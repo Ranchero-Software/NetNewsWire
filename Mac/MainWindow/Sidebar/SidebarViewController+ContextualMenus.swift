@@ -216,7 +216,7 @@ private extension SidebarViewController {
 		}
 
 		if let homePageURL = feed.homePageURL, let _ = URL(string: homePageURL) {
-			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL, image: AppAssets.openInBrowserImage)
+			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL, image: Assets.Images.openInBrowser)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
@@ -232,7 +232,7 @@ private extension SidebarViewController {
 
 		let notificationText = feed.notificationDisplayName.capitalized
 
-		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed, image: AppAssets.notificationImage)
+		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed, image: Assets.Images.notification)
 		if feed.isNotifyAboutNewArticles == nil || feed.isNotifyAboutNewArticles! == false {
 			notificationMenuItem.state = .off
 		} else {
@@ -301,17 +301,17 @@ private extension SidebarViewController {
 
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects, image: AppAssets.markAllAsReadMenuImage)
+		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects, image: Assets.Images.markAllAsReadMenu)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects, image: AppAssets.deleteImage)
+		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects, image: Assets.Images.delete)
 	}
 
 	func renameMenuItem(_ object: Any) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object, image: AppAssets.renameImage)
+		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object, image: Assets.Images.rename)
 	}
 
 	func anyObjectInArrayHasNonZeroUnreadCount(_ objects: [Any]) -> Bool {

@@ -44,7 +44,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			if let preferredColor = iconImage?.preferredColor {
 				faviconView.tintColor = UIColor(cgColor: preferredColor)
 			} else {
-				faviconView.tintColor = AppAssets.secondaryAccentColor
+				faviconView.tintColor = Assets.Colors.secondaryAccent
 			}
 		}
 	}
@@ -117,17 +117,17 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		switch (state.isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
-			folderTitle.textColor = AppAssets.primaryAccentColor
+			folderTitle.textColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 		case (true, .phone):
-			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
+			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			folderTitle.textColor = .white
 			unreadCountLabel.textColor = .secondaryLabel
 			faviconView.tintColor = .white
 		default:
 			folderTitle.textColor = .label
-			faviconView.tintColor = AppAssets.primaryAccentColor
+			faviconView.tintColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
 		}

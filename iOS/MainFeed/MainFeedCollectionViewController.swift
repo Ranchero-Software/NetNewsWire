@@ -605,7 +605,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func setFilterButtonToActive() {
-		filterButton.tintColor = AppAssets.primaryAccentColor
+		filterButton.tintColor = Assets.Colors.primaryAccent
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
 	}
 
@@ -688,13 +688,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		var menuItems: [UIAction] = []
 
 		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
-		let addFeedAction = UIAction(title: addFeedActionTitle, image: AppAssets.plus) { _ in
+		let addFeedAction = UIAction(title: addFeedActionTitle, image: Assets.Images.plus) { _ in
 			self.coordinator.showAddFeed()
 		}
 		menuItems.append(addFeedAction)
 
 		let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addFolderAction = UIAction(title: addFolderActionTitle, image: AppAssets.folderOutlinePlus) { _ in
+		let addFolderAction = UIAction(title: addFolderActionTitle, image: Assets.Images.folderOutlinePlus) { _ in
 			self.coordinator.showAddFolder()
 		}
 
@@ -925,7 +925,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] action in
 			self?.coordinator.showBrowserForFeed(indexPath)
 		}
 		return action
@@ -1026,7 +1026,7 @@ extension MainFeedCollectionViewController {
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 
-		let action = UIAction(title: title, image: AppAssets.trashImage, attributes: .destructive) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.trash, attributes: .destructive) { [weak self] action in
 			self?.delete(indexPath: indexPath)
 		}
 		return action
@@ -1034,7 +1034,7 @@ extension MainFeedCollectionViewController {
 
 	func renameAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Rename", comment: "Rename")
-		let action = UIAction(title: title, image: AppAssets.editImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.edit) { [weak self] action in
 			self?.rename(indexPath: indexPath)
 		}
 		return action
@@ -1046,7 +1046,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] action in
 			self?.coordinator.showFeedInspector(for: feed)
 		}
 		return action
@@ -1054,7 +1054,7 @@ extension MainFeedCollectionViewController {
 
 	func getAccountInfoAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: AppAssets.infoImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] action in
 			self?.coordinator.showAccountInspector(for: account)
 		}
 		return action
@@ -1062,7 +1062,7 @@ extension MainFeedCollectionViewController {
 
 	func deactivateAccountAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
-		let action = UIAction(title: title, image: AppAssets.deactivateImage) { action in
+		let action = UIAction(title: title, image: Assets.Images.deactivate) { action in
 			account.isActive = false
 		}
 		return action
@@ -1090,7 +1090,7 @@ extension MainFeedCollectionViewController {
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, sidebarItem.nameForDisplay) as String
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				if let articles = try? sidebarItem.fetchUnreadArticles() {
 					self?.coordinator.markAllAsRead(Array(articles))
@@ -1108,7 +1108,7 @@ extension MainFeedCollectionViewController {
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {

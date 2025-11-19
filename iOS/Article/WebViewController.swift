@@ -742,7 +742,7 @@ private extension WebViewController {
 	func prevArticleAction() -> UIAction? {
 		guard coordinator.isPrevArticleAvailable else { return nil }
 		let title = NSLocalizedString("Previous Article", comment: "Previous Article")
-		return UIAction(title: title, image: AppAssets.prevArticleImage) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.prevArticle) { [weak self] action in
 			self?.coordinator.selectPrevArticle()
 		}
 	}
@@ -750,7 +750,7 @@ private extension WebViewController {
 	func nextArticleAction() -> UIAction? {
 		guard coordinator.isNextArticleAvailable else { return nil }
 		let title = NSLocalizedString("Next Article", comment: "Next Article")
-		return UIAction(title: title, image: AppAssets.nextArticleImage) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.nextArticle) { [weak self] action in
 			self?.coordinator.selectNextArticle()
 		}
 	}
@@ -759,7 +759,7 @@ private extension WebViewController {
 		guard let article = article, !article.status.read || article.isAvailableToMarkUnread else { return nil }
 
 		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let readImage = article.status.read ? Assets.Images.circleClosed : AppAssets.circleOpenImage
+		let readImage = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 		return UIAction(title: title, image: readImage) { [weak self] action in
 			self?.coordinator.toggleReadForCurrentArticle()
 		}
@@ -777,7 +777,7 @@ private extension WebViewController {
 	func nextUnreadArticleAction() -> UIAction? {
 		guard coordinator.isAnyUnreadAvailable else { return nil }
 		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
-		return UIAction(title: title, image: AppAssets.nextUnreadArticleImage) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.nextUnread) { [weak self] action in
 			self?.coordinator.selectNextUnread()
 		}
 	}
@@ -785,7 +785,7 @@ private extension WebViewController {
 	func toggleArticleExtractorAction() -> UIAction {
 		let extracted = articleExtractorButtonState == .on
 		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
-		let extractorImage = extracted ? Assets.Images.articleExtractorOffSF : AppAssets.articleExtractorOnSF
+		let extractorImage = extracted ? Assets.Images.articleExtractorOffSF : Assets.Images.articleExtractorOnSF
 		return UIAction(title: title, image: extractorImage) { [weak self] action in
 			self?.toggleArticleExtractor()
 		}
@@ -793,7 +793,7 @@ private extension WebViewController {
 
 	func shareAction() -> UIAction {
 		let title = NSLocalizedString("Share", comment: "Share")
-		return UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.share) { [weak self] action in
 			self?.showActivityDialog()
 		}
 	}

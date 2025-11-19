@@ -230,30 +230,30 @@ private extension TimelineViewController {
 
 	func markReadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.swipeMarkReadImage)
+		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkRead)
 	}
 
 	func markUnreadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles, image: AppAssets.swipeMarkUnreadImage)
+		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkUnread)
 	}
 
 	func markStarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles, image: AppAssets.swipeMarkStarredImage)
+		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkStarred)
 	}
 
 	func markUnstarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles, image: AppAssets.swipeMarkUnstarredImage)
+		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkUnstarred)
 	}
 
 	func markAboveReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.markAboveAsReadImage)
+		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.markAboveAsRead)
 	}
 
 	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: AppAssets.markBelowAsReadImage)
+		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.markBelowAsRead)
 	}
 
 	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
@@ -270,12 +270,12 @@ private extension TimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 
-		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), feed, image: AppAssets.markAllAsReadImage)
+		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), feed, image: Assets.Images.markAllAsRead)
 	}
 
 	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString, image: AppAssets.openInBrowserImage)
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString, image: Assets.Images.openInBrowser)
 	}
 
 	func copyArticleURLMenuItem(_ urlString: String) -> NSMenuItem {

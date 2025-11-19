@@ -94,8 +94,8 @@ class MainTimelineIconFeedCell: UITableViewCell {
 				indicatorView.alpha = 1.0
 			}
 			UIView.animate(withDuration: 0.25) {
-				self.indicatorView.iconImage = AppAssets.unreadCellIndicatorImage
-				self.indicatorView.tintColor = AppAssets.secondaryAccentColor
+				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
+				self.indicatorView.tintColor = Assets.Colors.secondaryAccent
 			}
 			return
 		} else if cellData.starred {
@@ -103,8 +103,8 @@ class MainTimelineIconFeedCell: UITableViewCell {
 				indicatorView.alpha = 1.0
 			}
 			UIView.animate(withDuration: 0.25) {
-				self.indicatorView.iconImage = AppAssets.starredFeedImage
-				self.indicatorView.tintColor = AppAssets.starColor
+				self.indicatorView.iconImage = Assets.Images.starredFeed
+				self.indicatorView.tintColor = Assets.Colors.star
 			}
 			return
 		} else if indicatorView.alpha == 1.0 {
@@ -162,7 +162,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		}
 
 		if state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped {
-			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
+			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			applyTitleTextWithAttributes(state)
 			articleDate.textColor = .lightText
 			authorByLine.textColor = .lightText

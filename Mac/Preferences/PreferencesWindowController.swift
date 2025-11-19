@@ -35,13 +35,13 @@ final class PreferencesWindowController : NSWindowController, NSToolbarDelegate 
 		var specs = [PreferencesToolbarItemSpec]()
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General,
 											 name: NSLocalizedString("General", comment: "Preferences"),
-											 image: AppAssets.preferencesToolbarGeneralImage)]
+											 image: Assets.Images.preferencesToolbarGeneral)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
 											 name: NSLocalizedString("Accounts", comment: "Preferences"),
-											 image: AppAssets.preferencesToolbarAccountsImage)]
+											 image: Assets.Images.preferencesToolbarAccounts)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
 											 name: NSLocalizedString("Advanced", comment: "Preferences"),
-											 image: AppAssets.preferencesToolbarAdvancedImage)]
+											 image: Assets.Images.preferencesToolbarAdvanced)]
 		return specs
 	}()
 

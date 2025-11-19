@@ -21,12 +21,12 @@ import Account
 		}
 
 		let colorHash = ColorHash(feed.url)
-		if let favicon = AppAssets.faviconTemplateImage.maskWithColor(color: colorHash.color.cgColor) {
+		if let favicon = Assets.Images.faviconTemplate.maskWithColor(color: colorHash.color.cgColor) {
 			let iconImage = IconImage(favicon, isBackgroundSuppressed: true)
 			FaviconGenerator.faviconGeneratorCache[feed.url] = iconImage
 			return iconImage
 		} else {
-			return IconImage(AppAssets.faviconTemplateImage, isBackgroundSuppressed: true)
+			return IconImage(Assets.Images.faviconTemplate, isBackgroundSuppressed: true)
 		}
 
 	}

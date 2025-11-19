@@ -380,7 +380,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				/Localized/ShareExtension/MainInterface.storyboard,
-				AppAssets.swift,
 				AppDefaults.swift,
 				Resources/Assets.xcassets,
 				ShareExtension/ShareFolderPickerAccountCell.xib,

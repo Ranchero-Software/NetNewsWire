@@ -32,7 +32,7 @@ final class IconView: UIView {
 	private var isDiscernable = true
 
 	private let imageView: UIImageView = {
-		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
+		let imageView = NonIntrinsicImageView(image: Assets.Images.faviconTemplate)
 		imageView.contentMode = .scaleAspectFit
 		imageView.clipsToBounds = true
 		imageView.layer.cornerRadius = 2.0
@@ -115,7 +115,7 @@ private extension IconView {
 
 	private func updateBackgroundColor() {
 		if !isBackgroundSuppressed && ((iconImage != nil && isVerticalBackgroundExposed) || !isDiscernable) {
-			backgroundColor = AppAssets.iconBackgroundColor
+			backgroundColor = Assets.Colors.iconBackground
 		} else {
 			backgroundColor = nil
 		}

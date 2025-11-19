@@ -41,7 +41,7 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 		let fromView = transitionContext.view(forKey: .from)!
 		fromView.removeFromSuperview()
 
-		transitionContext.containerView.backgroundColor = AppAssets.fullScreenBackgroundColor
+		transitionContext.containerView.backgroundColor = Assets.Colors.fullScreenBackground
 		transitionContext.containerView.addSubview(imageView)
 
 		webViewController?.hideClickedImage()

@@ -19,7 +19,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 	func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
 
-		window!.tintColor = AppAssets.primaryAccentColor
+		window!.tintColor = Assets.Colors.primaryAccent
 
 		let rootViewController = window!.rootViewController as! RootSplitViewController
 		rootViewController.presentsWithGesture = true

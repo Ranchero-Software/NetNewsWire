@@ -781,11 +781,11 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .refresh:
 			let title = NSLocalizedString("Refresh", comment: "Refresh")
-			return buildToolbarButton(.refresh, title, AppAssets.refreshImage, "refreshAll:")
+			return buildToolbarButton(.refresh, title, Assets.Images.refresh, "refreshAll:")
 
 		case .newSidebarItemMenu:
 			let toolbarItem = NSMenuToolbarItem(itemIdentifier: .newSidebarItemMenu)
-			toolbarItem.image = AppAssets.addNewSidebarItemImage
+			toolbarItem.image = Assets.Images.addNewSidebarItem
 			let description = NSLocalizedString("Add Item", comment: "Add Item")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
@@ -794,18 +794,18 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .markAllAsRead:
 			let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
-			return buildToolbarButton(.markAllAsRead, title, AppAssets.markAllAsReadImage, "markAllAsRead:")
+			return buildToolbarButton(.markAllAsRead, title, Assets.Images.markAllAsRead, "markAllAsRead:")
 
 		case .toggleReadArticlesFilter:
 			let title = NSLocalizedString("Read Articles Filter", comment: "Read Articles Filter")
-			return buildToolbarButton(.toggleReadArticlesFilter, title, AppAssets.filterInactive, "toggleReadArticlesFilter:")
+			return buildToolbarButton(.toggleReadArticlesFilter, title, Assets.Images.filterInactive, "toggleReadArticlesFilter:")
 
 		case .timelineTrackingSeparator:
 			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitViewController!.splitView, dividerIndex: 1)
 
 		case .markRead:
 			let title = NSLocalizedString("Mark Read", comment: "Mark Read")
-			return buildToolbarButton(.markRead, title, AppAssets.readClosedImage, "toggleRead:")
+			return buildToolbarButton(.markRead, title, Assets.Images.readClosed, "toggleRead:")
 
 		case .markStar:
 			let title = NSLocalizedString("Star", comment: "Star")
@@ -813,7 +813,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .nextUnread:
 			let title = NSLocalizedString("Next Unread", comment: "Next Unread")
-			return buildToolbarButton(.nextUnread, title, AppAssets.nextUnreadImage, "nextUnread:")
+			return buildToolbarButton(.nextUnread, title, Assets.Images.nextUnread, "nextUnread:")
 
 		case .readerView:
 			let toolbarItem = RSToolbarItem(itemIdentifier: .readerView)
@@ -828,14 +828,14 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .share:
 			let title = NSLocalizedString("Share", comment: "Share")
-			return buildToolbarButton(.share, title, AppAssets.shareImage, "toolbarShowShareMenu:")
+			return buildToolbarButton(.share, title, Assets.Images.share, "toolbarShowShareMenu:")
 
 		case .openInBrowser:
 			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-			return buildToolbarButton(.openInBrowser, title, AppAssets.openInBrowserImage, "openArticleInBrowser:")
+			return buildToolbarButton(.openInBrowser, title, Assets.Images.openInBrowser, "openArticleInBrowser:")
 
 		case .articleThemeMenu:
-			articleThemeMenuToolbarItem.image = AppAssets.articleTheme
+			articleThemeMenuToolbarItem.image = Assets.Images.articleTheme
 			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
 			articleThemeMenuToolbarItem.toolTip = description
 			articleThemeMenuToolbarItem.label = description
@@ -850,7 +850,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .cleanUp:
 			let title = NSLocalizedString("Clean Up", comment: "Clean Up")
-			return buildToolbarButton(.cleanUp, title, AppAssets.cleanUpImage, "cleanUp:")
+			return buildToolbarButton(.cleanUp, title, Assets.Images.cleanUp, "cleanUp:")
 
 		default:
 			break
@@ -1112,7 +1112,7 @@ private extension MainWindowController {
 		}
 
 		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = markingRead ? AppAssets.readClosedImage : AppAssets.readOpenImage
+			button.image = markingRead ? Assets.Images.readClosed : Assets.Images.readOpen
 		}
 
 		return result
@@ -1223,7 +1223,7 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				button.image = Assets.Images.filterInactive
 			}
 			return false
 		}
@@ -1232,13 +1232,13 @@ private extension MainWindowController {
 			(item as? NSMenuItem)?.title = showCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = showCommand
-				button.image = AppAssets.filterActive
+				button.image = Assets.Images.filterActive
 			}
 		} else {
 			(item as? NSMenuItem)?.title = hideCommand
 			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
 				toolbarItem.toolTip = hideCommand
-				button.image = AppAssets.filterInactive
+				button.image = Assets.Images.filterInactive
 			}
 		}
 

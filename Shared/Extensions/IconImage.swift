@@ -15,19 +15,13 @@ import UIKit
 import RSCore
 
 final class IconImage: @unchecked Sendable {
-
-	lazy var isDark: Bool = {
-		return image.isDark()
-	}()
-
-	lazy var isBright: Bool = {
-		return image.isBright()
-	}()
-
 	let image: RSImage
 	let isSymbol: Bool
 	let isBackgroundSuppressed: Bool
 	let preferredColor: CGColor?
+
+	lazy var isDark = image.isDark()
+	lazy var isBright = image.isBright()
 
 	init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSuppressed: Bool = false, preferredColor: CGColor? = nil) {
 		self.image = image
@@ -35,7 +29,6 @@ final class IconImage: @unchecked Sendable {
 		self.preferredColor = preferredColor
 		self.isBackgroundSuppressed = isBackgroundSuppressed
 	}
-
 }
 
 #if os(macOS)
@@ -64,7 +57,7 @@ fileprivate enum ImageLuminanceType {
 	case regular, bright, dark
 }
 
-extension CGImage {
+private extension CGImage {
 
 	func isBright() -> Bool {
 		guard let luminanceType = getLuminanceType() else {
@@ -80,8 +73,7 @@ extension CGImage {
 		return luminanceType == .dark
 	}
 
-	fileprivate func getLuminanceType() -> ImageLuminanceType? {
-
+	func getLuminanceType() -> ImageLuminanceType? {
 		// This has been rewritten with information from https://christianselig.com/2021/04/efficient-average-color/
 
 		// First, resize the image. We do this for two reasons, 1) less pixels to deal with means faster
@@ -147,22 +139,21 @@ extension CGImage {
 		}
 	}
 
-	private func red(for pixelData: UInt32) -> UInt8 {
+	func red(for pixelData: UInt32) -> UInt8 {
 		return UInt8((pixelData >> 16) & 255)
 	}
 
-	private func green(for pixelData: UInt32) -> UInt8 {
+	func green(for pixelData: UInt32) -> UInt8 {
 		return UInt8((pixelData >> 8) & 255)
 	}
 
-	private func blue(for pixelData: UInt32) -> UInt8 {
+	func blue(for pixelData: UInt32) -> UInt8 {
 		return UInt8((pixelData >> 0) & 255)
 	}
-
 }
 
 
-enum IconSize: Int, CaseIterable {
+enum IconSize: Int, CaseIterable, Sendable {
 	case small = 1
 	case medium = 2
 	case large = 3
@@ -181,5 +172,4 @@ enum IconSize: Int, CaseIterable {
 			return CGSize(width: IconSize.largeDimension, height: IconSize.largeDimension)
 		}
 	}
-
 }

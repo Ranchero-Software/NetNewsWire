@@ -13,7 +13,7 @@ import Articles
 @MainActor final class SendToMarsEditCommand: SendToCommand {
 
 	let title = "MarsEdit"
-	let image: RSImage? = AppAssets.marsEditIcon
+	let image: RSImage? = Assets.Images.marsEdit
 
 	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit5"), UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 

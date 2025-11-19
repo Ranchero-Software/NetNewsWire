@@ -21,7 +21,7 @@ import Account
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
 	let fetchType: FetchType = .starred(nil)
 	var smallIcon: IconImage? {
-		return AppAssets.starredFeedImage
+		Assets.Images.starredFeed
 	}
 	func fetchUnreadCount(account: Account) async throws -> Int? {
 		try await account.fetchUnreadCountForStarredArticlesAsync()

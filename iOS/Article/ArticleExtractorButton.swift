@@ -72,8 +72,8 @@ final class ArticleExtractorButton: UIButton {
 	}
 
 	private func addAnimatedSublayer(to hostedLayer: CALayer) {
-		let image1 = AppAssets.articleExtractorOffTinted.cgImage!
-		let image2 = AppAssets.articleExtractorOnTinted.cgImage!
+		let image1 = Assets.Images.articleExtractorOffTinted.cgImage!
+		let image2 = Assets.Images.articleExtractorOnTinted.cgImage!
 		let images = [image1, image2, image1]
 
 		animatedLayer = CALayer()

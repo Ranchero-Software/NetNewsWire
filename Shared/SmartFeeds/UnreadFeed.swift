@@ -42,7 +42,7 @@ import ArticlesDatabase
 	}
 
 	var smallIcon: IconImage? {
-		return AppAssets.unreadFeedImage
+		Assets.Images.unreadFeed
 	}
 
 	#if os(macOS)

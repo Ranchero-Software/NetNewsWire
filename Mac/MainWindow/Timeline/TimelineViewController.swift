@@ -969,7 +969,7 @@ extension TimelineViewController: NSTableViewDelegate {
 					self.toggleArticleRead(article);
 					tableView.rowActionsVisible = false
 				}
-				action.image = article.status.read ? AppAssets.swipeMarkUnreadImage : AppAssets.swipeMarkReadImage
+				action.image = article.status.read ? Assets.Images.swipeMarkUnread : Assets.Images.swipeMarkRead
 				return [action]
 
 			case .trailing:
@@ -977,8 +977,8 @@ extension TimelineViewController: NSTableViewDelegate {
 					self.toggleArticleStarred(article);
 					tableView.rowActionsVisible = false
 				}
-				action.backgroundColor = AppAssets.starColor
-				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
+			action.backgroundColor = Assets.Colors.star
+				action.image = article.status.starred ? Assets.Images.swipeMarkUnstarred : Assets.Images.swipeMarkStarred
 				return [action]
 
 			@unknown default:

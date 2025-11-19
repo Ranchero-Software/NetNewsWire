@@ -23,8 +23,8 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
 
-	private lazy var filterButton = UIBarButtonItem(image: AppAssets.filterImage, style: .plain, target: self, action: #selector(toggleFilter(_:)))
-	private lazy var firstUnreadButton = UIBarButtonItem(image: AppAssets.nextUnreadArticleImage, style: .plain, target: self, action: #selector(firstUnread(_:)))
+	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
+	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
 
 	private lazy var dataSource = makeDataSource()
 	private let searchController = UISearchController(searchResultsController: nil)
@@ -407,8 +407,8 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			completion(true)
 		}
 
-		readAction.image = article.status.read ? Assets.Images.circleClosed : AppAssets.circleOpenImage
-		readAction.backgroundColor = AppAssets.primaryAccentColor
+		readAction.image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
+		readAction.backgroundColor = Assets.Colors.primaryAccent
 
 		return UISwipeActionsConfiguration(actions: [readAction])
 	}
@@ -428,7 +428,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 
 		starAction.image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
-		starAction.backgroundColor = AppAssets.starColor
+		starAction.backgroundColor = Assets.Colors.star
 
 		// Set up the read action
 		let moreTitle = NSLocalizedString("More", comment: "More")
@@ -477,7 +477,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		}
 
-		moreAction.image = AppAssets.moreImage
+		moreAction.image = Assets.Images.more
 		moreAction.backgroundColor = UIColor.systemGray
 
 		return UISwipeActionsConfiguration(actions: [starAction, moreAction])
@@ -757,7 +757,7 @@ private extension MainTimelineViewController {
 
 		if isReadArticlesFiltered {
 			filterButton.style = .prominent
-			filterButton.tintColor = AppAssets.primaryAccentColor
+			filterButton.tintColor = Assets.Colors.primaryAccent
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
 			filterButton.style = .plain
@@ -858,7 +858,7 @@ private extension MainTimelineViewController {
 		let title = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let image = article.status.read ? Assets.Images.circleClosed : AppAssets.circleOpenImage
+		let image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			self?.toggleRead(article)
@@ -902,7 +902,7 @@ private extension MainTimelineViewController {
 		}
 
 		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
-		let image = AppAssets.markAboveAsReadImage
+		let image = Assets.Images.markAboveAsRead
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markAboveAsRead(article)
@@ -927,7 +927,7 @@ private extension MainTimelineViewController {
 		}
 
 		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
-		let image = AppAssets.markBelowAsReadImage
+		let image = Assets.Images.markBelowAsRead
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markBelowAsRead(article)
@@ -989,7 +989,7 @@ private extension MainTimelineViewController {
 			!timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
-		let action = UIAction(title: title, image: AppAssets.openInSidebarImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.openInSidebar) { [weak self] action in
 			self?.discloseFeed(feed, animations: [.scroll, .navigation])
 		}
 		return action
@@ -1027,7 +1027,7 @@ private extension MainTimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 
-		let action = UIAction(title: title, image: AppAssets.markAllAsReadImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markAllAsRead(articles)
 			}
@@ -1087,7 +1087,7 @@ private extension MainTimelineViewController {
 	func openInBrowserAction(_ article: Article) -> UIAction? {
 		guard let _ = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-		let action = UIAction(title: title, image: AppAssets.safariImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] action in
 			self?.showBrowserForArticle(article)
 		}
 		return action
@@ -1118,7 +1118,7 @@ private extension MainTimelineViewController {
 	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
-		let action = UIAction(title: title, image: AppAssets.shareImage) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.share) { [weak self] action in
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action

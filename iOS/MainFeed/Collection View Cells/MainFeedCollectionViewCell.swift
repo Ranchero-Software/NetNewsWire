@@ -25,7 +25,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 			if let preferredColor = iconImage?.preferredColor {
 				faviconView.tintColor = UIColor(cgColor: preferredColor)
 			} else {
-				faviconView.tintColor = AppAssets.secondaryAccentColor
+				faviconView.tintColor = Assets.Colors.secondaryAccent
 			}
 		}
 	}
@@ -88,12 +88,12 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		switch (state.isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
-			feedTitle.textColor = AppAssets.primaryAccentColor
+			feedTitle.textColor = Assets.Colors.primaryAccent
 			feedTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize,
 											   weight: .semibold)
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 		case (true, .phone):
-			backgroundConfig.backgroundColor = AppAssets.primaryAccentColor
+			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			feedTitle.textColor = .white
 			unreadCountLabel.textColor = .secondaryLabel
 			if feedTitle.text == "All Unread" {
@@ -109,7 +109,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 					if let preferredColor = iconImage?.preferredColor {
 						faviconView.tintColor = UIColor(cgColor: preferredColor)
 					} else {
-						faviconView.tintColor = AppAssets.secondaryAccentColor
+						faviconView.tintColor = Assets.Colors.secondaryAccent
 					}
 				}
 			}

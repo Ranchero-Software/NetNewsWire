@@ -33,6 +33,6 @@ protocol SmallIconProvider {
 
 @MainActor extension Folder: SmallIconProvider {
 	var smallIcon: IconImage? {
-		AppAssets.mainFolderImage
+		Assets.Images.mainFolder
 	}
 }
