@@ -20,8 +20,22 @@ final class IconImage: @unchecked Sendable {
 	let isBackgroundSuppressed: Bool
 	let preferredColor: CGColor?
 
-	lazy var isDark = image.isDark()
-	lazy var isBright = image.isBright()
+	private lazy var luminanceType: ImageLuminanceType = {
+		#if os(macOS)
+		guard let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil) else { return .regular }
+		#else
+		guard let cgImage = image.cgImage else { return .regular }
+		#endif
+		return cgImage.calculateLuminanceType() ?? .regular
+	}()
+
+	var isDark: Bool {
+		luminanceType == .dark
+	}
+
+	var isBright: Bool {
+		luminanceType == .bright
+	}
 
 	init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSuppressed: Bool = false, preferredColor: CGColor? = nil) {
 		self.image = image
@@ -31,58 +45,21 @@ final class IconImage: @unchecked Sendable {
 	}
 }
 
-#if os(macOS)
-	extension NSImage {
-		func isDark() -> Bool {
-			return self.cgImage(forProposedRect: nil, context: nil, hints: nil)?.isDark() ?? false
-		}
-
-		func isBright() -> Bool {
-			return self.cgImage(forProposedRect: nil, context: nil, hints: nil)?.isBright() ?? false
-		}
-	}
-#else
-	extension UIImage {
-		func isDark() -> Bool {
-			return self.cgImage?.isDark() ?? false
-		}
-
-		func isBright() -> Bool {
-			return self.cgImage?.isBright() ?? false
-		}
-	}
-#endif
-
-fileprivate enum ImageLuminanceType {
+fileprivate enum ImageLuminanceType: Sendable {
 	case regular, bright, dark
 }
 
 private extension CGImage {
 
-	func isBright() -> Bool {
-		guard let luminanceType = getLuminanceType() else {
-			return false
-		}
-		return luminanceType == .bright
-	}
-
-	func isDark() -> Bool {
-		guard let luminanceType = getLuminanceType() else {
-			return false
-		}
-		return luminanceType == .dark
-	}
-
-	func getLuminanceType() -> ImageLuminanceType? {
+	func calculateLuminanceType() -> ImageLuminanceType? {
 		// This has been rewritten with information from https://christianselig.com/2021/04/efficient-average-color/
 
 		// First, resize the image. We do this for two reasons, 1) less pixels to deal with means faster
 		// calculation and a resized image still has the "gist" of the colors, and 2) the image we're dealing
 		// with may come in any of a variety of color formats (CMYK, ARGB, RGBA, etc.) which complicates things,
 		// and redrawing it normalizes that into a base color format we can deal with.
-		// 40x40 is a good size to resize to still preserve quite a bit of detail but not have too many pixels
-		// to deal with. Aspect ratio is irrelevant for just finding average color.
-		let size = CGSize(width: 40, height: 40)
+		// 20x20 provides good accuracy while being 4x faster than 40x40
+		let size = CGSize(width: 20, height: 20)
 
 		let width = Int(size.width)
 		let height = Int(size.height)
@@ -108,28 +85,34 @@ private extension CGImage {
 		let pointer = pixelBuffer.bindMemory(to: UInt32.self, capacity: width * height)
 
 		var totalLuminance = 0.0
+		var pixelsProcessed = 0
 
-		// Column of pixels in image
-		for x in 0 ..< width {
-			// Row of pixels in image
-			for y in 0 ..< height {
-				// To get the pixel location just think of the image as a grid of pixels, but stored as one long row
-				// rather than columns and rows, so for instance to map the pixel from the grid in the 15th row and 3
-				// columns in to our "long row", we'd offset ourselves 15 times the width in pixels of the image, and
-				// then offset by the amount of columns
-				let pixel = pointer[(y * width) + x]
+		// Process pixels one at a time (faster than SIMD for this small loop)
+		for i in 0 ..< totalPixels {
+			let pixel = pointer[i]
 
-				let r = red(for: pixel)
-				let g = green(for: pixel)
-				let b = blue(for: pixel)
+			let r = red(for: pixel)
+			let g = green(for: pixel)
+			let b = blue(for: pixel)
 
-				let luminance = (0.299 * Double(r) + 0.587 * Double(g) + 0.114 * Double(b))
+			let luminance = (0.299 * Double(r) + 0.587 * Double(g) + 0.114 * Double(b))
 
-				totalLuminance += luminance
+			totalLuminance += luminance
+			pixelsProcessed += 1
+
+			// Early exit optimization: check after processing 25% of pixels
+			if pixelsProcessed == totalPixels / 4 {
+				let currentAvg = totalLuminance / Double(pixelsProcessed)
+				if currentAvg < 30 {
+					return .dark
+				} else if currentAvg > 190 {
+					return .bright
+				}
 			}
 		}
 
 		let avgLuminance = totalLuminance / Double(totalPixels)
+
 		if totalLuminance == 0 || avgLuminance < 40 {
 			return .dark
 		} else if avgLuminance > 180 {
@@ -139,19 +122,21 @@ private extension CGImage {
 		}
 	}
 
+	@inline(__always)
 	func red(for pixelData: UInt32) -> UInt8 {
 		return UInt8((pixelData >> 16) & 255)
 	}
 
+	@inline(__always)
 	func green(for pixelData: UInt32) -> UInt8 {
 		return UInt8((pixelData >> 8) & 255)
 	}
 
+	@inline(__always)
 	func blue(for pixelData: UInt32) -> UInt8 {
 		return UInt8((pixelData >> 0) & 255)
 	}
 }
-
 
 enum IconSize: Int, CaseIterable, Sendable {
 	case small = 1
