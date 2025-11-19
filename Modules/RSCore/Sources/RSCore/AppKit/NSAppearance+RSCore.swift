@@ -10,15 +10,8 @@
 import AppKit
 
 extension NSAppearance {
-
-	@objc(rsIsDarkMode)
 	@MainActor public var isDarkMode: Bool {
-		if #available(macOS 10.14, *) {
-			return self.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-		}
-		else {
-			return false
-		}
+		bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
 	}
 }
 #endif
