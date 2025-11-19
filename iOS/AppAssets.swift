@@ -10,16 +10,6 @@ import RSCore
 import Account
 
 struct AppAssets {
-	static let accountBazQuxImage = RSImage(named: "accountBazQux")!
-	static let accountCloudKitImage = RSImage(named: "accountCloudKit")!
-	static let accountFeedbinImage = RSImage(named: "accountFeedbin")!
-	static let accountFeedlyImage = RSImage(named: "accountFeedly")!
-	static let accountFreshRSSImage = RSImage(named: "accountFreshRSS")!
-	static let accountInoreaderImage = RSImage(named: "accountInoreader")!
-	static let accountLocalPadImage = RSImage(named: "accountLocalPad")!
-	static let accountLocalPhoneImage = RSImage(named: "accountLocalPhone")!
-	static let accountNewsBlurImage = RSImage(named: "accountNewsBlur")!
-	static let accountTheOldReaderImage = RSImage(named: "accountTheOldReader")!
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 	static let articleExtractorError = RSImage(named: "articleExtractorError")!
 	static let articleExtractorOff = RSImage(named: "articleExtractorOff")!
@@ -72,8 +62,6 @@ struct AppAssets {
 	static let shareImage = RSImage(systemName: "square.and.arrow.up")!
 	static let smartFeedImage = RSImage(systemName: "gear")!
 	static let starColor = UIColor(named: "starColor")!
-	static let starClosedImage = RSImage(systemName: "star.fill")!
-	static let starOpenImage = RSImage(systemName: "star")!
 
 	static let starredFeedImage: IconImage = {
 		let image = UIImage(systemName: "star.fill")!
@@ -105,31 +93,4 @@ struct AppAssets {
 
 	static let vibrantTextColor = UIColor(named: "vibrantTextColor")!
 	static let controlBackgroundColor = UIColor(named: "controlBackgroundColor")!
-
-	@MainActor static func image(for accountType: AccountType) -> UIImage? {
-		switch accountType {
-		case .onMyMac:
-			if UIDevice.current.userInterfaceIdiom == .pad {
-				return AppAssets.accountLocalPadImage
-			} else {
-				return AppAssets.accountLocalPhoneImage
-			}
-		case .cloudKit:
-			return AppAssets.accountCloudKitImage
-		case .feedbin:
-			return AppAssets.accountFeedbinImage
-		case .feedly:
-			return AppAssets.accountFeedlyImage
-		case .freshRSS:
-			return AppAssets.accountFreshRSSImage
-		case .newsBlur:
-			return AppAssets.accountNewsBlurImage
-		case .inoreader:
-			return AppAssets.accountInoreaderImage
-		case .bazQux:
-			return AppAssets.accountBazQuxImage
-		case .theOldReader:
-			return AppAssets.accountTheOldReaderImage
-		}
-	}
 }

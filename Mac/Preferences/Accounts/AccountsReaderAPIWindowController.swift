@@ -39,23 +39,23 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 		if let accountType = accountType {
 			switch accountType {
 			case .freshRSS:
-				titleImageView.image = AppAssets.accountFreshRSS
+				titleImageView.image = Assets.Images.accountFreshRSS
 				titleLabel.stringValue = NSLocalizedString("Sign in to your FreshRSS account.", comment: "FreshRSS")
 				noAccountTextField.stringValue = NSLocalizedString("Don’t have a FreshRSS instance?", comment: "No FreshRSS")
 				createAccountButton.title = NSLocalizedString("Find out more", comment: "No FreshRSS Button")
 				apiURLTextField.placeholderString = NSLocalizedString("https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
 			case .inoreader:
-				titleImageView.image = AppAssets.accountInoreader
+				titleImageView.image = Assets.Images.accountInoreader
 				titleLabel.stringValue = NSLocalizedString("Sign in to your Inoreader account.", comment: "Inoreader")
 				gridView.row(at: 2).isHidden = true
 				noAccountTextField.stringValue = NSLocalizedString("Don’t have an Inoreader account?", comment: "No Inoreader")
 			case .bazQux:
-				titleImageView.image = AppAssets.accountBazQux
+				titleImageView.image = Assets.Images.accountBazQux
 				titleLabel.stringValue = NSLocalizedString("Sign in to your BazQux account.", comment: "BazQux")
 				gridView.row(at: 2).isHidden = true
 				noAccountTextField.stringValue = NSLocalizedString("Don’t have a BazQux account?", comment: "No BazQux")
 			case .theOldReader:
-				titleImageView.image = AppAssets.accountTheOldReader
+				titleImageView.image = Assets.Images.accountTheOldReader
 				titleLabel.stringValue = NSLocalizedString("Sign in to your The Old Reader account.", comment: "The Old Reader")
 				gridView.row(at: 2).isHidden = true
 				noAccountTextField.stringValue = NSLocalizedString("Don’t have a The Old Reader account?", comment: "No OldReader")

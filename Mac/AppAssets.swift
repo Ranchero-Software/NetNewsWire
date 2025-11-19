@@ -11,15 +11,6 @@ import RSCore
 import Account
 
 struct AppAssets {
-	static let accountBazQux = RSImage(named: "accountBazQux")!
-	static let accountCloudKit = RSImage(named: "accountCloudKit")!
-	static let accountFeedbin = RSImage(named: "accountFeedbin")!
-	static let accountFeedly = RSImage(named: "accountFeedly")!
-	static let accountFreshRSS = RSImage(named: "accountFreshRSS")!
-	static let accountInoreader = RSImage(named: "accountInoreader")!
-	static let accountLocal = RSImage(named: "accountLocal")!
-	static let accountNewsBlur = RSImage(named: "accountNewsBlur")!
-	static let accountTheOldReader = RSImage(named: "accountTheOldReader")!
 	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 	static let addNewSidebarItemImage = NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
 	static let articleExtractorError = RSImage(named: "articleExtractorError")!
@@ -36,15 +27,6 @@ struct AppAssets {
 	static let filterInactive = NSImage(systemSymbolName: "line.horizontal.3.decrease.circle", accessibilityDescription: nil)!
 	static let iconLightBackgroundColor = NSColor(named: NSColor.Name("iconLightBackgroundColor"))!
 	static let iconDarkBackgroundColor = NSColor(named: NSColor.Name("iconDarkBackgroundColor"))!
-
-	static let legacyArticleExtractor = RSImage(named: "legacyArticleExtractor")!
-	static let legacyArticleExtractorError = RSImage(named: "legacyArticleExtractorError")!
-	static let legacyArticleExtractorInactiveDark = RSImage(named: "legacyArticleExtractorInactiveDark")!
-	static let legacyArticleExtractorInactiveLight = RSImage(named: "legacyArticleExtractorInactiveLight")!
-	static let legacyArticleExtractorProgress1 = RSImage(named: "legacyArticleExtractorProgress1")!
-	static let legacyArticleExtractorProgress2 = RSImage(named: "legacyArticleExtractorProgress2")!
-	static let legacyArticleExtractorProgress3 = RSImage(named: "legacyArticleExtractorProgress3")!
-	static let legacyArticleExtractorProgress4 = RSImage(named: "legacyArticleExtractorProgress4")!
 
 	static let mainFolderImage: IconImage = {
 		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
@@ -72,8 +54,6 @@ struct AppAssets {
 	static let searchFeedImage = IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
 	static let shareImage = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)!
 	static let sidebarToggleImage = NSImage(systemSymbolName: "sidebar.left", accessibilityDescription: nil)!
-	static let starClosedImage = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
-	static let starOpenImage = NSImage(systemSymbolName: "star", accessibilityDescription: nil)!
 
 	static let starredFeedImage: IconImage = {
 		let image = NSImage(systemSymbolName: "star.fill", accessibilityDescription: nil)!
@@ -102,27 +82,4 @@ struct AppAssets {
 	static let swipeMarkStarredImage = RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
 	static let swipeMarkUnstarredImage = RSImage(systemSymbolName: "star", accessibilityDescription: "Unstar")!
 	static let starColor = NSColor(named: NSColor.Name("StarColor"))!
-
-	static func image(for accountType: AccountType) -> NSImage? {
-		switch accountType {
-		case .onMyMac:
-			return AppAssets.accountLocal
-		case .cloudKit:
-			return AppAssets.accountCloudKit
-		case .bazQux:
-			return AppAssets.accountBazQux
-		case .feedbin:
-			return AppAssets.accountFeedbin
-		case .feedly:
-			return AppAssets.accountFeedly
-		case .freshRSS:
-			return AppAssets.accountFreshRSS
-		case .inoreader:
-			return AppAssets.accountInoreader
-		case .newsBlur:
-			return AppAssets.accountNewsBlur
-		case .theOldReader:
-			return AppAssets.accountTheOldReader
-		}
-	}
 }

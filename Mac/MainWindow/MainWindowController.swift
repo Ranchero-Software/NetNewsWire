@@ -809,7 +809,7 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .markStar:
 			let title = NSLocalizedString("Star", comment: "Star")
-			return buildToolbarButton(.markStar, title, AppAssets.starOpenImage, "toggleStarred:")
+			return buildToolbarButton(.markStar, title, Assets.Images.starOpen, "toggleStarred:")
 
 		case .nextUnread:
 			let title = NSLocalizedString("Next Unread", comment: "Next Unread")
@@ -1196,7 +1196,7 @@ private extension MainWindowController {
 		}
 
 		if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-			button.image = starring ? AppAssets.starOpenImage : AppAssets.starClosedImage
+			button.image = starring ? Assets.Images.starOpen : Assets.Images.starClosed
 		}
 
 		return result

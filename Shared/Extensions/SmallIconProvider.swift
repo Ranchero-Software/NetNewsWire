@@ -12,21 +12,17 @@ import Account
 import RSCore
 
 protocol SmallIconProvider {
-
 	@MainActor var smallIcon: IconImage? { get }
 }
 
 @MainActor extension Account: SmallIconProvider {
 	var smallIcon: IconImage? {
-		if let image = AppAssets.image(for: type) {
-			return IconImage(image)
-		}
-		return nil
+		let image = Assets.accountImage(type)
+		return IconImage(image)
 	}
 }
 
 @MainActor extension Feed: SmallIconProvider {
-
 	var smallIcon: IconImage? {
 		if let iconImage = FaviconDownloader.shared.favicon(for: self) {
 			return iconImage
