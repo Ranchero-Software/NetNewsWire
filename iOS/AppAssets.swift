@@ -60,8 +60,6 @@ struct AppAssets {
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: AppAssets.starColor.cgColor)
 	}()
 
-	static let tickMarkColor = UIColor(named: "tickMarkColor")!
-
 	static let timelineStarImage: UIImage = {
 		let image = UIImage(systemName: "star.fill")!
 		return image.withTintColor(AppAssets.starColor, renderingMode: .alwaysOriginal)
