@@ -759,7 +759,7 @@ private extension WebViewController {
 		guard let article = article, !article.status.read || article.isAvailableToMarkUnread else { return nil }
 
 		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let readImage = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		let readImage = article.status.read ? Assets.Images.circleClosed : AppAssets.circleOpenImage
 		return UIAction(title: title, image: readImage) { [weak self] action in
 			self?.coordinator.toggleReadForCurrentArticle()
 		}
@@ -768,7 +768,7 @@ private extension WebViewController {
 	func toggleStarredAction() -> UIAction {
 		let starred = article?.status.starred ?? false
 		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") : NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
-		let starredImage = starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		let starredImage = starred ? Assets.Images.starOpen : Assets.Images.starClosed
 		return UIAction(title: title, image: starredImage) { [weak self] action in
 			self?.coordinator.toggleStarredForCurrentArticle()
 		}
@@ -785,7 +785,7 @@ private extension WebViewController {
 	func toggleArticleExtractorAction() -> UIAction {
 		let extracted = articleExtractorButtonState == .on
 		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
-		let extractorImage = extracted ? AppAssets.articleExtractorOffSF : AppAssets.articleExtractorOnSF
+		let extractorImage = extracted ? Assets.Images.articleExtractorOffSF : AppAssets.articleExtractorOnSF
 		return UIAction(title: title, image: extractorImage) { [weak self] action in
 			self?.toggleArticleExtractor()
 		}

@@ -951,7 +951,7 @@ extension MainFeedCollectionViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { action in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -979,7 +979,7 @@ extension MainFeedCollectionViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { action in
 			UIPasteboard.general.url = url
 		}
 		return action

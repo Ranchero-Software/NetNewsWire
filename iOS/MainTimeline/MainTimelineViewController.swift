@@ -407,7 +407,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			completion(true)
 		}
 
-		readAction.image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		readAction.image = article.status.read ? Assets.Images.circleClosed : AppAssets.circleOpenImage
 		readAction.backgroundColor = AppAssets.primaryAccentColor
 
 		return UISwipeActionsConfiguration(actions: [readAction])
@@ -427,7 +427,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			completion(true)
 		}
 
-		starAction.image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		starAction.image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
 		starAction.backgroundColor = AppAssets.starColor
 
 		// Set up the read action
@@ -858,7 +858,7 @@ private extension MainTimelineViewController {
 		let title = article.status.read ?
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
-		let image = article.status.read ? AppAssets.circleClosedImage : AppAssets.circleOpenImage
+		let image = article.status.read ? Assets.Images.circleClosed : AppAssets.circleOpenImage
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			self?.toggleRead(article)
@@ -877,7 +877,7 @@ private extension MainTimelineViewController {
 		let title = article.status.starred ?
 			NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") :
 			NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
-		let image = article.status.starred ? AppAssets.starOpenImage : AppAssets.starClosedImage
+		let image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
 
 		let action = UIAction(title: title, image: image) { [weak self] action in
 			self?.toggleStar(article)
@@ -1064,7 +1064,7 @@ private extension MainTimelineViewController {
 	func copyArticleURLAction(_ article: Article) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Copy Article URL", comment: "Copy Article URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { action in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1073,7 +1073,7 @@ private extension MainTimelineViewController {
 	func copyExternalURLAction(_ article: Article) -> UIAction? {
 		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
 		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
-		let action = UIAction(title: title, image: AppAssets.copyImage) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { action in
 			UIPasteboard.general.url = url
 		}
 		return action

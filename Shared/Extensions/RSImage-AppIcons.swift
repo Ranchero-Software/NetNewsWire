@@ -34,5 +34,5 @@ extension IconImage {
 		return nil
 	}()
 
-	static let nnwFeedIcon = IconImage(AppAssets.nnwFeedIcon)
+	static let nnwFeedIcon = IconImage(Assets.Images.nnwFeedIcon)
 }

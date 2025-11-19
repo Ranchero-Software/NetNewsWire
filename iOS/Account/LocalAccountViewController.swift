@@ -46,7 +46,7 @@ final class LocalAccountViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAssets.image(for: .onMyMac)
+			headerView.imageView.image = Assets.accountImage(.onMyMac)
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)

@@ -11,14 +11,9 @@ import RSCore
 import Account
 
 struct AppAssets {
-	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
 	static let addNewSidebarItemImage = NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
-	static let articleExtractorError = RSImage(named: "articleExtractorError")!
-	static let articleExtractorOff = RSImage(named: "articleExtractorOff")!
-	static let articleExtractorOn = RSImage(named: "articleExtractorOn")!
 	static let articleTheme = NSImage(systemSymbolName: "doc.richtext", accessibilityDescription: nil)!
 	static let cleanUpImage = NSImage(systemSymbolName: "bubbles.and.sparkles", accessibilityDescription: nil)!
-	static let copyImage = NSImage(systemSymbolName: "document.on.document", accessibilityDescription: nil)!
 	static let deleteImage = NSImage(systemSymbolName: "xmark.bin", accessibilityDescription: nil)!
 	static let marsEditIcon = RSImage(named: "MarsEditIcon")!
 	static let microblogIcon = RSImage(named: "MicroblogIcon")!
@@ -61,7 +56,6 @@ struct AppAssets {
 		return IconImage(image, isSymbol: true, isBackgroundSuppressed: true, preferredColor: preferredColor.cgColor)
 	}()
 
-	static let timelineSeparatorColor = NSColor(named: "timelineSeparatorColor")!
 	static let timelineStarSelected = RSImage(named: "timelineStar")?.tinted(with: .white)
 	static let timelineStarUnselected = RSImage(named: "timelineStar")?.tinted(with: starColor)
 

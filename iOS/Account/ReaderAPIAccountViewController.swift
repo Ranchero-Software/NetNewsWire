@@ -207,18 +207,18 @@ final class ReaderAPIAccountViewController: UITableViewController {
 	}
 
 	private func headerViewImage() -> UIImage? {
-		if let accountType = accountType {
+		if let accountType {
 			switch accountType {
-				case .bazQux:
-					return AppAssets.accountBazQuxImage
-				case .inoreader:
-					return AppAssets.accountInoreaderImage
-				case .theOldReader:
-					return AppAssets.accountTheOldReaderImage
-				case .freshRSS:
-					return AppAssets.accountFreshRSSImage
-				default:
-					return nil
+			case .bazQux:
+				return Assets.Images.accountBazQux
+			case .inoreader:
+				return Assets.Images.accountInoreader
+			case .theOldReader:
+				return Assets.Images.accountTheOldReader
+			case .freshRSS:
+				return Assets.Images.accountFreshRSS
+			default:
+				return nil
 			}
 		}
 		return nil

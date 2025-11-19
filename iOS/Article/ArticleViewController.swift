@@ -39,7 +39,7 @@ final class ArticleViewController: UIViewController {
 	private var articleExtractorButton: ArticleExtractorButton = {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
-		button.setImage(AppAssets.articleExtractorOff, for: .normal)
+		button.setImage(Assets.Images.articleExtractorOff, for: .normal)
 		return button
 	}()
 
@@ -228,16 +228,16 @@ final class ArticleViewController: UIViewController {
 			readBarButtonItem.isEnabled = article.isAvailableToMarkUnread
 			readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
 		} else {
-			readBarButtonItem.image = AppAssets.circleClosedImage
+			readBarButtonItem.image = Assets.Images.circleClosed
 			readBarButtonItem.isEnabled = true
 			readBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
 		}
 
 		if article.status.starred {
-			starBarButtonItem.image = AppAssets.starClosedImage
+			starBarButtonItem.image = Assets.Images.starClosed
 			starBarButtonItem.accLabelText = NSLocalizedString("Selected - Star Article", comment: "Selected - Star Article")
 		} else {
-			starBarButtonItem.image = AppAssets.starOpenImage
+			starBarButtonItem.image = Assets.Images.starOpen
 			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		}
 	}

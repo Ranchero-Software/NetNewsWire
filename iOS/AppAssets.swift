@@ -10,17 +10,11 @@ import RSCore
 import Account
 
 struct AppAssets {
-	static let nnwFeedIcon = RSImage(named: "nnwFeedIcon")!
-	static let articleExtractorError = RSImage(named: "articleExtractorError")!
-	static let articleExtractorOff = RSImage(named: "articleExtractorOff")!
-	static let articleExtractorOffSF = RSImage(systemName: "doc.plaintext")!
-
 	@MainActor static let articleExtractorOffTinted: UIImage = {
 		let image = UIImage(named: "articleExtractorOff")!
 		return image.tinted(color: AppAssets.primaryAccentColor)!
 	}()
 
-	static let articleExtractorOn = RSImage(named: "articleExtractorOn")!
 	static let articleExtractorOnSF = RSImage(named: "articleExtractorOnSF")!
 
 	@MainActor static let articleExtractorOnTinted: UIImage = {
@@ -30,10 +24,8 @@ struct AppAssets {
 
 	static let iconBackgroundColor = UIColor(named: "iconBackgroundColor")!
 
-	static let circleClosedImage = RSImage(systemName: "largecircle.fill.circle")!
 	static let circleOpenImage = RSImage(systemName: "circle")!
 	static let disclosureImage = RSImage(named: "disclosure")!
-	static let copyImage = RSImage(systemName: "doc.on.doc")!
 	static let deactivateImage = RSImage(systemName: "minus.circle")!
 	static let editImage = RSImage(systemName: "square.and.pencil")!
 	static let faviconTemplateImage = RSImage(named: "faviconTemplateImage")!

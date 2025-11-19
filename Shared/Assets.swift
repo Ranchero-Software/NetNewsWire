@@ -7,8 +7,14 @@
 //
 
 import Foundation
+
+#if canImport(UIKit)
+import UIKit
+#endif
+
 import RSCore
 import Account
+
 
 struct Assets {
 	struct Images {
@@ -23,25 +29,34 @@ struct Assets {
 
 		static var starOpen: RSImage { RSImage(symbol: "star")! }
 		static var starClosed: RSImage { RSImage(symbol: "star.fill")! }
+		static var copy: RSImage { RSImage(symbol: "document.on.document")! }
+
+		static var nnwFeedIcon: RSImage { RSImage(named: "nnwFeedIcon")! }
+
+		static var articleExtractorError: RSImage { RSImage(named: "articleExtractorError")! }
+		static var articleExtractorOn: RSImage { RSImage(named: "articleExtractorOn")! }
+		static var articleExtractorOff: RSImage { RSImage(named: "articleExtractorOff")! }
 
 		#if os(macOS)
 		static var accountLocal: RSImage { RSImage(named: "accountLocal")! }
 		#else // iOS
 		static var accountLocalPadImage: RSImage { RSImage(named: "accountLocalPad")! }
 		static var accountLocalPhoneImage: RSImage { RSImage(named: "accountLocalPhone")! }
+		static var articleExtractorOffSF: RSImage { RSImage(symbol: "doc.plaintext")! }
+		static var circleClosed: RSImage { RSImage(symbol: "largecircle.fill.circle")! }
 		#endif
 	}
 
-	static func accountImage(_ accountType: AccountType) -> RSImage {
+	@MainActor static func accountImage(_ accountType: AccountType) -> RSImage {
 		switch accountType {
 		case .onMyMac:
 			#if os(macOS)
 			return Assets.Images.accountLocal
 			#else // iOS
 			if UIDevice.current.userInterfaceIdiom == .pad {
-				return AppAssets.accountLocalPadImage
+				return Assets.Images.accountLocalPadImage
 			} else {
-				return AppAssets.accountLocalPhoneImage
+				return Assets.Images.accountLocalPhoneImage
 			}
 			#endif
 		case .cloudKit:
@@ -64,7 +79,9 @@ struct Assets {
 	}
 
 	struct Colors {
-		
+		#if os(macOS)
+		static var timelineSeparator: NSColor { NSColor(named: "timelineSeparatorColor")! }
+		#endif
 	}
 }
 

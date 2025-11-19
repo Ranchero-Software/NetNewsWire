@@ -166,7 +166,7 @@ extension AccountInspectorViewController {
 
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAssets.image(for: account.type)
+			headerView.imageView.image = Assets.accountImage(account.type)
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)

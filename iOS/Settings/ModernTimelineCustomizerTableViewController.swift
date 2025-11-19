@@ -95,7 +95,7 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 												 showFeedName: .byline,
 												 feedName: "The Great Gatsby",
 												 byline: "F. Scott Fitzgerald",
-												 iconImage: IconImage(UIImage(named: "nnwFeedIcon")!),
+												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
 												 showIcon: true,
 												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
 												 iconSize: AppDefaults.shared.timelineIconSize)
