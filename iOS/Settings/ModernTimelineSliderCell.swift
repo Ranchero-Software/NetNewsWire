@@ -13,17 +13,16 @@ enum SliderConfiguration {
 	case iconSize
 }
 
-class ModernTimelineSliderCell: UITableViewCell {
-
-
+final class ModernTimelineSliderCell: UITableViewCell {
 	@IBOutlet weak var slider: UISlider!
 
 	private let container = UIView()
 
-
 	override func awakeFromNib() {
-		super.awakeFromNib()
-		setup()
+		MainActor.assumeIsolated {
+			super.awakeFromNib()
+			setup()
+		}
 	}
 
 	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

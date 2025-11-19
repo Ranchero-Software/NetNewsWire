@@ -9,7 +9,7 @@
 import UIKit
 
 @IBDesignable
-final class InteractiveLabel: UILabel, UIEditMenuInteractionDelegate {
+final class InteractiveLabel: UILabel, @preconcurrency UIEditMenuInteractionDelegate {
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)

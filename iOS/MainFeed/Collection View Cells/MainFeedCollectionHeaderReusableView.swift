@@ -8,19 +8,17 @@
 
 import UIKit
 
-protocol MainFeedCollectionHeaderReusableViewDelegate: AnyObject {
+@MainActor protocol MainFeedCollectionHeaderReusableViewDelegate: AnyObject {
 	func mainFeedCollectionHeaderReusableViewDidTapDisclosureIndicator(_ view: MainFeedCollectionHeaderReusableView)
 }
 
-class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
-
+final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	var delegate: MainFeedCollectionHeaderReusableViewDelegate?
 
 	@IBOutlet weak var headerTitle: UILabel!
 	@IBOutlet weak var disclosureIndicator: UIImageView!
 	@IBOutlet weak var unreadCountLabel: UILabel!
 	private var unreadLabelWidthConstraint: NSLayoutConstraint?
-
 
 	override var accessibilityLabel: String? {
 		set {}
@@ -66,11 +64,13 @@ class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	}
 
 	override func awakeFromNib() {
-		super.awakeFromNib()
-		unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80)
-		unreadLabelWidthConstraint?.isActive = true
-		configureUI()
-		addTapGesture()
+		MainActor.assumeIsolated {
+			super.awakeFromNib()
+			unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80)
+			unreadLabelWidthConstraint?.isActive = true
+			configureUI()
+			addTapGesture()
+		}
 	}
 
 	func configureUI() {

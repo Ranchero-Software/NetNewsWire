@@ -15,7 +15,7 @@ import Articles
 import SafariServices
 import MessageUI
 
-protocol WebViewControllerDelegate: AnyObject {
+@MainActor protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
 }
 

@@ -15,14 +15,16 @@ final class RefreshProgressView: UIView {
 	@IBOutlet weak var label: UILabel!
 
 	override func awakeFromNib() {
-
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-		update()
-		scheduleUpdateRefreshLabel()
-
-		isAccessibilityElement = true
-		accessibilityTraits = [.updatesFrequently, .notEnabled]
+		MainActor.assumeIsolated {
+			
+			NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+			update()
+			scheduleUpdateRefreshLabel()
+			
+			isAccessibilityElement = true
+			accessibilityTraits = [.updatesFrequently, .notEnabled]
+		}
 	}
 
 	func update() {

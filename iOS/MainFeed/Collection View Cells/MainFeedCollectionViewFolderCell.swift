@@ -57,8 +57,10 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	override func awakeFromNib() {
-		super.awakeFromNib()
-		disclosureButton.addInteraction(UIPointerInteraction())
+		MainActor.assumeIsolated {
+			super.awakeFromNib()
+			disclosureButton.addInteraction(UIPointerInteraction())
+		}
 	}
 
 	func updateExpandedState(animate: Bool) {

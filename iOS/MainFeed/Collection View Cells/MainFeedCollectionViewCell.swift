@@ -75,9 +75,11 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 	}
 
     override func awakeFromNib() {
-        super.awakeFromNib()
-		faviconLeadingConstraint = faviconView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor)
-		faviconLeadingConstraint?.isActive = true
+		MainActor.assumeIsolated {
+			super.awakeFromNib()
+			faviconLeadingConstraint = faviconView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor)
+			faviconLeadingConstraint?.isActive = true
+		}
     }
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
