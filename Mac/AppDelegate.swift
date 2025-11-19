@@ -23,7 +23,7 @@ let appName = "NetNewsWire"
 @MainActor var appDelegate: AppDelegate!
 
 @main
-final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
+@MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
 
@@ -37,11 +37,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 	private var shuttingDown = false {
 		didSet {
 			if shuttingDown {
-				MainActor.assumeIsolated {
-					refreshTimer?.shuttingDown = shuttingDown
-					refreshTimer?.invalidate()
-					ArticleStatusSyncTimer.shared.stop()
-				}
+				refreshTimer?.shuttingDown = shuttingDown
+				refreshTimer?.invalidate()
+				ArticleStatusSyncTimer.shared.stop()
 			}
 		}
 	}
