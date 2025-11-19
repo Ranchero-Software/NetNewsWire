@@ -12,7 +12,7 @@ import UniformTypeIdentifiers
 
 final class ExportOPMLWindowController: NSWindowController {
 
-	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
+	@IBOutlet var accountPopUpButton: NSPopUpButton!
 	private weak var hostWindow: NSWindow?
 
 	convenience init() {

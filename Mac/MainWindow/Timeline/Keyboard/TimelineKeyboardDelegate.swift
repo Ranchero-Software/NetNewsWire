@@ -13,7 +13,7 @@ import RSCore
 
 @objc final class TimelineKeyboardDelegate: NSObject, KeyboardDelegate {
 
-	@IBOutlet weak var timelineViewController: TimelineViewController?
+	@IBOutlet var timelineViewController: TimelineViewController?
 	let shortcuts: Set<KeyboardShortcut>
 
 	override init() {

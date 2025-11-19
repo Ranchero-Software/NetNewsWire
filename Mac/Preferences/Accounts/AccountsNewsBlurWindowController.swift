@@ -13,14 +13,14 @@ import Secrets
 
 final class AccountsNewsBlurWindowController: NSWindowController {
 
-	@IBOutlet weak var signInTextField: NSTextField!
-	@IBOutlet weak var noAccountTextField: NSTextField!
-	@IBOutlet weak var createNewAccountButton: NSButton!
-	@IBOutlet weak var progressIndicator: NSProgressIndicator!
-	@IBOutlet weak var usernameTextField: NSTextField!
-	@IBOutlet weak var passwordTextField: NSSecureTextField!
-	@IBOutlet weak var errorMessageLabel: NSTextField!
-	@IBOutlet weak var actionButton: NSButton!
+	@IBOutlet var signInTextField: NSTextField!
+	@IBOutlet var noAccountTextField: NSTextField!
+	@IBOutlet var createNewAccountButton: NSButton!
+	@IBOutlet var progressIndicator: NSProgressIndicator!
+	@IBOutlet var usernameTextField: NSTextField!
+	@IBOutlet var passwordTextField: NSSecureTextField!
+	@IBOutlet var errorMessageLabel: NSTextField!
+	@IBOutlet var actionButton: NSButton!
 
 	var account: Account?
 

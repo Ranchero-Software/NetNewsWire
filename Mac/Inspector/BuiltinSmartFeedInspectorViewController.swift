@@ -11,7 +11,7 @@ import AppKit
 final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
-	@IBOutlet weak var smartFeedImageView: NSImageView!
+	@IBOutlet var smartFeedImageView: NSImageView!
 
 	private var smartFeed: PseudoFeed? {
 		didSet {

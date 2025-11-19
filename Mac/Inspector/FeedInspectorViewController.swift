@@ -14,12 +14,12 @@ import Account
 
 final class FeedInspectorViewController: NSViewController, Inspector {
 
-	@IBOutlet weak var iconView: IconView!
-	@IBOutlet weak var nameTextField: NSTextField?
-	@IBOutlet weak var homePageURLTextField: NSTextField?
-	@IBOutlet weak var urlTextField: NSTextField?
-	@IBOutlet weak var isNotifyAboutNewArticlesCheckBox: NSButton!
-	@IBOutlet weak var isReaderViewAlwaysOnCheckBox: NSButton?
+	@IBOutlet var iconView: IconView!
+	@IBOutlet var nameTextField: NSTextField?
+	@IBOutlet var homePageURLTextField: NSTextField?
+	@IBOutlet var urlTextField: NSTextField?
+	@IBOutlet var isNotifyAboutNewArticlesCheckBox: NSButton!
+	@IBOutlet var isReaderViewAlwaysOnCheckBox: NSButton?
 
 	private var feed: Feed? {
 		didSet {

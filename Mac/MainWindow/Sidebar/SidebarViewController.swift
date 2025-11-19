@@ -24,7 +24,7 @@ extension Notification.Name {
 
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
-	@IBOutlet weak var outlineView: NSOutlineView!
+	@IBOutlet var outlineView: NSOutlineView!
 
 	weak var delegate: SidebarDelegate?
 

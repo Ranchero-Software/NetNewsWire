@@ -18,12 +18,12 @@ import Articles
 
 final class TimelineContainerViewController: NSViewController {
 
-	@IBOutlet weak var viewOptionsPopUpButton: NSPopUpButton!
-	@IBOutlet weak var newestToOldestMenuItem: NSMenuItem!
-	@IBOutlet weak var oldestToNewestMenuItem: NSMenuItem!
-	@IBOutlet weak var groupByFeedMenuItem: NSMenuItem!
+	@IBOutlet var viewOptionsPopUpButton: NSPopUpButton!
+	@IBOutlet var newestToOldestMenuItem: NSMenuItem!
+	@IBOutlet var oldestToNewestMenuItem: NSMenuItem!
+	@IBOutlet var groupByFeedMenuItem: NSMenuItem!
 
-	@IBOutlet weak var readFilteredButton: NSButton!
+	@IBOutlet var readFilteredButton: NSButton!
 	@IBOutlet var containerView: TimelineContainerView!
 
 	var currentTimelineViewController: TimelineViewController? {

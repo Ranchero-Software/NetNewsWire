@@ -11,7 +11,7 @@ import Account
 
 final class NNW3OpenPanelAccessoryViewController: NSViewController {
 
-	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
+	@IBOutlet var accountPopUpButton: NSPopUpButton!
 
 	var selectedAccount: Account? {
 		accountPopUpButton.selectedItem?.representedObject as? Account

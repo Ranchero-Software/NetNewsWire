@@ -19,9 +19,9 @@ import RSCore
 // MARK: - AccountsPreferencesViewController
 final class AccountsPreferencesViewController: NSViewController {
 
-	@IBOutlet weak var tableView: NSTableView!
-	@IBOutlet weak var detailView: NSView!
-	@IBOutlet weak var deleteButton: NSButton!
+	@IBOutlet var tableView: NSTableView!
+	@IBOutlet var detailView: NSView!
+	@IBOutlet var deleteButton: NSButton!
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
 	var addAccountWindowController: NSWindowController?
 	var addAccountsViewController: NSHostingController<AddAccountsView>?

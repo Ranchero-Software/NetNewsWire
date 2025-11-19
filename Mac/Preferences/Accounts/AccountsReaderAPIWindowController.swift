@@ -13,18 +13,18 @@ import Secrets
 
 final class AccountsReaderAPIWindowController: NSWindowController {
 
-	@IBOutlet weak var titleImageView: NSImageView!
-	@IBOutlet weak var titleLabel: NSTextField!
+	@IBOutlet var titleImageView: NSImageView!
+	@IBOutlet var titleLabel: NSTextField!
 
-	@IBOutlet weak var gridView: NSGridView!
-	@IBOutlet weak var progressIndicator: NSProgressIndicator!
-	@IBOutlet weak var usernameTextField: NSTextField!
-	@IBOutlet weak var apiURLTextField: NSTextField!
-	@IBOutlet weak var passwordTextField: NSSecureTextField!
-	@IBOutlet weak var createAccountButton: NSButton!
-	@IBOutlet weak var errorMessageLabel: NSTextField!
-	@IBOutlet weak var actionButton: NSButton!
-	@IBOutlet weak var noAccountTextField: NSTextField!
+	@IBOutlet var gridView: NSGridView!
+	@IBOutlet var progressIndicator: NSProgressIndicator!
+	@IBOutlet var usernameTextField: NSTextField!
+	@IBOutlet var apiURLTextField: NSTextField!
+	@IBOutlet var passwordTextField: NSSecureTextField!
+	@IBOutlet var createAccountButton: NSButton!
+	@IBOutlet var errorMessageLabel: NSTextField!
+	@IBOutlet var actionButton: NSButton!
+	@IBOutlet var noAccountTextField: NSTextField!
 
 	var account: Account?
 	var accountType: AccountType?

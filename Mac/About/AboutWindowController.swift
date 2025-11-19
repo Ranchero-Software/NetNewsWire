@@ -10,12 +10,12 @@ import Cocoa
 
 class AboutWindowController: NSWindowController {
 
-	@IBOutlet weak var appIconImageView: NSImageView!
-	@IBOutlet weak var appTitleLabel: NSTextField!
-	@IBOutlet weak var versionLabel: NSTextField!
-	@IBOutlet weak var copyrightLabel: NSTextField!
-	@IBOutlet weak var websiteLabel: LinkLabel!
-	@IBOutlet weak var creditsTextView: NSTextView!
+	@IBOutlet var appIconImageView: NSImageView!
+	@IBOutlet var appTitleLabel: NSTextField!
+	@IBOutlet var versionLabel: NSTextField!
+	@IBOutlet var copyrightLabel: NSTextField!
+	@IBOutlet var websiteLabel: LinkLabel!
+	@IBOutlet var creditsTextView: NSTextView!
 
     override func windowDidLoad() {
         super.windowDidLoad()

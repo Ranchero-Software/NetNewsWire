@@ -13,7 +13,7 @@ import RSCore
 final class FolderInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
-	@IBOutlet weak var folderImageView: NSImageView!
+	@IBOutlet var folderImageView: NSImageView!
 
 	private var folder: Folder? {
 		didSet {

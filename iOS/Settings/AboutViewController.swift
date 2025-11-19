@@ -10,11 +10,11 @@ import UIKit
 
 final class AboutViewController: UITableViewController {
 
-	@IBOutlet weak var aboutTextView: UITextView!
-	@IBOutlet weak var creditsTextView: UITextView!
-	@IBOutlet weak var acknowledgmentsTextView: UITextView!
-	@IBOutlet weak var thanksTextView: UITextView!
-	@IBOutlet weak var dedicationTextView: UITextView!
+	@IBOutlet var aboutTextView: UITextView!
+	@IBOutlet var creditsTextView: UITextView!
+	@IBOutlet var acknowledgmentsTextView: UITextView!
+	@IBOutlet var thanksTextView: UITextView!
+	@IBOutlet var dedicationTextView: UITextView!
 
 	override func viewDidLoad() {
 

@@ -11,7 +11,7 @@ import RSCore
 
 @objc final class SidebarKeyboardDelegate: NSObject, KeyboardDelegate {
 
-	@IBOutlet weak var sidebarViewController: SidebarViewController?
+	@IBOutlet var sidebarViewController: SidebarViewController?
 	let shortcuts: Set<KeyboardShortcut>
 
 	override init() {
