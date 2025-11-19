@@ -8,7 +8,7 @@
 
 import UIKit
 
-@objc protocol SearchBarDelegate: NSObjectProtocol {
+@objc @MainActor protocol SearchBarDelegate: NSObjectProtocol {
 	@objc optional func nextWasPressed(_ searchBar: ArticleSearchBar)
 	@objc optional func previousWasPressed(_ searchBar: ArticleSearchBar)
 	@objc optional func doneWasPressed(_ searchBar: ArticleSearchBar)

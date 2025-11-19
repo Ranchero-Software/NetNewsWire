@@ -8,12 +8,12 @@
 
 import Foundation
 
-public struct ArticleThemePlist: Codable, Equatable {
-	public var name: String
-	public var themeIdentifier: String
-	public var creatorHomePage: String
-	public var creatorName: String
-	public var version: Int
+public struct ArticleThemePlist: Codable, Equatable, Sendable {
+	public let name: String
+	public let themeIdentifier: String
+	public let creatorHomePage: String
+	public let creatorName: String
+	public let version: Int
 
 	enum CodingKeys: String, CodingKey {
 		case name = "Name"

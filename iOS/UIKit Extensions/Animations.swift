@@ -9,7 +9,7 @@
 import Foundation
 
 /// Used to select which animations should be performed
-public struct Animations: OptionSet {
+public struct Animations: OptionSet, Sendable {
 
 	/// Selections and deselections will be animated.
 	public static let select = Animations(rawValue: 1)

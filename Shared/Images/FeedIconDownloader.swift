@@ -76,7 +76,7 @@ extension Notification.Name {
 		@MainActor func checkFeedIconURL() {
 			if let iconURL = feed.iconURL {
 				icon(forURL: iconURL, feed: feed) { (image) in
-					MainActor.assumeIsolated {
+					Task { @MainActor in
 						if let image = image {
 							self.cache[feed] = IconImage(image)
 							self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
@@ -130,7 +130,7 @@ private extension FeedIconDownloader {
 		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
 	}
 
-	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping (RSImage?, String?) -> Void) {
+	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (RSImage?, String?) -> Void) {
 		if Self.shouldSkipDownloadingFeedIcon(homePageURL) {
 			resultBlock(nil, nil)
 			return
@@ -149,7 +149,9 @@ private extension FeedIconDownloader {
 		if let url = metadata.bestWebsiteIconURL() {
 			homePagesWithNoIconURL.remove(homePageURL)
 			icon(forURL: url, feed: feed) { image in
-				resultBlock(image, url)
+				Task { @MainActor in
+					resultBlock(image, url)
+				}
 			}
 			return
 		}
@@ -158,7 +160,7 @@ private extension FeedIconDownloader {
 		resultBlock(nil, nil)
 	}
 
-	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @Sendable (RSImage?) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping ImageResultBlock) {
 
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {

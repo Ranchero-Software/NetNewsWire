@@ -10,7 +10,6 @@ import Foundation
 import os.log
 import RSCore
 import RSWeb
-import RSCore
 
 extension Notification.Name {
 	static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
@@ -19,7 +18,7 @@ extension Notification.Name {
 @MainActor final class ImageDownloader {
 	public static let shared = ImageDownloader()
 
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
+	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
 
 	nonisolated private let diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
@@ -40,7 +39,10 @@ extension Notification.Name {
 			return data
 		}
 
-		findImage(url)
+		Task { @MainActor in
+			await findImage(url)
+		}
+
 		return nil
 	}
 }
@@ -53,31 +55,33 @@ private extension ImageDownloader {
 		postImageDidBecomeAvailableNotification(url)
 	}
 
-	func findImage(_ url: String) {
+	func findImage(_ url: String) async {
 		guard !urlsInProgress.contains(url) && !badURLs.contains(url) else {
 			return
 		}
 		urlsInProgress.insert(url)
 
-		readFromDisk(url) { (image) in
-			if let image {
-				self.cacheImage(url, image)
-				self.urlsInProgress.remove(url)
-				return
-			}
+		if let image = await readFromDisk(url: url) {
+			cacheImage(url, image)
+			urlsInProgress.remove(url)
+			return
+		}
 
-			Task { @MainActor in
-				let image = await self.downloadImage(url)
+		if let image = await downloadImage(url) {
+			cacheImage(url, image)
+			urlsInProgress.remove(url)
+		}
+	}
 
-				if let image {
-					self.cacheImage(url, image)
-				}
-				self.urlsInProgress.remove(url)
+	func readFromDisk(url: String) async -> Data? {
+		await withCheckedContinuation { continuation in
+			readFromDisk(url) { data in
+				continuation.resume(returning: data)
 			}
 		}
 	}
 
-	func readFromDisk(_ url: String, _ completion: @escaping (Data?) -> Void) {
+	func readFromDisk(_ url: String, _ completion: @escaping @MainActor (Data?) -> Void) {
 		queue.async {
 			if let data = self.diskCache[self.diskKey(url)], !data.isEmpty {
 				DispatchQueue.main.async {
@@ -100,13 +104,13 @@ private extension ImageDownloader {
 		do {
 			let (data, response) = try await Downloader.shared.download(imageURL)
 
-			if let data = data, !data.isEmpty, let response = response, response.statusIsOK {
-				self.saveToDisk(url, data)
+			if let data, !data.isEmpty, let response, response.statusIsOK {
+				saveToDisk(url, data)
 				return data
 			}
 
 			if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
-				self.badURLs.insert(url)
+				badURLs.insert(url)
 			}
 
 			return nil
@@ -127,6 +131,7 @@ private extension ImageDownloader {
 	}
 
 	func postImageDidBecomeAvailableNotification(_ url: String) {
-		NotificationCenter.default.postOnMainThread(name: .imageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: url])
+		assert(Thread.isMainThread)
+		NotificationCenter.default.post(name: .imageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: url])
 	}
 }

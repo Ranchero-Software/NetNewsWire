@@ -15,7 +15,7 @@ extension UIView: MarkAsReadAlertControllerSourceType {}
 extension UIBarButtonItem: MarkAsReadAlertControllerSourceType {}
 
 
-struct MarkAsReadAlertController {
+@MainActor struct MarkAsReadAlertController {
 
 	static func confirm<T>(_ controller: UIViewController?,
 						   coordinator: SceneCoordinator?,

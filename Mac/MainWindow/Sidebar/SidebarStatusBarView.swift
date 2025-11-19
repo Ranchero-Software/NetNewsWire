@@ -13,7 +13,6 @@ import RSWeb
 import Account
 
 final class SidebarStatusBarView: NSView {
-
 	@IBOutlet var progressIndicator: NSProgressIndicator!
 	@IBOutlet var progressLabel: NSTextField!
 	@IBOutlet var bottomConstraint: NSLayoutConstraint!
@@ -26,15 +25,16 @@ final class SidebarStatusBarView: NSView {
 	}
 
 	override func awakeFromNib() {
+		MainActor.assumeIsolated {
+			progressIndicator.isHidden = true
+			progressLabel.isHidden = true
 
-		progressIndicator.isHidden = true
-		progressLabel.isHidden = true
+			let progressLabelFontSize = progressLabel.font?.pointSize ?? 13.0
+			progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
+			progressLabel.stringValue = ""
 
-		let progressLabelFontSize = progressLabel.font?.pointSize ?? 13.0
-		progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
-		progressLabel.stringValue = ""		
-
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
+		}
 	}
 
 	@objc func updateUI() {

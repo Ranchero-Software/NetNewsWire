@@ -7,15 +7,16 @@
 //
 
 import Foundation
+import Synchronization
 import os.log
 import Account
 
-final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
+final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 	static let shared = ExtensionFeedAddRequestFile()
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ExtensionFeedAddRequestFile")
 
-	private static var filePath: String = {
+	private static let filePath: String = {
 		let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
 		let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
 		return containerURL!.appendingPathComponent("extension_feed_add_request.plist").path
@@ -35,14 +36,23 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 		operationQueue
 	}
 
-	private var isActive = false
+	private let didStart = Mutex(false)
 
 	func start() {
-		guard !isActive else {
-			assertionFailure("start called when already active")
+		var shouldBail = false
+		didStart.withLock { didStart in
+			if didStart {
+				shouldBail = true
+				assertionFailure("start called when already did start")
+				return
+			}
+
+			didStart = true
+		}
+
+		if shouldBail {
 			return
 		}
-		isActive = true
 
 		NSFileCoordinator.addFilePresenter(self)
 		Task { @MainActor in
@@ -57,7 +67,10 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 	}
 
 	func resume() {
-		assert(isActive)
+		didStart.withLock { didStart in
+			assert(didStart)
+		}
+
 		NSFileCoordinator.addFilePresenter(self)
 		Task { @MainActor in
 			process()
@@ -65,7 +78,9 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter {
 	}
 
 	func suspend() {
-		assert(isActive)
+		didStart.withLock { didStart in
+			assert(didStart)
+		}
 		NSFileCoordinator.removeFilePresenter(self)
 	}
 

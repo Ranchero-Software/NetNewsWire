@@ -26,7 +26,7 @@ struct TextFieldSizeInfo {
 	let numberOfLinesUsed: Int // A two-line text field may only use one line, for instance. This would equal 1, then.
 }
 
-final class MultilineTextFieldSizer {
+@MainActor final class MultilineTextFieldSizer {
 
 	private let numberOfLines: Int
 	private let font: NSFont

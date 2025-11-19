@@ -12,10 +12,10 @@ import RSWeb
 import Articles
 
 @MainActor public final class Feed: SidebarItem, Renamable, Hashable {
-	public let feedID: String
-	public let accountID: String
-	public let url: String
-	public let sidebarItemID: SidebarItemIdentifier?
+	nonisolated public let feedID: String
+	nonisolated public let accountID: String
+	nonisolated public let url: String
+	nonisolated public let sidebarItemID: SidebarItemIdentifier?
 
 	public weak var account: Account?
 

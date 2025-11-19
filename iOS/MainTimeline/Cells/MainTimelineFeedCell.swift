@@ -25,9 +25,11 @@ class MainTimelineFeedCell: UITableViewCell {
 	var isPreview: Bool = false
 
 	override func awakeFromNib() {
-		super.awakeFromNib()
-		indicatorView.alpha = 0.0
-		configureStackView()
+		MainActor.assumeIsolated {
+			super.awakeFromNib()
+			indicatorView.alpha = 0.0
+			configureStackView()
+		}
 	}
 
 	private func configureStackView() {

@@ -11,10 +11,10 @@ import Account
 import Articles
 
 @objc(ScriptableArticle)
-final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor final class ScriptableArticle: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
 
     let article:Article
-    let container:ScriptingObjectContainer
+    nonisolated(unsafe) let container:ScriptingObjectContainer
 
     init (_ article:Article, container:ScriptingObjectContainer) {
         self.article = article
@@ -22,14 +22,14 @@ final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjec
     }
 
     @objc(objectSpecifier)
-    override var objectSpecifier: NSScriptObjectSpecifier? {
+    nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
         let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
-        return (scriptObjectSpecifier)
+        return scriptObjectSpecifier
     }
 
     // MARK: --- ScriptingObject protocol ---
 
-    var scriptingKey: String {
+    nonisolated var scriptingKey: String {
         return "articles"
     }
 
@@ -39,13 +39,13 @@ final class ScriptableArticle: NSObject, UniqueIdScriptingObject, ScriptingObjec
     // article.uniqueID here is the feed unique id
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    nonisolated var scriptingUniqueID:Any {
         return article.uniqueID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
-    var scriptingClassDescription: NSScriptClassDescription {
+    nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
 

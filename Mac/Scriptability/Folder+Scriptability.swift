@@ -12,10 +12,10 @@ import Articles
 import RSCore
 
 @objc(ScriptableFolder)
-final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor final class ScriptableFolder: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
 
     let folder:Folder
-    let container:ScriptingObjectContainer
+    nonisolated(unsafe) let container:ScriptingObjectContainer
 
     init (_ folder:Folder, container:ScriptingObjectContainer) {
         self.folder = folder
@@ -23,14 +23,14 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     }
 
     @objc(objectSpecifier)
-    override var objectSpecifier: NSScriptObjectSpecifier? {
+    nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
         let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
-        return (scriptObjectSpecifier)
+        return scriptObjectSpecifier
     }
 
     // MARK: --- ScriptingObject protocol ---
 
-    var scriptingKey: String {
+    nonisolated var scriptingKey: String {
         return "folders"
     }
 
@@ -40,13 +40,13 @@ final class ScriptableFolder: NSObject, UniqueIdScriptingObject, ScriptingObject
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    nonisolated var scriptingUniqueID:Any {
         return folder.folderID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
-    var scriptingClassDescription: NSScriptClassDescription {
+    nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
 

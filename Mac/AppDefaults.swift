@@ -15,7 +15,7 @@ enum FontSize: Int {
 	case veryLarge = 3
 }
 
-final class AppDefaults {
+final class AppDefaults: Sendable {
 
 	static let defaultThemeName = "Default"
 
@@ -64,7 +64,7 @@ final class AppDefaults {
 		return false
 	}()
 
-	var isFirstRun: Bool = {
+	let isFirstRun: Bool = {
 		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
 			return false
 		}
@@ -317,7 +317,7 @@ final class AppDefaults {
 		}
 	}
 
-	func registerDefaults() {
+	@MainActor func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
  		#else

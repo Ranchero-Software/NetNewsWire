@@ -9,8 +9,7 @@
 import Foundation
 import Articles
 
-protocol ScriptingMainWindowController {
+@MainActor protocol ScriptingMainWindowController {
     var scriptingCurrentArticle: Article? { get }
     var scriptingSelectedArticles: [Article] { get }
 }
-

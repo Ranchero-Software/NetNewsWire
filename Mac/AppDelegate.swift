@@ -20,9 +20,9 @@ import Sparkle
 
 let appName = "NetNewsWire"
 
-var appDelegate: AppDelegate!
+@MainActor var appDelegate: AppDelegate!
 
-@NSApplicationMain
+@main
 final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
@@ -105,8 +105,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		crashReporter.enable()
 
 		AccountManager.shared.start()
-		ArticleThemesManager.shared = ArticleThemesManager(folderPath: Platform.dataSubfolder(forApplication: nil, folderName: "Themes")!)
-
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
@@ -189,7 +187,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
 
 		DispatchQueue.main.async {
 			self.unreadCount = AccountManager.shared.unreadCount
@@ -199,6 +201,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			self.toggleInspectorWindow(self)
 		}
 
+		ArticleThemesManager.shared.start()
 		NetworkMonitor.shared.start()
 		ExtensionContainersFile.shared.start()
 		ExtensionFeedAddRequestFile.shared.start()
@@ -338,18 +341,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task { @MainActor in
-			updateSortMenuItems()
-			updateGroupByFeedMenuItem()
+	func userDefaultsDidChange() {
+		updateSortMenuItems()
+		updateGroupByFeedMenuItem()
 
-			if lastRefreshInterval != AppDefaults.shared.refreshInterval {
-				refreshTimer?.update()
-				lastRefreshInterval = AppDefaults.shared.refreshInterval
-			}
-
-			updateDockBadge()
+		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
+			refreshTimer?.update()
+			lastRefreshInterval = AppDefaults.shared.refreshInterval
 		}
+
+		updateDockBadge()
 	}
 
 	@objc func didWakeNotification(_ note: Notification) {
@@ -450,23 +451,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
 	// MARK: UNUserNotificationCenterDelegate
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .badge, .sound])
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
-		let userInfo = response.notification.request.content.userInfo
-
-		switch response.actionIdentifier {
-		case UserNotificationManager.ActionIdentifier.markAsRead:
-			handleMarkAsRead(userInfo: userInfo)
-		case UserNotificationManager.ActionIdentifier.markAsStarred:
-			handleMarkAsStarred(userInfo: userInfo)
-		default:
-			mainWindowController?.handle(response)
+		// Wrapper to safely transfer non-Sendable values to MainActor
+		struct UnsafeSendable<T>: @unchecked Sendable {
+			let value: T
 		}
-		completionHandler()
+
+		let wrappedResponse = UnsafeSendable(value: response)
+		let wrappedCompletionHandler = UnsafeSendable(value: completionHandler)
+
+		Task { @MainActor in
+			let response = wrappedResponse.value
+			let userInfo = response.notification.request.content.userInfo
+
+			switch response.actionIdentifier {
+			case UserNotificationManager.ActionIdentifier.markAsRead:
+				handleMarkAsRead(userInfo: userInfo)
+			case UserNotificationManager.ActionIdentifier.markAsStarred:
+				handleMarkAsStarred(userInfo: userInfo)
+			default:
+				mainWindowController?.handle(response)
+			}
+			wrappedCompletionHandler.value()
+		}
     }
 
 	// MARK: Add Feed

@@ -22,7 +22,7 @@ private let reuseIdentifier = "FeedCell"
 private let folderIdentifier = "Folder"
 private let containerReuseIdentifier = "Container"
 
-class MainFeedCollectionViewController: UICollectionViewController, UndoableCommandRunner {
+final class MainFeedCollectionViewController: UICollectionViewController, UndoableCommandRunner {
 
 	@IBOutlet weak var filterButton: UIBarButtonItem!
 	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {

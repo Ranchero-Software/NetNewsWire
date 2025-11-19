@@ -9,9 +9,10 @@
 import Foundation
 import Account
 
-protocol ExtensionContainer: ContainerIdentifiable, Codable {
+protocol ExtensionContainer: Codable {
 	var name: String { get }
 	var accountID: String { get }
+	var containerID: ContainerIdentifier? { get }
 }
 
 struct ExtensionContainers: Codable {

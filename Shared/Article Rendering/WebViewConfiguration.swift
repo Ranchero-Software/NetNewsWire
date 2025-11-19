@@ -9,9 +9,9 @@
 import Foundation
 import WebKit
 
-final class WebViewConfiguration {
+@MainActor final class WebViewConfiguration {
 
-	@MainActor static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
+	static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
 		assert(Thread.isMainThread)
 
 		let configuration = WKWebViewConfiguration()

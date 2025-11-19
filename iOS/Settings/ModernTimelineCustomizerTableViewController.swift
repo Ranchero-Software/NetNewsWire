@@ -43,8 +43,12 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 		title = NSLocalizedString("Timeline Customizer", comment: "Timeline Customizer")
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
     }
 
 
@@ -126,7 +130,8 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 	}
 
 	// MARK: - Notifications
-	@objc func userDefaultsDidChange(_ note: Notification) {
+
+	func userDefaultsDidChange() {
 		tableView.reloadSections(IndexSet(integersIn: 2...3), with: .none)
 	}
 

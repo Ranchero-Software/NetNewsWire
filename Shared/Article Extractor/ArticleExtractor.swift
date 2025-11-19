@@ -10,7 +10,7 @@ import Foundation
 import Account
 import Secrets
 
-public enum ArticleExtractorState {
+public enum ArticleExtractorState: Sendable {
     case ready
     case processing
     case failedToParse
@@ -18,24 +18,23 @@ public enum ArticleExtractorState {
 	case cancelled
 }
 
-protocol ArticleExtractorDelegate {
-    func articleExtractionDidFail(with: Error)
-    func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
+@MainActor protocol ArticleExtractorDelegate {
+	func articleExtractionDidFail(with: Error)
+	func articleExtractionDidComplete(extractedArticle: ExtractedArticle)
 }
 
-final class ArticleExtractor {
+@MainActor final class ArticleExtractor {
+	let articleLink: String
+	let delegate: ArticleExtractorDelegate
+	var article: ExtractedArticle?
 
+	var state = ArticleExtractorState.ready
+    private let url: URL
 	private var dataTask: URLSessionDataTask? = nil
 
-    var state: ArticleExtractorState!
-    var article: ExtractedArticle?
-    var delegate: ArticleExtractorDelegate?
-	var articleLink: String?
-
-    private var url: URL!
-
-    public init?(_ articleLink: String) {
+	public init?(_ articleLink: String, delegate: ArticleExtractorDelegate) {
 		self.articleLink = articleLink
+		self.delegate = delegate
 
 		let clientURL = "https://extract.feedbin.com/parser"
 		let username = SecretKey.mercuryClientID
@@ -56,56 +55,57 @@ final class ArticleExtractor {
 
         state = .processing
 
-        dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+		dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+			Task { @MainActor in
+				guard let self else {
+					return
+				}
 
-            guard let self = self else { return }
-
-            if let error = error {
-                self.state = .failedToParse
-                DispatchQueue.main.async {
-                    self.delegate?.articleExtractionDidFail(with: error)
-                }
-                return
-            }
-
-            guard let data = data else {
-                self.state = .failedToParse
-                DispatchQueue.main.async {
-					self.delegate?.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
-                }
-                return
-            }
-
-            do {
-				let decoder = JSONDecoder()
-				decoder.dateDecodingStrategy = .iso8601
-				self.article = try decoder.decode(ExtractedArticle.self, from: data)
-
-                DispatchQueue.main.async {
-					if self.article?.content == nil {
-						self.state = .failedToParse
-						self.delegate?.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
-					} else {
-						self.state = .complete
-						self.delegate?.articleExtractionDidComplete(extractedArticle: self.article!)
+				if let error = error {
+					self.state = .failedToParse
+					DispatchQueue.main.async {
+						self.delegate.articleExtractionDidFail(with: error)
 					}
-                }
-            } catch {
-                self.state = .failedToParse
-                DispatchQueue.main.async {
-                    self.delegate?.articleExtractionDidFail(with: error)
-                }
-            }
+					return
+				}
 
-        }
+				guard let data = data else {
+					self.state = .failedToParse
+					DispatchQueue.main.async {
+						self.delegate.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
+					}
+					return
+				}
+
+				do {
+					let decoder = JSONDecoder()
+					decoder.dateDecodingStrategy = .iso8601
+					let decodedArticle = try decoder.decode(ExtractedArticle.self, from: data)
+
+					Task { @MainActor in
+						self.article = decodedArticle
+						if decodedArticle.content == nil {
+							self.state = .failedToParse
+							self.delegate.articleExtractionDidFail(with: URLError(.cannotDecodeContentData))
+						} else {
+							self.state = .complete
+							self.delegate.articleExtractionDidComplete(extractedArticle: decodedArticle)
+						}
+					}
+				} catch {
+					self.state = .failedToParse
+					Task { @MainActor in
+						self.delegate.articleExtractionDidFail(with: error)
+					}
+				}
+			}
+		}
 
         dataTask!.resume()
-
     }
 
 	public func cancel() {
 		state = .cancelled
 		dataTask?.cancel()
 	}
-
 }

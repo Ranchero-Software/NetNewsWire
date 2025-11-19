@@ -16,9 +16,9 @@ import Account
 import Articles
 import Secrets
 
-var appDelegate: AppDelegate!
+@MainActor var appDelegate: AppDelegate!
 
-@UIApplicationMain
+@main
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
 	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
@@ -34,7 +34,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 
 	var unreadCount = 0 {
 		didSet {
@@ -52,14 +52,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		super.init()
 		appDelegate = self
 
-		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
-
 		AccountManager.shared.start()
-
-		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
-		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))
-		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentThemesFolderPath)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
@@ -100,6 +93,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
 
+		ArticleThemesManager.shared.start()
 		NetworkMonitor.shared.start()
 		ExtensionContainersFile.shared.start()
 		ExtensionFeedAddRequestFile.shared.start()
@@ -190,31 +184,40 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		}
 	}
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
 		completionHandler([.list, .banner, .badge, .sound])
     }
 
-    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-		defer { completionHandler() }
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
-		let userInfo = response.notification.request.content.userInfo
-
-		switch response.actionIdentifier {
-		case UserNotificationManager.ActionIdentifier.markAsRead:
-			handleMarkAsRead(userInfo: userInfo)
-		case UserNotificationManager.ActionIdentifier.markAsStarred:
-			handleMarkAsStarred(userInfo: userInfo)
-		default:
-			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
-				sceneDelegate.handle(response)
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-					sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
-				})
-			}
+		// Wrapper to safely transfer non-Sendable values to MainActor
+		struct UnsafeSendable<T>: @unchecked Sendable {
+			let value: T
 		}
 
-    }
+		let wrappedResponse = UnsafeSendable(value: response)
+		let wrappedCompletionHandler = UnsafeSendable(value: completionHandler)
 
+		Task { @MainActor in
+			let response = wrappedResponse.value
+			let userInfo = response.notification.request.content.userInfo
+
+			switch response.actionIdentifier {
+			case UserNotificationManager.ActionIdentifier.markAsRead:
+				handleMarkAsRead(userInfo: userInfo)
+			case UserNotificationManager.ActionIdentifier.markAsStarred:
+				handleMarkAsStarred(userInfo: userInfo)
+			default:
+				if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
+					sceneDelegate.handle(response)
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+						sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
+					})
+				}
+			}
+			wrappedCompletionHandler.value()
+		}
+    }
 }
 
 // MARK: App Initialization
@@ -349,13 +352,12 @@ private extension AppDelegate {
 
 	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
 	func scheduleBackgroundFeedRefresh() {
-		let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
-		request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
-
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
 		backgroundTaskDispatchQueue.async {
 			do {
+				let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
+				request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
 				Self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")

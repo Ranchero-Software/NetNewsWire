@@ -12,7 +12,7 @@ import Articles
 import RSCore
 
 @objc(ScriptableAccount)
-@MainActor final class ScriptableAccount: NSObject, UniqueIdScriptingObject, ScriptingObjectContainer {
+@MainActor final class ScriptableAccount: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
 
     let account:Account
     init (_ account:Account) {
@@ -20,10 +20,9 @@ import RSCore
     }
 
     @objc(objectSpecifier)
-    override var objectSpecifier: NSScriptObjectSpecifier? {
-        let myContainer = NSApplication.shared
-        let scriptObjectSpecifier = myContainer.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
-        return (scriptObjectSpecifier)
+    nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
+        let myContainer = MainActor.assumeIsolated { NSApplication.shared }
+        return myContainer.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
     }
 
 	@objc(scriptingIsActive)
@@ -48,7 +47,7 @@ import RSCore
 
     // MARK: --- ScriptingObject protocol ---
 
-    var scriptingKey: String {
+    nonisolated var scriptingKey: String {
         return "accounts"
     }
 
@@ -57,13 +56,13 @@ import RSCore
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    nonisolated var scriptingUniqueID:Any {
         return account.accountID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
-    var scriptingClassDescription: NSScriptClassDescription {
+    nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
 

@@ -19,18 +19,24 @@
 import Foundation
 import Articles
 
-protocol AppDelegateAppleEvents {
+@MainActor protocol AppDelegateAppleEvents {
     func installAppleEventHandlers()
     func getURL(_ event: NSAppleEventDescriptor, _ withReplyEvent: NSAppleEventDescriptor)
 }
 
-protocol ScriptingAppDelegate {
+@MainActor protocol ScriptingAppDelegate {
     var  scriptingCurrentArticle: Article?  {get}
     var  scriptingSelectedArticles: [Article]  {get}
     var  scriptingMainWindowController:ScriptingMainWindowController? {get}
 }
 
-extension AppDelegate : AppDelegateAppleEvents {
+// Wrapper to safely transfer non-Sendable values across isolation boundaries
+// This is safe for AppleScript commands because they always execute on the main thread
+private struct UnsafeSendable<T>: @unchecked Sendable {
+    let value: T
+}
+
+extension AppDelegate: AppDelegateAppleEvents {
 
     // MARK: GetURL Apple Event
 
@@ -92,14 +98,22 @@ extension AppDelegate : AppDelegateAppleEvents {
 }
 
 final class NetNewsWireCreateElementCommand : NSCreateCommand {
-	@MainActor override func performDefaultImplementation() -> Any? {
-         let classDescription = self.createClassDescription
-         if (classDescription.className == "feed") {
-             return ScriptableFeed.handleCreateElement(command:self)
-         } else if (classDescription.className == "folder") {
-             return ScriptableFolder.handleCreateElement(command:self)
+	// AppleScript commands always execute on the main thread, so using assumeIsolated is safe
+	// even though NSCreateCommand doesn't have concurrency annotations
+	nonisolated override func performDefaultImplementation() -> Any? {
+         let unsafeSelf = UnsafeSendable(value: self)
+         let wrapped = MainActor.assumeIsolated { () -> UnsafeSendable<Any?> in
+             let instance = unsafeSelf.value
+             let classDescription: NSScriptClassDescription = instance.createClassDescription
+             let command: NSCreateCommand = instance
+             if (classDescription.className == "feed") {
+                 return UnsafeSendable(value: ScriptableFeed.handleCreateElement(command:command))
+             } else if (classDescription.className == "folder") {
+                 return UnsafeSendable(value: ScriptableFolder.handleCreateElement(command:command))
+             }
+             return UnsafeSendable(value: nil)
          }
-         return nil
+         return wrapped.value
     }
 }
 
@@ -111,7 +125,7 @@ final class NetNewsWireCreateElementCommand : NSCreateCommand {
     is ambiguity about whether specifiers are lists or single objects, the code switches
     based on which it is.
 */
-@MainActor final class NetNewsWireDeleteCommand : NSDeleteCommand {
+final class NetNewsWireDeleteCommand : NSDeleteCommand {
 
     /*
         delete(objectToDelete:, from container:)
@@ -156,11 +170,15 @@ final class NetNewsWireCreateElementCommand : NSCreateCommand {
         the item to be deleted. keySpecifier is the thing in that container(s) to be deleted
         The first step is to resolve the receiversSpecifier and then call delete(specifier:, from container:)
     */
-	@MainActor override func performDefaultImplementation() -> Any? {
-         if let receiversSpecifier = self.receiversSpecifier {
-             if let receiverObjects = receiversSpecifier.objectsByEvaluatingSpecifier {
-                self.delete(specifier:self.keySpecifier, from:receiverObjects)
-             } 
+	// AppleScript commands always execute on the main thread, so using assumeIsolated is safe
+	// even though NSDeleteCommand doesn't have concurrency annotations
+	nonisolated override func performDefaultImplementation() -> Any? {
+         let unsafeSelf = UnsafeSendable(value: self)
+         MainActor.assumeIsolated {
+             let instance = unsafeSelf.value
+             if let receiverObjects = instance.receiversSpecifier?.objectsByEvaluatingSpecifier {
+                instance.delete(specifier:instance.keySpecifier, from:receiverObjects)
+             }
          }
          return nil
     }

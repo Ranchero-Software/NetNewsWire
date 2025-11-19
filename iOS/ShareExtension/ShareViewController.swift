@@ -8,19 +8,32 @@
 
 import UIKit
 import MobileCoreServices
-import Account
+import Synchronization
+import UniformTypeIdentifiers
 import Social
+import Account
 import RSCore
 import RSTree
-import UniformTypeIdentifiers
 
 final class ShareViewController: SLComposeServiceViewController, ShareFolderPickerControllerDelegate {
-
-	private var url: URL?
 	private var extensionContainers: ExtensionContainers?
 	private var flattenedContainers: [ExtensionContainer]!
 	private var selectedContainer: ExtensionContainer?
 	private var folderItem: SLComposeSheetConfigurationItem!
+
+	private struct State {
+		var url: URL?
+	}
+	private let state = Mutex(State())
+
+	nonisolated private var url: URL? {
+		get {
+			state.withLock { $0.url }
+		}
+		set {
+			state.withLock { $0.url = newValue }
+		}
+	}
 
 	override func viewDidLoad() {
 

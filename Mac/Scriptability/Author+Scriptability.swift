@@ -11,20 +11,19 @@ import Account
 import Articles
 
 @objc(ScriptableAuthor)
-final class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
+@MainActor final class ScriptableAuthor: NSObject, UniqueIDScriptingObject {
+    let author: Author
+    nonisolated(unsafe) let container: ScriptingObjectContainer
 
-    let author:Author
-    let container:ScriptingObjectContainer
-
-    init (_ author:Author, container:ScriptingObjectContainer) {
+    init (_ author: Author, container: ScriptingObjectContainer) {
         self.author = author
         self.container = container
     }
 
     @objc(objectSpecifier)
-    override var objectSpecifier: NSScriptObjectSpecifier? {
-        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
-        return (scriptObjectSpecifier)
+	nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
+        let scriptObjectSpecifier = container.makeFormUniqueIDScriptObjectSpecifier(forObject: self)
+        return scriptObjectSpecifier
     }
 
     @objc(scriptingSpecifierDescriptor)
@@ -34,14 +33,14 @@ final class ScriptableAuthor: NSObject, UniqueIdScriptingObject {
 
     // MARK: --- ScriptingObject protocol ---
 
-    var scriptingKey: String {
+    nonisolated var scriptingKey: String {
         return "authors"
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
 
     @objc(uniqueId)
-    var scriptingUniqueId:Any {
+    nonisolated var scriptingUniqueID:Any {
         return author.authorID
     }
 

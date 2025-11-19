@@ -108,6 +108,18 @@ public extension RSImage {
 	///
 	/// - Parameters:
 	///   - data: The data object containing the image data.
+	static func image(data: Data) async -> RSImage? {
+		await withCheckedContinuation { continuation in
+			RSImage.image(with: data) { image in
+				continuation.resume(returning: image)
+			}
+		}
+	}
+
+	/// Asynchronously initializes an image from data.
+	///
+	/// - Parameters:
+	///   - data: The data object containing the image data.
 	///   - imageResultBlock: The closure to call when the image has been initialized.
 	static func image(with data: Data, imageResultBlock: @escaping ImageResultBlock) {
 		DispatchQueue.global().async {

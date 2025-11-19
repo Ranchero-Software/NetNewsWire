@@ -9,7 +9,8 @@
 import Foundation
 import Zip
 
-public class ArticleThemeDownloader {
+public final class ArticleThemeDownloader: Sendable {
+	public static let shared = ArticleThemeDownloader()
 
 	public enum ArticleThemeDownloaderError: LocalizedError {
 		case noThemeFile
@@ -22,7 +23,6 @@ public class ArticleThemeDownloader {
 		}
 	}
 
-	public static let shared = ArticleThemeDownloader()
 	private init() {}
 
 	public func handleFile(at location: URL) throws {

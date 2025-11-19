@@ -27,7 +27,7 @@ extension RSImage {
 }
 
 extension IconImage {
-	static var appIcon: IconImage? = {
+	static let appIcon: IconImage? = {
 		if let image = RSImage.appIconImage {
 			return IconImage(image)
 		}

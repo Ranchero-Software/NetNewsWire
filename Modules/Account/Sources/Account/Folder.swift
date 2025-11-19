@@ -11,7 +11,7 @@ import Articles
 import RSCore
 
 public final class Folder: SidebarItem, Renamable, Container, Hashable {
-	public let accountID: String
+	nonisolated public let accountID: String
 	public weak var account: Account?
 
 	public var defaultReadFilterType: ReadFilterType {
@@ -36,7 +36,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	}
 
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
-	public let folderID: Int // not saved: per-run only
+	nonisolated public let folderID: Int // not saved: per-run only
 	public var externalID: String? = nil
 	static var incrementingID = 0
 

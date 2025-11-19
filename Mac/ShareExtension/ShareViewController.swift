@@ -8,13 +8,25 @@
 
 import Cocoa
 import UniformTypeIdentifiers
+import Synchronization
 
 final class ShareViewController: NSViewController {
-
 	@IBOutlet weak var nameTextField: NSTextField!
 	@IBOutlet weak var folderPopUpButton: NSPopUpButton!
 
-	private var url: URL?
+	private struct State: Sendable {
+		var url: URL?
+	}
+	private let state = Mutex(State())
+
+	nonisolated private var url: URL? {
+		get {
+			state.withLock { $0.url }
+		}
+		set {
+			state.withLock { $0.url = newValue }
+		}
+	}
 	private var extensionContainers: ExtensionContainers?
 
 	override var nibName: NSNib.Name? {
@@ -79,11 +91,10 @@ final class ShareViewController: NSViewController {
 				}
 			})
 		}
-
-    }
+	}
 
     @IBAction func send(_ sender: AnyObject?) {
-		guard let url = url, let selectedContainer = selectedContainer(), let containerID = selectedContainer.containerID else {
+		guard let url, let selectedContainer = selectedContainer(), let containerID = selectedContainer.containerID else {
 			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 			return
 		}

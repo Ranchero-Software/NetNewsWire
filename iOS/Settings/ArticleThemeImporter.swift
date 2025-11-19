@@ -8,7 +8,7 @@
 
 import UIKit
 
-struct ArticleThemeImporter {
+@MainActor struct ArticleThemeImporter {
 
 	static func importTheme(controller: UIViewController, url: URL) throws {
 		let theme = try ArticleTheme(url: url, isAppTheme: false)

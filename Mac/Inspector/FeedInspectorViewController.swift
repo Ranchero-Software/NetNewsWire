@@ -7,9 +7,10 @@
 //
 
 import AppKit
+import UserNotifications
+import Synchronization
 import Articles
 import Account
-import UserNotifications
 
 final class FeedInspectorViewController: NSViewController, Inspector {
 
@@ -28,7 +29,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 		}
 	}
 
-	private var userNotificationSettings: UNNotificationSettings?
+	private var authorizationStatus: UNAuthorizationStatus?
 
 	// MARK: Inspector
 
@@ -63,7 +64,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	// MARK: Actions
 	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
-		guard userNotificationSettings != nil else  {
+		guard authorizationStatus != nil else  {
 			DispatchQueue.main.async {
 				self.isNotifyAboutNewArticlesCheckBox.setNextState()
 			}
@@ -71,7 +72,9 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 		}
 
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			self.updateNotificationSettings()
+			Task { @MainActor in
+				self.updateNotificationSettings()
+			}
 
 			if settings.authorizationStatus == .denied {
 				DispatchQueue.main.async {
@@ -84,15 +87,17 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 				}
 			} else {
 				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
-					self.updateNotificationSettings()
-					if granted {
-						DispatchQueue.main.async {
-							self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
-							NSApplication.shared.registerForRemoteNotifications()
-						}
-					} else {
-						DispatchQueue.main.async {
-							self.isNotifyAboutNewArticlesCheckBox.setNextState()
+					Task { @MainActor in
+						self.updateNotificationSettings()
+						if granted {
+							DispatchQueue.main.async {
+								self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
+								NSApplication.shared.registerForRemoteNotifications()
+							}
+						} else {
+							DispatchQueue.main.async {
+								self.isNotifyAboutNewArticlesCheckBox.setNextState()
+							}
 						}
 					}
 				}
@@ -180,9 +185,10 @@ private extension FeedInspectorViewController {
 
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			self.userNotificationSettings = settings
-			if settings.authorizationStatus == .authorized {
-				DispatchQueue.main.async {
+			let authorizationStatus = settings.authorizationStatus
+			Task { @MainActor in
+				self.authorizationStatus = authorizationStatus
+				if self.authorizationStatus == .authorized {
 					NSApplication.shared.registerForRemoteNotifications()
 				}
 			}

@@ -42,8 +42,10 @@ final class OpenInBrowserActivity: UIActivity {
 			return
 		}
 
-		UIApplication.shared.open(url, options: [:], completionHandler: nil)
+		Task { @MainActor in
+			UIApplication.shared.open(url, options: [:], completionHandler: nil)
+		}
+		
 		activityDidFinish(true)
 	}
-
 }

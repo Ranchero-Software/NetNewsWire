@@ -13,9 +13,6 @@ import UserNotifications
 import UniformTypeIdentifiers
 
 final class GeneralPreferencesViewController: NSViewController {
-
-	private var userNotificationSettings: UNNotificationSettings?
-
 	@IBOutlet weak var articleThemePopup: NSPopUpButton!
 	@IBOutlet weak var defaultBrowserPopup: NSPopUpButton!
 
@@ -137,7 +134,6 @@ private extension GeneralPreferencesViewController {
 
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			self.userNotificationSettings = settings
 			if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
 					NSApplication.shared.registerForRemoteNotifications()

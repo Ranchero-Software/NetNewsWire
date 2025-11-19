@@ -145,7 +145,7 @@ extension SidebarViewController {
 		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 	}
 
-	func showNotificationsNotEnabledAlert() {
+	nonisolated func showNotificationsNotEnabledAlert() {
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.messageText = NSLocalizedString("Notifications are not enabled", comment: "Notifications are not enabled.")

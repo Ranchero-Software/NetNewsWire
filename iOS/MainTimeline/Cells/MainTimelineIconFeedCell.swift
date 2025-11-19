@@ -26,10 +26,12 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	var isPreview: Bool = false
 
 	override func awakeFromNib() {
-		super.awakeFromNib()
-		indicatorView.alpha = 0.0
-		iconView.translatesAutoresizingMaskIntoConstraints = false
-		configureStackView()
+		MainActor.assumeIsolated {
+			super.awakeFromNib()
+			indicatorView.alpha = 0.0
+			iconView.translatesAutoresizingMaskIntoConstraints = false
+			configureStackView()
+		}
 	}
 
 	private func configureStackView() {

@@ -10,11 +10,10 @@ import AppKit
 import Account
 import Articles
 
-protocol TimelineContainerViewControllerDelegate: AnyObject {
+@MainActor protocol TimelineContainerViewControllerDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
 	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController)
-
 }
 
 final class TimelineContainerViewController: NSViewController {
@@ -73,15 +72,17 @@ final class TimelineContainerViewController: NSViewController {
 		makeMenuItemTitleLarger(groupByFeedMenuItem)
 		updateViewOptionsPopUpButton()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
     }
 
 	// MARK: - Notifications
 
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task {
-			updateViewOptionsPopUpButton()
-		}
+	func userDefaultsDidChange() {
+		updateViewOptionsPopUpButton()
 	}
 
 	// MARK: - API

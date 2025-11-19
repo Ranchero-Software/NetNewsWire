@@ -12,7 +12,7 @@ import SwiftUI
 import RSCore
 
 // MARK: - AccountsPreferencesAddAccountDelegate
-protocol AccountsPreferencesAddAccountDelegate {
+@MainActor protocol AccountsPreferencesAddAccountDelegate {
 	func presentSheetForAccount(_ accountType: AccountType)
 }
 

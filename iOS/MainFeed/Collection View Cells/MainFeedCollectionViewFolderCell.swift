@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
+@MainActor protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
 	func mainFeedCollectionFolderViewCellDisclosureDidToggle(_ sender: MainFeedCollectionViewFolderCell, expanding: Bool)
 }
 
@@ -57,8 +57,10 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	override func awakeFromNib() {
-		super.awakeFromNib()
-		disclosureButton.addInteraction(UIPointerInteraction())
+		MainActor.assumeIsolated {
+			super.awakeFromNib()
+			disclosureButton.addInteraction(UIPointerInteraction())
+		}
 	}
 
 	func updateExpandedState(animate: Bool) {
