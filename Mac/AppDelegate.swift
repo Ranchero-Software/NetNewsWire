@@ -454,9 +454,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
-		let userInfo = response.notification.request.content.userInfo
+		// Wrapper to safely transfer non-Sendable values to MainActor
+		struct UnsafeSendable<T>: @unchecked Sendable {
+			let value: T
+		}
+
+		let wrappedResponse = UnsafeSendable(value: response)
+		let wrappedCompletionHandler = UnsafeSendable(value: completionHandler)
 
 		Task { @MainActor in
+			let response = wrappedResponse.value
+			let userInfo = response.notification.request.content.userInfo
+
 			switch response.actionIdentifier {
 			case UserNotificationManager.ActionIdentifier.markAsRead:
 				handleMarkAsRead(userInfo: userInfo)
@@ -465,7 +474,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			default:
 				mainWindowController?.handle(response)
 			}
-			completionHandler()
+			wrappedCompletionHandler.value()
 		}
     }
 
