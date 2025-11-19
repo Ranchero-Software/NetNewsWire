@@ -75,24 +75,28 @@ public struct Platform {
 private extension Platform {
 
 	static func dataFolder(forApplication appName: String?) -> URL? {
+		var dataFolder: URL?
+
 		do {
 			#if os(macOS)
-			var dataFolder = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+			dataFolder = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
 
 			if let appName = appName ?? Bundle.main.infoDictionary?["CFBundleExecutable"] as? String {
-				dataFolder = dataFolder.appendingPathComponent(appName)
+				dataFolder = dataFolder?.appendingPathComponent(appName)
 			}
 			#else // iOS
-			let dataFolder = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+			dataFolder = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
 			#endif
 
-			try FileManager.default.createDirectory(at: dataFolder, withIntermediateDirectories: true, attributes: nil)
+			if let dataFolder {
+				try FileManager.default.createDirectory(at: dataFolder, withIntermediateDirectories: true, attributes: nil)
+			}
 
 		} catch {
 			Self.logger.error("Platform.dataFolder error: \(error.localizedDescription)")
 		}
 
-		return nil
+		return dataFolder
 	}
 
 	static func dataFile(forApplication appName: String?, filename: String) -> URL? {
