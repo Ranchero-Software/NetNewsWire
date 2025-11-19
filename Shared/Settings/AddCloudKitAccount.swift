@@ -14,7 +14,7 @@ import AppKit
 import UIKit
 #endif
 
-enum AddCloudKitAccountError: LocalizedError, RecoverableError {
+enum AddCloudKitAccountError: LocalizedError, RecoverableError, Sendable {
 
 	case iCloudDriveMissing
 
@@ -43,7 +43,10 @@ enum AddCloudKitAccountError: LocalizedError, RecoverableError {
 			return false
 		}
 
-		AddCloudKitAccountUtilities.openiCloudSettings()
+		Task { @MainActor in
+			AddCloudKitAccountUtilities.openiCloudSettings()
+		}
+		
 		return true
 	}
 }
@@ -54,7 +57,7 @@ struct AddCloudKitAccountUtilities {
 		FileManager.default.ubiquityIdentityToken != nil
 	}
 
-	static func openiCloudSettings() {
+	@MainActor static func openiCloudSettings() {
 #if os(macOS)
 		if let url = URL(string: "x-apple.systempreferences:com.apple.preferences.AppleIDPrefPane") {
 			NSWorkspace.shared.open(url)

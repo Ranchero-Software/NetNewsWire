@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
+@MainActor protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
 	func mainFeedCollectionFolderViewCellDisclosureDidToggle(_ sender: MainFeedCollectionViewFolderCell, expanding: Bool)
 }
 

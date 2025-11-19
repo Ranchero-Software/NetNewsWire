@@ -33,7 +33,7 @@ final class FeedInspectorViewController: UITableViewController {
 		return feed.homePageURL == nil
 	}
 
-	private var userNotificationSettings: UNNotificationSettings?
+	private var authorizationStatus: UNAuthorizationStatus?
 
 	override func viewDidLoad() {
 		tableView.register(InspectorIconHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
@@ -72,25 +72,23 @@ final class FeedInspectorViewController: UITableViewController {
 	}
 
 	@IBAction func notifyAboutNewArticlesChanged(_ sender: Any) {
-		guard let settings = userNotificationSettings else {
+		guard let authorizationStatus else {
 			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
 			return
 		}
-		if settings.authorizationStatus == .denied {
+		if authorizationStatus == .denied {
 			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
 			present(notificationUpdateErrorAlert(), animated: true, completion: nil)
-		} else if settings.authorizationStatus == .authorized {
+		} else if authorizationStatus == .authorized {
 			feed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
 		} else {
 			UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
-				self.updateNotificationSettings()
-				if granted {
-					DispatchQueue.main.async {
+				Task { @MainActor in
+					self.updateNotificationSettings()
+					if granted {
 						self.feed.isNotifyAboutNewArticles = self.notifyAboutNewArticlesSwitch.isOn
 						UIApplication.shared.registerForRemoteNotifications()
-					}
-				} else {
-					DispatchQueue.main.async {
+					} else {
 						self.notifyAboutNewArticlesSwitch.isOn = !self.notifyAboutNewArticlesSwitch.isOn
 					}
 				}
@@ -199,12 +197,12 @@ extension FeedInspectorViewController: UITextFieldDelegate {
 
 extension FeedInspectorViewController {
 
-	@objc
-	func updateNotificationSettings() {
+	@objc func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+			let updatedAuthorizationStatus = settings.authorizationStatus
 			DispatchQueue.main.async {
-				self.userNotificationSettings = settings
-				if settings.authorizationStatus == .authorized {
+				self.authorizationStatus = updatedAuthorizationStatus
+				if self.authorizationStatus == .authorized {
 					UIApplication.shared.registerForRemoteNotifications()
 				}
 			}

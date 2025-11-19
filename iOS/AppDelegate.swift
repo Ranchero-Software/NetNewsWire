@@ -16,9 +16,9 @@ import Account
 import Articles
 import Secrets
 
-var appDelegate: AppDelegate!
+@MainActor var appDelegate: AppDelegate!
 
-@UIApplicationMain
+@main
 final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
 	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
@@ -52,14 +52,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		super.init()
 		appDelegate = self
 
-		let documentFolder = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-		let documentAccountsFolder = documentFolder.appendingPathComponent("Accounts").absoluteString
-
 		AccountManager.shared.start()
-
-		let documentThemesFolder = documentFolder.appendingPathComponent("Themes").absoluteString
-		let documentThemesFolderPath = String(documentThemesFolder.suffix(from: documentAccountsFolder.index(documentThemesFolder.startIndex, offsetBy: 7)))
-		ArticleThemesManager.shared = ArticleThemesManager(folderPath: documentThemesFolderPath)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
@@ -100,6 +93,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationC
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
 
+		ArticleThemesManager.shared.start()
 		NetworkMonitor.shared.start()
 		ExtensionContainersFile.shared.start()
 		ExtensionFeedAddRequestFile.shared.start()

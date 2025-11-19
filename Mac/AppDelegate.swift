@@ -197,6 +197,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidat
 			self.toggleInspectorWindow(self)
 		}
 
+		ArticleThemesManager.shared.start()
 		NetworkMonitor.shared.start()
 		ExtensionContainersFile.shared.start()
 		ExtensionFeedAddRequestFile.shared.start()

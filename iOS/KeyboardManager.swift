@@ -8,14 +8,14 @@
 
 import UIKit
 
-enum KeyboardType: String {
+enum KeyboardType: String, Sendable {
 	case global = "GlobalKeyboardShortcuts"
 	case sidebar = "SidebarKeyboardShortcuts"
 	case timeline = "TimelineKeyboardShortcuts"
 	case detail = "DetailKeyboardShortcuts"
 }
 
-final class KeyboardManager {
+@MainActor final class KeyboardManager {
 
 	private(set) var _keyCommands: [UIKeyCommand]
 	var keyCommands: [UIKeyCommand] {
