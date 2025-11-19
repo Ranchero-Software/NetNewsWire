@@ -112,12 +112,13 @@ let appName = "NetNewsWire"
 	}
 
 	// MARK: - API
+
 	func showAddFolderSheetOnWindow(_ window: NSWindow) {
 		addFolderWindowController = AddFolderWindowController()
 		addFolderWindowController!.runSheetOnWindow(window)
 	}
 
-	@MainActor func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
+	func showAddFeedSheetOnWindow(_ window: NSWindow, urlString: String?, name: String?, account: Account?, folder: Folder?) {
 		addFeedController = AddFeedController(hostWindow: window)
 		addFeedController?.showAddFeedSheet(urlString, name, account, folder)
 	}
@@ -166,10 +167,8 @@ let appName = "NetNewsWire"
 		let localAccount = AccountManager.shared.defaultAccount
 
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
-			// Import feeds. Either old NNW 3 feeds or the default feeds.
-			if !NNW3ImportController.importSubscriptionsIfFileExists(account: localAccount) {
-				DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
-			}
+			// Import default feeds.
+			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
 
 		updateSortMenuItems()
@@ -185,9 +184,9 @@ let appName = "NetNewsWire"
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			Task { @MainActor in
-				self?.userDefaultsDidChange()
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { _ in
+			MainActor.assumeIsolated {
+				self.userDefaultsDidChange()
 			}
 		}
 
@@ -196,7 +195,7 @@ let appName = "NetNewsWire"
 		}
 
 		if InspectorWindowController.shouldOpenAtStartup {
-			self.toggleInspectorWindow(self)
+			toggleInspectorWindow(self)
 		}
 
 		ArticleThemesManager.shared.start()
@@ -245,7 +244,7 @@ let appName = "NetNewsWire"
 	}
 
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
-		guard let mainWindowController = mainWindowController else {
+		guard let mainWindowController else {
 			return false
 		}
 		mainWindowController.handle(userActivity)
@@ -259,7 +258,7 @@ let appName = "NetNewsWire"
 		// if the window doesn’t already exist — because it absolutely *should* exist already.
 		// And if the window exists, then maybe the views and view controllers are also already loaded?
 		// We’ll try this, and then see if we get more crash logs like this or not.
-		guard let mainWindowController = mainWindowController, mainWindowController.isWindowLoaded else {
+		guard let mainWindowController, mainWindowController.isWindowLoaded else {
 			return false
 		}
 		mainWindowController.showWindow(self)
@@ -310,7 +309,8 @@ let appName = "NetNewsWire"
 		while !isShutDownSyncDone && RunLoop.current.run(mode: .default, before: timeout) && timeout > Date() { }
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
+
 	@objc func unreadCountDidChange(_ note: Notification) {
 		MainActor.assumeIsolated {
 			if note.object is AccountManager {
@@ -929,15 +929,15 @@ extension AppDelegate {
 */
 extension AppDelegate : ScriptingAppDelegate {
 
-    internal var scriptingMainWindowController: ScriptingMainWindowController? {
+    var scriptingMainWindowController: ScriptingMainWindowController? {
         return mainWindowController
     }
 
-    internal var  scriptingCurrentArticle: Article? {
+    var scriptingCurrentArticle: Article? {
         return self.scriptingMainWindowController?.scriptingCurrentArticle
     }
 
-    internal var  scriptingSelectedArticles: [Article] {
+    var scriptingSelectedArticles: [Article] {
         return self.scriptingMainWindowController?.scriptingSelectedArticles ?? []
     }
 }
@@ -951,7 +951,6 @@ extension AppDelegate: NSWindowRestoration {
 		}
 		completionHandler(mainWindow, nil)
 	}
-
 }
 
 // Handle Notification Actions
