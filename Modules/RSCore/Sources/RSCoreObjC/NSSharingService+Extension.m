@@ -5,6 +5,8 @@
 //  Created by Brent Simmons on 11/3/24.
 //
 
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
+
 #import "NSSharingService+Extension.h"
 
 @implementation NSSharingService (NoDeprecationWarning)
@@ -20,3 +22,5 @@
 }
 
 @end
+
+#endif

@@ -6,6 +6,8 @@
 //  Copyright © 2018 Ranchero Software. All rights reserved.
 //
 
+#if os(macOS)
+
 import AppKit
 
 // Get the height of an NSTextField given a string, font, and width.
@@ -15,18 +17,16 @@ import AppKit
 typealias WidthHeightCache = [Int: Int] // width: height
 
 private struct TextFieldSizerSpecifier: Hashable {
-
 	let numberOfLines: Int
 	let font: NSFont
 }
 
-struct TextFieldSizeInfo {
-
-	let size: NSSize // Integral size (ceiled)
-	let numberOfLinesUsed: Int // A two-line text field may only use one line, for instance. This would equal 1, then.
+public struct TextFieldSizeInfo: Sendable {
+	public let size: NSSize // Integral size (ceiled)
+	public let numberOfLinesUsed: Int // A two-line text field may only use one line, for instance. This would equal 1, then.
 }
 
-@MainActor final class MultilineTextFieldSizer {
+@MainActor public final class MultilineTextFieldSizer {
 
 	private let numberOfLines: Int
 	private let font: NSFont
@@ -47,12 +47,12 @@ struct TextFieldSizeInfo {
 		self.doubleLineHeightEstimate = MultilineTextFieldSizer.calculateHeight("AqLjJ0/y\nAqLjJ0/y", 200, self.textField)
 	}
 
-	static func size(for string: String, font: NSFont, numberOfLines: Int, width: Int) -> TextFieldSizeInfo {
+	public static func size(for string: String, font: NSFont, numberOfLines: Int, width: Int) -> TextFieldSizeInfo {
 
 		return sizer(numberOfLines: numberOfLines, font: font).sizeInfo(for: string, width: width)
 	}
 
-	static func size(for attributedString: NSAttributedString, numberOfLines: Int, width: Int) -> TextFieldSizeInfo {
+	public static func size(for attributedString: NSAttributedString, numberOfLines: Int, width: Int) -> TextFieldSizeInfo {
 		guard attributedString.length > 0 else {
 			return TextFieldSizeInfo(size: NSSize.zero, numberOfLinesUsed: 0)
 		}
@@ -240,3 +240,6 @@ private extension MultilineTextFieldSizer {
 		return nil
 	}
 }
+
+#endif
+

@@ -8,3 +8,4 @@
 @import Foundation;
 
 #import "../striphtml.h"
+#import "../NSSharingService+Extension.h"

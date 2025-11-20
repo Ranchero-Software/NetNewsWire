@@ -6,20 +6,22 @@
 //  Copyright © 2018 Ranchero Software. All rights reserved.
 //
 
+#if os(macOS)
+
 import AppKit
 
 // Get the size of an NSTextField configured with a specific font with a specific size.
 // Uses a cache.
 // Main thready only.
 
-@MainActor final class SingleLineTextFieldSizer {
+@MainActor public final class SingleLineTextFieldSizer {
 
 	let font: NSFont
 	private let textField: NSTextField
 	private var cache = [String: NSSize]()
 
 	/// Get the NSTextField size for text, given a font.
-	static func size(for text: String, font: NSFont) -> NSSize {
+	public static func size(for text: String, font: NSFont) -> NSSize {
 		return sizer(for: font).size(for: text)
 	}
 
@@ -63,3 +65,5 @@ import AppKit
 		return newSizer
 	}
 }
+
+#endif

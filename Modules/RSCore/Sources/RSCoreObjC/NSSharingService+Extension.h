@@ -1,9 +1,11 @@
 //
-//  NSObject+NSSharingService_RSCore.h
+//  NSSharingService+Extension.h
 //  RSCore
 //
 //  Created by Brent Simmons on 11/3/24.
 //
+
+#if TARGET_OS_MAC && !TARGET_OS_IPHONE
 
 @import AppKit;
 
@@ -21,3 +23,5 @@
 + (NSArray *)sharingServicesForItems_noDeprecationWarning:(NSArray *)items;
 
 @end
+
+#endif
