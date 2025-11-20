@@ -11,6 +11,7 @@ import RSCore
 import RSDatabase
 import RSParser
 import RSWeb
+import NewsBlur
 import SyncDatabase
 import os.log
 import Secrets

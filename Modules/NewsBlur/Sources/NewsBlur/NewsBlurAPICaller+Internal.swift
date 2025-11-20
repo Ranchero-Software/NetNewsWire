@@ -13,12 +13,12 @@ protocol NewsBlurDataConvertible {
 	var asData: Data? { get }
 }
 
-enum NewsBlurError: LocalizedError {
+public enum NewsBlurError: LocalizedError {
 	case general(message: String)
 	case invalidParameter
 	case unknown
 
-	var errorDescription: String? {
+	public var errorDescription: String? {
 		switch self {
 		case .general(let message):
 			return message

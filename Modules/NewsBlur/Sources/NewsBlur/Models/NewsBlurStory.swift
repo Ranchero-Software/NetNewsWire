@@ -10,23 +10,23 @@ import Foundation
 import RSCore
 import RSParser
 
-typealias NewsBlurStory = NewsBlurStoriesResponse.Story
+public typealias NewsBlurStory = NewsBlurStoriesResponse.Story
 
-struct NewsBlurStoriesResponse: Decodable, Sendable {
-	let stories: [Story]
+public struct NewsBlurStoriesResponse: Decodable, Sendable {
+	public let stories: [Story]
 
-	struct Story: Decodable {
-		let storyID: String
-		let feedID: Int
-		let title: String?
-		let url: String?
-		let authorName: String?
-		let contentHTML: String?
-		var imageURL: String? {
+	public struct Story: Decodable, Sendable {
+		public let storyID: String
+		public let feedID: Int
+		public let title: String?
+		public let url: String?
+		public let authorName: String?
+		public let contentHTML: String?
+		public var imageURL: String? {
 			return imageURLs?.first?.value
 		}
-		var tags: [String]?
-		var datePublished: Date? {
+		public var tags: [String]?
+		public var datePublished: Date? {
 			let interval = (publishedTimestamp as NSString).doubleValue
 			return Date(timeIntervalSince1970: interval)
 		}

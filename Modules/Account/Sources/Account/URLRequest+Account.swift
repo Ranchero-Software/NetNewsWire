@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import NewsBlur
 import Secrets
 
 public extension URLRequest {

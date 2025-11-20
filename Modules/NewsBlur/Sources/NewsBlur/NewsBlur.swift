@@ -8,8 +8,7 @@
 import Foundation
 import os.log
 
-struct NewsBlur {
-
+public struct NewsBlur {
 	// Convention with this logger is to put "NewsBlur: " at the beginning of each message.
-	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "NewsBlur")
+	public static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "NewsBlur")
 }
