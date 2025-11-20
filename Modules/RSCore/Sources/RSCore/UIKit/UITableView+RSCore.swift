@@ -6,15 +6,14 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
-import RSCore
 
-extension UITableView {
+public extension UITableView {
 
-	/**
-	Selects a row and scrolls it to the middle if it is not visible
-	*/
-	public func selectRowAndScrollIfNotVisible(at indexPath: IndexPath, animations: Animations) {
+	/// Selects a row and scrolls it to the middle if it is not visible
+	func selectRowAndScrollIfNotVisible(at indexPath: IndexPath, animations: Animations) {
 		guard let dataSource = dataSource,
 			let numberOfSections = dataSource.numberOfSections,
 			indexPath.section < numberOfSections(self),
@@ -36,10 +35,12 @@ extension UITableView {
 		return safeAreaLayoutGuide.layoutFrame.contains(rect)
 	}
 
-	public func middleVisibleRow() -> IndexPath? {
+	func middleVisibleRow() -> IndexPath? {
 		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame), visibleIndexPaths.count > 2 {
 			return visibleIndexPaths[visibleIndexPaths.count / 2]
 		}
 		return nil
 	}
 }
+
+#endif

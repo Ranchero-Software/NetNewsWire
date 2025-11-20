@@ -6,9 +6,12 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
-extension UIActivityViewController {
+public extension UIActivityViewController {
+	
 	convenience init(url: URL, title: String?, applicationActivities: [UIActivity]?) {
 		let itemSource = ArticleActivityItemSource(url: url, subject: title)
 		let titleSource = TitleActivityItemSource(title: title)
@@ -16,3 +19,5 @@ extension UIActivityViewController {
 		self.init(activityItems: [titleSource, itemSource], applicationActivities: applicationActivities)
 	}
 }
+
+#endif

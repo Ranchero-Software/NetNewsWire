@@ -6,14 +6,14 @@
 //  Copyright © 2025 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import Foundation
 import UIKit
-import RSCore
 
 extension UICollectionView {
-	/**
-	Selects an item and scrolls it to the middle if it is not visible
-	*/
+	
+	/// Selects an item and scrolls it to the middle if it is not visible
 	public func selectItemAndScrollIfNotVisible(at indexPath: IndexPath, animations: Animations) {
 		guard let dataSource = dataSource,
 			let numberOfSections = dataSource.numberOfSections,
@@ -30,3 +30,5 @@ extension UICollectionView {
 	}
 
 }
+
+#endif

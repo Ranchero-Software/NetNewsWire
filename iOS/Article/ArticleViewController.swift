@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import SafariServices
 import WebKit
+import RSCore
 import Account
 import Articles
-import SafariServices
 
 final class ArticleViewController: UIViewController {
 

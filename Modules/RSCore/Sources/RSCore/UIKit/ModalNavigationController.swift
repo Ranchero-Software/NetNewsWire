@@ -6,16 +6,19 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
-final class ModalNavigationController: UINavigationController {
+public final class ModalNavigationController: UINavigationController {
 
-	override func viewDidLayoutSubviews() {
+	public override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 
 		// This hack is to resolve https://github.com/brentsimmons/NetNewsWire/issues/1301
 		let frame = navigationBar.frame
 		navigationBar.frame = CGRect(x: frame.minX, y: frame.minY, width: frame.size.width, height: 64.0)
 	}
-
 }
+
+#endif

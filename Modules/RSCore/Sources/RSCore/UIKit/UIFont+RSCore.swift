@@ -1,14 +1,37 @@
 //
-//  String-Extensions.swift
-//  NetNewsWire
+//  UIFont-Extensions.swift
+//  NetNewsWire-iOS
 //
-//  Created by Maurice Parker on 4/8/19.
+//  Created by Maurice Parker on 4/27/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
-extension String {
+extension UIFont {
+
+	func withTraits(traits:UIFontDescriptor.SymbolicTraits) -> UIFont {
+		if let descriptor = fontDescriptor.withSymbolicTraits(traits) {
+			return UIFont(descriptor: descriptor, size: 0) //size 0 means keep the size as it is
+		} else {
+			return self
+		}
+	}
+
+	public func bold() -> UIFont {
+		return withTraits(traits: .traitBold)
+	}
+
+	public func italic() -> UIFont {
+		return withTraits(traits: .traitItalic)
+	}
+}
+
+// MARK: - String Sizing
+
+public extension String {
 
 	func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
 		let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
@@ -21,5 +44,6 @@ extension String {
 		let boundingBox = self.boundingRect(with: constraintRect, options: [.usesLineFragmentOrigin, .usesFontLeading], attributes: [NSAttributedString.Key.font: font], context: nil)
 		return ceil(boundingBox.width)
 	}
-
 }
+
+#endif

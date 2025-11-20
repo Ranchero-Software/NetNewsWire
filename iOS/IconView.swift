@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSCore
 
 @IBDesignable
 final class IconView: UIView {

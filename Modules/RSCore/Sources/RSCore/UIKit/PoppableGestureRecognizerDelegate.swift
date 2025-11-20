@@ -7,25 +7,27 @@
 //
 // https://stackoverflow.com/a/41248703
 
+#if os(iOS)
+
 import UIKit
 
-final class PoppableGestureRecognizerDelegate: NSObject, UIGestureRecognizerDelegate {
+public final class PoppableGestureRecognizerDelegate: NSObject, UIGestureRecognizerDelegate {
+    public weak var navigationController: UINavigationController?
 
-    weak var navigationController: UINavigationController?
-
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+	public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return navigationController?.viewControllers.count ?? 0 > 1
     }
 
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		return true
     }
 
-	func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+	public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 		if otherGestureRecognizer is UIPanGestureRecognizer {
 			return true
 		}
 		return false
 	}
-
 }
+
+#endif

@@ -6,10 +6,11 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 public extension UIBarButtonItem {
-
 	@IBInspectable var accEnabled: Bool {
 		get {
 			return isAccessibilityElement
@@ -27,5 +28,6 @@ public extension UIBarButtonItem {
 			accessibilityLabel = newValue
 		}
 	}
-
 }
+
+#endif

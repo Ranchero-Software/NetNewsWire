@@ -6,11 +6,12 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 extension UIPageViewController {
-
-	var scrollViewInsidePageControl: UIScrollView? {
+	public var scrollViewInsidePageControl: UIScrollView? {
 		for view in view.subviews {
 			if let scrollView = view as? UIScrollView {
 				return scrollView
@@ -18,5 +19,6 @@ extension UIPageViewController {
 		}
 		return nil
 	}
-
 }
+
+#endif

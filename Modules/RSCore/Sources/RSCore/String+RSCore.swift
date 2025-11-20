@@ -295,5 +295,5 @@ public extension String {
 	var strippingHTTPOrHTTPSScheme: String {
 		self.stripping(prefix: "http://").stripping(prefix: "https://")
 	}
-
 }
+

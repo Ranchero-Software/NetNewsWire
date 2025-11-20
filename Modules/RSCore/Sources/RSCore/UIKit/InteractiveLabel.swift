@@ -6,10 +6,12 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 @IBDesignable
-final class InteractiveLabel: UILabel, @preconcurrency UIEditMenuInteractionDelegate {
+public final class InteractiveLabel: UILabel, @preconcurrency UIEditMenuInteractionDelegate {
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -43,21 +45,21 @@ final class InteractiveLabel: UILabel, @preconcurrency UIEditMenuInteractionDele
 		}
 	}
 
-	override var canBecomeFirstResponder: Bool {
+	public override var canBecomeFirstResponder: Bool {
 		return true
 	}
 
-	override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+	public override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
 		return (action == #selector(UIResponderStandardEditActions.copy(_:)))
 	}
 
-	override func copy(_ sender: Any?) {
+	public override func copy(_ sender: Any?) {
 		UIPasteboard.general.string = text
 	}
 
 	// MARK: - UIEditMenuInteractionDelegate
 
-	func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
+	public func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
 
 		let copyAction = UIAction(title: "Copy", image: nil) { [weak self] action in
 			self?.copy(nil)
@@ -66,3 +68,4 @@ final class InteractiveLabel: UILabel, @preconcurrency UIEditMenuInteractionDele
 	}
 }
 
+#endif

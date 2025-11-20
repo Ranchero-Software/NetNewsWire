@@ -11,7 +11,6 @@
 import UIKit
 
 extension UIResponder {
-
 	private weak static var _currentFirstResponder: UIResponder? = nil
 
 	public static var isFirstResponderTextField: Bool {
@@ -32,7 +31,6 @@ extension UIResponder {
 	@objc internal func findFirstResponder(sender: AnyObject) {
 		UIResponder._currentFirstResponder = self
 	}
-
 }
 
 #endif
