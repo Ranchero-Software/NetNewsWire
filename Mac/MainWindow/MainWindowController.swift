@@ -18,7 +18,7 @@ enum TimelineSourceMode {
 
 final class MainWindowController : NSWindowController, NSUserInterfaceValidations {
 
-    @IBOutlet weak var articleThemePopUpButton: NSPopUpButton?
+    @IBOutlet var articleThemePopUpButton: NSPopUpButton?
 
     private var activityManager = ActivityManager()
 

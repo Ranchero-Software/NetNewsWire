@@ -10,9 +10,8 @@ import UIKit
 import Account
 
 final class RefreshProgressView: UIView {
-
-	@IBOutlet weak var progressView: UIProgressView!
-	@IBOutlet weak var label: UILabel!
+	@IBOutlet var progressView: UIProgressView!
+	@IBOutlet var label: UILabel!
 
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {

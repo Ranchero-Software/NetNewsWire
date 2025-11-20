@@ -17,11 +17,12 @@ final class FeedInspectorViewController: UITableViewController {
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 500.0)
 
 	var feed: Feed!
-	@IBOutlet weak var nameTextField: UITextField!
-	@IBOutlet weak var notifyAboutNewArticlesSwitch: UISwitch!
-	@IBOutlet weak var alwaysShowReaderViewSwitch: UISwitch!
-	@IBOutlet weak var homePageLabel: InteractiveLabel!
-	@IBOutlet weak var feedURLLabel: InteractiveLabel!
+
+	@IBOutlet var nameTextField: UITextField!
+	@IBOutlet var notifyAboutNewArticlesSwitch: UISwitch!
+	@IBOutlet var alwaysShowReaderViewSwitch: UISwitch!
+	@IBOutlet var homePageLabel: InteractiveLabel!
+	@IBOutlet var feedURLLabel: InteractiveLabel!
 
 	private var headerView: InspectorIconHeaderView?
 	private var iconImage: IconImage? {

@@ -13,11 +13,10 @@ import UIKit
 }
 
 class MainFeedCollectionViewFolderCell: UICollectionViewCell {
-
-	@IBOutlet weak var folderTitle: UILabel!
-	@IBOutlet weak var faviconView: IconView!
-	@IBOutlet weak var unreadCountLabel: UILabel!
-	@IBOutlet weak var disclosureButton: UIButton!
+	@IBOutlet var folderTitle: UILabel!
+	@IBOutlet var faviconView: IconView!
+	@IBOutlet var unreadCountLabel: UILabel!
+	@IBOutlet var disclosureButton: UIButton!
 
 	var delegate: MainFeedCollectionViewFolderCellDelegate?
 

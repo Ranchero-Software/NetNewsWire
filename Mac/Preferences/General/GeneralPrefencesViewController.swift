@@ -13,8 +13,8 @@ import UserNotifications
 import UniformTypeIdentifiers
 
 final class GeneralPreferencesViewController: NSViewController {
-	@IBOutlet weak var articleThemePopup: NSPopUpButton!
-	@IBOutlet weak var defaultBrowserPopup: NSPopUpButton!
+	@IBOutlet var articleThemePopup: NSPopUpButton!
+	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)

@@ -9,9 +9,8 @@
 import UIKit
 
 final class AddFeedSelectFolderTableViewCell: VibrantTableViewCell {
-
-	@IBOutlet weak var folderLabel: UILabel!
-	@IBOutlet weak var detailLabel: UILabel!
+	@IBOutlet var folderLabel: UILabel!
+	@IBOutlet var detailLabel: UILabel!
 
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)

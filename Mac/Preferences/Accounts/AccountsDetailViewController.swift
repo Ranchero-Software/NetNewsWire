@@ -10,10 +10,10 @@ import AppKit
 import Account
 
 final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate {
-	@IBOutlet weak var typeLabel: NSTextField!
-	@IBOutlet weak var nameTextField: NSTextField!
-	@IBOutlet weak var activeButton: NSButtonCell!
-	@IBOutlet weak var credentialsButton: NSButton!
+	@IBOutlet var typeLabel: NSTextField!
+	@IBOutlet var nameTextField: NSTextField!
+	@IBOutlet var activeButton: NSButtonCell!
+	@IBOutlet var credentialsButton: NSButton!
 
 	private var accountsWindowController: NSWindowController?
 	private var account: Account?

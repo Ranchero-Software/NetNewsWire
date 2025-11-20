@@ -22,9 +22,8 @@ private let folderIdentifier = "Folder"
 private let containerReuseIdentifier = "Container"
 
 final class MainFeedCollectionViewController: UICollectionViewController, UndoableCommandRunner {
-
-	@IBOutlet weak var filterButton: UIBarButtonItem!
-	@IBOutlet weak var addNewItemButton: UIBarButtonItem! {
+	@IBOutlet var filterButton: UIBarButtonItem!
+	@IBOutlet var addNewItemButton: UIBarButtonItem! {
 		didSet {
 			if #available(iOS 14, *) {
 				addNewItemButton.primaryAction = nil

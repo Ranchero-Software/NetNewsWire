@@ -18,15 +18,15 @@ final class SettingsViewController: UITableViewController {
 
 	private weak var opmlAccount: Account?
 
-	@IBOutlet weak var timelineSortOrderSwitch: UISwitch!
-	@IBOutlet weak var groupByFeedSwitch: UISwitch!
-	@IBOutlet weak var refreshClearsReadArticlesSwitch: UISwitch!
-	@IBOutlet weak var articleThemeDetailLabel: UILabel!
-	@IBOutlet weak var confirmMarkAllAsReadSwitch: UISwitch!
-	@IBOutlet weak var showFullscreenArticlesSwitch: UISwitch!
-	@IBOutlet weak var colorPaletteDetailLabel: UILabel!
-	@IBOutlet weak var openLinksInNetNewsWire: UISwitch!
-	@IBOutlet weak var enableJavaScriptSwitch: UISwitch!
+	@IBOutlet var timelineSortOrderSwitch: UISwitch!
+	@IBOutlet var groupByFeedSwitch: UISwitch!
+	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
+	@IBOutlet var articleThemeDetailLabel: UILabel!
+	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
+	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
+	@IBOutlet var colorPaletteDetailLabel: UILabel!
+	@IBOutlet var openLinksInNetNewsWire: UISwitch!
+	@IBOutlet var enableJavaScriptSwitch: UISwitch!
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?

@@ -9,13 +9,12 @@
 import UIKit
 
 class MainTimelineIconFeedCell: UITableViewCell {
-
-	@IBOutlet weak var articleTitle: UILabel!
-	@IBOutlet weak var authorByLine: UILabel!
-	@IBOutlet weak var iconView: IconView!
-	@IBOutlet weak var indicatorView: IconView!
-	@IBOutlet weak var articleDate: UILabel!
-	@IBOutlet weak var metaDataStackView: UIStackView!
+	@IBOutlet var articleTitle: UILabel!
+	@IBOutlet var authorByLine: UILabel!
+	@IBOutlet var iconView: IconView!
+	@IBOutlet var indicatorView: IconView!
+	@IBOutlet var articleDate: UILabel!
+	@IBOutlet var metaDataStackView: UIStackView!
 
 	var cellData: MainTimelineCellData! {
 		didSet {

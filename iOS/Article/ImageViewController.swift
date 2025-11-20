@@ -9,15 +9,13 @@
 import UIKit
 
 final class ImageViewController: UIViewController {
-
-
-	@IBOutlet weak var closeButton: UIButton!
-	@IBOutlet weak var shareButton: UIButton!
-	@IBOutlet weak var imageScrollView: ImageScrollView!
-	@IBOutlet weak var titleLabel: UILabel!
-	@IBOutlet weak var titleBackground: UIVisualEffectView!
-	@IBOutlet weak var titleLeading: NSLayoutConstraint!
-	@IBOutlet weak var titleTrailing: NSLayoutConstraint!
+	@IBOutlet var closeButton: UIButton!
+	@IBOutlet var shareButton: UIButton!
+	@IBOutlet var imageScrollView: ImageScrollView!
+	@IBOutlet var titleLabel: UILabel!
+	@IBOutlet var titleBackground: UIVisualEffectView!
+	@IBOutlet var titleLeading: NSLayoutConstraint!
+	@IBOutlet var titleTrailing: NSLayoutConstraint!
 
 	var image: UIImage!
 	var imageTitle: String?

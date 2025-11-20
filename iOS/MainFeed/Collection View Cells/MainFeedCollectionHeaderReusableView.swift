@@ -15,9 +15,10 @@ import UIKit
 final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	var delegate: MainFeedCollectionHeaderReusableViewDelegate?
 
-	@IBOutlet weak var headerTitle: UILabel!
-	@IBOutlet weak var disclosureIndicator: UIImageView!
-	@IBOutlet weak var unreadCountLabel: UILabel!
+	@IBOutlet var headerTitle: UILabel!
+	@IBOutlet var disclosureIndicator: UIImageView!
+	@IBOutlet var unreadCountLabel: UILabel!
+
 	private var unreadLabelWidthConstraint: NSLayoutConstraint?
 
 	override var accessibilityLabel: String? {

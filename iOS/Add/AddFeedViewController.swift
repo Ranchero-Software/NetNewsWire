@@ -13,11 +13,10 @@ import RSTree
 import RSParser
 
 final class AddFeedViewController: UITableViewController {
-
-	@IBOutlet weak var addButton: UIBarButtonItem!
-	@IBOutlet weak var urlTextField: UITextField!
-	@IBOutlet weak var urlTextFieldToSuperViewConstraint: NSLayoutConstraint!
-	@IBOutlet weak var nameTextField: UITextField!
+	@IBOutlet var addButton: UIBarButtonItem!
+	@IBOutlet var urlTextField: UITextField!
+	@IBOutlet var urlTextFieldToSuperViewConstraint: NSLayoutConstraint!
+	@IBOutlet var nameTextField: UITextField!
 
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 

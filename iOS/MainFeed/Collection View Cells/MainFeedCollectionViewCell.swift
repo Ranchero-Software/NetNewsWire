@@ -13,10 +13,9 @@ import RSTree
 
 
 class MainFeedCollectionViewCell: UICollectionViewCell {
-
-	@IBOutlet weak var feedTitle: UILabel!
-	@IBOutlet weak var faviconView: IconView!
-	@IBOutlet weak var unreadCountLabel: UILabel!
+	@IBOutlet var feedTitle: UILabel!
+	@IBOutlet var faviconView: IconView!
+	@IBOutlet var unreadCountLabel: UILabel!
 	private var faviconLeadingConstraint: NSLayoutConstraint?
 
 	var iconImage: IconImage? {

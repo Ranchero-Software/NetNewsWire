@@ -14,7 +14,7 @@ import Account
 final class CloudKitAccountViewController: UITableViewController {
 
 	weak var delegate: AddAccountDismissDelegate?
-	@IBOutlet weak var footerLabel: UILabel!
+	@IBOutlet var footerLabel: UILabel!
 
 	override func viewDidLoad() {
 		super.viewDidLoad()

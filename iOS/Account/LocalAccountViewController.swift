@@ -12,8 +12,8 @@ import Account
 
 final class LocalAccountViewController: UITableViewController {
 
-	@IBOutlet weak var nameTextField: UITextField!
-	@IBOutlet weak var footerLabel: UILabel!
+	@IBOutlet var nameTextField: UITextField!
+	@IBOutlet var footerLabel: UILabel!
 
 	weak var delegate: AddAccountDismissDelegate?
 

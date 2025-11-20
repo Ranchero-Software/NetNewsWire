@@ -9,7 +9,6 @@
 import UIKit
 
 final class ShareFolderPickerCell: UITableViewCell {
-
-	@IBOutlet weak var icon: UIImageView!
-	@IBOutlet weak var label: UILabel!
+	@IBOutlet var icon: UIImageView!
+	@IBOutlet var label: UILabel!
 }

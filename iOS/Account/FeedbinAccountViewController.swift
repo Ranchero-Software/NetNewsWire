@@ -15,13 +15,13 @@ import Secrets
 
 final class FeedbinAccountViewController: UITableViewController {
 
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var emailTextField: UITextField!
-	@IBOutlet weak var passwordTextField: UITextField!
-	@IBOutlet weak var showHideButton: UIButton!
-	@IBOutlet weak var actionButton: UIButton!
-	@IBOutlet weak var footerLabel: UILabel!
+	@IBOutlet var activityIndicator: UIActivityIndicatorView!
+	@IBOutlet var cancelBarButtonItem: UIBarButtonItem!
+	@IBOutlet var emailTextField: UITextField!
+	@IBOutlet var passwordTextField: UITextField!
+	@IBOutlet var showHideButton: UIButton!
+	@IBOutlet var actionButton: UIButton!
+	@IBOutlet var footerLabel: UILabel!
 
 	weak var account: Account?
 	weak var delegate: AddAccountDismissDelegate?

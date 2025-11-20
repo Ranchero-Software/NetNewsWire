@@ -9,9 +9,8 @@
 import UIKit
 
 final class SettingsComboTableViewCell: VibrantTableViewCell {
-
-	@IBOutlet weak var comboImage: UIImageView!
-	@IBOutlet weak var comboNameLabel: UILabel!
+	@IBOutlet var comboImage: UIImageView!
+	@IBOutlet var comboNameLabel: UILabel!
 
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)

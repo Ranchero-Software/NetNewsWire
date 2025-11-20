@@ -11,8 +11,8 @@ import UniformTypeIdentifiers
 import Synchronization
 
 final class ShareViewController: NSViewController {
-	@IBOutlet weak var nameTextField: NSTextField!
-	@IBOutlet weak var folderPopUpButton: NSPopUpButton!
+	@IBOutlet var nameTextField: NSTextField!
+	@IBOutlet var folderPopUpButton: NSPopUpButton!
 
 	private struct State: Sendable {
 		var url: URL?

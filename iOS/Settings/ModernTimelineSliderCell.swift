@@ -14,7 +14,7 @@ enum SliderConfiguration {
 }
 
 final class ModernTimelineSliderCell: UITableViewCell {
-	@IBOutlet weak var slider: UISlider!
+	@IBOutlet var slider: UISlider!
 
 	private let container = UIView()
 

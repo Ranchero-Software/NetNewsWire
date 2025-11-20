@@ -14,16 +14,15 @@ import Account
 import Secrets
 
 final class ReaderAPIAccountViewController: UITableViewController {
-
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var usernameTextField: UITextField!
-	@IBOutlet weak var passwordTextField: UITextField!
-	@IBOutlet weak var apiURLTextField: UITextField!
-	@IBOutlet weak var showHideButton: UIButton!
-	@IBOutlet weak var actionButton: UIButton!
-	@IBOutlet weak var footerLabel: UILabel!
-	@IBOutlet weak var signUpButton: UIButton!
+	@IBOutlet var activityIndicator: UIActivityIndicatorView!
+	@IBOutlet var cancelBarButtonItem: UIBarButtonItem!
+	@IBOutlet var usernameTextField: UITextField!
+	@IBOutlet var passwordTextField: UITextField!
+	@IBOutlet var apiURLTextField: UITextField!
+	@IBOutlet var showHideButton: UIButton!
+	@IBOutlet var actionButton: UIButton!
+	@IBOutlet var footerLabel: UILabel!
+	@IBOutlet var signUpButton: UIButton!
 
 	weak var account: Account?
 	var accountType: AccountType?

@@ -10,11 +10,10 @@ import UIKit
 import Articles
 
 final class ContextMenuPreviewViewController: UIViewController {
-
-	@IBOutlet weak var blogNameLabel: UILabel!
-	@IBOutlet weak var blogAuthorLabel: UILabel!
-	@IBOutlet weak var articleTitleLabel: UILabel!
-	@IBOutlet weak var dateTimeLabel: UILabel!
+	@IBOutlet var blogNameLabel: UILabel!
+	@IBOutlet var blogAuthorLabel: UILabel!
+	@IBOutlet var articleTitleLabel: UILabel!
+	@IBOutlet var dateTimeLabel: UILabel!
 
 	var article: Article!
 
