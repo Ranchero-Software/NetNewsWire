@@ -7,6 +7,7 @@
 //
 
 #if os(iOS)
+
 import UIKit
 
 extension UIResponder {
@@ -33,4 +34,5 @@ extension UIResponder {
 	}
 
 }
+
 #endif

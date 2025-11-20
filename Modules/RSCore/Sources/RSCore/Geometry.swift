@@ -8,7 +8,6 @@
 
 import Foundation
 
-#if os(macOS)
 public extension CGRect {
 
 	/// Centers a rectangle vertically in another rectangle.
@@ -46,4 +45,13 @@ public extension CGRect {
 		return self.centeredHorizontally(in: self.centeredVertically(in: containerRect))
 	}
 }
-#endif
+
+public extension Array where Element == CGRect {
+
+	func maxY() -> CGFloat {
+
+		var y: CGFloat = 0.0
+		self.forEach { y = Swift.max(y, $0.maxY) }
+		return y
+	}
+}

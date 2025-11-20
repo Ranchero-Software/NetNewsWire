@@ -6,6 +6,8 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 public final class CroppingPreviewParameters: UIPreviewParameters {
@@ -20,3 +22,5 @@ public final class CroppingPreviewParameters: UIPreviewParameters {
 		self.visiblePath = visiblePath
 	}
 }
+
+#endif

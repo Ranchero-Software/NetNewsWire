@@ -6,6 +6,8 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+#if os(iOS)
+
 import UIKit
 
 public final class ImageHeaderView: UITableViewHeaderFooterView {
@@ -35,3 +37,5 @@ public final class ImageHeaderView: UITableViewHeaderFooterView {
 		imageView.frame = CGRect(x: x, y: y, width: 48.0, height: 48.0)
 	}
 }
+
+#endif
