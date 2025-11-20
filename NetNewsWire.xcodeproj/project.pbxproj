@@ -428,7 +428,7 @@
 			membershipExceptions = (
 				Assets.swift,
 				Extensions/IconImage.swift,
-				"Extensions/Node-Extensions.swift",
+				"Extensions/Node+Extensions.swift",
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,
 				ShareExtension/ExtensionFeedAddRequest.swift,
