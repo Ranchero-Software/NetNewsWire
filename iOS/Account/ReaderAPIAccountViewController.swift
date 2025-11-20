@@ -7,10 +7,11 @@
 //
 
 import UIKit
+import SafariServices
+import RSCore
+import RSWeb
 import Account
 import Secrets
-import RSWeb
-import SafariServices
 
 final class ReaderAPIAccountViewController: UITableViewController {
 

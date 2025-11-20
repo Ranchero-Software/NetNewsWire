@@ -6,9 +6,7 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import UIKit
-
-extension Array where Element == CGRect {
+public extension Array where Element == CGRect {
 
 	func maxY() -> CGFloat {
 

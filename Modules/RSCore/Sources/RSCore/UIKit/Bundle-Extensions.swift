@@ -8,18 +8,16 @@
 
 import Foundation
 
-extension Bundle {
-
+public extension Bundle {
 	var appName: String {
-		return infoDictionary?["CFBundleName"] as! String
+		infoDictionary?["CFBundleName"] as! String
 	}
 
 	var versionNumber: String {
-		return infoDictionary?["CFBundleShortVersionString"] as! String
+		infoDictionary?["CFBundleShortVersionString"] as! String
 	}
 
 	var buildNumber: String {
-		return infoDictionary?["CFBundleVersion"] as! String
+		infoDictionary?["CFBundleVersion"] as! String
 	}
-
 }

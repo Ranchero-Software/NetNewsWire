@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSCore
 
 extension UITableView {
 

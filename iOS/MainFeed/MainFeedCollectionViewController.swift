@@ -7,16 +7,15 @@
 //
 
 import UIKit
-import WebKit
-import SafariServices
 import os
-import Account
-import Articles
+import SafariServices
+import UniformTypeIdentifiers
+import WebKit
 import RSCore
 import RSTree
 import RSWeb
-import SafariServices
-import UniformTypeIdentifiers
+import Account
+import Articles
 
 private let reuseIdentifier = "FeedCell"
 private let folderIdentifier = "Folder"

@@ -8,6 +8,7 @@
 
 import UIKit
 import SafariServices
+import RSCore
 import Account
 
 final class CloudKitAccountViewController: UITableViewController {

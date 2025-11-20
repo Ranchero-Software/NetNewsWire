@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSCore
 import Account
 
 final class LocalAccountViewController: UITableViewController {

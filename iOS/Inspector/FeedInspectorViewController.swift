@@ -7,9 +7,10 @@
 //
 
 import UIKit
-import Account
 import SafariServices
 import UserNotifications
+import RSCore
+import Account
 
 final class FeedInspectorViewController: UITableViewController {
 

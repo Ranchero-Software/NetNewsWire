@@ -8,16 +8,16 @@
 
 import UIKit
 import SafariServices
+import RSCore
 import Account
 
 final class AccountInspectorViewController: UITableViewController {
-
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 
-	@IBOutlet weak var nameTextField: UITextField!
-	@IBOutlet weak var activeSwitch: UISwitch!
-	@IBOutlet weak var deleteAccountButton: VibrantButton!
-	@IBOutlet weak var limitationsAndSolutionsButton: UIButton!
+	@IBOutlet var nameTextField: UITextField!
+	@IBOutlet var activeSwitch: UISwitch!
+	@IBOutlet var deleteAccountButton: VibrantButton!
+	@IBOutlet var limitationsAndSolutionsButton: UIButton!
 
 	var isModal = false
 	weak var account: Account?
@@ -195,7 +195,6 @@ extension AccountInspectorViewController {
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
-
 }
 
 // MARK: UITextFieldDelegate
@@ -206,5 +205,4 @@ extension AccountInspectorViewController: UITextFieldDelegate {
 		textField.resignFirstResponder()
 		return true
 	}
-
 }

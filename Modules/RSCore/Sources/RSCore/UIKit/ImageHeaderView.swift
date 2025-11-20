@@ -8,11 +8,10 @@
 
 import UIKit
 
-final class ImageHeaderView: UITableViewHeaderFooterView {
+public final class ImageHeaderView: UITableViewHeaderFooterView {
+	public static let rowHeight = CGFloat(integerLiteral: 88)
 
-	static let rowHeight = CGFloat(integerLiteral: 88)
-
-	var imageView = UIImageView()
+	public let imageView = UIImageView()
 
 	override init(reuseIdentifier: String?) {
 		super.init(reuseIdentifier: reuseIdentifier)
@@ -30,7 +29,7 @@ final class ImageHeaderView: UITableViewHeaderFooterView {
 		addSubview(imageView)
 	}
 
-	override func layoutSubviews() {
+	public override func layoutSubviews() {
 		let x = (bounds.width - 48.0) / 2
 		let y = (bounds.height - 48.0) / 2
 		imageView.frame = CGRect(x: x, y: y, width: 48.0, height: 48.0)
