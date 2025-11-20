@@ -415,7 +415,6 @@
 				Commands/MarkCommandValidationStatus.swift,
 				ExtensionPoints/SendToMarsEditCommand.swift,
 				ExtensionPoints/SendToMicroBlogCommand.swift,
-				"Extensions/NSView-Extensions.swift",
 				Resources/NewsFax.nnwtheme,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,

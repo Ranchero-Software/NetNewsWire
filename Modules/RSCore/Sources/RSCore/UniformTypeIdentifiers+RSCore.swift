@@ -8,7 +8,7 @@
 
 import UniformTypeIdentifiers
 
-extension UTType {
+public extension UTType {
 
 	static let opml = UTType("org.opml.opml")!
 }

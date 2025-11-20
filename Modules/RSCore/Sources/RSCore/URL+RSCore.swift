@@ -8,13 +8,7 @@
 
 import Foundation
 
-extension URL {
-
-	/// Extracts email address from a `URL` with a `mailto` scheme, otherwise `nil`.
-	var emailAddress: String? {
-		scheme == "mailto" ? URLComponents(url: self, resolvingAgainstBaseURL: false)?.path : nil
-	}
-
+public extension URL {
 	/// Percent encoded `mailto` URL for use with `canOpenUrl`. If the URL doesn't contain the `mailto` scheme, this is `nil`.
 	var percentEncodedEmailAddress: URL? {
 		guard scheme == "mailto" else {
@@ -24,16 +18,6 @@ extension URL {
 			return nil
 		}
 		return URL(string: urlString)
-	}
-
-	func valueFor(_ parameter: String) -> String? {
-		guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false),
-			  let queryItems = components.queryItems,
-			  let value = queryItems.first(where: { $0.name == parameter })?.value else {
-			return nil
-		}
-		return value
-
 	}
 
 	/// Percent-encode spaces in links that may contain spaces but are otherwise already percent-encoded.
