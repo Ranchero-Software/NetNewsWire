@@ -40,7 +40,14 @@
       "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/CXdiQ66vrw6xQvwpUsnSF.xccrashpoint/**)",
       "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/CUBuQldlzk5kfHyWcXeXc4.xccrashpoint/**)",
       "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DUqtMkHqpQuJK5f-_BXM2A.xccrashpoint/**)",
-      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DlmMpUlOi9xJldzoOvTvaq.xccrashpoint/**)"
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DlmMpUlOi9xJldzoOvTvaq.xccrashpoint/**)",
+      "Bash(chmod:*)",
+      "Bash(./symbolicate_json_crash.sh:*)",
+      "Read(//private/tmp/**)",
+      "Bash(./symbolicate_all_crashes.sh:*)",
+      "Bash(./symbolicate_crash_simple.sh:*)",
+      "Bash(rm:*)",
+      "Bash(./symbolicate_crash.sh:*)"
     ],
     "deny": []
   }
