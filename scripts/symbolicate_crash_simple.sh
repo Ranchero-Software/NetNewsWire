@@ -45,6 +45,13 @@ if [ ! -f "$CRASH_LOG" ]; then
     exit 1
 fi
 
+# Skip if already symbolicated
+if [[ "$CRASH_LOG" == *"symbolicated"* ]]; then
+    print_warning "File appears to already be symbolicated (contains 'symbolicated' in name): $CRASH_LOG"
+    print_info "Skipping to avoid re-symbolicating"
+    exit 0
+fi
+
 # Find symbolicatecrash
 SYMBOLICATE_CRASH=$(find /Applications/Xcode.app -name "symbolicatecrash" 2>/dev/null | head -n 1)
 
@@ -77,8 +84,8 @@ if [ -z "$DSYM_DIR" ]; then
         print_info "Platform: iOS"
     fi
 
-    # Extract UUID
-    APP_UUID=$(sed -n '/^Binary Images:/,$p' "$CRASH_LOG" | grep "0x" | grep "+$APP_NAME " | head -n 1 | grep -o '<[a-f0-9]*>' | tr -d '<>' || echo "")
+    # Extract UUID - try both formats (+AppName and AppName.app)
+    APP_UUID=$(sed -n '/^Binary Images:/,$p' "$CRASH_LOG" | grep "0x" | grep -E "(\+$APP_NAME |$APP_NAME\.app)" | head -n 1 | grep -o '<[a-f0-9-]*>' | tr -d '<>' || echo "")
 
     if [ -n "$APP_UUID" ]; then
         print_info "App UUID: $APP_UUID"
