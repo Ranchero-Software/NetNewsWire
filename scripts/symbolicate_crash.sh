@@ -58,6 +58,13 @@ if [ ! -f "$CRASH_LOG" ]; then
     exit 1
 fi
 
+# Skip if already symbolicated
+if [[ "$CRASH_LOG" == *"symbolicated"* ]]; then
+    print_warning "File appears to already be symbolicated (contains 'symbolicated' in name): $CRASH_LOG"
+    print_info "Skipping to avoid re-symbolicating"
+    exit 0
+fi
+
 print_info "Crash log: $CRASH_LOG"
 
 # Extract app info from crash log
@@ -98,18 +105,26 @@ temp_uuids=$(mktemp)
 # Extract lines from "Binary Images:" section
 sed -n '/^Binary Images:/,$p' "$CRASH_LOG" | grep "0x" | while read line; do
     # Extract binary name and UUID
-    # Format: 0xaddress - 0xaddress [+]BinaryName arch <uuid> /path
-    # Fields: 1=start_addr 2=- 3=end_addr 4=[+]binary 5=arch 6=<uuid> 7+=path
-    if [[ "$line" =~ \<([a-f0-9]+)\> ]]; then
+    # Two formats supported:
+    #   Old: 0xaddress - 0xaddress +BinaryName arch <uuid> /path
+    #   New: 0xaddress - 0xaddress com.bundle.id (version) <uuid> /path
+    if [[ "$line" =~ \<([a-f0-9-]+)\> ]]; then
         uuid="${BASH_REMATCH[1]}"
-        # Extract field 4 which is the binary name
-        binary=$(echo "$line" | awk '{
-            # Field 4 contains the binary name (possibly with + prefix)
-            bin = $4
-            # Remove leading + if present
-            gsub(/^\+/, "", bin)
-            print bin
-        }')
+
+        # Try to extract binary name from path (last component)
+        if [[ "$line" =~ /([^/]+)$ ]]; then
+            binary="${BASH_REMATCH[1]}"
+        else
+            # Fallback: try field 4 (old format with + prefix)
+            binary=$(echo "$line" | awk '{
+                bin = $4
+                gsub(/^\+/, "", bin)
+                print bin
+            }')
+        fi
+
+        # Clean up UUID (remove hyphens)
+        uuid=$(echo "$uuid" | tr -d '-')
         echo "$binary:$uuid" >> "$temp_uuids"
     fi
 done
@@ -142,7 +157,11 @@ else
     fi
 
     # Get the main app UUID to search for
+    # First try from the extracted UUIDs, then try direct extraction from Binary Images
     APP_UUID=$(grep "^$APP_NAME:" /tmp/crash_uuids.txt | cut -d: -f2 | head -n 1)
+    if [ -z "$APP_UUID" ]; then
+        APP_UUID=$(sed -n '/^Binary Images:/,$p' "$CRASH_LOG" | grep "0x" | grep -E "(\+$APP_NAME |$APP_NAME\.app)" | head -n 1 | grep -o '<[a-f0-9-]*>' | tr -d '<>-' | tr '[:upper:]' '[:lower:]' || echo "")
+    fi
 
     if [ -z "$APP_UUID" ]; then
         print_warning "Could not find UUID for $APP_NAME in crash log"

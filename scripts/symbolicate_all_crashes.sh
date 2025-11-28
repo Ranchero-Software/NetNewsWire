@@ -53,9 +53,13 @@ print_section "Crash Log Batch Symbolication"
 print_info "Directory: $CRASH_DIR"
 print_info "Pattern: *crash*.log (case-insensitive)"
 
-# Find all crash log files (case-insensitive)
+# Find all crash log files (case-insensitive), excluding already symbolicated files
 CRASH_LOGS=()
 while IFS= read -r -d '' file; do
+    # Skip files with "symbolicated" in the name
+    if [[ "$file" == *"symbolicated"* ]]; then
+        continue
+    fi
     CRASH_LOGS+=("$file")
 done < <(find "$CRASH_DIR" -maxdepth 1 -type f -iname "*crash*.log" -print0 2>/dev/null)
 
@@ -113,8 +117,8 @@ symbolicate_single() {
     fi
     print_info "Platform: $PLATFORM"
 
-    # Extract UUID
-    APP_UUID=$(sed -n '/^Binary Images:/,$p' "$crash_log" | grep "0x" | grep "+$APP_NAME " | head -n 1 | grep -o '<[a-f0-9]*>' | tr -d '<>' || echo "")
+    # Extract UUID - try both formats (+AppName and AppName.app)
+    APP_UUID=$(sed -n '/^Binary Images:/,$p' "$crash_log" | grep "0x" | grep -E "(\+$APP_NAME |$APP_NAME\.app)" | head -n 1 | grep -o '<[a-f0-9-]*>' | tr -d '<>' || echo "")
 
     # Find matching archive
     DSYM_DIR=""
