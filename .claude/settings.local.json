@@ -19,7 +19,14 @@
       "Bash(1)",
       "Bash(sed:*)",
       "Bash(cat:*)",
-      "Bash(dd:*)"
+      "Bash(dd:*)",
+      "Bash(chmod:*)",
+      "Bash(./symbolicate_json_crash.sh:*)",
+      "Read(//private/tmp/**)",
+      "Bash(./symbolicate_all_crashes.sh:*)",
+      "Bash(./symbolicate_crash_simple.sh:*)",
+      "Bash(rm:*)",
+      "Bash(./symbolicate_crash.sh:*)"
     ],
     "deny": []
   }
