@@ -524,9 +524,12 @@ final class ReaderAPICaller: NSObject {
 					if self.variant == .theOldReader {
 						return "i=tag:google.com,2005:reader/item/\(articleID)"
 					} else {
-						let idValue = Int(articleID)!
-						let idHexString = String(idValue, radix: 16, uppercase: false)
-						return "i=tag:google.com,2005:reader/item/\(idHexString)"
+						if let idValue = Int(articleID) {
+							let idHexString = String(idValue, radix: 16, uppercase: false)
+							return "i=tag:google.com,2005:reader/item/\(idHexString)"
+						} else {
+							return "i=tag:google.com,2005:reader/item/\(articleID)"
+						}
 					}
 				}).joined(separator:"&")
 				
