@@ -1,33 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find:*)",
-      "Bash(grep:*)",
-      "Bash(ls:*)",
-      "Bash(./buildscripts/quiet_build_and_test.sh:*)",
-      "WebSearch",
-      "WebFetch(domain:github.com)",
-      "Bash(gh issue view:*)",
-      "Bash(xcodebuild:*)",
-      "Bash(swift test:*)",
-      "WebFetch(domain:swiftlang.github.io)",
-      "Bash(git log:*)",
-      "Bash(gh pr list:*)",
-      "Bash(gh issue list:*)",
-      "Bash(xcbeautify:*)",
-      "Bash(swift build:*)",
-      "Bash(1)",
-      "Bash(sed:*)",
-      "Bash(cat:*)",
-      "Bash(dd:*)",
-      "Bash(chmod:*)",
-      "Bash(./symbolicate_json_crash.sh:*)",
-      "Read(//private/tmp/**)",
-      "Bash(./symbolicate_all_crashes.sh:*)",
-      "Bash(./symbolicate_crash_simple.sh:*)",
-      "Bash(rm:*)",
-      "Bash(./symbolicate_crash.sh:*)"
+      "Bash(DEBUG=1 ./symbolicate_crash.sh:*)",
+      "Read(//Users/brent/Library/Developer/Xcode/Archives/**)",
+      "Bash(ARCHIVE=\"/Users/brent/Library/Developer/Xcode/Archives/2025-11-01/NetNewsWire 11-1-25, 8.56 PM.xcarchive\")",
+      "Bash(atos:*)",
+      "Bash(dwarfdump:*)",
+      "Bash(./test_frame_extraction.sh)",
+      "Bash(./test_dsym_lookup.sh:*)",
+      "Bash(./test_main_loop.sh:*)",
+      "Bash(tee:*)",
+      "Bash(/dev/null)"
     ],
-    "deny": []
+    "deny": [],
+    "ask": []
   }
 }
