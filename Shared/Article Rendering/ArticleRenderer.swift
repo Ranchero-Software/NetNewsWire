@@ -179,7 +179,7 @@ private extension ArticleRenderer {
 	}
 
 	static var defaultStyleSheet: String = {
-		let path = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
+		let path = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
 		let s = try! String(contentsOfFile: path, encoding: .utf8)
 		return "\n\(s)\n"
 	}()
