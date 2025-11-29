@@ -88,7 +88,7 @@ final class ImportOPMLWindowController: NSWindowController {
 		panel.allowsMultipleSelection = false
 		panel.canChooseDirectories = false
 		panel.resolvesAliases = true
-		panel.allowedContentTypes = [UTType.opml, UTType.xml]
+		panel.acceptOPML()
 		panel.allowsOtherFileTypes = false
 		
 		panel.beginSheetModal(for: hostWindow!) { modalResult in
