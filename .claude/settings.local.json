@@ -14,7 +14,8 @@
       "Bash(ACCOUNT_DSYM=\"/Users/brent/Library/Developer/Xcode/Archives/2025-11-01/NetNewsWire 11-1-25, 8.56 PM.xcarchive/dSYMs/Account.framework.dSYM/Contents/Resources/DWARF/Account\":*)",
       "Bash(nm:*)",
       "Bash(./check_account_symbol.sh)",
-      "Bash(/tmp/test_symbolicatecrash.sh)"
+      "Bash(/tmp/test_symbolicatecrash.sh)",
+      "Read(//Users/brent/Library/Developer/Xcode/DerivedData/**)"
     ],
     "deny": [],
     "ask": []
