@@ -1,0 +1,173 @@
+========================================
+Symbolicated Crash Report
+========================================
+
+Process:         NetNewsWire
+Bundle ID:       com.ranchero.NetNewsWire-Evergreen
+Version:         6.2 (6200)
+Architecture:    ARM-64
+Crash Time:      2025-11-17 06:48:16.8948 -0800
+OS Version:      macOS 15.6 (24G84)
+
+Exception Information:
+Type:            EXC_CRASH
+Signal:          SIGABRT
+Codes:           0x0000000000000000, 0x0000000000000000
+
+Application Specific Information:
+libsystem_c.dylib: abort() called
+
+========================================
+Thread Backtraces
+========================================
+
+----------------------------------------
+Thread 0 Crashed (ID: 235119322)
+Queue: com.apple.main-thread
+----------------------------------------
+0   libsystem_kernel.dylib         0x1821a2388 __pthread_kill + 8
+1   libsystem_pthread.dylib        0x1821db88c pthread_kill + 296
+2   libsystem_c.dylib              0x1820e4a3c abort + 124
+3   NetNewsWire                    0x103017460 -[PLCrashReporter setCrashCallbacks:].cold.1 (in NetNewsWire) (PLCrashReporter.m:0)
+4   NetNewsWire                    0x103014ff4 -[PLCrashReporter generateLiveReportWithThread:] (in NetNewsWire) (PLCrashReporter.m:659)
+5   Foundation                     0x18386cce4 _NSAppleEventManagerGenericHandler + 252
+6   AE                             0x189cbf13c 0xb13c
+7   AE                             0x189cbea7c 0xaa7c
+8   AE                             0x189cb8044 aeProcessAppleEvent + 484
+9   HIToolbox                      0x18dcba828 AEProcessAppleEvent + 68
+10  AppKit                         0x1861e9d38 _DPSNextEvent + 1456
+11  AppKit                         0x186b88940 -[NSApplication(NSEventRouting) _nextEventMatchingEventMask:untilDate:inMode:dequeue:] + 688
+12  AppKit                         0x1861dcbe4 -[NSApplication run] + 480
+13  AppKit                         0x1861b32dc NSApplicationMain + 880
+14  NetNewsWire                    0x102fec510 main (in NetNewsWire) (AppDelegate.swift:33)
+15  dyld                           0x181e3ab98 start + 6076
+
+----------------------------------------
+Thread 1 (ID: 235119533)
+Queue: com.apple.WebKit.ServicesController
+----------------------------------------
+0   libsystem_kernel.dylib         0x18219b9b8 __ulock_wait + 8
+1   libdispatch.dylib              0x182025cbc _dlock_wait + 56
+2   libdispatch.dylib              0x182025adc _dispatch_thread_event_wait_slow + 56
+3   libdispatch.dylib              0x182033a88 __DISPATCH_WAIT_FOR_QUEUE__ + 368
+4   libdispatch.dylib              0x182033640 _dispatch_sync_f_slow + 148
+5   WebKit                         0x1a8d8c82c void std::__1::__call_once_proxy[abi:sn190102]<std::__1::tuple<WebKit::ServicesController::refreshExistingServices(bool)::'block-literal'::$_10&&>>(void*) + 112
+6   libc++.1.dylib                 0x1820f93b8 std::__1::__call_once(unsigned long volatile&, void*, void (*)(void*)) + 196
+7   WebKit                         0x1a8d89320 invocation function for block in WebKit::ServicesController::refreshExistingServices(bool) + 432
+8   libdispatch.dylib              0x182023b2c _dispatch_call_block_and_release + 32
+9   libdispatch.dylib              0x18203d85c _dispatch_client_callout + 16
+10  libdispatch.dylib              0x18202c350 _dispatch_lane_serial_drain + 740
+11  libdispatch.dylib              0x18202ce2c _dispatch_lane_invoke + 388
+12  libdispatch.dylib              0x182037264 _dispatch_root_queue_drain_deferred_wlh + 292
+13  libdispatch.dylib              0x182036ae8 _dispatch_workloop_worker_thread + 540
+14  libsystem_pthread.dylib        0x1821d7e64 _pthread_wqthread + 292
+15  libsystem_pthread.dylib        0x1821d6b74 start_wqthread + 8
+
+----------------------------------------
+Thread 2 (ID: 235119534)
+----------------------------------------
+0   libsystem_pthread.dylib        0x1821d6b6c start_wqthread + 0
+
+----------------------------------------
+Thread 3 (ID: 235119535)
+----------------------------------------
+0   libsystem_pthread.dylib        0x1821d6b6c start_wqthread + 0
+
+----------------------------------------
+Thread 4 (ID: 235119594)
+Name: JavaScriptCore libpas scavenger
+----------------------------------------
+0   libsystem_kernel.dylib         0x18219d3cc __psynch_cvwait + 8
+1   libsystem_pthread.dylib        0x1821dc0e0 _pthread_cond_wait + 984
+2   JavaScriptCore                 0x1a2439884 scavenger_thread_main + 1364
+3   libsystem_pthread.dylib        0x1821dbc0c _pthread_start + 136
+4   libsystem_pthread.dylib        0x1821d6b80 thread_start + 8
+
+----------------------------------------
+Thread 5 (ID: 235119595)
+----------------------------------------
+0   libsystem_pthread.dylib        0x1821d6b6c start_wqthread + 0
+
+----------------------------------------
+Thread 6 (ID: 235119603)
+----------------------------------------
+0   libsystem_pthread.dylib        0x1821d6b6c start_wqthread + 0
+
+----------------------------------------
+Thread 7 (ID: 235119604)
+Name: WebCore: Scrolling
+----------------------------------------
+0   libsystem_kernel.dylib         0x182199c34 mach_msg2_trap + 8
+1   libsystem_kernel.dylib         0x1821ac3a0 mach_msg2_internal + 76
+2   libsystem_kernel.dylib         0x1821a2764 mach_msg_overwrite + 484
+3   libsystem_kernel.dylib         0x182199fa8 mach_msg + 24
+4   CoreFoundation                 0x1822c6cbc __CFRunLoopServiceMachPort + 160
+5   CoreFoundation                 0x1822c55d8 __CFRunLoopRun + 1208
+6   CoreFoundation                 0x1822c4a98 CFRunLoopRunSpecific + 572
+7   CoreFoundation                 0x18233e554 CFRunLoopRun + 64
+8   JavaScriptCore                 0x1a0eee140 WTF::Detail::CallableWrapper<WTF::RunLoop::create(WTF::ASCIILiteral, WTF::ThreadType, WTF::Thread::QOS)::$_0, void>::call() + 52
+9   JavaScriptCore                 0x1a0f253b0 WTF::Thread::entryPoint(WTF::Thread::NewThreadContext*) + 240
+10  JavaScriptCore                 0x1a0d48c9c WTF::wtfThreadEntryPoint(void*) + 16
+11  libsystem_pthread.dylib        0x1821dbc0c _pthread_start + 136
+12  libsystem_pthread.dylib        0x1821d6b80 thread_start + 8
+
+----------------------------------------
+Thread 8 (ID: 235119605)
+----------------------------------------
+0   libsystem_pthread.dylib        0x1821d6b6c start_wqthread + 0
+
+----------------------------------------
+Thread 9 (ID: 235119606)
+Name: CVDisplayLink
+----------------------------------------
+0   libsystem_kernel.dylib         0x18219d3cc __psynch_cvwait + 8
+1   libsystem_pthread.dylib        0x1821dc10c _pthread_cond_wait + 1028
+2   CoreVideo                      0x18bb7d1f4 CVDisplayLink::waitUntil(unsigned long long) + 336
+3   CoreVideo                      0x18bb7c2dc CVDisplayLink::runIOThread() + 500
+4   libsystem_pthread.dylib        0x1821dbc0c _pthread_start + 136
+5   libsystem_pthread.dylib        0x1821d6b80 thread_start + 8
+
+----------------------------------------
+Thread 10 (ID: 235119610)
+Name: CVDisplayLink
+----------------------------------------
+0   libsystem_kernel.dylib         0x18219d3cc __psynch_cvwait + 8
+1   libsystem_pthread.dylib        0x1821dc10c _pthread_cond_wait + 1028
+2   CoreVideo                      0x18bb7d1f4 CVDisplayLink::waitUntil(unsigned long long) + 336
+3   CoreVideo                      0x18bb7c2dc CVDisplayLink::runIOThread() + 500
+4   libsystem_pthread.dylib        0x1821dbc0c _pthread_start + 136
+5   libsystem_pthread.dylib        0x1821d6b80 thread_start + 8
+
+========================================
+Binary Images
+========================================
+
+0x4344184832 NetNewsWire <169ab24f-6b7f-3a5c-a095-84acd5121e9e> /private/var/folders/*/NetNewsWire.app/Contents/MacOS/NetNewsWire
+0x4350525440 RSParser <78fc5d37-88d6-3196-9155-5af2eef0ca7c> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/RSParser.framework/Versions/A/RSParser
+0x4346331136 SyncDatabase <563bd038-d899-3361-b101-976914a6722b> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/SyncDatabase.framework/Versions/A/SyncDatabase
+0x4348100608 Sparkle <98336fc1-3990-3aa4-9bd2-b2384dd52ad6> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/Sparkle.framework/Versions/A/Sparkle
+0x4346462208 Articles <4e41b3af-3c1e-335e-bdff-a66c91a49e29> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/Articles.framework/Versions/A/Articles
+0x4346085376 RSDatabase <5d67766c-3d77-383e-acf3-3fbbb78b223a> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/RSDatabase.framework/Versions/A/RSDatabase
+0x4346789888 RSTree <5cdbc7dc-f924-3dcc-b7b0-4132fd194ee0> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/RSTree.framework/Versions/A/RSTree
+0x4347527168 ArticlesDatabase <a86900fe-c088-3deb-8095-92c4bb8c63d7> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/ArticlesDatabase.framework/Versions/A/ArticlesDatabase
+0x4346888192 Secrets <cb286967-611c-3e59-807e-95e7b79fcc42> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/Secrets.framework/Versions/A/Secrets
+0x4356145152 Account <ea29d0e0-ce2c-3266-8822-a2d019437f08> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/Account.framework/Versions/A/Account
+0x4346986496 RSCore <68423f4e-85aa-3e6a-9c0b-022080a768eb> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/RSCore.framework/Versions/A/RSCore
+0x4349640704 RSWeb <51049d2d-2f39-38fe-bf36-d0fe656e26ef> /private/var/folders/*/NetNewsWire.app/Contents/Frameworks/RSWeb.framework/Versions/A/RSWeb
+0x4584718336 libobjc-trampolines.dylib <a3faee04-0f8b-3428-9497-560c97eca6fb> /usr/lib/libobjc-trampolines.dylib
+0x4627939328 AGXMetalG16X <8e5557ce-84f2-3aa0-a631-94d3809e5bf0> /System/Library/Extensions/AGXMetalG16X.bundle/Contents/MacOS/AGXMetalG16X
+0x4671586304 AppleMetalOpenGLRenderer <28cfca54-b985-318a-a54a-7709dcd5f39e> /System/Library/Extensions/AppleMetalOpenGLRenderer.bundle/Contents/MacOS/AppleMetalOpenGLRenderer
+0x6477680640 libsystem_kernel.dylib <6e4a96ad-04b8-3e8a-b91d-087e62306246> /usr/lib/system/libsystem_kernel.dylib
+0x6477926400 libsystem_pthread.dylib <d6494ba9-171e-39fc-b1aa-28ecf87975d1> /usr/lib/system/libsystem_pthread.dylib
+0x6476447744 libsystem_c.dylib <dfea8794-80ce-37c3-8f6a-108aa1d0b1b0> /usr/lib/system/libsystem_c.dylib
+0x6501412864 Foundation <b9a92060-f21e-3ecf-9ded-94a65c68a6f4> /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation
+0x6606766080 AE <c410f3f4-79c0-3066-92bd-3b8ab89ade37> /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE
+0x6673809408 HIToolbox <1a037942-11e0-3fc8-aad2-20b11e7ae1a4> /System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox
+0x6544879616 AppKit <860c164c-d04c-30ff-8c6f-e672b74caf11> /System/Library/Frameworks/AppKit.framework/Versions/C/AppKit
+0x6474121216 dyld <3247e185-ced2-36ff-9e29-47a77c23e004> /usr/lib/dyld
+0x6476144640 libdispatch.dylib <24ce0d89-4114-30c2-a81a-3db1f5931cff> /usr/lib/system/libdispatch.dylib
+0x7119384576 WebKit <fb40cbe5-eb40-3ba6-b806-be1abc73a678> /System/Library/Frameworks/WebKit.framework/Versions/A/WebKit
+0x6476980224 libc++.1.dylib <643ed232-ce19-3f63-8015-0aee768c002f> /usr/lib/libc++.1.dylib
+0x6993223680 JavaScriptCore <124e513d-5932-3a30-9f2d-15086a1e382c> /System/Library/Frameworks/JavaScriptCore.framework/Versions/A/JavaScriptCore
+0x6478405632 CoreFoundation <8d45baee-6cc0-3b89-93fd-ea1c8e15c6d7> /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation
+0x6639034368 CoreVideo <09d2cfd2-78be-3ab9-bd62-81adfb485fcc> /System/Library/Frameworks/CoreVideo.framework/Versions/A/CoreVideo
