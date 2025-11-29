@@ -148,7 +148,7 @@ done
 print_info "Found $(wc -l < "$DSYM_CACHE" | tr -d ' ') dSYMs"
 
 # Create output file
-OUTPUT_FILE="${CRASH_LOG%.log}_symbolicated.txt"
+OUTPUT_FILE="${CRASH_LOG%.log}_symbolicated.log"
 
 print_info "Generating symbolicated report..."
 

@@ -306,28 +306,40 @@ temp_file=$(mktemp)
 symbolicated_count=0
 
 while IFS= read -r line; do
-    # Check if this is a stack frame line
+    # Check if this is a stack frame line using grep (handles tabs/spaces better)
     # Format: <frame_num> <binary_name> <address> <load_address> + <offset>
-    if [[ "$line" =~ ^[[:space:]]*([0-9]+)[[:space:]]+([^[:space:]]+)[[:space:]]+(0x[0-9a-f]+)[[:space:]]+(0x[0-9a-f]+)[[:space:]]+\+[[:space:]]+([0-9]+) ]]; then
-        frame_num="${BASH_REMATCH[1]}"
-        binary_name="${BASH_REMATCH[2]}"
-        address="${BASH_REMATCH[3]}"
-        load_address="${BASH_REMATCH[4]}"
-        offset="${BASH_REMATCH[5]}"
+    # Also handles already-symbolicated lines with function names
+    if echo "$line" | grep -q '^[0-9]'; then
+        # Extract components using awk (handles variable whitespace)
+        frame_info=$(echo "$line" | awk '{
+            if (NF >= 5 && $3 ~ /^0x/ && $4 ~ /^0x/ && $5 == "+") {
+                # Unsymbolicated line: frame binary address base + offset
+                print $1 "|" $2 "|" $3 "|" $4 "|" $6
+            }
+        }')
 
-        # Find dSYM for this binary
-        dsym_binary=$(find_dsym_for_binary "$binary_name" "$DSYMS_DIR")
+        if [ -n "$frame_info" ]; then
+            # Split the extracted info
+            frame_num=$(echo "$frame_info" | cut -d'|' -f1)
+            binary_name=$(echo "$frame_info" | cut -d'|' -f2)
+            address=$(echo "$frame_info" | cut -d'|' -f3)
+            load_address=$(echo "$frame_info" | cut -d'|' -f4)
+            offset=$(echo "$frame_info" | cut -d'|' -f5)
 
-        if [ -n "$dsym_binary" ]; then
-            # Symbolicate the address
-            symbol=$(atos -arch "$ARCH" -o "$dsym_binary" -l "$load_address" "$address" 2>/dev/null)
+            # Find dSYM for this binary
+            dsym_binary=$(find_dsym_for_binary "$binary_name" "$DSYMS_DIR" || true)
 
-            # If we got a valid symbol (not just the address back), use it
-            if [ -n "$symbol" ] && [[ ! "$symbol" =~ ^0x[0-9a-f]+ ]] && [[ "$symbol" != "$address "* ]]; then
-                # Format the symbolicated line to match Apple's format
-                echo "$line ($symbol)" >> "$temp_file"
-                symbolicated_count=$((symbolicated_count + 1))
-                continue
+            if [ -n "$dsym_binary" ]; then
+                # Symbolicate the address
+                symbol=$(atos -arch "$ARCH" -o "$dsym_binary" -l "$load_address" "$address" 2>/dev/null)
+
+                # If we got a valid symbol (not just the address back), use it
+                if [ -n "$symbol" ] && [[ ! "$symbol" =~ ^0x[0-9a-f]+ ]] && [[ "$symbol" != "$address "* ]]; then
+                    # Format the symbolicated line to match Apple's format
+                    echo "$line $symbol" >> "$temp_file"
+                    symbolicated_count=$((symbolicated_count + 1))
+                    continue
+                fi
             fi
         fi
     fi

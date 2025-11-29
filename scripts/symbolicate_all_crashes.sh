@@ -3,8 +3,6 @@
 # symbolicate_all_crashes.sh - Batch symbolicate all crash logs in a directory
 # Usage: ./symbolicate_all_crashes.sh [directory]
 
-set -e
-
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -39,15 +37,19 @@ if [ ! -d "$CRASH_DIR" ]; then
     exit 1
 fi
 
-# Find symbolicatecrash tool
-SYMBOLICATE_CRASH=$(find /Applications/Xcode.app -name "symbolicatecrash" 2>/dev/null | head -n 1)
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -z "$SYMBOLICATE_CRASH" ]; then
-    print_error "symbolicatecrash not found. Please install Xcode."
+# Check if symbolication scripts exist
+if [ ! -f "$SCRIPT_DIR/symbolicate_crash.sh" ]; then
+    print_error "symbolicate_crash.sh not found in $SCRIPT_DIR"
     exit 1
 fi
 
-export DEVELOPER_DIR="/Applications/Xcode.app/Contents/Developer"
+if [ ! -f "$SCRIPT_DIR/symbolicate_json_crash.sh" ]; then
+    print_error "symbolicate_json_crash.sh not found in $SCRIPT_DIR"
+    exit 1
+fi
 
 print_section "Crash Log Batch Symbolication"
 print_info "Directory: $CRASH_DIR"
@@ -77,6 +79,21 @@ SUCCESSFUL=0
 FAILED=0
 SKIPPED=0
 
+# Function to detect crash log format
+detect_format() {
+    local crash_log="$1"
+
+    # Check first line for JSON format
+    local first_line=$(head -n 1 "$crash_log")
+    if echo "$first_line" | grep -q '{"app_name"'; then
+        echo "json"
+        return
+    fi
+
+    # Otherwise assume traditional/translated format
+    echo "traditional"
+}
+
 # Function to symbolicate a single crash log
 symbolicate_single() {
     local crash_log="$1"
@@ -84,160 +101,64 @@ symbolicate_single() {
     local total="$3"
 
     local basename=$(basename "$crash_log")
-    local output_file="${crash_log%.log}_symbolicated.log"
 
     print_section "[$index/$total] Processing: $basename"
 
-    # Check if already symbolicated
+    # Detect crash log format
+    local format=$(detect_format "$crash_log")
+
+    # Determine output file name - always use .log extension
+    local output_file="${crash_log%.log}_symbolicated.log"
+
+    # Check if symbolicated file already exists
     if [ -f "$output_file" ]; then
-        read -p "$(echo -e ${YELLOW}Output file exists. Overwrite? [y/N]:${NC} )" -n 1 -r
-        echo
-        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-            print_warning "Skipped: $basename"
-            return 2
-        fi
+        print_warning "Symbolicated file already exists: $(basename "$output_file")"
+        print_info "Skipping (use rm to delete and re-symbolicate)"
+        return 2
     fi
 
-    # Extract app info
-    APP_NAME=$(grep "^Process:" "$crash_log" | awk '{print $2}' | head -n 1)
-    APP_PATH=$(grep "^Path:" "$crash_log" | awk '{print $2}' | head -n 1)
+    print_info "Format: $format"
 
-    if [ -z "$APP_NAME" ]; then
-        print_error "Could not extract app name from crash log"
-        return 1
-    fi
-
-    print_info "App: $APP_NAME"
-
-    # Detect platform
-    if [[ "$APP_PATH" == *"/Contents/MacOS/"* ]]; then
-        PLATFORM="macOS"
-    else
-        PLATFORM="iOS"
-    fi
-    print_info "Platform: $PLATFORM"
-
-    # Extract UUID - try both formats (+AppName and AppName.app)
-    APP_UUID=$(sed -n '/^Binary Images:/,$p' "$crash_log" | grep "0x" | grep -E "(\+$APP_NAME |$APP_NAME\.app)" | head -n 1 | grep -o '<[a-f0-9-]*>' | tr -d '<>' || echo "")
-
-    # Find matching archive
-    DSYM_DIR=""
-    ARCHIVE_BASE="$HOME/Library/Developer/Xcode/Archives"
-
-    if [ -n "$APP_UUID" ]; then
-        print_info "App UUID: $APP_UUID"
-        print_info "Searching for matching archive..."
-
-        # Search for archive by UUID
-        while IFS= read -r archive; do
-            archive_name=$(basename "$archive")
-
-            # Filter by platform
-            if [[ "$PLATFORM" == "macOS" ]] && [[ "$archive_name" == *"iOS"* ]]; then
-                continue
-            fi
-            if [[ "$PLATFORM" == "iOS" ]] && [[ "$archive_name" != *"iOS"* ]]; then
-                continue
-            fi
-
-            # Find app dSYM
-            app_dsym=$(find "$archive/dSYMs" -name "$APP_NAME.app.dSYM" -type d 2>/dev/null | head -n 1)
-            if [ -n "$app_dsym" ]; then
-                dwarf_file=$(find "$app_dsym" -type f -path "*/DWARF/$APP_NAME" 2>/dev/null | head -n 1)
-                if [ -f "$dwarf_file" ]; then
-                    archive_uuid=$(dwarfdump --uuid "$dwarf_file" 2>/dev/null | grep -i "arm64\|x86_64" | head -n 1 | awk '{print $2}' | tr -d '-' | tr '[:upper:]' '[:lower:]')
-
-                    if [ "$archive_uuid" == "$APP_UUID" ]; then
-                        DSYM_DIR="$archive/dSYMs"
-                        print_info "Found by UUID: $(basename "$archive")"
-                        break
-                    fi
-                fi
-            fi
-        done < <(find "$ARCHIVE_BASE" -name "*.xcarchive" -type d 2>/dev/null | sort -r)
-    fi
-
-    # Fallback: find by name
-    if [ -z "$DSYM_DIR" ]; then
-        print_warning "UUID match failed, searching by name..."
-
-        while IFS= read -r archive; do
-            archive_name=$(basename "$archive")
-
-            # Filter by platform
-            if [[ "$PLATFORM" == "macOS" ]] && [[ "$archive_name" == *"iOS"* ]]; then
-                continue
-            fi
-            if [[ "$PLATFORM" == "iOS" ]] && [[ "$archive_name" != *"iOS"* ]]; then
-                continue
-            fi
-
-            if [[ "$archive_name" == *"$APP_NAME"* ]]; then
-                DSYM_DIR="$archive/dSYMs"
-                print_warning "Using by name: $(basename "$archive")"
-                break
-            fi
-        done < <(find "$ARCHIVE_BASE" -name "*.xcarchive" -type d 2>/dev/null | sort -r)
-    fi
-
-    if [ -z "$DSYM_DIR" ] || [ ! -d "$DSYM_DIR" ]; then
-        print_error "Could not find dSYMs for $APP_NAME"
-        return 1
-    fi
-
-    # Symbolicate with system framework paths
-    print_info "Symbolicating..."
-    if DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer "$SYMBOLICATE_CRASH" -d "$DSYM_DIR" "$crash_log" /System/Library/Frameworks /System/Library/PrivateFrameworks /usr/lib > "$output_file" 2>/dev/null; then
-        print_info "✓ Success: $output_file"
-
-        # Show preview
-        if grep -q "Thread 0 Crashed:" "$output_file" 2>/dev/null; then
-            echo ""
-            echo -e "${BLUE}Preview (first 5 frames):${NC}"
-            sed -n '/^Thread 0 Crashed:/,/^Thread [0-9]/p' "$output_file" | head -n 7 | tail -n +2
-        fi
-
-        return 0
-    else
-        print_warning "symbolicatecrash completed with warnings"
-        if [ -f "$output_file" ]; then
-            print_info "Partial output saved: $output_file"
+    # Use appropriate script based on format
+    if [ "$format" == "json" ]; then
+        if "$SCRIPT_DIR/symbolicate_json_crash.sh" "$crash_log" > /dev/null 2>&1; then
+            print_info "✓ Success"
             return 0
         else
+            print_error "✗ Failed"
+            return 1
+        fi
+    else
+        if "$SCRIPT_DIR/symbolicate_crash.sh" "$crash_log" > /dev/null 2>&1; then
+            print_info "✓ Success"
+            return 0
+        else
+            print_error "✗ Failed"
             return 1
         fi
     fi
 }
 
 # Process each crash log
-for i in "${!CRASH_LOGS[@]}"; do
-    crash_log="${CRASH_LOGS[$i]}"
-    index=$((i + 1))
-
+index=1
+for crash_log in "${CRASH_LOGS[@]}"; do
     if symbolicate_single "$crash_log" "$index" "$TOTAL"; then
-        SUCCESSFUL=$((SUCCESSFUL + 1))
+        ((SUCCESSFUL++))
     else
         exit_code=$?
         if [ $exit_code -eq 2 ]; then
-            SKIPPED=$((SKIPPED + 1))
+            ((SKIPPED++))
         else
-            FAILED=$((FAILED + 1))
+            ((FAILED++))
         fi
     fi
-
-    echo ""
+    ((index++))
 done
 
-# Print summary
 print_section "Summary"
 echo -e "${GREEN}Successful:${NC} $SUCCESSFUL"
 echo -e "${YELLOW}Skipped:${NC}    $SKIPPED"
 echo -e "${RED}Failed:${NC}     $FAILED"
-echo -e "Total:      $TOTAL"
+echo "Total:      $TOTAL"
 echo ""
-
-if [ $SUCCESSFUL -gt 0 ]; then
-    print_info "Symbolicated files are saved with '_symbolicated.log' suffix"
-fi
-
-exit 0
+print_info "Symbolicated files are saved with '_symbolicated.log' suffix"

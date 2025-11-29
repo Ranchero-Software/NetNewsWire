@@ -60,6 +60,15 @@ Binary Images:
 0x100000000 - 0x100ffffff +NetNewsWire arm64 <uuid> /path/to/app
 ```
 
+### Translated Report Format (macOS 15+)
+```
+Process:               NetNewsWire [12345]
+Thread 0 Crashed::  Dispatch queue: com.apple.main-thread
+0   libsystem_kernel.dylib        	       0x1821a2388 __pthread_kill + 8
+3   NetNewsWire                   	       0x103017460 0x102ef0000 + 1209440
+```
+**Advantage**: System frameworks are already symbolicated, only your app code needs symbolication
+
 ### JSON Format (macOS 15+)
 ```json
 {"app_name":"NetNewsWire","timestamp":"2025-11-17 06:48:17.00 -0800",...}
@@ -144,7 +153,7 @@ After:  0   NetNewsWire  0x00000001059feea0 closure #1 in ReaderAPICaller.retrie
 
 ## Output Files
 
-All scripts create a `*_symbolicated.log` or `*_symbolicated.txt` file with:
+All scripts create a `*_symbolicated.log` file with:
 - App and system information
 - Exception details
 - Symbolicated stack traces for all threads (with frame numbers)
@@ -212,7 +221,7 @@ brew install jq
 
 ### Files Created
 
-- `*_symbolicated.log` or `*_symbolicated.txt` - Output file with symbols
+- `*_symbolicated.log` - Output file with symbols
 - Original crash log is never modified
 
 ## Best Practices
@@ -234,11 +243,11 @@ brew install jq
 ## Notes
 
 - The JSON crash log format appeared in macOS 15 (Sequoia) and is structurally different from traditional crash logs
+- "Translated Report" format crash logs (macOS 15+) include pre-symbolicated system frameworks, which is valuable for debugging
 - Archives must be built with debug symbols (dSYMs) enabled
 - The scripts search for archives from newest to oldest by default
 - Frame numbers start from 0 (top of stack) to match Apple's format
 - Scripts automatically skip files with "symbolicated" in the filename to avoid re-symbolicating
-- "Translated Report" format crash logs (with both a translated section and full report) may not symbolicate app code correctly - use the JSON format script instead if available
 
 ## Additional Resources
 
