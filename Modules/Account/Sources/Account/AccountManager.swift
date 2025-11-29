@@ -170,9 +170,11 @@ public final class AccountManager: UnreadCountProvider {
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
 		}
+		catch let error as CocoaError where error.code == .fileNoSuchFile {
+			// Already doesn’t exist.
+		}
 		catch {
-			assertionFailure("Could not create folder for OnMyMac account.")
-			abort()
+			// TODO: add logging and/or reporting to user. No need to crash here.
 		}
 		
 		updateUnreadCount()
