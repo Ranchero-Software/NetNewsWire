@@ -37,7 +37,7 @@ Add change notes
 Zip app - NetNewsWire6.1.5b4.zip
 Upload binary to release
 Publish release
-Copy file to releases archive — iCloud Drive/Archive/Releases/
+Copy file to releases archive — /Volumes/KD/Archive/Releases/
 
 Update Appcast on main branch
 	Add changes
