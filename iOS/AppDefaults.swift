@@ -62,6 +62,7 @@ final class AppDefaults {
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let hideReadFeeds = "hideReadFeeds"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -240,7 +241,16 @@ final class AppDefaults {
 			AppDefaults.setString(for: Key.currentThemeName, newValue)
 		}
 	}
-	
+
+	var hideReadFeeds: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.hideReadFeeds)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.hideReadFeeds)
+		}
+	}
+
 	static func registerDefaults() {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
@@ -317,5 +327,4 @@ private extension AppDefaults {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
 	}
-	
 }

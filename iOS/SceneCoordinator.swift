@@ -335,13 +335,22 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 			// for state restoration to work with while we are waiting for the unread counts to initialize.
 			if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
-				treeControllerDelegate.isReadFiltered = readFeedsFilterState
+				// Migrate legacy state to UserDefaults only if not already set
+				if !AppDefaults.shared.hideReadFeeds {
+					AppDefaults.shared.hideReadFeeds = readFeedsFilterState
+				}
+				treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
+			} else {
+				// Use state from UserDefaults
+				treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
 			}
-			
+
 		} else {
-			
+
 			rebuildBackingStores(initialLoad: true)
-			
+
+			// Use state from UserDefaults
+			treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
 		}
 	}
 	
@@ -558,11 +567,15 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func toggleReadFeedsFilter() {
+		let newValue: Bool
 		if isReadFeedsFiltered {
+			newValue = false
 			treeControllerDelegate.isReadFiltered = false
 		} else {
+			newValue = true
 			treeControllerDelegate.isReadFiltered = true
 		}
+		AppDefaults.shared.hideReadFeeds = newValue
 		rebuildBackingStores()
 		mainFeedViewController?.updateUI()
 	}
@@ -2050,7 +2063,6 @@ private extension SceneCoordinator {
 			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
 		}
 		return [
-			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
 			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
 			UserInfoKey.readArticlesFilterState: readArticlesFilterState
 		]
