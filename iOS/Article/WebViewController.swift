@@ -50,7 +50,13 @@ final class WebViewController: UIViewController {
 			windowScrollY = 0
 		}
 	}
-	var isShowingExtractedArticle = false
+	var isShowingExtractedArticle = false {
+		didSet {
+			if AppDefaults.shared.isShowingExtractedArticle != isShowingExtractedArticle {
+				AppDefaults.shared.isShowingExtractedArticle = isShowingExtractedArticle
+			}
+		}
+	}
 
 	var articleExtractorButtonState: ArticleExtractorButtonState = .off {
 		didSet {

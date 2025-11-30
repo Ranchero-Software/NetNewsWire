@@ -107,11 +107,10 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	var stateRestorationActivity: NSUserActivity {
 		let activity = activityManager.stateRestorationActivity
 		var userInfo = activity.userInfo ?? [AnyHashable: Any]()
-		
+
 		userInfo[UserInfoKey.windowState] = windowState()
-		
+
 		let articleState = articleViewController?.currentState
-		userInfo[UserInfoKey.isShowingExtractedArticle] = articleState?.isShowingExtractedArticle ?? false
 		userInfo[UserInfoKey.articleWindowScrollY] = articleState?.windowScrollY ?? 0
 
 		activity.userInfo = userInfo
@@ -2157,10 +2156,17 @@ private extension SceneCoordinator {
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
 		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
 			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo),
-			  let isShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool,
 			  let articleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int else {
 				  return false
 			  }
+
+		// Migrate legacy isShowingExtractedArticle to UserDefaults only if not already set
+		if let legacyIsShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool {
+			if !AppDefaults.shared.isShowingExtractedArticle {
+				AppDefaults.shared.isShowingExtractedArticle = legacyIsShowingExtractedArticle
+			}
+		}
+		let isShowingExtractedArticle = AppDefaults.shared.isShowingExtractedArticle
 
 		switch feedIdentifier {
 

@@ -63,6 +63,7 @@ final class AppDefaults {
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 		static let hideReadFeeds = "hideReadFeeds"
+		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -248,6 +249,15 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.hideReadFeeds)
+		}
+	}
+
+	var isShowingExtractedArticle: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.isShowingExtractedArticle)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.isShowingExtractedArticle)
 		}
 	}
 
