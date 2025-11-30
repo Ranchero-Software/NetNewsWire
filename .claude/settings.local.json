@@ -15,7 +15,13 @@
       "Bash(nm:*)",
       "Bash(./check_account_symbol.sh)",
       "Bash(/tmp/test_symbolicatecrash.sh)",
-      "Read(//Users/brent/Library/Developer/Xcode/DerivedData/**)"
+      "Read(//Users/brent/Library/Developer/Xcode/DerivedData/**)",
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/n60dUfbLqr-vmFRVY3ct6.xccrashpoint/**)",
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/BfyXjXpoOI9_vtYZ0YP8Wm.xccrashpoint/**)",
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/CXdiQ66vrw6xQvwpUsnSF.xccrashpoint/**)",
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/CUBuQldlzk5kfHyWcXeXc4.xccrashpoint/**)",
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DUqtMkHqpQuJK5f-_BXM2A.xccrashpoint/**)",
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DlmMpUlOi9xJldzoOvTvaq.xccrashpoint/**)"
     ],
     "deny": [],
     "ask": []
