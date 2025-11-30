@@ -810,8 +810,9 @@ private extension WebViewController {
 	}
 
 	func openURLInSafariViewController(_ url: URL) {
-
-		let viewController = SFSafariViewController(url: url)
+		guard let viewController = SFSafariViewController.safeSafariViewController(url) else {
+			return
+		}
 		present(viewController, animated: true)
 	}
 }
