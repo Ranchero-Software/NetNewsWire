@@ -1,7 +1,7 @@
 # NetNewsWire Status
 
-Current milestone: NetNewsWire 6.2.1
-	https://github.com/Ranchero-Software/NetNewsWire/milestone/64
+Current milestone: NetNewsWire 6.2.1 on release/6.2.1 branch
+https://github.com/Ranchero-Software/NetNewsWire/milestone/64
 
 Stuart working on Liquid Glass UI for NetNewsWire 7
 
