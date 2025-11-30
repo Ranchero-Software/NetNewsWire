@@ -1,23 +1,28 @@
 # Mac Release Notes
 
-### 6.2 build 6200 1 Nov 2025 - branch main tag: mac-6.2
+### 6.2. build 6201 29 Nov 2025 - branch: release/6.2.1 tag: mac-6.2.1b1
+
+Fixed some crashing bugs
+Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import
+
+### 6.2 build 6200 1 Nov 2025 - branch: main tag: mac-6.2
 
 Bump version and do release build
 
-### 6.2b4 build 6145 29 Oct 2025 - branch main tag: mac-6.2b4
+### 6.2b4 build 6145 29 Oct 2025 - branch: main tag: mac-6.2b4
 
 Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
 Added a dotted underline to links in the Sepia theme, to make links more visible
 
-### 6.2b3 build 6144 29 Oct 2025 - branch main tag: mac-6.2b3
+### 6.2b3 build 6144 29 Oct 2025 - branch: main tag: mac-6.2b3
 
 Added support for source:markdown to the RSS parser. Markdown is stored in the database. When an article doesn’t already have HTML content, the Markdown will be rendered as HTML. (Note: anyone reading this in October 2025 almost surely does not have any source:markdown elements in their feeds, so this won’t affect you. Here’s more info, for the curious <http://scripting.com/2022/07/19/152235.html?title=devNotesForMarkdownInFeeds>)
 
-### 6.2b2 build 6143 21 Oct 2025 - branch main tag: mac-6.2b2
+### 6.2b2 build 6143 21 Oct 2025 - branch: main tag: mac-6.2b2
 
 Made scrolling of the timeline view faster
 
-### 6.2b1 build 6142 19 Oct 2025 - branch main tag: mac-6.2b1
+### 6.2b1 build 6142 19 Oct 2025 - branch: main tag: mac-6.2b1
 
 Improved http/https caching, reducing bandwidth and battery use
 Fixed bug where a feed could be read twice on being added
@@ -42,27 +47,27 @@ Fixed a bug finding a feed in a page that has no body tag
 Now using a number formatter for unread counts in the sidebar
 
 
-### 6.1.11b1 build 6141 9 Sep 2025 - branch main tag: mac-6.1.11b1
+### 6.1.11b1 build 6141 9 Sep 2025 - branch: main tag: mac-6.1.11b1
 
 Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect. <https://github.com/Ranchero-Software/NetNewsWire/issues/4523>
 
-### 6.1.10 build 6140 8 Sep 2025 - branch main tag: mac-6.1.10
+### 6.1.10 build 6140 8 Sep 2025 - branch: main tag: mac-6.1.10
 
 Bump version, do release build
 
-### 6.1.10b4 build 6139 16 Aug 2025 - branch main tag: mac-6.1.10b4
+### 6.1.10b4 build 6139 16 Aug 2025 - branch: main tag: mac-6.1.10b4
 
 Adopt secure state restoration; fix bug with state restoration not working in previous betas.
 
-### 6.1.10b3 build 6138 11 Aug 2025 - branch main tag: mac-6.1.10b3
+### 6.1.10b3 build 6138 11 Aug 2025 - branch: main tag: mac-6.1.10b3
 
 Fixed bug, introduced in previous test build, that prevented choosing an OPML file to import
 
-### 6.1.10b2 build 6137 13 May 2025 - branch main tag: mac-6.1.10b2
+### 6.1.10b2 build 6137 13 May 2025 - branch: main tag: mac-6.1.10b2
 
 Fixed bug, introduced in previous test build, that prevented adding a Feedly account
 
-### 6.1.10b1 build 6136 7 May 2025 - branch main tag: mac-6.1.10b1
+### 6.1.10b1 build 6136 7 May 2025 - branch: main tag: mac-6.1.10b1
 
 Added caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests
 Worked around The Verge’s bug with character encoding
@@ -71,7 +76,7 @@ Fixed double-underlines on 404 Media links. (Fixed bug where using <u> tag insid
 Added &smallcircle; to the entities decoder
 Synced the Mac default theme with the iOS version
 
-### 6.1.9b1 build 6134 11 Jan 2024 - branch 6.1.9-mac tag: mac-6.1.9b1
+### 6.1.9b1 build 6134 11 Jan 2024 - branch: 6.1.9-mac tag: mac-6.1.9b1
 
 Fix some glitches in the default article theme
 Fix an issue with slow updates for some feeds (by not paying attention to http Cache-Control response headers [except for openrss.org])
@@ -84,7 +89,7 @@ Fix state restoration bug by building on Xcode 14
 
 Hopefully fix state restoration bug by building on Xcode 14
 
-### 6.1.7 build 6131 16 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7-release
+### 6.1.7 build 6131 16 Dec 2024 - branch: mac-6.1.7 tag: mac-6.1.7-release
 
 Fix bug clearing refresh progress
 Fix bandwidth bugs with downloading web pages to find feed icons and favicons
@@ -92,7 +97,7 @@ Update default theme with enhancements by John Gruber
 Space out requests made to openrss.org
 Send user-agent with platform, version, and build to openrss.org (and only to that site)
 
-### 6.1.7b1 build 6130 15 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7b1
+### 6.1.7b1 build 6130 15 Dec 2024 - branch: mac-6.1.7 tag: mac-6.1.7b1
 
 Fix bug clearing refresh progress
 Fix bandwidth bugs with downloading web pages to find feed icons and favicons
