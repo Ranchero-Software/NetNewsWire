@@ -325,7 +325,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		// containerExpandedWindowState
-		if AppDefaults.shared.containerExpandedWindowState == nil,
+		if AppDefaults.shared.expandedContainers == nil,
 		   let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
 			let convertedState = legacyState.compactMap { dict -> [String: String]? in
 				var stringDict = [String: String]()
@@ -337,7 +337,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 				return stringDict.isEmpty ? nil : stringDict
 			}
 			let containerIdentifiers = convertedState.compactMap { ContainerIdentifier(userInfo: $0) }
-			AppDefaults.shared.containerExpandedWindowState = Set(containerIdentifiers)
+			AppDefaults.shared.expandedContainers = Set(containerIdentifiers)
 		}
 
 		// readArticlesFilterState
@@ -378,7 +378,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	private func restoreWindowStateFromUserDefaults() {
 		// Restore containerExpandedWindowState from UserDefaults
-		if let storedState = AppDefaults.shared.containerExpandedWindowState {
+		if let storedState = AppDefaults.shared.expandedContainers {
 			expandedTable.formUnion(storedState)
 		}
 
@@ -1734,7 +1734,7 @@ private extension SceneCoordinator {
 	}
 
 	private func saveExpandedTableToUserDefaults() {
-		AppDefaults.shared.containerExpandedWindowState = expandedTable
+		AppDefaults.shared.expandedContainers = expandedTable
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {

@@ -66,7 +66,7 @@ final class AppDefaults {
 		static let hideReadFeeds = "hideReadFeeds"
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
-		static let containerExpandedWindowState = "containerExpandedWindowState"
+		static let expandedContainers = "expandedContainers"
 		static let readArticlesFilterState = "readArticlesFilterState"
 		static let selectedFeedIdentifier = "selectedFeedIdentifier"
 	}
@@ -287,9 +287,9 @@ final class AppDefaults {
 		}
 	}
 
-	var containerExpandedWindowState: Set<ContainerIdentifier>? {
+	var expandedContainers: Set<ContainerIdentifier>? {
 		get {
-			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.containerExpandedWindowState) as? [[String: String]] else {
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.expandedContainers) as? [[String: String]] else {
 				return nil
 			}
 			let containerIdentifiers = rawIdentifiers.compactMap { ContainerIdentifier(userInfo: $0) }
@@ -297,11 +297,11 @@ final class AppDefaults {
 		}
 		set {
 			guard let newValue, !newValue.isEmpty else {
-				UserDefaults.standard.set([String: String](), forKey: Key.containerExpandedWindowState)
+				UserDefaults.standard.set([String: String](), forKey: Key.expandedContainers)
 				return
 			}
 			let containerIdentifierUserInfos = newValue.compactMap { $0.userInfo }
-			UserDefaults.standard.set(containerIdentifierUserInfos, forKey: Key.containerExpandedWindowState)
+			UserDefaults.standard.set(containerIdentifierUserInfos, forKey: Key.expandedContainers)
 		}
 	}
 
