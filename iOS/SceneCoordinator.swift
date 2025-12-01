@@ -341,7 +341,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		// readArticlesFilterState
-		if AppDefaults.shared.readArticlesFilterState == nil,
+		if AppDefaults.shared.feedsHidingReadArticles == nil,
 		   let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
 			let enabledFeeds = legacyState.filter { $0.value == true }
 			let convertedState = enabledFeeds.keys.compactMap { key -> [String: String]? in
@@ -354,7 +354,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 				return stringDict.isEmpty ? nil : stringDict
 			}
 			let feedIdentifiers = convertedState.compactMap { FeedIdentifier(userInfo: $0) }
-			AppDefaults.shared.readArticlesFilterState = Set(feedIdentifiers)
+			AppDefaults.shared.feedsHidingReadArticles = Set(feedIdentifiers)
 		}
 
 		// hideReadFeeds
@@ -1738,11 +1738,11 @@ private extension SceneCoordinator {
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
-		AppDefaults.shared.readArticlesFilterState = feedsHidingReadArticles
+		AppDefaults.shared.feedsHidingReadArticles = feedsHidingReadArticles
 	}
 
 	private func restoreReadFilterEnabledTableFromUserDefaults() {
-		guard let state = AppDefaults.shared.readArticlesFilterState else {
+		guard let state = AppDefaults.shared.feedsHidingReadArticles else {
 			return
 		}
 		feedsHidingReadArticles.formUnion(state)

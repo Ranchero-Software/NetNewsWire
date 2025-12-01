@@ -67,7 +67,7 @@ final class AppDefaults {
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let expandedContainers = "expandedContainers"
-		static let readArticlesFilterState = "readArticlesFilterState"
+		static let feedsHidingReadArticles = "feedsHidingReadArticles"
 		static let selectedFeedIdentifier = "selectedFeedIdentifier"
 	}
 
@@ -305,9 +305,9 @@ final class AppDefaults {
 		}
 	}
 
-	var readArticlesFilterState: Set<FeedIdentifier>? {
+	var feedsHidingReadArticles: Set<FeedIdentifier>? {
 		get {
-			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.readArticlesFilterState) as? [[String: String]] else {
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.feedsHidingReadArticles) as? [[String: String]] else {
 				return nil
 			}
 			let feedIdentifiers = rawIdentifiers.compactMap { FeedIdentifier(userInfo: $0) }
@@ -315,12 +315,12 @@ final class AppDefaults {
 		}
 		set {
 			guard let newValue, !newValue.isEmpty else {
-				UserDefaults.standard.set([String: String](), forKey: Key.readArticlesFilterState)
+				UserDefaults.standard.set([String: String](), forKey: Key.feedsHidingReadArticles)
 				return
 			}
 
 			let feedIdentifierUserInfos = newValue.compactMap { $0.userInfo }
-			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.readArticlesFilterState)
+			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.feedsHidingReadArticles)
 		}
 	}
 
