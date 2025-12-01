@@ -246,6 +246,10 @@ final class AppDefaults {
 		}
 	}
 
+	var hideReadFeedsHasBeenSet: Bool {
+		UserDefaults.standard.object(forKey: Key.hideReadFeeds) != nil
+	}
+
 	var hideReadFeeds: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.hideReadFeeds)
@@ -255,6 +259,10 @@ final class AppDefaults {
 		}
 	}
 
+	var isShowingExtractedArticleHasBeenSet: Bool {
+		UserDefaults.standard.object(forKey: Key.isShowingExtractedArticle) != nil
+	}
+
 	var isShowingExtractedArticle: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.isShowingExtractedArticle)
@@ -262,6 +270,10 @@ final class AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.isShowingExtractedArticle)
 		}
+	}
+
+	var articleWindowScrollYHasBeenSet: Bool {
+		UserDefaults.standard.object(forKey: Key.articleWindowScrollY) != nil
 	}
 
 	var articleWindowScrollY: Int {

@@ -305,80 +305,84 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func restoreWindowState(_ activity: NSUserActivity?) {
-		if let activity = activity, let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
+		migrateFromLegacyStateStorage(activity)
+		restoreWindowStateFromUserDefaults()
+	}
 
-			// Migrate legacy containerExpandedWindowState to UserDefaults if not already set
-			let containerStateToUse: [[String: String]]
-			if let storedState = AppDefaults.shared.containerExpandedWindowState {
-				containerStateToUse = storedState
-			} else if let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-				// Convert [[AnyHashable: AnyHashable]] to [[String: String]]
-				let convertedState = legacyState.compactMap { dict -> [String: String]? in
-					var stringDict = [String: String]()
-					for (key, value) in dict {
-						if let keyString = key as? String, let valueString = value as? String {
-							stringDict[keyString] = valueString
-						}
-					}
-					return stringDict.isEmpty ? nil : stringDict
-				}
-				AppDefaults.shared.containerExpandedWindowState = convertedState
-				containerStateToUse = convertedState
-			} else {
-				containerStateToUse = []
-			}
-			let containerIdentifiers = containerStateToUse.compactMap { ContainerIdentifier(userInfo: $0) }
-			expandedTable = Set(containerIdentifiers)
-
-			// Migrate legacy readArticlesFilterState to UserDefaults if not already set
-			if let storedState = AppDefaults.shared.readArticlesFilterState {
-				// Use state from UserDefaults
-				for dict in storedState {
-					if let feedIdentifier = FeedIdentifier(userInfo: dict) {
-						readFilterEnabledTable[feedIdentifier] = true
-					}
-				}
-			} else if let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
-				// Convert and migrate legacy state
-				for key in legacyState.keys {
-					if let feedIdentifier = FeedIdentifier(userInfo: key), let isEnabled = legacyState[key], isEnabled {
-						readFilterEnabledTable[feedIdentifier] = true
-					}
-				}
-				saveReadFilterEnabledTableToUserDefaults()
-			}
-
-			rebuildBackingStores(initialLoad: true)
-
-			// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
-			// for state restoration to work with while we are waiting for the unread counts to initialize.
-			if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
-				// Migrate legacy state to UserDefaults only if not already set
-				if !AppDefaults.shared.hideReadFeeds {
-					AppDefaults.shared.hideReadFeeds = readFeedsFilterState
-				}
-				treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
-			} else {
-				// Use state from UserDefaults
-				treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
-			}
-
-		} else {
-
-			// Restore containerExpandedWindowState from UserDefaults
-			if let storedState = AppDefaults.shared.containerExpandedWindowState {
-				let containerIdentifiers = storedState.compactMap { ContainerIdentifier(userInfo: $0) }
-				expandedTable = Set(containerIdentifiers)
-			}
-
-			// Restore readArticlesFilterState from UserDefaults
-			restoreReadFilterEnabledTableFromUserDefaults()
-
-			rebuildBackingStores(initialLoad: true)
-
-			// Use state from UserDefaults
-			treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
+	/// Copy storage from legacy scene restoration state to UserDefaults.
+	///
+	/// We can do this because we support just one scene now.
+	/// The idea is to make state restoration more reliable.
+	private func migrateFromLegacyStateStorage(_ activity: NSUserActivity?) {
+		guard let windowState = activity?.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] else {
+			return
 		}
+
+		// containerExpandedWindowState
+		if AppDefaults.shared.containerExpandedWindowState == nil,
+		   let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
+			let convertedState = legacyState.compactMap { dict -> [String: String]? in
+				var stringDict = [String: String]()
+				for (key, value) in dict {
+					if let keyString = key as? String, let valueString = value as? String {
+						stringDict[keyString] = valueString
+					}
+				}
+				return stringDict.isEmpty ? nil : stringDict
+			}
+			AppDefaults.shared.containerExpandedWindowState = convertedState
+		}
+
+		// readArticlesFilterState
+		if AppDefaults.shared.readArticlesFilterState == nil,
+		   let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
+			let enabledFeeds = legacyState.filter { $0.value == true }
+			let convertedState = enabledFeeds.keys.compactMap { key -> [String: String]? in
+				var stringDict = [String: String]()
+				for (k, v) in key {
+					if let keyString = k as? String, let valueString = v as? String {
+						stringDict[keyString] = valueString
+					}
+				}
+				return stringDict.isEmpty ? nil : stringDict
+			}
+			AppDefaults.shared.readArticlesFilterState = convertedState
+		}
+
+		// hideReadFeeds
+		if !AppDefaults.shared.hideReadFeedsHasBeenSet,
+		   let legacyState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
+			AppDefaults.shared.hideReadFeeds = legacyState
+		}
+
+		// isShowingExtractedArticle
+		if !AppDefaults.shared.isShowingExtractedArticleHasBeenSet,
+		   let legacyState = windowState[UserInfoKey.isShowingExtractedArticle] as? Bool {
+			AppDefaults.shared.isShowingExtractedArticle = legacyState
+		}
+
+		// articleWindowScrollY
+		if !AppDefaults.shared.articleWindowScrollYHasBeenSet,
+		   let legacyState = windowState[UserInfoKey.articleWindowScrollY] as? Int {
+			AppDefaults.shared.articleWindowScrollY = legacyState
+		}
+	}
+
+	private func restoreWindowStateFromUserDefaults() {
+		// Restore containerExpandedWindowState from UserDefaults
+		if let storedState = AppDefaults.shared.containerExpandedWindowState {
+			let containerIdentifiers = storedState.compactMap { ContainerIdentifier(userInfo: $0) }
+			expandedTable = Set(containerIdentifiers)
+		}
+
+		// Restore readArticlesFilterState from UserDefaults
+		restoreReadFilterEnabledTableFromUserDefaults()
+
+		rebuildBackingStores(initialLoad: true)
+
+		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
+		// for state restoration to work with while we are waiting for the unread counts to initialize.
+		treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
 	}
 	
 	func handle(_ activity: NSUserActivity) {
@@ -2215,20 +2219,8 @@ private extension SceneCoordinator {
 				  return false
 			  }
 
-		// Migrate legacy isShowingExtractedArticle to UserDefaults only if not already set
-		if let legacyIsShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool {
-			if !AppDefaults.shared.isShowingExtractedArticle {
-				AppDefaults.shared.isShowingExtractedArticle = legacyIsShowingExtractedArticle
-			}
-		}
+		// Read values from UserDefaults (migration happens in restoreWindowState)
 		let isShowingExtractedArticle = AppDefaults.shared.isShowingExtractedArticle
-
-		// Migrate legacy articleWindowScrollY to UserDefaults only if not already set
-		if let legacyArticleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int {
-			if AppDefaults.shared.articleWindowScrollY == 0 {
-				AppDefaults.shared.articleWindowScrollY = legacyArticleWindowScrollY
-			}
-		}
 		let articleWindowScrollY = AppDefaults.shared.articleWindowScrollY
 
 		switch feedIdentifier {
