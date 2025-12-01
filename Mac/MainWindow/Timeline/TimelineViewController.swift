@@ -29,7 +29,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	@IBOutlet var tableView: TimelineTableView!
 
 	private var feedsHidingReadArticles = Set<FeedIdentifier>()
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]() {
+	private var readFilterEnabledTable: [FeedIdentifier: Bool] {
 		var d = [FeedIdentifier: Bool]()
 		for feedIdentifier in feedsHidingReadArticles {
 			d[feedIdentifier] = true
@@ -292,17 +292,34 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	func toggleReadFilter() {
 		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? Feed)?.feedID else { return }
-		readFilterEnabledTable[feedID] = !filter
+		if filter {
+			noteFeedHidesReadArticles(feedID)
+		} else {
+			noteFeedShowsReadArticles(feedID)
+		}
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
 	}
-	
+
 	// MARK: State Restoration
 	
+	private func noteFeedHidesReadArticles(_ feedID: FeedIdentifier) {
+		feedsHidingReadArticles.insert(feedID)
+	}
+
+	private func noteFeedShowsReadArticles(_ feedID: FeedIdentifier) {
+		feedsHidingReadArticles.remove(feedID)
+	}
+
 	func restoreState(from state: TimelineWindowState) {
 		for i in 0..<state.readArticlesFilterStateKeys.count {
 			if let feedIdentifier = FeedIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = state.readArticlesFilterStateValues[i]
+				let hidesReadFeeds = state.readArticlesFilterStateValues[i]
+				if hidesReadFeeds {
+					noteFeedHidesReadArticles(feedIdentifier)
+				} else {
+					noteFeedShowsReadArticles(feedIdentifier)
+				}
 			}
 		}
 		
@@ -336,7 +353,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		for i in 0..<readArticlesFilterStateKeys.count {
 			if let feedIdentifier = FeedIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
+				let hidesReadArticles = readArticlesFilterStateValues[i]
+				if hidesReadArticles {
+					noteFeedHidesReadArticles(feedIdentifier)
+				} else {
+					noteFeedShowsReadArticles(feedIdentifier)
+				}
 			}
 		}
 
