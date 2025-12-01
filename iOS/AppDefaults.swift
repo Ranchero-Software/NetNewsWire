@@ -315,12 +315,19 @@ final class AppDefaults {
 		}
 	}
 
-	var selectedFeedIdentifier: [String: String]? {
+	var selectedFeedIdentifier: FeedIdentifier? {
 		get {
-			UserDefaults.standard.dictionary(forKey: Key.selectedFeedIdentifier) as? [String: String]
+			guard let userInfo = UserDefaults.standard.dictionary(forKey: Key.selectedFeedIdentifier) as? [String: String] else {
+				return nil
+			}
+			return FeedIdentifier(userInfo: userInfo)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.selectedFeedIdentifier)
+			guard let newValue else {
+				UserDefaults.standard.removeObject(forKey: Key.selectedFeedIdentifier)
+				return
+			}
+			UserDefaults.standard.set(newValue.userInfo, forKey: Key.selectedFeedIdentifier)
 		}
 	}
 
