@@ -312,12 +312,30 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	
 	func restoreWindowState(_ activity: NSUserActivity?) {
 		if let activity = activity, let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
-			
-			if let containerExpandedWindowState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-				let containerIdentifiers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
-				expandedTable = Set(containerIdentifiers)
+
+			// Migrate legacy containerExpandedWindowState to UserDefaults if not already set
+			let containerStateToUse: [[String: String]]
+			if let storedState = AppDefaults.shared.containerExpandedWindowState {
+				containerStateToUse = storedState
+			} else if let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
+				// Convert [[AnyHashable: AnyHashable]] to [[String: String]]
+				let convertedState = legacyState.compactMap { dict -> [String: String]? in
+					var stringDict = [String: String]()
+					for (key, value) in dict {
+						if let keyString = key as? String, let valueString = value as? String {
+							stringDict[keyString] = valueString
+						}
+					}
+					return stringDict.isEmpty ? nil : stringDict
+				}
+				AppDefaults.shared.containerExpandedWindowState = convertedState
+				containerStateToUse = convertedState
+			} else {
+				containerStateToUse = []
 			}
-			
+			let containerIdentifiers = containerStateToUse.compactMap { ContainerIdentifier(userInfo: $0) }
+			expandedTable = Set(containerIdentifiers)
+
 			if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
 				for key in readArticlesFilterState.keys {
 					if let feedIdentifier = FeedIdentifier(userInfo: key) {
@@ -342,6 +360,12 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 
 		} else {
+
+			// Restore containerExpandedWindowState from UserDefaults
+			if let storedState = AppDefaults.shared.containerExpandedWindowState {
+				let containerIdentifiers = storedState.compactMap { ContainerIdentifier(userInfo: $0) }
+				expandedTable = Set(containerIdentifiers)
+			}
 
 			rebuildBackingStores(initialLoad: true)
 
@@ -1656,6 +1680,7 @@ private extension SceneCoordinator {
 	
 	func markExpanded(_ containerID: ContainerIdentifier) {
 		expandedTable.insert(containerID)
+		saveExpandedTableToUserDefaults()
 	}
 
 	func markExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1672,6 +1697,7 @@ private extension SceneCoordinator {
 	
 	func unmarkExpanded(_ containerID: ContainerIdentifier) {
 		expandedTable.remove(containerID)
+		saveExpandedTableToUserDefaults()
 	}
 
 	func unmarkExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1684,6 +1710,19 @@ private extension SceneCoordinator {
 		if let containerIdentifiable = node.representedObject as? ContainerIdentifiable {
 			unmarkExpanded(containerIdentifiable)
 		}
+	}
+
+	private func saveExpandedTableToUserDefaults() {
+		let state = expandedTable.compactMap { containerID -> [String: String]? in
+			var stringDict = [String: String]()
+			for (key, value) in containerID.userInfo {
+				if let keyString = key as? String, let valueString = value as? String {
+					stringDict[keyString] = valueString
+				}
+			}
+			return stringDict.isEmpty ? nil : stringDict
+		}
+		AppDefaults.shared.containerExpandedWindowState = state
 	}
 
 	// MARK: Select Prev Unread
@@ -2053,13 +2092,11 @@ private extension SceneCoordinator {
 	// MARK: NSUserActivity
 	
 	func windowState() -> [AnyHashable: Any] {
-		let containerExpandedWindowState = expandedTable.map( { $0.userInfo })
 		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
 		for key in readFilterEnabledTable.keys {
 			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
 		}
 		return [
-			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
 			UserInfoKey.readArticlesFilterState: readArticlesFilterState
 		]
 	}
