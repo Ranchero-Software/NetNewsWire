@@ -110,9 +110,6 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		userInfo[UserInfoKey.windowState] = windowState()
 
-		let articleState = articleViewController?.currentState
-		userInfo[UserInfoKey.articleWindowScrollY] = articleState?.windowScrollY ?? 0
-
 		activity.userInfo = userInfo
 		return activity
 	}
@@ -2155,8 +2152,7 @@ private extension SceneCoordinator {
 	
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
 		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo),
-			  let articleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int else {
+			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				  return false
 			  }
 
@@ -2167,6 +2163,14 @@ private extension SceneCoordinator {
 			}
 		}
 		let isShowingExtractedArticle = AppDefaults.shared.isShowingExtractedArticle
+
+		// Migrate legacy articleWindowScrollY to UserDefaults only if not already set
+		if let legacyArticleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int {
+			if AppDefaults.shared.articleWindowScrollY == 0 {
+				AppDefaults.shared.articleWindowScrollY = legacyArticleWindowScrollY
+			}
+		}
+		let articleWindowScrollY = AppDefaults.shared.articleWindowScrollY
 
 		switch feedIdentifier {
 

@@ -64,6 +64,7 @@ final class AppDefaults {
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 		static let hideReadFeeds = "hideReadFeeds"
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
+		static let articleWindowScrollY = "articleWindowScrollY"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -258,6 +259,15 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.isShowingExtractedArticle)
+		}
+	}
+
+	var articleWindowScrollY: Int {
+		get {
+			UserDefaults.standard.integer(forKey: Key.articleWindowScrollY)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.articleWindowScrollY)
 		}
 	}
 
