@@ -716,6 +716,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func expand(_ containerID: ContainerIdentifier) {
 		markExpanded(containerID)
 		rebuildBackingStores()
+		saveExpandedTableToUserDefaults()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -736,12 +737,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 		rebuildBackingStores()
+		saveExpandedTableToUserDefaults()
 	}
 	
 	func collapse(_ containerID: ContainerIdentifier) {
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
+		saveExpandedTableToUserDefaults()
 	}
 	
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -762,6 +765,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
+		saveExpandedTableToUserDefaults()
 	}
 	
 	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
@@ -1692,7 +1696,6 @@ private extension SceneCoordinator {
 	
 	func markExpanded(_ containerID: ContainerIdentifier) {
 		expandedTable.insert(containerID)
-		saveExpandedTableToUserDefaults()
 	}
 
 	func markExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1709,7 +1712,6 @@ private extension SceneCoordinator {
 	
 	func unmarkExpanded(_ containerID: ContainerIdentifier) {
 		expandedTable.remove(containerID)
-		saveExpandedTableToUserDefaults()
 	}
 
 	func unmarkExpanded(_ containerIdentifiable: ContainerIdentifiable) {
