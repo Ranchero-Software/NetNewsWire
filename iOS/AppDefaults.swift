@@ -287,12 +287,21 @@ final class AppDefaults {
 		}
 	}
 
-	var containerExpandedWindowState: [[String: String]]? {
+	var containerExpandedWindowState: Set<ContainerIdentifier>? {
 		get {
-			UserDefaults.standard.array(forKey: Key.containerExpandedWindowState) as? [[String: String]]
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.containerExpandedWindowState) as? [[String: String]] else {
+				return nil
+			}
+			let containerIdentifiers = rawIdentifiers.compactMap { ContainerIdentifier(userInfo: $0) }
+			return Set(containerIdentifiers)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.containerExpandedWindowState)
+			guard let newValue, !newValue.isEmpty else {
+				UserDefaults.standard.set([String: String](), forKey: Key.containerExpandedWindowState)
+				return
+			}
+			let containerIdentifierUserInfos = newValue.compactMap { $0.userInfo }
+			UserDefaults.standard.set(containerIdentifierUserInfos, forKey: Key.containerExpandedWindowState)
 		}
 	}
 
