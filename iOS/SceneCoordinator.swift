@@ -62,14 +62,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private let fetchRequestQueue = FetchRequestQueue()
 
 	// Which Containers are expanded
-	private var expandedTable = Set<ContainerIdentifier>()
+	private var expandedContainers = Set<ContainerIdentifier>()
 
 	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
-	private var lastExpandedTable = Set<ContainerIdentifier>()
+	private var lastExpandedContainers = Set<ContainerIdentifier>()
 
 	// Which Feeds have the Read Articles Filter enabled
 	private var feedsHidingReadArticles = Set<FeedIdentifier>()
-	private var readFilterEnabledTable: [FeedIdentifier: Bool] {
+	private var readFilterEnabledTable: [FeedIdentifier: Bool] { // TODO: remove this
 		var d = [FeedIdentifier: Bool]()
 		for feedIdentifier in feedsHidingReadArticles {
 			d[feedIdentifier] = true
@@ -379,7 +379,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private func restoreWindowStateFromUserDefaults() {
 		// Restore containerExpandedWindowState from UserDefaults
 		if let storedState = AppDefaults.shared.expandedContainers {
-			expandedTable.formUnion(storedState)
+			expandedContainers.formUnion(storedState)
 		}
 
 		// Restore readArticlesFilterState from UserDefaults
@@ -703,7 +703,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func isExpanded(_ containerID: ContainerIdentifier) -> Bool {
-		return expandedTable.contains(containerID)
+		return expandedContainers.contains(containerID)
 	}
 		
 	func isExpanded(_ containerIdentifiable: ContainerIdentifiable) -> Bool {
@@ -730,7 +730,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
-		lastExpandedTable.insert(containerID)
+		lastExpandedContainers.insert(containerID)
 		expand(containerID)
 	}
 
@@ -758,7 +758,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
-		lastExpandedTable.remove(containerID)
+		lastExpandedContainers.remove(containerID)
 		collapse(containerID)
 	}
 
@@ -1556,7 +1556,7 @@ private extension SceneCoordinator {
 
 		// Compute the differences in the shadow table rows and the expanded table entries
 		var changes = [ShadowTableChanges.RowChanges]()
-		let expandedTableDifference = lastExpandedTable.symmetricDifference(expandedTable)
+		let expandedTableDifference = lastExpandedContainers.symmetricDifference(expandedContainers)
 
 		for (section, newSectionRows) in newShadowTable.enumerated() {
 			var moves = Set<ShadowTableChanges.Move>()
@@ -1597,7 +1597,7 @@ private extension SceneCoordinator {
 			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
 		}
 
-		lastExpandedTable = expandedTable
+		lastExpandedContainers = expandedContainers
 
 		// Compute the difference in the shadow table sections
 		var moves = Set<ShadowTableChanges.Move>()
@@ -1702,7 +1702,7 @@ private extension SceneCoordinator {
 	}
 	
 	func markExpanded(_ containerID: ContainerIdentifier) {
-		expandedTable.insert(containerID)
+		expandedContainers.insert(containerID)
 	}
 
 	func markExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1718,7 +1718,7 @@ private extension SceneCoordinator {
 	}
 	
 	func unmarkExpanded(_ containerID: ContainerIdentifier) {
-		expandedTable.remove(containerID)
+		expandedContainers.remove(containerID)
 	}
 
 	func unmarkExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1734,7 +1734,7 @@ private extension SceneCoordinator {
 	}
 
 	private func saveExpandedTableToUserDefaults() {
-		AppDefaults.shared.expandedContainers = expandedTable
+		AppDefaults.shared.expandedContainers = expandedContainers
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
