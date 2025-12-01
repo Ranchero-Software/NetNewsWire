@@ -68,7 +68,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var lastExpandedTable = Set<ContainerIdentifier>()
 
 	// Which Feeds have the Read Articles Filter enabled
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var feedsHidingReadArticles = Set<FeedIdentifier>()
+	private var readFilterEnabledTable: [FeedIdentifier: Bool] {
+		var d = [FeedIdentifier: Bool]()
+		for feedIdentifier in feedsHidingReadArticles {
+			d[feedIdentifier] = true
+		}
+		return d
+	}
 
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
@@ -119,11 +126,10 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	var isReadArticlesFiltered: Bool {
-		if let feedID = timelineFeed?.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
-			return readFilterEnabled
-		} else {
-			return timelineDefaultReadFilterType != .none
+		if let feedID = timelineFeed?.feedID {
+			return feedsHidingReadArticles.contains(feedID)
 		}
+		return timelineDefaultReadFilterType != .none
 	}
 	
 	var timelineDefaultReadFilterType: ReadFilterType {
@@ -618,9 +624,9 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		if isReadArticlesFiltered {
-			readFilterEnabledTable[feedID] = false
+			feedsHidingReadArticles.remove(feedID)
 		} else {
-			readFilterEnabledTable[feedID] = true
+			feedsHidingReadArticles.insert(feedID)
 		}
 		saveReadFilterEnabledTableToUserDefaults()
 
@@ -1741,18 +1747,14 @@ private extension SceneCoordinator {
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
-		let enabledFeeds = readFilterEnabledTable.filter { $0.value == true }
-		AppDefaults.shared.readArticlesFilterState = Set(enabledFeeds.keys)
+		AppDefaults.shared.readArticlesFilterState = feedsHidingReadArticles
 	}
 
 	private func restoreReadFilterEnabledTableFromUserDefaults() {
 		guard let state = AppDefaults.shared.readArticlesFilterState else {
 			return
 		}
-
-		for feedIdentifier in state {
-			readFilterEnabledTable[feedIdentifier] = true
-		}
+		feedsHidingReadArticles.formUnion(state)
 	}
 
 	// MARK: Select Prev Unread

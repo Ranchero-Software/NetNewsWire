@@ -28,7 +28,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var feedsHidingReadArticles = Set<FeedIdentifier>()
+	private var readFilterEnabledTable = [FeedIdentifier: Bool]() {
+		var d = [FeedIdentifier: Bool]()
+		for feedIdentifier in feedsHidingReadArticles {
+			d[feedIdentifier] = true
+		}
+		return d
+	}
+
 	var isReadFiltered: Bool? {
 		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed else {
 			return nil
@@ -36,8 +44,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
-			return readFilterEnabled
+		if let feedID = timelineFeed.feedID {
+			return feedsHidingReadArticles.contains(feedID)
 		} else {
 			return timelineFeed.defaultReadFilterType == .read
 		}
