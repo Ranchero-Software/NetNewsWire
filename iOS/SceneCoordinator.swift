@@ -105,13 +105,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private let treeController: TreeController
 	
 	var stateRestorationActivity: NSUserActivity {
-		let activity = activityManager.stateRestorationActivity
-		var userInfo = activity.userInfo ?? [AnyHashable: Any]()
-
-		userInfo[UserInfoKey.windowState] = windowState()
-
-		activity.userInfo = userInfo
-		return activity
+		return activityManager.stateRestorationActivity
 	}
 	
 	var isNavigationDisabled = false
@@ -336,12 +330,22 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			let containerIdentifiers = containerStateToUse.compactMap { ContainerIdentifier(userInfo: $0) }
 			expandedTable = Set(containerIdentifiers)
 
-			if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
-				for key in readArticlesFilterState.keys {
-					if let feedIdentifier = FeedIdentifier(userInfo: key) {
-						readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
+			// Migrate legacy readArticlesFilterState to UserDefaults if not already set
+			if let storedState = AppDefaults.shared.readArticlesFilterState {
+				// Use state from UserDefaults
+				for dict in storedState {
+					if let feedIdentifier = FeedIdentifier(userInfo: dict) {
+						readFilterEnabledTable[feedIdentifier] = true
 					}
 				}
+			} else if let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
+				// Convert and migrate legacy state
+				for key in legacyState.keys {
+					if let feedIdentifier = FeedIdentifier(userInfo: key), let isEnabled = legacyState[key], isEnabled {
+						readFilterEnabledTable[feedIdentifier] = true
+					}
+				}
+				saveReadFilterEnabledTableToUserDefaults()
 			}
 
 			rebuildBackingStores(initialLoad: true)
@@ -366,6 +370,9 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 				let containerIdentifiers = storedState.compactMap { ContainerIdentifier(userInfo: $0) }
 				expandedTable = Set(containerIdentifiers)
 			}
+
+			// Restore readArticlesFilterState from UserDefaults
+			restoreReadFilterEnabledTableFromUserDefaults()
 
 			rebuildBackingStores(initialLoad: true)
 
@@ -610,7 +617,8 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		} else {
 			readFilterEnabledTable[feedID] = true
 		}
-		
+		saveReadFilterEnabledTableToUserDefaults()
+
 		refreshTimeline(resetScroll: false)
 	}
 
@@ -1725,6 +1733,30 @@ private extension SceneCoordinator {
 		AppDefaults.shared.containerExpandedWindowState = state
 	}
 
+	private func saveReadFilterEnabledTableToUserDefaults() {
+		let enabledFeeds = readFilterEnabledTable.filter { $0.value == true }
+		let state = enabledFeeds.keys.compactMap { feedIdentifier -> [String: String]? in
+			var stringDict = [String: String]()
+			for (key, value) in feedIdentifier.userInfo {
+				if let keyString = key as? String, let valueString = value as? String {
+					stringDict[keyString] = valueString
+				}
+			}
+			return stringDict.isEmpty ? nil : stringDict
+		}
+		AppDefaults.shared.readArticlesFilterState = state
+	}
+
+	private func restoreReadFilterEnabledTableFromUserDefaults() {
+		guard let state = AppDefaults.shared.readArticlesFilterState else { return }
+
+		for dict in state {
+			if let feedIdentifier = FeedIdentifier(userInfo: dict) {
+				readFilterEnabledTable[feedIdentifier] = true
+			}
+		}
+	}
+
 	// MARK: Select Prev Unread
 
 	@discardableResult
@@ -2090,17 +2122,7 @@ private extension SceneCoordinator {
 	}
 	
 	// MARK: NSUserActivity
-	
-	func windowState() -> [AnyHashable: Any] {
-		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
-		for key in readFilterEnabledTable.keys {
-			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
-		}
-		return [
-			UserInfoKey.readArticlesFilterState: readArticlesFilterState
-		]
-	}
-	
+
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
 			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],

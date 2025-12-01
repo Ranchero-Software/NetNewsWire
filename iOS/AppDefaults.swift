@@ -66,6 +66,7 @@ final class AppDefaults {
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let containerExpandedWindowState = "containerExpandedWindowState"
+		static let readArticlesFilterState = "readArticlesFilterState"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -278,6 +279,15 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.containerExpandedWindowState)
+		}
+	}
+
+	var readArticlesFilterState: [[String: String]]? {
+		get {
+			UserDefaults.standard.array(forKey: Key.readArticlesFilterState) as? [[String: String]]
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.readArticlesFilterState)
 		}
 	}
 
