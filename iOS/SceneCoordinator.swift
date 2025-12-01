@@ -346,7 +346,8 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 				}
 				return stringDict.isEmpty ? nil : stringDict
 			}
-			AppDefaults.shared.readArticlesFilterState = convertedState
+			let feedIdentifiers = convertedState.compactMap { FeedIdentifier(userInfo: $0) }
+			AppDefaults.shared.readArticlesFilterState = Set(feedIdentifiers)
 		}
 
 		// hideReadFeeds
@@ -1741,17 +1742,16 @@ private extension SceneCoordinator {
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
 		let enabledFeeds = readFilterEnabledTable.filter { $0.value == true }
-		let state = enabledFeeds.keys.map { $0.userInfo }
-		AppDefaults.shared.readArticlesFilterState = state
+		AppDefaults.shared.readArticlesFilterState = Set(enabledFeeds.keys)
 	}
 
 	private func restoreReadFilterEnabledTableFromUserDefaults() {
-		guard let state = AppDefaults.shared.readArticlesFilterState else { return }
+		guard let state = AppDefaults.shared.readArticlesFilterState else {
+			return
+		}
 
-		for dict in state {
-			if let feedIdentifier = FeedIdentifier(userInfo: dict) {
-				readFilterEnabledTable[feedIdentifier] = true
-			}
+		for feedIdentifier in state {
+			readFilterEnabledTable[feedIdentifier] = true
 		}
 	}
 

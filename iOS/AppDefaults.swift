@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Account
 
 enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	case automatic = 0
@@ -295,12 +296,22 @@ final class AppDefaults {
 		}
 	}
 
-	var readArticlesFilterState: [[String: String]]? {
+	var readArticlesFilterState: Set<FeedIdentifier>? {
 		get {
-			UserDefaults.standard.array(forKey: Key.readArticlesFilterState) as? [[String: String]]
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.readArticlesFilterState) as? [[String: String]] else {
+				return nil
+			}
+			let feedIdentifiers = rawIdentifiers.compactMap { FeedIdentifier(userInfo: $0) }
+			return Set(feedIdentifiers)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Key.readArticlesFilterState)
+			guard let newValue, !newValue.isEmpty else {
+				UserDefaults.standard.set([String: String](), forKey: Key.readArticlesFilterState)
+				return
+			}
+
+			let feedIdentifierUserInfos = newValue.compactMap { $0.userInfo }
+			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.readArticlesFilterState)
 		}
 	}
 
