@@ -1741,15 +1741,7 @@ private extension SceneCoordinator {
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
 		let enabledFeeds = readFilterEnabledTable.filter { $0.value == true }
-		let state = enabledFeeds.keys.compactMap { feedIdentifier -> [String: String]? in
-			var stringDict = [String: String]()
-			for (key, value) in feedIdentifier.userInfo {
-				if let keyString = key as? String, let valueString = value as? String {
-					stringDict[keyString] = valueString
-				}
-			}
-			return stringDict.isEmpty ? nil : stringDict
-		}
+		let state = enabledFeeds.keys.map { $0.userInfo }
 		AppDefaults.shared.readArticlesFilterState = state
 	}
 
@@ -2131,7 +2123,7 @@ private extension SceneCoordinator {
 
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
-			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
+			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [String: String],
 			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return
 		}
@@ -2216,7 +2208,7 @@ private extension SceneCoordinator {
 	}
 	
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
-		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
+		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [String: String],
 			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				  return false
 			  }

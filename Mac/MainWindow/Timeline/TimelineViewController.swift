@@ -81,7 +81,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	var windowState: TimelineWindowState {
-		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo as? [String: String] }
+		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo }
 		let readArticlesFilterStateValues = readFilterEnabledTable.values.compactMap( { $0 })
 		
 		if selectedArticles.count == 1 {
@@ -321,7 +321,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	///
 	/// TODO: Delete for NetNewsWire 7.
 	func restoreLegacyState(from state: [AnyHashable: Any]) {
-		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
+		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[String: String]],
 			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
 			return
 		}

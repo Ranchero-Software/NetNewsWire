@@ -67,6 +67,7 @@ final class AppDefaults {
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let containerExpandedWindowState = "containerExpandedWindowState"
 		static let readArticlesFilterState = "readArticlesFilterState"
+		static let selectedFeedIdentifier = "selectedFeedIdentifier"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -300,6 +301,15 @@ final class AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.readArticlesFilterState)
+		}
+	}
+
+	var selectedFeedIdentifier: [String: String]? {
+		get {
+			UserDefaults.standard.dictionary(forKey: Key.selectedFeedIdentifier) as? [String: String]
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.selectedFeedIdentifier)
 		}
 	}
 
