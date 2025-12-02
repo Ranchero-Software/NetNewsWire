@@ -8,6 +8,7 @@
 
 import UIKit
 import Account
+import Articles
 
 enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	case automatic = 0
@@ -69,6 +70,7 @@ final class AppDefaults {
 		static let expandedContainers = "expandedContainers"
 		static let sidebarItemsHidingReadArticles = "sidebarItemsHidingReadArticles"
 		static let selectedSidebarItem = "selectedSidebarItem"
+		static let selectedArticle = "selectedArticle"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -337,6 +339,22 @@ final class AppDefaults {
 				return
 			}
 			UserDefaults.standard.set(newValue.userInfo, forKey: Key.selectedSidebarItem)
+		}
+	}
+
+	var selectedArticle: ArticleSpecifier? {
+		get {
+			guard let d = UserDefaults.standard.dictionary(forKey: Key.selectedArticle) as? [String: String] else {
+				return nil
+			}
+			return ArticleSpecifier(dictionary: d)
+		}
+		set {
+			guard let newValue else {
+				UserDefaults.standard.removeObject(forKey: Key.selectedArticle)
+				return
+			}
+			UserDefaults.standard.set(newValue.dictionary, forKey: Key.selectedArticle)
 		}
 	}
 
