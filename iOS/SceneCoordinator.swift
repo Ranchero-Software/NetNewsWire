@@ -717,6 +717,11 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func articleFor(_ articleID: String) -> Article? {
+		// Check if it's the currently displayed article
+		if let currentArticle, currentArticle.articleID == articleID {
+			return currentArticle
+		}
+		// Otherwise look in the timeline
 		return idToArticleDictionary[articleID]
 	}
 	
