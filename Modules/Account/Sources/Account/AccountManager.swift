@@ -398,6 +398,23 @@ public final class AccountManager: UnreadCountProvider {
         }
     }
 
+	/// Fetch a single article by accountID and articleID.
+	/// Returns nil if the account or article is not found.
+	public func fetchArticle(accountID: String, articleID: String) -> Article? {
+		precondition(Thread.isMainThread)
+
+		guard let account = existingAccount(with: accountID) else {
+			return nil
+		}
+
+		do {
+			let articles = try account.fetchArticles(.articleIDs(Set([articleID])))
+			return articles.first
+		} catch {
+			return nil
+		}
+	}
+
 	// MARK: - Fetching Article Counts
 
 	public func fetchCountForStarredArticles() throws -> Int {
