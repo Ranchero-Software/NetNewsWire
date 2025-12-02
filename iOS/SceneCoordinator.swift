@@ -237,7 +237,15 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return nil
 	}
 	
-	var currentArticle: Article?
+	var currentArticle: Article? {
+		didSet {
+			if let article = currentArticle {
+				AppDefaults.shared.selectedArticle = ArticleSpecifier(article: article)
+			} else {
+				AppDefaults.shared.selectedArticle = nil
+			}
+		}
+	}
 
 	private(set) var articles = ArticleArray() {
 		didSet {
@@ -914,7 +922,6 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if article == nil {
 			rootSplitViewController.show(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
-			AppDefaults.shared.selectedArticle = nil
 			return
 		}
 
@@ -928,8 +935,6 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
 		}
-
-		AppDefaults.shared.selectedArticle = ArticleSpecifier(article: article!)
 	}
 	
 	func beginSearching() {
