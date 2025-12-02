@@ -74,3 +74,6 @@ Guard statements should always put the return in a separate line.
 
 Don’t do force unwrapping of optionals.
 
+## Things to Know
+
+Just because unit tests pass doesn’t mean a given bug is fixed. It may not have a test. It may not even be testable — it may require manual testing.
