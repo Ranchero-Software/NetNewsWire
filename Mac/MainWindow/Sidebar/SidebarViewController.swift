@@ -118,7 +118,10 @@ extension Notification.Name {
 		func selectFeedsVisitor(node: Node) {
 			if let feedID = (node.representedObject as? SidebarItemIdentifiable)?.sidebarItemID {
 				if selectedFeedIdentifers.contains(feedID) {
-					selectIndexes.insert(outlineView.row(forItem: node) )
+					let row = outlineView.row(forItem: node)
+					if row >= 0 {
+						selectIndexes.insert(row)
+					}
 				}
 			}
 		}
@@ -154,7 +157,10 @@ extension Notification.Name {
 		func selectFeedsVisitor(node: Node) {
 			if let sidebarItemID = (node.representedObject as? SidebarItemIdentifiable)?.sidebarItemID {
 				if selectedFeedIdentifiers.contains(sidebarItemID) {
-					selectIndexes.insert(outlineView.row(forItem: node) )
+					let row = outlineView.row(forItem: node)
+					if row >= 0 {
+						selectIndexes.insert(row)
+					}
 				}
 			}
 		}
