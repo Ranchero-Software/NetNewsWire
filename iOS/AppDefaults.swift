@@ -291,17 +291,23 @@ final class AppDefaults {
 
 	var expandedContainers: Set<ContainerIdentifier>? {
 		get {
-			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.expandedContainers) as? [[String: String]] else {
+			// Return nil only if the key doesn't exist (never been set)
+			guard UserDefaults.standard.object(forKey: Key.expandedContainers) != nil else {
 				return nil
+			}
+			// If key exists, return the set (even if empty)
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.expandedContainers) as? [[String: String]] else {
+				return Set()
 			}
 			let containerIdentifiers = rawIdentifiers.compactMap { ContainerIdentifier(userInfo: $0) }
 			return Set(containerIdentifiers)
 		}
 		set {
-			guard let newValue, !newValue.isEmpty else {
-				UserDefaults.standard.set([String: String](), forKey: Key.expandedContainers)
+			guard let newValue else {
+				UserDefaults.standard.removeObject(forKey: Key.expandedContainers)
 				return
 			}
+			// Store empty array when set is empty, not an empty dictionary
 			let containerIdentifierUserInfos = newValue.compactMap { $0.userInfo }
 			UserDefaults.standard.set(containerIdentifierUserInfos, forKey: Key.expandedContainers)
 		}

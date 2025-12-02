@@ -296,8 +296,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		self.articleViewController?.coordinator = self
 		self.articleViewController?.navigationController?.delegate = self
 
-		for sectionNode in treeController.rootNode.childNodes {
-			markExpanded(sectionNode)
+		for _ in treeController.rootNode.childNodes {
 			shadowTable.append((sectionID: "", feedNodes: [FeedNode]()))
 		}
 		
@@ -397,7 +396,12 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		// Restore containerExpandedWindowState from UserDefaults
 		if let storedState = AppDefaults.shared.expandedContainers {
-			expandedContainers.formUnion(storedState)
+			expandedContainers = storedState
+		} else {
+			// First run: expand all sections by default
+			for sectionNode in treeController.rootNode.childNodes {
+				markExpanded(sectionNode)
+			}
 		}
 
 		// Restore readArticlesFilterState from UserDefaults
