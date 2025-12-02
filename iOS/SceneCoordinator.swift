@@ -341,7 +341,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		// readArticlesFilterState
-		if AppDefaults.shared.feedsHidingReadArticles == nil,
+		if AppDefaults.shared.sidebarItemsHidingReadArticles == nil,
 		   let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
 			let enabledFeeds = legacyState.filter { $0.value == true }
 			let convertedState = enabledFeeds.keys.compactMap { key -> [String: String]? in
@@ -354,7 +354,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 				return stringDict.isEmpty ? nil : stringDict
 			}
 			let feedIdentifiers = convertedState.compactMap { FeedIdentifier(userInfo: $0) }
-			AppDefaults.shared.feedsHidingReadArticles = Set(feedIdentifiers)
+			AppDefaults.shared.sidebarItemsHidingReadArticles = Set(feedIdentifiers)
 		}
 
 		// hideReadFeeds
@@ -374,6 +374,13 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		   let legacyState = windowState[UserInfoKey.articleWindowScrollY] as? Int {
 			AppDefaults.shared.articleWindowScrollY = legacyState
 		}
+
+		// selectedSidebarItem
+		if AppDefaults.shared.selectedSidebarItem == nil,
+		   let legacyState = windowState[UserInfoKey.feedIdentifier] as? [String: String],
+		   let feedIdentifier = FeedIdentifier(userInfo: legacyState) {
+			AppDefaults.shared.selectedSidebarItem = feedIdentifier
+		}
 	}
 
 	private func restoreWindowStateFromUserDefaults() {
@@ -390,8 +397,21 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
 		treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
+
+		// Restore selectedSidebarItem from UserDefaults
+		if let feedIdentifier = AppDefaults.shared.selectedSidebarItem {
+			restoreSelectedSidebarItem(feedIdentifier)
+		}
 	}
-	
+
+	private func restoreSelectedSidebarItem(_ feedIdentifier: FeedIdentifier) {
+		guard let feedNode = nodeFor(feedID: feedIdentifier),
+			  let indexPath = indexPathFor(feedNode) else {
+			return
+		}
+		selectFeed(indexPath: indexPath, animations: [])
+	}
+
 	func handle(_ activity: NSUserActivity) {
 		selectFeed(indexPath: nil) {
 			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
@@ -798,7 +818,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			completion?()
 			return
 		}
-		
+
 		currentFeedIndexPath = indexPath
 		mainFeedViewController.updateFeedSelection(animations: animations)
 
@@ -807,29 +827,31 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
-			
+
 			self.activityManager.selecting(feed: feed)
 			self.rootSplitViewController.show(.supplementary)
 			setTimelineFeed(feed, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
+				AppDefaults.shared.selectedSidebarItem = feed.feedID
 				completion?()
 			}
-			
+
 		} else {
-			
+
 			setTimelineFeed(nil, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
 				self.rootSplitViewController.show(.primary)
+				AppDefaults.shared.selectedSidebarItem = nil
 				completion?()
 			}
-			
+
 		}
-		
+
 	}
 	
 	func selectPrevFeed() {
@@ -1738,11 +1760,11 @@ private extension SceneCoordinator {
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
-		AppDefaults.shared.feedsHidingReadArticles = feedsHidingReadArticles
+		AppDefaults.shared.sidebarItemsHidingReadArticles = feedsHidingReadArticles
 	}
 
 	private func restoreReadFilterEnabledTableFromUserDefaults() {
-		guard let state = AppDefaults.shared.feedsHidingReadArticles else {
+		guard let state = AppDefaults.shared.sidebarItemsHidingReadArticles else {
 			return
 		}
 		feedsHidingReadArticles.formUnion(state)

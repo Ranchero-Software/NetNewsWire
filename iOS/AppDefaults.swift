@@ -67,8 +67,8 @@ final class AppDefaults {
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let expandedContainers = "expandedContainers"
-		static let feedsHidingReadArticles = "feedsHidingReadArticles"
-		static let selectedFeedIdentifier = "selectedFeedIdentifier"
+		static let sidebarItemsHidingReadArticles = "sidebarItemsHidingReadArticles"
+		static let selectedSidebarItem = "selectedSidebarItem"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -305,9 +305,9 @@ final class AppDefaults {
 		}
 	}
 
-	var feedsHidingReadArticles: Set<FeedIdentifier>? {
+	var sidebarItemsHidingReadArticles: Set<FeedIdentifier>? {
 		get {
-			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.feedsHidingReadArticles) as? [[String: String]] else {
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.sidebarItemsHidingReadArticles) as? [[String: String]] else {
 				return nil
 			}
 			let feedIdentifiers = rawIdentifiers.compactMap { FeedIdentifier(userInfo: $0) }
@@ -315,28 +315,28 @@ final class AppDefaults {
 		}
 		set {
 			guard let newValue, !newValue.isEmpty else {
-				UserDefaults.standard.set([String: String](), forKey: Key.feedsHidingReadArticles)
+				UserDefaults.standard.set([String: String](), forKey: Key.sidebarItemsHidingReadArticles)
 				return
 			}
 
 			let feedIdentifierUserInfos = newValue.compactMap { $0.userInfo }
-			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.feedsHidingReadArticles)
+			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.sidebarItemsHidingReadArticles)
 		}
 	}
 
-	var selectedFeedIdentifier: FeedIdentifier? {
+	var selectedSidebarItem: FeedIdentifier? {
 		get {
-			guard let userInfo = UserDefaults.standard.dictionary(forKey: Key.selectedFeedIdentifier) as? [String: String] else {
+			guard let userInfo = UserDefaults.standard.dictionary(forKey: Key.selectedSidebarItem) as? [String: String] else {
 				return nil
 			}
 			return FeedIdentifier(userInfo: userInfo)
 		}
 		set {
 			guard let newValue else {
-				UserDefaults.standard.removeObject(forKey: Key.selectedFeedIdentifier)
+				UserDefaults.standard.removeObject(forKey: Key.selectedSidebarItem)
 				return
 			}
-			UserDefaults.standard.set(newValue.userInfo, forKey: Key.selectedFeedIdentifier)
+			UserDefaults.standard.set(newValue.userInfo, forKey: Key.selectedSidebarItem)
 		}
 	}
 
