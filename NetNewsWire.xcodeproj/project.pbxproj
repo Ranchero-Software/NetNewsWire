@@ -430,6 +430,7 @@
 		84D35E0C2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				ArticleSpecifier.swift,
 				Extensions/IconImage.swift,
 				"Extensions/Node-Extensions.swift",
 				ShareExtension/ExtensionContainers.swift,

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Articles
 
 /// Use this to refer to an Article when you can look it up.
 ///
@@ -19,7 +20,7 @@ struct ArticleSpecifier: Hashable, Sendable {
 		static let articleID = "articleID"
 	}
 
-	/// Plist-compatible dictionary, able to saved to disk or in UserDefaults.
+	/// Plist-compatible dictionary, meant to be saved to disk or in UserDefaults.
 	var dictionary: [String: String] {
 		[Key.accountID: accountID, Key.articleID: articleID]
 	}

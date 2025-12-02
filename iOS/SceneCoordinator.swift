@@ -409,7 +409,20 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			  let indexPath = indexPathFor(feedNode) else {
 			return
 		}
-		selectFeed(indexPath: indexPath, animations: [])
+		selectFeed(indexPath: indexPath, animations: []) {
+			// Restore selectedArticle from UserDefaults
+			if let articleSpecifier = AppDefaults.shared.selectedArticle {
+				self.restoreSelectedArticle(articleSpecifier)
+			}
+		}
+	}
+
+	private func restoreSelectedArticle(_ articleSpecifier: ArticleSpecifier) {
+		// Find the article in the current timeline
+		guard let article = articles.first(where: { $0.articleID == articleSpecifier.articleID }) else {
+			return
+		}
+		selectArticle(article)
 	}
 
 	func handle(_ activity: NSUserActivity) {
@@ -889,18 +902,19 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		guard article != currentArticle else { return }
-		
+
 		currentArticle = article
 		activityManager.reading(feed: timelineFeed, article: article)
-		
+
 		if article == nil {
 			rootSplitViewController.show(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
+			AppDefaults.shared.selectedArticle = nil
 			return
 		}
-		
+
 		rootSplitViewController.show(.secondary)
-		
+
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
 
@@ -909,6 +923,8 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		if let isShowingExtractedArticle = isShowingExtractedArticle, let articleWindowScrollY = articleWindowScrollY {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
 		}
+
+		AppDefaults.shared.selectedArticle = ArticleSpecifier(article: article!)
 	}
 	
 	func beginSearching() {
