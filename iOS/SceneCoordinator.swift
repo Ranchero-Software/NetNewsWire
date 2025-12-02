@@ -419,7 +419,9 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	private func restoreSelectedArticle(_ articleSpecifier: ArticleSpecifier) {
 		// Find the article in the current timeline
-		guard let article = articles.first(where: { $0.articleID == articleSpecifier.articleID }) else {
+		guard let article = articles.first(where: {
+			$0.articleID == articleSpecifier.articleID && $0.accountID == articleSpecifier.accountID
+		}) else {
 			return
 		}
 		selectArticle(article)
