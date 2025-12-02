@@ -118,7 +118,10 @@ protocol SidebarDelegate: AnyObject {
 		func selectFeedsVisitor(node: Node) {
 			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
 				if selectedFeedIdentifers.contains(feedID) {
-					selectIndexes.insert(outlineView.row(forItem: node) )
+					let row = outlineView.row(forItem: node)
+					if row >= 0 {
+						selectIndexes.insert(row)
+					}
 				}
 			}
 		}
@@ -154,7 +157,10 @@ protocol SidebarDelegate: AnyObject {
 		func selectFeedsVisitor(node: Node) {
 			if let feedID = (node.representedObject as? FeedIdentifiable)?.feedID {
 				if selectedFeedIdentifiers.contains(feedID) {
-					selectIndexes.insert(outlineView.row(forItem: node) )
+					let row = outlineView.row(forItem: node)
+					if row >= 0 {
+						selectIndexes.insert(row)
+					}
 				}
 			}
 		}
