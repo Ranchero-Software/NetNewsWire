@@ -41,4 +41,8 @@ struct ArticleSpecifier: Hashable, Sendable {
 	init(article: Article) {
 		self.init(accountID: article.accountID, articleID: article.articleID)
 	}
+
+	func matchesArticle(_ article: Article) -> Bool {
+		article.accountID == accountID && article.articleID == articleID
+	}
 }

@@ -20,6 +20,10 @@ extension Array where Element == Article {
 		return self[row]
 	}
 
+	func article(matching articleSpecifier: ArticleSpecifier) -> Article? {
+		first { articleSpecifier.matchesArticle($0) }
+	}
+
 	func orderedRowIndexes(fromIndex startIndex: Int, wrappingToTop wrapping: Bool) -> [Int] {
 		if startIndex >= self.count {
 			// Wrap around to the top if specified
