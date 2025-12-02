@@ -58,8 +58,10 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			coordinator.handle(notificationResponse)
 			return
 		}
-		
-		if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
+
+		// Handle activities from external sources (Handoff, Spotlight, Siri Shortcuts).
+		// Skip handling session.stateRestorationActivity since UserDefaults now handles state restoration.
+		if let userActivity = connectionOptions.userActivities.first {
 			coordinator.handle(userActivity)
 		}
 
