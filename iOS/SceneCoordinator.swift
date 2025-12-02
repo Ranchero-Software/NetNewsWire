@@ -384,6 +384,9 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	private func restoreWindowStateFromUserDefaults() {
+		let selectedSidebarItem = AppDefaults.shared.selectedSidebarItem
+		let selectedArticle = AppDefaults.shared.selectedArticle
+
 		// Restore containerExpandedWindowState from UserDefaults
 		if let storedState = AppDefaults.shared.expandedContainers {
 			expandedContainers.formUnion(storedState)
@@ -399,20 +402,20 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
 
 		// Restore selectedSidebarItem from UserDefaults
-		if let feedIdentifier = AppDefaults.shared.selectedSidebarItem {
-			restoreSelectedSidebarItem(feedIdentifier)
+		if let selectedSidebarItem {
+			restoreSelectedSidebarItem(selectedSidebarItem, selectedArticle)
 		}
 	}
 
-	private func restoreSelectedSidebarItem(_ feedIdentifier: FeedIdentifier) {
-		guard let feedNode = nodeFor(feedID: feedIdentifier),
+	private func restoreSelectedSidebarItem(_ selectedSidebarItem: FeedIdentifier, _ selectedArticle: ArticleSpecifier?) {
+		guard let feedNode = nodeFor(feedID: selectedSidebarItem),
 			  let indexPath = indexPathFor(feedNode) else {
 			return
 		}
 		selectFeed(indexPath: indexPath, animations: []) {
 			// Restore selectedArticle from UserDefaults
-			if let articleSpecifier = AppDefaults.shared.selectedArticle {
-				self.restoreSelectedArticle(articleSpecifier)
+			if let selectedArticle {
+				self.restoreSelectedArticle(selectedArticle)
 			}
 		}
 	}
