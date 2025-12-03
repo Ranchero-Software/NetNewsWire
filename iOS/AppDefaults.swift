@@ -427,7 +427,7 @@ private extension AppDefaults {
 
 struct StateRestorationInfo {
 	let hideReadFeeds: Bool
-	let expandedContainers: Set<ContainerIdentifier>?
+	let expandedContainers: Set<ContainerIdentifier>
 	let selectedSidebarItem: FeedIdentifier?
 	let sidebarItemsHidingReadArticles: Set<FeedIdentifier>
 	let selectedArticle: ArticleSpecifier?
@@ -435,7 +435,7 @@ struct StateRestorationInfo {
 	let isShowingExtractedArticle: Bool
 
 	init(hideReadFeeds: Bool,
-		 expandedContainers: Set<ContainerIdentifier>?,
+		 expandedContainers: Set<ContainerIdentifier>,
 		 selectedSidebarItem: FeedIdentifier?,
 		 sidebarItemsHidingReadArticles: Set<FeedIdentifier>,
 		 selectedArticle: ArticleSpecifier?,

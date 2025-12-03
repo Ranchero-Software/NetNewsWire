@@ -317,25 +317,23 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 	}
 	
-	func restoreWindowState(_ activity: NSUserActivity?) {
+	func restoreWindowState(activity: NSUserActivity?) {
 		let stateInfo = StateRestorationInfo(legacyState: activity)
-		restoreWindowState(from: stateInfo)
+		restoreWindowState(stateInfo)
 	}
 
-	private func restoreWindowState(from stateInfo: StateRestorationInfo) {
-		// Restore containerExpandedWindowState
-		if let storedState = stateInfo.expandedContainers {
-			// Restore saved state (might be empty if everything was collapsed)
-			expandedContainers = storedState
-		} else {
-			// First run: expand all sections by default
+	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
+		if AppDefaults.shared.isFirstRun {
+			// Expand top-level items on first run.
 			for sectionNode in treeController.rootNode.childNodes {
 				markExpanded(sectionNode)
 			}
+			saveExpandedContainersToUserDefaults()
+		} else {
+			expandedContainers = stateInfo.expandedContainers
 		}
 
-		// Restore readArticlesFilterState
-		restoreReadFilterEnabledTable(from: stateInfo)
+		feedsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
 
 		rebuildBackingStores(initialLoad: true)
 
@@ -343,26 +341,28 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
 		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
 
-		// Restore selectedSidebarItem
-		if let selectedSidebarItem = stateInfo.selectedSidebarItem {
-			restoreSelectedSidebarItem(selectedSidebarItem, stateInfo: stateInfo)
-		}
+		restoreSelectedSidebarItemAndArticle(stateInfo)
 	}
 
-	private func restoreSelectedSidebarItem(_ selectedSidebarItem: FeedIdentifier, stateInfo: StateRestorationInfo) {
+	private func restoreSelectedSidebarItemAndArticle(_ stateInfo: StateRestorationInfo) {
+		guard let selectedSidebarItem = stateInfo.selectedSidebarItem else {
+			return
+		}
+
 		guard let feedNode = nodeFor(feedID: selectedSidebarItem),
 			  let indexPath = indexPathFor(feedNode) else {
 			return
 		}
 		selectFeed(indexPath: indexPath, animations: []) {
-			// Restore selectedArticle
-			if let selectedArticle = stateInfo.selectedArticle {
-				self.restoreSelectedArticle(selectedArticle, stateInfo: stateInfo)
-			}
+			self.restoreSelectedArticle(stateInfo)
 		}
 	}
 
-	private func restoreSelectedArticle(_ articleSpecifier: ArticleSpecifier, stateInfo: StateRestorationInfo) {
+	private func restoreSelectedArticle(_ stateInfo: StateRestorationInfo) {
+		guard let articleSpecifier = stateInfo.selectedArticle else {
+			return
+		}
+
 		let article = articles.article(matching: articleSpecifier) ??
 			AccountManager.shared.fetchArticle(accountID: articleSpecifier.accountID,
 											   articleID: articleSpecifier.articleID)
@@ -708,7 +708,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func expand(_ containerID: ContainerIdentifier) {
 		markExpanded(containerID)
 		rebuildBackingStores()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -729,14 +729,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 		rebuildBackingStores()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 	
 	func collapse(_ containerID: ContainerIdentifier) {
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 	
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -757,7 +757,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 	
 	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
@@ -1720,18 +1720,12 @@ private extension SceneCoordinator {
 		}
 	}
 
-	private func saveExpandedTableToUserDefaults() {
+	private func saveExpandedContainersToUserDefaults() {
 		AppDefaults.shared.expandedContainers = expandedContainers
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
 		AppDefaults.shared.sidebarItemsHidingReadArticles = feedsHidingReadArticles
-	}
-
-	private func restoreReadFilterEnabledTable(from stateInfo: StateRestorationInfo) {
-		if !stateInfo.sidebarItemsHidingReadArticles.isEmpty {
-			feedsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
-		}
 	}
 
 	// MARK: Select Prev Unread

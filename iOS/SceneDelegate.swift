@@ -38,7 +38,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.coordinator = coordinator
 		rootViewController.delegate = coordinator
 		
-		coordinator.restoreWindowState(session.stateRestorationActivity)
+		coordinator.restoreWindowState(activity: session.stateRestorationActivity)
 
 		updateUserInterfaceStyle()
 
