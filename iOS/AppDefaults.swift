@@ -71,6 +71,7 @@ final class AppDefaults {
 		static let sidebarItemsHidingReadArticles = "sidebarItemsHidingReadArticles"
 		static let selectedSidebarItem = "selectedSidebarItem"
 		static let selectedArticle = "selectedArticle"
+		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -250,10 +251,6 @@ final class AppDefaults {
 		}
 	}
 
-	var hideReadFeedsHasBeenSet: Bool {
-		UserDefaults.standard.object(forKey: Key.hideReadFeeds) != nil
-	}
-
 	var hideReadFeeds: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.hideReadFeeds)
@@ -261,10 +258,6 @@ final class AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.hideReadFeeds)
 		}
-	}
-
-	var isShowingExtractedArticleHasBeenSet: Bool {
-		UserDefaults.standard.object(forKey: Key.isShowingExtractedArticle) != nil
 	}
 
 	var isShowingExtractedArticle: Bool {
@@ -276,10 +269,6 @@ final class AppDefaults {
 		}
 	}
 
-	var articleWindowScrollYHasBeenSet: Bool {
-		UserDefaults.standard.object(forKey: Key.articleWindowScrollY) != nil
-	}
-
 	var articleWindowScrollY: Int {
 		get {
 			UserDefaults.standard.integer(forKey: Key.articleWindowScrollY)
@@ -289,44 +278,29 @@ final class AppDefaults {
 		}
 	}
 
-	var expandedContainers: Set<ContainerIdentifier>? {
+	var expandedContainers: Set<ContainerIdentifier> {
 		get {
-			// Return nil only if the key doesn't exist (never been set)
-			guard UserDefaults.standard.object(forKey: Key.expandedContainers) != nil else {
-				return nil
-			}
-			// If key exists, return the set (even if empty)
 			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.expandedContainers) as? [[String: String]] else {
-				return Set()
+				return Set<ContainerIdentifier>()
 			}
 			let containerIdentifiers = rawIdentifiers.compactMap { ContainerIdentifier(userInfo: $0) }
 			return Set(containerIdentifiers)
 		}
 		set {
-			guard let newValue else {
-				UserDefaults.standard.removeObject(forKey: Key.expandedContainers)
-				return
-			}
-			// Store empty array when set is empty, not an empty dictionary
 			let containerIdentifierUserInfos = newValue.compactMap { $0.userInfo }
 			UserDefaults.standard.set(containerIdentifierUserInfos, forKey: Key.expandedContainers)
 		}
 	}
 
-	var sidebarItemsHidingReadArticles: Set<FeedIdentifier>? {
+	var sidebarItemsHidingReadArticles: Set<FeedIdentifier> {
 		get {
 			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.sidebarItemsHidingReadArticles) as? [[String: String]] else {
-				return nil
+				return Set<FeedIdentifier>()
 			}
 			let feedIdentifiers = rawIdentifiers.compactMap { FeedIdentifier(userInfo: $0) }
 			return Set(feedIdentifiers)
 		}
 		set {
-			guard let newValue, !newValue.isEmpty else {
-				UserDefaults.standard.set([String: String](), forKey: Key.sidebarItemsHidingReadArticles)
-				return
-			}
-
 			let feedIdentifierUserInfos = newValue.compactMap { $0.userInfo }
 			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.sidebarItemsHidingReadArticles)
 		}
@@ -361,6 +335,15 @@ final class AppDefaults {
 				return
 			}
 			UserDefaults.standard.set(newValue.dictionary, forKey: Key.selectedArticle)
+		}
+	}
+
+	var didMigrateLegacyStateRestorationInfo: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.didMigrateLegacyStateRestorationInfo)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.didMigrateLegacyStateRestorationInfo)
 		}
 	}
 
@@ -439,5 +422,115 @@ private extension AppDefaults {
 		else {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
+	}
+}
+
+struct StateRestorationInfo {
+	let hideReadFeeds: Bool
+	let expandedContainers: Set<ContainerIdentifier>?
+	let selectedSidebarItem: FeedIdentifier?
+	let sidebarItemsHidingReadArticles: Set<FeedIdentifier>
+	let selectedArticle: ArticleSpecifier?
+	let articleWindowScrollY: Int
+	let isShowingExtractedArticle: Bool
+
+	init(hideReadFeeds: Bool,
+		 expandedContainers: Set<ContainerIdentifier>?,
+		 selectedSidebarItem: FeedIdentifier?,
+		 sidebarItemsHidingReadArticles: Set<FeedIdentifier>,
+		 selectedArticle: ArticleSpecifier?,
+		 articleWindowScrollY: Int,
+		 isShowingExtractedArticle: Bool) {
+		self.hideReadFeeds = hideReadFeeds
+		self.expandedContainers = expandedContainers
+		self.selectedSidebarItem = selectedSidebarItem
+		self.sidebarItemsHidingReadArticles = sidebarItemsHidingReadArticles
+		self.selectedArticle = selectedArticle
+		self.articleWindowScrollY = articleWindowScrollY
+		self.isShowingExtractedArticle = isShowingExtractedArticle
+	}
+
+	init() {
+		self.init(hideReadFeeds: AppDefaults.shared.hideReadFeeds,
+				  expandedContainers: AppDefaults.shared.expandedContainers,
+				  selectedSidebarItem: AppDefaults.shared.selectedSidebarItem,
+				  sidebarItemsHidingReadArticles: AppDefaults.shared.sidebarItemsHidingReadArticles,
+				  selectedArticle: AppDefaults.shared.selectedArticle,
+				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
+				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)
+	}
+
+	// TODO: Delete for NetNewsWire 7.1.
+	init(legacyState: NSUserActivity?) {
+		if AppDefaults.shared.didMigrateLegacyStateRestorationInfo {
+			self.init()
+			return
+		}
+
+		AppDefaults.shared.didMigrateLegacyStateRestorationInfo = true
+
+		// Extract legacy window state if available
+		guard let windowState = legacyState?.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] else {
+			self.init()
+			return
+		}
+
+		let hideReadFeeds: Bool
+		if let legacyValue = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
+			hideReadFeeds = legacyValue
+		} else {
+			hideReadFeeds = AppDefaults.shared.hideReadFeeds
+		}
+
+		let expandedContainers: Set<ContainerIdentifier>
+		if let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
+			let convertedState = legacyState.compactMap { dict -> [String: String]? in
+				var stringDict = [String: String]()
+				for (key, value) in dict {
+					if let keyString = key as? String, let valueString = value as? String {
+						stringDict[keyString] = valueString
+					}
+				}
+				return stringDict.isEmpty ? nil : stringDict
+			}
+			let containerIdentifiers = convertedState.compactMap { ContainerIdentifier(userInfo: $0) }
+			expandedContainers = Set(containerIdentifiers)
+		} else {
+			expandedContainers = AppDefaults.shared.expandedContainers
+		}
+
+		let sidebarItemsHidingReadArticles: Set<FeedIdentifier>
+		if let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
+			let enabledFeeds = legacyState.filter { $0.value == true }
+			let convertedState = enabledFeeds.keys.compactMap { key -> [String: String]? in
+				var stringDict = [String: String]()
+				for (k, v) in key {
+					if let keyString = k as? String, let valueString = v as? String {
+						stringDict[keyString] = valueString
+					}
+				}
+				return stringDict.isEmpty ? nil : stringDict
+			}
+			let feedIdentifiers = convertedState.compactMap { FeedIdentifier(userInfo: $0) }
+			sidebarItemsHidingReadArticles = Set(feedIdentifiers)
+		} else {
+			sidebarItemsHidingReadArticles = AppDefaults.shared.sidebarItemsHidingReadArticles
+		}
+
+		let selectedSidebarItem: FeedIdentifier?
+		if let legacyState = windowState[UserInfoKey.feedIdentifier] as? [String: String],
+		   let feedIdentifier = FeedIdentifier(userInfo: legacyState) {
+			selectedSidebarItem = feedIdentifier
+		} else {
+			selectedSidebarItem = AppDefaults.shared.selectedSidebarItem
+		}
+
+		self.init(hideReadFeeds: hideReadFeeds,
+				  expandedContainers: expandedContainers,
+				  selectedSidebarItem: selectedSidebarItem,
+				  sidebarItemsHidingReadArticles: sidebarItemsHidingReadArticles,
+				  selectedArticle: AppDefaults.shared.selectedArticle,
+				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
+				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)
 	}
 }

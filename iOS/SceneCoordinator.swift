@@ -318,84 +318,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func restoreWindowState(_ activity: NSUserActivity?) {
-		migrateFromLegacyStateStorage(activity)
-		restoreWindowStateFromUserDefaults()
+		let stateInfo = StateRestorationInfo(legacyState: activity)
+		restoreWindowState(from: stateInfo)
 	}
 
-	/// Copy storage from legacy scene restoration state to UserDefaults.
-	///
-	/// We can do this because we support just one scene now.
-	/// The idea is to make state restoration more reliable.
-	private func migrateFromLegacyStateStorage(_ activity: NSUserActivity?) {
-		guard let windowState = activity?.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] else {
-			return
-		}
-
-		// containerExpandedWindowState
-		if AppDefaults.shared.expandedContainers == nil,
-		   let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-			let convertedState = legacyState.compactMap { dict -> [String: String]? in
-				var stringDict = [String: String]()
-				for (key, value) in dict {
-					if let keyString = key as? String, let valueString = value as? String {
-						stringDict[keyString] = valueString
-					}
-				}
-				return stringDict.isEmpty ? nil : stringDict
-			}
-			let containerIdentifiers = convertedState.compactMap { ContainerIdentifier(userInfo: $0) }
-			AppDefaults.shared.expandedContainers = Set(containerIdentifiers)
-		}
-
-		// readArticlesFilterState
-		if AppDefaults.shared.sidebarItemsHidingReadArticles == nil,
-		   let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
-			let enabledFeeds = legacyState.filter { $0.value == true }
-			let convertedState = enabledFeeds.keys.compactMap { key -> [String: String]? in
-				var stringDict = [String: String]()
-				for (k, v) in key {
-					if let keyString = k as? String, let valueString = v as? String {
-						stringDict[keyString] = valueString
-					}
-				}
-				return stringDict.isEmpty ? nil : stringDict
-			}
-			let feedIdentifiers = convertedState.compactMap { FeedIdentifier(userInfo: $0) }
-			AppDefaults.shared.sidebarItemsHidingReadArticles = Set(feedIdentifiers)
-		}
-
-		// hideReadFeeds
-		if !AppDefaults.shared.hideReadFeedsHasBeenSet,
-		   let legacyState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
-			AppDefaults.shared.hideReadFeeds = legacyState
-		}
-
-		// isShowingExtractedArticle
-		if !AppDefaults.shared.isShowingExtractedArticleHasBeenSet,
-		   let legacyState = windowState[UserInfoKey.isShowingExtractedArticle] as? Bool {
-			AppDefaults.shared.isShowingExtractedArticle = legacyState
-		}
-
-		// articleWindowScrollY
-		if !AppDefaults.shared.articleWindowScrollYHasBeenSet,
-		   let legacyState = windowState[UserInfoKey.articleWindowScrollY] as? Int {
-			AppDefaults.shared.articleWindowScrollY = legacyState
-		}
-
-		// selectedSidebarItem
-		if AppDefaults.shared.selectedSidebarItem == nil,
-		   let legacyState = windowState[UserInfoKey.feedIdentifier] as? [String: String],
-		   let feedIdentifier = FeedIdentifier(userInfo: legacyState) {
-			AppDefaults.shared.selectedSidebarItem = feedIdentifier
-		}
-	}
-
-	private func restoreWindowStateFromUserDefaults() {
-		let selectedSidebarItem = AppDefaults.shared.selectedSidebarItem
-		let selectedArticle = AppDefaults.shared.selectedArticle
-
-		// Restore containerExpandedWindowState from UserDefaults
-		if let storedState = AppDefaults.shared.expandedContainers {
+	private func restoreWindowState(from stateInfo: StateRestorationInfo) {
+		// Restore containerExpandedWindowState
+		if let storedState = stateInfo.expandedContainers {
+			// Restore saved state (might be empty if everything was collapsed)
 			expandedContainers = storedState
 		} else {
 			// First run: expand all sections by default
@@ -404,41 +334,41 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 
-		// Restore readArticlesFilterState from UserDefaults
-		restoreReadFilterEnabledTableFromUserDefaults()
+		// Restore readArticlesFilterState
+		restoreReadFilterEnabledTable(from: stateInfo)
 
 		rebuildBackingStores(initialLoad: true)
 
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
-		treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
+		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
 
-		// Restore selectedSidebarItem from UserDefaults
-		if let selectedSidebarItem {
-			restoreSelectedSidebarItem(selectedSidebarItem, selectedArticle)
+		// Restore selectedSidebarItem
+		if let selectedSidebarItem = stateInfo.selectedSidebarItem {
+			restoreSelectedSidebarItem(selectedSidebarItem, stateInfo: stateInfo)
 		}
 	}
 
-	private func restoreSelectedSidebarItem(_ selectedSidebarItem: FeedIdentifier, _ selectedArticle: ArticleSpecifier?) {
+	private func restoreSelectedSidebarItem(_ selectedSidebarItem: FeedIdentifier, stateInfo: StateRestorationInfo) {
 		guard let feedNode = nodeFor(feedID: selectedSidebarItem),
 			  let indexPath = indexPathFor(feedNode) else {
 			return
 		}
 		selectFeed(indexPath: indexPath, animations: []) {
-			// Restore selectedArticle from UserDefaults
-			if let selectedArticle {
-				self.restoreSelectedArticle(selectedArticle)
+			// Restore selectedArticle
+			if let selectedArticle = stateInfo.selectedArticle {
+				self.restoreSelectedArticle(selectedArticle, stateInfo: stateInfo)
 			}
 		}
 	}
 
-	private func restoreSelectedArticle(_ articleSpecifier: ArticleSpecifier) {
+	private func restoreSelectedArticle(_ articleSpecifier: ArticleSpecifier, stateInfo: StateRestorationInfo) {
 		let article = articles.article(matching: articleSpecifier) ??
 			AccountManager.shared.fetchArticle(accountID: articleSpecifier.accountID,
 											   articleID: articleSpecifier.articleID)
 
 		if let article {
-			selectArticle(article)
+			selectArticle(article, isShowingExtractedArticle: stateInfo.isShowingExtractedArticle, articleWindowScrollY: stateInfo.articleWindowScrollY)
 		}
 	}
 
@@ -1798,11 +1728,10 @@ private extension SceneCoordinator {
 		AppDefaults.shared.sidebarItemsHidingReadArticles = feedsHidingReadArticles
 	}
 
-	private func restoreReadFilterEnabledTableFromUserDefaults() {
-		guard let state = AppDefaults.shared.sidebarItemsHidingReadArticles else {
-			return
+	private func restoreReadFilterEnabledTable(from stateInfo: StateRestorationInfo) {
+		if !stateInfo.sidebarItemsHidingReadArticles.isEmpty {
+			feedsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
 		}
-		feedsHidingReadArticles.formUnion(state)
 	}
 
 	// MARK: Select Prev Unread
