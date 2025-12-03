@@ -28,8 +28,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.preferredDisplayMode = .oneBesideSecondary
 
 		Task { @MainActor in
-			// Ensure Feeds view shows on first run on iPad — otherwise the UI is empty.
-			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.shared.isFirstRun {
+			// Ensure Feeds view shows on iPad — otherwise the UI may be empty.
+			if UIDevice.current.userInterfaceIdiom == .pad {
 				rootViewController.show(.primary)
 			}
 		}
