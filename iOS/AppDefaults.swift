@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os.log
 import Account
 import Articles
 
@@ -25,7 +26,6 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 			return NSLocalizedString("Dark", comment: "Dark")
 		}
 	}
-	
 }
 
 extension Notification.Name {
@@ -33,10 +33,11 @@ extension Notification.Name {
 }
 
 final class AppDefaults {
+	static let shared = AppDefaults()
 
 	static let defaultThemeName = "Default"
-	
-	static let shared = AppDefaults()
+
+	fileprivate static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDefaults")
 	private init() {}
 	
 	static var store: UserDefaults = {
@@ -287,6 +288,7 @@ final class AppDefaults {
 			return Set(containerIdentifiers)
 		}
 		set {
+			Self.logger.debug("AppDefaults: set expandedContainers: \(newValue)")
 			let containerIdentifierUserInfos = newValue.compactMap { $0.userInfo }
 			UserDefaults.standard.set(containerIdentifierUserInfos, forKey: Key.expandedContainers)
 		}
@@ -448,6 +450,8 @@ struct StateRestorationInfo {
 		self.selectedArticle = selectedArticle
 		self.articleWindowScrollY = articleWindowScrollY
 		self.isShowingExtractedArticle = isShowingExtractedArticle
+
+		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsidebarItemsHidingReadArticles: \(sidebarItemsHidingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
 	}
 
 	init() {
