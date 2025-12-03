@@ -859,6 +859,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		activityManager.reading(feed: timelineFeed, article: article)
 
 		if article == nil {
+			articleViewController?.article = nil
 			rootSplitViewController.show(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
@@ -1964,6 +1965,12 @@ private extension SceneCoordinator {
 	func replaceArticles(with sortedArticles: ArticleArray, animated: Bool) {
 		if articles != sortedArticles {
 			articles = sortedArticles
+
+			// Clear current article if it's no longer in the timeline
+			if let currentArticle, !sortedArticles.contains(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
+				selectArticle(nil)
+			}
+
 			updateShowNamesAndIcons()
 			updateUnreadCount()
 			mainTimelineViewController?.reloadArticles(animated: animated)
