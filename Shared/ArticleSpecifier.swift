@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Articles
 
 /// Use this to refer to an Article when you can look it up.
 ///

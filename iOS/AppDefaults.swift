@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import os.log
+import Account
+import Articles
 
 enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	case automatic = 0
@@ -23,7 +26,6 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 			return NSLocalizedString("Dark", comment: "Dark")
 		}
 	}
-
 }
 
 extension Notification.Name {
@@ -31,10 +33,10 @@ extension Notification.Name {
 }
 
 final class AppDefaults: Sendable {
-
-	static let defaultThemeName = "Default"
-
 	static let shared = AppDefaults()
+	static let defaultThemeName = "Default"
+	fileprivate static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDefaults")
+
 	private init() {}
 
 	nonisolated(unsafe) static let store: UserDefaults = {
@@ -62,6 +64,14 @@ final class AppDefaults: Sendable {
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let hideReadFeeds = "hideReadFeeds"
+		static let isShowingExtractedArticle = "isShowingExtractedArticle"
+		static let articleWindowScrollY = "articleWindowScrollY"
+		static let expandedContainers = "expandedContainers"
+		static let sidebarItemsHidingReadArticles = "sidebarItemsHidingReadArticles"
+		static let selectedSidebarItem = "selectedSidebarItem"
+		static let selectedArticle = "selectedArticle"
+		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -241,6 +251,103 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var hideReadFeeds: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.hideReadFeeds)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.hideReadFeeds)
+		}
+	}
+
+	var isShowingExtractedArticle: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.isShowingExtractedArticle)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.isShowingExtractedArticle)
+		}
+	}
+
+	var articleWindowScrollY: Int {
+		get {
+			UserDefaults.standard.integer(forKey: Key.articleWindowScrollY)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.articleWindowScrollY)
+		}
+	}
+
+	var expandedContainers: Set<ContainerIdentifier> {
+		get {
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.expandedContainers) as? [[String: String]] else {
+				return Set<ContainerIdentifier>()
+			}
+			let containerIdentifiers = rawIdentifiers.compactMap { ContainerIdentifier(userInfo: $0) }
+			return Set(containerIdentifiers)
+		}
+		set {
+			Self.logger.debug("AppDefaults: set expandedContainers: \(newValue)")
+			let containerIdentifierUserInfos = newValue.compactMap { $0.userInfo }
+			UserDefaults.standard.set(containerIdentifierUserInfos, forKey: Key.expandedContainers)
+		}
+	}
+
+	var sidebarItemsHidingReadArticles: Set<SidebarItemIdentifier> {
+		get {
+			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.sidebarItemsHidingReadArticles) as? [[String: String]] else {
+				return Set<SidebarItemIdentifier>()
+			}
+			let feedIdentifiers = rawIdentifiers.compactMap { SidebarItemIdentifier(userInfo: $0) }
+			return Set(feedIdentifiers)
+		}
+		set {
+			let feedIdentifierUserInfos = newValue.compactMap { $0.userInfo }
+			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.sidebarItemsHidingReadArticles)
+		}
+	}
+
+	var selectedSidebarItem: SidebarItemIdentifier? {
+		get {
+			guard let userInfo = UserDefaults.standard.dictionary(forKey: Key.selectedSidebarItem) as? [String: String] else {
+				return nil
+			}
+			return SidebarItemIdentifier(userInfo: userInfo)
+		}
+		set {
+			guard let newValue else {
+				UserDefaults.standard.removeObject(forKey: Key.selectedSidebarItem)
+				return
+			}
+			UserDefaults.standard.set(newValue.userInfo, forKey: Key.selectedSidebarItem)
+		}
+	}
+
+	var selectedArticle: ArticleSpecifier? {
+		get {
+			guard let d = UserDefaults.standard.dictionary(forKey: Key.selectedArticle) as? [String: String] else {
+				return nil
+			}
+			return ArticleSpecifier(dictionary: d)
+		}
+		set {
+			guard let newValue else {
+				UserDefaults.standard.removeObject(forKey: Key.selectedArticle)
+				return
+			}
+			UserDefaults.standard.set(newValue.dictionary, forKey: Key.selectedArticle)
+		}
+	}
+
+	var didMigrateLegacyStateRestorationInfo: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.didMigrateLegacyStateRestorationInfo)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.didMigrateLegacyStateRestorationInfo)
+		}
+	}
+
 	@MainActor static func registerDefaults() {
 		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
@@ -317,5 +424,123 @@ private extension AppDefaults {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
 	}
+}
 
+struct StateRestorationInfo {
+	let hideReadFeeds: Bool
+	let expandedContainers: Set<ContainerIdentifier>
+	let selectedSidebarItem: SidebarItemIdentifier?
+	let sidebarItemsHidingReadArticles: Set<SidebarItemIdentifier>
+	let selectedArticle: ArticleSpecifier?
+	let articleWindowScrollY: Int
+	let isShowingExtractedArticle: Bool
+
+	init(hideReadFeeds: Bool,
+		 expandedContainers: Set<ContainerIdentifier>,
+		 selectedSidebarItem: SidebarItemIdentifier?,
+		 sidebarItemsHidingReadArticles: Set<SidebarItemIdentifier>,
+		 selectedArticle: ArticleSpecifier?,
+		 articleWindowScrollY: Int,
+		 isShowingExtractedArticle: Bool) {
+		self.hideReadFeeds = hideReadFeeds
+		self.expandedContainers = expandedContainers
+		self.selectedSidebarItem = selectedSidebarItem
+		self.sidebarItemsHidingReadArticles = sidebarItemsHidingReadArticles
+		self.selectedArticle = selectedArticle
+		self.articleWindowScrollY = articleWindowScrollY
+		self.isShowingExtractedArticle = isShowingExtractedArticle
+
+		// Break out interpolations to avoid OSLogMessage ambiguity.
+		let expandedContainersDescription: String = String(describing: expandedContainers)
+		let selectedSidebarItemUserInfo: [AnyHashable: AnyHashable] = selectedSidebarItem?.userInfo ?? [:]
+		let sidebarItemsHidingDescription: String = String(describing: sidebarItemsHidingReadArticles)
+		let selectedArticleDictionary: [String: String] = selectedArticle?.dictionary ?? [:]
+		let isShowingExtractedArticleString = isShowingExtractedArticle ? "true" : "false"
+
+		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainersDescription)\nselectedSidebarItem: \(selectedSidebarItemUserInfo)\nsidebarItemsHidingReadArticles: \(sidebarItemsHidingDescription)\nselectedArticle: \(selectedArticleDictionary)\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticleString)")
+	}
+
+	init() {
+		self.init(hideReadFeeds: AppDefaults.shared.hideReadFeeds,
+				  expandedContainers: AppDefaults.shared.expandedContainers,
+				  selectedSidebarItem: AppDefaults.shared.selectedSidebarItem,
+				  sidebarItemsHidingReadArticles: AppDefaults.shared.sidebarItemsHidingReadArticles,
+				  selectedArticle: AppDefaults.shared.selectedArticle,
+				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
+				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)
+	}
+
+	// TODO: Delete for NetNewsWire 7.1.
+	init(legacyState: NSUserActivity?) {
+		if AppDefaults.shared.didMigrateLegacyStateRestorationInfo {
+			self.init()
+			return
+		}
+
+		AppDefaults.shared.didMigrateLegacyStateRestorationInfo = true
+
+		// Extract legacy window state if available
+		guard let windowState = legacyState?.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] else {
+			self.init()
+			return
+		}
+
+		let hideReadFeeds: Bool
+		if let legacyValue = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
+			hideReadFeeds = legacyValue
+		} else {
+			hideReadFeeds = AppDefaults.shared.hideReadFeeds
+		}
+
+		let expandedContainers: Set<ContainerIdentifier>
+		if let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
+			let convertedState = legacyState.compactMap { dict -> [String: String]? in
+				var stringDict = [String: String]()
+				for (key, value) in dict {
+					if let keyString = key as? String, let valueString = value as? String {
+						stringDict[keyString] = valueString
+					}
+				}
+				return stringDict.isEmpty ? nil : stringDict
+			}
+			let containerIdentifiers = convertedState.compactMap { ContainerIdentifier(userInfo: $0) }
+			expandedContainers = Set(containerIdentifiers)
+		} else {
+			expandedContainers = AppDefaults.shared.expandedContainers
+		}
+
+		let sidebarItemsHidingReadArticles: Set<SidebarItemIdentifier>
+		if let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
+			let enabledFeeds = legacyState.filter { $0.value == true }
+			let convertedState = enabledFeeds.keys.compactMap { key -> [String: String]? in
+				var stringDict = [String: String]()
+				for (k, v) in key {
+					if let keyString = k as? String, let valueString = v as? String {
+						stringDict[keyString] = valueString
+					}
+				}
+				return stringDict.isEmpty ? nil : stringDict
+			}
+			let feedIdentifiers = convertedState.compactMap { SidebarItemIdentifier(userInfo: $0) }
+			sidebarItemsHidingReadArticles = Set(feedIdentifiers)
+		} else {
+			sidebarItemsHidingReadArticles = AppDefaults.shared.sidebarItemsHidingReadArticles
+		}
+
+		let selectedSidebarItem: SidebarItemIdentifier?
+		if let legacyState = windowState[UserInfoKey.feedIdentifier] as? [String: String],
+		   let feedIdentifier = SidebarItemIdentifier(userInfo: legacyState) {
+			selectedSidebarItem = feedIdentifier
+		} else {
+			selectedSidebarItem = AppDefaults.shared.selectedSidebarItem
+		}
+
+		self.init(hideReadFeeds: hideReadFeeds,
+				  expandedContainers: expandedContainers,
+				  selectedSidebarItem: selectedSidebarItem,
+				  sidebarItemsHidingReadArticles: sidebarItemsHidingReadArticles,
+				  selectedArticle: AppDefaults.shared.selectedArticle,
+				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
+				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)
+	}
 }
