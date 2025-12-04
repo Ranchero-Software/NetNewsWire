@@ -143,7 +143,7 @@ protocol SidebarDelegate: AnyObject {
 			expandedTable = Set(containerIdentifiers)
 		}
 
-		guard let selectedFeedsState = state[UserInfoKey.selectedFeedsState] as? [[AnyHashable: AnyHashable]] else {
+		guard let selectedFeedsState = state[UserInfoKey.selectedFeedsState] as? [[String: String]] else {
 			return
 		}
 

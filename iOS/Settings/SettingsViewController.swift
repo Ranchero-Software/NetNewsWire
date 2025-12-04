@@ -414,8 +414,24 @@ private extension SettingsViewController {
 	}
 	
 	func importOPMLDocumentPicker() {
-		
-		let docPicker = UIDocumentPickerViewController(forOpeningContentTypes: [UTType.opml, UTType.xml], asCopy: true)
+		var contentTypes: [UTType] = []
+
+		// Create UTType for .opml files by extension, without requiring conformance.
+		// This ensures files ending in .opml can be selected no matter how OPML is registered.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4858>
+		if let opmlByExtension = UTType(filenameExtension: "opml") {
+			contentTypes.append(opmlByExtension)
+		}
+
+		// Also try the registered org.opml.opml UTI if it exists
+		if let registeredOPML = UTType("org.opml.opml") {
+			contentTypes.append(registeredOPML)
+		}
+
+		// Include XML as a fallback
+		contentTypes.append(.xml)
+
+		let docPicker = UIDocumentPickerViewController(forOpeningContentTypes: contentTypes, asCopy: true)
 		docPicker.delegate = self
 		docPicker.modalPresentationStyle = .formSheet
 		self.present(docPicker, animated: true)

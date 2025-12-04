@@ -62,13 +62,20 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private let fetchRequestQueue = FetchRequestQueue()
 
 	// Which Containers are expanded
-	private var expandedTable = Set<ContainerIdentifier>()
+	private var expandedContainers = Set<ContainerIdentifier>()
 
 	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
-	private var lastExpandedTable = Set<ContainerIdentifier>()
+	private var lastExpandedContainers = Set<ContainerIdentifier>()
 
 	// Which Feeds have the Read Articles Filter enabled
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private var feedsHidingReadArticles = Set<FeedIdentifier>()
+	private var readFilterEnabledTable: [FeedIdentifier: Bool] { // TODO: remove this
+		var d = [FeedIdentifier: Bool]()
+		for feedIdentifier in feedsHidingReadArticles {
+			d[feedIdentifier] = true
+		}
+		return d
+	}
 
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
@@ -119,11 +126,10 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	var isReadArticlesFiltered: Bool {
-		if let feedID = timelineFeed?.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
-			return readFilterEnabled
-		} else {
-			return timelineDefaultReadFilterType != .none
+		if let feedID = timelineFeed?.feedID {
+			return feedsHidingReadArticles.contains(feedID)
 		}
+		return timelineDefaultReadFilterType != .none
 	}
 	
 	var timelineDefaultReadFilterType: ReadFilterType {
@@ -231,7 +237,15 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		return nil
 	}
 	
-	var currentArticle: Article?
+	var currentArticle: Article? {
+		didSet {
+			if let article = currentArticle {
+				AppDefaults.shared.selectedArticle = ArticleSpecifier(article: article)
+			} else {
+				AppDefaults.shared.selectedArticle = nil
+			}
+		}
+	}
 
 	private(set) var articles = ArticleArray() {
 		didSet {
@@ -282,8 +296,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		self.articleViewController?.coordinator = self
 		self.articleViewController?.navigationController?.delegate = self
 
-		for sectionNode in treeController.rootNode.childNodes {
-			markExpanded(sectionNode)
+		for _ in treeController.rootNode.childNodes {
 			shadowTable.append((sectionID: "", feedNodes: [FeedNode]()))
 		}
 		
@@ -304,87 +317,61 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 	}
 	
-	func restoreWindowState(_ activity: NSUserActivity?) {
-		migrateFromLegacyStateStorage(activity)
-		restoreWindowStateFromUserDefaults()
+	func restoreWindowState(activity: NSUserActivity?) {
+		let stateInfo = StateRestorationInfo(legacyState: activity)
+		restoreWindowState(stateInfo)
 	}
 
-	/// Copy storage from legacy scene restoration state to UserDefaults.
-	///
-	/// We can do this because we support just one scene now.
-	/// The idea is to make state restoration more reliable.
-	private func migrateFromLegacyStateStorage(_ activity: NSUserActivity?) {
-		guard let windowState = activity?.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] else {
-			return
-		}
-
-		// containerExpandedWindowState
-		if AppDefaults.shared.containerExpandedWindowState == nil,
-		   let legacyState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-			let convertedState = legacyState.compactMap { dict -> [String: String]? in
-				var stringDict = [String: String]()
-				for (key, value) in dict {
-					if let keyString = key as? String, let valueString = value as? String {
-						stringDict[keyString] = valueString
-					}
-				}
-				return stringDict.isEmpty ? nil : stringDict
+	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
+		if AppDefaults.shared.isFirstRun {
+			// Expand top-level items on first run.
+			for sectionNode in treeController.rootNode.childNodes {
+				markExpanded(sectionNode)
 			}
-			AppDefaults.shared.containerExpandedWindowState = convertedState
+			saveExpandedContainersToUserDefaults()
+		} else {
+			expandedContainers = stateInfo.expandedContainers
 		}
 
-		// readArticlesFilterState
-		if AppDefaults.shared.readArticlesFilterState == nil,
-		   let legacyState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
-			let enabledFeeds = legacyState.filter { $0.value == true }
-			let convertedState = enabledFeeds.keys.compactMap { key -> [String: String]? in
-				var stringDict = [String: String]()
-				for (k, v) in key {
-					if let keyString = k as? String, let valueString = v as? String {
-						stringDict[keyString] = valueString
-					}
-				}
-				return stringDict.isEmpty ? nil : stringDict
-			}
-			AppDefaults.shared.readArticlesFilterState = convertedState
-		}
-
-		// hideReadFeeds
-		if !AppDefaults.shared.hideReadFeedsHasBeenSet,
-		   let legacyState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
-			AppDefaults.shared.hideReadFeeds = legacyState
-		}
-
-		// isShowingExtractedArticle
-		if !AppDefaults.shared.isShowingExtractedArticleHasBeenSet,
-		   let legacyState = windowState[UserInfoKey.isShowingExtractedArticle] as? Bool {
-			AppDefaults.shared.isShowingExtractedArticle = legacyState
-		}
-
-		// articleWindowScrollY
-		if !AppDefaults.shared.articleWindowScrollYHasBeenSet,
-		   let legacyState = windowState[UserInfoKey.articleWindowScrollY] as? Int {
-			AppDefaults.shared.articleWindowScrollY = legacyState
-		}
-	}
-
-	private func restoreWindowStateFromUserDefaults() {
-		// Restore containerExpandedWindowState from UserDefaults
-		if let storedState = AppDefaults.shared.containerExpandedWindowState {
-			let containerIdentifiers = storedState.compactMap { ContainerIdentifier(userInfo: $0) }
-			expandedTable = Set(containerIdentifiers)
-		}
-
-		// Restore readArticlesFilterState from UserDefaults
-		restoreReadFilterEnabledTableFromUserDefaults()
+		feedsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
 
 		rebuildBackingStores(initialLoad: true)
 
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
-		treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
+		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
+
+		restoreSelectedSidebarItemAndArticle(stateInfo)
 	}
-	
+
+	private func restoreSelectedSidebarItemAndArticle(_ stateInfo: StateRestorationInfo) {
+		guard let selectedSidebarItem = stateInfo.selectedSidebarItem else {
+			return
+		}
+
+		guard let feedNode = nodeFor(feedID: selectedSidebarItem),
+			  let indexPath = indexPathFor(feedNode) else {
+			return
+		}
+		selectFeed(indexPath: indexPath, animations: []) {
+			self.restoreSelectedArticle(stateInfo)
+		}
+	}
+
+	private func restoreSelectedArticle(_ stateInfo: StateRestorationInfo) {
+		guard let articleSpecifier = stateInfo.selectedArticle else {
+			return
+		}
+
+		let article = articles.article(matching: articleSpecifier) ??
+			AccountManager.shared.fetchArticle(accountID: articleSpecifier.accountID,
+											   articleID: articleSpecifier.articleID)
+
+		if let article {
+			selectArticle(article, isShowingExtractedArticle: stateInfo.isShowingExtractedArticle, articleWindowScrollY: stateInfo.articleWindowScrollY)
+		}
+	}
+
 	func handle(_ activity: NSUserActivity) {
 		selectFeed(indexPath: nil) {
 			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
@@ -617,9 +604,9 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		if isReadArticlesFiltered {
-			readFilterEnabledTable[feedID] = false
+			feedsHidingReadArticles.remove(feedID)
 		} else {
-			readFilterEnabledTable[feedID] = true
+			feedsHidingReadArticles.insert(feedID)
 		}
 		saveReadFilterEnabledTableToUserDefaults()
 
@@ -664,6 +651,11 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func articleFor(_ articleID: String) -> Article? {
+		// Check if it's the currently displayed article
+		if let currentArticle, currentArticle.articleID == articleID {
+			return currentArticle
+		}
+		// Otherwise look in the timeline
 		return idToArticleDictionary[articleID]
 	}
 	
@@ -696,7 +688,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 	
 	func isExpanded(_ containerID: ContainerIdentifier) -> Bool {
-		return expandedTable.contains(containerID)
+		return expandedContainers.contains(containerID)
 	}
 		
 	func isExpanded(_ containerIdentifiable: ContainerIdentifiable) -> Bool {
@@ -716,14 +708,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func expand(_ containerID: ContainerIdentifier) {
 		markExpanded(containerID)
 		rebuildBackingStores()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
-		lastExpandedTable.insert(containerID)
+		lastExpandedContainers.insert(containerID)
 		expand(containerID)
 	}
 
@@ -737,21 +729,21 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 		rebuildBackingStores()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 	
 	func collapse(_ containerID: ContainerIdentifier) {
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 	
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
 		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
-		lastExpandedTable.remove(containerID)
+		lastExpandedContainers.remove(containerID)
 		collapse(containerID)
 	}
 
@@ -765,7 +757,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
-		saveExpandedTableToUserDefaults()
+		saveExpandedContainersToUserDefaults()
 	}
 	
 	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
@@ -791,7 +783,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			completion?()
 			return
 		}
-		
+
 		currentFeedIndexPath = indexPath
 		mainFeedViewController.updateFeedSelection(animations: animations)
 
@@ -800,29 +792,31 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 
 		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
-			
+
 			self.activityManager.selecting(feed: feed)
 			self.rootSplitViewController.show(.supplementary)
 			setTimelineFeed(feed, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
+				AppDefaults.shared.selectedSidebarItem = feed.feedID
 				completion?()
 			}
-			
+
 		} else {
-			
+
 			setTimelineFeed(nil, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
 				self.rootSplitViewController.show(.primary)
+				AppDefaults.shared.selectedSidebarItem = nil
 				completion?()
 			}
-			
+
 		}
-		
+
 	}
 	
 	func selectPrevFeed() {
@@ -860,18 +854,19 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		guard article != currentArticle else { return }
-		
+
 		currentArticle = article
 		activityManager.reading(feed: timelineFeed, article: article)
-		
+
 		if article == nil {
+			articleViewController?.article = nil
 			rootSplitViewController.show(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
 		}
-		
+
 		rootSplitViewController.show(.secondary)
-		
+
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
 
@@ -1549,7 +1544,7 @@ private extension SceneCoordinator {
 
 		// Compute the differences in the shadow table rows and the expanded table entries
 		var changes = [ShadowTableChanges.RowChanges]()
-		let expandedTableDifference = lastExpandedTable.symmetricDifference(expandedTable)
+		let expandedTableDifference = lastExpandedContainers.symmetricDifference(expandedContainers)
 
 		for (section, newSectionRows) in newShadowTable.enumerated() {
 			var moves = Set<ShadowTableChanges.Move>()
@@ -1590,7 +1585,7 @@ private extension SceneCoordinator {
 			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
 		}
 
-		lastExpandedTable = expandedTable
+		lastExpandedContainers = expandedContainers
 
 		// Compute the difference in the shadow table sections
 		var moves = Set<ShadowTableChanges.Move>()
@@ -1695,7 +1690,7 @@ private extension SceneCoordinator {
 	}
 	
 	func markExpanded(_ containerID: ContainerIdentifier) {
-		expandedTable.insert(containerID)
+		expandedContainers.insert(containerID)
 	}
 
 	func markExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1711,7 +1706,7 @@ private extension SceneCoordinator {
 	}
 	
 	func unmarkExpanded(_ containerID: ContainerIdentifier) {
-		expandedTable.remove(containerID)
+		expandedContainers.remove(containerID)
 	}
 
 	func unmarkExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1726,41 +1721,12 @@ private extension SceneCoordinator {
 		}
 	}
 
-	private func saveExpandedTableToUserDefaults() {
-		let state = expandedTable.compactMap { containerID -> [String: String]? in
-			var stringDict = [String: String]()
-			for (key, value) in containerID.userInfo {
-				if let keyString = key as? String, let valueString = value as? String {
-					stringDict[keyString] = valueString
-				}
-			}
-			return stringDict.isEmpty ? nil : stringDict
-		}
-		AppDefaults.shared.containerExpandedWindowState = state
+	private func saveExpandedContainersToUserDefaults() {
+		AppDefaults.shared.expandedContainers = expandedContainers
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
-		let enabledFeeds = readFilterEnabledTable.filter { $0.value == true }
-		let state = enabledFeeds.keys.compactMap { feedIdentifier -> [String: String]? in
-			var stringDict = [String: String]()
-			for (key, value) in feedIdentifier.userInfo {
-				if let keyString = key as? String, let valueString = value as? String {
-					stringDict[keyString] = valueString
-				}
-			}
-			return stringDict.isEmpty ? nil : stringDict
-		}
-		AppDefaults.shared.readArticlesFilterState = state
-	}
-
-	private func restoreReadFilterEnabledTableFromUserDefaults() {
-		guard let state = AppDefaults.shared.readArticlesFilterState else { return }
-
-		for dict in state {
-			if let feedIdentifier = FeedIdentifier(userInfo: dict) {
-				readFilterEnabledTable[feedIdentifier] = true
-			}
-		}
+		AppDefaults.shared.sidebarItemsHidingReadArticles = feedsHidingReadArticles
 	}
 
 	// MARK: Select Prev Unread
@@ -1999,6 +1965,12 @@ private extension SceneCoordinator {
 	func replaceArticles(with sortedArticles: ArticleArray, animated: Bool) {
 		if articles != sortedArticles {
 			articles = sortedArticles
+
+			// Clear current article if it's no longer in the timeline
+			if let currentArticle, !sortedArticles.contains(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
+				selectArticle(nil)
+			}
+
 			updateShowNamesAndIcons()
 			updateUnreadCount()
 			mainTimelineViewController?.reloadArticles(animated: animated)
@@ -2131,7 +2103,7 @@ private extension SceneCoordinator {
 
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
-			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
+			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [String: String],
 			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				return
 		}
@@ -2216,7 +2188,7 @@ private extension SceneCoordinator {
 	}
 	
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
-		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
+		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [String: String],
 			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
 				  return false
 			  }

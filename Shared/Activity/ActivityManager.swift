@@ -23,14 +23,9 @@ final class ActivityManager {
 	private var readingArticle: Article?
 
 	var stateRestorationActivity: NSUserActivity {
-		if let activity = readingActivity {
-			return activity
-		}
-		
-		if let activity = selectingActivity {
-			return activity
-		}
-		
+		// State restoration is now handled via UserDefaults (AppDefaults.selectedSidebarItem and AppDefaults.selectedArticle).
+		// The reading/selecting activities are still maintained for Handoff, Spotlight, and Siri Shortcuts,
+		// but we don't use them for same-device state restoration anymore.
 		let activity = NSUserActivity(activityType: ActivityType.restoration.rawValue)
 		#if os(iOS)
 		activity.persistentIdentifier = UUID().uuidString

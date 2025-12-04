@@ -430,6 +430,7 @@
 		84D35E0C2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				ArticleSpecifier.swift,
 				Extensions/IconImage.swift,
 				"Extensions/Node-Extensions.swift",
 				ShareExtension/ExtensionContainers.swift,
@@ -438,6 +439,7 @@
 				ShareExtension/ExtensionFeedAddRequestFile.swift,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
+				UserInfoKey.swift,
 			);
 			target = 513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */;
 		};
