@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 6.2.1</title>
+            <description><![CDATA[
+				<p>Changes since 6.2:</p>
+				<ul>
+					<li>Fixed some crashing bugs</li>
+					<li>Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import</li>
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 03 Dec 2025 21:40:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2.1/NetNewsWire6.2.1.zip" sparkle:version="6202" sparkle:shortVersionString="6.2.1" length="10242980" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 6.2</title>
             <description><![CDATA[
 				<p>Changes since 6.1.10:</p>
@@ -38,25 +52,6 @@
 			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2/NetNewsWire6.2.zip" sparkle:version="6200" sparkle:shortVersionString="6.2" length="10242005" type="application/zip" />
 			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
 		</item>
-
-		<item>
-			<title>NetNewsWire 6.1.10</title>
-            <description><![CDATA[
-            <p>Changes since 6.1.9:</p>
-            <ul>
-                <li>Added caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests</li>
-                <li>Worked around The Verge’s bug with character encoding</li>
-                <li>Fixed bug where links in footnotes — in light mode, using the default theme — would be invisible</li>
-                <li>Fixed double-underlines on 404 Media links. (Fixed bug where using tag inside an would cause two underlines.)</li>
-                <li>Added &smallcircle; to the entities decoder</li>
-                <li>Synced the Mac default theme with the iOS version</li>
-                <li>Adopted secure state restoration</li>
-</ul>
-			]]></description>
-        <pubDate>Mon, 08 Sep 2025 11:24:08 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.10/NetNewsWire6.1.10.zip" sparkle:version="6140" sparkle:shortVersionString="6.1.10" length="9396988" type="application/zip" />
-			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
-        </item>
 
     </channel>
 </rss>
