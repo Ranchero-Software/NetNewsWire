@@ -1,6 +1,10 @@
 # Mac Release Notes
 
-### 6.2. build 6201 29 Nov 2025 - branch release/6.2.1 tag: mac-6.2.1b1
+### 6.2.1 build 6202 03 Dec 2025 - branch: release/mac-6.2.1 tag: mac-6.2.1
+
+Bumped version
+
+### 6.2.1b1 build 6201 29 Nov 2025 - branch release/6.2.1 tag: mac-6.2.1b1
 
 Fixed some crashing bugs
 Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import
