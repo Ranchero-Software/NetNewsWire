@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 6.2.1 TestFlight build 6203 03 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6203
+
+Fixed several state restoration bugs
+Fixed a crash that could happen on opening a web browser view
+Fixed a bug where some users couldn’t select any OPML files (when importing OPML)
+Fixed a bug on iPad where the an article would remain displayed after changing selection in the Feeds view
+
 ### 6.2 TestFlight build 6202 31 Oct 2025 - branch main tag: iOS-6.2-6202  — submitted as App Store release build 4 Nov 2025
 
 Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
