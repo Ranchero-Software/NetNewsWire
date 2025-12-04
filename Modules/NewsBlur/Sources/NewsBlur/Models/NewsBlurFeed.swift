@@ -49,7 +49,7 @@ extension NewsBlurFeed {
 	}
 }
 
-nonisolated extension NewsBlurFeedsResponse {
+extension NewsBlurFeedsResponse {
 	private enum CodingKeys: String, CodingKey {
 		case feeds = "feeds"
 		case folders = "flat_folders"
