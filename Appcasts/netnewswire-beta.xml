@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 6.2.1</title>
+            <description><![CDATA[
+				<p>Changes since 6.2:</p>
+				<ul>
+					<li>Fixed some crashing bugs</li>
+					<li>Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import</li>
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 03 Dec 2025 21:40:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2.1/NetNewsWire6.2.1.zip" sparkle:version="6202" sparkle:shortVersionString="6.2.1" length="10242980" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 6.2.1b1</title>
             <description><![CDATA[
 				<p>Changes since 6.2:</p>
