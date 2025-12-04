@@ -12,6 +12,8 @@ https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-6.2-6202
 
 ## Mac
 
-Mac shipping: 6.2
-https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-6.2
+Mac shipping: 6.2.1
+Branch: release/mac-6.2.1
+
+https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-6.2.1
 
