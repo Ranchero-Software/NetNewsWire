@@ -1,0 +1,50 @@
+{
+  "originHash" : "0a5edced7ddbd0b75f7074b7376b27ee47915bbbcd8b244098e870c935e5df23",
+  "pins" : [
+    {
+      "identity" : "plcrashreporter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/microsoft/plcrashreporter.git",
+      "state" : {
+        "revision" : "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
+        "version" : "1.11.0"
+      }
+    },
+    {
+      "identity" : "sparkle-binary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Ranchero-Software/Sparkle-Binary.git",
+      "state" : {
+        "revision" : "d1a8b3c98d96c601453f2e4230f1dd65b60d0581",
+        "version" : "2.0.1"
+      }
+    },
+    {
+      "identity" : "swift-cmark",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-cmark.git",
+      "state" : {
+        "revision" : "5d9bdaa4228b381639fff09403e39a04926e2dbe",
+        "version" : "0.7.1"
+      }
+    },
+    {
+      "identity" : "swift-markdown",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-markdown.git",
+      "state" : {
+        "revision" : "7d9a5ce307528578dfa777d505496bd5f544ad94",
+        "version" : "0.7.3"
+      }
+    },
+    {
+      "identity" : "zip",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/marmelroy/Zip.git",
+      "state" : {
+        "revision" : "059e7346082d02de16220cd79df7db18ddeba8c3"
+      }
+    }
+  ],
+  "version" : 3
+}
