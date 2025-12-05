@@ -86,3 +86,7 @@ Set up the expected state, kill the app, then relaunch — file a bug if the exp
 ### First run
 
 - Top items expanded, hide read feeds off, showing feeds view
+
+## Mac
+
+tbd
