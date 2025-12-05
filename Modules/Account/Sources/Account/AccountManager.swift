@@ -390,6 +390,22 @@ import RSDatabase
 		return allFetchedArticles
 	}
 
+	/// Fetch a single article (synchronously) by accountID and articleID.
+	public func fetchArticle(accountID: String, articleID: String) -> Article? {
+		precondition(Thread.isMainThread)
+
+		guard let account = existingAccount(accountID: accountID) else {
+			return nil
+		}
+
+		do {
+			let articles = try account.fetchArticles(.articleIDs(Set([articleID])))
+			return articles.first
+		} catch {
+			return nil
+		}
+	}
+
 	// MARK: - Fetching Article Counts
 
 	@MainActor public func fetchCountForStarredArticles() throws -> Int {
