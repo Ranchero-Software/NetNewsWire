@@ -18,65 +18,96 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable,
 	case feed(String, String) // accountID, feedID
 	case folder(String, String) // accountID, folderName
 
+	private struct TypeName {
+		static let smartFeed = "smartFeed"
+		static let script = "script"
+		static let feed = "feed"
+		static let folder = "folder"
+	}
+
+	private struct Key {
+		static let typeName = "type"
+		static let id = "id"
+		static let accountID = "accountID"
+		static let feedID = "feedID"
+		static let oldFeedIDKey = "webFeedID"
+		static let folderName = "folderName"
+	}
+
+	private var typeName: String {
+		switch self {
+		case .smartFeed:
+			return TypeName.smartFeed
+		case .script:
+			return TypeName.script
+		case .feed:
+			return TypeName.feed
+		case .folder:
+			return TypeName.folder
+		}
+	}
+
 	public var description: String {
 		switch self {
 		case .smartFeed(let id):
-			return "smartFeed: \(id)"
+			return "(typeName): \(id)"
 		case .script(let id):
-			return "script: \(id)"
+			return "(typeName): \(id)"
 		case .feed(let accountID, let feedID):
-			return "feed: \(accountID)_\(feedID)"
+			return "(typeName): \(accountID)_\(feedID)"
 		case .folder(let accountID, let folderName):
-			return "folder: \(accountID)_\(folderName)"
+			return "(typeName): \(accountID)_\(folderName)"
 		}
 	}
 
-	public var userInfo: [AnyHashable: AnyHashable] {
+	public var userInfo: [String: String] {
+		var d = [Key.typeName: typeName]
+
 		switch self {
 		case .smartFeed(let id):
-			return [
-				"type": "smartFeed",
-				"id": id
-			]
+			d[Key.id] = id
 		case .script(let id):
-			return [
-				"type": "script",
-				"id": id
-			]
+			d[Key.id] = id
 		case .feed(let accountID, let feedID):
-			return [
-				"type": "feed",
-				"accountID": accountID,
-				"feedID": feedID
-			]
+			d[Key.accountID] = accountID
+			d[Key.feedID] = feedID
 		case .folder(let accountID, let folderName):
-			return [
-				"type": "folder",
-				"accountID": accountID,
-				"folderName": folderName
-			]
+			d[Key.accountID] = accountID
+			d[Key.folderName] = folderName
 		}
+
+		return d
 	}
 
-	public init?(userInfo: [AnyHashable: AnyHashable]) {
-		guard let type = userInfo["type"] as? String else { return nil }
+	public init?(userInfo: [String: String]) {
+		guard let type = userInfo[Key.typeName] else {
+			return nil
+		}
 
 		switch type {
-		case "smartFeed":
-			guard let id = userInfo["id"] as? String else { return nil }
-			self = SidebarItemIdentifier.smartFeed(id)
-		case "script":
-			guard let id = userInfo["id"] as? String else { return nil }
-			self = SidebarItemIdentifier.script(id)
-		case "feed":
-			guard let accountID = userInfo["accountID"] as? String, let feedID = userInfo["feedID"] as? String else { return nil }
-			self = SidebarItemIdentifier.feed(accountID, feedID)
-		case "folder":
-			guard let accountID = userInfo["accountID"] as? String, let folderName = userInfo["folderName"] as? String else { return nil }
-			self = SidebarItemIdentifier.folder(accountID, folderName)
+		case TypeName.smartFeed:
+			guard let id = userInfo[Key.id] else {
+				return nil
+			}
+			self = .smartFeed(id)
+		case TypeName.script:
+			guard let id = userInfo[Key.id] else {
+				return nil
+			}
+			self = .script(id)
+		case TypeName.feed:
+			guard let accountID = userInfo[Key.accountID], let feedID = userInfo[Key.feedID] ?? userInfo[Key.oldFeedIDKey] else {
+				return nil
+			}
+			self = .feed(accountID, feedID)
+		case TypeName.folder:
+			guard let accountID = userInfo[Key.accountID], let folderName = userInfo[Key.folderName] else {
+				return nil
+			}
+			self = .folder(accountID, folderName)
 		default:
+			assertionFailure("Expected valid SidebarItemIdentifier.userInfo but got \(userInfo)")
 			return nil
 		}
 	}
-
 }
