@@ -20,7 +20,7 @@ struct ArticleSpecifier: Hashable, Sendable {
 		static let articleID = "articleID"
 	}
 
-	/// Plist-compatible dictionary, able to saved to disk or in UserDefaults.
+	/// Plist-compatible dictionary, meant to be saved to disk or in UserDefaults.
 	var dictionary: [String: String] {
 		[Key.accountID: accountID, Key.articleID: articleID]
 	}
@@ -40,5 +40,9 @@ struct ArticleSpecifier: Hashable, Sendable {
 
 	init(article: Article) {
 		self.init(accountID: article.accountID, articleID: article.articleID)
+	}
+
+	func matchesArticle(_ article: Article) -> Bool {
+		article.accountID == accountID && article.articleID == articleID
 	}
 }
