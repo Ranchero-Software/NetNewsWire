@@ -50,7 +50,13 @@ final class WebViewController: UIViewController {
 			windowScrollY = 0
 		}
 	}
-	var isShowingExtractedArticle = false
+	var isShowingExtractedArticle = false {
+		didSet {
+			if AppDefaults.shared.isShowingExtractedArticle != isShowingExtractedArticle {
+				AppDefaults.shared.isShowingExtractedArticle = isShowingExtractedArticle
+			}
+		}
+	}
 
 	var articleExtractorButtonState: ArticleExtractorButtonState = .off {
 		didSet {
@@ -64,7 +70,13 @@ final class WebViewController: UIViewController {
 	private(set) var article: Article?
 
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
-	var windowScrollY = 0
+	var windowScrollY = 0 {
+		didSet {
+			if windowScrollY != AppDefaults.shared.articleWindowScrollY {
+				AppDefaults.shared.articleWindowScrollY = windowScrollY
+			}
+		}
+	}
 	private var restoreWindowScrollY: Int?
 
 	override func viewDidLoad() {
