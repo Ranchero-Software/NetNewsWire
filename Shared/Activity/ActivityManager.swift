@@ -183,7 +183,7 @@ import UniformTypeIdentifiers
 		activity.isEligibleForSearch = true
 
 		let articleFetcherIdentifierUserInfo = sidebarItem.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
-		activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo]
+		activity.userInfo = [UserInfoKey.sidebarItemID: articleFetcherIdentifierUserInfo]
 		activity.requiredUserInfoKeys = Set(activity.userInfo!.keys.map { $0 as! String })
 
 		activity.persistentIdentifier = sidebarItem.sidebarItemID?.description ?? ""
@@ -204,7 +204,7 @@ import UniformTypeIdentifiers
 		if let sidebarItem {
 			let articleFetcherIdentifierUserInfo = sidebarItem.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
 			let articlePathUserInfo = article.pathUserInfo
-			activity.userInfo = [UserInfoKey.feedIdentifier: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
+			activity.userInfo = [UserInfoKey.sidebarItemID: articleFetcherIdentifierUserInfo, UserInfoKey.articlePath: articlePathUserInfo]
 		} else {
 			activity.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]
 		}

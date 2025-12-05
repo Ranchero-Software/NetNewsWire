@@ -359,7 +359,7 @@ struct FeedNode: Hashable, Sendable {
 			expandedContainers = stateInfo.expandedContainers
 		}
 
-		feedsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
+		sidebarItemsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
 
 		rebuildBackingStores(initialLoad: true)
 
@@ -375,7 +375,7 @@ struct FeedNode: Hashable, Sendable {
 			return
 		}
 
-		guard let feedNode = nodeFor(feedID: selectedSidebarItem),
+		guard let feedNode = nodeFor(sidebarItemID: selectedSidebarItem),
 			  let indexPath = indexPathFor(feedNode) else {
 			return
 		}
@@ -714,9 +714,9 @@ struct FeedNode: Hashable, Sendable {
 		}
 
 		if isReadArticlesFiltered {
-			feedsHidingReadArticles.remove(sidebarItemID)
+			sidebarItemsHidingReadArticles.remove(sidebarItemID)
 		} else {
-			feedsHidingReadArticles.insert(sidebarItemID)
+			sidebarItemsHidingReadArticles.insert(sidebarItemID)
 		}
 
 		refreshTimeline(resetScroll: false)
@@ -1818,7 +1818,7 @@ private extension SceneCoordinator {
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
-		AppDefaults.shared.sidebarItemsHidingReadArticles = feedsHidingReadArticles
+		AppDefaults.shared.sidebarItemsHidingReadArticles = sidebarItemsHidingReadArticles
 	}
 
 	// MARK: Select Prev Unread
@@ -2208,17 +2208,17 @@ private extension SceneCoordinator {
 
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
-			let sidebarItemIDUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [String : String],
+			let sidebarItemIDUserInfo = userInfo[UserInfoKey.sidebarItemID] as? [String : String],
 			let sidebarItemID = SidebarItemIdentifier(userInfo: sidebarItemIDUserInfo) else {
 				return
 		}
 
-		treeControllerDelegate.addFilterException(feedIdentifier)
+		treeControllerDelegate.addFilterException(sidebarItemID)
 
-		switch feedIdentifier {
+		switch sidebarItemID {
 
 		case .smartFeed:
-			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
+			guard let smartFeed = SmartFeedsController.shared.find(by: sidebarItemID) else { return }
 
 			markExpanded(SmartFeedsController.shared)
 			rebuildBackingStores(initialLoad: true, completion:  {
@@ -2293,7 +2293,7 @@ private extension SceneCoordinator {
 	}
 
 	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, feedID: String, articleID: String) -> Bool {
-		guard let sidebarItemIDUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [String : String],
+		guard let sidebarItemIDUserInfo = (userInfo[UserInfoKey.sidebarItemID] ?? userInfo[UserInfoKey.feedIdentifier]) as? [String: String],
 			  let sidebarItemID = SidebarItemIdentifier(userInfo: sidebarItemIDUserInfo) else {
 			return false
 		}

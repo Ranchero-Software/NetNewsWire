@@ -28,7 +28,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
+	private var feedsHidingReadArticles = Set<SidebarItemIdentifier>()
+	private var readFilterEnabledTable: [SidebarItemIdentifier: Bool] {
+		var d = [SidebarItemIdentifier: Bool]()
+		for sidebarItemID in feedsHidingReadArticles {
+			d[sidebarItemID] = true
+		}
+		return d
+	}
+
 	var isReadFiltered: Bool? {
 		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
 			return nil
@@ -36,8 +44,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let sidebarItemID = timelineFeed.sidebarItemID, let readFilterEnabled = readFilterEnabledTable[sidebarItemID] {
-			return readFilterEnabled
+		if let sidebarItemID = timelineFeed.sidebarItemID {
+			return feedsHidingReadArticles.contains(sidebarItemID)
 		} else {
 			return timelineFeed.defaultReadFilterType == .read
 		}
@@ -81,7 +89,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	var windowState: TimelineWindowState {
-		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo as? [String: String] }
+		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo }
 		let readArticlesFilterStateValues = readFilterEnabledTable.values.compactMap( { $0 })
 
 		if selectedArticles.count == 1 {
@@ -285,18 +293,38 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func toggleReadFilter() {
-		guard let filter = isReadFiltered, let sidebarItemID = (representedObjects?.first as? SidebarItem)?.sidebarItemID else { return }
-		readFilterEnabledTable[sidebarItemID] = !filter
+		guard let filter = isReadFiltered,
+			  let sidebarItemID = (representedObjects?.first as? SidebarItem)?.sidebarItemID else {
+			return
+		}
+		if filter {
+			noteSidebarItemHidesReadArticles(sidebarItemID)
+		} else {
+			noteSidebarItemShowsReadArticles(sidebarItemID)
+		}
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
 	}
 
 	// MARK: State Restoration
 
+	private func noteSidebarItemHidesReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
+		feedsHidingReadArticles.insert(sidebarItemID)
+	}
+
+	private func noteSidebarItemShowsReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
+		feedsHidingReadArticles.remove(sidebarItemID)
+	}
+
 	func restoreState(from state: TimelineWindowState) {
 		for i in 0..<state.readArticlesFilterStateKeys.count {
-			if let feedIdentifier = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = state.readArticlesFilterStateValues[i]
+			if let sidebarItemID = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
+				let hidesReadArticles = state.readArticlesFilterStateValues[i]
+				if hidesReadArticles {
+					noteSidebarItemHidesReadArticles(sidebarItemID)
+				} else {
+					noteSidebarItemShowsReadArticles(sidebarItemID)
+				}
 			}
 		}
 
@@ -323,14 +351,19 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	///
 	/// TODO: Delete for NetNewsWire 7.
 	func restoreLegacyState(from state: [AnyHashable: Any]) {
-		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
+		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[String: String]],
 			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
 			return
 		}
 
 		for i in 0..<readArticlesFilterStateKeys.count {
-			if let feedIdentifier = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
+			if let sidebarItemID = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+				let hidesReadArticles = readArticlesFilterStateValues[i]
+				if hidesReadArticles {
+					noteSidebarItemHidesReadArticles(sidebarItemID)
+				} else {
+					noteSidebarItemShowsReadArticles(sidebarItemID)
+				}
 			}
 		}
 

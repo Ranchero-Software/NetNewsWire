@@ -528,7 +528,7 @@ struct StateRestorationInfo {
 		}
 
 		let selectedSidebarItem: SidebarItemIdentifier?
-		if let legacyState = windowState[UserInfoKey.feedIdentifier] as? [String: String],
+		if let legacyState = (windowState[UserInfoKey.sidebarItemID] ?? windowState[UserInfoKey.feedIdentifier]) as? [String: String],
 		   let feedIdentifier = SidebarItemIdentifier(userInfo: legacyState) {
 			selectedSidebarItem = feedIdentifier
 		} else {
