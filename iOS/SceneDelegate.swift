@@ -27,8 +27,8 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.preferredDisplayMode = .oneBesideSecondary
 
 		Task { @MainActor in
-			// Ensure Feeds view shows on first run on iPad — otherwise the UI is empty.
-			if UIDevice.current.userInterfaceIdiom == .pad && AppDefaults.shared.isFirstRun {
+			// Ensure Feeds view shows on iPad — otherwise the UI may be empty.
+			if UIDevice.current.userInterfaceIdiom == .pad {
 				rootViewController.show(.primary)
 			}
 		}
@@ -37,7 +37,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.coordinator = coordinator
 		rootViewController.delegate = coordinator
 
-		coordinator.restoreWindowState(session.stateRestorationActivity)
+		coordinator.restoreWindowState(activity: session.stateRestorationActivity)
 
 		updateUserInterfaceStyle()
 
@@ -58,10 +58,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			return
 		}
 
-		if let userActivity = connectionOptions.userActivities.first ?? session.stateRestorationActivity {
+		// Handle activities from external sources (Handoff, Spotlight, Siri Shortcuts).
+		// Skip handling session.stateRestorationActivity since UserDefaults now handles state restoration.
+		if let userActivity = connectionOptions.userActivities.first {
 			coordinator.handle(userActivity)
 		}
-
 	}
 
 	func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

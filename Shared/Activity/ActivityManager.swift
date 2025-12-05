@@ -22,6 +22,7 @@ import UniformTypeIdentifiers
 	private var readingActivity: NSUserActivity?
 	private var readingArticle: Article?
 
+	#if os(macOS)
 	var stateRestorationActivity: NSUserActivity {
 		if let activity = readingActivity {
 			return activity
@@ -32,12 +33,21 @@ import UniformTypeIdentifiers
 		}
 
 		let activity = NSUserActivity(activityType: ActivityType.restoration.rawValue)
-		#if os(iOS)
 		activity.persistentIdentifier = UUID().uuidString
-		#endif
 		activity.becomeCurrent()
 		return activity
 	}
+	#else // iOS
+	var stateRestorationActivity: NSUserActivity {
+		// State restoration is now handled via UserDefaults (AppDefaults.selectedSidebarItem and AppDefaults.selectedArticle).
+		// The reading/selecting activities are still maintained for Handoff, Spotlight, and Siri Shortcuts,
+		// but we don't use them for same-device state restoration anymore.
+		let activity = NSUserActivity(activityType: ActivityType.restoration.rawValue)
+		activity.persistentIdentifier = UUID().uuidString
+		activity.becomeCurrent()
+		return activity
+	}
+	#endif
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
