@@ -21,7 +21,11 @@
       "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/CXdiQ66vrw6xQvwpUsnSF.xccrashpoint/**)",
       "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/CUBuQldlzk5kfHyWcXeXc4.xccrashpoint/**)",
       "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DUqtMkHqpQuJK5f-_BXM2A.xccrashpoint/**)",
-      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DlmMpUlOi9xJldzoOvTvaq.xccrashpoint/**)"
+      "Read(//Users/brent/Library/Developer/Xcode/Products/com.ranchero.NetNewsWire.iOS/Crashes/Points/DlmMpUlOi9xJldzoOvTvaq.xccrashpoint/**)",
+      "Bash(gh issue view:*)",
+      "Bash(git log:*)",
+      "Bash(xcodebuild:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
