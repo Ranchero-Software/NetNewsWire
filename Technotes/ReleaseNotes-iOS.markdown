@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 6.2.1 TestFlight build 6204 07 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6204
+
+Fixed navigation bug, introduced in previous beta, where the timeline could appear on tapping next unread when viewing the next unread article requires changing the Feeds view selection
+Fixed state restoration bug, introduced in previous beta, where the second run of the app could have everything in the Feeds view collapsed
+
 ### 6.2.1 TestFlight build 6203 03 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6203
 
 Fixed several state restoration bugs
