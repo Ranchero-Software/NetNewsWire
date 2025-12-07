@@ -25,7 +25,8 @@
       "Bash(gh issue view:*)",
       "Bash(git log:*)",
       "Bash(xcodebuild:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []
