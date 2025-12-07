@@ -284,7 +284,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		self.rootSplitViewController.maximumPrimaryColumnWidth = 500
 		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
 		self.rootSplitViewController.maximumSupplementaryColumnWidth = 500
-		self.rootSplitViewController.preferredSupplementaryColumnWidthFraction = 0.4
+		self.rootSplitViewController.preferredSupplementaryColumnWidthFraction = 0.33
 		self.rootSplitViewController.preferredSplitBehavior = .tile
 
 		self.treeController = TreeController(delegate: treeControllerDelegate)
@@ -335,7 +335,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			for sectionNode in treeController.rootNode.childNodes {
 				markExpanded(sectionNode)
 			}
-			saveExpandedContainersToUserDefaults()
+			saveExpandedContainers()
 		} else {
 			expandedContainers = stateInfo.expandedContainers
 		}
@@ -582,6 +582,10 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		fetchRequestQueue.cancelAllRequests()
 	}
 
+	func saveExpandedContainers() {
+		AppDefaults.shared.expandedContainers = expandedContainers
+	}
+
 	func cleanUp(conditional: Bool) {
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
@@ -715,7 +719,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	func expand(_ containerID: ContainerIdentifier) {
 		markExpanded(containerID)
 		rebuildBackingStores()
-		saveExpandedContainersToUserDefaults()
+		saveExpandedContainers()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -736,14 +740,14 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 		rebuildBackingStores()
-		saveExpandedContainersToUserDefaults()
+		saveExpandedContainers()
 	}
 
 	func collapse(_ containerID: ContainerIdentifier) {
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
-		saveExpandedContainersToUserDefaults()
+		saveExpandedContainers()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -764,7 +768,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
-		saveExpandedContainersToUserDefaults()
+		saveExpandedContainers()
 	}
 
 	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
@@ -1726,10 +1730,6 @@ private extension SceneCoordinator {
 		if let containerIdentifiable = node.representedObject as? ContainerIdentifiable {
 			unmarkExpanded(containerIdentifiable)
 		}
-	}
-
-	private func saveExpandedContainersToUserDefaults() {
-		AppDefaults.shared.expandedContainers = expandedContainers
 	}
 
 	private func saveReadFilterEnabledTableToUserDefaults() {
