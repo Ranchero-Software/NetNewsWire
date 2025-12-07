@@ -1,8 +1,5 @@
 #include "./common/NetNewsWire_codesigning_common.xcconfig"
 
-CODE_SIGN_IDENTITY = Apple Development
-DEVELOPMENT_TEAM = M8L2WTLA8W
-
 BUNDLE_LOADER = $(TEST_HOST)
 COMBINE_HIDPI_IMAGES = YES
 INFOPLIST_FILE = Tests/NetNewsWire-iOSTests/Info.plist

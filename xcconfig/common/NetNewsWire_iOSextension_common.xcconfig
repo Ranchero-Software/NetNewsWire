@@ -4,8 +4,6 @@
 #include "./NetNewsWire_codesigning_common.xcconfig"
 #include "./NetNewsWire_ios_target_common.xcconfig"
 
-CODE_SIGN_IDENTITY = iPhone Developer
-DEVELOPMENT_TEAM = M8L2WTLA8W
 ENABLE_HARDENED_RUNTIME = YES
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../../Frameworks
 PRODUCT_NAME = $(TARGET_NAME)

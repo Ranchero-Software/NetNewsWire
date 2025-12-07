@@ -1,7 +1,11 @@
 // Common code signing configuration for all NetNewsWire targets
 
+CODE_SIGN_IDENTITY[sdk=macosx*] = Mac Developer
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
 CODE_SIGN_STYLE = Automatic
 ORGANIZATION_IDENTIFIER = com.ranchero
+DEVELOPMENT_TEAM = M8L2WTLA8W
 PROVISIONING_PROFILE_SPECIFIER =
 DEVELOPER_ENTITLEMENTS =
 
