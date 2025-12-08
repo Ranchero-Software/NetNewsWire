@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 6.2.1 TestFlight build 6205 07 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6205
+
+Fixed bug where the All Unread feed wouldn't remove read articles on refresh (when the refresh-to-remove-read-articles setting is on)
+Fixed split view bug on iPad, introduced in previous beta, where the article view could get extremely narrow
+
 ### 6.2.1 TestFlight build 6204 07 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6204
 
 Fixed navigation bug, introduced in previous beta, where the timeline could appear on tapping next unread when viewing the next unread article requires changing the Feeds view selection
