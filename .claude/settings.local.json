@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-<<<<<<< HEAD
       "Bash(find:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
