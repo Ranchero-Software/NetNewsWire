@@ -126,10 +126,13 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	var isReadArticlesFiltered: Bool {
+		guard timelineDefaultReadFilterType != .alwaysRead else {
+			return true
+		}
 		if let feedID = timelineFeed?.feedID {
 			return feedsHidingReadArticles.contains(feedID)
 		}
-		return timelineDefaultReadFilterType != .none
+		return timelineDefaultReadFilterType == .read
 	}
 
 	var timelineDefaultReadFilterType: ReadFilterType {
