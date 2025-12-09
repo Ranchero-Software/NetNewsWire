@@ -29,7 +29,9 @@ mkdir -p ../SharedXcodeSettings
 echo Creating DeveloperSettings.xcconfig
 
 cat <<file >> ../SharedXcodeSettings/DeveloperSettings.xcconfig
-CODE_SIGN_IDENTITY = Mac Developer
+CODE_SIGN_IDENTITY[sdk=macosx*] = Mac Developer
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
 DEVELOPMENT_TEAM = $devTeamID
 CODE_SIGN_STYLE = Automatic
 ORGANIZATION_IDENTIFIER = $devOrgName
