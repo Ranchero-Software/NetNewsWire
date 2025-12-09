@@ -14,13 +14,11 @@ public protocol FeedIdentifiable {
 
 public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 	case smartFeed(String) // String is a unique identifier
-	case script(String) // String is a unique identifier
 	case webFeed(String, String) // accountID, webFeedID
 	case folder(String, String) // accountID, folderName
 
 	private struct TypeName {
 		static let smartFeed = "smartFeed"
-		static let script = "script"
 		static let feed = "feed"
 		static let folder = "folder"
 	}
@@ -37,8 +35,6 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 		switch self {
 		case .smartFeed:
 			return TypeName.smartFeed
-		case .script:
-			return TypeName.script
 		case .webFeed:
 			return TypeName.feed
 		case .folder:
@@ -49,8 +45,6 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 	public var description: String {
 		switch self {
 		case .smartFeed(let id):
-			return "\(typeName): \(id)"
-		case .script(let id):
 			return "\(typeName): \(id)"
 		case .webFeed(let accountID, let webFeedID):
 			return "\(typeName): \(accountID)_\(webFeedID)"
@@ -64,8 +58,6 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 		
 		switch self {
 		case .smartFeed(let id):
-			d[Key.id] = id
-		case .script(let id):
 			d[Key.id] = id
 		case .webFeed(let accountID, let webFeedID):
 			d[Key.accountID] = accountID
@@ -89,11 +81,6 @@ public enum FeedIdentifier: CustomStringConvertible, Hashable, Equatable {
 				return nil
 			}
 			self = FeedIdentifier.smartFeed(id)
-		case TypeName.script:
-			guard let id = userInfo[Key.id] else {
-				return nil
-			}
-			self = FeedIdentifier.script(id)
 		case TypeName.feed:
 			guard let accountID = userInfo[Key.accountID], let webFeedID = userInfo[Key.feedID] else {
 				return nil
