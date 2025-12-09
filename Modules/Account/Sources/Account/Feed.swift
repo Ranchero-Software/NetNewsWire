@@ -21,19 +21,3 @@ public protocol Feed: FeedIdentifiable, ArticleFetcher, DisplayNameProvider, Unr
 	var defaultReadFilterType: ReadFilterType { get }
 	
 }
-
-public extension Feed {
-	
-	func readFiltered(readFilterEnabledTable: [FeedIdentifier: Bool]) -> Bool {
-		guard defaultReadFilterType != .alwaysRead else {
-			return true
-		}
-		if let feedID = feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
-			return readFilterEnabled
-		} else {
-			return defaultReadFilterType == .read
-		}
-
-	}
-	
-}

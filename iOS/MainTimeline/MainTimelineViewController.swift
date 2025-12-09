@@ -736,12 +736,8 @@ private extension MainTimelineViewController {
 			navigationItem.titleView = titleView
 		}
 
-		switch timelineDefaultReadFilterType {
-		case .none, .read:
-			navigationItem.rightBarButtonItem = filterButton
-		case .alwaysRead:
-			navigationItem.rightBarButtonItem = nil
-		}
+		let shouldShowFilterButton = coordinator?.shouldShowFilterButton() ?? false
+		navigationItem.rightBarButtonItem = shouldShowFilterButton ? filterButton : nil
 
 		if isReadArticlesFiltered {
 			filterButton.image = AppAssets.filterActiveImage

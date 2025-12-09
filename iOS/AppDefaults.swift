@@ -69,7 +69,10 @@ final class AppDefaults {
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let expandedContainers = "expandedContainers"
-		static let sidebarItemsHidingReadArticles = "sidebarItemsHidingReadArticles"
+		static let legacyFromBetaSidebarItemsHidingReadArticles = "sidebarItemsHidingReadArticles"
+		static let smartFeedsHidingReadArticles = "smartFeedsHidingReadArticles"
+		static let feedsHidingReadArticles = "feedsHidingReadArticles"
+		static let foldersShowingReadArticles = "foldersShowingReadArticles"
 		static let selectedSidebarItem = "selectedSidebarItem"
 		static let selectedArticle = "selectedArticle"
 		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
@@ -294,17 +297,52 @@ final class AppDefaults {
 		}
 	}
 
-	var sidebarItemsHidingReadArticles: Set<FeedIdentifier> {
+	var legacyFromBetaSidebarItemsHidingReadArticles: Set<FeedIdentifier> {
+		guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.legacyFromBetaSidebarItemsHidingReadArticles) as? [[String: String]] else {
+			return Set<FeedIdentifier>()
+		}
+		let feedIdentifiers = rawIdentifiers.compactMap { FeedIdentifier(userInfo: $0) }
+		return Set(feedIdentifiers)
+	}
+
+	func deleteLegacyFromBetaSidebarItemsHidingReadArticles() {
+		UserDefaults.standard.removeObject(forKey: Key.legacyFromBetaSidebarItemsHidingReadArticles)
+	}
+
+	var smartFeedsHidingReadArticles: Set<String> {
 		get {
-			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.sidebarItemsHidingReadArticles) as? [[String: String]] else {
-				return Set<FeedIdentifier>()
-			}
-			let feedIdentifiers = rawIdentifiers.compactMap { FeedIdentifier(userInfo: $0) }
-			return Set(feedIdentifiers)
+			let smartFeedIDs = UserDefaults.standard.array(forKey: Key.smartFeedsHidingReadArticles) as? [String] ?? []
+			return Set(smartFeedIDs)
 		}
 		set {
-			let feedIdentifierUserInfos = newValue.compactMap { $0.userInfo }
-			UserDefaults.standard.set(feedIdentifierUserInfos, forKey: Key.sidebarItemsHidingReadArticles)
+			let array = Array(newValue)
+			UserDefaults.standard.set(array, forKey: Key.smartFeedsHidingReadArticles)
+		}
+	}
+
+	var feedsHidingReadArticles: [String: Set<String>] { // Account id: Set<feed.webFeedID>
+		get {
+			guard let d = UserDefaults.standard.dictionary(forKey: Key.feedsHidingReadArticles) as? [String: [String]] else {
+				return [String: Set<String>]()
+			}
+			return d.mapValues { Set($0) }
+		}
+		set {
+			let d = newValue.mapValues { Array($0) }
+			UserDefaults.standard.set(d, forKey: Key.feedsHidingReadArticles)
+		}
+	}
+
+	var foldersShowingReadArticles: [String: Set<String>] { // Account id: Set<folder.nameForDisplay>
+		get {
+			guard let d = UserDefaults.standard.dictionary(forKey: Key.foldersShowingReadArticles) as? [String: [String]] else {
+				return [String: Set<String>]()
+			}
+			return d.mapValues { Set($0) }
+		}
+		set {
+			let d = newValue.mapValues { Array($0) }
+			UserDefaults.standard.set(d, forKey: Key.foldersShowingReadArticles)
 		}
 	}
 
@@ -363,7 +401,6 @@ final class AppDefaults {
 										Key.currentThemeName: Self.defaultThemeName]
 		AppDefaults.store.register(defaults: defaults)
 	}
-
 }
 
 private extension AppDefaults {
@@ -431,7 +468,9 @@ struct StateRestorationInfo {
 	let hideReadFeeds: Bool
 	let expandedContainers: Set<ContainerIdentifier>
 	let selectedSidebarItem: FeedIdentifier?
-	let sidebarItemsHidingReadArticles: Set<FeedIdentifier>
+	let smartFeedsHidingReadArticles: Set<String>
+	let feedsHidingReadArticles: [String: Set<String>]
+	let foldersShowingReadArticles: [String: Set<String>]
 	let selectedArticle: ArticleSpecifier?
 	let articleWindowScrollY: Int
 	let isShowingExtractedArticle: Bool
@@ -439,26 +478,32 @@ struct StateRestorationInfo {
 	init(hideReadFeeds: Bool,
 		 expandedContainers: Set<ContainerIdentifier>,
 		 selectedSidebarItem: FeedIdentifier?,
-		 sidebarItemsHidingReadArticles: Set<FeedIdentifier>,
+		 smartFeedsHidingReadArticles: Set<String>,
+		 feedsHidingReadArticles: [String: Set<String>],
+		 foldersShowingReadArticles: [String: Set<String>],
 		 selectedArticle: ArticleSpecifier?,
 		 articleWindowScrollY: Int,
 		 isShowingExtractedArticle: Bool) {
 		self.hideReadFeeds = hideReadFeeds
 		self.expandedContainers = expandedContainers
 		self.selectedSidebarItem = selectedSidebarItem
-		self.sidebarItemsHidingReadArticles = sidebarItemsHidingReadArticles
+		self.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
+		self.feedsHidingReadArticles = feedsHidingReadArticles
+		self.foldersShowingReadArticles = foldersShowingReadArticles
 		self.selectedArticle = selectedArticle
 		self.articleWindowScrollY = articleWindowScrollY
 		self.isShowingExtractedArticle = isShowingExtractedArticle
 
-		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsidebarItemsHidingReadArticles: \(sidebarItemsHidingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
+		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsmartFeedsHidingReadArticles: \(smartFeedsHidingReadArticles)\nfeedsHidingReadArticles: \(feedsHidingReadArticles)\nfoldersShowingReadArticles: \(foldersShowingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
 	}
 
 	init() {
 		self.init(hideReadFeeds: AppDefaults.shared.hideReadFeeds,
 				  expandedContainers: AppDefaults.shared.expandedContainers,
 				  selectedSidebarItem: AppDefaults.shared.selectedSidebarItem,
-				  sidebarItemsHidingReadArticles: AppDefaults.shared.sidebarItemsHidingReadArticles,
+				  smartFeedsHidingReadArticles: AppDefaults.shared.smartFeedsHidingReadArticles,
+				  feedsHidingReadArticles: AppDefaults.shared.feedsHidingReadArticles,
+				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
 				  selectedArticle: AppDefaults.shared.selectedArticle,
 				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
 				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)
@@ -518,7 +563,22 @@ struct StateRestorationInfo {
 			let feedIdentifiers = convertedState.compactMap { FeedIdentifier(userInfo: $0) }
 			sidebarItemsHidingReadArticles = Set(feedIdentifiers)
 		} else {
-			sidebarItemsHidingReadArticles = AppDefaults.shared.sidebarItemsHidingReadArticles
+			sidebarItemsHidingReadArticles = AppDefaults.shared.legacyFromBetaSidebarItemsHidingReadArticles
+			AppDefaults.shared.deleteLegacyFromBetaSidebarItemsHidingReadArticles()
+		}
+		var smartFeedsHidingReadArticles = Set<String>()
+		var feedsHidingReadArticles = [String: Set<String>]()
+		for sidebarItem in sidebarItemsHidingReadArticles {
+			switch sidebarItem {
+			case .smartFeed(let id):
+				smartFeedsHidingReadArticles.insert(id)
+			case .webFeed(let accountID, let feedID):
+				var feedIDs = feedsHidingReadArticles[accountID] ?? Set<String>()
+				feedIDs.insert(feedID)
+				feedsHidingReadArticles[accountID] = feedIDs
+			default:
+				continue
+			}
 		}
 
 		let selectedSidebarItem: FeedIdentifier?
@@ -532,7 +592,9 @@ struct StateRestorationInfo {
 		self.init(hideReadFeeds: hideReadFeeds,
 				  expandedContainers: expandedContainers,
 				  selectedSidebarItem: selectedSidebarItem,
-				  sidebarItemsHidingReadArticles: sidebarItemsHidingReadArticles,
+				  smartFeedsHidingReadArticles: smartFeedsHidingReadArticles,
+				  feedsHidingReadArticles: feedsHidingReadArticles,
+				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
 				  selectedArticle: AppDefaults.shared.selectedArticle,
 				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
 				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)

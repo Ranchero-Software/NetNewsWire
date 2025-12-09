@@ -19,16 +19,16 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 final class FetchRequestOperation {
 
 	let id: Int
-	let readFilterEnabledTable: [FeedIdentifier: Bool]
+	let hidingReadArticlesState: HidingReadArticlesState
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
 	private let fetchers: [ArticleFetcher]
 
-	init(id: Int, readFilterEnabledTable: [FeedIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, hidingReadArticlesState: HidingReadArticlesState, fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
-		self.readFilterEnabledTable = readFilterEnabledTable
+		self.hidingReadArticlesState = hidingReadArticlesState
 		self.fetchers = fetchers
 		self.resultBlock = resultBlock
 	}
@@ -79,9 +79,16 @@ final class FetchRequestOperation {
 				callCompletionIfNeeded()
 			}
 		}
-		
+
+		func fetcherHidesReadArticles(_ fetcher: ArticleFetcher) -> Bool {
+			guard let feed = fetcher as? Feed, let sidebarItemID = feed.feedID else {
+				return false
+			}
+			return hidingReadArticlesState.isHiding(for: sidebarItemID)
+		}
+
 		for fetcher in fetchers {
-			if (fetcher as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+			if fetcherHidesReadArticles(fetcher) {
 				fetcher.fetchUnreadArticlesAsync { articleSetResult in
 					let articles = (try? articleSetResult.get()) ?? Set<Article>()
 					process(articles)

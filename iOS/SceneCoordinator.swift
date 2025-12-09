@@ -67,15 +67,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
 	private var lastExpandedContainers = Set<ContainerIdentifier>()
 
-	// Which Feeds have the Read Articles Filter enabled
-	private var feedsHidingReadArticles = Set<FeedIdentifier>()
-	private var readFilterEnabledTable: [FeedIdentifier: Bool] { // TODO: remove this
-		var d = [FeedIdentifier: Bool]()
-		for feedIdentifier in feedsHidingReadArticles {
-			d[feedIdentifier] = true
-		}
-		return d
-	}
+	private let hidingReadArticlesState = HidingReadArticlesState()
 
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
@@ -126,13 +118,10 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	var isReadArticlesFiltered: Bool {
-		guard timelineDefaultReadFilterType != .alwaysRead else {
-			return true
+		guard let feedID = timelineFeed?.feedID else {
+			return false
 		}
-		if let feedID = timelineFeed?.feedID {
-			return feedsHidingReadArticles.contains(feedID)
-		}
-		return timelineDefaultReadFilterType == .read
+		return hidingReadArticlesState.isHiding(for: feedID)
 	}
 
 	var timelineDefaultReadFilterType: ReadFilterType {
@@ -343,7 +332,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 			expandedContainers = stateInfo.expandedContainers
 		}
 
-		feedsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
+		hidingReadArticlesState.copy(from: stateInfo)
 
 		rebuildBackingStores(initialLoad: true)
 
@@ -446,7 +435,7 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	@objc func unreadCountDidChange(_ note: Notification) {
 		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
 		guard AccountManager.shared.isUnreadCountsInitialized else {
-			return	
+			return
 		}
 
 		queueRebuildBackingStores()
@@ -579,6 +568,11 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	// MARK: API
 
+	func didEnterBackground() {
+		hidingReadArticlesState.save()
+		saveExpandedContainers()
+	}
+
 	func suspend() {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
 		rebuildBackingStoresQueue.performCallsImmediately()
@@ -612,18 +606,18 @@ final class SceneCoordinator: NSObject, UndoableCommandRunner {
 		mainFeedViewController?.updateUI()
 	}
 
+	func shouldShowFilterButton() -> Bool {
+		guard let sidebarItemID = timelineFeed?.feedID else {
+			return false
+		}
+		return hidingReadArticlesState.canToggleHiding(for: sidebarItemID)
+	}
+
 	func toggleReadArticlesFilter() {
-		guard let feedID = timelineFeed?.feedID else {
+		guard let sidebarItemID = timelineFeed?.feedID else {
 			return
 		}
-
-		if isReadArticlesFiltered {
-			feedsHidingReadArticles.remove(feedID)
-		} else {
-			feedsHidingReadArticles.insert(feedID)
-		}
-		saveReadFilterEnabledTableToUserDefaults()
-
+		hidingReadArticlesState.toggleHiding(for: sidebarItemID)
 		refreshTimeline(resetScroll: false)
 	}
 
@@ -1735,10 +1729,6 @@ private extension SceneCoordinator {
 		}
 	}
 
-	private func saveReadFilterEnabledTableToUserDefaults() {
-		AppDefaults.shared.sidebarItemsHidingReadArticles = feedsHidingReadArticles
-	}
-
 	// MARK: Select Prev Unread
 
 	@discardableResult
@@ -2065,7 +2055,7 @@ private extension SceneCoordinator {
 		cancelPendingAsyncFetches()
 
 		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, hidingReadArticlesState: hidingReadArticlesState, fetchers: fetchers) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
@@ -2138,9 +2128,6 @@ private extension SceneCoordinator {
 				}
 			})
 
-		case .script:
-			break
-
 		case .folder(let accountID, let folderName):
 			guard let accountNode = self.findAccountNode(accountID: accountID),
 				let account = accountNode.representedObject as? Account else {
@@ -2211,9 +2198,6 @@ private extension SceneCoordinator {
 		let articleWindowScrollY = AppDefaults.shared.articleWindowScrollY
 
 		switch feedIdentifier {
-
-		case .script:
-			return false
 
 		case .smartFeed, .folder:
 			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
