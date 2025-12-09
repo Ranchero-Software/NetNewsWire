@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 6.2.1 TestFlight build 6206 08 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6206
+
+Fixed bug, introduced in previous beta, where hide-read-articles settings weren’t working or saving for folders
+
 ### 6.2.1 TestFlight build 6205 07 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6205
 
 Fixed bug where the All Unread feed wouldn't remove read articles on refresh (when the refresh-to-remove-read-articles setting is on)
