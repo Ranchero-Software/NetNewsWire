@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 6.2.1 TestFlight build 6206 08 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6206
+### 6.2.1 TestFlight build 6206 08 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6206 — submitted to App Store
 
 Fixed bug, introduced in previous beta, where hide-read-articles settings weren’t working or saving for folders
 
