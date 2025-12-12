@@ -219,7 +219,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 		//navigationItem.subtitle = "" // don't inherit feeds subtitle on push
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
-		updateNavigationBarSubtitle("")
+		coordinator?.updateNavigationBarSubtitles(nil)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
