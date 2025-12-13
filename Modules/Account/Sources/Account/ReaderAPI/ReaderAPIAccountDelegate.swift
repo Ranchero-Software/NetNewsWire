@@ -760,7 +760,7 @@ private extension ReaderAPIAccountDelegate {
 			let articleIDs = Array(fetchedArticleIDs)
 			let chunkedArticleIDs = articleIDs.chunked(into: 150)
 
-			refreshProgress.addTasks(chunkedArticleIDs.count - 1)
+			refreshProgress.addTasks(chunkedArticleIDs.count + 1)
 
 			for chunk in chunkedArticleIDs {
 
