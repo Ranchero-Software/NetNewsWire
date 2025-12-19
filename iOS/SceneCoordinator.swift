@@ -655,9 +655,22 @@ struct FeedNode: Hashable, Sendable {
 						}
 					}
 				}
-			} else {
+			}
+			else {
 				self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
-				self.mainTimelineViewController?.updateNavigationBarSubtitle("")
+				// If unread count > 0, add unread string to timeline
+				if let _ = timelineFeed, timelineUnreadCount > 0 {
+					let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
+					let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
+					self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)
+				} else {
+					// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
+					if UIDevice.current.userInterfaceIdiom == .phone {
+						self.mainTimelineViewController?.updateNavigationBarSubtitle(NSLocalizedString("Updated Just Now", comment: "Updated Just Now"))
+					} else {
+						self.mainTimelineViewController?.updateNavigationBarSubtitle("")
+					}
+				}
 			}
 		} else {
 			// Updating in progress, apply to both iPhone and iPad Feeds.
@@ -665,7 +678,6 @@ struct FeedNode: Hashable, Sendable {
 		}
 
 		scheduleNavigationBarSubtitleUpdate()
-
 	}
 
 	func scheduleNavigationBarSubtitleUpdate() {
