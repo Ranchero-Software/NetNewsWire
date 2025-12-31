@@ -40,8 +40,8 @@ struct FeedbinSubscriptionJSONFeed: Codable, Sendable {
 	let favicon: String?
 	let icon: String?
 	enum CodingKeys: String, CodingKey {
-		case favicon = "favicon"
-		case icon = "icon"
+		case favicon
+		case icon
 	}
 }
 

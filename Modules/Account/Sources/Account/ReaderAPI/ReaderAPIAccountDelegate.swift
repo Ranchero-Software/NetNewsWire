@@ -53,9 +53,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	@MainActor var server: String? {
-		get {
-			return caller.server
-		}
+		caller.server
 	}
 
 	var isOPMLImportInProgress = false
@@ -509,9 +507,9 @@ private extension ReaderAPIAccountDelegate {
 
 		let folderTags: [ReaderAPITag]
 		if variant == .inoreader {
-			folderTags = tags.filter{ $0.type == "folder" }
+			folderTags = tags.filter { $0.type == "folder" }
 		} else {
-			folderTags = tags.filter{ $0.tagID.contains("/label/") }
+			folderTags = tags.filter { $0.tagID.contains("/label/") }
 		}
 
 		guard !folderTags.isEmpty else { return }

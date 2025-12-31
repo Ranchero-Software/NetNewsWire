@@ -137,7 +137,7 @@ public final class DatabaseQueue: Sendable {
 	/// Run all the lines that start with "create".
 	/// Use this to create tables, indexes, etc.
 	public func runCreateStatements(_ statements: String) throws {
-		nonisolated(unsafe) var error: DatabaseError? = nil
+		nonisolated(unsafe) var error: DatabaseError?
 
 		runInDatabaseSync { result in
 			Self.logger.debug("DatabaseQueue: runCreateStatements")
@@ -214,8 +214,7 @@ private extension DatabaseQueue {
 		autoreleasepool {
 			if state.isSuspended {
 				databaseBlock(.failure(.isSuspended))
-			}
-			else {
+			} else {
 				if useTransaction {
 					state.database.beginTransaction()
 				}

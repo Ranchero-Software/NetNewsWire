@@ -71,7 +71,7 @@ struct HTTP4xxResponse {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
 
-		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)		
+		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
 	}
 
 	deinit {
@@ -318,9 +318,7 @@ private extension DownloadSession {
 				}
 				urls.insert(oneRedirectURL)
 				currentURL = oneRedirectURL
-			}
-
-			else {
+			} else {
 				break
 			}
 		}
