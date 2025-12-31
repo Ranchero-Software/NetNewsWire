@@ -14,7 +14,6 @@ import Foundation
 
 public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable, Sendable {
 	case smartFeed(String) // String is a unique identifier
-	case script(String) // String is a unique identifier
 	case feed(String, String) // accountID, feedID
 	case folder(String, String) // accountID, folderName
 
@@ -38,8 +37,6 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable,
 		switch self {
 		case .smartFeed:
 			return TypeName.smartFeed
-		case .script:
-			return TypeName.script
 		case .feed:
 			return TypeName.feed
 		case .folder:
@@ -50,8 +47,6 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable,
 	public var description: String {
 		switch self {
 		case .smartFeed(let id):
-			return "(typeName): \(id)"
-		case .script(let id):
 			return "(typeName): \(id)"
 		case .feed(let accountID, let feedID):
 			return "(typeName): \(accountID)_\(feedID)"
@@ -65,8 +60,6 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable,
 
 		switch self {
 		case .smartFeed(let id):
-			d[Key.id] = id
-		case .script(let id):
 			d[Key.id] = id
 		case .feed(let accountID, let feedID):
 			d[Key.accountID] = accountID
@@ -90,11 +83,6 @@ public enum SidebarItemIdentifier: CustomStringConvertible, Hashable, Equatable,
 				return nil
 			}
 			self = .smartFeed(id)
-		case TypeName.script:
-			guard let id = userInfo[Key.id] else {
-				return nil
-			}
-			self = .script(id)
 		case TypeName.feed:
 			guard let accountID = userInfo[Key.accountID], let feedID = userInfo[Key.feedID] ?? userInfo[Key.oldFeedIDKey] else {
 				return nil
