@@ -747,13 +747,8 @@ private extension MainTimelineViewController {
 	}
 
 	func resetUI(resetScroll: Bool) {
-		switch timelineDefaultReadFilterType {
-		case .none, .read:
-			navigationItem.rightBarButtonItem = filterButton
-			navigationItem.rightBarButtonItem?.isEnabled = true
-		case .alwaysRead:
-			navigationItem.rightBarButtonItem = nil
-		}
+		let shouldShowFilterButton = coordinator?.shouldShowFilterButton() ?? false
+		navigationItem.rightBarButtonItem = shouldShowFilterButton ? filterButton : nil
 
 		if isReadArticlesFiltered {
 			filterButton.style = .prominent

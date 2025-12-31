@@ -77,6 +77,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	}
 
 	func sceneDidEnterBackground(_ scene: UIScene) {
+		coordinator.didEnterBackground()
 		ArticleStringFormatter.emptyCaches()
 		appDelegate.prepareAccountsForBackground()
 	}
