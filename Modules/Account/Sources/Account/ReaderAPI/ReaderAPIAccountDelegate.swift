@@ -355,7 +355,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-
 	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 
 		if sourceContainer is Account {

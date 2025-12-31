@@ -241,7 +241,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 					}
 				case .zoneNotFound, .userDeletedZone:
 					DispatchQueue.main.async {
-						self.createZoneRecord() { result in
+						self.createZoneRecord { result in
 							switch result {
 							case .success:
 								self.findOrCreateAccount(completion: completion)

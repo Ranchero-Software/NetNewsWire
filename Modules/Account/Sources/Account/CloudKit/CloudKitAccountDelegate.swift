@@ -73,10 +73,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .DownloadProgressDidChange, object: syncProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 		await withCheckedContinuation { continuation in
 			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
-			op.completionBlock = { mainThreadOperation in
+			op.completionBlock = { _ in
 				continuation.resume()
 			}
 			mainThreadOperationQueue.add(op)
@@ -279,7 +279,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 					}
 				}
 			}
-			
+
 			for await result in group {
 				if case .failure = result {
 					errorOccurred = true
@@ -316,11 +316,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 			folder.externalID = externalID
 			account.addFolderToTree(folder)
-			
+
 			await withTaskGroup(of: Void.self) { group in
 				for feed in feedsToRestore {
 					folder.topLevelFeeds.remove(feed)
-					
+
 					group.addTask {
 						do {
 							try await self.restoreFeed(for: account, feed: feed, container: folder)
@@ -346,7 +346,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
-		
+
 		try await syncDatabase.insertStatuses(syncStatuses)
 		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			try await sendArticleStatus(for: account)
@@ -548,7 +548,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
-		let _ = try await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
+		_ = try await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 
 		let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
 														  name: parsedFeed.title,
@@ -657,7 +657,7 @@ private extension CloudKitAccountDelegate {
 		syncProgress.addTasks(2)
 
 		do {
-			let _ = try await accountZone.removeFeed(feed, from: container)
+			_ = try await accountZone.removeFeed(feed, from: container)
 			syncProgress.completeTask()
 		} catch {
 			syncProgress.completeTask()
@@ -681,7 +681,6 @@ private extension CloudKitAccountDelegate {
 			throw error
 		}
 	}
-
 }
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {

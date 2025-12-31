@@ -1,4 +1,3 @@
-
 //
 //  Container.swift
 //  NetNewsWire
@@ -12,12 +11,10 @@ import RSCore
 import Articles
 
 extension Notification.Name {
-
 	public static let ChildrenDidChange = Notification.Name("ChildrenDidChange")
 }
 
 @MainActor public protocol Container: AnyObject, ContainerIdentifiable {
-
 	var account: Account? { get }
 	var topLevelFeeds: Set<Feed> { get set }
 	var folders: Set<Folder>? { get set }
@@ -32,7 +29,7 @@ extension Notification.Name {
     func removeFeedFromTreeAtTopLevel(_ feed: Feed)
 	func addFeedToTreeAtTopLevel(_ feed: Feed)
 
-	//Recursive — checks subfolders
+	// Recursive — checks subfolders
 	func flattenedFeeds() -> Set<Feed>
 	func has(_ feed: Feed) -> Bool
 	func hasFeed(with feedID: String) -> Bool
@@ -164,4 +161,3 @@ extension Notification.Name {
 		NotificationCenter.default.post(name: .ChildrenDidChange, object: self)
 	}
 }
-

@@ -27,7 +27,7 @@ import Secrets
 		}
 	}
 
-	var accountMetadata: AccountMetadata? = nil
+	var accountMetadata: AccountMetadata?
 	var refreshProgress = DownloadProgress(numberOfTasks: 0)
 
 	let caller: NewsBlurAPICaller
@@ -59,7 +59,7 @@ import Secrets
 		syncDatabase = SyncDatabase(databasePath: dataFolder.appending("/DB.sqlite3"))
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 	}
 
 	func refreshAll(for account: Account) async throws {
@@ -234,7 +234,6 @@ import Secrets
 		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 		return !feedIDsAndItems.isEmpty
 	}
-
 
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
 	}

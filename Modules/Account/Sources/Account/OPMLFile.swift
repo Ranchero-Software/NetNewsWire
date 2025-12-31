@@ -76,7 +76,7 @@ private extension OPMLFile {
 	}
 
 	func opmlFileData() -> Data? {
-		var fileData: Data? = nil
+		var fileData: Data?
 
 		do {
 			fileData = try Data(contentsOf: fileURL)

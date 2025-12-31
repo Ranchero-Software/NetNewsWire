@@ -8,12 +8,12 @@ let package = Package(
 		.library(
 			name: "SyncDatabase",
 			type: .dynamic,
-			targets: ["SyncDatabase"]),
+			targets: ["SyncDatabase"])
 	],
 	dependencies: [
 		.package(path: "../Articles"),
 		.package(path: "../RSCore"),
-		.package(path: "../RSDatabase"),
+		.package(path: "../RSDatabase")
 	],
 	targets: [
 		.target(
@@ -21,13 +21,13 @@ let package = Package(
 			dependencies: [
 				"RSCore",
 				"RSDatabase",
-				"Articles",
+				"Articles"
 			],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances"),
 				.unsafeFlags(["-warnings-as-errors"])
 			]
-		),
+		)
 	]
 )

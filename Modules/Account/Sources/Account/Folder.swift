@@ -27,7 +27,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	}
 
 	public var topLevelFeeds: Set<Feed> = Set<Feed>()
-	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
+	public var folders: Set<Folder>? // subfolders are not supported, so this is always nil
 
 	public var name: String? {
 		didSet {
@@ -37,7 +37,7 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
 	nonisolated public let folderID: Int // not saved: per-run only
-	public var externalID: String? = nil
+	public var externalID: String?
 	static var incrementingID = 0
 
 	// MARK: - DisplayNameProvider
@@ -192,7 +192,7 @@ extension Folder: OPMLRepresentable {
 
 		var hasAtLeastOneChild = false
 
-		for feed in topLevelFeeds.sorted()  {
+		for feed in topLevelFeeds.sorted() {
 			s += feed.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 			hasAtLeastOneChild = true
 		}

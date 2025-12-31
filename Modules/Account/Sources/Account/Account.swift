@@ -230,8 +230,7 @@ public enum FetchType {
 			if refreshInProgress != oldValue {
 				if refreshInProgress {
 					NotificationCenter.default.post(name: .AccountRefreshDidBegin, object: self)
-				}
-				else {
+				} else {
 					NotificationCenter.default.post(name: .AccountRefreshDidFinish, object: self)
 					opmlFile.markAsDirty()
 				}
@@ -382,7 +381,7 @@ public enum FetchType {
 											   client: OAuthAuthorizationClient,
 											   accountType: AccountType,
 											   transport: Transport = URLSession.webserviceTransport(),
-											   completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> ()) {
+											   completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> Void) {
 		let grantingType: OAuthAuthorizationGranting.Type
 
 		switch accountType {
@@ -395,7 +394,7 @@ public enum FetchType {
 		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 		await delegate.receiveRemoteNotification(for: self, userInfo: userInfo)
 	}
 
@@ -495,7 +494,7 @@ public enum FetchType {
 	}
 
 	@MainActor func loadOPMLItems(_ items: [RSOPMLItem]) {
-		addOPMLItems(OPMLNormalizer.normalize(items))		
+		addOPMLItems(OPMLNormalizer.normalize(items))
 	}
 
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -766,7 +765,7 @@ public enum FetchType {
 	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
 		try await database.fetchStarredArticleIDsAsync()
 	}
-	
+
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
 	@MainActor public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
 		try await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
@@ -836,7 +835,7 @@ public enum FetchType {
 
 		let updatedStatuses = try await database.markAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let updatedArticleIDs = updatedStatuses.articleIDs()
-		let updatedArticles = Set(articles.filter{ updatedArticleIDs.contains($0.articleID) })
+		let updatedArticles = Set(articles.filter { updatedArticleIDs.contains($0.articleID) })
 		noteStatusesForArticlesDidChange(updatedArticles)
 
 		return updatedArticles
@@ -1042,7 +1041,7 @@ public enum FetchType {
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Account, rhs: Account) -> Bool {
+	public static func ==(lhs: Account, rhs: Account) -> Bool {
 		return lhs === rhs
 	}
 }
@@ -1145,7 +1144,6 @@ public enum FetchType {
 		return articles
 	}
 
-
 	// MARK: - Feed Articles
 
 	func _fetchArticles(feed: Feed) throws -> Set<Article> {
@@ -1236,13 +1234,12 @@ public enum FetchType {
 		if feeds.isEmpty {
 			return
 		}
+
 		if feeds.count == 1, let feed = feeds.first {
 			_fetchUnreadCount(feed: feed)
-		}
-		else if feeds.count < 10 {
+		} else if feeds.count < 10 {
 			_fetchUnreadCounts(feeds: feeds)
-		}
-		else {
+		} else {
 			_fetchAllUnreadCounts()
 		}
 	}

@@ -57,16 +57,16 @@ public enum ContainerIdentifier: Hashable, Equatable, Sendable {
 }
 
 extension ContainerIdentifier: Encodable {
-    enum CodingKeys: CodingKey {
-        case type
-        case accountID
-        case folderName
-    }
+	enum CodingKeys: CodingKey {
+		case type
+		case accountID
+		case folderName
+	}
 
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        switch self {
-        case .smartFeedController:
+	public func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		switch self {
+		case .smartFeedController:
 			try container.encode("smartFeedController", forKey: .type)
 		case .account(let accountID):
 			try container.encode("account", forKey: .type)
@@ -75,14 +75,14 @@ extension ContainerIdentifier: Encodable {
 			try container.encode("folder", forKey: .type)
 			try container.encode(accountID, forKey: .accountID)
 			try container.encode(folderName, forKey: .folderName)
-        }
-    }
+		}
+	}
 }
 
 extension ContainerIdentifier: Decodable {
 
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+	public init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
 		let type =  try container.decode(String.self, forKey: .type)
 
 		switch type {
@@ -96,6 +96,5 @@ extension ContainerIdentifier: Decodable {
 			let folderName =  try container.decode(String.self, forKey: .folderName)
 			self = .folder(accountID, folderName)
 		}
-    }
-
+	}
 }

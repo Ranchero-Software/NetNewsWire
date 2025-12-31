@@ -119,7 +119,7 @@ private extension SyncStatusTable {
 			return nil
 		}
 
-		let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
+		let articleIDs = resultSet.mapToSet { $0.string(forColumnIndex: 0) }
 		return articleIDs
 	}
 }

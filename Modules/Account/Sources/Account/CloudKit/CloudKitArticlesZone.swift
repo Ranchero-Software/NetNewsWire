@@ -17,12 +17,11 @@ import SyncDatabase
 import CloudKitSync
 
 final class CloudKitArticlesZone: CloudKitZone {
-
 	var zoneID: CKRecordZone.ID
 
 	weak var container: CKContainer?
 	weak var database: CKDatabase?
-	var delegate: CloudKitZoneDelegate? = nil
+	var delegate: CloudKitZoneDelegate?
 
 	let compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
 
@@ -253,5 +252,4 @@ private extension CloudKitArticlesZone {
 
 		return result
 	}
-
 }

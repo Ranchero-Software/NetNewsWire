@@ -107,8 +107,7 @@ import os.log
 				feed.homePageURL = feed.homePageURL
 				feed.externalID = String(feed.feedID)
 				feed.faviconURL = feed.faviconURL
-			}
-			else {
+			} else {
 				feedsToAdd.insert(feed)
 			}
 		}
@@ -397,7 +396,7 @@ import os.log
 		}
 
 		let folderName = (container as? Folder)?.name
-		
+
 		do {
 			try await caller.deleteFeed(feedID: feedID, folder: folderName)
 

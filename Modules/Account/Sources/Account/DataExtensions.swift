@@ -15,7 +15,6 @@ public extension Notification.Name {
 }
 
 public extension Feed {
-
 	static let SettingUserInfoKey = "feedSetting"
 
 	struct SettingKey {
@@ -48,7 +47,6 @@ extension Feed {
 }
 
 public extension Article {
-
 	@MainActor var account: Account? {
 		return AccountManager.shared.existingAccount(accountID: accountID)
 	}
@@ -57,4 +55,3 @@ public extension Article {
 		return account?.existingFeed(withFeedID: feedID)
 	}
 }
-

@@ -123,7 +123,7 @@ struct ReaderAPIEntryOrigin: Codable, Sendable {
 	let title: String?
 
 	enum CodingKeys: String, CodingKey {
-		case streamId = "streamId"
-		case title = "title"
+		case streamId
+		case title
 	}
 }

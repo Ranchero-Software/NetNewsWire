@@ -125,7 +125,7 @@ final class RSMarkdownTests: XCTestCase {
 		let markdown = """
 		First paragraph.
 
-		Second paragraph with  
+		Second paragraph with
 		line break.
 		"""
 		let html = RSMarkdown.markdownToHTML(markdown)

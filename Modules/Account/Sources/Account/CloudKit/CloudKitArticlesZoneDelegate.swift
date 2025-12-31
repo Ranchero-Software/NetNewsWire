@@ -35,7 +35,7 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		do {
 			let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
 			let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
-			
+
 			await delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
 			try await update(records: changed,
 							 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,

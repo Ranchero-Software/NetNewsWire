@@ -57,22 +57,18 @@ enum CreateReaderAPISubscriptionResult {
 	var credentials: Credentials?
 
 	@MainActor var server: String? {
-		get {
-			return apiBaseURL?.host
-		}
+		apiBaseURL?.host
 	}
 
 	@MainActor private var apiBaseURL: URL? {
-		get {
-			switch variant {
-			case .generic, .freshRSS:
-				guard let accountMetadata = accountMetadata else {
-					return nil
-				}
-				return accountMetadata.endpointURL
-			default:
-				return URL(string: variant.host)
+		switch variant {
+		case .generic, .freshRSS:
+			guard let accountMetadata = accountMetadata else {
+				return nil
 			}
+			return accountMetadata.endpointURL
+		default:
+			return URL(string: variant.host)
 		}
 	}
 
@@ -291,7 +287,6 @@ enum CreateReaderAPISubscriptionResult {
 
 		return .created(subscription)
 	}
-
 
 	public func renameSubscription(subscriptionID: String, newName: String) async throws {
 

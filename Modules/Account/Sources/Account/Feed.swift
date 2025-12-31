@@ -30,8 +30,7 @@ import Articles
 		set {
 			if let url = newValue, !url.isEmpty {
 				metadata.homePageURL = url.normalizedURL
-			}
-			else {
+			} else {
 				metadata.homePageURL = nil
 			}
 		}
@@ -81,8 +80,7 @@ import Articles
 		set {
 			if let authorsSet = newValue {
 				metadata.authors = Array(authorsSet)
-			}
-			else {
+			} else {
 				metadata.authors = nil
 			}
 		}
@@ -100,8 +98,7 @@ import Articles
 			if newValue != editedName {
 				if let valueToSet = newValue, !valueToSet.isEmpty {
 					metadata.editedName = valueToSet
-				}
-				else {
+				} else {
 					metadata.editedName = nil
 				}
 				postDisplayNameDidChangeNotification()
@@ -254,9 +251,6 @@ import Articles
 
 	var metadata: FeedMetadata
 
-	// MARK: - Private
-
-
 	// MARK: - Init
 
 	init(account: Account, url: String, metadata: FeedMetadata) {
@@ -287,8 +281,8 @@ import Articles
 
 	// MARK: - Equatable
 
-	public class func ==(lhs: Feed, rhs: Feed) -> Bool {
-		return lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
+	public static func ==(lhs: Feed, rhs: Feed) -> Bool {
+		lhs.feedID == rhs.feedID && lhs.accountID == rhs.accountID
 	}
 }
 

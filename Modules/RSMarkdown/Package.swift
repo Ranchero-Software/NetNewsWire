@@ -7,7 +7,7 @@ let package = Package(
     products: [
         .library(
             name: "RSMarkdown",
-            targets: ["RSMarkdown"]),
+            targets: ["RSMarkdown"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-markdown.git", from: "0.4.0")
@@ -28,6 +28,6 @@ let package = Package(
             name: "RSMarkdownTests",
             dependencies: ["RSMarkdown"],
             resources: [.process("Resources")]
-        ),
+        )
     ]
 )

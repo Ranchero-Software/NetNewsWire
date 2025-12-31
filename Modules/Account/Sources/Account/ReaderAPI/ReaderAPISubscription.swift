@@ -25,9 +25,9 @@ struct ReaderAPIQuickAddResult: Codable, Sendable {
 	let streamId: String?
 
 	enum CodingKeys: String, CodingKey {
-		case numResults = "numResults"
-		case error = "error"
-		case streamId = "streamId"
+		case numResults
+		case error
+		case streamId
 	}
 }
 
@@ -35,7 +35,7 @@ struct ReaderAPISubscriptionContainer: Codable, Sendable {
 	let subscriptions: [ReaderAPISubscription]
 
 	enum CodingKeys: String, CodingKey {
-		case subscriptions = "subscriptions"
+		case subscriptions
 	}
 }
 
@@ -66,7 +66,7 @@ struct ReaderAPISubscription: Codable, Sendable {
 	enum CodingKeys: String, CodingKey {
 		case feedID = "id"
 		case name = "title"
-		case categories = "categories"
+		case categories
 		case feedURL = "url"
 		case homePageURL = "htmlUrl"
 		case iconURL = "iconUrl"

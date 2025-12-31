@@ -14,10 +14,10 @@ import CloudKitSync
 @MainActor final class CloudKitRemoteNotificationOperation: MainThreadOperation, @unchecked Sendable {
 	private weak var accountZone: CloudKitAccountZone?
 	private weak var articlesZone: CloudKitArticlesZone?
-	nonisolated(unsafe) private var userInfo: [AnyHashable : Any]
+	nonisolated(unsafe) private var userInfo: [AnyHashable: Any]
 	private static let logger = cloudKitLogger
 
-	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable : Any]) {
+	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable: Any]) {
 		self.accountZone = accountZone
 		self.articlesZone = articlesZone
 		self.userInfo = userInfo

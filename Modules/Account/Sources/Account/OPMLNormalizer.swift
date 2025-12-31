@@ -24,14 +24,14 @@ final class OPMLNormalizer {
 
 		items.forEach { (item) in
 
-			if let _ = item.feedSpecifier {
+			if item.feedSpecifier != nil {
 				if !feedsToAdd.contains(where: { $0.feedSpecifier?.feedURL == item.feedSpecifier?.feedURL }) {
 					feedsToAdd.append(item)
 				}
 				return
 			}
 
-			guard let _ = item.titleFromAttributes else {
+			guard item.titleFromAttributes != nil else {
 				// Folder doesn’t have a name, so it won’t be created, and its items will go one level up.
 				if let itemChildren = item.children {
 					normalize(itemChildren, parentFolder: parentFolder)

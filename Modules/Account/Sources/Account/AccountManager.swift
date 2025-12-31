@@ -66,7 +66,6 @@ import RSDatabase
 		return false
 	}
 
-
 	public var activeAccounts: [Account] {
 		assert(Thread.isMainThread)
 		return Array(accountsDictionary.values.filter { $0.isActive })
@@ -77,7 +76,7 @@ import RSDatabase
 	}
 
 	public var lastArticleFetchEndTime: Date? {
-		var lastArticleFetchEndTime: Date? = nil
+		var lastArticleFetchEndTime: Date?
 		for account in activeAccounts {
 			if let accountLastArticleFetchEndTime = account.metadata.lastArticleFetchEndTime {
 				if lastArticleFetchEndTime == nil || lastArticleFetchEndTime! < accountLastArticleFetchEndTime {
@@ -112,8 +111,7 @@ import RSDatabase
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {
 			try FileManager.default.createDirectory(atPath: localAccountFolder, withIntermediateDirectories: true, attributes: nil)
-		}
-		catch {
+		} catch {
 			assertionFailure("Could not create folder for OnMyMac account.")
 			abort()
 		}
@@ -181,11 +179,9 @@ import RSDatabase
 
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
-		}
-		catch let error as CocoaError where error.code == .fileNoSuchFile {
+		} catch let error as CocoaError where error.code == .fileNoSuchFile {
 			// Already doesn’t exist.
-		}
-		catch {
+		} catch {
 			// TODO: add logging and/or reporting to user. No need to crash here.
 		}
 
@@ -263,7 +259,7 @@ import RSDatabase
 		}
 	}
 
-	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 		Task {
 			for account in activeAccounts {
 				await account.receiveRemoteNotification(userInfo: userInfo)
@@ -351,7 +347,7 @@ import RSDatabase
 
 	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
-			if let _ = account.existingFeed(withURL: urlString) {
+			if account.existingFeed(withURL: urlString) != nil {
 				return true
 			}
 		}
@@ -472,8 +468,7 @@ private extension AccountManager {
 
 		do {
 			filenames = try FileManager.default.contentsOfDirectory(atPath: accountsFolder)
-		}
-		catch {
+		} catch {
 			print("Error reading Accounts folder: \(error)")
 			return
 		}
