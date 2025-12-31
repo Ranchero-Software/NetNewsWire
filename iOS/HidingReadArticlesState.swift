@@ -9,9 +9,9 @@
 import Foundation
 import Account
 
-final class HidingReadArticlesState {
+@MainActor final class HidingReadArticlesState {
 	private var smartFeedsHiding = Set<String>()
-	private var feedsHiding = [String: Set<String>]() // accountID: Set<feed.webFeedID>
+	private var feedsHiding = [String: Set<String>]() // accountID: Set<feed.feedID>
 	private var foldersShowing = [String: Set<String>]() // accountID: Set<folder.nameForDisplay>
 
 	func copy(from stateRestorationInfo: StateRestorationInfo) {
@@ -26,7 +26,7 @@ final class HidingReadArticlesState {
 		saveFoldersShowing()
 	}
 
-	func toggleHiding(for sidebarItemID: FeedIdentifier) {
+	func toggleHiding(for sidebarItemID: SidebarItemIdentifier) {
 		assert(canToggleHiding(for: sidebarItemID))
 		if (!canToggleHiding(for: sidebarItemID)) {
 			return
@@ -37,7 +37,7 @@ final class HidingReadArticlesState {
 		saveHiding(for: sidebarItemID, hiding: toggledValue)
 	}
 
-	func isHiding(for sidebarItemID: FeedIdentifier) -> Bool {
+	func isHiding(for sidebarItemID: SidebarItemIdentifier) -> Bool {
 		switch sidebarItemID {
 
 		case .smartFeed(let id):
@@ -46,7 +46,7 @@ final class HidingReadArticlesState {
 			}
 			return smartFeedsHiding.contains(id)
 
-		case .webFeed(let accountID, let feedID):
+		case .feed(let accountID, let feedID):
 			var isHidingReadArticles = false
 			if let feedIDs = feedsHiding[accountID] {
 				isHidingReadArticles = feedIDs.contains(feedID)
@@ -63,7 +63,7 @@ final class HidingReadArticlesState {
 		}
 	}
 
-	func canToggleHiding(for sidebarItemID: FeedIdentifier) -> Bool {
+	func canToggleHiding(for sidebarItemID: SidebarItemIdentifier) -> Bool {
 		// The only item that can't be toggled is the unread smart feed.
 		!isUnreadSmartFeed(sidebarItemID)
 	}
@@ -71,11 +71,11 @@ final class HidingReadArticlesState {
 
 private extension HidingReadArticlesState {
 
-	func isUnreadSmartFeed(_ sidebarItemID: FeedIdentifier) -> Bool {
-		sidebarItemID == SmartFeedsController.shared.unreadFeed.feedID
+	func isUnreadSmartFeed(_ sidebarItemID: SidebarItemIdentifier) -> Bool {
+		sidebarItemID == SmartFeedsController.shared.unreadFeed.sidebarItemID
 	}
 
-	func saveHiding(for sidebarItemID: FeedIdentifier, hiding: Bool) {
+	func saveHiding(for sidebarItemID: SidebarItemIdentifier, hiding: Bool) {
 		switch sidebarItemID {
 
 		case .smartFeed(let id):
@@ -89,7 +89,7 @@ private extension HidingReadArticlesState {
 			}
 			saveSmartFeedsHiding()
 
-		case .webFeed(let accountID, let feedID):
+		case .feed(let accountID, let feedID):
 			if hiding {
 				var feedIDs = feedsHiding[accountID] ?? Set<String>()
 				feedIDs.insert(feedID)
@@ -119,7 +119,7 @@ private extension HidingReadArticlesState {
 
 		// Filter out accounts and folders that no longer exist.
 		for accountID in Array(d.keys) {
-			guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 				d[accountID] = nil
 				continue
 			}
@@ -134,11 +134,11 @@ private extension HidingReadArticlesState {
 
 		// Filter out accounts and feeds that no longer exist.
 		for accountID in Array(d.keys) {
-			guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 				d[accountID] = nil
 				continue
 			}
-			d[accountID] = d[accountID]?.filter { account.existingWebFeed(withWebFeedID: $0) != nil }
+			d[accountID] = d[accountID]?.filter { account.existingFeed(withFeedID: $0) != nil }
 		}
 
 		AppDefaults.shared.feedsHidingReadArticles = d

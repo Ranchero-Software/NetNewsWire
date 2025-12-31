@@ -549,16 +549,16 @@ struct StateRestorationInfo {
 			let sidebarItemIdentifiers = convertedState.compactMap { SidebarItemIdentifier(userInfo: $0) }
 			sidebarItemsHidingReadArticles = Set(sidebarItemIdentifiers)
 		} else {
-			sidebarItemsHidingReadArticles = AppDefaults.shared.legacyFromBetaSidebarItemsHidingReadArticles
-			AppDefaults.shared.deleteLegacyFromBetaSidebarItemsHidingReadArticles()
+			sidebarItemsHidingReadArticles = Set<SidebarItemIdentifier>()
 		}
+
 		var smartFeedsHidingReadArticles = Set<String>()
 		var feedsHidingReadArticles = [String: Set<String>]()
 		for sidebarItem in sidebarItemsHidingReadArticles {
 			switch sidebarItem {
 			case .smartFeed(let id):
 				smartFeedsHidingReadArticles.insert(id)
-			case .webFeed(let accountID, let feedID):
+			case .feed(let accountID, let feedID):
 				var feedIDs = feedsHidingReadArticles[accountID] ?? Set<String>()
 				feedIDs.insert(feedID)
 				feedsHidingReadArticles[accountID] = feedIDs
