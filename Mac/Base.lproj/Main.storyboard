@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -646,10 +646,10 @@
                                                 <action selector="openBugTracker:" target="Ady-hI-5gd" id="fZQ-ng-gIm"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Slack Group" id="OKC-FV-V33">
+                                        <menuItem title="Discourse Forum" id="OKC-FV-V33">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="openSlackGroup:" target="Ady-hI-5gd" id="5HZ-0D-vG5"/>
+                                                <action selector="openDiscourse:" target="Ady-hI-5gd" id="pHL-0j-vVt"/>
                                             </connections>
                                         </menuItem>
                                     </items>

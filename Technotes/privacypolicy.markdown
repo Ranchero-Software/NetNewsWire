@@ -66,6 +66,6 @@ NetNewsWire displays HTML that comes from feeds from other sites. Some of these 
 
 ## Questions or comments
 
-If you have questions or comments about this privacy policy, please contact Brent Simmons on the [Slack group](https://netnewswire.com/slack) or on [Mastodon](https://indieweb.social/@brentsimmons).
+If you have questions or comments about this privacy policy, please contact Brent Simmons on the [NetNewsWire forum](https://discourse.netnewswire.com/) or on [Mastodon](https://indieweb.social/@brentsimmons).
 
 This [policy](https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/privacypolicy.markdown) is stored in the NetNewsWire GitHub repository, where you can track any changes we might make.
