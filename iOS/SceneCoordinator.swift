@@ -123,7 +123,7 @@ struct FeedNode: Hashable, Sendable {
 		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
 			return false
 		}
-		return hidingReadArticlesState.isHiding(for: sidebarItemID)
+		return hidingReadArticlesState.isHidingReadArticles(for: sidebarItemID)
 	}
 
 	var timelineDefaultReadFilterType: ReadFilterType {
@@ -721,14 +721,14 @@ struct FeedNode: Hashable, Sendable {
 		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
 			return false
 		}
-		return hidingReadArticlesState.canToggleHiding(for: sidebarItemID)
+		return hidingReadArticlesState.canToggleHidingReadArticles(for: sidebarItemID)
 	}
 
 	func toggleReadArticlesFilter() {
 		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
 			return
 		}
-		hidingReadArticlesState.toggleHiding(for: sidebarItemID)
+		hidingReadArticlesState.toggleHidingReadArticles(for: sidebarItemID)
 		refreshTimeline(resetScroll: false)
 	}
 
