@@ -283,7 +283,7 @@ private extension ArticleRenderer {
 			}
 			isFirstAuthor = false
 
-			var authorEmailAddress: String? = nil
+			var authorEmailAddress: String?
 			if let emailAddress = author.emailAddress, !(emailAddress.contains("noreply@") || emailAddress.contains("no-reply@")) {
 				authorEmailAddress = emailAddress
 			}

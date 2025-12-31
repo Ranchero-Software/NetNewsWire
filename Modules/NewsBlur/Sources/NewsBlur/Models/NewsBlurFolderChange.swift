@@ -22,18 +22,18 @@ extension NewsBlurFolderChange: NewsBlurDataConvertible {
 			case .add(let name):
 				return [
 					URLQueryItem(name: "folder", value: name),
-					URLQueryItem(name: "parent_folder", value: ""), // root folder
+					URLQueryItem(name: "parent_folder", value: "") // root folder
 				]
 			case .rename(let from, let to):
 				return [
 					URLQueryItem(name: "folder_to_rename", value: from),
 					URLQueryItem(name: "new_folder_name", value: to),
-					URLQueryItem(name: "in_folder", value: ""), // root folder
+					URLQueryItem(name: "in_folder", value: "") // root folder
 				]
 			case .delete(let name, let feedIDs):
 				var queryItems = [
 					URLQueryItem(name: "folder_to_delete", value: name),
-					URLQueryItem(name: "in_folder", value: ""), // root folder
+					URLQueryItem(name: "in_folder", value: "") // root folder
 				]
 				queryItems.append(contentsOf: feedIDs.map { id in
 					URLQueryItem(name: "feed_id", value: id)

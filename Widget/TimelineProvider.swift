@@ -72,4 +72,3 @@ struct WidgetTimelineEntry: TimelineEntry {
 	public let date: Date
 	public let widgetData: WidgetData
 }
-

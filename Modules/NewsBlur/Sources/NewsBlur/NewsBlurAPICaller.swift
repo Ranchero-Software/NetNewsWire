@@ -79,7 +79,7 @@ public final class NewsBlurAPICaller: Sendable {
 			.appendingPathComponent("reader/feeds")
 			.appendingQueryItems([
 				URLQueryItem(name: "flat", value: "true"),
-				URLQueryItem(name: "update_counts", value: "true"),
+				URLQueryItem(name: "update_counts", value: "true")
 			])
 
 		let (_, payload) = try await requestData(callURL: url, resultType: NewsBlurFeedsResponse.self)
@@ -90,7 +90,7 @@ public final class NewsBlurAPICaller: Sendable {
 		let url: URL! = baseURL
 			.appendingPathComponent(endpoint)
 			.appendingQueryItems([
-				URLQueryItem(name: "include_timestamps", value: "true"),
+				URLQueryItem(name: "include_timestamps", value: "true")
 			])
 
 		let (_, payload) = try await requestData(callURL: url, resultType: NewsBlurStoryHashesResponse.self, dateDecoding: .secondsSince1970)
@@ -118,7 +118,7 @@ public final class NewsBlurAPICaller: Sendable {
 				URLQueryItem(name: "order", value: "newest"),
 				URLQueryItem(name: "read_filter", value: "all"),
 				URLQueryItem(name: "include_hidden", value: "false"),
-				URLQueryItem(name: "include_story_content", value: "true"),
+				URLQueryItem(name: "include_story_content", value: "true")
 			])
 
 		let (response, payload) = try await requestData(callURL: url, resultType: NewsBlurStoriesResponse.self)

@@ -278,7 +278,7 @@ import RSDatabase
 			await refreshAll(errorHandler: errorHandler)
 		}
 	}
-	
+
 	public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async {
 		guard NetworkMonitor.shared.isConnected else {
 			Self.logger.info("AccountManager: skipping refreshAll — not connected to internet.")

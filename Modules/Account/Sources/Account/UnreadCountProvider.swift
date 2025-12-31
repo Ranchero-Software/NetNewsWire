@@ -20,7 +20,6 @@ public extension Notification.Name {
 	func calculateUnreadCount<T: Collection>(_ children: T) -> Int
 }
 
-
 public extension UnreadCountProvider {
 
 	func postUnreadCountDidInitializeNotification() {
@@ -42,5 +41,3 @@ public extension UnreadCountProvider {
 		return updatedUnreadCount
 	}
 }
-
-

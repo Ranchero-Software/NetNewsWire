@@ -9,15 +9,6 @@
 import XCTest
 
 class AppleScriptXCTestCase: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-    }
-
     /*
         @function doIndividualScript
         @param filename -- name of a .applescript (sans extension) in the test bundle's
@@ -31,7 +22,7 @@ class AppleScriptXCTestCase: XCTestCase {
     func doIndividualScript(filename:String) -> NSAppleEventDescriptor? {
         var errorDict: NSDictionary? = nil
         let testBundle = Bundle(for: type(of: self))
-        let url = testBundle.url(forResource:filename, withExtension:"scpt")
+        let url = testBundle.url(forResource: filename, withExtension: "scpt")
         guard let testScriptUrl = url  else {
             XCTFail("Failed Getting script URL")
             return nil

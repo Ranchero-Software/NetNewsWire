@@ -147,7 +147,7 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 	}
 }
 
-// MARK : Private
+// MARK: - Private
 
 private extension ArticleThemesManager {
 

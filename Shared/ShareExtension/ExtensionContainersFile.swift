@@ -53,7 +53,7 @@ import Account
 		let errorPointer: NSErrorPointer = nil
 		let fileCoordinator = NSFileCoordinator()
 		let fileURL = URL(fileURLWithPath: ExtensionContainersFile.filePath)
-		var extensionContainers: ExtensionContainers? = nil
+		var extensionContainers: ExtensionContainers?
 
 		fileCoordinator.coordinate(readingItemAt: fileURL, options: [], error: errorPointer, byAccessor: { readURL in
 			if let fileData = try? Data(contentsOf: readURL) {

@@ -8,13 +8,13 @@ let package = Package(
 		.library(
 			name: "NewsBlur",
 			targets: ["NewsBlur"]
-		),
+		)
 	],
 	dependencies: [
 		.package(path: "../Secrets"),
 		.package(path: "../RSWeb"),
 		.package(path: "../RSParser"),
-		.package(path: "../RSCore"),
+		.package(path: "../RSCore")
 	],
 	targets: [
 		.target(
@@ -29,6 +29,6 @@ let package = Package(
 		.testTarget(
 			name: "NewsBlurTests",
 			dependencies: ["NewsBlur"]
-		),
+		)
 	]
 )

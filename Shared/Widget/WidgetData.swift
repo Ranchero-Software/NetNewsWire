@@ -9,7 +9,6 @@
 import Foundation
 
 struct WidgetData: Codable {
-
 	let currentUnreadCount: Int
 	let currentTodayCount: Int
 	let currentStarredCount: Int
@@ -17,17 +16,13 @@ struct WidgetData: Codable {
 	let starredArticles: [LatestArticle]
 	let todayArticles: [LatestArticle]
 	let lastUpdateTime: Date
-
 }
 
 struct LatestArticle: Codable, Identifiable {
-
 	var id: String
 	let feedTitle: String
 	let articleTitle: String?
 	let articleSummary: String?
 	let feedIconPath: String? // Path to image data in shared container.
 	let pubDate: String
-
 }
-

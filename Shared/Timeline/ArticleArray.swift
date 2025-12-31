@@ -49,7 +49,7 @@ typealias ArticleArray = [Article]
 	}
 
 	func articlesForIndexes(_ indexes: IndexSet) -> [Article] {
-		return indexes.compactMap{ (oneIndex) -> Article? in
+		return indexes.compactMap { (oneIndex) -> Article? in
 			return articleAtRow(oneIndex)
 		}
 	}

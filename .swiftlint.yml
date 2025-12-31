@@ -29,6 +29,11 @@ disabled_rules:
   - nesting
 
 excluded:
+  - ".build"
+  - ".git"
+  - ".swiftpm"
+  - ".claude"
+  - Modules/*/.build/
   - Modules/Secrets/Sources/Secrets/SecretKey.swift
   - Modules/Account/Tests/
   - Modules/Account/Sources/Account/Feedly/

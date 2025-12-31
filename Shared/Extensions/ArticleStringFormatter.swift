@@ -11,7 +11,6 @@ import Articles
 import RSParser
 
 @MainActor struct ArticleStringFormatter {
-
 	private static var feedNameCache = [String: String]()
 	private static var titleCache = [String: String]()
 	private static var summaryCache = [String: String]()
@@ -114,4 +113,3 @@ import RSParser
 		return dateFormatter.string(from: date)
 	}
 }
-

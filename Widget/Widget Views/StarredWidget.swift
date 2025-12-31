@@ -9,7 +9,7 @@
 import WidgetKit
 import SwiftUI
 
-struct StarredWidgetView : View {
+struct StarredWidgetView: View {
 
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
@@ -25,7 +25,7 @@ struct StarredWidgetView : View {
 			GeometryReader { metrics in
 				starredImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment:.leading, spacing: 0) {
+				VStack(alignment: .leading, spacing: 0) {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()

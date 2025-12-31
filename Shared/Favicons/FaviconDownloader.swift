@@ -165,7 +165,7 @@ extension Notification.Name {
 			if let faviconURLs = remainingFaviconURLs[homePageURL] {
 				if let nextIconURL = faviconURLs.first {
 					let _ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)
-					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst();
+					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst()
 				} else {
 					remainingFaviconURLs[homePageURL] = nil
 

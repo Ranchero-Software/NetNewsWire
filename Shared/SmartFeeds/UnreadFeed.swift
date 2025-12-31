@@ -20,7 +20,7 @@ import ArticlesDatabase
 
 @MainActor final class UnreadFeed: PseudoFeed {
 
-	var account: Account? = nil
+	var account: Account?
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .alwaysRead

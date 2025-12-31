@@ -14,7 +14,6 @@ import Account
 // These handle multiple accounts.
 
 @MainActor func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
-
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 
 	let group = DispatchGroup()
@@ -35,13 +34,11 @@ import Account
 }
 
 private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: Set<Article>] {
-
 	let d = Dictionary(grouping: articles, by: { $0.accountID })
 	return d.mapValues{ Set($0) }
 }
 
 @MainActor extension Article {
-
 	var feed: Feed? {
 		return account?.existingFeed(withFeedID: feedID)
 	}
@@ -181,7 +178,6 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 		return byline
 	}
-
 }
 
 // MARK: Path
@@ -195,7 +191,7 @@ struct ArticlePathKey {
 
 @MainActor extension Article {
 
-	public var pathUserInfo: [AnyHashable : Any] {
+	public var pathUserInfo: [AnyHashable: Any] {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
@@ -203,13 +199,11 @@ struct ArticlePathKey {
 			ArticlePathKey.articleID: articleID
 		]
 	}
-
 }
 
 // MARK: SortableArticle
 
 @MainActor extension Article: SortableArticle {
-
 	var sortableName: String {
 		return feed?.name ?? ""
 	}
@@ -225,5 +219,4 @@ struct ArticlePathKey {
 	var sortableFeedID: String {
 		return feedID
 	}
-
 }

@@ -14,8 +14,6 @@ import RSCore
 
 	static func importDefaultFeeds(account: Account) {
 		let defaultFeedsURL = Bundle.main.url(forResource: "DefaultFeeds", withExtension: "opml")!
-		AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL) { result in }
+		AccountManager.shared.defaultAccount.importOPML(defaultFeedsURL) { _ in }
 	}
-
 }
-

@@ -9,15 +9,6 @@
 import XCTest
 
 @MainActor final class ScriptingTests: AppleScriptXCTestCase {
-
-    override func setUp() {
-        super.setUp()
-    }
-
-    override func tearDown() {
-        super.tearDown()
-    }
-
     /*
         @function testGenericScript
         @brief  An example of how a script can be run as part of an XCTest
@@ -28,7 +19,7 @@ import XCTest
     */
     func testGenericScript() {
         let scriptResult = doIndividualScript(filename: "testGenericScript")
-        XCTAssert( scriptResult?.stringValue == "Geoducks!")
+        XCTAssert(scriptResult?.stringValue == "Geoducks!")
     }
 
     func testGetUrlScript() {
@@ -54,9 +45,9 @@ import XCTest
     func doIndividualScriptWithExpectation(filename:String) {
         let scriptExpectation = self.expectation(description: filename+"expectation")
 		DispatchQueue.main.async {
-             _ = self.doIndividualScript(filename:filename)
+             _ = self.doIndividualScript(filename: filename)
              scriptExpectation.fulfill()
         }
-        self.wait(for:[scriptExpectation], timeout:60)
+        self.wait(for: [scriptExpectation], timeout: 60)
     }
 }

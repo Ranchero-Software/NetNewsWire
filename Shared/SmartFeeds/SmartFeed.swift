@@ -13,8 +13,7 @@ import ArticlesDatabase
 import Account
 
 @MainActor final class SmartFeed: PseudoFeed {
-
-	var account: Account? = nil
+	var account: Account?
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .none

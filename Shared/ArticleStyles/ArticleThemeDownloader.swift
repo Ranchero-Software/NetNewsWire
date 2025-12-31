@@ -68,7 +68,6 @@ public final class ArticleThemeDownloader: Sendable {
 		}
 	}
 
-
 	/// Performs a deep search of the unzipped directory to find the theme file.
 	/// - Parameter searchPath: directory to search
 	/// - Returns: optional `String`

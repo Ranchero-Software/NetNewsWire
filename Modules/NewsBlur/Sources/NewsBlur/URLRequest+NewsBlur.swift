@@ -29,12 +29,12 @@ public extension URLRequest {
 			var postData = URLComponents()
 			postData.queryItems = [
 				URLQueryItem(name: "username", value: credentials.username),
-				URLQueryItem(name: "password", value: credentials.secret),
+				URLQueryItem(name: "password", value: credentials.secret)
 			]
 			httpBody = postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 
 		} else if credentialsType == .newsBlurSessionID {
-			
+
 			setValue("\(NewsBlurAPICaller.sessionIDCookieKey)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true
 		}

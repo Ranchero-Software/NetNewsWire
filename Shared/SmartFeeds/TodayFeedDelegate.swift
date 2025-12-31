@@ -27,4 +27,3 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 		try await account.fetchUnreadCountForTodayAsync()
 	}
 }
-

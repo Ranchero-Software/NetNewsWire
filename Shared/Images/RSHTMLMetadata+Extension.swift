@@ -65,7 +65,7 @@ extension RSHTMLMetadata {
 				continue
 			}
 			if image.size.height > bestImage!.size.height && image.size.width > bestImage!.size.width {
-				bestImage = image;
+				bestImage = image
 			}
 		}
 

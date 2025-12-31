@@ -28,18 +28,18 @@ extension NewsBlurFeedChange: NewsBlurDataConvertible {
 			case .rename(let feedID, let newName):
 				return [
 					URLQueryItem(name: "feed_id", value: feedID),
-					URLQueryItem(name: "feed_title", value: newName),
+					URLQueryItem(name: "feed_title", value: newName)
 				]
 			case .delete(let feedID, let folder):
 				return [
 					URLQueryItem(name: "feed_id", value: feedID),
-					folder != nil ? URLQueryItem(name: "in_folder", value: folder) : nil,
+					folder != nil ? URLQueryItem(name: "in_folder", value: folder) : nil
 				].compactMap { $0 }
 			case .move(let feedID, let from, let to):
 				return [
 					URLQueryItem(name: "feed_id", value: feedID),
 					URLQueryItem(name: "in_folder", value: from ?? ""),
-					URLQueryItem(name: "to_folder", value: to ?? ""),
+					URLQueryItem(name: "to_folder", value: to ?? "")
 				]
 			}
 		}()
