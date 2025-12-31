@@ -67,7 +67,8 @@
       "Bash(do)",
       "Bash(echo:*)",
       "Bash(done)",
-      "Bash(# Show files touched by state restoration related commits echo \"\"=== Files changed in state restoration commits ===\"\" for commit in 04e98a47d 89b31858c d788af388 1d49b9328 236943f82 38d6b11c5 3be027699 16c66513c 1ef2aa162 6ce3bdadc 1954f5b65 55b7da75d 20b3bda94 4bf57afc1 e0074d70b 616b9deeb f6bca9ee8 ea6eedb86 380617920 d68106ac0 d30c62757 813f0706b 2ea00619c; do git diff-tree --no-commit-id --name-only -r \"\"$commit\"\" done)"
+      "Bash(# Show files touched by state restoration related commits echo \"\"=== Files changed in state restoration commits ===\"\" for commit in 04e98a47d 89b31858c d788af388 1d49b9328 236943f82 38d6b11c5 3be027699 16c66513c 1ef2aa162 6ce3bdadc 1954f5b65 55b7da75d 20b3bda94 4bf57afc1 e0074d70b 616b9deeb f6bca9ee8 ea6eedb86 380617920 d68106ac0 d30c62757 813f0706b 2ea00619c; do git diff-tree --no-commit-id --name-only -r \"\"$commit\"\" done)",
+      "Bash(swiftlint version:*)"
     ],
     "deny": [],
     "ask": []
