@@ -14,8 +14,6 @@ import Articles
 import ArticlesDatabase
 import RSDatabase
 
-// Main thread only.
-
 @MainActor public final class AccountManager: UnreadCountProvider {
 	public static var shared = AccountManager()
 
@@ -34,7 +32,7 @@ import RSDatabase
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountManager")
 
-	@MainActor public var areUnreadCountsInitialized: Bool {
+	public var areUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
 			if !account.areUnreadCountsInitialized {
 				return false
@@ -55,7 +53,7 @@ import RSDatabase
 		Array(accountsDictionary.values)
 	}
 
-	@MainActor public var sortedAccounts: [Account] {
+	public var sortedAccounts: [Account] {
 		sortByName(accounts)
 	}
 
@@ -69,16 +67,16 @@ import RSDatabase
 	}
 
 
-	@MainActor public var activeAccounts: [Account] {
+	public var activeAccounts: [Account] {
 		assert(Thread.isMainThread)
 		return Array(accountsDictionary.values.filter { $0.isActive })
 	}
 
-	@MainActor public var sortedActiveAccounts: [Account] {
+	public var sortedActiveAccounts: [Account] {
 		sortByName(activeAccounts)
 	}
 
-	@MainActor public var lastArticleFetchEndTime: Date? {
+	public var lastArticleFetchEndTime: Date? {
 		var lastArticleFetchEndTime: Date? = nil
 		for account in activeAccounts {
 			if let accountLastArticleFetchEndTime = account.metadata.lastArticleFetchEndTime {
@@ -90,11 +88,11 @@ import RSDatabase
 		return lastArticleFetchEndTime
 	}
 
-	@MainActor public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
+	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {
 		AccountManager.shared.activeAccounts.first(where: { $0.nameForDisplay == displayName })
 	}
 
-	@MainActor public var refreshInProgress: Bool {
+	public var refreshInProgress: Bool {
 		for account in activeAccounts {
 			if account.refreshInProgress {
 				return true
@@ -107,7 +105,7 @@ import RSDatabase
 
 	private var isActive = false
 
-	@MainActor public init() {
+	public init() {
 		self.accountsFolder = AppConfig.dataSubfolder(named: "Accounts").path
 
 		// The local "On My Mac" account must always exist, even if it's empty.
@@ -171,7 +169,7 @@ import RSDatabase
 		return account
 	}
 
-	@MainActor public func deleteAccount(_ account: Account) {
+	public func deleteAccount(_ account: Account) {
 		guard !account.refreshInProgress else {
 			return
 		}
@@ -198,7 +196,7 @@ import RSDatabase
 		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
 
-	@MainActor public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
+	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
 		guard type != .onMyMac else {
 			return false
 		}
@@ -214,7 +212,7 @@ import RSDatabase
 		return accountsDictionary[accountID]
 	}
 
-	@MainActor public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
+	public func existingContainer(with containerID: ContainerIdentifier) -> Container? {
 		switch containerID {
 		case .account(let accountID):
 			return existingAccount(accountID: accountID)
@@ -226,7 +224,7 @@ import RSDatabase
 		return nil
 	}
 
-	@MainActor public func existingFeed(with sidebarItemID: SidebarItemIdentifier) -> SidebarItem? {
+	public func existingFeed(with sidebarItemID: SidebarItemIdentifier) -> SidebarItem? {
 		switch sidebarItemID {
 		case .folder(let accountID, let folderName):
 			if let account = existingAccount(accountID: accountID) {
@@ -242,20 +240,20 @@ import RSDatabase
 		return nil
 	}
 
-	@MainActor public func suspendNetworkAll() {
+	public func suspendNetworkAll() {
 		isSuspended = true
 		for account in accounts {
 			account.suspendNetwork()
 		}
 	}
 
-	@MainActor public func suspendDatabaseAll() {
+	public func suspendDatabaseAll() {
 		for account in accounts {
 			account.suspendDatabase()
 		}
 	}
 
-	@MainActor public func resumeAll() {
+	public func resumeAll() {
 		isSuspended = false
 		for account in accounts {
 			account.resumeDatabaseAndDelegate()
@@ -265,8 +263,8 @@ import RSDatabase
 		}
 	}
 
-	@MainActor public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
-		Task { @MainActor in
+	public func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+		Task {
 			for account in activeAccounts {
 				await account.receiveRemoteNotification(userInfo: userInfo)
 			}
@@ -275,13 +273,13 @@ import RSDatabase
 
 	public typealias ErrorHandlerCallback = @Sendable (Error) -> Void
 
-	@MainActor public func refreshAllWithoutWaiting(errorHandler: ErrorHandlerCallback? = nil) {
-		Task { @MainActor in
+	public func refreshAllWithoutWaiting(errorHandler: ErrorHandlerCallback? = nil) {
+		Task {
 			await refreshAll(errorHandler: errorHandler)
 		}
 	}
 	
-	@MainActor public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async {
+	public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async {
 		guard NetworkMonitor.shared.isConnected else {
 			Self.logger.info("AccountManager: skipping refreshAll — not connected to internet.")
 			return
@@ -305,7 +303,7 @@ import RSDatabase
 		}
 	}
 
-	@MainActor public func sendArticleStatusAll() async {
+	public func sendArticleStatusAll() async {
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
 				group.addTask {
@@ -315,13 +313,13 @@ import RSDatabase
 		}
 	}
 
-	@MainActor public func syncArticleStatusAllWithoutWaiting() {
-		Task { @MainActor in
+	public func syncArticleStatusAllWithoutWaiting() {
+		Task {
 			await syncArticleStatusAll()
 		}
 	}
 
-	@MainActor public func syncArticleStatusAll() async {
+	public func syncArticleStatusAll() async {
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
 				group.addTask {
@@ -337,7 +335,7 @@ import RSDatabase
 		}
 	}
 
-	@MainActor public func anyAccountHasAtLeastOneFeed() -> Bool {
+	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {
 				return true
@@ -347,11 +345,11 @@ import RSDatabase
 		return false
 	}
 
-	@MainActor public func anyAccountHasNetNewsWireNewsSubscription() -> Bool {
+	public func anyAccountHasNetNewsWireNewsSubscription() -> Bool {
 		anyAccountHasFeedWithURL(Self.netNewsWireNewsURL) || anyAccountHasFeedWithURL(Self.jsonNetNewsWireNewsURL)
 	}
 
-	@MainActor public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
+	public func anyAccountHasFeedWithURL(_ urlString: String) -> Bool {
 		for account in activeAccounts {
 			if let _ = account.existingFeed(withURL: urlString) {
 				return true
@@ -364,7 +362,7 @@ import RSDatabase
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
 
-	@MainActor public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		precondition(Thread.isMainThread)
 
 		var articles = Set<Article>()
@@ -374,7 +372,7 @@ import RSDatabase
 		return articles
 	}
 
-	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+	public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
 		precondition(Thread.isMainThread)
 
 		guard activeAccounts.count > 0 else {
@@ -408,7 +406,7 @@ import RSDatabase
 
 	// MARK: - Fetching Article Counts
 
-	@MainActor public func fetchCountForStarredArticles() throws -> Int {
+	public func fetchCountForStarredArticles() throws -> Int {
 		precondition(Thread.isMainThread)
 		var count = 0
 		for account in activeAccounts {
@@ -428,7 +426,7 @@ import RSDatabase
 
 	// MARK: - Notifications
 
-	@MainActor @objc func unreadCountDidInitialize(_ notification: Notification) {
+	@objc func unreadCountDidInitialize(_ notification: Notification) {
 		guard notification.object is Account else {
 			return
 		}
@@ -437,14 +435,14 @@ import RSDatabase
 		}
 	}
 
-	@MainActor @objc func unreadCountDidChange(_ notification: Notification) {
+	@objc func unreadCountDidChange(_ notification: Notification) {
 		guard notification.object is Account else {
 			return
 		}
 		updateUnreadCount()
 	}
 
-	@MainActor @objc func accountStateDidChange(_ notification: Notification) {
+	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
 }
@@ -453,7 +451,7 @@ import RSDatabase
 
 private extension AccountManager {
 
-	@MainActor func updateUnreadCount() {
+	func updateUnreadCount() {
 		unreadCount = calculateUnreadCount(activeAccounts)
 	}
 
@@ -469,7 +467,7 @@ private extension AccountManager {
 		return nil
 	}
 
-	@MainActor func readAccountsFromDisk() {
+	func readAccountsFromDisk() {
 		var filenames: [String]?
 
 		do {
@@ -496,11 +494,11 @@ private extension AccountManager {
 		}
 	}
 
-	@MainActor func duplicateServiceAccount(_ account: Account) -> Bool {
+	func duplicateServiceAccount(_ account: Account) -> Bool {
 		duplicateServiceAccount(type: account.type, username: account.username)
 	}
 
-	@MainActor func sortByName(_ accounts: [Account]) -> [Account] {
+	func sortByName(_ accounts: [Account]) -> [Account] {
 		// LocalAccount is first.
 
 		return accounts.sorted { (account1, account2) -> Bool in
