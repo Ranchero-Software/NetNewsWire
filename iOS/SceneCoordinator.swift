@@ -66,15 +66,7 @@ struct FeedNode: Hashable, Sendable {
 	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
 	private var lastExpandedContainers = Set<ContainerIdentifier>()
 
-	// Which SidebarItems have the Read Articles Filter enabled
-	private var sidebarItemsHidingReadArticles = Set<SidebarItemIdentifier>()
-	private var readFilterEnabledTable: [SidebarItemIdentifier: Bool] { // TODO: remove this
-		var d = [SidebarItemIdentifier: Bool]()
-		for sidebarItemIdentifier in sidebarItemsHidingReadArticles {
-			d[sidebarItemIdentifier] = true
-		}
-		return d
-	}
+	private let hidingReadArticlesState = HidingReadArticlesState()
 
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
@@ -128,10 +120,10 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	var isReadArticlesFiltered: Bool {
-		if let sidebarItemID = timelineFeed?.sidebarItemID {
-			return sidebarItemsHidingReadArticles.contains(sidebarItemID)
+		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
+			return false
 		}
-		return timelineDefaultReadFilterType != .none
+		return hidingReadArticlesState.isHiding(for: sidebarItemID)
 	}
 
 	var timelineDefaultReadFilterType: ReadFilterType {
@@ -354,12 +346,12 @@ struct FeedNode: Hashable, Sendable {
 			for sectionNode in treeController.rootNode.childNodes {
 				markExpanded(sectionNode)
 			}
-			saveExpandedContainersToUserDefaults()
+			saveExpandedContainers()
 		} else {
 			expandedContainers = stateInfo.expandedContainers
 		}
 
-		sidebarItemsHidingReadArticles.formUnion(stateInfo.sidebarItemsHidingReadArticles)
+		hidingReadArticlesState.copy(from: stateInfo)
 
 		rebuildBackingStores(initialLoad: true)
 
@@ -693,10 +685,19 @@ struct FeedNode: Hashable, Sendable {
 
 	// MARK: API
 
+	func didEnterBackground() {
+		hidingReadArticlesState.save()
+		saveExpandedContainers()
+	}
+
 	func suspend() {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
 		rebuildBackingStoresQueue.performCallsImmediately()
 		fetchRequestQueue.cancelAllRequests()
+	}
+
+	func saveExpandedContainers() {
+		AppDefaults.shared.expandedContainers = expandedContainers
 	}
 
 	func cleanUp(conditional: Bool) {
@@ -709,28 +710,25 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func toggleReadFeedsFilter() {
-		if isReadFeedsFiltered {
-			treeControllerDelegate.isReadFiltered = false
-			AppDefaults.shared.hideReadFeeds = false
-		} else {
-			treeControllerDelegate.isReadFiltered = true
-			AppDefaults.shared.hideReadFeeds = true
-		}
+		let newValue = !isReadFeedsFiltered
+		treeControllerDelegate.isReadFiltered = newValue
+		AppDefaults.shared.hideReadFeeds = newValue
 		rebuildBackingStores()
 		mainFeedCollectionViewController?.updateUI()
+	}
+
+	func shouldShowFilterButton() -> Bool {
+		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
+			return false
+		}
+		return hidingReadArticlesState.canToggleHiding(for: sidebarItemID)
 	}
 
 	func toggleReadArticlesFilter() {
 		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
 			return
 		}
-
-		if isReadArticlesFiltered {
-			sidebarItemsHidingReadArticles.remove(sidebarItemID)
-		} else {
-			sidebarItemsHidingReadArticles.insert(sidebarItemID)
-		}
-
+		hidingReadArticlesState.toggleHiding(for: sidebarItemID)
 		refreshTimeline(resetScroll: false)
 	}
 
@@ -828,7 +826,7 @@ struct FeedNode: Hashable, Sendable {
 	func expand(_ containerID: ContainerIdentifier) {
 		markExpanded(containerID)
 		rebuildBackingStores()
-		saveExpandedContainersToUserDefaults()
+		saveExpandedContainers()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -849,14 +847,14 @@ struct FeedNode: Hashable, Sendable {
 			}
 		}
 		rebuildBackingStores()
-		saveExpandedContainersToUserDefaults()
+		saveExpandedContainers()
 	}
 
 	func collapse(_ containerID: ContainerIdentifier) {
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
-		saveExpandedContainersToUserDefaults()
+		saveExpandedContainers()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
@@ -877,6 +875,7 @@ struct FeedNode: Hashable, Sendable {
 		}
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
+		saveExpandedContainers()
 	}
 
 	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
@@ -1825,14 +1824,6 @@ private extension SceneCoordinator {
 		}
 	}
 
-	private func saveExpandedContainersToUserDefaults() {
-		AppDefaults.shared.expandedContainers = expandedContainers
-	}
-
-	private func saveReadFilterEnabledTableToUserDefaults() {
-		AppDefaults.shared.sidebarItemsHidingReadArticles = sidebarItemsHidingReadArticles
-	}
-
 	// MARK: Select Prev Unread
 
 	@discardableResult
@@ -2070,9 +2061,11 @@ private extension SceneCoordinator {
 		if articles != sortedArticles {
 			articles = sortedArticles
 
-			// Clear current article if it's no longer in the timeline
+			// Clear current article if it's no longer in the timeline.
+			// Don't call selectArticle(nil) because that triggers navigation on iPhone.
 			if let currentArticle, !sortedArticles.contains(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
-				selectArticle(nil)
+				self.currentArticle = nil
+				articleViewController?.article = nil
 			}
 
 			updateShowNamesAndIcons()
@@ -2156,7 +2149,7 @@ private extension SceneCoordinator {
 		cancelPendingAsyncFetches()
 
 		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, hidingReadArticlesState: hidingReadArticlesState, fetchers: fetchers) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
@@ -2205,19 +2198,6 @@ private extension SceneCoordinator {
 
 	// MARK: NSUserActivity
 
-	func windowState() -> [AnyHashable: Any] {
-		let containerExpandedWindowState = expandedContainers.map( { $0.userInfo })
-		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
-		for key in readFilterEnabledTable.keys {
-			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
-		}
-		return [
-			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
-			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
-			UserInfoKey.readArticlesFilterState: readArticlesFilterState
-		]
-	}
-
 	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
 		guard let userInfo = userInfo,
 			let sidebarItemIDUserInfo = userInfo[UserInfoKey.sidebarItemID] as? [String : String],
@@ -2241,9 +2221,6 @@ private extension SceneCoordinator {
 					}
 				}
 			})
-
-		case .script:
-			break
 
 		case .folder(let accountID, let folderName):
 			guard let accountNode = self.findAccountNode(accountID: accountID),
@@ -2316,9 +2293,6 @@ private extension SceneCoordinator {
 
 
 		switch sidebarItemID {
-
-		case .script:
-			return false
 
 		case .smartFeed, .folder:
 			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
