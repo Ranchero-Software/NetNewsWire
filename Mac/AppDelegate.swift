@@ -397,12 +397,12 @@ let appName = "NetNewsWire"
 		return controller
 	}
 
-	func createAndShowMainWindowIfNecessary() {
-		if mainWindowController == nil {
-			createAndShowMainWindow()
-		} else {
-			mainWindowController?.showWindow(self)
+	func createAndShowMainWindowIfNecessary() -> MainWindowController {
+		if let mainWindowController {
+			mainWindowController.showWindow(self)
+			return mainWindowController
 		}
+		return createAndShowMainWindow()
 	}
 
 	func removeMainWindow(_ windowController: MainWindowController) {
@@ -481,13 +481,12 @@ let appName = "NetNewsWire"
 
 	// MARK: Add Feed
 	@MainActor func addFeed(_ urlString: String?, name: String? = nil, account: Account? = nil, folder: Folder? = nil) {
-		createAndShowMainWindowIfNecessary()
-
-		if mainWindowController!.isDisplayingSheet {
+		let windowController = createAndShowMainWindowIfNecessary()
+		if windowController.isDisplayingSheet {
 			return
 		}
 
-		showAddFeedSheetOnWindow(mainWindowController!.window!, urlString: urlString, name: name, account: account, folder: folder)
+		showAddFeedSheetOnWindow(windowController.window!, urlString: urlString, name: name, account: account, folder: folder)
 	}
 
 	// MARK: - Dock Badge
@@ -508,8 +507,8 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func showMainWindow(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		mainWindowController?.window?.makeKey()
+		let windowController = createAndShowMainWindowIfNecessary()
+		windowController.window?.makeKey()
 	}
 
 	@IBAction func refreshAll(_ sender: Any?) {
@@ -521,8 +520,8 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		showAddFolderSheetOnWindow(mainWindowController!.window!)
+		let windowController = createAndShowMainWindowIfNecessary()
+		showAddFolderSheetOnWindow(windowController.window!)
 	}
 
 	@IBAction func showKeyboardShortcutsWindow(_ sender: Any?) {
@@ -559,31 +558,31 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func importOPMLFromFile(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		if mainWindowController!.isDisplayingSheet {
+		let windowController = createAndShowMainWindowIfNecessary()
+		if windowController.isDisplayingSheet {
 			return
 		}
 
 		importOPMLController = ImportOPMLWindowController()
-		importOPMLController?.runSheetOnWindow(mainWindowController!.window!)
+		importOPMLController?.runSheetOnWindow(windowController.window!)
 	}
 
 	@IBAction func importNNW3FromFile(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		if mainWindowController!.isDisplayingSheet {
+		let windowController = createAndShowMainWindowIfNecessary()
+		if windowController.isDisplayingSheet {
 			return
 		}
-		NNW3ImportController.askUserToImportNNW3Subscriptions(window: mainWindowController!.window!)
+		NNW3ImportController.askUserToImportNNW3Subscriptions(window: windowController.window!)
 	}
 
 	@IBAction func exportOPML(_ sender: Any?) {
-		createAndShowMainWindowIfNecessary()
-		if mainWindowController!.isDisplayingSheet {
+		let windowController = createAndShowMainWindowIfNecessary()
+		if windowController.isDisplayingSheet {
 			return
 		}
 
 		exportOPMLController = ExportOPMLWindowController()
-		exportOPMLController?.runSheetOnWindow(mainWindowController!.window!)
+		exportOPMLController?.runSheetOnWindow(windowController.window!)
 	}
 
 	@IBAction func addAppNews(_ sender: Any?) {
@@ -618,7 +617,7 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func openSlackGroup(_ sender: Any?) {
-		HelpURL.slack.open()
+		HelpURL.discourse.open()
 	}
 
 	@IBAction func showHelp(_ sender: Any?) {
@@ -630,21 +629,18 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func gotoToday(_ sender: Any?) {
-
-		createAndShowMainWindowIfNecessary()
-		mainWindowController!.gotoToday(sender)
+		let windowController = createAndShowMainWindowIfNecessary()
+		windowController.gotoToday(sender)
 	}
 
 	@IBAction func gotoAllUnread(_ sender: Any?) {
-
-		createAndShowMainWindowIfNecessary()
-		mainWindowController!.gotoAllUnread(sender)
+		let windowController = createAndShowMainWindowIfNecessary()
+		windowController.gotoAllUnread(sender)
 	}
 
 	@IBAction func gotoStarred(_ sender: Any?) {
-
-		createAndShowMainWindowIfNecessary()
-		mainWindowController!.gotoStarred(sender)
+		let windowController = createAndShowMainWindowIfNecessary()
+		windowController.gotoStarred(sender)
 	}
 
 	@IBAction func showCustomAboutPanel(_ sender: Any?) {
@@ -655,12 +651,10 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
-
 		AppDefaults.shared.timelineSortDirection = .orderedAscending
 	}
 
 	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
-
 		AppDefaults.shared.timelineSortDirection = .orderedDescending
 	}
 
