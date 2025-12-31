@@ -93,8 +93,7 @@ public struct FeedParser {
 				DispatchQueue.main.async {
 					completion(parsedFeed, nil)
 				}
-			}
-			catch {
+			} catch {
 				DispatchQueue.main.async {
 					completion(nil, error)
 				}

@@ -26,7 +26,7 @@ import RSDatabaseObjC
 				self.didComplete()
 				return
 			}
-			
+
 			switch databaseResult {
 			case .success(let database):
 				if let unreadCountDictionary = self.fetchUnreadCounts(database) {

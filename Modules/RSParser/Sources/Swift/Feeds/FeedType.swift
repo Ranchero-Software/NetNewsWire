@@ -20,7 +20,6 @@ public enum FeedType: Sendable {
 	case notAFeed
 }
 
-
 private let minNumberOfBytesRequired = 128
 
 public func feedType(_ parserData: ParserData, isPartialData: Bool = false) -> FeedType {

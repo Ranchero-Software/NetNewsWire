@@ -63,4 +63,3 @@ extension Author: @retroactive DatabaseObject {
 		return d
 	}
 }
-

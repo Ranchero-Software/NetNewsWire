@@ -11,19 +11,16 @@ import RSParser
 import RSParserObjC
 
 final class OPMLTests: XCTestCase {
-
 	let subsData = parserData("Subs", "opml", "http://example.org/")
 
 	func testOPMLParsingPerformance() {
-
 		// 0.002 sec on my 2012 iMac.
 		self.measure {
-			let _ = try! RSOPMLParser.parseOPML(with: self.subsData)
+			_ = try! RSOPMLParser.parseOPML(with: self.subsData)
 		}
 	}
 
 	func testNotOPML() {
-
 		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
 		XCTAssertThrowsError(try RSOPMLParser.parseOPML(with: d))
 	}
@@ -35,7 +32,6 @@ final class OPMLTests: XCTestCase {
 		recursivelyCheckOPMLStructure(opmlDocument)
 	}
 
-
 	func testFindingTitles() {
 		// https://github.com/brentsimmons/NetNewsWire/issues/527
 		// Fix a bug where titles aren’t found when there’s no title attribute in the OPML,
@@ -45,7 +41,6 @@ final class OPMLTests: XCTestCase {
 		let opmlDocument = try! RSOPMLParser.parseOPML(with: d)
 		recursivelyCheckOPMLStructure(opmlDocument)
 	}
-
 }
 
 private extension OPMLTests {
@@ -65,8 +60,7 @@ private extension OPMLTests {
 		if !isFolder {
 			XCTAssertNotNil(feedSpecifier!.title)
 			XCTAssertNotNil(feedSpecifier!.feedURL)
-		}
-		else {
+		} else {
 			XCTAssertNil(feedSpecifier)
 		}
 

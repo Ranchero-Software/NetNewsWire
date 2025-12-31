@@ -163,7 +163,7 @@ private extension JSONFeedParser {
 		let dateModified = parseDate(itemDictionary[Key.dateModified] as? String)
 
 		let authors = parseAuthors(itemDictionary)
-		var tags: Set<String>? = nil
+		var tags: Set<String>?
 		if let tagsArray = itemDictionary[Key.tags] as? [String] {
 			tags = Set(tagsArray)
 		}

@@ -36,7 +36,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 		defer {
 			if let resultSet = self.selectRowsWhere(key: DatabaseKey.articleID, inValues: Array(articleIDs), in: database) {
 				let fetchedStatuses = resultSet.mapToSet(statusWithRow)
-				let fetchedArticleIDs = Set(fetchedStatuses.map{ $0.articleID })
+				let fetchedArticleIDs = Set(fetchedStatuses.map { $0.articleID })
 				assert(fetchedArticleIDs == articleIDs)
 			}
 		}
@@ -118,7 +118,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 					return
 				}
 
-				let articleIDs = resultSet.mapToSet{ $0.string(forColumnIndex: 0) }
+				let articleIDs = resultSet.mapToSet { $0.string(forColumnIndex: 0) }
 				DispatchQueue.main.async {
 					completion(.success(articleIDs))
 				}

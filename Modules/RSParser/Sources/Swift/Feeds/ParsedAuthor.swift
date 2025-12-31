@@ -9,7 +9,6 @@
 import Foundation
 
 public struct ParsedAuthor: Hashable, Codable, Sendable {
-
 	public let name: String?
 	public let url: String?
 	public let avatarURL: String?
@@ -27,17 +26,13 @@ public struct ParsedAuthor: Hashable, Codable, Sendable {
 	public func hash(into hasher: inout Hasher) {
 		if let name = name {
 			hasher.combine(name)
-		}
-		else if let url = url {
+		} else if let url = url {
 			hasher.combine(url)
-		}
-		else if let emailAddress = emailAddress {
+		} else if let emailAddress = emailAddress {
 			hasher.combine(emailAddress)
-		}
-		else if let avatarURL = avatarURL {
+		} else if let avatarURL = avatarURL {
 			hasher.combine(avatarURL)
-		}
-		else {
+		} else {
 			hasher.combine("")
 		}
 	}
