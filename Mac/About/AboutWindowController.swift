@@ -49,7 +49,7 @@ class AboutWindowController: NSWindowController {
 		versionLabel.stringValue = versionString
 
 		// Copyright
-		let copyright = Bundle.main.infoDictionary?["NSHumanReadableCopyright"] as? String ?? "Copyright © 2002-2025 Brent Simmons. All rights reserved."
+		let copyright = Bundle.main.infoDictionary?["NSHumanReadableCopyright"] as? String ?? "Copyright © 2002-2026 Brent Simmons. All rights reserved."
 		copyrightLabel.stringValue = copyright
 
 		// Credits

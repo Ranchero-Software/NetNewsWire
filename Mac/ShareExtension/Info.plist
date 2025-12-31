@@ -48,6 +48,6 @@
 		<string>$(PRODUCT_MODULE_NAME).ShareViewController</string>
 	</dict>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2002-2025 Brent Simmons. All rights reserved.</string>
+	<string>Copyright © 2002-2026 Brent Simmons. All rights reserved.</string>
 </dict>
 </plist>
