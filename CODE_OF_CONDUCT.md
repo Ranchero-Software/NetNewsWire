@@ -55,7 +55,7 @@ further defined and clarified by project maintainers.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by contacting Brent Simmons via direct message on the [Slack group](https://netnewswire.com/slack). All
+reported by contacting Brent Simmons via direct message on the [Discourse forum](https://discourse.netnewswire.com/). All
 complaints will be reviewed and investigated and will result in a response that
 is deemed necessary and appropriate to the circumstances. The project team is
 obligated to maintain confidentiality with regard to the reporter of an incident.

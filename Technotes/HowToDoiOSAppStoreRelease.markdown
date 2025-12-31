@@ -15,6 +15,6 @@ On next screen, click Submit to App Review
 Once it appears on App Store…
 
 Optionally…
-Announce on Slack
+Announce on Discourse
 Announce on NetNewsWire blog
 Announce on inessential

@@ -16,7 +16,7 @@ Here’s [How to Support NetNewsWire](Technotes/HowToSupportNetNewsWire.markdown
 
 #### Community
 
-[Join the Slack group](https://netnewswire.com/slack) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
+[Join the forum](https://discourse.netnewswire.com/) to talk with other NetNewsWire users — and to help out, if you’d like to, by testing, coding, writing, providing feedback, or just helping us think things through. Everybody is welcome and encouraged to join.
 
 Every community member is expected to abide by the [code of conduct](CONTRIBUTING.md#code-of-conduct) which is included in the [Contributing](CONTRIBUTING.md) page.
 
@@ -92,4 +92,4 @@ functionality disabled.  This is because we have API keys that can't be stored i
 repository or shared between developers.  Certain account types, like iCloud and Feedly, aren't
 enabled and the Reader View isn't enabled because of this.
 
-If you have any problems, we will help you out in Slack ([see above](README.md#Community)).
+If you have any problems, we will help you out in the forum ([see above](README.md#Community)).

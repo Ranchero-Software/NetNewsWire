@@ -56,7 +56,7 @@ Push: git push origin iOS-6.1.5-6124
 
 In AppStoreConnect add groups and release the app
 Paste in the release notes
-Announce in Slack
+Announce in Discourse
 Optionally blog about it
 
 ## GitHub release

@@ -616,7 +616,7 @@ let appName = "NetNewsWire"
 		HelpURL.bugTracker.open()
 	}
 
-	@IBAction func openSlackGroup(_ sender: Any?) {
+	@IBAction func openDiscourse(_ sender: Any?) {
 		HelpURL.discourse.open()
 	}
 

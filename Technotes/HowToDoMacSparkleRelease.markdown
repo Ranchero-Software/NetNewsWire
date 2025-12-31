@@ -56,7 +56,7 @@ Commit and push git change
 Test updating via appcast
 
 Optionally:
-Announce on Slack
+Announce on Discourse
 Announce on blog
 
 If release build:
