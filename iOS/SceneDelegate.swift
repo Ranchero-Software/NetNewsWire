@@ -137,7 +137,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						AccountManager.shared.resumeAll()
 					}
 					self.coordinator.selectAllUnreadFeed() {
-						self.coordinator.selectArticleInCurrentFeed(id!)
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+							self.coordinator.selectArticleInCurrentFeed(id!)
+						})
 					}
 				} else {
 					self.coordinator.selectAllUnreadFeed()
@@ -153,7 +155,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						AccountManager.shared.resumeAll()
 					}
 					self.coordinator.selectTodayFeed() {
-						self.coordinator.selectArticleInCurrentFeed(id!)
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+							self.coordinator.selectArticleInCurrentFeed(id!)
+						})
 					}
 				} else {
 					self.coordinator.selectTodayFeed()
@@ -169,7 +173,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						AccountManager.shared.resumeAll()
 					}
 					self.coordinator.selectStarredFeed() {
-						self.coordinator.selectArticleInCurrentFeed(id!)
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+							self.coordinator.selectArticleInCurrentFeed(id!)
+						})
 					}
 				} else {
 					self.coordinator.selectStarredFeed()
