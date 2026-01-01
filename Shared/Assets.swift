@@ -111,8 +111,6 @@ struct Assets {
 							 preferredColor: Assets.Colors.primaryAccent.cgColor)
 		}
 
-
-
 #else // iOS
 		static var accountLocalPadImage: RSImage { RSImage(named: "accountLocalPad")! }
 		static var accountLocalPhoneImage: RSImage { RSImage(named: "accountLocalPhone")! }

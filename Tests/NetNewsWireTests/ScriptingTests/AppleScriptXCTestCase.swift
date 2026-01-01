@@ -19,8 +19,8 @@ class AppleScriptXCTestCase: XCTestCase {
                 if the test_result is false or is missing, the test fails
         @return  the value of script_result, if any
     */
-    func doIndividualScript(filename:String) -> NSAppleEventDescriptor? {
-        var errorDict: NSDictionary? = nil
+    func doIndividualScript(filename: String) -> NSAppleEventDescriptor? {
+        var errorDict: NSDictionary?
         let testBundle = Bundle(for: type(of: self))
         let url = testBundle.url(forResource: filename, withExtension: "scpt")
         guard let testScriptUrl = url  else {
@@ -29,14 +29,14 @@ class AppleScriptXCTestCase: XCTestCase {
         }
 
         guard let testScript = NSAppleScript(contentsOf: testScriptUrl, error: &errorDict) else {
-            print ("error is \(String(describing: errorDict))")
+            print("error is \(String(describing: errorDict))")
             XCTFail("Failed initializing NSAppleScript")
             return nil
         }
 
         let scriptResult = testScript.executeAndReturnError(&errorDict)
         if errorDict != nil {
-            print ("error is \(String(describing: errorDict))")
+            print("error is \(String(describing: errorDict))")
             XCTFail("Failed executing script")
             return nil
         }
@@ -47,7 +47,7 @@ class AppleScriptXCTestCase: XCTestCase {
             return nil
         }
 
-        if (testResult.booleanValue != true) {
+        if !testResult.booleanValue {
             print("test_result was \(testResult)")
             print("script_result was \(String(describing: usrfDictionary["script_result"]))")
         }
