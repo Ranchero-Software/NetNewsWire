@@ -12,7 +12,6 @@ import Articles
 import Account
 
 @MainActor final class SidebarTreeControllerDelegate: TreeControllerDelegate {
-
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
 
@@ -36,7 +35,7 @@ import Account
 		}
 
 		return nil
-	}	
+	}
 }
 
 private extension SidebarTreeControllerDelegate {

@@ -15,7 +15,6 @@ import UIKit
 #endif
 
 enum AddCloudKitAccountError: LocalizedError, RecoverableError, Sendable {
-
 	case iCloudDriveMissing
 
 	var errorDescription: String? {
@@ -46,13 +45,12 @@ enum AddCloudKitAccountError: LocalizedError, RecoverableError, Sendable {
 		Task { @MainActor in
 			AddCloudKitAccountUtilities.openiCloudSettings()
 		}
-		
+
 		return true
 	}
 }
 
 struct AddCloudKitAccountUtilities {
-
 	static var isiCloudDriveEnabled: Bool {
 		FileManager.default.ubiquityIdentityToken != nil
 	}

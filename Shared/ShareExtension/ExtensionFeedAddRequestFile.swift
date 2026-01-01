@@ -173,7 +173,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 			return
 		}
 
-		var destinationContainer: Container? = nil
+		var destinationContainer: Container?
 		if account.containerID == request.destinationContainerID {
 			destinationContainer = account
 		} else {

@@ -27,13 +27,13 @@ extension NSAppleEventDescriptor {
             return [:]
         }
         let listCount = usrfList.numberOfItems
-        guard (listCount%2 == 0) else {
+        guard listCount % 2 == 0 else {
             print ("error: usrfDictionary() expected even number of items in usrf")
             return [:]
         }
-        var usrfDictionary:[String:NSAppleEventDescriptor] = [:]
+        var usrfDictionary: [String: NSAppleEventDescriptor] = [:]
         var processedItems = 0
-        while (processedItems < listCount) {
+        while processedItems < listCount {
             processedItems = processedItems + 2
             guard let nthlabel = usrfList.atIndex(processedItems-1) else {
                 print("usrfDictionary() couldn't get item \(processedItems+1) in usrf list")

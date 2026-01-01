@@ -20,8 +20,7 @@ struct UnreadWidgetView: View {
 		if entry.widgetData.currentUnreadCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.unread.url)
-		}
-		else {
+		} else {
 			GeometryReader { metrics in
 				unreadImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)

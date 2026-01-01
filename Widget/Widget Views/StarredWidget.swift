@@ -20,8 +20,7 @@ struct StarredWidgetView: View {
 		if entry.widgetData.starredArticles.count == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.starred.url)
-		}
-		else {
+		} else {
 			GeometryReader { metrics in
 				starredImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)

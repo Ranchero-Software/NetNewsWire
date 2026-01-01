@@ -35,7 +35,7 @@ class AppleScriptXCTestCase: XCTestCase {
         }
 
         let scriptResult = testScript.executeAndReturnError(&errorDict)
-        if (errorDict != nil) {
+        if errorDict != nil {
             print ("error is \(String(describing: errorDict))")
             XCTFail("Failed executing script")
             return nil

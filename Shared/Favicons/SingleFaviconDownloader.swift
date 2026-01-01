@@ -121,8 +121,7 @@ private extension SingleFaviconDownloader {
 				Task { @MainActor in
 					self.diskStatus = .onDisk
 				}
-			}
-			catch {}
+			} catch {}
 		}
 	}
 

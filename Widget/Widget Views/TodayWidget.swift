@@ -20,8 +20,7 @@ struct TodayWidgetView: View {
 		if entry.widgetData.todayArticles.count == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.today.url)
-		}
-		else {
+		} else {
 			GeometryReader { metrics in
 				todayImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
