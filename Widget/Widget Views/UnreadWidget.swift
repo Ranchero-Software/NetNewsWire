@@ -22,47 +22,50 @@ struct UnreadWidgetView: View {
 				.widgetURL(WidgetDeepLink.unread.url)
 		}
 		else {
-			GeometryReader { metrics in
-				unreadImage
-					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment: .leading, spacing: 0) {
+			VStack {
+				Spacer()
+				HStack {
+					unreadImage
+						.layoutPriority(1)
+					Text("label.text.unread", comment: "Unread")
+						.font(.caption2)
+						.bold()
+						.lineLimit(1)
+						.minimumScaleFactor(0.8)
+						.fixedSize(horizontal: false, vertical: true)
+						.layoutPriority(1)
+					Spacer()
+						.layoutPriority(0)
+					if entry.widgetData.currentUnreadCount - maxCount() > 0 {
+						Text(verbatim: entry.widgetData.currentUnreadCount.formatted())
+							.font(.caption2)
+							.bold()
+							.foregroundColor(.secondary)
+							.lineLimit(1)
+							.minimumScaleFactor(0.8)
+							.fixedSize(horizontal: false, vertical: true)
+					}
+				}
+				.widgetURL(WidgetDeepLink.unread.url)
+				Divider()
+				if entry.widgetData.unreadArticles.count > 0 {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
 											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-							.padding(.top, WidgetLayout.articleItemViewPaddingTop)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						} else {
 							ArticleItemView(article: entry.widgetData.unreadArticles[i],
 											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						}
 					})
-					Spacer()
 				}
-				.padding(.leading, WidgetLayout.leftSideWidth)
-				.padding([.bottom, .trailing])
-				.overlay(
-					VStack {
-						Spacer()
-						HStack {
-							Spacer()
-							if entry.widgetData.currentUnreadCount - maxCount() > 0 {
-								Text(L10n.unreadCount(entry.widgetData.currentUnreadCount - maxCount()))
-									.font(.caption2)
-									.bold()
-									.foregroundColor(.secondary)
-							}
-						}
-					}
-						.padding(.horizontal)
-				)
+				Spacer()
 			}
-			.widgetURL(WidgetDeepLink.unread.url)
+			.padding(.vertical, 2)
 		}
 	}
-
+			
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()
@@ -91,11 +94,11 @@ struct UnreadWidgetView: View {
 				.foregroundColor(.accentColor)
 				.frame(width: 30)
 
-			Text(L10n.unreadWidgetNoItemsTitle)
+			Text("label.text.unread", comment: "Unread")
 				.font(.headline)
 				.foregroundColor(.primary)
 
-			Text(L10n.unreadWidgetNoItems)
+			Text("label.text.unread-no-articles", comment: "There are no unread articles.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()

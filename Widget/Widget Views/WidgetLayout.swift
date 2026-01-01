@@ -10,10 +10,10 @@ import Foundation
 
 struct WidgetLayout {
 
-	static let titleImageSize = CGFloat(20)
+	static let titleImageSize = CGFloat(14)
 	static let titleImagePaddingRight = CGFloat(6)
 	static let leftSideWidth = titleImageSize + titleImagePaddingRight
-	static let feedIconSize = CGFloat(24)
+	static let feedIconSize = CGFloat(14)
 	static let articleItemViewPaddingTop = CGFloat(8)
 	static let articleItemViewPaddingBottom = CGFloat(4)
 }

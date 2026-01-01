@@ -1,0 +1,105 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "label.text.starred" : {
+      "comment" : "Starred",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starred"
+          }
+        }
+      }
+    },
+    "label.text.starred-no-articles" : {
+      "comment" : "There are no starred articles.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no starred articles."
+          }
+        }
+      }
+    },
+    "label.text.starred-widget-description" : {
+      "comment" : "A description of the Starred widget.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This widget displays your starred articles."
+          }
+        }
+      }
+    },
+    "label.text.today" : {
+      "comment" : "Today",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        }
+      }
+    },
+    "label.text.today-no-articles" : {
+      "comment" : "There are no recent articles.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no recent articles."
+          }
+        }
+      }
+    },
+    "label.text.today-widget-description" : {
+      "comment" : "A description of the Today widget.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This widget displays articles posted within the last 24 hours."
+          }
+        }
+      }
+    },
+    "label.text.unread" : {
+      "comment" : "Unread",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unread"
+          }
+        }
+      }
+    },
+    "label.text.unread-no-articles" : {
+      "comment" : "There are no unread articles.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are no unread articles."
+          }
+        }
+      }
+    },
+    "label.text.unread-widget-description" : {
+      "comment" : "A description of the Unread widget.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This widget display unread articles."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

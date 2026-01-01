@@ -23,8 +23,8 @@ struct UnreadWidget: Widget {
 					Color.clear
 				}
 		})
-		.configurationDisplayName(L10n.unreadWidgetTitle)
-		.description(L10n.unreadWidgetDescription)
+		.configurationDisplayName(Text("label.text.unread", comment: "Unread"))
+		.description(Text("label.text.unread-widget-description", comment: "A description of the Unread widget."))
 		.supportedFamilies([.systemMedium, .systemLarge])
 	}
 }
@@ -41,8 +41,8 @@ struct TodayWidget: Widget {
 					Color.clear
 				}
 		})
-		.configurationDisplayName(L10n.todayWidgetTitle)
-		.description(L10n.todayWidgetDescription)
+		.configurationDisplayName(Text("label.text.today", comment: "Today"))
+		.description(Text("label.text.today-widget-description", comment: "A description of the Today widget."))
 		.supportedFamilies([.systemMedium, .systemLarge])
 	}
 }
@@ -59,8 +59,8 @@ struct StarredWidget: Widget {
 					Color.clear
 				}
 		})
-		.configurationDisplayName(L10n.starredWidgetTitle)
-		.description(L10n.starredWidgetDescription)
+		.configurationDisplayName(Text("label.text.starred", comment: "Starred"))
+		.description(Text("label.text.starred-widget-description", comment: "A description of the Starred widget."))
 		.supportedFamilies([.systemMedium, .systemLarge])
 	}
 }
