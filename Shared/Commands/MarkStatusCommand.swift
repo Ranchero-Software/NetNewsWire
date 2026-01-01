@@ -20,7 +20,7 @@ import Articles
 	let undoManager: UndoManager
 	let flag: Bool
 	let statusKey: ArticleStatus.Key
-	var completion: (() -> Void)? = nil
+	var completion: (() -> Void)?
 
 	init?(initialArticles: [Article], statusKey: ArticleStatus.Key, flag: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil) {
 

@@ -39,7 +39,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 
 		extensionContainers = ExtensionContainersFile.read()
 		flattenedContainers = extensionContainers?.flattened ?? [ExtensionContainer]()
-		if let extensionContainers = extensionContainers {
+		if let extensionContainers {
 			selectedContainer = ShareDefaultContainer.defaultContainer(containers: extensionContainers)
 		}
 
@@ -55,7 +55,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 			tableView.rowHeight = 38
 		}
 
-		var provider: NSItemProvider? = nil
+		var provider: NSItemProvider?
 
 		// Try to get any HTML that is maybe passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
@@ -120,7 +120,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 			return
 		}
 
-		var name: String? = nil
+		var name: String?
 		if !contentText.mayBeURL {
 			name = contentText.isEmpty ? nil : contentText
 		}

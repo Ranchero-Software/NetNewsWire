@@ -23,7 +23,7 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
     private var activityManager = ActivityManager()
 
 	private var isShowingExtractedArticle = false
-	private var articleExtractor: ArticleExtractor? = nil
+	private var articleExtractor: ArticleExtractor?
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
@@ -45,17 +45,17 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	private var sidebarViewController: SidebarViewController?
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
-	private var currentSearchField: NSSearchField? = nil
+	private var currentSearchField: NSSearchField?
 	private let articleThemeMenuToolbarItem = NSMenuToolbarItem(itemIdentifier: .articleThemeMenu)
-	private var searchString: String? = nil
-	private var lastSentSearchString: String? = nil
+	private var searchString: String?
+	private var lastSentSearchString: String?
 	private var timelineSourceMode: TimelineSourceMode = .regular {
 		didSet {
 			timelineContainerViewController?.showTimeline(for: timelineSourceMode)
 			detailViewController?.showDetail(for: timelineSourceMode)
 		}
 	}
-	private var searchSmartFeed: SmartFeed? = nil
+	private var searchSmartFeed: SmartFeed?
 	private var restoreArticleWindowScrollY: CGFloat?
 
 	// MARK: - NSWindowController

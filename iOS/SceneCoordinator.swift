@@ -73,10 +73,10 @@ struct FeedNode: Hashable, Sendable {
 
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
-	private var lastSearchScope: SearchScope? = nil
+	private var lastSearchScope: SearchScope?
 	private var isSearching: Bool = false
-	private var savedSearchArticles: ArticleArray? = nil
-	private var savedSearchArticleIds: Set<String>? = nil
+	private var savedSearchArticles: ArticleArray?
+	private var savedSearchArticleIds: Set<String>?
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false

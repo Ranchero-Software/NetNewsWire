@@ -92,7 +92,6 @@ struct StarredWidgetView: View {
 				.frame(width: 30)
 				.foregroundColor(.yellow)
 
-
 			Text(L10n.starredWidgetNoItemsTitle)
 				.font(.headline)
 				.foregroundColor(.primary)

@@ -30,7 +30,7 @@ public enum ArticleExtractorState: Sendable {
 
 	var state = ArticleExtractorState.ready
     private let url: URL
-	private var dataTask: URLSessionDataTask? = nil
+	private var dataTask: URLSessionDataTask?
 
 	public init?(_ articleLink: String, delegate: ArticleExtractorDelegate) {
 		self.articleLink = articleLink

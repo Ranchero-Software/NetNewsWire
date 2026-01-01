@@ -165,7 +165,7 @@ extension NSAttributedString {
 			} else {
 				if char == "&" {
 					var entity = "&"
-					var lastchar: Character? = nil
+					var lastchar: Character?
 
 					while let entitychar = iterator.next() {
 						if entitychar.isWhitespace {

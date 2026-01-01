@@ -32,7 +32,7 @@ open class ImageScrollView: UIScrollView {
 	@objc open var imageContentMode: ScaleMode = .widthFill
 	@objc open var initialOffset: Offset = .beginning
 
-	@objc public private(set) var zoomView: UIImageView? = nil
+	@objc public private(set) var zoomView: UIImageView?
 
 	@objc open weak var imageScrollViewDelegate: ImageScrollViewDelegate?
 

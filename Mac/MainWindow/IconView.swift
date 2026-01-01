@@ -10,7 +10,7 @@ import AppKit
 
 final class IconView: NSView {
 
-	var iconImage: IconImage? = nil {
+	var iconImage: IconImage? {
 		didSet {
 			if iconImage !== oldValue {
 				imageView.image = iconImage?.image

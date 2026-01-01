@@ -10,7 +10,7 @@ import Foundation
 
 @MainActor final class FetchRequestQueue {
 	private var pendingRequests = [FetchRequestOperation]()
-	private var currentRequest: FetchRequestOperation? = nil
+	private var currentRequest: FetchRequestOperation?
 
 	var isAnyCurrentRequest: Bool {
 		if let currentRequest = currentRequest {
