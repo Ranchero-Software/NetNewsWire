@@ -122,8 +122,7 @@ private extension IconView {
 			}
 			let offset = floor((viewSize.height - imageSize.height) / 2.0)
 			return NSMakeRect(offset, offset, imageSize.width, imageSize.height)
-		}
-		else if imageSize.height > imageSize.width {
+		} else if imageSize.height > imageSize.width {
 			let factor = viewSize.height / imageSize.height
 			let width = imageSize.width * factor
 			let originX = floor((viewSize.width - width) / 2.0)

@@ -46,7 +46,7 @@ final class ModernTimelineSliderCell: UITableViewCell {
 			container.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
 			container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
 			container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-			container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+			container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
 		])
 		contentView.backgroundColor = .systemGroupedBackground
 	}
@@ -68,13 +68,6 @@ final class ModernTimelineSliderCell: UITableViewCell {
 				return
 			}
 		}
-	}
-
-
-	override func setSelected(_ selected: Bool, animated: Bool) {
-		super.setSelected(selected, animated: animated)
-
-		// Configure the view for the selected state
 	}
 
 	@IBAction func sliderValueChanges(_ sender: Any) {

@@ -17,8 +17,8 @@ extension UTType {
 final class ArticleThemesTableViewController: UITableViewController {
 
 	override func viewDidLoad() {
-		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)));
-		importBarButtonItem.title = NSLocalizedString("Import Theme", comment: "Import Theme");
+		let importBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(importTheme(_:)))
+		importBarButtonItem.title = NSLocalizedString("Import Theme", comment: "Import Theme")
 		navigationItem.rightBarButtonItem = importBarButtonItem
 
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
@@ -80,7 +80,7 @@ final class ArticleThemesTableViewController: UITableViewController {
 			  !theme.isAppTheme	else { return nil }
 
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (action, view, completion) in
+		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (_, _, completion) in
 			let title = NSLocalizedString("Delete Theme?", comment: "Delete Theme")
 
 			let localizedMessageText = NSLocalizedString("Are you sure you want to delete the theme “%@”?.", comment: "Delete Theme Message")
@@ -89,13 +89,13 @@ final class ArticleThemesTableViewController: UITableViewController {
 			let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
 			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { action in
+			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 				completion(true)
 			}
 			alertController.addAction(cancelAction)
 
 			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { action in
+			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { _ in
 				ArticleThemesManager.shared.deleteTheme(themeName: themeName)
 				completion(true)
 			}

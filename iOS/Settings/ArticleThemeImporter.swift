@@ -26,7 +26,7 @@ import UIKit
 
 		if let websiteURL = URL(string: theme.creatorHomePage) {
 			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
-			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { action in
+			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { _ in
 				UIApplication.shared.open(websiteURL)
 				try? Self.importTheme(controller: controller, url: url)
 			}
@@ -49,7 +49,7 @@ import UIKit
 		}
 
 		let installThemeTitle = NSLocalizedString("Install Theme", comment: "Install Theme")
-		let installThemeAction = UIAlertAction(title: installThemeTitle, style: .default) { action in
+		let installThemeAction = UIAlertAction(title: installThemeTitle, style: .default) { _ in
 
 			if ArticleThemesManager.shared.themeExists(filename: url.path) {
 				let title = NSLocalizedString("Duplicate Theme", comment: "Duplicate Theme")
@@ -71,16 +71,13 @@ import UIKit
 			} else {
 				importTheme()
 			}
-
 		}
 
 		alertController.addAction(installThemeAction)
 		alertController.preferredAction = installThemeAction
 
 		controller.present(alertController, animated: true)
-
 	}
-
 }
 
 private extension ArticleThemeImporter {
@@ -98,5 +95,4 @@ private extension ArticleThemeImporter {
 
 		controller.present(alertController, animated: true)
 	}
-
 }

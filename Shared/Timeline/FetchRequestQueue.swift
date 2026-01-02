@@ -52,6 +52,6 @@ private extension FetchRequestQueue {
 	}
 
 	func removeCanceledAndFinishedRequests() {
-		pendingRequests = pendingRequests.filter{ !$0.isCanceled && !$0.isFinished }
+		pendingRequests = pendingRequests.filter { !$0.isCanceled && !$0.isFinished }
 	}
 }

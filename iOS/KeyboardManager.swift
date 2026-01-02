@@ -95,12 +95,11 @@ private extension KeyboardManager {
 			return "\u{8}"
 		case "[deletefunction]":
 			return nil
-        case "[tab]":
-            return "\t"
+		case "[tab]":
+			return "\t"
 		default:
 			return key
 		}
-
 	}
 
 	static func createKeyModifierFlags(keyEntry: [String: Any]) -> UIKeyModifierFlags {

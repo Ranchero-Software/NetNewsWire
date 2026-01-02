@@ -161,7 +161,7 @@ extension Notification.Name {
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
 			return
 		}
-		guard let _ = singleFaviconDownloader.iconImage else {
+		guard singleFaviconDownloader.iconImage != nil else {
 			if let faviconURLs = remainingFaviconURLs[homePageURL] {
 				if let nextIconURL = faviconURLs.first {
 					_ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)

@@ -66,7 +66,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.propertyList.identifier, options: nil, completionHandler: { [weak self] (pList, error) in
 				if error != nil {
 					return
@@ -93,7 +93,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
 					return
