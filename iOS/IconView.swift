@@ -12,7 +12,7 @@ import RSCore
 @IBDesignable
 final class IconView: UIView {
 
-	var iconImage: IconImage? = nil {
+	var iconImage: IconImage? {
 		didSet {
 			guard iconImage !== oldValue else {
 				return
@@ -21,8 +21,7 @@ final class IconView: UIView {
 			if traitCollection.userInterfaceStyle == .dark {
 				let isDark = iconImage?.isDark ?? false
 				isDiscernable = !isDark
-			}
-			else {
+			} else {
 				let isBright = iconImage?.isBright ?? false
 				isDiscernable = !isBright
 			}
@@ -99,8 +98,7 @@ private extension IconView {
 			}
 			let offset = floor((viewSize.height - imageSize.height) / 2.0)
 			return CGRect(x: offset, y: offset, width: imageSize.width, height: imageSize.height)
-		}
-		else if imageSize.height > imageSize.width {
+		} else if imageSize.height > imageSize.width {
 			let factor = viewSize.height / imageSize.height
 			let width = imageSize.width * factor
 			let originX = floor((viewSize.width - width) / 2.0)
@@ -122,4 +120,3 @@ private extension IconView {
 		}
 	}
 }
-

@@ -27,6 +27,7 @@ disabled_rules:
   - line_length
   - operator_whitespace
   - nesting
+  - class_delegate_protocol
 
 excluded:
   - ".build"

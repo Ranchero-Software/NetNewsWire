@@ -27,10 +27,10 @@ typealias ArticleArray = [Article]
 	func orderedRowIndexes(fromIndex startIndex: Int, wrappingToTop wrapping: Bool) -> [Int] {
 		if startIndex >= self.count {
 			// Wrap around to the top if specified
-			return wrapping ? Array<Int>(0..<self.count) : []
+			return wrapping ? [Int](0..<self.count) : []
 		} else {
 			// Start at the selection and wrap around to the beginning
-			return Array<Int>(startIndex..<self.count) + (wrapping ? Array<Int>(0..<startIndex) : [])
+			return [Int](startIndex..<self.count) + (wrapping ? [Int](0..<startIndex) : [])
 		}
 	}
 	func rowOfNextUnreadArticle(_ selectedRow: Int, wrappingToTop wrapping: Bool) -> Int? {
@@ -132,5 +132,4 @@ typealias ArticleArray = [Article]
 		articlesBelow.removeFirst()
 		return articlesBelow
 	}
-
 }

@@ -19,11 +19,11 @@ final class DeleteCommand: UndoableCommand {
 	var redoActionName: String {
 		undoActionName
 	}
-	let errorHandler: (Error) -> ()
+	let errorHandler: (Error) -> Void
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	@MainActor init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
+	@MainActor init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> Void) {
 
 		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -77,10 +77,7 @@ final class DeleteCommand: UndoableCommand {
 		}
 
 		for node in nodes {
-			if let _ = node.representedObject as? Feed {
-				continue
-			}
-			if let _ = node.representedObject as? Folder {
+			if node.representedObject is Feed || node.representedObject is Folder {
 				continue
 			}
 			return false
@@ -100,7 +97,7 @@ final class DeleteCommand: UndoableCommand {
 	private let folder: Folder?
 	private let feed: Feed?
 	private let path: ContainerPath
-	private let errorHandler: (Error) -> ()
+	private let errorHandler: (Error) -> Void
 
 	private var container: Container? {
 		if let parentFolder = parentFolder {
@@ -165,9 +162,9 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func restore() {
-		if let _ = feed {
+		if feed != nil {
 			restoreFeed()
-		} else if let _ = folder {
+		} else if folder != nil {
 			restoreFolder()
 		}
 	}
@@ -257,9 +254,9 @@ private struct DeleteActionName {
 		var numberOfFolders = 0
 
 		for node in nodes {
-			if let _ = node.representedObject as? Feed {
+			if node.representedObject as? Feed != nil {
 				numberOfFeeds += 1
-			} else if let _ = node.representedObject as? Folder {
+			} else if node.representedObject as? Folder != nil {
 				numberOfFolders += 1
 			} else {
 				return nil // Delete only Feeds and Folders.

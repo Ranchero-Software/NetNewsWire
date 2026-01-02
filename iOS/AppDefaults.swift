@@ -84,7 +84,7 @@ final class AppDefaults: Sendable {
 	}()
 
 	let isFirstRun: Bool = {
-		if let _ = AppDefaults.store.object(forKey: Key.firstRunDate) as? Date {
+		if AppDefaults.store.object(forKey: Key.firstRunDate) as? Date != nil {
 			return false
 		}
 		firstRunDate = Date()
@@ -443,8 +443,7 @@ private extension AppDefaults {
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {
 		if value == .orderedAscending {
 			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
-		}
-		else {
+		} else {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
 	}
@@ -462,14 +461,14 @@ struct StateRestorationInfo {
 	let isShowingExtractedArticle: Bool
 
 	init(hideReadFeeds: Bool,
-		 expandedContainers: Set<ContainerIdentifier>,
-		 selectedSidebarItem: SidebarItemIdentifier?,
-		 smartFeedsHidingReadArticles: Set<String>,
-		 feedsHidingReadArticles: [String: Set<String>],
-		 foldersShowingReadArticles: [String: Set<String>],
-		 selectedArticle: ArticleSpecifier?,
-		 articleWindowScrollY: Int,
-		 isShowingExtractedArticle: Bool) {
+	     expandedContainers: Set<ContainerIdentifier>,
+	     selectedSidebarItem: SidebarItemIdentifier?,
+	     smartFeedsHidingReadArticles: Set<String>,
+	     feedsHidingReadArticles: [String: Set<String>],
+	     foldersShowingReadArticles: [String: Set<String>],
+	     selectedArticle: ArticleSpecifier?,
+	     articleWindowScrollY: Int,
+	     isShowingExtractedArticle: Bool) {
 		self.hideReadFeeds = hideReadFeeds
 		self.expandedContainers = expandedContainers
 		self.selectedSidebarItem = selectedSidebarItem

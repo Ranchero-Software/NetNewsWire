@@ -42,7 +42,7 @@ enum KeyboardType: String, Sendable {
 
 		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
 		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
-		_keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) } )
+		_keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) })
 	}
 
 	static func createKeyCommand(title: String, action: String, input: String, modifiers: UIKeyModifierFlags) -> UIKeyCommand {
