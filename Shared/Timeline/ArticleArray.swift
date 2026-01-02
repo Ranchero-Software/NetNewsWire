@@ -134,4 +134,3 @@ typealias ArticleArray = [Article]
 	}
 
 }
-

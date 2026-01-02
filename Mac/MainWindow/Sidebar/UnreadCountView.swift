@@ -108,4 +108,3 @@ final class UnreadCountView: NSView {
 		}
 	}
 }
-

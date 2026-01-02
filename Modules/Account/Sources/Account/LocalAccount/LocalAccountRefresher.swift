@@ -19,7 +19,6 @@ import os
 }
 
 @MainActor final class LocalAccountRefresher {
-
 	var delegate: LocalAccountRefresherDelegate?
 	var downloadProgress: DownloadProgress {
 		downloadSession.downloadProgress
@@ -292,4 +291,3 @@ private extension Data {
 		return self.isImage
 	}
 }
-

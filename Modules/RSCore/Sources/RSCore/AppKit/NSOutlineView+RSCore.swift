@@ -179,4 +179,3 @@ public extension NSOutlineView {
 	}
 }
 #endif
-

@@ -19,11 +19,9 @@ extension ArticleStatus {
 
 		self.init(articleID: articleID, read: read, starred: starred, dateArrived: dateArrived)
 	}
-
 }
 
 extension ArticleStatus: @retroactive DatabaseObject {
-
 	public var databaseID: String {
 		return articleID
 	}
@@ -32,4 +30,3 @@ extension ArticleStatus: @retroactive DatabaseObject {
 		return [DatabaseKey.articleID: articleID, DatabaseKey.read: read, DatabaseKey.starred: starred, DatabaseKey.dateArrived: dateArrived]
 	}
 }
-

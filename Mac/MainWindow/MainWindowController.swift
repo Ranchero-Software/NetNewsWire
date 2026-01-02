@@ -1421,6 +1421,4 @@ private extension MainWindowController {
 		articleThemeMenuToolbarItem.menu = articleThemeMenu
 		articleThemePopUpButton?.menu = articleThemeMenu
 	}
-
 }
-

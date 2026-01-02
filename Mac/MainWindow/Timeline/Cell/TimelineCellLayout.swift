@@ -233,4 +233,3 @@ private extension Array where Element == NSRect {
 		return y
 	}
 }
-

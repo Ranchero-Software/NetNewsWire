@@ -244,4 +244,3 @@ private extension DatabaseLookupTable {
 		objectIDsWithNoRelatedObjects.withLock { $0.subtract(objectIDs) }
 	}
 }
-

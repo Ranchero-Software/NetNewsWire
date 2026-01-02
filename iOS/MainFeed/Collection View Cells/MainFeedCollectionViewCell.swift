@@ -115,4 +115,3 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 		self.backgroundConfiguration = backgroundConfig
 	}
 }
-

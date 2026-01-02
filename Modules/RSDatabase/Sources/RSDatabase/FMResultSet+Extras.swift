@@ -36,4 +36,3 @@ public extension FMResultSet {
 		return Set(compactMap(completion))
 	}
 }
-

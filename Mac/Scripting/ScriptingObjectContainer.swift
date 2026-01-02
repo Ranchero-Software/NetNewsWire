@@ -36,4 +36,3 @@ extension ScriptingObjectContainer {
         return specifier
     }
 }
-

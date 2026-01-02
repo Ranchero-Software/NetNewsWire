@@ -365,4 +365,3 @@ private extension SidebarViewController {
 		return articles
 	}
 }
-

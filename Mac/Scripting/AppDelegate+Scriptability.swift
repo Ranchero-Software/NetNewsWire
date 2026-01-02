@@ -202,4 +202,3 @@ final class NetNewsWireExistsCommand: NSExistsCommand {
 		return result
 	}
 }
-

@@ -185,4 +185,3 @@ private extension ArticlePasteboardWriter {
 		return authors.map{ authorDictionary($0) }
 	}
 }
-

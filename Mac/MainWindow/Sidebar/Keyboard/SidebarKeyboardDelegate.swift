@@ -39,4 +39,3 @@ import RSCore
 		return true
 	}
 }
-
