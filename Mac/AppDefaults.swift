@@ -42,6 +42,7 @@ final class AppDefaults: Sendable {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
+		static let markAsReadOnOpenEnabled = "markAsReadOnOpenEnabled"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 
 		// Hidden prefs
@@ -307,6 +308,15 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var isMarkAsReadOnOpenEnabled: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.markAsReadOnOpenEnabled)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.markAsReadOnOpenEnabled)
+		}
+	}
+	
 	var isArticleContentJavascriptEnabled: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
@@ -333,6 +343,7 @@ final class AppDefaults: Sendable {
 			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
+			Key.markAsReadOnOpenEnabled: true,
 			Key.articleContentJavascriptEnabled: true
 		]
 

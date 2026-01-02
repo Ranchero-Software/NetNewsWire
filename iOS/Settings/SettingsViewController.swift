@@ -22,6 +22,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var groupByFeedSwitch: UISwitch!
 	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet var articleThemeDetailLabel: UILabel!
+	@IBOutlet var markAsReadOnOpenSwitch: UISwitch!
 	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet var colorPaletteDetailLabel: UILabel!
@@ -70,6 +71,12 @@ final class SettingsViewController: UITableViewController {
 
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
+		if AppDefaults.shared.markAsReadOnOpen {
+			markAsReadOnOpenSwitch.isOn = true
+		} else {
+			markAsReadOnOpenSwitch.isOn = false
+		}
+		
 		if AppDefaults.shared.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
 		} else {
@@ -293,6 +300,14 @@ final class SettingsViewController: UITableViewController {
 		}
 	}
 
+	@IBAction func switchMarkAsReadOnOpen(_ sender: Any) {
+		if markAsReadOnOpenSwitch.isOn {
+			AppDefaults.shared.markAsReadOnOpen = true
+		} else {
+			AppDefaults.shared.markAsReadOnOpen = false
+		}
+	}
+	
 	@IBAction func switchConfirmMarkAllAsRead(_ sender: Any) {
 		if confirmMarkAllAsReadSwitch.isOn {
 			AppDefaults.shared.confirmMarkAllAsRead = true
