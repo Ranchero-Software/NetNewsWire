@@ -61,7 +61,7 @@ import UIKit
 				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 				alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
-				let overwriteAction = UIAlertAction(title: NSLocalizedString("Overwrite", comment: "Overwrite"), style: .default) { action in
+				let overwriteAction = UIAlertAction(title: NSLocalizedString("Overwrite", comment: "Overwrite"), style: .default) { _ in
 					importTheme()
 				}
 				alertController.addAction(overwriteAction)

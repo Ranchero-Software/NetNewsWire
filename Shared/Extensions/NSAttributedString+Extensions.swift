@@ -175,9 +175,10 @@ extension NSAttributedString {
 
 						entity.append(entitychar)
 
-						if (entitychar == ";") { break }
+						if entitychar == ";" {
+							break
+						}
 					}
-
 
 					result.mutableString.append(entity.decodedEntity)
 
@@ -252,7 +253,6 @@ extension NSAttributedString {
 
 		self.init(attributedString: result)
 	}
-
 }
 
 /// This is a very, very basic implementation that only covers our needs.

@@ -35,7 +35,7 @@ import Account
 
 private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: Set<Article>] {
 	let d = Dictionary(grouping: articles, by: { $0.accountID })
-	return d.mapValues{ Set($0) }
+	return d.mapValues { Set($0) }
 }
 
 @MainActor extension Article {
@@ -161,17 +161,13 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 
 			if let emailAddress = authorEmailAddress, emailAddress.contains(" ") {
 				byline += emailAddress // probably name plus email address
-			}
-			else if let name = author.name, let emailAddress = authorEmailAddress {
+			} else if let name = author.name, let emailAddress = authorEmailAddress {
 				byline += "\(name) <\(emailAddress)>"
-			}
-			else if let name = author.name {
+			} else if let name = author.name {
 				byline += name
-			}
-			else if let emailAddress = authorEmailAddress {
+			} else if let emailAddress = authorEmailAddress {
 				byline += "<\(emailAddress)>"
-			}
-			else if let url = author.url {
+			} else if let url = author.url {
 				byline += url
 			}
 		}

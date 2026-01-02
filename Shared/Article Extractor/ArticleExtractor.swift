@@ -55,7 +55,7 @@ public enum ArticleExtractorState: Sendable {
 
         state = .processing
 
-		dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+		dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
 			Task { @MainActor in
 				guard let self else {
 					return

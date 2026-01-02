@@ -10,7 +10,6 @@ import WidgetKit
 import SwiftUI
 
 struct UnreadWidgetView: View {
-
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 
@@ -21,7 +20,7 @@ struct UnreadWidgetView: View {
 			inboxZero
 				.widgetURL(WidgetDeepLink.unread.url)
 		} else {
-			GeometryReader { metrics in
+			GeometryReader { _ in
 				unreadImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
 				VStack(alignment: .leading, spacing: 0) {
@@ -102,6 +101,4 @@ struct UnreadWidgetView: View {
 		.multilineTextAlignment(.center)
 		.padding()
 	}
-
 }
-

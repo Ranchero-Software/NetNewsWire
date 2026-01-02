@@ -9,9 +9,7 @@
 import UIKit
 import Articles
 
-class ModernTimelineCustomizerTableViewController: UITableViewController {
-
-
+final class ModernTimelineCustomizerTableViewController: UITableViewController {
 	private var previewArticle: Article {
 		var components = DateComponents()
 		components.year = 1925
@@ -39,7 +37,6 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 				status: ArticleStatus(articleID: "_testArticleID", read: false, starred: false, dateArrived: .now))
 	}
 
-
     override func viewDidLoad() {
         super.viewDidLoad()
 		title = NSLocalizedString("Timeline Customizer", comment: "Timeline Customizer")
@@ -50,7 +47,6 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 			}
 		}
     }
-
 
 	override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
 		tableView.reloadSections(IndexSet(integer: 2), with: .fade)
@@ -73,7 +69,6 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 		if section == 3 { return NSLocalizedString("Preview without Icon", comment: "Previews") }
 		return nil
 	}
-
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		if indexPath.section == 0 {
@@ -134,6 +129,4 @@ class ModernTimelineCustomizerTableViewController: UITableViewController {
 	func userDefaultsDidChange() {
 		tableView.reloadSections(IndexSet(integersIn: 2...3), with: .none)
 	}
-
 }
-

@@ -66,10 +66,6 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 		}
 	}
 
-	override func viewDidLoad() {
-		super.viewDidLoad()
-	}
-
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		return AddAccountSections.allCases.count
 	}

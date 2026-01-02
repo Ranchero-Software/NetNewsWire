@@ -84,13 +84,17 @@ import Articles
 	}
 
 	static func filteredArticles(_ articles: [Article], _ statusKey: ArticleStatus.Key, _ flag: Bool) -> [Article] {
-
-		return articles.filter{ article in
-			guard article.status.boolStatus(forKey: statusKey) != flag else { return false }
-			guard statusKey == .read else { return true }
-			guard !article.status.read || article.isAvailableToMarkUnread else { return false }
+		articles.filter { article in
+			guard article.status.boolStatus(forKey: statusKey) != flag else {
+				return false
+			}
+			guard statusKey == .read else {
+				return true
+			}
+			guard !article.status.read || article.isAvailableToMarkUnread else {
+				return false
+			}
 			return true
 		}
-
 	}
 }
