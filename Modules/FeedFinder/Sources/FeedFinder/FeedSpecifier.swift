@@ -11,7 +11,7 @@ import RSWeb
 
 public struct FeedSpecifier: Hashable, Sendable {
 	public enum Source: Int, Sendable {
-		case UserEntered = 0, HTMLHead, HTMLLink
+		case userEntered = 0, HTMLHead, HTMLLink
 
 		func equalToOrBetterThan(_ otherSource: Source) -> Bool {
 			return self.rawValue <= otherSource.rawValue
@@ -37,7 +37,7 @@ public struct FeedSpecifier: Hashable, Sendable {
 	static func knownFeedSpecifier(url: URL) -> FeedSpecifier? {
 		if url.isRachelByTheBayURL {
 			let feedURLString = "https://rachelbythebay.com/w/atom.xml"
-			return FeedSpecifier(title: "writing - rachelbythebay", urlString: feedURLString, source: .UserEntered, orderFound: 0)
+			return FeedSpecifier(title: "writing - rachelbythebay", urlString: feedURLString, source: .userEntered, orderFound: 0)
 		}
 
 		return nil
@@ -81,40 +81,39 @@ private extension FeedSpecifier {
 	func calculatedScore() -> Int {
 		var score = 0
 
-		if source == .UserEntered {
+		if source == .userEntered {
 			return 1000
-		}
-		else if source == .HTMLHead {
-			score = score + 50
+		} else if source == .HTMLHead {
+			score += 50
 		}
 
 		score = score - ((orderFound - 1) * 5)
 
 		if urlString.caseInsensitiveContains("comments") {
-			score = score - 10
+			score -= 10
 		}
 		if urlString.caseInsensitiveContains("podcast") {
-			score = score - 10
+			score -= 10
 		}
 		if urlString.caseInsensitiveContains("rss") {
-			score = score + 5
+			score += 5
 		}
 		if urlString.hasSuffix("/index.xml") {
-			score = score + 5
+			score += 5
 		}
 		if urlString.hasSuffix("/feed/") {
-			score = score + 5
+			score += 5
 		}
 		if urlString.hasSuffix("/feed") {
-			score = score + 4
+			score += 4
 		}
 		if urlString.caseInsensitiveContains("json") {
-			score = score + 3
+			score += 3
 		}
 
 		if let title = title {
 			if title.caseInsensitiveContains("comments") {
-				score = score - 10
+				score -= 10
 			}
 		}
 

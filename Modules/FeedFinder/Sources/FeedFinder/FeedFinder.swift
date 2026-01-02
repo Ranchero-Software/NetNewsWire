@@ -55,7 +55,7 @@ public final class FeedFinder {
 		}
 
 		if FeedFinder.isFeed(data, url.absoluteString) {
-			let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .UserEntered, orderFound: 1)
+			let feedSpecifier = FeedSpecifier(title: nil, urlString: url.absoluteString, source: .userEntered, orderFound: 1)
 			return Set([feedSpecifier])
 		}
 
@@ -75,8 +75,7 @@ private extension FeedFinder {
 		if let existingFeedSpecifier = feedSpecifiers[feedSpecifier.urlString] {
 			let mergedFeedSpecifier = existingFeedSpecifier.feedSpecifierByMerging(feedSpecifier)
 			feedSpecifiers[feedSpecifier.urlString] = mergedFeedSpecifier
-		}
-		else {
+		} else {
 			feedSpecifiers[feedSpecifier.urlString] = feedSpecifier
 		}
 	}
@@ -97,8 +96,7 @@ private extension FeedFinder {
 			if oneFeedSpecifier.source == .HTMLHead {
 				addFeedSpecifier(oneFeedSpecifier, feedSpecifiers: &feedSpecifiers)
 				didFindFeedInHTMLHead = true
-			}
-			else {
+			} else {
 				if feedSpecifiers[oneFeedSpecifier.urlString] == nil {
 					feedSpecifiersToDownload.insert(oneFeedSpecifier)
 				}
@@ -107,11 +105,9 @@ private extension FeedFinder {
 
 		if didFindFeedInHTMLHead {
 			return Set(feedSpecifiers.values)
-		}
-		else if feedSpecifiersToDownload.isEmpty {
+		} else if feedSpecifiersToDownload.isEmpty {
 			throw FeedFinderError.feedNotFound
-		}
-		else {
+		} else {
 			return await downloadFeedSpecifiers(feedSpecifiersToDownload, feedSpecifiers: feedSpecifiers)
 		}
 	}

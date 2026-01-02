@@ -18,14 +18,11 @@ import Foundation
 	private static var incrementingID = 0
 
 	public var isRoot: Bool {
-		if let _ = parent {
-			return false
-		}
-		return true
+		parent == nil
 	}
 
 	public var numberOfChildNodes: Int {
-		return childNodes.count
+		childNodes.count
 	}
 
 	public var indexPath: IndexPath {
@@ -36,7 +33,7 @@ import Foundation
 			}
 			preconditionFailure("A Node’s parent must contain it as a child.")
 		}
-		return IndexPath(index: 0) //root node
+		return IndexPath(index: 0) // root node
 	}
 
 	public var level: Int {
@@ -47,7 +44,7 @@ import Foundation
 	}
 
 	public var isLeaf: Bool {
-		return numberOfChildNodes < 1
+		numberOfChildNodes < 1
 	}
 
 	public init(representedObject: AnyObject, parent: Node?) {
@@ -60,7 +57,7 @@ import Foundation
 		Node.incrementingID += 1
 	}
 
-	public class func genericRootNode() -> Node {
+	public static func genericRootNode() -> Node {
 		let node = Node(representedObject: TopLevelRepresentedObject(), parent: nil)
 		node.canHaveChildNodes = true
 		return node
@@ -75,7 +72,7 @@ import Foundation
 
 	public func createChildNode(_ representedObject: AnyObject) -> Node {
 		// Just creates — doesn’t add it.
-		return Node(representedObject: representedObject, parent: self)
+		Node(representedObject: representedObject, parent: self)
 	}
 
 	public func childAtIndex(_ index: Int) -> Node? {
@@ -86,21 +83,19 @@ import Foundation
 	}
 
 	public func indexOfChild(_ node: Node) -> Int? {
-		return childNodes.firstIndex{ (oneChildNode) -> Bool in
-			oneChildNode === node
-		}
+		childNodes.firstIndex { $0 === node }
 	}
 
 	public func childNodeRepresentingObject(_ obj: AnyObject) -> Node? {
-		return findNodeRepresentingObject(obj, recursively: false)
+		findNodeRepresentingObject(obj, recursively: false)
 	}
 
 	public func descendantNodeRepresentingObject(_ obj: AnyObject) -> Node? {
-		return findNodeRepresentingObject(obj, recursively: true)
+		findNodeRepresentingObject(obj, recursively: true)
 	}
 
 	public func descendantNode(where test: (Node) -> Bool) -> Node? {
-		return findNode(where: test, recursively: true)
+		findNode(where: test, recursively: true)
 	}
 
 	public func hasAncestor(in nodes: [Node]) -> Bool {
@@ -129,12 +124,12 @@ import Foundation
 		}
 	}
 
-	public class func nodesOrganizedByParent(_ nodes: [Node]) -> [Node: [Node]] {
+	public static func nodesOrganizedByParent(_ nodes: [Node]) -> [Node: [Node]] {
 		let nodesWithParents = nodes.filter { $0.parent != nil }
 		return Dictionary(grouping: nodesWithParents, by: { $0.parent! })
 	}
 
-	public class func indexSetsGroupedByParent(_ nodes: [Node]) -> [Node: IndexSet] {
+	public static func indexSetsGroupedByParent(_ nodes: [Node]) -> [Node: IndexSet] {
 		let d = nodesOrganizedByParent(nodes)
 		let indexSetDictionary = d.mapValues { (nodes) -> IndexSet in
 
@@ -165,7 +160,7 @@ import Foundation
 	// MARK: - Equatable
 
 	nonisolated public class func ==(lhs: Node, rhs: Node) -> Bool {
-		return lhs === rhs
+		lhs === rhs
 	}
 }
 
@@ -173,7 +168,7 @@ import Foundation
 @MainActor public extension Array where Element == Node {
 
 	func representedObjects() -> [AnyObject] {
-		return self.map{ $0.representedObject }
+		self.map { $0.representedObject }
 	}
 }
 

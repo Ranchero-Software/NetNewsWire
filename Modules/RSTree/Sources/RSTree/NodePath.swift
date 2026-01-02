@@ -20,8 +20,7 @@ import Foundation
 			if let parent = nomad.parent {
 				tempArray.append(parent)
 				nomad = parent
-			}
-			else {
+			} else {
 				break
 			}
 		}
@@ -32,8 +31,7 @@ import Foundation
 	public init?(representedObject: AnyObject, treeController: TreeController) {
 		if let node = treeController.nodeInTreeRepresentingObject(representedObject) {
 			self.init(node: node)
-		}
-		else {
+		} else {
 			return nil
 		}
 	}
