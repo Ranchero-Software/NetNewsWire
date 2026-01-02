@@ -21,14 +21,14 @@ extension UndoableCommand {
 
 	public func registerUndo() {
 		undoManager.setActionName(undoActionName)
-		undoManager.registerUndo(withTarget: self) { (target) in
+		undoManager.registerUndo(withTarget: self) { _ in
 			self.undo()
 		}
 	}
 
 	public func registerRedo() {
 		undoManager.setActionName(redoActionName)
-		undoManager.registerUndo(withTarget: self) { (target) in
+		undoManager.registerUndo(withTarget: self) { _ in
 			self.perform()
 		}
 	}

@@ -387,7 +387,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
@@ -560,7 +559,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	func markOlderArticlesRead(_ selectedArticles: [Article]) {
 		// Mark articles older than the selectedArticles(s) as read.
 
-		var cutoffDate: Date? = nil
+		var cutoffDate: Date?
 		for article in selectedArticles {
 			if cutoffDate == nil {
 				cutoffDate = article.logicalDatePublished

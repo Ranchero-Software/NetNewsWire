@@ -10,7 +10,6 @@ import WidgetKit
 import SwiftUI
 
 struct UnreadWidgetView: View {
-
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 
@@ -106,6 +105,4 @@ struct UnreadWidgetView: View {
 		.multilineTextAlignment(.center)
 		.padding()
 	}
-
 }
-

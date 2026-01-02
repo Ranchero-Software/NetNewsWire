@@ -50,10 +50,10 @@ extension Notification.Name {
 			return cachedImage
 		}
 
-		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), (homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog") {
+		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog" {
 			return IconImage.nnwFeedIcon
 		}
-		if (Self.shouldSkipDownloadingFeedIcon(feed: feed)) {
+		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
 			return nil
 		}
 

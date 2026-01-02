@@ -12,38 +12,37 @@ import Articles
 
 @objc(ScriptableArticle)
 @MainActor final class ScriptableArticle: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
+    let article: Article
+    nonisolated(unsafe) let container: ScriptingObjectContainer
 
-    let article:Article
-    nonisolated(unsafe) let container:ScriptingObjectContainer
-
-    init (_ article:Article, container:ScriptingObjectContainer) {
+    init (_ article: Article, container: ScriptingObjectContainer) {
         self.article = article
         self.container = container
     }
 
     @objc(objectSpecifier)
     nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
-        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
+        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject: self)
         return scriptObjectSpecifier
     }
 
-    // MARK: --- ScriptingObject protocol ---
+    // MARK: - ScriptingObject protocol
 
     nonisolated var scriptingKey: String {
-        return "articles"
+        "articles"
     }
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
+    // MARK: - UniqueIdScriptingObject protocol
 
     // articles have id in the NetNewsWire database and id in the feed
     // article.uniqueID here is the feed unique id
 
     @objc(uniqueId)
-    nonisolated var scriptingUniqueID:Any {
-        return article.uniqueID
+    nonisolated var scriptingUniqueID: Any {
+        article.uniqueID
     }
 
-    // MARK: --- ScriptingObjectContainer protocol ---
+    // MARK: - ScriptingObjectContainer protocol
 
     nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
@@ -53,62 +52,62 @@ import Articles
         print ("delete event not handled")
     }
 
-    // MARK: --- Scriptable properties ---
+    // MARK: - Scriptable properties
 
     @objc(url)
-    var url:String?  {
-        return article.preferredLink
+    var url: String?  {
+		article.preferredLink
     }
 
     @objc(permalink)
-    var permalink:String?  {
-        return article.link
+    var permalink: String?  {
+        article.link
     }
 
     @objc(externalUrl)
-    var externalUrl:String?  {
-        return article.externalLink
+    var externalUrl: String?  {
+        article.externalLink
     }
 
     @objc(title)
-    var title:String  {
-        return article.title ?? ""
+    var title: String  {
+        article.title ?? ""
     }
 
     @objc(contents)
-    var contents:String  {
-        return article.contentText ?? ""
+    var contents: String  {
+       article.contentText ?? ""
     }
 
     @objc(html)
-    var html:String  {
-        return article.contentHTML ?? ""
+    var html: String  {
+        article.contentHTML ?? ""
     }
 
     @objc(summary)
-    var summary:String  {
-        return article.summary ?? ""
+    var summary: String  {
+        article.summary ?? ""
     }
 
     @objc(datePublished)
-    var datePublished:Date?  {
-        return article.datePublished
+    var datePublished: Date?  {
+        article.datePublished
     }
 
     @objc(dateModified)
-    var dateModified:Date?  {
-        return article.dateModified
+    var dateModified: Date?  {
+        article.dateModified
     }
 
     @objc(dateArrived)
-    var dateArrived:Date  {
-        return article.status.dateArrived
+    var dateArrived: Date  {
+        article.status.dateArrived
     }
 
     @objc(read)
-    var read:Bool  {
+    var read: Bool  {
 		get {
-			return article.status.boolStatus(forKey:.read)
+			article.status.boolStatus(forKey: .read)
 		}
 		set {
 			markArticles([self.article], statusKey: .read, flag: newValue)
@@ -116,9 +115,9 @@ import Articles
     }
 
     @objc(starred)
-    var starred:Bool  {
+    var starred: Bool  {
 		get {
-			return article.status.boolStatus(forKey:.starred)
+			article.status.boolStatus(forKey:.starred)
 		}
 		set {
 			markArticles([self.article], statusKey: .starred, flag: newValue)
@@ -126,24 +125,26 @@ import Articles
     }
 
     @objc(deleted)
-    var deleted:Bool  {
-        return false
+    var deleted: Bool  {
+        false
     }
 
     @objc(imageURL)
-    var imageURL:String  {
-        return article.imageLink ?? ""
+    var imageURL: String  {
+        article.imageLink ?? ""
     }
 
     @objc(authors)
-    var authors:NSArray {
+    var authors: NSArray {
         let articleAuthors = article.authors ?? []
         return articleAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
 
 	@objc(feed)
 	var feed: ScriptableFeed? {
-		guard let parentFeed = self.article.feed else { return nil }
+		guard let parentFeed = self.article.feed else {
+			return nil
+		}
 		return ScriptableFeed.scriptableFeed(for: parentFeed)
 	}
 }

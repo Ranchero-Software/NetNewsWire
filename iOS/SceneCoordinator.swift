@@ -73,10 +73,10 @@ struct FeedNode: Hashable, Sendable {
 
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
-	private var lastSearchScope: SearchScope? = nil
+	private var lastSearchScope: SearchScope?
 	private var isSearching: Bool = false
-	private var savedSearchArticles: ArticleArray? = nil
-	private var savedSearchArticleIds: Set<String>? = nil
+	private var savedSearchArticles: ArticleArray?
+	private var savedSearchArticleIds: Set<String>?
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
@@ -583,7 +583,6 @@ struct FeedNode: Hashable, Sendable {
 		}
 	}
 
-
 	/// Updates navigation bar subtitles in response to feed selection, unread count changes,
 	/// `combinedRefreshProgressDidChange` notifications, and a timed refresh every
 	/// 60s.
@@ -906,7 +905,6 @@ struct FeedNode: Hashable, Sendable {
 		currentFeedIndexPath = indexPath
 		mainFeedCollectionViewController.updateFeedSelection(animations: animations)
 
-
 		if deselectArticle {
 			selectArticle(nil)
 		}
@@ -937,7 +935,6 @@ struct FeedNode: Hashable, Sendable {
 
 		}
 		updateNavigationBarSubtitles(nil)
-
 	}
 
 	func selectPrevFeed() {
@@ -2290,7 +2287,6 @@ private extension SceneCoordinator {
 		// Read values from UserDefaults (migration happens in restoreWindowState)
 		let isShowingExtractedArticle = AppDefaults.shared.isShowingExtractedArticle
 		let articleWindowScrollY = AppDefaults.shared.articleWindowScrollY
-
 
 		switch sidebarItemID {
 

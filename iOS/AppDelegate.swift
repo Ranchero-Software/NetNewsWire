@@ -82,7 +82,7 @@ import Secrets
 			self.updateBadge()
 		}
 
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
 			if granted {
 				DispatchQueue.main.async {
 					UIApplication.shared.registerForRemoteNotifications()
@@ -106,7 +106,7 @@ import Secrets
 
 	}
 
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		Task { @MainActor in
 			self.resumeDatabaseProcessingIfNecessary()
 			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
@@ -410,7 +410,7 @@ private extension AppDelegate {
 	}
 
 	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return

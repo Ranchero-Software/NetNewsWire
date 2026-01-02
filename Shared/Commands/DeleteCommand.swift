@@ -13,12 +13,11 @@ import Account
 import Articles
 
 final class DeleteCommand: UndoableCommand {
-
 	let treeController: TreeController?
 	let undoManager: UndoManager
 	let undoActionName: String
 	var redoActionName: String {
-		return undoActionName
+		undoActionName
 	}
 	let errorHandler: (Error) -> ()
 
@@ -38,7 +37,7 @@ final class DeleteCommand: UndoableCommand {
 		self.undoManager = undoManager
 		self.errorHandler = errorHandler
 
-		let itemSpecifiers = nodesToDelete.compactMap{ SidebarItemSpecifier(node: $0, errorHandler: errorHandler) }
+		let itemSpecifiers = nodesToDelete.compactMap { SidebarItemSpecifier(node: $0, errorHandler: errorHandler) }
 		guard !itemSpecifiers.isEmpty else {
 			return nil
 		}
@@ -50,7 +49,7 @@ final class DeleteCommand: UndoableCommand {
 		let group = DispatchGroup()
 		itemSpecifiers.forEach {
 			group.enter()
-			$0.delete() {
+			$0.delete {
 				group.leave()
 			}
 		}
@@ -113,7 +112,7 @@ final class DeleteCommand: UndoableCommand {
 		return nil
 	}
 
-	@MainActor init?(node: Node, errorHandler: @escaping (Error) -> ()) {
+	@MainActor init?(node: Node, errorHandler: @escaping (Error) -> Void) {
 
 		var account: Account?
 
@@ -123,13 +122,11 @@ final class DeleteCommand: UndoableCommand {
 			self.feed = feed
 			self.folder = nil
 			account = feed.account
-		}
-		else if let folder = node.representedObject as? Folder {
+		} else if let folder = node.representedObject as? Folder {
 			self.feed = nil
 			self.folder = folder
 			account = folder.account
-		}
-		else {
+		} else {
 			return nil
 		}
 		if account == nil {
@@ -144,9 +141,7 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func delete(completion: @escaping () -> Void) {
-
-		if let feed = feed {
-
+		if let feed {
 			guard let container = path.resolveContainer() else {
 				completion()
 				return
@@ -159,20 +154,17 @@ final class DeleteCommand: UndoableCommand {
 				self.checkResult(result)
 			}
 
-		} else if let folder = folder {
-
+		} else if let folder {
 			BatchUpdate.shared.start()
 			account?.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-
 		}
 	}
 
 	func restore() {
-
 		if let _ = feed {
 			restoreFeed()
 		}
@@ -192,7 +184,6 @@ final class DeleteCommand: UndoableCommand {
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-
 	}
 
 	private func restoreFolder() {
@@ -206,7 +197,6 @@ final class DeleteCommand: UndoableCommand {
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-
 	}
 
 	private func checkResult(_ result: Result<Void, Error>) {
@@ -217,9 +207,7 @@ final class DeleteCommand: UndoableCommand {
 		case .failure(let error):
 			errorHandler(error)
 		}
-
 	}
-
 }
 
 @MainActor private extension Node {
@@ -255,7 +243,6 @@ final class DeleteCommand: UndoableCommand {
 
 		return folders.reversed()
 	}
-
 }
 
 private struct DeleteActionName {

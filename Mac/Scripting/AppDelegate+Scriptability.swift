@@ -77,7 +77,6 @@ extension AppDelegate: AppDelegateAppleEvents {
 
 		}
 
-
 		// Special case URL with specific scheme handler x-netnewswire-feed: intended to ensure we open
 		// it regardless of which news reader may be set as the default
 		let nnwScheme = "x-netnewswire-feed:"

@@ -11,8 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-
-class MainFeedCollectionViewCell: UICollectionViewCell {
+final class MainFeedCollectionViewCell: UICollectionViewCell {
 	@IBOutlet var feedTitle: UILabel!
 	@IBOutlet var faviconView: IconView!
 	@IBOutlet var unreadCountLabel: UILabel!
@@ -115,6 +114,5 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 		self.backgroundConfiguration = backgroundConfig
 	}
-
 }
 

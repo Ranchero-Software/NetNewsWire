@@ -6,10 +6,9 @@
 //  Copyright © 2025 Ranchero Software. All rights reserved.
 //
 
+final class LinkLabel: NSTextField {
 
-class LinkLabel: NSTextField {
-
-	/// pièces de résistance -- keeping it a mac-assed mac app.
+	/// Les pièces de résistance — keeping it a Mac-assed Mac app.
 	override func resetCursorRects() {
         addCursorRect(bounds, cursor: .pointingHand)
     }

@@ -29,9 +29,8 @@ public final class ArticleThemeDownloader: Sendable {
 		createDownloadDirectoryIfRequired()
 		let movedFileLocation = try moveTheme(from: location)
 		let unzippedFileLocation = try unzipFile(at: movedFileLocation)
-		NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil, userInfo: ["url" : unzippedFileLocation])
+		NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil, userInfo: ["url": unzippedFileLocation])
 	}
-
 
 	/// Creates `Application Support/NetNewsWire/Downloads` if needed.
 	private func createDownloadDirectoryIfRequired() {
@@ -75,7 +74,7 @@ public final class ArticleThemeDownloader: Sendable {
 		if let directoryContents = FileManager.default.enumerator(atPath: searchPath) {
 			while let file = directoryContents.nextObject() as? String {
 				if file.hasPrefix("__MACOSX/") {
-					//logger.debug("Ignoring theme file in __MACOSX folder.")
+					// logger.debug("Ignoring theme file in __MACOSX folder.")
 					continue
 				}
 				if file.hasSuffix(".nnwtheme") {

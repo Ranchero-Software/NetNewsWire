@@ -68,10 +68,6 @@ enum AddAccountSections: Int, CaseIterable {
 				AddAccountSections.selfhosted.sectionContent
 		}
 	}
-
-
-
-
 }
 
 struct AddAccountsView: View {
@@ -264,10 +260,8 @@ struct AddAccountsView: View {
 	}
 }
 
-
 struct AddAccountsView_Previews: PreviewProvider {
 	static var previews: some View {
 		AddAccountsView(delegate: nil)
 	}
 }
-

@@ -17,7 +17,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
-	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
+	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 
 	private var refreshProgressView: RefreshProgressView?
 
@@ -1017,7 +1017,6 @@ private extension MainTimelineViewController {
 		guard articles.canMarkAllAsRead(), let contentView = self.tableView.cellForRow(at: indexPath)?.contentView else {
 			return nil
 		}
-
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String

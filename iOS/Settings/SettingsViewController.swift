@@ -68,7 +68,6 @@ final class SettingsViewController: UITableViewController {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
-
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
@@ -92,7 +91,6 @@ final class SettingsViewController: UITableViewController {
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
-
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -320,8 +318,7 @@ final class SettingsViewController: UITableViewController {
 		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
  	}
 
-
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func contentSizeCategoryDidChange() {
 		tableView.reloadData()
@@ -341,7 +338,7 @@ final class SettingsViewController: UITableViewController {
 
 }
 
-// MARK: OPML Document Picker
+// MARK: - OPML Document Picker
 
 extension SettingsViewController: UIDocumentPickerDelegate {
 
@@ -362,7 +359,7 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 }
 
-// MARK: Private
+// MARK: - Private
 
 private extension SettingsViewController {
 
@@ -401,7 +398,7 @@ private extension SettingsViewController {
 		}
 
 		for account in AccountManager.shared.sortedActiveAccounts {
-			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] _ in
 				self?.opmlAccount = account
 				self?.importOPMLDocumentPicker()
 			}
@@ -457,7 +454,7 @@ private extension SettingsViewController {
 		}
 
 		for account in AccountManager.shared.sortedAccounts {
-			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] _ in
 				self?.opmlAccount = account
 				self?.exportOPMLDocumentPicker()
 			}

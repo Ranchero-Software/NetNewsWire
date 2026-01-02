@@ -14,7 +14,6 @@ extension CGRect: MarkAsReadAlertControllerSourceType {}
 extension UIView: MarkAsReadAlertControllerSourceType {}
 extension UIBarButtonItem: MarkAsReadAlertControllerSourceType {}
 
-
 @MainActor struct MarkAsReadAlertController {
 
 	static func confirm<T>(_ controller: UIViewController?,
@@ -44,7 +43,6 @@ extension UIBarButtonItem: MarkAsReadAlertControllerSourceType {}
 							  cancelCompletion: (() -> Void)?,
 							  sourceType: T,
 							  completion: @escaping (UIAlertAction) -> Void) -> UIAlertController where T: MarkAsReadAlertControllerSourceType  {
-
 
 		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
 		let message = NSLocalizedString("You can turn this confirmation off in Settings.",

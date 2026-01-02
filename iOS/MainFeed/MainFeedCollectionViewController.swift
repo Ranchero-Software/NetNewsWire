@@ -57,7 +57,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	/// `viewDidAppear(_:)` after a delay to allow the deselection animation to complete.
 	private var isAnimating: Bool = false
 
-
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		registerForNotifications()
@@ -228,7 +227,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		return coordinator.numberOfSections()
     }
 
-
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
 		return coordinator.numberOfRows(in: section)
@@ -258,7 +256,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			withReuseIdentifier: containerReuseIdentifier,
 			for: indexPath
 		) as! MainFeedCollectionHeaderReusableView
-
 
 		guard let nameProvider = coordinator.rootNode.childAtIndex(indexPath.section)?.representedObject as? DisplayNameProvider else {
 			return UICollectionReusableView()
@@ -301,16 +298,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     }
     */
 
-
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
 		if traitCollection.userInterfaceIdiom == .pad { return true }
 		return !isAnimating
     }
 
-
-
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
+	override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
         return true
     }
 
@@ -339,7 +333,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	// MARK: - Key Commands
 
-	// MARK: Keyboard shortcuts
+	// MARK: - Keyboard shortcuts
 
 	@objc func collapseAllExceptForGroupItems(_ sender: Any?) {
 		coordinator.collapseAllFolders()
@@ -404,8 +398,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		coordinator.showFeedInspector()
 	}
 
-
-
 	// MARK: - API
 
 	func focus() {
@@ -420,10 +412,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 		addNewItemButton?.isEnabled = !AccountManager.shared.activeAccounts.isEmpty
 
-
 		configureContextMenu()
 	}
-
 
 	func updateFeedSelection(animations: Animations) {
 		if let indexPath = coordinator.currentFeedIndexPath {
@@ -550,9 +540,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-
 	// MARK: - Private
-
 
 	/// Configure standard feed cells
 	func configure(_ cell: MainFeedCollectionViewCell, indexPath: IndexPath) {
@@ -612,10 +600,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 
-
-
 	// MARK: - Notifications
-
 
 	@objc func preferredContentSizeCategoryDidChange() {
 		IconImageCache.shared.emptyCache()
@@ -670,8 +655,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	// MARK: - Actions
-	@objc
-	func configureContextMenu(_: Any? = nil) {
+
+	@objc func configureContextMenu(_: Any? = nil) {
 		/*
 			Context Menu Order:
 			1. Add Feed
@@ -735,11 +720,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		present(alertController, animated: true)
 	}
 
-
 	@IBAction func toggleFilter(_ sender: Any) {
 		coordinator.toggleReadFeedsFilter()
 	}
-
 
 	func toggle(_ headerView: MainFeedCollectionHeaderReusableView) {
 		guard let sectionNode = coordinator.rootNode.childAtIndex(headerView.tag) else {
@@ -754,16 +737,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			coordinator.expand(sectionNode)
 		}
 	}
-
 }
 
 extension MainFeedCollectionViewController: MainFeedCollectionHeaderReusableViewDelegate {
 	func mainFeedCollectionHeaderReusableViewDidTapDisclosureIndicator(_ view: MainFeedCollectionHeaderReusableView) {
 		toggle(view)
 	}
-
 }
-
 
 extension MainFeedCollectionViewController: MainFeedCollectionViewFolderCellDelegate {
 	func mainFeedCollectionFolderViewCellDisclosureDidToggle(_ sender: MainFeedCollectionViewFolderCell, expanding: Bool) {
@@ -773,7 +753,6 @@ extension MainFeedCollectionViewController: MainFeedCollectionViewFolderCellDele
 			collapse(sender)
 		}
 	}
-
 
 	func expand(_ cell: MainFeedCollectionViewFolderCell) {
 		guard let indexPath = collectionView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
@@ -788,11 +767,7 @@ extension MainFeedCollectionViewController: MainFeedCollectionViewFolderCellDele
 		}
 		coordinator.collapse(node)
 	}
-
-
-
 }
-
 
 extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
@@ -825,12 +800,8 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 			let cell = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: sectionIndex)) as? MainFeedCollectionHeaderReusableView else {
 				return nil
 		}
-
-
 		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
-
-
 }
 
 extension MainFeedCollectionViewController {
@@ -874,9 +845,7 @@ extension MainFeedCollectionViewController {
 			}
 
 			return UIMenu(title: "", children: menuElements)
-
 		})
-
 	}
 
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
@@ -1006,7 +975,6 @@ extension MainFeedCollectionViewController {
 			completion(true)
 		}
 
-
 		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markAllAsRead(Array(articles))
@@ -1115,7 +1083,6 @@ extension MainFeedCollectionViewController {
 		return action
 	}
 
-
 	func rename(indexPath: IndexPath) {
 		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
 
@@ -1222,4 +1189,3 @@ extension MainFeedCollectionViewController {
 		deleteCommand.perform()
 	}
 }
-

@@ -10,7 +10,7 @@ import AppKit
 import Articles
 import Account
 
-final class AddFolderWindowController : NSWindowController {
+final class AddFolderWindowController: NSWindowController {
 
     @IBOutlet var folderNameTextField: NSTextField!
     @IBOutlet var accountPopupButton: NSPopUpButton!

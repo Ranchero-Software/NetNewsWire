@@ -11,7 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-final class SidebarCell : NSTableCellView {
+final class SidebarCell: NSTableCellView {
 
 	var iconImage: IconImage? {
 		didSet {

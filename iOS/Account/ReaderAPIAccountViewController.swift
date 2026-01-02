@@ -116,7 +116,6 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		}
 	}
 
-
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
 	}
@@ -278,8 +277,6 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		}
 	}
 
-
-
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)
 	}
@@ -315,5 +312,4 @@ extension ReaderAPIAccountViewController: UITextFieldDelegate {
 		textField.resignFirstResponder()
 		return true
 	}
-
 }

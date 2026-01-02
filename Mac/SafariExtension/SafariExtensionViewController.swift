@@ -13,7 +13,7 @@ final class SafariExtensionViewController: SFSafariExtensionViewController {
 	// This would be the place to handle a popover that could, for example, list the possibly multiple feeds offered by a site.
     static let shared: SafariExtensionViewController = {
         let shared = SafariExtensionViewController()
-        shared.preferredContentSize = NSSize(width:320, height:240)
+        shared.preferredContentSize = NSSize(width: 320, height: 240)
         return shared
     }()
 

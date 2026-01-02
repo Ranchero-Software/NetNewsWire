@@ -16,7 +16,6 @@ import RSWeb
 import SafariServices
 import UniformTypeIdentifiers
 
-
 extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 
 	func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: any UICollectionViewDropCoordinator) {

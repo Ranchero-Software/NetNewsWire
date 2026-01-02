@@ -44,7 +44,7 @@ final class WebViewController: UIViewController {
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
-	private var articleExtractor: ArticleExtractor? = nil
+	private var articleExtractor: ArticleExtractor?
 	var extractedArticle: ExtractedArticle? {
 		didSet {
 			windowScrollY = 0
@@ -505,10 +505,7 @@ extension WebViewController: UIScrollViewDelegate {
 			self.windowScrollY = javascriptScrollY
 		}
 	}
-
 }
-
-
 
 // MARK: JSON
 

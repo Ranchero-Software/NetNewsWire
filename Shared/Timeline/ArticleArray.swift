@@ -88,7 +88,7 @@ typealias ArticleArray = [Article]
 	}
 
 	func unreadArticles() -> [Article]? {
-		let articles = self.filter{ !$0.status.read }
+		let articles = self.filter { !$0.status.read }
 		return articles.isEmpty ? nil : articles
 	}
 

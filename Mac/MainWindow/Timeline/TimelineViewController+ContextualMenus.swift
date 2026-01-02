@@ -114,7 +114,6 @@ extension TimelineViewController {
 	}
 }
 
-
 private extension TimelineViewController {
 
 	func markArticles(_ articles: [Article], read: Bool) {
@@ -286,7 +285,6 @@ private extension TimelineViewController {
 		return menuItem(NSLocalizedString("Copy External URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString, image: Assets.Images.copy)
 	}
 
-
 	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any, image: RSImage?) -> NSMenuItem {
 
 		let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
@@ -300,7 +298,6 @@ private extension TimelineViewController {
 }
 
 private final class SharingCommandInfo {
-
 	let service: NSSharingService
 	let items: [Any]
 

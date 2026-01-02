@@ -84,7 +84,7 @@ final class FeedInspectorViewController: UITableViewController {
 		} else if authorizationStatus == .authorized {
 			feed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
 		} else {
-			UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
+			UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
 				Task { @MainActor in
 					self.updateNotificationSettings()
 					if granted {
@@ -215,7 +215,7 @@ extension FeedInspectorViewController {
 		let alert = UIAlertController(title: NSLocalizedString("Enable Notifications", comment: "Notifications"),
 									  message: NSLocalizedString("Notifications need to be enabled in the Settings app.", comment: "Notifications need to be enabled in the Settings app."), preferredStyle: .alert)
 		let openSettings = UIAlertAction(title: NSLocalizedString("Open Settings", comment: "Open Settings"), style: .default) { (action) in
-			UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly : false], completionHandler: nil)
+			UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false], completionHandler: nil)
 		}
 		let dismiss = UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil)
 		alert.addAction(openSettings)

@@ -95,6 +95,4 @@ extension ImageViewController: ImageScrollViewDelegate {
 	func imageScrollViewDidGestureSwipeDown(imageScrollView: ImageScrollView) {
 		dismiss(animated: true)
 	}
-
-
 }

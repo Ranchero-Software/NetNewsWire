@@ -42,7 +42,7 @@ import XCTest
         _ = doIndividualScript(filename: "testFeedExists")
     }
 
-    func doIndividualScriptWithExpectation(filename:String) {
+    func doIndividualScriptWithExpectation(filename: String) {
         let scriptExpectation = self.expectation(description: filename+"expectation")
 		DispatchQueue.main.async {
              _ = self.doIndividualScript(filename: filename)

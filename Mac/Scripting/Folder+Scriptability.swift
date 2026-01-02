@@ -13,69 +13,70 @@ import RSCore
 
 @objc(ScriptableFolder)
 @MainActor final class ScriptableFolder: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
+	let folder: Folder
+	nonisolated(unsafe) let container: ScriptingObjectContainer
 
-    let folder:Folder
-    nonisolated(unsafe) let container:ScriptingObjectContainer
+	init (_ folder:Folder, container: ScriptingObjectContainer) {
+		self.folder = folder
+		self.container = container
+	}
 
-    init (_ folder:Folder, container:ScriptingObjectContainer) {
-        self.folder = folder
-        self.container = container
-    }
+	@objc(objectSpecifier)
+	nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
+		let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject: self)
+		return scriptObjectSpecifier
+	}
 
-    @objc(objectSpecifier)
-    nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
-        let scriptObjectSpecifier = self.container.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
-        return scriptObjectSpecifier
-    }
+	// MARK: --- ScriptingObject protocol ---
 
-    // MARK: --- ScriptingObject protocol ---
+	nonisolated var scriptingKey: String {
+		"folders"
+	}
 
-    nonisolated var scriptingKey: String {
-        return "folders"
-    }
+	// MARK: --- UniqueIdScriptingObject protocol ---
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
+	// I am not sure if account should prefer to be specified by name or by ID
+	// but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
-    // I am not sure if account should prefer to be specified by name or by ID
-    // but in either case it seems like the accountID would be used as the keydata, so I chose ID
+	@objc(uniqueId)
+	nonisolated var scriptingUniqueID:Any {
+		folder.folderID
+	}
 
-    @objc(uniqueId)
-    nonisolated var scriptingUniqueID:Any {
-        return folder.folderID
-    }
+	// MARK: --- ScriptingObjectContainer protocol ---
 
-    // MARK: --- ScriptingObjectContainer protocol ---
+	nonisolated var scriptingClassDescription: NSScriptClassDescription {
+		self.classDescription as! NSScriptClassDescription
+	}
 
-    nonisolated var scriptingClassDescription: NSScriptClassDescription {
-        return self.classDescription as! NSScriptClassDescription
-    }
+	func deleteElement(_ element: ScriptingObject) {
+		if let scriptableFeed = element as? ScriptableFeed {
+			BatchUpdate.shared.perform {
+				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { _ in }
+			}
+		}
+	}
 
-    func deleteElement(_ element:ScriptingObject) {
-       if let scriptableFeed = element as? ScriptableFeed {
-            BatchUpdate.shared.perform {
-				folder.account?.removeFeed(scriptableFeed.feed, from: folder) { result in }
-            }
-        }
-    }
+	// MARK: - handle NSCreateCommand
+	/*
+	 handle an AppleScript like
+	 make new folder in account X with properties {name:"new folder name"}
+	 or
+	 tell account X to make new folder at end with properties {name:"new folder name"}
+	 */
+	class func handleCreateElement(command: NSCreateCommand) -> Any?  {
+		guard command.isCreateCommand(forClass: "fold") else {
+			return nil
+		}
+		let name = command.property(forKey: "name") as? String ?? ""
 
-    // MARK: --- handle NSCreateCommand ---
-    /*
-        handle an AppleScript like
-           make new folder in account X with properties {name:"new folder name"}
-        or
-           tell account X to make new folder at end with properties {name:"new folder name"}
-    */
-    class func handleCreateElement(command:NSCreateCommand) -> Any?  {
-        guard command.isCreateCommand(forClass: "fold") else { return nil }
-        let name = command.property(forKey: "name") as? String ?? ""
-
-        // some combination of the tell target and the location specifier ("in" or "at")
-        // identifies where the new folder should be created
-        let (account, folder) = command.accountAndFolderForNewChild()
-        guard folder == nil else {
-            print("support for folders within folders is NYI");
-            return nil
-        }
+		// some combination of the tell target and the location specifier ("in" or "at")
+		// identifies where the new folder should be created
+		let (account, folder) = command.accountAndFolderForNewChild()
+		guard folder == nil else {
+			print("support for folders within folders is NYI");
+			return nil
+		}
 
 		command.suspendExecution()
 
@@ -84,68 +85,69 @@ import RSCore
 				let folder = try await account.addFolder(name)
 				let scriptableAccount = ScriptableAccount(account)
 				let scriptableFolder = ScriptableFolder(folder, container: scriptableAccount)
-				command.resumeExecution(withResult:scriptableFolder.objectSpecifier)
+				command.resumeExecution(withResult: scriptableFolder.objectSpecifier)
 			} catch {
-				command.resumeExecution(withResult:nil)
+				command.resumeExecution(withResult: nil)
 			}
 		}
 
-        return nil
-    }
+		return nil
+	}
 
-    // MARK: --- Scriptable elements ---
+	// MARK: --- Scriptable elements ---
 
-    @objc(feeds)
-    var feeds:NSArray  {
+	@objc(feeds)
+	var feeds: NSArray  {
 		let feeds = Array(folder.topLevelFeeds)
-        return feeds.map { ScriptableFeed($0, container:self) } as NSArray
-    }
+		return feeds.map { ScriptableFeed($0, container: self) } as NSArray
+	}
 
-    @objc(articles)
-    var articles:NSArray {
-        let feeds = Array(folder.topLevelFeeds)
-        let allArticles = feeds.flatMap { feed in
-            (try? feed.fetchArticles()) ?? Set<Article>()
-        }
-        // Sort articles by logical date published like Feed does
-        let sortedArticles = allArticles.sorted(by: {
-            return $0.logicalDatePublished > $1.logicalDatePublished
-        })
-        return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
-    }
+	@objc(articles)
+	var articles: NSArray {
+		let feeds = Array(folder.topLevelFeeds)
+		let allArticles = feeds.flatMap { feed in
+			(try? feed.fetchArticles()) ?? Set<Article>()
+		}
+		// Sort articles by logical date published like Feed does
+		let sortedArticles = allArticles.sorted(by: {
+			$0.logicalDatePublished > $1.logicalDatePublished
+		})
+		return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
+	}
 
-    @objc(countOfArticles)
-    func countOfArticles() -> Int {
-        let feeds = Array(folder.topLevelFeeds)
-        return feeds.reduce(0) { count, feed in
-            let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
-            return count + feedArticles.count
-        }
-    }
+	@objc(countOfArticles)
+	func countOfArticles() -> Int {
+		let feeds = Array(folder.topLevelFeeds)
+		return feeds.reduce(0) { count, feed in
+			let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
+			return count + feedArticles.count
+		}
+	}
 
-    @objc(objectInArticlesAtIndex:)
-    func objectInArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
-        let feeds = Array(folder.topLevelFeeds)
-        let allArticles = feeds.flatMap { feed in
-            (try? feed.fetchArticles()) ?? Set<Article>()
-        }
-        let sortedArticles = allArticles.sorted(by: {
-            return $0.logicalDatePublished > $1.logicalDatePublished
-        })
-        guard index >= 0 && index < sortedArticles.count else { return nil }
-        return ScriptableArticle(sortedArticles[index], container: self)
-    }
+	@objc(objectInArticlesAtIndex:)
+	func objectInArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
+		let feeds = Array(folder.topLevelFeeds)
+		let allArticles = feeds.flatMap { feed in
+			(try? feed.fetchArticles()) ?? Set<Article>()
+		}
+		let sortedArticles = allArticles.sorted(by: {
+			return $0.logicalDatePublished > $1.logicalDatePublished
+		})
+		guard index >= 0 && index < sortedArticles.count else {
+			return nil
+		}
+		return ScriptableArticle(sortedArticles[index], container: self)
+	}
 
-    // MARK: --- Scriptable properties ---
+	// MARK: - Scriptable properties
 
-    @objc(name)
-    var name:String  {
-        return self.folder.name ?? ""
-    }
+	@objc(name)
+	var name:String  {
+		folder.name ?? ""
+	}
 
-    @objc(opmlRepresentation)
-    var opmlRepresentation:String  {
-        return self.folder.OPMLString(indentLevel:0)
-    }
-
+	@objc(opmlRepresentation)
+	var opmlRepresentation:String  {
+		folder.OPMLString(indentLevel:0)
+	}
 }

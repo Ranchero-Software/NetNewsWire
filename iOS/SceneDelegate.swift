@@ -220,8 +220,6 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			} else {
 				return
 			}
-
-
 		}
 	}
 }

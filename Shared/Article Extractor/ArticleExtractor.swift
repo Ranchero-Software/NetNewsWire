@@ -30,7 +30,7 @@ public enum ArticleExtractorState: Sendable {
 
 	var state = ArticleExtractorState.ready
     private let url: URL
-	private var dataTask: URLSessionDataTask? = nil
+	private var dataTask: URLSessionDataTask?
 
 	public init?(_ articleLink: String, delegate: ArticleExtractorDelegate) {
 		self.articleLink = articleLink
@@ -55,7 +55,7 @@ public enum ArticleExtractorState: Sendable {
 
         state = .processing
 
-		dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+		dataTask = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
 			Task { @MainActor in
 				guard let self else {
 					return

@@ -63,7 +63,7 @@ struct PasteboardFeed: Hashable {
 		let feedID = dictionary[Key.feedID]
 		let editedName = dictionary[Key.editedName]
 
-		var accountType: AccountType? = nil
+		var accountType: AccountType?
 		if let accountTypeString = dictionary[Key.accountType], let accountTypeInt = Int(accountTypeString) {
 			accountType = AccountType(rawValue: accountTypeInt)
 		}
@@ -168,7 +168,7 @@ extension Feed: @retroactive PasteboardWriterOwner {
 	static let feedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.feed"
 	static let feedUTIInternalType = NSPasteboard.PasteboardType(rawValue: feedUTIInternal)
 
-	var containerID: ContainerIdentifier? = nil
+	var containerID: ContainerIdentifier?
 
 	init(feed: Feed) {
 		self.feed = feed

@@ -106,7 +106,7 @@ struct ReaderAPIArticleSummary: Codable, Sendable {
 	let content: String?
 
 	enum CodingKeys: String, CodingKey {
-		case content = "content"
+		case content
 	}
 }
 

@@ -247,7 +247,6 @@ public extension String {
 		return s.replacingOccurrences(of: "\\n{3,}", with: "\n\n", options: .regularExpression)
 	}
 
-
 	/// Returns a Boolean value indicating whether the string contains another string, case-insensitively.
 	///
 	/// - Parameter string: The string to search for.

@@ -9,7 +9,6 @@
 import AppKit
 
 @MainActor protocol Inspector: AnyObject {
-
 	var objects: [Any]? { get set }
 	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
 	var windowTitle: String { get }
@@ -19,10 +18,8 @@ import AppKit
 
 typealias InspectorViewController = Inspector & NSViewController
 
-
 final class InspectorWindowController: NSWindowController {
-
-	class var shouldOpenAtStartup: Bool {
+	static var shouldOpenAtStartup: Bool {
 		return UserDefaults.standard.bool(forKey: DefaultsKey.windowIsOpen)
 	}
 
@@ -75,7 +72,7 @@ final class InspectorWindowController: NSWindowController {
 
 	func inspector(for objects: [Any]?) -> InspectorViewController {
 
-		var fallbackInspector: InspectorViewController? = nil
+		var fallbackInspector: InspectorViewController?
 
 		for inspector in inspectors {
 			if inspector.isFallbackInspector {

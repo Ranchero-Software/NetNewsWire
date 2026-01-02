@@ -230,8 +230,7 @@ private extension ArticleRenderer {
 		components.path = article.articleID
 		if let imageIconURLString = components.string {
 			d["avatar_src"] = imageIconURLString
-		}
-		else {
+		} else {
 			d["avatar_src"] = ""
 		}
 
@@ -290,20 +289,15 @@ private extension ArticleRenderer {
 
 			if let emailAddress = authorEmailAddress, emailAddress.contains(" ") {
 				byline += emailAddress // probably name plus email address
-			}
-			else if let name = author.name, let url = author.url {
+			} else if let name = author.name, let url = author.url {
 				byline += name.htmlByAddingLink(url)
-			}
-			else if let name = author.name, let emailAddress = authorEmailAddress {
+			} else if let name = author.name, let emailAddress = authorEmailAddress {
 				byline += "\(name) &lt;\(emailAddress)&gt;"
-			}
-			else if let name = author.name {
+			} else if let name = author.name {
 				byline += name
-			}
-			else if let emailAddress = authorEmailAddress {
+			} else if let emailAddress = authorEmailAddress {
 				byline += "&lt;\(emailAddress)&gt;" // TODO: mailto link
-			}
-			else if let url = author.url {
+			} else if let url = author.url {
 				byline += String.htmlWithLink(url)
 			}
 		}
@@ -355,4 +349,3 @@ private extension ArticleRenderer {
 		return url
 	}
 }
-

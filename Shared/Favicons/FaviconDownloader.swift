@@ -31,7 +31,7 @@ extension Notification.Name {
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
 
-	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
+	private var homePageToFaviconURLCache = [String: String]() // homePageURL: faviconURL
 	private var homePageToFaviconURLCachePath: String
 	private var homePageToFaviconURLCacheDirty = false {
 		didSet {
@@ -143,7 +143,7 @@ extension Notification.Name {
 			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
 			if let firstIconURL = faviconURLs.first {
-				let _ = self.favicon(with: firstIconURL, homePageURL: url)
+				_ = self.favicon(with: firstIconURL, homePageURL: url)
 				self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
 			}
 		}
@@ -161,10 +161,10 @@ extension Notification.Name {
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
 			return
 		}
-		guard let _ = singleFaviconDownloader.iconImage else {
+		guard singleFaviconDownloader.iconImage != nil else {
 			if let faviconURLs = remainingFaviconURLs[homePageURL] {
 				if let nextIconURL = faviconURLs.first {
-					let _ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)
+					_ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)
 					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst()
 				} else {
 					remainingFaviconURLs[homePageURL] = nil

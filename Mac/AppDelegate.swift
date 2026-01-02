@@ -134,8 +134,7 @@ let appName = "NetNewsWire"
 		let cacheFolder: String
 		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
 			cacheFolder = userCacheFolder
-		}
-		else {
+		} else {
 			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
 			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
 		}
@@ -154,8 +153,7 @@ let appName = "NetNewsWire"
 
 		do {
 			try self.softwareUpdater.start()
-		}
-		catch {
+		} catch {
 			Self.logger.error("Failed to start software updater with error: \(error.localizedDescription)")
 		}
 
@@ -206,7 +204,7 @@ let appName = "NetNewsWire"
 		refreshTimer = AccountRefreshTimer()
 		ArticleStatusSyncTimer.shared.start()
 
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge]) { (granted, error) in }
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { _, _ in }
 
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			if settings.authorizationStatus == .authorized {
@@ -278,7 +276,7 @@ let appName = "NetNewsWire"
 		saveState()
 	}
 
-	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String : Any]) {
+	func application(_ application: NSApplication, didReceiveRemoteNotification userInfo: [String: Any]) {
 		Task { @MainActor in
 			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 		}
@@ -550,8 +548,7 @@ let appName = "NetNewsWire"
 
 		if inspectorWindowController!.isOpen {
 			inspectorWindowController!.window!.performClose(self)
-		}
-		else {
+		} else {
 			inspectorWindowController!.objects = objectsForInspector()
 			inspectorWindowController!.showWindow(self)
 		}
@@ -658,7 +655,7 @@ let appName = "NetNewsWire"
 		AppDefaults.shared.timelineSortDirection = .orderedDescending
 	}
 
-	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {		
+	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {
 		AppDefaults.shared.timelineGroupByFeed.toggle()
 	}
 
@@ -771,7 +768,7 @@ extension AppDelegate {
 			let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
 
-			var attrs = [NSAttributedString.Key : Any]()
+			var attrs = [NSAttributedString.Key: Any]()
 			attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
 			attrs[.foregroundColor] = NSColor.textColor
 
@@ -832,7 +829,7 @@ extension AppDelegate {
 				}
 			}
 		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error, "path": url.path])
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error, "path": url.path])
 		}
 	}
 
@@ -921,8 +918,7 @@ extension AppDelegate {
     These would be unnecessary if the similar accessors were marked internal rather than private,
     but for now, we'll keep the stratification of visibility
 */
-extension AppDelegate : ScriptingAppDelegate {
-
+extension AppDelegate: ScriptingAppDelegate {
     var scriptingMainWindowController: ScriptingMainWindowController? {
         return mainWindowController
     }
@@ -939,7 +935,7 @@ extension AppDelegate : ScriptingAppDelegate {
 extension AppDelegate: NSWindowRestoration {
 
 	@objc static func restoreWindow(withIdentifier identifier: NSUserInterfaceItemIdentifier, state: NSCoder, completionHandler: @escaping (NSWindow?, Error?) -> Void) {
-		var mainWindow: NSWindow? = nil
+		var mainWindow: NSWindow?
 		if identifier.rawValue == WindowRestorationIdentifiers.mainWindow {
 			mainWindow = appDelegate.createAndShowMainWindow().window
 		}
@@ -961,7 +957,7 @@ private extension AppDelegate {
 
 	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
 		MainActor.assumeIsolated {
-			guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+			guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 				  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 				  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				assertionFailure("Expected valid articlePathUserInfo from userInfo \(userInfo)")

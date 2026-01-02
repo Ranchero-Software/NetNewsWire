@@ -97,7 +97,6 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		disclosureExpanded = isExpanded
 	}
 
-
 	override var accessibilityLabel: String? {
 		set {}
 		get {
@@ -137,5 +136,4 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 
 		self.backgroundConfiguration = backgroundConfig
 	}
-
 }

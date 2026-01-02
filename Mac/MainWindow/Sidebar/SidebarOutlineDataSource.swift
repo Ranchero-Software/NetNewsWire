@@ -374,7 +374,7 @@ private extension SidebarOutlineDataSource {
 			guard let sourceAccountID = pasteboardFeed.accountID,
 				  let sourceAccount = AccountManager.shared.existingAccount(accountID: sourceAccountID),
 				  let feedID = pasteboardFeed.feedID,
-				  let feed = sourceAccount.existingFeed(withFeedID:  feedID),
+				  let feed = sourceAccount.existingFeed(withFeedID: feedID),
 				  let destinationContainer = parentNode.representedObject as? Container
 			else {
 				return

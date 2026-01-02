@@ -428,7 +428,6 @@ extension ArticleViewController {
 
 }
 
-
 // MARK: WebViewControllerDelegate
 
 extension ArticleViewController: WebViewControllerDelegate {

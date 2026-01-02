@@ -67,7 +67,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 	}
 
 	func refreshAll(for account: Account) async throws {
@@ -542,8 +542,7 @@ private extension FeedbinAccountDelegate {
 				feed.externalID = String(subscription.subscriptionID)
 				feed.faviconURL = subscription.jsonFeed?.favicon
 				feed.iconURL = subscription.jsonFeed?.icon
-			}
-			else {
+			} else {
 				subscriptionsToAdd.insert(subscription)
 			}
 		}
@@ -689,8 +688,8 @@ private extension FeedbinAccountDelegate {
 		var orderFound = 0
 
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
-			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
-			orderFound = orderFound + 1
+			let source = url == choice.url ? FeedSpecifier.Source.userEntered : FeedSpecifier.Source.HTMLLink
+			orderFound += 1
 			let specifier = FeedSpecifier(title: choice.name, urlString: choice.url, source: source, orderFound: orderFound)
 			return specifier
 		}
@@ -849,7 +848,7 @@ private extension FeedbinAccountDelegate {
 		guard let articleIDs else {
 			return
 		}
-		
+
 		do {
 			guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 				return

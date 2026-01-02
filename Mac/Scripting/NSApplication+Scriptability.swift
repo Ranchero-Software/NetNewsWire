@@ -11,9 +11,8 @@ import Account
 import Articles
 
 extension NSApplication : @preconcurrency ScriptingObjectContainer {
-
-    // MARK: --- ScriptingObjectContainer protocol ---
-
+    // MARK: - ScriptingObjectContainer protocol
+	
     nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
@@ -137,5 +136,3 @@ extension NSApplication : @preconcurrency ScriptingObjectContainer {
         return ScriptableFeed(feed, container:self)
     }
 }
-
-
