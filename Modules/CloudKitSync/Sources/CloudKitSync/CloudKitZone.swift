@@ -312,7 +312,6 @@ public extension CloudKitZone {
 		database?.add(op)
 	}
 
-
 	/// Fetch a CKRecord by using its externalID
 	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
 		guard let externalID else {

@@ -505,10 +505,7 @@ extension WebViewController: UIScrollViewDelegate {
 			self.windowScrollY = javascriptScrollY
 		}
 	}
-
 }
-
-
 
 // MARK: JSON
 

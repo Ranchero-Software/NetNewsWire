@@ -62,7 +62,7 @@ public struct FeedSpecifier: Hashable, Sendable {
 		}
 
 		var currentHighScore = Int.min
-		var currentBestFeed: FeedSpecifier? = nil
+		var currentBestFeed: FeedSpecifier?
 
 		for oneFeedSpecifier in feedSpecifiers {
 			let oneScore = oneFeedSpecifier.score

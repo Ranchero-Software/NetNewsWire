@@ -17,7 +17,6 @@ import Articles
 // CREATE TABLE if not EXISTS authors (authorID TEXT NOT NULL PRIMARY KEY, name TEXT, url TEXT, avatarURL TEXT, emailAddress TEXT);
 // CREATE TABLE if not EXISTS authorLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 
-
 final class AuthorsTable: DatabaseRelatedObjectsTable, Sendable {
 	let name: String
 	let databaseIDKey = DatabaseKey.authorID
@@ -36,4 +35,3 @@ final class AuthorsTable: DatabaseRelatedObjectsTable, Sendable {
 		return nil
 	}
 }
-

@@ -13,7 +13,6 @@ import Articles
 import Account
 
 final class FeedInspectorViewController: NSViewController, Inspector {
-
 	@IBOutlet var iconView: IconView!
 	@IBOutlet var nameTextField: NSTextField?
 	@IBOutlet var homePageURLTextField: NSTextField?
@@ -114,7 +113,6 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
 		updateImage()
 	}
-
 }
 
 extension FeedInspectorViewController: NSTextFieldDelegate {
@@ -122,7 +120,6 @@ extension FeedInspectorViewController: NSTextFieldDelegate {
 	func controlTextDidEndEditing(_ note: Notification) {
 		renameFeedIfNecessary()
 	}
-
 }
 
 private extension FeedInspectorViewController {
@@ -134,7 +131,6 @@ private extension FeedInspectorViewController {
 		}
 		feed = singleFeed
 	}
-
 
 	@objc func updateUI() {
 		updateImage()

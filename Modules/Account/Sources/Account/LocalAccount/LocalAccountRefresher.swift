@@ -25,7 +25,7 @@ import os
 		downloadSession.downloadProgress
 	}
 
-	private var completion: (() -> Void)? = nil
+	private var completion: (() -> Void)?
 	private var isSuspended = false
 
 	private lazy var downloadSession: DownloadSession = {
@@ -194,7 +194,6 @@ import os
 		}
 	}
 }
-
 
 // MARK: - Private
 

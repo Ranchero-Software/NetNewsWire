@@ -111,7 +111,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
 		nonisolated(unsafe) var articles: Set<Article> = Set<Article>()
-		nonisolated(unsafe) var error: DatabaseError? = nil
+		nonisolated(unsafe) var error: DatabaseError?
 
 		queue.runInDatabaseSync { (databaseResult) in
 			switch databaseResult {
@@ -181,7 +181,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				let authorsNames = row.string(forColumn: DatabaseKey.authors)
 
 				let searchRowIDObject = row.object(forColumnName: DatabaseKey.searchRowID)
-				var searchRowID: Int? = nil
+				var searchRowID: Int?
 				if searchRowIDObject != nil && !(searchRowIDObject is NSNull) {
 					searchRowID = Int(row.longLongInt(forColumn: DatabaseKey.searchRowID))
 				}
@@ -400,7 +400,6 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				}
 				return unreadCountDictionary
 			}
-
 
 			switch databaseResult {
 			case .success(let database):
@@ -717,7 +716,7 @@ nonisolated private extension ArticlesTable {
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) throws -> Set<Article> {
 		nonisolated(unsafe) var articles = Set<Article>()
-		nonisolated(unsafe) var error: DatabaseError? = nil
+		nonisolated(unsafe) var error: DatabaseError?
 
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
@@ -1052,7 +1051,6 @@ nonisolated private extension ArticlesTable {
 		saveUpdatedArticles(Set(updatedArticles), fetchedArticlesDictionary, database)
 		return updatedArticles
 	}
-
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
 		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)

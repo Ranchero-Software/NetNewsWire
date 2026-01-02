@@ -40,7 +40,6 @@ final class AccountsPreferencesViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 
-
 		// Fix tableView frame — for some reason IB wants it 1pt wider than the clip view. This leads to unwanted horizontal scrolling.
 		var rTable = tableView.frame
 		rTable.size.width = tableView.superview!.frame.size.width

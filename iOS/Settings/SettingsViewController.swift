@@ -318,8 +318,7 @@ final class SettingsViewController: UITableViewController {
 		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
  	}
 
-
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func contentSizeCategoryDidChange() {
 		tableView.reloadData()
@@ -339,7 +338,7 @@ final class SettingsViewController: UITableViewController {
 
 }
 
-// MARK: OPML Document Picker
+// MARK: - OPML Document Picker
 
 extension SettingsViewController: UIDocumentPickerDelegate {
 
@@ -360,7 +359,7 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 }
 
-// MARK: Private
+// MARK: - Private
 
 private extension SettingsViewController {
 

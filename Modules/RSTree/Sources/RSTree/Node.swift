@@ -164,7 +164,6 @@ import Foundation
 	}
 }
 
-
 @MainActor public extension Array where Element == Node {
 
 	func representedObjects() -> [AnyObject] {

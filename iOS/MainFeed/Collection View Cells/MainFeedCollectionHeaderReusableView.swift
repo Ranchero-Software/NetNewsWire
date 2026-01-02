@@ -43,7 +43,6 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 		}
 	}
 
-
 	private var _unreadCount: Int = 0
 
 	var unreadCount: Int {

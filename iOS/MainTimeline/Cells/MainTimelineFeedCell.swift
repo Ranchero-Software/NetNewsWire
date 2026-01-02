@@ -144,6 +144,4 @@ class MainTimelineFeedCell: UITableViewCell {
 
 		self.backgroundConfiguration = backgroundConfig
 	}
-
-
 }

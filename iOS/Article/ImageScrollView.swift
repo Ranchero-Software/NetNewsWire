@@ -238,7 +238,6 @@ open class ImageScrollView: UIScrollView {
 			minScale = yScale
 		}
 
-
 		let maxScale = maxScaleFromMinScale*minScale
 
 		// don't let minScale exceed maxScale. (If the image is smaller than the screen, we don't want to force it to be zoomed.)

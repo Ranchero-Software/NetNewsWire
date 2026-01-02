@@ -15,7 +15,6 @@ import UIKit
 	@objc optional func searchBar(_ searchBar: ArticleSearchBar, textDidChange: String)
 }
 
-
 @IBDesignable final class ArticleSearchBar: UIStackView {
 	var searchField: UISearchTextField!
 	var nextButton: UIButton!

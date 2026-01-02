@@ -29,7 +29,7 @@ import Account
     func accountAndFolderForNewChild() -> (Account, Folder?) {
         let appleEvent = self.appleEvent
         var account = AccountManager.shared.defaultAccount
-        var folder:Folder? = nil
+        var folder:Folder?
         if let appleEvent = appleEvent {
             var descriptorToConsider:NSAppleEventDescriptor?
             if let insertionLocationDescriptor = appleEvent.paramDescriptor(forKeyword:keyAEInsertHere) {

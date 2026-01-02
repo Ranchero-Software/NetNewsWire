@@ -1018,7 +1018,6 @@ private extension MainTimelineViewController {
 			return nil
 		}
 
-
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 

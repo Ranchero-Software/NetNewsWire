@@ -32,7 +32,6 @@ import RSWeb
 		open(urlString, inBackground: invert ? !AppDefaults.shared.openInBrowserInBackground : AppDefaults.shared.openInBrowserInBackground)
 	}
 
-
 	/// Opens a URL in the default browser.
 	///
 	/// - Parameters:

@@ -83,7 +83,6 @@ final class ModernTimelineCustomizerTableViewController: UITableViewController {
 			return cell
 		}
 
-
 		if indexPath.section == 2 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell") as? MainTimelineIconFeedCell ?? MainTimelineIconFeedCell()
 			cell.cellData = MainTimelineCellData(article: previewArticle,

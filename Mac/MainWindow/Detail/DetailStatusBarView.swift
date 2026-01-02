@@ -74,5 +74,3 @@ private extension DetailStatusBarView {
 		}
 	}
 }
-
-

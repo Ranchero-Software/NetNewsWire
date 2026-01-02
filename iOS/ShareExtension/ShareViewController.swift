@@ -36,7 +36,6 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func viewDidLoad() {
-
 		extensionContainers = ExtensionContainersFile.read()
 		flattenedContainers = extensionContainers?.flattened ?? [ExtensionContainer]()
 		if let extensionContainers {
@@ -115,7 +114,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func didSelectPost() {
-		guard let url = url, let selectedContainer = selectedContainer, let containerID = selectedContainer.containerID else {
+		guard let url, let selectedContainer, let containerID = selectedContainer.containerID else {
 			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 			return
 		}
@@ -139,7 +138,6 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func configurationItems() -> [Any]! {
-
 		// To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
 		guard let urlItem = SLComposeSheetConfigurationItem() else { return nil }
 		urlItem.title = "URL"
@@ -165,7 +163,6 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 		return [folderItem!, urlItem]
 
 	}
-
 }
 
 private extension ShareViewController {
@@ -177,5 +174,4 @@ private extension ShareViewController {
 			self.folderItem.value = "\(folder.accountName) / \(folder.name)"
 		}
 	}
-
 }

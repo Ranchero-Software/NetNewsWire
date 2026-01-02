@@ -392,7 +392,6 @@ extension Notification.Name {
 		menu.takeItems(from: contextualMenu)
 	}
 
-
 	// MARK: - NSOutlineViewDelegate
 
 	func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
@@ -601,7 +600,6 @@ private extension SidebarViewController {
 
 		treeControllerDelegate.addFilterException(folderSidebarItemID)
 	}
-
 
 	func queueRebuildTreeAndRestoreSelection() {
 		rebuildTreeAndRestoreSelectionQueue.add(self, #selector(rebuildTreeAndRestoreSelection))

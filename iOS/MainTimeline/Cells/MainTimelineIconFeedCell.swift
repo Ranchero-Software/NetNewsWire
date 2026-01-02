@@ -46,7 +46,6 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		}
 	}
 
-
 	private func configure(_ cellData: MainTimelineCellData) {
 		updateIndicatorView(cellData)
 		articleTitle.numberOfLines = cellData.numberOfLines
@@ -116,8 +115,6 @@ class MainTimelineIconFeedCell: UITableViewCell {
 
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
-
-
 
 		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if cellData.title != "" {

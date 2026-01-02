@@ -15,10 +15,10 @@ import AppKit
 
 public final class UserApp {
 	public let bundleID: String
-	public var icon: NSImage? = nil
+	public var icon: NSImage?
 	public var existsOnDisk = false
-	public var path: String? = nil
-	public var runningApplication: NSRunningApplication? = nil
+	public var path: String?
+	public var runningApplication: NSRunningApplication?
 
 	public var isRunning: Bool {
 		updateStatus()

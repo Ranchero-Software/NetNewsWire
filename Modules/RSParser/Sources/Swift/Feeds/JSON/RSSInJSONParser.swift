@@ -73,7 +73,7 @@ private extension RSSInJSONParser {
 		let title = itemDictionary["title"] as? String
 
 		var contentHTML = itemDictionary["description"] as? String
-		var contentText: String? = nil
+		var contentText: String?
 		if contentHTML != nil && !(contentHTML!.contains("<")) {
 			contentText = contentHTML
 			contentHTML = nil
@@ -82,7 +82,7 @@ private extension RSSInJSONParser {
 			return nil
 		}
 
-		var datePublished: Date? = nil
+		var datePublished: Date?
 		if let datePublishedString = itemDictionary["pubDate"] as? String {
 			datePublished = RSDateWithString(datePublishedString)
 		}

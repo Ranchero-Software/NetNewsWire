@@ -148,7 +148,6 @@ final class FeedbinAccountViewController: UITableViewController {
 		self.present(safari, animated: true, completion: nil)
 	}
 
-
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false) 
 	}
@@ -170,7 +169,6 @@ final class FeedbinAccountViewController: UITableViewController {
 			activityIndicator.stopAnimating()
 		}
 	}
-
 }
 
 extension FeedbinAccountViewController: UITextFieldDelegate {
@@ -184,5 +182,4 @@ extension FeedbinAccountViewController: UITextFieldDelegate {
 		}
 		return true
 	}
-
 }

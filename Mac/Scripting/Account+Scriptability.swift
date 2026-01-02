@@ -73,7 +73,7 @@ import RSCore
 			}
 		} else if let scriptableFeed = element as? ScriptableFeed {
 			BatchUpdate.shared.perform {
-				var container: Container? = nil
+				var container: Container?
 				if let scriptableFolder = scriptableFeed.container as? ScriptableFolder {
 					container = scriptableFolder.folder
 				} else {
