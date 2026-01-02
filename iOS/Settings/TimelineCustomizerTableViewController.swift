@@ -1,5 +1,5 @@
 //
-//  ModernTimelineCustomizerTableViewController.swift
+//  TimelineCustomizerTableViewController.swift
 //  NetNewsWire-iOS
 //
 //  Created by Stuart Breckenridge on 21/08/2025.
@@ -9,7 +9,7 @@
 import UIKit
 import Articles
 
-final class ModernTimelineCustomizerTableViewController: UITableViewController {
+final class TimelineCustomizerTableViewController: UITableViewController {
 	private var previewArticle: Article {
 		var components = DateComponents()
 		components.year = 1925

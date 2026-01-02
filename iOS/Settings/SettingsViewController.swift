@@ -202,7 +202,7 @@ final class SettingsViewController: UITableViewController {
 		case 3:
 			switch indexPath.row {
 			case 3:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: ModernTimelineCustomizerTableViewController.self)
+				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerTableViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break

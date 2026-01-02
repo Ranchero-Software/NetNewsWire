@@ -167,8 +167,7 @@ final class DeleteCommand: UndoableCommand {
 	func restore() {
 		if let _ = feed {
 			restoreFeed()
-		}
-		else if let _ = folder {
+		} else if let _ = folder {
 			restoreFolder()
 		}
 	}
@@ -234,8 +233,7 @@ final class DeleteCommand: UndoableCommand {
 		while nomad != nil {
 			if let folder = nomad!.representedObject as? Folder {
 				folders += [folder]
-			}
-			else {
+			} else {
 				break
 			}
 			nomad = nomad!.parent
@@ -261,11 +259,9 @@ private struct DeleteActionName {
 		for node in nodes {
 			if let _ = node.representedObject as? Feed {
 				numberOfFeeds += 1
-			}
-			else if let _ = node.representedObject as? Folder {
+			} else if let _ = node.representedObject as? Folder {
 				numberOfFolders += 1
-			}
-			else {
+			} else {
 				return nil // Delete only Feeds and Folders.
 			}
 		}
