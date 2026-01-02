@@ -136,7 +136,7 @@ extension Notification.Name {
 	/// Restore state using legacy state restoration data.
 	///
 	/// TODO: Delete for NetNewsWire 7.
-	func restoreLegacyState(from state: [AnyHashable : Any]) {
+	func restoreLegacyState(from state: [AnyHashable: Any]) {
 
 		if let containerExpandedWindowState = state[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
 			let containerIdentifiers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
@@ -504,7 +504,7 @@ extension Notification.Name {
 		revealAndSelectRepresentedObject(sidebarItem as AnyObject)
 	}
 
-	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
+	func deepLinkRevealAndSelect(for userInfo: [AnyHashable: Any]) {
 		guard let accountNode = findAccountNode(userInfo),
 			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
 			let sidebarItem = feedNode.representedObject as? SidebarItem else {
@@ -758,7 +758,7 @@ private extension SidebarViewController {
 		return nil
 	}
 
-	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
+	func findAccountNode(_ userInfo: [AnyHashable: Any]?) -> Node? {
 		guard let accountID = userInfo?[ArticlePathKey.accountID] as? String else {
 			return nil
 		}
@@ -778,7 +778,7 @@ private extension SidebarViewController {
 		return nil
 	}
 
-	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
+	func findFeedNode(_ userInfo: [AnyHashable: Any]?, beginningAt startingNode: Node) -> Node? {
 		guard let feedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}

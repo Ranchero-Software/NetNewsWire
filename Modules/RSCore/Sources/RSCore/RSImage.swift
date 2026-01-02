@@ -246,9 +246,9 @@ public extension RSImage {
 			RSImageLogger.debug("RSImageLogger: createThumbnail image source count = \(count, privacy: .public)")
 		}
 
-		let options = [kCGImageSourceCreateThumbnailWithTransform : true,
-					   kCGImageSourceCreateThumbnailFromImageIfAbsent : true,
-					   kCGImageSourceThumbnailMaxPixelSize : NSNumber(value: maxPixelSize)]
+		let options = [kCGImageSourceCreateThumbnailWithTransform: true,
+					   kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+					   kCGImageSourceThumbnailMaxPixelSize: NSNumber(value: maxPixelSize)]
 		return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary)
 	}
 }

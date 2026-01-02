@@ -23,7 +23,7 @@ import Secrets
 
 	var refreshProgress: DownloadProgress { get }
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async
 
 	func refreshAll(for account: Account) async throws
 	func syncArticleStatus(for account: Account) async throws

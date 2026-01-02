@@ -14,7 +14,7 @@ protocol ScriptingObject {
 }
 
 protocol NamedScriptingObject: ScriptingObject {
-	var name:String { get }
+	var name: String { get }
 }
 
 protocol UniqueIDScriptingObject: ScriptingObject {

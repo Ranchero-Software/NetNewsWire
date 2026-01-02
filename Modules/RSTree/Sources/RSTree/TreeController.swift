@@ -12,7 +12,7 @@ import Foundation
 	func treeController(treeController: TreeController, childNodesFor: Node) -> [Node]?
 }
 
-public typealias NodeVisitBlock = (_ : Node) -> Void
+public typealias NodeVisitBlock = (_: Node) -> Void
 
 @MainActor public final class TreeController {
 

@@ -48,7 +48,7 @@ import Articles
         return self.classDescription as! NSScriptClassDescription
     }
 
-    func deleteElement(_ element:ScriptingObject) {
+    func deleteElement(_ element: ScriptingObject) {
         print ("delete event not handled")
     }
 
@@ -117,7 +117,7 @@ import Articles
     @objc(starred)
     var starred: Bool  {
 		get {
-			article.status.boolStatus(forKey:.starred)
+			article.status.boolStatus(forKey: .starred)
 		}
 		set {
 			markArticles([self.article], statusKey: .starred, flag: newValue)
@@ -137,7 +137,7 @@ import Articles
     @objc(authors)
     var authors: NSArray {
         let articleAuthors = article.authors ?? []
-        return articleAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
+        return articleAuthors.map { ScriptableAuthor($0, container: self) } as NSArray
     }
 
 	@objc(feed)

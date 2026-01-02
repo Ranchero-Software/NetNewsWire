@@ -324,7 +324,7 @@ final class AppDefaults: Sendable {
  		let showDebugMenu = false
  		#endif
 
-		let defaults: [String : Any] = [
+		let defaults: [String: Any] = [
 			Key.sidebarFontSize: FontSize.medium.rawValue,
 			Key.timelineFontSize: FontSize.medium.rawValue,
 			Key.detailFontSize: FontSize.medium.rawValue,
@@ -428,7 +428,7 @@ private extension AppDefaults {
 		UserDefaults.standard.set(date, forKey: key)
 	}
 
-	static func sortDirection(for key:String) -> ComparisonResult {
+	static func sortDirection(for key: String) -> ComparisonResult {
 		let rawInt = int(for: key)
 		if rawInt == ComparisonResult.orderedAscending.rawValue {
 			return .orderedAscending

@@ -36,7 +36,7 @@ import Secrets
 		refresher.downloadProgress
 	}()
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 	}
 
 	@MainActor func refreshAll(for account: Account) async throws {

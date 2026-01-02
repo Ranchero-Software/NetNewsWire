@@ -59,7 +59,7 @@ public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID:
 	func subscribeToZoneChanges()
 
 	/// Process a remove notification
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async
 
 }
 
@@ -126,7 +126,7 @@ public extension CloudKitZone {
 		})
 	}
 
-	func receiveRemoteNotification(userInfo: [AnyHashable : Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {
 			return

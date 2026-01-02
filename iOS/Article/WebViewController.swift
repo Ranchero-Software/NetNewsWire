@@ -403,7 +403,7 @@ extension WebViewController: WKNavigationDelegate {
 				}
 
 				if UIApplication.shared.canOpenURL(emailAddress) {
-					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly : false], completionHandler: nil)
+					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly: false], completionHandler: nil)
 				} else {
 					let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
 					alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
@@ -413,7 +413,7 @@ extension WebViewController: WKNavigationDelegate {
 				decisionHandler(.cancel)
 
 				if UIApplication.shared.canOpenURL(url) {
-					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
+					UIApplication.shared.open(url, options: [.universalLinksOnly: false], completionHandler: nil)
 				}
 
 			} else {

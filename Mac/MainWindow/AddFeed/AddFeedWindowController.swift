@@ -18,8 +18,7 @@ import Account
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
 }
 
-final class AddFeedWindowController : NSWindowController {
-
+final class AddFeedWindowController: NSWindowController {
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!

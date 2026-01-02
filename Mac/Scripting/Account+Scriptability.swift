@@ -65,7 +65,7 @@ import RSCore
         self.classDescription as! NSScriptClassDescription
     }
 
-	func deleteElement(_ element:ScriptingObject) {
+	func deleteElement(_ element: ScriptingObject) {
 		if let scriptableFolder = element as? ScriptableFolder {
 			BatchUpdate.shared.perform {
 				account.removeFolder(scriptableFolder.folder) { _ in
@@ -94,7 +94,7 @@ import RSCore
 
     @objc(feeds)
     var feeds: NSArray  {
-        account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
+        account.topLevelFeeds.map { ScriptableFeed($0, container: self) } as NSArray
     }
 
     @objc(countOfFeeds)
@@ -116,23 +116,23 @@ import RSCore
 		guard let feed = account.existingFeed(withFeedID: id) else {
 			return nil
 		}
-        return ScriptableFeed(feed, container:self)
+        return ScriptableFeed(feed, container: self)
     }
 
     @objc(valueInFeedsWithName:)
     func valueInFeeds(withName name: String) -> ScriptableFeed? {
 		let feeds = Array(account.flattenedFeeds())
-		guard let feed = feeds.first(where:{$0.name == name}) else {
+		guard let feed = feeds.first(where: { $0.name == name }) else {
 			return nil
 		}
-        return ScriptableFeed(feed, container:self)
+        return ScriptableFeed(feed, container: self)
     }
 
     @objc(folders)
     var folders: NSArray  {
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
-		return folders.map { ScriptableFolder($0, container:self) } as NSArray
+		return folders.map { ScriptableFolder($0, container: self) } as NSArray
     }
 
     @objc(countOfFolders)
@@ -151,14 +151,14 @@ import RSCore
     }
 
     @objc(valueInFoldersWithUniqueID:)
-	func valueInFolders(withUniqueID id:NSNumber) -> ScriptableFolder? {
+	func valueInFolders(withUniqueID id: NSNumber) -> ScriptableFolder? {
 		let folderId = id.intValue
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
-		guard let folder = folders.first(where:{$0.folderID == folderId}) else {
+		guard let folder = folders.first(where: { $0.folderID == folderId }) else {
 			return nil
 		}
-		return ScriptableFolder(folder, container:self)
+		return ScriptableFolder(folder, container: self)
 	}
 
 	// MARK: --- Scriptable properties ---
@@ -191,7 +191,7 @@ import RSCore
 		guard let feed = account.existingFeed(withFeedID: id) else {
 			return nil
 		}
-        return ScriptableFeed(feed, container:self)
+        return ScriptableFeed(feed, container: self)
     }
 
     @objc(valueInAllFeedsWithName:)
@@ -200,12 +200,12 @@ import RSCore
 		guard let feed = feeds.first(where: {$0.name == name}) else {
 			return nil
 		}
-        return ScriptableFeed(feed, container:self)
+        return ScriptableFeed(feed, container: self)
     }
 
     @objc(opmlRepresentation)
     var opmlRepresentation: String  {
-        self.account.OPMLString(indentLevel:0)
+        self.account.OPMLString(indentLevel: 0)
     }
 
 	@objc(accountType)

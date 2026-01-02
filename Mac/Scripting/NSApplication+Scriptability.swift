@@ -10,14 +10,14 @@ import AppKit
 import Account
 import Articles
 
-extension NSApplication : @preconcurrency ScriptingObjectContainer {
+extension NSApplication: @preconcurrency ScriptingObjectContainer {
     // MARK: - ScriptingObjectContainer protocol
 	
     nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
 
-    func deleteElement(_ element:ScriptingObject) {
+    func deleteElement(_ element: ScriptingObject) {
         print ("delete event not handled")
     }
 
@@ -40,10 +40,10 @@ extension NSApplication : @preconcurrency ScriptingObjectContainer {
     @objc(selectedArticles)
     func selectedArticles() -> NSArray {
         let articles = appDelegate.scriptingSelectedArticles
-        let scriptableArticles:[ScriptableArticle] = articles.compactMap { article in
+        let scriptableArticles: [ScriptableArticle] = articles.compactMap { article in
             if let feed = article.feed,
                let scriptableFeed = ScriptableFeed.scriptableFeed(for: feed) {
-                return ScriptableArticle(article, container:scriptableFeed)
+                return ScriptableArticle(article, container: scriptableFeed)
             } else {
                 return nil
             }
@@ -91,9 +91,11 @@ extension NSApplication : @preconcurrency ScriptingObjectContainer {
     }
 
     @objc(valueInAccountsWithUniqueID:)
-    func valueInAccounts(withUniqueID id:String) -> ScriptableAccount? {
+    func valueInAccounts(withUniqueID id: String) -> ScriptableAccount? {
         let accounts = AccountManager.shared.accounts
-        guard let account = accounts.first(where:{$0.accountID == id}) else { return nil }
+		guard let account = accounts.first(where: { $0.accountID == id }) else {
+			return nil
+		}
         return ScriptableAccount(account)
     }
 
@@ -105,7 +107,7 @@ extension NSApplication : @preconcurrency ScriptingObjectContainer {
 
     func allFeeds() -> [Feed] {
         let accounts = AccountManager.shared.activeAccounts
-        let emptyFeeds:[Feed] = []
+        let emptyFeeds: [Feed] = []
         return accounts.reduce(emptyFeeds) { (result, nthAccount) -> [Feed] in
               let accountFeeds = Array(nthAccount.topLevelFeeds)
               return result + accountFeeds
@@ -114,7 +116,7 @@ extension NSApplication : @preconcurrency ScriptingObjectContainer {
 
     @objc(feeds)
     func feeds() -> NSArray {
-        allFeeds().map { ScriptableFeed($0, container:self) } as NSArray
+        allFeeds().map { ScriptableFeed($0, container: self) } as NSArray
     }
 
     @objc(countOfFeeds)
@@ -125,14 +127,18 @@ extension NSApplication : @preconcurrency ScriptingObjectContainer {
     @objc(objectInFeedsAtIndex:)
     func objectInFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
         let feeds = allFeeds()
-        guard index >= 0 && index < feeds.count else { return nil }
+		guard index >= 0 && index < feeds.count else {
+			return nil
+		}
         return ScriptableFeed(feeds[index], container: self)
     }
 
     @objc(valueInFeedsWithUniqueID:)
-    func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
+    func valueInFeeds(withUniqueID id: String) -> ScriptableFeed? {
         let feeds = allFeeds()
-        guard let feed = feeds.first(where:{$0.feedID == id}) else { return nil }
-        return ScriptableFeed(feed, container:self)
+		guard let feed = feeds.first(where: { $0.feedID == id} ) else {
+			return nil
+		}
+        return ScriptableFeed(feed, container: self)
     }
 }

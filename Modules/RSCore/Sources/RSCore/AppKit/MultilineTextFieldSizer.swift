@@ -30,7 +30,7 @@ public struct TextFieldSizeInfo: Sendable {
 
 	private let numberOfLines: Int
 	private let font: NSFont
-	private let textField:NSTextField
+	private let textField: NSTextField
 	private let singleLineHeightEstimate: Int
 	private let doubleLineHeightEstimate: Int
 	private var cache = [String: WidthHeightCache]() // Each string has a cache.

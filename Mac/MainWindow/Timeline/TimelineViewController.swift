@@ -605,7 +605,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: - Navigation
 
-	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
+	func goToDeepLink(for userInfo: [AnyHashable: Any]) {
 		guard let articleID = userInfo[ArticlePathKey.articleID] as? String else { return }
 
 		if isReadFiltered ?? false {

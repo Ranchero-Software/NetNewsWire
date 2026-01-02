@@ -20,7 +20,7 @@ public extension FMDatabase {
 		return database
 	}
 
-	func executeUpdateInTransaction(_ sql : String, withArgumentsIn parameters: [Any]? = nil) {
+	func executeUpdateInTransaction(_ sql: String, withArgumentsIn parameters: [Any]? = nil) {
 		beginTransaction()
 		guard executeUpdate(sql, withArgumentsIn: parameters) else {
 			rollback()
