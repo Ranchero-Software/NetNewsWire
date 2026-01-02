@@ -10,8 +10,8 @@ identifier_name:
 #  ignores_urls: true
 
 large_tuple:
-  warning: 3
-  error: 4
+  warning: 4
+  error: 5
 
 disabled_rules:
   - todo

@@ -133,7 +133,7 @@ enum CreateSubscriptionResult {
 		if suspended {
 			throw TransportError.suspended
 		}
-		
+
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
 

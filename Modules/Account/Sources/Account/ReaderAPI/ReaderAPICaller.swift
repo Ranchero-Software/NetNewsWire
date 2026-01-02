@@ -382,7 +382,7 @@ enum CreateReaderAPISubscriptionResult {
 				let idHexString = String(idValue, radix: 16, uppercase: false)
 				return "i=tag:google.com,2005:reader/item/\(idHexString)"
 			}
-		}).joined(separator:"&")
+		}).joined(separator: "&")
 
 		let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
 
@@ -553,7 +553,7 @@ private extension ReaderAPICaller {
 				let idHexString = String(format: "%.16llx", intValue)
 				return "i=tag:google.com,2005:reader/item/\(idHexString)"
 			}
-		}).joined(separator:"&")
+		}).joined(separator: "&")
 
 		let actionIndicator = add ? "a" : "r"
 

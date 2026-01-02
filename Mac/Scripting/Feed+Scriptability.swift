@@ -13,11 +13,10 @@ import Articles
 
 @objc(ScriptableFeed)
 @MainActor final class ScriptableFeed: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
+    let feed: Feed
+    nonisolated(unsafe) let container: ScriptingObjectContainer
 
-    let feed:Feed
-    nonisolated(unsafe) let container:ScriptingObjectContainer
-
-    init (_ feed:Feed, container:ScriptingObjectContainer) {
+    init (_ feed: Feed, container: ScriptingObjectContainer) {
         self.feed = feed
         self.container = container
     }
@@ -30,13 +29,13 @@ import Articles
 
     @objc(scriptingSpecifierDescriptor)
     func scriptingSpecifierDescriptor() -> NSScriptObjectSpecifier {
-        return (self.objectSpecifier ?? NSScriptObjectSpecifier() )
+        objectSpecifier ?? NSScriptObjectSpecifier()
     }
 
     // MARK: --- ScriptingObject protocol ---
 
     nonisolated var scriptingKey: String {
-        return "feeds"
+        "feeds"
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
@@ -44,14 +43,14 @@ import Articles
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
-    nonisolated var scriptingUniqueID:Any {
-        return feed.feedID
+    nonisolated var scriptingUniqueID: Any {
+        feed.feedID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
     nonisolated var scriptingClassDescription: NSScriptClassDescription {
-        return self.classDescription as! NSScriptClassDescription
+       classDescription as! NSScriptClassDescription
     }
 
     func deleteElement(_ element:ScriptingObject) {
@@ -59,8 +58,8 @@ import Articles
 
     // MARK: --- handle NSCreateCommand ---
 
-    class func urlForNewFeed(arguments:[String:Any]) -> String?  {
-        var url:String?
+    class func urlForNewFeed(arguments: [String:Any]) -> String?  {
+        var url: String?
         if let withDataParam = arguments["ObjectData"] {
             if let objectDataDescriptor = withDataParam as? NSAppleEventDescriptor {
                 url = objectDataDescriptor.stringValue
@@ -71,22 +70,24 @@ import Articles
         return url
     }
 
-    class func scriptableFeed(_ feed:Feed, account:Account, folder:Folder?) -> ScriptableFeed  {
+    class func scriptableFeed(_ feed: Feed, account: Account, folder: Folder?) -> ScriptableFeed  {
         let scriptableAccount = ScriptableAccount(account)
         if let folder = folder {
-            let scriptableFolder = ScriptableFolder(folder, container:scriptableAccount)
-            return ScriptableFeed(feed, container:scriptableFolder)
+            let scriptableFolder = ScriptableFolder(folder, container: scriptableAccount)
+            return ScriptableFeed(feed, container: scriptableFolder)
         } else  {
-            return ScriptableFeed(feed, container:scriptableAccount)
+            return ScriptableFeed(feed, container: scriptableAccount)
         }
     }
 
     class func scriptableFeed(for feed: Feed) -> ScriptableFeed? {
-        guard let account = feed.account else { return nil }
+		guard let account = feed.account else {
+			return nil
+		}
 
         // Find the proper container hierarchy
         let containers = account.existingContainers(withFeed: feed)
-        var folder: Folder? = nil
+        var folder: Folder?
 
         // Check if feed is in a folder
         for container in containers {
@@ -99,14 +100,21 @@ import Articles
         return scriptableFeed(feed, account: account, folder: folder)
     }
 
-    class func handleCreateElement(command:NSCreateCommand) -> Any?  {
-        guard command.isCreateCommand(forClass:"Feed") else { return nil }
-        guard let arguments = command.arguments else {return nil}
-        let titleFromArgs = command.property(forKey:"name") as? String
-        let (account, folder) = command.accountAndFolderForNewChild()
-        guard let url = self.urlForNewFeed(arguments:arguments) else {return nil}
+    static func handleCreateElement(command: NSCreateCommand) -> Any?  {
+		guard command.isCreateCommand(forClass:"Feed") else {
+			return nil
+		}
+		guard let arguments = command.arguments else {
+			return nil
+		}
 
-        if let existingFeed = account.existingFeed(withURL:url) {
+        let titleFromArgs = command.property(forKey: "name") as? String
+        let (account, folder) = command.accountAndFolderForNewChild()
+		guard let url = self.urlForNewFeed(arguments:arguments) else {
+			return nil
+		}
+
+        if let existingFeed = account.existingFeed(withURL: url) {
             return scriptableFeed(existingFeed, account:account, folder:folder).objectSpecifier
         }
 
@@ -124,10 +132,10 @@ import Articles
 			switch result {
 			case .success(let feed):
 				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-				let scriptableFeed = self.scriptableFeed(feed, account:account, folder:folder)
-				command.resumeExecution(withResult:scriptableFeed.objectSpecifier)
+				let scriptableFeed = self.scriptableFeed(feed, account: account, folder: folder)
+				command.resumeExecution(withResult: scriptableFeed.objectSpecifier)
 			case .failure:
-				command.resumeExecution(withResult:nil)
+				command.resumeExecution(withResult: nil)
 			}
 
 		}
@@ -138,64 +146,67 @@ import Articles
     // MARK: --- Scriptable properties ---
 
     @objc(url)
-    var url:String  {
-        return self.feed.url
+    var url: String  {
+        feed.url
     }
 
     @objc(name)
-    var name:String  {
-        return self.feed.name ?? ""
+    var name: String  {
+        feed.name ?? ""
     }
 
     @objc(homePageURL)
-    var homePageURL:String  {
-        return self.feed.homePageURL ?? ""
+    var homePageURL: String  {
+		feed.homePageURL ?? ""
     }
 
     @objc(iconURL)
-    var iconURL:String  {
-        return self.feed.iconURL ?? ""
+    var iconURL: String  {
+        feed.iconURL ?? ""
     }
 
     @objc(faviconURL)
-    var faviconURL:String  {
-        return self.feed.faviconURL ?? ""
+    var faviconURL: String  {
+        feed.faviconURL ?? ""
     }
 
     @objc(opmlRepresentation)
-    var opmlRepresentation:String  {
-        return self.feed.OPMLString(indentLevel:0)
+    var opmlRepresentation: String  {
+        feed.OPMLString(indentLevel:0)
     }
 
     // MARK: --- scriptable elements ---
 
     @objc(authors)
-    var authors:NSArray {
+    var authors: NSArray {
         let feedAuthors = feed.authors ?? []
         return feedAuthors.map { ScriptableAuthor($0, container:self) } as NSArray
     }
 
     @objc(valueInAuthorsWithUniqueID:)
-    func valueInAuthors(withUniqueID id:String) -> ScriptableAuthor? {
-        guard let author = feed.authors?.first(where:{$0.authorID == id}) else { return nil }
+    func valueInAuthors(withUniqueID id: String) -> ScriptableAuthor? {
+		guard let author = feed.authors?.first(where: {$0.authorID == id}) else {
+			return nil
+		}
         return ScriptableAuthor(author, container:self)
     }
 
     @objc(articles)
-    var articles:NSArray {
+    var articles: NSArray {
         let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
         // the articles are a set, use the sorting algorithm from the viewer
-        let sortedArticles = feedArticles.sorted(by:{
+        let sortedArticles = feedArticles.sorted(by: {
             return $0.logicalDatePublished > $1.logicalDatePublished
         })
         return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
     }
 
     @objc(valueInArticlesWithUniqueID:)
-    func valueInArticles(withUniqueID id:String) -> ScriptableArticle? {
+    func valueInArticles(withUniqueID id: String) -> ScriptableArticle? {
         let articles = (try? feed.fetchArticles()) ?? Set<Article>()
-        guard let article = articles.first(where:{$0.uniqueID == id}) else { return nil }
-        return ScriptableArticle(article, container:self)
+		guard let article = articles.first(where: {$0.uniqueID == id}) else {
+			return nil
+		}
+        return ScriptableArticle(article, container: self)
     }
-
 }

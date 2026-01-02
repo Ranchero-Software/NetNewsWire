@@ -21,7 +21,7 @@ import RSCore
     @objc(objectSpecifier)
     nonisolated override var objectSpecifier: NSScriptObjectSpecifier? {
         let myContainer = MainActor.assumeIsolated { NSApplication.shared }
-        return myContainer.makeFormUniqueIDScriptObjectSpecifier(forObject:self)
+        return myContainer.makeFormUniqueIDScriptObjectSpecifier(forObject: self)
     }
 
 	@objc(scriptingIsActive)
@@ -68,7 +68,7 @@ import RSCore
 	func deleteElement(_ element:ScriptingObject) {
 		if let scriptableFolder = element as? ScriptableFolder {
 			BatchUpdate.shared.perform {
-				account.removeFolder(scriptableFolder.folder) { result in
+				account.removeFolder(scriptableFolder.folder) { _ in
 				}
 			}
 		} else if let scriptableFeed = element as? ScriptableFeed {
@@ -79,7 +79,7 @@ import RSCore
 				} else {
 					container = account
 				}
-				account.removeFeed(scriptableFeed.feed, from: container!) { result in
+				account.removeFeed(scriptableFeed.feed, from: container!) { _ in
 				}
 			}
 		}
@@ -151,17 +151,17 @@ import RSCore
     }
 
     @objc(valueInFoldersWithUniqueID:)
-    func valueInFolders(withUniqueID id:NSNumber) -> ScriptableFolder? {
-        let folderId = id.intValue
+	func valueInFolders(withUniqueID id:NSNumber) -> ScriptableFolder? {
+		let folderId = id.intValue
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
 		guard let folder = folders.first(where:{$0.folderID == folderId}) else {
 			return nil
 		}
-        return ScriptableFolder(folder, container:self)
-    }    
+		return ScriptableFolder(folder, container:self)
+	}
 
-    // MARK: --- Scriptable properties ---
+	// MARK: --- Scriptable properties ---
 
     @objc(allFeeds)
     var allFeeds: NSArray  {
@@ -204,33 +204,33 @@ import RSCore
     }
 
     @objc(opmlRepresentation)
-    var opmlRepresentation:String  {
+    var opmlRepresentation: String  {
         self.account.OPMLString(indentLevel:0)
     }
 
-    @objc(accountType)
-    var accountType:OSType {
-        var osType:String = ""
-        switch self.account.type {
-        case .onMyMac:
-                osType = "Locl"
+	@objc(accountType)
+	var accountType: OSType {
+		var osType: String = ""
+		switch account.type {
+		case .onMyMac:
+			osType = "Locl"
 		case .cloudKit:
-				osType = "Clkt"
-        case .feedly:
-                osType = "Fdly"
-        case .feedbin:
-                osType = "Fdbn"
-        case .newsBlur:
-                osType = "NBlr"
+			osType = "Clkt"
+		case .feedly:
+			osType = "Fdly"
+		case .feedbin:
+			osType = "Fdbn"
+		case .newsBlur:
+			osType = "NBlr"
 		case .freshRSS:
-				osType = "Frsh"
+			osType = "Frsh"
 		case .inoreader:
-				osType = "Inrd"
+			osType = "Inrd"
 		case .bazQux:
-				osType = "Bzqx"
+			osType = "Bzqx"
 		case .theOldReader:
-				osType = "Tord"
-        }
-        return osType.fourCharCode
-    }
+			osType = "Tord"
+		}
+		return osType.fourCharCode
+	}
 }
