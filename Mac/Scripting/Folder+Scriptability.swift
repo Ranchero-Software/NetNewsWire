@@ -64,7 +64,7 @@ import RSCore
 	 or
 	 tell account X to make new folder at end with properties {name:"new folder name"}
 	 */
-	class func handleCreateElement(command: NSCreateCommand) -> Any?  {
+	static func handleCreateElement(command: NSCreateCommand) -> Any?  {
 		guard command.isCreateCommand(forClass: "fold") else {
 			return nil
 		}
@@ -147,7 +147,7 @@ import RSCore
 	}
 
 	@objc(opmlRepresentation)
-	var opmlRepresentation: String  {
+	var opmlRepresentation: String {
 		folder.OPMLString(indentLevel: 0)
 	}
 }

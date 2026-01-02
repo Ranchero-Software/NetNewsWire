@@ -82,7 +82,7 @@ public extension String {
 
 		let s = self.trimmingWhitespace
 
-		if (s.isEmpty || (!s.contains(".") && !s.mayBeIPv6URL && !s.hostMayBeLocalhost)) {
+		if s.isEmpty || (!s.contains(".") && !s.mayBeIPv6URL && !s.hostMayBeLocalhost) {
 			return false
 		}
 
@@ -274,7 +274,7 @@ public extension String {
 				escaped.append(char)
 			}
 		}
-		
+
 		return escaped
 	}
 

@@ -119,7 +119,7 @@ extension SidebarViewController {
 					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 				}
 			} else {
-				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { granted, _ in
 					if granted {
 						DispatchQueue.main.async {
 							if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
@@ -215,7 +215,7 @@ private extension SidebarViewController {
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		if let homePageURL = feed.homePageURL, let _ = URL(string: homePageURL) {
+		if let homePageURL = feed.homePageURL, URL(string: homePageURL) != nil {
 			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL, image: Assets.Images.openInBrowser)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())

@@ -32,7 +32,7 @@ public struct FeedSpecifier: Hashable, Sendable {
 		self.source = source
 		self.orderFound = orderFound
 	}
-	
+
 	/// Some feed URLs are known in advance. Save time/bandwidth by special-casing those.
 	static func knownFeedSpecifier(url: URL) -> FeedSpecifier? {
 		if url.isRachelByTheBayURL {

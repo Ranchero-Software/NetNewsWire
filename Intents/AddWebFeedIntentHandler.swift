@@ -37,7 +37,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		guard let extensionContainers = await ExtensionContainersFile.read() else {
 			throw AddWebFeedIntentHandlerError.communicationFailure
 		}
-		
+
 		let accountNames = extensionContainers.accounts.map { $0.name }
 		return accountNames
 	}
@@ -46,7 +46,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		guard let accountName = intent.accountName else {
 			return .notRequired()
 		}
-		
+
 		guard let extensionContainers = await ExtensionContainersFile.read() else {
 			return .unsupported(forReason: .communication)
 		}

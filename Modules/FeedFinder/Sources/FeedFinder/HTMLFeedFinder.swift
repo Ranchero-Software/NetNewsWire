@@ -25,7 +25,7 @@ final class HTMLFeedFinder {
 
 		for oneFeedLink in metadata.feedLinks {
 			if let oneURLString = oneFeedLink.urlString?.normalizedURL {
-				orderFound = orderFound + 1
+				orderFound += 1
 				let oneFeedSpecifier = FeedSpecifier(title: oneFeedLink.title, urlString: oneURLString, source: .HTMLHead, orderFound: orderFound)
 				addFeedSpecifier(oneFeedSpecifier)
 			}
@@ -34,7 +34,7 @@ final class HTMLFeedFinder {
 		let bodyLinks = RSHTMLLinkParser.htmlLinks(with: parserData)
 		for oneBodyLink in bodyLinks {
 			if linkMightBeFeed(oneBodyLink), let normalizedURL = oneBodyLink.urlString?.normalizedURL {
-				orderFound = orderFound + 1
+				orderFound += 1
 				let oneFeedSpecifier = FeedSpecifier(title: oneBodyLink.text, urlString: normalizedURL, source: .HTMLLink, orderFound: orderFound)
 				addFeedSpecifier(oneFeedSpecifier)
 			}

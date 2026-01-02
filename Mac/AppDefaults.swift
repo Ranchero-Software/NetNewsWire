@@ -65,7 +65,7 @@ final class AppDefaults: Sendable {
 	}()
 
 	let isFirstRun: Bool = {
-		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
+		if UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date != nil {
 			return false
 		}
 		firstRunDate = Date()

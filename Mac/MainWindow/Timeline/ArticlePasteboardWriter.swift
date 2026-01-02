@@ -38,7 +38,7 @@ extension Article: @retroactive PasteboardWriterOwner {
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 		var types = [ArticlePasteboardWriter.articleUTIType]
 
-		if article.preferredURL != nil{
+		if article.preferredURL != nil {
 			types += [.URL]
 		}
 		types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]
@@ -182,6 +182,6 @@ private extension ArticlePasteboardWriter {
 		guard let authors = article.authors, !authors.isEmpty else {
 			return nil
 		}
-		return authors.map{ authorDictionary($0) }
+		return authors.map { authorDictionary($0) }
 	}
 }

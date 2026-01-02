@@ -41,7 +41,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 	}
 
 	override func messageReceived(withName messageName: String, from page: SFSafariPage, userInfo: [String: Any]?) {
-		if (messageName == "subscribeToFeed") {
+		if messageName == "subscribeToFeed" {
 			if var feedURLString = userInfo?["url"] as? String {
 				var openInDefaultBrowser = false
 
@@ -61,7 +61,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 					NSWorkspace.shared.open(feedURL)
 				}
 			}
-		} else if (messageName == "pong") {
+		} else if messageName == "pong" {
 			if let validationIDString = userInfo?["validationID"] as? String {
 				// Should we validate the button?
 				let shouldValidate = userInfo?["shouldValidate"] as? Bool ?? false
