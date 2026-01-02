@@ -241,4 +241,3 @@ private extension MultilineTextFieldSizer {
 }
 
 #endif
-

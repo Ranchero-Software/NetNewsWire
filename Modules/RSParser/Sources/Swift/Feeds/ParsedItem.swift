@@ -29,11 +29,24 @@ public struct ParsedItem: Hashable, Sendable {
 	public let tags: Set<String>?
 	public let attachments: Set<ParsedAttachment>?
 
-	public init(syncServiceID: String?, uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?,
-				language: String?, contentHTML: String?, contentText: String?, markdown: String?, summary: String?, imageURL: String?,
-				bannerImageURL: String?,datePublished: Date?, dateModified: Date?, authors: Set<ParsedAuthor>?,
-				tags: Set<String>?, attachments: Set<ParsedAttachment>?) {
-
+	public init(syncServiceID: String?,
+				uniqueID: String,
+				feedURL: String,
+				url: String?,
+				externalURL: String?,
+				title: String?,
+				language: String?,
+				contentHTML: String?,
+				contentText: String?,
+				markdown: String?,
+				summary: String?,
+				imageURL: String?,
+				bannerImageURL: String?,
+				datePublished: Date?,
+				dateModified: Date?,
+				authors: Set<ParsedAuthor>?,
+				tags: Set<String>?,
+				attachments: Set<ParsedAttachment>?) {
 		self.syncServiceID = syncServiceID
 		self.uniqueID = uniqueID
 		self.feedURL = feedURL

@@ -308,7 +308,7 @@ private extension DownloadSession {
 
 		var currentURL = url
 
-		while(true) {
+		while true {
 
 			if let oneRedirectURL = redirectCache[currentURL] {
 

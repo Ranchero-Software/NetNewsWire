@@ -45,7 +45,7 @@ final class OpenInBrowserActivity: UIActivity {
 		Task { @MainActor in
 			UIApplication.shared.open(url, options: [:], completionHandler: nil)
 		}
-		
+
 		activityDidFinish(true)
 	}
 }

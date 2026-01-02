@@ -735,7 +735,7 @@ nonisolated private extension ArticlesTable {
 	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
 		nonisolated(unsafe) var articlesCount = 0
 		nonisolated(unsafe) var error: DatabaseError? = nil
-		
+
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
 			case .success(let database):
@@ -859,8 +859,8 @@ nonisolated private extension ArticlesTable {
 
 	func sqliteSearchString(with searchString: String) -> String {
 		var s = ""
-		searchString.enumerateSubstrings(in: searchString.startIndex..<searchString.endIndex, options: .byWords) { (word, range, enclosingRange, stop) in
-			guard let word = word else {
+		searchString.enumerateSubstrings(in: searchString.startIndex..<searchString.endIndex, options: .byWords) { (word, _, _, stop) in
+			guard let word else {
 				return
 			}
 			s += word

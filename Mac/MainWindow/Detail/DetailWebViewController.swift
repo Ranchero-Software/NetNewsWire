@@ -208,7 +208,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			decisionHandler(.cancel)
 			return
 		}
-		
+
 		decisionHandler(.allow)
 	}
 

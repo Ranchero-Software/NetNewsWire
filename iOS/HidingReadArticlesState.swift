@@ -19,7 +19,7 @@ import Account
 		feedsHidingReadArticles = stateRestorationInfo.feedsHidingReadArticles
 		foldersShowingReadArticles = stateRestorationInfo.foldersShowingReadArticles
 	}
-	
+
 	func save() {
 		saveSmartFeedsHidingReadArticles()
 		saveFeedsHidingReadArticles()

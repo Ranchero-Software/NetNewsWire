@@ -12,8 +12,8 @@ import Articles
 
 extension NSApplication: @preconcurrency ScriptingObjectContainer {
     // MARK: - ScriptingObjectContainer protocol
-	
-    nonisolated var scriptingClassDescription: NSScriptClassDescription {
+
+	nonisolated var scriptingClassDescription: NSScriptClassDescription {
         return self.classDescription as! NSScriptClassDescription
     }
 

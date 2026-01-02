@@ -149,7 +149,7 @@ final class FeedbinAccountViewController: UITableViewController {
 	}
 
 	@objc func textDidChange(_ note: Notification) {
-		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false) 
+		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
 	}
 
 	private func showError(_ message: String) {

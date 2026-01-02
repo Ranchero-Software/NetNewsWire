@@ -442,7 +442,7 @@ private extension SidebarOutlineDataSource {
 		Task { @MainActor in
 			do {
 				let destinationFolder = try await destinationAccount.addFolder(folder.name ?? "")
-				
+
 				for feed in folder.topLevelFeeds {
 					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in

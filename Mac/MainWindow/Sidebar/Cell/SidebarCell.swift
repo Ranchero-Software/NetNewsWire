@@ -91,7 +91,7 @@ final class SidebarCell: NSTableCellView {
 		commonInit()
 	}
 
-	required init?(coder: NSCoder) {		
+	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
