@@ -71,20 +71,20 @@ final class ReaderAPIAccountViewController: UITableViewController {
 
 	private func setupFooter() {
 		switch accountType {
-			case .bazQux:
-				footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
-			case .inoreader:
-				footerLabel.text = NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Inoreader SignUp"), for: .normal)
-			case .theOldReader:
-				footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
-			case .freshRSS:
-				footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
-				signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
-			default:
-				return
+		case .bazQux:
+			footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
+		case .inoreader:
+			footerLabel.text = NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Inoreader SignUp"), for: .normal)
+		case .theOldReader:
+			footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
+		case .freshRSS:
+			footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
+			signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
+		default:
+			return
 		}
 	}
 
@@ -246,16 +246,16 @@ final class ReaderAPIAccountViewController: UITableViewController {
 	@IBAction func signUpWithProvider(_ sender: Any) {
 		var url: URL!
 		switch accountType {
-			case .bazQux:
-				url = URL(string: "https://bazqux.com")!
-			case .inoreader:
-				url = URL(string: "https://www.inoreader.com")!
-			case .theOldReader:
-				url = URL(string: "https://theoldreader.com")!
-			case .freshRSS:
-				url = URL(string: "https://freshrss.org")!
-			default:
-				return
+		case .bazQux:
+			url = URL(string: "https://bazqux.com")!
+		case .inoreader:
+			url = URL(string: "https://www.inoreader.com")!
+		case .theOldReader:
+			url = URL(string: "https://theoldreader.com")!
+		case .freshRSS:
+			url = URL(string: "https://freshrss.org")!
+		default:
+			return
 		}
 		let safari = SFSafariViewController(url: url)
 		safari.modalPresentationStyle = .currentContext

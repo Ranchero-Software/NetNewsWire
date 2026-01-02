@@ -461,7 +461,7 @@ extension Notification.Name {
 		}
 	}
 
-	//MARK: - Node Manipulation
+	// MARK: - Node Manipulation
 
 	func deleteNodes(_ nodes: [Node]) {
 		let nodesToDelete = treeController.normalizedSelectedNodes(nodes)
@@ -537,7 +537,7 @@ extension SidebarViewController: NSUserInterfaceValidations {
 	}
 }
 
-//MARK: - Private
+// MARK: - Private
 
 private extension SidebarViewController {
 

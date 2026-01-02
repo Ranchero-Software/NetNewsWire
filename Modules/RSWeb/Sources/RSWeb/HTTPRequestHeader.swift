@@ -17,5 +17,5 @@ nonisolated public struct HTTPRequestHeader {
 	// Conditional GET
 
 	public static let ifModifiedSince = "If-Modified-Since"
-	public static let ifNoneMatch = "If-None-Match" //Etag
+	public static let ifNoneMatch = "If-None-Match" // Etag
 }

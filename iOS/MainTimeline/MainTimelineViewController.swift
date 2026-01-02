@@ -217,7 +217,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		//navigationItem.subtitle = "" // don't inherit feeds subtitle on push
+		// navigationItem.subtitle = "" // don't inherit feeds subtitle on push
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)
 	}

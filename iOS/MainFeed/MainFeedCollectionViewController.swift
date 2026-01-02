@@ -516,7 +516,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
-		//applyToCellsForRepresentedObject(representedObject, configure)
+		// applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {

@@ -10,8 +10,8 @@ import Foundation
 import RSMarkdown
 
 public struct ParsedItem: Hashable, Sendable {
-	public let syncServiceID: String? //Nil when not syncing
-	public let uniqueID: String //RSS guid, for instance; may be calculated
+	public let syncServiceID: String? // Nil when not syncing
+	public let uniqueID: String // RSS guid, for instance; may be calculated
 	public let feedURL: String
 	public let url: String?
 	public let externalURL: String?

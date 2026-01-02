@@ -996,27 +996,27 @@ extension TimelineViewController: NSTableViewDelegate {
 		}
 
 		switch edge {
-			case .leading:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (action, row) in
-					self.toggleArticleRead(article)
-					tableView.rowActionsVisible = false
-				}
-				action.image = article.status.read ? Assets.Images.swipeMarkUnread : Assets.Images.swipeMarkRead
-				return [action]
-
-			case .trailing:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (action, row) in
-					self.toggleArticleStarred(article)
-					tableView.rowActionsVisible = false
-				}
+		case .leading:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (action, row) in
+				self.toggleArticleRead(article)
+				tableView.rowActionsVisible = false
+			}
+			action.image = article.status.read ? Assets.Images.swipeMarkUnread : Assets.Images.swipeMarkRead
+			return [action]
+			
+		case .trailing:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (action, row) in
+				self.toggleArticleStarred(article)
+				tableView.rowActionsVisible = false
+			}
 			action.backgroundColor = Assets.Colors.star
-				action.image = article.status.starred ? Assets.Images.swipeMarkUnstarred : Assets.Images.swipeMarkStarred
-				return [action]
-
-			@unknown default:
-				Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
+			action.image = article.status.starred ? Assets.Images.swipeMarkUnstarred : Assets.Images.swipeMarkStarred
+			return [action]
+			
+		@unknown default:
+			Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
 		}
-
+		
 		return []
 	}
 }

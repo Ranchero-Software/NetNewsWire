@@ -242,7 +242,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 					articlesToDelete = Set<Article>()
 				}
 
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) //7
+				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) // 7
 
 				self.addArticlesToCache(newArticles)
 				self.addArticlesToCache(updatedArticles)
@@ -298,29 +298,29 @@ final class ArticlesTable: DatabaseTable, Sendable {
 					articleIDs.formUnion(parsedItems.articleIDs())
 				}
 
-				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) //1
+				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) // 1
 				assert(statusesDictionary.count == articleIDs.count)
 
-				let allIncomingArticles = Article.articlesWithFeedIDsAndItems(feedIDsAndItems, self.accountID, statusesDictionary) //2
+				let allIncomingArticles = Article.articlesWithFeedIDsAndItems(feedIDsAndItems, self.accountID, statusesDictionary) // 2
 				if allIncomingArticles.isEmpty {
 					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 					return
 				}
 
-				let incomingArticles = self.filterIncomingArticles(allIncomingArticles) //3
+				let incomingArticles = self.filterIncomingArticles(allIncomingArticles) // 3
 				if incomingArticles.isEmpty {
 					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 					return
 				}
 
 				let incomingArticleIDs = incomingArticles.articleIDs()
-				let fetchedArticles = self.fetchArticles(articleIDs: incomingArticleIDs, database) //4
+				let fetchedArticles = self.fetchArticles(articleIDs: incomingArticleIDs, database) // 4
 				let fetchedArticlesDictionary = fetchedArticles.dictionary()
 
-				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
-				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
+				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //
+				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) // 6
 
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, nil, completion) //7
+				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, nil, completion) // 7
 
 				self.addArticlesToCache(newArticles)
 				self.addArticlesToCache(updatedArticles)
@@ -987,7 +987,7 @@ nonisolated private extension ArticlesTable {
 		return newArticles.isEmpty ? nil : newArticles
 	}
 
-	func findAndSaveNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //5
+	func findAndSaveNewArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { // 5
 		guard let newArticles = findNewArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
 		}
@@ -1032,7 +1032,7 @@ nonisolated private extension ArticlesTable {
 	}
 
 	func findUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
-		let updatedArticles = incomingArticles.filter{ (incomingArticle) -> Bool in //6
+		let updatedArticles = incomingArticles.filter{ (incomingArticle) -> Bool in // 6
 			if let existingArticle = fetchedArticlesDictionary[incomingArticle.articleID] {
 				if existingArticle != incomingArticle {
 					return true
@@ -1044,7 +1044,7 @@ nonisolated private extension ArticlesTable {
 		return updatedArticles.isEmpty ? nil : updatedArticles
 	}
 
-	func findAndSaveUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { //6
+	func findAndSaveUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article], _ database: FMDatabase) -> Set<Article>? { // 6
 		guard let updatedArticles = findUpdatedArticles(incomingArticles, fetchedArticlesDictionary) else {
 			return nil
 		}

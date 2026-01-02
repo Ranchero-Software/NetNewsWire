@@ -14,10 +14,9 @@ import Secrets
 public extension URLRequest {
 
 	init(url: URL, credentials: Credentials?, conditionalGet: HTTPConditionalGetInfo? = nil) {
-
 		self.init(url: url)
 
-		guard let credentials = credentials else {
+		guard let credentials else {
 			return
 		}
 
@@ -33,15 +32,15 @@ public extension URLRequest {
 			var postData = URLComponents()
 			postData.queryItems = [
 				URLQueryItem(name: "username", value: credentials.username),
-				URLQueryItem(name: "password", value: credentials.secret),
+				URLQueryItem(name: "password", value: credentials.secret)
 			]
 			httpBody = postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 		case .newsBlurSessionID:
 			setValue("\(NewsBlurAPICaller.sessionIDCookieKey)=\(credentials.secret)", forHTTPHeaderField: "Cookie")
 			httpShouldHandleCookies = true
 		case .readerBasic:
-            setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            httpMethod = "POST"
+			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+			httpMethod = "POST"
 			var postData = URLComponents()
 			postData.queryItems = [
 				URLQueryItem(name: "Email", value: credentials.username),
@@ -49,22 +48,22 @@ public extension URLRequest {
 			]
 			httpBody = postData.enhancedPercentEncodedQuery?.data(using: .utf8)
 		case .readerAPIKey:
-            let auth = "GoogleLogin auth=\(credentials.secret)"
-            setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
+			let auth = "GoogleLogin auth=\(credentials.secret)"
+			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
 		case .oauthAccessToken:
-            let auth = "OAuth \(credentials.secret)"
-            setValue(auth, forHTTPHeaderField: "Authorization")
+			let auth = "OAuth \(credentials.secret)"
+			setValue(auth, forHTTPHeaderField: "Authorization")
 		case .oauthAccessTokenSecret:
-            assertionFailure("Token secrets are used by OAuth1. Did you mean to use `OAuthSwift` instead of a URLRequest?")
-            break
-        case .oauthRefreshToken:
-            // While both access and refresh tokens are credentials, it seems the `Credentials` cases
-            // enumerates how the identity of the user can be proved rather than
-            // credentials-in-general, such as in this refresh token case,
-            // the authority to prove an identity.
-            assertionFailure("Refresh tokens are used to replace expired access tokens. Did you mean to use `accessToken` instead?")
-            break
-        }
+			assertionFailure("Token secrets are used by OAuth1. Did you mean to use `OAuthSwift` instead of a URLRequest?")
+			break
+		case .oauthRefreshToken:
+			// While both access and refresh tokens are credentials, it seems the `Credentials` cases
+			// enumerates how the identity of the user can be proved rather than
+			// credentials-in-general, such as in this refresh token case,
+			// the authority to prove an identity.
+			assertionFailure("Refresh tokens are used to replace expired access tokens. Did you mean to use `accessToken` instead?")
+			break
+		}
 
 		guard let conditionalGet = conditionalGet else {
 			return
@@ -78,7 +77,5 @@ public extension URLRequest {
 		if let etag = conditionalGet.etag {
 			setValue(etag, forHTTPHeaderField: HTTPRequestHeader.ifNoneMatch)
 		}
-
 	}
-
 }

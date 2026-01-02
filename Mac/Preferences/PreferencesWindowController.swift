@@ -175,7 +175,7 @@ private extension PreferencesWindowController {
 		var updatedWindowFrame = windowFrame
 		updatedWindowFrame.size.height = heightForWindow
 		updatedWindowFrame.origin.y = windowOriginY
-		updatedWindowFrame.size.width = windowWidth //NSWidth(viewFrame)
+		updatedWindowFrame.size.width = windowWidth // NSWidth(viewFrame)
 
 		var updatedViewFrame = viewFrame
 		updatedViewFrame.origin = NSZeroPoint

@@ -66,7 +66,7 @@ import Articles
 
 	}
 
-	init() { //Empty
+	init() { // Empty
 		self.title = ""
 		self.attributedTitle = NSAttributedString()
 		self.summary = ""
