@@ -227,8 +227,7 @@ private extension MultilineTextFieldSizer {
 
 			if oneWidth < width && (oneWidth > smallNeighbor.width || smallNeighbor.width == 0) {
 				smallNeighbor = (oneWidth, oneHeight)
-			}
-			else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
+			} else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
 				largeNeighbor = (oneWidth, oneHeight)
 			}
 

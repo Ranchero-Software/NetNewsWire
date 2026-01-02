@@ -134,8 +134,7 @@ final class AtomParserTests: XCTestCase {
 			let author = article.authors!.first!
 			if author.name == "Daring Fireball Department of Commerce" {
 				XCTAssertNil(author.url)
-			}
-			else {
+			} else {
 				XCTAssertEqual(author.name, "John Gruber")
 				XCTAssertEqual(author.url, "http://daringfireball.net/")
 			}

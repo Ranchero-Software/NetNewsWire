@@ -19,8 +19,7 @@ public extension NSResponder {
 			}
 			if let _ = nomad.nextResponder {
 				nomad = nomad.nextResponder!
-			}
-			else {
+			} else {
 				break
 			}
 		}

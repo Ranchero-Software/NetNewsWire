@@ -43,8 +43,7 @@ import Articles
 
 		if let feedName = feedName {
 			self.feedName = ArticleStringFormatter.truncatedFeedName(feedName)
-		}
-		else {
+		} else {
 			self.feedName = ""
 		}
 

@@ -149,8 +149,7 @@ private extension TimelineTableCellView {
 
 		if Int(floor(rect.height)) == 0 || Int(floor(rect.width)) == 0 {
 			hideView(textField)
-		}
-		else {
+		} else {
 			showView(textField)
 			textField.setFrame(ifNotEqualTo: rect)
 		}

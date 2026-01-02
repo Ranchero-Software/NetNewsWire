@@ -54,8 +54,7 @@ public struct RSSInJSONParser {
 
 			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, language: feedLanguage, feedDescription: feedDescription, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 
-		}
-		catch { throw error }
+		} catch { throw error }
 	}
 }
 
@@ -149,8 +148,7 @@ private extension RSSInJSONParser {
 				return Set([oneTag])
 			}
 			return nil
-		}
-		else if let categoryArray = itemDictionary["category"] as? JSONArray {
+		} else if let categoryArray = itemDictionary["category"] as? JSONArray {
 			return Set(categoryArray.compactMap{ $0["#value"] as? String })
 		}
 		return nil

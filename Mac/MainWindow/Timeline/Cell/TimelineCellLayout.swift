@@ -42,8 +42,7 @@ import RSCore
 
 		if height > 0.1 {
 			self.height = height
-		}
-		else {
+		} else {
 			self.height = [feedNameRect, dateRect, titleRect, summaryRect, textRect, unreadIndicatorRect, iconImageRect].maxY() + paddingBottom
 		}
 	}
@@ -62,8 +61,7 @@ import RSCore
 		var lastTextRect = titleRect
 		if numberOfLinesForTitle == 0 {
 			lastTextRect = textRect
-		}
-		else if numberOfLinesForTitle < appearance.titleNumberOfLines {
+		} else if numberOfLinesForTitle < appearance.titleNumberOfLines {
 			if summaryRect.height > 0.1 {
 				lastTextRect = summaryRect
 			}

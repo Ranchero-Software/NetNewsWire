@@ -61,8 +61,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 					NSWorkspace.shared.open(feedURL)
 				}
 			}
-		}
-		else if (messageName == "pong") {
+		} else if (messageName == "pong") {
 			if let validationIDString = userInfo?["validationID"] as? String {
 				// Should we validate the button?
 				let shouldValidate = userInfo?["shouldValidate"] as? Bool ?? false

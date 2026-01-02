@@ -117,8 +117,7 @@ final class AppDefaults: Sendable {
 		if let appGroupID = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String,
 		   let appGroupDefaults = UserDefaults(suiteName: appGroupID) {
 			return appGroupDefaults
-		}
-		else {
+		} else {
 			return UserDefaults.standard
 		}
 	}
@@ -439,8 +438,7 @@ private extension AppDefaults {
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {
 		if value == .orderedAscending {
 			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
-		}
-		else {
+		} else {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
 	}

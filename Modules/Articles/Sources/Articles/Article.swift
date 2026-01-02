@@ -47,8 +47,7 @@ public final class Article: Hashable, Sendable {
 
 		if let articleID = articleID {
 			self.articleID = articleID
-		}
-		else {
+		} else {
 			self.articleID = Article.calculatedArticleID(feedID: feedID, uniqueID: uniqueID)
 		}
 	}

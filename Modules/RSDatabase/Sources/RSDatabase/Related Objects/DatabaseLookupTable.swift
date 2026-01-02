@@ -70,8 +70,7 @@ public final class DatabaseLookupTable: Sendable {
 		for object in objects {
 			if let relatedObjects = object.relatedObjectsWithName(relationshipName), !relatedObjects.isEmpty {
 				objectsWithRelationships += [object]
-			}
-			else {
+			} else {
 				objectsWithNoRelationships += [object]
 			}
 		}

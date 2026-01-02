@@ -64,8 +64,7 @@ final class InspectorWindowController: NSWindowController {
 
 		if let savedOrigin = originFromDefaults() {
 			window?.setFlippedOriginAdjustingForScreen(savedOrigin)
-		}
-		else {
+		} else {
 			window?.flippedOrigin = NSPoint(x: 256, y: 256)
 		}
 	}
@@ -77,8 +76,7 @@ final class InspectorWindowController: NSWindowController {
 		for inspector in inspectors {
 			if inspector.isFallbackInspector {
 				fallbackInspector = inspector
-			}
-			else if let objects = objects, inspector.canInspect(objects) {
+			} else if let objects = objects, inspector.canInspect(objects) {
 				return inspector
 			}
 		}

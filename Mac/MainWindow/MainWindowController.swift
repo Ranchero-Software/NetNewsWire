@@ -370,8 +370,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		// TODO: handle search mode
 		if timelineViewController.canGoToNextUnread(wrappingToTop: false) {
 			goToNextUnreadInTimeline(wrappingToTop: false)
-		}
-		else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
+		} else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
 			sidebarViewController.goToNextUnread(wrappingToTop: true)
 
 			// If we ended up on the same timelineViewController, we may need to wrap

@@ -167,8 +167,7 @@ private extension SidebarOutlineDataSource {
 		for feed in draggedFeeds {
 			if feed.isLocalFeed {
 				hasLocalFeed = true
-			}
-			else {
+			} else {
 				hasNonLocalFeed = true
 			}
 			if hasLocalFeed && hasNonLocalFeed {

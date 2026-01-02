@@ -140,8 +140,7 @@ private extension PreferencesWindowController {
 
 		if let currentView = currentView {
 			window!.contentView?.replaceSubview(currentView, with: newViewController.view)
-		}
-		else {
+		} else {
 			window!.contentView?.addSubview(newViewController.view)
 		}
 

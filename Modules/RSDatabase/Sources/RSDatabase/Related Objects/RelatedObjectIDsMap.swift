@@ -27,8 +27,7 @@ struct RelatedObjectIDsMap: Sendable {
 			let relatedObjectID: String = lookupValue.relatedObjectID
 			if d[objectID] == nil {
 				d[objectID] = Set([relatedObjectID])
-			}
-			else {
+			} else {
 				d[objectID]!.insert(relatedObjectID)
 			}
 		}

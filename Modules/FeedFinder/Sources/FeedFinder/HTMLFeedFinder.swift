@@ -50,8 +50,7 @@ private extension HTMLFeedFinder {
 		if let existingFeedSpecifier = feedSpecifiersDictionary[feedSpecifier.urlString] {
 			let mergedFeedSpecifier = existingFeedSpecifier.feedSpecifierByMerging(feedSpecifier)
 			feedSpecifiersDictionary[feedSpecifier.urlString] = mergedFeedSpecifier
-		}
-		else {
+		} else {
 			feedSpecifiersDictionary[feedSpecifier.urlString] = feedSpecifier
 		}
 	}

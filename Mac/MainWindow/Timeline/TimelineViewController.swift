@@ -405,8 +405,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		if markAsRead {
 			markSelectedArticlesAsRead(sender)
-		}
-		else {
+		} else {
 			markSelectedArticlesAsUnread(sender)
 		}
 	}
@@ -563,8 +562,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		for article in selectedArticles {
 			if cutoffDate == nil {
 				cutoffDate = article.logicalDatePublished
-			}
-			else if cutoffDate! > article.logicalDatePublished {
+			} else if cutoffDate! > article.logicalDatePublished {
 				cutoffDate = article.logicalDatePublished
 			}
 		}
@@ -913,8 +911,7 @@ extension TimelineViewController: NSTableViewDelegate {
 			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
 				configureTimelineCell(cell, article: article)
-			}
-			else {
+			} else {
 				makeTimelineCellEmpty(cell)
 			}
 		}
@@ -1316,8 +1313,7 @@ private extension TimelineViewController {
 						return true
 					}
 				}
-			}
-			else if let folder = representedObject as? Folder {
+			} else if let folder = representedObject as? Folder {
 				for oneFeed in feeds {
 					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true

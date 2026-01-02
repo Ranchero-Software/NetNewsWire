@@ -646,8 +646,7 @@ struct FeedNode: Hashable, Sendable {
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
 				// If unread count > 0, add unread string to timeline
 				if let _ = timelineFeed, timelineUnreadCount > 0 {
@@ -1385,8 +1384,7 @@ struct FeedNode: Hashable, Sendable {
 	func showInAppBrowser() {
 		if currentArticle != nil {
 			articleViewController?.openInAppBrowser()
-		}
-		else {
+		} else {
 			mainFeedCollectionViewController.openInAppBrowser()
 		}
 	}

@@ -34,8 +34,7 @@ public extension URL {
 
 		if isHTTPSURL() {
 			return absoluteString.stringByRemovingCaseInsensitivePrefix(URLConstants.prefixHTTPS)
-		}
-		else if isHTTPURL() {
+		} else if isHTTPURL() {
 			return absoluteString.stringByRemovingCaseInsensitivePrefix(URLConstants.prefixHTTP)
 		}
 

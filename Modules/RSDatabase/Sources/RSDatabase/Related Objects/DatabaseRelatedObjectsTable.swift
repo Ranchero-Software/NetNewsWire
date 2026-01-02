@@ -39,8 +39,7 @@ public extension DatabaseRelatedObjectsTable {
 		for databaseID in databaseIDs {
 			if let cachedObject = cache[databaseID] {
 				cachedObjects += [cachedObject]
-			}
-			else {
+			} else {
 				databaseIDsToFetch.insert(databaseID)
 			}
 		}

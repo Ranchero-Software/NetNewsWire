@@ -65,8 +65,7 @@ public struct ParsedItem: Hashable, Sendable {
 	public func hash(into hasher: inout Hasher) {
 		if let syncServiceID = syncServiceID {
 			hasher.combine(syncServiceID)
-		}
-		else {
+		} else {
 			hasher.combine(uniqueID)
 			hasher.combine(feedURL)
 		}
