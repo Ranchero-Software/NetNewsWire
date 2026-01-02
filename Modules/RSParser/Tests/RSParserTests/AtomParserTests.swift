@@ -16,7 +16,7 @@ final class AtomParserTests: XCTestCase {
 		// 0.009 sec on my 2012 iMac.
 		let d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -25,7 +25,7 @@ final class AtomParserTests: XCTestCase {
 		// 0.003 sec on my 2012 iMac.
 		let d = parserData("allthis", "atom", "http://leancrew.com/all-this")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 

@@ -74,7 +74,7 @@ import RSCore
 		// identifies where the new folder should be created
 		let (account, folder) = command.accountAndFolderForNewChild()
 		guard folder == nil else {
-			print("support for folders within folders is NYI");
+			print("support for folders within folders is NYI")
 			return nil
 		}
 

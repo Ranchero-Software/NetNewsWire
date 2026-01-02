@@ -45,7 +45,7 @@ public extension NSTableView {
 		}
 
 		let rMidY = NSMidY(r)
-		var scrollPoint = NSZeroPoint;
+		var scrollPoint = NSZeroPoint
 		scrollPoint.y = floor(rMidY - (documentVisibleRect.size.height / 2.0)) + CGFloat(extraHeight)
 		scrollPoint.y = max(scrollPoint.y, 0)
 

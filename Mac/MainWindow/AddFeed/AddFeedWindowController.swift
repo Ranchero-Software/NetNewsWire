@@ -96,7 +96,7 @@ final class AddFeedWindowController: NSWindowController {
 
 		if normalizedURLString.isEmpty {
 			cancelSheet()
-			return;
+			return
 		}
 		guard let url = URL(string: normalizedURLString) else {
 			cancelSheet()

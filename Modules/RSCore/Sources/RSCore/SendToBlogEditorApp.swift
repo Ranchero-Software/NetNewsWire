@@ -54,7 +54,7 @@ import Foundation
 
 		appleEvent.setParam(paramDescriptor, forKeyword: keyDirectObject)
 
-		let _ = try? appleEvent.sendEvent(options: [.noReply, .canSwitchLayer, .alwaysInteract], timeout: .AEDefaultTimeout)
+		_ = try? appleEvent.sendEvent(options: [.noReply, .canSwitchLayer, .alwaysInteract], timeout: .AEDefaultTimeout)
 
 	}
 }

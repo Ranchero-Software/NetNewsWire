@@ -25,7 +25,7 @@ final class InspectorWindowController: NSWindowController {
 
 	var objects: [Any]? {
 		didSet {
-			let _ = window
+			_ = window
 			currentInspector = inspector(for: objects)
 		}
 	}

@@ -97,7 +97,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 				if thisValidationID != uniqueValidationID {
 					// Default to valid ... we'll know soon enough whether the latest state
 					// is actually still valid or not...
-					SafariExtensionHandler.callValidationHandler(forHandlerID: thisValidationID, withShouldValidate: true);
+					SafariExtensionHandler.callValidationHandler(forHandlerID: thisValidationID, withShouldValidate: true)
 
 				}
 			}
@@ -108,13 +108,13 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 			// a timeout period has elapsed
 			window.getActiveTab { (activeTab) in
 				guard let activeTab = activeTab else {
-					SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate: false);
+					SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate: false)
 					return
 				}
 
 				activeTab.getActivePage { (activePage) in
 					guard let activePage = activePage else {
-						SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate: false);
+						SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate: false)
 						return
 					}
 

@@ -32,7 +32,6 @@ public extension String {
 }
 
 public extension String {
-
 	/// An MD5 hash of the string's UTF-8 representation.
 	var md5Hash: Data {
 		self.data(using: .utf8)!.md5Hash
@@ -94,7 +93,6 @@ public extension String {
 		}
 
 		return true
-
 	}
 
 	/// Normalizes a URL that could begin with "feed:" or "feeds:", converting
@@ -180,7 +178,7 @@ public extension String {
 			return self.replacingCharacters(in: range, with: "")
 		}
 
-		return self;
+		return self
 	}
 
 	/// Strips HTML from a string.
@@ -200,7 +198,7 @@ public extension String {
 			let outputBuffer = UnsafeMutablePointer<CChar>.allocate(capacity: outputCapacity)
 			defer { outputBuffer.deallocate() }
 
-			let _ = stripHTML(
+			_ = stripHTML(
 				cString,
 				inputLength,
 				outputBuffer,
@@ -217,7 +215,7 @@ public extension String {
 	/// Replaces `p`, `blockquote`, `div`, `br`, and `li` tags with varying quantities
 	/// of newlines, strips all other tags, and guarantees no more than two consecutive newlines.
 	///
-	/// - Returns: A copy of self, with HTML tags removed..
+	/// - Returns: A copy of self, with HTML tags removed.
 	func convertingToPlainText() -> String {
 		if !self.contains("<") {
 			return self
@@ -253,7 +251,7 @@ public extension String {
 	///
 	/// - Returns: `true` if the string contains `string`; `false` otherwise.
 	func caseInsensitiveContains(_ string: String) -> Bool {
-		return self.range(of: string, options: .caseInsensitive) != nil
+		self.range(of: string, options: .caseInsensitive) != nil
 	}
 
 	/// Returns the string with the special XML characters (other than single-quote) ampersand-escaped.
@@ -295,4 +293,3 @@ public extension String {
 		self.stripping(prefix: "http://").stripping(prefix: "https://")
 	}
 }
-

@@ -52,7 +52,7 @@ final class AccountsAddCloudKitWindowController: NSWindowController {
 			return
 		}
 
-		let _ = AccountManager.shared.createAccount(type: .cloudKit)
+		_ = AccountManager.shared.createAccount(type: .cloudKit)
 		hostWindow.endSheet(window, returnCode: NSApplication.ModalResponse.OK)
 	}
 }

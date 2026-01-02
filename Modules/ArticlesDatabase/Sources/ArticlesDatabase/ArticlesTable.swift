@@ -216,20 +216,20 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			func makeDatabaseCalls(_ database: FMDatabase) {
 				let articleIDs = parsedItems.articleIDs()
 
-				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) //1
+				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) // 1
 				assert(statusesDictionary.count == articleIDs.count)
 
-				let incomingArticles = Article.articlesWithParsedItems(parsedItems, feedID, self.accountID, statusesDictionary) //2
+				let incomingArticles = Article.articlesWithParsedItems(parsedItems, feedID, self.accountID, statusesDictionary) // 2
 				if incomingArticles.isEmpty {
 					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
 					return
 				}
 
-				let fetchedArticles = self.fetchArticlesForFeedID(feedID, database) //4
+				let fetchedArticles = self.fetchArticlesForFeedID(feedID, database) // 4
 				let fetchedArticlesDictionary = fetchedArticles.dictionary()
 
-				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //5
-				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) //6
+				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) // 5
+				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) // 6
 
 				// Articles to delete are 1) not starred and 2) older than 30 days and 3) no longer in feed.
 				let articlesToDelete: Set<Article>
@@ -1015,7 +1015,7 @@ nonisolated private extension ArticlesTable {
 			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
 				return updatedArticle[keyPath: comparisonKeyPath] != fetchedArticle[keyPath: comparisonKeyPath]
 			}
-			assertionFailure("Expected to find matching fetched article.");
+			assertionFailure("Expected to find matching fetched article.")
 			return true
 		}
 	}
@@ -1065,7 +1065,7 @@ nonisolated private extension ArticlesTable {
 		// Untested theory: this gets us better performance and less database fragmentation.
 
 		guard let fetchedArticle = fetchedArticles[updatedArticle.articleID] else {
-			assertionFailure("Expected to find matching fetched article.");
+			assertionFailure("Expected to find matching fetched article.")
 			saveNewArticles(Set([updatedArticle]), database)
 			return
 		}

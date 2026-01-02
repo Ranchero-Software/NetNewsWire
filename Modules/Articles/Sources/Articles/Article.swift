@@ -120,7 +120,7 @@ public extension Article {
 						forHTML ? result.append("&lt;\(tag)&gt;") : result.append("<\(tag)>")
 					}
 
-					let _ = scanner.scanString(">")
+					_ = scanner.scanString(">")
 				}
 			}
 		}

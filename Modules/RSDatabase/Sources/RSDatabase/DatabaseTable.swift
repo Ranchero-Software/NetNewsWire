@@ -29,7 +29,6 @@ public extension DatabaseTable {
 	}
 
 	func selectRowsWhere(key: String, inValues values: [Any], in database: FMDatabase) -> FMResultSet? {
-
 		if values.isEmpty {
 			return nil
 		}
@@ -39,7 +38,6 @@ public extension DatabaseTable {
 	// MARK: Deleting
 
 	func deleteRowsWhere(key: String, equalsAnyValue values: [Any], in database: FMDatabase) {
-
 		if values.isEmpty {
 			return
 		}
@@ -49,33 +47,28 @@ public extension DatabaseTable {
 	// MARK: Updating
 
 	func updateRowsWithValue(_ value: Any, valueKey: String, whereKey: String, matches: [Any], database: FMDatabase) {
-
-		let _ = database.rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: matches, tableName: self.name)
+		_ = database.rs_updateRows(withValue: value, valueKey: valueKey, whereKey: whereKey, inValues: matches, tableName: self.name)
 	}
 
 	func updateRowsWithDictionary(_ dictionary: DatabaseDictionary, whereKey: String, matches: Any, database: FMDatabase) {
-
-		let _ = database.rs_updateRows(with: dictionary, whereKey: whereKey, equalsValue: matches, tableName: self.name)
+		_ = database.rs_updateRows(with: dictionary, whereKey: whereKey, equalsValue: matches, tableName: self.name)
 	}
 
 	// MARK: Saving
 
 	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, in database: FMDatabase) {
-
 		dictionaries.forEach { (oneDictionary) in
 			let _ = database.rs_insertRow(with: oneDictionary, insertType: insertType, tableName: self.name)
 		}
 	}
 
 	func insertRow(_ rowDictionary: DatabaseDictionary, insertType: RSDatabaseInsertType, in database: FMDatabase) {
-
 		insertRows([rowDictionary], insertType: insertType, in: database)
 	}
 
 	// MARK: Counting
 
 	func numberWithCountResultSet(_ resultSet: FMResultSet) -> Int {
-
 		guard resultSet.next() else {
 			return 0
 		}
