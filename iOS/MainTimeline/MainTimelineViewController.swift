@@ -17,7 +17,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
-	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
+	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 
 	private var refreshProgressView: RefreshProgressView?
 

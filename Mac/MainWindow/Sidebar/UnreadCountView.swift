@@ -8,7 +8,7 @@
 
 import AppKit
 
-final class UnreadCountView : NSView {
+final class UnreadCountView: NSView {
 	@MainActor struct Appearance {
 		static let padding = NSEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
 		static let cornerRadius: CGFloat = 8.0

@@ -23,7 +23,6 @@ import RSParser
 //      display error sheet.
 
 @MainActor final class AddFeedController: AddFeedWindowControllerDelegate {
-
 	private let hostWindow: NSWindow
 	private var addFeedWindowController: AddFeedWindowController?
 	private var foundFeedURLString: String?
@@ -47,7 +46,7 @@ import RSParser
 		windowController.runSheetOnWindow(hostWindow)
 	}
 
-	// MARK: AddFeedWindowControllerDelegate
+	// MARK: - AddFeedWindowControllerDelegate
 
 	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
@@ -92,11 +91,9 @@ import RSParser
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController) {
 		closeAddFeedSheet(NSApplication.ModalResponse.cancel)
 	}
-
 }
 
 private extension AddFeedController {
-
 	var urlStringFromPasteboard: String? {
 		if let urlString = NSPasteboard.urlString(from: NSPasteboard.general) {
 			return urlString.normalizedURL
@@ -125,7 +122,7 @@ private extension AddFeedController {
 		}
 	}
 
-	// MARK: Errors
+	// MARK: - Errors
 
 	func showAlreadySubscribedError(_ urlString: String) {
 		let alert = NSAlert()
@@ -154,16 +151,14 @@ private extension AddFeedController {
 		alert.beginSheetModal(for: hostWindow)
 	}
 
-	// MARK: Progress
+	// MARK: - Progress
 
 	func beginShowingProgress() {
-		IndeterminateProgressController.beginProgressWithMessage(NSLocalizedString("Finding feed…", comment:"Feed finder"))
+		IndeterminateProgressController.beginProgressWithMessage(NSLocalizedString("Finding feed…", comment: "Feed finder"))
 	}
 
 	func endShowingProgress() {
 		IndeterminateProgressController.endProgress()
 		hostWindow.makeKeyAndOrderFront(self)
 	}
-
 }
-

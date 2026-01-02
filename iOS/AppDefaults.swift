@@ -374,7 +374,7 @@ final class AppDefaults: Sendable {
 	}
 
 	@MainActor static func registerDefaults() {
-		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
 										Key.timelineNumberOfLines: 2,
@@ -432,7 +432,7 @@ private extension AppDefaults {
 		AppDefaults.store.set(date, forKey: key)
 	}
 
-	static func sortDirection(for key:String) -> ComparisonResult {
+	static func sortDirection(for key: String) -> ComparisonResult {
 		let rawInt = int(for: key)
 		if rawInt == ComparisonResult.orderedAscending.rawValue {
 			return .orderedAscending

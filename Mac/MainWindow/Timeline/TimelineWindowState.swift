@@ -17,7 +17,7 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 	let selectedAccountID: String?
 	let selectedArticleID: String?
 
-	init(readArticlesFilterStateKeys: [[String : String]], readArticlesFilterStateValues: [Bool], selectedAccountID: String? = nil, selectedArticleID: String? = nil) {
+	init(readArticlesFilterStateKeys: [[String: String]], readArticlesFilterStateValues: [Bool], selectedAccountID: String? = nil, selectedArticleID: String? = nil) {
 		self.readArticlesFilterStateKeys = readArticlesFilterStateKeys
 		self.readArticlesFilterStateValues = readArticlesFilterStateValues
 		self.selectedAccountID = selectedAccountID

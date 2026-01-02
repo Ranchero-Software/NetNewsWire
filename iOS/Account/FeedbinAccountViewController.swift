@@ -156,7 +156,7 @@ final class FeedbinAccountViewController: UITableViewController {
 		presentError(title: NSLocalizedString("Error", comment: "Credentials Error"), message: message)
 	}
 
-	private func setNavigationEnabled(to value:Bool){
+	private func setNavigationEnabled(to value: Bool) {
 		cancelBarButtonItem.isEnabled = value
 		actionButton.isEnabled = value
 	}

@@ -16,8 +16,7 @@ enum TimelineSourceMode {
 	case regular, search
 }
 
-final class MainWindowController : NSWindowController, NSUserInterfaceValidations {
-
+final class MainWindowController: NSWindowController, NSUserInterfaceValidations {
     @IBOutlet var articleThemePopUpButton: NSPopUpButton?
 
     private var activityManager = ActivityManager()
@@ -118,14 +117,14 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 
 	func handle(_ response: UNNotificationResponse) {
 		let userInfo = response.notification.request.content.userInfo
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any] else { return }
 		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
 
 	func handle(_ activity: NSUserActivity) {
 		guard let userInfo = activity.userInfo else { return }
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any] else { return }
 		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
@@ -741,8 +740,7 @@ extension MainWindowController: ArticleExtractorDelegate {
     but for now, we'll keep the stratification of visibility
 */
 
-extension MainWindowController : ScriptingMainWindowController {
-
+extension MainWindowController: ScriptingMainWindowController {
     internal var scriptingCurrentArticle: Article? {
         return self.oneSelectedArticle
     }

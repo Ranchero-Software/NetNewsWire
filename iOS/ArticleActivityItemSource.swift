@@ -18,7 +18,7 @@ final class ArticleActivityItemSource: NSObject, UIActivityItemSource {
 		self.subject = subject
 	}
 
-	func activityViewControllerPlaceholderItem(_ : UIActivityViewController) -> Any {
+	func activityViewControllerPlaceholderItem(_: UIActivityViewController) -> Any {
 		return url
 	}
 
