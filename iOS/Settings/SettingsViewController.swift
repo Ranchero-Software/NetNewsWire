@@ -52,9 +52,10 @@ final class SettingsViewController: UITableViewController {
 
 	private enum ArticlesRow: Int, CaseIterable {
 		case theme = 0
-		case openLinksInNetNewsWire = 1
-		case enableJavaScript = 2
-		case enableFullScreenArticles = 3
+		case markAsReadOnOpen = 1
+		case openLinksInNetNewsWire = 2
+		case enableJavaScript = 3
+		case enableFullScreenArticles = 4
 	}
 
 	private enum HelpRow: Int {
@@ -71,6 +72,7 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var groupByFeedSwitch: UISwitch!
 	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet var articleThemeDetailLabel: UILabel!
+	@IBOutlet var markAsReadOnOpenSwitch: UISwitch!
 	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
 	@IBOutlet var colorPaletteCell: UITableViewCell?
@@ -129,6 +131,12 @@ final class SettingsViewController: UITableViewController {
 		}
 
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
+
+		if AppDefaults.markAsReadOnOpen {
+			markAsReadOnOpenSwitch.isOn = true
+		} else {
+			markAsReadOnOpenSwitch.isOn = false
+		}
 
 		if AppDefaults.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true
@@ -381,6 +389,14 @@ final class SettingsViewController: UITableViewController {
 			AppDefaults.refreshClearsReadArticles = true
 		} else {
 			AppDefaults.refreshClearsReadArticles = false
+		}
+	}
+
+	@IBAction func switchMarkAsReadOnOpen(_ sender: Any) {
+		if markAsReadOnOpenSwitch.isOn {
+			AppDefaults.markAsReadOnOpen = true
+		} else {
+			AppDefaults.markAsReadOnOpen = false
 		}
 	}
 
