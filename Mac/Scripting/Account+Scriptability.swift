@@ -13,9 +13,8 @@ import RSCore
 
 @objc(ScriptableAccount)
 @MainActor final class ScriptableAccount: NSObject, UniqueIDScriptingObject, @preconcurrency ScriptingObjectContainer {
-
-    let account:Account
-    init (_ account:Account) {
+    let account: Account
+    init (_ account: Account) {
         self.account = account
     }
 
@@ -28,7 +27,7 @@ import RSCore
 	@objc(scriptingIsActive)
 	var scriptingIsActive: Bool {
 		get {
-			return account.isActive
+			account.isActive
 		}
 		set {
 			account.isActive = newValue
@@ -38,17 +37,17 @@ import RSCore
 	@objc(scriptingName)
 	var scriptingName: NSString {
 		get {
-			return account.nameForDisplay as NSString
+			account.nameForDisplay as NSString
 		}
 		set {
 			account.name = newValue as String
 		}
 	}
 
-    // MARK: --- ScriptingObject protocol ---
+    // MARK: - ScriptingObject protocol
 
     nonisolated var scriptingKey: String {
-        return "accounts"
+        "accounts"
     }
 
     // MARK: --- UniqueIdScriptingObject protocol ---
@@ -56,14 +55,14 @@ import RSCore
     // I am not sure if account should prefer to be specified by name or by ID
     // but in either case it seems like the accountID would be used as the keydata, so I chose ID
     @objc(uniqueId)
-    nonisolated var scriptingUniqueID:Any {
-        return account.accountID
+    nonisolated var scriptingUniqueID: Any {
+        account.accountID
     }
 
     // MARK: --- ScriptingObjectContainer protocol ---
 
     nonisolated var scriptingClassDescription: NSScriptClassDescription {
-        return self.classDescription as! NSScriptClassDescription
+        self.classDescription as! NSScriptClassDescription
     }
 
 	func deleteElement(_ element:ScriptingObject) {
@@ -87,44 +86,50 @@ import RSCore
 	}
 
     @objc(isLocationRequiredToCreateForKey:)
-    func isLocationRequiredToCreate(forKey key:String) -> Bool {
-       return false;
+    func isLocationRequiredToCreate(forKey key: String) -> Bool {
+       false
     }
 
     // MARK: --- Scriptable elements ---
 
     @objc(feeds)
-    var feeds:NSArray  {
-        return account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
+    var feeds: NSArray  {
+        account.topLevelFeeds.map { ScriptableFeed($0, container:self) } as NSArray
     }
 
     @objc(countOfFeeds)
     func countOfFeeds() -> Int {
-        return account.topLevelFeeds.count
+        account.topLevelFeeds.count
     }
 
     @objc(objectInFeedsAtIndex:)
     func objectInFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
         let feeds = Array(account.topLevelFeeds)
-        guard index >= 0 && index < feeds.count else { return nil }
+		guard index >= 0 && index < feeds.count else {
+			return nil
+		}
         return ScriptableFeed(feeds[index], container: self)
     }
 
     @objc(valueInFeedsWithUniqueID:)
-    func valueInFeeds(withUniqueID id:String) -> ScriptableFeed? {
-		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
+    func valueInFeeds(withUniqueID id: String) -> ScriptableFeed? {
+		guard let feed = account.existingFeed(withFeedID: id) else {
+			return nil
+		}
         return ScriptableFeed(feed, container:self)
     }
 
     @objc(valueInFeedsWithName:)
-    func valueInFeeds(withName name:String) -> ScriptableFeed? {
+    func valueInFeeds(withName name: String) -> ScriptableFeed? {
 		let feeds = Array(account.flattenedFeeds())
-        guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
+		guard let feed = feeds.first(where:{$0.name == name}) else {
+			return nil
+		}
         return ScriptableFeed(feed, container:self)
     }
 
     @objc(folders)
-    var folders:NSArray  {
+    var folders: NSArray  {
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
 		return folders.map { ScriptableFolder($0, container:self) } as NSArray
@@ -132,14 +137,16 @@ import RSCore
 
     @objc(countOfFolders)
     func countOfFolders() -> Int {
-        return account.folders?.count ?? 0
+        account.folders?.count ?? 0
     }
 
     @objc(objectInFoldersAtIndex:)
     func objectInFoldersAtIndex(_ index: Int) -> ScriptableFolder? {
         let foldersSet = account.folders ?? Set<Folder>()
         let folders = Array(foldersSet)
-        guard index >= 0 && index < folders.count else { return nil }
+		guard index >= 0 && index < folders.count else {
+			return nil
+		}
         return ScriptableFolder(folders[index], container: self)
     }
 
@@ -148,7 +155,9 @@ import RSCore
         let folderId = id.intValue
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
-        guard let folder = folders.first(where:{$0.folderID == folderId}) else { return nil }
+		guard let folder = folders.first(where:{$0.folderID == folderId}) else {
+			return nil
+		}
         return ScriptableFolder(folder, container:self)
     }    
 
@@ -158,39 +167,45 @@ import RSCore
     var allFeeds: NSArray  {
 		let allFeeds = account.flattenedFeeds()
 		let scriptableFeeds = allFeeds.map { feed in
-			return ScriptableFeed(feed, container: self)
+			ScriptableFeed(feed, container: self)
 		}
 		return scriptableFeeds as NSArray
     }
 
     @objc(countOfAllFeeds)
     func countOfAllFeeds() -> Int {
-        return account.flattenedFeeds().count
+        account.flattenedFeeds().count
     }
 
     @objc(objectInAllFeedsAtIndex:)
     func objectInAllFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
         let allFeeds = Array(account.flattenedFeeds())
-        guard index >= 0 && index < allFeeds.count else { return nil }
+		guard index >= 0 && index < allFeeds.count else {
+			return nil
+		}
         return ScriptableFeed(allFeeds[index], container: self)
     }
 
     @objc(valueInAllFeedsWithUniqueID:)
-    func valueInAllFeeds(withUniqueID id:String) -> ScriptableFeed? {
-		guard let feed = account.existingFeed(withFeedID: id) else { return nil }
+    func valueInAllFeeds(withUniqueID id: String) -> ScriptableFeed? {
+		guard let feed = account.existingFeed(withFeedID: id) else {
+			return nil
+		}
         return ScriptableFeed(feed, container:self)
     }
 
     @objc(valueInAllFeedsWithName:)
-    func valueInAllFeeds(withName name:String) -> ScriptableFeed? {
+    func valueInAllFeeds(withName name: String) -> ScriptableFeed? {
 		let feeds = Array(account.flattenedFeeds())
-        guard let feed = feeds.first(where:{$0.name == name}) else { return nil }
+		guard let feed = feeds.first(where: {$0.name == name}) else {
+			return nil
+		}
         return ScriptableFeed(feed, container:self)
     }
 
     @objc(opmlRepresentation)
     var opmlRepresentation:String  {
-        return self.account.OPMLString(indentLevel:0)
+        self.account.OPMLString(indentLevel:0)
     }
 
     @objc(accountType)
