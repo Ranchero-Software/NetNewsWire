@@ -16,49 +16,52 @@ struct StarredWidgetView: View {
 	var entry: Provider.Entry
 
 	var body: some View {
-		if entry.widgetData.starredArticles.count == 0 {
+		if entry.widgetData.currentStarredCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.starred.url)
-		} else {
-			GeometryReader { _ in
-				starredImage
-					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment: .leading, spacing: 0) {
+		}
+		else {
+			VStack {
+				Spacer()
+				HStack {
+					starredImage
+						.layoutPriority(1)
+					Text("label.text.starred", comment: "Starred")
+						.font(.caption2)
+						.bold()
+						.lineLimit(1)
+						.minimumScaleFactor(0.8)
+						.fixedSize(horizontal: false, vertical: true)
+						.layoutPriority(1)
+					Spacer()
+						.layoutPriority(0)
+					if entry.widgetData.currentStarredCount - maxCount() > 0 {
+						Text(verbatim: entry.widgetData.currentStarredCount.formatted())
+							.font(.caption2)
+							.bold()
+							.foregroundColor(.secondary)
+							.lineLimit(1)
+							.minimumScaleFactor(0.8)
+							.fixedSize(horizontal: false, vertical: true)
+					}
+				}
+				.widgetURL(WidgetDeepLink.starred.url)
+				Divider()
+				if entry.widgetData.starredArticles.count > 0 {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.starredArticles[i],
 											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-							.padding(.top, WidgetLayout.articleItemViewPaddingTop)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						} else {
 							ArticleItemView(article: entry.widgetData.starredArticles[i],
 											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						}
 					})
-					Spacer()
 				}
-				.padding(.leading, WidgetLayout.leftSideWidth)
-				.padding([.bottom, .trailing])
-				.overlay(
-					VStack {
-						Spacer()
-						HStack {
-							Spacer()
-							if entry.widgetData.currentStarredCount - maxCount() > 0 {
-								Text(L10n.starredCount(entry.widgetData.currentStarredCount - maxCount()))
-									.font(.caption2)
-									.bold()
-									.foregroundColor(.secondary)
-							}
-						}
-					}
-						.padding(.horizontal)
-				)
-
+				Spacer()
 			}
-			.widgetURL(WidgetDeepLink.starred.url)
+			.padding(.vertical, 2)
 		}
 	}
 
@@ -92,11 +95,12 @@ struct StarredWidgetView: View {
 				.frame(width: 30)
 				.foregroundColor(.yellow)
 
-			Text(L10n.starredWidgetNoItemsTitle)
+
+			Text("label.text.starred", comment: "Starred")
 				.font(.headline)
 				.foregroundColor(.primary)
 
-			Text(L10n.starredWidgetNoItems)
+			Text("label.text.starred-no-articles", comment: "There are no starred articles.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()
