@@ -11,23 +11,19 @@ import Account
 import RSCore
 
 @MainActor @objc final class SmartFeedPasteboardWriter: NSObject, @MainActor NSPasteboardWriting {
-
 	private let smartFeed: PseudoFeed
 
 	init(smartFeed: PseudoFeed) {
-
 		self.smartFeed = smartFeed
 	}
 
 	// MARK: - NSPasteboardWriting
 
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-
-		return [.string]
+		[.string]
 	}
 
 	func pasteboardPropertyList(forType type: NSPasteboard.PasteboardType) -> Any? {
-
 		let plist: Any?
 
 		switch type {
@@ -40,4 +36,3 @@ import RSCore
 		return plist
 	}
 }
-

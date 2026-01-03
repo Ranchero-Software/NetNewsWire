@@ -36,8 +36,7 @@ public extension NSOutlineView {
 				selectRowIndexes(NSIndexSet(index: oneRow) as IndexSet, byExtendingSelection: false)
 				scrollRowToVisible(oneRow)
 				return true
-			}
-			else {
+			} else {
 				expandItem(oneNode)
 			}
 		}

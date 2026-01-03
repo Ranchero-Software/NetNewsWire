@@ -293,7 +293,7 @@ import os.log
 				return
 			}
 
-			let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash } )
+			let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash })
 			let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
 
 			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
@@ -320,7 +320,7 @@ import os.log
 				return
 			}
 
-			let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash } )
+			let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash })
 			let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
 
 			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()

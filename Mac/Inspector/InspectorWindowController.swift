@@ -9,7 +9,6 @@
 import AppKit
 
 @MainActor protocol Inspector: AnyObject {
-
 	var objects: [Any]? { get set }
 	var isFallbackInspector: Bool { get } // Can handle nothing-to-inspect or unexpected type of objects.
 	var windowTitle: String { get }
@@ -19,16 +18,14 @@ import AppKit
 
 typealias InspectorViewController = Inspector & NSViewController
 
-
 final class InspectorWindowController: NSWindowController {
-
-	class var shouldOpenAtStartup: Bool {
+	static var shouldOpenAtStartup: Bool {
 		return UserDefaults.standard.bool(forKey: DefaultsKey.windowIsOpen)
 	}
 
 	var objects: [Any]? {
 		didSet {
-			let _ = window
+			_ = window
 			currentInspector = inspector(for: objects)
 		}
 	}
@@ -67,21 +64,19 @@ final class InspectorWindowController: NSWindowController {
 
 		if let savedOrigin = originFromDefaults() {
 			window?.setFlippedOriginAdjustingForScreen(savedOrigin)
-		}
-		else {
+		} else {
 			window?.flippedOrigin = NSPoint(x: 256, y: 256)
 		}
 	}
 
 	func inspector(for objects: [Any]?) -> InspectorViewController {
 
-		var fallbackInspector: InspectorViewController? = nil
+		var fallbackInspector: InspectorViewController?
 
 		for inspector in inspectors {
 			if inspector.isFallbackInspector {
 				fallbackInspector = inspector
-			}
-			else if let objects = objects, inspector.canInspect(objects) {
+			} else if let objects = objects, inspector.canInspect(objects) {
 				return inspector
 			}
 		}
@@ -113,7 +108,7 @@ private extension InspectorWindowController {
 
 		DispatchQueue.main.async {
 			window.title = inspector.windowTitle
-		}	
+		}
 
 		let flippedOrigin = window.flippedOrigin
 

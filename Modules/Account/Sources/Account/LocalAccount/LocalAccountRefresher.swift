@@ -19,13 +19,12 @@ import os
 }
 
 @MainActor final class LocalAccountRefresher {
-
 	var delegate: LocalAccountRefresherDelegate?
 	var downloadProgress: DownloadProgress {
 		downloadSession.downloadProgress
 	}
 
-	private var completion: (() -> Void)? = nil
+	private var completion: (() -> Void)?
 	private var isSuspended = false
 
 	private lazy var downloadSession: DownloadSession = {
@@ -195,7 +194,6 @@ import os
 	}
 }
 
-
 // MARK: - Private
 
 private extension LocalAccountRefresher {
@@ -293,4 +291,3 @@ private extension Data {
 		return self.isImage
 	}
 }
-

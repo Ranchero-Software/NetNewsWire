@@ -63,7 +63,7 @@ struct PasteboardFeed: Hashable {
 		let feedID = dictionary[Key.feedID]
 		let editedName = dictionary[Key.editedName]
 
-		var accountType: AccountType? = nil
+		var accountType: AccountType?
 		if let accountTypeString = dictionary[Key.accountType], let accountTypeInt = Int(accountTypeString) {
 			accountType = AccountType(rawValue: accountTypeInt)
 		}
@@ -76,8 +76,7 @@ struct PasteboardFeed: Hashable {
 		var pasteboardType: NSPasteboard.PasteboardType?
 		if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIInternalType) {
 			pasteboardType = FeedPasteboardWriter.feedUTIInternalType
-		}
-		else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
+		} else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
 			pasteboardType = FeedPasteboardWriter.feedUTIType
 		}
 		if let foundType = pasteboardType {
@@ -91,8 +90,7 @@ struct PasteboardFeed: Hashable {
 		// Check for URL or a string that may be a URL.
 		if pasteboardItem.types.contains(.URL) {
 			pasteboardType = .URL
-		}
-		else if pasteboardItem.types.contains(.string) {
+		} else if pasteboardItem.types.contains(.string) {
 			pasteboardType = .string
 		}
 		if let foundType = pasteboardType {
@@ -168,7 +166,7 @@ extension Feed: @retroactive PasteboardWriterOwner {
 	static let feedUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.feed"
 	static let feedUTIInternalType = NSPasteboard.PasteboardType(rawValue: feedUTIInternal)
 
-	var containerID: ContainerIdentifier? = nil
+	var containerID: ContainerIdentifier?
 
 	init(feed: Feed) {
 		self.feed = feed

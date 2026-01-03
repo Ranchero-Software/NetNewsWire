@@ -89,4 +89,3 @@ private extension DetailWebView {
 		return false
 	}
 }
-

@@ -60,7 +60,7 @@ import Articles
 		self.starred = article.status.starred
 	}
 
-	init() { //Empty
+	init() { // Empty
 		self.title = ""
 		self.text = ""
 		self.dateString = ""

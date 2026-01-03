@@ -20,7 +20,7 @@ public extension FMDatabase {
 		return database
 	}
 
-	func executeUpdateInTransaction(_ sql : String, withArgumentsIn parameters: [Any]? = nil) {
+	func executeUpdateInTransaction(_ sql: String, withArgumentsIn parameters: [Any]? = nil) {
 		beginTransaction()
 		guard executeUpdate(sql, withArgumentsIn: parameters) else {
 			rollback()
@@ -97,7 +97,7 @@ public extension FMDatabase {
 		guard let resultSet = executeQuery(sql, withArgumentsIn: parameters) else {
 			return nil
 		}
-		
+
 		let count = resultSet.intWithCountResult()
 		return count
 	}

@@ -58,7 +58,7 @@ final class RootSplitViewController: UISplitViewController {
 	}
 
 	@objc func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		coordinator.markAllAsReadInTimeline() {
+		coordinator.markAllAsReadInTimeline {
 			self.coordinator.selectNextUnread()
 		}
 	}

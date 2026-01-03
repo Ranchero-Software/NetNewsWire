@@ -29,7 +29,7 @@ public struct HTTPLinkPagingInfo {
 
 		var dict: [String: String] = [:]
 		links.forEach({
-			let components = $0.components(separatedBy:"; ")
+			let components = $0.components(separatedBy: "; ")
 			let page = components[0].trimmingCharacters(in: CharacterSet(charactersIn: " <>"))
 			dict[components[1]] = page
 		})

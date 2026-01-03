@@ -44,8 +44,7 @@ extension Notification.Name {
 
 		if let imageData = imageDownloader.image(for: avatarURL) {
 			scaleAndCacheImageData(imageData, avatarURL)
-		}
-		else {
+		} else {
 			waitingForAvatarURLs.insert(avatarURL)
 		}
 

@@ -84,7 +84,7 @@ public struct CredentialsManager {
 			throw CredentialsError.unhandledError(status: status)
 		}
 
-		guard let existingItem = item as? [String : Any],
+		guard let existingItem = item as? [String: Any],
 			let secretData = existingItem[kSecValueData as String] as? Data,
 			let secret = String(data: secretData, encoding: String.Encoding.utf8) else {
 				return nil

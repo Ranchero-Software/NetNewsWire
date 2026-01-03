@@ -25,9 +25,9 @@ import Articles
 }
 
 @MainActor protocol ScriptingAppDelegate {
-    var  scriptingCurrentArticle: Article?  {get}
-    var  scriptingSelectedArticles: [Article]  {get}
-    var  scriptingMainWindowController:ScriptingMainWindowController? {get}
+    var  scriptingCurrentArticle: Article? {get}
+    var  scriptingSelectedArticles: [Article] {get}
+    var  scriptingMainWindowController: ScriptingMainWindowController? {get}
 }
 
 // Wrapper to safely transfer non-Sendable values across isolation boundaries
@@ -60,7 +60,7 @@ extension AppDelegate: AppDelegateAppleEvents {
 
 			if let themeURL = URL(string: themeURLString) {
 				let request = URLRequest(url: themeURL)
-				let task = URLSession.shared.downloadTask(with: request) { location, response, error in
+				let task = URLSession.shared.downloadTask(with: request) { location, _, error in
 					guard let location = location else {
 						return
 					}
@@ -76,7 +76,6 @@ extension AppDelegate: AppDelegateAppleEvents {
 			return
 
 		}
-
 
 		// Special case URL with specific scheme handler x-netnewswire-feed: intended to ensure we open
 		// it regardless of which news reader may be set as the default
@@ -97,7 +96,7 @@ extension AppDelegate: AppDelegateAppleEvents {
     }
 }
 
-final class NetNewsWireCreateElementCommand : NSCreateCommand {
+final class NetNewsWireCreateElementCommand: NSCreateCommand {
 	// AppleScript commands always execute on the main thread, so using assumeIsolated is safe
 	// even though NSCreateCommand doesn't have concurrency annotations
 	nonisolated override func performDefaultImplementation() -> Any? {
@@ -106,10 +105,10 @@ final class NetNewsWireCreateElementCommand : NSCreateCommand {
              let instance = unsafeSelf.value
              let classDescription: NSScriptClassDescription = instance.createClassDescription
              let command: NSCreateCommand = instance
-             if (classDescription.className == "feed") {
-                 return UnsafeSendable(value: ScriptableFeed.handleCreateElement(command:command))
-             } else if (classDescription.className == "folder") {
-                 return UnsafeSendable(value: ScriptableFolder.handleCreateElement(command:command))
+             if classDescription.className == "feed" {
+                 return UnsafeSendable(value: ScriptableFeed.handleCreateElement(command: command))
+             } else if classDescription.className == "folder" {
+                 return UnsafeSendable(value: ScriptableFolder.handleCreateElement(command: command))
              }
              return UnsafeSendable(value: nil)
          }
@@ -125,7 +124,7 @@ final class NetNewsWireCreateElementCommand : NSCreateCommand {
     is ambiguity about whether specifiers are lists or single objects, the code switches
     based on which it is.
 */
-final class NetNewsWireDeleteCommand : NSDeleteCommand {
+final class NetNewsWireDeleteCommand: NSDeleteCommand {
 
     /*
         delete(objectToDelete:, from container:)
@@ -133,10 +132,10 @@ final class NetNewsWireDeleteCommand : NSDeleteCommand {
         Here the code unravels the case of objectToDelete being a list or a single object,
         ultimately calling container.deleteElement(element) for each element to delete
     */
-	@MainActor func delete(objectToDelete:Any, from container:ScriptingObjectContainer) {
+	@MainActor func delete(objectToDelete: Any, from container: ScriptingObjectContainer) {
         if let objectList = objectToDelete as? [Any] {
             for nthObject in objectList {
-                self.delete(objectToDelete:nthObject, from:container)
+                self.delete(objectToDelete: nthObject, from: container)
             }
         } else if let element = objectToDelete as? ScriptingObject {
             container.deleteElement(element)
@@ -152,14 +151,14 @@ final class NetNewsWireDeleteCommand : NSDeleteCommand {
         After resolving, we call delete(objectToDelete:, from container:) with the container and
         the resolved objects
     */
-	@MainActor func delete(specifier:NSScriptObjectSpecifier, from container:Any) {
+	@MainActor func delete(specifier: NSScriptObjectSpecifier, from container: Any) {
         if let containerList = container as? [Any] {
             for nthObject in containerList {
-                self.delete(specifier:specifier, from:nthObject)
+                self.delete(specifier: specifier, from: nthObject)
             }
         } else if let container = container as? ScriptingObjectContainer {
-            if let resolvedObjects = specifier.objectsByEvaluating(withContainers:container) {
-                self.delete(objectToDelete:resolvedObjects, from:container)
+            if let resolvedObjects = specifier.objectsByEvaluating(withContainers: container) {
+                self.delete(objectToDelete: resolvedObjects, from: container)
             }
         }
     }
@@ -177,14 +176,14 @@ final class NetNewsWireDeleteCommand : NSDeleteCommand {
          MainActor.assumeIsolated {
              let instance = unsafeSelf.value
              if let receiverObjects = instance.receiversSpecifier?.objectsByEvaluatingSpecifier {
-                instance.delete(specifier:instance.keySpecifier, from:receiverObjects)
+                instance.delete(specifier: instance.keySpecifier, from: receiverObjects)
              }
          }
          return nil
     }
 }
 
-final class NetNewsWireExistsCommand : NSExistsCommand {
+final class NetNewsWireExistsCommand: NSExistsCommand {
 
     // cocoa default behavior doesn't work here, because of cases where we define an object's property
     // to be another object type.  e.g., 'permalink of the current article' parses as
@@ -196,9 +195,10 @@ final class NetNewsWireExistsCommand : NSExistsCommand {
     // The wrinkle is that it is possible that the direct object is a list, so we need to
     // handle that case as well
 
-    override func performDefaultImplementation() -> Any? {
-         guard let result = super.performDefaultImplementation() else { return NSNumber(booleanLiteral:false) }
-         return result
-    }
+	override func performDefaultImplementation() -> Any? {
+		guard let result = super.performDefaultImplementation() else {
+			return false as NSNumber
+		}
+		return result
+	}
 }
-

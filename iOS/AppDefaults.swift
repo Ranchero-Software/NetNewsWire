@@ -84,7 +84,7 @@ final class AppDefaults: Sendable {
 	}()
 
 	let isFirstRun: Bool = {
-		if let _ = AppDefaults.store.object(forKey: Key.firstRunDate) as? Date {
+		if AppDefaults.store.object(forKey: Key.firstRunDate) is Date {
 			return false
 		}
 		firstRunDate = Date()
@@ -374,7 +374,7 @@ final class AppDefaults: Sendable {
 	}
 
 	@MainActor static func registerDefaults() {
-		let defaults: [String : Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
 										Key.timelineNumberOfLines: 2,
@@ -432,7 +432,7 @@ private extension AppDefaults {
 		AppDefaults.store.set(date, forKey: key)
 	}
 
-	static func sortDirection(for key:String) -> ComparisonResult {
+	static func sortDirection(for key: String) -> ComparisonResult {
 		let rawInt = int(for: key)
 		if rawInt == ComparisonResult.orderedAscending.rawValue {
 			return .orderedAscending
@@ -443,8 +443,7 @@ private extension AppDefaults {
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {
 		if value == .orderedAscending {
 			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
-		}
-		else {
+		} else {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
 	}
@@ -462,14 +461,14 @@ struct StateRestorationInfo {
 	let isShowingExtractedArticle: Bool
 
 	init(hideReadFeeds: Bool,
-		 expandedContainers: Set<ContainerIdentifier>,
-		 selectedSidebarItem: SidebarItemIdentifier?,
-		 smartFeedsHidingReadArticles: Set<String>,
-		 feedsHidingReadArticles: [String: Set<String>],
-		 foldersShowingReadArticles: [String: Set<String>],
-		 selectedArticle: ArticleSpecifier?,
-		 articleWindowScrollY: Int,
-		 isShowingExtractedArticle: Bool) {
+	     expandedContainers: Set<ContainerIdentifier>,
+	     selectedSidebarItem: SidebarItemIdentifier?,
+	     smartFeedsHidingReadArticles: Set<String>,
+	     feedsHidingReadArticles: [String: Set<String>],
+	     foldersShowingReadArticles: [String: Set<String>],
+	     selectedArticle: ArticleSpecifier?,
+	     articleWindowScrollY: Int,
+	     isShowingExtractedArticle: Bool) {
 		self.hideReadFeeds = hideReadFeeds
 		self.expandedContainers = expandedContainers
 		self.selectedSidebarItem = selectedSidebarItem

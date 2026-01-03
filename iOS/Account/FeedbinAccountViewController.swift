@@ -148,21 +148,20 @@ final class FeedbinAccountViewController: UITableViewController {
 		self.present(safari, animated: true, completion: nil)
 	}
 
-
 	@objc func textDidChange(_ note: Notification) {
-		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false) 
+		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
 	}
 
 	private func showError(_ message: String) {
 		presentError(title: NSLocalizedString("Error", comment: "Credentials Error"), message: message)
 	}
 
-	private func setNavigationEnabled(to value:Bool){
+	private func setNavigationEnabled(to value: Bool) {
 		cancelBarButtonItem.isEnabled = value
 		actionButton.isEnabled = value
 	}
 
-	private func toggleActivityIndicatorAnimation(visible value: Bool){
+	private func toggleActivityIndicatorAnimation(visible value: Bool) {
 		activityIndicator.isHidden = !value
 		if value {
 			activityIndicator.startAnimating()
@@ -170,7 +169,6 @@ final class FeedbinAccountViewController: UITableViewController {
 			activityIndicator.stopAnimating()
 		}
 	}
-
 }
 
 extension FeedbinAccountViewController: UITextFieldDelegate {
@@ -184,5 +182,4 @@ extension FeedbinAccountViewController: UITextFieldDelegate {
 		}
 		return true
 	}
-
 }

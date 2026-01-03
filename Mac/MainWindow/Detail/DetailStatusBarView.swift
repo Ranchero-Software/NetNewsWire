@@ -25,8 +25,7 @@ final class DetailStatusBarView: NSView {
 			if let link = linkForDisplay {
 				urlLabel.stringValue = link
 				self.isHidden = false
-			}
-			else {
+			} else {
 				urlLabel.stringValue = ""
 				self.isHidden = true
 			}
@@ -68,11 +67,8 @@ private extension DetailStatusBarView {
 	func updateLinkForDisplay() {
 		if let mouseoverLink = mouseoverLink, !mouseoverLink.isEmpty {
 			linkForDisplay = mouseoverLink.strippingHTTPOrHTTPSScheme
-		}
-		else {
+		} else {
 			linkForDisplay = nil
 		}
 	}
 }
-
-

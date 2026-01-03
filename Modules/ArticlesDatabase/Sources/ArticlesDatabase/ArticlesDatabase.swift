@@ -36,7 +36,7 @@ public struct ArticleChanges: Sendable {
 	}
 }
 
-@MainActor public final class ArticlesDatabase: Sendable {
+@MainActor public final class ArticlesDatabase {
 	public enum RetentionStyle: Sendable {
 		case feedBased // Local and iCloud: article retention is defined by contents of feed
 		case syncSystem // Feedbin, Feedly, etc.: article retention is defined by external system

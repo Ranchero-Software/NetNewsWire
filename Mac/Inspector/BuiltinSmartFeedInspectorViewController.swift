@@ -31,7 +31,7 @@ final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector
 
 	func canInspect(_ objects: [Any]) -> Bool {
 
-		guard let _ = singleSmartFeed(from: objects) else {
+		guard singleSmartFeed(from: objects) != nil else {
 			return false
 		}
 		return true

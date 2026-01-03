@@ -102,7 +102,7 @@ public struct KeyboardKey: Hashable, Sendable {
 
 		var integerValue = 0
 
-		switch(s) {
+		switch s {
 		case "[space]":
 			integerValue = " ".keyboardIntegerValue!
 		case "[uparrow]":
@@ -121,8 +121,8 @@ public struct KeyboardKey: Hashable, Sendable {
 			integerValue = KeyboardKey.deleteKeyCode
 		case "[deletefunction]":
 			integerValue = NSDeleteFunctionKey
-        case "[tab]":
-            integerValue = NSTabCharacter
+		case "[tab]":
+			integerValue = NSTabCharacter
 		default:
 			guard let unwrappedIntegerValue = s.keyboardIntegerValue else {
 				return nil

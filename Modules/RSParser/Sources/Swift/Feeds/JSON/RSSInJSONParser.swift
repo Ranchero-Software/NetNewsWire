@@ -54,8 +54,7 @@ public struct RSSInJSONParser {
 
 			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, language: feedLanguage, feedDescription: feedDescription, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 
-		}
-		catch { throw error }
+		} catch { throw error }
 	}
 }
 
@@ -73,7 +72,7 @@ private extension RSSInJSONParser {
 		let title = itemDictionary["title"] as? String
 
 		var contentHTML = itemDictionary["description"] as? String
-		var contentText: String? = nil
+		var contentText: String?
 		if contentHTML != nil && !(contentHTML!.contains("<")) {
 			contentText = contentHTML
 			contentHTML = nil
@@ -82,7 +81,7 @@ private extension RSSInJSONParser {
 			return nil
 		}
 
-		var datePublished: Date? = nil
+		var datePublished: Date?
 		if let datePublishedString = itemDictionary["pubDate"] as? String {
 			datePublished = RSDateWithString(datePublishedString)
 		}
@@ -117,11 +116,11 @@ private extension RSSInJSONParser {
 			}
 			if s.isEmpty {
 				// Sheesh. Tough case.
-				if let _ = contentHTML {
-					s = contentHTML!
+				if let html = contentHTML {
+					s = html
 				}
-				if let _ = contentText {
-					s = contentText!
+				if let text = contentText {
+					s = text
 				}
 			}
 			uniqueID = (s as NSString).rsparser_md5Hash()
@@ -149,9 +148,8 @@ private extension RSSInJSONParser {
 				return Set([oneTag])
 			}
 			return nil
-		}
-		else if let categoryArray = itemDictionary["category"] as? JSONArray {
-			return Set(categoryArray.compactMap{ $0["#value"] as? String })
+		} else if let categoryArray = itemDictionary["category"] as? JSONArray {
+			return Set(categoryArray.compactMap { $0["#value"] as? String })
 		}
 		return nil
 	}

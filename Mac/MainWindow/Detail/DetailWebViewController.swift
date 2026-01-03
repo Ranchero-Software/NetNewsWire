@@ -68,7 +68,7 @@ final class DetailWebViewController: NSViewController {
 
 	private var isShowingExtractedArticle: Bool {
 		switch state {
-		case .extracted(_, _, _):
+		case .extracted:
 			return true
 		default:
 			return false
@@ -208,7 +208,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			decisionHandler(.cancel)
 			return
 		}
-		
+
 		decisionHandler(.allow)
 	}
 
@@ -269,7 +269,7 @@ private extension DetailWebViewController {
 	}
 
 	func reloadHTMLMaintainingScrollPosition() {
-		fetchScrollInfo() { scrollInfo in
+		fetchScrollInfo { scrollInfo in
 			self.windowScrollY = scrollInfo?.offsetY
 			self.reloadHTML()
 		}
@@ -319,7 +319,7 @@ private extension DetailWebViewController {
 	private func fetchScrollInfo(_ completion: @escaping (ScrollInfo?) -> Void) {
 		let javascriptString = "var x = {contentHeight: document.body.scrollHeight, offsetY: document.body.scrollTop}; x"
 
-		webView.evaluateJavaScript(javascriptString) { (info, error) in
+		webView.evaluateJavaScript(javascriptString) { (info, _) in
 			guard let info = info as? [String: Any] else {
 				completion(nil)
 				return

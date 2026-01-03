@@ -30,7 +30,7 @@ public struct TextFieldSizeInfo: Sendable {
 
 	private let numberOfLines: Int
 	private let font: NSFont
-	private let textField:NSTextField
+	private let textField: NSTextField
 	private let singleLineHeightEstimate: Int
 	private let doubleLineHeightEstimate: Int
 	private var cache = [String: WidthHeightCache]() // Each string has a cache.
@@ -227,8 +227,7 @@ private extension MultilineTextFieldSizer {
 
 			if oneWidth < width && (oneWidth > smallNeighbor.width || smallNeighbor.width == 0) {
 				smallNeighbor = (oneWidth, oneHeight)
-			}
-			else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
+			} else if oneWidth > width && (oneWidth < largeNeighbor.width || largeNeighbor.width == 0) {
 				largeNeighbor = (oneWidth, oneHeight)
 			}
 
@@ -242,4 +241,3 @@ private extension MultilineTextFieldSizer {
 }
 
 #endif
-

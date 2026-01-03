@@ -68,7 +68,6 @@ final class SettingsViewController: UITableViewController {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
-
 		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
@@ -92,7 +91,6 @@ final class SettingsViewController: UITableViewController {
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
-
 
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
@@ -204,7 +202,7 @@ final class SettingsViewController: UITableViewController {
 		case 3:
 			switch indexPath.row {
 			case 3:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: ModernTimelineCustomizerTableViewController.self)
+				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerTableViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
@@ -226,14 +224,17 @@ final class SettingsViewController: UITableViewController {
 				openURL(HelpURL.helpHome.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
-				openURL(HelpURL.releaseNotes.rawValue)
+				openURL(HelpURL.discourse.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 2:
-				openURL(HelpURL.bugTracker.rawValue)
+				openURL(HelpURL.releaseNotes.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 3:
-				let hosting = UIHostingController(rootView: AboutView())
-				self.navigationController?.pushViewController(hosting, animated: true)
+				openURL(HelpURL.bugTracker.rawValue)
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			case 4:
+				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
+				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
 			}
@@ -320,8 +321,7 @@ final class SettingsViewController: UITableViewController {
 		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
  	}
 
-
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc func contentSizeCategoryDidChange() {
 		tableView.reloadData()
@@ -341,7 +341,7 @@ final class SettingsViewController: UITableViewController {
 
 }
 
-// MARK: OPML Document Picker
+// MARK: - OPML Document Picker
 
 extension SettingsViewController: UIDocumentPickerDelegate {
 
@@ -362,7 +362,7 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 }
 
-// MARK: Private
+// MARK: - Private
 
 private extension SettingsViewController {
 
@@ -401,7 +401,7 @@ private extension SettingsViewController {
 		}
 
 		for account in AccountManager.shared.sortedActiveAccounts {
-			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] _ in
 				self?.opmlAccount = account
 				self?.importOPMLDocumentPicker()
 			}
@@ -457,7 +457,7 @@ private extension SettingsViewController {
 		}
 
 		for account in AccountManager.shared.sortedAccounts {
-			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] action in
+			let action = UIAlertAction(title: account.nameForDisplay, style: .default) { [weak self] _ in
 				self?.opmlAccount = account
 				self?.exportOPMLDocumentPicker()
 			}

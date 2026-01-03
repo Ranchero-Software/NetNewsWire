@@ -89,20 +89,20 @@ public extension Data {
 
 		/// Tags in UTF-8/ASCII format.
 		enum UTF8 {
-			static let lowercaseHTML = "html".data(using: .utf8)!
-			static let lowercaseBody = "body".data(using: .utf8)!
-			static let uppercaseHTML = "HTML".data(using: .utf8)!
-			static let uppercaseBody = "BODY".data(using: .utf8)!
-			static let lowercaseHead = "head".data(using: .utf8)!
-			static let uppercaseHead = "HEAD".data(using: .utf8)!
-			static let lowercaseDoctype = "<!doctype".data(using: .utf8)!
-			static let uppercaseDoctype = "<!DOCTYPE".data(using: .utf8)!
-			static let lowercaseDiv = "div".data(using: .utf8)!
-			static let uppercaseDiv = "DIV".data(using: .utf8)!
-			static let lowercaseP = "p".data(using: .utf8)!
-			static let uppercaseP = "P".data(using: .utf8)!
-			static let lowercaseSpan = "span".data(using: .utf8)!
-			static let uppercaseSpan = "SPAN".data(using: .utf8)!
+			static let lowercaseHTML = Data("html".utf8)
+			static let lowercaseBody = Data("body".utf8)
+			static let uppercaseHTML = Data("HTML".utf8)
+			static let uppercaseBody = Data("BODY".utf8)
+			static let lowercaseHead = Data("head".utf8)
+			static let uppercaseHead = Data("HEAD".utf8)
+			static let lowercaseDoctype = Data("<!doctype".utf8)
+			static let uppercaseDoctype = Data("<!DOCTYPE".utf8)
+			static let lowercaseDiv = Data("div".utf8)
+			static let uppercaseDiv = Data("DIV".utf8)
+			static let lowercaseP = Data("p".utf8)
+			static let uppercaseP = Data("P".utf8)
+			static let lowercaseSpan = Data("span".utf8)
+			static let uppercaseSpan = Data("SPAN".utf8)
 		}
 
 		/// Tags in UTF-16 format.

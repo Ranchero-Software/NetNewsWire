@@ -20,9 +20,8 @@ struct TodayWidgetView: View {
 		if entry.widgetData.todayArticles.count == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.today.url)
-		}
-		else {
-			GeometryReader { metrics in
+		} else {
+			GeometryReader { _ in
 				todayImage
 					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
 				VStack(alignment: .leading, spacing: 0) {
@@ -92,7 +91,6 @@ struct TodayWidgetView: View {
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30)
 				.foregroundColor(.orange)
-
 
 			Text(L10n.todayWidgetNoItemsTitle)
 				.font(.headline)

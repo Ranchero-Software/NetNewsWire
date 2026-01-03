@@ -12,7 +12,7 @@ import Foundation
 	func treeController(treeController: TreeController, childNodesFor: Node) -> [Node]?
 }
 
-public typealias NodeVisitBlock = (_ : Node) -> Void
+public typealias NodeVisitBlock = (_: Node) -> Void
 
 @MainActor public final class TreeController {
 
@@ -80,7 +80,7 @@ private extension TreeController {
 
 	func visitNode(_ node: Node, _ visitBlock: NodeVisitBlock) {
 		visitBlock(node)
-		node.childNodes.forEach{ (oneChildNode) in
+		node.childNodes.forEach { (oneChildNode) in
 			visitNode(oneChildNode, visitBlock)
 		}
 	}
@@ -109,12 +109,12 @@ private extension TreeController {
 		let childNodes = delegate?.treeController(treeController: self, childNodesFor: node) ?? [Node]()
 
 		childNodesDidChange = !nodeArraysAreEqual(childNodes, node.childNodes)
-		if (childNodesDidChange) {
+		if childNodesDidChange {
 			node.childNodes = childNodes
 		}
 
-		childNodes.forEach{ (oneChildNode) in
-			if rebuildChildNodes(node: oneChildNode) {
+		for childNode in childNodes {
+			if rebuildChildNodes(node: childNode) {
 				childNodesDidChange = true
 			}
 		}

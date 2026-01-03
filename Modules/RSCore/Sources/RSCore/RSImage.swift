@@ -152,9 +152,9 @@ public extension RSImage {
 			return nil
 		}
 
-		var exactMatch: (index: Int, maxDimension: Int)? = nil
-		var goodMatch: (index: Int, maxDimension: Int)? = nil
-		var smallMatch: (index: Int, maxDimension: Int)? = nil
+		var exactMatch: (index: Int, maxDimension: Int)?
+		var goodMatch: (index: Int, maxDimension: Int)?
+		var smallMatch: (index: Int, maxDimension: Int)?
 
 		// Single pass through all images to find the best match
 		for i in 0..<numberOfImages {
@@ -246,9 +246,9 @@ public extension RSImage {
 			RSImageLogger.debug("RSImageLogger: createThumbnail image source count = \(count, privacy: .public)")
 		}
 
-		let options = [kCGImageSourceCreateThumbnailWithTransform : true,
-					   kCGImageSourceCreateThumbnailFromImageIfAbsent : true,
-					   kCGImageSourceThumbnailMaxPixelSize : NSNumber(value: maxPixelSize)]
+		let options = [kCGImageSourceCreateThumbnailWithTransform: true,
+					   kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+					   kCGImageSourceThumbnailMaxPixelSize: NSNumber(value: maxPixelSize)]
 		return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary)
 	}
 }

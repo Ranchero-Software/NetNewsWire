@@ -43,8 +43,7 @@ import Articles
 
 		if let feedName = feedName {
 			self.feedName = ArticleStringFormatter.truncatedFeedName(feedName)
-		}
-		else {
+		} else {
 			self.feedName = ""
 		}
 
@@ -66,7 +65,7 @@ import Articles
 
 	}
 
-	init() { //Empty
+	init() { // Empty
 		self.title = ""
 		self.attributedTitle = NSAttributedString()
 		self.summary = ""

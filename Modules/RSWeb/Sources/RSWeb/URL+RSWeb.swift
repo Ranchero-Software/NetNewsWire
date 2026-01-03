@@ -34,8 +34,7 @@ public extension URL {
 
 		if isHTTPSURL() {
 			return absoluteString.stringByRemovingCaseInsensitivePrefix(URLConstants.prefixHTTPS)
-		}
-		else if isHTTPURL() {
+		} else if isHTTPURL() {
 			return absoluteString.stringByRemovingCaseInsensitivePrefix(URLConstants.prefixHTTP)
 		}
 
@@ -76,7 +75,7 @@ private extension String {
 		let lowerPrefix = prefix.lowercased()
 		let lowerSelf = self.lowercased()
 
-		if (lowerSelf == lowerPrefix) {
+		if lowerSelf == lowerPrefix {
 			return ""
 		}
 		if !lowerSelf.hasPrefix(lowerPrefix) {

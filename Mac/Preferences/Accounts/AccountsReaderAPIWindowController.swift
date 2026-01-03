@@ -174,7 +174,6 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 					errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 				}
 
-
 			} catch {
 				stopAnimation()
 				errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")

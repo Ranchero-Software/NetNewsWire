@@ -35,8 +35,7 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 	var windowTitle: String = NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
-
-		guard let _ = singleFolder(from: objects) else {
+		guard singleFolder(from: objects) != nil else {
 			return false
 		}
 		return true

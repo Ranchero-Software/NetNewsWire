@@ -63,13 +63,13 @@ public enum CloudKitZoneResult {
 private extension CloudKitZoneResult {
 
 	static func anyRequestErrors(_ errors: [AnyHashable: CKError]) -> CloudKitZoneResult? {
-		if errors.values.contains(where: { $0.code == .changeTokenExpired } ) {
+		if errors.values.contains(where: { $0.code == .changeTokenExpired }) {
 			return .changeTokenExpired
 		}
-		if errors.values.contains(where: { $0.code == .zoneNotFound } ) {
+		if errors.values.contains(where: { $0.code == .zoneNotFound }) {
 			return .zoneNotFound
 		}
-		if errors.values.contains(where: { $0.code == .userDeletedZone } ) {
+		if errors.values.contains(where: { $0.code == .userDeletedZone }) {
 			return .userDeletedZone
 		}
 		return nil

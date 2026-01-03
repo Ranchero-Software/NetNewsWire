@@ -40,11 +40,11 @@ final class WebViewController: UIViewController {
 	private var isFullScreenAvailable: Bool {
 		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
 	}
-	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator);
+	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 	private lazy var transition = ImageTransition(controller: self)
 	private var clickedImageCompletion: (() -> Void)?
 
-	private var articleExtractor: ArticleExtractor? = nil
+	private var articleExtractor: ArticleExtractor?
 	var extractedArticle: ExtractedArticle? {
 		didSet {
 			windowScrollY = 0
@@ -177,7 +177,7 @@ final class WebViewController: UIViewController {
 
 		let overlap = 2 * UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * windowScene.screen.scale
 		let scrollToY: CGFloat = {
-			let scrollDistance = webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap;
+			let scrollDistance = webView.scrollView.layoutMarginsGuide.layoutFrame.height - overlap
 			let fullScroll = webView.scrollView.contentOffset.y + (scrollingUp ? -scrollDistance : scrollDistance)
 			let final = finalScrollPosition(scrollingUp: scrollingUp)
 			return (scrollingUp ? fullScroll > final : fullScroll < final) ? fullScroll : final
@@ -321,7 +321,7 @@ extension WebViewController: ArticleExtractorDelegate {
 extension WebViewController: UIContextMenuInteractionDelegate {
     func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
 
-		return UIContextMenuConfiguration(identifier: nil, previewProvider: contextMenuPreviewProvider) { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: contextMenuPreviewProvider) { [weak self] _ in
 			guard let self = self else { return nil }
 
 			var menus = [UIMenu]()
@@ -403,7 +403,7 @@ extension WebViewController: WKNavigationDelegate {
 				}
 
 				if UIApplication.shared.canOpenURL(emailAddress) {
-					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly : false], completionHandler: nil)
+					UIApplication.shared.open(emailAddress, options: [.universalLinksOnly: false], completionHandler: nil)
 				} else {
 					let alert = UIAlertController(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("This device cannot send emails.", comment: "This device cannot send emails."), preferredStyle: .alert)
 					alert.addAction(.init(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil))
@@ -413,7 +413,7 @@ extension WebViewController: WKNavigationDelegate {
 				decisionHandler(.cancel)
 
 				if UIApplication.shared.canOpenURL(url) {
-					UIApplication.shared.open(url, options: [.universalLinksOnly : false], completionHandler: nil)
+					UIApplication.shared.open(url, options: [.universalLinksOnly: false], completionHandler: nil)
 				}
 
 			} else {
@@ -505,10 +505,7 @@ extension WebViewController: UIScrollViewDelegate {
 			self.windowScrollY = javascriptScrollY
 		}
 	}
-
 }
-
-
 
 // MARK: JSON
 
@@ -533,7 +530,7 @@ private extension WebViewController {
 			return
 		}
 
-		coordinator.webViewProvider.dequeueWebView() { webView in
+		coordinator.webViewProvider.dequeueWebView { webView in
 
 			webView.ready {
 
@@ -661,7 +658,7 @@ private extension WebViewController {
 
 		guard let imageURL = URL(string: clickMessage.imageURL) else { return }
 
-		Downloader.shared.download(imageURL) { [weak self] data, response, error in
+		Downloader.shared.download(imageURL) { [weak self] data, _, error in
 			guard let self, let data, error == nil, !data.isEmpty,
 				  let image = UIImage(data: data) else {
 				return
@@ -754,7 +751,7 @@ private extension WebViewController {
 	func prevArticleAction() -> UIAction? {
 		guard coordinator.isPrevArticleAvailable else { return nil }
 		let title = NSLocalizedString("Previous Article", comment: "Previous Article")
-		return UIAction(title: title, image: Assets.Images.prevArticle) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.prevArticle) { [weak self] _ in
 			self?.coordinator.selectPrevArticle()
 		}
 	}
@@ -762,7 +759,7 @@ private extension WebViewController {
 	func nextArticleAction() -> UIAction? {
 		guard coordinator.isNextArticleAvailable else { return nil }
 		let title = NSLocalizedString("Next Article", comment: "Next Article")
-		return UIAction(title: title, image: Assets.Images.nextArticle) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.nextArticle) { [weak self] _ in
 			self?.coordinator.selectNextArticle()
 		}
 	}
@@ -772,7 +769,7 @@ private extension WebViewController {
 
 		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
 		let readImage = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
-		return UIAction(title: title, image: readImage) { [weak self] action in
+		return UIAction(title: title, image: readImage) { [weak self] _ in
 			self?.coordinator.toggleReadForCurrentArticle()
 		}
 	}
@@ -781,7 +778,7 @@ private extension WebViewController {
 		let starred = article?.status.starred ?? false
 		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") : NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
 		let starredImage = starred ? Assets.Images.starOpen : Assets.Images.starClosed
-		return UIAction(title: title, image: starredImage) { [weak self] action in
+		return UIAction(title: title, image: starredImage) { [weak self] _ in
 			self?.coordinator.toggleStarredForCurrentArticle()
 		}
 	}
@@ -789,7 +786,7 @@ private extension WebViewController {
 	func nextUnreadArticleAction() -> UIAction? {
 		guard coordinator.isAnyUnreadAvailable else { return nil }
 		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
-		return UIAction(title: title, image: Assets.Images.nextUnread) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.nextUnread) { [weak self] _ in
 			self?.coordinator.selectNextUnread()
 		}
 	}
@@ -798,14 +795,14 @@ private extension WebViewController {
 		let extracted = articleExtractorButtonState == .on
 		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
 		let extractorImage = extracted ? Assets.Images.articleExtractorOffSF : Assets.Images.articleExtractorOnSF
-		return UIAction(title: title, image: extractorImage) { [weak self] action in
+		return UIAction(title: title, image: extractorImage) { [weak self] _ in
 			self?.toggleArticleExtractor()
 		}
 	}
 
 	func shareAction() -> UIAction {
 		let title = NSLocalizedString("Share", comment: "Share")
-		return UIAction(title: title, image: Assets.Images.share) { [weak self] action in
+		return UIAction(title: title, image: Assets.Images.share) { [weak self] _ in
 			self?.showActivityDialog()
 		}
 	}
@@ -865,8 +862,7 @@ extension WebViewController {
 		}
 		let encoded = json.base64EncodedString()
 
-		webView?.evaluateJavaScript("updateFind(\"\(encoded)\")") {
-			(result, error) in
+		webView?.evaluateJavaScript("updateFind(\"\(encoded)\")") { (result, error) in
 			guard error == nil,
 				let b64 = result as? String,
 				let rawData = Data(base64Encoded: b64),

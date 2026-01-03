@@ -42,8 +42,7 @@ import RSCore
 
 		if height > 0.1 {
 			self.height = height
-		}
-		else {
+		} else {
 			self.height = [feedNameRect, dateRect, titleRect, summaryRect, textRect, unreadIndicatorRect, iconImageRect].maxY() + paddingBottom
 		}
 	}
@@ -62,8 +61,7 @@ import RSCore
 		var lastTextRect = titleRect
 		if numberOfLinesForTitle == 0 {
 			lastTextRect = textRect
-		}
-		else if numberOfLinesForTitle < appearance.titleNumberOfLines {
+		} else if numberOfLinesForTitle < appearance.titleNumberOfLines {
 			if summaryRect.height > 0.1 {
 				lastTextRect = summaryRect
 			}
@@ -124,13 +122,13 @@ import RSCore
 		return (r, sizeInfo.numberOfLinesUsed)
 	}
 
-	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int,  _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
+	static func rectForSummary(_ textBoxRect: NSRect, _ titleRect: NSRect, _ titleNumberOfLines: Int, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 		if titleNumberOfLines >= appearance.titleNumberOfLines || cellData.text.isEmpty {
 			return NSRect.zero
 		}
 
 		var r = textBoxRect
-		r.origin.y = NSMaxY(titleRect)
+		r.origin.y = titleRect.maxY
 		let summaryNumberOfLines = appearance.titleNumberOfLines - titleNumberOfLines
 
 		let sizeInfo = MultilineTextFieldSizer.size(for: cellData.text, font: appearance.textOnlyFont, numberOfLines: summaryNumberOfLines, width: Int(textBoxRect.width))
@@ -161,9 +159,9 @@ import RSCore
 	static func rectForDate(_ textBoxRect: NSRect, _ rectAbove: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.dateString, font: appearance.dateFont)
 
-		var r = NSZeroRect
+		var r = NSRect.zero
 		r.size = textFieldSize
-		r.origin.y = NSMaxY(rectAbove) + appearance.titleBottomMargin
+		r.origin.y = rectAbove.maxY + appearance.titleBottomMargin
 		r.size.width = textFieldSize.width
 
 		r.origin.x = textBoxRect.maxX - textFieldSize.width
@@ -173,11 +171,11 @@ import RSCore
 
 	static func rectForFeedName(_ textBoxRect: NSRect, _ dateRect: NSRect, _ appearance: TimelineCellAppearance, _ cellData: TimelineCellData) -> NSRect {
 		if cellData.showFeedName == .none {
-			return NSZeroRect
+			return NSRect.zero
 		}
 
 		let textFieldSize = SingleLineTextFieldSizer.size(for: cellData.feedName, font: appearance.feedNameFont)
-		var r = NSZeroRect
+		var r = NSRect.zero
 		r.size = textFieldSize
 		r.origin.y = dateRect.minY
 		r.origin.x = textBoxRect.origin.x
@@ -188,7 +186,7 @@ import RSCore
 
 	static func rectForUnreadIndicator(_ appearance: TimelineCellAppearance, _ titleRect: NSRect) -> NSRect {
 
-		var r = NSZeroRect
+		var r = NSRect.zero
 		r.size = NSSize(width: appearance.unreadCircleDimension, height: appearance.unreadCircleDimension)
 		r.origin.x = appearance.cellPadding.left
 		r.origin.y = titleRect.minY + 6
@@ -235,4 +233,3 @@ private extension Array where Element == NSRect {
 		return y
 	}
 }
-

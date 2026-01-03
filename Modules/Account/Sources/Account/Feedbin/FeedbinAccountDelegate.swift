@@ -67,7 +67,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 	}
 
 	func refreshAll(for account: Account) async throws {
@@ -542,8 +542,7 @@ private extension FeedbinAccountDelegate {
 				feed.externalID = String(subscription.subscriptionID)
 				feed.faviconURL = subscription.jsonFeed?.favicon
 				feed.iconURL = subscription.jsonFeed?.icon
-			}
-			else {
+			} else {
 				subscriptionsToAdd.insert(subscription)
 			}
 		}
@@ -645,11 +644,11 @@ private extension FeedbinAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 			do {
 				try await apiCall(articleIDGroup)
-				try? await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
+				try? await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
 			} catch {
 				savedError = error
 				Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
-				try? await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) } ))
+				try? await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
 			}
 		}
 
@@ -689,8 +688,8 @@ private extension FeedbinAccountDelegate {
 		var orderFound = 0
 
 		let feedSpecifiers: [FeedSpecifier] = choices.map { choice in
-			let source = url == choice.url ? FeedSpecifier.Source.UserEntered : FeedSpecifier.Source.HTMLLink
-			orderFound = orderFound + 1
+			let source = url == choice.url ? FeedSpecifier.Source.userEntered : FeedSpecifier.Source.HTMLLink
+			orderFound += 1
 			let specifier = FeedSpecifier(title: choice.name, urlString: choice.url, source: source, orderFound: orderFound)
 			return specifier
 		}
@@ -800,7 +799,7 @@ private extension FeedbinAccountDelegate {
 
 	func processEntries(account: Account, entries: [FeedbinEntry]?) async throws {
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
-		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
 		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
@@ -828,7 +827,7 @@ private extension FeedbinAccountDelegate {
 				return
 			}
 
-			let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) } )
+			let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) })
 			let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
 
 			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
@@ -849,13 +848,13 @@ private extension FeedbinAccountDelegate {
 		guard let articleIDs else {
 			return
 		}
-		
+
 		do {
 			guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 				return
 			}
 
-			let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) } )
+			let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) })
 			let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
 
 			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()

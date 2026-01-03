@@ -68,8 +68,7 @@ public struct FeedParser {
 			case .unknown, .notAFeed:
 				return nil
 			}
-		}
-		catch { throw error }
+		} catch { throw error }
 	}
 
 	public static func parse(_ parserData: ParserData) async throws -> ParsedFeed? {
@@ -77,8 +76,7 @@ public struct FeedParser {
 			parse(parserData) { parsedFeed, error in
 				if let error {
 					continuation.resume(throwing: error)
-				}
-				else {
+				} else {
 					continuation.resume(returning: parsedFeed)
 				}
 			}

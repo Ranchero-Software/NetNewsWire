@@ -42,7 +42,7 @@ enum KeyboardType: String, Sendable {
 
 		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
 		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
-		_keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) } )
+		_keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) })
 	}
 
 	static func createKeyCommand(title: String, action: String, input: String, modifiers: UIKeyModifierFlags) -> UIKeyCommand {
@@ -74,9 +74,11 @@ private extension KeyboardManager {
 	}
 
 	static func createKeyCommandInput(keyEntry: [String: Any]) -> String? {
-		guard let key = keyEntry["key"] as? String else { return nil }
+		guard let key = keyEntry["key"] as? String else {
+			return nil
+		}
 
-		switch(key) {
+		switch key {
 		case "[space]":
 			return "\u{0020}"
 		case "[uparrow]":
@@ -95,12 +97,11 @@ private extension KeyboardManager {
 			return "\u{8}"
 		case "[deletefunction]":
 			return nil
-        case "[tab]":
-            return "\t"
+		case "[tab]":
+			return "\t"
 		default:
 			return key
 		}
-
 	}
 
 	static func createKeyModifierFlags(keyEntry: [String: Any]) -> UIKeyModifierFlags {

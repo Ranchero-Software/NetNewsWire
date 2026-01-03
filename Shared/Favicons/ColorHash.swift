@@ -41,7 +41,7 @@ public class ColorHash {
 		for char in "\(str)x" {
 			if let scl = String(char).unicodeScalars.first?.value {
 				if hash > maxSafeInteger {
-					hash = hash / seed2
+					hash /= seed2
 				}
 				hash = hash * seed + CGFloat(scl)
 			}
@@ -51,23 +51,23 @@ public class ColorHash {
 
 	public var HSB: (CGFloat, CGFloat, CGFloat) {
 		var hash = CGFloat(bkdrHash)
-		let H = hash.truncatingRemainder(dividingBy: (full - 1.0)) / full
+		let h = hash.truncatingRemainder(dividingBy: (full - 1.0)) / full
 		hash /= full
-		let S = saturation[Int((full * hash).truncatingRemainder(dividingBy: CGFloat(saturation.count)))]
+		let s = saturation[Int((full * hash).truncatingRemainder(dividingBy: CGFloat(saturation.count)))]
 		hash /= CGFloat(saturation.count)
-		let B = brightness[Int((full * hash).truncatingRemainder(dividingBy: CGFloat(brightness.count)))]
-		return (H, S, B)
+		let b = brightness[Int((full * hash).truncatingRemainder(dividingBy: CGFloat(brightness.count)))]
+		return (h, s, b)
 	}
 
 	#if os(iOS) || os(tvOS) || os(watchOS)
 	public var color: UIColor {
-		let (H, S, B) = HSB
-		return UIColor(hue: H, saturation: S, brightness: B, alpha: 1.0)
+		let (h, s, b) = HSB
+		return UIColor(hue: h, saturation: s, brightness: b, alpha: 1.0)
 	}
 	#elseif os(OSX)
 	public var color: NSColor {
-		let (H, S, B) = HSB
-		return NSColor(hue: H, saturation: S, brightness: B, alpha: 1.0)
+		let (h, s, b) = HSB
+		return NSColor(hue: h, saturation: s, brightness: b, alpha: 1.0)
 	}
 	#endif
 

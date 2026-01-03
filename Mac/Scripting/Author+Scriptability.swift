@@ -15,7 +15,7 @@ import Articles
     let author: Author
     nonisolated(unsafe) let container: ScriptingObjectContainer
 
-    init (_ author: Author, container: ScriptingObjectContainer) {
+    init(_ author: Author, container: ScriptingObjectContainer) {
         self.author = author
         self.container = container
     }
@@ -28,41 +28,41 @@ import Articles
 
     @objc(scriptingSpecifierDescriptor)
     func scriptingSpecifierDescriptor() -> NSScriptObjectSpecifier {
-        return (self.objectSpecifier ?? NSScriptObjectSpecifier() )
+        objectSpecifier ?? NSScriptObjectSpecifier()
     }
 
-    // MARK: --- ScriptingObject protocol ---
+    // MARK: - ScriptingObject protocol
 
     nonisolated var scriptingKey: String {
-        return "authors"
+        "authors"
     }
 
-    // MARK: --- UniqueIdScriptingObject protocol ---
+    // MARK: - UniqueIdScriptingObject protocol
 
     @objc(uniqueId)
-    nonisolated var scriptingUniqueID:Any {
-        return author.authorID
+    nonisolated var scriptingUniqueID: Any {
+        author.authorID
     }
 
-    // MARK: --- Scriptable properties ---
+    // MARK: - Scriptable properties
 
     @objc(url)
-    var url:String  {
-        return self.author.url ?? ""
+    var url: String {
+        author.url ?? ""
     }
 
     @objc(name)
-    var name:String  {
-        return self.author.name ?? ""
+    var name: String {
+        author.name ?? ""
     }
 
     @objc(avatarURL)
-    var avatarURL:String  {
-        return self.author.avatarURL ?? ""
+    var avatarURL: String {
+        author.avatarURL ?? ""
     }
 
     @objc(emailAddress)
-    var emailAddress:String  {
-        return self.author.emailAddress ?? ""
+    var emailAddress: String {
+        author.emailAddress ?? ""
     }
 }

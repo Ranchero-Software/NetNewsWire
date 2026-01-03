@@ -58,7 +58,7 @@ final class ImageViewController: UIViewController {
 
 	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
 		super.viewWillTransition(to: size, with: coordinator)
-		coordinator.animate(alongsideTransition: { [weak self] context in
+		coordinator.animate(alongsideTransition: { [weak self] _ in
 			self?.imageScrollView.resize()
 		})
 	}
@@ -75,7 +75,7 @@ final class ImageViewController: UIViewController {
 		dismiss(animated: true)
 	}
 
-	private func layoutTitleLabel(){
+	private func layoutTitleLabel() {
 		let width = view.frame.width
 		let multiplier = traitCollection.userInterfaceIdiom == .pad ? CGFloat(0.1) : CGFloat(0.04)
 		titleLeading.constant += width * multiplier
@@ -95,6 +95,4 @@ extension ImageViewController: ImageScrollViewDelegate {
 	func imageScrollViewDidGestureSwipeDown(imageScrollView: ImageScrollView) {
 		dismiss(animated: true)
 	}
-
-
 }

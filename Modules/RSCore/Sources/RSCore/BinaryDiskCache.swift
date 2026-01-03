@@ -42,8 +42,7 @@ nonisolated public final class BinaryDiskCache: Sendable {
 			mutex.withLock { _ in
 				do {
 					return try _data(forKey: key)
-				}
-				catch {}
+				} catch {}
 				return nil
 			}
 		}
@@ -53,14 +52,11 @@ nonisolated public final class BinaryDiskCache: Sendable {
 				if let data = newValue {
 					do {
 						try _setData(data, forKey: key)
-					}
-					catch {}
-				}
-				else {
+					} catch {}
+				} else {
 					do {
 						try _deleteData(forKey: key)
-					}
-					catch{}
+					} catch {}
 				}
 			}
 		}
@@ -85,7 +81,7 @@ nonisolated private extension BinaryDiskCache {
 	}
 
 	func filePath(forKey key: String) -> String {
-		return (folder as NSString).appendingPathComponent(key)
+		(folder as NSString).appendingPathComponent(key)
 	}
 
 	func urlForKey(_ key: String) -> URL {

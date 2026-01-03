@@ -99,7 +99,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		self.variant = variant
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any]) async {
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 	}
 
 	func refreshAll(for account: Account) async throws {
@@ -203,7 +203,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			throw AccountError.unknown
 		}
 	}
-
 
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
 	}
@@ -314,7 +313,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 
 		// This error should never happen
@@ -413,8 +411,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
-		}
-		else {
+		} else {
 			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
@@ -672,7 +669,6 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	func sendArticleStatuses(_ statuses: Set<SyncStatus>, apiCall: ([String]) async throws -> Void) async {
-
 		guard !statuses.isEmpty else {
 			return
 		}
@@ -682,7 +678,7 @@ private extension ReaderAPIAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 
 			do {
-				let _ = try await apiCall(articleIDGroup)
+				_ = try await apiCall(articleIDGroup)
 				try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
 			} catch {
 				Self.logger.error("ReaderAPI: Article status sync call failed: \(error.localizedDescription)")
@@ -778,7 +774,7 @@ private extension ReaderAPIAccountDelegate {
 	func processEntries(account: Account, entries: [ReaderAPIEntry]?) async {
 
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
-		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
 
 		try? await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}

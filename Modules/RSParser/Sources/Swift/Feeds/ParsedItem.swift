@@ -10,8 +10,8 @@ import Foundation
 import RSMarkdown
 
 public struct ParsedItem: Hashable, Sendable {
-	public let syncServiceID: String? //Nil when not syncing
-	public let uniqueID: String //RSS guid, for instance; may be calculated
+	public let syncServiceID: String? // Nil when not syncing
+	public let uniqueID: String // RSS guid, for instance; may be calculated
 	public let feedURL: String
 	public let url: String?
 	public let externalURL: String?
@@ -29,11 +29,24 @@ public struct ParsedItem: Hashable, Sendable {
 	public let tags: Set<String>?
 	public let attachments: Set<ParsedAttachment>?
 
-	public init(syncServiceID: String?, uniqueID: String, feedURL: String, url: String?, externalURL: String?, title: String?,
-				language: String?, contentHTML: String?, contentText: String?, markdown: String?, summary: String?, imageURL: String?,
-				bannerImageURL: String?,datePublished: Date?, dateModified: Date?, authors: Set<ParsedAuthor>?,
-				tags: Set<String>?, attachments: Set<ParsedAttachment>?) {
-
+	public init(syncServiceID: String?,
+	            uniqueID: String,
+	            feedURL: String,
+	            url: String?,
+	            externalURL: String?,
+	            title: String?,
+	            language: String?,
+	            contentHTML: String?,
+	            contentText: String?,
+	            markdown: String?,
+	            summary: String?,
+	            imageURL: String?,
+	            bannerImageURL: String?,
+	            datePublished: Date?,
+	            dateModified: Date?,
+	            authors: Set<ParsedAuthor>?,
+	            tags: Set<String>?,
+	            attachments: Set<ParsedAttachment>?) {
 		self.syncServiceID = syncServiceID
 		self.uniqueID = uniqueID
 		self.feedURL = feedURL
@@ -65,8 +78,7 @@ public struct ParsedItem: Hashable, Sendable {
 	public func hash(into hasher: inout Hasher) {
 		if let syncServiceID = syncServiceID {
 			hasher.combine(syncServiceID)
-		}
-		else {
+		} else {
 			hasher.combine(uniqueID)
 			hasher.combine(feedURL)
 		}

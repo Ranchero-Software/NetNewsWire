@@ -193,7 +193,7 @@ nonisolated extension URLSession: Transport {
 		var sendRequest = request
 		sendRequest.httpMethod = method
 
-		let task = self.dataTask(with: sendRequest) { (data, response, error) in
+		let task = self.dataTask(with: sendRequest) { (_, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
 					return completion(.failure(error))

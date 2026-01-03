@@ -16,14 +16,13 @@ enum TimelineSourceMode {
 	case regular, search
 }
 
-final class MainWindowController : NSWindowController, NSUserInterfaceValidations {
-
+final class MainWindowController: NSWindowController, NSUserInterfaceValidations {
     @IBOutlet var articleThemePopUpButton: NSPopUpButton?
 
     private var activityManager = ActivityManager()
 
 	private var isShowingExtractedArticle = false
-	private var articleExtractor: ArticleExtractor? = nil
+	private var articleExtractor: ArticleExtractor?
 	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
@@ -45,17 +44,17 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	private var sidebarViewController: SidebarViewController?
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
-	private var currentSearchField: NSSearchField? = nil
+	private var currentSearchField: NSSearchField?
 	private let articleThemeMenuToolbarItem = NSMenuToolbarItem(itemIdentifier: .articleThemeMenu)
-	private var searchString: String? = nil
-	private var lastSentSearchString: String? = nil
+	private var searchString: String?
+	private var lastSentSearchString: String?
 	private var timelineSourceMode: TimelineSourceMode = .regular {
 		didSet {
 			timelineContainerViewController?.showTimeline(for: timelineSourceMode)
 			detailViewController?.showDetail(for: timelineSourceMode)
 		}
 	}
-	private var searchSmartFeed: SmartFeed? = nil
+	private var searchSmartFeed: SmartFeed?
 	private var restoreArticleWindowScrollY: CGFloat?
 
 	// MARK: - NSWindowController
@@ -118,14 +117,14 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 
 	func handle(_ response: UNNotificationResponse) {
 		let userInfo = response.notification.request.content.userInfo
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any] else { return }
 		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
 
 	func handle(_ activity: NSUserActivity) {
 		guard let userInfo = activity.userInfo else { return }
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any] else { return }
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any] else { return }
 		sidebarViewController?.deepLinkRevealAndSelect(for: articlePathUserInfo)
 		currentTimelineViewController?.goToDeepLink(for: articlePathUserInfo)
 	}
@@ -337,7 +336,7 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}		
+		}
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -371,8 +370,7 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 		// TODO: handle search mode
 		if timelineViewController.canGoToNextUnread(wrappingToTop: false) {
 			goToNextUnreadInTimeline(wrappingToTop: false)
-		}
-		else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
+		} else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
 			sidebarViewController.goToNextUnread(wrappingToTop: true)
 
 			// If we ended up on the same timelineViewController, we may need to wrap
@@ -445,7 +443,7 @@ final class MainWindowController : NSWindowController, NSUserInterfaceValidation
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		currentTimelineViewController?.markAllAsRead() {
+		currentTimelineViewController?.markAllAsRead {
 			self.nextUnread(sender)
 		}
 	}
@@ -741,8 +739,7 @@ extension MainWindowController: ArticleExtractorDelegate {
     but for now, we'll keep the stratification of visibility
 */
 
-extension MainWindowController : ScriptingMainWindowController {
-
+extension MainWindowController: ScriptingMainWindowController {
     internal var scriptingCurrentArticle: Article? {
         return self.oneSelectedArticle
     }
@@ -983,7 +980,7 @@ private extension MainWindowController {
 
 		let splitViewWidths: [Int]
 		if let splitView = splitViewController?.splitView {
-			splitViewWidths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
+			splitViewWidths = splitView.arrangedSubviews.map { Int(floor($0.frame.width)) }
 		} else {
 			splitViewWidths = []
 		}
@@ -1424,6 +1421,4 @@ private extension MainWindowController {
 		articleThemeMenuToolbarItem.menu = articleThemeMenu
 		articleThemePopUpButton?.menu = articleThemeMenu
 	}
-
 }
-

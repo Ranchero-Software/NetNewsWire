@@ -11,7 +11,7 @@
 import UIKit
 
 public extension UIActivityViewController {
-	
+
 	convenience init(url: URL, title: String?, applicationActivities: [UIActivity]?) {
 		let itemSource = ArticleActivityItemSource(url: url, subject: title)
 		let titleSource = TitleActivityItemSource(title: title)

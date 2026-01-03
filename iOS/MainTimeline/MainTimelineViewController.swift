@@ -17,7 +17,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
-	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action:#selector(showFeedInspector(_:)))
+	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 
 	private var refreshProgressView: RefreshProgressView?
 
@@ -217,7 +217,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
-		//navigationItem.subtitle = "" // don't inherit feeds subtitle on push
+		// navigationItem.subtitle = "" // don't inherit feeds subtitle on push
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)
 	}
@@ -231,7 +231,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 		}
 		if traitCollection.userInterfaceIdiom == .phone {
-			if let _ = coordinator?.currentArticle {
+			if coordinator?.currentArticle != nil {
 				if let indexPath = tableView.indexPathForSelectedRow {
 					tableView.deselectRow(at: indexPath, animated: true)
 				}
@@ -262,7 +262,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		coordinator?.markAllAsReadInTimeline()
 	}
 
-	@IBAction func markAllAsRead(_ sender: Any) {
+	@IBAction func markAllAsRead(_ sender: Any?) {
 		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 
 		if let source = sender as? UIBarButtonItem {
@@ -271,7 +271,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 		}
 
-		if let _ = sender as? UIKeyCommand {
+		if sender is UIKeyCommand {
 			guard let indexPath = tableView.indexPathForSelectedRow, let contentView = tableView.cellForRow(at: indexPath)?.contentView else {
 				return
 			}
@@ -402,7 +402,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
 
-		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] (action, view, completion) in
+		let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] _, _, completion in
 			self?.toggleRead(article)
 			completion(true)
 		}
@@ -422,7 +422,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			NSLocalizedString("Unstar", comment: "Unstar") :
 			NSLocalizedString("Star", comment: "Star")
 
-		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] (action, view, completion) in
+		let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] _, _, completion in
 			self?.toggleStar(article)
 			completion(true)
 		}
@@ -488,7 +488,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 
-		return UIContextMenuConfiguration(identifier: indexPath.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: indexPath.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -855,7 +855,7 @@ private extension MainTimelineViewController {
 			NSLocalizedString("Mark as Read", comment: "Mark as Read")
 		let image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			self?.toggleRead(article)
 		}
 
@@ -874,7 +874,7 @@ private extension MainTimelineViewController {
 			NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
 		let image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
 
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			self?.toggleStar(article)
 		}
 
@@ -898,7 +898,7 @@ private extension MainTimelineViewController {
 
 		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
 		let image = Assets.Images.markAboveAsRead
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markAboveAsRead(article)
 			}
@@ -923,7 +923,7 @@ private extension MainTimelineViewController {
 
 		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
 		let image = Assets.Images.markBelowAsRead
-		let action = UIAction(title: title, image: image) { [weak self] action in
+		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markBelowAsRead(article)
 			}
@@ -941,7 +941,7 @@ private extension MainTimelineViewController {
 			completion(true)
 		}
 
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.markAboveAsRead(article)
 				completion(true)
@@ -960,7 +960,7 @@ private extension MainTimelineViewController {
 			completion(true)
 		}
 
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.markBelowAsRead(article)
 				completion(true)
@@ -984,7 +984,7 @@ private extension MainTimelineViewController {
 			!timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
-		let action = UIAction(title: title, image: Assets.Images.openInSidebar) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.openInSidebar) { [weak self] _ in
 			self?.discloseFeed(feed, animations: [.scroll, .navigation])
 		}
 		return action
@@ -995,7 +995,7 @@ private extension MainTimelineViewController {
 			!timelineFeedIsEqualTo(feed) else { return nil }
 
 		let title = NSLocalizedString("Go to Feed", comment: "Go to Feed")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.discloseFeed(feed, animations: [.scroll, .navigation])
 			completion(true)
 		}
@@ -1018,11 +1018,10 @@ private extension MainTimelineViewController {
 			return nil
 		}
 
-
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 
-		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				self?.markAllAsRead(articles)
 			}
@@ -1047,7 +1046,7 @@ private extension MainTimelineViewController {
 			completion(true)
 		}
 
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.markAllAsRead(articles)
 				completion(true)
@@ -1059,7 +1058,7 @@ private extension MainTimelineViewController {
 	func copyArticleURLAction(_ article: Article) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Copy Article URL", comment: "Copy Article URL")
-		let action = UIAction(title: title, image: Assets.Images.copy) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1068,7 +1067,7 @@ private extension MainTimelineViewController {
 	func copyExternalURLAction(_ article: Article) -> UIAction? {
 		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
 		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
-		let action = UIAction(title: title, image: Assets.Images.copy) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -1080,19 +1079,23 @@ private extension MainTimelineViewController {
 	}
 
 	func openInBrowserAction(_ article: Article) -> UIAction? {
-		guard let _ = article.preferredURL else { return nil }
+		guard article.preferredURL != nil else {
+			return nil
+		}
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] _ in
 			self?.showBrowserForArticle(article)
 		}
 		return action
 	}
 
 	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let _ = article.preferredURL else { return nil }
+		guard article.preferredURL != nil else {
+			return nil
+		}
 
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.showBrowserForArticle(article)
 			completion(true)
 		}
@@ -1102,7 +1105,9 @@ private extension MainTimelineViewController {
 	func shareDialogForTableCell(indexPath: IndexPath, url: URL, title: String?) {
 		let activityViewController = UIActivityViewController(url: url, title: title, applicationActivities: nil)
 
-		guard let cell = tableView.cellForRow(at: indexPath) else { return }
+		guard let cell = tableView.cellForRow(at: indexPath) else {
+			return
+		}
 		let popoverController = activityViewController.popoverPresentationController
 		popoverController?.sourceView = cell
 		popoverController?.sourceRect = CGRect(x: 0, y: 0, width: cell.frame.size.width, height: cell.frame.size.height)
@@ -1113,7 +1118,7 @@ private extension MainTimelineViewController {
 	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
-		let action = UIAction(title: title, image: Assets.Images.share) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.share) { [weak self] _ in
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
 		return action
@@ -1122,7 +1127,7 @@ private extension MainTimelineViewController {
 	func shareAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let url = article.preferredURL else { return nil }
 		let title = NSLocalizedString("Share", comment: "Share")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			completion(true)
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}

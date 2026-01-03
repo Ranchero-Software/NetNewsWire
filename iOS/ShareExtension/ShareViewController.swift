@@ -36,10 +36,9 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func viewDidLoad() {
-
 		extensionContainers = ExtensionContainersFile.read()
 		flattenedContainers = extensionContainers?.flattened ?? [ExtensionContainer]()
-		if let extensionContainers = extensionContainers {
+		if let extensionContainers {
 			selectedContainer = ShareDefaultContainer.defaultContainer(containers: extensionContainers)
 		}
 
@@ -55,7 +54,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 			tableView.rowHeight = 38
 		}
 
-		var provider: NSItemProvider? = nil
+		var provider: NSItemProvider?
 
 		// Try to get any HTML that is maybe passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
@@ -66,7 +65,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.propertyList.identifier, options: nil, completionHandler: { [weak self] (pList, error) in
 				if error != nil {
 					return
@@ -93,7 +92,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
 					return
@@ -115,12 +114,12 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func didSelectPost() {
-		guard let url = url, let selectedContainer = selectedContainer, let containerID = selectedContainer.containerID else {
+		guard let url, let selectedContainer, let containerID = selectedContainer.containerID else {
 			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 			return
 		}
 
-		var name: String? = nil
+		var name: String?
 		if !contentText.mayBeURL {
 			name = contentText.isEmpty ? nil : contentText
 		}
@@ -139,7 +138,6 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func configurationItems() -> [Any]! {
-
 		// To add configuration options via table cells at the bottom of the sheet, return an array of SLComposeSheetConfigurationItem here.
 		guard let urlItem = SLComposeSheetConfigurationItem() else { return nil }
 		urlItem.title = "URL"
@@ -165,7 +163,6 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 		return [folderItem!, urlItem]
 
 	}
-
 }
 
 private extension ShareViewController {
@@ -177,5 +174,4 @@ private extension ShareViewController {
 			self.folderItem.value = "\(folder.accountName) / \(folder.name)"
 		}
 	}
-
 }

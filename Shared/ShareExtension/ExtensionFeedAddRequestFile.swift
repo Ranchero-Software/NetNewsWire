@@ -133,7 +133,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 		let fileCoordinator = NSFileCoordinator(filePresenter: self)
 		let fileURL = URL(fileURLWithPath: ExtensionFeedAddRequestFile.filePath)
 
-		var requests: [ExtensionFeedAddRequest]? = nil
+		var requests: [ExtensionFeedAddRequest]?
 
 		fileCoordinator.coordinate(writingItemAt: fileURL, options: [.forMerging], error: errorPointer, byAccessor: { url in
 			do {
@@ -159,7 +159,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 	}
 
 	func processRequest(_ request: ExtensionFeedAddRequest) {
-		var destinationAccountID: String? = nil
+		var destinationAccountID: String?
 		switch request.destinationContainerID {
 		case .account(let accountID):
 			destinationAccountID = accountID
@@ -173,7 +173,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 			return
 		}
 
-		var destinationContainer: Container? = nil
+		var destinationContainer: Container?
 		if account.containerID == request.destinationContainerID {
 			destinationContainer = account
 		} else {

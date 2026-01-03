@@ -82,7 +82,7 @@ import Secrets
 			self.updateBadge()
 		}
 
-		UNUserNotificationCenter.current().requestAuthorization(options:[.badge, .sound, .alert]) { (granted, error) in
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
 			if granted {
 				DispatchQueue.main.async {
 					UIApplication.shared.registerForRemoteNotifications()
@@ -106,7 +106,7 @@ import Secrets
 
 	}
 
-    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		Task { @MainActor in
 			self.resumeDatabaseProcessingIfNecessary()
 			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
@@ -143,8 +143,8 @@ import Secrets
 
 	// MARK: - API
 
-	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> ()) {
-		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
+	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> Void) {
+		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate }).forEach {
 			$0.cleanUp(conditional: true)
 		}
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: errorHandler)
@@ -264,7 +264,7 @@ private extension AppDelegate {
 		}
 
 		DispatchQueue.main.async { [weak self] in
-			self?.waitToComplete() { [weak self] suspend in
+			self?.waitToComplete { [weak self] suspend in
 				self?.completeProcessing(suspend)
 			}
 		}
@@ -410,7 +410,7 @@ private extension AppDelegate {
 	}
 
 	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
 				return

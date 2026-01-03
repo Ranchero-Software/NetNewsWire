@@ -35,7 +35,7 @@ final class AccountInspectorViewController: UITableViewController {
 		navigationItem.title = account.nameForDisplay
 
 		if account.type != .onMyMac {
-			deleteAccountButton.setTitle(NSLocalizedString("Remove Account", comment: "Remove Account"), for: .normal) 
+			deleteAccountButton.setTitle(NSLocalizedString("Remove Account", comment: "Remove Account"), for: .normal)
 		}
 
 		if account.type != .cloudKit {
@@ -107,8 +107,10 @@ final class AccountInspectorViewController: UITableViewController {
 		alertController.addAction(cancelAction)
 
 		let markTitle = NSLocalizedString("Remove", comment: "Remove")
-		let markAction = UIAlertAction(title: markTitle, style: .destructive) { [weak self] (action) in
-			guard let self = self, let account = self.account else { return }
+		let markAction = UIAlertAction(title: markTitle, style: .destructive) { [weak self] _ in
+			guard let self, let account = self.account else {
+				return
+			}
 			AccountManager.shared.deleteAccount(account)
 			if self.isModal {
 				self.dismiss(animated: true)

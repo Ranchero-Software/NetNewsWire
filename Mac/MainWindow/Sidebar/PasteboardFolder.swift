@@ -13,14 +13,12 @@ import RSCore
 typealias PasteboardFolderDictionary = [String: String]
 
 @MainActor struct PasteboardFolder: Hashable {
-
 	private struct Key {
 		static let name = "name"
 		// Internal
 		static let folderID = "folderID"
 		static let accountID = "accountID"
 	}
-
 
 	let name: String
 	let folderID: String?

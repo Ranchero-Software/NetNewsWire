@@ -18,22 +18,21 @@ nonisolated public extension String {
 
 		for char in self {
 			switch char {
-				case "&":
-					escaped.append("&amp;")
-				case "<":
-					escaped.append("&lt;")
-				case ">":
-					escaped.append("&gt;")
-				case "\"":
-					escaped.append("&quot;")
-				case "'":
-					escaped.append("&apos;")
-				default:
-					escaped.append(char)
+			case "&":
+				escaped.append("&amp;")
+			case "<":
+				escaped.append("&lt;")
+			case ">":
+				escaped.append("&gt;")
+			case "\"":
+				escaped.append("&quot;")
+			case "'":
+				escaped.append("&apos;")
+			default:
+				escaped.append(char)
 			}
 		}
 
 		return escaped
 	}
-
 }

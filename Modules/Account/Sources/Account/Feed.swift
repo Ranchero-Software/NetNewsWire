@@ -322,7 +322,7 @@ extension Feed: OPMLRepresentable {
 		return Set<String>(map { $0.feedID })
 	}
 
-	func sorted() -> Array<Feed> {
+	func sorted() -> [Feed] {
 		return sorted(by: { (feed1, feed2) -> Bool in
 			if feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedSame {
 				return feed1.url < feed2.url

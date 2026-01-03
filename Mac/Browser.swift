@@ -10,7 +10,6 @@ import Foundation
 import RSWeb
 
 @MainActor struct Browser {
-
 	/// The user-specified default browser for opening web pages.
 	///
 	/// The user-assigned default browser, or `nil` if none was assigned
@@ -23,7 +22,6 @@ import RSWeb
 		return nil
 	}
 
-
 	/// Opens a URL in the default browser.
 	///
 	/// - Parameters:
@@ -33,7 +31,6 @@ import RSWeb
 		// Opens according to prefs.
 		open(urlString, inBackground: invert ? !AppDefaults.shared.openInBrowserInBackground : AppDefaults.shared.openInBrowserInBackground)
 	}
-
 
 	/// Opens a URL in the default browser.
 	///
@@ -52,9 +49,11 @@ import RSWeb
 			configuration.activates = false
 		}
 
-		NSWorkspace.shared.open(preparedURL, configuration: configuration) { (runningApplication, error) in
+		NSWorkspace.shared.open(preparedURL, configuration: configuration) { _, error in
 			Task { @MainActor in
-				guard error != nil else { return }
+				guard error != nil else {
+					return
+				}
 				if let defaultBrowser = defaultBrowser {
 					defaultBrowser.openURL(url, inBackground: inBackground)
 				} else {

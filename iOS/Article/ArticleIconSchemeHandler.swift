@@ -11,7 +11,6 @@ import WebKit
 import Articles
 
 final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
-
 	weak var coordinator: SceneCoordinator?
 
 	init(coordinator: SceneCoordinator) {
@@ -49,12 +48,9 @@ final class ArticleIconSchemeHandler: NSObject, WKURLSchemeHandler {
 			urlSchemeTask.didReceive(data)
 			urlSchemeTask.didFinish()
 		}
-
 	}
 
 	func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
 		urlSchemeTask.didFailWithError(URLError(.unknown))
 	}
-
 }
-

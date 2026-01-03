@@ -16,7 +16,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.004 sec on my 2012 iMac.
 		let d = parserData("scriptingNews", "rss", "http://scripting.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -25,7 +25,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.004 sec on my 2012 iMac.
 		let d = parserData("KatieFloyd", "rss", "http://katiefloyd.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -34,7 +34,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.001 sec on my 2012 iMac.
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -43,7 +43,7 @@ final class RSSParserTests: XCTestCase {
 		// 0.002 sec on my 2012 iMac.
 		let d = parserData("manton", "rss", "http://manton.org/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 

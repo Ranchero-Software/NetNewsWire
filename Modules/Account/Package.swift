@@ -8,7 +8,7 @@ let package = Package(
 		.library(
 			name: "Account",
 			type: .dynamic,
-			targets: ["Account"]),
+			targets: ["Account"])
 	],
 	dependencies: [
 		.package(path: "../Articles"),
@@ -41,16 +41,16 @@ let package = Package(
 			],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
 		),
 		.testTarget(
 			name: "AccountTests",
 			dependencies: ["Account"],
 			resources: [
-				.copy("JSON"),
+				.copy("JSON")
 			],
 			swiftSettings: [.swiftLanguageMode(.v6)]
-		),
+		)
 	]
 )

@@ -97,9 +97,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		disclosureExpanded = isExpanded
 	}
 
-
 	override var accessibilityLabel: String? {
-		set {}
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
@@ -108,6 +106,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 				return (String(describing: folderTitle.text))
 			}
 		}
+		set {}
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
@@ -137,5 +136,4 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 
 		self.backgroundConfiguration = backgroundConfig
 	}
-
 }

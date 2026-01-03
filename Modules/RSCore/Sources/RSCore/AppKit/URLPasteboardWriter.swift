@@ -18,11 +18,11 @@ import AppKit
 		self.urlString = urlString
 	}
 
-	public class func write(urlString: String, to pasteboard: NSPasteboard) {
+	public static func write(urlString: String, to pasteboard: NSPasteboard) {
 		write(urlStrings: [urlString], to: pasteboard)
 	}
 
-	public class func write(urlStrings: [String], to pasteboard: NSPasteboard) {
+	public static func write(urlStrings: [String], to pasteboard: NSPasteboard) {
 		assert(!urlStrings.isEmpty)
 		guard !urlStrings.isEmpty else {
 			return
@@ -36,7 +36,7 @@ import AppKit
 	// MARK: - NSPasteboardWriting
 
 	public func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
-		if let _ = URL(string: urlString) {
+		if URL(string: urlString) != nil {
 			return [.URL, .string]
 		}
 		return [.string]

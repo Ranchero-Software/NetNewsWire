@@ -100,8 +100,8 @@ class MainTimelineFeedCell: UITableViewCell {
 				.font: UIFont.preferredFont(forTextStyle: .headline),
 				.paragraphStyle: paragraphStyle,
 				.foregroundColor: isSelected ? UIColor.white : UIColor.label
- 			]
-			let titleWithNewline = cellData.title + (cellData.summary != "" ? "\n" : "" ) 
+			]
+			let titleWithNewline = cellData.title + (cellData.summary != "" ? "\n" : "" )
 			let titleAttributed = NSAttributedString(string: titleWithNewline, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
@@ -144,6 +144,4 @@ class MainTimelineFeedCell: UITableViewCell {
 
 		self.backgroundConfiguration = backgroundConfig
 	}
-
-
 }

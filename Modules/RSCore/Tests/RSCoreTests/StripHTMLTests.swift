@@ -148,7 +148,7 @@ final class StripHTMLTests: XCTestCase {
 
 		self.measure {
 			for _ in 0..<1000 {
-				let _ = html.strippingHTML(maxCharacters: 300)
+				_ = html.strippingHTML(maxCharacters: 300)
 			}
 		}
 	}
@@ -214,7 +214,7 @@ final class StripHTMLTests: XCTestCase {
 		self.measure {
 			for _ in 0..<100 {
 				for html in htmlFiles {
-					let _ = html.strippingHTML(maxCharacters: 300)
+					_ = html.strippingHTML(maxCharacters: 300)
 				}
 			}
 		}

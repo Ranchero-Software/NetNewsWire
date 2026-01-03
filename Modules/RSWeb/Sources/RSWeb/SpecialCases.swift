@@ -25,7 +25,6 @@ nonisolated public struct SpecialCase {
 	}
 }
 
-
 nonisolated extension URL {
 
 	public var isOpenRSSOrgURL: Bool {

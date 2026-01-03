@@ -9,14 +9,13 @@
 import Foundation
 
 final class SidebarWindowState: NSObject, NSSecureCoding {
-
 	static let supportsSecureCoding = true
 
 	let isReadFiltered: Bool
 	let expandedContainers: [[String: String]]
 	let selectedFeeds: [[String: String]]
 
-	init(isReadFiltered: Bool, expandedContainers: [[String : String]], selectedFeeds: [[String : String]]) {
+	init(isReadFiltered: Bool, expandedContainers: [[String: String]], selectedFeeds: [[String: String]]) {
 		self.isReadFiltered = isReadFiltered
 		self.expandedContainers = expandedContainers
 		self.selectedFeeds = selectedFeeds

@@ -13,7 +13,6 @@ import Articles
 import Account
 
 final class FeedInspectorViewController: NSViewController, Inspector {
-
 	@IBOutlet var iconView: IconView!
 	@IBOutlet var nameTextField: NSTextField?
 	@IBOutlet var homePageURLTextField: NSTextField?
@@ -64,7 +63,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	// MARK: Actions
 	@IBAction func isNotifyAboutNewArticlesChanged(_ sender: Any) {
-		guard authorizationStatus != nil else  {
+		guard authorizationStatus != nil else {
 			DispatchQueue.main.async {
 				self.isNotifyAboutNewArticlesCheckBox.setNextState()
 			}
@@ -86,7 +85,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 					self.feed?.isNotifyAboutNewArticles = (self.isNotifyAboutNewArticlesCheckBox?.state ?? .off) == .on ? true : false
 				}
 			} else {
-				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { granted, _ in
 					Task { @MainActor in
 						self.updateNotificationSettings()
 						if granted {
@@ -114,7 +113,6 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
 		updateImage()
 	}
-
 }
 
 extension FeedInspectorViewController: NSTextFieldDelegate {
@@ -122,7 +120,6 @@ extension FeedInspectorViewController: NSTextFieldDelegate {
 	func controlTextDidEndEditing(_ note: Notification) {
 		renameFeedIfNecessary()
 	}
-
 }
 
 private extension FeedInspectorViewController {
@@ -134,7 +131,6 @@ private extension FeedInspectorViewController {
 		}
 		feed = singleFeed
 	}
-
 
 	@objc func updateUI() {
 		updateImage()

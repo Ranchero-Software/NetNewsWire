@@ -48,7 +48,7 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
 		UIView.animate(
 			withDuration: duration,
-			delay:0.0,
+			delay: 0.0,
 			usingSpringWithDamping: 0.8,
 			initialSpringVelocity: 0.2,
 			animations: {
@@ -87,14 +87,14 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
 		UIView.animate(
 			withDuration: duration,
-			delay:0.0,
+			delay: 0.0,
 			usingSpringWithDamping: 0.8,
 			initialSpringVelocity: 0.2,
 			animations: {
 				imageView.frame = self.originFrame
 			}, completion: { _ in
 				if let controller = self.webViewController {
-					controller.showClickedImage() {
+					controller.showClickedImage {
 						DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
 							imageView.removeFromSuperview()
 							transitionContext.completeTransition(true)

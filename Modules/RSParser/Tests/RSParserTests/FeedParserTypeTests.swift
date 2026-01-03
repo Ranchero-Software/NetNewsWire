@@ -201,7 +201,7 @@ final class FeedParserTypeTests: XCTestCase {
 
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 
@@ -211,7 +211,7 @@ final class FeedParserTypeTests: XCTestCase {
 
 		let d = parserData("inessential", "json", "http://inessential.com/")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 
@@ -221,7 +221,7 @@ final class FeedParserTypeTests: XCTestCase {
 
 		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 
@@ -231,7 +231,7 @@ final class FeedParserTypeTests: XCTestCase {
 
 		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 

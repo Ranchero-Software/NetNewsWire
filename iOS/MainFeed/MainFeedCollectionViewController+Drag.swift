@@ -34,7 +34,4 @@ extension MainFeedCollectionViewController: UICollectionViewDragDelegate {
 		dragItem.localObject = node
 		return [dragItem]
 	}
-
-
-
 }

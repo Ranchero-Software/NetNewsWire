@@ -40,8 +40,10 @@ extension NSAttributedString {
 		let baseDescriptor = baseFont.fontDescriptor
 		let baseSymbolicTraits = baseDescriptor.symbolicTraits
 
-		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font: Any?, range: NSRange, stop: UnsafeMutablePointer<ObjCBool>) in
-			guard let font = font as? Font else { return }
+		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font, range, _) in
+			guard let font = font as? Font else {
+				return
+			}
 
 			let currentDescriptor = font.fontDescriptor
 			let symbolicTraits = baseSymbolicTraits.union(currentDescriptor.symbolicTraits)
@@ -79,22 +81,22 @@ extension NSAttributedString {
 
 		init?(forTag: String) {
 			switch forTag {
-				case "b", "strong":
-					self = .bold
-				case "i", "em", "cite", "var", "dfn":
-					self = .italic
-				case "sup":
-					self = .superscript
-				case "sub":
-					self = .subscript
-				case "u", "ins":
-					self = .underline
-				case "s", "del":
-					self = .strikethrough
-				case "code", "samp", "tt", "kbd":
-					self = .monospace
-				default:
-					return nil
+			case "b", "strong":
+				self = .bold
+			case "i", "em", "cite", "var", "dfn":
+				self = .italic
+			case "sup":
+				self = .superscript
+			case "sub":
+				self = .subscript
+			case "u", "ins":
+				self = .underline
+			case "s", "del":
+				self = .strikethrough
+			case "code", "samp", "tt", "kbd":
+				self = .monospace
+			default:
+				return nil
 			}
 		}
 	}
@@ -165,19 +167,20 @@ extension NSAttributedString {
 			} else {
 				if char == "&" {
 					var entity = "&"
-					var lastchar: Character? = nil
+					var lastchar: Character?
 
 					while let entitychar = iterator.next() {
 						if entitychar.isWhitespace {
 							lastchar = entitychar
-							break;
+							break
 						}
 
 						entity.append(entitychar)
 
-						if (entitychar == ";") { break }
+						if entitychar == ";" {
+							break
+						}
 					}
-
 
 					result.mutableString.append(entity.decodedEntity)
 
@@ -252,7 +255,6 @@ extension NSAttributedString {
 
 		self.init(attributedString: result)
 	}
-
 }
 
 /// This is a very, very basic implementation that only covers our needs.
@@ -276,13 +278,11 @@ private struct CountedSet<Element> where Element: Hashable {
 	}
 
 	func contains(_ element: Element) -> Bool {
-		return _storage[element] != nil
+		_storage[element] != nil
 	}
 
 	subscript(key: Element) -> Int {
-		get {
-			return _storage[key, default: 0]
-		}
+		_storage[key, default: 0]
 	}
 }
 

@@ -199,7 +199,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 				return
 			}
 			info.addData(data)
-			
+
 			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
 				dataTask.cancel()
 				removeTask(dataTask)
@@ -276,7 +276,7 @@ private extension DownloadSession {
 		updateDownloadProgress()
 	}
 
-	func urlStringIsBlackListedRedirect(_ urlString: String) -> Bool {
+	func urlStringIsDisallowedRedirect(_ urlString: String) -> Bool {
 
 		// Hotels and similar often do permanent redirects. We can catch some of those.
 
@@ -293,7 +293,7 @@ private extension DownloadSession {
 	}
 
 	func cacheRedirect(_ oldURL: URL, _ newURL: URL) {
-		if urlStringIsBlackListedRedirect(newURL.absoluteString) {
+		if urlStringIsDisallowedRedirect(newURL.absoluteString) {
 			return
 		}
 		redirectCache[oldURL] = newURL
@@ -308,7 +308,7 @@ private extension DownloadSession {
 
 		var currentURL = url
 
-		while(true) {
+		while true {
 
 			if let oneRedirectURL = redirectCache[currentURL] {
 

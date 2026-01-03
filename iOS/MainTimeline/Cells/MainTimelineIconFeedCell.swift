@@ -46,7 +46,6 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		}
 	}
 
-
 	private func configure(_ cellData: MainTimelineCellData) {
 		updateIndicatorView(cellData)
 		articleTitle.numberOfLines = cellData.numberOfLines
@@ -117,8 +116,6 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
 
-
-
 		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if cellData.title != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
@@ -130,7 +127,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 				.paragraphStyle: paragraphStyle,
 				.foregroundColor: isSelected ? UIColor.white : UIColor.label
 			]
-			let titleWithNewline = cellData.title + (cellData.summary != "" ? "\n" : "" ) 
+			let titleWithNewline = cellData.title + (cellData.summary != "" ? "\n" : "" )
 			let titleAttributed = NSAttributedString(string: titleWithNewline, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}

@@ -201,9 +201,9 @@ enum CreateReaderAPISubscriptionResult {
 
 		let oldTagName = "user/-/label/\(encodedOldName)"
 		let newTagName = "user/-/label/\(encodedNewName)"
-		let postData = "T=\(token)&s=\(oldTagName)&dest=\(newTagName)".data(using: String.Encoding.utf8)
+		let postData = Data("T=\(token)&s=\(oldTagName)&dest=\(newTagName)".utf8)
 
-		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 
 	@MainActor public func deleteTag(folderExternalID: String) async throws {
@@ -219,9 +219,9 @@ enum CreateReaderAPISubscriptionResult {
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		let postData = "T=\(token)&s=\(folderExternalID)".data(using: String.Encoding.utf8)
+		let postData = Data("T=\(token)&s=\(folderExternalID)".utf8)
 
-		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 
 	@MainActor public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
@@ -265,9 +265,9 @@ enum CreateReaderAPISubscriptionResult {
 			throw AccountError.invalidParameter
 		}
 
-		let postData = "T=\(token)&quickadd=\(encodedFeedURL)".data(using: String.Encoding.utf8)
+		let postData = Data("T=\(token)&quickadd=\(encodedFeedURL)".utf8)
 
-		let (_, subResult) = try await self.transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIQuickAddResult.self)
+		let (_, subResult) = try await self.transport.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIQuickAddResult.self)
 
 		guard let subResult else {
 			return .notFound
@@ -306,9 +306,9 @@ enum CreateReaderAPISubscriptionResult {
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		let postData = "T=\(token)&s=\(subscriptionID)&ac=unsubscribe".data(using: String.Encoding.utf8)
+		let postData = Data("T=\(token)&s=\(subscriptionID)&ac=unsubscribe".utf8)
 
-		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 
 	public func createTagging(subscriptionID: String, tagName: String) async throws {
@@ -354,7 +354,7 @@ enum CreateReaderAPISubscriptionResult {
 		}
 		let postData = postString.data(using: String.Encoding.utf8)
 
-		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 
 	@MainActor public func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
@@ -382,11 +382,11 @@ enum CreateReaderAPISubscriptionResult {
 				let idHexString = String(idValue, radix: 16, uppercase: false)
 				return "i=tag:google.com,2005:reader/item/\(idHexString)"
 			}
-		}).joined(separator:"&")
+		}).joined(separator: "&")
 
-		let postData = "T=\(token)&output=json&\(idsToFetch)".data(using: String.Encoding.utf8)
+		let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
 
-		let (_, entryWrapper) = try await transport.send(request: request, method: HTTPMethod.post, data: postData!, resultType: ReaderAPIEntryWrapper.self)
+		let (_, entryWrapper) = try await transport.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
 
 		guard let entryWrapper else {
 			throw AccountError.invalidResponse
@@ -553,12 +553,12 @@ private extension ReaderAPICaller {
 				let idHexString = String(format: "%.16llx", intValue)
 				return "i=tag:google.com,2005:reader/item/\(idHexString)"
 			}
-		}).joined(separator:"&")
+		}).joined(separator: "&")
 
 		let actionIndicator = add ? "a" : "r"
 
-		let postData = "T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".data(using: String.Encoding.utf8)
+		let postData = Data("T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".utf8)
 
-		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData!)
+		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 }

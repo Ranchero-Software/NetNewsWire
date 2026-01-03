@@ -11,8 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-
-class MainFeedCollectionViewCell: UICollectionViewCell {
+final class MainFeedCollectionViewCell: UICollectionViewCell {
 	@IBOutlet var feedTitle: UILabel!
 	@IBOutlet var faviconView: IconView!
 	@IBOutlet var unreadCountLabel: UILabel!
@@ -62,7 +61,6 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 	}
 
 	override var accessibilityLabel: String? {
-		set {}
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
@@ -71,6 +69,7 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 				return (String(describing: feedTitle.text))
 			}
 		}
+		set {}
 	}
 
     override func awakeFromNib() {
@@ -115,6 +114,4 @@ class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 		self.backgroundConfiguration = backgroundConfig
 	}
-
 }
-
