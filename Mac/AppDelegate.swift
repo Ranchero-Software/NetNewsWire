@@ -223,7 +223,7 @@ let appName = "NetNewsWire"
 		#else
 		if AppDefaults.shared.suppressSyncOnLaunch {
 			refreshTimer!.update()
-			ArticleStatusSyncTimer.shared.update.update()
+			ArticleStatusSyncTimer.shared.update()
 		} else {
 			DispatchQueue.main.async {
 				self.refreshTimer!.timedRefresh(nil)
