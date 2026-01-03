@@ -11,7 +11,7 @@ import RSParser
 
 final class RSDateParserTests: XCTestCase {
 
-	static func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int) -> Date {
+	static func dateWithValues(_ year: Int, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int, _ second: Int, _ milliseconds: Int = 0) -> Date {
 		var dateComponents = DateComponents()
 		dateComponents.calendar = Calendar.current
 		dateComponents.timeZone = TimeZone(secondsFromGMT: 0)
@@ -22,6 +22,7 @@ final class RSDateParserTests: XCTestCase {
 		dateComponents.hour = hour
 		dateComponents.minute = minute
 		dateComponents.second = second
+		dateComponents.nanosecond = milliseconds * 1000000
 
 		return dateComponents.date!
 	}
@@ -100,9 +101,9 @@ final class RSDateParserTests: XCTestCase {
 		XCTAssertEqual(d, expectedDateResult)
 	}
 
-//	func testHighMillisecondDate() {
-//		let expectedDateResult = Self.dateWithValues(2021, 03, 29, 10, 46, 56)
-//		let d = RSDateWithString("2021-03-29T10:46:56.516941+00:00")
-//		XCTAssertEqual(d, expectedDateResult)
-//	}
+	func testHighMillisecondDate() {
+		let expectedDateResult = Self.dateWithValues(2021, 03, 29, 10, 46, 56, 516)
+		let d = RSDateWithString("2021-03-29T10:46:56.516941+00:00")
+		XCTAssertEqual(d!.timeIntervalSince1970, expectedDateResult.timeIntervalSince1970, accuracy: 0.000001)
+	}
 }
