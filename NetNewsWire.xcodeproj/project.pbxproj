@@ -666,7 +666,6 @@
 				176813EF2564BB2C00D98635 /* Sources */,
 				176813F02564BB2C00D98635 /* Frameworks */,
 				176813F12564BB2C00D98635 /* Resources */,
-				1701E1BF25689B44009453D8 /* SwiftGen Localization */,
 				17EF6A1725C4E59D002C9F81 /* Embed Frameworks */,
 				84BB8F7F26224B5F00DB61F8 /* Delete Unnecessary Frameworks */,
 			);
@@ -1068,25 +1067,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		1701E1BF25689B44009453D8 /* SwiftGen Localization */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "SwiftGen Localization";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if ! command -v swiftgen &> /dev/null\nthen\n    echo \"swiftgen could not be found\"\n    exit\nfi\n\nswiftgen run strings -t structured-swift5 \"$PROJECT_DIR/Widget/Resources/en.lproj/Localizable.strings\" \"$PROJECT_DIR/Widget/Resources/Localizable.stringsdict\" --output \"$PROJECT_DIR/Widget/Resources/Localized.swift\";\n";
-		};
 		513F328A2593EFCE0003048F /* Delete Unnecessary Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;

@@ -17,49 +17,52 @@ struct TodayWidgetView: View {
 	var entry: Provider.Entry
 
 	var body: some View {
-		if entry.widgetData.todayArticles.count == 0 {
+		if entry.widgetData.currentTodayCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.today.url)
-		} else {
-			GeometryReader { _ in
-				todayImage
-					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment: .leading, spacing: 0) {
+		}
+		else {
+			VStack {
+				Spacer()
+				HStack {
+					todayImage
+						.layoutPriority(1)
+					Text("label.text.today", comment: "Today")
+						.font(.caption2)
+						.bold()
+						.lineLimit(1)
+						.minimumScaleFactor(0.8)
+						.fixedSize(horizontal: false, vertical: true)
+						.layoutPriority(1)
+					Spacer()
+						.layoutPriority(0)
+					if entry.widgetData.currentTodayCount - maxCount() > 0 {
+						Text(verbatim: entry.widgetData.currentTodayCount.formatted())
+							.font(.caption2)
+							.bold()
+							.foregroundColor(.secondary)
+							.lineLimit(1)
+							.minimumScaleFactor(0.8)
+							.fixedSize(horizontal: false, vertical: true)
+					}
+				}
+				.widgetURL(WidgetDeepLink.today.url)
+				Divider()
+				if entry.widgetData.todayArticles.count > 0 {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
 						if i != 0 {
 							Divider()
 							ArticleItemView(article: entry.widgetData.todayArticles[i],
 											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-							.padding(.top, WidgetLayout.articleItemViewPaddingTop)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						} else {
 							ArticleItemView(article: entry.widgetData.todayArticles[i],
 											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
 						}
 					})
-					Spacer()
 				}
-				.padding(.leading, WidgetLayout.leftSideWidth)
-				.padding([.bottom, .trailing])
-				.overlay(
-					VStack {
-						Spacer()
-						HStack {
-							Spacer()
-							if entry.widgetData.currentTodayCount - maxCount() > 0 {
-								Text(L10n.todayCount(entry.widgetData.currentTodayCount - maxCount()))
-									.font(.caption2)
-									.bold()
-									.foregroundColor(.secondary)
-							}
-						}
-					}
-						.padding(.horizontal)
-				)
-
+				Spacer()
 			}
-			.widgetURL(WidgetDeepLink.today.url)
+			.padding(.vertical, 2)
 		}
 	}
 
@@ -92,11 +95,12 @@ struct TodayWidgetView: View {
 				.frame(width: 30)
 				.foregroundColor(.orange)
 
-			Text(L10n.todayWidgetNoItemsTitle)
+
+			Text("label.text.today", comment: "Today")
 				.font(.headline)
 				.foregroundColor(.primary)
 
-			Text(L10n.todayWidgetNoItems)
+			Text("label.text.today-no-articles", comment: "There are no recent articles.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()
