@@ -276,7 +276,7 @@ private extension DownloadSession {
 		updateDownloadProgress()
 	}
 
-	func urlStringIsBlackListedRedirect(_ urlString: String) -> Bool {
+	func urlStringIsDisallowedRedirect(_ urlString: String) -> Bool {
 
 		// Hotels and similar often do permanent redirects. We can catch some of those.
 
@@ -293,7 +293,7 @@ private extension DownloadSession {
 	}
 
 	func cacheRedirect(_ oldURL: URL, _ newURL: URL) {
-		if urlStringIsBlackListedRedirect(newURL.absoluteString) {
+		if urlStringIsDisallowedRedirect(newURL.absoluteString) {
 			return
 		}
 		redirectCache[oldURL] = newURL

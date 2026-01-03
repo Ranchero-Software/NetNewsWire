@@ -87,7 +87,7 @@ private extension FeedSpecifier {
 			score += 50
 		}
 
-		score = score - ((orderFound - 1) * 5)
+		score -= (orderFound - 1) * 5
 
 		if urlString.caseInsensitiveContains("comments") {
 			score -= 10

@@ -55,11 +55,11 @@ public extension Notification.Name {
 private extension BatchUpdate {
 
 	func incrementCount() {
-		count = count + 1
+		count += 1
 	}
 
 	func decrementCount() {
-		count = count - 1
+		count -= 1
 		if count < 1 {
 			assert(count > -1, "Expected batch updates count to be 0 or greater.")
 			count = 0

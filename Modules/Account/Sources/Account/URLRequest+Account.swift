@@ -22,9 +22,9 @@ public extension URLRequest {
 
 		switch credentials.type {
 		case .basic:
-			let data = "\(credentials.username):\(credentials.secret)".data(using: .utf8)
-			let base64 = data?.base64EncodedString()
-			let auth = "Basic \(base64 ?? "")"
+			let data = Data("\(credentials.username):\(credentials.secret)".utf8)
+			let base64 = data.base64EncodedString()
+			let auth = "Basic \(base64)"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
 		case .newsBlurBasic:
 			setValue("application/x-www-form-urlencoded", forHTTPHeaderField: HTTPRequestHeader.contentType)
