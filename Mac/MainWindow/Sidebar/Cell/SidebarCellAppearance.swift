@@ -32,4 +32,3 @@ struct SidebarCellAppearance: Equatable {
 		self.textFieldFont = NSFont.systemFont(ofSize: textFieldFontSize)
 	}
 }
-

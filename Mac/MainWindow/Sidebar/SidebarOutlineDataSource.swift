@@ -64,7 +64,7 @@ import Account
 	func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
 		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
-		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil)  {
+		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil) {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		let parentNode = nodeForItem(item)
@@ -100,7 +100,7 @@ import Account
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
 		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
-		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil)  {
+		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil) {
 			return false
 		}
 		let parentNode = nodeForItem(item)
@@ -167,8 +167,7 @@ private extension SidebarOutlineDataSource {
 		for feed in draggedFeeds {
 			if feed.isLocalFeed {
 				hasLocalFeed = true
-			}
-			else {
+			} else {
 				hasNonLocalFeed = true
 			}
 			if hasLocalFeed && hasNonLocalFeed {
@@ -237,7 +236,7 @@ private extension SidebarOutlineDataSource {
 		return localDragOperation(parentNode: parentNode, draggedFeeds)
 	}
 
-	func localDragOperation(parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>)-> NSDragOperation {
+	func localDragOperation(parentNode: Node, _ draggedFeeds: Set<PasteboardFeed>) -> NSDragOperation {
 		guard let firstDraggedFeed = draggedFeeds.first else { return .move }
 		if sameAccount(firstDraggedFeed, parentNode) {
 			if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
@@ -443,7 +442,7 @@ private extension SidebarOutlineDataSource {
 		Task { @MainActor in
 			do {
 				let destinationFolder = try await destinationAccount.addFolder(folder.name ?? "")
-				
+
 				for feed in folder.topLevelFeeds {
 					if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 						destinationAccount.addFeed(existingFeed, to: destinationFolder) { result in

@@ -13,7 +13,7 @@ public struct HTTPResponseCode {
 	// http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 	// Not an enum because the main interest is the actual values.
 
-	public static let responseContinue = 100 //"continue" is a language keyword, hence the weird name
+	public static let responseContinue = 100 // "continue" is a language keyword, hence the weird name
 	public static let switchingProtocols = 101
 
 	public static let OK = 200

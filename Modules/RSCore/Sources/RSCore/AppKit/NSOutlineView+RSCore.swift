@@ -64,13 +64,12 @@ public extension NSOutlineView {
 
 		while true {
 			row += 1
-			if let _ = item(atRow: row) {
+			if item(atRow: row) != nil {
 				if canSelect(row) {
 					selectRowAndScrollToVisible(row)
 					return
 				}
-			}
-			else {
+			} else {
 				return // if there are no more items, we’re out of rows
 			}
 		}
@@ -180,4 +179,3 @@ public extension NSOutlineView {
 	}
 }
 #endif
-

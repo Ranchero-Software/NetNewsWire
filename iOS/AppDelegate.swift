@@ -82,7 +82,7 @@ import Secrets
 			self.updateBadge()
 		}
 
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
 			if granted {
 				DispatchQueue.main.async {
 					UIApplication.shared.registerForRemoteNotifications()
@@ -143,8 +143,8 @@ import Secrets
 
 	// MARK: - API
 
-	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> ()) {
-		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate } ).forEach {
+	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> Void) {
+		UIApplication.shared.connectedScenes.compactMap( { $0.delegate as? SceneDelegate }).forEach {
 			$0.cleanUp(conditional: true)
 		}
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: errorHandler)
@@ -264,7 +264,7 @@ private extension AppDelegate {
 		}
 
 		DispatchQueue.main.async { [weak self] in
-			self?.waitToComplete() { [weak self] suspend in
+			self?.waitToComplete { [weak self] suspend in
 				self?.completeProcessing(suspend)
 			}
 		}

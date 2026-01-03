@@ -190,7 +190,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 		return statusWithRow(row, articleID: articleID)
 	}
 
-	func statusWithRow(_ row: FMResultSet, articleID: String) ->ArticleStatus? {
+	func statusWithRow(_ row: FMResultSet, articleID: String) -> ArticleStatus? {
 		if let cachedStatus = cache[articleID] {
 			return cachedStatus
 		}

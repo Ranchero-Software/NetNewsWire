@@ -71,7 +71,7 @@ private extension CoalescingQueue {
 
 	func add(_ call: QueueCall) {
 		restartTimer()
-		
+
 		if !calls.contains(call) {
 			calls.append(call)
 		}

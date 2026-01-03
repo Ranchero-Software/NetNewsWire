@@ -102,13 +102,13 @@ final class AddFolderViewController: UITableViewController {
 			return defaultNumberOfRows - 1
 		}
 
-		return defaultNumberOfRows	
+		return defaultNumberOfRows
 	}
 }
 
 extension AddFolderViewController: UIPickerViewDataSource, UIPickerViewDelegate {
 
-	func numberOfComponents(in pickerView: UIPickerView) ->Int {
+	func numberOfComponents(in pickerView: UIPickerView) -> Int {
 		return 1
 	}
 
@@ -123,7 +123,6 @@ extension AddFolderViewController: UIPickerViewDataSource, UIPickerViewDelegate 
 	func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
 		didSelect(accounts[row])
 	}
-
 }
 
 extension AddFolderViewController: UITextFieldDelegate {
@@ -132,5 +131,4 @@ extension AddFolderViewController: UITextFieldDelegate {
 		textField.resignFirstResponder()
 		return true
 	}
-
 }

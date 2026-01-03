@@ -12,7 +12,7 @@ import Foundation
 /// [send-to-blog-editor Apple Events API](http://ranchero.com/netnewswire/developers/externalinterface)\.
 
 @MainActor public struct SendToBlogEditorApp {
-	///The target descriptor of the application.
+	/// The target descriptor of the application.
 	///
 	/// The easiest way to get this is probably `UserApp.targetDescriptor` or `NSAppleEventDescriptor(runningApplication:)`.
 	///
@@ -54,7 +54,7 @@ import Foundation
 
 		appleEvent.setParam(paramDescriptor, forKeyword: keyDirectObject)
 
-		let _ = try? appleEvent.sendEvent(options: [.noReply, .canSwitchLayer, .alwaysInteract], timeout: .AEDefaultTimeout)
+		_ = try? appleEvent.sendEvent(options: [.noReply, .canSwitchLayer, .alwaysInteract], timeout: .AEDefaultTimeout)
 
 	}
 }

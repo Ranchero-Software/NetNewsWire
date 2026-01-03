@@ -58,7 +58,7 @@ public struct JSONFeedParser {
 			throw FeedParserError.invalidJSON
 		}
 
-		guard let version = d[Key.version] as? String, let _ = version.range(of: JSONFeedParser.jsonFeedVersionMarker) else {
+		guard let version = d[Key.version] as? String, version.range(of: JSONFeedParser.jsonFeedVersionMarker) != nil else {
 			throw FeedParserError.jsonFeedVersionNotFound
 		}
 		guard let itemsArray = d[Key.items] as? JSONArray else {

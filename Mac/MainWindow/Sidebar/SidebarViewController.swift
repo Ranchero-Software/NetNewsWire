@@ -136,7 +136,7 @@ extension Notification.Name {
 	/// Restore state using legacy state restoration data.
 	///
 	/// TODO: Delete for NetNewsWire 7.
-	func restoreLegacyState(from state: [AnyHashable : Any]) {
+	func restoreLegacyState(from state: [AnyHashable: Any]) {
 
 		if let containerExpandedWindowState = state[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
 			let containerIdentifiers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
@@ -339,7 +339,7 @@ extension Notification.Name {
 	// MARK: - Navigation
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		if let _ = nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) {
+		if nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) != nil {
 			return true
 		}
 		return false
@@ -461,7 +461,7 @@ extension Notification.Name {
 		}
 	}
 
-	//MARK: - Node Manipulation
+	// MARK: - Node Manipulation
 
 	func deleteNodes(_ nodes: [Node]) {
 		let nodesToDelete = treeController.normalizedSelectedNodes(nodes)
@@ -504,7 +504,7 @@ extension Notification.Name {
 		revealAndSelectRepresentedObject(sidebarItem as AnyObject)
 	}
 
-	func deepLinkRevealAndSelect(for userInfo: [AnyHashable : Any]) {
+	func deepLinkRevealAndSelect(for userInfo: [AnyHashable: Any]) {
 		guard let accountNode = findAccountNode(userInfo),
 			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
 			let sidebarItem = feedNode.representedObject as? SidebarItem else {
@@ -537,7 +537,7 @@ extension SidebarViewController: NSUserInterfaceValidations {
 	}
 }
 
-//MARK: - Private
+// MARK: - Private
 
 private extension SidebarViewController {
 
@@ -758,7 +758,7 @@ private extension SidebarViewController {
 		return nil
 	}
 
-	func findAccountNode(_ userInfo: [AnyHashable : Any]?) -> Node? {
+	func findAccountNode(_ userInfo: [AnyHashable: Any]?) -> Node? {
 		guard let accountID = userInfo?[ArticlePathKey.accountID] as? String else {
 			return nil
 		}
@@ -778,7 +778,7 @@ private extension SidebarViewController {
 		return nil
 	}
 
-	func findFeedNode(_ userInfo: [AnyHashable : Any]?, beginningAt startingNode: Node) -> Node? {
+	func findFeedNode(_ userInfo: [AnyHashable: Any]?, beginningAt startingNode: Node) -> Node? {
 		guard let feedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}
@@ -857,7 +857,7 @@ private extension SidebarViewController {
 	}
 
 	func applyToAvailableCells(_ completion: (SidebarCell, Node) -> Void) {
-		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
+		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) in
 			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
 				return
 			}

@@ -24,7 +24,7 @@ let package = Package(
 			swiftSettings: [
 				.unsafeFlags(["-warnings-as-errors"]),
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
 		),
 		.testTarget(

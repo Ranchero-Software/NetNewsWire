@@ -13,14 +13,13 @@ public extension NSResponder {
 
 	func hasAncestor(_ ancestor: NSResponder) -> Bool {
 		var nomad: NSResponder = self
-		while(true) {
+		while true {
 			if nomad === ancestor {
 				return true
 			}
-			if let _ = nomad.nextResponder {
-				nomad = nomad.nextResponder!
-			}
-			else {
+			if let next = nomad.nextResponder {
+				nomad = next
+			} else {
 				break
 			}
 		}

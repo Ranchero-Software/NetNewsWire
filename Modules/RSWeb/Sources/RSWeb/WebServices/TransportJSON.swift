@@ -42,15 +42,13 @@ nonisolated extension Transport {
 								DispatchQueue.main.async {
 									completion(.success((response, decoded)))
 								}
-							}
-							catch {
+							} catch {
 								DispatchQueue.main.async {
 									completion(.failure(error))
 								}
 							}
 						}
-					}
-					else {
+					} else {
 						completion(.success((response, nil)))
 					}
 

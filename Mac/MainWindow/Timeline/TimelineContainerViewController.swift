@@ -114,7 +114,7 @@ final class TimelineContainerViewController: NSViewController {
 			return false
 		}
 		for object in representedObjects {
-			guard let _ = currentObjects.firstIndex(where: { $0 === object } ) else {
+			if currentObjects.firstIndex(where: { $0 === object }) == nil {
 				return false
 			}
 		}
@@ -183,8 +183,7 @@ private extension TimelineContainerViewController {
 	func mode(for timelineViewController: TimelineViewController) -> TimelineSourceMode {
 		if timelineViewController === regularTimelineViewController {
 			return .regular
-		}
-		else if timelineViewController === searchTimelineViewController {
+		} else if timelineViewController === searchTimelineViewController {
 			return .search
 		}
 		assertionFailure("Expected timelineViewController to match either regular or search timelineViewController, but it doesn’t.")

@@ -254,7 +254,7 @@ enum CreateSubscriptionResult {
 
 		let payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
 
-		let (response, _) = try await transport.send(request: request, method: HTTPMethod.post, payload:payload)
+		let (response, _) = try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
 
 		if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
 			let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
@@ -463,7 +463,7 @@ enum CreateSubscriptionResult {
 
 extension FeedbinAPICaller {
 
-	func storeConditionalGet(key: String, headers: [AnyHashable : Any]) {
+	func storeConditionalGet(key: String, headers: [AnyHashable: Any]) {
 		if var conditionalGet = accountMetadata?.conditionalGetInfo {
 			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
 			accountMetadata?.conditionalGetInfo = conditionalGet

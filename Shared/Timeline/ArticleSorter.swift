@@ -18,20 +18,20 @@ import Foundation
 
 @MainActor struct ArticleSorter {
 
-	static func sortedByDate<T: SortableArticle>(articles: [T],
-												 sortDirection: ComparisonResult,
-												 groupByFeed: Bool) -> [T] {
+	static func sortedByDate<T: SortableArticle>(articles: [T], sortDirection: ComparisonResult, groupByFeed: Bool) -> [T] {
 		if groupByFeed {
 			return sortedByFeedName(articles: articles, sortByDateDirection: sortDirection)
 		} else {
 			return sortedByDate(articles: articles, sortDirection: sortDirection)
 		}
 	}
+}
 
-	// MARK: -
+// MARK: - Private
 
-	private static func sortedByFeedName<T: SortableArticle>(articles: [T],
-															 sortByDateDirection: ComparisonResult) -> [T] {
+private extension ArticleSorter {
+
+	static func sortedByFeedName<T: SortableArticle>(articles: [T], sortByDateDirection: ComparisonResult) -> [T] {
 		// Group articles by "feed-feedID" - feed ID is used to differentiate between
 		// two feeds that have the same name
 		let groupedArticles = Dictionary(grouping: articles) { "\($0.sortableName.lowercased())-\($0.sortableFeedID)" }
@@ -44,9 +44,8 @@ import Foundation
 		}
 	}
 
-	private static func sortedByDate<T: SortableArticle>(articles: [T],
-														 sortDirection: ComparisonResult) -> [T] {
-		return articles.sorted { (article1, article2) -> Bool in
+	static func sortedByDate<T: SortableArticle>(articles: [T], sortDirection: ComparisonResult) -> [T] {
+		articles.sorted { (article1, article2) -> Bool in
 			if article1.sortableDate == article2.sortableDate {
 				return article1.sortableArticleID < article2.sortableArticleID
 			}
@@ -57,5 +56,4 @@ import Foundation
 			return article1.sortableDate < article2.sortableDate
 		}
 	}
-
 }

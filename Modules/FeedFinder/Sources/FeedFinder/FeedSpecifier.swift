@@ -32,7 +32,7 @@ public struct FeedSpecifier: Hashable, Sendable {
 		self.source = source
 		self.orderFound = orderFound
 	}
-	
+
 	/// Some feed URLs are known in advance. Save time/bandwidth by special-casing those.
 	static func knownFeedSpecifier(url: URL) -> FeedSpecifier? {
 		if url.isRachelByTheBayURL {
@@ -87,7 +87,7 @@ private extension FeedSpecifier {
 			score += 50
 		}
 
-		score = score - ((orderFound - 1) * 5)
+		score -= (orderFound - 1) * 5
 
 		if urlString.caseInsensitiveContains("comments") {
 			score -= 10

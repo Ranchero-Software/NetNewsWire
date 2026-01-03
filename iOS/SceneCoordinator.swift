@@ -454,7 +454,7 @@ struct FeedNode: Hashable, Sendable {
 	@objc func unreadCountDidChange(_ note: Notification) {
 		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
 		guard AccountManager.shared.areUnreadCountsInitialized else {
-			return	
+			return
 		}
 
 		queueRebuildBackingStores()
@@ -616,7 +616,7 @@ struct FeedNode: Hashable, Sendable {
 					self.mainFeedCollectionViewController?.navigationItem.subtitle = refreshText
 
 					// If unread count > 0, add unread string to timeline
-					if let _ = timelineFeed, timelineUnreadCount > 0 {
+					if timelineFeed != nil, timelineUnreadCount > 0 {
 						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 						let unreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
 						self.mainTimelineViewController?.updateNavigationBarSubtitle(unreadCount)
@@ -633,7 +633,7 @@ struct FeedNode: Hashable, Sendable {
 					self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
 
 					// If unread count > 0, add unread string to timeline
-					if let _ = timelineFeed, timelineUnreadCount > 0 {
+					if timelineFeed != nil, timelineUnreadCount > 0 {
 						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 						let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
 						self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)
@@ -646,11 +646,10 @@ struct FeedNode: Hashable, Sendable {
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
 				// If unread count > 0, add unread string to timeline
-				if let _ = timelineFeed, timelineUnreadCount > 0 {
+				if timelineFeed != nil, timelineUnreadCount > 0 {
 					let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 					let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
 					self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)
@@ -1122,7 +1121,7 @@ struct FeedNode: Hashable, Sendable {
 			self.mainTimelineViewController?.hideSearch()
 		}
 
-		selectNextUnreadFeed() {
+		selectNextUnreadFeed {
 			self.selectNextUnreadArticleInTimeline()
 		}
 	}
@@ -1385,8 +1384,7 @@ struct FeedNode: Hashable, Sendable {
 	func showInAppBrowser() {
 		if currentArticle != nil {
 			articleViewController?.openInAppBrowser()
-		}
-		else {
+		} else {
 			mainFeedCollectionViewController.openInAppBrowser()
 		}
 	}
@@ -1421,7 +1419,7 @@ struct FeedNode: Hashable, Sendable {
 		do {
 			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, url: URL(fileURLWithPath: filename))
 		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 		}
 
 	}
@@ -1551,7 +1549,7 @@ private extension SceneCoordinator {
 		addToFilterExceptionsIfNecessary(sidebarItem)
 		addShadowTableToFilterExceptions()
 
-		rebuildBackingStores(completion:  {
+		rebuildBackingStores(completion: {
 			self.treeControllerDelegate.resetFilterExceptions()
 			completion()
 		})
@@ -2195,9 +2193,9 @@ private extension SceneCoordinator {
 
 	// MARK: NSUserActivity
 
-	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
+	func handleSelectFeed(_ userInfo: [AnyHashable: Any]?) {
 		guard let userInfo = userInfo,
-			let sidebarItemIDUserInfo = userInfo[UserInfoKey.sidebarItemID] as? [String : String],
+			let sidebarItemIDUserInfo = userInfo[UserInfoKey.sidebarItemID] as? [String: String],
 			let sidebarItemID = SidebarItemIdentifier(userInfo: sidebarItemIDUserInfo) else {
 				return
 		}
@@ -2210,7 +2208,7 @@ private extension SceneCoordinator {
 			guard let smartFeed = SmartFeedsController.shared.find(by: sidebarItemID) else { return }
 
 			markExpanded(SmartFeedsController.shared)
-			rebuildBackingStores(initialLoad: true, completion:  {
+			rebuildBackingStores(initialLoad: true, completion: {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
 					self.selectFeed(indexPath: indexPath) {
@@ -2227,7 +2225,7 @@ private extension SceneCoordinator {
 
 			markExpanded(account)
 
-			rebuildBackingStores(initialLoad: true, completion:  {
+			rebuildBackingStores(initialLoad: true, completion: {
 				self.treeControllerDelegate.resetFilterExceptions()
 
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
@@ -2250,10 +2248,10 @@ private extension SceneCoordinator {
 		}
 	}
 
-	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
+	func handleReadArticle(_ userInfo: [AnyHashable: Any]?) {
 		guard let userInfo = userInfo else { return }
 
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			  let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
 			  let feedID = articlePathUserInfo[ArticlePathKey.feedID] as? String,
@@ -2278,7 +2276,7 @@ private extension SceneCoordinator {
 		}
 	}
 
-	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, feedID: String, articleID: String) -> Bool {
+	func restoreFeedSelection(_ userInfo: [AnyHashable: Any], accountID: String, feedID: String, articleID: String) -> Bool {
 		guard let sidebarItemIDUserInfo = (userInfo[UserInfoKey.sidebarItemID] ?? userInfo[UserInfoKey.feedIdentifier]) as? [String: String],
 			  let sidebarItemID = SidebarItemIdentifier(userInfo: sidebarItemIDUserInfo) else {
 			return false

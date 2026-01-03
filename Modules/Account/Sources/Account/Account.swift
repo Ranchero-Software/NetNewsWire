@@ -378,10 +378,10 @@ public enum FetchType {
 	}
 
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
-											   client: OAuthAuthorizationClient,
-											   accountType: AccountType,
-											   transport: Transport = URLSession.webserviceTransport(),
-											   completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> Void) {
+	                                           client: OAuthAuthorizationClient,
+	                                           accountType: AccountType,
+	                                           transport: Transport = URLSession.webserviceTransport(),
+	                                           completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> Void) {
 		let grantingType: OAuthAuthorizationGranting.Type
 
 		switch accountType {

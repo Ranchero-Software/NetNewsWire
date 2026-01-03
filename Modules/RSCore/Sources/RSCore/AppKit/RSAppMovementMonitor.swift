@@ -78,7 +78,7 @@ import Cocoa
 			// every time the app becomes active. This catches a good number of edge-case
 			// changes to the app bundle's path, such as when a containing folder or the
 			// volume name changes.
-			NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: nil) { notification in
+			NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
 				Task { @MainActor in
 					// Removing observer in invalidate doesn't seem to prevent this getting called? Maybe
 					// because it's on the same invocation of the runloop?

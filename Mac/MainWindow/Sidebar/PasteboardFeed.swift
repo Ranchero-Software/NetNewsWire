@@ -76,8 +76,7 @@ struct PasteboardFeed: Hashable {
 		var pasteboardType: NSPasteboard.PasteboardType?
 		if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIInternalType) {
 			pasteboardType = FeedPasteboardWriter.feedUTIInternalType
-		}
-		else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
+		} else if pasteboardItem.types.contains(FeedPasteboardWriter.feedUTIType) {
 			pasteboardType = FeedPasteboardWriter.feedUTIType
 		}
 		if let foundType = pasteboardType {
@@ -91,8 +90,7 @@ struct PasteboardFeed: Hashable {
 		// Check for URL or a string that may be a URL.
 		if pasteboardItem.types.contains(.URL) {
 			pasteboardType = .URL
-		}
-		else if pasteboardItem.types.contains(.string) {
+		} else if pasteboardItem.types.contains(.string) {
 			pasteboardType = .string
 		}
 		if let foundType = pasteboardType {

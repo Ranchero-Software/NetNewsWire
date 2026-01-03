@@ -12,7 +12,7 @@ let package = Package(
 		.library(
 			name: "RSDatabaseObjC",
 			type: .dynamic,
-			targets: ["RSDatabaseObjC"]),
+			targets: ["RSDatabaseObjC"])
 	],
 	dependencies: [
 	],
@@ -22,7 +22,7 @@ let package = Package(
 			dependencies: ["RSDatabaseObjC"],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
 		),
 		.target(
@@ -31,6 +31,6 @@ let package = Package(
 		),
 		.testTarget(
 			name: "RSDatabaseTests",
-			dependencies: ["RSDatabase"]),
+			dependencies: ["RSDatabase"])
 	]
 )

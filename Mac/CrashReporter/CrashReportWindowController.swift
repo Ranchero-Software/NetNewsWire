@@ -59,4 +59,3 @@ final class CrashReportWindowController: NSWindowController {
 		close()
 	}
 }
-

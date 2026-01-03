@@ -57,8 +57,7 @@ private extension AdvancedPreferencesViewController {
 	func updateUI() {
 		if wantsTestBuilds {
 			testBuildsButton.state = .on
-		}
-		else {
+		} else {
 			releaseBuildsButton.state = .on
 		}
 	}

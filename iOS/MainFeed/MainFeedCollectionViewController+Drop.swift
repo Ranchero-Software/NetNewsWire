@@ -71,7 +71,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 
 	func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: any UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
 
-		guard let destIndexPath = destinationIndexPath,	destIndexPath.section > 0, collectionView.hasActiveDrag else {
+		guard let destIndexPath = destinationIndexPath, destIndexPath.section > 0, collectionView.hasActiveDrag else {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 

@@ -17,7 +17,7 @@ public extension FMResultSet {
 
 		let count = Int(long(forColumnIndex: 0))
 		close()
-		
+
 		return count
 	}
 
@@ -36,4 +36,3 @@ public extension FMResultSet {
 		return Set(compactMap(completion))
 	}
 }
-

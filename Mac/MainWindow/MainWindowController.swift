@@ -336,7 +336,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}		
+		}
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -370,8 +370,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		// TODO: handle search mode
 		if timelineViewController.canGoToNextUnread(wrappingToTop: false) {
 			goToNextUnreadInTimeline(wrappingToTop: false)
-		}
-		else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
+		} else if sidebarViewController.canGoToNextUnread(wrappingToTop: true) {
 			sidebarViewController.goToNextUnread(wrappingToTop: true)
 
 			// If we ended up on the same timelineViewController, we may need to wrap
@@ -444,7 +443,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		currentTimelineViewController?.markAllAsRead() {
+		currentTimelineViewController?.markAllAsRead {
 			self.nextUnread(sender)
 		}
 	}
@@ -981,7 +980,7 @@ private extension MainWindowController {
 
 		let splitViewWidths: [Int]
 		if let splitView = splitViewController?.splitView {
-			splitViewWidths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
+			splitViewWidths = splitView.arrangedSubviews.map { Int(floor($0.frame.width)) }
 		} else {
 			splitViewWidths = []
 		}
@@ -1422,6 +1421,4 @@ private extension MainWindowController {
 		articleThemeMenuToolbarItem.menu = articleThemeMenu
 		articleThemePopUpButton?.menu = articleThemeMenu
 	}
-
 }
-

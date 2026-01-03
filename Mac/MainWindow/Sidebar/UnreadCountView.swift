@@ -46,11 +46,11 @@ final class UnreadCountView: NSView {
 	}
 
 	private var intrinsicContentSizeIsValid = false
-	private var _intrinsicContentSize = NSZeroSize
+	private var _intrinsicContentSize = NSSize.zero
 
 	override var intrinsicContentSize: NSSize {
 		if !intrinsicContentSizeIsValid {
-			var size = NSZeroSize
+			var size = NSSize.zero
 			if unreadCount > 0 {
 				size = textSize()
 				size.width += (Appearance.padding.left + Appearance.padding.right)
@@ -74,7 +74,7 @@ final class UnreadCountView: NSView {
 
 	private func textSize() -> NSSize {
 		if unreadCount < 1 {
-			return NSZeroSize
+			return NSSize.zero
 		}
 
 		if let cachedSize = UnreadCountView.textSizeCache[unreadCount] {
@@ -91,9 +91,9 @@ final class UnreadCountView: NSView {
 
 	private func textRect() -> NSRect {
 		let size = textSize()
-		var r = NSZeroRect
+		var r = NSRect.zero
 		r.size = size
-		r.origin.x = (NSMaxX(bounds) - Appearance.padding.right) - r.size.width
+		r.origin.x = (bounds.maxX - Appearance.padding.right) - r.size.width
 		r.origin.y = Appearance.padding.top
 		return r
 	}
@@ -108,4 +108,3 @@ final class UnreadCountView: NSView {
 		}
 	}
 }
-

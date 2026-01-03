@@ -65,7 +65,7 @@ final class AppDefaults: Sendable {
 	}()
 
 	let isFirstRun: Bool = {
-		if let _ = UserDefaults.standard.object(forKey: Key.firstRunDate) as? Date {
+		if UserDefaults.standard.object(forKey: Key.firstRunDate) is Date {
 			return false
 		}
 		firstRunDate = Date()
@@ -117,8 +117,7 @@ final class AppDefaults: Sendable {
 		if let appGroupID = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String,
 		   let appGroupDefaults = UserDefaults(suiteName: appGroupID) {
 			return appGroupDefaults
-		}
-		else {
+		} else {
 			return UserDefaults.standard
 		}
 	}
@@ -324,7 +323,7 @@ final class AppDefaults: Sendable {
  		let showDebugMenu = false
  		#endif
 
-		let defaults: [String : Any] = [
+		let defaults: [String: Any] = [
 			Key.sidebarFontSize: FontSize.medium.rawValue,
 			Key.timelineFontSize: FontSize.medium.rawValue,
 			Key.detailFontSize: FontSize.medium.rawValue,
@@ -428,7 +427,7 @@ private extension AppDefaults {
 		UserDefaults.standard.set(date, forKey: key)
 	}
 
-	static func sortDirection(for key:String) -> ComparisonResult {
+	static func sortDirection(for key: String) -> ComparisonResult {
 		let rawInt = int(for: key)
 		if rawInt == ComparisonResult.orderedAscending.rawValue {
 			return .orderedAscending
@@ -439,8 +438,7 @@ private extension AppDefaults {
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {
 		if value == .orderedAscending {
 			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
-		}
-		else {
+		} else {
 			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
 		}
 	}

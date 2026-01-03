@@ -73,7 +73,7 @@ final class SidebarCell: NSTableCellView {
 	}()
 
 	private let faviconImageView = IconView()
-	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
+	private let unreadCountView = UnreadCountView(frame: NSRect.zero)
 
 	override var backgroundStyle: NSView.BackgroundStyle {
 		didSet {
@@ -91,7 +91,7 @@ final class SidebarCell: NSTableCellView {
 		commonInit()
 	}
 
-	required init?(coder: NSCoder) {		
+	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
@@ -100,7 +100,7 @@ final class SidebarCell: NSTableCellView {
 		if let cellAppearance = cellAppearance {
 			titleView.font = cellAppearance.textFieldFont
 		}
-		resizeSubviews(withOldSize: NSZeroSize)
+		resizeSubviews(withOldSize: NSSize.zero)
 	}
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {

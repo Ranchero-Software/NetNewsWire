@@ -39,7 +39,7 @@ final class ShareViewController: NSViewController {
 		extensionContainers = ExtensionContainersFile.read()
 		buildFolderPopupMenu()
 
-		var provider: NSItemProvider? = nil
+		var provider: NSItemProvider?
 
 		// Try to get any HTML that is maybe passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
@@ -50,7 +50,7 @@ final class ShareViewController: NSViewController {
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.propertyList.identifier, options: nil, completionHandler: { [weak self] (pList, error) in
 				if error != nil {
 					return
@@ -77,7 +77,7 @@ final class ShareViewController: NSViewController {
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
 					return
@@ -126,7 +126,7 @@ private extension ShareViewController {
 		}
 
 		let defaultContainer = ShareDefaultContainer.defaultContainer(containers: extensionContainers)
-		var defaultMenuItem: NSMenuItem? = nil
+		var defaultMenuItem: NSMenuItem?
 
 		for account in extensionContainers.accounts {
 

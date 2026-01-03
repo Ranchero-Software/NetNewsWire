@@ -202,7 +202,7 @@ final class SettingsViewController: UITableViewController {
 		case 3:
 			switch indexPath.row {
 			case 3:
-				let timeline = UIStoryboard.settings.instantiateController(ofType: ModernTimelineCustomizerTableViewController.self)
+				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerTableViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
@@ -224,12 +224,15 @@ final class SettingsViewController: UITableViewController {
 				openURL(HelpURL.helpHome.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 1:
-				openURL(HelpURL.releaseNotes.rawValue)
+				openURL(HelpURL.discourse.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 2:
-				openURL(HelpURL.bugTracker.rawValue)
+				openURL(HelpURL.releaseNotes.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			case 3:
+				openURL(HelpURL.bugTracker.rawValue)
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+			case 4:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: AboutViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:

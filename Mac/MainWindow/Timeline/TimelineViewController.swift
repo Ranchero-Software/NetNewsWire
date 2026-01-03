@@ -12,7 +12,7 @@ import Articles
 import Account
 import os.log
 
-@MainActor protocol TimelineDelegate: AnyObject  {
+@MainActor protocol TimelineDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
@@ -405,8 +405,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		if markAsRead {
 			markSelectedArticlesAsRead(sender)
-		}
-		else {
+		} else {
 			markSelectedArticlesAsUnread(sender)
 		}
 	}
@@ -563,8 +562,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		for article in selectedArticles {
 			if cutoffDate == nil {
 				cutoffDate = article.logicalDatePublished
-			}
-			else if cutoffDate! > article.logicalDatePublished {
+			} else if cutoffDate! > article.logicalDatePublished {
 				cutoffDate = article.logicalDatePublished
 			}
 		}
@@ -605,7 +603,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: - Navigation
 
-	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
+	func goToDeepLink(for userInfo: [AnyHashable: Any]) {
 		guard let articleID = userInfo[ArticlePathKey.articleID] as? String else { return }
 
 		if isReadFiltered ?? false {
@@ -633,10 +631,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		guard let _ = indexOfNextUnreadArticle(wrappingToTop: wrapping) else {
-			return false
-		}
-		return true
+		return indexOfNextUnreadArticle(wrappingToTop: wrapping) != nil
 	}
 
 	func indexOfNextUnreadArticle(wrappingToTop wrapping: Bool = false) -> Int? {
@@ -913,8 +908,7 @@ extension TimelineViewController: NSTableViewDelegate {
 			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
 				configureTimelineCell(cell, article: article)
-			}
-			else {
+			} else {
 				makeTimelineCellEmpty(cell)
 			}
 		}
@@ -996,25 +990,25 @@ extension TimelineViewController: NSTableViewDelegate {
 		}
 
 		switch edge {
-			case .leading:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (action, row) in
-					self.toggleArticleRead(article);
-					tableView.rowActionsVisible = false
-				}
-				action.image = article.status.read ? Assets.Images.swipeMarkUnread : Assets.Images.swipeMarkRead
-				return [action]
+		case .leading:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (_, _) in
+				self.toggleArticleRead(article)
+				tableView.rowActionsVisible = false
+			}
+			action.image = article.status.read ? Assets.Images.swipeMarkUnread : Assets.Images.swipeMarkRead
+			return [action]
 
-			case .trailing:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (action, row) in
-					self.toggleArticleStarred(article);
-					tableView.rowActionsVisible = false
-				}
+		case .trailing:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (_, _) in
+				self.toggleArticleStarred(article)
+				tableView.rowActionsVisible = false
+			}
 			action.backgroundColor = Assets.Colors.star
-				action.image = article.status.starred ? Assets.Images.swipeMarkUnstarred : Assets.Images.swipeMarkStarred
-				return [action]
+			action.image = article.status.starred ? Assets.Images.swipeMarkUnstarred : Assets.Images.swipeMarkStarred
+			return [action]
 
-			@unknown default:
-				Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
+		@unknown default:
+			Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
 		}
 
 		return []
@@ -1221,7 +1215,7 @@ private extension TimelineViewController {
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
 		cancelPendingAsyncFetches()
-		let fetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
 		if fetchers.isEmpty {
 			return Set<Article>()
 		}
@@ -1316,8 +1310,7 @@ private extension TimelineViewController {
 						return true
 					}
 				}
-			}
-			else if let folder = representedObject as? Folder {
+			} else if let folder = representedObject as? Folder {
 				for oneFeed in feeds {
 					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true

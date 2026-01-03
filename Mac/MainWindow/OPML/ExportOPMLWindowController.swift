@@ -96,8 +96,7 @@ final class ExportOPMLWindowController: NSWindowController {
 					let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
 					do {
 						try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
-					}
-					catch let error as NSError {
+					} catch let error as NSError {
 						NSApplication.shared.presentError(error)
 					}
 				}

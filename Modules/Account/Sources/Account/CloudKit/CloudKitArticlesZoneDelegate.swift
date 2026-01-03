@@ -77,7 +77,7 @@ private extension CloudKitArticlesZoneDelegate {
 		// Parse items on background thread
 		let feedIDsAndItems = await Task.detached(priority: .userInitiated) {
 			let parsedItems = records.compactMap { makeParsedItem($0) }
-			return Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
+			return Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
 		}.value
 
 		nonisolated(unsafe) var updateError: Error?

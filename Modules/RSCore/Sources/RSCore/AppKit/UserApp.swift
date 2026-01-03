@@ -44,8 +44,7 @@ public final class UserApp {
 				if app == runningApplication {
 					break
 				}
-			}
-			else {
+			} else {
 				if !app.isTerminated {
 					runningApplication = app
 					break
@@ -58,8 +57,7 @@ public final class UserApp {
 			icon = runningApplication.icon
 			if let bundleURL = runningApplication.bundleURL {
 				path = bundleURL.path
-			}
-			else {
+			} else {
 				path = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID)?.path
 			}
 			if icon == nil, let path = path {
@@ -74,8 +72,7 @@ public final class UserApp {
 				icon = NSWorkspace.shared.icon(forFile: path)
 			}
 			existsOnDisk = true
-		}
-		else {
+		} else {
 			existsOnDisk = false
 			icon = nil
 		}
@@ -140,4 +137,3 @@ public final class UserApp {
 	}
 }
 #endif
-

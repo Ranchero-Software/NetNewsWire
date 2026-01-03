@@ -61,7 +61,7 @@ public final class InteractiveLabel: UILabel, @preconcurrency UIEditMenuInteract
 
 	public func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
 
-		let copyAction = UIAction(title: "Copy", image: nil) { [weak self] action in
+		let copyAction = UIAction(title: "Copy", image: nil) { [weak self] _ in
 			self?.copy(nil)
 		}
 		return UIMenu(title: "", children: [copyAction])

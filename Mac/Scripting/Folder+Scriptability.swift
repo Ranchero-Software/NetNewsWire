@@ -16,7 +16,7 @@ import RSCore
 	let folder: Folder
 	nonisolated(unsafe) let container: ScriptingObjectContainer
 
-	init (_ folder:Folder, container: ScriptingObjectContainer) {
+	init (_ folder: Folder, container: ScriptingObjectContainer) {
 		self.folder = folder
 		self.container = container
 	}
@@ -39,7 +39,7 @@ import RSCore
 	// but in either case it seems like the accountID would be used as the keydata, so I chose ID
 
 	@objc(uniqueId)
-	nonisolated var scriptingUniqueID:Any {
+	nonisolated var scriptingUniqueID: Any {
 		folder.folderID
 	}
 
@@ -64,7 +64,7 @@ import RSCore
 	 or
 	 tell account X to make new folder at end with properties {name:"new folder name"}
 	 */
-	class func handleCreateElement(command: NSCreateCommand) -> Any?  {
+	static func handleCreateElement(command: NSCreateCommand) -> Any? {
 		guard command.isCreateCommand(forClass: "fold") else {
 			return nil
 		}
@@ -74,7 +74,7 @@ import RSCore
 		// identifies where the new folder should be created
 		let (account, folder) = command.accountAndFolderForNewChild()
 		guard folder == nil else {
-			print("support for folders within folders is NYI");
+			print("support for folders within folders is NYI")
 			return nil
 		}
 
@@ -94,10 +94,10 @@ import RSCore
 		return nil
 	}
 
-	// MARK: --- Scriptable elements ---
+	// MARK: - Scriptable elements
 
 	@objc(feeds)
-	var feeds: NSArray  {
+	var feeds: NSArray {
 		let feeds = Array(folder.topLevelFeeds)
 		return feeds.map { ScriptableFeed($0, container: self) } as NSArray
 	}
@@ -112,7 +112,7 @@ import RSCore
 		let sortedArticles = allArticles.sorted(by: {
 			$0.logicalDatePublished > $1.logicalDatePublished
 		})
-		return sortedArticles.map { ScriptableArticle($0, container:self) } as NSArray
+		return sortedArticles.map { ScriptableArticle($0, container: self) } as NSArray
 	}
 
 	@objc(countOfArticles)
@@ -142,12 +142,12 @@ import RSCore
 	// MARK: - Scriptable properties
 
 	@objc(name)
-	var name:String  {
+	var name: String {
 		folder.name ?? ""
 	}
 
 	@objc(opmlRepresentation)
-	var opmlRepresentation:String  {
-		folder.OPMLString(indentLevel:0)
+	var opmlRepresentation: String {
+		folder.OPMLString(indentLevel: 0)
 	}
 }

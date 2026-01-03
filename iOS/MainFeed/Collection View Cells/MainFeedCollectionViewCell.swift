@@ -61,7 +61,6 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	}
 
 	override var accessibilityLabel: String? {
-		set {}
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
@@ -70,6 +69,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 				return (String(describing: feedTitle.text))
 			}
 		}
+		set {}
 	}
 
     override func awakeFromNib() {
@@ -115,4 +115,3 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 		self.backgroundConfiguration = backgroundConfig
 	}
 }
-

@@ -149,7 +149,7 @@ final class FeedbinAccountViewController: UITableViewController {
 	}
 
 	@objc func textDidChange(_ note: Notification) {
-		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false) 
+		actionButton.isEnabled = !(emailTextField.text?.isEmpty ?? false) && !(passwordTextField.text?.isEmpty ?? false)
 	}
 
 	private func showError(_ message: String) {
@@ -161,7 +161,7 @@ final class FeedbinAccountViewController: UITableViewController {
 		actionButton.isEnabled = value
 	}
 
-	private func toggleActivityIndicatorAnimation(visible value: Bool){
+	private func toggleActivityIndicatorAnimation(visible value: Bool) {
 		activityIndicator.isHidden = !value
 		if value {
 			activityIndicator.startAnimating()

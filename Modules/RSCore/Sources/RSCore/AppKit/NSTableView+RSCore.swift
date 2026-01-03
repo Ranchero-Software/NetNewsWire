@@ -40,12 +40,12 @@ public extension NSTableView {
 		let documentVisibleRect = scrollView.documentVisibleRect
 
 		let r = rect(ofRow: row)
-		if NSContainsRect(documentVisibleRect, r) {
+		if documentVisibleRect.contains(r) {
 			return
 		}
 
-		let rMidY = NSMidY(r)
-		var scrollPoint = NSZeroPoint;
+		let rMidY = r.midY
+		var scrollPoint = NSPoint.zero
 		scrollPoint.y = floor(rMidY - (documentVisibleRect.size.height / 2.0)) + CGFloat(extraHeight)
 		scrollPoint.y = max(scrollPoint.y, 0)
 
@@ -54,7 +54,7 @@ public extension NSTableView {
 
 		let clipView = scrollView.contentView
 
-		let rClipView = NSMakeRect(scrollPoint.x, scrollPoint.y, NSWidth(clipView.bounds), NSHeight(clipView.bounds))
+		let rClipView = NSRect(x: scrollPoint.x, y: scrollPoint.y, width: clipView.bounds.width, height: clipView.bounds.height)
 
 		clipView.animator().bounds = rClipView
 	}

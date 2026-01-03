@@ -14,7 +14,7 @@ final class TimelineTableCellView: NSTableCellView {
 	private let titleView = TimelineTableCellView.multiLineTextField()
 	private let summaryView = TimelineTableCellView.multiLineTextField()
 	private let textView = TimelineTableCellView.multiLineTextField()
-	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
+	private let unreadIndicatorView = UnreadIndicatorView(frame: NSRect.zero)
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
@@ -65,7 +65,7 @@ final class TimelineTableCellView: NSTableCellView {
 		commonInit()
 	}
 
-	required init?(coder: NSCoder) {		
+	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
@@ -91,7 +91,7 @@ final class TimelineTableCellView: NSTableCellView {
 
 	override func layout() {
 
-		resizeSubviews(withOldSize: NSZeroSize)
+		resizeSubviews(withOldSize: NSSize.zero)
 	}
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
@@ -149,8 +149,7 @@ private extension TimelineTableCellView {
 
 		if Int(floor(rect.height)) == 0 || Int(floor(rect.width)) == 0 {
 			hideView(textField)
-		}
-		else {
+		} else {
 			showView(textField)
 			textField.setFrame(ifNotEqualTo: rect)
 		}
@@ -300,7 +299,11 @@ private extension TimelineTableCellView {
 	}
 
 	func showOrHideView(_ view: NSView, _ shouldHide: Bool) {
-		shouldHide ? hideView(view) : showView(view)
+		if shouldHide {
+			hideView(view)
+		} else {
+			showView(view)
+		}
 	}
 
 	func updateSubviews() {

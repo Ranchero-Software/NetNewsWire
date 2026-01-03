@@ -18,8 +18,7 @@ import Account
 	func addFeedWindowControllerUserDidCancel(_: AddFeedWindowController)
 }
 
-final class AddFeedWindowController : NSWindowController {
-
+final class AddFeedWindowController: NSWindowController {
     @IBOutlet var urlTextField: NSTextField!
 	@IBOutlet var nameTextField: NSTextField!
 	@IBOutlet var addButton: NSButton!
@@ -97,7 +96,7 @@ final class AddFeedWindowController : NSWindowController {
 
 		if normalizedURLString.isEmpty {
 			cancelSheet()
-			return;
+			return
 		}
 		guard let url = URL(string: normalizedURLString) else {
 			cancelSheet()

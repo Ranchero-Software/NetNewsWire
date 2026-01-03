@@ -112,7 +112,7 @@ import Foundation
 
 		operation.callCompletionBlock()
 		operation.noteDidComplete()
-		
+
 		pendingOperations.removeAll { $0 == operation }
 		if currentOperation == operation {
 			currentOperation = nil
@@ -155,7 +155,7 @@ private extension MainThreadOperationQueue {
 			return
 		}
 		hasPendingRunScheduled = true
-		
+
 		Task {
 			hasPendingRunScheduled = false
 			guard !isSuspended && currentOperation == nil else {
@@ -173,7 +173,7 @@ private extension MainThreadOperationQueue {
 		guard let index = pendingOperations.firstIndex(where: { operationIsAvailable($0) }) else {
 			return nil
 		}
-		
+
 		let operation = pendingOperations[index]
 		pendingOperations.remove(at: index)
 		assert(!pendingOperations.contains(where: { $0 == operation }))

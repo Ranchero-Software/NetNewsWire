@@ -159,7 +159,7 @@ import Foundation
 
 	// MARK: - Equatable
 
-	nonisolated public class func ==(lhs: Node, rhs: Node) -> Bool {
+	nonisolated public static func ==(lhs: Node, rhs: Node) -> Bool {
 		lhs === rhs
 	}
 }

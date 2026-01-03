@@ -8,7 +8,7 @@ let package = Package(
 		.library(
 			name: "CloudKitSync",
 			targets: ["CloudKitSync"]
-		),
+		)
 	],
 	dependencies: [
 		.package(path: "../RSCore")
@@ -21,12 +21,12 @@ let package = Package(
 			],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
 		),
 		.testTarget(
 			name: "CloudKitSyncTests",
 			dependencies: ["CloudKitSync"]
-		),
+		)
 	]
 )

@@ -83,7 +83,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			///
 			/// `shouldSelectItemAt()` will not allow selection when `isAnimating`
 			/// is `true.`
-			if let _ = collectionView.indexPathsForSelectedItems {
+			if collectionView.indexPathsForSelectedItems != nil {
 				isAnimating = true
 			}
 		}
@@ -95,7 +95,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		/// On iPhone, once the deselection animation has completed, set `isAnimating`
 		/// to false and this will allow selection.
 		if traitCollection.userInterfaceIdiom == .phone {
-			if let _ = collectionView.indexPathsForSelectedItems {
+			if collectionView.indexPathsForSelectedItems != nil {
 				coordinator.selectFeed(indexPath: nil, animations: [.select])
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
 					self.isAnimating = false
@@ -130,7 +130,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 			// Set up the delete action
 			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-			let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] (action, view, completion) in
+			let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
 				self?.delete(indexPath: indexPath)
 				completion(true)
 			}
@@ -141,7 +141,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 			// Set up the rename action
 			let renameTitle = NSLocalizedString("Rename", comment: "Rename")
-			let renameAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completion) in
+			let renameAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
 				self?.rename(indexPath: indexPath)
 				completion(true)
 			}
@@ -233,7 +233,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		guard let node = coordinator.nodeFor(indexPath), let _ = node.representedObject as? Folder else {
+		guard let node = coordinator.nodeFor(indexPath), node.representedObject is Folder else {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? MainFeedCollectionViewCell
 			configure(cell!, indexPath: indexPath)
 			return cell!
@@ -324,7 +324,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return makeFeedContextMenu(indexPath: indexPath, includeDeleteRename: true)
 		} else if sidebarItem is Folder {
 			return makeFolderContextMenu(indexPath: indexPath)
-		} else if sidebarItem is PseudoFeed  {
+		} else if sidebarItem is PseudoFeed {
 			return makePseudoFeedContextMenu(indexPath: indexPath)
 		} else {
 			return nil
@@ -516,7 +516,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
-		//applyToCellsForRepresentedObject(representedObject, configure)
+		// applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
@@ -546,7 +546,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	func configure(_ cell: MainFeedCollectionViewCell, indexPath: IndexPath) {
 		guard let node = coordinator.nodeFor(indexPath) else { return }
 		var indentationLevel = 0
-		if let _ = node.parent?.representedObject as? Folder {
+		if node.parent?.representedObject is Folder {
 			indentationLevel = 1
 		}
 
@@ -779,7 +779,7 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 					return nil
 		}
 
-		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { suggestedActions in
+		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { _ in
 
 			var menuElements = [UIMenuElement]()
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountInfoAction(account: account)]))
@@ -806,7 +806,7 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 
 extension MainFeedCollectionViewController {
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -849,7 +849,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
-		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -876,7 +876,7 @@ extension MainFeedCollectionViewController {
 			return nil
 		}
 
-		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { suggestedActions in
+		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { _ in
 			return UIMenu(title: "", children: [markAllAction])
 		})
 	}
@@ -887,7 +887,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] _ in
 			self?.coordinator.showBrowserForFeed(indexPath)
 		}
 		return action
@@ -899,7 +899,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.coordinator.showBrowserForFeed(indexPath)
 			completion(true)
 		}
@@ -913,7 +913,7 @@ extension MainFeedCollectionViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAction(title: title, image: Assets.Images.copy) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -926,7 +926,7 @@ extension MainFeedCollectionViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
-		let action = UIAlertAction(title: title, style: .default) { action in
+		let action = UIAlertAction(title: title, style: .default) { _ in
 			UIPasteboard.general.url = url
 			completion(true)
 		}
@@ -941,7 +941,7 @@ extension MainFeedCollectionViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAction(title: title, image: Assets.Images.copy) { action in
+		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
 		return action
@@ -955,7 +955,7 @@ extension MainFeedCollectionViewController {
 			  }
 
 		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
-		let action = UIAlertAction(title: title, style: .default) { action in
+		let action = UIAlertAction(title: title, style: .default) { _ in
 			UIPasteboard.general.url = url
 			completion(true)
 		}
@@ -975,7 +975,7 @@ extension MainFeedCollectionViewController {
 			completion(true)
 		}
 
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.coordinator.markAllAsRead(Array(articles))
 				completion(true)
@@ -987,7 +987,7 @@ extension MainFeedCollectionViewController {
 	func deleteAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Delete", comment: "Delete")
 
-		let action = UIAction(title: title, image: Assets.Images.trash, attributes: .destructive) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.trash, attributes: .destructive) { [weak self] _ in
 			self?.delete(indexPath: indexPath)
 		}
 		return action
@@ -995,7 +995,7 @@ extension MainFeedCollectionViewController {
 
 	func renameAction(indexPath: IndexPath) -> UIAction {
 		let title = NSLocalizedString("Rename", comment: "Rename")
-		let action = UIAction(title: title, image: Assets.Images.edit) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.edit) { [weak self] _ in
 			self?.rename(indexPath: indexPath)
 		}
 		return action
@@ -1007,7 +1007,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] _ in
 			self?.coordinator.showFeedInspector(for: feed)
 		}
 		return action
@@ -1015,7 +1015,7 @@ extension MainFeedCollectionViewController {
 
 	func getAccountInfoAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] _ in
 			self?.coordinator.showAccountInspector(for: account)
 		}
 		return action
@@ -1023,7 +1023,7 @@ extension MainFeedCollectionViewController {
 
 	func deactivateAccountAction(account: Account) -> UIAction {
 		let title = NSLocalizedString("Deactivate", comment: "Deactivate")
-		let action = UIAction(title: title, image: Assets.Images.deactivate) { action in
+		let action = UIAction(title: title, image: Assets.Images.deactivate) { _ in
 			account.isActive = false
 		}
 		return action
@@ -1035,7 +1035,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] action in
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.coordinator.showFeedInspector(for: feed)
 			completion(true)
 		}
@@ -1051,7 +1051,7 @@ extension MainFeedCollectionViewController {
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, sidebarItem.nameForDisplay) as String
-		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				if let articles = try? sidebarItem.fetchUnreadArticles() {
 					self?.coordinator.markAllAsRead(Array(articles))
@@ -1063,13 +1063,13 @@ extension MainFeedCollectionViewController {
 	}
 
 	func markAllAsReadAction(account: Account, contentView: UIView?) -> UIAction? {
-		guard account.unreadCount > 0, let contentView = contentView else {
+		guard account.unreadCount > 0, let contentView else {
 			return nil
 		}
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
-		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] action in
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -1095,7 +1095,7 @@ extension MainFeedCollectionViewController {
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
-		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] action in
+		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] _ in
 
 			guard let name = alertController.textFields?[0].text, !name.isEmpty else {
 				return
@@ -1126,7 +1126,7 @@ extension MainFeedCollectionViewController {
 		alertController.addAction(renameAction)
 		alertController.preferredAction = renameAction
 
-		alertController.addTextField() { textField in
+		alertController.addTextField { textField in
 			textField.text = sidebarItem.nameForDisplay
 			textField.placeholder = NSLocalizedString("Name", comment: "Name")
 			textField.clearButtonMode = .always
@@ -1147,7 +1147,7 @@ extension MainFeedCollectionViewController {
 			title = NSLocalizedString("Delete Folder", comment: "Delete folder")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, sidebarItem.nameForDisplay) as String
-		} else  {
+		} else {
 			title = NSLocalizedString("Delete Feed", comment: "Delete feed")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, sidebarItem.nameForDisplay) as String
@@ -1159,7 +1159,7 @@ extension MainFeedCollectionViewController {
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
-		let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] action in
+		let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
 			self?.performDelete(indexPath: indexPath)
 		}
 		alertController.addAction(deleteAction)

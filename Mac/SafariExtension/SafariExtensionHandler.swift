@@ -29,7 +29,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 	}
 
 	// Maps from UUID to a validation wrapper
-	nonisolated(unsafe) static var gPingPongMap = Dictionary<String, ValidationWrapper>()
+	nonisolated(unsafe) static var gPingPongMap = [String: ValidationWrapper]()
 	static let validationQueue = DispatchQueue(label: "Toolbar Validation")
 
 	// Bottleneck for calling through to a validation handler we have saved, and removing it from the list.
@@ -40,8 +40,8 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 		}
 	}
 
-	override func messageReceived(withName messageName: String, from page: SFSafariPage, userInfo: [String : Any]?) {
-		if (messageName == "subscribeToFeed") {
+	override func messageReceived(withName messageName: String, from page: SFSafariPage, userInfo: [String: Any]?) {
+		if messageName == "subscribeToFeed" {
 			if var feedURLString = userInfo?["url"] as? String {
 				var openInDefaultBrowser = false
 
@@ -61,12 +61,11 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 					NSWorkspace.shared.open(feedURL)
 				}
 			}
-		}
-		else if (messageName == "pong") {
+		} else if messageName == "pong" {
 			if let validationIDString = userInfo?["validationID"] as? String {
 				// Should we validate the button?
 				let shouldValidate = userInfo?["shouldValidate"] as? Bool ?? false
-				SafariExtensionHandler.callValidationHandler(forHandlerID: validationIDString, withShouldValidate:shouldValidate)
+				SafariExtensionHandler.callValidationHandler(forHandlerID: validationIDString, withShouldValidate: shouldValidate)
 			}
 		}
     }
@@ -97,7 +96,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 				if thisValidationID != uniqueValidationID {
 					// Default to valid ... we'll know soon enough whether the latest state
 					// is actually still valid or not...
-					SafariExtensionHandler.callValidationHandler(forHandlerID: thisValidationID, withShouldValidate: true);
+					SafariExtensionHandler.callValidationHandler(forHandlerID: thisValidationID, withShouldValidate: true)
 
 				}
 			}
@@ -108,17 +107,17 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 			// a timeout period has elapsed
 			window.getActiveTab { (activeTab) in
 				guard let activeTab = activeTab else {
-					SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate:false);
+					SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate: false)
 					return
 				}
 
 				activeTab.getActivePage { (activePage) in
 					guard let activePage = activePage else {
-						SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate:false);
-						return						
+						SafariExtensionHandler.callValidationHandler(forHandlerID: uniqueValidationID, withShouldValidate: false)
+						return
 					}
 
-					activePage.getPropertiesWithCompletionHandler { (pageProperties) in
+					activePage.getPropertiesWithCompletionHandler { pageProperties in
 						if let isActive = pageProperties?.isActive {
 							if isActive {
 								// Capture the uniqueValidationID to ensure it doesn't change out from under us on a future call
@@ -127,7 +126,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 								let pongTimeoutInNanoseconds = Int(Double(NSEC_PER_SEC) * 0.5)
 								let timeoutDeadline = DispatchTime.now() + DispatchTimeInterval.nanoseconds(pongTimeoutInNanoseconds)
 								DispatchQueue.main.asyncAfter(deadline: timeoutDeadline, execute: { [timedOutValidationID = uniqueValidationID] in
-									SafariExtensionHandler.callValidationHandler(forHandlerID: timedOutValidationID, withShouldValidate:false)
+									SafariExtensionHandler.callValidationHandler(forHandlerID: timedOutValidationID, withShouldValidate: false)
 								})
 							}
 						}

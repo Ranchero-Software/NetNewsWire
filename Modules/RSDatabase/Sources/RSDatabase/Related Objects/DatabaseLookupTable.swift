@@ -70,8 +70,7 @@ public final class DatabaseLookupTable: Sendable {
 		for object in objects {
 			if let relatedObjects = object.relatedObjectsWithName(relationshipName), !relatedObjects.isEmpty {
 				objectsWithRelationships += [object]
-			}
-			else {
+			} else {
 				objectsWithNoRelationships += [object]
 			}
 		}
@@ -112,7 +111,7 @@ private extension DatabaseLookupTable {
 		let sql = "delete from \(name) where \(objectIDKey)=? and \(relatedObjectIDKey) in \(placeholders)"
 
 		let parameters: [Any] = [objectID] + Array(relatedObjectIDs)
-		let _ = database.executeUpdate(sql, withArgumentsIn: parameters)
+		_ = database.executeUpdate(sql, withArgumentsIn: parameters)
 	}
 
 	// MARK: Saving/Updating
@@ -185,7 +184,7 @@ private extension DatabaseLookupTable {
 
 		for relatedObjectID in relatedObjectIDs {
 			let d: [NSObject: Any] = [(objectIDKey as NSString): objectID, (relatedObjectIDKey as NSString): relatedObjectID]
-			let _ = database.rs_insertRow(with: d, insertType: .orIgnore, tableName: name)
+			_ = database.rs_insertRow(with: d, insertType: .orIgnore, tableName: name)
 		}
 	}
 
@@ -245,4 +244,3 @@ private extension DatabaseLookupTable {
 		objectIDsWithNoRelatedObjects.withLock { $0.subtract(objectIDs) }
 	}
 }
-

@@ -15,12 +15,11 @@ final class RefreshProgressView: UIView {
 
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
-			
 			NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 			update()
 			scheduleUpdateRefreshLabel()
-			
+
 			isAccessibilityElement = true
 			accessibilityTraits = [.updatesFrequently, .notEnabled]
 		}

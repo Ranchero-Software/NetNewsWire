@@ -24,7 +24,7 @@ final class OpenInBrowserActivity: UIActivity {
 		return UIActivity.ActivityType(rawValue: "com.rancharo.NetNewsWire-Evergreen.safari")
 	}
 
-	override class var activityCategory: UIActivity.Category {
+	override static var activityCategory: UIActivity.Category {
 		return .action
 	}
 
@@ -45,7 +45,7 @@ final class OpenInBrowserActivity: UIActivity {
 		Task { @MainActor in
 			UIApplication.shared.open(url, options: [:], completionHandler: nil)
 		}
-		
+
 		activityDidFinish(true)
 	}
 }

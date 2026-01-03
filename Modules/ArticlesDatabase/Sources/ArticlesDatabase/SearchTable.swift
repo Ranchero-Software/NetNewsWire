@@ -116,7 +116,7 @@ final class SearchTable: DatabaseTable, @unchecked Sendable {
 
 	/// Index new articles.
 	func indexNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-		let articleSearchInfos = Set(articles.map{ ArticleSearchInfo(article: $0) })
+		let articleSearchInfos = Set(articles.map { ArticleSearchInfo(article: $0) })
 		performInitialIndexForArticles(articleSearchInfos, database)
 	}
 

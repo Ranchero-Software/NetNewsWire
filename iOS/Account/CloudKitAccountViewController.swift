@@ -38,7 +38,7 @@ final class CloudKitAccountViewController: UITableViewController {
 			return
 		}
 
-		let _ = AccountManager.shared.createAccount(type: .cloudKit)
+		_ = AccountManager.shared.createAccount(type: .cloudKit)
 		dismiss(animated: true, completion: nil)
 		delegate?.dismiss()
 	}

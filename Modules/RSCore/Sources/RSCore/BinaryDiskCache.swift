@@ -53,8 +53,7 @@ nonisolated public final class BinaryDiskCache: Sendable {
 					do {
 						try _setData(data, forKey: key)
 					} catch {}
-				}
-				else {
+				} else {
 					do {
 						try _deleteData(forKey: key)
 					} catch {}

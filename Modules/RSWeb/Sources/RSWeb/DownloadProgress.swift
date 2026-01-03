@@ -150,7 +150,7 @@ nonisolated public final class DownloadProgress: Hashable, Sendable {
 		hasher.combine(id)
 	}
 
-	// MARK - Equatable
+	// MARK: - Equatable
 
 	public static func ==(lhs: DownloadProgress, rhs: DownloadProgress) -> Bool {
 		lhs.id == rhs.id
