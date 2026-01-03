@@ -116,11 +116,11 @@ private extension RSSInJSONParser {
 			}
 			if s.isEmpty {
 				// Sheesh. Tough case.
-				if let _ = contentHTML {
-					s = contentHTML!
+				if let html = contentHTML {
+					s = html
 				}
-				if let _ = contentText {
-					s = contentText!
+				if let text = contentText {
+					s = text
 				}
 			}
 			uniqueID = (s as NSString).rsparser_md5Hash()
@@ -149,7 +149,7 @@ private extension RSSInJSONParser {
 			}
 			return nil
 		} else if let categoryArray = itemDictionary["category"] as? JSONArray {
-			return Set(categoryArray.compactMap{ $0["#value"] as? String })
+			return Set(categoryArray.compactMap { $0["#value"] as? String })
 		}
 		return nil
 	}

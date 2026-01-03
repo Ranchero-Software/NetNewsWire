@@ -18,7 +18,7 @@ extension NSApplication: @preconcurrency ScriptingObjectContainer {
     }
 
     func deleteElement(_ element: ScriptingObject) {
-        print ("delete event not handled")
+        print("delete event not handled")
     }
 
     nonisolated var scriptingKey: String {
@@ -136,7 +136,7 @@ extension NSApplication: @preconcurrency ScriptingObjectContainer {
     @objc(valueInFeedsWithUniqueID:)
     func valueInFeeds(withUniqueID id: String) -> ScriptableFeed? {
         let feeds = allFeeds()
-		guard let feed = feeds.first(where: { $0.feedID == id} ) else {
+		guard let feed = feeds.first(where: { $0.feedID == id}) else {
 			return nil
 		}
         return ScriptableFeed(feed, container: self)

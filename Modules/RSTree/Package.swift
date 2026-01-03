@@ -8,7 +8,7 @@ let package = Package(
 		.library(
 			name: "RSTree",
 			type: .dynamic,
-			targets: ["RSTree"]),
+			targets: ["RSTree"])
 	],
 	targets: [
 		.target(
@@ -16,7 +16,7 @@ let package = Package(
 			dependencies: [],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
-			]),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			])
 	]
 )

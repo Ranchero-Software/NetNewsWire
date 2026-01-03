@@ -12,7 +12,7 @@ let package = Package(
 		.library(
 			name: "RSParserObjC",
 			type: .dynamic,
-			targets: ["RSParserObjC"]),
+			targets: ["RSParserObjC"])
 	],
 	dependencies: [
 		.package(path: "../RSMarkdown")
@@ -24,7 +24,7 @@ let package = Package(
 			path: "Sources/Swift",
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]),
 		.target(
 			name: "RSParserObjC",
@@ -41,8 +41,8 @@ let package = Package(
 			resources: [.copy("Resources")],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
-		),
+		)
 	]
 )

@@ -64,7 +64,7 @@ import RSCore
 	 or
 	 tell account X to make new folder at end with properties {name:"new folder name"}
 	 */
-	static func handleCreateElement(command: NSCreateCommand) -> Any?  {
+	static func handleCreateElement(command: NSCreateCommand) -> Any? {
 		guard command.isCreateCommand(forClass: "fold") else {
 			return nil
 		}
@@ -97,7 +97,7 @@ import RSCore
 	// MARK: - Scriptable elements
 
 	@objc(feeds)
-	var feeds: NSArray  {
+	var feeds: NSArray {
 		let feeds = Array(folder.topLevelFeeds)
 		return feeds.map { ScriptableFeed($0, container: self) } as NSArray
 	}
@@ -142,7 +142,7 @@ import RSCore
 	// MARK: - Scriptable properties
 
 	@objc(name)
-	var name: String  {
+	var name: String {
 		folder.name ?? ""
 	}
 

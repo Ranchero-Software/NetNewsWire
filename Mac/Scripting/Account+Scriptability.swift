@@ -93,7 +93,7 @@ import RSCore
     // MARK: --- Scriptable elements ---
 
     @objc(feeds)
-    var feeds: NSArray  {
+    var feeds: NSArray {
         account.topLevelFeeds.map { ScriptableFeed($0, container: self) } as NSArray
     }
 
@@ -129,7 +129,7 @@ import RSCore
     }
 
     @objc(folders)
-    var folders: NSArray  {
+    var folders: NSArray {
 		let foldersSet = account.folders ?? Set<Folder>()
 		let folders = Array(foldersSet)
 		return folders.map { ScriptableFolder($0, container: self) } as NSArray
@@ -164,7 +164,7 @@ import RSCore
 	// MARK: --- Scriptable properties ---
 
     @objc(allFeeds)
-    var allFeeds: NSArray  {
+    var allFeeds: NSArray {
 		let allFeeds = account.flattenedFeeds()
 		let scriptableFeeds = allFeeds.map { feed in
 			ScriptableFeed(feed, container: self)
@@ -204,7 +204,7 @@ import RSCore
     }
 
     @objc(opmlRepresentation)
-    var opmlRepresentation: String  {
+    var opmlRepresentation: String {
         self.account.OPMLString(indentLevel: 0)
     }
 

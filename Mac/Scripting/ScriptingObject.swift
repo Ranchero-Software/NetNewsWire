@@ -9,7 +9,7 @@
 import Foundation
 
 protocol ScriptingObject {
-	var objectSpecifier: NSScriptObjectSpecifier?  { get }
+	var objectSpecifier: NSScriptObjectSpecifier? { get }
 	var scriptingKey: String { get }
 }
 

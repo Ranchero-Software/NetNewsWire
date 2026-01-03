@@ -48,7 +48,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Fetching Articles for Feed
 
 	func fetchArticles(_ feedID: String) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticlesForFeedID(feedID, $0) }
+		return try fetchArticles { self.fetchArticlesForFeedID(feedID, $0) }
 	}
 
 	func fetchArticlesAsync(_ feedID: String, _ completion: @escaping ArticleSetResultBlock) {
@@ -56,7 +56,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	}
 
 	func fetchArticles(_ feedIDs: Set<String>) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticles(feedIDs, $0) }
+		return try fetchArticles { self.fetchArticles(feedIDs, $0) }
 	}
 
 	func fetchArticlesAsync(_ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
@@ -66,7 +66,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Fetching Articles by articleID
 
 	func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticles(articleIDs: articleIDs, $0) }
+		return try fetchArticles { self.fetchArticles(articleIDs: articleIDs, $0) }
 	}
 
 	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
@@ -76,7 +76,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Fetching Unread Articles
 
 	func fetchUnreadArticles(_ feedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchUnreadArticles(feedIDs, limit, $0) }
+		return try fetchArticles { self.fetchUnreadArticles(feedIDs, limit, $0) }
 	}
 
 	func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -86,7 +86,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Fetching Today Articles
 
 	func fetchArticlesSince(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchArticlesSince(feedIDs, cutoffDate, limit, $0) }
+		return try fetchArticles { self.fetchArticlesSince(feedIDs, cutoffDate, limit, $0) }
 	}
 
 	func fetchArticlesSinceAsync(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -96,7 +96,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Fetching Starred Articles
 
 	func fetchStarredArticles(_ feedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
-		return try fetchArticles{ self.fetchStarredArticles(feedIDs, limit, $0) }
+		return try fetchArticles { self.fetchStarredArticles(feedIDs, limit, $0) }
 	}
 
 	func fetchStarredArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -104,7 +104,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	}
 
 	func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {
-		return try fetchArticlesCount{ self.fetchStarredArticlesCount(feedIDs, $0) }
+		return try fetchArticlesCount { self.fetchStarredArticlesCount(feedIDs, $0) }
 	}
 
 	// MARK: - Fetching Search Articles
@@ -130,13 +130,13 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) throws -> Set<Article> {
 		var articles = try fetchArticlesMatching(searchString)
-		articles = articles.filter{ feedIDs.contains($0.feedID) }
+		articles = articles.filter { feedIDs.contains($0.feedID) }
 		return articles
 	}
 
 	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
 		var articles = try fetchArticlesMatching(searchString)
-		articles = articles.filter{ articleIDs.contains($0.articleID) }
+		articles = articles.filter { articleIDs.contains($0.articleID) }
 		return articles
 	}
 
@@ -543,7 +543,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			completion(nil)
 			return
 		}
-		
+
 		queue.runInTransaction { databaseResult in
 			switch databaseResult {
 			case .success(let database):
@@ -569,7 +569,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 					return
 				}
-				let articleIDs = resultSet.mapToSet{ $0.string(forColumn: DatabaseKey.articleID) }
+				let articleIDs = resultSet.mapToSet { $0.string(forColumn: DatabaseKey.articleID) }
 				if articleIDs.isEmpty {
 					return
 				}
@@ -677,7 +677,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 					return
 				}
-				let articleIDs = resultSet.mapToSet{ $0.string(forColumn: DatabaseKey.articleID) }
+				let articleIDs = resultSet.mapToSet { $0.string(forColumn: DatabaseKey.articleID) }
 				if articleIDs.isEmpty {
 					return
 				}
@@ -734,7 +734,7 @@ nonisolated private extension ArticlesTable {
 
 	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
 		nonisolated(unsafe) var articlesCount = 0
-		nonisolated(unsafe) var error: DatabaseError? = nil
+		nonisolated(unsafe) var error: DatabaseError?
 
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
@@ -859,7 +859,7 @@ nonisolated private extension ArticlesTable {
 
 	func sqliteSearchString(with searchString: String) -> String {
 		var s = ""
-		searchString.enumerateSubstrings(in: searchString.startIndex..<searchString.endIndex, options: .byWords) { (word, _, _, stop) in
+		searchString.enumerateSubstrings(in: searchString.startIndex..<searchString.endIndex, options: .byWords) { (word, _, _, _) in
 			guard let word else {
 				return
 			}
@@ -962,13 +962,13 @@ nonisolated private extension ArticlesTable {
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
 		let articles = fetchArticlesMatching(searchString, database)
 		// TODO: include the feedIDs in the SQL rather than filtering here.
-		return articles.filter{ feedIDs.contains($0.feedID) }
+		return articles.filter { feedIDs.contains($0.feedID) }
 	}
 
 	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
 		let articles = fetchArticlesMatching(searchString, database)
 		// TODO: include the articleIDs in the SQL rather than filtering here.
-		return articles.filter{ articleIDs.contains($0.articleID) }
+		return articles.filter { articleIDs.contains($0.articleID) }
 	}
 
 	// MARK: - Saving Parsed Items
@@ -1011,7 +1011,7 @@ nonisolated private extension ArticlesTable {
 	// MARK: - Updating Existing Articles
 
 	func articlesWithRelatedObjectChanges<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
-		return updatedArticles.filter{ (updatedArticle) -> Bool in
+		return updatedArticles.filter { (updatedArticle) -> Bool in
 			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
 				return updatedArticle[keyPath: comparisonKeyPath] != fetchedArticle[keyPath: comparisonKeyPath]
 			}
@@ -1032,7 +1032,7 @@ nonisolated private extension ArticlesTable {
 	}
 
 	func findUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
-		let updatedArticles = incomingArticles.filter{ (incomingArticle) -> Bool in // 6
+		let updatedArticles = incomingArticles.filter { (incomingArticle) -> Bool in // 6
 			if let existingArticle = fetchedArticlesDictionary[incomingArticle.articleID] {
 				if existingArticle != incomingArticle {
 					return true
@@ -1106,7 +1106,7 @@ nonisolated private extension ArticlesTable {
 	func filterIncomingArticles(_ articles: Set<Article>) -> Set<Article> {
 		// Drop Articles that we can ignore.
 		precondition(retentionStyle == .syncSystem)
-		return Set(articles.filter{ !articleIsIgnorable($0) })
+		return Set(articles.filter { !articleIsIgnorable($0) })
 	}
 
 	func removeArticles(_ articleIDs: Set<String>, _ database: FMDatabase) {

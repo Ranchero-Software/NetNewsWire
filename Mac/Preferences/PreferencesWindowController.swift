@@ -167,9 +167,9 @@ private extension PreferencesWindowController {
 		let windowFrame = window!.frame
 		let contentViewFrame = window!.contentView!.frame
 
-		let deltaHeight = NSHeight(contentViewFrame) - NSHeight(viewFrame)
-		let heightForWindow = NSHeight(windowFrame) - deltaHeight
-		let windowOriginY = NSMinY(windowFrame) + deltaHeight
+		let deltaHeight = contentViewFrame.height - viewFrame.height
+		let heightForWindow = windowFrame.height - deltaHeight
+		let windowOriginY = windowFrame.minY + deltaHeight
 
 		var updatedWindowFrame = windowFrame
 		updatedWindowFrame.size.height = heightForWindow
@@ -177,7 +177,7 @@ private extension PreferencesWindowController {
 		updatedWindowFrame.size.width = windowWidth // NSWidth(viewFrame)
 
 		var updatedViewFrame = viewFrame
-		updatedViewFrame.origin = NSZeroPoint
+		updatedViewFrame.origin = NSPoint.zero
 		updatedViewFrame.size.width = windowWidth
 		if viewFrame != updatedViewFrame {
 			view.frame = updatedViewFrame

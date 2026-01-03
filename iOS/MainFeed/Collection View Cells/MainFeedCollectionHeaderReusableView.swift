@@ -22,7 +22,6 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	private var unreadLabelWidthConstraint: NSLayoutConstraint?
 
 	override var accessibilityLabel: String? {
-		set {}
 		get {
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
@@ -31,16 +30,14 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 				return "\(headerTitle.text ?? "") \(expandedStateMessage) "
 			}
 		}
+		set {}
 	}
 
 	private var expandedStateMessage: String {
-		set {}
-		get {
-			if disclosureExpanded {
-				return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
-			}
-			return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
+		if disclosureExpanded {
+			return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
 		}
+		return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
 	}
 
 	private var _unreadCount: Int = 0

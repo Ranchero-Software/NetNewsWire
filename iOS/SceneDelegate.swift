@@ -43,7 +43,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: AppDefaults.self)
 
-		if let _ = connectionOptions.urlContexts.first?.url  {
+		if connectionOptions.urlContexts.first?.url != nil {
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)
 			return
 		}
@@ -136,7 +136,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					if AccountManager.shared.isSuspended {
 						AccountManager.shared.resumeAll()
 					}
-					self.coordinator.selectAllUnreadFeed() {
+					self.coordinator.selectAllUnreadFeed {
 						self.coordinator.selectArticleInCurrentFeed(id!)
 					}
 				} else {
@@ -152,7 +152,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					if AccountManager.shared.isSuspended {
 						AccountManager.shared.resumeAll()
 					}
-					self.coordinator.selectTodayFeed() {
+					self.coordinator.selectTodayFeed {
 						self.coordinator.selectArticleInCurrentFeed(id!)
 					}
 				} else {
@@ -168,7 +168,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					if AccountManager.shared.isSuspended {
 						AccountManager.shared.resumeAll()
 					}
-					self.coordinator.selectStarredFeed() {
+					self.coordinator.selectStarredFeed {
 						self.coordinator.selectArticleInCurrentFeed(id!)
 					}
 				} else {
@@ -196,7 +196,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					DispatchQueue.main.async {
 						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
 					}
-					let task = URLSession.shared.downloadTask(with: request) { location, response, error in
+					let task = URLSession.shared.downloadTask(with: request) { location, _, error in
 						guard
 							  let location = location else { return }
 

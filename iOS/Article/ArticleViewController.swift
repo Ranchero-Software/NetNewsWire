@@ -364,8 +364,7 @@ public extension Notification.Name {
 extension ArticleViewController: SearchBarDelegate {
 
 	func searchBar(_ searchBar: ArticleSearchBar, textDidChange searchText: String) {
-		currentWebViewController?.searchText(searchText) {
-			found in
+		currentWebViewController?.searchText(searchText) { found in
 			searchBar.resultsCount = found.count
 
 			if let index = found.index {

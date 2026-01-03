@@ -49,7 +49,7 @@ public extension Notification.Name {
 	public func end() {
 		precondition(Thread.isMainThread)
 		decrementCount()
-	}	
+	}
 }
 
 private extension BatchUpdate {

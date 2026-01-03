@@ -110,13 +110,21 @@ public extension Article {
 				result.append(text)
 			}
 
-			if let _ = scanner.scanString("<") {
+			if scanner.scanString("<") != nil {
 				// All the allowed tags currently don't allow attributes
 				if let tag = scanner.scanUpToString(">") {
 					if Self.allowedTags.contains(tag.replacingOccurrences(of: "/", with: "")) {
-						forHTML ? result.append("<\(tag)>") : result.append("")
+						if forHTML {
+							result.append("<\(tag)>")
+						} else {
+							result.append("")
+						}
 					} else {
-						forHTML ? result.append("&lt;\(tag)&gt;") : result.append("<\(tag)>")
+						if forHTML {
+							result.append("&lt;\(tag)&gt;")
+						} else {
+							result.append("<\(tag)>")
+						}
 					}
 
 					_ = scanner.scanString(">")

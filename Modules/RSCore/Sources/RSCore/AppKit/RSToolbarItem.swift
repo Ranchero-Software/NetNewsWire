@@ -12,7 +12,7 @@ import AppKit
 public class RSToolbarItem: NSToolbarItem {
 
 	override public func validate() {
-		guard let view = view, let _ = view.window else {
+		guard let view = view, view.window != nil else {
 			isEnabled = false
 			return
 		}
@@ -34,7 +34,7 @@ private extension RSToolbarItem {
 			return false
 		}
 
-		while(true) {
+		while true {
 			if let validated = validateWithResponder(responder!) {
 				return validated
 			}

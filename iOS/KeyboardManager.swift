@@ -74,9 +74,11 @@ private extension KeyboardManager {
 	}
 
 	static func createKeyCommandInput(keyEntry: [String: Any]) -> String? {
-		guard let key = keyEntry["key"] as? String else { return nil }
+		guard let key = keyEntry["key"] as? String else {
+			return nil
+		}
 
-		switch(key) {
+		switch key {
 		case "[space]":
 			return "\u{0020}"
 		case "[uparrow]":

@@ -213,7 +213,7 @@ extension Folder: OPMLRepresentable {
 
 @MainActor extension Set where Element == Folder {
 
-	func sorted() -> Array<Folder> {
+	func sorted() -> [Folder] {
 		return sorted(by: { (folder1, folder2) -> Bool in
 			return folder1.nameForDisplay.localizedStandardCompare(folder2.nameForDisplay) == .orderedAscending
 		})

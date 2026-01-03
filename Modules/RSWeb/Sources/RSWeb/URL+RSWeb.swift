@@ -75,7 +75,7 @@ private extension String {
 		let lowerPrefix = prefix.lowercased()
 		let lowerSelf = self.lowercased()
 
-		if (lowerSelf == lowerPrefix) {
+		if lowerSelf == lowerPrefix {
 			return ""
 		}
 		if !lowerSelf.hasPrefix(lowerPrefix) {

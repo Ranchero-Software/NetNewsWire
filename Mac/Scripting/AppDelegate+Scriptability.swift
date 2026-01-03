@@ -25,8 +25,8 @@ import Articles
 }
 
 @MainActor protocol ScriptingAppDelegate {
-    var  scriptingCurrentArticle: Article?  {get}
-    var  scriptingSelectedArticles: [Article]  {get}
+    var  scriptingCurrentArticle: Article? {get}
+    var  scriptingSelectedArticles: [Article] {get}
     var  scriptingMainWindowController: ScriptingMainWindowController? {get}
 }
 
@@ -60,7 +60,7 @@ extension AppDelegate: AppDelegateAppleEvents {
 
 			if let themeURL = URL(string: themeURLString) {
 				let request = URLRequest(url: themeURL)
-				let task = URLSession.shared.downloadTask(with: request) { location, response, error in
+				let task = URLSession.shared.downloadTask(with: request) { location, _, error in
 					guard let location = location else {
 						return
 					}
@@ -105,9 +105,9 @@ final class NetNewsWireCreateElementCommand: NSCreateCommand {
              let instance = unsafeSelf.value
              let classDescription: NSScriptClassDescription = instance.createClassDescription
              let command: NSCreateCommand = instance
-             if (classDescription.className == "feed") {
+             if classDescription.className == "feed" {
                  return UnsafeSendable(value: ScriptableFeed.handleCreateElement(command: command))
-             } else if (classDescription.className == "folder") {
+             } else if classDescription.className == "folder" {
                  return UnsafeSendable(value: ScriptableFolder.handleCreateElement(command: command))
              }
              return UnsafeSendable(value: nil)
@@ -197,7 +197,7 @@ final class NetNewsWireExistsCommand: NSExistsCommand {
 
 	override func performDefaultImplementation() -> Any? {
 		guard let result = super.performDefaultImplementation() else {
-			return NSNumber(booleanLiteral: false)
+			return false as NSNumber
 		}
 		return result
 	}

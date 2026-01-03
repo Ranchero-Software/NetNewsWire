@@ -12,7 +12,7 @@ import Foundation
 import UIKit
 
 extension UICollectionView {
-	
+
 	/// Selects an item and scrolls it to the middle if it is not visible
 	public func selectItemAndScrollIfNotVisible(at indexPath: IndexPath, animations: Animations) {
 		guard let dataSource = dataSource,

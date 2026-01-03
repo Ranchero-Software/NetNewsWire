@@ -28,7 +28,7 @@ import Account
 
 	func toggleHidingReadArticles(for sidebarItemID: SidebarItemIdentifier) {
 		assert(canToggleHidingReadArticles(for: sidebarItemID))
-		if (!canToggleHidingReadArticles(for: sidebarItemID)) {
+		if !canToggleHidingReadArticles(for: sidebarItemID) {
 			return
 		}
 

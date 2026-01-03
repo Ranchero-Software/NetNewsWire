@@ -47,22 +47,22 @@ import Articles
     // MARK: - Scriptable properties
 
     @objc(url)
-    var url: String  {
+    var url: String {
         author.url ?? ""
     }
 
     @objc(name)
-    var name: String  {
+    var name: String {
         author.name ?? ""
     }
 
     @objc(avatarURL)
-    var avatarURL: String  {
+    var avatarURL: String {
         author.avatarURL ?? ""
     }
 
     @objc(emailAddress)
-    var emailAddress: String  {
+    var emailAddress: String {
         author.emailAddress ?? ""
     }
 }

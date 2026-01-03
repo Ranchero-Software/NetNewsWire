@@ -254,9 +254,9 @@ private struct DeleteActionName {
 		var numberOfFolders = 0
 
 		for node in nodes {
-			if node.representedObject as? Feed != nil {
+			if node.representedObject is Feed {
 				numberOfFeeds += 1
-			} else if node.representedObject as? Folder != nil {
+			} else if node.representedObject is Folder {
 				numberOfFolders += 1
 			} else {
 				return nil // Delete only Feeds and Folders.

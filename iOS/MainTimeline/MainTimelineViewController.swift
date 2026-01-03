@@ -271,7 +271,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 		}
 
-		if sender as? UIKeyCommand != nil {
+		if sender is UIKeyCommand {
 			guard let indexPath = tableView.indexPathForSelectedRow, let contentView = tableView.cellForRow(at: indexPath)?.contentView else {
 				return
 			}
@@ -1079,7 +1079,9 @@ private extension MainTimelineViewController {
 	}
 
 	func openInBrowserAction(_ article: Article) -> UIAction? {
-		guard let _ = article.preferredURL else { return nil }
+		guard article.preferredURL != nil else {
+			return nil
+		}
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] _ in
 			self?.showBrowserForArticle(article)
@@ -1088,7 +1090,9 @@ private extension MainTimelineViewController {
 	}
 
 	func openInBrowserAlertAction(_ article: Article, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let _ = article.preferredURL else { return nil }
+		guard article.preferredURL != nil else {
+			return nil
+		}
 
 		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in

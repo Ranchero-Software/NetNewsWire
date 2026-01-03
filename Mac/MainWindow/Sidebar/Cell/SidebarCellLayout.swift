@@ -17,7 +17,6 @@ import RSCore
 	let unreadCountRect: CGRect
 
 	init(appearance: SidebarCellAppearance, cellSize: NSSize, shouldShowImage: Bool, textField: NSTextField, unreadCountView: UnreadCountView) {
-
 		let bounds = NSRect(x: 0.0, y: 0.0, width: floor(cellSize.width), height: floor(cellSize.height))
 
 		var rFavicon = NSRect.zero
@@ -31,7 +30,7 @@ import RSCore
 
 		var rTextField = NSRect(x: 0.0, y: 0.0, width: textFieldSize.width, height: textFieldSize.height)
 		if shouldShowImage {
-			rTextField.origin.x = NSMaxX(rFavicon) + appearance.imageMarginRight
+			rTextField.origin.x = rFavicon.maxX + appearance.imageMarginRight
 		}
 		rTextField = rTextField.centeredVertically(in: bounds)
 
@@ -41,17 +40,17 @@ import RSCore
 		var rUnread = NSRect.zero
 		if !unreadCountIsHidden {
 			rUnread.size = unreadCountSize
-			rUnread.origin.x = NSMaxX(bounds) - unreadCountSize.width
+			rUnread.origin.x = bounds.maxX - unreadCountSize.width
 			rUnread = rUnread.centeredVertically(in: bounds)
-			let textFieldMaxX = NSMinX(rUnread) - appearance.unreadCountMarginLeft
-			if NSMaxX(rTextField) > textFieldMaxX {
-				rTextField.size.width = textFieldMaxX - NSMinX(rTextField)
+			let textFieldMaxX = rUnread.minX - appearance.unreadCountMarginLeft
+			if rTextField.maxX > textFieldMaxX {
+				rTextField.size.width = textFieldMaxX - rTextField.minX
 			}
 		}
 		self.unreadCountRect = rUnread
 
-		if NSMaxX(rTextField) > NSMaxX(bounds) {
-			rTextField.size.width = NSMaxX(bounds) - NSMinX(rTextField)
+		if rTextField.maxX > bounds.maxX {
+			rTextField.size.width = bounds.maxX - rTextField.minX
 		}
 		self.titleRect = rTextField
 	}

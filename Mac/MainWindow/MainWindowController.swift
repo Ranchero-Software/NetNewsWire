@@ -336,7 +336,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	@IBAction func openArticleInBrowser(_ sender: Any?) {
 		if let link = currentLink {
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
-		}		
+		}
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
@@ -443,7 +443,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		currentTimelineViewController?.markAllAsRead() {
+		currentTimelineViewController?.markAllAsRead {
 			self.nextUnread(sender)
 		}
 	}
@@ -980,7 +980,7 @@ private extension MainWindowController {
 
 		let splitViewWidths: [Int]
 		if let splitView = splitViewController?.splitView {
-			splitViewWidths = splitView.arrangedSubviews.map{ Int(floor($0.frame.width)) }
+			splitViewWidths = splitView.arrangedSubviews.map { Int(floor($0.frame.width)) }
 		} else {
 			splitViewWidths = []
 		}

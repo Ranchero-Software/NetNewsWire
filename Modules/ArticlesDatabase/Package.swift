@@ -8,13 +8,13 @@ let package = Package(
 		.library(
 			name: "ArticlesDatabase",
 			type: .dynamic,
-			targets: ["ArticlesDatabase"]),
+			targets: ["ArticlesDatabase"])
 	],
 	dependencies: [
 		.package(path: "../Articles"),
 		.package(path: "../RSCore"),
 		.package(path: "../RSParser"),
-		.package(path: "../RSDatabase"),
+		.package(path: "../RSDatabase")
 	],
 	targets: [
 		.target(
@@ -23,12 +23,12 @@ let package = Package(
 				"RSCore",
 				"RSDatabase",
 				"RSParser",
-				"Articles",
+				"Articles"
 			],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
-		),
+		)
 	]
 )

@@ -339,7 +339,7 @@ extension Notification.Name {
 	// MARK: - Navigation
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		if let _ = nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) {
+		if nextSelectableRowWithUnreadArticle(wrappingToTop: wrapping) != nil {
 			return true
 		}
 		return false
@@ -857,7 +857,7 @@ private extension SidebarViewController {
 	}
 
 	func applyToAvailableCells(_ completion: (SidebarCell, Node) -> Void) {
-		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) -> Void in
+		outlineView.enumerateAvailableRowViews { (rowView: NSTableRowView, row: Int) in
 			guard let cell = cellForRowView(rowView), let node = nodeForRow(row) else {
 				return
 			}

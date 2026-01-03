@@ -49,63 +49,63 @@ import Articles
     }
 
     func deleteElement(_ element: ScriptingObject) {
-        print ("delete event not handled")
+        print("delete event not handled")
     }
 
     // MARK: - Scriptable properties
 
     @objc(url)
-    var url: String?  {
+    var url: String? {
 		article.preferredLink
     }
 
     @objc(permalink)
-    var permalink: String?  {
+    var permalink: String? {
         article.link
     }
 
     @objc(externalUrl)
-    var externalUrl: String?  {
+    var externalUrl: String? {
         article.externalLink
     }
 
     @objc(title)
-    var title: String  {
+    var title: String {
         article.title ?? ""
     }
 
     @objc(contents)
-    var contents: String  {
+    var contents: String {
        article.contentText ?? ""
     }
 
     @objc(html)
-    var html: String  {
+    var html: String {
         article.contentHTML ?? ""
     }
 
     @objc(summary)
-    var summary: String  {
+    var summary: String {
         article.summary ?? ""
     }
 
     @objc(datePublished)
-    var datePublished: Date?  {
+    var datePublished: Date? {
         article.datePublished
     }
 
     @objc(dateModified)
-    var dateModified: Date?  {
+    var dateModified: Date? {
         article.dateModified
     }
 
     @objc(dateArrived)
-    var dateArrived: Date  {
+    var dateArrived: Date {
         article.status.dateArrived
     }
 
     @objc(read)
-    var read: Bool  {
+    var read: Bool {
 		get {
 			article.status.boolStatus(forKey: .read)
 		}
@@ -115,7 +115,7 @@ import Articles
     }
 
     @objc(starred)
-    var starred: Bool  {
+    var starred: Bool {
 		get {
 			article.status.boolStatus(forKey: .starred)
 		}
@@ -125,12 +125,12 @@ import Articles
     }
 
     @objc(deleted)
-    var deleted: Bool  {
+    var deleted: Bool {
         false
     }
 
     @objc(imageURL)
-    var imageURL: String  {
+    var imageURL: String {
         article.imageLink ?? ""
     }
 

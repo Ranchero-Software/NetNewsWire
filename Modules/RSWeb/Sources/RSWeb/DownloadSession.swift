@@ -199,7 +199,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 				return
 			}
 			info.addData(data)
-			
+
 			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
 				dataTask.cancel()
 				removeTask(dataTask)

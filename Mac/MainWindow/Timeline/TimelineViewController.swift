@@ -12,7 +12,7 @@ import Articles
 import Account
 import os.log
 
-@MainActor protocol TimelineDelegate: AnyObject  {
+@MainActor protocol TimelineDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
@@ -631,10 +631,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		guard let _ = indexOfNextUnreadArticle(wrappingToTop: wrapping) else {
-			return false
-		}
-		return true
+		return indexOfNextUnreadArticle(wrappingToTop: wrapping) != nil
 	}
 
 	func indexOfNextUnreadArticle(wrappingToTop wrapping: Bool = false) -> Int? {
@@ -994,26 +991,26 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		switch edge {
 		case .leading:
-			let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (action, row) in
+			let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (_, _) in
 				self.toggleArticleRead(article)
 				tableView.rowActionsVisible = false
 			}
 			action.image = article.status.read ? Assets.Images.swipeMarkUnread : Assets.Images.swipeMarkRead
 			return [action]
-			
+
 		case .trailing:
-			let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (action, row) in
+			let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (_, _) in
 				self.toggleArticleStarred(article)
 				tableView.rowActionsVisible = false
 			}
 			action.backgroundColor = Assets.Colors.star
 			action.image = article.status.starred ? Assets.Images.swipeMarkUnstarred : Assets.Images.swipeMarkStarred
 			return [action]
-			
+
 		@unknown default:
 			Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
 		}
-		
+
 		return []
 	}
 }
@@ -1218,7 +1215,7 @@ private extension TimelineViewController {
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
 		cancelPendingAsyncFetches()
-		let fetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
 		if fetchers.isEmpty {
 			return Set<Article>()
 		}

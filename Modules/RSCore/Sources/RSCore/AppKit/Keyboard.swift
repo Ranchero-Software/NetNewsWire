@@ -102,7 +102,7 @@ public struct KeyboardKey: Hashable, Sendable {
 
 		var integerValue = 0
 
-		switch(s) {
+		switch s {
 		case "[space]":
 			integerValue = " ".keyboardIntegerValue!
 		case "[uparrow]":

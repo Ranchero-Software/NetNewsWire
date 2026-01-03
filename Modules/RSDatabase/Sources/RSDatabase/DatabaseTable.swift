@@ -58,7 +58,7 @@ public extension DatabaseTable {
 
 	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, in database: FMDatabase) {
 		dictionaries.forEach { (oneDictionary) in
-			let _ = database.rs_insertRow(with: oneDictionary, insertType: insertType, tableName: self.name)
+			_ = database.rs_insertRow(with: oneDictionary, insertType: insertType, tableName: self.name)
 		}
 	}
 
@@ -101,7 +101,7 @@ public extension DatabaseTable {
 	func containsColumn(_ columnName: String, in database: FMDatabase) -> Bool {
 		if let resultSet = database.executeQuery("select * from \(name) limit 1;", withArgumentsIn: nil) {
 			if let columnMap = resultSet.columnNameToIndexMap {
-				if let _ = columnMap[columnName.lowercased()] {
+				if columnMap[columnName.lowercased()] != nil {
 					return true
 				}
 			}

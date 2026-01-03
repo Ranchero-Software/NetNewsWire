@@ -118,7 +118,7 @@ final class HTMLMetadataTests: XCTestCase {
 		// 0.002 sec on my 2012 iMac
 		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
 		self.measure {
-			let _ = RSHTMLMetadataParser.htmlMetadata(with: d)
+			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
 		}
 	}
 

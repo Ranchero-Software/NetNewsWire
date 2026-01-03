@@ -27,7 +27,7 @@ import WebKit
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
 	}
 
-	func dequeueWebView(completion: @escaping (PreloadedWebView) -> ()) {
+	func dequeueWebView(completion: @escaping (PreloadedWebView) -> Void) {
 		operationQueue.add(WebViewProviderDequeueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler, completion: completion))
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
 	}
@@ -58,9 +58,9 @@ final class WebViewProviderReplenishQueueOperation: MainThreadOperation, @unchec
 final class WebViewProviderDequeueOperation: MainThreadOperation, @unchecked Sendable {
 	private var queue: NSMutableArray
 	private var articleIconSchemeHandler: ArticleIconSchemeHandler
-	private var completion: (PreloadedWebView) -> ()
+	private var completion: (PreloadedWebView) -> Void
 
-	init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler, completion: @escaping (PreloadedWebView) -> ()) {
+	init(queue: NSMutableArray, articleIconSchemeHandler: ArticleIconSchemeHandler, completion: @escaping (PreloadedWebView) -> Void) {
 		self.queue = queue
 		self.articleIconSchemeHandler = articleIconSchemeHandler
 		self.completion = completion

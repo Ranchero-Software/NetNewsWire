@@ -230,7 +230,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 				showError(NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error"))
 				return false
 			}
-			guard let _ = URL(string: apiURLTextField.text!) else {
+			guard URL(string: apiURLTextField.text!) != nil else {
 				showError(NSLocalizedString("Invalid API URL.", comment: "Invalid API URL"))
 				return false
 			}

@@ -15,7 +15,7 @@ let package = Package(
 			dependencies: ["RSCoreObjC"],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
 		),
 		.target(
@@ -33,7 +33,7 @@ let package = Package(
 			],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-				.enableUpcomingFeature("InferIsolatedConformances"),
+				.enableUpcomingFeature("InferIsolatedConformances")
 			]
 		),
 		.testTarget(
@@ -41,6 +41,6 @@ let package = Package(
 			dependencies: ["RSCore"],
 			resources: [.copy("Resources")],
 			swiftSettings: [.swiftLanguageMode(.v5)]
-		),
+		)
 	]
 )

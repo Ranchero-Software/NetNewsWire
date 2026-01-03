@@ -29,7 +29,7 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 	}
 
 	// Maps from UUID to a validation wrapper
-	nonisolated(unsafe) static var gPingPongMap = Dictionary<String, ValidationWrapper>()
+	nonisolated(unsafe) static var gPingPongMap = [String: ValidationWrapper]()
 	static let validationQueue = DispatchQueue(label: "Toolbar Validation")
 
 	// Bottleneck for calling through to a validation handler we have saved, and removing it from the list.

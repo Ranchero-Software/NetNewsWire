@@ -93,7 +93,7 @@ public extension Set where Element == ArticleStatus {
 
 public extension Array where Element == ArticleStatus {
 
-	func articleIDs() -> [String] {		
+	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}
 }

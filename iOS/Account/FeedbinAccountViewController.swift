@@ -161,7 +161,7 @@ final class FeedbinAccountViewController: UITableViewController {
 		actionButton.isEnabled = value
 	}
 
-	private func toggleActivityIndicatorAnimation(visible value: Bool){
+	private func toggleActivityIndicatorAnimation(visible value: Bool) {
 		activityIndicator.isHidden = !value
 		if value {
 			activityIndicator.startAnimating()

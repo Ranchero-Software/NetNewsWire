@@ -66,10 +66,4 @@ struct ShadowTableChanges {
 	var moves: Set<Move>?
 	var rowChanges: [RowChanges]?
 
-	init(deletes: Set<Int>?, inserts: Set<Int>?, moves: Set<Move>?, rowChanges: [RowChanges]?) {
-		self.deletes = deletes
-		self.inserts = inserts
-		self.moves = moves
-		self.rowChanges = rowChanges
-	}
 }

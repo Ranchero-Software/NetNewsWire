@@ -24,7 +24,7 @@ final class RefreshProgressView: UIView {
 			accessibilityTraits = [.updatesFrequently, .notEnabled]
 		}
 	}
-	
+
 	func update() {
 		if !AccountManager.shared.combinedRefreshProgress.isComplete {
 			progressChanged(animated: false)

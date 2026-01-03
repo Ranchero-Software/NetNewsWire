@@ -80,7 +80,7 @@ private extension TreeController {
 
 	func visitNode(_ node: Node, _ visitBlock: NodeVisitBlock) {
 		visitBlock(node)
-		node.childNodes.forEach{ (oneChildNode) in
+		node.childNodes.forEach { (oneChildNode) in
 			visitNode(oneChildNode, visitBlock)
 		}
 	}

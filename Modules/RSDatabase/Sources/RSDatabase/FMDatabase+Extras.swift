@@ -97,7 +97,7 @@ public extension FMDatabase {
 		guard let resultSet = executeQuery(sql, withArgumentsIn: parameters) else {
 			return nil
 		}
-		
+
 		let count = resultSet.intWithCountResult()
 		return count
 	}

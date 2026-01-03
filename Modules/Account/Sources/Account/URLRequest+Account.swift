@@ -55,14 +55,12 @@ public extension URLRequest {
 			setValue(auth, forHTTPHeaderField: "Authorization")
 		case .oauthAccessTokenSecret:
 			assertionFailure("Token secrets are used by OAuth1. Did you mean to use `OAuthSwift` instead of a URLRequest?")
-			break
 		case .oauthRefreshToken:
 			// While both access and refresh tokens are credentials, it seems the `Credentials` cases
 			// enumerates how the identity of the user can be proved rather than
 			// credentials-in-general, such as in this refresh token case,
 			// the authority to prove an identity.
 			assertionFailure("Refresh tokens are used to replace expired access tokens. Did you mean to use `accessToken` instead?")
-			break
 		}
 
 		guard let conditionalGet = conditionalGet else {
