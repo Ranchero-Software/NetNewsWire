@@ -25,7 +25,15 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
 	let server: String? = "api.feedbin.com"
 	var isOPMLImportInProgress = false
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
+	let refreshProgress = RSProgress()
 
 	var credentials: Credentials? {
 		didSet {
@@ -65,6 +73,8 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 			caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
 		}
+
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
@@ -373,6 +383,11 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	func resume() {
 		caller.resume()
 		syncDatabase.resume()
+	}
+
+	// MARK: - Notifications
+	@objc func progressInfoDidChange(_ notification: Notification) {
+		progressInfo = refreshProgress.progressInfo
 	}
 }
 

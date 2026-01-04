@@ -26,7 +26,6 @@ public extension Notification.Name {
 	static let UserDidDeleteAccount = Notification.Name("UserDidDeleteAccount")
 	static let AccountRefreshDidBegin = Notification.Name(rawValue: "AccountRefreshDidBegin")
 	static let AccountRefreshDidFinish = Notification.Name(rawValue: "AccountRefreshDidFinish")
-	static let AccountRefreshProgressDidChange = Notification.Name(rawValue: "AccountRefreshProgressDidChange")
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
@@ -60,7 +59,7 @@ public enum FetchType {
 	case searchWithArticleIDs(String, Set<String>)
 }
 
-@MainActor public final class Account: DisplayNameProvider, UnreadCountProvider, Container, Hashable {
+@MainActor public final class Account: ProgressInfoReporter, DisplayNameProvider, UnreadCountProvider, Container, Hashable {
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
@@ -238,8 +237,13 @@ public enum FetchType {
 		}
 	}
 
-	var refreshProgress: DownloadProgress {
-		return delegate.refreshProgress
+	public var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+			refreshInProgress = !progressInfo.isComplete
+		}
 	}
 
 	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
@@ -295,7 +299,7 @@ public enum FetchType {
 			defaultName = NSLocalizedString("The Old Reader", comment: "The Old Reader")
 		}
 
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: delegate)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
@@ -993,13 +997,8 @@ public enum FetchType {
 
 	// MARK: - Notifications
 
-	@objc func downloadProgressDidChange(_ note: Notification) {
-		guard let noteObject = note.object as? DownloadProgress, noteObject === refreshProgress else {
-			return
-		}
-
-		refreshInProgress = !refreshProgress.isComplete
-		NotificationCenter.default.post(name: .AccountRefreshProgressDidChange, object: self)
+	@objc func progressInfoDidChange(_ note: Notification) {
+		progressInfo = delegate.progressInfo
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {

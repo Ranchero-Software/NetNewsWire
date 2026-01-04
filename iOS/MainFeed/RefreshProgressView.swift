@@ -15,7 +15,7 @@ final class RefreshProgressView: UIView {
 
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
-			NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 			NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 			update()
 			scheduleUpdateRefreshLabel()
@@ -26,7 +26,7 @@ final class RefreshProgressView: UIView {
 	}
 
 	func update() {
-		if !AccountManager.shared.combinedRefreshProgress.isComplete {
+		if !CombinedRefreshProgress.shared.isComplete {
 			progressChanged(animated: false)
 		} else {
 			updateRefreshLabel()
@@ -37,7 +37,7 @@ final class RefreshProgressView: UIView {
 		progressChanged(animated: false)
 	}
 
-	@objc func progressDidChange(_ note: Notification) {
+	@objc func progressInfoDidChange(_ note: Notification) {
 		progressChanged(animated: true)
 	}
 
@@ -62,16 +62,16 @@ private extension RefreshProgressView {
 		// https://github.com/Ranchero-Software/NetNewsWire/issues/1764
 		let isInViewHierarchy = self.superview != nil
 
-		let progress = AccountManager.shared.combinedRefreshProgress
+		let progressInfo = CombinedRefreshProgress.shared.progressInfo
 
-		if progress.isComplete {
+		if progressInfo.isComplete {
 			if isInViewHierarchy {
 				progressView.setProgress(1, animated: animated)
 			}
 
 			func completeLabel() {
 				// Check that there are no pending downloads.
-				if AccountManager.shared.combinedRefreshProgress.isComplete {
+				if CombinedRefreshProgress.shared.isComplete {
 					self.updateRefreshLabel()
 					self.label.isHidden = false
 					self.progressView.isHidden = true
@@ -92,7 +92,7 @@ private extension RefreshProgressView {
 			label.isHidden = true
 			progressView.isHidden = false
 			if isInViewHierarchy {
-				let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
+				let percent = Float(progressInfo.numberCompleted) / Float(progressInfo.numberOfTasks)
 
 				// Don't let the progress bar go backwards unless we need to go back more than 25%
 				if percent > progressView.progress || progressView.progress - percent > 0.25 {

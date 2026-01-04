@@ -100,8 +100,6 @@ import RSDatabase
 		return false
 	}
 
-	public let combinedRefreshProgress = CombinedRefreshProgress()
-
 	private var isActive = false
 
 	public init() {
@@ -281,9 +279,9 @@ import RSDatabase
 			return
 		}
 
-		combinedRefreshProgress.start()
+		CombinedRefreshProgress.shared.start()
 		defer {
-			combinedRefreshProgress.stop()
+			CombinedRefreshProgress.shared.stop()
 		}
 
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in

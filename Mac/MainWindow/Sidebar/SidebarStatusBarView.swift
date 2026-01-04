@@ -33,7 +33,7 @@ final class SidebarStatusBarView: NSView {
 			progressLabel.font = NSFont.monospacedDigitSystemFont(ofSize: progressLabelFontSize, weight: NSFont.Weight.regular)
 			progressLabel.stringValue = ""
 
-			NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 		}
 	}
 
@@ -45,8 +45,7 @@ final class SidebarStatusBarView: NSView {
 
 	// MARK: Notifications
 
-	@objc dynamic func progressDidChange(_ notification: Notification) {
-
+	@objc func progressInfoDidChange(_ notification: Notification) {
 		CoalescingQueue.standard.add(self, #selector(updateUI))
 	}
 }
@@ -99,21 +98,21 @@ private extension SidebarStatusBarView {
 
 	func updateProgressIndicator() {
 
-		let progress = AccountManager.shared.combinedRefreshProgress
+		let progressInfo = CombinedRefreshProgress.shared.progressInfo
 
-		if progress.isComplete {
+		if progressInfo.isComplete {
 			stopProgressIfNeeded()
 			return
 		}
 
 		startProgressIfNeeded()
 
-		let maxValue = Double(progress.numberOfTasks)
+		let maxValue = Double(progressInfo.numberOfTasks)
 		if progressIndicator.maxValue != maxValue {
 			progressIndicator.maxValue = maxValue
 		}
 
-		let doubleValue = Double(progress.numberCompleted)
+		let doubleValue = Double(progressInfo.numberCompleted)
 		if progressIndicator.doubleValue != doubleValue {
 			progressIndicator.doubleValue = doubleValue
 		}
@@ -121,15 +120,15 @@ private extension SidebarStatusBarView {
 
 	func updateProgressLabel() {
 
-		let progress = AccountManager.shared.combinedRefreshProgress
+		let progressInfo = CombinedRefreshProgress.shared.progressInfo
 
-		if progress.isComplete {
+		if progressInfo.isComplete {
 			progressLabel.stringValue = ""
 			return
 		}
 
 		let formatString = NSLocalizedString("%@ of %@", comment: "Status bar progress")
-		let s = String(format: formatString, NSNumber(value: progress.numberCompleted), NSNumber(value: progress.numberOfTasks))
+		let s = String(format: formatString, NSNumber(value: progressInfo.numberCompleted), NSNumber(value: progressInfo.numberOfTasks))
 
 		progressLabel.stringValue = s
 	}

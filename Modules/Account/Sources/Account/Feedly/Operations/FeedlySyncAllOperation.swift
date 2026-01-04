@@ -31,25 +31,21 @@ final class FeedlySyncAllOperation: FeedlyOperation, @unchecked Sendable {
 	///
 	/// Download articles for statuses at the union of those statuses without its corresponding article and those included in 3 (changed since last successful sync).
 	///
-	@MainActor init(account: Account, feedlyUserId: String, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIdsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredService: FeedlyGetStreamIdsService, getStreamIdsService: FeedlyGetStreamIdsService, getEntriesService: FeedlyGetEntriesService, database: SyncDatabase, downloadProgress: DownloadProgress, operationQueue: MainThreadOperationQueue) {
+	@MainActor init(account: Account, feedlyUserId: String, lastSuccessfulFetchStartDate: Date?, markArticlesService: FeedlyMarkArticlesService, getUnreadService: FeedlyGetStreamIdsService, getCollectionsService: FeedlyGetCollectionsService, getStreamContentsService: FeedlyGetStreamContentsService, getStarredService: FeedlyGetStreamIdsService, getStreamIdsService: FeedlyGetStreamIdsService, getEntriesService: FeedlyGetEntriesService, database: SyncDatabase, operationQueue: MainThreadOperationQueue) {
 		self.syncUUID = UUID()
 
 		super.init(name: "FeedlySyncAllOperation")
 
 		operationQueue.suspend()
 
-		self.downloadProgress = downloadProgress
-
 		// Send any read/unread/starred article statuses to Feedly before anything else.
 		let sendArticleStatuses = FeedlySendArticleStatusesOperation(database: database, service: markArticlesService)
 		sendArticleStatuses.delegate = self
-		sendArticleStatuses.downloadProgress = downloadProgress
 		operationQueue.add(sendArticleStatuses)
 
 		// Get all the Collections the user has.
 		let getCollections = FeedlyGetCollectionsOperation(service: getCollectionsService)
 		getCollections.delegate = self
-		getCollections.downloadProgress = downloadProgress
 		getCollections.addDependency(sendArticleStatuses)
 		operationQueue.add(getCollections)
 
@@ -67,7 +63,6 @@ final class FeedlySyncAllOperation: FeedlyOperation, @unchecked Sendable {
 
 		let getAllArticleIds = FeedlyIngestStreamArticleIdsOperation(account: account, userId: feedlyUserId, service: getStreamIdsService)
 		getAllArticleIds.delegate = self
-		getAllArticleIds.downloadProgress = downloadProgress
 		getAllArticleIds.addDependency(createFeedsOperation)
 		operationQueue.add(getAllArticleIds)
 
@@ -75,28 +70,24 @@ final class FeedlySyncAllOperation: FeedlyOperation, @unchecked Sendable {
 		let getUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: feedlyUserId, service: getUnreadService, database: database, newerThan: nil)
 		getUnread.delegate = self
 		getUnread.addDependency(getAllArticleIds)
-		getUnread.downloadProgress = downloadProgress
 		operationQueue.add(getUnread)
 
 		// Get each page of the article ids which have been update since the last successful fetch start date.
 		// If the date is nil, this operation provides an empty set (everything is new, nothing is updated).
 		let getUpdated = FeedlyGetUpdatedArticleIdsOperation(account: account, userId: feedlyUserId, service: getStreamIdsService, newerThan: lastSuccessfulFetchStartDate)
 		getUpdated.delegate = self
-		getUpdated.downloadProgress = downloadProgress
 		getUpdated.addDependency(createFeedsOperation)
 		operationQueue.add(getUpdated)
 
 		// Get each page of the article ids for starred articles.
 		let getStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: feedlyUserId, service: getStarredService, database: database, newerThan: nil)
 		getStarred.delegate = self
-		getStarred.downloadProgress = downloadProgress
 		getStarred.addDependency(createFeedsOperation)
 		operationQueue.add(getStarred)
 
 		// Now all the possible article ids we need have a status, fetch the article ids for missing articles.
 		let getMissingIDs = FeedlyFetchIDsForMissingArticlesOperation(account: account)
 		getMissingIDs.delegate = self
-		getMissingIDs.downloadProgress = downloadProgress
 		getMissingIDs.addDependency(getAllArticleIds)
 		getMissingIDs.addDependency(getUnread)
 		getMissingIDs.addDependency(getStarred)
@@ -112,7 +103,6 @@ final class FeedlySyncAllOperation: FeedlyOperation, @unchecked Sendable {
 			operationQueue: operationQueue
 		)
 		downloadMissingArticles.delegate = self
-		downloadMissingArticles.downloadProgress = downloadProgress
 		downloadMissingArticles.addDependency(getMissingIDs)
 		downloadMissingArticles.addDependency(getUpdated)
 		operationQueue.add(downloadMissingArticles)
@@ -120,13 +110,12 @@ final class FeedlySyncAllOperation: FeedlyOperation, @unchecked Sendable {
 		// Once this operation's dependencies, their dependencies etc finish, we can finish.
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
-		finishOperation.downloadProgress = downloadProgress
 		finishOperation.addDependency(downloadMissingArticles)
 		operationQueue.add(finishOperation)
 	}
 
-	@MainActor convenience init(account: Account, feedlyUserId: String, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, downloadProgress: DownloadProgress, operationQueue: MainThreadOperationQueue) {
-		self.init(account: account, feedlyUserId: feedlyUserId, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredService: caller, getStreamIdsService: caller, getEntriesService: caller, database: database, downloadProgress: downloadProgress, operationQueue: operationQueue)
+	@MainActor convenience init(account: Account, feedlyUserId: String, caller: FeedlyAPICaller, database: SyncDatabase, lastSuccessfulFetchStartDate: Date?, operationQueue: MainThreadOperationQueue) {
+		self.init(account: account, feedlyUserId: feedlyUserId, lastSuccessfulFetchStartDate: lastSuccessfulFetchStartDate, markArticlesService: caller, getUnreadService: caller, getCollectionsService: caller, getStreamContentsService: caller, getStarredService: caller, getStreamIdsService: caller, getEntriesService: caller, database: database, operationQueue: operationQueue)
 	}
 
 	@MainActor override func run() {

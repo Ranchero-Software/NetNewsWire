@@ -18,17 +18,24 @@ import os
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges)
 }
 
-@MainActor final class LocalAccountRefresher {
+@MainActor final class LocalAccountRefresher: ProgressInfoReporter {
 	var delegate: LocalAccountRefresherDelegate?
-	var downloadProgress: DownloadProgress {
-		downloadSession.downloadProgress
+
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
 	}
 
 	private var completion: (() -> Void)?
 	private var isSuspended = false
 
 	private lazy var downloadSession: DownloadSession = {
-		return DownloadSession(delegate: self)
+		let session = DownloadSession(delegate: self)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: session)
+		return session
 	}()
 
 	private var urlToFeedDictionary = [String: Feed]()
@@ -74,6 +81,12 @@ import os
 
 	@MainActor public func resume() {
 		isSuspended = false
+	}
+
+	// MARK: - Notifications
+
+	@objc func progressInfoDidChange(_ notification: Notification) {
+		progressInfo = downloadSession.progressInfo
 	}
 }
 

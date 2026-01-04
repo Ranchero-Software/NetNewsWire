@@ -44,6 +44,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let caller: ReaderAPICaller
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
 
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
+	let refreshProgress = RSProgress()
+
 	var behaviors: AccountBehaviors {
 		var behaviors: AccountBehaviors = [.disallowOPMLImports, .disallowFeedInMultipleFolders]
 		if variant == .freshRSS {
@@ -70,8 +79,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
-
 	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
 		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		syncDatabase = SyncDatabase(databasePath: databasePath)
@@ -97,6 +104,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		self.caller.variant = variant
 		self.variant = variant
+
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
@@ -476,6 +485,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		syncDatabase.resume()
+	}
+
+	// MARK: - Notifications
+
+	@objc func progressInfoDidChange(_ notification: Notification) {
+		progressInfo = refreshProgress.progressInfo
 	}
 }
 

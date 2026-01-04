@@ -16,11 +16,18 @@ import RSWeb
 import Secrets
 
 @MainActor final class LocalAccountDelegate: AccountDelegate {
-
 	weak var account: Account?
 
 	let behaviors: AccountBehaviors = []
 	let isOPMLImportInProgress = false
+
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
 
 	let server: String? = nil
 	var credentials: Credentials?
@@ -29,18 +36,15 @@ import Secrets
 	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
 		refresher.delegate = self
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refresher)
 		return refresher
-	}()
-
-	lazy var refreshProgress: DownloadProgress = {
-		refresher.downloadProgress
 	}()
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 	}
 
 	@MainActor func refreshAll(for account: Account) async throws {
-		guard refreshProgress.isComplete, !Platform.isRunningUnitTests else {
+		guard progressInfo.isComplete, !Platform.isRunningUnitTests else {
 			return
 		}
 
@@ -148,6 +152,12 @@ import Secrets
 
 	@MainActor func resume() {
 		refresher.resume()
+	}
+
+	// MARK: - Notifications
+
+	@objc func progressInfoDidChange(_ notification: Notification) {
+		progressInfo = refresher.progressInfo
 	}
 }
 

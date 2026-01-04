@@ -7,105 +7,81 @@
 //
 
 import Foundation
+import RSCore
 import RSWeb
-
-extension Notification.Name {
-	public static let combinedRefreshProgressDidChange = Notification.Name("combinedRefreshProgressDidChange")
-}
 
 /// Combine the refresh progress of multiple accounts into one place,
 /// for use by refresh status view and so on.
-public final class CombinedRefreshProgress {
-
-	public private(set) var numberOfTasks = 0
-	public private(set) var numberRemaining = 0
-	public private(set) var numberCompleted = 0
-
-	public var isComplete: Bool {
-		!isStarted || numberRemaining < 1
+@MainActor public final class CombinedRefreshProgress: ProgressInfoReporter {
+	public static let shared = CombinedRefreshProgress()
+	
+	public var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
 	}
 
-	var isStarted = false
+	public var isComplete: Bool {
+		!isStarted || progressInfo.numberRemaining < 1
+	}
+
+	private var isStarted = false {
+		didSet {
+			if isStarted != oldValue {
+				progressInfo = ProgressInfo()
+			}
+		}
+	}
 
 	init() {
-
-		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .DownloadProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: nil)
 	}
 
 	func start() {
-		reset()
 		isStarted = true
 	}
 
 	func stop() {
-		reset()
 		isStarted = false
 	}
 
-	@MainActor @objc func refreshProgressDidChange(_ notification: Notification) {
-
+	@objc func progressInfoDidChange(_ notification: Notification) {
 		guard isStarted else {
 			return
 		}
-
-		var updatedNumberOfTasks = 0
-		var updatedNumberRemaining = 0
-		var updatedNumberCompleted = 0
-
-		var didMakeChange = false
-
-		let downloadProgresses = AccountManager.shared.activeAccounts.map { $0.refreshProgress }
-		for downloadProgress in downloadProgresses {
-			let progressInfo = downloadProgress.progressInfo
-			updatedNumberOfTasks += progressInfo.numberOfTasks
-			updatedNumberRemaining += progressInfo.numberRemaining
-			updatedNumberCompleted += progressInfo.numberCompleted
+		guard notification.object is Account else {
+			return
 		}
 
-		if updatedNumberOfTasks > numberOfTasks {
-			numberOfTasks = updatedNumberOfTasks
-			didMakeChange = true
-		}
+		let currentProgressInfo = progressInfo
 
-		assert(updatedNumberRemaining <= numberOfTasks)
-		updatedNumberRemaining = max(updatedNumberRemaining, numberRemaining)
-		updatedNumberRemaining = min(updatedNumberRemaining, numberOfTasks)
-		if updatedNumberRemaining != numberRemaining {
-			numberRemaining = updatedNumberRemaining
-			didMakeChange = true
-		}
+		let progressInfos = AccountManager.shared.activeAccounts.map { $0.progressInfo }
+		let updatedProgressInfo = ProgressInfo.combined(progressInfos)
+		var updatedNumberOfTasks = updatedProgressInfo.numberOfTasks
+		var updatedNumberCompleted = updatedProgressInfo.numberCompleted
+		var updatedNumberRemaining = updatedProgressInfo.numberRemaining
 
-		assert(updatedNumberCompleted <= numberOfTasks)
-		updatedNumberCompleted = max(updatedNumberCompleted, numberCompleted)
-		updatedNumberCompleted = min(updatedNumberCompleted, numberOfTasks)
-		if updatedNumberCompleted != numberCompleted {
-			numberCompleted = updatedNumberCompleted
-			didMakeChange = true
+		if updatedNumberOfTasks < currentProgressInfo.numberOfTasks {
+			updatedNumberOfTasks = currentProgressInfo.numberOfTasks
 		}
+		if updatedNumberCompleted < currentProgressInfo.numberCompleted {
+			updatedNumberCompleted = currentProgressInfo.numberCompleted
+		}
+		if updatedNumberCompleted > updatedProgressInfo.numberOfTasks {
+			updatedNumberOfTasks = updatedNumberCompleted
+		}
+		updatedNumberRemaining = updatedNumberOfTasks - updatedNumberCompleted
 
-		if didMakeChange {
-			postDidChangeNotification()
-		}
+		progressInfo = ProgressInfo(numberOfTasks: updatedNumberOfTasks,
+									numberCompleted: updatedNumberCompleted,
+									numberRemaining: updatedNumberRemaining)
 	}
 }
 
 private extension CombinedRefreshProgress {
-
 	func reset() {
-
-		let didMakeChange = numberOfTasks != 0 || numberRemaining != 0 || numberCompleted != 0
-
-		numberOfTasks = 0
-		numberRemaining = 0
-		numberCompleted = 0
-
-		if didMakeChange {
-			postDidChangeNotification()
-		}
-	}
-
-	func postDidChangeNotification() {
-
-		NotificationCenter.default.post(name: .combinedRefreshProgressDidChange, object: self)
+		progressInfo = ProgressInfo()
 	}
 }

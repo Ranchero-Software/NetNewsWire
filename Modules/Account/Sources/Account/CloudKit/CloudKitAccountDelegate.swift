@@ -10,12 +10,12 @@ import Foundation
 import CloudKit
 import SystemConfiguration
 import os.log
-import SyncDatabase
 import RSCore
 import RSParser
+import RSWeb
+import SyncDatabase
 import Articles
 import ArticlesDatabase
-import RSWeb
 import Secrets
 import CloudKitSync
 import FeedFinder
@@ -54,9 +54,26 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	/// refreshProgress is combined sync progress and feed download progress.
-	let refreshProgress = DownloadProgress(numberOfTasks: 0)
-	private let syncProgress = DownloadProgress(numberOfTasks: 0)
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
+
+	private let syncProgress = RSProgress()
+	private var syncProgressInfo = ProgressInfo() {
+		didSet {
+			updateProgress()
+		}
+	}
+
+	private var refreshProgressInfo = ProgressInfo() {
+		didSet {
+			updateProgress()
+		}
+	}
 
 	init(dataFolder: String) {
 
@@ -69,8 +86,8 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		self.refresher = LocalAccountRefresher()
 		self.refresher.delegate = self
 
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: refresher.downloadProgress)
-		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .DownloadProgressDidChange, object: syncProgress)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: refresher)
+		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: syncProgress)
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
@@ -84,7 +101,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	}
 
 	func refreshAll(for account: Account) async throws {
-		guard refreshProgress.isComplete else {
+		guard refreshProgressInfo.isComplete else {
 			return
 		}
 
@@ -121,7 +138,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	}
 
 	func importOPML(for account: Account, opmlFile: URL) async throws {
-		guard refreshProgress.isComplete else {
+		guard refreshProgressInfo.isComplete else {
 			return
 		}
 
@@ -324,10 +341,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 					group.addTask {
 						do {
 							try await self.restoreFeed(for: account, feed: feed, container: folder)
-							self.syncProgress.completeTask()
+							await self.syncProgress.completeTask()
 						} catch {
 							Self.logger.error("CloudKit: Restore folder feed error: \(error.localizedDescription)")
-							self.syncProgress.completeTask()
+							await self.syncProgress.completeTask()
 						}
 					}
 				}
@@ -407,26 +424,16 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 private extension CloudKitAccountDelegate {
 
-	func updateRefreshProgress() {
-
-//		refreshProgress.numberOfTasks = refresher.downloadProgress.numberOfTasks + syncProgress.numberOfTasks
-//		refreshProgress.numberRemaining = refresher.downloadProgress.numberRemaining + syncProgress.numberRemaining
-
-		// Complete?
-		if refreshProgress.isComplete {
-			refresher.downloadProgress.reset()
-			syncProgress.reset()
-		}
+	func updateProgress() {
+		progressInfo = ProgressInfo.combined([refreshProgressInfo, syncProgressInfo])
 	}
 
-	@objc func downloadProgressDidChange(_ note: Notification) {
-
-		updateRefreshProgress()
+	@objc func refreshProgressDidChange(_ note: Notification) {
+		refreshProgressInfo = refresher.progressInfo
 	}
 
 	@objc func syncProgressDidChange(_ note: Notification) {
-
-		updateRefreshProgress()
+		syncProgressInfo = syncProgress.progressInfo
 	}
 }
 
@@ -639,8 +646,6 @@ private extension CloudKitAccountDelegate {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 			let op = CloudKitSendStatusOperation(account: account,
 												 articlesZone: articlesZone,
-												 refreshProgress: refreshProgress,
-												 showProgress: showProgress,
 												 database: syncDatabase)
 			op.completionBlock = { mainThreadOperation in
 				if mainThreadOperation.isCanceled {
