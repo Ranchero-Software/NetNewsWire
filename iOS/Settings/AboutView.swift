@@ -20,23 +20,23 @@ struct AboutView: View {
 				Text(verbatim: "NetNewsWire")
 					.font(.largeTitle)
 
-				Text(verbatim: "By Brent Simmons and the Ranchero Software Team")
+				Text(verbatim: "By Brent Simmons and the Ranchero Software team")
 					.foregroundStyle(.secondary)
-				Text("[netnewswire.com](https://netnewswire.com)")
+				Text("[netnewswire.com](https://netnewswire.com/)")
 
 				VStack(spacing: 6) {
 					Text(verbatim: "Credits")
 						.bold()
 						.foregroundStyle(.secondary)
 						.padding(.top, 16)
-					AboutCreditView(contributorType: "Contributing Developers", contributors: [Contributors.mauriceParker, Contributors.stuartBreckenridge])
+					AboutCreditView(contributorType: "Contributing Developers", contributors: [.stuartBreckenridge, .mauriceParker])
 					AboutCreditView(contributorType: "App Icon", contributors: [.bradEllis])
 					AboutCreditView(contributorType: "Feedly Syncing", contributors: [.keilGillard])
-					AboutCreditView(contributorType: "NewsBlur Synching", contributors: [.anhDo])
+					AboutCreditView(contributorType: "NewsBlur Syncing", contributors: [.anhDo])
 					AboutCreditView(contributorType: "Under-the-hood magic & CSS", contributors: [.nateWeaver])
 					AboutCreditView(contributorType: "Newsfoot (JS footnote displayer)", contributors: [.andrewBrehaut])
 					AboutCreditView(contributorType: "Help Book", contributors: [.ryanDotson])
-					AboutCreditView(contributorType: "...and Featuring Additional Contributions from", contributors: [.danielJalkut, .joeHeck, .olofHellman, .rizwanMohamedIbrahim, .philViso, .others])
+					AboutCreditView(contributorType: "Featuring additional contributions from", contributors: [.danielJalkut, .joeHeck, .olofHellman, .rizwanMohamedIbrahim, .philViso, .others])
 				}
 
 				VStack(spacing: 6) {
@@ -52,10 +52,10 @@ struct AboutView: View {
 						.bold()
 						.foregroundStyle(.secondary)
 						.padding(.top, 16)
-					Text("NetNewsWire 7 is dedicated to everyone working to save democracy around the world.")
+					Text("NetNewsWire 7 is dedicated to everyone working to save democracy in the United States and around the world.")
 				}
 
-				Text(verbatim: "Copyright © 2002-2025 Brent Simmons")
+				Text(verbatim: "Copyright © 2002-2026 Brent Simmons")
 					.font(.caption)
 					.foregroundStyle(.secondary)
 			}
