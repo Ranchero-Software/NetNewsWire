@@ -76,9 +76,11 @@ enum CloudKitAccountZoneError: LocalizedError {
 				if let title = item.titleFromAttributes {
 					let containerRecord = newContainerCKRecord(name: title)
 					records.append(containerRecord)
-					item.children?.forEach { itemChild in
-						if let feedSpecifier = itemChild.feedSpecifier {
-							processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+					if let itemChildren = item.children {
+						for itemChild in itemChildren {
+							if let feedSpecifier = itemChild.feedSpecifier {
+								processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+							}
 						}
 					}
 				}

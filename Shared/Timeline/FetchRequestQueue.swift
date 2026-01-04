@@ -21,7 +21,9 @@ import Foundation
 
 	func cancelAllRequests() {
 		precondition(Thread.isMainThread)
-		pendingRequests.forEach { $0.isCanceled = true }
+		for pendingRequest in pendingRequests {
+			pendingRequest.isCanceled = true
+		}
 		currentRequest?.isCanceled = true
 		pendingRequests = [FetchRequestOperation]()
 	}

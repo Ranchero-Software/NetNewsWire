@@ -22,13 +22,13 @@ final class OPMLNormalizer {
 	private func normalize(_ items: [RSOPMLItem], parentFolder: RSOPMLItem? = nil) {
 		var feedsToAdd = [RSOPMLItem]()
 
-		items.forEach { (item) in
+		for item in items {
 
 			if item.feedSpecifier != nil {
 				if !feedsToAdd.contains(where: { $0.feedSpecifier?.feedURL == item.feedSpecifier?.feedURL }) {
 					feedsToAdd.append(item)
 				}
-				return
+				continue
 			}
 
 			guard item.titleFromAttributes != nil else {
@@ -36,7 +36,7 @@ final class OPMLNormalizer {
 				if let itemChildren = item.children {
 					normalize(itemChildren, parentFolder: parentFolder)
 				}
-				return
+				continue
 			}
 
 			feedsToAdd.append(item)

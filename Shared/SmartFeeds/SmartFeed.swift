@@ -65,7 +65,7 @@ import Account
 
 		// Remove any accounts that are no longer active or have been deleted
 		let activeAccountIDs = activeAccounts.map { $0.accountID }
-		unreadCounts.keys.forEach { accountID in
+		for accountID in unreadCounts.keys {
 			if !activeAccountIDs.contains(accountID) {
 				unreadCounts.removeValue(forKey: accountID)
 			}

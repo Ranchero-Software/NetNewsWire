@@ -215,7 +215,7 @@ private extension TimelineViewController {
 		}
 
 		let menu = NSMenu(title: NSLocalizedString("Share", comment: "Share menu name"))
-		services.forEach { (service) in
+		for service in services {
 			service.delegate = sharingServiceDelegate
 			let menuItem = NSMenuItem(title: service.menuItemTitle, action: #selector(performShareServiceFromContextualMenu(_:)), keyEquivalent: "")
 			menuItem.image = service.image

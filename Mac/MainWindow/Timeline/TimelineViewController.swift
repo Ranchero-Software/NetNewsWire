@@ -1119,7 +1119,7 @@ private extension TimelineViewController {
 	func updateArticleRowMap() {
 		var rowMap = [String: [Int]]()
 		var index = 0
-		articles.forEach { (article) in
+		for article in articles {
 			if var indexes = rowMap[article.articleID] {
 				indexes.append(index)
 				rowMap[article.articleID] = indexes
@@ -1140,9 +1140,9 @@ private extension TimelineViewController {
 	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
 		var indexes = IndexSet()
 
-		articleIDs.forEach { (articleID) in
+		for articleID in articleIDs {
 			guard let rowsIndex = rows(for: articleID) else {
-				return
+				continue
 			}
 			for rowIndex in rowsIndex {
 				indexes.insert(rowIndex)

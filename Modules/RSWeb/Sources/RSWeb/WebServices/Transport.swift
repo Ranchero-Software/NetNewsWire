@@ -144,9 +144,15 @@ nonisolated extension URLSession: Transport {
 
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
-			dataTasks.forEach { $0.cancel() }
-			uploadTasks.forEach { $0.cancel() }
-			downloadTasks.forEach { $0.cancel() }
+			for task in dataTasks {
+				task.cancel()
+			}
+			for task in uploadTasks {
+				task.cancel()
+			}
+			for task in downloadTasks {
+				task.cancel()
+			}
 		}
 	}
 

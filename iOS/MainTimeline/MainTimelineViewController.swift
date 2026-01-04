@@ -615,13 +615,16 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		tableView.indexPathsForVisibleRows?.forEach { indexPath in
+		guard let indexPaths = tableView.indexPathsForVisibleRows else {
+			return
+		}
+
+		for indexPath in indexPaths {
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
-				return
+				continue
 			}
 			if article.feed == feed {
 				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
@@ -635,9 +638,13 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
-		tableView.indexPathsForVisibleRows?.forEach { indexPath in
+		guard let indexPaths = tableView.indexPathsForVisibleRows else {
+			return
+		}
+
+		for indexPath in indexPaths {
 			guard let article = dataSource.itemIdentifier(for: indexPath), let authors = article.authors, !authors.isEmpty else {
-				return
+				continue
 			}
 			for author in authors {
 				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {

@@ -105,11 +105,13 @@ extension Notification.Name {
 	func restoreState(from state: SidebarWindowState?) {
 		guard let state else { return }
 
-		let containerIdentifers = state.expandedContainers.compactMap( { ContainerIdentifier(userInfo: $0) })
-		expandedTable = Set(containerIdentifers)
+		let containerIdentifiers = state.expandedContainers.compactMap( { ContainerIdentifier(userInfo: $0) })
+		expandedTable = Set(containerIdentifiers)
 
-		let selectedFeedIdentifers = Set(state.selectedFeeds.compactMap( { SidebarItemIdentifier(userInfo: $0) }))
-		selectedFeedIdentifers.forEach { treeControllerDelegate.addFilterException($0) }
+		let selectedFeedIdentifiers = Set(state.selectedFeeds.compactMap( { SidebarItemIdentifier(userInfo: $0) }))
+		for identifier in selectedFeedIdentifiers {
+			treeControllerDelegate.addFilterException(identifier)
+		}
 
 		rebuildTreeAndReloadDataIfNeeded()
 
@@ -117,7 +119,7 @@ extension Notification.Name {
 
 		func selectFeedsVisitor(node: Node) {
 			if let feedID = (node.representedObject as? SidebarItemIdentifiable)?.sidebarItemID {
-				if selectedFeedIdentifers.contains(feedID) {
+				if selectedFeedIdentifiers.contains(feedID) {
 					let row = outlineView.row(forItem: node)
 					if row >= 0 {
 						selectIndexes.insert(row)
@@ -148,7 +150,9 @@ extension Notification.Name {
 		}
 
 		let selectedFeedIdentifiers = Set(selectedFeedsState.compactMap( { SidebarItemIdentifier(userInfo: $0) }))
-		selectedFeedIdentifiers.forEach { treeControllerDelegate.addFilterException($0) }
+		for identifier in selectedFeedIdentifiers {
+			treeControllerDelegate.addFilterException(identifier)
+		}
 
 		rebuildTreeAndReloadDataIfNeeded()
 
@@ -571,7 +575,9 @@ private extension SidebarViewController {
 	}
 
 	func addAllSelectedToFilterExceptions() {
-		selectedFeeds.forEach { addToFilterExceptionsIfNecessary($0) }
+		for feed in selectedFeeds {
+			addToFilterExceptionsIfNecessary(feed)
+		}
 	}
 
 	func addToFilterExceptionsIfNecessary(_ sidebarItem: SidebarItem?) {
@@ -613,13 +619,12 @@ private extension SidebarViewController {
 		restoreSelection(to: savedSelection, sendNotificationIfChanged: true)
 
 		// Automatically expand any new or newly active accounts
-		AccountManager.shared.activeAccounts.forEach { account in
+		for account in AccountManager.shared.activeAccounts {
 			if !savedAccounts.contains(account) {
 				let accountNode = treeController.nodeInTreeRepresentingObject(account)
 				outlineView.expandItem(accountNode)
 			}
 		}
-
 	}
 
 	func rebuildTreeAndReloadDataIfNeeded() {

@@ -89,9 +89,15 @@ struct HTTP4xxResponse {
 
 	public func cancelAll() {
 		urlSession.getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
-			dataTasks.forEach { $0.cancel() }
-			uploadTasks.forEach { $0.cancel() }
-			downloadTasks.forEach { $0.cancel() }
+			for task in dataTasks {
+				task.cancel()
+			}
+			for task in uploadTasks {
+				task.cancel()
+			}
+			for task in downloadTasks {
+				task.cancel()
+			}
 			Task { @MainActor in
 				self.updateProgress()
 			}

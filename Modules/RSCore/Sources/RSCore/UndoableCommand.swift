@@ -56,14 +56,16 @@ extension UndoableCommand {
     }
 
 	func clearUndoableCommands() {
-        // Useful, for example, when timeline is reloaded and the list of articles changes.
-        // Otherwise things like Redo Mark Read are ambiguous.
-        // (Do they apply to the previous articles or to the current articles?)
+		// Useful, for example, when timeline is reloaded and the list of articles changes.
+		// Otherwise things like Redo Mark Read are ambiguous.
+		// (Do they apply to the previous articles or to the current articles?)
 
-        guard let undoManager = undoManager else {
-            return
-        }
-        undoableCommands.forEach { undoManager.removeAllActions(withTarget: $0) }
-        undoableCommands = [UndoableCommand]()
-    }
+		guard let undoManager = undoManager else {
+			return
+		}
+		for undoableCommand in undoableCommands {
+			undoManager.removeAllActions(withTarget: undoableCommand)
+		}
+		undoableCommands = [UndoableCommand]()
+	}
 }

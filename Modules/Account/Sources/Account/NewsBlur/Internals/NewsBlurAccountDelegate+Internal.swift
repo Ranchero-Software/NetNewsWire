@@ -42,7 +42,7 @@ import os.log
 
 		// Delete any folders not at NewsBlur
 		if let folders = account.folders {
-			folders.forEach { folder in
+			for folder in folders {
 				if !folderNames.contains(folder.name ?? "") {
 					for feed in folder.topLevelFeeds {
 						account.addFeedToTreeAtTopLevel(feed)
@@ -63,7 +63,7 @@ import os.log
 
 		// Make any folders NewsBlur has, but we don't
 		// Ignore account-level folder
-		folderNames.forEach { folderName in
+		for folderName in folderNames {
 			if !accountFolderNames.contains(folderName) && folderName != " " {
 				_ = account.ensureFolder(with: folderName)
 			}
@@ -113,7 +113,7 @@ import os.log
 		}
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
-		feedsToAdd.forEach { feed in
+		for feed in feedsToAdd {
 			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
 			feed.externalID = String(feed.feedID)
 			account.addFeedToTreeAtTopLevel(feed)

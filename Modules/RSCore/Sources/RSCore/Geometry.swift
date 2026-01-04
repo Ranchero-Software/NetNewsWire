@@ -47,10 +47,11 @@ public extension CGRect {
 }
 
 public extension Array where Element == CGRect {
-
 	func maxY() -> CGFloat {
 		var y: CGFloat = 0.0
-		self.forEach { y = Swift.max(y, $0.maxY) }
+		for r in self {
+			y = Swift.max(y, r.maxY)
+		}
 		return y
 	}
 }

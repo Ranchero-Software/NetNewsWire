@@ -155,7 +155,11 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 			Self.logger.error("Save to disk coordination failed: \(error.localizedDescription)")
 		}
 
-		requests?.forEach { processRequest($0) }
+		if let requests {
+			for request in requests {
+				processRequest(request)
+			}
+		}
 	}
 
 	func processRequest(_ request: ExtensionFeedAddRequest) {

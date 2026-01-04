@@ -493,8 +493,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func applyToAvailableCells(_ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
-		collectionView.visibleCells.forEach { cell in
-			guard let indexPath = collectionView.indexPath(for: cell) else { return }
+		for cell in collectionView.visibleCells {
+			guard let indexPath = collectionView.indexPath(for: cell) else {
+				continue
+			}
 			if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
 				completion(cell, indexPath)
 			}
