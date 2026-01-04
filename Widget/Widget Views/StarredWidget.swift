@@ -19,8 +19,7 @@ struct StarredWidgetView: View {
 		if entry.widgetData.currentStarredCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.starred.url)
-		}
-		else {
+		} else {
 			VStack {
 				Spacer()
 				HStack {
@@ -94,7 +93,6 @@ struct StarredWidgetView: View {
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30)
 				.foregroundColor(.yellow)
-
 
 			Text("label.text.starred", comment: "Starred")
 				.font(.headline)

@@ -9,10 +9,10 @@
 import SwiftUI
 
 struct AboutCreditView: View {
-	
+
 	let contributorType: String
 	let contributors: [Contributors]
-	
+
     var body: some View {
 		HStack(alignment: .top) {
 			Spacer()
@@ -37,7 +37,7 @@ struct AboutCreditView: View {
 			}
 			Spacer()
 		}
-		
+
     }
 }
 

@@ -19,8 +19,7 @@ struct UnreadWidgetView: View {
 		if entry.widgetData.currentUnreadCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.unread.url)
-		}
-		else {
+		} else {
 			VStack {
 				Spacer()
 				HStack {
@@ -64,7 +63,7 @@ struct UnreadWidgetView: View {
 			.padding(.vertical, 2)
 		}
 	}
-			
+
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.resizable()

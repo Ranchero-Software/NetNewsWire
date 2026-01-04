@@ -20,8 +20,7 @@ struct TodayWidgetView: View {
 		if entry.widgetData.currentTodayCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.today.url)
-		}
-		else {
+		} else {
 			VStack {
 				Spacer()
 				HStack {
@@ -94,7 +93,6 @@ struct TodayWidgetView: View {
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 30)
 				.foregroundColor(.orange)
-
 
 			Text("label.text.today", comment: "Today")
 				.font(.headline)

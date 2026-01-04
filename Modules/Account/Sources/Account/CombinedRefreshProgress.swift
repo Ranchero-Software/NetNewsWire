@@ -14,7 +14,7 @@ import RSWeb
 /// for use by refresh status view and so on.
 @MainActor public final class CombinedRefreshProgress: ProgressInfoReporter {
 	public static let shared = CombinedRefreshProgress()
-	
+
 	public var progressInfo = ProgressInfo() {
 		didSet {
 			if progressInfo != oldValue {

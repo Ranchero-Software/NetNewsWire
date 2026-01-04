@@ -10,14 +10,13 @@ import Foundation
 
 public struct AboutContributor: Identifiable, Hashable {
 	public let id: UUID = UUID()
-	
+
 	let name: String
 	let url: URL
 }
 
-
 public enum Contributors: CaseIterable {
-	
+
 	case mauriceParker
 	case stuartBreckenridge
 	case bradEllis
@@ -32,8 +31,7 @@ public enum Contributors: CaseIterable {
 	case philViso
 	case ryanDotson
 	case others
-	
-	
+
 	public var contributor: AboutContributor {
 		switch self {
 		case .mauriceParker:
@@ -45,7 +43,7 @@ public enum Contributors: CaseIterable {
 		case .keilGillard:
 			return AboutContributor(name: "Keil Gillard", url: URL(string: "https://twitter.com/kielgillard")!)
 		case .anhDo:
-			return AboutContributor(name: "Anh Do", url: URL(string:"https://mastodon.social/@anhdo")!)
+			return AboutContributor(name: "Anh Do", url: URL(string: "https://mastodon.social/@anhdo")!)
 		case .nateWeaver:
 			return AboutContributor(name: "Nate Weaver", url: URL(string: "https://github.com/wevah")!)
 		case .andrewBrehaut:

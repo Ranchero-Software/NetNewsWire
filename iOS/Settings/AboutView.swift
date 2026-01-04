@@ -16,14 +16,13 @@ struct AboutView: View {
 					.resizable()
 					.frame(width: 100, height: 100)
 					.clipShape(ConcentricRectangle(corners: .fixed(20)))
-				
+
 				Text(verbatim: "NetNewsWire")
 					.font(.largeTitle)
-				
+
 				Text(verbatim: "By Brent Simmons and the Ranchero Software Team")
 					.foregroundStyle(.secondary)
 				Text("[netnewswire.com](https://netnewswire.com)")
-				
 
 				VStack(spacing: 6) {
 					Text(verbatim: "Credits")
@@ -39,7 +38,7 @@ struct AboutView: View {
 					AboutCreditView(contributorType: "Help Book", contributors: [.ryanDotson])
 					AboutCreditView(contributorType: "...and Featuring Additional Contributions from", contributors: [.danielJalkut, .joeHeck, .olofHellman, .rizwanMohamedIbrahim, .philViso, .others])
 				}
-				
+
 				VStack(spacing: 6) {
 					Text(verbatim: "Thanks")
 						.bold()
@@ -47,7 +46,7 @@ struct AboutView: View {
 						.padding(.top, 16)
 					Text("Thanks to Sheila and my family; thanks to my friends in Seattle and around the globe; thanks to the ever-patient and ever-awesome NetNewsWire beta testers.\n\nThanks to [Gus Mueller](https://shapeof.com/) for [FMDB](https://github.com/ccgus/fmdb) by [Flying Meat Software](http://flyingmeat.com/). Thanks to [GitHub](https://github.com) and [Discourse](https://discourse.com) for making open source collaboration easy and fun. Thanks to [Ben Ubois](https://benubois.com/) at [Feedbin](https://feedbin.com) for all the extra help with syncing and article rendering — and [for hosting the server for the Reader view](https://feedbin.com/blog/2019/03/11/the-future-of-full-content/).")
 				}
-				
+
 				VStack(spacing: 6) {
 					Text(verbatim: "Dedication")
 						.bold()
@@ -55,8 +54,7 @@ struct AboutView: View {
 						.padding(.top, 16)
 					Text("NetNewsWire 7 is dedicated to everyone working to save democracy around the world.")
 				}
-				
-				
+
 				Text(verbatim: "Copyright © 2002-2025 Brent Simmons")
 					.font(.caption)
 					.foregroundStyle(.secondary)
