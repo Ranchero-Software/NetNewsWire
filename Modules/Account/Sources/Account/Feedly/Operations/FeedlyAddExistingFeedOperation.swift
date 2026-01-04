@@ -15,7 +15,7 @@ import Secrets
 final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlyCheckpointOperationDelegate, @unchecked Sendable {
 	var addCompletionHandler: ((Result<Void, Error>) -> ())?
 
-	init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, progress: DownloadProgress, customFeedName: String? = nil, operationQueue: MainThreadOperationQueue) throws {
+	init(account: Account, credentials: Credentials, resource: FeedlyFeedResourceId, service: FeedlyAddFeedToCollectionService, container: Container, customFeedName: String? = nil, operationQueue: MainThreadOperationQueue) throws {
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		let (folder, collectionId) = try validator.getValidContainer()
@@ -24,21 +24,16 @@ final class FeedlyAddExistingFeedOperation: FeedlyOperation, FeedlyOperationDele
 
 		super.init()
 
-		self.downloadProgress = progress
-
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: resource, feedName: customFeedName, collectionId: collectionId, service: service)
 		addRequest.delegate = self
-		addRequest.downloadProgress = progress
 		operationQueue.add(addRequest)
 
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest)
-		createFeeds.downloadProgress = progress
 		createFeeds.addDependency(addRequest)
 		operationQueue.add(createFeeds)
 
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
-		finishOperation.downloadProgress = progress
 		finishOperation.addDependency(createFeeds)
 		operationQueue.add(finishOperation)
 	}

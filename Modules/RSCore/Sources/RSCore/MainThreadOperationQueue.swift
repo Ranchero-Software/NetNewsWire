@@ -16,14 +16,38 @@ import Foundation
 ///
 /// The operation queue can be suspended and resumed.
 /// It is *not* suspended on creation — it is active.
-@MainActor public final class MainThreadOperationQueue {
+@MainActor public final class MainThreadOperationQueue: ProgressInfoReporter {
 	/// Use the shared queue when you don’t need to create a separate queue.
 	public static let shared: MainThreadOperationQueue = MainThreadOperationQueue()
 
 	private var pendingOperations = [MainThreadOperation]()
 	private var currentOperation: MainThreadOperation?
+	private var completedOrCanceledOperationIDs = Set<Int>()
 	private var isSuspended = false
 	private var hasPendingRunScheduled = false
+
+	/// Controls whether or not `progressInfo` is reported.
+	///
+	/// Normally you would use this only for a private queue —
+	/// for a sync queue private to a specific account, for instance.
+	/// You would set it to true at the beginning of a sync session
+	/// and set it false when the sync session completes.
+	public var isTrackingProgress = false {
+		didSet {
+			if isTrackingProgress != oldValue {
+				completedOrCanceledOperationIDs = Set<Int>()
+			}
+		}
+	}
+
+	/// Reports progress. Valid only when `trackingProgress` is true.
+	public var progressInfo = ProgressInfo() {
+		didSet {
+			if isTrackingProgress && progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
 
 	public var pendingOperationsCount: Int {
 		let pendingNonCanceledOperations = pendingOperations.filter({ !$0.isCanceled })
@@ -74,6 +98,9 @@ import Foundation
 		precondition(Thread.isMainThread)
 		for operation in operations {
 			operation.cancel()
+			if isTrackingProgress {
+				completedOrCanceledOperationIDs.insert(operation.id)
+			}
 		}
 
 		runNextOperationIfNeeded()
@@ -113,6 +140,10 @@ import Foundation
 		operation.callCompletionBlock()
 		operation.noteDidComplete()
 
+		if isTrackingProgress {
+			completedOrCanceledOperationIDs.insert(operation.id)
+		}
+
 		pendingOperations.removeAll { $0 == operation }
 		if currentOperation == operation {
 			currentOperation = nil
@@ -140,6 +171,7 @@ private extension MainThreadOperationQueue {
 		for canceledOperation in canceledOperations {
 			pendingOperations.removeAll { $0 == canceledOperation }
 		}
+		updateProgressInfo()
 	}
 
 	func pendingAndCurrentOperations(named name: String) -> [MainThreadOperation]? {
@@ -151,7 +183,9 @@ private extension MainThreadOperationQueue {
 	}
 
 	func runNextOperationIfNeeded() {
-		guard !hasPendingRunScheduled else {
+		updateProgressInfo()
+
+		guard !isSuspended && !hasPendingRunScheduled else {
 			return
 		}
 		hasPendingRunScheduled = true
@@ -165,6 +199,7 @@ private extension MainThreadOperationQueue {
 				return
 			}
 			currentOperation = operation
+			updateProgressInfo()
 			operation.run()
 		}
 	}
@@ -183,5 +218,27 @@ private extension MainThreadOperationQueue {
 
 	func operationIsAvailable(_ operation: MainThreadOperation) -> Bool {
 		!operation.isCanceled && operation.dependencies.isEmpty
+	}
+
+	func updateProgressInfo() {
+		guard isTrackingProgress else {
+			return
+		}
+
+		let pendingOperationIDs: Set<Int> = {
+			var ids = Set(pendingOperations.map(\.id))
+			if let currentOperationID = currentOperation?.id {
+				ids.insert(currentOperationID)
+			}
+			return ids.filter { !completedOrCanceledOperationIDs.contains($0) }
+		}()
+
+		let numberCompleted = completedOrCanceledOperationIDs.count
+		let numberRemaining = pendingOperationIDs.count
+		let numberOfTasks = numberCompleted + numberRemaining
+
+		progressInfo = ProgressInfo(numberOfTasks: numberOfTasks,
+									numberCompleted: numberCompleted,
+									numberRemaining: numberRemaining)
 	}
 }

@@ -18,46 +18,23 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	private let blockSize = 150
 	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
-	private weak var refreshProgress: DownloadProgress?
-	private let localProgress = DownloadProgress(numberOfTasks: 0)
-	private var showProgress: Bool
 	private var syncDatabase: SyncDatabase
 	private static let logger = cloudKitLogger
 
-	init(account: Account, articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress, showProgress: Bool, database: SyncDatabase) {
+	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase) {
 		self.account = account
 		self.articlesZone = articlesZone
-		self.refreshProgress = refreshProgress
-		self.showProgress = showProgress
 		self.syncDatabase = database
 		super.init(name: "CloudKitSendStatusOperation")
-
-		if showProgress {
-			refreshProgress.addChild(self.localProgress)
-		}
 	}
 
 	@MainActor override func run() {
 		Self.logger.debug("iCloud: Sending article statuses")
 
 		Task { @MainActor in
-			defer {
-				localProgress.completeAll()
-				didComplete()
-			}
-
-			do {
-				if showProgress {
-					let count = (try await syncDatabase.selectPendingCount()) ?? 0
-					let ticks = count / blockSize
-					localProgress.addTasks(ticks)
-				}
-
-				await selectForProcessing()
-				Self.logger.debug("iCloud: Finished sending article statuses")
-			} catch {
-				Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
-			}
+			await selectForProcessing()
+			Self.logger.debug("iCloud: Finished sending article statuses")
+			didComplete()
 		}
 	}
 }
@@ -65,12 +42,6 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 @MainActor private extension CloudKitSendStatusOperation {
 
 	func selectForProcessing() async {
-		defer {
-			if showProgress {
-				localProgress.completeTask()
-			}
-		}
-
 		do {
 			guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
 				  !syncStatuses.isEmpty else {

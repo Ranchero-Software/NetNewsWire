@@ -31,8 +31,7 @@ struct HTTP4xxResponse {
 	}
 }
 
-@MainActor @objc public final class DownloadSession: NSObject {
-	public let downloadProgress = DownloadProgress(numberOfTasks: 0)
+@MainActor @objc public final class DownloadSession: NSObject, ProgressInfoReporter {
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
 	private var tasksPending = Set<URLSessionTask>()
@@ -42,6 +41,14 @@ struct HTTP4xxResponse {
 	private var redirectCache = [URL: URL]()
 	private var queue = [URL]()
 	private let cache = DownloadCache.shared
+
+	public var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
 
 	// 429 Too Many Requests responses
 	private var retryAfterMessages = [String: HTTPResponse429]()
@@ -85,6 +92,9 @@ struct HTTP4xxResponse {
 			dataTasks.forEach { $0.cancel() }
 			uploadTasks.forEach { $0.cancel() }
 			downloadTasks.forEach { $0.cancel() }
+			Task { @MainActor in
+				self.updateProgress()
+			}
 		}
 	}
 
@@ -97,7 +107,7 @@ struct HTTP4xxResponse {
 		}
 
 		urlsInSession = filteredURLs
-		updateDownloadProgress()
+		updateProgress()
 	}
 }
 
@@ -154,7 +164,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 		MainActor.assumeIsolated {
 			defer {
-				updateDownloadProgress()
+				updateProgress()
 			}
 
 			tasksInProgress.insert(dataTask)
@@ -273,7 +283,7 @@ private extension DownloadSession {
 
 		addDataTaskFromQueueIfNecessary()
 
-		updateDownloadProgress()
+		updateProgress()
 	}
 
 	func urlStringIsDisallowedRedirect(_ urlString: String) -> Bool {
@@ -331,18 +341,27 @@ private extension DownloadSession {
 
 	// MARK: - Download Progress
 
-	@MainActor func updateDownloadProgress() {
-		// TODO
-//		downloadProgress.numberOfTasks = urlsInSession.count
-//
-//		let numberRemaining = tasksPending.count + tasksInProgress.count + queue.count
-//		downloadProgress.numberRemaining = min(numberRemaining, downloadProgress.numberOfTasks)
-//
-//		// Complete?
-//		if downloadProgress.numberOfTasks > 0 && downloadProgress.numberRemaining < 1 {
-//			delegate.downloadSessionDidComplete(self)
-//			urlsInSession.removeAll()
-//		}
+	@MainActor func updateProgress() {
+		let numberOfTasks = urlsInSession.count
+		let numberRemaining: Int
+		let numberCompleted: Int
+		if numberOfTasks == 0 {
+			numberRemaining = 0
+			numberCompleted = 0
+		} else {
+			numberRemaining = tasksPending.count + tasksInProgress.count + queue.count
+			numberCompleted = numberOfTasks - numberRemaining
+		}
+
+		progressInfo = ProgressInfo(numberOfTasks: numberOfTasks,
+									numberCompleted: numberCompleted,
+									numberRemaining: numberRemaining)
+
+		// Completed?
+		if progressInfo.numberOfTasks > 0 && progressInfo.numberRemaining < 1 {
+			delegate.downloadSessionDidComplete(self)
+			urlsInSession.removeAll()
+		}
 	}
 
 	// MARK: - 429 Too Many Requests

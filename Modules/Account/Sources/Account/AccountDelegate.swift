@@ -7,11 +7,12 @@
 //
 
 import Foundation
-import Articles
+import RSCore
 import RSWeb
+import Articles
 import Secrets
 
-@MainActor protocol AccountDelegate {
+@MainActor protocol AccountDelegate: ProgressInfoReporter {
 
 	var behaviors: AccountBehaviors { get }
 
@@ -20,8 +21,6 @@ import Secrets
 	var server: String? { get }
 	var credentials: Credentials? { get set }
 	var accountMetadata: AccountMetadata? { get set }
-
-	var refreshProgress: DownloadProgress { get }
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async
 

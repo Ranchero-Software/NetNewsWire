@@ -27,7 +27,7 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 	private var feedResourceId: FeedlyFeedResourceId?
 	var addCompletionHandler: ((Result<Feed, Error>) -> ())?
 
-	@MainActor init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress, operationQueue: MainThreadOperationQueue) throws {
+	@MainActor init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, operationQueue: MainThreadOperationQueue) throws {
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		(self.folder, self.collectionId) = try validator.getValidContainer()
@@ -44,12 +44,10 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 		super.init()
 
 		operationQueue.suspend()
-		self.downloadProgress = progress
 
 		let search = FeedlySearchOperation(query: url, locale: .current, service: searchService)
 		search.delegate = self
 		search.searchDelegate = self
-		search.downloadProgress = progress
 		operationQueue.add(search)
 		operationQueue.resume()
 	}
@@ -89,30 +87,25 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceId, feedName: feedName, collectionId: collectionId, service: addToCollectionService)
 		addRequest.delegate = self
-		addRequest.downloadProgress = downloadProgress
 		operationQueue.add(addRequest)
 
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest)
 		createFeeds.delegate = self
 		createFeeds.addDependency(addRequest)
-		createFeeds.downloadProgress = downloadProgress
 		operationQueue.add(createFeeds)
 
 		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: syncUnreadIdsService, database: database, newerThan: nil)
 		syncUnread.addDependency(createFeeds)
-		syncUnread.downloadProgress = downloadProgress
 		syncUnread.delegate = self
 		operationQueue.add(syncUnread)
 
 		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil, operationQueue: operationQueue)
 		syncFeed.addDependency(syncUnread)
-		syncFeed.downloadProgress = downloadProgress
 		syncFeed.delegate = self
 		operationQueue.add(syncFeed)
 
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
-		finishOperation.downloadProgress = downloadProgress
 		finishOperation.addDependency(syncFeed)
 		finishOperation.delegate = self
 		operationQueue.add(finishOperation)

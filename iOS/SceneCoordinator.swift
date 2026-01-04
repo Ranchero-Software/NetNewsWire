@@ -326,7 +326,7 @@ struct FeedNode: Hashable, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .combinedRefreshProgressDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
@@ -584,7 +584,7 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	/// Updates navigation bar subtitles in response to feed selection, unread count changes,
-	/// `combinedRefreshProgressDidChange` notifications, and a timed refresh every
+	/// `progressInfoDidChange` notifications, and a timed refresh every
 	/// 60s.
 	///
 	/// Subtitles are handled differently on iPhone and iPad.
@@ -601,9 +601,9 @@ struct FeedNode: Hashable, Sendable {
 	///
 	/// - Parameter note: Optional `Notification`
 	@objc func updateNavigationBarSubtitles(_ note: Notification?) {
-		let progress = AccountManager.shared.combinedRefreshProgress
+		let progressInfo = CombinedRefreshProgress.shared.progressInfo
 
-		if progress.isComplete {
+		if progressInfo.isComplete {
 			if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
 				if Date.now > accountLastArticleFetchEndTime.addingTimeInterval(60) {
 					let relativeDateTimeFormatter = RelativeDateTimeFormatter()

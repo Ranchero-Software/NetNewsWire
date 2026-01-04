@@ -28,7 +28,15 @@ import Secrets
 	}
 
 	var accountMetadata: AccountMetadata?
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
+	let refreshProgress = RSProgress()
 
 	let caller: NewsBlurAPICaller
 	let syncDatabase: SyncDatabase
@@ -57,6 +65,7 @@ import Secrets
 		}
 
 		syncDatabase = SyncDatabase(databasePath: dataFolder.appending("/DB.sqlite3"))
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
@@ -429,7 +438,7 @@ import Secrets
 		return try await caller.validateCredentials()
 	}
 
-	// MARK: Suspend and Resume (for iOS)
+	// MARK: - Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
 	func suspendNetwork() {
@@ -445,5 +454,11 @@ import Secrets
 	func resume() {
 		caller.resume()
 		syncDatabase.resume()
+	}
+
+	// MARK: - Notifications
+
+	@objc func progressInfoDidChange(_ notification: Notification) {
+		progressInfo = refreshProgress.progressInfo
 	}
 }
