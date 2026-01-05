@@ -106,7 +106,7 @@ let appName = "NetNewsWire"
 
 		AccountManager.shared.start()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
@@ -314,11 +314,8 @@ let appName = "NetNewsWire"
 	// MARK: - Notifications
 
 	@objc func unreadCountDidChange(_ note: Notification) {
-		MainActor.assumeIsolated {
-			if note.object is AccountManager {
-				unreadCount = AccountManager.shared.unreadCount
-			}
-		}
+		assert(note.object is AccountManager)
+		unreadCount = AccountManager.shared.unreadCount
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
