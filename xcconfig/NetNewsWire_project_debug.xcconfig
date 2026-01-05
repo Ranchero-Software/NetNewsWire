@@ -1,14 +1,20 @@
 #include "./NetNewsWire_project.xcconfig"
 #include "./common/NetNewsWire_debug_identifiers.xcconfig"
 
+// The SKIP_APP_GROUP_ACCESS definition suppresses app group permission dialogs
+// on every launch of the debug build — at the cost of extensions not working
+// as expected. To debug extensions, temporarily remove the instances
+// of SKIP_APP_GROUP_ACCESS below. You will get a permissions dialog on every
+// launch, which is annoying, but it will allow extensions to be debugged.
+// Be sure to discard your change; do not commit it.
+
 DEBUG_INFORMATION_FORMAT = dwarf
 ENABLE_TESTABILITY = YES
 GCC_DYNAMIC_NO_PIC = NO
 GCC_OPTIMIZATION_LEVEL = 0
-GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 $(inherited)
+GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 SKIP_APP_GROUP_ACCESS=1 $(inherited)
 MTL_ENABLE_DEBUG_INFO = YES
 ONLY_ACTIVE_ARCH = YES
-OTHER_SWIFT_FLAGS = -DDEBUG
+OTHER_SWIFT_FLAGS = -DDEBUG -DSKIP_APP_GROUP_ACCESS
 SWIFT_OPTIMIZATION_LEVEL = -Onone
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
-
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG SKIP_APP_GROUP_ACCESS
