@@ -9,20 +9,21 @@
 import Cocoa
 
 final class AboutWindowController: NSWindowController {
-
 	@IBOutlet var appIconImageView: NSImageView!
 	@IBOutlet var appTitleLabel: NSTextField!
 	@IBOutlet var versionLabel: NSTextField!
-	@IBOutlet var copyrightLabel: NSTextField!
+	@IBOutlet var copyrightLabel: LinksTextView!
 	@IBOutlet var websiteLabel: LinkLabel!
 	@IBOutlet var creditsTextView: LinksTextView!
 
-    override func windowDidLoad() {
-        super.windowDidLoad()
+	override func windowDidLoad() {
+		super.windowDidLoad()
 		configureWindow()
 		updateUI()
-    }
+	}
+}
 
+private extension AboutWindowController {
 	func configureWindow() {
 		window?.isOpaque = false
 		window?.backgroundColor = .clear
@@ -37,8 +38,7 @@ final class AboutWindowController: NSWindowController {
 		}
 	}
 
-	private func updateUI() {
-
+	func updateUI() {
 		// App Icon
 		appIconImageView.image = NSApp.applicationIconImage
 
@@ -49,8 +49,23 @@ final class AboutWindowController: NSWindowController {
 		versionLabel.stringValue = versionString
 
 		// Copyright
-		let copyright = Bundle.main.infoDictionary?["NSHumanReadableCopyright"] as? String ?? "Copyright © 2002-2026 Brent Simmons. All rights reserved."
-		copyrightLabel.stringValue = copyright
+		let copyrightText = Bundle.main.infoDictionary!["NSHumanReadableCopyright"] as! String
+		let copyrightAttributedString = NSMutableAttributedString(string: copyrightText)
+		let copyrightFullRange = NSRange(location: 0, length: copyrightAttributedString.length)
+
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.alignment = .center
+		copyrightAttributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: copyrightFullRange)
+		copyrightAttributedString.addAttribute(.foregroundColor, value: NSColor.secondaryLabelColor, range: copyrightFullRange)
+		copyrightAttributedString.addAttribute(.font, value: NSFont.preferredFont(forTextStyle: .subheadline), range: copyrightFullRange)
+
+		if let nameRange = copyrightText.range(of: "Brent Simmons") {
+			let nsRange = NSRange(nameRange, in: copyrightText)
+			let url = URL(string: "https://inessential.com/")!
+			copyrightAttributedString.addAttribute(.link, value: url, range: nsRange)
+		}
+
+		copyrightLabel.textStorage?.setAttributedString(copyrightAttributedString)
 
 		// Credits
 		if let creditsURL = Bundle.main.url(forResource: "Credits", withExtension: "rtf"),
@@ -74,5 +89,4 @@ final class AboutWindowController: NSWindowController {
 		attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: NSRange(location: 0, length: attributedString.length))
 		websiteLabel.attributedStringValue = attributedString
 	}
-
 }
