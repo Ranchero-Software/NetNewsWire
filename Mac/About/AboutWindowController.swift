@@ -6,7 +6,7 @@
 //  Copyright © 2025 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
+import AppKit
 
 final class AboutWindowController: NSWindowController {
 	@IBOutlet var appIconImageView: NSImageView!

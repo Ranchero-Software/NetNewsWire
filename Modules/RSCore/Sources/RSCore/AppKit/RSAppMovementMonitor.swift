@@ -8,7 +8,7 @@
 //
 
 #if os(macOS)
-import Cocoa
+import AppKit
 
 @MainActor public final class RSAppMovementMonitor: NSObject {
 
