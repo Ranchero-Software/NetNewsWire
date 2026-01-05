@@ -1,4 +1,4 @@
 #include "./common/NetNewsWire_iOSextension_common.xcconfig"
 CODE_SIGN_ENTITLEMENTS = iOS/ShareExtension/NetNewsWire_iOS_ShareExtension.entitlements
 INFOPLIST_FILE = iOS/ShareExtension/Info.plist
-PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS.Share-Extension
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS$(BUNDLE_ID_SUFFIX).Share-Extension
