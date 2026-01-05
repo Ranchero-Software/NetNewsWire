@@ -55,10 +55,10 @@ let appName = "NetNewsWire"
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
-				MainActor.assumeIsolated {
+//				MainActor.assumeIsolated {
 					CoalescingQueue.standard.add(self, #selector(updateDockBadge))
 					postUnreadCountDidChangeNotification()
-				}
+//				}
 			}
 		}
 	}
@@ -87,8 +87,8 @@ let appName = "NetNewsWire"
 	private var inspectorWindowController: InspectorWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private let appMovementMonitor: RSAppMovementMonitor
-	private var softwareUpdater: SPUUpdater!
-	private var crashReporter: PLCrashReporter!
+	private var softwareUpdater: SPUUpdater?
+	private var crashReporter: PLCrashReporter?
 
 	private var themeImportPath: String?
 
@@ -99,8 +99,10 @@ let appName = "NetNewsWire"
 
 		appDelegate = self
 		let crashReporterConfig = PLCrashReporterConfig.defaultConfiguration()
-		crashReporter = PLCrashReporter(configuration: crashReporterConfig)
-		crashReporter.enable()
+		if let crashReporter = PLCrashReporter(configuration: crashReporterConfig) {
+			crashReporter.enable()
+			self.crashReporter = crashReporter
+		}
 
 		AccountManager.shared.start()
 
@@ -149,10 +151,10 @@ let appName = "NetNewsWire"
 		// Initialize Sparkle...
 		let hostBundle = Bundle.main
 		let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
-		self.softwareUpdater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: updateDriver, delegate: self)
+		softwareUpdater = SPUUpdater(hostBundle: hostBundle, applicationBundle: hostBundle, userDriver: updateDriver, delegate: self)
 
 		do {
-			try self.softwareUpdater.start()
+			try softwareUpdater?.start()
 		} catch {
 			Self.logger.error("Failed to start software updater with error: \(error.localizedDescription)")
 		}
@@ -236,8 +238,10 @@ let appName = "NetNewsWire"
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 		}
 
-		DispatchQueue.main.async {
-			CrashReporter.check(crashReporter: self.crashReporter)
+		Task {
+			if let crashReporter {
+				CrashReporter.check(crashReporter: crashReporter)
+			}
 		}
 	}
 
@@ -660,7 +664,7 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func checkForUpdates(_ sender: Any?) {
-		softwareUpdater.checkForUpdates()
+		softwareUpdater?.checkForUpdates()
 	}
 }
 
