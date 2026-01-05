@@ -80,8 +80,8 @@
                         </scroller>
                     </scrollView>
                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" contentType="url" translatesAutoresizingMaskIntoConstraints="NO" id="quK-3X-Mnw" customClass="LinkLabel" customModule="NetNewsWire" customModuleProvider="target">
-                        <rect key="frame" x="64" y="34" width="90" height="14"/>
-                        <textFieldCell key="cell" alignment="center" title="inessential.com" id="TYf-Hx-QuA">
+                        <rect key="frame" x="59" y="34" width="100" height="14"/>
+                        <textFieldCell key="cell" alignment="center" title="netnewswire.com" id="TYf-Hx-QuA">
                             <font key="font" textStyle="subheadline" name=".SFNS-Regular"/>
                             <color key="textColor" name="linkColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
