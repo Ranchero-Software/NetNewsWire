@@ -1,0 +1,5 @@
+// Debug build identifier suffixes
+// This file is included only by debug configurations
+
+BUNDLE_ID_SUFFIX = -DEBUG
+APP_GROUP_SUFFIX = -DEBUG

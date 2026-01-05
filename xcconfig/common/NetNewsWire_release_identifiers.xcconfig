@@ -1,0 +1,4 @@
+// Release build identifier suffixes (empty for production)
+
+BUNDLE_ID_SUFFIX =
+APP_GROUP_SUFFIX =

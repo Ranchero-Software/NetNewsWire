@@ -2,5 +2,5 @@
 CODE_SIGN_ENTITLEMENTS = Mac/ShareExtension/ShareExtension.entitlements
 INFOPLIST_FILE = Mac/ShareExtension/Info.plist
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks
-PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen.Mac.ShareExtension
+PRODUCT_BUNDLE_IDENTIFIER = $(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen$(BUNDLE_ID_SUFFIX).Mac.ShareExtension
 ASSETCATALOG_COMPILER_APPICON_NAME =
