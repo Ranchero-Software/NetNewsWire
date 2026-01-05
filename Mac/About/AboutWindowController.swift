@@ -8,14 +8,14 @@
 
 import Cocoa
 
-class AboutWindowController: NSWindowController {
+final class AboutWindowController: NSWindowController {
 
 	@IBOutlet var appIconImageView: NSImageView!
 	@IBOutlet var appTitleLabel: NSTextField!
 	@IBOutlet var versionLabel: NSTextField!
 	@IBOutlet var copyrightLabel: NSTextField!
 	@IBOutlet var websiteLabel: LinkLabel!
-	@IBOutlet var creditsTextView: NSTextView!
+	@IBOutlet var creditsTextView: LinksTextView!
 
     override func windowDidLoad() {
         super.windowDidLoad()

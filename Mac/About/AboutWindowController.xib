@@ -59,7 +59,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="255" height="198"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textView wantsLayer="YES" editable="NO" drawsBackground="NO" importsGraphics="NO" verticallyResizable="YES" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" spellingCorrection="YES" smartInsertDelete="YES" id="hXV-nv-VJf">
+                                <textView wantsLayer="YES" editable="NO" drawsBackground="NO" importsGraphics="NO" verticallyResizable="YES" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" spellingCorrection="YES" smartInsertDelete="YES" id="hXV-nv-VJf" customClass="LinksTextView" customModule="NetNewsWire" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="255" height="198"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
