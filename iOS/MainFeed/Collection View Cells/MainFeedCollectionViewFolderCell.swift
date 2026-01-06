@@ -31,7 +31,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 				unreadCountLabel.isHidden = true
 			} else {
 				unreadCountLabel.isHidden = false
-				updateUnreadCount()
+				updateUnreadCountVisibility()
 			}
 			unreadCountLabel.text = newValue.formatted()
 		}
@@ -51,7 +51,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	var disclosureExpanded = true {
 		didSet {
 			updateExpandedState(animate: true)
-			updateUnreadCount()
+			updateUnreadCountVisibility()
 		}
 	}
 
@@ -75,13 +75,13 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		}
 	}
 
-	func updateUnreadCount() {
-		if !disclosureExpanded && unreadCount > 0 && unreadCountLabel.alpha != 1 {
-			UIView.animate(withDuration: 0.3) {
+	func updateUnreadCountVisibility() {
+		if !disclosureExpanded && unreadCount > 0 {
+			UIView.animate {
 				self.unreadCountLabel.alpha = 1
 			}
 		} else {
-			UIView.animate(withDuration: 0.3) {
+			UIView.animate {
 				self.unreadCountLabel.alpha = 0
 			}
 		}
