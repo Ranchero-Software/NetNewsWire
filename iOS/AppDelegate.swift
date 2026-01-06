@@ -178,7 +178,9 @@ import Secrets
 
 	func prepareAccountsForForeground() {
 		updateBadge()
+#if !SKIP_APP_GROUP_ACCESS
 		ExtensionFeedAddRequestFile.shared.resume()
+#endif
 		ArticleStatusSyncTimer.shared.update()
 
 		if let lastRefresh = AppDefaults.shared.lastRefresh {
