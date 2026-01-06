@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import os
 import UserNotifications
 import Articles
 import Account
@@ -17,7 +18,9 @@ enum TimelineSourceMode {
 }
 
 final class MainWindowController: NSWindowController, NSUserInterfaceValidations {
-    @IBOutlet var articleThemePopUpButton: NSPopUpButton?
+	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainWindowController")
+
+	@IBOutlet var articleThemePopUpButton: NSPopUpButton?
 
     private var activityManager = ActivityManager()
 
@@ -130,7 +133,9 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	func saveStateToUserDefaults() {
-		let data = try? NSKeyedArchiver.archivedData(withRootObject: savableState(), requiringSecureCoding: true)
+		let state = savableState()
+		Self.logger.debug("MainWindowController: Saving state to UserDefaults: \(state)")
+		let data = try? NSKeyedArchiver.archivedData(withRootObject: state, requiringSecureCoding: true)
 		AppDefaults.shared.secureWindowState = data
 		window?.saveFrame(usingName: windowAutosaveName)
 	}
@@ -138,12 +143,13 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	func restoreStateFromUserDefaults() {
 		if let data = AppDefaults.shared.secureWindowState,
 		   let state = try? NSKeyedUnarchiver.unarchivedObject(ofClass: MainWindowState.self, from: data) {
-			restoreState(from: state)
+			Self.logger.debug("MainWindowController: restoring state from UserDefaults: \(state)")
 			window?.setFrameUsingName(windowAutosaveName, force: true)
+			restoreState(from: state)
 		} else if let state = AppDefaults.shared.legacyWindowState {
 			// Migrate from previous window state data. Delete data when finished.
-			restoreLegacyState(from: state)
 			window?.setFrameUsingName(windowAutosaveName, force: true)
+			restoreLegacyState(from: state)
 			AppDefaults.shared.deleteLegacyWindowState()
 		}
 	}
@@ -545,7 +551,6 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
 		ArticleThemesManager.shared.currentThemeName = menuItem.title
 	}
-
 }
 
 // MARK: NSWindowDelegate
@@ -553,19 +558,25 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 extension MainWindowController: NSWindowDelegate {
 
 	func window(_ window: NSWindow, willEncodeRestorableState coder: NSCoder) {
-		coder.encode(savableState(), forKey: UserInfoKey.windowState)
+		let state = savableState()
+		Self.logger.debug("MainWindowController: willEncodeRestorableState: \(state)")
+		coder.encode(state, forKey: UserInfoKey.windowState)
 	}
 
 	func window(_ window: NSWindow, didDecodeRestorableState coder: NSCoder) {
-		guard let state = coder.decodeObject(of: MainWindowState.self, forKey: UserInfoKey.windowState) else { return }
+		guard let state = coder.decodeObject(of: MainWindowState.self, forKey: UserInfoKey.windowState) else {
+			Self.logger.debug("MainWindowController: failed to decode restorable state")
+			return
+		}
+		Self.logger.debug("MainWindowController: didDecodeRestorableState: \(state)")
 		restoreState(from: state)
 	}
 
 	func windowWillClose(_ notification: Notification) {
+		Self.logger.debug("MainWindowController: windowWillClose")
 		detailViewController?.stopMediaPlayback()
 		appDelegate.removeMainWindow(self)
 	}
-
 }
 
 // MARK: - SidebarDelegate
@@ -594,9 +605,9 @@ extension MainWindowController: SidebarDelegate {
 	}
 
 	func sidebarInvalidatedRestorationState(_: SidebarViewController) {
+		Self.logger.debug("MainWindowController: sidebarInvalidatedRestorationState")
 		invalidateRestorableState()
 	}
-
 }
 
 // MARK: - TimelineContainerViewControllerDelegate
