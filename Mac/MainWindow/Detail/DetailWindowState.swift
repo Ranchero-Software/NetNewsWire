@@ -34,4 +34,8 @@ final class DetailWindowState: NSObject, NSSecureCoding {
 		coder.encode(isShowingExtractedArticle, forKey: Key.isShowingExtractedArticle)
 		coder.encode(Double(windowScrollY), forKey: Key.windowScrollY)
 	}
+
+	override var description: String {
+		"DetailWindowState: extracted=\(isShowingExtractedArticle), scrollY=\(windowScrollY)"
+	}
 }

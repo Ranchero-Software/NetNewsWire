@@ -38,4 +38,8 @@ final class SidebarWindowState: NSObject, NSSecureCoding {
 		coder.encode(expandedContainers, forKey: Key.expandedContainers)
 		coder.encode(selectedFeeds, forKey: Key.selectedFeeds)
 	}
+
+	override var description: String {
+		"SidebarWindowState: readFiltered=\(isReadFiltered), expandedContainers=\(expandedContainers), selectedFeeds=\(selectedFeeds)"
+	}
 }

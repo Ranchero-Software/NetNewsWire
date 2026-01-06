@@ -44,4 +44,8 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 		coder.encode(selectedAccountID, forKey: Key.selectedAccountID)
 		coder.encode(selectedArticleID, forKey: Key.selectedArticleID)
 	}
+
+	override var description: String {
+		"TimelineWindowState: filterKeys=\(readArticlesFilterStateKeys.count), filterValues=\(readArticlesFilterStateValues.count), accountID=\(selectedAccountID ?? "nil"), articleID=\(selectedArticleID ?? "nil")"
+	}
 }
