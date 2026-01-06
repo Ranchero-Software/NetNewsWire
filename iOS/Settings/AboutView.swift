@@ -29,7 +29,7 @@ struct AboutView: View {
 						.bold()
 						.foregroundStyle(.secondary)
 						.padding(.top, 16)
-					AboutCreditView(contributorType: "Contributing Developers", contributors: [.stuartBreckenridge, .mauriceParker])
+					AboutCreditView(contributorType: "Contributing Developers", contributors: [.mauriceParker, .stuartBreckenridge])
 					AboutCreditView(contributorType: "App Icon", contributors: [.bradEllis])
 					AboutCreditView(contributorType: "Feedly Syncing", contributors: [.keilGillard])
 					AboutCreditView(contributorType: "NewsBlur Syncing", contributors: [.anhDo])
@@ -58,6 +58,7 @@ struct AboutView: View {
 				Text(verbatim: "Copyright © 2002-2026 Brent Simmons")
 					.font(.caption)
 					.foregroundStyle(.secondary)
+					.padding(.bottom)
 			}
 			.scenePadding(.horizontal)
 		}
