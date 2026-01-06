@@ -30,7 +30,7 @@
 	<key>DeveloperEntitlements</key>
 	<string>$(DEVELOPER_ENTITLEMENTS)</string>
 	<key>AppGroup</key>
-	<string>group.$(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS</string>
+	<string>$(APP_GROUP_ID)</string>
 	<key>AppIdentifierPrefix</key>
 	<string>$(AppIdentifierPrefix)</string>
 </dict>
