@@ -103,6 +103,7 @@ public extension CloudKitZone {
 
 	/// Moves the change token to the new key name.  This can eventually be removed.
 	func migrateChangeToken() {
+		Self.logger.debug("CloudKitZone: migrateChangeToken \(self.zoneID.zoneName, privacy: .public)")
 		if let tokenData = UserDefaults.standard.object(forKey: oldChangeTokenKey) as? Data,
 		   let oldChangeToken = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: tokenData) {
 			changeToken = oldChangeToken
@@ -112,6 +113,7 @@ public extension CloudKitZone {
 
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {
+		Self.logger.debug("CloudKitZone: resetChangeToken \(self.zoneID.zoneName, privacy: .public)")
 		changeToken = nil
 	}
 
@@ -127,6 +129,7 @@ public extension CloudKitZone {
 	}
 
 	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
+		Self.logger.debug("CloudKitZone: receiveRemoteNotification \(self.zoneID.zoneName, privacy: .public) userInfo: \(userInfo)")
 		let note = CKRecordZoneNotification(fromRemoteNotificationDictionary: userInfo)
 		guard note?.recordZoneID?.zoneName == zoneID.zoneName else {
 			return
@@ -135,12 +138,13 @@ public extension CloudKitZone {
 		do {
 			try await fetchChangesInZone()
 		} catch {
-			Self.logger.error("CloudKit: \(self.zoneID.zoneName) remote notification fetch error: \(error.localizedDescription)")
+			Self.logger.error("CloudKitZone: receiveRemoteNotification \(self.zoneID.zoneName, privacy: .public) fetch error: \(error.localizedDescription)")
 		}
 	}
 
 	/// Creates the zone record
 	func createZoneRecord(completion: @escaping @MainActor (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: createZoneRecord \(self.zoneID.zoneName, privacy: .public)")
 		guard let database else {
 			Task { @MainActor in
 				completion(.failure(CloudKitZoneError.unknown))
@@ -161,6 +165,7 @@ public extension CloudKitZone {
 
 	/// Subscribes to zone changes
 	func subscribeToZoneChanges() {
+		Self.logger.debug("CloudKitZone: subscribeToZoneChanges \(self.zoneID.zoneName, privacy: .public)")
 		let subscription = CKRecordZoneSubscription(zoneID: zoneID, subscriptionID: zoneID.zoneName)
 
 		let info = CKSubscription.NotificationInfo()
@@ -169,13 +174,14 @@ public extension CloudKitZone {
 
 		save(subscription) { result in
 			if case .failure(let error) = result {
-				Self.logger.error("CloudKit: \(self.zoneID.zoneName) zone subscribe to changes error: \(error.localizedDescription)")
+				Self.logger.error("CloudKitZone: subscribeToZoneChanges \(self.zoneID.zoneName, privacy: .public) zone error: \(error.localizedDescription)")
 			}
 		}
     }
 
 	/// Issue a CKQuery and return the resulting CKRecords.
 	func query(_ ckQuery: CKQuery, desiredKeys: [String]? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: query ckQuery \(self.zoneID.zoneName, privacy: .public)")
 		var records = [CKRecord]()
 
 		let op = CKQueryOperation(query: ckQuery)
@@ -224,7 +230,7 @@ public extension CloudKitZone {
 						}
 					}
 				case .retry(let timeToWait):
-					Self.logger.debug("CloudKit: \(self.zoneID.zoneName) zone query retry in \(timeToWait) seconds")
+					Self.logger.debug("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) zone query retry in \(timeToWait) seconds")
 					self.retryIfPossible(after: timeToWait) {
 						self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
 					}
@@ -245,6 +251,7 @@ public extension CloudKitZone {
 
 	/// Query CKRecords using a CKQuery Cursor
 	func query(cursor: CKQueryOperation.Cursor, desiredKeys: [String]? = nil, carriedRecords: [CKRecord], completion: @escaping (Result<[CKRecord], Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: query cursor \(self.zoneID.zoneName, privacy: .public)")
 		var records = carriedRecords
 
 		let op = CKQueryOperation(cursor: cursor)
@@ -293,7 +300,7 @@ public extension CloudKitZone {
 						}
 					}
 				case .retry(let timeToWait):
-					Self.logger.debug("CloudKit: \(self.zoneID.zoneName) zone query retry in \(timeToWait) seconds")
+					Self.logger.debug("CloudKitZone: query cursor \(self.zoneID.zoneName, privacy: .public) zone query retry in \(timeToWait) seconds")
 					self.retryIfPossible(after: timeToWait) {
 						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
 					}
@@ -314,6 +321,7 @@ public extension CloudKitZone {
 
 	/// Fetch a CKRecord by using its externalID
 	func fetch(externalID: String?, completion: @escaping (Result<CKRecord, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: fetch \(self.zoneID.zoneName, privacy: .public) externalID: \(externalID ?? "")")
 		guard let externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -352,7 +360,7 @@ public extension CloudKitZone {
 						}
 					}
 				case .retry(let timeToWait):
-					Self.logger.debug("CloudKit: \(self.zoneID.zoneName) zone fetch retry in \(timeToWait) seconds")
+					Self.logger.debug("CloudKitZone: fetch \(self.zoneID.zoneName, privacy: .public) externalID: \(externalID) zone fetch retry in \(timeToWait) seconds")
 					self.retryIfPossible(after: timeToWait) {
 						self.fetch(externalID: externalID, completion: captures.completion)
 					}
@@ -371,16 +379,19 @@ public extension CloudKitZone {
 
 	/// Save the CKRecord
 	func save(_ record: CKRecord, completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: save \(self.zoneID.zoneName, privacy: .public)")
 		modify(recordsToSave: [record], recordIDsToDelete: [], completion: completion)
 	}
 
 	/// Save the CKRecords
 	func save(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: save records \(self.zoneID.zoneName, privacy: .public)")
 		modify(recordsToSave: records, recordIDsToDelete: [], completion: completion)
 	}
 
 	/// Saves or modifies the records as long as they are unchanged relative to the local version
 	func saveIfNew(_ records: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: saveIfNew \(self.zoneID.zoneName, privacy: .public)")
 		let op = CKModifyRecordsOperation(recordsToSave: records, recordIDsToDelete: [CKRecord.ID]())
 		op.savePolicy = .ifServerRecordUnchanged
 		op.isAtomic = false
@@ -459,6 +470,7 @@ public extension CloudKitZone {
 
 	/// Save the CKSubscription
 	func save(_ subscription: CKSubscription, completion: @escaping (Result<CKSubscription, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: save subscription \(self.zoneID.zoneName, privacy: .public)")
 		// Wrapper to safely transfer non-Sendable values in @Sendable closure
 		let captures = CloudKitZoneCaptures(zone: self, completion: completion)
 
@@ -486,7 +498,7 @@ public extension CloudKitZone {
 						}
 					}
 				case .retry(let timeToWait):
-					Self.logger.debug("CloudKit: \(self.zoneID.zoneName) save subscription retry in \(timeToWait) seconds")
+					Self.logger.debug("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) save subscription retry in \(timeToWait) seconds")
 					self.retryIfPossible(after: timeToWait) {
 						self.save(subscription, completion: captures.completion)
 					}
@@ -501,6 +513,7 @@ public extension CloudKitZone {
 
 	/// Delete CKRecords using a CKQuery
 	func delete(ckQuery: CKQuery, completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: delete ckQuery \(self.zoneID.zoneName, privacy: .public)")
 
 		var records = [CKRecord]()
 
@@ -545,6 +558,7 @@ public extension CloudKitZone {
 
 	/// Delete CKRecords using a CKQuery
 	func delete(cursor: CKQueryOperation.Cursor, carriedRecords: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: delete cursor \(self.zoneID.zoneName, privacy: .public)")
 
 		var records = [CKRecord]()
 
@@ -584,16 +598,19 @@ public extension CloudKitZone {
 
 	/// Delete a CKRecord using its recordID
 	func delete(recordID: CKRecord.ID, completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: delete recordID \(self.zoneID.zoneName, privacy: .public)")
 		modify(recordsToSave: [], recordIDsToDelete: [recordID], completion: completion)
 	}
 
 	/// Delete CKRecords
 	func delete(recordIDs: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: delete recordIDs \(self.zoneID.zoneName, privacy: .public)")
 		modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
 	}
 
 	/// Delete a CKRecord using its externalID
 	func delete(externalID: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: delete \(self.zoneID.zoneName, privacy: .public) externalID \(externalID ?? "")")
 		guard let externalID = externalID else {
 			completion(.failure(CloudKitZoneError.corruptAccount))
 			return
@@ -605,6 +622,7 @@ public extension CloudKitZone {
 
 	/// Delete a CKSubscription
 	func delete(subscriptionID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: delete \(self.zoneID.zoneName, privacy: .public) subscriptionID \(subscriptionID)")
 		// Wrapper to safely transfer non-Sendable values in @Sendable closure
 		let captures = CloudKitZoneCaptures(zone: self, completion: completion)
 
@@ -621,7 +639,7 @@ public extension CloudKitZone {
 						captures.completion(.success(()))
 					}
 				case .retry(let timeToWait):
-					Self.logger.debug("CloudKit: \(self.zoneID.zoneName) delete subscription retry in \(timeToWait) seconds")
+					Self.logger.debug("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) delete subscription retry in \(timeToWait) seconds")
 					self.retryIfPossible(after: timeToWait) {
 						self.delete(subscriptionID: subscriptionID, completion: captures.completion)
 					}
@@ -636,6 +654,7 @@ public extension CloudKitZone {
 
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		Self.logger.debug("CloudKitZone: modify recordsToSave recordIDsToDelete \(self.zoneID.zoneName, privacy: .public)")
 		guard !(recordsToSave.isEmpty && recordIDsToDelete.isEmpty) else {
 			DispatchQueue.main.async {
 				completion(.success(()))
@@ -682,7 +701,7 @@ public extension CloudKitZone {
 						completion(.failure(CloudKitZoneError.userDeletedZone))
 					}
 				case .retry(let timeToWait):
-					Self.logger.debug("CloudKit: \(self.zoneID.zoneName) zone modify retry in \(timeToWait) seconds")
+					Self.logger.debug("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) zone modify retry in \(timeToWait) seconds")
 					self.retryIfPossible(after: timeToWait) {
 						self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 					}
@@ -696,7 +715,7 @@ public extension CloudKitZone {
 							self.modify(recordsToSave: records, recordIDsToDelete: []) { result in
 								switch result {
 								case .success:
-									Self.logger.info("CloudKit: Saved \(records.count) chunked records")
+									Self.logger.info("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) Saved \(records.count) chunked records")
 									saveChunks(completion: completion)
 								case .failure(let error):
 									completion(.failure(error))
@@ -713,7 +732,7 @@ public extension CloudKitZone {
 							self.modify(recordsToSave: [], recordIDsToDelete: records) { result in
 								switch result {
 								case .success:
-									Self.logger.debug("CloudKit: Deleted \(records.count) chunked records")
+									Self.logger.debug("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) deleted \(records.count) chunked records")
 									deleteChunks()
 								case .failure(let error):
 									DispatchQueue.main.async {
@@ -752,7 +771,7 @@ public extension CloudKitZone {
 
 	/// Fetch all the changes in the CKZone since the last time we checked
     func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
-
+		Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public)")
 		var savedChangeToken = changeToken
 
 		var changedRecords = [CKRecord]()
@@ -765,27 +784,35 @@ public extension CloudKitZone {
 		op.qualityOfService = Self.qualityOfService
 
         op.recordZoneChangeTokensUpdatedBlock = { _, token, _ in
+			Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) recordZoneChangeTokensUpdatedBlock token: \(token)")
 			savedChangeToken = token
         }
 
         op.recordWasChangedBlock = { _, result in
+			Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) recordWasChangedBlock")
 			if let record = try? result.get() {
+				Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) record created \(record.creationDate ?? Date.distantPast) updated \(record.modificationDate ?? Date.distantPast)")
 				changedRecords.append(record)
 			}
         }
 
         op.recordWithIDWasDeletedBlock = { recordID, recordType in
+			Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) recordWithIDWasDeletedBlock \(recordID)")
 			let recordKey = CloudKitRecordKey(recordType: recordType, recordID: recordID)
 			deletedRecordKeys.append(recordKey)
         }
 
         op.recordZoneFetchResultBlock = { _, result in
+			Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) recordZoneFetchResultBlock")
 			if case .success(let (serverChangeToken, _, _)) = result {
+				Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) serverChangeToken \(serverChangeToken)")
 				savedChangeToken = serverChangeToken
 			}
         }
 
         op.fetchRecordZoneChangesResultBlock = { [weak self] result in
+			let zoneIDName = self?.zoneID.zoneName ?? "[self deallocated]"
+			Self.logger.debug("CloudKitZone: fetchChangesInZone \(zoneIDName, privacy: .public) fetchRecordZoneChangesResultBlock")
 			guard let self = self else {
 				completion(.failure(CloudKitZoneError.unknown))
 				return
@@ -793,6 +820,7 @@ public extension CloudKitZone {
 
 			switch result {
 			case .success:
+				Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) success changedRecords count \(changedRecords.count) deletedRecordKeys count \(deletedRecordKeys.count) changeToken \(savedChangeToken)")
 				Task { @MainActor in
 					do {
 						try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
@@ -803,8 +831,10 @@ public extension CloudKitZone {
 					}
 				}
 			case .failure(let error):
+				Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) failure \(error.localizedDescription)")
 				switch CloudKitZoneResult.resolve(error) {
 				case .success:
+					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) success changedRecords count \(changedRecords.count) deletedRecordKeys count \(deletedRecordKeys.count) changeToken \(savedChangeToken)")
 					Task { @MainActor in
 						do {
 							try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
@@ -815,6 +845,7 @@ public extension CloudKitZone {
 						}
 					}
 				case .zoneNotFound:
+					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) failure .zoneNotFound")
 					self.createZoneRecord { result in
 						switch result {
 						case .success:
@@ -826,20 +857,23 @@ public extension CloudKitZone {
 						}
 					}
 				case .userDeletedZone:
+					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) failure .userDeletedZone")
 					DispatchQueue.main.async {
 						completion(.failure(CloudKitZoneError.userDeletedZone))
 					}
 				case .retry(let timeToWait):
-					Self.logger.debug("CloudKit: \(self.zoneID.zoneName) zone fetch changeds retry in \(timeToWait) seconds")
+					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) zone fetch changes retry in \(timeToWait) seconds")
 					self.retryIfPossible(after: timeToWait) {
 						self.fetchChangesInZone(completion: completion)
 					}
 				case .changeTokenExpired:
+					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) failure .changeTokenExpired")
 					DispatchQueue.main.async {
 						self.changeToken = nil
 						self.fetchChangesInZone(completion: completion)
 					}
 				default:
+					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) failure default")
 					DispatchQueue.main.async {
 						completion(.failure(CloudKitError(error)))
 					}

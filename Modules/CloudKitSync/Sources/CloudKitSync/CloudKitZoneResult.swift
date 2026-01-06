@@ -23,7 +23,9 @@ public enum CloudKitZoneResult {
 	public static func resolve(_ error: Error?) -> CloudKitZoneResult {
         guard error != nil else { return .success }
 
-        guard let ckError = error as? CKError else {
+		cloudKitLogger.info("CloudKitZoneResult: resolve found error \(error.debugDescription)")
+
+		guard let ckError = error as? CKError else {
             return .failure(error: error!)
         }
 
