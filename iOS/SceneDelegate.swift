@@ -137,7 +137,9 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						AccountManager.shared.resumeAll()
 					}
 					self.coordinator.selectAllUnreadFeed {
-						self.coordinator.selectArticleInCurrentFeed(id!)
+						DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+							self.coordinator.selectArticleInCurrentFeed(id!)
+						}
 					}
 				} else {
 					self.coordinator.selectAllUnreadFeed()
@@ -152,7 +154,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					if AccountManager.shared.isSuspended {
 						AccountManager.shared.resumeAll()
 					}
-					self.coordinator.selectTodayFeed {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
 						self.coordinator.selectArticleInCurrentFeed(id!)
 					}
 				} else {
@@ -168,7 +170,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 					if AccountManager.shared.isSuspended {
 						AccountManager.shared.resumeAll()
 					}
-					self.coordinator.selectStarredFeed {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
 						self.coordinator.selectArticleInCurrentFeed(id!)
 					}
 				} else {
