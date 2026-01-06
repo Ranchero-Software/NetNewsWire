@@ -990,8 +990,15 @@ private extension MainWindowController {
 		let isFullScreen = window?.styleMask.contains(.fullScreen) ?? false
 
 		let splitViewWidths: [Int]
-		if let splitView = splitViewController?.splitView {
-			splitViewWidths = splitView.arrangedSubviews.map { Int(floor($0.frame.width)) }
+		if let splitView = splitViewController?.splitView, let window {
+			let sidebarWidth = splitView.arrangedSubviews[0].frame.width
+			let detailWidth = splitView.arrangedSubviews[2].frame.width
+			// Starting with macOS 26, timelineWidth has to be calculated —
+			// because its width is greater than its apparent width,
+			// so that things can slide under the sidebar.
+			let dividerThickness = splitView.dividerThickness
+			let timelineWidth = window.frame.width - (sidebarWidth + detailWidth + (dividerThickness * 2))
+			splitViewWidths = [Int(floor(sidebarWidth)), Int(floor(timelineWidth)), Int(floor(detailWidth))]
 		} else {
 			splitViewWidths = []
 		}
