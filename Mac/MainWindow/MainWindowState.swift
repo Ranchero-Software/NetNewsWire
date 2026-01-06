@@ -54,4 +54,11 @@ final class MainWindowState: NSObject, NSSecureCoding {
 		coder.encode(timelineWindowState, forKey: Key.timelineWindowState)
 		coder.encode(detailWindowState, forKey: Key.detailWindowState)
 	}
+
+	override var description: String {
+		let sidebar = sidebarWindowState?.description ?? "nil"
+		let timeline = timelineWindowState?.description ?? "nil"
+		let detail = detailWindowState?.description ?? "nil"
+		return "MainWindowState: fullScreen=\(isFullScreen), widths=\(splitViewWidths), sidebarHidden=\(isSidebarHidden), sidebar=[\(sidebar)], timeline=[\(timeline)], detail=[\(detail)]"
+	}
 }
