@@ -54,12 +54,9 @@ struct Provider: TimelineProvider {
 			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date()))
 		}
 
-		// Configure next update in 1 hour.
-		let nextUpdateDate = Calendar.current.date(byAdding: .hour, value: 1, to: date)!
-
 		let timeline = Timeline(
 			entries: [entry],
-			policy: .after(nextUpdateDate))
+			policy: .never)
 
 		completion(timeline)
 	}
