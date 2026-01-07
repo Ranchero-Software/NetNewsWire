@@ -580,11 +580,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	// MARK: - Notifications
 
 	@objc func progressInfoDidChange(_ notification: Notification) {
-		Self.logger.debug("ReaderAPIAccountDelegate: progressInfoDidChange")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: progressInfoDidChange — did complete")
-		}
-
 		progressInfo = refreshProgress.progressInfo
 	}
 }
