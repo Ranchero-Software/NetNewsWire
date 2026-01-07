@@ -375,9 +375,6 @@ private extension AppDelegate {
 		}
 	}
 
-	/// Performs background feed refresh.
-	/// - Parameter task: `BGAppRefreshTask`
-	/// - Warning: As of Xcode 11 beta 2, when triggered from the debugger this doesn't work.
 	func performBackgroundFeedRefresh(with task: BGAppRefreshTask) {
 
 		scheduleBackgroundFeedRefresh() // schedule next refresh
