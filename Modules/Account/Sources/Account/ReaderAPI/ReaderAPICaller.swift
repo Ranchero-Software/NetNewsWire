@@ -151,12 +151,17 @@ enum CreateReaderAPISubscriptionResult {
 		let (_, data) = try await transport.send(request: request)
 
 		// Convert the return data to UTF8 and then parse out the Auth token
-		guard let data, let accessToken = String(data: data, encoding: .utf8) else {
+		guard let data, let updatedAccessToken = String(data: data, encoding: .utf8) else {
 			throw TransportError.noData
 		}
+		// Remove unwanted \n character.
+		var trimmedUpdatedAccessToken = updatedAccessToken
+		if trimmedUpdatedAccessToken.hasSuffix("\n") {
+			trimmedUpdatedAccessToken.removeLast()
+		}
 
-		self.accessToken = accessToken
-		return accessToken
+		accessToken = trimmedUpdatedAccessToken
+		return trimmedUpdatedAccessToken
 	}
 
 	@MainActor public func retrieveTags() async throws -> [ReaderAPITag]? {
@@ -227,8 +232,10 @@ enum CreateReaderAPISubscriptionResult {
 	}
 
 	@MainActor public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
+		logger.debug("ReaderAPICaller: retrieveSubscriptions")
 
 		guard let baseURL = apiBaseURL else {
+			logger.error("ReaderAPICaller: retrieveSubscriptions — expected non-nil apiBaseURL")
 			throw CredentialsError.incompleteCredentials
 		}
 
@@ -237,14 +244,20 @@ enum CreateReaderAPISubscriptionResult {
 			.appendingQueryItem(URLQueryItem(name: "output", value: "json"))
 
 		guard let callURL = url else {
+			logger.error("ReaderAPICaller: retrieveSubscriptions — expected non-nil callURL")
 			throw TransportError.noURL
 		}
 
 		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		let (_, container) = try await transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
-		return container?.subscriptions
+		do {
+			let (_, container) = try await transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
+			return container?.subscriptions
+		} catch {
+			logger.error("ReaderAPICaller: retrieveSubscriptions — error calling API: \(error.localizedDescription)")
+			throw error
+		}
 	}
 
 	@MainActor public func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
@@ -264,6 +277,7 @@ enum CreateReaderAPISubscriptionResult {
 		request.httpMethod = "POST"
 
 		guard let encodedFeedURL = self.encodeForURLPath(url) else {
+			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — couldn’t create encoded feed URL")
 			throw AccountError.invalidParameter
 		}
 
@@ -272,18 +286,22 @@ enum CreateReaderAPISubscriptionResult {
 		let (_, subResult) = try await self.transport.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIQuickAddResult.self)
 
 		guard let subResult else {
+			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — expected non-nil result from API call")
 			return .notFound
 		}
 		if subResult.numResults == 0 {
+			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — expected non-empty result from API call")
 			return .notFound
 		}
 
 		// There is no call to get a single subscription entry, so we get them all,
 		// look up the one we just subscribed to and return that
 		guard let subscriptions = try await retrieveSubscriptions() else {
+			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — expected non-nil subscriptions from API call")
 			throw AccountError.createErrorNotFound
 		}
 		guard let subscription = subscriptions.first(where: { $0.feedID == subResult.streamId }) else {
+			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — expected to find feed in subscriptions returned from API call")
 			throw AccountError.createErrorNotFound
 		}
 
@@ -329,34 +347,46 @@ enum CreateReaderAPISubscriptionResult {
 	}
 
 	@MainActor private func changeSubscription(subscriptionID: String, removeTagName: String? = nil, addTagName: String? = nil, title: String? = nil) async throws {
+		logger.debug("ReaderAPICaller: changeSubscription — subscriptionID: \(subscriptionID) removeTagName: \(removeTagName ?? "") addTagName: \(addTagName ?? "") title: \(title ?? ""))")
 
 		guard removeTagName != nil || addTagName != nil || title != nil else {
+			logger.error("ReaderAPICaller: changeSubscription — expected non-nil removeTagName, addTagName, and title")
 			throw AccountError.invalidParameter
 		}
 		guard let baseURL = apiBaseURL else {
+			logger.error("ReaderAPICaller: changeSubscription — expected non-nil apiBaseURL")
 			throw CredentialsError.incompleteCredentials
 		}
 
-		let token = try await requestAuthorizationToken(endpoint: baseURL)
+		do {
+			let token = try await requestAuthorizationToken(endpoint: baseURL)
 
-		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
-		self.addVariantHeaders(&request)
-		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
-		request.httpMethod = "POST"
+			var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
+			self.addVariantHeaders(&request)
+			request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
+			request.httpMethod = "POST"
 
-		var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
-		if let fromLabel = self.encodeForURLPath(removeTagName) {
-			postString += "&r=user/-/label/\(fromLabel)"
-		}
-		if let toLabel = self.encodeForURLPath(addTagName) {
-			postString += "&a=user/-/label/\(toLabel)"
-		}
-		if let encodedTitle = self.encodeForURLPath(title) {
-			postString += "&t=\(encodedTitle)"
-		}
-		let postData = postString.data(using: String.Encoding.utf8)
+			var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
+			if let fromLabel = self.encodeForURLPath(removeTagName) {
+				postString += "&r=user/-/label/\(fromLabel)"
+			}
+			if let toLabel = self.encodeForURLPath(addTagName) {
+				postString += "&a=user/-/label/\(toLabel)"
+			}
+			if let encodedTitle = self.encodeForURLPath(title) {
+				postString += "&t=\(encodedTitle)"
+			}
+			logger.debug("ReaderAPICaller: changeSubscription — sending post data: \(postString)")
+			let postData = Data(postString.utf8)
+#if DEBUG
+			let debugPostString = String(data: postData, encoding: .utf8)
+			logger.debug("ReaderAPICaller: changeSubscription — checking post data encoding: \(debugPostString ?? "nil")")
+#endif
 
-		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
+			_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
+		} catch {
+			logger.error("ReaderAPICaller: changeSubscription — error: \(error.localizedDescription)")
+		}
 	}
 
 	@MainActor public func retrieveEntries(articleIDs: [String]) async throws -> [ReaderAPIEntry]? {
