@@ -26,7 +26,7 @@ extension Article: @retroactive PasteboardWriterOwner {
 
 	private lazy var renderedHTML: String = {
 		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
-		return rendering.html
+		return "<meta charset=\"utf-8\">\n" + rendering.html
 	}()
 
 	init(article: Article) {
