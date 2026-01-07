@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import RSWeb
 import Secrets
 
@@ -48,7 +49,7 @@ enum CreateReaderAPISubscriptionResult {
 
 	private let transport: Transport
 	private let uriComponentAllowed: CharacterSet
-
+	private let logger: Logger
 	private var accessToken: String?
 
 	weak var accountMetadata: AccountMetadata?
@@ -72,8 +73,9 @@ enum CreateReaderAPISubscriptionResult {
 		}
 	}
 
-	init(transport: Transport) {
+	init(transport: Transport, logger: Logger) {
 		self.transport = transport
+		self.logger = logger
 
 		var urlHostAllowed = CharacterSet.urlHostAllowed
 		urlHostAllowed.remove("+")
@@ -246,7 +248,7 @@ enum CreateReaderAPISubscriptionResult {
 	}
 
 	@MainActor public func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
-
+		logger.debug("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "")")
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.incompleteCredentials
 		}
