@@ -84,7 +84,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		syncDatabase = SyncDatabase(databasePath: databasePath)
 
 		if transport != nil {
-			self.caller = ReaderAPICaller(transport: transport!)
+			self.caller = ReaderAPICaller(transport: transport!, logger: Self.logger)
 		} else {
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -99,7 +99,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
 
-			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
+			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), logger: Self.logger)
 		}
 
 		self.caller.variant = variant
@@ -113,9 +113,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: refreshAll — did complete")
-		}
 
 		refreshProgress.addTasks(6)
 
@@ -169,9 +166,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus — did complete")
-		}
 
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
@@ -179,9 +173,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	public func sendArticleStatus(for account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus — did complete")
-		}
 
 		let syncStatuses = (try await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
@@ -198,9 +189,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	@MainActor func refreshArticleStatus(for account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshArticleStatus")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: refreshArticleStatus — did complete")
-		}
 
 		var errorOccurred = false
 
@@ -231,9 +219,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
 		Self.logger.debug("ReaderAPIAccountDelegate: createFolder — name \(name)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: createFolder — did complete — name \(name)")
-		}
 
 		guard let folder = account.ensureFolder(with: name) else {
 			Self.logger.error("ReaderAPIAccountDelegate: createFolder failed — account.ensureFolder failed")
@@ -244,9 +229,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: renameFolder — name \(folder.nameForDisplay) to \(name)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: renameFolder — did complete — name \(folder.nameForDisplay) to \(name)")
-		}
 
 		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
@@ -263,9 +245,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func removeFolder(for account: Account, with folder: Folder) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: removeFolder — name \(folder.nameForDisplay)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: removeFolder — did complete — name \(folder.nameForDisplay)")
-		}
 
 		for feed in folder.topLevelFeeds {
 
@@ -317,9 +296,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	@discardableResult
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — url \(url) name \(name ?? "")")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: createFeed — did complete — url \(url) name \(name ?? "")")
-		}
 
 		guard let url = URL(string: url) else {
 			throw AccountError.invalidParameter
@@ -357,9 +333,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: renameFeed — name \(feed.nameForDisplay) to name \(name)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: renameFeed — did complete — name \(feed.nameForDisplay) to name \(name)")
-		}
 
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
@@ -382,9 +355,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func removeFeed(account: Account, feed: Feed, container: any Container) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: removeFeed — url \(feed.url)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: removeFeed — did complete — url \(feed.url)")
-		}
 
 		guard let subscriptionID = feed.externalID else {
 			assert(feed.externalID != nil)
@@ -406,9 +376,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: moveFeed — url \(feed.url)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: moveFeed — did complete — url \(feed.url)")
-		}
 
 		if sourceContainer is Account {
 			try await addFeed(account: account, feed: feed, container: destinationContainer)
@@ -438,9 +405,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func addFeed(account: Account, feed: Feed, container: any Container) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: addFeed — url \(feed.url)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: addFeed — did complete — url \(feed.url)")
-		}
 
 		if let folder = container as? Folder, let feedExternalID = feed.externalID {
 
@@ -471,9 +435,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: restoreFeed — url \(feed.url)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: restoreFeed — did complete — url \(feed.url)")
-		}
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
@@ -484,9 +445,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func restoreFolder(for account: Account, folder: Folder) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: restoreFolder — name \(folder.nameForDisplay)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: restoreFolder — did complete — name \(folder.nameForDisplay)")
-		}
 
 		for feed in folder.topLevelFeeds {
 
@@ -504,9 +462,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: markArticles — statusKey \(statusKey.rawValue)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: markArticles — did complete — statusKey \(statusKey.rawValue)")
-		}
 
 		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
@@ -520,10 +475,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		Self.logger.debug("ReaderAPIAccountDelegate: accountDidInitialize")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: accountDidInitialize — did complete")
-		}
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 	}
 
@@ -532,15 +483,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		Self.logger.debug("ReaderAPIAccountDelegate: validateCredentials")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: validateCredentials — did complete")
-		}
 
 		guard let endpoint else {
 			throw TransportError.noURL
 		}
 
-		let caller = ReaderAPICaller(transport: transport)
+		let caller = ReaderAPICaller(transport: transport, logger: Self.logger)
 		caller.credentials = credentials
 		return try await caller.validateCredentials(endpoint: endpoint)
 	}
@@ -550,9 +498,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	/// Suspend all network activity
 	func suspendNetwork() {
 		Self.logger.debug("ReaderAPIAccountDelegate: suspendNetwork")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: suspendNetwork — did complete")
-		}
 
 		caller.cancelAll()
 	}
@@ -560,9 +505,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
 		Self.logger.debug("ReaderAPIAccountDelegate: suspendDatabase")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: suspendDatabase — did complete")
-		}
 
 		syncDatabase.suspend()
 	}
@@ -570,9 +512,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		Self.logger.debug("ReaderAPIAccountDelegate: resume")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: resume — did complete")
-		}
 
 		syncDatabase.resume()
 	}
@@ -590,9 +529,6 @@ private extension ReaderAPIAccountDelegate {
 
 	@MainActor func refreshAccount(_ account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount — did complete")
-		}
 
 		let tags = try await caller.retrieveTags()
 		refreshProgress.completeTask()
@@ -609,9 +545,6 @@ private extension ReaderAPIAccountDelegate {
 
 	@MainActor func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncFolders")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: syncFolders — did complete")
-		}
 
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
@@ -659,9 +592,6 @@ private extension ReaderAPIAccountDelegate {
 
 	@MainActor func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncFeeds — subscriptions.count \(subscriptions?.count ?? -1)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: syncFeeds — did complete — subscriptions.count \(subscriptions?.count ?? -1)")
-		}
 
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
@@ -702,9 +632,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func syncFeedFolderRelationship(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncFeedFolderRelationship — subscriptions.count \(subscriptions?.count ?? -1)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: syncFeedFolderRelationship — did complete — subscriptions.count \(subscriptions?.count ?? -1)")
-		}
 
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
@@ -784,9 +711,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func sendArticleStatuses(_ statuses: Set<SyncStatus>, apiCall: ([String]) async throws -> Void) async {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses — did complete")
-		}
 
 		guard !statuses.isEmpty else {
 			return
@@ -808,9 +732,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func clearFolderRelationship(for feed: Feed, folderExternalID: String?) {
 		Self.logger.debug("ReaderAPIAccountDelegate: clearFolderRelationship — \(feed.url) folderExternalID \(folderExternalID ?? "")")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: clearFolderRelationship — did complete — \(feed.url) folderExternalID \(folderExternalID ?? "")")
-		}
 
 		guard var folderRelationship = feed.folderRelationship, let folderExternalID = folderExternalID else { return }
 		folderRelationship[folderExternalID] = nil
@@ -819,9 +740,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func saveFolderRelationship(for feed: Feed, folderExternalID: String?, feedExternalID: String) {
 		Self.logger.debug("ReaderAPIAccountDelegate: saveFolderRelationship — \(feed.url) folderExternalID \(folderExternalID ?? "") feedExternalID \(feedExternalID)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: saveFolderRelationship — did complete — \(feed.url) folderExternalID \(folderExternalID ?? "") feedExternalID \(feedExternalID)")
-		}
 		guard let folderExternalID = folderExternalID else { return }
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderExternalID] = feedExternalID
@@ -833,9 +751,6 @@ private extension ReaderAPIAccountDelegate {
 
 	@MainActor func createFeed(account: Account, subscription: ReaderAPISubscription, name: String?, container: Container) async throws -> Feed {
 		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — \(subscription.feedID) name \(name ?? "")")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: createFeed — did complete — \(subscription.feedID) name \(name ?? "")")
-		}
 
 		let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
 		feed.externalID = String(subscription.feedID)
@@ -852,9 +767,6 @@ private extension ReaderAPIAccountDelegate {
 	@discardableResult
 	func initialFeedDownload( account: Account, feed: Feed) async throws -> Feed {
 		Self.logger.debug("ReaderAPIAccountDelegate: initialFeedDownload — \(feed.url)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: initialFeedDownload — did complete — \(feed.url)")
-		}
 
 		refreshProgress.addTasks(5)
 
@@ -877,9 +789,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func refreshMissingArticles(_ account: Account) async {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshMissingArticles")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: refreshMissingArticles — did complete")
-		}
 
 		do {
 			let fetchedArticleIDs = (try? await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()) ?? Set<String>()
@@ -913,9 +822,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func processEntries(account: Account, entries: [ReaderAPIEntry]?) async {
 		Self.logger.debug("ReaderAPIAccountDelegate: processEntries")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: processEntries — did complete")
-		}
 
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
@@ -925,9 +831,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
 		Self.logger.debug("ReaderAPIAccountDelegate: mapEntriesToParsedItems — entries.count \(entries?.count ?? 0)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: mapEntriesToParsedItems — did complete — entries.count \(entries?.count ?? 0)")
-		}
 
 		guard let entries = entries else {
 			return Set<ParsedItem>()
@@ -971,9 +874,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func syncArticleReadState(account: Account, articleIDs: [String]?) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleReadState — articleIDs.count \(articleIDs?.count ?? 0)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: syncArticleReadState — did complete — articleIDs.count \(articleIDs?.count ?? 0)")
-		}
 
 		guard let articleIDs else {
 			return
@@ -1004,9 +904,6 @@ private extension ReaderAPIAccountDelegate {
 
 	func syncArticleStarredState(account: Account, articleIDs: [String]?) async {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStarredState — articleIDs.count \(articleIDs?.count ?? 0)")
-		defer {
-			Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStarredState — did complete — articleIDs.count \(articleIDs?.count ?? 0)")
-		}
 
 		guard let articleIDs else {
 			return
