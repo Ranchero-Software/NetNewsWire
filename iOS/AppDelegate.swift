@@ -167,7 +167,7 @@ import Secrets
 #if !SKIP_APP_GROUP_ACCESS
 		ExtensionFeedAddRequestFile.shared.suspend()
 #endif
-		
+
 		ArticleStatusSyncTimer.shared.invalidate()
 		scheduleBackgroundFeedRefresh()
 		syncArticleStatus()
