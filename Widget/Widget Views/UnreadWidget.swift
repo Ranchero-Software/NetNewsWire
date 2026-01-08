@@ -21,8 +21,7 @@ struct UnreadWidgetView: View {
 				.widgetURL(WidgetDeepLink.unread.url)
 		} else {
 			VStack {
-				Spacer()
-				HStack {
+				HStack(alignment: .center) {
 					unreadImage
 						.layoutPriority(1)
 					Text("label.text.unread", comment: "Unread")
@@ -78,9 +77,9 @@ struct UnreadWidgetView: View {
 		}
 
 		if family == .systemLarge {
-			return entry.widgetData.unreadArticles.count >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
+			return entry.widgetData.currentUnreadCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentUnreadCount
 		}
-		return entry.widgetData.unreadArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.unreadArticles.count
+		return entry.widgetData.currentUnreadCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentUnreadCount
 	}
 
 	var inboxZero: some View {

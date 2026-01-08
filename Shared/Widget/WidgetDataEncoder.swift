@@ -45,73 +45,96 @@ import Account
 			return nil
 		}
 	}
-
-	func encode() {
-		if isRunning {
+	
+	func encode()  {
+		guard !isRunning else {
 			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
 			return
 		}
 
-		Self.logger.debug("WidgetDataEncoder: encoding")
 		isRunning = true
+		defer { isRunning = false }
 
-		flushSharedContainer()
+		removeStaleFaviconsFromSharedContainer()
 
-		Task { @MainActor in
-			defer {
-				isRunning = false
+		let latestData: WidgetData
+		do {
+			latestData = try fetchWidgetData()
+			Self.logger.debug("WidgetDataEncoder: fetched latest widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
+			return
+		}
+		
+		let encodedData: Data
+		do {
+			encodedData = try JSONEncoder().encode(latestData)
+			Self.logger.debug("WidgetDataEncoder: encoded widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: error encoding widget data: \(error.localizedDescription)")
+			return
+		}
+		
+		do {
+			let existingData = try? WidgetDataDecoder.decodeWidgetData()
+			try encodedData.write(to: dataURL, options: [.atomic])
+			reloadTimelines(newData: latestData, existingData: existingData)
+			Self.logger.debug("WidgetDataEncoder: finished refreshing widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: could not write data to container")
+		}
+	}
+	
+	func reloadTimelines(newData: WidgetData, existingData: WidgetData?) {
+		if let existingData = existingData {
+			var shouldRefreshSummary = false
+			
+			if existingData.unreadArticles != newData.unreadArticles {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.UnreadWidget")
+				shouldRefreshSummary = true
+				Self.logger.debug("WidgetDataEncoder: Reloading Unread widget")
 			}
-
-			let latestData: WidgetData
-			do {
-				latestData = try await fetchWidgetData()
-			} catch {
-				Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
-				return
+			
+			if existingData.todayArticles != newData.todayArticles {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.TodayWidget")
+				shouldRefreshSummary = true
+				Self.logger.debug("WidgetDataEncoder: Reloading Today widget")
 			}
-
-			let encodedData: Data
-			do {
-				encodedData = try JSONEncoder().encode(latestData)
-			} catch {
-				Self.logger.error("WidgetDataEncoder: error encoding widget data: \(error.localizedDescription)")
-				return
+			
+			if existingData.starredArticles != newData.starredArticles {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.StarredWidget")
+				shouldRefreshSummary = true
+				Self.logger.debug("WidgetDataEncoder: Reloading Starred widget")
 			}
-
-			if fileExists() {
-				try? FileManager.default.removeItem(at: dataURL)
-				Self.logger.debug("WidgetDataEncoder: removed widget data from container")
-			}
-
-			if FileManager.default.createFile(atPath: dataURL.path, contents: encodedData, attributes: nil) {
-				Self.logger.debug("WidgetDataEncoder: wrote data to container")
-				WidgetCenter.shared.reloadAllTimelines()
-			} else {
-				Self.logger.error("WidgetDataEncoder: could not write data to container")
+			
+			if shouldRefreshSummary {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.LockScreenSummaryWidget")
+				Self.logger.debug("WidgetDataEncoder: Reloading Summary widget")
 			}
 		}
 	}
+
 }
 
 @MainActor private extension WidgetDataEncoder {
 
-	func fetchWidgetData() async throws -> WidgetData {
-		let fetchedUnreadArticles = try await AccountManager.shared.fetchArticlesAsync(.unread(fetchLimit))
+	func fetchWidgetData() throws -> WidgetData {
+		let fetchedUnreadArticles = try AccountManager.shared.fetchArticles(.unread(fetchLimit))
 		let unreadArticles = sortedLatestArticles(fetchedUnreadArticles)
 
-		let fetchedStarredArticles = try await AccountManager.shared.fetchArticlesAsync(.starred(fetchLimit))
+		let fetchedStarredArticles = try AccountManager.shared.fetchArticles(.starred(fetchLimit))
 		let starredArticles = sortedLatestArticles(fetchedStarredArticles)
 
-		let fetchedTodayArticles = try await AccountManager.shared.fetchArticlesAsync(.today(fetchLimit))
+		let fetchedTodayArticles = try AccountManager.shared.fetchArticles(.today(fetchLimit))
 		let todayArticles = sortedLatestArticles(fetchedTodayArticles)
 
 		let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
-									currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
+									currentTodayCount: todayArticles.count,
 									currentStarredCount: (try? AccountManager.shared.fetchCountForStarredArticles()) ?? 0,
 									unreadArticles: unreadArticles,
 									starredArticles: starredArticles,
 									todayArticles: todayArticles,
-									lastUpdateTime: Date())
+									lastUpdateTime: Date.now)
 		return latestData
 	}
 
@@ -120,14 +143,17 @@ import Account
 	}
 
 	func writeImageDataToSharedContainer(_ imageData: Data?) -> String? {
-		guard let imageData else {
+		guard let imageData, let md5 = imageData.md5String else {
 			return nil
 		}
+	
 
-		// Each image gets a UUID
-		let uuid = UUID().uuidString
-
-		let imagePath = imageContainer.appendingPathComponent(uuid, isDirectory: false)
+		let imagePath = imageContainer.appendingPathComponent(md5, isDirectory: false)
+		let fm = FileManager.default
+		if fm.fileExists(atPath: imagePath.path) {
+			Self.logger.debug("WidgetDataEncoder: favicon already exists. Will not write again.")
+			return imagePath.path
+		}
 		do {
 			try imageData.write(to: imagePath)
 			return imagePath.path
@@ -136,18 +162,47 @@ import Account
 		}
 	}
 
-	func flushSharedContainer() {
-		try? FileManager.default.removeItem(atPath: imageContainer.path)
-		try? FileManager.default.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
+	func removeStaleFaviconsFromSharedContainer() {
+		let fm = FileManager.default
+		if !fm.fileExists(atPath: imageContainer.path) {
+			try? fm.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
+			return
+		}
+
+		/// We don't have 7 days to test in DEBUG mode.
+		/// So, for testing purposes, images are removed after 30s
+		/// if they haven't been accessed.
+		#if DEBUG
+		let cutoffDate = Date.now.addingTimeInterval(-30)
+		#else
+		let cutoffDate = Date.now.addingTimeInterval(-7 * 24 * 60 * 60)
+		#endif
+
+		do {
+			let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentAccessDateKey, .contentModificationDateKey]
+			let urls = try fm.contentsOfDirectory(at: imageContainer, includingPropertiesForKeys: Array(resourceKeys), options: [.skipsHiddenFiles])
+			for url in urls {
+				let values = try url.resourceValues(forKeys: resourceKeys)
+				// Skip directories; we only store files in this container
+				if values.isDirectory == true { continue }
+
+				// Prefer last access date; fall back to modification date if needed
+				let lastAccess = values.contentAccessDate ?? values.contentModificationDate
+				if let lastAccess, lastAccess < cutoffDate {
+					try? fm.removeItem(at: url)
+				}
+			}
+		} catch {
+			Self.logger.debug("WidgetDataEncoder: unable to remove favicons: \(error.localizedDescription).")
+		}
 	}
 
 	func createLatestArticle(_ article: Article) -> LatestArticle {
 		let truncatedTitle = ArticleStringFormatter.truncatedTitle(article)
 		let articleTitle = truncatedTitle.isEmpty ? ArticleStringFormatter.truncatedSummary(article) : truncatedTitle
 
-		// TODO: It looks like we write images each time, but we’re probably over-writing unchanged images sometimes.
 		let feedIconPath = writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation())
-
+		
 		let pubDate = article.datePublished?.description ?? ""
 
 		let latestArticle = LatestArticle(id: article.sortableArticleID,
@@ -164,3 +219,4 @@ import Account
 		return latestArticles.sorted(by: { $0.pubDate > $1.pubDate })
 	}
 }
+

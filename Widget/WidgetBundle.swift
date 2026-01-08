@@ -65,6 +65,24 @@ struct StarredWidget: Widget {
 	}
 }
 
+struct LockScreenSummaryWidget: Widget {
+	let kind: String = "com.ranchero.NetNewsWire.LockScreenSummaryWidget"
+
+	var body: some WidgetConfiguration {
+
+		return StaticConfiguration(kind: kind, provider: Provider(), content: { entry in
+			LockScreenSummaryWidgetView(entry: entry)
+				.frame(maxWidth: .infinity, maxHeight: .infinity)
+				.containerBackground(for: .widget) {
+					Color.clear
+				}
+		})
+		.configurationDisplayName(Text("label.text.lock-screen-summary", comment: "Summary"))
+		.description(Text("label.text.lock-screen-summary-description", comment: "A description of the Lock Screen Summary widget."))
+		.supportedFamilies([.accessoryRectangular])
+	}
+}
+
 // MARK: - WidgetBundle
 @main
 struct NetNewsWireWidgets: WidgetBundle {
@@ -73,5 +91,6 @@ struct NetNewsWireWidgets: WidgetBundle {
 		UnreadWidget()
 		TodayWidget()
 		StarredWidget()
+		LockScreenSummaryWidget()
 	}
 }

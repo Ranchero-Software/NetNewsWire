@@ -14,9 +14,9 @@ struct Provider: TimelineProvider {
 	func placeholder(in context: Context) -> WidgetTimelineEntry {
 		do {
 			let data = try WidgetDataDecoder.decodeWidgetData()
-			return WidgetTimelineEntry(date: Date(), widgetData: data)
+			return WidgetTimelineEntry(date: Date.now, widgetData: data)
 		} catch {
-			return WidgetTimelineEntry(date: Date(), widgetData: WidgetDataDecoder.sampleData())
+			return WidgetTimelineEntry(date: Date.now, widgetData: WidgetDataDecoder.sampleData())
 		}
 	}
 
@@ -24,18 +24,18 @@ struct Provider: TimelineProvider {
 		if context.isPreview {
 			do {
 				let data = try WidgetDataDecoder.decodeWidgetData()
-				completion(WidgetTimelineEntry(date: Date(), widgetData: data))
+				completion(WidgetTimelineEntry(date: Date.now, widgetData: data))
 			} catch {
-				completion(WidgetTimelineEntry(date: Date(),
+				completion(WidgetTimelineEntry(date: Date.now,
 											   widgetData: WidgetDataDecoder.sampleData()))
 			}
 		} else {
 			do {
 				let widgetData = try WidgetDataDecoder.decodeWidgetData()
-				let entry = WidgetTimelineEntry(date: Date(), widgetData: widgetData)
+				let entry = WidgetTimelineEntry(date: Date.now, widgetData: widgetData)
 				completion(entry)
 			} catch {
-				let entry = WidgetTimelineEntry(date: Date(),
+				let entry = WidgetTimelineEntry(date: Date.now,
 												widgetData: WidgetDataDecoder.sampleData())
 				completion(entry)
 			}
@@ -44,22 +44,21 @@ struct Provider: TimelineProvider {
 
 	func getTimeline(in context: Context, completion: @escaping (Timeline<WidgetTimelineEntry>) -> Void) {
 		// Create current timeline entry for now.
-		let date = Date()
+		let date = Date.now
 		var entry: WidgetTimelineEntry
 
 		do {
 			let widgetData = try WidgetDataDecoder.decodeWidgetData()
 			entry = WidgetTimelineEntry(date: date, widgetData: widgetData)
 		} catch {
-			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date()))
+			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date.now))
 		}
-
-		// Configure next update in 1 hour.
-		let nextUpdateDate = Calendar.current.date(byAdding: .hour, value: 1, to: date)!
+		
+		let fallback = Calendar.current.date(byAdding: .minute, value: 30, to: Date.now)!
 
 		let timeline = Timeline(
 			entries: [entry],
-			policy: .after(nextUpdateDate))
+			policy: .after(fallback))
 
 		completion(timeline)
 	}

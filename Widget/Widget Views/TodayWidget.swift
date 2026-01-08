@@ -22,8 +22,7 @@ struct TodayWidgetView: View {
 				.widgetURL(WidgetDeepLink.today.url)
 		} else {
 			VStack {
-				Spacer()
-				HStack {
+				HStack(alignment: .center) {
 					todayImage
 						.layoutPriority(1)
 					Text("label.text.today", comment: "Today")
@@ -35,7 +34,7 @@ struct TodayWidgetView: View {
 						.layoutPriority(1)
 					Spacer()
 						.layoutPriority(0)
-					if entry.widgetData.currentTodayCount - maxCount() > 0 {
+					if entry.widgetData.currentTodayCount > 0 {
 						Text(verbatim: entry.widgetData.currentTodayCount.formatted())
 							.font(.caption2)
 							.bold()
@@ -80,9 +79,9 @@ struct TodayWidgetView: View {
 		}
 
 		if family == .systemLarge {
-			return entry.widgetData.todayArticles.count >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.todayArticles.count
+			return entry.widgetData.currentTodayCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentTodayCount
 		}
-		return entry.widgetData.todayArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.todayArticles.count
+		return entry.widgetData.todayArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentTodayCount
 	}
 
 	var inboxZero: some View {
