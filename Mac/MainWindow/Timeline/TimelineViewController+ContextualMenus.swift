@@ -212,8 +212,15 @@ private extension TimelineViewController {
 		let sharingServicePicker = NSSharingServicePicker(items: items)
 		sharingServicePicker.delegate = self.sharingServicePickerDelegate
 
-		// Anchor the picker to the clicked row's view
-		let rect = tableView.rect(ofRow: tableView.selectedRow)
+		// Anchor the picker to the first article being shared
+		let rowToAnchorTo: Int
+		if let firstArticle = articlesToShare.first,
+		   let row = articles.firstIndex(where: { $0.articleID == firstArticle.articleID }) {
+			rowToAnchorTo = row
+		} else {
+			rowToAnchorTo = tableView.selectedRow
+		}
+		let rect = tableView.rect(ofRow: rowToAnchorTo)
 		sharingServicePicker.show(relativeTo: rect, of: tableView, preferredEdge: .maxX)
 	}
 
