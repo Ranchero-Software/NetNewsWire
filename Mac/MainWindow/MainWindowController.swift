@@ -989,21 +989,30 @@ private extension MainWindowController {
 	func savableState() -> MainWindowState {
 		let isFullScreen = window?.styleMask.contains(.fullScreen) ?? false
 
+		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
 		let splitViewWidths: [Int]
 		if let splitView = splitViewController?.splitView, let window {
-			let sidebarWidth = splitView.arrangedSubviews[0].frame.width
-			let detailWidth = splitView.arrangedSubviews[2].frame.width
+			let dividerThickness = splitView.dividerThickness
+			let sidebarWidth: CGFloat
+			let detailWidth: CGFloat
+			
 			// Starting with macOS 26, timelineWidth has to be calculated —
 			// because its width is greater than its apparent width,
 			// so that things can slide under the sidebar.
-			let dividerThickness = splitView.dividerThickness
-			let timelineWidth = window.frame.width - (sidebarWidth + detailWidth + (dividerThickness * 2))
+			let timelineWidth: CGFloat
+			if isSidebarHidden {
+				sidebarWidth = 0.0
+				detailWidth = splitView.arrangedSubviews[2].frame.width
+				timelineWidth = window.frame.width - (detailWidth + dividerThickness)
+			} else {
+				sidebarWidth = splitView.arrangedSubviews[0].frame.width
+				detailWidth = splitView.arrangedSubviews[2].frame.width
+				timelineWidth = window.frame.width - (sidebarWidth + detailWidth + (dividerThickness * 2))
+			}
 			splitViewWidths = [Int(floor(sidebarWidth)), Int(floor(timelineWidth)), Int(floor(detailWidth))]
 		} else {
 			splitViewWidths = []
 		}
-
-		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
 
 		return MainWindowState(isFullScreen: isFullScreen,
 							   splitViewWidths: splitViewWidths,
@@ -1333,25 +1342,25 @@ private extension MainWindowController {
 
 	func restoreSplitViewState(from state: MainWindowState) {
 		guard let splitView = splitViewController?.splitView,
-			  state.splitViewWidths.count == 3,
-			  let window = window else {
+			  state.splitViewWidths.count == 3
+		else {
 			return
 		}
 
-		let windowWidth = Int(floor(window.frame.width))
-		let dividerThickness: Int = Int(splitView.dividerThickness)
-		let sidebarWidth: Int = state.splitViewWidths[0]
-		let timelineWidth: Int = state.splitViewWidths[1]
+		let dividerThickness = splitView.dividerThickness
+		let isSidebarHidden = state.isSidebarHidden
+		let sidebarWidth = CGFloat(state.splitViewWidths[0])
+		let timelineWidth = CGFloat(state.splitViewWidths[1])
 
-		// Make sure the detail view has its minimum thickness, at least.
-		if windowWidth < sidebarWidth + dividerThickness + timelineWidth + dividerThickness + MainWindowController.detailViewMinimumThickness {
-			return
+		if isSidebarHidden {
+			splitView.setPosition(0.0, ofDividerAt: 0)
+			splitView.setPosition(timelineWidth, ofDividerAt: 1)
+		} else {
+			splitView.setPosition(sidebarWidth, ofDividerAt: 0)
+			splitView.setPosition(sidebarWidth + dividerThickness + timelineWidth, ofDividerAt: 1)
 		}
 
-		splitView.setPosition(CGFloat(sidebarWidth), ofDividerAt: 0)
-		splitView.setPosition(CGFloat(sidebarWidth + dividerThickness + timelineWidth), ofDividerAt: 1)
-
-		sidebarSplitViewItem?.isCollapsed = state.isSidebarHidden
+		sidebarSplitViewItem?.isCollapsed = isSidebarHidden
 	}
 
 	/// Restore main window split view using legacy state restoration data.
