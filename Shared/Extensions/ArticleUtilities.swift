@@ -38,17 +38,17 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 	return d.mapValues { Set($0) }
 }
 
-@MainActor extension Article {
-	var feed: Feed? {
-		return account?.existingFeed(withFeedID: feedID)
-	}
-
+extension Article {
 	var url: URL? {
 		return URL.encodeSpacesIfNeeded(rawLink)
 	}
 
 	var externalURL: URL? {
 		return URL.encodeSpacesIfNeeded(rawExternalLink)
+	}
+
+	var preferredURL: URL? {
+		return url ?? externalURL
 	}
 
 	var imageURL: URL? {
@@ -83,16 +83,37 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 		return nil
 	}
 
-	var preferredURL: URL? {
-		return url ?? externalURL
-	}
-
 	var body: String? {
 		return contentHTML ?? contentText ?? summary
 	}
 
 	var logicalDatePublished: Date {
 		return datePublished ?? dateModified ?? status.dateArrived
+	}
+
+
+}
+
+@MainActor extension Article {
+	var feed: Feed? {
+		return account?.existingFeed(withFeedID: feedID)
+	}
+
+	func iconImage() -> IconImage? {
+		return IconImageCache.shared.imageForArticle(self)
+	}
+
+	func iconImageUrl(feed: Feed) -> URL? {
+		if let image = iconImage() {
+			let fm = FileManager.default
+			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+			let feedID = feed.feedID.replacingOccurrences(of: "/", with: "_")
+			path.appendPathComponent(feedID + "_smallIcon.png")
+			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
+			return path
+		} else {
+			return nil
+		}
 	}
 
 	var isAvailableToMarkUnread: Bool {
@@ -111,23 +132,6 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 			return true
 		} else {
 			return false
-		}
-	}
-
-	func iconImage() -> IconImage? {
-		return IconImageCache.shared.imageForArticle(self)
-	}
-
-	func iconImageUrl(feed: Feed) -> URL? {
-		if let image = iconImage() {
-			let fm = FileManager.default
-			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			let feedID = feed.feedID.replacingOccurrences(of: "/", with: "_")
-			path.appendPathComponent(feedID + "_smallIcon.png")
-			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
-			return path
-		} else {
-			return nil
 		}
 	}
 
@@ -176,7 +180,7 @@ private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: 
 	}
 }
 
-// MARK: Path
+// MARK: - Path
 
 struct ArticlePathKey {
 	static let accountID = "accountID"

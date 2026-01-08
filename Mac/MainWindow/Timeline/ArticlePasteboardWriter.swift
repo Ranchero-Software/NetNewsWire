@@ -11,26 +11,32 @@ import Articles
 import RSCore
 
 extension Article: @retroactive PasteboardWriterOwner {
-	@MainActor public var pasteboardWriter: NSPasteboardWriting {
-		return ArticlePasteboardWriter(article: self)
+	public var pasteboardWriter: NSPasteboardWriting {
+		ArticlePasteboardWriter(article: self)
 	}
 }
 
-@MainActor @objc final class ArticlePasteboardWriter: NSObject, @MainActor NSPasteboardWriting {
-
+// This can’t be @MainActor — AppKit will call methods outside the main thread.
+@objc final class ArticlePasteboardWriter: NSObject, NSPasteboardWriting {
 	let article: Article
+	private let renderedHTML: String
+	private let feedURL: String?
+	private let feedNameForDisplay: String?
+	private let feedHomePageURL: String?
+
 	static let articleUTI = "com.ranchero.article"
 	static let articleUTIType = NSPasteboard.PasteboardType(rawValue: articleUTI)
 	static let articleUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.article"
 	static let articleUTIInternalType = NSPasteboard.PasteboardType(rawValue: articleUTIInternal)
 
-	private lazy var renderedHTML: String = {
-		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
-		return rendering.html
-	}()
-
-	init(article: Article) {
+	@MainActor init(article: Article) {
 		self.article = article
+		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
+		self.renderedHTML = rendering.html
+
+		self.feedURL = article.feed?.url
+		self.feedNameForDisplay = article.feed?.nameForDisplay
+		self.feedHomePageURL = article.feed?.homePageURL
 	}
 
 	// MARK: - NSPasteboardWriting
@@ -94,12 +100,14 @@ private extension ArticlePasteboardWriter {
 
 		s += "Date: \(article.logicalDatePublished)\n\n"
 
-		if let feed = article.feed {
-			s += "Feed: \(feed.nameForDisplay)\n"
-			if let homePageURL = feed.homePageURL {
-				s += "Home page: \(homePageURL)\n"
-			}
-			s += "URL: \(feed.url)"
+		if let feedNameForDisplay {
+			s += "Feed: \(feedNameForDisplay)\n"
+		}
+		if let feedHomePageURL {
+			s += "Home page: \(feedHomePageURL)\n"
+		}
+		if let feedURL {
+			s += "URL: \(feedURL)"
 		}
 
 		return s
@@ -140,11 +148,7 @@ private extension ArticlePasteboardWriter {
 
 		d[Key.articleID] = article.articleID
 		d[Key.uniqueID] = article.uniqueID
-
-		if let feed = article.feed {
-			d[Key.feedURL] = feed.url
-		}
-
+		d[Key.feedURL] = feedURL ?? nil
 		d[Key.feedID] = article.feedID
 		d[Key.title] = article.title ?? nil
 		d[Key.contentHTML] = article.contentHTML ?? nil
