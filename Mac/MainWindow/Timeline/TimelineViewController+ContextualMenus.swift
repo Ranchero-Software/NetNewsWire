@@ -190,41 +190,31 @@ private extension TimelineViewController {
 			}
 		}
 
-		if let sharingMenu = shareMenu(for: articles) {
-			menu.addSeparatorIfNeeded()
-			let menuItem = NSMenuItem(title: sharingMenu.title, action: nil, keyEquivalent: "")
-			menuItem.submenu = sharingMenu
-			menu.addItem(menuItem)
-		}
+		menu.addSeparatorIfNeeded()
+		let shareButtonMenuItem = NSMenuItem(title: NSLocalizedString("Share...", comment: "Share..."), action: #selector(showShareSheet(_:)), keyEquivalent: "")
+		shareButtonMenuItem.target = self
+		shareButtonMenuItem.representedObject = articles
+		menu.addItem(shareButtonMenuItem)
+		shareButtonMenuItem.isEnabled = !articles.isEmpty
 
 		return menu
 	}
-
-	func shareMenu(for articles: [Article]) -> NSMenu? {
-		if articles.isEmpty {
-			return nil
+	
+	@objc func showShareSheet(_ sender: Any?) {
+		let articlesToShare: [Article]
+		if let menuItem = sender as? NSMenuItem, let representedArticles = menuItem.representedObject as? [Article] {
+			articlesToShare = representedArticles
+		} else {
+			articlesToShare = selectedArticles
 		}
-
-		let sortedArticles = articles.sortedByDate(.orderedAscending)
+		let sortedArticles = articlesToShare.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
-		let standardServices = NSSharingService.sharingServices(forItems_noDeprecationWarning: items) as? [NSSharingService] ?? [NSSharingService]()
-		let customServices = SharingServicePickerDelegate.customSharingServices(for: items)
-		let services = standardServices + customServices
-		if services.isEmpty {
-			return nil
-		}
-
-		let menu = NSMenu(title: NSLocalizedString("Share", comment: "Share menu name"))
-		for service in services {
-			service.delegate = sharingServiceDelegate
-			let menuItem = NSMenuItem(title: service.menuItemTitle, action: #selector(performShareServiceFromContextualMenu(_:)), keyEquivalent: "")
-			menuItem.image = service.image
-			let sharingCommandInfo = SharingCommandInfo(service: service, items: items)
-			menuItem.representedObject = sharingCommandInfo
-			menu.addItem(menuItem)
-		}
-
-		return menu
+		let sharingServicePicker = NSSharingServicePicker(items: items)
+		sharingServicePicker.delegate = self.sharingServicePickerDelegate
+		
+		// Anchor the picker to the clicked row's view
+		let rect = tableView.rect(ofRow: tableView.selectedRow)
+		sharingServicePicker.show(relativeTo: rect, of: tableView, preferredEdge: .maxX)
 	}
 
 	func markReadMenuItem(_ articles: [Article]) -> NSMenuItem {
@@ -310,3 +300,4 @@ private final class SharingCommandInfo {
 		service.perform(withItems: items)
 	}
 }
+
