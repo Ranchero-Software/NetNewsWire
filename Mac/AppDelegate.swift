@@ -93,7 +93,7 @@ let appName = "NetNewsWire"
 	private var themeImportPath: String?
 
 	@MainActor override init() {
-		NSMenuItem.disableIcons()
+		NSMenuItem.rs_disableIcons()
 		NSWindow.allowsAutomaticWindowTabbing = false
 		self.appMovementMonitor = RSAppMovementMonitor()
 		super.init()

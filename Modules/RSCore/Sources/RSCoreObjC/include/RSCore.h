@@ -9,3 +9,4 @@
 
 #import "../striphtml.h"
 #import "../NSSharingService+Extension.h"
+#import "../NSMenuItem+RSCore.h"
