@@ -1,5 +1,17 @@
 # Mac Release Notes
 
+### 7.0b1 build 7000 08 Jan 2026: - branch: main tag: mac-7.0b1
+
+Adopted Liquid Glass UI
+Adopted Swift 6.2 structured concurrency
+Converted a bunch of code from callback-based to async/await
+Improved window state restoration when sidebar is collapsed
+Added custom About window
+Simplified and made more flexible the progress reporting system
+Changed link in the Help from Slack to Discourse
+Renamed a bunch of types in the code (Feed -> SidebarItem, WebFeed -> Feed, etc.)
+Started moving some code, especially syncing code, into new modules
+
 ### 6.2.1 build 6202 03 Dec 2025 - branch: release/mac-6.2.1 tag: mac-6.2.1
 
 Bumped version
