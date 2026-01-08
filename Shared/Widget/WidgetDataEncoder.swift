@@ -47,43 +47,41 @@ import Account
 	}
 	
 	func encode()  {
-		Task { @MainActor in
-			guard !isRunning else {
-				Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
-				return
-			}
+		guard !isRunning else {
+			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
+			return
+		}
 
-			isRunning = true
-			defer { isRunning = false }
+		isRunning = true
+		defer { isRunning = false }
 
-			removeStaleFaviconsFromSharedContainer()
+		removeStaleFaviconsFromSharedContainer()
 
-			let latestData: WidgetData
-			do {
-				latestData = try await fetchWidgetData()
-				Self.logger.debug("WidgetDataEncoder: fetched latest widget data")
-			} catch {
-				Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
-				return
-			}
-			
-			let encodedData: Data
-			do {
-				encodedData = try JSONEncoder().encode(latestData)
-				Self.logger.debug("WidgetDataEncoder: encoded widget data")
-			} catch {
-				Self.logger.error("WidgetDataEncoder: error encoding widget data: \(error.localizedDescription)")
-				return
-			}
-			
-			do {
-				let existingData = try? WidgetDataDecoder.decodeWidgetData()
-				try encodedData.write(to: dataURL, options: [.atomic])
-				reloadTimelines(newData: latestData, existingData: existingData)
-				Self.logger.debug("WidgetDataEncoder: finished refreshing widget data")
-			} catch {
-				Self.logger.error("WidgetDataEncoder: could not write data to container")
-			}
+		let latestData: WidgetData
+		do {
+			latestData = try fetchWidgetData()
+			Self.logger.debug("WidgetDataEncoder: fetched latest widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
+			return
+		}
+		
+		let encodedData: Data
+		do {
+			encodedData = try JSONEncoder().encode(latestData)
+			Self.logger.debug("WidgetDataEncoder: encoded widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: error encoding widget data: \(error.localizedDescription)")
+			return
+		}
+		
+		do {
+			let existingData = try? WidgetDataDecoder.decodeWidgetData()
+			try encodedData.write(to: dataURL, options: [.atomic])
+			reloadTimelines(newData: latestData, existingData: existingData)
+			Self.logger.debug("WidgetDataEncoder: finished refreshing widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: could not write data to container")
 		}
 	}
 	
@@ -110,14 +108,14 @@ import Account
 
 @MainActor private extension WidgetDataEncoder {
 
-	func fetchWidgetData() async throws -> WidgetData {
-		let fetchedUnreadArticles = try await AccountManager.shared.fetchArticlesAsync(.unread(fetchLimit))
+	func fetchWidgetData() throws -> WidgetData {
+		let fetchedUnreadArticles = try AccountManager.shared.fetchArticles(.unread(fetchLimit))
 		let unreadArticles = sortedLatestArticles(fetchedUnreadArticles)
 
-		let fetchedStarredArticles = try await AccountManager.shared.fetchArticlesAsync(.starred(fetchLimit))
+		let fetchedStarredArticles = try AccountManager.shared.fetchArticles(.starred(fetchLimit))
 		let starredArticles = sortedLatestArticles(fetchedStarredArticles)
 
-		let fetchedTodayArticles = try await AccountManager.shared.fetchArticlesAsync(.today(fetchLimit))
+		let fetchedTodayArticles = try AccountManager.shared.fetchArticles(.today(fetchLimit))
 		let todayArticles = sortedLatestArticles(fetchedTodayArticles)
 
 		let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
