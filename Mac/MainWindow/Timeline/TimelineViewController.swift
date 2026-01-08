@@ -28,7 +28,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	internal var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
+	var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	private var feedsHidingReadArticles = Set<SidebarItemIdentifier>()
 	private var readFilterEnabledTable: [SidebarItemIdentifier: Bool] {

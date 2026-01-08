@@ -64,7 +64,7 @@ import Secrets
 	/// See the implementation for `FeedlyAPICallerDelegate`.
 	private weak var initializedAccount: Account?
 
-	internal let caller: FeedlyAPICaller
+	let caller: FeedlyAPICaller
 
 	nonisolated private static let logger = Feedly.logger
 	private let syncDatabase: SyncDatabase

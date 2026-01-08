@@ -751,12 +751,12 @@ extension MainWindowController: ArticleExtractorDelegate {
 */
 
 extension MainWindowController: ScriptingMainWindowController {
-    internal var scriptingCurrentArticle: Article? {
-        return self.oneSelectedArticle
+    var scriptingCurrentArticle: Article? {
+        oneSelectedArticle
     }
 
-    internal var scriptingSelectedArticles: [Article] {
-        return self.selectedArticles ?? []
+    var scriptingSelectedArticles: [Article] {
+        selectedArticles ?? []
     }
 }
 
