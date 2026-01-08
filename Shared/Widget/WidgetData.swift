@@ -18,7 +18,7 @@ struct WidgetData: Codable {
 	let lastUpdateTime: Date
 }
 
-struct LatestArticle: Codable, Identifiable {
+struct LatestArticle: Codable, Identifiable, Hashable {
 	var id: String
 	let feedTitle: String
 	let articleTitle: String?
