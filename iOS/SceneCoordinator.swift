@@ -286,8 +286,8 @@ struct FeedNode: Hashable, Sendable {
 		self.rootSplitViewController.minimumPrimaryColumnWidth = 300
 		self.rootSplitViewController.maximumPrimaryColumnWidth = 500
 		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
-		self.rootSplitViewController.maximumSupplementaryColumnWidth = 500
-		self.rootSplitViewController.preferredSupplementaryColumnWidthFraction = 0.4
+		self.rootSplitViewController.preferredSupplementaryColumnWidth = 320
+		self.rootSplitViewController.maximumSupplementaryColumnWidth = 360
 		self.rootSplitViewController.preferredSplitBehavior = .tile
 
 		self.treeController = TreeController(delegate: treeControllerDelegate)
