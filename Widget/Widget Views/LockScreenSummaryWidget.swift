@@ -10,9 +10,9 @@ import SwiftUI
 import WidgetKit
 
 struct LockScreenSummaryWidgetView: View {
-	
+
 	var entry: Provider.Entry
-	
+
     var body: some View {
 		VStack(alignment: .leading, spacing: 2) {
 			HStack(alignment: .center) {
@@ -39,20 +39,20 @@ struct LockScreenSummaryWidgetView: View {
 		}
 		.font(.caption)
     }
-	
+
 	var starredImage: some View {
 		Image(systemName: "star.fill")
 			.frame(width: 14, height: 14)
 	}
-	
+
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
 			.frame(width: 14, height: 14)
 	}
-	
+
 	var todayImage: some View {
 		Image(systemName: "sun.max.fill")
 			.frame(width: 14, height: 14)
 	}
-	
+
 }

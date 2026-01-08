@@ -45,8 +45,8 @@ import Account
 			return nil
 		}
 	}
-	
-	func encode()  {
+
+	func encode() {
 		guard !isRunning else {
 			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
 			return
@@ -65,7 +65,7 @@ import Account
 			Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
 			return
 		}
-		
+
 		let encodedData: Data
 		do {
 			encodedData = try JSONEncoder().encode(latestData)
@@ -74,7 +74,7 @@ import Account
 			Self.logger.error("WidgetDataEncoder: error encoding widget data: \(error.localizedDescription)")
 			return
 		}
-		
+
 		do {
 			let existingData = try? WidgetDataDecoder.decodeWidgetData()
 			try encodedData.write(to: dataURL, options: [.atomic])
@@ -84,29 +84,29 @@ import Account
 			Self.logger.error("WidgetDataEncoder: could not write data to container")
 		}
 	}
-	
+
 	func reloadTimelines(newData: WidgetData, existingData: WidgetData?) {
 		if let existingData = existingData {
 			var shouldRefreshSummary = false
-			
+
 			if existingData.unreadArticles != newData.unreadArticles {
 				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.UnreadWidget")
 				shouldRefreshSummary = true
 				Self.logger.debug("WidgetDataEncoder: Reloading Unread widget")
 			}
-			
+
 			if existingData.todayArticles != newData.todayArticles {
 				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.TodayWidget")
 				shouldRefreshSummary = true
 				Self.logger.debug("WidgetDataEncoder: Reloading Today widget")
 			}
-			
+
 			if existingData.starredArticles != newData.starredArticles {
 				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.StarredWidget")
 				shouldRefreshSummary = true
 				Self.logger.debug("WidgetDataEncoder: Reloading Starred widget")
 			}
-			
+
 			if shouldRefreshSummary {
 				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.LockScreenSummaryWidget")
 				Self.logger.debug("WidgetDataEncoder: Reloading Summary widget")
@@ -146,7 +146,6 @@ import Account
 		guard let imageData, let md5 = imageData.md5String else {
 			return nil
 		}
-	
 
 		let imagePath = imageContainer.appendingPathComponent(md5, isDirectory: false)
 		let fm = FileManager.default
@@ -202,7 +201,7 @@ import Account
 		let articleTitle = truncatedTitle.isEmpty ? ArticleStringFormatter.truncatedSummary(article) : truncatedTitle
 
 		let feedIconPath = writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation())
-		
+
 		let pubDate = article.datePublished?.description ?? ""
 
 		let latestArticle = LatestArticle(id: article.sortableArticleID,
@@ -219,4 +218,3 @@ import Account
 		return latestArticles.sorted(by: { $0.pubDate > $1.pubDate })
 	}
 }
-

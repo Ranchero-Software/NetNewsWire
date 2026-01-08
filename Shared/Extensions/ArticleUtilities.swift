@@ -91,7 +91,6 @@ extension Article {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
 
-
 }
 
 @MainActor extension Article {

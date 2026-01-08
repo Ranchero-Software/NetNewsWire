@@ -995,7 +995,7 @@ private extension MainWindowController {
 			let dividerThickness = splitView.dividerThickness
 			let sidebarWidth: CGFloat
 			let detailWidth: CGFloat
-			
+
 			// Starting with macOS 26, timelineWidth has to be calculated —
 			// because its width is greater than its apparent width,
 			// so that things can slide under the sidebar.

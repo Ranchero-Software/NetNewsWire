@@ -53,7 +53,7 @@ struct Provider: TimelineProvider {
 		} catch {
 			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date.now))
 		}
-		
+
 		let fallback = Calendar.current.date(byAdding: .minute, value: 30, to: Date.now)!
 
 		let timeline = Timeline(

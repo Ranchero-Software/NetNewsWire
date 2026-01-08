@@ -27,7 +27,7 @@ enum TimelineShowFeedName: Sendable {
 final class TimelineViewController: NSViewController, UndoableCommandRunner, UnreadCountProvider {
 
 	@IBOutlet var tableView: TimelineTableView!
-	
+
 	internal var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
 	private var feedsHidingReadArticles = Set<SidebarItemIdentifier>()
@@ -257,7 +257,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 			didRegisterForNotifications = true
 		}
-		
+
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.view.window)
 	}
 

@@ -77,7 +77,6 @@ struct StarredWidgetView: View {
 			reduceAccessibilityCount = 1
 		}
 
-		
 		if family == .systemLarge {
 			return entry.widgetData.currentStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
 		}

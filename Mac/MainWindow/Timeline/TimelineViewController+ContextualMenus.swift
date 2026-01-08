@@ -199,7 +199,7 @@ private extension TimelineViewController {
 
 		return menu
 	}
-	
+
 	@objc func showShareSheet(_ sender: Any?) {
 		let articlesToShare: [Article]
 		if let menuItem = sender as? NSMenuItem, let representedArticles = menuItem.representedObject as? [Article] {
@@ -211,7 +211,7 @@ private extension TimelineViewController {
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
 		let sharingServicePicker = NSSharingServicePicker(items: items)
 		sharingServicePicker.delegate = self.sharingServicePickerDelegate
-		
+
 		// Anchor the picker to the clicked row's view
 		let rect = tableView.rect(ofRow: tableView.selectedRow)
 		sharingServicePicker.show(relativeTo: rect, of: tableView, preferredEdge: .maxX)
@@ -300,4 +300,3 @@ private final class SharingCommandInfo {
 		service.perform(withItems: items)
 	}
 }
-
