@@ -21,8 +21,7 @@ struct StarredWidgetView: View {
 				.widgetURL(WidgetDeepLink.starred.url)
 		} else {
 			VStack {
-				Spacer()
-				HStack {
+				HStack(alignment: .center) {
 					starredImage
 						.layoutPriority(1)
 					Text("label.text.starred", comment: "Starred")
@@ -78,11 +77,11 @@ struct StarredWidgetView: View {
 			reduceAccessibilityCount = 1
 		}
 
-		let starredCount = entry.widgetData.starredArticles.count
+		
 		if family == .systemLarge {
-			return starredCount >= 7 ? (7 - reduceAccessibilityCount) : starredCount
+			return entry.widgetData.currentStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
 		}
-		return starredCount >= 3 ? (3 - reduceAccessibilityCount) : starredCount
+		return entry.widgetData.currentStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
 	}
 
 	var inboxZero: some View {
