@@ -87,19 +87,29 @@ import Account
 	
 	func reloadTimelines(newData: WidgetData, existingData: WidgetData?) {
 		if let existingData = existingData {
+			var shouldRefreshSummary = false
+			
 			if existingData.unreadArticles != newData.unreadArticles {
 				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.UnreadWidget")
+				shouldRefreshSummary = true
 				Self.logger.debug("WidgetDataEncoder: Reloading Unread widget")
 			}
 			
 			if existingData.todayArticles != newData.todayArticles {
 				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.TodayWidget")
+				shouldRefreshSummary = true
 				Self.logger.debug("WidgetDataEncoder: Reloading Today widget")
 			}
 			
 			if existingData.starredArticles != newData.starredArticles {
 				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.StarredWidget")
+				shouldRefreshSummary = true
 				Self.logger.debug("WidgetDataEncoder: Reloading Starred widget")
+			}
+			
+			if shouldRefreshSummary {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.LockScreenSummaryWidget")
+				Self.logger.debug("WidgetDataEncoder: Reloading Summary widget")
 			}
 		}
 	}

@@ -1,6 +1,28 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "label.text.lock-screen-summary" : {
+      "comment" : "Summary",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summary"
+          }
+        }
+      }
+    },
+    "label.text.lock-screen-summary-description" : {
+      "comment" : "A description of the Lock Screen Summary widget.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Lock Screen Summary displays current article counts across the Smart Feeds. "
+          }
+        }
+      }
+    },
     "label.text.starred" : {
       "comment" : "Starred",
       "localizations" : {
