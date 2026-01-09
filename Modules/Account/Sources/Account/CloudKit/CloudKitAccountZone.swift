@@ -203,59 +203,46 @@ enum CloudKitAccountZoneError: LocalizedError {
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 
 		database?.fetch(withQuery: ckQuery, inZoneWith: zoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults) { [weak self] result in
-			guard let self = self else { return }
+			Task { @MainActor [weak self] in
+				guard let self else {
+					return
+				}
 
-			switch result {
-			case .success(let (matchResults, _)):
-				let records = matchResults.compactMap { try? $0.1.get() }
-				DispatchQueue.main.async {
+				switch result {
+				case .success(let (matchResults, _)):
+					let records = matchResults.compactMap { try? $0.1.get() }
 					if !records.isEmpty {
 						completion(.success(records[0].externalID))
 					} else {
-						Task {
-							do {
-								let externalID = try await self.createContainer(name: "Account", isAccount: true)
-								completion(.success(externalID))
-							} catch let createError {
-								completion(.failure(createError))
-							}
+						do {
+							let externalID = try await self.createContainer(name: "Account", isAccount: true)
+							completion(.success(externalID))
+						} catch let createError {
+							completion(.failure(createError))
 						}
 					}
-				}
-			case .failure(let error):
-				switch CloudKitZoneResult.resolve(error) {
-				case .success:
-					DispatchQueue.main.async {
-						Task {
-							do {
-								let externalID = try await self.createContainer(name: "Account", isAccount: true)
-								completion(.success(externalID))
-							} catch let createError {
-								completion(.failure(createError))
-							}
+				case .failure(let error):
+					switch CloudKitZoneResult.resolve(error) {
+					case .success:
+						do {
+							let externalID = try await self.createContainer(name: "Account", isAccount: true)
+							completion(.success(externalID))
+						} catch let createError {
+							completion(.failure(createError))
 						}
-					}
-				case .retry(let timeToWait):
-					DispatchQueue.main.async {
-						self.retryIfPossible(after: timeToWait) {
-							self.findOrCreateAccount(completion: completion)
-						}
-					}
-				case .zoneNotFound, .userDeletedZone:
-					DispatchQueue.main.async {
+					case .retry(let timeToWait):
+						await self.delaySeconds(timeToWait)
+						self.findOrCreateAccount(completion: completion)
+					case .zoneNotFound, .userDeletedZone:
 						self.createZoneRecord { result in
 							switch result {
 							case .success:
 								self.findOrCreateAccount(completion: completion)
 							case .failure(let error):
-								DispatchQueue.main.async {
-									completion(.failure(CloudKitError(error)))
-								}
+								completion(.failure(CloudKitError(error)))
 							}
 						}
-					}
-				default:
-					Task {
+					default:
 						do {
 							let externalID = try await self.createContainer(name: "Account", isAccount: true)
 							completion(.success(externalID))
@@ -266,7 +253,6 @@ enum CloudKitAccountZoneError: LocalizedError {
 				}
 			}
 		}
-
 	}
 
 	func createFolder(name: String) async throws -> String {
@@ -298,11 +284,9 @@ enum CloudKitAccountZoneError: LocalizedError {
 			}
 		}
 	}
-
 }
 
 private extension CloudKitAccountZone {
-
 	func newFeedCKRecord(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) -> CKRecord {
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: generateRecordID())
 		record[CloudKitFeed.Fields.url] = feedSpecifier.feedURL
@@ -331,5 +315,4 @@ private extension CloudKitAccountZone {
 		try await save(record)
 		return record.externalID
 	}
-
 }
