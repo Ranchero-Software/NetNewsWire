@@ -170,7 +170,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 			}
 
 			@MainActor func fetcherHidesReadArticles(_ fetcher: ArticleFetcher) -> Bool {
-				guard let feed = fetcher as? Feed, let sidebarItemID = feed.sidebarItemID else {
+				guard let sidebarItem = fetcher as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID else {
 					return false
 				}
 				return hidingReadArticlesState.isHidingReadArticles(for: sidebarItemID)
