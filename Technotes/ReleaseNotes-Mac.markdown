@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.0b2 build 7001 08 Jan 2026: - branch: main tag: mac-7.0b2
+
+Fixed crash when downloading a theme
+Fixed hiding read articles (the toggle wasn’t toggling, now it is)
+
 ### 7.0b1 build 7000 08 Jan 2026: - branch: main tag: mac-7.0b1
 
 Adopted Liquid Glass UI
