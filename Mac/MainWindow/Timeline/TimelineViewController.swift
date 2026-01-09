@@ -302,9 +302,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 		if filter {
-			noteSidebarItemHidesReadArticles(sidebarItemID)
-		} else {
 			noteSidebarItemShowsReadArticles(sidebarItemID)
+		} else {
+			noteSidebarItemHidesReadArticles(sidebarItemID)
 		}
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
