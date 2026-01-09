@@ -7,6 +7,19 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0b2</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed crash when downloading a theme</li>
+					<li>Fixed hiding read articles (the toggle wasn’t toggling, now it is)</li>
+				</ul>
+			]]></description>
+        	<pubDate>Fri, 09 Jan 2026 08:55:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b2/NetNewsWire7.0b2.zip" sparkle:version="7001" sparkle:shortVersionString="7.0b2" length="10322480" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0b1</title>
             <description><![CDATA[
             <p>Besides the changes listed, there are <i>many</i> under-the-hood changes affecting all parts of the app. Bugs could appear anywhere! Please report anything you find to our bug tracker or to the Beta Testing topic in the Discourse forum.</p>
