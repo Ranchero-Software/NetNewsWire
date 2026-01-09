@@ -26,7 +26,7 @@ static void *kShouldShowImageKey = &kShouldShowImageKey;
 
 - (NSImage *)rs_swizzledImage {
 
-	if (self.rs_shouldShowImage || [self rs_isToolbarItemRepresentation]) {
+	if (self.rs_shouldShowImage || [self rs_isToolbarItemRepresentation] || self.title.length < 1) {
 		// Call the original getter (now swapped to rs_swizzledImage)
 		return [self rs_swizzledImage];
 	}
