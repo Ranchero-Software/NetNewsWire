@@ -65,16 +65,17 @@ extension AppDelegate: AppDelegateAppleEvents {
 						return
 					}
 
-					do {
-						try ArticleThemeDownloader.shared.handleFile(at: location)
-					} catch {
-						NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+					Task { @MainActor in
+						do {
+							try ArticleThemeDownloader.shared.handleFile(at: location)
+						} catch {
+							NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+						}
 					}
 				}
 				task.resume()
 			}
 			return
-
 		}
 
 		// Special case URL with specific scheme handler x-netnewswire-feed: intended to ensure we open

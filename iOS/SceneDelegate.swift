@@ -206,10 +206,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 						guard
 							  let location = location else { return }
 
-						do {
-							try ArticleThemeDownloader.shared.handleFile(at: location)
-						} catch {
-							NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+						Task { @MainActor in
+							do {
+								try ArticleThemeDownloader.shared.handleFile(at: location)
+							} catch {
+								NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+							}
 						}
 					}
 					task.resume()
