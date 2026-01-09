@@ -607,6 +607,14 @@ private extension WebViewController {
 
 		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
+
+		// Uncomment when you want to debug HTML and CSS for an article.
+		// If you’re running in the simulator, this will write the file to a location on your Mac.
+//		let debugFolderURL = AppConfig.dataSubfolder(named: "debug")
+//		let fileURL = debugFolderURL.appendingPathComponent("article.html")
+//		try? html.write(to: fileURL, atomically: true, encoding: .utf8)
+//		print("article.html written to \(fileURL.path)")
+
 		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
 	}
 
