@@ -101,6 +101,10 @@ body > .systemMessage {
 	text-align: start;
 }
 
+.articleTitle h1 {
+	font-size: 1.5rem;
+}
+
 .articleTitle a:link, .articleTitle a:visited {
 	color: var(--article-title-color);
 	margin-top: 26px;
@@ -137,6 +141,10 @@ body > .systemMessage {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.externalLink:has(a[href=""]) {
+	display: none;
 }
 
 .externalLink a {
@@ -512,6 +520,10 @@ a.footnote:hover,
 
 	a u {
 	  text-decoration: none;
+	}
+
+	.articleTitle h1 {
+		font-size: 1.85rem;
 	}
 
 	.articleBody a:link, .articleBody a:visited {
