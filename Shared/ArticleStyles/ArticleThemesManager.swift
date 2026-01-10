@@ -160,10 +160,8 @@ private extension ArticleThemesManager {
 		let allThemeNames = appThemeNames.union(installedThemeNames)
 
 		let sortedThemeNames = allThemeNames.sorted(by: { $0.compare($1, options: .caseInsensitive) == .orderedAscending })
-		Task { @MainActor in
-			if sortedThemeNames != themeNames {
-				themeNames = sortedThemeNames
-			}
+		if sortedThemeNames != themeNames {
+			themeNames = sortedThemeNames
 		}
 	}
 
