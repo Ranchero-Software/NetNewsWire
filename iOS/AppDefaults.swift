@@ -216,7 +216,7 @@ final class AppDefaults: Sendable {
 			AppDefaults.setBool(for: Key.articleContentJavascriptEnabled, newValue)
 		}
 	}
-	
+
 	var splitViewPreferredDisplayMode: Int {
 		get {
 			return AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
