@@ -219,11 +219,9 @@ final class AppDefaults: Sendable {
 	
 	var splitViewPreferredDisplayMode: Int {
 		get {
-			print("SplitView get saved displayMode: \(AppDefaults.int(for: Key.splitViewPreferredDisplayMode))")
 			return AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
 		}
 		set {
-			print("SplitView set saved displayMode: \(newValue)")
 			AppDefaults.setInt(for: Key.splitViewPreferredDisplayMode, newValue)
 		}
 	}
