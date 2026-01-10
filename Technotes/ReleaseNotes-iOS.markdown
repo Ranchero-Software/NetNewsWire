@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7000 10 Jan 2026 - branch: main tag: iOS-7.0-7000
+
+Adopted Liquid Glass UI
+Adopted Swift 6.2 structured concurrency
+Enhanced design, performance, and reliability for the springboard widgets
+Improved split view state restoration on iPad
+Added new movie-credits-style about screen
+
 ### 6.2.1 TestFlight build 6206 08 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6206 — submitted to App Store
 
 Fixed bug, introduced in previous beta, where hide-read-articles settings weren’t working or saving for folders
