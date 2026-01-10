@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 7.0b3 build 7003 10 Jan 2026: - branch: main tag: mac-7.0b3
+
+Fixed bug with persisting the theme selection
+Fixed crash adding a Feedly account
+Fixed (we think) a crash that could happen during iCloud syncing
+
 ### 7.0b2 build 7001 08 Jan 2026: - branch: main tag: mac-7.0b2
 
 Fixed crash when downloading a theme
