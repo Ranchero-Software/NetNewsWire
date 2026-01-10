@@ -1146,6 +1146,7 @@ struct FeedNode: Hashable, Sendable {
 
 	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
 		markAllAsRead(articles) {
+			self.rootSplitViewController.preferredDisplayMode = .twoBesideSecondary
 			self.rootSplitViewController.show(.primary)
 			completion?()
 		}
@@ -1405,10 +1406,6 @@ struct FeedNode: Hashable, Sendable {
 		articleViewController?.focus()
 	}
 
-	func toggleSidebar() {
-		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .oneBesideSecondary ? .secondaryOnly : .oneBesideSecondary
-	}
-
 	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		if let article = self.articles.first(where: { $0.articleID == articleID }) {
 			self.selectArticle(article, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
@@ -1469,6 +1466,12 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 			return .primary
 		}
 	}
+	
+	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
+		AppDefaults.shared.splitViewPreferredDisplayMode = displayMode.rawValue
+	}
+	
+	
 
 }
 

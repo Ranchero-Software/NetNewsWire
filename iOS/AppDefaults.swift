@@ -74,6 +74,7 @@ final class AppDefaults: Sendable {
 		static let selectedSidebarItem = "selectedSidebarItem"
 		static let selectedArticle = "selectedArticle"
 		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
+		static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -213,6 +214,15 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			AppDefaults.setBool(for: Key.articleContentJavascriptEnabled, newValue)
+		}
+	}
+	
+	var splitViewPreferredDisplayMode: Int {
+		get {
+			return AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
+		}
+		set {
+			AppDefaults.setInt(for: Key.splitViewPreferredDisplayMode, newValue)
 		}
 	}
 
@@ -384,7 +394,8 @@ final class AppDefaults: Sendable {
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true,
 										Key.articleContentJavascriptEnabled: true,
-										Key.currentThemeName: Self.defaultThemeName]
+										Key.currentThemeName: Self.defaultThemeName,
+									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue]
 		AppDefaults.store.register(defaults: defaults)
 	}
 }
