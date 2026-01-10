@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0b3</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed bug with persisting the theme selection
+					<li>Fixed crash adding a Feedly account
+					<li>Fixed (we think) a crash that could happen during iCloud syncing
+				</ul>
+			]]></description>
+        	<pubDate>Sat, 10 Jan 2026 10:30:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b3/NetNewsWire7.1b3.zip" sparkle:version="7003" sparkle:shortVersionString="7.0b3" length="10320310" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0b2</title>
             <description><![CDATA[
 				<ul>
