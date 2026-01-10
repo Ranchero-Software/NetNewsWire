@@ -27,6 +27,27 @@ final class RootSplitViewController: UISplitViewController {
 
 	override func show(_ column: UISplitViewController.Column) {
 		guard !coordinator.isNavigationDisabled else { return }
+		
+		/// Always show the column on iPhone
+		if UIDevice.current.userInterfaceIdiom == .phone {
+			super.show(column)
+			return
+		}
+		
+		/// In certain scenarios, we don't want to select a feed or article
+		/// and have the display mode change as this interferes with state
+		/// restoration of the feeds and timeline display modes.
+		
+		/// Don't show primary when the preferred display mode is timeline + article or article only.
+		if column == .primary && (preferredDisplayMode == .oneBesideSecondary || preferredDisplayMode == .secondaryOnly) {
+			return
+		}
+		
+		/// Don't show the timeline when the preferred display mode is article only.
+		if column == .supplementary && preferredDisplayMode == .secondaryOnly {
+			return
+		}
+		
 		super.show(column)
 	}
 
