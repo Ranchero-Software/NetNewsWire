@@ -1405,10 +1405,6 @@ struct FeedNode: Hashable, Sendable {
 		articleViewController?.focus()
 	}
 
-	func toggleSidebar() {
-		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .oneBesideSecondary ? .secondaryOnly : .oneBesideSecondary
-	}
-
 	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		if let article = self.articles.first(where: { $0.articleID == articleID }) {
 			self.selectArticle(article, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
