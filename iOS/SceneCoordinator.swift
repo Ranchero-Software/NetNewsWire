@@ -1146,6 +1146,7 @@ struct FeedNode: Hashable, Sendable {
 
 	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
 		markAllAsRead(articles) {
+			self.rootSplitViewController.preferredDisplayMode = .twoBesideSecondary
 			self.rootSplitViewController.show(.primary)
 			completion?()
 		}
