@@ -58,7 +58,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 			let entryIds = Set(entries.map { $0.id })
 			let parsedIds = Set(parsed.map { $0.uniqueID })
 			let difference = entryIds.subtracting(parsedIds)
-			Feedly.logger.info("Feedly: Dropping articles with IDs \(difference)")
+			Feedly.logger.debug("FeedlyGetStreamContentsOperation: Dropping articles with IDs \(difference)")
 		}
 
 		storedParsedEntries = parsed

@@ -36,7 +36,7 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation, @unchecked Sendabl
 		var articleIds = missingArticleEntryIdProvider.entryIDs
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIDs)
 
-		Feedly.logger.info("Feedly: Requesting \(articleIds.count) articles")
+		Feedly.logger.debug("FeedlyDownloadArticlesOperation: Requesting \(articleIds.count) articles")
 
 		let feedlyAPILimitBatchSize = 1000
 		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {

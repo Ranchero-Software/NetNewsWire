@@ -24,7 +24,7 @@ final class FeedlyLogoutOperation: FeedlyOperation, @unchecked Sendable {
 	}
 
 	@MainActor override func run() {
-		Feedly.logger.info("Feedly: Requesting logout \(self.account.accountID, privacy: .public)")
+		Feedly.logger.info("FeedlyLogoutOperation: Requesting logout \(self.account.accountID, privacy: .public)")
 		service.logout(completion: didCompleteLogout(_:))
 	}
 
@@ -32,7 +32,7 @@ final class FeedlyLogoutOperation: FeedlyOperation, @unchecked Sendable {
 		assert(Thread.isMainThread)
 		switch result {
 		case .success:
-			Feedly.logger.info("Feedly: Logged out of \(self.account.accountID, privacy: .public)")
+			Feedly.logger.info("FeedlyLogoutOperation: Logged out of \(self.account.accountID, privacy: .public)")
 			do {
 				try account.removeCredentials(type: .oauthAccessToken)
 				try account.removeCredentials(type: .oauthRefreshToken)

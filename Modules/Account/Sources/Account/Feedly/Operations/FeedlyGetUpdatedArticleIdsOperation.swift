@@ -45,8 +45,9 @@ final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIde
 	}
 
 	@MainActor private func getStreamIds(_ continuation: String?) {
+		Feedly.logger.debug("FeedlyGetUpdatedArticleIdsOperation: getStreamIds")
 		guard let date = newerThan else {
-			Feedly.logger.debug("Feedly: No date provided so everything must be new (nothing is updated)")
+			Feedly.logger.debug("FeedlyGetUpdatedArticleIdsOperation: No date provided so everything must be new (nothing is updated)")
 			didComplete()
 			return
 		}
@@ -65,7 +66,7 @@ final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIde
 			storedUpdatedArticleIds.formUnion(streamIds.ids)
 
 			guard let continuation = streamIds.continuation else {
-				Feedly.logger.info("Feedly: Articles updated since last successful sync start date: \(self.storedUpdatedArticleIds.count)")
+				Feedly.logger.debug("FeedlyGetUpdatedArticleIdsOperation: Articles updated since last successful sync start date: \(self.storedUpdatedArticleIds.count)")
 				didComplete()
 				return
 			}

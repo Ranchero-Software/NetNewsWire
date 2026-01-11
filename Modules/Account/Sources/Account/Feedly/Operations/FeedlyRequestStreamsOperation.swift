@@ -51,7 +51,7 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation, @unchecked Sendable 
 			queueDelegate?.feedlyRequestStreamsOperation(self, enqueue: operation)
 		}
 
-		Feedly.logger.info("Feedly: Requested \(self.collectionsProvider.collections.count) collection streams")
+		Feedly.logger.debug("FeedlyRequestStreamsOperation: Requested \(self.collectionsProvider.collections.count) collection streams")
 		didComplete()
 	}
 }

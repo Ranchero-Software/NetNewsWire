@@ -116,7 +116,7 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 		addCompletionHandler?(.failure(error))
 		addCompletionHandler = nil
 
-		Feedly.logger.error("Feedly: Unable to add new feed with error \(error.localizedDescription)")
+		Feedly.logger.error("FeedlyAddNewFeedOperation: Unable to add new feed with error \(error.localizedDescription)")
 
 		cancel()
 	}

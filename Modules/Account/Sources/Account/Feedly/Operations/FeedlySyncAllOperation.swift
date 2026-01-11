@@ -119,13 +119,13 @@ final class FeedlySyncAllOperation: FeedlyOperation, @unchecked Sendable {
 	}
 
 	@MainActor override func run() {
-		Feedly.logger.info("Feedly: Starting sync \(self.syncUUID.uuidString, privacy: .public)")
+		Feedly.logger.info("FeedlySyncAllOperation: Starting sync \(self.syncUUID.uuidString, privacy: .public)")
 		didComplete()
 	}
 
 	@MainActor override func noteDidComplete() {
 		if isCanceled {
-			Feedly.logger.info("Feedly: Canceling sync \(self.syncUUID.uuidString, privacy: .public)")
+			Feedly.logger.info("FeedlySyncAllOperation: Canceling sync \(self.syncUUID.uuidString, privacy: .public)")
 			operationQueue?.cancelAll()
 			syncCompletionHandler = nil
 		}
@@ -137,7 +137,7 @@ extension FeedlySyncAllOperation: FeedlyCheckpointOperationDelegate {
 
 	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 		assert(Thread.isMainThread)
-		Feedly.logger.info("Feedly: Sync finished \(self.syncUUID.uuidString, privacy: .public)")
+		Feedly.logger.info("FeedlySyncAllOperation: Sync finished \(self.syncUUID.uuidString, privacy: .public)")
 
 		syncCompletionHandler?(.success(()))
 		syncCompletionHandler = nil
@@ -153,7 +153,7 @@ extension FeedlySyncAllOperation: FeedlyOperationDelegate {
 
 		MainActor.assumeIsolated {
 			// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
-			Feedly.logger.error("Feedly: Sync \(self.syncUUID.uuidString, privacy: .public) failed with error: \(error.localizedDescription)")
+			Feedly.logger.error("FeedlySyncAllOperation: Sync \(self.syncUUID.uuidString, privacy: .public) failed with error: \(error.localizedDescription)")
 			
 			syncCompletionHandler?(.failure(error))
 			syncCompletionHandler = nil

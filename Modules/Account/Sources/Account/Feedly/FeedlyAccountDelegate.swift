@@ -124,20 +124,21 @@ import Secrets
 
 	@MainActor func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 		assert(Thread.isMainThread)
+		Self.logger.debug("FeedlyAccountDelegate: refreshAll")
 
 		guard !Platform.isRunningUnitTests else {
-			Self.logger.debug("Feedly: Ignoring refreshAll: running unit tests")
+			Self.logger.debug("FeedlyAccountDelegate: Ignoring refreshAll: running unit tests")
 			completion(.success(()))
 			return
 		}
 		guard currentSyncAllOperation == nil else {
-			Self.logger.debug("Feedly: Ignoring refreshAll: sync already in progress")
+			Self.logger.debug("FeedlyAccountDelegate: Ignoring refreshAll: sync already in progress")
 			completion(.success(()))
 			return
 		}
 
 		guard let credentials = credentials else {
-			Self.logger.info("Feedly: Ignoring refreshAll: account has no credentials")
+			Self.logger.info("FeedlyAccountDelegate: Ignoring refreshAll: account has no credentials")
 			completion(.failure(FeedlyAccountDelegateError.notLoggedIn))
 			return
 		}
@@ -153,7 +154,7 @@ import Secrets
 				self?.accountMetadata?.lastArticleFetchEndTime = Date()
 			}
 
-			Self.logger.debug("Feedly: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")
+			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")
 			completion(result)
 			self?.operationQueue.isTrackingProgress = false
 			self?.progressInfo = ProgressInfo()
@@ -161,7 +162,6 @@ import Secrets
 
 		currentSyncAllOperation = syncAllOperation
 		operationQueue.isTrackingProgress = true
-		operationQueue.suspend()
 		operationQueue.add(syncAllOperation)
 	}
 
@@ -171,6 +171,7 @@ import Secrets
 	}
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: sendArticleStatus")
 		try await withCheckedThrowingContinuation { continuation in
 			sendArticleStatus(for: account) { result in
 				continuation.resume(with: result)
@@ -196,6 +197,7 @@ import Secrets
 	///
 	/// - Parameter account: The account whose articles have a remote status.
 	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: refreshArticleStatus")
 		try await withCheckedThrowingContinuation { continuation in
 			refreshArticleStatus(for: account) { result in
 				continuation.resume(with: result)
@@ -251,20 +253,20 @@ import Secrets
 			return
 		}
 
-		Self.logger.info("Feedly: Begin importing OPML")
+		Self.logger.info("FeedlyAccountDelegate: Begin importing OPML")
 		isOPMLImportInProgress = true
 
 		caller.importOpml(data) { result in
 			Task { @MainActor in
 				switch result {
 				case .success:
-					Self.logger.info("Feedly: OPML import finished")
+					Self.logger.debug("FeedlyAccountDelegate: OPML import finished")
 					self.isOPMLImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
 					}
 				case .failure(let error):
-					Self.logger.error("Feedly: OPML import failed: \(error.localizedDescription)")
+					Self.logger.error("FeedlyAccountDelegate: OPML import failed: \(error.localizedDescription)")
 					self.isOPMLImportInProgress = false
 					DispatchQueue.main.async {
 						let wrappedError = AccountError.wrapped(error, account)
@@ -276,7 +278,8 @@ import Secrets
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
-		try await withCheckedThrowingContinuation { continuation in
+		Self.logger.debug("FeedlyAccountDelegate: createFolder")
+		return try await withCheckedThrowingContinuation { continuation in
 			createFolder(for: account, name: name) { result in
 				continuation.resume(with: result)
 			}
@@ -304,6 +307,7 @@ import Secrets
 	}
 
 	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: renameFolder")
 		try await withCheckedThrowingContinuation { continuation in
 			renameFolder(for: account, with: folder, to: name) { result in
 				continuation.resume(with: result)
@@ -337,6 +341,7 @@ import Secrets
 	}
 
 	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: removeFolder")
 		try await withCheckedThrowingContinuation { continuation in
 			removeFolder(for: account, with: folder) { result in
 				continuation.resume(with: result)
@@ -366,7 +371,8 @@ import Secrets
 	}
 
 	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
-		try await withCheckedThrowingContinuation { continuation in
+		Self.logger.debug("FeedlyAccountDelegate: createFeed")
+		return try await withCheckedThrowingContinuation { continuation in
 			createFeed(for: account, url: urlString, name: name, container: container, validateFeed: validateFeed) { result in
 				continuation.resume(with: result)
 			}
@@ -406,6 +412,7 @@ import Secrets
 	}
 
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: renameFeed")
 		try await withCheckedThrowingContinuation { continuation in
 			renameFeed(for: account, with: feed, to: name) { result in
 				continuation.resume(with: result)
@@ -443,6 +450,7 @@ import Secrets
 	}
 
 	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: addFeed")
 		try await withCheckedThrowingContinuation { continuation in
 			addFeed(for: account, with: feed, to: container) { result in
 				continuation.resume(with: result)
@@ -481,6 +489,7 @@ import Secrets
 	}
 
 	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: removeFeed")
 		try await withCheckedThrowingContinuation { continuation in
 			removeFeed(for: account, with: feed, from: container) { result in
 				continuation.resume(with: result)
@@ -511,6 +520,7 @@ import Secrets
 	}
 
 	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: moveFeed")
 		try await withCheckedThrowingContinuation{ continuation in
 			moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
 				continuation.resume(with: result)
@@ -555,6 +565,7 @@ import Secrets
 	}
 
 	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: restoreFeed")
 		try await withCheckedThrowingContinuation { continuation in
 			restoreFeed(for: account, feed: feed, container: container) { result in
 				continuation.resume(with: result)
@@ -585,6 +596,7 @@ import Secrets
 	}
 
 	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: restoreFolder")
 		try await withCheckedThrowingContinuation { continuation in
 			restoreFolder(for: account, folder: folder) { result in
 				continuation.resume(with: result)
@@ -618,6 +630,7 @@ import Secrets
 	}
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		Self.logger.debug("FeedlyAccountDelegate: markArticles")
 		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
@@ -630,17 +643,20 @@ import Secrets
 	}
 
 	func accountDidInitialize(_ account: Account) {
+		Self.logger.debug("FeedlyAccountDelegate: accountDidInitialize")
 		initializedAccount = account
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 	}
 
 	func accountWillBeDeleted(_ account: Account) {
+		Self.logger.debug("FeedlyAccountDelegate: accountWillBeDeleted")
 		let logout = FeedlyLogoutOperation(account: account, service: caller)
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
 		MainThreadOperationQueue.shared.add(logout)
 	}
 
 	static func validateCredentials(transport: any Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		Self.logger.debug("FeedlyAccountDelegate: validateCredentials")
 		assertionFailure("An account instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
 		return credentials
 	}
@@ -649,17 +665,20 @@ import Secrets
 
 	/// Suspend all network activity
 	func suspendNetwork() {
+		Self.logger.debug("FeedlyAccountDelegate: suspendNetwork")
 		caller.suspend()
 		operationQueue.cancelAll()
 	}
 
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
+		Self.logger.debug("FeedlyAccountDelegate: suspendDatabase")
 		syncDatabase.suspend()
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
+		Self.logger.debug("FeedlyAccountDelegate: resume")
 		syncDatabase.resume()
 		caller.resume()
 	}
@@ -678,6 +697,7 @@ import Secrets
 extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 
 	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
+		Self.logger.debug("FeedlyAccountDelegate: reauthorizeFeedlyAPICaller")
 		guard let account = initializedAccount else {
 			completionHandler(false)
 			return

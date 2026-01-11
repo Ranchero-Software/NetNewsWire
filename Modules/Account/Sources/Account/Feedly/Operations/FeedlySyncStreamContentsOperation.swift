@@ -49,7 +49,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 
 	@MainActor override func noteDidComplete() {
 		if isCanceled {
-			Feedly.logger.info("Feedly: Canceling sync stream contents for \(self.resource.id)")
+			Feedly.logger.debug("FeedlySyncStreamContentsOperation: Canceling sync stream contents for \(self.resource.id)")
 			operationQueue?.cancelAll()
 		}
 		super.noteDidComplete()
@@ -61,7 +61,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 			return
 		}
 
-		Feedly.logger.info("Feedly: Requesting page for \(self.resource.id)")
+		Feedly.logger.debug("FeedlySyncStreamContentsOperation: Requesting page for \(self.resource.id)")
 		let operations = pageOperations(for: continuation)
 		operationQueue.add(operations)
 	}
@@ -94,14 +94,14 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 
 	@MainActor func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream) {
 		guard !isCanceled else {
-			Feedly.logger.info("Feedly: Canceled requesting page for \(self.resource.id)")
+			Feedly.logger.debug("FeedlySyncStreamContentsOperation: Canceled requesting page for \(self.resource.id)")
 			return
 		}
 
-		Feedly.logger.info("Feedly: Ingesting \(stream.items.count) items from \(stream.id)")
+		Feedly.logger.debug("FeedlySyncStreamContentsOperation: Ingesting \(stream.items.count) items from \(stream.id)")
 
 		guard isPagingEnabled, let continuation = stream.continuation else {
-			Feedly.logger.info("Feedly: Reached end of stream for \(stream.id)")
+			Feedly.logger.debug("FeedlySyncStreamContentsOperation: Reached end of stream for \(stream.id)")
 			return
 		}
 
@@ -109,7 +109,7 @@ final class FeedlySyncStreamContentsOperation: FeedlyOperation, FeedlyOperationD
 	}
 
 	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		Feedly.logger.info("Feedly: Finished ingesting items from \(self.resource.id)")
+		Feedly.logger.debug("FeedlySyncStreamContentsOperation: Finished ingesting items from \(self.resource.id)")
 		didComplete()
 	}
 

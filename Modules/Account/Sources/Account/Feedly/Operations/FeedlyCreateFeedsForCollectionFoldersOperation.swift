@@ -93,7 +93,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, @un
 				return (feed, folder)
 			}
 
-		Feedly.logger.info("Feedly: Processing \(feedsAndFolders.count) feeds")
+		Feedly.logger.debug("FeedlyCreateFeedsForCollectionFoldersOperation: Processing \(feedsAndFolders.count) feeds")
 		for (feed, folder) in feedsAndFolders {
 			if !folder.has(feed) {
 				folder.addFeedToTreeAtTopLevel(feed)
@@ -106,7 +106,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, @un
 		account.removeFeedsFromTreeAtTopLevel(feedsWithoutCollections)
 
 		if !feedsWithoutCollections.isEmpty {
-			Feedly.logger.info("Feedly: Removed \(feedsWithoutCollections.count) feeds")
+			Feedly.logger.debug("FeedlyCreateFeedsForCollectionFoldersOperation: Removed \(feedsWithoutCollections.count) feeds")
 		}
 	}
 }

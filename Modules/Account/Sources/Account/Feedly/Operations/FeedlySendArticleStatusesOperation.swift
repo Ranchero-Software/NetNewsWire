@@ -25,7 +25,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation, @unchecked Send
 
 	override func run() {
 		Task { @MainActor in
-			Feedly.logger.info("Feedly: Sending article statuses")
+			Feedly.logger.debug("FeedlySendArticleStatusesOperation: Sending article statuses")
 
 			do {
 				guard let syncStatuses = try await database.selectForProcessing() else {
@@ -75,7 +75,7 @@ private extension FeedlySendArticleStatusesOperation {
 		}
 
 		Task { @MainActor in
-			Feedly.logger.info("Feedly: Finished sending article statuses")
+			Feedly.logger.debug("FeedlySendArticleStatusesOperation: Finished sending article statuses")
 			self.didComplete()
 		}
 	}

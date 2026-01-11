@@ -26,18 +26,18 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 	}
 
 	@MainActor override func run() {
-		Feedly.logger.info("Feedly: Requesting collections")
+		Feedly.logger.debug("FeedlyGetCollectionsOperation: Requesting collections")
 
 		service.getCollections { result in
 			Task { @MainActor in
 				switch result {
 				case .success(let collections):
-					Feedly.logger.info("Feedly: Received collections \(collections.map { $0.id })")
+					Feedly.logger.debug("FeedlyGetCollectionsOperation: Received collections \(collections.map { $0.id })")
 					self.collections = collections
 					self.didComplete()
 
 				case .failure(let error):
-					Feedly.logger.error("Feedly: Unable to request collections with error \(error.localizedDescription)")
+					Feedly.logger.error("FeedlyGetCollectionsOperation: Unable to request collections with error \(error.localizedDescription)")
 					self.didComplete(with: error)
 				}
 			}

@@ -59,7 +59,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 			dict[key] = value
 		}
 
-		Feedly.logger.info("Feedly: Grouped \(items.count) items by \(dict.count) feeds for \(self.parsedItemProvider.parsedItemProviderName)")
+		Feedly.logger.debug("FeedlyOrganiseParsedItemsByFeedOperation: Grouped \(items.count) items by \(dict.count) feeds for \(self.parsedItemProvider.parsedItemProviderName)")
 
 		itemsKeyedByFeedId = dict
 	}
