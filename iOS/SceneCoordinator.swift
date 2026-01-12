@@ -2273,7 +2273,9 @@ private extension SceneCoordinator {
 		}
 
 		discloseFeed(feed) {
-			self.selectArticleInCurrentFeed(articleID)
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+				self.selectArticleInCurrentFeed(articleID)
+			})
 		}
 	}
 
