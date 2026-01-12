@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7000 11 Jan 2026 - branch: main tag: iOS-7.0-7001
+
+Fixed (we think; we hope) a crashing bug that could happen during background feed refresh
+
 ### 7.0 TestFlight build 7000 10 Jan 2026 - branch: main tag: iOS-7.0-7000
 
 Adopted Liquid Glass UI
