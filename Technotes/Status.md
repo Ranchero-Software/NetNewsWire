@@ -10,6 +10,9 @@ Stuart working on Liquid Glass UI for NetNewsWire 7
 iOS shipping: 6.2.1 (6206)
 https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-6.2.1-6206
 
+iOS beta: 7.0 (7001)
+https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-7.0-7001
+
 ## Mac
 
 Mac shipping: 6.2.1
