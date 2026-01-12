@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import BackgroundTasks
+@preconcurrency import BackgroundTasks
 import os
 import WidgetKit
 import RSCore
@@ -348,20 +348,19 @@ private extension AppDelegate {
 
 }
 
-// MARK: Background Tasks
+// MARK: - Background Tasks
 
 private extension AppDelegate {
-
 	/// Register all background tasks.
-	func registerBackgroundTasks() {
+	nonisolated func registerBackgroundTasks() {
 		// Register background feed refresh.
-		BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.ranchero.NetNewsWire.FeedRefresh", using: nil) { (task) in
+		BGTaskScheduler.shared.register(forTaskWithIdentifier: "com.ranchero.NetNewsWire.FeedRefresh", using: nil) { task in
 			self.performBackgroundFeedRefresh(with: task as! BGAppRefreshTask)
 		}
 	}
 
-	/// Schedules a background app refresh based on `AppDefaults.refreshInterval`.
-	func scheduleBackgroundFeedRefresh() {
+	/// Schedule a background app refresh based on `AppDefaults.refreshInterval`.
+	nonisolated func scheduleBackgroundFeedRefresh() {
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
 		backgroundTaskDispatchQueue.async {
@@ -375,7 +374,7 @@ private extension AppDelegate {
 		}
 	}
 
-	func performBackgroundFeedRefresh(with task: BGAppRefreshTask) {
+	nonisolated func performBackgroundFeedRefresh(with task: BGAppRefreshTask) {
 
 		scheduleBackgroundFeedRefresh() // schedule next refresh
 
@@ -397,18 +396,17 @@ private extension AppDelegate {
 		// set expiration handler
 		task.expirationHandler = { [weak task] in
 			Self.logger.info("Background refresh terminated for running too long.")
-			DispatchQueue.main.async {
+			task?.setTaskCompleted(success: false)
+			Task { @MainActor in
 				self.suspendApplication()
-				task?.setTaskCompleted(success: false)
 			}
 		}
 	}
 }
 
-// Handle Notification Actions
+// MARK: - Handle Notification Actions
 
 private extension AppDelegate {
-
 	func handleMarkAsRead(userInfo: [AnyHashable: Any]) {
 		handleStatusNotification(userInfo: userInfo, statusKey: .read)
 	}
@@ -448,3 +446,4 @@ private extension AppDelegate {
 		}
 	}
 }
+
