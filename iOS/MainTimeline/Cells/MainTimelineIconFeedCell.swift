@@ -147,7 +147,12 @@ class MainTimelineIconFeedCell: UITableViewCell {
 					.paragraphStyle: paragraphStyle,
 					.foregroundColor: isSelected ? UIColor.white : UIColor.label
 				]
-				let summaryAttributed = NSAttributedString(string: "\n" + cellData.summary, attributes: summaryAttributes)
+				var summaryAttributed: NSAttributedString
+				if cellData.title != "" {
+					summaryAttributed = NSAttributedString(string: "\n" + cellData.summary, attributes: summaryAttributes)
+				} else {
+					summaryAttributed = NSAttributedString(string: cellData.summary, attributes: summaryAttributes)
+				}
 				attributedCellText.append(summaryAttributed)
 			}
 			articleTitle.attributedText = attributedCellText
