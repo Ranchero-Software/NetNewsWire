@@ -17,7 +17,7 @@ struct TodayWidgetView: View {
 	var entry: Provider.Entry
 
 	var body: some View {
-		if entry.widgetData.currentTodayCount == 0 {
+		if entry.widgetData.totalTodayCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.today.url)
 		} else {
@@ -34,8 +34,8 @@ struct TodayWidgetView: View {
 						.layoutPriority(1)
 					Spacer()
 						.layoutPriority(0)
-					if entry.widgetData.currentTodayCount > 0 {
-						Text(verbatim: entry.widgetData.currentTodayCount.formatted())
+					if entry.widgetData.totalTodayCount > 0 {
+						Text(verbatim: entry.widgetData.totalTodayUnreadCount > 0 ? "\(entry.widgetData.totalTodayCount.formatted()), \(entry.widgetData.totalTodayUnreadCount.formatted()) unread" : entry.widgetData.totalTodayCount.formatted())
 							.font(.caption2)
 							.bold()
 							.foregroundColor(.secondary)
@@ -48,14 +48,8 @@ struct TodayWidgetView: View {
 				Divider()
 				if entry.widgetData.todayArticles.count > 0 {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
-						if i != 0 {
-							Divider()
-							ArticleItemView(article: entry.widgetData.todayArticles[i],
-											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-						} else {
-							ArticleItemView(article: entry.widgetData.todayArticles[i],
-											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-						}
+						ArticleItemView(article: entry.widgetData.todayArticles[i],
+										deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
 					})
 				}
 				Spacer()
@@ -79,9 +73,9 @@ struct TodayWidgetView: View {
 		}
 
 		if family == .systemLarge {
-			return entry.widgetData.currentTodayCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentTodayCount
+			return entry.widgetData.totalTodayCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.totalTodayCount
 		}
-		return entry.widgetData.todayArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentTodayCount
+		return entry.widgetData.totalTodayCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.totalTodayCount
 	}
 
 	var inboxZero: some View {

@@ -18,7 +18,7 @@ struct WidgetDataDecoder {
 			let decodedWidgetData = try JSONDecoder().decode(WidgetData.self, from: Data(contentsOf: dataURL!))
 			return decodedWidgetData
 		} else {
-			return WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
+			return WidgetData(totalUnreadCount: 0, totalTodayCount: 0, totalTodayUnreadCount: 0, totalStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
 		}
 	}
 
@@ -29,7 +29,7 @@ struct WidgetDataDecoder {
 			let decoded = try JSONDecoder().decode(WidgetData.self, from: data)
 			return decoded
 		} catch {
-			return WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
+			return WidgetData(totalUnreadCount: 0, totalTodayCount: 0, totalTodayUnreadCount: 0, totalStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date())
 		}
 	}
 

@@ -16,7 +16,7 @@ struct UnreadWidgetView: View {
 	var entry: Provider.Entry
 
 	var body: some View {
-		if entry.widgetData.currentUnreadCount == 0 {
+		if entry.widgetData.totalUnreadCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.unread.url)
 		} else {
@@ -33,8 +33,8 @@ struct UnreadWidgetView: View {
 						.layoutPriority(1)
 					Spacer()
 						.layoutPriority(0)
-					if entry.widgetData.currentUnreadCount - maxCount() > 0 {
-						Text(verbatim: entry.widgetData.currentUnreadCount.formatted())
+					if entry.widgetData.totalUnreadCount - maxCount() > 0 {
+						Text(verbatim: entry.widgetData.totalUnreadCount.formatted())
 							.font(.caption2)
 							.bold()
 							.foregroundColor(.secondary)
@@ -47,14 +47,8 @@ struct UnreadWidgetView: View {
 				Divider()
 				if entry.widgetData.unreadArticles.count > 0 {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
-						if i != 0 {
-							Divider()
-							ArticleItemView(article: entry.widgetData.unreadArticles[i],
-											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-						} else {
-							ArticleItemView(article: entry.widgetData.unreadArticles[i],
-											deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-						}
+						ArticleItemView(article: entry.widgetData.unreadArticles[i],
+										deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
 					})
 				}
 				Spacer()
@@ -77,9 +71,9 @@ struct UnreadWidgetView: View {
 		}
 
 		if family == .systemLarge {
-			return entry.widgetData.currentUnreadCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentUnreadCount
+			return entry.widgetData.totalUnreadCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.totalUnreadCount
 		}
-		return entry.widgetData.currentUnreadCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentUnreadCount
+		return entry.widgetData.totalUnreadCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.totalUnreadCount
 	}
 
 	var inboxZero: some View {
