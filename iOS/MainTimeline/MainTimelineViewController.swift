@@ -121,7 +121,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	private var navigationBarSubtitleTitleLabel: UILabel {
 		let label = UILabel()
-		label.font = UIFont.preferredFont(forTextStyle: .footnote)
+		label.font = UIFont(name: "Helvetica", size: 12)
 		label.textColor = .systemGray
 		label.textAlignment = .center
 		label.isUserInteractionEnabled = true
