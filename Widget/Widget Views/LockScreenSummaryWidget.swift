@@ -19,39 +19,42 @@ struct LockScreenSummaryWidgetView: View {
 				unreadImage
 				Text("label.text.unread", comment: "Unread")
 				Spacer()
-				Text(verbatim: entry.widgetData.currentUnreadCount.formatted())
+				Text(verbatim: entry.widgetData.totalUnreadCount.formatted())
 					.frame(maxWidth: .infinity, alignment: .trailing)
 			}
 			HStack(alignment: .center) {
 				todayImage
 				Text("label.text.today", comment: "Today")
 				Spacer()
-				Text(verbatim: entry.widgetData.currentTodayCount.formatted())
+				Text(verbatim: entry.widgetData.totalTodayCount.formatted())
 					.frame(maxWidth: .infinity, alignment: .trailing)
 			}
 			HStack(alignment: .center) {
 				starredImage
 				Text("label.text.starred", comment: "Starred")
 				Spacer()
-				Text(verbatim: entry.widgetData.currentStarredCount.formatted())
+				Text(verbatim: entry.widgetData.totalStarredCount.formatted())
 					.frame(maxWidth: .infinity, alignment: .trailing)
 			}
 		}
-		.font(.caption)
+		.font(.subheadline)
     }
 
 	var starredImage: some View {
 		Image(systemName: "star.fill")
+			.resizable()
 			.frame(width: 14, height: 14)
 	}
 
 	var unreadImage: some View {
 		Image(systemName: "largecircle.fill.circle")
+			.resizable()
 			.frame(width: 14, height: 14)
 	}
 
 	var todayImage: some View {
 		Image(systemName: "sun.max.fill")
+			.resizable()
 			.frame(width: 14, height: 14)
 	}
 

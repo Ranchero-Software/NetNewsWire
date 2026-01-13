@@ -16,7 +16,7 @@ struct StarredWidgetView: View {
 	var entry: Provider.Entry
 
 	var body: some View {
-		if entry.widgetData.currentStarredCount == 0 {
+		if entry.widgetData.starredArticles.count == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.starred.url)
 		} else {
@@ -33,8 +33,8 @@ struct StarredWidgetView: View {
 						.layoutPriority(1)
 					Spacer()
 						.layoutPriority(0)
-					if entry.widgetData.currentStarredCount - maxCount() > 0 {
-						Text(verbatim: entry.widgetData.currentStarredCount.formatted())
+					if entry.widgetData.totalStarredCount - maxCount() > 0 {
+						Text(verbatim: entry.widgetData.totalStarredCount.formatted())
 							.font(.caption2)
 							.bold()
 							.foregroundColor(.secondary)
@@ -47,14 +47,8 @@ struct StarredWidgetView: View {
 				Divider()
 				if entry.widgetData.starredArticles.count > 0 {
 					ForEach(0..<maxCount(), id: \.self, content: { i in
-						if i != 0 {
-							Divider()
-							ArticleItemView(article: entry.widgetData.starredArticles[i],
-											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-						} else {
-							ArticleItemView(article: entry.widgetData.starredArticles[i],
-											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-						}
+						ArticleItemView(article: entry.widgetData.starredArticles[i],
+										deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
 					})
 				}
 				Spacer()
@@ -78,9 +72,9 @@ struct StarredWidgetView: View {
 		}
 
 		if family == .systemLarge {
-			return entry.widgetData.currentStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
+			return entry.widgetData.totalStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.totalStarredCount
 		}
-		return entry.widgetData.currentStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.currentStarredCount
+		return entry.widgetData.totalStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.totalStarredCount
 	}
 
 	var inboxZero: some View {

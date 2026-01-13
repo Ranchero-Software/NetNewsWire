@@ -9,9 +9,10 @@
 import Foundation
 
 struct WidgetData: Codable {
-	let currentUnreadCount: Int
-	let currentTodayCount: Int
-	let currentStarredCount: Int
+	let totalUnreadCount: Int
+	let totalTodayCount: Int
+	let totalTodayUnreadCount: Int
+	let totalStarredCount: Int
 	let unreadArticles: [LatestArticle]
 	let starredArticles: [LatestArticle]
 	let todayArticles: [LatestArticle]

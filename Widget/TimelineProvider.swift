@@ -51,7 +51,7 @@ struct Provider: TimelineProvider {
 			let widgetData = try WidgetDataDecoder.decodeWidgetData()
 			entry = WidgetTimelineEntry(date: date, widgetData: widgetData)
 		} catch {
-			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(currentUnreadCount: 0, currentTodayCount: 0, currentStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date.now))
+			entry = WidgetTimelineEntry(date: date, widgetData: WidgetData(totalUnreadCount: 0, totalTodayCount: 0, totalTodayUnreadCount: 0, totalStarredCount: 0, unreadArticles: [], starredArticles: [], todayArticles: [], lastUpdateTime: Date.now))
 		}
 
 		let fallback = Calendar.current.date(byAdding: .minute, value: 30, to: Date.now)!

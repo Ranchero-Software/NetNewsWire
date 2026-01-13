@@ -15,6 +15,8 @@ class MainTimelineFeedCell: UITableViewCell {
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
 
+    private(set) var usedTitleLineCount: Int = 0
+
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
@@ -95,30 +97,69 @@ class MainTimelineFeedCell: UITableViewCell {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
 			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
-			paragraphStyle.lineBreakMode = .byTruncatingTail
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .headline),
 				.paragraphStyle: paragraphStyle,
 				.foregroundColor: isSelected ? UIColor.white : UIColor.label
 			]
-			let titleWithNewline = cellData.title + (cellData.summary != "" ? "\n" : "" )
-			let titleAttributed = NSAttributedString(string: titleWithNewline, attributes: titleAttributes)
+			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-		if cellData.summary != "" {
-			let paragraphStyle = NSMutableParagraphStyle()
-			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
-			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
-			paragraphStyle.lineBreakMode = .byTruncatingTail
-			let summaryAttributes: [NSAttributedString.Key: Any] = [
-				.font: UIFont.preferredFont(forTextStyle: .body),
-				.paragraphStyle: paragraphStyle,
-				.foregroundColor: isSelected ? UIColor.white : UIColor.label
-			]
-			let summaryAttributed = NSAttributedString(string: cellData.summary, attributes: summaryAttributes)
-			attributedCellText.append(summaryAttributed)
-		}
+		
 		articleTitle.attributedText = attributedCellText
+		
+		if linesUsedForTitleGreaterThanOrEqualToPreference() {
+			// No need to add cell summary as we're already at maximum.
+			articleTitle.lineBreakMode = .byTruncatingTail
+			return
+		} else {
+			if cellData.summary != "" {
+				let paragraphStyle = NSMutableParagraphStyle()
+				paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
+				paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
+				let summaryAttributes: [NSAttributedString.Key: Any] = [
+					.font: UIFont.preferredFont(forTextStyle: .body),
+					.paragraphStyle: paragraphStyle,
+					.foregroundColor: isSelected ? UIColor.white : UIColor.label
+				]
+				let summaryAttributed = NSAttributedString(string: "\n" + cellData.summary, attributes: summaryAttributes)
+				attributedCellText.append(summaryAttributed)
+			}
+			articleTitle.attributedText = attributedCellText
+			if linesUsedForTitleGreaterThanOrEqualToPreference() {
+				articleTitle.lineBreakMode = .byTruncatingTail
+			}
+		}
+	}
+	
+	func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
+		contentView.layoutIfNeeded()
+		
+		let attributed = articleTitle.attributedText ?? NSAttributedString()
+		let textStorage = NSTextStorage(attributedString: attributed)
+		let containerSize = CGSize(width: articleTitle.bounds.width, height: .greatestFiniteMagnitude)
+		let textContainer = NSTextContainer(size: containerSize)
+		textContainer.lineFragmentPadding = 0
+		textContainer.maximumNumberOfLines = articleTitle.numberOfLines // 0 means unlimited
+		textContainer.lineBreakMode = articleTitle.lineBreakMode
+
+		let layoutManager = NSLayoutManager()
+		layoutManager.addTextContainer(textContainer)
+		textStorage.addLayoutManager(layoutManager)
+
+		_ = layoutManager.glyphRange(for: textContainer)
+
+		var lineCount = 0
+		var glyphIndex = 0
+		let glyphs = layoutManager.numberOfGlyphs
+		while glyphIndex < glyphs {
+			var lineRange = NSRange()
+			_ = layoutManager.lineFragmentRect(forGlyphAt: glyphIndex, effectiveRange: &lineRange)
+			glyphIndex = NSMaxRange(lineRange)
+			lineCount += 1
+		}
+		usedTitleLineCount = lineCount
+		return usedTitleLineCount >= AppDefaults.shared.timelineNumberOfLines
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
@@ -145,3 +186,4 @@ class MainTimelineFeedCell: UITableViewCell {
 		self.backgroundConfiguration = backgroundConfig
 	}
 }
+
