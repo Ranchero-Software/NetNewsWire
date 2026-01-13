@@ -42,6 +42,7 @@ enum CreateReaderAPISubscriptionResult {
 		case subscriptionList = "/reader/api/0/subscription/list"
 		case subscriptionEdit = "/reader/api/0/subscription/edit"
 		case subscriptionAdd = "/reader/api/0/subscription/quickadd"
+		case subscriptionImport = "/reader/api/0/subscription/import"
 		case contents = "/reader/api/0/stream/items/contents"
 		case itemIds = "/reader/api/0/stream/items/ids"
 		case editTag = "/reader/api/0/edit-tag"
@@ -524,6 +525,27 @@ enum CreateReaderAPISubscriptionResult {
 
 		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation)
 	}
+
+    @MainActor func importOPML(opmlData: Data) async throws {
+        guard let baseURL = apiBaseURL else {
+            throw CredentialsError.incompleteCredentials
+        }
+
+        let callURL = baseURL
+            .appendingPathComponent(ReaderAPIEndpoints.subscriptionImport.rawValue)
+        var request = URLRequest(url: callURL, readerAPICredentials: self.credentials)
+        addVariantHeaders(&request)
+        request.setValue("text/xml", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "POST"
+        request.httpBody = opmlData
+
+        let (response, responseData) = try await transport.send(request: request)
+		
+		guard response.statusCode == 200 else {
+			throw AccountError.invalidResponse
+		}
+    }
+
 
 	public func createUnreadEntries(entries: [String]) async throws {
 
