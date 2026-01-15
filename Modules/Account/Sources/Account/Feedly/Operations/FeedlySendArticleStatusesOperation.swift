@@ -30,7 +30,6 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 			do {
 				let syncStatuses = try await database.selectForProcessing() ?? Set<SyncStatus>()
 				self.processStatuses(Array(syncStatuses))
-				self.didFinish()
 			} catch {
 				self.didFinish(with: error)
 			}
