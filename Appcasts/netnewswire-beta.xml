@@ -7,6 +7,18 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0b4</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed Feedly syncing — it’s working again
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 14 Jan 2026 20:45:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b4/NetNewsWire7.0b4.zip" sparkle:version="7004" sparkle:shortVersionString="7.0b4" length="10349072" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0b3</title>
             <description><![CDATA[
 				<ul>
