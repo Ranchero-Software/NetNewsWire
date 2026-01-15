@@ -446,7 +446,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			completion?()
 			return
 		}
-
+		
 		collectionView.performBatchUpdates {
 			if let deletes = changes.deletes, !deletes.isEmpty {
 				collectionView.deleteSections(IndexSet(deletes))
@@ -479,17 +479,17 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 					}
 				}
 			}
-		}
-
-		if let rowChanges = changes.rowChanges {
-			for rowChange in rowChanges {
-				if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {
-					collectionView.reloadItems(at: reloads)
+		} completion: { finished in
+			if let rowChanges = changes.rowChanges {
+				for rowChange in rowChanges {
+					if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {
+						self.collectionView.reloadItems(at: reloads)
+					}
 				}
 			}
-		}
 
-		completion?()
+			completion?()
+		}
 	}
 
 	func applyToAvailableCells(_ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
