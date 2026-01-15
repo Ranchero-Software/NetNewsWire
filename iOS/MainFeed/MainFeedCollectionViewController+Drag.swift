@@ -37,4 +37,3 @@ extension MainFeedCollectionViewController: UICollectionViewDragDelegate {
 		return [dragItem]
 	}
 }
-

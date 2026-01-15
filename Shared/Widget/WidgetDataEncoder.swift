@@ -139,7 +139,7 @@ import Account
 									starredArticles: starredArticles,
 									todayArticles: todayArticles,
 									lastUpdateTime: Date.now)
-		
+
 		return latestData
 	}
 

@@ -564,7 +564,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			  let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)), let _ = view.window else {
 				return nil
 		}
-	
+
 		let previewView = cell.contentView
 		let inset: CGFloat = 0
 		let visibleBounds = previewView.bounds.insetBy(dx: inset, dy: 2)

@@ -15,7 +15,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	@IBOutlet var indicatorView: IconView!
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
-	
+
 	private(set) var usedTitleLineCount: Int = 0
 
 	var cellData: MainTimelineCellData! {
@@ -130,9 +130,9 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-		
+
 		articleTitle.attributedText = attributedCellText
-		
+
 		if linesUsedForTitleGreaterThanOrEqualToPreference() {
 			// No need to add cell summary as we're already at maximum.
 			articleTitle.lineBreakMode = .byTruncatingTail
@@ -161,10 +161,10 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			}
 		}
 	}
-	
+
 	func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
 		contentView.layoutIfNeeded()
-		
+
 		let attributed = articleTitle.attributedText ?? NSAttributedString()
 		let textStorage = NSTextStorage(attributedString: attributed)
 		let containerSize = CGSize(width: articleTitle.bounds.width, height: .greatestFiniteMagnitude)

@@ -105,9 +105,9 @@ class MainTimelineFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-		
+
 		articleTitle.attributedText = attributedCellText
-		
+
 		if linesUsedForTitleGreaterThanOrEqualToPreference() {
 			// No need to add cell summary as we're already at maximum.
 			articleTitle.lineBreakMode = .byTruncatingTail
@@ -136,10 +136,10 @@ class MainTimelineFeedCell: UITableViewCell {
 			}
 		}
 	}
-	
+
 	func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
 		contentView.layoutIfNeeded()
-		
+
 		let attributed = articleTitle.attributedText ?? NSAttributedString()
 		let textStorage = NSTextStorage(attributedString: attributed)
 		let containerSize = CGSize(width: articleTitle.bounds.width, height: .greatestFiniteMagnitude)
@@ -191,4 +191,3 @@ class MainTimelineFeedCell: UITableViewCell {
 		self.backgroundConfiguration = backgroundConfig
 	}
 }
-
