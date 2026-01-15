@@ -48,6 +48,8 @@ Commit
 
 On branch (or on main, if working on main):
 
+git push
+
 Use SemVer with tags
 Tag the app: git tag iOS-6.1.5-6124
 Push: git push origin iOS-6.1.5-6124
@@ -72,5 +74,3 @@ NetNewsWire 6.1.6 (6140) for iOS - TestFlight
 
 Public TestFlight link:
 https://testflight.apple.com/join/wpedPMRR
-
-Update Technotes/Status.md
