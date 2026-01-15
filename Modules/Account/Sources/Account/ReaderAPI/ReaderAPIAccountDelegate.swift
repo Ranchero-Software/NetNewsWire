@@ -54,7 +54,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	let refreshProgress = RSProgress()
 
 	var behaviors: AccountBehaviors {
-		var behaviors: AccountBehaviors = [.disallowOPMLImports, .disallowFeedInMultipleFolders]
+		var behaviors: AccountBehaviors = [.disallowFeedInMultipleFolders]
 		if variant == .freshRSS {
 			behaviors.append(.disallowFeedInRootFolder)
 		}
@@ -215,6 +215,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+        let opmlData = try Data(contentsOf: opmlFile)
+        try await caller.importOPML(opmlData: opmlData)
 	}
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
