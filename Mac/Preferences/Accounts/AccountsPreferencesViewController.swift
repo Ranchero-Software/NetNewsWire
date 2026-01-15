@@ -189,7 +189,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			addAccount.delegate = self
 			addAccount.presentationAnchor = window
 			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
-			FeedlyMainThreadOperationQueue.shared.add(addAccount)
+			MainThreadOperationQueue.shared.add(addAccount)
 
 		case .newsBlur:
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()

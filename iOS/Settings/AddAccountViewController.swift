@@ -196,7 +196,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
-			FeedlyMainThreadOperationQueue.shared.add(addAccount)
+			MainThreadOperationQueue.shared.add(addAccount)
 		case .newsBlur:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
