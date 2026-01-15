@@ -1,6 +1,14 @@
 # iOS Release Notes
 
-### 7.0 TestFlight build 7000 11 Jan 2026 - branch: main tag: iOS-7.0-7001
+### 7.0 TestFlight build 7002 14 Jan 2026 - branch: main tag: iOS-7.0-7002
+
+Fixed Feedly syncing — it’s working again
+Fixed some timeline text layout issues
+Fixed a contextual menu crash
+Fixed a crash in springboard widgets
+Fixed some widget layout issues
+
+### 7.0 TestFlight build 7001 11 Jan 2026 - branch: main tag: iOS-7.0-7001
 
 Fixed (we think; we hope) a crashing bug that could happen during background feed refresh
 
