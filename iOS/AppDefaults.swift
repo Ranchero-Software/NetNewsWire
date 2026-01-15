@@ -316,7 +316,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var feedsHidingReadArticles: [String: Set<String>] { // Account id: Set<feed.webFeedID>
+	var feedsHidingReadArticles: [String: Set<String>] { // Account id: Set<feed.feedID>
 		get {
 			guard let d = UserDefaults.standard.dictionary(forKey: Key.feedsHidingReadArticles) as? [String: [String]] else {
 				return [String: Set<String>]()

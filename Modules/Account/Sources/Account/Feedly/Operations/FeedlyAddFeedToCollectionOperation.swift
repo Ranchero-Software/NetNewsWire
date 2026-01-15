@@ -12,7 +12,7 @@ protocol FeedlyAddFeedToCollectionService {
 	func addFeed(with feedId: FeedlyFeedResourceId, title: String?, toCollectionWith collectionId: String, completion: @escaping @Sendable (Result<[FeedlyFeed], Error>) -> ())
 }
 
-final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding, @unchecked Sendable {
+final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, FeedlyResourceProviding {
 
 	let feedName: String?
 	let collectionId: String
@@ -28,7 +28,6 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 		self.feedName = feedName
 		self.collectionId = collectionId
 		self.service = service
-		super.init()
 	}
 
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
@@ -40,15 +39,14 @@ final class FeedlyAddFeedToCollectionOperation: FeedlyOperation, FeedlyFeedsAndF
 	override func run() {
 		service.addFeed(with: feedResource, title: feedName, toCollectionWith: collectionId) { [weak self] result in
 			Task { @MainActor in
-				guard let self else {
+				guard let self = self else {
 					return
 				}
 				if self.isCanceled {
-					self.didComplete()
+					self.didFinish()
 					return
 				}
 				self.didCompleteRequest(result)
-				self.didComplete()
 			}
 		}
 	}
@@ -64,11 +62,13 @@ private extension FeedlyAddFeedToCollectionOperation {
 			let feedsWithCreatedFeedId = feedlyFeeds.filter { $0.id == resource.id }
 
 			if feedsWithCreatedFeedId.isEmpty {
-				self.error = AccountError.createErrorNotFound
+				didFinish(with: AccountError.createErrorNotFound)
+			} else {
+				didFinish()
 			}
 
 		case .failure(let error):
-			self.error = error
+			didFinish(with: error)
 		}
 	}
 }

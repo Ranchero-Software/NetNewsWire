@@ -13,34 +13,33 @@ import os.log
 
 
 /// Take changes to statuses of articles locally and apply them to the corresponding the articles remotely.
-final class FeedlySendArticleStatusesOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlySendArticleStatusesOperation: FeedlyOperation {
+
 	private let database: SyncDatabase
 	private let service: FeedlyMarkArticlesService
 
-	@MainActor init(database: SyncDatabase, service: FeedlyMarkArticlesService) {
+	init(database: SyncDatabase, service: FeedlyMarkArticlesService) {
 		self.database = database
 		self.service = service
-		super.init()
 	}
 
 	override func run() {
-		Task { @MainActor in
-			Feedly.logger.debug("FeedlySendArticleStatusesOperation: Sending article statuses")
+		Feedly.logger.info("Feedly: Sending article statuses")
 
+		Task {
 			do {
-				guard let syncStatuses = try await database.selectForProcessing() else {
-					didComplete()
-					return
-				}
-				processStatuses(Array(syncStatuses))
+				let syncStatuses = try await database.selectForProcessing() ?? Set<SyncStatus>()
+				self.processStatuses(Array(syncStatuses))
+				self.didFinish()
 			} catch {
-				didComplete()
+				self.didFinish(with: error)
 			}
 		}
 	}
 }
 
 private extension FeedlySendArticleStatusesOperation {
+
 	func processStatuses(_ pending: [SyncStatus]) {
 		let statuses: [(status: SyncStatus.Key, flag: Bool, action: FeedlyMarkAction)] = [
 			(.read, false, .unread),
@@ -74,9 +73,9 @@ private extension FeedlySendArticleStatusesOperation {
 			}
 		}
 
-		Task { @MainActor in
-			Feedly.logger.debug("FeedlySendArticleStatusesOperation: Finished sending article statuses")
-			self.didComplete()
+		group.notify(queue: DispatchQueue.main) {
+			Feedly.logger.info("Feedly: Finished sending article statuses")
+			self.didFinish()
 		}
 	}
 }

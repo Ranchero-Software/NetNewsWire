@@ -11,34 +11,52 @@ import RSWeb
 import RSCore
 
 protocol FeedlyOperationDelegate: AnyObject {
-	@MainActor func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
+	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error)
 }
 
 /// Abstract base class for Feedly sync operations.
 ///
 /// Normally we don’t do inheritance — but in this case
 /// it’s the best option.
-open class FeedlyOperation: MainThreadOperation, @unchecked Sendable {
-	weak var delegate: FeedlyOperationDelegate?
-	var error: Error?
+@MainActor open class FeedlyOperation: FeedlyMainThreadOperation {
 
-	nonisolated func didComplete(with error: Error) {
-		if Thread.isMainThread {
-			MainActor.assumeIsolated {
-				self.error = error
-				didComplete()
-			}
-		} else {
-			Task { @MainActor in
-				didComplete(with: error)
+	weak var delegate: FeedlyOperationDelegate?
+	var downloadProgress: DownloadProgress? {
+		didSet {
+			oldValue?.completeTask()
+			downloadProgress?.addToNumberOfTasksAndRemaining(1)
+		}
+	}
+
+	// FeedlyMainThreadOperation
+	public var isCanceled = false {
+		didSet {
+			if isCanceled {
+				didCancel()
 			}
 		}
 	}
-	
-	@MainActor open override func noteDidComplete() {
-		if let error {
-			delegate?.feedlyOperation(self, didFailWith: error)
+	public var id: Int?
+	public weak var operationDelegate: FeedlyMainThreadOperationDelegate?
+	public var name: String?
+	public var completionBlock: FeedlyMainThreadOperation.FeedlyMainThreadOperationCompletionBlock?
+
+	public func run() {
+	}
+
+	func didFinish() {
+		if !isCanceled {
+			operationDelegate?.operationDidComplete(self)
 		}
-		super.noteDidComplete()
+		downloadProgress?.completeTask()
+	}
+
+	func didFinish(with error: Error) {
+		delegate?.feedlyOperation(self, didFailWith: error)
+		didFinish()
+	}
+
+	public func didCancel() {
+		didFinish()
 	}
 }

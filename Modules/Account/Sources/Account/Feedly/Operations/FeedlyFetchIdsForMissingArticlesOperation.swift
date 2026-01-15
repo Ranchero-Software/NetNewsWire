@@ -1,5 +1,5 @@
 //
-//  FeedlyFetchIDsForMissingArticlesOperation.swift
+//  FeedlyFetchIdsForMissingArticlesOperation.swift
 //  Account
 //
 //  Created by Kiel Gillard on 7/1/20.
@@ -9,25 +9,24 @@
 import Foundation
 import os.log
 
-final class FeedlyFetchIDsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, @unchecked Sendable {
+final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 
 	private let account: Account
 
 	private(set) var entryIDs = Set<String>()
 
-	@MainActor init(account: Account) {
+	init(account: Account) {
 		self.account = account
-		super.init()
 	}
 
-	@MainActor override func run() {
-		Task { @MainActor in
+	override func run() {
+		Task {
 			do {
 				let articleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				entryIDs.formUnion(articleIDs)
-				didComplete()
+				didFinish()
 			} catch {
-				didComplete(with: error)
+				didFinish(with: error)
 			}
 		}
 	}

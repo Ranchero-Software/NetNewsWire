@@ -10,20 +10,19 @@ import Foundation
 import os.log
 
 /// Single responsibility is to accurately reflect Collections and their Feeds as Folders and their Feeds.
-final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation {
 
 	let account: Account
 	let feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding
 
-	@MainActor init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding) {
+	init(account: Account, feedsAndFoldersProvider: FeedlyFeedsAndFoldersProviding) {
 		self.feedsAndFoldersProvider = feedsAndFoldersProvider
 		self.account = account
-		super.init()
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		defer {
-			didComplete()
+			didFinish()
 		}
 
 		let pairs = feedsAndFoldersProvider.feedsAndFolders
@@ -39,7 +38,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, @un
 			let feedsToRemove = feedsInFolder.filter { !feedsInCollection.contains($0.feedID) }
 			if !feedsToRemove.isEmpty {
 				folder.removeFeedsFromTreeAtTopLevel(feedsToRemove)
-//				os_log(.debug, log: log, "\"%@\" - removed: %@", collection.label, feedsToRemove.map { $0.feedID }, feedsInCollection)
+				//				os_log(.debug, log: log, "\"%@\" - removed: %@", collection.label, feedsToRemove.map { $0.feedID }, feedsInCollection)
 			}
 
 		}
@@ -93,8 +92,8 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, @un
 				return (feed, folder)
 			}
 
-		Feedly.logger.debug("FeedlyCreateFeedsForCollectionFoldersOperation: Processing \(feedsAndFolders.count) feeds")
-		for (feed, folder) in feedsAndFolders {
+		Feedly.logger.info("Feedly: Processing \(feedsAndFolders.count) feeds")
+		feedsAndFolders.forEach { (feed, folder) in
 			if !folder.has(feed) {
 				folder.addFeedToTreeAtTopLevel(feed)
 			}
@@ -106,7 +105,7 @@ final class FeedlyCreateFeedsForCollectionFoldersOperation: FeedlyOperation, @un
 		account.removeFeedsFromTreeAtTopLevel(feedsWithoutCollections)
 
 		if !feedsWithoutCollections.isEmpty {
-			Feedly.logger.debug("FeedlyCreateFeedsForCollectionFoldersOperation: Removed \(feedsWithoutCollections.count) feeds")
+			Feedly.logger.info("Feedly: Removed \(feedsWithoutCollections.count) feeds")
 		}
 	}
 }

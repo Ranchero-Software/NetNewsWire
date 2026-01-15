@@ -14,7 +14,7 @@ protocol FeedlyGetStreamIdsOperationDelegate: AnyObject {
 }
 
 /// Single responsibility is to get the stream ids from Feedly.
-final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding, @unchecked Sendable {
+final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 
 	var entryIDs: Set<String> {
 		guard let ids = streamIds?.ids else {
@@ -33,33 +33,30 @@ final class FeedlyGetStreamIdsOperation: FeedlyOperation, FeedlyEntryIdentifierP
 	let unreadOnly: Bool?
 	let newerThan: Date?
 
-	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, continuation: String? = nil, newerThan: Date? = nil, unreadOnly: Bool?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.continuation = continuation
 		self.newerThan = newerThan
 		self.unreadOnly = unreadOnly
-		super.init()
 	}
 
 	weak var streamIdsDelegate: FeedlyGetStreamIdsOperationDelegate?
 
-	@MainActor override func run() {
+	override func run() {
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
-			Task { @MainActor in
-				switch result {
-				case .success(let stream):
-					self.streamIds = stream
-					
-					self.streamIdsDelegate?.feedlyGetStreamIdsOperation(self, didGet: stream)
-					
-					self.didComplete()
-					
-				case .failure(let error):
-					Feedly.logger.error("Feedly: Unable to get stream IDs: \(error.localizedDescription)")
-					self.didComplete(with: error)
-				}
+			switch result {
+			case .success(let stream):
+				self.streamIds = stream
+
+				self.streamIdsDelegate?.feedlyGetStreamIdsOperation(self, didGet: stream)
+
+				self.didFinish()
+
+			case .failure(let error):
+				Feedly.logger.error("Feedly: Unable to get stream IDs: \(error.localizedDescription)")
+				self.didFinish(with: error)
 			}
 		}
 	}

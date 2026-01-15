@@ -11,17 +11,16 @@ import os.log
 import RSParser
 
 /// Get full entries for the entry identifiers.
-final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding, @unchecked Sendable {
+final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
 
 	let account: Account
 	let service: FeedlyGetEntriesService
 	let provider: FeedlyEntryIdentifierProviding
 
-	@MainActor init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding) {
+	init(account: Account, service: FeedlyGetEntriesService, provider: FeedlyEntryIdentifierProviding) {
 		self.account = account
 		self.service = service
 		self.provider = provider
-		super.init()
 	}
 
 	private(set) var entries = [FeedlyEntry]()
@@ -38,12 +37,12 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		})
 
 		// TODO: Fix the below. There’s an error on the os.log line: "Expression type '()' is ambiguous without more context"
-//		if parsed.count != entries.count {
-//			let entryIds = Set(entries.map { $0.id })
-//			let parsedIds = Set(parsed.map { $0.uniqueID })
-//			let difference = entryIds.subtracting(parsedIds)
-//			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
-//		}
+		//		if parsed.count != entries.count {
+		//			let entryIds = Set(entries.map { $0.id })
+		//			let parsedIds = Set(parsed.map { $0.uniqueID })
+		//			let difference = entryIds.subtracting(parsedIds)
+		//			os_log(.debug, log: log, "%{public}@ dropping articles with ids: %{public}@.", self, difference)
+		//		}
 
 		storedParsedEntries = parsed
 
@@ -54,17 +53,17 @@ final class FeedlyGetEntriesOperation: FeedlyOperation, FeedlyEntryProviding, Fe
 		return name ?? String(describing: Self.self)
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		service.getEntries(for: provider.entryIDs) { result in
 			Task { @MainActor in
 				switch result {
 				case .success(let entries):
 					self.entries = entries
-					self.didComplete()
-
+					self.didFinish()
+					
 				case .failure(let error):
 					Feedly.logger.error("Feedly: Unable to get entries with error \(error.localizedDescription)")
-					self.didComplete(with: error)
+					self.didFinish(with: error)
 				}
 			}
 		}

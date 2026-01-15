@@ -16,7 +16,7 @@ protocol FeedlyParsedItemsByFeedProviding {
 }
 
 /// Group articles by their feeds.
-final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding, @unchecked Sendable {
+final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyParsedItemsByFeedProviding {
 
 	private let account: Account
 	private let parsedItemProvider: FeedlyParsedItemProviding
@@ -32,15 +32,14 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 
 	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
 
-	@MainActor init(account: Account, parsedItemProvider: FeedlyParsedItemProviding) {
+	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding) {
 		self.account = account
 		self.parsedItemProvider = parsedItemProvider
-		super.init()
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		defer {
-			didComplete()
+			didFinish()
 		}
 
 		let items = parsedItemProvider.parsedEntries
@@ -59,7 +58,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 			dict[key] = value
 		}
 
-		Feedly.logger.debug("FeedlyOrganiseParsedItemsByFeedOperation: Grouped \(items.count) items by \(dict.count) feeds for \(self.parsedItemProvider.parsedItemProviderName)")
+		Feedly.logger.info("Feedly: Grouped \(items.count) items by \(dict.count) feeds for \(self.parsedItemProvider.parsedItemProviderName)")
 
 		itemsKeyedByFeedId = dict
 	}
