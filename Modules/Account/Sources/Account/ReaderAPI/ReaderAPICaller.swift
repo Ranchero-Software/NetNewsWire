@@ -539,7 +539,7 @@ enum CreateReaderAPISubscriptionResult {
         request.httpMethod = "POST"
         request.httpBody = opmlData
 
-        let (response, responseData) = try await transport.send(request: request)
+        let (response, _) = try await transport.send(request: request)
 		
 		guard response.statusCode == 200 else {
 			throw AccountError.invalidResponse
