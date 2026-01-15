@@ -41,7 +41,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 	}
@@ -65,7 +65,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 		send.completionBlock = { _ in
 			didFinishExpectation.fulfill()
 		}
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
 		let statusCount = try await container.database.selectPendingCount()
@@ -92,7 +92,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -120,7 +120,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -148,7 +148,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -176,7 +176,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -204,7 +204,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -232,7 +232,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -260,7 +260,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -305,7 +305,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 
@@ -351,7 +351,7 @@ final class FeedlySendArticleStatusesOperationTests: XCTestCase {
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(send)
+		FeedlyMainThreadOperationQueue.shared.add(send)
 
 		await fulfillment(of: [didFinishExpectation], timeout: 2)
 

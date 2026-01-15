@@ -42,7 +42,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(mirrorOperation)
+		FeedlyMainThreadOperationQueue.shared.add(mirrorOperation)
 
 		waitForExpectations(timeout: 2)
 
@@ -71,7 +71,7 @@ import RSCore
 				completionExpectation.fulfill()
 			}
 
-			MainThreadOperationQueue.shared.add(addFolders)
+			FeedlyMainThreadOperationQueue.shared.add(addFolders)
 
 			waitForExpectations(timeout: 2)
 		}
@@ -85,7 +85,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(removeFolders)
+		FeedlyMainThreadOperationQueue.shared.add(removeFolders)
 
 		waitForExpectations(timeout: 2)
 
@@ -132,7 +132,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(mirrorOperation)
+		FeedlyMainThreadOperationQueue.shared.add(mirrorOperation)
 
 		waitForExpectations(timeout: 2)
 
@@ -176,7 +176,7 @@ import RSCore
 				completionExpectation.fulfill()
 			}
 
-			MainThreadOperationQueue.shared.add([addFoldersAndFeeds, createFeeds])
+			FeedlyMainThreadOperationQueue.shared.addOperations([addFoldersAndFeeds, createFeeds])
 
 			waitForExpectations(timeout: 2)
 
@@ -193,7 +193,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(removeFolders)
+		FeedlyMainThreadOperationQueue.shared.add(removeFolders)
 
 		waitForExpectations(timeout: 2)
 

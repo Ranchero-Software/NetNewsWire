@@ -32,7 +32,7 @@ import RSCore
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(operation)
+		FeedlyMainThreadOperationQueue.shared.add(operation)
 
 		waitForExpectations(timeout: 2)
 	}
@@ -52,9 +52,9 @@ import RSCore
 			didFinishExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(operation)
+		FeedlyMainThreadOperationQueue.shared.add(operation)
 
-		MainThreadOperationQueue.shared.cancel([operation])
+		FeedlyMainThreadOperationQueue.shared.cancelOperations([operation])
 
 		waitForExpectations(timeout: 1)
 	}

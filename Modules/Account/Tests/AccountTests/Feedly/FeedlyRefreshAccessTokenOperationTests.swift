@@ -62,7 +62,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(refresh)
+		FeedlyMainThreadOperationQueue.shared.add(refresh)
 		refresh.cancel()
 
 		waitForExpectations(timeout: 1)
@@ -100,7 +100,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(refresh)
+		FeedlyMainThreadOperationQueue.shared.add(refresh)
 
 		waitForExpectations(timeout: 1)
 
@@ -147,7 +147,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(refresh)
+		FeedlyMainThreadOperationQueue.shared.add(refresh)
 
 		waitForExpectations(timeout: 1)
 
@@ -201,7 +201,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(refresh)
+		FeedlyMainThreadOperationQueue.shared.add(refresh)
 
 		waitForExpectations(timeout: 1)
 

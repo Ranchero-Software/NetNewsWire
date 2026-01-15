@@ -74,7 +74,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(logout)
+		FeedlyMainThreadOperationQueue.shared.add(logout)
 		logout.cancel()
 
 		waitForExpectations(timeout: 1)
@@ -105,7 +105,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(logout)
+		FeedlyMainThreadOperationQueue.shared.add(logout)
 
 		waitForExpectations(timeout: 1)
 
@@ -151,7 +151,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(logout)
+		FeedlyMainThreadOperationQueue.shared.add(logout)
 
 		waitForExpectations(timeout: 1)
 
@@ -197,7 +197,7 @@ import Secrets
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(logout)
+		FeedlyMainThreadOperationQueue.shared.add(logout)
 
 		waitForExpectations(timeout: 1)
 
