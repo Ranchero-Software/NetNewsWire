@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.0b3 build 7004 14 Jan 2026 — branch: main tag: mac-7.0b4
+
+Fixed Feedly syncing — it’s working again
+
 ### 7.0b3 build 7003 10 Jan 2026: - branch: main tag: mac-7.0b3
 
 Fixed bug with persisting the theme selection
