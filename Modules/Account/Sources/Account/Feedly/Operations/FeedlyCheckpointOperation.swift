@@ -8,16 +8,19 @@
 
 import Foundation
 
-protocol FeedlyCheckpointOperationDelegate: AnyObject {
-	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation)
+@MainActor protocol FeedlyCheckpointOperationDelegate: AnyObject {
+	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation)
 }
 
 /// Let the delegate know an instance is executing. The semantics are up to the delegate.
-final class FeedlyCheckpointOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlyCheckpointOperation: FeedlyOperation {
+
 	weak var checkpointDelegate: FeedlyCheckpointOperationDelegate?
 
-	@MainActor override func run() {
+	override func run() {
+		defer {
+			didFinish()
+		}
 		checkpointDelegate?.feedlyCheckpointOperationDidReachCheckpoint(self)
-		didComplete()
 	}
 }

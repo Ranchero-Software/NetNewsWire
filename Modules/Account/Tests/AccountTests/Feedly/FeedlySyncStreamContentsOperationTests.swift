@@ -28,7 +28,7 @@ import RSCore
 	}
 
 	func testIngestsOnePageSuccess() throws {
-		let operationQueue = MainThreadOperationQueue()
+		let operationQueue = FeedlyMainThreadOperationQueue()
 		let service = TestGetStreamContentsService()
 		let resource = FeedlyCategoryResourceId(id: "user/1234/category/5678")
 		let newerThan: Date? = Date(timeIntervalSinceReferenceDate: 0)
@@ -46,7 +46,7 @@ import RSCore
 			XCTAssertNil(serviceUnreadOnly)
 		}
 
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, operationQueue: operationQueue)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
 
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
@@ -80,14 +80,14 @@ import RSCore
 			XCTAssertNil(serviceUnreadOnly)
 		}
 
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, operationQueue: MainThreadOperationQueue.shared)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
 
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(syncStreamContents)
+		FeedlyMainThreadOperationQueue.shared.add(syncStreamContents)
 
 		waitForExpectations(timeout: 2)
 	}
@@ -121,14 +121,14 @@ import RSCore
 			getStreamPageExpectation.fulfill()
 		}
 
-		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan, operationQueue: MainThreadOperationQueue.shared)
+		let syncStreamContents = FeedlySyncStreamContentsOperation(account: account, resource: resource, service: service, isPagingEnabled: true, newerThan: newerThan)
 
 		let completionExpectation = expectation(description: "Did Finish")
 		syncStreamContents.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(syncStreamContents)
+		FeedlyMainThreadOperationQueue.shared.add(syncStreamContents)
 
 		waitForExpectations(timeout: 10)
 

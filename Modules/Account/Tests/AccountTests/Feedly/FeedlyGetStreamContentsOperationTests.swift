@@ -40,7 +40,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(getStreamContents)
+		FeedlyMainThreadOperationQueue.shared.add(getStreamContents)
 
 		waitForExpectations(timeout: 2)
 
@@ -73,7 +73,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(getStreamContents)
+		FeedlyMainThreadOperationQueue.shared.add(getStreamContents)
 
 		waitForExpectations(timeout: 2)
 
@@ -105,7 +105,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(getStreamContents)
+		FeedlyMainThreadOperationQueue.shared.add(getStreamContents)
 
 		waitForExpectations(timeout: 2)
 

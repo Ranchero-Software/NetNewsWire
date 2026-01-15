@@ -14,22 +14,21 @@ protocol FeedlyFeedsAndFoldersProviding {
 }
 
 /// Reflect Collections from Feedly as Folders.
-final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding, @unchecked Sendable {
+final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFeedsAndFoldersProviding {
 
 	let account: Account
 	let collectionsProvider: FeedlyCollectionProviding
 
 	private(set) var feedsAndFolders = [([FeedlyFeed], Folder)]()
 
-	@MainActor init(account: Account, collectionsProvider: FeedlyCollectionProviding) {
+	init(account: Account, collectionsProvider: FeedlyCollectionProviding) {
 		self.collectionsProvider = collectionsProvider
 		self.account = account
-		super.init()
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		defer {
-			didComplete()
+			didFinish()
 		}
 
 		let localFolders = account.folders ?? Set()
@@ -45,7 +44,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 			return (collection.feeds, folder)
 		}
 
-		Feedly.logger.debug("FeedlyMirrorCollectionsAsFoldersOperation: Ensured \(self.feedsAndFolders.count) folders for \(collections.count) collections")
+		Feedly.logger.info("Feedly: Ensured \(self.feedsAndFolders.count) folders for \(collections.count) collections")
 
 		// Remove folders without a corresponding collection
 		let collectionFolders = Set(feedsAndFolders.map { $0.1 })
@@ -58,7 +57,7 @@ final class FeedlyMirrorCollectionsAsFoldersOperation: FeedlyOperation, FeedlyFe
 
 			let folderCountForLog = foldersWithoutCollections.count
 			let foldersForLog = foldersWithoutCollections.map { $0.externalID ?? $0.nameForDisplay }
-			Feedly.logger.debug("FeedlyMirrorCollectionsAsFoldersOperation: Removed \(folderCountForLog) folders: \(foldersForLog)")
+			Feedly.logger.info("Feedly: Removed \(folderCountForLog) folders: \(foldersForLog)")
 		}
 	}
 }

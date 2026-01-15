@@ -25,7 +25,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(getCollections)
+		FeedlyMainThreadOperationQueue.shared.add(getCollections)
 
 		waitForExpectations(timeout: 2)
 
@@ -82,7 +82,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(getCollections)
+		FeedlyMainThreadOperationQueue.shared.add(getCollections)
 
 		waitForExpectations(timeout: 2)
 

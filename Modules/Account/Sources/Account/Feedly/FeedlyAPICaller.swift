@@ -437,15 +437,17 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 		}
 
 		send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success((_, let collectionFeeds)):
-				if let feeds = collectionFeeds {
-					completion(.success(feeds))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
+			Task { @MainActor in
+				switch result {
+				case .success((_, let collectionFeeds)):
+					if let feeds = collectionFeeds {
+						completion(.success(feeds))
+					} else {
+						completion(.failure(URLError(.cannotDecodeContentData)))
+					}
+				case .failure(let error):
+					completion(.failure(error))
 				}
-			case .failure(let error):
-				completion(.failure(error))
 			}
 		}
 	}
@@ -959,3 +961,4 @@ extension FeedlyAPICaller: FeedlyLogoutService {
 		}
 	}
 }
+

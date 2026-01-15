@@ -14,31 +14,30 @@ protocol FeedlyCollectionProviding: AnyObject {
 }
 
 /// Get Collections from Feedly.
-final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProviding, @unchecked Sendable {
+final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProviding {
 
 	let service: FeedlyGetCollectionsService
 
 	private(set) var collections = [FeedlyCollection]()
 
-	@MainActor init(service: FeedlyGetCollectionsService) {
+	init(service: FeedlyGetCollectionsService) {
 		self.service = service
-		super.init()
 	}
 
-	@MainActor override func run() {
-		Feedly.logger.debug("FeedlyGetCollectionsOperation: Requesting collections")
+	override func run() {
+		Feedly.logger.info("Feedly: Requesting collections")
 
 		service.getCollections { result in
 			Task { @MainActor in
 				switch result {
 				case .success(let collections):
-					Feedly.logger.debug("FeedlyGetCollectionsOperation: Received collections \(collections.map { $0.id })")
+					Feedly.logger.info("Feedly: Received collections \(collections.map { $0.id })")
 					self.collections = collections
-					self.didComplete()
+					self.didFinish()
 
 				case .failure(let error):
-					Feedly.logger.error("FeedlyGetCollectionsOperation: Unable to request collections with error \(error.localizedDescription)")
-					self.didComplete(with: error)
+					Feedly.logger.error("Feedly: Unable to request collections with error \(error.localizedDescription)")
+					self.didFinish(with: error)
 				}
 			}
 		}

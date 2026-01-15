@@ -13,37 +13,37 @@ protocol FeedlyLogoutService {
 	func logout(completion: @escaping @MainActor (Result<Void, Error>) -> ())
 }
 
-final class FeedlyLogoutOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlyLogoutOperation: FeedlyOperation {
+
 	let service: FeedlyLogoutService
 	let account: Account
 
-	@MainActor init(account: Account, service: FeedlyLogoutService) {
+	init(account: Account, service: FeedlyLogoutService) {
 		self.service = service
 		self.account = account
-		super.init()
 	}
 
-	@MainActor override func run() {
-		Feedly.logger.info("FeedlyLogoutOperation: Requesting logout \(self.account.accountID, privacy: .public)")
+	override func run() {
+		Feedly.logger.info("Feedly: Requesting logout \(self.account.accountID, privacy: .public)")
 		service.logout(completion: didCompleteLogout(_:))
 	}
 
-	@MainActor func didCompleteLogout(_ result: Result<Void, Error>) {
+	func didCompleteLogout(_ result: Result<Void, Error>) {
 		assert(Thread.isMainThread)
 		switch result {
 		case .success:
-			Feedly.logger.info("FeedlyLogoutOperation: Logged out of \(self.account.accountID, privacy: .public)")
+			Feedly.logger.info("Feedly: Logged out of \(self.account.accountID, privacy: .public)")
 			do {
 				try account.removeCredentials(type: .oauthAccessToken)
 				try account.removeCredentials(type: .oauthRefreshToken)
 			} catch {
 				// oh well, we tried our best.
 			}
-			didComplete()
+			didFinish()
 
 		case .failure(let error):
 			Feedly.logger.error("Feedly: Logout failed: \(error.localizedDescription)")
-			didComplete(with: error)
+			didFinish(with: error)
 		}
 	}
 }

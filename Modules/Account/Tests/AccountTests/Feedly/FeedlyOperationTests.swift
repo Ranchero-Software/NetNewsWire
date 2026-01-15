@@ -27,9 +27,9 @@ import RSCore
 			didCallMainExpectation?.fulfill()
 
 			if let error = mockError {
-				didComplete(with: error)
+				didFinish(with: error)
 			} else {
-				didComplete()
+				didFinish()
 			}
 		}
 	}
@@ -49,7 +49,7 @@ import RSCore
         let testOperation = TestOperation()
 		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
 
-		MainThreadOperationQueue.shared.add(testOperation)
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
 
 		waitForExpectations(timeout: 2)
     }
@@ -64,7 +64,7 @@ import RSCore
 
 		testOperation.delegate = delegate
 
-		MainThreadOperationQueue.shared.add(testOperation)
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
 
 		waitForExpectations(timeout: 2)
 
@@ -87,7 +87,7 @@ import RSCore
 
 		XCTAssertFalse(testOperation.isCanceled)
 
-		MainThreadOperationQueue.shared.add(testOperation)
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
 
 		waitForExpectations(timeout: 2)
 
@@ -106,7 +106,7 @@ import RSCore
 
 		XCTAssertFalse(testOperation.isCanceled)
 
-		MainThreadOperationQueue.shared.add(testOperation)
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
 		testOperation.cancel()
 
 		waitForExpectations(timeout: 2)
@@ -123,11 +123,11 @@ import RSCore
 //			dependencyExpectation.fulfill()
 //		}
 //
-//		MainThreadOperationQueue.shared.make(blockOperation, dependOn: testOperation)
+//		FeedlyMainThreadOperationQueue.shared.make(blockOperation, dependOn: testOperation)
 //
 //		//XCTAssertTrue(blockOperation.dependencies.contains(testOperation))
 //		
-//		MainThreadOperationQueue.shared.addOperations([testOperation, blockOperation])
+//		FeedlyMainThreadOperationQueue.shared.addOperations([testOperation, blockOperation])
 //		
 //		waitForExpectations(timeout: 2)
     }

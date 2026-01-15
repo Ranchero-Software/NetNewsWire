@@ -13,7 +13,9 @@ import RSWeb
 import RSCore
 import Secrets
 
-final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate, @unchecked Sendable {
+final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate, FeedlySearchOperationDelegate, FeedlyCheckpointOperationDelegate {
+
+	private let operationQueue = FeedlyMainThreadOperationQueue()
 	private let folder: Folder
 	private let collectionId: String
 	private let url: String
@@ -27,12 +29,14 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 	private var feedResourceId: FeedlyFeedResourceId?
 	var addCompletionHandler: ((Result<Feed, Error>) -> ())?
 
-	@MainActor init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, operationQueue: MainThreadOperationQueue) throws {
+	init(account: Account, credentials: Credentials, url: String, feedName: String?, searchService: FeedlySearchService, addToCollectionService: FeedlyAddFeedToCollectionService, syncUnreadIdsService: FeedlyGetStreamIdsService, getStreamContentsService: FeedlyGetStreamContentsService, database: SyncDatabase, container: Container, progress: DownloadProgress) throws {
+
 
 		let validator = FeedlyFeedContainerValidator(container: container)
 		(self.folder, self.collectionId) = try validator.getValidContainer()
 
 		self.url = url
+		self.operationQueue.suspend()
 		self.account = account
 		self.credentials = credentials
 		self.database = database
@@ -43,43 +47,38 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 
 		super.init()
 
-		operationQueue.suspend()
+		self.downloadProgress = progress
 
 		let search = FeedlySearchOperation(query: url, locale: .current, service: searchService)
 		search.delegate = self
 		search.searchDelegate = self
-		operationQueue.add(search)
+		search.downloadProgress = progress
+		self.operationQueue.add(search)
+	}
+
+	override func run() {
 		operationQueue.resume()
 	}
 
-	@MainActor override func run() {
-		didComplete()
-	}
-
-	@MainActor override func noteDidComplete() {
-		assert(Thread.isMainThread)
-		if isCanceled {
-			operationQueue?.cancelAll()
-		} else if let error {
-			addCompletionHandler?(.failure(error))
-		}
-
+	override func didCancel() {
+		operationQueue.cancelAllOperations()
 		addCompletionHandler = nil
-		super.noteDidComplete()
+		super.didCancel()
 	}
 
-	@MainActor func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {
+	override func didFinish(with error: Error) {
+		assert(Thread.isMainThread)
+		addCompletionHandler?(.failure(error))
+		addCompletionHandler = nil
+		super.didFinish(with: error)
+	}
+
+	func feedlySearchOperation(_ operation: FeedlySearchOperation, didGet response: FeedlyFeedsSearchResponse) {
 		guard !isCanceled else {
 			return
 		}
-		guard let operationQueue else {
-			cancel()
-			return
-		}
 		guard let first = response.results.first else {
-			error = AccountError.createErrorNotFound
-			didComplete()
-			return
+			return didFinish(with: AccountError.createErrorNotFound)
 		}
 
 		let feedResourceId = FeedlyFeedResourceId(id: first.feedId)
@@ -87,48 +86,52 @@ final class FeedlyAddNewFeedOperation: FeedlyOperation, FeedlyOperationDelegate,
 
 		let addRequest = FeedlyAddFeedToCollectionOperation(account: account, folder: folder, feedResource: feedResourceId, feedName: feedName, collectionId: collectionId, service: addToCollectionService)
 		addRequest.delegate = self
+		addRequest.downloadProgress = downloadProgress
 		operationQueue.add(addRequest)
 
 		let createFeeds = FeedlyCreateFeedsForCollectionFoldersOperation(account: account, feedsAndFoldersProvider: addRequest)
 		createFeeds.delegate = self
 		createFeeds.addDependency(addRequest)
+		createFeeds.downloadProgress = downloadProgress
 		operationQueue.add(createFeeds)
 
 		let syncUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: syncUnreadIdsService, database: database, newerThan: nil)
 		syncUnread.addDependency(createFeeds)
+		syncUnread.downloadProgress = downloadProgress
 		syncUnread.delegate = self
 		operationQueue.add(syncUnread)
 
-		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil, operationQueue: operationQueue)
+		let syncFeed = FeedlySyncStreamContentsOperation(account: account, resource: feedResourceId, service: getStreamContentsService, isPagingEnabled: false, newerThan: nil)
 		syncFeed.addDependency(syncUnread)
+		syncFeed.downloadProgress = downloadProgress
 		syncFeed.delegate = self
 		operationQueue.add(syncFeed)
 
 		let finishOperation = FeedlyCheckpointOperation()
 		finishOperation.checkpointDelegate = self
+		finishOperation.downloadProgress = downloadProgress
 		finishOperation.addDependency(syncFeed)
 		finishOperation.delegate = self
 		operationQueue.add(finishOperation)
 	}
 
-	@MainActor func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
-		self.error = error
+	func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 		addCompletionHandler?(.failure(error))
 		addCompletionHandler = nil
 
-		Feedly.logger.error("FeedlyAddNewFeedOperation: Unable to add new feed with error \(error.localizedDescription)")
+		Feedly.logger.error("Feedly: Unable to add new feed with error \(error.localizedDescription)")
 
 		cancel()
 	}
 
-	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
+	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
 		guard !isCanceled else {
 			return
 		}
 		defer {
-			didComplete()
+			didFinish()
 		}
-		
+
 		guard let handler = addCompletionHandler else {
 			return
 		}

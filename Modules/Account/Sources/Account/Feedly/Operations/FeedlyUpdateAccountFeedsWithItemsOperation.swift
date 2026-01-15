@@ -11,25 +11,26 @@ import RSParser
 import os.log
 
 /// Combine the articles with their feeds for a specific account.
-final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 
 	private let account: Account
 	private let organisedItemsProvider: FeedlyParsedItemsByFeedProviding
 
-	@MainActor init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding) {
+	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding) {
 		self.account = account
 		self.organisedItemsProvider = organisedItemsProvider
-		super.init()
 	}
 
 	override func run() {
-		Task { @MainActor in
-			let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
+		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
+
+		Task {
 			do {
 				try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
-				didComplete()
+				Feedly.logger.debug("Feedly: updated \(feedIDsAndItems.count) for \(self.organisedItemsProvider.parsedItemsByFeedProviderName)")
+				self.didFinish()
 			} catch {
-				didComplete(with: error)
+				self.didFinish(with: error)
 			}
 		}
 	}

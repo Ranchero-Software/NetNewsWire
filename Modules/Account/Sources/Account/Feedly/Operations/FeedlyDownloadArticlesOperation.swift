@@ -11,32 +11,32 @@ import os.log
 import RSCore
 import RSWeb
 
-final class FeedlyDownloadArticlesOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlyDownloadArticlesOperation: FeedlyOperation {
+
 	private let account: Account
 	private let missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding
 	private let getEntriesService: FeedlyGetEntriesService
+	private let operationQueue = FeedlyMainThreadOperationQueue()
 	private let finishOperation: FeedlyCheckpointOperation
 
-	@MainActor init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService, operationQueue: MainThreadOperationQueue) {
+	init(account: Account, missingArticleEntryIdProvider: FeedlyEntryIdentifierProviding, updatedArticleEntryIdProvider: FeedlyEntryIdentifierProviding, getEntriesService: FeedlyGetEntriesService) {
 		self.account = account
+		self.operationQueue.suspend()
 		self.missingArticleEntryIdProvider = missingArticleEntryIdProvider
 		self.updatedArticleEntryIdProvider = updatedArticleEntryIdProvider
 		self.getEntriesService = getEntriesService
 		self.finishOperation = FeedlyCheckpointOperation()
 		super.init()
 		self.finishOperation.checkpointDelegate = self
-
-		operationQueue.suspend()
-		operationQueue.add(self.finishOperation)
-		operationQueue.resume()
+		self.operationQueue.add(self.finishOperation)
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		var articleIds = missingArticleEntryIdProvider.entryIDs
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIDs)
 
-		Feedly.logger.debug("FeedlyDownloadArticlesOperation: Requesting \(articleIds.count) articles")
+		Feedly.logger.info("Feedly: Requesting \(articleIds.count) articles")
 
 		let feedlyAPILimitBatchSize = 1000
 		for articleIds in Array(articleIds).chunked(into: feedlyAPILimitBatchSize) {
@@ -44,7 +44,7 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation, @unchecked Sendabl
 			let provider = FeedlyEntryIdentifierProvider(entryIDs: Set(articleIds))
 			let getEntries = FeedlyGetEntriesOperation(account: account, service: getEntriesService, provider: provider)
 			getEntries.delegate = self
-			self.operationQueue?.add(getEntries)
+			self.operationQueue.add(getEntries)
 
 			let organiseByFeed = FeedlyOrganiseParsedItemsByFeedOperation(
 				account: account,
@@ -52,7 +52,7 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation, @unchecked Sendabl
 			)
 			organiseByFeed.delegate = self
 			organiseByFeed.addDependency(getEntries)
-			self.operationQueue?.add(organiseByFeed)
+			self.operationQueue.add(organiseByFeed)
 
 			let updateAccount = FeedlyUpdateAccountFeedsWithItemsOperation(
 				account: account,
@@ -61,25 +61,25 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation, @unchecked Sendabl
 
 			updateAccount.delegate = self
 			updateAccount.addDependency(organiseByFeed)
-			self.operationQueue?.add(updateAccount)
+			self.operationQueue.add(updateAccount)
 
 			finishOperation.addDependency(updateAccount)
 		}
 
-		didComplete()
+		operationQueue.resume()
 	}
 
-	@MainActor override func noteDidComplete() {
-		if isCanceled {
-			operationQueue?.cancelAll()
-		}
+	override func didCancel() {
+		Feedly.logger.info("Feedly: Canceling FeedlyDownloadArticlesOperation")
+		operationQueue.cancelAllOperations()
+		super.didCancel()
 	}
 }
 
 extension FeedlyDownloadArticlesOperation: FeedlyCheckpointOperationDelegate {
 
-	@MainActor func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
-		didComplete()
+	func feedlyCheckpointOperationDidReachCheckpoint(_ operation: FeedlyCheckpointOperation) {
+		didFinish()
 	}
 }
 
@@ -90,5 +90,7 @@ extension FeedlyDownloadArticlesOperation: FeedlyOperationDelegate {
 
 		// Having this log is useful for debugging missing required JSON keys in the response from Feedly, for example.
 		Feedly.logger.error("Feedly: FeedlyDownloadArticlesOperation did fail with error: \(error.localizedDescription)")
+		cancel()
 	}
 }
+

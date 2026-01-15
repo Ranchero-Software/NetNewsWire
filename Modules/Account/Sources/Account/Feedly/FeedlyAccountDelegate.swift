@@ -60,6 +60,8 @@ import Secrets
 
 	var accountMetadata: AccountMetadata?
 
+	let refreshProgress = DownloadProgress(numberOfTasks: 0)
+
 	/// Set on `accountDidInitialize` for the purposes of refreshing OAuth tokens when they expire.
 	/// See the implementation for `FeedlyAPICallerDelegate`.
 	private weak var initializedAccount: Account?
@@ -69,8 +71,8 @@ import Secrets
 	nonisolated private static let logger = Feedly.logger
 	private let syncDatabase: SyncDatabase
 
-	private weak var currentSyncAllOperation: MainThreadOperation?
-	private let operationQueue = MainThreadOperationQueue()
+	private weak var currentSyncAllOperation: FeedlyMainThreadOperation?
+	private let operationQueue = FeedlyMainThreadOperationQueue()
 
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
 		// Many operations have their own operation queues, such as the sync all operation.
@@ -106,7 +108,8 @@ import Secrets
 
 		self.caller.delegate = self
 
-		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: operationQueue)
+		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: refreshProgress)
+
 	}
 
 	// MARK: Account API
@@ -145,7 +148,7 @@ import Secrets
 
 		progressInfo = ProgressInfo()
 
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, operationQueue: operationQueue)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
 
 		let date = Date()
 		syncAllOperation.syncCompletionHandler = { [weak self] result in
@@ -156,12 +159,11 @@ import Secrets
 
 			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")
 			completion(result)
-			self?.operationQueue.isTrackingProgress = false
+			self?.refreshProgress.reset()
 			self?.progressInfo = ProgressInfo()
 		}
 
 		currentSyncAllOperation = syncAllOperation
-		operationQueue.isTrackingProgress = true
 		operationQueue.add(syncAllOperation)
 	}
 
@@ -231,7 +233,7 @@ import Secrets
 			completion(.success(()))
 		}
 
-		operationQueue.add([ingestUnread, ingestStarred])
+		operationQueue.addOperations([ingestUnread, ingestStarred])
 	}
 
 
@@ -255,18 +257,21 @@ import Secrets
 
 		Self.logger.info("FeedlyAccountDelegate: Begin importing OPML")
 		isOPMLImportInProgress = true
+		refreshProgress.addToNumberOfTasksAndRemaining(1)
 
 		caller.importOpml(data) { result in
 			Task { @MainActor in
 				switch result {
 				case .success:
 					Self.logger.debug("FeedlyAccountDelegate: OPML import finished")
+					self.refreshProgress.completeTask()
 					self.isOPMLImportInProgress = false
 					DispatchQueue.main.async {
 						completion(.success(()))
 					}
 				case .failure(let error):
 					Self.logger.error("FeedlyAccountDelegate: OPML import failed: \(error.localizedDescription)")
+					self.refreshProgress.completeTask()
 					self.isOPMLImportInProgress = false
 					DispatchQueue.main.async {
 						let wrappedError = AccountError.wrapped(error, account)
@@ -288,8 +293,12 @@ import Secrets
 
 	@MainActor func createFolder(for account: Account, name: String, completion: @escaping @Sendable (Result<Folder, Error>) -> Void) {
 
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+
 		caller.createCollection(named: name) { result in
 			Task { @MainActor in
+				progress.completeTask()
 				switch result {
 				case .success(let collection):
 					if let folder = account.ensureFolder(with: collection.label) {
@@ -356,8 +365,12 @@ import Secrets
 			}
 		}
 
+		let progress = refreshProgress
+		progress.addToNumberOfTasksAndRemaining(1)
+
 		caller.deleteCollection(with: id) { result in
 			Task { @MainActor in
+				progress.completeTask()
 
 				switch result {
 				case .success:
@@ -396,7 +409,7 @@ import Secrets
 														   getStreamContentsService: caller,
 														   database: syncDatabase,
 														   container: container,
-														   operationQueue: operationQueue)
+														   progress: refreshProgress)
 
 			addNewFeed.addCompletionHandler = { result in
 				completion(result)
@@ -471,8 +484,8 @@ import Secrets
                                                                      resource: resource,
                                                                      service: caller,
                                                                      container: container,
-                                                                     customFeedName: feed.editedName,
-																	 operationQueue: operationQueue)
+																	 progress: refreshProgress,
+																	 customFeedName: feed.editedName)
 
 
 			addExistingFeed.addCompletionHandler = { result in
@@ -652,7 +665,7 @@ import Secrets
 		Self.logger.debug("FeedlyAccountDelegate: accountWillBeDeleted")
 		let logout = FeedlyLogoutOperation(account: account, service: caller)
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
-		MainThreadOperationQueue.shared.add(logout)
+		FeedlyMainThreadOperationQueue.shared.add(logout)
 	}
 
 	static func validateCredentials(transport: any Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
@@ -667,7 +680,7 @@ import Secrets
 	func suspendNetwork() {
 		Self.logger.debug("FeedlyAccountDelegate: suspendNetwork")
 		caller.suspend()
-		operationQueue.cancelAll()
+		operationQueue.cancelAllOperations()
 	}
 
 	/// Suspend the SQLLite databases
@@ -685,12 +698,8 @@ import Secrets
 
 	// MARK: - Notifications
 
-	@objc func syncProgressDidChange(_ notification: Notification) {
-		if operationQueue.isTrackingProgress {
-			progressInfo = operationQueue.progressInfo
-		} else {
-			progressInfo = ProgressInfo()
-		}
+	@objc func downloadProgressDidChange(_ notification: Notification) {
+		progressInfo = refreshProgress.progressInfo
 	}
 }
 
@@ -714,6 +723,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 		}
 
 		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient)
+		refreshAccessToken.downloadProgress = refreshProgress
 
 		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.
 		let refreshAccessTokenDelegate = RefreshAccessTokenOperationDelegate()
@@ -724,6 +734,6 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			completionHandler(refreshAccessTokenDelegate.didReauthorize && !operation.isCanceled)
 		}
 
-		MainThreadOperationQueue.shared.add(refreshAccessToken)
+		FeedlyMainThreadOperationQueue.shared.add(refreshAccessToken)
 	}
 }

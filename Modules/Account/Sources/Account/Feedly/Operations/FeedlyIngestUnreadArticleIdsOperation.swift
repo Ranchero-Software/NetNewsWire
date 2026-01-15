@@ -18,7 +18,7 @@ import Secrets
 /// When all the unread article ids are collected, a status is created for each.
 /// The article ids previously marked as unread but not collected become read.
 /// So this operation has side effects *for the entire account* it operates on.
-final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation {
 
 	private let account: Account
 	private let resource: FeedlyResourceId
@@ -26,30 +26,29 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, @unchecked S
 	private let database: SyncDatabase
 	private var remoteEntryIds = Set<String>()
 
-	@MainActor convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
+	convenience init(account: Account, userId: String, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		let resource = FeedlyCategoryResourceId.Global.all(for: userId)
 		self.init(account: account, resource: resource, service: service, database: database, newerThan: newerThan)
 	}
 
-	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamIdsService, database: SyncDatabase, newerThan: Date?) {
 		self.account = account
 		self.resource = resource
 		self.service = service
 		self.database = database
-		super.init()
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		getStreamIds(nil)
 	}
 
-	@MainActor private func getStreamIds(_ continuation: String?) {
+	private func getStreamIds(_ continuation: String?) {
 		service.getStreamIds(for: resource, continuation: continuation, newerThan: nil, unreadOnly: true, completion: didGetStreamIds(_:))
 	}
 
-	@MainActor private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
+	private func didGetStreamIds(_ result: Result<FeedlyStreamIds, Error>) {
 		guard !isCanceled else {
-			didComplete()
+			didFinish()
 			return
 		}
 
@@ -66,74 +65,59 @@ final class FeedlyIngestUnreadArticleIdsOperation: FeedlyOperation, @unchecked S
 			getStreamIds(continuation)
 
 		case .failure(let error):
-			didComplete(with: error)
+			didFinish(with: error)
 		}
 	}
 
 	/// Do not override pending statuses with the remote statuses of the same articles, otherwise an article will temporarily re-acquire the remote status before the pending status is pushed and subseqently pulled.
 	private func removeEntryIdsWithPendingStatus() {
-		Task { @MainActor in
-			guard !isCanceled else {
-				didComplete()
-				return
-			}
+		guard !isCanceled else {
+			didFinish()
+			return
+		}
 
+		Task {
 			do {
-				if let pendingArticleIDs = try await database.selectPendingReadStatusArticleIDs() {
-					remoteEntryIds.subtract(pendingArticleIDs)
-					updateUnreadStatuses()
-				}
-
+				let pendingArticleIds = try await database.selectPendingReadStatusArticleIDs() ?? Set<String>()
+				self.remoteEntryIds.subtract(pendingArticleIds)
+				self.updateUnreadStatuses()
 			} catch {
-				didComplete(with: error)
+				self.didFinish(with: error)
 			}
 		}
 	}
 
-	@MainActor private func updateUnreadStatuses() {
+	private func updateUnreadStatuses() {
 		guard !isCanceled else {
-			didComplete()
+			didFinish()
 			return
 		}
 
-		Task { @MainActor in
+		Task {
 			do {
 				let localUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
-				processUnreadArticleIDs(localUnreadArticleIDs)
+				self.processUnreadArticleIDs(localUnreadArticleIDs)
 			} catch {
-				didComplete(with: error)
+				self.didFinish(with: error)
 			}
 		}
 	}
 
-	@MainActor private func processUnreadArticleIDs(_ localUnreadArticleIDs: Set<String>) {
+	private func processUnreadArticleIDs(_ localUnreadArticleIDs: Set<String>) {
 		guard !isCanceled else {
-			didComplete()
+			didFinish()
 			return
 		}
 
-		Task { @MainActor in
-			var markingError: Error?
-
-			let remoteUnreadArticleIDs = remoteEntryIds
-			let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
-
+		let remoteUnreadArticleIDs = remoteEntryIds
+		Task {
 			do {
 				try await account.markAsUnreadAsync(articleIDs: remoteUnreadArticleIDs)
-			} catch {
-				markingError = error
-			}
-
-			do {
+				let articleIDsToMarkRead = localUnreadArticleIDs.subtracting(remoteUnreadArticleIDs)
 				try await account.markAsReadAsync(articleIDs: articleIDsToMarkRead)
+				self.didFinish()
 			} catch {
-				markingError = error
-			}
-
-			if let markingError {
-				didComplete(with: markingError)
-			} else {
-				didComplete()
+				self.didFinish(with: error)
 			}
 		}
 	}

@@ -61,7 +61,7 @@ import RSCore
 
 		XCTAssertTrue(account.flattenedFeeds().isEmpty, "Expected empty account.")
 
-		MainThreadOperationQueue.shared.add(createFeeds)
+		FeedlyMainThreadOperationQueue.shared.add(createFeeds)
 
 		waitForExpectations(timeout: 2)
 
@@ -132,7 +132,7 @@ import RSCore
 
 			XCTAssertTrue(account.flattenedFeeds().isEmpty, "Expected empty account.")
 
-			MainThreadOperationQueue.shared.add(createFeeds)
+			FeedlyMainThreadOperationQueue.shared.add(createFeeds)
 
 			waitForExpectations(timeout: 2)
 		}
@@ -154,7 +154,7 @@ import RSCore
 			completionExpectation.fulfill()
 		}
 
-		MainThreadOperationQueue.shared.add(removeFeeds)
+		FeedlyMainThreadOperationQueue.shared.add(removeFeeds)
 
 		waitForExpectations(timeout: 2)
 

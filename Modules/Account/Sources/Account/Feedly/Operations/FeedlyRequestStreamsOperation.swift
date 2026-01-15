@@ -15,7 +15,7 @@ protocol FeedlyRequestStreamsOperationDelegate: AnyObject {
 
 /// Create one stream request operation for one Feedly collection.
 /// This is the start of the process of refreshing the entire contents of a Folder.
-final class FeedlyRequestStreamsOperation: FeedlyOperation, @unchecked Sendable {
+final class FeedlyRequestStreamsOperation: FeedlyOperation {
 
 	weak var queueDelegate: FeedlyRequestStreamsOperationDelegate?
 
@@ -25,16 +25,19 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation, @unchecked Sendable 
 	let newerThan: Date?
 	let unreadOnly: Bool?
 
-	@MainActor init(account: Account, collectionsProvider: FeedlyCollectionProviding, newerThan: Date?, unreadOnly: Bool?, service: FeedlyGetStreamContentsService) {
+	init(account: Account, collectionsProvider: FeedlyCollectionProviding, newerThan: Date?, unreadOnly: Bool?, service: FeedlyGetStreamContentsService) {
 		self.account = account
 		self.service = service
 		self.collectionsProvider = collectionsProvider
 		self.newerThan = newerThan
 		self.unreadOnly = unreadOnly
-		super.init()
 	}
 
-	@MainActor override func run() {
+	override func run() {
+		defer {
+			didFinish()
+		}
+
 		assert(queueDelegate != nil, "This is not particularly useful unless the `queueDelegate` is non-nil.")
 
 		// TODO: Prioritise the must read collection/category before others so the most important content for the user loads first.
@@ -51,7 +54,6 @@ final class FeedlyRequestStreamsOperation: FeedlyOperation, @unchecked Sendable 
 			queueDelegate?.feedlyRequestStreamsOperation(self, enqueue: operation)
 		}
 
-		Feedly.logger.debug("FeedlyRequestStreamsOperation: Requested \(self.collectionsProvider.collections.count) collection streams")
-		didComplete()
+		Feedly.logger.info("Feedly: Requested \(self.collectionsProvider.collections.count) collection streams")
 	}
 }

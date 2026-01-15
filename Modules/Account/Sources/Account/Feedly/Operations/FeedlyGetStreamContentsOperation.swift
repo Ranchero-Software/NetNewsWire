@@ -20,11 +20,11 @@ protocol FeedlyParsedItemProviding {
 }
 
 protocol FeedlyGetStreamContentsOperationDelegate: AnyObject {
-	@MainActor func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream)
+	func feedlyGetStreamContentsOperation(_ operation: FeedlyGetStreamContentsOperation, didGetContentsOf stream: FeedlyStream)
 }
 
 /// Get the stream content of a Collection from Feedly.
-final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding, @unchecked Sendable {
+final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProviding, FeedlyParsedItemProviding {
 
 	struct ResourceProvider: FeedlyResourceProviding {
 		var resource: FeedlyResourceId
@@ -38,7 +38,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 
 	var entries: [FeedlyEntry] {
 		guard let entries = stream?.items else {
-//			assert(isFinished, "This should only be called when the operation finishes without error.")
+			//			assert(isFinished, "This should only be called when the operation finishes without error.")
 			assertionFailure("Has this operation been addeded as a dependency on the caller?")
 			return []
 		}
@@ -58,7 +58,7 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 			let entryIds = Set(entries.map { $0.id })
 			let parsedIds = Set(parsed.map { $0.uniqueID })
 			let difference = entryIds.subtracting(parsedIds)
-			Feedly.logger.debug("FeedlyGetStreamContentsOperation: Dropping articles with IDs \(difference)")
+			Feedly.logger.info("Feedly: Dropping articles with IDs \(difference)")
 		}
 
 		storedParsedEntries = parsed
@@ -82,21 +82,20 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 
 	weak var streamDelegate: FeedlyGetStreamContentsOperationDelegate?
 
-	@MainActor init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
+	init(account: Account, resource: FeedlyResourceId, service: FeedlyGetStreamContentsService, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.account = account
 		self.resourceProvider = ResourceProvider(resource: resource)
 		self.service = service
 		self.continuation = continuation
 		self.unreadOnly = unreadOnly
 		self.newerThan = newerThan
-		super.init()
 	}
 
-	@MainActor convenience init(account: Account, resourceProvider: FeedlyResourceProviding, service: FeedlyGetStreamContentsService, newerThan: Date?, unreadOnly: Bool? = nil) {
+	convenience init(account: Account, resourceProvider: FeedlyResourceProviding, service: FeedlyGetStreamContentsService, newerThan: Date?, unreadOnly: Bool? = nil) {
 		self.init(account: account, resource: resourceProvider.resource, service: service, newerThan: newerThan, unreadOnly: unreadOnly)
 	}
 
-	@MainActor override func run() {
+	override func run() {
 		service.getStreamContents(for: resourceProvider.resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) { result in
 			Task { @MainActor in
 				switch result {
@@ -105,11 +104,11 @@ final class FeedlyGetStreamContentsOperation: FeedlyOperation, FeedlyEntryProvid
 					
 					self.streamDelegate?.feedlyGetStreamContentsOperation(self, didGetContentsOf: stream)
 					
-					self.didComplete()
+					self.didFinish()
 					
 				case .failure(let error):
 					Feedly.logger.error("Feedly: Unable to get stream contents: \(error.localizedDescription)")
-					self.didComplete(with: error)
+					self.didFinish(with: error)
 				}
 			}
 		}
