@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7004 16 Jan 2026 - branch: main tag: iOS-7.0-7004
+
+Fixed — again, we think and hope — the most common crashing bug by far (a bug which happened while updating the Feeds view)
+Use large title in navigation bar in Feeds view
+
 ### 7.0 TestFlight build 7003 15 Jan 2026 - branch: main tag: iOS-7.0-7003
 
 Fixed (we think) the most common crashing bug by far (a bug which happened while updating the Feeds view)
