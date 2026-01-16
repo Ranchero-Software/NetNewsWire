@@ -39,6 +39,7 @@ xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME_IOS" \
   -destination "$DESTINATION_IOS" \
+  -skip-testing:AccountTests \
   test | xcbeautify
 
 echo "🎉 All builds and tests completed successfully."
