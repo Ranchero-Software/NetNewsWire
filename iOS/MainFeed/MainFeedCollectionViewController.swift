@@ -223,12 +223,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
 		return coordinator.numberOfSections()
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
 		return coordinator.numberOfRows(in: section)
     }
 
