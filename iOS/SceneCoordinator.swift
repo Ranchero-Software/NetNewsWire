@@ -71,6 +71,8 @@ struct FeedNode: Hashable, Sendable {
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 
+	private var needsRebuild = false
+
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope?
@@ -1602,14 +1604,26 @@ private extension SceneCoordinator {
 	}
 
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
-		if !BatchUpdate.shared.isPerforming {
-			addToFilterExceptionsIfNecessary(timelineFeed)
-			treeController.rebuild()
-			treeControllerDelegate.resetFilterExceptions()
+		if BatchUpdate.shared.isPerforming {
+			needsRebuild = true
+			return
+		}
 
-			updateExpandedNodes?()
-			let changes = rebuildShadowTable()
-			mainFeedCollectionViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
+		BatchUpdate.shared.start()
+		addToFilterExceptionsIfNecessary(timelineFeed)
+		treeController.rebuild()
+		treeControllerDelegate.resetFilterExceptions()
+
+		updateExpandedNodes?()
+		let changes = rebuildShadowTable()
+		mainFeedCollectionViewController.reloadFeeds(initialLoad: initialLoad, changes: changes) {
+			BatchUpdate.shared.end()
+			completion?()
+
+			if self.needsRebuild {
+				self.needsRebuild = false
+				self.rebuildBackingStores()
+			}
 		}
 	}
 
