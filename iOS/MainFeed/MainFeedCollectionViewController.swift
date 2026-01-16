@@ -78,7 +78,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				/// This sizes the navigation bar to large.
 				self.navigationController?.navigationBar.sizeToFit()
 			}
-			
+
 			/// On iPhone, we want to deselect the feed when the user navigates
 			/// back to the feeds view. To prevent the user from selecting a new feed while
 			/// the current feed is being deselected, set `isAnimating` to true.
@@ -446,7 +446,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			completion?()
 			return
 		}
-		
+
 		collectionView.performBatchUpdates {
 			if let deletes = changes.deletes, !deletes.isEmpty {
 				collectionView.deleteSections(IndexSet(deletes))
@@ -479,7 +479,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 					}
 				}
 			}
-		} completion: { finished in
+		} completion: { _ in
 			if let rowChanges = changes.rowChanges {
 				for rowChange in rowChanges {
 					if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {

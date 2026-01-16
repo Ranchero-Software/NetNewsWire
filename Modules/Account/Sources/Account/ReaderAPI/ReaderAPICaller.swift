@@ -540,12 +540,11 @@ enum CreateReaderAPISubscriptionResult {
         request.httpBody = opmlData
 
         let (response, _) = try await transport.send(request: request)
-		
+
 		guard response.statusCode == 200 else {
 			throw AccountError.invalidResponse
 		}
     }
-
 
 	public func createUnreadEntries(entries: [String]) async throws {
 
