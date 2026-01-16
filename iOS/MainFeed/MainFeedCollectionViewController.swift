@@ -71,12 +71,14 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		updateUI()
 		super.viewWillAppear(animated)
 
-		collectionView.refreshControl = UIRefreshControl()
-		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-
 		if traitCollection.userInterfaceIdiom == .phone {
-			self.navigationController?.navigationBar.prefersLargeTitles = false
-
+			self.navigationController?.navigationBar.prefersLargeTitles = true
+			self.navigationItem.largeTitleDisplayMode = .always
+			DispatchQueue.main.async {
+				/// This sizes the navigation bar to large.
+				self.navigationController?.navigationBar.sizeToFit()
+			}
+			
 			/// On iPhone, we want to deselect the feed when the user navigates
 			/// back to the feeds view. To prevent the user from selecting a new feed while
 			/// the current feed is being deselected, set `isAnimating` to true.
