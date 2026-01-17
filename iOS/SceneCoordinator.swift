@@ -60,6 +60,8 @@ struct FeedNode: Hashable, Sendable {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SceneCoordinator")
+
 	// Which Containers are expanded
 	private var expandedContainers = Set<ContainerIdentifier>()
 
@@ -1604,7 +1606,10 @@ private extension SceneCoordinator {
 	}
 
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
+		Self.logger.debug("SceneCoordinator: rebuildBackingStores: initialLoad \(initialLoad ? "true" : "false")")
+
 		if BatchUpdate.shared.isPerforming {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because BatchUpdate.shared.isPerforming")
 			needsRebuild = true
 			return
 		}
@@ -1621,6 +1626,7 @@ private extension SceneCoordinator {
 			completion?()
 
 			if self.needsRebuild {
+				Self.logger.debug("SceneCoordinator: rebuildBackingStores — self.needsRebuild, so calling rebuildBackingStoresAgain")
 				self.needsRebuild = false
 				self.rebuildBackingStores()
 			}
