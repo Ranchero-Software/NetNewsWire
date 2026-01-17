@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 import UserNotifications
 import Account
 import Articles
@@ -60,6 +61,8 @@ struct FeedNode: Hashable, Sendable {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SceneCoordinator")
+
 	// Which Containers are expanded
 	private var expandedContainers = Set<ContainerIdentifier>()
 
@@ -71,7 +74,7 @@ struct FeedNode: Hashable, Sendable {
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 
-	private var needsRebuild = false
+	private var isRebuildingBackingStores = false
 
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
@@ -1603,13 +1606,19 @@ private extension SceneCoordinator {
 		rebuildBackingStores()
 	}
 
+	static var rebuildCount = 0
+
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
-		if BatchUpdate.shared.isPerforming {
-			needsRebuild = true
+		Self.logger.debug("SceneCoordinator: rebuildBackingStores: # \(Self.rebuildCount) initialLoad \(initialLoad ? "true" : "false")")
+		Self.rebuildCount += 1
+
+		if isRebuildingBackingStores {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because isRebuildingBackingStores")
+			queueRebuildBackingStores()
 			return
 		}
 
-		BatchUpdate.shared.start()
+		isRebuildingBackingStores = true
 		addToFilterExceptionsIfNecessary(timelineFeed)
 		treeController.rebuild()
 		treeControllerDelegate.resetFilterExceptions()
@@ -1617,13 +1626,8 @@ private extension SceneCoordinator {
 		updateExpandedNodes?()
 		let changes = rebuildShadowTable()
 		mainFeedCollectionViewController.reloadFeeds(initialLoad: initialLoad, changes: changes) {
-			BatchUpdate.shared.end()
 			completion?()
-
-			if self.needsRebuild {
-				self.needsRebuild = false
-				self.rebuildBackingStores()
-			}
+			self.isRebuildingBackingStores = false
 		}
 	}
 
