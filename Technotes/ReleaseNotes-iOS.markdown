@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7005 16 Jan 2026 - branch: main tag: iOS-7.0-7005
+
+Fixed a performance issue introduced in the previous (7004) build
+
 ### 7.0 TestFlight build 7004 16 Jan 2026 - branch: main tag: iOS-7.0-7004
 
 Fixed — again, we think and hope — the most common crashing bug by far (a bug which happened while updating the Feeds view)
