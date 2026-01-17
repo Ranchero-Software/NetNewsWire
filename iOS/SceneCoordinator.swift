@@ -74,7 +74,7 @@ struct FeedNode: Hashable, Sendable {
 	// Flattened tree structure for the Sidebar
 	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
 
-	private var needsRebuild = false
+	private var isRebuildingBackingStores = false
 
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
@@ -1606,16 +1606,19 @@ private extension SceneCoordinator {
 		rebuildBackingStores()
 	}
 
-	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
-		Self.logger.debug("SceneCoordinator: rebuildBackingStores: initialLoad \(initialLoad ? "true" : "false")")
+	static var rebuildCount = 0
 
-		if BatchUpdate.shared.isPerforming {
-			Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because BatchUpdate.shared.isPerforming")
-			needsRebuild = true
+	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
+		Self.logger.debug("SceneCoordinator: rebuildBackingStores: # \(Self.rebuildCount) initialLoad \(initialLoad ? "true" : "false")")
+		Self.rebuildCount += 1
+
+		if isRebuildingBackingStores {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because isRebuildingBackingStores")
+			queueRebuildBackingStores()
 			return
 		}
 
-		BatchUpdate.shared.start()
+		isRebuildingBackingStores = true
 		addToFilterExceptionsIfNecessary(timelineFeed)
 		treeController.rebuild()
 		treeControllerDelegate.resetFilterExceptions()
@@ -1623,14 +1626,8 @@ private extension SceneCoordinator {
 		updateExpandedNodes?()
 		let changes = rebuildShadowTable()
 		mainFeedCollectionViewController.reloadFeeds(initialLoad: initialLoad, changes: changes) {
-			BatchUpdate.shared.end()
 			completion?()
-
-			if self.needsRebuild {
-				Self.logger.debug("SceneCoordinator: rebuildBackingStores — self.needsRebuild, so calling rebuildBackingStoresAgain")
-				self.needsRebuild = false
-				self.rebuildBackingStores()
-			}
+			self.isRebuildingBackingStores = false
 		}
 	}
 
