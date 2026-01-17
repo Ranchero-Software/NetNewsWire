@@ -234,9 +234,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 		guard let node = coordinator.nodeFor(indexPath), node.representedObject is Folder else {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as? MainFeedCollectionViewCell
-			configure(cell!, indexPath: indexPath)
-			return cell!
+			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MainFeedCollectionViewCell
+			configure(cell, indexPath: indexPath)
+			return cell
 		}
 
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: folderIdentifier, for: indexPath) as! MainFeedCollectionViewFolderCell
