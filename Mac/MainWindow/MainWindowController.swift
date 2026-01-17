@@ -90,7 +90,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		sidebarViewController!.splitViewItem = sidebarSplitViewItem
 		sidebarViewController!.delegate = self
 		sidebarViewController!.view.translatesAutoresizingMaskIntoConstraints = false
-		sidebarViewController!.view.widthAnchor.constraint(greaterThanOrEqualToConstant: 260).isActive = true
+		sidebarViewController!.view.widthAnchor.constraint(greaterThanOrEqualToConstant: 235).isActive = true
 
 		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController
 		timelineContainerViewController!.delegate = self
