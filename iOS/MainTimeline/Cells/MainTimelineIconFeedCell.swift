@@ -190,7 +190,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		usedTitleLineCount = lineCount
 		return usedTitleLineCount >= AppDefaults.shared.timelineNumberOfLines
 	}
-	
+
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
 		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if isSelected {

@@ -135,7 +135,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			}
 		}
 	}
-	
+
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
 		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if isSelected {
