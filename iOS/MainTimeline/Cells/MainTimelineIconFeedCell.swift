@@ -119,8 +119,8 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		let attributedCellText = NSMutableAttributedString()
 		if cellData.title != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
-			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
-			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
+			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).lineHeight
+			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .headline).lineHeight
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .headline),
 				.paragraphStyle: paragraphStyle,
@@ -139,8 +139,8 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		} else {
 			if cellData.summary != "" {
 				let paragraphStyle = NSMutableParagraphStyle()
-				paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
-				paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
+				paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
+				paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
 				let summaryAttributes: [NSAttributedString.Key: Any] = [
 					.font: UIFont.preferredFont(forTextStyle: .body),
 					.paragraphStyle: paragraphStyle,
