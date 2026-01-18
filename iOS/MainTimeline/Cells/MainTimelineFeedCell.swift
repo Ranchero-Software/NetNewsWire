@@ -92,7 +92,6 @@ class MainTimelineFeedCell: UITableViewCell {
 
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
-		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if cellData.title != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
@@ -100,7 +99,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .headline),
 				.paragraphStyle: paragraphStyle,
-				.foregroundColor: isSelected ? UIColor.white : UIColor.label
+				.foregroundColor: titleTextColor(for: state)
 			]
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
@@ -120,7 +119,7 @@ class MainTimelineFeedCell: UITableViewCell {
 				let summaryAttributes: [NSAttributedString.Key: Any] = [
 					.font: UIFont.preferredFont(forTextStyle: .body),
 					.paragraphStyle: paragraphStyle,
-					.foregroundColor: isSelected ? UIColor.white : UIColor.label
+					.foregroundColor: titleTextColor(for: state)
 				]
 				var summaryAttributed: NSAttributedString
 				if cellData.title != "" {
@@ -134,6 +133,15 @@ class MainTimelineFeedCell: UITableViewCell {
 			if linesUsedForTitleGreaterThanOrEqualToPreference() {
 				articleTitle.lineBreakMode = .byTruncatingTail
 			}
+		}
+	}
+	
+	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
+		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
+		if isSelected {
+			return .white
+		} else {
+			return .label
 		}
 	}
 
@@ -179,11 +187,11 @@ class MainTimelineFeedCell: UITableViewCell {
 
 		if state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			applyTitleTextWithAttributes(state)
+			articleTitle.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText
 			authorByLine.textColor = .lightText
 		} else {
-			applyTitleTextWithAttributes(state)
+			articleTitle.textColor = titleTextColor(for: state)
 			articleDate.textColor = .secondaryLabel
 			authorByLine.textColor = .secondaryLabel
 		}
