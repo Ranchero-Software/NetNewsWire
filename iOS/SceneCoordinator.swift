@@ -36,7 +36,7 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func hash(into hasher: inout Hasher) {
-		hasher.combine(sidebarItemID)
+		hasher.combine(node)
 	}
 }
 
