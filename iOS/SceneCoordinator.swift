@@ -461,7 +461,7 @@ struct FeedNode: Hashable, Sendable {
 		guard AccountManager.shared.areUnreadCountsInitialized else {
 			return
 		}
-
+		Self.logger.debug("SceneCoordinator: unreadCountDidChange \(note.object.debugDescription)")
 		queueRebuildBackingStores()
 	}
 
@@ -1609,11 +1609,19 @@ private extension SceneCoordinator {
 	static var rebuildCount = 0
 
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
+#if DEBUG
 		Self.logger.debug("SceneCoordinator: rebuildBackingStores: # \(Self.rebuildCount) initialLoad \(initialLoad ? "true" : "false")")
 		Self.rebuildCount += 1
+#endif
 
-		if isRebuildingBackingStores {
-			Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because isRebuildingBackingStores")
+		if isRebuildingBackingStores || BatchUpdate.shared.isPerforming {
+#if DEBUG
+			if isRebuildingBackingStores {
+				Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because isRebuildingBackingStores")
+			} else {
+				Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because BatchUpdate.shared.isPerforming")
+			}
+#endif
 			queueRebuildBackingStores()
 			return
 		}
