@@ -66,15 +66,10 @@ struct FeedNode: Hashable, Sendable {
 	// Which Containers are expanded
 	private var expandedContainers = Set<ContainerIdentifier>()
 
-	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
+	// Which Containers used to be expanded. Reset by rebuilding the sidebar.
 	private var lastExpandedContainers = Set<ContainerIdentifier>()
 
 	private let hidingReadArticlesState = HidingReadArticlesState()
-
-	// Flattened tree structure for the Sidebar
-	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
-
-	private var isRebuildingBackingStores = false
 
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
@@ -167,11 +162,14 @@ struct FeedNode: Hashable, Sendable {
 			return nil
 		}
 
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+
 		let prevIndexPath: IndexPath? = {
 			if indexPath.row - 1 < 0 {
 				for i in (0..<indexPath.section).reversed() {
-					if shadowTable[i].feedNodes.count > 0 {
-						return IndexPath(row: shadowTable[i].feedNodes.count - 1, section: i)
+					let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					if numberOfItems > 0 {
+						return IndexPath(row: numberOfItems - 1, section: i)
 					}
 				}
 				return nil
@@ -188,10 +186,15 @@ struct FeedNode: Hashable, Sendable {
 			return nil
 		}
 
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
+
 		let nextIndexPath: IndexPath? = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
-				for i in indexPath.section + 1..<shadowTable.count {
-					if shadowTable[i].feedNodes.count > 0 {
+			let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+			if indexPath.row + 1 >= numberOfItems {
+				for i in indexPath.section + 1..<numberOfSections {
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					if count > 0 {
 						return IndexPath(row: 0, section: i)
 					}
 				}
@@ -314,14 +317,12 @@ struct FeedNode: Hashable, Sendable {
 
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
-			shadowTable.append((sectionID: "", feedNodes: [FeedNode]()))
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
@@ -477,10 +478,6 @@ struct FeedNode: Hashable, Sendable {
 		} else {
 			rebuildBackingStores()
 		}
-	}
-
-	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildBackingStores()
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -744,31 +741,18 @@ struct FeedNode: Hashable, Sendable {
 		})
 	}
 
-	func numberOfSections() -> Int {
-		return shadowTable.count
-	}
-
-	func numberOfRows(in section: Int) -> Int {
-		return shadowTable[section].feedNodes.count
-	}
-
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section > -1 &&
-				indexPath.row > -1 &&
-				indexPath.section < shadowTable.count &&
-				indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
+		guard let feedNode = mainFeedCollectionViewController.dataSource.itemIdentifier(for: indexPath) else {
 			return nil
 		}
-		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
+		return feedNode.node
 	}
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
-		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].feedNodes.firstIndex(of: FeedNode(node)) {
-				return IndexPath(row: row, section: i)
-			}
-		}
-		return nil
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let feedNode = FeedNode(node)
+
+		return mainFeedCollectionViewController.dataSource.indexPath(for: feedNode)
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
@@ -780,9 +764,21 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
-			return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
+		guard numberOfSections > 0 else { return indexPath }
+
+		guard indexPath.section < numberOfSections else {
+			let lastSection = numberOfSections - 1
+			let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+			return IndexPath(row: max(0, numberOfItems - 1), section: lastSection)
 		}
+
+		let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+		guard indexPath.row < numberOfItems else {
+			return IndexPath(row: max(0, numberOfItems - 1), section: indexPath.section)
+		}
+
 		return indexPath
 	}
 
@@ -1613,40 +1609,36 @@ private extension SceneCoordinator {
 		Self.rebuildCount += 1
 #endif
 
-		if isRebuildingBackingStores || BatchUpdate.shared.isPerforming {
-#if DEBUG
-			if isRebuildingBackingStores {
-				Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because isRebuildingBackingStores")
-			} else {
-				Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because BatchUpdate.shared.isPerforming")
-			}
-#endif
-			queueRebuildBackingStores()
-			return
-		}
 
-		isRebuildingBackingStores = true
 		addToFilterExceptionsIfNecessary(timelineFeed)
 		treeController.rebuild()
 		treeControllerDelegate.resetFilterExceptions()
 
 		updateExpandedNodes?()
-		let changes = rebuildShadowTable()
-		mainFeedCollectionViewController.reloadFeeds(initialLoad: initialLoad, changes: changes) {
-			completion?()
-			self.isRebuildingBackingStores = false
+
+		// Update currentFeedIndexPath if needed
+		if currentFeedIndexPath != nil {
+			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
+
+		lastExpandedContainers = expandedContainers
+
+		let snapshot = createSidebarSnapshot()
+		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad, completion: completion)
 	}
 
-	func rebuildShadowTable() -> ShadowTableChanges {
-		var newShadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
+	private func createSidebarSnapshot() -> NSDiffableDataSourceSnapshot<String, FeedNode> {
+		var snapshot = NSDiffableDataSourceSnapshot<String, FeedNode>()
 
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
-
-			var feedNodes = [FeedNode]()
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
+			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
+
+			snapshot.appendSections([sectionID])
 
 			if isExpanded(sectionNode) {
+				var feedNodes = [FeedNode]()
+
 				for node in sectionNode.childNodes {
 					feedNodes.append(FeedNode(node))
 					if isExpanded(node) {
@@ -1655,98 +1647,19 @@ private extension SceneCoordinator {
 						}
 					}
 				}
-			}
 
-			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
-			newShadowTable.append((sectionID: sectionID, feedNodes: feedNodes))
-		}
-
-		// If we have a current Feed IndexPath it is no longer valid and needs reset.
-		if currentFeedIndexPath != nil {
-			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
-		}
-
-		// Compute the differences in the shadow table rows and the expanded table entries
-		var changes = [ShadowTableChanges.RowChanges]()
-		let expandedTableDifference = lastExpandedContainers.symmetricDifference(expandedContainers)
-
-		for (section, newSectionRows) in newShadowTable.enumerated() {
-			var moves = Set<ShadowTableChanges.Move>()
-			var inserts = Set<Int>()
-			var deletes = Set<Int>()
-
-			let oldFeedNodes = shadowTable.first(where: { $0.sectionID == newSectionRows.sectionID })?.feedNodes ?? [FeedNode]()
-
-			let diff = newSectionRows.feedNodes.difference(from: oldFeedNodes).inferringMoves()
-			for change in diff {
-				switch change {
-				case .insert(let offset, _, let associated):
-					if let associated = associated {
-						moves.insert(ShadowTableChanges.Move(associated, offset))
-					} else {
-						inserts.insert(offset)
-					}
-				case .remove(let offset, _, let associated):
-					if let associated = associated {
-						moves.insert(ShadowTableChanges.Move(offset, associated))
-					} else {
-						deletes.insert(offset)
-					}
-				}
-			}
-
-			// We need to reload the difference in expanded rows to get the disclosure arrows correct when programmatically changing their state
-			var reloads = Set<Int>()
-
-			for (index, newFeedNode) in newSectionRows.feedNodes.enumerated() {
-				if let newFeedNodeContainerID = (newFeedNode.node.representedObject as? Container)?.containerID {
-					if expandedTableDifference.contains(newFeedNodeContainerID) {
-						reloads.insert(index)
-					}
-				}
-			}
-
-			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
-		}
-
-		lastExpandedContainers = expandedContainers
-
-		// Compute the difference in the shadow table sections
-		var moves = Set<ShadowTableChanges.Move>()
-		var inserts = Set<Int>()
-		var deletes = Set<Int>()
-
-		let oldSections = shadowTable.map { $0.sectionID }
-		let newSections = newShadowTable.map { $0.sectionID }
-		let diff = newSections.difference(from: oldSections).inferringMoves()
-		for change in diff {
-			switch change {
-			case .insert(let offset, _, let associated):
-				if let associated = associated {
-					moves.insert(ShadowTableChanges.Move(associated, offset))
-				} else {
-					inserts.insert(offset)
-				}
-			case .remove(let offset, _, let associated):
-				if let associated = associated {
-					moves.insert(ShadowTableChanges.Move(offset, associated))
-				} else {
-					deletes.insert(offset)
-				}
+				snapshot.appendItems(feedNodes, toSection: sectionID)
 			}
 		}
 
-		shadowTable = newShadowTable
-
-		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
+		return snapshot
 	}
 
 	func shadowTableContains(_ sidebarItem: SidebarItem) -> Bool {
-		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let nodeSidebarItem = feedNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
-					return true
-				}
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		for feedNode in snapshot.itemIdentifiers {
+			if let nodeSidebarItem = feedNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
+				return true
 			}
 		}
 		return false
@@ -1889,12 +1802,17 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
 			if indexPath.row - 1 < 0 {
 				if indexPath.section - 1 < 0 {
-					return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+					let lastSection = numberOfSections - 1
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+					return IndexPath(row: count - 1, section: lastSection)
 				} else {
-					return IndexPath(row: shadowTable[indexPath.section - 1].feedNodes.count - 1, section: indexPath.section - 1)
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section - 1])
+					return IndexPath(row: count - 1, section: indexPath.section - 1)
 				}
 			} else {
 				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
@@ -1904,13 +1822,16 @@ private extension SceneCoordinator {
 		if selectPrevUnreadFeedFetcher(startingWith: nextIndexPath) {
 			return
 		}
-		let maxIndexPath = IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+		let lastSection = numberOfSections - 1
+		let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+		let maxIndexPath = IndexPath(row: count - 1, section: lastSection)
 		selectPrevUnreadFeedFetcher(startingWith: maxIndexPath)
 
 	}
 
 	@discardableResult
 	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
 
 		for i in (0...indexPath.section).reversed() {
 
@@ -1918,7 +1839,8 @@ private extension SceneCoordinator {
 				if indexPath.section == i {
 					return indexPath.row
 				} else {
-					return shadowTable[i].feedNodes.count - 1
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					return count - 1
 				}
 			}()
 
@@ -1996,9 +1918,12 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
-				if indexPath.section + 1 >= shadowTable.count {
+			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+			if indexPath.row + 1 >= count {
+				if indexPath.section + 1 >= numberOfSections {
 					return IndexPath(row: 0, section: 0)
 				} else {
 					return IndexPath(row: 0, section: indexPath.section + 1)
@@ -2021,8 +1946,10 @@ private extension SceneCoordinator {
 	}
 
 	func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 
-		for i in indexPath.section..<shadowTable.count {
+		for i in indexPath.section..<numberOfSections {
 
 			let startingRow: Int = {
 				if indexPath.section == i {
@@ -2032,7 +1959,8 @@ private extension SceneCoordinator {
 				}
 			}()
 
-			for j in startingRow..<shadowTable[i].feedNodes.count {
+			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+			for j in startingRow..<count {
 
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {

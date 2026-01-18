@@ -285,6 +285,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
+	func applySnapshot(_ snapshot: NSDiffableDataSourceSnapshot<String, FeedNode>, animatingDifferences: Bool, completion: (() -> Void)? = nil) {
+		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
+			completion?()
+		}
+	}
+
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
 	}
@@ -442,60 +448,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			let vc = SFSafariViewController(url: url)
 			vc.modalPresentationStyle = .overFullScreen
 			present(vc, animated: true)
-		}
-	}
-
-	func reloadFeeds(initialLoad: Bool, changes: ShadowTableChanges, completion: (() -> Void)? = nil) {
-		updateUI()
-
-		guard !initialLoad else {
-			collectionView.reloadData()
-			completion?()
-			return
-		}
-
-		collectionView.performBatchUpdates {
-			if let deletes = changes.deletes, !deletes.isEmpty {
-				collectionView.deleteSections(IndexSet(deletes))
-			}
-
-			if let inserts = changes.inserts, !inserts.isEmpty {
-				collectionView.insertSections(IndexSet(inserts))
-			}
-
-			if let moves = changes.moves, !moves.isEmpty {
-				for move in moves {
-					collectionView.moveSection(move.from, toSection: move.to)
-				}
-			}
-
-			if let rowChanges = changes.rowChanges {
-				for rowChange in rowChanges {
-					if let deletes = rowChange.deleteIndexPaths, !deletes.isEmpty {
-						collectionView.deleteItems(at: deletes)
-					}
-
-					if let inserts = rowChange.insertIndexPaths, !inserts.isEmpty {
-						collectionView.insertItems(at: inserts)
-					}
-
-					if let moves = rowChange.moveIndexPaths, !moves.isEmpty {
-						for move in moves {
-							collectionView.moveItem(at: move.0, to: move.1)
-						}
-					}
-				}
-			}
-		} completion: { _ in
-			if let rowChanges = changes.rowChanges {
-				for rowChange in rowChanges {
-					if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {
-						self.collectionView.reloadItems(at: reloads)
-					}
-				}
-			}
-
-			completion?()
 		}
 	}
 
