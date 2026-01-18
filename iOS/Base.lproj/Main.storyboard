@@ -139,7 +139,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wWh-bJ-tNe">
-                                            <rect key="frame" x="83" y="14.999999999999998" width="327" height="20.333333333333329"/>
+                                            <rect key="frame" x="83" y="12.999999999999998" width="327" height="20.333333333333329"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -161,16 +161,16 @@
                                             </constraints>
                                         </view>
                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ESv-eQ-b8X">
-                                            <rect key="frame" x="83" y="36.333333333333336" width="327" height="17.666666666666664"/>
+                                            <rect key="frame" x="83" y="34.333333333333336" width="327" height="19.666666666666664"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AM1-9Z-4rU">
-                                                    <rect key="frame" x="0.0" y="1.6666666666666652" width="179" height="14.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="2.6666666666666652" width="179" height="14.333333333333336"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zdW-7U-Vov">
-                                                    <rect key="frame" x="187" y="1.6666666666666652" width="140" height="14.333333333333336"/>
+                                                    <rect key="frame" x="187" y="2.6666666666666652" width="140" height="14.333333333333336"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                                     <nil key="highlightedColor"/>
@@ -189,7 +189,7 @@
                                         <constraint firstItem="Adg-d9-egJ" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="VIg-VB-r3d" secondAttribute="bottom" constant="3" id="KJL-py-Sd1"/>
                                         <constraint firstItem="VIg-VB-r3d" firstAttribute="leading" secondItem="baQ-HK-mjy" secondAttribute="trailing" constant="8" symbolic="YES" id="NY7-Kg-7tF"/>
                                         <constraint firstItem="baQ-HK-mjy" firstAttribute="leading" secondItem="Adg-d9-egJ" secondAttribute="leading" constant="15" id="SuA-f2-vgv"/>
-                                        <constraint firstItem="wWh-bJ-tNe" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="15" id="VEu-g8-hf0"/>
+                                        <constraint firstItem="wWh-bJ-tNe" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="13" id="VEu-g8-hf0"/>
                                         <constraint firstItem="Adg-d9-egJ" firstAttribute="trailing" secondItem="ESv-eQ-b8X" secondAttribute="trailing" constant="20" id="WOi-Ux-1J5"/>
                                         <constraint firstItem="Adg-d9-egJ" firstAttribute="bottom" secondItem="ESv-eQ-b8X" secondAttribute="bottom" constant="8" id="arj-Vg-UZ3"/>
                                         <constraint firstItem="VIg-VB-r3d" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="15" id="fX5-pf-fYx"/>
@@ -224,22 +224,22 @@
                                             </constraints>
                                         </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Title" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xIH-Bj-Hfb">
-                                            <rect key="frame" x="39" y="15" width="371" height="21"/>
+                                            <rect key="frame" x="39" y="12" width="371" height="20.333333333333258"/>
                                             <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="POG-WQ-rYn">
-                                            <rect key="frame" x="39" y="36" width="371" height="18.333333333333329"/>
+                                            <rect key="frame" x="39" y="34" width="371" height="20.333333333333329"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NA4-5R-bQn">
-                                                    <rect key="frame" x="0.0" y="2.0000000000000009" width="203" height="14.333333333333336"/>
+                                                    <rect key="frame" x="0.0" y="3.0000000000000009" width="203" height="14.333333333333336"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DHe-fL-GeU">
-                                                    <rect key="frame" x="203" y="2.0000000000000009" width="168" height="14.333333333333336"/>
+                                                    <rect key="frame" x="203" y="3.0000000000000009" width="168" height="14.333333333333336"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                     <color key="textColor" systemColor="secondaryLabelColor"/>
                                                     <nil key="highlightedColor"/>
@@ -255,7 +255,7 @@
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="trailing" secondItem="xIH-Bj-Hfb" secondAttribute="trailing" constant="20" id="CJm-OT-agU"/>
                                         <constraint firstItem="xIH-Bj-Hfb" firstAttribute="leading" secondItem="qJ6-XG-BBa" secondAttribute="trailing" constant="8" symbolic="YES" id="LBB-sr-Af3"/>
                                         <constraint firstItem="POG-WQ-rYn" firstAttribute="leading" secondItem="xIH-Bj-Hfb" secondAttribute="leading" id="NyL-bo-xK3"/>
-                                        <constraint firstItem="xIH-Bj-Hfb" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="15" id="TCh-kO-fj1"/>
+                                        <constraint firstItem="xIH-Bj-Hfb" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="13" id="TCh-kO-fj1"/>
                                         <constraint firstItem="qJ6-XG-BBa" firstAttribute="top" secondItem="T0c-9w-8Vx" secondAttribute="top" constant="15" id="gwo-Xi-4nq"/>
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="bottom" secondItem="POG-WQ-rYn" secondAttribute="bottom" constant="7.6666666666666217" id="nQe-AM-26Q"/>
                                         <constraint firstItem="T0c-9w-8Vx" firstAttribute="trailing" secondItem="POG-WQ-rYn" secondAttribute="trailing" constant="20" id="nrE-3J-lDa"/>
@@ -639,7 +639,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Blog Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YsT-Lt-Zry">
-                                <rect key="frame" x="20" y="7.9999999999999982" width="86.333333333333343" height="20.333333333333329"/>
+                                <rect key="frame" x="20" y="7.9999999999999982" width="86.333333333333329" height="20.333333333333329"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                 <color key="textColor" name="primaryAccentColor"/>
                                 <nil key="highlightedColor"/>
@@ -745,19 +745,19 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

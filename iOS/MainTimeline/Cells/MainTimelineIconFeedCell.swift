@@ -117,15 +117,14 @@ class MainTimelineIconFeedCell: UITableViewCell {
 
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
-		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
 		if cellData.title != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
-			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
-			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .headline).pointSize
+			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .headline).lineHeight
+			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .headline).lineHeight
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: UIFont.preferredFont(forTextStyle: .headline),
 				.paragraphStyle: paragraphStyle,
-				.foregroundColor: isSelected ? UIColor.white : UIColor.label
+				.foregroundColor: titleTextColor(for: state)
 			]
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
@@ -140,12 +139,12 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		} else {
 			if cellData.summary != "" {
 				let paragraphStyle = NSMutableParagraphStyle()
-				paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
-				paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).pointSize
+				paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
+				paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
 				let summaryAttributes: [NSAttributedString.Key: Any] = [
 					.font: UIFont.preferredFont(forTextStyle: .body),
 					.paragraphStyle: paragraphStyle,
-					.foregroundColor: isSelected ? UIColor.white : UIColor.label
+					.foregroundColor: titleTextColor(for: state)
 				]
 				var summaryAttributed: NSAttributedString
 				if cellData.title != "" {
@@ -191,6 +190,15 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		usedTitleLineCount = lineCount
 		return usedTitleLineCount >= AppDefaults.shared.timelineNumberOfLines
 	}
+	
+	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
+		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
+		if isSelected {
+			return .white
+		} else {
+			return .label
+		}
+	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		super.updateConfiguration(using: state)
@@ -204,11 +212,11 @@ class MainTimelineIconFeedCell: UITableViewCell {
 
 		if state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			applyTitleTextWithAttributes(state)
+			articleTitle.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText
 			authorByLine.textColor = .lightText
 		} else {
-			applyTitleTextWithAttributes(state)
+			articleTitle.textColor = titleTextColor(for: state)
 			articleDate.textColor = .secondaryLabel
 			authorByLine.textColor = .secondaryLabel
 		}
