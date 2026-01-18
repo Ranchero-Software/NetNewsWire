@@ -57,10 +57,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	/// `viewDidAppear(_:)` after a delay to allow the deselection animation to complete.
 	private var isAnimating: Bool = false
 
+	private var dataSource: UICollectionViewDiffableDataSource<String, FeedNode>!
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		registerForNotifications()
 		configureCollectionView()
+		configureDiffableDataSource()
 		collectionView.dragDelegate = self
 		collectionView.dropDelegate = self
 		becomeFirstResponder()
@@ -218,71 +221,75 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
+	func configureDiffableDataSource() {
+		dataSource = UICollectionViewDiffableDataSource<String, FeedNode>(
+			collectionView: collectionView
+		) { [weak self] collectionView, indexPath, feedNode -> UICollectionViewCell? in
+			guard let self else { return nil }
+
+			if feedNode.node.representedObject is Folder {
+				let cell = collectionView.dequeueReusableCell(
+					withReuseIdentifier: folderIdentifier,
+					for: indexPath
+				) as! MainFeedCollectionViewFolderCell
+				self.configure(cell, feedNode: feedNode)
+				cell.delegate = self
+				return cell
+			} else {
+				let cell = collectionView.dequeueReusableCell(
+					withReuseIdentifier: reuseIdentifier,
+					for: indexPath
+				) as! MainFeedCollectionViewCell
+				self.configure(cell, feedNode: feedNode)
+				return cell
+			}
+		}
+
+		dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
+			guard let self else { return nil }
+			guard kind == UICollectionView.elementKindSectionHeader else {
+				return UICollectionReusableView()
+			}
+
+			let headerView = collectionView.dequeueReusableSupplementaryView(
+				ofKind: kind,
+				withReuseIdentifier: containerReuseIdentifier,
+				for: indexPath
+			) as! MainFeedCollectionHeaderReusableView
+
+			guard let nameProvider = self.coordinator.rootNode.childAtIndex(indexPath.section)?.representedObject as? DisplayNameProvider else {
+				return UICollectionReusableView()
+			}
+
+			headerView.delegate = self
+			headerView.headerTitle.text = nameProvider.nameForDisplay
+
+			guard let sectionNode = self.coordinator.rootNode.childAtIndex(indexPath.section) else {
+				return headerView
+			}
+
+			if let account = sectionNode.representedObject as? Account {
+				headerView.unreadCount = account.unreadCount
+			} else {
+				headerView.unreadCount = 0
+			}
+
+			headerView.tag = indexPath.section
+			headerView.disclosureExpanded = self.coordinator.isExpanded(sectionNode)
+
+			if indexPath.section != 0 {
+				headerView.addInteraction(UIContextMenuInteraction(delegate: self))
+			}
+
+			return headerView
+		}
+	}
+
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
 	}
 
-    // MARK: UICollectionViewDataSource
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return coordinator.numberOfSections()
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return coordinator.numberOfRows(in: section)
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		guard let node = coordinator.nodeFor(indexPath), node.representedObject is Folder else {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MainFeedCollectionViewCell
-			configure(cell, indexPath: indexPath)
-			return cell
-		}
-
-		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: folderIdentifier, for: indexPath) as! MainFeedCollectionViewFolderCell
-		configure(cell, indexPath: indexPath)
-		cell.delegate = self
-		return cell
-
-    }
-
-	override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-		guard kind == UICollectionView.elementKindSectionHeader else {
-				return UICollectionReusableView()
-			}
-
-		let headerView = collectionView.dequeueReusableSupplementaryView(
-			ofKind: kind,
-			withReuseIdentifier: containerReuseIdentifier,
-			for: indexPath
-		) as! MainFeedCollectionHeaderReusableView
-
-		guard let nameProvider = coordinator.rootNode.childAtIndex(indexPath.section)?.representedObject as? DisplayNameProvider else {
-			return UICollectionReusableView()
-		}
-
-		headerView.delegate = self
-		headerView.headerTitle.text = nameProvider.nameForDisplay
-
-		guard let sectionNode = coordinator.rootNode.childAtIndex(indexPath.section) else {
-			return headerView
-		}
-
-		if let account = sectionNode.representedObject as? Account {
-			headerView.unreadCount = account.unreadCount
-		} else {
-			headerView.unreadCount = 0
-		}
-
-		headerView.tag = indexPath.section
-		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)
-
-		if indexPath.section != 0 {
-			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
-		}
-
-		return headerView
-	}
+    // MARK: UICollectionViewDelegate
 
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
@@ -503,6 +510,20 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
+	func configureIcon(_ cell: MainFeedCollectionViewCell, sidebarItem: SidebarItem) {
+		guard let sidebarItemID = sidebarItem.sidebarItemID else {
+			return
+		}
+		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
+	}
+
+	func configureIcon(_ cell: MainFeedCollectionViewFolderCell, sidebarItem: SidebarItem) {
+		guard let sidebarItemID = sidebarItem.sidebarItemID else {
+			return
+		}
+		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
+	}
+
 	func configureIcon(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
 		guard let node = coordinator.nodeFor(indexPath), let sidebarItem = node.representedObject as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID else {
 			return
@@ -545,6 +566,36 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	// MARK: - Private
 
 	/// Configure standard feed cells
+	func configure(_ cell: MainFeedCollectionViewCell, feedNode: FeedNode) {
+		let node = feedNode.node
+		var indentationLevel = 0
+		if node.parent?.representedObject is Folder {
+			indentationLevel = 1
+		}
+
+		if let sidebarItem = node.representedObject as? SidebarItem {
+			cell.feedTitle.text = sidebarItem.nameForDisplay
+			cell.unreadCount = sidebarItem.unreadCount
+			cell.indentationLevel = indentationLevel
+			configureIcon(cell, sidebarItem: sidebarItem)
+		}
+	}
+
+	/// Configure folders
+	func configure(_ cell: MainFeedCollectionViewFolderCell, feedNode: FeedNode) {
+		let node = feedNode.node
+
+		if let folder = node.representedObject as? Folder {
+			cell.folderTitle.text = folder.nameForDisplay
+			cell.unreadCount = folder.unreadCount
+			configureIcon(cell, sidebarItem: folder)
+		}
+
+		if let containerID = (node.representedObject as? Container)?.containerID {
+			cell.setDisclosure(isExpanded: coordinator.isExpanded(containerID), animated: false)
+		}
+	}
+
 	func configure(_ cell: MainFeedCollectionViewCell, indexPath: IndexPath) {
 		guard let node = coordinator.nodeFor(indexPath) else { return }
 		var indentationLevel = 0
