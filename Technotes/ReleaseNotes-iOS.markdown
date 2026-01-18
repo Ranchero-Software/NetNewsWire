@@ -1,6 +1,13 @@
 # iOS Release Notes
 
-### 7.0 TestFlight build 7005 16 Jan 2026 - branch: main tag: iOS-7.0-7005
+### 7.0 TestFlight build 7006 18 Jan 2026 - branch: main tag: iOS-7.0-7006
+
+Fixed (we think), again, a crashing bug that could happen on updating the feeds list. (It was fixed in 7004 but reintroduced in 7005.)
+Fixed a performance issue when swiping rows in the timeline
+Fixed a bug in the timeline where text could be clipped off at the top, particularly accented text
+Fixed a bug in Settings where Open Links in NetNewsWire didn’t wrap
+
+### 7.0 TestFlight build 7005 17 Jan 2026 - branch: main tag: iOS-7.0-7005
 
 Fixed a performance issue introduced in the previous (7004) build
 
