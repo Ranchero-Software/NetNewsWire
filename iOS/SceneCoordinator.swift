@@ -461,7 +461,6 @@ struct FeedNode: Hashable, Sendable {
 		guard AccountManager.shared.areUnreadCountsInitialized else {
 			return
 		}
-		Self.logger.debug("SceneCoordinator: unreadCountDidChange \(note.object.debugDescription)")
 		queueRebuildBackingStores()
 	}
 
