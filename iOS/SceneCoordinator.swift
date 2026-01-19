@@ -26,7 +26,7 @@ enum ShowFeedName {
 	case feed
 }
 
-struct FeedNode: Hashable, Sendable {
+struct SidebarItemNode: Hashable, Sendable {
 	let node: Node
 	let sidebarItemID: SidebarItemIdentifier
 
@@ -39,7 +39,7 @@ struct FeedNode: Hashable, Sendable {
 		hasher.combine(ObjectIdentifier(node))
 	}
 
-	nonisolated static func == (lhs: FeedNode, rhs: FeedNode) -> Bool {
+	nonisolated static func == (lhs: SidebarItemNode, rhs: SidebarItemNode) -> Bool {
 		lhs.node === rhs.node
 	}
 }
@@ -382,8 +382,8 @@ struct FeedNode: Hashable, Sendable {
 			return
 		}
 
-		guard let feedNode = nodeFor(sidebarItemID: selectedSidebarItem),
-			  let indexPath = indexPathFor(feedNode) else {
+		guard let sidebarItemNode = nodeFor(sidebarItemID: selectedSidebarItem),
+			  let indexPath = indexPathFor(sidebarItemNode) else {
 			return
 		}
 		selectFeed(indexPath: indexPath, animations: []) {
@@ -753,15 +753,15 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard let feedNode = mainFeedCollectionViewController.dataSource.itemIdentifier(for: indexPath) else {
+		guard let sidebarItemNode = mainFeedCollectionViewController.dataSource.itemIdentifier(for: indexPath) else {
 			return nil
 		}
-		return feedNode.node
+		return sidebarItemNode.node
 	}
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
-		let feedNode = FeedNode(node)
-		return mainFeedCollectionViewController.dataSource.indexPath(for: feedNode)
+		let sidebarItemNode = SidebarItemNode(node)
+		return mainFeedCollectionViewController.dataSource.indexPath(for: sidebarItemNode)
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
@@ -1614,8 +1614,8 @@ private extension SceneCoordinator {
 
 	func addVisibleSidebarItemsToFilterExceptions() {
 		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
-		for feedNode in snapshot.itemIdentifiers {
-			if let feed = feedNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let feed = sidebarItemNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 		}
@@ -1659,8 +1659,8 @@ private extension SceneCoordinator {
 		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad, completion: completion)
 	}
 
-	private func createSidebarSnapshot() -> NSDiffableDataSourceSnapshot<String, FeedNode> {
-		var snapshot = NSDiffableDataSourceSnapshot<String, FeedNode>()
+	private func createSidebarSnapshot() -> NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
+		var snapshot = NSDiffableDataSourceSnapshot<String, SidebarItemNode>()
 
 		for i in 0..<treeController.rootNode.numberOfChildNodes {
 			let sectionNode = treeController.rootNode.childAtIndex(i)!
@@ -1669,18 +1669,18 @@ private extension SceneCoordinator {
 			snapshot.appendSections([sectionID])
 
 			if isExpanded(sectionNode) {
-				var feedNodes = [FeedNode]()
+				var siNodes = [SidebarItemNode]()
 
 				for node in sectionNode.childNodes {
-					feedNodes.append(FeedNode(node))
+					siNodes.append(SidebarItemNode(node))
 					if isExpanded(node) {
 						for child in node.childNodes {
-							feedNodes.append(FeedNode(child))
+							siNodes.append(SidebarItemNode(child))
 						}
 					}
 				}
 
-				snapshot.appendItems(feedNodes, toSection: sectionID)
+				snapshot.appendItems(siNodes, toSection: sectionID)
 			}
 		}
 
@@ -1689,8 +1689,8 @@ private extension SceneCoordinator {
 
 	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
 		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
-		for feedNode in snapshot.itemIdentifiers {
-			if let nodeSidebarItem = feedNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
 				return true
 			}
 		}
@@ -2289,7 +2289,7 @@ private extension SceneCoordinator {
 			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
-				if let feedNode = nodeFor(sidebarItemID: sidebarItemID), let folder = feedNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
+				if let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let folder = sidebarItemNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
 					treeControllerDelegate.addFilterException(folderSidebarItemID)
 				}
 			}
@@ -2317,7 +2317,7 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func findFeedNode(feedID: String, beginningAt startingNode: Node) -> Node? {
+	func findSidebarItemNode(feedID: String, beginningAt startingNode: Node) -> Node? {
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
 			return node
 		}
@@ -2325,7 +2325,7 @@ private extension SceneCoordinator {
 	}
 
 	func selectFeedAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		guard let feedNode = nodeFor(sidebarItemID: sidebarItemID), let feedIndexPath = indexPathFor(feedNode) else { return false }
+		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let feedIndexPath = indexPathFor(sidebarItemNode) else { return false }
 
 		selectFeed(indexPath: feedIndexPath) {
 			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)

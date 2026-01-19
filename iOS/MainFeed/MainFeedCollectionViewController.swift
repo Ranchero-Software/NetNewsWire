@@ -59,7 +59,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	/// `viewDidAppear(_:)` after a delay to allow the deselection animation to complete.
 	private var isAnimating: Bool = false
 
-	var dataSource: UICollectionViewDiffableDataSource<String, FeedNode>!
+	var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -224,19 +224,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configureDiffableDataSource() {
-		dataSource = UICollectionViewDiffableDataSource<String, FeedNode>(
+		dataSource = UICollectionViewDiffableDataSource<String, SidebarItemNode>(
 			collectionView: collectionView
-		) { [weak self] collectionView, indexPath, feedNode -> UICollectionViewCell? in
+		) { [weak self] collectionView, indexPath, sidebarItemNode -> UICollectionViewCell? in
 			guard let self else {
 				return nil
 			}
 
-			if feedNode.node.representedObject is Folder {
+			if sidebarItemNode.node.representedObject is Folder {
 				let cell = collectionView.dequeueReusableCell(
 					withReuseIdentifier: folderIdentifier,
 					for: indexPath
 				) as! MainFeedCollectionViewFolderCell
-				self.configure(cell, feedNode: feedNode)
+				self.configure(cell, sidebarItemNode: sidebarItemNode)
 				cell.delegate = self
 				return cell
 			} else {
@@ -244,7 +244,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 					withReuseIdentifier: reuseIdentifier,
 					for: indexPath
 				) as! MainFeedCollectionViewCell
-				self.configure(cell, feedNode: feedNode)
+				self.configure(cell, sidebarItemNode: sidebarItemNode)
 				return cell
 			}
 		}
@@ -291,7 +291,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	func applySnapshot(_ snapshot: NSDiffableDataSourceSnapshot<String, FeedNode>, animatingDifferences: Bool, completion: (() -> Void)? = nil) {
+	func applySnapshot(_ snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>, animatingDifferences: Bool, completion: (() -> Void)? = nil) {
 		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
 			completion?()
 		}
@@ -524,8 +524,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	// MARK: - Private
 
 	/// Configure standard feed cells
-	func configure(_ cell: MainFeedCollectionViewCell, feedNode: FeedNode) {
-		let node = feedNode.node
+	func configure(_ cell: MainFeedCollectionViewCell, sidebarItemNode: SidebarItemNode) {
+		let node = sidebarItemNode.node
 		var indentationLevel = 0
 		if node.parent?.representedObject is Folder {
 			indentationLevel = 1
@@ -540,8 +540,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	/// Configure folders
-	func configure(_ cell: MainFeedCollectionViewFolderCell, feedNode: FeedNode) {
-		let node = feedNode.node
+	func configure(_ cell: MainFeedCollectionViewFolderCell, sidebarItemNode: SidebarItemNode) {
+		let node = sidebarItemNode.node
 
 		if let folder = node.representedObject as? Folder {
 			cell.folderTitle.text = folder.nameForDisplay

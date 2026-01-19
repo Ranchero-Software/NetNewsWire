@@ -646,12 +646,12 @@ private extension SidebarOutlineDataSource {
 
 	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
-		let draggedFeedNode = Node(representedObject: draggedFeedWrapper, parent: nil)
-		let nodes = parentNode.childNodes + [draggedFeedNode]
+		let draggedSidebarItemNode = Node(representedObject: draggedFeedWrapper, parent: nil)
+		let nodes = parentNode.childNodes + [draggedSidebarItemNode]
 
 		// Revisit if the tree controller can ever be sorted in some other way.
 		let sortedNodes = nodes.sortedAlphabeticallyWithFoldersAtEnd()
-		let index = sortedNodes.firstIndex(of: draggedFeedNode)!
+		let index = sortedNodes.firstIndex(of: draggedSidebarItemNode)!
 		return index
 	}
 

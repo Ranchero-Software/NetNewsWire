@@ -510,8 +510,8 @@ extension Notification.Name {
 
 	func deepLinkRevealAndSelect(for userInfo: [AnyHashable: Any]) {
 		guard let accountNode = findAccountNode(userInfo),
-			let feedNode = findFeedNode(userInfo, beginningAt: accountNode),
-			let sidebarItem = feedNode.representedObject as? SidebarItem else {
+			let sidebarItemNode = findSidebarItemNode(userInfo, beginningAt: accountNode),
+			let sidebarItem = sidebarItemNode.representedObject as? SidebarItem else {
 			return
 		}
 		selectFeed(sidebarItem)
@@ -783,7 +783,7 @@ private extension SidebarViewController {
 		return nil
 	}
 
-	func findFeedNode(_ userInfo: [AnyHashable: Any]?, beginningAt startingNode: Node) -> Node? {
+	func findSidebarItemNode(_ userInfo: [AnyHashable: Any]?, beginningAt startingNode: Node) -> Node? {
 		guard let feedID = userInfo?[ArticlePathKey.feedID] as? String else {
 			return nil
 		}
