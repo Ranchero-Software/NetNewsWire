@@ -90,7 +90,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		try await save(records)
 	}
 
-	///  Persist a web feed record to iCloud and return the external key
+	///  Persist a feed record to iCloud and return the external key
 	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
@@ -112,7 +112,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		return record.externalID
 	}
 
-	/// Rename the given web feed
+	/// Rename the given feed
 	func renameFeed(_ feed: Feed, editedName: String?) async throws {
 		guard let externalID = feed.externalID else {
 			throw CloudKitZoneError.corruptAccount
@@ -125,7 +125,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 		try await save(record)
 	}
 
-	/// Removes a web feed from a container and optionally deletes it, returning true if deleted
+	/// Removes a feed from a container and optionally deletes it, returning true if deleted
 	func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
 		guard let fromContainerExternalID = from.externalID else {
 			throw CloudKitZoneError.corruptAccount

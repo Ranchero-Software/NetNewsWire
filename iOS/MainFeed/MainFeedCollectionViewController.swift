@@ -719,7 +719,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 
-		let addFeedActionTitle = NSLocalizedString("Add Web Feed", comment: "Add Web Feed")
+		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
 		let addFeedAction = UIAlertAction(title: addFeedActionTitle, style: .default) { _ in
 			self.coordinator.showAddFeed()
 		}

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina5_9" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -97,7 +97,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Add Web Feed" id="i1W-2z-PAk">
+                    <navigationItem key="navigationItem" title="Add Feed" id="i1W-2z-PAk">
                         <barButtonItem key="leftBarButtonItem" title="Cancel" id="QpU-Ro-nHd">
                             <connections>
                                 <action selector="cancel:" destination="7aE-6a-iP7" id="g4H-Mc-Jnh"/>
@@ -127,7 +127,7 @@
             <objects>
                 <navigationController storyboardIdentifier="AddFeedFolderNavViewController" id="WDg-F7-gfk" customClass="ModalNavigationController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="akM-T1-shZ">
-                        <rect key="frame" x="0.0" y="100" width="375" height="54"/>
+                        <rect key="frame" x="0.0" y="88" width="375" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -138,10 +138,10 @@
             </objects>
             <point key="canvasLocation" x="-1711" y="756"/>
         </scene>
-        <!--Web Feed Folder-->
+        <!--Feed Folder-->
         <scene sceneID="wnD-aY-W32">
             <objects>
-                <tableViewController storyboardIdentifier="AddFeedFolderViewController" title="Web Feed Folder" id="acA-n7-ohN" customClass="AddFeedFolderViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="AddFeedFolderViewController" title="Feed Folder" id="acA-n7-ohN" customClass="AddFeedFolderViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="new-nW-ba2">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -239,7 +239,7 @@
             <objects>
                 <navigationController storyboardIdentifier="AddFeedViewControllerNav" id="4Ej-aI-tUP" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Fot-QF-7Rn">
-                        <rect key="frame" x="0.0" y="100" width="375" height="54"/>
+                        <rect key="frame" x="0.0" y="88" width="375" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -371,7 +371,7 @@
             <objects>
                 <navigationController storyboardIdentifier="AddFolderViewControllerNav" id="edk-IE-nce" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Pi1-Bc-YXQ">
-                        <rect key="frame" x="0.0" y="100" width="375" height="54"/>
+                        <rect key="frame" x="0.0" y="88" width="375" height="54"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
