@@ -1553,7 +1553,7 @@ private extension SceneCoordinator {
 
 	func ensureFeedIsAvailableToSelect(_ sidebarItem: SidebarItem, completion: @escaping () -> Void) {
 		addToFilterExceptionsIfNecessary(sidebarItem)
-		addShadowTableToFilterExceptions()
+		addVisibleSidebarItemsToFilterExceptions()
 
 		rebuildBackingStores(completion: {
 			self.treeControllerDelegate.resetFilterExceptions()
@@ -1588,7 +1588,7 @@ private extension SceneCoordinator {
 		treeControllerDelegate.addFilterException(folderSidebarItemID)
 	}
 
-	func addShadowTableToFilterExceptions() {
+	func addVisibleSidebarItemsToFilterExceptions() {
 		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
 		for feedNode in snapshot.itemIdentifiers {
 			if let feed = feedNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
@@ -1663,7 +1663,7 @@ private extension SceneCoordinator {
 		return snapshot
 	}
 
-	func shadowTableContains(_ sidebarItem: SidebarItem) -> Bool {
+	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
 		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
 		for feedNode in snapshot.itemIdentifiers {
 			if let nodeSidebarItem = feedNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
@@ -1674,7 +1674,7 @@ private extension SceneCoordinator {
 	}
 
 	func clearTimelineIfNoLongerAvailable() {
-		if let feed = timelineFeed, !shadowTableContains(feed) {
+		if let feed = timelineFeed, !sidebarContains(feed) {
 			selectFeed(nil, deselectArticle: true)
 		}
 	}
