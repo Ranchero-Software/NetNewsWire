@@ -80,7 +80,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	private var lastSearchScope: SearchScope?
 	private var isSearching: Bool = false
 	private var savedSearchArticles: ArticleArray?
-	private var savedSearchArticleIds: Set<String>?
+	private var savedSearchArticleIDs: Set<String>?
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
@@ -1015,7 +1015,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		isSearching = true
 		preSearchTimelineFeed = timelineFeed
 		savedSearchArticles = articles
-		savedSearchArticleIds = Set(articles.map { $0.articleID })
+		savedSearchArticleIDs = Set(articles.map { $0.articleID })
 		setTimelineFeed(nil, animated: true)
 		selectArticle(nil)
 	}
@@ -1033,7 +1033,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		lastSearchString = ""
 		lastSearchScope = nil
 		preSearchTimelineFeed = nil
-		savedSearchArticleIds = nil
+		savedSearchArticleIDs = nil
 		savedSearchArticles = nil
 		isSearching = false
 		selectArticle(nil)
@@ -1057,7 +1057,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			case .global:
 				setTimelineFeed(SmartFeed(delegate: SearchFeedDelegate(searchString: searchString)), animated: true)
 			case .timeline:
-				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIds!)), animated: true)
+				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIDs!)), animated: true)
 			}
 
 			lastSearchString = searchString
