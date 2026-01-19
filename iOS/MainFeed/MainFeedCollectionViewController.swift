@@ -39,7 +39,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
-		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else { return nil }
+		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else {
+			return nil
+		}
 
 		return keyboardManager.keyCommands
 	}
@@ -225,7 +227,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		dataSource = UICollectionViewDiffableDataSource<String, FeedNode>(
 			collectionView: collectionView
 		) { [weak self] collectionView, indexPath, feedNode -> UICollectionViewCell? in
-			guard let self else { return nil }
+			guard let self else {
+				return nil
+			}
 
 			if feedNode.node.representedObject is Folder {
 				let cell = collectionView.dequeueReusableCell(
@@ -246,7 +250,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
-			guard let self else { return nil }
+			guard let self else {
+				return nil
+			}
 			guard kind == UICollectionView.elementKindSectionHeader else {
 				return UICollectionReusableView()
 			}
@@ -549,7 +555,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configure(_ cell: MainFeedCollectionViewCell, indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath) else { return }
+		guard let node = coordinator.nodeFor(indexPath) else {
+			return
+		}
 		var indentationLevel = 0
 		if node.parent?.representedObject is Folder {
 			indentationLevel = 1
@@ -565,7 +573,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	/// Configure folders
 	func configure(_ cell: MainFeedCollectionViewFolderCell, indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath) else { return }
+		guard let node = coordinator.nodeFor(indexPath) else {
+			return
+		}
 
 		if let folder = node.representedObject as? Folder {
 			cell.folderTitle.text = folder.nameForDisplay
@@ -590,7 +600,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
-		guard let indexPaths = collectionView.indexPathsForSelectedItems else { return }
+		guard let indexPaths = collectionView.indexPathsForSelectedItems else {
+			return
+		}
 		collectionView.reloadItems(at: indexPaths)
 		restoreSelectionIfNecessary(adjustScroll: false)
 	}
@@ -628,7 +640,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 		let node: Node? = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
 
-		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
+		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else {
+			return
+		}
 
 		if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
 			cell.unreadCount = unreadCountProvider.unreadCount
@@ -813,7 +827,9 @@ extension MainFeedCollectionViewController {
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
 		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] _ in
 
-			guard let self = self else { return nil }
+			guard let self = self else {
+				return nil
+			}
 
 			var menuElements = [UIMenuElement]()
 
@@ -856,7 +872,9 @@ extension MainFeedCollectionViewController {
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
 		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] _ in
 
-			guard let self = self else { return nil }
+			guard let self = self else {
+				return nil
+			}
 
 			var menuElements = [UIMenuElement]()
 
@@ -1089,7 +1107,9 @@ extension MainFeedCollectionViewController {
 	}
 
 	func rename(indexPath: IndexPath) {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+			return
+		}
 
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Rename feed")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, sidebarItem.nameForDisplay) as String
@@ -1144,7 +1164,9 @@ extension MainFeedCollectionViewController {
 	}
 
 	func delete(indexPath: IndexPath) {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+			return
+		}
 
 		let title: String
 		let message: String

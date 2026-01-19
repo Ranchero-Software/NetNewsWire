@@ -275,7 +275,9 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	private var currentArticleRow: Int? {
-		guard let article = currentArticle else { return nil }
+		guard let article = currentArticle else {
+			return nil
+		}
 		return articles.firstIndex(of: article)
 	}
 
@@ -405,7 +407,9 @@ struct FeedNode: Hashable, Sendable {
 
 	func handle(_ activity: NSUserActivity) {
 		selectFeed(indexPath: nil) {
-			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
+			guard let activityType = ActivityType(rawValue: activity.activityType) else {
+				return
+			}
 			switch activityType {
 			case .restoration:
 				break
@@ -771,7 +775,9 @@ struct FeedNode: Hashable, Sendable {
 	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
 		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
 		let numberOfSections = snapshot.numberOfSections
-		guard numberOfSections > 0 else { return indexPath }
+		guard numberOfSections > 0 else {
+			return indexPath
+		}
 
 		guard indexPath.section < numberOfSections else {
 			let lastSection = numberOfSections - 1
@@ -835,7 +841,9 @@ struct FeedNode: Hashable, Sendable {
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
-		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
 		lastExpandedContainers.insert(containerID)
 		expand(containerID)
 	}
@@ -863,7 +871,9 @@ struct FeedNode: Hashable, Sendable {
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
-		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
 		lastExpandedContainers.remove(containerID)
 		collapse(containerID)
 	}
@@ -975,7 +985,9 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
-		guard article != currentArticle else { return }
+		guard article != currentArticle else {
+			return
+		}
 
 		currentArticle = article
 		activityManager.reading(feed: timelineFeed, article: article)
@@ -1030,7 +1042,9 @@ struct FeedNode: Hashable, Sendable {
 
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
 
-		guard isSearching else { return }
+		guard isSearching else {
+			return
+		}
 
 		if searchString.count < 3 {
 			setTimelineFeed(nil, animated: true)
@@ -1212,7 +1226,9 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func toggleRead(_ article: Article) {
-		guard !article.status.read || article.isAvailableToMarkUnread else { return }
+		guard !article.status.read || article.isAvailableToMarkUnread else {
+			return
+		}
 		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read)
 	}
 
@@ -1378,12 +1394,16 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func showBrowserForArticle(_ article: Article) {
-		guard let url = article.preferredURL else { return }
+		guard let url = article.preferredURL else {
+			return
+		}
 		UIApplication.shared.open(url, options: [:])
 	}
 
 	func showBrowserForCurrentArticle() {
-		guard let url = currentArticle?.preferredURL else { return }
+		guard let url = currentArticle?.preferredURL else {
+			return
+		}
 		UIApplication.shared.open(url, options: [:])
 	}
 
@@ -1434,12 +1454,16 @@ struct FeedNode: Hashable, Sendable {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = mainFeedCollectionViewController.presentedViewController else { return }
+		guard let presentedController = mainFeedCollectionViewController.presentedViewController else {
+			return
+		}
 
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else { return }
+		guard let settings = presentedController.children.first as? SettingsViewController else {
+			return
+		}
 		settings.dismiss(animated: true, completion: nil)
 	}
 
@@ -2211,7 +2235,9 @@ private extension SceneCoordinator {
 	}
 
 	func handleReadArticle(_ userInfo: [AnyHashable: Any]?) {
-		guard let userInfo = userInfo else { return }
+		guard let userInfo = userInfo else {
+			return
+		}
 
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
