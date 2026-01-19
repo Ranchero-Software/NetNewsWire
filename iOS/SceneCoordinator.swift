@@ -353,6 +353,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
+		Self.logger.debug("SceneCoordinator: restoreWindowState")
+
 		if AppDefaults.shared.isFirstRun {
 			// Expand top-level items on first run.
 			for sectionNode in treeController.rootNode.childNodes {
@@ -459,6 +461,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	// MARK: Notifications
 
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
+		Self.logger.debug("SceneCoordinator: unreadCountDidInitialize")
+
 		guard notification.object is AccountManager else {
 			return
 		}
@@ -481,24 +485,29 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: containerChildrenDidChange")
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
 			fetchAndMergeArticlesAsync(animated: true) {
 				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
-				self.rebuildBackingStores()
+				self.queueRebuildBackingStores()
 			}
 		} else {
-			rebuildBackingStores()
+			queueRebuildBackingStores()
 		}
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: displayNameDidChange")
+
 		if let sidebarItem = note.object as? SidebarItem {
 			reconfigureSidebarItem(sidebarItem)
 		}
-		rebuildBackingStores()
+		queueRebuildBackingStores()
 	}
 
 	@objc func accountStateDidChange(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: accountStateDidChange")
+
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
 				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
@@ -510,6 +519,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	@objc func userDidAddAccount(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: userDidAddAccount")
+
 		let expandNewAccount = {
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
@@ -528,6 +539,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: userDidDeleteAccount")
+
 		let cleanupAccount = {
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
@@ -714,6 +727,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func cleanUp(conditional: Bool) {
+		Self.logger.debug("SceneCoordinator: cleanUp: conditional \(conditional ? "true" : "false")")
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
@@ -723,6 +737,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func toggleReadFeedsFilter() {
+		Self.logger.debug("SceneCoordinator: toggleReadFeedsFilter")
+
 		let newValue = !isReadFeedsFiltered
 		treeControllerDelegate.isReadFiltered = newValue
 		AppDefaults.shared.hideReadFeeds = newValue
@@ -836,6 +852,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func expand(_ containerID: ContainerIdentifier) {
+		Self.logger.debug("SceneCoordinator: expand")
+
 		markExpanded(containerID)
 		rebuildBackingStores()
 		saveExpandedContainers()
@@ -852,6 +870,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func expandAllSectionsAndFolders() {
+		Self.logger.debug("SceneCoordinator: expandAllSectionsAndFolders")
+
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
 			for topLevelNode in sectionNode.childNodes {
@@ -865,6 +885,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func collapse(_ containerID: ContainerIdentifier) {
+		Self.logger.debug("SceneCoordinator: collapse")
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
@@ -882,6 +903,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func collapseAllFolders() {
+		Self.logger.debug("SceneCoordinator: collapseAllFolders")
 		for sectionNode in treeController.rootNode.childNodes {
 			for topLevelNode in sectionNode.childNodes {
 				if topLevelNode.representedObject is Folder {
@@ -914,6 +936,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func selectSidebarItem(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+		Self.logger.debug("SceneCoordinator: selectSidebarItem")
+
 		guard indexPath != currentFeedIndexPath else {
 			completion?()
 			return
@@ -1254,6 +1278,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func discloseFeed(_ feed: Feed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
+		Self.logger.debug("SceneCoordinator: discloseFeed")
+
 		if isSearching {
 			mainTimelineViewController?.hideSearch()
 		}
@@ -1579,6 +1605,8 @@ private extension SceneCoordinator {
 	}
 
 	func ensureFeedIsAvailableToSelect(_ sidebarItem: SidebarItem, completion: @escaping () -> Void) {
+		Self.logger.debug("SceneCoordinator: ensureFeedIsAvailableToSelect")
+
 		addToFilterExceptionsIfNecessary(sidebarItem)
 		addVisibleSidebarItemsToFilterExceptions()
 
@@ -1629,6 +1657,8 @@ private extension SceneCoordinator {
 	}
 
 	@objc func rebuildBackingStoresWithDefaults() {
+		Self.logger.debug("SceneCoordinator: rebuildBackingStoresWithDefaults")
+
 		rebuildBackingStores()
 	}
 
@@ -2203,6 +2233,8 @@ private extension SceneCoordinator {
 	// MARK: NSUserActivity
 
 	func handleSelectFeed(_ userInfo: [AnyHashable: Any]?) {
+		Self.logger.debug("SceneCoordinator: handleSelectFeed")
+
 		guard let userInfo = userInfo,
 			let sidebarItemIDUserInfo = userInfo[UserInfoKey.sidebarItemID] as? [String: String],
 			let sidebarItemID = SidebarItemIdentifier(userInfo: sidebarItemIDUserInfo) else {
