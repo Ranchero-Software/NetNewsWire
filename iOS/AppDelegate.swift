@@ -269,8 +269,10 @@ private extension AppDelegate {
 
 		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
 			guard let self = self else { return }
-			self.completeProcessing(true)
-			Self.logger.info("Accounts wait for progress terminated for running too long.")
+			Task { @MainActor in
+				self.completeProcessing(true)
+				Self.logger.info("Accounts wait for progress terminated for running too long.")
+			}
 		}
 
 		DispatchQueue.main.async { [weak self] in
@@ -318,9 +320,14 @@ private extension AppDelegate {
 			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 		}
 
-		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask {
-			completeProcessing()
-			Self.logger.info("Accounts sync processing terminated for running too long.")
+		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
+			Task { @MainActor in
+				guard let self = self else { return }
+				self.isSyncArticleStatusRunning = false
+				UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
+				self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+				Self.logger.info("Accounts sync processing terminated for running too long.")
+			}
 		}
 
 		Task { @MainActor in
