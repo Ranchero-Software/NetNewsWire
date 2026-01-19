@@ -386,7 +386,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			  let indexPath = indexPathFor(sidebarItemNode) else {
 			return
 		}
-		selectFeed(indexPath: indexPath, animations: []) {
+		selectSidebarItem(indexPath: indexPath, animations: []) {
 			self.restoreSelectedArticle(stateInfo)
 		}
 	}
@@ -406,7 +406,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func handle(_ activity: NSUserActivity) {
-		selectFeed(indexPath: nil) {
+		selectSidebarItem(indexPath: nil) {
 			guard let activityType = ActivityType(rawValue: activity.activityType) else {
 				return
 			}
@@ -448,7 +448,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showSearch() {
-		selectFeed(indexPath: nil) {
+		selectSidebarItem(indexPath: nil) {
 			self.rootSplitViewController.show(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
 				self.mainTimelineViewController!.showSearchAll()
@@ -906,11 +906,11 @@ struct SidebarItemNode: Hashable, Sendable {
 				return nil
 			}
 		}()
-		selectFeed(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
+		selectSidebarItem(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
 		updateNavigationBarSubtitles(nil)
 	}
 
-	func selectFeed(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+	func selectSidebarItem(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		guard indexPath != currentFeedIndexPath else {
 			completion?()
 			return
@@ -953,13 +953,13 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func selectPrevFeed() {
 		if let indexPath = prevFeedIndexPath {
-			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
+			selectSidebarItem(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
 
 	func selectNextFeed() {
 		if let indexPath = nextFeedIndexPath {
-			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
+			selectSidebarItem(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
 
@@ -1889,7 +1889,7 @@ private extension SceneCoordinator {
 				}
 
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(indexPath: prevIndexPath, animations: [.scroll, .navigation])
+					selectSidebarItem(indexPath: prevIndexPath, animations: [.scroll, .navigation])
 					return true
 				}
 
@@ -2006,7 +2006,7 @@ private extension SceneCoordinator {
 				}
 
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(indexPath: nextIndexPath, animations: [.scroll, .navigation], deselectArticle: false) {
+					selectSidebarItem(indexPath: nextIndexPath, animations: [.scroll, .navigation], deselectArticle: false) {
 						self.currentArticle = nil
 						completion(true)
 					}
@@ -2197,7 +2197,7 @@ private extension SceneCoordinator {
 			rebuildBackingStores(initialLoad: true, completion: {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
-					self.selectFeed(indexPath: indexPath) {
+					self.selectSidebarItem(indexPath: indexPath) {
 						self.mainFeedCollectionViewController.focus()
 					}
 				}
@@ -2215,7 +2215,7 @@ private extension SceneCoordinator {
 				self.treeControllerDelegate.resetFilterExceptions()
 
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
-					self.selectFeed(indexPath: indexPath) {
+					self.selectSidebarItem(indexPath: indexPath) {
 						self.mainFeedCollectionViewController.focus()
 					}
 				}
@@ -2279,14 +2279,14 @@ private extension SceneCoordinator {
 		switch sidebarItemID {
 
 		case .smartFeed, .folder:
-			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 			return found
 
 		case .feed:
-			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 				if let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let folder = sidebarItemNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
@@ -2324,10 +2324,12 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func selectFeedAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let feedIndexPath = indexPathFor(sidebarItemNode) else { return false }
+	func selectSidebarItemAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let sidebarItemIndexPath = indexPathFor(sidebarItemNode) else {
+			return false
+		}
 
-		selectFeed(indexPath: feedIndexPath) {
+		selectSidebarItem(indexPath: sidebarItemIndexPath) {
 			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
 

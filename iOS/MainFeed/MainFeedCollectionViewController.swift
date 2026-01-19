@@ -103,7 +103,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		/// to false and this will allow selection.
 		if traitCollection.userInterfaceIdiom == .phone {
 			if collectionView.indexPathsForSelectedItems != nil {
-				coordinator.selectFeed(indexPath: nil, animations: [.select])
+				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
 					self.isAnimating = false
 				})
@@ -305,7 +305,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath: indexPath, animations: [.navigation, .select, .scroll])
+		coordinator.selectSidebarItem(indexPath: indexPath, animations: [.navigation, .select, .scroll])
 	}
 
     // MARK: UICollectionViewDelegate
@@ -1209,7 +1209,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(indexPath: nil)
+			coordinator.selectSidebarItem(indexPath: nil)
 		}
 
 		pushUndoableCommand(deleteCommand)
