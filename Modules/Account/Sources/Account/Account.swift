@@ -404,7 +404,14 @@ public enum FetchType {
 
 	// MARK: - Refreshing
 
-	@MainActor public func refreshAll() async throws {
+	/// Start a refresh session without waiting or catching errors.
+	public func triggerRefreshAll() {
+		Task {
+			try? await refreshAll()
+		}
+	}
+
+	public func refreshAll() async throws {
 		try await delegate.refreshAll(for: self)
 	}
 

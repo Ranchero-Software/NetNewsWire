@@ -120,12 +120,8 @@ final class FeedbinAccountViewController: UITableViewController {
 						try? account?.removeCredentials(type: .basic)
 						try account?.storeCredentials(validatedCredentials)
 
-						do {
-							try await account?.refreshAll()
-						} catch {
-							presentError(error)
-						}
-
+						account?.triggerRefreshAll()
+						
 						dismiss(animated: true, completion: nil)
 						delegate?.dismiss()
 					} catch {
