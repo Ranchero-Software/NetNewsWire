@@ -57,7 +57,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	/// `viewDidAppear(_:)` after a delay to allow the deselection animation to complete.
 	private var isAnimating: Bool = false
 
-	private var dataSource: UICollectionViewDiffableDataSource<String, FeedNode>!
+	var dataSource: UICollectionViewDiffableDataSource<String, FeedNode>!
 
 	override func viewDidLoad() {
 		super.viewDidLoad()

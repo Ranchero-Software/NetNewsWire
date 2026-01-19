@@ -35,8 +35,12 @@ struct FeedNode: Hashable, Sendable {
 		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
 	}
 
-	func hash(into hasher: inout Hasher) {
-		hasher.combine(node)
+	nonisolated func hash(into hasher: inout Hasher) {
+		hasher.combine(ObjectIdentifier(node))
+	}
+
+	nonisolated static func == (lhs: FeedNode, rhs: FeedNode) -> Bool {
+		lhs.node === rhs.node
 	}
 }
 
@@ -749,9 +753,7 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
 		let feedNode = FeedNode(node)
-
 		return mainFeedCollectionViewController.dataSource.indexPath(for: feedNode)
 	}
 
@@ -1584,11 +1586,10 @@ private extension SceneCoordinator {
 	}
 
 	func addShadowTableToFilterExceptions() {
-		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let feed = feedNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
-					treeControllerDelegate.addFilterException(sidebarItemID)
-				}
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		for feedNode in snapshot.itemIdentifiers {
+			if let feed = feedNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
+				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 		}
 	}
