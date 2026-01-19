@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7007 19 Jan 2026 - branch: main tag: iOS-7.0-7007
+
+Fixed a number of bugs related to the feeds list. (Technical details, for the curious: we switched to diffable data sources.)
+
 ### 7.0 TestFlight build 7006 18 Jan 2026 - branch: main tag: iOS-7.0-7006
 
 Fixed (we think), again, a crashing bug that could happen on updating the feeds list. (It was fixed in 7004 but reintroduced in 7005.)
