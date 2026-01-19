@@ -26,7 +26,7 @@ enum ShowFeedName {
 	case feed
 }
 
-struct FeedNode: Hashable, Sendable {
+struct SidebarItemNode: Hashable, Sendable {
 	let node: Node
 	let sidebarItemID: SidebarItemIdentifier
 
@@ -35,8 +35,12 @@ struct FeedNode: Hashable, Sendable {
 		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
 	}
 
-	func hash(into hasher: inout Hasher) {
-		hasher.combine(sidebarItemID)
+	nonisolated func hash(into hasher: inout Hasher) {
+		hasher.combine(ObjectIdentifier(node))
+	}
+
+	nonisolated static func == (lhs: SidebarItemNode, rhs: SidebarItemNode) -> Bool {
+		lhs.node === rhs.node
 	}
 }
 
@@ -66,22 +70,17 @@ struct FeedNode: Hashable, Sendable {
 	// Which Containers are expanded
 	private var expandedContainers = Set<ContainerIdentifier>()
 
-	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
+	// Which Containers used to be expanded. Reset by rebuilding the sidebar.
 	private var lastExpandedContainers = Set<ContainerIdentifier>()
 
 	private let hidingReadArticlesState = HidingReadArticlesState()
-
-	// Flattened tree structure for the Sidebar
-	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
-
-	private var isRebuildingBackingStores = false
 
 	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
 	private var lastSearchScope: SearchScope?
 	private var isSearching: Bool = false
 	private var savedSearchArticles: ArticleArray?
-	private var savedSearchArticleIds: Set<String>?
+	private var savedSearchArticleIDs: Set<String>?
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
@@ -167,11 +166,14 @@ struct FeedNode: Hashable, Sendable {
 			return nil
 		}
 
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+
 		let prevIndexPath: IndexPath? = {
 			if indexPath.row - 1 < 0 {
 				for i in (0..<indexPath.section).reversed() {
-					if shadowTable[i].feedNodes.count > 0 {
-						return IndexPath(row: shadowTable[i].feedNodes.count - 1, section: i)
+					let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					if numberOfItems > 0 {
+						return IndexPath(row: numberOfItems - 1, section: i)
 					}
 				}
 				return nil
@@ -188,10 +190,15 @@ struct FeedNode: Hashable, Sendable {
 			return nil
 		}
 
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
+
 		let nextIndexPath: IndexPath? = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
-				for i in indexPath.section + 1..<shadowTable.count {
-					if shadowTable[i].feedNodes.count > 0 {
+			let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+			if indexPath.row + 1 >= numberOfItems {
+				for i in indexPath.section + 1..<numberOfSections {
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					if count > 0 {
 						return IndexPath(row: 0, section: i)
 					}
 				}
@@ -268,7 +275,9 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	private var currentArticleRow: Int? {
-		guard let article = currentArticle else { return nil }
+		guard let article = currentArticle else {
+			return nil
+		}
 		return articles.firstIndex(of: article)
 	}
 
@@ -314,14 +323,12 @@ struct FeedNode: Hashable, Sendable {
 
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
-			shadowTable.append((sectionID: "", feedNodes: [FeedNode]()))
 		}
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
@@ -358,6 +365,9 @@ struct FeedNode: Hashable, Sendable {
 
 		hidingReadArticlesState.copy(from: stateInfo)
 
+		// Ensure the view is loaded so dataSource is initialized before rebuilding
+		_ = mainFeedCollectionViewController.view
+
 		rebuildBackingStores(initialLoad: true)
 
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
@@ -372,11 +382,11 @@ struct FeedNode: Hashable, Sendable {
 			return
 		}
 
-		guard let feedNode = nodeFor(sidebarItemID: selectedSidebarItem),
-			  let indexPath = indexPathFor(feedNode) else {
+		guard let sidebarItemNode = nodeFor(sidebarItemID: selectedSidebarItem),
+			  let indexPath = indexPathFor(sidebarItemNode) else {
 			return
 		}
-		selectFeed(indexPath: indexPath, animations: []) {
+		selectSidebarItem(indexPath: indexPath, animations: []) {
 			self.restoreSelectedArticle(stateInfo)
 		}
 	}
@@ -396,8 +406,10 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func handle(_ activity: NSUserActivity) {
-		selectFeed(indexPath: nil) {
-			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
+		selectSidebarItem(indexPath: nil) {
+			guard let activityType = ActivityType(rawValue: activity.activityType) else {
+				return
+			}
 			switch activityType {
 			case .restoration:
 				break
@@ -436,7 +448,7 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func showSearch() {
-		selectFeed(indexPath: nil) {
+		selectSidebarItem(indexPath: nil) {
 			self.rootSplitViewController.show(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
 				self.mainTimelineViewController!.showSearchAll()
@@ -479,11 +491,10 @@ struct FeedNode: Hashable, Sendable {
 		}
 	}
 
-	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildBackingStores()
-	}
-
 	@objc func displayNameDidChange(_ note: Notification) {
+		if let sidebarItem = note.object as? SidebarItem {
+			reconfigureSidebarItem(sidebarItem)
+		}
 		rebuildBackingStores()
 	}
 
@@ -744,31 +755,16 @@ struct FeedNode: Hashable, Sendable {
 		})
 	}
 
-	func numberOfSections() -> Int {
-		return shadowTable.count
-	}
-
-	func numberOfRows(in section: Int) -> Int {
-		return shadowTable[section].feedNodes.count
-	}
-
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section > -1 &&
-				indexPath.row > -1 &&
-				indexPath.section < shadowTable.count &&
-				indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
+		guard let sidebarItemNode = mainFeedCollectionViewController.dataSource.itemIdentifier(for: indexPath) else {
 			return nil
 		}
-		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
+		return sidebarItemNode.node
 	}
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
-		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].feedNodes.firstIndex(of: FeedNode(node)) {
-				return IndexPath(row: row, section: i)
-			}
-		}
-		return nil
+		let sidebarItemNode = SidebarItemNode(node)
+		return mainFeedCollectionViewController.dataSource.indexPath(for: sidebarItemNode)
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
@@ -780,9 +776,23 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
-			return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
+		guard numberOfSections > 0 else {
+			return indexPath
 		}
+
+		guard indexPath.section < numberOfSections else {
+			let lastSection = numberOfSections - 1
+			let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+			return IndexPath(row: max(0, numberOfItems - 1), section: lastSection)
+		}
+
+		let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+		guard indexPath.row < numberOfItems else {
+			return IndexPath(row: max(0, numberOfItems - 1), section: indexPath.section)
+		}
+
 		return indexPath
 	}
 
@@ -834,7 +844,9 @@ struct FeedNode: Hashable, Sendable {
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
-		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
 		lastExpandedContainers.insert(containerID)
 		expand(containerID)
 	}
@@ -862,7 +874,9 @@ struct FeedNode: Hashable, Sendable {
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
-		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
 		lastExpandedContainers.remove(containerID)
 		collapse(containerID)
 	}
@@ -895,11 +909,11 @@ struct FeedNode: Hashable, Sendable {
 				return nil
 			}
 		}()
-		selectFeed(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
+		selectSidebarItem(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
 		updateNavigationBarSubtitles(nil)
 	}
 
-	func selectFeed(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+	func selectSidebarItem(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		guard indexPath != currentFeedIndexPath else {
 			completion?()
 			return
@@ -942,13 +956,13 @@ struct FeedNode: Hashable, Sendable {
 
 	func selectPrevFeed() {
 		if let indexPath = prevFeedIndexPath {
-			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
+			selectSidebarItem(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
 
 	func selectNextFeed() {
 		if let indexPath = nextFeedIndexPath {
-			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
+			selectSidebarItem(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
 
@@ -974,7 +988,9 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
-		guard article != currentArticle else { return }
+		guard article != currentArticle else {
+			return
+		}
 
 		currentArticle = article
 		activityManager.reading(feed: timelineFeed, article: article)
@@ -1002,7 +1018,7 @@ struct FeedNode: Hashable, Sendable {
 		isSearching = true
 		preSearchTimelineFeed = timelineFeed
 		savedSearchArticles = articles
-		savedSearchArticleIds = Set(articles.map { $0.articleID })
+		savedSearchArticleIDs = Set(articles.map { $0.articleID })
 		setTimelineFeed(nil, animated: true)
 		selectArticle(nil)
 	}
@@ -1020,7 +1036,7 @@ struct FeedNode: Hashable, Sendable {
 		lastSearchString = ""
 		lastSearchScope = nil
 		preSearchTimelineFeed = nil
-		savedSearchArticleIds = nil
+		savedSearchArticleIDs = nil
 		savedSearchArticles = nil
 		isSearching = false
 		selectArticle(nil)
@@ -1029,7 +1045,9 @@ struct FeedNode: Hashable, Sendable {
 
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
 
-		guard isSearching else { return }
+		guard isSearching else {
+			return
+		}
 
 		if searchString.count < 3 {
 			setTimelineFeed(nil, animated: true)
@@ -1042,7 +1060,7 @@ struct FeedNode: Hashable, Sendable {
 			case .global:
 				setTimelineFeed(SmartFeed(delegate: SearchFeedDelegate(searchString: searchString)), animated: true)
 			case .timeline:
-				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIds!)), animated: true)
+				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIDs!)), animated: true)
 			}
 
 			lastSearchString = searchString
@@ -1211,7 +1229,9 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func toggleRead(_ article: Article) {
-		guard !article.status.read || article.isAvailableToMarkUnread else { return }
+		guard !article.status.read || article.isAvailableToMarkUnread else {
+			return
+		}
 		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read)
 	}
 
@@ -1377,12 +1397,16 @@ struct FeedNode: Hashable, Sendable {
 	}
 
 	func showBrowserForArticle(_ article: Article) {
-		guard let url = article.preferredURL else { return }
+		guard let url = article.preferredURL else {
+			return
+		}
 		UIApplication.shared.open(url, options: [:])
 	}
 
 	func showBrowserForCurrentArticle() {
-		guard let url = currentArticle?.preferredURL else { return }
+		guard let url = currentArticle?.preferredURL else {
+			return
+		}
 		UIApplication.shared.open(url, options: [:])
 	}
 
@@ -1433,12 +1457,16 @@ struct FeedNode: Hashable, Sendable {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = mainFeedCollectionViewController.presentedViewController else { return }
+		guard let presentedController = mainFeedCollectionViewController.presentedViewController else {
+			return
+		}
 
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else { return }
+		guard let settings = presentedController.children.first as? SettingsViewController else {
+			return
+		}
 		settings.dismiss(animated: true, completion: nil)
 	}
 
@@ -1552,7 +1580,7 @@ private extension SceneCoordinator {
 
 	func ensureFeedIsAvailableToSelect(_ sidebarItem: SidebarItem, completion: @escaping () -> Void) {
 		addToFilterExceptionsIfNecessary(sidebarItem)
-		addShadowTableToFilterExceptions()
+		addVisibleSidebarItemsToFilterExceptions()
 
 		rebuildBackingStores(completion: {
 			self.treeControllerDelegate.resetFilterExceptions()
@@ -1579,20 +1607,19 @@ private extension SceneCoordinator {
 
 	func addParentFolderToFilterExceptions(_ sidebarItem: SidebarItem) {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(sidebarItem as AnyObject),
-			let folder = node.parent?.representedObject as? Folder,
-			let folderSidebarItemID = folder.sidebarItemID else {
-				return
+			  let folder = node.parent?.representedObject as? Folder,
+			  let folderSidebarItemID = folder.sidebarItemID else {
+			return
 		}
 
 		treeControllerDelegate.addFilterException(folderSidebarItemID)
 	}
 
-	func addShadowTableToFilterExceptions() {
-		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let feed = feedNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
-					treeControllerDelegate.addFilterException(sidebarItemID)
-				}
+	func addVisibleSidebarItemsToFilterExceptions() {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let feed = sidebarItemNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
+				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 		}
 	}
@@ -1609,151 +1636,92 @@ private extension SceneCoordinator {
 
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
 #if DEBUG
-		Self.logger.debug("SceneCoordinator: rebuildBackingStores: # \(Self.rebuildCount) initialLoad \(initialLoad ? "true" : "false")")
+		if initialLoad {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores: #\(Self.rebuildCount) initialLoad == true")
+		} else {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores: #\(Self.rebuildCount)")
+		}
 		Self.rebuildCount += 1
 #endif
 
-		if isRebuildingBackingStores || BatchUpdate.shared.isPerforming {
-#if DEBUG
-			if isRebuildingBackingStores {
-				Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because isRebuildingBackingStores")
-			} else {
-				Self.logger.debug("SceneCoordinator: rebuildBackingStores — skipping because BatchUpdate.shared.isPerforming")
-			}
-#endif
-			queueRebuildBackingStores()
-			return
-		}
 
-		isRebuildingBackingStores = true
 		addToFilterExceptionsIfNecessary(timelineFeed)
 		treeController.rebuild()
 		treeControllerDelegate.resetFilterExceptions()
 
 		updateExpandedNodes?()
-		let changes = rebuildShadowTable()
-		mainFeedCollectionViewController.reloadFeeds(initialLoad: initialLoad, changes: changes) {
-			completion?()
-			self.isRebuildingBackingStores = false
-		}
-	}
 
-	func rebuildShadowTable() -> ShadowTableChanges {
-		var newShadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
-
-		for i in 0..<treeController.rootNode.numberOfChildNodes {
-
-			var feedNodes = [FeedNode]()
-			let sectionNode = treeController.rootNode.childAtIndex(i)!
-
-			if isExpanded(sectionNode) {
-				for node in sectionNode.childNodes {
-					feedNodes.append(FeedNode(node))
-					if isExpanded(node) {
-						for child in node.childNodes {
-							feedNodes.append(FeedNode(child))
-						}
-					}
-				}
-			}
-
-			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
-			newShadowTable.append((sectionID: sectionID, feedNodes: feedNodes))
-		}
-
-		// If we have a current Feed IndexPath it is no longer valid and needs reset.
+		// Update currentFeedIndexPath if needed
 		if currentFeedIndexPath != nil {
 			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
 
-		// Compute the differences in the shadow table rows and the expanded table entries
-		var changes = [ShadowTableChanges.RowChanges]()
-		let expandedTableDifference = lastExpandedContainers.symmetricDifference(expandedContainers)
-
-		for (section, newSectionRows) in newShadowTable.enumerated() {
-			var moves = Set<ShadowTableChanges.Move>()
-			var inserts = Set<Int>()
-			var deletes = Set<Int>()
-
-			let oldFeedNodes = shadowTable.first(where: { $0.sectionID == newSectionRows.sectionID })?.feedNodes ?? [FeedNode]()
-
-			let diff = newSectionRows.feedNodes.difference(from: oldFeedNodes).inferringMoves()
-			for change in diff {
-				switch change {
-				case .insert(let offset, _, let associated):
-					if let associated = associated {
-						moves.insert(ShadowTableChanges.Move(associated, offset))
-					} else {
-						inserts.insert(offset)
-					}
-				case .remove(let offset, _, let associated):
-					if let associated = associated {
-						moves.insert(ShadowTableChanges.Move(offset, associated))
-					} else {
-						deletes.insert(offset)
-					}
-				}
-			}
-
-			// We need to reload the difference in expanded rows to get the disclosure arrows correct when programmatically changing their state
-			var reloads = Set<Int>()
-
-			for (index, newFeedNode) in newSectionRows.feedNodes.enumerated() {
-				if let newFeedNodeContainerID = (newFeedNode.node.representedObject as? Container)?.containerID {
-					if expandedTableDifference.contains(newFeedNodeContainerID) {
-						reloads.insert(index)
-					}
-				}
-			}
-
-			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
-		}
-
 		lastExpandedContainers = expandedContainers
 
-		// Compute the difference in the shadow table sections
-		var moves = Set<ShadowTableChanges.Move>()
-		var inserts = Set<Int>()
-		var deletes = Set<Int>()
+		let snapshot = createSidebarSnapshot()
+		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad, completion: completion)
+	}
 
-		let oldSections = shadowTable.map { $0.sectionID }
-		let newSections = newShadowTable.map { $0.sectionID }
-		let diff = newSections.difference(from: oldSections).inferringMoves()
-		for change in diff {
-			switch change {
-			case .insert(let offset, _, let associated):
-				if let associated = associated {
-					moves.insert(ShadowTableChanges.Move(associated, offset))
-				} else {
-					inserts.insert(offset)
+	private func createSidebarSnapshot() -> NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
+		var snapshot = NSDiffableDataSourceSnapshot<String, SidebarItemNode>()
+
+		for i in 0..<treeController.rootNode.numberOfChildNodes {
+			let sectionNode = treeController.rootNode.childAtIndex(i)!
+			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
+
+			snapshot.appendSections([sectionID])
+
+			if isExpanded(sectionNode) {
+				var siNodes = [SidebarItemNode]()
+
+				for node in sectionNode.childNodes {
+					siNodes.append(SidebarItemNode(node))
+					if isExpanded(node) {
+						for child in node.childNodes {
+							siNodes.append(SidebarItemNode(child))
+						}
+					}
 				}
-			case .remove(let offset, _, let associated):
-				if let associated = associated {
-					moves.insert(ShadowTableChanges.Move(offset, associated))
-				} else {
-					deletes.insert(offset)
-				}
+
+				snapshot.appendItems(siNodes, toSection: sectionID)
 			}
 		}
 
-		shadowTable = newShadowTable
-
-		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
+		return snapshot
 	}
 
-	func shadowTableContains(_ sidebarItem: SidebarItem) -> Bool {
-		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let nodeSidebarItem = feedNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
-					return true
-				}
+	func reconfigureSidebarItem(_ sidebarItem: SidebarItem) {
+		var snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+
+		// Find all nodes that represent this sidebar item
+		var nodesToReconfigure: [SidebarItemNode] = []
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
+			   nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
+				nodesToReconfigure.append(sidebarItemNode)
+			}
+		}
+
+		guard !nodesToReconfigure.isEmpty else {
+			return
+		}
+
+		snapshot.reconfigureItems(nodesToReconfigure)
+		mainFeedCollectionViewController.dataSource.apply(snapshot, animatingDifferences: false)
+	}
+
+	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
+				return true
 			}
 		}
 		return false
 	}
 
 	func clearTimelineIfNoLongerAvailable() {
-		if let feed = timelineFeed, !shadowTableContains(feed) {
+		if let feed = timelineFeed, !sidebarContains(feed) {
 			selectFeed(nil, deselectArticle: true)
 		}
 	}
@@ -1889,12 +1857,17 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
 			if indexPath.row - 1 < 0 {
 				if indexPath.section - 1 < 0 {
-					return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+					let lastSection = numberOfSections - 1
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+					return IndexPath(row: count - 1, section: lastSection)
 				} else {
-					return IndexPath(row: shadowTable[indexPath.section - 1].feedNodes.count - 1, section: indexPath.section - 1)
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section - 1])
+					return IndexPath(row: count - 1, section: indexPath.section - 1)
 				}
 			} else {
 				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
@@ -1904,13 +1877,16 @@ private extension SceneCoordinator {
 		if selectPrevUnreadFeedFetcher(startingWith: nextIndexPath) {
 			return
 		}
-		let maxIndexPath = IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+		let lastSection = numberOfSections - 1
+		let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+		let maxIndexPath = IndexPath(row: count - 1, section: lastSection)
 		selectPrevUnreadFeedFetcher(startingWith: maxIndexPath)
 
 	}
 
 	@discardableResult
 	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
 
 		for i in (0...indexPath.section).reversed() {
 
@@ -1918,7 +1894,8 @@ private extension SceneCoordinator {
 				if indexPath.section == i {
 					return indexPath.row
 				} else {
-					return shadowTable[i].feedNodes.count - 1
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					return count - 1
 				}
 			}()
 
@@ -1935,7 +1912,7 @@ private extension SceneCoordinator {
 				}
 
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(indexPath: prevIndexPath, animations: [.scroll, .navigation])
+					selectSidebarItem(indexPath: prevIndexPath, animations: [.scroll, .navigation])
 					return true
 				}
 
@@ -1996,9 +1973,12 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
-				if indexPath.section + 1 >= shadowTable.count {
+			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+			if indexPath.row + 1 >= count {
+				if indexPath.section + 1 >= numberOfSections {
 					return IndexPath(row: 0, section: 0)
 				} else {
 					return IndexPath(row: 0, section: indexPath.section + 1)
@@ -2021,8 +2001,10 @@ private extension SceneCoordinator {
 	}
 
 	func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 
-		for i in indexPath.section..<shadowTable.count {
+		for i in indexPath.section..<numberOfSections {
 
 			let startingRow: Int = {
 				if indexPath.section == i {
@@ -2032,7 +2014,8 @@ private extension SceneCoordinator {
 				}
 			}()
 
-			for j in startingRow..<shadowTable[i].feedNodes.count {
+			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+			for j in startingRow..<count {
 
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
@@ -2046,7 +2029,7 @@ private extension SceneCoordinator {
 				}
 
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(indexPath: nextIndexPath, animations: [.scroll, .navigation], deselectArticle: false) {
+					selectSidebarItem(indexPath: nextIndexPath, animations: [.scroll, .navigation], deselectArticle: false) {
 						self.currentArticle = nil
 						completion(true)
 					}
@@ -2237,7 +2220,7 @@ private extension SceneCoordinator {
 			rebuildBackingStores(initialLoad: true, completion: {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
-					self.selectFeed(indexPath: indexPath) {
+					self.selectSidebarItem(indexPath: indexPath) {
 						self.mainFeedCollectionViewController.focus()
 					}
 				}
@@ -2255,7 +2238,7 @@ private extension SceneCoordinator {
 				self.treeControllerDelegate.resetFilterExceptions()
 
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
-					self.selectFeed(indexPath: indexPath) {
+					self.selectSidebarItem(indexPath: indexPath) {
 						self.mainFeedCollectionViewController.focus()
 					}
 				}
@@ -2275,7 +2258,9 @@ private extension SceneCoordinator {
 	}
 
 	func handleReadArticle(_ userInfo: [AnyHashable: Any]?) {
-		guard let userInfo = userInfo else { return }
+		guard let userInfo = userInfo else {
+			return
+		}
 
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
@@ -2317,17 +2302,17 @@ private extension SceneCoordinator {
 		switch sidebarItemID {
 
 		case .smartFeed, .folder:
-			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 			return found
 
 		case .feed:
-			let found = selectFeedAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
-				if let feedNode = nodeFor(sidebarItemID: sidebarItemID), let folder = feedNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
+				if let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let folder = sidebarItemNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
 					treeControllerDelegate.addFilterException(folderSidebarItemID)
 				}
 			}
@@ -2355,17 +2340,19 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func findFeedNode(feedID: String, beginningAt startingNode: Node) -> Node? {
+	func findSidebarItemNode(feedID: String, beginningAt startingNode: Node) -> Node? {
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
 			return node
 		}
 		return nil
 	}
 
-	func selectFeedAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		guard let feedNode = nodeFor(sidebarItemID: sidebarItemID), let feedIndexPath = indexPathFor(feedNode) else { return false }
+	func selectSidebarItemAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let sidebarItemIndexPath = indexPathFor(sidebarItemNode) else {
+			return false
+		}
 
-		selectFeed(indexPath: feedIndexPath) {
+		selectSidebarItem(indexPath: sidebarItemIndexPath) {
 			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
 

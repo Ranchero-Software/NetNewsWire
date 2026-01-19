@@ -39,7 +39,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
-		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else { return nil }
+		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else {
+			return nil
+		}
 
 		return keyboardManager.keyCommands
 	}
@@ -57,10 +59,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	/// `viewDidAppear(_:)` after a delay to allow the deselection animation to complete.
 	private var isAnimating: Bool = false
 
+	var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		registerForNotifications()
 		configureCollectionView()
+		configureDiffableDataSource()
 		collectionView.dragDelegate = self
 		collectionView.dropDelegate = self
 		becomeFirstResponder()
@@ -98,7 +103,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		/// to false and this will allow selection.
 		if traitCollection.userInterfaceIdiom == .phone {
 			if collectionView.indexPathsForSelectedItems != nil {
-				coordinator.selectFeed(indexPath: nil, animations: [.select])
+				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
 					self.isAnimating = false
 				})
@@ -218,75 +223,89 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
+	func configureDiffableDataSource() {
+		dataSource = UICollectionViewDiffableDataSource<String, SidebarItemNode>(
+			collectionView: collectionView
+		) { [weak self] collectionView, indexPath, sidebarItemNode -> UICollectionViewCell? in
+			guard let self else {
+				return nil
+			}
+
+			if sidebarItemNode.node.representedObject is Folder {
+				let cell = collectionView.dequeueReusableCell(
+					withReuseIdentifier: folderIdentifier,
+					for: indexPath
+				) as! MainFeedCollectionViewFolderCell
+				self.configure(cell, sidebarItemNode: sidebarItemNode)
+				cell.delegate = self
+				return cell
+			} else {
+				let cell = collectionView.dequeueReusableCell(
+					withReuseIdentifier: reuseIdentifier,
+					for: indexPath
+				) as! MainFeedCollectionViewCell
+				self.configure(cell, sidebarItemNode: sidebarItemNode)
+				return cell
+			}
+		}
+
+		dataSource.supplementaryViewProvider = { [weak self] collectionView, kind, indexPath in
+			guard let self else {
+				return nil
+			}
+			guard kind == UICollectionView.elementKindSectionHeader else {
+				return UICollectionReusableView()
+			}
+
+			let headerView = collectionView.dequeueReusableSupplementaryView(
+				ofKind: kind,
+				withReuseIdentifier: containerReuseIdentifier,
+				for: indexPath
+			) as! MainFeedCollectionHeaderReusableView
+
+			guard let nameProvider = self.coordinator.rootNode.childAtIndex(indexPath.section)?.representedObject as? DisplayNameProvider else {
+				return UICollectionReusableView()
+			}
+
+			headerView.delegate = self
+			headerView.headerTitle.text = nameProvider.nameForDisplay
+
+			guard let sectionNode = self.coordinator.rootNode.childAtIndex(indexPath.section) else {
+				return headerView
+			}
+
+			if let account = sectionNode.representedObject as? Account {
+				headerView.unreadCount = account.unreadCount
+			} else {
+				headerView.unreadCount = 0
+			}
+
+			headerView.tag = indexPath.section
+			headerView.disclosureExpanded = self.coordinator.isExpanded(sectionNode)
+
+			if indexPath.section != 0 {
+				headerView.addInteraction(UIContextMenuInteraction(delegate: self))
+			}
+
+			return headerView
+		}
+	}
+
+	func applySnapshot(_ snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>, animatingDifferences: Bool, completion: (() -> Void)? = nil) {
+		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
+			completion?()
+		}
+	}
+
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
 	}
 
-    // MARK: UICollectionViewDataSource
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-		return coordinator.numberOfSections()
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return coordinator.numberOfRows(in: section)
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		guard let node = coordinator.nodeFor(indexPath), node.representedObject is Folder else {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MainFeedCollectionViewCell
-			configure(cell, indexPath: indexPath)
-			return cell
-		}
-
-		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: folderIdentifier, for: indexPath) as! MainFeedCollectionViewFolderCell
-		configure(cell, indexPath: indexPath)
-		cell.delegate = self
-		return cell
-
-    }
-
-	override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-		guard kind == UICollectionView.elementKindSectionHeader else {
-				return UICollectionReusableView()
-			}
-
-		let headerView = collectionView.dequeueReusableSupplementaryView(
-			ofKind: kind,
-			withReuseIdentifier: containerReuseIdentifier,
-			for: indexPath
-		) as! MainFeedCollectionHeaderReusableView
-
-		guard let nameProvider = coordinator.rootNode.childAtIndex(indexPath.section)?.representedObject as? DisplayNameProvider else {
-			return UICollectionReusableView()
-		}
-
-		headerView.delegate = self
-		headerView.headerTitle.text = nameProvider.nameForDisplay
-
-		guard let sectionNode = coordinator.rootNode.childAtIndex(indexPath.section) else {
-			return headerView
-		}
-
-		if let account = sectionNode.representedObject as? Account {
-			headerView.unreadCount = account.unreadCount
-		} else {
-			headerView.unreadCount = 0
-		}
-
-		headerView.tag = indexPath.section
-		headerView.disclosureExpanded = coordinator.isExpanded(sectionNode)
-
-		if indexPath.section != 0 {
-			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
-		}
-
-		return headerView
-	}
+    // MARK: UICollectionViewDelegate
 
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		coordinator.selectFeed(indexPath: indexPath, animations: [.navigation, .select, .scroll])
+		coordinator.selectSidebarItem(indexPath: indexPath, animations: [.navigation, .select, .scroll])
 	}
 
     // MARK: UICollectionViewDelegate
@@ -438,60 +457,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	func reloadFeeds(initialLoad: Bool, changes: ShadowTableChanges, completion: (() -> Void)? = nil) {
-		updateUI()
-
-		guard !initialLoad else {
-			collectionView.reloadData()
-			completion?()
-			return
-		}
-
-		collectionView.performBatchUpdates {
-			if let deletes = changes.deletes, !deletes.isEmpty {
-				collectionView.deleteSections(IndexSet(deletes))
-			}
-
-			if let inserts = changes.inserts, !inserts.isEmpty {
-				collectionView.insertSections(IndexSet(inserts))
-			}
-
-			if let moves = changes.moves, !moves.isEmpty {
-				for move in moves {
-					collectionView.moveSection(move.from, toSection: move.to)
-				}
-			}
-
-			if let rowChanges = changes.rowChanges {
-				for rowChange in rowChanges {
-					if let deletes = rowChange.deleteIndexPaths, !deletes.isEmpty {
-						collectionView.deleteItems(at: deletes)
-					}
-
-					if let inserts = rowChange.insertIndexPaths, !inserts.isEmpty {
-						collectionView.insertItems(at: inserts)
-					}
-
-					if let moves = rowChange.moveIndexPaths, !moves.isEmpty {
-						for move in moves {
-							collectionView.moveItem(at: move.0, to: move.1)
-						}
-					}
-				}
-			}
-		} completion: { _ in
-			if let rowChanges = changes.rowChanges {
-				for rowChange in rowChanges {
-					if let reloads = rowChange.reloadIndexPaths, !reloads.isEmpty {
-						self.collectionView.reloadItems(at: reloads)
-					}
-				}
-			}
-
-			completion?()
-		}
-	}
-
 	func applyToAvailableCells(_ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
 		for cell in collectionView.visibleCells {
 			guard let indexPath = collectionView.indexPath(for: cell) else {
@@ -501,6 +466,20 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				completion(cell, indexPath)
 			}
 		}
+	}
+
+	func configureIcon(_ cell: MainFeedCollectionViewCell, sidebarItem: SidebarItem) {
+		guard let sidebarItemID = sidebarItem.sidebarItemID else {
+			return
+		}
+		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
+	}
+
+	func configureIcon(_ cell: MainFeedCollectionViewFolderCell, sidebarItem: SidebarItem) {
+		guard let sidebarItemID = sidebarItem.sidebarItemID else {
+			return
+		}
+		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
 	}
 
 	func configureIcon(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
@@ -545,8 +524,40 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	// MARK: - Private
 
 	/// Configure standard feed cells
+	func configure(_ cell: MainFeedCollectionViewCell, sidebarItemNode: SidebarItemNode) {
+		let node = sidebarItemNode.node
+		var indentationLevel = 0
+		if node.parent?.representedObject is Folder {
+			indentationLevel = 1
+		}
+
+		if let sidebarItem = node.representedObject as? SidebarItem {
+			cell.feedTitle.text = sidebarItem.nameForDisplay
+			cell.unreadCount = sidebarItem.unreadCount
+			cell.indentationLevel = indentationLevel
+			configureIcon(cell, sidebarItem: sidebarItem)
+		}
+	}
+
+	/// Configure folders
+	func configure(_ cell: MainFeedCollectionViewFolderCell, sidebarItemNode: SidebarItemNode) {
+		let node = sidebarItemNode.node
+
+		if let folder = node.representedObject as? Folder {
+			cell.folderTitle.text = folder.nameForDisplay
+			cell.unreadCount = folder.unreadCount
+			configureIcon(cell, sidebarItem: folder)
+		}
+
+		if let containerID = (node.representedObject as? Container)?.containerID {
+			cell.setDisclosure(isExpanded: coordinator.isExpanded(containerID), animated: false)
+		}
+	}
+
 	func configure(_ cell: MainFeedCollectionViewCell, indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath) else { return }
+		guard let node = coordinator.nodeFor(indexPath) else {
+			return
+		}
 		var indentationLevel = 0
 		if node.parent?.representedObject is Folder {
 			indentationLevel = 1
@@ -562,7 +573,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	/// Configure folders
 	func configure(_ cell: MainFeedCollectionViewFolderCell, indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath) else { return }
+		guard let node = coordinator.nodeFor(indexPath) else {
+			return
+		}
 
 		if let folder = node.representedObject as? Folder {
 			cell.folderTitle.text = folder.nameForDisplay
@@ -587,7 +600,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
-		guard let indexPaths = collectionView.indexPathsForSelectedItems else { return }
+		guard let indexPaths = collectionView.indexPathsForSelectedItems else {
+			return
+		}
 		collectionView.reloadItems(at: indexPaths)
 		restoreSelectionIfNecessary(adjustScroll: false)
 	}
@@ -625,7 +640,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 		let node: Node? = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
 
-		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else { return }
+		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else {
+			return
+		}
 
 		if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
 			cell.unreadCount = unreadCountProvider.unreadCount
@@ -810,7 +827,9 @@ extension MainFeedCollectionViewController {
 	func makeFeedContextMenu(indexPath: IndexPath, includeDeleteRename: Bool) -> UIContextMenuConfiguration {
 		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [ weak self] _ in
 
-			guard let self = self else { return nil }
+			guard let self = self else {
+				return nil
+			}
 
 			var menuElements = [UIMenuElement]()
 
@@ -853,7 +872,9 @@ extension MainFeedCollectionViewController {
 	func makeFolderContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration {
 		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { [weak self] _ in
 
-			guard let self = self else { return nil }
+			guard let self = self else {
+				return nil
+			}
 
 			var menuElements = [UIMenuElement]()
 
@@ -1086,7 +1107,9 @@ extension MainFeedCollectionViewController {
 	}
 
 	func rename(indexPath: IndexPath) {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+			return
+		}
 
 		let formatString = NSLocalizedString("Rename “%@”", comment: "Rename feed")
 		let title = NSString.localizedStringWithFormat(formatString as NSString, sidebarItem.nameForDisplay) as String
@@ -1141,7 +1164,9 @@ extension MainFeedCollectionViewController {
 	}
 
 	func delete(indexPath: IndexPath) {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else { return	}
+		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+			return
+		}
 
 		let title: String
 		let message: String
@@ -1184,7 +1209,7 @@ extension MainFeedCollectionViewController {
 		}
 
 		if indexPath == coordinator.currentFeedIndexPath {
-			coordinator.selectFeed(indexPath: nil)
+			coordinator.selectSidebarItem(indexPath: nil)
 		}
 
 		pushUndoableCommand(deleteCommand)
