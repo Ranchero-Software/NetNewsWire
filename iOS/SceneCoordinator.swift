@@ -492,6 +492,9 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
+		if let sidebarItem = note.object as? SidebarItem {
+			reconfigureSidebarItem(sidebarItem)
+		}
 		rebuildBackingStores()
 	}
 
@@ -1685,6 +1688,26 @@ private extension SceneCoordinator {
 		}
 
 		return snapshot
+	}
+
+	func reconfigureSidebarItem(_ sidebarItem: SidebarItem) {
+		var snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+
+		// Find all nodes that represent this sidebar item
+		var nodesToReconfigure: [SidebarItemNode] = []
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
+			   nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
+				nodesToReconfigure.append(sidebarItemNode)
+			}
+		}
+
+		guard !nodesToReconfigure.isEmpty else {
+			return
+		}
+
+		snapshot.reconfigureItems(nodesToReconfigure)
+		mainFeedCollectionViewController.dataSource.apply(snapshot, animatingDifferences: false)
 	}
 
 	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
