@@ -363,6 +363,9 @@ struct FeedNode: Hashable, Sendable {
 
 		hidingReadArticlesState.copy(from: stateInfo)
 
+		// Ensure the view is loaded so dataSource is initialized before rebuilding
+		_ = mainFeedCollectionViewController.view
+
 		rebuildBackingStores(initialLoad: true)
 
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
@@ -1577,9 +1580,9 @@ private extension SceneCoordinator {
 
 	func addParentFolderToFilterExceptions(_ sidebarItem: SidebarItem) {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(sidebarItem as AnyObject),
-			let folder = node.parent?.representedObject as? Folder,
-			let folderSidebarItemID = folder.sidebarItemID else {
-				return
+			  let folder = node.parent?.representedObject as? Folder,
+			  let folderSidebarItemID = folder.sidebarItemID else {
+			return
 		}
 
 		treeControllerDelegate.addFilterException(folderSidebarItemID)
@@ -1606,7 +1609,11 @@ private extension SceneCoordinator {
 
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
 #if DEBUG
-		Self.logger.debug("SceneCoordinator: rebuildBackingStores: # \(Self.rebuildCount) initialLoad \(initialLoad ? "true" : "false")")
+		if initialLoad {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores: #\(Self.rebuildCount) initialLoad == true")
+		} else {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores: #\(Self.rebuildCount)")
+		}
 		Self.rebuildCount += 1
 #endif
 
