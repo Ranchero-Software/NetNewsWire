@@ -26,7 +26,7 @@ static void *kShouldShowImageKey = &kShouldShowImageKey;
 
 - (NSImage *)rs_swizzledImage {
 
-	if (self.rs_shouldShowImage || [self rs_isToolbarItemRepresentation] || self.title.length < 1) {
+	if (self.rs_shouldShowImage || [self rs_isToolbarItemRepresentation] || ![self rs_isMainMenuItem] || self.title.length < 1) {
 		// Call the original getter (now swapped to rs_swizzledImage)
 		return [self rs_swizzledImage];
 	}
@@ -37,6 +37,14 @@ static void *kShouldShowImageKey = &kShouldShowImageKey;
 
 	// Menu items not attached to any menu are likely toolbar button representations
 	return self.menu == nil;
+}
+
+- (BOOL)rs_isMainMenuItem {
+
+	// Return true if the parent menu is the main menu.
+	// This allows images to show for (for instance) the traffic light menus
+	// and for menu items in submenus such as Move & Resize and Full Screen Tile.
+	return self.menu.supermenu == NSApplication.sharedApplication.mainMenu;
 }
 
 - (BOOL)rs_shouldShowImage {
