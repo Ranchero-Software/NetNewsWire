@@ -267,7 +267,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 			let sectionID = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
 
-			// Smart feeds
+			// Smart feeds section
 			if sectionID.isEmpty {
 				headerView.headerTitle.text = SmartFeedsController.shared.nameForDisplay
 				headerView.unreadCount = 0
@@ -277,11 +277,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			}
 
 			// Accounts
-			guard let account = AccountManager.shared.existingAccount(withID: sectionID) else {
+			guard let account = AccountManager.shared.existingAccount(accountID: sectionID) else {
 				return headerView
 			}
 
-			headerView.headerTitle.text = account.displayName
+			headerView.headerTitle.text = account.nameForDisplay
 			headerView.unreadCount = account.unreadCount
 			headerView.account = account
 			headerView.disclosureExpanded = self.coordinator.isExpanded(account)
@@ -589,14 +589,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	private func findHeaderViewForAccount(_ account: Account) -> MainFeedCollectionHeaderReusableView? {
-		// Section identifiers are sidebarItemID strings.
-		guard let sectionID = account.sidebarItemID?.description else {
+		guard let sectionIndex = dataSource.snapshot().sectionIdentifiers.firstIndex(of: account.accountID) else {
 			return nil
 		}
-		guard let sectionIndex = snapshot.sectionIdentifiers.firstIndex(of: sectionID) else {
-			return nil
-		}
-		guard sectionIndex != 0 else { // Skip smart feeds.
+		guard sectionIndex > 0 else { // Skip smart feeds.
 			return nil
 		}
 

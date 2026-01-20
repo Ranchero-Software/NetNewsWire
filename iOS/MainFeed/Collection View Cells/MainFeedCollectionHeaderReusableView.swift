@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Account
 
 @MainActor protocol MainFeedCollectionHeaderReusableViewDelegate: AnyObject {
 	func mainFeedCollectionHeaderReusableViewDidTapDisclosureIndicator(_ view: MainFeedCollectionHeaderReusableView)
