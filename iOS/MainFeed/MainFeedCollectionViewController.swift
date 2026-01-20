@@ -752,16 +752,23 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func toggle(_ headerView: MainFeedCollectionHeaderReusableView) {
-		guard let sectionNode = coordinator.rootNode.childAtIndex(headerView.tag) else {
+		let containerIdentifiable: ContainerIdentifiable
+		if let account = headerView.account {
+			containerIdentifiable = account
+		} else {
+			containerIdentifiable = SmartFeedsController.shared
+		}
+
+		guard let containerID = containerIdentifiable.containerID else {
 			return
 		}
 
-		if coordinator.isExpanded(sectionNode) {
+		if coordinator.isExpanded(containerID) {
 			headerView.disclosureExpanded = false
-			coordinator.collapse(sectionNode)
+			coordinator.collapse(containerID)
 		} else {
 			headerView.disclosureExpanded = true
-			coordinator.expand(sectionNode)
+			coordinator.expand(containerID)
 		}
 	}
 }
