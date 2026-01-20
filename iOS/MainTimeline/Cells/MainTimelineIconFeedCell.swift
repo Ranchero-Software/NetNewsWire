@@ -72,7 +72,9 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	}
 
 	func setIconImage(_ iconImage: IconImage?) {
-		iconView.iconImage = iconImage
+		if iconView.iconImage !== iconImage {
+			iconView.iconImage = iconImage
+		}
 	}
 
 	private func updateIconViewSizeConstraints(to size: CGSize) {
