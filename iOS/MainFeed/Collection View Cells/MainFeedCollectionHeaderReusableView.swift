@@ -13,10 +13,15 @@ import Account
 	func mainFeedCollectionHeaderReusableViewDidTapDisclosureIndicator(_ view: MainFeedCollectionHeaderReusableView)
 }
 
+enum SectionHeaderType {
+	case smartFeeds
+	case account(String) // accountID
+}
+
 final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	var delegate: MainFeedCollectionHeaderReusableViewDelegate?
-	weak var account: Account?
-
+	var sectionHeaderType: SectionHeaderType?
+	
 	@IBOutlet var headerTitle: UILabel!
 	@IBOutlet var disclosureIndicator: UIImageView!
 	@IBOutlet var unreadCountLabel: UILabel!
@@ -75,7 +80,7 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	override func prepareForReuse() {
 		super.prepareForReuse()
 
-		account = nil
+		sectionHeaderType = nil
 
 		let contextMenuInteractions = interactions.compactMap { $0 as? UIContextMenuInteraction }
 		for interaction in contextMenuInteractions {

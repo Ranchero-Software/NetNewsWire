@@ -269,9 +269,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 			// Smart feeds section
 			if sectionID.isEmpty {
+				headerView.sectionHeaderType = .smartFeeds
 				headerView.headerTitle.text = SmartFeedsController.shared.nameForDisplay
 				headerView.unreadCount = 0
-				headerView.account = nil
 				headerView.disclosureExpanded = self.coordinator.isExpanded(SmartFeedsController.shared)
 				return headerView
 			}
@@ -281,9 +281,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				return headerView
 			}
 
+			headerView.sectionHeaderType = .account(sectionID)
 			headerView.headerTitle.text = account.nameForDisplay
 			headerView.unreadCount = account.unreadCount
-			headerView.account = account
 			headerView.disclosureExpanded = self.coordinator.isExpanded(account)
 			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
 
@@ -718,15 +718,23 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func toggle(_ headerView: MainFeedCollectionHeaderReusableView) {
-		let containerIdentifiable: ContainerIdentifiable
-		if let account = headerView.account {
-			containerIdentifiable = account
-		} else {
-			containerIdentifiable = SmartFeedsController.shared
+		guard let sectionHeaderType = headerView.sectionHeaderType else {
+			return
 		}
 
-		guard let containerID = containerIdentifiable.containerID else {
-			return
+		let containerID: ContainerIdentifier
+		switch sectionHeaderType {
+		case .smartFeeds:
+			guard let id = SmartFeedsController.shared.containerID else {
+				return
+			}
+			containerID = id
+		case .account(let accountID):
+			guard let account = AccountManager.shared.existingAccount(accountID: accountID),
+				  let id = account.containerID else {
+				return
+			}
+			containerID = id
 		}
 
 		if coordinator.isExpanded(containerID) {
@@ -775,11 +783,12 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
 
 		guard let headerView = interaction.view as? MainFeedCollectionHeaderReusableView,
-			  let account = headerView.account else {
+			  case .account(let accountID) = headerView.sectionHeaderType,
+			  let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			return nil
 		}
 
-		return UIContextMenuConfiguration(identifier: account.accountID as NSCopying, previewProvider: nil) { _ in
+		return UIContextMenuConfiguration(identifier: accountID as NSCopying, previewProvider: nil) { _ in
 
 			var menuElements = [UIMenuElement]()
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountInfoAction(account: account)]))
@@ -796,9 +805,10 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 
 	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, previewForHighlightingMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
 
-		guard let sectionIndex = configuration.identifier as? Int,
-			let cell = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: sectionIndex)) as? MainFeedCollectionHeaderReusableView else {
-				return nil
+		guard let accountID = configuration.identifier as? String,
+			  let sectionIndex = dataSource.snapshot().sectionIdentifiers.firstIndex(of: accountID),
+			  let cell = collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: sectionIndex)) as? MainFeedCollectionHeaderReusableView else {
+			return nil
 		}
 		return UITargetedPreview(view: cell, parameters: CroppingPreviewParameters(view: cell))
 	}
