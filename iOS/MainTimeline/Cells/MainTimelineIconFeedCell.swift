@@ -15,12 +15,19 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	@IBOutlet var indicatorView: IconView!
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
+	@IBOutlet var leadingConstraint: NSLayoutConstraint!
 
 	private(set) var usedTitleLineCount: Int = 0
 
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
+		}
+	}
+	
+	var indexPathRow: Int = 0 {
+		didSet {
+			configureSeparator(indexRow: indexPathRow)
 		}
 	}
 
@@ -64,6 +71,15 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		setIconImage(cellData.iconImage, with: cellData.iconSize)
 
 		articleDate.text = cellData.dateString
+	}
+	
+	private func configureSeparator(indexRow: Int) {
+		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
+		if leadingConstraint != nil {
+			leadingConstraint.constant = constant
+			setNeedsLayout()
+			layoutIfNeeded()
+		}
 	}
 
 	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {

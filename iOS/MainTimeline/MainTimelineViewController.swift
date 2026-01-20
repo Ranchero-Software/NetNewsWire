@@ -602,7 +602,14 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
-
+	
+	override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+		// Hide the separator on the bottom row
+		if indexPath.row == tableView.numberOfRows(inSection: 0) - 1 {
+			cell.separatorInset = UIEdgeInsets(top: 0, left: CGFloat.greatestFiniteMagnitude, bottom: 0, right: 0)
+		}
+	}
+	
 	// MARK: - Notifications
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -625,10 +632,12 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell {
 					let cellData = configure(article: article)
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 				}
 				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineFeedCell {
 					let cellData = configure(article: article)
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 				}
 			}
 		}
@@ -859,10 +868,12 @@ private extension MainTimelineViewController {
 				if self!.showIcons {
 					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell", for: indexPath) as! MainTimelineIconFeedCell
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 					return cell
 				} else {
 					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell", for: indexPath) as! MainTimelineFeedCell
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 					return cell
 				}
 

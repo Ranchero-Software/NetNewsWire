@@ -14,12 +14,19 @@ class MainTimelineFeedCell: UITableViewCell {
 	@IBOutlet var indicatorView: IconView!
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
+	@IBOutlet var leadingConstraint: NSLayoutConstraint!
 
     private(set) var usedTitleLineCount: Int = 0
 
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
+		}
+	}
+	
+	var indexPathRow: Int = 0 {
+		didSet {
+			configureSeparator(indexRow: indexPathRow)
 		}
 	}
 
@@ -61,6 +68,15 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 
 		articleDate.text = cellData.dateString
+	}
+	
+	private func configureSeparator(indexRow: Int) {
+		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
+		if leadingConstraint != nil {
+			leadingConstraint.constant = constant
+			setNeedsLayout()
+			layoutIfNeeded()
+		}
 	}
 
 	private func updateIndicatorView(_ cellData: MainTimelineCellData) {
