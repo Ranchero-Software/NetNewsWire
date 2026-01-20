@@ -808,14 +808,12 @@ extension MainFeedCollectionViewController: MainFeedCollectionViewFolderCellDele
 extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 	func contextMenuInteraction(_ interaction: UIContextMenuInteraction, configurationForMenuAtLocation location: CGPoint) -> UIContextMenuConfiguration? {
 
-		guard let sectionIndex = interaction.view?.tag,
-			let sectionNode = coordinator.rootNode.childAtIndex(sectionIndex),
-			let account = sectionNode.representedObject as? Account
-				else {
-					return nil
+		guard let headerView = interaction.view as? MainFeedCollectionHeaderReusableView,
+			  let account = headerView.account else {
+			return nil
 		}
 
-		return UIContextMenuConfiguration(identifier: sectionIndex as NSCopying, previewProvider: nil) { _ in
+		return UIContextMenuConfiguration(identifier: account.accountID as NSCopying, previewProvider: nil) { _ in
 
 			var menuElements = [UIMenuElement]()
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountInfoAction(account: account)]))
