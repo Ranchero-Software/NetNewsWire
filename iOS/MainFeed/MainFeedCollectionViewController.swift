@@ -502,12 +502,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
 		applyToAvailableCells { (cell, indexPath) in
-			if let node = coordinator.nodeFor(indexPath),
-			   let representedSidebarItem = representedObject as? SidebarItem,
-			   let candidateSidebarItem = node.representedObject as? SidebarItem,
-			   representedSidebarItem.sidebarItemID == candidateSidebarItem.sidebarItemID {
-				completion(cell, indexPath)
+			guard let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
+				  let representedSidebarItem = representedObject as? SidebarItem,
+				  let candidateSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
+				  representedSidebarItem.sidebarItemID == candidateSidebarItem.sidebarItemID else {
+				return
 			}
+			completion(cell, indexPath)
 		}
 	}
 
