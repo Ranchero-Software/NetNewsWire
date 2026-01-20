@@ -896,25 +896,29 @@ extension MainFeedCollectionViewController {
 	}
 
 	func homePageAction(indexPath: IndexPath) -> UIAction? {
-		guard coordinator.homePageURLForFeed(indexPath) != nil else {
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
+			  let homePageURL = feed.homePageURL,
+			  let url = URL(string: homePageURL) else {
 			return nil
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] _ in
-			self?.coordinator.showBrowserForFeed(indexPath)
+		let action = UIAction(title: title, image: Assets.Images.safari) { _ in
+			UIApplication.shared.open(url, options: [:])
 		}
 		return action
 	}
 
 	func homePageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard coordinator.homePageURLForFeed(indexPath) != nil else {
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
+			  let homePageURL = feed.homePageURL,
+			  let url = URL(string: homePageURL) else {
 			return nil
 		}
 
 		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
-		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
-			self?.coordinator.showBrowserForFeed(indexPath)
+		let action = UIAlertAction(title: title, style: .default) { _ in
+			UIApplication.shared.open(url, options: [:])
 			completion(true)
 		}
 		return action

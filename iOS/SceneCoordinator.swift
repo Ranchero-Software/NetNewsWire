@@ -1389,12 +1389,6 @@ struct SidebarItemNode: Hashable, Sendable {
 		return url
 	}
 
-	func showBrowserForFeed(_ indexPath: IndexPath) {
-		if let url = homePageURLForFeed(indexPath) {
-			UIApplication.shared.open(url, options: [:])
-		}
-	}
-
 	func showBrowserForCurrentFeed() {
 		if let ip = currentFeedIndexPath, let url = homePageURLForFeed(ip) {
 			UIApplication.shared.open(url, options: [:])
