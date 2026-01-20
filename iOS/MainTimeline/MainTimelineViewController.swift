@@ -209,6 +209,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 		gesture.allowedScrollTypesMask = []
 
+		navigationItem.title = nil // Don’t let "Timeline" accidentally show
 		navigationItem.titleView = navigationBarTitleLabel
 		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
 	}
