@@ -107,7 +107,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		return keyboardManager.keyCommands
 	}
 
-	private var navigationBarTitleLabel: UILabel {
+	private lazy var navigationBarTitleLabel: UILabel = {
 		let label = UILabel()
 		label.font = UIFont.preferredFont(forTextStyle: .subheadline).bold()
 		label.isUserInteractionEnabled = true
@@ -118,9 +118,9 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		let pointerInteraction = UIPointerInteraction(delegate: nil)
 		label.addInteraction(pointerInteraction)
 		return label
-	}
+	}()
 
-	private var navigationBarSubtitleTitleLabel: UILabel {
+	private lazy var navigationBarSubtitleTitleLabel: UILabel = {
 		let label = UILabel()
 		label.font = UIFont(name: "Helvetica", size: 12)
 		label.textColor = .systemGray
@@ -129,10 +129,10 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 		label.addGestureRecognizer(tap)
 		return label
-	}
+	}()
 
 	override var canBecomeFirstResponder: Bool {
-		return true
+		true
 	}
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineViewController")
@@ -346,6 +346,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	func updateNavigationBarTitle(_ text: String) {
+		navigationItem.title = text
 		if let label = navigationItem.titleView as? UILabel {
 			label.text = text
 			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
