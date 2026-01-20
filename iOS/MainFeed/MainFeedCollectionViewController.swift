@@ -641,18 +641,18 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		let node: Node? = coordinator.rootNode.descendantNodeRepresentingObject(unreadCountProvider as AnyObject)
-
-		guard let unreadCountNode = node, let indexPath = coordinator.indexPathFor(unreadCountNode) else {
-			return
-		}
-
-		if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
-			cell.unreadCount = unreadCountProvider.unreadCount
-		}
-
-		if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
-			cell.unreadCount = unreadCountProvider.unreadCount
+		for cell in collectionView.visibleCells {
+			guard let indexPath = collectionView.indexPath(for: cell),
+				  let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
+				  sidebarItemNode.node.representedObject === unreadCountProvider as AnyObject else {
+				continue
+			}
+			if let feedCell = cell as? MainFeedCollectionViewCell {
+				feedCell.unreadCount = unreadCountProvider.unreadCount
+			}
+			if let folderCell = cell as? MainFeedCollectionViewFolderCell {
+				folderCell.unreadCount = unreadCountProvider.unreadCount
+			}
 		}
 	}
 
