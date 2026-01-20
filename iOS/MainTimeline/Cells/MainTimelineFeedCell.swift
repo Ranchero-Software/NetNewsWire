@@ -14,12 +14,19 @@ class MainTimelineFeedCell: UITableViewCell {
 	@IBOutlet var indicatorView: IconView!
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
+	@IBOutlet var leadingConstraint: NSLayoutConstraint!
 
     private(set) var usedTitleLineCount: Int = 0
 
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
+		}
+	}
+	
+	var indexPathRow: Int = 0 {
+		didSet {
+			configureSeparator(indexRow: indexPathRow)
 		}
 	}
 
@@ -61,6 +68,15 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 
 		articleDate.text = cellData.dateString
+	}
+	
+	private func configureSeparator(indexRow: Int) {
+		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
+		if leadingConstraint != nil {
+			leadingConstraint.constant = constant
+			setNeedsLayout()
+			layoutIfNeeded()
+		}
 	}
 
 	private func updateIndicatorView(_ cellData: MainTimelineCellData) {
@@ -104,40 +120,33 @@ class MainTimelineFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
+		
+		if cellData.summary != "" {
+			let paragraphStyle = NSMutableParagraphStyle()
+			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
+			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
+			let summaryAttributes: [NSAttributedString.Key: Any] = [
+				.font: UIFont.preferredFont(forTextStyle: .body),
+				.paragraphStyle: paragraphStyle,
+				.foregroundColor: titleTextColor(for: state)
+			]
+			var summaryAttributed: NSAttributedString
+			if cellData.title != "" {
+				summaryAttributed = NSAttributedString(string: "\n" + cellData.summary, attributes: summaryAttributes)
+			} else {
+				summaryAttributed = NSAttributedString(string: cellData.summary, attributes: summaryAttributes)
+			}
+			attributedCellText.append(summaryAttributed)
+		}
 
 		articleTitle.attributedText = attributedCellText
-
 		if linesUsedForTitleGreaterThanOrEqualToPreference() {
-			// No need to add cell summary as we're already at maximum.
 			articleTitle.lineBreakMode = .byTruncatingTail
-			return
-		} else {
-			if cellData.summary != "" {
-				let paragraphStyle = NSMutableParagraphStyle()
-				paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
-				paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
-				let summaryAttributes: [NSAttributedString.Key: Any] = [
-					.font: UIFont.preferredFont(forTextStyle: .body),
-					.paragraphStyle: paragraphStyle,
-					.foregroundColor: titleTextColor(for: state)
-				]
-				var summaryAttributed: NSAttributedString
-				if cellData.title != "" {
-					summaryAttributed = NSAttributedString(string: "\n" + cellData.summary, attributes: summaryAttributes)
-				} else {
-					summaryAttributed = NSAttributedString(string: cellData.summary, attributes: summaryAttributes)
-				}
-				attributedCellText.append(summaryAttributed)
-			}
-			articleTitle.attributedText = attributedCellText
-			if linesUsedForTitleGreaterThanOrEqualToPreference() {
-				articleTitle.lineBreakMode = .byTruncatingTail
-			}
 		}
 	}
 
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
+		let isSelected = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
 		if isSelected {
 			return .white
 		} else {
@@ -184,8 +193,10 @@ class MainTimelineFeedCell: UITableViewCell {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
+		
+		let isActive = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
 
-		if state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped {
+		if isActive {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleTitle.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText

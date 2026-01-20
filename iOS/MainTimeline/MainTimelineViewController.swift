@@ -603,6 +603,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
 
+	
 	// MARK: - Notifications
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
@@ -625,10 +626,12 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell {
 					let cellData = configure(article: article)
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 				}
 				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineFeedCell {
 					let cellData = configure(article: article)
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 				}
 			}
 		}
@@ -859,10 +862,12 @@ private extension MainTimelineViewController {
 				if self!.showIcons {
 					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell", for: indexPath) as! MainTimelineIconFeedCell
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 					return cell
 				} else {
 					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell", for: indexPath) as! MainTimelineFeedCell
 					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
 					return cell
 				}
 
