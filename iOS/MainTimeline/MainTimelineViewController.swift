@@ -602,13 +602,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	override func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
-	
-	override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-		// Hide the separator on the bottom row
-		if indexPath.row == tableView.numberOfRows(inSection: 0) - 1 {
-			cell.separatorInset = UIEdgeInsets(top: 0, left: CGFloat.greatestFiniteMagnitude, bottom: 0, right: 0)
-		}
-	}
+
 	
 	// MARK: - Notifications
 
