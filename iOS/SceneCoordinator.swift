@@ -1674,7 +1674,6 @@ private extension SceneCoordinator {
 		Self.rebuildCount += 1
 #endif
 
-
 		addToFilterExceptionsIfNecessary(timelineFeed)
 		treeController.rebuild()
 		treeControllerDelegate.resetFilterExceptions()
