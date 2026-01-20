@@ -603,7 +603,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
 
-	
 	// MARK: - Notifications
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {

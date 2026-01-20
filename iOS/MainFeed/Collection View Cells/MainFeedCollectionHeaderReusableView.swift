@@ -21,7 +21,7 @@ enum SectionHeaderType {
 final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	var delegate: MainFeedCollectionHeaderReusableViewDelegate?
 	var sectionHeaderType: SectionHeaderType?
-	
+
 	@IBOutlet var headerTitle: UILabel!
 	@IBOutlet var disclosureIndicator: UIImageView!
 	@IBOutlet var unreadCountLabel: UILabel!

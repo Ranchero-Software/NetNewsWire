@@ -23,7 +23,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			configure(cellData)
 		}
 	}
-	
+
 	var indexPathRow: Int = 0 {
 		didSet {
 			configureSeparator(indexRow: indexPathRow)
@@ -69,7 +69,7 @@ class MainTimelineFeedCell: UITableViewCell {
 
 		articleDate.text = cellData.dateString
 	}
-	
+
 	private func configureSeparator(indexRow: Int) {
 		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
 		if leadingConstraint != nil {
@@ -120,7 +120,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-		
+
 		if cellData.summary != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
@@ -193,7 +193,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
-		
+
 		let isActive = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
 
 		if isActive {

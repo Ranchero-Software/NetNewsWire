@@ -24,7 +24,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			configure(cellData)
 		}
 	}
-	
+
 	var indexPathRow: Int = 0 {
 		didSet {
 			configureSeparator(indexRow: indexPathRow)
@@ -72,7 +72,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 
 		articleDate.text = cellData.dateString
 	}
-	
+
 	private func configureSeparator(indexRow: Int) {
 		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
 		if leadingConstraint != nil {
@@ -147,7 +147,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-		
+
 		if cellData.summary != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
@@ -222,7 +222,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		}
 
 		let isActive = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
-		
+
 		if isActive {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleTitle.textColor = titleTextColor(for: state)
