@@ -1,5 +1,18 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7007 20 Jan 2026 - branch: main tag: iOS-7.0-7008
+
+Fixed more bugs related to the feeds list
+Made performance better during refresh/sync by coalescing updates to the feeds list
+Changed the separators on the timeline to not go under the unread/star indicator area
+Fixed a timeline cell bug where text would be the wrong color when fully swiped
+Fixed a timeline cell bug that could cause incorrect text truncation
+Fixed a timeline bug where the selected cell could flash as the feeds list is downloading icons 
+Fixed a couple spots in user-facing text that refer to "web feed" — now they refer to "feed"
+Fixed a couple spots in user-facing text that used ... instead of a single ellipsis character …
+Fixed settings bug where the add-Feedbin-account sheet wouldn’t close or wouldn’t close as quickly as expected
+Fixed bug where the title of the timeline in the navigation bar could appear as "Timeline" instead of the expected title
+
 ### 7.0 TestFlight build 7007 19 Jan 2026 - branch: main tag: iOS-7.0-7007
 
 Fixed a number of bugs related to the feeds list. (Technical details, for the curious: we switched to diffable data sources.)
