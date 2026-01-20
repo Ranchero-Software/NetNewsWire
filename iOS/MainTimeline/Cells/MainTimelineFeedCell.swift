@@ -120,35 +120,28 @@ class MainTimelineFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
+		
+		if cellData.summary != "" {
+			let paragraphStyle = NSMutableParagraphStyle()
+			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
+			paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
+			let summaryAttributes: [NSAttributedString.Key: Any] = [
+				.font: UIFont.preferredFont(forTextStyle: .body),
+				.paragraphStyle: paragraphStyle,
+				.foregroundColor: titleTextColor(for: state)
+			]
+			var summaryAttributed: NSAttributedString
+			if cellData.title != "" {
+				summaryAttributed = NSAttributedString(string: "\n" + cellData.summary, attributes: summaryAttributes)
+			} else {
+				summaryAttributed = NSAttributedString(string: cellData.summary, attributes: summaryAttributes)
+			}
+			attributedCellText.append(summaryAttributed)
+		}
 
 		articleTitle.attributedText = attributedCellText
-
 		if linesUsedForTitleGreaterThanOrEqualToPreference() {
-			// No need to add cell summary as we're already at maximum.
 			articleTitle.lineBreakMode = .byTruncatingTail
-			return
-		} else {
-			if cellData.summary != "" {
-				let paragraphStyle = NSMutableParagraphStyle()
-				paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
-				paragraphStyle.maximumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
-				let summaryAttributes: [NSAttributedString.Key: Any] = [
-					.font: UIFont.preferredFont(forTextStyle: .body),
-					.paragraphStyle: paragraphStyle,
-					.foregroundColor: titleTextColor(for: state)
-				]
-				var summaryAttributed: NSAttributedString
-				if cellData.title != "" {
-					summaryAttributed = NSAttributedString(string: "\n" + cellData.summary, attributes: summaryAttributes)
-				} else {
-					summaryAttributed = NSAttributedString(string: cellData.summary, attributes: summaryAttributes)
-				}
-				attributedCellText.append(summaryAttributed)
-			}
-			articleTitle.attributedText = attributedCellText
-			if linesUsedForTitleGreaterThanOrEqualToPreference() {
-				articleTitle.lineBreakMode = .byTruncatingTail
-			}
 		}
 	}
 
