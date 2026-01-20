@@ -573,12 +573,18 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		as? MainFeedCollectionHeaderReusableView
 	}
 
-	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
-		guard let indexPaths = collectionView.indexPathsForSelectedItems else {
+	private func reloadAllVisibleCells() {
+		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
+		let itemIdentifiers = visibleIndexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
+		guard !itemIdentifiers.isEmpty else {
 			return
 		}
-		collectionView.reloadItems(at: indexPaths)
-		restoreSelectionIfNecessary(adjustScroll: false)
+
+		var snapshot = dataSource.snapshot()
+		snapshot.reconfigureItems(itemIdentifiers)
+		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
+		}
 	}
 
 	func setFilterButtonToActive() {
