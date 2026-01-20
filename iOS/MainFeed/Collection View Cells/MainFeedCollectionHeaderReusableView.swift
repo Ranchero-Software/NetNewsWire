@@ -14,6 +14,7 @@ import UIKit
 
 final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	var delegate: MainFeedCollectionHeaderReusableViewDelegate?
+	weak var account: Account?
 
 	@IBOutlet var headerTitle: UILabel!
 	@IBOutlet var disclosureIndicator: UIImageView!
@@ -67,6 +68,17 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 			unreadLabelWidthConstraint?.isActive = true
 			configureUI()
 			addTapGesture()
+		}
+	}
+
+	override func prepareForReuse() {
+		super.prepareForReuse()
+
+		account = nil
+
+		let contextMenuInteractions = interactions.compactMap { $0 as? UIContextMenuInteraction }
+		for interaction in contextMenuInteractions {
+			removeInteraction(interaction)
 		}
 	}
 

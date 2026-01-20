@@ -263,29 +263,29 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				for: indexPath
 			) as! MainFeedCollectionHeaderReusableView
 
-			guard let nameProvider = self.coordinator.rootNode.childAtIndex(indexPath.section)?.representedObject as? DisplayNameProvider else {
-				return UICollectionReusableView()
-			}
-
 			headerView.delegate = self
-			headerView.headerTitle.text = nameProvider.nameForDisplay
 
-			guard let sectionNode = self.coordinator.rootNode.childAtIndex(indexPath.section) else {
+			let sectionID = self.dataSource.snapshot().sectionIdentifiers[indexPath.section]
+
+			// Smart feeds
+			if sectionID.isEmpty {
+				headerView.headerTitle.text = SmartFeedsController.shared.nameForDisplay
+				headerView.unreadCount = 0
+				headerView.account = nil
+				headerView.disclosureExpanded = self.coordinator.isExpanded(SmartFeedsController.shared)
 				return headerView
 			}
 
-			if let account = sectionNode.representedObject as? Account {
-				headerView.unreadCount = account.unreadCount
-			} else {
-				headerView.unreadCount = 0
+			// Accounts
+			guard let account = AccountManager.shared.existingAccount(withID: sectionID) else {
+				return headerView
 			}
 
-			headerView.tag = indexPath.section
-			headerView.disclosureExpanded = self.coordinator.isExpanded(sectionNode)
-
-			if indexPath.section != 0 {
-				headerView.addInteraction(UIContextMenuInteraction(delegate: self))
-			}
+			headerView.headerTitle.text = account.displayName
+			headerView.unreadCount = account.unreadCount
+			headerView.account = account
+			headerView.disclosureExpanded = self.coordinator.isExpanded(account)
+			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
 
 			return headerView
 		}
@@ -588,15 +588,22 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	private func headerViewForAccount(_ account: Account) -> MainFeedCollectionHeaderReusableView? {
-
-		guard let node = coordinator.rootNode.childNodeRepresentingObject(account),
-			  let sectionIndex = coordinator.rootNode.indexOfChild(node) else {
+	private func findHeaderViewForAccount(_ account: Account) -> MainFeedCollectionHeaderReusableView? {
+		// Section identifiers are sidebarItemID strings.
+		guard let sectionID = account.sidebarItemID?.description else {
 			return nil
 		}
-		if sectionIndex == 0 { return nil }
+		guard let sectionIndex = snapshot.sectionIdentifiers.firstIndex(of: sectionID) else {
+			return nil
+		}
+		guard sectionIndex != 0 else { // Skip smart feeds.
+			return nil
+		}
 
-		return collectionView.supplementaryView(forElementKind: UICollectionView.elementKindSectionHeader, at: IndexPath(item: 0, section: sectionIndex)) as? MainFeedCollectionHeaderReusableView
+		return collectionView.supplementaryView(
+			forElementKind: UICollectionView.elementKindSectionHeader,
+			at: IndexPath(item: 0, section: sectionIndex))
+		as? MainFeedCollectionHeaderReusableView
 	}
 
 	private func reloadAllVisibleCells(completion: (() -> Void)? = nil) {
@@ -632,7 +639,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		if let account = unreadCountProvider as? Account {
-			if let headerView = headerViewForAccount(account) {
+			if let headerView = findHeaderViewForAccount(account) {
 				headerView.unreadCount = account.unreadCount
 			}
 			return
