@@ -210,7 +210,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	}
 
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		let isSelected = state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped
+		let isSelected = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
 		if isSelected {
 			return .white
 		} else {
@@ -228,7 +228,9 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
 
-		if state.isSelected || state.isHighlighted || state.isFocused || state.isSwiped {
+		let isActive = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
+		
+		if isActive {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleTitle.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText
