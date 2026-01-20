@@ -791,27 +791,6 @@ struct SidebarItemNode: Hashable, Sendable {
 		return idToArticleDictionary[articleID]
 	}
 
-	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
-		let numberOfSections = snapshot.numberOfSections
-		guard numberOfSections > 0 else {
-			return indexPath
-		}
-
-		guard indexPath.section < numberOfSections else {
-			let lastSection = numberOfSections - 1
-			let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
-			return IndexPath(row: max(0, numberOfItems - 1), section: lastSection)
-		}
-
-		let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
-		guard indexPath.row < numberOfItems else {
-			return IndexPath(row: max(0, numberOfItems - 1), section: indexPath.section)
-		}
-
-		return indexPath
-	}
-
 	func unreadCountFor(_ node: Node) -> Int {
 		// The coordinator supplies the unread count for the currently selected feed
 		if node.representedObject === timelineFeed as AnyObject {

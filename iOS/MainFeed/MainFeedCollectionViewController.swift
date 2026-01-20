@@ -501,7 +501,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
-		// applyToCellsForRepresentedObject(representedObject, configure)
+//		applyToCellsForRepresentedObject(representedObject, configure)
 	}
 
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
@@ -528,7 +528,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	// MARK: - Private
 
-	/// Configure standard feed cells
+	/// Configure feed cell.
 	func configure(_ cell: MainFeedCollectionViewCell, sidebarItemNode: SidebarItemNode) {
 		let node = sidebarItemNode.node
 		var indentationLevel = 0
@@ -544,7 +544,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	/// Configure folders
+	/// Configure folder cell.
 	func configure(_ cell: MainFeedCollectionViewFolderCell, sidebarItemNode: SidebarItemNode) {
 		let node = sidebarItemNode.node
 
@@ -552,40 +552,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			cell.folderTitle.text = folder.nameForDisplay
 			cell.unreadCount = folder.unreadCount
 			configureIcon(cell, sidebarItem: folder)
-		}
-
-		if let containerID = (node.representedObject as? Container)?.containerID {
-			cell.setDisclosure(isExpanded: coordinator.isExpanded(containerID), animated: false)
-		}
-	}
-
-	func configure(_ cell: MainFeedCollectionViewCell, indexPath: IndexPath) {
-		guard let node = dataSource.itemIdentifier(for: indexPath)?.node else {
-			return
-		}
-		var indentationLevel = 0
-		if node.parent?.representedObject is Folder {
-			indentationLevel = 1
-		}
-
-		if let sidebarItem = node.representedObject as? SidebarItem {
-			cell.feedTitle.text = sidebarItem.nameForDisplay
-			cell.unreadCount = sidebarItem.unreadCount
-			cell.indentationLevel = indentationLevel
-			configureIcon(cell, indexPath)
-		}
-	}
-
-	/// Configure folders
-	func configure(_ cell: MainFeedCollectionViewFolderCell, indexPath: IndexPath) {
-		guard let node = dataSource.itemIdentifier(for: indexPath)?.node else {
-			return
-		}
-
-		if let folder = node.representedObject as? Folder {
-			cell.folderTitle.text = folder.nameForDisplay
-			cell.unreadCount = folder.unreadCount
-			configureIcon(cell, indexPath)
 		}
 
 		if let containerID = (node.representedObject as? Container)?.containerID {
