@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 import WebKit
 import RSCore
 import RSWeb
@@ -134,7 +135,10 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		return true
 	}
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineViewController")
+
 	override func viewDidLoad() {
+		Self.logger.debug("MainTimelineViewController: viewDidLoad")
 
 		assert(coordinator != nil)
 
@@ -210,6 +214,8 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
+		Self.logger.debug("MainTimelineViewController: viewWillAppear")
+
 		super.viewWillAppear(animated)
 		self.navigationController?.isToolbarHidden = false
 
@@ -223,6 +229,8 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
+		Self.logger.debug("MainTimelineViewController: viewDidAppear")
+
 		super.viewDidAppear(true)
 		isTimelineViewControllerPending = false
 		if navigationController?.navigationBar.alpha == 0 {
@@ -240,7 +248,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 	}
 
-	// MARK: Actions
+	// MARK: - Actions
 
 	@objc func openInBrowser(_ sender: Any?) {
 		assert(coordinator != nil)
@@ -297,7 +305,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 	}
 
-	// MARK: Keyboard shortcuts
+	// MARK: - Keyboard shortcuts
 
 	@objc func selectNextUp(_ sender: Any?) {
 		assert(coordinator != nil)
@@ -324,7 +332,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		coordinator?.showFeedInspector()
 	}
 
-	// MARK: API
+	// MARK: - API
 
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = currentArticle, let indexPath = dataSource.indexPath(for: article) {
@@ -353,14 +361,18 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	func reinitializeArticles(resetScroll: Bool) {
+		Self.logger.debug("MainTimelineViewController: reinitializeArticles")
 		resetUI(resetScroll: resetScroll)
 	}
 
 	func reloadArticles(animated: Bool) {
+		Self.logger.debug("MainTimelineViewController: reloadArticles")
 		applyChanges(animated: animated)
 	}
 
 	func updateArticleSelection(animations: Animations) {
+		Self.logger.debug("MainTimelineViewController: updateArticleSelection")
+
 		if let article = currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if tableView.indexPathForSelectedRow != indexPath {
 				tableView.selectRowAndScrollIfNotVisible(at: indexPath, animations: animations)
@@ -373,6 +385,8 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	func updateUI() {
+		Self.logger.debug("MainTimelineViewController: updateUI")
+
 		refreshProgressView?.update()
 		updateToolbar()
 	}
@@ -388,6 +402,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	func focus() {
+		Self.logger.debug("MainTimelineViewController: focus")
 		becomeFirstResponder()
 	}
 
@@ -586,13 +601,16 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
 
-	// MARK: Notifications
+	// MARK: - Notifications
 
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
+		Self.logger.debug("MainTimelineViewController: unreadCountDidChange")
 		updateUI()
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineViewController: statusesDidChange")
+
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
 			return
 		}
@@ -615,26 +633,17 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		Self.logger.debug("MainTimelineViewController: feedIconDidBecomeAvailable")
+
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		guard let indexPaths = tableView.indexPathsForVisibleRows else {
-			return
-		}
-
-		for indexPath in indexPaths {
-			guard let article = dataSource.itemIdentifier(for: indexPath) else {
-				continue
-			}
-			if article.feed == feed {
-				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
-					cell.setIconImage(image)
-				}
-			}
-		}
+		updateIconForVisibleArticles(feed)
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
+		Self.logger.debug("MainTimelineViewController: avatarDidBecomeAvailable")
+
 		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
@@ -655,12 +664,34 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if showIcons {
-			queueReloadAvailableCells()
+		Self.logger.debug("MainTimelineViewController: faviconDidBecomeAvailable")
+		updateIconForVisibleArticles()
+	}
+
+	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
+	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
+		guard showIcons else {
+			return
+		}
+		guard let indexPaths = tableView.indexPathsForVisibleRows else {
+			return
+		}
+
+		for indexPath in indexPaths {
+			guard let article = dataSource.itemIdentifier(for: indexPath) else {
+				continue
+			}
+			if feed == nil || feed == article.feed {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
+					cell.setIconImage(image)
+				}
+			}
 		}
 	}
 
 	func userDefaultsDidChange() {
+		Self.logger.debug("MainTimelineViewController: userDefaultsDidChange")
+
 		if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
 			self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 			self.iconSize = AppDefaults.shared.timelineIconSize
@@ -670,22 +701,26 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineViewController: contentSizeCategoryDidChange")
 		reloadAllVisibleCells()
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineViewController: displayNameDidChange")
 		updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
 	}
 
 	@objc func willEnterForeground(_ note: Notification) {
+		Self.logger.debug("MainTimelineViewController: willEnterForeground")
 		updateUI()
 	}
 
 	@objc func scrollPositionDidChange() {
+		Self.logger.debug("MainTimelineViewController: scrollPositionDidChange")
 		timelineMiddleIndexPath = tableView.middleVisibleRow()
 	}
 
-	// MARK: Reloading
+	// MARK: - Reloading
 
 	func queueReloadAvailableCells() {
 		CoalescingQueue.standard.add(self, #selector(reloadAllVisibleCells))
