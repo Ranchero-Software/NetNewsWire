@@ -83,7 +83,7 @@ struct AddAccountsView: View {
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
-			Text("Choose an account type to add...")
+			Text("Choose an account type to add…")
 				.font(.headline)
 				.padding()
 

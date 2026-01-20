@@ -692,7 +692,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			}
 		} else {
 			// Updating in progress, apply to both iPhone and iPad Feeds.
-			self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updating...", comment: "Updating...")
+			self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updating…", comment: "Updating…")
 		}
 
 		scheduleNavigationBarSubtitleUpdate()
