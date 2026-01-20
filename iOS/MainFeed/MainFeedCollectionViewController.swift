@@ -157,7 +157,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			renameAction.accessibilityLabel = renameTitle
 			actions.append(renameAction)
 
-			if let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed {
+			if let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed {
 				let moreTitle = NSLocalizedString("More", comment: "More")
 				let moreAction = UIContextualAction(style: .normal, title: nil) { [weak self] (action, view, completion) in
 
@@ -336,7 +336,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     }
 
 	override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+		guard let sidebarItem = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? SidebarItem else {
 			return nil
 		}
 		if sidebarItem is Feed {
@@ -560,7 +560,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configure(_ cell: MainFeedCollectionViewCell, indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath) else {
+		guard let node = dataSource.itemIdentifier(for: indexPath)?.node else {
 			return
 		}
 		var indentationLevel = 0
@@ -578,7 +578,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	/// Configure folders
 	func configure(_ cell: MainFeedCollectionViewFolderCell, indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath) else {
+		guard let node = dataSource.itemIdentifier(for: indexPath)?.node else {
 			return
 		}
 
@@ -782,14 +782,16 @@ extension MainFeedCollectionViewController: MainFeedCollectionViewFolderCellDele
 	}
 
 	func expand(_ cell: MainFeedCollectionViewFolderCell) {
-		guard let indexPath = collectionView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
+		guard let indexPath = collectionView.indexPath(for: cell),
+			  let node = dataSource.itemIdentifier(for: indexPath)?.node else {
 			return
 		}
 		coordinator.expand(node)
 	}
 
 	func collapse(_ cell: MainFeedCollectionViewFolderCell) {
-		guard let indexPath = collectionView.indexPath(for: cell), let node = coordinator.nodeFor(indexPath) else {
+		guard let indexPath = collectionView.indexPath(for: cell),
+			  let node = dataSource.itemIdentifier(for: indexPath)?.node else {
 			return
 		}
 		coordinator.collapse(node)
@@ -938,7 +940,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func copyFeedPageAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
 			  let url = URL(string: feed.url) else {
 				  return nil
 			  }
@@ -951,7 +953,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func copyFeedPageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
 			  let url = URL(string: feed.url) else {
 				  return nil
 			  }
@@ -965,7 +967,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func copyHomePageAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
 			  let homePageURL = feed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
@@ -979,7 +981,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func copyHomePageAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
 			  let homePageURL = feed.homePageURL,
 			  let url = URL(string: homePageURL) else {
 				  return nil
@@ -994,7 +996,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed,
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
 			feed.unreadCount > 0,
 			let articles = try? feed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
 				return nil
@@ -1033,7 +1035,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func getInfoAction(indexPath: IndexPath) -> UIAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed else {
 			return nil
 		}
 
@@ -1061,7 +1063,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func getInfoAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = coordinator.nodeFor(indexPath)?.representedObject as? Feed else {
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed else {
 			return nil
 		}
 
@@ -1074,7 +1076,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func markAllAsReadAction(indexPath: IndexPath) -> UIAction? {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem,
+		guard let sidebarItem = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? SidebarItem,
 			  let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView,
 			  sidebarItem.unreadCount > 0 else {
 				  return nil
@@ -1115,7 +1117,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func rename(indexPath: IndexPath) {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+		guard let sidebarItem = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? SidebarItem else {
 			return
 		}
 
@@ -1172,7 +1174,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func delete(indexPath: IndexPath) {
-		guard let sidebarItem = coordinator.nodeFor(indexPath)?.representedObject as? SidebarItem else {
+		guard let sidebarItem = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? SidebarItem else {
 			return
 		}
 
@@ -1205,7 +1207,7 @@ extension MainFeedCollectionViewController {
 
 	func performDelete(indexPath: IndexPath) {
 		guard let undoManager = undoManager,
-			  let deleteNode = coordinator.nodeFor(indexPath),
+			  let deleteNode = dataSource.itemIdentifier(for: indexPath)?.node,
 			  let deleteCommand = DeleteCommand(nodesToDelete: [deleteNode], undoManager: undoManager, errorHandler: ErrorHandler.present(self)) else {
 			return
 		}

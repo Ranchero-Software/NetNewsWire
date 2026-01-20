@@ -18,7 +18,8 @@ import UniformTypeIdentifiers
 
 extension MainFeedCollectionViewController: UICollectionViewDragDelegate {
 	func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: any UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-		guard let node = coordinator.nodeFor(indexPath), let feed = node.representedObject as? Feed else {
+		guard let node = dataSource.itemIdentifier(for: indexPath)?.node,
+			  let feed = node.representedObject as? Feed else {
 			return [UIDragItem]()
 		}
 
