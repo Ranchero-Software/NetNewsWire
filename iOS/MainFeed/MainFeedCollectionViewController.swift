@@ -483,14 +483,18 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configureIcon(_ cell: MainFeedCollectionViewCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let sidebarItem = node.representedObject as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID else {
+		guard let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
+			  let sidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
+			  let sidebarItemID = sidebarItem.sidebarItemID else {
 			return
 		}
 		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
 	}
 
 	func configureIcon(_ cell: MainFeedCollectionViewFolderCell, _ indexPath: IndexPath) {
-		guard let node = coordinator.nodeFor(indexPath), let sidebarItem = node.representedObject as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID else {
+		guard let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
+			  let sidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
+			  let sidebarItemID = sidebarItem.sidebarItemID else {
 			return
 		}
 		cell.iconImage = IconImageCache.shared.imageFor(sidebarItemID)
