@@ -113,6 +113,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		label.isUserInteractionEnabled = true
 		label.numberOfLines = 1
 		label.textAlignment = .center
+		label.adjustsFontForContentSizeCategory = false
 		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 		label.addGestureRecognizer(tap)
 		let pointerInteraction = UIPointerInteraction(delegate: nil)
@@ -126,6 +127,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		label.textColor = .systemGray
 		label.textAlignment = .center
 		label.isUserInteractionEnabled = true
+		label.adjustsFontForContentSizeCategory = false
 		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 		label.addGestureRecognizer(tap)
 		return label
