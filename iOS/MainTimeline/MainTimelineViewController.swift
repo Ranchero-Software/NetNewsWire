@@ -179,6 +179,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		]
 		searchController.searchBar.barTintColor = .clear
 		searchController.searchBar.scopeBarBackgroundImage = UIImage()
+		searchController.searchBar.autocapitalizationType = .none
 		navigationItem.searchController = searchController
 
 		if traitCollection.userInterfaceIdiom == .pad {
