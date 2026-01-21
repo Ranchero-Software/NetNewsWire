@@ -917,7 +917,12 @@ struct SidebarItemNode: Hashable, Sendable {
 	func selectSidebarItem(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		Self.logger.debug("SceneCoordinator: selectSidebarItem")
 
-		guard indexPath != currentFeedIndexPath else {
+		// Compare by feed identity, not indexPath — indexPath can change when feeds are added/removed
+		var tappedFeed: AnyObject?
+		if let indexPath {
+			tappedFeed = nodeFor(indexPath)?.representedObject as AnyObject?
+		}
+		guard tappedFeed !== timelineFeed as AnyObject? else {
 			completion?()
 			return
 		}
