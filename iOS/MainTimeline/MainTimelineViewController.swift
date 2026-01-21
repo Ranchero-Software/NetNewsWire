@@ -571,13 +571,11 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 
 		let previewView = cell.contentView
-		let inset: CGFloat = 12
-		let visibleBounds = previewView.bounds.insetBy(dx: inset, dy: 2)
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .clear
-		parameters.visiblePath = UIBezierPath(roundedRect: visibleBounds,
+		parameters.backgroundColor = .white
+		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
 											  cornerRadius: 20)
-		return UITargetedPreview(view: previewView, parameters: parameters)
+		return UITargetedPreview(view: cell, parameters: parameters)
 	}
 
 	override func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
@@ -587,14 +585,12 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 
 		let previewView = cell.contentView
-		let inset: CGFloat = 0
-		let visibleBounds = previewView.bounds.insetBy(dx: inset, dy: 2)
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .clear
-		parameters.visiblePath = UIBezierPath(roundedRect: visibleBounds,
+		parameters.backgroundColor = .white
+		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
 											  cornerRadius: 20)
+		return UITargetedPreview(view: cell, parameters: parameters)
 
-		return UITargetedPreview(view: previewView, parameters: parameters)
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
