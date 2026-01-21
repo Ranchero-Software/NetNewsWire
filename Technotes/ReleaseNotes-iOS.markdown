@@ -1,6 +1,17 @@
 # iOS Release Notes
 
-### 7.0 TestFlight build 7007 20 Jan 2026 - branch: main tag: iOS-7.0-7008
+### 7.0 TestFlight build 7009 20 Jan 2026 - branch: main tag: iOS-7.0-7009
+
+Fixed a crash on changing system text size
+Fixed a crash on playing fullscreen video
+Fixed a bug where an unnecessary … would be added to titles in the timeline in some circumstances
+Gave the search scope bar a translucent background to be more Liquid-Glass-like
+Made the timeline navigation bar title and subtitle opt out of dynamic type
+Made separators in timeline start under the text instead of under the icon
+Fixed a bug where the selected timeline cell would be translucent while the contextual menu appears, which made it impossible to read when it was moved to be layered on top of another cell
+Fixed a bug in settings where the text for Add Account button was small for some of the account types
+
+### 7.0 TestFlight build 7008 20 Jan 2026 - branch: main tag: iOS-7.0-7008
 
 Fixed more bugs related to the feeds list
 Made performance better during refresh/sync by coalescing updates to the feeds list
