@@ -175,6 +175,8 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			NSLocalizedString("Here", comment: "Here"),
 			NSLocalizedString("All Articles", comment: "All Articles")
 		]
+		searchController.searchBar.barTintColor = .clear
+		searchController.searchBar.scopeBarBackgroundImage = UIImage()
 		navigationItem.searchController = searchController
 
 		if traitCollection.userInterfaceIdiom == .pad {
