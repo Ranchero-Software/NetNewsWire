@@ -37,10 +37,6 @@ private extension WebViewConfiguration {
 		preferences.javaScriptCanOpenWindowsAutomatically = false
 		preferences.minimumFontSize = 12
 
-#if os(iOS)
-		preferences.isElementFullscreenEnabled = true
-#endif
-
 		return preferences
 	}
 
