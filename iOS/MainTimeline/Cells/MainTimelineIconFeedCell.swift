@@ -155,8 +155,9 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		}
 		
 		articleTitle.attributedText = attributedCellText
+		
 		if linesUsedForTitleGreaterThanOrEqualToPreference() {
-			articleTitle.lineBreakMode = .byTruncatingTail
+			articleTitle.lineBreakMode = .byWordWrapping
 			return
 		}
 		
@@ -179,17 +180,10 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		}
 	
 		articleTitle.attributedText = attributedCellText
-		
-		if articleTitle.bounds.width > 0 && articleTitle.bounds.width < 440 {
-			if linesUsedForTitleGreaterThanOrEqualToPreference() {
-				articleTitle.lineBreakMode = .byTruncatingTail
-			}
-		}
+		articleTitle.lineBreakMode = .byTruncatingTail
 	}
 	
 	private func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
-		contentView.layoutIfNeeded()
-
 		let attributed = articleTitle.attributedText ?? NSAttributedString()
 		let textStorage = NSTextStorage(attributedString: attributed)
 		let containerSize = CGSize(width: articleTitle.bounds.width, height: .greatestFiniteMagnitude)
@@ -214,7 +208,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			lineCount += 1
 		}
 		usedTitleLineCount = lineCount
-		return usedTitleLineCount >= AppDefaults.shared.timelineNumberOfLines
+		return usedTitleLineCount == AppDefaults.shared.timelineNumberOfLines
 	}
 	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {

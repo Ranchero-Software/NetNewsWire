@@ -127,8 +127,9 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 		
 		articleTitle.attributedText = attributedCellText
+		
 		if linesUsedForTitleGreaterThanOrEqualToPreference() {
-			articleTitle.lineBreakMode = .byTruncatingTail
+			articleTitle.lineBreakMode = .byWordWrapping
 			return
 		}
 		
@@ -151,12 +152,7 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 	
 		articleTitle.attributedText = attributedCellText
-		
-		if articleTitle.bounds.width > 0 && articleTitle.bounds.width < 440 {
-			if linesUsedForTitleGreaterThanOrEqualToPreference() {
-				articleTitle.lineBreakMode = .byTruncatingTail
-			}
-		}
+		articleTitle.lineBreakMode = .byTruncatingTail
 	}
 
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
@@ -195,7 +191,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			lineCount += 1
 		}
 		usedTitleLineCount = lineCount
-		return usedTitleLineCount >= AppDefaults.shared.timelineNumberOfLines
+		return usedTitleLineCount == AppDefaults.shared.timelineNumberOfLines
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
