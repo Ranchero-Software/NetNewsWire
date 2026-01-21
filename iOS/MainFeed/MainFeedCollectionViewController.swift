@@ -573,17 +573,24 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		as? MainFeedCollectionHeaderReusableView
 	}
 
-	private func reloadAllVisibleCells() {
+	private func reconfigureVisibleCells() {
 		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
 		let itemIdentifiers = visibleIndexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
-		guard !itemIdentifiers.isEmpty else {
+		reconfigureCells(itemIdentifiers) { [weak self] in
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
+		}
+	}
+
+	private func reconfigureCells(_ items: [SidebarItemNode], completion: (() -> Void)? = nil) {
+		guard !items.isEmpty else {
+			completion?()
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
-		snapshot.reconfigureItems(itemIdentifiers)
-		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary(adjustScroll: false)
+		snapshot.reconfigureItems(items)
+		dataSource.apply(snapshot, animatingDifferences: false) {
+			completion?()
 		}
 	}
 
@@ -601,7 +608,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	@objc func preferredContentSizeCategoryDidChange() {
 		IconImageCache.shared.emptyCache()
-		reloadAllVisibleCells()
+		reconfigureVisibleCells()
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -618,19 +625,16 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		for cell in collectionView.visibleCells {
-			guard let indexPath = collectionView.indexPath(for: cell),
-				  let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
+		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
+		let itemsToReconfigure = visibleIndexPaths.compactMap { indexPath -> SidebarItemNode? in
+			guard let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
 				  sidebarItemNode.node.representedObject === unreadCountProvider as AnyObject else {
-				continue
+				return nil
 			}
-			if let feedCell = cell as? MainFeedCollectionViewCell {
-				feedCell.unreadCount = unreadCountProvider.unreadCount
-			}
-			if let folderCell = cell as? MainFeedCollectionViewFolderCell {
-				folderCell.unreadCount = unreadCountProvider.unreadCount
-			}
+			return sidebarItemNode
 		}
+
+		reconfigureCells(itemsToReconfigure)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -643,14 +647,25 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		applyToAvailableCells(configureIcon)
+		reconfigureVisibleCells()
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))
+
+		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
+		let itemsToReconfigure = visibleIndexPaths.compactMap { indexPath -> SidebarItemNode? in
+			guard let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
+				  let candidateSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
+				  feed.sidebarItemID == candidateSidebarItem.sidebarItemID else {
+				return nil
+			}
+			return sidebarItemNode
+		}
+
+		reconfigureCells(itemsToReconfigure)
 	}
 
 	// MARK: - Actions
