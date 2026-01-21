@@ -129,7 +129,7 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="62y-E0-vOF" userLabel="Top Separator">
-                                            <rect key="frame" x="39" y="0.0" width="371" height="1"/>
+                                            <rect key="frame" x="83" y="0.0" width="327" height="1"/>
                                             <color key="backgroundColor" systemColor="separatorColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="1" id="rVm-wB-5hM"/>
@@ -186,7 +186,7 @@
                                         <constraint firstItem="62y-E0-vOF" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" id="NKp-m5-s42"/>
                                         <constraint firstItem="VIg-VB-r3d" firstAttribute="leading" secondItem="baQ-HK-mjy" secondAttribute="trailing" constant="8" symbolic="YES" id="NY7-Kg-7tF"/>
                                         <constraint firstItem="VIg-VB-r3d" firstAttribute="top" secondItem="wWh-bJ-tNe" secondAttribute="top" id="NjQ-KI-DIw"/>
-                                        <constraint firstItem="62y-E0-vOF" firstAttribute="leading" secondItem="Adg-d9-egJ" secondAttribute="leading" constant="39" id="QQu-KW-A5q"/>
+                                        <constraint firstItem="62y-E0-vOF" firstAttribute="leading" secondItem="Adg-d9-egJ" secondAttribute="leading" constant="83" id="QQu-KW-A5q"/>
                                         <constraint firstItem="baQ-HK-mjy" firstAttribute="leading" secondItem="Adg-d9-egJ" secondAttribute="leading" constant="15" id="SuA-f2-vgv"/>
                                         <constraint firstItem="wWh-bJ-tNe" firstAttribute="top" secondItem="Adg-d9-egJ" secondAttribute="top" constant="13" id="VEu-g8-hf0"/>
                                         <constraint firstItem="Adg-d9-egJ" firstAttribute="trailing" secondItem="ESv-eQ-b8X" secondAttribute="trailing" constant="20" id="WOi-Ux-1J5"/>
@@ -756,19 +756,19 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

@@ -80,7 +80,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	}
 	
 	private func configureSeparator(indexRow: Int) {
-		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
+		let constant: CGFloat = (indexRow == 0) ? 15.0 : 83.0
 		if leadingConstraint != nil {
 			leadingConstraint.constant = constant
 			setNeedsLayout()
