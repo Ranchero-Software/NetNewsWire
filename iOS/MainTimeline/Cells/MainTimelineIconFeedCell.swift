@@ -16,23 +16,23 @@ class MainTimelineIconFeedCell: UITableViewCell {
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
 	@IBOutlet var leadingConstraint: NSLayoutConstraint!
-
+	
 	private(set) var usedTitleLineCount: Int = 0
-
+	
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
 		}
 	}
-
+	
 	var indexPathRow: Int = 0 {
 		didSet {
 			configureSeparator(indexRow: indexPathRow)
 		}
 	}
-
+	
 	var isPreview: Bool = false
-
+	
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
@@ -41,7 +41,14 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			configureStackView()
 		}
 	}
-
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		applyTitleTextWithAttributes(configurationState)
+		articleTitle.setNeedsLayout()
+		articleTitle.layoutIfNeeded()
+	}
+	
 	private func configureStackView() {
 		switch traitCollection.preferredContentSizeCategory {
 		case .accessibilityMedium, .accessibilityLarge, .accessibilityExtraLarge, .accessibilityExtraExtraLarge, .accessibilityExtraExtraExtraLarge:
@@ -54,12 +61,11 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			metaDataStackView.distribution = .fill
 		}
 	}
-
+	
 	private func configure(_ cellData: MainTimelineCellData) {
 		updateIndicatorView(cellData)
 		articleTitle.numberOfLines = cellData.numberOfLines
-		applyTitleTextWithAttributes(configurationState)
-
+		
 		if cellData.showFeedName == .feed {
 			authorByLine.text = cellData.feedName
 		} else if cellData.showFeedName == .byline {
@@ -67,12 +73,12 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		} else if cellData.showFeedName == .none {
 			authorByLine.text = ""
 		}
-
+		
 		setIconImage(cellData.iconImage, with: cellData.iconSize)
-
+		
 		articleDate.text = cellData.dateString
 	}
-
+	
 	private func configureSeparator(indexRow: Int) {
 		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
 		if leadingConstraint != nil {
@@ -81,31 +87,31 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			layoutIfNeeded()
 		}
 	}
-
+	
 	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
 		iconView.iconImage = iconImage
 		updateIconViewSizeConstraints(to: size.size)
 	}
-
+	
 	func setIconImage(_ iconImage: IconImage?) {
 		if iconView.iconImage !== iconImage {
 			iconView.iconImage = iconImage
 		}
 	}
-
+	
 	private func updateIconViewSizeConstraints(to size: CGSize) {
 		for constraint in iconView.constraints {
 			constraint.isActive = false
 		}
-
+		
 		NSLayoutConstraint.activate([
 			iconView.widthAnchor.constraint(equalToConstant: size.width),
 			iconView.heightAnchor.constraint(equalToConstant: size.height)
 		])
-
+		
 		setNeedsLayout()
 	}
-
+	
 	private func updateIndicatorView(_ cellData: MainTimelineCellData) {
 		if cellData.read == false {
 			if indicatorView.alpha == 0.0 {
@@ -132,7 +138,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			}
 		}
 	}
-
+	
 	private func applyTitleTextWithAttributes(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
 		if cellData.title != "" {
@@ -147,7 +153,13 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-
+		
+		articleTitle.attributedText = attributedCellText
+		if linesUsedForTitleGreaterThanOrEqualToPreference() {
+			articleTitle.lineBreakMode = .byTruncatingTail
+			return
+		}
+		
 		if cellData.summary != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
@@ -165,14 +177,17 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			}
 			attributedCellText.append(summaryAttributed)
 		}
-
+	
 		articleTitle.attributedText = attributedCellText
-		if linesUsedForTitleGreaterThanOrEqualToPreference() {
-			articleTitle.lineBreakMode = .byTruncatingTail
+		
+		if articleTitle.bounds.width > 0 && articleTitle.bounds.width < 440 {
+			if linesUsedForTitleGreaterThanOrEqualToPreference() {
+				articleTitle.lineBreakMode = .byTruncatingTail
+			}
 		}
 	}
-
-	func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
+	
+	private func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
 		contentView.layoutIfNeeded()
 
 		let attributed = articleTitle.attributedText ?? NSAttributedString()
@@ -201,7 +216,7 @@ class MainTimelineIconFeedCell: UITableViewCell {
 		usedTitleLineCount = lineCount
 		return usedTitleLineCount >= AppDefaults.shared.timelineNumberOfLines
 	}
-
+	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
 		let isSelected = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
 		if isSelected {
@@ -210,19 +225,19 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			return .label
 		}
 	}
-
+	
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		super.updateConfiguration(using: state)
-
+		
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.cornerRadius = 20
 		if traitCollection.userInterfaceIdiom == .pad {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
-
+		
 		let isActive = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
-
+		
 		if isActive {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleTitle.textColor = titleTextColor(for: state)
@@ -233,9 +248,9 @@ class MainTimelineIconFeedCell: UITableViewCell {
 			articleDate.textColor = .secondaryLabel
 			authorByLine.textColor = .secondaryLabel
 		}
-
+		
 		self.backgroundConfiguration = backgroundConfig
-
+		
 	}
-
+	
 }

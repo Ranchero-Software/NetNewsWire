@@ -39,6 +39,13 @@ class MainTimelineFeedCell: UITableViewCell {
 			configureStackView()
 		}
 	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		applyTitleTextWithAttributes(configurationState)
+		articleTitle.setNeedsLayout()
+		articleTitle.layoutIfNeeded()
+	}
 
 	private func configureStackView() {
 		switch traitCollection.preferredContentSizeCategory {
@@ -56,8 +63,6 @@ class MainTimelineFeedCell: UITableViewCell {
 	private func configure(_ cellData: MainTimelineCellData) {
 		updateIndicatorView(cellData)
 		articleTitle.numberOfLines = cellData.numberOfLines
-
-		applyTitleTextWithAttributes(configurationState)
 
 		if cellData.showFeedName == .feed {
 			authorByLine.text = cellData.feedName
@@ -120,7 +125,13 @@ class MainTimelineFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-
+		
+		articleTitle.attributedText = attributedCellText
+		if linesUsedForTitleGreaterThanOrEqualToPreference() {
+			articleTitle.lineBreakMode = .byTruncatingTail
+			return
+		}
+		
 		if cellData.summary != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
@@ -138,10 +149,13 @@ class MainTimelineFeedCell: UITableViewCell {
 			}
 			attributedCellText.append(summaryAttributed)
 		}
-
+	
 		articleTitle.attributedText = attributedCellText
-		if linesUsedForTitleGreaterThanOrEqualToPreference() {
-			articleTitle.lineBreakMode = .byTruncatingTail
+		
+		if articleTitle.bounds.width > 0 && articleTitle.bounds.width < 440 {
+			if linesUsedForTitleGreaterThanOrEqualToPreference() {
+				articleTitle.lineBreakMode = .byTruncatingTail
+			}
 		}
 	}
 
@@ -154,7 +168,7 @@ class MainTimelineFeedCell: UITableViewCell {
 		}
 	}
 
-	func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
+	private func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
 		contentView.layoutIfNeeded()
 
 		let attributed = articleTitle.attributedText ?? NSAttributedString()
