@@ -39,7 +39,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			configureStackView()
 		}
 	}
-	
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		applyTitleTextWithAttributes(configurationState)
@@ -125,14 +125,14 @@ class MainTimelineFeedCell: UITableViewCell {
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			attributedCellText.append(titleAttributed)
 		}
-		
+
 		articleTitle.attributedText = attributedCellText
-		
+
 		if linesUsedForTitleGreaterThanOrEqualToPreference() {
 			articleTitle.lineBreakMode = .byWordWrapping
 			return
 		}
-		
+
 		if cellData.summary != "" {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = UIFont.preferredFont(forTextStyle: .body).lineHeight
@@ -150,7 +150,7 @@ class MainTimelineFeedCell: UITableViewCell {
 			}
 			attributedCellText.append(summaryAttributed)
 		}
-	
+
 		articleTitle.attributedText = attributedCellText
 		articleTitle.lineBreakMode = .byTruncatingTail
 	}
