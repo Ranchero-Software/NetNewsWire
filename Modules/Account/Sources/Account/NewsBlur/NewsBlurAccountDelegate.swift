@@ -87,6 +87,8 @@ import Secrets
 
 			try await refreshMissingStories(for: account)
 			refreshProgress.completeTask()
+
+			accountMetadata?.lastArticleFetchEndTime = Date()
 		} catch {
 			refreshProgress.reset()
 			throw AccountError.wrapped(error, account)
