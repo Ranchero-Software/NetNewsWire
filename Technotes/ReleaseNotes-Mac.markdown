@@ -1,11 +1,11 @@
 # Mac Release Notes
 
-### 7.0b4 build 7011 14 Jan 2026 — branch: main tag: mac-7.0b4
+### 7.0b5 build 7011 14 Jan 2026 — branch: main tag: mac-7.0b5
 
 Decreased the minimum size of the sidebar
 Fixed two causes of a bug where small images would sometimes display as much larger than they should be
 
-### 7.0b3 build 7004 14 Jan 2026 — branch: main tag: mac-7.0b4
+### 7.0b4 build 7004 14 Jan 2026 — branch: main tag: mac-7.0b4
 
 Fixed Feedly syncing — it’s working again
 
