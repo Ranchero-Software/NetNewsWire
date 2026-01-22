@@ -374,6 +374,10 @@ a.footnote:hover,
 		font-size: [[font-size]]px;
 	}
 
+	.articleTitle h1 {
+		font-size: 1.5em;
+	}
+
 	pre {
 		border: 1px solid var(--secondary-accent-color);
 		padding: 5px;
