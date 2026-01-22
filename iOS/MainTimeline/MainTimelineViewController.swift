@@ -827,7 +827,7 @@ private extension MainTimelineViewController {
 
 	func updateToolbar() {
 		markAllAsReadButton?.isEnabled = isTimelineUnreadAvailable
-		firstUnreadButton.isEnabled = isTimelineUnreadAvailable
+		firstUnreadButton.isEnabled = coordinator?.isAnyUnreadAvailable ?? false
 
 		if isRootSplitCollapsed {
 			if let toolbarItems = toolbarItems, toolbarItems.last != firstUnreadButton {
