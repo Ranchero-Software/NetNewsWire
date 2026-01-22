@@ -17,9 +17,9 @@
 /* see removeWpSmiley; this rule is kept in case a wp-smiley is encountered without alt text */
 
 .wp-smiley {
-    height: 1em;
-    max-height: 1em;
- }
+    height: 1em !important;
+    max-height: 1em !important;
+}
 
 /* Hide the external link at the bottom of Daring Fireball posts */
 

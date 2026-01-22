@@ -252,7 +252,7 @@ pre code {
 
 img, figure, video, div, object {
 	max-width: 100%;
-	height: auto !important;
+	height: auto;
 	margin: 0 auto;
 }
 
