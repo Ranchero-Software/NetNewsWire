@@ -614,32 +614,40 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	@objc func statusesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: statusesDidChange")
 
+		guard isViewLoaded, view.window != nil else {
+			return
+		}
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
 			return
 		}
-
-		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
-		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
-
-		guard !visibleUpdatedArticles.isEmpty else {
+		guard let indexPaths = tableView.indexPathsForVisibleRows else {
 			return
 		}
 
+		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
+		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
 		reconfigureCells(visibleUpdatedArticles)
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: feedIconDidBecomeAvailable")
 
+		guard isViewLoaded, view.window != nil else {
+			return
+		}
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
+
 		updateIconForVisibleArticles(feed)
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: avatarDidBecomeAvailable")
 
+		guard isViewLoaded, view.window != nil else {
+			return
+		}
 		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
 			return
 		}
@@ -660,21 +668,24 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 			return nil
 		}
-
-		guard !articlesToReload.isEmpty else {
-			return
-		}
-
 		reconfigureCells(articlesToReload)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: faviconDidBecomeAvailable")
+
+		guard isViewLoaded, view.window != nil else {
+			return
+		}
+
 		updateIconForVisibleArticles()
 	}
 
 	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
 	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
+		guard isViewLoaded, view.window != nil else {
+			return
+		}
 		guard showIcons else {
 			return
 		}
@@ -691,11 +702,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 			return nil
 		}
-
-		guard !articlesToReload.isEmpty else {
-			return
-		}
-
 		reconfigureCells(articlesToReload)
 	}
 
@@ -737,11 +743,22 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	@objc private func reconfigureVisibleCells() {
-		let visibleArticles = tableView.indexPathsForVisibleRows!.compactMap { return dataSource.itemIdentifier(for: $0) }
+		guard isViewLoaded, view.window != nil else {
+			return
+		}
+		guard let indexPaths = tableView.indexPathsForVisibleRows else {
+			return
+		}
+
+		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
 		reconfigureCells(visibleArticles)
 	}
 
 	private func reconfigureCells(_ articles: [Article]) {
+		guard !articles.isEmpty else {
+			return
+		}
+
 		var snapshot = dataSource.snapshot()
 		snapshot.reconfigureItems(articles)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
