@@ -1,5 +1,15 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7010 21 Jan 2026 - branch: main tag: iOS-7.0-7010
+
+Fixed two causes of a bug where small images would sometimes display as much larger than they should be
+Fixed a bug where NewsBlur wouldn’t display the last update time. It will start doing so after the next time it updates
+Fixed a bug where the article that was restored on launch would get cleared out it if it’s not part of the current timeline
+Fixed a bug where the next-unread button would still be enabled when there are no unread articles
+Fixed super-large titles in several themes
+Fixed a bug where the search field would auto-capitalize the first letter
+Fixed one cause (hopefully the only one) of a bug where selecting a feed might not show the articles for that feed in the timeline
+
 ### 7.0 TestFlight build 7009 21 Jan 2026 - branch: main tag: iOS-7.0-7009
 
 Fixed a crash on changing system text size
