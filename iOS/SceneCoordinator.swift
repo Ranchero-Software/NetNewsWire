@@ -81,6 +81,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	private var isSearching: Bool = false
 	private var savedSearchArticles: ArticleArray?
 	private var savedSearchArticleIDs: Set<String>?
+	private var isRestoringState = false
 
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
@@ -355,6 +356,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
 		Self.logger.debug("SceneCoordinator: restoreWindowState")
 
+		isRestoringState = true
+
 		if AppDefaults.shared.isFirstRun {
 			// Expand top-level items on first run.
 			for sectionNode in treeController.rootNode.childNodes {
@@ -381,11 +384,13 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	private func restoreSelectedSidebarItemAndArticle(_ stateInfo: StateRestorationInfo) {
 		guard let selectedSidebarItem = stateInfo.selectedSidebarItem else {
+			isRestoringState = false
 			return
 		}
 
 		guard let sidebarItemNode = nodeFor(sidebarItemID: selectedSidebarItem),
 			  let indexPath = indexPathFor(sidebarItemNode) else {
+			isRestoringState = false
 			return
 		}
 		selectSidebarItem(indexPath: indexPath, animations: []) {
@@ -394,6 +399,10 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	private func restoreSelectedArticle(_ stateInfo: StateRestorationInfo) {
+		defer {
+			isRestoringState = false
+		}
+
 		guard let articleSpecifier = stateInfo.selectedArticle else {
 			return
 		}
@@ -2074,7 +2083,8 @@ private extension SceneCoordinator {
 
 			// Clear current article if it's no longer in the timeline.
 			// Don't call selectArticle(nil) because that triggers navigation on iPhone.
-			if let currentArticle, !sortedArticles.contains(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
+			// Skip during state restoration so the restored article stays open.
+			if !isRestoringState, let currentArticle, !sortedArticles.contains(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
 				self.currentArticle = nil
 				articleViewController?.article = nil
 			}
