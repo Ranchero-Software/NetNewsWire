@@ -626,11 +626,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
 		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
-
-		guard !visibleUpdatedArticles.isEmpty else {
-			return
-		}
-
 		reconfigureCells(visibleUpdatedArticles)
 	}
 
@@ -673,11 +668,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 			return nil
 		}
-
-		guard !articlesToReload.isEmpty else {
-			return
-		}
-
 		reconfigureCells(articlesToReload)
 	}
 
@@ -712,11 +702,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 			return nil
 		}
-
-		guard !articlesToReload.isEmpty else {
-			return
-		}
-
 		reconfigureCells(articlesToReload)
 	}
 
@@ -764,7 +749,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		guard let indexPaths = tableView.indexPathsForVisibleRows else {
 			return
 		}
-		
+
 		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
 		reconfigureCells(visibleArticles)
 	}
