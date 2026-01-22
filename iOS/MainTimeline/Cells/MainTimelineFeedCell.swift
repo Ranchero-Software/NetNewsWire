@@ -14,7 +14,13 @@ class MainTimelineFeedCell: UITableViewCell {
 	@IBOutlet var indicatorView: IconView!
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
-	@IBOutlet var leadingConstraint: NSLayoutConstraint!
+	@IBOutlet var separatorView: UIView!
+	
+	private var separatorLeadingConstraint: NSLayoutConstraint?
+	private var separatorTrailingConstraint: NSLayoutConstraint?
+	private var separatorTopConstraint: NSLayoutConstraint?
+	private var separatorHeightConstraint: NSLayoutConstraint?
+	
 
     private(set) var usedTitleLineCount: Int = 0
 
@@ -37,6 +43,16 @@ class MainTimelineFeedCell: UITableViewCell {
 			super.awakeFromNib()
 			indicatorView.alpha = 0.0
 			configureStackView()
+			separatorView.translatesAutoresizingMaskIntoConstraints = false
+			separatorTopConstraint = separatorView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0)
+			separatorHeightConstraint = separatorView.heightAnchor.constraint(equalToConstant: 1)
+			separatorTrailingConstraint = separatorView.trailingAnchor.constraint(equalTo: articleTitle.trailingAnchor)
+			// Leading constraint will be configured in configureSeparator(indexRow:)
+			NSLayoutConstraint.activate([
+				separatorTopConstraint!,
+				separatorHeightConstraint!,
+				separatorTrailingConstraint!
+			])
 		}
 	}
 
@@ -76,12 +92,42 @@ class MainTimelineFeedCell: UITableViewCell {
 	}
 
 	private func configureSeparator(indexRow: Int) {
-		let constant: CGFloat = (indexRow == 0) ? 15.0 : 39.0
-		if leadingConstraint != nil {
-			leadingConstraint.constant = constant
-			setNeedsLayout()
-			layoutIfNeeded()
+		// Set base constraints if they don't exist.
+		if separatorTopConstraint == nil || separatorHeightConstraint == nil || separatorTrailingConstraint == nil {
+			separatorView.translatesAutoresizingMaskIntoConstraints = false
+			separatorTopConstraint = separatorView.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0)
+			separatorHeightConstraint = separatorView.heightAnchor.constraint(equalToConstant: 1)
+			separatorTrailingConstraint = separatorView.trailingAnchor.constraint(equalTo: articleTitle.trailingAnchor)
+			NSLayoutConstraint.activate([
+				separatorTopConstraint!,
+				separatorHeightConstraint!,
+				separatorTrailingConstraint!
+			])
+			print(#function, "Base constraints activated")
 		}
+
+		// disable leading constraints
+		if let existingLeading = separatorLeadingConstraint {
+			existingLeading.isActive = false
+			separatorLeadingConstraint = nil
+			print(#function, "Leading deactivated")
+		}
+
+		// Give initial row special treatment
+		if indexRow == 0 {
+			separatorLeadingConstraint = separatorView.leadingAnchor.constraint(equalTo: indicatorView.leadingAnchor)
+			print(#function, "Index 0: Leading set")
+		} else {
+			separatorLeadingConstraint = separatorView.leadingAnchor.constraint(equalTo: articleTitle.leadingAnchor, constant: 0)
+			print(#function, "Index \(indexPathRow): Leading set")
+		}
+
+		separatorLeadingConstraint?.isActive = true
+		print(#function, "Leading activated")
+
+		setNeedsLayout()
+		layoutIfNeeded()
+		print(#function, "Layout triggered")
 	}
 
 	private func updateIndicatorView(_ cellData: MainTimelineCellData) {
@@ -165,8 +211,6 @@ class MainTimelineFeedCell: UITableViewCell {
 	}
 
 	private func linesUsedForTitleGreaterThanOrEqualToPreference() -> Bool {
-		contentView.layoutIfNeeded()
-
 		let attributed = articleTitle.attributedText ?? NSAttributedString()
 		let textStorage = NSTextStorage(attributedString: attributed)
 		let containerSize = CGSize(width: articleTitle.bounds.width, height: .greatestFiniteMagnitude)
