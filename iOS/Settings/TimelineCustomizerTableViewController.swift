@@ -9,6 +9,9 @@
 import UIKit
 import Articles
 
+
+
+
 final class TimelineCustomizerTableViewController: UITableViewController {
 	private var previewArticle: Article {
 		var components = DateComponents()
@@ -71,45 +74,46 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 	}
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		if indexPath.section == 0 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "IconSizeCell") as! ModernTimelineSliderCell
-			cell.sliderConfiguration = .iconSize
-			return cell
-		}
-
-		if indexPath.section == 1 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "NumberOfLinesCell") as! ModernTimelineSliderCell
-			cell.sliderConfiguration = .numberOfLines
-			return cell
-		}
-
-		if indexPath.section == 2 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell") as? MainTimelineIconFeedCell ?? MainTimelineIconFeedCell()
-			cell.cellData = MainTimelineCellData(article: previewArticle,
-												 showFeedName: .byline,
-												 feedName: "The Great Gatsby",
-												 byline: "F. Scott Fitzgerald",
-												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
-												 showIcon: true,
-												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
-												 iconSize: AppDefaults.shared.timelineIconSize)
-			cell.isPreview = true
-			return cell
-		}
-
-		if indexPath.section == 3 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell") as? MainTimelineFeedCell ?? MainTimelineFeedCell()
-			cell.cellData = MainTimelineCellData(article: previewArticle,
-												 showFeedName: .byline,
-												 feedName: "The Great Gatsby",
-												 byline: "F. Scott Fitzgerald",
-												 iconImage: nil,
-												 showIcon: false,
-												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
-												 iconSize: AppDefaults.shared.timelineIconSize)
-			cell.isPreview = true
-			return cell
-		}
+		
+//		if indexPath.section == 0 {
+//			let cell = tableView.dequeueReusableCell(withIdentifier: "IconSizeCell") as! ModernTimelineSliderCell
+//			cell.sliderConfiguration = .iconSize
+//			return cell
+//		}
+//
+//		if indexPath.section == 1 {
+//			let cell = tableView.dequeueReusableCell(withIdentifier: "NumberOfLinesCell") as! ModernTimelineSliderCell
+//			cell.sliderConfiguration = .numberOfLines
+//			return cell
+//		}
+//
+//		if indexPath.section == 2 {
+//			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell") as? MainTimelineIconFeedCell ?? MainTimelineIconFeedCell()
+//			cell.cellData = MainTimelineCellData(article: previewArticle,
+//												 showFeedName: .byline,
+//												 feedName: "The Great Gatsby",
+//												 byline: "F. Scott Fitzgerald",
+//												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
+//												 showIcon: true,
+//												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
+//												 iconSize: AppDefaults.shared.timelineIconSize)
+//			cell.isPreview = true
+//			return cell
+//		}
+//
+//		if indexPath.section == 3 {
+//			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell") as? MainTimelineFeedCell ?? MainTimelineFeedCell()
+//			cell.cellData = MainTimelineCellData(article: previewArticle,
+//												 showFeedName: .byline,
+//												 feedName: "The Great Gatsby",
+//												 byline: "F. Scott Fitzgerald",
+//												 iconImage: nil,
+//												 showIcon: false,
+//												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
+//												 iconSize: AppDefaults.shared.timelineIconSize)
+//			cell.isPreview = true
+//			return cell
+//		}
 
 		return UITableViewCell()
 
