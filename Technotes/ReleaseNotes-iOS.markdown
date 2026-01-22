@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 7.0 TestFlight build 7009 20 Jan 2026 - branch: main tag: iOS-7.0-7009
+### 7.0 TestFlight build 7009 21 Jan 2026 - branch: main tag: iOS-7.0-7009
 
 Fixed a crash on changing system text size
 Fixed a crash on playing fullscreen video
