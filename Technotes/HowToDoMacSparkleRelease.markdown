@@ -48,7 +48,7 @@ Update Appcast on main branch
 	Update file size - length
 
 Run xmllint on appcast
-	xmllint --noout netnewswire-beta.xml
+xmllint --noout ~/Projects/nnw/main/Appcasts/netnewswire-beta.xml
 
 Upload appcast
 Commit and push git change
