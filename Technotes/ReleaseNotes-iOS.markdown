@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7012 21 Jan 2026 - branch: main tag: iOS-7.0-7012
+
+Fixed a bug that could cause timeline articles to not get updated properly on things like status changes
+Fixed a crash that could happen updating timeline articles
+
 ### 7.0 TestFlight build 7010 21 Jan 2026 - branch: main tag: iOS-7.0-7010
 
 Fixed two causes of a bug where small images would sometimes display as much larger than they should be
