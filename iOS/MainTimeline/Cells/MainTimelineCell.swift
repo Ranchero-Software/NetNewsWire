@@ -28,6 +28,12 @@ class MainTimelineCell: UITableViewCell {
 	
 	var isPreview: Bool = false
 	
+	var activeState: Bool {
+		let state = self.configurationState
+		let active = state.isSwiped || state.isSelected
+		return active
+	}
+	
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
@@ -67,7 +73,7 @@ class MainTimelineCell: UITableViewCell {
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
-				self.indicatorView.tintColor = Assets.Colors.secondaryAccent
+				self.indicatorView.tintColor = self.activeState ? .white : Assets.Colors.secondaryAccent
 			}
 			return
 		} else if cellData.starred {
@@ -76,7 +82,7 @@ class MainTimelineCell: UITableViewCell {
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.starredFeed
-				self.indicatorView.tintColor = Assets.Colors.star
+				self.indicatorView.tintColor = self.activeState ? .white : Assets.Colors.star
 			}
 			return
 		} else if indicatorView.alpha == 1.0 {
@@ -170,8 +176,7 @@ class MainTimelineCell: UITableViewCell {
 	}
 	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		let isSelected = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
-		if isSelected {
+		if activeState {
 			return .white
 		} else {
 			return .label
@@ -210,10 +215,8 @@ class MainTimelineCell: UITableViewCell {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
-		
-		let isActive = state.isSelected || state.isHighlighted || state.isEditing || state.isSwiped
-		
-		if isActive {
+				
+		if self.activeState {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleContent.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText
@@ -223,6 +226,8 @@ class MainTimelineCell: UITableViewCell {
 			articleDate.textColor = .secondaryLabel
 			articleByLine.textColor = .secondaryLabel
 		}
+		
+		updateIndicatorView(cellData)
 		
 		self.backgroundConfiguration = backgroundConfig
 	}
