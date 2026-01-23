@@ -625,16 +625,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
-		let itemsToReconfigure = visibleIndexPaths.compactMap { indexPath -> SidebarItemNode? in
-			guard let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
+		for cell in collectionView.visibleCells {
+			guard let indexPath = collectionView.indexPath(for: cell),
+				  let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
 				  sidebarItemNode.node.representedObject === unreadCountProvider as AnyObject else {
-				return nil
+				continue
 			}
-			return sidebarItemNode
+			if let feedCell = cell as? MainFeedCollectionViewCell {
+				feedCell.unreadCount = unreadCountProvider.unreadCount
+			}
+			if let folderCell = cell as? MainFeedCollectionViewFolderCell {
+				folderCell.unreadCount = unreadCountProvider.unreadCount
+			}
 		}
-
-		reloadCells(itemsToReconfigure)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -647,25 +650,14 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		reloadAllVisibleCells()
+		applyToAvailableCells(configureIcon)
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-
-		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
-		let itemsToReconfigure = visibleIndexPaths.compactMap { indexPath -> SidebarItemNode? in
-			guard let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
-				  let candidateSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
-				  feed.sidebarItemID == candidateSidebarItem.sidebarItemID else {
-				return nil
-			}
-			return sidebarItemNode
-		}
-
-		reloadCells(itemsToReconfigure)
+		applyToCellsForRepresentedObject(feed, configureIcon(_:_:))
 	}
 
 	// MARK: - Actions

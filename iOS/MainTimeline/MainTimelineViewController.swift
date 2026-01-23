@@ -614,7 +614,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	@objc func statusesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: statusesDidChange")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
@@ -626,13 +626,27 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
 		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
-		reloadCells(visibleUpdatedArticles)
+
+		for article in visibleUpdatedArticles {
+			if let indexPath = dataSource.indexPath(for: article) {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell {
+					let cellData = configure(article: article)
+					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
+				}
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineFeedCell {
+					let cellData = configure(article: article)
+					cell.cellData = cellData
+					cell.indexPathRow = indexPath.row
+				}
+			}
+		}
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: feedIconDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
@@ -645,7 +659,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: avatarDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
@@ -655,26 +669,22 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			return
 		}
 
-		let articlesToReload = indexPaths.compactMap { indexPath -> Article? in
-			guard let article = dataSource.itemIdentifier(for: indexPath),
-				  let authors = article.authors,
-				  !authors.isEmpty else {
-				return nil
+		for indexPath in indexPaths {
+			guard let article = dataSource.itemIdentifier(for: indexPath), let authors = article.authors, !authors.isEmpty else {
+				continue
 			}
 			for author in authors {
-				if author.avatarURL == avatarURL {
-					return article
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
+					cell.setIconImage(image)
 				}
 			}
-			return nil
 		}
-		reloadCells(articlesToReload)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: faviconDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 
@@ -683,7 +693,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
 	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 		guard showIcons else {
@@ -693,16 +703,16 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			return
 		}
 
-		let articlesToReload = indexPaths.compactMap { indexPath -> Article? in
+		for indexPath in indexPaths {
 			guard let article = dataSource.itemIdentifier(for: indexPath) else {
-				return nil
+				continue
 			}
 			if feed == nil || feed == article.feed {
-				return article
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
+					cell.setIconImage(image)
+				}
 			}
-			return nil
 		}
-		reloadCells(articlesToReload)
 	}
 
 	func userDefaultsDidChange() {
@@ -743,7 +753,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	}
 
 	@objc private func reloadAllVisibleCells() {
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 		guard let indexPaths = tableView.indexPathsForVisibleRows else {
