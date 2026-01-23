@@ -130,7 +130,7 @@ class MainTimelineCell: UITableViewCell {
 			]
 			
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
-			let linesUsed = countLines(of: titleAttributed, width: 343)
+			let linesUsed = countLines(of: titleAttributed, width: articleContent.bounds.width)
 			// 2. Measure Title Height
 			if linesUsed >= cellData.numberOfLines {
 				// The title already fills 3 lines, set it and exit
@@ -138,7 +138,6 @@ class MainTimelineCell: UITableViewCell {
 				articleContent.lineBreakMode = .byTruncatingTail
 				return
 			}
-			print(linesUsed, articleContent.bounds.width)
 		
 			attributedCellText.append(titleAttributed)
 		}
