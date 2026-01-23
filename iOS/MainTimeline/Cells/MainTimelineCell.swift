@@ -29,6 +29,7 @@ class MainTimelineCell: UITableViewCell {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
 			indicatorView.alpha = 0.0
+			feedIcon?.translatesAutoresizingMaskIntoConstraints = false
 			configureStackView()
 		}
 	}
@@ -50,7 +51,7 @@ class MainTimelineCell: UITableViewCell {
 		}
 		
 		if feedIcon != nil {
-			setIconImage(cellData.iconImage)
+			setIconImage(cellData.iconImage, with: cellData.iconSize)
 		}
 		
 		articleDate.text = cellData.dateString
@@ -108,6 +109,26 @@ class MainTimelineCell: UITableViewCell {
 		if feedIcon!.iconImage !== iconImage {
 			feedIcon!.iconImage = iconImage
 		}
+	}
+	
+	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
+		feedIcon!.iconImage = iconImage
+		updateIconViewSizeConstraints(to: size.size)
+	}
+	
+	private func updateIconViewSizeConstraints(to size: CGSize) {
+		guard feedIcon != nil else { return }
+		
+		for constraint in feedIcon!.constraints.compactMap({ $0 }) {
+			constraint.isActive = false
+		}
+		
+		NSLayoutConstraint.activate([
+			feedIcon!.widthAnchor.constraint(equalToConstant: size.width),
+			feedIcon!.heightAnchor.constraint(equalToConstant: size.height)
+		])
+		
+		setNeedsLayout()
 	}
 	
 	private func addArticleContent(_ state: UICellConfigurationState) {
@@ -170,15 +191,20 @@ class MainTimelineCell: UITableViewCell {
 		}
 		
 		let linesUsed = countLines(of: attributedCellText, width: articleContent.bounds.width)
+		if attributedCellText.string.contains("Bree-folk") {
+			print("Bree-folk: \(linesUsed), \(self.feedIcon != nil)")
+		}
 		if linesUsed >= cellData.numberOfLines {
 			// The title already fills 3 lines, set it and exit
 			articleContent.attributedText = attributedCellText
 			articleContent.lineBreakMode = .byTruncatingTail
 			return
+		} else {
+			articleContent.attributedText = attributedCellText
+			articleContent.lineBreakMode = .byWordWrapping
 		}
 		
-		articleContent.attributedText = attributedCellText
-		
+	
 	}
 	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
@@ -216,7 +242,7 @@ class MainTimelineCell: UITableViewCell {
 		super.updateConfiguration(using: state)
 		
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		backgroundConfig.cornerRadius = traitCollection.userInterfaceIdiom == .pad ? 20 : 0
+		backgroundConfig.cornerRadius = 20
 		if traitCollection.userInterfaceIdiom == .pad {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
