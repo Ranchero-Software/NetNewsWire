@@ -9,22 +9,22 @@
 import UIKit
 
 class MainTimelineCell: UITableViewCell {
-	
+
 	@IBOutlet var articleContent: UILabel!
 	@IBOutlet var articleByLine: UILabel!
 	@IBOutlet var feedIcon: IconView?
 	@IBOutlet var indicatorView: IconView!
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
-	
+
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
 		}
 	}
-	
+
 	var isPreview: Bool = false
-	
+
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
@@ -33,15 +33,11 @@ class MainTimelineCell: UITableViewCell {
 			configureStackView()
 		}
 	}
-	
-	override func layoutSubviews() {
-		super.layoutSubviews()
-	}
-	
+
 	private func configure(_ cellData: MainTimelineCellData) {
 		articleContent.numberOfLines = cellData.numberOfLines
 		addArticleContent(configurationState)
-		
+
 		if cellData.showFeedName == .feed {
 			articleByLine.text = cellData.feedName
 		} else if cellData.showFeedName == .byline {
@@ -49,14 +45,14 @@ class MainTimelineCell: UITableViewCell {
 		} else if cellData.showFeedName == .none {
 			articleByLine.text = ""
 		}
-		
+
 		if feedIcon != nil {
 			setIconImage(cellData.iconImage, with: cellData.iconSize)
 		}
-		
+
 		articleDate.text = cellData.dateString
 	}
-	
+
 	private func updateIndicatorView(_ state: UICellConfigurationState) {
 		if cellData.read == false {
 			if indicatorView.alpha == 0.0 {
@@ -83,7 +79,7 @@ class MainTimelineCell: UITableViewCell {
 			}
 		}
 	}
-	
+
 	private func configureStackView() {
 		switch traitCollection.preferredContentSizeCategory {
 		case .accessibilityMedium, .accessibilityLarge, .accessibilityExtraLarge, .accessibilityExtraExtraLarge, .accessibilityExtraExtraExtraLarge:
@@ -96,7 +92,7 @@ class MainTimelineCell: UITableViewCell {
 			metaDataStackView.distribution = .fillEqually
 		}
 	}
-	
+
 	private func isActive(_ state: UICellConfigurationState) -> Bool {
 		let active = state.isSwiped || state.isSelected || state.isEditing || state.isHighlighted
 		if cellData.title.contains("Vouchers") {
@@ -104,41 +100,41 @@ class MainTimelineCell: UITableViewCell {
 		}
 		return active
 	}
-	
+
 	func setIconImage(_ iconImage: IconImage?) {
 		if feedIcon!.iconImage !== iconImage {
 			feedIcon!.iconImage = iconImage
 		}
 	}
-	
+
 	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
 		feedIcon!.iconImage = iconImage
 		updateIconViewSizeConstraints(to: size.size)
 	}
-	
+
 	private func updateIconViewSizeConstraints(to size: CGSize) {
 		guard feedIcon != nil else { return }
-		
+
 		for constraint in feedIcon!.constraints.compactMap({ $0 }) {
 			constraint.isActive = false
 		}
-		
+
 		NSLayoutConstraint.activate([
 			feedIcon!.widthAnchor.constraint(equalToConstant: size.width),
 			feedIcon!.heightAnchor.constraint(equalToConstant: size.height)
 		])
-		
+
 		setNeedsLayout()
 	}
-	
+
 	private func addArticleContent(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
-		
+
 		// 1. Prepare Title
 		if cellData.title != "" {
 			let titleFont = UIFont.preferredFont(forTextStyle: .headline)
 			let lineHeight = titleFont.lineHeight
-			
+
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = lineHeight
 			paragraphStyle.maximumLineHeight = lineHeight
@@ -146,13 +142,13 @@ class MainTimelineCell: UITableViewCell {
 			paragraphStyle.lineBreakStrategy = []
 			paragraphStyle.hyphenationFactor = 1.0
 			paragraphStyle.allowsDefaultTighteningForTruncation = true
-			
+
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: titleFont,
 				.paragraphStyle: paragraphStyle,
 				.foregroundColor: titleTextColor(for: state)
 			]
-			
+
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 			let linesUsed = countLines(of: titleAttributed, width: articleContent.bounds.width)
 			// 2. Measure Title Height
@@ -162,15 +158,15 @@ class MainTimelineCell: UITableViewCell {
 				articleContent.lineBreakMode = .byTruncatingTail
 				return
 			}
-			
+
 			attributedCellText.append(titleAttributed)
 		}
-		
+
 		// 3. Prepare Summary (Only reached if Title < 3 lines)
 		if cellData.summary != "" {
 			let summaryFont = UIFont.preferredFont(forTextStyle: .body)
 			let summaryLineHeight = summaryFont.lineHeight
-			
+
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = summaryLineHeight
 			paragraphStyle.maximumLineHeight = summaryLineHeight
@@ -178,18 +174,18 @@ class MainTimelineCell: UITableViewCell {
 			paragraphStyle.lineBreakStrategy = []
 			paragraphStyle.hyphenationFactor = 1.0
 			paragraphStyle.allowsDefaultTighteningForTruncation = true
-			
+
 			let summaryAttributes: [NSAttributedString.Key: Any] = [
 				.font: summaryFont,
 				.paragraphStyle: paragraphStyle,
 				.foregroundColor: titleTextColor(for: state)
 			]
-			
+
 			let prefix = cellData.title != "" ? "\n" : ""
 			let summaryAttributed = NSAttributedString(string: prefix + cellData.summary, attributes: summaryAttributes)
 			attributedCellText.append(summaryAttributed)
 		}
-		
+
 		let linesUsed = countLines(of: attributedCellText, width: articleContent.bounds.width)
 		if attributedCellText.string.contains("Bree-folk") {
 			print("Bree-folk: \(linesUsed), \(self.feedIcon != nil)")
@@ -203,10 +199,9 @@ class MainTimelineCell: UITableViewCell {
 			articleContent.attributedText = attributedCellText
 			articleContent.lineBreakMode = .byWordWrapping
 		}
-		
-	
+
 	}
-	
+
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
 		if isActive(state) {
 			return .white
@@ -214,22 +209,22 @@ class MainTimelineCell: UITableViewCell {
 			return .label
 		}
 	}
-	
+
 	func countLines(of attributedString: NSAttributedString, width: CGFloat) -> Int {
 		let textStorage = NSTextStorage(attributedString: attributedString)
 		let textContainer = NSTextContainer(size: CGSize(width: width, height: .greatestFiniteMagnitude))
 		let layoutManager = NSLayoutManager()
-		
+
 		layoutManager.addTextContainer(textContainer)
 		textStorage.addLayoutManager(layoutManager)
-		
+
 		textContainer.lineFragmentPadding = 0 // UILabel uses 0 or very small
 		layoutManager.ensureLayout(for: textContainer)
-		
+
 		var lineCount = 0
 		var index = 0
 		var lineRange = NSRange()
-		
+
 		while index < layoutManager.numberOfGlyphs {
 			layoutManager.lineFragmentRect(forGlyphAt: index, effectiveRange: &lineRange)
 			index = NSMaxRange(lineRange)
@@ -237,17 +232,17 @@ class MainTimelineCell: UITableViewCell {
 		}
 		return lineCount
 	}
-	
+
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		super.updateConfiguration(using: state)
-		
+
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.cornerRadius = 20
 		if traitCollection.userInterfaceIdiom == .pad {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
-		
+
 		if isActive(state) {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleContent.textColor = titleTextColor(for: state)
@@ -258,11 +253,10 @@ class MainTimelineCell: UITableViewCell {
 			articleDate.textColor = .secondaryLabel
 			articleByLine.textColor = .secondaryLabel
 		}
-		
+
 		updateIndicatorView(state)
-		
+
 		self.backgroundConfiguration = backgroundConfig
 	}
-	
-}
 
+}

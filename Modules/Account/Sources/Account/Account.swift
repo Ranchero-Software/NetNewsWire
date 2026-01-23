@@ -1359,7 +1359,7 @@ public enum FetchType {
 		guard !articles.isEmpty else {
 			return
 		}
-		
+
 		let feeds = Set(articles.compactMap { $0.feed })
 		let statuses = Set(articles.map { $0.status })
 		let articleIDs = Set(articles.map { $0.articleID })
