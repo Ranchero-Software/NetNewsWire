@@ -634,15 +634,9 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		for article in visibleUpdatedArticles {
 			if let indexPath = dataSource.indexPath(for: article) {
-				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineCell {
 					let cellData = configure(article: article)
 					cell.cellData = cellData
-					cell.indexPathRow = indexPath.row
-				}
-				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineFeedCell {
-					let cellData = configure(article: article)
-					cell.cellData = cellData
-					cell.indexPathRow = indexPath.row
 				}
 			}
 		}
@@ -679,7 +673,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 				continue
 			}
 			for author in authors {
-				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
+				if author.avatarURL == avatarURL, let cell = tableView.cellForRow(at: indexPath) as? MainTimelineCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
 			}
@@ -713,7 +707,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 				continue
 			}
 			if feed == nil || feed == article.feed {
-				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineIconFeedCell, let image = iconImageFor(article) {
+				if let cell = tableView.cellForRow(at: indexPath) as? MainTimelineCell, let image = iconImageFor(article) {
 					cell.setIconImage(image)
 				}
 			}
