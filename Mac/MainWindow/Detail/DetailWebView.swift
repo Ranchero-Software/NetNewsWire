@@ -14,6 +14,32 @@ final class DetailWebView: WKWebView {
 	weak var keyboardDelegate: KeyboardDelegate?
 	private var isObservingResizeNotifications = false
 
+	private static let estimatedToolbarHeight: CGFloat = 52 // Height of macOS 26.2 icon-only toolbar
+	private var toolbarHeight: CGFloat {
+		guard let window,
+			  let toolbar = window.toolbar,
+			  toolbar.isVisible,
+			  let contentView = window.contentView else {
+			return lastToolbarHeight ?? Self.estimatedToolbarHeight
+		}
+
+		let contentLayoutRect = window.contentLayoutRect
+		let windowHeight = contentView.bounds.height
+		let height = windowHeight - contentLayoutRect.height
+		lastToolbarHeight = height
+		return height
+	}
+	private var lastToolbarHeight: CGFloat?
+
+	override init(frame: CGRect, configuration: WKWebViewConfiguration) {
+		super.init(frame: frame, configuration: configuration)
+		updateObscuredContentInsets()
+	}
+
+	required init?(coder: NSCoder) {
+		abort()
+	}
+
 	override func accessibilityLabel() -> String? {
 		NSLocalizedString("Article", comment: "Article")
 	}
@@ -106,17 +132,9 @@ private extension DetailWebView {
 	}
 
 	func updateObscuredContentInsets() {
-		guard let window,
-			  let toolbar = window.toolbar,
-			  toolbar.isVisible,
-			  let contentView = window.contentView else {
-			return
+		let updatedObscuredContentInsets = NSEdgeInsets(top: toolbarHeight, left: 0, bottom: 0, right: 0)
+		if obscuredContentInsets != updatedObscuredContentInsets {
+			obscuredContentInsets = updatedObscuredContentInsets
 		}
-
-		let contentLayoutRect = window.contentLayoutRect
-		let windowHeight = contentView.bounds.height
-		let toolbarHeight = windowHeight - contentLayoutRect.height
-
-		obscuredContentInsets = NSEdgeInsets(top: toolbarHeight, left: 0, bottom: 0, right: 0)
 	}
 }
