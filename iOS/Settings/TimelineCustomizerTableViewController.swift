@@ -9,12 +9,15 @@
 import UIKit
 import Articles
 
+
+
+
 final class TimelineCustomizerTableViewController: UITableViewController {
 	private var previewArticle: Article {
 		var components = DateComponents()
-		components.year = 1925
-		components.month = 4
-		components.day = 10
+		components.year = 1954
+		components.month = 7
+		components.day = 29
 
 		let calendar = Calendar.current
 		let date = calendar.date(from: components)!
@@ -23,9 +26,9 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 				articleID: "_testArticleID",
 				feedID: "_testFeedID",
 				uniqueID: UUID().uuidString,
-				title: "Chapter 1",
+				title: "At The Sign Of The Prancing Pony",
 				contentHTML: nil,
-				contentText: "In my younger and more vulnerable years my father gave me some advice that I’ve been turning over in my mind ever since. “Whenever you feel like criticizing any one,” he told me, “just remember that all the people in this world haven’t had the advantages that you’ve had.”",
+				contentText: "Bree was the chief village of Bree-land, a small country a few miles broad whose chief claim to fame was its aluminum siding industry. The Men of Bree were cheerful and independant: they belonged to nobody but themselves. In the lands beyond Bree there were mysterious wanderers.",
 				markdown: nil,
 				url: nil,
 				externalURL: nil,
@@ -33,7 +36,7 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 				imageURL: nil,
 				datePublished: date,
 				dateModified: nil,
-				authors: Set([Author(authorID: "_testAuthorID", name: "F. Scott Fitzgerald", url: nil, avatarURL: nil, emailAddress: nil)!]),
+				authors: Set([Author(authorID: "_testAuthorID", name: "J. R. R. Tolkien", url: nil, avatarURL: nil, emailAddress: nil)!]),
 				status: ArticleStatus(articleID: "_testArticleID", read: false, starred: false, dateArrived: .now))
 	}
 
@@ -71,6 +74,7 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 	}
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		
 		if indexPath.section == 0 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "IconSizeCell") as! ModernTimelineSliderCell
 			cell.sliderConfiguration = .iconSize
@@ -84,11 +88,11 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 		}
 
 		if indexPath.section == 2 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell") as? MainTimelineIconFeedCell ?? MainTimelineIconFeedCell()
+			let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIcon) as! MainTimelineCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
-												 feedName: "The Great Gatsby",
-												 byline: "F. Scott Fitzgerald",
+												 feedName: "The Fellowship of the Ring",
+												 byline: "J. R. R. Tolkien",
 												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
 												 showIcon: true,
 												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,
@@ -98,11 +102,11 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 		}
 
 		if indexPath.section == 3 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell") as? MainTimelineFeedCell ?? MainTimelineFeedCell()
+			let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifier) as! MainTimelineCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
-												 feedName: "The Great Gatsby",
-												 byline: "F. Scott Fitzgerald",
+												 feedName: "The Fellowship of the Ring",
+												 byline: "J. R. R. Tolkien",
 												 iconImage: nil,
 												 showIcon: false,
 												 numberOfLines: AppDefaults.shared.timelineNumberOfLines,

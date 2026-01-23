@@ -14,6 +14,11 @@ import RSWeb
 import Account
 import Articles
 
+let standardCellIdentifier = "MainTimelineCellStandard"
+let standardCellIdentifierIndex0 = "MainTimelineCellIndexZero"
+let standardCellIdentifierIcon = "MainTimelineCellIcon"
+let standardCellIdentifierIconIndex0 = "MainTimelineCellIconIndexZero"
+
 final class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 
 	private var numberOfTextLines = 0
@@ -154,7 +159,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		// TODO: fix this temporary hack, which will probably require refactoring image handling.
 		// We want to know when to possibly reconfigure our cells with a new image, and we don’t
-		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
+		// always know when an image is available — but watching the .htmlMetadataAvailable Notification
 		// lets us know that it’s time to request an image.
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 
@@ -691,7 +696,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		updateIconForVisibleArticles()
 	}
 
-	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
+	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
 	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
 		guard isViewLoaded else {
 			return
@@ -877,7 +882,7 @@ private extension MainTimelineViewController {
 			tableView.rowHeight = UITableView.automaticDimension
 		}
 
-        var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
+		var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(articles ?? ArticleArray(), toSection: 0)
 
@@ -892,21 +897,31 @@ private extension MainTimelineViewController {
 			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
 				let cellData = self!.configure(article: article)
 				if self!.showIcons {
-					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineIconFeedCell", for: indexPath) as! MainTimelineIconFeedCell
-					cell.cellData = cellData
-					cell.indexPathRow = indexPath.row
-					return cell
+					if indexPath.row == 0 {
+						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIconIndex0, for: indexPath) as! MainTimelineCell
+						cell.cellData = cellData
+						return cell
+					} else {
+						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIcon, for: indexPath) as! MainTimelineCell
+						cell.cellData = cellData
+						return cell
+					}
 				} else {
-					let cell = tableView.dequeueReusableCell(withIdentifier: "MainTimelineFeedCell", for: indexPath) as! MainTimelineFeedCell
-					cell.cellData = cellData
-					cell.indexPathRow = indexPath.row
-					return cell
+					if indexPath.row == 0 {
+						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIndex0, for: indexPath) as! MainTimelineCell
+						cell.cellData = cellData
+						return cell
+					} else {
+						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifier, for: indexPath) as! MainTimelineCell
+						cell.cellData = cellData
+						return cell
+					}
 				}
 
 			})
 		dataSource.defaultRowAnimation = .middle
 		return dataSource
-    }
+	}
 
 	@discardableResult
 	func configure(article: Article) -> MainTimelineCellData {
