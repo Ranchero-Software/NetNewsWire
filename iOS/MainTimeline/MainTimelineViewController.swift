@@ -14,12 +14,13 @@ import RSWeb
 import Account
 import Articles
 
-let standardCellIdentifier = "MainTimelineCellStandard"
-let standardCellIdentifierIndex0 = "MainTimelineCellIndexZero"
-let standardCellIdentifierIcon = "MainTimelineCellIcon"
-let standardCellIdentifierIconIndex0 = "MainTimelineCellIconIndexZero"
-
 final class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
+	struct CellIdentifier {
+		static let standard = "MainTimelineCellStandard"
+		static let standardIndex0 = "MainTimelineCellIndexZero"
+		static let icon = "MainTimelineCellIcon"
+		static let iconIndex0 = "MainTimelineCellIconIndexZero"
+	}
 
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -888,31 +889,25 @@ private extension MainTimelineViewController {
 
 	func makeDataSource() -> UITableViewDiffableDataSource<Int, Article> {
 		let dataSource: UITableViewDiffableDataSource<Int, Article> =
-			MainTimelineDataSource(tableView: tableView, cellProvider: { [weak self] tableView, indexPath, article in
-				let cellData = self!.configure(article: article)
-				if self!.showIcons {
-					if indexPath.row == 0 {
-						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIconIndex0, for: indexPath) as! MainTimelineCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIcon, for: indexPath) as! MainTimelineCell
-						cell.cellData = cellData
-						return cell
-					}
+		MainTimelineDataSource(tableView: tableView) { [weak self] tableView, indexPath, article in
+			guard let self else {
+				return nil
+			}
+			let cellData = self.configure(article: article)
+			let cellIdentifier: String = {
+				if self.showIcons {
+					return indexPath.row == 0 ? CellIdentifier.iconIndex0 : CellIdentifier.icon
 				} else {
-					if indexPath.row == 0 {
-						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIndex0, for: indexPath) as! MainTimelineCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifier, for: indexPath) as! MainTimelineCell
-						cell.cellData = cellData
-						return cell
-					}
+					return indexPath.row == 0 ? CellIdentifier.standardIndex0 : CellIdentifier.standard
 				}
+			}()
 
-			})
+			// Force unwrapping because if this doesn't work then there are serious issues.
+			let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! MainTimelineCell
+			cell.cellData = cellData
+			return cell
+		}
+
 		dataSource.defaultRowAnimation = .middle
 		return dataSource
 	}

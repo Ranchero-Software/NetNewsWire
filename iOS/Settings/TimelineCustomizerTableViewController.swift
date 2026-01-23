@@ -85,7 +85,7 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 		}
 
 		if indexPath.section == 2 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifierIcon) as! MainTimelineCell
+			let cell = tableView.dequeueReusableCell(withIdentifier: MainTimelineViewController.CellIdentifier.icon) as! MainTimelineCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
 												 feedName: "The Fellowship of the Ring",
@@ -99,7 +99,7 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 		}
 
 		if indexPath.section == 3 {
-			let cell = tableView.dequeueReusableCell(withIdentifier: standardCellIdentifier) as! MainTimelineCell
+			let cell = tableView.dequeueReusableCell(withIdentifier: MainTimelineViewController.CellIdentifier.standard) as! MainTimelineCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
 												 feedName: "The Fellowship of the Ring",
