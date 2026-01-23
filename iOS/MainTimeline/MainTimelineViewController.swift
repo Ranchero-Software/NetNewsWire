@@ -586,8 +586,9 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	override func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
-			  let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)), view.window != nil else {
-				return nil
+			  let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)),
+			  view.window != nil else {
+			return nil
 		}
 
 		let previewView = cell.contentView
@@ -596,7 +597,6 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
-
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
