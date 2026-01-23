@@ -586,7 +586,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 	override func tableView(_ tableView: UITableView, previewForDismissingContextMenuWithConfiguration configuration: UIContextMenuConfiguration) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
-			  let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)), let _ = view.window else {
+			  let cell = tableView.cellForRow(at: IndexPath(row: row, section: 0)), view.window != nil else {
 				return nil
 		}
 
