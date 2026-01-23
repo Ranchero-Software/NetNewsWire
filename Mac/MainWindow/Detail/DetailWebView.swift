@@ -11,11 +11,11 @@ import WebKit
 import RSCore
 
 final class DetailWebView: WKWebView {
-
 	weak var keyboardDelegate: KeyboardDelegate?
+	private var isObservingResizeNotifications = false
 
 	override func accessibilityLabel() -> String? {
-		return NSLocalizedString("Article", comment: "Article")
+		NSLocalizedString("Article", comment: "Article")
 	}
 
 	// MARK: - NSResponder
@@ -27,7 +27,26 @@ final class DetailWebView: WKWebView {
 		super.keyDown(with: event)
 	}
 
-	// MARK: NSView
+	// MARK: - NSView
+
+	override func viewDidMoveToWindow() {
+		super.viewDidMoveToWindow()
+		updateObscuredContentInsets()
+
+		if let window, !isObservingResizeNotifications {
+			NotificationCenter.default.addObserver(
+				self,
+				selector: #selector(windowDidResize(_:)),
+				name: NSWindow.didResizeNotification,
+				object: window
+			)
+			isObservingResizeNotifications = true
+		}
+	}
+
+	@objc func windowDidResize(_ notification: Notification) {
+		updateObscuredContentInsets()
+	}
 
 	override func willOpenMenu(_ menu: NSMenu, with event: NSEvent) {
 		// There’s no API for affecting a WKWebView’s contextual menu.
@@ -59,18 +78,15 @@ final class DetailWebView: WKWebView {
 // MARK: - Private
 
 private extension NSUserInterfaceItemIdentifier {
-
 	static let DetailMenuItemIdentifierReload = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierReload")
 	static let DetailMenuItemIdentifierOpenLink = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierOpenLink")
 }
 
 private extension DetailWebView {
-
 	static let menuItemIdentifiersToHide: [NSUserInterfaceItemIdentifier] = [.DetailMenuItemIdentifierReload]
 	static let menuItemIdentifierMatchStrings = ["newwindow", "download"]
 
 	func shouldHideMenuItem(_ menuItem: NSMenuItem) -> Bool {
-
 		guard let identifier = menuItem.identifier else {
 			return false
 		}
@@ -87,5 +103,20 @@ private extension DetailWebView {
 		}
 
 		return false
+	}
+
+	func updateObscuredContentInsets() {
+		guard let window,
+			  let toolbar = window.toolbar,
+			  toolbar.isVisible,
+			  let contentView = window.contentView else {
+			return
+		}
+
+		let contentLayoutRect = window.contentLayoutRect
+		let windowHeight = contentView.bounds.height
+		let toolbarHeight = windowHeight - contentLayoutRect.height
+
+		obscuredContentInsets = NSEdgeInsets(top: toolbarHeight, left: 0, bottom: 0, right: 0)
 	}
 }
