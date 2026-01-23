@@ -17,9 +17,6 @@ class MainTimelineCell: UITableViewCell {
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
 	
-	private(set) var usedTitleLineCount: Int = 0
-	
-	
 	var cellData: MainTimelineCellData! {
 		didSet {
 			configure(cellData)
@@ -27,12 +24,6 @@ class MainTimelineCell: UITableViewCell {
 	}
 	
 	var isPreview: Bool = false
-	
-	var activeState: Bool {
-		let state = self.configurationState
-		let active = state.isSwiped || state.isSelected
-		return active
-	}
 	
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
@@ -47,7 +38,6 @@ class MainTimelineCell: UITableViewCell {
 	}
 	
 	private func configure(_ cellData: MainTimelineCellData) {
-		updateIndicatorView(cellData)
 		articleContent.numberOfLines = cellData.numberOfLines
 		addArticleContent(configurationState)
 		
@@ -66,14 +56,14 @@ class MainTimelineCell: UITableViewCell {
 		articleDate.text = cellData.dateString
 	}
 	
-	private func updateIndicatorView(_ cellData: MainTimelineCellData) {
+	private func updateIndicatorView(_ state: UICellConfigurationState) {
 		if cellData.read == false {
 			if indicatorView.alpha == 0.0 {
 				indicatorView.alpha = 1.0
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
-				self.indicatorView.tintColor = self.activeState ? .white : Assets.Colors.secondaryAccent
+				self.indicatorView.tintColor = self.isActive(state) ? .white : Assets.Colors.secondaryAccent
 			}
 			return
 		} else if cellData.starred {
@@ -82,7 +72,7 @@ class MainTimelineCell: UITableViewCell {
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.starredFeed
-				self.indicatorView.tintColor = self.activeState ? .white : Assets.Colors.star
+				self.indicatorView.tintColor = self.isActive(state) ? .white : Assets.Colors.star
 			}
 			return
 		} else if indicatorView.alpha == 1.0 {
@@ -101,9 +91,17 @@ class MainTimelineCell: UITableViewCell {
 			metaDataStackView.distribution = .fill
 		default:
 			metaDataStackView.axis = .horizontal
-			metaDataStackView.alignment = .center
-			metaDataStackView.distribution = .fill
+			metaDataStackView.alignment = .bottom
+			metaDataStackView.distribution = .fillEqually
 		}
+	}
+	
+	private func isActive(_ state: UICellConfigurationState) -> Bool {
+		let active = state.isSwiped || state.isSelected || state.isEditing || state.isHighlighted
+		if cellData.title.contains("Vouchers") {
+			print("Vouchers: \(active)")
+		}
+		return active
 	}
 	
 	func setIconImage(_ iconImage: IconImage?) {
@@ -111,7 +109,6 @@ class MainTimelineCell: UITableViewCell {
 			feedIcon!.iconImage = iconImage
 		}
 	}
-	
 	
 	private func addArticleContent(_ state: UICellConfigurationState) {
 		let attributedCellText = NSMutableAttributedString()
@@ -144,7 +141,7 @@ class MainTimelineCell: UITableViewCell {
 				articleContent.lineBreakMode = .byTruncatingTail
 				return
 			}
-		
+			
 			attributedCellText.append(titleAttributed)
 		}
 		
@@ -156,7 +153,7 @@ class MainTimelineCell: UITableViewCell {
 			let paragraphStyle = NSMutableParagraphStyle()
 			paragraphStyle.minimumLineHeight = summaryLineHeight
 			paragraphStyle.maximumLineHeight = summaryLineHeight
-			paragraphStyle.lineBreakMode = .byTruncatingTail
+			paragraphStyle.lineBreakMode = .byWordWrapping
 			paragraphStyle.lineBreakStrategy = []
 			paragraphStyle.hyphenationFactor = 1.0
 			paragraphStyle.allowsDefaultTighteningForTruncation = true
@@ -172,11 +169,20 @@ class MainTimelineCell: UITableViewCell {
 			attributedCellText.append(summaryAttributed)
 		}
 		
+		let linesUsed = countLines(of: attributedCellText, width: articleContent.bounds.width)
+		if linesUsed >= cellData.numberOfLines {
+			// The title already fills 3 lines, set it and exit
+			articleContent.attributedText = attributedCellText
+			articleContent.lineBreakMode = .byTruncatingTail
+			return
+		}
+		
 		articleContent.attributedText = attributedCellText
+		
 	}
 	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		if activeState {
+		if isActive(state) {
 			return .white
 		} else {
 			return .label
@@ -210,13 +216,13 @@ class MainTimelineCell: UITableViewCell {
 		super.updateConfiguration(using: state)
 		
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		backgroundConfig.cornerRadius = 20
+		backgroundConfig.cornerRadius = traitCollection.userInterfaceIdiom == .pad ? 20 : 0
 		if traitCollection.userInterfaceIdiom == .pad {
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
-				
-		if self.activeState {
+		
+		if isActive(state) {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleContent.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText
@@ -227,7 +233,7 @@ class MainTimelineCell: UITableViewCell {
 			articleByLine.textColor = .secondaryLabel
 		}
 		
-		updateIndicatorView(cellData)
+		updateIndicatorView(state)
 		
 		self.backgroundConfiguration = backgroundConfig
 	}
