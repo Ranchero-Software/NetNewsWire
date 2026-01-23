@@ -626,7 +626,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 
 		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
 		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
-		reconfigureCells(visibleUpdatedArticles)
+		reloadCells(visibleUpdatedArticles)
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
@@ -668,7 +668,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 			return nil
 		}
-		reconfigureCells(articlesToReload)
+		reloadCells(articlesToReload)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -702,7 +702,7 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 			}
 			return nil
 		}
-		reconfigureCells(articlesToReload)
+		reloadCells(articlesToReload)
 	}
 
 	func userDefaultsDidChange() {
@@ -711,14 +711,14 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
 			self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 			self.iconSize = AppDefaults.shared.timelineIconSize
-			self.reconfigureVisibleCells()
+			self.reloadAllVisibleCells()
 		}
 		self.updateToolbar()
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: contentSizeCategoryDidChange")
-		reconfigureVisibleCells()
+		reloadAllVisibleCells()
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -739,10 +739,10 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 	// MARK: - Reloading
 
 	func queueReloadAvailableCells() {
-		CoalescingQueue.standard.add(self, #selector(reconfigureVisibleCells))
+		CoalescingQueue.standard.add(self, #selector(reloadAllVisibleCells))
 	}
 
-	@objc private func reconfigureVisibleCells() {
+	@objc private func reloadAllVisibleCells() {
 		guard isViewLoaded, view.window != nil else {
 			return
 		}
@@ -751,16 +751,16 @@ final class MainTimelineViewController: UITableViewController, UndoableCommandRu
 		}
 
 		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
-		reconfigureCells(visibleArticles)
+		reloadCells(visibleArticles)
 	}
 
-	private func reconfigureCells(_ articles: [Article]) {
+	private func reloadCells(_ articles: [Article]) {
 		guard !articles.isEmpty else {
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
-		snapshot.reconfigureItems(articles)
+		snapshot.reloadItems(articles)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}

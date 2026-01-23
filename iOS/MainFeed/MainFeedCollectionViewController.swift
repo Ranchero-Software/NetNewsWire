@@ -573,22 +573,22 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		as? MainFeedCollectionHeaderReusableView
 	}
 
-	private func reconfigureVisibleCells() {
+	private func reloadAllVisibleCells() {
 		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
 		let itemIdentifiers = visibleIndexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
-		reconfigureCells(itemIdentifiers) { [weak self] in
+		reloadCells(itemIdentifiers) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
 
-	private func reconfigureCells(_ items: [SidebarItemNode], completion: (() -> Void)? = nil) {
+	private func reloadCells(_ items: [SidebarItemNode], completion: (() -> Void)? = nil) {
 		guard !items.isEmpty else {
 			completion?()
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
-		snapshot.reconfigureItems(items)
+		snapshot.reloadItems(items)
 		dataSource.apply(snapshot, animatingDifferences: false) {
 			completion?()
 		}
@@ -608,7 +608,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	@objc func preferredContentSizeCategoryDidChange() {
 		IconImageCache.shared.emptyCache()
-		reconfigureVisibleCells()
+		reloadAllVisibleCells()
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
@@ -634,7 +634,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return sidebarItemNode
 		}
 
-		reconfigureCells(itemsToReconfigure)
+		reloadCells(itemsToReconfigure)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -647,7 +647,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		reconfigureVisibleCells()
+		reloadAllVisibleCells()
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
@@ -665,7 +665,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return sidebarItemNode
 		}
 
-		reconfigureCells(itemsToReconfigure)
+		reloadCells(itemsToReconfigure)
 	}
 
 	// MARK: - Actions
