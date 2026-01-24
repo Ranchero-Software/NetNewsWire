@@ -7,6 +7,18 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0b6</title>
+            <description><![CDATA[
+				<ul>
+					<li>Made the article view content blur when underneath the toolbar
+				</ul>
+			]]></description>
+        	<pubDate>Sat, 24 Jan 2026 10:35:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b6/NetNewsWire7.0b6.zip" sparkle:version="7013" sparkle:shortVersionString="7.0b6" length="10356640" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0b5</title>
             <description><![CDATA[
 				<ul>
@@ -16,18 +28,6 @@
 			]]></description>
         	<pubDate>Thu, 22 Jan 2026 15:45:00 -0800</pubDate>
 			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b5/NetNewsWire7.0b5.zip" sparkle:version="7011" sparkle:shortVersionString="7.0b5" length="10354304" type="application/zip" />
-			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0b4</title>
-            <description><![CDATA[
-				<ul>
-					<li>Fixed Feedly syncing — it’s working again
-				</ul>
-			]]></description>
-        	<pubDate>Wed, 14 Jan 2026 20:45:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b4/NetNewsWire7.0b4.zip" sparkle:version="7004" sparkle:shortVersionString="7.0b4" length="10349072" type="application/zip" />
 			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
 		</item>
 
