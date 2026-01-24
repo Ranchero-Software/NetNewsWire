@@ -14,10 +14,10 @@ import RSWeb
 import Account
 import Articles
 
-let standardCellIdentifier = "MainTimelineCellStandard"
-let standardCellIdentifierIndex0 = "MainTimelineCellIndexZero"
-let standardCellIdentifierIcon = "MainTimelineCellIcon"
-let standardCellIdentifierIconIndex0 = "MainTimelineCellIconIndexZero"
+//let standardCellIdentifier = "MainTimelineCellStandard"
+//let standardCellIdentifierIndex0 = "MainTimelineCellIndexZero"
+//let standardCellIdentifierIcon = "MainTimelineCellIcon"
+//let standardCellIdentifierIconIndex0 = "MainTimelineCellIconIndexZero"
 
 final class MainTimelineViewController: UITableViewController, UndoableCommandRunner {
 

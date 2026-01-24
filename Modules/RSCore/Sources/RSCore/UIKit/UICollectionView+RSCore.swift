@@ -28,6 +28,13 @@ extension UICollectionView {
 			scrollToItem(at: indexPath, at: .centeredVertically, animated: true)
 		}
 	}
+	
+	public func middleVisibleRow() -> IndexPath? {
+		if indexPathsForVisibleItems.count > 2 {
+			return indexPathsForVisibleItems[indexPathsForVisibleItems.count / 2]
+		}
+		return nil
+	}
 
 }
 
