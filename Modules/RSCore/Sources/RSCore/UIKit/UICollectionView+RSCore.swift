@@ -22,7 +22,7 @@ extension UICollectionView {
 				return
 		}
 
-		selectItem(at: indexPath, animated: animations.contains(.select), scrollPosition: [])
+		selectItem(at: indexPath, animated: true, scrollPosition: [])
 
 		if  !indexPathsForVisibleItems.contains(indexPath) {
 			scrollToItem(at: indexPath, at: .centeredVertically, animated: true)

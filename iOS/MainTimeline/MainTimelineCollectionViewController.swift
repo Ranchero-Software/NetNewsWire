@@ -189,7 +189,8 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 		navigationItem.largeTitleDisplayMode = .never
 		navigationItem.titleView = navigationBarTitleLabel
 		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
-
+		
+		
     }
 	
 	override func viewWillAppear(_ animated: Bool) {
@@ -268,9 +269,7 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 		Self.logger.debug("MainTimelineViewController: updateArticleSelection")
 
 		if let article = currentArticle, let indexPath = dataSource.indexPath(for: article) {
-			if collectionView.indexPathsForSelectedItems?.first != indexPath {
-				collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: animations)
-			}
+			collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: animations)
 		} else {
 			collectionView.selectItem(at: nil, animated: animations.contains(.select), scrollPosition: .centeredVertically)
 		}
@@ -432,6 +431,91 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 
     // MARK: UICollectionViewDelegate
 	
+	override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+		guard let firstIndex = indexPaths.first, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
+
+		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
+
+			guard let self = self else { return nil }
+
+			var menuElements = [UIMenuElement]()
+
+			var markActions = [UIAction]()
+			if let action = self.toggleArticleReadStatusAction(article) {
+				markActions.append(action)
+			}
+			markActions.append(self.toggleArticleStarStatusAction(article))
+			if let action = self.markAboveAsReadAction(article, indexPath: firstIndex) {
+				markActions.append(action)
+			}
+			if let action = self.markBelowAsReadAction(article, indexPath: firstIndex) {
+				markActions.append(action)
+			}
+			menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
+
+			var secondaryActions = [UIAction]()
+			if let action = self.discloseFeedAction(article) {
+				secondaryActions.append(action)
+			}
+			if let action = self.markAllInFeedAsReadAction(article, indexPath: firstIndex) {
+				secondaryActions.append(action)
+			}
+			if !secondaryActions.isEmpty {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: secondaryActions))
+			}
+
+			var copyActions = [UIAction]()
+			if let action = self.copyArticleURLAction(article) {
+				copyActions.append(action)
+			}
+			if let action = self.copyExternalURLAction(article) {
+				copyActions.append(action)
+			}
+			if !copyActions.isEmpty {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: copyActions))
+			}
+
+			if let action = self.openInBrowserAction(article) {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
+			}
+
+			if let action = self.shareAction(article, indexPath: firstIndex) {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
+			}
+
+			return UIMenu(title: "", children: menuElements)
+
+		})
+	}
+	
+	override func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+		guard let row = configuration.identifier as? Int,
+			let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)) else {
+				return nil
+		}
+
+		let previewView = cell.contentView
+		let parameters = UIPreviewParameters()
+		parameters.backgroundColor = .white
+		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
+											  cornerRadius: 20)
+		return UITargetedPreview(view: cell, parameters: parameters)
+	}
+	
+	
+	override func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+		guard let row = configuration.identifier as? Int,
+			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), let _ = view.window else {
+				return nil
+		}
+
+		let previewView = cell.contentView
+		let parameters = UIPreviewParameters()
+		parameters.backgroundColor = .white
+		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
+											  cornerRadius: 20)
+		return UITargetedPreview(view: cell, parameters: parameters)
+	}
 	
 	
 	
@@ -512,7 +596,6 @@ private extension MainTimelineCollectionViewController {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
 		config.showsSeparators = false
 		config.headerMode = .none
-
 		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			var actions = [UIContextualAction]()
@@ -589,7 +672,7 @@ private extension MainTimelineCollectionViewController {
 			return config
 		}
 		config.leadingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
-		
+			Self.logger.debug("Leading swipe provider called for \(indexPath.row)")
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
 			var actions = [UIContextualAction]()
@@ -613,11 +696,13 @@ private extension MainTimelineCollectionViewController {
 			return config
 		}
 		
-		let layout = UICollectionViewCompositionalLayout.list(using: config)
-		collectionView.setCollectionViewLayout(layout, animated: false)
 		collectionView.refreshControl = UIRefreshControl()
 		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		collectionView.allowsMultipleSelection = false
+		collectionView.contentInsetAdjustmentBehavior = .always
+		
+		let layout = UICollectionViewCompositionalLayout.list(using: config)
+		layout.configuration.contentInsetsReference = .safeArea
+        collectionView.collectionViewLayout = layout
 	}
 	
 	private func makeDataSource() -> UICollectionViewDiffableDataSource<Int, Article> {
@@ -645,7 +730,6 @@ private extension MainTimelineCollectionViewController {
 						return cell
 					}
 				}
-
 			})
 		
 		return dataSource
@@ -733,6 +817,10 @@ private extension MainTimelineCollectionViewController {
 			completion?()
 		}
 	}
+	
+	
+
+	
 
 }
 
@@ -1195,3 +1283,4 @@ extension MainTimelineCollectionViewController {
 		return action
 	}
 }
+

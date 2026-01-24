@@ -197,7 +197,9 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		if state.isSelected  {
+		if state.isSwiped {
+			return .label
+		} else if state.isSelected  {
 			return .white
 		} else {
 			return .label
@@ -232,10 +234,6 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.cornerRadius = 20
-		if traitCollection.userInterfaceIdiom == .pad {
-			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
-			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
-		}
 		
 		if state.isSwiped {
 			backgroundConfig.backgroundColor = .secondarySystemFill
