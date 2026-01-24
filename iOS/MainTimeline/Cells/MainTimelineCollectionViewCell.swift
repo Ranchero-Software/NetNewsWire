@@ -63,19 +63,21 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
-				self.indicatorView.tintColor = self.isActive(state) ? .white : Assets.Colors.secondaryAccent
+				self.indicatorView.tintColor = Assets.Colors.secondaryAccent
 			}
 			return
-		} else if cellData.starred {
+		}
+		else if cellData.starred {
 			if indicatorView.alpha == 0.0 {
 				indicatorView.alpha = 1.0
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.starredFeed
-				self.indicatorView.tintColor = self.isActive(state) ? .white : Assets.Colors.star
+				self.indicatorView.tintColor = Assets.Colors.star
 			}
 			return
-		} else if indicatorView.alpha == 1.0 {
+		}
+		else if indicatorView.alpha == 1.0 {
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.alpha = 0.0
 				self.indicatorView.iconImage = nil
@@ -98,21 +100,13 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	
 	private func isActive(_ state: UICellConfigurationState) -> Bool {
 		let active = state.isSwiped || state.isSelected || state.isEditing || state.isHighlighted
-		if cellData.title.contains("Vouchers") {
-			print("Vouchers: \(active)")
-		}
 		return active
 	}
 	
-	func setIconImage(_ iconImage: IconImage?) {
-		if feedIcon!.iconImage !== iconImage {
-			feedIcon!.iconImage = iconImage
-		}
-	}
 	
 	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
-		feedIcon!.iconImage = iconImage
 		updateIconViewSizeConstraints(to: size.size)
+		feedIcon!.iconImage = iconImage
 	}
 	
 	private func updateIconViewSizeConstraints(to size: CGSize) {
@@ -203,7 +197,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		if isActive(state) {
+		if state.isSelected  {
 			return .white
 		} else {
 			return .label
@@ -243,7 +237,12 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -4 : -12, bottom: 0, trailing: !isPreview ? -4 : -12)
 		}
 		
-		if isActive(state) {
+		if state.isSwiped {
+			backgroundConfig.backgroundColor = .secondarySystemFill
+			articleContent.textColor = titleTextColor(for: state)
+			articleDate.textColor = .secondaryLabel
+			articleByLine.textColor = .secondaryLabel
+		} else if state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleContent.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText
@@ -260,3 +259,4 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 	
 }
+

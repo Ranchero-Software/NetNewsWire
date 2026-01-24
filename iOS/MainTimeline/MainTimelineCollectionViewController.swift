@@ -156,13 +156,76 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
         super.viewDidLoad()
 		
 		addNotificationObservers()
+		configureCollectionView()
 		configureSearchController()
 		definesPresentationContext = true
 
         // Uncomment the following line to preserve selection between presentations
         self.clearsSelectionOnViewWillAppear = false
+		
+		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+		iconSize = AppDefaults.shared.timelineIconSize
+
+		collectionView.refreshControl = UIRefreshControl()
+		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+
+		configureToolbar()
+		resetUI(resetScroll: true)
+
+		// Load the table and then scroll to the saved position if available
+		applyChanges(animated: false) {
+			if let restoreIndexPath = self.timelineMiddleIndexPath {
+				self.collectionView.scrollToItem(at: restoreIndexPath, at: .centeredVertically, animated: false)
+			}
+		}
+
+		// Disable swipe back on iPad Mice
+		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
+			return
+		}
+		gesture.allowedScrollTypesMask = []
+
+		navigationItem.title = nil // Don’t let "Timeline" accidentally show
+		navigationItem.largeTitleDisplayMode = .never
+		navigationItem.titleView = navigationBarTitleLabel
+		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
 
     }
+	
+	override func viewWillAppear(_ animated: Bool) {
+		Self.logger.debug("MainTimelineViewController: viewWillAppear")
+
+		super.viewWillAppear(animated)
+		self.navigationController?.isToolbarHidden = false
+
+		// If the nav bar is hidden, fade it in to avoid it showing stuff as it is getting laid out
+		if navigationController?.navigationBar.isHidden ?? false {
+			navigationController?.navigationBar.alpha = 0
+		}
+
+		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
+		coordinator?.updateNavigationBarSubtitles(nil)
+	}
+
+	override func viewDidAppear(_ animated: Bool) {
+		Self.logger.debug("MainTimelineViewController: viewDidAppear")
+
+		super.viewDidAppear(true)
+		isTimelineViewControllerPending = false
+		if navigationController?.navigationBar.alpha == 0 {
+			UIView.animate(withDuration: 0.5) {
+				self.navigationController?.navigationBar.alpha = 1
+			}
+		}
+		if traitCollection.userInterfaceIdiom == .phone {
+			if coordinator?.currentArticle != nil {
+				if let indexPath = collectionView.indexPathsForSelectedItems?.first {
+					collectionView.deselectItem(at: indexPath, animated: true)
+				}
+				coordinator?.selectArticle(nil)
+			}
+		}
+	}
 
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		if let article = currentArticle, let indexPath = dataSource.indexPath(for: article) {
@@ -240,26 +303,26 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	// MARK: - Reloading
 
 	func queueReloadAvailableCells() {
-		CoalescingQueue.standard.add(self, #selector(reconfigureVisibleCells))
+		CoalescingQueue.standard.add(self, #selector(reloadVisibleCells))
 	}
 
-	@objc private func reconfigureVisibleCells() {
+	@objc private func reloadVisibleCells() {
 		guard isViewLoaded, view.window != nil else {
 			return
 		}
 		let indexPaths = collectionView.indexPathsForVisibleItems
 
 		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
-		reconfigureCells(visibleArticles)
+		reloadCells(visibleArticles)
 	}
 
-	private func reconfigureCells(_ articles: [Article]) {
+	private func reloadCells(_ articles: [Article]) {
 		guard !articles.isEmpty else {
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
-		snapshot.reconfigureItems(articles)
+		snapshot.reloadItems(articles)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
@@ -361,34 +424,17 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 
     // MARK: UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: standardCellIdentifier, for: indexPath)
-    
-        // Configure the cell
-    
-        return cell
-    }
+	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+		becomeFirstResponder()
+		let article = dataSource.itemIdentifier(for: indexPath)
+		coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
+	}
 
     // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
+	
+	
+	
+	
     /*
     // Uncomment this method to specify if the specified item should be selected
     override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
@@ -464,7 +510,7 @@ private extension MainTimelineCollectionViewController {
 	
 	private func configureCollectionView() {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
-		config.separatorConfiguration.color = .separator
+		config.showsSeparators = false
 		config.headerMode = .none
 
 		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
@@ -542,14 +588,12 @@ private extension MainTimelineCollectionViewController {
 
 			return config
 		}
-		
 		config.leadingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
-			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
-			var actions = [UIContextualAction]()
-			
+		
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
-
+			var actions = [UIContextualAction]()
+			
 			// Set up the read action
 			let readTitle = article.status.read ?
 				NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
@@ -569,16 +613,11 @@ private extension MainTimelineCollectionViewController {
 			return config
 		}
 		
-
 		let layout = UICollectionViewCompositionalLayout.list(using: config)
 		collectionView.setCollectionViewLayout(layout, animated: false)
 		collectionView.refreshControl = UIRefreshControl()
 		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-
-		if config.appearance == .sidebar {
-			// This defrosts the glass.
-			collectionView.backgroundColor = .clear
-		}
+		collectionView.allowsMultipleSelection = false
 	}
 	
 	private func makeDataSource() -> UICollectionViewDiffableDataSource<Int, Article> {
@@ -659,7 +698,7 @@ private extension MainTimelineCollectionViewController {
 		if resetScroll {
 			let snapshot = dataSource.snapshot()
 			if snapshot.sectionIdentifiers.count > 0 && snapshot.itemIdentifiers(inSection: 0).count > 0 {
-				collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
+				//collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
 			}
 		}
 
@@ -716,11 +755,13 @@ private extension MainTimelineCollectionViewController {
 			return
 		}
 		let indexPaths = collectionView.indexPathsForVisibleItems
-		if indexPaths.count == 0 { return }
+		if indexPaths.count == 0 {
+			return
+		}
 
 		let visibleArticles = indexPaths.compactMap { dataSource.itemIdentifier(for: $0) }
 		let visibleUpdatedArticles = visibleArticles.filter { articleIDs.contains($0.articleID) }
-		reconfigureCells(visibleUpdatedArticles)
+		reloadCells(visibleUpdatedArticles)
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
@@ -760,7 +801,7 @@ private extension MainTimelineCollectionViewController {
 			}
 			return nil
 		}
-		reconfigureCells(articlesToReload)
+		reloadCells(articlesToReload)
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -792,7 +833,7 @@ private extension MainTimelineCollectionViewController {
 			}
 			return nil
 		}
-		reconfigureCells(articlesToReload)
+		reloadCells(articlesToReload)
 	}
 
 	func userDefaultsDidChange() {
@@ -801,14 +842,14 @@ private extension MainTimelineCollectionViewController {
 		if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
 			self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 			self.iconSize = AppDefaults.shared.timelineIconSize
-			self.reconfigureVisibleCells()
+			self.reloadVisibleCells()
 		}
 		self.updateToolbar()
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: contentSizeCategoryDidChange")
-		reconfigureVisibleCells()
+		reloadVisibleCells()
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
