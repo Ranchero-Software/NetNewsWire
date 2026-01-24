@@ -25,6 +25,8 @@ Smoke test
 On main: update Technotes/Status.md
 commit
 
+git push
+
 Tag the app:
 git tag mac-6.1.5b4
 
