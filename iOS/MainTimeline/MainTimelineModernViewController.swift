@@ -145,7 +145,6 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: Constants
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 	
-	
 	// MARK: - IBOutlets
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
 	@IBOutlet var collectionView: UICollectionView!
@@ -153,6 +152,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	
     override func viewDidLoad() {
         super.viewDidLoad()
+		
 		addNotificationObservers()
 		configureCollectionView()
 		configureSearchController()
@@ -187,7 +187,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
         // Do any additional setup after loading the view.
     }
-    
+	
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: viewWillAppear")
 
@@ -446,13 +446,13 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 	
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
-
+		
 		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
-
+			
 			guard let self = self else { return nil }
-
+			
 			var menuElements = [UIMenuElement]()
-
+			
 			var markActions = [UIAction]()
 			if let action = self.toggleArticleReadStatusAction(article) {
 				markActions.append(action)
@@ -465,7 +465,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 				markActions.append(action)
 			}
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
-
+			
 			var secondaryActions = [UIAction]()
 			if let action = self.discloseFeedAction(article) {
 				secondaryActions.append(action)
@@ -476,7 +476,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 			if !secondaryActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: secondaryActions))
 			}
-
+			
 			var copyActions = [UIAction]()
 			if let action = self.copyArticleURLAction(article) {
 				copyActions.append(action)
@@ -487,26 +487,26 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 			if !copyActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: copyActions))
 			}
-
+			
 			if let action = self.openInBrowserAction(article) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
-
+			
 			if let action = self.shareAction(article, indexPath: firstIndex) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
-
+			
 			return UIMenu(title: "", children: menuElements)
-
+			
 		})
 	}
 	
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
-			let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)) else {
-				return nil
+			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)) else {
+			return nil
 		}
-
+		
 		let previewView = cell.contentView
 		let parameters = UIPreviewParameters()
 		parameters.backgroundColor = .white
@@ -519,9 +519,9 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
 			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), let _ = view.window else {
-				return nil
+			return nil
 		}
-
+		
 		let previewView = cell.contentView
 		let parameters = UIPreviewParameters()
 		parameters.backgroundColor = .white
@@ -529,6 +529,8 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
+	
+	
 }
 
 // MARK: Private API
@@ -697,7 +699,7 @@ private extension MainTimelineModernViewController {
 		
 		collectionView.refreshControl = UIRefreshControl()
 		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		collectionView.contentInsetAdjustmentBehavior = .always
+		collectionView.contentInsetAdjustmentBehavior = .automatic
 		
 		let layout = UICollectionViewCompositionalLayout.list(using: config)
 		layout.configuration.contentInsetsReference = .safeArea
