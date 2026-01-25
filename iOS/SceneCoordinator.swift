@@ -57,7 +57,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	private var rootSplitViewController: RootSplitViewController!
 
 	private var mainFeedCollectionViewController: MainFeedCollectionViewController!
-	private var mainTimelineViewController: MainTimelineViewController?
+	private var mainTimelineViewController: MainTimelineModernViewController?
 	private var articleViewController: ArticleViewController?
 
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
@@ -314,7 +314,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		self.mainFeedCollectionViewController?.navigationController?.delegate = self
 		updateNavigationBarSubtitles(nil)
 
-		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineViewController
+		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineModernViewController
 		self.mainTimelineViewController?.coordinator = self
 		self.mainTimelineViewController?.navigationController?.delegate = self
 
@@ -2143,8 +2143,8 @@ private extension SceneCoordinator {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
+		emptyTheTimeline()
 		guard let timelineFeed = timelineFeed else {
-			emptyTheTimeline()
 			completion()
 			return
 		}
