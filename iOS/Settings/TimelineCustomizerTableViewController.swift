@@ -9,9 +9,6 @@
 import UIKit
 import Articles
 
-
-
-
 final class TimelineCustomizerTableViewController: UITableViewController {
 	private var previewArticle: Article {
 		var components = DateComponents()
@@ -74,7 +71,7 @@ final class TimelineCustomizerTableViewController: UITableViewController {
 	}
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		
+
 		if indexPath.section == 0 {
 			let cell = tableView.dequeueReusableCell(withIdentifier: "IconSizeCell") as! ModernTimelineSliderCell
 			cell.sliderConfiguration = .iconSize

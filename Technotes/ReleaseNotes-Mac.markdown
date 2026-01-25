@@ -1,6 +1,10 @@
 # Mac Release Notes
 
-### 7.0b5 build 7011 14 Jan 2026 — branch: main tag: mac-7.0b5
+### 7.0b6 build 7013 24 Jan 2026 — branch: main tag: mac-7.0b6
+
+Made the article view content blur when underneath the toolbar. (Technical detail for the curious: WKWebView has a new property `obscuredContentInsets` for this scenario.)
+
+### 7.0b5 build 7011 22 Jan 2026 — branch: main tag: mac-7.0b5
 
 Decreased the minimum size of the sidebar
 Fixed two causes of a bug where small images would sometimes display as much larger than they should be

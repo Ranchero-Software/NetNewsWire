@@ -7,58 +7,27 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.0b4</title>
+			<title>NetNewsWire 7.0b6</title>
             <description><![CDATA[
 				<ul>
-					<li>Fixed Feedly syncing — it’s working again
+					<li>Made the article view content blur when underneath the toolbar
 				</ul>
 			]]></description>
-        	<pubDate>Wed, 14 Jan 2026 20:45:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b4/NetNewsWire7.0b4.zip" sparkle:version="7004" sparkle:shortVersionString="7.0b4" length="10349072" type="application/zip" />
+        	<pubDate>Sat, 24 Jan 2026 10:35:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b6/NetNewsWire7.0b6.zip" sparkle:version="7013" sparkle:shortVersionString="7.0b6" length="10356640" type="application/zip" />
 			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
 		</item>
 
 		<item>
-			<title>NetNewsWire 7.0b3</title>
+			<title>NetNewsWire 7.0b5</title>
             <description><![CDATA[
 				<ul>
-					<li>Fixed bug with persisting the theme selection
-					<li>Fixed crash adding a Feedly account
-					<li>Fixed (we think) a crash that could happen during iCloud syncing
+					<li>Decreased the minimum size of the sidebar
+					<li>Fixed two causes of a bug where small images would sometimes display as much larger than they should be
 				</ul>
 			]]></description>
-        	<pubDate>Sat, 10 Jan 2026 10:30:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b3/NetNewsWire7.1b3.zip" sparkle:version="7003" sparkle:shortVersionString="7.0b3" length="10320310" type="application/zip" />
-			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0b2</title>
-            <description><![CDATA[
-				<ul>
-					<li>Fixed crash when downloading a theme</li>
-					<li>Fixed hiding read articles (the toggle wasn’t toggling, now it is)</li>
-				</ul>
-			]]></description>
-        	<pubDate>Fri, 09 Jan 2026 08:55:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b2/NetNewsWire7.0b2.zip" sparkle:version="7001" sparkle:shortVersionString="7.0b2" length="10322480" type="application/zip" />
-			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0b1</title>
-            <description><![CDATA[
-            <p>Besides the changes listed, there are <i>many</i> under-the-hood changes affecting all parts of the app. Bugs could appear anywhere! Please report anything you find to our bug tracker or to the Beta Testing topic in the Discourse forum.</p>
-				<ul>
-					<li>Adopted Liquid Glass UI</li>
-					<li>Adopted Swift 6 structured concurrency</li>
-					<li>Improved window state restoration when sidebar is collapsed</li>
-					<li>Added custom About window</li>
-					<li>Changed link in the Help from Slack to Discourse</li>
-				</ul>
-			]]></description>
-        	<pubDate>Thu, 08 Jan 2026 11:00:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b1/NetNewsWire7.0b1.zip" sparkle:version="7000" sparkle:shortVersionString="7.0b1" length="10323148" type="application/zip" />
+        	<pubDate>Thu, 22 Jan 2026 15:45:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b5/NetNewsWire7.0b5.zip" sparkle:version="7011" sparkle:shortVersionString="7.0b5" length="10354304" type="application/zip" />
 			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
 		</item>
 
