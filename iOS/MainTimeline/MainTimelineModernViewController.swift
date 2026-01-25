@@ -14,12 +14,14 @@ import RSWeb
 import Account
 import Articles
 
-let standardCellIdentifier = "MainTimelineCellStandard"
-let standardCellIdentifierIndex0 = "MainTimelineCellIndexZero"
-let standardCellIdentifierIcon = "MainTimelineCellIcon"
-let standardCellIdentifierIconIndex0 = "MainTimelineCellIconIndexZero"
-
 final class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
+	
+	struct CellIdentifier {
+		static let standard = "MainTimelineCellStandard"
+		static let standardIndex0 = "MainTimelineCellIndexZero"
+		static let icon = "MainTimelineCellIcon"
+		static let iconIndex0 = "MainTimelineCellIconIndexZero"
+	}
 
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
@@ -707,21 +709,21 @@ private extension MainTimelineModernViewController {
 				let cellData = self!.configure(article: article)
 				if self!.showIcons {
 					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: standardCellIdentifierIconIndex0, for: indexPath) as! MainTimelineCollectionViewCell
+						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.iconIndex0, for: indexPath) as! MainTimelineCollectionViewCell
 						cell.cellData = cellData
 						return cell
 					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: standardCellIdentifierIcon, for: indexPath) as! MainTimelineCollectionViewCell
+						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.icon, for: indexPath) as! MainTimelineCollectionViewCell
 						cell.cellData = cellData
 						return cell
 					}
 				} else {
 					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: standardCellIdentifierIndex0, for: indexPath) as! MainTimelineCollectionViewCell
+						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standardIndex0, for: indexPath) as! MainTimelineCollectionViewCell
 						cell.cellData = cellData
 						return cell
 					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: standardCellIdentifier, for: indexPath) as! MainTimelineCollectionViewCell
+						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standard, for: indexPath) as! MainTimelineCollectionViewCell
 						cell.cellData = cellData
 						return cell
 					}
