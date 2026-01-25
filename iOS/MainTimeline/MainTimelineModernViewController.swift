@@ -14,15 +14,16 @@ import RSWeb
 import Account
 import Articles
 
+
+struct CellIdentifier {
+	static let standard = "MainTimelineCellStandard"
+	static let standardIndex0 = "MainTimelineCellIndexZero"
+	static let icon = "MainTimelineCellIcon"
+	static let iconIndex0 = "MainTimelineCellIconIndexZero"
+}
+
 final class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
 	
-	struct CellIdentifier {
-		static let standard = "MainTimelineCellStandard"
-		static let standardIndex0 = "MainTimelineCellIndexZero"
-		static let icon = "MainTimelineCellIcon"
-		static let iconIndex0 = "MainTimelineCellIconIndexZero"
-	}
-
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
