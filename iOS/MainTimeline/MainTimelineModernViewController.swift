@@ -509,7 +509,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		
 		let previewView = cell.contentView
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .white
+		parameters.backgroundColor = .tertiarySystemBackground
 		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
@@ -524,7 +524,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		
 		let previewView = cell.contentView
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .white
+		parameters.backgroundColor = .clear
 		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
