@@ -464,311 +464,378 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nzm-Gf-Xce" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1334" y="-1153"/>
+            <point key="canvasLocation" x="1306" y="-1822"/>
         </scene>
         <!--Timeline-->
-        <scene sceneID="ZWX-Qy-9W5">
+        <scene sceneID="zD6-2d-bd7">
             <objects>
-                <collectionViewController storyboardIdentifier="MainTimelineCollectionViewController" title="Timeline" id="cJj-ky-6X7" customClass="MainTimelineCollectionViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" dataMode="prototypes" prefetchingEnabled="NO" id="06z-Yr-4sk">
+                <viewController title="Timeline" extendedLayoutIncludesOpaqueBars="YES" id="QJM-al-rDe" customClass="MainTimelineModernViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="NY8-Yd-8Av">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" dataMode="prototypes" prefetchingEnabled="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YPO-ig-3vA">
+                                <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="AeW-UV-6nb">
+                                    <size key="itemSize" width="402" height="128"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="8" minY="0.0" maxX="8" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MainTimelineCellIndexZero" id="mnV-bT-V2W" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="8" y="0.0" width="386" height="52"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="FbB-Hl-Eg2">
+                                            <rect key="frame" x="0.0" y="0.0" width="386" height="52"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1d5-Y3-Op5">
+                                                    <rect key="frame" x="8" y="0.0" width="370" height="1"/>
+                                                    <color key="backgroundColor" systemColor="separatorColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="1" id="mkk-77-j8h"/>
+                                                    </constraints>
+                                                </view>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Uqs-BQ-GEC" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="8" y="8" width="16" height="16"/>
+                                                    <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="16" id="g1s-7i-04d"/>
+                                                        <constraint firstAttribute="width" constant="16" id="gXY-FG-2Qp"/>
+                                                    </constraints>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Yan-r6-V5Z">
+                                                    <rect key="frame" x="32" y="5.9999999999999982" width="346" height="20.333333333333329"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="5Fg-Tr-Kiy">
+                                                    <rect key="frame" x="32" y="28.333333333333332" width="346" height="14.333333333333332"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o3c-FZ-gKE">
+                                                            <rect key="frame" x="0.0" y="0.0" width="172" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aGY-Xq-5YU">
+                                                            <rect key="frame" x="174" y="0.0" width="172" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="1d5-Y3-Op5" firstAttribute="leading" secondItem="Uqs-BQ-GEC" secondAttribute="leading" id="Dmm-92-ZH9"/>
+                                                <constraint firstItem="Yan-r6-V5Z" firstAttribute="top" secondItem="FbB-Hl-Eg2" secondAttribute="top" constant="6" id="HuG-h3-H5d"/>
+                                                <constraint firstItem="1d5-Y3-Op5" firstAttribute="trailing" secondItem="Yan-r6-V5Z" secondAttribute="trailing" id="Kq1-la-WyU"/>
+                                                <constraint firstItem="Uqs-BQ-GEC" firstAttribute="leading" secondItem="FbB-Hl-Eg2" secondAttribute="leading" constant="8" id="M2Z-pj-PbV"/>
+                                                <constraint firstAttribute="trailing" secondItem="5Fg-Tr-Kiy" secondAttribute="trailing" constant="8" id="MD2-yi-tQF"/>
+                                                <constraint firstAttribute="bottom" secondItem="5Fg-Tr-Kiy" secondAttribute="bottom" constant="9.3333333333333357" id="NBZ-iq-pvJ"/>
+                                                <constraint firstItem="5Fg-Tr-Kiy" firstAttribute="leading" secondItem="Yan-r6-V5Z" secondAttribute="leading" id="OzI-eT-Ddp"/>
+                                                <constraint firstItem="5Fg-Tr-Kiy" firstAttribute="top" secondItem="Yan-r6-V5Z" secondAttribute="bottom" constant="2" id="Q7d-lf-YOu"/>
+                                                <constraint firstAttribute="trailing" secondItem="Yan-r6-V5Z" secondAttribute="trailing" constant="8" id="byj-KU-yj5"/>
+                                                <constraint firstItem="1d5-Y3-Op5" firstAttribute="top" secondItem="FbB-Hl-Eg2" secondAttribute="top" id="coe-an-hym"/>
+                                                <constraint firstItem="Yan-r6-V5Z" firstAttribute="leading" secondItem="Uqs-BQ-GEC" secondAttribute="trailing" constant="8" symbolic="YES" id="d8l-bR-cyG"/>
+                                                <constraint firstItem="Uqs-BQ-GEC" firstAttribute="top" secondItem="FbB-Hl-Eg2" secondAttribute="top" constant="8" id="eeC-L4-HDW"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="386" height="52"/>
+                                        <connections>
+                                            <outlet property="articleByLine" destination="o3c-FZ-gKE" id="Rvb-MC-pbA"/>
+                                            <outlet property="articleContent" destination="Yan-r6-V5Z" id="FMW-ye-boq"/>
+                                            <outlet property="articleDate" destination="aGY-Xq-5YU" id="pQl-d6-8jK"/>
+                                            <outlet property="indicatorView" destination="Uqs-BQ-GEC" id="xXE-x6-hBa"/>
+                                            <outlet property="metaDataStackView" destination="5Fg-Tr-Kiy" id="F9V-La-EMd"/>
+                                            <outlet property="topSeparator" destination="1d5-Y3-Op5" id="v8Z-Z8-IBl"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MainTimelineCellStandard" id="Mxu-98-EdP" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="8" y="62" width="386" height="52"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="LRz-kL-lsv">
+                                            <rect key="frame" x="0.0" y="0.0" width="386" height="52"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fNi-gn-bjx">
+                                                    <rect key="frame" x="32" y="0.0" width="346" height="1"/>
+                                                    <color key="backgroundColor" systemColor="separatorColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="1" id="yEg-TP-34y"/>
+                                                    </constraints>
+                                                </view>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="EQl-0T-Ks7" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="8" y="8" width="16" height="16"/>
+                                                    <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="16" id="TEi-aG-mME"/>
+                                                        <constraint firstAttribute="width" constant="16" id="YG0-MV-XMc"/>
+                                                    </constraints>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h4j-SE-f60">
+                                                    <rect key="frame" x="32" y="5.9999999999999982" width="346" height="20.333333333333329"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="1Y6-rg-S6P">
+                                                    <rect key="frame" x="32" y="28.333333333333332" width="346" height="14.333333333333332"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NSi-68-toP">
+                                                            <rect key="frame" x="0.0" y="0.0" width="172" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pk2-pA-n2G">
+                                                            <rect key="frame" x="174" y="0.0" width="172" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="bottom" secondItem="1Y6-rg-S6P" secondAttribute="bottom" constant="9.3333333333333357" id="CbT-jF-kwj"/>
+                                                <constraint firstItem="fNi-gn-bjx" firstAttribute="trailing" secondItem="h4j-SE-f60" secondAttribute="trailing" id="GYt-5f-9Tj"/>
+                                                <constraint firstItem="EQl-0T-Ks7" firstAttribute="top" secondItem="LRz-kL-lsv" secondAttribute="top" constant="8" id="Mnq-AL-J9x"/>
+                                                <constraint firstItem="h4j-SE-f60" firstAttribute="leading" secondItem="EQl-0T-Ks7" secondAttribute="trailing" constant="8" symbolic="YES" id="NMx-Pv-922"/>
+                                                <constraint firstItem="EQl-0T-Ks7" firstAttribute="leading" secondItem="LRz-kL-lsv" secondAttribute="leading" constant="8" id="PQg-ee-7WB"/>
+                                                <constraint firstItem="1Y6-rg-S6P" firstAttribute="leading" secondItem="h4j-SE-f60" secondAttribute="leading" id="WL8-xd-3AC"/>
+                                                <constraint firstItem="h4j-SE-f60" firstAttribute="top" secondItem="LRz-kL-lsv" secondAttribute="top" constant="6" id="iE6-Mt-kvv"/>
+                                                <constraint firstAttribute="trailing" secondItem="h4j-SE-f60" secondAttribute="trailing" constant="8" id="jwI-60-Njt"/>
+                                                <constraint firstAttribute="trailing" secondItem="1Y6-rg-S6P" secondAttribute="trailing" constant="8" id="ruj-nK-2zO"/>
+                                                <constraint firstItem="fNi-gn-bjx" firstAttribute="leading" secondItem="h4j-SE-f60" secondAttribute="leading" id="sDV-bM-z9i"/>
+                                                <constraint firstItem="fNi-gn-bjx" firstAttribute="top" secondItem="LRz-kL-lsv" secondAttribute="top" id="uQJ-wt-uU7"/>
+                                                <constraint firstItem="1Y6-rg-S6P" firstAttribute="top" secondItem="h4j-SE-f60" secondAttribute="bottom" constant="2" id="x30-0U-959"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="386" height="52"/>
+                                        <connections>
+                                            <outlet property="articleByLine" destination="NSi-68-toP" id="wcT-rj-i7U"/>
+                                            <outlet property="articleContent" destination="h4j-SE-f60" id="0Ox-RV-6J6"/>
+                                            <outlet property="articleDate" destination="pk2-pA-n2G" id="E8V-DX-RgA"/>
+                                            <outlet property="indicatorView" destination="EQl-0T-Ks7" id="dMp-de-q0V"/>
+                                            <outlet property="metaDataStackView" destination="1Y6-rg-S6P" id="MP2-eW-Mso"/>
+                                            <outlet property="topSeparator" destination="fNi-gn-bjx" id="c4d-s7-Krb"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MainTimelineCellIconIndexZero" id="UfC-jX-8iV" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="8" y="124" width="386" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="Clj-Wp-0Wl">
+                                            <rect key="frame" x="0.0" y="0.0" width="386" height="55"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JuI-qj-gCR" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="8" y="8" width="16" height="16"/>
+                                                    <color key="backgroundColor" systemColor="secondarySystemFillColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="16" id="XZF-D0-fnX"/>
+                                                        <constraint firstAttribute="height" constant="16" id="YiR-7D-7e0"/>
+                                                    </constraints>
+                                                </view>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Yb4-je-eHg" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="32" y="8" width="36" height="36"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="36" id="LkX-Xj-fZf"/>
+                                                        <constraint firstAttribute="height" constant="36" id="Yya-dk-F7x"/>
+                                                    </constraints>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1rh-TG-4t8">
+                                                    <rect key="frame" x="76" y="5.9999999999999982" width="302" height="20.333333333333329"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="lgo-IC-NEC">
+                                                    <rect key="frame" x="76" y="28.999999999999996" width="302" height="14.333333333333332"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kYC-07-iWu">
+                                                            <rect key="frame" x="0.0" y="0.0" width="150" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1tb-Fr-7LL">
+                                                            <rect key="frame" x="152" y="0.0" width="150" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nj2-sM-Flq">
+                                                    <rect key="frame" x="8" y="0.0" width="370" height="1"/>
+                                                    <color key="backgroundColor" systemColor="separatorColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="1" id="T0c-BM-pV6"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="1rh-TG-4t8" firstAttribute="top" secondItem="Clj-Wp-0Wl" secondAttribute="top" constant="6" id="5Gx-ae-0qm"/>
+                                                <constraint firstItem="JuI-qj-gCR" firstAttribute="top" secondItem="Clj-Wp-0Wl" secondAttribute="top" constant="8" id="8Oi-mc-g2A"/>
+                                                <constraint firstItem="nj2-sM-Flq" firstAttribute="top" secondItem="Clj-Wp-0Wl" secondAttribute="top" id="9N0-5g-1hy"/>
+                                                <constraint firstItem="1rh-TG-4t8" firstAttribute="leading" secondItem="Yb4-je-eHg" secondAttribute="trailing" constant="8" symbolic="YES" id="CQ6-D9-AuG"/>
+                                                <constraint firstItem="nj2-sM-Flq" firstAttribute="trailing" secondItem="1rh-TG-4t8" secondAttribute="trailing" id="MsQ-5T-oKC"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="lgo-IC-NEC" secondAttribute="bottom" constant="9.3300000000000001" id="Rd8-1j-JOC"/>
+                                                <constraint firstItem="lgo-IC-NEC" firstAttribute="top" secondItem="1rh-TG-4t8" secondAttribute="bottom" constant="2.6666666666666714" id="Rmc-dT-5hQ"/>
+                                                <constraint firstAttribute="trailing" secondItem="1rh-TG-4t8" secondAttribute="trailing" constant="8" id="UWb-XW-1Cp"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Yb4-je-eHg" secondAttribute="bottom" constant="8" id="X77-GP-48D"/>
+                                                <constraint firstAttribute="trailing" secondItem="lgo-IC-NEC" secondAttribute="trailing" constant="8" id="cJL-XZ-oDw"/>
+                                                <constraint firstItem="nj2-sM-Flq" firstAttribute="leading" secondItem="JuI-qj-gCR" secondAttribute="leading" id="ezR-ZU-b5P"/>
+                                                <constraint firstItem="lgo-IC-NEC" firstAttribute="leading" secondItem="1rh-TG-4t8" secondAttribute="leading" id="f5a-yo-icp"/>
+                                                <constraint firstItem="JuI-qj-gCR" firstAttribute="leading" secondItem="Clj-Wp-0Wl" secondAttribute="leading" constant="8" id="mvP-rc-owQ"/>
+                                                <constraint firstItem="Yb4-je-eHg" firstAttribute="leading" secondItem="JuI-qj-gCR" secondAttribute="trailing" constant="8" id="noZ-sK-fH0"/>
+                                                <constraint firstItem="Yb4-je-eHg" firstAttribute="top" secondItem="Clj-Wp-0Wl" secondAttribute="top" constant="8" id="tX5-l6-fhV"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="386" height="55"/>
+                                        <connections>
+                                            <outlet property="articleByLine" destination="kYC-07-iWu" id="6fC-Fq-9hC"/>
+                                            <outlet property="articleContent" destination="1rh-TG-4t8" id="MnB-DE-n6A"/>
+                                            <outlet property="articleDate" destination="1tb-Fr-7LL" id="Owf-XG-57A"/>
+                                            <outlet property="feedIcon" destination="Yb4-je-eHg" id="egJ-UF-rp9"/>
+                                            <outlet property="indicatorView" destination="JuI-qj-gCR" id="w5B-XF-SaE"/>
+                                            <outlet property="metaDataStackView" destination="lgo-IC-NEC" id="WaH-c6-Bhi"/>
+                                            <outlet property="topSeparator" destination="nj2-sM-Flq" id="ygu-22-n7S"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="MainTimelineCellIcon" id="Vam-6u-7Ng" userLabel="MainTimelineCellIcon" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="8" y="189" width="386" height="55"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="N8Y-jf-wcX">
+                                            <rect key="frame" x="0.0" y="0.0" width="386" height="55"/>
+                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <subviews>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yrT-cr-PV7" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="8" y="8" width="16" height="16"/>
+                                                    <color key="backgroundColor" systemColor="secondarySystemFillColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="16" id="CaG-Xs-Wve"/>
+                                                        <constraint firstAttribute="height" constant="16" id="TbR-JV-2D1"/>
+                                                    </constraints>
+                                                </view>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oR6-Is-fGr" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="32" y="8" width="36" height="36"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="36" id="1OK-10-Fq1"/>
+                                                        <constraint firstAttribute="width" constant="36" id="haU-2J-z8p"/>
+                                                    </constraints>
+                                                </view>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Content" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O03-6u-AcE">
+                                                    <rect key="frame" x="76" y="5.9999999999999982" width="302" height="20.333333333333329"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="Mzm-P5-SeC">
+                                                    <rect key="frame" x="76" y="28.999999999999996" width="302" height="14.333333333333332"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9nR-Dd-ZuE">
+                                                            <rect key="frame" x="0.0" y="0.0" width="150" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pLf-h1-h8G">
+                                                            <rect key="frame" x="152" y="0.0" width="150" height="14.333333333333334"/>
+                                                            <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                </stackView>
+                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fP1-Cp-b0P">
+                                                    <rect key="frame" x="76" y="0.0" width="302" height="1"/>
+                                                    <color key="backgroundColor" systemColor="separatorColor"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="1" id="vZ0-vW-48g"/>
+                                                    </constraints>
+                                                </view>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="O03-6u-AcE" firstAttribute="top" secondItem="N8Y-jf-wcX" secondAttribute="top" constant="6" id="0cO-u7-nn1"/>
+                                                <constraint firstAttribute="trailing" secondItem="Mzm-P5-SeC" secondAttribute="trailing" constant="8" id="2Ya-vc-ivc"/>
+                                                <constraint firstItem="yrT-cr-PV7" firstAttribute="top" secondItem="N8Y-jf-wcX" secondAttribute="top" constant="8" id="7yA-25-oTM"/>
+                                                <constraint firstItem="O03-6u-AcE" firstAttribute="leading" secondItem="oR6-Is-fGr" secondAttribute="trailing" constant="8" symbolic="YES" id="HVB-Nz-iYq"/>
+                                                <constraint firstItem="fP1-Cp-b0P" firstAttribute="top" secondItem="N8Y-jf-wcX" secondAttribute="top" id="Hzn-T2-WQD"/>
+                                                <constraint firstItem="Mzm-P5-SeC" firstAttribute="leading" secondItem="O03-6u-AcE" secondAttribute="leading" id="OCH-Jk-pap"/>
+                                                <constraint firstItem="yrT-cr-PV7" firstAttribute="leading" secondItem="N8Y-jf-wcX" secondAttribute="leading" constant="8" id="Rzv-Tr-NTy"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="oR6-Is-fGr" secondAttribute="bottom" constant="8" id="VRp-NS-jjU"/>
+                                                <constraint firstAttribute="trailing" secondItem="O03-6u-AcE" secondAttribute="trailing" constant="8" id="Vxz-ky-0mj"/>
+                                                <constraint firstItem="oR6-Is-fGr" firstAttribute="leading" secondItem="yrT-cr-PV7" secondAttribute="trailing" constant="8" id="bmo-Xv-fES"/>
+                                                <constraint firstItem="oR6-Is-fGr" firstAttribute="top" secondItem="N8Y-jf-wcX" secondAttribute="top" constant="8" id="fHy-Tj-AXE"/>
+                                                <constraint firstItem="Mzm-P5-SeC" firstAttribute="top" secondItem="O03-6u-AcE" secondAttribute="bottom" constant="2.6666666666666714" id="l96-Py-rYK"/>
+                                                <constraint firstItem="fP1-Cp-b0P" firstAttribute="trailing" secondItem="O03-6u-AcE" secondAttribute="trailing" id="lta-Kh-ywc"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Mzm-P5-SeC" secondAttribute="bottom" constant="9.3300000000000001" id="mo3-dA-9un"/>
+                                                <constraint firstItem="fP1-Cp-b0P" firstAttribute="leading" secondItem="O03-6u-AcE" secondAttribute="leading" id="rRV-94-BmU"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="386" height="55"/>
+                                        <connections>
+                                            <outlet property="articleByLine" destination="9nR-Dd-ZuE" id="Nob-Rc-nMm"/>
+                                            <outlet property="articleContent" destination="O03-6u-AcE" id="Ogx-Ic-fqN"/>
+                                            <outlet property="articleDate" destination="pLf-h1-h8G" id="cqd-Be-C2z"/>
+                                            <outlet property="feedIcon" destination="oR6-Is-fGr" id="QMn-kI-uNH"/>
+                                            <outlet property="indicatorView" destination="yrT-cr-PV7" id="lxe-Mx-blu"/>
+                                            <outlet property="metaDataStackView" destination="Mzm-P5-SeC" id="wZq-Ag-BU0"/>
+                                            <outlet property="topSeparator" destination="fP1-Cp-b0P" id="jYs-gw-mm9"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <connections>
+                                    <outlet property="delegate" destination="QJM-al-rDe" id="SFB-v8-UuF"/>
+                                </connections>
+                            </collectionView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="woz-CC-xTu"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="0.0" minimumInteritemSpacing="10" sectionInsetReference="safeArea" id="iFm-8c-9Ng">
-                            <size key="itemSize" width="402" height="128"/>
-                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        </collectionViewFlowLayout>
-                        <cells>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" reuseIdentifier="MainTimelineCellIconIndexZero" id="SLp-Me-7sO" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="23" y="0.0" width="356" height="62"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="ff6-GK-rxK">
-                                    <rect key="frame" x="0.0" y="0.0" width="356" height="62"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <view contentMode="scaleToFill" id="uIL-zU-z42" userLabel="Top Separator">
-                                            <rect key="frame" x="8" y="0.0" width="380" height="1"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="separatorColor"/>
-                                        </view>
-                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="izK-AQ-lTp" userLabel="Indicator View" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="8" width="16" height="16"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        </view>
-                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3KH-vj-6op" userLabel="Feed Icon" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="32" y="8" width="36" height="36"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Article Content" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fjR-9p-fjp">
-                                            <rect key="frame" x="76" y="5.9999999999999982" width="312" height="20.333333333333329"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" distribution="fillEqually" alignment="center" spacing="162" translatesAutoresizingMaskIntoConstraints="NO" id="A7o-xG-ssj">
-                                            <rect key="frame" x="76" y="27.000000000000004" width="312" height="14.333333333333332"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9ul-hv-oK6">
-                                                    <rect key="frame" x="0.0" y="0.0" width="75" height="14.333333333333334"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oVi-cJ-dcT">
-                                                    <rect key="frame" x="237" y="0.0" width="75" height="14.333333333333334"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </stackView>
-                                    </subviews>
-                                    <viewLayoutGuide key="safeArea" id="Tbc-cj-c8h"/>
-                                </collectionViewCellContentView>
-                                <size key="customSize" width="356" height="62"/>
-                                <connections>
-                                    <outlet property="articleByLine" destination="9ul-hv-oK6" id="T4e-Ub-ZEz"/>
-                                    <outlet property="articleContent" destination="fjR-9p-fjp" id="PpS-f5-Llw"/>
-                                    <outlet property="articleDate" destination="oVi-cJ-dcT" id="s7S-85-ugB"/>
-                                    <outlet property="feedIcon" destination="3KH-vj-6op" id="bOx-XJ-iqM"/>
-                                    <outlet property="indicatorView" destination="izK-AQ-lTp" id="3Cm-on-Qcz"/>
-                                    <outlet property="metaDataStackView" destination="A7o-xG-ssj" id="zQ5-sj-VQ6"/>
-                                </connections>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" reuseIdentifier="MainTimelineCellIcon" id="gD1-BE-xgV" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="23" y="62" width="356" height="62"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="q24-ED-6jU">
-                                    <rect key="frame" x="0.0" y="0.0" width="356" height="62"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <view contentMode="scaleToFill" id="VBP-V5-LYY" userLabel="Top Separator">
-                                            <rect key="frame" x="76" y="0.0" width="312" height="1"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="separatorColor"/>
-                                        </view>
-                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OSa-gq-5IZ" userLabel="Indicator View" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="8" width="16" height="16"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        </view>
-                                        <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="aTe-bO-hmQ" userLabel="Feed Icon" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="32" y="8" width="36" height="36"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                        </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Article Content" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="x3M-qt-lcA">
-                                            <rect key="frame" x="76" y="5.9999999999999982" width="312" height="20.333333333333329"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" distribution="fillEqually" alignment="center" spacing="162" translatesAutoresizingMaskIntoConstraints="NO" id="Evh-oD-Qw0">
-                                            <rect key="frame" x="76" y="27.000000000000004" width="312" height="14.333333333333332"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lvh-Rk-B6e">
-                                                    <rect key="frame" x="0.0" y="0.0" width="75" height="14.333333333333334"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2tD-cb-fP5">
-                                                    <rect key="frame" x="237" y="0.0" width="75" height="14.333333333333334"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </stackView>
-                                    </subviews>
-                                    <viewLayoutGuide key="safeArea" id="lep-Je-RSN"/>
-                                </collectionViewCellContentView>
-                                <size key="customSize" width="356" height="62"/>
-                                <connections>
-                                    <outlet property="articleByLine" destination="lvh-Rk-B6e" id="Ssk-bh-aYT"/>
-                                    <outlet property="articleContent" destination="x3M-qt-lcA" id="1lT-zb-uWn"/>
-                                    <outlet property="articleDate" destination="2tD-cb-fP5" id="npB-Qs-2NB"/>
-                                    <outlet property="feedIcon" destination="aTe-bO-hmQ" id="lNC-1V-N3g"/>
-                                    <outlet property="indicatorView" destination="OSa-gq-5IZ" id="jKy-JE-Grr"/>
-                                    <outlet property="metaDataStackView" destination="Evh-oD-Qw0" id="zWn-RP-5OH"/>
-                                </connections>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" reuseIdentifier="MainTimelineCellIndexZero" id="sRE-92-2mK" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="23" y="124" width="356" height="62"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" id="O5E-lX-PE3">
-                                    <rect key="frame" x="0.0" y="0.0" width="356" height="62"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <view contentMode="scaleToFill" id="ixX-Kg-gqR" userLabel="Top Separator">
-                                            <rect key="frame" x="8" y="0.0" width="340" height="1"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="separatorColor"/>
-                                        </view>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rpj-KQ-Vlp" userLabel="Indicator View" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="8" width="16" height="16"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="16" id="4Y3-ly-xVX"/>
-                                                <constraint firstAttribute="height" constant="16" id="tiq-r9-itO"/>
-                                            </constraints>
-                                        </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Content" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fTb-j5-lIK">
-                                            <rect key="frame" x="32" y="5.9999999999999982" width="316" height="20.333333333333329"/>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="166" translatesAutoresizingMaskIntoConstraints="NO" id="J5z-Kj-JY6">
-                                            <rect key="frame" x="32" y="27.333333333333329" width="316" height="27"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bT1-FT-B4h">
-                                                    <rect key="frame" x="0.0" y="6.333333333333333" width="75" height="14.333333333333336"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VKd-y7-xha">
-                                                    <rect key="frame" x="241" y="6.333333333333333" width="75" height="14.333333333333336"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </stackView>
-                                    </subviews>
-                                    <viewLayoutGuide key="safeArea" id="umo-sc-RKw"/>
-                                    <constraints>
-                                        <constraint firstItem="Rpj-KQ-Vlp" firstAttribute="top" secondItem="umo-sc-RKw" secondAttribute="top" constant="8" id="3dV-Sz-Qa6"/>
-                                        <constraint firstItem="umo-sc-RKw" firstAttribute="trailing" secondItem="J5z-Kj-JY6" secondAttribute="trailing" constant="8" id="Lwd-pK-LjH"/>
-                                        <constraint firstItem="umo-sc-RKw" firstAttribute="bottom" secondItem="J5z-Kj-JY6" secondAttribute="bottom" constant="7.6699999999999999" id="aG1-9l-cQG"/>
-                                        <constraint firstItem="umo-sc-RKw" firstAttribute="trailing" secondItem="fTb-j5-lIK" secondAttribute="trailing" constant="8" id="kLx-EH-jXM"/>
-                                        <constraint firstItem="fTb-j5-lIK" firstAttribute="top" secondItem="umo-sc-RKw" secondAttribute="top" constant="6" id="mRF-rX-jD0"/>
-                                        <constraint firstItem="Rpj-KQ-Vlp" firstAttribute="leading" secondItem="umo-sc-RKw" secondAttribute="leading" constant="8" id="mYL-L6-Pv0"/>
-                                        <constraint firstItem="fTb-j5-lIK" firstAttribute="leading" secondItem="Rpj-KQ-Vlp" secondAttribute="trailing" constant="8" symbolic="YES" id="mcy-Qb-REQ"/>
-                                        <constraint firstItem="J5z-Kj-JY6" firstAttribute="top" secondItem="fTb-j5-lIK" secondAttribute="bottom" constant="1" id="qkb-Uf-rWZ"/>
-                                    </constraints>
-                                </collectionViewCellContentView>
-                                <size key="customSize" width="356" height="62"/>
-                                <connections>
-                                    <outlet property="articleByLine" destination="bT1-FT-B4h" id="Mny-DJ-Voa"/>
-                                    <outlet property="articleContent" destination="fTb-j5-lIK" id="bmf-qA-gHO"/>
-                                    <outlet property="articleDate" destination="VKd-y7-xha" id="wmd-Gc-pAA"/>
-                                    <outlet property="indicatorView" destination="Rpj-KQ-Vlp" id="GJw-8G-ovK"/>
-                                    <outlet property="metaDataStackView" destination="J5z-Kj-JY6" id="A9H-90-e62"/>
-                                </connections>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" reuseIdentifier="MainTimelineCellStandard" id="QZF-fW-Lvd" customClass="MainTimelineCollectionViewCell" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="23" y="186" width="356" height="62"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" id="Rbz-9c-eqc">
-                                    <rect key="frame" x="0.0" y="0.0" width="356" height="62"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                    <subviews>
-                                        <view contentMode="scaleToFill" id="hHs-vX-qOD" userLabel="Top Separator">
-                                            <rect key="frame" x="32" y="0.0" width="320" height="1"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                            <color key="backgroundColor" systemColor="separatorColor"/>
-                                        </view>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wJb-7s-Eeg" userLabel="Indicator View" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                            <rect key="frame" x="8" y="8" width="16" height="16"/>
-                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="16" id="1Tz-3n-ovR"/>
-                                                <constraint firstAttribute="height" constant="16" id="xqC-a5-hdi"/>
-                                            </constraints>
-                                        </view>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Article Content" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KbN-p4-pso">
-                                            <rect key="frame" x="32" y="5.9999999999999982" width="320" height="20.333333333333329"/>
-                                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                            <nil key="textColor"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="170" translatesAutoresizingMaskIntoConstraints="NO" id="XiN-Ba-ZJt">
-                                            <rect key="frame" x="32" y="27.333333333333329" width="320" height="27"/>
-                                            <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Pyh-iU-q6R">
-                                                    <rect key="frame" x="0.0" y="6.333333333333333" width="75" height="14.333333333333336"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tq4-9p-U1P">
-                                                    <rect key="frame" x="245" y="6.333333333333333" width="75" height="14.333333333333336"/>
-                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
-                                                    <color key="textColor" systemColor="secondaryLabelColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                            </subviews>
-                                        </stackView>
-                                    </subviews>
-                                    <viewLayoutGuide key="safeArea" id="M8z-py-1Wq"/>
-                                    <constraints>
-                                        <constraint firstItem="XiN-Ba-ZJt" firstAttribute="top" secondItem="KbN-p4-pso" secondAttribute="bottom" constant="1" id="GXL-4b-Gss"/>
-                                        <constraint firstItem="XiN-Ba-ZJt" firstAttribute="leading" secondItem="KbN-p4-pso" secondAttribute="leading" id="I8c-ph-DLk"/>
-                                        <constraint firstItem="M8z-py-1Wq" firstAttribute="trailing" secondItem="KbN-p4-pso" secondAttribute="trailing" constant="8" id="Kyh-pq-BzA"/>
-                                        <constraint firstItem="hHs-vX-qOD" firstAttribute="leading" secondItem="KbN-p4-pso" secondAttribute="leading" id="UiC-RD-N7T"/>
-                                        <constraint firstItem="wJb-7s-Eeg" firstAttribute="top" secondItem="M8z-py-1Wq" secondAttribute="top" constant="8" id="Z9x-Cq-wKx"/>
-                                        <constraint firstItem="hHs-vX-qOD" firstAttribute="trailing" secondItem="KbN-p4-pso" secondAttribute="trailing" id="aja-PX-teV"/>
-                                        <constraint firstItem="M8z-py-1Wq" firstAttribute="bottom" secondItem="XiN-Ba-ZJt" secondAttribute="bottom" constant="7.6699999999999999" id="cyt-dP-hx9"/>
-                                        <constraint firstItem="KbN-p4-pso" firstAttribute="leading" secondItem="wJb-7s-Eeg" secondAttribute="trailing" constant="8" symbolic="YES" id="czG-0f-T54"/>
-                                        <constraint firstItem="KbN-p4-pso" firstAttribute="top" secondItem="M8z-py-1Wq" secondAttribute="top" constant="6" id="mgz-sY-sH3"/>
-                                        <constraint firstItem="wJb-7s-Eeg" firstAttribute="leading" secondItem="M8z-py-1Wq" secondAttribute="leading" constant="8" id="nbM-af-7NU"/>
-                                        <constraint firstItem="XiN-Ba-ZJt" firstAttribute="trailing" secondItem="KbN-p4-pso" secondAttribute="trailing" id="sfE-Di-d4w"/>
-                                    </constraints>
-                                </collectionViewCellContentView>
-                                <size key="customSize" width="356" height="62"/>
-                                <connections>
-                                    <outlet property="articleByLine" destination="Pyh-iU-q6R" id="IW6-Cz-b4u"/>
-                                    <outlet property="articleContent" destination="KbN-p4-pso" id="dIT-vI-vGe"/>
-                                    <outlet property="articleDate" destination="tq4-9p-U1P" id="nfy-KW-uUU"/>
-                                    <outlet property="indicatorView" destination="wJb-7s-Eeg" id="qd8-Ug-cnt"/>
-                                    <outlet property="metaDataStackView" destination="XiN-Ba-ZJt" id="e8L-60-8cj"/>
-                                </connections>
-                            </collectionViewCell>
-                        </cells>
-                        <connections>
-                            <outlet property="dataSource" destination="cJj-ky-6X7" id="oxq-ry-PFa"/>
-                            <outlet property="delegate" destination="cJj-ky-6X7" id="GMc-x2-3Lc"/>
-                        </connections>
-                    </collectionView>
+                        <constraints>
+                            <constraint firstItem="YPO-ig-3vA" firstAttribute="bottom" secondItem="NY8-Yd-8Av" secondAttribute="bottom" id="7EU-A0-Ody"/>
+                            <constraint firstItem="woz-CC-xTu" firstAttribute="trailing" secondItem="YPO-ig-3vA" secondAttribute="trailing" id="I7G-14-m0e"/>
+                            <constraint firstAttribute="top" secondItem="YPO-ig-3vA" secondAttribute="top" id="iLe-Hu-UHs"/>
+                            <constraint firstItem="YPO-ig-3vA" firstAttribute="leading" secondItem="woz-CC-xTu" secondAttribute="leading" id="pjD-oI-QEj"/>
+                        </constraints>
+                    </view>
                     <toolbarItems>
-                        <barButtonItem title="Item" image="markAllAsRead" id="zPg-5O-h2h">
+                        <barButtonItem title="Item" image="markAllAsRead" id="jGC-TX-BdL">
                             <userDefinedRuntimeAttributes>
                                 <userDefinedRuntimeAttribute type="string" keyPath="accLabelText" value="Mark All as Read"/>
                             </userDefinedRuntimeAttributes>
                             <connections>
-                                <action selector="markAllAsRead:" destination="cJj-ky-6X7" id="7K0-hZ-sRh"/>
+                                <action selector="markAllAsRead:" destination="QJM-al-rDe" id="wU6-dU-tbq"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="Sh1-y2-bnI"/>
-                        <barButtonItem style="plain" systemItem="flexibleSpace" id="dWm-qN-fZj"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="b7y-Z8-Lsi"/>
+                        <barButtonItem style="plain" systemItem="flexibleSpace" id="mBD-F8-H07"/>
                     </toolbarItems>
-                    <navigationItem key="navigationItem" id="T7q-f4-eSl"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="markAllAsReadButton" destination="zPg-5O-h2h" id="xPv-My-8TD"/>
+                        <outlet property="collectionView" destination="YPO-ig-3vA" id="ZNY-s8-9N7"/>
+                        <outlet property="markAllAsReadButton" destination="jGC-TX-BdL" id="k4R-i9-0dE"/>
                     </connections>
-                </collectionViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Slo-n3-smV" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WXZ-fR-d1z" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="447.76119402985074" y="-1153.3180778032036"/>
+            <point key="canvasLocation" x="450.74626865671638" y="-1147.1395881006865"/>
         </scene>
         <!--Root Split View Controller-->
         <scene sceneID="FfI-oe-67h">
             <objects>
-                <splitViewController storyboardIdentifier="RootSplitViewController" allowDoubleColumnStyle="YES" preferredDisplayMode="beside" behavior="tile" primaryBackgroundStyle="sidebar" id="AJQ-jq-uMa" customClass="RootSplitViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <splitViewController storyboardIdentifier="RootSplitViewController" extendedLayoutIncludesOpaqueBars="YES" allowDoubleColumnStyle="YES" preferredDisplayMode="beside" behavior="tile" primaryBackgroundStyle="sidebar" id="AJQ-jq-uMa" customClass="RootSplitViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <connections>
                         <segue destination="JEX-9P-axG" kind="relationship" relationship="detailViewController" id="JbU-kn-u7r"/>
                         <segue destination="6Bn-mF-MPS" kind="relationship" relationship="masterViewController" id="LrL-UL-SqT"/>
-                        <segue destination="cJj-ky-6X7" kind="relationship" relationship="supplementaryViewController" id="jLy-Vo-ObY"/>
+                        <segue destination="QJM-al-rDe" kind="relationship" relationship="supplementaryViewController" id="8If-9V-mR3"/>
                     </connections>
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9SW-km-PuE" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -1207,19 +1274,25 @@
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="secondaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemFillColor">
+            <color red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="secondarySystemGroupedBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="separatorColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.12" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="tertiaryLabelColor">
-            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29803921568627451" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.29803921570000003" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

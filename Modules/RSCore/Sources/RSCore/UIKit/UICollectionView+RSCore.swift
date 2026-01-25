@@ -12,6 +12,24 @@ import Foundation
 import UIKit
 
 extension UICollectionView {
+	/*
+	func selectRowAndScrollIfNotVisible(at indexPath: IndexPath, animations: Animations) {
+		guard let dataSource = dataSource,
+			let numberOfSections = dataSource.numberOfSections,
+			indexPath.section < numberOfSections(self),
+			indexPath.row < dataSource.tableView(self, numberOfRowsInSection: indexPath.section) else {
+				return
+		}
+
+		selectRow(at: indexPath, animated: animations.contains(.select), scrollPosition: .none)
+
+		if let visibleIndexPaths = indexPathsForRows(in: safeAreaLayoutGuide.layoutFrame) {
+			if !(visibleIndexPaths.contains(indexPath) && cellCompletelyVisible(indexPath)) {
+				scrollToRow(at: indexPath, at: .middle, animated: animations.contains(.scroll))
+			}
+		}
+	}
+	 */
 
 	/// Selects an item and scrolls it to the middle if it is not visible
 	public func selectItemAndScrollIfNotVisible(at indexPath: IndexPath, animations: Animations) {

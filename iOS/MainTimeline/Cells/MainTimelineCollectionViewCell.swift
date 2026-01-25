@@ -15,6 +15,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	@IBOutlet var indicatorView: IconView!
 	@IBOutlet var articleDate: UILabel!
 	@IBOutlet var metaDataStackView: UIStackView!
+	@IBOutlet var topSeparator: UIView!
 	
 	var cellData: MainTimelineCellData! {
 		didSet {
@@ -63,7 +64,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
-				self.indicatorView.tintColor = Assets.Colors.secondaryAccent
+				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.secondaryAccent
 			}
 			return
 		}
@@ -73,7 +74,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			}
 			UIView.animate(withDuration: 0.25) {
 				self.indicatorView.iconImage = Assets.Images.starredFeed
-				self.indicatorView.tintColor = Assets.Colors.star
+				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.star
 			}
 			return
 		}
@@ -105,8 +106,10 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	
 	
 	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
-		updateIconViewSizeConstraints(to: size.size)
-		feedIcon!.iconImage = iconImage
+		if feedIcon != nil {
+			updateIconViewSizeConstraints(to: size.size)
+			feedIcon!.iconImage = iconImage
+		}
 	}
 	
 	private func updateIconViewSizeConstraints(to size: CGSize) {
@@ -197,9 +200,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 	
 	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		if state.isSwiped {
+		if state.isSwiped && state.isSelected {
+			return .white
+		} else if state.isSwiped && !state.isSelected {
 			return .label
-		} else if state.isSelected  {
+		} else if !state.isSwiped && state.isSelected {
 			return .white
 		} else {
 			return .label
@@ -235,20 +240,35 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.cornerRadius = 20
 		
-		if state.isSwiped {
-			backgroundConfig.backgroundColor = .secondarySystemFill
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .secondaryLabel
-			articleByLine.textColor = .secondaryLabel
-		} else if state.isSelected {
+		if traitCollection.userInterfaceIdiom == .pad {
+			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
+			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -12 : -12, bottom: 0, trailing: !isPreview ? -12 : -12)
+		}
+		
+		if state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			articleContent.textColor = titleTextColor(for: state)
 			articleDate.textColor = .lightText
 			articleByLine.textColor = .lightText
-		} else {
+			topSeparator.alpha = 0.0
+		} else if state.isSwiped && !state.isSelected {
+			backgroundConfig.backgroundColor = .secondarySystemFill
 			articleContent.textColor = titleTextColor(for: state)
 			articleDate.textColor = .secondaryLabel
 			articleByLine.textColor = .secondaryLabel
+			topSeparator.alpha = 0.0
+		} else if !state.isSwiped && state.isSelected {
+			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
+			articleContent.textColor = titleTextColor(for: state)
+			articleDate.textColor = .lightText
+			articleByLine.textColor = .lightText
+			topSeparator.alpha = 0.0
+		} else {
+			backgroundConfig.backgroundColor = .clear
+			articleContent.textColor = titleTextColor(for: state)
+			articleDate.textColor = .secondaryLabel
+			articleByLine.textColor = .secondaryLabel
+			topSeparator.alpha = 1.0
 		}
 		
 		updateIndicatorView(state)

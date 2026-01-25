@@ -1,8 +1,8 @@
 //
-//  MainTimelineCollectionViewController.swift
+//  MainTimelineModernViewController.swift
 //  NetNewsWire-iOS
 //
-//  Created by Stuart Breckenridge on 24/01/2026.
+//  Created by Stuart Breckenridge on 25/01/2026.
 //  Copyright © 2026 Ranchero Software. All rights reserved.
 //
 
@@ -19,8 +19,7 @@ let standardCellIdentifierIndex0 = "MainTimelineCellIndexZero"
 let standardCellIdentifierIcon = "MainTimelineCellIcon"
 let standardCellIdentifierIconIndex0 = "MainTimelineCellIconIndexZero"
 
-
-final class MainTimelineCollectionViewController: UICollectionViewController, UndoableCommandRunner {
+class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
 
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
@@ -138,30 +137,24 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	// MARK: Private Constants
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineCollectionViewController")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineModernViewController")
 	
-	// MARK: Constantns
+	// MARK: Constants
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 	
 	
 	// MARK: - IBOutlets
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
+	@IBOutlet var collectionView: UICollectionView!
 	
-	// MARK: - Lifecycle
 	
     override func viewDidLoad() {
-		Self.logger.debug("MainTimelineCollectionViewController: viewDidLoad")
-		assert(coordinator != nil)
-		
         super.viewDidLoad()
-		
 		addNotificationObservers()
 		configureCollectionView()
 		configureSearchController()
 		definesPresentationContext = true
 
-        // Uncomment the following line to preserve selection between presentations
-        self.clearsSelectionOnViewWillAppear = false
 		
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
@@ -189,12 +182,11 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 		navigationItem.largeTitleDisplayMode = .never
 		navigationItem.titleView = navigationBarTitleLabel
 		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
-		
-		
+        // Do any additional setup after loading the view.
     }
-	
+    
 	override func viewWillAppear(_ animated: Bool) {
-		Self.logger.debug("MainTimelineViewController: viewWillAppear")
+		Self.logger.debug("MainTimelineModernViewController: viewWillAppear")
 
 		super.viewWillAppear(animated)
 		self.navigationController?.isToolbarHidden = false
@@ -209,7 +201,7 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
-		Self.logger.debug("MainTimelineViewController: viewDidAppear")
+		Self.logger.debug("MainTimelineModernViewController: viewDidAppear")
 
 		super.viewDidAppear(true)
 		isTimelineViewControllerPending = false
@@ -229,11 +221,18 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	}
 
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
+		Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary")
 		if let article = currentArticle, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
+				Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary selecting item and adjusting scroll")
 				collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
-				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+				if let indexPaths = collectionView.indexPathsForSelectedItems {
+					if !indexPaths.contains(indexPath) {
+						Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary does not contain selected index path")
+						collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+					}
+				}
 			}
 		}
 	}
@@ -254,21 +253,25 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 			label.sizeToFit()
 		}
 	}
-
+	
 	func reinitializeArticles(resetScroll: Bool) {
-		Self.logger.debug("MainTimelineViewController: reinitializeArticles")
+		Self.logger.debug("MainTimelineModernViewController: reinitializeArticles")
 		resetUI(resetScroll: resetScroll)
 	}
 
 	func reloadArticles(animated: Bool) {
-		Self.logger.debug("MainTimelineViewController: reloadArticles")
+		Self.logger.debug("MainTimelineModernViewController: reloadArticles")
 		applyChanges(animated: animated)
 	}
 
 	func updateArticleSelection(animations: Animations) {
-		Self.logger.debug("MainTimelineViewController: updateArticleSelection")
-
-		if let article = currentArticle, let indexPath = dataSource.indexPath(for: article) {
+		Self.logger.debug("MainTimelineModernViewController: updateArticleSelection")
+		
+		if let article = currentArticle,
+		   let indexPath = dataSource.indexPath(for: article), let indexPaths = collectionView.indexPathsForSelectedItems {
+			if indexPaths.contains(indexPath) {
+				return
+			}
 			collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: animations)
 		} else {
 			collectionView.selectItem(at: nil, animated: animations.contains(.select), scrollPosition: .centeredVertically)
@@ -278,7 +281,7 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	}
 
 	func updateUI() {
-		Self.logger.debug("MainTimelineViewController: updateUI")
+		Self.logger.debug("MainTimelineModernViewController: updateUI")
 
 		refreshProgressView?.update()
 		updateToolbar()
@@ -295,7 +298,7 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	}
 
 	func focus() {
-		Self.logger.debug("MainTimelineViewController: focus")
+		Self.logger.debug("MainTimelineModernViewController: focus")
 		becomeFirstResponder()
 	}
 	
@@ -306,6 +309,7 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	}
 
 	@objc private func reloadVisibleCells() {
+		Self.logger.debug("MainTimelineModernViewController: reloadVisibleCells")
 		guard isViewLoaded, view.window != nil else {
 			return
 		}
@@ -316,15 +320,19 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	}
 
 	private func reloadCells(_ articles: [Article]) {
+		Self.logger.debug("MainTimelineModernViewController: reloadCells")
 		guard !articles.isEmpty else {
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(articles)
-		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
-			self?.restoreSelectionIfNecessary(adjustScroll: false)
-		}
+		DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.0, execute: {
+			self.dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+				self?.restoreSelectionIfNecessary(adjustScroll: false)
+			}
+		})
+		
 	}
 	
 	@objc func refreshAccounts(_ sender: Any) {
@@ -416,22 +424,24 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
+        // Get the new view controller using segue.destination.
         // Pass the selected object to the new view controller.
     }
     */
 
-    // MARK: UICollectionViewDataSource
+}
 
-	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+
+// MARK: - UICollectionViewDelegate
+
+extension MainTimelineModernViewController: UICollectionViewDelegate {
+	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		let article = dataSource.itemIdentifier(for: indexPath)
 		coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
-
-    // MARK: UICollectionViewDelegate
 	
-	override func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
+	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
 		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
@@ -488,7 +498,7 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 		})
 	}
 	
-	override func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
 			let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)) else {
 				return nil
@@ -503,7 +513,7 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 	}
 	
 	
-	override func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
+	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
 			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), let _ = view.window else {
 				return nil
@@ -516,36 +526,10 @@ final class MainTimelineCollectionViewController: UICollectionViewController, Un
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
-	
-	
-	
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-    
-    }
-    */
-
 }
 
-
 // MARK: Private API
-private extension MainTimelineCollectionViewController {
+private extension MainTimelineModernViewController {
 	
 	func addNotificationObservers() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -606,7 +590,14 @@ private extension MainTimelineCollectionViewController {
 				NSLocalizedString("Star", comment: "Star")
 
 			let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] _, _, completion in
-				self?.toggleStar(article)
+				/// The call to `toggleStar` is delayed in order to allow
+				/// the swipe animation to complete. Calling `toggleStar` with no
+				/// delay results UICollectionView internal inconsistency: unexpected
+				/// removal of the current swipe occurrence's mask view error.
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.85, execute: {
+					self?.toggleStar(article)
+				})
+				
 				completion(true)
 			}
 
@@ -672,7 +663,6 @@ private extension MainTimelineCollectionViewController {
 			return config
 		}
 		config.leadingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
-			Self.logger.debug("Leading swipe provider called for \(indexPath.row)")
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
 			var actions = [UIContextualAction]()
@@ -683,7 +673,13 @@ private extension MainTimelineCollectionViewController {
 				NSLocalizedString("Mark as Read", comment: "Mark as Read")
 
 			let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] _, _, completion in
-				self?.toggleRead(article)
+				/// The call to `toggleRead` is delayed in order to allow
+				/// the swipe animation to complete. Calling `toggleRead` with no
+				/// delay results UICollectionView internal inconsistency: unexpected
+				/// removal of the current swipe occurrence's mask view error.
+				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.85, execute: {
+					self?.toggleRead(article)
+				})
 				completion(true)
 			}
 
@@ -692,7 +688,7 @@ private extension MainTimelineCollectionViewController {
 			actions.append(readAction)
 			
 			let config = UISwipeActionsConfiguration(actions: actions)
-			config.performsFirstActionWithFullSwipe = false
+			config.performsFirstActionWithFullSwipe = true
 			return config
 		}
 		
@@ -702,7 +698,7 @@ private extension MainTimelineCollectionViewController {
 		
 		let layout = UICollectionViewCompositionalLayout.list(using: config)
 		layout.configuration.contentInsetsReference = .safeArea
-        collectionView.collectionViewLayout = layout
+		collectionView.collectionViewLayout = layout
 	}
 	
 	private func makeDataSource() -> UICollectionViewDiffableDataSource<Int, Article> {
@@ -725,7 +721,7 @@ private extension MainTimelineCollectionViewController {
 						cell.cellData = cellData
 						return cell
 					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: standardCellIdentifier, for: indexPath) as! MainTimelineCollectionViewCell  
+						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: standardCellIdentifier, for: indexPath) as! MainTimelineCollectionViewCell
 						cell.cellData = cellData
 						return cell
 					}
@@ -808,6 +804,7 @@ private extension MainTimelineCollectionViewController {
 	}
 
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
+		Self.logger.debug("MainTimelineModernViewController: applyChanges")
 		var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(articles ?? ArticleArray(), toSection: 0)
@@ -824,17 +821,15 @@ private extension MainTimelineCollectionViewController {
 
 }
 
-
-
 // MARK: - Notifications API
-private extension MainTimelineCollectionViewController {
+private extension MainTimelineModernViewController {
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
-		Self.logger.debug("MainTimelineViewController: unreadCountDidChange")
+		Self.logger.debug("MainTimelineModernViewController: unreadCountDidChange")
 		updateUI()
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: statusesDidChange")
+		Self.logger.debug("MainTimelineModernViewController: statusesDidChange")
 
 		guard isViewLoaded, view.window != nil else {
 			return
@@ -853,7 +848,7 @@ private extension MainTimelineCollectionViewController {
 	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: feedIconDidBecomeAvailable")
+		Self.logger.debug("MainTimelineModernViewController: feedIconDidBecomeAvailable")
 
 		guard isViewLoaded, view.window != nil else {
 			return
@@ -866,7 +861,7 @@ private extension MainTimelineCollectionViewController {
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: avatarDidBecomeAvailable")
+		Self.logger.debug("MainTimelineModernViewController: avatarDidBecomeAvailable")
 
 		guard isViewLoaded, view.window != nil else {
 			return
@@ -893,7 +888,7 @@ private extension MainTimelineCollectionViewController {
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: faviconDidBecomeAvailable")
+		Self.logger.debug("MainTimelineModernViewController: faviconDidBecomeAvailable")
 
 		guard isViewLoaded, view.window != nil else {
 			return
@@ -925,7 +920,7 @@ private extension MainTimelineCollectionViewController {
 	}
 
 	func userDefaultsDidChange() {
-		Self.logger.debug("MainTimelineViewController: userDefaultsDidChange")
+		Self.logger.debug("MainTimelineModernViewController: userDefaultsDidChange")
 
 		if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
 			self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
@@ -936,29 +931,28 @@ private extension MainTimelineCollectionViewController {
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: contentSizeCategoryDidChange")
+		Self.logger.debug("MainTimelineModernViewController: contentSizeCategoryDidChange")
 		reloadVisibleCells()
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: displayNameDidChange")
+		Self.logger.debug("MainTimelineModernViewController: displayNameDidChange")
 		updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
 	}
 
 	@objc func willEnterForeground(_ note: Notification) {
-		Self.logger.debug("MainTimelineViewController: willEnterForeground")
+		Self.logger.debug("MainTimelineModernViewController: willEnterForeground")
 		updateUI()
 	}
 
 	@objc func scrollPositionDidChange() {
-		Self.logger.debug("MainTimelineViewController: scrollPositionDidChange")
+		Self.logger.debug("MainTimelineModernViewController: scrollPositionDidChange")
 		timelineMiddleIndexPath = collectionView.middleVisibleRow()
 	}
 
 }
 
-
-extension MainTimelineCollectionViewController: UISearchControllerDelegate {
+extension MainTimelineModernViewController: UISearchControllerDelegate {
 
 	func willPresentSearchController(_ searchController: UISearchController) {
 		coordinator?.beginSearching()
@@ -973,7 +967,7 @@ extension MainTimelineCollectionViewController: UISearchControllerDelegate {
 
 }
 
-extension MainTimelineCollectionViewController: UISearchResultsUpdating {
+extension MainTimelineModernViewController: UISearchResultsUpdating {
 
 	func updateSearchResults(for searchController: UISearchController) {
 		let searchScope = SearchScope(rawValue: searchController.searchBar.selectedScopeButtonIndex)!
@@ -982,7 +976,7 @@ extension MainTimelineCollectionViewController: UISearchResultsUpdating {
 
 }
 
-extension MainTimelineCollectionViewController: UISearchBarDelegate {
+extension MainTimelineModernViewController: UISearchBarDelegate {
 	func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
 		let searchScope = SearchScope(rawValue: selectedScope)!
 		searchArticles(searchBar.text!, searchScope)
@@ -990,7 +984,7 @@ extension MainTimelineCollectionViewController: UISearchBarDelegate {
 }
 
 // MARK: Article Actions
-extension MainTimelineCollectionViewController {
+extension MainTimelineModernViewController {
 	func toggleRead(_ article: Article) {
 		assert(coordinator != nil)
 		coordinator?.toggleRead(article)
