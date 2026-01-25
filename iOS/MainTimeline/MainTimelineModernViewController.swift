@@ -19,7 +19,7 @@ let standardCellIdentifierIndex0 = "MainTimelineCellIndexZero"
 let standardCellIdentifierIcon = "MainTimelineCellIcon"
 let standardCellIdentifierIconIndex0 = "MainTimelineCellIconIndexZero"
 
-class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
+final class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
 
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
