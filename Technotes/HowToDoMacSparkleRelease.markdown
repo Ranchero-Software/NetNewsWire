@@ -25,6 +25,8 @@ Smoke test
 On main: update Technotes/Status.md
 commit
 
+git push
+
 Tag the app:
 git tag mac-6.1.5b4
 
@@ -48,7 +50,7 @@ Update Appcast on main branch
 	Update file size - length
 
 Run xmllint on appcast
-	xmllint --noout netnewswire-beta.xml
+xmllint --noout ~/Projects/nnw/main/Appcasts/netnewswire-beta.xml
 
 Upload appcast
 Commit and push git change
