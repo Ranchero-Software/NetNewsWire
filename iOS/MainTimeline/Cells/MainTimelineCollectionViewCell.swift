@@ -25,6 +25,9 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	
 	var isPreview: Bool = false
 	
+	private var rangeOfTitle: NSRange?
+	private var rangeOfSummary: NSRange?
+	
 	private static let indicatorAnimationDuration = 0.25
 	
 	override func awakeFromNib() {
@@ -38,6 +41,12 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
+	}
+	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		rangeOfTitle = nil
+		rangeOfSummary = nil
 	}
 	
 	private func configure(_ cellData: MainTimelineCellData) {
@@ -146,16 +155,23 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			]
 			
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
+            let titleLength = titleAttributed.length
+            let tentativeTitleRange = NSRange(location: 0, length: titleLength)
+            rangeOfTitle = tentativeTitleRange
+			
 			let linesUsed = countLines(of: titleAttributed, width: articleContent.bounds.width)
 			// 2. Measure Title Height
 			if linesUsed >= cellData.numberOfLines {
-				// The title already fills 3 lines, set it and exit
+				// The title already fills the available lines, set it and exit
 				articleContent.attributedText = titleAttributed
 				articleContent.lineBreakMode = .byTruncatingTail
+				// Title occupies the whole label content in this path
+				rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
 				return
 			}
 			
 			attributedCellText.append(titleAttributed)
+            rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
 		}
 		
 		// 3. Prepare Summary (Only reached if Title < 3 lines)
@@ -179,6 +195,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			
 			let prefix = cellData.title != "" ? "\n" : ""
 			let summaryAttributed = NSAttributedString(string: prefix + cellData.summary, attributes: summaryAttributes)
+            let currentLength = attributedCellText.length
+            let start = currentLength
+            let length = summaryAttributed.length
+            rangeOfSummary = NSRange(location: start, length: length)
+            
 			attributedCellText.append(summaryAttributed)
 		}
 		
@@ -196,24 +217,43 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 	
 	func adjustArticleContentColor() {
-		if configurationState.isSwiped && configurationState.isSelected {
-			articleContent.textColor = .white
-			articleByLine.textColor = .white
-			articleDate.textColor = .white
-		} else if configurationState.isSwiped && !configurationState.isSelected {
-			addArticleContent(configurationState)
-			articleByLine.textColor = .secondaryLabel
-			articleDate.textColor = .secondaryLabel
-		} else if !configurationState.isSwiped && configurationState.isSelected {
-			articleContent.textColor = .white
-			articleByLine.textColor = .white
-			articleDate.textColor = .white
-		} else {
-			addArticleContent(configurationState)
-			articleByLine.textColor = .secondaryLabel
-			articleDate.textColor = .secondaryLabel
+    // Helper to recolor the title range to .label while preserving other attributes
+		func applyTitleColour() {
+			guard let titleRange = rangeOfTitle, titleRange.location != NSNotFound, titleRange.length > 0 else { return }
+			guard let current = articleContent.attributedText else { return }
+			let mutable = NSMutableAttributedString(attributedString: current)
+			mutable.addAttribute(.foregroundColor, value: UIColor.label, range: titleRange)
+			articleContent.attributedText = mutable
 		}
-	}
+		func applySummaryColour() {
+			guard let summaryRange = rangeOfSummary, summaryRange.location != NSNotFound, summaryRange.length > 0 else { return }
+			guard let current = articleContent.attributedText else { return }
+			let mutable = NSMutableAttributedString(attributedString: current)
+			mutable.addAttribute(.foregroundColor, value: cellData.title == "" ? UIColor.label : UIColor.secondaryLabel, range: summaryRange)
+			articleContent.attributedText = mutable
+		}
+	
+
+    if configurationState.isSwiped && configurationState.isSelected {
+        articleContent.textColor = .white
+        articleByLine.textColor = .white
+        articleDate.textColor = .white
+    } else if configurationState.isSwiped && !configurationState.isSelected {
+        applyTitleColour()
+		applySummaryColour()
+        articleByLine.textColor = .secondaryLabel
+        articleDate.textColor = .secondaryLabel
+    } else if !configurationState.isSwiped && configurationState.isSelected {
+        articleContent.textColor = .white
+        articleByLine.textColor = .white
+        articleDate.textColor = .white
+    } else {
+		applyTitleColour()
+		applySummaryColour()
+        articleByLine.textColor = .secondaryLabel
+        articleDate.textColor = .secondaryLabel
+    }
+}
 	
 	func countLines(of attributedString: NSAttributedString, width: CGFloat) -> Int {
 		let textStorage = NSTextStorage(attributedString: attributedString)
