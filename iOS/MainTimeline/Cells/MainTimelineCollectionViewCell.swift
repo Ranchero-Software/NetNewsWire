@@ -99,12 +99,6 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		}
 	}
 	
-	private func isActive(_ state: UICellConfigurationState) -> Bool {
-		let active = state.isSwiped || state.isSelected || state.isEditing || state.isHighlighted
-		return active
-	}
-	
-	
 	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
 		if feedIcon != nil {
 			updateIconViewSizeConstraints(to: size.size)
@@ -146,7 +140,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: titleFont,
 				.paragraphStyle: paragraphStyle,
-				.foregroundColor: titleTextColor(for: state)
+				.foregroundColor: UIColor.label
 			]
 			
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
@@ -178,7 +172,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			let summaryAttributes: [NSAttributedString.Key: Any] = [
 				.font: summaryFont,
 				.paragraphStyle: paragraphStyle,
-				.foregroundColor: titleTextColor(for: state)
+				.foregroundColor: cellData.title != "" ? UIColor.secondaryLabel : UIColor.label
 			]
 			
 			let prefix = cellData.title != "" ? "\n" : ""
@@ -199,15 +193,23 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 	}
 	
-	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		if state.isSwiped && state.isSelected {
-			return .white
-		} else if state.isSwiped && !state.isSelected {
-			return .label
-		} else if !state.isSwiped && state.isSelected {
-			return .white
+	func adjustArticleContentColor() {
+		if configurationState.isSwiped && configurationState.isSelected {
+			articleContent.textColor = .white
+			articleByLine.textColor = .white
+			articleDate.textColor = .white
+		} else if configurationState.isSwiped && !configurationState.isSelected {
+			addArticleContent(configurationState)
+			articleByLine.textColor = .secondaryLabel
+			articleDate.textColor = .secondaryLabel
+		} else if !configurationState.isSwiped && configurationState.isSelected {
+			articleContent.textColor = .white
+			articleByLine.textColor = .white
+			articleDate.textColor = .white
 		} else {
-			return .label
+			addArticleContent(configurationState)
+			articleByLine.textColor = .secondaryLabel
+			articleDate.textColor = .secondaryLabel
 		}
 	}
 	
@@ -247,30 +249,18 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		
 		if state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .lightText
-			articleByLine.textColor = .lightText
 			topSeparator.alpha = 0.0
 		} else if state.isSwiped && !state.isSelected {
 			backgroundConfig.backgroundColor = .secondarySystemFill
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .secondaryLabel
-			articleByLine.textColor = .secondaryLabel
 			topSeparator.alpha = 0.0
 		} else if !state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .lightText
-			articleByLine.textColor = .lightText
 			topSeparator.alpha = 0.0
 		} else {
 			backgroundConfig.backgroundColor = .clear
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .secondaryLabel
-			articleByLine.textColor = .secondaryLabel
 			topSeparator.alpha = 1.0
 		}
-		
+		adjustArticleContentColor()
 		updateIndicatorView(state)
 		
 		self.backgroundConfiguration = backgroundConfig
