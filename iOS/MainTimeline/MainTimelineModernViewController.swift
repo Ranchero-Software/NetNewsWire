@@ -718,8 +718,6 @@ private extension MainTimelineModernViewController {
 			return section
 		}
 		layout.configuration.contentInsetsReference = .safeArea
-		
-		
 		collectionView.collectionViewLayout = layout
 	}
 	
