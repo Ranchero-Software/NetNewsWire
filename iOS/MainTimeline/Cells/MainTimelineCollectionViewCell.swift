@@ -217,7 +217,6 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 	
 	func adjustArticleContentColor() {
-    // Helper to recolor the title range to .label while preserving other attributes
 		func applyTitleColour() {
 			guard let titleRange = rangeOfTitle, titleRange.location != NSNotFound, titleRange.length > 0 else { return }
 			guard let current = articleContent.attributedText else { return }
@@ -232,7 +231,6 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			mutable.addAttribute(.foregroundColor, value: cellData.title == "" ? UIColor.label : UIColor.secondaryLabel, range: summaryRange)
 			articleContent.attributedText = mutable
 		}
-	
 
     if configurationState.isSwiped && configurationState.isSelected {
         articleContent.textColor = .white
