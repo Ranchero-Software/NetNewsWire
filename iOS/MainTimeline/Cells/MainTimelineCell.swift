@@ -24,6 +24,8 @@ final class MainTimelineCell: UITableViewCell {
 	
 	var isPreview: Bool = false
 	
+	private static let indicatorAnimationDuration = 0.25
+	
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
@@ -61,7 +63,7 @@ final class MainTimelineCell: UITableViewCell {
 			if indicatorView.alpha == 0.0 {
 				indicatorView.alpha = 1.0
 			}
-			UIView.animate(withDuration: 0.25) {
+			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
 				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
 				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.secondaryAccent
 			}
@@ -71,14 +73,14 @@ final class MainTimelineCell: UITableViewCell {
 			if indicatorView.alpha == 0.0 {
 				indicatorView.alpha = 1.0
 			}
-			UIView.animate(withDuration: 0.25) {
+			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
 				self.indicatorView.iconImage = Assets.Images.starredFeed
 				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.star
 			}
 			return
 		}
 		else if indicatorView.alpha == 1.0 {
-			UIView.animate(withDuration: 0.25) {
+			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
 				self.indicatorView.alpha = 0.0
 				self.indicatorView.iconImage = nil
 			}
