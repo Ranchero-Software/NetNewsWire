@@ -512,7 +512,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
-			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), let _ = view.window else {
+			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), view.window != nil else {
 			return nil
 		}
 
