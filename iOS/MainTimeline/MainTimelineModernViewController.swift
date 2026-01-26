@@ -701,8 +701,25 @@ private extension MainTimelineModernViewController {
 		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		collectionView.contentInsetAdjustmentBehavior = .automatic
 		
-		let layout = UICollectionViewCompositionalLayout.list(using: config)
+		let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+			let listConfig = config
+			
+			let section = NSCollectionLayoutSection.list(using: listConfig, layoutEnvironment: layoutEnvironment)
+			
+			/// Note to future self: apply insets that affect cell width
+			/// calculations (leading swipe actions with sidebar visible)
+			section.contentInsets = NSDirectionalEdgeInsets(
+				top: 0,
+				leading: self.view.safeAreaInsets.left, // Sidebar width
+				bottom: 0,
+				trailing: 0
+			)
+			
+			return section
+		}
 		layout.configuration.contentInsetsReference = .safeArea
+		
+		
 		collectionView.collectionViewLayout = layout
 	}
 	
