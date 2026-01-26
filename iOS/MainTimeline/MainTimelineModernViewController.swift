@@ -226,11 +226,10 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary selecting item and adjusting scroll")
 				collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
-				if let indexPaths = collectionView.indexPathsForSelectedItems {
-					if !indexPaths.contains(indexPath) {
-						Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary does not contain selected index path")
-						collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
-					}
+				let indexPaths = collectionView.indexPathsForSelectedItems ?? []
+				if !indexPaths.contains(indexPath) {
+					Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary does not contain selected index path")
+					collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
 				}
 			}
 		}
@@ -256,6 +255,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	func reinitializeArticles(resetScroll: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: reinitializeArticles")
 		resetUI(resetScroll: resetScroll)
+		restoreSelectionIfNecessary(adjustScroll: false)
 	}
 
 	func reloadArticles(animated: Bool) {
