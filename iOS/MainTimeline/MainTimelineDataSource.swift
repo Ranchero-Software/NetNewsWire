@@ -15,11 +15,10 @@ final class MainTimelineDataSource<SectionIdentifierType, ItemIdentifierType>: U
 	}
 }
 
-
 final class MainTimelineCollectionViewDataSource<SectionIdentifierType, ItemIdentifierType>: UICollectionViewDiffableDataSource<SectionIdentifierType, ItemIdentifierType> where SectionIdentifierType: Hashable, ItemIdentifierType: Hashable {
-	
+
 	override func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
 		false
 	}
-	
+
 }

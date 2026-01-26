@@ -14,9 +14,8 @@ import RSWeb
 import Account
 import Articles
 
-
 final class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
-	
+
 	struct CellIdentifier {
 		static let standard = "MainTimelineCellStandard"
 		static let standardIndex0 = "MainTimelineCellIndexZero"
@@ -32,7 +31,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
 	private lazy var dataSource = makeDataSource()
-	
+
 	private var timelineFeed: SidebarItem? {
 		assert(coordinator != nil)
 		return coordinator?.timelineFeed
@@ -94,7 +93,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		assert(coordinator != nil)
 		return coordinator?.articles
 	}
-	
+
 	private lazy var navigationBarTitleLabel: UILabel = {
 		let label = UILabel()
 		label.font = UIFont.preferredFont(forTextStyle: .subheadline).bold()
@@ -121,7 +120,6 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		return label
 	}()
 
-	
 	// MARK: Variables
 	weak var coordinator: SceneCoordinator?
 	var undoableCommands = [UndoableCommand]()
@@ -136,29 +134,27 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	override var canBecomeFirstResponder: Bool {
 		true
 	}
-	
+
 	// MARK: Private Constants
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineModernViewController")
-	
+
 	// MARK: Constants
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
-	
+
 	// MARK: - IBOutlets
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
 	@IBOutlet var collectionView: UICollectionView!
-	
-	
+
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+
 		addNotificationObservers()
 		configureCollectionView()
 		configureSearchController()
 		definesPresentationContext = true
 
-		
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 
@@ -187,7 +183,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
         // Do any additional setup after loading the view.
     }
-	
+
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: viewWillAppear")
 
@@ -256,7 +252,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			label.sizeToFit()
 		}
 	}
-	
+
 	func reinitializeArticles(resetScroll: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: reinitializeArticles")
 		resetUI(resetScroll: resetScroll)
@@ -269,7 +265,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	func updateArticleSelection(animations: Animations) {
 		Self.logger.debug("MainTimelineModernViewController: updateArticleSelection")
-		
+
 		if let article = currentArticle,
 		   let indexPath = dataSource.indexPath(for: article), let indexPaths = collectionView.indexPathsForSelectedItems {
 			if indexPaths.contains(indexPath) {
@@ -304,7 +300,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		Self.logger.debug("MainTimelineModernViewController: focus")
 		becomeFirstResponder()
 	}
-	
+
 	// MARK: - Reloading
 
 	func queueReloadAvailableCells() {
@@ -335,9 +331,9 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				self?.restoreSelectionIfNecessary(adjustScroll: false)
 			}
 		})
-		
+
 	}
-	
+
 	@objc func refreshAccounts(_ sender: Any) {
 		collectionView.refreshControl?.endRefreshing()
 
@@ -347,7 +343,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
 		}
 	}
-	
+
 	// MARK: - Keyboard shortcuts
 
 	@objc func selectNextUp(_ sender: Any?) {
@@ -374,7 +370,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		assert(coordinator != nil)
 		coordinator?.showFeedInspector()
 	}
-	
+
 	// MARK: - IBActions
 
 	@objc func openInBrowser(_ sender: Any?) {
@@ -434,7 +430,6 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 }
 
-
 // MARK: - UICollectionViewDelegate
 
 extension MainTimelineModernViewController: UICollectionViewDelegate {
@@ -443,16 +438,16 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		let article = dataSource.itemIdentifier(for: indexPath)
 		coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
 	}
-	
+
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
-		
+
 		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
-			
+
 			guard let self = self else { return nil }
-			
+
 			var menuElements = [UIMenuElement]()
-			
+
 			var markActions = [UIAction]()
 			if let action = self.toggleArticleReadStatusAction(article) {
 				markActions.append(action)
@@ -465,7 +460,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 				markActions.append(action)
 			}
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: markActions))
-			
+
 			var secondaryActions = [UIAction]()
 			if let action = self.discloseFeedAction(article) {
 				secondaryActions.append(action)
@@ -476,7 +471,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 			if !secondaryActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: secondaryActions))
 			}
-			
+
 			var copyActions = [UIAction]()
 			if let action = self.copyArticleURLAction(article) {
 				copyActions.append(action)
@@ -487,26 +482,26 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 			if !copyActions.isEmpty {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: copyActions))
 			}
-			
+
 			if let action = self.openInBrowserAction(article) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
-			
+
 			if let action = self.shareAction(article, indexPath: firstIndex) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [action]))
 			}
-			
+
 			return UIMenu(title: "", children: menuElements)
-			
+
 		})
 	}
-	
+
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
 			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)) else {
 			return nil
 		}
-		
+
 		let previewView = cell.contentView
 		let parameters = UIPreviewParameters()
 		parameters.backgroundColor = .tertiarySystemBackground
@@ -514,14 +509,13 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
-	
-	
+
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
 			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), let _ = view.window else {
 			return nil
 		}
-		
+
 		let previewView = cell.contentView
 		let parameters = UIPreviewParameters()
 		parameters.backgroundColor = .clear
@@ -529,13 +523,12 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
-	
-	
+
 }
 
 // MARK: Private API
 private extension MainTimelineModernViewController {
-	
+
 	func addNotificationObservers() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
@@ -558,7 +551,7 @@ private extension MainTimelineModernViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 	}
-	
+
 	private func configureSearchController() {
 		// Setup the Search Controller
 		searchController.delegate = self
@@ -574,13 +567,13 @@ private extension MainTimelineModernViewController {
 		searchController.searchBar.scopeBarBackgroundImage = UIImage()
 		searchController.searchBar.autocapitalizationType = .none
 		navigationItem.searchController = searchController
-		
+
 		if traitCollection.userInterfaceIdiom == .pad {
 			searchController.searchBar.selectedScopeButtonIndex = 1
 			navigationItem.searchBarPlacementAllowsExternalIntegration = true
 		}
 	}
-	
+
 	private func configureCollectionView() {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
 		config.showsSeparators = false
@@ -588,7 +581,7 @@ private extension MainTimelineModernViewController {
 		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			var actions = [UIContextualAction]()
-			
+
 			// Set up the star action
 			let starTitle = article.status.starred ?
 				NSLocalizedString("Unstar", comment: "Unstar") :
@@ -602,7 +595,7 @@ private extension MainTimelineModernViewController {
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.85, execute: {
 					self?.toggleStar(article)
 				})
-				
+
 				completion(true)
 			}
 
@@ -658,7 +651,7 @@ private extension MainTimelineModernViewController {
 
 			moreAction.image = Assets.Images.more
 			moreAction.backgroundColor = UIColor.systemGray
-			
+
 			actions.append(starAction)
 			actions.append(moreAction)
 
@@ -671,7 +664,7 @@ private extension MainTimelineModernViewController {
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
 			var actions = [UIContextualAction]()
-			
+
 			// Set up the read action
 			let readTitle = article.status.read ?
 				NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
@@ -691,21 +684,21 @@ private extension MainTimelineModernViewController {
 			readAction.image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 			readAction.backgroundColor = Assets.Colors.primaryAccent
 			actions.append(readAction)
-			
+
 			let config = UISwipeActionsConfiguration(actions: actions)
 			config.performsFirstActionWithFullSwipe = true
 			return config
 		}
-		
+
 		collectionView.refreshControl = UIRefreshControl()
 		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 		collectionView.contentInsetAdjustmentBehavior = .automatic
-		
-		let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+
+		let layout = UICollectionViewCompositionalLayout { _, layoutEnvironment in
 			let listConfig = config
-			
+
 			let section = NSCollectionLayoutSection.list(using: listConfig, layoutEnvironment: layoutEnvironment)
-			
+
 			/// Note to future self: apply insets that affect cell width
 			/// calculations (leading swipe actions with sidebar visible)
 			section.contentInsets = NSDirectionalEdgeInsets(
@@ -714,13 +707,13 @@ private extension MainTimelineModernViewController {
 				bottom: 0,
 				trailing: 0
 			)
-			
+
 			return section
 		}
 		layout.configuration.contentInsetsReference = .safeArea
 		collectionView.collectionViewLayout = layout
 	}
-	
+
 	private func makeDataSource() -> UICollectionViewDiffableDataSource<Int, Article> {
 		let dataSource: UICollectionViewDiffableDataSource<Int, Article> =
 			MainTimelineCollectionViewDataSource(collectionView: collectionView, cellProvider: { [weak self] collectionView, indexPath, article in
@@ -747,10 +740,10 @@ private extension MainTimelineModernViewController {
 					}
 				}
 			})
-		
+
 		return dataSource
 	}
-	
+
 	@discardableResult
 	private func configure(article: Article) -> MainTimelineCellData {
 		let iconImage = iconImageFor(article)
@@ -759,14 +752,14 @@ private extension MainTimelineModernViewController {
 		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize)
 		return cellData
 	}
-	
+
 	private func iconImageFor(_ article: Article) -> IconImage? {
 		if !showIcons {
 			return nil
 		}
 		return article.iconImage()
 	}
-	
+
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
 		assert(coordinator != nil)
 		coordinator?.searchArticles(searchString, searchScope)
@@ -798,7 +791,7 @@ private extension MainTimelineModernViewController {
 		if resetScroll {
 			let snapshot = dataSource.snapshot()
 			if snapshot.sectionIdentifiers.count > 0 && snapshot.itemIdentifiers(inSection: 0).count > 0 {
-				//collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
+				// collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
 			}
 		}
 
@@ -834,10 +827,6 @@ private extension MainTimelineModernViewController {
 			completion?()
 		}
 	}
-	
-	
-
-	
 
 }
 
@@ -916,7 +905,7 @@ private extension MainTimelineModernViewController {
 
 		updateIconForVisibleArticles()
 	}
-	
+
 	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
 	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
 		guard isViewLoaded, view.window != nil else {
@@ -1297,4 +1286,3 @@ extension MainTimelineModernViewController {
 		return action
 	}
 }
-
