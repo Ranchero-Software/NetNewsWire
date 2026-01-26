@@ -25,6 +25,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	
 	var isPreview: Bool = false
 	
+	private var rangeOfTitle: NSRange?
+	private var rangeOfSummary: NSRange?
+	
+	private static let indicatorAnimationDuration = 0.25
+	
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
@@ -36,6 +41,12 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	
 	override func layoutSubviews() {
 		super.layoutSubviews()
+	}
+	
+	override func prepareForReuse() {
+		super.prepareForReuse()
+		rangeOfTitle = nil
+		rangeOfSummary = nil
 	}
 	
 	private func configure(_ cellData: MainTimelineCellData) {
@@ -62,7 +73,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			if indicatorView.alpha == 0.0 {
 				indicatorView.alpha = 1.0
 			}
-			UIView.animate(withDuration: 0.25) {
+			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
 				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
 				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.secondaryAccent
 			}
@@ -72,14 +83,14 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			if indicatorView.alpha == 0.0 {
 				indicatorView.alpha = 1.0
 			}
-			UIView.animate(withDuration: 0.25) {
+			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
 				self.indicatorView.iconImage = Assets.Images.starredFeed
 				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.star
 			}
 			return
 		}
 		else if indicatorView.alpha == 1.0 {
-			UIView.animate(withDuration: 0.25) {
+			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
 				self.indicatorView.alpha = 0.0
 				self.indicatorView.iconImage = nil
 			}
@@ -98,12 +109,6 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			metaDataStackView.distribution = .fillEqually
 		}
 	}
-	
-	private func isActive(_ state: UICellConfigurationState) -> Bool {
-		let active = state.isSwiped || state.isSelected || state.isEditing || state.isHighlighted
-		return active
-	}
-	
 	
 	private func setIconImage(_ iconImage: IconImage?, with size: IconSize) {
 		if feedIcon != nil {
@@ -146,20 +151,27 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: titleFont,
 				.paragraphStyle: paragraphStyle,
-				.foregroundColor: titleTextColor(for: state)
+				.foregroundColor: UIColor.label
 			]
 			
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
+            let titleLength = titleAttributed.length
+            let tentativeTitleRange = NSRange(location: 0, length: titleLength)
+            rangeOfTitle = tentativeTitleRange
+			
 			let linesUsed = countLines(of: titleAttributed, width: articleContent.bounds.width)
 			// 2. Measure Title Height
 			if linesUsed >= cellData.numberOfLines {
-				// The title already fills 3 lines, set it and exit
+				// The title already fills the available lines, set it and exit
 				articleContent.attributedText = titleAttributed
 				articleContent.lineBreakMode = .byTruncatingTail
+				// Title occupies the whole label content in this path
+				rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
 				return
 			}
 			
 			attributedCellText.append(titleAttributed)
+            rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
 		}
 		
 		// 3. Prepare Summary (Only reached if Title < 3 lines)
@@ -178,11 +190,16 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			let summaryAttributes: [NSAttributedString.Key: Any] = [
 				.font: summaryFont,
 				.paragraphStyle: paragraphStyle,
-				.foregroundColor: titleTextColor(for: state)
+				.foregroundColor: cellData.title != "" ? UIColor.secondaryLabel : UIColor.label
 			]
 			
 			let prefix = cellData.title != "" ? "\n" : ""
 			let summaryAttributed = NSAttributedString(string: prefix + cellData.summary, attributes: summaryAttributes)
+            let currentLength = attributedCellText.length
+            let start = currentLength
+            let length = summaryAttributed.length
+            rangeOfSummary = NSRange(location: start, length: length)
+            
 			attributedCellText.append(summaryAttributed)
 		}
 		
@@ -199,17 +216,42 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 	}
 	
-	func titleTextColor(for state: UICellConfigurationState) -> UIColor {
-		if state.isSwiped && state.isSelected {
-			return .white
-		} else if state.isSwiped && !state.isSelected {
-			return .label
-		} else if !state.isSwiped && state.isSelected {
-			return .white
-		} else {
-			return .label
+	func adjustArticleContentColor() {
+		func applyTitleColour() {
+			guard let titleRange = rangeOfTitle, titleRange.location != NSNotFound, titleRange.length > 0 else { return }
+			guard let current = articleContent.attributedText else { return }
+			let mutable = NSMutableAttributedString(attributedString: current)
+			mutable.addAttribute(.foregroundColor, value: UIColor.label, range: titleRange)
+			articleContent.attributedText = mutable
 		}
-	}
+		func applySummaryColour() {
+			guard let summaryRange = rangeOfSummary, summaryRange.location != NSNotFound, summaryRange.length > 0 else { return }
+			guard let current = articleContent.attributedText else { return }
+			let mutable = NSMutableAttributedString(attributedString: current)
+			mutable.addAttribute(.foregroundColor, value: cellData.title == "" ? UIColor.label : UIColor.secondaryLabel, range: summaryRange)
+			articleContent.attributedText = mutable
+		}
+
+    if configurationState.isSwiped && configurationState.isSelected {
+        articleContent.textColor = .white
+        articleByLine.textColor = .white
+        articleDate.textColor = .white
+    } else if configurationState.isSwiped && !configurationState.isSelected {
+        applyTitleColour()
+		applySummaryColour()
+        articleByLine.textColor = .secondaryLabel
+        articleDate.textColor = .secondaryLabel
+    } else if !configurationState.isSwiped && configurationState.isSelected {
+        articleContent.textColor = .white
+        articleByLine.textColor = .white
+        articleDate.textColor = .white
+    } else {
+		applyTitleColour()
+		applySummaryColour()
+        articleByLine.textColor = .secondaryLabel
+        articleDate.textColor = .secondaryLabel
+    }
+}
 	
 	func countLines(of attributedString: NSAttributedString, width: CGFloat) -> Int {
 		let textStorage = NSTextStorage(attributedString: attributedString)
@@ -247,30 +289,18 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		
 		if state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .lightText
-			articleByLine.textColor = .lightText
 			topSeparator.alpha = 0.0
 		} else if state.isSwiped && !state.isSelected {
 			backgroundConfig.backgroundColor = .secondarySystemFill
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .secondaryLabel
-			articleByLine.textColor = .secondaryLabel
 			topSeparator.alpha = 0.0
 		} else if !state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .lightText
-			articleByLine.textColor = .lightText
 			topSeparator.alpha = 0.0
 		} else {
 			backgroundConfig.backgroundColor = .clear
-			articleContent.textColor = titleTextColor(for: state)
-			articleDate.textColor = .secondaryLabel
-			articleByLine.textColor = .secondaryLabel
 			topSeparator.alpha = 1.0
 		}
-		
+		adjustArticleContentColor()
 		updateIndicatorView(state)
 		
 		self.backgroundConfiguration = backgroundConfig
