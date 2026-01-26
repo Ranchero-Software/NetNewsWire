@@ -1,6 +1,6 @@
 // High Level Settings common to both the iOS application and any extensions we bundle with it
 MARKETING_VERSION = 7.0
-CURRENT_PROJECT_VERSION = 7012
+CURRENT_PROJECT_VERSION = 7014
 
 APP_GROUP_ID = group.$(ORGANIZATION_IDENTIFIER).NetNewsWire.iOS$(APP_GROUP_SUFFIX)
 
