@@ -816,7 +816,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		if let article = self.currentArticle, let account = article.account {
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
 		}
-		fetchAndReplaceArticlesAsync(animated: true) {
+		fetchAndReplaceArticlesAsync(animated: true, emptyFirst: false) {
 			self.mainTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
 		}
 	}
@@ -2081,12 +2081,17 @@ private extension SceneCoordinator {
 		if articles != sortedArticles {
 			articles = sortedArticles
 
-			// Clear current article if it's no longer in the timeline.
+			// Update currentArticle to the new instance if it's still in the timeline,
+			// or clear it if it's no longer there.
 			// Don't call selectArticle(nil) because that triggers navigation on iPhone.
 			// Skip during state restoration so the restored article stays open.
-			if !isRestoringState, let currentArticle, !sortedArticles.contains(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
-				self.currentArticle = nil
-				articleViewController?.article = nil
+			if !isRestoringState, let currentArticle {
+				if let newArticle = sortedArticles.first(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
+					self.currentArticle = newArticle
+				} else {
+					self.currentArticle = nil
+					articleViewController?.article = nil
+				}
 			}
 
 			updateShowNamesAndIcons()
@@ -2139,11 +2144,13 @@ private extension SceneCoordinator {
 		fetchRequestQueue.cancelAllRequests()
 	}
 
-	func fetchAndReplaceArticlesAsync(animated: Bool, completion: @escaping () -> Void) {
+	func fetchAndReplaceArticlesAsync(animated: Bool, emptyFirst: Bool = true, completion: @escaping () -> Void) {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
-		emptyTheTimeline()
+		if emptyFirst {
+			emptyTheTimeline()
+		}
 		guard let timelineFeed = timelineFeed else {
 			completion()
 			return
