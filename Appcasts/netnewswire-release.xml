@@ -7,6 +7,22 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0</title>
+            <description><![CDATA[
+				Changes since 6.2.1:
+				<ul>
+					<li>Adopted Liquid Glass UI
+					<li>Improved window state restoration when sidebar is collapsed
+					<li>Added custom About window
+					<li>Changed link in the Help menu from Slack to Discourse
+				</ul>
+			]]></description>
+        	<pubDate>Mon, 26 Jan 2026 21:15:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0/NetNewsWire7.0.zip" sparkle:version="7015" sparkle:shortVersionString="7.0" length="10356608" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 6.2.1</title>
             <description><![CDATA[
 				<p>Changes since 6.2:</p>

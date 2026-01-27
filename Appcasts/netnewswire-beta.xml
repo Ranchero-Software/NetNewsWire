@@ -7,6 +7,18 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0</title>
+            <description><![CDATA[
+				<ul>
+					<li>This build is the same as 7.0b6 — except for the version number. This is NetNewsWire 7.0.
+				</ul>
+			]]></description>
+        	<pubDate>Mon, 26 Jan 2026 21:15:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0/NetNewsWire7.0.zip" sparkle:version="7015" sparkle:shortVersionString="7.0" length="10356608" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0b6</title>
             <description><![CDATA[
 				<ul>
