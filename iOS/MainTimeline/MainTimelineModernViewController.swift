@@ -683,7 +683,7 @@ private extension MainTimelineModernViewController {
 			actions.append(moreAction)
 
 			let config = UISwipeActionsConfiguration(actions: actions)
-			config.performsFirstActionWithFullSwipe = false
+			config.performsFirstActionWithFullSwipe = true
 
 			return config
 		}
