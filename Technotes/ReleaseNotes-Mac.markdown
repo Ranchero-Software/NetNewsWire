@@ -1,5 +1,16 @@
 # Mac Release Notes
 
+### 7.0 build 7015 26 Jan 2026 — branch: main tag: mac-7.0
+
+Same as 7.0b6.
+
+User-facing changes since 6.2.1:
+
+Adopted Liquid Glass UI
+Improved window state restoration when sidebar is collapsed
+Added custom About window
+Changed link in the Help menu from Slack to Discourse
+
 ### 7.0b6 build 7013 24 Jan 2026 — branch: main tag: mac-7.0b6
 
 Made the article view content blur when underneath the toolbar. (Technical detail for the curious: WKWebView has a new property `obscuredContentInsets` for this scenario.)
