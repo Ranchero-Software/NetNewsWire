@@ -30,7 +30,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
-	private lazy var dataSource = makeDataSource()
+	private var dataSource: UICollectionViewDiffableDataSource<Int, Article>?
 
 	private var timelineFeed: SidebarItem? {
 		assert(coordinator != nil)
@@ -145,21 +145,28 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	// MARK: - IBOutlets
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
-	@IBOutlet var collectionView: UICollectionView!
+	@IBOutlet var collectionView: UICollectionView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+		assert(collectionView != nil)
+		dataSource = makeDataSource(collectionView!)
+
 		addNotificationObservers()
-		configureCollectionView()
+
+		assert(dataSource != nil)
+		configureCollectionView(dataSource!)
+
 		configureSearchController()
 		definesPresentationContext = true
 
 		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
 		iconSize = AppDefaults.shared.timelineIconSize
 
-		collectionView.refreshControl = UIRefreshControl()
-		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		assert(collectionView?.refreshControl != nil)
+		collectionView?.refreshControl = UIRefreshControl()
+		collectionView?.refreshControl?.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
 
 		configureToolbar()
 		resetUI(resetScroll: true)
@@ -167,7 +174,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		// Load the table and then scroll to the saved position if available
 		applyChanges(animated: false) {
 			if let restoreIndexPath = self.timelineMiddleIndexPath {
-				self.collectionView.scrollToItem(at: restoreIndexPath, at: .centeredVertically, animated: false)
+				self.collectionView?.scrollToItem(at: restoreIndexPath, at: .centeredVertically, animated: false)
 			}
 		}
 
@@ -211,8 +218,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		}
 		if traitCollection.userInterfaceIdiom == .phone {
 			if coordinator?.currentArticle != nil {
-				if let indexPath = collectionView.indexPathsForSelectedItems?.first {
-					collectionView.deselectItem(at: indexPath, animated: true)
+				if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
+					collectionView?.deselectItem(at: indexPath, animated: true)
 				}
 				coordinator?.selectArticle(nil)
 			}
@@ -221,7 +228,10 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary")
-		if let article = currentArticle, let indexPath = dataSource.indexPath(for: article) {
+		guard let collectionView else {
+			return
+		}
+		if let article = currentArticle, let dataSource, let indexPath = dataSource.indexPath(for: article) {
 			if adjustScroll {
 				Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary selecting item and adjusting scroll")
 				collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: [])
@@ -271,6 +281,9 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	func updateArticleSelection(animations: Animations) {
 		Self.logger.debug("MainTimelineModernViewController: updateArticleSelection")
+		guard isViewLoaded, let collectionView, let dataSource else {
+			return
+		}
 
 		if let article = currentArticle,
 		   let indexPath = dataSource.indexPath(for: article), let indexPaths = collectionView.indexPathsForSelectedItems {
@@ -315,7 +328,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	@objc private func reloadVisibleCells() {
 		Self.logger.debug("MainTimelineModernViewController: reloadVisibleCells")
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
 			return
 		}
 		let indexPaths = collectionView.indexPathsForVisibleItems
@@ -326,14 +339,17 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	private func reloadCells(_ articles: [Article]) {
 		Self.logger.debug("MainTimelineModernViewController: reloadCells")
-		guard !articles.isEmpty else {
+		guard !articles.isEmpty, let dataSource else {
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
 		snapshot.reloadItems(articles)
 		DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.0, execute: {
-			self.dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			guard let dataSource = self.dataSource else {
+				return
+			}
+			dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 				self?.restoreSelectionIfNecessary(adjustScroll: false)
 			}
 		})
@@ -341,7 +357,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	}
 
 	@objc func refreshAccounts(_ sender: Any) {
-		collectionView.refreshControl?.endRefreshing()
+		collectionView?.refreshControl?.endRefreshing()
 
 		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
@@ -409,6 +425,9 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		}
 
 		if sender is UIKeyCommand {
+			guard let collectionView else {
+				return
+			}
 			guard let indexPath = collectionView.indexPathsForSelectedItems?.first, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 				return
 			}
@@ -441,12 +460,14 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 extension MainTimelineModernViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
-		let article = dataSource.itemIdentifier(for: indexPath)
-		coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
+		if let dataSource {
+			let article = dataSource.itemIdentifier(for: indexPath)
+			coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
+		}
 	}
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
-		guard let firstIndex = indexPaths.first, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
+		guard let firstIndex = indexPaths.first, let dataSource, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
 		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
 
@@ -580,7 +601,7 @@ private extension MainTimelineModernViewController {
 		}
 	}
 
-	private func configureCollectionView() {
+	private func configureCollectionView(_ dataSource: UICollectionViewDiffableDataSource<Int, Article>) {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
 		config.showsSeparators = false
 		config.headerMode = .none
@@ -696,9 +717,9 @@ private extension MainTimelineModernViewController {
 			return config
 		}
 
-		collectionView.refreshControl = UIRefreshControl()
-		collectionView.refreshControl!.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
-		collectionView.contentInsetAdjustmentBehavior = .automatic
+		collectionView?.refreshControl = UIRefreshControl()
+		collectionView?.refreshControl?.addTarget(self, action: #selector(refreshAccounts(_:)), for: .valueChanged)
+		collectionView?.contentInsetAdjustmentBehavior = .automatic
 
 		let layout = UICollectionViewCompositionalLayout { _, layoutEnvironment in
 			let listConfig = config
@@ -717,10 +738,10 @@ private extension MainTimelineModernViewController {
 			return section
 		}
 		layout.configuration.contentInsetsReference = .safeArea
-		collectionView.collectionViewLayout = layout
+		collectionView?.collectionViewLayout = layout
 	}
 
-	private func makeDataSource() -> UICollectionViewDiffableDataSource<Int, Article> {
+	private func makeDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Int, Article> {
 		let dataSource: UICollectionViewDiffableDataSource<Int, Article> =
 			MainTimelineCollectionViewDataSource(collectionView: collectionView, cellProvider: { [weak self] collectionView, indexPath, article in
 				guard let self else {
@@ -795,12 +816,14 @@ private extension MainTimelineModernViewController {
 			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
-		collectionView.selectItem(at: nil, animated: false, scrollPosition: .top)
+		collectionView?.selectItem(at: nil, animated: false, scrollPosition: .top)
 
 		if resetScroll {
-			let snapshot = dataSource.snapshot()
-			if snapshot.sectionIdentifiers.count > 0 && snapshot.itemIdentifiers(inSection: 0).count > 0 {
-				// collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
+			if let dataSource {
+				let snapshot = dataSource.snapshot()
+				if snapshot.sectionIdentifiers.count > 0 && snapshot.itemIdentifiers(inSection: 0).count > 0 {
+					// collectionView.selectItem(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
+				}
 			}
 		}
 
@@ -827,6 +850,10 @@ private extension MainTimelineModernViewController {
 
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
 		Self.logger.debug("MainTimelineModernViewController: applyChanges")
+		guard let dataSource else {
+			return
+		}
+
 		var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(articles ?? ArticleArray(), toSection: 0)
@@ -849,7 +876,7 @@ private extension MainTimelineModernViewController {
 	@objc func statusesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: statusesDidChange")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
 			return
 		}
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
@@ -881,7 +908,7 @@ private extension MainTimelineModernViewController {
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: avatarDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded, view.window != nil, let collectionView else {
 			return
 		}
 		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
@@ -890,7 +917,8 @@ private extension MainTimelineModernViewController {
 		let indexPaths = collectionView.indexPathsForVisibleItems
 
 		let articlesToReload = indexPaths.compactMap { indexPath -> Article? in
-			guard let article = dataSource.itemIdentifier(for: indexPath),
+			guard let dataSource,
+				  let article = dataSource.itemIdentifier(for: indexPath),
 				  let authors = article.authors,
 				  !authors.isEmpty else {
 				return nil
@@ -917,7 +945,7 @@ private extension MainTimelineModernViewController {
 
 	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
 	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
 			return
 		}
 		guard showIcons else {
@@ -965,7 +993,7 @@ private extension MainTimelineModernViewController {
 
 	@objc func scrollPositionDidChange() {
 		Self.logger.debug("MainTimelineModernViewController: scrollPositionDidChange")
-		timelineMiddleIndexPath = collectionView.middleVisibleRow()
+		timelineMiddleIndexPath = collectionView?.middleVisibleRow()
 	}
 
 }
@@ -1053,7 +1081,7 @@ extension MainTimelineModernViewController {
 	}
 
 	func markAboveAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard canMarkAboveAsRead(for: article), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard canMarkAboveAsRead(for: article), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
@@ -1078,7 +1106,7 @@ extension MainTimelineModernViewController {
 	}
 
 	func markBelowAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard canMarkBelowAsRead(for: article), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard canMarkBelowAsRead(for: article), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
@@ -1093,7 +1121,7 @@ extension MainTimelineModernViewController {
 	}
 
 	func markAboveAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard canMarkAboveAsRead(for: article), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard canMarkAboveAsRead(for: article), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
@@ -1112,7 +1140,7 @@ extension MainTimelineModernViewController {
 	}
 
 	func markBelowAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard canMarkBelowAsRead(for: article), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard canMarkBelowAsRead(for: article), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
@@ -1175,7 +1203,7 @@ extension MainTimelineModernViewController {
 		}
 
 		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard articles.canMarkAllAsRead(), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
@@ -1197,7 +1225,7 @@ extension MainTimelineModernViewController {
 		}
 
 		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard articles.canMarkAllAsRead(), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
@@ -1266,7 +1294,7 @@ extension MainTimelineModernViewController {
 	func shareDialogForTableCell(indexPath: IndexPath, url: URL, title: String?) {
 		let activityViewController = UIActivityViewController(url: url, title: title, applicationActivities: nil)
 
-		guard let cell = collectionView.cellForItem(at: indexPath) else {
+		guard let collectionView, let cell = collectionView.cellForItem(at: indexPath) else {
 			return
 		}
 		let popoverController = activityViewController.popoverPresentationController
