@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7018 26 Jan 2026 - branch: main tag: iOS-7.0-7018
+
+Fix crash bug — take two! — introduced in 7014
+
 ### 7.0 TestFlight build 7016 26 Jan 2026 - branch: main tag: iOS-7.0-7016
 
 Fix crash introduced in the previous build
