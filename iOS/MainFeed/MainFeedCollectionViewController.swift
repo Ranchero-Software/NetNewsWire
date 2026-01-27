@@ -127,6 +127,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	// MARK: - Collection View Configuration
 	func configureCollectionView() {
+		let standardCellLeadingOffSet = 48.0
+		let indentedCellLeadingOffSet = 64.0
 		var config = UICollectionLayoutListConfiguration(appearance: traitCollection.userInterfaceIdiom == .pad ? .sidebar : .insetGrouped)
 		config.separatorConfiguration.color = .tertiarySystemFill
 		config.headerMode = .supplementary
@@ -210,6 +212,24 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			config.performsFirstActionWithFullSwipe = false
 
 			return config
+		}
+		
+		config.itemSeparatorHandler = { (indexPath, sectionSeparatorConfiguration) in
+			var configuration = sectionSeparatorConfiguration
+			configuration.bottomSeparatorVisibility = .hidden
+			configuration.topSeparatorVisibility = indexPath.row == 0 ? .hidden : .visible
+
+			if let cell = self.collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
+				if cell.indentationLevel == 1 {
+					configuration.topSeparatorInsets = NSDirectionalEdgeInsets(top: 0, leading: indentedCellLeadingOffSet, bottom: 0, trailing: 0)
+				} else {
+					configuration.topSeparatorInsets = NSDirectionalEdgeInsets(top: 0, leading: standardCellLeadingOffSet, bottom: 0, trailing: 0)
+				}
+			}
+			if let _ = self.collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
+				configuration.topSeparatorInsets = NSDirectionalEdgeInsets(top: 0, leading: standardCellLeadingOffSet, bottom: 0, trailing: 0)
+			}
+			return configuration
 		}
 
 		let layout = UICollectionViewCompositionalLayout.list(using: config)

@@ -1,5 +1,5 @@
 //
-//  ModernTimelineSliderCell.swift
+//  TimelineCustomizerCell.swift
 //  NetNewsWire-iOS
 //
 //  Created by Stuart Breckenridge on 21/08/2025.
@@ -13,44 +13,9 @@ enum SliderConfiguration {
 	case iconSize
 }
 
-final class ModernTimelineSliderCell: UITableViewCell {
+final class TimelineCustomizerCell: UICollectionViewCell {
 	@IBOutlet var slider: UISlider!
-
-	private let container = UIView()
-
-	override func awakeFromNib() {
-		MainActor.assumeIsolated {
-			super.awakeFromNib()
-			setup()
-		}
-	}
-
-	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-		super.init(style: style, reuseIdentifier: reuseIdentifier)
-		setup()
-	}
-
-	required init?(coder: NSCoder) {
-		super.init(coder: coder)
-		setup()
-	}
-
-	private func setup() {
-		container.layer.cornerRadius = contentView.frame.height/2
-		container.backgroundColor = .systemBackground
-		container.translatesAutoresizingMaskIntoConstraints = false
-		contentView.addSubview(container)
-		contentView.sendSubviewToBack(container)
-
-		NSLayoutConstraint.activate([
-			container.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-			container.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
-			container.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-			container.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
-		])
-		contentView.backgroundColor = .systemGroupedBackground
-	}
-
+	
 	var sliderConfiguration: SliderConfiguration! {
 		didSet {
 			switch sliderConfiguration {
@@ -69,7 +34,7 @@ final class ModernTimelineSliderCell: UITableViewCell {
 			}
 		}
 	}
-
+	
 	@IBAction func sliderValueChanges(_ sender: Any) {
 		switch sliderConfiguration {
 		case .numberOfLines:
@@ -81,5 +46,12 @@ final class ModernTimelineSliderCell: UITableViewCell {
 			return
 		}
 	}
-
+	
+	override func updateConfiguration(using state: UICellConfigurationState) {
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+		backgroundConfig.backgroundColor = traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
+		backgroundConfig.cornerRadius = 20
+		self.backgroundConfiguration = backgroundConfig
+	}
+	
 }
