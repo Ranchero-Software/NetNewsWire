@@ -49,7 +49,7 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 	
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		backgroundConfig.backgroundColor = .secondarySystemBackground
+		backgroundConfig.backgroundColor = traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
 		backgroundConfig.cornerRadius = 20
 		self.backgroundConfiguration = backgroundConfig
 	}

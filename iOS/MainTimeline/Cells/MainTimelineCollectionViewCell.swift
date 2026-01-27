@@ -298,7 +298,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		updateIndicatorView(state)
 		
 		if isPreview {
-			backgroundConfig.backgroundColor = .secondarySystemBackground
+			backgroundConfig.backgroundColor = traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
 			topSeparator.alpha = 0.0
 		}
 
