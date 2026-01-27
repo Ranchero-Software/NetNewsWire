@@ -254,12 +254,18 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	func reinitializeArticles(resetScroll: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: reinitializeArticles")
+		guard isViewLoaded else {
+			return
+		}
 		resetUI(resetScroll: resetScroll)
 		restoreSelectionIfNecessary(adjustScroll: false)
 	}
 
 	func reloadArticles(animated: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: reloadArticles")
+		guard isViewLoaded else {
+			return
+		}
 		applyChanges(animated: animated)
 	}
 
@@ -717,8 +723,11 @@ private extension MainTimelineModernViewController {
 	private func makeDataSource() -> UICollectionViewDiffableDataSource<Int, Article> {
 		let dataSource: UICollectionViewDiffableDataSource<Int, Article> =
 			MainTimelineCollectionViewDataSource(collectionView: collectionView, cellProvider: { [weak self] collectionView, indexPath, article in
-				let cellData = self!.configure(article: article)
-				if self!.showIcons {
+				guard let self else {
+					return nil
+				}
+				let cellData = self.configure(article: article)
+				if self.showIcons {
 					if indexPath.row == 0 {
 						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.iconIndex0, for: indexPath) as! MainTimelineCollectionViewCell
 						cell.cellData = cellData
