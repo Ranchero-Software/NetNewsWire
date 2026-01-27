@@ -296,6 +296,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		}
 		adjustArticleContentColor()
 		updateIndicatorView(state)
+		
+		if isPreview {
+			backgroundConfig.backgroundColor = .secondarySystemBackground
+			topSeparator.alpha = 0.0
+		}
 
 		self.backgroundConfiguration = backgroundConfig
 	}
