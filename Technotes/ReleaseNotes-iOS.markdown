@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7016 26 Jan 2026 - branch: main tag: iOS-7.0-7016
+
+Fix crash introduced in the previous build
+
 ### 7.0 TestFlight build 7014 26 Jan 2026 - branch: main tag: iOS-7.0-7014
 
 Fixed a bug where swiping multiple cells in the timeline would be just weird. (Technical details for the curious: we switched from UITableView to UICollectionView.)
