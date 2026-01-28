@@ -142,6 +142,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	// MARK: Constants
 	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	let updateCellsQueue = CoalescingQueue(name: "Timeline Update Cells", interval: 0.5, maxInterval: 1.0)
 
 	// MARK: - IBOutlets
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
@@ -323,7 +324,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: - Reloading
 
 	func queueReloadAvailableCells() {
-		CoalescingQueue.standard.add(self, #selector(reloadVisibleCells))
+		updateCellsQueue.add(self, #selector(reloadVisibleCells))
 	}
 
 	@objc private func reloadVisibleCells() {
@@ -898,39 +899,16 @@ private extension MainTimelineModernViewController {
 		guard isViewLoaded else {
 			return
 		}
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
-			return
-		}
-
-		updateIconForVisibleArticles(feed)
+		queueReloadAvailableCells()
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: avatarDidBecomeAvailable")
 
-		guard isViewLoaded, let collectionView else {
+		guard isViewLoaded else {
 			return
 		}
-		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
-			return
-		}
-		let indexPaths = collectionView.indexPathsForVisibleItems
-
-		let articlesToReload = indexPaths.compactMap { indexPath -> Article? in
-			guard let dataSource,
-				  let article = dataSource.itemIdentifier(for: indexPath),
-				  let authors = article.authors,
-				  !authors.isEmpty else {
-				return nil
-			}
-			for author in authors {
-				if author.avatarURL == avatarURL {
-					return article
-				}
-			}
-			return nil
-		}
-		reloadCells(articlesToReload)
+		queueReloadAvailableCells()
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
@@ -939,30 +917,7 @@ private extension MainTimelineModernViewController {
 		guard isViewLoaded else {
 			return
 		}
-
-		updateIconForVisibleArticles()
-	}
-
-	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
-	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
-		guard isViewLoaded, let collectionView, let dataSource else {
-			return
-		}
-		guard showIcons else {
-			return
-		}
-		let indexPaths = collectionView.indexPathsForVisibleItems
-
-		let articlesToReload = indexPaths.compactMap { indexPath -> Article? in
-			guard let article = dataSource.itemIdentifier(for: indexPath) else {
-				return nil
-			}
-			if feed == nil || feed == article.feed {
-				return article
-			}
-			return nil
-		}
-		reloadCells(articlesToReload)
+		queueReloadAvailableCells()
 	}
 
 	func userDefaultsDidChange() {
