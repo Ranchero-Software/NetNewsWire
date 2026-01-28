@@ -416,11 +416,21 @@ body a.footnote:visited,
 	position: relative;
 }
 /* Substack images */
-.image-link .restack-image {
+.image-link .restack-image,
+[data-sanitized-class="captioned-image-container"] [data-sanitized-class="restack-image"] {
 	display: none;
 }
-.image-link .image-link-expand {
-	display: none;
+.image-link .image-link-expand,
+[data-sanitized-class="captioned-image-container"] [data-sanitized-class="image-link-expand"] {
+	display: none
+}
+.footnote,
+[data-sanitized-class="footnote"] {
+	font-size: 90%;
+	display: flex;
+	align-items: baseline;
+	border-top: 1px solid var(--table-cell-border-color);
+	gap: 20px;
 }
 /* Wordpress block editor */
 .wp-block-image > .aligncenter {
@@ -446,6 +456,13 @@ body a.footnote:visited,
 }
 .twitterTimestamp {
 	font-size: 66%;
+}
+/* force datawrapper to have white background in dark mode */
+@media (prefers-color-scheme: dark) {
+	#iframe-datawrapper,
+	[data-sanitized-id="iframe-datawrapper"] {
+		background-color: white;
+	}
 }
 
 
