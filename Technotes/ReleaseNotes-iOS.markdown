@@ -21,7 +21,7 @@ Fix crash introduced in the previous build
 Fixed a bug where swiping multiple cells in the timeline would be just weird. (Technical details for the curious: we switched from UITableView to UICollectionView.)
 Fixed — we’re pretty sure — a state restoration bug where the article you were reading could disappear on re-launch
 Fixed a bug where separators in the timeline might not start under the text as they should
-Fixed a bug where a cell in the timeline might have an icon when it shouldn’t, and vice verse, when that article appears in (for instance) the Today list and then you switch to the actual feed (and vice versa)
+Fixed a bug where a cell in the timeline might have an icon when it shouldn’t, and vice versa, when that article appears in (for instance) the Today list and then you switch to the actual feed (and vice versa)
 
 ### 7.0 TestFlight build 7012 21 Jan 2026 - branch: main tag: iOS-7.0-7012
 
