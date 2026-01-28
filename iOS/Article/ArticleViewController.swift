@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 import SafariServices
 import WebKit
 import RSCore
@@ -48,9 +49,12 @@ final class ArticleViewController: UIViewController {
 	weak var coordinator: SceneCoordinator!
 
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticleViewController")
 
 	var article: Article? {
 		didSet {
+			Self.logger.debug("ArticleViewController: article didSet: \(self.article?.accountID ?? "nil") \(self.article?.articleID ?? "nil") \(self.article?.title ?? "nil")")
+
 			if let controller = currentWebViewController, controller.article != article {
 				controller.setArticle(article)
 				DispatchQueue.main.async {
