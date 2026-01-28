@@ -17,8 +17,8 @@
 	--font-color: #111;
 	--code-background-border: transparent;
 	--code-background: #403f3f;
-	--font-size-title: 1em;
-	--font-size-secondary: 0.8em;
+	--font-size-title: 0.9em;
+	--font-size-secondary: 0.7em;
 	--body-line-height: 1.475;
 }
 @media (prefers-color-scheme: dark) {
@@ -42,13 +42,13 @@
 }
 @media (min-width: 400px) {
 	:root {
-		--font-size-title: 1.15em;
+		--font-size-title: 1em;
 		--font-size-secondary: 0.9em;
 	}
 }
 @media (min-width: 740px) {
 	:root {
-		--font-size-title: 1.5em;
+		--font-size-title: 1.25em;
 		--body-line-height: 1.6;
 	}
 }
