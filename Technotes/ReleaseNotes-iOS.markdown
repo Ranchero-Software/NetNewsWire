@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7019 27 Jan 2026 - branch: main tag: iOS-7.0-7019
+
+Fixed bug where the timeline unread and star indicators didn't update on status changes
+Made the article view button the same color as the other buttons (no longer blue)
+Fixed bug on the feeds view where the separator would start at the left edge of the icon instead of the left edge of the text
+Fixed bug in Settings > Timeline Layout where cells would briefly appear to overlay when changing settings 
+Fixed bug in timeline where you couldn’t swipe to star/unstar without tapping the button
+
 ### 7.0 TestFlight build 7018 26 Jan 2026 - branch: main tag: iOS-7.0-7018
 
 Fix crash bug — take two! — introduced in 7014
