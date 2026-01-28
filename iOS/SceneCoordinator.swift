@@ -412,7 +412,10 @@ struct SidebarItemNode: Hashable, Sendable {
 										   articleID: articleSpecifier.articleID)
 
 		if let article {
-			selectArticle(article, isShowingExtractedArticle: stateInfo.isShowingExtractedArticle, articleWindowScrollY: stateInfo.articleWindowScrollY)
+			// Disable animation since this function runs only during state restoration on launch.
+			UIView.performWithoutAnimation {
+				selectArticle(article, isShowingExtractedArticle: stateInfo.isShowingExtractedArticle, articleWindowScrollY: stateInfo.articleWindowScrollY)
+			}
 		}
 	}
 
