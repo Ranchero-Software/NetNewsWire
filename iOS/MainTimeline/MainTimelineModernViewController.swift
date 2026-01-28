@@ -26,7 +26,6 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
-	private var refreshProgressView: RefreshProgressView?
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
@@ -141,8 +140,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineModernViewController")
 
 	// MARK: Constants
-	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
-	let updateCellsQueue = CoalescingQueue(name: "Timeline Update Cells", interval: 0.5, maxInterval: 1.0)
+	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	private let updateQueue = CoalescingQueue(name: "Timeline Update Queue", interval: 0.5, maxInterval: 1.0)
 
 	// MARK: - IBOutlets
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
@@ -296,13 +295,16 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			collectionView.selectItem(at: nil, animated: animations.contains(.select), scrollPosition: .centeredVertically)
 		}
 
-		updateUI()
+		queueUpdateUI()
 	}
 
-	func updateUI() {
+	func queueUpdateUI() {
+		updateQueue.add(self, #selector(updateUI))
+	}
+
+	@objc func updateUI() {
 		Self.logger.debug("MainTimelineModernViewController: updateUI")
 
-		refreshProgressView?.update()
 		updateToolbar()
 	}
 
@@ -324,7 +326,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: - Reloading
 
 	func queueReloadAvailableCells() {
-		updateCellsQueue.add(self, #selector(reloadVisibleCells))
+		updateQueue.add(self, #selector(reloadVisibleCells))
 	}
 
 	@objc private func reloadVisibleCells() {
@@ -570,11 +572,8 @@ private extension MainTimelineModernViewController {
 		// lets us know that it’s time to request an image.
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			Task { @MainActor in
-				self?.userDefaultsDidChange()
-			}
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -871,7 +870,7 @@ private extension MainTimelineModernViewController {
 private extension MainTimelineModernViewController {
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: unreadCountDidChange")
-		updateUI()
+		queueUpdateUI()
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
@@ -920,15 +919,20 @@ private extension MainTimelineModernViewController {
 		queueReloadAvailableCells()
 	}
 
-	func userDefaultsDidChange() {
-		Self.logger.debug("MainTimelineModernViewController: userDefaultsDidChange")
-
-		if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
-			self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-			self.iconSize = AppDefaults.shared.timelineIconSize
-			self.reloadVisibleCells()
+	@objc func timelineIconSizeDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineModernViewController: timelineIconSizeDidChange")
+		if iconSize != AppDefaults.shared.timelineIconSize {
+			iconSize = AppDefaults.shared.timelineIconSize
+			reloadVisibleCells()
 		}
-		self.updateToolbar()
+	}
+
+	@objc func timelineNumberOfLinesDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineModernViewController: timelineNumberOfLinesDidChange")
+		if numberOfTextLines != AppDefaults.shared.timelineNumberOfLines {
+			numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+			reloadVisibleCells()
+		}
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -943,7 +947,7 @@ private extension MainTimelineModernViewController {
 
 	@objc func willEnterForeground(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: willEnterForeground")
-		updateUI()
+		queueUpdateUI()
 	}
 
 	@objc func scrollPositionDidChange() {
