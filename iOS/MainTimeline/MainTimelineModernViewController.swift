@@ -328,7 +328,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	@objc private func reloadVisibleCells() {
 		Self.logger.debug("MainTimelineModernViewController: reloadVisibleCells")
-		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
+		guard isViewLoaded, let collectionView, let dataSource else {
 			return
 		}
 		let indexPaths = collectionView.indexPathsForVisibleItems
@@ -539,7 +539,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
-			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), view.window != nil else {
+			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)) else {
 			return nil
 		}
 
@@ -876,7 +876,7 @@ private extension MainTimelineModernViewController {
 	@objc func statusesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: statusesDidChange")
 
-		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
+		guard isViewLoaded, let collectionView, let dataSource else {
 			return
 		}
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
@@ -895,7 +895,7 @@ private extension MainTimelineModernViewController {
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: feedIconDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
@@ -908,7 +908,7 @@ private extension MainTimelineModernViewController {
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: avatarDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil, let collectionView else {
+		guard isViewLoaded, let collectionView else {
 			return
 		}
 		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
@@ -936,7 +936,7 @@ private extension MainTimelineModernViewController {
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: faviconDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
 
@@ -945,7 +945,7 @@ private extension MainTimelineModernViewController {
 
 	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
 	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
-		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
+		guard isViewLoaded, let collectionView, let dataSource else {
 			return
 		}
 		guard showIcons else {
