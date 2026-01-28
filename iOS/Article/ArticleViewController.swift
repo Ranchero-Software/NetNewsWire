@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import SafariServices
 import WebKit
+import RSCore
 import Account
 import Articles
-import SafariServices
 
-class ArticleViewController: UIViewController {
-	
+final class ArticleViewController: UIViewController {
+
 	typealias State = (extractedArticle: ExtractedArticle?,
 		isShowingExtractedArticle: Bool,
 		articleExtractorButtonState: ArticleExtractorButtonState,
@@ -25,26 +26,26 @@ class ArticleViewController: UIViewController {
 	@IBOutlet private weak var readBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var starBarButtonItem: UIBarButtonItem!
 	@IBOutlet private weak var actionBarButtonItem: UIBarButtonItem!
-	
+
 	@IBOutlet private var searchBar: ArticleSearchBar!
 	@IBOutlet private var searchBarBottomConstraint: NSLayoutConstraint!
 	private var defaultControls: [UIBarButtonItem]?
-	
+
 	private var pageViewController: UIPageViewController!
-	
+
 	private var currentWebViewController: WebViewController? {
 		return pageViewController?.viewControllers?.first as? WebViewController
 	}
-	
+
 	private var articleExtractorButton: ArticleExtractorButton = {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
-		button.setImage(AppAssets.articleExtractorOff, for: .normal)
+		button.setImage(Assets.Images.articleExtractorOff, for: .normal)
 		return button
 	}()
-	
+
 	weak var coordinator: SceneCoordinator!
-	
+
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
 
 	var article: Article? {
@@ -60,7 +61,7 @@ class ArticleViewController: UIViewController {
 			updateUI()
 		}
 	}
-	
+
 	var restoreScrollPosition: (isShowingExtractedArticle: Bool, articleWindowScrollY: Int)? {
 		didSet {
 			if let rsp = restoreScrollPosition {
@@ -68,7 +69,7 @@ class ArticleViewController: UIViewController {
 			}
 		}
 	}
-	
+
 	var currentState: State? {
 		guard let controller = currentWebViewController else { return nil}
 		return State(extractedArticle: controller.extractedArticle,
@@ -76,14 +77,14 @@ class ArticleViewController: UIViewController {
 					 articleExtractorButtonState: controller.articleExtractorButtonState,
 					 windowScrollY: controller.windowScrollY)
 	}
-	
+
 	var restoreState: State?
-	
+
 	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
 		return keyboardManager.keyCommands
 	}
-	
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 
@@ -99,15 +100,15 @@ class ArticleViewController: UIViewController {
 		])
 		fullScreenTapZone.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapNavigationBar)))
 		navigationItem.titleView = fullScreenTapZone
-		
+
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
-		
+
 		if let parentNavController = navigationController?.parent as? UINavigationController {
 			poppableDelegate.navigationController = parentNavController
 			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
 		}
-		
+
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
@@ -128,7 +129,7 @@ class ArticleViewController: UIViewController {
 			view.topAnchor.constraint(equalTo: pageViewController.view.topAnchor),
 			view.bottomAnchor.constraint(equalTo: pageViewController.view.bottomAnchor)
 		])
-				
+
 		let controller: WebViewController
 		if let state = restoreState {
 			controller = createWebViewController(article, updateView: false)
@@ -139,18 +140,18 @@ class ArticleViewController: UIViewController {
 		} else {
 			controller = createWebViewController(article, updateView: true)
 		}
-		
+
 		if let rsp = restoreScrollPosition {
 			controller.setScrollPosition(isShowingExtractedArticle: rsp.isShowingExtractedArticle, articleWindowScrollY: rsp.articleWindowScrollY)
 		}
 
 		articleExtractorButton.buttonState = controller.articleExtractorButtonState
-		
+
 		self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
 		if AppDefaults.shared.logicalArticleFullscreenEnabled {
 			controller.hideBars()
 		}
-		
+
 		// Search bar
 		searchBar.translatesAutoresizingMaskIntoConstraints = false
 		NotificationCenter.default.addObserver(self, selector: #selector(beginFind(_:)), name: .FindInArticle, object: nil)
@@ -158,10 +159,10 @@ class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(_:)), name: UIWindow.keyboardWillChangeFrameNotification, object: nil)
 		searchBar.delegate = self
 		view.bringSubviewToFront(searchBar)
-		
+
 		updateUI()
 	}
-	
+
 	override func viewWillAppear(_ animated: Bool) {
 		let hideToolbars = AppDefaults.shared.logicalArticleFullscreenEnabled
 		if hideToolbars {
@@ -174,31 +175,34 @@ class ArticleViewController: UIViewController {
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
+		navigationController?.navigationBar.topItem?.subtitle = nil
 		coordinator.isArticleViewControllerPending = false
+		searchBar.shouldBeginEditing = true
 	}
-	
+
 	override func viewWillDisappear(_ animated: Bool) {
 		super.viewWillDisappear(animated)
 		if searchBar != nil && !searchBar.isHidden {
 			endFind()
+			searchBar.shouldBeginEditing = false
 		}
 	}
-	
+
 	override func viewSafeAreaInsetsDidChange() {
 		// This will animate if the show/hide bars animation is happening.
 		view.layoutIfNeeded()
 	}
-	
+
 	override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
 		// We only want to show bars when rotating to horizontalSizeClass == .regular
 		// (i.e., big) iPhones to resolve crash #4483.
-		if UIDevice.current.userInterfaceIdiom == .phone && newCollection.horizontalSizeClass == .regular {
+		if traitCollection.userInterfaceIdiom == .phone && newCollection.horizontalSizeClass == .regular {
 			currentWebViewController?.showBars()
 		}
 	}
-	
+
 	func updateUI() {
-		
+
 		guard let article = article else {
 			articleExtractorButton.isEnabled = false
 			nextUnreadBarButtonItem.isEnabled = false
@@ -215,36 +219,36 @@ class ArticleViewController: UIViewController {
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
-		
+
 		let permalinkPresent = article.preferredLink != nil
 		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.shared.isDeveloperBuild
 		actionBarButtonItem.isEnabled = permalinkPresent
-		
+
 		if article.status.read {
-			readBarButtonItem.image = AppAssets.circleOpenImage
+			readBarButtonItem.image = Assets.Images.circleOpen
 			readBarButtonItem.isEnabled = article.isAvailableToMarkUnread
 			readBarButtonItem.accLabelText = NSLocalizedString("Mark Article Unread", comment: "Mark Article Unread")
 		} else {
-			readBarButtonItem.image = AppAssets.circleClosedImage
+			readBarButtonItem.image = Assets.Images.circleClosed
 			readBarButtonItem.isEnabled = true
 			readBarButtonItem.accLabelText = NSLocalizedString("Selected - Mark Article Unread", comment: "Selected - Mark Article Unread")
 		}
-		
+
 		if article.status.starred {
-			starBarButtonItem.image = AppAssets.starClosedImage
+			starBarButtonItem.image = Assets.Images.starClosed
 			starBarButtonItem.accLabelText = NSLocalizedString("Selected - Star Article", comment: "Selected - Star Article")
 		} else {
-			starBarButtonItem.image = AppAssets.starOpenImage
+			starBarButtonItem.image = Assets.Images.starOpen
 			starBarButtonItem.accLabelText = NSLocalizedString("Star Article", comment: "Star Article")
 		}
 	}
-	
+
 	// MARK: Notifications
-	
+
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		updateUI()
 	}
-	
+
 	@objc func statusesDidChange(_ note: Notification) {
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String> else {
 			return
@@ -260,14 +264,14 @@ class ArticleViewController: UIViewController {
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
 		currentWebViewController?.fullReload()
 	}
-	
+
 	@objc func willEnterForeground(_ note: Notification) {
 		// The toolbar will come back on you if you don't hide it again
 		if AppDefaults.shared.logicalArticleFullscreenEnabled {
 			currentWebViewController?.hideBars()
 		}
 	}
-	
+
 	// MARK: Actions
 
 	@objc func didTapNavigationBar() {
@@ -281,27 +285,27 @@ class ArticleViewController: UIViewController {
 	@IBAction func toggleArticleExtractor(_ sender: Any) {
 		currentWebViewController?.toggleArticleExtractor()
 	}
-	
+
 	@IBAction func nextUnread(_ sender: Any) {
 		coordinator.selectNextUnread()
 	}
-	
+
 	@IBAction func prevArticle(_ sender: Any) {
 		coordinator.selectPrevArticle()
 	}
-	
+
 	@IBAction func nextArticle(_ sender: Any) {
 		coordinator.selectNextArticle()
 	}
-	
+
 	@IBAction func toggleRead(_ sender: Any) {
 		coordinator.toggleReadForCurrentArticle()
 	}
-	
+
 	@IBAction func toggleStar(_ sender: Any) {
 		coordinator.toggleStarredForCurrentArticle()
 	}
-	
+
 	@IBAction func showActivityDialog(_ sender: Any) {
 		currentWebViewController?.showActivityDialog(popOverBarButtonItem: actionBarButtonItem)
 	}
@@ -309,13 +313,13 @@ class ArticleViewController: UIViewController {
 	@objc func toggleReaderView(_ sender: Any?) {
 		currentWebViewController?.toggleArticleExtractor()
 	}
-	
+
 	// MARK: Keyboard Shortcuts
 
 	@objc func navigateToTimeline(_ sender: Any?) {
 		coordinator.navigateToTimeline()
 	}
-	
+
 	// MARK: API
 
 	func focus() {
@@ -337,7 +341,7 @@ class ArticleViewController: UIViewController {
 	func scrollPageUp() {
 		currentWebViewController?.scrollPageUp()
 	}
-	
+
 	func stopArticleExtractorIfProcessing() {
 		currentWebViewController?.stopArticleExtractorIfProcessing()
 	}
@@ -345,7 +349,7 @@ class ArticleViewController: UIViewController {
 	func openInAppBrowser() {
 		currentWebViewController?.openInAppBrowser()
 	}
-	
+
 	func setScrollPosition(isShowingExtractedArticle: Bool, articleWindowScrollY: Int) {
 		currentWebViewController?.setScrollPosition(isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 	}
@@ -358,29 +362,28 @@ public extension Notification.Name {
 }
 
 extension ArticleViewController: SearchBarDelegate {
-	
+
 	func searchBar(_ searchBar: ArticleSearchBar, textDidChange searchText: String) {
-		currentWebViewController?.searchText(searchText) {
-			found in
+		currentWebViewController?.searchText(searchText) { found in
 			searchBar.resultsCount = found.count
-			
+
 			if let index = found.index {
 				searchBar.selectedResult = index + 1
 			}
 		}
 	}
-	
+
 	func doneWasPressed(_ searchBar: ArticleSearchBar) {
 		NotificationCenter.default.post(name: .EndFindInArticle, object: nil)
 	}
-	
+
 	func nextWasPressed(_ searchBar: ArticleSearchBar) {
 		if searchBar.selectedResult < searchBar.resultsCount {
 			currentWebViewController?.selectNextSearchResult()
 			searchBar.selectedResult += 1
 		}
 	}
-	
+
 	func previousWasPressed(_ searchBar: ArticleSearchBar) {
 		if searchBar.selectedResult > 1 {
 			currentWebViewController?.selectPreviousSearchResult()
@@ -390,14 +393,14 @@ extension ArticleViewController: SearchBarDelegate {
 }
 
 extension ArticleViewController {
-	
+
 	@objc func beginFind(_ _: Any? = nil) {
 		searchBar.isHidden = false
 		navigationController?.setToolbarHidden(true, animated: true)
 		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height
 		searchBar.becomeFirstResponder()
 	}
-	
+
 	@objc func endFind(_ _: Any? = nil) {
 		searchBar.resignFirstResponder()
 		searchBar.isHidden = true
@@ -405,13 +408,13 @@ extension ArticleViewController {
 		currentWebViewController?.additionalSafeAreaInsets.bottom = 0
 		currentWebViewController?.endSearch()
 	}
-	
+
 	@objc func keyboardWillChangeFrame(_ notification: Notification) {
 		if !searchBar.isHidden,
 			let duration = notification.userInfo?[UIWindow.keyboardAnimationDurationUserInfoKey] as? Double,
 			let curveRaw = notification.userInfo?[UIWindow.keyboardAnimationCurveUserInfoKey] as? UInt,
 			let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
-			
+
 			let curve = UIView.AnimationOptions(rawValue: curveRaw)
 			let newHeight = view.safeAreaLayoutGuide.layoutFrame.maxY - frame.minY
 			currentWebViewController?.additionalSafeAreaInsets.bottom = newHeight + searchBar.frame.height + 10
@@ -421,26 +424,25 @@ extension ArticleViewController {
 			})
 		}
 	}
-	
-}
 
+}
 
 // MARK: WebViewControllerDelegate
 
 extension ArticleViewController: WebViewControllerDelegate {
-	
+
 	func webViewController(_ webViewController: WebViewController, articleExtractorButtonStateDidUpdate buttonState: ArticleExtractorButtonState) {
 		if webViewController === currentWebViewController {
 			articleExtractorButton.buttonState = buttonState
 		}
 	}
-	
+
 }
 
 // MARK: UIPageViewControllerDataSource
 
 extension ArticleViewController: UIPageViewControllerDataSource {
-	
+
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
 		guard let webViewController = viewController as? WebViewController,
 			let currentArticle = webViewController.article,
@@ -449,7 +451,7 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 		}
 		return createWebViewController(article)
 	}
-	
+
 	func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
 		guard let webViewController = viewController as? WebViewController,
 			let currentArticle = webViewController.article,
@@ -458,7 +460,7 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 		}
 		return createWebViewController(article)
 	}
-	
+
 }
 
 // MARK: UIPageViewControllerDelegate
@@ -468,19 +470,22 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 	func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
 		guard finished, completed else { return }
 		guard let article = currentWebViewController?.article else { return }
-		
+
 		coordinator.selectArticle(article, animations: [.select, .scroll, .navigation])
 		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
-		
-		previousViewControllers.compactMap({ $0 as? WebViewController }).forEach({ $0.stopWebViewActivity() })
+
+		for viewController in previousViewControllers {
+			if let webViewController = viewController as? WebViewController {
+				webViewController.stopWebViewActivity()
+			}
+		}
 	}
-	
 }
 
 // MARK: UIGestureRecognizerDelegate
 
 extension ArticleViewController: UIGestureRecognizerDelegate {
-	
+
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
@@ -492,13 +497,13 @@ extension ArticleViewController: UIGestureRecognizerDelegate {
 		}
 		return false
     }
-	
+
 }
 
 // MARK: Private
 
 private extension ArticleViewController {
-	
+
 	func createWebViewController(_ article: Article?, updateView: Bool = true) -> WebViewController {
 		let controller = WebViewController()
 		controller.coordinator = coordinator
@@ -506,5 +511,5 @@ private extension ArticleViewController {
 		controller.setArticle(article, updateView: updateView)
 		return controller
 	}
-	
+
 }

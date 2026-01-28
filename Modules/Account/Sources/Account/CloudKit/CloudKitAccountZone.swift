@@ -12,6 +12,7 @@ import RSCore
 import RSWeb
 import RSParser
 import CloudKit
+import CloudKitSync
 
 enum CloudKitAccountZoneError: LocalizedError {
 	case unknown
@@ -19,17 +20,15 @@ enum CloudKitAccountZoneError: LocalizedError {
 		return NSLocalizedString("An unexpected CloudKit error occurred.", comment: "An unexpected CloudKit error occurred.")
 	}
 }
-final class CloudKitAccountZone: CloudKitZone {
 
+@MainActor final class CloudKitAccountZone: CloudKitZone {
 	var zoneID: CKRecordZone.ID
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
 
     weak var container: CKContainer?
     weak var database: CKDatabase?
 	var delegate: CloudKitZoneDelegate?
-    
-	struct CloudKitWebFeed {
+
+	struct CloudKitFeed {
 		static let recordType = "AccountWebFeed"
 		struct Fields {
 			static let url = "url"
@@ -39,7 +38,7 @@ final class CloudKitAccountZone: CloudKitZone {
 			static let containerExternalIDs = "containerExternalIDs"
 		}
 	}
-	
+
 	struct CloudKitContainer {
 		static let recordType = "AccountContainer"
 		struct Fields {
@@ -47,29 +46,29 @@ final class CloudKitAccountZone: CloudKitZone {
 			static let name = "name"
 		}
 	}
-	
+
 	init(container: CKContainer) {
         self.container = container
         self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Account", ownerName: CKCurrentUserDefaultName)
 		migrateChangeToken()
     }
-	
-	func importOPML(rootExternalID: String, items: [RSOPMLItem], completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
 		var records = [CKRecord]()
 		var feedRecords = [String: CKRecord]()
-		
+
 		func processFeed(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) {
-			if let webFeedRecord = feedRecords[feedSpecifier.feedURL], var containerExternalIDs = webFeedRecord[CloudKitWebFeed.Fields.containerExternalIDs] as? [String] {
+			if let feedRecord = feedRecords[feedSpecifier.feedURL], var containerExternalIDs = feedRecord[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
 				containerExternalIDs.append(containerExternalID)
-				webFeedRecord[CloudKitWebFeed.Fields.containerExternalIDs] = containerExternalIDs
+				feedRecord[CloudKitFeed.Fields.containerExternalIDs] = containerExternalIDs
 			} else {
-				let webFeedRecord = newWebFeedCKRecord(feedSpecifier: feedSpecifier, containerExternalID: containerExternalID)
-				records.append(webFeedRecord)
-				feedRecords[feedSpecifier.feedURL] = webFeedRecord
+				let feedRecord = newFeedCKRecord(feedSpecifier: feedSpecifier, containerExternalID: containerExternalID)
+				records.append(feedRecord)
+				feedRecords[feedSpecifier.feedURL] = feedRecord
 			}
 		}
-		
+
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
 				processFeed(feedSpecifier: feedSpecifier, containerExternalID: rootExternalID)
@@ -77,284 +76,243 @@ final class CloudKitAccountZone: CloudKitZone {
 				if let title = item.titleFromAttributes {
 					let containerRecord = newContainerCKRecord(name: title)
 					records.append(containerRecord)
-					item.children?.forEach { itemChild in
-						if let feedSpecifier = itemChild.feedSpecifier {
-							processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+					if let itemChildren = item.children {
+						for itemChild in itemChildren {
+							if let feedSpecifier = itemChild.feedSpecifier {
+								processFeed(feedSpecifier: feedSpecifier, containerExternalID: containerRecord.externalID)
+							}
 						}
 					}
 				}
 			}
 		}
 
-		save(records, completion: completion)
+		try await save(records)
 	}
-    
-	///  Persist a web feed record to iCloud and return the external key
-	func createWebFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container, completion: @escaping (Result<String, Error>) -> Void) {
+
+	///  Persist a feed record to iCloud and return the external key
+	func createFeed(url: String, name: String?, editedName: String?, homePageURL: String?, container: Container) async throws -> String {
 		let recordID = CKRecord.ID(recordName: url.md5String, zoneID: zoneID)
-		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
-		record[CloudKitWebFeed.Fields.url] = url
-		record[CloudKitWebFeed.Fields.name] = name
+		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
+		record[CloudKitFeed.Fields.url] = url
+		record[CloudKitFeed.Fields.name] = name
 		if let editedName = editedName {
-			record[CloudKitWebFeed.Fields.editedName] = editedName
+			record[CloudKitFeed.Fields.editedName] = editedName
 		}
 		if let homePageURL = homePageURL {
-			record[CloudKitWebFeed.Fields.homePageURL] = homePageURL
+			record[CloudKitFeed.Fields.homePageURL] = homePageURL
 		}
 
 		guard let containerExternalID = container.externalID else {
-			completion(.failure(CloudKitZoneError.corruptAccount))
-			return
+			throw CloudKitZoneError.corruptAccount
 		}
-		record[CloudKitWebFeed.Fields.containerExternalIDs] = [containerExternalID]
+		record[CloudKitFeed.Fields.containerExternalIDs] = [containerExternalID]
 
-		save(record) { result in
-			switch result {
-			case .success:
-				completion(.success(record.externalID))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await save(record)
+		return record.externalID
 	}
-	
-	/// Rename the given web feed
-	func renameWebFeed(_ webFeed: WebFeed, editedName: String?, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let externalID = webFeed.externalID else {
-			completion(.failure(CloudKitZoneError.corruptAccount))
-			return
+
+	/// Rename the given feed
+	func renameFeed(_ feed: Feed, editedName: String?) async throws {
+		guard let externalID = feed.externalID else {
+			throw CloudKitZoneError.corruptAccount
 		}
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
-		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: recordID)
-		record[CloudKitWebFeed.Fields.editedName] = editedName
-		
-		save(record) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
+		record[CloudKitFeed.Fields.editedName] = editedName
+
+		try await save(record)
 	}
-	
-	/// Removes a web feed from a container and optionally deletes it, calling the completion with true if deleted
-	func removeWebFeed(_ webFeed: WebFeed, from: Container, completion: @escaping (Result<Bool, Error>) -> Void) {
+
+	/// Removes a feed from a container and optionally deletes it, returning true if deleted
+	func removeFeed(_ feed: Feed, from: Container) async throws -> Bool {
 		guard let fromContainerExternalID = from.externalID else {
-			completion(.failure(CloudKitZoneError.corruptAccount))
-			return
+			throw CloudKitZoneError.corruptAccount
 		}
-		
-		fetch(externalID: webFeed.externalID) { result in
-			switch result {
-			case .success(let record):
-				
-				if let containerExternalIDs = record[CloudKitWebFeed.Fields.containerExternalIDs] as? [String] {
-					var containerExternalIDSet = Set(containerExternalIDs)
-					containerExternalIDSet.remove(fromContainerExternalID)
-					
-					if containerExternalIDSet.isEmpty {
-						self.delete(externalID: webFeed.externalID) { result in
-							switch result {
-							case .success:
-								completion(.success(true))
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-						
-					} else {
-						
-						record[CloudKitWebFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
-						self.save(record) { result in
-							switch result {
-							case .success:
-								completion(.success(false))
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-						
-					}
-				}
-				
-			case .failure(let error):
-				if let ckError = ((error as? CloudKitError)?.error as? CKError), ckError.code == .unknownItem {
-					completion(.success(true))
+
+		do {
+			let record = try await fetch(externalID: feed.externalID)
+
+			if let containerExternalIDs = record[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
+				var containerExternalIDSet = Set(containerExternalIDs)
+				containerExternalIDSet.remove(fromContainerExternalID)
+
+				if containerExternalIDSet.isEmpty {
+					try await delete(externalID: feed.externalID)
+					return true
 				} else {
-					completion(.failure(error))
+					record[CloudKitFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
+					try await save(record)
+					return false
 				}
+			}
+			return false
+		} catch {
+			if let ckError = ((error as? CloudKitError)?.error as? CKError), ckError.code == .unknownItem {
+				return true
+			} else {
+				throw error
 			}
 		}
 	}
-	
-	func moveWebFeed(_ webFeed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func moveFeed(_ feed: Feed, from: Container, to: Container) async throws {
 		guard let fromContainerExternalID = from.externalID, let toContainerExternalID = to.externalID else {
-			completion(.failure(CloudKitZoneError.corruptAccount))
-			return
+			throw CloudKitZoneError.corruptAccount
 		}
-		
-		fetch(externalID: webFeed.externalID) { result in
-			switch result {
-			case .success(let record):
-				if let containerExternalIDs = record[CloudKitWebFeed.Fields.containerExternalIDs] as? [String] {
-					var containerExternalIDSet = Set(containerExternalIDs)
-					containerExternalIDSet.remove(fromContainerExternalID)
-					containerExternalIDSet.insert(toContainerExternalID)
-					record[CloudKitWebFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
-					self.save(record, completion: completion)
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+
+		let record = try await fetch(externalID: feed.externalID)
+		if let containerExternalIDs = record[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
+			var containerExternalIDSet = Set(containerExternalIDs)
+			containerExternalIDSet.remove(fromContainerExternalID)
+			containerExternalIDSet.insert(toContainerExternalID)
+			record[CloudKitFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
+			try await save(record)
 		}
 	}
-	
-	func addWebFeed(_ webFeed: WebFeed, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func addFeed(_ feed: Feed, to: Container) async throws {
 		guard let toContainerExternalID = to.externalID else {
-			completion(.failure(CloudKitZoneError.corruptAccount))
-			return
+			throw CloudKitZoneError.corruptAccount
 		}
-		
-		fetch(externalID: webFeed.externalID) { result in
-			switch result {
-			case .success(let record):
-				if let containerExternalIDs = record[CloudKitWebFeed.Fields.containerExternalIDs] as? [String] {
-					var containerExternalIDSet = Set(containerExternalIDs)
-					containerExternalIDSet.insert(toContainerExternalID)
-					record[CloudKitWebFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
-					self.save(record, completion: completion)
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+
+		let record = try await fetch(externalID: feed.externalID)
+		if let containerExternalIDs = record[CloudKitFeed.Fields.containerExternalIDs] as? [String] {
+			var containerExternalIDSet = Set(containerExternalIDs)
+			containerExternalIDSet.insert(toContainerExternalID)
+			record[CloudKitFeed.Fields.containerExternalIDs] = Array(containerExternalIDSet)
+			try await save(record)
 		}
 	}
-	
-	func findWebFeedExternalIDs(for folder: Folder, completion: @escaping (Result<[String], Error>) -> Void) {
+
+	func findFeedExternalIDs(for folder: Folder) async throws -> [String] {
 		guard let folderExternalID = folder.externalID else {
-			completion(.failure(CloudKitAccountZoneError.unknown))
-			return
+			throw CloudKitAccountZoneError.unknown
 		}
-		
+
 		let predicate = NSPredicate(format: "containerExternalIDs CONTAINS %@", folderExternalID)
-		let ckQuery = CKQuery(recordType: CloudKitWebFeed.recordType, predicate: predicate)
-		
-		query(ckQuery) { result in
-			switch result {
-			case .success(let records):
-				let webFeedExternalIds = records.map { $0.externalID }
-				completion(.success(webFeedExternalIds))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		let ckQuery = CKQuery(recordType: CloudKitFeed.recordType, predicate: predicate)
+
+		let records = try await query(ckQuery)
+		return records.map { $0.externalID }
 	}
-	
-	func findOrCreateAccount(completion: @escaping (Result<String, Error>) -> Void) {
+
+	private func findOrCreateAccount(completion: @escaping @Sendable (Result<String, Error>) -> Void) {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
-		
-		database?.perform(ckQuery, inZoneWith: zoneID) { [weak self] records, error in
-			guard let self = self else { return }
-			
-			switch CloudKitZoneResult.resolve(error) {
-            case .success:
-				DispatchQueue.main.async {
-					if records!.count > 0 {
-						completion(.success(records![0].externalID))
+
+		database?.fetch(withQuery: ckQuery, inZoneWith: zoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults) { [weak self] result in
+			Task { @MainActor [weak self] in
+				guard let self else {
+					return
+				}
+
+				switch result {
+				case .success(let (matchResults, _)):
+					let records = matchResults.compactMap { try? $0.1.get() }
+					if !records.isEmpty {
+						completion(.success(records[0].externalID))
 					} else {
-						self.createContainer(name: "Account", isAccount: true, completion: completion)
+						do {
+							let externalID = try await self.createContainer(name: "Account", isAccount: true)
+							completion(.success(externalID))
+						} catch let createError {
+							completion(.failure(createError))
+						}
 					}
-				}
-			case .retry(let timeToWait):
-				self.retryIfPossible(after: timeToWait) {
-					self.findOrCreateAccount(completion: completion)
-				}
-			case .zoneNotFound, .userDeletedZone:
-				self.createZoneRecord() { result in
-					switch result {
+				case .failure(let error):
+					switch CloudKitZoneResult.resolve(error) {
 					case .success:
+						do {
+							let externalID = try await self.createContainer(name: "Account", isAccount: true)
+							completion(.success(externalID))
+						} catch let createError {
+							completion(.failure(createError))
+						}
+					case .retry(let timeToWait):
+						await self.delaySeconds(timeToWait)
 						self.findOrCreateAccount(completion: completion)
-					case .failure(let error):
-						DispatchQueue.main.async {
-							completion(.failure(CloudKitError(error)))
+					case .zoneNotFound, .userDeletedZone:
+						self.createZoneRecord { result in
+							switch result {
+							case .success:
+								self.findOrCreateAccount(completion: completion)
+							case .failure(let error):
+								completion(.failure(CloudKitError(error)))
+							}
+						}
+					default:
+						do {
+							let externalID = try await self.createContainer(name: "Account", isAccount: true)
+							completion(.success(externalID))
+						} catch let createError {
+							completion(.failure(createError))
 						}
 					}
 				}
-			default:
-				self.createContainer(name: "Account", isAccount: true, completion: completion)
 			}
 		}
-		
 	}
-	
-	func createFolder(name: String, completion: @escaping (Result<String, Error>) -> Void) {
-		createContainer(name: name, isAccount: false, completion: completion)
+
+	func createFolder(name: String) async throws -> String {
+		try await createContainer(name: name, isAccount: false)
 	}
-	
-	func renameFolder(_ folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func renameFolder(_ folder: Folder, to name: String) async throws {
 		guard let externalID = folder.externalID else {
-			completion(.failure(CloudKitZoneError.corruptAccount))
-			return
+			throw CloudKitZoneError.corruptAccount
 		}
 
 		let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: recordID)
 		record[CloudKitContainer.Fields.name] = name
-		
-		save(record) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
+
+		try await save(record)
+	}
+
+	func removeFolder(_ folder: Folder) async throws {
+		try await delete(externalID: folder.externalID)
+	}
+
+	// MARK: - Async Wrappers
+
+	func findOrCreateAccount() async throws -> String {
+		try await withCheckedThrowingContinuation { continuation in
+			findOrCreateAccount { result in
+				continuation.resume(with: result)
 			}
 		}
 	}
-	
-	func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		delete(externalID: folder.externalID, completion: completion)
-	}
-	
 }
 
 private extension CloudKitAccountZone {
-	
-	func newWebFeedCKRecord(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) -> CKRecord {
-		let record = CKRecord(recordType: CloudKitWebFeed.recordType, recordID: generateRecordID())
-		record[CloudKitWebFeed.Fields.url] = feedSpecifier.feedURL
+	func newFeedCKRecord(feedSpecifier: RSOPMLFeedSpecifier, containerExternalID: String) -> CKRecord {
+		let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: generateRecordID())
+		record[CloudKitFeed.Fields.url] = feedSpecifier.feedURL
 		if let editedName = feedSpecifier.title {
-			record[CloudKitWebFeed.Fields.editedName] = editedName
+			record[CloudKitFeed.Fields.editedName] = editedName
 		}
 		if let homePageURL = feedSpecifier.homePageURL {
-			record[CloudKitWebFeed.Fields.homePageURL] = homePageURL
+			record[CloudKitFeed.Fields.homePageURL] = homePageURL
 		}
-		record[CloudKitWebFeed.Fields.containerExternalIDs] = [containerExternalID]
+		record[CloudKitFeed.Fields.containerExternalIDs] = [containerExternalID]
 		return record
 	}
-	
+
 	func newContainerCKRecord(name: String) -> CKRecord {
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
 		record[CloudKitContainer.Fields.name] = name
 		record[CloudKitContainer.Fields.isAccount] = "0"
 		return record
 	}
-	
-	func createContainer(name: String, isAccount: Bool, completion: @escaping (Result<String, Error>) -> Void) {
+
+	func createContainer(name: String, isAccount: Bool) async throws -> String {
 		let record = CKRecord(recordType: CloudKitContainer.recordType, recordID: generateRecordID())
 		record[CloudKitContainer.Fields.name] = name
 		record[CloudKitContainer.Fields.isAccount] = isAccount ? "1" : "0"
 
-		save(record) { result in
-			switch result {
-			case .success:
-				completion(.success(record.externalID))
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
+		try await save(record)
+		return record.externalID
 	}
-	
 }

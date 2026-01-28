@@ -9,16 +9,18 @@ body {
 	color: rgb(79, 50, 28);
 }
 
-a {
-	text-decoration: none;
+[href] {
+	text-decoration-style: underline;
+	text-decoration-color: var(--link-underline-color);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
 }
-a:hover {
+[href]:hover {
 	text-shadow: 0 1px rgba(255, 255, 255, 2);
 	opacity: 0.8;
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
 }
 
-.feedlink {
-}
 #nnwImageIcon {
 	width: 32px;
 	height: 32px;
@@ -46,6 +48,8 @@ a:hover {
 	--primary-accent-color: #43350e;
 	--secondary-accent-color: #43350e;
 	--block-quote-border-color: rgba(0, 0, 0, 0.3);
+	--link-underline-color: color-mix(in hsl, currentColor, transparent 40%);
+	--link-underline-special: color-mix(in hsl, currentColor, transparent 80%)
 }
 
 body a,
@@ -88,8 +92,8 @@ body > .systemMessage {
 	color: var(--system-message-color);
 }
 
-.headerContainer a:link,
-.headerContainer a:visited {
+.headerContainer a[href] {
+	text-decoration-color: var(--link-underline-special);
 	color: var(--feedlink-color);
 }
 
@@ -109,9 +113,8 @@ body > .systemMessage {
 	text-align: start;
 }
 
-.articleTitle a:link,
-.articleTitle a:visited {
-	text-decoration: none;
+.articleTitle [href] {
+	text-decoration-color: transparent;
 	color: var(--article-title-color);
 	margin-top: 26px;
 }
@@ -121,9 +124,8 @@ body > .systemMessage {
 	font-weight: bold;
 }
 
-.articleDateline a:link,
-.articleDateline a:visited {
-	text-decoration: none;
+.articleDateline [href] {
+	text-decoration-color: var(--link-underline-special);
 	color: var(--article-date-color);
 }
 
@@ -132,9 +134,7 @@ body > .systemMessage {
 	font-weight: bold;
 }
 
-.articleDatelineTitle a:link,
-.articleDatelineTitle a:visited {
-	text-decoration: none;
+.articleDatelineTitle [href] {
 	color: var(--article-title-color);
 }
 
@@ -147,10 +147,6 @@ body > .systemMessage {
 	text-overflow: ellipsis;
 }
 
-.externalLink a:link,
-.externalLink a:visited {
-	text-decoration: none;
-}
 
 .articleBody {
 	margin-top: 20px;
@@ -376,6 +372,10 @@ a.footnote:hover,
 		-webkit-text-size-adjust: none;
 		font-family: Charter, Georgia, sans-serif;
 		font-size: [[font-size]]px;
+	}
+
+	.articleTitle h1 {
+		font-size: 1.5em;
 	}
 
 	pre {

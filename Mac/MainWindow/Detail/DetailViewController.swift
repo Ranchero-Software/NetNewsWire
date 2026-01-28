@@ -31,7 +31,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	var windowState: DetailWindowState {
 		currentWebViewController.windowState
 	}
-	
+
 	private var currentWebViewController: DetailWebViewController! {
 		didSet {
 			let webview = currentWebViewController.view
@@ -65,7 +65,11 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
 	}
 
 	// MARK: - API
@@ -86,13 +90,13 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	func stopMediaPlayback() {
 		currentWebViewController.stopMediaPlayback()
 	}
-	
-	func canScrollDown(_ callback: @escaping (Bool) -> Void) {
-		currentWebViewController.canScrollDown(callback)
+
+	func canScrollDown() async -> Bool {
+		await currentWebViewController.canScrollDown()
 	}
 
-	func canScrollUp(_ callback: @escaping (Bool) -> Void) {
-		currentWebViewController.canScrollUp(callback)
+	func canScrollUp() async -> Bool {
+		await currentWebViewController.canScrollUp()
 	}
 
 	override func scrollPageDown(_ sender: Any?) {
@@ -102,9 +106,9 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 	override func scrollPageUp(_ sender: Any?) {
 		currentWebViewController.scrollPageUp(sender)
 	}
-	
+
 	// MARK: - Navigation
-	
+
 	func focus() {
 		guard let window = currentWebViewController.webView.window else {
 			return
@@ -155,12 +159,10 @@ private extension DetailViewController {
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ : Notification) {
-		Task { @MainActor in
-			if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
-				isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
-				createNewWebViewsAndRestoreState()
-			}
+	func userDefaultsDidChange() {
+		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+			createNewWebViewsAndRestoreState()
 		}
 	}
 

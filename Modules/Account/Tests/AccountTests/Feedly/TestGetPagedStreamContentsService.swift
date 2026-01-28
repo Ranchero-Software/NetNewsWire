@@ -9,15 +9,15 @@
 import XCTest
 @testable import Account
 
-final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
-	
+@MainActor final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
+
 	var parameterTester: ((FeedlyResourceId, String?, Date?, Bool?) -> ())?
 	var getStreamContentsExpectation: XCTestExpectation?
 	var pages = [String: FeedlyStream]()
-	
+
 	func addAtLeastOnePage(for resource: FeedlyResourceId, continuations: [String], numberOfEntriesPerPage count: Int)  {
 		pages = [String: FeedlyStream](minimumCapacity: continuations.count + 1)
-		
+
 		// A continuation is an identifier for the next page.
 		// The first page has a nil identifier.
 		// The last page has no next page, so the next continuation value for that page is nil.
@@ -30,16 +30,16 @@ final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
 			pages[key] = page
 		}
 	}
-	
+
 	private func makeStreamContents(for resource: FeedlyResourceId, continuation: String?, between range: Range<Int>) -> FeedlyStream {
 		let entries = range.map { index -> FeedlyEntry in
 			let content = FeedlyEntry.Content(content: "Content \(index)",
 				direction: .leftToRight)
-			
+
 			let origin = FeedlyOrigin(title: "Origin \(index)",
 				streamId: resource.id,
 				htmlUrl: "http://localhost/feedly/origin/\(index)")
-			
+
 			return FeedlyEntry(id: "/articles/\(index)",
 				title: "Article \(index)",
 				content: content,
@@ -55,16 +55,16 @@ final class TestGetPagedStreamContentsService: FeedlyGetStreamContentsService {
 				categories: nil,
 				enclosure: nil)
 		}
-		
+
 		let stream = FeedlyStream(id: resource.id, updated: nil, continuation: continuation, items: entries)
-		
+
 		return stream
 	}
-	
+
 	static func getPagingKey(for stream: FeedlyResourceId, continuation: String?) -> String {
 		return "\(stream.id)@\(continuation ?? "")"
 	}
-	
+
 	func getStreamContents(for resource: FeedlyResourceId, continuation: String?, newerThan: Date?, unreadOnly: Bool?, completion: @escaping (Result<FeedlyStream, Error>) -> ()) {
 		let key = TestGetPagedStreamContentsService.getPagingKey(for: resource, continuation: continuation)
 		guard let page = pages[key] else {

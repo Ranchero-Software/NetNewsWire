@@ -20,25 +20,23 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 
 	private let account: Account
 	private let parsedItemProvider: FeedlyParsedItemProviding
-	private let log: OSLog
-	
+
 	var parsedItemsByFeedProviderName: String {
 		return name ?? String(describing: Self.self)
 	}
-	
+
 	var parsedItemsKeyedByFeedId: [String : Set<ParsedItem>] {
 		precondition(Thread.isMainThread) // Needs to be on main thread because Feed is a main-thread-only model type.
 		return itemsKeyedByFeedId
 	}
-	
+
 	private var itemsKeyedByFeedId = [String: Set<ParsedItem>]()
-	
-	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding, log: OSLog) {
+
+	init(account: Account, parsedItemProvider: FeedlyParsedItemProviding) {
 		self.account = account
 		self.parsedItemProvider = parsedItemProvider
-		self.log = log
 	}
-	
+
 	override func run() {
 		defer {
 			didFinish()
@@ -46,7 +44,7 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 
 		let items = parsedItemProvider.parsedEntries
 		var dict = [String: Set<ParsedItem>](minimumCapacity: items.count)
-		
+
 		for item in items {
 			let key = item.feedURL
 			let value: Set<ParsedItem> = {
@@ -59,9 +57,9 @@ final class FeedlyOrganiseParsedItemsByFeedOperation: FeedlyOperation, FeedlyPar
 			}()
 			dict[key] = value
 		}
-		
-		os_log(.debug, log: log, "Grouped %i items by %i feeds for %@", items.count, dict.count, parsedItemProvider.parsedItemProviderName)
-		
+
+		Feedly.logger.info("Feedly: Grouped \(items.count) items by \(dict.count) feeds for \(self.parsedItemProvider.parsedItemProviderName)")
+
 		itemsKeyedByFeedId = dict
 	}
 }

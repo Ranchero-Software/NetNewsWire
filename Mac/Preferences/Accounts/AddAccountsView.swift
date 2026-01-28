@@ -16,7 +16,7 @@ enum AddAccountSections: Int, CaseIterable {
 	case web
 	case selfhosted
 	case allOrdered
-	
+
 	var sectionHeader: String {
 		switch self {
 		case .local:
@@ -31,7 +31,7 @@ enum AddAccountSections: Int, CaseIterable {
 			return ""
 		}
 	}
-	
+
 	var sectionFooter: String {
 		switch self {
 		case .local:
@@ -46,7 +46,7 @@ enum AddAccountSections: Int, CaseIterable {
 			return ""
 		}
 	}
-	
+
 	var sectionContent: [AccountType] {
 		switch self {
 		case .local:
@@ -68,79 +68,53 @@ enum AddAccountSections: Int, CaseIterable {
 				AddAccountSections.selfhosted.sectionContent
 		}
 	}
-	
-	
-	
-	
 }
 
 struct AddAccountsView: View {
-    
+
 	weak var parent: NSHostingController<AddAccountsView>? // required because presentationMode.dismiss() doesn't work
 	var addAccountDelegate: AccountsPreferencesAddAccountDelegate?
 	private let chunkLimit = 4 // use this to control number of accounts in each web account column
 	@State private var selectedAccount: AccountType = .onMyMac
-	
+
 	init(delegate: AccountsPreferencesAddAccountDelegate?) {
 		self.addAccountDelegate = delegate
 	}
-	
+
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
-			Text("Choose an account type to add...")
+			Text("Choose an account type to add…")
 				.font(.headline)
 				.padding()
-			
+
 			localAccount
-			
+
 			if !AppDefaults.shared.isDeveloperBuild {
 				icloudAccount
 			}
-			
+
 			webAccounts
 			selfhostedAccounts
-			
+
 			HStack(spacing: 12) {
 				Spacer()
-				if #available(OSX 11.0, *) {
-					Button(action: {
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Cancel")
-							.frame(width: 76)
-					})
-					.help("Cancel")
-					.keyboardShortcut(.cancelAction)
-					
-				} else {
-					Button(action: {
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Cancel")
-							.frame(width: 76)
-					})
-					.accessibility(label: Text("Add Account"))
-				}
-				if #available(OSX 11.0, *) {
-					Button(action: {
-						addAccountDelegate?.presentSheetForAccount(selectedAccount)
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Continue")
-							.frame(width: 76)
-					})
-					.help("Add Account")
-					.keyboardShortcut(.defaultAction)
-					
-				} else {
-					Button(action: {
-						addAccountDelegate?.presentSheetForAccount(selectedAccount)
-						parent?.dismiss(nil)
-					}, label: {
-						Text("Continue")
-							.frame(width: 76)
-					})
-				}
+				Button(action: {
+					parent?.dismiss(nil)
+				}, label: {
+					Text("Cancel")
+						.frame(width: 76)
+				})
+				.help("Cancel")
+				.keyboardShortcut(.cancelAction)
+				Button(action: {
+					addAccountDelegate?.presentSheetForAccount(selectedAccount)
+					parent?.dismiss(nil)
+				}, label: {
+					Text("Continue")
+						.frame(width: 76)
+				})
+				.help("Add Account")
+				.keyboardShortcut(.defaultAction)
 			}
 			.padding(.top, 12)
 			.padding(.bottom, 4)
@@ -150,13 +124,13 @@ struct AddAccountsView: View {
 		.frame(width: 420)
 		.padding()
     }
-	
+
 	var localAccount: some View {
 		VStack(alignment: .leading) {
 			Text("Local")
 				.font(.headline)
 				.padding(.horizontal)
-			
+
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.local.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .center) {
@@ -172,23 +146,23 @@ struct AddAccountsView: View {
 			})
 			.pickerStyle(RadioGroupPickerStyle())
 			.offset(x: 7.5, y: 0)
-			
+
 			Text(AddAccountSections.local.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
 				.fixedSize(horizontal: false, vertical: true)
-			
+
 		}
-		
+
 	}
-	
+
 	var icloudAccount: some View {
 		VStack(alignment: .leading) {
 			Text("iCloud")
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
-			
+
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.icloud.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .center) {
@@ -197,22 +171,22 @@ struct AddAccountsView: View {
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
-						
+
 						Text(account.localizedAccountName())
 					}
 					.tag(account)
 				})
 			})
 			.offset(x: 7.5, y: 0)
-			.disabled(isCloudInUse())
-			
+			.disabled(AccountManager.shared.hasiCloudAccount)
+
 			Text(AddAccountSections.icloud.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
 				.fixedSize(horizontal: false, vertical: true)
 		}
 	}
-	
+
 	@ViewBuilder
 	var webAccounts: some View {
 		VStack(alignment: .leading) {
@@ -220,13 +194,13 @@ struct AddAccountsView: View {
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
-			
+
 			HStack {
 				ForEach(0..<chunkedWebAccounts().count, id: \.self, content: { chunk in
 					VStack {
 						Picker(selection: $selectedAccount, label: Text(""), content: {
 							ForEach(chunkedWebAccounts()[chunk], id: \.self, content: { account in
-		
+
 								HStack(alignment: .center) {
 									account.image()
 										.resizable()
@@ -236,7 +210,7 @@ struct AddAccountsView: View {
 									Text(account.localizedAccountName())
 								}
 								.tag(account)
-								
+
 							})
 						})
 						Spacer()
@@ -244,21 +218,21 @@ struct AddAccountsView: View {
 				})
 			}
 			.offset(x: 7.5, y: 0)
-			
+
 			Text(AddAccountSections.web.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
 				.fixedSize(horizontal: false, vertical: true)
 		}
 	}
-	
+
 	var selfhostedAccounts: some View {
 		VStack(alignment: .leading) {
 			Text("Self-hosted")
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
-			
+
 			Picker(selection: $selectedAccount, label: Text(""), content: {
 				ForEach(AddAccountSections.selfhosted.sectionContent, id: \.self, content: { account in
 					HStack(alignment: .center) {
@@ -267,34 +241,27 @@ struct AddAccountsView: View {
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
-			
+
 						Text(account.localizedAccountName())
 					}.tag(account)
 				})
 			})
 			.offset(x: 7.5, y: 0)
-			
+
 			Text(AddAccountSections.selfhosted.sectionFooter).foregroundColor(.gray)
 				.padding(.horizontal)
 				.lineLimit(3)
 				.fixedSize(horizontal: false, vertical: true)
 		}
 	}
-	
-	private func isCloudInUse() -> Bool {
-		AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit })
-	}
-	
+
 	private func chunkedWebAccounts() -> [[AccountType]] {
 		AddAccountSections.web.sectionContent.chunked(into: chunkLimit)
 	}
-
 }
-
 
 struct AddAccountsView_Previews: PreviewProvider {
 	static var previews: some View {
 		AddAccountsView(delegate: nil)
 	}
 }
-

@@ -10,7 +10,7 @@ import XCTest
 import RSParser
 import RSParserObjC
 
-class FeedParserTypeTests: XCTestCase {
+final class FeedParserTypeTests: XCTestCase {
 
 	// MARK: HTML
 
@@ -27,7 +27,7 @@ class FeedParserTypeTests: XCTestCase {
 		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
-	
+
 	func testInessentialHTMLType() {
 
 		let d = parserData("inessential", "html", "http://inessential.com/")
@@ -41,7 +41,7 @@ class FeedParserTypeTests: XCTestCase {
 		let type = feedType(d)
 		XCTAssertTrue(type == .notAFeed)
 	}
-	
+
 	// MARK: RSS
 
 	func testEMarleyRSSType() {
@@ -57,7 +57,7 @@ class FeedParserTypeTests: XCTestCase {
 		let type = feedType(d)
 		XCTAssertTrue(type == .rss)
 	}
-	
+
 	func testKatieFloydRSSType() {
 
 		let d = parserData("KatieFloyd", "rss", "https://katiefloyd.com/")
@@ -187,21 +187,21 @@ class FeedParserTypeTests: XCTestCase {
 
 		// In the case of this feed, the partial data isn’t enough to detect that it’s a JSON Feed.
 		// The type detector should return .unknown rather than .notAFeed.
-		
+
 		let d = parserData("allthis-partial", "json", "http://leancrew.com/allthis/")
 		let type = feedType(d, isPartialData: true)
 		XCTAssertEqual(type, .unknown)
 	}
 
 	// MARK: Performance
-	
+
 	func testFeedTypePerformance() {
 
 		// 0.000 on my 2012 iMac.
 
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 
@@ -211,7 +211,7 @@ class FeedParserTypeTests: XCTestCase {
 
 		let d = parserData("inessential", "json", "http://inessential.com/")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 
@@ -221,7 +221,7 @@ class FeedParserTypeTests: XCTestCase {
 
 		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 
@@ -231,7 +231,7 @@ class FeedParserTypeTests: XCTestCase {
 
 		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
 		self.measure {
-			let _ = feedType(d)
+			_ = feedType(d)
 		}
 	}
 

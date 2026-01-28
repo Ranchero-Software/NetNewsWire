@@ -10,7 +10,7 @@ import Foundation
 import Account
 import RSCore
 
-struct OPMLExporter {
+@MainActor struct OPMLExporter {
 
 	static func OPMLString(with account: Account, title: String) -> String {
 
@@ -24,7 +24,7 @@ struct OPMLExporter {
 					<title>\(escapedTitle)</title>
 				</head>
 			<body>
-			
+
 			"""
 
 		let middleText = account.OPMLString(indentLevel: 0)

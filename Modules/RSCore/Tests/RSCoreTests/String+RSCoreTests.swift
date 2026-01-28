@@ -8,7 +8,7 @@
 
 import XCTest
 
-class String_RSCore: XCTestCase {
+final class StringRSCoreTests: XCTestCase {
 
 	func testCollapsingWhitespace() {
 
@@ -168,16 +168,16 @@ class String_RSCore: XCTestCase {
 
 		self.measure {
 			for _ in 0..<1000 {
-				let _ = s1.md5String
-				let _ = s2.md5String
-				let _ = s3.md5String
-				let _ = s4.md5String
-				let _ = s5.md5String
-				let _ = s6.md5String
-				let _ = s7.md5String
-				let _ = s8.md5String
-				let _ = s9.md5String
-				let _ = s10.md5String
+				_ = s1.md5String
+				_ = s2.md5String
+				_ = s3.md5String
+				_ = s4.md5String
+				_ = s5.md5String
+				_ = s6.md5String
+				_ = s7.md5String
+				_ = s8.md5String
+				_ = s9.md5String
+				_ = s10.md5String
 			}
 		}
 	}

@@ -9,18 +9,18 @@
 import AppKit
 import RSCore
 
-class TimelineTableCellView: NSTableCellView {
+final class TimelineTableCellView: NSTableCellView {
 
 	private let titleView = TimelineTableCellView.multiLineTextField()
 	private let summaryView = TimelineTableCellView.multiLineTextField()
 	private let textView = TimelineTableCellView.multiLineTextField()
-	private let unreadIndicatorView = UnreadIndicatorView(frame: NSZeroRect)
+	private let unreadIndicatorView = UnreadIndicatorView(frame: NSRect.zero)
 	private let dateView = TimelineTableCellView.singleLineTextField()
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
 	private lazy var iconView = IconView()
 
-	private var starView = TimelineTableCellView.imageView(with: AppAssets.timelineStarUnselected, scaling: .scaleNone)
+	private var starView = TimelineTableCellView.imageView(with: Assets.Images.timelineStarUnselected, scaling: .scaleNone)
 
 	private lazy var textFields = {
 		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
@@ -35,13 +35,13 @@ class TimelineTableCellView: NSTableCellView {
 			}
 		}
 	}
-	
+
 	var cellData: TimelineCellData! {
 		didSet {
 			updateSubviews()
 		}
 	}
-	
+
 	var isEmphasized: Bool = false {
 		didSet {
 			unreadIndicatorView.isEmphasized = isEmphasized
@@ -55,7 +55,7 @@ class TimelineTableCellView: NSTableCellView {
 			updateStarView()
 		}
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -64,8 +64,8 @@ class TimelineTableCellView: NSTableCellView {
 		super.init(frame: frameRect)
 		commonInit()
 	}
-	
-	required init?(coder: NSCoder) {		
+
+	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
@@ -73,29 +73,29 @@ class TimelineTableCellView: NSTableCellView {
 	convenience init() {
 		self.init(frame: NSRect.zero)
 	}
-	
+
 	override func setFrameSize(_ newSize: NSSize) {
-		
+
 		if newSize == self.frame.size {
 			return
 		}
-		
+
 		super.setFrameSize(newSize)
 		needsLayout = true
 	}
 
 	override func viewDidMoveToSuperview() {
-		
+
 		updateSubviews()
 	}
-	
+
 	override func layout() {
 
-		resizeSubviews(withOldSize: NSZeroSize)
+		resizeSubviews(withOldSize: NSSize.zero)
 	}
-	
+
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
-		
+
 		let layoutRects = updatedLayoutRects()
 
 		setFrame(for: titleView, rect: layoutRects.titleRect)
@@ -144,13 +144,12 @@ private extension TimelineTableCellView {
 		imageView.imageScaling = scaling
 		return imageView
 	}
-	
+
 	func setFrame(for textField: NSTextField, rect: NSRect) {
 
 		if Int(floor(rect.height)) == 0 || Int(floor(rect.width)) == 0 {
 			hideView(textField)
-		}
-		else {
+		} else {
 			showView(textField)
 			textField.setFrame(ifNotEqualTo: rect)
 		}
@@ -259,9 +258,9 @@ private extension TimelineTableCellView {
 
 	func updateStarView() {
 		if isSelected && isEmphasized {
-			starView.image = AppAssets.timelineStarSelected
+			starView.image = Assets.Images.timelineStarSelected
 		} else {
-			starView.image = AppAssets.timelineStarUnselected
+			starView.image = Assets.Images.timelineStarUnselected
 		}
 		showOrHideView(starView, !cellData.starred)
 	}
@@ -300,7 +299,11 @@ private extension TimelineTableCellView {
 	}
 
 	func showOrHideView(_ view: NSView, _ shouldHide: Bool) {
-		shouldHide ? hideView(view) : showView(view)
+		if shouldHide {
+			hideView(view)
+		} else {
+			showView(view)
+		}
 	}
 
 	func updateSubviews() {

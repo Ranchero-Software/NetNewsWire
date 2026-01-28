@@ -11,14 +11,12 @@ import AppKit
 // To get, for instance, the keyboard integer value for "\r": "\r".keyboardIntegerValue (returns 13)
 
 public struct KeyboardConstant {
-
 	public static let lineFeedKey = "\n".keyboardIntegerValue
 	public static let returnKey = "\r".keyboardIntegerValue
 	public static let spaceKey = " ".keyboardIntegerValue
 }
 
 public extension String {
-
 	var keyboardIntegerValue: Int? {
 		if isEmpty {
 			return nil
@@ -32,13 +30,11 @@ public extension String {
 	}
 }
 
-public struct KeyboardShortcut: Hashable {
-
+public struct KeyboardShortcut: Hashable, Sendable {
 	public let key: KeyboardKey
 	public let actionString: String
 
 	public init?(dictionary: [String: Any]) {
-
 		guard let key = KeyboardKey(dictionary: dictionary) else {
 			return nil
 		}
@@ -50,14 +46,12 @@ public struct KeyboardShortcut: Hashable {
 		self.actionString = actionString
 	}
 
-	public func perform(with view: NSView) {
-
+	@MainActor public func perform(with view: NSView) {
 		let action = NSSelectorFromString(actionString)
 		NSApplication.shared.sendAction(action, to: nil, from: view)
 	}
 
 	public static func findMatchingShortcut(in shortcuts: Set<KeyboardShortcut>, key: KeyboardKey) -> KeyboardShortcut? {
-
 		for shortcut in shortcuts {
 			if shortcut.key == key {
 				return shortcut
@@ -67,8 +61,7 @@ public struct KeyboardShortcut: Hashable {
 	}
 }
 
-public struct KeyboardKey: Hashable {
-
+public struct KeyboardKey: Hashable, Sendable {
 	public let shiftKeyDown: Bool
 	public let optionKeyDown: Bool
 	public let commandKeyDown: Bool
@@ -80,7 +73,6 @@ public struct KeyboardKey: Hashable {
 	}
 
 	init(integerValue: Int, shiftKeyDown: Bool, optionKeyDown: Bool, commandKeyDown: Bool, controlKeyDown: Bool) {
-
 		self.integerValue = integerValue
 
 		self.shiftKeyDown = shiftKeyDown
@@ -92,7 +84,6 @@ public struct KeyboardKey: Hashable {
 	static let deleteKeyCode = 127
 
 	public init(with event: NSEvent) {
-
 		let flags = event.modifierFlags
 		let shiftKeyDown = flags.contains(.shift)
 		let optionKeyDown = flags.contains(.option)
@@ -105,14 +96,13 @@ public struct KeyboardKey: Hashable {
 	}
 
 	public init?(dictionary: [String: Any]) {
-
 		guard let s = dictionary["key"] as? String else {
 			return nil
 		}
 
 		var integerValue = 0
 
-		switch(s) {
+		switch s {
 		case "[space]":
 			integerValue = " ".keyboardIntegerValue!
 		case "[uparrow]":
@@ -131,8 +121,8 @@ public struct KeyboardKey: Hashable {
 			integerValue = KeyboardKey.deleteKeyCode
 		case "[deletefunction]":
 			integerValue = NSDeleteFunctionKey
-        case "[tab]":
-            integerValue = NSTabCharacter
+		case "[tab]":
+			integerValue = NSTabCharacter
 		default:
 			guard let unwrappedIntegerValue = s.keyboardIntegerValue else {
 				return nil

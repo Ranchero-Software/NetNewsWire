@@ -13,7 +13,7 @@ protocol FeedlyResourceProviding {
 }
 
 extension FeedlyFeedResourceId: FeedlyResourceProviding {
-	
+
 	var resource: FeedlyResourceId {
 		return self
 	}

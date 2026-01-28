@@ -1,9 +1,9 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
 	name: "RSParser",
-	platforms: [.macOS(.v13), .iOS(.v17)],
+	platforms: [.macOS(.v26), .iOS(.v26)],
 	products: [
 		.library(
 			name: "RSParser",
@@ -12,31 +12,37 @@ let package = Package(
 		.library(
 			name: "RSParserObjC",
 			type: .dynamic,
-			targets: ["RSParserObjC"]),
+			targets: ["RSParserObjC"])
 	],
 	dependencies: [
+		.package(path: "../RSMarkdown")
 	],
 	targets: [
 		.target(
 			name: "RSParser",
-			dependencies: ["RSParserObjC"],
-			path: "Sources/Swift"),
+			dependencies: ["RSParserObjC", "RSMarkdown"],
+			path: "Sources/Swift",
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]),
 		.target(
 			name: "RSParserObjC",
 			dependencies: [],
 			path: "Sources/ObjC",
 			cSettings: [
-				.headerSearchPath("include"),
-				.unsafeFlags(["-fprofile-instr-generate", "-fcoverage-mapping"])
-			],
-			linkerSettings: [
-				.unsafeFlags(["-fprofile-instr-generate"])
+				.headerSearchPath("include")
 			]
 		),
 		.testTarget(
 			name: "RSParserTests",
 			dependencies: ["RSParser"],
 			exclude: ["Info.plist"],
-			resources: [.copy("Resources")]),
+			resources: [.copy("Resources")],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]
+		)
 	]
 )

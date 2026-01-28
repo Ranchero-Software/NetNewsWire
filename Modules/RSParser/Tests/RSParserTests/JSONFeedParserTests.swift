@@ -9,14 +9,14 @@
 import XCTest
 import RSParser
 
-class JSONFeedParserTests: XCTestCase {
+final class JSONFeedParserTests: XCTestCase {
 
 	func testInessentialPerformance() {
 
 		// 0.001 sec on my 2012 iMac.
 		let d = parserData("inessential", "json", "http://inessential.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -25,7 +25,7 @@ class JSONFeedParserTests: XCTestCase {
 		// 0.009 sec on my 2012 iMac.
 		let d = parserData("DaringFireball", "json", "http://daringfireball.net/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -47,7 +47,7 @@ class JSONFeedParserTests: XCTestCase {
 	}
 
 	func testCurt() {
-		
+
 		let d = parserData("curt", "json", "http://curtclifton.net/")
 		let parsedFeed = try! FeedParser.parse(d)!
 
@@ -83,7 +83,7 @@ class JSONFeedParserTests: XCTestCase {
 		let parsedFeed = try! FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.items.count, 20)
 		XCTAssertEqual(parsedFeed.language, "de-DE")
-		
+
 		for item in parsedFeed.items {
 			XCTAssertEqual(item.language, "de-DE")
 		}

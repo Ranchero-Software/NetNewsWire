@@ -13,7 +13,7 @@ struct NNW3ImportController {
 
 	/// Import NNW3 subscriptions if they exist.
 	/// Return true if Subscriptions.plist was found and subscriptions were imported.
-	static func importSubscriptionsIfFileExists(account: Account) -> Bool {
+	@MainActor static func importSubscriptionsIfFileExists(account: Account) -> Bool {
 		guard let subscriptionsPlistURL = defaultFileURL else {
 			return false
 		}
@@ -25,7 +25,7 @@ struct NNW3ImportController {
 		}
 
 	/// Run an NSOpenPanel and import subscriptions (if the user chooses to).
-	static func askUserToImportNNW3Subscriptions(window: NSWindow) {
+	@MainActor static func askUserToImportNNW3Subscriptions(window: NSWindow) {
 		chooseFile(window)
 	}
 }
@@ -42,7 +42,7 @@ private extension NNW3ImportController {
 	}
 
 	/// Import Subscriptions.plist file. Convert to OPML and then import into specified Account.
-	static func importSubscriptionsPlist(_ subscriptionsPlistURL: URL, into account: Account) {
+	@MainActor static func importSubscriptionsPlist(_ subscriptionsPlistURL: URL, into account: Account) {
 		guard let opmlURL = convertToOPMLFile(subscriptionsPlistURL: subscriptionsPlistURL) else {
 			return
 		}
@@ -58,7 +58,7 @@ private extension NNW3ImportController {
 	}
 
 	/// Run the NSOpenPanel. On success, import subscriptions to the selected account.
-	static func chooseFile(_ window: NSWindow) {
+	@MainActor static func chooseFile(_ window: NSWindow) {
 		let accessoryViewController = NNW3OpenPanelAccessoryViewController()
 
 		let panel = NSOpenPanel()
@@ -74,7 +74,7 @@ private extension NNW3ImportController {
 		panel.accessoryView = accessoryViewController.view
 		panel.isAccessoryViewDisclosed = true
 		panel.title = NSLocalizedString("Choose a Subscriptions.plist file:", comment: "NNW3 Import")
-		
+
 		panel.beginSheetModal(for: window) { modalResult in
 			guard modalResult == .OK, let subscriptionsPlistURL = panel.url else {
 				return
@@ -89,7 +89,7 @@ private extension NNW3ImportController {
 	}
 
 	/// Convert Subscriptions.plist on disk to a temporary OPML file.
-	static func convertToOPMLFile(subscriptionsPlistURL url: URL) -> URL? {
+	@MainActor static func convertToOPMLFile(subscriptionsPlistURL url: URL) -> URL? {
 		guard let document = NNW3Document(subscriptionsPlistURL: url) else {
 			return nil
 		}

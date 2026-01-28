@@ -10,15 +10,17 @@ import Foundation
 import CloudKit
 import SystemConfiguration
 import os.log
-import SyncDatabase
 import RSCore
 import RSParser
+import RSWeb
+import SyncDatabase
 import Articles
 import ArticlesDatabase
-import RSWeb
 import Secrets
+import CloudKitSync
+import FeedFinder
 
-enum CloudKitAccountDelegateError: LocalizedError {
+enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	case invalidParameter
 	case unknown
 
@@ -27,11 +29,10 @@ enum CloudKitAccountDelegateError: LocalizedError {
 	}
 }
 
-final class CloudKitAccountDelegate: AccountDelegate {
+@MainActor final class CloudKitAccountDelegate: AccountDelegate {
+	nonisolated private static let logger = cloudKitLogger
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-
-	private let database: SyncDatabase
+	private let syncDatabase: SyncDatabase
 
 	private let container: CKContainer = {
 		let orgID = Bundle.main.object(forInfoDictionaryKey: "OrganizationIdentifier") as! String
@@ -53,398 +54,394 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	var credentials: Credentials?
 	var accountMetadata: AccountMetadata?
 
-	/// refreshProgress is combined sync progress and feed download progress.
-	let refreshProgress = DownloadProgress(numberOfTasks: 0)
-	private let syncProgress = DownloadProgress(numberOfTasks: 0)
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
+
+	private let syncProgress = RSProgress()
+	private var syncProgressInfo = ProgressInfo() {
+		didSet {
+			updateProgress()
+		}
+	}
+
+	private var refreshProgressInfo = ProgressInfo() {
+		didSet {
+			updateProgress()
+		}
+	}
 
 	init(dataFolder: String) {
-
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		self.accountZone = CloudKitAccountZone(container: container)
 		self.articlesZone = CloudKitArticlesZone(container: container)
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		self.database = SyncDatabase(databaseFilePath: databaseFilePath)
+		self.syncDatabase = SyncDatabase(databasePath: databaseFilePath)
 
 		self.refresher = LocalAccountRefresher()
 		self.refresher.delegate = self
 
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: refresher.downloadProgress)
-		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .DownloadProgressDidChange, object: syncProgress)
+		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: refresher)
+		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: syncProgress)
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
-		op.completionBlock = { mainThreadOperaion in
-			completion()
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		await withCheckedContinuation { continuation in
+			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
+			op.completionBlock = { _ in
+				Self.logger.debug("CloutKitAccountDelegate: \(#function, privacy: .public) did complete")
+				continuation.resume()
+			}
+			mainThreadOperationQueue.add(op)
 		}
-		mainThreadOperationQueue.add(op)
 	}
 
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		guard refreshProgress.isComplete else {
-			completion(.success(()))
+	func refreshAll(for account: Account) async throws {
+		guard refreshProgressInfo.isComplete else {
 			return
 		}
 
 		syncProgress.reset()
-		
-		let reachability = SCNetworkReachabilityCreateWithName(nil, "apple.com")
-		var flags = SCNetworkReachabilityFlags()
-		guard SCNetworkReachabilityGetFlags(reachability!, &flags), flags.contains(.reachable) else {
-			completion(.success(()))
+
+		guard NetworkMonitor.shared.isConnected else {
 			return
 		}
 
-		standardRefreshAll(for: account, completion: completion)
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		try await standardRefreshAll(for: account)
+		Self.logger.debug("CloutKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
+	func syncArticleStatus(for account: Account) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	func sendArticleStatus(for account: Account) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		try await sendArticleStatus(account: account, showProgress: false)
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	func refreshArticleStatus(for account: Account) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
+			op.completionBlock = { mainThreadOperation in
+				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+				if mainThreadOperation.isCanceled {
+					continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
+				} else {
+					continuation.resume(returning: ())
 				}
-			case .failure(let error):
-				completion?(.failure(error))
 			}
+			mainThreadOperationQueue.add(op)
 		}
 	}
 
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		sendArticleStatus(for: account, showProgress: false, completion: completion)
-	}
-
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
-		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
-				completion(.failure(CloudKitAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
-			}
-		}
-		mainThreadOperationQueue.add(op)
-	}
-
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		guard refreshProgress.isComplete else {
-			completion(.success(()))
+	func importOPML(for account: Account, opmlFile: URL) async throws {
+		guard refreshProgressInfo.isComplete else {
 			return
 		}
 
-		var fileData: Data?
-
-		do {
-			fileData = try Data(contentsOf: opmlFile)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		guard let opmlData = fileData else {
-			completion(.success(()))
-			return
-		}
-
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		var opmlDocument: RSOPMLDocument?
+		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+
+		// TODO: throw appropriate error if OPML file is empty.
+		guard let opmlItems = opmlDocument.children, let rootExternalID = account.externalID else {
+			return
+		}
+		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
+
+		syncProgress.addTask()
+		defer {
+			syncProgress.completeTask()
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+		}
 
 		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+			try await accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems)
+			try? await standardRefreshAll(for: account)
 		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		guard let loadDocument = opmlDocument else {
-			completion(.success(()))
-			return
-		}
-
-		guard let opmlItems = loadDocument.children, let rootExternalID = account.externalID else {
-			return
-		}
-
-		let normalizedItems = OPMLNormalizer.normalize(opmlItems)
-		
-		syncProgress.addToNumberOfTasksAndRemaining(1)
-		self.accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems) { _ in
-			self.syncProgress.completeTask()
-			self.standardRefreshAll(for: account, completion: completion)
+			throw error
 		}
 	}
 
-	func createWebFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+	@discardableResult
+	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) url: \(urlString)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete url: \(urlString)")
+		}
 		guard let url = URL(string: urlString) else {
-			completion(.failure(LocalAccountDelegateError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
 		let editedName = name == nil || name!.isEmpty ? nil : name
-
-		createRSSWebFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed, completion: completion)
+		return try await createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed)
 	}
 
-	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
 		let editedName = name.isEmpty ? nil : name
-		syncProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.renameWebFeed(feed, editedName: editedName) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success:
-				feed.editedName = name
-				completion(.success(()))
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
+		syncProgress.addTask()
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
+			syncProgress.completeTask()
+		}
+
+		do {
+			try await accountZone.renameFeed(feed, editedName: editedName)
+			feed.editedName = name
+		} catch {
+			processAccountError(account, error)
+			throw error
+		}
+	}
+
+	func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
+		}
+
+		do {
+			try await removeFeedFromCloud(for: account, with: feed, from: container)
+			account.clearFeedMetadata(feed)
+			container.removeFeedFromTreeAtTopLevel(feed)
+		} catch {
+			switch error {
+			case CloudKitZoneError.corruptAccount:
+				// We got into a bad state and should remove the feed to clear up the bad data
+				account.clearFeedMetadata(feed)
+				container.removeFeedFromTreeAtTopLevel(feed)
+			default:
+				throw error
 			}
 		}
 	}
 
-	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		removeWebFeedFromCloud(for: account, with: feed, from: container) { result in
-			switch result {
-			case .success:
-				account.clearWebFeedMetadata(feed)
-				container.removeWebFeed(feed)
-				completion(.success(()))
-			case .failure(let error):
-				switch error {
-				case CloudKitZoneError.corruptAccount:
-					// We got into a bad state and should remove the feed to clear up the bad data
-					account.clearWebFeedMetadata(feed)
-					container.removeWebFeed(feed)
-				default:
-					completion(.failure(error))
-				}
-			}
+	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
+		syncProgress.addTask()
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
+			syncProgress.completeTask()
+		}
+
+		do {
+			try await accountZone.moveFeed(feed, from: sourceContainer, to: destinationContainer)
+			sourceContainer.removeFeedFromTreeAtTopLevel(feed)
+			destinationContainer.addFeedToTreeAtTopLevel(feed)
+		} catch {
+			processAccountError(account, error)
+			throw error
 		}
 	}
 
-	func moveWebFeed(for account: Account, with feed: WebFeed, from fromContainer: Container, to toContainer: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.moveWebFeed(feed, from: fromContainer, to: toContainer) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success:
-				fromContainer.removeWebFeed(feed)
-				toContainer.addWebFeed(feed)
-				completion(.success(()))
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
-			}
+	func addFeed(account: Account, feed: Feed, container: Container) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
+		syncProgress.addTask()
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
+			syncProgress.completeTask()
+		}
+
+		do {
+			try await accountZone.addFeed(feed, to: container)
+			container.addFeedToTreeAtTopLevel(feed)
+		} catch {
+			processAccountError(account, error)
+			throw error
 		}
 	}
 
-	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.addWebFeed(feed, to: container) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success:
-				container.addWebFeed(feed)
-				completion(.success(()))
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
+	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
+		try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
+	}
+
+	func createFolder(for account: Account, name: String) async throws -> Folder {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) name: \(name)")
+		syncProgress.addTask()
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete name: \(name)")
+			syncProgress.completeTask()
+		}
+
+		do {
+			let externalID = try await accountZone.createFolder(name: name)
+			guard let folder = account.ensureFolder(with: name) else {
+				throw AccountError.invalidParameter
 			}
+			folder.externalID = externalID
+			return folder
+		} catch {
+			processAccountError(account, error)
+			throw error
 		}
 	}
 
-	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) new name: \(name)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete new name: \(name)")
+		}
+		syncProgress.addTask()
+		defer { syncProgress.completeTask() }
+
+		do {
+			try await accountZone.renameFolder(folder, to: name)
+			folder.name = name
+		} catch {
+			processAccountError(account, error)
+			throw error
 		}
 	}
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.createFolder(name: name) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success(let externalID):
-				if let folder = account.ensureFolder(with: name) {
-					folder.externalID = externalID
-					completion(.success(folder))
-				} else {
-					completion(.failure(FeedbinAccountDelegateError.invalidParameter))
-				}
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
-			}
+	func removeFolder(for account: Account, with folder: Folder) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) name: \(folder.name ?? "")")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete name: \(folder.name ?? "")")
 		}
-	}
+		syncProgress.addTask()
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		syncProgress.addToNumberOfTasksAndRemaining(1)
-		accountZone.renameFolder(folder, to: name) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success:
-				folder.name = name
-				completion(.success(()))
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
-			}
+		let feedExternalIDs: [String]
+		do {
+			feedExternalIDs = try await accountZone.findFeedExternalIDs(for: folder)
+			syncProgress.completeTask()
+		} catch {
+			syncProgress.completeTask()
+			syncProgress.completeTask()
+			processAccountError(account, error)
+			throw error
 		}
-	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		syncProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.findWebFeedExternalIDs(for: folder) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success(let webFeedExternalIDs):
+		let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
+		var errorOccurred = false
 
-				let webFeeds = webFeedExternalIDs.compactMap { account.existingWebFeed(withExternalID: $0) }
-				let group = DispatchGroup()
-				var errorOccurred = false
-
-				for webFeed in webFeeds {
-					group.enter()
-					self.removeWebFeedFromCloud(for: account, with: webFeed, from: folder) { result in
-						group.leave()
-						if case .failure(let error) = result {
-							os_log(.error, log: self.log, "Remove folder, remove webfeed error: %@.", error.localizedDescription)
-							errorOccurred = true
-						}
+		await withTaskGroup(of: Result<Void, Error>.self) { group in
+			for feed in feeds {
+				group.addTask {
+					do {
+						try await self.removeFeedFromCloud(for: account, with: feed, from: folder)
+						return .success(())
+					} catch {
+						Self.logger.error("CloudKit: Remove folder, remove feed error: \(error.localizedDescription)")
+						return .failure(error)
 					}
 				}
+			}
 
-				group.notify(queue: DispatchQueue.global(qos: .background)) {
-					DispatchQueue.main.async {
-						guard !errorOccurred else {
-							self.syncProgress.completeTask()
-							completion(.failure(CloudKitAccountDelegateError.unknown))
-							return
-						}
-
-						self.accountZone.removeFolder(folder) { result in
-							self.syncProgress.completeTask()
-							switch result {
-							case .success:
-								account.removeFolder(folder)
-								completion(.success(()))
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-					}
+			for await result in group {
+				if case .failure = result {
+					errorOccurred = true
 				}
-
-			case .failure(let error):
-				self.syncProgress.completeTask()
-				self.syncProgress.completeTask()
-				self.processAccountError(account, error)
-				completion(.failure(error))
 			}
 		}
 
+		guard !errorOccurred else {
+			syncProgress.completeTask()
+			throw CloudKitAccountDelegateError.unknown
+		}
+
+		do {
+			try await accountZone.removeFolder(folder)
+			syncProgress.completeTask()
+			account.removeFolderFromTree(folder)
+		} catch {
+			syncProgress.completeTask()
+			throw error
+		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	func restoreFolder(for account: Account, folder: Folder) async throws {
 		guard let name = folder.name else {
-			completion(.failure(LocalAccountDelegateError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
+		}
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) name: \(name)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete name: \(name)")
 		}
 
-		let feedsToRestore = folder.topLevelWebFeeds
-		syncProgress.addToNumberOfTasksAndRemaining(1 + feedsToRestore.count)
+		let feedsToRestore = folder.topLevelFeeds
+		syncProgress.addTasks(1 + feedsToRestore.count)
 
-		accountZone.createFolder(name: name) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success(let externalID):
-				folder.externalID = externalID
-				account.addFolder(folder)
+		do {
+			let externalID = try await accountZone.createFolder(name: name)
+			syncProgress.completeTask()
 
-				let group = DispatchGroup()
+			folder.externalID = externalID
+			account.addFolderToTree(folder)
+
+			await withTaskGroup(of: Void.self) { group in
 				for feed in feedsToRestore {
+					folder.topLevelFeeds.remove(feed)
 
-					folder.topLevelWebFeeds.remove(feed)
-
-					group.enter()
-					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
-						self.syncProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+					group.addTask {
+						do {
+							try await self.restoreFeed(for: account, feed: feed, container: folder)
+							await self.syncProgress.completeTask()
+						} catch {
+							Self.logger.error("CloudKit: Restore folder feed error: \(error.localizedDescription)")
+							await self.syncProgress.completeTask()
 						}
 					}
-
 				}
-
-				group.notify(queue: DispatchQueue.main) {
-					account.addFolder(folder)
-					completion(.success(()))
-				}
-
-			case .failure(let error):
-				self.processAccountError(account, error)
-				completion(.failure(error))
 			}
+
+			account.addFolderToTree(folder)
+		} catch {
+			syncProgress.completeTask()
+			processAccountError(account, error)
+			throw error
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
+	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(articles.map { article in
+			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		})
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account, showProgress: false)  { _ in }
-						}
-						completion(.success(()))
-					}
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		try await syncDatabase.insertStatuses(syncStatuses)
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+			try await sendArticleStatus(for: account)
 		}
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
 	func accountDidInitialize(_ account: Account) {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		self.account = account
 
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, articlesZone: articlesZone)
-		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: database, articlesZone: articlesZone)
+		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: syncDatabase, articlesZone: articlesZone)
 
-		database.resetAllSelectedForProcessing()
+		syncDatabase.resetAllSelectedForProcessing()
 
 		// Check to see if this is a new account and initialize anything we need
 		if account.externalID == nil {
-			accountZone.findOrCreateAccount() { result in
-				switch result {
-				case .success(let externalID):
+			Task {
+				do {
+					let externalID = try await accountZone.findOrCreateAccount()
 					account.externalID = externalID
-					self.initialRefreshAll(for: account) { _ in }
-				case .failure(let error):
-					os_log(.error, log: self.log, "Error adding account container: %@", error.localizedDescription)
+					try? await self.initialRefreshAll(for: account)
+				} catch {
+					Self.logger.error("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")
 				}
 			}
 			accountZone.subscribeToZoneChanges()
@@ -454,27 +451,32 @@ final class CloudKitAccountDelegate: AccountDelegate {
 	}
 
 	func accountWillBeDeleted(_ account: Account) {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		accountZone.resetChangeToken()
 		articlesZone.resetChangeToken()
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: (Result<Credentials?, Error>) -> Void) {
-		return completion(.success(nil))
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		nil
 	}
 
 	// MARK: - Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		refresher.suspend()
 	}
 
 	func suspendDatabase() {
-		database.suspend()
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		syncDatabase.suspend()
 	}
 
 	func resume() {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		refresher.resume()
-		database.resume()
+		syncDatabase.resume()
 	}
 }
 
@@ -482,26 +484,16 @@ final class CloudKitAccountDelegate: AccountDelegate {
 
 private extension CloudKitAccountDelegate {
 
-	func updateRefreshProgress() {
-
-		refreshProgress.numberOfTasks = refresher.downloadProgress.numberOfTasks + syncProgress.numberOfTasks
-		refreshProgress.numberRemaining = refresher.downloadProgress.numberRemaining + syncProgress.numberRemaining
-
-		// Complete?
-		if refreshProgress.numberOfTasks > 0 && refreshProgress.numberRemaining < 1 {
-			refresher.downloadProgress.numberOfTasks = 0
-			syncProgress.numberOfTasks = 0
-		}
+	func updateProgress() {
+		progressInfo = ProgressInfo.combined([refreshProgressInfo, syncProgressInfo])
 	}
 
-	@objc func downloadProgressDidChange(_ note: Notification) {
-
-		updateRefreshProgress()
+	@objc func refreshProgressDidChange(_ note: Notification) {
+		refreshProgressInfo = refresher.progressInfo
 	}
 
 	@objc func syncProgressDidChange(_ note: Notification) {
-
-		updateRefreshProgress()
+		syncProgressInfo = syncProgress.progressInfo
 	}
 }
 
@@ -509,311 +501,297 @@ private extension CloudKitAccountDelegate {
 
 private extension CloudKitAccountDelegate {
 
-	func initialRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
+	func initialRefreshAll(for account: Account) async throws {
+		try await performRefreshAll(for: account, sendArticleStatus: false)
+	}
 
-		func fail(_ error: Error) {
-			self.processAccountError(account, error)
-			self.syncProgress.reset()
-			completion(.failure(error))
+	func standardRefreshAll(for account: Account) async throws {
+		try await performRefreshAll(for: account, sendArticleStatus: true)
+	}
+
+	func performRefreshAll(for account: Account, sendArticleStatus: Bool) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) sendArticleStatus: \(sendArticleStatus ? "true" : "false")")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 		}
 
-		syncProgress.addToNumberOfTasksAndRemaining(3)
-		accountZone.fetchChangesInZone() { result in
-			self.syncProgress.completeTask()
+		syncProgress.addTasks(3)
 
-			let webFeeds = account.flattenedWebFeeds()
+		do {
+			try await accountZone.fetchChangesInZone()
+			syncProgress.completeTask()
 
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					self.syncProgress.completeTask()
-					switch result {
-					case .success:
+			let feeds = account.flattenedFeeds()
 
-						self.combinedRefresh(account, webFeeds) {
-							self.syncProgress.reset()
-							account.metadata.lastArticleFetchEndTime = Date()
-						}
+			try await refreshArticleStatus(for: account)
+			syncProgress.completeTask()
 
-					case .failure(let error):
-						fail(error)
-					}
-				}
-			case .failure(let error):
-				fail(error)
+			await refresher.refreshFeeds(feeds)
+
+			if sendArticleStatus {
+				try await self.sendArticleStatus(account: account, showProgress: true)
 			}
+
+			syncProgress.reset()
+			account.metadata.lastArticleFetchEndTime = Date()
+		} catch {
+			processAccountError(account, error)
+			syncProgress.reset()
+			throw error
 		}
 	}
 
-	func standardRefreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		syncProgress.addToNumberOfTasksAndRemaining(3)
-
-		func fail(_ error: Error) {
-			self.processAccountError(account, error)
-			self.syncProgress.reset()
-			completion(.failure(error))
+	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) url: \(url)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete url: \(url)")
 		}
+		syncProgress.addTasks(5)
 
-		accountZone.fetchChangesInZone() { result in
-			switch result {
-			case .success:
-				
-				self.syncProgress.completeTask()
-				let webFeeds = account.flattenedWebFeeds()
+		do {
+			let feedSpecifiers = try await FeedFinder.find(url: url)
+			syncProgress.completeTask()
 
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						self.syncProgress.completeTask()
-						self.combinedRefresh(account, webFeeds) {
-							self.sendArticleStatus(for: account, showProgress: true) { _ in
-								self.syncProgress.reset()
-								account.metadata.lastArticleFetchEndTime = Date()
-								completion(.success(()))
-							}
-						}
-					case .failure(let error):
-						fail(error)
-					}
-				}
-
-			case .failure(let error):
-				fail(error)
-			}
-		}
-	}
-
-	func combinedRefresh(_ account: Account, _ webFeeds: Set<WebFeed>, completion: @escaping () -> Void) {
-
-		refresher.refreshFeeds(webFeeds, completion: completion)
-	}
-
-	func createRSSWebFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-
-		func addDeadFeed() {
-			let feed = account.createWebFeed(with: editedName, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-			container.addWebFeed(feed)
-
-			self.accountZone.createWebFeed(url: url.absoluteString,
-										   name: editedName,
-										   editedName: nil,
-										   homePageURL: nil,
-										   container: container) { result in
-
-				self.syncProgress.completeTask()
-				switch result {
-				case .success(let externalID):
-					feed.externalID = externalID
-					completion(.success(feed))
-				case .failure(let error):
-					container.removeWebFeed(feed)
-					completion(.failure(error))
-				}
-			}
-		}
-
-		syncProgress.addToNumberOfTasksAndRemaining(5)
-		FeedFinder.find(url: url) { result in
-			
-			self.syncProgress.completeTask()
-			switch result {
-			case .success(let feedSpecifiers):
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers), let url = URL(string: bestFeedSpecifier.urlString) else {
-					self.syncProgress.completeTasks(3)
-					if validateFeed {
-						self.syncProgress.completeTask()
-						completion(.failure(AccountError.createErrorNotFound))
-					} else {
-						addDeadFeed()
-					}
-					return
-				}
-
-				if account.hasWebFeed(withURL: bestFeedSpecifier.urlString) {
-					self.syncProgress.completeTasks(4)
-					completion(.failure(AccountError.createErrorAlreadySubscribed))
-					return
-				}
-
-				let feed = account.createWebFeed(with: nil, url: url.absoluteString, webFeedID: url.absoluteString, homePageURL: nil)
-				feed.editedName = editedName
-				container.addWebFeed(feed)
-
-				InitialFeedDownloader.download(url) { parsedFeed in
-					self.syncProgress.completeTask()
-
-					if let parsedFeed = parsedFeed {
-						account.update(feed, with: parsedFeed) { result in
-							switch result {
-							case .success:
-
-								self.accountZone.createWebFeed(url: bestFeedSpecifier.urlString,
-															   name: parsedFeed.title,
-															   editedName: editedName,
-															   homePageURL: parsedFeed.homePageURL,
-															   container: container) { result in
-
-									self.syncProgress.completeTask()
-									switch result {
-									case .success(let externalID):
-										feed.externalID = externalID
-										self.sendNewArticlesToTheCloud(account, feed)
-										completion(.success(feed))
-									case .failure(let error):
-										container.removeWebFeed(feed)
-										self.syncProgress.completeTasks(2)
-										completion(.failure(error))
-									}
-								}
-
-							case .failure(let error):
-								container.removeWebFeed(feed)
-								self.syncProgress.completeTasks(3)
-								completion(.failure(error))
-							}
-
-						}
-					} else {
-						self.syncProgress.completeTasks(3)
-						container.removeWebFeed(feed)
-						completion(.failure(AccountError.createErrorNotFound))
-					}
-
-				}
-
-			case .failure:
-				self.syncProgress.completeTasks(3)
+			guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers),
+				  let feedURL = URL(string: bestFeedSpecifier.urlString) else {
+				syncProgress.completeTasks(3)
 				if validateFeed {
-					self.syncProgress.completeTask()
-					completion(.failure(AccountError.createErrorNotFound))
-					return
+					syncProgress.completeTask()
+					throw AccountError.createErrorNotFound
 				} else {
-					addDeadFeed()
+					return try await addDeadFeed(account: account, url: url, editedName: editedName, container: container)
 				}
+			}
+
+			if account.hasFeed(withURL: bestFeedSpecifier.urlString) {
+				syncProgress.completeTasks(4)
+				throw AccountError.createErrorAlreadySubscribed
+			}
+
+			return try await createAndSyncFeed(account: account,
+											   feedURL: feedURL,
+											   bestFeedSpecifier: bestFeedSpecifier,
+											   editedName: editedName,
+											   container: container)
+		} catch {
+			syncProgress.completeTasks(3)
+			if validateFeed {
+				syncProgress.completeTask()
+				throw AccountError.createErrorNotFound
+			} else {
+				return try await addDeadFeed(account: account, url: url, editedName: editedName, container: container)
 			}
 		}
 	}
 
-	func sendNewArticlesToTheCloud(_ account: Account, _ feed: WebFeed) {
-		account.fetchArticlesAsync(.webFeed(feed)) { result in
-			switch result {
-			case .success(let articles):
-				self.storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>()) {
-					self.syncProgress.completeTask()
-					self.sendArticleStatus(for: account, showProgress: true) { result in
-						switch result {
-						case .success:
-							self.articlesZone.fetchChangesInZone() { _ in }
-						case .failure(let error):
-							os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
-						}
-					}
-				}
-			case .failure(let error):
-				os_log(.error, log: self.log, "CloudKit Feed send articles error: %@.", error.localizedDescription)
+	func createAndSyncFeed(account: Account, feedURL: URL, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws -> Feed {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feedURL: \(feedURL)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feedURL: \(feedURL)")
+		}
+		let feed = account.createFeed(with: nil, url: feedURL.absoluteString, feedID: feedURL.absoluteString, homePageURL: nil)
+		feed.editedName = editedName
+		container.addFeedToTreeAtTopLevel(feed)
+
+		do {
+			let parsedFeed = try await downloadAndParseFeed(feedURL: feedURL, feed: feed)
+			try await updateAndCreateFeedInCloud(account: account,
+												 feed: feed,
+												 parsedFeed: parsedFeed,
+												 bestFeedSpecifier: bestFeedSpecifier,
+												 editedName: editedName,
+												 container: container)
+			return feed
+		} catch {
+			container.removeFeedFromTreeAtTopLevel(feed)
+			syncProgress.completeTasks(3)
+			throw error
+		}
+	}
+
+	func downloadAndParseFeed(feedURL: URL, feed: Feed) async throws -> ParsedFeed {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feedURL: \(feedURL)")
+		let (parsedFeed, response) = try await InitialFeedDownloader.download(feedURL)
+		syncProgress.completeTask()
+		feed.lastCheckDate = Date()
+
+		guard let parsedFeed else {
+			throw AccountError.createErrorNotFound
+		}
+
+		// Save conditional GET info so that first refresh uses conditional GET.
+		if let httpResponse = response as? HTTPURLResponse,
+		   let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse) {
+			feed.conditionalGetInfo = conditionalGetInfo
+		}
+
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+		return parsedFeed
+	}
+
+	func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
+		_ = try await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
+
+		let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
+														  name: parsedFeed.title,
+														  editedName: editedName,
+														  homePageURL: parsedFeed.homePageURL,
+														  container: container)
+		syncProgress.completeTask()
+		feed.externalID = externalID
+		sendNewArticlesToTheCloud(account, feed)
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	func addDeadFeed(account: Account, url: URL, editedName: String?, container: Container) async throws -> Feed {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		let feed = account.createFeed(with: editedName, url: url.absoluteString, feedID: url.absoluteString, homePageURL: nil)
+		container.addFeedToTreeAtTopLevel(feed)
+
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+			syncProgress.completeTask()
+		}
+
+		do {
+			let externalID = try await accountZone.createFeed(url: url.absoluteString,
+															  name: editedName,
+															  editedName: nil,
+															  homePageURL: nil,
+															  container: container)
+			feed.externalID = externalID
+			return feed
+		} catch {
+			container.removeFeedFromTreeAtTopLevel(feed)
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")
+			throw error
+		}
+	}
+
+	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		Task {
+			do {
+				let articles = try await account.fetchArticlesAsync(.feed(feed))
+
+				await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
+				syncProgress.completeTask()
+
+				try await sendArticleStatus(account: account, showProgress: true)
+				try? await articlesZone.fetchChangesInZone()
+			} catch {
+				Self.logger.error("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")
 			}
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 		}
 	}
 
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
-			account.removeFeeds(account.topLevelWebFeeds)
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) \(error)")
+			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
-				account.removeFolder(folder)
+				account.removeFolderFromTree(folder)
 			}
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 		}
 	}
 
-	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?, completion: (() -> Void)?) {
+	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?) async {
 		// New records with a read status aren't really new, they just didn't have the read article stored
-		let group = DispatchGroup()
-		if let new = new {
-			let filteredNew = new.filter { $0.status.read == false }
-			group.enter()
-			insertSyncStatuses(articles: filteredNew, statusKey: .new, flag: true) {
-				group.leave()
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		await withTaskGroup(of: Void.self) { group in
+			if let new = new {
+				let filteredNew = new.filter { $0.status.read == false }
+				group.addTask {
+					await self.insertSyncStatuses(articles: filteredNew, statusKey: .new, flag: true)
+				}
+			}
+
+			group.addTask {
+				await self.insertSyncStatuses(articles: updated, statusKey: .new, flag: false)
+			}
+
+			group.addTask {
+				await self.insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true)
 			}
 		}
-
-		group.enter()
-		insertSyncStatuses(articles: updated, statusKey: .new, flag: false) {
-			group.leave()
-		}
-
-		group.enter()
-		insertSyncStatuses(articles: deleted, statusKey: .deleted, flag: true) {
-			group.leave()
-		}
-
-		group.notify(queue: DispatchQueue.global(qos: .userInitiated)) {
-			DispatchQueue.main.async {
-				completion?()
-			}
-		}
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool, completion: @escaping () -> Void) {
+	func insertSyncStatuses(articles: Set<Article>?, statusKey: SyncStatus.Key, flag: Bool) async {
 		guard let articles = articles, !articles.isEmpty else {
-			completion()
 			return
 		}
-		let syncStatuses = articles.map { article in
-			return SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
-		}
-		database.insertStatuses(syncStatuses) { _ in
-			completion()
-		}
+		let syncStatuses = Set(articles.map { article in
+			SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
+		})
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		try? await syncDatabase.insertStatuses(syncStatuses)
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func sendArticleStatus(for account: Account, showProgress: Bool, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let op = CloudKitSendStatusOperation(account: account,
-											 articlesZone: articlesZone,
-											 refreshProgress: refreshProgress,
-											 showProgress: showProgress,
-											 database: database)
-		op.completionBlock = { mainThreadOperaion in
-			if mainThreadOperaion.isCanceled {
-				completion(.failure(CloudKitAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
-			}
-		}
-		mainThreadOperationQueue.add(op)
-	}
-
-
-	func removeWebFeedFromCloud(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		syncProgress.addToNumberOfTasksAndRemaining(2)
-		accountZone.removeWebFeed(feed, from: container) { result in
-			self.syncProgress.completeTask()
-			switch result {
-			case .success:
-				guard let webFeedExternalID = feed.externalID else {
-					completion(.success(()))
-					return
+	func sendArticleStatus(account: Account, showProgress: Bool) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+			let op = CloudKitSendStatusOperation(account: account,
+												 articlesZone: articlesZone,
+												 database: syncDatabase)
+			op.completionBlock = { mainThreadOperation in
+				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+				if mainThreadOperation.isCanceled {
+					continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
+				} else {
+					continuation.resume(returning: ())
 				}
-				self.articlesZone.deleteArticles(webFeedExternalID) { result in
-					feed.dropConditionalGetInfo()
-					self.syncProgress.completeTask()
-					completion(result)
-				}
-			case .failure(let error):
-				self.syncProgress.completeTask()
-				self.processAccountError(account, error)
-				completion(.failure(error))
 			}
+			mainThreadOperationQueue.add(op)
 		}
 	}
 
+	func removeFeedFromCloud(for account: Account, with feed: Feed, from container: Container) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+		}
+
+		syncProgress.addTasks(2)
+
+		do {
+			_ = try await accountZone.removeFeed(feed, from: container)
+			syncProgress.completeTask()
+		} catch {
+			syncProgress.completeTask()
+			syncProgress.completeTask()
+			processAccountError(account, error)
+			throw error
+		}
+
+		guard let feedExternalID = feed.externalID else {
+			syncProgress.completeTask()
+			return
+		}
+
+		do {
+			try await articlesZone.deleteArticles(feedExternalID)
+			feed.dropConditionalGetInfo()
+			syncProgress.completeTask()
+		} catch {
+			syncProgress.completeTask()
+			processAccountError(account, error)
+			throw error
+		}
+	}
 }
 
 extension CloudKitAccountDelegate: LocalAccountRefresherDelegate {
 
 	func localAccountRefresher(_ refresher: LocalAccountRefresher, articleChanges: ArticleChanges) {
-		self.storeArticleChanges(new: articleChanges.newArticles,
-								 updated: articleChanges.updatedArticles,
-								 deleted: articleChanges.deletedArticles,
-								 completion: nil)
+		Task {
+			await storeArticleChanges(new: articleChanges.new,
+									  updated: articleChanges.updated,
+									  deleted: articleChanges.deleted)
+		}
 	}
 }

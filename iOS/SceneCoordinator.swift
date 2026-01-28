@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 import UserNotifications
 import Account
 import Articles
@@ -25,22 +26,25 @@ enum ShowFeedName {
 	case feed
 }
 
-struct FeedNode: Hashable {
-	var node: Node
-	var feedID: FeedIdentifier
-	
-	init(_ node: Node) {
+struct SidebarItemNode: Hashable, Sendable {
+	let node: Node
+	let sidebarItemID: SidebarItemIdentifier
+
+	@MainActor init(_ node: Node) {
 		self.node = node
-		self.feedID = (node.representedObject as! Feed).feedID!
+		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
 	}
-	
-	func hash(into hasher: inout Hasher) {
-		hasher.combine(feedID)
+
+	nonisolated func hash(into hasher: inout Hasher) {
+		hasher.combine(ObjectIdentifier(node))
+	}
+
+	nonisolated static func == (lhs: SidebarItemNode, rhs: SidebarItemNode) -> Bool {
+		lhs.node === rhs.node
 	}
 }
 
-class SceneCoordinator: NSObject, UndoableCommandRunner {
-
+@MainActor final class SceneCoordinator: NSObject, UndoableCommandRunner {
 	var undoableCommands = [UndoableCommand]()
 	var undoManager: UndoManager? {
 		return rootSplitViewController.undoManager
@@ -52,8 +56,8 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	private var rootSplitViewController: RootSplitViewController!
 
-	private var mainFeedViewController: MainFeedViewController!
-	private var mainTimelineViewController: MainTimelineViewController?
+	private var mainFeedCollectionViewController: MainFeedCollectionViewController!
+	private var mainTimelineViewController: MainTimelineModernViewController?
 	private var articleViewController: ArticleViewController?
 
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
@@ -61,28 +65,30 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SceneCoordinator")
+
 	// Which Containers are expanded
-	private var expandedTable = Set<ContainerIdentifier>()
+	private var expandedContainers = Set<ContainerIdentifier>()
 
-	// Which Containers used to be expanded. Reset by rebuilding the Shadow Table.
-	private var lastExpandedTable = Set<ContainerIdentifier>()
+	// Which Containers used to be expanded. Reset by rebuilding the sidebar.
+	private var lastExpandedContainers = Set<ContainerIdentifier>()
 
-	// Which Feeds have the Read Articles Filter enabled
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	private let hidingReadArticlesState = HidingReadArticlesState()
 
-	// Flattened tree structure for the Sidebar
-	private var shadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
-
-	private(set) var preSearchTimelineFeed: Feed?
+	private(set) var preSearchTimelineFeed: SidebarItem?
 	private var lastSearchString = ""
-	private var lastSearchScope: SearchScope? = nil
+	private var lastSearchScope: SearchScope?
 	private var isSearching: Bool = false
-	private var savedSearchArticles: ArticleArray? = nil
-	private var savedSearchArticleIds: Set<String>? = nil
-	
+	private var savedSearchArticles: ArticleArray?
+	private var savedSearchArticleIDs: Set<String>?
+	private var isRestoringState = false
+
 	var isTimelineViewControllerPending = false
 	var isArticleViewControllerPending = false
-	
+
+	/// `Bool` to track whether a refresh is scheduled.
+	private var isNavigationBarSubtitleRefreshScheduled: Bool = false
+
 	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
@@ -90,7 +96,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 	}
-	
+
 	private(set) var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
@@ -98,52 +104,41 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 	}
-	
-	var prefersStatusBarHidden = false
-	
-	private let treeControllerDelegate = WebFeedTreeControllerDelegate()
-	private let treeController: TreeController
-	
-	var stateRestorationActivity: NSUserActivity {
-		let activity = activityManager.stateRestorationActivity
-		var userInfo = activity.userInfo ?? [AnyHashable: Any]()
-		
-		userInfo[UserInfoKey.windowState] = windowState()
-		
-		let articleState = articleViewController?.currentState
-		userInfo[UserInfoKey.isShowingExtractedArticle] = articleState?.isShowingExtractedArticle ?? false
-		userInfo[UserInfoKey.articleWindowScrollY] = articleState?.windowScrollY ?? 0
 
-		activity.userInfo = userInfo
-		return activity
+	var prefersStatusBarHidden = false
+
+	private let treeControllerDelegate = SidebarTreeControllerDelegate()
+	private let treeController: TreeController
+
+	var stateRestorationActivity: NSUserActivity {
+		activityManager.stateRestorationActivity
 	}
-	
+
 	var isNavigationDisabled = false
-	
+
 	var isRootSplitCollapsed: Bool {
 		return rootSplitViewController.isCollapsed
 	}
-	
+
 	var isReadFeedsFiltered: Bool {
 		return treeControllerDelegate.isReadFiltered
 	}
-	
+
 	var isReadArticlesFiltered: Bool {
-		if let feedID = timelineFeed?.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
-			return readFilterEnabled
-		} else {
-			return timelineDefaultReadFilterType != .none
+		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
+			return false
 		}
+		return hidingReadArticlesState.isHidingReadArticles(for: sidebarItemID)
 	}
-	
+
 	var timelineDefaultReadFilterType: ReadFilterType {
 		return timelineFeed?.defaultReadFilterType ?? .none
 	}
-	
+
 	var rootNode: Node {
 		return treeController.rootNode
 	}
-	
+
 	// At some point we should refactor the current Feed IndexPath out and only use the timeline feed
 	private(set) var currentFeedIndexPath: IndexPath?
 
@@ -153,12 +148,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		return IconImageCache.shared.imageForFeed(timelineFeed)
 	}
-	
+
 	private var exceptionArticleFetcher: ArticleFetcher?
-	private(set) var timelineFeed: Feed?
-	
+	private(set) var timelineFeed: SidebarItem? {
+		didSet {
+			mainTimelineViewController?.updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
+			updateNavigationBarSubtitles(nil)
+		}
+	}
+
 	var timelineMiddleIndexPath: IndexPath?
-	
+
 	private(set) var showFeedNames = ShowFeedName.none
 	private(set) var showIcons = false
 
@@ -166,12 +166,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		guard let indexPath = currentFeedIndexPath else {
 			return nil
 		}
-		
+
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+
 		let prevIndexPath: IndexPath? = {
 			if indexPath.row - 1 < 0 {
 				for i in (0..<indexPath.section).reversed() {
-					if shadowTable[i].feedNodes.count > 0 {
-						return IndexPath(row: shadowTable[i].feedNodes.count - 1, section: i)
+					let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					if numberOfItems > 0 {
+						return IndexPath(row: numberOfItems - 1, section: i)
 					}
 				}
 				return nil
@@ -179,19 +182,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
 			}
 		}()
-		
+
 		return prevIndexPath
 	}
-	
+
 	var nextFeedIndexPath: IndexPath? {
 		guard let indexPath = currentFeedIndexPath else {
 			return nil
 		}
-		
+
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
+
 		let nextIndexPath: IndexPath? = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
-				for i in indexPath.section + 1..<shadowTable.count {
-					if shadowTable[i].feedNodes.count > 0 {
+			let numberOfItems = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+			if indexPath.row + 1 >= numberOfItems {
+				for i in indexPath.section + 1..<numberOfSections {
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					if count > 0 {
 						return IndexPath(row: 0, section: i)
 					}
 				}
@@ -200,7 +208,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 				return IndexPath(row: indexPath.row + 1, section: indexPath.section)
 			}
 		}()
-		
+
 		return nextIndexPath
 	}
 
@@ -210,28 +218,28 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		return articleRow > 0
 	}
-	
+
 	var isNextArticleAvailable: Bool {
 		guard let articleRow = currentArticleRow else {
 			return false
 		}
 		return articleRow + 1 < articles.count
 	}
-	
+
 	var prevArticle: Article? {
 		guard isPrevArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
 		return articles[articleRow - 1]
 	}
-	
+
 	var nextArticle: Article? {
 		guard isNextArticleAvailable, let articleRow = currentArticleRow else {
 			return nil
 		}
 		return articles[articleRow + 1]
 	}
-	
+
 	var firstUnreadArticleIndexPath: IndexPath? {
 		for (row, article) in articles.enumerated() {
 			if !article.status.read {
@@ -240,8 +248,16 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		return nil
 	}
-	
-	var currentArticle: Article?
+
+	var currentArticle: Article? {
+		didSet {
+			if let article = currentArticle {
+				AppDefaults.shared.selectedArticle = ArticleSpecifier(article: article)
+			} else {
+				AppDefaults.shared.selectedArticle = nil
+			}
+		}
+	}
 
 	private(set) var articles = ArticleArray() {
 		didSet {
@@ -260,31 +276,45 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	private var currentArticleRow: Int? {
-		guard let article = currentArticle else { return nil }
+		guard let article = currentArticle else {
+			return nil
+		}
 		return articles.firstIndex(of: article)
 	}
 
 	var isTimelineUnreadAvailable: Bool {
 		return timelineUnreadCount > 0
 	}
-	
+
 	var isAnyUnreadAvailable: Bool {
 		return appDelegate.unreadCount > 0
 	}
-	
-	var timelineUnreadCount: Int = 0
-	
+
+	var timelineUnreadCount: Int = 0 {
+		didSet {
+			updateNavigationBarSubtitles(nil)
+		}
+	}
+
 	init(rootSplitViewController: RootSplitViewController) {
 		self.rootSplitViewController = rootSplitViewController
+		self.rootSplitViewController.minimumPrimaryColumnWidth = 300
+		self.rootSplitViewController.maximumPrimaryColumnWidth = 500
+		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
+		self.rootSplitViewController.preferredSupplementaryColumnWidth = 320
+		self.rootSplitViewController.maximumSupplementaryColumnWidth = 360
+		self.rootSplitViewController.preferredSplitBehavior = .tile
+
 		self.treeController = TreeController(delegate: treeControllerDelegate)
 
 		super.init()
 
-		self.mainFeedViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedViewController
-		self.mainFeedViewController.coordinator = self
-		self.mainFeedViewController?.navigationController?.delegate = self
+		self.mainFeedCollectionViewController = rootSplitViewController.viewController(for: .primary) as? MainFeedCollectionViewController
+		self.mainFeedCollectionViewController.coordinator = self
+		self.mainFeedCollectionViewController?.navigationController?.delegate = self
+		updateNavigationBarSubtitles(nil)
 
-		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineViewController
+		self.mainTimelineViewController = rootSplitViewController.viewController(for: .supplementary) as? MainTimelineModernViewController
 		self.mainTimelineViewController?.coordinator = self
 		self.mainTimelineViewController?.navigationController?.delegate = self
 
@@ -294,60 +324,103 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
-			shadowTable.append((sectionID: "", feedNodes: [FeedNode]()))
 		}
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(userDidAddFeed(_:)), name: .UserDidAddFeed, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
-	}
-	
-	func restoreWindowState(_ activity: NSUserActivity?) {
-		if let activity = activity, let windowState = activity.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] {
-			
-			if let containerExpandedWindowState = windowState[UserInfoKey.containerExpandedWindowState] as? [[AnyHashable: AnyHashable]] {
-				let containerIdentifiers = containerExpandedWindowState.compactMap( { ContainerIdentifier(userInfo: $0) })
-				expandedTable = Set(containerIdentifiers)
-			}
-			
-			if let readArticlesFilterState = windowState[UserInfoKey.readArticlesFilterState] as? [[AnyHashable: AnyHashable]: Bool] {
-				for key in readArticlesFilterState.keys {
-					if let feedIdentifier = FeedIdentifier(userInfo: key) {
-						readFilterEnabledTable[feedIdentifier] = readArticlesFilterState[key]
-					}
-				}
-			}
+		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 
-			rebuildBackingStores(initialLoad: true)
-
-			// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
-			// for state restoration to work with while we are waiting for the unread counts to initialize.
-			if let readFeedsFilterState = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
-				treeControllerDelegate.isReadFiltered = readFeedsFilterState
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
 			}
-			
-		} else {
-			
-			rebuildBackingStores(initialLoad: true)
-			
 		}
 	}
-	
+
+	func restoreWindowState(activity: NSUserActivity?) {
+		let stateInfo = StateRestorationInfo(legacyState: activity)
+		restoreWindowState(stateInfo)
+	}
+
+	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
+		Self.logger.debug("SceneCoordinator: restoreWindowState")
+
+		isRestoringState = true
+
+		if AppDefaults.shared.isFirstRun {
+			// Expand top-level items on first run.
+			for sectionNode in treeController.rootNode.childNodes {
+				markExpanded(sectionNode)
+			}
+			saveExpandedContainers()
+		} else {
+			expandedContainers = stateInfo.expandedContainers
+		}
+
+		hidingReadArticlesState.copy(from: stateInfo)
+
+		// Ensure the view is loaded so dataSource is initialized before rebuilding
+		_ = mainFeedCollectionViewController.view
+
+		rebuildBackingStores(initialLoad: true)
+
+		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
+		// for state restoration to work with while we are waiting for the unread counts to initialize.
+		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
+
+		restoreSelectedSidebarItemAndArticle(stateInfo)
+	}
+
+	private func restoreSelectedSidebarItemAndArticle(_ stateInfo: StateRestorationInfo) {
+		guard let selectedSidebarItem = stateInfo.selectedSidebarItem else {
+			isRestoringState = false
+			return
+		}
+
+		guard let sidebarItemNode = nodeFor(sidebarItemID: selectedSidebarItem),
+			  let indexPath = indexPathFor(sidebarItemNode) else {
+			isRestoringState = false
+			return
+		}
+		selectSidebarItem(indexPath: indexPath, animations: []) {
+			self.restoreSelectedArticle(stateInfo)
+		}
+	}
+
+	private func restoreSelectedArticle(_ stateInfo: StateRestorationInfo) {
+		defer {
+			isRestoringState = false
+		}
+
+		guard let articleSpecifier = stateInfo.selectedArticle else {
+			return
+		}
+
+		let article = articles.article(matching: articleSpecifier) ??
+		AccountManager.shared.fetchArticle(accountID: articleSpecifier.accountID,
+										   articleID: articleSpecifier.articleID)
+
+		if let article {
+			selectArticle(article, isShowingExtractedArticle: stateInfo.isShowingExtractedArticle, articleWindowScrollY: stateInfo.articleWindowScrollY)
+		}
+	}
+
 	func handle(_ activity: NSUserActivity) {
-		selectFeed(indexPath: nil) {
-			guard let activityType = ActivityType(rawValue: activity.activityType) else { return }
+		selectSidebarItem(indexPath: nil) {
+			guard let activityType = ActivityType(rawValue: activity.activityType) else {
+				return
+			}
 			switch activityType {
 			case .restoration:
 				break
@@ -358,24 +431,24 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			case .readArticle:
 				self.handleReadArticle(activity.userInfo)
 			case .addFeedIntent:
-				self.showAddWebFeed()
+				self.showAddFeed()
 			}
 		}
 	}
-	
+
 	func handle(_ response: UNNotificationResponse) {
 		let userInfo = response.notification.request.content.userInfo
 		handleReadArticle(userInfo)
 	}
-	
+
 	func resetFocus() {
 		if currentArticle != nil {
 			mainTimelineViewController?.focus()
 		} else {
-			mainFeedViewController?.focus()
+			mainFeedCollectionViewController?.focus()
 		}
 	}
-	
+
 	func selectFirstUnreadInAllUnread() {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.unreadFeed) {
@@ -386,21 +459,23 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	func showSearch() {
-		selectFeed(indexPath: nil) {
+		selectSidebarItem(indexPath: nil) {
 			self.rootSplitViewController.show(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
 				self.mainTimelineViewController!.showSearchAll()
 			}
 		}
 	}
-	
+
 	// MARK: Notifications
-	
+
 	@objc func unreadCountDidInitialize(_ notification: Notification) {
+		Self.logger.debug("SceneCoordinator: unreadCountDidInitialize")
+
 		guard notification.object is AccountManager else {
 			return
 		}
-		
+
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
@@ -408,37 +483,40 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 		// We will handle the filtering of unread feeds in unreadCountDidInitialize after they have all be calculated
-		guard AccountManager.shared.isUnreadCountsInitialized else {
-			return	
+		guard AccountManager.shared.areUnreadCountsInitialized else {
+			return
 		}
-		
 		queueRebuildBackingStores()
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
 		updateUnreadCount()
 	}
-	
+
 	@objc func containerChildrenDidChange(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: containerChildrenDidChange")
 		if timelineFetcherContainsAnyPseudoFeed() || timelineFetcherContainsAnyFolder() {
 			fetchAndMergeArticlesAsync(animated: true) {
 				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
-				self.rebuildBackingStores()
+				self.queueRebuildBackingStores()
 			}
 		} else {
-			rebuildBackingStores()
+			queueRebuildBackingStores()
 		}
 	}
-	
-	@objc func batchUpdateDidPerform(_ notification: Notification) {
-		rebuildBackingStores()
-	}
-	
+
 	@objc func displayNameDidChange(_ note: Notification) {
-		rebuildBackingStores()
+		Self.logger.debug("SceneCoordinator: displayNameDidChange")
+
+		if let sidebarItem = note.object as? SidebarItem {
+			reconfigureSidebarItem(sidebarItem)
+		}
+		queueRebuildBackingStores()
 	}
 
 	@objc func accountStateDidChange(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: accountStateDidChange")
+
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
 				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
@@ -448,15 +526,17 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.rebuildBackingStores()
 		}
 	}
-	
+
 	@objc func userDidAddAccount(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: userDidAddAccount")
+
 		let expandNewAccount = {
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
 				self.markExpanded(node)
 			}
 		}
-		
+
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
 				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
@@ -468,13 +548,15 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
+		Self.logger.debug("SceneCoordinator: userDidDeleteAccount")
+
 		let cleanupAccount = {
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {
 				self.unmarkExpanded(node)
 			}
 		}
-		
+
 		if timelineFetcherContainsAnyPseudoFeed() {
 			fetchAndMergeArticlesAsync(animated: true) {
 				self.mainTimelineViewController?.reinitializeArticles(resetScroll: false)
@@ -486,30 +568,28 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	@objc func userDidAddFeed(_ notification: Notification) {
-		guard let webFeed = notification.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
-		discloseWebFeed(webFeed, animations: [.scroll, .navigation])
+		discloseFeed(feed, animations: [.scroll, .navigation])
 	}
-	
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task { @MainActor in
-			self.sortDirection = AppDefaults.shared.timelineSortDirection
-			self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
-		}
+
+	func userDefaultsDidChange() {
+		sortDirection = AppDefaults.shared.timelineSortDirection
+		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
-	
+
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
 			return
 		}
-		
+
 		let shouldFetchAndMergeArticles = timelineFetcherContainsAnyFeed(feeds) || timelineFetcherContainsAnyPseudoFeed()
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
 	}
-	
+
 	@objc func willEnterForeground(_ note: Notification) {
 		// Don't interfere with any fetch requests that we may have initiated before the app was returned to the foreground.
 		// For example if you select Next Unread from the Home Screen Quick actions, you can start a request before we are
@@ -518,18 +598,18 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			queueFetchAndMergeArticles()
 		}
 	}
-	
+
 	@objc func importDownloadedTheme(_ note: Notification) {
 		guard let userInfo = note.userInfo,
 			let url = userInfo["url"] as? URL else {
 			return
 		}
-		
+
 		DispatchQueue.main.async {
 			self.importTheme(filename: url.path)
 		}
 	}
-	
+
 	@objc func themeDownloadDidFail(_ note: Notification) {
 		guard let userInfo = note.userInfo,
 			  let error = userInfo["error"] as? Error else {
@@ -540,15 +620,123 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 	}
 
+	/// Updates navigation bar subtitles in response to feed selection, unread count changes,
+	/// `progressInfoDidChange` notifications, and a timed refresh every
+	/// 60s.
+	///
+	/// Subtitles are handled differently on iPhone and iPad.
+	///
+	/// `MainFeedViewController`
+	/// - When refreshing: Feeds will display "Updating..." on both iPhone and iPad.
+	/// - When refreshed: Feeds will display "Updated <#relative_time#>" on both iPhone and iPad.
+	///
+	/// `MainTimelineViewController`
+	/// - Where the unread count for the timeline is > 0, this is displayed on both iPhone and iPad.
+	/// - If the timeline count is 0, the iPhone follows the same logic as `MainFeedViewController`
+	/// - Specific to iPad, if the unread count is 0, the iPad will not display a subtitle. The refresh text
+	/// will generally be visible in the sidebar and there's no need to display it twice.
+	///
+	/// - Parameter note: Optional `Notification`
+	@objc func updateNavigationBarSubtitles(_ note: Notification?) {
+		let progressInfo = CombinedRefreshProgress.shared.progressInfo
+
+		if progressInfo.isComplete {
+			if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+				if Date.now > accountLastArticleFetchEndTime.addingTimeInterval(60) {
+					let relativeDateTimeFormatter = RelativeDateTimeFormatter()
+					relativeDateTimeFormatter.dateTimeStyle = .named
+					let refreshed = relativeDateTimeFormatter.localizedString(for: accountLastArticleFetchEndTime, relativeTo: Date())
+					let localizedRefreshText = NSLocalizedString("Updated %@", comment: "Updated")
+					let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
+
+					// Update Feeds with Updated text
+					self.mainFeedCollectionViewController?.navigationItem.subtitle = refreshText
+
+					// If unread count > 0, add unread string to timeline
+					if timelineFeed != nil, timelineUnreadCount > 0 {
+						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
+						let unreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
+						self.mainTimelineViewController?.updateNavigationBarSubtitle(unreadCount)
+					} else {
+						// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
+						if UIDevice.current.userInterfaceIdiom == .phone {
+							self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshText)
+						} else {
+							self.mainTimelineViewController?.updateNavigationBarSubtitle("")
+						}
+					}
+				} else {
+					// Use 'Updated Just Now' while <60s have passed since refresh.
+					self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+
+					// If unread count > 0, add unread string to timeline
+					if timelineFeed != nil, timelineUnreadCount > 0 {
+						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
+						let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
+						self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)
+					} else {
+						// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
+						if UIDevice.current.userInterfaceIdiom == .phone {
+							self.mainTimelineViewController?.updateNavigationBarSubtitle(NSLocalizedString("Updated Just Now", comment: "Updated Just Now"))
+						} else {
+							self.mainTimelineViewController?.updateNavigationBarSubtitle("")
+						}
+					}
+				}
+			} else {
+				self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
+				// If unread count > 0, add unread string to timeline
+				if timelineFeed != nil, timelineUnreadCount > 0 {
+					let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
+					let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
+					self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)
+				} else {
+					// When unread count == 0, iPhone timeline displays Updated Just Now; iPad is blank
+					if UIDevice.current.userInterfaceIdiom == .phone {
+						self.mainTimelineViewController?.updateNavigationBarSubtitle(NSLocalizedString("Updated Just Now", comment: "Updated Just Now"))
+					} else {
+						self.mainTimelineViewController?.updateNavigationBarSubtitle("")
+					}
+				}
+			}
+		} else {
+			// Updating in progress, apply to both iPhone and iPad Feeds.
+			self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updating…", comment: "Updating…")
+		}
+
+		scheduleNavigationBarSubtitleUpdate()
+	}
+
+	func scheduleNavigationBarSubtitleUpdate() {
+		if isNavigationBarSubtitleRefreshScheduled {
+			return
+		}
+		isNavigationBarSubtitleRefreshScheduled = true
+		DispatchQueue.main.asyncAfter(deadline: .now() + 60) { [weak self] in
+			self?.isNavigationBarSubtitleRefreshScheduled = false
+			self?.updateNavigationBarSubtitles(nil)
+		}
+	}
+
 	// MARK: API
-	
+
+	func didEnterBackground() {
+		hidingReadArticlesState.save()
+		saveExpandedContainers()
+	}
+
 	func suspend() {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
 		rebuildBackingStoresQueue.performCallsImmediately()
 		fetchRequestQueue.cancelAllRequests()
 	}
-	
+
+	func saveExpandedContainers() {
+		AppDefaults.shared.expandedContainers = expandedContainers
+	}
+
 	func cleanUp(conditional: Bool) {
+		Self.logger.debug("SceneCoordinator: cleanUp: conditional \(conditional ? "true" : "false")")
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
@@ -556,79 +744,62 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			refreshTimeline(resetScroll: false)
 		}
 	}
-	
+
 	func toggleReadFeedsFilter() {
-		if isReadFeedsFiltered {
-			treeControllerDelegate.isReadFiltered = false
-		} else {
-			treeControllerDelegate.isReadFiltered = true
-		}
+		Self.logger.debug("SceneCoordinator: toggleReadFeedsFilter")
+
+		let newValue = !isReadFeedsFiltered
+		treeControllerDelegate.isReadFiltered = newValue
+		AppDefaults.shared.hideReadFeeds = newValue
 		rebuildBackingStores()
-		mainFeedViewController?.updateUI()
+		mainFeedCollectionViewController?.updateUI()
 	}
-	
+
+	func shouldShowFilterButton() -> Bool {
+		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
+			return false
+		}
+		return hidingReadArticlesState.canToggleHidingReadArticles(for: sidebarItemID)
+	}
+
 	func toggleReadArticlesFilter() {
-		guard let feedID = timelineFeed?.feedID else {
+		guard let sidebarItemID = timelineFeed?.sidebarItemID else {
 			return
 		}
-
-		if isReadArticlesFiltered {
-			readFilterEnabledTable[feedID] = false
-		} else {
-			readFilterEnabledTable[feedID] = true
-		}
-		
+		hidingReadArticlesState.toggleHidingReadArticles(for: sidebarItemID)
 		refreshTimeline(resetScroll: false)
 	}
 
-	func nodeFor(feedID: FeedIdentifier) -> Node? {
+	func nodeFor(sidebarItemID: SidebarItemIdentifier) -> Node? {
 		return treeController.rootNode.descendantNode(where: { node in
-			if let feed = node.representedObject as? Feed {
-				return feed.feedID == feedID
+			if let sidebarItem = node.representedObject as? SidebarItem {
+				return sidebarItem.sidebarItemID == sidebarItemID
 			} else {
 				return false
 			}
 		})
 	}
-	
-	func numberOfSections() -> Int {
-		return shadowTable.count
-	}
-	
-	func numberOfRows(in section: Int) -> Int {
-		return shadowTable[section].feedNodes.count
-	}
-	
+
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard indexPath.section > -1 &&
-				indexPath.row > -1 &&
-				indexPath.section < shadowTable.count &&
-				indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
+		guard let sidebarItemNode = mainFeedCollectionViewController.dataSource.itemIdentifier(for: indexPath) else {
 			return nil
 		}
-		return shadowTable[indexPath.section].feedNodes[indexPath.row].node
+		return sidebarItemNode.node
 	}
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
-		for i in 0..<shadowTable.count {
-			if let row = shadowTable[i].feedNodes.firstIndex(of: FeedNode(node)) {
-				return IndexPath(row: row, section: i)
-			}
-		}
-		return nil
+		let sidebarItemNode = SidebarItemNode(node)
+		return mainFeedCollectionViewController.dataSource.indexPath(for: sidebarItemNode)
 	}
-	
+
 	func articleFor(_ articleID: String) -> Article? {
+		// Check if it's the currently displayed article
+		if let currentArticle, currentArticle.articleID == articleID {
+			return currentArticle
+		}
 		return idToArticleDictionary[articleID]
 	}
-	
-	func cappedIndexPath(_ indexPath: IndexPath) -> IndexPath {
-		guard indexPath.section < shadowTable.count && indexPath.row < shadowTable[indexPath.section].feedNodes.count else {
-			return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
-		}
-		return indexPath
-	}
-	
+
 	func unreadCountFor(_ node: Node) -> Int {
 		// The coordinator supplies the unread count for the currently selected feed
 		if node.representedObject === timelineFeed as AnyObject {
@@ -640,48 +811,55 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		assertionFailure("This method should only be called for nodes that have an UnreadCountProvider as the represented object.")
 		return 0
 	}
-	
+
 	func refreshTimeline(resetScroll: Bool) {
 		if let article = self.currentArticle, let account = article.account {
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
 		}
-		fetchAndReplaceArticlesAsync(animated: true) {
+		fetchAndReplaceArticlesAsync(animated: true, emptyFirst: false) {
 			self.mainTimelineViewController?.reinitializeArticles(resetScroll: resetScroll)
 		}
 	}
-	
+
 	func isExpanded(_ containerID: ContainerIdentifier) -> Bool {
-		return expandedTable.contains(containerID)
+		return expandedContainers.contains(containerID)
 	}
-		
+
 	func isExpanded(_ containerIdentifiable: ContainerIdentifiable) -> Bool {
 		if let containerID = containerIdentifiable.containerID {
 			return isExpanded(containerID)
 		}
 		return false
 	}
-		
+
 	func isExpanded(_ node: Node) -> Bool {
 		if let containerIdentifiable = node.representedObject as? ContainerIdentifiable {
 			return isExpanded(containerIdentifiable)
 		}
 		return false
 	}
-		
+
 	func expand(_ containerID: ContainerIdentifier) {
+		Self.logger.debug("SceneCoordinator: expand")
+
 		markExpanded(containerID)
 		rebuildBackingStores()
+		saveExpandedContainers()
 	}
 
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func expand(_ node: Node) {
-		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
-		lastExpandedTable.insert(containerID)
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
+		lastExpandedContainers.insert(containerID)
 		expand(containerID)
 	}
 
 	func expandAllSectionsAndFolders() {
+		Self.logger.debug("SceneCoordinator: expandAllSectionsAndFolders")
+
 		for sectionNode in treeController.rootNode.childNodes {
 			markExpanded(sectionNode)
 			for topLevelNode in sectionNode.childNodes {
@@ -691,23 +869,29 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			}
 		}
 		rebuildBackingStores()
+		saveExpandedContainers()
 	}
-	
+
 	func collapse(_ containerID: ContainerIdentifier) {
+		Self.logger.debug("SceneCoordinator: collapse")
 		unmarkExpanded(containerID)
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
+		saveExpandedContainers()
 	}
-	
+
 	/// This is a special function that expects the caller to change the disclosure arrow state outside this function.
 	/// Failure to do so will get the Sidebar into an invalid state.
 	func collapse(_ node: Node) {
-		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else { return }
-		lastExpandedTable.remove(containerID)
+		guard let containerID = (node.representedObject as? ContainerIdentifiable)?.containerID else {
+			return
+		}
+		lastExpandedContainers.remove(containerID)
 		collapse(containerID)
 	}
 
 	func collapseAllFolders() {
+		Self.logger.debug("SceneCoordinator: collapseAllFolders")
 		for sectionNode in treeController.rootNode.childNodes {
 			for topLevelNode in sectionNode.childNodes {
 				if topLevelNode.representedObject is Folder {
@@ -717,77 +901,88 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		}
 		rebuildBackingStores()
 		clearTimelineIfNoLongerAvailable()
+		saveExpandedContainers()
 	}
-	
+
 	func mainFeedIndexPathForCurrentTimeline() -> IndexPath? {
 		guard let node = treeController.rootNode.descendantNodeRepresentingObject(timelineFeed as AnyObject) else {
 			return nil
 		}
 		return indexPathFor(node)
 	}
-	
-	func selectFeed(_ feed: Feed?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+
+	func selectFeed(_ sidebarItem: SidebarItem?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
 		let indexPath: IndexPath? = {
-			if let feed = feed, let indexPath = indexPathFor(feed as AnyObject) {
+			if let sidebarItem, let indexPath = indexPathFor(sidebarItem as AnyObject) {
 				return indexPath
 			} else {
 				return nil
 			}
 		}()
-		selectFeed(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
+		selectSidebarItem(indexPath: indexPath, animations: animations, deselectArticle: deselectArticle, completion: completion)
+		updateNavigationBarSubtitles(nil)
 	}
-	
-	func selectFeed(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
-		guard indexPath != currentFeedIndexPath else {
+
+	func selectSidebarItem(indexPath: IndexPath?, animations: Animations = [], deselectArticle: Bool = true, completion: (() -> Void)? = nil) {
+		Self.logger.debug("SceneCoordinator: selectSidebarItem")
+
+		// Compare by feed identity, not indexPath — indexPath can change when feeds are added/removed
+		var tappedFeed: AnyObject?
+		if let indexPath {
+			tappedFeed = nodeFor(indexPath)?.representedObject as AnyObject?
+		}
+		guard tappedFeed !== timelineFeed as AnyObject? else {
 			completion?()
 			return
 		}
-		
+
 		currentFeedIndexPath = indexPath
-		mainFeedViewController.updateFeedSelection(animations: animations)
+		mainFeedCollectionViewController.updateFeedSelection(animations: animations)
 
 		if deselectArticle {
 			selectArticle(nil)
 		}
 
-		if let ip = indexPath, let node = nodeFor(ip), let feed = node.representedObject as? Feed {
-			
-			self.activityManager.selecting(feed: feed)
+		if let ip = indexPath, let node = nodeFor(ip), let sidebarItem = node.representedObject as? SidebarItem {
+
+			self.activityManager.selecting(sidebarItem: sidebarItem)
 			self.rootSplitViewController.show(.supplementary)
-			setTimelineFeed(feed, animated: false) {
+			setTimelineFeed(sidebarItem, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
+				AppDefaults.shared.selectedSidebarItem = sidebarItem.sidebarItemID
 				completion?()
 			}
-			
+
 		} else {
-			
+
 			setTimelineFeed(nil, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
 				self.rootSplitViewController.show(.primary)
+				AppDefaults.shared.selectedSidebarItem = nil
 				completion?()
 			}
-			
+
 		}
-		
+		updateNavigationBarSubtitles(nil)
 	}
-	
+
 	func selectPrevFeed() {
 		if let indexPath = prevFeedIndexPath {
-			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
+			selectSidebarItem(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
-	
+
 	func selectNextFeed() {
 		if let indexPath = nextFeedIndexPath {
-			selectFeed(indexPath: indexPath, animations: [.navigation, .scroll])
+			selectSidebarItem(indexPath: indexPath, animations: [.navigation, .scroll])
 		}
 	}
-	
+
 	func selectTodayFeed(completion: (() -> Void)? = nil) {
 		markExpanded(SmartFeedsController.shared)
 		self.ensureFeedIsAvailableToSelect(SmartFeedsController.shared.todayFeed) {
@@ -810,19 +1005,22 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	}
 
 	func selectArticle(_ article: Article?, animations: Animations = [], isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
-		guard article != currentArticle else { return }
-		
+		guard article != currentArticle else {
+			return
+		}
+
 		currentArticle = article
 		activityManager.reading(feed: timelineFeed, article: article)
-		
+
 		if article == nil {
+			articleViewController?.article = nil
 			rootSplitViewController.show(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
 		}
-		
+
 		rootSplitViewController.show(.secondary)
-		
+
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
 
@@ -832,12 +1030,12 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			articleViewController?.restoreScrollPosition = (isShowingExtractedArticle, articleWindowScrollY)
 		}
 	}
-	
+
 	func beginSearching() {
 		isSearching = true
 		preSearchTimelineFeed = timelineFeed
 		savedSearchArticles = articles
-		savedSearchArticleIds = Set(articles.map { $0.articleID })
+		savedSearchArticleIDs = Set(articles.map { $0.articleID })
 		setTimelineFeed(nil, animated: true)
 		selectArticle(nil)
 	}
@@ -851,107 +1049,109 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		} else {
 			setTimelineFeed(nil, animated: true)
 		}
-		
+
 		lastSearchString = ""
 		lastSearchScope = nil
 		preSearchTimelineFeed = nil
-		savedSearchArticleIds = nil
+		savedSearchArticleIDs = nil
 		savedSearchArticles = nil
 		isSearching = false
 		selectArticle(nil)
 		mainTimelineViewController?.focus()
 	}
-	
+
 	func searchArticles(_ searchString: String, _ searchScope: SearchScope) {
-		
-		guard isSearching else { return }
-		
+
+		guard isSearching else {
+			return
+		}
+
 		if searchString.count < 3 {
 			setTimelineFeed(nil, animated: true)
 			return
 		}
-		
+
 		if searchString != lastSearchString || searchScope != lastSearchScope {
-			
+
 			switch searchScope {
 			case .global:
 				setTimelineFeed(SmartFeed(delegate: SearchFeedDelegate(searchString: searchString)), animated: true)
 			case .timeline:
-				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIds!)), animated: true)
+				setTimelineFeed(SmartFeed(delegate: SearchTimelineFeedDelegate(searchString: searchString, articleIDs: savedSearchArticleIDs!)), animated: true)
 			}
-			
+
 			lastSearchString = searchString
 			lastSearchScope = searchScope
 		}
-		
+
 	}
-	
+
 	func findPrevArticle(_ article: Article) -> Article? {
 		guard let index = articles.firstIndex(of: article), index > 0 else {
 			return nil
 		}
 		return articles[index - 1]
 	}
-	
+
 	func findNextArticle(_ article: Article) -> Article? {
 		guard let index = articles.firstIndex(of: article), index + 1 != articles.count else {
 			return nil
 		}
 		return articles[index + 1]
 	}
-	
+
 	func selectPrevArticle() {
 		if let article = prevArticle {
 			selectArticle(article, animations: [.navigation, .scroll])
 		}
 	}
-	
+
 	func selectNextArticle() {
 		if let article = nextArticle {
 			selectArticle(article, animations: [.navigation, .scroll])
 		}
 	}
-	
+
 	func selectFirstUnread() {
 		if selectFirstUnreadArticleInTimeline() {
 			activityManager.selectingNextUnread()
 		}
 	}
-	
+
 	func selectPrevUnread() {
-		
+
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
-		
+
 		isNavigationDisabled = true
 		defer {
 			isNavigationDisabled = false
 		}
-		
+
 		if selectPrevUnreadArticleInTimeline() {
 			return
 		}
-		
+
 		selectPrevUnreadFeedFetcher()
 		selectPrevUnreadArticleInTimeline()
 	}
 
 	func selectNextUnread() {
-		
+
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
 		if appDelegate.unreadCount < 1 {
 			return
 		}
-		
+
 		isNavigationDisabled = true
 		defer {
 			isNavigationDisabled = false
 		}
-		
+
 		if selectNextUnreadArticleInTimeline() {
 			return
 		}
@@ -960,11 +1160,11 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.mainTimelineViewController?.hideSearch()
 		}
 
-		selectNextUnreadFeed() {
+		selectNextUnreadFeed {
 			self.selectNextUnreadArticleInTimeline()
 		}
 	}
-	
+
 	func scrollOrGoToNextUnread() {
 		if articleViewController?.canScrollDown() ?? false {
 			articleViewController?.scrollPageDown()
@@ -978,13 +1178,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			articleViewController?.scrollPageUp()
 		}
 	}
-	
+
 	func markAllAsRead(_ articles: [Article], completion: (() -> Void)? = nil) {
 		markArticlesWithUndo(articles, statusKey: .read, flag: true, completion: completion)
 	}
-	
+
 	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
 		markAllAsRead(articles) {
+			self.rootSplitViewController.preferredDisplayMode = .twoBesideSecondary
 			self.rootSplitViewController.show(.primary)
 			completion?()
 		}
@@ -1025,27 +1226,29 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		let articleBelowArray = articles.articlesBelow(article: article)
 		markAllAsRead(articleBelowArray)
 	}
-	
+
 	func markAsReadForCurrentArticle() {
 		if let article = currentArticle {
 			markArticlesWithUndo([article], statusKey: .read, flag: true)
 		}
 	}
-	
+
 	func markAsUnreadForCurrentArticle() {
 		if let article = currentArticle {
 			markArticlesWithUndo([article], statusKey: .read, flag: false)
 		}
 	}
-	
+
 	func toggleReadForCurrentArticle() {
 		if let article = currentArticle {
 			toggleRead(article)
 		}
 	}
-	
+
 	func toggleRead(_ article: Article) {
-		guard !article.status.read || article.isAvailableToMarkUnread else { return }
+		guard !article.status.read || article.isAvailableToMarkUnread else {
+			return
+		}
 		markArticlesWithUndo([article], statusKey: .read, flag: !article.status.read)
 	}
 
@@ -1054,41 +1257,43 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			toggleStar(article)
 		}
 	}
-	
+
 	func toggleStar(_ article: Article) {
 		markArticlesWithUndo([article], statusKey: .starred, flag: !article.status.starred)
 	}
 
-	func timelineFeedIsEqualTo(_ feed: WebFeed) -> Bool {
-		guard let timelineFeed = timelineFeed as? WebFeed else {
+	func timelineFeedIsEqualTo(_ feed: Feed) -> Bool {
+		guard let timelineFeed = timelineFeed as? Feed else {
 			return false
 		}
 
 		return timelineFeed == feed
 	}
 
-	func discloseWebFeed(_ webFeed: WebFeed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
+	func discloseFeed(_ feed: Feed, initialLoad: Bool = false, animations: Animations = [], completion: (() -> Void)? = nil) {
+		Self.logger.debug("SceneCoordinator: discloseFeed")
+
 		if isSearching {
 			mainTimelineViewController?.hideSearch()
 		}
 
-		guard let account = webFeed.account else {
+		guard let account = feed.account else {
 			completion?()
 			return
 		}
 
-		let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(webFeed) })
+		let parentFolder = account.sortedFolders?.first(where: { $0.objectIsChild(feed) })
 
 		markExpanded(account)
 		if let parentFolder = parentFolder {
 			markExpanded(parentFolder)
 		}
 
-		if let webFeedFeedID = webFeed.feedID {
-			self.treeControllerDelegate.addFilterException(webFeedFeedID)
+		if let feedSidebarItemID = feed.sidebarItemID {
+			self.treeControllerDelegate.addFilterException(feedSidebarItemID)
 		}
-		if let parentFolderFeedID = parentFolder?.feedID {
-			self.treeControllerDelegate.addFilterException(parentFolderFeedID)
+		if let parentFolderSidebarItemID = parentFolder?.sidebarItemID {
+			self.treeControllerDelegate.addFilterException(parentFolderSidebarItemID)
 		}
 
 		rebuildBackingStores(initialLoad: initialLoad, completion: {
@@ -1096,10 +1301,10 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.selectFeed(nil) {
 				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
 					DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-						self.selectFeed(webFeed, animations: animations, completion: completion)
+						self.selectFeed(feed, animations: animations, completion: completion)
 					}
 				} else {
-					self.selectFeed(webFeed, animations: animations, completion: completion)
+					self.selectFeed(feed, animations: animations, completion: completion)
 				}
 			}
 		})
@@ -1111,14 +1316,14 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 			self.rootSplitViewController.setNeedsStatusBarAppearanceUpdate()
 		}
 	}
-	
+
 	func hideStatusBar() {
 		prefersStatusBarHidden = true
 		UIView.animate(withDuration: 0.15) {
 			self.rootSplitViewController.setNeedsStatusBarAppearanceUpdate()
 		}
 	}
-	
+
 	func showSettings(scrollToArticlesSection: Bool = false) {
 		let settingsNavController = UIStoryboard.settings.instantiateInitialViewController() as! UINavigationController
 		let settingsViewController = settingsNavController.topViewController as! SettingsViewController
@@ -1127,7 +1332,7 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		settingsViewController.presentingParentController = rootSplitViewController
 		rootSplitViewController.present(settingsNavController, animated: true)
 	}
-	
+
 	func showAccountInspector(for account: Account) {
 		let accountInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
@@ -1138,49 +1343,47 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		accountInspectorController.account = account
 		rootSplitViewController.present(accountInspectorNavController, animated: true)
 	}
-	
+
 	func showFeedInspector() {
-		let timelineWebFeed = timelineFeed as? WebFeed
-		let articleFeed = currentArticle?.webFeed
-		guard let feed = timelineWebFeed ?? articleFeed else {
+		guard let feed = timelineFeed as? Feed ?? currentArticle?.feed else {
 			return
 		}
 		showFeedInspector(for: feed)
 	}
-	
-	func showFeedInspector(for feed: WebFeed) {
+
+	func showFeedInspector(for feed: Feed) {
 		let feedInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
-		let feedInspectorController = feedInspectorNavController.topViewController as! WebFeedInspectorViewController
+		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
 		feedInspectorNavController.modalPresentationStyle = .formSheet
-		feedInspectorNavController.preferredContentSize = WebFeedInspectorViewController.preferredContentSizeForFormSheetDisplay
-		feedInspectorController.webFeed = feed
+		feedInspectorNavController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
+		feedInspectorController.feed = feed
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
-	
-	func showAddWebFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
-		
+
+	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
+
 		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
 		selectFeed(nil)
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddWebFeedViewControllerNav") as! UINavigationController
-		
+		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
+
 		let addViewController = addNavViewController.topViewController as! AddFeedViewController
 		addViewController.initialFeed = initialFeed
 		addViewController.initialFeedName = initialFeedName
-		
+
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedViewController.present(addNavViewController, animated: true)
+		mainFeedCollectionViewController.present(addNavViewController, animated: true)
 	}
-	
+
 	func showAddFolder() {
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedViewController.present(addNavViewController, animated: true)
+		mainFeedCollectionViewController.present(addNavViewController, animated: true)
 	}
-	
+
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
 		let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
 		imageVC.image = image
@@ -1189,83 +1392,76 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 		imageVC.transitioningDelegate = transitioningDelegate
 		rootSplitViewController.present(imageVC, animated: true)
 	}
-	
+
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
 		guard let node = nodeFor(indexPath),
-			let feed = node.representedObject as? WebFeed,
+			let feed = node.representedObject as? Feed,
 			let homePageURL = feed.homePageURL,
 			let url = URL(string: homePageURL) else {
 				return nil
 		}
 		return url
 	}
-	
-	func showBrowserForFeed(_ indexPath: IndexPath) {
-		if let url = homePageURLForFeed(indexPath) {
-			UIApplication.shared.open(url, options: [:])
-		}
-	}
-	
+
 	func showBrowserForCurrentFeed() {
 		if let ip = currentFeedIndexPath, let url = homePageURLForFeed(ip) {
 			UIApplication.shared.open(url, options: [:])
 		}
 	}
-	
+
 	func showBrowserForArticle(_ article: Article) {
-		guard let url = article.preferredURL else { return }
+		guard let url = article.preferredURL else {
+			return
+		}
 		UIApplication.shared.open(url, options: [:])
 	}
 
 	func showBrowserForCurrentArticle() {
-		guard let url = currentArticle?.preferredURL else { return }
+		guard let url = currentArticle?.preferredURL else {
+			return
+		}
 		UIApplication.shared.open(url, options: [:])
 	}
-	
+
 	func showInAppBrowser() {
 		if currentArticle != nil {
 			articleViewController?.openInAppBrowser()
-		}
-		else {
-			mainFeedViewController.openInAppBrowser()
+		} else {
+			mainFeedCollectionViewController.openInAppBrowser()
 		}
 	}
 
 	func navigateToFeeds() {
-		mainFeedViewController?.focus()
+		mainFeedCollectionViewController?.focus()
 		selectArticle(nil)
 	}
-	
+
 	func navigateToTimeline() {
 		if currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
 		}
 		mainTimelineViewController?.focus()
 	}
-	
+
 	func navigateToDetail() {
 		articleViewController?.focus()
 	}
 
-	func toggleSidebar() {
-		rootSplitViewController.preferredDisplayMode = rootSplitViewController.displayMode == .oneBesideSecondary ? .secondaryOnly : .oneBesideSecondary
-	}
-	
 	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
 		if let article = self.articles.first(where: { $0.articleID == articleID }) {
 			self.selectArticle(article, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
 	}
-	
+
 	func importTheme(filename: String) {
 		do {
 			try ArticleThemeImporter.importTheme(controller: rootSplitViewController, url: URL(fileURLWithPath: filename))
 		} catch {
-			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error" : error])
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
 		}
-		
+
 	}
-	
+
 	/// This will dismiss the foremost view controller if the user
 	/// has launched from an external action (i.e., a widget tap, or
 	/// selecting an article via a notification).
@@ -1274,15 +1470,19 @@ class SceneCoordinator: NSObject, UndoableCommandRunner {
 	/// `SFSafariViewController` or `SettingsViewController`,
 	/// otherwise, this function does nothing.
 	func dismissIfLaunchingFromExternalAction() {
-		guard let presentedController = mainFeedViewController.presentedViewController else { return }
-		
+		guard let presentedController = mainFeedCollectionViewController.presentedViewController else {
+			return
+		}
+
 		if presentedController.isKind(of: SFSafariViewController.self) {
 			presentedController.dismiss(animated: true, completion: nil)
 		}
-		guard let settings = presentedController.children.first as? SettingsViewController else { return }
+		guard let settings = presentedController.children.first as? SettingsViewController else {
+			return
+		}
 		settings.dismiss(animated: true, completion: nil)
 	}
-	
+
 }
 
 // MARK: UISplitViewControllerDelegate
@@ -1311,40 +1511,28 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 			return .primary
 		}
 	}
-	
+
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-
-		var sidebarIsShowing = false
-
-		switch displayMode {
-		case .automatic, .secondaryOnly, .oneBesideSecondary, .oneOverSecondary:
-			sidebarIsShowing = false
-		case .twoBesideSecondary, .twoOverSecondary, .twoDisplaceSecondary:
-			sidebarIsShowing = true
-		@unknown default:
-			break
-		}
-
-		let timelineShouldShowRefreshProgress = !sidebarIsShowing
-		mainTimelineViewController?.setRefreshToolbarItemVisibility(visible: timelineShouldShowRefreshProgress)
+		AppDefaults.shared.splitViewPreferredDisplayMode = displayMode.rawValue
 	}
+
 }
 
 // MARK: UINavigationControllerDelegate
 
 extension SceneCoordinator: UINavigationControllerDelegate {
-	
+
 	func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
 		guard UIApplication.shared.applicationState != .background else {
 			return
 		}
-		
+
 		guard rootSplitViewController.isCollapsed else {
 			return
 		}
 
 		// If we are showing the Feeds and only the feeds start clearing stuff
-		if viewController === mainFeedViewController && !isTimelineViewControllerPending {
+		if viewController === mainFeedCollectionViewController && !isTimelineViewControllerPending {
 			activityManager.invalidateCurrentActivities()
 			selectFeed(nil, animations: [.scroll, .select, .navigation])
 			return
@@ -1381,7 +1569,7 @@ private extension SceneCoordinator {
 		}
 		runCommand(markReadCommand)
 	}
-	
+
 	func updateUnreadCount() {
 		var count = 0
 		for article in articles {
@@ -1391,201 +1579,165 @@ private extension SceneCoordinator {
 		}
 		timelineUnreadCount = count
 	}
-	
+
 	func rebuildArticleDictionaries() {
 		var idDictionary = [String: Article]()
 
-		articles.forEach { article in
+		for article in articles {
 			idDictionary[article.articleID] = article
 		}
 
 		_idToArticleDictionary = idDictionary
 		articleDictionaryNeedsUpdate = false
 	}
-	
-	func ensureFeedIsAvailableToSelect(_ feed: Feed, completion: @escaping () -> Void) {
-		addToFilterExceptionsIfNecessary(feed)
-		addShadowTableToFilterExceptions()
-		
-		rebuildBackingStores(completion:  {
+
+	func ensureFeedIsAvailableToSelect(_ sidebarItem: SidebarItem, completion: @escaping () -> Void) {
+		Self.logger.debug("SceneCoordinator: ensureFeedIsAvailableToSelect")
+
+		addToFilterExceptionsIfNecessary(sidebarItem)
+		addVisibleSidebarItemsToFilterExceptions()
+
+		rebuildBackingStores(completion: {
 			self.treeControllerDelegate.resetFilterExceptions()
 			completion()
 		})
 	}
 
-	func addToFilterExceptionsIfNecessary(_ feed: Feed?) {
-		if isReadFeedsFiltered, let feedID = feed?.feedID {
-			if feed is SmartFeed {
-				treeControllerDelegate.addFilterException(feedID)
-			} else if let folderFeed = feed as? Folder {
+	func addToFilterExceptionsIfNecessary(_ sidebarItem: SidebarItem?) {
+		if isReadFeedsFiltered, let sidebarItemID = sidebarItem?.sidebarItemID {
+			if sidebarItem is SmartFeed {
+				treeControllerDelegate.addFilterException(sidebarItemID)
+			} else if let folderFeed = sidebarItem as? Folder {
 				if folderFeed.account?.existingFolder(withID: folderFeed.folderID) != nil {
-					treeControllerDelegate.addFilterException(feedID)
+					treeControllerDelegate.addFilterException(sidebarItemID)
 				}
-			} else if let webFeed = feed as? WebFeed {
-				if webFeed.account?.existingWebFeed(withWebFeedID: webFeed.webFeedID) != nil {
-					treeControllerDelegate.addFilterException(feedID)
-					addParentFolderToFilterExceptions(webFeed)
-				}
-			}
-		}
-	}
-	
-	func addParentFolderToFilterExceptions(_ feed: Feed) {
-		guard let node = treeController.rootNode.descendantNodeRepresentingObject(feed as AnyObject),
-			let folder = node.parent?.representedObject as? Folder,
-			let folderFeedID = folder.feedID else {
-				return
-		}
-		
-		treeControllerDelegate.addFilterException(folderFeedID)
-	}
-	
-	func addShadowTableToFilterExceptions() {
-		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let feed = feedNode.node.representedObject as? Feed, let feedID = feed.feedID {
-					treeControllerDelegate.addFilterException(feedID)
+			} else if let feed = sidebarItem as? Feed {
+				if feed.account?.existingFeed(withFeedID: feed.feedID) != nil {
+					treeControllerDelegate.addFilterException(sidebarItemID)
+					addParentFolderToFilterExceptions(feed)
 				}
 			}
 		}
 	}
-	
+
+	func addParentFolderToFilterExceptions(_ sidebarItem: SidebarItem) {
+		guard let node = treeController.rootNode.descendantNodeRepresentingObject(sidebarItem as AnyObject),
+			  let folder = node.parent?.representedObject as? Folder,
+			  let folderSidebarItemID = folder.sidebarItemID else {
+			return
+		}
+
+		treeControllerDelegate.addFilterException(folderSidebarItemID)
+	}
+
+	func addVisibleSidebarItemsToFilterExceptions() {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let feed = sidebarItemNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
+				treeControllerDelegate.addFilterException(sidebarItemID)
+			}
+		}
+	}
+
 	func queueRebuildBackingStores() {
 		rebuildBackingStoresQueue.add(self, #selector(rebuildBackingStoresWithDefaults))
 	}
 
 	@objc func rebuildBackingStoresWithDefaults() {
+		Self.logger.debug("SceneCoordinator: rebuildBackingStoresWithDefaults")
+
 		rebuildBackingStores()
 	}
-	
+
+	static var rebuildCount = 0
+
 	func rebuildBackingStores(initialLoad: Bool = false, updateExpandedNodes: (() -> Void)? = nil, completion: (() -> Void)? = nil) {
-		if !BatchUpdate.shared.isPerforming {
-			addToFilterExceptionsIfNecessary(timelineFeed)
-			treeController.rebuild()
-			treeControllerDelegate.resetFilterExceptions()
-			
-			updateExpandedNodes?()
-			let changes = rebuildShadowTable()
-			mainFeedViewController.reloadFeeds(initialLoad: initialLoad, changes: changes, completion: completion)
+#if DEBUG
+		if initialLoad {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores: #\(Self.rebuildCount) initialLoad == true")
+		} else {
+			Self.logger.debug("SceneCoordinator: rebuildBackingStores: #\(Self.rebuildCount)")
 		}
-	}
-	
-	func rebuildShadowTable() -> ShadowTableChanges {
-		var newShadowTable = [(sectionID: String, feedNodes: [FeedNode])]()
+		Self.rebuildCount += 1
+#endif
 
-		for i in 0..<treeController.rootNode.numberOfChildNodes {
+		addToFilterExceptionsIfNecessary(timelineFeed)
+		treeController.rebuild()
+		treeControllerDelegate.resetFilterExceptions()
 
-			var feedNodes = [FeedNode]()
-			let sectionNode = treeController.rootNode.childAtIndex(i)!
+		updateExpandedNodes?()
 
-			if isExpanded(sectionNode) {
-				for node in sectionNode.childNodes {
-					feedNodes.append(FeedNode(node))
-					if isExpanded(node) {
-						for child in node.childNodes {
-							feedNodes.append(FeedNode(child))
-						}
-					}
-				}
-			}
-
-			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
-			newShadowTable.append((sectionID: sectionID, feedNodes: feedNodes))
-		}
-
-		// If we have a current Feed IndexPath it is no longer valid and needs reset.
+		// Update currentFeedIndexPath if needed
 		if currentFeedIndexPath != nil {
 			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
 		}
 
-		// Compute the differences in the shadow table rows and the expanded table entries
-		var changes = [ShadowTableChanges.RowChanges]()
-		let expandedTableDifference = lastExpandedTable.symmetricDifference(expandedTable)
+		lastExpandedContainers = expandedContainers
 
-		for (section, newSectionRows) in newShadowTable.enumerated() {
-			var moves = Set<ShadowTableChanges.Move>()
-			var inserts = Set<Int>()
-			var deletes = Set<Int>()
-
-			let oldFeedNodes = shadowTable.first(where: { $0.sectionID == newSectionRows.sectionID })?.feedNodes ?? [FeedNode]()
-
-			let diff = newSectionRows.feedNodes.difference(from: oldFeedNodes).inferringMoves()
-			for change in diff {
-				switch change {
-				case .insert(let offset, _, let associated):
-					if let associated = associated {
-						moves.insert(ShadowTableChanges.Move(associated, offset))
-					} else {
-						inserts.insert(offset)
-					}
-				case .remove(let offset, _, let associated):
-					if let associated = associated {
-						moves.insert(ShadowTableChanges.Move(offset, associated))
-					} else {
-						deletes.insert(offset)
-					}
-				}
-			}
-
-			// We need to reload the difference in expanded rows to get the disclosure arrows correct when programmatically changing their state
-			var reloads = Set<Int>()
-
-			for (index, newFeedNode) in newSectionRows.feedNodes.enumerated() {
-				if let newFeedNodeContainerID = (newFeedNode.node.representedObject as? Container)?.containerID {
-					if expandedTableDifference.contains(newFeedNodeContainerID) {
-						reloads.insert(index)
-					}
-				}
-			}
-
-			changes.append(ShadowTableChanges.RowChanges(section: section, deletes: deletes, inserts: inserts, reloads: reloads, moves: moves))
-		}
-
-		lastExpandedTable = expandedTable
-
-		// Compute the difference in the shadow table sections
-		var moves = Set<ShadowTableChanges.Move>()
-		var inserts = Set<Int>()
-		var deletes = Set<Int>()
-
-		let oldSections = shadowTable.map { $0.sectionID }
-		let newSections = newShadowTable.map { $0.sectionID }
-		let diff = newSections.difference(from: oldSections).inferringMoves()
-		for change in diff {
-			switch change {
-			case .insert(let offset, _, let associated):
-				if let associated = associated {
-					moves.insert(ShadowTableChanges.Move(associated, offset))
-				} else {
-					inserts.insert(offset)
-				}
-			case .remove(let offset, _, let associated):
-				if let associated = associated {
-					moves.insert(ShadowTableChanges.Move(offset, associated))
-				} else {
-					deletes.insert(offset)
-				}
-			}
-		}
-
-		shadowTable = newShadowTable
-
-		return ShadowTableChanges(deletes: deletes, inserts: inserts, moves: moves, rowChanges: changes)
+		let snapshot = createSidebarSnapshot()
+		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad, completion: completion)
 	}
 
-	func shadowTableContains(_ feed: Feed) -> Bool {
-		for section in shadowTable {
-			for feedNode in section.feedNodes {
-				if let nodeFeed = feedNode.node.representedObject as? Feed, nodeFeed.feedID == feed.feedID {
-					return true
+	private func createSidebarSnapshot() -> NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
+		var snapshot = NSDiffableDataSourceSnapshot<String, SidebarItemNode>()
+
+		for i in 0..<treeController.rootNode.numberOfChildNodes {
+			let sectionNode = treeController.rootNode.childAtIndex(i)!
+			let sectionID = (sectionNode.representedObject as? Account)?.accountID ?? ""
+
+			snapshot.appendSections([sectionID])
+
+			if isExpanded(sectionNode) {
+				var siNodes = [SidebarItemNode]()
+
+				for node in sectionNode.childNodes {
+					siNodes.append(SidebarItemNode(node))
+					if isExpanded(node) {
+						for child in node.childNodes {
+							siNodes.append(SidebarItemNode(child))
+						}
+					}
 				}
+
+				snapshot.appendItems(siNodes, toSection: sectionID)
+			}
+		}
+
+		return snapshot
+	}
+
+	func reconfigureSidebarItem(_ sidebarItem: SidebarItem) {
+		var snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+
+		// Find all nodes that represent this sidebar item
+		var nodesToReconfigure: [SidebarItemNode] = []
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem,
+			   nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
+				nodesToReconfigure.append(sidebarItemNode)
+			}
+		}
+
+		guard !nodesToReconfigure.isEmpty else {
+			return
+		}
+
+		snapshot.reconfigureItems(nodesToReconfigure)
+		mainFeedCollectionViewController.dataSource.apply(snapshot, animatingDifferences: false)
+	}
+
+	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		for sidebarItemNode in snapshot.itemIdentifiers {
+			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
+				return true
 			}
 		}
 		return false
 	}
-	
+
 	func clearTimelineIfNoLongerAvailable() {
-		if let feed = timelineFeed, !shadowTableContains(feed) {
+		if let feed = timelineFeed, !sidebarContains(feed) {
 			selectFeed(nil, deselectArticle: true)
 		}
 	}
@@ -1596,19 +1748,19 @@ private extension SceneCoordinator {
 		}
 		return indexPathFor(node)
 	}
-	
-	func setTimelineFeed(_ feed: Feed?, animated: Bool, completion: (() -> Void)? = nil) {
-		timelineFeed = feed
-		
+
+	func setTimelineFeed(_ sidebarItem: SidebarItem?, animated: Bool, completion: (() -> Void)? = nil) {
+		timelineFeed = sidebarItem
+
 		fetchAndReplaceArticlesAsync(animated: animated) {
 			self.mainTimelineViewController?.reinitializeArticles(resetScroll: true)
 			completion?()
 		}
 	}
-	
+
 	func updateShowNamesAndIcons() {
-		
-		if timelineFeed is WebFeed {
+
+		if timelineFeed is Feed {
 			showFeedNames = {
 				for article in articles {
 					if !article.byline().isEmpty {
@@ -1625,12 +1777,12 @@ private extension SceneCoordinator {
 			self.showIcons = true
 			return
 		}
-		
+
 		if showFeedNames == .none {
 			self.showIcons = false
 			return
 		}
-		
+
 		for article in articles {
 			if let authors = article.authors {
 				for author in authors {
@@ -1641,12 +1793,12 @@ private extension SceneCoordinator {
 				}
 			}
 		}
-		
+
 		self.showIcons = false
 	}
-	
+
 	func markExpanded(_ containerID: ContainerIdentifier) {
-		expandedTable.insert(containerID)
+		expandedContainers.insert(containerID)
 	}
 
 	func markExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1654,15 +1806,15 @@ private extension SceneCoordinator {
 			markExpanded(containerID)
 		}
 	}
-	
+
 	func markExpanded(_ node: Node) {
 		if let containerIdentifiable = node.representedObject as? ContainerIdentifiable {
 			markExpanded(containerIdentifiable)
 		}
 	}
-	
+
 	func unmarkExpanded(_ containerID: ContainerIdentifier) {
-		expandedTable.remove(containerID)
+		expandedContainers.remove(containerID)
 	}
 
 	func unmarkExpanded(_ containerIdentifiable: ContainerIdentifiable) {
@@ -1688,16 +1840,16 @@ private extension SceneCoordinator {
 				return articles.count - 1
 			}
 		}()
-		
+
 		return selectPrevArticleInTimeline(startingRow: startingRow)
 	}
-	
+
 	func selectPrevArticleInTimeline(startingRow: Int) -> Bool {
-		
+
 		guard startingRow >= 0 else {
 			return false
 		}
-		
+
 		for i in (0...startingRow).reversed() {
 			let article = articles[i]
 			if !article.status.read {
@@ -1705,13 +1857,13 @@ private extension SceneCoordinator {
 				return true
 			}
 		}
-		
+
 		return false
-		
+
 	}
-	
+
 	func selectPrevUnreadFeedFetcher() {
-		
+
 		let indexPath: IndexPath = {
 			if currentFeedIndexPath == nil {
 				return IndexPath(row: 0, section: 0)
@@ -1721,71 +1873,80 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
 			if indexPath.row - 1 < 0 {
 				if indexPath.section - 1 < 0 {
-					return IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+					let lastSection = numberOfSections - 1
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+					return IndexPath(row: count - 1, section: lastSection)
 				} else {
-					return IndexPath(row: shadowTable[indexPath.section - 1].feedNodes.count - 1, section: indexPath.section - 1)
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section - 1])
+					return IndexPath(row: count - 1, section: indexPath.section - 1)
 				}
 			} else {
 				return IndexPath(row: indexPath.row - 1, section: indexPath.section)
 			}
 		}()
-		
+
 		if selectPrevUnreadFeedFetcher(startingWith: nextIndexPath) {
 			return
 		}
-		let maxIndexPath = IndexPath(row: shadowTable[shadowTable.count - 1].feedNodes.count - 1, section: shadowTable.count - 1)
+		let lastSection = numberOfSections - 1
+		let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[lastSection])
+		let maxIndexPath = IndexPath(row: count - 1, section: lastSection)
 		selectPrevUnreadFeedFetcher(startingWith: maxIndexPath)
-		
+
 	}
-	
+
 	@discardableResult
 	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
-		
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+
 		for i in (0...indexPath.section).reversed() {
-			
+
 			let startingRow: Int = {
 				if indexPath.section == i {
 					return indexPath.row
 				} else {
-					return shadowTable[i].feedNodes.count - 1
+					let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+					return count - 1
 				}
 			}()
-			
+
 			for j in (0...startingRow).reversed() {
-				
+
 				let prevIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(prevIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
 					assertionFailure()
 					return true
 				}
-				
+
 				if isExpanded(node) {
 					continue
 				}
-				
+
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(indexPath: prevIndexPath, animations: [.scroll, .navigation])
+					selectSidebarItem(indexPath: prevIndexPath, animations: [.scroll, .navigation])
 					return true
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		return false
-		
+
 	}
-	
+
 	// MARK: Select Next Unread
-	
+
 	@discardableResult
 	func selectFirstUnreadArticleInTimeline() -> Bool {
 		return selectNextArticleInTimeline(startingRow: 0, animated: true)
 	}
-	
+
 	@discardableResult
 	func selectNextUnreadArticleInTimeline() -> Bool {
 		let startingRow: Int = {
@@ -1795,16 +1956,16 @@ private extension SceneCoordinator {
 				return 0
 			}
 		}()
-		
+
 		return selectNextArticleInTimeline(startingRow: startingRow, animated: false)
 	}
-	
+
 	func selectNextArticleInTimeline(startingRow: Int, animated: Bool) -> Bool {
-		
+
 		guard startingRow < articles.count else {
 			return false
 		}
-		
+
 		for i in startingRow..<articles.count {
 			let article = articles[i]
 			if !article.status.read {
@@ -1812,13 +1973,13 @@ private extension SceneCoordinator {
 				return true
 			}
 		}
-		
+
 		return false
-		
+
 	}
-	
+
 	func selectNextUnreadFeed(completion: @escaping () -> Void) {
-		
+
 		let indexPath: IndexPath = {
 			if currentFeedIndexPath == nil {
 				return IndexPath(row: -1, section: 0)
@@ -1826,11 +1987,14 @@ private extension SceneCoordinator {
 				return currentFeedIndexPath!
 			}
 		}()
-		
+
 		// Increment or wrap around the IndexPath
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
-			if indexPath.row + 1 >= shadowTable[indexPath.section].feedNodes.count {
-				if indexPath.section + 1 >= shadowTable.count {
+			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
+			if indexPath.row + 1 >= count {
+				if indexPath.section + 1 >= numberOfSections {
 					return IndexPath(row: 0, section: 0)
 				} else {
 					return IndexPath(row: 0, section: indexPath.section + 1)
@@ -1839,7 +2003,7 @@ private extension SceneCoordinator {
 				return IndexPath(row: indexPath.row + 1, section: indexPath.section)
 			}
 		}()
-		
+
 		selectNextUnreadFeed(startingWith: nextIndexPath) { found in
 			if !found {
 				self.selectNextUnreadFeed(startingWith: IndexPath(row: 0, section: 0)) { _ in
@@ -1849,13 +2013,15 @@ private extension SceneCoordinator {
 				completion()
 			}
 		}
-		
+
 	}
-	
+
 	func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
-		
-		for i in indexPath.section..<shadowTable.count {
-			
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let numberOfSections = snapshot.numberOfSections
+
+		for i in indexPath.section..<numberOfSections {
+
 			let startingRow: Int = {
 				if indexPath.section == i {
 					return indexPath.row
@@ -1864,7 +2030,8 @@ private extension SceneCoordinator {
 				}
 			}()
 
-			for j in startingRow..<shadowTable[i].feedNodes.count {
+			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[i])
+			for j in startingRow..<count {
 
 				let nextIndexPath = IndexPath(row: j, section: i)
 				guard let node = nodeFor(nextIndexPath), let unreadCountProvider = node.representedObject as? UnreadCountProvider else {
@@ -1876,49 +2043,63 @@ private extension SceneCoordinator {
 				if isExpanded(node) {
 					continue
 				}
-				
+
 				if unreadCountProvider.unreadCount > 0 {
-					selectFeed(indexPath: nextIndexPath, animations: [.scroll, .navigation], deselectArticle: false) {
+					selectSidebarItem(indexPath: nextIndexPath, animations: [.scroll, .navigation], deselectArticle: false) {
 						self.currentArticle = nil
 						completion(true)
 					}
 					return
 				}
-				
+
 			}
-			
+
 		}
-		
+
 		completion(false)
-		
+
 	}
-	
+
 	// MARK: Fetching Articles
-	
+
 	func emptyTheTimeline() {
 		if !articles.isEmpty {
 			replaceArticles(with: Set<Article>(), animated: false)
 		}
 	}
-	
+
 	func sortParametersDidChange() {
 		replaceArticles(with: Set(articles), animated: true)
 	}
-		
+
 	func replaceArticles(with unsortedArticles: Set<Article>, animated: Bool) {
 		let sortedArticles = Array(unsortedArticles).sortedByDate(sortDirection, groupByFeed: groupByFeed)
 		replaceArticles(with: sortedArticles, animated: animated)
 	}
-	
+
 	func replaceArticles(with sortedArticles: ArticleArray, animated: Bool) {
 		if articles != sortedArticles {
 			articles = sortedArticles
+
+			// Update currentArticle to the new instance if it's still in the timeline,
+			// or clear it if it's no longer there.
+			// Don't call selectArticle(nil) because that triggers navigation on iPhone.
+			// Skip during state restoration so the restored article stays open.
+			if !isRestoringState, let currentArticle {
+				if let newArticle = sortedArticles.first(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
+					self.currentArticle = newArticle
+				} else {
+					self.currentArticle = nil
+					articleViewController?.article = nil
+				}
+			}
+
 			updateShowNamesAndIcons()
 			updateUnreadCount()
 			mainTimelineViewController?.reloadArticles(animated: animated)
 		}
 	}
-	
+
 	func queueFetchAndMergeArticles() {
 		fetchAndMergeArticlesQueue.add(self, #selector(fetchAndMergeArticlesAsync))
 	}
@@ -1929,13 +2110,13 @@ private extension SceneCoordinator {
 			self.mainTimelineViewController?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
 	}
-	
+
 	func fetchAndMergeArticlesAsync(animated: Bool = true, completion: (() -> Void)? = nil) {
-		
+
 		guard let timelineFeed = timelineFeed else {
 			return
 		}
-		
+
 		fetchUnsortedArticlesAsync(for: [timelineFeed]) { [weak self] (unsortedArticles) in
 			// Merge articles by articleID. For any unique articleID in current articles, add to unsortedArticles.
 			guard let strongSelf = self else {
@@ -1947,7 +2128,7 @@ private extension SceneCoordinator {
 				if !unsortedArticleIDs.contains(article.articleID) {
 					updatedArticles.insert(article)
 				}
-				if article.account?.existingWebFeed(withWebFeedID: article.webFeedID) == nil {
+				if article.account?.existingFeed(withFeedID: article.feedID) == nil {
 					updatedArticles.remove(article)
 				}
 			}
@@ -1955,36 +2136,38 @@ private extension SceneCoordinator {
 			strongSelf.replaceArticles(with: updatedArticles, animated: animated)
 			completion?()
 		}
-		
+
 	}
-	
+
 	func cancelPendingAsyncFetches() {
 		fetchSerialNumber += 1
 		fetchRequestQueue.cancelAllRequests()
 	}
 
-	func fetchAndReplaceArticlesAsync(animated: Bool, completion: @escaping () -> Void) {
+	func fetchAndReplaceArticlesAsync(animated: Bool, emptyFirst: Bool = true, completion: @escaping () -> Void) {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
-		guard let timelineFeed = timelineFeed else {
+		if emptyFirst {
 			emptyTheTimeline()
+		}
+		guard let timelineFeed = timelineFeed else {
 			completion()
 			return
 		}
-		
+
 		var fetchers = [ArticleFetcher]()
 		fetchers.append(timelineFeed)
 		if exceptionArticleFetcher != nil {
 			fetchers.append(exceptionArticleFetcher!)
 			exceptionArticleFetcher = nil
 		}
-		
+
 		fetchUnsortedArticlesAsync(for: fetchers) { [weak self] (articles) in
 			self?.replaceArticles(with: articles, animated: animated)
 			completion()
 		}
-		
+
 	}
 
 	func fetchUnsortedArticlesAsync(for representedObjects: [Any], completion: @escaping ArticleSetBlock) {
@@ -1992,16 +2175,16 @@ private extension SceneCoordinator {
 		// if it’s been superseded by a newer fetch, or the timeline was emptied, etc., it won’t get called.
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
-		
+
 		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, hidingReadArticlesState: hidingReadArticlesState, fetchers: fetchers) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
 			}
 			completion(articles)
 		}
-		
+
 		fetchRequestQueue.add(fetchOperation)
 	}
 
@@ -2011,78 +2194,64 @@ private extension SceneCoordinator {
 		}
 		return false
 	}
-	
+
 	func timelineFetcherContainsAnyFolder() -> Bool {
 		if timelineFeed is Folder {
 			return true
 		}
 		return false
 	}
-	
-	func timelineFetcherContainsAnyFeed(_ feeds: Set<WebFeed>) -> Bool {
-		
+
+	func timelineFetcherContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
+
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
-		
-		if let feed = timelineFeed as? WebFeed {
+
+		if let feed = timelineFeed as? Feed {
 			for oneFeed in feeds {
-				if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
+				if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 					return true
 				}
 			}
 		} else if let folder = timelineFeed as? Folder {
 			for oneFeed in feeds {
-				if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
+				if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 					return true
 				}
 			}
 		}
-		
+
 		return false
-		
+
 	}
-	
+
 	// MARK: NSUserActivity
-	
-	func windowState() -> [AnyHashable: Any] {
-		let containerExpandedWindowState = expandedTable.map( { $0.userInfo })
-		var readArticlesFilterState = [[AnyHashable: AnyHashable]: Bool]()
-		for key in readFilterEnabledTable.keys {
-			readArticlesFilterState[key.userInfo] = readFilterEnabledTable[key]
-		}
-		return [
-			UserInfoKey.readFeedsFilterState: isReadFeedsFiltered,
-			UserInfoKey.containerExpandedWindowState: containerExpandedWindowState,
-			UserInfoKey.readArticlesFilterState: readArticlesFilterState
-		]
-	}
-	
-	func handleSelectFeed(_ userInfo: [AnyHashable : Any]?) {
+
+	func handleSelectFeed(_ userInfo: [AnyHashable: Any]?) {
+		Self.logger.debug("SceneCoordinator: handleSelectFeed")
+
 		guard let userInfo = userInfo,
-			let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo) else {
+			let sidebarItemIDUserInfo = userInfo[UserInfoKey.sidebarItemID] as? [String: String],
+			let sidebarItemID = SidebarItemIdentifier(userInfo: sidebarItemIDUserInfo) else {
 				return
 		}
 
-		treeControllerDelegate.addFilterException(feedIdentifier)
-		
-		switch feedIdentifier {
-		
+		treeControllerDelegate.addFilterException(sidebarItemID)
+
+		switch sidebarItemID {
+
 		case .smartFeed:
-			guard let smartFeed = SmartFeedsController.shared.find(by: feedIdentifier) else { return }
+			guard let smartFeed = SmartFeedsController.shared.find(by: sidebarItemID) else { return }
 
 			markExpanded(SmartFeedsController.shared)
-			rebuildBackingStores(initialLoad: true, completion:  {
+			rebuildBackingStores(initialLoad: true, completion: {
 				self.treeControllerDelegate.resetFilterExceptions()
 				if let indexPath = self.indexPathFor(smartFeed) {
-					self.selectFeed(indexPath: indexPath) {
-						self.mainFeedViewController.focus()
+					self.selectSidebarItem(indexPath: indexPath) {
+						self.mainFeedCollectionViewController.focus()
 					}
 				}
 			})
-		
-		case .script:
-			break
-		
+
 		case .folder(let accountID, let folderName):
 			guard let accountNode = self.findAccountNode(accountID: accountID),
 				let account = accountNode.representedObject as? Account else {
@@ -2090,92 +2259,94 @@ private extension SceneCoordinator {
 			}
 
 			markExpanded(account)
-			
-			rebuildBackingStores(initialLoad: true, completion:  {
+
+			rebuildBackingStores(initialLoad: true, completion: {
 				self.treeControllerDelegate.resetFilterExceptions()
-				
+
 				if let folderNode = self.findFolderNode(folderName: folderName, beginningAt: accountNode), let indexPath = self.indexPathFor(folderNode) {
-					self.selectFeed(indexPath: indexPath) {
-						self.mainFeedViewController.focus()
+					self.selectSidebarItem(indexPath: indexPath) {
+						self.mainFeedCollectionViewController.focus()
 					}
 				}
 			})
-		
-		case .webFeed(let accountID, let webFeedID):
+
+		case .feed(let accountID, let feedID):
 			guard let accountNode = findAccountNode(accountID: accountID),
 				let account = accountNode.representedObject as? Account,
-				let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+				let feed = account.existingFeed(withFeedID: feedID) else {
 				return
 			}
-			
-			self.discloseWebFeed(webFeed, initialLoad: true) {
-				self.mainFeedViewController.focus()
+
+			self.discloseFeed(feed, initialLoad: true) {
+				self.mainFeedCollectionViewController.focus()
 			}
 		}
 	}
-	
-	func handleReadArticle(_ userInfo: [AnyHashable : Any]?) {
-		guard let userInfo = userInfo else { return }
-		
-		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable : Any],
+
+	func handleReadArticle(_ userInfo: [AnyHashable: Any]?) {
+		guard let userInfo = userInfo else {
+			return
+		}
+
+		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			  let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
-			  let webFeedID = articlePathUserInfo[ArticlePathKey.webFeedID] as? String,
+			  let feedID = articlePathUserInfo[ArticlePathKey.feedID] as? String,
 			  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String,
 			  let accountNode = findAccountNode(accountID: accountID, accountName: accountName),
 			  let account = accountNode.representedObject as? Account else {
 				  return
 			  }
-		
+
 		exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
 
-		if restoreFeedSelection(userInfo, accountID: accountID, webFeedID: webFeedID, articleID: articleID) {
+		if restoreFeedSelection(userInfo, accountID: accountID, feedID: feedID, articleID: articleID) {
 			return
 		}
-		
-		guard let webFeed = account.existingWebFeed(withWebFeedID: webFeedID) else {
+
+		guard let feed = account.existingFeed(withFeedID: feedID) else {
 			return
 		}
-		
-		discloseWebFeed(webFeed) {
-			self.selectArticleInCurrentFeed(articleID)
+
+		discloseFeed(feed) {
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+				self.selectArticleInCurrentFeed(articleID)
+			})
 		}
 	}
-	
-	func restoreFeedSelection(_ userInfo: [AnyHashable : Any], accountID: String, webFeedID: String, articleID: String) -> Bool {
-		guard let feedIdentifierUserInfo = userInfo[UserInfoKey.feedIdentifier] as? [AnyHashable : AnyHashable],
-			  let feedIdentifier = FeedIdentifier(userInfo: feedIdentifierUserInfo),
-			  let isShowingExtractedArticle = userInfo[UserInfoKey.isShowingExtractedArticle] as? Bool,
-			  let articleWindowScrollY = userInfo[UserInfoKey.articleWindowScrollY] as? Int else {
-				  return false
-			  }
 
-		switch feedIdentifier {
-
-		case .script:
+	func restoreFeedSelection(_ userInfo: [AnyHashable: Any], accountID: String, feedID: String, articleID: String) -> Bool {
+		guard let sidebarItemIDUserInfo = (userInfo[UserInfoKey.sidebarItemID] ?? userInfo[UserInfoKey.feedIdentifier]) as? [String: String],
+			  let sidebarItemID = SidebarItemIdentifier(userInfo: sidebarItemIDUserInfo) else {
 			return false
+		}
+
+		// Read values from UserDefaults (migration happens in restoreWindowState)
+		let isShowingExtractedArticle = AppDefaults.shared.isShowingExtractedArticle
+		let articleWindowScrollY = AppDefaults.shared.articleWindowScrollY
+
+		switch sidebarItemID {
 
 		case .smartFeed, .folder:
-			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
-				treeControllerDelegate.addFilterException(feedIdentifier)
+				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 			return found
-		
-		case .webFeed:
-			let found = selectFeedAndArticle(feedIdentifier: feedIdentifier, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+
+		case .feed:
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 			if found {
-				treeControllerDelegate.addFilterException(feedIdentifier)
-				if let webFeedNode = nodeFor(feedID: feedIdentifier), let folder = webFeedNode.parent?.representedObject as? Folder, let folderFeedID = folder.feedID {
-					treeControllerDelegate.addFilterException(folderFeedID)
+				treeControllerDelegate.addFilterException(sidebarItemID)
+				if let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let folder = sidebarItemNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
+					treeControllerDelegate.addFilterException(folderSidebarItemID)
 				}
 			}
 			return found
-			
+
 		}
-		
 	}
-	
+
 	func findAccountNode(accountID: String, accountName: String? = nil) -> Node? {
 		if let node = treeController.rootNode.descendantNode(where: { ($0.representedObject as? Account)?.accountID == accountID }) {
 			return node
@@ -2187,7 +2358,7 @@ private extension SceneCoordinator {
 
 		return nil
 	}
-	
+
 	func findFolderNode(folderName: String, beginningAt startingNode: Node) -> Node? {
 		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Folder)?.nameForDisplay == folderName }) {
 			return node
@@ -2195,21 +2366,22 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func findWebFeedNode(webFeedID: String, beginningAt startingNode: Node) -> Node? {
-		if let node = startingNode.descendantNode(where: { ($0.representedObject as? WebFeed)?.webFeedID == webFeedID }) {
+	func findSidebarItemNode(feedID: String, beginningAt startingNode: Node) -> Node? {
+		if let node = startingNode.descendantNode(where: { ($0.representedObject as? Feed)?.feedID == feedID }) {
 			return node
 		}
 		return nil
 	}
-	
-	func selectFeedAndArticle(feedIdentifier: FeedIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
-		guard let feedNode = nodeFor(feedID: feedIdentifier), let feedIndexPath = indexPathFor(feedNode) else { return false }
-		
-		selectFeed(indexPath: feedIndexPath) {
+
+	func selectSidebarItemAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let sidebarItemIndexPath = indexPathFor(sidebarItemNode) else {
+			return false
+		}
+
+		selectSidebarItem(indexPath: sidebarItemIndexPath) {
 			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
 		}
-		
+
 		return true
 	}
-	
 }

@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum ReaderAPIVariant {
+nonisolated public enum ReaderAPIVariant: Sendable {
 	case generic
 	case freshRSS
 	case inoreader
 	case bazQux
 	case theOldReader
-	
+
 	public var host: String {
 		switch self {
 		case .inoreader:
@@ -26,5 +26,4 @@ public enum ReaderAPIVariant {
 			return ""
 		}
 	}
-	
 }

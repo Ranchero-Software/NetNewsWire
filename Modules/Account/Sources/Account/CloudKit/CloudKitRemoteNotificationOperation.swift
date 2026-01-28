@@ -7,46 +7,36 @@
 //
 
 import Foundation
-
 import os.log
 import RSCore
+import CloudKitSync
 
-class CloudKitRemoteNotificationOperation: MainThreadOperation {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "CloudKitRemoteNotificationOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+@MainActor final class CloudKitRemoteNotificationOperation: MainThreadOperation, @unchecked Sendable {
 	private weak var accountZone: CloudKitAccountZone?
 	private weak var articlesZone: CloudKitArticlesZone?
-	private var userInfo: [AnyHashable : Any]
-	
-	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable : Any]) {
+	nonisolated(unsafe) private var userInfo: [AnyHashable: Any]
+	private static let logger = cloudKitLogger
+
+	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable: Any]) {
 		self.accountZone = accountZone
 		self.articlesZone = articlesZone
 		self.userInfo = userInfo
+		super.init(name: "CloudKitRemoteNotificationOperation")
 	}
 
-	func run() {
-		guard let accountZone = accountZone, let articlesZone = articlesZone else {
-			self.operationDelegate?.operationDidComplete(self)
+	override func run() {
+		guard let accountZone, let articlesZone else {
+			didComplete()
 			return
 		}
-		
-		os_log(.debug, log: log, "Processing remote notification...")
-		
-		accountZone.receiveRemoteNotification(userInfo: userInfo) {
-			articlesZone.receiveRemoteNotification(userInfo: self.userInfo) {
-				os_log(.debug, log: self.log, "Done processing remote notification.")
-				self.operationDelegate?.operationDidComplete(self)
-			}
+
+		Task { @MainActor in
+			Self.logger.debug("iCloud: Processing remote notification")
+			await accountZone.receiveRemoteNotification(userInfo: userInfo)
+			await articlesZone.receiveRemoteNotification(userInfo: self.userInfo)
+
+			Self.logger.debug("iCloud: Finished processing remote notification")
+			didComplete()
 		}
-		
 	}
-	
 }

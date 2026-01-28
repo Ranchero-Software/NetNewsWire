@@ -7,25 +7,26 @@
 //
 
 import UIKit
+import os
 import RSCore
-import os.log
 
-struct ErrorHandler {
+struct ErrorHandler: Sendable {
 
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
 
-	public static func present(_ viewController: UIViewController) -> (Error) -> () {
+	@Sendable public static func present(_ viewController: UIViewController) -> @Sendable (Error) -> Void {
 		return { [weak viewController] error in
-			if UIApplication.shared.applicationState == .active {
-				viewController?.presentError(error)
-			} else {
-				ErrorHandler.log(error)
+			Task { @MainActor in
+				if UIApplication.shared.applicationState == .active {
+					viewController?.presentError(error)
+				} else {
+					log(error)
+				}
 			}
 		}
 	}
-		
-	public static func log(_ error: Error) {
-		os_log(.error, log: self.log, "%@", error.localizedDescription)
-	}
 
+	@Sendable nonisolated public static func log(_ error: Error) {
+		logger.error("\(error.localizedDescription)")
+	}
 }

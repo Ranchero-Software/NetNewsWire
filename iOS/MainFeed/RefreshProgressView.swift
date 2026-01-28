@@ -9,24 +9,24 @@
 import UIKit
 import Account
 
-class RefreshProgressView: UIView {
-	
-	@IBOutlet weak var progressView: UIProgressView!
-	@IBOutlet weak var label: UILabel!
-	
+final class RefreshProgressView: UIView {
+	@IBOutlet var progressView: UIProgressView!
+	@IBOutlet var label: UILabel!
+
 	override func awakeFromNib() {
+		MainActor.assumeIsolated {
+			NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
+			NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+			update()
+			scheduleUpdateRefreshLabel()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(progressDidChange(_:)), name: .combinedRefreshProgressDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-		update()
-		scheduleUpdateRefreshLabel()
-
-		isAccessibilityElement = true
-		accessibilityTraits = [.updatesFrequently, .notEnabled]
+			isAccessibilityElement = true
+			accessibilityTraits = [.updatesFrequently, .notEnabled]
+		}
 	}
-	
+
 	func update() {
-		if !AccountManager.shared.combinedRefreshProgress.isComplete {
+		if !CombinedRefreshProgress.shared.isComplete {
 			progressChanged(animated: false)
 		} else {
 			updateRefreshLabel()
@@ -37,7 +37,7 @@ class RefreshProgressView: UIView {
 		progressChanged(animated: false)
 	}
 
-	@objc func progressDidChange(_ note: Notification) {
+	@objc func progressInfoDidChange(_ note: Notification) {
 		progressChanged(animated: true)
 	}
 
@@ -50,7 +50,7 @@ class RefreshProgressView: UIView {
 	deinit {
 		NotificationCenter.default.removeObserver(self)
 	}
-	
+
 }
 
 // MARK: Private
@@ -62,16 +62,16 @@ private extension RefreshProgressView {
 		// https://github.com/Ranchero-Software/NetNewsWire/issues/1764
 		let isInViewHierarchy = self.superview != nil
 
-		let progress = AccountManager.shared.combinedRefreshProgress
+		let progressInfo = CombinedRefreshProgress.shared.progressInfo
 
-		if progress.isComplete {
+		if progressInfo.isComplete {
 			if isInViewHierarchy {
 				progressView.setProgress(1, animated: animated)
 			}
-			
+
 			func completeLabel() {
 				// Check that there are no pending downloads.
-				if AccountManager.shared.combinedRefreshProgress.isComplete {
+				if CombinedRefreshProgress.shared.isComplete {
 					self.updateRefreshLabel()
 					self.label.isHidden = false
 					self.progressView.isHidden = true
@@ -92,7 +92,7 @@ private extension RefreshProgressView {
 			label.isHidden = true
 			progressView.isHidden = false
 			if isInViewHierarchy {
-				let percent = Float(progress.numberCompleted) / Float(progress.numberOfTasks)
+				let percent = Float(progressInfo.numberCompleted) / Float(progressInfo.numberOfTasks)
 
 				// Don't let the progress bar go backwards unless we need to go back more than 25%
 				if percent > progressView.progress || progressView.progress - percent > 0.25 {
@@ -101,7 +101,7 @@ private extension RefreshProgressView {
 			}
 		}
 	}
-	
+
 	func updateRefreshLabel() {
 		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
 
@@ -131,5 +131,5 @@ private extension RefreshProgressView {
 			self?.scheduleUpdateRefreshLabel()
 		}
 	}
-	
+
 }

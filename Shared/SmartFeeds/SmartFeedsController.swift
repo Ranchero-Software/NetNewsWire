@@ -10,16 +10,13 @@ import Foundation
 import RSCore
 import Account
 
-final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
-	
-	var containerID: ContainerIdentifier? {
-		return ContainerIdentifier.smartFeedController
-	}
+@MainActor final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
+	nonisolated let containerID: ContainerIdentifier? = ContainerIdentifier.smartFeedController
 
 	public static let shared = SmartFeedsController()
 	let nameForDisplay = NSLocalizedString("Smart Feeds", comment: "Smart Feeds group title")
 
-	var smartFeeds = [Feed]()
+	var smartFeeds = [SidebarItem]()
 	let todayFeed = SmartFeed(delegate: TodayFeedDelegate())
 	let unreadFeed = UnreadFeed()
 	let starredFeed = SmartFeed(delegate: StarredFeedDelegate())
@@ -27,8 +24,8 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 	private init() {
 		self.smartFeeds = [todayFeed, unreadFeed, starredFeed]
 	}
-	
-	func find(by identifier: FeedIdentifier) -> PseudoFeed? {
+
+	func find(by identifier: SidebarItemIdentifier) -> PseudoFeed? {
 		switch identifier {
 		case .smartFeed(let stringIdentifer):
 			switch stringIdentifer {
@@ -45,5 +42,5 @@ final class SmartFeedsController: DisplayNameProvider, ContainerIdentifiable {
 			return nil
 		}
 	}
-	
+
 }

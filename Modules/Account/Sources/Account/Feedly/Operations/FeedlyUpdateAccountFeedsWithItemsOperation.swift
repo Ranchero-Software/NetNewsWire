@@ -15,25 +15,23 @@ final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {
 
 	private let account: Account
 	private let organisedItemsProvider: FeedlyParsedItemsByFeedProviding
-	private let log: OSLog
 
-	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding, log: OSLog) {
+	init(account: Account, organisedItemsProvider: FeedlyParsedItemsByFeedProviding) {
 		self.account = account
 		self.organisedItemsProvider = organisedItemsProvider
-		self.log = log
 	}
-	
+
 	override func run() {
-		let webFeedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
-		
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { databaseError in
-			if let error = databaseError {
+		let feedIDsAndItems = organisedItemsProvider.parsedItemsKeyedByFeedId
+
+		Task {
+			do {
+				try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+				Feedly.logger.debug("Feedly: updated \(feedIDsAndItems.count) for \(self.organisedItemsProvider.parsedItemsByFeedProviderName)")
+				self.didFinish()
+			} catch {
 				self.didFinish(with: error)
-				return
 			}
-			
-			os_log(.debug, log: self.log, "Updated %i feeds for \"%@\"", webFeedIDsAndItems.count, self.organisedItemsProvider.parsedItemsByFeedProviderName)
-			self.didFinish()
 		}
 	}
 }

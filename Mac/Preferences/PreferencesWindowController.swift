@@ -13,7 +13,7 @@ private struct PreferencesToolbarItemSpec {
 	let identifier: NSToolbarItem.Identifier
 	let name: String
 	let image: NSImage?
-	
+
 	init(identifierRawValue: String, name: String, image: NSImage?) {
 		self.identifier = NSToolbarItem.Identifier(identifierRawValue)
 		self.name = name
@@ -27,28 +27,21 @@ private struct ToolbarItemIdentifier {
 	static let Advanced = "Advanced"
 }
 
-class PreferencesWindowController : NSWindowController, NSToolbarDelegate {
-	
+final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
+
 	private let windowWidth = CGFloat(512.0) // Width is constant for all views; only the height changes
 	private var viewControllers = [String: NSViewController]()
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General,
 											 name: NSLocalizedString("General", comment: "Preferences"),
-											 image: AppAssets.preferencesToolbarGeneralImage)]
+											 image: Assets.Images.preferencesToolbarGeneral)]
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
 											 name: NSLocalizedString("Accounts", comment: "Preferences"),
-											 image: AppAssets.preferencesToolbarAccountsImage)]
-
-		// Omit the Advanced Preferences for now because the Software Update related functionality is
-		// forbidden/non-applicable, and we can rely upon Apple to some extent for crash reports. We
-		// can add back the Crash Reporter preferences when we're ready to dynamically shuffle the rest
-		// of the content in this tab.
-		#if !MAC_APP_STORE
-			specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
-												 name: NSLocalizedString("Advanced", comment: "Preferences"),
-												 image: AppAssets.preferencesToolbarAdvancedImage)]
-		#endif
+											 image: Assets.Images.preferencesToolbarAccounts)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
+											 name: NSLocalizedString("Advanced", comment: "Preferences"),
+											 image: Assets.Images.preferencesToolbarAdvanced)]
 		return specs
 	}()
 
@@ -133,7 +126,7 @@ private extension PreferencesWindowController {
 			assertionFailure("Preferences window: no view controller matching \(identifier).")
 			return
 		}
-		
+
 		if newViewController.view == currentView {
 			return
 		}
@@ -147,8 +140,7 @@ private extension PreferencesWindowController {
 
 		if let currentView = currentView {
 			window!.contentView?.replaceSubview(currentView, with: newViewController.view)
-		}
-		else {
+		} else {
 			window!.contentView?.addSubview(newViewController.view)
 		}
 
@@ -174,23 +166,23 @@ private extension PreferencesWindowController {
 		let viewFrame = view.frame
 		let windowFrame = window!.frame
 		let contentViewFrame = window!.contentView!.frame
-		
-		let deltaHeight = NSHeight(contentViewFrame) - NSHeight(viewFrame)
-		let heightForWindow = NSHeight(windowFrame) - deltaHeight
-		let windowOriginY = NSMinY(windowFrame) + deltaHeight
-		
+
+		let deltaHeight = contentViewFrame.height - viewFrame.height
+		let heightForWindow = windowFrame.height - deltaHeight
+		let windowOriginY = windowFrame.minY + deltaHeight
+
 		var updatedWindowFrame = windowFrame
 		updatedWindowFrame.size.height = heightForWindow
 		updatedWindowFrame.origin.y = windowOriginY
-		updatedWindowFrame.size.width = windowWidth //NSWidth(viewFrame)
-		
+		updatedWindowFrame.size.width = windowWidth // NSWidth(viewFrame)
+
 		var updatedViewFrame = viewFrame
-		updatedViewFrame.origin = NSZeroPoint
+		updatedViewFrame.origin = NSPoint.zero
 		updatedViewFrame.size.width = windowWidth
 		if viewFrame != updatedViewFrame {
 			view.frame = updatedViewFrame
 		}
-		
+
 		if windowFrame != updatedWindowFrame {
 			window!.contentView?.alphaValue = 0.0
 			window!.setFrame(updatedWindowFrame, display: true, animate: true)

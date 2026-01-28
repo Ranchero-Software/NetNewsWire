@@ -38,7 +38,7 @@ final class DetailContainerView: NSView {
 
 	override func draw(_ dirtyRect: NSRect) {
 		NSColor.controlBackgroundColor.set()
-		let r = NSIntersectionRect(dirtyRect, bounds)
+		let r = dirtyRect.intersection(bounds)
 		r.fill()
 	}
 }

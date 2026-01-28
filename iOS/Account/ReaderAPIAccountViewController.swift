@@ -7,27 +7,27 @@
 //
 
 import UIKit
+import SafariServices
+import RSCore
+import RSWeb
 import Account
 import Secrets
-import RSWeb
-import SafariServices
 
-class ReaderAPIAccountViewController: UITableViewController {
-
-	@IBOutlet weak var activityIndicator: UIActivityIndicatorView!
-	@IBOutlet weak var cancelBarButtonItem: UIBarButtonItem!
-	@IBOutlet weak var usernameTextField: UITextField!
-	@IBOutlet weak var passwordTextField: UITextField!
-	@IBOutlet weak var apiURLTextField: UITextField!
-	@IBOutlet weak var showHideButton: UIButton!
-	@IBOutlet weak var actionButton: UIButton!
-	@IBOutlet weak var footerLabel: UILabel!
-	@IBOutlet weak var signUpButton: UIButton!
+final class ReaderAPIAccountViewController: UITableViewController {
+	@IBOutlet var activityIndicator: UIActivityIndicatorView!
+	@IBOutlet var cancelBarButtonItem: UIBarButtonItem!
+	@IBOutlet var usernameTextField: UITextField!
+	@IBOutlet var passwordTextField: UITextField!
+	@IBOutlet var apiURLTextField: UITextField!
+	@IBOutlet var showHideButton: UIButton!
+	@IBOutlet var actionButton: UIButton!
+	@IBOutlet var footerLabel: UILabel!
+	@IBOutlet var signUpButton: UIButton!
 
 	weak var account: Account?
 	var accountType: AccountType?
 	weak var delegate: AddAccountDismissDelegate?
-	
+
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupFooter()
@@ -35,7 +35,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 		activityIndicator.isHidden = true
 		usernameTextField.delegate = self
 		passwordTextField.delegate = self
-		
+
 		if let unwrappedAccount = account,
 		   let credentials = try? retrieveCredentialsForAccount(for: unwrappedAccount) {
 			actionButton.setTitle(NSLocalizedString("Update Credentials", comment: "Update Credentials"), for: .normal)
@@ -45,7 +45,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 		} else {
 			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Add Account"), for: .normal)
 		}
-		
+
 		if let unwrappedAccountType = accountType {
 			switch unwrappedAccountType {
 			case .freshRSS:
@@ -61,37 +61,37 @@ class ReaderAPIAccountViewController: UITableViewController {
 				title = ""
 			}
 		}
-		
+
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: usernameTextField)
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
-		
+
     }
-	
+
 	private func setupFooter() {
 		switch accountType {
-			case .bazQux:
-				footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
-			case .inoreader:
-				footerLabel.text = NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Inoreader SignUp"), for: .normal)
-			case .theOldReader:
-				footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
-				signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
-			case .freshRSS:
-				footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
-				signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
-			default:
-				return
+		case .bazQux:
+			footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
+		case .inoreader:
+			footerLabel.text = NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Inoreader SignUp"), for: .normal)
+		case .theOldReader:
+			footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
+		case .freshRSS:
+			footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
+			signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
+		default:
+			return
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
@@ -101,7 +101,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		switch section {
 		case 0:
@@ -115,8 +115,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 			return 1
 		}
 	}
-	
-	
+
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
 	}
@@ -130,74 +129,73 @@ class ReaderAPIAccountViewController: UITableViewController {
 			showHideButton.setTitle("Show", for: .normal)
 		}
 	}
-	
+
 	@IBAction func action(_ sender: Any) {
 		guard validateDataEntry(), let type = accountType else {
 			return
 		}
-		
+
 		let username = usernameTextField.text!
 		let password = passwordTextField.text!
 		let url = apiURL()!
-		
+
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername) else {
 			showError(NSLocalizedString("There is already an account of that type with that username created.", comment: "Duplicate Error"))
 			return
 		}
 
-		startAnimatingActivityIndicator()
-		disableNavigation()
+		Task { @MainActor in
+			startAnimatingActivityIndicator()
+			disableNavigation()
 
-		let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
-		Account.validateCredentials(type: type, credentials: credentials, endpoint: url) { result in
+			@MainActor func stopAnimation() {
+				stopAnimatingActivityIndicator()
+				enableNavigation()
+			}
 
-			self.stopAnimatingActivityIndicator()
-			self.enableNavigation()
+			let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
+			do {
+				let validatedCredentials = try await Account.validateCredentials(type: type, credentials: credentials, endpoint: url)
+				stopAnimation()
 
-			switch result {
-			case .success(let validatedCredentials):
-				if let validatedCredentials = validatedCredentials {
-
-					if self.account == nil {
-						self.account = AccountManager.shared.createAccount(type: type)
+				if let validatedCredentials {
+					if account == nil {
+						account = AccountManager.shared.createAccount(type: type)
 					}
 
 					do {
-						self.account?.endpointURL = url
-						
-						try? self.account?.removeCredentials(type: .readerBasic)
-						try? self.account?.removeCredentials(type: .readerAPIKey)
-						try self.account?.storeCredentials(credentials)
-						try self.account?.storeCredentials(validatedCredentials)
+						account?.endpointURL = url
 
-						self.dismiss(animated: true, completion: nil)
-						
-						self.account?.refreshAll() { result in
-							switch result {
-							case .success:
-								break
-							case .failure(let error):
-								self.showError(NSLocalizedString(error.localizedDescription, comment: "Account Refresh Error"))
-							}
+						try? account?.removeCredentials(type: .readerBasic)
+						try? account?.removeCredentials(type: .readerAPIKey)
+						try account?.storeCredentials(credentials)
+						try account?.storeCredentials(validatedCredentials)
+
+						dismiss(animated: true, completion: nil)
+
+						do {
+							try await account?.refreshAll()
+						} catch {
+							showError(NSLocalizedString(error.localizedDescription, comment: "Account Refresh Error"))
 						}
-						
-						self.delegate?.dismiss()
+
+						delegate?.dismiss()
 					} catch {
-						self.showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
+						showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
 					}
 				} else {
-					self.showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
+					showError(NSLocalizedString("Invalid username/password combination.", comment: "Credentials Error"))
 				}
-			case .failure(let error):
-				self.showError(error.localizedDescription)
+			} catch {
+				stopAnimation()
+				showError(error.localizedDescription)
 			}
-
 		}
 	}
-	
+
 	private func retrieveCredentialsForAccount(for account: Account) throws -> Credentials? {
 		switch accountType {
 		case .bazQux, .inoreader, .theOldReader, .freshRSS:
@@ -206,25 +204,25 @@ class ReaderAPIAccountViewController: UITableViewController {
 			return nil
 		}
 	}
-	
+
 	private func headerViewImage() -> UIImage? {
-		if let accountType = accountType {
+		if let accountType {
 			switch accountType {
-				case .bazQux:
-					return AppAssets.accountBazQuxImage
-				case .inoreader:
-					return AppAssets.accountInoreaderImage
-				case .theOldReader:
-					return AppAssets.accountTheOldReaderImage
-				case .freshRSS:
-					return AppAssets.accountFreshRSSImage
-				default:
-					return nil
+			case .bazQux:
+				return Assets.Images.accountBazQux
+			case .inoreader:
+				return Assets.Images.accountInoreader
+			case .theOldReader:
+				return Assets.Images.accountTheOldReader
+			case .freshRSS:
+				return Assets.Images.accountFreshRSS
+			default:
+				return nil
 			}
 		}
 		return nil
 	}
-  
+
 	private func validateDataEntry() -> Bool {
 		switch accountType {
 		case .freshRSS:
@@ -232,7 +230,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 				showError(NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error"))
 				return false
 			}
-			guard let _ = URL(string: apiURLTextField.text!) else {
+			guard URL(string: apiURLTextField.text!) != nil else {
 				showError(NSLocalizedString("Invalid API URL.", comment: "Invalid API URL"))
 				return false
 			}
@@ -244,26 +242,26 @@ class ReaderAPIAccountViewController: UITableViewController {
 		}
 		return true
 	}
-	
+
 	@IBAction func signUpWithProvider(_ sender: Any) {
 		var url: URL!
 		switch accountType {
-			case .bazQux:
-				url = URL(string: "https://bazqux.com")!
-			case .inoreader:
-				url = URL(string: "https://www.inoreader.com")!
-			case .theOldReader:
-				url = URL(string: "https://theoldreader.com")!
-			case .freshRSS:
-				url = URL(string: "https://freshrss.org")!
-			default:
-				return
+		case .bazQux:
+			url = URL(string: "https://bazqux.com")!
+		case .inoreader:
+			url = URL(string: "https://www.inoreader.com")!
+		case .theOldReader:
+			url = URL(string: "https://theoldreader.com")!
+		case .freshRSS:
+			url = URL(string: "https://freshrss.org")!
+		default:
+			return
 		}
 		let safari = SFSafariViewController(url: url)
 		safari.modalPresentationStyle = .currentContext
 		self.present(safari, animated: true, completion: nil)
 	}
-	
+
 	private func apiURL() -> URL? {
 		switch accountType {
 		case .freshRSS:
@@ -278,9 +276,7 @@ class ReaderAPIAccountViewController: UITableViewController {
 			return nil
 		}
 	}
-	
-	
-	
+
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)
 	}
@@ -316,5 +312,4 @@ extension ReaderAPIAccountViewController: UITextFieldDelegate {
 		textField.resignFirstResponder()
 		return true
 	}
-
 }

@@ -9,16 +9,16 @@
 import AppKit
 import RSCore
 
-class TimelineTableView: NSTableView {
-	
+final class TimelineTableView: NSTableView {
+
 	weak var keyboardDelegate: KeyboardDelegate?
-	
+
 	override func accessibilityLabel() -> String? {
 		return NSLocalizedString("Timeline", comment: "Timeline")
 	}
-	
+
 	// MARK: - NSResponder
-	
+
 	override func keyDown(with event: NSEvent) {
 		if keyboardDelegate?.keydown(event, in: self) ?? false {
 			return
@@ -31,14 +31,14 @@ class TimelineTableView: NSTableView {
 	override var isOpaque: Bool {
 		return true
 	}
-	
+
 	override func viewWillStartLiveResize() {
 		if let scrollView = self.enclosingScrollView {
 			scrollView.hasVerticalScroller = false
 		}
 		super.viewWillStartLiveResize()
 	}
-	
+
 	override func viewDidEndLiveResize() {
 		if let scrollView = self.enclosingScrollView {
 			scrollView.hasVerticalScroller = true

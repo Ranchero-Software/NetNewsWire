@@ -9,14 +9,14 @@
 import Foundation
 import Account
 
-final class AccountRefreshTimer {
-	
+@MainActor final class AccountRefreshTimer {
+
 	var shuttingDown = false
 
 	private var internalTimer: Timer?
 	private var lastTimedRefresh: Date?
 	private let launchTime = Date()
-	
+
 	func fireOldTimer() {
 		if let timer = internalTimer {
 			if timer.fireDate < Date() {
@@ -26,7 +26,7 @@ final class AccountRefreshTimer {
 			}
 		}
 	}
-	
+
 	func invalidate() {
 		guard let timer = internalTimer else {
 			return
@@ -36,12 +36,12 @@ final class AccountRefreshTimer {
 		}
 		internalTimer = nil
 	}
-	
+
 	func update() {
 		guard !shuttingDown else {
 			return
 		}
-		
+
 		let refreshInterval = AppDefaults.shared.refreshInterval
 		if refreshInterval == .manually {
 			invalidate()
@@ -56,23 +56,23 @@ final class AccountRefreshTimer {
 		if let currentNextFireDate = internalTimer?.fireDate, currentNextFireDate == nextRefreshTime {
 			return
 		}
-		
+
 		invalidate()
 		let timer = Timer(fireAt: nextRefreshTime, interval: 0, target: self, selector: #selector(timedRefresh(_:)), userInfo: nil, repeats: false)
 		RunLoop.main.add(timer, forMode: .common)
 		internalTimer = timer
-		
+
 	}
-	
+
 	@objc func timedRefresh(_ sender: Timer?) {
-		
+
 		guard !shuttingDown else {
 			return
 		}
-		
+
 		lastTimedRefresh = Date()
 		update()
-		
-		AccountManager.shared.refreshAll()
+
+		AccountManager.shared.refreshAllWithoutWaiting()
 	}
 }

@@ -11,7 +11,7 @@ import XCTest
 
 @testable import NetNewsWire
 
-class SharingTests: XCTestCase {
+@MainActor final class SharingTests: XCTestCase {
 
     func testSharingSubject() {
         let sharingServiceDelegate = SharingServiceDelegate(nil)
@@ -19,7 +19,7 @@ class SharingTests: XCTestCase {
 
         sharingService.delegate = sharingServiceDelegate
         sharingService.perform(withItems: [
-            ArticlePasteboardWriter(article: article(titled: "Immunization")),
+            ArticlePasteboardWriter(article: article(titled: "Immunization"))
         ])
 
         XCTAssertEqual("Immunization", sharingService.subject)
@@ -32,7 +32,7 @@ class SharingTests: XCTestCase {
         sharingService.delegate = sharingServiceDelegate
         sharingService.perform(withItems: [
             ArticlePasteboardWriter(article: article(titled: "NetNewsWire Status: Almost Beta")),
-            ArticlePasteboardWriter(article: article(titled: "No Algorithms Follow-Up")),
+            ArticlePasteboardWriter(article: article(titled: "No Algorithms Follow-Up"))
         ])
 
         XCTAssertEqual("NetNewsWire Status: Almost Beta, No Algorithms Follow-Up", sharingService.subject)
@@ -42,11 +42,12 @@ class SharingTests: XCTestCase {
         let articleId = randomId()
 		return Article(accountID: randomId(),
 					   articleID: articleId,
-					   webFeedID: randomId(),
+					   feedID: randomId(),
 					   uniqueID: randomId(),
 					   title: title,
 					   contentHTML: nil,
 					   contentText: nil,
+					   markdown: nil,
 					   url: nil,
 					   externalURL: nil,
 					   summary: nil,

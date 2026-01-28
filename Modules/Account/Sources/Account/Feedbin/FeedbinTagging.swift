@@ -8,8 +8,7 @@
 
 import Foundation
 
-struct FeedbinTagging: Codable {
-
+struct FeedbinTagging: Codable, Sendable {
 	let taggingID: Int
 	let feedID: Int
 	let name: String
@@ -19,17 +18,14 @@ struct FeedbinTagging: Codable {
 		case feedID = "feed_id"
 		case name = "name"
 	}
-
 }
 
-struct FeedbinCreateTagging: Codable {
-	
+struct FeedbinCreateTagging: Codable, Sendable {
 	let feedID: Int
 	let name: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case feedID = "feed_id"
 		case name = "name"
 	}
-	
 }

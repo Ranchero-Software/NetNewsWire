@@ -14,172 +14,212 @@ import RSCore
 import Articles
 import Account
 
+@MainActor final class WidgetDataEncoder {
+	static let shared = WidgetDataEncoder()
 
-public final class WidgetDataEncoder {
+	var isRunning = false
 
-	private let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
 	private let fetchLimit = 7
+	private let imageContainer: URL
+	private let dataURL: URL
 
-	private lazy var appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as! String
-	private lazy var containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup)
-	private lazy var imageContainer = containerURL?.appendingPathComponent("widgetImages", isDirectory: true)
-	private lazy var dataURL = containerURL?.appendingPathComponent("widget-data.json")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WidgetDataEncoder")
 
-	public var isRunning = false
+	init?() {
+		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
+			Self.logger.error("WidgetDataEncoder: unable to create appGroup")
+			return nil
+		}
+		guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroup) else {
+			Self.logger.error("WidgetDataEncoder: unable to create containerURL")
+			return nil
+		}
 
-	init () {
-		if imageContainer != nil {
-			try? FileManager.default.createDirectory(at: imageContainer!, withIntermediateDirectories: true, attributes: nil)
+		self.imageContainer = containerURL.appendingPathComponent("widgetImages", isDirectory: true)
+		self.dataURL = containerURL.appendingPathComponent("widget-data.json")
+
+		do {
+			try FileManager.default.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
+		} catch {
+			Self.logger.error("WidgetDataEncoder: unable to create folder for images")
+			return nil
 		}
 	}
 
 	func encode() {
-		if #available(iOS 14, *) {
-			isRunning = true
+		guard !isRunning else {
+			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
+			return
+		}
 
-			flushSharedContainer()
-			os_log(.debug, log: log, "Starting encoding widget data.")
+		isRunning = true
+		defer { isRunning = false }
 
-			DispatchQueue.main.async {
-				self.encodeWidgetData() { latestData in
-					guard let latestData = latestData else {
-						self.isRunning = false
-						return
-					}
+		removeStaleFaviconsFromSharedContainer()
 
-					let encodedData = try? JSONEncoder().encode(latestData)
+		let latestData: WidgetData
+		do {
+			latestData = try fetchWidgetData()
+			Self.logger.debug("WidgetDataEncoder: fetched latest widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
+			return
+		}
 
-					os_log(.debug, log: self.log, "Finished encoding widget data.")
+		let encodedData: Data
+		do {
+			encodedData = try JSONEncoder().encode(latestData)
+			Self.logger.debug("WidgetDataEncoder: encoded widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: error encoding widget data: \(error.localizedDescription)")
+			return
+		}
 
-					if self.fileExists() {
-						try? FileManager.default.removeItem(at: self.dataURL!)
-						os_log(.debug, log: self.log, "Removed widget data from container.")
-					}
-
-					if FileManager.default.createFile(atPath: self.dataURL!.path, contents: encodedData, attributes: nil) {
-						os_log(.debug, log: self.log, "Wrote widget data to container.")
-						WidgetCenter.shared.reloadAllTimelines()
-					}
-
-					self.isRunning = false
-				}
-			}
+		do {
+			let existingData = try? WidgetDataDecoder.decodeWidgetData()
+			try encodedData.write(to: dataURL, options: [.atomic])
+			reloadTimelines(newData: latestData, existingData: existingData)
+			Self.logger.debug("WidgetDataEncoder: finished refreshing widget data")
+		} catch {
+			Self.logger.error("WidgetDataEncoder: could not write data to container")
 		}
 	}
 
-	@available(iOS 14, *)
-	private func encodeWidgetData(completion: @escaping (WidgetData?) -> Void) {
-		let dispatchGroup = DispatchGroup()
-		var groupError: Error? = nil
+	func reloadTimelines(newData: WidgetData, existingData: WidgetData?) {
+		if let existingData = existingData {
+			var shouldRefreshSummary = false
 
-		var unread = [LatestArticle]()
-
-		dispatchGroup.enter()
-		AccountManager.shared.fetchArticlesAsync(.unread(fetchLimit)) { (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				for article in articles {
-					let latestArticle = LatestArticle(id: article.sortableArticleID,
-													  feedTitle: article.sortableName,
-													  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
-													  articleSummary: article.summary,
-													  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
-													  pubDate: article.datePublished?.description ?? "")
-					unread.append(latestArticle)
-				}
-			case .failure(let databaseError):
-				groupError = databaseError
+			if existingData.unreadArticles != newData.unreadArticles {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.UnreadWidget")
+				shouldRefreshSummary = true
+				Self.logger.debug("WidgetDataEncoder: Reloading Unread widget")
 			}
-			dispatchGroup.leave()
-		}
 
-		var starred = [LatestArticle]()
-
-		dispatchGroup.enter()
-		AccountManager.shared.fetchArticlesAsync(.starred(fetchLimit)) { (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				for article in articles {
-					let latestArticle = LatestArticle(id: article.sortableArticleID,
-													  feedTitle: article.sortableName,
-													  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
-													  articleSummary: article.summary,
-													  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
-													  pubDate: article.datePublished?.description ?? "")
-					starred.append(latestArticle)
-				}
-			case .failure(let databaseError):
-				groupError = databaseError
+			if existingData.todayArticles != newData.todayArticles || existingData.totalTodayUnreadCount != newData.totalTodayUnreadCount {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.TodayWidget")
+				shouldRefreshSummary = true
+				Self.logger.debug("WidgetDataEncoder: Reloading Today widget")
 			}
-			dispatchGroup.leave()
-		}
 
-		var today = [LatestArticle]()
-
-		dispatchGroup.enter()
-		AccountManager.shared.fetchArticlesAsync(.today(fetchLimit)) { (articleSetResult) in
-			switch articleSetResult {
-			case .success(let articles):
-				for article in articles {
-					let latestArticle = LatestArticle(id: article.sortableArticleID,
-													  feedTitle: article.sortableName,
-													  articleTitle: ArticleStringFormatter.truncatedTitle(article).isEmpty ? ArticleStringFormatter.truncatedSummary(article) : ArticleStringFormatter.truncatedTitle(article),
-													  articleSummary: article.summary,
-													  feedIconPath: self.writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation()),
-													  pubDate: article.datePublished?.description ?? "")
-					today.append(latestArticle)
-				}
-			case .failure(let databaseError):
-				groupError = databaseError
+			if existingData.starredArticles != newData.starredArticles {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.StarredWidget")
+				shouldRefreshSummary = true
+				Self.logger.debug("WidgetDataEncoder: Reloading Starred widget")
 			}
-			dispatchGroup.leave()
-		}
 
-		dispatchGroup.notify(queue: .main) {
-			if groupError != nil {
-				os_log(.error, log: self.log, "WidgetDataEncoder failed to write the widget data.")
-				completion(nil)
-			} else {
-				let latestData = WidgetData(currentUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
-											currentTodayCount: SmartFeedsController.shared.todayFeed.unreadCount,
-											currentStarredCount: (try? AccountManager.shared.fetchCountForStarredArticles()) ?? 0,
-											unreadArticles: unread,
-											starredArticles: starred,
-											todayArticles:today,
-											lastUpdateTime: Date())
-				completion(latestData)
+			if shouldRefreshSummary {
+				WidgetCenter.shared.reloadTimelines(ofKind: "com.ranchero.NetNewsWire.LockScreenSummaryWidget")
+				Self.logger.debug("WidgetDataEncoder: Reloading Summary widget")
 			}
-		}
-
-	}
-
-	private func fileExists() -> Bool {
-		FileManager.default.fileExists(atPath: dataURL!.path)
-	}
-
-	private func writeImageDataToSharedContainer(_ imageData: Data?) -> String? {
-		if imageData == nil { return nil }
-		// Each image gets a UUID
-		let uuid = UUID().uuidString
-		if let imagePath = imageContainer?.appendingPathComponent(uuid, isDirectory: false) {
-			do {
-				try imageData!.write(to: imagePath)
-				return imagePath.path
-			} catch {
-				return nil
-			}
-		}
-
-		return nil
-	}
-
-	private func flushSharedContainer() {
-		if let imageContainer = imageContainer {
-			try? FileManager.default.removeItem(atPath: imageContainer.path)
-			try? FileManager.default.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
 		}
 	}
 
 }
 
+@MainActor private extension WidgetDataEncoder {
 
+	func fetchWidgetData() throws -> WidgetData {
+		let fetchedUnreadArticles = try AccountManager.shared.fetchArticles(.unread(fetchLimit))
+		let unreadArticles = sortedLatestArticles(fetchedUnreadArticles)
+
+		let fetchedStarredArticles = try AccountManager.shared.fetchArticles(.starred(fetchLimit))
+		let starredArticles = sortedLatestArticles(fetchedStarredArticles)
+
+		let fetchedTodayArticles = try AccountManager.shared.fetchArticles(.today(fetchLimit))
+		let fetchedTodayTotal = try AccountManager.shared.fetchArticles(.today())
+		let fetchedTodayTotalCount = fetchedTodayTotal.count
+		let fetchedTodayUnreadCount = fetchedTodayTotal.filter({ $0.status.read == false }).count
+		let todayArticles = sortedLatestArticles(fetchedTodayArticles)
+
+		let latestData = WidgetData(totalUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
+									totalTodayCount: fetchedTodayTotalCount,
+									totalTodayUnreadCount: fetchedTodayUnreadCount,
+									totalStarredCount: (try? AccountManager.shared.fetchCountForStarredArticles()) ?? 0,
+									unreadArticles: unreadArticles,
+									starredArticles: starredArticles,
+									todayArticles: todayArticles,
+									lastUpdateTime: Date.now)
+
+		return latestData
+	}
+
+	func fileExists() -> Bool {
+		FileManager.default.fileExists(atPath: dataURL.path)
+	}
+
+	func writeImageDataToSharedContainer(_ imageData: Data?) -> String? {
+		guard let imageData, let md5 = imageData.md5String else {
+			return nil
+		}
+
+		let imagePath = imageContainer.appendingPathComponent(md5, isDirectory: false)
+		let fm = FileManager.default
+		if fm.fileExists(atPath: imagePath.path) {
+			Self.logger.debug("WidgetDataEncoder: favicon already exists. Will not write again.")
+			return imagePath.path
+		}
+		do {
+			try imageData.write(to: imagePath)
+			return imagePath.path
+		} catch {
+			return nil
+		}
+	}
+
+	func removeStaleFaviconsFromSharedContainer() {
+		let fm = FileManager.default
+		if !fm.fileExists(atPath: imageContainer.path) {
+			try? fm.createDirectory(at: imageContainer, withIntermediateDirectories: true, attributes: nil)
+			return
+		}
+
+		/// We don't have 7 days to test in DEBUG mode.
+		/// So, for testing purposes, images are removed after 30s
+		/// if they haven't been accessed.
+		#if DEBUG
+		let cutoffDate = Date.now.addingTimeInterval(-30)
+		#else
+		let cutoffDate = Date.now.addingTimeInterval(-7 * 24 * 60 * 60)
+		#endif
+
+		do {
+			let resourceKeys: Set<URLResourceKey> = [.isDirectoryKey, .contentAccessDateKey, .contentModificationDateKey]
+			let urls = try fm.contentsOfDirectory(at: imageContainer, includingPropertiesForKeys: Array(resourceKeys), options: [.skipsHiddenFiles])
+			for url in urls {
+				let values = try url.resourceValues(forKeys: resourceKeys)
+				// Skip directories; we only store files in this container
+				if values.isDirectory == true { continue }
+
+				// Prefer last access date; fall back to modification date if needed
+				let lastAccess = values.contentAccessDate ?? values.contentModificationDate
+				if let lastAccess, lastAccess < cutoffDate {
+					try? fm.removeItem(at: url)
+				}
+			}
+		} catch {
+			Self.logger.debug("WidgetDataEncoder: unable to remove favicons: \(error.localizedDescription).")
+		}
+	}
+
+	func createLatestArticle(_ article: Article) -> LatestArticle {
+		let truncatedTitle = ArticleStringFormatter.truncatedTitle(article)
+		let articleTitle = truncatedTitle.isEmpty ? ArticleStringFormatter.truncatedSummary(article) : truncatedTitle
+
+		let feedIconPath = writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation())
+
+		let pubDate = article.datePublished?.description ?? ""
+
+		let latestArticle = LatestArticle(id: article.sortableArticleID,
+										  feedTitle: article.sortableName,
+										  articleTitle: articleTitle,
+										  articleSummary: article.summary,
+										  feedIconPath: feedIconPath,
+										  pubDate: pubDate)
+		return latestArticle
+	}
+
+	func sortedLatestArticles(_ fetchedArticles: Set<Article>) -> [LatestArticle] {
+		let latestArticles = fetchedArticles.map(createLatestArticle)
+		return latestArticles.sorted(by: { $0.pubDate > $1.pubDate })
+	}
+}

@@ -1,0 +1,8 @@
+// Common settings for all Mac extensions
+
+#include "./NetNewsWire_codesigning_common.xcconfig"
+#include "./NetNewsWire_mac_target_common.xcconfig"
+
+ENABLE_HARDENED_RUNTIME = YES
+SDKROOT = macosx
+PRODUCT_NAME = $(TARGET_NAME)

@@ -8,7 +8,7 @@
 
 import AppKit
 
-protocol RenameWindowControllerDelegate {
+@MainActor protocol RenameWindowControllerDelegate {
 
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject: Any, withNewName: String)
 }
@@ -18,7 +18,7 @@ final class RenameWindowController: NSWindowController {
 	@IBOutlet var renamePrompt: NSTextField!
 	@IBOutlet var newTitleTextField: NSTextField!
 	@IBOutlet var renameButton: NSButton!
-	
+
 	private var originalTitle: String?
 	private var representedObject: Any?
 	private var delegate: RenameWindowControllerDelegate?

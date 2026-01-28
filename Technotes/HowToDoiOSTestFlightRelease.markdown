@@ -48,6 +48,8 @@ Commit
 
 On branch (or on main, if working on main):
 
+git push
+
 Use SemVer with tags
 Tag the app: git tag iOS-6.1.5-6124
 Push: git push origin iOS-6.1.5-6124
@@ -56,7 +58,7 @@ Push: git push origin iOS-6.1.5-6124
 
 In AppStoreConnect add groups and release the app
 Paste in the release notes
-Announce in Slack
+Announce in Discourse
 Optionally blog about it
 
 ## GitHub release

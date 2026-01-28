@@ -11,16 +11,16 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsNewsBlurWindowController: NSWindowController {
-	
-	@IBOutlet weak var signInTextField: NSTextField!
-	@IBOutlet weak var noAccountTextField: NSTextField!
-	@IBOutlet weak var createNewAccountButton: NSButton!
-	@IBOutlet weak var progressIndicator: NSProgressIndicator!
-	@IBOutlet weak var usernameTextField: NSTextField!
-	@IBOutlet weak var passwordTextField: NSSecureTextField!
-	@IBOutlet weak var errorMessageLabel: NSTextField!
-	@IBOutlet weak var actionButton: NSButton!
+final class AccountsNewsBlurWindowController: NSWindowController {
+
+	@IBOutlet var signInTextField: NSTextField!
+	@IBOutlet var noAccountTextField: NSTextField!
+	@IBOutlet var createNewAccountButton: NSButton!
+	@IBOutlet var progressIndicator: NSProgressIndicator!
+	@IBOutlet var usernameTextField: NSTextField!
+	@IBOutlet var passwordTextField: NSSecureTextField!
+	@IBOutlet var errorMessageLabel: NSTextField!
+	@IBOutlet var actionButton: NSButton!
 
 	var account: Account?
 
@@ -48,8 +48,12 @@ class AccountsNewsBlurWindowController: NSWindowController {
 	// MARK: API
 
 	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		hostWindow.beginSheet(window, completionHandler: completion)
 	}
 
 	// MARK: Actions
@@ -59,80 +63,74 @@ class AccountsNewsBlurWindowController: NSWindowController {
 	}
 
 	@IBAction func action(_ sender: Any) {
-		self.errorMessageLabel.stringValue = ""
+		errorMessageLabel.stringValue = ""
 
 		guard !usernameTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
+			errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
+			errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
 			return
 		}
-		
-		actionButton.isEnabled = false
-		progressIndicator.isHidden = false
-		progressIndicator.startAnimation(self)
 
-		let credentials = Credentials(type: .newsBlurBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: .newsBlur, credentials: credentials) { [weak self] result in
+		Task { @MainActor in
+			actionButton.isEnabled = false
+			progressIndicator.isHidden = false
+			progressIndicator.startAnimation(self)
 
-			guard let self = self else { return }
+			@MainActor func stopAnimation() {
+				actionButton.isEnabled = true
+				progressIndicator.isHidden = true
+				progressIndicator.stopAnimation(self)
+			}
 
-			self.actionButton.isEnabled = true
-			self.progressIndicator.isHidden = true
-			self.progressIndicator.stopAnimation(self)
+			let credentials = Credentials(type: .newsBlurBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
+			do {
+				let validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials)
+				stopAnimation()
 
-			switch result {
-			case .success(let validatedCredentials):
-				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+				guard let validatedCredentials else {
+					errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
 					return
 				}
 
-				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: .newsBlur)
+				if account == nil {
+					account = AccountManager.shared.createAccount(type: .newsBlur)
 				}
 
 				do {
-					try self.account?.removeCredentials(type: .newsBlurBasic)
-					try self.account?.removeCredentials(type: .newsBlurSessionId)
-					try self.account?.storeCredentials(credentials)
-					try self.account?.storeCredentials(validatedCredentials)
+					try account?.removeCredentials(type: .newsBlurBasic)
+					try account?.removeCredentials(type: .newsBlurSessionID)
+					try account?.storeCredentials(credentials)
+					try account?.storeCredentials(validatedCredentials)
 
-					self.account?.refreshAll() { result in
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
+					do {
+						try await account?.refreshAll()
+					} catch {
+						NSApplication.shared.presentError(error)
 					}
-					
-					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
+
+					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 				}
-
-			case .failure:
-
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
-
+			} catch {
+				stopAnimation()
+				errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
 			}
 		}
 	}
-	
+
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		NSWorkspace.shared.open(URL(string: "https://newsblur.com")!)
 	}
-	
+
 	// MARK: Autofill
 	func enableAutofill() {
-		if #available(macOS 11, *) {
-			usernameTextField.contentType = .username
-			passwordTextField.contentType = .password
-		}
+		usernameTextField.contentType = .username
+		passwordTextField.contentType = .password
 	}
-	
+
 }

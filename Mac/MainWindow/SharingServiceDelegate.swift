@@ -11,7 +11,7 @@ import AppKit
 @objc final class SharingServiceDelegate: NSObject, NSSharingServiceDelegate {
 
 	weak var window: NSWindow?
-	
+
 	init(_ window: NSWindow?) {
 		self.window = window
 	}
@@ -24,9 +24,9 @@ import AppKit
 			}
 			.joined(separator: ", ")
 	}
-	
+
 	func sharingService(_ sharingService: NSSharingService, sourceWindowForShareItems items: [Any], sharingContentScope: UnsafeMutablePointer<NSSharingService.SharingContentScope>) -> NSWindow? {
 		return window
 	}
-	
+
 }

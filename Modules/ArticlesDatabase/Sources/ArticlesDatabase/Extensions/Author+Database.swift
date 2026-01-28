@@ -15,26 +15,26 @@ import RSParser
 // MARK: - DatabaseObject
 
 extension Author {
-	
+
 	init?(row: FMResultSet) {
 		let authorID = row.string(forColumn: DatabaseKey.authorID)
 		let name = row.string(forColumn: DatabaseKey.name)
 		let url = row.string(forColumn: DatabaseKey.url)
 		let avatarURL = row.string(forColumn: DatabaseKey.avatarURL)
 		let emailAddress = row.string(forColumn: DatabaseKey.emailAddress)
-		
+
 		self.init(authorID: authorID, name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
 	}
-	
+
 	init?(parsedAuthor: ParsedAuthor) {
 		self.init(authorID: nil, name: parsedAuthor.name, url: parsedAuthor.url, avatarURL: parsedAuthor.avatarURL, emailAddress: parsedAuthor.emailAddress)
 	}
-	
+
 	public static func authorsWithParsedAuthors(_ parsedAuthors: Set<ParsedAuthor>?) -> Set<Author>? {
 		guard let parsedAuthors = parsedAuthors else {
 			return nil
 		}
-		
+
 		let authors = Set(parsedAuthors.compactMap { Author(parsedAuthor: $0) })
 		return authors.isEmpty ? nil: authors
 	}
@@ -63,4 +63,3 @@ extension Author: @retroactive DatabaseObject {
 		return d
 	}
 }
-

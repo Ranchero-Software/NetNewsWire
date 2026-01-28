@@ -35,7 +35,7 @@
 @property (nonatomic) BOOL parsingChannelImage;
 @property (nonatomic, readonly) NSDate *currentDate;
 @property (nonatomic) BOOL endRSSFound;
-@property (nonatomic) NSString *link;
+@property (nonatomic) NSString *homepageURLString;
 @property (nonatomic) NSString *title;
 @property (nonatomic) NSDate *dateParsed;
 @property (nonatomic) BOOL isRDF;
@@ -77,7 +77,7 @@
 	
 	[self parse];
 
-	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title link:self.link language:self.language articles:self.articles];
+	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString language:self.language articles:self.articles];
 
 	return parsedFeed;
 }
@@ -110,6 +110,12 @@ static const NSInteger kTitleLength = 6;
 
 static const char *kDC = "dc";
 static const NSInteger kDCLength = 3;
+
+static const char *kSource = "source";
+static const NSInteger kSourceLength = 7;
+
+static const char *kMarkdown = "markdown";
+static const NSInteger kMarkdownLength = 9;
 
 static const char *kCreator = "creator";
 static const NSInteger kCreatorLength = 8;
@@ -206,8 +212,8 @@ static const NSInteger kLanguageLength = 9;
 	}
 
 	if (RSSAXEqualTags(localName, kLink, kLinkLength)) {
-		if (!self.link) {
-			self.link = [self currentString];
+		if (RSParserStringIsEmpty(self.homepageURLString)) {
+			self.homepageURLString = [self currentString];
 		}
 	}
 
@@ -240,6 +246,12 @@ static const NSInteger kLanguageLength = 9;
 	}
 }
 
+- (void)addSourceElement:(const xmlChar *)localName {
+
+	if (RSSAXEqualTags(localName, kMarkdown, kMarkdownLength)) {
+		self.currentArticle.markdown = [self currentString];
+	}
+}
 
 - (void)addGuid {
 
@@ -279,6 +291,11 @@ static const NSInteger kLanguageLength = 9;
 	 and not even a relative path. This may need to evolve over time as we find
 	 feeds broken in different ways.*/
 
+	// https://github.com/Ranchero-Software/NetNewsWire/issues/1230
+	if ([s rsparser_contains:@" "]) {
+		return NO;
+	}
+	
 	if (![s rsparser_contains:@"/"]) {
 		// This seems to be just about the best possible check.
 		// Bad guids are often just integers, for instance.
@@ -299,12 +316,12 @@ static const NSInteger kLanguageLength = 9;
 		return s;
 	}
 
-	if (!self.link) {
+	if (!self.homepageURLString) {
 		//TODO: get feed URL and use that to resolve URL.*/
 		return s;
 	}
 
-	NSURL *baseURL = [NSURL URLWithString:self.link];
+	NSURL *baseURL = [NSURL URLWithString:self.homepageURLString];
 	if (!baseURL) {
 		return s;
 	}
@@ -332,6 +349,11 @@ static const NSInteger kLanguageLength = 9;
 		return;
 	}
 
+	if (RSSAXEqualTags(prefix, kSource, kSourceLength)) {
+		[self addSourceElement:localName];
+		return;
+	}
+
 	if (RSSAXEqualTags(prefix, kContent, kContentLength) && RSSAXEqualTags(localName, kEncoded, kEncodedLength)) {
 		NSString *s = [self currentString];
 		if (!RSParserStringIsEmpty(s)) {
@@ -354,7 +376,13 @@ static const NSInteger kLanguageLength = 9;
 		[self addAuthorWithString:[self currentString]];
 	}
 	else if (RSSAXEqualTags(localName, kLink, kLinkLength)) {
-		self.currentArticle.link = [self urlString:[self currentString]];
+		RSParsedArticle *article = self.currentArticle;
+		if (article.link == nil) {
+			NSString *s = [self currentString];
+			if (!RSParserStringIsEmpty(s)) {
+				article.link = [self urlString:s];
+			}
+		}
 	}
 	else if (RSSAXEqualTags(localName, kDescription, kDescriptionLength)) {
 

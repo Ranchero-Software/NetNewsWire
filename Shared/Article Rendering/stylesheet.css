@@ -101,6 +101,10 @@ body > .systemMessage {
 	text-align: start;
 }
 
+.articleTitle h1 {
+	font-size: 1.5rem;
+}
+
 .articleTitle a:link, .articleTitle a:visited {
 	color: var(--article-title-color);
 	margin-top: 26px;
@@ -137,6 +141,10 @@ body > .systemMessage {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.externalLink:has(a[href=""]) {
+	display: none;
 }
 
 .externalLink a {
@@ -244,7 +252,7 @@ pre code {
 
 img, figure, video, div, object {
 	max-width: 100%;
-	height: auto !important;
+	height: auto;
 	margin: 0 auto;
 }
 
@@ -514,15 +522,33 @@ a.footnote:hover,
 	  text-decoration: none;
 	}
 
+	.articleTitle h1 {
+		font-size: 1.85rem;
+	}
+
 	.articleBody a:link, .articleBody a:visited {
 		border-bottom: 1px solid var(--accent-color);
 	}
+	
+	.articleBody a:has(img),
+	.articleBody a:has(img):link,
+	.articleBody a:has(img):visited {
+		border-bottom: none;
+	}
+	
 	.articleBody a:hover {
 		border-radius: 2px;
 		background: linear-gradient(0deg, var(--hover-gradient-color-start) 0%, var(--hover-gradient-color-end) 100%);
 		border-bottom: 1px solid var(--hover-gradient-color-end);
 		color: white;
 		text-decoration: none;
+	}
+	
+	.articleBody a:has(img):hover {
+		background: none;
+		border-bottom: none;
+		color: inherit;
+		border-radius: 0;
 	}
 	.articleBody a:hover u {
 		color: white;

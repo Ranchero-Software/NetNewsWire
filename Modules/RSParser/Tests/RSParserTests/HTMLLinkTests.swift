@@ -10,14 +10,14 @@ import XCTest
 import RSParser
 import RSParserObjC
 
-class HTMLLinkTests: XCTestCase {
+final class HTMLLinkTests: XCTestCase {
 
 	func testSixColorsPerformance() {
 
 		// 0.003 sec on my 2012 iMac
 		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
 		self.measure {
-			let _ = RSHTMLLinkParser.htmlLinks(with: d)
+			_ = RSHTMLLinkParser.htmlLinks(with: d)
 		}
 	}
 

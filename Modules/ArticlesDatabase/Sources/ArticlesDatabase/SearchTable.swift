@@ -7,14 +7,14 @@
 //
 
 import Foundation
+import Synchronization
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import Articles
 import RSParser
 
-final class ArticleSearchInfo: Hashable {
-
+final class ArticleSearchInfo: Hashable, Sendable {
 	let articleID: String
 	let title: String?
 	let contentHTML: String?
@@ -22,27 +22,7 @@ final class ArticleSearchInfo: Hashable {
 	let summary: String?
 	let authorsNames: String?
 	let searchRowID: Int?
-	
-	var preferredText: String {
-		if let body = contentHTML, !body.isEmpty {
-			return body
-		}
-		if let body = contentText, !body.isEmpty {
-			return body
-		}
-		return summary ?? ""
-	}
-
-	lazy var bodyForIndex: String = {
-		let s = preferredText.rsparser_stringByDecodingHTMLEntities()
-		let sanitizedBody = s.strippingHTML().collapsingWhitespace
-
-		if let authorsNames = authorsNames {
-			return sanitizedBody.appending(" \(authorsNames)")
-		} else {
-			return sanitizedBody
-		}
-	}()
+	let bodyForIndex: String
 
 	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, authorsNames: String?, searchRowID: Int?) {
 		self.articleID = articleID
@@ -52,6 +32,27 @@ final class ArticleSearchInfo: Hashable {
 		self.contentText = contentText
 		self.summary = summary
 		self.searchRowID = searchRowID
+
+		let preferredText: String = {
+			if let body = contentHTML, !body.isEmpty {
+				return body
+			}
+			if let body = contentText, !body.isEmpty {
+				return body
+			}
+			return summary ?? ""
+		}()
+
+		self.bodyForIndex = {
+			let s = preferredText.rsparser_stringByDecodingHTMLEntities()
+			let sanitizedBody = s.strippingHTML()
+
+			if let authorsNames {
+				return sanitizedBody.appending(" \(authorsNames)")
+			} else {
+				return sanitizedBody
+			}
+		}()
 	}
 
 	convenience init(article: Article) {
@@ -77,15 +78,13 @@ final class ArticleSearchInfo: Hashable {
 	}
 }
 
-final class SearchTable: DatabaseTable {
-
+final class SearchTable: DatabaseTable, @unchecked Sendable {
 	let name = "search"
 	private let queue: DatabaseQueue
-	private weak var articlesTable: ArticlesTable?
+	weak var articlesTable: ArticlesTable?
 
-	init(queue: DatabaseQueue, articlesTable: ArticlesTable) {
+	init(queue: DatabaseQueue) {
 		self.queue = queue
-		self.articlesTable = articlesTable
 	}
 
 	func ensureIndexedArticles(for articleIDs: Set<String>) {
@@ -117,7 +116,7 @@ final class SearchTable: DatabaseTable {
 
 	/// Index new articles.
 	func indexNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-		let articleSearchInfos = Set(articles.map{ ArticleSearchInfo(article: $0) })
+		let articleSearchInfos = Set(articles.map { ArticleSearchInfo(article: $0) })
 		performInitialIndexForArticles(articleSearchInfos, database)
 	}
 
@@ -132,7 +131,9 @@ final class SearchTable: DatabaseTable {
 private extension SearchTable {
 
 	func performInitialIndexForArticles(_ articles: Set<ArticleSearchInfo>, _ database: FMDatabase) {
-		articles.forEach { performInitialIndex($0, database) }
+		for article in articles {
+			performInitialIndex(article, database)
+		}
 	}
 
 	func performInitialIndex(_ article: ArticleSearchInfo, _ database: FMDatabase) {
@@ -177,7 +178,7 @@ private extension SearchTable {
 		let groupedSearchInfos = Dictionary(grouping: searchInfos, by: { $0.rowID })
 		let searchInfosDictionary = groupedSearchInfos.mapValues { $0.first! }
 
-		articles.forEach { (article) in
+		for article in articles {
 			updateIndexForArticle(article, searchInfosDictionary, database)
 		}
 	}

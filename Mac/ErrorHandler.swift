@@ -10,16 +10,17 @@ import AppKit
 import Account
 import os.log
 
-struct ErrorHandler {
+struct ErrorHandler: Sendable {
 
-	private static var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
-	
-	public static func present(_ error: Error) {
-		NSApplication.shared.presentError(error)
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
+
+	@Sendable public static func present(_ error: Error) {
+		Task { @MainActor in
+			NSApplication.shared.presentError(error)
+		}
 	}
-	
+
 	public static func log(_ error: Error) {
-		os_log(.error, log: self.log, "%@", error.localizedDescription)
+		logger.error("\(error.localizedDescription)")
 	}
-	
 }

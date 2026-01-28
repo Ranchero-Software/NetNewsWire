@@ -31,7 +31,11 @@ final class AdvancedPreferencesViewController: NSViewController {
 		super.viewWillAppear()
 		updateUI()
 		if !didRegisterForNotification {
-			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+				Task { @MainActor in
+					self?.userDefaultsDidChange()
+				}
+			}
 			didRegisterForNotification = true
 		}
 	}
@@ -43,22 +47,21 @@ final class AdvancedPreferencesViewController: NSViewController {
 		wantsTestBuilds = (button === testBuildsButton)
 	}
 
-	@objc func userDefaultsDidChange(_ sender: Any?) {
+	func userDefaultsDidChange() {
 		updateUI()
 	}
 }
 
 private extension AdvancedPreferencesViewController {
 
-	@MainActor func updateUI() {
+	func updateUI() {
 		if wantsTestBuilds {
 			testBuildsButton.state = .on
-		}
-		else {
+		} else {
 			releaseBuildsButton.state = .on
 		}
 	}
-	
+
 	func currentAppcastURL() -> String {
 		return UserDefaults.standard.string(forKey: appcastDefaultsKey) ?? ""
 	}

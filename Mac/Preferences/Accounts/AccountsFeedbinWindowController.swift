@@ -11,25 +11,25 @@ import Account
 import RSWeb
 import Secrets
 
-class AccountsFeedbinWindowController: NSWindowController {
+final class AccountsFeedbinWindowController: NSWindowController {
 
-	@IBOutlet weak var signInTextField: NSTextField!
-	@IBOutlet weak var noAccountTextField: NSTextField!
-	@IBOutlet weak var createNewAccountButton: NSButton!
-	@IBOutlet weak var progressIndicator: NSProgressIndicator!
-	@IBOutlet weak var usernameTextField: NSTextField!
-	@IBOutlet weak var passwordTextField: NSSecureTextField!
-	@IBOutlet weak var errorMessageLabel: NSTextField!
-	@IBOutlet weak var actionButton: NSButton!
-	
+	@IBOutlet var signInTextField: NSTextField!
+	@IBOutlet var noAccountTextField: NSTextField!
+	@IBOutlet var createNewAccountButton: NSButton!
+	@IBOutlet var progressIndicator: NSProgressIndicator!
+	@IBOutlet var usernameTextField: NSTextField!
+	@IBOutlet var passwordTextField: NSSecureTextField!
+	@IBOutlet var errorMessageLabel: NSTextField!
+	@IBOutlet var actionButton: NSButton!
+
 	var account: Account?
-	
+
 	private weak var hostWindow: NSWindow?
-	
+
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("AccountsFeedbin"))
 	}
-	
+
 	override func windowDidLoad() {
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .basic) {
 			usernameTextField.stringValue = credentials.username
@@ -41,102 +41,96 @@ class AccountsFeedbinWindowController: NSWindowController {
 			actionButton.title = NSLocalizedString("Create", comment: "Add Account")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your Feedbin account.", comment: "SignIn")
 		}
-		
+
 		enableAutofill()
-		
+
 		usernameTextField.becomeFirstResponder()
 	}
-	
+
 	// MARK: API
-	
-	func runSheetOnWindow(_ hostWindow: NSWindow, completion: ((NSApplication.ModalResponse) -> Void)? = nil) {
+
+	func runSheetOnWindow(_ hostWindow: NSWindow) {
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		hostWindow.beginSheet(window!, completionHandler: completion)
+		hostWindow.beginSheet(window)
 	}
 
-	// MARK: Actions
-	
+	// MARK: - Actions
+
 	@IBAction func cancel(_ sender: Any) {
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
 	}
-	
+
 	@IBAction func action(_ sender: Any) {
-		
-		self.errorMessageLabel.stringValue = ""
-		
+		errorMessageLabel.stringValue = ""
+
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+			errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
 			return
 		}
-		
+
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: usernameTextField.stringValue) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error")
+			errorMessageLabel.stringValue = NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error")
 			return
 		}
-		
-		actionButton.isEnabled = false
-		progressIndicator.isHidden = false
-		progressIndicator.startAnimation(self)
-		
-		let credentials = Credentials(type: .basic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
-		Account.validateCredentials(type: .feedbin, credentials: credentials) { [weak self] result in
-			
-			guard let self = self else { return }
-			
-			self.actionButton.isEnabled = true
-			self.progressIndicator.isHidden = true
-			self.progressIndicator.stopAnimation(self)
-			
-			switch result {
-			case .success(let validatedCredentials):
-			
-				guard let validatedCredentials = validatedCredentials else {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
+
+		Task { @MainActor in
+			actionButton.isEnabled = false
+			progressIndicator.isHidden = false
+			progressIndicator.startAnimation(self)
+
+			@MainActor func stopAnimation() {
+				actionButton.isEnabled = true
+				progressIndicator.isHidden = true
+				progressIndicator.stopAnimation(self)
+			}
+
+			let credentials = Credentials(type: .basic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
+			do {
+				let validatedCredentials = try await Account.validateCredentials(type: .feedbin, credentials: credentials)
+				stopAnimation()
+
+				guard let validatedCredentials else {
+					errorMessageLabel.stringValue = NSLocalizedString("Invalid email/password combination.", comment: "Credentials Error")
 					return
 				}
-				
-				if self.account == nil {
-					self.account = AccountManager.shared.createAccount(type: .feedbin)
-				}
-			
-				do {
-					try self.account?.removeCredentials(type: .basic)
-					try self.account?.storeCredentials(validatedCredentials)
 
-					self.account?.refreshAll() { result in
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							NSApplication.shared.presentError(error)
-						}
-					}
-					
-					self.hostWindow?.endSheet(self.window!, returnCode: NSApplication.ModalResponse.OK)
-				} catch {
-					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+				if account == nil {
+					account = AccountManager.shared.createAccount(type: .feedbin)
 				}
-				
-			case .failure:
-				
-				self.errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
-				
+
+				do {
+					try account?.removeCredentials(type: .basic)
+					try account?.storeCredentials(validatedCredentials)
+
+					do {
+						try await account?.refreshAll()
+					} catch {
+						NSApplication.shared.presentError(error)
+					}
+
+					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+				} catch {
+					errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
+				}
+
+			} catch {
+				stopAnimation()
+				errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
 			}
-			
 		}
-		
 	}
-	
+
 	@IBAction func createAccountWithProvider(_ sender: Any) {
 		NSWorkspace.shared.open(URL(string: "https://feedbin.com/signup")!)
 	}
-	
+
 	// MARK: Autofill
 	func enableAutofill() {
-		if #available(macOS 11, *) {
-			usernameTextField.contentType = .username
-			passwordTextField.contentType = .password
-		}
+		usernameTextField.contentType = .username
+		passwordTextField.contentType = .password
 	}
-	
 }

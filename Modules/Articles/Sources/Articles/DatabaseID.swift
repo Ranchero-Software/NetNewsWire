@@ -8,24 +8,21 @@
 
 import Foundation
 import RSCore
+import Synchronization
 
-// MD5 works because:
-// * It’s fast
-// * Collisions aren’t going to happen with feed data
+private let databaseIDCache = Mutex([String: String]())
 
-private var databaseIDCache = [String: String]()
-private var databaseIDCacheLock = NSLock()
 public func databaseIDWithString(_ s: String) -> String {
-    databaseIDCacheLock.lock()
-    defer {
-        databaseIDCacheLock.unlock()
-    }
-	
-	if let identifier = databaseIDCache[s] {
+	databaseIDCache.withLock { cache in
+		if let identifier = cache[s] {
+			return identifier
+		}
+
+		// MD5 works because:
+		// * It’s fast
+		// * Collisions aren’t going to happen with feed data
+		let identifier = s.md5String
+		cache[s] = identifier
 		return identifier
 	}
-	
-	let identifier = s.md5String
-	databaseIDCache[s] = identifier
-	return identifier
 }

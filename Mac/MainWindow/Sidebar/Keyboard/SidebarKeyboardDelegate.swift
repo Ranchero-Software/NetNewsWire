@@ -11,7 +11,7 @@ import RSCore
 
 @objc final class SidebarKeyboardDelegate: NSObject, KeyboardDelegate {
 
-	@IBOutlet weak var sidebarViewController: SidebarViewController?
+	@IBOutlet var sidebarViewController: SidebarViewController?
 	let shortcuts: Set<KeyboardShortcut>
 
 	override init() {
@@ -23,7 +23,7 @@ import RSCore
 
 		super.init()
 	}
-	
+
 	func keydown(_ event: NSEvent, in view: NSView) -> Bool {
 
 		if MainWindowKeyboardHandler.shared.keydown(event, in: view) {
@@ -39,4 +39,3 @@ import RSCore
 		return true
 	}
 }
-

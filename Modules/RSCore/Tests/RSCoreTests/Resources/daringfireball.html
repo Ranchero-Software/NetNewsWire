@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en"  class="daringfireball-net">
+<head>
+	<meta charset="UTF-8" />
+	<title>Daring Fireball</title>
+
+	<link rel="apple-touch-icon-precomposed" href="/graphics/apple-touch-icon.png" />
+	<link rel="shortcut icon" href="/graphics/favicon.ico?v=005" />
+	<link rel="mask-icon" href="/graphics/dfstar.svg" color="#4a525a">
+	<link rel="stylesheet" type="text/css" media="screen"  href="/css/fireball_screen.css?v1.2025-03-12" />
+	<link rel="stylesheet" type="text/css" media="screen"  href="/css/ie_sucks.php" />
+	<link rel="stylesheet" type="text/css" media="print"   href="/css/fireball_print.css?v01" />
+	<link rel="alternate"  type="application/atom+xml"     href="/feeds/main" />
+	<link rel="alternate"  type="application/json"         href="/feeds/json" />
+	<link rel="me"                                         href="https://mastodon.social/@gruber" />
+	<link rel="me"                                         href="https://mastodon.social/@daringfireball" />
+	<script src="/js/js-global/FancyZoom.js"></script>
+	<script src="/js/js-global/FancyZoomHTML.js"></script>
+
+	<!-- Open Graph bullshit, for home page: -->
+	<meta property="og:title"       content="Daring Fireball, by John Gruber" />
+	<meta property="og:type"        content="website" />
+	<meta property="og:url"         content="https://daringfireball.net/" />
+	<meta property="og:image"       content="https://daringfireball.net/graphics/df-wide-card.png" />
+	<meta property="og:site_name"   content="Daring Fireball" />
+	<meta property="og:description" content="Commentary on Apple, technology, design, politics, and more." />
+</head>
+<body  class="daringfireball-net"  onload="setupZoom()">
+<div id="Box">
+
+<div id="Banner"><a href="/" title="Daring Fireball: Home"><img src="/graphics/logos/" alt="Daring Fireball" height="56" /></a></div><div id="Sidebar">
+<p>By <strong>John&nbsp;Gruber</strong></p>
+
+<ul><!--&#9733;-->
+<li><a href="/archive/" title="Previous articles.">Archive</a></li><li><script>
+// <![CDATA[
+function ReadCookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1, c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+	}
+	return null;
+}
+var display_linked_list = ReadCookie('displayLinkedList');
+var li_linked = '<a href="/linked/" title="The Linked List.">Linked List<\/a>';
+if (display_linked_list == "hide") {
+	// Linked List is off on home page, so show it in menu:
+	document.write(li_linked + "<\/li>\n<li>");
+}
+else {
+	// Default to not putting separate LL item in sidebar:
+}
+// ]]>
+</script></li>
+<li><a href="/thetalkshow/" title="America’s favorite 3-star podcast.">The Talk Show</a></li>
+<li><a href="https://dithering.fm/" title="Two episodes per week, 15 minutes per episode. Not a minute less, not a minute more.">Dithering</a></li>
+<li><a href="/projects/" title="Software projects, including SmartyPants and Markdown.">Projects</a></li>
+<li><a href="/contact/" title="How to send email or feedback regarding Daring Fireball.">Contact</a></li>
+<li><a href="/colophon/" title="About this site and the tools used to produce it.">Colophon</a></li>
+<li><a href="/feeds/">Feeds / Social</a></li>
+<!-- 
+<li><a href="https://twitter.com/daringfireball">Twitter</a></li>
+ -->
+<li><a href="/feeds/sponsors/">Sponsorship</a></li>
+</ul>
+
+<div id="SidebarMartini">
+<a href="https://www.mux.com/video-api?utm_campaign=fireball&utm_source=DF">
+	<img alt="Mux" src="/martini/images/mux-pink.png" height="90">
+</a>
+<p><a href="https://www.mux.com/video-api?utm_campaign=fireball&utm_source=DF">Mux</a> — Video API for developers. Build in one sprint or less.</p>
+</div>
+
+</div> <!-- Sidebar -->
+
+<div id="Main">
+
+<dl class="linkedlist">
+<dt>
+<a href="https://satcom.sysnet.ucsd.edu/">Eavesdropping on Internal Networks via Unencrypted Satellites</a>&nbsp;<a class="permalink" title="Permanent link to ‘Eavesdropping on Internal Networks via Unencrypted Satellites’" href="https://daringfireball.net/linked/2025/10/20/unencrypted-satellite-data">&#9733;</a>
+</dt>
+<dd>
+<p>SATCOM Security — a team of researchers from UC San Diego and the University of Maryland:</p>
+
+<blockquote>
+  <p>We pointed a commercial-off-the-shelf satellite dish at the sky
+and carried out the most comprehensive public study to date of
+geostationary satellite communication. A shockingly large amount
+of sensitive traffic is being broadcast unencrypted, including
+critical infrastructure, internal corporate and government
+communications, private citizens’ voice calls and SMS, and
+consumer Internet traffic from in-flight Wi-Fi and mobile
+networks. This data can be passively observed by anyone with a few
+hundred dollars of consumer-grade hardware. There are thousands of
+geostationary satellite transponders globally, and data from a
+single transponder may be visible from an area as large as 40% of
+the surface of the earth.</p>
+</blockquote>
+
+<p>The researchers don’t mention RCS by name, only SMS, but this a perfect example of why I thought <a href="https://daringfireball.net/linked/2023/11/16/apple-rcs">Apple’s original stance on RCS</a> was correct, and their <a href="https://daringfireball.net/2024/02/eu_rcs_imessage">change of heart to support it last year</a> was unfortunate. No new protocol for messaging should be adopted unless the protocol exclusively works using end-to-end encryption.</p>
+
+<p>Via Wired: “<a href="https://www.wired.com/story/satellites-are-leaking-the-worlds-secrets-calls-texts-military-and-corporate-data/">Satellites Are Leaking the World’s Secrets: Calls, Texts, Military and Corporate Data</a>” (<a href="https://apple.news/AqDWke2M2TZ-a9CDq1crbrA">News+ link</a>).</p>
+
+</dd>
+
+
+<dt>
+<a href="https://world.hey.com/jason/when-design-drives-behavior-49baf157">When Design Drives Behavior</a>&nbsp;<a class="permalink" title="Permanent link to ‘When Design Drives Behavior’" href="https://daringfireball.net/linked/2025/10/20/when-design-drives-behavior">&#9733;</a>
+</dt>
+<dd>
+<p>Jason Fried:</p>
+
+<blockquote>
+  <p>So what’s the net effect of this tiny little design detail that
+the owner may not even understand? Well, it looks like the watch
+is already half-way out of power after the first day, so <em>it
+encourages the owner to wind the watch more frequently</em>. To keep
+it closer to topped off, even when it’s not necessary. This helps
+prevents the watch from running out of power, losing time, and,
+ultimately, stopping. A stopped watch may be right twice a day,
+but it’s rarely at the times you want.</p>
+
+<p>Small detail, material behavior change. Well considered, well
+executed, well done.</p>
+</blockquote>
+
+</dd>
+
+
+<dt>
+<a href="https://pxlnv.com/linklog/macbook-pro-charger-brouhaha/">Apple Lowered the Price of the New MacBook Pro for Most of the Eurpopean Countries Where It No Longer Ships With an Included Power Adapter</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Lowered the Price of the New MacBook Pro for Most of the Eurpopean Countries Where It No Longer Ships With an Included Power Adapter’" href="https://daringfireball.net/linked/2025/10/20/heer-m5-mbp-charger">&#9733;</a>
+</dt>
+<dd>
+<p>Nick Heer, at Pixel Envy:</p>
+
+<blockquote>
+  <p>First of all, the dollar is not the currency in any of these
+countries. Second, the charger in European countries is €65, which
+is more like $76 right now. Third, Apple is allowed to bundle an
+A.C. adapter, it just needs to offer an option to not include it.</p>
+</blockquote>
+
+<p>Practically speaking, though, the EU directive regarding included chargers means Apple <em>won’t</em> include one, and likely no other laptop maker will either. They’d have to create, and stock, double the SKUs for every standard configuration. (If you buy a build-to-order configuration of the M5 MacBook Pro in Europe, you get a choice to include an adapter in the build-to-order workflow for an upcharge. If you buy a standard configuration model, you get the option to purchase a power adapter as a separate accessory.)</p>
+
+<blockquote>
+  <p>Fourth, and most important, is that the new MacBook Pro is less
+expensive in nearly every region in which the A.C. adapter is
+now a configure-to-order option — even after adding the
+adapter. [...]</p>
+
+<p>Countries with a charger in the box, on the other hand, see no
+such price adjustment, at least for the ones I have checked. The
+new M5 model starts at the same price as the M4 it replaces in
+Canada, Japan, Singapore, and the United States. [...]</p>
+
+<p>Maybe Apple was already planning a €100 price cut for these new
+models. The M4 was €100 less expensive than the M3 it replaced,
+for example, so it is plausible. That is something we simply
+cannot know. What we do know for certain is that these new
+MacBook Pros might not come with an A.C. adapter, but even if
+someone adds one at checkout, it still costs less in most places
+with this option.</p>
+</blockquote>
+
+<p>The fact that the new M5 MacBook Pro costs less than the M4 models, even when paying extra to include a new power adapter, leads me to suspect that Apple was planning price cuts in these countries regardless. As Heer points out, Apple cut the price by €100 when the base MacBook Pro went from the M3 to M4 a year ago. (<a href="https://daringfireball.net/linked/2025/03/05/apple-announces-with-little-surprise-m4-macbook-airs">MacBook Air prices have been getting lower worldwide</a>, too.)</p>
+
+<p>Anyway, the reason this regulation is subject to ridicule was never that European MacBook buyers were, effectively, paying for a charger that was no longer included. It’s that this is a silly law, and likely causes more harm than good. If Apple thought it was a good idea to no longer include power adapters in the box with MacBooks, they’d just stop including chargers in the box, worldwide. That’s what Apple started doing with iPhones <a href="https://www.apple.com/newsroom/2020/10/apple-announces-iphone-12-and-iphone-12-mini-a-new-era-for-iphone-with-5g/">with the iPhone 12 lineup <em>five years ago</em></a>. That wasn’t because of a law. It was because Apple thought it was a good idea.</p>
+
+<p>The problem I see with the MacBook power adapter situation in Europe is that while power users — like the sort of people who read Daring Fireball and Pixel Envy — will have no problem buying exactly the sort of power adapter they want, or simply re-using a good one they already own, normal users have no idea what makes a “good” power adapter. I suspect there are going to be a lot of Europeans who buy a new M5 MacBook Pro and wind up charging it with inexpensive low-watt power adapters meant for things like phones, and wind up with a shitty, slow charging experience.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://daringfireball.net/linked/2025/10/16/m5-mbp-no-power-adapter-in-europe">More on the Lack of an Included Charger With New M5 MacBooks in Europe, Including the U.K. and Norway</a>&nbsp;<a class="permalink" title="Permanent link to ‘More on the Lack of an Included Charger With New M5 MacBooks in Europe, Including the U.K. and Norway’" href="https://daringfireball.net/linked/2025/10/20/uk-eu-hardware-directives-macbook-chargers">&#9733;</a>
+</dt>
+<dd>
+<p>While poking fun at EU regulations leading Apple not to include a power adapter with the new M5 MacBook Pro across Europe, I wondered why the U.K. — which left the EU five years ago — was affected. DF reader <em>CA</em> wrote, via email:</p>
+
+<blockquote>
+  <p>We did indeed leave the EU, but remain aligned to some of their
+standards like food and consumer goods through a thing called the
+Windsor Framework. Because the UK includes Northern Ireland, which
+has an open border with the Republic of Ireland, and the RoI is
+part of the EU, and the border MUST remain open for historical
+reasons, there has to be a way of ensuring UK goods that don’t
+meet EU standards don’t enter the EU via Northern Ireland. Hence,
+we agreed to align to a selection of their standards to ensure the
+border can stay open.</p>
+
+<p>That’s why everything has to be USB-C and power supplies aren’t in
+the M5 MacBook Pro boxes, but we aren’t affected by the DMA
+shenanigans — those don’t apply to physical goods, only the
+configuration of the software.</p>
+</blockquote>
+
+<p>Something similar is surely the reason why the power adapter isn’t in the box for Norway, either — a country that has never been part of the EU. Here’s <a href="https://en.wikipedia.org/wiki/Windsor_Framework">Wikipedia’s entry on the Windsor Framework</a>, and here’s a UK government “Call for Evidence” from a year ago <a href="https://www.gov.uk/government/calls-for-evidence/common-charger-for-electrical-devices-call-for-evidence/common-charger-for-electrical-devices-call-for-evidence">regarding a requirement to follow the EU’s Common Charger Directive</a>.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.kickstarter.com/projects/bzotto/go-computer-now-the-story-of-sphere">Kickstarter Campaign for Ben Zotto’s ‘Go Computer Now!’, a Book on Sphere, the Nearly Forgotten Personal Computer Company</a>&nbsp;<a class="permalink" title="Permanent link to ‘Kickstarter Campaign for Ben Zotto’s ‘Go Computer Now!’, a Book on Sphere, the Nearly Forgotten Personal Computer Company’" href="https://daringfireball.net/linked/2025/10/20/go-computer-now-kickstarter">&#9733;</a>
+</dt>
+<dd>
+<p>Ben Zotto:</p>
+
+<blockquote>
+  <p>Name every pioneering personal computer you can think of from the
+1970s. The MITS Altair 8800. The Apple-1. The IMSAI 8080. You may
+even know about the SWTPC 6800 or Processor Technology Sol-20.</p>
+
+<p>There’s a computer missing from that list, and it’s an important
+one: Sphere Corporation’s Sphere 1. While far ahead of its
+competitors in 1975 in what it delivered as an all-in-one PC,
+Sphere’s manufacturing operations and cash flow lagged immediately
+behind. The company collapsed so quickly that it was nearly erased
+from the collective memory of that period.</p>
+
+<p>But I know about Sphere. So does Bill Gates! And it just might
+have sparked a few ideas in Steve Wozniak — though not as many as
+Sphere’s founder later claimed.</p>
+
+<p>I have a story to tell about this remarkable Utah-based company,
+one that fills in the gaps in other histories of the era, and puts
+Sphere in the context of the computers we have heard about again
+and again for a half century. I want to tell you why Sphere was
+important and worth remembering — and explain why they were
+forgotten. While first to market with some important technologies,
+“firsts” are not as interesting as how their visionary, imperfect
+founder could see around corners. His reach far exceeded his
+grasp, leading to his early exit and the company’s quick downfall.</p>
+</blockquote>
+
+<p>I’ll admit that before I encountered this Kickstarter campaign (<a href="https://zeppelin.flights/@glennf/115380107936716029">via Glenn Fleishman</a>, who edited the book), I can’t recall ever even hearing about Sphere. Count me in as a backer.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.nytimes.com/2025/10/15/world/europe/london-police-phone-theft-china-gang.html?unlocked_article_code=1.u08.0dqv.RfHSG9CDuk4i&amp;smid=url-share">How London Became a Global Hub for Phone Theft</a>&nbsp;<a class="permalink" title="Permanent link to ‘How London Became a Global Hub for Phone Theft’" href="https://daringfireball.net/linked/2025/10/20/london-phone-theft">&#9733;</a>
+</dt>
+<dd>
+<p>Lizzie Dearden and Amelia Nierenberg, reporting for The New York Times (gift link):</p>
+
+<blockquote>
+  <p>For years, London’s police assumed most of the phone thefts were
+the work of small-time thieves looking to make some quick cash.
+But last December, they got an intriguing lead from a woman who
+had used “Find My iPhone” to track her device to a warehouse near
+Heathrow Airport. Arriving there on Christmas Eve, officers found
+boxes bound for Hong Kong. They were labeled as batteries but
+contained almost 1,000 stolen iPhones. [...]</p>
+
+<p>The police are now using that information to map where stolen
+phones are transported by street thieves. After the Heathrow
+seizure, a team of specialist investigators who normally deal with
+firearms and drug smuggling was assigned to the case. They
+identified further shipments and used forensics to identify two
+men in their 30s who are suspected of being ringleaders of a group
+that sent up to 40,000 stolen phones to China.</p>
+
+<p>When the men were arrested on Sept. 23, the car they were
+traveling in contained several phones, some wrapped in aluminum
+foil in an attempt to prevent them from transmitting tracking
+signals. At one point, the police said at a news conference, they
+observed the men buying almost 1.5 miles’ worth of foil in Costco.</p>
+</blockquote>
+
+<p>There’s shopping in bulk at Costco, and then there’s shopping in bulk.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.apple.com/newsroom/2025/10/apple-and-nbcuniversal-introduce-the-apple-tv-and-peacock-bundle/">Apple and NBCUniversal Introduce the Apple TV and Peacock Bundle</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple and NBCUniversal Introduce the Apple TV and Peacock Bundle’" href="https://daringfireball.net/linked/2025/10/20/apple-tv-peacock-bundle">&#9733;</a>
+</dt>
+<dd>
+<p>Apple Newsroom:</p>
+
+<blockquote>
+  <p>Apple and NBCUniversal today announced the launch of the Apple TV
+and Peacock Bundle, available beginning October 20. The
+first-of-its-kind bundle offers the services’ complementary array
+of award-winning originals, marquee live events and sports,
+beloved franchises, and blockbuster movies, including <em>Ted Lasso</em>,
+<em>Severance</em>, <em>The Paper</em>, <em>The Traitors</em>, <em>How to Train Your
+Dragon</em>, the NBA (tipping off October 21 on Peacock), <em>F1 The
+Movie</em> (coming later this year), and much more, all through one
+convenient monthly subscription.</p>
+
+<p>Customers in the U.S. can save over 30 percent by subscribing to
+the Apple TV and Peacock Premium bundle for $14.99 per month, or
+Apple TV and Peacock Premium Plus for $19.99 per month, through
+either app or website. Apple One subscribers on the Family and
+Premier plans can subscribe to Peacock Premium Plus and receive a
+35 percent discount — the first benefit of its kind for Apple’s
+all-in-one subscription bundle.</p>
+</blockquote>
+
+</dd>
+
+
+<dt>
+<a href="https://www.cnbc.com/2025/10/20/apple-stock-iphone-17-us-china-sales.html">Counterpoint Research Claims iPhone 17 Sales Are Up Year-Over-Year in the U.S. and China</a>&nbsp;<a class="permalink" title="Permanent link to ‘Counterpoint Research Claims iPhone 17 Sales Are Up Year-Over-Year in the U.S. and China’" href="https://daringfireball.net/linked/2025/10/20/counterpoint-research-iphones-17">&#9733;</a>
+</dt>
+<dd>
+<p>CNBC:</p>
+
+<blockquote>
+  <p>Apple shares rose 4% on Monday as a new report showed iPhone 17
+sales off to a strong start in the U.S. and China.</p>
+
+<p>The iPhone 17 series, which dropped in September, has outsold the
+iPhone 16 series by 14% in the U.S. and China within its first 10
+days of availability, according to <a href="https://counterpointresearch.com/en/insights/iPhone-17-Far-Outpaces-iPhone-16-Sales-in-China-and-US-During-First-10-Days-of-Availability">data from Counterpoint
+Research</a>.</p>
+</blockquote>
+
+<p>Just because a research firms claims iPhone 17 sales are up 14 percent doesn’t mean they <em>are</em> up 14 percent. These are estimates, not hard numbers from Apple — and Apple doesn’t share actual sales numbers with anyone. <a href="https://www.techmeme.com/251020/p2#a251020p2">Some headlines</a> get this right, but most don’t.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.myartbroker.com/artist-david-hockney/articles/david-hockney-xerox-prints">David Hockney’s Xerox Prints</a>&nbsp;<a class="permalink" title="Permanent link to ‘David Hockney’s Xerox Prints’" href="https://daringfireball.net/linked/2025/10/20/hockney-xerox-prints">&#9733;</a>
+</dt>
+<dd>
+<p>Erin-Atlanta Argun:</p>
+
+<blockquote>
+  <p>While Hockney is perhaps best known for his larger-than-life
+<a href="https://www.myartbroker.com/artist-david-hockney/collection-swimming-pools">swimming pool</a> paintings, bold coloured acrylics are
+certainly not his only forte. Contrary to the old saying, Hockney
+is a jack of all trades and a master of all he has worked with:
+from paint to <a href="https://www.myartbroker.com/artist-david-hockney/series-the-yosemite-suite">iPads</a>. In the late 1980s, his fascination
+with technology and new ways of creating art led him to the Xerox
+photocopying machine. The copy machine offered Hockney his
+speediest technique of printing yet, allowing the artist to build
+layers, textures and colours like never before. However, it was
+not only a swift and spontaneous way for Hockney to produce his
+prints. The tech-savvy artist said that he had a more
+“philosophical” interest in the Xerox machine as a new iteration
+of the camera.</p>
+</blockquote>
+
+<p>My post last week arguing that AI is a legitimate tool to create art has, as I expected, generated polarized feedback. One argument several readers have made is that AI generates nothing but <a href="https://www.404media.co/openais-sora-2-copyright-infringement-machine-features-nazi-spongebobs-and-criminal-pikachus/">plagiarism, copyright infringement, and slop</a>. That’s just not true. If a painter as renowned as David Hockney can use a literal photocopier as an artistic tool, AI can be one too.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.theatlantic.com/photography/archive/2025/10/photos-no-kings-protests-across-america/684600/?gift=xw1ABCFnadCHxRLYMsWCkxkq7lcITrmN2tq1-jBOYrA">Photos From Saturday’s ‘No Kings’ Protests Across the U.S.</a>&nbsp;<a class="permalink" title="Permanent link to ‘Photos From Saturday’s ‘No Kings’ Protests Across the U.S.’" href="https://daringfireball.net/linked/2025/10/20/no-kings-protest-photos">&#9733;</a>
+</dt>
+<dd>
+<p>Picking up steam, these protests are.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.theverge.com/news/802486/aws-outage-alexa-fortnite-snapchat-offline">Major AWS Outage</a>&nbsp;<a class="permalink" title="Permanent link to ‘Major AWS Outage’" href="https://daringfireball.net/linked/2025/10/20/major-aws-outage">&#9733;</a>
+</dt>
+<dd>
+<p>Jess Weatherbed, The Verge:</p>
+
+<blockquote>
+  <p>A major Amazon Web Services (AWS) outage took down multiple online
+services for around four hours this morning, including Amazon,
+Alexa, Snapchat, Fortnite, <a href="https://status.openai.com/incidents/01K80CBJD5Z64DF82KGT3K3QE0">ChatGPT</a>, <a href="https://x.com/EOSStatus/status/1980194104115150858">Epic Games Store,
+Epic Online Services</a>, and more.</p>
+
+<p>As of 6:35AM ET, the <a href="https://health.aws.amazon.com/health/status">AWS status checker</a> is reporting that
+“most AWS Service operations are succeeding normally now,” and
+some of the impacted platforms, including <a href="https://x.com/FortniteStatus/status/1980249794502082948">Fortnite</a>,
+<a href="https://x.com/EOSStatus/status/1980226546607726916">Epic Games Store</a>, and <a href="https://x.com/AravSrinivas/status/1980239929189036222">Perplexity</a> have announced
+that they are fully recovered and back online.</p>
+
+<p>However, as of 9:50AM ET, Amazon says that multiple services in
+the US-EAST-1 Region are still “impacted” by operational issues,
+and that it is working towards a full resolution. The AWS
+dashboard first reported issues affecting the US-EAST-1 Region at
+3:11AM ET, with global services in other regions also taken
+offline. The cause of the outage hasn’t been confirmed, and it’s
+unclear when regular service will be fully restored.</p>
+</blockquote>
+
+<p>I bet it was this AWS outage that explains why I couldn’t sign in to my NYT account to play Wordle this morning. (Got it in 4 today.)</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Sunday, 19 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://www.mux.com/video-api?utm_campaign=fireball&amp;utm_source=DF">Mux: Video API for Developers</a>&nbsp;<a class="permalink" title="Permanent link to ‘Mux: Video API for Developers’" href="https://daringfireball.net/linked/2025/10/19/mux">&#9733;</a>
+</dt>
+<dd>
+<p>My thanks to Mux for sponsoring last week at DF. Modern video should be simple to ship and scale. Mux makes it easy to build live and on-demand video into anything from websites to platforms to AI workflows. </p>
+
+<p>Upload a video, get back a playback URL. No transcoding headaches. No CDN setup. Go further with the building blocks of your video: thumbnails, transcripts, and storyboards. Use them to create exactly what you want.</p>
+
+<p>Future-proof your video stack with infrastructure trusted by Patreon, Substack, and Synthesia. Get started free, no credit card required. Use the code <strong>FIREBALL</strong> for an extra $50 usage credit, when you need it.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Friday, 17 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://www.apple.com/mac/compare/?modelList=MacBook-Air-M4,MacBook-Pro-14-M5,MacBook-Pro-14-M4-Pro">The Base M5 MacBook Pro vs. the M4 MacBook&#160;Air</a>&nbsp;<a class="permalink" title="Permanent link to ‘The Base M5 MacBook Pro vs. the M4 MacBook Air’" href="https://daringfireball.net/linked/2025/10/17/m5-mbp-vs-m4-mba">&#9733;</a>
+</dt>
+<dd>
+<p>A few readers took exception to this bit from <a href="https://daringfireball.net/2025/10/m5_chip_launches_with_macbook_pro_ipad_pro_vision_pro">my post Wednesday regarding the new M5 MacBook Pro</a>:</p>
+
+<blockquote>
+  <p>The base 14-inch model, with the no-adjective M-series chip, is
+for people who probably would be better served with a MacBook
+Air but who wrongly believe they “need” a laptop with “Pro” in
+its name.</p>
+</blockquote>
+
+<p>E.g., <a href="https://bsky.app/profile/brianstucki.com/post/3m3d7uv77i22k">Brian Stucki, who wrote on Bluesky</a>:</p>
+
+<blockquote>
+  <p>A rare disagree with @gruber.foo here. I’m a cognizant MacBook Pro
+no-adjective user because the CPU/GPU is more than enough for me.
+I buy over Air for</p>
+
+<ul>
+<li>XDR display</li>
+<li>Battery life</li>
+<li>much better speakers</li>
+<li>SD/HDMI ports</li>
+</ul>
+
+<p>I’m glad to have the option without an adjective markup.</p>
+</blockquote>
+
+<p>The <a href="https://www.apple.com/mac/compare/?modelList=MacBook-Air-M4,MacBook-Pro-14-M5,MacBook-Pro-14-M4-Pro">main link</a> on this post is to Apple’s ever-excellent Compare page for MacBooks, comparing the $1,000 M4 MacBook Air to the new $1,600 M5 MacBook Pro and, because there’s a third slot, the $2,000 M4 MacBook Pro with the M4 Pro chip. Stucki’s short list nails the actual advantages of the base MacBook Pro compared to the MacBook Air: much better display (1,000 nits vs. 500 nits, with the MBP supporting up to 1,600 nits for HDR content), better speakers, longer battery life, and SD/HDMI ports. Unmentioned by Stucki is that only the MacBook Pro offers the option for a nano-texture matte display for $150.</p>
+
+<p>In my defense, I did say “probably” in my post. My understanding is that the base MacBook Pro is a huge seller for Apple. So of course some very well-informed users are buying them for good reasons. But I really do think an awful lot of base MacBook Pro buyers are spending an extra $600 and carrying 0.7 pounds of extra weight for features they don’t actually notice or care about. They just think they need a “pro” laptop, and underestimate just how incredibly capable MacBook Airs are.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.usmint.gov/news/press-releases/united-states-mint-releases-2026-american-innovation-one-dollar-coin-program-designs">United States Mint to Release Commemorative $1 Steve Jobs Coin</a>&nbsp;<a class="permalink" title="Permanent link to ‘United States Mint to Release Commemorative $1 Steve Jobs Coin’" href="https://daringfireball.net/linked/2025/10/17/steve-jobs-coin">&#9733;</a>
+</dt>
+<dd>
+<p>I’m not really into commemorative coins, and I have to say I suspect Steve Jobs wasn’t either, but it’s a nice little recognition. No mention of it from the Mint, but the $1 value of the coin is <a href="https://www.businessinsider.com/how-steve-jobs-scammed-apple-for-free-lunch-with-1-dollar-salary-2017-6">the same as the salary Jobs drew from Apple</a>.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.theringer.com/podcasts/the-town-with-matthew-belloni/2025/10/14/apples-true-intentions-in-hollywood-with-top-exec-eddy-cue">Matthew Belloni Interviews Eddy Cue on ‘The Town’</a>&nbsp;<a class="permalink" title="Permanent link to ‘Matthew Belloni Interviews Eddy Cue on ‘The Town’’" href="https://daringfireball.net/linked/2025/10/17/belloni-cue-interview">&#9733;</a>
+</dt>
+<dd>
+<p><a href="https://daringfireball.net/linked/2025/10/17/apple-formula-1">Speaking of</a> Eddy Cue, he was the guest on Matthew Belloni’s excellent podcast, The Town, this week. (<a href="https://overcast.fm/+AA4DU9C87M8">Overcast link</a>.) Just a great interview in general. Cue doesn’t do many interviews but he’s my favorite Apple executive to hear speak, because he’s the least rehearsed and most straightforward. If he doesn’t want to answer a question (Belloni tried, mightily, to press him on subscriber and viewership numbers), Cue just says he’s not going to answer that question, rather than dance around it with a non-answer answer.</p>
+
+<p>My two big takeaways:</p>
+
+<ul>
+<li><p>Everyone in Hollywood is spooked about what Apple’s intentions “really are” regarding original movies and series. They’re worried it’s some sort of play to polish Apple’s brand, and that Apple is going to get bored or tired of losing money, and pick up stakes and leave the game. Cue emphasized that the answer is simple: Apple thinks it’s a great business to be in (and he also made the point that Apple’s brand needed no polishing) and they’re in this business for that reason, and for the long haul.</p></li>
+<li><p>Apple is serious about sports rights, but they don’t want to dabble. They want to own the rights to entire sports. Friday Night Baseball was, effectively, a learning experiment. Apple TV’s MLS deal — and the F1 US deal announced today — are the sort of deals Apple wants. (That’s going to make it hard for Apple to get involved with the NFL, because the NFL strategically wants to spread its games across all the major TV networks <em>and</em> streaming services.) Cue is a huge sports fan (as is Tim Cook), and Apple wants to deliver sports on Apple TV that cater to fans.</p></li>
+</ul>
+
+</dd>
+
+
+<dt>
+<a href="https://www.apple.com/newsroom/2025/10/apple-is-the-exclusive-new-broadcast-partner-for-formula-1-in-the-us/">Apple Is the Exclusive New Broadcast Partner for Formula 1 in the U.S.</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Is the Exclusive New Broadcast Partner for Formula 1 in the U.S.’" href="https://daringfireball.net/linked/2025/10/17/apple-formula-1">&#9733;</a>
+</dt>
+<dd>
+<p>Blockbuster sports streaming news from Apple Newsroom:</p>
+
+<blockquote>
+  <p>Apple and Formula 1 today announced a five-year partnership that
+will bring all F1 races exclusively to Apple TV in the United
+States beginning next year. [...]</p>
+
+<p>Apple TV will deliver comprehensive coverage of Formula 1, with
+all practice, qualifying, Sprint sessions, and Grands Prix
+available to Apple TV subscribers. Select races and all practice
+sessions will also be available for free in the Apple TV app
+throughout the course of the season. In addition to broadcasting
+Formula 1 on Apple TV, Apple will amplify the sport across Apple
+News, Apple Maps, Apple Music, and Apple Fitness+. Apple Sports — the free app for iPhone — will feature live updates for every
+qualifying, Sprint, and race for each Grand Prix across the
+season, with real-time leaderboards, season driver and constructor
+standings, Live Activities to follow on the Lock Screen, and a
+designated widget for the iPhone Home Screen.</p>
+
+<p>F1 TV Premium, F1’s own premier content offering, will continue to
+be available in the U.S. via an Apple TV subscription only and
+will be free for those who subscribe.</p>
+</blockquote>
+
+<p>If I’m reading this right, all you need to get access to <em>everything</em> F1-related is an Apple TV subscription (the service <a href="https://daringfireball.net/linked/2025/10/13/apple-tv-minus">formerly known as TV+</a>) and to be in the US. This even includes <a href="https://f1tv.formula1.com/">F1 TV Premium</a> — normally $130/year — which <a href="https://sixcolors.com/post/2025/10/looking-for-the-red-flags-in-apples-formula-1-tv-deal/">Jason Snell wrote about</a> in a piece <a href="https://daringfireball.net/linked/2025/10/14/snell-f1-apple">I linked to</a> earlier this week.</p>
+
+<p>Basically, this sounds like the sort of sports broadcasting deal that Eddy Cue has been talking about as Apple’s goal for years — the rights to the entire sport, free of charge if you’re an Apple TV subscriber.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Thursday, 16 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://www.macrumors.com/2025/10/15/new-macbook-pro-lacks-charger-in-europe/">M5 MacBook Pro Does Not Include a Charger in the Box in Europe</a>&nbsp;<a class="permalink" title="Permanent link to ‘M5 MacBook Pro Does Not Include a Charger in the Box in Europe’" href="https://daringfireball.net/linked/2025/10/16/m5-mbp-no-power-adapter-in-europe">&#9733;</a>
+</dt>
+<dd>
+<p>Joe Rossignol, MacRumors:</p>
+
+<blockquote>
+  <p>The new 14-inch MacBook Pro with an M5 chip does not include a
+charger in the box in European countries, including the U.K.,
+Ireland, Germany, Italy, France, Spain, the Netherlands, Norway,
+and others, according to Apple’s online store. In the U.S. and all
+other countries outside of Europe, the new MacBook Pro comes with
+Apple’s 70W USB-C Power Adapter, but European customers miss out.</p>
+
+<p>Apple has gradually stopped including chargers with many products
+over the years — a decision it has attributed to its
+environmental goals.</p>
+
+<p>In this case, an Apple spokesperson <a href="https://x.com/LelloucheNico/status/1978510945224688060">told French website
+Numerama’s Nicolas Lellouche</a> that the decision to not
+include a charger with this particular MacBook Pro was made in
+anticipation of a <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:C_202402997">European regulation</a> that will require
+Apple to provide customers with the option to purchase certain
+devices without a charger in the box, starting in April.</p>
+</blockquote>
+
+<p>I’m not sure why there’s no power adapter in the box in the UK (<a href="https://www.apple.com/uk/shop/buy-mac/macbook-pro/14-inch-space-black-standard-display-apple-m5-chip-with-10-core-cpu-and-10-core-gpu-16gb-memory-512gb">I double-checked</a>). The <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:C_202402997">cited regulation</a> is for the EU, and the UK, rather famously, left the EU in 2020.</p>
+
+<p>But, still, amazing stuff <a href="https://daringfireball.net/linked/2025/10/08/apple-france-siri-opt-in-recordings">continues</a> to happen in Europe.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://theoatmeal.com/comics/ai_art">Matthew Inman of The Oatmeal: ‘A Cartoonist’s Review of AI&#160;Art’</a>&nbsp;<a class="permalink" title="Permanent link to ‘Matthew Inman of The Oatmeal: ‘A Cartoonist’s Review of AI Art’’" href="https://daringfireball.net/linked/2025/10/16/oatmeal-ai-art">&#9733;</a>
+</dt>
+<dd>
+<p>Good and thoughtful graphic essay by Matthew Inman, expressing why he dislikes AI-generated art. It’s been widely <a href="https://kottke.org/25/10/0047680-the-oatmeals-take-on-ai">linked to</a>, largely approvingly. I fundamentally disagree with the premise. Near the start, Inman writes:</p>
+
+<blockquote>
+  <p>When I consume AI art, it <em>also</em> evokes a feeling. Good, bad,
+neutral — whatever.</p>
+
+<p>Until I find out that it’s AI art.</p>
+
+<p>Then I feel deflated, grossed out, and maybe a little bit bored.
+This feeling isn’t a choice.</p>
+</blockquote>
+
+<p>I think it very much is a choice. If your opinion about a work of art changes after you find out which tools were used to make it, or who the artist is or what they’ve done, you’re no longer judging the art. You’re making a choice not to form your opinion based on the work itself, but rather on something else. If you refuse to watch Woody Allen movies because of his personal life, that’s a choice, but you’re choosing not to watch <a href="https://www.avclub.com/amc-diane-keaton-annie-hall-somethings-gotta-give-re-release">some</a> of the <a href="https://woodyallen.com/manhattan/">best</a> <a href="https://woodyallen.com/match-point-2/">movies</a> that have <a href="https://www.rogerebert.com/reviews/crimes-and-misdemeanors-1989">ever</a> been made.</p>
+
+<p>Stanley Kubrick said, “The test of a work of art is, in the end, our affection for it, not our ability to explain why it is good.” If an image, a song, a poem, or video evokes affection in your heart, and then that affection dissipates when you learn what tools were used to create it, that’s not a test of the work of art itself. To me it’s no different than losing affection for a movie only upon learning that special effects were created digitally, not practically. Or whether a movie — or a photograph — was shot using a digital camera or on film. Or whether a novel was written using a computer or with pen and paper.</p>
+
+<p>I think most “AI art” today completely sucks. But not because it was made using AI generation tools. It just sucks period. Good art is being made with AI tools, though, and more — much more — is coming.</p>
+
+</dd>
+
+
+</dl>
+
+<hr class="ookiaks" />
+
+
+<div class="article">
+<h1><a href="https://daringfireball.net/2025/10/m5_chip_launches_with_macbook_pro_ipad_pro_vision_pro" title="Permanent link to ‘The Just Plain M5 Chip Launches in Three Updated Products: 14-Inch MacBook Pro, iPad Pro (Both Sizes), and Some Sort of Headset Thingamajig Called Vision Pro’">The Just Plain M5 Chip Launches in Three Updated Products: 14-Inch MacBook Pro, iPad Pro (Both Sizes), and Some Sort of Headset Thingamajig Called Vision&#160;Pro</a></h1>
+<h6 class="dateline">Wednesday, 15 October 2025</h6>
+
+<p><a href="https://www.apple.com/newsroom/2025/10/apple-unleashes-m5-the-next-big-leap-in-ai-performance-for-apple-silicon/">Apple Newsroom, today</a>:</p>
+
+<blockquote>
+  <p>Apple today announced M5, delivering the next big leap in AI
+performance and advances to nearly every aspect of the chip. Built
+using third-generation 3-nanometer technology, M5 introduces a
+next-generation 10-core GPU architecture with a Neural Accelerator
+in each core, enabling GPU-based AI workloads to run dramatically
+faster, with over 4× the peak GPU compute performance compared to
+M4. The GPU also offers enhanced graphics capabilities and
+third-generation ray tracing that combined deliver a graphics
+performance that is up to 45 percent higher than M4. M5 features
+the world’s fastest performance core, with up to a 10-core CPU
+made up of six efficiency cores and up to four performance cores.
+Together, they deliver up to 15 percent faster multithreaded
+performance over M4. M5 also features an improved 16-core Neural
+Engine, a powerful media engine, and a nearly 30 percent increase
+in unified memory bandwidth to 153GB/s. M5 brings its
+industry-leading power-efficient performance to the new <a href="https://www.apple.com/newsroom/2025/10/apple-unveils-new-14-inch-macbook-pro-powered-by-the-m5-chip/">14-inch
+MacBook Pro</a>, <a href="https://www.apple.com/newsroom/2025/10/apple-introduces-the-powerful-new-ipad-pro-with-the-m5-chip/">iPad Pro</a>, and <a href="https://www.apple.com/newsroom/2025/10/apple-vision-pro-upgraded-with-the-m5-chip-and-dual-knit-band/">Apple Vision Pro</a>,
+allowing each device to excel in its own way. All are available
+for pre-order today.</p>
+</blockquote>
+
+<p>Some thoughts and observations:</p>
+
+<h2>14-Inch MacBook Pro</h2>
+
+<p>Apple Newsroom: “<a href="https://www.apple.com/newsroom/2025/10/apple-unveils-new-14-inch-macbook-pro-powered-by-the-m5-chip/">Apple Unveils New 14‑Inch MacBook Pro Powered by the M5 Chip, Delivering the Next Big Leap in AI for the Mac</a>”.</p>
+
+<p>The 14-inch MacBook Pro with the no-adjective M-series chip has always been an odd duck in the MacBook lineup. This “Pro”-but-not-pro spot in the MacBook lineup goes back to the Intel era, when there was a 13-inch MacBook Pro without a Touch Bar. That was the MacBook Pro that, in 2016, Phil Schiller suggested as <a href="https://www.cnet.com/tech/computing/new-macbook-pro-should-have-been-named-air/">a good choice for those who were then holding out for a MacBook Air with a retina display</a>. (The <a href="https://support.apple.com/en-us/111933">first retina MacBook Air</a> didn’t ship for another two years, in late 2018.) It’s more like a MacBook “Pro” than a MacBook Pro. The truly <em>pro</em>-spec’d MacBook Pros have M-series Pro and Max chips, and are available in both 14- and 16-inch sizes. The base 14-inch model, with the no-adjective M-series chip, is for people who probably would be better served with a MacBook Air but who wrongly believe they “need” a laptop with “Pro” in its name.</p>
+
+<p>Here’s a timeline of no-adjective M-series chips and when they appeared in the 14-inch MacBook Pro:</p>
+
+<ul>
+<li><p>M1 13-inch MacBook Pro: <a href="https://www.apple.com/newsroom/2020/11/introducing-the-next-generation-of-mac/">10 November 2020</a>. This MacBook Pro was one of the three Macs that debuted with the launch of Apple Silicon — the others were the MacBook Air and Mac Mini. The hardware looked exactly like the last generation Intel MacBook Pro. The M1 Pro and M1 Max models didn’t ship for another year (well, 11 months later), and those models brought with them the new form factor design that’s still with us today with the new M5 MacBook Pro.</p></li>
+<li><p>M2 13-inch MacBook Pro: <a href="https://www.apple.com/newsroom/2022/06/apple-unveils-m2-with-breakthrough-performance-and-capabilities/">6 June 2022</a>. This model also stuck with the older Intel-era form factor, including the 13-inch, not 14-inch, display size.</p></li>
+<li><p>M3 14-inch MacBook Pro: <a href="https://www.apple.com/newsroom/2023/10/apple-unveils-new-macbook-pro-featuring-m3-chips/">30 October 2023</a>. The “<a href="https://www.apple.com/newsroom/2023/10/behind-the-scenes-at-scary-fast-apples-keynote-event-shot-on-iphone/">Scary Fast</a>” event. This model debuted alongside the pro-spec’d M3 Pro and M3 Max 14- and 16-inch models.</p></li>
+<li><p>M4 14-inch MacBook Pro: <a href="https://www.apple.com/newsroom/2024/10/new-macbook-pro-features-m4-family-of-chips-and-apple-intelligence/">30 October 2024</a>. Exactly one year after the M3, and also alongside the M4 Pro and M4 Max models. What was different in 2024 with the M4 generation is that <a href="https://www.apple.com/newsroom/2024/05/apple-unveils-stunning-new-ipad-pro-with-m4-chip-and-apple-pencil-pro/">the M4 iPad Pros debuted back in early May</a>, all by themselves.</p></li>
+<li><p>M5 14-inch MacBook Pro: <a href="https://www.apple.com/newsroom/2025/10/apple-unveils-new-14-inch-macbook-pro-powered-by-the-m5-chip/">15 October 2025</a> (today). What’s different with today’s announcement is that it is <em>not</em> alongside the M5 Pro and M5 Max models, but <em>is</em> alongside the M5 iPad Pros.</p></li>
+</ul>
+
+<p>This raises the question of when to expect those M5 Pro/Max models. The rumor mill suggests “early 2026”. I suspect that’s right, based on nothing other than the fact that if they were going to be announced this year, Apple almost certainly would have announced the entire M5 generation MacBook lineup together.</p>
+
+<p>Basically, this is just a <a href="https://www.apple.com/macbook-pro/compare/?modelList=MacBook-Pro-14-M5,MacBook-Pro-14-M4,MacBook-Pro-14-M4-Pro">speed bump upgrade over the just-plain M4 MacBook Pro</a>. But annual — or at least regular — <a href="https://daringfireball.net/2019/05/good_old_fashioned_macbook_pro_speed_bumps">speed bumps are a good thing</a>. The alternative is years-long gaps between hardware refreshes.</p>
+
+<h2>iPad Pros</h2>
+
+<p>Apple Newsroom: “<a href="https://www.apple.com/newsroom/2025/10/apple-introduces-the-powerful-new-ipad-pro-with-the-m5-chip/">Apple Introduces the Powerful New iPad Pro With the M5 Chip</a>”:</p>
+
+<blockquote>
+  <p>Featuring a next-generation GPU with a Neural Accelerator in each
+core, M5 delivers a big boost in performance for iPad Pro users,
+whether they’re working on cutting-edge projects or tapping into
+AI for productivity. The new iPad Pro delivers up to 3.5× the AI
+performance than iPad Pro with M4 and up to 5.6× faster than iPad
+Pro with M1. N1, the new Apple-designed wireless networking chip,
+enables the latest generation of wireless technologies with
+support for Wi-Fi 7 on iPad Pro. The C1X modem comes to cellular
+models of iPad Pro, delivering up to 50 percent faster cellular
+data performance than its predecessor with even greater
+efficiency, allowing users to do more on the go.</p>
+</blockquote>
+
+<p>I think the N1 wireless chip and C1X modem are more interesting generation-over-generation improvements than the M5 chip. Thanks to the N1, these iPad Pro models support Wi-Fi 7 — today’s new M5 14-inch MacBook Pro does not. I would wager rather heavily that the upcoming M5 Pro and M5 Max MacBook Pro models <em>will</em> support Wi-Fi 7 (probably via the N1 chip, or perhaps even an “N1X” or something).</p>
+
+<p>Other than that, this too <a href="https://www.apple.com/ipad/compare/?modelList=ipad-pro-11-m5,ipad-pro-11-m4,ipad-air-11-m3">is a speed bump upgrade</a>.</p>
+
+<h2>Vision Pro</h2>
+
+<p>Apple Newsroom: “<a href="https://www.apple.com/newsroom/2025/10/apple-vision-pro-upgraded-with-the-m5-chip-and-dual-knit-band/">Apple Vision Pro Upgraded With the M5 Chip and Dual Knit Band</a>”:</p>
+
+<blockquote>
+  <p>The upgraded Vision Pro also comes with the soft, cushioned Dual
+Knit Band to help users achieve an even more comfortable fit, and
+visionOS 26, which unlocks innovative spatial experiences,
+including widgets, new Personas, an interactive Jupiter
+Environment, and new Apple Intelligence features with support for
+additional languages.</p>
+</blockquote>
+
+<p>The new Dual Knit Band (<a href="https://www.apple.com/shop/product/DUAL_KNIT_BAND_SA/apple-vision-pro-dual-knit-band">$99 on its own</a>) looks like a hybrid of the more attractive Solo Knit Band (which did not have a strap that went over the top of your head) and the Dual Loop Band (which did have an over-the-head strap, but which looked somewhat orthopedic). It’s a tacit acknowledgement that physical comfort has been a real problem for many people who’ve tried Vision Pro. (Me, personally, I find using it with the Solo Knit Band comfortable for as long as I care to use it — which is typically just 2–3 hours, tops.)</p>
+
+<blockquote>
+  <p>There are over 1 million apps and thousands of games on the App
+Store, hundreds of 3D movies on the Apple TV app, and all-new
+series and films in Apple Immersive with a selection of live NBA
+games coming soon.</p>
+</blockquote>
+
+<p>Translation: <em>Hey, there’s actually a growing library of immersive content to watch, software to use, and games to play for this thing now.</em></p>
+
+<blockquote>
+  <p>With M5, Apple Vision Pro renders 10 percent more pixels on the
+custom micro-OLED displays compared to the previous generation,
+resulting in a sharper image with crisper text and more detailed
+visuals. Vision Pro can also increase the refresh rate up to 120Hz
+for reduced motion blur when users look at their physical
+surroundings, and an even smoother experience when using Mac
+Virtual Display. Vision Pro with M5 works alongside the
+purpose-built R1 chip, which processes input from 12 cameras, five
+sensors, and six microphones, and streams new images to the
+displays within 12 milliseconds to create a real-time view of the
+world. The high-performance battery now supports up to two and a
+half hours of general use, and up to three hours of video
+playback, all on a single charge.</p>
+</blockquote>
+
+<p>It’s merely another speed bump upgrade alongside the other two speed bump upgrades today, but a bit more dramatic given that the Vision Pro is jumping from the M2 to M5. No price drop, no change to the form factor. But Apple’s interest in the platform is very much alive.&nbsp;<a class="permalink" title="Permanent link to ‘The Just Plain M5 Chip Launches in Three Updated Products: 14-Inch MacBook Pro, iPad Pro (Both Sizes), and Some Sort of Headset Thingamajig Called Vision Pro’" href="https://daringfireball.net/2025/10/m5_chip_launches_with_macbook_pro_ipad_pro_vision_pro">&#9733;</a></p>
+
+</div> <!-- article -->
+
+<hr class="ookiaks" />
+
+
+<h2 class="dateline">Wednesday, 15 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://cordcuttersnews.com/tivo-stops-selling-dvrs-marking-the-end-of-an-era/">TiVo Stops Selling DVRs</a>&nbsp;<a class="permalink" title="Permanent link to ‘TiVo Stops Selling DVRs’" href="https://daringfireball.net/linked/2025/10/15/tivo-stops-selling-dvrs">&#9733;</a>
+</dt>
+<dd>
+<p>Luke Bouma, writing for Cord Cutters:</p>
+
+<blockquote>
+  <p>In a seismic shift for the television industry, TiVo Corporation
+has quietly pulled the plug on its storied digital video recorder
+line, effectively ending an era that redefined how consumers
+interacted with broadcast content. As of early October 2025, the
+company’s <a href="https://www.tivo.com/">official website</a> has scrubbed all references
+to its hardware DVR products, including the once-revered TiVo
+Edge models designed for cable subscribers and over-the-air
+antenna users. Visitors searching for these devices now encounter
+a streamlined catalog that omits any mention of physical
+recording hardware, signaling a complete withdrawal from the
+retail DVR market.</p>
+
+<p>This move culminates decades of gradual decline for TiVo’s
+hardware ambitions, which peaked in the early 2000s when the brand
+became synonymous with effortless time-shifting of television
+programming. Launched in 1999, TiVo’s DVRs introduced features
+like one-touch recording, commercial skipping, and intuitive
+search capabilities that made traditional TV schedules feel
+obsolete. At its zenith, the company boasted millions of
+subscribers, forcing cable providers and networks to adapt to
+empowered viewers who could pause live broadcasts or binge-watch
+at will. The TiVo Edge, introduced in 2021 as a hybrid device
+supporting both cable cards and streaming, represented the final
+evolution of this hardware legacy, blending OTA tuners with 4K
+support and expanded storage options. Yet, even as it garnered
+praise for superior interface design and reliability, sales
+dwindled amid the cord-cutting revolution.</p>
+</blockquote>
+
+<p>The writing has been on the wall for years. We’ve been a TiVo house for 25 years, but their hardware has gotten worse over the years. I forget what our second-to-last TiVo model was, but it died in 2021, and we bought a TiVo Edge. The Edge was often unreliable, and sometimes needed weekly reboots to keep working. (System software updates eventually fixed that.) But the hardware failed this summer. We’d only had it four years.</p>
+
+<p>And, the Edge system software UI was a disaster, and a huge regression from the old TiVo interface. Almost everything was worse in the new “modern” TiVo interface from the old one: navigating shows you’d already recorded, the live-right-now TV guide, the interface for setting up a show to record — all of that went from really good and intuitive to clunky and confusing and slow. The one and only thing our TiVo Edge remained excellent at was playback. Fast-forwarding, rewinding, pausing — nothing else compares to TiVo for that. Even Apple’s own TV app on an Apple TV box doesn’t fast-forward or rewind with anything close to the precision and low latency TiVo’s devices have always offered. My first TiVo from 25 years ago had better fast-forward and rewind than anything on Apple TV (let alone other, lesser streaming boxes) today.</p>
+
+<p>But the overall TiVo experience has been so bad — and getting worse — for so long that I’m not sad at all that they’re getting out of the game. TiVo’s one job was to provide a best-of-breed experience and they lost the plot on that a decade ago. Fuck ’em.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.businesswire.com/news/home/20251009156976/en/Halo-Fund-Announces-Strategic-Secondary-Investment-in-1Password">‘Halo Fund Announces Strategic Secondary Investment in 1Password’</a>&nbsp;<a class="permalink" title="Permanent link to ‘‘Halo Fund Announces Strategic Secondary Investment in 1Password’’" href="https://daringfireball.net/linked/2025/10/15/halo-fund-1password">&#9733;</a>
+</dt>
+<dd>
+<p>Halo Fund:</p>
+
+<blockquote>
+  <p>Halo Fund, a new $1 billion growth fund founded by Ryan Smith and Ryan Sweeney, today announced a strategic secondary investment in 1Password, a leader in identity security and pioneer of Extended Access Management. Halo Fund is joined in this investment by legendary technology leaders, including Flume Ventures with Sun Microsystems founder Scott McNealy and former Zscaler Chief Strategy Officer Manoj Apte. This transaction underscores strong demand from innovators and investors to join 1Password’s journey.</p>
+</blockquote>
+
+<p>Well I’m sure this will halt 1Password’s <a href="https://mjtsai.com/blog/2023/06/26/elegy-for-the-native-mac-app/">descent</a> into enterprise/cross-platform shittiness.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Tuesday, 14 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://tidbits.com/2025/10/09/how-to-turn-liquid-glass-into-a-solid-interface/">‘How to Turn Liquid Glass Into a Solid Interface’</a>&nbsp;<a class="permalink" title="Permanent link to ‘‘How to Turn Liquid Glass Into a Solid Interface’’" href="https://daringfireball.net/linked/2025/10/14/engst-liquid-glass">&#9733;</a>
+</dt>
+<dd>
+<p>Adam Engst, at TidBITS:</p>
+
+<blockquote>
+  <p>Apple’s new Liquid Glass interface design brings transparency and
+blur effects to all Apple operating systems, but many users find
+it distracting or difficult to read. Here’s how to control its
+effects and make your interface more usable. Although the relevant
+Accessibility settings are quite similar across macOS, iOS,
+watchOS, and tvOS, I separate them because they offer different
+levels of utility in each.</p>
+</blockquote>
+
+<p>Comprehensive, illustrated overview of the various Accessibility settings (and, on MacOS 26 Tahoe, hidden command-line <code>defaults</code> settings) that let you adjust the transparency and contrast of Liquid Glass across the various Apple OS 26 interfaces. A useful guide for today — and, I bet, a useful look back at the first versions of Liquid Glass for the future.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://sixcolors.com/post/2025/10/looking-for-the-red-flags-in-apples-formula-1-tv-deal/">‘Looking for the Red Flags in Apple’s Formula 1 TV Deal’</a>&nbsp;<a class="permalink" title="Permanent link to ‘‘Looking for the Red Flags in Apple’s Formula 1 TV Deal’’" href="https://daringfireball.net/linked/2025/10/14/snell-f1-apple">&#9733;</a>
+</dt>
+<dd>
+<p>Jason Snell, at Six Colors:</p>
+
+<blockquote>
+  <p>The entire point of a streaming-only product is that once you’re
+off traditional TV, you can go beyond the single stream and
+provide interactive options. The whole point of streaming TV,
+especially sports, should be that you can leave the flat video
+stream behind and build something cool using software.</p>
+
+<p>That is, by the way, what F1 TV Pro is: A sophisticated bit of
+software that merges track data with multiple cameras to let
+viewers choose how they want to watch races. It’s absolutely
+the product that Apple should aspire to build, or co-opt, in
+this deal.</p>
+
+<p>I understand that Formula 1 owner Liberty Media is reluctant to
+lose a profit center, but if Apple’s paying them an extra $50
+million, isn’t that the proper trade-off? Also, working with Apple
+in the U.S. could be part of a longer-term tech partnership
+between F1 and Apple that could extend worldwide.</p>
+</blockquote>
+
+<p>I don’t really care about Apple obtaining sports streaming rights if all they’re going to do is stream a traditional linear broadcast of the games/events/races. I want to see Apple <em>do the Apple thing</em> and think deeply about what a software-based broadcast can be and offer — and then create it. So, to me, Apple’s Friday Night Baseball has been a wash. It’s a good broadcast (that, <a href="https://x.com/kendallbaker/status/1957930701086679514">rumors suggest</a>, may be coming to an end), but it’s <em>just</em> a good traditional baseball broadcast. It could be on any streaming service. The only Apple-y aspects are the designs and typography of the on-screen graphics and <a href="https://daringfireball.net/2025/02/fox_new_scorebug_graphic_design">scorebug</a>. I want something like F1 TV Pro, but for baseball — and eventually, for all sports.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Monday, 13 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://www.apple.com/tv-pr/news/2025/10/apple-original-films-blockbuster-feature-f1-the-movie-from-joseph-kosinski-to-make-global-streaming-debut-on-friday-december-12-2025/">Apple Renames ‘Apple TV+’ to ‘Apple&#160;TV’</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Renames ‘Apple TV+’ to ‘Apple TV’’" href="https://daringfireball.net/linked/2025/10/13/apple-tv-minus">&#9733;</a>
+</dt>
+<dd>
+<p>At the bottom of Apple’s press release announcing that <em>F1 The Movie</em> will be available for streaming on December 12:</p>
+
+<blockquote>
+  <p>Apple TV+ is now simply Apple TV, with a vibrant new identity.
+Ahead of its global streaming debut on Apple TV, the film
+continues to be available for purchase on participating digital
+platforms, including the Apple TV app, Amazon Prime Video,
+Fandango at Home and more.</p>
+
+<p><strong>About Apple TV</strong></p>
+
+<p>Apple TV is available on the Apple TV app in over 100 countries
+and regions, on over 1 billion screens, including iPhone, iPad,
+Apple TV, Apple Vision Pro, Mac, popular smart TVs from Samsung,
+LG, Sony, VIZIO, TCL and others, Roku and Amazon Fire TV devices,
+Chromecast with Google TV, PlayStation and Xbox gaming consoles,
+and at tv.apple.com, for $12.99 per month with a seven-day free
+trial for new subscribers.</p>
+</blockquote>
+
+<p>In some ways, I get it. Like, if you’re telling someone how much you enjoy <em>Slow Horses</em> and they ask how to watch it, it’s more natural and conversational to just say “It’s on Apple TV”. That’s what most people say. That’s what I say — and as part of my job, I completely understand the difference between Apple TV the device, Apple TV the (free) app, and Apple TV+ the (paid) streaming service.</p>
+
+<p>But right there in Apple’s own “About Apple TV” description, you see just how overused “Apple TV” now is. You can watch Apple TV in Apple TV on Apple TV — the paid service in the free app on the set-top box. But you can watch any streaming service you want on the box, in that service’s own app. But many of those services are also available in the Apple TV app. And the Apple TV streaming service is also available on just about all other popular set-top hardware platforms. So you don’t need an Apple TV to watch Apple TV. It’s a bit like Abbott and Costello’s classic “<a href="https://www.youtube.com/watch?v=sYOUFGfK4bU">Who’s on First</a>” routine.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://support.apple.com/en-us/123359">Apple Announces the End-of-Life for Clips</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Announces the End-of-Life for Clips’" href="https://daringfireball.net/linked/2025/10/13/clips-eol">&#9733;</a>
+</dt>
+<dd>
+<p>Apple Support:</p>
+
+<blockquote>
+  <p>The Clips app is no longer being updated, and will no longer be
+available for download for new users as of October 10, 2025. You
+can continue to use Clips on iOS 26 and iPadOS 26 or earlier.</p>
+</blockquote>
+
+<p>Clips is such an interesting story. It really was a great app. Back in 2017, when version 2.0 arrived (just six months after 1.0), <a href="https://daringfireball.net/linked/2017/11/10/clips-2-0">I described it as</a> “the single best example of a productivity app designed for iOS”. I stand by that. Clips was a very ambitious app that really pushed the state of the art in iOS UI design forward in so many ways. The general knock on iOS has always been that it’s a platform for content consumption, not creation. Clips was <em>all about</em> creation.</p>
+
+<p>But, for as many great ideas as Clips contained (and debuted), it clearly never clicked with the public. Most people — even just only counting people who create and share edited videos to social media — probably have never even heard of Clips. There was something essential missing: a use case. <a href="https://thatrandomagency.com/2025/06/09/instagram-edits-app-review/">Edits</a>, Meta’s new-this-year video editing app for mobile, has a clear use case: it’s meant for editing videos destined for Meta’s popular social media networks. Clips had no clear target destination. <a href="https://daringfireball.net/linked/2025/01/20/remember-clips">It could have</a>, but never did.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://krebsonsecurity.com/2025/10/ddos-botnet-aisuru-blankets-us-isps-in-record-ddos/">The World’s Largest, Most Disruptive Botnet Is Exploiting Compromised Internet-of-Things (IoT) Devices</a>&nbsp;<a class="permalink" title="Permanent link to ‘The World’s Largest, Most Disruptive Botnet Is Exploiting Compromised Internet-of-Things (IoT) Devices’" href="https://daringfireball.net/linked/2025/10/13/ddos-iot-krebs">&#9733;</a>
+</dt>
+<dd>
+<p>Brian Krebs:</p>
+
+<blockquote>
+  <p>The world’s largest and most disruptive botnet is now drawing a
+majority of its firepower from compromised Internet-of-Things
+(IoT) devices hosted on U.S. Internet providers like AT&amp;T, Comcast
+and Verizon, new evidence suggests. Experts say the heavy
+concentration of infected devices at U.S. providers is
+complicating efforts to limit collateral damage from the botnet’s
+attacks, which shattered previous records this week with a brief
+traffic flood that clocked in at nearly 30 trillion bits of data
+per second.</p>
+
+<p>Since its debut more than a year ago, the Aisuru botnet has
+steadily outcompeted virtually all other IoT-based botnets in the
+wild, with recent attacks siphoning Internet bandwidth from an
+estimated 300,000 compromised hosts worldwide.</p>
+</blockquote>
+
+<p>I guess those people who were declaring <a href="https://daringfireball.net/linked/2017/02/27/internet-teddy-bear">a decade ago</a> that the Internet of Things would change the world were right.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.warhistoryonline.com/news/full-metal-jacket-born-to-kill-amazon.html">Before Taking the Guns Out of the Bond Posters, Amazon Prime Bowdlerized the Poster for ‘Full Metal Jacket’</a>&nbsp;<a class="permalink" title="Permanent link to ‘Before Taking the Guns Out of the Bond Posters, Amazon Prime Bowdlerized the Poster for ‘Full Metal Jacket’’" href="https://daringfireball.net/linked/2025/10/13/prime-full-metal-jacket-born-to-kill">&#9733;</a>
+</dt>
+<dd>
+<p>I missed this story back in 2024, but it’s the same infuriating impulse toward infantilization <a href="https://daringfireball.net/linked/2025/10/11/bond-poster-guns">as with the Bond posters</a> this month. Amazon <a href="https://daringfireball.net/misc/2025/10/full-metal-jacket-poster-prime.jpeg">restored the correct poster art</a> for <em>Full Metal Jacket</em>, but they didn’t learn the lesson: <a href="https://x.com/MatthewModine/status/1802862920378052877">don’t fuck with art</a>.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://truthsocial.com/@realDonaldTrump/posts/115359345947837427">Let’s Check in on the Mad King’s Spiral Into Dementia</a>&nbsp;<a class="permalink" title="Permanent link to ‘Let’s Check in on the Mad King’s Spiral Into Dementia’" href="https://daringfireball.net/linked/2025/10/13/trump-dementia-checkin">&#9733;</a>
+</dt>
+<dd>
+<p>The president of the United States, yesterday on his blog:</p>
+
+<blockquote>
+  <p>THE BIDEN FBI PLACED 274 AGENTS INTO THE CROWD ON JANUARY 6. If
+this is so, which it is, a lot of very good people will be owed
+big apologies. What a SCAM - DO SOMETHING!!! President DJT</p>
+</blockquote>
+
+<p>No president, of course, can be expected to remember everything that happened during his four-year term. But Trump, of course, was still president on January 6, and the events that day were — to say the least — historically significant. The entire point of the January 6 insurrection — for his role in which, Trump was impeached — was to <em>prevent</em> Joe Biden from becoming president on January 20.</p>
+
+<p>The man is obviously unwell.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Saturday, 11 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://drata.com/daring">Drata</a>&nbsp;<a class="permalink" title="Permanent link to ‘Drata’" href="https://daringfireball.net/linked/2025/10/11/drata">&#9733;</a>
+</dt>
+<dd>
+<p>My thanks to Drata for once again sponsoring DF. Their message is short and sweet: Automate compliance. Streamline security. Manage risk. Drata delivers the world’s most advanced Trust Management platform.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://deadline.com/2025/09/the-savant-jessica-chastain-postponed-apple-1236553658/">Apple Has Indefinitely Postponed Jessica Chastain’s Apple TV+ Thriller ‘The Savant’, for Political Reasons</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Has Indefinitely Postponed Jessica Chastain’s Apple TV+ Thriller ‘The Savant’, for Political Reasons’" href="https://daringfireball.net/linked/2025/10/11/the-savant-apple-tv">&#9733;</a>
+</dt>
+<dd>
+<p>Nellie Andreeva, reporting for Deadline back on September 23:</p>
+
+<blockquote>
+  <p>The release of Apple TV+’s <em>The Savant</em> has been put on hold. The
+decision comes three days before the thriller starring Jessica
+Chastain was slated to premiere on the streamer Sept. 26. No new
+date has been set.</p>
+
+<p>“After careful consideration, we have made the decision to
+postpone The Savant,” an Apple TV+ spokesperson said in a
+statement to Deadline. “We appreciate your understanding and look
+forward to releasing the series at a future date.”</p>
+
+<p>The streamer would not elaborate on the reasons for the
+last-minute change but <em>The Savant</em>’s subject matter is believed
+to be behind it, with the storyline about preventing extremist
+attacks and some of the imagery considered possibly triggering
+following the Sept. 10 assassination of right-wing political
+activist Charlie Kirk. The series includes a sniper in action and
+the bombing of a government building among other acts of violence.</p>
+</blockquote>
+
+<p>Jessica Chastain, <a href="https://www.instagram.com/p/DO_V2EyEZmj/">in a post on Instagram later that same day</a>:</p>
+
+<blockquote>
+  <p>I want to say how much I value my partnership with Apple.
+They’ve been incredible collaborators and I deeply respect their
+team. That said, I wanted to reach out and let you know that
+we’re not aligned on the decision to pause the release of <em>The
+Savant</em>. [...]</p>
+
+<p>I’ve never shied away from difficult subjects, and while I wish
+this show wasn’t so relevant, unfortunately it is. <em>The Savant</em>
+is about the heroes who work every day to stop violence before it
+happens, and honoring their courage feels more urgent than ever.
+While I respect Apple’s decision to pause the release for now, I
+remain hopeful the show will reach audiences soon. Until then,
+I’m wishing safety and strength for everyone, and I’ll let you
+know if and when <em>The Savant</em> is released.</p>
+</blockquote>
+
+<p>Here we are nearly three weeks later, and it’s still a question of <em>if</em>, not <em>when</em> — <a href="https://tv.apple.com/us/show/the-savant/umc.cmc.aar44keiny3h54xvaakg260q">Apple TV’s page for <em>The Savant</em></a> still has it labeled “Coming: At a Later Date”. </p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.nytimes.com/2025/10/07/dining/saul-zabar-dead.html">Saul Zabar, Smoked Fish Czar of Upper West Side, Dies at&#160;97</a>&nbsp;<a class="permalink" title="Permanent link to ‘Saul Zabar, Smoked Fish Czar of Upper West Side, Dies at 97’" href="https://daringfireball.net/linked/2025/10/11/saul-zabar-rip">&#9733;</a>
+</dt>
+<dd>
+<p>Clyde Haberman, The New York Times:</p>
+
+<blockquote>
+  <p>Saul Zabar, who across more than seven decades as a principal
+owner of the Upper West Side food emporium bearing his family name
+kept New Yorkers amply fortified with smoked fish, earthy bread
+and tangy cheese, not to mention pungent coffee, died on Tuesday
+in Manhattan. He was 97. [...]</p>
+
+<p>What did he look for in a fish? His response to The New York Sun
+in 2007 was worthy of a cryptic Zen master: “It’s got to have
+taste. Not too this, not too that.”</p>
+
+<p>But he was clear about his store’s iconic status. “There’s a
+romance about what we do,” he said in 2012. “We have a modern
+appearance, but we really do things the way they were done 40, 50,
+75, even 200 years ago.” [...]</p>
+
+<p>“We get asked often why we don’t franchise, because we have a lot
+of branded products,” <a href="https://www.ediblemanhattan.com/tastemakers/the_brothers_zabar">he told the magazine Edible Manhattan in
+2022</a>.</p>
+
+<p>“Money is not why we do this, not why we’re here seven days a
+week,” he said. “It’s a way of life for us. It’s kind of
+old-fashioned.”</p>
+</blockquote>
+
+<p>Many people claim that they’re not in it for the money. Only some of them mean it. And those are the most interesting, and often most beloved, people in the world.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.darkhorizons.com/amazon-fixes-james-bond-art-sort-of/">Amazon Hamfistedly Removed the Guns From Prime’s James Bond Movie Posters</a>&nbsp;<a class="permalink" title="Permanent link to ‘Amazon Hamfistedly Removed the Guns From Prime’s James Bond Movie Posters’" href="https://daringfireball.net/linked/2025/10/11/bond-poster-guns">&#9733;</a>
+</dt>
+<dd>
+<p>Garth Franklin, writing at Dark Horizons:</p>
+
+<blockquote>
+  <p>Amazon has quietly walked back new James Bond thumbnail artwork on
+its Prime Video service following controversy over digital
+alterations to the original art. <a href="https://www.darkhorizons.com/amazons-new-posters-disarm-james-bond/">As reported here yesterday</a>,
+the art was unveiled on the weekend to coincide with James Bond
+Day celebrations on Sunday.</p>
+
+<p>Bond fans quickly noticed that the artwork had undergone some
+amateur photoshopping, which either cropped or airbrushed out
+his signature Walther PPK gun from the original image in a
+variety of ways.</p>
+
+<p>The results were widely derided on social media; films like <em>Dr.
+No</em> and <em>Goldeneye</em> appeared to have Bond making a rude gesture,
+while others like <em>A View to a Kill</em> elongated Roger Moore’s arms
+well past the point of any human.</p>
+</blockquote>
+
+<p>The updated ones just kinda suck. <a href="https://daringfireball.net/misc/2025/10/no-gun-bond-posters.jpeg">Amazon’s original “new” posters</a> were downright hilariously bad. This bodes poorly for the Bond franchise’s future.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Friday, 10 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://www.apple.com/newsroom/2025/10/spectrum-brings-nba-games-in-apple-immersive-to-apple-vision-pro/">Apple Newsroom on the Immersive Vision Pro Lakers Broadcasts</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Newsroom on the Immersive Vision Pro Lakers Broadcasts’" href="https://daringfireball.net/linked/2025/10/10/apple-newsroom-lakers-immersive">&#9733;</a>
+</dt>
+<dd>
+<p>Apple Newsroom:</p>
+
+<blockquote>
+  <p>In addition to live games for fans in the Lakers’ regional
+broadcast territory — which covers Southern California, Hawaii,
+and parts of southern Nevada, including Las Vegas — full game
+replays and highlights will be available to Apple Vision Pro users
+in select countries and regions from both the SportsNet and NBA
+apps. These live games will be captured using the new URSA Cine
+Immersive Live camera from Blackmagic Design, a version of the
+camera that launched earlier this year to capture Apple Immersive
+for Vision Pro, and will be available for purchase next year.</p>
+</blockquote>
+
+<p>I didn’t catch <a href="https://daringfireball.net/linked/2025/10/09/apple-immersive-video-lakers">yesterday</a> that these immersive broadcasts would only be available live within the Lakers’ local broadcast territory, which stinks, but alas, makes sense given how sports broadcasting rights work.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Thursday,  9 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://www.techradar.com/streaming/entertainment/wish-you-could-be-courtside-at-a-lakers-game-put-your-vision-pro-back-on-and-fire-up-the-nba-app">Some Lakers Games This Season Will Be Broadcast Live in Immersive Video for Vision&#160;Pro</a>&nbsp;<a class="permalink" title="Permanent link to ‘Some Lakers Games This Season Will Be Broadcast Live in Immersive Video for Vision Pro’" href="https://daringfireball.net/linked/2025/10/09/apple-immersive-video-lakers">&#9733;</a>
+</dt>
+<dd>
+<p>Jacob Krol, writing for Techradar:</p>
+
+<blockquote>
+  <p>We’ve seen a broad range of content, but I’ve been waiting for
+something live — specifically, live sports. Seeing that <a href="https://www.techradar.com/phones/iphone/exclusive-those-phones-are-being-treated-just-like-any-other-camera-inside-apples-first-friday-night-baseball-broadcast-shot-on-iphone-17-pro">Apple
+TV+’s <em>Friday Night Baseball</em> is capturing games with the iPhone
+17 Pro and 17 Pro Max</a> gave me some hope, and now we have a
+confirmed release. In what might be the start of something new,
+select Los Angeles Lakers games will be live-streamed in Apple
+Immersive for the Vision Pro this coming season.</p>
+
+<p>It’s not every game, but for those that are streaming — exclusive
+to the $3,500 Spatial Computer — you’ll get access to views that
+put you right in the middle of the action. Special cameras that
+support the format will be set courtside and under each basket to
+give you perspectives that amp up the immersion. The Lakers’ games
+will be shot using a special version of Blackmagic Design’s URSA
+Cine Immersive Live camera.</p>
+</blockquote>
+
+<p>Kind of weird, to me, that it wasn’t Apple’s own Friday Night Baseball broadcasts first, but I can’t wait to try this.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://migrantinsider.com/p/scoop-apple-quietly-made-ice-agents">Apple’s Justification for Removing DeICER From the App Store</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple’s Justification for Removing DeICER From the App Store’" href="https://daringfireball.net/linked/2025/10/09/apple-app-store-deicer">&#9733;</a>
+</dt>
+<dd>
+<p>Pablo Manríquez, reporting for Migrant Insider:</p>
+
+<blockquote>
+  <p>Apple has quietly removed DeICER, a civic-reporting app used to
+log immigration enforcement activity, from its App Store after a
+law enforcement complaint — invoking a rule normally reserved for
+protecting marginalized groups from hate speech.</p>
+
+<p>According to internal correspondence reviewed by Migrant Insider,
+Apple told developer Rafael Concepcion that the app violated
+Guideline 1.1.1, which prohibits “defamatory, discriminatory, or
+mean-spirited content” directed at “religion, race, sexual
+orientation, gender, national/ethnic origin, or other targeted
+groups.”</p>
+
+<p>But Apple’s justification went further. “Information provided to
+Apple by law enforcement shows that your app violates Guideline
+1.1.1 because its purpose is to provide location information
+about law enforcement officers that can be used to harm such
+officers individually or as a group,” the company wrote in its
+removal notice.</p>
+
+<p>The decision effectively treats federal immigration agents as a
+protected class — a novel interpretation of Apple’s hate-speech
+policy that shields one of the most powerful arms of government
+from public scrutiny.</p>
+</blockquote>
+
+<p>Delicate flowers, these ICE agents are. And it’s a lie, anyway. There’s not one story about any of these apps being used to harm ICE agents. And even if such an attack happened, that wouldn’t imply it’s the <em>purpose</em> of these apps. The purpose of these apps is to protect people — citizens and non-citizens alike — <em>from ICE</em>.</p>
+
+<p>Alas, <a href="https://www.404media.co/google-calls-ice-agents-a-vulnerable-group-removes-ice-spotting-app-red-dot/">there’s no more courage, conviction, or honesty from Google</a> on the Android side of the fence either.</p>
+
+<p>It’d be both interesting and honest if either Apple or Google justified these app bannings by simply saying the Trump administration demanded them and that they — Apple and Google — fear reprisal from Trump if they don’t comply.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.404media.co/apple-banned-an-app-that-simply-archived-videos-of-ice-abuses/">Apple Banned an App That Simply Archived Videos of ICE Abuses</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Banned an App That Simply Archived Videos of ICE Abuses’" href="https://daringfireball.net/linked/2025/10/09/apple-banned-eyes-up">&#9733;</a>
+</dt>
+<dd>
+<p>Joseph Cox, reporting for 404 Media:</p>
+
+<blockquote>
+  <p>Apple removed an app for preserving TikToks, Instagram reels, news
+reports, and videos documenting abuses by ICE, 404 Media has
+learned. The app, called Eyes Up, differs from other banned apps
+such as ICEBlock which were designed to report sightings of ICE
+officials in real-time to warn local communities. Eyes Up,
+meanwhile, was more of an aggregation service pooling together
+information to preserve evidence in case the material is needed in
+the future in court.</p>
+
+<p>The news shows <a href="https://www.404media.co/iceblock-owner-after-apple-removes-app-we-are-determined-to-fight-this/">that Apple</a> <a href="https://www.404media.co/google-calls-ice-agents-a-vulnerable-group-removes-ice-spotting-app-red-dot/">and Google’s</a> crackdown
+on ICE-spotting apps, which started after pressure from the
+Department of Justice against Apple, is broader in scope than apps
+that report sightings of ICE officials. It has also impacted at
+least one app that was more about creating a historical record of
+ICE’s activity during its mass deportation effort.</p>
+
+<p>“Our goal is government accountability, we aren’t even doing
+real-time tracking,” the administrator of Eyes Up, who said their
+name was Mark, told 404 Media. Mark asked 404 Media to only use
+his first name to protect him from retaliation. “I think the
+[Trump] admin is just embarrassed by how many incriminating
+videos we have.”</p>
+</blockquote>
+
+<p>Sometimes consistency is a bad thing.</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Wednesday,  8 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://www.bloomberg.com/news/articles/2025-10-06/apple-faces-probe-in-france-over-voice-recordings-made-by-siri">Apple Faces French Investigation Over Opt-In Siri Voice Recordings</a>&nbsp;<a class="permalink" title="Permanent link to ‘Apple Faces French Investigation Over Opt-In Siri Voice Recordings’" href="https://daringfireball.net/linked/2025/10/08/apple-france-siri-opt-in-recordings">&#9733;</a>
+</dt>
+<dd>
+<p>Benoit Berthelot and Gaspard Sebag, reporting for Bloomberg:</p>
+
+<blockquote>
+  <p>Apple Inc. faces an investigation in France over the use of voice
+recordings made with its assistant Siri. The probe has been
+referred to the Office for Combating Cybercrime, the Paris
+prosecutor’s office said in a statement on Monday. An Apple
+spokesperson referred to <a href="https://www.apple.com/jo/newsroom/2025/01/our-longstanding-privacy-commitment-with-siri/">a blog post</a> the company published in
+January about its use of voice recordings, and declined to comment
+further.</p>
+
+<p><a href="https://www.politico.eu/article/le-parquet-de-paris-ouvre-une-enquete-sur-siri-lassistant-vocal-dapple/">Politico earlier reported</a> the investigation.</p>
+
+<p>The investigation concerns Apple’s collection of user recordings
+through Siri, the digital assistant available on most of its
+devices. Apple can record and retain audio interactions through
+Siri to help improve its services, a feature the company says is
+opt-in. Some of that data can be retained for up to two years and
+reviewed by “graders”, or subcontractors, <a href="https://www.apple.com/legal/privacy/data/en/improve-siri-dictation/">according to Apple</a>.</p>
+</blockquote>
+
+<p>Sending recorded Siri voice interactions to Apple <em>is</em> opt-in, and the opt-in screen is very clear and cogent. It’s not just something Apple claims.</p>
+
+<p>Amazing stuff continues to happen in the EU.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.threads.com/@katienotopoulos/post/DPRAi3ZDUfJ">Katie Notopoulos on the Difference Between Sora and Meta Vibes</a>&nbsp;<a class="permalink" title="Permanent link to ‘Katie Notopoulos on the Difference Between Sora and Meta Vibes’" href="https://daringfireball.net/linked/2025/10/08/notopoulos-sora-vs-vibes">&#9733;</a>
+</dt>
+<dd>
+<p>Katie Notopoulos, on Threads:</p>
+
+<blockquote>
+  <p>Me looking at Vibes feed: this is screensaver. So boring. Why
+would anyone want it?</p>
+
+<p>Me looking at videos I made of my own face in Sora 2: heheh I love
+this it’s funny it’s ME.</p>
+</blockquote>
+
+<p>My feelings exactly.</p>
+
+<p>I even like staring at screensavers sometimes. But the screensavers I like watching are Apple’s aerial (and occasionally, underwater) screensavers on Apple TV. They’re slow, peaceful, and real. Vibes is chaotic, fast, and phony.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://spyglass.org/soras-slop-hits-different/">‘Sora’s Slop Hits Different’</a>&nbsp;<a class="permalink" title="Permanent link to ‘‘Sora’s Slop Hits Different’’" href="https://daringfireball.net/linked/2025/10/08/mg-sora">&#9733;</a>
+</dt>
+<dd>
+<p>MG Siegler, writing at Spyglass:</p>
+
+<blockquote>
+  <p>I think that’s the real revelation here. It’s less about
+consumption and more about <em>creation</em>. I <a href="https://500ish.com/wither-on-the-vine-d8893fddf07e?ref=spyglass.org">previously wrote</a>
+about how I was an early investor in Vine in part because it felt
+like it could be analogous to Instagram. Thanks in large part to
+filters, that app made it easy for anyone to think they were good
+enough to be a photographer. It didn’t matter if they were or not,
+they <em>thought</em> they were — I was one of them — so everyone
+posted their photos. Vine felt like it could have been that for
+video thanks to its clever tap-to-record mechanism. But actually,
+it became a network for a lot of really talented amateurs to
+figure out a new format for funny videos on the internet. When
+Twitter acquired the company and dropped the ball, TikTok took
+that idea and scaled it (thanks to ByteDance paying um, <em>Meta</em>
+billions of dollars for distribution, and their own very smart
+algorithms).</p>
+
+<p>In a way, Sora feels like enabling everyone to be a TikTok
+creator.</p>
+</blockquote>
+
+<p>I don’t want to predict if Sora is a fad or has staying power, but so far <a href="https://sora.chatgpt.com/p/s_68e5c38a9d28819193068a89359164f7">I enjoy it</a> in a way that I haven’t enjoyed a new social network in years. It’s just fun to dash off a stupid video with no more work than a quick text prompt, and the friends I’m following are making some damn funny clips every day.</p>
+
+</dd>
+
+
+<dt>
+<a href="https://www.nytimes.com/2025/10/07/science/nobel-prize-physics.html">Nobel Prize in Physics Is Awarded for Work in Quantum Mechanics</a>&nbsp;<a class="permalink" title="Permanent link to ‘Nobel Prize in Physics Is Awarded for Work in Quantum Mechanics’" href="https://daringfireball.net/linked/2025/10/08/nobel-prize-physics">&#9733;</a>
+</dt>
+<dd>
+<p>The New York Times:</p>
+
+<blockquote>
+  <p>John Clarke, Michel H. Devoret and John M. Martinis were awarded
+the Nobel Prize in Physics on Tuesday in Sweden for showing that
+two properties of quantum mechanics, the physical laws that rule
+the subatomic realm, could be observed in a system large enough to
+see with the naked eye.</p>
+
+<p>“There is no advanced technology today that does not rely on
+quantum mechanics,” Olle Eriksson, chairman of the Nobel Committee
+for Physics, said during the announcement of the award. The
+laureates’ discoveries, he added, paved the way for technologies
+like the cellphone, cameras and fiber optic cables. It also helped
+lay the groundwork for current attempts to build a quantum
+computer, a device that could compute and process information at
+speeds that would not be possible with classical computers.</p>
+</blockquote>
+
+<p>Can you believe these woke dopes gave this award to three people, and not one of them is Donald Trump?</p>
+
+</dd>
+
+
+</dl>
+
+<h2 class="dateline">Tuesday,  7 October 2025</h2>
+<dl class="linkedlist">
+<dt>
+<a href="https://9to5mac.com/2025/10/06/everything-new-in-ios-26-1-beta-2/">What’s New or Changed in iOS 26.1 Beta&#160;2</a>&nbsp;<a class="permalink" title="Permanent link to ‘What’s New or Changed in iOS 26.1 Beta 2’" href="https://daringfireball.net/linked/2025/10/07/new-in-ios-261-beta-2">&#9733;</a>
+</dt>
+<dd>
+<p>Ryan Christoffel, 9to5Mac:</p>
+
+<blockquote>
+  <p>Alarms and timers are now harder to dismiss thanks to a <a href="https://9to5mac.com/2025/10/06/ios-26-1-beta-2-makes-alarms-harder-to-accidentally-dismiss/">new
+‘Slide to stop’ gesture</a>. Both alarms and timers were
+updated in iOS 26 to utilize a new design with much larger
+on-screen buttons than before. Now in iOS 26.1 beta 2, Apple has
+replaced the ‘Stop’ button with a new sliding gesture that
+requires a little more intentionality. This should make accidental
+alarm dismissals more rare.</p>
+</blockquote>
+
+<p>That’s one of several changes that caught my eye. Seems like a great idea. Another notable change: <a href="https://sixcolors.com/post/2025/10/ipados-26-1-beta-brings-back-slide-over-adds-microphone-adjustments/">Slide Over returns to iPadOS</a>.</p>
+
+<p><strong>See also:</strong> <a href="https://www.macrumors.com/2025/10/06/ios-26-1-beta-2-features/">Juli Clover’s rundown of changes in iOS 26.1 beta 2 for MacRumors</a>.</p>
+
+</dd>
+
+
+</dl>
+
+<hr class="ookiaks" />
+
+
+<div class="article">
+<h1><a href="https://daringfireball.net/2025/10/iceblock_removed_from_app_store" title="Permanent link to ‘Complying With ‘Demand’ From Trump Administration, Apple Removes ICEBlock From App Store’">Complying With ‘Demand’ From Trump Administration, Apple Removes ICEBlock From App Store</a></h1>
+<h6 class="dateline">Friday,  3 October 2025</h6>
+
+<p><a href="https://www.foxbusiness.com/politics/apple-takes-down-ice-tracking-app-after-pressure-from-ag-bondi">Ashley Oliver, reporting for Fox Business</a>:</p>
+
+<blockquote>
+  <p>DOJ officials, at the direction of Attorney General Pam Bondi,
+asked Apple to take down ICEBlock, a move that comes as Trump
+administration officials have claimed the tool, which allows users
+to anonymously report ICE agents’ presence, puts agents in danger
+and helps shield illegal immigrants.</p>
+
+<p>“We reached out to Apple today demanding they remove the ICEBlock
+app from their App Store — and Apple did so,” Bondi said in a
+statement to Fox News Digital.</p>
+
+<p>“ICEBlock is designed to put ICE agents at risk just for doing
+their jobs, and violence against law enforcement is an intolerable
+red line that cannot be crossed,” Bondi added. “This Department of
+Justice will continue making every effort to protect our brave
+federal law enforcement officers, who risk their lives every day
+to keep Americans safe.”</p>
+</blockquote>
+
+<p>Fox, in its opening paragraph, describes Bondi as having “asked” Apple to remove ICEBlock from the App Store, but Bondi’s own statement uses the verb “demand”. The difference is not nitpicking. No one, not even Bondi, is claiming any aspect of ICEBlock is illegal. Thus it’s not merely inappropriate but outrageous — and yet another among dozens of other causes for alarm regarding Trump 2.0’s decidedly authoritarian turn — for the DOJ to “demand” that Apple do anything about it. But demand they did, and comply did Apple. (Check those lips <a href="https://daringfireball.net/2024/11/i_wonder">for Cheetos dust</a> before heading home today.)</p>
+
+<p>Katherine Tangalakis-Lippert, Peter Kafka, and Kwan Wei Kevin Tan, <a href="https://www.businessinsider.com/apple-iceblock-app-store-removed-2025-10">reporting for Business Insider</a>:</p>
+
+<blockquote>
+  <p>Apple has removed ICEBlock, an app that allowed users to monitor
+and report the location of immigration enforcement officers, from
+the App Store.</p>
+
+<p>“We created the App Store to be a safe and trusted place to
+discover apps,” Apple said in a statement to Business Insider.
+“Based on information we’ve received from law enforcement about
+the safety risks associated with ICEBlock, we have removed it and
+similar apps from the App Store.”</p>
+</blockquote>
+
+<p>ICEBlock developer Joshua Aaron, <a href="https://bsky.app/profile/iceblock.app/post/3m2alyaghbk2n">posting on the ICEBlock Bluesky account</a>:</p>
+
+<blockquote>
+  <p>We just received a message from Apple’s App Review that #ICEBlock
+has been removed from the App Store due to “objectionable
+content”. The only thing we can imagine is this is due to pressure
+from the Trump Admin.</p>
+
+<p>We have responded and we’ll fight this! #resist</p>
+</blockquote>
+
+<p>There is clearly nothing illegal about ICEBlock.<sup id="fnr1-2025-10-03"><a href="#fn1-2025-10-03">1</a></sup> It’s just information, obviously protected by the First Amendment. Law enforcement officers in the United States have no right to avoid being recorded nor their actions being reported and shared. Reporting and publishing where police are policing is free speech and fundamental to the civil rights and liberties of a free society.</p>
+
+<p>We can all wish Apple had fought this “demand”. I certainly do. <a href="https://www.youtube.com/watch?v=ohPToBog_-g">John Oliver’s “Fuck you, make me”</a> argument <a href="https://daringfireball.net/linked/2025/10/03/fuck-you-make-me">sprung to mind</a> for me this morning. But that’s wishful thinking. I believe there are many lines Apple would not cross, even if it means taking on the ire of Trump administration lickspittles, if not the barely literate wrath of the mad king himself on <a href="https://daringfireball.net/2025/06/truth_social_is_just_trumps_blog">his sad little blog</a>. Apple may well eventually — if not soon — be forced to define those lines. But keeping ICEBlock in the App Store isn’t one of them. You might believe it should be. There’s a big part of me that believes it should be. But I can also <a href="https://daringfireball.net/2025/08/gold_frankincense_and_silicon">see why it’s not</a>. Pick your battles.</p>
+
+<p>I wrote about ICEBlock twice back in late July. <a href="https://daringfireball.net/2025/07/iceblock">Quoting extensively from my initial post</a>:</p>
+
+<blockquote>
+  <p>The ICEBlock app is interesting in and of itself (and from my
+tire-kicking test drive, appears to be a well-crafted and designed
+app), as will be Apple’s response if (when?) the Trump
+administration takes offense to the app’s existence. Back in 2019,
+kowtowing to tacit demands from China, <a href="https://daringfireball.net/linked/2019/10/10/apple-pulls-hkmaps">Apple removed from the App
+Store an app called HKmap.live</a> which helped pro-democracy
+activists in Hong Kong know the location of police and protest
+activity. The app broke no Hong Kong laws, but <a href="https://www.npr.org/2019/10/10/768841864/after-china-objects-apple-removes-app-used-by-hong-kong-protesters">scared the
+thin-skinned skittish lickspittles in the Chinese Communist
+Party</a>. (Remember too that in 2019, <a href="https://daringfireball.net/linked/2019/10/07/taiwan-flag-emoji">Apple removed the Taiwan
+flag emoji</a> (🇹🇼) from the iOS 13 keyboard for users in Hong
+Kong and Macau.)</p>
+
+<p>One defense from Apple regarding HKmap.live, however, was that the
+iOS app was a thin wrapper around the website, which website
+remained fully functional and could be saved to an iPhone user’s
+home screen. Removing the app from the App Store thus did not
+prevent Hongkongers from accessing it. (<a href="https://hkmap.live/">That website</a> today
+<a href="https://en.wikipedia.org/wiki/HKmap.live">seems to be defunct</a>.)</p>
+
+<p>ICEBlock is different. It is <em>only</em> available as a native iOS app.
+According to the developers, this is for technical reasons. From
+their web page explaining <a href="https://www.iceblock.app/android">why they <em>can’t</em> offer an Android
+version</a>:</p>
+
+<blockquote>
+  <p>At ICEBlock, user privacy and security are paramount. Our
+application is designed to provide as much anonymity as possible
+without storing any user data or creating accounts. While we
+understand the desire for an Android version of ICEBlock,
+achieving this level of anonymity on Android is not feasible due
+to the inherent requirements of push notification services.</p>
+
+<p>To send push notifications on Android, it is necessary to use a
+mechanism that requires storing device IDs. This means that we
+would need to maintain a privately hosted database to store these
+identifiers. Storing such data, even if it’s anonymized,
+introduces significant privacy risks. [...]</p>
+
+<p>In contrast, iOS offers us the flexibility to deliver push
+notifications while adhering strictly to our design philosophy.
+Apple’s ecosystem allows for push notifications to be sent
+without requiring us to store any user-identifiable information.
+This ensures that ICEBlock remains completely anonymous and
+secure.</p>
+</blockquote>
+
+<p>To deliver push notifications on Android, the developers claim
+they would need to maintain a database of device IDs, create a
+user account system to manage those device IDs, and all of that
+server-stored data would be susceptible to law enforcement
+subpoenas and pro-ICE red hat hackers. (What “brown shirts” were
+to the Nazis, we should make “red hats” to MAGA.)</p>
+
+<p>To maintain anonymity and store zero user data, there is and can
+be no web app version of ICEBlock. There is and can be no Android
+version. Only iOS supports the security and privacy features for
+ICEBlock to offer what it does, the way it does. Here’s to hoping
+that Apple will proudly defend it if push comes to shove.</p>
+</blockquote>
+
+<p>Apple’s removal of ICEBlock from the App Store is, in multiple ways, <em>worse</em> than Apple’s removal of HKmap.live from the App Store back in 2019. First, you cannot take a disagreement with the Chinese government to court. Here in the United States, you can. But Apple chose not to. That’s a display of weakness. </p>
+
+<p>Second, from the perspective of users, without the HKmap.live “app”, Hong Kong iPhone users could still access all the functionality via the website, and the website could be saved to their home screens as a web app that was, I believe, functionally identical to the version from the App Store. I put “app” in quotes above because the HKmap.live app was really just a thin wrapper around the service’s mobile website. Hongkongers lost some convenience, and they lost the ability to tell non-technical protestor friends “just get it from the App Store”, but it’s not <em>that</em> much more complex to explain how to add a website to your iPhone home screen as a web app.</p>
+
+<p>With ICEBlock, the entire thing is simply no longer available. If you already have ICEBlock installed, the installed version still functions on your iPhone, but, until and if Apple changes its mind, there will be no further software updates and new users are unable to download it. Nor will current users be able to re-download the app on a new iPhone — and now is “new iPhone” season. And, seemingly, there can be no web app (or Android) version of ICEBlock that offers the same level of anonymity as the native iOS version — with notifications, but without user accounts nor any database of device IDs for notifications that would be subject to subpoena from ICEBlock.</p>
+
+<p>The gist of <a href="https://daringfireball.net/linked/2025/07/26/iceblock-trust-apple">my second post on ICEBlock</a> from back in July is that ICEBlock’s privacy-protecting architecture isn’t magic. It’s based on trust in Apple itself. Joshua Aaron doesn’t have access to ICEBlock users’ device IDs (let alone their personal identities), but ICEBlock can send push notifications to devices because Apple itself does know device IDs and users’ identities.</p>
+
+<p>It’s rather chilling to consider what Apple would have done if the Trump administration had “demanded” a list of device IDs and user identities for everyone who had installed ICEBlock. Or what Apple <em>will</em> do if such a demand pops into one of their dimwitted but cruel minds.<sup id="fnr2-2025-10-03"><a href="#fn2-2025-10-03">2</a></sup> I suspect that’s one of the lines Apple would not cross. That Apple would stand its ground there and say “Fuck you, make us” and take it to court. But there’s only one way to find out.&nbsp;<a class="permalink" title="Permanent link to ‘Complying With ‘Demand’ From Trump Administration, Apple Removes ICEBlock From App Store’" href="https://daringfireball.net/2025/10/iceblock_removed_from_app_store">&#9733;</a></p>
+
+<div class="footnotes">
+<hr />
+<ol>
+
+<li id="fn1-2025-10-03">
+<p>It’s interesting to consider how Aaron might “fight this”. I don’t think suing the Department of Justice is an option. All Pam Bondi did was issue a “demand” to Apple. That’s inappropriate and an embarrassment, and in any normal administration would be just cause for her immediate dismissal from the job. But it’s not against the law. She didn’t issue an unconstitutional legal demand to Apple. She just issued a verbal request with an implicit threat of turning the nation’s MAGA derps and Fox News junkies against Apple. What Apple was afraid of wasn’t fighting this demand in a court of law, but in the court of public opinion.</p>
+
+<p>So maybe Aaron sues Apple? I’m not sure he has grounds for that either, but it’d be interesting to see Apple’s lawyers argue in court that the App Store is no place for apps that protect users’ civil liberties and personal privacy.&nbsp;<a href="#fnr1-2025-10-03"  class="footnoteBackLink"  title="Jump back to footnote 1 in the text.">&#x21A9;&#xFE0E;︎</a></p>
+</li>
+
+<li id="fn2-2025-10-03">
+<p>A few people have already asked me why it took the Trump administration several months to put ICEBlock in its crosshairs and issue a takedown “demand” to Apple. <a href="https://abc7ny.com/post/iceblock-new-iphone-app-lets-users-know-when-ice-agents-are-area/16902392/">Aaron shipped the first release of ICEBlock back in April</a>, and it achieved a significant amount of well-deserved publicity in July after Trump’s ICE goons began large-scale deportation raids in Los Angeles. My answer is simple: it took them months to issue this demand because they’re so goddamn stupid and incompetent. We should be thankful for that. In a competent regime attempting an authoritarian takeover of a liberal democracy, it would have been taken down in days, not months.&nbsp;<a href="#fnr2-2025-10-03"  class="footnoteBackLink"  title="Jump back to footnote 2 in the text.">&#x21A9;&#xFE0E;</a></p>
+</li>
+
+</ol>
+</div>
+
+</div> <!-- article -->
+
+<hr class="ookiaks" />
+
+
+<div class="article">
+<h1><a href="https://daringfireball.net/2025/09/apple_on_the_digital_markets_act" title="Permanent link to ‘Apple on the Digital Markets Act’">Apple on the Digital Markets&#160;Act</a></h1>
+<h6 class="dateline">Friday, 26 September 2025</h6>
+
+<p>Apple, “<a href="https://www.apple.com/newsroom/2025/09/the-digital-markets-acts-impacts-on-eu-users/">The Digital Markets Act’s Impacts on EU Users</a>”:</p>
+
+<blockquote>
+  <p>The DMA requires Apple to make certain features work on non-Apple
+products and apps before we can share them with our users.
+Unfortunately, that requires a lot of engineering work, and it’s
+caused us to delay some new features in the EU:</p>
+
+<ul>
+<li><p><em>Live Translation</em> with AirPods uses Apple Intelligence to let
+Apple users communicate across languages. Bringing a
+sophisticated feature like this to other devices creates
+challenges that take time to solve. For example, we designed
+Live Translation so that our users’ conversations stay private — they’re processed on device and are never accessible to Apple — and our teams are doing additional engineering work to make
+sure they won’t be exposed to other companies or developers
+either.</p></li>
+<li><p><em>iPhone Mirroring</em> lets our users see and interact with their
+iPhone from their Mac, so they can seamlessly check their
+notifications, or drag and drop photos between devices. Our
+teams still have not found a secure way to bring this feature to
+non-Apple devices without putting all the data on a user’s
+iPhone at risk. And as a result, we have not been able to bring
+the feature to the EU. [...]</p></li>
+</ul>
+
+<p>We’ve suggested changes to these features that would protect our
+users’ data, but so far, the European Commission has rejected our
+proposals. And according to the European Commission, under the
+DMA, it’s illegal for us to share these features with Apple users
+until we bring them to other companies’ products. If we shared
+them any sooner, we’d be fined and potentially forced to stop
+shipping our products in the EU.</p>
+</blockquote>
+
+<p>Live Translation with AirPods and iPhone Mirroring are both <em>amazing</em> features. And EU users are missing out on them. I think Apple structured this piece exactly right, by emphasizing first that the most direct effect of the DMA is that EU users are getting great features late — or never. And that list of features is only going to grow over time.</p>
+
+<p>Under the section “Is the DMA Achieving Its Goals?”:</p>
+
+<blockquote>
+  <p>Regulators claimed the DMA would promote competition and give
+European consumers more choices. But the law is not living up to
+those promises. In fact, it’s having some of the opposite effects:</p>
+
+<ul>
+<li><p><em>Fewer choices</em>: When features are delayed or unavailable, EU
+users don’t get the same options as users in the rest of the
+world. They lose the choice to use Apple’s latest technologies,
+and their devices fall further behind.</p></li>
+<li><p><em>Less differentiation</em>: By forcing Apple to build features and
+technologies for non-Apple products, the DMA is making the
+options available to European consumers more similar. For
+instance, the changes to app marketplaces are making iOS look
+more like Android — and that reduces choice.</p></li>
+<li><p><em>Unfair competition</em>: The DMA’s rules only apply to Apple, even
+though Samsung is the smartphone market leader in Europe, and
+Chinese companies are growing fast. Apple has led the way in
+building a unique, innovative ecosystem that others have copied — to the benefit of users everywhere. But instead of rewarding
+that innovation, the DMA singles Apple out while leaving our
+competitors free to continue as they always have.</p></li>
+</ul>
+</blockquote>
+
+<p>This is all true. But I have a better way to put this. If Apple were to just switch the iPhone’s OS from iOS to Android, these DMA conflicts would all go away. Apple’s not going to do that, of course, but to me it’s a crystallizing way of looking at it. The DMA is supposedly intended to increase “competition”, which in turn should increase consumer choice. But the easiest way for Apple to comply with the DMA would be to switch EU iPhones to Android — which, by a significant margin, already has majority mobile OS market share in the EU. <a href="https://gs.statcounter.com/os-market-share/mobile/europe/">Here’s a link to StatCounter’s mobile OS stats for Europe</a> (<a href="https://daringfireball.net/2024/03/eu_share_of_apples_revenue">which is not the same as the EU</a>, but as good a proxy as I could find). It’s two-thirds Android, one-third iOS — a 2-1 ratio.</p>
+
+<p>If Apple just shipped all EU iPhones with Android instead of iOS, all of their DMA problems would be off the table. EU iPhone users would lose <em>all</em> iOS exclusive features and Apple device <a href="https://www.apple.com/macos/continuity/">Continuity</a> integrations. EU consumers would effectively have no choice at all in mobile OSes. They’d just get to choose which brand of Android phone to buy.</p>
+
+<p>How in the world would that increase competition? iOS’s unique and exclusive features — which, yes, in many cases, are exclusive to the Apple device ecosystem — <em>are competition</em>.&nbsp;<a class="permalink" title="Permanent link to ‘Apple on the Digital Markets Act’" href="https://daringfireball.net/2025/09/apple_on_the_digital_markets_act">&#9733;</a></p>
+
+</div> <!-- article -->
+
+<hr class="ookiaks" />
+
+
+<div id="Footer">
+<form id="SiteSearch" action="https://daringfireball.net/search" method="get" style="margin-bottom: 2.5em;">
+<div>
+<input name="q" type="text" value="" style="margin-right: 8px; width: 66%;" />
+<input type="submit" value="Search" />
+</div>
+</form>
+
+<p class="smallprint">
+<a href="/preferences/" title="Customize the font size and presentation options for this web site.">Display Preferences</a>
+<br /><br />
+Copyright &copy; 2002–2025 The Daring Fireball Company LLC.
+</p>
+</div>
+
+
+<!-- Google Analytics -->
+
+<!-- 
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-593949-1']);
+  _gaq.push (['_gat._anonymizeIp']);
+  _gaq.push(['_trackPageview']);
+  (function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+ -->
+
+<!-- Asynchronously load Mint -->
+<!-- No, screw mint
+<script type="text/javascript">
+(function () {
+	var ma = document.createElement('script');
+	ma.type = 'text/javascript';
+	ma.src = '/mint/?js';
+	ma.async = true;
+	var s = document.getElementsByTagName('script')[0];
+	s.parentNode.insertBefore(ma, s);
+})();
+</script>
+-->
+</div> <!-- Main -->
+
+</div> <!-- Box -->
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'991bfe120e21758a',t:'MTc2MDk5OTc2OQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
+<!-- 0.0072 seconds -->

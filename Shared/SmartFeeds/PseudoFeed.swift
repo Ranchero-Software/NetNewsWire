@@ -13,7 +13,7 @@ import Articles
 import Account
 import RSCore
 
-protocol PseudoFeed: AnyObject, Feed, SmallIconProvider, PasteboardWriterOwner {
+protocol PseudoFeed: AnyObject, SidebarItem, SmallIconProvider, PasteboardWriterOwner {
 
 }
 
@@ -24,8 +24,8 @@ import Articles
 import Account
 import RSCore
 
-protocol PseudoFeed: AnyObject, Feed, SmallIconProvider {
-	
+protocol PseudoFeed: AnyObject, SidebarItem, SmallIconProvider {
+
 }
 
 #endif

@@ -15,75 +15,54 @@ import CloudKit
 import SyncDatabase
 import Articles
 import ArticlesDatabase
+import CloudKitSync
 
-class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
+final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-	
+	private static let logger = cloudKitLogger
+
 	weak var account: Account?
-	var database: SyncDatabase
+	var syncDatabase: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
-	var compressionQueue = DispatchQueue(label: "Articles Zone Delegate Compression Queue")
-	
+
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
 		self.account = account
-		self.database = database
+		self.syncDatabase = database
 		self.articlesZone = articlesZone
 	}
-	
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey], completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		database.selectPendingReadStatusArticleIDs() { result in
-			switch result {
-			case .success(let pendingReadStatusArticleIDs):
 
-				self.database.selectPendingStarredStatusArticleIDs() { result in
-					switch result {
-					case .success(let pendingStarredStatusArticleIDs):
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		do {
+			let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
+			let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
 
-						self.delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs) {
-							self.update(records: changed,
-										 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-										 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs,
-										 completion: completion)
-						}
-						
-					case .failure(let error):
-						os_log(.error, log: self.log, "Error occurred getting pending starred records: %@", error.localizedDescription)
-						completion(.failure(CloudKitZoneError.unknown))
-					}
-				}
-			case .failure(let error):
-				os_log(.error, log: self.log, "Error occurred getting pending read status records: %@", error.localizedDescription)
-				completion(.failure(CloudKitZoneError.unknown))
-			}
-
+			await delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
+			try await update(records: changed,
+							 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+							 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
+		} catch {
+			Self.logger.error("CloudKit: Error getting sync status records: \(error.localizedDescription)")
+			throw CloudKitZoneError.unknown
 		}
-		
 	}
-	
 }
 
 private extension CloudKitArticlesZoneDelegate {
 
-	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>, completion: @escaping () -> Void) {
+	func delete(recordKeys: [CloudKitRecordKey], pendingStarredStatusArticleIDs: Set<String>) async {
 		let receivedRecordIDs = recordKeys.filter({ $0.recordType == CloudKitArticlesZone.CloudKitArticleStatus.recordType }).map({ $0.recordID })
 		let receivedArticleIDs = Set(receivedRecordIDs.map({ stripPrefix($0.externalID) }))
 		let deletableArticleIDs = receivedArticleIDs.subtracting(pendingStarredStatusArticleIDs)
-		
+
 		guard !deletableArticleIDs.isEmpty else {
-			completion()
 			return
 		}
-		
-		database.deleteSelectedForProcessing(Array(deletableArticleIDs)) { _ in
-			self.account?.delete(articleIDs: deletableArticleIDs) { _ in
-				completion()
-			}
-		}
+
+		try? await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
+		try? await account?.delete(articleIDs: deletableArticleIDs)
 	}
 
-	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>, completion: @escaping (Result<Void, Error>) -> Void) {
+	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>) async throws {
 
 		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ stripPrefix($0.externalID) }))
 		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ stripPrefix($0.externalID) }))
@@ -95,144 +74,122 @@ private extension CloudKitArticlesZoneDelegate {
 		let updateableUnstarredArticleIDs = receivedUnstarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 		let updateableStarredArticleIDs = receivedStarredArticleIDs.subtracting(pendingStarredStatusArticleIDs)
 
-		var errorOccurred = false
-		let group = DispatchGroup()
-		
-		group.enter()
-		account?.markAsUnread(updateableUnreadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing unread statuses: %@", databaseError.localizedDescription)
-			}
-			group.leave()
+		// Parse items on background thread
+		let feedIDsAndItems = await Task.detached(priority: .userInitiated) {
+			let parsedItems = records.compactMap { makeParsedItem($0) }
+			return Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
+		}.value
+
+		nonisolated(unsafe) var updateError: Error?
+
+		do {
+			try await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing unread statuses: \(error.localizedDescription)")
 		}
-		
-		group.enter()
-		account?.markAsRead(updateableReadArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing read statuses: %@", databaseError.localizedDescription)
-			}
-			group.leave()
+
+		do {
+			try await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing read statuses: \(error.localizedDescription)")
 		}
-		
-		group.enter()
-		account?.markAsUnstarred(updateableUnstarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing unstarred statuses: %@", databaseError.localizedDescription)
-			}
-			group.leave()
+
+		do {
+			try await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing unstarred statuses: \(error.localizedDescription)")
 		}
-		
-		group.enter()
-		account?.markAsStarred(updateableStarredArticleIDs) { result in
-			if case .failure(let databaseError) = result {
-				errorOccurred = true
-				os_log(.error, log: self.log, "Error occurred while storing starred statuses: %@", databaseError.localizedDescription)
-			}
-			group.leave()
+
+		do {
+			try await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
+		} catch {
+			updateError = error
+			Self.logger.error("CloudKit: Error while storing starred statuses: \(error.localizedDescription)")
 		}
-		
-		group.enter()
-		compressionQueue.async {
-			let parsedItems = records.compactMap { self.makeParsedItem($0) }
-			let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-			
-			DispatchQueue.main.async {
-				for (webFeedID, parsedItems) in webFeedIDsAndItems {
-					group.enter()
-					self.account?.update(webFeedID, with: parsedItems, deleteOlder: false) { result in
-						switch result {
-						case .success(let articleChanges):
-							guard let deletes = articleChanges.deletedArticles, !deletes.isEmpty else {
-								group.leave()
-								return
-							}
-							let syncStatuses = deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) }
-							self.database.insertStatuses(syncStatuses) { _ in
-								group.leave()
-							}
-						case .failure(let databaseError):
-							errorOccurred = true
-							os_log(.error, log: self.log, "Error occurred while storing articles: %@", databaseError.localizedDescription)
-							group.leave()
-						}
-					}
+
+		for (feedID, parsedItems) in feedIDsAndItems {
+			do {
+				guard let articleChanges = try await self.account?.updateAsync(feedID: feedID, parsedItems: parsedItems, deleteOlder: false) else {
+					continue
 				}
-				group.leave()
+				guard let deletes = articleChanges.deleted, !deletes.isEmpty else {
+					continue
+				}
+				let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
+				try? await self.syncDatabase.insertStatuses(syncStatuses)
+			} catch {
+				updateError = error
+				Self.logger.error("CloudKit: Error while storing articles: \(error.localizedDescription)")
 			}
-			
 		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			if errorOccurred {
-				completion(.failure(CloudKitZoneError.unknown))
-			} else {
-				completion(.success(()))
-			}
+
+		if let updateError {
+			throw updateError
 		}
 	}
-	
+
 	func stripPrefix(_ externalID: String) -> String {
 		return String(externalID[externalID.index(externalID.startIndex, offsetBy: 2)..<externalID.endIndex])
 	}
+}
 
-	func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
-		guard articleRecord.recordType == CloudKitArticlesZone.CloudKitArticle.recordType else {
-			return nil
-		}
-		
-		var parsedAuthors = Set<ParsedAuthor>()
-		
-		let decoder = JSONDecoder()
-		
-		if let encodedParsedAuthors = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.parsedAuthors] as? [String] {
-			for encodedParsedAuthor in encodedParsedAuthors {
-				if let data = encodedParsedAuthor.data(using: .utf8), let parsedAuthor = try? decoder.decode(ParsedAuthor.self, from: data) {
-					parsedAuthors.insert(parsedAuthor)
-				}
-			}
-		}
-		
-		guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
-			let webFeedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.webFeedURL] as? String else {
-			return nil
-		}
-		
-		var contentHTML = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String
-		if let contentHTMLData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTMLData] as? NSData {
-			if let decompressedContentHTMLData = try? contentHTMLData.decompressed(using: .lzfse) {
-				contentHTML = String(data: decompressedContentHTMLData as Data, encoding: .utf8)
-			}
-		}
-		
-		var contentText = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String
-		if let contentTextData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentTextData] as? NSData {
-			if let decompressedContentTextData = try? contentTextData.decompressed(using: .lzfse) {
-				contentText = String(data: decompressedContentTextData as Data, encoding: .utf8)
-			}
-		}
-		
-		let parsedItem = ParsedItem(syncServiceID: nil,
-									uniqueID: uniqueID,
-									feedURL: webFeedURL,
-									url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
-									externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
-									title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
-									language: nil,
-									contentHTML: contentHTML,
-									contentText: contentText,
-									summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
-									imageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
-									bannerImageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
-									datePublished: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.datePublished] as? Date,
-									dateModified: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.dateModified] as? Date,
-									authors: parsedAuthors,
-									tags: nil,
-									attachments: nil)
-		
-		return parsedItem
+nonisolated func makeParsedItem(_ articleRecord: CKRecord) -> ParsedItem? {
+	guard articleRecord.recordType == CloudKitArticlesZone.CloudKitArticle.recordType else {
+		return nil
 	}
-	
+
+	var parsedAuthors = Set<ParsedAuthor>()
+
+	let decoder = JSONDecoder()
+
+	if let encodedParsedAuthors = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.parsedAuthors] as? [String] {
+		for encodedParsedAuthor in encodedParsedAuthors {
+			if let data = encodedParsedAuthor.data(using: .utf8), let parsedAuthor = try? decoder.decode(ParsedAuthor.self, from: data) {
+				parsedAuthors.insert(parsedAuthor)
+			}
+		}
+	}
+
+	guard let uniqueID = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.uniqueID] as? String,
+		  let feedURL = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.feedURL] as? String else {
+		return nil
+	}
+
+	var contentHTML = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTML] as? String
+	if let contentHTMLData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentHTMLData] as? NSData {
+		if let decompressedContentHTMLData = try? contentHTMLData.decompressed(using: .lzfse) {
+			contentHTML = String(data: decompressedContentHTMLData as Data, encoding: .utf8)
+		}
+	}
+
+	var contentText = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentText] as? String
+	if let contentTextData = articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.contentTextData] as? NSData {
+		if let decompressedContentTextData = try? contentTextData.decompressed(using: .lzfse) {
+			contentText = String(data: decompressedContentTextData as Data, encoding: .utf8)
+		}
+	}
+
+	let parsedItem = ParsedItem(syncServiceID: nil,
+								uniqueID: uniqueID,
+								feedURL: feedURL,
+								url: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.url] as? String,
+								externalURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.externalURL] as? String,
+								title: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.title] as? String,
+								language: nil,
+								contentHTML: contentHTML,
+								contentText: contentText,
+								markdown: nil,
+								summary: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.summary] as? String,
+								imageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
+								bannerImageURL: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.imageURL] as? String,
+								datePublished: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.datePublished] as? Date,
+								dateModified: articleRecord[CloudKitArticlesZone.CloudKitArticle.Fields.dateModified] as? Date,
+								authors: parsedAuthors,
+								tags: nil,
+								attachments: nil)
+
+	return parsedItem
 }

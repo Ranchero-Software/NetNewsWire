@@ -12,13 +12,13 @@ import Articles
 import Account
 import os.log
 
-protocol TimelineDelegate: AnyObject  {
+@MainActor protocol TimelineDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
-	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed)
+	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
 }
 
-enum TimelineShowFeedName {
+enum TimelineShowFeedName: Sendable {
 	case none
 	case byline
 	case feed
@@ -28,39 +28,49 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@IBOutlet var tableView: TimelineTableView!
 
-	private var readFilterEnabledTable = [FeedIdentifier: Bool]()
+	var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
+
+	private var feedsHidingReadArticles = Set<SidebarItemIdentifier>()
+	private var readFilterEnabledTable: [SidebarItemIdentifier: Bool] {
+		var d = [SidebarItemIdentifier: Bool]()
+		for sidebarItemID in feedsHidingReadArticles {
+			d[sidebarItemID] = true
+		}
+		return d
+	}
+
 	var isReadFiltered: Bool? {
-		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed else {
+		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
 			return nil
 		}
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let feedID = timelineFeed.feedID, let readFilterEnabled = readFilterEnabledTable[feedID] {
-			return readFilterEnabled
+		if let sidebarItemID = timelineFeed.sidebarItemID {
+			return feedsHidingReadArticles.contains(sidebarItemID)
 		} else {
 			return timelineFeed.defaultReadFilterType == .read
 		}
 	}
-	
+
 	var isCleanUpAvailable: Bool {
 		let isEligibleForCleanUp: Bool?
-		
-		if representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? Feed, timelineFeed.defaultReadFilterType == .alwaysRead {
+
+		if representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem, timelineFeed.defaultReadFilterType == .alwaysRead {
 			isEligibleForCleanUp = true
 		} else {
 			isEligibleForCleanUp = isReadFiltered
 		}
 
 		guard isEligibleForCleanUp ?? false else { return false }
-		
+
 		let readSelectedCount = selectedArticles.filter({ $0.status.read }).count
 		let readArticleCount = articles.count - unreadCount
 		let availableToCleanCount = readArticleCount - readSelectedCount
-		
+
 		return availableToCleanCount > 0
 	}
-	
+
 	var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
@@ -81,9 +91,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	var windowState: TimelineWindowState {
-		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo as? [String: String] }
+		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo }
 		let readArticlesFilterStateValues = readFilterEnabledTable.values.compactMap( { $0 })
-		
+
 		if selectedArticles.count == 1 {
 			let path = selectedArticles.first!.pathUserInfo
 			return TimelineWindowState(readArticlesFilterStateKeys: readArticlesFilterStateKeys,
@@ -129,7 +139,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
-			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is WebFeed {
+			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
 				showFeedNames = {
 					for article in articles {
 						if !article.byline().isEmpty {
@@ -210,11 +220,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "TimelineViewController")
+
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
 		self.delegate = delegate
 	}
-	
+
 	override func viewDidLoad() {
 		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize)
 		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
@@ -225,14 +237,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 		tableView.keyboardDelegate = keyboardDelegate
-		
-		if #available(macOS 11.0, *) {
-			tableView.style = .inset
-		}
-		
+
+		tableView.style = .inset
+
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(webFeedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
@@ -240,17 +250,23 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+				Task { @MainActor in
+					self?.userDefaultsDidChange()
+				}
+			}
 			didRegisterForNotifications = true
 		}
+
+		sharingServicePickerDelegate = SharingServicePickerDelegate(self.view.window)
 	}
-	
+
 	override func viewDidAppear() {
 		sharingServiceDelegate = SharingServiceDelegate(self.view.window)
 	}
 
 	// MARK: - API
-	
+
 	func markAllAsRead(completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager, completion: completion) else {
 			return
@@ -275,34 +291,54 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		return representedObjects.first! === object
 	}
-	
+
 	func cleanUp() {
 		fetchAndReplacePreservingSelection()
 	}
 
 	func toggleReadFilter() {
-		guard let filter = isReadFiltered, let feedID = (representedObjects?.first as? Feed)?.feedID else { return }
-		readFilterEnabledTable[feedID] = !filter
+		guard let filter = isReadFiltered,
+			  let sidebarItemID = (representedObjects?.first as? SidebarItem)?.sidebarItemID else {
+			return
+		}
+		if filter {
+			noteSidebarItemShowsReadArticles(sidebarItemID)
+		} else {
+			noteSidebarItemHidesReadArticles(sidebarItemID)
+		}
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
 	}
-	
+
 	// MARK: State Restoration
-	
+
+	private func noteSidebarItemHidesReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
+		feedsHidingReadArticles.insert(sidebarItemID)
+	}
+
+	private func noteSidebarItemShowsReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
+		feedsHidingReadArticles.remove(sidebarItemID)
+	}
+
 	func restoreState(from state: TimelineWindowState) {
 		for i in 0..<state.readArticlesFilterStateKeys.count {
-			if let feedIdentifier = FeedIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = state.readArticlesFilterStateValues[i]
+			if let sidebarItemID = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
+				let hidesReadArticles = state.readArticlesFilterStateValues[i]
+				if hidesReadArticles {
+					noteSidebarItemHidesReadArticles(sidebarItemID)
+				} else {
+					noteSidebarItemShowsReadArticles(sidebarItemID)
+				}
 			}
 		}
-		
+
 		if let selectedAccountID = state.selectedAccountID,
-		   let account = AccountManager.shared.existingAccount(with: selectedAccountID),
+		   let account = AccountManager.shared.existingAccount(accountID: selectedAccountID),
 		   let selectedArticleID = state.selectedArticleID {
-			
+
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: selectedArticleID)
 			fetchAndReplaceArticlesSync()
-			
+
 			if let selectedIndex = articles.firstIndex(where: { $0.articleID == selectedArticleID }) {
 				tableView.selectRow(selectedIndex)
 				DispatchQueue.main.async {
@@ -319,20 +355,25 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	///
 	/// TODO: Delete for NetNewsWire 7.
 	func restoreLegacyState(from state: [AnyHashable: Any]) {
-		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[AnyHashable: AnyHashable]],
+		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[String: String]],
 			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
 			return
 		}
 
 		for i in 0..<readArticlesFilterStateKeys.count {
-			if let feedIdentifier = FeedIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
-				readFilterEnabledTable[feedIdentifier] = readArticlesFilterStateValues[i]
+			if let sidebarItemID = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
+				let hidesReadArticles = readArticlesFilterStateValues[i]
+				if hidesReadArticles {
+					noteSidebarItemHidesReadArticles(sidebarItemID)
+				} else {
+					noteSidebarItemShowsReadArticles(sidebarItemID)
+				}
 			}
 		}
 
 		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
-			let account = AccountManager.shared.existingAccount(with: accountID),
+			let account = AccountManager.shared.existingAccount(accountID: accountID),
 			let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String {
 
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: articleID)
@@ -350,7 +391,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-
 	// MARK: - Actions
 
 	@objc func openArticleInBrowser(_ sender: Any?) {
@@ -358,7 +398,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			Browser.open(link, invertPreference: NSApp.currentEvent?.modifierFlags.contains(.shift) ?? false)
 		}
 	}
-	
+
 	@IBAction func toggleStatusOfSelectedArticles(_ sender: Any?) {
 		guard !selectedArticles.isEmpty else {
 			return
@@ -369,8 +409,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		if markAsRead {
 			markSelectedArticlesAsRead(sender)
-		}
-		else {
+		} else {
 			markSelectedArticlesAsUnread(sender)
 		}
 	}
@@ -381,7 +420,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		runCommand(markReadCommand)
 	}
-	
+
 	@IBAction func markSelectedArticlesAsUnread(_ sender: Any?) {
 		guard let undoManager = undoManager, let markUnreadCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: false, undoManager: undoManager) else {
 			return
@@ -397,36 +436,36 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard let lastSelectedRow = tableView.selectedRowIndexes.last else {
 			return
 		}
-		
+
 		let nextRowIndex = lastSelectedRow - 1
 		if nextRowIndex <= 0 {
 			tableView.scrollTo(row: 0, extraHeight: 0)
 		}
-		
+
 		tableView.selectRow(nextRowIndex)
-		
+
 		let followingRowIndex = nextRowIndex - 1
 		if followingRowIndex < 0 {
 			return
 		}
-		
+
 		tableView.scrollToRowIfNotVisible(followingRowIndex)
-		
+
 	}
-	
+
 	@IBAction func selectNextDown(_ sender: Any?) {
 		guard let firstSelectedRow = tableView.selectedRowIndexes.first else {
 			return
 		}
-		
+
 		let tableMaxIndex = tableView.numberOfRows - 1
 		let nextRowIndex = firstSelectedRow + 1
 		if nextRowIndex >= tableMaxIndex {
 			tableView.scrollTo(row: tableMaxIndex, extraHeight: 0)
 		}
-		
+
 		tableView.selectRow(nextRowIndex)
-		
+
 		let followingRowIndex = nextRowIndex + 1
 		if followingRowIndex > tableMaxIndex {
 			return
@@ -435,11 +474,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.scrollToRowIfNotVisible(followingRowIndex)
 
 	}
-	
+
 	func toggleReadStatusForSelectedArticles() {
 		// If any one of the selected articles is unread, then mark them as read.
 		// If all articles are read, then mark them as unread them.
-		
+
 		let commandStatus = markReadCommandStatus()
 		let markingRead: Bool
 		switch commandStatus {
@@ -450,14 +489,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		case .canDoNothing:
 			return
 		}
-		
+
 		guard let undoManager = undoManager, let markStarredCommand = MarkStatusCommand(initialArticles: selectedArticles, markingRead: markingRead, undoManager: undoManager) else {
 			return
 		}
-		
+
 		runCommand(markStarredCommand)
 	}
-	
+
 	func toggleStarredStatusForSelectedArticles() {
 
 		// If any one of the selected articles is not starred, then star them.
@@ -486,11 +525,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	func markReadCommandStatus() -> MarkCommandValidationStatus {
 		let articles = selectedArticles
-		
+
 		if articles.anyArticleIsUnread() {
 			return .canMark
 		}
-		
+
 		if articles.anyArticleIsReadAndCanMarkUnread() {
 			return .canUnmark
 		}
@@ -523,12 +562,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	func markOlderArticlesRead(_ selectedArticles: [Article]) {
 		// Mark articles older than the selectedArticles(s) as read.
 
-		var cutoffDate: Date? = nil
+		var cutoffDate: Date?
 		for article in selectedArticles {
 			if cutoffDate == nil {
 				cutoffDate = article.logicalDatePublished
-			}
-			else if cutoffDate! > article.logicalDatePublished {
+			} else if cutoffDate! > article.logicalDatePublished {
 				cutoffDate = article.logicalDatePublished
 			}
 		}
@@ -568,8 +606,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	// MARK: - Navigation
-	
-	func goToDeepLink(for userInfo: [AnyHashable : Any]) {
+
+	func goToDeepLink(for userInfo: [AnyHashable: Any]) {
 		guard let articleID = userInfo[ArticlePathKey.articleID] as? String else { return }
 
 		if isReadFiltered ?? false {
@@ -581,12 +619,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 
 		guard let ix = articles.firstIndex(where: { $0.articleID == articleID }) else {	return }
-		
+
 		NSCursor.setHiddenUntilMouseMoves(true)
 		tableView.selectRow(ix)
 		tableView.scrollTo(row: ix)
 	}
-	
+
 	func goToNextUnread(wrappingToTop wrapping: Bool = false) {
 		guard let ix = indexOfNextUnreadArticle() else {
 			return
@@ -595,14 +633,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.selectRow(ix)
 		tableView.scrollTo(row: ix)
 	}
-	
+
 	func canGoToNextUnread(wrappingToTop wrapping: Bool = false) -> Bool {
-		guard let _ = indexOfNextUnreadArticle(wrappingToTop: wrapping) else {
-			return false
-		}
-		return true
+		return indexOfNextUnreadArticle(wrappingToTop: wrapping) != nil
 	}
-	
+
 	func indexOfNextUnreadArticle(wrappingToTop wrapping: Bool = false) -> Int? {
 		return articles.rowOfNextUnreadArticle(tableView.selectedRow, wrappingToTop: wrapping)
 	}
@@ -611,7 +646,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard let window = tableView.window else {
 			return
 		}
-		
+
 		window.makeFirstResponderUnlessDescendantIsFirstResponder(tableView)
 		if !hasAtLeastOneSelectedArticle && articles.count > 0 {
 			tableView.selectRowAndScrollToVisible(0)
@@ -628,15 +663,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		updateUnreadCount()
 	}
 
-	@objc func webFeedIconDidBecomeAvailable(_ note: Notification) {
-		guard showIcons, let feed = note.userInfo?[UserInfoKey.webFeed] as? WebFeed else {
+	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
+		guard showIcons, let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
 		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
 			guard let article = articles.articleAtRow(row) else {
 				return false
 			}
-			return feed == article.webFeed
+			return feed == article.feed
 		}
 		if let indexesToReload = indexesToReload {
 			reloadCells(for: indexesToReload)
@@ -671,11 +706,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {
-		guard let feeds = note.userInfo?[Account.UserInfoKey.webFeeds] as? Set<WebFeed> else {
+		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
 			return
 		}
 
-		let shouldFetchAndMergeArticles = representedObjectsContainsAnyWebFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
+		let shouldFetchAndMergeArticles = representedObjectsContainsAnyFeed(feeds) || representedObjectsContainsAnyPseudoFeed()
 		if shouldFetchAndMergeArticles {
 			queueFetchAndMergeArticles()
 		}
@@ -686,7 +721,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			fetchAndReplaceArticlesAsync()
 		}
 	}
-	
+
 	@objc func accountsDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync()
@@ -699,14 +734,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task { @MainActor in
-			self.fontSize = AppDefaults.shared.timelineFontSize
-			self.sortDirection = AppDefaults.shared.timelineSortDirection
-			self.groupByFeed = AppDefaults.shared.timelineGroupByFeed
-		}
+	@MainActor func userDefaultsDidChange() {
+		fontSize = AppDefaults.shared.timelineFontSize
+		sortDirection = AppDefaults.shared.timelineSortDirection
+		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
-	
+
 	// MARK: - Reloading Data
 
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
@@ -722,7 +755,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		reloadVisibleCells(for: indexes)
 	}
-	
+
 	private func reloadVisibleCells(for articles: [Article]) {
 		reloadVisibleCells(for: Set(articles.articleIDs()))
 	}
@@ -730,7 +763,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private func reloadVisibleCells(for articles: Set<Article>) {
 		reloadVisibleCells(for: articles.articleIDs())
 	}
-	
+
 	private func reloadVisibleCells(for articleIDs: Set<String>) {
 		if articleIDs.isEmpty {
 			return
@@ -754,15 +787,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
 	}
-	
+
 	// MARK: - Cell Configuring
 
 	private func calculateRowHeight() -> CGFloat {
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
-		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, webFeedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
-		
+		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, status: status)
+
 		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
@@ -879,8 +912,7 @@ extension TimelineViewController: NSTableViewDelegate {
 			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
 				configureTimelineCell(cell, article: article)
-			}
-			else {
+			} else {
 				makeTimelineCellEmpty(cell)
 			}
 		}
@@ -922,7 +954,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.webFeed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons)
+		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons)
 	}
 
 	private func iconFor(_ article: Article) -> IconImage? {
@@ -962,25 +994,25 @@ extension TimelineViewController: NSTableViewDelegate {
 		}
 
 		switch edge {
-			case .leading:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (action, row) in
-					self.toggleArticleRead(article);
-					tableView.rowActionsVisible = false
-				}
-				action.image = article.status.read ? AppAssets.swipeMarkUnreadImage : AppAssets.swipeMarkReadImage
-				return [action]
+		case .leading:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (_, _) in
+				self.toggleArticleRead(article)
+				tableView.rowActionsVisible = false
+			}
+			action.image = article.status.read ? Assets.Images.swipeMarkUnread : Assets.Images.swipeMarkRead
+			return [action]
 
-			case .trailing:
-				let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (action, row) in
-					self.toggleArticleStarred(article);
-					tableView.rowActionsVisible = false
-				}
-				action.backgroundColor = AppAssets.starColor
-				action.image = article.status.starred ? AppAssets.swipeMarkUnstarredImage : AppAssets.swipeMarkStarredImage
-				return [action]
+		case .trailing:
+			let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (_, _) in
+				self.toggleArticleStarred(article)
+				tableView.rowActionsVisible = false
+			}
+			action.backgroundColor = Assets.Colors.star
+			action.image = article.status.starred ? Assets.Images.swipeMarkUnstarred : Assets.Images.swipeMarkStarred
+			return [action]
 
-			@unknown default:
-				os_log(.error, "Unknown table row edge: %ld", edge.rawValue)
+		@unknown default:
+			Self.logger.error("TimelineViewController: unknown edge \(edge.rawValue, privacy: .public)")
 		}
 
 		return []
@@ -990,7 +1022,7 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
-	
+
 	func fetchAndReplacePreservingSelection() {
 		if let article = oneSelectedArticle, let account = article.account {
 			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
@@ -999,7 +1031,7 @@ private extension TimelineViewController {
 			fetchAndReplaceArticlesSync()
 		}
 	}
-	
+
 	@objc func reloadAvailableCells() {
 		if let indexesToReload = tableView.indexesOfAvailableRows() {
 			reloadCells(for: indexesToReload)
@@ -1034,7 +1066,7 @@ private extension TimelineViewController {
 			self.showIcons = false
 			return
 		}
-		
+
 		for article in articles {
 			if let authors = article.authors {
 				for author in authors {
@@ -1061,7 +1093,7 @@ private extension TimelineViewController {
 			replaceArticles(with: unsortedArticles)
 		}
 	}
-	
+
 	func selectedArticleIDs() -> [String] {
 		return selectedArticles.articleIDs()
 	}
@@ -1091,7 +1123,7 @@ private extension TimelineViewController {
 	func updateArticleRowMap() {
 		var rowMap = [String: [Int]]()
 		var index = 0
-		articles.forEach { (article) in
+		for article in articles {
 			if var indexes = rowMap[article.articleID] {
 				indexes.append(index)
 				rowMap[article.articleID] = indexes
@@ -1112,9 +1144,9 @@ private extension TimelineViewController {
 	func indexesForArticleIDs(_ articleIDs: Set<String>) -> IndexSet {
 		var indexes = IndexSet()
 
-		articleIDs.forEach { (articleID) in
+		for articleID in articleIDs {
 			guard let rowsIndex = rows(for: articleID) else {
-				return
+				continue
 			}
 			for rowIndex in rowsIndex {
 				indexes.insert(rowIndex)
@@ -1136,7 +1168,7 @@ private extension TimelineViewController {
 	}
 
 	// MARK: - Fetching Articles
-	
+
 	func fetchAndReplaceArticlesSync() {
 		// To be called when the user has made a change of selection in the sidebar.
 		// It blocks the main thread, so that there’s no async delay,
@@ -1147,12 +1179,12 @@ private extension TimelineViewController {
 			emptyTheTimeline()
 			return
 		}
-		
+
 		if exceptionArticleFetcher != nil {
 			representedObjects.append(exceptionArticleFetcher as AnyObject)
 			exceptionArticleFetcher = nil
 		}
-		
+
 		let fetchedArticles = fetchUnsortedArticlesSync(for: representedObjects)
 		replaceArticles(with: fetchedArticles)
 	}
@@ -1165,12 +1197,12 @@ private extension TimelineViewController {
 			emptyTheTimeline()
 			return
 		}
-		
+
 		if exceptionArticleFetcher != nil {
 			representedObjects.append(exceptionArticleFetcher as AnyObject)
 			exceptionArticleFetcher = nil
 		}
-		
+
 		fetchUnsortedArticlesAsync(for: representedObjects) { [weak self] (articles) in
 			self?.replaceArticles(with: articles)
 		}
@@ -1187,14 +1219,14 @@ private extension TimelineViewController {
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {
 		cancelPendingAsyncFetches()
-		let fetchers = representedObjects.compactMap{ $0 as? ArticleFetcher }
+		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
 		if fetchers.isEmpty {
 			return Set<Article>()
 		}
 
 		var fetchedArticles = Set<Article>()
 		for fetchers in fetchers {
-			if (fetchers as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
 				if let articles = try? fetchers.fetchUnreadArticles() {
 					fetchedArticles.formUnion(articles)
 				}
@@ -1269,23 +1301,22 @@ private extension TimelineViewController {
 		return representedObjects?.contains(where: { $0 is Folder }) ?? false
 	}
 
-	func representedObjectsContainsAnyWebFeed(_ webFeeds: Set<WebFeed>) -> Bool {
+	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
 		// Return true if there’s a match or if a folder contains (recursively) one of feeds
 
 		guard let representedObjects = representedObjects else {
 			return false
 		}
 		for representedObject in representedObjects {
-			if let feed = representedObject as? WebFeed {
-				for oneFeed in webFeeds {
-					if feed.webFeedID == oneFeed.webFeedID || feed.url == oneFeed.url {
+			if let feed = representedObject as? Feed {
+				for oneFeed in feeds {
+					if feed.feedID == oneFeed.feedID || feed.url == oneFeed.url {
 						return true
 					}
 				}
-			}
-			else if let folder = representedObject as? Folder {
-				for oneFeed in webFeeds {
-					if folder.hasWebFeed(with: oneFeed.webFeedID) || folder.hasWebFeed(withURL: oneFeed.url) {
+			} else if let folder = representedObject as? Folder {
+				for oneFeed in feeds {
+					if folder.hasFeed(with: oneFeed.feedID) || folder.hasFeed(withURL: oneFeed.url) {
 						return true
 					}
 				}

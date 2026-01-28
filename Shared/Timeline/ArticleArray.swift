@@ -11,7 +11,7 @@ import Articles
 
 typealias ArticleArray = [Article]
 
-extension Array where Element == Article {
+@MainActor extension Array where Element == Article {
 
 	func articleAtRow(_ row: Int) -> Article? {
 		if row < 0 || row == NSNotFound || row > count - 1 {
@@ -20,13 +20,17 @@ extension Array where Element == Article {
 		return self[row]
 	}
 
+	func article(matching articleSpecifier: ArticleSpecifier) -> Article? {
+		first { articleSpecifier.matchesArticle($0) }
+	}
+
 	func orderedRowIndexes(fromIndex startIndex: Int, wrappingToTop wrapping: Bool) -> [Int] {
 		if startIndex >= self.count {
 			// Wrap around to the top if specified
-			return wrapping ? Array<Int>(0..<self.count) : []
+			return wrapping ? [Int](0..<self.count) : []
 		} else {
 			// Start at the selection and wrap around to the beginning
-			return Array<Int>(startIndex..<self.count) + (wrapping ? Array<Int>(0..<startIndex) : [])
+			return [Int](startIndex..<self.count) + (wrapping ? [Int](0..<startIndex) : [])
 		}
 	}
 	func rowOfNextUnreadArticle(_ selectedRow: Int, wrappingToTop wrapping: Bool) -> Int? {
@@ -45,15 +49,15 @@ extension Array where Element == Article {
 	}
 
 	func articlesForIndexes(_ indexes: IndexSet) -> [Article] {
-		return indexes.compactMap{ (oneIndex) -> Article? in
+		return indexes.compactMap { (oneIndex) -> Article? in
 			return articleAtRow(oneIndex)
 		}
 	}
-		
+
 	func sortedByDate(_ sortDirection: ComparisonResult, groupByFeed: Bool = false) -> ArticleArray {
 		return ArticleSorter.sortedByDate(articles: self, sortDirection: sortDirection, groupByFeed: groupByFeed)
 	}
-	
+
 	func canMarkAllAsRead() -> Bool {
 		return anyArticleIsUnread()
 	}
@@ -84,7 +88,7 @@ extension Array where Element == Article {
 	}
 
 	func unreadArticles() -> [Article]? {
-		let articles = self.filter{ !$0.status.read }
+		let articles = self.filter { !$0.status.read }
 		return articles.isEmpty ? nil : articles
 	}
 
@@ -107,7 +111,7 @@ extension Array where Element == Article {
 		guard let position = firstIndex(of: article) else {	return [] }
 		return articlesAbove(position: position)
 	}
-	
+
 	func articlesAbove(position: Int) -> [Article] {
 		guard position < count else { return [] }
 		let articlesAbove = self[..<position]
@@ -118,7 +122,7 @@ extension Array where Element == Article {
 		guard let position = firstIndex(of: article) else {	return [] }
 		return articlesBelow(position: position)
 	}
-	
+
 	func articlesBelow(position: Int) -> [Article] {
 		guard position < count else { return [] }
 		var articlesBelow = Array(self[position...])
@@ -128,6 +132,4 @@ extension Array where Element == Article {
 		articlesBelow.removeFirst()
 		return articlesBelow
 	}
-	
 }
-

@@ -12,21 +12,18 @@ import Articles
 import ArticlesDatabase
 import Account
 
-// Main thread only.
+@MainActor struct StarredFeedDelegate: SmartFeedDelegate {
 
-struct StarredFeedDelegate: SmartFeedDelegate {
-
-	var feedID: FeedIdentifier? {
-		return FeedIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
+	var sidebarItemID: SidebarItemIdentifier? {
+		return SidebarItemIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
 	}
 
 	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
 	let fetchType: FetchType = .starred(nil)
 	var smallIcon: IconImage? {
-		return AppAssets.starredFeedImage
+		Assets.Images.starredFeed
 	}
-
-	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
-		account.fetchUnreadCountForStarredArticles(completion)
+	func fetchUnreadCount(account: Account) async throws -> Int? {
+		try await account.fetchUnreadCountForStarredArticlesAsync()
 	}
 }

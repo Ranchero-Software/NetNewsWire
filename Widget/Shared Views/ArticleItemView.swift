@@ -82,4 +82,3 @@ struct ArticleItemView: View {
 		return displayFormatter.string(from: date)
 	}
 }
-

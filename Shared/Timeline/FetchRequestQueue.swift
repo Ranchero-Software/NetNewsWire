@@ -8,13 +8,10 @@
 
 import Foundation
 
-// Main thread only.
-
-final class FetchRequestQueue {
-
+@MainActor final class FetchRequestQueue {
 	private var pendingRequests = [FetchRequestOperation]()
-	private var currentRequest: FetchRequestOperation? = nil
-	
+	private var currentRequest: FetchRequestOperation?
+
 	var isAnyCurrentRequest: Bool {
 		if let currentRequest = currentRequest {
 			return !currentRequest.isCanceled
@@ -24,7 +21,9 @@ final class FetchRequestQueue {
 
 	func cancelAllRequests() {
 		precondition(Thread.isMainThread)
-		pendingRequests.forEach { $0.isCanceled = true }
+		for pendingRequest in pendingRequests {
+			pendingRequest.isCanceled = true
+		}
 		currentRequest?.isCanceled = true
 		pendingRequests = [FetchRequestOperation]()
 	}
@@ -55,6 +54,6 @@ private extension FetchRequestQueue {
 	}
 
 	func removeCanceledAndFinishedRequests() {
-		pendingRequests = pendingRequests.filter{ !$0.isCanceled && !$0.isFinished }
+		pendingRequests = pendingRequests.filter { !$0.isCanceled && !$0.isFinished }
 	}
 }

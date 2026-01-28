@@ -1,0 +1,39 @@
+// Common code signing configuration for all NetNewsWire targets
+
+CODE_SIGN_IDENTITY[sdk=macosx*] = Mac Developer
+CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
+CODE_SIGN_STYLE = Automatic
+ORGANIZATION_IDENTIFIER = com.ranchero
+DEVELOPMENT_TEAM = M8L2WTLA8W
+PROVISIONING_PROFILE_SPECIFIER =
+DEVELOPER_ENTITLEMENTS =
+
+// developers can locally override the Xcode settings for code signing
+// by creating a DeveloperSettings.xcconfig file locally at the appropriate path
+// This allows a pristine project to have code signing set up with the appropriate
+// developer ID and certificates, and for dev to be able to have local settings
+// without needing to check in anything into source control
+//
+// As an example, make a ../../SharedXcodeSettings/DeveloperSettings.xcconfig file and
+// give it the contents
+//
+//    CODE_SIGN_IDENTITY[sdk=macosx*] = Mac Developer
+//    CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
+//    CODE_SIGN_IDENTITY[sdk=iphonesimulator*] = iPhone Developer
+//    DEVELOPMENT_TEAM = <Your Team ID>
+//    ORGANIZATION_IDENTIFIER = <Your Domain Name Reversed>
+//    CODE_SIGN_STYLE = Automatic
+//    DEVELOPER_ENTITLEMENTS = -dev
+//    PROVISIONING_PROFILE_SPECIFIER =
+//
+// And you should be able to build without code signing errors and without modifying
+// the NetNewsWire Xcode project.
+//
+// Example:  if your NetNewsWire Xcode project file is at
+//     /Users/Shared/git/NetNewsWire/NetNewsWire.xcodeproj
+// create your DeveloperSettings.xcconfig file at
+//     /Users/Shared/git/SharedXcodeSettings/DeveloperSettings.xcconfig
+//
+
+#include? "../../../SharedXcodeSettings/DeveloperSettings.xcconfig"

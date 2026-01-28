@@ -29,7 +29,7 @@ final class PreferencesControlsBackgroundView: NSView {
 
 		let fillColor = self.effectiveAppearance.isDarkMode ? darkModeFillColor : lightModeFillColor
 		fillColor.setFill()
-		let r = NSIntersectionRect(dirtyRect, bounds)
+		let r = dirtyRect.intersection(bounds)
 		r.fill()
 
 		let borderColor = self.effectiveAppearance.isDarkMode ? darkModeBorderColor : lightModeBorderColor

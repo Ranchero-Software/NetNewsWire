@@ -431,6 +431,9 @@ a.footnote:hover,
 		border: 1px solid var(--secondary-accent-color);
 	}
 
+	.articleTitle h1 {
+		font-size: 1.25em;
+	}
 }
 
 /* macOS Specific */

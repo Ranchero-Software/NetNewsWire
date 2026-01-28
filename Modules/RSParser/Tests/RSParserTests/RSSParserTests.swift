@@ -9,14 +9,14 @@
 import XCTest
 import RSParser
 
-class RSSParserTests: XCTestCase {
+final class RSSParserTests: XCTestCase {
 
 	func testScriptingNewsPerformance() {
 
 		// 0.004 sec on my 2012 iMac.
 		let d = parserData("scriptingNews", "rss", "http://scripting.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -25,7 +25,7 @@ class RSSParserTests: XCTestCase {
 		// 0.004 sec on my 2012 iMac.
 		let d = parserData("KatieFloyd", "rss", "http://katiefloyd.com/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -34,7 +34,7 @@ class RSSParserTests: XCTestCase {
 		// 0.001 sec on my 2012 iMac.
 		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -43,7 +43,7 @@ class RSSParserTests: XCTestCase {
 		// 0.002 sec on my 2012 iMac.
 		let d = parserData("manton", "rss", "http://manton.org/")
 		self.measure {
-			let _ = try! FeedParser.parse(d)
+			_ = try! FeedParser.parse(d)
 		}
 	}
 
@@ -173,6 +173,30 @@ class RSSParserTests: XCTestCase {
 		let d = parserData("manton", "rss", "http://manton.org/")
 		let parsedFeed = try! FeedParser.parse(d)!
 		XCTAssertEqual(parsedFeed.language, "en-US")
+	}
+
+	func testMarkdown1() {
+		let d = parserData("markdown1", "rss", "https://wordland.social/scripting/237777565/rss.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.markdown)
+		}
+	}
+
+	func testMarkdown2() {
+		let d = parserData("markdown2", "rss", "https://wordland.social/scripting/246529703/rss.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.markdown)
+		}
+	}
+
+	func testMedscapeExternalURLs() {
+		let d = parserData("medscape", "rss", "https://www.medscape.com/cx/rssfeeds/2674.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		for article in parsedFeed.items {
+			XCTAssertNotNil(article.externalURL)
+		}
 	}
 
 //	func testFeedWithGB2312Encoding() {

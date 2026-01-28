@@ -1,0 +1,969 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ <title>It Will Never Work in Theory</title>
+ <link href="https://neverworkintheory.org/atom.xml" rel="self"/>
+ <link href="https://neverworkintheory.org/"/>
+ <updated>2024-03-21T22:48:52+00:00</updated>
+ <id>https://neverworkintheory.org</id>
+ <author>
+   <name>Greg Wilson</name>
+   <email>gvwilson@third-bit.com</email>
+ </author>
+ 
+ <entry>
+   <title>Retrospective</title>
+   <link href="https://neverworkintheory.org/2024/03/21/retrospective.html"/>
+   <updated>2024-03-21T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2024/03/21/retrospective</id>
+   <content type="html">&lt;p&gt;
+  &lt;em&gt;IEEE Software&lt;/em&gt; is publishing a short retrospective on this project in 2024.
+  A preprint is available on
+  &lt;a href=&quot;https://www.computer.org/csdl/magazine/so/5555/01/10424425/1Ulj1Qa8tJ6&quot;&gt;the magazine's site&lt;/a&gt;,
+  or you can &lt;a href=&quot;https://www.computer.org/csdl/api/v1/periodical/mags/so/5555/01/10424425/1Ulj1Qa8tJ6/download-article/pdf&quot;&gt;download a PDF&lt;/a&gt; directly.
+&lt;/p&gt;
+
+&lt;pre&gt;
+@article{nwit2024,
+  author = {Greg Wilson and Jorge Aranda and Michael Hoye and Brittany Johnson},
+  title = {It Will Never Work in Theory},
+  journal = {IEEE Software},
+  year = {2024},
+  doi = {10.1109/MS.2024.3362649},
+  link = {https://www.computer.org/csdl/magazine/so/5555/01/10424425/1Ulj1Qa8tJ6}
+}
+&lt;/pre&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Shurui Zhou on Sustainability of Open Source Scientific Software</title>
+   <link href="https://neverworkintheory.org/2023/06/13/zhou-shurui.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/zhou-shurui</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/zhou-shurui.png&quot; width=&quot;80%&quot; alt=&quot;Shurui Zhou&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://www.eecg.utoronto.ca/~shuruiz/&quot; class=&quot;person&quot;&gt;Shurui Zhou&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Understanding the sustainability challenges for building open-source scientific software.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Shurui is an Assistant Professor in Electrical and Computer Engineering at the University of Toronto in Canada.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/zhou-shurui.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/zhou-shurui-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/zhou-shurui-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/24BdlgcK2mE&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Andreas Zeller on Creating Nasty Test Inputs</title>
+   <link href="https://neverworkintheory.org/2023/06/13/zeller-andreas.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/zeller-andreas</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/zeller-andreas.jpg&quot; width=&quot;80%&quot; alt=&quot;Andreas Zeller&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://andreas-zeller.info/&quot; class=&quot;person&quot;&gt;Andreas Zeller&lt;/a&gt;
+      &lt;br&gt;
+      &quot;How to create the nastiest test inputs ever.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Andreas is faculty at the CISPA Helmholtz Center for Information Security and Professor of Software Engineering at Saarland University in Saarbrücken, Germany.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/zeller-andreas.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/zeller-andreas-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/zeller-andreas-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/GCy8bYJ_G0I&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Ethel Tshukudu on Conceptual Transfer in Students Learning New Programming Languages</title>
+   <link href="https://neverworkintheory.org/2023/06/13/tshukudu-ethel.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/tshukudu-ethel</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/tshukudu-ethel.jpg&quot; width=&quot;80%&quot; alt=&quot;Ethel Tshukudu&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://www.csedbotswana.org/&quot; class=&quot;person&quot;&gt;Ethel Tshukudu&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Understanding conceptual transfer in students learning new programming languages.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Ethel is a Lecturer at the University of Botswana and a Founder and Director of CSEdBotswana.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/tshukudu-ethel.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/tshukudu-ethel-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/tshukudu-ethel-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/MHwSnjLx-64&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Allison Sullivan on the Benefits of Unit Tests for Software Models</title>
+   <link href="https://neverworkintheory.org/2023/06/13/sullivan-allison.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/sullivan-allison</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/sullivan-allison.jpg&quot; width=&quot;80%&quot; alt=&quot;Allison Sullivan&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://allisonius.github.io/&quot; class=&quot;person&quot;&gt;Allison Sullivan&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Proofreading the proofreader: the benefits of unit tests for software models.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Allison is an Assistant Professor at the University of Texas at Arlington.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/sullivan-allison.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/sullivan-allison-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/sullivan-allison-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/H6vyMSoVN5s&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Alexander Serebrenik on Employability and Experiences of Older Developers</title>
+   <link href="https://neverworkintheory.org/2023/06/13/serebrenik-alexander.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/serebrenik-alexander</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/serebrenik-alexander.jpg&quot; width=&quot;80%&quot; alt=&quot;Alexander Serebrenik&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://www.win.tue.nl/~aserebre/&quot; class=&quot;person&quot;&gt;Alexander Serebrenik&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Getting old: employability and experiences of veteran software developers.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Alexander is a Full Professor of Social Software Engineering at Eindhoven University of Technology in the Netherlands.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/serebrenik-alexander.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/serebrenik-alexander-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/serebrenik-alexander-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/vofY6oeAaBQ&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Kai Presler-Marshall on Teaching Collaborative Skills to Undergrads</title>
+   <link href="https://neverworkintheory.org/2023/06/13/presler-marshall-kai.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/presler-marshall-kai</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/presler-marshall-kai.jpg&quot; width=&quot;80%&quot; alt=&quot;Kai Presler-Marshall&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://kpresler.github.io/&quot; class=&quot;person&quot;&gt;Kai Presler-Marshall&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Teaching collaborative skills to undergraduate software engineering students.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Kai completed his PhD at North Carolina State University and now teaches computer science at Bowdoin College in Maine.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/presler-marshall-kai.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/presler-marshall-kai-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/presler-marshall-kai-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/CvwHg9N7gWo&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Gustavo Pinto on Cognitive-Driven Development</title>
+   <link href="https://neverworkintheory.org/2023/06/13/pinto-gustavo.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/pinto-gustavo</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/pinto-gustavo.jpg&quot; width=&quot;80%&quot; alt=&quot;Gustavo Pinto&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://gustavopinto.org/&quot; class=&quot;person&quot;&gt;Gustavo Pinto&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Cognitive-driven development helps software teams to keep code units under the limit.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Gustavo is Head of Research at Zup Innovation and Assistant Professor at Federal University of Pará in Brazil.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/pinto-gustavo.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/pinto-gustavo-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/pinto-gustavo-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/g_ht_LDm5Hw&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Christian Newman on Crafting Strong Identifier Naming Practices</title>
+   <link href="https://neverworkintheory.org/2023/06/13/newman-christian.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/newman-christian</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/newman-christian.png&quot; width=&quot;80%&quot; alt=&quot;Christian Newman&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://www.scanl.org/&quot; class=&quot;person&quot;&gt;Christian Newman&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Crafting strong identifier naming practices.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Christian is assistant faculty in the Software Engineering Department at Rochester Institute of Technology.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/newman-christian.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/newman-christian-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/newman-christian-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/Q85GhN7871c&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Ariana Mirian on Enterprise Vulnerability Remediation</title>
+   <link href="https://neverworkintheory.org/2023/06/13/mirian-ariana.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/mirian-ariana</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/mirian-ariana.jpg&quot; width=&quot;80%&quot; alt=&quot;Ariana Mirian&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://arianamirian.com/&quot; class=&quot;person&quot;&gt;Ariana Mirian&lt;/a&gt;
+      &lt;br&gt;
+      &quot;The theory and practice of enterprise vulnerability remediation.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Ariana is a security researcher at the University of California San Diego in the United States.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/mirian-ariana.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/mirian-ariana-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/mirian-ariana-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/ceuNc5cy1UA&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Lauren Margulieux on Things Software Developers Should Know About Learning</title>
+   <link href="https://neverworkintheory.org/2023/06/13/margulieux-lauren.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/margulieux-lauren</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/margulieux-lauren.jpg&quot; width=&quot;80%&quot; alt=&quot;Lauren Margulieux&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://laurenmarg.com/&quot; class=&quot;person&quot;&gt;Lauren Margulieux&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Things software developers should learn about learning.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Lauren is an Associate Professor of Learning Sciences at Georgia State University.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/margulieux-lauren.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/margulieux-lauren-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/margulieux-lauren-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/XGF8ljfL4ZA&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Sherlock Licorish on Using Genetic Improvement to Enhance Code Snippets</title>
+   <link href="https://neverworkintheory.org/2023/06/13/licorish-sherlock.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/licorish-sherlock</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/licorish-sherlock.jpg&quot; width=&quot;80%&quot; alt=&quot;Sherlock Licorish&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://www.otago.ac.nz/info-science/people/staff/sherlock-licorish.html&quot; class=&quot;person&quot;&gt;Sherlock Licorish&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Can genetic improvement enhance online code snippets?&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Sherlock is an Associate Professor in the Department of Information Science at the University of Otago.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/licorish-sherlock.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/licorish-sherlock-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/licorish-sherlock-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/ylREDaqKWEk&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Carol Lee on Developer Thriving</title>
+   <link href="https://neverworkintheory.org/2023/06/13/lee-carol.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/lee-carol</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/lee-carol.jpg&quot; width=&quot;80%&quot; alt=&quot;Carol Lee&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://www.carol-s-lee-phd.com/&quot; class=&quot;person&quot;&gt;Carol Lee&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Developer thriving: why developers deserve more than satisfaction.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Carol is a senior research scientist at Pluralsight Flow's Developer Success Lab in the United States.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/lee-carol.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/lee-carol-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/lee-carol-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/8gfTqazvejI&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Thomas LaToza on Programming Strategically</title>
+   <link href="https://neverworkintheory.org/2023/06/13/latoza-thomas.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/latoza-thomas</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/latoza-thomas.jpg&quot; width=&quot;80%&quot; alt=&quot;Thomas LaToza&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://cs.gmu.edu/~tlatoza/&quot; class=&quot;person&quot;&gt;Thomas LaToza&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Programming strategically.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Thomas is an Associate Professor of Computer Science at George Mason University in the United States.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/latoza-thomas.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/latoza-thomas-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/latoza-thomas-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/Dyo7WpndWog&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Raula Kula on What We Know About Libraries and Their Dependencies</title>
+   <link href="https://neverworkintheory.org/2023/06/13/kula-raula.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/kula-raula</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/kula-raula.jpg&quot; width=&quot;80%&quot; alt=&quot;Raula Kula&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://raux.github.io/&quot; class=&quot;person&quot;&gt;Raula Kula&lt;/a&gt;
+      &lt;br&gt;
+      &quot;What do we know about libraries and their dependencies?&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Raula is an Assistant Professor at the Nara Institute of Science and Technology (NAIST) in Japan.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/kula-raula.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/kula-raula-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/kula-raula-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/O-PZX7d7YWo&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Elvan Kula on Understanding and Predicting Delays in Software Development</title>
+   <link href="https://neverworkintheory.org/2023/06/13/kula-elvan.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/kula-elvan</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/kula-elvan.png&quot; width=&quot;80%&quot; alt=&quot;Elvan Kula&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://serg.ewi.tudelft.nl/members/elvan-kula/&quot; class=&quot;person&quot;&gt;Elvan Kula&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Understanding and predicting delays in large-scale software development.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Elvan is chapter lead of Analytics and AI Research at ING and a doctoral candidate at TU Delft.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/kula-elvan.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/kula-elvan-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/kula-elvan-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/g3b8JfkV5jQ&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Rashina Hoda on Making Sense of User Feedback</title>
+   <link href="https://neverworkintheory.org/2023/06/13/hoda-rashina.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/hoda-rashina</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/hoda-rashina.jpg&quot; width=&quot;80%&quot; alt=&quot;Rashina Hoda&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://rashina.com/&quot; class=&quot;person&quot;&gt;Rashina Hoda&lt;/a&gt;
+      &lt;br&gt;
+      &quot;You asked for it: making sense of user feedback.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Rashina is an Associate Professor of Software Engineering and Deputy Director of the HumaniSE lab at Monash University in Australia.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/hoda-rashina.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/hoda-rashina-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/hoda-rashina-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/O03LRJMgOf0&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Prem Devanbu on Leveraging the Bimodality of Software</title>
+   <link href="https://neverworkintheory.org/2023/06/13/devanbu-prem.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/devanbu-prem</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/devanbu-prem.jpg&quot; width=&quot;80%&quot; alt=&quot;Prem Devanbu&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://web.cs.ucdavis.edu/~devanbu/&quot; class=&quot;person&quot;&gt;Prem Devanbu&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Leveraging the bimodality of software.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Prem is a Distinguished Professor (Emeritus) of Computer Science at the University of California Davis in the United States.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/devanbu-prem.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/devanbu-prem-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/devanbu-prem-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/LQ43KdojuTI&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Zadia Codabux on Technical Debt in R Packages</title>
+   <link href="https://neverworkintheory.org/2023/06/13/codabux-zadia.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/codabux-zadia</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/codabux-zadia.jpg&quot; width=&quot;80%&quot; alt=&quot;Zadia Codabux&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://www.cs.usask.ca/faculty/zadiacodabux/&quot; class=&quot;person&quot;&gt;Zadia Codabux&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Technical debt in R packages.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Zadia is an Assistance Professor at the University of Saskatchewan in Canada.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/codabux-zadia.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/codabux-zadia-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/codabux-zadia-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/-T0vuUkQCFg&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Preetha Chatterjee on Emotion Awareness in Software Engineering</title>
+   <link href="https://neverworkintheory.org/2023/06/13/chatterjee-preetha.html"/>
+   <updated>2023-06-13T00:00:00+00:00</updated>
+   <id>https://neverworkintheory.org/2023/06/13/chatterjee-preetha</id>
+   <content type="html">
+
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;col-4&quot;&gt;
+    &lt;p&gt;
+      &lt;img src=&quot;/static/2023-04/chatterjee-preetha.jpg&quot; width=&quot;80%&quot; alt=&quot;Preetha Chatterjee&quot;/&gt;
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;col-6&quot;&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;https://preethac.github.io/&quot; class=&quot;person&quot;&gt;Preetha Chatterjee&lt;/a&gt;
+      &lt;br&gt;
+      &quot;Emotion awareness in software engineering.&quot;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;em&gt;
+	Preetha is an Assistant Professor at Drexel University in the United States.
+      &lt;/em&gt;
+    &lt;/p&gt;
+    &lt;p&gt;
+      &lt;a href=&quot;/static/2023-04/chatterjee-preetha.pdf&quot;&gt;slides&lt;/a&gt;
+      
+&lt;br/&gt;
+Transcript:
+
+
+&lt;a href=&quot;/static/2023-04/chatterjee-preetha-en.txt&quot;&gt;English&lt;/a&gt;
+
+
+&lt;a href=&quot;/static/2023-04/chatterjee-preetha-es.txt&quot;&gt;Español&lt;/a&gt;
+
+
+
+    &lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;col-1&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;iframe width=&quot;800&quot; height=&quot;450&quot; src=&quot;https://youtube.com/embed/lkatTyerkwg&quot;&gt;&lt;/iframe&gt;
+
+</content>
+ </entry>
+ 
+</feed>

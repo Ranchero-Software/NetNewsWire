@@ -12,170 +12,104 @@ import os.log
 import RSCore
 import RSWeb
 import SyncDatabase
+import CloudKitSync
 
-class CloudKitSendStatusOperation: MainThreadOperation {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendable {
 	private let blockSize = 150
-	
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "CloudKitSendStatusOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
 	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
-	private weak var refreshProgress: DownloadProgress?
-	private var showProgress: Bool
-	private var database: SyncDatabase
+	private var syncDatabase: SyncDatabase
+	private static let logger = cloudKitLogger
 
-	init(account: Account, articlesZone: CloudKitArticlesZone, refreshProgress: DownloadProgress, showProgress: Bool, database: SyncDatabase) {
+	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase) {
 		self.account = account
 		self.articlesZone = articlesZone
-		self.refreshProgress = refreshProgress
-		self.showProgress = showProgress
-		self.database = database
+		self.syncDatabase = database
+		super.init(name: "CloudKitSendStatusOperation")
 	}
-	
-	func run() {
-		os_log(.debug, log: log, "Sending article statuses...")
-		
-		if showProgress {
-			
-			database.selectPendingCount() { result in
-				switch result {
-				case .success(let count):
-					let ticks = count / self.blockSize
-					self.refreshProgress?.addToNumberOfTasksAndRemaining(ticks)
-					self.selectForProcessing()
-				case .failure(let databaseError):
-					os_log(.error, log: self.log, "Send status count pending error: %@.", databaseError.localizedDescription)
-					self.operationDelegate?.cancelOperation(self)
-				}
-			}
-			
-		} else {
-			
-			selectForProcessing()
-			
+
+	@MainActor override func run() {
+		Self.logger.debug("iCloud: Sending article statuses")
+
+		Task { @MainActor in
+			await selectForProcessing()
+			Self.logger.debug("iCloud: Finished sending article statuses")
+			didComplete()
 		}
-		
 	}
-	
 }
 
-private extension CloudKitSendStatusOperation {
-	
-	func selectForProcessing() {
-		database.selectForProcessing(limit: blockSize) { result in
-			switch result {
-			case .success(let syncStatuses):
-				
-				func stopProcessing() {
-					if self.showProgress {
-						self.refreshProgress?.completeTask()
-					}
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					self.operationDelegate?.operationDidComplete(self)
-				}
-				
-				guard syncStatuses.count > 0 else {
-					stopProcessing()
-					return
-				}
-				
-				self.processStatuses(syncStatuses) { stop in
-					if stop {
-						stopProcessing()
-					} else {
-						self.selectForProcessing()
-					}
-				}
-				
-			case .failure(let databaseError):
-				os_log(.error, log: self.log, "Send status error: %@.", databaseError.localizedDescription)
-				self.operationDelegate?.cancelOperation(self)
+@MainActor private extension CloudKitSendStatusOperation {
+
+	func selectForProcessing() async {
+		do {
+			guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
+				  !syncStatuses.isEmpty else {
+				return
 			}
+
+			let stopProcessing = await processStatuses(Array(syncStatuses))
+			if stopProcessing {
+				return
+			}
+
+			await selectForProcessing()
+		} catch {
+			Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
 		}
 	}
-	
-	func processStatuses(_ syncStatuses: [SyncStatus], completion: @escaping (Bool) -> Void) {
-		guard let account = account, let articlesZone = articlesZone else {
-			completion(true)
-			return
+
+	/// Returns true if processing should stop.
+	func processStatuses(_ syncStatuses: [SyncStatus]) async -> Bool {
+		guard let account, let articlesZone else {
+			return true
 		}
-		
+
 		let articleIDs = syncStatuses.map({ $0.articleID })
-		account.fetchArticlesAsync(.articleIDs(Set(articleIDs))) { result in
-			
-			func processWithArticles(_ articles: Set<Article>) {
-				
-				let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
-				let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
-					result[article.articleID] = article
-				}
-				let statusUpdates = syncStatusesDict.compactMap { (key, value) in
-					return CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
-				}
-				
-				func done(_ stop: Bool) {
-					// Don't clear the last one since we might have had additional ticks added
-					if self.showProgress && self.refreshProgress?.numberRemaining ?? 0 > 1 {
-						self.refreshProgress?.completeTask()
-					}
-					os_log(.debug, log: self.log, "Done sending article status block...")
-					completion(stop)
-				}
-				
-				// If this happens, we have somehow gotten into a state where we have new status records
-				// but the articles didn't come back in the fetch.  We need to clean up those sync records
-				// and stop processing.
-				if statusUpdates.isEmpty {
-					self.database.deleteSelectedForProcessing(articleIDs) { _ in
-						done(true)
-						return
-					}
-				} else {
-					articlesZone.modifyArticles(statusUpdates) { result in
-						switch result {
-						case .success:
-							self.database.deleteSelectedForProcessing(statusUpdates.map({ $0.articleID })) { _ in
-								done(false)
-							}
-						case .failure(let error):
-							self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-								self.processAccountError(account, error)
-								os_log(.error, log: self.log, "Send article status modify articles error: %@.", error.localizedDescription)
-								completion(true)
-							}
-						}
-					}
-				}
-				
-			}
+		let articles: Set<Article>
 
-			switch result {
-			case .success(let articles):
-				processWithArticles(articles)
-			case .failure(let databaseError):
-				self.database.resetSelectedForProcessing(syncStatuses.map({ $0.articleID })) { _ in
-					os_log(.error, log: self.log, "Send article status fetch articles error: %@.", databaseError.localizedDescription)
-					completion(true)
-				}
-			}
+		do {
+			articles = try await account.fetchArticlesAsync(.articleIDs(Set(articleIDs)))
+		} catch {
+			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+			Self.logger.error("iCloud: Send article status fetch articles error: \(error.localizedDescription)")
+			return true
+		}
 
+		let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
+		let articlesDict = articles.reduce(into: [String: Article]()) { result, article in
+			result[article.articleID] = article
+		}
+		let statusUpdates = syncStatusesDict.compactMap { (key, value) in
+			CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key])
+		}
+
+		// If this happens, we have somehow gotten into a state where we have new status records
+		// but the articles didn't come back in the fetch. We need to clean up those sync records
+		// and stop processing.
+		if statusUpdates.isEmpty {
+			try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
+			return true
+		} else {
+			do {
+				try await articlesZone.modifyArticles(statusUpdates)
+				try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
+				return false
+			} catch {
+				try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+				processAccountError(account, error)
+				Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
+				return true
+			}
 		}
 	}
-	
+
 	func processAccountError(_ account: Account, _ error: Error) {
 		if case CloudKitZoneError.userDeletedZone = error {
-			account.removeFeeds(account.topLevelWebFeeds)
+			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 			for folder in account.folders ?? Set<Folder>() {
-				account.removeFolder(folder)
+				account.removeFolderFromTree(folder)
 			}
 		}
 	}
-
 }

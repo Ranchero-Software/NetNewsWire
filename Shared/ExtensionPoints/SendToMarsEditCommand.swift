@@ -10,10 +10,10 @@ import AppKit
 import RSCore
 import Articles
 
-final class SendToMarsEditCommand: SendToCommand {
+@MainActor final class SendToMarsEditCommand: SendToCommand {
 
 	let title = "MarsEdit"
-	let image: RSImage? = AppAssets.marsEditIcon
+	let image: RSImage? = Assets.Images.marsEdit
 
 	private let marsEditApps = [UserApp(bundleID: "com.red-sweater.marsedit5"), UserApp(bundleID: "com.red-sweater.marsedit4"), UserApp(bundleID: "com.red-sweater.marsedit")]
 
@@ -56,10 +56,10 @@ private extension SendToMarsEditCommand {
 		let body = article.contentHTML ?? article.contentText ?? article.summary
 		let authorName = article.authors?.first?.name
 
-		let sender = SendToBlogEditorApp(targetDescriptor: targetDescriptor, title: article.title, body: body, summary: article.summary, link: article.externalLink, permalink: article.link, subject: nil, creator: authorName, commentsURL: nil, guid: article.uniqueID, sourceName: article.webFeed?.nameForDisplay, sourceHomeURL: article.webFeed?.homePageURL, sourceFeedURL: article.webFeed?.url)
-		let _ = sender.send()
+		let sender = SendToBlogEditorApp(targetDescriptor: targetDescriptor, title: article.title, body: body, summary: article.summary, link: article.externalLink, permalink: article.link, subject: nil, creator: authorName, commentsURL: nil, guid: article.uniqueID, sourceName: article.feed?.nameForDisplay, sourceHomeURL: article.feed?.homePageURL, sourceFeedURL: article.feed?.url)
+		sender.send()
 	}
-	
+
 	func appToUse() -> UserApp? {
 
 		for app in marsEditApps {

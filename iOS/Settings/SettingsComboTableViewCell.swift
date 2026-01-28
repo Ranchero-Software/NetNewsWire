@@ -8,16 +8,15 @@
 
 import UIKit
 
-class SettingsComboTableViewCell: VibrantTableViewCell {
-
-	@IBOutlet weak var comboImage: UIImageView!
-	@IBOutlet weak var comboNameLabel: UILabel!
+final class SettingsComboTableViewCell: VibrantTableViewCell {
+	@IBOutlet var comboImage: UIImageView!
+	@IBOutlet var comboNameLabel: UILabel!
 
 	override func updateVibrancy(animated: Bool) {
 		super.updateVibrancy(animated: animated)
 		updateLabelVibrancy(comboNameLabel, color: labelColor, animated: animated)
-		
-		let tintColor = isHighlighted || isSelected ? AppAssets.vibrantTextColor : UIColor.label
+
+		let tintColor = isHighlighted || isSelected ? Assets.Colors.vibrantText : UIColor.label
 		if animated {
 			UIView.animate(withDuration: Self.duration) {
 				self.comboImage?.tintColor = tintColor
@@ -26,5 +25,5 @@ class SettingsComboTableViewCell: VibrantTableViewCell {
 			self.comboImage?.tintColor = tintColor
 		}
 	}
-	
+
 }

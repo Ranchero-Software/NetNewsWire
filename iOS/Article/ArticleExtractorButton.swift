@@ -15,31 +15,31 @@ enum ArticleExtractorButtonState {
 	case off
 }
 
-class ArticleExtractorButton: UIButton {
-	
+final class ArticleExtractorButton: UIButton {
+
 	private var animatedLayer: CALayer?
-	
+
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
 			if buttonState != oldValue {
 				switch buttonState {
 				case .error:
 					stripAnimatedSublayer()
-					setImage(AppAssets.articleExtractorError, for: .normal)
+					setImage(Assets.Images.articleExtractorError, for: .normal)
 				case .animated:
 					setImage(nil, for: .normal)
 					setNeedsLayout()
 				case .on:
 					stripAnimatedSublayer()
-					setImage(AppAssets.articleExtractorOn, for: .normal)
+					setImage(Assets.Images.articleExtractorOn, for: .normal)
 				case .off:
 					stripAnimatedSublayer()
-					setImage(AppAssets.articleExtractorOff, for: .normal)
+					setImage(Assets.Images.articleExtractorOff, for: .normal)
 				}
 			}
 		}
 	}
-	
+
 	override var accessibilityLabel: String? {
 		get {
 			switch buttonState {
@@ -57,7 +57,7 @@ class ArticleExtractorButton: UIButton {
 			super.accessibilityLabel = newValue
 		}
 	}
-	
+
 	override func layoutSubviews() {
 		super.layoutSubviews()
 		guard case .animated = buttonState else {
@@ -66,31 +66,31 @@ class ArticleExtractorButton: UIButton {
 		stripAnimatedSublayer()
 		addAnimatedSublayer(to: layer)
 	}
-	
+
 	private func stripAnimatedSublayer() {
 		animatedLayer?.removeFromSuperlayer()
 	}
-	
+
 	private func addAnimatedSublayer(to hostedLayer: CALayer) {
-		let image1 = AppAssets.articleExtractorOffTinted.cgImage!
-		let image2 = AppAssets.articleExtractorOnTinted.cgImage!
+		let image1 = Assets.Images.articleExtractorOffTinted.cgImage!
+		let image2 = Assets.Images.articleExtractorOnTinted.cgImage!
 		let images = [image1, image2, image1]
-		
+
 		animatedLayer = CALayer()
-		let imageSize = AppAssets.articleExtractorOff.size
+		let imageSize = Assets.Images.articleExtractorOff.size
 		animatedLayer!.bounds = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
 		animatedLayer!.position = CGPoint(x: bounds.midX, y: bounds.midY)
-		
+
 		hostedLayer.addSublayer(animatedLayer!)
-		
+
 		let animation = CAKeyframeAnimation(keyPath: "contents")
 		animation.calculationMode = CAAnimationCalculationMode.linear
 		animation.keyTimes = [0, 0.5, 1]
 		animation.duration = 2
 		animation.values = images as [Any]
 		animation.repeatCount = HUGE
-		
+
 		animatedLayer!.add(animation, forKey: "contents")
 	}
-	
+
 }

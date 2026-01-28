@@ -1,5 +1,160 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7018 26 Jan 2026 - branch: main tag: iOS-7.0-7018
+
+Fix crash bug — take two! — introduced in 7014
+
+### 7.0 TestFlight build 7016 26 Jan 2026 - branch: main tag: iOS-7.0-7016
+
+Fix crash introduced in the previous build
+
+### 7.0 TestFlight build 7014 26 Jan 2026 - branch: main tag: iOS-7.0-7014
+
+Fixed a bug where swiping multiple cells in the timeline would be just weird. (Technical details for the curious: we switched from UITableView to UICollectionView.)
+Fixed — we’re pretty sure — a state restoration bug where the article you were reading could disappear on re-launch
+Fixed a bug where separators in the timeline might not start under the text as they should
+Fixed a bug where a cell in the timeline might have an icon when it shouldn’t, and vice verse, when that article appears in (for instance) the Today list and then you switch to the actual feed (and vice versa)
+
+### 7.0 TestFlight build 7012 21 Jan 2026 - branch: main tag: iOS-7.0-7012
+
+Fixed a bug that could cause timeline articles to not get updated properly on things like status changes
+Fixed a crash that could happen updating timeline articles
+
+### 7.0 TestFlight build 7010 21 Jan 2026 - branch: main tag: iOS-7.0-7010
+
+Fixed two causes of a bug where small images would sometimes display as much larger than they should be
+Fixed a bug where NewsBlur wouldn’t display the last update time. It will start doing so after the next time it updates
+Fixed a bug where the article that was restored on launch would get cleared out it if it’s not part of the current timeline
+Fixed a bug where the next-unread button would still be enabled when there are no unread articles
+Fixed super-large titles in several themes
+Fixed a bug where the search field would auto-capitalize the first letter
+Fixed one cause (hopefully the only one) of a bug where selecting a feed might not show the articles for that feed in the timeline
+
+### 7.0 TestFlight build 7009 21 Jan 2026 - branch: main tag: iOS-7.0-7009
+
+Fixed a crash on changing system text size
+Fixed a crash on playing fullscreen video
+Fixed a bug where an unnecessary … would be added to titles in the timeline in some circumstances
+Gave the search scope bar a translucent background to be more Liquid-Glass-like
+Made the timeline navigation bar title and subtitle opt out of dynamic type
+Made separators in timeline start under the text instead of under the icon
+Fixed a bug where the selected timeline cell would be translucent while the contextual menu appears, which made it impossible to read when it was moved to be layered on top of another cell
+Fixed a bug in settings where the text for Add Account button was small for some of the account types
+
+### 7.0 TestFlight build 7008 20 Jan 2026 - branch: main tag: iOS-7.0-7008
+
+Fixed more bugs related to the feeds list
+Made performance better during refresh/sync by coalescing updates to the feeds list
+Changed the separators on the timeline to not go under the unread/star indicator area
+Fixed a timeline cell bug where text would be the wrong color when fully swiped
+Fixed a timeline cell bug that could cause incorrect text truncation
+Fixed a timeline bug where the selected cell could flash as the feeds list is downloading icons 
+Fixed a couple spots in user-facing text that refer to "web feed" — now they refer to "feed"
+Fixed a couple spots in user-facing text that used ... instead of a single ellipsis character …
+Fixed settings bug where the add-Feedbin-account sheet wouldn’t close or wouldn’t close as quickly as expected
+Fixed bug where the title of the timeline in the navigation bar could appear as "Timeline" instead of the expected title
+
+### 7.0 TestFlight build 7007 19 Jan 2026 - branch: main tag: iOS-7.0-7007
+
+Fixed a number of bugs related to the feeds list. (Technical details, for the curious: we switched to diffable data sources.)
+
+### 7.0 TestFlight build 7006 18 Jan 2026 - branch: main tag: iOS-7.0-7006
+
+Fixed (we think), again, a crashing bug that could happen on updating the feeds list. (It was fixed in 7004 but reintroduced in 7005.)
+Fixed a performance issue when swiping rows in the timeline
+Fixed a bug in the timeline where text could be clipped off at the top, particularly accented text
+Fixed a bug in Settings where Open Links in NetNewsWire didn’t wrap
+
+### 7.0 TestFlight build 7005 17 Jan 2026 - branch: main tag: iOS-7.0-7005
+
+Fixed a performance issue introduced in the previous (7004) build
+
+### 7.0 TestFlight build 7004 16 Jan 2026 - branch: main tag: iOS-7.0-7004
+
+Fixed — again, we think and hope — the most common crashing bug by far (a bug which happened while updating the Feeds view)
+Use large title in navigation bar in Feeds view
+
+### 7.0 TestFlight build 7003 15 Jan 2026 - branch: main tag: iOS-7.0-7003
+
+Fixed (we think) the most common crashing bug by far (a bug which happened while updating the Feeds view)
+Added ability to import OPML to FreshRSS account
+
+### 7.0 TestFlight build 7002 14 Jan 2026 - branch: main tag: iOS-7.0-7002
+
+Fixed Feedly syncing — it’s working again
+Fixed some timeline text layout issues
+Fixed a contextual menu crash
+Fixed a crash in springboard widgets
+Fixed some widget layout issues
+
+### 7.0 TestFlight build 7001 11 Jan 2026 - branch: main tag: iOS-7.0-7001
+
+Fixed (we think; we hope) a crashing bug that could happen during background feed refresh
+
+### 7.0 TestFlight build 7000 10 Jan 2026 - branch: main tag: iOS-7.0-7000
+
+Adopted Liquid Glass UI
+Adopted Swift 6.2 structured concurrency
+Enhanced design, performance, and reliability for the springboard widgets
+Improved split view state restoration on iPad
+Added new movie-credits-style about screen
+
+### 6.2.1 TestFlight build 6206 08 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6206 — submitted to App Store
+
+Fixed bug, introduced in previous beta, where hide-read-articles settings weren’t working or saving for folders
+
+### 6.2.1 TestFlight build 6205 07 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6205
+
+Fixed bug where the All Unread feed wouldn't remove read articles on refresh (when the refresh-to-remove-read-articles setting is on)
+Fixed split view bug on iPad, introduced in previous beta, where the article view could get extremely narrow
+
+### 6.2.1 TestFlight build 6204 07 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6204
+
+Fixed navigation bug, introduced in previous beta, where the timeline could appear on tapping next unread when viewing the next unread article requires changing the Feeds view selection
+Fixed state restoration bug, introduced in previous beta, where the second run of the app could have everything in the Feeds view collapsed
+
+### 6.2.1 TestFlight build 6203 03 Dec 2025 - branch: release/6.2.1 tag: iOS-6.2.1-6203
+
+Fixed several state restoration bugs
+Fixed a crash that could happen on opening a web browser view
+Fixed a bug where some users couldn’t select any OPML files (when importing OPML)
+Fixed a bug on iPad where the an article would remain displayed after changing selection in the Feeds view
+
+### 6.2 TestFlight build 6202 31 Oct 2025 - branch main tag: iOS-6.2-6202  — submitted as App Store release build 4 Nov 2025
+
+Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
+
+### 6.2 TestFlight build 6201 30 Oct 2025 - branch main tag: iOS-6.2-6201
+
+Added support for source:markdown to the RSS parser
+Added a dotted underline to links in the Sepia theme, to make links more visible
+
+### 6.2 TestFlight build 6200 21 Oct 2025 - branch main tag: iOS-6.2-6200
+
+Made scrolling of the timeline view faster
+
+### 6.2 TestFlight build 6199 19 Oct 2025 - branch: main tag iOS-6.2-6199
+
+New feature: you can now enable/disable JavaScript (in the Settings screen)
+Improved http/https caching, reducing bandwidth and battery use
+Fixed bug where a feed could be read twice on being added
+Fixed bug where the initial download for a new feed didn’t store conditional GET info
+Added some special cases where we can and should avoid doing some specific work (such as downloading the home page to find a feed icon)
+Worked around a server bug where a server would always respond with a 304 when any conditional GET info is sent (the app drops conditional GET info every 8 days)
+Fixed a possible cause of feeds not updating by caching (non-429) 4xx responses for some hours rather than for the duration of the app run
+Fixed Atom parser bug with relative URLs
+Fixed Atom parser bug where author at root level wasn’t applied to articles
+Did a few micro performance optimizations
+Fixed bug where contextual menu in timeline could be slow to appear
+Fixed a possible cause of app icon unread count badge to be out of date
+Fixed bug where timeline text could be truncated early when showing max number of lines in timeline and small text
+Fixed a bug where images that are links could get underlined in the default theme
+Fixed a bug finding a feed in a page that has no body tag
+Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect
+Improved iCloud error dialog
+Fixed some cosmetic UI glitches
+Removed support for multiple windows
+
 ### 6.1.10 TestFlight build 6198 11 Aug 2025 - branch: main tag iOS-6.1.10-6198 — submitted as App Store release build 18 Aug 2025
 
 Replaced BBC in default feeds (for new users) because its feeds have gone wonky. Replaced with Scripting News.

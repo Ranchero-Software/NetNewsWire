@@ -10,6 +10,7 @@ import Articles
 import RSCore
 import RSParser
 import RSWeb
+import FeedFinder
 import SyncDatabase
 import os.log
 import Secrets
@@ -19,7 +20,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case invalidParameter
 	case invalidResponse
 	case urlNotFound
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .unknown:
@@ -35,50 +36,55 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 }
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
-	
+
 	private let variant: ReaderAPIVariant
-	
-	private let database: SyncDatabase
-	
+
+	private let syncDatabase: SyncDatabase
+
 	private let caller: ReaderAPICaller
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
+
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
+	let refreshProgress = RSProgress()
 
 	var behaviors: AccountBehaviors {
-		var behaviors: AccountBehaviors = [.disallowOPMLImports, .disallowFeedInMultipleFolders]
+		var behaviors: AccountBehaviors = [.disallowFeedInMultipleFolders]
 		if variant == .freshRSS {
 			behaviors.append(.disallowFeedInRootFolder)
 		}
 		return behaviors
 	}
 
-	var server: String? {
-		get {
-			return caller.server
-		}
+	@MainActor var server: String? {
+		caller.server
 	}
-	
+
 	var isOPMLImportInProgress = false
-	
+
 	var credentials: Credentials? {
 		didSet {
 			caller.credentials = credentials
 		}
 	}
-	
+
 	weak var accountMetadata: AccountMetadata? {
 		didSet {
 			caller.accountMetadata = accountMetadata
 		}
 	}
 
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
-	
 	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
-		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
-		database = SyncDatabase(databaseFilePath: databaseFilePath)
-		
+		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
+		syncDatabase = SyncDatabase(databasePath: databasePath)
+
 		if transport != nil {
-			caller = ReaderAPICaller(transport: transport!)
+			self.caller = ReaderAPICaller(transport: transport!, logger: Self.logger)
 		} else {
 			let sessionConfiguration = URLSessionConfiguration.default
 			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -88,649 +94,487 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			sessionConfiguration.httpMaximumConnectionsPerHost = 1
 			sessionConfiguration.httpCookieStorage = nil
 			sessionConfiguration.urlCache = nil
-			
+
 			if let userAgentHeaders = UserAgent.headers() {
 				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 			}
-			
-			caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration))
+
+			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), logger: Self.logger)
 		}
-		
-		caller.variant = variant
+
+		self.caller.variant = variant
 		self.variant = variant
-	}
-	
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		completion()
-	}
-	
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		refreshProgress.reset()
-		refreshProgress.addToNumberOfTasksAndRemaining(6)
-		
-		refreshAccount(account) { result in
-			switch result {
-			case .success():
-				self.sendArticleStatus(for: account) { _ in
-					self.refreshProgress.completeTask()
-					self.caller.retrieveItemIDs(type: .allForAccount) { result in
-						self.refreshProgress.completeTask()
-						switch result {
-						case .success(let articleIDs):
-							account.markAsRead(Set(articleIDs)) { _ in
-								self.refreshArticleStatus(for: account) { _ in
-									self.refreshProgress.completeTask()
-									self.refreshMissingArticles(account) {
-										DispatchQueue.main.async {
-											self.refreshProgress.reset()
-											completion(.success(()))
-										}
-									}
-								}
-							}
-						case .failure(let error):
-							self.refreshProgress.reset()
-							completion(.failure(error))
-						}
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
+	}
+
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	}
+
+	func refreshAll(for account: Account) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
+
+		refreshProgress.addTasks(6)
+
+		do {
+			try await refreshAccount(account)
+
+			try await sendArticleStatus(for: account)
+			refreshProgress.completeTask()
+
+			let articleIDs = try await caller.retrieveItemIDs(type: .allForAccount)
+			refreshProgress.completeTask()
+
+			_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
+			try? await refreshArticleStatus(for: account)
+			refreshProgress.completeTask()
+
+			await refreshMissingArticles(account)
+			refreshProgress.reset()
+
+		} catch {
+			Self.logger.error("ReaderAPIAccountDelegate: refreshAll 1 — error \(error.localizedDescription)")
+			refreshProgress.reset()
+
+			let wrappedError = AccountError.wrapped(error, account)
+			if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
+
+				self.caller.credentials = basicCredentials
+
+				do {
+					if let apiCredentials = try await caller.validateCredentials(endpoint: endpoint) {
+						try? account.storeCredentials(apiCredentials)
+						caller.credentials = apiCredentials
+						try await refreshAll(for: account)
+						return
 					}
+					throw wrappedError
+				} catch {
+					Self.logger.error("ReaderAPIAccountDelegate: refreshAll 2 — error \(error.localizedDescription)")
+					throw wrappedError
 				}
 
-			case .failure(let error):
-				DispatchQueue.main.async {
-					self.refreshProgress.reset()
-					
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
-						self.caller.credentials = basicCredentials
-						
-						self.caller.validateCredentials(endpoint: endpoint) { result in
-							switch result {
-							case .success(let apiCredentials):
-								if let apiCredentials = apiCredentials {
-									DispatchQueue.main.async {
-										try? account.storeCredentials(apiCredentials)
-										self.caller.credentials = apiCredentials
-										self.refreshAll(for: account, completion: completion)
-									}
-								} else {
-									DispatchQueue.main.async {
-										completion(.failure(wrappedError))
-									}
-								}
-							case .failure:
-								DispatchQueue.main.async {
-									completion(.failure(wrappedError))
-								}
-							}
-						}
-						
-					} else {
-						completion(.failure(wrappedError))
-					}
-				}
+			} else {
+				throw wrappedError
 			}
-			
 		}
-		
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
+	@MainActor func syncArticleStatus(for account: Account) async throws {
 		guard variant != .inoreader else {
-			completion?(.success(()))
 			return
 		}
-		
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
-				}
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+
+		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
+
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
 	}
-	
-	func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Sending article statuses...")
 
-		database.selectForProcessing { result in
+	public func sendArticleStatus(for account: Account) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
-				let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
-				let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
-				let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
+		let syncStatuses = (try await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
-				let group = DispatchGroup()
+		let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
+		let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
+		let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
+		let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
 
-				group.enter()
-				self.sendArticleStatuses(createUnreadStatuses, apiCall: self.caller.createUnreadEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteUnreadStatuses, apiCall: self.caller.deleteUnreadEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(createStarredStatuses, apiCall: self.caller.createStarredEntries) {
-					group.leave()
-				}
-
-				group.enter()
-				self.sendArticleStatuses(deleteStarredStatuses, apiCall: self.caller.deleteStarredEntries) {
-					group.leave()
-				}
-
-				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					completion(.success(()))
-				}
-			}
-
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
-			}
-		}
+		await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+		await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+		await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+		await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
 	}
-	
-	func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		os_log(.debug, log: log, "Refreshing article statuses...")
 
-		let group = DispatchGroup()
+	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: refreshArticleStatus")
+
 		var errorOccurred = false
 
-		group.enter()
-		caller.retrieveItemIDs(type: .unread) { result in
-			switch result {
-			case .success(let articleIDs):
-				self.syncArticleReadState(account: account, articleIDs: articleIDs) {
-					group.leave()
-				}
-			case .failure(let error):
-				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving unread entries failed: %@.", error.localizedDescription)
-				group.leave()
-			}
-			
-		}
-		
-		group.enter()
-		caller.retrieveItemIDs(type: .starred) { result in
-			switch result {
-			case .success(let articleIDs):
-				self.syncArticleStarredState(account: account, articleIDs: articleIDs) {
-					group.leave()
-				}
-			case .failure(let error):
-				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving starred entries failed: %@.", error.localizedDescription)
-				group.leave()
-			}
+		let articleIDs = try await caller.retrieveItemIDs(type: .unread)
 
+		do {
+			try await syncArticleReadState(account: account, articleIDs: articleIDs)
+		} catch {
+			errorOccurred = true
+			Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving unread entries failed: \(error.localizedDescription)")
 		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			if errorOccurred {
-				completion(.failure(ReaderAPIAccountDelegateError.unknown))
-			} else {
-				completion(.success(()))
-			}
+
+		do {
+			let articleIDs = try await caller.retrieveItemIDs(type: .starred)
+			await syncArticleStarredState(account: account, articleIDs: articleIDs)
+		} catch {
+			errorOccurred = true
+			Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving starred entries failed: \(error.localizedDescription)")
 		}
-	}
-	
-	func importOPML(for account:Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> Void) {
-	}
-	
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> Void) {
-		if let folder = account.ensureFolder(with: name) {
-			completion(.success(folder))
-		} else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
+
+		if errorOccurred {
+			throw AccountError.unknown
 		}
-	}
-	
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.renameTag(oldName: folder.name ?? "", newName: name) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					folder.externalID = "user/-/label/\(name)"
-					folder.name = name
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
-		}
-		
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+        let opmlData = try Data(contentsOf: opmlFile)
+        try await caller.importOPML(opmlData: opmlData)
+	}
 
-		let group = DispatchGroup()
-		
-		for feed in folder.topLevelWebFeeds {
-			
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		Self.logger.debug("ReaderAPIAccountDelegate: createFolder — name \(name)")
+
+		guard let folder = account.ensureFolder(with: name) else {
+			Self.logger.error("ReaderAPIAccountDelegate: createFolder failed — account.ensureFolder failed")
+			throw AccountError.invalidParameter
+		}
+		return folder
+	}
+
+	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: renameFolder — name \(folder.nameForDisplay) to \(name)")
+
+		refreshProgress.addTask()
+		defer { refreshProgress.completeTask() }
+
+		do {
+			try await caller.renameTag(oldName: folder.name ?? "", newName: name)
+			folder.externalID = "user/-/label/\(name)"
+			folder.name = name
+		} catch {
+			Self.logger.error("ReaderAPIAccountDelegate: renameFolder — error: \(error.localizedDescription)")
+			throw AccountError.wrapped(error, account)
+		}
+	}
+
+	func removeFolder(for account: Account, with folder: Folder) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: removeFolder — name \(folder.nameForDisplay)")
+
+		for feed in folder.topLevelFeeds {
+
 			if feed.folderRelationship?.count ?? 0 > 1 {
-				
-				if let feedExternalID = feed.externalID {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteTagging(subscriptionID: feedExternalID, tagName: folder.nameForDisplay) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							DispatchQueue.main.async {
-								self.clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
-							}
-						case .failure(let error):
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
-						}
-					}
-				}
-				
-			} else {
-				
+
 				if let subscriptionID = feed.externalID {
-					group.enter()
-					refreshProgress.addToNumberOfTasksAndRemaining(1)
-					caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-						self.refreshProgress.completeTask()
-						group.leave()
-						switch result {
-						case .success:
-							DispatchQueue.main.async {
-								account.clearWebFeedMetadata(feed)
-							}
-						case .failure(let error):
-							os_log(.error, log: self.log, "Remove feed error: %@.", error.localizedDescription)
-						}
+
+					refreshProgress.addTask()
+
+					do {
+						try await caller.deleteTagging(subscriptionID: subscriptionID, tagName: folder.nameForDisplay)
+						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
+						refreshProgress.completeTask()
+					} catch {
+						refreshProgress.completeTask()
+						Self.logger.error("ReaderAPIAccountDelegate: removeFolder — remove feed 1 error: \(error.localizedDescription)")
 					}
-					
 				}
-				
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			if self.variant == .theOldReader {
-				account.removeFolder(folder)
-				completion(.success(()))
+
 			} else {
-				self.caller.deleteTag(folder: folder) { result in
-					switch result {
-					case .success:
-						account.removeFolder(folder)
-						completion(.success(()))
-					case .failure(let error):
-						completion(.failure(error))
+
+				if let subscriptionID = feed.externalID {
+					refreshProgress.addTask()
+
+					do {
+						try await caller.deleteSubscription(subscriptionID: subscriptionID)
+						account.clearFeedMetadata(feed)
+
+						refreshProgress.completeTask()
+					} catch {
+
+						refreshProgress.completeTask()
+						Self.logger.error("ReaderAPIAccountDelegate: removeFolder - remove feed 2 error: \(error.localizedDescription)")
 					}
 				}
 			}
 		}
-		
+
+		if self.variant == .theOldReader {
+			account.removeFolderFromTree(folder)
+		} else {
+			if let folderExternalID = folder.externalID {
+				try await caller.deleteTag(folderExternalID: folderExternalID)
+			}
+			account.removeFolderFromTree(folder)
+		}
 	}
-	
-	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> Void) {
+
+	@discardableResult
+	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — url \(url) name \(name ?? "")")
+
 		guard let url = URL(string: url) else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(2)
-		
-		FeedFinder.find(url: url) { result in
-			self.refreshProgress.completeTask()
 
-			switch result {
-			case .success(let feedSpecifiers):
-				let feedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
-				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: feedSpecifiers) else {
-					self.refreshProgress.reset()
-					completion(.failure(AccountError.createErrorNotFound))
-					return
-				}
+		refreshProgress.addTasks(2)
 
-				self.caller.createSubscription(url: bestFeedSpecifier.urlString, name: name, folder: container as? Folder) { result in
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let subResult):
-						switch subResult {
-						case .created(let subscription):
-							self.createFeed(account: account, subscription: subscription, name: name, container: container, completion: completion)
-						case .notFound:
-							DispatchQueue.main.async {
-								completion(.failure(AccountError.createErrorNotFound))
-							}
-						}
-					case .failure(let error):
-						DispatchQueue.main.async {
-							let wrappedError = AccountError.wrappedError(error: error, account: account)
-							completion(.failure(wrappedError))
-						}
-					}
-					
-				}
-			case .failure:
-				self.refreshProgress.reset()
-				completion(.failure(AccountError.createErrorNotFound))
+		do {
+
+			let feedSpecifiers = try await FeedFinder.find(url: url)
+			refreshProgress.completeTask()
+
+			let filteredFeedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
+			guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: filteredFeedSpecifiers) else {
+				refreshProgress.reset()
+				throw AccountError.createErrorNotFound
 			}
-			
+
+			let subResult = try await caller.createSubscription(url: bestFeedSpecifier.urlString, name: name)
+			refreshProgress.completeTask()
+
+			switch subResult {
+			case .created(let subscription):
+				return try await createFeed(account: account, subscription: subscription, name: name, container: container)
+			case .notFound:
+				throw AccountError.createErrorNotFound
+			}
+
+		} catch {
+			Self.logger.error("ReaderAPIAccountDelegate: createFeed - error: \(error.localizedDescription)")
+			refreshProgress.reset()
+			throw AccountError.createErrorNotFound
 		}
-		
 	}
-	
-	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+
+	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: renameFeed — name \(feed.nameForDisplay) to name \(name)")
+
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
+			assert(feed.externalID != nil)
+			throw AccountError.invalidParameter
 		}
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.renameSubscription(subscriptionID: subscriptionID, newName: name) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					feed.editedName = name
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
+
+		refreshProgress.addTask()
+
+		do {
+			try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
+			feed.editedName = name
+			refreshProgress.completeTask()
+		} catch {
+			Self.logger.error("ReaderAPIAccountDelegate: renameFeed - error: \(error.localizedDescription)")
+			refreshProgress.completeTask()
+			throw AccountError.wrapped(error, account)
 		}
-		
 	}
-	
-	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func removeFeed(account: Account, feed: Feed, container: any Container) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: removeFeed — url \(feed.url)")
+
 		guard let subscriptionID = feed.externalID else {
-			completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-			return
+			assert(feed.externalID != nil)
+			throw AccountError.invalidParameter
 		}
-		
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-		caller.deleteSubscription(subscriptionID: subscriptionID) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					account.clearWebFeedMetadata(feed)
-					account.removeWebFeed(feed)
-					if let folders = account.folders {
-						for folder in folders {
-							folder.removeWebFeed(feed)
-						}
-					}
-					completion(.success(()))
-				}
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
+
+		refreshProgress.addTask()
+		defer { refreshProgress.completeTask()}
+
+		do {
+			try await caller.deleteSubscription(subscriptionID: subscriptionID)
+			account.clearFeedMetadata(feed)
+			account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
+		} catch {
+			Self.logger.error("ReaderAPIAccountDelegate: removeFeed - error: \(error.localizedDescription)")
+			throw AccountError.wrapped(error, account)
 		}
 	}
-	
-	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
-		if from is Account {
-			addWebFeed(for: account, with: feed, to: to, completion: completion)
+
+	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: moveFeed — url \(feed.url)")
+
+		if sourceContainer is Account {
+			try await addFeed(account: account, feed: feed, container: destinationContainer)
 		} else {
+
 			guard
-				let subscriptionId = feed.externalID,
-				let fromTag = (from as? Folder)?.name,
-				let toTag = (to as? Folder)?.name
+				let subscriptionID = feed.externalID,
+				let sourceTag = (sourceContainer as? Folder)?.name,
+				let destinationTag = (destinationContainer as? Folder)?.name
 			else {
-				completion(.failure(ReaderAPIAccountDelegateError.invalidParameter))
-				return
+				throw AccountError.invalidParameter
 			}
-			
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.moveSubscription(subscriptionID: subscriptionId, fromTag: fromTag, toTag: toTag) { result in
-				self.refreshProgress.completeTask()
-				switch result {
-				case .success:
-					from.removeWebFeed(feed)
-					to.addWebFeed(feed)
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
+
+			refreshProgress.addTask()
+			defer { refreshProgress.completeTask() }
+
+			do {
+				try await caller.moveSubscription(subscriptionID: subscriptionID, sourceTag: sourceTag, destinationTag: destinationTag)
+				sourceContainer.removeFeedFromTreeAtTopLevel(feed)
+				destinationContainer.addFeedToTreeAtTopLevel(feed)
+			} catch {
+				Self.logger.error("ReaderAPIAccountDelegate: moveFeed - error: \(error.localizedDescription)")
+				throw error
 			}
 		}
 	}
-	
-	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
+
+	func addFeed(account: Account, feed: Feed, container: any Container) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: addFeed — url \(feed.url)")
+
 		if let folder = container as? Folder, let feedExternalID = feed.externalID {
-			refreshProgress.addToNumberOfTasksAndRemaining(1)
-			caller.createTagging(subscriptionID: feedExternalID, tagName: folder.name ?? "") { result in
-				self.refreshProgress.completeTask()
-				switch result {
-				case .success:
-					DispatchQueue.main.async {
-						self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
-						account.removeWebFeed(feed)
-						folder.addWebFeed(feed)
-						completion(.success(()))
-					}
-				case .failure(let error):
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrappedError(error: error, account: account)
-						completion(.failure(wrappedError))
-					}
-				}
+
+			refreshProgress.addTask()
+
+			do {
+
+				try await caller.createTagging(subscriptionID: feedExternalID, tagName: folder.name ?? "")
+
+				self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
+				account.removeFeedFromTreeAtTopLevel(feed)
+				folder.addFeedToTreeAtTopLevel(feed)
+
+				refreshProgress.completeTask()
+
+			} catch {
+				Self.logger.error("ReaderAPIAccountDelegate: addFeed - error: \(error.localizedDescription)")
+				refreshProgress.completeTask()
+				throw AccountError.wrapped(error, account)
 			}
 		} else {
-			DispatchQueue.main.async {
-				if let account = container as? Account {
-					account.addFeedIfNotInAnyFolder(feed)
-				}
-				completion(.success(()))
+
+			if let account = container as? Account {
+				account.addFeedIfNotInAnyFolder(feed)
 			}
 		}
 	}
-	
-	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-			account.addWebFeed(existingFeed, to: container) { result in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: restoreFeed — url \(feed.url)")
+
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			try await account.addFeed(existingFeed, container: container)
 		} else {
-			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
-		
-	}
-	
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-
-		let group = DispatchGroup()
-		
-		for feed in folder.topLevelWebFeeds {
-			
-			folder.topLevelWebFeeds.remove(feed)
-			
-			group.enter()
-			restoreWebFeed(for: account, feed: feed, container: folder) { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
-					os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
-				}
-			}
-			
-		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			account.addFolder(folder)
-			completion(.success(()))
-		}
-		
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
+	func restoreFolder(for account: Account, folder: Folder) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: restoreFolder — name \(folder.nameForDisplay)")
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
-					}
-				}
-			case .failure(let error):
-				completion(.failure(error))
+		for feed in folder.topLevelFeeds {
+
+			folder.topLevelFeeds.remove(feed)
+
+			do {
+				try await restoreFeed(for: account, feed: feed, container: folder)
+			} catch {
+				Self.logger.error("ReaderAPIAccountDelegate: restoreFolder — error: \(error.localizedDescription)")
 			}
+		}
+
+		account.addFolderToTree(folder)
+	}
+
+	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: markArticles — statusKey \(statusKey.rawValue)")
+
+		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(articles.map { article in
+			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		})
+
+		try await syncDatabase.insertStatuses(syncStatuses)
+		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+			try? await sendArticleStatus(for: account)
 		}
 	}
 
 	func accountDidInitialize(_ account: Account) {
 		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 	}
-	
+
 	func accountWillBeDeleted(_ account: Account) {
 	}
-	
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?, completion: @escaping (Result<Credentials?, Error>) -> Void) {
-		guard let endpoint = endpoint else {
-			completion(.failure(TransportError.noURL))
-			return
+
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		Self.logger.debug("ReaderAPIAccountDelegate: validateCredentials")
+
+		guard let endpoint else {
+			throw TransportError.noURL
 		}
-		
-		let caller = ReaderAPICaller(transport: transport)
+
+		let caller = ReaderAPICaller(transport: transport, logger: Self.logger)
 		caller.credentials = credentials
-		caller.validateCredentials(endpoint: endpoint) { result in
-			DispatchQueue.main.async {
-				completion(result)
-			}
-		}
-		
+		return try await caller.validateCredentials(endpoint: endpoint)
 	}
 
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
 	func suspendNetwork() {
+		Self.logger.debug("ReaderAPIAccountDelegate: suspendNetwork")
+
 		caller.cancelAll()
 	}
-	
+
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		Self.logger.debug("ReaderAPIAccountDelegate: suspendDatabase")
+
+		syncDatabase.suspend()
 	}
-	
+
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
-		database.resume()
+		Self.logger.debug("ReaderAPIAccountDelegate: resume")
+
+		syncDatabase.resume()
+	}
+
+	// MARK: - Notifications
+
+	@objc func progressInfoDidChange(_ notification: Notification) {
+		progressInfo = refreshProgress.progressInfo
 	}
 }
 
 // MARK: Private
 
 private extension ReaderAPIAccountDelegate {
-	
-	func refreshAccount(_ account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		caller.retrieveTags { result in
-			switch result {
-			case .success(let tags):
-				self.refreshProgress.completeTask()
-				self.caller.retrieveSubscriptions { result in
-					self.refreshProgress.completeTask()
-					switch result {
-					case .success(let subscriptions):
-						BatchUpdate.shared.perform {
-							self.syncFolders(account, tags)
-							self.syncFeeds(account, subscriptions)
-							self.syncFeedFolderRelationship(account, subscriptions)
-						}
-						completion(.success(()))
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+
+	@MainActor func refreshAccount(_ account: Account) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount")
+
+		let tags = try await caller.retrieveTags()
+		refreshProgress.completeTask()
+
+		let subscriptions = try await caller.retrieveSubscriptions()
+		refreshProgress.completeTask()
+
+		BatchUpdate.shared.perform {
+			self.syncFolders(account, tags)
+			self.syncFeeds(account, subscriptions)
+			self.syncFeedFolderRelationship(account, subscriptions)
 		}
 	}
 
-	func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
+	@MainActor func syncFolders(_ account: Account, _ tags: [ReaderAPITag]?) {
+		Self.logger.debug("ReaderAPIAccountDelegate: syncFolders")
+
 		guard let tags = tags else { return }
 		assert(Thread.isMainThread)
-		
+
 		let folderTags: [ReaderAPITag]
 		if variant == .inoreader {
-			folderTags = tags.filter{ $0.type == "folder" }
+			folderTags = tags.filter { $0.type == "folder" }
 		} else {
-			folderTags = tags.filter{ $0.tagID.contains("/label/") }
+			folderTags = tags.filter { $0.tagID.contains("/label/") }
 		}
-		
+
 		guard !folderTags.isEmpty else { return }
-		
-		os_log(.debug, log: log, "Syncing folders with %ld tags.", folderTags.count)
 
 		let readerFolderExternalIDs = folderTags.compactMap { $0.tagID }
 
 		// Delete any folders not at Reader
 		if let folders = account.folders {
-			folders.forEach { folder in
+			for folder in folders {
 				if !readerFolderExternalIDs.contains(folder.externalID ?? "") {
-					for feed in folder.topLevelWebFeeds {
-						account.addWebFeed(feed)
+					for feed in folder.topLevelFeeds {
+						account.addFeedToTreeAtTopLevel(feed)
 						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
 					}
-					account.removeFolder(folder)
+					account.removeFolderFromTree(folder)
 				}
 			}
 		}
-		
+
 		let folderExternalIDs: [String] =  {
 			if let folders = account.folders {
 				return folders.compactMap { $0.externalID }
@@ -740,177 +584,164 @@ private extension ReaderAPIAccountDelegate {
 		}()
 
 		// Make any folders Reader has, but we don't
-		folderTags.forEach { tag in
+		for tag in folderTags {
 			if !folderExternalIDs.contains(tag.tagID) {
 				let folder = account.ensureFolder(with: tag.folderName ?? "None")
 				folder?.externalID = tag.tagID
 			}
 		}
-		
 	}
-	
-	func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
-		
+
+	@MainActor func syncFeeds(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
+		Self.logger.debug("ReaderAPIAccountDelegate: syncFeeds — subscriptions.count \(subscriptions?.count ?? -1)")
+
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
 
-		os_log(.debug, log: log, "Syncing feeds with %ld subscriptions.", subscriptions.count)
-		
 		let subFeedIds = subscriptions.map { $0.feedID }
-		
+
 		// Remove any feeds that are no longer in the subscriptions
 		if let folders = account.folders {
 			for folder in folders {
-				for feed in folder.topLevelWebFeeds {
-					if !subFeedIds.contains(feed.webFeedID) {
-						folder.removeWebFeed(feed)
+				for feed in folder.topLevelFeeds {
+					if !subFeedIds.contains(feed.feedID) {
+						folder.removeFeedFromTreeAtTopLevel(feed)
 					}
 				}
 			}
 		}
-		
-		for feed in account.topLevelWebFeeds {
-			if !subFeedIds.contains(feed.webFeedID) {
-				account.clearWebFeedMetadata(feed)
-				account.removeWebFeed(feed)
+
+		for feed in account.topLevelFeeds {
+			if !subFeedIds.contains(feed.feedID) {
+				account.clearFeedMetadata(feed)
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
-		
+
 		// Add any feeds we don't have and update any we do
-		subscriptions.forEach { subscription in
-			
-			if let feed = account.existingWebFeed(withWebFeedID: subscription.feedID) {
+		for subscription in subscriptions {
+			if let feed = account.existingFeed(withFeedID: subscription.feedID) {
 				feed.name = subscription.name
 				feed.editedName = nil
 				feed.homePageURL = subscription.homePageURL
 			} else {
-				let feed = account.createWebFeed(with: subscription.name, url: subscription.url, webFeedID: subscription.feedID, homePageURL: subscription.homePageURL)
+				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)
 				feed.externalID = subscription.feedID
-				account.addWebFeed(feed)
+				account.addFeedToTreeAtTopLevel(feed)
 			}
-			
 		}
-		
 	}
 
 	func syncFeedFolderRelationship(_ account: Account, _ subscriptions: [ReaderAPISubscription]?) {
+		Self.logger.debug("ReaderAPIAccountDelegate: syncFeedFolderRelationship — subscriptions.count \(subscriptions?.count ?? -1)")
+
 		guard let subscriptions = subscriptions else { return }
 		assert(Thread.isMainThread)
-		os_log(.debug, log: log, "Syncing taggings with %ld subscriptions.", subscriptions.count)
-		
+
 		// Set up some structures to make syncing easier
 		let folderDict = externalIDToFolderDictionary(with: account.folders)
 		let taggingsDict = subscriptions.reduce([String: [ReaderAPISubscription]]()) { (dict, subscription) in
 			var taggedFeeds = dict
-			
-			subscription.categories.forEach({ (category) in
+
+			for category in subscription.categories {
 				if var taggedFeed = taggedFeeds[category.categoryId] {
 					taggedFeed.append(subscription)
 					taggedFeeds[category.categoryId] = taggedFeed
 				} else {
 					taggedFeeds[category.categoryId] = [subscription]
 				}
-			})
-			
+			}
+
 			return taggedFeeds
 		}
-		
+
 		// Sync the folders
 		for (folderExternalID, groupedTaggings) in taggingsDict {
 			guard let folder = folderDict[folderExternalID] else { return }
 			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
-			
+
 			// Move any feeds not in the folder to the account
-			for feed in folder.topLevelWebFeeds {
-				if !taggingFeedIDs.contains(feed.webFeedID) {
-					folder.removeWebFeed(feed)
+			for feed in folder.topLevelFeeds {
+				if !taggingFeedIDs.contains(feed.feedID) {
+					folder.removeFeedFromTreeAtTopLevel(feed)
 					clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
-					account.addWebFeed(feed)
+					account.addFeedToTreeAtTopLevel(feed)
 				}
 			}
-			
+
 			// Add any feeds not in the folder
-			let folderFeedIds = folder.topLevelWebFeeds.map { $0.webFeedID }
-			
+			let folderFeedIds = folder.topLevelFeeds.map { $0.feedID }
+
 			for subscription in groupedTaggings {
 				let taggingFeedID = subscription.feedID
 				if !folderFeedIds.contains(taggingFeedID) {
-					guard let feed = account.existingWebFeed(withWebFeedID: taggingFeedID) else {
+					guard let feed = account.existingFeed(withFeedID: taggingFeedID) else {
 						continue
 					}
 					saveFolderRelationship(for: feed, folderExternalID: folderExternalID, feedExternalID: subscription.feedID)
-					folder.addWebFeed(feed)
+					folder.addFeedToTreeAtTopLevel(feed)
 				}
 			}
-			
+
 		}
-	
+
 		let taggedFeedIDs = Set(subscriptions.filter({ !$0.categories.isEmpty }).map { String($0.feedID) })
-		
+
 		// Remove all feeds from the account container that have a tag
-		for feed in account.topLevelWebFeeds {
-			if taggedFeedIDs.contains(feed.webFeedID) {
-				account.removeWebFeed(feed)
+		for feed in account.topLevelFeeds {
+			if taggedFeedIDs.contains(feed.feedID) {
+				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
 	}
-	
+
 	func externalIDToFolderDictionary(with folders: Set<Folder>?) -> [String: Folder] {
 		guard let folders = folders else {
 			return [String: Folder]()
 		}
 
 		var d = [String: Folder]()
-		
+
 		for folder in folders {
 			if let externalID = folder.externalID, d[externalID] == nil {
 				d[externalID] = folder
 			}
 		}
-		
+
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([String], @escaping (Result<Void, Error>) -> Void) -> Void, completion: @escaping (() -> Void)) {
+	func sendArticleStatuses(_ statuses: Set<SyncStatus>, apiCall: ([String]) async throws -> Void) async {
+		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses")
+
 		guard !statuses.isEmpty else {
-			completion()
 			return
 		}
-		
-		let group = DispatchGroup()
-		
+
 		let articleIDs = statuses.compactMap { $0.articleID }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
-			
-			group.enter()
-			apiCall(articleIDGroup) { result in
-				switch result {
-				case .success:
-					self.database.deleteSelectedForProcessing(articleIDGroup.map { $0 } )
-					group.leave()
-				case .failure(let error):
-					os_log(.error, log: self.log, "Article status sync call failed: %@.", error.localizedDescription)
-					self.database.resetSelectedForProcessing(articleIDGroup.map { $0 } )
-					group.leave()
-				}
+
+			do {
+				_ = try await apiCall(articleIDGroup)
+				try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
+			} catch {
+				Self.logger.error("ReaderAPIAccountDelegate: sendArticleStatuses — error \(error.localizedDescription)")
+				try? await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup))
 			}
-			
 		}
-		
-		group.notify(queue: DispatchQueue.main) {
-			completion()
-		}
-		
 	}
-	
-	func clearFolderRelationship(for feed: WebFeed, folderExternalID: String?) {
+
+	func clearFolderRelationship(for feed: Feed, folderExternalID: String?) {
+		Self.logger.debug("ReaderAPIAccountDelegate: clearFolderRelationship — \(feed.url) folderExternalID \(folderExternalID ?? "")")
+
 		guard var folderRelationship = feed.folderRelationship, let folderExternalID = folderExternalID else { return }
 		folderRelationship[folderExternalID] = nil
 		feed.folderRelationship = folderRelationship
 	}
-	
-	func saveFolderRelationship(for feed: WebFeed, folderExternalID: String?, feedExternalID: String) {
+
+	func saveFolderRelationship(for feed: Feed, folderExternalID: String?, feedExternalID: String) {
+		Self.logger.debug("ReaderAPIAccountDelegate: saveFolderRelationship — \(feed.url) folderExternalID \(folderExternalID ?? "") feedExternalID \(feedExternalID)")
 		guard let folderExternalID = folderExternalID else { return }
 		if var folderRelationship = feed.folderRelationship {
 			folderRelationship[folderExternalID] = feedExternalID
@@ -919,134 +750,94 @@ private extension ReaderAPIAccountDelegate {
 			feed.folderRelationship = [folderExternalID: feedExternalID]
 		}
 	}
-	
-	func createFeed( account: Account, subscription sub: ReaderAPISubscription, name: String?, container: Container, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		
-		DispatchQueue.main.async {
-			
-			let feed = account.createWebFeed(with: sub.name, url: sub.url, webFeedID: String(sub.feedID), homePageURL: sub.homePageURL)
-			feed.externalID = String(sub.feedID)
-			
-			account.addWebFeed(feed, to: container) { result in
-				switch result {
-				case .success:
-					if let name = name {
-						self.renameWebFeed(for: account, with: feed, to: name) { result in
-							switch result {
-							case .success:
-								self.initialFeedDownload(account: account, feed: feed, completion: completion)
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-					} else {
-						self.initialFeedDownload(account: account, feed: feed, completion: completion)
-					}
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-			
+
+	@MainActor func createFeed(account: Account, subscription: ReaderAPISubscription, name: String?, container: Container) async throws -> Feed {
+		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — \(subscription.feedID) name \(name ?? "")")
+
+		let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: String(subscription.feedID), homePageURL: subscription.homePageURL)
+		feed.externalID = String(subscription.feedID)
+
+		try await account.addFeed(feed, container: container)
+		if let name {
+			try await renameFeed(for: account, with: feed, to: name)
 		}
-		
+		try await initialFeedDownload(account: account, feed: feed)
+
+		return feed
 	}
 
-	func initialFeedDownload( account: Account, feed: WebFeed, completion: @escaping (Result<WebFeed, Error>) -> Void) {
-		refreshProgress.addToNumberOfTasksAndRemaining(5)
-		
+	@discardableResult
+	func initialFeedDownload( account: Account, feed: Feed) async throws -> Feed {
+		Self.logger.debug("ReaderAPIAccountDelegate: initialFeedDownload — \(feed.url)")
+
+		refreshProgress.addTasks(5)
+
 		// Download the initial articles
-		self.caller.retrieveItemIDs(type: .allForFeed, webFeedID: feed.webFeedID) { result in
-			self.refreshProgress.completeTask()
-			switch result {
-			case .success(let articleIDs):
-				account.markAsRead(Set(articleIDs)) { _ in
-					self.refreshProgress.completeTask()
-					self.refreshArticleStatus(for: account) { _ in
-						self.refreshProgress.completeTask()
-						self.refreshMissingArticles(account) {
-							self.refreshProgress.reset()
-							DispatchQueue.main.async {
-								completion(.success(feed))
-							}
+		let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID)
 
-						}
-					}
+		refreshProgress.completeTask()
 
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-			
-		}
- 
+		_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
+		refreshProgress.completeTask()
+
+		try? await refreshArticleStatus(for: account)
+		refreshProgress.completeTask()
+
+		await refreshMissingArticles(account)
+		refreshProgress.reset()
+
+		return feed
 	}
-	
-	func refreshMissingArticles(_ account: Account, completion: @escaping VoidCompletionBlock) {
-		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDsResult in
 
-			func process(_ fetchedArticleIDs: Set<String>) {
-				guard !fetchedArticleIDs.isEmpty else {
-					completion()
-					return
-				}
-				
-				os_log(.debug, log: self.log, "Refreshing missing articles...")
-				let group = DispatchGroup()
+	func refreshMissingArticles(_ account: Account) async {
+		Self.logger.debug("ReaderAPIAccountDelegate: refreshMissingArticles")
 
-				let articleIDs = Array(fetchedArticleIDs)
-				let chunkedArticleIDs = articleIDs.chunked(into: 150)
+		do {
+			let fetchedArticleIDs = (try? await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()) ?? Set<String>()
 
-				self.refreshProgress.addToNumberOfTasksAndRemaining(chunkedArticleIDs.count - 1)
+			if fetchedArticleIDs.isEmpty {
+				return
+			}
 
-				for chunk in chunkedArticleIDs {
-					group.enter()
-					self.caller.retrieveEntries(articleIDs: chunk) { result in
-						self.refreshProgress.completeTask()
+			Self.logger.info("ReaderAPI: Refreshing missing articles")
 
-						switch result {
-						case .success(let entries):
-							self.processEntries(account: account, entries: entries) {
-								group.leave()
-							}
+			let articleIDs = Array(fetchedArticleIDs)
+			let chunkedArticleIDs = articleIDs.chunked(into: 150)
 
-						case .failure(let error):
-							os_log(.error, log: self.log, "Refresh missing articles failed: %@.", error.localizedDescription)
-							group.leave()
-						}
-					}
-				}
+			refreshProgress.addTasks(chunkedArticleIDs.count + 1)
 
-				group.notify(queue: DispatchQueue.main) {
-					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing articles.")
-					completion()
+			for chunk in chunkedArticleIDs {
+
+				do {
+					let entries = try await caller.retrieveEntries(articleIDs: chunk)
+					refreshProgress.completeTask()
+					await processEntries(account: account, entries: entries)
+				} catch {
+					Self.logger.error("ReaderAPI: Refresh missing articles error: \(error.localizedDescription)")
 				}
 			}
 
-			switch articleIDsResult {
-			case .success(let articleIDs):
-				process(articleIDs)
-			case .failure:
-				self.refreshProgress.completeTask()
-				completion()
-			}
+			refreshProgress.completeTask()
+			Self.logger.info("ReaderAPI: Finished refreshing missing articles")
 		}
 	}
 
-	func processEntries(account: Account, entries: [ReaderAPIEntry]?, completion: @escaping VoidCompletionBlock) {
+	func processEntries(account: Account, entries: [ReaderAPIEntry]?) async {
+		Self.logger.debug("ReaderAPIAccountDelegate: processEntries")
+
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
-		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL } ).mapValues { Set($0) }
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { _ in
-			completion()
-		}
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
+
+		try? await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
-	
+
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
-		
+		Self.logger.debug("ReaderAPIAccountDelegate: mapEntriesToParsedItems — entries.count \(entries?.count ?? 0)")
+
 		guard let entries = entries else {
 			return Set<ParsedItem>()
 		}
-		
+
 		let parsedItems: [ParsedItem] = entries.compactMap { entry in
 			guard let streamID = entry.origin.streamId else {
 				return nil
@@ -1058,7 +849,7 @@ private extension ReaderAPIAccountDelegate {
 				}
 				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
 			}
-			
+
 			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
 							  uniqueID: entry.uniqueID(variant: variant),
 							  feedURL: streamID,
@@ -1068,6 +859,7 @@ private extension ReaderAPIAccountDelegate {
 							  language: nil,
 							  contentHTML: entry.summary.content,
 							  contentText: nil,
+							  markdown: nil,
 							  summary: entry.summary.content,
 							  imageURL: nil,
 							  bannerImageURL: nil,
@@ -1077,107 +869,66 @@ private extension ReaderAPIAccountDelegate {
 							  tags: nil,
 							  attachments: nil)
 		}
-		
+
 		return Set(parsedItems)
-		
+
 	}
-	
-	func syncArticleReadState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
+
+	func syncArticleReadState(account: Account, articleIDs: [String]?) async throws {
+		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleReadState — articleIDs.count \(articleIDs?.count ?? 0)")
+
+		guard let articleIDs else {
 			return
 		}
 
-		database.selectPendingReadStatusArticleIDs() { result in
+		Task { @MainActor in
+			do {
 
-			func process(_ pendingArticleIDs: Set<String>) {
+				let pendingArticleIDs = (try await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-				
-				account.fetchUnreadArticleIDs { articleIDsResult in
-					guard let currentUnreadArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
 
-					let group = DispatchGroup()
-					
-					// Mark articles as unread
-					let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-					group.enter()
-					account.markAsUnread(deltaUnreadArticleIDs) { _ in
-						group.leave()
-					}
+				let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
 
-					// Mark articles as read
-					let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsRead(deltaReadArticleIDs) { _ in
-						group.leave()
-					}
-					
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
+				// Mark articles as unread
+				let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+				_ = try? await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
+
+				// Mark articles as read
+				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+				_ = try? await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
+
+			} catch {
+				Self.logger.error("ReaderAPIAccountDelegate: syncArticleReadState — error \(error.localizedDescription)")
 			}
-			
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Read Status failed: %@.", error.localizedDescription)
-			}
-			
 		}
-		
 	}
-	
-	func syncArticleStarredState(account: Account, articleIDs: [String]?, completion: @escaping (() -> Void)) {
-		guard let articleIDs = articleIDs else {
-			completion()
+
+	func syncArticleStarredState(account: Account, articleIDs: [String]?) async {
+		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStarredState — articleIDs.count \(articleIDs?.count ?? 0)")
+
+		guard let articleIDs else {
 			return
 		}
 
-		database.selectPendingStarredStatusArticleIDs() { result in
+		do {
 
-			func process(_ pendingArticleIDs: Set<String>) {
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+			let pendingArticleIDs = (try await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
-				account.fetchStarredArticleIDs { articleIDsResult in
-					guard let currentStarredArticleIDs = try? articleIDsResult.get() else {
-						return
-					}
+			let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
-					let group = DispatchGroup()
-					
-					// Mark articles as starred
-					let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-					group.enter()
-					account.markAsStarred(deltaStarredArticleIDs) { _ in
-						group.leave()
-					}
+			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
 
-					// Mark articles as unstarred
-					let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-					group.enter()
-					account.markAsUnstarred(deltaUnstarredArticleIDs) { _ in
-						group.leave()
-					}
+			// Mark articles as starred
+			let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+			_ = try? await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
-					group.notify(queue: DispatchQueue.main) {
-						completion()
-					}
-				}
-			}
-			
-			switch result {
-			case .success(let pendingArticleIDs):
-				process(pendingArticleIDs)
-			case .failure(let error):
-				os_log(.error, log: self.log, "Sync Article Starred Status failed: %@.", error.localizedDescription)
-			}
+			// Mark articles as unstarred
+			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+			_ = try? await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
+		} catch {
+			Self.logger.error("ReaderAPIAccountDelegate: syncArticleStarredState — error \(error.localizedDescription)")
 		}
-		
 	}
-
 }

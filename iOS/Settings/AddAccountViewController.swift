@@ -14,14 +14,14 @@ protocol AddAccountDismissDelegate: UIViewController {
 	func dismiss()
 }
 
-class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
+final class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
 
 	private enum AddAccountSections: Int, CaseIterable {
 		case local = 0
 		case icloud
 		case web
 		case selfhosted
-		
+
 		var sectionHeader: String {
 			switch self {
 			case .local:
@@ -34,7 +34,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 				return NSLocalizedString("Self-hosted", comment: "Self hosted Account")
 			}
 		}
-		
+
 		var sectionFooter: String {
 			switch self {
 			case .local:
@@ -47,7 +47,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 				return NSLocalizedString("Self-hosted accounts sync your feeds across all your devices", comment: "Self hosted Account")
 			}
 		}
-		
+
 		var sectionContent: [AccountType] {
 			switch self {
 			case .local:
@@ -65,35 +65,31 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			}
 		}
 	}
-	
-	override func viewDidLoad() {
-		super.viewDidLoad()
-	}
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		return AddAccountSections.allCases.count
 	}
-	
+
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		if section == AddAccountSections.local.rawValue {
 			return AddAccountSections.local.sectionContent.count
 		}
-		
+
 		if section == AddAccountSections.icloud.rawValue {
 			return AddAccountSections.icloud.sectionContent.count
 		}
-		
+
 		if section == AddAccountSections.web.rawValue {
 			return AddAccountSections.web.sectionContent.count
 		}
-		
+
 		if section == AddAccountSections.selfhosted.rawValue {
 			return AddAccountSections.selfhosted.sectionContent.count
 		}
 
 		return 0
 	}
-	
+
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
 		switch section {
 		case AddAccountSections.local.rawValue:
@@ -108,7 +104,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			return nil
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
 		switch section {
 		case AddAccountSections.local.rawValue:
@@ -123,24 +119,24 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			return nil
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCell(withIdentifier: "SettingsAccountTableViewCell", for: indexPath) as! SettingsComboTableViewCell
-		
+
 		switch indexPath.section {
 		case AddAccountSections.local.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.local.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: .onMyMac)
+			cell.comboImage?.image = Assets.accountImage(.onMyMac)
 		case AddAccountSections.icloud.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.icloud.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.icloud.sectionContent[indexPath.row])
+			cell.comboImage?.image = Assets.accountImage(AddAccountSections.icloud.sectionContent[indexPath.row])
 			if AppDefaults.shared.isDeveloperBuild || AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit }) {
 				cell.isUserInteractionEnabled = false
 				cell.comboNameLabel?.isEnabled = false
 			}
 		case AddAccountSections.web.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.web.sectionContent[indexPath.row])
+			cell.comboImage?.image = Assets.accountImage(AddAccountSections.web.sectionContent[indexPath.row])
 			let type = AddAccountSections.web.sectionContent[indexPath.row]
 			if (type == .feedly || type == .inoreader) && AppDefaults.shared.isDeveloperBuild {
 				cell.isUserInteractionEnabled = false
@@ -148,16 +144,16 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			}
 		case AddAccountSections.selfhosted.rawValue:
 			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].localizedAccountName()
-			cell.comboImage?.image = AppAssets.image(for: AddAccountSections.selfhosted.sectionContent[indexPath.row])
-			
+			cell.comboImage?.image = Assets.accountImage(AddAccountSections.selfhosted.sectionContent[indexPath.row])
+
 		default:
 			return cell
 		}
 		return cell
 	}
-	
+
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-		
+
 		switch indexPath.section {
 		case AddAccountSections.local.rawValue:
 			let type = AddAccountSections.local.sectionContent[indexPath.row]
@@ -175,7 +171,7 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			return
 		}
 	}
-	
+
 	private func presentController(for accountType: AccountType) {
 		switch accountType {
 		case .onMyMac:
@@ -216,33 +212,32 @@ class AddAccountViewController: UITableViewController, AddAccountDismissDelegate
 			present(navController, animated: true)
 		}
 	}
-	
+
 	func dismiss() {
 		navigationController?.popViewController(animated: false)
 	}
-	
+
 }
 
 extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
-	
+
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
 		let rootViewController = view.window?.rootViewController
-		
-		account.refreshAll { result in
-			switch result {
-			case .success:
-				break
-			case .failure(let error):
+
+		Task { @MainActor in
+			do {
+				try await account.refreshAll()
+			} catch {
 				guard let viewController = rootViewController else {
 					return
 				}
 				viewController.presentError(error)
 			}
 		}
-		
+
 		dismiss()
 	}
-	
+
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {
 		presentError(error)
 	}

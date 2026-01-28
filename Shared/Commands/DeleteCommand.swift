@@ -13,18 +13,17 @@ import Account
 import Articles
 
 final class DeleteCommand: UndoableCommand {
-
 	let treeController: TreeController?
 	let undoManager: UndoManager
 	let undoActionName: String
 	var redoActionName: String {
-		return undoActionName
+		undoActionName
 	}
-	let errorHandler: (Error) -> ()
+	let errorHandler: (Error) -> Void
 
 	private let itemSpecifiers: [SidebarItemSpecifier]
 
-	init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> ()) {
+	@MainActor init?(nodesToDelete: [Node], treeController: TreeController? = nil, undoManager: UndoManager, errorHandler: @escaping (Error) -> Void) {
 
 		guard DeleteCommand.canDelete(nodesToDelete) else {
 			return nil
@@ -38,7 +37,7 @@ final class DeleteCommand: UndoableCommand {
 		self.undoManager = undoManager
 		self.errorHandler = errorHandler
 
-		let itemSpecifiers = nodesToDelete.compactMap{ SidebarItemSpecifier(node: $0, errorHandler: errorHandler) }
+		let itemSpecifiers = nodesToDelete.compactMap { SidebarItemSpecifier(node: $0, errorHandler: errorHandler) }
 		guard !itemSpecifiers.isEmpty else {
 			return nil
 		}
@@ -46,28 +45,31 @@ final class DeleteCommand: UndoableCommand {
 	}
 
 	func perform() {
-		
+
 		let group = DispatchGroup()
-		itemSpecifiers.forEach {
+		for itemSpecifier in itemSpecifiers {
 			group.enter()
-			$0.delete() {
+			itemSpecifier.delete {
 				group.leave()
 			}
 		}
-	
+
 		group.notify(queue: DispatchQueue.main) {
-			self.treeController?.rebuild()
-			self.registerUndo()
+			MainActor.assumeIsolated {
+				self.treeController?.rebuild()
+				self.registerUndo()
+			}
 		}
-		
 	}
-	
+
 	func undo() {
-		itemSpecifiers.forEach { $0.restore() }
+		for itemSpecifier in itemSpecifiers {
+			itemSpecifier.restore()
+		}
 		registerRedo()
 	}
 
-	static func canDelete(_ nodes: [Node]) -> Bool {
+	@MainActor static func canDelete(_ nodes: [Node]) -> Bool {
 
 		// Return true if all nodes are feeds and folders.
 		// Any other type: return false.
@@ -77,10 +79,7 @@ final class DeleteCommand: UndoableCommand {
 		}
 
 		for node in nodes {
-			if let _ = node.representedObject as? WebFeed {
-				continue
-			}
-			if let _ = node.representedObject as? Folder {
+			if node.representedObject is Feed || node.representedObject is Folder {
 				continue
 			}
 			return false
@@ -93,14 +92,14 @@ final class DeleteCommand: UndoableCommand {
 // Remember as much as we can now about the items being deleted,
 // so they can be restored to the correct place.
 
-private struct SidebarItemSpecifier {
+@MainActor private struct SidebarItemSpecifier {
 
 	private weak var account: Account?
 	private let parentFolder: Folder?
 	private let folder: Folder?
-	private let webFeed: WebFeed?
+	private let feed: Feed?
 	private let path: ContainerPath
-	private let errorHandler: (Error) -> ()
+	private let errorHandler: (Error) -> Void
 
 	private var container: Container? {
 		if let parentFolder = parentFolder {
@@ -112,23 +111,21 @@ private struct SidebarItemSpecifier {
 		return nil
 	}
 
-	init?(node: Node, errorHandler: @escaping (Error) -> ()) {
+	@MainActor init?(node: Node, errorHandler: @escaping (Error) -> Void) {
 
 		var account: Account?
 
 		self.parentFolder = node.parentFolder()
 
-		if let webFeed = node.representedObject as? WebFeed {
-			self.webFeed = webFeed
+		if let feed = node.representedObject as? Feed {
+			self.feed = feed
 			self.folder = nil
-			account = webFeed.account
-		}
-		else if let folder = node.representedObject as? Folder {
-			self.webFeed = nil
+			account = feed.account
+		} else if let folder = node.representedObject as? Folder {
+			self.feed = nil
 			self.folder = folder
 			account = folder.account
-		}
-		else {
+		} else {
 			return nil
 		}
 		if account == nil {
@@ -137,61 +134,54 @@ private struct SidebarItemSpecifier {
 
 		self.account = account!
 		self.path = ContainerPath(account: account!, folders: node.containingFolders())
-		
+
 		self.errorHandler = errorHandler
-		
+
 	}
 
 	func delete(completion: @escaping () -> Void) {
-
-		if let webFeed = webFeed {
-			
+		if let feed {
 			guard let container = path.resolveContainer() else {
 				completion()
 				return
 			}
-			
+
 			BatchUpdate.shared.start()
-			account?.removeWebFeed(webFeed, from: container) { result in
+			account?.removeFeed(feed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
-		} else if let folder = folder {
-			
+
+		} else if let folder {
 			BatchUpdate.shared.start()
 			account?.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
-			
 		}
 	}
 
 	func restore() {
-
-		if let _ = webFeed {
-			restoreWebFeed()
-		}
-		else if let _ = folder {
+		if feed != nil {
+			restoreFeed()
+		} else if folder != nil {
 			restoreFolder()
 		}
 	}
 
-	private func restoreWebFeed() {
+	private func restoreFeed() {
 
-		guard let account = account, let feed = webFeed, let container = path.resolveContainer() else {
+		guard let account = account, let feed = feed, let container = path.resolveContainer() else {
 			return
 		}
-		
+
 		BatchUpdate.shared.start()
-		account.restoreWebFeed(feed, container: container) { result in
+		account.restoreFeed(feed, container: container) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-		
 	}
 
 	private func restoreFolder() {
@@ -199,30 +189,27 @@ private struct SidebarItemSpecifier {
 		guard let account = account, let folder = folder else {
 			return
 		}
-		
+
 		BatchUpdate.shared.start()
 		account.restoreFolder(folder) { result in
 			BatchUpdate.shared.end()
 			self.checkResult(result)
 		}
-		
 	}
 
 	private func checkResult(_ result: Result<Void, Error>) {
-		
+
 		switch result {
 		case .success:
 			break
 		case .failure(let error):
 			errorHandler(error)
 		}
-
 	}
-	
 }
 
-private extension Node {
-	
+@MainActor private extension Node {
+
 	func parentFolder() -> Folder? {
 
 		guard let parentNode = self.parent else {
@@ -245,8 +232,7 @@ private extension Node {
 		while nomad != nil {
 			if let folder = nomad!.representedObject as? Folder {
 				folders += [folder]
-			}
-			else {
+			} else {
 				break
 			}
 			nomad = nomad!.parent
@@ -254,7 +240,6 @@ private extension Node {
 
 		return folders.reversed()
 	}
-
 }
 
 private struct DeleteActionName {
@@ -265,19 +250,17 @@ private struct DeleteActionName {
 	private static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
 	private static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
 
-	static func name(for nodes: [Node]) -> String? {
+	@MainActor static func name(for nodes: [Node]) -> String? {
 
 		var numberOfFeeds = 0
 		var numberOfFolders = 0
 
 		for node in nodes {
-			if let _ = node.representedObject as? WebFeed {
+			if node.representedObject is Feed {
 				numberOfFeeds += 1
-			}
-			else if let _ = node.representedObject as? Folder {
+			} else if node.representedObject is Folder {
 				numberOfFolders += 1
-			}
-			else {
+			} else {
 				return nil // Delete only Feeds and Folders.
 			}
 		}

@@ -9,7 +9,6 @@
 import SwiftUI
 
 struct SizeCategories {
-	
 	let largeSizeCategories: [ContentSizeCategory] = [.extraExtraLarge,
 													  .extraExtraExtraLarge,
 													  .accessibilityMedium,
@@ -17,10 +16,8 @@ struct SizeCategories {
 													  .accessibilityExtraLarge,
 													  .accessibilityExtraExtraLarge,
 													  .accessibilityExtraExtraExtraLarge]
-	
-	
+
 	func isSizeCategoryLarge(category: ContentSizeCategory) -> Bool {
-		largeSizeCategories.filter{ $0 == category }.count == 1
+		largeSizeCategories.filter { $0 == category }.count == 1
 	}
-	
 }

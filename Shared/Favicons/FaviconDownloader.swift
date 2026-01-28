@@ -20,7 +20,8 @@ extension Notification.Name {
 	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-final class FaviconDownloader {
+@MainActor final class FaviconDownloader {
+	static let shared = FaviconDownloader()
 
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 
@@ -30,7 +31,7 @@ final class FaviconDownloader {
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
 
-	private var homePageToFaviconURLCache = [String: String]() //homePageURL: faviconURL
+	private var homePageToFaviconURLCache = [String: String]() // homePageURL: faviconURL
 	private var homePageToFaviconURLCachePath: String
 	private var homePageToFaviconURLCacheDirty = false {
 		didSet {
@@ -47,14 +48,15 @@ final class FaviconDownloader {
 	}
 
 	private let queue: DispatchQueue
-	private var cache = [WebFeed: IconImage]() // faviconURL: RSImage
+	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
 	struct UserInfoKey {
 		static let faviconURL = "faviconURL"
 	}
 
-	init(folder: String) {
-
+	init() {
+		let folderURL = AppConfig.cacheSubfolder(named: "Favicons")
+		let folder = folderURL.path
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
@@ -71,21 +73,24 @@ final class FaviconDownloader {
 	// MARK: - API
 
 	func resetCache() {
-		cache = [WebFeed: IconImage]()
+		cache = [Feed: IconImage]()
 	}
-	
-	func favicon(for webFeed: WebFeed) -> IconImage? {
 
+	func favicon(for feed: Feed) -> IconImage? {
 		assert(Thread.isMainThread)
 
-		var homePageURL = webFeed.homePageURL
-		if let faviconURL = webFeed.faviconURL {
+		if shouldSkipDownloadingFavicon(feed: feed) {
+			return nil
+		}
+
+		var homePageURL = feed.homePageURL
+		if let faviconURL = feed.faviconURL {
 			return favicon(with: faviconURL, homePageURL: homePageURL)
 		}
 
 		if homePageURL == nil {
 			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
-			if let feedURL = URL(string: webFeed.url), let scheme = feedURL.scheme, let host = feedURL.host {
+			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
 				homePageURL = scheme + "://" + host + "/"
 			}
 		}
@@ -95,21 +100,18 @@ final class FaviconDownloader {
 
 		return nil
 	}
-	
-	func faviconAsIcon(for webFeed: WebFeed) -> IconImage? {
-		
-		if let image = cache[webFeed] {
+
+	func faviconAsIcon(for feed: Feed) -> IconImage? {
+
+		if let image = cache[feed] {
 			return image
 		}
-		
-		if let iconImage = favicon(for: webFeed), let imageData = iconImage.image.dataRepresentation() {
-			if let scaledImage = RSImage.scaledForIcon(imageData) {
-				let scaledIconImage = IconImage(scaledImage)
-				cache[webFeed] = scaledIconImage
-				return scaledIconImage
-			}
+
+		if let iconImage = favicon(for: feed) {
+			cache[feed] = iconImage
+			return iconImage
 		}
-		
+
 		return nil
 	}
 
@@ -141,7 +143,7 @@ final class FaviconDownloader {
 			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 
 			if let firstIconURL = faviconURLs.first {
-				let _ = self.favicon(with: firstIconURL, homePageURL: url)
+				_ = self.favicon(with: firstIconURL, homePageURL: url)
 				self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
 			}
 		}
@@ -159,11 +161,11 @@ final class FaviconDownloader {
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
 			return
 		}
-		guard let _ = singleFaviconDownloader.iconImage else {
+		guard singleFaviconDownloader.iconImage != nil else {
 			if let faviconURLs = remainingFaviconURLs[homePageURL] {
 				if let nextIconURL = faviconURLs.first {
-					let _ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)
-					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst();
+					_ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)
+					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst()
 				} else {
 					remainingFaviconURLs[homePageURL] = nil
 
@@ -199,7 +201,7 @@ final class FaviconDownloader {
 			saveHomePageToFaviconURLCache()
 		}
 	}
-	
+
 	@objc func saveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
 		if homePageURLsWithNoFaviconURLCacheDirty {
 			saveHomePageURLsWithNoFaviconURLCache()
@@ -208,6 +210,12 @@ final class FaviconDownloader {
 }
 
 private extension FaviconDownloader {
+
+	static let specialCasesToSkip = [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
+
+	func shouldSkipDownloadingFavicon(feed: Feed) -> Bool {
+		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
+	}
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
 
@@ -232,7 +240,7 @@ private extension FaviconDownloader {
 	func faviconDownloader(withURL faviconURL: String, homePageURL: String?) -> SingleFaviconDownloader {
 
 		var firstTimeSeeingHomepageURL = false
-		
+
 		if let homePageURL = homePageURL, self.homePageToFaviconURLCache[homePageURL] == nil {
 			self.homePageToFaviconURLCache[homePageURL] = faviconURL
 			self.homePageToFaviconURLCacheDirty = true
@@ -303,7 +311,7 @@ private extension FaviconDownloader {
 			assertionFailure(error.localizedDescription)
 		}
 	}
-	
+
 	func saveHomePageURLsWithNoFaviconURLCache() {
 		homePageURLsWithNoFaviconURLCacheDirty = false
 

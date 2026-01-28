@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+  <title>Florens Verschelde</title>
+  <id>urn:uuid:c6e9028c-f392-5f5f-9a97-3267a03f1956</id>
+  <link href="https://fvsch.com/feed.xml" rel="self" type="application/atom+xml"/>
+  <link href="https://fvsch.com" rel="alternate" type="text/html"/>
+  <updated>2021-01-11T20:25:38+01:00</updated>
+  <icon>https://fvsch.com/assets/images/icon.png?v=ql0r5y</icon>
+  <author>
+    <name>Florens Verschelde</name>
+  </author>
+  <entry xml:lang="en">
+    <id>urn:uuid:4baef108-e14e-59e6-935a-52224a141d9e</id>
+    <link rel="alternate" type="text/html" href="https://fvsch.com/raw-power-mac"/>
+    <title>RAW Power 3: an affordable digital photo development app for macOS</title>
+    <published>2021-01-11T00:00:00+01:00</published>
+    <updated>2021-01-11T00:00:00+01:00</updated>
+    <summary>My personal review of RAW Power, a photo editing app for macOS and iOS that is shaping up to be an alternative to Lightroom or Aperture.</summary>
+    <content type="html">&lt;p&gt;I used to dabble in digital photography, even attended a series of workshops for a year. I’m still amateur level, I think, and haven’t shot much in the past 7 years or so. Still, I have a few thousand pictures, some edited and some not at all, that sit in my archives, and I’d like to edit and publish at least some of those.&lt;/p&gt;
+&lt;p&gt;Only problem: I didn’t have any photo management and development software I’m comfortable with.&lt;/p&gt;
+&lt;p&gt;I used to own Lightroom 3 and 4. I still do, but they probably don’t install on current Macs, and Adobe made it hard if not impossible to get a license for the current Lightroom Classic app without paying 20 euros per month. So I’ve been looking for alternatives.&lt;/p&gt;
+&lt;article-nav&gt;&lt;/article-nav&gt;
+&lt;h2&gt;&lt;span&gt;Rounding up photo editors&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;Here’s a list of what I found:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Capture One, the priciest option for pros (around €500).&lt;/li&gt;
+&lt;li&gt;DxO PhotoLab, more affordable (€130); I’ve heard some good things.&lt;/li&gt;
+&lt;li&gt;ON1 Photo Raw (€102), not a good option for my M1 Mac&lt;sup id=&quot;fnref1:1&quot;&gt;&lt;a href=&quot;#fn:1&quot; class=&quot;footnote-ref&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/li&gt;
+&lt;li&gt;Exposure X6 (€110), which seems interesting.&lt;/li&gt;
+&lt;li&gt;Skylum Luminar (€90 standalone, €150 with their new “AI” tools), which was slow when I tried it a few years back but might have improved since.&lt;/li&gt;
+&lt;li&gt;Darkroom (€88, or a €22/year subscription), seems to integrate with the Apple Photos library and provide a bunch of tools in a nicely designed package &lt;sup id=&quot;fnref1:2&quot;&gt;&lt;a href=&quot;#fn:2&quot; class=&quot;footnote-ref&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/li&gt;
+&lt;li&gt;Photoscape X (€44), seems marketed for the Instagram crowd but could be powerful anyway.&lt;/li&gt;
+&lt;li&gt;Picktorial ($5/month subscription).&lt;/li&gt;
+&lt;li&gt;Apple’s own Photos app (included with macOS), which I tried briefly, but I don’t want to import my photos from my archive folders on external drives and into their Photos Library; I hear the development tools are a bit limited too.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I also got Affinity Photo and Pixelmator Pro, each for around €50. While they can do some RAW development, and have some great features, they’re closer to Photoshop in spirit. So not my cup of tea. They also don’t include a library browser or manager.&lt;/p&gt;
+&lt;p&gt;There are a few open-source options too, such as Darktable, RawTherapee and LightZone. I didn’t consider them because they tend to have limited macOS support&lt;sup id=&quot;fnref1:3&quot;&gt;&lt;a href=&quot;#fn:3&quot; class=&quot;footnote-ref&quot;&gt;3&lt;/a&gt;&lt;/sup&gt;, a steep learning curve, and questionable usability&lt;sup id=&quot;fnref1:4&quot;&gt;&lt;a href=&quot;#fn:4&quot; class=&quot;footnote-ref&quot;&gt;4&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;p&gt;Finally, after reading &lt;a href=&quot;http://austinmann.com/trek/iphone-proraw&quot;&gt;this review of the Apple ProRAW format&lt;/a&gt;, I discovered a small macOS and iOS app called &lt;a href=&quot;https://gentlemencoders.com/raw-power-for-macos/&quot;&gt;RAW Power&lt;/a&gt;. It piqued my interest since it’s cheap (around €30), runs natively on Apple’s new CPUs, and looks similar in spirit to early versions of Lightroom and Aperture.&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;The RAW Power UI&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;RAW Power is developed by Nik Bhatt, who worked for years at Apple on the Aperture team. A bunch of user comments call RAW Power a spiritual successor to Aperture, though at this time its feature set seems more limited (with a few exceptions where it’s more up-to-date).&lt;/p&gt;
+&lt;p&gt;It was originally a development extension for Apple Photos, before gaining a photo library module in version 2 (improved further in version 3), making it usable as a standalone app as well. You can get a trial version on the app’s website, which is fully functional and adds a watermark to exported photos.&lt;/p&gt;
+&lt;p&gt;Before trying it out, I took an hour to watch &lt;a href=&quot;https://www.youtube.com/watch?v=ME229JqbM48&amp;amp;list=PLgF1Bfd-tVLa8sizMIG2g42x6CdPUmHsb&quot;&gt;this video tutorial series recorded by Nik&lt;/a&gt;. I especially liked this one, &lt;a href=&quot;https://www.youtube.com/watch?v=ONNR8CDgQEc&quot;&gt;RAW Power 3 for Mac: Rating and Filtering Workflow&lt;/a&gt;. That workflow is not super specific to RAW Power, and could be reproduced in several apps, but sharing this method was a nice touch.&lt;/p&gt;
+&lt;p&gt;The RAW Power UI looks like this:&lt;/p&gt;
+&lt;figure class=&quot;full&quot;&gt;&lt;img src=&quot;https://fvsch.com/articles/raw-power-mac/rawpower-ui.png&quot; width=&quot;650&quot; height=&quot;408&quot; alt=&quot;Screenshot of the RAW Power app.&quot;&gt;&lt;/figure&gt;
+&lt;p&gt;The UI can be customized a bit, and includes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Top: a toolbar that can be customized and rearranged&lt;/li&gt;
+&lt;li&gt;Left: a library explorer showing folders or Apple Photos albums&lt;/li&gt;
+&lt;li&gt;Center: the main photo view&lt;/li&gt;
+&lt;li&gt;Bottom a tab strip&lt;/li&gt;
+&lt;li&gt;Right: a sidebar which shows either photo metadata or RAW development tools&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All those UI components can be hidden or toggled. And if you hide the main photo viewer, the thumbnail strip becomes a bigger thumbnail grid.&lt;/p&gt;
+&lt;p&gt;This lets you customize your workspace however you want, but sometimes I find that I want to go from one UI configuration to another, and clicking 3 buttons to change things one way and then 3 buttons to change it back is a bit painful.&lt;sup id=&quot;fnref1:5&quot;&gt;&lt;a href=&quot;#fn:5&quot; class=&quot;footnote-ref&quot;&gt;5&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;On the customizing front, you can also reorder and show or hide each of the RAW “adjustments” modules that appear in the Edit sidebar. The interface for that would benefit from some improvements though, since you need to use different menus to add a module, hide a module, and reorder modules; it would be possible to unify all that in a single, more intuitive config view.&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&quot;https://fvsch.com/articles/raw-power-mac/rawpower-adjustment-order.png&quot; width=&quot;505&quot; height=&quot;390&quot; alt=&quot;The Reorder Adjustments dialogue&quot;&gt;&lt;/figure&gt;
+&lt;p&gt;Personally, I’m missing a way to quickly show the photo’s metadata when I’m in Edit mode&lt;sup id=&quot;fnref1:6&quot;&gt;&lt;a href=&quot;#fn:6&quot; class=&quot;footnote-ref&quot;&gt;6&lt;/a&gt;&lt;/sup&gt;. I have to switch the sidebar from Edit to Info, which takes a good second for some reason, on top of making me lose my place. I’d also love to keep a histogram in Info mode.&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;The adjustment tools&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;The adjustment sidebar has a bunch of good tools:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A good histogram with black/white and color clipping highlighting.&lt;/li&gt;
+&lt;li&gt;White Balance (with a decent Auto option and manual control).&lt;/li&gt;
+&lt;li&gt;A good Crop tool (I like being able to control the precise pixel size and coordinates, it came in handy working on a photo series where I’m trying to align 20 pictures taken from the same spot!), and a Perspective tool that is maybe less intuitive.&lt;/li&gt;
+&lt;li&gt;Basics/Tone/Enhance has the usual suspects: exposure, brightness, highlights and shadows, clarity…&lt;/li&gt;
+&lt;li&gt;Black &amp;amp; White, Channel Mixer, HSL Color.&lt;/li&gt;
+&lt;li&gt;Curves, Levels, Vignette.&lt;/li&gt;
+&lt;li&gt;A LUT tool that lets you apply predefined styles, including some film simulation or black and white ones. I wasn’t familiar with the “LUT” term, but apparently LUTs are a kind of color map that pairs each input color to its destination color, and there are a bunch of LUTs available online from different providers, with both free and paid options.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure&gt;&lt;img src=&quot;https://fvsch.com/articles/raw-power-mac/rawpower-basics.png&quot; width=&quot;300&quot; height=&quot;390&quot; alt=&quot;The Basics, Tone and Enhance controls&quot;&gt;&lt;figcaption&gt;Not sure why Brightness is a “Basics” control but “Exposure” is a “Tone” control. Or why Deepen and Lighten are in “Enhance” and not “Tone”, or why “Sharpen” is in a different category (with a single slider) and not in “Enhance”. So I’ve reordered those modules to put them together.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Things I like about the adjustment sliders in RAW Power:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;It’s easy to see which slider you tweaked (used the system highlight color, which is pink in my case) and which uses the default value.&lt;/li&gt;
+&lt;li&gt;Double-click resets to the default value.&lt;/li&gt;
+&lt;li&gt;The numbers are text inputs, and can be edited manually for precision.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Some things I don’t like:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Sometimes text inputs require two clicks to get focus. Not sure if it’s a bug-bug, or a usability bug somewhere.&lt;/li&gt;
+&lt;li&gt;Some text inputs support the Up and Down keys to increment or decrement the value, and others don’t, depending on the module.&lt;/li&gt;
+&lt;li&gt;Based on system settings, it decided I want a comma as the decimal separator, and wouldn’t accept input like &lt;code&gt;1.5&lt;/code&gt; (resetting to the default value instead). I worked around it by changing my system settings, but being more forgiving and handing both dots and commas as decimal separators would be better.&lt;/li&gt;
+&lt;li&gt;The way out of bounds values are handled (if I input &lt;code&gt;5&lt;/code&gt; and the maximum is &lt;code&gt;2.0&lt;/code&gt;, please use &lt;code&gt;2.0&lt;/code&gt; instead of discarding my input).&lt;/li&gt;
+&lt;li&gt;Slider values are single digit numbers plus two decimals, e.g. &lt;code&gt;1.00&lt;/code&gt; or &lt;code&gt;-2.54&lt;/code&gt;. Most of them go from &lt;code&gt;0.00&lt;/code&gt; to &lt;code&gt;1.00&lt;/code&gt;, and would be easier to work with if they were shown as integers between &lt;code&gt;0&lt;/code&gt; and &lt;code&gt;100&lt;/code&gt; (same precision, but you don’t have to type a decimal separator all the time).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Arguably, I’m finicky. That’s the problem when you use and review software as a UI developer &amp;amp; designer. 😛&lt;/p&gt;
+&lt;p&gt;Overall I like the tools, they’re rather powerful. There are a few useful presets you can apply, and a couple “Auto Enhance” features which look decent but not quite magical.&lt;/p&gt;
+&lt;p&gt;One tool which is both powerful and a bit confusing is the RAW Processing adjustment. It shows 9 sliders and a couple options:&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&quot;https://fvsch.com/articles/raw-power-mac/rawpower-raw-processing.png&quot; width=&quot;300&quot; height=&quot;315&quot; alt=&quot;The RAW Processing controls, with sliders such as Boost, Black Point, Luma Nose, Color Noise, Moiré, and RAW Sharpen&quot;&gt;&lt;/figure&gt;
+&lt;p&gt;The noise controls are part of this first RAW processing pass. I haven’t worked with very noisy images yet, so I’m not sure if they’re good. The Color Noise correction seems to work well.&lt;/p&gt;
+&lt;p&gt;The “Boost” feature is interesting. It’s set at its maximum by default. If you move it back to 0%, you get a much more washed-out, lifeless picture, like you get in some RAW processing software out of the box (especially in some of the open-source ones, when they’re not set up to apply some default enhancements). Comparing the results at 0%, 50% and 100% Boost, I tend to like what it does.&lt;/p&gt;
+&lt;figure class=&quot;full&quot;&gt;&lt;img src=&quot;https://fvsch.com/articles/raw-power-mac/boost-demo.jpg&quot; width=&quot;680&quot; height=&quot;450&quot; alt=&quot;A side-by-side comparison of the same image with two different development settings. Left one looks a bit gray and lacks contrast. Right one is more colorful and contrasted.&quot;&gt;&lt;figcaption&gt;Boost at 0% and 100%&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;In the video tutorials, Nik shows how sometimes Boost goes a bit too far, and it’s better to lower it a bit or completely before applying other adjustments (such as highlight recovery). I’ve sometimes moved it down to 90% or 80%, but rarely all the way down.&lt;/p&gt;
+&lt;p&gt;Another slider I’ve used at times is Black Point, which er makes more or fewer parts of the image black or dark?&lt;/p&gt;
+&lt;p&gt;Sometimes it looks like there are a few ways to do the same thing, especially when it comes to contrast with: Boost, RAW Contrast, Contrast, Curves and Levels, to name a few. Or micro-contrast with RAW Sharpen, Clarity and Sharpen. It probably takes some time and expertise to learn what works best for you and your images.&lt;/p&gt;
+&lt;p&gt;I just discovered the &lt;a href=&quot;https://gentlemencoders.com/wp-content/uploads/2020/04/RAW-Power-3.0-for-Mac-Help.pdf&quot;&gt;RAW Power user manual (50 page PDF)&lt;/a&gt;, which has more details on how adjustments work. Maybe that’ll clarify what the best approach is for some use cases.&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&quot;https://fvsch.com/articles/raw-power-mac/rawpower-curves.png&quot; width=&quot;300&quot; height=&quot;390&quot; alt=&quot;The Curves adjustment tool&quot;&gt;&lt;figcaption&gt;The Curves tool is powerful and lets you set as many points as you want, but it’s hard to move a point just right on the vertical axis, and a little nudge can have an overblown effect. I was a bit more at ease with Lightroom’s four number inputs, which make it easy to create a symmetrical S-curve and control how strong the effect is.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;Finally, there are no local adjustment tool: no brushes, no gradients, no repair, etc. While things like machine-learning based local repairs can be done by other software working on an exported TIFF file, it would be great to at least have support for gradient filters, e.g. to handle sky-vs-land exposure.&lt;/p&gt;
+&lt;p&gt;RAW Power 3.2 added support for Apple’s ProRAW (part of the DNG 1.6 format), which includes precomputed local adjustments from the iPhone’s software as a kind of mask or extra layer (I’m not sure)  that you can turn on or off or apply partially. Maybe some of the work done on ProRAW support lays the groundwork for local adjustments? One can dream. 😄&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;Data portability&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;In an ideal world, adjustments made to a RAW photo in one app would be understood by another app. Sadly we don’t leave in this world, because RAW development and image correction algorithms are specific to each app, and there’s no standard even for common things such as exposure correction, black and white or color processing, curves, vignette, embedded LUTs, etc.&lt;/p&gt;
+&lt;p&gt;So development settings done in Lightroom, RAW Power or DxO PhotoLab won’t be interoperable at all. Okay. But can we at least make sure that those development settings are saved reliably?&lt;/p&gt;
+&lt;p&gt;Lightroom lets you write development settings as “sidecar files”, which use the &lt;code&gt;.xmp&lt;/code&gt; extension, or embedded inside DNG files. This comes in handy when syncing files via Dropbox, saving photos on an external drive, or changing computers or operating system.&lt;/p&gt;
+&lt;p&gt;RAW Power saves development data in &lt;code&gt;Documents/RAW Power&lt;/code&gt;, with no option to use sidecar files. This folder may look like this:&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&quot;https://fvsch.com/articles/raw-power-mac/rawpower-metadata.png&quot; width=&quot;555&quot; height=&quot;370&quot; alt=&quot;The RAW Power folder, which stores JPEG previews and development data with a .rawpower extension&quot;&gt;&lt;/figure&gt;
+&lt;p&gt;If you move or rename a photo, you risk losing the link with this development data, as stated in the help pages:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;RAW Power stores its editing and rating / flag information in files stored within its “sandbox,” which is a directory inside your home folder on your disk. RAW Power stores information in the sandbox that lets it connect its data with your original images. Part of the identifier is the file name of your image, and part is the identifier generated by macOS. As a result of this system, RAW Power can connect editing and rating information to your original even if you move the file elsewhere on your disk. However, if you rename it, or move it to another volume, the link is broken.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;So if you store photos on a drive, that drive dies and you later get a backup of your photos: sorry, your development data will be lost or not linked to the photos.&lt;/p&gt;
+&lt;p&gt;In my book, that’s a serious risk that will have me keep looking at alternatives.&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;My recommendation&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;Despite a few pain points and concerns, I find that RAW Power is a capable tool and I’ll probably use it more in the future, while keeping an eye on the pricier competition.&lt;/p&gt;
+&lt;p&gt;If you liked Lightroom Classic or Aperture, RAW Power might be a good fit for you, provided you can forgive a few issues and missing features.&lt;/p&gt;
+&lt;p&gt;RAW Power is, as far as I can tell, indie software with a team of one and a low price. It should give you a lot of value for your money.&lt;/p&gt;
+&lt;p&gt;I heartily recommend giving it a try.&lt;/p&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&quot;fn:1&quot;&gt;
+&lt;p&gt;I bought a ON1 Photo Raw 2020 license in a sale last year. It fails to install on my computer. The 2021 version — a somewhat pricy upgrade — is an Intel app that runs too slowly to be comfortable. I might reconsider later if the price and performance are right.&amp;#160;&lt;a href=&quot;#fnref1:1&quot; rev=&quot;footnote&quot; class=&quot;footnote-backref&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&quot;fn:2&quot;&gt;
+&lt;p&gt;Subjectively and just based on screenshots, Darkroom has the most attractive design.&amp;#160;&lt;a href=&quot;#fnref1:2&quot; rev=&quot;footnote&quot; class=&quot;footnote-backref&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&quot;fn:3&quot;&gt;
+&lt;p&gt;Darktable tells you “Good Luck :)” if you want to install a macOS version.&amp;#160;&lt;a href=&quot;#fnref1:3&quot; rev=&quot;footnote&quot; class=&quot;footnote-backref&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&quot;fn:4&quot;&gt;
+&lt;p&gt;That’s not a condemnation of those projects. I understand that open-source side projects made by developers might focus on Linux support and/or powerful features that scratch one’s itch over the years-long design process needed for best-in-class usability.&amp;#160;&lt;a href=&quot;#fnref1:4&quot; rev=&quot;footnote&quot; class=&quot;footnote-backref&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&quot;fn:5&quot;&gt;
+&lt;p&gt;For browsing and rating I might show the left sidebar, a thumbnail grid with medium thumbnails, and the metadata sidebar. For editing a particular photo, I’d hide the left sidebar, show the main photo view, and either hide the thumbnails or keep them at the smallest size. If I count the clicks needed to go from the first configuration to the other one: that’s 4 clicks.&amp;#160;&lt;a href=&quot;#fnref1:5&quot; rev=&quot;footnote&quot; class=&quot;footnote-backref&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&quot;fn:6&quot;&gt;
+&lt;p&gt;For instance, I’ve wanted to check data such as the shooting date and hour when tweaking white balance, to make sure the white balance is consistent with the hour and season when I’m going for a realistic look.&amp;#160;&lt;a href=&quot;#fnref1:6&quot; rev=&quot;footnote&quot; class=&quot;footnote-backref&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</content>
+  </entry>
+  <entry xml:lang="en">
+    <id>urn:uuid:2380b5bb-eb96-5bed-9f3c-8ad36e8deb61</id>
+    <link rel="alternate" type="text/html" href="https://fvsch.com/learning-xstate"/>
+    <title>Learning XState by refactoring an old project</title>
+    <published>2021-01-06T17:00:00+01:00</published>
+    <updated>2021-01-06T17:00:00+01:00</updated>
+    <summary>I’ve been wanting to learn XState, a JavaScript state machine library. I had one exercise in mind: porting the hand-rolled state code in the small click precision game I built last year, if possible.</summary>
+    <content type="html">&lt;p&gt;For a while I’ve wanted to learn the &lt;a href=&quot;https://xstate.js.org&quot;&gt;XState library&lt;/a&gt;, which is presented as a solution to gnarly UI state issues where “what should we show and how should it act?” becomes hard to determine.&lt;/p&gt;
+&lt;p&gt;Since the best way to learn is to actually build something, I’m thinking I can try to port an old project of mine over to XState, and see how it turns out. Continue reading if you want to follow along!&lt;/p&gt;
+&lt;article-nav&gt;&lt;/article-nav&gt;
+&lt;h2&gt;&lt;span&gt;Why state machines?&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;I’ve been building a bunch of app or app-like user interfaces with React and other frameworks, and you quickly run into situations where a screen or component’s UI state is represented by a series of variables.&lt;/p&gt;
+&lt;p&gt;For instance, if a component loads data from a server, you can end up with variables like:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;data&lt;/code&gt; (&lt;code&gt;undefined&lt;/code&gt;, empty Array, or Array with data)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;error&lt;/code&gt; (&lt;code&gt;undefined&lt;/code&gt; or an error object or message)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;loading&lt;/code&gt; (boolean)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You end up writing conditions like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;const hasContent =
+  !error &amp;amp;&amp;amp;
+  !loading &amp;amp;&amp;amp;
+  Array.isArray(data) &amp;amp;&amp;amp;
+  data.length &amp;gt; 0;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Add a couple more UX or business rules to this UI component, and you’re in trouble. Your code will be littered with complex conditions, and it’s easy to get one of those wrong and end up with subtle bugs where different parts of the UI disagree about what state the application or component is in. So, what’s a poor UI developer to do?&lt;/p&gt;
+&lt;p&gt;Enter finite-state machines.&lt;/p&gt;
+&lt;p&gt;As a literature major with no formal computer science training, I’m not quite sure what I’m talking about, but apparently a &lt;a href=&quot;https://en.wikipedia.org/wiki/Finite-state_machine&quot;&gt;“finite-state machine”&lt;/a&gt; is a programming concept where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the program has a list of possible states;&lt;/li&gt;
+&lt;li&gt;it can be in only one state at a time;&lt;/li&gt;
+&lt;li&gt;and it defines how each state can or cannot transition to other states.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This can be used to describe physical devices like elevators, traffic lights, vending machines and more, and often those devices do run programs that implement a finite-state machine.&lt;/p&gt;
+&lt;p&gt;Last year I built a tiny &lt;a href=&quot;https://click-precision-game.netlify.app/&quot;&gt;click precision game&lt;/a&gt;, with zero experience in game development. I used &lt;a href=&quot;https://svelte.dev/&quot;&gt;Svelte&lt;/a&gt;, and designed the game’s state somewhat naively. Often thinking “I should use an established formalism here” but being pressed for time, I improvised some ad hoc code.&lt;/p&gt;
+&lt;p&gt;Shortly after that, I heard of XState, a JavaScript library that helps with implementing state machines. And I wondered how would things have worked out if I had used XState. Let’s find out!&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;How the game currently works&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;Since this is a refactoring operation, we should review key parts of the &lt;a href=&quot;https://github.com/fvsch/click-precision-game/tree/v1.0.0&quot;&gt;current code for click-precision-game&lt;/a&gt;. How does it handle the main gameplay state?&lt;/p&gt;
+&lt;p&gt;Let’s look at the main gameplay in the &lt;a href=&quot;https://github.com/fvsch/click-precision-game/blob/v1.0.0/src/components/Playground.svelte&quot;&gt;&lt;code&gt;Playground.svelte&lt;/code&gt; component&lt;/a&gt;. There’s a lot of logic there. The game follows a linear timeline where each instance of the game is divided in two parts:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A countdown, divided in a few phases (showing “click the green square”, “3”, “2”, “1”).&lt;/li&gt;
+&lt;li&gt;Then a series of 20 “turns”, each turn divided in 2 phases: the “turn” itself (time when the game’s target is visible and must be clicked), and a “cooldown” (short pause before the next turn).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;That information is encoded as a collection of objects:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;export const PLAY_PHASES = {
+  START: {
+    next: &quot;COUNTDOWN_3&quot;,
+    durationRatio: 1,
+    minDuration: 1000,
+    countdown: 4,
+    showTarget: false,
+  },
+  COUNTDOWN_3: {
+    next: &quot;COUNTDOWN_2&quot;,
+    durationRatio: 0.5,
+    minDuration: 400,
+    countdown: 3,
+    showTarget: false,
+  },
+  COUNTDOWN_2: {
+    next: &quot;COUNTDOWN_1&quot;,
+    /* … */
+  },
+  COUNTDOWN_1: {
+    next: &quot;TURN&quot;,
+    /* … */
+  },
+  TURN: {
+    next: &quot;COOLDOWN&quot;,
+    /* … */
+  },
+  COOLDOWN: {
+    next: &quot;TURN&quot;,
+    /* … */
+  }
+};&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When the &lt;code&gt;Playground&lt;/code&gt; component is mounted, we’re triggering the first phase:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;onMount(() =&amp;gt; {
+  startPhase(&quot;START&quot;);
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And the &lt;code&gt;startPhase&lt;/code&gt; function does the heavy lifting. Here it is, partly abridged and annotated:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;function startPhase(key) {
+  // If we’re just starting a turn
+  if (key === &quot;TURN&quot;) {
+    // increment the turn count
+    turns += 1;
+    // reset the success/failure state to a neutral value
+    turnState = TURN_STATE.INITIAL;
+    // place the target at a random position
+    targetPosition = getTargetPosition();
+  }
+
+  // If ending a turn, we check the component state
+  // to see if we have registered a successful click
+  // on the target
+  if (key === &quot;COOLDOWN&quot;) {
+    if (turnState === TURN_STATE.SUCCESS) {
+      successCount += 1;
+    }
+  }
+
+  // Get config for this phase
+  const phase = PLAY_PHASES[key];
+  // update UI
+  countdown = phase.countdown;
+  showTarget = phase.showTarget;
+  // schedule next phase
+  timeout = setTimeout(
+    () =&amp;gt; startPhase(phase.next),
+    Math.max(phase.minDuration, phase.durationRatio * $gameSpeed)
+  );
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that the &lt;code&gt;countdown&lt;/code&gt; and &lt;code&gt;showTarget&lt;/code&gt; variables are reactive, and tracked by Svelte. When we update their value, Svelte does its &lt;a href=&quot;https://svelte.dev/blog/svelte-3-rethinking-reactivity&quot;&gt;reactivity magic&lt;/a&gt; and updates the view. If we were in React land, we could probably use &lt;code&gt;useState&lt;/code&gt; and update these state variables with:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;const [countdown, setCountdown] = useState();
+const [showTarget, setShowTarget] = useState();
+
+const startPhase = (key) =&amp;gt; {
+  /* … */
+  setCountdown(phase.countdown);
+  setShowTarget(phase.showTarget);
+  /* … */
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Anyway, that’s how it works right now. Doing a bit of reading on &lt;a href=&quot;https://statecharts.github.io/&quot;&gt;statecharts&lt;/a&gt; and &lt;a href=&quot;https://css-tricks.com/robust-react-user-interfaces-with-finite-state-machines/&quot;&gt;this introduction to state machines by David Khourshid on CSS-Tricks&lt;/a&gt;, it looks like I was close enough to a hand-rolled finite state machine. Yay me!&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;Getting comfortable with XState&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;Originally I wanted to open the XState docs in one tab, my current code on another screen, and just start converting stuff and figuring things out along the way.&lt;/p&gt;
+&lt;p&gt;Turns out that XState is a bit more complex than I thought. It’s not very hard, but there are a few concepts to learn: machines, services, actions, actors maybe? Is that more than I bargained for?&lt;/p&gt;
+&lt;p&gt;So, change of plan: before tacking the gameplay state, I want to make sure I’m comfortable with basic usage of XState and how to integrate it in Svelte.&lt;/p&gt;
+&lt;p&gt;Let’s start with a simpler bit of state then; I picked the main navigation state.&lt;/p&gt;
+&lt;p&gt;The game has 3 different screens:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;&quot;setup&quot;&lt;/code&gt; (configures a game’s parameters before starting)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&quot;playing&quot;&lt;/code&gt; (plays the game’s main loop)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&quot;results&quot;&lt;/code&gt; (shows your points)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We start at the Setup screen:&lt;/p&gt;
+&lt;figure&gt;&lt;img src=&quot;https://fvsch.com/articles/learning-xstate/game-setup-screen.png&quot; width=&quot;504&quot; height=&quot;504&quot; alt=&quot;A start screen with form fields for choosing a target size, playground size and game speed, and a “Start” button.&quot;&gt;&lt;/figure&gt;
+&lt;p&gt;The information for “which screen should we show?” is stored as a string in a Svelte store (a reactive variable that can be shared between components). It’s defined like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;import { writable } from &quot;svelte/store&quot;;
+
+export const screen = writable(&quot;setup&quot;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And in our root component we have a kind of switch statement where we pick which component to render:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-svelte&quot;&gt;&amp;lt;script&amp;gt;
+  import { screen } from &quot;../store.js&quot;;
+  import Setup from &quot;./Setup.svelte&quot;;
+  /* … */
+&amp;lt;/script&amp;gt;
+
+{#if $screen === &quot;setup&quot;}
+  &amp;lt;Setup /&amp;gt;
+{:else if $screen === &quot;playing&quot;}
+  &amp;lt;Playground /&amp;gt;
+{:else if $screen === &quot;results&quot;}
+  &amp;lt;Results /&amp;gt;
+{/if}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To navigate between screens, we change the store’s value:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;function startPlaying() {
+  $screen = &quot;playing&quot;;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note: we’re using the dollar syntax, &lt;code&gt;$screen&lt;/code&gt;, to access the value of the &lt;code&gt;screen&lt;/code&gt; store in a reactive way (&lt;a href=&quot;https://svelte.dev/docs#4_Prefix_stores_with_$_to_access_their_values&quot;&gt;read more in the Svelte docs&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;Converting this to XState is probably overkill, but using XState we can enforce a few rules:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Restrict the state to known values (e.g. make it impossible to set the current screen to &lt;code&gt;&quot;whoops&quot;&lt;/code&gt; if that’s not a known state).&lt;/li&gt;
+&lt;li&gt;Specify relationships between states, e.g. only the &lt;code&gt;&quot;playing&quot;&lt;/code&gt; state can go to the &lt;code&gt;&quot;results&quot;&lt;/code&gt; state.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Let’s create a basic XState machine to keep track of the current screen:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;// src/state/screen.js
+import { Machine } from &quot;xstate&quot;;
+
+const screenMachine = Machine({
+  id: &quot;screen&quot;,
+  initial: &quot;setup&quot;,
+  states: {
+    setup: {},
+    playing: {},
+    results: {}
+  }
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Right now our 3 states have no rules or features attached, but we’ll flesh them out later.&lt;/p&gt;
+&lt;p&gt;Now if I’m understanding correctly, a XState “machine” is a static set of rules, but it is itself stateless: it doesn’t have a current state or a state history. To hold a “current value”, we need a XState “service”:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;// src/state/screen.js
+import { interpret, Machine } from &quot;xstate&quot;;
+
+const screenMachine = Machine({
+  id: &quot;screen&quot;,
+  initial: &quot;setup&quot;,
+  states: {
+    setup: {},
+    playing: {},
+    results: {}
+  }
+});
+
+const screenService = interpret(screenMachine);
+export default screenService;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This feels a bit like a class-vs-instance thing. We have a kind of blueprint (a class, or a machine in this case) which is used to create a structure that holds data or state (instance/service). Not sure if that makes sense, this is just how it looks to me. 😅&lt;/p&gt;
+&lt;p&gt;Let’s update our top component to use the &lt;code&gt;screenService&lt;/code&gt; instead of the &lt;code&gt;screen&lt;/code&gt; Svelte store:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-svelte&quot;&gt;&amp;lt;script&amp;gt;
+  import screenService from &quot;../state/screen.js&quot;;
+  import Setup from &quot;./Setup.svelte&quot;;
+  /* … */
+&amp;lt;/script&amp;gt;
+
+{#if screenService.state.matches(&quot;setup&quot;)}
+  &amp;lt;Setup /&amp;gt;
+{:else if screenService.state.matches(&quot;playing&quot;)}
+  &amp;lt;Playground /&amp;gt;
+{:else if screenService.state.matches(&quot;results&quot;)}
+  &amp;lt;Results /&amp;gt;
+{/if}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This looks good to me, but alas! it fails. We get a blank screen. What’s going on in the Console?&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Warning: Attempted to read state from uninitialized service &apos;screen&apos;. Make sure the service is started first.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Indeed, when we run &lt;code&gt;console.log(screenService.state)&lt;/code&gt;, that’s &lt;code&gt;undefined&lt;/code&gt;! Looks like we have to start the service to make it go to its initial state (&lt;code&gt;&quot;setup&quot;&lt;/code&gt;):&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;const screenService = interpret(screenMachine);
+screenService.start();&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;That works! I’m seeing the Setup screen, and if I change the &lt;code&gt;initial&lt;/code&gt; value in &lt;code&gt;stateMachine&lt;/code&gt; and reload the page I can see the Playground or Results components — though Results are broken, because the result data is missing.&lt;/p&gt;
+&lt;p&gt;So we have a navigation state. Now we need some navigation actions, i.e. a way to go from one state to the other.&lt;/p&gt;
+&lt;p&gt;XState handles that with events, which are defined on the machine. It looks like, by convention, state names are lowercase and event names are uppercase, so we’ll follow that.&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;const screenMachine = Machine({
+  id: &quot;screen&quot;,
+  initial: &quot;setup&quot;,
+  states: {
+    setup: {
+      on: {
+        START_PLAYING: &quot;playing&quot;
+      }
+    },
+    playing: {
+      on: {
+        SHOW_RESULTS: &quot;results&quot;,
+        SHOW_SETUP: &quot;setup&quot;
+      }
+    },
+    results: {
+      on: {
+        SHOW_SETUP: &quot;setup&quot;
+      }
+    }
+  }
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With that setup:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;to start playing, we must be on the &lt;code&gt;&quot;setup&quot;&lt;/code&gt; state and send a &lt;code&gt;&quot;START_PLAYING&quot;&lt;/code&gt; event;&lt;/li&gt;
+&lt;li&gt;the &lt;code&gt;&quot;playing&quot;&lt;/code&gt; state can go to the &lt;code&gt;&quot;results&quot;&lt;/code&gt; state or to the &lt;code&gt;&quot;setup&quot;&lt;/code&gt; state (e.g. if the user wants to interrupt a game);&lt;/li&gt;
+&lt;li&gt;the &lt;code&gt;&quot;results&quot;&lt;/code&gt; state can only go back to the &lt;code&gt;&quot;setup&quot;&lt;/code&gt; state, to start a new game.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;And we could add events to handle more features. For instance, if we want to add a “Try Again” button on the results screen that starts a new game with the same parameters, we can add: &lt;code&gt;PLAY_AGAIN: &quot;playing&quot;&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;We send events with the service’s &lt;code&gt;send&lt;/code&gt; method. Let’s start with the &lt;code&gt;Setup&lt;/code&gt; page. It listens to the form’s &lt;code&gt;&quot;submit&quot;&lt;/code&gt; event and navigates, so we’ll update that:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;// src/components/Setup.svelte
+&amp;lt;script&amp;gt;
+  import screenService from &quot;../state/screen.js&quot;;
+
+  function onSubmit(event) {
+    event.preventDefault();
+    screenService.send(&quot;START_PLAYING&quot;);
+  }
+&amp;lt;/script&amp;gt;
+
+&amp;lt;form on:submit={onSubmit}&amp;gt;
+  &amp;lt;!-- … --&amp;gt;
+&amp;lt;/form&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And… it doesn’t work.&lt;/p&gt;
+&lt;p&gt;Nothing in the Console. Hmm, how else can we debug what’s happening? We have two options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;add a bunch of &lt;code&gt;console.log&lt;/code&gt;s;&lt;/li&gt;
+&lt;li&gt;use the Redux DevTools browser extension and &lt;a href=&quot;https://xstate.js.org/docs/guides/interpretation.html#options&quot;&gt;tell XState to send it state information&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Looking closer, once we call &lt;code&gt;send(&quot;START_PLAYING&quot;)&lt;/code&gt;, here is what happens:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;The event is dispatched correctly on the &lt;code&gt;screenService&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;screenService&lt;/code&gt;’s state changes to &lt;code&gt;&quot;playing&quot;&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;But nothing in &lt;code&gt;Game.svelte&lt;/code&gt; reacts to this change.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;We need to make Svelte aware of changes in the &lt;code&gt;screenService&lt;/code&gt;!&lt;/p&gt;
+&lt;p&gt;Thankfully, XState’s docs have &lt;a href=&quot;https://xstate.js.org/docs/recipes/svelte.html&quot;&gt;a recipe for using XState with Svelte&lt;/a&gt;, which shows two solutions. My favorite is to treat the XState service as a Svelte store, which is possible because a XState service has a &lt;code&gt;subscribe&lt;/code&gt; method that &lt;a href=&quot;https://svelte.dev/docs#Store_contract&quot;&gt;fulfills Svelte’s “store contract”&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In short, that means we can use &lt;code&gt;$screenService&lt;/code&gt; as a reactive version of &lt;code&gt;screenService.state&lt;/code&gt;. Our code becomes:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-svelte&quot;&gt;&amp;lt;script&amp;gt;
+  import screenService from &quot;../state/screen.js&quot;;
+  /* … */
+&amp;lt;/script&amp;gt;
+
+{#if $screenService.matches(&quot;setup&quot;)}
+  &amp;lt;Setup /&amp;gt;
+{:else if $screenService.matches(&quot;playing&quot;)}
+  &amp;lt;Playground /&amp;gt;
+{:else if $screenService.matches(&quot;results&quot;)}
+  &amp;lt;Results /&amp;gt;
+{/if}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And with that, navigating between screens finally works!&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;Tackling the main game loop&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;Okay, that wasn’t super simple and there was a bit of a learning curve, but we finally know how to make a basic state machine with XState. Should we create one for the &lt;code&gt;PLAY_PHASES&lt;/code&gt; structure we described earlier? As a reminder, it looked like this:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;export const PLAY_PHASES = {
+  START: {
+    next: &quot;COUNTDOWN_3&quot;
+  },
+  COUNTDOWN_3: {
+    next: &quot;COUNTDOWN_2&quot;
+  },
+  COUNTDOWN_2: {
+    next: &quot;COUNTDOWN_1&quot;
+  },
+  COUNTDOWN_1: {
+    next: &quot;TURN&quot;
+  },
+  TURN: {
+    next: &quot;COOLDOWN&quot;
+  },
+  COOLDOWN: {
+    next: &quot;TURN&quot;
+  }
+};&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first-level keys are our states, and we have just one event, &lt;code&gt;&quot;next&quot;&lt;/code&gt;, telling us what the next state should be.&lt;/p&gt;
+&lt;p&gt;As a XState machine, this could look like:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;const playMachine = Machine({
+  id: &quot;play&quot;,
+  initial: &quot;start&quot;,
+  states: {
+    start: {
+      on: { NEXT: &quot;countdown_3&quot; }
+    },
+    countdown_3: {
+      on: { NEXT: &quot;countdown_2&quot; }
+    },
+    countdown_2: {
+      on: { NEXT: &quot;countdown_1&quot; }
+    },
+    countdown_1: {
+      on: { NEXT: &quot;turn&quot; }
+    },
+    turn: {
+      on: { NEXT: &quot;cooldown&quot; }
+    },
+    cooldown: {
+      on: { NEXT: &quot;turn&quot; }
+    }
+  }
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;While working on the XState refactor for this article, I realized that the 4 first states (from &lt;code&gt;&quot;start&quot;&lt;/code&gt; to &lt;code&gt;&quot;countdown_1&lt;/code&gt;) represent a single countdown animation with 4 “stages”. To simplify the state logic a bit, I decided to turn those states into a single &lt;code&gt;“countdown”&lt;/code&gt; state, and moved the animation logic to &lt;a href=&quot;https://github.com/fvsch/click-precision-game/blob/v2.0.0/src/components/Countdown.svelte&quot;&gt;a CSS animation in the Countdown component&lt;/a&gt;. This simplifies our machine:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;const playMachine = Machine({
+  id: &quot;play&quot;,
+  initial: &quot;countdown&quot;,
+  states: {
+    countdown: {
+      on: { NEXT: &quot;turn&quot; }
+    },
+    turn: {
+      on: { NEXT: &quot;cooldown&quot; }
+    },
+    cooldown: {
+      on: { NEXT: &quot;turn&quot; }
+    }
+  }
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Another problem to solve: how do we start this &lt;code&gt;playMachine&lt;/code&gt; at the right time in our app’s life?&lt;/p&gt;
+&lt;p&gt;One solution would be to create and start a new &lt;code&gt;playService&lt;/code&gt; every time that the &lt;code&gt;Playground&lt;/code&gt; component is mounted.&lt;/p&gt;
+&lt;p&gt;Another option is to merge our &lt;code&gt;screenMachine&lt;/code&gt; and our &lt;code&gt;playMachine&lt;/code&gt; in one &lt;a href=&quot;https://xstate.js.org/docs/guides/hierarchical.html&quot;&gt;hierarchical state machine&lt;/a&gt;. The states from our &lt;code&gt;playMachine&lt;/code&gt; can be children of the &lt;code&gt;playing&lt;/code&gt; state.&lt;/p&gt;
+&lt;p&gt;(You don’t need to have a single machine for your whole app’s state. It’s perfectly okay to have several machines for several features or screens. But since the game loop only exists in the &lt;code&gt;&quot;playing&quot;&lt;/code&gt; screen, a single hierarchical machine makes sense here.)&lt;/p&gt;
+&lt;p&gt;Our merged machine will handle most of the game’s state, so let’s call it &lt;code&gt;gameMachine&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;// src/state/game.js
+import { interpret, Machine } from &quot;xstate&quot;;
+
+const gameMachine = Machine({
+  id: &quot;game&quot;,
+  initial: &quot;setup&quot;,
+  states: {
+    setup: {
+      on: {
+        START_PLAYING: &quot;playing&quot;,
+      }
+    },
+    playing: {
+      on: {
+        SHOW_RESULTS: &quot;results&quot;,
+        SHOW_SETUP: &quot;setup&quot;
+      },
+      initial: &quot;countdown&quot;,
+      states: {
+        countdown: {
+          on: { NEXT: &quot;turn&quot; }
+        },
+        turn: {
+          on: { NEXT: &quot;cooldown&quot; }
+        },
+        cooldown: {
+          on: { NEXT: &quot;turn&quot; }
+        }
+      }
+    },
+    results: {
+      on: {
+        SHOW_SETUP: &quot;setup&quot;
+      }
+    }
+  }
+});
+
+const gameService = interpret(gameMachine);
+gameService.start();
+
+export default gameService;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This machine can be &lt;a href=&quot;https://xstate.js.org/viz/?gist=897990dba921cb329062644d3b551c65&quot;&gt;visualized using XState’s interactive visualizer&lt;/a&gt;:&lt;/p&gt;
+&lt;figure class=&quot;frame&quot;&gt;&lt;iframe width=&quot;100%&quot; height=&quot;400&quot; src=&quot;https://xstate.js.org/viz/?gist=897990dba921cb329062644d3b551c65&amp;amp;embed=1&quot; title=&quot;OK&quot;&gt;&lt;/iframe&gt;
+&lt;/figure&gt;
+&lt;p&gt;If you try clicking on the event names in the visualization, you’ll see that:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;We start at the &lt;code&gt;setup&lt;/code&gt; state.&lt;/li&gt;
+&lt;li&gt;We can go to the &lt;code&gt;playing&lt;/code&gt; state, which starts at its &lt;code&gt;playing.countdown&lt;/code&gt; state.&lt;/li&gt;
+&lt;li&gt;In the &lt;code&gt;playing&lt;/code&gt; state, we can go to &lt;code&gt;playing.turn&lt;/code&gt;, then to &lt;code&gt;playing.cooldown&lt;/code&gt;, then to &lt;code&gt;playing.turn&lt;/code&gt; again, and we stay there in a loop.&lt;/li&gt;
+&lt;li&gt;We can go from the &lt;code&gt;playing&lt;/code&gt; state forward to the &lt;code&gt;results&lt;/code&gt; state, or back to &lt;code&gt;setup&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Pretty good. Now, in the &lt;code&gt;Playground&lt;/code&gt; component we need to react to changes in the game state to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;show or hide the countdown;&lt;/li&gt;
+&lt;li&gt;show the square target with a new position, and increment the turn count;&lt;/li&gt;
+&lt;li&gt;hide the square target.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Most of that logic happens in the &lt;code&gt;startPhase&lt;/code&gt; function we described earlier. Our previous logic relied on calling &lt;code&gt;startPhase&lt;/code&gt; recursively, with a delay. Schematically, it looked like:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;import { onMount } from &quot;svelte&quot;;
+import { PLAY_PHASES } from &quot;./constants.js&quot;;
+
+onMount(() =&amp;gt; {
+  startPhase(&quot;countdown&quot;);
+});
+
+function startPhase(key) {
+  // 1. Perform side effects (update the UI):
+  // …
+  // 2. Set a timer for the next phase:
+  const nextKey = PLAY_PHASES[key].next;
+  const duration = PLAY_PHASES[key].duration;
+  setTimeout(() =&amp;gt; {
+    startPhase(nextKey);
+  }, duration);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;With our state machine, we’re going to split this in two:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We’re going to call &lt;code&gt;startPhase&lt;/code&gt; every time the &lt;code&gt;gameService&lt;/code&gt;’s state changes. For that, we need to subscribe to updates.&lt;/li&gt;
+&lt;li&gt;At the end of a game phase (in our &lt;code&gt;setTimeout&lt;/code&gt; function), we’re going to send a &lt;code&gt;&quot;NEXT&quot;&lt;/code&gt; event instead of calling &lt;code&gt;startPhase&lt;/code&gt; directly.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code class=&quot;language-js&quot;&gt;import { onMount, onDestroy } from &quot;svelte&quot;;
+import gameService from &quot;../state/game.js&quot;;
+import { gamePhaseDurations } from &quot;../state/setup.js&quot;;
+
+// Listen to state transitions
+onMount(() =&amp;gt; {
+  gameService.onTransition(startPhase);
+});
+onDestroy(() =&amp;gt; {
+  gameService.off(startPhase);
+});
+
+function startPhase(state) {
+  // state.value looks like: {playing: &quot;countdown&quot;}
+  const key = state.value.playing;
+  // 1. Perform side effects (update the UI):
+  // …
+  // 2. Set a timer for the next phase:
+  const duration = $gamePhaseDurations[key];
+  setTimeout(() =&amp;gt; {
+    gameService.send(&quot;NEXT&quot;);
+  }, duration);
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;And we’re done!&lt;/p&gt;
+&lt;p&gt;The &lt;a href=&quot;https://github.com/fvsch/click-precision-game/blob/v2.0.0/src/components/Playground.svelte&quot;&gt;actual logic&lt;/a&gt; is a bit more complex — it handles things like counting turns and points, sending a &lt;code&gt;send(&quot;SHOW_RESULTS&quot;)&lt;/code&gt; event after 20 turns, etc. — but this is a good representation of how the state machine powers the game loop.&lt;/p&gt;
+&lt;h2&gt;&lt;span&gt;My impressions of XState&lt;/span&gt;&lt;/h2&gt;
+&lt;p&gt;I found XState to be more complex than I had anticipated. Granted I knew next to nothing about state machines and &lt;a href=&quot;https://statecharts.github.io&quot;&gt;statecharts&lt;/a&gt;. But the learning curve was a bit steep, I think, for two reasons:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;There’s a bit of jargon to wrap your head around.&lt;/li&gt;
+&lt;li&gt;XState has a lot of features, and it’s easy to get lost asking yourself if one feature is essential for your use case or not, or that other feature, or maybe this one…&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;At first I tried diving in for a couple hours, writing some code, expecting to know my way around the concepts and library in that time-frame. That didn’t work at all.&lt;/p&gt;
+&lt;p&gt;So I took a step back, actually read some of the docs, watched a couple videos and read some articles, before diving back in with a smaller scope: porting the navigation state.&lt;/p&gt;
+&lt;p&gt;After that, porting the main game loop to XState was still a lot of work, but mostly because my own UI logic had a lot of parts to account for, and changing some of its state management meant I had a lot of loose ends to reconnect.&lt;/p&gt;
+&lt;figure&gt;&lt;img width=&quot;620&quot; height=&quot;402&quot; src=&quot;https://fvsch.com/articles/learning-xstate/telephone-switchboard-operator.jpg&quot; alt=&quot;An operator plugging cables in an very big switchboard&quot;&gt;&lt;figcaption&gt;Me trying to make &lt;code&gt;Playground.svelte&lt;/code&gt; work again.&lt;/figcaption&gt;&lt;/figure&gt;
+&lt;p&gt;While I initially wanted to spend 1–2 days learning XState, I ended up spending close to a week learning and refactoring, and then 2–3 days writing this post (I’m a slow writer).&lt;/p&gt;
+&lt;p&gt;There were a few more things I wanted to try, but had to drop for lack of time:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Statecharts can have “extended state”, &lt;a href=&quot;https://xstate.js.org/docs/guides/context.html&quot;&gt;called “Context” in XState&lt;/a&gt;. It looks like it would make sense to store the points and turn count in the &lt;code&gt;gameService&lt;/code&gt;’s context.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;With the turn count stored in the &lt;code&gt;gameService&lt;/code&gt;, the branching logic for going to the next turn &lt;em&gt;or&lt;/em&gt; ending the game could be part of the state machine as well (instead of the &lt;code&gt;Playground&lt;/code&gt; component’s state and the &lt;code&gt;startPhase&lt;/code&gt; function). Probably using &lt;a href=&quot;https://xstate.js.org/docs/guides/guards.html&quot;&gt;Guarded Transitions&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;I tried putting the playing phase duration config on the state machine, using &lt;a href=&quot;https://xstate.js.org/docs/guides/states.html#state-meta-data&quot;&gt;state meta data&lt;/a&gt;, but it was awkward and created other issues for that use case.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Would I use XState on a new project? Definitely. Being able to reason about an app, screen or feature’s state by reading a statechart definition is invaluable, and the visualizations are a nice touch. And while I haven’t used most of the advanced features, reading up on them makes me confident that I could handle complex use cases.&lt;/p&gt;
+&lt;p&gt;A word of caution though: when bringing XState to a team project, I’d factor in the learning curve for everyone involved. It’s probably worth doing some basic training, at least.&lt;/p&gt;</content>
+  </entry>
+</feed>

@@ -18,11 +18,11 @@ private struct URLConstants {
 public extension URL {
 
 	func isHTTPSURL() -> Bool {
-		return self.scheme?.lowercased() == URLConstants.schemeHTTPS
+		return self.scheme?.lowercased(with: localeForLowercasing) == URLConstants.schemeHTTPS
 	}
 
 	func isHTTPURL() -> Bool {
-		return self.scheme?.lowercased() == URLConstants.schemeHTTP
+		return self.scheme?.lowercased(with: localeForLowercasing) == URLConstants.schemeHTTP
 	}
 
 	func isHTTPOrHTTPSURL() -> Bool {
@@ -34,8 +34,7 @@ public extension URL {
 
 		if isHTTPSURL() {
 			return absoluteString.stringByRemovingCaseInsensitivePrefix(URLConstants.prefixHTTPS)
-		}
-		else if isHTTPURL() {
+		} else if isHTTPURL() {
 			return absoluteString.stringByRemovingCaseInsensitivePrefix(URLConstants.prefixHTTP)
 		}
 
@@ -76,7 +75,7 @@ private extension String {
 		let lowerPrefix = prefix.lowercased()
 		let lowerSelf = self.lowercased()
 
-		if (lowerSelf == lowerPrefix) {
+		if lowerSelf == lowerPrefix {
 			return ""
 		}
 		if !lowerSelf.hasPrefix(lowerPrefix) {

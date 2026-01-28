@@ -9,7 +9,6 @@
 import AppKit
 
 final class TimelineContainerView: NSView {
-
 	private var contentViewConstraints: [NSLayoutConstraint]?
 
 	var contentView: NSView? {
@@ -34,4 +33,3 @@ final class TimelineContainerView: NSView {
 		}
 	}
 }
-

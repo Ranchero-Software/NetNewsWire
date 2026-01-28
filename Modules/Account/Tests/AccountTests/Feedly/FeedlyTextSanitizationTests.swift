@@ -9,10 +9,10 @@
 import XCTest
 @testable import Account
 
-class FeedlyTextSanitizationTests: XCTestCase {
-	
+final class FeedlyTextSanitizationTests: XCTestCase {
+
 	func testRTLSanitization() {
-		
+
 		let targetsAndExpectations: [(target: String?, expectation: String?)] = [
 			(nil, nil),
 			("", ""),
@@ -27,9 +27,9 @@ class FeedlyTextSanitizationTests: XCTestCase {
 			("<div style=\"direction:rtl;text-align:right\"></DIV>", "<div style=\"direction:rtl;text-align:right\"></DIV>"),
 			("<div style=\"direction:rtl;text-align:right\">text</div>", "text"),
 		]
-		
+
 		let sanitizer = FeedlyRTLTextSanitizer()
-		
+
 		for (target, expectation) in targetsAndExpectations {
 			let calculated = sanitizer.sanitize(target)
 			XCTAssertEqual(expectation, calculated)

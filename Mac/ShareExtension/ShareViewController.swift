@@ -6,18 +6,28 @@
 //  Copyright © 2020 Ranchero Software. All rights reserved.
 //
 
-import Cocoa
-import os.log
+import AppKit
 import UniformTypeIdentifiers
+import Synchronization
 
-class ShareViewController: NSViewController {
+final class ShareViewController: NSViewController {
+	@IBOutlet var nameTextField: NSTextField!
+	@IBOutlet var folderPopUpButton: NSPopUpButton!
 
-	@IBOutlet weak var nameTextField: NSTextField!
-	@IBOutlet weak var folderPopUpButton: NSPopUpButton!
-	
-	private var url: URL?
+	private struct State: Sendable {
+		var url: URL?
+	}
+	private let state = Mutex(State())
+
+	nonisolated private var url: URL? {
+		get {
+			state.withLock { $0.url }
+		}
+		set {
+			state.withLock { $0.url = newValue }
+		}
+	}
 	private var extensionContainers: ExtensionContainers?
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "ShareViewController")
 
 	override var nibName: NSNib.Name? {
         return NSNib.Name("ShareViewController")
@@ -25,11 +35,11 @@ class ShareViewController: NSViewController {
 
     override func loadView() {
         super.loadView()
-		
+
 		extensionContainers = ExtensionContainersFile.read()
 		buildFolderPopupMenu()
-		
-		var provider: NSItemProvider? = nil
+
+		var provider: NSItemProvider?
 
 		// Try to get any HTML that is maybe passed in
 		for item in self.extensionContext!.inputItems as! [NSExtensionItem] {
@@ -40,7 +50,7 @@ class ShareViewController: NSViewController {
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.propertyList.identifier, options: nil, completionHandler: { [weak self] (pList, error) in
 				if error != nil {
 					return
@@ -67,7 +77,7 @@ class ShareViewController: NSViewController {
 			}
 		}
 
-		if provider != nil  {
+		if provider != nil {
 			provider!.loadItem(forTypeIdentifier: UTType.url.identifier, options: nil, completionHandler: { [weak self] (urlCoded, error) in
 				if error != nil {
 					return
@@ -81,11 +91,10 @@ class ShareViewController: NSViewController {
 				}
 			})
 		}
-
-    }
+	}
 
     @IBAction func send(_ sender: AnyObject?) {
-		guard let url = url, let selectedContainer = selectedContainer(), let containerID = selectedContainer.containerID else {
+		guard let url, let selectedContainer = selectedContainer(), let containerID = selectedContainer.containerID else {
 			self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 			return
 		}
@@ -93,7 +102,7 @@ class ShareViewController: NSViewController {
 		let name = nameTextField.stringValue.isEmpty ? nil : nameTextField.stringValue
 		let request = ExtensionFeedAddRequest(name: name, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
-		
+
 		self.extensionContext!.completeRequest(returningItems: [], completionHandler: nil)
 	}
 
@@ -105,31 +114,31 @@ class ShareViewController: NSViewController {
 }
 
 private extension ShareViewController {
-	
+
 	func buildFolderPopupMenu() {
-		
+
 		let menu = NSMenu(title: "Folders")
 		menu.autoenablesItems = false
-		
+
 		guard let extensionContainers = extensionContainers else {
 			folderPopUpButton.menu = nil
 			return
 		}
 
 		let defaultContainer = ShareDefaultContainer.defaultContainer(containers: extensionContainers)
-		var defaultMenuItem: NSMenuItem? = nil
-		
+		var defaultMenuItem: NSMenuItem?
+
 		for account in extensionContainers.accounts {
-			
+
 			let menuItem = NSMenuItem(title: account.name, action: nil, keyEquivalent: "")
 			menuItem.representedObject = account
-			
+
 			if account.disallowFeedInRootFolder {
 				menuItem.isEnabled = false
 			}
-			
+
 			menu.addItem(menuItem)
-			
+
 			if defaultContainer?.containerID == account.containerID {
 				defaultMenuItem = menuItem
 			}
@@ -143,15 +152,15 @@ private extension ShareViewController {
 					defaultMenuItem = menuItem
 				}
 			}
-			
+
 		}
-		
+
 		folderPopUpButton.menu = menu
 		folderPopUpButton.select(defaultMenuItem)
 	}
-	
+
 	func selectedContainer() -> ExtensionContainer? {
 		return folderPopUpButton.selectedItem?.representedObject as? ExtensionContainer
 	}
-	
+
 }

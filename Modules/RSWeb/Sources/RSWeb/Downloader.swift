@@ -16,16 +16,12 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 /// or a web page. For a download-feeds session, see DownloadSession.
 /// Caches response for a short time for GET requests. May return cached response.
 @MainActor public final class Downloader {
-
 	public static let shared = Downloader()
 	private let urlSession: URLSession
 	private var callbacks = [URL: [DownloadCallback]]()
-
-	// Cache — short-lived
-	private let cache = Cache<DownloaderRecord>(timeToLive: 60 * 3, timeBetweenCleanups: 60 * 2)
+	private let cache = DownloadCache.shared
 
 	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
-	nonisolated private static let debugLoggingEnabled = false
 
 	private init() {
 		let sessionConfiguration = URLSessionConfiguration.ephemeral
@@ -34,7 +30,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1
 		sessionConfiguration.httpCookieStorage = nil
-		
+
 		if let userAgentHeaders = UserAgent.headers() {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
@@ -44,6 +40,18 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 
 	deinit {
 		urlSession.invalidateAndCancel()
+	}
+
+	public func download(_ url: URL) async throws -> (Data?, URLResponse?) {
+		try await withCheckedThrowingContinuation { continuation in
+			download(url) { data, response, error in
+				if let error {
+					continuation.resume(throwing: error)
+				} else {
+					continuation.resume(returning: (data, response))
+				}
+			}
+		}
 	}
 
 	public func download(_ url: URL, _ callback: @escaping DownloadCallback) {
@@ -59,31 +67,31 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 			return
 		}
 
+		guard url.isHTTPOrHTTPSURL() else {
+			Self.logger.debug("Downloader: skipping download for non-http/https URL: \(url)")
+			callback(nil, nil, nil)
+			return
+		}
+
 		let isCacheableRequest = urlRequest.httpMethod == HTTPMethod.get
 
 		// Return cached record if available.
 		if isCacheableRequest {
 			if let cachedRecord = cache[url.absoluteString] {
-				if Self.debugLoggingEnabled {
-					Self.logger.debug("Downloader: returning cached record for \(url)")
-				}
-				callback(cachedRecord.data, cachedRecord.response, cachedRecord.error)
+				Self.logger.debug("Downloader: returning cached record for \(url)")
+				callback(cachedRecord.data, cachedRecord.response, nil)
 				return
 			}
 		}
 
 		// Add callback. If there is already a download in progress for this URL, return early.
 		if callbacks[url] == nil {
-			if Self.debugLoggingEnabled {
-				Self.logger.debug("Downloader: downloading \(url)")
-			}
+			Self.logger.debug("Downloader: downloading \(url)")
 			callbacks[url] = [callback]
 		} else {
 			// A download is already be in progress for this URL. Don’t start a separate download.
 			// Add the callback to the callbacks array for this URL.
-			if Self.debugLoggingEnabled {
-				Self.logger.debug("Downloader: download in progress for \(url) — adding callback")
-			}
+			Self.logger.debug("Downloader: download in progress for \(url) — adding callback")
 			callbacks[url]?.append(callback)
 			return
 		}
@@ -94,11 +102,8 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
 
 			if isCacheableRequest {
-				if Self.debugLoggingEnabled {
-					Self.logger.debug("Downloader: caching record for \(url)")
-				}
-				let cachedRecord = DownloaderRecord(data: data, response: response, error: error)
-				self.cache[url.absoluteString] = cachedRecord
+				Self.logger.debug("Downloader: caching response for \(url)")
+				self.cache.add(url.absoluteString, data: data, response: response)
 			}
 
 			Task { @MainActor in
@@ -124,25 +129,15 @@ private extension Downloader {
 			return
 		}
 
-		if Self.debugLoggingEnabled {
-			let count = callbacksForURL.count
-			if count == 1 {
-				Self.logger.debug("Downloader: calling 1 callback for URL \(url)")
-			} else {
-				Self.logger.debug("Downloader: calling \(count) callbacks for URL \(url)")
-			}
+		let count = callbacksForURL.count
+		if count == 1 {
+			Self.logger.debug("Downloader: calling 1 callback for URL \(url)")
+		} else {
+			Self.logger.debug("Downloader: calling \(count) callbacks for URL \(url)")
 		}
 
 		for callback in callbacksForURL {
 			callback(data, response, error)
 		}
 	}
-}
-
-struct DownloaderRecord: CacheRecord, Sendable {
-
-	let dateCreated = Date()
-	let data: Data?
-	let response: URLResponse?
-	let error: Error?
 }

@@ -13,8 +13,8 @@ import RSCore
 final class FolderInspectorViewController: NSViewController, Inspector {
 
 	@IBOutlet var nameTextField: NSTextField?
-	@IBOutlet weak var folderImageView: NSImageView!
-	
+	@IBOutlet var folderImageView: NSImageView!
+
 	private var folder: Folder? {
 		didSet {
 			if folder != oldValue {
@@ -35,8 +35,7 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 	var windowTitle: String = NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
 
 	func canInspect(_ objects: [Any]) -> Bool {
-
-		guard let _ = singleFolder(from: objects) else {
+		guard singleFolder(from: objects) != nil else {
 			return false
 		}
 		return true
@@ -46,20 +45,18 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 	override func viewDidLoad() {
 		updateUI()
-		
-		if #available(macOS 11.0, *) {
-			let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
-			folderImageView.image = image
-			folderImageView.contentTintColor = NSColor.controlAccentColor
-		}
-		
+
+		let image = NSImage(systemSymbolName: "folder", accessibilityDescription: nil)!
+		folderImageView.image = image
+		folderImageView.contentTintColor = NSColor.controlAccentColor
+
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 	}
 
 	override func viewDidDisappear() {
 		renameFolderIfNecessary()
 	}
-	
+
 	// MARK: Notifications
 
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -75,7 +72,7 @@ extension FolderInspectorViewController: NSTextFieldDelegate {
 	func controlTextDidEndEditing(_ obj: Notification) {
 		renameFolderIfNecessary()
 	}
-	
+
 }
 
 private extension FolderInspectorViewController {
@@ -106,22 +103,24 @@ private extension FolderInspectorViewController {
 		}
 		windowTitle = folder?.nameForDisplay ?? NSLocalizedString("Folder Inspector", comment: "Folder Inspector window title")
 	}
-	
+
 	func renameFolderIfNecessary() {
-		guard let folder = folder,
-			  let account = folder.account,
-			  let nameTextField = nameTextField,
-			  folder.nameForDisplay != nameTextField.stringValue else {
+		guard let folder, let account = folder.account, let nameTextField else {
 			return
 		}
-		
-		account.renameFolder(folder, to: nameTextField.stringValue) { [weak self] result in
-			if case .failure(let error) = result {
-				self?.presentError(error)
-			} else {
-				self?.windowTitle = folder.nameForDisplay
+
+		let newFolderName = nameTextField.stringValue
+		guard !newFolderName.isEmpty, folder.nameForDisplay != newFolderName else {
+			return
+		}
+
+		Task { @MainActor in
+			do {
+				try await account.renameFolder(folder, to: newFolderName)
+				windowTitle = folder.nameForDisplay
+			} catch {
+				presentError(error)
 			}
 		}
 	}
-	
 }

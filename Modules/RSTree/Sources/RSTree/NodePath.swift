@@ -8,8 +8,7 @@
 
 import Foundation
 
-public struct NodePath {
-
+@MainActor public struct NodePath {
 	let components: [Node]
 
 	public init(node: Node) {
@@ -21,8 +20,7 @@ public struct NodePath {
 			if let parent = nomad.parent {
 				tempArray.append(parent)
 				nomad = parent
-			}
-			else {
+			} else {
 				break
 			}
 		}
@@ -31,11 +29,9 @@ public struct NodePath {
 	}
 
 	public init?(representedObject: AnyObject, treeController: TreeController) {
-
 		if let node = treeController.nodeInTreeRepresentingObject(representedObject) {
 			self.init(node: node)
-		}
-		else {
+		} else {
 			return nil
 		}
 	}

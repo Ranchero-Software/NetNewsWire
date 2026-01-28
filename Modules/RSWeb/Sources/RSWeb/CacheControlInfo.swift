@@ -10,7 +10,7 @@ import Foundation
 /// Basic Cache-Control handling — just the part we need,
 /// which is to know when we got the response (dateCreated)
 /// and when we can ask again (canResume).
-public struct CacheControlInfo: Codable, Equatable {
+nonisolated public struct CacheControlInfo: Codable, Equatable {
 
 	let dateCreated: Date
 	let maxAge: TimeInterval
@@ -21,7 +21,7 @@ public struct CacheControlInfo: Codable, Equatable {
 	public var canResume: Bool {
 		Date() >= resumeDate
 	}
-	
+
 	public init?(urlResponse: HTTPURLResponse) {
 		guard let cacheControlValue = urlResponse.valueForHTTPHeaderField(HTTPResponseHeader.cacheControl) else {
 			return nil
@@ -35,14 +35,14 @@ public struct CacheControlInfo: Codable, Equatable {
 		guard let maxAge = Self.parseMaxAge(value) else {
 			return nil
 		}
-		
+
 		let d = Date()
 		self.dateCreated = d
 		self.maxAge = maxAge
 	}
 }
 
-private extension CacheControlInfo {
+nonisolated private extension CacheControlInfo {
 
 	static let maxAgePrefix = "max-age="
 	static let maxAgePrefixCount = maxAgePrefix.count

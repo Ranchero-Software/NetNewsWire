@@ -13,19 +13,17 @@ import ArticlesDatabase
 import Account
 
 struct TodayFeedDelegate: SmartFeedDelegate {
-
-	var feedID: FeedIdentifier? {
-		return FeedIdentifier.smartFeed(String(describing: TodayFeedDelegate.self))
+	var sidebarItemID: SidebarItemIdentifier? {
+		return SidebarItemIdentifier.smartFeed(String(describing: TodayFeedDelegate.self))
 	}
-	
+
 	let nameForDisplay = NSLocalizedString("Today", comment: "Today pseudo-feed title")
 	let fetchType = FetchType.today(nil)
 	var smallIcon: IconImage? {
-		return AppAssets.todayFeedImage
+		Assets.Images.todayFeed
 	}
-	
-	func fetchUnreadCount(for account: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
-		account.fetchUnreadCountForToday(completion)
+
+	func fetchUnreadCount(account: Account) async throws -> Int? {
+		try await account.fetchUnreadCountForTodayAsync()
 	}
 }
-

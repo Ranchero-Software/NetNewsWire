@@ -17,15 +17,15 @@ extension Notification.Name {
 	static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable") // UserInfoKey.feed
 }
 
-public final class FeedIconDownloader {
+@MainActor public final class FeedIconDownloader {
 
 	public static let shared = FeedIconDownloader()
 
 	private let imageDownloader = ImageDownloader.shared
 	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 	private var homePagesWithNoIconURL = Set<String>()
-	private var cache = [WebFeed: IconImage]()
-	private var waitingForFeedURLs = [String: WebFeed]()
+	private var cache = [Feed: IconImage]()
+	private var waitingForFeedURLs = [String: Feed]()
 
 	private var feedURLToIconURLCache = [String: String]()
 	private var feedURLToIconURLCachePath: URL
@@ -41,20 +41,23 @@ public final class FeedIconDownloader {
 		self.feedURLToIconURLCachePath = folder.appendingPathComponent("FeedURLToIconURLCache.plist")
 		loadFeedURLToIconURLCache()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
 	}
 
-	func icon(for feed: WebFeed) -> IconImage? {
+	func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
 		}
-		
-		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), (homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog") {
+
+		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog" {
 			return IconImage.nnwFeedIcon
 		}
+		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
+			return nil
+		}
 
-		func checkHomePageURL() {
+		@MainActor func checkHomePageURL() {
 			guard let homePageURL = feed.homePageURL else {
 				return
 			}
@@ -69,16 +72,18 @@ public final class FeedIconDownloader {
 				}
 			}
 		}
-		
-		func checkFeedIconURL() {
+
+		@MainActor func checkFeedIconURL() {
 			if let iconURL = feed.iconURL {
 				icon(forURL: iconURL, feed: feed) { (image) in
-					if let image = image {
-						self.cache[feed] = IconImage(image)
-						self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-					} else {
-						checkHomePageURL()
+					Task { @MainActor in
+						if let image = image {
+							self.cache[feed] = IconImage(image)
+							self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
+							self.postFeedIconDidBecomeAvailableNotification(feed)
+						} else {
+							checkHomePageURL()
+						}
 					}
 				}
 			} else {
@@ -88,9 +93,11 @@ public final class FeedIconDownloader {
 
 		if let previouslyFoundIconURL = feedURLToIconURLCache[feed.url] {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image in
-				if let image {
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-					self.cache[feed] = IconImage(image)
+				MainActor.assumeIsolated {
+					if let image {
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+						self.cache[feed] = IconImage(image)
+					}
 				}
 			}
 
@@ -113,11 +120,23 @@ public final class FeedIconDownloader {
 
 private extension FeedIconDownloader {
 
-	static let homePagesWithUglyIcons: Set<String> = Set(["https://www.macsparky.com/", "https://xkcd.com/"])
+	static let specialCasesToSkip = ["macsparky.com", "xkcd.com", SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
-	func icon(forHomePageURL homePageURL: String, feed: WebFeed, _ resultBlock: @escaping (RSImage?, String?) -> Void) {
+	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
+		shouldSkipDownloadingFeedIcon(feed.url)
+	}
 
-		if homePagesWithNoIconURL.contains(homePageURL) || Self.homePagesWithUglyIcons.contains(homePageURL) {
+	static func shouldSkipDownloadingFeedIcon(_ urlString: String) -> Bool {
+		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
+	}
+
+	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (RSImage?, String?) -> Void) {
+		if Self.shouldSkipDownloadingFeedIcon(homePageURL) {
+			resultBlock(nil, nil)
+			return
+		}
+
+		if homePagesWithNoIconURL.contains(homePageURL) {
 			resultBlock(nil, nil)
 			return
 		}
@@ -130,7 +149,9 @@ private extension FeedIconDownloader {
 		if let url = metadata.bestWebsiteIconURL() {
 			homePagesWithNoIconURL.remove(homePageURL)
 			icon(forURL: url, feed: feed) { image in
-				resultBlock(image, url)
+				Task { @MainActor in
+					resultBlock(image, url)
+				}
 			}
 			return
 		}
@@ -139,7 +160,7 @@ private extension FeedIconDownloader {
 		resultBlock(nil, nil)
 	}
 
-	func icon(forURL url: String, feed: WebFeed, _ imageResultBlock: @escaping (RSImage?) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping ImageResultBlock) {
 
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {
@@ -149,10 +170,10 @@ private extension FeedIconDownloader {
 		RSImage.scaledForIcon(imageData, imageResultBlock: imageResultBlock)
 	}
 
-	func postFeedIconDidBecomeAvailableNotification(_ feed: WebFeed) {
+	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.webFeed: feed]
+			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
 			NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}

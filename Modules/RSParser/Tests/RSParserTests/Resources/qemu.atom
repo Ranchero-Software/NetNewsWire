@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.4">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2025-10-08T23:46:50+00:00</updated><id>/feed.xml</id><title type="html">QEMU</title><subtitle>QEMU is a FAST! processor emulator
+</subtitle><entry><title type="html">QEMU version 10.1.0 released</title><link href="/2025/08/26/qemu-10-1-0/" rel="alternate" type="text/html" title="QEMU version 10.1.0 released" /><published>2025-08-26T23:25:00+00:00</published><updated>2025-08-26T23:25:00+00:00</updated><id>/2025/08/26/qemu-10-1-0</id><content type="html" xml:base="/2025/08/26/qemu-10-1-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 10.1.0 release. This release contains 2700+ commits from 226 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/10.1">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>VFIO: Initial support for accessing/mapping memory for confidential guests when guest_memfd is being utilized, allowing passthrough support for virtual machines running under SEV-SNP/TDX</li>
+  <li>Live migration: support for utilizing multifd to accelerate post-copy migration, optimizations for pre-copy migration, and RDMA migration support for ipv6</li>
+  <li>QEMU guest agent: support for querying load of virtual machines running Windows via new ‘guest-get-load’ command</li>
+  <li>ARM: support for CPU features FEAT_SME2, FEAT_SME2p1, FEAT_SME_B16B16, FEAT_SME_F16F16, FEAT_SVE_B16B16, and FEAT_SVE2p1</li>
+  <li>ARM: support for new board/machine models ‘max78000fthr’, ‘ast2700fc’, ‘catalina-bmc’, ‘gb200-bmc’, and ‘ast2700a0-evb’</li>
+  <li>ARM: ‘virt’ board now supports nested virtualization under KVM, CXL, and ACPI-based PCI hotplug</li>
+  <li>LoongArch: support for in-kernel irqchip</li>
+  <li>Microblaze: support for selecting the endianess of ‘petalogix_s3adsp1800’ machine type</li>
+  <li>RISC-V: ISA/extension support for atomic instruction fetch (Ziccif), ‘Svrsw60t59b’, and numerous other improvements/additions/fixes</li>
+  <li>RISC-V: support for Kunminghu CPU and platform</li>
+  <li>x86: KVM support for running confidential guests via Intel TDX</li>
+  <li>x86: Support for initializing AMD SEV/SEV-ES/SEV-SNP virtual machines using the IGVM file format</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 10.1" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 10.1.0 release. This release contains 2700+ commits from 226 authors.]]></summary></entry><entry><title type="html">QEMU version 10.0.0 released</title><link href="/2025/04/23/qemu-10-0-0/" rel="alternate" type="text/html" title="QEMU version 10.0.0 released" /><published>2025-04-23T18:14:00+00:00</published><updated>2025-04-23T18:14:00+00:00</updated><id>/2025/04/23/qemu-10-0-0</id><content type="html" xml:base="/2025/04/23/qemu-10-0-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 10.0.0 release. This release contains 2800+ commits from 211 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/10.0">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>block: virtio-scsi multiqueue support for using different I/O threads to process requests for each queue (similar to the virtio-blk multiqueue support that was added in QEMU 9.2)</li>
+  <li>VFIO: improved support for IGD passthrough on all Intel Gen 11/12 devices</li>
+  <li>Documentation: significant improvement/overhaul of documentation for QEMU Machine Protocol to make it clearer and more organized, including all commands/events/types now being cross-reference-able via click-able links in generated documentation</li>
+  <li>ARM: emulation support for Secure EL2 physical and virtual timers</li>
+  <li>ARM: emulation support for FEAT_AFP, FEAT_RPRES, and FEAT_XS architecture features</li>
+  <li>ARM: new board models for NPCM8445 Evaluation and i.MX 8M Plus EVK boards</li>
+  <li>HPPA: new SeaBIOS-hppa version 18 with lots of fixes and enhancements</li>
+  <li>HPPA: translation speed and virtual CPU reset improvements</li>
+  <li>HPPA: emulation support for Diva GSP BMC boards</li>
+  <li>LoongArch: support for CPU hotplug, paravirtual IPIs, KVM steal time accounting, and virtual ‘extioi’ interrupt routing.</li>
+  <li>RISC-V: ISA/extension support for riscv-iommu-sys devices, ‘svukte’, ‘ssstateen’, ‘smrnmi’, ‘smdbltrp’/’ssdbltrp’, ‘supm’/’sspm’, and IOMMU translation tags</li>
+  <li>RISC-V: emulation support for Ascalon and RV64 Xiangshan Nanhu CPUs, and Microblaze V boards.</li>
+  <li>s390x: add CPU model support for the generation 17 mainframe CPU</li>
+  <li>s390x: add support for virtio-mem and for bypassing IOMMU to improve PCI device performance</li>
+  <li>x86: CPU model support for Clearwater Forest and Sierra Forest v2</li>
+  <li>x86: faster emulation of string instructions</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 10.0" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 10.0.0 release. This release contains 2800+ commits from 211 authors.]]></summary></entry><entry><title type="html">Announcing QEMU Google Summer of Code 2025 internships</title><link href="/2025/03/06/gsoc-2025/" rel="alternate" type="text/html" title="Announcing QEMU Google Summer of Code 2025 internships" /><published>2025-03-06T07:00:00+00:00</published><updated>2025-03-06T07:00:00+00:00</updated><id>/2025/03/06/gsoc-2025</id><content type="html" xml:base="/2025/03/06/gsoc-2025/"><![CDATA[<p>QEMU is participating in <a href="https://summerofcode.withgoogle.com/">Google Summer of
+Code</a> again this year! Google Summer of Code
+is an open source internship program that offers paid remote work
+opportunities for contributing to open source. Internships run May through
+August, so if you have time and want to experience open source development,
+read on to find out how you can apply.</p>
+
+<p>Each intern is paired with one or more mentors, experienced QEMU contributors
+who support them during the internship. Code developed by the intern is
+submitted through the same open source development process that all QEMU
+contributions follow. This gives interns experience with contributing to open
+source software. Some interns then choose to pursue a career in open source
+software after completing their internship.</p>
+
+<h2 id="find-out-if-you-are-eligible">Find out if you are eligible</h2>
+<p>Information on who can apply for Google Summer of Code is
+<a href="https://developers.google.com/open-source/gsoc/faq#what_are_the_eligibility_requirements_for_participation">here</a>.</p>
+
+<h2 id="select-a-project-idea">Select a project idea</h2>
+<p>Look through the the <a href="https://wiki.qemu.org/Google_Summer_of_Code_2025">list of QEMU project
+ideas</a> and see if there is
+something you are interested in working on. Once you have found a project idea
+you want to apply for, email the mentor for that project idea to ask any
+questions you may have and discuss the idea further.</p>
+
+<h2 id="submit-your-application">Submit your application</h2>
+<p>You can <a href="https://summerofcode.withgoogle.com/">apply for Google Summer of Code</a>
+from March 24th to April 8th.</p>
+
+<p>Good luck with your applications!</p>
+
+<p>If you have questions about applying for QEMU GSoC, please email
+<a href="mailto:stefanha@gmail.com">Stefan Hajnoczi</a> or ask on the <a href="https://webchat.oftc.net/?channels=qemu-gsoc">#qemu-gsoc IRC
+channel</a>.</p>]]></content><author><name></name></author><category term="internships" /><category term="gsoc" /><summary type="html"><![CDATA[QEMU is participating in Google Summer of Code again this year! Google Summer of Code is an open source internship program that offers paid remote work opportunities for contributing to open source. Internships run May through August, so if you have time and want to experience open source development, read on to find out how you can apply.]]></summary></entry><entry><title type="html">QEMU version 9.2.0 released</title><link href="/2024/12/11/qemu-9-2-0/" rel="alternate" type="text/html" title="QEMU version 9.2.0 released" /><published>2024-12-11T23:42:00+00:00</published><updated>2024-12-11T23:42:00+00:00</updated><id>/2024/12/11/qemu-9-2-0</id><content type="html" xml:base="/2024/12/11/qemu-9-2-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 9.2.0 release. This release contains 1700+ commits from 209 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/9.2">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>virtio-gpu: support for 3D acceleration of Vulkan applications via Venus Vulkan driver in the guest and virglrenderer host library</li>
+  <li>crypto: GLib crypto backend now supports SHA-384 hashes</li>
+  <li>migration: QATzip-accelerated compression support while using multiple migration streams</li>
+  <li>Rust: experimental support for device models written in Rust (for development use only)</li>
+  <li>ARM: emulation support for FEAT_EBF16, FEAT_CMOW architecture features</li>
+  <li>ARM: support for two-stage SMMU translation for sbsa-ref and virt boards</li>
+  <li>ARM: support for CPU Security Extensions for xilinx-zynq-a9 board</li>
+  <li>ARM: 64GB+ memory support when using HVF acceleration on newer Mac systems</li>
+  <li>HPPA: SeaBIOS-hppa v17 firmware with various fixes and enhancements</li>
+  <li>RISC-V: IOMMU support for virt machine</li>
+  <li>RISC-V: support for control flow integrity and Svvptc extensions, and support for Bit-Manipulation extension on OpenTitan boards</li>
+  <li>RISC-V: improved performance for vector unit-stride/whole register ld/st instructions</li>
+  <li>s390x: support for booting from other devices if the previous ones fail</li>
+  <li>x86: support for new nitro-enclave machine type that can emulate AWS Nitro Enclave and can boot from Enclave Image Format files.</li>
+  <li>x86: KVM support for enabling AVX10, as well as enabling specific AVX10 versions via command-line</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 9.2" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 9.2.0 release. This release contains 1700+ commits from 209 authors.]]></summary></entry><entry><title type="html">QEMU version 9.1.0 released</title><link href="/2024/09/03/qemu-9-1-0/" rel="alternate" type="text/html" title="QEMU version 9.1.0 released" /><published>2024-09-03T23:08:00+00:00</published><updated>2024-09-03T23:08:00+00:00</updated><id>/2024/09/03/qemu-9-1-0</id><content type="html" xml:base="/2024/09/03/qemu-9-1-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 9.1.0 release. This release contains 2800+ commits from 263 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/9.1">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>migration: compression offload support via Intel In-Memory Analytics Accelerator (IAA) or User Space Accelerator Development Kit (UADK), along with enhanced support for postcopy failure recovery</li>
+  <li>virtio: support for VIRTIO_F_NOTIFICATION_DATA, allowing guest drivers to provide additional data as part of sending device notifications for performance/debug purposes</li>
+  <li>guest-agent: support for guest-network-get-route command on linux, guest-ssh-* commands on Windows, and enhanced CLI support for configuring allowed/blocked commands</li>
+  <li>block: security fixes for QEMU NBD server and NBD TLS encryption</li>
+  <li>ARM: emulation support for FEAT_NMI, FEAT_CSV2_3, FEAT_ETS2, FEAT_Spec_FPACC, FEAT_WFxT, FEAT_Debugv8p8 architecture features</li>
+  <li>ARM: nested/two-stage page table support for emulated SMMUv3</li>
+  <li>ARM: xilinx_zynq board support for cache controller and multiple CPUs, and B-L475E-IOT01A board support for a DM163 display</li>
+  <li>LoongArch: support for directly booting an ELF kernel and for running up to 256 vCPUs via extioi virt extension</li>
+  <li>LoongArch: enhanced debug/GDB support</li>
+  <li>RISC-V: support for version 1.13 of privileged architecture specification</li>
+  <li>RISC-V: support for Zve32x, Zve64x, Zimop, Zcmop, Zama16b, Zabha, Zawrs, and Smcntrpmf extensions</li>
+  <li>RISC-V: enhanced debug/GDB support and general fixes</li>
+  <li>SPARC: emulation support for FMAF, IMA, VIS3, and VIS4 architecture features</li>
+  <li>x86: KVM support for running AMD SEV-SNP guests</li>
+  <li>x86: CPU emulation support for Icelake-Server-v7, SapphireRapids-v3, and SierraForest</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 9.1" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 9.1.0 release. This release contains 2800+ commits from 263 authors.]]></summary></entry><entry><title type="html">KVM Forum 2024: Call for presentations</title><link href="/2024/05/06/kvm-forum-cfp/" rel="alternate" type="text/html" title="KVM Forum 2024: Call for presentations" /><published>2024-05-06T06:00:00+00:00</published><updated>2024-05-06T06:00:00+00:00</updated><id>/2024/05/06/kvm-forum-cfp</id><content type="html" xml:base="/2024/05/06/kvm-forum-cfp/"><![CDATA[<p>The <a href="https://kvm-forum.qemu.org/">KVM Forum 2024</a> conference will take
+place in Brno, Czech Republic on September 22-23, 2024. KVM Forum brings
+together the Linux virtualization community, especially around the KVM stack,
+including QEMU and other virtual machine monitors.</p>
+
+<p>The Call for Presentations is open until June 8, 2024. You are invited to
+submit presentation proposals via the <a href="https://kvm-forum.qemu.org/2024/cfp/">KVM Forum CfP
+page</a>. All presentation slots will be
+25 minutes + 5 minutes for questions.</p>
+
+<p>Suggested topics include:</p>
+
+<ul>
+  <li>Scalability and Optimization</li>
+  <li>Hardening and security</li>
+  <li>Confidential computing</li>
+  <li>Testing</li>
+  <li>KVM and the Linux Kernel
+    <ul>
+      <li>New Features and Architecture Ports</li>
+      <li>Device Passthrough: VFIO, mdev, vDPA</li>
+      <li>Network Virtualization</li>
+      <li>Virtio and vhost</li>
+    </ul>
+  </li>
+  <li>Virtual Machine Monitors and Management
+    <ul>
+      <li>VMM Implementation: APIs, Live Migration, Performance Tuning, etc.</li>
+      <li>Multi-process VMMs: vhost-user, vfio-user, QEMU Storage Daemon, SPDK</li>
+      <li>QEMU without KVM: Hypervisor.framework, Windows Hypervisor Platform, etc.</li>
+      <li>Managing KVM: Libvirt, KubeVirt, Kata Containers</li>
+    </ul>
+  </li>
+  <li>Emulation
+    <ul>
+      <li>New Devices, Boards and Architectures</li>
+      <li>CPU Emulation and Binary Translation</li>
+    </ul>
+  </li>
+</ul>]]></content><author><name></name></author><category term="presentations" /><category term="conferences" /><summary type="html"><![CDATA[The KVM Forum 2024 conference will take place in Brno, Czech Republic on September 22-23, 2024. KVM Forum brings together the Linux virtualization community, especially around the KVM stack, including QEMU and other virtual machine monitors.]]></summary></entry><entry><title type="html">QEMU version 9.0.0 released</title><link href="/2024/04/23/qemu-9-0-0/" rel="alternate" type="text/html" title="QEMU version 9.0.0 released" /><published>2024-04-23T23:02:00+00:00</published><updated>2024-04-23T23:02:00+00:00</updated><id>/2024/04/23/qemu-9-0-0</id><content type="html" xml:base="/2024/04/23/qemu-9-0-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 9.0.0 release. This release contains 2700+ commits from 220 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/9.0">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>block: virtio-blk now supports multiqueue where different queues of a single disk can be processed by different I/O threads</li>
+  <li>gdbstub: various improvements such as catching syscalls in user-mode, support for fork-follow modes, and support for siginfo:read</li>
+  <li>memory: preallocation of memory backends can now be handled concurrently using multiple threads in some cases</li>
+  <li>migration: support for “mapped-ram” capability allowing for more efficient VM snapshots, improved support for zero-page detection, and checkpoint-restart support for VFIO</li>
+  <li>ARM: architectural feature support for ECV (Enhanced Counter Virtualization), NV (Nested Virtualization), and NV2 (Enhanced Nested Virtualization)</li>
+  <li>ARM: board support for B-L475E-IOT01A IoT node, mp3-an536 (MPS3 dev board + AN536 firmware), and raspi4b (Raspberry Pi 4 Model B)</li>
+  <li>ARM: additional IO/disk/USB/SPI/ethernet controller and timer support for Freescale i.MX6, Allwinner R40, Banana Pi, npcm7xxx, and virt boards</li>
+  <li>HPPA: numerous bug fixes and SeaBIOS-hppa firmware updated to version 16</li>
+  <li>LoongArch: KVM acceleration support, including LSX/LASX vector extensions</li>
+  <li>RISC-V: ISA/extension support for Zacas, amocas, RVA22 profiles, Zaamo, Zalrsc, Ztso, and more</li>
+  <li>RISC-V: SMBIOS support for RISC-V virt machine, ACPI support for SRAT, SLIT, AIA, PLIC and updated RHCT table support, and numerous fixes</li>
+  <li>s390x: Emulation support for CVDG, CVB, CVBY and CVBG instructions, and fixes for LAE (Load Address Extended) emulation</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 9.0" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 9.0.0 release. This release contains 2700+ commits from 220 authors.]]></summary></entry><entry><title type="html">QEMU version 8.2.0 released</title><link href="/2023/12/20/qemu-8-2-0/" rel="alternate" type="text/html" title="QEMU version 8.2.0 released" /><published>2023-12-20T16:33:00+00:00</published><updated>2023-12-20T16:33:00+00:00</updated><id>/2023/12/20/qemu-8-2-0</id><content type="html" xml:base="/2023/12/20/qemu-8-2-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 8.2.0 release. This release contains 3200+ commits from 238 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/8.2">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>New virtio-sound device emulation</li>
+  <li>New virtio-gpu rutabaga device emulation used by Android emulator</li>
+  <li>New hv-balloon for dynamic memory protocol device for Hyper-V guests</li>
+  <li>New Universal Flash Storage device emulation</li>
+  <li>Network Block Device (NBD) 64-bit offsets for improved performance</li>
+  <li>dump-guest-memory now supports the standard kdump format</li>
+  <li>ARM: Xilinx Versal board now models the CFU/CFI, and the TRNG device</li>
+  <li>ARM: CPU emulation support for cortex-a710 and neoverse-n2</li>
+  <li>ARM: architectural feature support for PACQARMA3, EPAC, Pauth2, FPAC, FPACCOMBINE, TIDCP1, MOPS, HBC, and HPMN0</li>
+  <li>HPPA: CPU emulation support for 64-bit PA-RISC 2.0</li>
+  <li>HPPA: machine emulation support for C3700, including Astro memory controller and four Elroy PCI bridges</li>
+  <li>LoongArch: ISA support for LASX extension and PRELDX instruction</li>
+  <li>LoongArch: CPU emulation support for la132</li>
+  <li>RISC-V: ISA/extension support for AIA virtualization support via KVM, and vector cryptographic instructions</li>
+  <li>RISC-V: Numerous extension/instruction cleanups, fixes, and reworks</li>
+  <li>s390x: support for vfio-ap passthrough of crypto adapter for protected virtualization guests</li>
+  <li>Tricore: support for TC37x CPU which implements ISA v1.6.2</li>
+  <li>Tricore: support for CRCN, FTOU, FTOHP, and HPTOF instructions</li>
+  <li>x86: Zen support for PV console and network devices</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 8.2" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 8.2.0 release. This release contains 3200+ commits from 238 authors.]]></summary></entry><entry><title type="html">QEMU version 8.1.0 released</title><link href="/2023/08/22/qemu-8-1-0/" rel="alternate" type="text/html" title="QEMU version 8.1.0 released" /><published>2023-08-22T16:42:00+00:00</published><updated>2023-08-22T16:42:00+00:00</updated><id>/2023/08/22/qemu-8-1-0</id><content type="html" xml:base="/2023/08/22/qemu-8-1-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 8.1.0 release. This release contains 2900+ commits from 250 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/8.1">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>VFIO: improved live migration support, no longer an experimental feature</li>
+  <li>GTK GUI now supports multi-touch events</li>
+  <li>ARM, PowerPC, and RISC-V can now use AES acceleration on host processor</li>
+  <li>PCIe: new QMP commands to inject CXL General Media events, DRAM events and
+Memory Module events</li>
+  <li>ARM: KVM VMs on a host which supports MTE (the Memory Tagging Extension)
+can now use MTE in the guest</li>
+  <li>ARM: emulation support for bpim2u (Banana Pi BPI-M2 Ultra) board and
+neoverse-v1 (Cortex Neoverse-V1) CPU</li>
+  <li>ARM: new architectural feature support for: FEAT_PAN3 (SCTLR_ELx.EPAN),
+FEAT_LSE2 (Large System Extensions v2), and experimental support for
+FEAT_RME (Realm Management Extensions)</li>
+  <li>Hexagon: new instruction support for v68/v73 scalar, and v68/v69 HVX</li>
+  <li>Hexagon: gdbstub support for HVX</li>
+  <li>MIPS: emulation support for Ingenic XBurstR1/XBurstR2 CPUs, and MXU
+instructions</li>
+  <li>PowerPC: TCG SMT support, allowing pseries and powernv to run with up to 8
+threads per core</li>
+  <li>PowerPC: emulation support for Power9 DD2.2 CPU model, and perf sampling
+support for POWER CPUs</li>
+  <li>RISC-V: ISA extension support for BF16/Zfa, and disassembly support
+for Zcm<em>/Z</em>inx/XVentanaCondOps/Xthead</li>
+  <li>RISC-V: CPU emulation support for Veyron V1</li>
+  <li>RISC-V: numerous KVM/emulation fixes and enhancements</li>
+  <li>s390: instruction emulation fixes for LDER, LCBB, LOCFHR, MXDB, MXDBR,
+EPSW, MDEB, MDEBR, MVCRL, LRA, CKSM, CLM, ICM, MC, STIDP, EXECUTE, and
+CLGEBR(A)</li>
+  <li>SPARC: updated target/sparc to use tcg_gen_lookup_and_goto_ptr() for
+improved performance</li>
+  <li>Tricore: emulation support for TC37x CPU that supports ISA v1.6.2
+instructions</li>
+  <li>Tricore: instruction emulation of POPCNT.W, LHA, CRC32L.W, CRC32.B,
+SHUFFLE, SYSCALL, and DISABLE</li>
+  <li>x86: CPU model support for GraniteRapids</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 8.1" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 8.1.0 release. This release contains 2900+ commits from 250 authors.]]></summary></entry><entry><title type="html">QEMU version 8.0.0 released</title><link href="/2023/04/20/qemu-8-0-0/" rel="alternate" type="text/html" title="QEMU version 8.0.0 released" /><published>2023-04-20T18:53:00+00:00</published><updated>2023-04-20T18:53:00+00:00</updated><id>/2023/04/20/qemu-8-0-0</id><content type="html" xml:base="/2023/04/20/qemu-8-0-0/"><![CDATA[<p>We’d like to announce the availability of the QEMU 8.0.0 release. This release contains 2800+ commits from 238 authors.</p>
+
+<p>You can grab the tarball from our <a href="https://www.qemu.org/download/#source">download page</a>. The full list of changes are available <a href="https://wiki.qemu.org/ChangeLog/8.0">in the changelog</a>.</p>
+
+<p>Highlights include:</p>
+
+<ul>
+  <li>ARM: emulation support for FEAT_EVT, FEAT_FGT, and AArch32 ARMv8-R</li>
+  <li>ARM: CPU emulation for Cortex-A55 and Cortex-R52, and new Olimex
+STM32 H405 machine type</li>
+  <li>ARM: gdbstub support for M-profile system registers</li>
+  <li>HPPA: fid (Floating-Point Identify) instruction support and 32-bit
+emulation improvements</li>
+  <li>RISC-V: additional ISA and Extension support for smstateen, native
+debug icount trigger, cache-related PMU events in virtual mode,
+Zawrs/Svadu/T-Head/Zicond extensions, and ACPI support</li>
+  <li>RISC-V: updated machine support for OpenTitan, PolarFire, and
+OpenSBI</li>
+  <li>RISC-V: wide ranges of fixes covering PMP propagation for TLB,
+mret exceptions, uncompressed instructions, and other
+emulation/virtualization improvements</li>
+  <li>s390x: improved zPCI passthrough device handling</li>
+  <li>s390x: support for asynchronous teardown of memory of secure KVM
+guests during reboot</li>
+  <li>x86: support for Xen guests under KVM with Linux v5.12+</li>
+  <li>x86: new SapphireRapids CPU model</li>
+  <li>x86: TCG support for FSRM, FZRM, FSRS, and FSRC CPUID flags</li>
+  <li>virtio-mem: support for using preallocation in conjunction with live
+migration</li>
+  <li>VFIO: experimental migration support updated to v2 VFIO migration
+protocol</li>
+  <li>qemu-nbd: improved efficient over TCP and when using TLS</li>
+  <li>and lots more…</li>
+</ul>
+
+<p>Thank you to everybody who contributed to this release, whether that was by writing code, reporting bugs, improving documentation, testing, or providing the project with CI resources. We couldn’t do these without you!</p>]]></content><author><name></name></author><category term="releases" /><category term="qemu 8.0" /><summary type="html"><![CDATA[We’d like to announce the availability of the QEMU 8.0.0 release. This release contains 2800+ commits from 238 authors.]]></summary></entry></feed>

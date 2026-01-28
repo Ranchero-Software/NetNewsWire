@@ -11,24 +11,21 @@ import XCTest
 import RSWeb
 import RSCore
 
-class FeedlyOperationTests: XCTestCase {
-	
+@MainActor final class FeedlyOperationTests: XCTestCase {
 	enum TestOperationError: Error, Equatable {
-		case mockError
-		case anotherMockError
+		case error1
+		case error2
 	}
-	
-	final class TestOperation: FeedlyOperation {
+
+	final class TestOperation: FeedlyOperation, @unchecked Sendable {
 		var didCallMainExpectation: XCTestExpectation?
 		var mockError: Error?
-		
-		override func run() {
-			super.run()
+
+		@MainActor override func run() {
 			// Should always call on main thread.
 			XCTAssertTrue(Thread.isMainThread)
-			
 			didCallMainExpectation?.fulfill()
-			
+
 			if let error = mockError {
 				didFinish(with: error)
 			} else {
@@ -36,12 +33,12 @@ class FeedlyOperationTests: XCTestCase {
 			}
 		}
 	}
-	
+
 	final class TestDelegate: FeedlyOperationDelegate {
-		
+
 		var error: Error?
 		var didFailExpectation: XCTestExpectation?
-		
+
 		func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
 			didFailExpectation?.fulfill()
 			self.error = error
@@ -51,73 +48,72 @@ class FeedlyOperationTests: XCTestCase {
     func testDoesCallMain() {
         let testOperation = TestOperation()
 		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
-		
-		MainThreadOperationQueue.shared.add(testOperation)
-		
+
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
+
 		waitForExpectations(timeout: 2)
     }
 
 	func testDoesFail() {
         let testOperation = TestOperation()
 		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
-		testOperation.mockError = TestOperationError.mockError
-		
+		testOperation.mockError = TestOperationError.error1
+
 		let delegate = TestDelegate()
 		delegate.didFailExpectation = expectation(description: "Operation Failed As Expected")
-		
+
 		testOperation.delegate = delegate
-		
-		MainThreadOperationQueue.shared.add(testOperation)
-		
+
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
+
 		waitForExpectations(timeout: 2)
-		
+
 		if let error = delegate.error as? TestOperationError {
-			XCTAssertEqual(error, TestOperationError.mockError)
+			XCTAssertEqual(error, TestOperationError.error1)
 		} else {
 			XCTFail("Expected \(TestOperationError.self) but got \(String(describing: delegate.error)).")
 		}
     }
-	
+
 	func testOperationFlags() {
         let testOperation = TestOperation()
 		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
-		
+
 		let completionExpectation = expectation(description: "Operation Completed")
 		testOperation.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
-		
+
 
 		XCTAssertFalse(testOperation.isCanceled)
-		
-		MainThreadOperationQueue.shared.add(testOperation)
-		
+
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
+
 		waitForExpectations(timeout: 2)
-		
+
 		XCTAssertFalse(testOperation.isCanceled)
     }
-	
+
 	func testOperationCancellationFlags() {
         let testOperation = TestOperation()
 		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
 		testOperation.didCallMainExpectation?.isInverted = true
-		
+
 		let completionExpectation = expectation(description: "Operation Completed")
 		testOperation.completionBlock = { _ in
 			completionExpectation.fulfill()
 		}
-		
+
 		XCTAssertFalse(testOperation.isCanceled)
-		
-		MainThreadOperationQueue.shared.add(testOperation)
-		
-		MainThreadOperationQueue.shared.cancelOperations([testOperation])
-		
+
+		FeedlyMainThreadOperationQueue.shared.add(testOperation)
+		testOperation.cancel()
+
 		waitForExpectations(timeout: 2)
-		
+
 		XCTAssertTrue(testOperation.isCanceled)
     }
-	
+
 	func testDependency() {
 //        let testOperation = TestOperation()
 //		testOperation.didCallMainExpectation = expectation(description: "Did Call Main")
@@ -127,11 +123,11 @@ class FeedlyOperationTests: XCTestCase {
 //			dependencyExpectation.fulfill()
 //		}
 //
-//		MainThreadOperationQueue.shared.make(blockOperation, dependOn: testOperation)
+//		FeedlyMainThreadOperationQueue.shared.make(blockOperation, dependOn: testOperation)
 //
 //		//XCTAssertTrue(blockOperation.dependencies.contains(testOperation))
 //		
-//		MainThreadOperationQueue.shared.addOperations([testOperation, blockOperation])
+//		FeedlyMainThreadOperationQueue.shared.addOperations([testOperation, blockOperation])
 //		
 //		waitForExpectations(timeout: 2)
     }

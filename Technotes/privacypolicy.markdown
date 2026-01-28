@@ -56,9 +56,9 @@ Neither netnewswire.com nor inessential.com (Brent’s blog) use any cookies, Ja
 
 The [NetNewsWire GitHub repository](https://github.com/Ranchero-Software/NetNewsWire) does use cookies and JavaScript, because that’s how GitHub works. The repository, including the issue tracker and anything you post there, is public. See [GitHub’s privacy policy](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement) for more information.
 
-The [NetNewsWire Slack group](https://netnewswire.com/slack) also uses cookies and JavaScript, because that’s how Slack works. The group is public: anyone may join. See [Slack’s privacy policy](https://slack.com/trust/privacy/privacy-policy) for more info.
+The [NetNewsWire Discourse forum](https://discourse.netnewswire.com/) also uses cookies and JavaScript, because that’s how Discourse works. The group is public: anyone may join. (TODO: create a privacy policy for the Discourse forum. Short version: it’s membership-based, which means you have to create an account, and it collects information that it needs for functionality. It’s hosted by us, which means nobody else has access to that data. And we don’t use it for anything else and never would.)
 
-Posting to the GitHub repository and joining the Slack group are optional, opt-in activities.
+Posting to the GitHub repository and joining the Discourse forum are optional, opt-in activities.
 
 ### Content in NetNewsWire
 
@@ -66,6 +66,6 @@ NetNewsWire displays HTML that comes from feeds from other sites. Some of these 
 
 ## Questions or comments
 
-If you have questions or comments about this privacy policy, please contact Brent Simmons on the [Slack group](https://netnewswire.com/slack) or on [Mastodon](https://indieweb.social/@brentsimmons).
+If you have questions or comments about this privacy policy, please contact Brent Simmons on the [NetNewsWire forum](https://discourse.netnewswire.com/) or on [Mastodon](https://indieweb.social/@brentsimmons).
 
 This [policy](https://github.com/brentsimmons/NetNewsWire/blob/master/Technotes/privacypolicy.markdown) is stored in the NetNewsWire GitHub repository, where you can track any changes we might make.

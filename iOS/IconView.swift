@@ -7,10 +7,12 @@
 //
 
 import UIKit
+import RSCore
 
+@IBDesignable
 final class IconView: UIView {
 
-	var iconImage: IconImage? = nil {
+	var iconImage: IconImage? {
 		didSet {
 			guard iconImage !== oldValue else {
 				return
@@ -19,8 +21,7 @@ final class IconView: UIView {
 			if traitCollection.userInterfaceStyle == .dark {
 				let isDark = iconImage?.isDark ?? false
 				isDiscernable = !isDark
-			}
-			else {
+			} else {
 				let isBright = iconImage?.isBright ?? false
 				isDiscernable = !isBright
 			}
@@ -31,10 +32,11 @@ final class IconView: UIView {
 	private var isDiscernable = true
 
 	private let imageView: UIImageView = {
-		let imageView = NonIntrinsicImageView(image: AppAssets.faviconTemplateImage)
+		let imageView = NonIntrinsicImageView(image: Assets.Images.faviconTemplate)
 		imageView.contentMode = .scaleAspectFit
 		imageView.clipsToBounds = true
 		imageView.layer.cornerRadius = 2.0
+		imageView.layer.cornerCurve = .continuous
 		return imageView
 	}()
 
@@ -45,11 +47,11 @@ final class IconView: UIView {
 	private var isSymbolImage: Bool {
 		return iconImage?.isSymbol ?? false
 	}
-	
+
 	private var isBackgroundSuppressed: Bool {
 		return iconImage?.isBackgroundSuppressed ?? false
 	}
-	
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		commonInit()
@@ -59,7 +61,7 @@ final class IconView: UIView {
 		super.init(coder: coder)
 		commonInit()
 	}
-	
+
 	convenience init() {
 		self.init(frame: .zero)
 	}
@@ -77,7 +79,7 @@ final class IconView: UIView {
 private extension IconView {
 
 	func commonInit() {
-		layer.cornerRadius = MainTimelineDefaultCellLayout.iconCornerRadius
+		layer.cornerRadius = 4
 		clipsToBounds = true
 		addSubview(imageView)
 	}
@@ -96,8 +98,7 @@ private extension IconView {
 			}
 			let offset = floor((viewSize.height - imageSize.height) / 2.0)
 			return CGRect(x: offset, y: offset, width: imageSize.width, height: imageSize.height)
-		}
-		else if imageSize.height > imageSize.width {
+		} else if imageSize.height > imageSize.width {
 			let factor = viewSize.height / imageSize.height
 			let width = imageSize.width * factor
 			let originX = floor((viewSize.width - width) / 2.0)
@@ -113,7 +114,7 @@ private extension IconView {
 
 	private func updateBackgroundColor() {
 		if !isBackgroundSuppressed && ((iconImage != nil && isVerticalBackgroundExposed) || !isDiscernable) {
-			backgroundColor = AppAssets.iconBackgroundColor
+			backgroundColor = Assets.Colors.iconBackground
 		} else {
 			backgroundColor = nil
 		}

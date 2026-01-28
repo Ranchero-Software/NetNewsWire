@@ -1,0 +1,9 @@
+// Common settings for all iOS extensions
+
+#include? "../../../SharedXcodeSettings/ProjectSettings.xcconfig"
+#include "./NetNewsWire_codesigning_common.xcconfig"
+#include "./NetNewsWire_ios_target_common.xcconfig"
+
+ENABLE_HARDENED_RUNTIME = YES
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/../../Frameworks
+PRODUCT_NAME = $(TARGET_NAME)

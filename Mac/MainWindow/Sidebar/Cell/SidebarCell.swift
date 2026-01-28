@@ -11,7 +11,7 @@ import RSCore
 import Account
 import RSTree
 
-class SidebarCell : NSTableCellView {
+final class SidebarCell: NSTableCellView {
 
 	var iconImage: IconImage? {
 		didSet {
@@ -73,14 +73,15 @@ class SidebarCell : NSTableCellView {
 	}()
 
 	private let faviconImageView = IconView()
-	private let unreadCountView = UnreadCountView(frame: NSZeroRect)
+	private let unreadCountView = UnreadCountView(frame: NSRect.zero)
 
 	override var backgroundStyle: NSView.BackgroundStyle {
 		didSet {
 			updateFaviconImage()
+			unreadCountView.isSelected = (backgroundStyle != .normal)
 		}
 	}
-	
+
 	override var isFlipped: Bool {
 		return true
 	}
@@ -89,8 +90,8 @@ class SidebarCell : NSTableCellView {
 		super.init(frame: frameRect)
 		commonInit()
 	}
-	
-	required init?(coder: NSCoder) {		
+
+	required init?(coder: NSCoder) {
 		super.init(coder: coder)
 		commonInit()
 	}
@@ -99,7 +100,7 @@ class SidebarCell : NSTableCellView {
 		if let cellAppearance = cellAppearance {
 			titleView.font = cellAppearance.textFieldFont
 		}
-		resizeSubviews(withOldSize: NSZeroSize)
+		resizeSubviews(withOldSize: NSSize.zero)
 	}
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
@@ -138,10 +139,10 @@ private extension SidebarCell {
 		titleView.setFrame(ifNotEqualTo: layout.titleRect)
 		unreadCountView.setFrame(ifNotEqualTo: layout.unreadCountRect)
 	}
-	
+
 	func updateFaviconImage() {
 		var updatedIconImage = iconImage
-		
+
 		if let iconImage = iconImage, iconImage.isSymbol {
 			var tintColor: CGColor
 			if backgroundStyle != .normal {
@@ -162,6 +163,5 @@ private extension SidebarCell {
 			faviconImageView.iconImage = nil
 		}
 	}
-	
-}
 
+}

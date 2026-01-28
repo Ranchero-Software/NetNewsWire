@@ -10,15 +10,15 @@
 import AppKit
 import UniformTypeIdentifiers
 
-public class MacWebBrowser {
+@MainActor public class MacWebBrowser {
 
 	/// Opens a URL in the default browser.
 	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
-		
+
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
 		}
-		
+
 		if inBackground {
 
 			let configuration = NSWorkspace.OpenConfiguration()
@@ -146,7 +146,7 @@ public class MacWebBrowser {
 extension MacWebBrowser: CustomDebugStringConvertible {
 
 	public var debugDescription: String {
-		if let name = name, let bundleIdentifier = bundleIdentifier{
+		if let name, let bundleIdentifier {
 			return "MacWebBrowser: \(name) (\(bundleIdentifier))"
 		} else {
 			return "MacWebBrowser"

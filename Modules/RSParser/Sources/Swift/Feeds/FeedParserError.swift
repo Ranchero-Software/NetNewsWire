@@ -8,22 +8,11 @@
 
 import Foundation
 
-public struct FeedParserError: Error {
-
-	public enum FeedParserErrorType {
-
-		case rssChannelNotFound
-		case rssItemsNotFound
-		case jsonFeedVersionNotFound
-		case jsonFeedItemsNotFound
-		case jsonFeedTitleNotFound
-		case invalidJSON
-	}
-
-	public let errorType: FeedParserErrorType
-
-	public init(_ errorType: FeedParserErrorType) {
-
-		self.errorType = errorType
-	}
+public enum FeedParserError: Error, Sendable {
+	case rssChannelNotFound
+	case rssItemsNotFound
+	case jsonFeedVersionNotFound
+	case jsonFeedItemsNotFound
+	case jsonFeedTitleNotFound
+	case invalidJSON
 }

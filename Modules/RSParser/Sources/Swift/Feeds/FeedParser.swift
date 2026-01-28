@@ -12,12 +12,12 @@ import RSParserObjC
 // FeedParser handles RSS, Atom, JSON Feed, and RSS-in-JSON.
 // You don’t need to know the type of feed.
 
-public typealias FeedParserCallback = (_ parsedFeed: ParsedFeed?, _ error: Error?) -> Void
+public typealias FeedParserCallback = @Sendable (_ parsedFeed: ParsedFeed?, _ error: Error?) -> Void
 
 public struct FeedParser {
 
 	private static let parseQueue = DispatchQueue(label: "FeedParser parse queue")
-	
+
 	public static func canParse(_ parserData: ParserData) -> Bool {
 
 		let type = feedType(parserData)
@@ -68,8 +68,19 @@ public struct FeedParser {
 			case .unknown, .notAFeed:
 				return nil
 			}
+		} catch { throw error }
+	}
+
+	public static func parse(_ parserData: ParserData) async throws -> ParsedFeed? {
+		try await withCheckedThrowingContinuation { continuation in
+			parse(parserData) { parsedFeed, error in
+				if let error {
+					continuation.resume(throwing: error)
+				} else {
+					continuation.resume(returning: parsedFeed)
+				}
+			}
 		}
-		catch { throw error }
 	}
 
 	public static func parse(_ parserData: ParserData, _ completion: @escaping FeedParserCallback) {
@@ -80,8 +91,7 @@ public struct FeedParser {
 				DispatchQueue.main.async {
 					completion(parsedFeed, nil)
 				}
-			}
-			catch {
+			} catch {
 				DispatchQueue.main.async {
 					completion(nil, error)
 				}

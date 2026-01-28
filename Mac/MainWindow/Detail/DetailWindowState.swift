@@ -9,12 +9,12 @@
 import Foundation
 
 final class DetailWindowState: NSObject, NSSecureCoding {
-	
+
 	static let supportsSecureCoding = true
 
 	let isShowingExtractedArticle: Bool
 	let windowScrollY: CGFloat
-	
+
 	init(isShowingExtractedArticle: Bool, windowScrollY: CGFloat) {
 		self.isShowingExtractedArticle = isShowingExtractedArticle
 		self.windowScrollY = windowScrollY
@@ -29,9 +29,13 @@ final class DetailWindowState: NSObject, NSSecureCoding {
 		isShowingExtractedArticle = coder.decodeBool(forKey: Key.isShowingExtractedArticle)
 		windowScrollY = CGFloat(coder.decodeDouble(forKey: Key.windowScrollY))
 	}
-	
+
 	func encode(with coder: NSCoder) {
 		coder.encode(isShowingExtractedArticle, forKey: Key.isShowingExtractedArticle)
 		coder.encode(Double(windowScrollY), forKey: Key.windowScrollY)
+	}
+
+	override var description: String {
+		"DetailWindowState: extracted=\(isShowingExtractedArticle), scrollY=\(windowScrollY)"
 	}
 }

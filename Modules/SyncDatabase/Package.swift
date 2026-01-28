@@ -1,19 +1,19 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
 	name: "SyncDatabase",
-	platforms: [.macOS(.v13), .iOS(.v17)],
+	platforms: [.macOS(.v26), .iOS(.v26)],
 	products: [
 		.library(
 			name: "SyncDatabase",
 			type: .dynamic,
-			targets: ["SyncDatabase"]),
+			targets: ["SyncDatabase"])
 	],
 	dependencies: [
 		.package(path: "../Articles"),
 		.package(path: "../RSCore"),
-		.package(path: "../RSDatabase"),
+		.package(path: "../RSDatabase")
 	],
 	targets: [
 		.target(
@@ -21,7 +21,13 @@ let package = Package(
 			dependencies: [
 				"RSCore",
 				"RSDatabase",
-				"Articles",
-			]),
+				"Articles"
+			],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.unsafeFlags(["-warnings-as-errors"])
+			]
+		)
 	]
 )

@@ -14,24 +14,22 @@ import RSWeb
 import CloudKit
 import Articles
 import SyncDatabase
+import CloudKitSync
 
 final class CloudKitArticlesZone: CloudKitZone {
-	
 	var zoneID: CKRecordZone.ID
-	
-	var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
-	
+
 	weak var container: CKContainer?
 	weak var database: CKDatabase?
-	var delegate: CloudKitZoneDelegate? = nil
-	
-	var compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
-	
-	struct CloudKitArticle {
+	var delegate: CloudKitZoneDelegate?
+
+	let compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
+
+	struct CloudKitArticle: Sendable {
 		static let recordType = "Article"
 		struct Fields {
 			static let articleStatus = "articleStatus"
-			static let webFeedURL = "webFeedURL"
+			static let feedURL = "webFeedURL"
 			static let uniqueID = "uniqueID"
 			static let title = "title"
 			static let contentHTML = "contentHTML"
@@ -48,10 +46,10 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 
-	struct CloudKitArticleStatus {
+	struct CloudKitArticleStatus: Sendable {
 		static let recordType = "ArticleStatus"
 		struct Fields {
-			static let webFeedExternalID = "webFeedExternalID"
+			static let feedExternalID = "webFeedExternalID"
 			static let read = "read"
 			static let starred = "starred"
 		}
@@ -63,65 +61,54 @@ final class CloudKitArticlesZone: CloudKitZone {
 		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
 		migrateChangeToken()
 	}
-	
-	func refreshArticles(completion: @escaping ((Result<Void, Error>) -> Void)) {
-		fetchChangesInZone() { result in
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				if case CloudKitZoneError.userDeletedZone = error {
-					self.createZoneRecord() { result in
-						switch result {
-						case .success:
-							self.refreshArticles(completion: completion)
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				} else {
-					completion(.failure(error))
-				}
+
+	@MainActor func refreshArticles() async throws {
+		do {
+			try await fetchChangesInZone()
+		} catch {
+			if case CloudKitZoneError.userDeletedZone = error {
+				try await createZoneRecord()
+				try await refreshArticles()
+			} else {
+				throw error
 			}
 		}
 	}
-	
-	func saveNewArticles(_ articles: Set<Article>, completion: @escaping ((Result<Void, Error>) -> Void)) {
+
+	@MainActor func saveNewArticles(_ articles: Set<Article>) async throws {
 		guard !articles.isEmpty else {
-			completion(.success(()))
 			return
 		}
-		
+
 		var records = [CKRecord]()
-		
+
 		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
 		for saveArticle in saveArticles {
 			records.append(makeStatusRecord(saveArticle))
 			records.append(makeArticleRecord(saveArticle))
 		}
 
-		compressionQueue.async {
-			let compressedRecords = self.compressArticleRecords(records)
-			self.save(compressedRecords, completion: completion)
-		}
+		let compressedRecords = await Task.detached(priority: .userInitiated) {
+			self.compressArticleRecords(records)
+		}.value
+		try await save(compressedRecords)
 	}
-	
-	func deleteArticles(_ webFeedExternalID: String, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		let predicate = NSPredicate(format: "webFeedExternalID = %@", webFeedExternalID)
+
+	func deleteArticles(_ feedExternalID: String) async throws {
+		let predicate = NSPredicate(format: "webFeedExternalID = %@", feedExternalID)
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
-		delete(ckQuery: ckQuery, completion: completion)
+		try await delete(ckQuery: ckQuery)
 	}
-	
-	func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+
+	@MainActor func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
 		guard !statusUpdates.isEmpty else {
-			completion(.success(()))
 			return
 		}
-		
+
 		var modifyRecords = [CKRecord]()
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
-		
+
 		for statusUpdate in statusUpdates {
 			switch statusUpdate.record {
 			case .all:
@@ -138,87 +125,73 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 
-		compressionQueue.async {
-			let compressedModifyRecords = self.compressArticleRecords(modifyRecords)
-			self.modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs) { result in
-				switch result {
-				case .success:
-					let compressedNewRecords = self.compressArticleRecords(newRecords)
-					self.saveIfNew(compressedNewRecords) { result in
-						switch result {
-						case .success:
-							completion(.success(()))
-						case .failure(let error):
-							completion(.failure(error))
-						}
-					}
-				case .failure(let error):
-					self.handleModifyArticlesError(error, statusUpdates: statusUpdates, completion: completion)
-				}
-			}
+		let (compressedModifyRecords, compressedNewRecords) = await Task.detached(priority: .userInitiated) {
+			let compressedModify = self.compressArticleRecords(modifyRecords)
+			let compressedNew = self.compressArticleRecords(newRecords)
+			return (compressedModify, compressedNew)
+		}.value
+
+		do {
+			try await modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs)
+			try await saveIfNew(compressedNewRecords)
+		} catch {
+			try await handleModifyArticlesError(error, statusUpdates: statusUpdates)
 		}
-		
 	}
-	
+
 }
 
 private extension CloudKitArticlesZone {
 
-	func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate], completion: @escaping ((Result<Void, Error>) -> Void)) {
+	func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
 		if case CloudKitZoneError.userDeletedZone = error {
-			self.createZoneRecord() { result in
-				switch result {
-				case .success:
-					self.modifyArticles(statusUpdates, completion: completion)
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			try await createZoneRecord()
+			try await modifyArticles(statusUpdates)
 		} else {
-			completion(.failure(error))
+			throw error
 		}
 	}
-	
+
 	func statusID(_ id: String) -> String {
 		return "s|\(id)"
 	}
-	
+
 	func articleID(_ id: String) -> String {
 		return "a|\(id)"
 	}
-	
-	func makeStatusRecord(_ article: Article) -> CKRecord {
+
+	@MainActor func makeStatusRecord(_ article: Article) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
-		if let webFeedExternalID = article.webFeed?.externalID {
-			record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
+		if let feedExternalID = article.feed?.externalID {
+			record[CloudKitArticleStatus.Fields.feedExternalID] = feedExternalID
 		}
 		record[CloudKitArticleStatus.Fields.read] = article.status.read ? "1" : "0"
 		record[CloudKitArticleStatus.Fields.starred] = article.status.starred ? "1" : "0"
 		return record
 	}
-	
-	func makeStatusRecord(_ statusUpdate: CloudKitArticleStatusUpdate) -> CKRecord {
+
+	@MainActor func makeStatusRecord(_ statusUpdate: CloudKitArticleStatusUpdate) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: statusID(statusUpdate.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticleStatus.recordType, recordID: recordID)
-		
-		if let webFeedExternalID = statusUpdate.article?.webFeed?.externalID {
-			record[CloudKitArticleStatus.Fields.webFeedExternalID] = webFeedExternalID
+
+		if let feedExternalID = statusUpdate.article?.feed?.externalID {
+			record[CloudKitArticleStatus.Fields.feedExternalID] = feedExternalID
 		}
-		
+
 		record[CloudKitArticleStatus.Fields.read] = statusUpdate.isRead ? "1" : "0"
 		record[CloudKitArticleStatus.Fields.starred] = statusUpdate.isStarred ? "1" : "0"
-		
+
 		return record
 	}
-	
-	func makeArticleRecord(_ article: Article) -> CKRecord {
+
+	@MainActor func makeArticleRecord(_ article: Article) -> CKRecord {
 		let recordID = CKRecord.ID(recordName: articleID(article.articleID), zoneID: zoneID)
 		let record = CKRecord(recordType: CloudKitArticle.recordType, recordID: recordID)
 
 		let articleStatusRecordID = CKRecord.ID(recordName: statusID(article.articleID), zoneID: zoneID)
 		record[CloudKitArticle.Fields.articleStatus] = CKRecord.Reference(recordID: articleStatusRecordID, action: .deleteSelf)
-		record[CloudKitArticle.Fields.webFeedURL] = article.webFeed?.url
+		record[CloudKitArticle.Fields.feedURL] = article.feed?.url
 		record[CloudKitArticle.Fields.uniqueID] = article.uniqueID
 		record[CloudKitArticle.Fields.title] = article.title
 		record[CloudKitArticle.Fields.contentHTML] = article.contentHTML
@@ -229,10 +202,10 @@ private extension CloudKitArticlesZone {
 		record[CloudKitArticle.Fields.imageURL] = article.rawImageLink
 		record[CloudKitArticle.Fields.datePublished] = article.datePublished
 		record[CloudKitArticle.Fields.dateModified] = article.dateModified
-		
+
 		let encoder = JSONEncoder()
 		var parsedAuthors = [String]()
-		
+
 		if let authors = article.authors, !authors.isEmpty {
 			for author in authors {
 				let parsedAuthor = ParsedAuthor(name: author.name,
@@ -245,17 +218,17 @@ private extension CloudKitArticlesZone {
 			}
 			record[CloudKitArticle.Fields.parsedAuthors] = parsedAuthors
 		}
-		
+
 		return record
 	}
 
-	func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
+	nonisolated func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
 		var result = [CKRecord]()
-		
+
 		for record in records {
-			
+
 			if record.recordType == CloudKitArticle.recordType {
-				
+
 				if let contentHTML = record[CloudKitArticle.Fields.contentHTML] as? String {
 					let data = Data(contentHTML.utf8) as NSData
 					if let compressedData = try? data.compressed(using: .lzfse) {
@@ -263,7 +236,7 @@ private extension CloudKitArticlesZone {
 						record[CloudKitArticle.Fields.contentHTML] = nil
 					}
 				}
-				
+
 				if let contentText = record[CloudKitArticle.Fields.contentText] as? String {
 					let data = Data(contentText.utf8) as NSData
 					if let compressedData = try? data.compressed(using: .lzfse) {
@@ -271,13 +244,12 @@ private extension CloudKitArticlesZone {
 						record[CloudKitArticle.Fields.contentText] = nil
 					}
 				}
-				
+
 			}
-			
+
 			result.append(record)
 		}
-		
+
 		return result
 	}
-
 }

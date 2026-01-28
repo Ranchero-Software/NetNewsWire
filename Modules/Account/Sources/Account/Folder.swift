@@ -10,41 +10,34 @@ import Foundation
 import Articles
 import RSCore
 
-public final class Folder: Feed, Renamable, Container, Hashable {
+public final class Folder: SidebarItem, Renamable, Container, Hashable {
+	nonisolated public let accountID: String
+	public weak var account: Account?
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .read
 	}
-	
+
 	public var containerID: ContainerIdentifier? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return ContainerIdentifier.folder(accountID, nameForDisplay)
-	}
-	
-	public var feedID: FeedIdentifier? {
-		guard let accountID = account?.accountID else {
-			assertionFailure("Expected feed.account, but got nil.")
-			return nil
-		}
-		return FeedIdentifier.folder(accountID, nameForDisplay)
+		ContainerIdentifier.folder(accountID, nameForDisplay)
 	}
 
-	public weak var account: Account?
-	public var topLevelWebFeeds: Set<WebFeed> = Set<WebFeed>()
-	public var folders: Set<Folder>? = nil // subfolders are not supported, so this is always nil
-	
+	public var sidebarItemID: SidebarItemIdentifier? {
+		SidebarItemIdentifier.folder(accountID, nameForDisplay)
+	}
+
+	public var topLevelFeeds: Set<Feed> = Set<Feed>()
+	public var folders: Set<Folder>? // subfolders are not supported, so this is always nil
+
 	public var name: String? {
 		didSet {
 			postDisplayNameDidChangeNotification()
 		}
 	}
-	
+
 	static let untitledName = NSLocalizedString("Untitled ƒ", comment: "Folder name")
-	public let folderID: Int // not saved: per-run only
-	public var externalID: String? = nil
+	nonisolated public let folderID: Int // not saved: per-run only
+	public var externalID: String?
 	static var incrementingID = 0
 
 	// MARK: - DisplayNameProvider
@@ -52,7 +45,7 @@ public final class Folder: Feed, Renamable, Container, Hashable {
 	public var nameForDisplay: String {
 		return name ?? Folder.untitledName
 	}
-	
+
 	// MARK: - UnreadCountProvider
 
 	public var unreadCount = 0 {
@@ -66,13 +59,23 @@ public final class Folder: Feed, Renamable, Container, Hashable {
 	// MARK: - Renamable
 
 	public func rename(to name: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		guard let account = account else { return }
-		account.renameFolder(self, to: name, completion: completion)
+		guard let account else {
+			return
+		}
+		Task { @MainActor in
+			do {
+				try await account.renameFolder(self, to: name)
+				completion(.success(()))
+			} catch {
+				completion(.failure(error))
+			}
+		}
 	}
-	
+
 	// MARK: - Init
 
 	init(account: Account, name: String?) {
+		self.accountID = account.accountID
 		self.account = account
 		self.name = name
 
@@ -100,42 +103,42 @@ public final class Folder: Feed, Renamable, Container, Hashable {
 
 	// MARK: Container
 
-	public func flattenedWebFeeds() -> Set<WebFeed> {
+	public func flattenedFeeds() -> Set<Feed> {
 		// Since sub-folders are not supported, it’s always the top-level feeds.
-		return topLevelWebFeeds
+		return topLevelFeeds
 	}
 
 	public func objectIsChild(_ object: AnyObject) -> Bool {
 		// Folders contain Feed objects only, at least for now.
-		guard let feed = object as? WebFeed else {
+		guard let feed = object as? Feed else {
 			return false
 		}
-		return topLevelWebFeeds.contains(feed)
+		return topLevelFeeds.contains(feed)
 	}
 
-	public func addWebFeed(_ feed: WebFeed) {
-		topLevelWebFeeds.insert(feed)
+	public func addFeedToTreeAtTopLevel(_ feed: Feed) {
+		topLevelFeeds.insert(feed)
 		postChildrenDidChangeNotification()
 	}
-	
-	public func addFeeds(_ feeds: Set<WebFeed>) {
+
+	public func addFeeds(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
-		topLevelWebFeeds.formUnion(feeds)
+		topLevelFeeds.formUnion(feeds)
 		postChildrenDidChangeNotification()
 	}
-	
-	public func removeWebFeed(_ feed: WebFeed) {
-		topLevelWebFeeds.remove(feed)
+
+	public func removeFeedFromTreeAtTopLevel(_ feed: Feed) {
+		topLevelFeeds.remove(feed)
 		postChildrenDidChangeNotification()
 	}
-	
-	public func removeFeeds(_ feeds: Set<WebFeed>) {
+
+	public func removeFeedsFromTreeAtTopLevel(_ feeds: Set<Feed>) {
 		guard !feeds.isEmpty else {
 			return
 		}
-		topLevelWebFeeds.subtract(feeds)
+		topLevelFeeds.subtract(feeds)
 		postChildrenDidChangeNotification()
 	}
 
@@ -158,14 +161,14 @@ private extension Folder {
 
 	func updateUnreadCount() {
 		var updatedUnreadCount = 0
-		for feed in topLevelWebFeeds {
+		for feed in topLevelFeeds {
 			updatedUnreadCount += feed.unreadCount
 		}
 		unreadCount = updatedUnreadCount
 	}
 
-	func childrenContain(_ feed: WebFeed) -> Bool {
-		return topLevelWebFeeds.contains(feed)
+	func childrenContain(_ feed: Feed) -> Bool {
+		return topLevelFeeds.contains(feed)
 	}
 }
 
@@ -174,7 +177,7 @@ private extension Folder {
 extension Folder: OPMLRepresentable {
 
 	public func OPMLString(indentLevel: Int, allowCustomAttributes: Bool) -> String {
-		
+
 		let attrExternalID: String = {
 			if allowCustomAttributes, let externalID = externalID {
 				return " nnw_externalID=\"\(externalID.escapingSpecialXMLCharacters)\""
@@ -182,14 +185,14 @@ extension Folder: OPMLRepresentable {
 				return ""
 			}
 		}()
-		
+
 		let escapedTitle = nameForDisplay.escapingSpecialXMLCharacters
 		var s = "<outline text=\"\(escapedTitle)\" title=\"\(escapedTitle)\"\(attrExternalID)>\n"
 		s = s.prepending(tabCount: indentLevel)
 
 		var hasAtLeastOneChild = false
 
-		for feed in topLevelWebFeeds.sorted()  {
+		for feed in topLevelFeeds.sorted() {
 			s += feed.OPMLString(indentLevel: indentLevel + 1, allowCustomAttributes: allowCustomAttributes)
 			hasAtLeastOneChild = true
 		}
@@ -200,7 +203,7 @@ extension Folder: OPMLRepresentable {
 			return s
 		}
 
-		s = s + String(tabCount: indentLevel) + "</outline>\n"
+		s = s + String(repeating: "\t", count: indentLevel) + "</outline>\n"
 
 		return s
 	}
@@ -208,12 +211,12 @@ extension Folder: OPMLRepresentable {
 
 // MARK: Set
 
-extension Set where Element == Folder {
-	
-	func sorted() -> Array<Folder> {
+@MainActor extension Set where Element == Folder {
+
+	func sorted() -> [Folder] {
 		return sorted(by: { (folder1, folder2) -> Bool in
 			return folder1.nameForDisplay.localizedStandardCompare(folder2.nameForDisplay) == .orderedAscending
 		})
 	}
-	
+
 }

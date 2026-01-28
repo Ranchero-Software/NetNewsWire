@@ -12,16 +12,15 @@ import Articles
 import ArticlesDatabase
 import Account
 
-final class SmartFeed: PseudoFeed {
-
-	var account: Account? = nil
+@MainActor final class SmartFeed: PseudoFeed {
+	var account: Account?
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .none
 	}
 
-	var feedID: FeedIdentifier? {
-		delegate.feedID
+	var sidebarItemID: SidebarItemIdentifier? {
+		delegate.sidebarItemID
 	}
 
 	var nameForDisplay: String {
@@ -39,7 +38,7 @@ final class SmartFeed: PseudoFeed {
 	var smallIcon: IconImage? {
 		return delegate.smallIcon
 	}
-	
+
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
@@ -63,40 +62,42 @@ final class SmartFeed: PseudoFeed {
 
 	@objc func fetchUnreadCounts() {
 		let activeAccounts = AccountManager.shared.activeAccounts
-		
+
 		// Remove any accounts that are no longer active or have been deleted
 		let activeAccountIDs = activeAccounts.map { $0.accountID }
-		unreadCounts.keys.forEach { accountID in
+		for accountID in unreadCounts.keys {
 			if !activeAccountIDs.contains(accountID) {
 				unreadCounts.removeValue(forKey: accountID)
 			}
 		}
-		
+
 		if activeAccounts.isEmpty {
 			updateUnreadCount()
 		} else {
-			activeAccounts.forEach { self.fetchUnreadCount(for: $0) }
+			for account in activeAccounts {
+				fetchUnreadCount(account: account)
+			}
 		}
 	}
-	
+
 }
 
 extension SmartFeed: ArticleFetcher {
 
 	func fetchArticles() throws -> Set<Article> {
-		return try delegate.fetchArticles()
+		try delegate.fetchArticles()
 	}
 
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		delegate.fetchArticlesAsync(completion)
+	func fetchArticlesAsync() async throws -> Set<Article> {
+		try await delegate.fetchArticlesAsync()
 	}
 
 	func fetchUnreadArticles() throws -> Set<Article> {
-		return try delegate.fetchUnreadArticles()
+		try delegate.fetchUnreadArticles()
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		delegate.fetchUnreadArticlesAsync(completion)
+	func fetchUnreadArticlesAsync() async throws -> Set<Article> {
+		try await delegate.fetchUnreadArticlesAsync()
 	}
 }
 
@@ -106,22 +107,24 @@ private extension SmartFeed {
 		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
 	}
 
-	func fetchUnreadCount(for account: Account) {
-		delegate.fetchUnreadCount(for: account) { singleUnreadCountResult in
-			guard let accountUnreadCount = try? singleUnreadCountResult.get() else {
+	func fetchUnreadCount(account: Account) {
+		Task { @MainActor in
+			guard let unreadCount = try? await delegate.fetchUnreadCount(account: account) else {
 				return
 			}
-			self.unreadCounts[account.accountID] = accountUnreadCount
-			self.updateUnreadCount()
+			unreadCounts[account.accountID] = unreadCount
+			updateUnreadCount()
 		}
 	}
 
 	func updateUnreadCount() {
-		unreadCount = AccountManager.shared.activeAccounts.reduce(0) { (result, account) -> Int in
+		var updatedUnreadCount = 0
+		for account in AccountManager.shared.activeAccounts {
 			if let oneUnreadCount = unreadCounts[account.accountID] {
-				return result + oneUnreadCount
+				updatedUnreadCount += oneUnreadCount
 			}
-			return result
 		}
+
+		unreadCount = updatedUnreadCount
 	}
 }

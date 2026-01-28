@@ -1,9 +1,9 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
 	name: "Secrets",
-	platforms: [.macOS(.v13), .iOS(.v17)],
+	platforms: [.macOS(.v26), .iOS(.v26)],
 	products: [
 		.library(
 			name: "Secrets",
@@ -16,7 +16,12 @@ let package = Package(
 		.target(
 			name: "Secrets",
 			dependencies: [],
-			exclude: ["SecretKey.swift.gyb"]
+			exclude: ["SecretKey.swift.gyb"],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.unsafeFlags(["-warnings-as-errors"])
+			]
 		)
 	]
 )

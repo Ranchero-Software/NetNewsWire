@@ -11,7 +11,7 @@ import Account
 
 final class NNW3OpenPanelAccessoryViewController: NSViewController {
 
-	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
+	@IBOutlet var accountPopUpButton: NSPopUpButton!
 
 	var selectedAccount: Account? {
 		accountPopUpButton.selectedItem?.representedObject as? Account
@@ -22,7 +22,7 @@ final class NNW3OpenPanelAccessoryViewController: NSViewController {
 	}
 
 	// MARK: - NSViewController
-	
+
 	required init?(coder: NSCoder) {
 		preconditionFailure("NNW3OpenPanelAccessoryViewController.init(coder) not implemented by design.")
 	}

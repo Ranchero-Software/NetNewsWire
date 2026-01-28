@@ -8,36 +8,30 @@
 
 import Foundation
 
-struct FeedbinTag: Codable {
-	
+struct FeedbinTag: Codable, Sendable {
 	let tagID: Int
 	let name: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case tagID = "id"
 		case name = "name"
 	}
-	
 }
 
-struct FeedbinRenameTag: Codable {
-	
+struct FeedbinRenameTag: Codable, Sendable {
 	let oldName: String
 	let newName: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case oldName = "old_name"
 		case newName = "new_name"
 	}
-	
 }
 
-struct FeedbinDeleteTag: Codable {
-	
+struct FeedbinDeleteTag: Codable, Sendable {
 	let name: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case name
 	}
-	
 }

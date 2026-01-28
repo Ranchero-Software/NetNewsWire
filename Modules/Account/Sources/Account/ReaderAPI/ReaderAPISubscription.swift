@@ -19,23 +19,23 @@ import RSParser
 
 */
 
-struct ReaderAPIQuickAddResult: Codable {
+struct ReaderAPIQuickAddResult: Codable, Sendable {
 	let numResults: Int
 	let error: String?
 	let streamId: String?
-	
+
 	enum CodingKeys: String, CodingKey {
-		case numResults = "numResults"
-		case error = "error"
-		case streamId = "streamId"
+		case numResults
+		case error
+		case streamId
 	}
 }
 
-struct ReaderAPISubscriptionContainer: Codable {
+struct ReaderAPISubscriptionContainer: Codable, Sendable {
 	let subscriptions: [ReaderAPISubscription]
-	
+
 	enum CodingKeys: String, CodingKey {
-		case subscriptions = "subscriptions"
+		case subscriptions
 	}
 }
 
@@ -55,7 +55,7 @@ struct ReaderAPISubscriptionContainer: Codable {
 }
 
 */
-struct ReaderAPISubscription: Codable {
+struct ReaderAPISubscription: Codable, Sendable {
 	let feedID: String
 	let name: String?
 	let categories: [ReaderAPICategory]
@@ -66,7 +66,7 @@ struct ReaderAPISubscription: Codable {
 	enum CodingKeys: String, CodingKey {
 		case feedID = "id"
 		case name = "title"
-		case categories = "categories"
+		case categories
 		case feedURL = "url"
 		case homePageURL = "htmlUrl"
 		case iconURL = "iconUrl"
@@ -81,31 +81,29 @@ struct ReaderAPISubscription: Codable {
 	}
 }
 
-struct ReaderAPICategory: Codable {
+struct ReaderAPICategory: Codable, Sendable {
 	let categoryId: String
 	let categoryLabel: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case categoryId = "id"
 		case categoryLabel = "label"
 	}
 }
 
-struct ReaderAPICreateSubscription: Codable {
+struct ReaderAPICreateSubscription: Codable, Sendable {
 	let feedURL: String
 	enum CodingKeys: String, CodingKey {
 		case feedURL = "feed_url"
 	}
 }
 
-struct ReaderAPISubscriptionChoice: Codable {
-	
+struct ReaderAPISubscriptionChoice: Codable, Sendable {
 	let name: String?
 	let url: String
-	
+
 	enum CodingKeys: String, CodingKey {
 		case name = "title"
 		case url = "feed_url"
 	}
-	
 }

@@ -11,7 +11,3 @@
 #import "../FMDatabase+RSExtras.h"
 #import "../FMResultSet+RSExtras.h"
 #import "../NSString+RSDatabase.h"
-
-// RSDatabase
-
-#import "../RSDatabaseQueue.h"

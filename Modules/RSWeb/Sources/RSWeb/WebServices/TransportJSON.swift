@@ -8,13 +8,22 @@
 
 import Foundation
 
-extension Transport {
-	
+nonisolated extension Transport {
+
+	/// Send an HTTP GET and return JSON object(s)
+	public func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
+		try await withCheckedThrowingContinuation { continuation in
+			send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	/**
 	 Sends an HTTP get and returns JSON object(s)
 	 */
-    public func send<R: Decodable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
-		
+    public func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping @Sendable (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+
 		send(request: request) { result in
 			DispatchQueue.main.async {
 
@@ -33,15 +42,13 @@ extension Transport {
 								DispatchQueue.main.async {
 									completion(.success((response, decoded)))
 								}
-							}
-							catch {
+							} catch {
 								DispatchQueue.main.async {
 									completion(.failure(error))
 								}
 							}
 						}
-					}
-					else {
+					} else {
 						completion(.success((response, nil)))
 					}
 
@@ -51,12 +58,25 @@ extension Transport {
 			}
 		}
 	}
-	
+
+	public func send<P: Encodable & Sendable>(request: URLRequest, method: String, payload: P) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, payload: payload) { result in
+				switch result {
+				case .success:
+					continuation.resume()
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
 	/**
 	Sends the specified HTTP method with a JSON payload.
 	*/
-	public func send<P: Encodable>(request: URLRequest, method: String, payload: P, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	public func send<P: Encodable>(request: URLRequest, method: String, payload: P, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+
 		var postRequest = request
 		postRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
@@ -79,12 +99,12 @@ extension Transport {
 			}
 		}
 	}
-	
+
 	/**
 	Sends the specified HTTP method with a JSON payload and returns JSON object(s).
 	*/
-	public func send<P: Encodable, R: Decodable>(request: URLRequest, method: String, payload: P, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
-		
+	public func send<P: Encodable, R: Decodable>(request: URLRequest, method: String, payload: P, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping @Sendable (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+
 		var postRequest = request
 		postRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
@@ -95,7 +115,7 @@ extension Transport {
 			completion(.failure(error))
 			return
 		}
-		
+
 		send(request: postRequest, method: method, payload: data) { result in
 			DispatchQueue.main.async {
 
@@ -121,10 +141,25 @@ extension Transport {
 		}
 	}
 
+	public func send<R: Decodable & Sendable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
+
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, data: data, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
+
+				switch result {
+				case .success(let (response, decoded)):
+					continuation.resume(returning: (response, decoded))
+				case .failure(let error):
+					continuation.resume(throwing: error)
+				}
+			}
+		}
+	}
+
     /**
      Sends the specified HTTP method with a Raw payload and returns JSON object(s).
      */
-	public func send<R: Decodable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+	public func send<R: Decodable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping @Sendable (Result<(HTTPURLResponse, R?), Error>) -> Void) {
 
 		send(request: request, method: method, payload: data) { result in
 			DispatchQueue.main.async {

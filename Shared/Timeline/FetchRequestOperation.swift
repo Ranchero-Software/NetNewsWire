@@ -16,16 +16,22 @@ import Articles
 
 typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperation) -> Void
 
-final class FetchRequestOperation {
+// TODO: unify these two versions of FetchRequestOperation,
+// which diverged when we changed — just on iOS — how we keep track
+// of sidebar item hide-read-articles settings.
+
+#if os(macOS)
+
+@MainActor final class FetchRequestOperation {
 
 	let id: Int
-	let readFilterEnabledTable: [FeedIdentifier: Bool]
+	let readFilterEnabledTable: [SidebarItemIdentifier: Bool]
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
 	private let fetchers: [ArticleFetcher]
 
-	init(id: Int, readFilterEnabledTable: [FeedIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.readFilterEnabledTable = readFilterEnabledTable
@@ -33,67 +39,156 @@ final class FetchRequestOperation {
 		self.resultBlock = resultBlock
 	}
 
-	func run(_ completion: @escaping (FetchRequestOperation) -> Void) {
+	@MainActor func run(_ completion: @escaping (FetchRequestOperation) -> Void) {
 		precondition(Thread.isMainThread)
 		precondition(!isFinished)
 
-		var didCallCompletion = false
+		Task { @MainActor in
+			var didCallCompletion = false
 
-		func callCompletionIfNeeded() {
-			if !didCallCompletion {
-				didCallCompletion = true
-				completion(self)
+			func callCompletionIfNeeded() {
+				if !didCallCompletion {
+					didCallCompletion = true
+					completion(self)
+				}
 			}
-		}
 
-		if isCanceled {
-			callCompletionIfNeeded()
-			return
-		}
-
-		if fetchers.isEmpty {
-			isFinished = true
-			resultBlock(Set<Article>(), self)
-			callCompletionIfNeeded()
-			return
-		}
-
-		let numberOfFetchers = fetchers.count
-		var fetchersReturned = 0
-		var fetchedArticles = Set<Article>()
-		
-		func process(_ articles: Set<Article>) {
-			precondition(Thread.isMainThread)
-			guard !self.isCanceled else {
+			if isCanceled {
 				callCompletionIfNeeded()
 				return
 			}
-			
-			assert(!self.isFinished)
 
-			fetchedArticles.formUnion(articles)
-			fetchersReturned += 1
-			if fetchersReturned == numberOfFetchers {
-				self.isFinished = true
-				self.resultBlock(fetchedArticles, self)
+			if fetchers.isEmpty {
+				isFinished = true
+				resultBlock(Set<Article>(), self)
 				callCompletionIfNeeded()
+				return
 			}
-		}
-		
-		for fetcher in fetchers {
-			if (fetcher as? Feed)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
-				fetcher.fetchUnreadArticlesAsync { articleSetResult in
-					let articles = (try? articleSetResult.get()) ?? Set<Article>()
-					process(articles)
+
+			let numberOfFetchers = fetchers.count
+			var fetchersReturned = 0
+			var fetchedArticles = Set<Article>()
+
+			@MainActor func process(_ articles: Set<Article>) {
+				precondition(Thread.isMainThread)
+				guard !self.isCanceled else {
+					callCompletionIfNeeded()
+					return
 				}
-			} else {
-				fetcher.fetchArticlesAsync { articleSetResult in
-					let articles = (try? articleSetResult.get()) ?? Set<Article>()
-					process(articles)
+
+				assert(!self.isFinished)
+
+				fetchedArticles.formUnion(articles)
+				fetchersReturned += 1
+				if fetchersReturned == numberOfFetchers {
+					self.isFinished = true
+					self.resultBlock(fetchedArticles, self)
+					callCompletionIfNeeded()
 				}
 			}
-			
+
+			for fetcher in fetchers {
+				if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+					if let articles = try? await fetcher.fetchUnreadArticlesAsync() {
+						process(articles)
+					}
+				} else {
+					if let articles = try? await fetcher.fetchArticlesAsync() {
+						process(articles)
+					}
+				}
+			}
 		}
 	}
 }
 
+#else
+
+@MainActor final class FetchRequestOperation {
+
+	let id: Int
+	let hidingReadArticlesState: HidingReadArticlesState
+	let resultBlock: FetchRequestOperationResultBlock
+	var isCanceled = false
+	var isFinished = false
+	private let fetchers: [ArticleFetcher]
+
+	init(id: Int, hidingReadArticlesState: HidingReadArticlesState, fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+		precondition(Thread.isMainThread)
+		self.id = id
+		self.hidingReadArticlesState = hidingReadArticlesState
+		self.fetchers = fetchers
+		self.resultBlock = resultBlock
+	}
+
+	@MainActor func run(_ completion: @escaping (FetchRequestOperation) -> Void) {
+		precondition(Thread.isMainThread)
+		precondition(!isFinished)
+
+		Task { @MainActor in
+			var didCallCompletion = false
+
+			func callCompletionIfNeeded() {
+				if !didCallCompletion {
+					didCallCompletion = true
+					completion(self)
+				}
+			}
+
+			if isCanceled {
+				callCompletionIfNeeded()
+				return
+			}
+
+			if fetchers.isEmpty {
+				isFinished = true
+				resultBlock(Set<Article>(), self)
+				callCompletionIfNeeded()
+				return
+			}
+
+			let numberOfFetchers = fetchers.count
+			var fetchersReturned = 0
+			var fetchedArticles = Set<Article>()
+
+			@MainActor func process(_ articles: Set<Article>) {
+				precondition(Thread.isMainThread)
+				guard !self.isCanceled else {
+					callCompletionIfNeeded()
+					return
+				}
+
+				assert(!self.isFinished)
+
+				fetchedArticles.formUnion(articles)
+				fetchersReturned += 1
+				if fetchersReturned == numberOfFetchers {
+					self.isFinished = true
+					self.resultBlock(fetchedArticles, self)
+					callCompletionIfNeeded()
+				}
+			}
+
+			@MainActor func fetcherHidesReadArticles(_ fetcher: ArticleFetcher) -> Bool {
+				guard let sidebarItem = fetcher as? SidebarItem, let sidebarItemID = sidebarItem.sidebarItemID else {
+					return false
+				}
+				return hidingReadArticlesState.isHidingReadArticles(for: sidebarItemID)
+			}
+
+			for fetcher in fetchers {
+				if fetcherHidesReadArticles(fetcher) {
+					if let articles = try? await fetcher.fetchUnreadArticlesAsync() {
+						process(articles)
+					}
+				} else {
+					if let articles = try? await fetcher.fetchArticlesAsync() {
+						process(articles)
+					}
+				}
+			}
+		}
+	}
+}
+
+#endif

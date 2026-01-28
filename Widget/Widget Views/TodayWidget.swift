@@ -9,7 +9,7 @@
 import WidgetKit
 import SwiftUI
 
-struct TodayWidgetView : View {
+struct TodayWidgetView: View {
 
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
@@ -17,50 +17,44 @@ struct TodayWidgetView : View {
 	var entry: Provider.Entry
 
 	var body: some View {
-		if entry.widgetData.todayArticles.count == 0 {
+		if entry.widgetData.totalTodayCount == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.today.url)
-		}
-		else {
-			GeometryReader { metrics in
-				todayImage
-					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment:.leading, spacing: 0) {
-					ForEach(0..<maxCount(), id: \.self, content: { i in
-						if i != 0 {
-							Divider()
-							ArticleItemView(article: entry.widgetData.todayArticles[i],
-											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-							.padding(.top, WidgetLayout.articleItemViewPaddingTop)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
-						} else {
-							ArticleItemView(article: entry.widgetData.todayArticles[i],
-											deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
-						}
-					})
+		} else {
+			VStack {
+				HStack(alignment: .center) {
+					todayImage
+						.layoutPriority(1)
+					Text("label.text.today", comment: "Today")
+						.font(.caption2)
+						.bold()
+						.lineLimit(1)
+						.minimumScaleFactor(0.8)
+						.fixedSize(horizontal: false, vertical: true)
+						.layoutPriority(1)
 					Spacer()
-				}
-				.padding(.leading, WidgetLayout.leftSideWidth)
-				.padding([.bottom, .trailing])
-				.overlay(
-					VStack {
-						Spacer()
-						HStack {
-							Spacer()
-							if entry.widgetData.currentTodayCount - maxCount() > 0 {
-								Text(L10n.todayCount(entry.widgetData.currentTodayCount - maxCount()))
-									.font(.caption2)
-									.bold()
-									.foregroundColor(.secondary)
-							}
-						}
+						.layoutPriority(0)
+					if entry.widgetData.totalTodayCount > 0 {
+						Text(verbatim: entry.widgetData.totalTodayUnreadCount > 0 ? "\(entry.widgetData.totalTodayCount.formatted()), \(entry.widgetData.totalTodayUnreadCount.formatted()) unread" : entry.widgetData.totalTodayCount.formatted())
+							.font(.caption2)
+							.bold()
+							.foregroundColor(.secondary)
+							.lineLimit(1)
+							.minimumScaleFactor(0.8)
+							.fixedSize(horizontal: false, vertical: true)
 					}
-						.padding(.horizontal)
-				)
-
+				}
+				.widgetURL(WidgetDeepLink.today.url)
+				Divider()
+				if entry.widgetData.todayArticles.count > 0 {
+					ForEach(0..<maxCount(), id: \.self, content: { i in
+						ArticleItemView(article: entry.widgetData.todayArticles[i],
+										deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
+					})
+				}
+				Spacer()
 			}
-			.widgetURL(WidgetDeepLink.today.url)
+			.padding(.vertical, 2)
 		}
 	}
 
@@ -79,9 +73,9 @@ struct TodayWidgetView : View {
 		}
 
 		if family == .systemLarge {
-			return entry.widgetData.todayArticles.count >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.todayArticles.count
+			return entry.widgetData.totalTodayCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.totalTodayCount
 		}
-		return entry.widgetData.todayArticles.count >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.todayArticles.count
+		return entry.widgetData.totalTodayCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.totalTodayCount
 	}
 
 	var inboxZero: some View {
@@ -93,12 +87,11 @@ struct TodayWidgetView : View {
 				.frame(width: 30)
 				.foregroundColor(.orange)
 
-
-			Text(L10n.todayWidgetNoItemsTitle)
+			Text("label.text.today", comment: "Today")
 				.font(.headline)
 				.foregroundColor(.primary)
 
-			Text(L10n.todayWidgetNoItems)
+			Text("label.text.today-no-articles", comment: "There are no recent articles.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()

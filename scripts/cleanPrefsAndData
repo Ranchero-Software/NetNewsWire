@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Clean preferences and data for NetNewsWire (macOS)
+# Usage: cleanPrefsAndData [--debug | --release | --all]
+# Default: --debug (cleans debug build data only)
+
+set -e
+
+CLEAN_DEBUG=false
+CLEAN_RELEASE=false
+
+case "${1:---debug}" in
+    --debug)
+        CLEAN_DEBUG=true
+        ;;
+    --release)
+        CLEAN_RELEASE=true
+        ;;
+    --all)
+        CLEAN_DEBUG=true
+        CLEAN_RELEASE=true
+        ;;
+    *)
+        echo "Usage: cleanPrefsAndData [--debug | --release | --all]"
+        echo "  --debug   Clean debug build data (default)"
+        echo "  --release Clean release build data"
+        echo "  --all     Clean both debug and release data"
+        exit 1
+        ;;
+esac
+
+# Bundle identifiers
+DEBUG_BUNDLE_ID="com.ranchero.NetNewsWire-Evergreen-DEBUG"
+RELEASE_BUNDLE_ID="com.ranchero.NetNewsWire-Evergreen"
+
+# App group identifiers
+DEBUG_APP_GROUP="group.com.ranchero.NetNewsWire-Evergreen-DEBUG"
+RELEASE_APP_GROUP="group.com.ranchero.NetNewsWire-Evergreen"
+
+clean_build() {
+    local bundle_id="$1"
+    local app_group="$2"
+    local label="$3"
+
+    echo "Cleaning $label build data..."
+
+    # Delete preferences
+    echo "  Deleting preferences for $bundle_id"
+    defaults delete "$bundle_id" 2>/dev/null || true
+
+    # Sandboxed container
+    local container_path="$HOME/Library/Containers/$bundle_id"
+    if [ -d "$container_path" ]; then
+        echo "  Removing container: $container_path"
+        rm -rf "$container_path"
+    fi
+
+    # App group container
+    local group_container_path="$HOME/Library/Group Containers/$app_group"
+    if [ -d "$group_container_path" ]; then
+        echo "  Removing group container: $group_container_path"
+        rm -rf "$group_container_path"
+    fi
+}
+
+if [ "$CLEAN_DEBUG" = true ]; then
+    clean_build "$DEBUG_BUNDLE_ID" "$DEBUG_APP_GROUP" "DEBUG"
+fi
+
+if [ "$CLEAN_RELEASE" = true ]; then
+    clean_build "$RELEASE_BUNDLE_ID" "$RELEASE_APP_GROUP" "RELEASE"
+fi
+
+# Flush preference cache
+echo "Flushing preference cache..."
+killall cfprefsd 2>/dev/null || true
+
+echo "Done."

@@ -7,43 +7,45 @@
 //
 
 import Foundation
-import os
+import Synchronization
 
-public final class ArticleStatus: Hashable {
-
-	public enum Key: String {
-		case read = "read"
-		case starred = "starred"
+public final class ArticleStatus: Hashable, Sendable {
+	public enum Key: String, Sendable {
+		case read
+		case starred
 	}
-	
+
 	public let articleID: String
 	public let dateArrived: Date
 
-	private let _read: OSAllocatedUnfairLock<Bool>
-	private let _starred: OSAllocatedUnfairLock<Bool>
+	private struct State: Sendable {
+		var read: Bool
+		var starred: Bool
+	}
+
+	private let state: Mutex<State>
 
 	public var read: Bool {
 		get {
-			_read.withLock { $0 }
+			state.withLock { $0.read }
 		}
 		set {
-			_read.withLock { $0 = newValue }
+			state.withLock { $0.read = newValue }
 		}
 	}
 
 	public var starred: Bool {
 		get {
-			_starred.withLock { $0 }
+			state.withLock { $0.starred }
 		}
 		set {
-			_starred.withLock { $0 = newValue }
+			state.withLock { $0.starred = newValue }
 		}
 	}
 
 	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
-		self._read = OSAllocatedUnfairLock(initialState: read)
-		self._starred = OSAllocatedUnfairLock(initialState: starred)
+		self.state = Mutex(State(read: read, starred: starred))
 		self.dateArrived = dateArrived
 	}
 
@@ -59,7 +61,7 @@ public final class ArticleStatus: Hashable {
 			return starred
 		}
 	}
-	
+
 	public func setBoolStatus(_ status: Bool, forKey key: ArticleStatus.Key) {
 		switch key {
 		case .read:
@@ -83,15 +85,15 @@ public final class ArticleStatus: Hashable {
 }
 
 public extension Set where Element == ArticleStatus {
-	
+
 	func articleIDs() -> Set<String> {
 		return Set<String>(map { $0.articleID })
 	}
 }
 
 public extension Array where Element == ArticleStatus {
-	
-	func articleIDs() -> [String] {		
+
+	func articleIDs() -> [String] {
 		return map { $0.articleID }
 	}
 }

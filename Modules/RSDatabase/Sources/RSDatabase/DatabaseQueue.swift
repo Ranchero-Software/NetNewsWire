@@ -7,51 +7,42 @@
 //
 
 import Foundation
+import Synchronization
+import os
 import SQLite3
 import RSDatabaseObjC
 
 /// Manage a serial queue and a SQLite database.
-/// It replaces RSDatabaseQueue, which is deprecated.
-/// Main-thread only.
-/// Important note: on iOS, the queue can be suspended
+///
+/// On iOS, the queue can be suspended
 /// in order to support background refreshing.
-public final class DatabaseQueue {
+public final class DatabaseQueue: Sendable {
+	private struct State {
+		var isCallingDatabase = false
+		var isSuspended = false
+		let database: FMDatabase
 
-	/// Check to see if the queue is suspended. Read-only.
-	/// Calling suspend() and resume() will change the value of this property.
-	/// This will return true only on iOS — on macOS it’s always false.
-	public var isSuspended: Bool {
-		#if os(iOS)
-		precondition(Thread.isMainThread)
-		return _isSuspended
-		#else
-		return false
-		#endif
+		init(_ database: FMDatabase) {
+			self.database = database
+		}
 	}
 
-	private var _isSuspended = true
-	private var isCallingDatabase = false
-	private let database: FMDatabase
+	private let state: Mutex<State>
 	private let databasePath: String
 	private let serialDispatchQueue: DispatchQueue
-	private let targetDispatchQueue: DispatchQueue
-	#if os(iOS)
-	private let databaseLock = NSLock()
-	#endif
 
-	/// When init returns, the database will not be suspended: it will be ready for database calls.
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DatabaseQueue")
+
 	public init(databasePath: String) {
-		precondition(Thread.isMainThread)
+		Self.logger.debug("DatabaseQueue: creating with database path \(databasePath)")
 
-		self.serialDispatchQueue = DispatchQueue(label: "DatabaseQueue (Serial) - \(databasePath)", attributes: .initiallyInactive)
-		self.targetDispatchQueue = DispatchQueue(label: "DatabaseQueue (Target) - \(databasePath)")
-		self.serialDispatchQueue.setTarget(queue: self.targetDispatchQueue)
-		self.serialDispatchQueue.activate()
+		self.serialDispatchQueue = DispatchQueue(label: "DatabaseQueue (Serial) - \(databasePath)")
 
 		self.databasePath = databasePath
-		self.database = FMDatabase(path: databasePath)!
-		openDatabase()
-		_isSuspended = false
+		let database = FMDatabase(path: databasePath)!
+		self.state = Mutex(State(database))
+
+		self.state.withLock { openDatabase($0.database) }
 	}
 
 	// MARK: - Suspend and Resume
@@ -66,44 +57,35 @@ public final class DatabaseQueue {
 	/// On Mac, suspend() and resume() are no-ops, since there isn’t a need for them.
 	public func suspend() {
 		#if os(iOS)
-		precondition(Thread.isMainThread)
-		guard !_isSuspended else {
-			return
-		}
-
-		_isSuspended = true
-
-		serialDispatchQueue.suspend()
-		targetDispatchQueue.async {
-			self.lockDatabase()
-			self.database.close()
-			self.unlockDatabase()
-			DispatchQueue.main.async {
-				self.serialDispatchQueue.resume()
+		Self.logger.info("DatabaseQueue: suspending")
+		state.withLock { state in
+			guard !state.isSuspended else {
+				assertionFailure("DatabaseQueue: suspend called when already suspended")
+				return
 			}
+
+			state.isSuspended = true
+			serialDispatchQueue.suspend()
+			state.database.close()
 		}
 		#endif
 	}
 
 	/// Open the SQLite database. Allow database calls again.
-	/// This is also for iOS only.
+	/// iOS only — does nothing on macOS.
 	public func resume() {
 		#if os(iOS)
-		precondition(Thread.isMainThread)
-		guard _isSuspended else {
-			return
-		}
-
-		serialDispatchQueue.suspend()
-		targetDispatchQueue.sync {
-			if _isSuspended {
-				lockDatabase()
-				openDatabase()
-				unlockDatabase()
-				_isSuspended = false
+		Self.logger.info("DatabaseQueue: resuming")
+		state.withLock { state in
+			guard state.isSuspended else {
+				assertionFailure("DatabaseQueue: resume called when already resumed")
+				return
 			}
+
+			state.isSuspended = false
+			openDatabase(state.database)
+			serialDispatchQueue.resume()
 		}
-		serialDispatchQueue.resume()
 		#endif
 	}
 
@@ -114,17 +96,19 @@ public final class DatabaseQueue {
 	/// the DatabaseBlock *and* depending on how many other calls have been
 	/// scheduled on the queue. Use sparingly — prefer async versions.
 	public func runInDatabaseSync(_ databaseBlock: DatabaseBlock) {
-		precondition(Thread.isMainThread)
 		serialDispatchQueue.sync {
-			self._runInDatabase(self.database, databaseBlock, false)
+			self.state.withLock { state in
+				self._runInDatabase(&state, databaseBlock, false)
+			}
 		}
 	}
 
 	/// Run a DatabaseBlock asynchronously.
 	public func runInDatabase(_ databaseBlock: @escaping DatabaseBlock) {
-		precondition(Thread.isMainThread)
 		serialDispatchQueue.async {
-			self._runInDatabase(self.database, databaseBlock, false)
+			self.state.withLock { state in
+				self._runInDatabase(&state, databaseBlock, false)
+			}
 		}
 	}
 
@@ -133,27 +117,31 @@ public final class DatabaseQueue {
 	/// Nevertheless, it’s best to avoid this because it will block the main thread —
 	/// prefer the async `runInTransaction` instead.
 	public func runInTransactionSync(_ databaseBlock: @escaping DatabaseBlock) {
-		precondition(Thread.isMainThread)
 		serialDispatchQueue.sync {
-			self._runInDatabase(self.database, databaseBlock, true)
+			self.state.withLock { state in
+				self._runInDatabase(&state, databaseBlock, true)
+			}
 		}
 	}
 
 	/// Run a DatabaseBlock wrapped in a transaction asynchronously.
 	/// Transactions help performance significantly when updating the database.
 	public func runInTransaction(_ databaseBlock: @escaping DatabaseBlock) {
-		precondition(Thread.isMainThread)
 		serialDispatchQueue.async {
-			self._runInDatabase(self.database, databaseBlock, true)
+			self.state.withLock { state in
+				self._runInDatabase(&state, databaseBlock, true)
+			}
 		}
 	}
 
 	/// Run all the lines that start with "create".
 	/// Use this to create tables, indexes, etc.
 	public func runCreateStatements(_ statements: String) throws {
-		precondition(Thread.isMainThread)
-		var error: DatabaseError? = nil
+		nonisolated(unsafe) var error: DatabaseError?
+
 		runInDatabaseSync { result in
+			Self.logger.debug("DatabaseQueue: runCreateStatements")
+
 			switch result {
 			case .success(let database):
 				statements.enumerateLines { (line, stop) in
@@ -166,7 +154,8 @@ public final class DatabaseQueue {
 				error = databaseError
 			}
 		}
-		if let error = error {
+
+		if let error {
 			throw(error)
 		}
 	}
@@ -177,9 +166,12 @@ public final class DatabaseQueue {
 	/// since the last vacuum() call. You almost certainly want to call
 	/// vacuumIfNeeded instead.
 	public func vacuum() {
-		precondition(Thread.isMainThread)
 		runInDatabase { result in
-			result.database?.executeStatements("vacuum;")
+			Self.logger.debug("DatabaseQueue: vacuum")
+			guard let database = try? result.get() else {
+				return
+			}
+			database.executeStatements("vacuum;")
 		}
 	}
 
@@ -189,7 +181,6 @@ public final class DatabaseQueue {
 	/// - Returns: true if database will be vacuumed.
 	@discardableResult
 	public func vacuumIfNeeded(daysBetweenVacuums: Int) -> Bool {
-		precondition(Thread.isMainThread)
 		let defaultsKey = "DatabaseQueue-LastVacuumDate-\(databasePath)"
 		let minimumVacuumInterval = TimeInterval(daysBetweenVacuums * (60 * 60 * 24)) // Doesn’t have to be precise
 		let now = Date()
@@ -212,48 +203,32 @@ public final class DatabaseQueue {
 
 private extension DatabaseQueue {
 
-	func lockDatabase() {
-		#if os(iOS)
-		databaseLock.lock()
-		#endif
-	}
+	private func _runInDatabase(_ state: inout State, _ databaseBlock: DatabaseBlock, _ useTransaction: Bool) {
+		precondition(!state.isCallingDatabase)
 
-	func unlockDatabase() {
-		#if os(iOS)
-		databaseLock.unlock()
-		#endif
-	}
-
-	func _runInDatabase(_ database: FMDatabase, _ databaseBlock: DatabaseBlock, _ useTransaction: Bool) {
-		lockDatabase()
+		state.isCallingDatabase = true
 		defer {
-			unlockDatabase()
+			state.isCallingDatabase = false
 		}
 
-		precondition(!isCallingDatabase)
-
-		isCallingDatabase = true
 		autoreleasepool {
-			if _isSuspended {
+			if state.isSuspended {
 				databaseBlock(.failure(.isSuspended))
-			}
-			else {
+			} else {
 				if useTransaction {
-					database.beginTransaction()
+					state.database.beginTransaction()
 				}
-				databaseBlock(.success(database))
+				databaseBlock(.success(state.database))
 				if useTransaction {
-					database.commit()
+					state.database.commit()
 				}
 			}
 		}
-		isCallingDatabase = false
 	}
 
-	func openDatabase() {
+	func openDatabase(_ database: FMDatabase) {
 		database.open()
 		database.executeStatements("PRAGMA synchronous = 1;")
 		database.setShouldCacheStatements(true)
 	}
 }
-

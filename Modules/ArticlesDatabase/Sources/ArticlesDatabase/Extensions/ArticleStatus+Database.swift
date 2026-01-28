@@ -12,18 +12,16 @@ import RSDatabaseObjC
 import Articles
 
 extension ArticleStatus {
-	
+
 	convenience init(articleID: String, dateArrived: Date, row: FMResultSet) {
 		let read = row.bool(forColumn: DatabaseKey.read)
 		let starred = row.bool(forColumn: DatabaseKey.starred)
 
 		self.init(articleID: articleID, read: read, starred: starred, dateArrived: dateArrived)
 	}
-	
 }
 
 extension ArticleStatus: @retroactive DatabaseObject {
-
 	public var databaseID: String {
 		return articleID
 	}
@@ -32,4 +30,3 @@ extension ArticleStatus: @retroactive DatabaseObject {
 		return [DatabaseKey.articleID: articleID, DatabaseKey.read: read, DatabaseKey.starred: starred, DatabaseKey.dateArrived: dateArrived]
 	}
 }
-

@@ -31,8 +31,8 @@ extension SidebarViewController {
 		let object = objects.first!
 
 		switch object {
-		case is WebFeed:
-			return menuForWebFeed(object as! WebFeed)
+		case is Feed:
+			return menuForFeed(object as! Feed)
 		case is Folder:
 			return menuForFolder(object as! Folder)
 		case is PseudoFeed:
@@ -68,7 +68,7 @@ extension SidebarViewController {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [Any] else {
 			return
 		}
-		
+
 		let articles = unreadArticles(for: objects)
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
 			return
@@ -80,7 +80,7 @@ extension SidebarViewController {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [AnyObject] else {
 			return
 		}
-		
+
 		let nodes = objects.compactMap { treeController.nodeInTreeRepresentingObject($0) }
 
 		let alert = SidebarDeleteItemsAlert.build(nodes)
@@ -93,7 +93,7 @@ extension SidebarViewController {
 
 	@objc func renameFromContextualMenu(_ sender: Any?) {
 
-		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is WebFeed || object is Folder else {
+		guard let window = view.window, let menuItem = sender as? NSMenuItem, let object = menuItem.representedObject as? DisplayNameProvider, object is Feed || object is Folder else {
 			return
 		}
 
@@ -103,10 +103,10 @@ extension SidebarViewController {
 		}
 		window.beginSheet(renameSheet)
 	}
-	
+
 	@objc func toggleNotificationsFromContextMenu(_ sender: Any?) {
 		guard let item = sender as? NSMenuItem,
-			  let feed = item.representedObject as? WebFeed else {
+			  let feed = item.representedObject as? Feed else {
 			return
 		}
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
@@ -119,7 +119,7 @@ extension SidebarViewController {
 					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 				}
 			} else {
-				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, error) in
+				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { granted, _ in
 					if granted {
 						DispatchQueue.main.async {
 							if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
@@ -134,18 +134,18 @@ extension SidebarViewController {
 			}
 		}
 	}
-	
+
 	@objc func toggleArticleExtractorFromContextMenu(_ sender: Any?) {
 		guard let item = sender as? NSMenuItem,
-			  let feed = item.representedObject as? WebFeed else {
+			  let feed = item.representedObject as? Feed else {
 			return
 		}
 		if feed.isArticleExtractorAlwaysOn == nil { feed.isArticleExtractorAlwaysOn = false }
 		feed.isArticleExtractorAlwaysOn?.toggle()
 		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 	}
-	
-	func showNotificationsNotEnabledAlert() {
+
+	nonisolated func showNotificationsNotEnabledAlert() {
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.messageText = NSLocalizedString("Notifications are not enabled", comment: "Notifications are not enabled.")
@@ -163,14 +163,14 @@ extension SidebarViewController {
 			}
 		}
 	}
-	
+
 }
 
 extension SidebarViewController: RenameWindowControllerDelegate {
 
 	func renameWindowController(_ windowController: RenameWindowController, didRenameObject object: Any, withNewName name: String) {
 
-		if let feed = object as? WebFeed {
+		if let feed = object as? Feed {
 			feed.rename(to: name) { result in
 				switch result {
 				case .success:
@@ -200,40 +200,40 @@ private extension SidebarViewController {
 
 		let menu = NSMenu(title: "")
 
-		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(AppDelegate.showAddWebFeedWindow(_:)), keyEquivalent: "")
+		menu.addItem(withTitle: NSLocalizedString("New Feed", comment: "Command"), action: #selector(AppDelegate.showAddFeedWindow(_:)), keyEquivalent: "")
 		menu.addItem(withTitle: NSLocalizedString("New Folder", comment: "Command"), action: #selector(AppDelegate.showAddFolderWindow(_:)), keyEquivalent: "")
 
 		return menu
 	}
 
-	func menuForWebFeed(_ webFeed: WebFeed) -> NSMenu? {
+	func menuForFeed(_ feed: Feed) -> NSMenu? {
 
 		let menu = NSMenu(title: "")
 
-		if webFeed.unreadCount > 0 {
-			menu.addItem(markAllReadMenuItem([webFeed]))
+		if feed.unreadCount > 0 {
+			menu.addItem(markAllReadMenuItem([feed]))
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		if let homePageURL = webFeed.homePageURL, let _ = URL(string: homePageURL) {
-			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL)
+		if let homePageURL = feed.homePageURL, URL(string: homePageURL) != nil {
+			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL, image: Assets.Images.openInBrowser)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), webFeed.url)
+		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), feed.url, image: Assets.Images.copy)
 		menu.addItem(copyFeedURLItem)
 
-		if let homePageURL = webFeed.homePageURL {
-			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL)
+		if let homePageURL = feed.homePageURL {
+			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL, image: Assets.Images.copy)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
-		
-		let notificationText = webFeed.notificationDisplayName.capitalized
-		
-		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), webFeed)
-		if webFeed.isNotifyAboutNewArticles == nil || webFeed.isNotifyAboutNewArticles! == false {
+
+		let notificationText = feed.notificationDisplayName.capitalized
+
+		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed, image: Assets.Images.notification)
+		if feed.isNotifyAboutNewArticles == nil || feed.isNotifyAboutNewArticles! == false {
 			notificationMenuItem.state = .off
 		} else {
 			notificationMenuItem.state = .on
@@ -241,9 +241,9 @@ private extension SidebarViewController {
 		menu.addItem(notificationMenuItem)
 
 		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
-		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), webFeed)
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), feed, image: Assets.Images.articleExtractorOff)
 
-		if webFeed.isArticleExtractorAlwaysOn == nil || webFeed.isArticleExtractorAlwaysOn! == false {
+		if feed.isArticleExtractorAlwaysOn == nil || feed.isArticleExtractorAlwaysOn! == false {
 			articleExtractorMenuItem.state = .off
 		} else {
 			articleExtractorMenuItem.state = .on
@@ -251,9 +251,9 @@ private extension SidebarViewController {
 		menu.addItem(articleExtractorMenuItem)
 
 		menu.addItem(NSMenuItem.separator())
-		
-		menu.addItem(renameMenuItem(webFeed))
-		menu.addItem(deleteMenuItem([webFeed]))
+
+		menu.addItem(renameMenuItem(feed))
+		menu.addItem(deleteMenuItem([feed]))
 
 		return menu
 	}
@@ -301,17 +301,17 @@ private extension SidebarViewController {
 
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects, image: Assets.Images.markAllAsReadMenu)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects)
+		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects, image: Assets.Images.delete)
 	}
 
 	func renameMenuItem(_ object: Any) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object)
+		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object, image: Assets.Images.rename)
 	}
 
 	func anyObjectInArrayHasNonZeroUnreadCount(_ objects: [Any]) -> Bool {
@@ -338,14 +338,17 @@ private extension SidebarViewController {
 
 	func objectIsFeedOrFolder(_ object: Any) -> Bool {
 
-		return object is WebFeed || object is Folder
+		return object is Feed || object is Folder
 	}
 
-	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {
+	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any, image: RSImage?) -> NSMenuItem {
 
 		let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
 		item.representedObject = representedObject
 		item.target = self
+		if let image {
+			item.image = image
+		}
 		return item
 	}
 
@@ -362,4 +365,3 @@ private extension SidebarViewController {
 		return articles
 	}
 }
-

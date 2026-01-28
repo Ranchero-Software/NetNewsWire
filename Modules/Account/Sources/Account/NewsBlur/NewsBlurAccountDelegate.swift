@@ -11,12 +11,12 @@ import RSCore
 import RSDatabase
 import RSParser
 import RSWeb
+import NewsBlur
 import SyncDatabase
 import os.log
 import Secrets
 
-final class NewsBlurAccountDelegate: AccountDelegate {
-
+@MainActor final class NewsBlurAccountDelegate: AccountDelegate {
 	var behaviors: AccountBehaviors = []
 
 	var isOPMLImportInProgress: Bool = false
@@ -27,12 +27,21 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 		}
 	}
 
-	var accountMetadata: AccountMetadata? = nil
-	var refreshProgress = DownloadProgress(numberOfTasks: 0)
+	var accountMetadata: AccountMetadata?
+
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
+	let refreshProgress = RSProgress()
 
 	let caller: NewsBlurAPICaller
-	let log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "NewsBlur")
-	let database: SyncDatabase
+	let syncDatabase: SyncDatabase
+
+	static let logger = NewsBlur.logger
 
 	init(dataFolder: String, transport: Transport?) {
 		if let transport = transport {
@@ -55,355 +64,233 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			caller = NewsBlurAPICaller(transport: session)
 		}
 
-		database = SyncDatabase(databaseFilePath: dataFolder.appending("/DB.sqlite3"))
+		syncDatabase = SyncDatabase(databasePath: dataFolder.appending("/DB.sqlite3"))
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable : Any], completion: @escaping () -> Void) {
-		completion()
+	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 	}
-	
-	func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
 
+	func refreshAll(for account: Account) async throws {
 		refreshProgress.reset()
-		
-		self.refreshProgress.addToNumberOfTasksAndRemaining(4)
+		self.refreshProgress.addTasks(4)
 
-		refreshFeeds(for: account) { result in
-			self.refreshProgress.completeTask()
+		do {
+			try await refreshFeeds(for: account)
+			refreshProgress.completeTask()
 
-			switch result {
-			case .success:
-				self.sendArticleStatus(for: account) { result in
-					self.refreshProgress.completeTask()
+			try await sendArticleStatus(for: account)
+			refreshProgress.completeTask()
 
-					switch result {
-					case .success:
-						self.refreshArticleStatus(for: account) { result in
-							self.refreshProgress.completeTask()
+			try await refreshArticleStatus(for: account)
+			refreshProgress.completeTask()
 
-							switch result {
-							case .success:
-								self.refreshMissingStories(for: account) { result in
-									self.refreshProgress.completeTask()
+			try await refreshMissingStories(for: account)
+			refreshProgress.completeTask()
 
-									switch result {
-									case .success:
-										DispatchQueue.main.async {
-											completion(.success(()))
-										}
-
-									case .failure(let error):
-										DispatchQueue.main.async {
-											self.refreshProgress.reset()
-											let wrappedError = AccountError.wrappedError(error: error, account: account)
-											completion(.failure(wrappedError))
-										}
-									}
-								}
-
-							case .failure(let error):
-								completion(.failure(error))
-							}
-						}
-
-					case .failure(let error):
-						completion(.failure(error))
-					}
-				}
-
-			case .failure(let error):
-				completion(.failure(error))
-			}
+			accountMetadata?.lastArticleFetchEndTime = Date()
+		} catch {
+			refreshProgress.reset()
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
-	func syncArticleStatus(for account: Account, completion: ((Result<Void, Error>) -> Void)? = nil) {
-		sendArticleStatus(for: account) { result in
-			switch result {
-			case .success:
-				self.refreshArticleStatus(for: account) { result in
-					switch result {
-					case .success:
-						completion?(.success(()))
-					case .failure(let error):
-						completion?(.failure(error))
-					}
-				}
-			case .failure(let error):
-				completion?(.failure(error))
-			}
-		}
+	@MainActor func syncArticleStatus(for account: Account) async throws {
+		try await sendArticleStatus(for: account)
+		try await refreshArticleStatus(for: account)
 	}
-	
-	func sendArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		os_log(.debug, log: log, "Sending story statuses...")
 
-		database.selectForProcessing { result in
+	@MainActor func sendArticleStatus(for account: Account) async throws {
+		Self.logger.info("NewsBlur: Sending story statuses")
+		defer {
+			Self.logger.info("NewsBlur: Finished sending article statuses")
+		}
 
-			func processStatuses(_ syncStatuses: [SyncStatus]) {
-				let createUnreadStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.read && $0.flag == false
-				}
-				let deleteUnreadStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.read && $0.flag == true
-				}
-				let createStarredStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.starred && $0.flag == true
-				}
-				let deleteStarredStatuses = syncStatuses.filter {
-					$0.key == SyncStatus.Key.starred && $0.flag == false
-				}
+		guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+			return
+		}
 
-				let group = DispatchGroup()
-				var errorOccurred = false
+		let createUnreadStatuses = syncStatuses.filter {
+			$0.key == SyncStatus.Key.read && $0.flag == false
+		}
+		let deleteUnreadStatuses = syncStatuses.filter {
+			$0.key == SyncStatus.Key.read && $0.flag == true
+		}
+		let createStarredStatuses = syncStatuses.filter {
+			$0.key == SyncStatus.Key.starred && $0.flag == true
+		}
+		let deleteStarredStatuses = syncStatuses.filter {
+			$0.key == SyncStatus.Key.starred && $0.flag == false
+		}
 
-				group.enter()
-				self.sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: self.caller.markAsUnread) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		var savedError: Error?
 
-				group.enter()
-				self.sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: self.caller.markAsRead) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		do {
+			try await sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: caller.markAsUnread)
+		} catch {
+			savedError = error
+		}
 
-				group.enter()
-				self.sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: self.caller.star) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		do {
+			try await sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: caller.markAsRead)
+		} catch {
+			savedError = error
+		}
 
-				group.enter()
-				self.sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: self.caller.unstar) { result in
-					group.leave()
-					if case .failure = result {
-						errorOccurred = true
-					}
-				}
+		do {
+			try await sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: caller.star)
+		} catch {
+			savedError = error
+		}
 
-				group.notify(queue: DispatchQueue.main) {
-					os_log(.debug, log: self.log, "Done sending article statuses.")
-					if errorOccurred {
-						completion(.failure(NewsBlurError.unknown))
-					} else {
-						completion(.success(()))
-					}
-				}
-			}
+		do {
+			try await sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: caller.unstar)
+		} catch {
+			savedError = error
+		}
 
-			switch result {
-			case .success(let syncStatuses):
-				processStatuses(syncStatuses)
-			case .failure(let databaseError):
-				completion(.failure(databaseError))
-			}
+		if let savedError {
+			throw savedError
 		}
 	}
 
-	func refreshArticleStatus(for account: Account, completion: @escaping (Result<Void, Error>) -> ()) {
-		os_log(.debug, log: log, "Refreshing story statuses...")
-
-		let group = DispatchGroup()
-		var errorOccurred = false
-
-		group.enter()
-		caller.retrieveUnreadStoryHashes { result in
-			switch result {
-			case .success(let storyHashes):
-				self.syncStoryReadState(account: account, hashes: storyHashes) {
-					group.leave()
-				}
-			case .failure(let error):
-				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving unread stories failed: %@.", error.localizedDescription)
-				group.leave()
-			}
+	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		Self.logger.info("NewsBlur: Refreshing story statuses")
+		defer {
+			Self.logger.info("NewsBlur: Finished refreshing article statuses")
 		}
 
-		group.enter()
-		caller.retrieveStarredStoryHashes { result in
-			switch result {
-			case .success(let storyHashes):
-				self.syncStoryStarredState(account: account, hashes: storyHashes) {
-					group.leave()
-				}
-			case .failure(let error):
-				errorOccurred = true
-				os_log(.info, log: self.log, "Retrieving starred stories failed: %@.", error.localizedDescription)
-				group.leave()
-			}
+		var savedError: Error?
+
+		do {
+			let storyHashes = try await caller.retrieveUnreadStoryHashes()
+			await syncStoryReadState(account: account, hashes: storyHashes)
+		} catch {
+			Self.logger.error("NewsBlur: error retrieving unread stories: \(error.localizedDescription)")
+			savedError = error
 		}
 
-		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done refreshing article statuses.")
-			if errorOccurred {
-				completion(.failure(NewsBlurError.unknown))
-			} else {
-				completion(.success(()))
-			}
+		do {
+			let storyHashes = try await caller.retrieveStarredStoryHashes()
+			await syncStoryStarredState(account: account, hashes: storyHashes)
+		} catch {
+			Self.logger.error("NewsBlur: error retrieving starred stories: \(error.localizedDescription)")
+			savedError = error
+		}
+
+		if let savedError {
+			throw savedError
 		}
 	}
 
-	func refreshStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		os_log(.debug, log: log, "Refreshing stories...")
-		os_log(.debug, log: log, "Refreshing unread stories...")
+	func refreshStories(for account: Account) async throws {
+		Self.logger.info("NewsBlur: Refreshing stories and unread stories")
 
-		caller.retrieveUnreadStoryHashes { result in
-			switch result {
-			case .success(let storyHashes):
+		let storyHashes = try await caller.retrieveUnreadStoryHashes()
+		if let count = storyHashes?.count, count > 0 {
+			refreshProgress.addTasks((count - 1) / 100 + 1)
+		}
 
-				if let count = storyHashes?.count, count > 0 {
-					self.refreshProgress.addToNumberOfTasksAndRemaining((count - 1) / 100 + 1)
-				}
-
-				self.refreshUnreadStories(for: account, hashes: storyHashes, updateFetchDate: nil, completion: completion)
-			case .failure(let error):
-				completion(.failure(error))
+		let storyHashesArray: [NewsBlurStoryHash] = {
+			if let storyHashes {
+				return Array(storyHashes)
 			}
+			return [NewsBlurStoryHash]()
+		}()
+		try await refreshUnreadStories(for: account, hashes: storyHashesArray, updateFetchDate: nil)
+	}
+
+	func refreshMissingStories(for account: Account) async throws {
+		Self.logger.info("NewsBlur: Refreshing missing stories")
+		defer {
+			Self.logger.info("NewsBlur: Finished refreshing missing stories.")
+		}
+
+		let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+
+		var savedError: Error?
+
+		let storyHashes = Array(fetchedArticleIDs).map {
+			NewsBlurStoryHash(hash: $0, timestamp: Date())
+		}
+		let chunkedStoryHashes = storyHashes.chunked(into: 100)
+
+		for chunk in chunkedStoryHashes {
+			do {
+				let (stories, _) = try await caller.retrieveStories(hashes: chunk)
+				try await processStories(account: account, stories: stories)
+			} catch {
+				savedError = error
+				Self.logger.error("NewsBlur: Refresh missing stories error: \(error.localizedDescription)")
+			}
+		}
+
+		if let savedError {
+			throw savedError
 		}
 	}
 
-	func refreshMissingStories(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		os_log(.debug, log: log, "Refreshing missing stories...")
-
-		account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-
-			func process(_ fetchedHashes: Set<String>) {
-				let group = DispatchGroup()
-				var errorOccurred = false
-
-				let storyHashes = Array(fetchedHashes).map {
-					NewsBlurStoryHash(hash: $0, timestamp: Date())
-				}
-				let chunkedStoryHashes = storyHashes.chunked(into: 100)
-
-				for chunk in chunkedStoryHashes {
-					group.enter()
-					self.caller.retrieveStories(hashes: chunk) { result in
-
-						switch result {
-						case .success((let stories, _)):
-							self.processStories(account: account, stories: stories) { result in
-								group.leave()
-								if case .failure = result {
-									errorOccurred = true
-								}
-							}
-						case .failure(let error):
-							errorOccurred = true
-							os_log(.error, log: self.log, "Refresh missing stories failed: %@.", error.localizedDescription)
-							group.leave()
-						}
-					}
-				}
-
-				group.notify(queue: DispatchQueue.main) {
-					self.refreshProgress.completeTask()
-					os_log(.debug, log: self.log, "Done refreshing missing stories.")
-					if errorOccurred {
-						completion(.failure(NewsBlurError.unknown))
-					} else {
-						completion(.success(()))
-					}
-				}
-			}
-
-			switch result {
-			case .success(let fetchedArticleIDs):
-				process(fetchedArticleIDs)
-			case .failure(let error):
-				self.refreshProgress.completeTask()
-				completion(.failure(error))
-			}
-		}
-	}
-
-	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil, completion: @escaping (Result<Bool, DatabaseError>) -> Void) {
+	@discardableResult
+	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil) async throws -> Bool {
 		let parsedItems = mapStoriesToParsedItems(stories: stories).filter {
-			guard let datePublished = $0.datePublished, let since = since else {
+			guard let datePublished = $0.datePublished, let since else {
 				return true
 			}
-
 			return datePublished >= since
 		}
-		let webFeedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues {
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues {
 			Set($0)
 		}
 
-		account.update(webFeedIDsAndItems: webFeedIDsAndItems, defaultRead: true) { error in
-			if let error = error {
-				completion(.failure(error))
-				return
-			}
+		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		return !feedIDsAndItems.isEmpty
+	}
 
-			completion(.success(!webFeedIDsAndItems.isEmpty))
+	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+	}
+
+	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
 		}
-	}
 
-	func importOPML(for account: Account, opmlFile: URL, completion: @escaping (Result<Void, Error>) -> ()) {
-		completion(.success(()))
-	}
+		try await caller.addFolder(named: name)
 
-	func createFolder(for account: Account, name: String, completion: @escaping (Result<Folder, Error>) -> ()) {
-		self.refreshProgress.addToNumberOfTasksAndRemaining(1)
-
-		caller.addFolder(named: name) { result in
-			self.refreshProgress.completeTask()
-
-			switch result {
-			case .success():
-				if let folder = account.ensureFolder(with: name) {
-					completion(.success(folder))
-				} else {
-					completion(.failure(NewsBlurError.invalidParameter))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		guard let folder = account.ensureFolder(with: name) else {
+			throw AccountError.invalidParameter
 		}
+		return folder
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		guard let folderToRename = folder.name else {
-			completion(.failure(NewsBlurError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		let nameBefore = folder.name
 
-		caller.renameFolder(with: folderToRename, to: name) { result in
-			self.refreshProgress.completeTask()
-
-			switch result {
-			case .success:
-				completion(.success(()))
-			case .failure(let error):
-				folder.name = nameBefore
-				completion(.failure(error))
-			}
+		do {
+			try await caller.renameFolder(with: folderToRename, to: name)
+			folder.name = name
+		} catch {
+			folder.name = nameBefore
+			throw error
 		}
-
-		folder.name = name
 	}
 
-	func removeFolder(for account: Account, with folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
 		guard let folderToRemove = folder.name else {
-			completion(.failure(NewsBlurError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
 		var feedIDs: [String] = []
-		for feed in folder.topLevelWebFeeds {
+		for feed in folder.topLevelFeeds {
 			if (feed.folderRelationship?.count ?? 0) > 1 {
 				clearFolderRelationship(for: feed, withFolderName: folderToRemove)
 			} else if let feedID = feed.externalID {
@@ -411,221 +298,149 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 			}
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-
-		caller.removeFolder(named: folderToRemove, feedIDs: feedIDs) { result in
-			self.refreshProgress.completeTask()
-
-			switch result {
-			case .success:
-				account.removeFolder(folder)
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
 		}
+
+		try await caller.removeFolder(named: folderToRemove, feedIDs: feedIDs)
+		account.removeFolderFromTree(folder)
 	}
 
-	func createWebFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<WebFeed, Error>) -> ()) {
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+	@discardableResult
+	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
 
 		let folderName = (container as? Folder)?.name
-		caller.addURL(url, folder: folderName) { result in
-			self.refreshProgress.completeTask()
 
-			switch result {
-			case .success(let feed):
-				self.createFeed(account: account, feed: feed, name: name, container: container, completion: completion)
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
+		do {
+			guard let newsBlurFeed = try await caller.addURL(urlString, folder: folderName) else {
+				throw NewsBlurError.unknown
 			}
+			let feed = try await createFeed(account: account, newsBlurFeed: newsBlurFeed, name: name, container: container)
+			return feed
+		} catch {
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
-	func renameWebFeed(for account: Account, with feed: WebFeed, to name: String, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 		guard let feedID = feed.externalID else {
-			completion(.failure(NewsBlurError.invalidParameter))
+			throw AccountError.invalidParameter
+		}
+
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
+
+		do {
+			try await caller.renameFeed(feedID: feedID, newName: name)
+			feed.editedName = name
+		} catch {
+			throw AccountError.wrapped(error, account)
+		}
+	}
+
+	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
+		if let account = container as? Account {
+			account.addFeedToTreeAtTopLevel(feed)
 			return
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-
-		caller.renameFeed(feedID: feedID, newName: name) { result in
-			self.refreshProgress.completeTask()
-
-			switch result {
-			case .success:
-				DispatchQueue.main.async {
-					feed.editedName = name
-					completion(.success(()))
-				}
-
-			case .failure(let error):
-				DispatchQueue.main.async {
-					let wrappedError = AccountError.wrappedError(error: error, account: account)
-					completion(.failure(wrappedError))
-				}
-			}
-		}
-	}
-
-	func addWebFeed(for account: Account, with feed: WebFeed, to container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
 		guard let folder = container as? Folder else {
-			DispatchQueue.main.async {
-				if let account = container as? Account {
-					account.addWebFeed(feed)
-				}
-				completion(.success(()))
-			}
-
 			return
 		}
 
 		let folderName = folder.name ?? ""
 		saveFolderRelationship(for: feed, withFolderName: folderName, id: folderName)
-		folder.addWebFeed(feed)
-
-		completion(.success(()))
+		folder.addFeedToTreeAtTopLevel(feed)
 	}
 
-	func removeWebFeed(for account: Account, with feed: WebFeed, from container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
-		deleteFeed(for: account, with: feed, from: container, completion: completion)
+	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+		try await deleteFeed(for: account, with: feed, from: container)
 	}
 
-	func moveWebFeed(for account: Account, with feed: WebFeed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		guard let feedID = feed.externalID else {
-			completion(.failure(NewsBlurError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
-
-		caller.moveFeed(
-				feedID: feedID,
-				from: (from as? Folder)?.name,
-				to: (to as? Folder)?.name
-		) { result in
-			self.refreshProgress.completeTask()
-
-			switch result {
-			case .success:
-				from.removeWebFeed(feed)
-				to.addWebFeed(feed)
-				
-				completion(.success(()))
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
 		}
+
+		try await caller.moveFeed(feedID: feedID,
+								  from: (sourceContainer as? Folder)?.name,
+								  to: (destinationContainer as? Folder)?.name)
+
+		sourceContainer.removeFeedFromTreeAtTopLevel(feed)
+		destinationContainer.addFeedToTreeAtTopLevel(feed)
 	}
 
-	func restoreWebFeed(for account: Account, feed: WebFeed, container: Container, completion: @escaping (Result<Void, Error>) -> ()) {
-		if let existingFeed = account.existingWebFeed(withURL: feed.url) {
-			account.addWebFeed(existingFeed, to: container) { result in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+		if let existingFeed = account.existingFeed(withURL: feed.url) {
+			try await account.addFeed(existingFeed, container: container)
 		} else {
-			createWebFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> ()) {
+	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
 		guard let folderName = folder.name else {
-			completion(.failure(NewsBlurError.invalidParameter))
-			return
+			throw AccountError.invalidParameter
 		}
 
-		var feedsToRestore: [WebFeed] = []
-		for feed in folder.topLevelWebFeeds {
+		var feedsToRestore: [Feed] = []
+		for feed in folder.topLevelFeeds {
 			feedsToRestore.append(feed)
-			folder.topLevelWebFeeds.remove(feed)
+			folder.topLevelFeeds.remove(feed)
 		}
 
-		let group = DispatchGroup()
-
-		group.enter()
-		createFolder(for: account, name: folderName) { result in
-			group.leave()
-			switch result {
-			case .success(let folder):
-				for feed in feedsToRestore {
-					group.enter()
-					self.restoreWebFeed(for: account, feed: feed, container: folder) { result in
-						group.leave()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
-						}
-					}
-				}
-			case .failure(let error):
-				os_log(.error, log: self.log, "Restore folder feed error: %@.", error.localizedDescription)
+		do {
+			let folder = try await createFolder(for: account, name: folderName)
+			for feed in feedsToRestore {
+				try await restoreFeed(for: account, feed: feed, container: folder)
 			}
-		}
-
-		group.notify(queue: DispatchQueue.main) {
-			completion(.success(()))
+		} catch {
+			Self.logger.error("NewsBlur: Restore folder error: \(error.localizedDescription)")
+			throw error
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		account.update(articles, statusKey: statusKey, flag: flag) { result in
-			switch result {
-			case .success(let articles):
-				let syncStatuses = articles.map { article in
-					return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-				}
+	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(articles.map { article in
+			return SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		})
 
-				self.database.insertStatuses(syncStatuses) { _ in
-					self.database.selectPendingCount { result in
-						if let count = try? result.get(), count > 100 {
-							self.sendArticleStatus(for: account) { _ in }
-						}
-						completion(.success(()))
-					}
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		try await syncDatabase.insertStatuses(syncStatuses)
+		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+			try await sendArticleStatus(for: account)
 		}
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials(type: .newsBlurSessionId)
+		credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
 	}
 
 	func accountWillBeDeleted(_ account: Account) {
-		caller.logout() { _ in }
-	}
-
-	class func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL? = nil, completion: @escaping (Result<Credentials?, Error>) -> ()) {
-		let caller = NewsBlurAPICaller(transport: transport)
-		caller.credentials = credentials
-		caller.validateCredentials() { result in
-			DispatchQueue.main.async {
-				completion(result)
-			}
+		Task { @MainActor in
+			try await caller.logout()
 		}
 	}
 
-	// MARK: Suspend and Resume (for iOS)
+	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		let caller = NewsBlurAPICaller(transport: transport)
+		caller.credentials = credentials
+		return try await caller.validateCredentials()
+	}
+
+	// MARK: - Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
 	func suspendNetwork() {
@@ -634,12 +449,18 @@ final class NewsBlurAccountDelegate: AccountDelegate {
 
 	/// Suspend the SQLLite databases
 	func suspendDatabase() {
-		database.suspend()
+		syncDatabase.suspend()
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume() {
 		caller.resume()
-		database.resume()
+		syncDatabase.resume()
+	}
+
+	// MARK: - Notifications
+
+	@objc func progressInfoDidChange(_ notification: Notification) {
+		progressInfo = refreshProgress.progressInfo
 	}
 }

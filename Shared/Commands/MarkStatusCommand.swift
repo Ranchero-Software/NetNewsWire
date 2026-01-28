@@ -12,18 +12,18 @@ import Articles
 
 // Mark articles read/unread, starred/unstarred, deleted/undeleted.
 
-final class MarkStatusCommand: UndoableCommand {
-    
+@MainActor final class MarkStatusCommand: UndoableCommand {
+
 	let undoActionName: String
 	let redoActionName: String
     let articles: Set<Article>
 	let undoManager: UndoManager
 	let flag: Bool
 	let statusKey: ArticleStatus.Key
-	var completion: (() -> Void)? = nil
+	var completion: (() -> Void)?
 
 	init?(initialArticles: [Article], statusKey: ArticleStatus.Key, flag: Bool, undoManager: UndoManager, completion: (() -> Void)? = nil) {
-        
+
         // Filter out articles that already have the desired status or can't be marked.
 		let articlesToMark = MarkStatusCommand.filteredArticles(initialArticles, statusKey, flag)
 		if articlesToMark.isEmpty {
@@ -54,15 +54,15 @@ final class MarkStatusCommand: UndoableCommand {
 		mark(statusKey, flag)
  		registerUndo()
     }
-    
+
     func undo() {
 		mark(statusKey, !flag)
 		registerRedo()
     }
 }
 
-private extension MarkStatusCommand {
-    
+@MainActor private extension MarkStatusCommand {
+
 	func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
         markArticles(articles, statusKey: statusKey, flag: flag, completion: completion)
 		completion = nil
@@ -84,13 +84,17 @@ private extension MarkStatusCommand {
 	}
 
 	static func filteredArticles(_ articles: [Article], _ statusKey: ArticleStatus.Key, _ flag: Bool) -> [Article] {
-
-		return articles.filter{ article in
-			guard article.status.boolStatus(forKey: statusKey) != flag else { return false }
-			guard statusKey == .read else { return true }
-			guard !article.status.read || article.isAvailableToMarkUnread else { return false }
+		articles.filter { article in
+			guard article.status.boolStatus(forKey: statusKey) != flag else {
+				return false
+			}
+			guard statusKey == .read else {
+				return true
+			}
+			guard !article.status.read || article.isAvailableToMarkUnread else {
+				return false
+			}
 			return true
 		}
-		
 	}
 }

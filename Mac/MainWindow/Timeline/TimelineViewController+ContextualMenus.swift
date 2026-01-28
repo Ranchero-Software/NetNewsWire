@@ -65,24 +65,32 @@ extension TimelineViewController {
 	}
 
 	@objc func selectFeedInSidebarFromContextualMenu(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let webFeed = menuItem.representedObject as? WebFeed else {
+		guard let menuItem = sender as? NSMenuItem, let feed = menuItem.representedObject as? Feed else {
 			return
 		}
-		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
+		delegate?.timelineRequestedFeedSelection(self, feed: feed)
 	}
-	
+
 	@objc func markAllInFeedAsRead(_ sender: Any?) {
-		guard let menuItem = sender as? NSMenuItem, let feedArticles = menuItem.representedObject as? ArticleArray else {
+		guard let menuItem = sender as? NSMenuItem,
+			  let feed = menuItem.representedObject as? Feed else {
 			return
 		}
-		
-		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: feedArticles, markingRead: true, undoManager: undoManager) else {
+
+		guard let unreadArticles = try? feed.fetchUnreadArticles(), !unreadArticles.isEmpty else {
 			return
 		}
-		
+		guard let undoManager, let markReadCommand = MarkStatusCommand(
+			initialArticles: Array(unreadArticles),
+			markingRead: true,
+			undoManager: undoManager
+		) else {
+			return
+		}
+
 		runCommand(markReadCommand)
 	}
-	
+
 	@objc func openInBrowserFromContextualMenu(_ sender: Any?) {
 
 		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
@@ -90,7 +98,7 @@ extension TimelineViewController {
 		}
 		Browser.open(urlString, inBackground: false)
 	}
-	
+
 	@objc func copyURLFromContextualMenu(_ sender: Any?) {
 		guard let menuItem = sender as? NSMenuItem, let urlString = menuItem.representedObject as? String else {
 			return
@@ -105,7 +113,6 @@ extension TimelineViewController {
 		sharingCommandInfo.perform()
 	}
 }
-
 
 private extension TimelineViewController {
 
@@ -162,138 +169,132 @@ private extension TimelineViewController {
 		}
 
 		menu.addSeparatorIfNeeded()
-		
-		if articles.count == 1, let feed = articles.first!.webFeed {
-			if !(representedObjects?.contains(where: { $0 as? WebFeed == feed }) ?? false) {
+
+		if articles.count == 1, let feed = articles.first!.feed {
+			if !(representedObjects?.contains(where: { $0 as? Feed == feed }) ?? false) {
 				menu.addItem(selectFeedInSidebarMenuItem(feed))
 			}
 			if let markAllMenuItem = markAllAsReadMenuItem(feed) {
 				menu.addItem(markAllMenuItem)
 			}
 		}
-		
+
 		if articles.count == 1, let link = articles.first!.preferredLink {
 			menu.addSeparatorIfNeeded()
 			menu.addItem(openInBrowserMenuItem(link))
 			menu.addSeparatorIfNeeded()
 			menu.addItem(copyArticleURLMenuItem(link))
-			
+
 			if let externalLink = articles.first?.externalLink, externalLink != link {
 				menu.addItem(copyExternalURLMenuItem(externalLink))
 			}
 		}
 
-		if let sharingMenu = shareMenu(for: articles) {
-			menu.addSeparatorIfNeeded()
-			let menuItem = NSMenuItem(title: sharingMenu.title, action: nil, keyEquivalent: "")
-			menuItem.submenu = sharingMenu
-			menu.addItem(menuItem)
-		}
+		menu.addSeparatorIfNeeded()
+		let shareButtonMenuItem = NSMenuItem(title: NSLocalizedString("Share…", comment: "Share…"), action: #selector(showShareSheet(_:)), keyEquivalent: "")
+		shareButtonMenuItem.target = self
+		shareButtonMenuItem.representedObject = articles
+		menu.addItem(shareButtonMenuItem)
+		shareButtonMenuItem.isEnabled = !articles.isEmpty
 
 		return menu
 	}
 
-	func shareMenu(for articles: [Article]) -> NSMenu? {
-		if articles.isEmpty {
-			return nil
+	@objc func showShareSheet(_ sender: Any?) {
+		let articlesToShare: [Article]
+		if let menuItem = sender as? NSMenuItem, let representedArticles = menuItem.representedObject as? [Article] {
+			articlesToShare = representedArticles
+		} else {
+			articlesToShare = selectedArticles
 		}
-
-		let sortedArticles = articles.sortedByDate(.orderedAscending)
+		let sortedArticles = articlesToShare.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
-		let standardServices = NSSharingService.sharingServices(forItems_noDeprecationWarning: items) as? [NSSharingService] ?? [NSSharingService]()
-		let customServices = SharingServicePickerDelegate.customSharingServices(for: items)
-		let services = standardServices + customServices
-		if services.isEmpty {
-			return nil
-		}
+		let sharingServicePicker = NSSharingServicePicker(items: items)
+		sharingServicePicker.delegate = self.sharingServicePickerDelegate
 
-		let menu = NSMenu(title: NSLocalizedString("Share", comment: "Share menu name"))
-		services.forEach { (service) in
-			service.delegate = sharingServiceDelegate
-			let menuItem = NSMenuItem(title: service.menuItemTitle, action: #selector(performShareServiceFromContextualMenu(_:)), keyEquivalent: "")
-			menuItem.image = service.image
-			let sharingCommandInfo = SharingCommandInfo(service: service, items: items)
-			menuItem.representedObject = sharingCommandInfo
-			menu.addItem(menuItem)
+		// Anchor the picker to the first article being shared
+		let rowToAnchorTo: Int
+		if let firstArticle = articlesToShare.first,
+		   let row = articles.firstIndex(where: { $0.articleID == firstArticle.articleID }) {
+			rowToAnchorTo = row
+		} else {
+			rowToAnchorTo = tableView.selectedRow
 		}
-
-		return menu
+		let rect = tableView.rect(ofRow: rowToAnchorTo)
+		sharingServicePicker.show(relativeTo: rect, of: tableView, preferredEdge: .maxX)
 	}
 
 	func markReadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkRead)
 	}
 
 	func markUnreadMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkUnread)
 	}
 
 	func markStarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkStarred)
 	}
 
 	func markUnstarredMenuItem(_ articles: [Article]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkUnstarred)
 	}
 
 	func markAboveReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"),  #selector(markAboveArticlesReadFromContextualMenu(_:)), articles)
-	}
-	
-	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"),  #selector(markBelowArticlesReadFromContextualMenu(_:)), articles)
+		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"), #selector(markAboveArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.markAboveAsRead)
 	}
 
-	func selectFeedInSidebarMenuItem(_ feed: WebFeed) -> NSMenuItem {
+	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
+		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"), #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.markBelowAsRead)
+	}
+
+	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
 		let localizedMenuText = NSLocalizedString("Select “%@” in Sidebar", comment: "Command")
 		let formattedMenuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay)
-		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed)
+		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed, image: nil)
 	}
 
-	func markAllAsReadMenuItem(_ feed: WebFeed) -> NSMenuItem? {
-		guard let articlesSet = try? feed.fetchArticles() else {
-			return nil
-		}
-		let articles = Array(articlesSet)
-		guard articles.canMarkAllAsRead() else {
+	func markAllAsReadMenuItem(_ feed: Feed) -> NSMenuItem? {
+		guard feed.unreadCount > 0 else {
 			return nil
 		}
 
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
-		
-		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), articles)
+
+		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), feed, image: Assets.Images.markAllAsRead)
 	}
-	
+
 	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString)
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString, image: Assets.Images.openInBrowser)
 	}
-	
+
 	func copyArticleURLMenuItem(_ urlString: String) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString)
+		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString, image: Assets.Images.copy)
 	}
-	
+
 	func copyExternalURLMenuItem(_ urlString: String) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy External URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString)
+		return menuItem(NSLocalizedString("Copy External URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString, image: Assets.Images.copy)
 	}
 
-
-	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {
+	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any, image: RSImage?) -> NSMenuItem {
 
 		let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
 		item.representedObject = representedObject
 		item.target = self
+		if let image {
+			item.image = image
+		}
 		return item
 	}
 }
 
 private final class SharingCommandInfo {
-
 	let service: NSSharingService
 	let items: [Any]
 

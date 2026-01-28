@@ -8,17 +8,7 @@
 
 import XCTest
 
-class ScriptingTests: AppleScriptXCTestCase {
-
-    override func setUp() {
-        super.setUp()
-    }
-    
-    override func tearDown() {
-        super.tearDown()
-    }
-
-    
+@MainActor final class ScriptingTests: AppleScriptXCTestCase {
     /*
         @function testGenericScript
         @brief  An example of how a script can be run as part of an XCTest
@@ -29,73 +19,35 @@ class ScriptingTests: AppleScriptXCTestCase {
     */
     func testGenericScript() {
         let scriptResult = doIndividualScript(filename: "testGenericScript")
-        XCTAssert( scriptResult?.stringValue == "Geoducks!")
+        XCTAssert(scriptResult?.stringValue == "Geoducks!")
     }
-    
+
     func testGetUrlScript() {
         _ = doIndividualScript(filename: "testGetURL")
     }
-    
+
     func testNameAndUrlOfEveryFeedScript() {
         _ = doIndividualScript(filename: "testNameAndUrlOfEveryFeed")
     }
-    
+
     func testNameOfEveryFolderScript() {
         _ = doIndividualScript(filename: "testNameOfEveryFolder")
     }
-    
+
     func testNameOfAuthorsScript() {
         _ = doIndividualScript(filename: "testNameOfAuthors")
     }
-    
+
     func testFeedExists() {
         _ = doIndividualScript(filename: "testFeedExists")
     }
-    
-    func testFeedOPML() {
-        _ = doIndividualScript(filename: "testFeedOPML")
-    }
 
-//    func testTitleOfArticlesWhoseScript() {
-//        _ = doIndividualScript(filename: "testTitleOfArticlesWhose")
-//    }
-//
-//    func testIterativeCreateAndDeleteScript() {
-//        _ = doIndividualScriptWithExpectation(filename: "testIterativeCreateAndDeleteFeed")
-//    }
-
-    func doIndividualScriptWithExpectation(filename:String) {
-        let queue = DispatchQueue(label:"testQueue")
+    func doIndividualScriptWithExpectation(filename: String) {
         let scriptExpectation = self.expectation(description: filename+"expectation")
-        queue.async {
-             _ = self.doIndividualScript(filename:filename)
+		DispatchQueue.main.async {
+             _ = self.doIndividualScript(filename: filename)
              scriptExpectation.fulfill()
         }
-        self.wait(for:[scriptExpectation], timeout:60)
-    }
-
-/*
-    @function testCurrentArticleScripts
-    @brief    the pieces of the test are broken up into smaller pieces because of the
-              way events are delivered to the app -- I tried one single script with all the
-              actions and the keystrokes aren't delivered to the app right away, so the ui
-              isn't updated in time for 'current article' to be set.  But, breaking them up
-              in this way seems to work.
-              
-              July 30, 2019:  There's an issue where in order for a script to send keystrokes,
-			  The app has to be allowed to interact with the SystemEvents.app in
-			  System Preferences -> Security & Privacy -> Privacy -> Accessibility
-			  and this permission needs to be renewed every time the app is recompiled unless
-			  the app is codesigned.  Until we figure out how to get around this limitation,
-			  this test is disabled.
-*/
-    func disabledTestCurrentArticleScripts() {
-        
-        doIndividualScriptWithExpectation(filename: "uiScriptingTestSetup")
-        doIndividualScriptWithExpectation(filename: "establishMainWindowStartingState")
-        doIndividualScriptWithExpectation(filename: "selectAFeed")
-        doIndividualScriptWithExpectation(filename: "testCurrentArticleIsNil")
-        doIndividualScriptWithExpectation(filename: "selectAnArticle")
-        doIndividualScriptWithExpectation(filename: "testURLsOfCurrentArticle")
+        self.wait(for: [scriptExpectation], timeout: 60)
     }
 }

@@ -7,13 +7,12 @@
 //
 
 import XCTest
+@testable import RSWeb
 
-class StringTests: XCTestCase {
+final class StringTests: XCTestCase {
 
     func testHTMLEscaping() {
-
 		let s = #"<foo>"bar"&'baz'"#.escapedHTML
 		XCTAssertEqual(s, "&lt;foo&gt;&quot;bar&quot;&amp;&apos;baz&apos;")
-
     }
 }

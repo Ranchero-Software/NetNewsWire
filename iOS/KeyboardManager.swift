@@ -8,24 +8,24 @@
 
 import UIKit
 
-enum KeyboardType: String {
+enum KeyboardType: String, Sendable {
 	case global = "GlobalKeyboardShortcuts"
 	case sidebar = "SidebarKeyboardShortcuts"
 	case timeline = "TimelineKeyboardShortcuts"
 	case detail = "DetailKeyboardShortcuts"
 }
 
-class KeyboardManager {
-	
+@MainActor final class KeyboardManager {
+
 	private(set) var _keyCommands: [UIKeyCommand]
 	var keyCommands: [UIKeyCommand] {
 		guard !UIResponder.isFirstResponderTextField else { return [UIKeyCommand]() }
 		return _keyCommands
 	}
-		
+
 	init(type: KeyboardType) {
 		_keyCommands = KeyboardManager.globalAuxilaryKeyCommands()
-		
+
 		switch type {
 		case .sidebar:
 			_keyCommands.append(contentsOf: KeyboardManager.hardcodeFeedKeyCommands())
@@ -34,7 +34,7 @@ class KeyboardManager {
 		default:
 			break
 		}
-		
+
 		let globalFile = Bundle.main.path(forResource: KeyboardType.global.rawValue, ofType: "plist")!
 		let globalEntries = NSArray(contentsOfFile: globalFile)! as! [[String: Any]]
 		let globalCommands = globalEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) }
@@ -42,9 +42,9 @@ class KeyboardManager {
 
 		let specificFile = Bundle.main.path(forResource: type.rawValue, ofType: "plist")!
 		let specificEntries = NSArray(contentsOfFile: specificFile)! as! [[String: Any]]
-		_keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) } )
+		_keyCommands.append(contentsOf: specificEntries.compactMap { KeyboardManager.createKeyCommand(keyEntry: $0) })
 	}
-	
+
 	static func createKeyCommand(title: String, action: String, input: String, modifiers: UIKeyModifierFlags) -> UIKeyCommand {
 		let selector = NSSelectorFromString(action)
 		let keyCommand = UIKeyCommand(title: title, image: nil, action: selector, input: input, modifierFlags: modifiers, propertyList: nil, alternates: [], discoverabilityTitle: nil, attributes: [], state: .on)
@@ -56,7 +56,7 @@ class KeyboardManager {
 }
 
 private extension KeyboardManager {
-	
+
 	static func createKeyCommand(keyEntry: [String: Any]) -> UIKeyCommand? {
 		guard let input = createKeyCommandInput(keyEntry: keyEntry) else { return nil }
 		let modifiers = createKeyModifierFlags(keyEntry: keyEntry)
@@ -74,9 +74,11 @@ private extension KeyboardManager {
 	}
 
 	static func createKeyCommandInput(keyEntry: [String: Any]) -> String? {
-		guard let key = keyEntry["key"] as? String else { return nil }
-		
-		switch(key) {
+		guard let key = keyEntry["key"] as? String else {
+			return nil
+		}
+
+		switch key {
 		case "[space]":
 			return "\u{0020}"
 		case "[uparrow]":
@@ -95,39 +97,38 @@ private extension KeyboardManager {
 			return "\u{8}"
 		case "[deletefunction]":
 			return nil
-        case "[tab]":
-            return "\t"
+		case "[tab]":
+			return "\t"
 		default:
 			return key
 		}
-		
 	}
-	
+
 	static func createKeyModifierFlags(keyEntry: [String: Any]) -> UIKeyModifierFlags {
 		var flags = UIKeyModifierFlags()
-		
+
 		if keyEntry["shiftModifier"] as? Bool ?? false {
 			flags.insert(.shift)
 		}
-		
+
 		if keyEntry["optionModifier"] as? Bool ?? false {
 			flags.insert(.alternate)
 		}
-		
+
 		if keyEntry["commandModifier"] as? Bool ?? false {
 			flags.insert(.command)
 		}
-		
+
 		if keyEntry["controlModifier"] as? Bool ?? false {
 			flags.insert(.control)
 		}
 
 		return flags
 	}
-	
+
 	static func globalAuxilaryKeyCommands() -> [UIKeyCommand] {
 		var keys = [UIKeyCommand]()
-		
+
 		let addNewFeedTitle = NSLocalizedString("New Feed", comment: "New Feed")
 		keys.append(KeyboardManager.createKeyCommand(title: addNewFeedTitle, action: "addNewFeed:", input: "n", modifiers: [.command]))
 
@@ -151,7 +152,7 @@ private extension KeyboardManager {
 
 		let gotoSettings = NSLocalizedString("Go To Settings", comment: "Go To Settings")
 			keys.append(KeyboardManager.createKeyCommand(title: gotoSettings, action: "goToSettings:", input: ",", modifiers: [.command]))
-		
+
 		let articleSearchTitle = NSLocalizedString("Article Search", comment: "Article Search")
 		keys.append(KeyboardManager.createKeyCommand(title: articleSearchTitle, action: "articleSearch:", input: "f", modifiers: [.command, .alternate]))
 
@@ -169,7 +170,7 @@ private extension KeyboardManager {
 
 		return keys
 	}
-	
+
 	static func hardcodeFeedKeyCommands() -> [UIKeyCommand] {
 		var keys = [UIKeyCommand]()
 
@@ -178,16 +179,16 @@ private extension KeyboardManager {
 
 		let nextDownTitle = NSLocalizedString("Select Next Down", comment: "Select Next Down")
 		keys.append(KeyboardManager.createKeyCommand(title: nextDownTitle, action: "selectNextDown:", input: UIKeyCommand.inputDownArrow, modifiers: []))
-		
+
 		let getFeedInfo = NSLocalizedString("Get Feed Info", comment: "Get Feed Info")
 		keys.append(KeyboardManager.createKeyCommand(title: getFeedInfo, action: "showFeedInspector:", input: "i", modifiers: .command))
 
 		return keys
 	}
-	
+
 	static func hardcodeArticleKeyCommands() -> [UIKeyCommand] {
 		var keys = [UIKeyCommand]()
-		
+
 		let openInBrowserTitle = NSLocalizedString("Open In Browser", comment: "Open In Browser")
 		keys.append(KeyboardManager.createKeyCommand(title: openInBrowserTitle, action: "openInBrowser:", input: UIKeyCommand.inputRightArrow, modifiers: [.command]))
 
@@ -202,7 +203,7 @@ private extension KeyboardManager {
 
 		let toggleStarredTitle = NSLocalizedString("Toggle Starred Status", comment: "Toggle Starred Status")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleStarredTitle, action: "toggleStarred:", input: "l", modifiers: [.command, .shift]))
-		
+
 		let findInArticleTitle = NSLocalizedString("Find in Article", comment: "Find in Article")
 		keys.append(KeyboardManager.createKeyCommand(title: findInArticleTitle, action: "beginFind:", input: "f", modifiers: [.command]))
 
@@ -217,5 +218,5 @@ private extension KeyboardManager {
 
 		return keys
 	}
-	
+
 }

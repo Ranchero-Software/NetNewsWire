@@ -14,15 +14,15 @@ import RSCore
 import Articles
 import Account
 
-struct ArticleRenderer {
+@MainActor struct ArticleRenderer {
 
 	typealias Rendering = (style: String, html: String, title: String, baseURL: String)
-	
+
 	struct Page {
 		let url: URL
 		let baseURL: URL
 		let html: String
-		
+
 		init(name: String) {
 			url = Bundle.main.url(forResource: name, withExtension: "html")!
 			baseURL = url.deletingLastPathComponent()
@@ -31,17 +31,17 @@ struct ArticleRenderer {
 	}
 
 	static var imageIconScheme = "nnwImageIcon"
-	
+
 	static var blank = Page(name: "blank")
 	static var page = Page(name: "page")
-	
+
 	private let article: Article?
 	private let extractedArticle: ExtractedArticle?
 	private let articleTheme: ArticleTheme
 	private let title: String
 	private let body: String
 	private let baseURL: String?
-	
+
 	private static let longDateTimeFormatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateStyle = .long
@@ -140,7 +140,7 @@ struct ArticleRenderer {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noSelectionHTML, renderer.title, renderer.baseURL ?? "")
 	}
-	
+
 	static func noContentHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
@@ -173,13 +173,13 @@ private extension ArticleRenderer {
 	private var noContentHTML: String {
 		return ""
 	}
-	
+
 	private var articleCSS: String {
 		return try! MacroProcessor.renderedText(withTemplate: styleString(), substitutions: styleSubstitutions())
 	}
 
 	static var defaultStyleSheet: String = {
-		let path = Bundle.main.path(forResource: "styleSheet", ofType: "css")!
+		let path = Bundle.main.path(forResource: "stylesheet", ofType: "css")!
 		let s = try! String(contentsOfFile: path, encoding: .utf8)
 		return "\n\(s)\n"
 	}()
@@ -205,10 +205,10 @@ private extension ArticleRenderer {
 			assertionFailure("Article should have been set before calling this function.")
 			return d
 		}
-		
+
 		d["title"] = title
 		d["preferred_link"] = article.preferredLink ?? ""
-		
+
 		if let externalLink = article.externalLink, externalLink != article.preferredLink {
 			d["external_link_label"] = NSLocalizedString("Link:", comment: "Link")
 			d["external_link_stripped"] = externalLink.strippingHTTPOrHTTPSScheme
@@ -218,31 +218,30 @@ private extension ArticleRenderer {
 			d["external_link_stripped"] = ""
 			d["external_link"] = ""
 		}
-		
+
 		d["body"] = body
-		
+
 		#if os(macOS)
 		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
 		#endif
-		
+
 		var components = URLComponents()
 		components.scheme = Self.imageIconScheme
 		components.path = article.articleID
 		if let imageIconURLString = components.string {
 			d["avatar_src"] = imageIconURLString
-		}
-		else {
+		} else {
 			d["avatar_src"] = ""
 		}
-		
+
 		if self.title.isEmpty {
 			d["dateline_style"] = "articleDatelineTitle"
 		} else {
 			d["dateline_style"] = "articleDateline"
 		}
 
-		d["feed_link_title"] = article.webFeed?.nameForDisplay ?? ""
-		d["feed_link"] = article.webFeed?.homePageURL ?? ""
+		d["feed_link_title"] = article.feed?.nameForDisplay ?? ""
+		d["feed_link"] = article.feed?.homePageURL ?? ""
 
 		d["byline"] = byline()
 
@@ -261,7 +260,7 @@ private extension ArticleRenderer {
 	}
 
 	func byline() -> String {
-		guard let authors = article?.authors ?? article?.webFeed?.authors, !authors.isEmpty else {
+		guard let authors = article?.authors ?? article?.feed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -269,11 +268,11 @@ private extension ArticleRenderer {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == article?.webFeed?.nameForDisplay {
+			if author.name == article?.feed?.nameForDisplay {
 				return ""
 			}
 		}
-		
+
 		var byline = ""
 		var isFirstAuthor = true
 
@@ -283,27 +282,22 @@ private extension ArticleRenderer {
 			}
 			isFirstAuthor = false
 
-			var authorEmailAddress: String? = nil
+			var authorEmailAddress: String?
 			if let emailAddress = author.emailAddress, !(emailAddress.contains("noreply@") || emailAddress.contains("no-reply@")) {
 				authorEmailAddress = emailAddress
 			}
 
 			if let emailAddress = authorEmailAddress, emailAddress.contains(" ") {
 				byline += emailAddress // probably name plus email address
-			}
-			else if let name = author.name, let url = author.url {
+			} else if let name = author.name, let url = author.url {
 				byline += name.htmlByAddingLink(url)
-			}
-			else if let name = author.name, let emailAddress = authorEmailAddress {
+			} else if let name = author.name, let emailAddress = authorEmailAddress {
 				byline += "\(name) &lt;\(emailAddress)&gt;"
-			}
-			else if let name = author.name {
+			} else if let name = author.name {
 				byline += name
-			}
-			else if let emailAddress = authorEmailAddress {
+			} else if let emailAddress = authorEmailAddress {
 				byline += "&lt;\(emailAddress)&gt;" // TODO: mailto link
-			}
-			else if let url = author.url {
+			} else if let url = author.url {
 				byline += String.htmlWithLink(url)
 			}
 		}
@@ -328,15 +322,15 @@ private extension ArticleRenderer {
 
 // MARK: - Article extension
 
-private extension Article {
+@MainActor private extension Article {
 
 	var baseURL: URL? {
 		var s = link
 		if s == nil {
-			s = webFeed?.homePageURL
+			s = feed?.homePageURL
 		}
 		if s == nil {
-			s = webFeed?.url
+			s = feed?.url
 		}
 
 		guard let urlString = s else {
@@ -355,4 +349,3 @@ private extension Article {
 		return url
 	}
 }
-

@@ -13,14 +13,13 @@ import Account
 
 // These handle multiple accounts.
 
-func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
-	
+@MainActor func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
 
 	let group = DispatchGroup()
-	
+
 	for (accountID, accountArticles) in d {
-		guard let account = AccountManager.shared.existingAccount(with: accountID) else {
+		guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			continue
 		}
 		group.enter()
@@ -28,42 +27,40 @@ func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: 
 			group.leave()
 		}
 	}
-	
+
 	group.notify(queue: .main) {
 		completion?()
 	}
 }
 
 private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: Set<Article>] {
-	
 	let d = Dictionary(grouping: articles, by: { $0.accountID })
-	return d.mapValues{ Set($0) }
+	return d.mapValues { Set($0) }
 }
 
 extension Article {
-	
-	var webFeed: WebFeed? {
-		return account?.existingWebFeed(withWebFeedID: webFeedID)
-	}
-	
 	var url: URL? {
-		return URL.reparingIfRequired(rawLink)
+		return URL.encodeSpacesIfNeeded(rawLink)
 	}
-	
+
 	var externalURL: URL? {
-		return URL.reparingIfRequired(rawExternalLink)
+		return URL.encodeSpacesIfNeeded(rawExternalLink)
 	}
-	
+
+	var preferredURL: URL? {
+		return url ?? externalURL
+	}
+
 	var imageURL: URL? {
-		return URL.reparingIfRequired(rawImageLink)
+		return URL.encodeSpacesIfNeeded(rawImageLink)
 	}
-	
+
 	var link: String? {
 		// Prefer link from URL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
 		return url?.absoluteString ?? rawLink
 	}
-	
+
 	var externalLink: String? {
 		// Prefer link from externalURL, if one can be created, as these are repaired if required.
 		// Provide the raw link if URL creation fails.
@@ -85,19 +82,39 @@ extension Article {
 		}
 		return nil
 	}
-	
-	var preferredURL: URL? {
-		return url ?? externalURL
-	}
-	
+
 	var body: String? {
 		return contentHTML ?? contentText ?? summary
 	}
-	
+
 	var logicalDatePublished: Date {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
-	
+
+}
+
+@MainActor extension Article {
+	var feed: Feed? {
+		return account?.existingFeed(withFeedID: feedID)
+	}
+
+	func iconImage() -> IconImage? {
+		return IconImageCache.shared.imageForArticle(self)
+	}
+
+	func iconImageUrl(feed: Feed) -> URL? {
+		if let image = iconImage() {
+			let fm = FileManager.default
+			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
+			let feedID = feed.feedID.replacingOccurrences(of: "/", with: "_")
+			path.appendPathComponent(feedID + "_smallIcon.png")
+			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
+			return path
+		} else {
+			return nil
+		}
+	}
+
 	var isAvailableToMarkUnread: Bool {
 		guard let markUnreadWindow = account?.behaviors.compactMap( { behavior -> Int? in
 			switch behavior {
@@ -109,7 +126,7 @@ extension Article {
 		}).first else {
 			return true
 		}
-		
+
 		if logicalDatePublished.byAdding(days: markUnreadWindow) > Date() {
 			return true
 		} else {
@@ -117,29 +134,8 @@ extension Article {
 		}
 	}
 
-	func iconImage() -> IconImage? {
-		return IconImageCache.shared.imageForArticle(self)
-	}
-	
-	func iconImageUrl(webFeed: WebFeed) -> URL? {
-		if let image = iconImage() {
-			let fm = FileManager.default
-			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-			let feedID = webFeed.webFeedID.replacingOccurrences(of: "/", with: "_")
-			#if os(macOS)
-			path.appendPathComponent(feedID + "_smallIcon.tiff")
-			#else
-			path.appendPathComponent(feedID + "_smallIcon.png")
-			#endif
-			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
-			return path
-		} else {
-			return nil
-		}
-	}
-	
 	func byline() -> String {
-		guard let authors = authors ?? webFeed?.authors, !authors.isEmpty else {
+		guard let authors = authors ?? feed?.authors, !authors.isEmpty else {
 			return ""
 		}
 
@@ -147,11 +143,11 @@ extension Article {
 		// This code assumes that multiple authors would never match the feed name so that
 		// if there feed owner has an article co-author all authors are given the byline.
 		if authors.count == 1, let author = authors.first {
-			if author.name == webFeed?.nameForDisplay {
+			if author.name == feed?.nameForDisplay {
 				return ""
 			}
 		}
-		
+
 		var byline = ""
 		var isFirstAuthor = true
 
@@ -160,74 +156,66 @@ extension Article {
 				byline += ", "
 			}
 			isFirstAuthor = false
-			
-			var authorEmailAddress: String? = nil
+
+			var authorEmailAddress: String?
 			if let emailAddress = author.emailAddress, !(emailAddress.contains("noreply@") || emailAddress.contains("no-reply@")) {
 				authorEmailAddress = emailAddress
 			}
 
 			if let emailAddress = authorEmailAddress, emailAddress.contains(" ") {
 				byline += emailAddress // probably name plus email address
-			}
-			else if let name = author.name, let emailAddress = authorEmailAddress {
+			} else if let name = author.name, let emailAddress = authorEmailAddress {
 				byline += "\(name) <\(emailAddress)>"
-			}
-			else if let name = author.name {
+			} else if let name = author.name {
 				byline += name
-			}
-			else if let emailAddress = authorEmailAddress {
+			} else if let emailAddress = authorEmailAddress {
 				byline += "<\(emailAddress)>"
-			}
-			else if let url = author.url {
+			} else if let url = author.url {
 				byline += url
 			}
 		}
 
 		return byline
 	}
-	
 }
 
-// MARK: Path
+// MARK: - Path
 
 struct ArticlePathKey {
 	static let accountID = "accountID"
 	static let accountName = "accountName"
-	static let webFeedID = "webFeedID"
+	static let feedID = "feedID"
 	static let articleID = "articleID"
 }
 
-extension Article {
+@MainActor extension Article {
 
-	public var pathUserInfo: [AnyHashable : Any] {
+	public var pathUserInfo: [AnyHashable: Any] {
 		return [
 			ArticlePathKey.accountID: accountID,
 			ArticlePathKey.accountName: account?.nameForDisplay ?? "",
-			ArticlePathKey.webFeedID: webFeedID,
+			ArticlePathKey.feedID: feedID,
 			ArticlePathKey.articleID: articleID
 		]
 	}
-
 }
 
 // MARK: SortableArticle
 
-extension Article: SortableArticle {
-	
+@MainActor extension Article: SortableArticle {
 	var sortableName: String {
-		return webFeed?.name ?? ""
+		return feed?.name ?? ""
 	}
-	
+
 	var sortableDate: Date {
 		return logicalDatePublished
 	}
-	
+
 	var sortableArticleID: String {
 		return articleID
 	}
-	
-	var sortableWebFeedID: String {
-		return webFeedID
+
+	var sortableFeedID: String {
+		return feedID
 	}
-	
 }

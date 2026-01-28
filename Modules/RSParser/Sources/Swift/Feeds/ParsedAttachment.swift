@@ -8,8 +8,7 @@
 
 import Foundation
 
-public struct ParsedAttachment: Hashable {
-
+public struct ParsedAttachment: Hashable, Sendable {
 	public let url: String
 	public let mimeType: String?
 	public let title: String?
@@ -20,7 +19,7 @@ public struct ParsedAttachment: Hashable {
 		if url.isEmpty {
 			return nil
 		}
-		
+
 		self.url = url
 		self.mimeType = mimeType
 		self.title = title

@@ -14,8 +14,8 @@ import ArticlesDatabase
 
 struct SearchFeedDelegate: SmartFeedDelegate {
 
-	var feedID: FeedIdentifier? {
-		return FeedIdentifier.smartFeed(String(describing: SearchFeedDelegate.self))
+	var sidebarItemID: SidebarItemIdentifier? {
+		return SidebarItemIdentifier.smartFeed(String(describing: SearchFeedDelegate.self))
 	}
 
 	var nameForDisplay: String {
@@ -25,15 +25,15 @@ struct SearchFeedDelegate: SmartFeedDelegate {
 	let nameForDisplayPrefix = NSLocalizedString("Search: ", comment: "Search smart feed title prefix")
 	let searchString: String
 	let fetchType: FetchType
-	var smallIcon: IconImage? = AppAssets.searchFeedImage
+	var smallIcon: IconImage? = Assets.Images.searchFeed
 
 	init(searchString: String) {
 		self.searchString = searchString
 		self.fetchType = .search(searchString)
 	}
 
-	func fetchUnreadCount(for: Account, completion: @escaping SingleUnreadCountCompletionBlock) {
+	func fetchUnreadCount(account: Account) async throws -> Int? {
 		// TODO: after 5.0
+		nil
 	}
 }
-

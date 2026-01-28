@@ -8,10 +8,10 @@
 
 import AppKit
 
-class UnreadIndicatorView: NSView {
+final class UnreadIndicatorView: NSView {
 
 	static let unreadCircleDimension: CGFloat = 8.0
-	
+
 	var isEmphasized = false {
 		didSet {
 			if isEmphasized != oldValue {
@@ -19,7 +19,7 @@ class UnreadIndicatorView: NSView {
 			}
 		}
 	}
-	
+
 	var isSelected = false {
 		didSet {
 			if isSelected != oldValue {
@@ -41,5 +41,5 @@ class UnreadIndicatorView: NSView {
 		}
 		UnreadIndicatorView.bezierPath.fill()
     }
-    
+
 }

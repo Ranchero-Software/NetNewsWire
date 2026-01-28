@@ -13,11 +13,8 @@ import UserNotifications
 import UniformTypeIdentifiers
 
 final class GeneralPreferencesViewController: NSViewController {
-
-	private var userNotificationSettings: UNNotificationSettings?
-
-	@IBOutlet weak var articleThemePopup: NSPopUpButton!
-	@IBOutlet weak var defaultBrowserPopup: NSPopUpButton!
+	@IBOutlet var articleThemePopup: NSPopUpButton!
+	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -51,7 +48,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		let url = URL(fileURLWithPath: ArticleThemesManager.shared.folderPath)
 		NSWorkspace.shared.open(url)
 	}
-	
+
 	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
 		guard let menuItem = articleThemePopup.selectedItem else {
 			return
@@ -59,7 +56,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		ArticleThemesManager.shared.currentThemeName = menuItem.title
 		updateArticleThemePopup()
 	}
-	
+
 	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
 		guard let menuItem = defaultBrowserPopup.selectedItem else {
 			return
@@ -84,18 +81,18 @@ private extension GeneralPreferencesViewController {
 		updateArticleThemePopup()
 		updateBrowserPopup()
 	}
-	
+
 	func updateArticleThemePopup() {
 		let menu = articleThemePopup.menu!
 		menu.removeAllItems()
-		
+
 		menu.addItem(NSMenuItem(title: ArticleTheme.defaultTheme.name, action: nil, keyEquivalent: ""))
 		menu.addItem(NSMenuItem.separator())
 
 		for themeName in ArticleThemesManager.shared.themeNames {
 			menu.addItem(NSMenuItem(title: themeName, action: nil, keyEquivalent: ""))
 		}
-		
+
 		articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
 		if articleThemePopup.indexOfSelectedItem == -1 {
 			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
@@ -137,7 +134,6 @@ private extension GeneralPreferencesViewController {
 
 	func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			self.userNotificationSettings = settings
 			if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
 					NSApplication.shared.registerForRemoteNotifications()

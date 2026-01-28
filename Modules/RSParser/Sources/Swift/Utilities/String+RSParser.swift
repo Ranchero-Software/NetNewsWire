@@ -13,5 +13,4 @@ extension String {
 	var nilIfEmptyOrWhitespace: String? {
 		return self.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : self
 	}
-
 }

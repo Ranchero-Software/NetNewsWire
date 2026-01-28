@@ -9,8 +9,8 @@
 import XCTest
 @testable import Account
 
-class FeedlyFeedParserTests: XCTestCase {
-	
+@MainActor final class FeedlyFeedParserTests: XCTestCase {
+
 	func testParsing() {
 		let name = "Test Feed"
 		let website = "tests://nnw/feed/1"
@@ -22,9 +22,9 @@ class FeedlyFeedParserTests: XCTestCase {
 		XCTAssertEqual(parser.title, name)
 		XCTAssertEqual(parser.homePageURL, website)
 		XCTAssertEqual(parser.url, url)
-		XCTAssertEqual(parser.webFeedID, id)
+		XCTAssertEqual(parser.feedID, id)
 	}
-	
+
 	func testSanitization() {
 		let name = "Test Feed"
 		let website = "tests://nnw/feed/1"
@@ -36,6 +36,6 @@ class FeedlyFeedParserTests: XCTestCase {
 		XCTAssertEqual(parser.title, name)
 		XCTAssertEqual(parser.homePageURL, website)
 		XCTAssertEqual(parser.url, url)
-		XCTAssertEqual(parser.webFeedID, id)
+		XCTAssertEqual(parser.feedID, id)
 	}
 }

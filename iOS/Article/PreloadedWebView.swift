@@ -9,35 +9,31 @@
 import Foundation
 import WebKit
 
-class PreloadedWebView: WKWebView {
-	
+final class PreloadedWebView: WKWebView {
+
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
 
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
-		let preferences = WKPreferences()
-		preferences.javaScriptCanOpenWindowsAutomatically = false
-
-		let configuration = WKWebViewConfiguration()
-		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = true
-		configuration.setValue(true, forKey: "allowUniversalAccessFromFileURLs")
-		configuration.allowsInlineMediaPlayback = true
-		configuration.mediaTypesRequiringUserActionForPlayback = .audio
-		configuration.setURLSchemeHandler(articleIconSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
-		
+		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 		super.init(frame: .zero, configuration: configuration)
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
+		}
 	}
-	
+
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
+
 	}
-	
+
 	func preload() {
 		navigationDelegate = self
 		loadFileURL(ArticleRenderer.blank.url, allowingReadAccessTo: ArticleRenderer.blank.baseURL)
 	}
-	
+
 	func ready(completion: @escaping () -> Void) {
 		if isReady {
 			completeRequest(completion: completion)
@@ -45,7 +41,13 @@ class PreloadedWebView: WKWebView {
 			readyCompletion = completion
 		}
 	}
-	
+
+	func userDefaultsDidChange() {
+		if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
+			configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
+			reload()
+		}
+	}
 }
 
 // MARK: WKScriptMessageHandler
@@ -59,17 +61,15 @@ extension PreloadedWebView: WKNavigationDelegate {
 			readyCompletion = nil
 		}
 	}
-		
 }
 
 // MARK: Private
 
 private extension PreloadedWebView {
-	
+
 	func completeRequest(completion: @escaping () -> Void) {
 		isReady = false
 		navigationDelegate = nil
 		completion()
 	}
-	
 }

@@ -5,11 +5,11 @@
 //  Created by Brent Simmons on 9/6/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
 public extension NSOutlineView {
-
 	var selectedItems: [AnyObject] {
 		if selectionIsEmpty {
 			return [AnyObject]()
@@ -64,13 +64,12 @@ public extension NSOutlineView {
 
 		while true {
 			row += 1
-			if let _ = item(atRow: row) {
+			if item(atRow: row) != nil {
 				if canSelect(row) {
 					selectRowAndScrollToVisible(row)
 					return
 				}
-			}
-			else {
+			} else {
 				return // if there are no more items, we’re out of rows
 			}
 		}
@@ -180,4 +179,3 @@ public extension NSOutlineView {
 	}
 }
 #endif
-

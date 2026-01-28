@@ -11,12 +11,12 @@ import RSParser
 import Articles
 
 extension ParsedItem {
-	
+
 	var articleID: String {
 		if let s = syncServiceID {
 			return s
 		}
 		// Must be same calculation as for Article.
-		return Article.calculatedArticleID(webFeedID: feedURL, uniqueID: uniqueID)
+		return Article.calculatedArticleID(feedID: feedURL, uniqueID: uniqueID)
 	}
 }

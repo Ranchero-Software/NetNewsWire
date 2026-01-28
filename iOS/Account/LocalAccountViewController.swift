@@ -7,13 +7,14 @@
 //
 
 import UIKit
+import RSCore
 import Account
 
-class LocalAccountViewController: UITableViewController {
+final class LocalAccountViewController: UITableViewController {
 
-	@IBOutlet weak var nameTextField: UITextField!
-	@IBOutlet weak var footerLabel: UILabel!
-	
+	@IBOutlet var nameTextField: UITextField!
+	@IBOutlet var footerLabel: UILabel!
+
 	weak var delegate: AddAccountDismissDelegate?
 
 	override func viewDidLoad() {
@@ -23,7 +24,7 @@ class LocalAccountViewController: UITableViewController {
 		nameTextField.delegate = self
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 	}
-	
+
 	private func setupFooter() {
 		footerLabel.text = NSLocalizedString("Local accounts do not sync your feeds across devices.", comment: "Local")
 	}
@@ -31,35 +32,35 @@ class LocalAccountViewController: UITableViewController {
 	@IBAction func cancel(_ sender: Any) {
 		dismiss(animated: true, completion: nil)
 	}
-	
+
 	@IBAction func add(_ sender: Any) {
 		let account = AccountManager.shared.createAccount(type: .onMyMac)
 		account.name = nameTextField.text
 		dismiss(animated: true, completion: nil)
 		delegate?.dismiss()
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAssets.image(for: .onMyMac)
+			headerView.imageView.image = Assets.accountImage(.onMyMac)
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
-	
+
 }
 
 extension LocalAccountViewController: UITextFieldDelegate {
-	
+
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true
 	}
-	
+
 }

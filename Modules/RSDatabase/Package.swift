@@ -1,9 +1,9 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
 	name: "RSDatabase",
-	platforms: [.macOS(.v13), .iOS(.v17)],
+	platforms: [.macOS(.v26), .iOS(.v26)],
 	products: [
 		.library(
 			name: "RSDatabase",
@@ -12,14 +12,18 @@ let package = Package(
 		.library(
 			name: "RSDatabaseObjC",
 			type: .dynamic,
-			targets: ["RSDatabaseObjC"]),
+			targets: ["RSDatabaseObjC"])
 	],
 	dependencies: [
 	],
 	targets: [
 		.target(
 			name: "RSDatabase",
-			dependencies: ["RSDatabaseObjC"]
+			dependencies: ["RSDatabaseObjC"],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]
 		),
 		.target(
 			name: "RSDatabaseObjC",
@@ -27,6 +31,6 @@ let package = Package(
 		),
 		.testTarget(
 			name: "RSDatabaseTests",
-			dependencies: ["RSDatabase"]),
+			dependencies: ["RSDatabase"])
 	]
 )

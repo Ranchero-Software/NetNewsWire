@@ -8,17 +8,16 @@
 
 import Intents
 
-public enum AddWebFeedIntentHandlerError: LocalizedError {
-	
+public enum AddWebFeedIntentHandlerError: LocalizedError, Sendable {
 	case communicationFailure
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .communicationFailure:
 			return NSLocalizedString("Unable to communicate with NetNewsWire.", comment: "Communication failure")
 		}
 	}
-	
+
 }
 
 public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
@@ -26,89 +25,76 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 	override init() {
 		super.init()
 	}
-	
-	public func resolveUrl(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedUrlResolutionResult) -> Void) {
+
+	public func resolveUrl(for intent: AddWebFeedIntent) async -> AddWebFeedUrlResolutionResult {
 		guard let url = intent.url else {
-			completion(.unsupported(forReason: .required))
-			return
+			return .unsupported(forReason: .required)
 		}
-		completion(.success(with: url))
+		return .success(with: url)
 	}
-	
-	public func provideAccountNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
-		guard let extensionContainers = ExtensionContainersFile.read() else {
-			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
-			return
+
+	public func provideAccountNameOptions(for intent: AddWebFeedIntent) async throws -> [String] {
+		guard let extensionContainers = await ExtensionContainersFile.read() else {
+			throw AddWebFeedIntentHandlerError.communicationFailure
 		}
 
 		let accountNames = extensionContainers.accounts.map { $0.name }
-		completion(accountNames, nil)
+		return accountNames
 	}
-	
-	public func resolveAccountName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedAccountNameResolutionResult) -> Void) {
+
+	public func resolveAccountName(for intent: AddWebFeedIntent) async -> AddWebFeedAccountNameResolutionResult {
 		guard let accountName = intent.accountName else {
-			completion(AddWebFeedAccountNameResolutionResult.notRequired())
-			return
+			return .notRequired()
 		}
 
-		guard let extensionContainers = ExtensionContainersFile.read() else {
-			completion(.unsupported(forReason: .communication))
-			return
+		guard let extensionContainers = await ExtensionContainersFile.read() else {
+			return .unsupported(forReason: .communication)
 		}
-
 		if extensionContainers.findAccount(forName: accountName) == nil {
-			completion(.unsupported(forReason: .invalid))
-		} else {
-			completion(.success(with: accountName))
+			return .unsupported(forReason: .invalid)
 		}
+
+		return .success(with: accountName)
 	}
-	
-	public func provideFolderNameOptions(for intent: AddWebFeedIntent, with completion: @escaping ([String]?, Error?) -> Void) {
-		guard let extensionContainers = ExtensionContainersFile.read() else {
-			completion(nil, AddWebFeedIntentHandlerError.communicationFailure)
-			return
+
+	public func provideFolderNameOptions(for intent: AddWebFeedIntent) async throws -> [String] {
+		guard let extensionContainers = await ExtensionContainersFile.read() else {
+			throw AddWebFeedIntentHandlerError.communicationFailure
 		}
 
 		guard let accountName = intent.accountName, let account = extensionContainers.findAccount(forName: accountName) else {
-			completion([String](), nil)
-			return
+			return [String]()
 		}
 
 		let folderNames = account.folders.map { $0.name }
-		completion(folderNames, nil)
+		return folderNames
 	}
-	
-	public func resolveFolderName(for intent: AddWebFeedIntent, with completion: @escaping (AddWebFeedFolderNameResolutionResult) -> Void) {
+
+	public func resolveFolderName(for intent: AddWebFeedIntent) async -> AddWebFeedFolderNameResolutionResult {
 		guard let accountName = intent.accountName, let folderName = intent.folderName else {
-			completion(AddWebFeedFolderNameResolutionResult.notRequired())
-			return
-		}
-		
-		guard let extensionContainers = ExtensionContainersFile.read() else {
-			completion(.unsupported(forReason: .communication))
-			return
+			return .notRequired()
 		}
 
+		guard let extensionContainers = await ExtensionContainersFile.read() else {
+			return .unsupported(forReason: .communication)
+		}
 		guard let account = extensionContainers.findAccount(forName: accountName) else {
-			completion(.unsupported(forReason: .invalid))
-			return
+			return .unsupported(forReason: .invalid)
 		}
-		
-		if account.findFolder(forName: folderName) == nil {
-			completion(.unsupported(forReason: .invalid))
-		} else {
-			completion(.success(with: folderName))
-		}
-		return
 
-	}
-	
-	public func handle(intent: AddWebFeedIntent, completion: @escaping (AddWebFeedIntentResponse) -> Void) {
-		guard let url = intent.url, let extensionContainers = ExtensionContainersFile.read() else {
-			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
-			return
+		let folder = account.findFolder(forName: folderName)
+		if folder == nil {
+			return .unsupported(forReason: .invalid)
 		}
-		
+
+		return .success(with: folderName)
+	}
+
+	public func handle(intent: AddWebFeedIntent) async -> AddWebFeedIntentResponse {
+		guard let url = intent.url, let extensionContainers = await ExtensionContainersFile.read() else {
+			return AddWebFeedIntentResponse(code: .failure, userActivity: nil)
+		}
+
 		let account: ExtensionAccount? = {
 			if let accountName = intent.accountName {
 				return extensionContainers.findAccount(forName: accountName)
@@ -118,8 +104,7 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		}()
 
 		guard let validAccount = account else {
-			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
-			return
+			return AddWebFeedIntentResponse(code: .failure, userActivity: nil)
 		}
 
 		let container: ExtensionContainer? = {
@@ -131,13 +116,11 @@ public class AddWebFeedIntentHandler: NSObject, AddWebFeedIntentHandling {
 		}()
 
 		guard let validContainer = container, let containerID = validContainer.containerID else {
-			completion(AddWebFeedIntentResponse(code: .failure, userActivity: nil))
-			return
+			return AddWebFeedIntentResponse(code: .failure, userActivity: nil)
 		}
 
 		let request = ExtensionFeedAddRequest(name: nil, feedURL: url, destinationContainerID: containerID)
 		ExtensionFeedAddRequestFile.save(request)
-		completion(AddWebFeedIntentResponse(code: .success, userActivity: nil))
+		return AddWebFeedIntentResponse(code: .success, userActivity: nil)
 	}
-		
 }

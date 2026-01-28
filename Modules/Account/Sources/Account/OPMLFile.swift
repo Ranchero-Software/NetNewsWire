@@ -11,10 +11,7 @@ import os.log
 import RSCore
 import RSParser
 
-final class OPMLFile {
-	
-	private var log = OSLog(subsystem: Bundle.main.bundleIdentifier!, category: "opmlFile")
-
+@MainActor final class OPMLFile {
 	private let fileURL: URL
 	private let account: Account
 
@@ -24,43 +21,51 @@ final class OPMLFile {
 		}
 	}
 	private let saveQueue = CoalescingQueue(name: "Save Queue", interval: 0.5)
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "OPMLFile")
 
 	init(filename: String, account: Account) {
 		self.fileURL = URL(fileURLWithPath: filename)
 		self.account = account
 	}
-	
+
 	func markAsDirty() {
 		isDirty = true
 	}
-	
+
 	func load() {
 		guard let fileData = opmlFileData(), let opmlItems = parsedOPMLItems(fileData: fileData) else {
 			return
 		}
-		
+
 		BatchUpdate.shared.perform {
 			account.loadOPMLItems(opmlItems)
 		}
 	}
-	
+
 	func save() {
 		guard !account.isDeleted else { return }
 		let opmlDocumentString = opmlDocument()
-		
+
 		do {
 			try opmlDocumentString.write(to: fileURL, atomically: true, encoding: .utf8)
 		} catch let error as NSError {
-			os_log(.error, log: log, "OPML save to disk failed: %@.", error.localizedDescription)
+			Self.logger.error("OPML save to disk failed: \(error.localizedDescription)")
 		}
 	}
-	
 }
 
 private extension OPMLFile {
 
 	func queueSaveToDiskIfNeeded() {
-		saveQueue.add(self, #selector(saveToDiskIfNeeded))
+		if Thread.isMainThread {
+			MainActor.assumeIsolated {
+				saveQueue.add(self, #selector(saveToDiskIfNeeded))
+			}
+		} else {
+			Task { @MainActor in
+				saveQueue.add(self, #selector(saveToDiskIfNeeded))
+			}
+		}
 	}
 
 	@objc func saveToDiskIfNeeded() {
@@ -71,17 +76,17 @@ private extension OPMLFile {
 	}
 
 	func opmlFileData() -> Data? {
-		var fileData: Data? = nil
-		
+		var fileData: Data?
+
 		do {
 			fileData = try Data(contentsOf: fileURL)
 		} catch {
-			os_log(.error, log: log, "OPML read from disk failed: %@.", error.localizedDescription)
+			Self.logger.error("OPML read from disk failed: \(error.localizedDescription)")
 		}
 
 		return fileData
 	}
-	
+
 	func parsedOPMLItems(fileData: Data) -> [RSOPMLItem]? {
 		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
 		var opmlDocument: RSOPMLDocument?
@@ -89,13 +94,13 @@ private extension OPMLFile {
 		do {
 			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
 		} catch {
-			os_log(.error, log: log, "OPML Import failed: %@.", error.localizedDescription)
+			Self.logger.error("OPML import failed: \(error.localizedDescription)")
 			return nil
 		}
-		
+
 		return opmlDocument?.children
 	}
-	
+
 	func opmlDocument() -> String {
 		let escapedTitle = account.nameForDisplay.escapingSpecialXMLCharacters
 		let openingText =
@@ -121,5 +126,4 @@ private extension OPMLFile {
 		let opml = openingText + middleText + closingText
 		return opml
 	}
-	
 }

@@ -12,25 +12,22 @@ import RSCore
 
 // Not undoable.
 
-final class SendToMicroBlogCommand: SendToCommand {
-
+@MainActor final class SendToMicroBlogCommand: SendToCommand {
 	let title = "Micro.blog"
-	let image: RSImage? = AppAssets.microblogIcon
+	let image: RSImage? = Assets.Images.microblog
 
 	private let microBlogApp = UserApp(bundleID: "blog.micro.mac")
 
 	func canSendObject(_ object: Any?, selectedText: String?) -> Bool {
-
 		microBlogApp.updateStatus()
-		guard microBlogApp.existsOnDisk, let article = (object as? ArticlePasteboardWriter)?.article, let _ = article.preferredLink else {
+		guard microBlogApp.existsOnDisk, let article = (object as? ArticlePasteboardWriter)?.article, article.preferredLink != nil else {
 			return false
 		}
 
 		return true
 	}
-	
-	func sendObject(_ object: Any?, selectedText: String?) {
 
+	func sendObject(_ object: Any?, selectedText: String?) {
 		guard canSendObject(object, selectedText: selectedText) else {
 			return
 		}
@@ -61,36 +58,32 @@ final class SendToMicroBlogCommand: SendToCommand {
 	}
 }
 
-private extension Article {
-
+@MainActor private extension Article {
 	var attributionString: String {
-
 		// Feed name, or feed name + author name (if author is specified per-article).
 		// Includes trailing space.
 
-		if let feedName = webFeed?.nameForDisplay, let authorName = authors?.first?.name {
+		if let feedName = feed?.nameForDisplay, let authorName = authors?.first?.name {
 			return feedName + ", " + authorName + ": "
 		}
-		if let feedName = webFeed?.nameForDisplay {
+		if let feedName = feed?.nameForDisplay {
 			return feedName + ": "
 		}
 		return ""
 	}
 
 	var linkString: String {
-
 		// Title + link or just title (if no link) or just link if no title
 
-		if let title = title, let link = preferredLink {
+		if let title, let link = preferredLink {
 			return "[" + title + "](" + link + ")"
 		}
-		if let preferredLink = preferredLink {
+		if let preferredLink {
 			return preferredLink
 		}
-		if let title = title {
+		if let title {
 			return title
 		}
 		return ""
 	}
-
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
     <channel>
         <title>NetNewsWire Betas</title>
         <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
@@ -7,26 +7,53 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 6.1.10b4</title>
-			<description><![CDATA[
-<ul>
-<li>Adopt secure state restoration; fix bug with state restoration not working in previous betas.</li>
-</ul>
+			<title>NetNewsWire 7.0</title>
+            <description><![CDATA[
+				<ul>
+					<li>This build is the same as 7.0b6 — except for the version number. This is NetNewsWire 7.0.
+				</ul>
 			]]></description>
-			<pubDate>Sat, 16 Aug 2025 10:10:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.10b4/NetNewsWire6.1.10b4.zip" sparkle:version="6139" sparkle:shortVersionString="6.1.10b4" length="9396988" type="application/zip" />
-			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+        	<pubDate>Mon, 26 Jan 2026 21:15:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0/NetNewsWire7.0.zip" sparkle:version="7015" sparkle:shortVersionString="7.0" length="10356608" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
 		</item>
 
 		<item>
-			<title>NetNewsWire 6.1.10b3</title>
-			<description><![CDATA[
-<ul>
-<li>Fixed bug, introduced in previous test build, that prevented choosing an OPML file to import</li>
-</ul>
+			<title>NetNewsWire 7.0b6</title>
+            <description><![CDATA[
+				<ul>
+					<li>Made the article view content blur when underneath the toolbar
+				</ul>
 			]]></description>
-			<pubDate>Tue, 12 Aug 2025 10:10:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.1.10b3/NetNewsWire6.1.10b3.zip" sparkle:version="6138" sparkle:shortVersionString="6.1.10b3" length="9383040" type="application/zip" />
+        	<pubDate>Sat, 24 Jan 2026 10:35:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b6/NetNewsWire7.0b6.zip" sparkle:version="7013" sparkle:shortVersionString="7.0b6" length="10356640" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
+			<title>NetNewsWire 7.0b5</title>
+            <description><![CDATA[
+				<ul>
+					<li>Decreased the minimum size of the sidebar
+					<li>Fixed two causes of a bug where small images would sometimes display as much larger than they should be
+				</ul>
+			]]></description>
+        	<pubDate>Thu, 22 Jan 2026 15:45:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b5/NetNewsWire7.0b5.zip" sparkle:version="7011" sparkle:shortVersionString="7.0b5" length="10354304" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
+			<title>NetNewsWire 6.2.1</title>
+            <description><![CDATA[
+				<p>Changes since 6.2:</p>
+				<ul>
+					<li>Fixed some crashing bugs</li>
+					<li>Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import</li>
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 03 Dec 2025 21:40:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2.1/NetNewsWire6.2.1.zip" sparkle:version="6202" sparkle:shortVersionString="6.2.1" length="10242980" type="application/zip" />
 			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
 		</item>
 

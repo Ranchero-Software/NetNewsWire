@@ -18,21 +18,21 @@ import ArticlesDatabase
 
 // This just shows the global unread count, which appDelegate already has. Easy.
 
-final class UnreadFeed: PseudoFeed {
-	
-	var account: Account? = nil
+@MainActor final class UnreadFeed: PseudoFeed {
+
+	var account: Account?
 
 	public var defaultReadFilterType: ReadFilterType {
 		return .alwaysRead
 	}
 
-	var feedID: FeedIdentifier? {
-		return FeedIdentifier.smartFeed(String(describing: UnreadFeed.self))
+	var sidebarItemID: SidebarItemIdentifier? {
+		return SidebarItemIdentifier.smartFeed(String(describing: UnreadFeed.self))
 	}
 
 	let nameForDisplay = NSLocalizedString("All Unread", comment: "All Unread pseudo-feed title")
 	let fetchType = FetchType.unread(nil)
-	
+
 	var unreadCount = 0 {
 		didSet {
 			if unreadCount != oldValue {
@@ -42,15 +42,15 @@ final class UnreadFeed: PseudoFeed {
 	}
 
 	var smallIcon: IconImage? {
-		return AppAssets.unreadFeedImage
+		Assets.Images.unreadFeed
 	}
-	
+
 	#if os(macOS)
 	var pasteboardWriter: NSPasteboardWriting {
 		return SmartFeedPasteboardWriter(smartFeed: self)
 	}
 	#endif
-	
+
 	init() {
 
 		self.unreadCount = appDelegate.unreadCount
@@ -64,21 +64,21 @@ final class UnreadFeed: PseudoFeed {
 	}
 }
 
-extension UnreadFeed: ArticleFetcher {
-	
+@MainActor extension UnreadFeed: ArticleFetcher {
+
 	func fetchArticles() throws -> Set<Article> {
 		return try fetchUnreadArticles()
 	}
 
-	func fetchArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		fetchUnreadArticlesAsync(completion)
+	func fetchArticlesAsync() async throws -> Set<Article> {
+		try await fetchUnreadArticlesAsync()
 	}
 
 	func fetchUnreadArticles() throws -> Set<Article> {
-		return try AccountManager.shared.fetchArticles(fetchType)
+		try AccountManager.shared.fetchArticles(fetchType)
 	}
 
-	func fetchUnreadArticlesAsync(_ completion: @escaping ArticleSetResultBlock) {
-		AccountManager.shared.fetchArticlesAsync(fetchType, completion)
+	func fetchUnreadArticlesAsync() async throws -> Set<Article> {
+		try await AccountManager.shared.fetchArticlesAsync(fetchType)
 	}
 }

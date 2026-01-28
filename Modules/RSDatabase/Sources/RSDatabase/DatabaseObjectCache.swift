@@ -7,27 +7,28 @@
 //
 
 import Foundation
+import Synchronization
 
-public final class DatabaseObjectCache {
-
-	private var d = [String: DatabaseObject]()
+public final class DatabaseObjectCache: Sendable {
+	private let state = Mutex([String: DatabaseObject]())
 
 	public init() {
 		//
 	}
 	public func add(_ databaseObjects: [DatabaseObject]) {
-
-		for databaseObject in databaseObjects {
-			self[databaseObject.databaseID] = databaseObject
+		state.withLock { d in
+			for databaseObject in databaseObjects {
+				d[databaseObject.databaseID] = databaseObject
+			}
 		}
 	}
 
 	public subscript(_ databaseID: String) -> DatabaseObject? {
 		get {
-			return d[databaseID]
+			state.withLock { $0[databaseID] }
 		}
 		set {
-			d[databaseID] = newValue
+			state.withLock { $0[databaseID] = newValue }
 		}
 	}
 }

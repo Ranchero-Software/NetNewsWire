@@ -11,11 +11,11 @@ import RSDatabaseObjC
 
 // Protocol for a database table for related objects — authors and attachments in NetNewsWire, for instance.
 
-public protocol DatabaseRelatedObjectsTable: DatabaseTable {
+public protocol DatabaseRelatedObjectsTable: DatabaseTable, Sendable {
 
 	var databaseIDKey: String { get}
 	var cache: DatabaseObjectCache { get }
-	
+
 	func fetchObjectsWithIDs(_ databaseIDs: Set<String>, in database: FMDatabase) -> [DatabaseObject]?
 	func objectsWithResultSet(_ resultSet: FMResultSet) -> [DatabaseObject]
 	func objectWithRow(_ row: FMResultSet) -> DatabaseObject?
@@ -39,8 +39,7 @@ public extension DatabaseRelatedObjectsTable {
 		for databaseID in databaseIDs {
 			if let cachedObject = cache[databaseID] {
 				cachedObjects += [cachedObject]
-			}
-			else {
+			} else {
 				databaseIDsToFetch.insert(databaseID)
 			}
 		}
@@ -68,7 +67,7 @@ public extension DatabaseRelatedObjectsTable {
 
 		// Objects in cache must already exist in database. Filter them out.
 		let objectsToSave = objects.filter { (object) -> Bool in
-			if let _ = cache[object.databaseID] {
+			if cache[object.databaseID] != nil {
 				return false
 			}
 			return true

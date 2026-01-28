@@ -9,7 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Quiet build and test**: `./buildscripts/quiet_build_and_test.sh` - Same as above with less verbose output
 - **Manual Xcode builds**:
   - macOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire -destination "platform=macOS,arch=arm64" build`
-  - iOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire-iOS -destination "platform=iOS Simulator,name=iPhone 16" build`
+  - iOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire-iOS -destination "platform=iOS Simulator,name=iPhone 17" build`
 
 ### Testing
 - Run all tests: Use the `NetNewsWire.xctestplan` which includes tests from all modules
@@ -61,3 +61,19 @@ NetNewsWire is a multi-platform RSS reader with separate targets for macOS and i
 - Some features disabled in development builds due to private API keys
 - Code signing configured through SharedXcodeSettings for development
 - Documentation and technical notes are located in the `Technotes/` folder
+
+## Code Formatting
+
+Prefer idiomatic modern Swift.
+
+Prefer `if let x` and `guard let x` over `if let x = x` and `guard let x = x`.
+
+Don’t use `...` or `…` in Logger messages.
+
+Guard statements should always put the return in a separate line.
+
+Don’t do force unwrapping of optionals.
+
+## Things to Know
+
+Just because unit tests pass doesn’t mean a given bug is fixed. It may not have a test. It may not even be testable — it may require manual testing.

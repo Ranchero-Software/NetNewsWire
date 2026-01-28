@@ -11,65 +11,56 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
-public final class FetchAllUnreadCountsOperation: MainThreadOperation {
-
-	var result: UnreadCountDictionaryCompletionResult = .failure(.isSuspended)
-
-	// MainThreadOperation
-	public var isCanceled = false
-	public var id: Int?
-	public weak var operationDelegate: MainThreadOperationDelegate?
-	public var name: String? = "FetchAllUnreadCountsOperation"
-	public var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
-
+@MainActor public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecked Sendable {
+	nonisolated(unsafe) var result: UnreadCountDictionaryCompletionResult?
 	private let queue: DatabaseQueue
 
 	init(databaseQueue: DatabaseQueue) {
 		self.queue = databaseQueue
+		super.init(name: "FetchAllUnreadCountsOperation")
 	}
-	
-	public func run() {
+
+	public override func run() {
 		queue.runInDatabase { databaseResult in
 			if self.isCanceled {
-				self.informOperationDelegateOfCompletion()
+				self.didComplete()
 				return
 			}
 
 			switch databaseResult {
 			case .success(let database):
-				self.fetchUnreadCounts(database)
+				if let unreadCountDictionary = self.fetchUnreadCounts(database) {
+					self.result = .success(unreadCountDictionary)
+				} else {
+					self.result = .failure(DatabaseError.isSuspended)
+				}
 			case .failure:
-				self.informOperationDelegateOfCompletion()
+				self.result = .failure(DatabaseError.isSuspended)
 			}
+
+			self.didComplete()
 		}
 	}
 }
 
-private extension FetchAllUnreadCountsOperation {
+nonisolated private extension FetchAllUnreadCountsOperation {
 
-	func fetchUnreadCounts(_ database: FMDatabase) {
+	func fetchUnreadCounts(_ database: FMDatabase) -> UnreadCountDictionary? {
 		let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 group by feedID;"
 
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-			informOperationDelegateOfCompletion()
-			return
+			return nil
 		}
 
 		var unreadCountDictionary = UnreadCountDictionary()
 		while resultSet.next() {
-			if isCanceled {
-				resultSet.close()
-				informOperationDelegateOfCompletion()
-				return
-			}
 			let unreadCount = resultSet.long(forColumnIndex: 1)
-			if let webFeedID = resultSet.string(forColumnIndex: 0) {
-				unreadCountDictionary[webFeedID] = unreadCount
+			if let feedID = resultSet.string(forColumnIndex: 0) {
+				unreadCountDictionary[feedID] = unreadCount
 			}
 		}
 		resultSet.close()
 
-		result = .success(unreadCountDictionary)
-		informOperationDelegateOfCompletion()
+		return unreadCountDictionary
 	}
 }

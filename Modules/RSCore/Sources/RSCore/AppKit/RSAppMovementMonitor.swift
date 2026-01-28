@@ -6,18 +6,19 @@
 //  Created by Daniel Jalkut on 8/28/19.
 //  Copyright © 2019 Red Sweater Software. All rights reserved.
 //
-#if os(macOS)
-import Cocoa
 
-public class RSAppMovementMonitor: NSObject {
+#if os(macOS)
+import AppKit
+
+@MainActor public final class RSAppMovementMonitor: NSObject {
 
 	// If provided, the handler will be consulted when the app is moved.
 	// Return true to indicate that the default handler should be invoked.
-	public var appMovementHandler: ((RSAppMovementMonitor) -> Bool)? = nil
+	public var appMovementHandler: ((RSAppMovementMonitor) -> Bool)?
 
 	// DispatchSource offers a monitoring mechanism based on an open file descriptor
 	var fileDescriptor: Int32 = -1
-	var dispatchSource: DispatchSourceFileSystemObject? = nil
+	var dispatchSource: DispatchSourceFileSystemObject?
 
 	// Save the original location of the app in a file reference URL, which will track its new location.
 	// Note this is NSURL, not URL, because file reference URLs violate value-type assumptions of URL.
@@ -77,19 +78,21 @@ public class RSAppMovementMonitor: NSObject {
 			// every time the app becomes active. This catches a good number of edge-case
 			// changes to the app bundle's path, such as when a containing folder or the
 			// volume name changes.
-			NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: nil) { notification in
-				// Removing observer in invalidate doesn't seem to prevent this getting called? Maybe
-				// because it's on the same invocation of the runloop?
-				if self.isValid() && self.originalAppURL != self.appTrackingURL?.absoluteURL {
-					self.invokeEventHandler()
+			NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: nil) { _ in
+				Task { @MainActor in
+					// Removing observer in invalidate doesn't seem to prevent this getting called? Maybe
+					// because it's on the same invocation of the runloop?
+					if self.isValid() && self.originalAppURL != self.appTrackingURL?.absoluteURL {
+						self.invokeEventHandler()
+					}
 				}
 			}
 		}
 	}
 
-	deinit {
-		self.invalidate()
-	}
+//	deinit {
+//		self.invalidate()
+//	}
 
 	func invokeEventHandler() {
 		// Prevent re-entry when the app is activated while running handler
@@ -131,7 +134,9 @@ public class RSAppMovementMonitor: NSObject {
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.createsNewApplicationInstance = true
 		NSWorkspace.shared.openApplication(at: appURL, configuration: configuration) { _, _  in
-			NSApp.terminate(self)
+			Task { @MainActor in
+				NSApp.terminate(self)
+			}
 		}
 	}
 
@@ -139,7 +144,7 @@ public class RSAppMovementMonitor: NSObject {
 		let quitAlert = NSAlert()
 		quitAlert.alertStyle = .critical
 		quitAlert.addButton(withTitle: self.alertRelaunchButtonText)
-		
+
 		quitAlert.messageText = self.alertMessageText
 		quitAlert.informativeText = self.alertInformativeText
 

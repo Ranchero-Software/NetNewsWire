@@ -599,6 +599,10 @@ a.footnote:hover,
 		color: var(--primary-accent-color);
 	}
 
+	.articleTitle h1 {
+		font-size: 1.5em;
+	}
+
 	.avatar img {
 		border-radius: 4px;
 	}
@@ -620,7 +624,6 @@ a.footnote:hover,
 		left: 50%;
 		transform: translate(-50%, -50%);
 	}
-
 }
 
 /* macOS Specific */
@@ -675,5 +678,4 @@ a.footnote:hover,
 	.nnw-overflow table {
 		//border: 1px solid var(--accent-color);
 	}
-
 }

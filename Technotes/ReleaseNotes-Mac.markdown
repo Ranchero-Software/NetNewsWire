@@ -1,18 +1,129 @@
 # Mac Release Notes
 
-### 6.1.10b4 build 6139 16 Aug 2025 - branch main tag: mac-6.1.10b4
+### 7.0 build 7015 26 Jan 2026 — branch: main tag: mac-7.0
+
+Same as 7.0b6.
+
+User-facing changes since 6.2.1:
+
+Adopted Liquid Glass UI
+Improved window state restoration when sidebar is collapsed
+Added custom About window
+Changed link in the Help menu from Slack to Discourse
+
+### 7.0b6 build 7013 24 Jan 2026 — branch: main tag: mac-7.0b6
+
+Made the article view content blur when underneath the toolbar. (Technical detail for the curious: WKWebView has a new property `obscuredContentInsets` for this scenario.)
+
+### 7.0b5 build 7011 22 Jan 2026 — branch: main tag: mac-7.0b5
+
+Decreased the minimum size of the sidebar
+Fixed two causes of a bug where small images would sometimes display as much larger than they should be
+
+### 7.0b4 build 7004 14 Jan 2026 — branch: main tag: mac-7.0b4
+
+Fixed Feedly syncing — it’s working again
+
+### 7.0b3 build 7003 10 Jan 2026: - branch: main tag: mac-7.0b3
+
+Fixed bug with persisting the theme selection
+Fixed crash adding a Feedly account
+Fixed (we think) a crash that could happen during iCloud syncing
+
+### 7.0b2 build 7001 08 Jan 2026: - branch: main tag: mac-7.0b2
+
+Fixed crash when downloading a theme
+Fixed hiding read articles (the toggle wasn’t toggling, now it is)
+
+### 7.0b1 build 7000 08 Jan 2026: - branch: main tag: mac-7.0b1
+
+Adopted Liquid Glass UI
+Adopted Swift 6.2 structured concurrency
+Converted a bunch of code from callback-based to async/await
+Improved window state restoration when sidebar is collapsed
+Added custom About window
+Simplified and made more flexible the progress reporting system
+Changed link in the Help from Slack to Discourse
+Renamed a bunch of types in the code (Feed -> SidebarItem, WebFeed -> Feed, etc.)
+Started moving some code, especially syncing code, into new modules
+
+### 6.2.1 build 6202 03 Dec 2025 - branch: release/mac-6.2.1 tag: mac-6.2.1
+
+Bumped version
+
+### 6.2.1b1 build 6201 29 Nov 2025 - branch release/6.2.1 tag: mac-6.2.1b1
+
+Fixed some crashing bugs
+Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import
+
+### 6.2. build 6201 29 Nov 2025 - branch: release/6.2.1 tag: mac-6.2.1b1
+
+Fixed some crashing bugs
+Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import
+
+### 6.2 build 6200 1 Nov 2025 - branch: main tag: mac-6.2
+
+Bump version and do release build
+
+### 6.2b4 build 6145 29 Oct 2025 - branch: main tag: mac-6.2b4
+
+Changed Markdown behavior — it now prefers source:markdown, when present, over description and content:encoded, and renders the Markdown as HTML and uses it as the article body
+Added a dotted underline to links in the Sepia theme, to make links more visible
+
+### 6.2b3 build 6144 29 Oct 2025 - branch: main tag: mac-6.2b3
+
+Added support for source:markdown to the RSS parser. Markdown is stored in the database. When an article doesn’t already have HTML content, the Markdown will be rendered as HTML. (Note: anyone reading this in October 2025 almost surely does not have any source:markdown elements in their feeds, so this won’t affect you. Here’s more info, for the curious <http://scripting.com/2022/07/19/152235.html?title=devNotesForMarkdownInFeeds>)
+
+### 6.2b2 build 6143 21 Oct 2025 - branch: main tag: mac-6.2b2
+
+Made scrolling of the timeline view faster
+
+### 6.2b1 build 6142 19 Oct 2025 - branch: main tag: mac-6.2b1
+
+Improved http/https caching, reducing bandwidth and battery use
+Fixed bug where a feed could be read twice on being added
+Fixed bug where the initial download for a new feed didn’t store conditional GET info
+Added some special cases where we can and should avoid doing some specific work (such as downloading the home page to find a feed icon)
+Worked around a server bug where a server would always respond with a 304 when any conditional GET info is sent (the app drops conditional GET info every 8 days)
+Fixed a possible cause of feeds not updating by caching (non-429) 4xx responses for some hours rather than for the duration of the app run
+Fixed Atom parser bug with relative URLs
+Fixed Atom parser bug where author at root level wasn’t applied to articles
+Fixed a bug where the webview can sometimes take a surprisingly long time to appear after launch
+Fixed a bunch of AppleScript bugs
+Did a few micro performance optimizations
+Fixed bug where contextual menu in timeline could be slow to appear
+Fixed a possible cause of app icon unread count badge to be out of date
+Fixed bug where timeline text could be truncated early when showing max number of lines in timeline and small text
+Added ability to copy multiple article URLs
+Made Sidebar the first item in toolbar by default
+Added Open Application Support Folder (data folder) to Help menu (moved from Debug menu)
+Made it so we don’t get one-time codes in random text views
+Fixed a bug where images that are links could get underlined in the default theme
+Fixed a bug finding a feed in a page that has no body tag
+Now using a number formatter for unread counts in the sidebar
+
+
+### 6.1.11b1 build 6141 9 Sep 2025 - branch: main tag: mac-6.1.11b1
+
+Fixed bug with some favicons rendering weird, with dark vertical lines. Note: due to caching, the fix may take a few days to take effect. <https://github.com/Ranchero-Software/NetNewsWire/issues/4523>
+
+### 6.1.10 build 6140 8 Sep 2025 - branch: main tag: mac-6.1.10
+
+Bump version, do release build
+
+### 6.1.10b4 build 6139 16 Aug 2025 - branch: main tag: mac-6.1.10b4
 
 Adopt secure state restoration; fix bug with state restoration not working in previous betas.
 
-### 6.1.10b3 build 6138 11 Aug 2025 - branch main tag: mac-6.1.10b3
+### 6.1.10b3 build 6138 11 Aug 2025 - branch: main tag: mac-6.1.10b3
 
 Fixed bug, introduced in previous test build, that prevented choosing an OPML file to import
 
-### 6.1.10b2 build 6137 13 May 2025 - branch main tag: mac-6.1.10b2
+### 6.1.10b2 build 6137 13 May 2025 - branch: main tag: mac-6.1.10b2
 
 Fixed bug, introduced in previous test build, that prevented adding a Feedly account
 
-### 6.1.10b1 build 6136 7 May 2025 - branch main tag: mac-6.1.10b1
+### 6.1.10b1 build 6136 7 May 2025 - branch: main tag: mac-6.1.10b1
 
 Added caching to the downloader (the one that downloads feed icons, favicons, etc.) — make fewer network requests
 Worked around The Verge’s bug with character encoding
@@ -21,7 +132,7 @@ Fixed double-underlines on 404 Media links. (Fixed bug where using <u> tag insid
 Added &smallcircle; to the entities decoder
 Synced the Mac default theme with the iOS version
 
-### 6.1.9b1 build 6134 11 Jan 2024 - branch 6.1.9-mac tag: mac-6.1.9b1
+### 6.1.9b1 build 6134 11 Jan 2024 - branch: 6.1.9-mac tag: mac-6.1.9b1
 
 Fix some glitches in the default article theme
 Fix an issue with slow updates for some feeds (by not paying attention to http Cache-Control response headers [except for openrss.org])
@@ -34,7 +145,7 @@ Fix state restoration bug by building on Xcode 14
 
 Hopefully fix state restoration bug by building on Xcode 14
 
-### 6.1.7 build 6131 16 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7-release
+### 6.1.7 build 6131 16 Dec 2024 - branch: mac-6.1.7 tag: mac-6.1.7-release
 
 Fix bug clearing refresh progress
 Fix bandwidth bugs with downloading web pages to find feed icons and favicons
@@ -42,7 +153,7 @@ Update default theme with enhancements by John Gruber
 Space out requests made to openrss.org
 Send user-agent with platform, version, and build to openrss.org (and only to that site)
 
-### 6.1.7b1 build 6130 15 Dec 2024 - branch mac-6.1.7 tag: mac-6.1.7b1
+### 6.1.7b1 build 6130 15 Dec 2024 - branch: mac-6.1.7 tag: mac-6.1.7b1
 
 Fix bug clearing refresh progress
 Fix bandwidth bugs with downloading web pages to find feed icons and favicons

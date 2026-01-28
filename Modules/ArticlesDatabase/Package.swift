@@ -1,20 +1,20 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
 	name: "ArticlesDatabase",
-	platforms: [.macOS(.v13), .iOS(.v17)],
+	platforms: [.macOS(.v26), .iOS(.v26)],
 	products: [
 		.library(
 			name: "ArticlesDatabase",
 			type: .dynamic,
-			targets: ["ArticlesDatabase"]),
+			targets: ["ArticlesDatabase"])
 	],
 	dependencies: [
 		.package(path: "../Articles"),
 		.package(path: "../RSCore"),
 		.package(path: "../RSParser"),
-		.package(path: "../RSDatabase"),
+		.package(path: "../RSDatabase")
 	],
 	targets: [
 		.target(
@@ -23,7 +23,12 @@ let package = Package(
 				"RSCore",
 				"RSDatabase",
 				"RSParser",
-				"Articles",
-			]),
+				"Articles"
+			],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]
+		)
 	]
 )

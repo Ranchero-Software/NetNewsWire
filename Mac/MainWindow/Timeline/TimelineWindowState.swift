@@ -17,7 +17,7 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 	let selectedAccountID: String?
 	let selectedArticleID: String?
 
-	init(readArticlesFilterStateKeys: [[String : String]], readArticlesFilterStateValues: [Bool], selectedAccountID: String? = nil, selectedArticleID: String? = nil) {
+	init(readArticlesFilterStateKeys: [[String: String]], readArticlesFilterStateValues: [Bool], selectedAccountID: String? = nil, selectedArticleID: String? = nil) {
 		self.readArticlesFilterStateKeys = readArticlesFilterStateKeys
 		self.readArticlesFilterStateValues = readArticlesFilterStateValues
 		self.selectedAccountID = selectedAccountID
@@ -37,11 +37,15 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 		selectedAccountID = coder.decodeObject(of: NSString.self, forKey: Key.selectedAccountID) as? String
 		selectedArticleID = coder.decodeObject(of: NSString.self, forKey: Key.selectedArticleID) as? String
 	}
-	
+
 	func encode(with coder: NSCoder) {
 		coder.encode(readArticlesFilterStateKeys, forKey: Key.readArticlesFilterStateKeys)
 		coder.encode(readArticlesFilterStateValues, forKey: Key.readArticlesFilterStateValues)
 		coder.encode(selectedAccountID, forKey: Key.selectedAccountID)
 		coder.encode(selectedArticleID, forKey: Key.selectedArticleID)
+	}
+
+	override var description: String {
+		"TimelineWindowState: filterKeys=\(readArticlesFilterStateKeys.count), filterValues=\(readArticlesFilterStateValues.count), accountID=\(selectedAccountID ?? "nil"), articleID=\(selectedArticleID ?? "nil")"
 	}
 }

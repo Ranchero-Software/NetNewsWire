@@ -26,5 +26,5 @@ In no particular order …
 * Support your local library.
 * Be bold and do your best work.
 * Support indie developers — pay for apps that cost money. Even though NetNewsWire is free, apps are most definitely *not* free to make, and it costs money to keep improving them. It’s worth it.
-* Finally: report bugs and make feature requests on our Issues tracker. You can also join the Slack group — it’s not just for coders. We also need testers, writers, and, especially, people who are willing to talk things over. Most of software development is just making decisions, and we appreciate all the help we can get!
+* Finally: report bugs and make feature requests on our Issues tracker. You can also join the Discourse forum — it’s not just for coders. We also need testers, writers, and, especially, people who are willing to talk things over. Most of software development is just making decisions, and we appreciate all the help we can get!
 * Or: skip helping us, and, instead, help people who need help more than we do. Those people should not be hard to find.

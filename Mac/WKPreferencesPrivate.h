@@ -6,7 +6,7 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-#import <WebKit/WebKit.h>
+@import WebKit;
 
 @interface WKPreferences (Private)
 

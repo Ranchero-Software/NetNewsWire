@@ -8,11 +8,12 @@
 
 import Foundation
 import os
+import RSCore
 
 // Create a DownloadSessionDelegate, then create a DownloadSession.
 // To download things: call download with a set of URLs. DownloadSession will call the various delegate methods.
 
-public protocol DownloadSessionDelegate {
+@MainActor public protocol DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
@@ -20,10 +21,17 @@ public protocol DownloadSessionDelegate {
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
 }
 
-@objc public final class DownloadSession: NSObject {
+struct HTTP4xxResponse {
+	let statusCode: Int
+	let date: Date
 
-	public let downloadProgress = DownloadProgress(numberOfTasks: 0)
+	init(_ statusCode: Int) {
+		self.statusCode = statusCode
+		self.date = Date()
+	}
+}
 
+@MainActor @objc public final class DownloadSession: NSObject, ProgressInfoReporter {
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
 	private var tasksPending = Set<URLSessionTask>()
@@ -32,21 +40,31 @@ public protocol DownloadSessionDelegate {
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [URL: URL]()
 	private var queue = [URL]()
+	private let cache = DownloadCache.shared
+
+	public var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
 
 	// 429 Too Many Requests responses
 	private var retryAfterMessages = [String: HTTPResponse429]()
 
 	/// URLs with 400-499 responses (except for 429).
-	/// These URLs are skipped for the rest of the session.
-	private var urlsWith400s = Set<URL>()
+	/// These URLs are skipped for a period of time.
+	private var http4xxResponses = [URL: HTTP4xxResponse]()
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DownloadSession")
 
 	public init(delegate: DownloadSessionDelegate) {
 
 		self.delegate = delegate
 
 		super.init()
-		
+
 		let sessionConfiguration = URLSessionConfiguration.ephemeral
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 15.0
@@ -60,9 +78,9 @@ public protocol DownloadSessionDelegate {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
 
-		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)		
+		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
 	}
-	
+
 	deinit {
 		urlSession.invalidateAndCancel()
 	}
@@ -71,40 +89,60 @@ public protocol DownloadSessionDelegate {
 
 	public func cancelAll() {
 		urlSession.getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
-			dataTasks.forEach { $0.cancel() }
-			uploadTasks.forEach { $0.cancel() }
-			downloadTasks.forEach { $0.cancel() }
+			for task in dataTasks {
+				task.cancel()
+			}
+			for task in uploadTasks {
+				task.cancel()
+			}
+			for task in downloadTasks {
+				task.cancel()
+			}
+			Task { @MainActor in
+				self.updateProgress()
+			}
 		}
 	}
 
-	public func download(_ urls: Set<URL>) {
+	@MainActor public func download(_ urls: Set<URL>) {
+		cleanUp4xxResponsesCache()
 
 		let filteredURLs = Self.filteredURLs(urls)
-
 		for url in filteredURLs {
 			addDataTask(url)
 		}
 
 		urlsInSession = filteredURLs
-		updateDownloadProgress()
+		updateProgress()
 	}
 }
 
 // MARK: - URLSessionTaskDelegate
 
-extension DownloadSession: URLSessionTaskDelegate {
+extension DownloadSession: @preconcurrency URLSessionTaskDelegate {
 
 	public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+		MainActor.assumeIsolated {
+			defer {
+				removeTask(task)
+			}
 
-		defer {
-			removeTask(task)
+			guard let info = infoForTask(task) else {
+				if let url = task.originalRequest?.url {
+					Self.logger.debug("DownloadSession: no task info found for \(url)")
+				} else {
+					Self.logger.debug("DownloadSession: no task info found for unknown URL")
+				}
+				return
+			}
+
+			if let url = task.originalRequest?.url, error == nil {
+				Self.logger.debug("DownloadSession: Caching response for \(url)")
+				cache.add(url.absoluteString, data: info.data as Data, response: info.urlResponse)
+			}
+
+			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
 		}
-
-		guard let info = infoForTask(task) else {
-			return
-		}
-
-		delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
 	}
 
 	private static let redirectStatusCodes = Set([HTTPResponseCode.redirectPermanent, HTTPResponseCode.redirectTemporary, HTTPResponseCode.redirectVeryTemporary, HTTPResponseCode.redirectPermanentPreservingMethod])
@@ -119,9 +157,7 @@ extension DownloadSession: URLSessionTaskDelegate {
 
 		var modifiedRequest = request
 
-		if let url = request.url, url.isOpenRSSOrgURL {
-			modifiedRequest.setValue(UserAgent.openRSSOrgUserAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
-		}
+		modifiedRequest.addSpecialCaseUserAgentIfNeeded()
 
 		completionHandler(modifiedRequest)
 	}
@@ -129,52 +165,61 @@ extension DownloadSession: URLSessionTaskDelegate {
 
 // MARK: - URLSessionDataDelegate
 
-extension DownloadSession: URLSessionDataDelegate {
+extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-
-		defer {
-			updateDownloadProgress()
-		}
-
-		tasksInProgress.insert(dataTask)
-		tasksPending.remove(dataTask)
-
-		let taskInfo = infoForTask(dataTask)
-		if let taskInfo {
-			taskInfo.urlResponse = response
-		}
-
-		if !response.statusIsOK {
-
-			completionHandler(.cancel)
-			removeTask(dataTask)
-
-			let statusCode = response.forcedStatusCode
-
-			if statusCode == HTTPResponseCode.tooManyRequests {
-				handle429Response(dataTask, response)
-			} else if (400...499).contains(statusCode), let url = response.url {
-				urlsWith400s.insert(url)
+		MainActor.assumeIsolated {
+			defer {
+				updateProgress()
 			}
 
-			return
-		}
+			tasksInProgress.insert(dataTask)
+			tasksPending.remove(dataTask)
 
-		addDataTaskFromQueueIfNecessary()
-		completionHandler(.allow)
+			let taskInfo = infoForTask(dataTask)
+			if let taskInfo {
+				taskInfo.urlResponse = response
+			}
+
+			let statusCode = response.forcedStatusCode
+			if statusCode >= 400 {
+				if statusCode != HTTPResponseCode.tooManyRequests {
+					if let urlString = response.url?.absoluteString {
+						Self.logger.debug("DownloadSession: Caching >= 400 response for \(urlString)")
+						cache.add(urlString, data: nil, response: response)
+					}
+				}
+
+				Self.logger.debug("DownloadSession: canceling task due to >= 400 response \(response)")
+
+				completionHandler(.cancel)
+				removeTask(dataTask)
+
+				if statusCode == HTTPResponseCode.tooManyRequests {
+					handle429Response(dataTask, response)
+				} else if (400...499).contains(statusCode), let url = response.url {
+					http4xxResponses[url] = HTTP4xxResponse(statusCode)
+				}
+
+				return
+			}
+
+			addDataTaskFromQueueIfNecessary()
+			completionHandler(.allow)
+		}
 	}
-	
+
 	public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+		MainActor.assumeIsolated {
+			guard let info = infoForTask(dataTask) else {
+				return
+			}
+			info.addData(data)
 
-		guard let info = infoForTask(dataTask) else {
-			return
-		}
-		info.addData(data)
-
-		if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
-			dataTask.cancel()
-			removeTask(dataTask)
+			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
+				dataTask.cancel()
+				removeTask(dataTask)
+			}
 		}
 	}
 }
@@ -183,7 +228,7 @@ extension DownloadSession: URLSessionDataDelegate {
 
 private extension DownloadSession {
 
-	func addDataTask(_ url: URL) {
+	@MainActor func addDataTask(_ url: URL) {
 
 		guard tasksPending.count < 500 else {
 			queue.insert(url, at: 0)
@@ -194,11 +239,18 @@ private extension DownloadSession {
 		let urlToUse = cachedRedirect(for: url) ?? url
 
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
-			os_log(.debug, "Dropping request for previous 429: \(urlToUse)")
+			Self.logger.info("DownloadSession: Dropping request for previous 429: \(urlToUse)")
 			return
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
-			os_log(.debug, "Dropping request for previous 400-499: \(urlToUse)")
+			Self.logger.info("DownloadSession: Dropping request for previous 400-499: \(urlToUse)")
+			return
+		}
+
+		// Check cache
+		if let cachedResponse = cache[urlToUse.absoluteString] {
+			Self.logger.info("DownloadSession: using cached response for \(urlToUse) - \(cachedResponse.response?.forcedStatusCode ?? -1)")
+			delegate.downloadSession(self, downloadDidComplete: url, response: cachedResponse.response, data: cachedResponse.data ?? Data(), error: nil)
 			return
 		}
 
@@ -207,12 +259,11 @@ private extension DownloadSession {
 			if let conditionalGetInfo = delegate.downloadSession(self, conditionalGetInfoFor: url) {
 				conditionalGetInfo.addRequestHeadersToURLRequest(&request)
 			}
-			if url.isOpenRSSOrgURL {
-				request.setValue(UserAgent.openRSSOrgUserAgent, forHTTPHeaderField: HTTPRequestHeader.userAgent)
-			}
+			request.addSpecialCaseUserAgentIfNeeded()
 			return request
 		}()
 
+		Self.logger.debug("DownloadSession: adding dataTask for \(urlToUse)")
 		let task = urlSession.dataTask(with: urlRequest)
 
 		let info = DownloadInfo(url)
@@ -222,7 +273,7 @@ private extension DownloadSession {
 		task.resume()
 	}
 
-	func addDataTaskFromQueueIfNecessary() {
+	@MainActor func addDataTaskFromQueueIfNecessary() {
 		guard tasksPending.count < 500, let url = queue.popLast() else { return }
 		addDataTask(url)
 	}
@@ -231,17 +282,17 @@ private extension DownloadSession {
 		return taskIdentifierToInfoDictionary[task.taskIdentifier]
 	}
 
-	func removeTask(_ task: URLSessionTask) {
+	@MainActor func removeTask(_ task: URLSessionTask) {
 		tasksInProgress.remove(task)
 		tasksPending.remove(task)
 		taskIdentifierToInfoDictionary[task.taskIdentifier] = nil
 
 		addDataTaskFromQueueIfNecessary()
 
-		updateDownloadProgress()
+		updateProgress()
 	}
 
-	func urlStringIsBlackListedRedirect(_ urlString: String) -> Bool {
+	func urlStringIsDisallowedRedirect(_ urlString: String) -> Bool {
 
 		// Hotels and similar often do permanent redirects. We can catch some of those.
 
@@ -258,7 +309,7 @@ private extension DownloadSession {
 	}
 
 	func cacheRedirect(_ oldURL: URL, _ newURL: URL) {
-		if urlStringIsBlackListedRedirect(newURL.absoluteString) {
+		if urlStringIsDisallowedRedirect(newURL.absoluteString) {
 			return
 		}
 		redirectCache[oldURL] = newURL
@@ -273,7 +324,7 @@ private extension DownloadSession {
 
 		var currentURL = url
 
-		while(true) {
+		while true {
 
 			if let oneRedirectURL = redirectCache[currentURL] {
 
@@ -283,9 +334,7 @@ private extension DownloadSession {
 				}
 				urls.insert(oneRedirectURL)
 				currentURL = oneRedirectURL
-			}
-
-			else {
+			} else {
 				break
 			}
 		}
@@ -298,15 +347,24 @@ private extension DownloadSession {
 
 	// MARK: - Download Progress
 
-	func updateDownloadProgress() {
+	@MainActor func updateProgress() {
+		let numberOfTasks = urlsInSession.count
+		let numberRemaining: Int
+		let numberCompleted: Int
+		if numberOfTasks == 0 {
+			numberRemaining = 0
+			numberCompleted = 0
+		} else {
+			numberRemaining = tasksPending.count + tasksInProgress.count + queue.count
+			numberCompleted = numberOfTasks - numberRemaining
+		}
 
-		downloadProgress.numberOfTasks = urlsInSession.count
+		progressInfo = ProgressInfo(numberOfTasks: numberOfTasks,
+									numberCompleted: numberCompleted,
+									numberRemaining: numberRemaining)
 
-		let numberRemaining = tasksPending.count + tasksInProgress.count + queue.count
-		downloadProgress.numberRemaining = min(numberRemaining, downloadProgress.numberOfTasks)
-
-		// Complete?
-		if downloadProgress.numberOfTasks > 0 && downloadProgress.numberRemaining < 1 {
+		// Completed?
+		if progressInfo.numberOfTasks > 0 && progressInfo.numberRemaining < 1 {
 			delegate.downloadSessionDidComplete(self)
 			urlsInSession.removeAll()
 		}
@@ -314,7 +372,7 @@ private extension DownloadSession {
 
 	// MARK: - 429 Too Many Requests
 
-	func handle429Response(_ dataTask: URLSessionDataTask, _ response: URLResponse) {
+	@MainActor func handle429Response(_ dataTask: URLSessionDataTask, _ response: URLResponse) {
 
 		guard let message = createHTTPResponse429(dataTask, response) else {
 			return
@@ -342,15 +400,15 @@ private extension DownloadSession {
 		return HTTPResponse429(url: url, retryAfter: retryAfter)
 	}
 
-	func cancelAndRemoveTasksWithHost(_ host: String) {
+	@MainActor func cancelAndRemoveTasksWithHost(_ host: String) {
 
 		cancelAndRemoveTasksWithHost(host, in: tasksInProgress)
 		cancelAndRemoveTasksWithHost(host, in: tasksPending)
 	}
 
-	func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
+	@MainActor func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
 
-		let lowercaseHost = host.lowercased()
+		let lowercaseHost = host.lowercased(with: localeForLowercasing)
 
 		let tasksToRemove = tasks.filter { task in
 			if let taskHost = task.lowercaseHost, taskHost.contains(lowercaseHost) {
@@ -386,12 +444,25 @@ private extension DownloadSession {
 
 	// MARK: - 400-499 responses
 
-	func requestShouldBeDroppedDueToPrevious400(_ url: URL) -> Bool {
+	// Remove 4xx responses placed in the cache more than a while ago.
+	func cleanUp4xxResponsesCache() {
+		let oldDate = Date().bySubtracting(hours: 53)
 
-		if urlsWith400s.contains(url) {
+		for url in http4xxResponses.keys {
+			guard let response = http4xxResponses[url] else {
+				continue
+			}
+			if response.date < oldDate {
+				http4xxResponses[url] = nil
+			}
+		}
+	}
+
+	func requestShouldBeDroppedDueToPrevious400(_ url: URL) -> Bool {
+		if http4xxResponses[url] != nil {
 			return true
 		}
-		if let redirectedURL = cachedRedirect(for: url), urlsWith400s.contains(redirectedURL) {
+		if let redirectedURL = cachedRedirect(for: url), http4xxResponses[redirectedURL] != nil {
 			return true
 		}
 
@@ -436,14 +507,14 @@ extension URLSessionTask {
 		guard let request = currentRequest ?? originalRequest else {
 			return nil
 		}
-		return request.url?.host()?.lowercased()
+		return request.url?.host()?.lowercased(with: localeForLowercasing)
 	}
 }
 
 // MARK: - DownloadInfo
 
 private final class DownloadInfo {
-	
+
 	let url: URL
 	let data = NSMutableData()
 	var urlResponse: URLResponse?
@@ -452,9 +523,9 @@ private final class DownloadInfo {
 
 		self.url = url
 	}
-	
+
 	func addData(_ d: Data) {
-		
+
 		data.append(d)
 	}
 }

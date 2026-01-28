@@ -8,14 +8,12 @@
 
 import Foundation
 
-struct FeedbinImportResult: Codable {
-	
+struct FeedbinImportResult: Codable, Sendable {
 	let importResultID: Int
 	let complete: Bool
-	
+
 	enum CodingKeys: String, CodingKey {
 		case importResultID = "id"
 		case complete
 	}
-	
 }

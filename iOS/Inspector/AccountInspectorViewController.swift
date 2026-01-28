@@ -8,36 +8,36 @@
 
 import UIKit
 import SafariServices
+import RSCore
 import Account
 
-class AccountInspectorViewController: UITableViewController {
-
+final class AccountInspectorViewController: UITableViewController {
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 
-	@IBOutlet weak var nameTextField: UITextField!
-	@IBOutlet weak var activeSwitch: UISwitch!
-	@IBOutlet weak var deleteAccountButton: VibrantButton!
-	@IBOutlet weak var limitationsAndSolutionsButton: UIButton!
+	@IBOutlet var nameTextField: UITextField!
+	@IBOutlet var activeSwitch: UISwitch!
+	@IBOutlet var deleteAccountButton: VibrantButton!
+	@IBOutlet var limitationsAndSolutionsButton: UIButton!
 
 	var isModal = false
 	weak var account: Account?
-	
+
     override func viewDidLoad() {
         super.viewDidLoad()
-		
+
 		guard let account = account else { return }
-		
+
 		nameTextField.placeholder = account.defaultName
 		nameTextField.text = account.name
 		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
-		
+
 		navigationItem.title = account.nameForDisplay
-		
+
 		if account.type != .onMyMac {
-			deleteAccountButton.setTitle(NSLocalizedString("Remove Account", comment: "Remove Account"), for: .normal) 
+			deleteAccountButton.setTitle(NSLocalizedString("Remove Account", comment: "Remove Account"), for: .normal)
 		}
-		
+
 		if account.type != .cloudKit {
 			limitationsAndSolutionsButton.isHidden = true
 		}
@@ -46,11 +46,11 @@ class AccountInspectorViewController: UITableViewController {
 			let doneBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(done))
 			navigationItem.leftBarButtonItem = doneBarButtonItem
 		}
-		
+
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 
 	}
-	
+
 	override func viewWillDisappear(_ animated: Bool) {
 		account?.name = nameTextField.text
 		account?.isActive = activeSwitch.isOn
@@ -59,7 +59,7 @@ class AccountInspectorViewController: UITableViewController {
 	@objc func done() {
 		dismiss(animated: true)
 	}
-	
+
 	@IBAction func credentials(_ sender: Any) {
 		guard let account = account else { return }
 		switch account.type {
@@ -86,12 +86,12 @@ class AccountInspectorViewController: UITableViewController {
 			break
 		}
 	}
-	
+
 	@IBAction func deleteAccount(_ sender: Any) {
 		guard let account = account else {
 			return
 		}
-		
+
 		let title = NSLocalizedString("Remove Account", comment: "Remove Account")
 		let message: String = {
 			switch account.type {
@@ -105,10 +105,12 @@ class AccountInspectorViewController: UITableViewController {
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		alertController.addAction(cancelAction)
-		
+
 		let markTitle = NSLocalizedString("Remove", comment: "Remove")
-		let markAction = UIAlertAction(title: markTitle, style: .default) { [weak self] (action) in
-			guard let self = self, let account = self.account else { return }
+		let markAction = UIAlertAction(title: markTitle, style: .destructive) { [weak self] _ in
+			guard let self, let account = self.account else {
+				return
+			}
 			AccountManager.shared.deleteAccount(account)
 			if self.isModal {
 				self.dismiss(animated: true)
@@ -118,7 +120,7 @@ class AccountInspectorViewController: UITableViewController {
 		}
 		alertController.addAction(markAction)
 		alertController.preferredAction = markAction
-		
+
 		present(alertController, animated: true)
 	}
 
@@ -132,7 +134,7 @@ class AccountInspectorViewController: UITableViewController {
 // MARK: Table View
 
 extension AccountInspectorViewController {
-	
+
 	var hidesCredentialsSection: Bool {
 		guard let account = account else {
 			return true
@@ -147,7 +149,7 @@ extension AccountInspectorViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		guard let account = account else { return 0 }
-		
+
 		if account == AccountManager.shared.defaultAccount {
 			return 1
 		} else if hidesCredentialsSection {
@@ -156,32 +158,32 @@ extension AccountInspectorViewController {
 			return super.numberOfSections(in: tableView)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
 	}
-	
+
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
 		guard let account = account else { return nil }
 
 		if section == 0 {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
-			headerView.imageView.image = AppAssets.image(for: account.type)
+			headerView.imageView.image = Assets.accountImage(account.type)
 			return headerView
 		} else {
 			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
 	}
-	
+
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 		let cell: UITableViewCell
-		
+
 		if indexPath.section == 1, hidesCredentialsSection {
 			cell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 2))
 		} else {
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 		}
-		
+
 		return cell
 	}
 
@@ -191,20 +193,18 @@ extension AccountInspectorViewController {
 		}
 		return false
 	}
-	
+
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
-	
 }
 
 // MARK: UITextFieldDelegate
 
 extension AccountInspectorViewController: UITextFieldDelegate {
-	
+
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true
 	}
-
 }

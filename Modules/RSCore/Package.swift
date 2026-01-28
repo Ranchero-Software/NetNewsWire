@@ -1,9 +1,9 @@
-// swift-tools-version:5.10
+// swift-tools-version:6.2
 import PackageDescription
 
 let package = Package(
 	name: "RSCore",
-	platforms: [.macOS(.v13), .iOS(.v17)],
+	platforms: [.macOS(.v26), .iOS(.v26)],
 	products: [
 		.library(name: "RSCore", type: .dynamic, targets: ["RSCore"]),
 		.library(name: "RSCoreObjC", type: .dynamic, targets: ["RSCoreObjC"]),
@@ -12,16 +12,17 @@ let package = Package(
 	targets: [
 		.target(
 			name: "RSCore",
-			dependencies: ["RSCoreObjC"]),
+			dependencies: ["RSCoreObjC"],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]
+		),
 		.target(
 			name: "RSCoreObjC",
 			dependencies: [],
 			cSettings: [
-				.headerSearchPath("include"),
-				.unsafeFlags(["-fprofile-instr-generate", "-fcoverage-mapping"])
-			],
-			linkerSettings: [
-				.unsafeFlags(["-fprofile-instr-generate"])
+				.headerSearchPath("include")
 			]
 		),
 		.target(
@@ -29,9 +30,17 @@ let package = Package(
 			resources: [
 				.process("Resources/WebViewWindow.xib"),
 				.process("Resources/IndeterminateProgressWindow.xib")
-			]),
+			],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]
+		),
 		.testTarget(
 			name: "RSCoreTests",
-			dependencies: ["RSCore"]),
+			dependencies: ["RSCore"],
+			resources: [.copy("Resources")],
+			swiftSettings: [.swiftLanguageMode(.v5)]
+		)
 	]
 )

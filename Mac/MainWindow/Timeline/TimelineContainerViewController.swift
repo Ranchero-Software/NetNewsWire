@@ -10,21 +10,20 @@ import AppKit
 import Account
 import Articles
 
-protocol TimelineContainerViewControllerDelegate: AnyObject {
+@MainActor protocol TimelineContainerViewControllerDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineContainerViewController, articles: [Article]?, mode: TimelineSourceMode)
-	func timelineRequestedWebFeedSelection(_: TimelineContainerViewController, webFeed: WebFeed)
+	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineContainerViewController)
-
 }
 
 final class TimelineContainerViewController: NSViewController {
 
-	@IBOutlet weak var viewOptionsPopUpButton: NSPopUpButton!
-	@IBOutlet weak var newestToOldestMenuItem: NSMenuItem!
-	@IBOutlet weak var oldestToNewestMenuItem: NSMenuItem!
-	@IBOutlet weak var groupByFeedMenuItem: NSMenuItem!
-	
-	@IBOutlet weak var readFilteredButton: NSButton!
+	@IBOutlet var viewOptionsPopUpButton: NSPopUpButton!
+	@IBOutlet var newestToOldestMenuItem: NSMenuItem!
+	@IBOutlet var oldestToNewestMenuItem: NSMenuItem!
+	@IBOutlet var groupByFeedMenuItem: NSMenuItem!
+
+	@IBOutlet var readFilteredButton: NSButton!
 	@IBOutlet var containerView: TimelineContainerView!
 
 	var currentTimelineViewController: TimelineViewController? {
@@ -37,7 +36,7 @@ final class TimelineContainerViewController: NSViewController {
 			view?.window?.recalculateKeyViewLoop()
 		}
 	}
-	
+
 	var windowState: TimelineWindowState? {
 		return currentTimelineViewController?.windowState
 	}
@@ -53,7 +52,7 @@ final class TimelineContainerViewController: NSViewController {
 		guard let currentTimelineViewController = currentTimelineViewController, mode(for: currentTimelineViewController) == .regular else { return false }
 		return regularTimelineViewController.isCleanUpAvailable
 	}
-	
+
 	lazy var regularTimelineViewController = {
 		return TimelineViewController(delegate: self)
 	}()
@@ -67,23 +66,25 @@ final class TimelineContainerViewController: NSViewController {
         super.viewDidLoad()
         setRepresentedObjects(nil, mode: .regular)
 		showTimeline(for: .regular)
-		
+
 		makeMenuItemTitleLarger(newestToOldestMenuItem)
 		makeMenuItemTitleLarger(oldestToNewestMenuItem)
 		makeMenuItemTitleLarger(groupByFeedMenuItem)
 		updateViewOptionsPopUpButton()
-		
-		NotificationCenter.default.addObserver(self, selector: #selector(userDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
-    }
-	
-	// MARK: - Notifications
-	
-	@objc func userDefaultsDidChange(_ note: Notification) {
-		Task {
-			updateViewOptionsPopUpButton()
+
+		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+			Task { @MainActor in
+				self?.userDefaultsDidChange()
+			}
 		}
+    }
+
+	// MARK: - Notifications
+
+	func userDefaultsDidChange() {
+		updateViewOptionsPopUpButton()
 	}
-	
+
 	// MARK: - API
 
 	func setRepresentedObjects(_ objects: [AnyObject]?, mode: TimelineSourceMode) {
@@ -113,27 +114,27 @@ final class TimelineContainerViewController: NSViewController {
 			return false
 		}
 		for object in representedObjects {
-			guard let _ = currentObjects.firstIndex(where: { $0 === object } ) else {
+			if currentObjects.firstIndex(where: { $0 === object }) == nil {
 				return false
 			}
 		}
 		return true
 	}
-	
+
 	func cleanUp() {
 		regularTimelineViewController.cleanUp()
 	}
-	
+
 	func toggleReadFilter() {
 		regularTimelineViewController.toggleReadFilter()
 		updateReadFilterButton()
 	}
-	
+
 	// MARK: State Restoration
-	
+
 	func restoreState(from state: TimelineWindowState?) {
 		guard let state else { return }
-		
+
 		regularTimelineViewController.restoreState(from: state)
 		updateReadFilterButton()
 	}
@@ -153,14 +154,14 @@ extension TimelineContainerViewController: TimelineDelegate {
 		delegate?.timelineSelectionDidChange(self, articles: selectedArticles, mode: mode(for: timelineViewController))
 	}
 
-	func timelineRequestedWebFeedSelection(_: TimelineViewController, webFeed: WebFeed) {
-		delegate?.timelineRequestedWebFeedSelection(self, webFeed: webFeed)
+	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed) {
+		delegate?.timelineRequestedFeedSelection(self, feed: feed)
 	}
-	
+
 	func timelineInvalidatedRestorationState(_: TimelineViewController) {
 		delegate?.timelineInvalidatedRestorationState(self)
 	}
-	
+
 }
 
 private extension TimelineContainerViewController {
@@ -169,7 +170,7 @@ private extension TimelineContainerViewController {
 		menuItem.attributedTitle = NSAttributedString(string: menuItem.title,
 													  attributes: [NSAttributedString.Key.font: NSFont.controlContentFont(ofSize: NSFont.systemFontSize)])
 	}
-	
+
 	func timelineViewController(for mode: TimelineSourceMode) -> TimelineViewController {
 		switch mode {
 		case .regular:
@@ -182,15 +183,14 @@ private extension TimelineContainerViewController {
 	func mode(for timelineViewController: TimelineViewController) -> TimelineSourceMode {
 		if timelineViewController === regularTimelineViewController {
 			return .regular
-		}
-		else if timelineViewController === searchTimelineViewController {
+		} else if timelineViewController === searchTimelineViewController {
 			return .search
 		}
 		assertionFailure("Expected timelineViewController to match either regular or search timelineViewController, but it doesn’t.")
 		return .regular // Should never get here.
 	}
-	
-	@MainActor func updateViewOptionsPopUpButton() {
+
+	func updateViewOptionsPopUpButton() {
 		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
 			newestToOldestMenuItem.state = .off
 			oldestToNewestMenuItem.state = .on
@@ -200,32 +200,32 @@ private extension TimelineContainerViewController {
 			oldestToNewestMenuItem.state = .off
 			viewOptionsPopUpButton.setTitle(newestToOldestMenuItem.title)
 		}
-		
+
 		if AppDefaults.shared.timelineGroupByFeed == true {
 			groupByFeedMenuItem.state = .on
 		} else {
 			groupByFeedMenuItem.state = .off
 		}
 	}
-	
+
 	func updateReadFilterButton() {
 		guard currentTimelineViewController == regularTimelineViewController else {
 			readFilteredButton.isHidden = true
 			return
 		}
-		
+
 		guard let isReadFiltered = regularTimelineViewController.isReadFiltered else {
 			readFilteredButton.isHidden = true
 			return
 		}
-		
+
 		readFilteredButton.isHidden = false
-		
+
 		if isReadFiltered {
-			readFilteredButton.image = AppAssets.filterActive
+			readFilteredButton.image = Assets.Images.filterActive
 		} else {
-			readFilteredButton.image = AppAssets.filterInactive
+			readFilteredButton.image = Assets.Images.filterInactive
 		}
 	}
-	
+
 }

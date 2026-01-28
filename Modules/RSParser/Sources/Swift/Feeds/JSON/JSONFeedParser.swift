@@ -55,17 +55,17 @@ public struct JSONFeedParser {
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
 
 		guard let d = JSONUtilities.dictionary(with: parserData.data) else {
-			throw FeedParserError(.invalidJSON)
+			throw FeedParserError.invalidJSON
 		}
 
-		guard let version = d[Key.version] as? String, let _ = version.range(of: JSONFeedParser.jsonFeedVersionMarker) else {
-			throw FeedParserError(.jsonFeedVersionNotFound)
+		guard let version = d[Key.version] as? String, version.range(of: JSONFeedParser.jsonFeedVersionMarker) != nil else {
+			throw FeedParserError.jsonFeedVersionNotFound
 		}
 		guard let itemsArray = d[Key.items] as? JSONArray else {
-			throw FeedParserError(.jsonFeedItemsNotFound)
+			throw FeedParserError.jsonFeedItemsNotFound
 		}
 		guard let title = d[Key.title] as? String else {
-			throw FeedParserError(.jsonFeedTitleNotFound)
+			throw FeedParserError.jsonFeedTitleNotFound
 		}
 
 		let authors = parseAuthors(d)
@@ -163,13 +163,13 @@ private extension JSONFeedParser {
 		let dateModified = parseDate(itemDictionary[Key.dateModified] as? String)
 
 		let authors = parseAuthors(itemDictionary)
-		var tags: Set<String>? = nil
+		var tags: Set<String>?
 		if let tagsArray = itemDictionary[Key.tags] as? [String] {
 			tags = Set(tagsArray)
 		}
 		let attachments = parseAttachments(itemDictionary)
 
-		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, language: language, contentHTML: contentHTML, contentText: contentText, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
+		return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: url, externalURL: externalURL, title: title, language: language, contentHTML: contentHTML, contentText: contentText, markdown: nil, summary: summary, imageURL: imageURL, bannerImageURL: bannerImageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, tags: tags, attachments: attachments)
 	}
 
 	static func parseTitle(_ itemDictionary: JSONDictionary, _ feedURL: String) -> String? {

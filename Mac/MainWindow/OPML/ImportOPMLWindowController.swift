@@ -10,75 +10,77 @@ import AppKit
 import Account
 import UniformTypeIdentifiers
 
-class ImportOPMLWindowController: NSWindowController {
+final class ImportOPMLWindowController: NSWindowController {
 
-	@IBOutlet weak var accountPopUpButton: NSPopUpButton!
+	@IBOutlet var accountPopUpButton: NSPopUpButton!
 	private weak var hostWindow: NSWindow?
-	
+
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("ImportOPMLSheet"))
 	}
-	
+
 	override func windowDidLoad() {
 		accountPopUpButton.removeAllItems()
-		
+
 		let menu = NSMenu()
 		accountPopUpButton.menu = menu
 
 		for oneAccount in AccountManager.shared.sortedActiveAccounts {
-			
+
 			if oneAccount.behaviors.contains(.disallowOPMLImports) {
 				continue
 			}
-			
+
 			let oneMenuItem = NSMenuItem()
 			oneMenuItem.title = oneAccount.nameForDisplay
 			oneMenuItem.representedObject = oneAccount
 			menu.addItem(oneMenuItem)
-			
+
 			if oneAccount.accountID == AppDefaults.shared.importOPMLAccountID {
 				accountPopUpButton.select(oneMenuItem)
 			}
-			
+
 		}
 	}
-	
+
 	// MARK: API
-	
+
 	func runSheetOnWindow(_ hostWindow: NSWindow) {
-		
+		guard let window else {
+			return
+		}
+
 		self.hostWindow = hostWindow
-		
+
 		if AccountManager.shared.activeAccounts.count == 1 {
 			let account = AccountManager.shared.activeAccounts.first!
 			importOPML(account: account)
 		} else {
-			hostWindow.beginSheet(window!)
+			hostWindow.beginSheet(window)
 		}
-		
 	}
-	
+
 	// MARK: Actions
-	
+
 	@IBAction func cancel(_ sender: Any) {
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.cancel)
 	}
-	
+
 	@IBAction func importOPML(_ sender: Any) {
 
 		guard let menuItem = accountPopUpButton.selectedItem else {
 			return
 		}
-		
+
 		let account = menuItem.representedObject as! Account
 		AppDefaults.shared.importOPMLAccountID = account.accountID
 		hostWindow!.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 		importOPML(account: account)
-		
+
 	}
-	
+
 	func importOPML(account: Account) {
-		
+
 		let panel = NSOpenPanel()
 		panel.canDownloadUbiquitousContents = true
 		panel.canResolveUbiquitousConflicts = true
@@ -86,9 +88,9 @@ class ImportOPMLWindowController: NSWindowController {
 		panel.allowsMultipleSelection = false
 		panel.canChooseDirectories = false
 		panel.resolvesAliases = true
-		panel.allowedContentTypes = [UTType.opml, UTType.xml]
+		panel.acceptOPML()
 		panel.allowsOtherFileTypes = false
-		
+
 		panel.beginSheetModal(for: hostWindow!) { modalResult in
 			if modalResult == NSApplication.ModalResponse.OK, let url = panel.url {
 				account.importOPML(url) { result in
@@ -101,7 +103,7 @@ class ImportOPMLWindowController: NSWindowController {
 				}
 			}
 		}
-		
+
 	}
 
 }

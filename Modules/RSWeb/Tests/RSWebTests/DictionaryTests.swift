@@ -7,11 +7,11 @@
 //
 
 import XCTest
+@testable import RSWeb
 
-class DictionaryTests: XCTestCase {
+final class DictionaryTests: XCTestCase {
 
 	func testSimpleQueryString() {
-
 		let d = ["foo": "bar", "param1": "This is a value."]
 		let s = d.urlQueryString
 
@@ -19,7 +19,6 @@ class DictionaryTests: XCTestCase {
 	}
 
 	func testQueryStringWithAmpersand() {
-
 		let d = ["fo&o": "bar", "param1": "This is a&value."]
 		let s = d.urlQueryString
 
@@ -27,19 +26,16 @@ class DictionaryTests: XCTestCase {
 	}
 
 	func testQueryStringWithAccentedCharacters() {
-
 		let d = ["fée": "bør"]
 		let s = d.urlQueryString
 
-		XCTAssertTrue(s == "f%C3%A9e=b%C3%B8r")
+		XCTAssertEqual(s, "f%C3%A9e=b%C3%B8r")
 	}
 
 	func testQueryStringWithEmoji() {
-
 		let d = ["🌴e": "bar🎩🌴"]
 		let s = d.urlQueryString
 
-		XCTAssertTrue(s == "%F0%9F%8C%B4e=bar%F0%9F%8E%A9%F0%9F%8C%B4")
+		XCTAssertEqual(s, "%F0%9F%8C%B4e=bar%F0%9F%8E%A9%F0%9F%8C%B4")
 	}
-
 }

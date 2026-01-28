@@ -12,25 +12,31 @@ import RSCore
 
 extension Article: @retroactive PasteboardWriterOwner {
 	public var pasteboardWriter: NSPasteboardWriting {
-		return ArticlePasteboardWriter(article: self)
+		ArticlePasteboardWriter(article: self)
 	}
 }
 
+// This can’t be @MainActor — AppKit will call methods outside the main thread.
 @objc final class ArticlePasteboardWriter: NSObject, NSPasteboardWriting {
-
 	let article: Article
+	private let renderedHTML: String
+	private let feedURL: String?
+	private let feedNameForDisplay: String?
+	private let feedHomePageURL: String?
+
 	static let articleUTI = "com.ranchero.article"
 	static let articleUTIType = NSPasteboard.PasteboardType(rawValue: articleUTI)
 	static let articleUTIInternal = "com.ranchero.NetNewsWire-Evergreen.internal.article"
 	static let articleUTIInternalType = NSPasteboard.PasteboardType(rawValue: articleUTIInternal)
 
-	private lazy var renderedHTML: String = {
-		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
-		return rendering.html
-	}()
-
-	init(article: Article) {
+	@MainActor init(article: Article) {
 		self.article = article
+		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
+		self.renderedHTML = rendering.html
+
+		self.feedURL = article.feed?.url
+		self.feedNameForDisplay = article.feed?.nameForDisplay
+		self.feedHomePageURL = article.feed?.homePageURL
 	}
 
 	// MARK: - NSPasteboardWriting
@@ -38,7 +44,7 @@ extension Article: @retroactive PasteboardWriterOwner {
 	func writableTypes(for pasteboard: NSPasteboard) -> [NSPasteboard.PasteboardType] {
 		var types = [ArticlePasteboardWriter.articleUTIType]
 
-		if let _ = article.preferredURL {
+		if article.preferredURL != nil {
 			types += [.URL]
 		}
 		types += [.string, .html, ArticlePasteboardWriter.articleUTIInternalType]
@@ -78,11 +84,9 @@ private extension ArticlePasteboardWriter {
 		}
 		if let text = article.contentText {
 			s += "\(text)\n\n"
-		}
-		else if let summary = article.summary {
+		} else if let summary = article.summary {
 			s += "\(summary)\n\n"
-		}
-		else if let html = article.contentHTML {
+		} else if let html = article.contentHTML {
 			let convertedHTML = html.convertingToPlainText()
 			s += "\(convertedHTML)\n\n"
 		}
@@ -96,12 +100,14 @@ private extension ArticlePasteboardWriter {
 
 		s += "Date: \(article.logicalDatePublished)\n\n"
 
-		if let feed = article.webFeed {
-			s += "Feed: \(feed.nameForDisplay)\n"
-			if let homePageURL = feed.homePageURL {
-				s += "Home page: \(homePageURL)\n"
-			}
-			s += "URL: \(feed.url)"
+		if let feedNameForDisplay {
+			s += "Feed: \(feedNameForDisplay)\n"
+		}
+		if let feedHomePageURL {
+			s += "Home page: \(feedHomePageURL)\n"
+		}
+		if let feedURL {
+			s += "URL: \(feedURL)"
 		}
 
 		return s
@@ -111,7 +117,7 @@ private extension ArticlePasteboardWriter {
 		static let articleID = "articleID" // database ID, unique per account
 		static let uniqueID = "uniqueID" // unique ID, unique per feed (guid, or possibly calculated)
 		static let feedURL = "feedURL"
-		static let webFeedID = "webFeedID" // may differ from feedURL if coming from a syncing system
+		static let feedID = "feedID" // may differ from feedURL if coming from a syncing system
 		static let title = "title"
 		static let contentHTML = "contentHTML"
 		static let contentText = "contentText"
@@ -142,12 +148,8 @@ private extension ArticlePasteboardWriter {
 
 		d[Key.articleID] = article.articleID
 		d[Key.uniqueID] = article.uniqueID
-
-		if let feed = article.webFeed {
-			d[Key.feedURL] = feed.url
-		}
-
-		d[Key.webFeedID] = article.webFeedID
+		d[Key.feedURL] = feedURL ?? nil
+		d[Key.feedID] = article.feedID
 		d[Key.title] = article.title ?? nil
 		d[Key.contentHTML] = article.contentHTML ?? nil
 		d[Key.contentText] = article.contentText ?? nil
@@ -184,7 +186,6 @@ private extension ArticlePasteboardWriter {
 		guard let authors = article.authors, !authors.isEmpty else {
 			return nil
 		}
-		return authors.map{ authorDictionary($0) }
+		return authors.map { authorDictionary($0) }
 	}
 }
-

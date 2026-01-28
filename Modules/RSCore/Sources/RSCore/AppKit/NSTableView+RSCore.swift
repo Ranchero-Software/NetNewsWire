@@ -5,17 +5,16 @@
 //  Created by Brent Simmons on 9/6/16.
 //  Copyright © 2016 Ranchero Software, LLC. All rights reserved.
 //
+
 #if os(macOS)
 import AppKit
 
 public extension NSTableView {
-	
 	var selectionIsEmpty: Bool {
 		return selectedRowIndexes.startIndex == selectedRowIndexes.endIndex
 	}
-	
-	func indexesOfAvailableRowsPassingTest(_ test: (Int) -> Bool) -> IndexSet? {
 
+	func indexesOfAvailableRowsPassingTest(_ test: (Int) -> Bool) -> IndexSet? {
 		// Checks visible and in-flight rows.
 
 		var indexes = IndexSet()
@@ -29,26 +28,24 @@ public extension NSTableView {
 	}
 
 	func indexesOfAvailableRows() -> IndexSet? {
-
 		var indexes = IndexSet()
 		enumerateAvailableRowViews { indexes.insert($1) }
 		return indexes.isEmpty ? nil : indexes
 	}
 
 	func scrollTo(row: Int, extraHeight: Int = 150) {
-
 		guard let scrollView = self.enclosingScrollView else {
 			return
 		}
 		let documentVisibleRect = scrollView.documentVisibleRect
 
 		let r = rect(ofRow: row)
-		if NSContainsRect(documentVisibleRect, r) {
+		if documentVisibleRect.contains(r) {
 			return
 		}
 
-		let rMidY = NSMidY(r)
-		var scrollPoint = NSZeroPoint;
+		let rMidY = r.midY
+		var scrollPoint = NSPoint.zero
 		scrollPoint.y = floor(rMidY - (documentVisibleRect.size.height / 2.0)) + CGFloat(extraHeight)
 		scrollPoint.y = max(scrollPoint.y, 0)
 
@@ -57,7 +54,7 @@ public extension NSTableView {
 
 		let clipView = scrollView.contentView
 
-		let rClipView = NSMakeRect(scrollPoint.x, scrollPoint.y, NSWidth(clipView.bounds), NSHeight(clipView.bounds))
+		let rClipView = NSRect(x: scrollPoint.x, y: scrollPoint.y, width: clipView.bounds.width, height: clipView.bounds.height)
 
 		clipView.animator().bounds = rClipView
 	}
@@ -73,7 +70,6 @@ public extension NSTableView {
 	}
 
 	func visibleRowViews() -> [NSTableRowView]? {
-
 		guard let scrollView = self.enclosingScrollView, numberOfRows > 0 else {
 			return nil
 		}
@@ -95,12 +91,10 @@ public extension NSTableView {
 	}
 
 	func selectRow(_ row: Int) {
-
 		self.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
 	}
 
 	func selectRowAndScrollToVisible(_ row: Int) {
-
 		self.selectRow(row)
 		self.scrollRowToVisible(row)
 	}

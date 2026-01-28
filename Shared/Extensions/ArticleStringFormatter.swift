@@ -10,8 +10,7 @@ import Foundation
 import Articles
 import RSParser
 
-struct ArticleStringFormatter {
-
+@MainActor struct ArticleStringFormatter {
 	private static var feedNameCache = [String: String]()
 	private static var titleCache = [String: String]()
 	private static var summaryCache = [String: String]()
@@ -99,9 +98,7 @@ struct ArticleStringFormatter {
 			return cachedBody
 		}
 		var s = body.rsparser_stringByDecodingHTMLEntities()
-		s = s.strippingHTML(maxCharacters: 250)
-		s = s.trimmingWhitespace
-		s = s.collapsingWhitespace
+		s = s.strippingHTML(maxCharacters: 300)
 		if s == "Comments" { // Hacker News.
 			s = ""
 		}
@@ -116,4 +113,3 @@ struct ArticleStringFormatter {
 		return dateFormatter.string(from: date)
 	}
 }
-

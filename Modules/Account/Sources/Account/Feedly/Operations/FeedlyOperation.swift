@@ -18,7 +18,7 @@ protocol FeedlyOperationDelegate: AnyObject {
 ///
 /// Normally we don’t do inheritance — but in this case
 /// it’s the best option.
-class FeedlyOperation: MainThreadOperation {
+@MainActor open class FeedlyOperation: FeedlyMainThreadOperation {
 
 	weak var delegate: FeedlyOperationDelegate?
 	var downloadProgress: DownloadProgress? {
@@ -28,20 +28,20 @@ class FeedlyOperation: MainThreadOperation {
 		}
 	}
 
-	// MainThreadOperation
-	var isCanceled = false {
+	// FeedlyMainThreadOperation
+	public var isCanceled = false {
 		didSet {
 			if isCanceled {
 				didCancel()
 			}
 		}
 	}
-	var id: Int?
-	weak var operationDelegate: MainThreadOperationDelegate?
-	var name: String?
-	var completionBlock: MainThreadOperation.MainThreadOperationCompletionBlock?
+	public var id: Int?
+	public weak var operationDelegate: FeedlyMainThreadOperationDelegate?
+	public var name: String?
+	public var completionBlock: FeedlyMainThreadOperation.FeedlyMainThreadOperationCompletionBlock?
 
-	func run() {
+	public func run() {
 	}
 
 	func didFinish() {
@@ -56,7 +56,7 @@ class FeedlyOperation: MainThreadOperation {
 		didFinish()
 	}
 
-	func didCancel() {
+	public func didCancel() {
 		didFinish()
 	}
 }

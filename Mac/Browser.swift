@@ -9,8 +9,7 @@
 import Foundation
 import RSWeb
 
-struct Browser {
-
+@MainActor struct Browser {
 	/// The user-specified default browser for opening web pages.
 	///
 	/// The user-assigned default browser, or `nil` if none was assigned
@@ -23,7 +22,6 @@ struct Browser {
 		return nil
 	}
 
-
 	/// Opens a URL in the default browser.
 	///
 	/// - Parameters:
@@ -34,7 +32,6 @@ struct Browser {
 		open(urlString, inBackground: invert ? !AppDefaults.shared.openInBrowserInBackground : AppDefaults.shared.openInBrowserInBackground)
 	}
 
-
 	/// Opens a URL in the default browser.
 	///
 	/// - Parameters:
@@ -44,7 +41,7 @@ struct Browser {
 	///   to open in the background.
 	static func open(_ urlString: String, inBackground: Bool) {
 		guard let url = URL(string: urlString), let preparedURL = url.preparedForOpeningInBrowser() else { return }
-		
+
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.requiresUniversalLinks = true
 		configuration.promptsUserIfNeeded = false
@@ -52,12 +49,16 @@ struct Browser {
 			configuration.activates = false
 		}
 
-		NSWorkspace.shared.open(preparedURL, configuration: configuration) { (runningApplication, error) in
-			guard error != nil else { return }
-			if let defaultBrowser = defaultBrowser {
-				defaultBrowser.openURL(url, inBackground: inBackground)
-			} else {
-				MacWebBrowser.openURL(url, inBackground: inBackground)
+		NSWorkspace.shared.open(preparedURL, configuration: configuration) { _, error in
+			Task { @MainActor in
+				guard error != nil else {
+					return
+				}
+				if let defaultBrowser = defaultBrowser {
+					defaultBrowser.openURL(url, inBackground: inBackground)
+				} else {
+					MacWebBrowser.openURL(url, inBackground: inBackground)
+				}
 			}
 		}
 	}

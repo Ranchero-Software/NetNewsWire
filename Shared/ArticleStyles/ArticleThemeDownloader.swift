@@ -9,11 +9,12 @@
 import Foundation
 import Zip
 
-public class ArticleThemeDownloader {
-	
+public final class ArticleThemeDownloader: Sendable {
+	public static let shared = ArticleThemeDownloader()
+
 	public enum ArticleThemeDownloaderError: LocalizedError {
 		case noThemeFile
-		
+
 		public var errorDescription: String? {
 			switch self {
 			case .noThemeFile:
@@ -21,23 +22,21 @@ public class ArticleThemeDownloader {
 			}
 		}
 	}
-	
-	public static let shared = ArticleThemeDownloader()
+
 	private init() {}
-	
+
 	public func handleFile(at location: URL) throws {
 		createDownloadDirectoryIfRequired()
 		let movedFileLocation = try moveTheme(from: location)
 		let unzippedFileLocation = try unzipFile(at: movedFileLocation)
-		NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil, userInfo: ["url" : unzippedFileLocation])
+		NotificationCenter.default.post(name: .didEndDownloadingTheme, object: nil, userInfo: ["url": unzippedFileLocation])
 	}
-	
-	
+
 	/// Creates `Application Support/NetNewsWire/Downloads` if needed.
 	private func createDownloadDirectoryIfRequired() {
 		try? FileManager.default.createDirectory(at: downloadDirectory(), withIntermediateDirectories: true, attributes: nil)
 	}
-	
+
 	/// Moves the downloaded `.tmp` file to the `downloadDirectory` and renames it a `.zip`
 	/// - Parameter location: The temporary file location.
 	/// - Returns: Destination `URL`.
@@ -48,7 +47,7 @@ public class ArticleThemeDownloader {
 		try FileManager.default.moveItem(at: location, to: fileUrl)
 		return fileUrl
 	}
-	
+
 	/// Unzips the zip file
 	/// - Parameter location: Location of the zip archive.
 	/// - Returns: Enclosed `.nnwtheme` file.
@@ -67,8 +66,7 @@ public class ArticleThemeDownloader {
 			throw error
 		}
 	}
-	
-	
+
 	/// Performs a deep search of the unzipped directory to find the theme file.
 	/// - Parameter searchPath: directory to search
 	/// - Returns: optional `String`
@@ -76,7 +74,7 @@ public class ArticleThemeDownloader {
 		if let directoryContents = FileManager.default.enumerator(atPath: searchPath) {
 			while let file = directoryContents.nextObject() as? String {
 				if file.hasPrefix("__MACOSX/") {
-					//logger.debug("Ignoring theme file in __MACOSX folder.")
+					// logger.debug("Ignoring theme file in __MACOSX folder.")
 					continue
 				}
 				if file.hasSuffix(".nnwtheme") {
@@ -84,16 +82,16 @@ public class ArticleThemeDownloader {
 				}
 			}
 		}
-		
+
 		return nil
 	}
-	
+
 	/// The download directory used by the theme downloader: `Application Support/NetNewsWire/Downloads`
 	/// - Returns: `URL`
 	private func downloadDirectory() -> URL {
 		FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("NetNewsWire/Downloads", isDirectory: true)
 	}
-	
+
 	/// Removes downloaded themes, where themes == folders, from `Application Support/NetNewsWire/Downloads`.
 	public func cleanUp() {
 		guard let filenames = try? FileManager.default.contentsOfDirectory(atPath: downloadDirectory().path) else {

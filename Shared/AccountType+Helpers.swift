@@ -16,24 +16,14 @@ import UIKit
 import SwiftUI
 
 extension AccountType {
-	
+
 	// TODO: Move this to the Account Package.
-	
+
 	func localizedAccountName() -> String {
-		
+
 		switch self {
 		case .onMyMac:
-			let defaultName: String
-			#if os(macOS)
-			defaultName = NSLocalizedString("On My Mac", comment: "Account name")
-			#else
-			if UIDevice.current.userInterfaceIdiom == .pad {
-				defaultName = NSLocalizedString("On My iPad", comment: "Account name")
-			} else {
-				defaultName = NSLocalizedString("On My iPhone", comment: "Account name")
-			}
-			#endif
-			return defaultName
+			return NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On my iPhone")
 		case .bazQux:
 			return NSLocalizedString("BazQux", comment: "Account name")
 		case .cloudKit:
@@ -52,9 +42,9 @@ extension AccountType {
 			return NSLocalizedString("The Old Reader", comment: "Account name")
 		}
 	}
-	
+
 	// MARK: - SwiftUI Images
-	func image() -> Image {
+	@MainActor func image() -> Image {
 		switch self {
 		case .onMyMac:
 			// If it's the multiplatform app, the asset catalog contains assets for 

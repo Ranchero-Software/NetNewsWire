@@ -9,12 +9,12 @@
 
 import Foundation
 
-public enum TransportError: LocalizedError {
+public enum TransportError: LocalizedError, Sendable {
 	case noData
     case noURL
 	case suspended
 	case httpError(status: Int)
-	
+
 	public var errorDescription: String? {
 		switch self {
 		case .httpError(let status):
@@ -111,36 +111,60 @@ public enum TransportError: LocalizedError {
 			return NSLocalizedString("An unknown network error occurred.", comment: "Unknown error")
 		}
 	}
-	
+
 }
 
-public protocol Transport {
-	
+nonisolated public protocol Transport: Sendable {
+
 	/// Cancels all pending requests
 	func cancelAll()
-	
+
 	/// Sends URLRequest and returns the HTTP headers and the data payload.
-	func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
-	
+	@discardableResult
+	func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?)
+
+	/// Sends URLRequest and returns the HTTP headers and the data payload.
+	func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void)
+
 	/// Sends URLRequest that doesn't require any result information.
-	func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void)
-	
+	func send(request: URLRequest, method: String) async throws
+
+	/// Sends URLRequest that doesn't require any result information.
+	func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
+
 	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
-	func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void)
-	
+	func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?)
+
+	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
+	func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void)
+
 }
 
-extension URLSession: Transport {
-	
+nonisolated extension URLSession: Transport {
+
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
-			dataTasks.forEach { $0.cancel() }
-			uploadTasks.forEach { $0.cancel() }
-			downloadTasks.forEach { $0.cancel() }
+			for task in dataTasks {
+				task.cancel()
+			}
+			for task in uploadTasks {
+				task.cancel()
+			}
+			for task in downloadTasks {
+				task.cancel()
+			}
 		}
 	}
-	
-	public func send(request: URLRequest, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+
+	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?) {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	public func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		let task = self.dataTask(with: request) { (data, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
@@ -162,12 +186,20 @@ extension URLSession: Transport {
 		task.resume()
 	}
 
-	public func send(request: URLRequest, method: String, completion: @escaping (Result<Void, Error>) -> Void) {
-		
+	public func send(request: URLRequest, method: String) async throws {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	public func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+
 		var sendRequest = request
 		sendRequest.httpMethod = method
-		
-		let task = self.dataTask(with: sendRequest) { (data, response, error) in
+
+		let task = self.dataTask(with: sendRequest) { (_, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
 					return completion(.failure(error))
@@ -187,12 +219,20 @@ extension URLSession: Transport {
 		}
 		task.resume()
 	}
-	
-	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
-		
+
+	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?) {
+		try await withCheckedThrowingContinuation { continuation in
+			self.send(request: request, method: method, payload: payload) { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
+	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+
 		var sendRequest = request
 		sendRequest.httpMethod = method
-		
+
 		let task = self.uploadTask(with: sendRequest, from: payload) { (data, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
@@ -209,14 +249,14 @@ extension URLSession: Transport {
 				default:
 					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
 				}
-				
+
 			}
 		}
 		task.resume()
 	}
-	
+
 	public static func webserviceTransport() -> Transport {
-	
+
 		let sessionConfiguration = URLSessionConfiguration.default
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 60.0
@@ -225,11 +265,11 @@ extension URLSession: Transport {
 		sessionConfiguration.httpMaximumConnectionsPerHost = 2
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
-		
+
 		if let userAgentHeaders = UserAgent.headers() {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
-		
+
 		return URLSession(configuration: sessionConfiguration)
 	}
 }

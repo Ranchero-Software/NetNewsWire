@@ -16,29 +16,22 @@ import os.log
 final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 
 	private let database: SyncDatabase
-	private let log: OSLog
 	private let service: FeedlyMarkArticlesService
 
-	init(database: SyncDatabase, service: FeedlyMarkArticlesService, log: OSLog) {
+	init(database: SyncDatabase, service: FeedlyMarkArticlesService) {
 		self.database = database
 		self.service = service
-		self.log = log
 	}
-	
-	override func run() {
-		os_log(.debug, log: log, "Sending article statuses...")
 
-		database.selectForProcessing { result in
-			if self.isCanceled {
-				self.didFinish()
-				return
-			}
-			
-			switch result {
-			case .success(let syncStatuses):
-				self.processStatuses(syncStatuses)
-			case .failure:
-				self.didFinish()
+	override func run() {
+		Feedly.logger.info("Feedly: Sending article statuses")
+
+		Task {
+			do {
+				let syncStatuses = try await database.selectForProcessing() ?? Set<SyncStatus>()
+				self.processStatuses(Array(syncStatuses))
+			} catch {
+				self.didFinish(with: error)
 			}
 		}
 	}
@@ -66,14 +59,13 @@ private extension FeedlySendArticleStatusesOperation {
 			let database = self.database
 			group.enter()
 			service.mark(ids, as: pairing.action) { result in
-				assert(Thread.isMainThread)
-				switch result {
-				case .success:
-					database.deleteSelectedForProcessing(Array(ids)) { _ in
+				Task { @MainActor in
+					switch result {
+					case .success:
+						try? await database.deleteSelectedForProcessing(ids)
 						group.leave()
-					}
-				case .failure:
-					database.resetSelectedForProcessing(Array(ids)) { _ in
+					case .failure:
+						try? await database.resetSelectedForProcessing(ids)
 						group.leave()
 					}
 				}
@@ -81,7 +73,7 @@ private extension FeedlySendArticleStatusesOperation {
 		}
 
 		group.notify(queue: DispatchQueue.main) {
-			os_log(.debug, log: self.log, "Done sending article statuses.")
+			Feedly.logger.info("Feedly: Finished sending article statuses")
 			self.didFinish()
 		}
 	}

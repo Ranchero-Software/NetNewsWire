@@ -15,7 +15,7 @@ extension Notification.Name {
 	static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // UserInfoKey.imageURL (which is an avatarURL)
 }
 
-final class AuthorAvatarDownloader {
+@MainActor final class AuthorAvatarDownloader {
 
 	public static let shared = AuthorAvatarDownloader()
 
@@ -25,27 +25,26 @@ final class AuthorAvatarDownloader {
 
 	init() {
 
-		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .ImageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
 	}
 
 	func resetCache() {
 		cache = [String: IconImage]()
 	}
-	
+
 	func image(for author: Author) -> IconImage? {
 
 		guard let avatarURL = author.avatarURL else {
 			return nil
 		}
-		
+
 		if let cachedImage = cache[avatarURL] {
 			return cachedImage
 		}
-		
+
 		if let imageData = imageDownloader.image(for: avatarURL) {
 			scaleAndCacheImageData(imageData, avatarURL)
-		}
-		else {
+		} else {
 			waitingForAvatarURLs.insert(avatarURL)
 		}
 
@@ -66,12 +65,14 @@ final class AuthorAvatarDownloader {
 	}
 }
 
-private extension AuthorAvatarDownloader {
+@MainActor private extension AuthorAvatarDownloader {
 
 	func scaleAndCacheImageData(_ imageData: Data, _ avatarURL: String) {
 		RSImage.scaledForIcon(imageData) { (image) in
-			if let image = image {
-				self.handleImageDidBecomeAvailable(avatarURL, image)
+			MainActor.assumeIsolated {
+				if let image {
+					self.handleImageDidBecomeAvailable(avatarURL, image)
+				}
 			}
 		}
 	}

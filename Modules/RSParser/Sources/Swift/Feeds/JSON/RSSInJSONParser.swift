@@ -17,16 +17,15 @@ import RSParserObjC
 public struct RSSInJSONParser {
 
 	public static func parse(_ parserData: ParserData) throws -> ParsedFeed? {
-
 		do {
 			guard let parsedObject = try JSONSerialization.jsonObject(with: parserData.data) as? JSONDictionary else {
-				throw FeedParserError(.invalidJSON)
+				throw FeedParserError.invalidJSON
 			}
 			guard let rssObject = parsedObject["rss"] as? JSONDictionary else {
-				throw FeedParserError(.rssChannelNotFound)
+				throw FeedParserError.rssChannelNotFound
 			}
 			guard let channelObject = rssObject["channel"] as? JSONDictionary else {
-				throw FeedParserError(.rssChannelNotFound)
+				throw FeedParserError.rssChannelNotFound
 			}
 
 			// I’d bet money that in practice the items array won’t always appear correctly inside the channel object.
@@ -42,7 +41,7 @@ public struct RSSInJSONParser {
 				itemsObject = parsedObject["items"] as? JSONArray
 			}
 			if itemsObject == nil {
-				throw FeedParserError(.rssItemsNotFound)
+				throw FeedParserError.rssItemsNotFound
 			}
 
 			let title = channelObject["title"] as? String
@@ -55,18 +54,15 @@ public struct RSSInJSONParser {
 
 			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, language: feedLanguage, feedDescription: feedDescription, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 
-		}
-		catch { throw error }
+		} catch { throw error }
 	}
 }
 
 private extension RSSInJSONParser {
 
 	static func parseItems(_ itemsObject: JSONArray, _ feedURL: String) -> Set<ParsedItem> {
-
-		return Set(itemsObject.compactMap{ (oneItemDictionary) -> ParsedItem? in
-
-			return parsedItemWithDictionary(oneItemDictionary, feedURL)
+		Set(itemsObject.compactMap { (oneItemDictionary) -> ParsedItem? in
+			parsedItemWithDictionary(oneItemDictionary, feedURL)
 		})
 	}
 
@@ -76,7 +72,7 @@ private extension RSSInJSONParser {
 		let title = itemDictionary["title"] as? String
 
 		var contentHTML = itemDictionary["description"] as? String
-		var contentText: String? = nil
+		var contentText: String?
 		if contentHTML != nil && !(contentHTML!.contains("<")) {
 			contentText = contentHTML
 			contentHTML = nil
@@ -85,7 +81,7 @@ private extension RSSInJSONParser {
 			return nil
 		}
 
-		var datePublished: Date? = nil
+		var datePublished: Date?
 		if let datePublishedString = itemDictionary["pubDate"] as? String {
 			datePublished = RSDateWithString(datePublishedString)
 		}
@@ -120,18 +116,18 @@ private extension RSSInJSONParser {
 			}
 			if s.isEmpty {
 				// Sheesh. Tough case.
-				if let _ = contentHTML {
-					s = contentHTML!
+				if let html = contentHTML {
+					s = html
 				}
-				if let _ = contentText {
-					s = contentText!
+				if let text = contentText {
+					s = text
 				}
 			}
 			uniqueID = (s as NSString).rsparser_md5Hash()
 		}
 
 		if let uniqueID = uniqueID {
-			return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: nil, externalURL: externalURL, title: title, language: nil, contentHTML: contentHTML, contentText: contentText, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
+			return ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedURL, url: nil, externalURL: externalURL, title: title, language: nil, contentHTML: contentHTML, contentText: contentText, markdown: nil, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: datePublished, dateModified: nil, authors: authors, tags: tags, attachments: attachments)
 		}
 		return nil
 	}
@@ -152,9 +148,8 @@ private extension RSSInJSONParser {
 				return Set([oneTag])
 			}
 			return nil
-		}
-		else if let categoryArray = itemDictionary["category"] as? JSONArray {
-			return Set(categoryArray.compactMap{ $0["#value"] as? String })
+		} else if let categoryArray = itemDictionary["category"] as? JSONArray {
+			return Set(categoryArray.compactMap { $0["#value"] as? String })
 		}
 		return nil
 	}

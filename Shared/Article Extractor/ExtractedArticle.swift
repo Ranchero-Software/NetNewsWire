@@ -24,7 +24,7 @@ struct ExtractedArticle: Codable, Equatable {
 	let direction: String?
 	let totalPages: Int?
 	let renderedPages: Int?
-	
+
 	enum CodingKeys: String, CodingKey {
 		case title = "title"
 		case author = "author"
@@ -41,5 +41,5 @@ struct ExtractedArticle: Codable, Equatable {
 		case totalPages = "total_pages"
 		case renderedPages = "rendered_pages"
 	}
-	
+
 }

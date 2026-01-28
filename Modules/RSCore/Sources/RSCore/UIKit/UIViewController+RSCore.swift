@@ -5,27 +5,15 @@
 //  Created by Maurice Parker on 4/15/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
+
 #if os(iOS)
+
 import UIKit
 import SwiftUI
 
 extension UIViewController {
-	
-	// MARK: Autolayout
-	
-	public func addChildAndPinView(_ controller: UIViewController) {
-		view.addChildAndPin(controller.view)
-		addChild(controller)
-	}
-	
-	public func replaceChildAndPinView(_ controller: UIViewController) {
-		view.subviews.forEach { $0.removeFromSuperview() }
-		children.forEach { $0.removeFromParent() }
-		addChildAndPinView(controller)
-	}
-	
-	// MARK: Error Handling
-	
+	// MARK: - Error Handling
+
 	public func presentError(title: String, message: String, dismiss: (() -> Void)? = nil) {
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 		let dismissTitle = NSLocalizedString("OK", comment: "OK")
@@ -35,10 +23,10 @@ extension UIViewController {
 		alertController.addAction(dismissAction)
 		self.present(alertController, animated: true, completion: nil)
 	}
-	
+
 }
 
-// MARK: SwiftUI
+// MARK: - SwiftUI
 
 public struct ViewControllerHolder {
 	public weak var value: UIViewController?
@@ -65,4 +53,5 @@ extension UIViewController {
 		self.present(controller, animated: true, completion: nil)
 	}
 }
+
 #endif

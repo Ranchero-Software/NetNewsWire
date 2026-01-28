@@ -9,8 +9,7 @@
 import WidgetKit
 import SwiftUI
 
-struct StarredWidgetView : View {
-
+struct StarredWidgetView: View {
 	@Environment(\.widgetFamily) var family: WidgetFamily
 	@Environment(\.sizeCategory) var sizeCategory: ContentSizeCategory
 
@@ -20,47 +19,41 @@ struct StarredWidgetView : View {
 		if entry.widgetData.starredArticles.count == 0 {
 			inboxZero
 				.widgetURL(WidgetDeepLink.starred.url)
-		}
-		else {
-			GeometryReader { metrics in
-				starredImage
-					.frame(width: WidgetLayout.titleImageSize, alignment: .leading)
-				VStack(alignment:.leading, spacing: 0) {
-					ForEach(0..<maxCount(), id: \.self, content: { i in
-						if i != 0 {
-							Divider()
-							ArticleItemView(article: entry.widgetData.starredArticles[i],
-											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-							.padding(.top, WidgetLayout.articleItemViewPaddingTop)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
-						} else {
-							ArticleItemView(article: entry.widgetData.starredArticles[i],
-											deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-							.padding(.bottom, WidgetLayout.articleItemViewPaddingBottom)
-						}
-					})
+		} else {
+			VStack {
+				HStack(alignment: .center) {
+					starredImage
+						.layoutPriority(1)
+					Text("label.text.starred", comment: "Starred")
+						.font(.caption2)
+						.bold()
+						.lineLimit(1)
+						.minimumScaleFactor(0.8)
+						.fixedSize(horizontal: false, vertical: true)
+						.layoutPriority(1)
 					Spacer()
-				}
-				.padding(.leading, WidgetLayout.leftSideWidth)
-				.padding([.bottom, .trailing])
-				.overlay(
-					VStack {
-						Spacer()
-						HStack {
-							Spacer()
-							if entry.widgetData.currentStarredCount - maxCount() > 0 {
-								Text(L10n.starredCount(entry.widgetData.currentStarredCount - maxCount()))
-									.font(.caption2)
-									.bold()
-									.foregroundColor(.secondary)
-							}
-						}
+						.layoutPriority(0)
+					if entry.widgetData.totalStarredCount - maxCount() > 0 {
+						Text(verbatim: entry.widgetData.totalStarredCount.formatted())
+							.font(.caption2)
+							.bold()
+							.foregroundColor(.secondary)
+							.lineLimit(1)
+							.minimumScaleFactor(0.8)
+							.fixedSize(horizontal: false, vertical: true)
 					}
-						.padding(.horizontal)
-				)
-
+				}
+				.widgetURL(WidgetDeepLink.starred.url)
+				Divider()
+				if entry.widgetData.starredArticles.count > 0 {
+					ForEach(0..<maxCount(), id: \.self, content: { i in
+						ArticleItemView(article: entry.widgetData.starredArticles[i],
+										deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
+					})
+				}
+				Spacer()
 			}
-			.widgetURL(WidgetDeepLink.starred.url)
+			.padding(.vertical, 2)
 		}
 	}
 
@@ -78,11 +71,10 @@ struct StarredWidgetView : View {
 			reduceAccessibilityCount = 1
 		}
 
-		let starredCount = entry.widgetData.starredArticles.count
 		if family == .systemLarge {
-			return starredCount >= 7 ? (7 - reduceAccessibilityCount) : starredCount
+			return entry.widgetData.totalStarredCount >= 7 ? (7 - reduceAccessibilityCount) : entry.widgetData.totalStarredCount
 		}
-		return starredCount >= 3 ? (3 - reduceAccessibilityCount) : starredCount
+		return entry.widgetData.totalStarredCount >= 3 ? (3 - reduceAccessibilityCount) : entry.widgetData.totalStarredCount
 	}
 
 	var inboxZero: some View {
@@ -94,12 +86,11 @@ struct StarredWidgetView : View {
 				.frame(width: 30)
 				.foregroundColor(.yellow)
 
-
-			Text(L10n.starredWidgetNoItemsTitle)
+			Text("label.text.starred", comment: "Starred")
 				.font(.headline)
 				.foregroundColor(.primary)
 
-			Text(L10n.starredWidgetNoItems)
+			Text("label.text.starred-no-articles", comment: "There are no starred articles.")
 				.font(.caption)
 				.foregroundColor(.gray)
 			Spacer()
@@ -107,5 +98,4 @@ struct StarredWidgetView : View {
 		.multilineTextAlignment(.center)
 		.padding()
 	}
-
 }
