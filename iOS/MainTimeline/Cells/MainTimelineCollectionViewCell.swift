@@ -47,6 +47,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 	private func configure(_ cellData: MainTimelineCellData) {
 		articleContent.numberOfLines = cellData.numberOfLines
+		updateIndicatorView(configurationState)
 		addArticleContent(configurationState)
 
 		if cellData.showFeedName == .feed {
