@@ -130,7 +130,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		let standardCellLeadingOffSet = 48.0
 		let indentedCellLeadingOffSet = 64.0
 		var config = UICollectionLayoutListConfiguration(appearance: traitCollection.userInterfaceIdiom == .pad ? .sidebar : .insetGrouped)
-		config.separatorConfiguration.color = .tertiarySystemFill
+		config.separatorConfiguration.color = UIDevice.current.userInterfaceIdiom == .pad ? .clear : .tertiarySystemFill
 		config.headerMode = .supplementary
 
 		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
