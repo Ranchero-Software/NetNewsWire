@@ -103,6 +103,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		Self.logger.debug("MainFeedCollectionViewController: viewDidAppear")
 		/// On iPhone, once the deselection animation has completed, set `isAnimating`
 		/// to false and this will allow selection.
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+			self.deselectIfNeccessary()
+		}
+	}
+	
+	func deselectIfNeccessary() {
 		if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation == .portrait {
 			if collectionView.indexPathsForSelectedItems != nil {
 				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
@@ -110,7 +116,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 					self.isAnimating = false
 				})
 			}
-			return
+		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape && self.view.window!.traitCollection.horizontalSizeClass == .compact {
+			if collectionView.indexPathsForSelectedItems != nil {
+				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+					self.isAnimating = false
+				})
+			}
 		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape {
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
 				self.isAnimating = false

@@ -216,7 +216,21 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				self.navigationController?.navigationBar.alpha = 1
 			}
 		}
+		
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+			self.deselectIfNecessary()
+		})
+	}
+	
+	func deselectIfNecessary() {
 		if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait {
+			if coordinator?.currentArticle != nil {
+				if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
+					collectionView?.deselectItem(at: indexPath, animated: true)
+				}
+				coordinator?.selectArticle(nil)
+			}
+		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape && self.view.window!.traitCollection.horizontalSizeClass == .compact {
 			if coordinator?.currentArticle != nil {
 				if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
 					collectionView?.deselectItem(at: indexPath, animated: true)
