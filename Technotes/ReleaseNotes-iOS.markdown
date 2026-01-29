@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7020 28 Jan 2026 - branch: main tag: iOS-7.0-7020
+
+Fixed state restoration bug where the restored-to article would animate into view
+Made some small performance enhancements for the timeline — coalescing more updates
+
 ### 7.0 TestFlight build 7019 27 Jan 2026 - branch: main tag: iOS-7.0-7019
 
 Fixed bug where the timeline unread and star indicators didn't update on status changes
