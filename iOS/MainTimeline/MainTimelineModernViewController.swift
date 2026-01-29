@@ -216,7 +216,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				self.navigationController?.navigationBar.alpha = 1
 			}
 		}
-		if traitCollection.userInterfaceIdiom == .phone {
+		if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait {
 			if coordinator?.currentArticle != nil {
 				if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
 					collectionView?.deselectItem(at: indexPath, animated: true)

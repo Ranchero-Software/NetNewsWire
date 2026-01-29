@@ -33,6 +33,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedCollectionViewController")
+	
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 
@@ -98,16 +100,21 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-
+		Self.logger.debug("MainFeedCollectionViewController: viewDidAppear")
 		/// On iPhone, once the deselection animation has completed, set `isAnimating`
 		/// to false and this will allow selection.
-		if traitCollection.userInterfaceIdiom == .phone {
+		if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation == .portrait {
 			if collectionView.indexPathsForSelectedItems != nil {
 				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
 					self.isAnimating = false
 				})
 			}
+			return
+		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape {
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+				self.isAnimating = false
+			})
 		}
 	}
 
