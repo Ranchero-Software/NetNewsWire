@@ -223,20 +223,15 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	}
 	
 	func deselectIfNecessary() {
-		if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isPortrait {
-			if coordinator?.currentArticle != nil {
-				if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
-					collectionView?.deselectItem(at: indexPath, animated: true)
-				}
-				coordinator?.selectArticle(nil)
+		guard traitCollection.userInterfaceIdiom == .phone else {
+			return
+		}
+
+		if coordinator?.currentArticle != nil {
+			if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
+				collectionView?.deselectItem(at: indexPath, animated: true)
 			}
-		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape && self.view.window!.traitCollection.horizontalSizeClass == .compact {
-			if coordinator?.currentArticle != nil {
-				if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
-					collectionView?.deselectItem(at: indexPath, animated: true)
-				}
-				coordinator?.selectArticle(nil)
-			}
+			coordinator?.selectArticle(nil)
 		}
 	}
 
