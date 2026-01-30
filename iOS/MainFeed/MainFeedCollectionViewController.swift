@@ -109,24 +109,16 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 	
 	func deselectIfNeccessary() {
-		if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation == .portrait {
-			if collectionView.indexPathsForSelectedItems != nil {
-				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
-					self.isAnimating = false
-				})
-			}
-		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape && self.view.window!.traitCollection.horizontalSizeClass == .compact {
-			if collectionView.indexPathsForSelectedItems != nil {
-				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
-					self.isAnimating = false
-				})
-			}
-		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape {
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
-				self.isAnimating = false
-			})
+		guard traitCollection.horizontalSizeClass == .compact else {
+			return
+		}
+
+		if collectionView.indexPathsForSelectedItems != nil {
+			coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
+		}
+
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+			self.isAnimating = false
 		}
 	}
 
