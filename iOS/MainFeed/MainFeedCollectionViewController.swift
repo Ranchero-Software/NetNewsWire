@@ -33,6 +33,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedCollectionViewController")
+	
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 
@@ -98,16 +100,33 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-
+		Self.logger.debug("MainFeedCollectionViewController: viewDidAppear")
 		/// On iPhone, once the deselection animation has completed, set `isAnimating`
 		/// to false and this will allow selection.
-		if traitCollection.userInterfaceIdiom == .phone {
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+			self.deselectIfNeccessary()
+		}
+	}
+	
+	func deselectIfNeccessary() {
+		if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation == .portrait {
 			if collectionView.indexPathsForSelectedItems != nil {
 				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
 					self.isAnimating = false
 				})
 			}
+		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape && self.view.window!.traitCollection.horizontalSizeClass == .compact {
+			if collectionView.indexPathsForSelectedItems != nil {
+				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+					self.isAnimating = false
+				})
+			}
+		} else if traitCollection.userInterfaceIdiom == .phone && UIDevice.current.orientation.isLandscape {
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
+				self.isAnimating = false
+			})
 		}
 	}
 
@@ -130,7 +149,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		let standardCellLeadingOffSet = 48.0
 		let indentedCellLeadingOffSet = 64.0
 		var config = UICollectionLayoutListConfiguration(appearance: traitCollection.userInterfaceIdiom == .pad ? .sidebar : .insetGrouped)
-		config.separatorConfiguration.color = .tertiarySystemFill
+		config.separatorConfiguration.color = UIDevice.current.userInterfaceIdiom == .pad ? .clear : .tertiarySystemFill
 		config.headerMode = .supplementary
 
 		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in

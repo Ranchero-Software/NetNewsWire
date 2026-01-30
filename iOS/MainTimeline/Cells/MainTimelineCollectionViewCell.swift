@@ -277,10 +277,8 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.cornerRadius = 20
 
-		if traitCollection.userInterfaceIdiom == .pad {
-			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
-			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: !isPreview ? -12 : -12, bottom: 0, trailing: !isPreview ? -12 : -12)
-		}
+		backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
+		backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
 
 		if state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
