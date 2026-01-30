@@ -1025,7 +1025,9 @@ struct SidebarItemNode: Hashable, Sendable {
 		rootSplitViewController.show(.secondary)
 
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
-		markArticles(Set([article!]), statusKey: .read, flag: true)
+		if AppDefaults.shared.markAsReadOnOpen {
+			markArticles(Set([article!]), statusKey: .read, flag: true)
+		}
 
 		mainTimelineViewController?.updateArticleSelection(animations: animations)
 		articleViewController?.article = article
