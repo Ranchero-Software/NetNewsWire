@@ -109,7 +109,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 	
 	func deselectIfNeccessary() {
-		guard traitCollection.horizontalSizeClass == .compact else {
+		guard traitCollection.userInterfaceIdiom == .phone else {
 			return
 		}
 
