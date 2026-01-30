@@ -148,8 +148,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	func configureCollectionView() {
 		let standardCellLeadingOffSet = 48.0
 		let indentedCellLeadingOffSet = 64.0
-		var config = UICollectionLayoutListConfiguration(appearance: traitCollection.userInterfaceIdiom == .pad ? .sidebar : .insetGrouped)
-		config.separatorConfiguration.color = UIDevice.current.userInterfaceIdiom == .pad ? .clear : .tertiarySystemFill
+		let useSidebarAppearance = traitCollection.userInterfaceIdiom == .pad
+		var config = UICollectionLayoutListConfiguration(appearance: useSidebarAppearance ? .sidebar : .insetGrouped)
 		config.headerMode = .supplementary
 
 		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
@@ -235,6 +235,15 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		
 		config.itemSeparatorHandler = { (indexPath, sectionSeparatorConfiguration) in
 			var configuration = sectionSeparatorConfiguration
+
+			// Sidebar appearance: no separators
+			if useSidebarAppearance {
+				configuration.topSeparatorVisibility = .hidden
+				configuration.bottomSeparatorVisibility = .hidden
+				return configuration
+			}
+
+			// insetGrouped appearance: separators with proper insets
 			configuration.bottomSeparatorVisibility = .hidden
 			configuration.topSeparatorVisibility = indexPath.row == 0 ? .hidden : .visible
 
