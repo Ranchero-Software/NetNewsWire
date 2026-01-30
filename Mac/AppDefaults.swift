@@ -43,6 +43,7 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let onMyMacAccountPath = "onMyMacAccountPath"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -313,6 +314,15 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+		}
+	}
+
+	var onMyMacAccountPath: String? {
+		get {
+			return AppDefaults.string(for: Key.onMyMacAccountPath)
+		}
+		set {
+			AppDefaults.setString(for: Key.onMyMacAccountPath, newValue)
 		}
 	}
 

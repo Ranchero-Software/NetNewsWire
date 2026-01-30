@@ -9,8 +9,11 @@
         <customObject id="-2" userLabel="File's Owner" customClass="AccountsDetailViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="activeButton" destination="wxB-dX-nGt" id="ALS-GI-sb5"/>
+                <outlet property="changePathButton" destination="chg-Pa-th1" id="chg-Pa-co1"/>
                 <outlet property="credentialsButton" destination="gLh-gl-ZGQ" id="ee9-t8-lUg"/>
                 <outlet property="nameTextField" destination="TT0-Kf-YTC" id="oMG-jn-Qn0"/>
+                <outlet property="storagePathLabel" destination="sto-La-be1" id="sto-La-co1"/>
+                <outlet property="storagePathTextField" destination="sto-Pa-th1" id="sto-Pa-co1"/>
                 <outlet property="typeLabel" destination="XYX-iz-hnq" id="SKM-et-3h3"/>
                 <outlet property="view" destination="3ki-rg-6yb" id="ttM-4E-OLN"/>
             </connections>
@@ -34,6 +37,7 @@
                                     <gridRow yPlacement="top" id="etw-2m-nWZ"/>
                                     <gridRow id="3IT-3r-gEK"/>
                                     <gridRow id="Y4C-5M-ySp"/>
+                                    <gridRow id="sto-Ro-w01"/>
                                 </rows>
                                 <columns>
                                     <gridColumn id="sMM-Ds-SKX"/>
@@ -105,6 +109,49 @@
                                                 <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             </textFieldCell>
                                         </textField>
+                                    </gridCell>
+                                    <gridCell row="sto-Ro-w01" column="sMM-Ds-SKX" id="sto-Ce-l01">
+                                        <textField key="contentView" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sto-La-be1">
+                                            <rect key="frame" x="-2" y="50" width="80" height="16"/>
+                                            <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="Storage:" id="sto-La-ce1">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
+                                    </gridCell>
+                                    <gridCell row="sto-Ro-w01" column="Fhf-h9-g0O" id="sto-Ce-l02">
+                                        <view key="contentView" id="sto-St-ac1">
+                                            <rect key="frame" x="80" y="47" width="200" height="21"/>
+                                            <subviews>
+                                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sto-Pa-th1">
+                                                    <rect key="frame" x="0" y="0" width="130" height="21"/>
+                                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="truncatingMiddle" selectable="YES" editable="NO" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="sto-Pa-ce1">
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                    </textFieldCell>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="130" id="sto-Pa-wi1"/>
+                                                    </constraints>
+                                                </textField>
+                                                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="chg-Pa-th1">
+                                                    <rect key="frame" x="135" y="-3" width="65" height="24"/>
+                                                    <buttonCell key="cell" type="push" title="Change…" bezelStyle="rounded" alignment="center" controlSize="small" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="chg-Pa-ce1">
+                                                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                                        <font key="font" metaFont="smallSystem"/>
+                                                        <connections>
+                                                            <action selector="changePath:" target="-2" id="chg-Pa-ac1"/>
+                                                        </connections>
+                                                    </buttonCell>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="chg-Pa-th1" firstAttribute="leading" secondItem="sto-Pa-th1" secondAttribute="trailing" constant="5" id="sto-Sp-ac1"/>
+                                                <constraint firstItem="sto-Pa-th1" firstAttribute="centerY" secondItem="sto-St-ac1" secondAttribute="centerY" id="sto-Ce-y01"/>
+                                                <constraint firstItem="chg-Pa-th1" firstAttribute="centerY" secondItem="sto-St-ac1" secondAttribute="centerY" id="sto-Ce-y02"/>
+                                            </constraints>
+                                        </view>
                                     </gridCell>
                                 </gridCells>
                             </gridView>
