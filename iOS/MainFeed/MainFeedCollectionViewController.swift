@@ -25,11 +25,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	@IBOutlet var filterButton: UIBarButtonItem!
 	@IBOutlet var addNewItemButton: UIBarButtonItem! {
 		didSet {
-			if #available(iOS 14, *) {
-				addNewItemButton.primaryAction = nil
-			} else {
-				addNewItemButton.action = #selector(MainFeedCollectionViewController.add(_:))
-			}
+			addNewItemButton.target = self
+			addNewItemButton.action = #selector(MainFeedCollectionViewController.add(_:))
 		}
 	}
 
