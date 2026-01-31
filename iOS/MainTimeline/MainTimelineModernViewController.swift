@@ -30,6 +30,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
 	private var dataSource: UICollectionViewDiffableDataSource<Int, Article>?
+	var didPushArticleViewController = false
 
 	private var timelineFeed: SidebarItem? {
 		assert(coordinator != nil)
@@ -216,12 +217,16 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				self.navigationController?.navigationBar.alpha = 1
 			}
 		}
-		
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
-			self.deselectIfNecessary()
-		})
+
+		// Deselect only when returning from article navigation
+		if didPushArticleViewController {
+			didPushArticleViewController = false
+			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+				self.deselectIfNecessary()
+			}
+		}
 	}
-	
+
 	func deselectIfNecessary() {
 		guard traitCollection.userInterfaceIdiom == .phone else {
 			return
@@ -234,7 +239,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			coordinator?.selectArticle(nil)
 		}
 	}
-
+	
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary")
 		guard let collectionView else {

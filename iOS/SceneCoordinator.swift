@@ -1023,6 +1023,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 
 		rootSplitViewController.show(.secondary)
+		mainTimelineViewController?.didPushArticleViewController = true
 
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
