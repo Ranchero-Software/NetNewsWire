@@ -6,7 +6,6 @@
 //  Copyright © 2026 Ranchero Software. All rights reserved.
 //
 
-
 final class TimelineHeaderView: UICollectionReusableView {
     static let reuseIdentifier = "TimelineHeaderView"
 
@@ -33,4 +32,3 @@ final class TimelineHeaderView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
 }
-

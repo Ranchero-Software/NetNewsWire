@@ -239,7 +239,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			coordinator?.selectArticle(nil)
 		}
 	}
-	
+
 	func restoreSelectionIfNecessary(adjustScroll: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary")
 		guard let collectionView else {

@@ -31,7 +31,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedCollectionViewController")
-	
+
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 
@@ -104,7 +104,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.deselectIfNeccessary()
 		}
 	}
-	
+
 	func deselectIfNeccessary() {
 		guard traitCollection.userInterfaceIdiom == .phone else {
 			return
@@ -221,7 +221,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 			return config
 		}
-		
+
 		config.itemSeparatorHandler = { (indexPath, sectionSeparatorConfiguration) in
 			var configuration = sectionSeparatorConfiguration
 
