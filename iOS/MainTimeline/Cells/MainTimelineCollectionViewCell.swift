@@ -77,13 +77,19 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		super.prepareForReuse()
 		rangeOfTitle = nil
 		rangeOfSummary = nil
+		title = ""
+		summary = ""
 	}
 
 	private func configure(_ cellData: MainTimelineCellData) {
 		articleContent.numberOfLines = cellData.numberOfLines
 		updateIndicatorView(configurationState)
-		addArticleContent(configurationState)
-
+		if title != cellData.title || summary != cellData.summary {
+			title = cellData.title
+			summary = cellData.summary
+			addArticleContent(configurationState)
+		}
+		
 		if cellData.showFeedName == .feed {
 			articleByLine.text = cellData.feedName
 		} else if cellData.showFeedName == .byline {
