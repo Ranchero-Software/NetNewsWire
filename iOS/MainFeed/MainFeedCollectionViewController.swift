@@ -243,7 +243,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 					configuration.topSeparatorInsets = NSDirectionalEdgeInsets(top: 0, leading: standardCellLeadingOffSet, bottom: 0, trailing: 0)
 				}
 			}
-			if let _ = self.collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
+			if self.collectionView.cellForItem(at: indexPath) is MainFeedCollectionViewFolderCell {
 				configuration.topSeparatorInsets = NSDirectionalEdgeInsets(top: 0, leading: standardCellLeadingOffSet, bottom: 0, trailing: 0)
 			}
 			return configuration
