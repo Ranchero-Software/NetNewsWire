@@ -1018,7 +1018,9 @@ extension MainTimelineModernViewController {
 		let image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
-			self?.toggleRead(article)
+			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
+				self?.toggleRead(article)
+			}
 		}
 
 		return action
@@ -1037,7 +1039,9 @@ extension MainTimelineModernViewController {
 		let image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
-			self?.toggleStar(article)
+			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
+				self?.toggleStar(article)
+			}
 		}
 
 		return action
