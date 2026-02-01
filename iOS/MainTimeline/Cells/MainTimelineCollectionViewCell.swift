@@ -68,6 +68,8 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			indicatorView.alpha = 0.0
 			feedIcon?.translatesAutoresizingMaskIntoConstraints = false
 			configureStackView()
+			
+			registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(configureStackView))
 		}
 	}
 
