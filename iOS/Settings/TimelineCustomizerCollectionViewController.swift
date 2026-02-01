@@ -170,7 +170,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	) -> CGSize {
 		CGSize(width: collectionView.bounds.width, height: 50)
 	}
-	
+
 	override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
 		if indexPath.section > 1 {
 			return false
