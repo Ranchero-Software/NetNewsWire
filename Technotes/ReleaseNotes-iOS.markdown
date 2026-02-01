@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7021 1 Feb 2026 - branch: main tag: iOS-7.0-7021
+
+Fixed some UI glitches with timeline cells
+Made some performance enhancements in timeline cells
+Made sure sidebar shows on first launch on iPad in both orientations
+Fixed bug on Pro Max devices where showing sidebar would deselect current article
+Fixed — hopefully! — the last causes of the restored-to article getting wiped out on launch
+
 ### 7.0 TestFlight build 7020 28 Jan 2026 - branch: main tag: iOS-7.0-7020
 
 Fixed state restoration bug where the restored-to article would animate into view
