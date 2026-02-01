@@ -71,7 +71,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			indicatorView.alpha = 0.0
 			feedIcon?.translatesAutoresizingMaskIntoConstraints = false
 			configureStackView()
-			
+
 			registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(configureStackView))
 		}
 	}
@@ -92,7 +92,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			summary = cellData.summary
 			addArticleContent(configurationState)
 		}
-		
+
 		if cellData.showFeedName == .feed {
 			articleByLine.text = cellData.feedName
 		} else if cellData.showFeedName == .byline {
