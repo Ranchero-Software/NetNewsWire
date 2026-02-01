@@ -58,6 +58,7 @@ final class AppDefaults: Sendable {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let articleFullscreenAvailable = "articleFullscreenAvailable"
 		static let articleFullscreenEnabled = "articleFullscreenEnabled"
+		static let markAsReadOnOpen = "markAsReadOnOpen"
 		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
 		static let lastRefresh = "lastRefresh"
 		static let addFeedAccountID = "addFeedAccountID"
@@ -201,6 +202,15 @@ final class AppDefaults: Sendable {
 		articleFullscreenAvailable && articleFullscreenEnabled
 	}
 
+	var markAsReadOnOpen: Bool {
+		get {
+			return AppDefaults.bool(for: Key.markAsReadOnOpen)
+		}
+		set {
+			AppDefaults.setBool(for: Key.markAsReadOnOpen, newValue)
+		}
+	}
+	
 	var confirmMarkAllAsRead: Bool {
 		get {
 			return AppDefaults.bool(for: Key.confirmMarkAllAsRead)
@@ -396,6 +406,7 @@ final class AppDefaults: Sendable {
 										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 										Key.articleFullscreenAvailable: false,
 										Key.articleFullscreenEnabled: false,
+									    Key.markAsReadOnOpen: true,
 										Key.confirmMarkAllAsRead: true,
 										Key.articleContentJavascriptEnabled: true,
 										Key.currentThemeName: Self.defaultThemeName,
