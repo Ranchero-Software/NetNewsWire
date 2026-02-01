@@ -547,9 +547,16 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		}
 
 		let previewView = cell.contentView
+		var bounds = previewView.bounds
 		let parameters = UIPreviewParameters()
 		parameters.backgroundColor = .tertiarySystemBackground
-		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
+		if let insets = cell.backgroundConfiguration?.backgroundInsets {
+			bounds = bounds.inset(by: UIEdgeInsets(top: insets.top,
+												   left: -insets.leading,
+												   bottom: insets.bottom,
+												   right: -insets.trailing))
+		}
+		parameters.visiblePath = UIBezierPath(roundedRect: bounds,
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
@@ -561,9 +568,16 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		}
 
 		let previewView = cell.contentView
+		var bounds = previewView.bounds
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .clear
-		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
+		parameters.backgroundColor = .tertiarySystemBackground
+		if let insets = cell.backgroundConfiguration?.backgroundInsets {
+			bounds = bounds.inset(by: UIEdgeInsets(top: insets.top,
+												   left: -insets.leading,
+												   bottom: insets.bottom,
+												   right: -insets.trailing))
+		}
+		parameters.visiblePath = UIBezierPath(roundedRect: bounds,
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
