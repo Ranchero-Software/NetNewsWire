@@ -30,6 +30,38 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 	private static let indicatorAnimationDuration = 0.25
 
+	// Paragraph Styles
+	private static let baseWrappingParagraphStyle: NSParagraphStyle = {
+		let style = NSMutableParagraphStyle()
+		style.lineBreakMode = .byWordWrapping
+		style.lineBreakStrategy = []
+		style.hyphenationFactor = 1.0
+		style.allowsDefaultTighteningForTruncation = true
+		return style
+	}()
+	private static let headlineBaseParagraphStyle: NSParagraphStyle = {
+		let style = (baseWrappingParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
+		return style
+	}()
+	private static let summaryBaseParagraphStyle: NSParagraphStyle = {
+		let style = (baseWrappingParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
+		return style
+	}()
+
+	// Text Storage
+	private lazy var lineCountTextStorage = NSTextStorage()
+	private lazy var lineCountLayoutManager: NSLayoutManager = {
+		let lm = NSLayoutManager()
+		lineCountTextStorage.addLayoutManager(lm)
+		return lm
+	}()
+	private lazy var lineCountTextContainer: NSTextContainer = {
+		let tc = NSTextContainer(size: .zero)
+		tc.lineFragmentPadding = 0
+		lineCountLayoutManager.addTextContainer(tc)
+		return tc
+	}()
+
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
@@ -92,7 +124,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		}
 	}
 
-	private func configureStackView() {
+	@objc private func configureStackView() {
 		switch traitCollection.preferredContentSizeCategory {
 		case .accessibilityMedium, .accessibilityLarge, .accessibilityExtraLarge, .accessibilityExtraExtraLarge, .accessibilityExtraExtraExtraLarge:
 			metaDataStackView.axis = .vertical
@@ -135,13 +167,9 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			let titleFont = UIFont.preferredFont(forTextStyle: .headline)
 			let lineHeight = titleFont.lineHeight
 
-			let paragraphStyle = NSMutableParagraphStyle()
+			let paragraphStyle = (Self.headlineBaseParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
 			paragraphStyle.minimumLineHeight = lineHeight
 			paragraphStyle.maximumLineHeight = lineHeight
-			paragraphStyle.lineBreakMode = .byWordWrapping
-			paragraphStyle.lineBreakStrategy = []
-			paragraphStyle.hyphenationFactor = 1.0
-			paragraphStyle.allowsDefaultTighteningForTruncation = true
 
 			let titleAttributes: [NSAttributedString.Key: Any] = [
 				.font: titleFont,
@@ -150,11 +178,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			]
 
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
-            let titleLength = titleAttributed.length
-            let tentativeTitleRange = NSRange(location: 0, length: titleLength)
-            rangeOfTitle = tentativeTitleRange
+			let titleLength = titleAttributed.length
+			let tentativeTitleRange = NSRange(location: 0, length: titleLength)
+			rangeOfTitle = tentativeTitleRange
 
-			let linesUsed = countLines(of: titleAttributed, width: articleContent.bounds.width)
+			let linesUsed = countLines(titleAttributed, width: articleContent.bounds.width)
 			// 2. Measure Title Height
 			if linesUsed >= cellData.numberOfLines {
 				// The title already fills the available lines, set it and exit
@@ -166,7 +194,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			}
 
 			attributedCellText.append(titleAttributed)
-            rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
+			rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
 		}
 
 		// 3. Prepare Summary (Only reached if Title < 3 lines)
@@ -174,13 +202,9 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			let summaryFont = UIFont.preferredFont(forTextStyle: .body)
 			let summaryLineHeight = summaryFont.lineHeight
 
-			let paragraphStyle = NSMutableParagraphStyle()
+			let paragraphStyle = (Self.summaryBaseParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
 			paragraphStyle.minimumLineHeight = summaryLineHeight
 			paragraphStyle.maximumLineHeight = summaryLineHeight
-			paragraphStyle.lineBreakMode = .byWordWrapping
-			paragraphStyle.lineBreakStrategy = []
-			paragraphStyle.hyphenationFactor = 1.0
-			paragraphStyle.allowsDefaultTighteningForTruncation = true
 
 			let summaryAttributes: [NSAttributedString.Key: Any] = [
 				.font: summaryFont,
@@ -190,15 +214,15 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 			let prefix = cellData.title != "" ? "\n" : ""
 			let summaryAttributed = NSAttributedString(string: prefix + cellData.summary, attributes: summaryAttributes)
-            let currentLength = attributedCellText.length
-            let start = currentLength
-            let length = summaryAttributed.length
-            rangeOfSummary = NSRange(location: start, length: length)
+			let currentLength = attributedCellText.length
+			let start = currentLength
+			let length = summaryAttributed.length
+			rangeOfSummary = NSRange(location: start, length: length)
 
 			attributedCellText.append(summaryAttributed)
 		}
 
-		let linesUsed = countLines(of: attributedCellText, width: articleContent.bounds.width)
+		let linesUsed = countLines(attributedCellText, width: articleContent.bounds.width)
 		if linesUsed >= cellData.numberOfLines {
 			// The title already fills 3 lines, set it and exit
 			articleContent.attributedText = attributedCellText
@@ -227,44 +251,37 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			articleContent.attributedText = mutable
 		}
 
-    if configurationState.isSwiped && configurationState.isSelected {
-        articleContent.textColor = .white
-        articleByLine.textColor = .white
-        articleDate.textColor = .white
-    } else if configurationState.isSwiped && !configurationState.isSelected {
-        applyTitleColour()
-		applySummaryColour()
-        articleByLine.textColor = .secondaryLabel
-        articleDate.textColor = .secondaryLabel
-    } else if !configurationState.isSwiped && configurationState.isSelected {
-        articleContent.textColor = .white
-        articleByLine.textColor = .white
-        articleDate.textColor = .white
-    } else {
-		applyTitleColour()
-		applySummaryColour()
-        articleByLine.textColor = .secondaryLabel
-        articleDate.textColor = .secondaryLabel
-    }
-}
+		if configurationState.isSwiped && configurationState.isSelected {
+			articleContent.textColor = .white
+			articleByLine.textColor = .white
+			articleDate.textColor = .white
+		} else if configurationState.isSwiped && !configurationState.isSelected {
+			applyTitleColour()
+			applySummaryColour()
+			articleByLine.textColor = .secondaryLabel
+			articleDate.textColor = .secondaryLabel
+		} else if !configurationState.isSwiped && configurationState.isSelected {
+			articleContent.textColor = .white
+			articleByLine.textColor = .white
+			articleDate.textColor = .white
+		} else {
+			applyTitleColour()
+			applySummaryColour()
+			articleByLine.textColor = .secondaryLabel
+			articleDate.textColor = .secondaryLabel
+		}
+	}
 
-	func countLines(of attributedString: NSAttributedString, width: CGFloat) -> Int {
-		let textStorage = NSTextStorage(attributedString: attributedString)
-		let textContainer = NSTextContainer(size: CGSize(width: width, height: .greatestFiniteMagnitude))
-		let layoutManager = NSLayoutManager()
-
-		layoutManager.addTextContainer(textContainer)
-		textStorage.addLayoutManager(layoutManager)
-
-		textContainer.lineFragmentPadding = 0 // UILabel uses 0 or very small
-		layoutManager.ensureLayout(for: textContainer)
+	func countLines(_ attributed: NSAttributedString, width: CGFloat) -> Int {
+		lineCountTextContainer.size = CGSize(width: width, height: .greatestFiniteMagnitude)
+		lineCountTextStorage.setAttributedString(attributed)
+		lineCountLayoutManager.ensureLayout(for: lineCountTextContainer)
 
 		var lineCount = 0
 		var index = 0
 		var lineRange = NSRange()
-
-		while index < layoutManager.numberOfGlyphs {
-			layoutManager.lineFragmentRect(forGlyphAt: index, effectiveRange: &lineRange)
+		while index < lineCountLayoutManager.numberOfGlyphs {
+			lineCountLayoutManager.lineFragmentRect(forGlyphAt: index, effectiveRange: &lineRange)
 			index = NSMaxRange(lineRange)
 			lineCount += 1
 		}
@@ -278,7 +295,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		backgroundConfig.cornerRadius = 20
 
 		backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
-		backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
+		if UIDevice.current.userInterfaceIdiom == .pad {
+			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
+		} else {
+			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -12, bottom: 0, trailing: -12)
+		}
 
 		if state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
