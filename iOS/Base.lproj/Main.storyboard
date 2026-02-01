@@ -160,13 +160,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="5Fg-Tr-Kiy">
                                                     <rect key="frame" x="36" y="28.333333333333332" width="338" height="14.333333333333332"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o3c-FZ-gKE">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o3c-FZ-gKE">
                                                             <rect key="frame" x="0.0" y="0.0" width="168" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aGY-Xq-5YU">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aGY-Xq-5YU">
                                                             <rect key="frame" x="170" y="0.0" width="168" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -232,13 +232,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="1Y6-rg-S6P">
                                                     <rect key="frame" x="36" y="28.333333333333332" width="338" height="14.333333333333332"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NSi-68-toP">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NSi-68-toP">
                                                             <rect key="frame" x="0.0" y="0.0" width="168" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pk2-pA-n2G">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pk2-pA-n2G">
                                                             <rect key="frame" x="170" y="0.0" width="168" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -304,13 +304,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="lgo-IC-NEC">
                                                     <rect key="frame" x="80" y="28.999999999999996" width="294" height="14.333333333333332"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kYC-07-iWu">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kYC-07-iWu">
                                                             <rect key="frame" x="0.0" y="0.0" width="146" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1tb-Fr-7LL">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1tb-Fr-7LL">
                                                             <rect key="frame" x="148" y="0.0" width="146" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -336,7 +336,7 @@
                                                 <constraint firstItem="JIt-Zk-R1i" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="lgo-IC-NEC" secondAttribute="bottom" constant="9.3300000000000001" id="Rd8-1j-JOC"/>
                                                 <constraint firstItem="lgo-IC-NEC" firstAttribute="top" secondItem="1rh-TG-4t8" secondAttribute="bottom" constant="2.6666666666666714" id="Rmc-dT-5hQ"/>
                                                 <constraint firstItem="JIt-Zk-R1i" firstAttribute="trailing" secondItem="1rh-TG-4t8" secondAttribute="trailing" constant="12" id="UWb-XW-1Cp"/>
-                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Yb4-je-eHg" secondAttribute="bottom" constant="8" id="X77-GP-48D"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Yb4-je-eHg" secondAttribute="bottom" constant="7" id="X77-GP-48D"/>
                                                 <constraint firstItem="JIt-Zk-R1i" firstAttribute="trailing" secondItem="lgo-IC-NEC" secondAttribute="trailing" constant="12" id="cJL-XZ-oDw"/>
                                                 <constraint firstItem="nj2-sM-Flq" firstAttribute="leading" secondItem="JuI-qj-gCR" secondAttribute="leading" id="ezR-ZU-b5P"/>
                                                 <constraint firstItem="lgo-IC-NEC" firstAttribute="leading" secondItem="1rh-TG-4t8" secondAttribute="leading" id="f5a-yo-icp"/>
@@ -387,13 +387,13 @@
                                                 <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="Mzm-P5-SeC">
                                                     <rect key="frame" x="80" y="28.999999999999996" width="294" height="14.333333333333332"/>
                                                     <subviews>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9nR-Dd-ZuE">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="authorByLine" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9nR-Dd-ZuE">
                                                             <rect key="frame" x="0.0" y="0.0" width="146" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pLf-h1-h8G">
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="articleDate" textAlignment="right" lineBreakMode="wordWrap" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pLf-h1-h8G">
                                                             <rect key="frame" x="148" y="0.0" width="146" height="14.333333333333334"/>
                                                             <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -418,7 +418,7 @@
                                                 <constraint firstItem="fP1-Cp-b0P" firstAttribute="top" secondItem="YvV-qC-yEu" secondAttribute="top" id="Hzn-T2-WQD"/>
                                                 <constraint firstItem="Mzm-P5-SeC" firstAttribute="leading" secondItem="O03-6u-AcE" secondAttribute="leading" id="OCH-Jk-pap"/>
                                                 <constraint firstItem="yrT-cr-PV7" firstAttribute="leading" secondItem="YvV-qC-yEu" secondAttribute="leading" constant="12" id="Rzv-Tr-NTy"/>
-                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="oR6-Is-fGr" secondAttribute="bottom" constant="8" id="VRp-NS-jjU"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="oR6-Is-fGr" secondAttribute="bottom" constant="7" id="VRp-NS-jjU"/>
                                                 <constraint firstItem="YvV-qC-yEu" firstAttribute="trailing" secondItem="O03-6u-AcE" secondAttribute="trailing" constant="12" id="Vxz-ky-0mj"/>
                                                 <constraint firstItem="oR6-Is-fGr" firstAttribute="leading" secondItem="yrT-cr-PV7" secondAttribute="trailing" constant="8" id="bmo-Xv-fES"/>
                                                 <constraint firstItem="oR6-Is-fGr" firstAttribute="top" secondItem="YvV-qC-yEu" secondAttribute="top" constant="8" id="fHy-Tj-AXE"/>
