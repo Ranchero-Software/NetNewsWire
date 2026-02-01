@@ -109,6 +109,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		guard traitCollection.userInterfaceIdiom == .phone else {
 			return
 		}
+		// Pro Max may have split view in landscape — make sure it's collapsed.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5043>
+		guard coordinator.isRootSplitCollapsed else {
+			return
+		}
 
 		if collectionView.indexPathsForSelectedItems != nil {
 			coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
