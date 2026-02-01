@@ -25,8 +25,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 	var isPreview: Bool = false
 
+	// Cached Values
 	private var rangeOfTitle: NSRange?
 	private var rangeOfSummary: NSRange?
+	private var title: String = ""
+	private var summary: String = ""
 
 	private static let indicatorAnimationDuration = 0.25
 
