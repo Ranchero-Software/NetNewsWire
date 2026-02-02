@@ -231,12 +231,15 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		guard traitCollection.userInterfaceIdiom == .phone else {
 			return
 		}
+		guard let coordinator, coordinator.isRootSplitCollapsed else {
+			return
+		}
 
-		if coordinator?.currentArticle != nil {
+		if coordinator.currentArticle != nil {
 			if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
 				collectionView?.deselectItem(at: indexPath, animated: true)
 			}
-			coordinator?.selectArticle(nil)
+			coordinator.selectArticle(nil)
 		}
 	}
 
