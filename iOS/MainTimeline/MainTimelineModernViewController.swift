@@ -221,9 +221,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		// Deselect only when returning from article navigation
 		if coordinator?.isRootSplitCollapsed ?? true, didPushArticleViewController {
 			didPushArticleViewController = false
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-				self.deselectIfNecessary()
-			}
+			self.deselectIfNecessary()
 		}
 	}
 
@@ -555,12 +553,12 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		let previewView = cell.contentView
 		var bounds = previewView.bounds
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .tertiarySystemBackground
+		parameters.backgroundColor = cell.isSelected ? cell.backgroundConfiguration?.backgroundColor : .tertiarySystemBackground
 		if let insets = cell.backgroundConfiguration?.backgroundInsets {
 			bounds = bounds.inset(by: UIEdgeInsets(top: insets.top,
-												   left: -insets.leading,
+												   left: -insets.leading - 4,
 												   bottom: insets.bottom,
-												   right: -insets.trailing))
+												   right: -insets.trailing - 4))
 		}
 		parameters.visiblePath = UIBezierPath(roundedRect: bounds,
 											  cornerRadius: 20)
@@ -576,12 +574,12 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		let previewView = cell.contentView
 		var bounds = previewView.bounds
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .tertiarySystemBackground
+		parameters.backgroundColor = cell.isSelected ? cell.backgroundConfiguration?.backgroundColor : .tertiarySystemBackground
 		if let insets = cell.backgroundConfiguration?.backgroundInsets {
 			bounds = bounds.inset(by: UIEdgeInsets(top: insets.top,
-												   left: -insets.leading,
+												   left: -insets.leading - 4,
 												   bottom: insets.bottom,
-												   right: -insets.trailing))
+												   right: -insets.trailing - 4))
 		}
 		parameters.visiblePath = UIBezierPath(roundedRect: bounds,
 											  cornerRadius: 20)

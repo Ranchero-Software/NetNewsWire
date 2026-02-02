@@ -309,7 +309,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		if UIDevice.current.userInterfaceIdiom == .pad {
 			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
 		} else {
-			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -12, bottom: 0, trailing: -12)
+			if !isPreview {
+				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -12, bottom: 0, trailing: -12)
+			} else {
+				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -16, bottom: 0, trailing: -16)
+			}
 		}
 
 		if state.isSwiped && state.isSelected {
