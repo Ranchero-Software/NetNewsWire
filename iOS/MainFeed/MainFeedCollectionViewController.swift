@@ -71,6 +71,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     }
 
 	override func viewWillAppear(_ animated: Bool) {
+		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear \(self.coordinator.displayMode.rawValue)")
 		navigationController?.isToolbarHidden = false
 		updateUI()
 		super.viewWillAppear(animated)
@@ -97,12 +98,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
-		Self.logger.debug("MainFeedCollectionViewController: viewDidAppear")
-		/// On iPhone, once the deselection animation has completed, set `isAnimating`
-		/// to false and this will allow selection.
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-			self.deselectIfNeccessary()
-		}
+		self.deselectIfNeccessary()
 	}
 
 	func deselectIfNeccessary() {
@@ -111,20 +107,29 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		defer {
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-				self.isAnimating = false
-			}
+			self.isAnimating = false
 		}
 
-		// Pro Max may have split view in landscape — make sure it's collapsed.
+		// Pro Max may have split view in landscape — give the device some
+		// time to change its size class and then decide to deselect
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5043>
-		guard coordinator.isRootSplitCollapsed else {
-			return
-		}
-
-		if collectionView.indexPathsForSelectedItems != nil {
-			coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+			// If the iPhone is in portrait, deselect.
+			if UIDevice.current.orientation.isPortrait {
+				if self.collectionView.indexPathsForSelectedItems != nil {
+					self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
+				}
+				return
+			}
+			
+			// If the iPhone is in landscape, and the horizontal
+			// size class is compact, deselect.
+			if self.view.window!.traitCollection.horizontalSizeClass == .compact {
+				if self.collectionView.indexPathsForSelectedItems != nil { self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
+				}
+				return
+			}
+		})
 	}
 
 	func registerForNotifications() {

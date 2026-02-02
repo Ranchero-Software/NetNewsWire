@@ -221,9 +221,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		// Deselect only when returning from article navigation
 		if coordinator?.isRootSplitCollapsed ?? true, didPushArticleViewController {
 			didPushArticleViewController = false
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-				self.deselectIfNecessary()
-			}
+			self.deselectIfNecessary()
 		}
 	}
 
