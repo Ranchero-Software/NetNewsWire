@@ -13,10 +13,16 @@ class VibrantTableViewCell: UITableViewCell {
 	static let duration: TimeInterval = 0.6
 
 	var labelColor: UIColor {
+		if selectionStyle == .none {
+			return UIColor.label
+		}
 		return isHighlighted || isSelected ? Assets.Colors.vibrantText : UIColor.label
 	}
 
 	var secondaryLabelColor: UIColor {
+		if selectionStyle == .none {
+			return UIColor.secondaryLabel
+		}
 		return isHighlighted || isSelected ? Assets.Colors.vibrantText : UIColor.secondaryLabel
 	}
 
