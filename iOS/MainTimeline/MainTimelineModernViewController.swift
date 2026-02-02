@@ -219,7 +219,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		}
 
 		// Deselect only when returning from article navigation
-		if didPushArticleViewController {
+		if coordinator?.isRootSplitCollapsed ?? true, didPushArticleViewController {
 			didPushArticleViewController = false
 			DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
 				self.deselectIfNecessary()
@@ -228,6 +228,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	}
 
 	func deselectIfNecessary() {
+		Self.logger.debug("MainTimelineModernViewController: deselectIfNecessary")
+
 		guard traitCollection.userInterfaceIdiom == .phone else {
 			return
 		}
@@ -236,6 +238,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		}
 
 		if coordinator.currentArticle != nil {
+			Self.logger.debug("MainTimelineModernViewController: deselectIfNecessary deselecting")
 			if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
 				collectionView?.deselectItem(at: indexPath, animated: true)
 			}
