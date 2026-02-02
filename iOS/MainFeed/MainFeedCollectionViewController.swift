@@ -121,7 +121,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				}
 				return
 			}
-			
+
 			// If the iPhone is in landscape, and the horizontal
 			// size class is compact, deselect.
 			if self.view.window!.traitCollection.horizontalSizeClass == .compact {
