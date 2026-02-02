@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7022 2 Feb 2026 - branch: main tag: iOS-7.0-7022
+
+Fixed — again, this time for good, we think! — bugs on Pro Max devices with rotation and timeline selection
+Removed latency from the deselection animation on navigating back to the timeline 
+
 ### 7.0 TestFlight build 7021 1 Feb 2026 - branch: main tag: iOS-7.0-7021
 
 Fixed some UI glitches with timeline cells
