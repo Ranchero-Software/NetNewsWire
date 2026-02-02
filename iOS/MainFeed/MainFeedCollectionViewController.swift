@@ -71,7 +71,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     }
 
 	override func viewWillAppear(_ animated: Bool) {
-		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear \(self.coordinator.displayMode.rawValue)")
+		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear")
 		navigationController?.isToolbarHidden = false
 		updateUI()
 		super.viewWillAppear(animated)
