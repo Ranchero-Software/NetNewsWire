@@ -2086,16 +2086,13 @@ private extension SceneCoordinator {
 		if articles != sortedArticles {
 			articles = sortedArticles
 
-			// Update currentArticle to the new instance if it's still in the timeline,
-			// or clear it if it's no longer there.
-			// Don't call selectArticle(nil) because that triggers navigation on iPhone.
+			// Update currentArticle to the new instance if it's still in the timeline.
+			// If the article is no longer in the timeline, keep showing it anyway -
+			// don't blank the user's screen just because the article filtered out.
 			// Skip during state restoration so the restored article stays open.
 			if !isRestoringState, let currentArticle {
 				if let newArticle = sortedArticles.first(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
 					self.currentArticle = newArticle
-				} else {
-					self.currentArticle = nil
-					articleViewController?.article = nil
 				}
 			}
 
