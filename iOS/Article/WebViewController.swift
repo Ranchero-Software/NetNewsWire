@@ -67,7 +67,7 @@ final class WebViewController: UIViewController {
 	weak var coordinator: SceneCoordinator!
 	weak var delegate: WebViewControllerDelegate?
 
-	private(set) var article: Article?
+	var article: Article?
 
 	let scrollPositionQueue = CoalescingQueue(name: "Article Scroll Position", interval: 0.3, maxInterval: 0.3)
 	var windowScrollY = 0 {
