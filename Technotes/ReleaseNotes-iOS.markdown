@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7023 3 Feb 2026 - branch: main tag: iOS-7.0-7023
+
+Fixed — for real this time! — the last and final cause of the restored-to article sometimes getting removed on launch
+
 ### 7.0 TestFlight build 7022 2 Feb 2026 - branch: main tag: iOS-7.0-7022
 
 Fixed — again, this time for good, we think! — bugs on Pro Max devices with rotation and timeline selection
