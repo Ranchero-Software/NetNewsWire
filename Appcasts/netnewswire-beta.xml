@@ -19,31 +19,6 @@
 		</item>
 
 		<item>
-			<title>NetNewsWire 7.0b6</title>
-            <description><![CDATA[
-				<ul>
-					<li>Made the article view content blur when underneath the toolbar
-				</ul>
-			]]></description>
-        	<pubDate>Sat, 24 Jan 2026 10:35:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b6/NetNewsWire7.0b6.zip" sparkle:version="7013" sparkle:shortVersionString="7.0b6" length="10356640" type="application/zip" />
-			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0b5</title>
-            <description><![CDATA[
-				<ul>
-					<li>Decreased the minimum size of the sidebar
-					<li>Fixed two causes of a bug where small images would sometimes display as much larger than they should be
-				</ul>
-			]]></description>
-        	<pubDate>Thu, 22 Jan 2026 15:45:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0b5/NetNewsWire7.0b5.zip" sparkle:version="7011" sparkle:shortVersionString="7.0b5" length="10354304" type="application/zip" />
-			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
 			<title>NetNewsWire 6.2.1</title>
             <description><![CDATA[
 				<p>Changes since 6.2:</p>
