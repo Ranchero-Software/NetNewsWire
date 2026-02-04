@@ -1,7 +1,3 @@
-# Promotional Text
-
-More news. Less junk. Faster.
-
 # Description
 
 It’s like podcasts, but for reading.
