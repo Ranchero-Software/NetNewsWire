@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0 TestFlight build 7024 3 Feb 2026 - branch: main tag: iOS-7.0-7024
+
+Fixed a crashing bug
+
 ### 7.0 TestFlight build 7023 3 Feb 2026 - branch: main tag: iOS-7.0-7023
 
 Fixed — for real this time! — the last and final cause of the restored-to article sometimes getting removed on launch
