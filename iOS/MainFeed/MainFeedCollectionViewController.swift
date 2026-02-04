@@ -124,7 +124,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 			// If the iPhone is in landscape, and the horizontal
 			// size class is compact, deselect.
-			if self.view.window!.traitCollection.horizontalSizeClass == .compact {
+			if self.view.window?.traitCollection.horizontalSizeClass == .compact {
 				if self.collectionView.indexPathsForSelectedItems != nil { self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 				}
 				return
