@@ -14,6 +14,16 @@ final class DetailWebView: WKWebView {
 	weak var keyboardDelegate: KeyboardDelegate?
 	private var isObservingResizeNotifications = false
 
+	/// When the find bar is visible, the web view is pushed below it and no longer
+	/// extends under the toolbar, so we should not set obscuredContentInsets.
+	var isFindBarVisible = false {
+		didSet {
+			if isFindBarVisible != oldValue {
+				updateObscuredContentInsets()
+			}
+		}
+	}
+
 	private static let estimatedToolbarHeight: CGFloat = 52 // Height of macOS 26.2 icon-only toolbar
 	private var toolbarHeight: CGFloat {
 		guard let window,
@@ -99,6 +109,12 @@ final class DetailWebView: WKWebView {
 		super.viewDidEndLiveResize()
 		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
 	}
+
+	// MARK: NSTextFinderClient
+
+	// Returning false here prevents the "Replace" checkbox from appearing in the find bar
+	override var isEditable: Bool { return false }
+
 }
 
 // MARK: - Private
@@ -132,7 +148,10 @@ private extension DetailWebView {
 	}
 
 	func updateObscuredContentInsets() {
-		let updatedObscuredContentInsets = NSEdgeInsets(top: toolbarHeight, left: 0, bottom: 0, right: 0)
+		// When the find bar is visible, the web view is constrained below it and no longer
+		// extends under the toolbar, so we don't need to account for toolbar obscuring.
+		let topInset = isFindBarVisible ? 0 : toolbarHeight
+		let updatedObscuredContentInsets = NSEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
 		if obscuredContentInsets != updatedObscuredContentInsets {
 			obscuredContentInsets = updatedObscuredContentInsets
 		}
