@@ -13,6 +13,7 @@ import Account
 struct AccountNotificationInspectorView: View {
 	
 	@Environment(\.dismiss) private var dismiss
+	@State private var uuid = UUID()
     
 	var account: Account!
 	
@@ -23,11 +24,12 @@ struct AccountNotificationInspectorView: View {
 			}), id: \.feedID) { feed in
 				Toggle(isOn: Binding(get: { feed.isNotifyAboutNewArticles ?? false }, set: { feed.isNotifyAboutNewArticles = $0 })) {
 					HStack {
-						if feed.smallIcon != nil {
-							Image(uiImage: feed.smallIcon!.image)
-								.resizable()
-								.frame(width: 24, height: 24)
-								.clipShape(RoundedRectangle(cornerRadius: 4.0, style: .continuous))
+						if let img = IconImageCache.shared.imageFor(feed.sidebarItemID!) {
+							IconImageView(icon: img)
+								.id(uuid)
+						} else if let img = feed.smallIcon {
+							IconImageView(icon: img)
+								.id(uuid)
 						}
 						Text(verbatim: feed.nameForDisplay)
 						Spacer()
@@ -43,6 +45,9 @@ struct AccountNotificationInspectorView: View {
 						dismiss()
 					}
 				}
+			}
+			.onReceive(NotificationCenter.default.publisher(for: Notification.Name.feedIconDidBecomeAvailable)) { _ in
+				uuid = UUID()
 			}
 		}
     }
