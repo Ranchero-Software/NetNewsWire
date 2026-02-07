@@ -11,13 +11,13 @@ import UserNotifications
 import Account
 
 struct AccountNotificationInspectorView: View {
-	
+
 	@Environment(\.dismiss) private var dismiss
 	@State private var uuid = UUID()
 	@State private var authorisationStatus: UNAuthorizationStatus = .notDetermined
-    
+
 	var account: Account!
-	
+
 	var body: some View {
 		NavigationStack {
 			if authorisationStatus == .notDetermined || authorisationStatus == .denied {
@@ -25,7 +25,7 @@ struct AccountNotificationInspectorView: View {
 					ContentUnavailableView("Notifications Disabled",
 										   systemImage: "bell.slash",
 										   description: Text("Enable Notifications in Settings", comment: "Enable Notifications in Settings"))
-					
+
 					Button {
 						UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
 					} label: {
@@ -77,8 +77,6 @@ struct AccountNotificationInspectorView: View {
 					uuid = UUID()
 				}
 			}
-			
-			
 		}
 		.task {
 			let settings = await UNUserNotificationCenter.current().notificationSettings()
@@ -92,4 +90,3 @@ struct AccountNotificationInspectorView: View {
 		})
     }
 }
-

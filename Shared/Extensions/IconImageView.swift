@@ -6,7 +6,6 @@
 //  Copyright © 2026 Ranchero Software. All rights reserved.
 //
 
-
 // SwiftUI wrapper for `IconImage`
 
 import SwiftUI

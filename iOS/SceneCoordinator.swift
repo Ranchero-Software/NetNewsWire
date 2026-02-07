@@ -1348,7 +1348,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		accountInspectorController.account = account
 		rootSplitViewController.present(accountInspectorNavController, animated: true)
 	}
-	
+
 	func showNotificationInspector(for account: Account) {
 		let hostingController = UIHostingController(rootView: AccountNotificationInspectorView(account: account))
 		hostingController.modalPresentationStyle = .formSheet
