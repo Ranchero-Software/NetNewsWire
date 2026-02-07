@@ -35,6 +35,7 @@ struct AccountNotificationInspectorView: View {
 					.tint(.accentColor)
 				}
 				.navigationTitle(Text("New Article Notifications", comment: "New Article Notifications"))
+				.navigationSubtitle(Text(verbatim: account.nameForDisplay))
 				.navigationBarTitleDisplayMode(.inline)
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
@@ -64,6 +65,7 @@ struct AccountNotificationInspectorView: View {
 				}
 				.navigationTitle(Text("New Article Notifications", comment: "New Article Notifications"))
 				.navigationBarTitleDisplayMode(.inline)
+				.navigationSubtitle(Text(verbatim: account.nameForDisplay))
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
 						Button(role: .close) {
