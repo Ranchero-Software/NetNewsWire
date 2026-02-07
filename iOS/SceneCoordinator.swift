@@ -14,6 +14,7 @@ import Articles
 import RSCore
 import RSTree
 import SafariServices
+import SwiftUI
 
 enum SearchScope: Int {
 	case timeline = 0
@@ -1346,6 +1347,12 @@ struct SidebarItemNode: Hashable, Sendable {
 		accountInspectorController.isModal = true
 		accountInspectorController.account = account
 		rootSplitViewController.present(accountInspectorNavController, animated: true)
+	}
+	
+	func showNotificationInspector(for account: Account) {
+		let hostingController = UIHostingController(rootView: AccountNotificationInspectorView(account: account))
+		hostingController.modalPresentationStyle = .formSheet
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showFeedInspector() {

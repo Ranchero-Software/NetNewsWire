@@ -856,6 +856,8 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 			var menuElements = [UIMenuElement]()
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountInfoAction(account: account)]))
 
+			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountNotificationsAction(account: account)]))
+			
 			if let markAllAction = self.markAllAsReadAction(account: account, contentView: interaction.view) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
@@ -1098,6 +1100,14 @@ extension MainFeedCollectionViewController {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] _ in
 			self?.coordinator.showAccountInspector(for: account)
+		}
+		return action
+	}
+	
+	func getAccountNotificationsAction(account: Account) -> UIAction {
+		let title = NSLocalizedString("Notifications", comment: "Notifications")
+		let action = UIAction(title: title, image: UIImage(systemName: "bell.badge")) { [weak self] _ in
+			self?.coordinator.showNotificationInspector(for: account)
 		}
 		return action
 	}
