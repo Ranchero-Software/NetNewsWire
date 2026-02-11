@@ -1,0 +1,497 @@
+/* Shared iOS and macOS CSS rules. Platform specific rules are at the bottom of this file. */
+
+body {
+	margin-left: auto;
+	margin-right: auto;
+	word-wrap: break-word;
+	max-width: 44em;
+	background-color: rgb(248, 241, 227);
+	color: rgb(79, 50, 28);
+}
+
+[href] {
+	text-decoration-style: underline;
+	text-decoration-color: var(--link-underline-color);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.15em;
+}
+[href]:hover {
+	text-shadow: 0 1px rgba(255, 255, 255, 2);
+	opacity: 0.8;
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
+}
+
+#nnwImageIcon {
+	width: 32px;
+	height: 32px;
+	margin-right: 0.2em;
+}
+
+.systemMessage {
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translateX(-55%) translateY(-50%);
+	-webkit-user-select: none;
+	cursor: default;
+}
+
+:root {
+	--header-table-border-color: rgba(0, 0, 0, 0.3);
+	--header-color: rgba(0, 0, 0, 0.5);
+	--body-code-color: #704214;
+	--system-message-color: #704214;
+	--feedlink-color: #704214;
+	--article-title-color: #704214;
+	--article-date-color: rgba(0, 0, 0, 0.5);
+	--table-cell-border-color: lightgray;
+	--primary-accent-color: #43350e;
+	--secondary-accent-color: #43350e;
+	--block-quote-border-color: rgba(0, 0, 0, 0.3);
+	--link-underline-color: color-mix(in hsl, currentColor, transparent 40%);
+	--link-underline-special: color-mix(in hsl, currentColor, transparent 80%)
+}
+
+body a,
+body a:visited,
+body a * {
+	color: var(--secondary-accent-color);
+}
+
+body > header {
+	border-bottom: 1px solid var(--header-table-border-color);
+	padding-bottom: 0.5rem;
+}
+
+body > header a,
+body > header a:link,
+body > header a:visited {
+	color: var(--header-color);
+}
+body > header .headerTable {
+	width: 100%;
+}
+body > header .headerTable td,
+body > header .headerTable th {
+	color: var(--header-color);
+	padding: 0.2em;
+	border: none;
+	font-family: sans-serif;
+	font-size: 0.9rem;
+}
+body > header .headerTable td.avatar {
+	width: 33%;
+}
+
+body code,
+body pre {
+	color: var(--body-code-color);
+}
+
+body > .systemMessage {
+	color: var(--system-message-color);
+}
+
+.headerContainer a[href] {
+	text-decoration-color: var(--link-underline-special);
+	color: var(--feedlink-color);
+}
+
+.avatar img {
+	border-radius: 4px;
+}
+
+.feedIcon {
+	border-radius: 4px;
+}
+
+.rightAlign {
+	text-align: end;
+}
+
+.leftAlign {
+	text-align: start;
+}
+
+.articleTitle [href] {
+	text-decoration-color: transparent;
+	color: var(--article-title-color);
+	margin-top: 26px;
+}
+
+.articleDateline {
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+.articleDateline [href] {
+	text-decoration-color: var(--link-underline-special);
+	color: var(--article-date-color);
+}
+
+.articleDatelineTitle {
+	margin-bottom: 5px;
+	font-weight: bold;
+}
+
+.articleDatelineTitle [href] {
+	color: var(--article-title-color);
+}
+
+.externalLink {
+	margin-bottom: 5px;
+	font-style: italic;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+
+.articleBody {
+	margin-top: 20px;
+	line-height: 1.6em;
+}
+
+h1 {
+	line-height: 1.15em;
+	font-weight: bold;
+	padding-bottom: 0;
+	margin-bottom: 5px;
+}
+
+pre {
+	max-width: 100%;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	word-wrap: normal;
+	word-break: normal;
+}
+
+pre {
+	line-height: 1.4286em;
+}
+
+code,
+pre {
+	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
+	font-size: 0.85rem;
+	letter-spacing: -0.027em;
+	-webkit-hyphens: none;
+}
+
+.nnw-overflow {
+	overflow-x: auto;
+}
+
+/*
+ Instead of the last-child bits, border-collapse: collapse
+ could have been used. However, then the inter-cell borders
+ overlap the table border, which looks bad.
+ */
+.nnw-overflow table {
+	margin-bottom: 1px;
+	border-spacing: 0;
+	border: 1px solid var(--secondary-accent-color);
+	font-size: inherit;
+}
+
+.nnw-overflow table table {
+	margin-bottom: 0;
+	border: none;
+}
+
+.nnw-overflow td,
+.nnw-overflow th {
+	-webkit-hyphens: none;
+	word-break: normal;
+	border: 1px solid var(--table-cell-border-color);
+	border-top: none;
+	border-left: none;
+	padding: 5px;
+}
+
+.nnw-overflow tr :matches(td, th):last-child {
+	border-right: none;
+}
+
+.nnw-overflow
+	:matches(thead, tbody, tfoot):last-child
+	> tr:last-child
+	:matches(td, th) {
+	border-bottom: none;
+}
+
+.nnw-overflow td pre {
+	border: none;
+	padding: 0;
+}
+
+.nnw-overflow table[border="0"] {
+	border-width: 0;
+}
+
+img,
+figure,
+video,
+div,
+object {
+	max-width: 100%;
+	height: auto !important;
+	margin: 0 auto;
+}
+
+iframe {
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+iframe.nnw-constrained {
+	max-height: 50vw;
+}
+
+figure {
+	margin-bottom: 1em;
+	margin-top: 1em;
+}
+
+figcaption {
+	font-size: 14px;
+	line-height: 1.3em;
+}
+
+sup {
+	vertical-align: top;
+	position: relative;
+	bottom: 0.2rem;
+}
+
+sub {
+	vertical-align: bottom;
+	position: relative;
+	top: 0.2rem;
+}
+
+hr {
+	border: 1.5px solid var(--table-cell-border-color);
+}
+
+.iframeWrap {
+	position: relative;
+	display: block;
+	padding-top: 56.25%;
+}
+
+.iframeWrap iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100% !important;
+	width: 100% !important;
+}
+
+blockquote {
+	margin-inline-start: 0;
+	margin-inline-end: 0;
+	padding-inline-start: 15px;
+	border-inline-start: 3px solid var(--block-quote-border-color);
+}
+
+/* Feed Specific */
+
+.feedbin--article-wrap {
+	border-top: 1px solid var(--header-table-border-color);
+}
+
+/* Twitter */
+
+.twitterAvatar {
+	vertical-align: middle;
+	border-radius: 4px;
+	height: 1.7em;
+	width: 1.7em;
+}
+
+.twitterUsername {
+	line-height: 1.2;
+	margin-left: 4px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.twitterScreenName {
+	font-size: 66%;
+}
+
+.twitterTimestamp {
+	font-size: 66%;
+}
+
+/* Newsfoot theme for light mode (default) */
+.newsfoot-footnote-popover {
+	background: #ccc;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.25);
+	color: #704214;
+	padding: 1px;
+}
+
+.newsfoot-footnote-popover-arrow {
+	background: #fbf0d9;
+	border: 1px solid #ccc;
+}
+
+.newsfoot-footnote-popover-inner {
+	background: #fbf0d9;
+}
+
+body a.footnote,
+body a.footnote:visited,
+.newsfoot-footnote-popover + a.footnote:hover {
+	background: #aaa;
+	color: white;
+	transition: background-color 200ms ease-out;
+}
+
+a.footnote:hover,
+.newsfoot-footnote-popover + a.footnote {
+	background: #666;
+	transition: background-color 200ms ease-out;
+}
+
+/* iOS Specific */
+@supports (-webkit-touch-callout: none) {
+	body {
+		margin-top: 3px;
+		margin-bottom: 20px;
+		padding-left: 20px;
+		padding-right: 20px;
+
+		word-break: break-word;
+		-webkit-hyphens: auto;
+		-webkit-text-size-adjust: none;
+		font-family: Charter, Georgia, sans-serif;
+		font-size: [[font-size]]px;
+	}
+
+	.articleTitle h1 {
+		font-size: 1.5em;
+	}
+
+	pre {
+		border: 1px solid var(--secondary-accent-color);
+		padding: 5px;
+	}
+
+	.nnw-overflow table {
+		border: 1px solid var(--secondary-accent-color);
+	}
+}
+
+/* macOS Specific */
+@supports not (-webkit-touch-callout: none) {
+	body {
+		margin-top: 20px;
+		margin-bottom: 64px;
+		padding-left: 48px;
+		padding-right: 48px;
+		font-family: Charter, Georgia, sans-serif;
+	}
+
+	.smallText {
+		font-size: 14px;
+	}
+
+	.mediumText {
+		font-size: 16px;
+	}
+
+	.largeText {
+		font-size: 18px;
+	}
+
+	.xlargeText {
+		font-size: 20px;
+	}
+
+	.xxlargeText {
+		font-size: 22px;
+	}
+
+	pre {
+		border: 1px solid var(--primary-accent-color);
+		padding: 10px;
+	}
+
+	.nnw-overflow table {
+		border: 1px solid var(--primary-accent-color);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	body {
+	background-color: #17120f;
+	color: #c5c2c1;
+	}
+
+	body a,
+	body a:visited,
+	body a * {
+	color: #bbb8b7;
+	}
+
+	body b,
+	body strong {
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 15%);
+	}
+
+	[href]:hover,
+	.headerContainer a[href]:hover {
+	text-shadow: 0 1px rgba(0, 0, 0, 2);
+	opacity: 0.8;
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
+	}
+
+	:root {
+	--header-table-border-color: rgba(255, 255, 255, 0.3);
+	--header-color: rgba(255, 255, 255, 0.5);
+	--body-code-color: #c0bdb40;
+	--system-message-color: #c0bdb40;
+	--feedlink-color: #c0bdb40;
+	--article-title-color: #c0bdb40;
+	--article-date-color: rgba(255, 255, 255, 0.5);
+	--table-cell-border-color: dimgray;
+	--primary-accent-color: #43350e;
+	--secondary-accent-color: #43350e;
+	--block-quote-border-color: rgba(255, 255, 255, 0.3);
+	--link-underline-color: color-mix(in hsl, currentColor, transparent 20%);
+	--link-underline-special: color-mix(in hsl, currentColor, transparent 40%)
+	}
+
+	.newsfoot-footnote-popover {
+	background: #555;
+	box-shadow: 0 2px 4px rgba(255, 255, 255, 0.5), 0 3px 6px rgba(255, 255, 255, 0.25);
+	color: #c5c2c1;
+	}
+
+	.newsfoot-footnote-popover-arrow {
+	background: #17120f;
+	border-color: 1px solid #555;
+	}
+
+	.newsfoot-footnote-popover-inner {
+	background: #17120f;
+	}
+
+	body a.footnote,
+	body a.footnote:visited,
+	.newsfoot-footnote-popover + a.footnote:hover {
+	background: #444;
+	color: #aaa;
+	}
+
+	a.footnote:hover,
+	.newsfoot-footnote-popover + a.footnote {
+	background: #444;
+	}
+}
