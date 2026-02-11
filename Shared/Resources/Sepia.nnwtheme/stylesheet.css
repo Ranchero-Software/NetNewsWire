@@ -427,3 +427,74 @@ a.footnote:hover,
 		border: 1px solid var(--primary-accent-color);
 	}
 }
+
+@media (prefers-color-scheme: dark) {
+	body {
+	background-color: #17120f;
+	color: #c5c2c1;
+	}
+
+	body a,
+	body a:visited,
+	body a * {
+	color: #bbb8b7;
+	}
+
+	body b,
+	body strong {
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 15%);
+	}
+
+	[href]:hover,
+	.headerContainer a[href]:hover {
+	text-shadow: 0 1px rgba(0, 0, 0, 2);
+	opacity: 0.8;
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
+	}
+
+	:root {
+	--header-table-border-color: rgba(255, 255, 255, 0.3);
+	--header-color: rgba(255, 255, 255, 0.5);
+	--body-code-color: #c0bdb40;
+	--system-message-color: #c0bdb40;
+	--feedlink-color: #c0bdb40;
+	--article-title-color: #c0bdb40;
+	--article-date-color: rgba(255, 255, 255, 0.5);
+	--table-cell-border-color: dimgray;
+	--primary-accent-color: #43350e;
+	--secondary-accent-color: #43350e;
+	--block-quote-border-color: rgba(255, 255, 255, 0.3);
+	--link-underline-color: color-mix(in hsl, currentColor, transparent 20%);
+	--link-underline-special: color-mix(in hsl, currentColor, transparent 40%)
+	}
+
+	.newsfoot-footnote-popover {
+	background: #555;
+	box-shadow: 0 2px 4px rgba(255, 255, 255, 0.5), 0 3px 6px rgba(255, 255, 255, 0.25);
+	color: #c5c2c1;
+	padding: 1px;
+	}
+
+	.newsfoot-footnote-popover-arrow {
+	background: #17120f;
+	border: 1px solid #555;
+	}
+
+	.newsfoot-footnote-popover-inner {
+	background: #17120f;
+	}
+
+	body a.footnote,
+	body a.footnote:visited,
+	.newsfoot-footnote-popover + a.footnote:hover {
+	background: #444;
+	color: #aaa;
+	transition: background-color 200ms ease-out;
+	}
+
+	a.footnote:hover,
+	.newsfoot-footnote-popover + a.footnote {
+	background: #444;
+	transition: background-color 200ms ease-out;
+	}
+}
