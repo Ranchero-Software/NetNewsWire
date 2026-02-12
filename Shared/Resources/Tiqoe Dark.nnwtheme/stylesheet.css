@@ -448,6 +448,14 @@ a.footnote:hover,
 	color: inherit;
 	}
 
+	a :is(em, i, u) {
+	color: inherit;
+	}
+	
+	a u {
+	text-decoration: none;
+	}
+
 	[href]:hover,
 	.headerContainer a[href]:hover {
 	text-shadow: 0 1px rgba(0, 0, 0, 2);
