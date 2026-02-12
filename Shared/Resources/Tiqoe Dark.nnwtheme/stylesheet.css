@@ -452,14 +452,15 @@ a.footnote:hover,
 	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
 	}
 
+	/* #c0bdb4 → #c5c2c1 */
 	:root {
 	color-scheme: dark;
 	--header-table-border-color: rgba(255, 255, 255, 0.3);
 	--header-color: rgba(255, 255, 255, 0.5);
-	--body-code-color: #c0bdb40;
-	--system-message-color: #c0bdb40;
-	--feedlink-color: #c0bdb40;
-	--article-title-color: #c0bdb40;
+	--body-code-color: #c5c2c1;
+	--system-message-color: #c5c2c1;
+	--feedlink-color: rgba(255, 255, 255, 0.5);
+	--article-title-color: #c5c2c1;
 	--article-date-color: rgba(255, 255, 255, 0.5);
 	--table-cell-border-color: dimgray;
 	--primary-accent-color: #43350e;
