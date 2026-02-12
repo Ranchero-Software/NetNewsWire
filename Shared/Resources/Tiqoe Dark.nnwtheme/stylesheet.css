@@ -453,6 +453,7 @@ a.footnote:hover,
 	}
 
 	:root {
+	color-scheme: dark;
 	--header-table-border-color: rgba(255, 255, 255, 0.3);
 	--header-color: rgba(255, 255, 255, 0.5);
 	--body-code-color: #c0bdb40;
