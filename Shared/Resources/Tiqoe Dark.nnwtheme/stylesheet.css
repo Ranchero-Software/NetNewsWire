@@ -440,9 +440,12 @@ a.footnote:hover,
 	color: #bbb8b7;
 	}
 
-	body b,
-	body strong {
+	body :is(b, strong) {
 	color: color-mix(in hsl, var(--link-underline-color), firebrick 15%);
+	}
+	
+	.articleTitle [href] :is(em, i) {
+	color: inherit;
 	}
 
 	[href]:hover,
