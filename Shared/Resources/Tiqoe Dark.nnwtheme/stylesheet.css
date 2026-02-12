@@ -452,7 +452,6 @@ a.footnote:hover,
 	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
 	}
 
-	/* #c0bdb4 → #c5c2c1 */
 	:root {
 	color-scheme: dark;
 	--header-table-border-color: rgba(255, 255, 255, 0.3);
