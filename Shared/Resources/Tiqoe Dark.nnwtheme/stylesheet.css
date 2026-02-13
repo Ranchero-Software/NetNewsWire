@@ -92,6 +92,10 @@ body pre {
 	color: var(--body-code-color);
 }
 
+a code {
+	color: inherit;
+}
+
 body > .systemMessage {
 	color: var(--system-message-color);
 }
@@ -452,7 +456,7 @@ a.footnote:hover,
 	color: inherit;
 	}
 
-	a :is(em, i, u) {
+	a :is(code, em, i, u) {
 	color: inherit;
 	}
 	
