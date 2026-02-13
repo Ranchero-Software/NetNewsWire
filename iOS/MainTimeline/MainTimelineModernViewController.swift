@@ -1236,7 +1236,7 @@ extension MainTimelineModernViewController {
 			return nil
 		}
 
-		let localizedMenuText = NSLocalizedString("Mark All as Read in "%@"", comment: "Mark All as Read in Feed")
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
