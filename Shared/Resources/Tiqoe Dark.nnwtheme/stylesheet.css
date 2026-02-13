@@ -21,6 +21,10 @@ body {
 	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
 }
 
+[href]:has(img):hover {
+	opacity: 1;	
+	}
+
 #nnwImageIcon {
 	width: 32px;
 	height: 32px;
@@ -461,6 +465,10 @@ a.footnote:hover,
 	text-shadow: 0 1px rgba(0, 0, 0, 2);
 	opacity: 0.8;
 	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
+	}
+	
+	[href]:has(img):hover {
+	opacity: 1;	
 	}
 
 	:root {
