@@ -456,7 +456,7 @@ a.footnote:hover,
 	color: inherit;
 	}
 
-	a :is(code, em, i, u) {
+	a :is(code, em, i, span, u) {
 	color: inherit;
 	}
 	
