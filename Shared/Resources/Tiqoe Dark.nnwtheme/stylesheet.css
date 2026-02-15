@@ -58,7 +58,7 @@ body {
 
 body a,
 body a:visited,
-body a :not(em, i, u) * {
+body a :not(b, em, i, strong, u) * {
 	color: var(--secondary-accent-color);
 }
 
@@ -456,7 +456,7 @@ a.footnote:hover,
 	color: inherit;
 	}
 
-	a :is(code, em, i, span, u, b u) {
+	a :is(code, em, i, span, u) {
 	color: inherit;
 	}
 	
