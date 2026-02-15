@@ -267,7 +267,7 @@ import os.log
 		var savedError: Error?
 
 		let storyHashes = statuses.compactMap { $0.articleID }
-		let storyHashGroups = storyHashes.chunked(into: throttle ? 1 : 5) // API limit
+		let storyHashGroups = storyHashes.chunked(into: throttle ? 1 : 100) // API limit
 		for storyHashGroup in storyHashGroups {
 			do {
 				try await apiCall(Set(storyHashGroup))
