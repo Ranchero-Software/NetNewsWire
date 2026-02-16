@@ -1195,6 +1195,22 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	func canMarkAllAsReadExceptStarred() -> Bool {
+		return articles.canMarkAllAsReadExceptStarred()
+	}
+
+	func markAllAsReadExceptStarredInTimeline(completion: (() -> Void)? = nil) {
+		guard let unreadUnstarred = articles.unreadUnstarredArticles() else {
+			completion?()
+			return
+		}
+		markAllAsRead(unreadUnstarred) {
+			self.rootSplitViewController.preferredDisplayMode = .twoBesideSecondary
+			self.rootSplitViewController.show(.primary)
+			completion?()
+		}
+	}
+
 	func canMarkAboveAsRead(for article: Article) -> Bool {
 		let articlesAboveArray = articles.articlesAbove(article: article)
 		return articlesAboveArray.canMarkAllAsRead()
