@@ -1192,6 +1192,7 @@ extension MainFeedCollectionViewController {
 	func markUnstarredAsReadAction(indexPath: IndexPath) -> UIAction? {
 		guard let sidebarItem = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? SidebarItem,
 			  let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView,
+			  sidebarItem.unreadCount > 0,
 			  let articles = try? sidebarItem.fetchUnreadArticles(),
 			  Array(articles).unreadUnstarredArticles() != nil else {
 			return nil
@@ -1234,6 +1235,7 @@ extension MainFeedCollectionViewController {
 
 	func markUnstarredAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
+			  feed.unreadCount > 0,
 			  let articles = try? feed.fetchArticles(),
 			  Array(articles).unreadUnstarredArticles() != nil,
 			  let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
