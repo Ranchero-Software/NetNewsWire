@@ -68,6 +68,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
+			isAccessibilityElement = true
 			indicatorView.alpha = 0.0
 			feedIcon?.translatesAutoresizingMaskIntoConstraints = false
 			configureStackView()
