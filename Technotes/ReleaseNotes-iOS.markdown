@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 7.0.1 TestFlight build 7025 17 Feb 2026 - branch: main tag: iOS-7.0.1-7025
+
+Fixed a performance bug with syncing, with sending read status to NewsBlur
+Fixed a VoiceOver accessibility bug with the timeline
+Fixed a bug where you couldn’t swipe back from article view when it was in fullscreen mode
+Fixed a bug where images in the article view could get vertically stretched in some conditions
+
 ### 7.0 TestFlight build 7024 3 Feb 2026 - branch: main tag: iOS-7.0-7024
 
 Fixed a crashing bug
