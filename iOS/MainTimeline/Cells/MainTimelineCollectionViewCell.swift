@@ -108,7 +108,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		articleDate.text = cellData.dateString
 		updateAccessibilityLabel()
 	}
-	
+
 	private func updateAccessibilityLabel() {
 		let starredStatus = cellData.starred ? "\(NSLocalizedString("Starred", comment: "Starred article for accessibility")), " : ""
 		let unreadStatus = cellData.read ? "" : "\(NSLocalizedString("Unread", comment: "Unread")), "
