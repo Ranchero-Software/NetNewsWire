@@ -2,7 +2,7 @@
 
 ### 7.0.1b1 7016 17 Feb 2026 — branch: main tag: mac-7.0.1b1
 
-Fixed a performance bug with syncing sending read status to NewsBlur
+Fixed a performance bug with syncing, with sending read status to NewsBlur
 Fixed a bug aligning unread counts in the sidebar
 Fixed a typo in the credits
 Fixed a layout bug in the About window where text could get clipped on some machines
