@@ -7,6 +7,23 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.1b1</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed a performance bug with syncing, with sending read status to NewsBlur
+					<li>Fixed a bug aligning unread counts in the sidebar
+					<li>Fixed a typo in the credits
+					<li>Fixed a layout bug in the About window where text could get clipped on some machines
+					<li>Fixed a bug where images in the article view could get vertically stretched in some conditions
+					<li>Fixed a bug where a clicking an anchor link that should navigate to another spot in the article would open in the browser instead
+				   </ul>
+			]]></description>
+        	<pubDate>Tue, 17 Feb 2026 20:00:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b1/NetNewsWire7.0.1b1.zip" sparkle:version="7016" sparkle:shortVersionString="7.0.1b1" length="10357850" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0</title>
             <description><![CDATA[
 				<ul>
