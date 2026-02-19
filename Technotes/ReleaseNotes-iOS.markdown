@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0.1 TestFlight build 7026 18 Feb 2026 - branch: main tag: iOS-7.0.1-7026
+
+Fixed — this time for real, we think — a VoiceOver accessibility issue with the timeline
+Fixed a crash that could happen when trying to add a folder and none of the active accounts support folders
+
 ### 7.0.1 TestFlight build 7025 17 Feb 2026 - branch: main tag: iOS-7.0.1-7025
 
 Fixed a performance bug with syncing, with sending read status to NewsBlur
