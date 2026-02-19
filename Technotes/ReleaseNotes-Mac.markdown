@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 7.0.1b2 7017 17 Feb 2026 — branch: main tag: mac-7.0.1b2
+
+Fixed a crash that could happen when syncing some Reader API syncing systems
+Fixed a crash that could happen when removing an account
+Made the version selectable in the About window
+
 ### 7.0.1b1 7016 17 Feb 2026 — branch: main tag: mac-7.0.1b1
 
 Fixed a performance bug with syncing, with sending read status to NewsBlur
