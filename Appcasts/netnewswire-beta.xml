@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.1b2</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed a crash that could happen when syncing some Reader API syncing systems
+					<li>Fixed a crash that could happen when removing an account
+					<li>Made the version selectable in the About window
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 18 Feb 2026 22:00:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b2/NetNewsWire7.0.1b2.zip" sparkle:version="7017" sparkle:shortVersionString="7.0.1b2" length="10358570" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.1b1</title>
             <description><![CDATA[
 				<ul>
