@@ -76,6 +76,19 @@ extension SidebarViewController {
 		runCommand(markReadCommand)
 	}
 
+	@objc func markObjectsReadExceptStarredFromContextualMenu(_ sender: Any?) {
+
+		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [Any] else {
+			return
+		}
+
+		let articles = unreadUnstarredArticles(for: objects)
+		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) else {
+			return
+		}
+		runCommand(markReadCommand)
+	}
+
 	@objc func deleteFromContextualMenu(_ sender: Any?) {
 		guard let menuItem = sender as? NSMenuItem, let objects = menuItem.representedObject as? [AnyObject] else {
 			return
@@ -212,6 +225,9 @@ private extension SidebarViewController {
 
 		if feed.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([feed]))
+			if anyObjectHasUnreadUnstarredArticles([feed]) {
+				menu.addItem(markAllAsReadExceptStarredMenuItem([feed]))
+			}
 			menu.addItem(NSMenuItem.separator())
 		}
 
@@ -264,6 +280,9 @@ private extension SidebarViewController {
 
 		if folder.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([folder]))
+			if anyObjectHasUnreadUnstarredArticles([folder]) {
+				menu.addItem(markAllAsReadExceptStarredMenuItem([folder]))
+			}
 			menu.addItem(NSMenuItem.separator())
 		}
 
@@ -279,6 +298,9 @@ private extension SidebarViewController {
 
 		if smartFeed.unreadCount > 0 {
 			menu.addItem(markAllReadMenuItem([smartFeed]))
+			if anyObjectHasUnreadUnstarredArticles([smartFeed]) {
+				menu.addItem(markAllAsReadExceptStarredMenuItem([smartFeed]))
+			}
 		}
 		return menu.numberOfItems > 0 ? menu : nil
 	}
@@ -289,6 +311,9 @@ private extension SidebarViewController {
 
 		if anyObjectInArrayHasNonZeroUnreadCount(objects) {
 			menu.addItem(markAllReadMenuItem(objects))
+			if anyObjectHasUnreadUnstarredArticles(objects) {
+				menu.addItem(markAllAsReadExceptStarredMenuItem(objects))
+			}
 		}
 
 		if allObjectsAreFeedsAndOrFolders(objects) {
@@ -302,6 +327,11 @@ private extension SidebarViewController {
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
 		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects, image: Assets.Images.markAllAsReadMenu)
+	}
+
+	func markAllAsReadExceptStarredMenuItem(_ objects: [Any]) -> NSMenuItem {
+
+		return menuItem(NSLocalizedString("Mark Unstarred as Read", comment: "Command"), #selector(markObjectsReadExceptStarredFromContextualMenu(_:)), objects, image: Assets.Images.markAllAsReadMenu)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
@@ -363,5 +393,33 @@ private extension SidebarViewController {
 			}
 		}
 		return articles
+	}
+
+	func unreadUnstarredArticles(for objects: [Any]) -> Set<Article> {
+
+		var articles = Set<Article>()
+		for object in objects {
+			if let articleFetcher = object as? ArticleFetcher {
+				if let unreadArticles = try? articleFetcher.fetchUnreadArticles() {
+					let unstarred = unreadArticles.filter { !$0.status.starred }
+					articles.formUnion(unstarred)
+				}
+			}
+		}
+		return articles
+	}
+
+	func anyObjectHasUnreadUnstarredArticles(_ objects: [Any]) -> Bool {
+
+		for object in objects {
+			if let articleFetcher = object as? ArticleFetcher {
+				if let unreadArticles = try? articleFetcher.fetchUnreadArticles() {
+					if unreadArticles.contains(where: { !$0.status.starred }) {
+						return true
+					}
+				}
+			}
+		}
+		return false
 	}
 }
