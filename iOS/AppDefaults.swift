@@ -219,6 +219,14 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var sidebarSortType: SidebarSortType {
+		return .alphabetically
+	}
+
+	var sidebarSortAscending: Bool {
+		return true
+	}
+
 	var splitViewPreferredDisplayMode: Int {
 		get {
 			return AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
