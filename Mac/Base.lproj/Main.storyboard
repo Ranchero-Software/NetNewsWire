@@ -367,6 +367,38 @@
                                                 </items>
                                             </menu>
                                         </menuItem>
+                                        <menuItem title="Sort Feeds By" id="gT7-sF-kRd">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <menu key="submenu" title="Sort Feeds By" id="hY3-pK-mW9">
+                                                <items>
+                                                    <menuItem title="Name" id="qN4-wJ-fR2">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortFeedsByName:" target="Voe-Tx-rLC" id="vK8-hN-3pQ"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Unread Count" id="bL5-rT-xW7">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortFeedsByUnreadCount:" target="Voe-Tx-rLC" id="mD9-jP-4sR"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem isSeparatorItem="YES" id="kV2-sN-8wQ"/>
+                                                    <menuItem title="Ascending" id="aF3-qR-7vN">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortFeedsAscending:" target="Voe-Tx-rLC" id="wH5-tK-9bP"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                    <menuItem title="Descending" id="dG6-uW-2mL">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                        <connections>
+                                                            <action selector="sortFeedsDescending:" target="Voe-Tx-rLC" id="xJ8-vM-4cR"/>
+                                                        </connections>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </menuItem>
                                         <menuItem title="Group By Feed" id="Zxm-O6-NRE">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
@@ -669,6 +701,10 @@
                         <outlet property="groupArticlesByFeedMenuItem" destination="Zxm-O6-NRE" id="gwn-VT-2YZ"/>
                         <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
                         <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
+                        <outlet property="sortFeedsAscendingMenuItem" destination="aF3-qR-7vN" id="rS4-mH-6yK"/>
+                        <outlet property="sortFeedsByNameMenuItem" destination="qN4-wJ-fR2" id="pR6-kL-2wT"/>
+                        <outlet property="sortFeedsByUnreadCountMenuItem" destination="bL5-rT-xW7" id="tQ3-nM-7xS"/>
+                        <outlet property="sortFeedsDescendingMenuItem" destination="dG6-uW-2mL" id="uT7-nJ-3zL"/>
                     </connections>
                 </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

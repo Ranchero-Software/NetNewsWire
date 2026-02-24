@@ -461,6 +461,7 @@
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
 				Timer/RefreshInterval.swift,
+				Tree/SidebarSortType.swift,
 			);
 			target = 510C415B24E5CDE3008226FD /* NetNewsWire Share Extension */;
 		};
