@@ -655,6 +655,10 @@ private extension MainTimelineModernViewController {
 				/// removal of the current swipe occurrence's mask view error.
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.85, execute: {
 					self?.toggleStar(article)
+					let announcement = article.status.starred ?
+						NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
+						NSLocalizedString("Starred", comment: "Accessibility announcement")
+					UIAccessibility.post(notification: .announcement, argument: announcement)
 				})
 
 				completion(true)
@@ -738,6 +742,10 @@ private extension MainTimelineModernViewController {
 				/// removal of the current swipe occurrence's mask view error.
 				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.85, execute: {
 					self?.toggleRead(article)
+					let announcement = article.status.read ?
+						NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
+						NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
+					UIAccessibility.post(notification: .announcement, argument: announcement)
 				})
 				completion(true)
 			}
@@ -1040,6 +1048,10 @@ extension MainTimelineModernViewController {
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
 				self?.toggleRead(article)
+				let announcement = article.status.read ?
+					NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
+					NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
+				UIAccessibility.post(notification: .announcement, argument: announcement)
 			}
 		}
 
@@ -1061,6 +1073,10 @@ extension MainTimelineModernViewController {
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
 				self?.toggleStar(article)
+				let announcement = article.status.starred ?
+					NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
+					NSLocalizedString("Starred", comment: "Accessibility announcement")
+				UIAccessibility.post(notification: .announcement, argument: announcement)
 			}
 		}
 
