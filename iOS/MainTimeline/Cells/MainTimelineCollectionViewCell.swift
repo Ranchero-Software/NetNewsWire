@@ -118,22 +118,22 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 
 	private func updateIndicatorView(_ state: UICellConfigurationState) {
-		if cellData.read == false {
-			if indicatorView.alpha == 0.0 {
-				indicatorView.alpha = 1.0
-			}
-			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
-				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
-				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.secondaryAccent
-			}
-			return
-		} else if cellData.starred {
+		if cellData.starred {
 			if indicatorView.alpha == 0.0 {
 				indicatorView.alpha = 1.0
 			}
 			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
 				self.indicatorView.iconImage = Assets.Images.starredFeed
 				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.star
+			}
+			return
+		} else if cellData.read == false {
+			if indicatorView.alpha == 0.0 {
+				indicatorView.alpha = 1.0
+			}
+			UIView.animate(withDuration: Self.indicatorAnimationDuration) {
+				self.indicatorView.iconImage = Assets.Images.unreadCellIndicator
+				self.indicatorView.tintColor = (state.isSelected && !state.isSwiped) ? .white : Assets.Colors.secondaryAccent
 			}
 			return
 		} else if indicatorView.alpha == 1.0 {
