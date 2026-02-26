@@ -69,6 +69,11 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
 			isAccessibilityElement = true
+			articleContent.isAccessibilityElement = false
+			articleByLine.isAccessibilityElement = false
+			articleDate.isAccessibilityElement = false
+			indicatorView.isAccessibilityElement = false
+			feedIcon?.isAccessibilityElement = false
 			indicatorView.alpha = 0.0
 			feedIcon?.translatesAutoresizingMaskIntoConstraints = false
 			configureStackView()
