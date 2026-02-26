@@ -30,14 +30,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
-	private var feedsHidingReadArticles = Set<SidebarItemIdentifier>()
-	private var readFilterEnabledTable: [SidebarItemIdentifier: Bool] {
-		var d = [SidebarItemIdentifier: Bool]()
-		for sidebarItemID in feedsHidingReadArticles {
-			d[sidebarItemID] = true
-		}
-		return d
-	}
+	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
 
 	var isReadFiltered: Bool? {
 		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
@@ -46,11 +39,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let sidebarItemID = timelineFeed.sidebarItemID {
-			return feedsHidingReadArticles.contains(sidebarItemID)
-		} else {
-			return timelineFeed.defaultReadFilterType == .read
+		if let sidebarItemID = timelineFeed.sidebarItemID, let readFiltered = readFilterEnabledTable[sidebarItemID] {
+			return readFiltered
 		}
+		return timelineFeed.defaultReadFilterType == .read
 	}
 
 	var isCleanUpAvailable: Bool {
@@ -74,6 +66,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
+				seedReadFilterForFolders()
 				unreadCount = 0
 
 				selectionDidChange(nil)
@@ -313,11 +306,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	// MARK: State Restoration
 
 	private func noteSidebarItemHidesReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
-		feedsHidingReadArticles.insert(sidebarItemID)
+		readFilterEnabledTable[sidebarItemID] = true
 	}
 
 	private func noteSidebarItemShowsReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
-		feedsHidingReadArticles.remove(sidebarItemID)
+		readFilterEnabledTable[sidebarItemID] = false
 	}
 
 	func restoreState(from state: TimelineWindowState) {
@@ -1299,6 +1292,20 @@ private extension TimelineViewController {
 
 	func representedObjectsContainAnyFolder() -> Bool {
 		return representedObjects?.contains(where: { $0 is Folder }) ?? false
+	}
+
+	func seedReadFilterForFolders() {
+		guard let representedObjects else {
+			return
+		}
+		for object in representedObjects {
+			guard let folder = object as? Folder, let sidebarItemID = folder.sidebarItemID else {
+				continue
+			}
+			if readFilterEnabledTable[sidebarItemID] == nil {
+				readFilterEnabledTable[sidebarItemID] = true
+			}
+		}
 	}
 
 	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {
