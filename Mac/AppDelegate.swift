@@ -149,6 +149,16 @@ let appName = "NetNewsWire"
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
+		// Ensure the Sparkle feed URL is one of the two supported URLs.
+		// Default to the release builds URL from Info.plist.
+		if let infoDictionary = Bundle.main.infoDictionary,
+		   let releaseBuildsURL = infoDictionary["SUFeedURL"] as? String,
+		   let testBuildsURL = infoDictionary["FeedURLForTestBuilds"] as? String,
+		   let currentFeedURL = UserDefaults.standard.string(forKey: "SUFeedURL"),
+		   currentFeedURL != releaseBuildsURL && currentFeedURL != testBuildsURL {
+			UserDefaults.standard.set(releaseBuildsURL, forKey: "SUFeedURL")
+		}
+
 		// Initialize Sparkle...
 		let hostBundle = Bundle.main
 		let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
