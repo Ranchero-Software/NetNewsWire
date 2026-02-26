@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0.1 TestFlight build 7027 25 Feb 2026 - branch: main tag: iOS-7.0.1-7027
+
+Fixed bug where unread indicator would take precedence over star in timeline rows
+
 ### 7.0.1 TestFlight build 7026 18 Feb 2026 - branch: main tag: iOS-7.0.1-7026
 
 Fixed — this time for real, we think — a VoiceOver accessibility issue with the timeline
