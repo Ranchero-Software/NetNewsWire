@@ -79,6 +79,7 @@ let appName = "NetNewsWire"
 
 	private var mainWindowControllers = [MainWindowController]()
 	private lazy var preferencesWindowController = windowControllerWithName("Preferences")
+	private var aboutWindowController: AboutWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
@@ -656,10 +657,12 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func showCustomAboutPanel(_ sender: Any?) {
-		let aboutWC = AboutWindowController(windowNibName: "AboutWindowController")
-		aboutWC.showWindow(nil)
-		aboutWC.window?.center()
-		aboutWC.window?.makeKeyAndOrderFront(nil)
+		if aboutWindowController == nil {
+			aboutWindowController = AboutWindowController(windowNibName: "AboutWindowController")
+			aboutWindowController?.window?.center()
+		}
+		aboutWindowController?.showWindow(nil)
+		aboutWindowController?.window?.makeKeyAndOrderFront(nil)
 	}
 
 	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
