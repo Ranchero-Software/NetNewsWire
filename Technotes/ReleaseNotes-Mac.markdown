@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.0.1b3 7018 26 Feb 2026 — branch: main tag: mac-7.0.1b3
+
+Fixed bug where multiple About windows could be shown
+Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs)
+
 ### 7.0.1b2 7017 17 Feb 2026 — branch: main tag: mac-7.0.1b2
 
 Fixed a crash that could happen when syncing some Reader API syncing systems
