@@ -7,6 +7,19 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.1b3</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed bug where multiple About windows could be shown
+					<li>Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs)
+				</ul>
+			]]></description>
+        	<pubDate>Thu, 26 Feb 2026 09:00:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b3/NetNewsWire7.0.1b3.zip" sparkle:version="7018" sparkle:shortVersionString="7.0.1b3" length="10360149" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.1b2</title>
             <description><![CDATA[
 				<ul>
