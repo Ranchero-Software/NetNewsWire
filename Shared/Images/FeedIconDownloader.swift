@@ -65,6 +65,9 @@ extension Notification.Name {
 				return
 			}
 			icon(forHomePageURL: homePageURL, feed: feed) { image, iconURL in
+				if self.cache[feed] != nil {
+					return // already cached
+				}
 				if let image, let iconURL {
 					self.cache[feed] = IconImage(image)
 					self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
@@ -77,6 +80,9 @@ extension Notification.Name {
 			if let iconURL = feed.iconURL {
 				icon(forURL: iconURL, feed: feed) { (image) in
 					Task { @MainActor in
+						if self.cache[feed] != nil {
+							return // already cached
+						}
 						if let image = image {
 							self.cache[feed] = IconImage(image)
 							self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
@@ -94,9 +100,12 @@ extension Notification.Name {
 		if let previouslyFoundIconURL = feedURLToIconURLCache[feed.url] {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image in
 				MainActor.assumeIsolated {
+					if self.cache[feed] != nil {
+						return // already cached
+					}
 					if let image {
-						self.postFeedIconDidBecomeAvailableNotification(feed)
 						self.cache[feed] = IconImage(image)
+						self.postFeedIconDidBecomeAvailableNotification(feed)
 					}
 				}
 			}

@@ -25,13 +25,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	@IBOutlet var filterButton: UIBarButtonItem!
 	@IBOutlet var addNewItemButton: UIBarButtonItem! {
 		didSet {
-			if #available(iOS 14, *) {
-				addNewItemButton.primaryAction = nil
-			} else {
-				addNewItemButton.action = #selector(MainFeedCollectionViewController.add(_:))
-			}
+			addNewItemButton.target = self
+			addNewItemButton.action = #selector(MainFeedCollectionViewController.add(_:))
 		}
 	}
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedCollectionViewController")
 
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
@@ -72,6 +71,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     }
 
 	override func viewWillAppear(_ animated: Bool) {
+		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear")
 		navigationController?.isToolbarHidden = false
 		updateUI()
 		super.viewWillAppear(animated)
@@ -98,17 +98,38 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
+		self.deselectIfNeccessary()
+	}
 
-		/// On iPhone, once the deselection animation has completed, set `isAnimating`
-		/// to false and this will allow selection.
-		if traitCollection.userInterfaceIdiom == .phone {
-			if collectionView.indexPathsForSelectedItems != nil {
-				coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: {
-					self.isAnimating = false
-				})
-			}
+	func deselectIfNeccessary() {
+		guard traitCollection.userInterfaceIdiom == .phone else {
+			return
 		}
+
+		defer {
+			self.isAnimating = false
+		}
+
+		// Pro Max may have split view in landscape — give the device some
+		// time to change its size class and then decide to deselect
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5043>
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
+			// If the iPhone is in portrait, deselect.
+			if UIDevice.current.orientation.isPortrait {
+				if self.collectionView.indexPathsForSelectedItems != nil {
+					self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
+				}
+				return
+			}
+
+			// If the iPhone is in landscape, and the horizontal
+			// size class is compact, deselect.
+			if self.view.window?.traitCollection.horizontalSizeClass == .compact {
+				if self.collectionView.indexPathsForSelectedItems != nil { self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
+				}
+				return
+			}
+		})
 	}
 
 	func registerForNotifications() {
@@ -129,8 +150,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	func configureCollectionView() {
 		let standardCellLeadingOffSet = 48.0
 		let indentedCellLeadingOffSet = 64.0
-		var config = UICollectionLayoutListConfiguration(appearance: traitCollection.userInterfaceIdiom == .pad ? .sidebar : .insetGrouped)
-		config.separatorConfiguration.color = .tertiarySystemFill
+		let useSidebarAppearance = traitCollection.userInterfaceIdiom == .pad
+		var config = UICollectionLayoutListConfiguration(appearance: useSidebarAppearance ? .sidebar : .insetGrouped)
 		config.headerMode = .supplementary
 
 		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
@@ -213,9 +234,18 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 			return config
 		}
-		
+
 		config.itemSeparatorHandler = { (indexPath, sectionSeparatorConfiguration) in
 			var configuration = sectionSeparatorConfiguration
+
+			// Sidebar appearance: no separators
+			if useSidebarAppearance {
+				configuration.topSeparatorVisibility = .hidden
+				configuration.bottomSeparatorVisibility = .hidden
+				return configuration
+			}
+
+			// insetGrouped appearance: separators with proper insets
 			configuration.bottomSeparatorVisibility = .hidden
 			configuration.topSeparatorVisibility = indexPath.row == 0 ? .hidden : .visible
 
@@ -226,7 +256,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 					configuration.topSeparatorInsets = NSDirectionalEdgeInsets(top: 0, leading: standardCellLeadingOffSet, bottom: 0, trailing: 0)
 				}
 			}
-			if let _ = self.collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
+			if self.collectionView.cellForItem(at: indexPath) is MainFeedCollectionViewFolderCell {
 				configuration.topSeparatorInsets = NSDirectionalEdgeInsets(top: 0, leading: standardCellLeadingOffSet, bottom: 0, trailing: 0)
 			}
 			return configuration

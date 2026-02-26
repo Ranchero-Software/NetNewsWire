@@ -412,7 +412,10 @@ struct SidebarItemNode: Hashable, Sendable {
 										   articleID: articleSpecifier.articleID)
 
 		if let article {
-			selectArticle(article, isShowingExtractedArticle: stateInfo.isShowingExtractedArticle, articleWindowScrollY: stateInfo.articleWindowScrollY)
+			// Disable animation since this function runs only during state restoration on launch.
+			UIView.performWithoutAnimation {
+				selectArticle(article, isShowingExtractedArticle: stateInfo.isShowingExtractedArticle, articleWindowScrollY: stateInfo.articleWindowScrollY)
+			}
 		}
 	}
 
@@ -1020,6 +1023,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 
 		rootSplitViewController.show(.secondary)
+		mainTimelineViewController?.didPushArticleViewController = true
 
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
 		markArticles(Set([article!]), statusKey: .read, flag: true)
@@ -1542,7 +1546,8 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 		// Don't clear it if we have pushed an ArticleViewController, but don't yet see it on the navigation stack.
 		// This happens when we are going to the next unread and we need to grab another timeline to continue.  The
 		// ArticleViewController will be pushed, but we will briefly show the Timeline.  Don't clear things out when that happens.
-		if viewController === mainTimelineViewController && rootSplitViewController.isCollapsed && !isArticleViewControllerPending {
+		// Also skip during state restoration so we don't clear the restored article.
+		if viewController === mainTimelineViewController && rootSplitViewController.isCollapsed && !isArticleViewControllerPending && !isRestoringState {
 			currentArticle = nil
 			mainTimelineViewController?.updateArticleSelection(animations: [.scroll, .select, .navigation])
 			activityManager.invalidateReading()
@@ -2081,16 +2086,13 @@ private extension SceneCoordinator {
 		if articles != sortedArticles {
 			articles = sortedArticles
 
-			// Update currentArticle to the new instance if it's still in the timeline,
-			// or clear it if it's no longer there.
-			// Don't call selectArticle(nil) because that triggers navigation on iPhone.
+			// Update currentArticle to the new instance if it's still in the timeline.
+			// If the article is no longer in the timeline, keep showing it anyway -
+			// don't blank the user's screen just because the article filtered out.
 			// Skip during state restoration so the restored article stays open.
 			if !isRestoringState, let currentArticle {
 				if let newArticle = sortedArticles.first(where: { $0.articleID == currentArticle.articleID && $0.accountID == currentArticle.accountID }) {
 					self.currentArticle = newArticle
-				} else {
-					self.currentArticle = nil
-					articleViewController?.article = nil
 				}
 			}
 

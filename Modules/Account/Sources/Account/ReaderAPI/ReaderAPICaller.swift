@@ -407,15 +407,21 @@ enum CreateReaderAPISubscriptionResult {
 		request.httpMethod = "POST"
 
 		// Get ids from above into hex representation of value
-		let idsToFetch = articleIDs.map({ articleID -> String in
+		let idsToFetch = articleIDs.compactMap({ articleID -> String? in
 			if self.variant == .theOldReader {
 				return "i=tag:google.com,2005:reader/item/\(articleID)"
 			} else {
-				let idValue = Int(articleID)!
-				let idHexString = String(idValue, radix: 16, uppercase: false)
-				return "i=tag:google.com,2005:reader/item/\(idHexString)"
+				if let idValue = Int(articleID) {
+					let idHexString = String(idValue, radix: 16, uppercase: false)
+					return "i=tag:google.com,2005:reader/item/\(idHexString)"
+				} else {
+					return nil
+				}
 			}
 		}).joined(separator: "&")
+		if idsToFetch.isEmpty {
+			return nil
+		}
 
 		let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
 

@@ -26,11 +26,11 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
-	private var refreshProgressView: RefreshProgressView?
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
 	private var dataSource: UICollectionViewDiffableDataSource<Int, Article>?
+	var didPushArticleViewController = false
 
 	private var timelineFeed: SidebarItem? {
 		assert(coordinator != nil)
@@ -141,7 +141,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineModernViewController")
 
 	// MARK: Constants
-	let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
+	private let updateQueue = CoalescingQueue(name: "Timeline Update Queue", interval: 0.5, maxInterval: 1.0)
 
 	// MARK: - IBOutlets
 	@IBOutlet var markAllAsReadButton: UIBarButtonItem?
@@ -216,13 +217,30 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				self.navigationController?.navigationBar.alpha = 1
 			}
 		}
-		if traitCollection.userInterfaceIdiom == .phone {
-			if coordinator?.currentArticle != nil {
-				if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
-					collectionView?.deselectItem(at: indexPath, animated: true)
-				}
-				coordinator?.selectArticle(nil)
+
+		// Deselect only when returning from article navigation
+		if coordinator?.isRootSplitCollapsed ?? true, didPushArticleViewController {
+			didPushArticleViewController = false
+			self.deselectIfNecessary()
+		}
+	}
+
+	func deselectIfNecessary() {
+		Self.logger.debug("MainTimelineModernViewController: deselectIfNecessary")
+
+		guard traitCollection.userInterfaceIdiom == .phone else {
+			return
+		}
+		guard let coordinator, coordinator.isRootSplitCollapsed else {
+			return
+		}
+
+		if coordinator.currentArticle != nil {
+			Self.logger.debug("MainTimelineModernViewController: deselectIfNecessary deselecting")
+			if let indexPath = collectionView?.indexPathsForSelectedItems?.first {
+				collectionView?.deselectItem(at: indexPath, animated: true)
 			}
+			coordinator.selectArticle(nil)
 		}
 	}
 
@@ -295,13 +313,16 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			collectionView.selectItem(at: nil, animated: animations.contains(.select), scrollPosition: .centeredVertically)
 		}
 
-		updateUI()
+		queueUpdateUI()
 	}
 
-	func updateUI() {
+	func queueUpdateUI() {
+		updateQueue.add(self, #selector(updateUI))
+	}
+
+	@objc func updateUI() {
 		Self.logger.debug("MainTimelineModernViewController: updateUI")
 
-		refreshProgressView?.update()
 		updateToolbar()
 	}
 
@@ -323,12 +344,12 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: - Reloading
 
 	func queueReloadAvailableCells() {
-		CoalescingQueue.standard.add(self, #selector(reloadVisibleCells))
+		updateQueue.add(self, #selector(reloadVisibleCells))
 	}
 
 	@objc private func reloadVisibleCells() {
 		Self.logger.debug("MainTimelineModernViewController: reloadVisibleCells")
-		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
+		guard isViewLoaded, let collectionView, let dataSource else {
 			return
 		}
 		let indexPaths = collectionView.indexPathsForVisibleItems
@@ -530,23 +551,37 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		}
 
 		let previewView = cell.contentView
+		var bounds = previewView.bounds
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .tertiarySystemBackground
-		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
+		parameters.backgroundColor = cell.isSelected ? cell.backgroundConfiguration?.backgroundColor : .tertiarySystemBackground
+		if let insets = cell.backgroundConfiguration?.backgroundInsets {
+			bounds = bounds.inset(by: UIEdgeInsets(top: insets.top,
+												   left: -insets.leading - 4,
+												   bottom: insets.bottom,
+												   right: -insets.trailing - 4))
+		}
+		parameters.visiblePath = UIBezierPath(roundedRect: bounds,
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, dismissalPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
 		guard let row = configuration.identifier as? Int,
-			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)), view.window != nil else {
+			  let cell = collectionView.cellForItem(at: IndexPath(row: row, section: 0)) else {
 			return nil
 		}
 
 		let previewView = cell.contentView
+		var bounds = previewView.bounds
 		let parameters = UIPreviewParameters()
-		parameters.backgroundColor = .clear
-		parameters.visiblePath = UIBezierPath(roundedRect: previewView.bounds,
+		parameters.backgroundColor = cell.isSelected ? cell.backgroundConfiguration?.backgroundColor : .tertiarySystemBackground
+		if let insets = cell.backgroundConfiguration?.backgroundInsets {
+			bounds = bounds.inset(by: UIEdgeInsets(top: insets.top,
+												   left: -insets.leading - 4,
+												   bottom: insets.bottom,
+												   right: -insets.trailing - 4))
+		}
+		parameters.visiblePath = UIBezierPath(roundedRect: bounds,
 											  cornerRadius: 20)
 		return UITargetedPreview(view: cell, parameters: parameters)
 	}
@@ -569,11 +604,8 @@ private extension MainTimelineModernViewController {
 		// lets us know that it’s time to request an image.
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			Task { @MainActor in
-				self?.userDefaultsDidChange()
-			}
-		}
+		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -870,13 +902,13 @@ private extension MainTimelineModernViewController {
 private extension MainTimelineModernViewController {
 	@objc dynamic func unreadCountDidChange(_ notification: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: unreadCountDidChange")
-		updateUI()
+		queueUpdateUI()
 	}
 
 	@objc func statusesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: statusesDidChange")
 
-		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
+		guard isViewLoaded, let collectionView, let dataSource else {
 			return
 		}
 		guard let articleIDs = note.userInfo?[Account.UserInfoKey.articleIDs] as? Set<String>, !articleIDs.isEmpty else {
@@ -895,85 +927,44 @@ private extension MainTimelineModernViewController {
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: feedIconDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
-		guard let feed = note.userInfo?[UserInfoKey.feed] as? Feed else {
-			return
-		}
-
-		updateIconForVisibleArticles(feed)
+		queueReloadAvailableCells()
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: avatarDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil, let collectionView else {
+		guard isViewLoaded else {
 			return
 		}
-		guard showIcons, let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
-			return
-		}
-		let indexPaths = collectionView.indexPathsForVisibleItems
-
-		let articlesToReload = indexPaths.compactMap { indexPath -> Article? in
-			guard let dataSource,
-				  let article = dataSource.itemIdentifier(for: indexPath),
-				  let authors = article.authors,
-				  !authors.isEmpty else {
-				return nil
-			}
-			for author in authors {
-				if author.avatarURL == avatarURL {
-					return article
-				}
-			}
-			return nil
-		}
-		reloadCells(articlesToReload)
+		queueReloadAvailableCells()
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: faviconDidBecomeAvailable")
 
-		guard isViewLoaded, view.window != nil else {
+		guard isViewLoaded else {
 			return
 		}
-
-		updateIconForVisibleArticles()
+		queueReloadAvailableCells()
 	}
 
-	/// Update icon for all visible articles — or, if feed is non-nil, update articles only from that feed.
-	private func updateIconForVisibleArticles(_ feed: Feed? = nil) {
-		guard isViewLoaded, view.window != nil, let collectionView, let dataSource else {
-			return
+	@objc func timelineIconSizeDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineModernViewController: timelineIconSizeDidChange")
+		if iconSize != AppDefaults.shared.timelineIconSize {
+			iconSize = AppDefaults.shared.timelineIconSize
+			reloadVisibleCells()
 		}
-		guard showIcons else {
-			return
-		}
-		let indexPaths = collectionView.indexPathsForVisibleItems
-
-		let articlesToReload = indexPaths.compactMap { indexPath -> Article? in
-			guard let article = dataSource.itemIdentifier(for: indexPath) else {
-				return nil
-			}
-			if feed == nil || feed == article.feed {
-				return article
-			}
-			return nil
-		}
-		reloadCells(articlesToReload)
 	}
 
-	func userDefaultsDidChange() {
-		Self.logger.debug("MainTimelineModernViewController: userDefaultsDidChange")
-
-		if self.numberOfTextLines != AppDefaults.shared.timelineNumberOfLines || self.iconSize != AppDefaults.shared.timelineIconSize {
-			self.numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-			self.iconSize = AppDefaults.shared.timelineIconSize
-			self.reloadVisibleCells()
+	@objc func timelineNumberOfLinesDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineModernViewController: timelineNumberOfLinesDidChange")
+		if numberOfTextLines != AppDefaults.shared.timelineNumberOfLines {
+			numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+			reloadVisibleCells()
 		}
-		self.updateToolbar()
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
@@ -988,7 +979,7 @@ private extension MainTimelineModernViewController {
 
 	@objc func willEnterForeground(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: willEnterForeground")
-		updateUI()
+		queueUpdateUI()
 	}
 
 	@objc func scrollPositionDidChange() {
@@ -1045,7 +1036,9 @@ extension MainTimelineModernViewController {
 		let image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
-			self?.toggleRead(article)
+			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
+				self?.toggleRead(article)
+			}
 		}
 
 		return action
@@ -1064,7 +1057,9 @@ extension MainTimelineModernViewController {
 		let image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
-			self?.toggleStar(article)
+			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
+				self?.toggleStar(article)
+			}
 		}
 
 		return action

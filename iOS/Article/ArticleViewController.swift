@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import os
 import SafariServices
 import WebKit
 import RSCore
@@ -41,15 +42,19 @@ final class ArticleViewController: UIViewController {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
 		button.setImage(Assets.Images.articleExtractorOff, for: .normal)
+		button.tintColor = .label
 		return button
 	}()
 
 	weak var coordinator: SceneCoordinator!
 
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticleViewController")
 
 	var article: Article? {
 		didSet {
+			Self.logger.debug("ArticleViewController: article didSet: \(self.article?.accountID ?? "nil") \(self.article?.articleID ?? "nil") \(self.article?.title ?? "nil")")
+
 			if let controller = currentWebViewController, controller.article != article {
 				controller.setArticle(article)
 				DispatchQueue.main.async {
@@ -103,11 +108,6 @@ final class ArticleViewController: UIViewController {
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
-
-		if let parentNavController = navigationController?.parent as? UINavigationController {
-			poppableDelegate.navigationController = parentNavController
-			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
-		}
 
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
@@ -178,6 +178,10 @@ final class ArticleViewController: UIViewController {
 		navigationController?.navigationBar.topItem?.subtitle = nil
 		coordinator.isArticleViewControllerPending = false
 		searchBar.shouldBeginEditing = true
+		if let parentNavController = navigationController?.parent as? UINavigationController {
+			poppableDelegate.navigationController = parentNavController
+			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
+		}
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {
@@ -186,6 +190,7 @@ final class ArticleViewController: UIViewController {
 			endFind()
 			searchBar.shouldBeginEditing = false
 		}
+		currentWebViewController?.showBars()
 	}
 
 	override func viewSafeAreaInsetsDidChange() {

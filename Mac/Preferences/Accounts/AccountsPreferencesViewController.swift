@@ -7,8 +7,8 @@
 //
 
 import AppKit
-import Account
 import SwiftUI
+import Account
 import RSCore
 
 // MARK: - AccountsPreferencesAddAccountDelegate
@@ -56,30 +56,32 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 
 	@IBAction func removeAccount(_ sender: Any) {
-
-		guard tableView.selectedRow != -1 else {
+		guard let account = sortedAccounts[safe: tableView.selectedRow] else {
 			return
 		}
-
-		let acctName = sortedAccounts[tableView.selectedRow].nameForDisplay
+		let accountName = account.nameForDisplay
 
 		let alert = NSAlert()
 		alert.alertStyle = .warning
 		let deletePrompt = NSLocalizedString("Delete", comment: "Delete")
-		alert.messageText = "\(deletePrompt) “\(acctName)”?"
-		alert.informativeText = NSLocalizedString("Are you sure you want to delete the account “\(acctName)”? This cannot be undone.", comment: "Delete text")
+		alert.messageText = "\(deletePrompt) “\(accountName)”?"
+		alert.informativeText = NSLocalizedString("Are you sure you want to delete the account “\(accountName)”? This cannot be undone.", comment: "Delete text")
 
 		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete Account"))
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Delete Account"))
 
-		alert.beginSheetModal(for: view.window!) { [weak self] result in
+		guard let window = view.window else {
+			return
+		}
+		alert.beginSheetModal(for: window) { [weak self] result in
 			if result == NSApplication.ModalResponse.alertFirstButtonReturn {
-				guard let self = self else { return }
-				AccountManager.shared.deleteAccount(self.sortedAccounts[self.tableView.selectedRow])
+				guard let self else {
+					return
+				}
+				AccountManager.shared.deleteAccount(account)
 				self.hideController()
 			}
 		}
-
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
@@ -91,7 +93,6 @@ final class AccountsPreferencesViewController: NSViewController {
 		updateSortedAccounts()
 		tableView.reloadData()
 	}
-
 }
 
 // MARK: - NSTableViewDataSource

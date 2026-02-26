@@ -200,8 +200,23 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 	// WKNavigationDelegate
 
+	// Prevent user navigations within a page (for example, to elements with ids) from being dispatched to the browser
+	func isInternalPageNavigationAction(_ navigationAction: WKNavigationAction) -> Bool {
+		// If the origin and destination of the navigation have the same host and path, then
+		// the presence of a fragment should be considered "internal" to an article.
+		if let targetURL = navigationAction.request.url,
+		   let fragment = targetURL.fragment, fragment.isEmpty == false,
+		   let sourceURL = self.webView.url,
+		   sourceURL.host == targetURL.host,
+		   sourceURL.path == targetURL.path {
+			return true
+		} else {
+			return false
+		}
+	}
+
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void) {
-		if navigationAction.navigationType == .linkActivated {
+		if navigationAction.navigationType == .linkActivated, !isInternalPageNavigationAction(navigationAction) {
 			if let url = navigationAction.request.url {
 				self.openInBrowser(url, flags: navigationAction.modifierFlags)
 			}

@@ -14,7 +14,7 @@ final class UnreadCountView: NSView {
 		static let cornerRadius: CGFloat = 8.0
 		static let backgroundColor = NSColor.clear
 		static let textSize: CGFloat = 13.0
-		static let textFont = NSFont.systemFont(ofSize: textSize, weight: NSFont.Weight.regular)
+		static let textFont = NSFont.monospacedDigitSystemFont(ofSize: textSize, weight: NSFont.Weight.regular)
 	}
 
 	var unreadCount = 0 {

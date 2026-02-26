@@ -117,16 +117,18 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			folderTitle.textColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			unreadCountLabel.textColor = Assets.Colors.primaryAccent
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 		case (true, .phone):
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			folderTitle.textColor = .white
-			unreadCountLabel.textColor = .secondaryLabel
+			unreadCountLabel.textColor = .white
 			faviconView.tintColor = .white
 		default:
 			folderTitle.textColor = .label
 			faviconView.tintColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
+			unreadCountLabel.textColor = .secondaryLabel
 			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
 		}
 

@@ -36,7 +36,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				authors: Set([Author(authorID: "_testAuthorID", name: "J. R. R. Tolkien", url: nil, avatarURL: nil, emailAddress: nil)!]),
 				status: ArticleStatus(articleID: "_testArticleID", read: false, starred: false, dateArrived: .now))
 	}
-	
+
 	private var cachedTimelineLines: Int = AppDefaults.shared.timelineNumberOfLines
 	private var cachedIconSize: IconSize = AppDefaults.shared.timelineIconSize
 
@@ -47,38 +47,38 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			guard let self = self else { return }
 			Task { @MainActor in
-				
+
 				if AppDefaults.shared.timelineNumberOfLines != self.cachedTimelineLines {
 					self.cachedTimelineLines = AppDefaults.shared.timelineNumberOfLines
 					self.userDefaultsDidChange()
 				}
-				
+
 				if AppDefaults.shared.timelineIconSize != self.cachedIconSize {
 					self.cachedIconSize = AppDefaults.shared.timelineIconSize
 					self.userDefaultsDidChange()
 				}
 			}
 		}
-		
+
 		configureCollectionView()
     }
-	
+
 	private func configureCollectionView() {
 		collectionView.register(
 			TimelineHeaderView.self,
 			forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
 			withReuseIdentifier: TimelineHeaderView.reuseIdentifier
 		)
-		
+
 		var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
 		config.showsSeparators = false
 		config.headerMode = .supplementary
 
 		let layout = UICollectionViewCompositionalLayout.list(using: config)
-		
+
 		collectionView.setCollectionViewLayout(layout, animated: false)
 	}
-	
+
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -91,19 +91,19 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-		
+
 		if indexPath.section == 0 {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "IconSizeSelector", for: indexPath) as! TimelineCustomizerCell
 			cell.sliderConfiguration = .iconSize
 			return cell
 		}
-		
+
 		if indexPath.section == 1 {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NumberOfLinesSelector", for: indexPath) as! TimelineCustomizerCell
 			cell.sliderConfiguration = .numberOfLines
 			return cell
 		}
-		
+
 		if indexPath.section == 2 {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainTimelineCellStandard", for: indexPath) as! MainTimelineCollectionViewCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
@@ -117,7 +117,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			cell.isPreview = true
 			return cell
 		}
-		
+
 		if indexPath.section == 3 {
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainTimelineCellIcon", for: indexPath) as! MainTimelineCollectionViewCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
@@ -131,15 +131,13 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			cell.isPreview = true
 			return cell
 		}
-		
-		
-		
+
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainTimelineCellStandard", for: indexPath)
         return cell
     }
-	
+
 	// MARK: UICollectionViewDelegate
-	
+
 	override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath
 	) -> UICollectionReusableView {
 
@@ -167,17 +165,23 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		}
 		return header
 	}
-	
+
 	func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int
 	) -> CGSize {
 		CGSize(width: collectionView.bounds.width, height: 50)
 	}
 
+	override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
+		if indexPath.section > 1 {
+			return false
+		}
+		return true
+	}
 
 	// MARK: Notifications
-	
+
 	func userDefaultsDidChange() {
-		collectionView.reloadSections([2,3])
+		collectionView.reloadSections([2, 3])
 	}
 
 }

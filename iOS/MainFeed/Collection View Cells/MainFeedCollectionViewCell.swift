@@ -89,11 +89,12 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 			feedTitle.textColor = Assets.Colors.primaryAccent
 			feedTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize,
 											   weight: .semibold)
+			unreadCountLabel.textColor = Assets.Colors.primaryAccent
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 		case (true, .phone):
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
 			feedTitle.textColor = .white
-			unreadCountLabel.textColor = .secondaryLabel
+			unreadCountLabel.textColor = .white
 			if feedTitle.text == "All Unread" {
 				faviconView.tintColor = .white
 			}

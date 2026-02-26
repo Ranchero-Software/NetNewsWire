@@ -1,5 +1,20 @@
 # Mac Release Notes
 
+### 7.0.1b2 7017 17 Feb 2026 — branch: main tag: mac-7.0.1b2
+
+Fixed a crash that could happen when syncing some Reader API syncing systems
+Fixed a crash that could happen when removing an account
+Made the version selectable in the About window
+
+### 7.0.1b1 7016 17 Feb 2026 — branch: main tag: mac-7.0.1b1
+
+Fixed a performance bug with syncing, with sending read status to NewsBlur
+Fixed a bug aligning unread counts in the sidebar
+Fixed a typo in the credits
+Fixed a layout bug in the About window where text could get clipped on some machines
+Fixed a bug where images in the article view could get vertically stretched in some conditions
+Fixed a bug where a clicking an anchor link that should navigate to another spot in the article would open in the browser instead
+
 ### 7.0 build 7015 26 Jan 2026 — branch: main tag: mac-7.0
 
 Same as 7.0b6.

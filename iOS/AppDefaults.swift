@@ -29,7 +29,9 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 }
 
 extension Notification.Name {
-	public static let userInterfaceColorPaletteDidUpdate = Notification.Name(rawValue: "UserInterfaceColorPaletteDidUpdateNotification")
+	public static let userInterfaceColorPaletteDidUpdate = Notification.Name("UserInterfaceColorPaletteDidUpdateNotification")
+	public static let timelineIconSizeDidChange = Notification.Name("TimelineIconSizeDidChangeNotification")
+	public static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
 }
 
 final class AppDefaults: Sendable {
@@ -241,6 +243,7 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
+			NotificationCenter.default.post(name: .timelineNumberOfLinesDidChange, object: nil)
 		}
 	}
 
@@ -251,6 +254,7 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
+			NotificationCenter.default.post(name: .timelineIconSizeDidChange, object: nil)
 		}
 	}
 

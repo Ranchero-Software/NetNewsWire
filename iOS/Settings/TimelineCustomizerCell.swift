@@ -15,7 +15,7 @@ enum SliderConfiguration {
 
 final class TimelineCustomizerCell: UICollectionViewCell {
 	@IBOutlet var slider: UISlider!
-	
+
 	var sliderConfiguration: SliderConfiguration! {
 		didSet {
 			switch sliderConfiguration {
@@ -34,7 +34,7 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 			}
 		}
 	}
-	
+
 	@IBAction func sliderValueChanges(_ sender: Any) {
 		switch sliderConfiguration {
 		case .numberOfLines:
@@ -46,12 +46,12 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 			return
 		}
 	}
-	
+
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.backgroundColor = traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
 		backgroundConfig.cornerRadius = 20
 		self.backgroundConfiguration = backgroundConfig
 	}
-	
+
 }

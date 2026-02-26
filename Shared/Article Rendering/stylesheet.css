@@ -252,7 +252,7 @@ pre code {
 
 img, figure, video, div, object {
 	max-width: 100%;
-	height: auto;
+	height: auto !important;
 	margin: 0 auto;
 }
 
@@ -421,6 +421,10 @@ a.footnote:hover,
 		color: var(--secondary-accent-color);
 	}
 
+	a :is(i, em) {
+		color: inherit;
+	}
+
 	.externalLink a {
 		font-size: inherit;
 	}
@@ -516,6 +520,10 @@ a.footnote:hover,
 
 	body a, body a:visited, body a * {
 		color: var(--accent-color);
+	}
+
+	a :is(i, em) {
+		color: inherit;
 	}
 
 	a u {

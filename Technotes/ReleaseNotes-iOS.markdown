@@ -1,5 +1,51 @@
 # iOS Release Notes
 
+### 7.0.1 TestFlight build 7026 18 Feb 2026 - branch: main tag: iOS-7.0.1-7026
+
+Fixed — this time for real, we think — a VoiceOver accessibility issue with the timeline
+Fixed a crash that could happen when trying to add a folder and none of the active accounts support folders
+
+### 7.0.1 TestFlight build 7025 17 Feb 2026 - branch: main tag: iOS-7.0.1-7025
+
+Fixed a performance bug with syncing, with sending read status to NewsBlur
+Fixed a VoiceOver accessibility bug with the timeline
+Fixed a bug where you couldn’t swipe back from article view when it was in fullscreen mode
+Fixed a bug where images in the article view could get vertically stretched in some conditions
+
+### 7.0 TestFlight build 7024 3 Feb 2026 - branch: main tag: iOS-7.0-7024
+
+Fixed a crashing bug
+
+### 7.0 TestFlight build 7023 3 Feb 2026 - branch: main tag: iOS-7.0-7023
+
+Fixed — for real this time! — the last and final cause of the restored-to article sometimes getting removed on launch
+
+### 7.0 TestFlight build 7022 2 Feb 2026 - branch: main tag: iOS-7.0-7022
+
+Fixed — again, this time for good, we think! — bugs on Pro Max devices with rotation and timeline selection
+Removed latency from the deselection animation on navigating back to the timeline 
+
+### 7.0 TestFlight build 7021 1 Feb 2026 - branch: main tag: iOS-7.0-7021
+
+Fixed some UI glitches with timeline cells
+Made some performance enhancements in timeline cells
+Made sure sidebar shows on first launch on iPad in both orientations
+Fixed bug on Pro Max devices where showing sidebar would deselect current article
+Fixed — hopefully! — the last causes of the restored-to article getting wiped out on launch
+
+### 7.0 TestFlight build 7020 28 Jan 2026 - branch: main tag: iOS-7.0-7020
+
+Fixed state restoration bug where the restored-to article would animate into view
+Made some small performance enhancements for the timeline — coalescing more updates
+
+### 7.0 TestFlight build 7019 27 Jan 2026 - branch: main tag: iOS-7.0-7019
+
+Fixed bug where the timeline unread and star indicators didn't update on status changes
+Made the article view button the same color as the other buttons (no longer blue)
+Fixed bug on the feeds view where the separator would start at the left edge of the icon instead of the left edge of the text
+Fixed bug in Settings > Timeline Layout where cells would briefly appear to overlay when changing settings 
+Fixed bug in timeline where you couldn’t swipe to star/unstar without tapping the button
+
 ### 7.0 TestFlight build 7018 26 Jan 2026 - branch: main tag: iOS-7.0-7018
 
 Fix crash bug — take two! — introduced in 7014
@@ -13,7 +59,7 @@ Fix crash introduced in the previous build
 Fixed a bug where swiping multiple cells in the timeline would be just weird. (Technical details for the curious: we switched from UITableView to UICollectionView.)
 Fixed — we’re pretty sure — a state restoration bug where the article you were reading could disappear on re-launch
 Fixed a bug where separators in the timeline might not start under the text as they should
-Fixed a bug where a cell in the timeline might have an icon when it shouldn’t, and vice verse, when that article appears in (for instance) the Today list and then you switch to the actual feed (and vice versa)
+Fixed a bug where a cell in the timeline might have an icon when it shouldn’t, and vice versa, when that article appears in (for instance) the Today list and then you switch to the actual feed (and vice versa)
 
 ### 7.0 TestFlight build 7012 21 Jan 2026 - branch: main tag: iOS-7.0-7012
 
