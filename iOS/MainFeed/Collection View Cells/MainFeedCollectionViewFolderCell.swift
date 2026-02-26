@@ -58,6 +58,11 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
+			isAccessibilityElement = true
+			folderTitle.isAccessibilityElement = false
+			unreadCountLabel.isAccessibilityElement = false
+			faviconView.isAccessibilityElement = false
+			disclosureButton.isAccessibilityElement = false
 			disclosureButton.addInteraction(UIPointerInteraction())
 		}
 	}
@@ -99,11 +104,12 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 
 	override var accessibilityLabel: String? {
 		get {
+			let name = folderTitle.text ?? ""
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
-				return "\(String(describing: folderTitle.text)) \(unreadCount) \(unreadLabel)"
+				return "\(name) \(unreadCount) \(unreadLabel)"
 			} else {
-				return (String(describing: folderTitle.text))
+				return name
 			}
 		}
 		set {}

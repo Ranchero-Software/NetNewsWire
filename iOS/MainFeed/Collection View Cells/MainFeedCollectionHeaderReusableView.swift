@@ -70,6 +70,10 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
+			isAccessibilityElement = true
+			headerTitle.isAccessibilityElement = false
+			unreadCountLabel.isAccessibilityElement = false
+			disclosureIndicator.isAccessibilityElement = false
 			unreadLabelWidthConstraint = unreadCountLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 80)
 			unreadLabelWidthConstraint?.isActive = true
 			configureUI()

@@ -62,11 +62,12 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 
 	override var accessibilityLabel: String? {
 		get {
+			let name = feedTitle.text ?? ""
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
-				return "\(String(describing: feedTitle.text)) \(unreadCount) \(unreadLabel)"
+				return "\(name) \(unreadCount) \(unreadLabel)"
 			} else {
-				return (String(describing: feedTitle.text))
+				return name
 			}
 		}
 		set {}
@@ -75,6 +76,10 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
     override func awakeFromNib() {
 		MainActor.assumeIsolated {
 			super.awakeFromNib()
+			isAccessibilityElement = true
+			feedTitle.isAccessibilityElement = false
+			unreadCountLabel.isAccessibilityElement = false
+			faviconView.isAccessibilityElement = false
 			faviconLeadingConstraint = faviconView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor)
 			faviconLeadingConstraint?.isActive = true
 		}
