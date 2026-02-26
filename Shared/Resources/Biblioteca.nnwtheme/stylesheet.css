@@ -18,7 +18,7 @@
 	--code-background-border: transparent;
 	--code-background: #403f3f;
 	--font-size-title: 0.9em;
-	--font-size-secondary: 0.7em;
+	--font-size-secondary: 0.8em;
 	--body-line-height: 1.475;
 }
 @media (prefers-color-scheme: dark) {
@@ -48,7 +48,7 @@
 }
 @media (min-width: 740px) {
 	:root {
-		--font-size-title: 1.25em;
+		--font-size-title: 1.125em;
 		--body-line-height: 1.6;
 	}
 }
@@ -124,6 +124,7 @@ code {
 pre code {
 	font-size: 100%;
 }
+
 code a,
 pre a {
 	color: var(--body-code-color);
@@ -241,7 +242,6 @@ iframe.nnw-constrained {
 	font-family: var(--font-serif);
 	-webkit-transform: translate3d(0, 0, 0);
 	font-size: var(--font-size-title);
-	max-inline-size: 45ch;
 	text-wrap: balance;
 }
 .article-title h1 {
@@ -307,7 +307,7 @@ iframe.nnw-constrained {
 	font-family: var(--font-serif);
 	line-height: var(--body-line-height);
 	margin-top: 1em;
-	margin-bottom: 1.25em;
+	margin-bottom: 2em;
 }
 @media (min-width: 740px) {
 	.article-body {
