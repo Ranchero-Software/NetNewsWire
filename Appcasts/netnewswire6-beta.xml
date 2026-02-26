@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+    <channel>
+        <title>NetNewsWire Betas</title>
+        <link>https://ranchero.com/downloads/netnewswire6-beta.xml</link>
+        <description>Most recent NetNewsWire changes with links to updates.</description>
+        <language>en</language>
+
+		<item>
+			<title>NetNewsWire 7.0.1b3</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed bug where multiple About windows could be shown
+					<li>Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs)
+				</ul>
+			]]></description>
+        	<pubDate>Thu, 26 Feb 2026 09:00:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b3/NetNewsWire7.0.1b3.zip" sparkle:version="7018" sparkle:shortVersionString="7.0.1b3" length="10360149" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
+			<title>NetNewsWire 7.0.1b2</title>
+			<description><![CDATA[
+				<ul>
+				<li>Fixed a crash that could happen when syncing some Reader API syncing systems
+				<li>Fixed a crash that could happen when removing an account
+				<li>Made the version selectable in the About window
+				</ul>
+			]]></description>
+			<pubDate>Wed, 18 Feb 2026 22:00:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b2/NetNewsWire7.0.1b2.zip" sparkle:version="7017" sparkle:shortVersionString="7.0.1b2" length="10358570" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
+			<title>NetNewsWire 7.0.1b1</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed a performance bug with syncing, with sending read status to NewsBlur
+					<li>Fixed a bug aligning unread counts in the sidebar
+					<li>Fixed a typo in the credits
+					<li>Fixed a layout bug in the About window where text could get clipped on some machines
+					<li>Fixed a bug where images in the article view could get vertically stretched in some conditions
+					<li>Fixed a bug where a clicking an anchor link that should navigate to another spot in the article would open in the browser instead
+				   </ul>
+			]]></description>
+        	<pubDate>Tue, 17 Feb 2026 20:00:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b1/NetNewsWire7.0.1b1.zip" sparkle:version="7016" sparkle:shortVersionString="7.0.1b1" length="10357850" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
+			<title>NetNewsWire 7.0</title>
+            <description><![CDATA[
+				<ul>
+					<li>This build is the same as 7.0b6 — except for the version number. This is NetNewsWire 7.0.
+				</ul>
+			]]></description>
+        	<pubDate>Mon, 26 Jan 2026 21:15:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0/NetNewsWire7.0.zip" sparkle:version="7015" sparkle:shortVersionString="7.0" length="10356608" type="application/zip" />
+			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
+			<title>NetNewsWire 6.2.1</title>
+            <description><![CDATA[
+				<p>Changes since 6.2:</p>
+				<ul>
+					<li>Fixed some crashing bugs</li>
+					<li>Fixed a bug where, on some Macs, the user couldn’t select an OPML file to import</li>
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 03 Dec 2025 21:40:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-6.2.1/NetNewsWire6.2.1.zip" sparkle:version="6202" sparkle:shortVersionString="6.2.1" length="10242980" type="application/zip" />
+			<sparkle:minimumSystemVersion>13.0</sparkle:minimumSystemVersion>
+		</item>
+
+    </channel>
+</rss>
