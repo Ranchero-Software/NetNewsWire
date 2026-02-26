@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0.1 TestFlight build 7028 25 Feb 2026 - branch: main tag: iOS-7.0.1-7028
+
+Fixed accessibility bug where mark read/unread and star/unstarred commands wouldn't provide feedback (now they do)
+Fixed accessibility bug where, in the Feeds view, VoiceOver would read "optional feedname" instead of "feedname"
+
 ### 7.0.1 TestFlight build 7027 25 Feb 2026 - branch: main tag: iOS-7.0.1-7027
 
 Fixed bug where unread indicator would take precedence over star in timeline rows
