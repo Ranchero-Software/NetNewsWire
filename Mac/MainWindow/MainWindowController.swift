@@ -280,6 +280,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return validateToggleReadArticles(item)
 		}
 
+		if item.action == #selector(performFindPanelAction(_:)) {
+			return self.detailViewController?.canFindInCurrentArticle ?? false
+		}
+
 		return true
 	}
 
@@ -548,6 +552,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	@IBAction func toggleReadArticlesFilter(_ sender: Any?) {
 		timelineContainerViewController?.toggleReadFilter()
+	}
+
+	@IBAction  func performFindPanelAction(_ sender: Any?) {
+		self.detailViewController?.performFindPanelAction(sender)
 	}
 
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {

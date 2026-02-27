@@ -171,6 +171,25 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
+
+	// MARK: State Restoration
+	
+	func saveState(to state: inout [AnyHashable : Any]) {
+		state[UserInfoKey.isShowingExtractedArticle] = isShowingExtractedArticle
+		state[UserInfoKey.articleWindowScrollY] = windowScrollY
+	}
+
+	// MARK: Find in Article
+
+	var canFindInArticle: Bool {
+		switch state {
+		case .article(_, _), .extracted(_, _, _):
+			return true
+		default:
+			return false
+		}
+	}
+
 }
 
 // MARK: - WKScriptMessageHandler
