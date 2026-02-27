@@ -447,13 +447,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		switch type {
 		case .allForAccount:
-			let since: Date = {
-				if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
-					return lastArticleFetch
-				} else {
-					return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
-				}
-			}()
+			let since = accountItemFetchSinceDate()
 
 			let sinceTimeInterval = since.timeIntervalSince1970
 			queryItems.append(URLQueryItem(name: "ot", value: String(Int(sinceTimeInterval))))
@@ -576,6 +570,21 @@ enum CreateReaderAPISubscriptionResult {
 // MARK: Private
 
 private extension ReaderAPICaller {
+	func accountItemFetchSinceDate() -> Date {
+		let baselineWindowStart = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
+
+		// For FreshRSS-compatible servers (including Miniflux), using only "last successful fetch"
+		// can miss entries that were published earlier but had state changes (read/unread) later.
+		if variant == .freshRSS {
+			return baselineWindowStart
+		}
+
+		if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
+			return lastArticleFetch
+		}
+
+		return baselineWindowStart
+	}
 
 	func encodeForURLPath(_ pathComponent: String?) -> String? {
 		guard let pathComponent = pathComponent else { return nil }
