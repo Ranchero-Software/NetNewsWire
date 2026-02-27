@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.0.1b4 7018 26 Feb 2026 — branch: main tag: mac-7.0.1b4
+
+Runs on macOS 15
+
 ### 7.0.1b3 7018 26 Feb 2026 — branch: main tag: mac-7.0.1b3
 
 Fixed bug where multiple About windows could be shown
