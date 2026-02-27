@@ -94,7 +94,9 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 		timelineContainerViewController = splitViewController?.splitViewItems[1].viewController as? TimelineContainerViewController
 		timelineContainerViewController!.delegate = self
-		splitViewController?.splitViewItems[1].automaticallyAdjustsSafeAreaInsets = true
+		if #available(macOS 26.0, *) {
+			splitViewController?.splitViewItems[1].automaticallyAdjustsSafeAreaInsets = true
+		}
 
 		detailViewController = splitViewController?.splitViewItems[2].viewController as? DetailViewController
 
