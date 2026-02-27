@@ -1,0 +1,504 @@
+/* Shared iOS and macOS CSS rules. Platform specific rules are at the bottom of this file. */
+:root {
+	--header-table-border-color: rgba(0, 0, 0, 0.1);
+	--body-code-color: #fff;
+	--system-message-color: #111;
+	--feedlink-color: #777;
+	--article-title-color: #111;
+	--article-secondary-color: rgba(0, 0, 0, 0.5);
+	--table-cell-border-color: lightgray;
+	--table-header-border-color: #dedede;
+	--secondary-accent-color: #1145a5;
+	--block-quote-border-color: rgba(0, 0, 0, 0.3);
+	--font-serif: ui-serif, serif;
+	--font-sans: ui-sans-serif, sans-serif;
+	--font-mono: ui-monospace, monospace;
+	--background-color: #fff;
+	--font-color: #111;
+	--code-background-border: transparent;
+	--code-background: #403f3f;
+	--font-size-title: 0.9em;
+	--font-size-secondary: 0.8em;
+	--body-line-height: 1.475;
+}
+@media (prefers-color-scheme: dark) {
+	:root {
+		--header-table-border-color: rgba(255, 255, 255, 0.1);
+		--font-color: #ededed;
+		--background-color: #1E1E1E;
+		--header-color: rgba(255, 255, 255, 0.5);
+		--article-title-color: #fff;
+		--article-secondary-color: rgba(255, 255, 255, 0.65);
+		--secondary-accent-color: #7aa1e8;
+		--feedlink-color: rgba(255, 255, 255, 0.65);
+		--body-code-color: #f5f5f5;
+		--block-quote-border-color: rgba(255, 255, 255, 0.2);
+		--table-cell-border-color: rgba(255,255,255,0.1);
+		--table-header-border-color: rgba(255,255,255,0.2);
+		--code-background-border: #dedede20;
+		--code-background: #424141;
+		--system-message-color: #777;
+	}
+}
+@media (min-width: 400px) {
+	:root {
+		--font-size-title: 1em;
+		--font-size-secondary: 0.9em;
+	}
+}
+@media (min-width: 740px) {
+	:root {
+		--font-size-title: 1.125em;
+		--body-line-height: 1.6;
+	}
+}
+
+body {
+	margin-left: auto;
+	margin-right: auto;
+	padding-left: 20px;
+	padding-right: 20px;
+	word-wrap: break-word;
+	max-width: 42em;
+	color: var(--font-color);
+	background-color: var(--background-color);
+}
+a,
+a:visited,
+a * {
+	color: var(--secondary-accent-color);
+} 
+a {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 2px;
+}
+a:hover {
+	text-decoration: none;
+} 
+
+h1 {
+	line-height: 1.2;
+	font-weight: 700;
+}
+h2,
+h3,
+h4,
+h5,
+h6 {
+	line-height: 1.2;
+	font-family: var(--font-sans);
+	margin-top: 1.5em;
+	margin-bottom: 0.25em;
+}
+h2 + p,
+h3 + p,
+h4 + p,
+h5 + p,
+h6 + p {
+	margin-top: 0;
+}
+
+pre {
+	max-width: 100%;
+	margin: 0;
+	font-family: var(--font-mono);
+	background-color: var(--code-background);
+	color: var(--body-code-color);
+	font-size: 0.8rem;
+	border: 1px solid var(--code-background-border);
+	border-radius: 8px;
+	padding: 8px 12px;
+	overflow: auto;
+	overflow-y: hidden;
+	word-wrap: normal;
+	word-break: normal;
+	line-height: 1.4286em;
+	-webkit-hyphens: none;
+}
+code {
+	font-family: var(--font-mono);
+	font-size: 85%;
+}
+/* reset size of code in fences */
+pre code {
+	font-size: 100%;
+}
+
+code a,
+pre a {
+	color: var(--body-code-color);
+}
+img,
+figure,
+video,
+object {
+	max-width: 100%;
+	height: auto !important;
+	margin: 0 auto;
+}
+figure,
+img {
+	margin-top: 1.25em;
+	margin-bottom: 1.25em;
+}
+figure img {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+figcaption {
+	color: var(--article-secondary-color);
+	margin-top: 8px;
+	font-family: var(--font-sans);
+	font-size: 14px;
+	line-height: 1.3em;
+}
+ul li:not(:last-child) {
+	margin-bottom: 0.5em;
+}
+sup {
+	vertical-align: top;
+	position: relative;
+	bottom: 0.2rem;
+}
+sub {
+	vertical-align: bottom;
+	position: relative;
+	top: 0.2rem;
+}
+hr {
+	border: 1.5px solid var(--table-cell-border-color);
+}
+blockquote {
+	margin-inline-start: 0;
+	margin-inline-end: 0;
+	padding-inline-start: 15px;
+	border-inline-start: 3px solid var(--block-quote-border-color);
+}
+form {
+	font-family: var(--font-sans);
+}
+iframe {
+	max-width: 100%;
+	margin: 0 auto;
+}
+iframe.nnw-constrained {
+	max-height: 50vw;
+}
+.iframeWrap {
+	position: relative;
+	display: block;
+	padding-top: 56.25%;
+}
+.iframeWrap iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100% !important;
+	width: 100% !important;
+}
+
+/* Article header */
+.header-container {
+	font-size: var(--font-size-secondary);
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	font-family: var(--font-sans);
+	font-style: italic;
+	padding-top: 5px;
+}
+@media (min-width: 740px) {
+	.header-container {
+		padding-top: 0;
+		padding-bottom: 5px;
+		border-bottom: 1px solid var(--header-table-border-color);
+		justify-content: center;
+	}
+}
+.header-container img {
+	width: 20px;
+	height: 20px;
+	margin-right: 8px;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+@media (min-width: 740px) {
+	.header-container img {
+		width: 32px;
+		height: 32px;
+		margin-right: 10px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
+}
+.header-container a,
+.header-container a:link,
+.header-container a:visited {
+	text-decoration: none;
+	color: var(--feedlink-color);
+}
+.article-title {
+	font-family: var(--font-serif);
+	-webkit-transform: translate3d(0, 0, 0);
+	font-size: var(--font-size-title);
+	text-wrap: balance;
+}
+.article-title h1 {
+	margin-top: 5px;
+	margin-bottom: 10px;
+}
+@media (min-width: 740px) {
+	.article-title h1 {
+		margin-top: 20px;
+	}
+}
+.article-title a:link,
+.article-title a:visited {
+	text-decoration: none;
+	color: var(--article-title-color);
+}
+.articleDateline {
+	color: var(--article-secondary-color);
+	font-family: var(--font-sans);
+	font-size: var(--font-size-secondary);
+	align-items: baseline;
+	display: flex;
+	flex-wrap: wrap;
+}
+@media (min-width: 740px) {
+	.header-container {
+		font-size: 0.9em;
+	}
+}
+.articleDateline .byline {
+	font-weight: 600;
+	display: inline-block;
+	margin-right: 8px;
+}
+.articleDateline .byline:empty {
+	display: none;
+}
+.articleDateline .byline:not(:empty)::before {
+	content: "By "
+}
+.articleDateline a:link,
+.articleDateline a:visited {
+	color: var(--article-secondary-color);
+	text-decoration: none;
+}
+
+/* Links */
+.external-link {
+	margin-bottom: 5px;
+	font-style: italic;
+	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.external-link a:link,
+.external-link a:visited {
+	text-decoration: none;
+}
+
+/* Running copy */
+.article-body {
+	font-family: var(--font-serif);
+	line-height: var(--body-line-height);
+	margin-top: 1em;
+	margin-bottom: 2em;
+}
+@media (min-width: 740px) {
+	.article-body {
+		margin-bottom: 4em;
+	}
+}
+.nnw-overflow {
+	overflow-x: auto;
+}
+.systemMessage {
+	color: var(--system-message-color);
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translateX(-55%) translateY(-50%);
+	-webkit-user-select: none;
+	cursor: default;
+}
+
+/* Footnotes */
+.newsfoot-footnote-popover {
+	background: #ccc;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 3px 6px rgba(0, 0, 0, 0.25);
+	color: var(--font-color);
+	padding: 1px;
+}
+.newsfoot-footnote-popover-arrow {
+	background: #fbf0d9;
+	border: 1px solid #ccc;
+}
+.newsfoot-footnote-popover-inner {
+	background: #fbf0d9;
+}
+body a.footnote,
+body a.footnote:visited,
+.newsfoot-footnote-popover + a.footnote:hover {
+	font-family: var(--font-sans);
+	color: var(--font-color);
+	font-weight: 700;
+	padding: 0;
+	transition: background-color 200ms ease-out;
+}
+
+/*
+ Instead of the last-child bits, border-collapse: collapse
+ could have been used. However, then the inter-cell borders
+ overlap the table border, which looks bad.
+ */
+.nnw-overflow table {
+	font-family: var(--font-sans);
+	margin-bottom: 1px;
+	border-spacing: 0;
+	border: none;
+	font-size: 0.95em;
+}
+.nnw-overflow table table {
+	margin-bottom: 0;
+	border: none;
+}
+.nnw-overflow td,
+.nnw-overflow th {
+	-webkit-hyphens: none;
+	word-break: normal;
+	border-top: none;
+	border-left: none;
+	padding: 10px;
+	padding-right: 14px;
+	text-align: left;
+}
+.nnw-overflow th {
+	text-transform: uppercase;
+	font-size: 11px;
+	letter-spacing: 0.25px;
+	border-bottom: 1px solid var(--table-header-border-color);
+	padding-bottom: 5px;
+}
+.nnw-overflow td {
+	border-bottom: 1px solid var(--table-cell-border-color);
+}
+.nnw-overflow tr :matches(td, th):first-child {
+	padding-left: 0;
+	border-left: none;
+}
+.nnw-overflow tr :matches(td, th):last-child {
+	border-right: none;
+}
+.nnw-overflow
+	:matches(thead, tbody, tfoot):last-child
+	> tr:last-child
+	:matches(td, th) {
+	border-bottom: none;
+}
+.nnw-overflow td pre {
+	border: none;
+	padding: 0;
+}
+.nnw-overflow table[border="0"] {
+	border-width: 0;
+}
+
+/* Feed Specific */
+.feedbin--article-wrap {
+	border-top: 1px solid var(--header-table-border-color);
+}
+.captioned-image-container figure a {
+	position: relative;
+}
+/* Substack images */
+.image-link .restack-image,
+[data-sanitized-class="captioned-image-container"] [data-sanitized-class="restack-image"] {
+	display: none;
+}
+.image-link .image-link-expand,
+[data-sanitized-class="captioned-image-container"] [data-sanitized-class="image-link-expand"] {
+	display: none
+}
+.footnote,
+[data-sanitized-class="footnote"] {
+	font-size: 90%;
+	display: flex;
+	align-items: baseline;
+	border-top: 1px solid var(--table-cell-border-color);
+	gap: 20px;
+}
+/* Wordpress block editor */
+.wp-block-image > .aligncenter {
+	margin-left: auto;
+	margin-right: auto;
+	display: table;
+}
+/* Twitter */
+.twitterAvatar {
+	vertical-align: middle;
+	border-radius: 4px;
+	height: 1.7em;
+	width: 1.7em;
+}
+.twitterUsername {
+	line-height: 1.2;
+	margin-left: 4px;
+	display: inline-block;
+	vertical-align: middle;
+}
+.twitterScreenName {
+	font-size: 66%;
+}
+.twitterTimestamp {
+	font-size: 66%;
+}
+/* force datawrapper to have white background in dark mode */
+@media (prefers-color-scheme: dark) {
+	#iframe-datawrapper,
+	[data-sanitized-id="iframe-datawrapper"] {
+		background-color: white;
+	}
+}
+
+
+/* iOS Specific */
+@supports (-webkit-touch-callout: none) {
+	:root {
+		color-scheme: light dark;
+		--background-color: Canvas;
+	}
+	body {
+		word-break: break-word;
+		-webkit-hyphens: none;
+		-webkit-text-size-adjust: none;
+		font-size: [[font-size]]px;
+	}
+}
+
+/* macOS Specific */
+@supports not (-webkit-touch-callout: none) {
+	.smallText {
+		font-size: 16px;
+	}
+
+	.mediumText {
+		font-size: 18px;
+	}
+
+	.largeText {
+		font-size: 20px;
+	}
+
+	.xlargeText {
+		font-size: 22px;
+	}
+
+	.xxlargeText {
+		font-size: 24px;
+	}
+}
