@@ -436,6 +436,11 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		coordinator?.markAllAsReadInTimeline()
 	}
 
+	private func markAllAsReadExceptStarredInTimeline() {
+		assert(coordinator != nil)
+		coordinator?.markAllAsReadExceptStarredInTimeline()
+	}
+
 	@IBAction func markAllAsRead(_ sender: Any?) {
 		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
 
@@ -514,6 +519,9 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 				secondaryActions.append(action)
 			}
 			if let action = self.markAllInFeedAsReadAction(article, indexPath: firstIndex) {
+				secondaryActions.append(action)
+			}
+			if let action = self.markAllAsReadExceptStarredAction(firstIndex) {
 				secondaryActions.append(action)
 			}
 			if !secondaryActions.isEmpty {
@@ -692,6 +700,10 @@ private extension MainTimelineModernViewController {
 					}
 
 					if let action = self.markAllInFeedAsReadAlertAction(article, indexPath: indexPath, completion: completion) {
+						alert.addAction(action)
+					}
+
+					if let action = self.markAllAsReadExceptStarredAlertAction(indexPath, completion: completion) {
 						alert.addAction(action)
 					}
 
@@ -1251,6 +1263,45 @@ extension MainTimelineModernViewController {
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
 				self?.markAllAsRead(articles)
+				completion(true)
+			}
+		}
+		return action
+	}
+
+	func markAllAsReadExceptStarredAction(_ indexPath: IndexPath) -> UIAction? {
+		guard coordinator?.canMarkAllAsReadExceptStarred() ?? false else {
+			return nil
+		}
+		guard let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Unstarred as Read", comment: "Command")
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				self?.markAllAsReadExceptStarredInTimeline()
+			}
+		}
+		return action
+	}
+
+	func markAllAsReadExceptStarredAlertAction(_ indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard coordinator?.canMarkAllAsReadExceptStarred() ?? false else {
+			return nil
+		}
+		guard let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Unstarred as Read", comment: "Command")
+		let cancel = {
+			completion(true)
+		}
+
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
+				self?.markAllAsReadExceptStarredInTimeline()
 				completion(true)
 			}
 		}

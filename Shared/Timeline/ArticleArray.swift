@@ -92,6 +92,15 @@ typealias ArticleArray = [Article]
 		return articles.isEmpty ? nil : articles
 	}
 
+	func canMarkAllAsReadExceptStarred() -> Bool {
+		return anyArticlePassesTest { !$0.status.read && !$0.status.starred }
+	}
+
+	func unreadUnstarredArticles() -> [Article]? {
+		let articles = self.filter { !$0.status.read && !$0.status.starred }
+		return articles.isEmpty ? nil : articles
+	}
+
 	func representSameArticlesInSameOrder(as otherArticles: [Article]) -> Bool {
 		if self.count != otherArticles.count {
 			return false
