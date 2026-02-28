@@ -615,7 +615,17 @@ private extension WebViewController {
 //		try? html.write(to: fileURL, atomically: true, encoding: .utf8)
 //		print("article.html written to \(fileURL.path)")
 
-		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadHTMLString(html, baseURL: loadBaseURL(for: rendering.baseURL))
+	}
+
+	private func loadBaseURL(for renderingBaseURL: String) -> URL {
+		if let url = URL(string: renderingBaseURL),
+			let scheme = url.scheme?.lowercased(),
+			scheme == "http" || scheme == "https" {
+			return url
+		}
+
+		return URL(string: "https://netnewswire.com/")!
 	}
 
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
