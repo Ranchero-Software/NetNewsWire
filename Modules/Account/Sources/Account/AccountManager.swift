@@ -106,7 +106,16 @@ import RSDatabase
 		self.accountsFolder = AppConfig.dataSubfolder(named: "Accounts").path
 
 		// The local "On My Mac" account must always exist, even if it's empty.
-		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
+		// Check for custom OnMyMac path in UserDefaults
+		let localAccountFolder: String
+		if let customPath = UserDefaults.standard.string(forKey: "onMyMacAccountPath"),
+		   !customPath.isEmpty,
+		   FileManager.default.fileExists(atPath: customPath) || FileManager.default.isWritableFile(atPath: (customPath as NSString).deletingLastPathComponent) {
+			localAccountFolder = customPath
+		} else {
+			localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
+		}
+
 		do {
 			try FileManager.default.createDirectory(atPath: localAccountFolder, withIntermediateDirectories: true, attributes: nil)
 		} catch {
