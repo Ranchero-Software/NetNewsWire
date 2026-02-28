@@ -490,7 +490,14 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let dataSource, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
-		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
+		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying,
+										  previewProvider: {
+			let previewController = WebViewController()
+			previewController.coordinator = self.coordinator
+			previewController.article = article
+			return previewController
+		},
+										  actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -542,6 +549,15 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 			return UIMenu(title: "", children: menuElements)
 
 		})
+	}
+	
+	func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: any UIContextMenuInteractionCommitAnimating) {
+		animator.addCompletion { [weak self] in
+			guard let indexRow = configuration.identifier as? Int,
+				  let dataSource = self?.dataSource,
+					let article = dataSource.itemIdentifier(for: IndexPath(item: indexRow, section: 0)) else { return }
+			self?.coordinator?.selectArticle(article)
+		}
 	}
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
