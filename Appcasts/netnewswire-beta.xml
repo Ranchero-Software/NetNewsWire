@@ -7,6 +7,18 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.1b4</title>
+            <description><![CDATA[
+				<ul>
+					<li>Runs on macOS 15
+				</ul>
+			]]></description>
+        	<pubDate>Fri, 27 Feb 2026 11:55:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b4/NetNewsWire7.0.1b4.zip" sparkle:version="7019" sparkle:shortVersionString="7.0.1b4" length="10360701" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.1b3</title>
             <description><![CDATA[
 				<ul>
