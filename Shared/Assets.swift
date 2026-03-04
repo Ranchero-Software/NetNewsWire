@@ -218,6 +218,8 @@ struct Assets {
 		static var iconLightBackground: RSColor { NSColor(named: "iconLightBackgroundColor")! }
 		static var iconDarkBackground: RSColor { NSColor(named: "iconDarkBackgroundColor")! }
 		static var star: RSColor { RSColor(named: "StarColor")! }
+		static var sidebarUnreadCountBackground: RSColor { RSColor(named: "SidebarUnreadCountBackground")! }
+		static var sidebarUnreadCountText: RSColor { RSColor(named: "SidebarUnreadCountText")! }
 #else // iOS
 		static var primaryAccent: RSColor { RSColor(named: "primaryAccentColor")! }
 		static var secondaryAccent: RSColor { RSColor(named: "secondaryAccentColor")! }

@@ -9,12 +9,41 @@
 import AppKit
 
 final class UnreadCountView: NSView {
+
 	@MainActor struct Appearance {
+
 		static let padding = NSEdgeInsets(top: 1.0, left: 7.0, bottom: 1.0, right: 7.0)
 		static let cornerRadius: CGFloat = 8.0
-		static let backgroundColor = NSColor.clear
-		static let textSize: CGFloat = 13.0
-		static let textFont = NSFont.monospacedDigitSystemFont(ofSize: textSize, weight: NSFont.Weight.regular)
+
+		// macOS 26: no background pill, subtle text
+		// macOS 15: traditional background pill with named colors
+		static let useTraditionalBadge: Bool = {
+			if #available(macOS 26, *) {
+				return false
+			}
+			return true
+		}()
+
+		static let backgroundColor: NSColor = {
+			if useTraditionalBadge {
+				return Assets.Colors.sidebarUnreadCountBackground
+			}
+			return NSColor.clear
+		}()
+
+		static let textSize: CGFloat = {
+			if useTraditionalBadge {
+				return 11.0
+			}
+			return 13.0
+		}()
+
+		static let textFont: NSFont = {
+			if useTraditionalBadge {
+				return NSFont.monospacedDigitSystemFont(ofSize: textSize, weight: .semibold)
+			}
+			return NSFont.monospacedDigitSystemFont(ofSize: textSize, weight: .regular)
+		}()
 	}
 
 	var unreadCount = 0 {
@@ -34,6 +63,9 @@ final class UnreadCountView: NSView {
 	}
 
 	private var currentTextColor: NSColor {
+		if Appearance.useTraditionalBadge {
+			return Assets.Colors.sidebarUnreadCountText
+		}
 		return isSelected ? NSColor.white : NSColor.secondaryLabelColor
 	}
 
