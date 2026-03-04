@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.1b5</title>
+            <description><![CDATA[
+				<ul>
+					<li>Restore, on macOS 15, the separator between the toolbar and the article view
+					<li>Restore, on macOS 15, the traditional style unread count pills in the sidebar
+					<li>Fix, on macOS 15, an alignment bug in the settings window at the top of the General pane
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 03 Mar 2026 21:45:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1b5/NetNewsWire7.0.1b5.zip" sparkle:version="7020" sparkle:shortVersionString="7.0.1b5" length="10363792" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.1b4</title>
             <description><![CDATA[
 				<ul>
