@@ -13,6 +13,8 @@ import UserNotifications
 import UniformTypeIdentifiers
 
 final class GeneralPreferencesViewController: NSViewController {
+	@IBOutlet var articleTextSizeLabel: NSTextField!
+	@IBOutlet var articleTextSizePopup: NSPopUpButton!
 	@IBOutlet var articleThemePopup: NSPopUpButton!
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
 
@@ -28,6 +30,7 @@ final class GeneralPreferencesViewController: NSViewController {
 
 	override func viewWillAppear() {
 		super.viewWillAppear()
+		fixArticleTextSizeBaselineIfNeeded()
 		updateUI()
 		updateNotificationSettings()
 	}
@@ -71,6 +74,37 @@ final class GeneralPreferencesViewController: NSViewController {
 // MARK: - Private
 
 private extension GeneralPreferencesViewController {
+
+	/// On macOS 15 the "Article Text Size:" label is vertically misaligned
+	/// with its popup. Replace the firstBaseline constraint with a
+	/// centerY constraint, which works.
+	func fixArticleTextSizeBaselineIfNeeded() {
+		if #available(macOS 26, *) {
+			return
+		}
+
+		guard let superview = articleTextSizeLabel.superview else {
+			return
+		}
+
+		for constraint in superview.constraints {
+			let matchesBaseline =
+				constraint.firstAttribute == .firstBaseline &&
+				constraint.secondAttribute == .firstBaseline
+			let involvesPopup =
+				constraint.firstItem === articleTextSizePopup ||
+				constraint.secondItem === articleTextSizePopup
+			let involvesLabel =
+				constraint.firstItem === articleTextSizeLabel ||
+				constraint.secondItem === articleTextSizeLabel
+
+			if matchesBaseline && involvesPopup && involvesLabel {
+				superview.removeConstraint(constraint)
+				articleTextSizeLabel.centerYAnchor.constraint(equalTo: articleTextSizePopup.centerYAnchor).isActive = true
+				break
+			}
+		}
+	}
 
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)

@@ -293,7 +293,7 @@
                                     <constraint firstItem="UI6-sq-M15" firstAttribute="top" secondItem="1w0-nA-DEO" secondAttribute="bottom" constant="12" id="DMk-OP-dpa"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="Ci4-fW-KjU" secondAttribute="bottom" constant="12" id="E3r-xf-7aZ"/>
                                     <constraint firstAttribute="bottom" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="4" id="FAd-wh-IFu"/>
-                                    <constraint firstItem="pR2-Bf-7Fd" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" constant="8" id="G0C-1M-LW1"/>
+                                    <constraint firstItem="pR2-Bf-7Fd" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="G0C-1M-LW1"/>
                                     <constraint firstItem="yrg-M3-Dbz" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="JbY-CP-pK8"/>
                                     <constraint firstAttribute="trailing" secondItem="Ubm-Pk-l7x" secondAttribute="trailing" id="KIg-w5-ceG"/>
                                     <constraint firstItem="Wsb-Lr-8Q7" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="KT2-cC-duX"/>
@@ -348,6 +348,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="articleTextSizeLabel" destination="pR2-Bf-7Fd" id="aTS-lB-9Fd"/>
+                        <outlet property="articleTextSizePopup" destination="Z6O-Zt-V1g" id="aTS-pU-7Vg"/>
                         <outlet property="articleThemePopup" destination="ISO-Wu-R60" id="oI3-6W-dPa"/>
                         <outlet property="defaultBrowserPopup" destination="Ci4-fW-KjU" id="7Nh-nU-Sbc"/>
                     </connections>
