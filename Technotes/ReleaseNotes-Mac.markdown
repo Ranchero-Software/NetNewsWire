@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 7.0.1b5 7020 26 Feb 2026 — branch: main tag: mac-7.0.1b5
+
+Restore, on macOS 15, the separator between the toolbar and the article view
+Restore, on macOS 15, the traditional style unread count pills in the sidebar
+Fix, on macOS 15, an alignment bug in the settings window, at the top of the General pane
+
 ### 7.0.1b4 7018 26 Feb 2026 — branch: main tag: mac-7.0.1b4
 
 Runs on macOS 15
