@@ -100,6 +100,12 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 		detailViewController = splitViewController?.splitViewItems[2].viewController as? DetailViewController
 
+		if #available(macOS 26.0, *) {
+			// On macOS 26, Liquid Glass handles the toolbar/content boundary.
+		} else {
+			splitViewController?.splitViewItems[2].titlebarSeparatorStyle = .line
+		}
+
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidBegin, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidFinish, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
