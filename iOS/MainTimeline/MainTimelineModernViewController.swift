@@ -649,17 +649,21 @@ private extension MainTimelineModernViewController {
 				NSLocalizedString("Star", comment: "Star")
 
 			let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] _, _, completion in
+
+				// Post the accessibility announcement immediately so VoiceOver
+				// doesn't lag behind user actions.
+				let announcement = article.status.starred ?
+					NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
+					NSLocalizedString("Starred", comment: "Accessibility announcement")
+				UIAccessibility.post(notification: .announcement, argument: announcement)
+
 				/// The call to `toggleStar` is delayed in order to allow
 				/// the swipe animation to complete. Calling `toggleStar` with no
 				/// delay results UICollectionView internal inconsistency: unexpected
 				/// removal of the current swipe occurrence's mask view error.
-				DispatchQueue.main.asyncAfter(deadline: .now() + 0.85, execute: {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) {
 					self?.toggleStar(article)
-					let announcement = article.status.starred ?
-						NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
-						NSLocalizedString("Starred", comment: "Accessibility announcement")
-					UIAccessibility.post(notification: .announcement, argument: announcement)
-				})
+				}
 
 				completion(true)
 			}
@@ -736,17 +740,21 @@ private extension MainTimelineModernViewController {
 				NSLocalizedString("Mark as Read", comment: "Mark as Read")
 
 			let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] _, _, completion in
+
+				// Post the accessibility announcement immediately so VoiceOver
+				// doesn't lag behind user actions.
+				let announcement = article.status.read ?
+					NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
+					NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
+				UIAccessibility.post(notification: .announcement, argument: announcement)
+
 				/// The call to `toggleRead` is delayed in order to allow
 				/// the swipe animation to complete. Calling `toggleRead` with no
 				/// delay results UICollectionView internal inconsistency: unexpected
 				/// removal of the current swipe occurrence's mask view error.
-				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.85, execute: {
+				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.85) {
 					self?.toggleRead(article)
-					let announcement = article.status.read ?
-						NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
-						NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
-					UIAccessibility.post(notification: .announcement, argument: announcement)
-				})
+				}
 				completion(true)
 			}
 
@@ -1046,12 +1054,15 @@ extension MainTimelineModernViewController {
 		let image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
+			// Post the accessibility announcement immediately so VoiceOver
+			// doesn't lag behind user actions.
+			let announcement = article.status.read ?
+				NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
+				NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
+			UIAccessibility.post(notification: .announcement, argument: announcement)
+
 			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
 				self?.toggleRead(article)
-				let announcement = article.status.read ?
-					NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
-					NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
-				UIAccessibility.post(notification: .announcement, argument: announcement)
 			}
 		}
 
@@ -1071,12 +1082,15 @@ extension MainTimelineModernViewController {
 		let image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
+			// Post the accessibility announcement immediately so VoiceOver
+			// doesn't lag behind user actions.
+			let announcement = article.status.starred ?
+				NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
+				NSLocalizedString("Starred", comment: "Accessibility announcement")
+			UIAccessibility.post(notification: .announcement, argument: announcement)
+
 			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
 				self?.toggleStar(article)
-				let announcement = article.status.starred ?
-					NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
-					NSLocalizedString("Starred", comment: "Accessibility announcement")
-				UIAccessibility.post(notification: .announcement, argument: announcement)
 			}
 		}
 
