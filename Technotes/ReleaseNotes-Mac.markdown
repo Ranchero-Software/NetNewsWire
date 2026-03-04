@@ -1,6 +1,26 @@
 # Mac Release Notes
 
-### 7.0.1b5 7020 26 Feb 2026 — branch: main tag: mac-7.0.1b5
+### 7.0.1 7021 4 Mar 2026 — branch: main tag: mac-7.0.1
+
+Same as 7.0.1b5.
+
+Changes since 7.0:
+
+Runs on macOS 15
+Fixed a performance bug with NewsBlur syncing
+Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs) — made Sparkle updating more reliable
+Fixed a crash that could happen when syncing some Reader API syncing systems
+Fixed a crash that could happen when removing an account
+Fixed a bug aligning unread counts in the sidebar
+Fixed a bug where images in the article view could get vertically stretched in some conditions
+Fixed a bug where a clicking an anchor link in the article view that should navigate to another spot in the article would open in the browser instead
+Fixed bug where multiple About windows could be shown
+Fixed a layout bug in the About window where text could get clipped on some machines
+Made the version selectable in the About window
+Fixed a typo in the About window credits
+
+
+### 7.0.1b5 7020 3 Mar 2026 — branch: main tag: mac-7.0.1b5
 
 Restore, on macOS 15, the separator between the toolbar and the article view
 Restore, on macOS 15, the traditional style unread count pills in the sidebar
