@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0.1 TestFlight build 7029 3 Mar 2026 - branch: main tag: iOS-7.0.1-7029
+
+Fixed a latency issue when VoiceOver announces status changes from user action in the timeline
+
 ### 7.0.1 TestFlight build 7028 25 Feb 2026 - branch: main tag: iOS-7.0.1-7028
 
 Fixed accessibility bug where mark read/unread and star/unstarred commands wouldn't provide feedback (now they do)
