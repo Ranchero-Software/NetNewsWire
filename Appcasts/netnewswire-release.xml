@@ -7,6 +7,30 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.1</title>
+            <description><![CDATA[
+            <p>Changes since 7.0:
+				<ul>
+					<li>Made it run on macOS 15
+					<li>Fixed a performance bug with NewsBlur syncing
+					<li>Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs) — made Sparkle updating more reliable
+					<li>Fixed a crash that could happen when syncing some Reader API syncing systems
+					<li>Fixed a crash that could happen when removing an account
+					<li>Fixed a bug aligning unread counts in the sidebar
+					<li>Fixed a bug where images in the article view could get vertically stretched in some conditions
+					<li>Fixed a bug where a clicking an anchor link in the article view that should navigate to another spot in the article would open in the browser instead
+					<li>Fixed bug where multiple About windows could be shown
+					<li>Fixed a layout bug in the About window where text could get clipped on some machines
+					<li>Made the version selectable in the About window
+					<li>Fixed a typo in the About window credits
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 04 Mar 2026 16:30:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1/NetNewsWire7.0.1.zip" sparkle:version="7021" sparkle:shortVersionString="7.0.1" length="10363759" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0</title>
             <description><![CDATA[
 				Changes since 6.2.1:
