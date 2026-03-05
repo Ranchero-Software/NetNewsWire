@@ -4,6 +4,17 @@
 
 Fixed a latency issue when VoiceOver announces status changes from user action in the timeline
 
+Note: this release was submitted to the App Store as the 7.0.1 final release. 4 Mar 2026.
+
+Changes since 7.0:
+
+Fixed several accessibility bugs
+Fixed a performance bug with NewsBlur syncing
+Fixed bug where unread indicator would take precedence over star in timeline rows
+Fixed a bug where you couldn’t swipe back from article view when it was in fullscreen mode
+Fixed a crash that could happen when trying to add a folder and none of the active accounts support folders
+Fixed a bug where images in the article view could get vertically stretched in some conditions
+
 ### 7.0.1 TestFlight build 7028 25 Feb 2026 - branch: main tag: iOS-7.0.1-7028
 
 Fixed accessibility bug where mark read/unread and star/unstarred commands wouldn't provide feedback (now they do)
