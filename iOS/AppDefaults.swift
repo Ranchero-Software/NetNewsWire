@@ -220,11 +220,11 @@ final class AppDefaults: Sendable {
 	}
 
 	var sidebarSortType: SidebarSortType {
-		return .alphabetically
+		.alphabetically
 	}
 
 	var sidebarSortAscending: Bool {
-		return true
+		true
 	}
 
 	var splitViewPreferredDisplayMode: Int {
