@@ -10,7 +10,7 @@ Changes since 7.0:
 
 Fixed several accessibility bugs
 Fixed a performance bug with NewsBlur syncing
-Fixed bug where unread indicator would take precedence over star in timeline rows
+Fixed bug where the unread circle would take precedence over star in timeline rows
 Fixed a bug where you couldn’t swipe back from article view when it was in fullscreen mode
 Fixed a crash that could happen when trying to add a folder and none of the active accounts support folders
 Fixed a bug where images in the article view could get vertically stretched in some conditions
