@@ -51,6 +51,10 @@ let appName = "NetNewsWire"
 	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
 	@IBOutlet var groupArticlesByFeedMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
+	@IBOutlet var sortFeedsByNameMenuItem: NSMenuItem!
+	@IBOutlet var sortFeedsByUnreadCountMenuItem: NSMenuItem!
+	@IBOutlet var sortFeedsAscendingMenuItem: NSMenuItem!
+	@IBOutlet var sortFeedsDescendingMenuItem: NSMenuItem!
 
 	var unreadCount = 0 {
 		didSet {
@@ -185,6 +189,7 @@ let appName = "NetNewsWire"
 
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
+		updateSortFeedsMenuItems()
 
 		if mainWindowController == nil {
 			let mainWindowController = createAndShowMainWindow()
@@ -356,6 +361,7 @@ let appName = "NetNewsWire"
 	func userDefaultsDidChange() {
 		updateSortMenuItems()
 		updateGroupByFeedMenuItem()
+		updateSortFeedsMenuItems()
 
 		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
 			refreshTimer?.update()
@@ -447,6 +453,11 @@ let appName = "NetNewsWire"
 		}
 
 		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
+			return mainWindowController?.isOpen ?? false
+		}
+
+		if item.action == #selector(sortFeedsByName(_:)) || item.action == #selector(sortFeedsByUnreadCount(_:)) ||
+			item.action == #selector(sortFeedsAscending(_:)) || item.action == #selector(sortFeedsDescending(_:)) {
 			return mainWindowController?.isOpen ?? false
 		}
 
@@ -677,6 +688,22 @@ let appName = "NetNewsWire"
 		AppDefaults.shared.timelineGroupByFeed.toggle()
 	}
 
+	@IBAction func sortFeedsByName(_ sender: Any?) {
+		AppDefaults.shared.sidebarSortType = .alphabetically
+	}
+
+	@IBAction func sortFeedsByUnreadCount(_ sender: Any?) {
+		AppDefaults.shared.sidebarSortType = .byUnreadCount
+	}
+
+	@IBAction func sortFeedsAscending(_ sender: Any?) {
+		AppDefaults.shared.sidebarSortAscending = true
+	}
+
+	@IBAction func sortFeedsDescending(_ sender: Any?) {
+		AppDefaults.shared.sidebarSortAscending = false
+	}
+
 	@IBAction func checkForUpdates(_ sender: Any?) {
 		softwareUpdater?.checkForUpdates()
 	}
@@ -768,6 +795,16 @@ extension AppDelegate {
 		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
 		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
 		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
+	}
+
+	@MainActor func updateSortFeedsMenuItems() {
+		let sortType = AppDefaults.shared.sidebarSortType
+		sortFeedsByNameMenuItem.state = sortType == .alphabetically ? .on : .off
+		sortFeedsByUnreadCountMenuItem.state = sortType == .byUnreadCount ? .on : .off
+
+		let ascending = AppDefaults.shared.sidebarSortAscending
+		sortFeedsAscendingMenuItem.state = ascending ? .on : .off
+		sortFeedsDescendingMenuItem.state = ascending ? .off : .on
 	}
 
 	@MainActor func updateGroupByFeedMenuItem() {
