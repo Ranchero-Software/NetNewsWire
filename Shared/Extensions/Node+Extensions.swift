@@ -26,7 +26,7 @@ import Account
 
 	func sortedByUnreadCountWithFoldersAtEnd() -> [Node] {
 
-		return Node.nodesSortedByUnreadCountWithFoldersAtEnd(self)
+	Node.nodesSortedByUnreadCountWithFoldersAtEnd(self)
 	}
 
 	func sorted(by sortType: SidebarSortType, ascending: Bool = true) -> [Node] {
