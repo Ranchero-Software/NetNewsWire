@@ -78,11 +78,11 @@ public enum FetchType {
 	public var isDeleted = false
 
 	public var containerID: ContainerIdentifier? {
-		return ContainerIdentifier.account(accountID)
+		ContainerIdentifier.account(accountID)
 	}
 
 	public var account: Account? {
-		return self
+		self
 	}
 	nonisolated public let accountID: String
 	public let type: AccountType
@@ -95,7 +95,7 @@ public enum FetchType {
 
 	@MainActor public var name: String? {
 		get {
-			return settings.name
+			settings.name
 		}
 		set {
 			let currentNameForDisplay = nameForDisplay
@@ -111,7 +111,7 @@ public enum FetchType {
 
 	@MainActor public var isActive: Bool {
 		get {
-			return settings.isActive
+			settings.isActive
 		}
 		set {
 			if newValue != settings.isActive {
@@ -128,7 +128,7 @@ public enum FetchType {
 
 	@MainActor public var externalID: String? {
 		get {
-			return settings.externalID
+			settings.externalID
 		}
 		set {
 			settings.externalID = newValue
@@ -159,12 +159,12 @@ public enum FetchType {
 	}
 
 	var flattenedFeedURLs: Set<String> {
-		return Set(flattenedFeeds().map({ $0.url }))
+		Set(flattenedFeeds().map({ $0.url }))
 	}
 
 	@MainActor var username: String? {
 		get {
-			return settings.username
+			settings.username
 		}
 		set {
 			if newValue != settings.username {
@@ -173,9 +173,27 @@ public enum FetchType {
 		}
 	}
 
+	@MainActor public var lastArticleFetchStartTime: Date? {
+		get {
+			settings.lastArticleFetchStartTime
+		}
+		set {
+			settings.lastArticleFetchStartTime = newValue
+		}
+	}
+
+	@MainActor public var lastArticleFetchEndTime: Date? {
+		get {
+			settings.lastArticleFetchEndTime
+		}
+		set {
+			settings.lastArticleFetchEndTime = newValue
+		}
+	}
+
 	@MainActor public var endpointURL: URL? {
 		get {
-			return settings.endpointURL
+			settings.endpointURL
 		}
 		set {
 			if newValue != settings.endpointURL {
@@ -190,7 +208,6 @@ public enum FetchType {
 	let dataFolder: String
 	let database: ArticlesDatabase
 	var delegate: AccountDelegate
-	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	private var unreadCounts = [String: Int]() // [feedID: Int]
 
@@ -201,11 +218,10 @@ public enum FetchType {
 	}
 
 	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
-	@MainActor var settings: AccountSettings!
-
-	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist"), account: self)
-	typealias FeedMetadataDictionary = [String: FeedMetadata]
-	var feedMetadata = FeedMetadataDictionary()
+	private let settings: AccountSettings
+	private let feedSettingsDatabase: FeedSettingsDatabase
+	private typealias FeedSettingsDictionary = [String: FeedSettings]
+	private var feedSettingsCache = FeedSettingsDictionary()
 
     public var unreadCount = 0 {
         didSet {
@@ -216,7 +232,7 @@ public enum FetchType {
     }
 
 	public var behaviors: AccountBehaviors {
-		return delegate.behaviors
+		delegate.behaviors
 	}
 
 	var refreshInProgress = false {
@@ -292,27 +308,31 @@ public enum FetchType {
 			defaultName = NSLocalizedString("The Old Reader", comment: "The Old Reader")
 		}
 
+		let feedSettingsDatabasePath = (dataFolder as NSString).appendingPathComponent("FeedSettings.db")
+		self.feedSettingsDatabase = FeedSettingsDatabase(databasePath: feedSettingsDatabasePath)
+
+		self.settings = AccountSettings(accountID: accountID, dataFolder: dataFolder, database: accountSettingsDatabase)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: delegate)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
-		MainActor.assumeIsolated {
-			self.settings = AccountSettings(accountID: accountID, dataFolder: dataFolder, database: accountSettingsDatabase)
-			self.delegate.accountSettings = self.settings
-			feedMetadataFile.load()
-			opmlFile.load()
-		}
+		delegate.accountSettings = settings
+
+		FeedSettingsImporter.importIfNeeded(dataFolder: dataFolder, database: feedSettingsDatabase)
+		populateFeedSettingsCache()
+
+		opmlFile.load()
+		feedSettingsDatabase.deleteSettingsForFeedsNotIn(flattenedFeedURLs)
 
 		DispatchQueue.main.async {
 			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeedsIDs)
 			self._fetchAllUnreadCounts()
 		}
 
-		MainActor.assumeIsolated {
-			self.delegate.accountDidInitialize(self)
-		}
+		delegate.accountDidInitialize(self)
 	}
 
 	// MARK: - Credentials
@@ -431,7 +451,7 @@ public enum FetchType {
 			do {
 				try await delegate.importOPML(for: self, opmlFile: opmlFile)
 				// Reset the last fetch date to get the article history for the added feeds.
-				settings.lastArticleFetchStartTime = nil
+				lastArticleFetchStartTime = nil
 				try? await delegate.refreshAll(for: self)
 				completion(.success(()))
 			} catch {
@@ -471,7 +491,6 @@ public enum FetchType {
 
 	public func save() {
 		MainActor.assumeIsolated {
-			feedMetadataFile.save()
 			opmlFile.save()
 		}
 	}
@@ -576,8 +595,8 @@ public enum FetchType {
 
 	@MainActor func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
-		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
-		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
+		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
+		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
 		if let feedTitle = opmlFeedSpecifier.title {
 			if feed.name == nil {
 				feed.name = feedTitle
@@ -613,8 +632,8 @@ public enum FetchType {
 	}
 
 	@MainActor func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
-		let metadata = feedMetadata(feedURL: url, feedID: feedID)
-		let feed = Feed(account: self, url: url, metadata: metadata)
+		let settings = feedSettings(feedURL: url, feedID: feedID)
+		let feed = Feed(account: self, url: url, settings: settings)
 		feed.name = name
 		feed.homePageURL = homePageURL
 		return feed
@@ -688,9 +707,6 @@ public enum FetchType {
 		}
 	}
 
-	func clearFeedMetadata(_ feed: Feed) {
-		feedMetadata[feed.url] = nil
-	}
 
 	func addFolderToTree(_ folder: Folder) {
 		folders!.insert(folder)
@@ -1049,19 +1065,6 @@ public enum FetchType {
 	}
 }
 
-// MARK: - FeedMetadataDelegate
-
-@MainActor extension Account: FeedMetadataDelegate {
-
-	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
-		feedMetadataFile.markAsDirty()
-		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
-			return
-		}
-		feed.postFeedSettingDidChangeNotification(key)
-	}
-}
-
 // MARK: - Fetching Articles (Private)
 
 @MainActor private extension Account {
@@ -1288,14 +1291,19 @@ public enum FetchType {
 
 @MainActor private extension Account {
 
-	func feedMetadata(feedURL: String, feedID: String) -> FeedMetadata {
-		if let d = feedMetadata[feedURL] {
-			assert(d.delegate === self)
+	func populateFeedSettingsCache() {
+		let rows = feedSettingsDatabase.allRows()
+		for (feedURL, row) in rows {
+			feedSettingsCache[feedURL] = FeedSettings(feedURL: feedURL, row: row, database: feedSettingsDatabase)
+		}
+	}
+
+	func feedSettings(feedURL: String, feedID: String) -> FeedSettings {
+		if let d = feedSettingsCache[feedURL] {
 			return d
 		}
-		let d = FeedMetadata(feedID: feedID)
-		d.delegate = self
-		feedMetadata[feedURL] = d
+		let d = FeedSettings(feedURL: feedURL, feedID: feedID, database: feedSettingsDatabase)
+		feedSettingsCache[feedURL] = d
 		return d
 	}
 
