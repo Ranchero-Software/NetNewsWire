@@ -126,7 +126,7 @@ final class WebViewController: UIViewController {
 		if article != self.article {
 			self.article = article
 			if updateView {
-				if article?.feed?.isArticleExtractorAlwaysOn ?? false {
+				if article?.feed?.readerViewAlwaysEnabled == true {
 					startArticleExtractor()
 				}
 				windowScrollY = 0

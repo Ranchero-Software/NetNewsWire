@@ -19,8 +19,8 @@ final class FeedInspectorViewController: UITableViewController {
 	var feed: Feed!
 
 	@IBOutlet var nameTextField: UITextField!
-	@IBOutlet var notifyAboutNewArticlesSwitch: UISwitch!
-	@IBOutlet var alwaysShowReaderViewSwitch: UISwitch!
+	@IBOutlet var newArticleNotificationsEnabledSwitch: UISwitch!
+	@IBOutlet var readerViewAlwaysEnabledSwitch: UISwitch!
 	@IBOutlet var homePageLabel: InteractiveLabel!
 	@IBOutlet var feedURLLabel: InteractiveLabel!
 
@@ -43,9 +43,9 @@ final class FeedInspectorViewController: UITableViewController {
 		navigationItem.title = feed.nameForDisplay
 		nameTextField.text = feed.nameForDisplay
 
-		notifyAboutNewArticlesSwitch.setOn(feed.isNotifyAboutNewArticles ?? false, animated: false)
+		newArticleNotificationsEnabledSwitch.setOn(feed.newArticleNotificationsEnabled, animated: false)
 
-		alwaysShowReaderViewSwitch.setOn(feed.isArticleExtractorAlwaysOn ?? false, animated: false)
+		readerViewAlwaysEnabledSwitch.setOn(feed.readerViewAlwaysEnabled, animated: false)
 
 		homePageLabel.text = feed.homePageURL
 		feedURLLabel.text = feed.url
@@ -73,33 +73,33 @@ final class FeedInspectorViewController: UITableViewController {
 		headerView?.iconView.iconImage = iconImage
 	}
 
-	@IBAction func notifyAboutNewArticlesChanged(_ sender: Any) {
+	@IBAction func newArticleNotificationsEnabledChanged(_ sender: Any) {
 		guard let authorizationStatus else {
-			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
+			newArticleNotificationsEnabledSwitch.isOn = !newArticleNotificationsEnabledSwitch.isOn
 			return
 		}
 		if authorizationStatus == .denied {
-			notifyAboutNewArticlesSwitch.isOn = !notifyAboutNewArticlesSwitch.isOn
+			newArticleNotificationsEnabledSwitch.isOn = !newArticleNotificationsEnabledSwitch.isOn
 			present(notificationUpdateErrorAlert(), animated: true, completion: nil)
 		} else if authorizationStatus == .authorized {
-			feed.isNotifyAboutNewArticles = notifyAboutNewArticlesSwitch.isOn
+			feed.newArticleNotificationsEnabled = newArticleNotificationsEnabledSwitch.isOn
 		} else {
 			UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { granted, _ in
 				Task { @MainActor in
 					self.updateNotificationSettings()
 					if granted {
-						self.feed.isNotifyAboutNewArticles = self.notifyAboutNewArticlesSwitch.isOn
+						self.feed.newArticleNotificationsEnabled = self.newArticleNotificationsEnabledSwitch.isOn
 						UIApplication.shared.registerForRemoteNotifications()
 					} else {
-						self.notifyAboutNewArticlesSwitch.isOn = !self.notifyAboutNewArticlesSwitch.isOn
+						self.newArticleNotificationsEnabledSwitch.isOn = !self.newArticleNotificationsEnabledSwitch.isOn
 					}
 				}
 			}
 		}
 	}
 
-	@IBAction func alwaysShowReaderViewChanged(_ sender: Any) {
-		feed.isArticleExtractorAlwaysOn = alwaysShowReaderViewSwitch.isOn
+	@IBAction func readerViewAlwaysEnabledChanged(_ sender: Any) {
+		feed.readerViewAlwaysEnabled = readerViewAlwaysEnabledSwitch.isOn
 	}
 
 	@IBAction func done(_ sender: Any) {

@@ -43,7 +43,7 @@ import UserNotifications
 		}
 
 		for article in articles {
-			if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
+			if !article.status.read, let feed = article.feed, feed.newArticleNotificationsEnabled {
 				sendNotification(feed: feed, article: article)
 			}
 		}
