@@ -273,8 +273,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 					do {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
-						account.clearFeedMetadata(feed)
-
 						refreshProgress.completeTask()
 					} catch {
 
@@ -368,7 +366,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		do {
 			try await caller.deleteSubscription(subscriptionID: subscriptionID)
-			account.clearFeedMetadata(feed)
 			account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: removeFeed - error: \(error.localizedDescription)")
@@ -613,7 +610,6 @@ private extension ReaderAPIAccountDelegate {
 
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
-				account.clearFeedMetadata(feed)
 				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}

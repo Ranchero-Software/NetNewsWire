@@ -230,7 +230,6 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				if let subscriptionID = feed.externalID {
 					do {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
-						account.clearFeedMetadata(feed)
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
 					}
@@ -920,7 +919,6 @@ private extension FeedbinAccountDelegate {
 			Self.logger.error("Feedbin: Unable to remove feed from Feedbin. Removing locally and continuing processing: \(error.localizedDescription)")
 		}
 
-		account.clearFeedMetadata(feed)
 		account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
 	}
 }

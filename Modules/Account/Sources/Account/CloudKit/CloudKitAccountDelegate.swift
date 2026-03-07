@@ -218,13 +218,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		do {
 			try await removeFeedFromCloud(for: account, with: feed, from: container)
-			account.clearFeedMetadata(feed)
 			container.removeFeedFromTreeAtTopLevel(feed)
 		} catch {
 			switch error {
 			case CloudKitZoneError.corruptAccount:
 				// We got into a bad state and should remove the feed to clear up the bad data
-				account.clearFeedMetadata(feed)
 				container.removeFeedFromTreeAtTopLevel(feed)
 			default:
 				throw error

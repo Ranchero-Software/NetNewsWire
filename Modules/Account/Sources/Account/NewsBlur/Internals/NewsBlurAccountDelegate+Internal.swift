@@ -401,9 +401,6 @@ import os.log
 			try await caller.deleteFeed(feedID: feedID, folder: folderName)
 
 			account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
-			if account.existingFeed(withFeedID: feed.feedID) != nil {
-				account.clearFeedMetadata(feed)
-			}
 		} catch {
 			throw AccountError.wrapped(error, account)
 		}
