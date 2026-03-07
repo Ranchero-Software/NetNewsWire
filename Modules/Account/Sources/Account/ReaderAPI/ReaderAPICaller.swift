@@ -53,7 +53,7 @@ enum CreateReaderAPISubscriptionResult {
 	private let logger: Logger
 	private var accessToken: String?
 
-	weak var accountMetadata: AccountMetadata?
+	weak var accountSettings: AccountSettings?
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
@@ -65,10 +65,10 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor private var apiBaseURL: URL? {
 		switch variant {
 		case .generic, .freshRSS:
-			guard let accountMetadata = accountMetadata else {
+			guard let accountSettings = accountSettings else {
 				return nil
 			}
-			return accountMetadata.endpointURL
+			return accountSettings.endpointURL
 		default:
 			return URL(string: variant.host)
 		}
@@ -448,7 +448,7 @@ enum CreateReaderAPISubscriptionResult {
 		switch type {
 		case .allForAccount:
 			let since: Date = {
-				if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
+				if let lastArticleFetch = self.accountSettings?.lastArticleFetchStartTime {
 					return lastArticleFetch
 				} else {
 					return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
@@ -499,8 +499,8 @@ enum CreateReaderAPISubscriptionResult {
 
 		guard let continuation else {
 			if type == .allForAccount {
-				self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
-				self.accountMetadata?.lastArticleFetchEndTime = Date()
+				self.accountSettings?.lastArticleFetchStartTime = dateInfo?.date
+				self.accountSettings?.lastArticleFetchEndTime = Date()
 			}
 			return itemIDs
 		}

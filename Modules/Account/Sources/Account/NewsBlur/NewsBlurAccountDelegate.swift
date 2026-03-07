@@ -27,7 +27,7 @@ import Secrets
 		}
 	}
 
-	var accountMetadata: AccountMetadata?
+	var accountSettings: AccountSettings?
 
 	var progressInfo = ProgressInfo() {
 		didSet {
@@ -88,7 +88,7 @@ import Secrets
 			try await refreshMissingStories(for: account)
 			refreshProgress.completeTask()
 
-			accountMetadata?.lastArticleFetchEndTime = Date()
+			accountSettings?.lastArticleFetchEndTime = Date()
 		} catch {
 			refreshProgress.reset()
 			throw AccountError.wrapped(error, account)

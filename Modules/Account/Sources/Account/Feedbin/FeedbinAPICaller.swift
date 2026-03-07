@@ -36,7 +36,7 @@ enum CreateSubscriptionResult {
 	private var lastBackdateStartTime: Date?
 
 	var credentials: Credentials?
-	weak var accountMetadata: AccountMetadata?
+	weak var accountSettings: AccountSettings?
 
 	init(transport: Transport) {
 		self.transport = transport
@@ -109,7 +109,7 @@ enum CreateSubscriptionResult {
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.tags]
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.tags)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, tags) = try await transport.send(request: request, resultType: [FeedbinTag].self)
@@ -137,7 +137,7 @@ enum CreateSubscriptionResult {
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
 		callComponents.queryItems = [URLQueryItem(name: "mode", value: "extended")]
 
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.subscriptions]
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.subscriptions)
 		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, subscriptions) = try await transport.send(request: request, resultType: [FeedbinSubscription].self)
@@ -235,7 +235,7 @@ enum CreateSubscriptionResult {
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.taggings]
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.taggings)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, taggings) = try await transport.send(request: request, resultType: [FeedbinTagging].self)
@@ -333,7 +333,7 @@ enum CreateSubscriptionResult {
 		// getting **updated** articles that normally wouldn't be found with a regular fetch.
 		// https://github.com/Ranchero-Software/NetNewsWire/issues/2549#issuecomment-722341356
 		let since: Date = {
-			if let lastArticleFetch = accountMetadata?.lastArticleFetchStartTime {
+			if let lastArticleFetch = accountSettings?.lastArticleFetchStartTime {
 				if let lastBackdateStartTime = lastBackdateStartTime {
 					if lastBackdateStartTime.byAdding(days: 1) < lastArticleFetch {
 						self.lastBackdateStartTime = lastArticleFetch
@@ -388,7 +388,7 @@ enum CreateSubscriptionResult {
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.unreadEntries]
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.unreadEntries)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, unreadEntries) = try await transport.send(request: request, resultType: [Int].self)
@@ -426,7 +426,7 @@ enum CreateSubscriptionResult {
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
-		let conditionalGet = accountMetadata?.conditionalGetInfo[ConditionalGetKeys.starredEntries]
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.starredEntries)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, starredEntries) = try await transport.send(request: request, resultType: [Int].self)
@@ -464,10 +464,7 @@ enum CreateSubscriptionResult {
 extension FeedbinAPICaller {
 
 	func storeConditionalGet(key: String, headers: [AnyHashable: Any]) {
-		if var conditionalGet = accountMetadata?.conditionalGetInfo {
-			conditionalGet[key] = HTTPConditionalGetInfo(headers: headers)
-			accountMetadata?.conditionalGetInfo = conditionalGet
-		}
+		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: headers), for: key)
 	}
 
 	func extractPageNumber(link: String?) -> Int? {

@@ -32,7 +32,9 @@ import RSWeb
 			abort()
 		}
 
-		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, transport: transport)
+		let databasePath = accountFolder.appendingPathComponent("AccountSettings.db").path
+		let database = AccountSettingsDatabase(databasePath: databasePath)
+		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, accountSettingsDatabase: database, transport: transport)
 
 		return account
 

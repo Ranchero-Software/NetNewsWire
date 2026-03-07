@@ -225,8 +225,8 @@ import os.log
 	@MainActor func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?) async throws {
 		guard let hashes = hashes, !hashes.isEmpty else {
 			if let lastArticleFetch = updateFetchDate {
-				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
-				self.accountMetadata?.lastArticleFetchEndTime = Date()
+				self.accountSettings?.lastArticleFetchStartTime = lastArticleFetch
+				self.accountSettings?.lastArticleFetchEndTime = Date()
 			}
 			return
 		}

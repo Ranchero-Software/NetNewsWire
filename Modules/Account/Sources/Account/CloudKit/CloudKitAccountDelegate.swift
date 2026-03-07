@@ -52,7 +52,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	let server: String? = nil
 	var credentials: Credentials?
-	var accountMetadata: AccountMetadata?
+	var accountSettings: AccountSettings?
 
 	var progressInfo = ProgressInfo() {
 		didSet {
@@ -533,7 +533,7 @@ private extension CloudKitAccountDelegate {
 			}
 
 			syncProgress.reset()
-			account.metadata.lastArticleFetchEndTime = Date()
+			account.settings.lastArticleFetchEndTime = Date()
 		} catch {
 			processAccountError(account, error)
 			syncProgress.reset()
