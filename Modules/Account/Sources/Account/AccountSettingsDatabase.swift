@@ -22,6 +22,16 @@ import RSWeb
 		case externalID
 	}
 
+	struct Row {
+		var name: String?
+		var isActive: Bool
+		var username: String?
+		var lastArticleFetchStartTime: Date?
+		var lastArticleFetchEndTime: Date?
+		var endpointURL: URL?
+		var externalID: String?
+	}
+
 	private let database: FMDatabase
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountSettingsDatabase")
@@ -51,6 +61,38 @@ import RSWeb
 	func deleteSettings(for accountID: String) {
 		database.executeUpdate("DELETE FROM accountSettings WHERE accountID = ?;", withArgumentsIn: [accountID])
 		database.executeUpdate("DELETE FROM conditionalGetInfo WHERE accountID = ?;", withArgumentsIn: [accountID])
+	}
+
+	// MARK: - Fetch Row
+
+	func row(for accountID: String) -> Row? {
+		guard let resultSet = database.executeQuery("SELECT * FROM accountSettings WHERE accountID = ?;", withArgumentsIn: [accountID]) else {
+			return nil
+		}
+		defer {
+			resultSet.close()
+		}
+		guard resultSet.next() else {
+			return nil
+		}
+
+		var row = Row(name: nil, isActive: true, username: nil)
+		row.name = resultSet.string(forColumn: Column.name.rawValue)
+		row.isActive = resultSet.bool(forColumn: Column.isActive.rawValue)
+		row.username = resultSet.string(forColumn: Column.username.rawValue)
+		row.externalID = resultSet.string(forColumn: Column.externalID.rawValue)
+
+		if !resultSet.columnIsNull(Column.lastArticleFetchStartTime.rawValue) {
+			row.lastArticleFetchStartTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchStartTime.rawValue))
+		}
+		if !resultSet.columnIsNull(Column.lastArticleFetchEndTime.rawValue) {
+			row.lastArticleFetchEndTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchEndTime.rawValue))
+		}
+		if let endpointURLString = resultSet.string(forColumn: Column.endpointURL.rawValue) {
+			row.endpointURL = URL(string: endpointURLString)
+		}
+
+		return row
 	}
 
 	// MARK: - String
