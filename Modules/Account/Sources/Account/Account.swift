@@ -182,12 +182,12 @@ public enum FetchType {
 		}
 	}
 
-	public var lastArticleFetchEndTime: Date? {
+	public var lastRefreshCompletedDate: Date? {
 		get {
-			settings.lastArticleFetchEndTime
+			settings.lastRefreshCompletedDate
 		}
 		set {
-			settings.lastArticleFetchEndTime = newValue
+			settings.lastRefreshCompletedDate = newValue
 		}
 	}
 

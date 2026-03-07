@@ -53,7 +53,7 @@ import RSWeb
 		}
 
 		if let lastArticleFetchEndTime = plist["lastArticleFetchEndTime"] as? Date {
-			database.setDate(lastArticleFetchEndTime, for: accountID, column: .lastArticleFetchEndTime)
+			database.setDate(lastArticleFetchEndTime, for: accountID, column: .lastRefreshCompletedDate)
 		}
 
 		if let endpointURL = plist["endpointURL"] as? String {

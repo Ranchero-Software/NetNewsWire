@@ -103,7 +103,7 @@ private extension RefreshProgressView {
 	}
 
 	func updateRefreshLabel() {
-		if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+		if let accountLastArticleFetchEndTime = AccountManager.shared.lastRefreshCompletedDate {
 
 			if Date() > accountLastArticleFetchEndTime.addingTimeInterval(60) {
 

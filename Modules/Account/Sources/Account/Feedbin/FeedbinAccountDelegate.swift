@@ -795,7 +795,7 @@ private extension FeedbinAccountDelegate {
 		guard let page else {
 			if let lastArticleFetch = updateFetchDate {
 				accountSettings?.lastArticleFetchStartTime = lastArticleFetch
-				accountSettings?.lastArticleFetchEndTime = Date()
+				accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return
 		}

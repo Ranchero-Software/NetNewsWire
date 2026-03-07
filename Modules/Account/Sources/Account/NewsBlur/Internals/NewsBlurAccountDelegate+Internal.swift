@@ -226,7 +226,7 @@ import os.log
 		guard let hashes = hashes, !hashes.isEmpty else {
 			if let lastArticleFetch = updateFetchDate {
 				self.accountSettings?.lastArticleFetchStartTime = lastArticleFetch
-				self.accountSettings?.lastArticleFetchEndTime = Date()
+				self.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return
 		}

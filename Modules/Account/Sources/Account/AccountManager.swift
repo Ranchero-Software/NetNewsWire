@@ -76,16 +76,16 @@ import RSDatabase
 		sortByName(activeAccounts)
 	}
 
-	public var lastArticleFetchEndTime: Date? {
-		var lastArticleFetchEndTime: Date?
+	public var lastRefreshCompletedDate: Date? {
+		var lastRefreshCompletedDate: Date?
 		for account in activeAccounts {
-			if let accountLastArticleFetchEndTime = account.lastArticleFetchEndTime {
-				if lastArticleFetchEndTime == nil || lastArticleFetchEndTime! < accountLastArticleFetchEndTime {
-					lastArticleFetchEndTime = accountLastArticleFetchEndTime
+			if let accountLastArticleFetchEndTime = account.lastRefreshCompletedDate {
+				if lastRefreshCompletedDate == nil || lastRefreshCompletedDate! < accountLastArticleFetchEndTime {
+					lastRefreshCompletedDate = accountLastArticleFetchEndTime
 				}
 			}
 		}
-		return lastArticleFetchEndTime
+		return lastRefreshCompletedDate
 	}
 
 	public func existingActiveAccount(forDisplayName displayName: String) -> Account? {

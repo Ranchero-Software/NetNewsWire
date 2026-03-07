@@ -531,7 +531,7 @@ private extension CloudKitAccountDelegate {
 			}
 
 			syncProgress.reset()
-			account.lastArticleFetchEndTime = Date()
+			account.lastRefreshCompletedDate = Date()
 		} catch {
 			processAccountError(account, error)
 			syncProgress.reset()

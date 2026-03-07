@@ -55,10 +55,10 @@ import RSWeb
 		}
 	}
 
-	var lastArticleFetchEndTime: Date? {
+	var lastRefreshCompletedDate: Date? {
 		didSet {
-			if lastArticleFetchEndTime != oldValue {
-				database.setDate(lastArticleFetchEndTime, for: accountID, column: .lastArticleFetchEndTime)
+			if lastRefreshCompletedDate != oldValue {
+				database.setDate(lastRefreshCompletedDate, for: accountID, column: .lastRefreshCompletedDate)
 			}
 		}
 	}
@@ -91,7 +91,7 @@ import RSWeb
 			self.isActive = row.isActive
 			self.username = row.username
 			self.lastArticleFetchStartTime = row.lastArticleFetchStartTime
-			self.lastArticleFetchEndTime = row.lastArticleFetchEndTime
+			self.lastRefreshCompletedDate = row.lastRefreshCompletedDate
 			self.endpointURL = row.endpointURL
 			self.externalID = row.externalID
 		}

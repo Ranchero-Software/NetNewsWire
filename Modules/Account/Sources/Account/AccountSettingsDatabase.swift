@@ -17,7 +17,7 @@ import RSWeb
 		case isActive
 		case username
 		case lastArticleFetchStartTime
-		case lastArticleFetchEndTime
+		case lastRefreshCompletedDate
 		case endpointURL
 		case externalID
 	}
@@ -27,7 +27,7 @@ import RSWeb
 		let isActive: Bool
 		let username: String?
 		let lastArticleFetchStartTime: Date?
-		let lastArticleFetchEndTime: Date?
+		let lastRefreshCompletedDate: Date?
 		let endpointURL: URL?
 		let externalID: String?
 	}
@@ -81,9 +81,9 @@ import RSWeb
 			lastArticleFetchStartTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchStartTime.rawValue))
 		}
 
-		var lastArticleFetchEndTime: Date?
-		if !resultSet.columnIsNull(Column.lastArticleFetchEndTime.rawValue) {
-			lastArticleFetchEndTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchEndTime.rawValue))
+		var lastRefreshCompletedDate: Date?
+		if !resultSet.columnIsNull(Column.lastRefreshCompletedDate.rawValue) {
+			lastRefreshCompletedDate = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastRefreshCompletedDate.rawValue))
 		}
 
 		var endpointURL: URL?
@@ -96,7 +96,7 @@ import RSWeb
 			isActive: resultSet.bool(forColumn: Column.isActive.rawValue),
 			username: resultSet.string(forColumn: Column.username.rawValue),
 			lastArticleFetchStartTime: lastArticleFetchStartTime,
-			lastArticleFetchEndTime: lastArticleFetchEndTime,
+			lastRefreshCompletedDate: lastRefreshCompletedDate,
 			endpointURL: endpointURL,
 			externalID: resultSet.string(forColumn: Column.externalID.rawValue)
 		)
@@ -208,7 +208,7 @@ import RSWeb
 private extension AccountSettingsDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS accountSettings (accountID TEXT PRIMARY KEY, name TEXT, isActive INTEGER DEFAULT 1, username TEXT, lastArticleFetchStartTime REAL, lastArticleFetchEndTime REAL, endpointURL TEXT, externalID TEXT);
+	CREATE TABLE IF NOT EXISTS accountSettings (accountID TEXT PRIMARY KEY, name TEXT, isActive INTEGER DEFAULT 1, username TEXT, lastArticleFetchStartTime REAL, lastRefreshCompletedDate REAL, endpointURL TEXT, externalID TEXT);
 	CREATE TABLE IF NOT EXISTS conditionalGetInfo (accountID TEXT NOT NULL, endpoint TEXT NOT NULL, lastModified TEXT, etag TEXT, PRIMARY KEY (accountID, endpoint));
 	"""
 }
