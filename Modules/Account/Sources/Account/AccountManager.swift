@@ -79,7 +79,7 @@ import RSDatabase
 	public var lastArticleFetchEndTime: Date? {
 		var lastArticleFetchEndTime: Date?
 		for account in activeAccounts {
-			if let accountLastArticleFetchEndTime = account.settings.lastArticleFetchEndTime {
+			if let accountLastArticleFetchEndTime = account.lastArticleFetchEndTime {
 				if lastArticleFetchEndTime == nil || lastArticleFetchEndTime! < accountLastArticleFetchEndTime {
 					lastArticleFetchEndTime = accountLastArticleFetchEndTime
 				}
