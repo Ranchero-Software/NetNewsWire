@@ -79,7 +79,12 @@ import Articles
 
 	// MARK: - Insert Row
 
-	func insertRow(_ dictionary: DatabaseDictionary) {
+	func insertRow(_ feedURL: String, _ columnValues: [Column: Any]) {
+		var dictionary = DatabaseDictionary()
+		dictionary["feedURL"] = feedURL
+		for (column, value) in columnValues {
+			dictionary[column.rawValue] = value
+		}
 		database.insertRow(dictionary, insertType: .orReplace, tableName: "feedSettings")
 	}
 
