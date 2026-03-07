@@ -25,13 +25,13 @@ import Articles
 
 	public var homePageURL: String? {
 		get {
-			return metadata.homePageURL
+			settings.homePageURL
 		}
 		set {
 			if let url = newValue, !url.isEmpty {
-				metadata.homePageURL = url.normalizedURL
+				settings.homePageURL = url.normalizedURL
 			} else {
-				metadata.homePageURL = nil
+				settings.homePageURL = nil
 			}
 		}
 	}
@@ -39,26 +39,26 @@ import Articles
 	// Note: this is available only if the icon URL was available in the feed.
 	// The icon URL is a JSON-Feed-only feature.
 	// Otherwise we find an icon URL via other means, but we don’t store it
-	// as part of feed metadata.
+	// as part of feed settings.
 	public var iconURL: String? {
 		get {
-			return metadata.iconURL
+			settings.iconURL
 		}
 		set {
-			metadata.iconURL = newValue
+			settings.iconURL = newValue
 		}
 	}
 
 	// Note: this is available only if the favicon URL was available in the feed.
 	// The favicon URL is a JSON-Feed-only feature.
 	// Otherwise we find a favicon URL via other means, but we don’t store it
-	// as part of feed metadata.
+	// as part of feed settings.
 	public var faviconURL: String? {
 		get {
-			return metadata.faviconURL
+			settings.faviconURL
 		}
 		set {
-			metadata.faviconURL = newValue
+			settings.faviconURL = newValue
 		}
 	}
 
@@ -72,16 +72,16 @@ import Articles
 
 	public var authors: Set<Author>? {
 		get {
-			if let authorsArray = metadata.authors {
+			if let authorsArray = settings.authors {
 				return Set(authorsArray)
 			}
 			return nil
 		}
 		set {
 			if let authorsSet = newValue {
-				metadata.authors = Array(authorsSet)
+				settings.authors = Array(authorsSet)
 			} else {
-				metadata.authors = nil
+				settings.authors = nil
 			}
 		}
 	}
@@ -89,7 +89,7 @@ import Articles
 	@MainActor public var editedName: String? {
 		// Don’t let editedName == ""
 		get {
-			guard let s = metadata.editedName, !s.isEmpty else {
+			guard let s = settings.editedName, !s.isEmpty else {
 				return nil
 			}
 			return s
@@ -97,9 +97,9 @@ import Articles
 		set {
 			if newValue != editedName {
 				if let valueToSet = newValue, !valueToSet.isEmpty {
-					metadata.editedName = valueToSet
+					settings.editedName = valueToSet
 				} else {
-					metadata.editedName = nil
+					settings.editedName = nil
 				}
 				postDisplayNameDidChangeNotification()
 			}
@@ -108,74 +108,74 @@ import Articles
 
 	public var conditionalGetInfo: HTTPConditionalGetInfo? {
 		get {
-			return metadata.conditionalGetInfo
+			settings.conditionalGetInfo
 		}
 		set {
-			metadata.conditionalGetInfo = newValue
+			settings.conditionalGetInfo = newValue
 		}
 	}
 
 	public var conditionalGetInfoDate: Date? {
 		get {
-			return metadata.conditionalGetInfoDate
+			settings.conditionalGetInfoDate
 		}
 		set {
-			metadata.conditionalGetInfoDate = newValue
+			settings.conditionalGetInfoDate = newValue
 		}
 	}
 
 	public var cacheControlInfo: CacheControlInfo? {
 		get {
-			metadata.cacheControlInfo
+			settings.cacheControlInfo
 		}
 		set {
-			metadata.cacheControlInfo = newValue
+			settings.cacheControlInfo = newValue
 		}
 	}
 
 	public var contentHash: String? {
 		get {
-			return metadata.contentHash
+			settings.contentHash
 		}
 		set {
-			metadata.contentHash = newValue
+			settings.contentHash = newValue
 		}
 	}
 
-	public var isNotifyAboutNewArticles: Bool? {
+	public var newArticleNotificationsEnabled: Bool {
 		get {
-			return metadata.isNotifyAboutNewArticles
+			settings.newArticleNotificationsEnabled
 		}
 		set {
-			metadata.isNotifyAboutNewArticles = newValue
+			settings.newArticleNotificationsEnabled = newValue
 		}
 	}
 
-	public var isArticleExtractorAlwaysOn: Bool? {
+	public var readerViewAlwaysEnabled: Bool {
 		get {
-            metadata.isArticleExtractorAlwaysOn
+			settings.readerViewAlwaysEnabled
 		}
 		set {
-			metadata.isArticleExtractorAlwaysOn = newValue
+			settings.readerViewAlwaysEnabled = newValue
 		}
 	}
 
 	public var externalID: String? {
 		get {
-			return metadata.externalID
+			settings.externalID
 		}
 		set {
-			metadata.externalID = newValue
+			settings.externalID = newValue
 		}
 	}
 
 	// Folder Name: Sync Service Relationship ID
 	public var folderRelationship: [String: String]? {
 		get {
-			return metadata.folderRelationship
+			settings.folderRelationship
 		}
 		set {
-			metadata.folderRelationship = newValue
+			settings.folderRelationship = newValue
 		}
 	}
 
@@ -183,10 +183,10 @@ import Articles
 	/// (Not necessarily a successful attempt.)
 	public var lastCheckDate: Date? {
 		get {
-			metadata.lastCheckDate
+			settings.lastCheckDate
 		}
 		set {
-			metadata.lastCheckDate = newValue
+			settings.lastCheckDate = newValue
 		}
 	}
 	// MARK: - DisplayNameProvider
@@ -221,7 +221,7 @@ import Articles
 
 	public var unreadCount: Int {
 		get {
-			return account?.unreadCount(for: self) ?? 0
+			account?.unreadCount(for: self) ?? 0
 		}
 		set {
 			if unreadCount == newValue {
@@ -249,20 +249,21 @@ import Articles
         #endif
     }
 
-	var metadata: FeedMetadata
+	var settings: FeedSettings
 
 	// MARK: - Init
 
-	init(account: Account, url: String, metadata: FeedMetadata) {
+	init(account: Account, url: String, settings: FeedSettings) {
 		let accountID = account.accountID
-		let feedID = metadata.feedID
+		let feedID = settings.feedID
 		self.accountID = accountID
 		self.account = account
 		self.feedID = feedID
 		self.sidebarItemID = SidebarItemIdentifier.feed(accountID, feedID)
 
 		self.url = url
-		self.metadata = metadata
+		self.settings = settings
+		self.settings.feed = self
 	}
 
 	// MARK: - API
@@ -319,7 +320,7 @@ extension Feed: OPMLRepresentable {
 @MainActor extension Set where Element == Feed {
 
 	func feedIDs() -> Set<String> {
-		return Set<String>(map { $0.feedID })
+		Set<String>(map { $0.feedID })
 	}
 
 	func sorted() -> [Feed] {
