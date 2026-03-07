@@ -23,13 +23,13 @@ import RSWeb
 	}
 
 	struct Row {
-		var name: String?
-		var isActive: Bool
-		var username: String?
-		var lastArticleFetchStartTime: Date?
-		var lastArticleFetchEndTime: Date?
-		var endpointURL: URL?
-		var externalID: String?
+		let name: String?
+		let isActive: Bool
+		let username: String?
+		let lastArticleFetchStartTime: Date?
+		let lastArticleFetchEndTime: Date?
+		let endpointURL: URL?
+		let externalID: String?
 	}
 
 	private let database: FMDatabase
@@ -76,23 +76,30 @@ import RSWeb
 			return nil
 		}
 
-		var row = Row(name: nil, isActive: true, username: nil)
-		row.name = resultSet.string(forColumn: Column.name.rawValue)
-		row.isActive = resultSet.bool(forColumn: Column.isActive.rawValue)
-		row.username = resultSet.string(forColumn: Column.username.rawValue)
-		row.externalID = resultSet.string(forColumn: Column.externalID.rawValue)
-
+		var lastArticleFetchStartTime: Date?
 		if !resultSet.columnIsNull(Column.lastArticleFetchStartTime.rawValue) {
-			row.lastArticleFetchStartTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchStartTime.rawValue))
-		}
-		if !resultSet.columnIsNull(Column.lastArticleFetchEndTime.rawValue) {
-			row.lastArticleFetchEndTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchEndTime.rawValue))
-		}
-		if let endpointURLString = resultSet.string(forColumn: Column.endpointURL.rawValue) {
-			row.endpointURL = URL(string: endpointURLString)
+			lastArticleFetchStartTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchStartTime.rawValue))
 		}
 
-		return row
+		var lastArticleFetchEndTime: Date?
+		if !resultSet.columnIsNull(Column.lastArticleFetchEndTime.rawValue) {
+			lastArticleFetchEndTime = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastArticleFetchEndTime.rawValue))
+		}
+
+		var endpointURL: URL?
+		if let endpointURLString = resultSet.string(forColumn: Column.endpointURL.rawValue) {
+			endpointURL = URL(string: endpointURLString)
+		}
+
+		return Row(
+			name: resultSet.string(forColumn: Column.name.rawValue),
+			isActive: resultSet.bool(forColumn: Column.isActive.rawValue),
+			username: resultSet.string(forColumn: Column.username.rawValue),
+			lastArticleFetchStartTime: lastArticleFetchStartTime,
+			lastArticleFetchEndTime: lastArticleFetchEndTime,
+			endpointURL: endpointURL,
+			externalID: resultSet.string(forColumn: Column.externalID.rawValue)
+		)
 	}
 
 	// MARK: - String
