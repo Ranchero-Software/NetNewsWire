@@ -636,7 +636,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		if let articles = articles {
 			if articles.count == 1 {
 				activityManager.reading(feed: nil, article: articles.first)
-				if articles.first?.feed?.isArticleExtractorAlwaysOn ?? false {
+				if articles.first?.feed?.readerViewAlwaysEnabled == true {
 					detailState = .loading
 					startArticleExtractorForCurrentLink()
 				} else {

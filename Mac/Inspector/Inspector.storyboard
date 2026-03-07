@@ -92,7 +92,7 @@ Field</string>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="isNotifyAboutNewArticlesChanged:" target="sfH-oR-GXm" id="Vx9-pQ-RnP"/>
+                                    <action selector="newArticleNotificationsEnabledChanged:" target="sfH-oR-GXm" id="Vx9-pQ-RnP"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nH2-ab-KJ5">
@@ -102,7 +102,7 @@ Field</string>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="isReaderViewAlwaysOnChanged:" target="sfH-oR-GXm" id="rsD-0e-ksP"/>
+                                    <action selector="readerViewAlwaysEnabledChanged:" target="sfH-oR-GXm" id="rsD-0e-ksP"/>
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="I6k-QR-VmV" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
@@ -142,8 +142,8 @@ Field</string>
                     <connections>
                         <outlet property="homePageURLTextField" destination="zm0-15-BFy" id="0Jh-yy-mnF"/>
                         <outlet property="iconView" destination="I6k-QR-VmV" id="zrk-zx-zk7"/>
-                        <outlet property="isNotifyAboutNewArticlesCheckBox" destination="ZBX-E8-k9c" id="FWc-Ds-LUy"/>
-                        <outlet property="isReaderViewAlwaysOnCheckBox" destination="nH2-ab-KJ5" id="xPg-P5-3cr"/>
+                        <outlet property="newArticleNotificationsEnabledCheckBox" destination="ZBX-E8-k9c" id="FWc-Ds-LUy"/>
+                        <outlet property="readerViewAlwaysEnabledCheckBox" destination="nH2-ab-KJ5" id="xPg-P5-3cr"/>
                         <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
                         <outlet property="urlTextField" destination="Vvk-KG-JlG" id="bcl-fq-3nQ"/>
                     </connections>

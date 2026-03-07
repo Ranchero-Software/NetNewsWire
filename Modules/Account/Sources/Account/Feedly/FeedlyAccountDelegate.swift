@@ -154,7 +154,7 @@ import Secrets
 		syncAllOperation.syncCompletionHandler = { [weak self] result in
 			if case .success = result {
 				self?.accountSettings?.lastArticleFetchStartTime = date
-				self?.accountSettings?.lastArticleFetchEndTime = Date()
+				self?.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 
 			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")

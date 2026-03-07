@@ -50,7 +50,7 @@ import Secrets
 
 		let feeds = account.flattenedFeeds()
 		await refresher.refreshFeeds(feeds)
-		account.settings.lastArticleFetchEndTime = Date()
+		account.lastRefreshCompletedDate = Date()
 	}
 
 	@MainActor func syncArticleStatus(for account: Account) async throws {

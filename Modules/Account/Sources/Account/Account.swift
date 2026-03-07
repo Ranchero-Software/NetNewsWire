@@ -78,11 +78,11 @@ public enum FetchType {
 	public var isDeleted = false
 
 	public var containerID: ContainerIdentifier? {
-		return ContainerIdentifier.account(accountID)
+		ContainerIdentifier.account(accountID)
 	}
 
 	public var account: Account? {
-		return self
+		self
 	}
 	nonisolated public let accountID: String
 	public let type: AccountType
@@ -93,9 +93,9 @@ public enum FetchType {
 		return name
 	}
 
-	@MainActor public var name: String? {
+	public var name: String? {
 		get {
-			return settings.name
+			settings.name
 		}
 		set {
 			let currentNameForDisplay = nameForDisplay
@@ -109,9 +109,9 @@ public enum FetchType {
 	}
 	public let defaultName: String
 
-	@MainActor public var isActive: Bool {
+	public var isActive: Bool {
 		get {
-			return settings.isActive
+			settings.isActive
 		}
 		set {
 			if newValue != settings.isActive {
@@ -126,16 +126,16 @@ public enum FetchType {
 	public var topLevelFeeds = Set<Feed>()
 	public var folders: Set<Folder>? = Set<Folder>()
 
-	@MainActor public var externalID: String? {
+	public var externalID: String? {
 		get {
-			return settings.externalID
+			settings.externalID
 		}
 		set {
 			settings.externalID = newValue
 		}
 	}
 
-	@MainActor public var sortedFolders: [Folder]? {
+	public var sortedFolders: [Folder]? {
 		if let folders = folders {
 			return Array(folders).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 		}
@@ -159,12 +159,12 @@ public enum FetchType {
 	}
 
 	var flattenedFeedURLs: Set<String> {
-		return Set(flattenedFeeds().map({ $0.url }))
+		Set(flattenedFeeds().map({ $0.url }))
 	}
 
-	@MainActor var username: String? {
+	var username: String? {
 		get {
-			return settings.username
+			settings.username
 		}
 		set {
 			if newValue != settings.username {
@@ -173,9 +173,27 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public var endpointURL: URL? {
+	public var lastArticleFetchStartTime: Date? {
 		get {
-			return settings.endpointURL
+			settings.lastArticleFetchStartTime
+		}
+		set {
+			settings.lastArticleFetchStartTime = newValue
+		}
+	}
+
+	public var lastRefreshCompletedDate: Date? {
+		get {
+			settings.lastRefreshCompletedDate
+		}
+		set {
+			settings.lastRefreshCompletedDate = newValue
+		}
+	}
+
+	public var endpointURL: URL? {
+		get {
+			settings.endpointURL
 		}
 		set {
 			if newValue != settings.endpointURL {
@@ -190,7 +208,6 @@ public enum FetchType {
 	let dataFolder: String
 	let database: ArticlesDatabase
 	var delegate: AccountDelegate
-	static let saveQueue = CoalescingQueue(name: "Account Save Queue", interval: 1.0)
 
 	private var unreadCounts = [String: Int]() // [feedID: Int]
 
@@ -201,11 +218,10 @@ public enum FetchType {
 	}
 
 	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
-	@MainActor var settings: AccountSettings!
-
-	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist"), account: self)
-	typealias FeedMetadataDictionary = [String: FeedMetadata]
-	var feedMetadata = FeedMetadataDictionary()
+	private let settings: AccountSettings
+	private let feedSettingsDatabase: FeedSettingsDatabase
+	private typealias FeedSettingsDictionary = [String: FeedSettings]
+	private var feedSettingsCache = FeedSettingsDictionary()
 
     public var unreadCount = 0 {
         didSet {
@@ -216,7 +232,7 @@ public enum FetchType {
     }
 
 	public var behaviors: AccountBehaviors {
-		return delegate.behaviors
+		delegate.behaviors
 	}
 
 	var refreshInProgress = false {
@@ -292,32 +308,36 @@ public enum FetchType {
 			defaultName = NSLocalizedString("The Old Reader", comment: "The Old Reader")
 		}
 
+		let feedSettingsDatabasePath = (dataFolder as NSString).appendingPathComponent("FeedSettings.db")
+		self.feedSettingsDatabase = FeedSettingsDatabase(databasePath: feedSettingsDatabasePath)
+
+		self.settings = AccountSettings(accountID: accountID, dataFolder: dataFolder, database: accountSettingsDatabase)
+
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: delegate)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(batchUpdateDidPerform(_:)), name: .BatchUpdateDidPerform, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
-		MainActor.assumeIsolated {
-			self.settings = AccountSettings(accountID: accountID, dataFolder: dataFolder, database: accountSettingsDatabase)
-			self.delegate.accountSettings = self.settings
-			feedMetadataFile.load()
-			opmlFile.load()
-		}
+		delegate.accountSettings = settings
+
+		FeedSettingsImporter.importIfNeeded(dataFolder: dataFolder, database: feedSettingsDatabase)
+		populateFeedSettingsCache()
+
+		opmlFile.load()
+		feedSettingsDatabase.deleteSettingsForFeedsNotIn(flattenedFeedURLs)
 
 		DispatchQueue.main.async {
 			self.database.cleanupDatabaseAtStartup(subscribedToFeedIDs: self.flattenedFeedsIDs)
 			self._fetchAllUnreadCounts()
 		}
 
-		MainActor.assumeIsolated {
-			self.delegate.accountDidInitialize(self)
-		}
+		delegate.accountDidInitialize(self)
 	}
 
 	// MARK: - Credentials
 
-	@MainActor public func storeCredentials(_ credentials: Credentials) throws {
+	public func storeCredentials(_ credentials: Credentials) throws {
 		username = credentials.username
 		guard let server = delegate.server else {
 			assertionFailure()
@@ -327,14 +347,14 @@ public enum FetchType {
 		delegate.credentials = credentials
 	}
 
-	@MainActor public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
+	public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
 		guard let username = self.username, let server = delegate.server else {
 			return nil
 		}
 		return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 	}
 
-	@MainActor public func removeCredentials(type: CredentialsType) throws {
+	public func removeCredentials(type: CredentialsType) throws {
 		guard let username = self.username, let server = delegate.server else {
 			return
 		}
@@ -411,11 +431,11 @@ public enum FetchType {
 
 	// MARK: - Syncing Article Status
 
-	@MainActor public func sendArticleStatus() async throws {
+	public func sendArticleStatus() async throws {
 		try await delegate.sendArticleStatus(for: self)
 	}
 
-	@MainActor public func syncArticleStatus() async throws {
+	public func syncArticleStatus() async throws {
 		try await delegate.syncArticleStatus(for: self)
 	}
 
@@ -431,7 +451,7 @@ public enum FetchType {
 			do {
 				try await delegate.importOPML(for: self, opmlFile: opmlFile)
 				// Reset the last fetch date to get the article history for the added feeds.
-				settings.lastArticleFetchStartTime = nil
+				lastArticleFetchStartTime = nil
 				try? await delegate.refreshAll(for: self)
 				completion(.success(()))
 			} catch {
@@ -442,11 +462,11 @@ public enum FetchType {
 
 	// MARK: - Suspend/Resume
 
-	@MainActor public func suspendNetwork() {
+	public func suspendNetwork() {
 		delegate.suspendNetwork()
 	}
 
-	@MainActor public func suspendDatabase() {
+	public func suspendDatabase() {
 		#if os(iOS)
 		database.cancelAndSuspend()
 		#endif
@@ -455,7 +475,7 @@ public enum FetchType {
 
 	/// Re-open the SQLite database and allow database calls.
 	/// Call this *before* calling resume.
-	@MainActor public func resumeDatabaseAndDelegate() {
+	public func resumeDatabaseAndDelegate() {
 		#if os(iOS)
 		database.resume()
 		#endif
@@ -471,16 +491,15 @@ public enum FetchType {
 
 	public func save() {
 		MainActor.assumeIsolated {
-			feedMetadataFile.save()
 			opmlFile.save()
 		}
 	}
 
-	@MainActor public func prepareForDeletion() {
+	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
 	}
 
-	@MainActor func addOPMLItems(_ items: [RSOPMLItem]) {
+	func addOPMLItems(_ items: [RSOPMLItem]) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
 				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
@@ -499,7 +518,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor func loadOPMLItems(_ items: [RSOPMLItem]) {
+	func loadOPMLItems(_ items: [RSOPMLItem]) {
 		addOPMLItems(OPMLNormalizer.normalize(items))
 	}
 
@@ -514,7 +533,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor func existingContainer(withExternalID externalID: String) -> Container? {
+	func existingContainer(withExternalID externalID: String) -> Container? {
 		guard self.externalID != externalID else {
 			return self
 		}
@@ -537,7 +556,7 @@ public enum FetchType {
 	}
 
 	@discardableResult
-	@MainActor func ensureFolder(with name: String) -> Folder? {
+	func ensureFolder(with name: String) -> Folder? {
 		// TODO: support subfolders, maybe, some day
 
 		if name.isEmpty {
@@ -556,7 +575,7 @@ public enum FetchType {
 		return folder
 	}
 
-	@MainActor public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
+	public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
 		// TODO: support subfolders, maybe, some day.
 		// Since we don’t, just take the last name and make sure there’s a Folder.
 
@@ -566,7 +585,7 @@ public enum FetchType {
 		return ensureFolder(with: folderName)
 	}
 
-	@MainActor public func existingFolder(withDisplayName displayName: String) -> Folder? {
+	public func existingFolder(withDisplayName displayName: String) -> Folder? {
 		return folders?.first(where: { $0.nameForDisplay == displayName })
 	}
 
@@ -574,10 +593,10 @@ public enum FetchType {
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 
-	@MainActor func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
-		let metadata = feedMetadata(feedURL: feedURL, feedID: feedURL)
-		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, metadata: metadata)
+		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
+		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
 		if let feedTitle = opmlFeedSpecifier.title {
 			if feed.name == nil {
 				feed.name = feedTitle
@@ -586,7 +605,7 @@ public enum FetchType {
 		return feed
 	}
 
-	@MainActor func addFeed(_ feed: Feed, container: Container) async throws {
+	func addFeed(_ feed: Feed, container: Container) async throws {
 		try await delegate.addFeed(account: self, feed: feed, container: container)
 	}
 
@@ -612,9 +631,9 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
-		let metadata = feedMetadata(feedURL: url, feedID: feedID)
-		let feed = Feed(account: self, url: url, metadata: metadata)
+	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
+		let settings = feedSettings(feedURL: url, feedID: feedID)
+		let feed = Feed(account: self, url: url, settings: settings)
 		feed.name = name
 		feed.homePageURL = homePageURL
 		return feed
@@ -642,7 +661,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public func renameFeed(_ feed: Feed, name: String) async throws {
+	public func renameFeed(_ feed: Feed, name: String) async throws {
 		try await delegate.renameFeed(for: self, with: feed, to: name)
 	}
 
@@ -658,7 +677,7 @@ public enum FetchType {
 	}
 
 	@discardableResult
-	@MainActor public func addFolder(_ name: String) async throws -> Folder {
+	public func addFolder(_ name: String) async throws -> Folder {
 		try await delegate.createFolder(for: self, name: name)
 	}
 
@@ -688,9 +707,6 @@ public enum FetchType {
 		}
 	}
 
-	func clearFeedMetadata(_ feed: Feed) {
-		feedMetadata[feed.url] = nil
-	}
 
 	func addFolderToTree(_ folder: Folder) {
 		folders!.insert(folder)
@@ -704,7 +720,7 @@ public enum FetchType {
 
 	// MARK: - Fetching Articles
 
-	@MainActor public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
 			return try _fetchStarredArticles(limit: limit)
@@ -729,7 +745,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+	public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
 			return try await _fetchStarredArticlesAsync(limit: limit)
@@ -775,7 +791,7 @@ public enum FetchType {
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	@MainActor public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
 		try await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 	}
 
@@ -799,7 +815,7 @@ public enum FetchType {
 	// MARK: - Updating Feeds
 
 	@discardableResult
-	@MainActor func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+	func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async throws -> ArticleChanges {
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
@@ -812,7 +828,7 @@ public enum FetchType {
 		return try await updateAsync(feedID: feed.feedID, parsedItems: parsedItems)
 	}
 
-	@MainActor func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
+	func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
@@ -822,7 +838,7 @@ public enum FetchType {
 		return articleChanges
 	}
 
-	@MainActor func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
+	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
@@ -836,7 +852,7 @@ public enum FetchType {
 
 	/// Returns set of Article whose statuses did change.
 	@discardableResult
-	@MainActor func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
+	func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
 		guard !articles.isEmpty else {
 			return Set<Article>()
 		}
@@ -1049,22 +1065,9 @@ public enum FetchType {
 	}
 }
 
-// MARK: - FeedMetadataDelegate
-
-@MainActor extension Account: FeedMetadataDelegate {
-
-	func valueDidChange(_ feedMetadata: FeedMetadata, key: FeedMetadata.CodingKeys) {
-		feedMetadataFile.markAsDirty()
-		guard let feed = existingFeed(withFeedID: feedMetadata.feedID) else {
-			return
-		}
-		feed.postFeedSettingDidChangeNotification(key)
-	}
-}
-
 // MARK: - Fetching Articles (Private)
 
-@MainActor private extension Account {
+private extension Account {
 
 	// MARK: - Starred Articles
 
@@ -1219,7 +1222,7 @@ public enum FetchType {
 
 // MARK: - Fetching Unread Counts (Private)
 
-@MainActor private extension Account {
+private extension Account {
 
 	/// Fetch unread counts for zero or more feeds.
 	///
@@ -1286,16 +1289,21 @@ public enum FetchType {
 
 // MARK: - Private
 
-@MainActor private extension Account {
+private extension Account {
 
-	func feedMetadata(feedURL: String, feedID: String) -> FeedMetadata {
-		if let d = feedMetadata[feedURL] {
-			assert(d.delegate === self)
+	func populateFeedSettingsCache() {
+		let rows = feedSettingsDatabase.allRows()
+		for (feedURL, row) in rows {
+			feedSettingsCache[feedURL] = FeedSettings(feedURL: feedURL, row: row, database: feedSettingsDatabase)
+		}
+	}
+
+	func feedSettings(feedURL: String, feedID: String) -> FeedSettings {
+		if let d = feedSettingsCache[feedURL] {
 			return d
 		}
-		let d = FeedMetadata(feedID: feedID)
-		d.delegate = self
-		feedMetadata[feedURL] = d
+		let d = FeedSettings(feedURL: feedURL, feedID: feedID, database: feedSettingsDatabase)
+		feedSettingsCache[feedURL] = d
 		return d
 	}
 

@@ -25,8 +25,10 @@ final class ImportOPMLWindowController: NSWindowController {
 		let menu = NSMenu()
 		accountPopUpButton.menu = menu
 
-		for oneAccount in AccountManager.shared.sortedActiveAccounts {
+		let accounts: [Account] = AccountManager.shared.sortedActiveAccounts
+		let savedAccountID: String? = AppDefaults.shared.importOPMLAccountID
 
+		for oneAccount in accounts {
 			if oneAccount.behaviors.contains(.disallowOPMLImports) {
 				continue
 			}
@@ -36,10 +38,9 @@ final class ImportOPMLWindowController: NSWindowController {
 			oneMenuItem.representedObject = oneAccount
 			menu.addItem(oneMenuItem)
 
-			if oneAccount.accountID == AppDefaults.shared.importOPMLAccountID {
+			if oneAccount.accountID == savedAccountID {
 				accountPopUpButton.select(oneMenuItem)
 			}
-
 		}
 	}
 

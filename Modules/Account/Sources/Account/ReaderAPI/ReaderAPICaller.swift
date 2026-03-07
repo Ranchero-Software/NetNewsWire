@@ -500,7 +500,7 @@ enum CreateReaderAPISubscriptionResult {
 		guard let continuation else {
 			if type == .allForAccount {
 				self.accountSettings?.lastArticleFetchStartTime = dateInfo?.date
-				self.accountSettings?.lastArticleFetchEndTime = Date()
+				self.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return itemIDs
 		}
