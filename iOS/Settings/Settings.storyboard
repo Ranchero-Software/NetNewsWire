@@ -308,7 +308,40 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="EYf-v1-lNi" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="y5p-Tk-nrg" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="842.5" width="374" height="51.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="y5p-Tk-nrg" id="M7x-Lg-GAt">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="51.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Mark as Read on Open" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Nam-yV-0Mh">
+                                                    <rect key="frame" x="20" y="15" width="172.5" height="21.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="m11-vJ-pOQ">
+                                                    <rect key="frame" x="295" y="12" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchMarkAsReadOnOpen:" destination="a0p-rk-skQ" eventType="valueChanged" id="gcF-7t-DGR"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="m11-vJ-pOQ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Nam-yV-0Mh" secondAttribute="trailing" constant="8" id="IAp-8U-N66"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Nam-yV-0Mh" secondAttribute="bottom" id="SwR-nl-stK"/>
+                                                <constraint firstItem="Nam-yV-0Mh" firstAttribute="top" secondItem="M7x-Lg-GAt" secondAttribute="topMargin" id="UVR-0q-clJ"/>
+                                                <constraint firstAttribute="trailing" secondItem="m11-vJ-pOQ" secondAttribute="trailing" constant="18" id="cdQ-td-1xx"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="m11-vJ-pOQ" secondAttribute="bottom" constant="6" id="ket-Oj-wua"/>
+                                                <constraint firstItem="Nam-yV-0Mh" firstAttribute="leading" secondItem="M7x-Lg-GAt" secondAttribute="leadingMargin" id="q5e-sq-l0O"/>
+                                                <constraint firstItem="m11-vJ-pOQ" firstAttribute="centerY" secondItem="M7x-Lg-GAt" secondAttribute="centerY" id="seI-nP-Qk7"/>
+                                                <constraint firstItem="m11-vJ-pOQ" firstAttribute="top" relation="greaterThanOrEqual" secondItem="M7x-Lg-GAt" secondAttribute="top" constant="6" id="wfw-GZ-8B9"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="EYf-v1-lNi" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="843" width="374" height="52"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EYf-v1-lNi" id="7nz-0Y-HaW">
@@ -574,6 +607,7 @@
                         <outlet property="confirmMarkAllAsReadSwitch" destination="UOo-9z-IuL" id="yLZ-Kf-wDt"/>
                         <outlet property="enableJavaScriptSwitch" destination="Djo-HE-LWS" id="muL-I5-eDE"/>
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
+                        <outlet property="markAsReadOnOpenSwitch" destination="m11-vJ-pOQ" id="qnh-Mz-6EF"/>
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>
                         <outlet property="refreshClearsReadArticlesSwitch" destination="duV-CN-JmH" id="xTd-jF-Ei1"/>
                         <outlet property="showFullscreenArticlesSwitch" destination="2Md-2E-7Z4" id="lEN-VP-wEO"/>
