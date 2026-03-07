@@ -2,8 +2,7 @@
 //  FeedSettings.swift
 //  NetNewsWire
 //
-//  Created by Brent Simmons on 3/12/19.
-//  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
+//  Created by Brent Simmons on 3/7/26
 //
 
 import Foundation
