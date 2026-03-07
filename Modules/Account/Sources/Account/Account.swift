@@ -93,7 +93,7 @@ public enum FetchType {
 		return name
 	}
 
-	@MainActor public var name: String? {
+	public var name: String? {
 		get {
 			settings.name
 		}
@@ -109,7 +109,7 @@ public enum FetchType {
 	}
 	public let defaultName: String
 
-	@MainActor public var isActive: Bool {
+	public var isActive: Bool {
 		get {
 			settings.isActive
 		}
@@ -126,7 +126,7 @@ public enum FetchType {
 	public var topLevelFeeds = Set<Feed>()
 	public var folders: Set<Folder>? = Set<Folder>()
 
-	@MainActor public var externalID: String? {
+	public var externalID: String? {
 		get {
 			settings.externalID
 		}
@@ -135,7 +135,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public var sortedFolders: [Folder]? {
+	public var sortedFolders: [Folder]? {
 		if let folders = folders {
 			return Array(folders).sorted(by: { $0.nameForDisplay.caseInsensitiveCompare($1.nameForDisplay) == .orderedAscending })
 		}
@@ -162,7 +162,7 @@ public enum FetchType {
 		Set(flattenedFeeds().map({ $0.url }))
 	}
 
-	@MainActor var username: String? {
+	var username: String? {
 		get {
 			settings.username
 		}
@@ -173,7 +173,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public var lastArticleFetchStartTime: Date? {
+	public var lastArticleFetchStartTime: Date? {
 		get {
 			settings.lastArticleFetchStartTime
 		}
@@ -182,7 +182,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public var lastArticleFetchEndTime: Date? {
+	public var lastArticleFetchEndTime: Date? {
 		get {
 			settings.lastArticleFetchEndTime
 		}
@@ -191,7 +191,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public var endpointURL: URL? {
+	public var endpointURL: URL? {
 		get {
 			settings.endpointURL
 		}
@@ -337,7 +337,7 @@ public enum FetchType {
 
 	// MARK: - Credentials
 
-	@MainActor public func storeCredentials(_ credentials: Credentials) throws {
+	public func storeCredentials(_ credentials: Credentials) throws {
 		username = credentials.username
 		guard let server = delegate.server else {
 			assertionFailure()
@@ -347,14 +347,14 @@ public enum FetchType {
 		delegate.credentials = credentials
 	}
 
-	@MainActor public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
+	public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
 		guard let username = self.username, let server = delegate.server else {
 			return nil
 		}
 		return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 	}
 
-	@MainActor public func removeCredentials(type: CredentialsType) throws {
+	public func removeCredentials(type: CredentialsType) throws {
 		guard let username = self.username, let server = delegate.server else {
 			return
 		}
@@ -431,11 +431,11 @@ public enum FetchType {
 
 	// MARK: - Syncing Article Status
 
-	@MainActor public func sendArticleStatus() async throws {
+	public func sendArticleStatus() async throws {
 		try await delegate.sendArticleStatus(for: self)
 	}
 
-	@MainActor public func syncArticleStatus() async throws {
+	public func syncArticleStatus() async throws {
 		try await delegate.syncArticleStatus(for: self)
 	}
 
@@ -462,11 +462,11 @@ public enum FetchType {
 
 	// MARK: - Suspend/Resume
 
-	@MainActor public func suspendNetwork() {
+	public func suspendNetwork() {
 		delegate.suspendNetwork()
 	}
 
-	@MainActor public func suspendDatabase() {
+	public func suspendDatabase() {
 		#if os(iOS)
 		database.cancelAndSuspend()
 		#endif
@@ -475,7 +475,7 @@ public enum FetchType {
 
 	/// Re-open the SQLite database and allow database calls.
 	/// Call this *before* calling resume.
-	@MainActor public func resumeDatabaseAndDelegate() {
+	public func resumeDatabaseAndDelegate() {
 		#if os(iOS)
 		database.resume()
 		#endif
@@ -495,11 +495,11 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public func prepareForDeletion() {
+	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
 	}
 
-	@MainActor func addOPMLItems(_ items: [RSOPMLItem]) {
+	func addOPMLItems(_ items: [RSOPMLItem]) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
 				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
@@ -518,7 +518,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor func loadOPMLItems(_ items: [RSOPMLItem]) {
+	func loadOPMLItems(_ items: [RSOPMLItem]) {
 		addOPMLItems(OPMLNormalizer.normalize(items))
 	}
 
@@ -533,7 +533,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor func existingContainer(withExternalID externalID: String) -> Container? {
+	func existingContainer(withExternalID externalID: String) -> Container? {
 		guard self.externalID != externalID else {
 			return self
 		}
@@ -556,7 +556,7 @@ public enum FetchType {
 	}
 
 	@discardableResult
-	@MainActor func ensureFolder(with name: String) -> Folder? {
+	func ensureFolder(with name: String) -> Folder? {
 		// TODO: support subfolders, maybe, some day
 
 		if name.isEmpty {
@@ -575,7 +575,7 @@ public enum FetchType {
 		return folder
 	}
 
-	@MainActor public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
+	public func ensureFolder(withFolderNames folderNames: [String]) -> Folder? {
 		// TODO: support subfolders, maybe, some day.
 		// Since we don’t, just take the last name and make sure there’s a Folder.
 
@@ -585,7 +585,7 @@ public enum FetchType {
 		return ensureFolder(with: folderName)
 	}
 
-	@MainActor public func existingFolder(withDisplayName displayName: String) -> Folder? {
+	public func existingFolder(withDisplayName displayName: String) -> Folder? {
 		return folders?.first(where: { $0.nameForDisplay == displayName })
 	}
 
@@ -593,7 +593,7 @@ public enum FetchType {
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 
-	@MainActor func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
@@ -605,7 +605,7 @@ public enum FetchType {
 		return feed
 	}
 
-	@MainActor func addFeed(_ feed: Feed, container: Container) async throws {
+	func addFeed(_ feed: Feed, container: Container) async throws {
 		try await delegate.addFeed(account: self, feed: feed, container: container)
 	}
 
@@ -631,7 +631,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
+	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		let settings = feedSettings(feedURL: url, feedID: feedID)
 		let feed = Feed(account: self, url: url, settings: settings)
 		feed.name = name
@@ -661,7 +661,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public func renameFeed(_ feed: Feed, name: String) async throws {
+	public func renameFeed(_ feed: Feed, name: String) async throws {
 		try await delegate.renameFeed(for: self, with: feed, to: name)
 	}
 
@@ -677,7 +677,7 @@ public enum FetchType {
 	}
 
 	@discardableResult
-	@MainActor public func addFolder(_ name: String) async throws -> Folder {
+	public func addFolder(_ name: String) async throws -> Folder {
 		try await delegate.createFolder(for: self, name: name)
 	}
 
@@ -720,7 +720,7 @@ public enum FetchType {
 
 	// MARK: - Fetching Articles
 
-	@MainActor public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
 			return try _fetchStarredArticles(limit: limit)
@@ -745,7 +745,7 @@ public enum FetchType {
 		}
 	}
 
-	@MainActor public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+	public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
 			return try await _fetchStarredArticlesAsync(limit: limit)
@@ -791,7 +791,7 @@ public enum FetchType {
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	@MainActor public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
 		try await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 	}
 
@@ -815,7 +815,7 @@ public enum FetchType {
 	// MARK: - Updating Feeds
 
 	@discardableResult
-	@MainActor func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+	func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async throws -> ArticleChanges {
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
@@ -828,7 +828,7 @@ public enum FetchType {
 		return try await updateAsync(feedID: feed.feedID, parsedItems: parsedItems)
 	}
 
-	@MainActor func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
+	func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
@@ -838,7 +838,7 @@ public enum FetchType {
 		return articleChanges
 	}
 
-	@MainActor func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
+	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
@@ -852,7 +852,7 @@ public enum FetchType {
 
 	/// Returns set of Article whose statuses did change.
 	@discardableResult
-	@MainActor func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
+	func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
 		guard !articles.isEmpty else {
 			return Set<Article>()
 		}
@@ -1067,7 +1067,7 @@ public enum FetchType {
 
 // MARK: - Fetching Articles (Private)
 
-@MainActor private extension Account {
+private extension Account {
 
 	// MARK: - Starred Articles
 
@@ -1222,7 +1222,7 @@ public enum FetchType {
 
 // MARK: - Fetching Unread Counts (Private)
 
-@MainActor private extension Account {
+private extension Account {
 
 	/// Fetch unread counts for zero or more feeds.
 	///
@@ -1289,7 +1289,7 @@ public enum FetchType {
 
 // MARK: - Private
 
-@MainActor private extension Account {
+private extension Account {
 
 	func populateFeedSettingsCache() {
 		let rows = feedSettingsDatabase.allRows()
