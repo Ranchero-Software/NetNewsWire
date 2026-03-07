@@ -79,9 +79,12 @@ import RSWeb
 		}
 	}
 
-	init(accountID: String, database: AccountSettingsDatabase) {
+	init(accountID: String, dataFolder: String, database: AccountSettingsDatabase) {
 		self.accountID = accountID
 		self.database = database
+
+		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: dataFolder, database: database)
+		database.ensureAccountExists(accountID)
 
 		if let row = database.row(for: accountID) {
 			self.name = row.name
