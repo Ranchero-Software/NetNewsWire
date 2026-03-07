@@ -154,12 +154,8 @@ import os
 			return
 		}
 
-		if url.isOpenRSSOrgURL {
-			// Supported only for openrss.org. Cache-Control headers are
-			// otherwise not intentional for feeds, unfortunately.
-			if let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
-				feed.cacheControlInfo = cacheControlInfo
-			}
+		if let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
+			feed.cacheControlInfo = cacheControlInfo
 		}
 
 		let dataHash = data.md5String
