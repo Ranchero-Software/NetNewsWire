@@ -41,9 +41,9 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	weak var accountMetadata: AccountMetadata? {
+	weak var accountSettings: AccountSettings? {
 		didSet {
-			caller.accountMetadata = accountMetadata
+			caller.accountSettings = accountSettings
 		}
 	}
 
@@ -473,7 +473,7 @@ private extension FeedbinAccountDelegate {
 		// so that we will for sure get the new tagging information.
 		for tag in tags {
 			if !folderNames.contains(tag.name) {
-				accountMetadata?.conditionalGetInfo[FeedbinAPICaller.ConditionalGetKeys.taggings] = nil
+				accountSettings?.setConditionalGetInfo(nil, for: FeedbinAPICaller.ConditionalGetKeys.taggings)
 			}
 		}
 	}
@@ -795,8 +795,8 @@ private extension FeedbinAccountDelegate {
 	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?) async throws {
 		guard let page else {
 			if let lastArticleFetch = updateFetchDate {
-				accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
-				accountMetadata?.lastArticleFetchEndTime = Date()
+				accountSettings?.lastArticleFetchStartTime = lastArticleFetch
+				accountSettings?.lastArticleFetchEndTime = Date()
 			}
 			return
 		}

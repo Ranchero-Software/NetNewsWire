@@ -20,7 +20,7 @@ import Secrets
 
 	var server: String? { get }
 	var credentials: Credentials? { get set }
-	var accountMetadata: AccountMetadata? { get set }
+	var accountSettings: AccountSettings? { get set }
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async
 

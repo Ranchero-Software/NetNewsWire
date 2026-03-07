@@ -23,6 +23,7 @@ import RSDatabase
 	public let defaultAccount: Account
 
 	private let accountsFolder: String
+	private let accountSettingsDatabase: AccountSettingsDatabase
     private var accountsDictionary = [String: Account]()
 
 	private let defaultAccountFolderName = "OnMyMac"
@@ -78,7 +79,7 @@ import RSDatabase
 	public var lastArticleFetchEndTime: Date? {
 		var lastArticleFetchEndTime: Date?
 		for account in activeAccounts {
-			if let accountLastArticleFetchEndTime = account.metadata.lastArticleFetchEndTime {
+			if let accountLastArticleFetchEndTime = account.settings.lastArticleFetchEndTime {
 				if lastArticleFetchEndTime == nil || lastArticleFetchEndTime! < accountLastArticleFetchEndTime {
 					lastArticleFetchEndTime = accountLastArticleFetchEndTime
 				}
@@ -105,6 +106,9 @@ import RSDatabase
 	public init() {
 		self.accountsFolder = AppConfig.dataSubfolder(named: "Accounts").path
 
+		let databasePath = AppConfig.dataFolder.appendingPathComponent("AccountSettings.db").path
+		self.accountSettingsDatabase = AccountSettingsDatabase(databasePath: databasePath)
+
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {
@@ -114,7 +118,7 @@ import RSDatabase
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier, accountSettingsDatabase: accountSettingsDatabase)
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
@@ -155,7 +159,7 @@ import RSDatabase
 			abort()
 		}
 
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID, accountSettingsDatabase: accountSettingsDatabase)
 		accountsDictionary[accountID] = account
 
 		var userInfo = [String: Any]()
@@ -174,6 +178,8 @@ import RSDatabase
 
 		accountsDictionary.removeValue(forKey: account.accountID)
 		account.isDeleted = true
+
+		accountSettingsDatabase.deleteSettings(for: account.accountID)
 
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
@@ -450,7 +456,7 @@ private extension AccountManager {
 	}
 
 	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-		Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
+		Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, accountSettingsDatabase: accountSettingsDatabase)
 	}
 
 	func loadAccount(_ filename: String) -> Account? {

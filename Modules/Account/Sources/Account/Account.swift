@@ -95,12 +95,12 @@ public enum FetchType {
 
 	@MainActor public var name: String? {
 		get {
-			return metadata.name
+			return settings.name
 		}
 		set {
 			let currentNameForDisplay = nameForDisplay
-			if newValue != metadata.name {
-				metadata.name = newValue
+			if newValue != settings.name {
+				settings.name = newValue
 				if currentNameForDisplay != nameForDisplay {
 					postDisplayNameDidChangeNotification()
 				}
@@ -111,11 +111,11 @@ public enum FetchType {
 
 	@MainActor public var isActive: Bool {
 		get {
-			return metadata.isActive
+			return settings.isActive
 		}
 		set {
-			if newValue != metadata.isActive {
-				metadata.isActive = newValue
+			if newValue != settings.isActive {
+				settings.isActive = newValue
 				var userInfo = [AnyHashable: Any]()
 				userInfo[UserInfoKey.account] = self
 				NotificationCenter.default.post(name: .AccountStateDidChange, object: self, userInfo: userInfo)
@@ -128,10 +128,10 @@ public enum FetchType {
 
 	@MainActor public var externalID: String? {
 		get {
-			return metadata.externalID
+			return settings.externalID
 		}
 		set {
-			metadata.externalID = newValue
+			settings.externalID = newValue
 		}
 	}
 
@@ -164,22 +164,22 @@ public enum FetchType {
 
 	@MainActor var username: String? {
 		get {
-			return metadata.username
+			return settings.username
 		}
 		set {
-			if newValue != metadata.username {
-				metadata.username = newValue
+			if newValue != settings.username {
+				settings.username = newValue
 			}
 		}
 	}
 
 	@MainActor public var endpointURL: URL? {
 		get {
-			return metadata.endpointURL
+			return settings.endpointURL
 		}
 		set {
-			if newValue != metadata.endpointURL {
-				metadata.endpointURL = newValue
+			if newValue != settings.endpointURL {
+				settings.endpointURL = newValue
 			}
 		}
 	}
@@ -201,12 +201,7 @@ public enum FetchType {
 	}
 
 	private lazy var opmlFile = OPMLFile(filename: (dataFolder as NSString).appendingPathComponent("Subscriptions.opml"), account: self)
-	private lazy var metadataFile = AccountMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("Settings.plist"), account: self)
-	@MainActor var metadata = AccountMetadata() {
-		didSet {
-			delegate.accountMetadata = metadata
-		}
-	}
+	@MainActor var settings: AccountSettings!
 
 	private lazy var feedMetadataFile = FeedMetadataFile(filename: (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist"), account: self)
 	typealias FeedMetadataDictionary = [String: FeedMetadata]
@@ -246,7 +241,7 @@ public enum FetchType {
 		}
 	}
 
-	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String, accountSettingsDatabase: AccountSettingsDatabase, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -267,8 +262,6 @@ public enum FetchType {
 		case .theOldReader:
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader)
 		}
-
-		self.delegate.accountMetadata = metadata
 
 		self.accountID = accountID
 		self.type = type
@@ -306,7 +299,8 @@ public enum FetchType {
 		NotificationCenter.default.addObserver(self, selector: #selector(childrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 
 		MainActor.assumeIsolated {
-			metadataFile.load()
+			self.settings = AccountSettings(accountID: accountID, dataFolder: dataFolder, database: accountSettingsDatabase)
+			self.delegate.accountSettings = self.settings
 			feedMetadataFile.load()
 			opmlFile.load()
 		}
@@ -437,7 +431,7 @@ public enum FetchType {
 			do {
 				try await delegate.importOPML(for: self, opmlFile: opmlFile)
 				// Reset the last fetch date to get the article history for the added feeds.
-				metadata.lastArticleFetchStartTime = nil
+				settings.lastArticleFetchStartTime = nil
 				try? await delegate.refreshAll(for: self)
 				completion(.success(()))
 			} catch {
@@ -477,7 +471,6 @@ public enum FetchType {
 
 	public func save() {
 		MainActor.assumeIsolated {
-			metadataFile.save()
 			feedMetadataFile.save()
 			opmlFile.save()
 		}
@@ -1053,15 +1046,6 @@ public enum FetchType {
 
 	public static func ==(lhs: Account, rhs: Account) -> Bool {
 		return lhs === rhs
-	}
-}
-
-// MARK: - AccountMetadataDelegate
-
-@MainActor extension Account: AccountMetadataDelegate {
-
-	func valueDidChange(_ accountMetadata: AccountMetadata, key: AccountMetadata.CodingKeys) {
-		metadataFile.markAsDirty()
 	}
 }
 
