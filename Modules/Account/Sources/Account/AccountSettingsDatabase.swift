@@ -98,9 +98,9 @@ import RSWeb
 		database.executeUpdate("UPDATE accountSettings SET \(column.rawValue) = ? WHERE accountID = ?;", withArgumentsIn: [value, accountID])
 	}
 
-	// MARK: - Double
+	// MARK: - Date
 
-	func double(for accountID: String, column: Column) -> Double? {
+	func date(for accountID: String, column: Column) -> Date? {
 		let name = column.rawValue
 		guard let resultSet = database.executeQuery("SELECT \(name) FROM accountSettings WHERE accountID = ?;", withArgumentsIn: [accountID]) else {
 			return nil
@@ -114,13 +114,13 @@ import RSWeb
 		if resultSet.columnIsNull(name) {
 			return nil
 		}
-		return resultSet.double(forColumn: name)
+		return Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: name))
 	}
 
-	func setDouble(_ value: Double?, for accountID: String, column: Column) {
+	func setDate(_ value: Date?, for accountID: String, column: Column) {
 		let name = column.rawValue
 		if let value {
-			database.executeUpdate("UPDATE accountSettings SET \(name) = ? WHERE accountID = ?;", withArgumentsIn: [value, accountID])
+			database.executeUpdate("UPDATE accountSettings SET \(name) = ? WHERE accountID = ?;", withArgumentsIn: [value.timeIntervalSinceReferenceDate, accountID])
 		} else {
 			database.executeUpdate("UPDATE accountSettings SET \(name) = NULL WHERE accountID = ?;", withArgumentsIn: [accountID])
 		}
