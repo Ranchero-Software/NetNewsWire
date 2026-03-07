@@ -77,6 +77,12 @@ import Articles
 		database.executeUpdate("INSERT OR IGNORE INTO feedSettings (feedURL, feedID) VALUES (?, ?);", withArgumentsIn: [feedURL, feedID])
 	}
 
+	// MARK: - Insert Row
+
+	func insertRow(_ dictionary: DatabaseDictionary) {
+		database.insertRow(dictionary, insertType: .orReplace, tableName: "feedSettings")
+	}
+
 	// MARK: - Fetch Rows
 
 	func allRows() -> [String: Row] {
