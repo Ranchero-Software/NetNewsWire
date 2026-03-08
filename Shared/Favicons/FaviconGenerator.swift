@@ -11,24 +11,30 @@ import RSCore
 import Account
 
 @MainActor final class FaviconGenerator {
+	static let shared = FaviconGenerator()
 
-	private static var faviconGeneratorCache = [String: IconImage]() // feedURL: RSImage
+	private var cache = [String: IconImage]() // feedURL: IconImage
 
-	static func favicon(_ feed: Feed) -> IconImage {
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+	}
 
-		if let favicon = FaviconGenerator.faviconGeneratorCache[feed.url] {
+	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
+	}
+
+	func favicon(_ feed: Feed) -> IconImage {
+		if let favicon = cache[feed.url] {
 			return favicon
 		}
 
 		let colorHash = ColorHash(feed.url)
 		if let favicon = Assets.Images.faviconTemplate.maskWithColor(color: colorHash.color.cgColor) {
 			let iconImage = IconImage(favicon, isBackgroundSuppressed: true)
-			FaviconGenerator.faviconGeneratorCache[feed.url] = iconImage
+			cache[feed.url] = iconImage
 			return iconImage
 		} else {
 			return IconImage(Assets.Images.faviconTemplate, isBackgroundSuppressed: true)
 		}
-
 	}
-
 }
