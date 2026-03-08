@@ -114,9 +114,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func refreshAll(for account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
 
-		if credentials == nil {
-			credentials = try? account.retrieveCredentials(type: .readerAPIKey)
-		}
+		retrieveCredentialsIfNeeded(account)
 
 		refreshProgress.addTasks(6)
 
@@ -299,6 +297,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	@discardableResult
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		retrieveCredentialsIfNeeded(account)
+
 		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — url \(url) name \(name ?? "")")
 
 		guard let url = URL(string: url) else {
@@ -478,7 +478,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		retrieveCredentialsIfNeeded(account)
 	}
 
 	func accountWillBeDeleted(_ account: Account) {
@@ -516,9 +516,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func resume(account: Account) {
 		Self.logger.debug("ReaderAPIAccountDelegate: resume")
 
-		if credentials == nil {
-			credentials = try? account.retrieveCredentials(type: .readerAPIKey)
-		}
+		retrieveCredentialsIfNeeded(account)
 		syncDatabase.resume()
 	}
 
@@ -532,6 +530,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 // MARK: Private
 
 private extension ReaderAPIAccountDelegate {
+
+	func retrieveCredentialsIfNeeded(_ account: Account) {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		}
+	}
 
 	@MainActor func refreshAccount(_ account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount")
