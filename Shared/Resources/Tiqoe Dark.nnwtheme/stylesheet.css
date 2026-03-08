@@ -518,4 +518,14 @@ a.footnote:hover,
 	.newsfoot-footnote-popover + a.footnote {
 	background: #444;
 	}
+
+	.image-link-expand .icon-container svg {
+	stroke: #aaa;
+	}
+
+	.image-link-expand .icon-container:hover svg {
+	text-shadow: 0 1px rgba(0, 0, 0, 2);
+	opacity: 0.8;
+    	stroke: color-mix(in hsl, var(--link-underline-color), firebrick 70%)
+	}
 }
