@@ -1,5 +1,5 @@
 {
-  "originHash" : "0a5edced7ddbd0b75f7074b7376b27ee47915bbbcd8b244098e870c935e5df23",
+  "originHash" : "b42ca02f98af43c34dc24fd7b5a3a5c2fb9768f78221c9d5a845ccaeb288e70f",
   "pins" : [
     {
       "identity" : "plcrashreporter",
@@ -20,21 +20,12 @@
       }
     },
     {
-      "identity" : "swift-cmark",
+      "identity" : "tidemark",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-cmark.git",
+      "location" : "https://codeberg.org/brentsimmons/Tidemark",
       "state" : {
-        "revision" : "5d9bdaa4228b381639fff09403e39a04926e2dbe",
-        "version" : "0.7.1"
-      }
-    },
-    {
-      "identity" : "swift-markdown",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-markdown.git",
-      "state" : {
-        "revision" : "7d9a5ce307528578dfa777d505496bd5f544ad94",
-        "version" : "0.7.3"
+        "revision" : "9cd7784e4ab0d4368dc0f0c76380c1d89b3c8c4d",
+        "version" : "0.2.0"
       }
     },
     {

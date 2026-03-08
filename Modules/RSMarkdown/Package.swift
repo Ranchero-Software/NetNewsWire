@@ -10,14 +10,12 @@ let package = Package(
             targets: ["RSMarkdown"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-markdown.git", from: "0.4.0")
+		.package(url: "https://codeberg.org/brentsimmons/Tidemark", from: "0.2.0"),
     ],
     targets: [
         .target(
             name: "RSMarkdown",
-            dependencies: [
-                .product(name: "Markdown", package: "swift-markdown")
-            ],
+			dependencies: ["Tidemark"],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances"),
