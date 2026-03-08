@@ -33,10 +33,10 @@ import RSParser
 	}()
 
 	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(emptyCaches), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
-	@objc func emptyCaches() {
+	@objc func handleLowMemory(_ notification: Notification) {
 		feedNameCache.removeAll()
 		titleCache.removeAll()
 		summaryCache.removeAll()
