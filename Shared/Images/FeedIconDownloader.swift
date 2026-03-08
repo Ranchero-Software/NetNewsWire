@@ -42,6 +42,11 @@ extension Notification.Name {
 		loadFeedURLToIconURLCache()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+	}
+
+	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
 	}
 
 	func icon(for feed: Feed) -> IconImage? {
