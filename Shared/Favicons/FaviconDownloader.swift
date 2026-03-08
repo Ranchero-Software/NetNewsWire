@@ -68,12 +68,14 @@ extension Notification.Name {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
 	// MARK: - API
 
-	func resetCache() {
-		cache = [Feed: IconImage]()
+	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
+		singleFaviconDownloaderCache.removeAll()
 	}
 
 	func favicon(for feed: Feed) -> IconImage? {
