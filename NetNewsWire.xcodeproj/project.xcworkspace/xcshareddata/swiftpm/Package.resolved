@@ -1,13 +1,13 @@
 {
-  "originHash" : "b42ca02f98af43c34dc24fd7b5a3a5c2fb9768f78221c9d5a845ccaeb288e70f",
+  "originHash" : "3d8b7733f56d2178e1f184664a73e1b5b0b2eac44f0f368bba6b688591e36a8b",
   "pins" : [
     {
       "identity" : "plcrashreporter",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/microsoft/plcrashreporter.git",
       "state" : {
-        "revision" : "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
-        "version" : "1.11.0"
+        "revision" : "0254f941c646b1ed17b243654723d0f071e990d0",
+        "version" : "1.12.2"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://codeberg.org/brentsimmons/Tidemark",
       "state" : {
-        "revision" : "9cd7784e4ab0d4368dc0f0c76380c1d89b3c8c4d",
-        "version" : "0.2.0"
+        "revision" : "2b8d1a830eda70b4084b63534c2edd62ad7e5fee",
+        "version" : "0.2.1"
       }
     },
     {
