@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://codeberg.org/brentsimmons/Tidemark",
       "state" : {
-        "revision" : "2b8d1a830eda70b4084b63534c2edd62ad7e5fee",
-        "version" : "0.2.1"
+        "revision" : "7bc497a1550963267366d229b1c2dc1a277cce82",
+        "version" : "0.2.2"
       }
     },
     {
