@@ -114,6 +114,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func refreshAll(for account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
 
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		}
+
 		refreshProgress.addTasks(6)
 
 		do {
@@ -509,9 +513,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume() {
+	func resume(account: Account) {
 		Self.logger.debug("ReaderAPIAccountDelegate: resume")
 
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		}
 		syncDatabase.resume()
 	}
 

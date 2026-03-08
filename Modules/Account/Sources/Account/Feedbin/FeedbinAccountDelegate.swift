@@ -81,6 +81,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func refreshAll(for account: Account) async throws {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .basic)
+		}
+
 		refreshProgress.reset()
 		refreshProgress.addTasks(5)
 
@@ -379,7 +383,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume() {
+	func resume(account: Account) {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .basic)
+		}
 		caller.resume()
 		syncDatabase.resume()
 	}

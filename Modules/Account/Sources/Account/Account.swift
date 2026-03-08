@@ -352,18 +352,19 @@ public enum FetchType {
 	}
 
 	public func retrieveCredentials(type: CredentialsType) throws -> Credentials? {
-		guard let username = self.username, let server = delegate.server else {
+		guard let username = self.username else {
+			Self.logger.error("Account: retrieveCredentials: username is nil for \(type.rawValue, privacy: .public)")
 			return nil
 		}
-		return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
-	}
-
-	public func loggedRetrieveCredentials(type: CredentialsType) -> Credentials? {
-		do {
-			return try retrieveCredentials(type: type)
-		} catch {
-			Self.logger.error("Failed to retrieve \(type.rawValue, privacy: .public) credentials: \(error.localizedDescription, privacy: .public)")
+		guard let server = delegate.server else {
+			Self.logger.error("Account: retrieveCredentials: delegate.server is nil for \(type.rawValue, privacy: .public)")
 			return nil
+		}
+		do {
+			return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
+		} catch {
+			Self.logger.error("Account: retrieveCredentials: failed to retrieve \(type.rawValue, privacy: .public) credentials: \(error.localizedDescription, privacy: .public)")
+			throw error
 		}
 	}
 

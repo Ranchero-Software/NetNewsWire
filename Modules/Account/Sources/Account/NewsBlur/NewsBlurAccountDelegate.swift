@@ -72,6 +72,10 @@ import Secrets
 	}
 
 	func refreshAll(for account: Account) async throws {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
+		}
+
 		refreshProgress.reset()
 		self.refreshProgress.addTasks(4)
 
@@ -453,7 +457,10 @@ import Secrets
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume() {
+	func resume(account: Account) {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
+		}
 		caller.resume()
 		syncDatabase.resume()
 	}
