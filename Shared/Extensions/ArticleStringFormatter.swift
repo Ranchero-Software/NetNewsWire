@@ -8,34 +8,41 @@
 
 import Foundation
 import Articles
+import RSCore
 import RSParser
 
-@MainActor struct ArticleStringFormatter {
-	private static var feedNameCache = [String: String]()
-	private static var titleCache = [String: String]()
-	private static var summaryCache = [String: String]()
+@MainActor final class ArticleStringFormatter {
+	static let shared = ArticleStringFormatter()
 
-	private static let dateFormatter: DateFormatter = {
+	private var feedNameCache = [String: String]()
+	private var titleCache = [String: String]()
+	private var summaryCache = [String: String]()
+
+	private let dateFormatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateStyle = .medium
 		formatter.timeStyle = .none
 		return formatter
 	}()
 
-	private static let timeFormatter: DateFormatter = {
+	private let timeFormatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateStyle = .none
 		formatter.timeStyle = .short
 		return formatter
 	}()
 
-	static func emptyCaches() {
-		feedNameCache = [String: String]()
-		titleCache = [String: String]()
-		summaryCache = [String: String]()
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
-	static func truncatedFeedName(_ feedName: String) -> String {
+	@objc func handleLowMemory(_ notification: Notification) {
+		feedNameCache.removeAll()
+		titleCache.removeAll()
+		summaryCache.removeAll()
+	}
+
+	func truncatedFeedName(_ feedName: String) -> String {
 		if let cachedFeedName = feedNameCache[feedName] {
 			return cachedFeedName
 		}
@@ -51,7 +58,7 @@ import RSParser
 		return s
 	}
 
-	static func truncatedTitle(_ article: Article, forHTML: Bool = false) -> String {
+	func truncatedTitle(_ article: Article, forHTML: Bool = false) -> String {
 		guard let title = article.sanitizedTitle(forHTML: forHTML) else {
 			return ""
 		}
@@ -82,13 +89,13 @@ import RSParser
 		return s
 	}
 
-	static func attributedTruncatedTitle(_ article: Article) -> NSAttributedString {
+	func attributedTruncatedTitle(_ article: Article) -> NSAttributedString {
 		let title = truncatedTitle(article, forHTML: true)
 		let attributed = NSAttributedString(html: title)
 		return attributed
 	}
 
-	static func truncatedSummary(_ article: Article) -> String {
+	func truncatedSummary(_ article: Article) -> String {
 		guard let body = article.body else {
 			return ""
 		}
@@ -106,7 +113,7 @@ import RSParser
 		return s
 	}
 
-	static func dateString(_ date: Date) -> String {
+	func dateString(_ date: Date) -> String {
 		if Calendar.dateIsToday(date) {
 			return timeFormatter.string(from: date)
 		}

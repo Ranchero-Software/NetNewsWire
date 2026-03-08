@@ -24,6 +24,14 @@ nonisolated final class DownloadCache: Sendable {
 
 	private let cache = Cache<DownloadCacheRecord>(timeToLive: 60 * 13, timeBetweenCleanups: 60 * 2)
 
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+	}
+
+	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
+	}
+
 	subscript(_ key: String) -> DownloadCacheRecord? {
 		get {
 			cache[key]

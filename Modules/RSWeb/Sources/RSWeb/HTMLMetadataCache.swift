@@ -31,6 +31,10 @@ nonisolated public final class HTMLMetadataCache: Sendable {
 
 	private let cache = Cache<HTMLMetadataCacheRecord>(timeToLive: TimeInterval(hours: 21), timeBetweenCleanups: TimeInterval(hours: 10))
 
+	func removeAll() {
+		cache.removeAll()
+	}
+
 	subscript(_ url: String) -> RSHTMLMetadata? {
 		get {
 			return cache[url]?.metadata

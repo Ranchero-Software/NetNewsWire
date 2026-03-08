@@ -11,12 +11,10 @@ import Articles
 import RSCore
 
 extension Notification.Name {
-
 	static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // UserInfoKey.imageURL (which is an avatarURL)
 }
 
 @MainActor final class AuthorAvatarDownloader {
-
 	public static let shared = AuthorAvatarDownloader()
 
 	private let imageDownloader = ImageDownloader.shared
@@ -24,12 +22,12 @@ extension Notification.Name {
 	private var waitingForAvatarURLs = Set<String>()
 
 	init() {
-
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
-	func resetCache() {
-		cache = [String: IconImage]()
+	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
 	}
 
 	func image(for author: Author) -> IconImage? {
