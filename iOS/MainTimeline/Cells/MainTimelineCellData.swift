@@ -29,20 +29,20 @@ import Articles
 
 	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize) {
 
-		self.title = ArticleStringFormatter.truncatedTitle(article)
-		self.attributedTitle = ArticleStringFormatter.attributedTruncatedTitle(article)
+		self.title = ArticleStringFormatter.shared.truncatedTitle(article)
+		self.attributedTitle = ArticleStringFormatter.shared.attributedTruncatedTitle(article)
 
-		let truncatedSummary = ArticleStringFormatter.truncatedSummary(article)
+		let truncatedSummary = ArticleStringFormatter.shared.truncatedSummary(article)
 		if self.title.isEmpty && truncatedSummary.isEmpty {
 			self.summary = Self.noText
 		} else {
 			self.summary = truncatedSummary
 		}
 
-		self.dateString = ArticleStringFormatter.dateString(article.logicalDatePublished)
+		self.dateString = ArticleStringFormatter.shared.dateString(article.logicalDatePublished)
 
 		if let feedName = feedName {
-			self.feedName = ArticleStringFormatter.truncatedFeedName(feedName)
+			self.feedName = ArticleStringFormatter.shared.truncatedFeedName(feedName)
 		} else {
 			self.feedName = ""
 		}
