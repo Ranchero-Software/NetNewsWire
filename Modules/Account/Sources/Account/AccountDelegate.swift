@@ -60,5 +60,5 @@ import Secrets
 	func suspendDatabase()
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume()
+	func resume(account: Account)
 }

@@ -471,7 +471,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		syncDatabase.suspend()
 	}
 
-	func resume() {
+	func resume(account: Account) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		refresher.resume()
 		syncDatabase.resume()

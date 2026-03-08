@@ -150,7 +150,7 @@ import Secrets
 		// Nothing to do
 	}
 
-	@MainActor func resume() {
+	@MainActor func resume(account: Account) {
 		refresher.resume()
 	}
 
