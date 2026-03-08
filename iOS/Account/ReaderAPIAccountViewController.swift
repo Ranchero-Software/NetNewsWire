@@ -140,7 +140,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		let url = apiURL()!
 
 		// When you fill in the email address via auto-complete it adds extra whitespace
-		let trimmedUsername = username.trimmingCharacters(in: .whitespaces)
+		let trimmedUsername = username.trimmingWhitespace
 
 		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername) else {
 			showError(NSLocalizedString("There is already an account of that type with that username created.", comment: "Duplicate Error"))
@@ -265,7 +265,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 	private func apiURL() -> URL? {
 		switch accountType {
 		case .freshRSS:
-			return URL(string: apiURLTextField.text!)!
+			return URL(string: apiURLTextField.text!.trimmingWhitespace)!
 		case .inoreader:
 			return URL(string: ReaderAPIVariant.inoreader.host)!
 		case .bazQux:
