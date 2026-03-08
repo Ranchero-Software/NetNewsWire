@@ -53,7 +53,7 @@ public struct CredentialsManager {
 
 		let addStatus = SecItemAdd(query as CFDictionary, nil)
 		if addStatus != errSecSuccess {
-			throw CredentialsError.unhandledError(status: status)
+			throw CredentialsError.unhandledError(status: addStatus)
 		}
 	}
 
