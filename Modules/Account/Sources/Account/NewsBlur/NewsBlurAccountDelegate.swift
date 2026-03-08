@@ -27,7 +27,7 @@ import Secrets
 		}
 	}
 
-	var accountMetadata: AccountMetadata?
+	var accountSettings: AccountSettings?
 
 	var progressInfo = ProgressInfo() {
 		didSet {
@@ -72,6 +72,10 @@ import Secrets
 	}
 
 	func refreshAll(for account: Account) async throws {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
+		}
+
 		refreshProgress.reset()
 		self.refreshProgress.addTasks(4)
 
@@ -88,7 +92,7 @@ import Secrets
 			try await refreshMissingStories(for: account)
 			refreshProgress.completeTask()
 
-			accountMetadata?.lastArticleFetchEndTime = Date()
+			accountSettings?.lastRefreshCompletedDate = Date()
 		} catch {
 			refreshProgress.reset()
 			throw AccountError.wrapped(error, account)
@@ -453,7 +457,10 @@ import Secrets
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume() {
+	func resume(account: Account) {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
+		}
 		caller.resume()
 		syncDatabase.resume()
 	}

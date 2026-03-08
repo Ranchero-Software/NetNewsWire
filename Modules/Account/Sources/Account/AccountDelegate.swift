@@ -20,7 +20,7 @@ import Secrets
 
 	var server: String? { get }
 	var credentials: Credentials? { get set }
-	var accountMetadata: AccountMetadata? { get set }
+	var accountSettings: AccountSettings? { get set }
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async
 
@@ -60,5 +60,5 @@ import Secrets
 	func suspendDatabase()
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume()
+	func resume(account: Account)
 }

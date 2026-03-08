@@ -242,10 +242,10 @@ extension Notification.Name {
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
 			return
 		}
-		if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
+		if key == .homePageURL || key == .faviconURL {
 			configureCellsForRepresentedObject(feed)
 		}
 	}

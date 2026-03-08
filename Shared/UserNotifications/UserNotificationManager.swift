@@ -43,7 +43,7 @@ import UserNotifications
 		}
 
 		for article in articles {
-			if !article.status.read, let feed = article.feed, feed.isNotifyAboutNewArticles ?? false {
+			if !article.status.read, let feed = article.feed, feed.newArticleNotificationsEnabled {
 				sendNotification(feed: feed, article: article)
 			}
 		}
@@ -73,10 +73,10 @@ private extension UserNotificationManager {
 		let content = UNMutableNotificationContent()
 
 		content.title = feed.nameForDisplay
-		if !ArticleStringFormatter.truncatedTitle(article).isEmpty {
-			content.subtitle = ArticleStringFormatter.truncatedTitle(article)
+		if !ArticleStringFormatter.shared.truncatedTitle(article).isEmpty {
+			content.subtitle = ArticleStringFormatter.shared.truncatedTitle(article)
 		}
-		content.body = ArticleStringFormatter.truncatedSummary(article)
+		content.body = ArticleStringFormatter.shared.truncatedSummary(article)
 		content.threadIdentifier = feed.feedID
 		content.sound = UNNotificationSound.default
 		content.userInfo = [UserInfoKey.articlePath: article.pathUserInfo]

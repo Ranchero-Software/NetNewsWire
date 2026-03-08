@@ -202,8 +202,8 @@ import Account
 	}
 
 	func createLatestArticle(_ article: Article) -> LatestArticle {
-		let truncatedTitle = ArticleStringFormatter.truncatedTitle(article)
-		let articleTitle = truncatedTitle.isEmpty ? ArticleStringFormatter.truncatedSummary(article) : truncatedTitle
+		let truncatedTitle = ArticleStringFormatter.shared.truncatedTitle(article)
+		let articleTitle = truncatedTitle.isEmpty ? ArticleStringFormatter.shared.truncatedSummary(article) : truncatedTitle
 
 		let feedIconPath = writeImageDataToSharedContainer(article.iconImage()?.image.dataRepresentation())
 

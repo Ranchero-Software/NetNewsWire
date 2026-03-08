@@ -228,7 +228,7 @@
                                                     <rect key="frame" x="293" y="11.5" width="63" height="28"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
-                                                        <action selector="notifyAboutNewArticlesChanged:" destination="lEH-bG-pQW" eventType="valueChanged" id="1Mv-Im-H5v"/>
+                                                        <action selector="newArticleNotificationsEnabledChanged:" destination="lEH-bG-pQW" eventType="valueChanged" id="1Mv-Im-H5v"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
@@ -258,7 +258,7 @@
                                                     <rect key="frame" x="293" y="11.5" width="63" height="28"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
-                                                        <action selector="alwaysShowReaderViewChanged:" destination="lEH-bG-pQW" eventType="valueChanged" id="grg-EM-T3u"/>
+                                                        <action selector="readerViewAlwaysEnabledChanged:" destination="lEH-bG-pQW" eventType="valueChanged" id="grg-EM-T3u"/>
                                                     </connections>
                                                 </switch>
                                             </subviews>
@@ -357,11 +357,11 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="alwaysShowReaderViewSwitch" destination="fUd-JB-UMK" id="kUh-ob-Ego"/>
+                        <outlet property="readerViewAlwaysEnabledSwitch" destination="fUd-JB-UMK" id="kUh-ob-Ego"/>
                         <outlet property="feedURLLabel" destination="rOV-XS-bNW" id="mPv-yb-H4I"/>
                         <outlet property="homePageLabel" destination="HUP-Cu-FGT" id="EDm-vt-2r0"/>
                         <outlet property="nameTextField" destination="ZdA-rl-9eP" id="GzR-uc-fpV"/>
-                        <outlet property="notifyAboutNewArticlesSwitch" destination="g39-wK-xUs" id="ahS-ZK-6xN"/>
+                        <outlet property="newArticleNotificationsEnabledSwitch" destination="g39-wK-xUs" id="ahS-ZK-6xN"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qKF-0N-vfa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

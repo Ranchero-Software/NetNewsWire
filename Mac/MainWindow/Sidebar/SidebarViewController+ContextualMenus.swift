@@ -114,16 +114,14 @@ extension SidebarViewController {
 				self.showNotificationsNotEnabledAlert()
 			} else if settings.authorizationStatus == .authorized {
 				DispatchQueue.main.async {
-					if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
-					feed.isNotifyAboutNewArticles?.toggle()
+					feed.newArticleNotificationsEnabled.toggle()
 					NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 				}
 			} else {
 				UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { granted, _ in
 					if granted {
 						DispatchQueue.main.async {
-							if feed.isNotifyAboutNewArticles == nil { feed.isNotifyAboutNewArticles = false }
-							feed.isNotifyAboutNewArticles?.toggle()
+							feed.newArticleNotificationsEnabled.toggle()
 							NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 							NSApplication.shared.registerForRemoteNotifications()
 						}
@@ -140,8 +138,7 @@ extension SidebarViewController {
 			  let feed = item.representedObject as? Feed else {
 			return
 		}
-		if feed.isArticleExtractorAlwaysOn == nil { feed.isArticleExtractorAlwaysOn = false }
-		feed.isArticleExtractorAlwaysOn?.toggle()
+		feed.readerViewAlwaysEnabled.toggle()
 		NotificationCenter.default.post(Notification(name: .DidUpdateFeedPreferencesFromContextMenu))
 	}
 
@@ -233,21 +230,13 @@ private extension SidebarViewController {
 		let notificationText = feed.notificationDisplayName.capitalized
 
 		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed, image: Assets.Images.notification)
-		if feed.isNotifyAboutNewArticles == nil || feed.isNotifyAboutNewArticles! == false {
-			notificationMenuItem.state = .off
-		} else {
-			notificationMenuItem.state = .on
-		}
+		notificationMenuItem.state = feed.newArticleNotificationsEnabled ? .on : .off
 		menu.addItem(notificationMenuItem)
 
 		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
 		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), feed, image: Assets.Images.articleExtractorOff)
 
-		if feed.isArticleExtractorAlwaysOn == nil || feed.isArticleExtractorAlwaysOn! == false {
-			articleExtractorMenuItem.state = .off
-		} else {
-			articleExtractorMenuItem.state = .on
-		}
+		articleExtractorMenuItem.state = feed.readerViewAlwaysEnabled ? .on : .off
 		menu.addItem(articleExtractorMenuItem)
 
 		menu.addItem(NSMenuItem.separator())

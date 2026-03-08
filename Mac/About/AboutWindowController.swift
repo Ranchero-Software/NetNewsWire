@@ -30,11 +30,22 @@ private extension AboutWindowController {
 		window?.titlebarAppearsTransparent = true
 		window?.titleVisibility = .hidden
 		window?.styleMask.insert(.fullSizeContentView)
-		if let contentView = window?.contentView {
-			let visualEffectView = NSGlassEffectView(frame: contentView.bounds)
-			visualEffectView.tintColor = .clear
-			visualEffectView.autoresizingMask = [.width, .height]
-			contentView.addSubview(visualEffectView, positioned: .below, relativeTo: nil)
+		if #available(macOS 26.0, *) {
+			if let contentView = window?.contentView {
+				let visualEffectView = NSGlassEffectView(frame: contentView.bounds)
+				visualEffectView.tintColor = .clear
+				visualEffectView.autoresizingMask = [.width, .height]
+				contentView.addSubview(visualEffectView, positioned: .below, relativeTo: nil)
+			}
+		} else {
+			if let contentView = window?.contentView {
+				let visualEffectView = NSVisualEffectView(frame: contentView.bounds)
+				visualEffectView.blendingMode = .behindWindow
+				visualEffectView.material = .underWindowBackground
+				visualEffectView.state = .active
+				visualEffectView.autoresizingMask = [.width, .height]
+				contentView.addSubview(visualEffectView, positioned: .below, relativeTo: nil)
+			}
 		}
 	}
 

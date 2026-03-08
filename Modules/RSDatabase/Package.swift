@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
 	name: "RSDatabase",
-	platforms: [.macOS(.v26), .iOS(.v26)],
+	platforms: [.macOS(.v15), .iOS(.v26)],
 	products: [
 		.library(
 			name: "RSDatabase",

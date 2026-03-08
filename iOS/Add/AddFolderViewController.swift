@@ -28,14 +28,16 @@ final class AddFolderViewController: UITableViewController {
 			if let predefinedAccount = accounts.first(where: { $0.accountID == AppDefaults.shared.addFolderAccountID }) {
 				selectedAccount = predefinedAccount
 			} else {
-				selectedAccount = accounts[0]
+				selectedAccount = accounts.first
 			}
 		}
 	}
 
-	private var selectedAccount: Account! {
+	private var selectedAccount: Account? {
 		didSet {
-			guard selectedAccount != oldValue else { return }
+			guard selectedAccount != oldValue else {
+				return
+			}
 			accountLabel.text = selectedAccount.flatMap { ($0 as DisplayNameProvider).nameForDisplay }
 		}
 	}
@@ -53,7 +55,7 @@ final class AddFolderViewController: UITableViewController {
 			accountPickerView.dataSource = self
 			accountPickerView.delegate = self
 
-			if let index = accounts.firstIndex(of: selectedAccount) {
+			if let selectedAccount, let index = accounts.firstIndex(of: selectedAccount) {
 				accountPickerView.selectRow(index, inComponent: 0, animated: false)
 			}
 
@@ -76,7 +78,7 @@ final class AddFolderViewController: UITableViewController {
 	}
 
 	@IBAction func add(_ sender: Any) {
-		guard let folderName = nameTextField.text else {
+		guard let selectedAccount, let folderName = nameTextField.text else {
 			return
 		}
 

@@ -109,11 +109,6 @@ final class ArticleViewController: UIViewController {
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
 
-		if let parentNavController = navigationController?.parent as? UINavigationController {
-			poppableDelegate.navigationController = parentNavController
-			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
-		}
-
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
 		pageViewController.dataSource = self
@@ -183,6 +178,10 @@ final class ArticleViewController: UIViewController {
 		navigationController?.navigationBar.topItem?.subtitle = nil
 		coordinator.isArticleViewControllerPending = false
 		searchBar.shouldBeginEditing = true
+		if let parentNavController = navigationController?.parent as? UINavigationController {
+			poppableDelegate.navigationController = parentNavController
+			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
+		}
 	}
 
 	override func viewWillDisappear(_ animated: Bool) {
@@ -191,6 +190,7 @@ final class ArticleViewController: UIViewController {
 			endFind()
 			searchBar.shouldBeginEditing = false
 		}
+		currentWebViewController?.showBars()
 	}
 
 	override func viewSafeAreaInsetsDidChange() {

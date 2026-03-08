@@ -53,7 +53,7 @@ enum CreateReaderAPISubscriptionResult {
 	private let logger: Logger
 	private var accessToken: String?
 
-	weak var accountMetadata: AccountMetadata?
+	weak var accountSettings: AccountSettings?
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
@@ -65,10 +65,10 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor private var apiBaseURL: URL? {
 		switch variant {
 		case .generic, .freshRSS:
-			guard let accountMetadata = accountMetadata else {
+			guard let accountSettings = accountSettings else {
 				return nil
 			}
-			return accountMetadata.endpointURL
+			return accountSettings.endpointURL
 		default:
 			return URL(string: variant.host)
 		}
@@ -407,15 +407,21 @@ enum CreateReaderAPISubscriptionResult {
 		request.httpMethod = "POST"
 
 		// Get ids from above into hex representation of value
-		let idsToFetch = articleIDs.map({ articleID -> String in
+		let idsToFetch = articleIDs.compactMap({ articleID -> String? in
 			if self.variant == .theOldReader {
 				return "i=tag:google.com,2005:reader/item/\(articleID)"
 			} else {
-				let idValue = Int(articleID)!
-				let idHexString = String(idValue, radix: 16, uppercase: false)
-				return "i=tag:google.com,2005:reader/item/\(idHexString)"
+				if let idValue = Int(articleID) {
+					let idHexString = String(idValue, radix: 16, uppercase: false)
+					return "i=tag:google.com,2005:reader/item/\(idHexString)"
+				} else {
+					return nil
+				}
 			}
 		}).joined(separator: "&")
+		if idsToFetch.isEmpty {
+			return nil
+		}
 
 		let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
 
@@ -442,7 +448,7 @@ enum CreateReaderAPISubscriptionResult {
 		switch type {
 		case .allForAccount:
 			let since: Date = {
-				if let lastArticleFetch = self.accountMetadata?.lastArticleFetchStartTime {
+				if let lastArticleFetch = self.accountSettings?.lastArticleFetchStartTime {
 					return lastArticleFetch
 				} else {
 					return Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
@@ -493,8 +499,8 @@ enum CreateReaderAPISubscriptionResult {
 
 		guard let continuation else {
 			if type == .allForAccount {
-				self.accountMetadata?.lastArticleFetchStartTime = dateInfo?.date
-				self.accountMetadata?.lastArticleFetchEndTime = Date()
+				self.accountSettings?.lastArticleFetchStartTime = dateInfo?.date
+				self.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return itemIDs
 		}

@@ -31,7 +31,7 @@ import Secrets
 
 	let server: String? = nil
 	var credentials: Credentials?
-	var accountMetadata: AccountMetadata?
+	var accountSettings: AccountSettings?
 
 	private lazy var refresher: LocalAccountRefresher = {
 		let refresher = LocalAccountRefresher()
@@ -50,7 +50,7 @@ import Secrets
 
 		let feeds = account.flattenedFeeds()
 		await refresher.refreshFeeds(feeds)
-		account.metadata.lastArticleFetchEndTime = Date()
+		account.lastRefreshCompletedDate = Date()
 	}
 
 	@MainActor func syncArticleStatus(for account: Account) async throws {
@@ -150,7 +150,7 @@ import Secrets
 		// Nothing to do
 	}
 
-	@MainActor func resume() {
+	@MainActor func resume(account: Account) {
 		refresher.resume()
 	}
 

@@ -73,9 +73,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	weak var accountMetadata: AccountMetadata? {
+	weak var accountSettings: AccountSettings? {
 		didSet {
-			caller.accountMetadata = accountMetadata
+			caller.accountSettings = accountSettings
 		}
 	}
 
@@ -113,6 +113,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	func refreshAll(for account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
+
+		retrieveCredentialsIfNeeded(account)
 
 		refreshProgress.addTasks(6)
 
@@ -273,8 +275,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 					do {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
-						account.clearFeedMetadata(feed)
-
 						refreshProgress.completeTask()
 					} catch {
 
@@ -297,6 +297,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 	@discardableResult
 	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		retrieveCredentialsIfNeeded(account)
+
 		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — url \(url) name \(name ?? "")")
 
 		guard let url = URL(string: url) else {
@@ -368,7 +370,6 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		do {
 			try await caller.deleteSubscription(subscriptionID: subscriptionID)
-			account.clearFeedMetadata(feed)
 			account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: removeFeed - error: \(error.localizedDescription)")
@@ -477,7 +478,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		retrieveCredentialsIfNeeded(account)
 	}
 
 	func accountWillBeDeleted(_ account: Account) {
@@ -512,9 +513,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume() {
+	func resume(account: Account) {
 		Self.logger.debug("ReaderAPIAccountDelegate: resume")
 
+		retrieveCredentialsIfNeeded(account)
 		syncDatabase.resume()
 	}
 
@@ -528,6 +530,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 // MARK: Private
 
 private extension ReaderAPIAccountDelegate {
+
+	func retrieveCredentialsIfNeeded(_ account: Account) {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .readerAPIKey)
+		}
+	}
 
 	@MainActor func refreshAccount(_ account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount")
@@ -613,7 +621,6 @@ private extension ReaderAPIAccountDelegate {
 
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
-				account.clearFeedMetadata(feed)
 				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}

@@ -132,9 +132,11 @@ private extension DetailWebView {
 	}
 
 	func updateObscuredContentInsets() {
-		let updatedObscuredContentInsets = NSEdgeInsets(top: toolbarHeight, left: 0, bottom: 0, right: 0)
-		if obscuredContentInsets != updatedObscuredContentInsets {
-			obscuredContentInsets = updatedObscuredContentInsets
+		if #available(macOS 26.0, *) {
+			let updatedObscuredContentInsets = NSEdgeInsets(top: toolbarHeight, left: 0, bottom: 0, right: 0)
+			if obscuredContentInsets != updatedObscuredContentInsets {
+				obscuredContentInsets = updatedObscuredContentInsets
+			}
 		}
 	}
 }

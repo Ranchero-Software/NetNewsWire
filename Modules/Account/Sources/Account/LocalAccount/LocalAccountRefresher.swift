@@ -154,12 +154,8 @@ import os
 			return
 		}
 
-		if url.isOpenRSSOrgURL {
-			// Supported only for openrss.org. Cache-Control headers are
-			// otherwise not intentional for feeds, unfortunately.
-			if let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
-				feed.cacheControlInfo = cacheControlInfo
-			}
+		if let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
+			feed.cacheControlInfo = cacheControlInfo
 		}
 
 		let dataHash = data.md5String
@@ -275,23 +271,8 @@ private extension LocalAccountRefresher {
 		return false
 	}
 
-	static var urlCache = [String: URL]()
-
 	static func url(for feed: Feed) -> URL? {
-
-		assert(Thread.isMainThread)
-
-		let urlString = feed.url
-
-		if let url = urlCache[urlString] {
-			return url
-		}
-		if let url = URL(string: urlString) {
-			urlCache[urlString] = url
-			return url
-		}
-
-		return nil
+		URL(string: feed.url)
 	}
 }
 

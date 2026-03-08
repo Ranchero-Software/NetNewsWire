@@ -691,10 +691,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
-		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
 			return
 		}
-		if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
+		if key == .homePageURL || key == .faviconURL {
 			configureCellsForRepresentedObject(feed)
 		}
 	}
@@ -761,14 +761,24 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.coordinator.showAddFeed()
 		}
 
-		let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
-		let addFolderAction = UIAlertAction(title: addFolderActionTitle, style: .default) { _ in
-			self.coordinator.showAddFolder()
-		}
-
 		alertController.addAction(addFeedAction)
 
-		alertController.addAction(addFolderAction)
+		let anyActiveAccountSupportsFolders: Bool = {
+			for account in AccountManager.shared.activeAccounts {
+				if !account.behaviors.contains(.disallowFolderManagement) {
+					return true
+				}
+			}
+			return false
+		}()
+		if anyActiveAccountSupportsFolders {
+			let addFolderActionTitle = NSLocalizedString("Add Folder", comment: "Add Folder")
+			let addFolderAction = UIAlertAction(title: addFolderActionTitle, style: .default) { _ in
+				self.coordinator.showAddFolder()
+			}
+			alertController.addAction(addFolderAction)
+		}
+		
 		alertController.addAction(cancelAction)
 
 		alertController.popoverPresentationController?.barButtonItem = sender

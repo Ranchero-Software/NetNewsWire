@@ -210,8 +210,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 		   sourceURL.host == targetURL.host,
 		   sourceURL.path == targetURL.path {
 			return true
-		}
-		else {
+		} else {
 			return false
 		}
 	}

@@ -199,7 +199,7 @@ import UniformTypeIdentifiers
 
 	func makeReadArticleActivity(sidebarItem: SidebarItem?, article: Article) -> NSUserActivity {
 		let activity = NSUserActivity(activityType: ActivityType.readArticle.rawValue)
-		activity.title = ArticleStringFormatter.truncatedTitle(article)
+		activity.title = ArticleStringFormatter.shared.truncatedTitle(article)
 
 		if let sidebarItem {
 			let articleFetcherIdentifierUserInfo = sidebarItem.sidebarItemID?.userInfo ?? [AnyHashable: Any]()
@@ -230,7 +230,7 @@ import UniformTypeIdentifiers
 	func updateReadArticleSearchAttributes(with article: Article) {
 
 		let attributeSet = CSSearchableItemAttributeSet(itemContentType: UTType.compositeContent.identifier)
-		attributeSet.title = ArticleStringFormatter.truncatedTitle(article)
+		attributeSet.title = ArticleStringFormatter.shared.truncatedTitle(article)
 		attributeSet.contentDescription = article.summary
 		attributeSet.keywords = makeKeywords(article)
 		attributeSet.relatedUniqueIdentifier = ActivityManager.identifier(for: article)
@@ -247,7 +247,7 @@ import UniformTypeIdentifiers
 
 	func makeKeywords(_ article: Article) -> [String] {
 		let feedNameKeywords = makeKeywords(article.feed?.nameForDisplay)
-		let articleTitleKeywords = makeKeywords(ArticleStringFormatter.truncatedTitle(article))
+		let articleTitleKeywords = makeKeywords(ArticleStringFormatter.shared.truncatedTitle(article))
 		return feedNameKeywords + articleTitleKeywords
 	}
 

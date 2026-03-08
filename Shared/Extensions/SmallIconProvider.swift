@@ -27,7 +27,7 @@ protocol SmallIconProvider {
 		if let iconImage = FaviconDownloader.shared.favicon(for: self) {
 			return iconImage
 		}
-		return FaviconGenerator.favicon(self)
+		return FaviconGenerator.shared.favicon(self)
 	}
 }
 

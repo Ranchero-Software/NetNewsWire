@@ -1,5 +1,55 @@
 # Mac Release Notes
 
+### 7.0.1 7021 4 Mar 2026 — branch: main tag: mac-7.0.1
+
+Same as 7.0.1b5.
+
+Changes since 7.0:
+
+Runs on macOS 15
+Fixed a performance bug with NewsBlur syncing
+Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs) — made Sparkle updating more reliable
+Fixed a crash that could happen when syncing some Reader API syncing systems
+Fixed a crash that could happen when removing an account
+Fixed a bug aligning unread counts in the sidebar
+Fixed a bug where images in the article view could get vertically stretched in some conditions
+Fixed a bug where a clicking an anchor link in the article view that should navigate to another spot in the article would open in the browser instead
+Fixed bug where multiple About windows could be shown
+Fixed a layout bug in the About window where text could get clipped on some machines
+Made the version selectable in the About window
+Fixed a typo in the About window credits
+
+
+### 7.0.1b5 7020 3 Mar 2026 — branch: main tag: mac-7.0.1b5
+
+Restore, on macOS 15, the separator between the toolbar and the article view
+Restore, on macOS 15, the traditional style unread count pills in the sidebar
+Fix, on macOS 15, an alignment bug in the settings window, at the top of the General pane
+
+### 7.0.1b4 7019 26 Feb 2026 — branch: main tag: mac-7.0.1b4
+
+Runs on macOS 15
+
+### 7.0.1b3 7018 26 Feb 2026 — branch: main tag: mac-7.0.1b3
+
+Fixed bug where multiple About windows could be shown
+Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs)
+
+### 7.0.1b2 7017 17 Feb 2026 — branch: main tag: mac-7.0.1b2
+
+Fixed a crash that could happen when syncing some Reader API syncing systems
+Fixed a crash that could happen when removing an account
+Made the version selectable in the About window
+
+### 7.0.1b1 7016 17 Feb 2026 — branch: main tag: mac-7.0.1b1
+
+Fixed a performance bug with syncing, with sending read status to NewsBlur
+Fixed a bug aligning unread counts in the sidebar
+Fixed a typo in the credits
+Fixed a layout bug in the About window where text could get clipped on some machines
+Fixed a bug where images in the article view could get vertically stretched in some conditions
+Fixed a bug where a clicking an anchor link that should navigate to another spot in the article would open in the browser instead
+
 ### 7.0 build 7015 26 Jan 2026 — branch: main tag: mac-7.0
 
 Same as 7.0b6.

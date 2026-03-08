@@ -43,6 +43,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 		self.searchTable = SearchTable(queue: queue)
 		self.searchTable.articlesTable = self
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
 	// MARK: - Fetching Articles for Feed
@@ -587,6 +589,10 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	}
 
 	// MARK: - Caches
+
+	@objc func handleLowMemory(_ notification: Notification) {
+		emptyCaches()
+	}
 
 	func emptyCaches() {
 		queue.runInDatabase { _ in

@@ -17,16 +17,22 @@ public extension Notification.Name {
 public extension Feed {
 	static let SettingUserInfoKey = "feedSetting"
 
-	struct SettingKey {
-		public static let homePageURL = "homePageURL"
-		public static let iconURL = "iconURL"
-		public static let faviconURL = "faviconURL"
-		public static let name = "name"
-		public static let editedName = "editedName"
-		public static let authors = "authors"
-		public static let contentHash = "contentHash"
-		public static let conditionalGetInfo = "conditionalGetInfo"
-		public static let cacheControlInfo = "cacheControlInfo"
+	enum SettingKey {
+		case feedID
+		case homePageURL
+		case iconURL
+		case faviconURL
+		case editedName
+		case authors
+		case contentHash
+		case newArticleNotificationsEnabled
+		case readerViewAlwaysEnabled
+		case conditionalGetInfo
+		case conditionalGetInfoDate
+		case cacheControlInfo
+		case externalID
+		case folderRelationship
+		case lastCheckDate
 	}
 }
 
@@ -40,8 +46,8 @@ extension Feed {
 		authors = Author.authorsWithParsedAuthors(parsedFeed.authors)
 	}
 
-	func postFeedSettingDidChangeNotification(_ codingKey: FeedMetadata.CodingKeys) {
-		let userInfo = [Feed.SettingUserInfoKey: codingKey.stringValue]
+	func postFeedSettingDidChangeNotification(_ key: Feed.SettingKey) {
+		let userInfo: [String: Feed.SettingKey] = [Feed.SettingUserInfoKey: key]
 		NotificationCenter.default.post(name: .feedSettingDidChange, object: self, userInfo: userInfo)
 	}
 }

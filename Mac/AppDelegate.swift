@@ -79,6 +79,7 @@ let appName = "NetNewsWire"
 
 	private var mainWindowControllers = [MainWindowController]()
 	private lazy var preferencesWindowController = windowControllerWithName("Preferences")
+	private var aboutWindowController: AboutWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
 	private var importOPMLController: ImportOPMLWindowController?
@@ -149,6 +150,16 @@ let appName = "NetNewsWire"
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
+		// Ensure the Sparkle feed URL is one of the two supported URLs.
+		// Default to the release builds URL from Info.plist.
+		if let infoDictionary = Bundle.main.infoDictionary,
+		   let releaseBuildsURL = infoDictionary["SUFeedURL"] as? String,
+		   let testBuildsURL = infoDictionary["FeedURLForTestBuilds"] as? String,
+		   let currentFeedURL = UserDefaults.standard.string(forKey: "SUFeedURL"),
+		   currentFeedURL != releaseBuildsURL && currentFeedURL != testBuildsURL {
+			UserDefaults.standard.set(releaseBuildsURL, forKey: "SUFeedURL")
+		}
+
 		// Initialize Sparkle...
 		let hostBundle = Bundle.main
 		let updateDriver = SPUStandardUserDriver(hostBundle: hostBundle, delegate: self)
@@ -201,6 +212,7 @@ let appName = "NetNewsWire"
 
 		ArticleThemesManager.shared.start()
 		NetworkMonitor.shared.start()
+		MemoryPressureMonitor.shared.start()
 
 #if !SKIP_APP_GROUP_ACCESS
 		ExtensionContainersFile.shared.start()
@@ -280,7 +292,7 @@ let appName = "NetNewsWire"
 	}
 
 	func applicationDidResignActive(_ notification: Notification) {
-		ArticleStringFormatter.emptyCaches()
+		postLowMemoryNotification()
 		saveState()
 	}
 
@@ -324,10 +336,10 @@ let appName = "NetNewsWire"
 
 	@objc func feedSettingDidChange(_ note: Notification) {
 		MainActor.assumeIsolated {
-			guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? String else {
+			guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
 				return
 			}
-			if key == Feed.SettingKey.homePageURL || key == Feed.SettingKey.faviconURL {
+			if key == .homePageURL || key == .faviconURL {
 				_ = FaviconDownloader.shared.favicon(for: feed)
 			}
 		}
@@ -646,10 +658,12 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func showCustomAboutPanel(_ sender: Any?) {
-		let aboutWC = AboutWindowController(windowNibName: "AboutWindowController")
-		aboutWC.showWindow(nil)
-		aboutWC.window?.center()
-		aboutWC.window?.makeKeyAndOrderFront(nil)
+		if aboutWindowController == nil {
+			aboutWindowController = AboutWindowController(windowNibName: "AboutWindowController")
+			aboutWindowController?.window?.center()
+		}
+		aboutWindowController?.showWindow(nil)
+		aboutWindowController?.window?.makeKeyAndOrderFront(nil)
 	}
 
 	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {

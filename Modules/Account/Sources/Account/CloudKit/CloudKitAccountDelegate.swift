@@ -52,7 +52,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	let server: String? = nil
 	var credentials: Credentials?
-	var accountMetadata: AccountMetadata?
+	var accountSettings: AccountSettings?
 
 	var progressInfo = ProgressInfo() {
 		didSet {
@@ -218,13 +218,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		do {
 			try await removeFeedFromCloud(for: account, with: feed, from: container)
-			account.clearFeedMetadata(feed)
 			container.removeFeedFromTreeAtTopLevel(feed)
 		} catch {
 			switch error {
 			case CloudKitZoneError.corruptAccount:
 				// We got into a bad state and should remove the feed to clear up the bad data
-				account.clearFeedMetadata(feed)
 				container.removeFeedFromTreeAtTopLevel(feed)
 			default:
 				throw error
@@ -473,7 +471,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		syncDatabase.suspend()
 	}
 
-	func resume() {
+	func resume(account: Account) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		refresher.resume()
 		syncDatabase.resume()
@@ -533,7 +531,7 @@ private extension CloudKitAccountDelegate {
 			}
 
 			syncProgress.reset()
-			account.metadata.lastArticleFetchEndTime = Date()
+			account.lastRefreshCompletedDate = Date()
 		} catch {
 			processAccountError(account, error)
 			syncProgress.reset()

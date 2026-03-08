@@ -8,6 +8,7 @@
 
 import Foundation
 import os
+import RSCore
 import RSParser
 
 // To get a notification when HTMLMetadata is cached, see HTMLMetadataCache.
@@ -21,6 +22,14 @@ nonisolated public final class HTMLMetadataDownloader: Sendable {
 	private let cache = HTMLMetadataCache()
 	private let attemptDatesLock = OSAllocatedUnfairLock(initialState: [String: Date]())
 	private let urlsReturning4xxsLock = OSAllocatedUnfairLock(initialState: Set<String>())
+
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+	}
+
+	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
+	}
 
 	public func cachedMetadata(for url: String) -> RSHTMLMetadata? {
 		if Self.shouldSkipDownloadingMetadata(url) {

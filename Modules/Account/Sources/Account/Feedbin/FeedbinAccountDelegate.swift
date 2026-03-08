@@ -41,9 +41,9 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	weak var accountMetadata: AccountMetadata? {
+	weak var accountSettings: AccountSettings? {
 		didSet {
-			caller.accountMetadata = accountMetadata
+			caller.accountSettings = accountSettings
 		}
 	}
 
@@ -81,6 +81,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func refreshAll(for account: Account) async throws {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .basic)
+		}
+
 		refreshProgress.reset()
 		refreshProgress.addTasks(5)
 
@@ -230,7 +234,6 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				if let subscriptionID = feed.externalID {
 					do {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
-						account.clearFeedMetadata(feed)
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
 					}
@@ -380,7 +383,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume() {
+	func resume(account: Account) {
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .basic)
+		}
 		caller.resume()
 		syncDatabase.resume()
 	}
@@ -473,7 +479,7 @@ private extension FeedbinAccountDelegate {
 		// so that we will for sure get the new tagging information.
 		for tag in tags {
 			if !folderNames.contains(tag.name) {
-				accountMetadata?.conditionalGetInfo[FeedbinAPICaller.ConditionalGetKeys.taggings] = nil
+				accountSettings?.setConditionalGetInfo(nil, for: FeedbinAPICaller.ConditionalGetKeys.taggings)
 			}
 		}
 	}
@@ -795,8 +801,8 @@ private extension FeedbinAccountDelegate {
 	func refreshArticles(_ account: Account, page: String?, updateFetchDate: Date?) async throws {
 		guard let page else {
 			if let lastArticleFetch = updateFetchDate {
-				accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
-				accountMetadata?.lastArticleFetchEndTime = Date()
+				accountSettings?.lastArticleFetchStartTime = lastArticleFetch
+				accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return
 		}
@@ -920,7 +926,6 @@ private extension FeedbinAccountDelegate {
 			Self.logger.error("Feedbin: Unable to remove feed from Feedbin. Removing locally and continuing processing: \(error.localizedDescription)")
 		}
 
-		account.clearFeedMetadata(feed)
 		account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
 	}
 }

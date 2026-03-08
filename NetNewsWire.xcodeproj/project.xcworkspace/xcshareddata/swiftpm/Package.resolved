@@ -1,13 +1,13 @@
 {
-  "originHash" : "0a5edced7ddbd0b75f7074b7376b27ee47915bbbcd8b244098e870c935e5df23",
+  "originHash" : "3d8b7733f56d2178e1f184664a73e1b5b0b2eac44f0f368bba6b688591e36a8b",
   "pins" : [
     {
       "identity" : "plcrashreporter",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/microsoft/plcrashreporter.git",
       "state" : {
-        "revision" : "b1a342da19ed9b3af61ea2efa7656c2af30aeb7c",
-        "version" : "1.11.0"
+        "revision" : "0254f941c646b1ed17b243654723d0f071e990d0",
+        "version" : "1.12.2"
       }
     },
     {
@@ -20,21 +20,12 @@
       }
     },
     {
-      "identity" : "swift-cmark",
+      "identity" : "tidemark",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-cmark.git",
+      "location" : "https://codeberg.org/brentsimmons/Tidemark",
       "state" : {
-        "revision" : "5d9bdaa4228b381639fff09403e39a04926e2dbe",
-        "version" : "0.7.1"
-      }
-    },
-    {
-      "identity" : "swift-markdown",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-markdown.git",
-      "state" : {
-        "revision" : "7d9a5ce307528578dfa777d505496bd5f544ad94",
-        "version" : "0.7.3"
+        "revision" : "7bc497a1550963267366d229b1c2dc1a277cce82",
+        "version" : "0.2.2"
       }
     },
     {

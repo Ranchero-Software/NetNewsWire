@@ -124,7 +124,10 @@ import Secrets
 
 	func applicationDidEnterBackground(_ application: UIApplication) {
 		updateBadge()
-		IconImageCache.shared.emptyCache()
+	}
+
+	func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+		postLowMemoryNotification()
 	}
 
 	private func updateBadge() {
@@ -173,7 +176,6 @@ import Secrets
 		syncArticleStatus()
 		WidgetDataEncoder.shared?.encode()
 		waitForSyncTasksToFinish()
-		IconImageCache.shared.emptyCache()
 	}
 
 	func prepareAccountsForForeground() {
@@ -342,6 +344,8 @@ private extension AppDelegate {
 		AccountManager.shared.suspendNetworkAll()
 		AccountManager.shared.suspendDatabaseAll()
 		ArticleThemeDownloader.shared.cleanUp()
+
+		postLowMemoryNotification()
 
 		CoalescingQueue.standard.performCallsImmediately()
 		for scene in UIApplication.shared.connectedScenes {

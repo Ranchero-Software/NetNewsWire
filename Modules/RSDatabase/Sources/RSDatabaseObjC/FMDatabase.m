@@ -330,7 +330,11 @@ static int FMDBDatabaseBusyHandler(void *f, int count) {
 
 
 - (void)setCachedStatement:(FMStatement*)statement forQuery:(NSString*)query {
-    
+
+	if (!query) {
+		return;
+	}
+	
     query = [query copy]; // in case we got handed in a mutable string...
     [statement setQuery:query];
     

@@ -10,9 +10,8 @@ import XCTest
 import Foundation
 @testable import RSMarkdown
 
-// We’re using Apple’s swift-markdown package for Markdown parsing and HTML generation:
-// https://github.com/swiftlang/swift-markdown
-// Apple’s module has its own testing. These tests here are just for sanity checking,
+// We're using Tidemark (a C library) for Markdown parsing and HTML generation.
+// Tidemark has its own testing. These tests here are just for sanity checking,
 // to make sure nothing has gone wrong.
 
 final class RSMarkdownTests: XCTestCase {
@@ -29,7 +28,7 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testBoldFormatting() throws {
 		let markdown = "This is **bold** text."
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<strong>bold</strong>"))
 		XCTAssertTrue(html.contains("<p>This is <strong>bold</strong> text.</p>"))
@@ -37,7 +36,7 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testHeadingFormatting() throws {
 		let markdown = "# Main Heading\n## Sub Heading"
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<h1>Main Heading</h1>"))
 		XCTAssertTrue(html.contains("<h2>Sub Heading</h2>"))
@@ -45,7 +44,7 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testLinkFormatting() throws {
 		let markdown = "Visit [Apple](https://apple.com) for more info."
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<a href=\"https://apple.com\">Apple</a>"))
 		XCTAssertTrue(html.contains("<p>Visit <a href=\"https://apple.com\">Apple</a> for more info.</p>"))
@@ -58,9 +57,9 @@ final class RSMarkdownTests: XCTestCase {
 			let html = RSMarkdown.markdownToHTML(markdown)
 
 			// Verify the output is valid HTML (inside measure block to ensure correctness)
-			XCTAssertFalse(html.isEmpty)
-			XCTAssertTrue(html.contains("<"))
-			XCTAssertTrue(html.contains(">"))
+			XCTAssertNotNil(html)
+			XCTAssertTrue(html!.contains("<"))
+			XCTAssertTrue(html!.contains(">"))
 		}
 	}
 
@@ -68,7 +67,7 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testInlineCode() throws {
 		let markdown = "This is `inline code` in text."
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<code>inline code</code>"))
 	}
@@ -79,9 +78,9 @@ final class RSMarkdownTests: XCTestCase {
 		let hello = "world"
 		```
 		"""
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
-		XCTAssertTrue(html.contains("<pre><code"))
+		XCTAssertTrue(html.contains("<code>"))
 		XCTAssertTrue(html.contains("let hello = \"world\""))
 	}
 
@@ -91,11 +90,11 @@ final class RSMarkdownTests: XCTestCase {
 		- Item 2
 		- Item 3
 		"""
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<ul>"))
-		XCTAssertTrue(html.contains("<li><p>Item 1</p>"))
-		XCTAssertTrue(html.contains("<li><p>Item 2</p>"))
+		XCTAssertTrue(html.contains("<li>Item 1</li>"))
+		XCTAssertTrue(html.contains("<li>Item 2</li>"))
 		XCTAssertTrue(html.contains("</ul>"))
 	}
 
@@ -105,17 +104,17 @@ final class RSMarkdownTests: XCTestCase {
 		2. Second item
 		3. Third item
 		"""
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<ol>"))
-		XCTAssertTrue(html.contains("<li><p>First item</p>"))
-		XCTAssertTrue(html.contains("<li><p>Second item</p>"))
+		XCTAssertTrue(html.contains("<li>First item</li>"))
+		XCTAssertTrue(html.contains("<li>Second item</li>"))
 		XCTAssertTrue(html.contains("</ol>"))
 	}
 
 	func testNestedFormatting() throws {
 		let markdown = "Visit [**Apple**](https://apple.com) for *really* good stuff."
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<a href=\"https://apple.com\"><strong>Apple</strong></a>"))
 		XCTAssertTrue(html.contains("<em>really</em>"))
@@ -128,7 +127,7 @@ final class RSMarkdownTests: XCTestCase {
 		Second paragraph with
 		line break.
 		"""
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<p>First paragraph.</p>"))
 		XCTAssertTrue(html.contains("<p>Second paragraph"))
@@ -136,27 +135,23 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testSpecialCharactersAndEscaping() throws {
 		let markdown = "Use < and > symbols, plus 5 < 10 comparison."
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
-		// Note: swift-markdown currently doesn't escape < and > in text content
-		// This test verifies the current behavior, though ideally they would be escaped
-		XCTAssertTrue(html.contains("<p>Use < and > symbols"))
-		XCTAssertTrue(html.contains("5 < 10 comparison"))
+		XCTAssertTrue(html.contains("Use < and > symbols"))
+		XCTAssertTrue(html.contains("5 &lt; 10 comparison"))
 		XCTAssertTrue(html.contains("</p>"))
 	}
 
 	// MARK: - Edge Cases
 
 	func testEmptyString() throws {
-		let markdown = ""
-		let html = RSMarkdown.markdownToHTML(markdown)
-
-		XCTAssert(html.isEmpty || html.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+		let html = RSMarkdown.markdownToHTML("")
+		XCTAssertNil(html)
 	}
 
 	func testPlainText() throws {
 		let markdown = "This is just plain text with no markdown formatting."
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<p>This is just plain text with no markdown formatting.</p>"))
 		XCTAssertTrue(!html.contains("<strong>"))
@@ -165,10 +160,9 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testMalformedMarkdown() throws {
 		let markdown = "This has **unclosed bold and [incomplete link"
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		// Should not crash and should produce some reasonable output
-		XCTAssertFalse(html.isEmpty)
 		XCTAssertTrue(html.contains("unclosed bold"))
 	}
 
@@ -177,9 +171,8 @@ final class RSMarkdownTests: XCTestCase {
 		let baseMarkdown = "# Large Header\n\nThis is a paragraph with **bold** and *italic* text. "
 		let largeMarkdown = String(repeating: baseMarkdown, count: 1000)
 
-		let html = RSMarkdown.markdownToHTML(largeMarkdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(largeMarkdown))
 
-		XCTAssertFalse(html.isEmpty)
 		XCTAssertTrue(html.contains("<h1>Large Header</h1>"))
 		XCTAssertTrue(html.contains("<strong>bold</strong>"))
 	}
@@ -188,7 +181,7 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testMixedMarkdownAndHTML() throws {
 		let markdown = "This is **markdown** with <em>some HTML</em> mixed in."
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<strong>markdown</strong>"))
 		XCTAssertTrue(html.contains("<em>some HTML</em>"))
@@ -196,7 +189,7 @@ final class RSMarkdownTests: XCTestCase {
 
 	func testUnicodeAndEmoji() throws {
 		let markdown = "Unicode: café, naïve, résumé. Emoji: 🚀 🎉 ✨"
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("café"))
 		XCTAssertTrue(html.contains("🚀"))
@@ -223,14 +216,14 @@ final class RSMarkdownTests: XCTestCase {
 		}
 		```
 		"""
-		let html = RSMarkdown.markdownToHTML(markdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 		XCTAssertTrue(html.contains("<h1>Main Header</h1>"))
 		XCTAssertTrue(html.contains("<h2>Sub Header</h2>"))
 		XCTAssertTrue(html.contains("<ol>"))
 		XCTAssertTrue(html.contains("<a href=\"https://example.com\">a link</a>"))
 		XCTAssertTrue(html.contains("<code>inline code</code>"))
-		XCTAssertTrue(html.contains("<pre><code>"))
+		XCTAssertTrue(html.contains("<code>"))
 	}
 
 	// MARK: - Performance/Robustness
@@ -240,7 +233,7 @@ final class RSMarkdownTests: XCTestCase {
 
 		// Parse the same content multiple times
 		for _ in 0..<100 {
-			let html = RSMarkdown.markdownToHTML(markdown)
+			let html = try XCTUnwrap(RSMarkdown.markdownToHTML(markdown))
 
 			XCTAssertTrue(html.contains("<h1>Test Header</h1>"))
 			XCTAssertTrue(html.contains("<strong>test</strong>"))
@@ -267,12 +260,11 @@ final class RSMarkdownTests: XCTestCase {
 		let largeMarkdown = String(repeating: section, count: 500)
 
 		let startTime = CFAbsoluteTimeGetCurrent()
-		let html = RSMarkdown.markdownToHTML(largeMarkdown)
+		let html = try XCTUnwrap(RSMarkdown.markdownToHTML(largeMarkdown))
 		let endTime = CFAbsoluteTimeGetCurrent()
 
 		// Should complete within reasonable time even for large content
 		XCTAssertLessThan(endTime - startTime, 1.0)
-		XCTAssertFalse(html.isEmpty)
 		XCTAssertTrue(html.contains("<h2>Section Header</h2>"))
 	}
 }

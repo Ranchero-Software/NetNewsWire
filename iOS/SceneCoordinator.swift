@@ -644,7 +644,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		let progressInfo = CombinedRefreshProgress.shared.progressInfo
 
 		if progressInfo.isComplete {
-			if let accountLastArticleFetchEndTime = AccountManager.shared.lastArticleFetchEndTime {
+			if let accountLastArticleFetchEndTime = AccountManager.shared.lastRefreshCompletedDate {
 				if Date.now > accountLastArticleFetchEndTime.addingTimeInterval(60) {
 					let relativeDateTimeFormatter = RelativeDateTimeFormatter()
 					relativeDateTimeFormatter.dateTimeStyle = .named

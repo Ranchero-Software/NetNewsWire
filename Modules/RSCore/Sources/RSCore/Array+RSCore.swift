@@ -9,6 +9,9 @@
 import Foundation
 
 public extension Array {
+	subscript(safe index: Index) -> Element? {
+		indices.contains(index) ? self[index] : nil
+	}
 
 	func chunked(into size: Int) -> [[Element]] {
 		return stride(from: 0, to: count, by: size).map {

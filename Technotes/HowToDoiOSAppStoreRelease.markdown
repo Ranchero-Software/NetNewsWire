@@ -10,7 +10,10 @@ Fill in What’s New text
 Click Save at top of screen
 Click Add for Review next to Save
 
-On next screen, click Submit to App Review
+On next screen, click Submit for Review
+
+git tag iOS-7.0.1
+git push origin iOS-7.0.1
 
 Once it appears on App Store…
 

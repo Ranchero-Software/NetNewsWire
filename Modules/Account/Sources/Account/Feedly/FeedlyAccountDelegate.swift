@@ -58,7 +58,7 @@ import Secrets
 
 	let oauthAuthorizationClient: OAuthAuthorizationClient
 
-	var accountMetadata: AccountMetadata?
+	var accountSettings: AccountSettings?
 
 	let refreshProgress = DownloadProgress(numberOfTasks: 0)
 
@@ -129,6 +129,10 @@ import Secrets
 		assert(Thread.isMainThread)
 		Self.logger.debug("FeedlyAccountDelegate: refreshAll")
 
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
+		}
+
 		guard !Platform.isRunningUnitTests else {
 			Self.logger.debug("FeedlyAccountDelegate: Ignoring refreshAll: running unit tests")
 			completion(.success(()))
@@ -148,13 +152,13 @@ import Secrets
 
 		progressInfo = ProgressInfo()
 
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountMetadata?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
+		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountSettings?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
 
 		let date = Date()
 		syncAllOperation.syncCompletionHandler = { [weak self] result in
 			if case .success = result {
-				self?.accountMetadata?.lastArticleFetchStartTime = date
-				self?.accountMetadata?.lastArticleFetchEndTime = Date()
+				self?.accountSettings?.lastArticleFetchStartTime = date
+				self?.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 
 			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")
@@ -690,8 +694,11 @@ import Secrets
 	}
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume() {
+	func resume(account: Account) {
 		Self.logger.debug("FeedlyAccountDelegate: resume")
+		if credentials == nil {
+			credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
+		}
 		syncDatabase.resume()
 		caller.resume()
 	}

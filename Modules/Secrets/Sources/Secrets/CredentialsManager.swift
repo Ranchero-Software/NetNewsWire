@@ -53,7 +53,7 @@ public struct CredentialsManager {
 
 		let addStatus = SecItemAdd(query as CFDictionary, nil)
 		if addStatus != errSecSuccess {
-			throw CredentialsError.unhandledError(status: status)
+			throw CredentialsError.unhandledError(status: addStatus)
 		}
 	}
 
@@ -74,7 +74,18 @@ public struct CredentialsManager {
 		}
 
 		var item: CFTypeRef?
-		let status = SecItemCopyMatching(query as CFDictionary, &item)
+		var status = errSecSuccess
+
+		for attempt in 1...3 {
+			item = nil
+			status = SecItemCopyMatching(query as CFDictionary, &item)
+			if status == errSecSuccess {
+				break
+			}
+			if attempt < 3 {
+				Thread.sleep(forTimeInterval: 0.025)
+			}
+		}
 
 		guard status != errSecItemNotFound else {
 			return nil

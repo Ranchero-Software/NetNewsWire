@@ -225,8 +225,8 @@ import os.log
 	@MainActor func refreshUnreadStories(for account: Account, hashes: [NewsBlurStoryHash]?, updateFetchDate: Date?) async throws {
 		guard let hashes = hashes, !hashes.isEmpty else {
 			if let lastArticleFetch = updateFetchDate {
-				self.accountMetadata?.lastArticleFetchStartTime = lastArticleFetch
-				self.accountMetadata?.lastArticleFetchEndTime = Date()
+				self.accountSettings?.lastArticleFetchStartTime = lastArticleFetch
+				self.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return
 		}
@@ -401,9 +401,6 @@ import os.log
 			try await caller.deleteFeed(feedID: feedID, folder: folderName)
 
 			account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
-			if account.existingFeed(withFeedID: feed.feedID) != nil {
-				account.clearFeedMetadata(feed)
-			}
 		} catch {
 			throw AccountError.wrapped(error, account)
 		}

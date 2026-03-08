@@ -67,7 +67,7 @@ public struct ParsedItem: Hashable, Sendable {
 
 		// Render Markdown when present, else use contentHTML
 		if let markdown {
-			self.contentHTML = RSMarkdown.markdownToHTML(markdown)
+			self.contentHTML = RSMarkdown.markdownToHTML(markdown) ?? contentHTML
 		} else {
 			self.contentHTML = contentHTML
 		}

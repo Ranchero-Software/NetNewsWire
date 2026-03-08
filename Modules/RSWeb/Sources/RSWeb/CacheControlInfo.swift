@@ -12,14 +12,19 @@ import Foundation
 /// and when we can ask again (canResume).
 nonisolated public struct CacheControlInfo: Codable, Equatable {
 
-	let dateCreated: Date
-	let maxAge: TimeInterval
+	public let dateCreated: Date
+	public let maxAge: TimeInterval
 
 	var resumeDate: Date {
 		dateCreated + maxAge
 	}
 	public var canResume: Bool {
 		Date() >= resumeDate
+	}
+
+	public init(dateCreated: Date, maxAge: TimeInterval) {
+		self.dateCreated = dateCreated
+		self.maxAge = maxAge
 	}
 
 	public init?(urlResponse: HTTPURLResponse) {

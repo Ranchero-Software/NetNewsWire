@@ -6,14 +6,20 @@
 //
 
 import Foundation
-import Markdown
+import Tidemark
 
 public struct RSMarkdown {
-    /// Converts Markdown text to HTML string
-    /// - Parameter markdown: The Markdown text to convert
-    /// - Returns: HTML string representation of the Markdown
-    public static func markdownToHTML(_ markdown: String) -> String {
-        let document = Document(parsing: markdown)
-		return HTMLFormatter.format(document)
-    }
+
+	/// Converts Markdown text to HTML.
+	/// Returns nil on empty input or error.
+	public static func markdownToHTML(_ markdown: String) -> String? {
+		guard let cResult = markdown.withCString({ cString in
+			md_markdown_to_html(cString, strlen(cString))
+		}) else {
+			return nil
+		}
+		let result = String(cString: cResult)
+		free(cResult)
+		return result
+	}
 }
