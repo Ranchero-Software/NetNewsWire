@@ -9,6 +9,7 @@
 import Foundation
 import Account
 import Articles
+import RSCore
 
 @MainActor final class IconImageCache {
 
@@ -19,6 +20,14 @@ import Articles
 	private var faviconImageCache = [SidebarItemIdentifier: IconImage]()
 	private var smallIconImageCache = [SidebarItemIdentifier: IconImage]()
 	private var authorIconImageCache = [Author: IconImage]()
+
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+	}
+
+	@objc func handleLowMemory(_ notification: Notification) {
+		emptyCache()
+	}
 
 	func imageFor(_ feedID: SidebarItemIdentifier) -> IconImage? {
 		if let smartFeed = SmartFeedsController.shared.find(by: feedID) {
@@ -59,11 +68,11 @@ import Articles
 	}
 
 	func emptyCache() {
-		smartFeedIconImageCache = [SidebarItemIdentifier: IconImage]()
-		feedIconImageCache = [SidebarItemIdentifier: IconImage]()
-		faviconImageCache = [SidebarItemIdentifier: IconImage]()
-		smallIconImageCache = [SidebarItemIdentifier: IconImage]()
-		authorIconImageCache = [Author: IconImage]()
+		smartFeedIconImageCache.removeAll()
+		feedIconImageCache.removeAll()
+		faviconImageCache.removeAll()
+		smallIconImageCache.removeAll()
+		authorIconImageCache.removeAll()
 	}
 }
 
