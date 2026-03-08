@@ -106,7 +106,9 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			return
 		}
 
-		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: usernameTextField.stringValue) else {
+		let trimmedUsername = usernameTextField.stringValue.trimmingWhitespace
+
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: trimmedUsername) else {
 			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
 			return
 		}
@@ -114,7 +116,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 		let apiURL: URL
 		switch accountType {
 		case .freshRSS:
-			guard let inputURL = URL(string: apiURLTextField.stringValue) else {
+			guard let inputURL = URL(string: apiURLTextField.stringValue.trimmingWhitespace) else {
 				self.errorMessageLabel.stringValue = NSLocalizedString("Invalid API URL.", comment: "Invalid API URL")
 				return
 			}
@@ -141,7 +143,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 				progressIndicator.stopAnimation(self)
 			}
 
-			let credentials = Credentials(type: .readerBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
+			let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: passwordTextField.stringValue)
 			do {
 				let validatedCredentials = try await Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL)
 				stopAnimation()
@@ -176,7 +178,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 
 			} catch {
 				stopAnimation()
-				errorMessageLabel.stringValue = NSLocalizedString("Network error. Try again later.", comment: "Credentials Error")
+				errorMessageLabel.stringValue = error.localizedDescription
 			}
 		}
 	}
