@@ -18,6 +18,7 @@ import RSDatabase
 import ArticlesDatabase
 import RSWeb
 import Secrets
+import os.log
 
 // Main thread only.
 
@@ -60,6 +61,9 @@ public enum FetchType {
 }
 
 @MainActor public final class Account: ProgressInfoReporter, DisplayNameProvider, UnreadCountProvider, Container, Hashable {
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
+
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
 		public static let newArticles = "newArticles" // AccountDidDownloadArticles
@@ -354,6 +358,15 @@ public enum FetchType {
 		return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 	}
 
+	public func loggedRetrieveCredentials(type: CredentialsType) -> Credentials? {
+		do {
+			return try retrieveCredentials(type: type)
+		} catch {
+			Self.logger.error("Failed to retrieve \(type.rawValue, privacy: .public) credentials: \(error.localizedDescription, privacy: .public)")
+			return nil
+		}
+	}
+
 	public func removeCredentials(type: CredentialsType) throws {
 		guard let username = self.username, let server = delegate.server else {
 			return
@@ -479,7 +492,7 @@ public enum FetchType {
 		#if os(iOS)
 		database.resume()
 		#endif
-		delegate.resume()
+		delegate.resume(account: self)
 	}
 
 	/// Reload OPML, etc.
