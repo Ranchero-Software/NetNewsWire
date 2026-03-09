@@ -526,6 +526,6 @@ a.footnote:hover,
 	.image-link-expand .icon-container:hover svg {
 	text-shadow: 0 1px rgba(0, 0, 0, 2);
 	opacity: 0.8;
-    	stroke: color-mix(in hsl, var(--link-underline-color), firebrick 70%)
+    stroke: color-mix(in hsl, var(--link-underline-color), firebrick 70%)
 	}
 }
