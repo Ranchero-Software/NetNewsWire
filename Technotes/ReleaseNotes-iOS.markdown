@@ -1,5 +1,11 @@
 # iOS Release Notes
 
+### 7.0.2 TestFlight build 7030 8 Mar 2026 - branch: main tag: iOS-7.0.2-7030
+
+Fixed (we think) some bugs that showed up as the app forgetting credentials for syncing systems
+Fixed, or least cut down on, memory use that was causing more terminations due to memory pressure (now more aggressively unloading memory on moving to the background)
+Cut down on amount of disk writes — now storing account and feed settings in SQLite databases instead of in plist files, which is more efficient
+
 ### 7.0.1 TestFlight build 7029 3 Mar 2026 - branch: main tag: iOS-7.0.1-7029
 
 Fixed a latency issue when VoiceOver announces status changes from user action in the timeline
