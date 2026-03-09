@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.2b1</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed (we think) some bugs that showed up as the app forgetting credentials for syncing systems (this may have been mainly, or even entirely, on iOS, though)
+					<li>Now more aggressively unloading memory on moving to the background
+					<li>Cut down on amount of disk writes — now storing account and feed settings in SQLite databases instead of in plist files, which is more efficient
+				</ul>
+			]]></description>
+        	<pubDate>Mon, 09 Mar 2026 08:50:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.2b1/NetNewsWire7.0.2b1.zip" sparkle:version="7022" sparkle:shortVersionString="7.0.2b1" length="9645769" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.1</title>
             <description><![CDATA[
             <p>Changes since 7.0:

@@ -2,7 +2,7 @@
 
 ### 7.0.2b1 7022 8 Mar 2026 — branch: main tag: mac-7.0.2b1
 
-Fixed (we think) some bugs that showed up as the app forgetting credentials for syncing systems (this may have been mainly, or even entirely on iOS, though)
+Fixed (we think) some bugs that showed up as the app forgetting credentials for syncing systems (this may have been mainly, or even entirely, on iOS, though)
 Now more aggressively unloading memory on moving to the background
 Cut down on amount of disk writes — now storing account and feed settings in SQLite databases instead of in plist files, which is more efficient
 
