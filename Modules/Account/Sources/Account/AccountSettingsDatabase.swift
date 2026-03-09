@@ -7,6 +7,7 @@
 
 import Foundation
 import os
+import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import RSWeb
@@ -40,7 +41,9 @@ import RSWeb
 		self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
-		database.vacuumIfNeeded(daysBetweenVacuums: 30, filepath: databasePath)
+		if !Platform.isRunningUnitTests {
+			database.vacuumIfNeeded(daysBetweenVacuums: 30, filepath: databasePath)
+		}
 	}
 
 	// MARK: - Account Existence

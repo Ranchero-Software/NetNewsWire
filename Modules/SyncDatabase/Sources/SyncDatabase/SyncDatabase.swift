@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
@@ -17,7 +18,9 @@ public actor SyncDatabase {
 	public init(databasePath: String) {
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.runCreateStatements(Self.tableCreationStatements)
-		database.vacuumIfNeeded(daysBetweenVacuums: 11, filepath: databasePath)
+		if !Platform.isRunningUnitTests {
+			database.vacuumIfNeeded(daysBetweenVacuums: 11, filepath: databasePath)
+		}
 
 		self.database = database
 		self.databasePath = databasePath
