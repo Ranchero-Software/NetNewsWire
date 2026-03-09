@@ -58,7 +58,7 @@ body {
 
 body a,
 body a:visited,
-body a :not(b, em, i, strong, u) * {
+body a :not(b, code, em, i, strong, u) * {
 	color: var(--secondary-accent-color);
 }
 
