@@ -29,6 +29,7 @@ import RSWeb
 	private static let etagKey = "etag"
 
 	private let accountID: String
+	private let dataFolder: String
 
 	private var plistImported: Bool {
 		get {
@@ -140,6 +141,7 @@ import RSWeb
 
 	init(accountID: String, dataFolder: String) {
 		self.accountID = accountID
+		self.dataFolder = dataFolder
 
 		UserDefaults.standard.register(defaults: [defaultsKey(.isActive): true])
 
@@ -156,6 +158,12 @@ import RSWeb
 		if self.username == nil || self.endpointURL == nil {
 			readMissingSettingsFromDatabase()
 		}
+	}
+
+	// Call when an expected value is nil — perhaps it couldn’t be read on startup
+	// from the settings file. Try again.
+	func fetchFromSettingsFileIfNeeded() {
+		readMissingSettingsFromPlist(accountID: accountID, dataFolder: dataFolder)
 	}
 
 	func deleteSettings() {
@@ -187,11 +195,11 @@ private extension AccountSettings {
 		guard let imported = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: dataFolder) else {
 			return
 		}
-		if self.username == nil {
-			self.username = imported.username
+		if self.username == nil, let username = imported.username {
+			self.username = username
 		}
-		if self.endpointURL == nil {
-			self.endpointURL = imported.endpointURL
+		if self.endpointURL == nil, let endpointURL = imported.endpointURL {
+			self.endpointURL = endpointURL
 		}
 	}
 
@@ -203,8 +211,8 @@ private extension AccountSettings {
 			return
 		}
 
-		if self.username == nil {
-			self.username = database.username(for: accountID)
+		if self.username == nil, let username = database.username(for: accountID) {
+			self.username = username
 		}
 		if self.endpointURL == nil, let urlString = database.endpointURL(for: accountID) {
 			self.endpointURL = URL(string: urlString)
