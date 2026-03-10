@@ -40,7 +40,9 @@ import RSDatabaseObjC
 				}
 				let username = resultSet.string(forColumn: "username")
 				let endpointURL = resultSet.string(forColumn: "endpointURL")
-				credentials[accountID] = AccountCredentials(username: username, endpointURL: endpointURL)
+				if username != nil || endpointURL != nil {
+					credentials[accountID] = AccountCredentials(username: username, endpointURL: endpointURL)
+				}
 			}
 			resultSet.close()
 		}
