@@ -12,7 +12,6 @@ import RSCore
 import RSWeb
 import Articles
 import ArticlesDatabase
-import RSDatabase
 
 @MainActor public final class AccountManager: UnreadCountProvider {
 	public static var shared = AccountManager()
@@ -23,7 +22,6 @@ import RSDatabase
 	public let defaultAccount: Account
 
 	private let accountsFolder: String
-	private let accountSettingsDatabase: AccountSettingsDatabase
     private var accountsDictionary = [String: Account]()
 
 	private let defaultAccountFolderName = "OnMyMac"
@@ -106,9 +104,6 @@ import RSDatabase
 	public init() {
 		self.accountsFolder = AppConfig.dataSubfolder(named: "Accounts").path
 
-		let databasePath = AppConfig.dataFolder.appendingPathComponent("AccountSettings.db").path
-		self.accountSettingsDatabase = AccountSettingsDatabase(databasePath: databasePath)
-
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {
@@ -118,7 +113,7 @@ import RSDatabase
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier, accountSettingsDatabase: accountSettingsDatabase)
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
@@ -159,7 +154,7 @@ import RSDatabase
 			abort()
 		}
 
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID, accountSettingsDatabase: accountSettingsDatabase)
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)
 		accountsDictionary[accountID] = account
 
 		var userInfo = [String: Any]()
@@ -178,8 +173,6 @@ import RSDatabase
 
 		accountsDictionary.removeValue(forKey: account.accountID)
 		account.isDeleted = true
-
-		accountSettingsDatabase.deleteSettings(for: account.accountID)
 
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
@@ -456,7 +449,7 @@ private extension AccountManager {
 	}
 
 	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-		Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, accountSettingsDatabase: accountSettingsDatabase)
+		Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
 	}
 
 	func loadAccount(_ filename: String) -> Account? {

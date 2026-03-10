@@ -12,18 +12,14 @@ import RSWeb
 @MainActor final class AccountSettingsImporterTests: XCTestCase {
 
 	private var tempDirectory: String!
-	private var database: AccountSettingsDatabase!
 	private let accountID = "testAccount123"
 
 	override func setUp() async throws {
 		tempDirectory = (NSTemporaryDirectory() as NSString).appendingPathComponent(UUID().uuidString)
 		try FileManager.default.createDirectory(atPath: tempDirectory, withIntermediateDirectories: true)
-		let dbPath = (tempDirectory as NSString).appendingPathComponent("Settings.sqlite")
-		database = AccountSettingsDatabase(databasePath: dbPath)
 	}
 
 	override func tearDown() async throws {
-		database = nil
 		if let tempDirectory {
 			try? FileManager.default.removeItem(atPath: tempDirectory)
 		}
@@ -33,51 +29,39 @@ import RSWeb
 	// MARK: - Tests
 
 	func testNoPlistFile() {
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-		XCTAssertFalse(database.accountExists(accountID))
-	}
-
-	func testAccountAlreadyExists() {
-		writePlist(["name": "Test"])
-		database.ensureAccountExists(accountID)
-
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-
-		let row = database.row(for: accountID)
-		XCTAssertNil(row?.name)
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNil(result)
 	}
 
 	func testUnreadablePlistFile() {
 		let plistPath = (tempDirectory as NSString).appendingPathComponent("Settings.plist")
 		try! FileManager.default.createDirectory(atPath: plistPath, withIntermediateDirectories: true)
 
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-		XCTAssertFalse(database.accountExists(accountID))
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNil(result)
 	}
 
 	func testCorruptedPlistFile() {
 		let plistPath = (tempDirectory as NSString).appendingPathComponent("Settings.plist")
 		try! "not a plist at all".data(using: .utf8)!.write(to: URL(fileURLWithPath: plistPath))
 
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-		XCTAssertFalse(database.accountExists(accountID))
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNil(result)
 	}
 
 	func testEmptyPlist() {
 		writePlist([:])
 
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-
-		XCTAssertTrue(database.accountExists(accountID))
-		let row = database.row(for: accountID)
-		XCTAssertNotNil(row)
-		XCTAssertNil(row?.name)
-		XCTAssertTrue(row?.isActive ?? false)
-		XCTAssertNil(row?.username)
-		XCTAssertNil(row?.lastArticleFetchStartTime)
-		XCTAssertNil(row?.lastRefreshCompletedDate)
-		XCTAssertNil(row?.endpointURL)
-		XCTAssertNil(row?.externalID)
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNotNil(result)
+		XCTAssertNil(result?.name)
+		XCTAssertNil(result?.isActive)
+		XCTAssertNil(result?.username)
+		XCTAssertNil(result?.lastArticleFetchStartTime)
+		XCTAssertNil(result?.lastRefreshCompletedDate)
+		XCTAssertNil(result?.endpointURL)
+		XCTAssertNil(result?.externalID)
+		XCTAssertNil(result?.conditionalGetInfo)
 	}
 
 	func testAllFields() {
@@ -94,17 +78,15 @@ import RSWeb
 			"externalID": "ext-42"
 		])
 
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-
-		let row = database.row(for: accountID)
-		XCTAssertNotNil(row)
-		XCTAssertEqual(row?.name, "My Account")
-		XCTAssertEqual(row?.isActive, false)
-		XCTAssertEqual(row?.username, "testuser")
-		XCTAssertEqual(row?.lastArticleFetchStartTime?.timeIntervalSinceReferenceDate ?? .nan, fetchDate.timeIntervalSinceReferenceDate, accuracy: 0.001)
-		XCTAssertEqual(row?.lastRefreshCompletedDate?.timeIntervalSinceReferenceDate ?? .nan, fetchEndDate.timeIntervalSinceReferenceDate, accuracy: 0.001)
-		XCTAssertEqual(row?.endpointURL, URL(string: "https://example.com/api"))
-		XCTAssertEqual(row?.externalID, "ext-42")
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNotNil(result)
+		XCTAssertEqual(result?.name, "My Account")
+		XCTAssertEqual(result?.isActive, false)
+		XCTAssertEqual(result?.username, "testuser")
+		XCTAssertEqual(result?.lastArticleFetchStartTime?.timeIntervalSinceReferenceDate ?? .nan, fetchDate.timeIntervalSinceReferenceDate, accuracy: 0.001)
+		XCTAssertEqual(result?.lastRefreshCompletedDate?.timeIntervalSinceReferenceDate ?? .nan, fetchEndDate.timeIntervalSinceReferenceDate, accuracy: 0.001)
+		XCTAssertEqual(result?.endpointURL, URL(string: "https://example.com/api"))
+		XCTAssertEqual(result?.externalID, "ext-42")
 	}
 
 	func testConditionalGetInfo() {
@@ -115,14 +97,15 @@ import RSWeb
 			]
 		])
 
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNotNil(result)
 
-		let info1 = database.conditionalGetInfo(for: accountID, endpoint: "https://example.com/feed1")
+		let info1 = result?.conditionalGetInfo?["https://example.com/feed1"]
 		XCTAssertNotNil(info1)
 		XCTAssertEqual(info1?.lastModified, "Wed, 01 Jan 2025 00:00:00 GMT")
 		XCTAssertEqual(info1?.etag, "abc123")
 
-		let info2 = database.conditionalGetInfo(for: accountID, endpoint: "https://example.com/feed2")
+		let info2 = result?.conditionalGetInfo?["https://example.com/feed2"]
 		XCTAssertNotNil(info2)
 		XCTAssertNil(info2?.lastModified)
 		XCTAssertEqual(info2?.etag, "def456")
@@ -135,11 +118,10 @@ import RSWeb
 			]
 		])
 
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-
-		XCTAssertTrue(database.accountExists(accountID))
-		let info = database.conditionalGetInfo(for: accountID, endpoint: "https://example.com/feed")
-		XCTAssertNil(info)
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNotNil(result)
+		// Both lastModified and etag are nil, so HTTPConditionalGetInfo init returns nil
+		XCTAssertNil(result?.conditionalGetInfo?["https://example.com/feed"])
 	}
 
 	func testSubsetOfFields() {
@@ -148,31 +130,15 @@ import RSWeb
 			"username": "partialuser"
 		])
 
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-
-		let row = database.row(for: accountID)
-		XCTAssertNotNil(row)
-		XCTAssertEqual(row?.name, "Partial Account")
-		XCTAssertEqual(row?.username, "partialuser")
-		XCTAssertTrue(row?.isActive ?? false)
-		XCTAssertNil(row?.lastArticleFetchStartTime)
-		XCTAssertNil(row?.lastRefreshCompletedDate)
-		XCTAssertNil(row?.endpointURL)
-		XCTAssertNil(row?.externalID)
-	}
-
-	func testImportIsOneTime() {
-		writePlist(["name": "Original Name"])
-
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-		XCTAssertEqual(database.row(for: accountID)?.name, "Original Name")
-
-		// Overwrite plist with different data
-		writePlist(["name": "Changed Name"])
-
-		// Second import should be a no-op since account already exists in DB
-		AccountSettingsImporter.importIfNeeded(accountID: accountID, dataFolder: tempDirectory, database: database)
-		XCTAssertEqual(database.row(for: accountID)?.name, "Original Name")
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNotNil(result)
+		XCTAssertEqual(result?.name, "Partial Account")
+		XCTAssertEqual(result?.username, "partialuser")
+		XCTAssertNil(result?.isActive)
+		XCTAssertNil(result?.lastArticleFetchStartTime)
+		XCTAssertNil(result?.lastRefreshCompletedDate)
+		XCTAssertNil(result?.endpointURL)
+		XCTAssertNil(result?.externalID)
 	}
 
 	// MARK: - Helpers

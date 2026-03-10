@@ -261,7 +261,7 @@ public enum FetchType {
 		}
 	}
 
-	init(dataFolder: String, type: AccountType, accountID: String, accountSettingsDatabase: AccountSettingsDatabase, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
@@ -315,7 +315,7 @@ public enum FetchType {
 		let feedSettingsDatabasePath = (dataFolder as NSString).appendingPathComponent("FeedSettings.db")
 		self.feedSettingsDatabase = FeedSettingsDatabase(databasePath: feedSettingsDatabasePath)
 
-		self.settings = AccountSettings(accountID: accountID, dataFolder: dataFolder, database: accountSettingsDatabase)
+		self.settings = AccountSettings(accountID: accountID, dataFolder: dataFolder)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: delegate)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
@@ -511,6 +511,10 @@ public enum FetchType {
 
 	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted(self)
+	}
+
+	func deleteSettings() {
+		settings.deleteSettings()
 	}
 
 	func addOPMLItems(_ items: [RSOPMLItem]) {
