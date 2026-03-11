@@ -9,7 +9,10 @@
 import Foundation
 
 public enum CredentialsError: Error, Sendable {
-	case incompleteCredentials
+	case missingUsername
+	case missingPassword
+	case missingAccessToken
+	case missingEndpointURL
 	case unhandledError(status: OSStatus)
 }
 
