@@ -343,6 +343,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				NetNewsWire-iOSTests,
+				"NetNewsWire-iOSTests/ActivityItemSourceTests.swift",
 				"NetNewsWire-iOSTests/Info.plist",
 				NetNewsWireTests/Info.plist,
 			);
