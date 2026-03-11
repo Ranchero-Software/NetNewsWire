@@ -40,7 +40,7 @@ extension CredentialsError: LocalizedError {
 		}
 	}
 
-	private static func keychainStatusMessage(_ status: OSStatus) -> String {
+	static func keychainStatusMessage(_ status: OSStatus) -> String {
 		if let message = SecCopyErrorMessageString(status, nil) as String? {
 			return "error \(status): \(message)"
 		}
