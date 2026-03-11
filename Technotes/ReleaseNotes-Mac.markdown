@@ -2,7 +2,7 @@
 
 ### 7.0.2b2 7022 8 Mar 2026 — branch: main tag: mac-7.0.2b2
 
-Move account settings to UserDefaults storage in hope that this will make this storage more reliable
+Move account settings to UserDefaults storage in hope that to make this storage more reliable
 Create specific for errors for CredentialError, so we can know better what happened when an error occurs
 
 ### 7.0.2b1 7022 8 Mar 2026 — branch: main tag: mac-7.0.2b1
