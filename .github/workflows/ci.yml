@@ -26,6 +26,9 @@ jobs:
       - name: Generate Secrets Sources
         run: PROJECT_DIR="$GITHUB_WORKSPACE" ./buildscripts/updateSecrets.sh
 
+      - name: Select Xcode 26.3
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+
       - name: Run macOS Test Plan
         shell: bash
         run: |
@@ -63,6 +66,9 @@ jobs:
 
       - name: Generate Secrets Sources
         run: PROJECT_DIR="$GITHUB_WORKSPACE" ./buildscripts/updateSecrets.sh
+
+      - name: Select Xcode 26.3
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
 
       - name: Run iOS Test Plan
         shell: bash
