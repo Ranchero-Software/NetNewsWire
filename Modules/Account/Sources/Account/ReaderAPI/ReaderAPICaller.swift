@@ -53,7 +53,7 @@ enum CreateReaderAPISubscriptionResult {
 	private let logger: Logger
 	private var accessToken: String?
 
-	weak var accountSettings: AccountSettings?
+	var accountSettings: AccountSettings?
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?

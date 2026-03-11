@@ -73,7 +73,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	weak var accountSettings: AccountSettings? {
+	var accountSettings: AccountSettings? {
 		didSet {
 			caller.accountSettings = accountSettings
 		}

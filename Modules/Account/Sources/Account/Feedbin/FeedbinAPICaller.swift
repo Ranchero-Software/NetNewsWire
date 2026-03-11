@@ -36,7 +36,7 @@ enum CreateSubscriptionResult {
 	private var lastBackdateStartTime: Date?
 
 	var credentials: Credentials?
-	weak var accountSettings: AccountSettings?
+	var accountSettings: AccountSettings?
 
 	init(transport: Transport) {
 		self.transport = transport

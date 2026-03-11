@@ -41,7 +41,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	weak var accountSettings: AccountSettings? {
+	var accountSettings: AccountSettings? {
 		didSet {
 			caller.accountSettings = accountSettings
 		}
