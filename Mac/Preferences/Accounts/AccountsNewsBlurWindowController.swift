@@ -101,8 +101,6 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 				}
 
 				do {
-					try account?.removeCredentials(type: .newsBlurBasic)
-					try account?.removeCredentials(type: .newsBlurSessionID)
 					try account?.storeCredentials(credentials)
 					try account?.storeCredentials(validatedCredentials)
 

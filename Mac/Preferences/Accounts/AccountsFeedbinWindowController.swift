@@ -103,7 +103,6 @@ final class AccountsFeedbinWindowController: NSWindowController {
 				}
 
 				do {
-					try account?.removeCredentials(type: .basic)
 					try account?.storeCredentials(validatedCredentials)
 
 					do {

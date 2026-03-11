@@ -117,7 +117,6 @@ final class FeedbinAccountViewController: UITableViewController {
 					}
 
 					do {
-						try? account?.removeCredentials(type: .basic)
 						try account?.storeCredentials(validatedCredentials)
 
 						account?.triggerRefreshAll()
