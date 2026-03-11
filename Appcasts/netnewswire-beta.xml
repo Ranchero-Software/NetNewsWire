@@ -7,6 +7,19 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.2b2</title>
+            <description><![CDATA[
+				<ul>
+					<li>Moved account settings to UserDefaults storage to make it more reliable
+					<li>Created specific for errors for CredentialError, so we can know better what happened when an error occurs
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 10 Mar 2026 20:35:00 -0800</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.2b2/NetNewsWire7.0.2b2.zip" sparkle:version="7023" sparkle:shortVersionString="7.0.2b2" length="9647196" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.2b1</title>
             <description><![CDATA[
 				<ul>
