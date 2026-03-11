@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  macos-tests:
+    name: macOS Tests
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Run macOS Test Plan
+        id: run-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          result_bundle="$RUNNER_TEMP/NetNewsWire-macOS.xcresult"
+          rm -rf "$result_bundle"
+
+          xcodebuild \
+            -project NetNewsWire.xcodeproj \
+            -scheme NetNewsWire \
+            -destination "platform=macOS,arch=arm64" \
+            -resultBundlePath "$result_bundle" \
+            test | xcbeautify
+
+          echo "result_bundle=$result_bundle" >> "$GITHUB_OUTPUT"
+
+      - name: Upload macOS Result Bundle
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netnewswire-macos-xcresult
+          path: ${{ steps.run-tests.outputs.result_bundle }}
+          if-no-files-found: warn
+          retention-days: 7
+
+  ios-simulator-tests:
+    name: iOS Simulator Tests
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Run iOS Test Plan
+        id: run-tests
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          result_bundle="$RUNNER_TEMP/NetNewsWire-iOS.xcresult"
+          rm -rf "$result_bundle"
+
+          xcodebuild \
+            -project NetNewsWire.xcodeproj \
+            -scheme NetNewsWire-iOS \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
+            -resultBundlePath "$result_bundle" \
+            test | xcbeautify
+
+          echo "result_bundle=$result_bundle" >> "$GITHUB_OUTPUT"
+
+      - name: Upload iOS Result Bundle
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netnewswire-ios-xcresult
+          path: ${{ steps.run-tests.outputs.result_bundle }}
+          if-no-files-found: warn
+          retention-days: 7
