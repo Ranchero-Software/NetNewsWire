@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.0.2b2 7022 8 Mar 2026 — branch: main tag: mac-7.0.2b2
+
+Move account settings to UserDefaults storage in hope that this will make this storage more reliable
+Create specific for errors for CredentialError, so we can know better what happened when an error occurs
+
 ### 7.0.2b1 7022 8 Mar 2026 — branch: main tag: mac-7.0.2b1
 
 Fixed (we think) some bugs that showed up as the app forgetting credentials for syncing systems (this may have been mainly, or even entirely, on iOS, though)
