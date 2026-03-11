@@ -23,30 +23,32 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Generate Secrets Sources
+        run: PROJECT_DIR="$GITHUB_WORKSPACE" ./buildscripts/updateSecrets.sh
+
       - name: Run macOS Test Plan
-        id: run-tests
         shell: bash
         run: |
           set -euo pipefail
 
-          result_bundle="$RUNNER_TEMP/NetNewsWire-macOS.xcresult"
+          result_bundle="${RUNNER_TEMP}/NetNewsWire-macOS.xcresult"
           rm -rf "$result_bundle"
 
           xcodebuild \
             -project NetNewsWire.xcodeproj \
             -scheme NetNewsWire \
+            -xcconfig .github/macos-ci-no-signing.xcconfig \
             -destination "platform=macOS,arch=arm64" \
+            OTHER_SWIFT_FLAGS='$(inherited) -Xfrontend -warn-long-function-bodies=500 -Xfrontend -warn-long-expression-type-checking=500' \
             -resultBundlePath "$result_bundle" \
             test | xcbeautify
-
-          echo "result_bundle=$result_bundle" >> "$GITHUB_OUTPUT"
 
       - name: Upload macOS Result Bundle
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: netnewswire-macos-xcresult
-          path: ${{ steps.run-tests.outputs.result_bundle }}
+          path: ${{ runner.temp }}/NetNewsWire-macOS.xcresult
           if-no-files-found: warn
           retention-days: 7
 
@@ -59,29 +61,30 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Generate Secrets Sources
+        run: PROJECT_DIR="$GITHUB_WORKSPACE" ./buildscripts/updateSecrets.sh
+
       - name: Run iOS Test Plan
-        id: run-tests
         shell: bash
         run: |
           set -euo pipefail
 
-          result_bundle="$RUNNER_TEMP/NetNewsWire-iOS.xcresult"
+          result_bundle="${RUNNER_TEMP}/NetNewsWire-iOS.xcresult"
           rm -rf "$result_bundle"
 
           xcodebuild \
             -project NetNewsWire.xcodeproj \
             -scheme NetNewsWire-iOS \
             -destination "platform=iOS Simulator,name=iPhone 17" \
+            OTHER_SWIFT_FLAGS='$(inherited) -DDEBUG -DSKIP_APP_GROUP_ACCESS -Xfrontend -warn-long-function-bodies=500 -Xfrontend -warn-long-expression-type-checking=500' \
             -resultBundlePath "$result_bundle" \
             test | xcbeautify
-
-          echo "result_bundle=$result_bundle" >> "$GITHUB_OUTPUT"
 
       - name: Upload iOS Result Bundle
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: netnewswire-ios-xcresult
-          path: ${{ steps.run-tests.outputs.result_bundle }}
+          path: ${{ runner.temp }}/NetNewsWire-iOS.xcresult
           if-no-files-found: warn
           retention-days: 7
