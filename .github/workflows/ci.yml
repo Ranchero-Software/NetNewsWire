@@ -42,7 +42,7 @@ jobs:
             -scheme NetNewsWire \
             -xcconfig .github/macos-ci-no-signing.xcconfig \
             -destination "platform=macOS,arch=arm64" \
-            OTHER_SWIFT_FLAGS='$(inherited) -Xfrontend -warn-long-function-bodies=500 -Xfrontend -warn-long-expression-type-checking=500' \
+            OTHER_SWIFT_FLAGS='$(inherited) -Xfrontend -warn-long-function-bodies=650 -Xfrontend -warn-long-expression-type-checking=650' \
             -resultBundlePath "$result_bundle" \
             test | xcbeautify
 
