@@ -44,7 +44,7 @@ public struct CredentialsManager {
 		case errSecDuplicateItem:
 			break
 		default:
-			throw CredentialsError.unhandledError(status: status)
+			throw CredentialsError.keychainStoreFailure(status: status)
 		}
 
 		var deleteQuery = query
@@ -53,7 +53,7 @@ public struct CredentialsManager {
 
 		let addStatus = SecItemAdd(query as CFDictionary, nil)
 		if addStatus != errSecSuccess {
-			throw CredentialsError.unhandledError(status: addStatus)
+			throw CredentialsError.keychainStoreFailure(status: addStatus)
 		}
 	}
 
@@ -92,7 +92,7 @@ public struct CredentialsManager {
 		}
 
 		guard status == errSecSuccess else {
-			throw CredentialsError.unhandledError(status: status)
+			throw CredentialsError.keychainRetrieveFailure(status: status)
 		}
 
 		guard let existingItem = item as? [String: Any],
@@ -123,7 +123,7 @@ public struct CredentialsManager {
 
 		let status = SecItemDelete(query as CFDictionary)
 		guard status == errSecSuccess || status == errSecItemNotFound else {
-			throw CredentialsError.unhandledError(status: status)
+			throw CredentialsError.keychainRemoveFailure(status: status)
 		}
 	}
 }

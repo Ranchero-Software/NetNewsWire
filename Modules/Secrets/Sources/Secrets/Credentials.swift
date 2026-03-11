@@ -13,7 +13,9 @@ public enum CredentialsError: Error, Sendable {
 	case missingPassword
 	case missingAccessToken
 	case missingEndpointURL
-	case unhandledError(status: OSStatus)
+	case keychainStoreFailure(status: OSStatus)
+	case keychainRetrieveFailure(status: OSStatus)
+	case keychainRemoveFailure(status: OSStatus)
 }
 
 public enum CredentialsType: String, Sendable {
