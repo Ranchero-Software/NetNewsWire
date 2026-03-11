@@ -160,8 +160,6 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 				do {
 					account?.endpointURL = apiURL
 
-					try account?.removeCredentials(type: .readerBasic)
-					try account?.removeCredentials(type: .readerAPIKey)
 					try account?.storeCredentials(credentials)
 					try account?.storeCredentials(validatedCredentials)
 
