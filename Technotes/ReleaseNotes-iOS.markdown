@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0.2 TestFlight build 7031 10 Mar 2026 - branch: main tag: iOS-7.0.2-7031
+
+Moved account settings to UserDefaults storage to make it more reliable
+Created specific for errors for CredentialError, so we can know better what happened when an error occurs
+
 ### 7.0.2 TestFlight build 7030 8 Mar 2026 - branch: main tag: iOS-7.0.2-7030
 
 Fixed (we think) some bugs that showed up as the app forgetting credentials for syncing systems
