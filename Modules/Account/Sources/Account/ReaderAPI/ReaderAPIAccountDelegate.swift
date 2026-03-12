@@ -265,6 +265,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					} catch {
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder — remove feed 1 error: \(error.localizedDescription)")
+						postSyncError(error, account: account)
 					}
 				}
 
@@ -280,6 +281,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder - remove feed 2 error: \(error.localizedDescription)")
+						postSyncError(error, account: account)
 					}
 				}
 			}
@@ -457,6 +459,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				try await restoreFeed(for: account, feed: feed, container: folder)
 			} catch {
 				Self.logger.error("ReaderAPIAccountDelegate: restoreFolder — error: \(error.localizedDescription)")
+				postSyncError(error, account: account)
 			}
 		}
 
@@ -821,6 +824,7 @@ private extension ReaderAPIAccountDelegate {
 					await processEntries(account: account, entries: entries)
 				} catch {
 					Self.logger.error("ReaderAPI: Refresh missing articles error: \(error.localizedDescription)")
+					postSyncError(error, account: account)
 				}
 			}
 
@@ -937,5 +941,14 @@ private extension ReaderAPIAccountDelegate {
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: syncArticleStarredState — error \(error.localizedDescription)")
 		}
+	}
+
+	func postSyncError(_ error: Error, account: Account) {
+		let userInfo: [String: Any] = [
+			Account.UserInfoKey.syncError: error,
+			Account.UserInfoKey.accountName: account.nameForDisplay,
+			Account.UserInfoKey.accountType: account.type.rawValue
+		]
+		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
 	}
 }

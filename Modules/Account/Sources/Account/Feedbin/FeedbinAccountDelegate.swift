@@ -228,6 +228,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
+						postSyncError(error, account: account)
 					}
 				}
 			} else {
@@ -236,6 +237,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
+						postSyncError(error, account: account)
 					}
 				}
 			}
@@ -339,6 +341,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				try await restoreFeed(for: account, feed: feed, container: folder)
 			} catch {
 				Self.logger.error("Feedbin: Restore folder feed error: \(error.localizedDescription)")
+				postSyncError(error, account: account)
 			}
 		}
 
@@ -859,6 +862,7 @@ private extension FeedbinAccountDelegate {
 			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
+			postSyncError(error, account: account)
 		}
 	}
 
@@ -886,6 +890,7 @@ private extension FeedbinAccountDelegate {
 			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
+			postSyncError(error, account: account)
 		}
 	}
 
@@ -924,8 +929,18 @@ private extension FeedbinAccountDelegate {
 			try await caller.deleteSubscription(subscriptionID: subscriptionID)
 		} catch {
 			Self.logger.error("Feedbin: Unable to remove feed from Feedbin. Removing locally and continuing processing: \(error.localizedDescription)")
+			postSyncError(error, account: account)
 		}
 
 		account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
+	}
+
+	func postSyncError(_ error: Error, account: Account) {
+		let userInfo: [String: Any] = [
+			Account.UserInfoKey.syncError: error,
+			Account.UserInfoKey.accountName: account.nameForDisplay,
+			Account.UserInfoKey.accountType: account.type.rawValue
+		]
+		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
 	}
 }

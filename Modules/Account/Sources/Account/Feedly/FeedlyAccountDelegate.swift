@@ -636,6 +636,7 @@ import Secrets
 					break
 				case .failure(let error):
 					Self.logger.error("Feedly: Restore folder feed error: \(error.localizedDescription)")
+					self.postSyncError(error, account: account)
 				}
 			}
 		}
@@ -707,6 +708,20 @@ import Secrets
 
 	@objc func downloadProgressDidChange(_ notification: Notification) {
 		progressInfo = refreshProgress.progressInfo
+	}
+}
+
+// MARK: - Sync Error Posting
+
+private extension FeedlyAccountDelegate {
+
+	func postSyncError(_ error: Error, account: Account) {
+		let userInfo: [String: Any] = [
+			Account.UserInfoKey.syncError: error,
+			Account.UserInfoKey.accountName: account.nameForDisplay,
+			Account.UserInfoKey.accountType: account.type.rawValue
+		]
+		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
 	}
 }
 

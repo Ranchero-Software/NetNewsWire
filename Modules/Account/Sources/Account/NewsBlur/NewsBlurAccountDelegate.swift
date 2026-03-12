@@ -226,6 +226,7 @@ import Secrets
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Refresh missing stories error: \(error.localizedDescription)")
+				postSyncError(error, account: account)
 			}
 		}
 
@@ -412,6 +413,7 @@ import Secrets
 			}
 		} catch {
 			Self.logger.error("NewsBlur: Restore folder error: \(error.localizedDescription)")
+			postSyncError(error, account: account)
 			throw error
 		}
 	}
@@ -469,5 +471,19 @@ import Secrets
 
 	@objc func progressInfoDidChange(_ notification: Notification) {
 		progressInfo = refreshProgress.progressInfo
+	}
+}
+
+// MARK: - Sync Error Posting
+
+extension NewsBlurAccountDelegate {
+
+	func postSyncError(_ error: Error, account: Account) {
+		let userInfo: [String: Any] = [
+			Account.UserInfoKey.syncError: error,
+			Account.UserInfoKey.accountName: account.nameForDisplay,
+			Account.UserInfoKey.accountType: account.type.rawValue
+		]
+		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
 	}
 }
