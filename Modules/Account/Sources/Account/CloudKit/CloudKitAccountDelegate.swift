@@ -344,8 +344,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			}
 
 			for await result in group {
-				if case .failure = result {
+				if case .failure(let error) = result {
 					errorOccurred = true
+					postSyncError(error, account: account)
 				}
 			}
 		}
@@ -384,7 +385,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			folder.externalID = externalID
 			account.addFolderToTree(folder)
 
-			await withTaskGroup(of: Void.self) { group in
+			await withTaskGroup(of: Error?.self) { group in
 				for feed in feedsToRestore {
 					folder.topLevelFeeds.remove(feed)
 
@@ -392,10 +393,18 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 						do {
 							try await self.restoreFeed(for: account, feed: feed, container: folder)
 							await self.syncProgress.completeTask()
+							return nil
 						} catch {
 							Self.logger.error("CloudKit: Restore folder feed error: \(error.localizedDescription)")
 							await self.syncProgress.completeTask()
+							return error
 						}
+					}
+				}
+
+				for await error in group {
+					if let error {
+						postSyncError(error, account: account)
 					}
 				}
 			}
@@ -440,6 +449,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 					try? await self.initialRefreshAll(for: account)
 				} catch {
 					Self.logger.error("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")
+					if let account = self.account {
+						self.postSyncError(error, account: account)
+					}
 				}
 			}
 			accountZone.subscribeToZoneChanges()
@@ -694,6 +706,15 @@ private extension CloudKitAccountDelegate {
 			}
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 		}
+	}
+
+	func postSyncError(_ error: Error, account: Account) {
+		let userInfo: [String: Any] = [
+			Account.UserInfoKey.syncError: error,
+			Account.UserInfoKey.accountName: account.nameForDisplay,
+			Account.UserInfoKey.accountType: account.type.rawValue
+		]
+		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
 	}
 
 	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?) async {
