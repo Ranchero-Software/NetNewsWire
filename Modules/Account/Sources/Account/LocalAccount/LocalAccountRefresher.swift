@@ -186,6 +186,25 @@ import os
 		}
 	}
 
+	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL) {
+		guard let feed = urlToFeedDictionary[url.absoluteString],
+			  let account = feed.account else {
+			return
+		}
+
+		let transportError = TransportError.httpError(status: statusCode)
+		let statusDescription = transportError.localizedDescription
+		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
+		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+
+		let userInfo: [String: Any] = [
+			Account.UserInfoKey.syncError: error as Error,
+			Account.UserInfoKey.accountName: account.nameForDisplay,
+			Account.UserInfoKey.accountType: account.type.rawValue
+		]
+		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
+	}
+
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, url: URL) -> Bool {
 
 		guard !data.isDefinitelyNotFeed(), !isSuspended else {
