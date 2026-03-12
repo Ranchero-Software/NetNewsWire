@@ -43,6 +43,7 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 	case inoreader = 21
 	case bazQux = 22
 	case theOldReader = 23
+	case inkwell = 24
 
 	public var isDeveloperRestricted: Bool {
 		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
@@ -271,6 +272,8 @@ public enum FetchType {
 			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .feedly:
 			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
+		case .inkwell:
+			self.delegate = InkwellAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .newsBlur:
 			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
 		case .freshRSS:
@@ -302,6 +305,8 @@ public enum FetchType {
 			defaultName = NSLocalizedString("Feedbin", comment: "Feedbin")
 		case .newsBlur:
 			defaultName = NSLocalizedString("NewsBlur", comment: "NewsBlur")
+		case .inkwell:
+			defaultName = NSLocalizedString("Inkwell", comment: "Inkwell")
 		case .freshRSS:
 			defaultName = NSLocalizedString("FreshRSS", comment: "FreshRSS")
 		case .inoreader:
@@ -383,6 +388,8 @@ public enum FetchType {
 			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
 		case .freshRSS, .inoreader, .bazQux, .theOldReader:
 			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
+		case .inkwell:
+			return try await InkwellAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
 		default:
 			return nil
 		}
@@ -392,6 +399,8 @@ public enum FetchType {
 		switch type {
 		case .feedly:
 			return FeedlyAccountDelegate.environment.oauthAuthorizationClient
+		case .inkwell:
+			return .inkwellClient
 		default:
 			fatalError("\(type) is not a client for OAuth authorization code granting.")
 		}
@@ -402,6 +411,8 @@ public enum FetchType {
 		switch type {
 		case .feedly:
 			grantingType = FeedlyAccountDelegate.self
+		case .inkwell:
+			grantingType = InkwellAccountDelegate.self
 		default:
 			fatalError("\(type) does not support OAuth authorization code granting.")
 		}
@@ -419,6 +430,8 @@ public enum FetchType {
 		switch accountType {
 		case .feedly:
 			grantingType = FeedlyAccountDelegate.self
+		case .inkwell:
+			grantingType = InkwellAccountDelegate.self
 		default:
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}

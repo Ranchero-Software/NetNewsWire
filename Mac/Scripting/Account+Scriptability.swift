@@ -220,6 +220,8 @@ import RSCore
 			osType = "Fdly"
 		case .feedbin:
 			osType = "Fdbn"
+		case .inkwell:
+			osType = "Mcro"
 		case .newsBlur:
 			osType = "NBlr"
 		case .freshRSS:

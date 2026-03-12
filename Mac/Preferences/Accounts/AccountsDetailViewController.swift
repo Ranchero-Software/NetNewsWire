@@ -32,7 +32,7 @@ final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate 
 			return true
 		}
 		switch account.type {
-		case .onMyMac, .cloudKit, .feedly:
+		case .onMyMac, .cloudKit, .feedly, .inkwell:
 			return true
 		default:
 			return false

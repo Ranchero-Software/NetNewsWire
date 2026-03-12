@@ -119,7 +119,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 			cell.textField?.stringValue = account.nameForDisplay
 			cell.imageView?.image = account.smallIcon?.image
 
-			if account.type == .feedbin {
+			if account.type == .feedbin || account.type == .inkwell {
 				cell.isImageTemplateCapable = false
 			}
 
@@ -189,7 +189,14 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = window
-			runAwaitingFeedlyLoginAlertModal(forLifetimeOf: addAccount)
+			runAwaitingOAuthLoginAlertModal(forLifetimeOf: addAccount, accountType: .feedly)
+			MainThreadOperationQueue.shared.add(addAccount)
+
+		case .inkwell:
+			let addAccount = OAuthAccountAuthorizationOperation(accountType: .inkwell)
+			addAccount.delegate = self
+			addAccount.presentationAnchor = window
+			runAwaitingOAuthLoginAlertModal(forLifetimeOf: addAccount, accountType: .inkwell)
 			MainThreadOperationQueue.shared.add(addAccount)
 
 		case .newsBlur:
@@ -199,14 +206,17 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		}
 	}
 
-	private func runAwaitingFeedlyLoginAlertModal(forLifetimeOf operation: OAuthAccountAuthorizationOperation) {
+	private func runAwaitingOAuthLoginAlertModal(forLifetimeOf operation: OAuthAccountAuthorizationOperation, accountType: AccountType) {
+		let serviceName = accountType.localizedAccountName()
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Waiting for access to Feedly",
-											  comment: "Alert title when adding a Feedly account and waiting for authorization from the user.")
+		let messageFormat = NSLocalizedString("Waiting for access to %@",
+											 comment: "Alert title when adding an OAuth account and waiting for authorization from the user.")
+		alert.messageText = String(format: messageFormat, serviceName)
 
-		alert.informativeText = NSLocalizedString("A web browser will open the Feedly login for you to authorize access.",
-												  comment: "Alert informative text when adding a Feedly account and waiting for authorization from the user.")
+		let informativeFormat = NSLocalizedString("A web browser will open the %@ login for you to authorize access.",
+												 comment: "Alert informative text when adding an OAuth account and waiting for authorization from the user.")
+		alert.informativeText = String(format: informativeFormat, serviceName)
 
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
 

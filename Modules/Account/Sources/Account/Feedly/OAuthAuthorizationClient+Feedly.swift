@@ -33,4 +33,11 @@ nonisolated extension OAuthAuthorizationClient {
 										state: nil,
 										secret: "4ZfZ5DvqmJ8vKgMj")
 	}
+
+	static var inkwellClient: OAuthAuthorizationClient {
+		return OAuthAuthorizationClient(id: "https://netnewswire.com/",
+										redirectUri: "netnewswire://auth/inkwell",
+										state: nil,
+										secret: "")
+	}
 }

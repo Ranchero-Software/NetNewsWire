@@ -20,7 +20,7 @@ public enum OAuthAccountAuthorizationOperationError: LocalizedError, Sendable {
 	case duplicateAccount
 
 	public var errorDescription: String? {
-		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
+		return NSLocalizedString("There is already an account with that username created.", comment: "Duplicate Error")
 	}
 }
 
@@ -196,13 +196,13 @@ private extension OAuthAccountAuthorizationOperation {
 
 	func saveAccount(for grant: OAuthAuthorizationGrant) {
 		Self.logger.debug("OAuthAccountAuthorizationOperation: saveAccount")
-		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
+		guard !AccountManager.shared.duplicateServiceAccount(type: accountType, username: grant.accessToken.username) else {
 			self.error = OAuthAccountAuthorizationOperationError.duplicateAccount
 			didComplete()
 			return
 		}
 
-		let account = AccountManager.shared.createAccount(type: .feedly)
+		let account = AccountManager.shared.createAccount(type: accountType)
 		do {
 
 			// Store the refresh token first because it sends this token to the account delegate.
@@ -221,4 +221,3 @@ private extension OAuthAccountAuthorizationOperation {
 		didComplete()
 	}
 }
-
