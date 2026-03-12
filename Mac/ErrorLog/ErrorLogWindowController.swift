@@ -101,7 +101,7 @@ import Account
 			return
 		}
 
-		let entry = ErrorLogEntry(id: 0, timestamp: Date(), accountName: accountName, accountType: accountType, errorMessage: error.localizedDescription)
+		let entry = ErrorLogEntry(id: 0, date: Date(), accountName: accountName, accountType: accountType, errorMessage: error.localizedDescription)
 		appendEntry(entry)
 	}
 }
@@ -263,7 +263,7 @@ private extension ErrorLogWindowController {
 	func attributedString(for entry: ErrorLogEntry) -> NSAttributedString {
 		let result = NSMutableAttributedString()
 
-		let timestampString = "[\(Self.dateFormatter.string(from: entry.timestamp))] "
+		let timestampString = "[\(Self.dateFormatter.string(from: entry.date))] "
 		let timestampAttributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: NSColor.secondaryLabelColor,
 			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
