@@ -32,6 +32,8 @@ extension AccountType {
 			return NSLocalizedString("Feedbin", comment: "Account name")
 		case .feedly:
 			return NSLocalizedString("Feedly", comment: "Account name")
+		case .inkwell:
+			return NSLocalizedString("Inkwell", comment: "Account name")
 		case .freshRSS:
 			return NSLocalizedString("FreshRSS", comment: "Account name")
 		case .inoreader:
@@ -65,6 +67,8 @@ extension AccountType {
 			return Image("accountFeedbin")
 		case .feedly:
 			return Image("accountFeedly")
+		case .inkwell:
+			return Image("accountInkwell")
 		case .freshRSS:
 			return Image("accountFreshRSS")
 		case .inoreader:

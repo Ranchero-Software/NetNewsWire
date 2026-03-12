@@ -55,9 +55,9 @@ enum AddAccountSections: Int, CaseIterable {
 			return [.cloudKit]
 		case .web:
 			if AppDefaults.shared.isDeveloperBuild {
-				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader].filter({ $0.isDeveloperRestricted == false })
+				return [.bazQux, .feedbin, .feedly, .inkwell, .inoreader, .newsBlur, .theOldReader].filter({ $0.isDeveloperRestricted == false })
 			} else {
-				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+				return [.bazQux, .feedbin, .feedly, .inkwell, .inoreader, .newsBlur, .theOldReader]
 			}
 		case .selfhosted:
 			return [.freshRSS]

@@ -27,6 +27,7 @@ struct Assets {
 		static var accountCloudKit: RSImage { RSImage(named: "accountCloudKit")! }
 		static var accountFeedbin: RSImage { RSImage(named: "accountFeedbin")! }
 		static var accountFeedly: RSImage { RSImage(named: "accountFeedly")! }
+		static var accountInkwell: RSImage { RSImage(named: "accountInkwell")! }
 		static var accountFreshRSS: RSImage { RSImage(named: "accountFreshRSS")! }
 		static var accountInoreader: RSImage { RSImage(named: "accountInoreader")! }
 		static var accountNewsBlur: RSImage { RSImage(named: "accountNewsBlur")! }
@@ -200,6 +201,8 @@ struct Assets {
 			return Assets.Images.accountFeedbin
 		case .feedly:
 			return Assets.Images.accountFeedly
+		case .inkwell:
+			return Assets.Images.accountInkwell
 		case .freshRSS:
 			return Assets.Images.accountFreshRSS
 		case .inoreader:

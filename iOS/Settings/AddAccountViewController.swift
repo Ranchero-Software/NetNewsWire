@@ -56,9 +56,9 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 				return [.cloudKit]
 			case .web:
 				#if DEBUG
-				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+				return [.bazQux, .feedbin, .feedly, .inkwell, .inoreader, .newsBlur, .theOldReader]
 				#else
-				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+				return [.bazQux, .feedbin, .feedly, .inkwell, .inoreader, .newsBlur, .theOldReader]
 				#endif
 			case .selfhosted:
 				return [.freshRSS]
@@ -194,6 +194,11 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			present(navController, animated: true)
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
+			addAccount.delegate = self
+			addAccount.presentationAnchor = self.view.window!
+			MainThreadOperationQueue.shared.add(addAccount)
+		case .inkwell:
+			let addAccount = OAuthAccountAuthorizationOperation(accountType: .inkwell)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			MainThreadOperationQueue.shared.add(addAccount)

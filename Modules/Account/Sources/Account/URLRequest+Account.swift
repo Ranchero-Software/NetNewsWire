@@ -50,6 +50,9 @@ public extension URLRequest {
 		case .readerAPIKey:
 			let auth = "GoogleLogin auth=\(credentials.secret)"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
+		case .bearerAccessToken:
+			let auth = "Bearer \(credentials.secret)"
+			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
 		case .oauthAccessToken:
 			let auth = "OAuth \(credentials.secret)"
 			setValue(auth, forHTTPHeaderField: "Authorization")

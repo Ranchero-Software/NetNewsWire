@@ -84,6 +84,7 @@
 			<enumerator name="cloudkit" code="Clkt" description="The iCloud account"/>
 			<enumerator name="feedly" code="Fdly" description="A Feedly account"/>
 			<enumerator name="feedbin" code="Fdbn" description="A Feedbin account"/>
+			<enumerator name="inkwell" code="Mcro" description="An Inkwell account"/>
 			<enumerator name="newsblur" code="NBlr" description="A Newsblur account"/>
 			<enumerator name="fresh rss" code="Frsh" description="A Fresh RSS account"/>
 			<enumerator name="inoreader" code="Inrd" description="An Inoreader account"/>
@@ -264,4 +265,3 @@
     </suite>
 
 </dictionary>
-
