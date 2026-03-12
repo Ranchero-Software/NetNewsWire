@@ -37,7 +37,8 @@ import Account
 	private var hasBeenShown = false
 	private var hasLoadedEntries = false
 
-	private static let defaultWindowSize = NSSize(width: 600, height: 400)
+	private static let defaultWindowSize = NSSize(width: 640, height: 400)
+	static let minimumWindowSize = NSSize(width: 640, height: 300)
 
 	init() {
 		let window = NSWindow(contentRect: NSRect(origin: .zero, size: Self.defaultWindowSize), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: true)
@@ -110,7 +111,6 @@ import Account
 
 private extension ErrorLogWindowController {
 
-	static let minimumWindowSize = NSSize(width: 400, height: 300)
 	static let firstShowVerticalOffset: CGFloat = 40
 	static let dateFormatter: DateFormatter = {
 		let formatter = DateFormatter()
