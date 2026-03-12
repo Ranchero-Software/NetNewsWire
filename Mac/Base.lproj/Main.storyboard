@@ -572,6 +572,11 @@
                                                 <action selector="showMainWindow:" target="Ady-hI-5gd" id="yQt-yi-4JX"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Errors" keyEquivalent="9" id="erl-0g-Kw7">
+                                            <connections>
+                                                <action selector="showErrorLog:" target="Ady-hI-5gd" id="erl-1h-Lx8"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">
                                             <connections>
                                                 <action selector="toggleInspectorWindow:" target="Ady-hI-5gd" id="Bw5-4R-iWP"/>
