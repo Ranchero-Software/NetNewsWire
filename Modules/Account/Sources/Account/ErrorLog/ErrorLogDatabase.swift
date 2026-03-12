@@ -24,8 +24,10 @@ public actor ErrorLogDatabase {
 		ErrorLogTable.pruneEntries(limit: Self.pruneLimit, database: database)
 
 		self.database = database
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountDidEncounterSyncError(_:)), name: .AccountDidEncounterSyncError, object: nil)
 	}
-	
+
 	public func addEntry(accountName: String, accountType: Int, errorMessage: String) {
 		ErrorLogTable.insertEntry(accountName: accountName, accountType: accountType, errorMessage: errorMessage, database: database)
 	}
@@ -36,5 +38,18 @@ public actor ErrorLogDatabase {
 
 	public func deleteAll() {
 		ErrorLogTable.deleteAll(database: database)
+	}
+
+	// MARK: - Notifications
+
+	@objc nonisolated func handleAccountDidEncounterSyncError(_ notification: Notification) {
+		guard let error = notification.userInfo?[Account.UserInfoKey.syncError] as? Error,
+			  let accountName = notification.userInfo?[Account.UserInfoKey.accountName] as? String,
+			  let accountType = notification.userInfo?[Account.UserInfoKey.accountType] as? Int else {
+			return
+		}
+		Task {
+			await addEntry(accountName: accountName, accountType: accountType, errorMessage: error.localizedDescription)
+		}
 	}
 }
