@@ -30,6 +30,7 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
+	static let AccountDidEncounterSyncError = Notification.Name(rawValue: "AccountDidEncounterSyncError")
 }
 
 nonisolated public enum AccountType: Int, Codable, Sendable {
@@ -46,6 +47,29 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 
 	public var isDeveloperRestricted: Bool {
 		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
+	}
+
+	public var displayName: String {
+		switch self {
+		case .onMyMac:
+			return NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
+		case .cloudKit:
+			return NSLocalizedString("iCloud", comment: "iCloud")
+		case .feedly:
+			return NSLocalizedString("Feedly", comment: "Feedly")
+		case .feedbin:
+			return NSLocalizedString("Feedbin", comment: "Feedbin")
+		case .newsBlur:
+			return NSLocalizedString("NewsBlur", comment: "NewsBlur")
+		case .freshRSS:
+			return NSLocalizedString("FreshRSS", comment: "FreshRSS")
+		case .inoreader:
+			return NSLocalizedString("Inoreader", comment: "Inoreader")
+		case .bazQux:
+			return NSLocalizedString("BazQux", comment: "BazQux")
+		case .theOldReader:
+			return NSLocalizedString("The Old Reader", comment: "The Old Reader")
+		}
 	}
 }
 
@@ -74,10 +98,11 @@ public enum FetchType {
 		public static let statusKey = "statusKey" // StatusesDidChange
 		public static let statusFlag = "statusFlag" // StatusesDidChange
 		public static let feeds = "feeds" // AccountDidDownloadArticles, StatusesDidChange
+		public static let syncError = "syncError"
+		public static let accountName = "accountName"
+		public static let accountType = "accountType"
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
-
-	public static let defaultLocalAccountName = NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
 
 	public var isDeleted = false
 
@@ -291,26 +316,7 @@ public enum FetchType {
 		let retentionStyle: ArticlesDatabase.RetentionStyle = (type == .onMyMac || type == .cloudKit) ? .feedBased : .syncSystem
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID, retentionStyle: retentionStyle)
 
-		switch type {
-		case .onMyMac:
-			defaultName = Account.defaultLocalAccountName
-		case .cloudKit:
-			defaultName = NSLocalizedString("iCloud", comment: "iCloud")
-		case .feedly:
-			defaultName = NSLocalizedString("Feedly", comment: "Feedly")
-		case .feedbin:
-			defaultName = NSLocalizedString("Feedbin", comment: "Feedbin")
-		case .newsBlur:
-			defaultName = NSLocalizedString("NewsBlur", comment: "NewsBlur")
-		case .freshRSS:
-			defaultName = NSLocalizedString("FreshRSS", comment: "FreshRSS")
-		case .inoreader:
-			defaultName = NSLocalizedString("Inoreader", comment: "Inoreader")
-		case .bazQux:
-			defaultName = NSLocalizedString("BazQux", comment: "BazQux")
-		case .theOldReader:
-			defaultName = NSLocalizedString("The Old Reader", comment: "The Old Reader")
-		}
+		defaultName = type.displayName
 
 		let feedSettingsDatabasePath = (dataFolder as NSString).appendingPathComponent("FeedSettings.db")
 		self.feedSettingsDatabase = FeedSettingsDatabase(databasePath: feedSettingsDatabasePath)
