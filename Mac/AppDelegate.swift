@@ -86,6 +86,7 @@ let appName = "NetNewsWire"
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
+	private var errorLogWindowController: ErrorLogWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private let appMovementMonitor: RSAppMovementMonitor
 	private var softwareUpdater: SPUUpdater?
@@ -208,6 +209,10 @@ let appName = "NetNewsWire"
 
 		if InspectorWindowController.shouldOpenAtStartup {
 			toggleInspectorWindow(self)
+		}
+
+		if ErrorLogWindowController.shouldOpenAtStartup {
+			showErrorLog(self)
 		}
 
 		ArticleThemesManager.shared.start()
@@ -526,6 +531,13 @@ let appName = "NetNewsWire"
 		windowController.window?.makeKey()
 	}
 
+	@IBAction func showErrorLog(_ sender: Any?) {
+		if errorLogWindowController == nil {
+			errorLogWindowController = ErrorLogWindowController()
+		}
+		errorLogWindowController!.showWindow(self)
+	}
+
 	@IBAction func refreshAll(_ sender: Any?) {
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.present)
 	}
@@ -686,6 +698,32 @@ let appName = "NetNewsWire"
 // MARK: - Debug Menu
 extension AppDelegate {
 
+	#if DEBUG
+	func postFakeErrorsForTesting() {
+		let fakeErrors: [(String, Int, String)] = [
+			("On My Mac", AccountType.onMyMac.rawValue, "HTTP 404 Not Found: https://example.com/feed.xml"),
+			("Feedbin", AccountType.feedbin.rawValue, "HTTP 401 Unauthorized"),
+			("iCloud", AccountType.cloudKit.rawValue, "HTTP 429 Too Many Requests: https://daringfireball.net/feeds/main"),
+			("NewsBlur", AccountType.newsBlur.rawValue, "The operation couldn\u{2019}t be completed. Network connection lost."),
+			("FreshRSS", AccountType.freshRSS.rawValue, "HTTP 403 Forbidden: https://freshrss.example.com/api/greader.php"),
+			("Feedly", AccountType.feedly.rawValue, "HTTP 500 Internal Server Error: https://cloud.feedly.com/v3/streams"),
+			("Inoreader", AccountType.inoreader.rawValue, "The request timed out."),
+			("BazQux", AccountType.bazQux.rawValue, "HTTP 502 Bad Gateway: https://www.bazqux.com/reader/api"),
+			("The Old Reader", AccountType.theOldReader.rawValue, "A server with the specified hostname could not be found.")
+		]
+
+		for (accountName, accountType, message) in fakeErrors {
+			let error = NSError(domain: "NetNewsWire", code: 0, userInfo: [NSLocalizedDescriptionKey: message])
+			let userInfo: [String: Any] = [
+				Account.UserInfoKey.syncError: error as Error,
+				Account.UserInfoKey.accountName: accountName,
+				Account.UserInfoKey.accountType: accountType
+			]
+			NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
+		}
+	}
+	#endif
+
 	@IBAction func debugSearch(_ sender: Any?) {
 		AccountManager.shared.defaultAccount.debugRunSearch()
 	}
@@ -763,6 +801,7 @@ extension AppDelegate {
 	func saveState() {
 		mainWindowController?.saveStateToUserDefaults()
 		inspectorWindowController?.saveState()
+		errorLogWindowController?.saveState()
 	}
 
 	@MainActor func updateSortMenuItems() {
