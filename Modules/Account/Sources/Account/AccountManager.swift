@@ -296,7 +296,7 @@ import ErrorLog
 					do {
 						try await account.refreshAll()
 					} catch {
-						let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountTypeRawValue, errorMessage: error.localizedDescription)
+						let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountTypeRawValue, operation: "Refreshing", errorMessage: error.localizedDescription)
 						NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 						errorHandler?(error)
 					}
