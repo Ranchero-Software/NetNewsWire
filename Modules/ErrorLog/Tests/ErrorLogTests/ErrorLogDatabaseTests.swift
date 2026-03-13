@@ -9,7 +9,7 @@ import Testing
 import Foundation
 @testable import ErrorLog
 
-@Suite(.serialized) struct ErrorLogDatabaseTests {
+@Suite struct ErrorLogDatabaseTests {
 
 	private func temporaryDatabasePath() -> String {
 		let tempDir = NSTemporaryDirectory()
@@ -28,7 +28,7 @@ import Foundation
 		defer { deleteDatabaseFiles(at: path) }
 
 		let database = ErrorLogDatabase(databasePath: path)
-		await database.addEntry(sourceName: "TestAccount", sourceID: 1, operation: "Refreshing", errorMessage: "Something went wrong")
+		await database.addEntry(sourceName: "TestAccount", sourceID: 1, operation: "Refreshing", fileName: "Account/TestFile.swift", functionName: "testFunction()", lineNumber: 42, errorMessage: "Something went wrong")
 
 		let entries = await database.allEntries()
 		#expect(entries.count == 1)
@@ -37,6 +37,9 @@ import Foundation
 		#expect(entry.sourceName == "TestAccount")
 		#expect(entry.sourceID == 1)
 		#expect(entry.operation == "Refreshing")
+		#expect(entry.fileName == "Account/TestFile.swift")
+		#expect(entry.functionName == "testFunction()")
+		#expect(entry.lineNumber == 42)
 		#expect(entry.errorMessage == "Something went wrong")
 		#expect(entry.id > 0)
 	}
@@ -46,9 +49,9 @@ import Foundation
 		defer { deleteDatabaseFiles(at: path) }
 
 		let database = ErrorLogDatabase(databasePath: path)
-		await database.addEntry(sourceName: "First", sourceID: 1, operation: "Refreshing", errorMessage: "Error 1")
-		await database.addEntry(sourceName: "Second", sourceID: 2, operation: "Syncing", errorMessage: "Error 2")
-		await database.addEntry(sourceName: "Third", sourceID: 3, operation: "Downloading feed", errorMessage: "Error 3")
+		await database.addEntry(sourceName: "First", sourceID: 1, operation: "Refreshing", fileName: "Account/A.swift", functionName: "refresh()", lineNumber: 10, errorMessage: "Error 1")
+		await database.addEntry(sourceName: "Second", sourceID: 2, operation: "Syncing", fileName: "Account/B.swift", functionName: "sync()", lineNumber: 20, errorMessage: "Error 2")
+		await database.addEntry(sourceName: "Third", sourceID: 3, operation: "Downloading feed", fileName: "Account/C.swift", functionName: "download()", lineNumber: 30, errorMessage: "Error 3")
 
 		let entries = await database.allEntries()
 		#expect(entries.count == 3)
@@ -65,7 +68,7 @@ import Foundation
 
 		let database = ErrorLogDatabase(databasePath: path)
 		for i in 1...210 {
-			await database.addEntry(sourceName: "Account", sourceID: 1, operation: "Refreshing", errorMessage: "Error \(i)")
+			await database.addEntry(sourceName: "Account", sourceID: 1, operation: "Refreshing", fileName: "Account/Test.swift", functionName: "refresh()", lineNumber: i, errorMessage: "Error \(i)")
 		}
 
 		let entriesBeforePrune = await database.allEntries()

@@ -13,12 +13,15 @@ struct ErrorLogTable {
 
 	static let name = "errors"
 
-	static func insertEntry(sourceName: String, sourceID: Int, operation: String, errorMessage: String, database: FMDatabase) {
+	static func insertEntry(sourceName: String, sourceID: Int, operation: String, fileName: String, functionName: String, lineNumber: Int, errorMessage: String, database: FMDatabase) {
 		let dictionary: DatabaseDictionary = [
 			ErrorLogEntry.DatabaseKey.date: Date().timeIntervalSince1970,
 			ErrorLogEntry.DatabaseKey.sourceName: sourceName,
 			ErrorLogEntry.DatabaseKey.sourceID: sourceID,
 			ErrorLogEntry.DatabaseKey.operation: operation,
+			ErrorLogEntry.DatabaseKey.fileName: fileName,
+			ErrorLogEntry.DatabaseKey.functionName: functionName,
+			ErrorLogEntry.DatabaseKey.lineNumber: lineNumber,
 			ErrorLogEntry.DatabaseKey.errorMessage: errorMessage
 		]
 		database.insertRow(dictionary, insertType: .normal, tableName: name)
@@ -57,7 +60,10 @@ private extension ErrorLogTable {
 		let date = Date(timeIntervalSince1970: row.double(forColumn: ErrorLogEntry.DatabaseKey.date))
 		let sourceID = Int(row.int(forColumn: ErrorLogEntry.DatabaseKey.sourceID))
 		let operation = row.string(forColumn: ErrorLogEntry.DatabaseKey.operation) ?? ""
+		let fileName = row.string(forColumn: ErrorLogEntry.DatabaseKey.fileName) ?? ""
+		let functionName = row.string(forColumn: ErrorLogEntry.DatabaseKey.functionName) ?? ""
+		let lineNumber = Int(row.int(forColumn: ErrorLogEntry.DatabaseKey.lineNumber))
 
-		return ErrorLogEntry(id: id, date: date, sourceName: sourceName, sourceID: sourceID, operation: operation, errorMessage: errorMessage)
+		return ErrorLogEntry(id: id, date: date, sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage)
 	}
 }

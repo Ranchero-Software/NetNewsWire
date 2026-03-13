@@ -14,7 +14,7 @@ public actor ErrorLogDatabase {
 
 	private let database: FMDatabase
 
-	private static let tableCreationStatements = "CREATE TABLE if not EXISTS errors (id INTEGER PRIMARY KEY AUTOINCREMENT, date REAL NOT NULL, sourceName TEXT NOT NULL, sourceID INTEGER NOT NULL, operation TEXT NOT NULL, errorMessage TEXT NOT NULL);"
+	private static let tableCreationStatements = "CREATE TABLE if not EXISTS errors (id INTEGER PRIMARY KEY AUTOINCREMENT, date REAL NOT NULL, sourceName TEXT NOT NULL, sourceID INTEGER NOT NULL, operation TEXT NOT NULL DEFAULT '', fileName TEXT NOT NULL DEFAULT '', functionName TEXT NOT NULL DEFAULT '', lineNumber INTEGER NOT NULL DEFAULT 0, errorMessage TEXT NOT NULL);"
 
 	private static let pruneLimit = 200
 
@@ -31,8 +31,8 @@ public actor ErrorLogDatabase {
 		}
 	}
 
-	public func addEntry(sourceName: String, sourceID: Int, operation: String, errorMessage: String) {
-		ErrorLogTable.insertEntry(sourceName: sourceName, sourceID: sourceID, operation: operation, errorMessage: errorMessage, database: database)
+	public func addEntry(sourceName: String, sourceID: Int, operation: String, fileName: String, functionName: String, lineNumber: Int, errorMessage: String) {
+		ErrorLogTable.insertEntry(sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage, database: database)
 	}
 
 	public func allEntries() -> [ErrorLogEntry] {
@@ -47,9 +47,14 @@ public actor ErrorLogDatabase {
 			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
 			return
 		}
+		
 		let operation = notification.userInfo?[ErrorLogUserInfoKey.operation] as? String ?? ""
+		let fileName = notification.userInfo?[ErrorLogUserInfoKey.fileName] as? String ?? ""
+		let functionName = notification.userInfo?[ErrorLogUserInfoKey.functionName] as? String ?? ""
+		let lineNumber = notification.userInfo?[ErrorLogUserInfoKey.lineNumber] as? Int ?? 0
+
 		Task {
-			await addEntry(sourceName: sourceName, sourceID: sourceID, operation: operation, errorMessage: errorMessage)
+			await addEntry(sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage)
 		}
 	}
 }
