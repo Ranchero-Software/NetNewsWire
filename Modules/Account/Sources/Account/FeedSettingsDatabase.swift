@@ -60,7 +60,7 @@ import Articles
 		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
 		if !Platform.isRunningUnitTests {
-			database.vacuumIfNeeded(daysBetweenVacuums: 30, filepath: databasePath)
+			database.vacuum()
 		}
 	}
 

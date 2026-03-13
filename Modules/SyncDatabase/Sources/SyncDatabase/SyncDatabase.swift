@@ -19,7 +19,7 @@ public actor SyncDatabase {
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.runCreateStatements(Self.tableCreationStatements)
 		if !Platform.isRunningUnitTests {
-			database.vacuumIfNeeded(daysBetweenVacuums: 11, filepath: databasePath)
+			database.vacuum()
 		}
 
 		self.database = database
