@@ -168,7 +168,18 @@ import os
 			Self.logger.debug("LocalAccountRefresher: parsing feed for \(url.absoluteString)")
 
 			let parserData = ParserData(url: feed.url, data: data)
-			guard let parsedFeed = try? await FeedParser.parse(parserData) else {
+			let parsedFeed: ParsedFeed
+			do {
+				guard let result = try await FeedParser.parse(parserData) else {
+					return
+				}
+				parsedFeed = result
+			} catch {
+				Self.logger.error("LocalAccountRefresher: feed parse error for \(url.absoluteString): \(error.localizedDescription)")
+				if let account = feed.account {
+					let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Parsing feed", errorMessage: "\(error.localizedDescription): \(url.absoluteString)")
+					NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+				}
 				return
 			}
 			guard let account = feed.account else {
