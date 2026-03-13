@@ -16,6 +16,17 @@ import Account
 
 final class SettingsViewController: UITableViewController {
 
+	private enum Section: Int {
+		case notifications = 0
+		case accounts = 1
+		case feeds = 2
+		case timeline = 3
+		case articles = 4
+		case appearance = 5
+		case troubleshooting = 6
+		case help = 7
+	}
+
 	private weak var opmlAccount: Account?
 
 	@IBOutlet var timelineSortOrderSwitch: UISwitch!
@@ -111,7 +122,7 @@ final class SettingsViewController: UITableViewController {
 		self.tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 
 		if scrollToArticlesSection {
-			tableView.scrollToRow(at: IndexPath(row: 0, section: 4), at: .top, animated: true)
+			tableView.scrollToRow(at: IndexPath(row: 0, section: Section.articles.rawValue), at: .top, animated: true)
 			scrollToArticlesSection = false
 		}
 
@@ -121,16 +132,16 @@ final class SettingsViewController: UITableViewController {
 
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 
-		switch section {
-		case 1:
+		switch Section(rawValue: section) {
+		case .accounts:
 			return AccountManager.shared.accounts.count + 1
-		case 2:
+		case .feeds:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if AccountManager.shared.activeAccounts.isEmpty || AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() {
 				return defaultNumberOfRows - 1
 			}
 			return defaultNumberOfRows
-		case 4:
+		case .articles:
 			return traitCollection.userInterfaceIdiom == .phone ? 5 : 4
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
@@ -140,8 +151,8 @@ final class SettingsViewController: UITableViewController {
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 
 		let cell: UITableViewCell
-		switch indexPath.section {
-		case 1:
+		switch Section(rawValue: indexPath.section) {
+		case .accounts:
 
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
@@ -165,11 +176,11 @@ final class SettingsViewController: UITableViewController {
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-		switch indexPath.section {
-		case 0:
+		switch Section(rawValue: indexPath.section) {
+		case .notifications:
 			UIApplication.shared.open(URL(string: "\(UIApplication.openSettingsURLString)")!)
 			tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-		case 1:
+		case .accounts:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				let controller = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
@@ -179,7 +190,7 @@ final class SettingsViewController: UITableViewController {
 				controller.account = sortedAccounts[indexPath.row]
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
-		case 2:
+		case .feeds:
 			switch indexPath.row {
 			case 0:
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
@@ -199,7 +210,7 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case 3:
+		case .timeline:
 			switch indexPath.row {
 			case 3:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerCollectionViewController.self)
@@ -207,7 +218,7 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case 4:
+		case .articles:
 			switch indexPath.row {
 			case 0:
 				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
@@ -215,13 +226,13 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case 5:
+		case .appearance:
 			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
 			self.navigationController?.pushViewController(colorPalette, animated: true)
-		case 6:
+		case .troubleshooting:
 			let hosting = UIHostingController(rootView: ErrorLogView())
 			self.navigationController?.pushViewController(hosting, animated: true)
-		case 7:
+		case .help:
 			switch indexPath.row {
 			case 0:
 				openURL(HelpURL.helpHome.rawValue)
