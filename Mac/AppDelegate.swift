@@ -266,9 +266,9 @@ let appName = "NetNewsWire"
 			}
 		}
 
-		#if DEBUG
-		postFakeErrorsForTesting()
-		#endif
+//		#if DEBUG
+//		postFakeErrorsForTesting()
+//		#endif
 	}
 
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
@@ -709,7 +709,7 @@ extension AppDelegate {
 			("On My Mac", AccountType.onMyMac.rawValue, "Downloading feed", "HTTP 404 Not Found: https://example.com/feed.xml"),
 			("Feedbin", AccountType.feedbin.rawValue, "Syncing starred status", "HTTP 401 Unauthorized"),
 			("iCloud", AccountType.cloudKit.rawValue, "Refreshing", "HTTP 429 Too Many Requests: https://daringfireball.net/feeds/main"),
-			("NewsBlur", AccountType.newsBlur.rawValue, "Syncing read status", "The operation couldn\u{2019}t be completed. Network connection lost."),
+			("NewsBlur", AccountType.newsBlur.rawValue, "Syncing read status", "The operation couldn’t be completed. Network connection lost."),
 			("FreshRSS", AccountType.freshRSS.rawValue, "Refreshing articles", "HTTP 403 Forbidden: https://freshrss.example.com/api/greader.php"),
 			("Feedly", AccountType.feedly.rawValue, "Restoring feed", "HTTP 500 Internal Server Error: https://cloud.feedly.com/v3/streams"),
 			("Inoreader", AccountType.inoreader.rawValue, "Refreshing", "The request timed out."),
