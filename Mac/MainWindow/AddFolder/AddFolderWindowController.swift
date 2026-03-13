@@ -47,7 +47,7 @@ final class AddFolderWindowController: NSWindowController {
 		accountPopupButton.menu = menu
 
 		let sortedAccounts = AccountManager.shared.sortedActiveAccounts
-		let accounts = sortedAccounts.filter { !$0.behaviors.contains(.disallowFolderManagement) }
+		let accounts: [Account] = sortedAccounts.filter { !$0.behaviors.contains(.disallowFolderManagement) }
 
 		for oneAccount in accounts {
 
