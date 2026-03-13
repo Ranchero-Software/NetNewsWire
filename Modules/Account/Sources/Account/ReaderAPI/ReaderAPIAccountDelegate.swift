@@ -266,7 +266,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					} catch {
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder — remove feed 1 error: \(error.localizedDescription)")
-						postSyncError(error, account: account)
+						postSyncError(error, account: account, operation: "Removing feed from folder")
 					}
 				}
 
@@ -282,7 +282,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder - remove feed 2 error: \(error.localizedDescription)")
-						postSyncError(error, account: account)
+						postSyncError(error, account: account, operation: "Removing feed from folder")
 					}
 				}
 			}
@@ -460,7 +460,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				try await restoreFeed(for: account, feed: feed, container: folder)
 			} catch {
 				Self.logger.error("ReaderAPIAccountDelegate: restoreFolder — error: \(error.localizedDescription)")
-				postSyncError(error, account: account)
+				postSyncError(error, account: account, operation: "Restoring feed to folder")
 			}
 		}
 
@@ -825,7 +825,7 @@ private extension ReaderAPIAccountDelegate {
 					await processEntries(account: account, entries: entries)
 				} catch {
 					Self.logger.error("ReaderAPI: Refresh missing articles error: \(error.localizedDescription)")
-					postSyncError(error, account: account)
+					postSyncError(error, account: account, operation: "Refreshing missing articles")
 				}
 			}
 
@@ -944,8 +944,8 @@ private extension ReaderAPIAccountDelegate {
 		}
 	}
 
-	func postSyncError(_ error: Error, account: Account) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, errorMessage: error.localizedDescription)
+	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
