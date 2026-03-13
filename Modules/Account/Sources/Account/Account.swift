@@ -18,6 +18,7 @@ import RSDatabase
 import ArticlesDatabase
 import RSWeb
 import Secrets
+import ErrorLog
 import os.log
 
 // Main thread only.
@@ -349,7 +350,13 @@ public enum FetchType {
 			assertionFailure()
 			return
 		}
-		try CredentialsManager.storeCredentials(credentials, server: server)
+		do {
+			try CredentialsManager.storeCredentials(credentials, server: server)
+		} catch {
+			Self.logger.error("Account: storeCredentials: failed to store credentials: \(error.localizedDescription, privacy: .public)")
+			postCredentialError(error, operation: "Storing credentials")
+			throw error
+		}
 		delegate.credentials = credentials
 	}
 
@@ -366,6 +373,7 @@ public enum FetchType {
 			return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 		} catch {
 			Self.logger.error("Account: retrieveCredentials: failed to retrieve \(type.rawValue, privacy: .public) credentials: \(error.localizedDescription, privacy: .public)")
+			postCredentialError(error, operation: "Retrieving credentials")
 			throw error
 		}
 	}
@@ -374,7 +382,13 @@ public enum FetchType {
 		guard let username = self.username, let server = delegate.server else {
 			return
 		}
-		try CredentialsManager.removeCredentials(type: type, server: server, username: username)
+		do {
+			try CredentialsManager.removeCredentials(type: type, server: server, username: username)
+		} catch {
+			Self.logger.error("Account: removeCredentials: failed to remove credentials: \(error.localizedDescription, privacy: .public)")
+			postCredentialError(error, operation: "Removing credentials")
+			throw error
+		}
 	}
 
 	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
@@ -1088,6 +1102,13 @@ public enum FetchType {
 // MARK: - Fetching Articles (Private)
 
 private extension Account {
+
+	// MARK: - Credential Errors
+
+	func postCredentialError(_ error: Error, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: nameForDisplay, sourceID: type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+	}
 
 	// MARK: - Starred Articles
 
