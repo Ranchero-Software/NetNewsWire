@@ -108,7 +108,10 @@ import ErrorLog
 		let lineNumber = notification.userInfo?[ErrorLogUserInfoKey.lineNumber] as? Int ?? 0
 
 		let entry = ErrorLogEntry(id: 0, date: Date(), sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage)
-		appendEntry(entry)
+
+		Task { @MainActor in
+			appendEntry(entry)
+		}
 	}
 }
 
