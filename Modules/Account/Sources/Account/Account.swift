@@ -30,7 +30,6 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
-	static let AccountDidEncounterSyncError = Notification.Name(rawValue: "AccountDidEncounterSyncError")
 }
 
 nonisolated public enum AccountType: Int, Codable, Sendable {
@@ -98,9 +97,6 @@ public enum FetchType {
 		public static let statusKey = "statusKey" // StatusesDidChange
 		public static let statusFlag = "statusFlag" // StatusesDidChange
 		public static let feeds = "feeds" // AccountDidDownloadArticles, StatusesDidChange
-		public static let syncError = "syncError"
-		public static let accountName = "accountName"
-		public static let accountType = "accountType"
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
 
