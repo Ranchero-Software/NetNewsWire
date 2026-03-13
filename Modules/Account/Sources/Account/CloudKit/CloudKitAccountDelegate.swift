@@ -690,7 +690,14 @@ private extension CloudKitAccountDelegate {
 				syncProgress.completeTask()
 
 				try await sendArticleStatus(account: account, showProgress: true)
-				try? await articlesZone.fetchChangesInZone()
+				do {
+					try await articlesZone.fetchChangesInZone()
+				} catch {
+					Self.logger.error("CloudKitAccountDelegate: fetchChangesInZone error: \(error.localizedDescription)")
+					if let account = self.account {
+						postSyncError(error, account: account, operation: "Fetching zone changes")
+					}
+				}
 			} catch {
 				Self.logger.error("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")
 			}
