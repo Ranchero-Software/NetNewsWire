@@ -32,14 +32,7 @@ struct ErrorLogTable {
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 			return []
 		}
-
-		var entries = [ErrorLogEntry]()
-		while resultSet.next() {
-			if let entry = entryWithRow(resultSet) {
-				entries.append(entry)
-			}
-		}
-		return entries
+		return resultSet.compactMap(entryWithRow)
 	}
 
 	static func pruneEntries(limit: Int, database: FMDatabase) {
