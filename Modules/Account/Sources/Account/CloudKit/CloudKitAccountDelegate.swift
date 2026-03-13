@@ -347,7 +347,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			for await result in group {
 				if case .failure(let error) = result {
 					errorOccurred = true
-					postSyncError(error, account: account)
+					postSyncError(error, account: account, operation: "Removing folder")
 				}
 			}
 		}
@@ -405,7 +405,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 				for await error in group {
 					if let error {
-						postSyncError(error, account: account)
+						postSyncError(error, account: account, operation: "Restoring folder")
 					}
 				}
 			}
@@ -451,7 +451,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 				} catch {
 					Self.logger.error("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")
 					if let account = self.account {
-						self.postSyncError(error, account: account)
+						self.postSyncError(error, account: account, operation: "Creating account")
 					}
 				}
 			}
@@ -709,8 +709,8 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func postSyncError(_ error: Error, account: Account) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, errorMessage: error.localizedDescription)
+	func postSyncError(_ error: Error, account: Account, operation: String) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 

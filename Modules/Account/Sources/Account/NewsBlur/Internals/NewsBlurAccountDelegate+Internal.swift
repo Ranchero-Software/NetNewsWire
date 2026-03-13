@@ -307,7 +307,7 @@ import os.log
 			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		} catch {
 			Self.logger.error("NewsBlur: Sync Story Read Status failed: \(error.localizedDescription)")
-			postSyncError(error, account: account)
+			postSyncError(error, account: account, operation: "Syncing read status")
 		}
 	}
 
@@ -335,7 +335,7 @@ import os.log
 			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 		} catch {
 			Self.logger.error("NewsBlur: Sync Story Starred Status failed: \(error.localizedDescription)")
-			postSyncError(error, account: account)
+			postSyncError(error, account: account, operation: "Syncing starred status")
 		}
 	}
 
