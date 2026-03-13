@@ -15,6 +15,7 @@ import RSWeb
 import Account
 import Articles
 import Secrets
+import ErrorLog
 
 @MainActor var appDelegate: AppDelegate!
 
@@ -103,6 +104,7 @@ import Secrets
 
 		#if DEBUG
 		ArticleStatusSyncTimer.shared.update()
+//		postFakeErrorsForTesting()
 		#endif
 
 		return true
@@ -456,4 +458,30 @@ private extension AppDelegate {
 			suspendApplication()
 		}
 	}
+}
+
+// MARK: - Debug
+
+extension AppDelegate {
+
+	#if DEBUG
+	func postFakeErrorsForTesting() {
+		let fakeErrors: [(String, Int, String, String)] = [
+			("On My Mac", AccountType.onMyMac.rawValue, "Downloading feed", "HTTP 404 Not Found: https://example.com/feed.xml"),
+			("Feedbin", AccountType.feedbin.rawValue, "Syncing starred status", "HTTP 401 Unauthorized"),
+			("iCloud", AccountType.cloudKit.rawValue, "Refreshing", "HTTP 429 Too Many Requests: https://daringfireball.net/feeds/main"),
+			("Feedly", AccountType.feedly.rawValue, "Fetching articles", "The request timed out."),
+			("NewsBlur", AccountType.newsBlur.rawValue, "Refreshing feeds", "HTTP 503 Service Unavailable"),
+			("FreshRSS", AccountType.freshRSS.rawValue, "Syncing", "Could not connect to the server."),
+			("Inoreader", AccountType.inoreader.rawValue, "Fetching unread counts", "HTTP 500 Internal Server Error"),
+			("BazQux", AccountType.bazQux.rawValue, "Syncing articles", "The Internet connection appears to be offline."),
+			("The Old Reader", AccountType.theOldReader.rawValue, "Refreshing articles", "A server with the specified hostname could not be found.")
+		]
+
+		for (accountName, accountType, operation, message) in fakeErrors {
+			let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountType, operation: operation, errorMessage: message)
+			NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+		}
+	}
+	#endif
 }

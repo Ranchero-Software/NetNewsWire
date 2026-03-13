@@ -219,6 +219,9 @@ final class SettingsViewController: UITableViewController {
 			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
 			self.navigationController?.pushViewController(colorPalette, animated: true)
 		case 6:
+			let hosting = UIHostingController(rootView: ErrorLogView())
+			self.navigationController?.pushViewController(hosting, animated: true)
+		case 7:
 			switch indexPath.row {
 			case 0:
 				openURL(HelpURL.helpHome.rawValue)
