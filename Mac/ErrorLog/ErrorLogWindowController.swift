@@ -102,8 +102,12 @@ import ErrorLog
 			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
 			return
 		}
+		let operation = notification.userInfo?[ErrorLogUserInfoKey.operation] as? String ?? ""
+		let fileName = notification.userInfo?[ErrorLogUserInfoKey.fileName] as? String ?? ""
+		let functionName = notification.userInfo?[ErrorLogUserInfoKey.functionName] as? String ?? ""
+		let lineNumber = notification.userInfo?[ErrorLogUserInfoKey.lineNumber] as? Int ?? 0
 
-		let entry = ErrorLogEntry(id: 0, date: Date(), sourceName: sourceName, sourceID: sourceID, errorMessage: errorMessage)
+		let entry = ErrorLogEntry(id: 0, date: Date(), sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage)
 		appendEntry(entry)
 	}
 }
@@ -272,7 +276,12 @@ private extension ErrorLogWindowController {
 		]
 		result.append(NSAttributedString(string: timestampString, attributes: timestampAttributes))
 
-		let sourceNameString = "\(entry.sourceName): "
+		let sourceNameString: String
+		if entry.operation.isEmpty {
+			sourceNameString = "\(entry.sourceName): "
+		} else {
+			sourceNameString = "\(entry.sourceName) — \(entry.operation): "
+		}
 		let sourceColor = color(for: entry.sourceID)
 		let sourceAttributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: sourceColor,
@@ -286,7 +295,19 @@ private extension ErrorLogWindowController {
 			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
 			.paragraphStyle: Self.entryParagraphStyle
 		]
-		result.append(NSAttributedString(string: entry.errorMessage + "\n", attributes: messageAttributes))
+		result.append(NSAttributedString(string: entry.errorMessage, attributes: messageAttributes))
+
+		if !entry.functionName.isEmpty {
+			let locationString = " (\(entry.fileName):\(entry.functionName):\(entry.lineNumber))"
+			let locationAttributes: [NSAttributedString.Key: Any] = [
+				.foregroundColor: NSColor.tertiaryLabelColor,
+				.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
+				.paragraphStyle: Self.entryParagraphStyle
+			]
+			result.append(NSAttributedString(string: locationString, attributes: locationAttributes))
+		}
+
+		result.append(NSAttributedString(string: "\n", attributes: messageAttributes))
 
 		return result
 	}
