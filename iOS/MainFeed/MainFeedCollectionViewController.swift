@@ -212,6 +212,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 							alert.addAction(action)
 						}
 
+						if let action = self.markUnstarredAsReadAlertAction(indexPath: indexPath, completion: completion) {
+							alert.addAction(action)
+						}
+
 						let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 						alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 							completion(true)
@@ -870,6 +874,10 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
 
+			if let markUnstarredAction = self.markUnstarredAsReadAction(account: account, contentView: interaction.view) {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markUnstarredAction]))
+			}
+
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.deactivateAccountAction(account: account)]))
 
 			return UIMenu(title: "", children: menuElements)
@@ -920,6 +928,10 @@ extension MainFeedCollectionViewController {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
 
+			if let markUnstarredAction = self.markUnstarredAsReadAction(indexPath: indexPath) {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markUnstarredAction]))
+			}
+
 			if includeDeleteRename {
 				menuElements.append(UIMenu(title: "",
 										   options: .displayInline,
@@ -946,6 +958,10 @@ extension MainFeedCollectionViewController {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
 			}
 
+			if let markUnstarredAction = self.markUnstarredAsReadAction(indexPath: indexPath) {
+				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markUnstarredAction]))
+			}
+
 			menuElements.append(UIMenu(title: "",
 									   options: .displayInline,
 									   children: [
@@ -959,12 +975,21 @@ extension MainFeedCollectionViewController {
 	}
 
 	func makePseudoFeedContextMenu(indexPath: IndexPath) -> UIContextMenuConfiguration? {
-		guard let markAllAction = self.markAllAsReadAction(indexPath: indexPath) else {
+		var actions = [UIAction]()
+
+		if let markAllAction = self.markAllAsReadAction(indexPath: indexPath) {
+			actions.append(markAllAction)
+		}
+		if let markUnstarredAction = self.markUnstarredAsReadAction(indexPath: indexPath) {
+			actions.append(markUnstarredAction)
+		}
+
+		guard !actions.isEmpty else {
 			return nil
 		}
 
 		return UIContextMenuConfiguration(identifier: MainFeedRowIdentifier(indexPath: indexPath), previewProvider: nil, actionProvider: { _ in
-			return UIMenu(title: "", children: [markAllAction])
+			return UIMenu(title: "", children: actions)
 		})
 	}
 
@@ -1171,6 +1196,76 @@ extension MainFeedCollectionViewController {
 			}
 		}
 
+		return action
+	}
+
+	func markUnstarredAsReadAction(indexPath: IndexPath) -> UIAction? {
+		guard let sidebarItem = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? SidebarItem,
+			  let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView,
+			  sidebarItem.unreadCount > 0,
+			  let articles = try? sidebarItem.fetchUnreadArticles(),
+			  Array(articles).unreadUnstarredArticles() != nil else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Unstarred as Read", comment: "Command")
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				if let articles = try? sidebarItem.fetchUnreadArticles(),
+				   let unstarred = Array(articles).unreadUnstarredArticles() {
+					self?.coordinator.markAllAsRead(unstarred)
+				}
+			}
+		}
+		return action
+	}
+
+	func markUnstarredAsReadAction(account: Account, contentView: UIView?) -> UIAction? {
+		guard account.unreadCount > 0, let contentView else {
+			return nil
+		}
+		guard let articles = try? account.fetchArticles(.unread()),
+			  Array(articles).unreadUnstarredArticles() != nil else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Unstarred as Read", comment: "Command")
+		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					if let articles = try? account.fetchArticles(.unread()),
+					   let unstarred = Array(articles).unreadUnstarredArticles() {
+						self?.coordinator.markAllAsRead(unstarred)
+					}
+				}
+			}
+		}
+		return action
+	}
+
+	func markUnstarredAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
+		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
+			  feed.unreadCount > 0,
+			  let articles = try? feed.fetchArticles(),
+			  Array(articles).unreadUnstarredArticles() != nil,
+			  let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+			return nil
+		}
+
+		let title = NSLocalizedString("Mark Unstarred as Read", comment: "Command")
+		let cancel = {
+			completion(true)
+		}
+
+		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
+			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
+				if let articles = try? feed.fetchArticles(),
+				   let unstarred = Array(articles).unreadUnstarredArticles() {
+					self?.coordinator.markAllAsRead(unstarred)
+				}
+				completion(true)
+			}
+		}
 		return action
 	}
 
