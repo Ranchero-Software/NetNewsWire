@@ -43,7 +43,7 @@ import ErrorLog
 
 	init() {
 		let window = NSWindow(contentRect: NSRect(origin: .zero, size: Self.defaultWindowSize), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: true)
-		window.title = NSLocalizedString("Errors", comment: "Errors window title")
+		window.title = NSLocalizedString("Error Log", comment: "Error Log window title")
 		window.minSize = Self.minimumWindowSize
 		window.isReleasedWhenClosed = false
 		window.setFrameAutosaveName(Self.errorLogWindowAutosaveFrameName)
