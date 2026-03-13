@@ -1,11 +1,11 @@
 # Mac Release Notes
 
-### 7.0.2b3 7022 13 Mar 2026 — branch: main tag: mac-7.0.2b3
+### 7.0.2b3 7024 13 Mar 2026 — branch: main tag: mac-7.0.2b3
 
 Further improved the error message reporting for credentials errors, to help us get closer to fixing the credentials bugs some people are seeing
-Added a new Error Log window — see Window > Error Log. It shows errors from refreshing, syncing, etc. (Note: probably doesn’t show all possible errors yet. We’re still auditing the code for places to add error logging.)
+Added a new Error Log window — see Window > Error Log. It shows errors from refreshing, syncing, keychain, etc. (Note: it probably doesn’t show all possible errors yet. We’re still auditing the code for places to add error logging.)
 
-### 7.0.2b2 7022 8 Mar 2026 — branch: main tag: mac-7.0.2b2
+### 7.0.2b2 7023 8 Mar 2026 — branch: main tag: mac-7.0.2b2
 
 Moved account settings to UserDefaults storage to make it more reliable
 Created specific for errors for CredentialError, so we can know better what happened when an error occurs
