@@ -12,6 +12,7 @@ import RSCore
 import RSWeb
 import Articles
 import ArticlesDatabase
+import ErrorLog
 
 @MainActor public final class AccountManager: UnreadCountProvider {
 	
@@ -295,12 +296,8 @@ import ArticlesDatabase
 					do {
 						try await account.refreshAll()
 					} catch {
-						let userInfo: [String: Any] = [
-							Account.UserInfoKey.syncError: error,
-							Account.UserInfoKey.accountName: accountName,
-							Account.UserInfoKey.accountType: accountTypeRawValue
-						]
-						NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
+						let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountTypeRawValue, errorMessage: error.localizedDescription)
+						NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 						errorHandler?(error)
 					}
 				}

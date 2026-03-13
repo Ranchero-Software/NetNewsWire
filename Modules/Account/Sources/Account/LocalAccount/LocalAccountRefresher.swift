@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ErrorLog
 import RSCore
 import RSParser
 import RSWeb
@@ -197,12 +198,8 @@ import os
 		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
 		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
 
-		let userInfo: [String: Any] = [
-			Account.UserInfoKey.syncError: error as Error,
-			Account.UserInfoKey.accountName: account.nameForDisplay,
-			Account.UserInfoKey.accountType: account.type.rawValue
-		]
-		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, errorMessage: error.localizedDescription)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, url: URL) -> Bool {

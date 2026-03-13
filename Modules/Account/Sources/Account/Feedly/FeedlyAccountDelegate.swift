@@ -7,6 +7,7 @@
 //
 
 import Articles
+import ErrorLog
 import RSCore
 import RSParser
 import RSWeb
@@ -716,12 +717,8 @@ import Secrets
 private extension FeedlyAccountDelegate {
 
 	func postSyncError(_ error: Error, account: Account) {
-		let userInfo: [String: Any] = [
-			Account.UserInfoKey.syncError: error,
-			Account.UserInfoKey.accountName: account.nameForDisplay,
-			Account.UserInfoKey.accountType: account.type.rawValue
-		]
-		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, errorMessage: error.localizedDescription)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
 

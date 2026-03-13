@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import ErrorLog
 import SystemConfiguration
 import os.log
 import RSCore
@@ -709,12 +710,8 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func postSyncError(_ error: Error, account: Account) {
-		let userInfo: [String: Any] = [
-			Account.UserInfoKey.syncError: error,
-			Account.UserInfoKey.accountName: account.nameForDisplay,
-			Account.UserInfoKey.accountType: account.type.rawValue
-		]
-		NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, errorMessage: error.localizedDescription)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 
 	func storeArticleChanges(new: Set<Article>?, updated: Set<Article>?, deleted: Set<Article>?) async {

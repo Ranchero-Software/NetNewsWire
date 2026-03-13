@@ -11,6 +11,7 @@ import UserNotifications
 import os
 import Articles
 import Account
+import ErrorLog
 import RSCore
 import RSCoreResources
 import RSWeb
@@ -713,13 +714,8 @@ extension AppDelegate {
 		]
 
 		for (accountName, accountType, message) in fakeErrors {
-			let error = NSError(domain: "NetNewsWire", code: 0, userInfo: [NSLocalizedDescriptionKey: message])
-			let userInfo: [String: Any] = [
-				Account.UserInfoKey.syncError: error as Error,
-				Account.UserInfoKey.accountName: accountName,
-				Account.UserInfoKey.accountType: accountType
-			]
-			NotificationCenter.default.post(name: .AccountDidEncounterSyncError, object: self, userInfo: userInfo)
+			let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountType, errorMessage: message)
+			NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 		}
 	}
 	#endif
