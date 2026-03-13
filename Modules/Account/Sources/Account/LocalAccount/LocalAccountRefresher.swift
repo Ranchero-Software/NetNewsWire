@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ErrorLog
 import RSCore
 import RSParser
 import RSWeb
@@ -167,7 +168,18 @@ import os
 			Self.logger.debug("LocalAccountRefresher: parsing feed for \(url.absoluteString)")
 
 			let parserData = ParserData(url: feed.url, data: data)
-			guard let parsedFeed = try? await FeedParser.parse(parserData) else {
+			let parsedFeed: ParsedFeed
+			do {
+				guard let result = try await FeedParser.parse(parserData) else {
+					return
+				}
+				parsedFeed = result
+			} catch {
+				Self.logger.error("LocalAccountRefresher: feed parse error for \(url.absoluteString): \(error.localizedDescription)")
+				if let account = feed.account {
+					let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Parsing feed", errorMessage: "\(error.localizedDescription): \(url.absoluteString)")
+					NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+				}
 				return
 			}
 			guard let account = feed.account else {
@@ -184,6 +196,21 @@ import os
 
 			self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
 		}
+	}
+
+	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL) {
+		guard let feed = urlToFeedDictionary[url.absoluteString],
+			  let account = feed.account else {
+			return
+		}
+
+		let transportError = TransportError.httpError(status: statusCode)
+		let statusDescription = transportError.localizedDescription
+		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
+		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Downloading feed", errorMessage: error.localizedDescription)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, url: URL) -> Bool {

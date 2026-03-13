@@ -7,6 +7,7 @@
 
 import Foundation
 import RSDatabaseObjC
+import os
 
 public extension FMDatabase {
 
@@ -50,8 +51,26 @@ public extension FMDatabase {
 		}
 	}
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FMDatabase")
+
 	func vacuum() {
+		let shortName: String
+		if let path = databasePath() {
+			let components = (path as NSString).pathComponents
+			let count = components.count
+			if count >= 2 {
+				shortName = components[count - 2] + "/" + components[count - 1]
+			} else {
+				shortName = components.last ?? path
+			}
+		} else {
+			shortName = "unknown"
+		}
+
+		let start = CFAbsoluteTimeGetCurrent()
 		executeStatements("vacuum;")
+		let duration = CFAbsoluteTimeGetCurrent() - start
+		Self.logger.debug("VACUUM \(shortName) took \(duration, format: .fixed(precision: 4)) seconds")
 	}
 
 	func runCreateStatements(_ statements: String) {

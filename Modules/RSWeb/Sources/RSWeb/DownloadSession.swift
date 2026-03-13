@@ -18,6 +18,7 @@ import RSCore
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, url: URL) -> Bool
+	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL)
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
 }
 
@@ -191,6 +192,10 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 				}
 
 				Self.logger.debug("DownloadSession: canceling task due to >= 400 response \(response)")
+
+				if let url = taskInfo?.url {
+					delegate.downloadSession(self, httpError: statusCode, url: url)
+				}
 
 				completionHandler(.cancel)
 				removeTask(dataTask)

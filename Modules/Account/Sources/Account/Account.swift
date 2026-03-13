@@ -18,6 +18,7 @@ import RSDatabase
 import ArticlesDatabase
 import RSWeb
 import Secrets
+import ErrorLog
 import os.log
 
 // Main thread only.
@@ -46,6 +47,29 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 
 	public var isDeveloperRestricted: Bool {
 		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
+	}
+
+	public var displayName: String {
+		switch self {
+		case .onMyMac:
+			return NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
+		case .cloudKit:
+			return NSLocalizedString("iCloud", comment: "iCloud")
+		case .feedly:
+			return NSLocalizedString("Feedly", comment: "Feedly")
+		case .feedbin:
+			return NSLocalizedString("Feedbin", comment: "Feedbin")
+		case .newsBlur:
+			return NSLocalizedString("NewsBlur", comment: "NewsBlur")
+		case .freshRSS:
+			return NSLocalizedString("FreshRSS", comment: "FreshRSS")
+		case .inoreader:
+			return NSLocalizedString("Inoreader", comment: "Inoreader")
+		case .bazQux:
+			return NSLocalizedString("BazQux", comment: "BazQux")
+		case .theOldReader:
+			return NSLocalizedString("The Old Reader", comment: "The Old Reader")
+		}
 	}
 }
 
@@ -76,8 +100,6 @@ public enum FetchType {
 		public static let feeds = "feeds" // AccountDidDownloadArticles, StatusesDidChange
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
-
-	public static let defaultLocalAccountName = NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
 
 	public var isDeleted = false
 
@@ -291,26 +313,7 @@ public enum FetchType {
 		let retentionStyle: ArticlesDatabase.RetentionStyle = (type == .onMyMac || type == .cloudKit) ? .feedBased : .syncSystem
 		self.database = ArticlesDatabase(databaseFilePath: databaseFilePath, accountID: accountID, retentionStyle: retentionStyle)
 
-		switch type {
-		case .onMyMac:
-			defaultName = Account.defaultLocalAccountName
-		case .cloudKit:
-			defaultName = NSLocalizedString("iCloud", comment: "iCloud")
-		case .feedly:
-			defaultName = NSLocalizedString("Feedly", comment: "Feedly")
-		case .feedbin:
-			defaultName = NSLocalizedString("Feedbin", comment: "Feedbin")
-		case .newsBlur:
-			defaultName = NSLocalizedString("NewsBlur", comment: "NewsBlur")
-		case .freshRSS:
-			defaultName = NSLocalizedString("FreshRSS", comment: "FreshRSS")
-		case .inoreader:
-			defaultName = NSLocalizedString("Inoreader", comment: "Inoreader")
-		case .bazQux:
-			defaultName = NSLocalizedString("BazQux", comment: "BazQux")
-		case .theOldReader:
-			defaultName = NSLocalizedString("The Old Reader", comment: "The Old Reader")
-		}
+		defaultName = type.displayName
 
 		let feedSettingsDatabasePath = (dataFolder as NSString).appendingPathComponent("FeedSettings.db")
 		self.feedSettingsDatabase = FeedSettingsDatabase(databasePath: feedSettingsDatabasePath)
@@ -347,7 +350,13 @@ public enum FetchType {
 			assertionFailure()
 			return
 		}
-		try CredentialsManager.storeCredentials(credentials, server: server)
+		do {
+			try CredentialsManager.storeCredentials(credentials, server: server)
+		} catch {
+			Self.logger.error("Account: storeCredentials: failed to store credentials: \(error.localizedDescription, privacy: .public)")
+			postCredentialError(error, operation: "Storing credentials")
+			throw error
+		}
 		delegate.credentials = credentials
 	}
 
@@ -364,6 +373,7 @@ public enum FetchType {
 			return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 		} catch {
 			Self.logger.error("Account: retrieveCredentials: failed to retrieve \(type.rawValue, privacy: .public) credentials: \(error.localizedDescription, privacy: .public)")
+			postCredentialError(error, operation: "Retrieving credentials")
 			throw error
 		}
 	}
@@ -372,7 +382,13 @@ public enum FetchType {
 		guard let username = self.username, let server = delegate.server else {
 			return
 		}
-		try CredentialsManager.removeCredentials(type: type, server: server, username: username)
+		do {
+			try CredentialsManager.removeCredentials(type: type, server: server, username: username)
+		} catch {
+			Self.logger.error("Account: removeCredentials: failed to remove credentials: \(error.localizedDescription, privacy: .public)")
+			postCredentialError(error, operation: "Removing credentials")
+			throw error
+		}
 	}
 
 	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
@@ -1086,6 +1102,13 @@ public enum FetchType {
 // MARK: - Fetching Articles (Private)
 
 private extension Account {
+
+	// MARK: - Credential Errors
+
+	func postCredentialError(_ error: Error, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: nameForDisplay, sourceID: type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+	}
 
 	// MARK: - Starred Articles
 

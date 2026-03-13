@@ -11,7 +11,7 @@ import os
 
 public struct Platform {
 
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Platform")
+	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.ranchero.Platform", category: "Platform")
 
 	/// Returns true if the app is currently running unit tests.
 	nonisolated public static var isRunningUnitTests: Bool {

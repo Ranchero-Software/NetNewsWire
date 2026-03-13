@@ -7,6 +7,7 @@
 //
 
 import Articles
+import ErrorLog
 import RSCore
 import RSDatabase
 import RSParser
@@ -226,6 +227,7 @@ import Secrets
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Refresh missing stories error: \(error.localizedDescription)")
+				postSyncError(error, account: account, operation: "Refreshing stories")
 			}
 		}
 
@@ -412,6 +414,7 @@ import Secrets
 			}
 		} catch {
 			Self.logger.error("NewsBlur: Restore folder error: \(error.localizedDescription)")
+			postSyncError(error, account: account, operation: "Restoring folder")
 			throw error
 		}
 	}
@@ -469,5 +472,15 @@ import Secrets
 
 	@objc func progressInfoDidChange(_ notification: Notification) {
 		progressInfo = refreshProgress.progressInfo
+	}
+}
+
+// MARK: - Sync Error Posting
+
+extension NewsBlurAccountDelegate {
+
+	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

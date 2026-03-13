@@ -7,6 +7,7 @@
 //
 
 import Articles
+import ErrorLog
 import FeedFinder
 import RSCore
 import RSDatabase
@@ -228,6 +229,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
+						postSyncError(error, account: account, operation: "Removing feed")
 					}
 				}
 			} else {
@@ -236,6 +238,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
+						postSyncError(error, account: account, operation: "Removing feed")
 					}
 				}
 			}
@@ -339,6 +342,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				try await restoreFeed(for: account, feed: feed, container: folder)
 			} catch {
 				Self.logger.error("Feedbin: Restore folder feed error: \(error.localizedDescription)")
+				postSyncError(error, account: account, operation: "Restoring feed")
 			}
 		}
 
@@ -859,6 +863,7 @@ private extension FeedbinAccountDelegate {
 			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
+			postSyncError(error, account: account, operation: "Syncing read status")
 		}
 	}
 
@@ -886,6 +891,7 @@ private extension FeedbinAccountDelegate {
 			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 		} catch {
 			Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
+			postSyncError(error, account: account, operation: "Syncing starred status")
 		}
 	}
 
@@ -924,8 +930,14 @@ private extension FeedbinAccountDelegate {
 			try await caller.deleteSubscription(subscriptionID: subscriptionID)
 		} catch {
 			Self.logger.error("Feedbin: Unable to remove feed from Feedbin. Removing locally and continuing processing: \(error.localizedDescription)")
+			postSyncError(error, account: account, operation: "Removing feed")
 		}
 
 		account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
+	}
+
+	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

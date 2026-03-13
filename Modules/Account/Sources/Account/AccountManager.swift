@@ -12,14 +12,17 @@ import RSCore
 import RSWeb
 import Articles
 import ArticlesDatabase
+import ErrorLog
 
 @MainActor public final class AccountManager: UnreadCountProvider {
+	
 	public static var shared = AccountManager()
 
 	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
     private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
 
 	public let defaultAccount: Account
+	public let errorLogDatabase: ErrorLogDatabase
 
 	private let accountsFolder: String
     private var accountsDictionary = [String: Account]()
@@ -113,6 +116,9 @@ import ArticlesDatabase
 			abort()
 		}
 
+		let errorLogDatabasePath = AppConfig.dataFolder.appendingPathComponent("Errors.db").path
+		self.errorLogDatabase = ErrorLogDatabase(databasePath: errorLogDatabasePath)
+
 		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
@@ -129,7 +135,6 @@ import ArticlesDatabase
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
 		}
@@ -285,10 +290,14 @@ import ArticlesDatabase
 
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
+				let accountName = account.nameForDisplay
+				let accountTypeRawValue = account.type.rawValue
 				group.addTask {
 					do {
 						try await account.refreshAll()
 					} catch {
+						let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountTypeRawValue, operation: "Refreshing", errorMessage: error.localizedDescription)
+						NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 						errorHandler?(error)
 					}
 				}
@@ -438,6 +447,8 @@ import ArticlesDatabase
 	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
+
+
 }
 
 // MARK: - Private
