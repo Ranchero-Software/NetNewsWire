@@ -39,9 +39,8 @@
       }
     },
     {
-      "parallelizable" : false,
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:Modules\/ErrorLog",
         "identifier" : "ErrorLogTests",
         "name" : "ErrorLogTests"
       }
