@@ -13,11 +13,12 @@ struct ErrorLogTable {
 
 	static let name = "errors"
 
-	static func insertEntry(sourceName: String, sourceID: Int, errorMessage: String, database: FMDatabase) {
+	static func insertEntry(sourceName: String, sourceID: Int, operation: String, errorMessage: String, database: FMDatabase) {
 		let dictionary: DatabaseDictionary = [
 			ErrorLogEntry.DatabaseKey.date: Date().timeIntervalSince1970,
 			ErrorLogEntry.DatabaseKey.sourceName: sourceName,
 			ErrorLogEntry.DatabaseKey.sourceID: sourceID,
+			ErrorLogEntry.DatabaseKey.operation: operation,
 			ErrorLogEntry.DatabaseKey.errorMessage: errorMessage
 		]
 		database.insertRow(dictionary, insertType: .normal, tableName: name)
@@ -55,7 +56,8 @@ private extension ErrorLogTable {
 		let id = Int(row.longLongInt(forColumn: ErrorLogEntry.DatabaseKey.id))
 		let date = Date(timeIntervalSince1970: row.double(forColumn: ErrorLogEntry.DatabaseKey.date))
 		let sourceID = Int(row.int(forColumn: ErrorLogEntry.DatabaseKey.sourceID))
+		let operation = row.string(forColumn: ErrorLogEntry.DatabaseKey.operation) ?? ""
 
-		return ErrorLogEntry(id: id, date: date, sourceName: sourceName, sourceID: sourceID, errorMessage: errorMessage)
+		return ErrorLogEntry(id: id, date: date, sourceName: sourceName, sourceID: sourceID, operation: operation, errorMessage: errorMessage)
 	}
 }

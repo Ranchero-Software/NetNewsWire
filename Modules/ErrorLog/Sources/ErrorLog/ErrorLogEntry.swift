@@ -14,13 +14,15 @@ public struct ErrorLogEntry: Sendable {
 	public let date: Date
 	public let sourceName: String
 	public let sourceID: Int // 0-99 reserved for AccountType.rawValue. 100 and up for other components.
+	public let operation: String
 	public let errorMessage: String
 
-	public init(id: Int, date: Date, sourceName: String, sourceID: Int, errorMessage: String) {
+	public init(id: Int, date: Date, sourceName: String, sourceID: Int, operation: String, errorMessage: String) {
 		self.id = id
 		self.date = date
 		self.sourceName = sourceName
 		self.sourceID = sourceID
+		self.operation = operation
 		self.errorMessage = errorMessage
 	}
 
@@ -29,6 +31,7 @@ public struct ErrorLogEntry: Sendable {
 		static let date = "date"
 		static let sourceName = "sourceName"
 		static let sourceID = "sourceID"
+		static let operation = "operation"
 		static let errorMessage = "errorMessage"
 	}
 
@@ -37,6 +40,7 @@ public struct ErrorLogEntry: Sendable {
 			DatabaseKey.date: date.timeIntervalSince1970,
 			DatabaseKey.sourceName: sourceName,
 			DatabaseKey.sourceID: sourceID,
+			DatabaseKey.operation: operation,
 			DatabaseKey.errorMessage: errorMessage
 		]
 	}

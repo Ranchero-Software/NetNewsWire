@@ -28,7 +28,7 @@ import Foundation
 		defer { deleteDatabaseFiles(at: path) }
 
 		let database = ErrorLogDatabase(databasePath: path)
-		await database.addEntry(sourceName: "TestAccount", sourceID: 1, errorMessage: "Something went wrong")
+		await database.addEntry(sourceName: "TestAccount", sourceID: 1, operation: "Refreshing", errorMessage: "Something went wrong")
 
 		let entries = await database.allEntries()
 		#expect(entries.count == 1)
@@ -36,6 +36,7 @@ import Foundation
 		let entry = entries[0]
 		#expect(entry.sourceName == "TestAccount")
 		#expect(entry.sourceID == 1)
+		#expect(entry.operation == "Refreshing")
 		#expect(entry.errorMessage == "Something went wrong")
 		#expect(entry.id > 0)
 	}
@@ -45,9 +46,9 @@ import Foundation
 		defer { deleteDatabaseFiles(at: path) }
 
 		let database = ErrorLogDatabase(databasePath: path)
-		await database.addEntry(sourceName: "First", sourceID: 1, errorMessage: "Error 1")
-		await database.addEntry(sourceName: "Second", sourceID: 2, errorMessage: "Error 2")
-		await database.addEntry(sourceName: "Third", sourceID: 3, errorMessage: "Error 3")
+		await database.addEntry(sourceName: "First", sourceID: 1, operation: "Refreshing", errorMessage: "Error 1")
+		await database.addEntry(sourceName: "Second", sourceID: 2, operation: "Syncing", errorMessage: "Error 2")
+		await database.addEntry(sourceName: "Third", sourceID: 3, operation: "Downloading feed", errorMessage: "Error 3")
 
 		let entries = await database.allEntries()
 		#expect(entries.count == 3)
@@ -64,7 +65,7 @@ import Foundation
 
 		let database = ErrorLogDatabase(databasePath: path)
 		for i in 1...210 {
-			await database.addEntry(sourceName: "Account", sourceID: 1, errorMessage: "Error \(i)")
+			await database.addEntry(sourceName: "Account", sourceID: 1, operation: "Refreshing", errorMessage: "Error \(i)")
 		}
 
 		let entriesBeforePrune = await database.allEntries()

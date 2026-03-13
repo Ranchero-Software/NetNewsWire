@@ -14,7 +14,7 @@ public actor ErrorLogDatabase {
 
 	private let database: FMDatabase
 
-	private static let tableCreationStatements = "CREATE TABLE if not EXISTS errors (id INTEGER PRIMARY KEY AUTOINCREMENT, date REAL NOT NULL, sourceName TEXT NOT NULL, sourceID INTEGER NOT NULL, errorMessage TEXT NOT NULL);"
+	private static let tableCreationStatements = "CREATE TABLE if not EXISTS errors (id INTEGER PRIMARY KEY AUTOINCREMENT, date REAL NOT NULL, sourceName TEXT NOT NULL, sourceID INTEGER NOT NULL, operation TEXT NOT NULL, errorMessage TEXT NOT NULL);"
 
 	private static let pruneLimit = 200
 
@@ -31,8 +31,8 @@ public actor ErrorLogDatabase {
 		}
 	}
 
-	public func addEntry(sourceName: String, sourceID: Int, errorMessage: String) {
-		ErrorLogTable.insertEntry(sourceName: sourceName, sourceID: sourceID, errorMessage: errorMessage, database: database)
+	public func addEntry(sourceName: String, sourceID: Int, operation: String, errorMessage: String) {
+		ErrorLogTable.insertEntry(sourceName: sourceName, sourceID: sourceID, operation: operation, errorMessage: errorMessage, database: database)
 	}
 
 	public func allEntries() -> [ErrorLogEntry] {
@@ -47,8 +47,9 @@ public actor ErrorLogDatabase {
 			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
 			return
 		}
+		let operation = notification.userInfo?[ErrorLogUserInfoKey.operation] as? String ?? ""
 		Task {
-			await addEntry(sourceName: sourceName, sourceID: sourceID, errorMessage: errorMessage)
+			await addEntry(sourceName: sourceName, sourceID: sourceID, operation: operation, errorMessage: errorMessage)
 		}
 	}
 }
