@@ -7,6 +7,7 @@
 
 import AppKit
 import Account
+import ErrorLog
 
 @MainActor final class ErrorLogWindowController: NSWindowController, NSWindowDelegate {
 
@@ -50,7 +51,7 @@ import Account
 		super.init(window: window)
 		setupUI()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountDidEncounterSyncError(_:)), name: .AccountDidEncounterSyncError, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidEncounterError(_:)), name: .appDidEncounterError, object: nil)
 
 		window.delegate = self
 	}
@@ -95,14 +96,14 @@ import Account
 
 	// MARK: - Notifications
 
-	@objc func handleAccountDidEncounterSyncError(_ notification: Notification) {
-		guard let error = notification.userInfo?[Account.UserInfoKey.syncError] as? Error,
-			  let accountName = notification.userInfo?[Account.UserInfoKey.accountName] as? String,
-			  let accountType = notification.userInfo?[Account.UserInfoKey.accountType] as? Int else {
+	@objc func handleAppDidEncounterError(_ notification: Notification) {
+		guard let errorMessage = notification.userInfo?[ErrorLogUserInfoKey.errorMessage] as? String,
+			  let sourceName = notification.userInfo?[ErrorLogUserInfoKey.sourceName] as? String,
+			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
 			return
 		}
 
-		let entry = ErrorLogEntry(id: 0, date: Date(), accountName: accountName, accountType: accountType, errorMessage: error.localizedDescription)
+		let entry = ErrorLogEntry(id: 0, date: Date(), sourceName: sourceName, sourceID: sourceID, errorMessage: errorMessage)
 		appendEntry(entry)
 	}
 }
@@ -271,15 +272,14 @@ private extension ErrorLogWindowController {
 		]
 		result.append(NSAttributedString(string: timestampString, attributes: timestampAttributes))
 
-		let accountTypeName = AccountType(rawValue: entry.accountType)?.displayName ?? "Unknown"
-		let accountNameString = "\(entry.accountName) (\(accountTypeName)): "
-		let accountColor = color(for: entry.accountType)
-		let accountAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: accountColor,
+		let sourceNameString = "\(entry.sourceName): "
+		let sourceColor = color(for: entry.sourceID)
+		let sourceAttributes: [NSAttributedString.Key: Any] = [
+			.foregroundColor: sourceColor,
 			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .medium),
 			.paragraphStyle: Self.entryParagraphStyle
 		]
-		result.append(NSAttributedString(string: accountNameString, attributes: accountAttributes))
+		result.append(NSAttributedString(string: sourceNameString, attributes: sourceAttributes))
 
 		let messageAttributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: NSColor.labelColor,
@@ -291,8 +291,8 @@ private extension ErrorLogWindowController {
 		return result
 	}
 
-	func color(for accountType: Int) -> NSColor {
-		guard let type = AccountType(rawValue: accountType) else {
+	func color(for sourceID: Int) -> NSColor {
+		guard let type = AccountType(rawValue: sourceID) else {
 			return .secondaryLabelColor
 		}
 
