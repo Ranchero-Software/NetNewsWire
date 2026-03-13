@@ -1,6 +1,6 @@
 //
 //  ErrorLogTable.swift
-//  Account
+//  ErrorLog
 //
 //  Created by Brent Simmons on 3/11/26.
 //
@@ -13,11 +13,11 @@ struct ErrorLogTable {
 
 	static let name = "errors"
 
-	static func insertEntry(accountName: String, accountType: Int, errorMessage: String, database: FMDatabase) {
+	static func insertEntry(sourceName: String, sourceID: Int, errorMessage: String, database: FMDatabase) {
 		let dictionary: DatabaseDictionary = [
 			ErrorLogEntry.DatabaseKey.date: Date().timeIntervalSince1970,
-			ErrorLogEntry.DatabaseKey.accountName: accountName,
-			ErrorLogEntry.DatabaseKey.accountType: accountType,
+			ErrorLogEntry.DatabaseKey.sourceName: sourceName,
+			ErrorLogEntry.DatabaseKey.sourceID: sourceID,
 			ErrorLogEntry.DatabaseKey.errorMessage: errorMessage
 		]
 		database.insertRow(dictionary, insertType: .normal, tableName: name)
@@ -42,25 +42,20 @@ struct ErrorLogTable {
 		let sql = "delete from \(name) where id not in (select id from \(name) order by id desc limit \(limit))"
 		database.executeUpdateInTransaction(sql)
 	}
-
-	static func deleteAll(database: FMDatabase) {
-		let sql = "delete from \(name)"
-		database.executeUpdateInTransaction(sql)
-	}
 }
 
 private extension ErrorLogTable {
 
 	static func entryWithRow(_ row: FMResultSet) -> ErrorLogEntry? {
-		guard let accountName = row.string(forColumn: ErrorLogEntry.DatabaseKey.accountName),
+		guard let sourceName = row.string(forColumn: ErrorLogEntry.DatabaseKey.sourceName),
 			  let errorMessage = row.string(forColumn: ErrorLogEntry.DatabaseKey.errorMessage) else {
 			return nil
 		}
 
-		let id = row.longLongInt(forColumn: ErrorLogEntry.DatabaseKey.id)
+		let id = Int(row.longLongInt(forColumn: ErrorLogEntry.DatabaseKey.id))
 		let date = Date(timeIntervalSince1970: row.double(forColumn: ErrorLogEntry.DatabaseKey.date))
-		let accountType = Int(row.int(forColumn: ErrorLogEntry.DatabaseKey.accountType))
+		let sourceID = Int(row.int(forColumn: ErrorLogEntry.DatabaseKey.sourceID))
 
-		return ErrorLogEntry(id: id, date: date, accountName: accountName, accountType: accountType, errorMessage: errorMessage)
+		return ErrorLogEntry(id: id, date: date, sourceName: sourceName, sourceID: sourceID, errorMessage: errorMessage)
 	}
 }

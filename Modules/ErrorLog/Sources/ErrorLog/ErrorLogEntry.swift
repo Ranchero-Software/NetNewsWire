@@ -1,6 +1,6 @@
 //
 //  ErrorLogEntry.swift
-//  Account
+//  ErrorLog
 //
 //  Created by Brent Simmons on 3/11/26.
 //
@@ -10,33 +10,33 @@ import RSDatabase
 
 public struct ErrorLogEntry: Sendable {
 
-	public let id: Int64
+	public let id: Int
 	public let date: Date
-	public let accountName: String
-	public let accountType: Int
+	public let sourceName: String
+	public let sourceID: Int // 0-99 reserved for AccountType.rawValue. 100 and up for other components.
 	public let errorMessage: String
 
-	public init(id: Int64, date: Date, accountName: String, accountType: Int, errorMessage: String) {
+	public init(id: Int, date: Date, sourceName: String, sourceID: Int, errorMessage: String) {
 		self.id = id
 		self.date = date
-		self.accountName = accountName
-		self.accountType = accountType
+		self.sourceName = sourceName
+		self.sourceID = sourceID
 		self.errorMessage = errorMessage
 	}
 
 	struct DatabaseKey {
 		static let id = "id"
 		static let date = "date"
-		static let accountName = "accountName"
-		static let accountType = "accountType"
+		static let sourceName = "sourceName"
+		static let sourceID = "sourceID"
 		static let errorMessage = "errorMessage"
 	}
 
 	func databaseDictionary() -> DatabaseDictionary {
 		[
 			DatabaseKey.date: date.timeIntervalSince1970,
-			DatabaseKey.accountName: accountName,
-			DatabaseKey.accountType: accountType,
+			DatabaseKey.sourceName: sourceName,
+			DatabaseKey.sourceID: sourceID,
 			DatabaseKey.errorMessage: errorMessage
 		]
 	}
