@@ -19,20 +19,22 @@ struct ErrorLogView: View {
 	var body: some View {
 		Group {
 			if entries.isEmpty {
-				ContentUnavailableView("No Errors", systemImage: "checkmark.circle")
+				ContentUnavailableView("No Errors Logged", systemImage: "checkmark.circle")
 			} else {
-				ScrollView {
-					Text(buildAttributedString(entries))
-						.font(.system(.body, design: .monospaced))
-						.textSelection(.enabled)
-						.frame(maxWidth: .infinity, alignment: .leading)
-						.padding()
-
+				VStack(spacing: 0) {
 					privacyWarning
+					Divider()
+					ScrollView {
+						Text(buildAttributedString(entries))
+							.font(.system(.body, design: .monospaced))
+							.textSelection(.enabled)
+							.frame(maxWidth: .infinity, alignment: .leading)
+							.padding()
+					}
 				}
 			}
 		}
-		.navigationTitle("Errors")
+		.navigationTitle("Error Log")
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
 				Button("Copy Contents") {
@@ -62,8 +64,7 @@ struct ErrorLogView: View {
 		Text("Errors may contain feed URLs and other information you may not want to share publicly.")
 			.font(.footnote)
 			.foregroundStyle(.secondary)
-			.padding(.horizontal)
-			.padding(.bottom)
+			.padding()
 	}
 }
 
@@ -112,7 +113,7 @@ private extension ErrorLogView {
 			result.append(location)
 		}
 
-		result.append(AttributedString("\n"))
+		result.append(AttributedString("\n\n"))
 		return result
 	}
 
@@ -123,13 +124,13 @@ private extension ErrorLogView {
 			if entry.operation.isEmpty {
 				result += "\(entry.sourceName): "
 			} else {
-				result += "\(entry.sourceName) \u{2014} \(entry.operation): "
+				result += "\(entry.sourceName) — \(entry.operation): "
 			}
 			result += entry.errorMessage
 			if !entry.functionName.isEmpty {
 				result += " (\(entry.fileName):\(entry.functionName):\(entry.lineNumber))"
 			}
-			result += "\n"
+			result += "\n\n"
 		}
 		return result
 	}
