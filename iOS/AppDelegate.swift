@@ -104,7 +104,7 @@ import ErrorLog
 
 		#if DEBUG
 		ArticleStatusSyncTimer.shared.update()
-//		postFakeErrorsForTesting()
+		postFakeErrorsForTesting()
 		#endif
 
 		return true
