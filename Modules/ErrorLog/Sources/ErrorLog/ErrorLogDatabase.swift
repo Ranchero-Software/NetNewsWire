@@ -9,8 +9,11 @@ import Foundation
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
+import os
 
 public actor ErrorLogDatabase {
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorLogDatabase")
 
 	private let database: FMDatabase
 
@@ -23,6 +26,7 @@ public actor ErrorLogDatabase {
 		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
 		ErrorLogTable.pruneEntries(limit: Self.pruneLimit, database: database)
+		Self.vacuum(database: database)
 
 		self.database = database
 
@@ -37,6 +41,15 @@ public actor ErrorLogDatabase {
 
 	public func allEntries() -> [ErrorLogEntry] {
 		ErrorLogTable.allEntries(database: database)
+	}
+
+	// MARK: - Maintenance
+
+	private static func vacuum(database: FMDatabase) {
+		let start = CFAbsoluteTimeGetCurrent()
+		database.executeStatements("VACUUM;")
+		let duration = CFAbsoluteTimeGetCurrent() - start
+		logger.debug("ErrorLogDatabase: VACUUM took \(duration, format: .fixed(precision: 4)) seconds")
 	}
 
 	// MARK: - Notifications
