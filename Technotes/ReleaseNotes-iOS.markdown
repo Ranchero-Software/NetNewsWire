@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0.2 TestFlight build 7032 13 Mar 2026 - branch: main tag: iOS-7.0.2-7032
+
+Further improved the error message reporting for credentials errors, to help us get closer to fixing the credentials bugs some people are seeing
+Added a new Error Log screen — see Settings > Troubleshooting > Error Log. It shows errors from refreshing, syncing, keychain, etc. (Note: it probably doesn’t show all possible errors yet. We’re still auditing the code for places to add error logging.)
+
 ### 7.0.2 TestFlight build 7031 10 Mar 2026 - branch: main tag: iOS-7.0.2-7031
 
 Moved account settings to UserDefaults storage to make it more reliable
