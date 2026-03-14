@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0.2 TestFlight build 7033 14 Mar 2026 - branch: main tag: iOS-7.0.2-7033
+
+Fixed the missing-endpoint-URL bug with self-hosted sync accounts
+Reverted a change where clicking on URLs with #fragment — when they match the current page URL — would assume an in-page navigation instead of opening in browser. Unfortunately the fragment section is very often not included in the article in the RSS, so we do need to open in browser
+
 ### 7.0.2 TestFlight build 7032 13 Mar 2026 - branch: main tag: iOS-7.0.2-7032
 
 Further improved the error message reporting for credentials errors, to help us get closer to fixing the credentials bugs some people are seeing
