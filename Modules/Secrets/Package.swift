@@ -11,11 +11,17 @@ let package = Package(
 			targets: ["Secrets"]
 		)
 	],
-	dependencies: [],
+	dependencies: [
+		.package(path: "../ErrorLog"),
+		.package(path: "../RSCore")
+	],
 	targets: [
 		.target(
 			name: "Secrets",
-			dependencies: [],
+			dependencies: [
+				"ErrorLog",
+				"RSCore"
+			],
 			exclude: ["SecretKey.swift.gyb"],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),

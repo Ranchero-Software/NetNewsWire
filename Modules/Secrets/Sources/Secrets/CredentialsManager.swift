@@ -9,8 +9,12 @@
 import Foundation
 import os
 import Security
+import RSCore
+import ErrorLog
 
 public struct CredentialsManager {
+
+	static let CredentialsManagerErrorSourceID = 100
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CredentialsManager")
 
@@ -76,7 +80,9 @@ public struct CredentialsManager {
 			break
 		default:
 			logger.error("CredentialsManager: storeCredentials failed — \(CredentialsError.keychainStatusMessage(status), privacy: .public)")
-			throw CredentialsError.keychainStoreFailure(status: status)
+			let error = CredentialsError.keychainStoreFailure(status: status)
+			postAppDidEncounterError(operation: "Storing credentials", error: error)
+			throw error
 		}
 
 		var deleteQuery = query
@@ -86,7 +92,9 @@ public struct CredentialsManager {
 		let addStatus = SecItemAdd(query as CFDictionary, nil)
 		if addStatus != errSecSuccess {
 			logger.error("CredentialsManager: storeCredentials (after delete) failed — \(CredentialsError.keychainStatusMessage(addStatus), privacy: .public)")
-			throw CredentialsError.keychainStoreFailure(status: addStatus)
+			let error = CredentialsError.keychainStoreFailure(status: addStatus)
+			postAppDidEncounterError(operation: "Storing credentials after delete", error: error)
+			throw error
 		}
 	}
 
@@ -127,7 +135,9 @@ public struct CredentialsManager {
 
 		guard status == errSecSuccess else {
 			logger.error("CredentialsManager: retrieveCredentials failed — \(CredentialsError.keychainStatusMessage(status), privacy: .public) for type \(type.rawValue, privacy: .public)")
-			throw CredentialsError.keychainRetrieveFailure(status: status)
+			let error = CredentialsError.keychainRetrieveFailure(status: status)
+			postAppDidEncounterError(operation: "Retrieving credentials", error: error)
+			throw error
 		}
 
 		guard let existingItem = item as? [String: Any],
@@ -170,7 +180,17 @@ public struct CredentialsManager {
 
 		guard status == errSecSuccess || status == errSecItemNotFound else {
 			logger.error("CredentialsManager: removeCredentials failed — \(CredentialsError.keychainStatusMessage(status), privacy: .public)")
-			throw CredentialsError.keychainRemoveFailure(status: status)
+			let error = CredentialsError.keychainRemoveFailure(status: status)
+			postAppDidEncounterError(operation: "Removing credentials", error: error)
+			throw error
 		}
+	}
+}
+
+private extension CredentialsManager {
+
+	static func postAppDidEncounterError(operation: String, error: CredentialsError) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: "CredentialsManager", sourceID: Self.CredentialsManagerErrorSourceID, operation: operation, errorMessage: error.localizedDescription)
+		NotificationCenter.default.postOnMainThread(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
