@@ -7,6 +7,20 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.2b5</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed the missing-endpoint-URL bug with self-hosted sync accounts (FreshRSS most commonly)
+					<li>Reverted a change where clicking on URLs with #fragment — when they otherwise match the current page URL — would assume an in-page navigation instead of opening in browser. Unfortunately the fragment section is very often not included in the article in the RSS, so we do need to open in browser
+					<li>Fixed a crash that could happen setting the window title
+				</ul>
+			]]></description>
+        	<pubDate>Sat, 14 Mar 2026 11:45:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.2b5/NetNewsWire7.0.2b5.zip" sparkle:version="7026" sparkle:shortVersionString="7.0.2b5" length="9744692" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.2b4</title>
             <description><![CDATA[
 				<ul>
