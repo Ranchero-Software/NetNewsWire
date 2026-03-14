@@ -2,7 +2,7 @@
 
 ### 7.0.2b4 7025 13 Mar 2026 — branch: main tag: mac-7.0.2b4
 
-Fixed a concurrency-related crashing bug in the Error Log window.
+Fixed a concurrency-related crashing bug in the Error Log window
 
 ### 7.0.2b3 7024 13 Mar 2026 — branch: main tag: mac-7.0.2b3
 
