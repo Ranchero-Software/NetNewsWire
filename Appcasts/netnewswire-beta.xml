@@ -7,6 +7,18 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.2b4</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed a concurrency-related crashing bug in the Error Log window
+				</ul>
+			]]></description>
+        	<pubDate>Fri, 13 Mar 2026 16:55:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.2b4/NetNewsWire7.0.2b4.zip" sparkle:version="7025" sparkle:shortVersionString="7.0.2b4" length="9736134" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.2b3</title>
             <description><![CDATA[
 				<ul>
