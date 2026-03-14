@@ -64,6 +64,10 @@ import Articles
 		}
 	}
 
+	func vacuum() {
+		database.vacuum()
+	}
+
 	var isEmpty: Bool {
 		guard let resultSet = database.executeQuery("SELECT 1 FROM feedSettings LIMIT 1;", withArgumentsIn: []) else {
 			return true

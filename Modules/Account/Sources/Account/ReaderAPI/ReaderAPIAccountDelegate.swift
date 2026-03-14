@@ -500,6 +500,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		return try await caller.validateCredentials(endpoint: endpoint)
 	}
 
+	func vacuumDatabases() {
+		Task {
+			await syncDatabase.vacuum()
+		}
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity

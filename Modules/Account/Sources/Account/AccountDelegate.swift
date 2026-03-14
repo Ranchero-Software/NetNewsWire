@@ -53,6 +53,8 @@ import Secrets
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials?
 
+	func vacuumDatabases()
+
 	/// Suspend all network activity
 	func suspendNetwork()
 

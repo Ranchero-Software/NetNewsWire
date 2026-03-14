@@ -447,6 +447,12 @@ import Secrets
 		return try await caller.validateCredentials()
 	}
 
+	func vacuumDatabases() {
+		Task {
+			await syncDatabase.vacuum()
+		}
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
 
 	/// Suspend all network activity

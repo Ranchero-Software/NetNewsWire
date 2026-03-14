@@ -548,6 +548,13 @@
                                                 <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="Xut-dI-qDw"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="vDb-aB-q9Z"/>
+                                        <menuItem title="Vacuum Databases" id="kLm-nR-v3X">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="vacuumDatabases:" target="Ady-hI-5gd" id="pQw-eT-j7Y"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>

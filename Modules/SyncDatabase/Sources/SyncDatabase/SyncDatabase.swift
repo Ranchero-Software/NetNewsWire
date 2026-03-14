@@ -28,6 +28,10 @@ public actor SyncDatabase {
 
 	// MARK: - API
 
+	public func vacuum() {
+		database?.vacuum()
+	}
+
 	public func insertStatuses(_ statuses: Set<SyncStatus>) throws {
 		guard let database else {
 			throw DatabaseError.isSuspended

@@ -680,6 +680,12 @@ import Secrets
 		return credentials
 	}
 
+	func vacuumDatabases() {
+		Task {
+			await syncDatabase.vacuum()
+		}
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity

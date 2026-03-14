@@ -36,6 +36,10 @@ public actor ErrorLogDatabase {
 		ErrorLogTable.insertEntry(sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage, database: database)
 	}
 
+	public func vacuum() {
+		database.vacuum()
+	}
+
 	public func allEntries() -> [ErrorLogEntry] {
 		ErrorLogTable.allEntries(database: database)
 	}

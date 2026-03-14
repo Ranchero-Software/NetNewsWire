@@ -374,6 +374,12 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		return try await caller.validateCredentials()
 	}
 
+	func vacuumDatabases() {
+		Task {
+			await syncDatabase.vacuum()
+		}
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity

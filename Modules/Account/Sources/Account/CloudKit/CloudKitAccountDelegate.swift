@@ -472,6 +472,12 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		nil
 	}
 
+	func vacuumDatabases() {
+		Task {
+			await syncDatabase.vacuum()
+		}
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
 
 	func suspendNetwork() {

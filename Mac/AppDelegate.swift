@@ -772,6 +772,12 @@ extension AppDelegate {
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 
+	@IBAction func vacuumDatabases(_ sender: Any?) {
+		Task {
+			await AccountManager.shared.vacuumAllDatabases()
+		}
+	}
+
 	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
 		// Manual testing for alert in AccountsAddCloudKitWindowController
 		// Check for:

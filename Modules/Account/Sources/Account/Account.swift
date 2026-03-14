@@ -1029,6 +1029,14 @@ public enum FetchType {
 		postChildrenDidChangeNotification()
 	}
 
+	// MARK: - Vacuum
+
+	public func vacuumDatabases() {
+		database.vacuum()
+		feedSettingsDatabase.vacuum()
+		delegate.vacuumDatabases()
+	}
+
 	// MARK: - Debug
 
 	public func debugDropConditionalGetInfo() {

@@ -417,6 +417,15 @@ import ErrorLog
 		return count
 	}
 
+	// MARK: - Vacuum
+
+	public func vacuumAllDatabases() async {
+		await errorLogDatabase.vacuum()
+		for account in accounts {
+			account.vacuumDatabases()
+		}
+	}
+
 	// MARK: - Caches
 
 	/// Empty caches that can reasonably be emptied — when the app moves to the background, for instance.
