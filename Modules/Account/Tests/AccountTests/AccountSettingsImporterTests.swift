@@ -124,6 +124,55 @@ import RSWeb
 		XCTAssertNil(result?.conditionalGetInfo?["https://example.com/feed"])
 	}
 
+	func testEndpointURLAsDictionary() {
+		let plistPath = (tempDirectory as NSString).appendingPathComponent("Settings.plist")
+		let plistXML = """
+		<?xml version="1.0" encoding="UTF-8"?>
+		<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+		<plist version="1.0">
+		<dict>
+			<key>conditionalGetInfo</key>
+			<dict/>
+			<key>endpointURL</key>
+			<dict>
+				<key>relative</key>
+				<string>http://example.local:8090/api/greader.php</string>
+			</dict>
+			<key>isActive</key>
+			<true/>
+			<key>lastArticleFetch</key>
+			<date>2026-03-14T17:01:03Z</date>
+			<key>lastArticleFetchEndTime</key>
+			<date>2026-03-14T17:01:03Z</date>
+			<key>username</key>
+			<string>cool-username</string>
+		</dict>
+		</plist>
+		"""
+		try! plistXML.data(using: .utf8)!.write(to: URL(fileURLWithPath: plistPath))
+
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNotNil(result)
+		XCTAssertEqual(result?.endpointURL, URL(string: "http://example.local:8090/api/greader.php"))
+		XCTAssertEqual(result?.isActive, true)
+		XCTAssertEqual(result?.username, "cool-username")
+		XCTAssertNotNil(result?.lastArticleFetchStartTime)
+		XCTAssertNotNil(result?.lastRefreshCompletedDate)
+		XCTAssertNil(result?.conditionalGetInfo)
+		XCTAssertNil(result?.name)
+		XCTAssertNil(result?.externalID)
+	}
+
+	func testEndpointURLAsDictionaryWithBase() {
+		writePlist([
+			"endpointURL": ["relative": "/api/greader.php", "base": "http://example.local:8090"]
+		])
+
+		let result = AccountSettingsImporter.readSettingsFromPlist(accountID: accountID, dataFolder: tempDirectory)
+		XCTAssertNotNil(result)
+		XCTAssertEqual(result?.endpointURL?.absoluteString, "http://example.local:8090/api/greader.php")
+	}
+
 	func testSubsetOfFields() {
 		writePlist([
 			"name": "Partial Account",

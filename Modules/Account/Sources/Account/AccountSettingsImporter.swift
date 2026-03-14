@@ -63,6 +63,24 @@ import RSWeb
 		var endpointURL: URL?
 		if let urlString = plist["endpointURL"] as? String {
 			endpointURL = URL(string: urlString)
+		} else if let urlDict = plist["endpointURL"] as? [String: String] {
+			// PropertyListEncoder encodes URL as ["relative": "…", "base": "…"]
+			let relative = urlDict["relative"]
+			let base = urlDict["base"]
+			let baseURL: URL? = {
+				guard let base else {
+					return nil
+				}
+				return URL(string: base)
+			}()
+
+			if let baseURL, let relative {
+				endpointURL = URL(string: relative, relativeTo: baseURL)
+			} else if let relative {
+				endpointURL = URL(string: relative)
+			} else if let baseURL {
+				endpointURL = baseURL
+			}
 		}
 
 		Self.logger.info("AccountSettingsImporter: finished importing Settings.plist for account \(accountID)")
