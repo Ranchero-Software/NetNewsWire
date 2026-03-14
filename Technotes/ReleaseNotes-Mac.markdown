@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 7.0.2b5 7026 14 Mar 2026 — branch: main tag: mac-7.0.2b5
+
+Fixed the missing-endpoint-URL bug with self-hosted sync accounts (FreshRSS most commonly)
+Reverted a change where clicking on URLs with #fragment — when they otherwise match the current page URL — would assume an in-page navigation instead of opening in browser. Unfortunately the fragment section is very often not included in the article in the RSS, so we do need to open in browser
+Fixed a crash that could happen setting the window title
+
 ### 7.0.2b4 7025 13 Mar 2026 — branch: main tag: mac-7.0.2b4
 
 Fixed a concurrency-related crashing bug in the Error Log window
