@@ -231,7 +231,7 @@ public enum FetchType {
 	private var fetchingAllUnreadCounts = false
 	var areUnreadCountsInitialized = false
 
-	let dataFolder: String
+	public let dataFolder: String
 	let database: ArticlesDatabase
 	var delegate: AccountDelegate
 
