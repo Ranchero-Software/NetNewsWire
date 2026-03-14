@@ -1,6 +1,6 @@
 // High Level Settings common to both the Mac application and any extensions we bundle with it
-MARKETING_VERSION = 7.0.2b4
-CURRENT_PROJECT_VERSION = 7025
+MARKETING_VERSION = 7.0.2b5
+CURRENT_PROJECT_VERSION = 7026
 
 APP_GROUP_ID = group.$(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen$(APP_GROUP_SUFFIX)
 
