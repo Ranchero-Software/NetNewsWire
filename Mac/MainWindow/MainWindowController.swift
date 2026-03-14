@@ -171,7 +171,11 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
-		updateWindowTitleIfNecessary(note.object)
+		CoalescingQueue.standard.add(self, #selector(coalescedUpdateWindowTitle))
+	}
+
+	@objc func coalescedUpdateWindowTitle() {
+		updateWindowTitle()
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
