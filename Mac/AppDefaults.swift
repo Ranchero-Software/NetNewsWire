@@ -43,6 +43,8 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let sidebarSortType = "sidebarSortType"
+		static let sidebarSortAscending = "sidebarSortAscending"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -316,6 +318,36 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var sidebarSortType: SidebarSortType {
+		get {
+			let rawValue = UserDefaults.standard.integer(forKey: Key.sidebarSortType)
+			return SidebarSortType(rawValue: rawValue) ?? .alphabetically
+		}
+		set {
+			guard newValue != sidebarSortType else {
+				return
+			}
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.sidebarSortType)
+			NotificationCenter.default.post(name: .SidebarSortTypeDidChange, object: nil)
+		}
+	}
+
+	var sidebarSortAscending: Bool {
+		get {
+			if UserDefaults.standard.object(forKey: Key.sidebarSortAscending) == nil {
+				return true
+			}
+			return UserDefaults.standard.bool(forKey: Key.sidebarSortAscending)
+		}
+		set {
+			guard newValue != sidebarSortAscending else {
+				return
+			}
+			UserDefaults.standard.set(newValue, forKey: Key.sidebarSortAscending)
+			NotificationCenter.default.post(name: .SidebarSortTypeDidChange, object: nil)
+		}
+	}
+
 	@MainActor func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
@@ -333,7 +365,9 @@ final class AppDefaults: Sendable {
 			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
-			Key.articleContentJavascriptEnabled: true
+			Key.articleContentJavascriptEnabled: true,
+			Key.sidebarSortType: SidebarSortType.alphabetically.rawValue,
+			Key.sidebarSortAscending: true
 		]
 
 		UserDefaults.standard.register(defaults: defaults)
