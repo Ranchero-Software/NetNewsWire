@@ -302,7 +302,7 @@ let appName = "NetNewsWire"
 	}
 
 	func applicationDidResignActive(_ notification: Notification) {
-		postLowMemoryNotification()
+		AppNotification.postAppDidGoToBackground()
 		saveState()
 	}
 

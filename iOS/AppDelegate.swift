@@ -129,7 +129,7 @@ import ErrorLog
 	}
 
 	func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
-		postLowMemoryNotification()
+		AppNotification.postLowMemory()
 	}
 
 	private func updateBadge() {
@@ -341,13 +341,15 @@ private extension AppDelegate {
 	}
 
 	func suspendApplication() {
-		guard UIApplication.shared.applicationState == .background else { return }
+		guard UIApplication.shared.applicationState == .background else {
+			return
+		}
 
 		AccountManager.shared.suspendNetworkAll()
 		AccountManager.shared.suspendDatabaseAll()
 		ArticleThemeDownloader.shared.cleanUp()
 
-		postLowMemoryNotification()
+		AppNotification.postAppDidGoToBackground()
 
 		CoalescingQueue.standard.performCallsImmediately()
 		for scene in UIApplication.shared.connectedScenes {
