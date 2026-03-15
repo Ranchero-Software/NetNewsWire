@@ -10,27 +10,24 @@ import os
 
 public extension Notification.Name {
 
-	/// Posted on actual low memory condition. Posted on main thread.
+	/// Posted on actual low memory condition. Main thread.
 	static let lowMemory = Notification.Name("LowMemoryNotification")
 
-	/// Posted when the app goes to background. Posted on main thread.
+	/// Posted when the app goes to background. Main thread.
 	static let appDidGoToBackground = Notification.Name("AppDidGoToBackgroundNotification")
 }
 
-private let notificationLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Notifications.swift")
+public struct AppNotification {
 
-public func postLowMemoryNotification() {
-	NotificationCenter.default.postOnMainThread(name: .lowMemory, object: nil)
-}
+	private static let notificationLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppNotification")
 
-public func postAppDidGoToBackgroundNotification() {
-	if Thread.isMainThread {
-		lowMemoryLogger.info("Posting app did go to background notification")
-		NotificationCenter.default.post(name: .appDidGoToBackground, object: nil)
-	} else {
-		Task { @MainActor in
-			lowMemoryLogger.info("Posting app did go to background notification")
-			NotificationCenter.default.post(name: .appDidGoToBackground, object: nil)
-		}
+	public static func postLowMemory() {
+		notificationLogger.info("Posting low memory notification.")
+		NotificationCenter.default.postOnMainThread(name: .lowMemory, object: nil)
+	}
+
+	public static func postAppDidGoToBackground() {
+		notificationLogger.info("Posting app did go to background notification.")
+		NotificationCenter.default.postOnMainThread(name: .appDidGoToBackground, object: nil)
 	}
 }
