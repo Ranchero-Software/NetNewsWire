@@ -135,6 +135,8 @@ import ErrorLog
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
 		}
@@ -457,7 +459,13 @@ import ErrorLog
 		updateUnreadCount()
 	}
 
+	@objc func handleLowMemory(_ notification: Notification) {
+		emptyCaches()
+	}
 
+	@objc func handleAppDidGoToBackground(_ notification: Notification) {
+		emptyCaches()
+	}
 }
 
 // MARK: - Private
