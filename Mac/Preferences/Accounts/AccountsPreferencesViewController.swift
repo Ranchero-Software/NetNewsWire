@@ -124,7 +124,9 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountCell {
 
-			let account = account(at: row)
+			guard let account = account(at: row) else {
+				return nil
+			}
 			cell.textField?.stringValue = account.nameForDisplay
 			cell.imageView?.image = account.smallIcon?.image
 
@@ -141,7 +143,7 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 		updateDeleteButtonState()
 
 		if let selectedAccount {
-			controller = AccountsDetailViewController(account: selectedAccount)
+			let controller = AccountsDetailViewController(account: selectedAccount)
 			showController(controller)
 		} else {
 			hideController()
