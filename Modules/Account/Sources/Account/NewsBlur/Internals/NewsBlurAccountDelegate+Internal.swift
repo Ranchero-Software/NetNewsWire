@@ -271,6 +271,7 @@ import os.log
 		for storyHashGroup in storyHashGroups {
 			do {
 				try await apiCall(Set(storyHashGroup))
+				try? await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup))
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
