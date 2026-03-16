@@ -12,7 +12,6 @@ import ErrorLog
 @MainActor final class ErrorLogWindowController: NSWindowController, NSWindowDelegate {
 
 	private static let windowIsOpenKey = "ErrorLogWindowIsOpen"
-	private static let windowHasBeenShownKey = "ErrorLogWindowHasBeenShown"
 	private static let errorLogWindowAutosaveFrameName = "ErrorLogWindow"
 
 	static private(set) var shouldOpenAtStartup: Bool {
@@ -24,29 +23,20 @@ import ErrorLog
 		}
 	}
 
-	private static var hasBeenShownBefore: Bool {
-		get {
-			UserDefaults.standard.bool(forKey: windowHasBeenShownKey)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: windowHasBeenShownKey)
-		}
-	}
-
 	private var textView = NSTextView()
 	private var copyButton: NSButton?
 	private var hasBeenShown = false
 	private var hasLoadedEntries = false
 
 	private static let defaultWindowSize = NSSize(width: 640, height: 400)
-	static let minimumWindowSize = NSSize(width: 640, height: 300)
+	private static let minimumWindowSize = NSSize(width: 640, height: 300)
+	private static let aboveCenterOffset: CGFloat = 40
 
 	init() {
 		let window = NSWindow(contentRect: NSRect(origin: .zero, size: Self.defaultWindowSize), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: true)
 		window.title = NSLocalizedString("Error Log", comment: "Error Log window title")
 		window.minSize = Self.minimumWindowSize
 		window.isReleasedWhenClosed = false
-		window.setFrameAutosaveName(Self.errorLogWindowAutosaveFrameName)
 
 		super.init(window: window)
 		setupUI()
@@ -64,13 +54,12 @@ import ErrorLog
 	override func showWindow(_ sender: Any?) {
 		if !hasBeenShown {
 			hasBeenShown = true
-			if !Self.hasBeenShownBefore {
-				Self.hasBeenShownBefore = true
-				window?.center()
-				var frame = window?.frame ?? .zero
-				frame.origin.y += Self.firstShowVerticalOffset
+			window?.center()
+			if var frame = window?.frame {
+				frame.origin.y += Self.aboveCenterOffset
 				window?.setFrame(frame, display: false)
 			}
+			window?.setFrameAutosaveName(Self.errorLogWindowAutosaveFrameName)
 		}
 		super.showWindow(sender)
 		if !hasLoadedEntries {
@@ -119,7 +108,6 @@ import ErrorLog
 
 private extension ErrorLogWindowController {
 
-	static let firstShowVerticalOffset: CGFloat = 40
 	static let dateFormatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
