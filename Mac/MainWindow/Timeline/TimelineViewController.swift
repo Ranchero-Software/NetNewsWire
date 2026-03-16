@@ -241,7 +241,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 				Task { @MainActor in
@@ -716,6 +716,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func accountsDidChange(_ note: Notification) {
+		if representedObjectsContainsAnyPseudoFeed() {
+			fetchAndReplaceArticlesAsync()
+		}
+	}
+
+	@objc func userDidDeleteAccount(_ note: Notification) {
+		undoManager?.removeAllActions() // Undo stack may contain actions for the deleted account.
 		if representedObjectsContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync()
 		}
