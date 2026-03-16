@@ -261,7 +261,7 @@ public enum FetchType {
 		delegate.behaviors
 	}
 
-	var refreshInProgress = false {
+	public var refreshInProgress = false {
 		didSet {
 			if refreshInProgress != oldValue {
 				if refreshInProgress {
