@@ -177,6 +177,7 @@ import ErrorLog
 		}
 
 		account.prepareForDeletion()
+		account.deleteSettings()
 
 		accountsDictionary.removeValue(forKey: account.accountID)
 		account.isDeleted = true
