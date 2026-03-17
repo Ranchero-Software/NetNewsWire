@@ -300,11 +300,10 @@ final class AppDefaults: Sendable {
 	var refreshInterval: RefreshInterval {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
-			if rawValue == 2 { // Old every-10-minutes setting — migrate to every 30 minutes
-				refreshInterval = .every30Minutes
+			if rawValue == 2 { // Old every-10-minutes setting — now using 30 minutes as minimum.
 				return .every30Minutes
 			}
-			return RefreshInterval(rawValue: rawValue) ?? .everyHour
+			return RefreshInterval(rawValue: rawValue) ?? .every2Hours
 		}
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
@@ -317,6 +316,14 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+		}
+	}
+
+	init() {
+		// Migrate every-10-minute refresh interval to 30 minutes.
+		let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
+		if rawValue == 2 {
+			UserDefaults.standard.set(RefreshInterval.every30Minutes.rawValue, forKey: Key.refreshInterval)
 		}
 	}
 
