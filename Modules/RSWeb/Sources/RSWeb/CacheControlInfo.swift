@@ -22,6 +22,16 @@ nonisolated public struct CacheControlInfo: Codable, Equatable {
 		Date() >= resumeDate
 	}
 
+	/// canResume with a clamped maxAge — the actual maxAge
+	/// is clamped to [minMaxAge, maxMaxAge]. We do this because
+	/// sites tend to misconfigure their max age — we’ve seen
+	/// feeds that make this as long as one year, which is
+	/// clearly not intentional.
+	public func canResume(minMaxAge: TimeInterval, maxMaxAge: TimeInterval) -> Bool {
+		let clampedMaxAge = max(minMaxAge, min(maxMaxAge, maxAge))
+		return Date() >= dateCreated + clampedMaxAge
+	}
+
 	public init(dateCreated: Date, maxAge: TimeInterval) {
 		self.dateCreated = dateCreated
 		self.maxAge = maxAge

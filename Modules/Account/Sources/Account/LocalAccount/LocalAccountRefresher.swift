@@ -156,6 +156,7 @@ import os
 		}
 
 		if let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
+			Self.logger.debug("LocalAccountRefresher: setting cacheControlInfo maxAge: \(cacheControlInfo.maxAge) url: \(url.absoluteString)")
 			feed.cacheControlInfo = cacheControlInfo
 		}
 
@@ -281,18 +282,26 @@ private extension LocalAccountRefresher {
 		return false
 	}
 
+	static let cacheControlMinMaxAge: TimeInterval = 30 * 60 // 30 minutes
+	static let cacheControlMaxMaxAge: TimeInterval = 5 * 60 * 60 // 5 hours
+
 	static func feedShouldBeSkippedForCacheControlReasons(_ feed: Feed) -> Bool {
-		// We support Cache-Control only for openrss.org. The rest of the feed-providing
-		// universe hasn’t dealt with Cache-Control, and we routinely see days-long
-		// max-ages for even fast-moving feeds.
-		//
-		// However, openrss.org does make sure their Cache-Control headers are
-		// intentional, and we should honor those.
+		guard let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume else {
+			return false
+		}
+
+		// openrss.org gets unclamped Cache-Control — they configure it correctly.
 		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.openRSSOrgHostName]) {
-			if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
-				Self.logger.info("LocalAccountRefresher: Dropping request for special case Cache-Control reasons: \(feed.url)")
-				return true
-			}
+			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons (openrss.org): \(feed.url)")
+			return true
+		}
+
+		// All other feeds: honor Cache-Control with clamped max-age
+		// (min 30 minutes, max 5 hours) because many sites misconfigure it.
+		// We’ve seen max-age as long as one year (for a feed that updates frequently).
+		if !cacheControlInfo.canResume(minMaxAge: cacheControlMinMaxAge, maxMaxAge: cacheControlMaxMaxAge) {
+			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons: \(feed.url)")
+			return true
 		}
 
 		return false
