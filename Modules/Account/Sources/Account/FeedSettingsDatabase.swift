@@ -13,7 +13,7 @@ import RSDatabaseObjC
 import RSWeb
 import Articles
 
-@MainActor final class FeedSettingsDatabase {
+final class FeedSettingsDatabase: Sendable {
 	enum Column: String {
 		case feedID
 		case homePageURL
@@ -52,36 +52,46 @@ import Articles
 		let lastCheckDate: Date?
 	}
 
-	private let database: FMDatabase
+	nonisolated(unsafe) private let database: FMDatabase // Used on serial dispatch queue only
+	private let serialDispatchQueue: DispatchQueue
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedSettingsDatabase")
 
 	init(databasePath: String) {
+		self.serialDispatchQueue = DispatchQueue(label: "FeedSettingsDatabase")
 		self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
-		database.executeStatements("PRAGMA journal_mode = WAL;")
-		database.runCreateStatements(Self.tableCreationStatements)
+		serialDispatchQueue.sync { [database] in
+			database.executeStatements("PRAGMA journal_mode = WAL;")
+			database.runCreateStatements(Self.tableCreationStatements)
+		}
 		if !Platform.isRunningUnitTests {
-			database.vacuum()
+			vacuum()
 		}
 	}
 
 	func vacuum() {
-		database.vacuum()
+		serialDispatchQueue.async {
+			self.database.vacuum()
+		}
 	}
 
 	var isEmpty: Bool {
-		guard let resultSet = database.executeQuery("SELECT 1 FROM feedSettings LIMIT 1;", withArgumentsIn: []) else {
-			return true
+		serialDispatchQueue.sync {
+			guard let resultSet = self.database.executeQuery("SELECT 1 FROM feedSettings LIMIT 1;", withArgumentsIn: []) else {
+				return true
+			}
+			defer {
+				resultSet.close()
+			}
+			return !resultSet.next()
 		}
-		defer {
-			resultSet.close()
-		}
-		return !resultSet.next()
 	}
 
 	// MARK: - Feed Existence
 
 	func ensureFeedExists(_ feedURL: String, feedID: String) {
-		database.executeUpdate("INSERT OR IGNORE INTO feedSettings (feedURL, feedID) VALUES (?, ?);", withArgumentsIn: [feedURL, feedID])
+		serialDispatchQueue.async {
+			self.database.executeUpdate("INSERT OR IGNORE INTO feedSettings (feedURL, feedID) VALUES (?, ?);", withArgumentsIn: [feedURL, feedID])
+		}
 	}
 
 	// MARK: - Insert Row
@@ -92,36 +102,43 @@ import Articles
 		for (column, value) in columnValues {
 			dictionary[column.rawValue] = value
 		}
-		database.insertRow(dictionary, insertType: .orReplace, tableName: "feedSettings")
+		nonisolated(unsafe) let capturedDictionary = dictionary
+		serialDispatchQueue.async {
+			self.database.insertRow(capturedDictionary, insertType: .orReplace, tableName: "feedSettings")
+		}
 	}
 
 	// MARK: - Fetch Rows
 
 	func allRows() -> [String: Row] {
-		guard let resultSet = database.executeQuery("SELECT * FROM feedSettings;", withArgumentsIn: []) else {
-			return [:]
-		}
-		defer {
-			resultSet.close()
-		}
-
-		var rows = [String: Row]()
-		while resultSet.next() {
-			if let feedURL = resultSet.string(forColumn: "feedURL") {
-				rows[feedURL] = row(from: resultSet)
+		serialDispatchQueue.sync {
+			guard let resultSet = self.database.executeQuery("SELECT * FROM feedSettings;", withArgumentsIn: []) else {
+				return [:]
 			}
+			defer {
+				resultSet.close()
+			}
+
+			var rows = [String: Row]()
+			while resultSet.next() {
+				if let feedURL = resultSet.string(forColumn: "feedURL") {
+					rows[feedURL] = self.row(from: resultSet)
+				}
+			}
+			return rows
 		}
-		return rows
 	}
 
 	// MARK: - String
 
 	func setString(_ value: String?, for feedURL: String, column: Column) {
 		let name = column.rawValue
-		if let value {
-			database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
-		} else {
-			database.executeUpdate("UPDATE feedSettings SET \(name) = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+		serialDispatchQueue.async {
+			if let value {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
 		}
 	}
 
@@ -129,54 +146,66 @@ import Articles
 
 	func setBool(_ value: Bool, for feedURL: String, column: Column) {
 		let name = column.rawValue
-		database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
+		serialDispatchQueue.async {
+			self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
+		}
 	}
 
 	// MARK: - Date
 
 	func setDate(_ value: Date?, for feedURL: String, column: Column) {
 		let name = column.rawValue
-		if let value {
-			database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value.timeIntervalSinceReferenceDate, feedURL])
-		} else {
-			database.executeUpdate("UPDATE feedSettings SET \(name) = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+		serialDispatchQueue.async {
+			if let value {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value.timeIntervalSinceReferenceDate, feedURL])
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
 		}
 	}
 
 	// MARK: - Compound Types
 
 	func setConditionalGetInfo(_ info: HTTPConditionalGetInfo?, for feedURL: String) {
-		if let info {
-			database.executeUpdate("UPDATE feedSettings SET conditionalGetInfoLastModified = ?, conditionalGetInfoEtag = ? WHERE feedURL = ?;", withArgumentsIn: [info.lastModified as Any, info.etag as Any, feedURL])
-		} else {
-			database.executeUpdate("UPDATE feedSettings SET conditionalGetInfoLastModified = NULL, conditionalGetInfoEtag = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+		serialDispatchQueue.async {
+			if let info {
+				self.database.executeUpdate("UPDATE feedSettings SET conditionalGetInfoLastModified = ?, conditionalGetInfoEtag = ? WHERE feedURL = ?;", withArgumentsIn: [info.lastModified, info.etag, feedURL])
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET conditionalGetInfoLastModified = NULL, conditionalGetInfoEtag = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
 		}
 	}
 
 	func setCacheControlInfo(_ info: CacheControlInfo?, for feedURL: String) {
-		if let info {
-			database.executeUpdate("UPDATE feedSettings SET cacheControlInfoDateCreated = ?, cacheControlInfoMaxAge = ? WHERE feedURL = ?;", withArgumentsIn: [info.dateCreated.timeIntervalSinceReferenceDate, info.maxAge, feedURL])
-		} else {
-			database.executeUpdate("UPDATE feedSettings SET cacheControlInfoDateCreated = NULL, cacheControlInfoMaxAge = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+		serialDispatchQueue.async {
+			if let info {
+				self.database.executeUpdate("UPDATE feedSettings SET cacheControlInfoDateCreated = ?, cacheControlInfoMaxAge = ? WHERE feedURL = ?;", withArgumentsIn: [info.dateCreated.timeIntervalSinceReferenceDate, info.maxAge, feedURL])
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET cacheControlInfoDateCreated = NULL, cacheControlInfoMaxAge = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
 		}
 	}
 
 	func setAuthors(_ authors: [Author]?, for feedURL: String) {
-		if let authors {
-			let jsonString = Set(authors).json()
-			database.executeUpdate("UPDATE feedSettings SET authors = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString as Any, feedURL])
-		} else {
-			database.executeUpdate("UPDATE feedSettings SET authors = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+		serialDispatchQueue.async {
+			if let authors {
+				let jsonString = Set(authors).json()
+				self.database.executeUpdate("UPDATE feedSettings SET authors = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString, feedURL])
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET authors = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
 		}
 	}
 
 	func setFolderRelationship(_ relationship: [String: String]?, for feedURL: String) {
-		if let relationship {
-			if let data = try? JSONSerialization.data(withJSONObject: relationship), let jsonString = String(data: data, encoding: .utf8) {
-				database.executeUpdate("UPDATE feedSettings SET folderRelationship = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString, feedURL])
+		serialDispatchQueue.async {
+			if let relationship {
+				if let data = try? JSONSerialization.data(withJSONObject: relationship), let jsonString = String(data: data, encoding: .utf8) {
+					self.database.executeUpdate("UPDATE feedSettings SET folderRelationship = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString, feedURL])
+				}
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET folderRelationship = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
 			}
-		} else {
-			database.executeUpdate("UPDATE feedSettings SET folderRelationship = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
 		}
 	}
 
@@ -187,16 +216,19 @@ import Articles
 			return
 		}
 
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedURLs.count))!
-		let sql = "DELETE FROM feedSettings WHERE feedURL NOT IN \(placeholders);"
-		database.executeUpdate(sql, withArgumentsIn: Array(feedURLs))
+		let feedURLsArray = Array(feedURLs)
+		serialDispatchQueue.async {
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedURLsArray.count))!
+			let sql = "DELETE FROM feedSettings WHERE feedURL NOT IN \(placeholders);"
+			self.database.executeUpdate(sql, withArgumentsIn: feedURLsArray)
 
-		#if DEBUG
-		let numberOfRowChanges: Int32 = database.changes()
-		if numberOfRowChanges > 0 {
-			Self.logger.info("FeedSettingsDatabase: deleteSettingsForFeedsNotIn: deleted \(numberOfRowChanges) orphaned feed settings")
+			#if DEBUG
+			let numberOfRowChanges: Int32 = self.database.changes()
+			if numberOfRowChanges > 0 {
+				Self.logger.info("FeedSettingsDatabase: deleteSettingsForFeedsNotIn: deleted \(numberOfRowChanges) orphaned feed settings")
+			}
+			#endif
 		}
-		#endif
 	}
 }
 
