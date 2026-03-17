@@ -169,7 +169,7 @@ final class FeedSettingsDatabase: Sendable {
 	func setConditionalGetInfo(_ info: HTTPConditionalGetInfo?, for feedURL: String) {
 		serialDispatchQueue.async {
 			if let info {
-				self.database.executeUpdate("UPDATE feedSettings SET conditionalGetInfoLastModified = ?, conditionalGetInfoEtag = ? WHERE feedURL = ?;", withArgumentsIn: [info.lastModified, info.etag, feedURL])
+				self.database.executeUpdate("UPDATE feedSettings SET conditionalGetInfoLastModified = ?, conditionalGetInfoEtag = ? WHERE feedURL = ?;", withArgumentsIn: [info.lastModified as Any, info.etag as Any, feedURL])
 			} else {
 				self.database.executeUpdate("UPDATE feedSettings SET conditionalGetInfoLastModified = NULL, conditionalGetInfoEtag = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
 			}
@@ -190,7 +190,7 @@ final class FeedSettingsDatabase: Sendable {
 		serialDispatchQueue.async {
 			if let authors {
 				let jsonString = Set(authors).json()
-				self.database.executeUpdate("UPDATE feedSettings SET authors = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString, feedURL])
+				self.database.executeUpdate("UPDATE feedSettings SET authors = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString as Any, feedURL])
 			} else {
 				self.database.executeUpdate("UPDATE feedSettings SET authors = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
 			}
