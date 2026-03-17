@@ -10,7 +10,7 @@ import Foundation
 /// Basic Cache-Control handling — just the part we need,
 /// which is to know when we got the response (dateCreated)
 /// and when we can ask again (canResume).
-nonisolated public struct CacheControlInfo: Codable, Equatable {
+public struct CacheControlInfo: Codable, Equatable, Sendable {
 
 	public let dateCreated: Date
 	public let maxAge: TimeInterval
@@ -57,7 +57,7 @@ nonisolated public struct CacheControlInfo: Codable, Equatable {
 	}
 }
 
-nonisolated private extension CacheControlInfo {
+private extension CacheControlInfo {
 
 	static let maxAgePrefix = "max-age="
 	static let maxAgePrefixCount = maxAgePrefix.count
