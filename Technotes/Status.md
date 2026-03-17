@@ -8,8 +8,8 @@ https://github.com/Ranchero-Software/NetNewsWire/milestone/66
 iOS shipping: 7.0.1 (7029)
 https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-7.0-7024
 
-iOS beta: 7.0.2 (7033)
-https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-7.0.2-7033
+iOS beta: 7.0.2 (7034)
+https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-7.0.2-7034
 
 ## Mac
 
