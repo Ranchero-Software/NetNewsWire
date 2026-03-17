@@ -5,9 +5,9 @@ Be sure to have updated code and be *on correct branch*
 ## Edit Build Version
 
 NetNewsWire_ios_target_common.xcconfig
-
-Possibly bump MARKETING_VERSION
-Increment CURRENT_PROJECT_VERSION by 1 (usually)
+	Possibly bump MARKETING_VERSION
+NetNewsWire_version.xcconfig
+	 update CURRENT_PROJECT_VERSION if needed (might have just been done for Mac)
 
 Commit change.
 

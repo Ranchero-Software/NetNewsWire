@@ -1,7 +1,9 @@
 # How To Do Mac Sparkle Release
 
 NetNewsWire_mac_target_common.xcconfig
-	update MARKETING_VERSION and CURRENT_PROJECT_VERSION
+	update MARKETING_VERSION
+NetNewsWire_version.xcconfig
+	 update CURRENT_PROJECT_VERSION if needed (might have just been done for iOS)
 
 Run buildscripts/quiet_build_and_test.sh
 
