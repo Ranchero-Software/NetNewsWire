@@ -302,10 +302,10 @@ private extension LocalAccountRefresher {
 			return true
 		}
 
-		// All other feeds: honor Cache-Control with clamped max-age
-		// (min 30 minutes, max 5 hours) because many sites misconfigure it.
-		// We’ve seen max-age as long as one year (for a feed that updates frequently).
-		if !cacheControlInfo.canResume(minMaxAge: minimumTimeBetweenChecks, maxMaxAge: cacheControlMaxMaxAge) {
+		// All other feeds: honor Cache-Control with a max max-age
+		// because many sites misconfigure it. We’ve seen max-age as
+		// long as one year (for a feed that updates frequently).
+		if !cacheControlInfo.canResume(maxMaxAge: cacheControlMaxMaxAge) {
 			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons: \(feed.url)")
 			return true
 		}
