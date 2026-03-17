@@ -7,6 +7,7 @@
 //
 
 import Articles
+import ErrorLog
 import RSCore
 import RSParser
 import RSWeb
@@ -73,7 +74,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	weak var accountSettings: AccountSettings? {
+	var accountSettings: AccountSettings? {
 		didSet {
 			caller.accountSettings = accountSettings
 		}
@@ -265,6 +266,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					} catch {
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder — remove feed 1 error: \(error.localizedDescription)")
+						postSyncError(error, account: account, operation: "Removing feed from folder")
 					}
 				}
 
@@ -280,6 +282,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder - remove feed 2 error: \(error.localizedDescription)")
+						postSyncError(error, account: account, operation: "Removing feed from folder")
 					}
 				}
 			}
@@ -457,6 +460,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				try await restoreFeed(for: account, feed: feed, container: folder)
 			} catch {
 				Self.logger.error("ReaderAPIAccountDelegate: restoreFolder — error: \(error.localizedDescription)")
+				postSyncError(error, account: account, operation: "Restoring feed to folder")
 			}
 		}
 
@@ -494,6 +498,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		let caller = ReaderAPICaller(transport: transport, logger: Self.logger)
 		caller.credentials = credentials
 		return try await caller.validateCredentials(endpoint: endpoint)
+	}
+
+	func vacuumDatabases() {
+		Task {
+			await syncDatabase.vacuum()
+		}
 	}
 
 	// MARK: Suspend and Resume (for iOS)
@@ -821,6 +831,7 @@ private extension ReaderAPIAccountDelegate {
 					await processEntries(account: account, entries: entries)
 				} catch {
 					Self.logger.error("ReaderAPI: Refresh missing articles error: \(error.localizedDescription)")
+					postSyncError(error, account: account, operation: "Refreshing missing articles")
 				}
 			}
 
@@ -937,5 +948,10 @@ private extension ReaderAPIAccountDelegate {
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: syncArticleStarredState — error \(error.localizedDescription)")
 		}
+	}
+
+	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

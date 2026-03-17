@@ -300,7 +300,10 @@ final class AppDefaults: Sendable {
 	var refreshInterval: RefreshInterval {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
-			return RefreshInterval(rawValue: rawValue) ?? RefreshInterval.everyHour
+			if rawValue == 2 { // Old every-10-minutes setting — now using 30 minutes as minimum.
+				return .every30Minutes
+			}
+			return RefreshInterval(rawValue: rawValue) ?? .every2Hours
 		}
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.refreshInterval)
@@ -313,6 +316,14 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+		}
+	}
+
+	init() {
+		// Migrate every-10-minute refresh interval to 30 minutes.
+		let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
+		if rawValue == 2 {
+			UserDefaults.standard.set(RefreshInterval.every30Minutes.rawValue, forKey: Key.refreshInterval)
 		}
 	}
 
@@ -330,26 +341,13 @@ final class AppDefaults: Sendable {
 			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 			Key.timelineGroupByFeed: false,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
-			Key.refreshInterval: RefreshInterval.everyHour.rawValue,
+			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
 			Key.articleContentJavascriptEnabled: true
 		]
 
 		UserDefaults.standard.register(defaults: defaults)
-
-		// It seems that registering a default for NSQuitAlwaysKeepsWindows to true
-		// is not good enough to get the system to respect it, so we have to literally
-		// set it as the default to get it to take effect. This overrides a system-wide
-		// setting in the System Preferences, which is ostensibly meant to "close windows"
-		// in an app, but has the side-effect of also not preserving or restoring any state
-		// for the window. Since we've switched to using the standard state preservation and
-		// restoration mechanisms, and because it seems highly unlikely any user would object
-		// to NetNewsWire preserving this state, we'll force the preference on. If this becomes
-		// an issue, this could be changed to proactively look for whether the default has been
-		// set _by the user_ to false, and respect that default if it is so-set.
-//		UserDefaults.standard.set(true, forKey: "NSQuitAlwaysKeepsWindows")
-		// TODO: revisit the above when coming back to state restoration issues.
 	}
 
 	func actualFontSize(for fontSize: FontSize) -> CGFloat {

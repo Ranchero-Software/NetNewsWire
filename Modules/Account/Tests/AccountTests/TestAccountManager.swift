@@ -32,15 +32,15 @@ import RSWeb
 			abort()
 		}
 
-		let databasePath = accountFolder.appendingPathComponent("AccountSettings.db").path
-		let database = AccountSettingsDatabase(databasePath: databasePath)
-		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, accountSettingsDatabase: database, transport: transport)
+		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, transport: transport)
 
 		return account
 
 	}
 
 	func deleteAccount(_ account: Account) {
+
+		account.deleteSettings()
 
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)

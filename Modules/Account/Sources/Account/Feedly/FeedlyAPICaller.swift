@@ -143,7 +143,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 		var components = baseUrlComponents
@@ -183,7 +183,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 		var components = baseUrlComponents
@@ -235,7 +235,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 		var components = baseUrlComponents
@@ -292,7 +292,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 		guard let encodedId = encodeForURLPath(id) else {
@@ -336,7 +336,7 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 
@@ -400,7 +400,7 @@ extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 
@@ -577,7 +577,7 @@ extension FeedlyAPICaller: FeedlyGetCollectionsService {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 		var components = baseUrlComponents
@@ -618,7 +618,7 @@ extension FeedlyAPICaller: FeedlyGetStreamContentsService {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 
@@ -686,7 +686,7 @@ extension FeedlyAPICaller: FeedlyGetStreamIdsService {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 
@@ -756,7 +756,7 @@ extension FeedlyAPICaller: FeedlyGetEntriesService {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 
@@ -817,7 +817,7 @@ extension FeedlyAPICaller: FeedlyMarkArticlesService {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 		var components = baseUrlComponents
@@ -929,7 +929,7 @@ extension FeedlyAPICaller: FeedlyLogoutService {
 
 		guard let accessToken = credentials?.secret else {
 			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.incompleteCredentials))
+				completion(.failure(CredentialsError.missingAccessToken))
 			}
 		}
 		var components = baseUrlComponents

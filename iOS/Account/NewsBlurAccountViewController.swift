@@ -115,8 +115,6 @@ final class NewsBlurAccountViewController: UITableViewController {
 						account = AccountManager.shared.createAccount(type: .newsBlur)
 					}
 
-					try? account?.removeCredentials(type: .newsBlurBasic)
-					try? account?.removeCredentials(type: .newsBlurSessionID)
 					do {
 						try account?.storeCredentials(basicCredentials)
 						try account?.storeCredentials(sessionCredentials)

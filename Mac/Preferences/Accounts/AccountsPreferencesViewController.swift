@@ -27,6 +27,9 @@ final class AccountsPreferencesViewController: NSViewController {
 	var addAccountsViewController: NSHostingController<AddAccountsView>?
 
 	private var sortedAccounts = [Account]()
+	private var selectedAccount: Account? {
+		account(at: tableView.selectedRow)
+	}
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -39,6 +42,8 @@ final class AccountsPreferencesViewController: NSViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountRefreshStateChanged(_:)), name: .AccountRefreshDidBegin, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountRefreshStateChanged(_:)), name: .AccountRefreshDidFinish, object: nil)
 
 		// Fix tableView frame — for some reason IB wants it 1pt wider than the clip view. This leads to unwanted horizontal scrolling.
 		var rTable = tableView.frame
@@ -56,7 +61,7 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 
 	@IBAction func removeAccount(_ sender: Any) {
-		guard let account = sortedAccounts[safe: tableView.selectedRow] else {
+		guard let account = selectedAccount else {
 			return
 		}
 		let accountName = account.nameForDisplay
@@ -93,6 +98,10 @@ final class AccountsPreferencesViewController: NSViewController {
 		updateSortedAccounts()
 		tableView.reloadData()
 	}
+
+	@objc func handleAccountRefreshStateChanged(_ note: Notification) {
+		updateDeleteButtonState()
+	}
 }
 
 // MARK: - NSTableViewDataSource
@@ -100,11 +109,11 @@ final class AccountsPreferencesViewController: NSViewController {
 extension AccountsPreferencesViewController: NSTableViewDataSource {
 
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		return sortedAccounts.count
+		sortedAccounts.count
 	}
 
 	func tableView(_ tableView: NSTableView, objectValueFor tableColumn: NSTableColumn?, row: Int) -> Any? {
-		return sortedAccounts[row]
+		account(at: row)
 	}
 }
 
@@ -115,7 +124,9 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
 		if let cell = tableView.makeView(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "Cell"), owner: nil) as? AccountCell {
 
-			let account = sortedAccounts[row]
+			guard let account = account(at: row) else {
+				return nil
+			}
 			cell.textField?.stringValue = account.nameForDisplay
 			cell.imageView?.image = account.smallIcon?.image
 
@@ -129,26 +140,15 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 	}
 
 	func tableViewSelectionDidChange(_ notification: Notification) {
+		updateDeleteButtonState()
 
-		let selectedRow = tableView.selectedRow
-		if tableView.selectedRow == -1 {
-			deleteButton.isEnabled = false
-			hideController()
-			return
+		if let selectedAccount {
+			let controller = AccountsDetailViewController(account: selectedAccount)
+			showController(controller)
 		} else {
-			deleteButton.isEnabled = true
+			hideController()
 		}
-
-		let account = sortedAccounts[selectedRow]
-		if AccountManager.shared.defaultAccount == account {
-			deleteButton.isEnabled = false
-		}
-
-		let controller = AccountsDetailViewController(account: account)
-		showController(controller)
-
 	}
-
 }
 
 extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelegate {
@@ -231,8 +231,24 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 
 private extension AccountsPreferencesViewController {
 
+	func account(at row: Int) -> Account? {
+		sortedAccounts[safe: row]
+	}
+
 	func updateSortedAccounts() {
 		sortedAccounts = AccountManager.shared.sortedAccounts
+	}
+
+	func updateDeleteButtonState() {
+		guard let selectedAccount else {
+			deleteButton.isEnabled = false
+			return
+		}
+		if selectedAccount == AccountManager.shared.defaultAccount {
+			deleteButton.isEnabled = false
+			return
+		}
+		deleteButton.isEnabled = !selectedAccount.refreshInProgress
 	}
 
 	func showController(_ controller: NSViewController) {

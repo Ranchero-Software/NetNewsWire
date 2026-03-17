@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ErrorLog
 import RSCore
 import RSParser
 import RSWeb
@@ -155,6 +156,7 @@ import os
 		}
 
 		if let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
+			Self.logger.debug("LocalAccountRefresher: setting cacheControlInfo maxAge: \(cacheControlInfo.maxAge) url: \(url.absoluteString)")
 			feed.cacheControlInfo = cacheControlInfo
 		}
 
@@ -167,7 +169,18 @@ import os
 			Self.logger.debug("LocalAccountRefresher: parsing feed for \(url.absoluteString)")
 
 			let parserData = ParserData(url: feed.url, data: data)
-			guard let parsedFeed = try? await FeedParser.parse(parserData) else {
+			let parsedFeed: ParsedFeed
+			do {
+				guard let result = try await FeedParser.parse(parserData) else {
+					return
+				}
+				parsedFeed = result
+			} catch {
+				Self.logger.error("LocalAccountRefresher: feed parse error for \(url.absoluteString): \(error.localizedDescription)")
+				if let account = feed.account {
+					let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Parsing feed", errorMessage: "\(error.localizedDescription): \(url.absoluteString)")
+					NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+				}
 				return
 			}
 			guard let account = feed.account else {
@@ -184,6 +197,21 @@ import os
 
 			self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
 		}
+	}
+
+	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL) {
+		guard let feed = urlToFeedDictionary[url.absoluteString],
+			  let account = feed.account else {
+			return
+		}
+
+		let transportError = TransportError.httpError(status: statusCode)
+		let statusDescription = transportError.localizedDescription
+		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
+		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
+
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Downloading feed", errorMessage: error.localizedDescription)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData data: Data, url: URL) -> Bool {
@@ -239,6 +267,8 @@ private extension LocalAccountRefresher {
 		feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
 	}
 
+	static let minimumTimeBetweenChecks: TimeInterval = 29 * 60 // 29 minutes
+
 	static func feedShouldBeSkippedForTimingReasons(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
 		guard let lastCheckDate = feed.lastCheckDate else {
 			return false
@@ -251,21 +281,33 @@ private extension LocalAccountRefresher {
 			}
 		}
 
+		if Date().timeIntervalSince(lastCheckDate) < minimumTimeBetweenChecks {
+			Self.logger.info("LocalAccountRefresher: Dropping request — last checked less than 29 minutes ago: \(feed.url)")
+			return true
+		}
+
 		return false
 	}
 
+	static let cacheControlMaxMaxAge: TimeInterval = 5 * 60 * 60 // 5 hours
+
 	static func feedShouldBeSkippedForCacheControlReasons(_ feed: Feed) -> Bool {
-		// We support Cache-Control only for openrss.org. The rest of the feed-providing
-		// universe hasn’t dealt with Cache-Control, and we routinely see days-long
-		// max-ages for even fast-moving feeds.
-		//
-		// However, openrss.org does make sure their Cache-Control headers are
-		// intentional, and we should honor those.
+		guard let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume else {
+			return false
+		}
+
+		// openrss.org gets unclamped Cache-Control — they configure it correctly.
 		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.openRSSOrgHostName]) {
-			if let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume {
-				Self.logger.info("LocalAccountRefresher: Dropping request for special case Cache-Control reasons: \(feed.url)")
-				return true
-			}
+			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons (openrss.org): \(feed.url)")
+			return true
+		}
+
+		// All other feeds: honor Cache-Control with a max max-age
+		// because many sites misconfigure it. We’ve seen max-age as
+		// long as one year (for a feed that updates frequently).
+		if !cacheControlInfo.canResume(maxMaxAge: cacheControlMaxMaxAge) {
+			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons: \(feed.url)")
+			return true
 		}
 
 		return false

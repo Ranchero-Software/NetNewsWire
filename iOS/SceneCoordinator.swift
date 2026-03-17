@@ -553,6 +553,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	@objc func userDidDeleteAccount(_ note: Notification) {
 		Self.logger.debug("SceneCoordinator: userDidDeleteAccount")
 
+		undoManager?.removeAllActions() // Undo stack may contain actions for the deleted account.
+
 		let cleanupAccount = {
 			if let account = note.userInfo?[Account.UserInfoKey.account] as? Account,
 				let node = self.treeController.rootNode.childNodeRepresentingObject(account) {

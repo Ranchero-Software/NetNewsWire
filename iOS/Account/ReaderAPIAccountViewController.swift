@@ -169,8 +169,6 @@ final class ReaderAPIAccountViewController: UITableViewController {
 					do {
 						account?.endpointURL = url
 
-						try? account?.removeCredentials(type: .readerBasic)
-						try? account?.removeCredentials(type: .readerAPIKey)
 						try account?.storeCredentials(credentials)
 						try account?.storeCredentials(validatedCredentials)
 

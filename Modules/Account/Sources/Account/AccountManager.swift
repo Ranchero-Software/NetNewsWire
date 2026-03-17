@@ -12,18 +12,19 @@ import RSCore
 import RSWeb
 import Articles
 import ArticlesDatabase
-import RSDatabase
+import ErrorLog
 
 @MainActor public final class AccountManager: UnreadCountProvider {
+	
 	public static var shared = AccountManager()
 
 	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
     private static let jsonNetNewsWireNewsURL = "https://netnewswire.blog/feed.json"
 
 	public let defaultAccount: Account
+	public let errorLogDatabase: ErrorLogDatabase
 
 	private let accountsFolder: String
-	private let accountSettingsDatabase: AccountSettingsDatabase
     private var accountsDictionary = [String: Account]()
 
 	private let defaultAccountFolderName = "OnMyMac"
@@ -106,9 +107,6 @@ import RSDatabase
 	public init() {
 		self.accountsFolder = AppConfig.dataSubfolder(named: "Accounts").path
 
-		let databasePath = AppConfig.dataFolder.appendingPathComponent("AccountSettings.db").path
-		self.accountSettingsDatabase = AccountSettingsDatabase(databasePath: databasePath)
-
 		// The local "On My Mac" account must always exist, even if it's empty.
 		let localAccountFolder = (accountsFolder as NSString).appendingPathComponent("OnMyMac")
 		do {
@@ -118,7 +116,10 @@ import RSDatabase
 			abort()
 		}
 
-		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier, accountSettingsDatabase: accountSettingsDatabase)
+		let errorLogDatabasePath = AppConfig.dataFolder.appendingPathComponent("Errors.db").path
+		self.errorLogDatabase = ErrorLogDatabase(databasePath: errorLogDatabasePath)
+
+		defaultAccount = Account(dataFolder: localAccountFolder, type: .onMyMac, accountID: defaultAccountIdentifier)
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
@@ -134,7 +135,8 @@ import RSDatabase
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		DispatchQueue.main.async {
 			self.updateUnreadCount()
 		}
@@ -159,7 +161,7 @@ import RSDatabase
 			abort()
 		}
 
-		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID, accountSettingsDatabase: accountSettingsDatabase)
+		let account = Account(dataFolder: accountFolder, type: type, accountID: accountID)
 		accountsDictionary[accountID] = account
 
 		var userInfo = [String: Any]()
@@ -175,11 +177,10 @@ import RSDatabase
 		}
 
 		account.prepareForDeletion()
+		account.deleteSettings()
 
 		accountsDictionary.removeValue(forKey: account.accountID)
 		account.isDeleted = true
-
-		accountSettingsDatabase.deleteSettings(for: account.accountID)
 
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
@@ -292,10 +293,14 @@ import RSDatabase
 
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
+				let accountName = account.nameForDisplay
+				let accountTypeRawValue = account.type.rawValue
 				group.addTask {
 					do {
 						try await account.refreshAll()
 					} catch {
+						let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountTypeRawValue, operation: "Refreshing", errorMessage: error.localizedDescription)
+						NotificationCenter.default.postOnMainThread(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 						errorHandler?(error)
 					}
 				}
@@ -415,6 +420,15 @@ import RSDatabase
 		return count
 	}
 
+	// MARK: - Vacuum
+
+	public func vacuumAllDatabases() async {
+		await errorLogDatabase.vacuum()
+		for account in accounts {
+			account.vacuumDatabases()
+		}
+	}
+
 	// MARK: - Caches
 
 	/// Empty caches that can reasonably be emptied — when the app moves to the background, for instance.
@@ -445,6 +459,14 @@ import RSDatabase
 	@objc func accountStateDidChange(_ notification: Notification) {
 		updateUnreadCount()
 	}
+
+	@objc func handleLowMemory(_ notification: Notification) {
+		emptyCaches()
+	}
+
+	@objc func handleAppDidGoToBackground(_ notification: Notification) {
+		emptyCaches()
+	}
 }
 
 // MARK: - Private
@@ -456,7 +478,7 @@ private extension AccountManager {
 	}
 
 	func loadAccount(_ accountSpecifier: AccountSpecifier) -> Account? {
-		Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier, accountSettingsDatabase: accountSettingsDatabase)
+		Account(dataFolder: accountSpecifier.folderPath, type: accountSpecifier.type, accountID: accountSpecifier.identifier)
 	}
 
 	func loadAccount(_ filename: String) -> Account? {

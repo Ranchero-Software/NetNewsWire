@@ -271,6 +271,7 @@ import os.log
 		for storyHashGroup in storyHashGroups {
 			do {
 				try await apiCall(Set(storyHashGroup))
+				try? await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup))
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
@@ -307,6 +308,7 @@ import os.log
 			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		} catch {
 			Self.logger.error("NewsBlur: Sync Story Read Status failed: \(error.localizedDescription)")
+			postSyncError(error, account: account, operation: "Syncing read status")
 		}
 	}
 
@@ -334,6 +336,7 @@ import os.log
 			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 		} catch {
 			Self.logger.error("NewsBlur: Sync Story Starred Status failed: \(error.localizedDescription)")
+			postSyncError(error, account: account, operation: "Syncing starred status")
 		}
 	}
 

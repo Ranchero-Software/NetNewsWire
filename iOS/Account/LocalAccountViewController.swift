@@ -20,7 +20,7 @@ final class LocalAccountViewController: UITableViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		setupFooter()
-		navigationItem.title = Account.defaultLocalAccountName
+		navigationItem.title = AccountType.onMyMac.displayName
 		nameTextField.delegate = self
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
 	}

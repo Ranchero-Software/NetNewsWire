@@ -31,7 +31,12 @@ extension Notification.Name {
 		self.diskCache = BinaryDiskCache(folder: folder.path)
 		self.queue = DispatchQueue(label: "ImageDownloader serial queue - \(folder.path)")
 
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+	}
+
+	@objc func handleAppDidGoToBackground(_ notification: Notification) {
+		imageCache.removeAll()
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {

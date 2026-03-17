@@ -9,71 +9,91 @@ import Foundation
 import os
 import RSWeb
 
-/// One-time import from a Settings.plist into AccountSettingsDatabase.
+/// One-time import from a Settings.plist into UserDefaults.
 @MainActor struct AccountSettingsImporter {
+
+	struct ImportedSettings {
+		let name: String?
+		let isActive: Bool?
+		let username: String?
+		let lastArticleFetchStartTime: Date?
+		let lastRefreshCompletedDate: Date?
+		let endpointURL: URL?
+		let externalID: String?
+		let conditionalGetInfo: [String: HTTPConditionalGetInfo]?
+	}
+
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountSettingsImporter")
 
-	static func importIfNeeded(accountID: String, dataFolder: String, database: AccountSettingsDatabase) {
+	/// Returns ImportedSettings if there is a Settings.plist to read.
+	/// Returns nil if there is no plist or it can't be read.
+	static func readSettingsFromPlist(accountID: String, dataFolder: String) -> ImportedSettings? {
 		let plistPath = (dataFolder as NSString).appendingPathComponent("Settings.plist")
 		guard FileManager.default.fileExists(atPath: plistPath) else {
-			return
-		}
-		guard !database.accountExists(accountID) else {
-			return
+			return nil
 		}
 
 		Self.logger.info("AccountSettingsImporter: importing Settings.plist for account \(accountID)")
 
 		guard let data = FileManager.default.contents(atPath: plistPath) else {
 			Self.logger.error("AccountSettingsImporter: unable to read Settings.plist for account \(accountID)")
-			return
+			return nil
 		}
 
 		guard let plist = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] else {
 			Self.logger.error("AccountSettingsImporter: unable to deserialize Settings.plist for account \(accountID)")
-			return
+			return nil
 		}
 
-		database.ensureAccountExists(accountID)
-
-		if let name = plist["name"] as? String {
-			database.setString(name, for: accountID, column: .name)
-		}
-
-		if let isActive = plist["isActive"] as? Bool {
-			database.setBool(isActive, for: accountID, column: .isActive)
-		}
-
-		if let username = plist["username"] as? String {
-			database.setString(username, for: accountID, column: .username)
-		}
-
-		if let lastArticleFetch = plist["lastArticleFetch"] as? Date {
-			database.setDate(lastArticleFetch, for: accountID, column: .lastArticleFetchStartTime)
-		}
-
-		if let lastArticleFetchEndTime = plist["lastArticleFetchEndTime"] as? Date {
-			database.setDate(lastArticleFetchEndTime, for: accountID, column: .lastRefreshCompletedDate)
-		}
-
-		if let endpointURL = plist["endpointURL"] as? String {
-			database.setString(endpointURL, for: accountID, column: .endpointURL)
-		}
-
-		if let externalID = plist["externalID"] as? String {
-			database.setString(externalID, for: accountID, column: .externalID)
-		}
-
-		if let conditionalGetDict = plist["conditionalGetInfo"] as? [String: [String: String]] {
-			for (endpoint, value) in conditionalGetDict {
+		var conditionalGetInfoDict: [String: HTTPConditionalGetInfo]?
+		if let rawDict = plist["conditionalGetInfo"] as? [String: [String: String]] {
+			var dict = [String: HTTPConditionalGetInfo]()
+			for (endpoint, value) in rawDict {
 				let lastModified = value["lastModified"]
 				let etag = value["etag"]
 				if let info = HTTPConditionalGetInfo(lastModified: lastModified, etag: etag) {
-					database.setConditionalGetInfo(info, for: accountID, endpoint: endpoint)
+					dict[endpoint] = info
 				}
+			}
+			if !dict.isEmpty {
+				conditionalGetInfoDict = dict
+			}
+		}
+
+		var endpointURL: URL?
+		if let urlString = plist["endpointURL"] as? String {
+			endpointURL = URL(string: urlString)
+		} else if let urlDict = plist["endpointURL"] as? [String: String] {
+			// PropertyListEncoder encodes URL as ["relative": "…", "base": "…"]
+			let relative = urlDict["relative"]
+			let base = urlDict["base"]
+			let baseURL: URL? = {
+				guard let base else {
+					return nil
+				}
+				return URL(string: base)
+			}()
+
+			if let baseURL, let relative {
+				endpointURL = URL(string: relative, relativeTo: baseURL)
+			} else if let relative {
+				endpointURL = URL(string: relative)
+			} else if let baseURL {
+				endpointURL = baseURL
 			}
 		}
 
 		Self.logger.info("AccountSettingsImporter: finished importing Settings.plist for account \(accountID)")
+
+		return ImportedSettings(
+			name: plist["name"] as? String,
+			isActive: plist["isActive"] as? Bool,
+			username: plist["username"] as? String,
+			lastArticleFetchStartTime: plist["lastArticleFetch"] as? Date,
+			lastRefreshCompletedDate: plist["lastArticleFetchEndTime"] as? Date,
+			endpointURL: endpointURL,
+			externalID: plist["externalID"] as? String,
+			conditionalGetInfo: conditionalGetInfoDict
+		)
 	}
 }

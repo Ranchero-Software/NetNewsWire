@@ -79,6 +79,12 @@ public struct ArticleChanges: Sendable {
 		}
 	}
 
+	// MARK: - Vacuum
+
+	public func vacuum() {
+		queue.vacuum()
+	}
+
 	// MARK: - Fetching Articles
 
 	public func fetchArticles(feedID: String) throws -> Set<Article> {

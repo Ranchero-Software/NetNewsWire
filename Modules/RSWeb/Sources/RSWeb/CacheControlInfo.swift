@@ -10,7 +10,7 @@ import Foundation
 /// Basic Cache-Control handling — just the part we need,
 /// which is to know when we got the response (dateCreated)
 /// and when we can ask again (canResume).
-nonisolated public struct CacheControlInfo: Codable, Equatable {
+public struct CacheControlInfo: Codable, Equatable, Sendable {
 
 	public let dateCreated: Date
 	public let maxAge: TimeInterval
@@ -20,6 +20,15 @@ nonisolated public struct CacheControlInfo: Codable, Equatable {
 	}
 	public var canResume: Bool {
 		Date() >= resumeDate
+	}
+
+	/// canResume with a maximum maxAge. We do this because
+	/// sites tend to misconfigure their max age — we’ve seen
+	/// feeds that make this as long as one year, which is
+	/// clearly not intentional.
+	public func canResume(maxMaxAge: TimeInterval) -> Bool {
+		let maxAgeToUse = min(maxMaxAge, maxAge)
+		return Date() >= dateCreated + maxAgeToUse
 	}
 
 	public init(dateCreated: Date, maxAge: TimeInterval) {
@@ -47,7 +56,7 @@ nonisolated public struct CacheControlInfo: Codable, Equatable {
 	}
 }
 
-nonisolated private extension CacheControlInfo {
+private extension CacheControlInfo {
 
 	static let maxAgePrefix = "max-age="
 	static let maxAgePrefixCount = maxAgePrefix.count

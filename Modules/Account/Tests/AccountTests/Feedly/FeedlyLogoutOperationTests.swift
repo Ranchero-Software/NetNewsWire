@@ -31,7 +31,7 @@ import Secrets
 	private func getTokens(for account: Account) throws -> (accessToken: Credentials, refreshToken: Credentials) {
 		guard let accessToken = try account.retrieveCredentials(type: .oauthAccessToken), let refreshToken = try account.retrieveCredentials(type: .oauthRefreshToken) else {
 			XCTFail("Unable to retrieve access and/or refresh token from account.")
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingAccessToken
 		}
 		return (accessToken, refreshToken)
 	}
@@ -167,10 +167,10 @@ import Secrets
 		XCTAssertNotNil(delegate.error, "Should have failed with error.")
 		if let error = delegate.error {
 			switch error {
-			case CredentialsError.incompleteCredentials:
+			case CredentialsError.missingAccessToken:
 				break
 			default:
-				XCTFail("Expected \(CredentialsError.incompleteCredentials)")
+				XCTFail("Expected \(CredentialsError.missingAccessToken)")
 			}
 		}
 	}

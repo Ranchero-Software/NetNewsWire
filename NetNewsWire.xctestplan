@@ -19,16 +19,16 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSParser",
-        "identifier" : "RSParserTests",
-        "name" : "RSParserTests"
+        "containerPath" : "container:Modules\/RSMarkdown",
+        "identifier" : "RSMarkdownTests",
+        "name" : "RSMarkdownTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSMarkdown",
-        "identifier" : "RSMarkdownTests",
-        "name" : "RSMarkdownTests"
+        "containerPath" : "container:Modules\/RSWeb",
+        "identifier" : "RSWebTests",
+        "name" : "RSWebTests"
       }
     },
     {
@@ -40,9 +40,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:NetNewsWire.xcodeproj",
-        "identifier" : "849C64701ED37A5D003D8FC0",
-        "name" : "NetNewsWireTests"
+        "containerPath" : "container:Modules\/ErrorLog",
+        "identifier" : "ErrorLogTests",
+        "name" : "ErrorLogTests"
       }
     },
     {
@@ -61,9 +61,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSWeb",
-        "identifier" : "RSWebTests",
-        "name" : "RSWebTests"
+        "containerPath" : "container:Modules\/RSParser",
+        "identifier" : "RSParserTests",
+        "name" : "RSParserTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:NetNewsWire.xcodeproj",
+        "identifier" : "849C64701ED37A5D003D8FC0",
+        "name" : "NetNewsWireTests"
       }
     }
   ],

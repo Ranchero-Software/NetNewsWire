@@ -20,7 +20,7 @@ public final class MemoryPressureMonitor: Sendable {
 	init() {
 		source = DispatchSource.makeMemoryPressureSource(eventMask: [.warning, .critical], queue: .main)
 		source.setEventHandler {
-			postLowMemoryNotification()
+			AppNotification.postLowMemory()
 		}
 	}
 

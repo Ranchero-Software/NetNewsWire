@@ -11,6 +11,7 @@ import UserNotifications
 import os
 import Articles
 import Account
+import ErrorLog
 import RSCore
 import RSCoreResources
 import RSWeb
@@ -86,6 +87,7 @@ let appName = "NetNewsWire"
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
+	private var errorLogWindowController: ErrorLogWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private let appMovementMonitor: RSAppMovementMonitor
 	private var softwareUpdater: SPUUpdater?
@@ -210,6 +212,10 @@ let appName = "NetNewsWire"
 			toggleInspectorWindow(self)
 		}
 
+		if ErrorLogWindowController.shouldOpenAtStartup {
+			showErrorLog(self)
+		}
+
 		ArticleThemesManager.shared.start()
 		NetworkMonitor.shared.start()
 		MemoryPressureMonitor.shared.start()
@@ -259,6 +265,10 @@ let appName = "NetNewsWire"
 				CrashReporter.check(crashReporter: crashReporter)
 			}
 		}
+
+//		#if DEBUG
+//		postFakeErrorsForTesting()
+//		#endif
 	}
 
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
@@ -292,7 +302,7 @@ let appName = "NetNewsWire"
 	}
 
 	func applicationDidResignActive(_ notification: Notification) {
-		postLowMemoryNotification()
+		AppNotification.postAppDidGoToBackground()
 		saveState()
 	}
 
@@ -526,6 +536,13 @@ let appName = "NetNewsWire"
 		windowController.window?.makeKey()
 	}
 
+	@IBAction func showErrorLog(_ sender: Any?) {
+		if errorLogWindowController == nil {
+			errorLogWindowController = ErrorLogWindowController()
+		}
+		errorLogWindowController!.showWindow(self)
+	}
+
 	@IBAction func refreshAll(_ sender: Any?) {
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.present)
 	}
@@ -686,6 +703,27 @@ let appName = "NetNewsWire"
 // MARK: - Debug Menu
 extension AppDelegate {
 
+	#if DEBUG
+	func postFakeErrorsForTesting() {
+		let fakeErrors: [(String, Int, String, String)] = [
+			("On My Mac", AccountType.onMyMac.rawValue, "Downloading feed", "HTTP 404 Not Found: https://example.com/feed.xml"),
+			("Feedbin", AccountType.feedbin.rawValue, "Syncing starred status", "HTTP 401 Unauthorized"),
+			("iCloud", AccountType.cloudKit.rawValue, "Refreshing", "HTTP 429 Too Many Requests: https://daringfireball.net/feeds/main"),
+			("NewsBlur", AccountType.newsBlur.rawValue, "Syncing read status", "The operation couldn’t be completed. Network connection lost."),
+			("FreshRSS", AccountType.freshRSS.rawValue, "Refreshing articles", "HTTP 403 Forbidden: https://freshrss.example.com/api/greader.php"),
+			("Feedly", AccountType.feedly.rawValue, "Restoring feed", "HTTP 500 Internal Server Error: https://cloud.feedly.com/v3/streams"),
+			("Inoreader", AccountType.inoreader.rawValue, "Refreshing", "The request timed out."),
+			("BazQux", AccountType.bazQux.rawValue, "Removing feed", "HTTP 502 Bad Gateway: https://www.bazqux.com/reader/api"),
+			("The Old Reader", AccountType.theOldReader.rawValue, "Refreshing articles", "A server with the specified hostname could not be found.")
+		]
+
+		for (accountName, accountType, operation, message) in fakeErrors {
+			let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountType, operation: operation, errorMessage: message)
+			NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+		}
+	}
+	#endif
+
 	@IBAction func debugSearch(_ sender: Any?) {
 		AccountManager.shared.defaultAccount.debugRunSearch()
 	}
@@ -734,6 +772,12 @@ extension AppDelegate {
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 
+	@IBAction func vacuumDatabases(_ sender: Any?) {
+		Task {
+			await AccountManager.shared.vacuumAllDatabases()
+		}
+	}
+
 	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
 		// Manual testing for alert in AccountsAddCloudKitWindowController
 		// Check for:
@@ -763,6 +807,7 @@ extension AppDelegate {
 	func saveState() {
 		mainWindowController?.saveStateToUserDefaults()
 		inspectorWindowController?.saveState()
+		errorLogWindowController?.saveState()
 	}
 
 	@MainActor func updateSortMenuItems() {

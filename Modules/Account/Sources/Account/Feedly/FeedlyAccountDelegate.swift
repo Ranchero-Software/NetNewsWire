@@ -7,6 +7,7 @@
 //
 
 import Articles
+import ErrorLog
 import RSCore
 import RSParser
 import RSWeb
@@ -636,6 +637,7 @@ import Secrets
 					break
 				case .failure(let error):
 					Self.logger.error("Feedly: Restore folder feed error: \(error.localizedDescription)")
+					self.postSyncError(error, account: account, operation: "Restoring feed")
 				}
 			}
 		}
@@ -678,6 +680,12 @@ import Secrets
 		return credentials
 	}
 
+	func vacuumDatabases() {
+		Task {
+			await syncDatabase.vacuum()
+		}
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	/// Suspend all network activity
@@ -707,6 +715,16 @@ import Secrets
 
 	@objc func downloadProgressDidChange(_ notification: Notification) {
 		progressInfo = refreshProgress.progressInfo
+	}
+}
+
+// MARK: - Sync Error Posting
+
+private extension FeedlyAccountDelegate {
+
+	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
 

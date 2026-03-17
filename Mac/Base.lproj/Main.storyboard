@@ -548,6 +548,13 @@
                                                 <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="Xut-dI-qDw"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="vDb-aB-q9Z"/>
+                                        <menuItem title="Vacuum Databases" id="kLm-nR-v3X">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="vacuumDatabases:" target="Ady-hI-5gd" id="pQw-eT-j7Y"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
@@ -570,6 +577,11 @@
                                         <menuItem title="Main Window" keyEquivalent="0" id="LSZ-ci-Jb5">
                                             <connections>
                                                 <action selector="showMainWindow:" target="Ady-hI-5gd" id="yQt-yi-4JX"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Error Log" keyEquivalent="9" id="erl-0g-Kw7">
+                                            <connections>
+                                                <action selector="showErrorLog:" target="Ady-hI-5gd" id="erl-1h-Lx8"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">

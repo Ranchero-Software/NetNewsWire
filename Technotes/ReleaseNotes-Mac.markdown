@@ -1,5 +1,39 @@
 # Mac Release Notes
 
+### 7.0.2b6 7034 17 Mar 2026 — branch: main tag: mac-7.0.2b6
+
+Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
+Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
+Added a 29-minute minimum on refresh for any given feed
+Fixed a bug restoring the window frame for the Error log
+Moved saving feed settings/metadata to a background thread (super-small performance optimization)
+
+### 7.0.2b5 7026 14 Mar 2026 — branch: main tag: mac-7.0.2b5
+
+Fixed the missing-endpoint-URL bug with self-hosted sync accounts (FreshRSS most commonly)
+Reverted a change where clicking on URLs with #fragment — when they otherwise match the current page URL — would assume an in-page navigation instead of opening in browser. Unfortunately the fragment section is very often not included in the article in the RSS, so we do need to open in browser
+Fixed a crash that could happen setting the window title
+
+### 7.0.2b4 7025 13 Mar 2026 — branch: main tag: mac-7.0.2b4
+
+Fixed a concurrency-related crashing bug in the Error Log window
+
+### 7.0.2b3 7024 13 Mar 2026 — branch: main tag: mac-7.0.2b3
+
+Further improved the error message reporting for credentials errors, to help us get closer to fixing the credentials bugs some people are seeing
+Added a new Error Log window — see Window > Error Log. It shows errors from refreshing, syncing, keychain, etc. (Note: it probably doesn’t show all possible errors yet. We’re still auditing the code for places to add error logging.)
+
+### 7.0.2b2 7023 8 Mar 2026 — branch: main tag: mac-7.0.2b2
+
+Moved account settings to UserDefaults storage to make it more reliable
+Created specific for errors for CredentialError, so we can know better what happened when an error occurs
+
+### 7.0.2b1 7022 8 Mar 2026 — branch: main tag: mac-7.0.2b1
+
+Fixed (we think) some bugs that showed up as the app forgetting credentials for syncing systems (this may have been mainly, or even entirely, on iOS, though)
+Now more aggressively unloading memory on moving to the background
+Cut down on amount of disk writes — now storing account and feed settings in SQLite databases instead of in plist files, which is more efficient
+
 ### 7.0.1 7021 4 Mar 2026 — branch: main tag: mac-7.0.1
 
 Same as 7.0.1b5.

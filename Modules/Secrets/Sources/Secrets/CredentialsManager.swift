@@ -7,8 +7,16 @@
 //
 
 import Foundation
+import os
+import Security
+import RSCore
+import ErrorLog
 
 public struct CredentialsManager {
+
+	static let CredentialsManagerErrorSourceID = 100
+
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CredentialsManager")
 
 	private static let keychainGroup: String? = {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
@@ -19,7 +27,24 @@ public struct CredentialsManager {
 		return "\(appIdentifierPrefix)\(appGroupSuffix)"
 	}()
 
+	/// Delays used between retry attempts. Total wait across all
+	/// retries is 750ms, enough for most transient keychain errors.
+	private static let retryDelays: [TimeInterval] = [0.05, 0.1, 0.2, 0.4]
+
+	/// Returns true if the given keychain status is a transient error
+	/// worth retrying (as opposed to a permanent failure or a valid
+	/// "item not found" result).
+	private static func isTransientKeychainError(_ status: OSStatus) -> Bool {
+		switch status {
+		case errSecSuccess, errSecItemNotFound, errSecDuplicateItem:
+			return false
+		default:
+			return true
+		}
+	}
+
 	public static func storeCredentials(_ credentials: Credentials, server: String) throws {
+
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
 									kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock,
 									kSecAttrAccount as String: credentials.username,
@@ -36,7 +61,17 @@ public struct CredentialsManager {
 		let secretData = credentials.secret.data(using: String.Encoding.utf8)!
 		query[kSecValueData as String] = secretData
 
-		let status = SecItemAdd(query as CFDictionary, nil)
+		var status = SecItemAdd(query as CFDictionary, nil)
+
+		if isTransientKeychainError(status) {
+			for delay in retryDelays {
+				Thread.sleep(forTimeInterval: delay)
+				status = SecItemAdd(query as CFDictionary, nil)
+				if !isTransientKeychainError(status) {
+					break
+				}
+			}
+		}
 
 		switch status {
 		case errSecSuccess:
@@ -44,7 +79,10 @@ public struct CredentialsManager {
 		case errSecDuplicateItem:
 			break
 		default:
-			throw CredentialsError.unhandledError(status: status)
+			logger.error("CredentialsManager: storeCredentials failed — \(CredentialsError.keychainStatusMessage(status), privacy: .public)")
+			let error = CredentialsError.keychainStoreFailure(status: status)
+			postAppDidEncounterError(operation: "Storing credentials", error: error)
+			throw error
 		}
 
 		var deleteQuery = query
@@ -53,11 +91,15 @@ public struct CredentialsManager {
 
 		let addStatus = SecItemAdd(query as CFDictionary, nil)
 		if addStatus != errSecSuccess {
-			throw CredentialsError.unhandledError(status: addStatus)
+			logger.error("CredentialsManager: storeCredentials (after delete) failed — \(CredentialsError.keychainStatusMessage(addStatus), privacy: .public)")
+			let error = CredentialsError.keychainStoreFailure(status: addStatus)
+			postAppDidEncounterError(operation: "Storing credentials after delete", error: error)
+			throw error
 		}
 	}
 
 	public static func retrieveCredentials(type: CredentialsType, server: String, username: String) throws -> Credentials? {
+
 		var query: [String: Any] = [kSecClass as String: kSecClassInternetPassword,
 									kSecAttrAccount as String: username,
 									kSecAttrServer as String: server,
@@ -74,16 +116,16 @@ public struct CredentialsManager {
 		}
 
 		var item: CFTypeRef?
-		var status = errSecSuccess
+		var status = SecItemCopyMatching(query as CFDictionary, &item)
 
-		for attempt in 1...3 {
-			item = nil
-			status = SecItemCopyMatching(query as CFDictionary, &item)
-			if status == errSecSuccess {
-				break
-			}
-			if attempt < 3 {
-				Thread.sleep(forTimeInterval: 0.025)
+		if isTransientKeychainError(status) {
+			for delay in retryDelays {
+				Thread.sleep(forTimeInterval: delay)
+				item = nil
+				status = SecItemCopyMatching(query as CFDictionary, &item)
+				if !isTransientKeychainError(status) {
+					break
+				}
 			}
 		}
 
@@ -92,7 +134,10 @@ public struct CredentialsManager {
 		}
 
 		guard status == errSecSuccess else {
-			throw CredentialsError.unhandledError(status: status)
+			logger.error("CredentialsManager: retrieveCredentials failed — \(CredentialsError.keychainStatusMessage(status), privacy: .public) for type \(type.rawValue, privacy: .public)")
+			let error = CredentialsError.keychainRetrieveFailure(status: status)
+			postAppDidEncounterError(operation: "Retrieving credentials", error: error)
+			throw error
 		}
 
 		guard let existingItem = item as? [String: Any],
@@ -121,9 +166,31 @@ public struct CredentialsManager {
 			query[kSecAttrAccessGroup as String] = securityGroup
 		}
 
-		let status = SecItemDelete(query as CFDictionary)
-		guard status == errSecSuccess || status == errSecItemNotFound else {
-			throw CredentialsError.unhandledError(status: status)
+		var status = SecItemDelete(query as CFDictionary)
+
+		if isTransientKeychainError(status) {
+			for delay in retryDelays {
+				Thread.sleep(forTimeInterval: delay)
+				status = SecItemDelete(query as CFDictionary)
+				if !isTransientKeychainError(status) {
+					break
+				}
+			}
 		}
+
+		guard status == errSecSuccess || status == errSecItemNotFound else {
+			logger.error("CredentialsManager: removeCredentials failed — \(CredentialsError.keychainStatusMessage(status), privacy: .public)")
+			let error = CredentialsError.keychainRemoveFailure(status: status)
+			postAppDidEncounterError(operation: "Removing credentials", error: error)
+			throw error
+		}
+	}
+}
+
+private extension CredentialsManager {
+
+	static func postAppDidEncounterError(operation: String, error: CredentialsError) {
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: "CredentialsManager", sourceID: Self.CredentialsManagerErrorSourceID, operation: operation, errorMessage: error.localizedDescription)
+		NotificationCenter.default.postOnMainThread(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

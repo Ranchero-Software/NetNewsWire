@@ -53,7 +53,7 @@ enum CreateReaderAPISubscriptionResult {
 	private let logger: Logger
 	private var accessToken: String?
 
-	weak var accountSettings: AccountSettings?
+	var accountSettings: AccountSettings?
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
@@ -91,7 +91,7 @@ enum CreateReaderAPISubscriptionResult {
 	public func validateCredentials(endpoint: URL) async throws -> Credentials? {
 
 		guard let credentials else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingUsername
 		}
 
 		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.login.rawValue), readerAPICredentials: credentials)
@@ -118,7 +118,7 @@ enum CreateReaderAPISubscriptionResult {
 			}
 
 			guard let authString = authData["Auth"] else {
-				throw CredentialsError.incompleteCredentials
+				throw CredentialsError.missingAccessToken
 			}
 
 			// Save Auth Token for later use
@@ -143,7 +143,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		// Otherwise request one.
 		guard let credentials else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingUsername
 		}
 
 		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), readerAPICredentials: credentials)
@@ -168,7 +168,7 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor public func retrieveTags() async throws -> [ReaderAPITag]? {
 
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		var url = baseURL
@@ -193,7 +193,7 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor public func renameTag(oldName: String, newName: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		let token = try await requestAuthorizationToken(endpoint: baseURL)
@@ -217,7 +217,7 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor public func deleteTag(folderExternalID: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
@@ -237,7 +237,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		guard let baseURL = apiBaseURL else {
 			logger.error("ReaderAPICaller: retrieveSubscriptions — expected non-nil apiBaseURL")
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		let url = baseURL
@@ -264,7 +264,7 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor public func createSubscription(url: String, name: String?) async throws -> CreateReaderAPISubscriptionResult {
 		logger.debug("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "")")
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
@@ -317,7 +317,7 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor public func deleteSubscription(subscriptionID: String) async throws {
 
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
@@ -356,7 +356,7 @@ enum CreateReaderAPISubscriptionResult {
 		}
 		guard let baseURL = apiBaseURL else {
 			logger.error("ReaderAPICaller: changeSubscription — expected non-nil apiBaseURL")
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		do {
@@ -396,7 +396,7 @@ enum CreateReaderAPISubscriptionResult {
 			return [ReaderAPIEntry]()
 		}
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		let token = try await requestAuthorizationToken(endpoint: baseURL)
@@ -437,7 +437,7 @@ enum CreateReaderAPISubscriptionResult {
 	@MainActor public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
 
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		var queryItems = [
@@ -534,7 +534,7 @@ enum CreateReaderAPISubscriptionResult {
 
     @MainActor func importOPML(opmlData: Data) async throws {
         guard let baseURL = apiBaseURL else {
-            throw CredentialsError.incompleteCredentials
+            throw CredentialsError.missingEndpointURL
         }
 
         let callURL = baseURL
@@ -592,7 +592,7 @@ private extension ReaderAPICaller {
 	@MainActor private func updateStateToEntries(entries: [String], state: ReaderState, add: Bool) async throws {
 
 		guard let baseURL = apiBaseURL else {
-			throw CredentialsError.incompleteCredentials
+			throw CredentialsError.missingEndpointURL
 		}
 
 		let token = try await requestAuthorizationToken(endpoint: baseURL)

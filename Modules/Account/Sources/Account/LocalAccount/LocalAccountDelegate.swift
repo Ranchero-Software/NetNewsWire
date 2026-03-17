@@ -140,6 +140,9 @@ import Secrets
 		nil
 	}
 
+	func vacuumDatabases() {
+	}
+
 	// MARK: Suspend and Resume (for iOS)
 
 	@MainActor func suspendNetwork() {
