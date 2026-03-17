@@ -381,7 +381,7 @@ private extension AppDelegate {
 		backgroundTaskDispatchQueue.async {
 			do {
 				let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
-				request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60)
+				request.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
 				Self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")
