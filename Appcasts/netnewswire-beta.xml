@@ -7,6 +7,22 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.2b6</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
+					<li>Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
+					<li>Added a 29-minute minimum on refresh for any given feed
+					<li>Fixed a bug restoring the window frame for the Error log
+					<li>Moved saving feed settings/metadata to a background thread (super-small performance optimization)
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 17 Mar 2026 11:25:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.2b6/NetNewsWire7.0.2b6.zip" sparkle:version="7034" sparkle:shortVersionString="7.0.2b6" length="9765954" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.2b5</title>
             <description><![CDATA[
 				<ul>
