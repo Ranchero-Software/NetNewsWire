@@ -267,6 +267,8 @@ private extension LocalAccountRefresher {
 		feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
 	}
 
+	static let minimumTimeBetweenChecks: TimeInterval = 29 * 60 // 29 minutes
+
 	static func feedShouldBeSkippedForTimingReasons(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
 		guard let lastCheckDate = feed.lastCheckDate else {
 			return false
@@ -279,10 +281,14 @@ private extension LocalAccountRefresher {
 			}
 		}
 
+		if Date().timeIntervalSince(lastCheckDate) < minimumTimeBetweenChecks {
+			Self.logger.info("LocalAccountRefresher: Dropping request — last checked less than 29 minutes ago: \(feed.url)")
+			return true
+		}
+
 		return false
 	}
 
-	static let cacheControlMinMaxAge: TimeInterval = 30 * 60 // 30 minutes
 	static let cacheControlMaxMaxAge: TimeInterval = 5 * 60 * 60 // 5 hours
 
 	static func feedShouldBeSkippedForCacheControlReasons(_ feed: Feed) -> Bool {
@@ -299,7 +305,7 @@ private extension LocalAccountRefresher {
 		// All other feeds: honor Cache-Control with clamped max-age
 		// (min 30 minutes, max 5 hours) because many sites misconfigure it.
 		// We’ve seen max-age as long as one year (for a feed that updates frequently).
-		if !cacheControlInfo.canResume(minMaxAge: cacheControlMinMaxAge, maxMaxAge: cacheControlMaxMaxAge) {
+		if !cacheControlInfo.canResume(minMaxAge: minimumTimeBetweenChecks, maxMaxAge: cacheControlMaxMaxAge) {
 			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons: \(feed.url)")
 			return true
 		}
