@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+### 7.0.2b6 7034 17 Mar 2026 — branch: main tag: mac-7.0.2b6
+
+Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
+Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
+Added a 29-minute minimum on refresh for any given feed
+Fixed a bug restoring the window frame for the Error log
+Moved saving feed settings/metadata to a background thread (super-small performance optimization)
+
 ### 7.0.2b5 7026 14 Mar 2026 — branch: main tag: mac-7.0.2b5
 
 Fixed the missing-endpoint-URL bug with self-hosted sync accounts (FreshRSS most commonly)
