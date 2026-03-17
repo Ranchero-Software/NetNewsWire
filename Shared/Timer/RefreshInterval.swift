@@ -10,7 +10,6 @@ import Foundation
 
 enum RefreshInterval: Int, CaseIterable, Identifiable {
 	case manually = 1
-	case every10Minutes = 2
 	case every30Minutes = 3
 	case everyHour = 4
 	case every2Hours = 5
@@ -21,8 +20,6 @@ enum RefreshInterval: Int, CaseIterable, Identifiable {
 		switch self {
 		case .manually:
 			return 0
-		case .every10Minutes:
-			return 10 * 60
 		case .every30Minutes:
 			return 30 * 60
 		case .everyHour:
@@ -42,8 +39,6 @@ enum RefreshInterval: Int, CaseIterable, Identifiable {
 		switch self {
 		case .manually:
 			return NSLocalizedString("Manually", comment: "Manually")
-		case .every10Minutes:
-			return NSLocalizedString("Every 10 Minutes", comment: "Every 10 Minutes")
 		case .every30Minutes:
 			return NSLocalizedString("Every 30 Minutes", comment: "Every 30 Minutes")
 		case .everyHour:
