@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 7.0.2 TestFlight build 7034 15 Mar 2026 - branch: main tag: iOS-7.0.2-7034
+
+Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
+Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
+Added a 29-minute minimum on refresh for any given feed
+Moved saving feed settings/metadata to a background thread (super-small performance optimization)
+
 ### 7.0.2 TestFlight build 7033 14 Mar 2026 - branch: main tag: iOS-7.0.2-7033
 
 Fixed the missing-endpoint-URL bug with self-hosted sync accounts
