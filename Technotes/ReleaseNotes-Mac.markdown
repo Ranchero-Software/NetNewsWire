@@ -1,5 +1,22 @@
 # Mac Release Notes
 
+### 7.0.2 7035 17 Mar 2026 — branch: main tag: mac-7.0.2
+
+Same as 7.0.2b6.
+
+Changes since 7.0.1:
+
+Added a new Error Log window — see Window > Error Log. It shows errors from refreshing, syncing, keychain, etc. (Note: it probably doesn’t show all possible errors yet. We’re still auditing the code for places to add error logging.)
+Further improved the error message reporting for credentials errors
+Fixed the missing-endpoint-URL bug with self-hosted sync accounts (FreshRSS most commonly)
+Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
+Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
+Added a 29-minute minimum on refresh for any given feed
+Reverted a change where clicking on URLs with #fragment — when they otherwise match the current page URL — would assume an in-page navigation instead of opening in browser. Unfortunately the fragment section is very often not included in the article in the RSS, so we do need to open in browser
+Fixed a crash that could happen setting the window title
+Now more aggressively unloading memory on moving to the background
+Cut down on amount of disk writes — now storing account and feed settings in SQLite databases instead of in plist files, which is more efficient
+
 ### 7.0.2b6 7034 17 Mar 2026 — branch: main tag: mac-7.0.2b6
 
 Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
