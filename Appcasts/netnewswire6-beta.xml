@@ -7,6 +7,18 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.3b1</title>
+            <description><![CDATA[
+				<ul>
+					<li>Fixed bug storing credentials in Keychain when there's a previous item — which could cause authentication issues with syncing systems
+				</ul>
+			]]></description>
+        	<pubDate>Wed, 18 Mar 2026 16:35:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.3b1/NetNewsWire7.0.3b1.zip" sparkle:version="7036" sparkle:shortVersionString="7.0.3b1" length="9766838" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.2</title>
             <description><![CDATA[
 				<ul>
