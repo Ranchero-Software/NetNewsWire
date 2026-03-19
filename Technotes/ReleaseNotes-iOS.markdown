@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 7.0.3 build 7036 18 Mar 2026 - branch: main tag: iOS-7.0.3-7036
+### 7.0.3 build 7036 18 Mar 2026 - branch: main tag: iOS-7.0.3-7036 iOS-7.0.3
 
 This was originally a TestFlight build, and then submitted to the App Store.
 
