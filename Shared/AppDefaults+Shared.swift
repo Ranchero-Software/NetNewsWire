@@ -22,7 +22,7 @@ extension AppDefaults {
 		}
 	}
 
-	func migrateiCloudSyncArticleContentForUnreadArticlesSetting() {
+	@MainActor func migrateiCloudSyncArticleContentForUnreadArticlesSetting() {
 		// iCloudSyncArticleContentForUnreadArticles should be set to false unless
 		// the user already has an iCloud account.
 		guard UserDefaults.standard.object(forKey: Self.iCloudSyncArticleContentForUnreadArticles) == nil else {
