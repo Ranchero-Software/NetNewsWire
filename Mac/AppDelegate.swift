@@ -179,7 +179,6 @@ let appName = "NetNewsWire"
 			Self.logger.debug("Is first run.")
 		}
 		let localAccount = AccountManager.shared.defaultAccount
-
 		if isFirstRun && !AccountManager.shared.anyAccountHasAtLeastOneFeed() {
 			// Import default feeds.
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)

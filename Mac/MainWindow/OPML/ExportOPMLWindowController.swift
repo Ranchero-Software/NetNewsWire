@@ -29,14 +29,18 @@ final class ExportOPMLWindowController: NSWindowController {
 		let savedAccountID: String? = AppDefaults.shared.exportOPMLAccountID
 
 		for oneAccount in accounts {
-			let oneMenuItem = NSMenuItem()
-			oneMenuItem.title = oneAccount.nameForDisplay
-			oneMenuItem.representedObject = oneAccount
-			menu.addItem(oneMenuItem)
+			addMenuItem(to: menu, for: oneAccount, savedAccountID: savedAccountID)
+		}
+	}
 
-			if oneAccount.accountID == savedAccountID {
-				accountPopUpButton.select(oneMenuItem)
-			}
+	private func addMenuItem(to menu: NSMenu, for account: Account, savedAccountID: String?) {
+		let menuItem = NSMenuItem()
+		menuItem.title = account.nameForDisplay
+		menuItem.representedObject = account
+		menu.addItem(menuItem)
+
+		if account.accountID == savedAccountID {
+			accountPopUpButton.select(menuItem)
 		}
 	}
 

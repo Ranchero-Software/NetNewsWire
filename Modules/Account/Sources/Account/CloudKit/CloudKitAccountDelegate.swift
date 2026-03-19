@@ -76,6 +76,15 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
+	static var syncArticleContentForUnreadArticles: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		}
+	}
+
 	init(dataFolder: String) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		self.accountZone = CloudKitAccountZone(container: container)
@@ -86,10 +95,20 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		self.refresher = LocalAccountRefresher()
 		self.refresher.delegate = self
+		self.articlesZone.settings = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: refresher)
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: syncProgress)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	static func migrateiCloudSyncArticleContentForUnreadArticlesSetting(hasiCloudAccount: Bool) {
+		// iCloudSyncArticleContentForUnreadArticles should be set to false unless
+		// the user already has an iCloud account.
+		guard UserDefaults.standard.object(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey) == nil else {
+			return
+		}
+		syncArticleContentForUnreadArticles = hasiCloudAccount
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
@@ -766,7 +785,8 @@ private extension CloudKitAccountDelegate {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 			let op = CloudKitSendStatusOperation(account: account,
 												 articlesZone: articlesZone,
-												 database: syncDatabase)
+												 database: syncDatabase,
+												 settings: self)
 			op.completionBlock = { mainThreadOperation in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				if mainThreadOperation.isCanceled {
