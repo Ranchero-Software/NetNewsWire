@@ -17,6 +17,8 @@ import SyncDatabase
 import CloudKitSync
 
 final class CloudKitArticlesZone: CloudKitZone {
+
+	private static let logger = cloudKitLogger
 	var zoneID: CKRecordZone.ID
 
 	weak var container: CKContainer?
@@ -85,6 +87,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var records = [CKRecord]()
 
 		let syncUnreadContent = settings.syncArticleContentForUnreadArticles
+		Self.logger.info("CloudKitArticlesZone: saveNewArticles syncUnreadContent: \(syncUnreadContent, privacy: .public)")
+
 		for article in articles {
 			if article.status.starred {
 				records.append(makeStatusRecord(article))
@@ -93,6 +97,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 				records.append(makeStatusRecord(article))
 				if syncUnreadContent {
 					records.append(makeArticleRecord(article))
+				} else {
+					Self.logger.debug("CloudKitArticlesZone: saveNewArticles skipping content for unread article \(article.articleID, privacy: .public)")
 				}
 			}
 		}
@@ -119,6 +125,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var deleteRecordIDs = [CKRecord.ID]()
 
 		let syncUnreadContent = settings.syncArticleContentForUnreadArticles
+		Self.logger.info("CloudKitArticlesZone: modifyArticles syncUnreadContent: \(syncUnreadContent, privacy: .public)")
 
 		for statusUpdate in statusUpdates {
 			switch statusUpdate.record {
@@ -129,6 +136,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 				newRecords.append(self.makeStatusRecord(statusUpdate))
 				if statusUpdate.article!.status.starred || syncUnreadContent {
 					newRecords.append(self.makeArticleRecord(statusUpdate.article!))
+				} else {
+					Self.logger.debug("CloudKitArticlesZone: modifyArticles skipping content for unread article \(statusUpdate.articleID, privacy: .public)")
 				}
 			case .delete:
 				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: zoneID))
