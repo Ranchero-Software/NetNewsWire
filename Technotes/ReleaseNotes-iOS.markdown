@@ -2,6 +2,8 @@
 
 ### 7.0.3 build 7036 18 Mar 2026 - branch: main tag: iOS-7.0.3-7036
 
+This was originally a TestFlight build, and then submitted to the App Store.
+
 Fixed bug storing credentials in Keychain when there's a previous item — which could cause authentication issues with syncing systems
 
 ### 7.0.2 build 7034 15 Mar 2026 - branch: main tag: iOS-7.0.2-7034
