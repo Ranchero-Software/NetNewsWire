@@ -17,6 +17,7 @@ final class AccountInspectorViewController: UITableViewController {
 	@IBOutlet var nameTextField: UITextField!
 	@IBOutlet var activeSwitch: UISwitch!
 	@IBOutlet var deleteAccountButton: VibrantButton!
+	@IBOutlet var syncContentSwitch: UISwitch!
 	@IBOutlet var limitationsAndSolutionsButton: UIButton!
 
 	var isModal = false
@@ -31,6 +32,7 @@ final class AccountInspectorViewController: UITableViewController {
 		nameTextField.text = account.name
 		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
+		syncContentSwitch.isOn = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 
 		navigationItem.title = account.nameForDisplay
 
@@ -54,6 +56,9 @@ final class AccountInspectorViewController: UITableViewController {
 	override func viewWillDisappear(_ animated: Bool) {
 		account?.name = nameTextField.text
 		account?.isActive = activeSwitch.isOn
+		if account?.type == .cloudKit {
+			UserDefaults.standard.set(syncContentSwitch.isOn, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		}
 	}
 
 	@objc func done() {
@@ -131,12 +136,24 @@ final class AccountInspectorViewController: UITableViewController {
 	}
 }
 
-// MARK: Table View
+// MARK: - Table View
 
 extension AccountInspectorViewController {
 
+	/// Sections as laid out in the storyboard.
+	enum StoryboardSection: Int {
+		case nameAndActive = 0
+		case credentials = 1
+		case deleteAccount = 2
+		case syncContent = 3
+	}
+
+	var isCloudKitAccount: Bool {
+		account?.type == .cloudKit
+	}
+
 	var hidesCredentialsSection: Bool {
-		guard let account = account else {
+		guard let account else {
 			return true
 		}
 		switch account.type {
@@ -147,44 +164,69 @@ extension AccountInspectorViewController {
 		}
 	}
 
-	override func numberOfSections(in tableView: UITableView) -> Int {
-		guard let account = account else { return 0 }
-
-		if account == AccountManager.shared.defaultAccount {
-			return 1
-		} else if hidesCredentialsSection {
-			return 2
-		} else {
-			return super.numberOfSections(in: tableView)
+	/// The storyboard sections to display, in order, for the current account type.
+	///
+	/// - Default account: name/active only
+	/// - cloudKit: name/active, sync content, delete
+	/// - Other hidden-credentials: name/active, delete
+	/// - All others: name/active, credentials, delete
+	var displayedSections: [StoryboardSection] {
+		guard let account else {
+			return []
 		}
+		if account == AccountManager.shared.defaultAccount {
+			return [.nameAndActive]
+		}
+		if isCloudKitAccount {
+			return [.nameAndActive, .syncContent, .deleteAccount]
+		}
+		if hidesCredentialsSection {
+			return [.nameAndActive, .deleteAccount]
+		}
+		return [.nameAndActive, .credentials, .deleteAccount]
+	}
+
+	override func numberOfSections(in tableView: UITableView) -> Int {
+		displayedSections.count
+	}
+
+	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		let storyboardIndex = displayedSections[section].rawValue
+		return super.tableView(tableView, numberOfRowsInSection: storyboardIndex)
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: section)
+		if displayedSections[section] == .nameAndActive {
+			return ImageHeaderView.rowHeight
+		}
+		let storyboardIndex = displayedSections[section].rawValue
+		return super.tableView(tableView, heightForHeaderInSection: storyboardIndex)
 	}
 
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-		guard let account = account else { return nil }
-
-		if section == 0 {
+		guard let account else {
+			return nil
+		}
+		if displayedSections[section] == .nameAndActive {
 			let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as! ImageHeaderView
 			headerView.imageView.image = Assets.accountImage(account.type)
 			return headerView
-		} else {
-			return super.tableView(tableView, viewForHeaderInSection: section)
 		}
+		let storyboardIndex = displayedSections[section].rawValue
+		return super.tableView(tableView, viewForHeaderInSection: storyboardIndex)
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-		let cell: UITableViewCell
+		let storyboardIndex = displayedSections[indexPath.section].rawValue
+		return super.tableView(tableView, cellForRowAt: IndexPath(row: indexPath.row, section: storyboardIndex))
+	}
 
-		if indexPath.section == 1, hidesCredentialsSection {
-			cell = super.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 2))
-		} else {
-			cell = super.tableView(tableView, cellForRowAt: indexPath)
+	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+		if displayedSections[section] == .syncContent {
+			return "Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced."
 		}
-
-		return cell
+		let storyboardIndex = displayedSections[section].rawValue
+		return super.tableView(tableView, titleForFooterInSection: storyboardIndex)
 	}
 
 	override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
