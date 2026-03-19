@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,7 +18,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="398" height="205"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1536" height="935"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1410"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="398" height="205"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -28,13 +27,10 @@
                         <rect key="frame" x="199" y="151" width="0.0" height="102"/>
                     </stackView>
                     <stackView distribution="fill" orientation="horizontal" alignment="firstBaseline" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Q7-nI-h5u">
-                        <rect key="frame" x="199" y="95" width="0.0" height="21"/>
+                        <rect key="frame" x="199" y="92" width="0.0" height="24"/>
                     </stackView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xqo-gP-MPl">
-                        <rect key="frame" x="309" y="13" width="76" height="32"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="62" id="i5E-OP-URn"/>
-                        </constraints>
+                        <rect key="frame" x="316" y="20" width="62" height="24"/>
                         <buttonCell key="cell" type="push" title="Create" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oih-6c-KbS">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -42,12 +38,15 @@
 DQ
 </string>
                         </buttonCell>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="62" id="i5E-OP-URn"/>
+                        </constraints>
                         <connections>
                             <action selector="create:" target="-2" id="jgg-n6-VVy"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9eG-vV-s8c">
-                        <rect key="frame" x="235" y="13" width="76" height="32"/>
+                        <rect key="frame" x="242" y="20" width="62" height="24"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iVd-bO-4LN">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -59,7 +58,7 @@ Gw
                             <action selector="cancel:" target="-2" id="uDi-hX-dXu"/>
                         </connections>
                     </button>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="80D-3X-rL2">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="80D-3X-rL2">
                         <rect key="frame" x="87" y="169" width="293" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Create a local account on your Mac." id="1d2-Mx-TKe">
                             <font key="font" textStyle="headline" name=".SFNS-Bold"/>
@@ -75,16 +74,16 @@ Gw
                         </constraints>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="accountLocal" id="9RZ-J3-ioX"/>
                     </imageView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MWg-UL-xtj">
-                        <rect key="frame" x="87" y="98" width="44" height="16"/>
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MWg-UL-xtj">
+                        <rect key="frame" x="87" y="96" width="44" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Name:" id="AVh-ns-LEN">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f9b-FM-i8Q">
-                        <rect key="frame" x="137" y="95" width="200" height="21"/>
+                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="f9b-FM-i8Q">
+                        <rect key="frame" x="137" y="92" width="200" height="24"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="200" id="iff-tN-Gkx"/>
                         </constraints>
@@ -94,7 +93,7 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Kj-Cl-FJQ">
+                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Kj-Cl-FJQ">
                         <rect key="frame" x="87" y="129" width="293" height="32"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="32" id="CaZ-mY-r4X"/>

@@ -7,64 +7,32 @@
 //
 
 import AppKit
+import SwiftUI
 import Account
 
-final class AccountsDetailViewController: NSViewController, NSTextFieldDelegate {
-	@IBOutlet var typeLabel: NSTextField!
-	@IBOutlet var nameTextField: NSTextField!
-	@IBOutlet var activeButton: NSButtonCell!
-	@IBOutlet var credentialsButton: NSButton!
+final class AccountsDetailViewController: NSViewController {
 
+	private let account: Account
 	private var accountsWindowController: NSWindowController?
-	private var account: Account?
 
 	init(account: Account) {
-		super.init(nibName: "AccountsDetail", bundle: nil)
 		self.account = account
+		super.init(nibName: nil, bundle: nil)
 	}
 
 	public required init?(coder: NSCoder) {
-		super.init(coder: coder)
+		fatalError("AccountsDetailViewController does not support init(coder:)")
 	}
 
-	private var hidesCredentialsButton: Bool {
-		guard let account = account else {
-			return true
+	override func loadView() {
+		let detailView = AccountsDetailView(account: account) { [weak self] in
+			self?.showCredentials()
 		}
-		switch account.type {
-		case .onMyMac, .cloudKit, .feedly:
-			return true
-		default:
-			return false
-		}
+		let hostingView = NSHostingView(rootView: detailView)
+		self.view = hostingView
 	}
 
-	override func viewDidLoad() {
-		super.viewDidLoad()
-
-		nameTextField.delegate = self
-		typeLabel.stringValue = account?.defaultName ?? ""
-		nameTextField.stringValue = account?.name ?? ""
-		activeButton.state = account?.isActive ?? false ? .on : .off
-		credentialsButton.isHidden = hidesCredentialsButton
-	}
-
-	func controlTextDidEndEditing(_ obj: Notification) {
-		if !nameTextField.stringValue.isEmpty {
-			account?.name = nameTextField.stringValue
-		} else {
-			account?.name = nil
-		}
-	}
-
-	@IBAction func active(_ sender: NSButtonCell) {
-		account?.isActive = sender.state == .on ? true : false
-	}
-
-	@IBAction func credentials(_ sender: Any) {
-		guard let account else {
-			return
-		}
+	private func showCredentials() {
 		guard let window = view.window else {
 			return
 		}
