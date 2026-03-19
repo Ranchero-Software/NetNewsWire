@@ -76,14 +76,12 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	private static let syncArticleContentForUnreadArticlesKey = "iCloudSyncArticleContentForUnreadArticles"
-
 	static var syncArticleContentForUnreadArticles: Bool {
 		get {
-			UserDefaults.standard.bool(forKey: syncArticleContentForUnreadArticlesKey)
+			UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: syncArticleContentForUnreadArticlesKey)
+			UserDefaults.standard.set(newValue, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 		}
 	}
 
@@ -107,7 +105,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	static func migrateiCloudSyncArticleContentForUnreadArticlesSetting(hasiCloudAccount: Bool) {
 		// iCloudSyncArticleContentForUnreadArticles should be set to false unless
 		// the user already has an iCloud account.
-		guard UserDefaults.standard.object(forKey: syncArticleContentForUnreadArticlesKey) == nil else {
+		guard UserDefaults.standard.object(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey) == nil else {
 			return
 		}
 		syncArticleContentForUnreadArticles = hasiCloudAccount
