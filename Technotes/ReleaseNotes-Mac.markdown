@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.0.4b1 7038 19 Mar 2026 — branch: main tag: mac-7.0.4b1
+
+Added a new setting for the iCloud account — you can turn on/off syncing the content of unread articles. If you already have an iCloud account, the setting is on, because that’s how it’s been working this whole time. But for future iCloud accounts the settings defaults to off, since it saves so much time and energy. Note: for this setting to really turn off syncing content of unread articles, it needs to be turned off on all your devices running NetNewsWire. Also note: turning this off won’t magically erase the content that’s already been uploaded — that content will still have to sync. It will get cleaned up gradually, in the normal course of things.
+
 ### 7.0.3 7037 18 Mar 2026 — branch: main tag: mac-7.0.3
 
 Same as 7.0.3b1.
