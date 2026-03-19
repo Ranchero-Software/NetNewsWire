@@ -56,9 +56,10 @@ final class AccountInspectorViewController: UITableViewController {
 	override func viewWillDisappear(_ animated: Bool) {
 		account?.name = nameTextField.text
 		account?.isActive = activeSwitch.isOn
-		if account?.type == .cloudKit {
-			UserDefaults.standard.set(syncContentSwitch.isOn, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
-		}
+	}
+
+	@IBAction func syncContentSwitchDidChange(_ sender: UISwitch) {
+		UserDefaults.standard.set(sender.isOn, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 	}
 
 	@objc func done() {
