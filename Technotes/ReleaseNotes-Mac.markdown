@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.0.3 7037 18 Mar 2026 — branch: main tag: mac-7.0.3
+
+Same as 7.0.3b1.
+
 ### 7.0.3b1 7036 18 Mar 2026 — branch: main tag: mac-7.0.3b1
 
 Fixed bug storing credentials in Keychain when there's a previous item — which could cause authentication issues with syncing systems
