@@ -22,11 +22,13 @@ struct CloudKitArticleStatusUpdate {
 	var articleID: String
 	var statuses: [SyncStatus]
 	var article: Article?
+	var settings: any CloudKitSettings
 
-	init?(articleID: String, statuses: [SyncStatus], article: Article?) {
+	init?(articleID: String, statuses: [SyncStatus], article: Article?, settings: any CloudKitSettings) {
 		self.articleID = articleID
 		self.statuses = statuses
 		self.article = article
+		self.settings = settings
 
 		let rec = record
 		// This is an invalid status update.  The article is required for new and all
@@ -44,8 +46,11 @@ struct CloudKitArticleStatusUpdate {
 			return .new
 		}
 
-		if let article = article {
-			if article.status.read == false || article.status.starred == true {
+		if let article {
+			if article.status.starred {
+				return .all
+			}
+			if !article.status.read && settings.syncArticleContentForUnreadArticles {
 				return .all
 			}
 		}
