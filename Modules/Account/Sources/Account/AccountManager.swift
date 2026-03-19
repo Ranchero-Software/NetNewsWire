@@ -123,6 +123,8 @@ import ErrorLog
         accountsDictionary[defaultAccount.accountID] = defaultAccount
 
 		readAccountsFromDisk()
+
+		CloudKitAccountDelegate.migrateiCloudSyncArticleContentForUnreadArticlesSetting(hasiCloudAccount: hasiCloudAccount)
 	}
 
 	public func start() {
