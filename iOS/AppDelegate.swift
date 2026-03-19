@@ -71,7 +71,6 @@ import ErrorLog
 			let localAccount = AccountManager.shared.defaultAccount
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
-		AppDefaults.shared.migrateiCloudSyncArticleContentForUnreadArticlesSetting()
 
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
