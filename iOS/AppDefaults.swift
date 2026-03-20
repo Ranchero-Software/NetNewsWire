@@ -68,6 +68,7 @@ final class AppDefaults: Sendable {
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 		static let aiSummaryAPIURL = "aiSummaryAPIURL"
 		static let aiSummaryAPIKey = "aiSummaryAPIKey"
+		static let aiSummaryModel = "aiSummaryModel"
 		static let hideReadFeeds = "hideReadFeeds"
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
@@ -243,6 +244,21 @@ final class AppDefaults: Sendable {
 		set {
 			let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
 			AppDefaults.setString(for: Key.aiSummaryAPIKey, trimmed.isEmpty ? nil : trimmed)
+		}
+	}
+
+	var aiSummaryModel: String {
+		get {
+			let fallback = "gpt-4o-mini"
+			guard let model = AppDefaults.string(for: Key.aiSummaryModel)?.trimmingCharacters(in: .whitespacesAndNewlines),
+				  !model.isEmpty else {
+				return fallback
+			}
+			return model
+		}
+		set {
+			let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			AppDefaults.setString(for: Key.aiSummaryModel, trimmed.isEmpty ? nil : trimmed)
 		}
 	}
 

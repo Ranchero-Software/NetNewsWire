@@ -7,18 +7,27 @@
 
 import AppKit
 
-final class AISummaryPreferencesViewController: NSViewController {
+final class AISummaryPreferencesViewController: NSViewController, NSTextFieldDelegate {
 
 	private let descriptionLabel = NSTextField(labelWithString: NSLocalizedString("Configure an OpenAI-compatible API URL and API Key.", comment: "AI summary description"))
 	private let urlLabel = NSTextField(labelWithString: NSLocalizedString("URL", comment: "URL"))
 	private let urlField = NSTextField()
 	private let apiKeyLabel = NSTextField(labelWithString: NSLocalizedString("API Key", comment: "API Key"))
 	private let apiKeyField = NSTextField()
+	private let modelLabel = NSTextField(labelWithString: NSLocalizedString("Model", comment: "Model"))
+	private let modelPopUpButton = NSPopUpButton()
 	private let saveButton = NSButton(title: NSLocalizedString("Save", comment: "Save"), target: nil, action: nil)
 	private let statusLabel = NSTextField(labelWithString: "")
+	private let settingsLabelWidth: CGFloat = 70
+
+	private var modelReloadWorkItem: DispatchWorkItem?
+	private var modelLoadTask: Task<Void, Never>?
+	private var lastLoadedSignature: String?
+	private var latestRequestedSignature: String?
+	private var availableModels = [String]()
 
 	override func loadView() {
-		view = NSView(frame: NSRect(x: 0, y: 0, width: 450, height: 220))
+		view = NSView(frame: NSRect(x: 0, y: 0, width: 500, height: 280))
 		buildUI()
 		reloadValues()
 	}
@@ -26,6 +35,13 @@ final class AISummaryPreferencesViewController: NSViewController {
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		reloadValues()
+	}
+}
+
+extension AISummaryPreferencesViewController {
+	func controlTextDidChange(_ obj: Notification) {
+		statusLabel.stringValue = ""
+		scheduleModelListReload()
 	}
 }
 
@@ -37,6 +53,9 @@ private extension AISummaryPreferencesViewController {
 
 		urlField.placeholderString = "https://api.openai.com/v1"
 		apiKeyField.placeholderString = "sk-..."
+		urlField.delegate = self
+		apiKeyField.delegate = self
+		modelPopUpButton.autoenablesItems = false
 
 		saveButton.target = self
 		saveButton.action = #selector(saveSettings(_:))
@@ -57,17 +76,26 @@ private extension AISummaryPreferencesViewController {
 		apiKeyRow.alignment = .firstBaseline
 		apiKeyRow.spacing = 12
 
-		urlLabel.setContentHuggingPriority(.required, for: .horizontal)
-		apiKeyLabel.setContentHuggingPriority(.required, for: .horizontal)
-		urlLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
-		apiKeyLabel.widthAnchor.constraint(equalToConstant: 70).isActive = true
+		let modelRow = NSStackView(views: [modelLabel, modelPopUpButton])
+		modelRow.orientation = .horizontal
+		modelRow.alignment = .firstBaseline
+		modelRow.spacing = 12
 
-		let actionsRow = NSStackView(views: [saveButton, statusLabel])
+		for label in [urlLabel, apiKeyLabel, modelLabel] {
+			label.setContentHuggingPriority(.required, for: .horizontal)
+			label.widthAnchor.constraint(equalToConstant: settingsLabelWidth).isActive = true
+		}
+
+		let actionsLeadingSpacer = NSView()
+		actionsLeadingSpacer.translatesAutoresizingMaskIntoConstraints = false
+		actionsLeadingSpacer.widthAnchor.constraint(equalToConstant: settingsLabelWidth).isActive = true
+
+		let actionsRow = NSStackView(views: [actionsLeadingSpacer, saveButton, statusLabel])
 		actionsRow.orientation = .horizontal
 		actionsRow.alignment = .centerY
 		actionsRow.spacing = 12
 
-		let stack = NSStackView(views: [descriptionStack, urlRow, apiKeyRow, actionsRow])
+		let stack = NSStackView(views: [descriptionStack, urlRow, apiKeyRow, modelRow, actionsRow])
 		stack.orientation = .vertical
 		stack.alignment = .leading
 		stack.spacing = 12
@@ -82,17 +110,21 @@ private extension AISummaryPreferencesViewController {
 
 		urlField.widthAnchor.constraint(greaterThanOrEqualToConstant: 260).isActive = true
 		apiKeyField.widthAnchor.constraint(greaterThanOrEqualToConstant: 260).isActive = true
+		modelPopUpButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 260).isActive = true
 	}
 
 	func reloadValues() {
 		urlField.stringValue = AppDefaults.shared.aiSummaryAPIURL
 		apiKeyField.stringValue = AppDefaults.shared.aiSummaryAPIKey
 		statusLabel.stringValue = ""
+		lastLoadedSignature = nil
+		reloadModelList(force: true, preferredModel: AppDefaults.shared.aiSummaryModel)
 	}
 
 	@objc func saveSettings(_ sender: Any?) {
 		let apiURL = urlField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
 		let apiKey = apiKeyField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+		let selectedModel = selectedModelForSaving()
 
 		guard isValidAPIURL(apiURL) else {
 			statusLabel.stringValue = NSLocalizedString("Invalid URL", comment: "Invalid URL")
@@ -100,10 +132,147 @@ private extension AISummaryPreferencesViewController {
 			return
 		}
 
+		guard !selectedModel.isEmpty else {
+			statusLabel.stringValue = NSLocalizedString("Select a model", comment: "Select model before saving")
+			statusLabel.textColor = .systemRed
+			return
+		}
+
 		AppDefaults.shared.aiSummaryAPIURL = apiURL
 		AppDefaults.shared.aiSummaryAPIKey = apiKey
+		AppDefaults.shared.aiSummaryModel = selectedModel
 		statusLabel.stringValue = NSLocalizedString("Saved", comment: "Saved")
 		statusLabel.textColor = .systemGreen
+	}
+
+	func scheduleModelListReload() {
+		modelReloadWorkItem?.cancel()
+
+		let workItem = DispatchWorkItem { [weak self] in
+			self?.reloadModelList(force: false, preferredModel: self?.currentPreferredModel())
+		}
+		modelReloadWorkItem = workItem
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.4, execute: workItem)
+	}
+
+	func reloadModelList(force: Bool, preferredModel: String?) {
+		guard let credentials = credentialsForModelLoading() else {
+			lastLoadedSignature = nil
+			latestRequestedSignature = nil
+			showModelPlaceholder(NSLocalizedString("Enter URL and API Key", comment: "Model list placeholder when URL/key missing"))
+			return
+		}
+
+		let signature = "\(credentials.url)\n\(credentials.apiKey)"
+		if !force, signature == lastLoadedSignature {
+			return
+		}
+
+		latestRequestedSignature = signature
+		showModelPlaceholder(NSLocalizedString("Loading models...", comment: "Model loading"))
+		modelLoadTask?.cancel()
+
+		modelLoadTask = Task { [weak self] in
+			guard let self else {
+				return
+			}
+
+			do {
+				let models = try await AISummaryService.shared.fetchAvailableModels(urlString: credentials.url, apiKey: credentials.apiKey)
+				await MainActor.run {
+					guard self.latestRequestedSignature == signature else {
+						return
+					}
+					self.lastLoadedSignature = signature
+					self.updateModelSelection(with: models, preferredModel: preferredModel)
+				}
+			} catch is CancellationError {
+				return
+			} catch {
+				await MainActor.run {
+					guard self.latestRequestedSignature == signature else {
+						return
+					}
+					self.lastLoadedSignature = nil
+					self.showModelPlaceholder(NSLocalizedString("Failed to load models", comment: "Model loading failed"))
+				}
+			}
+		}
+	}
+
+	func credentialsForModelLoading() -> (url: String, apiKey: String)? {
+		let url = urlField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+		let apiKey = apiKeyField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+
+		guard !url.isEmpty, !apiKey.isEmpty, isValidAPIURL(url) else {
+			return nil
+		}
+
+		return (url, apiKey)
+	}
+
+	func showModelPlaceholder(_ title: String) {
+		availableModels.removeAll()
+		modelPopUpButton.removeAllItems()
+		modelPopUpButton.addItem(withTitle: title)
+		modelPopUpButton.isEnabled = false
+	}
+
+	func updateModelSelection(with models: [String], preferredModel: String?) {
+		availableModels = models
+
+		guard !models.isEmpty else {
+			showModelPlaceholder(NSLocalizedString("No models available", comment: "No models"))
+			return
+		}
+
+		configureModelPopUp(with: models)
+		selectModel(from: models, preferredModel: preferredModel)
+	}
+
+	func configureModelPopUp(with models: [String]) {
+		modelPopUpButton.removeAllItems()
+		modelPopUpButton.addItems(withTitles: models)
+		modelPopUpButton.isEnabled = true
+	}
+
+	func selectModel(from models: [String], preferredModel: String?) {
+		let preferred = (preferredModel ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+		if let preferredIndex = indexOfModel(in: models, model: preferred) {
+			modelPopUpButton.selectItem(at: preferredIndex)
+			return
+		}
+
+		let savedModel = AppDefaults.shared.aiSummaryModel.trimmingCharacters(in: .whitespacesAndNewlines)
+		if let savedIndex = indexOfModel(in: models, model: savedModel) {
+			modelPopUpButton.selectItem(at: savedIndex)
+			return
+		}
+
+		modelPopUpButton.selectItem(at: 0)
+	}
+
+	func indexOfModel(in models: [String], model: String) -> Int? {
+		guard !model.isEmpty else {
+			return nil
+		}
+		return models.firstIndex(of: model)
+	}
+
+	func currentPreferredModel() -> String {
+		if let selected = modelPopUpButton.titleOfSelectedItem?.trimmingCharacters(in: .whitespacesAndNewlines),
+		   !selected.isEmpty {
+			return selected
+		}
+		return AppDefaults.shared.aiSummaryModel
+	}
+
+	func selectedModelForSaving() -> String {
+		guard let selected = modelPopUpButton.titleOfSelectedItem?.trimmingCharacters(in: .whitespacesAndNewlines),
+			  availableModels.contains(selected) else {
+			return AppDefaults.shared.aiSummaryModel
+		}
+		return selected
 	}
 
 	func isValidAPIURL(_ text: String) -> Bool {

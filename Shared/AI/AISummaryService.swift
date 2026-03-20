@@ -37,10 +37,46 @@ actor AISummaryService {
 	static let shared = AISummaryService()
 
 	private let session: URLSession
-	private let model = "gpt-4o-mini"
 
 	init(session: URLSession = .shared) {
 		self.session = session
+	}
+
+	func fetchAvailableModels(urlString: String, apiKey: String) async throws -> [String] {
+		let trimmedURL = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+		var trimmedKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+
+		if trimmedKey.lowercased().hasPrefix("bearer ") {
+			trimmedKey = String(trimmedKey.dropFirst(7)).trimmingCharacters(in: .whitespacesAndNewlines)
+		}
+
+		guard !trimmedURL.isEmpty, !trimmedKey.isEmpty else {
+			throw AISummaryError.missingConfiguration
+		}
+
+		let endpoint = try modelEndpoint(from: trimmedURL)
+		var request = URLRequest(url: endpoint)
+		request.httpMethod = "GET"
+		request.setValue("application/json", forHTTPHeaderField: "Accept")
+		request.setValue("Bearer \(trimmedKey)", forHTTPHeaderField: "Authorization")
+		request.timeoutInterval = 30
+
+		do {
+			let (data, response) = try await session.data(for: request)
+			guard let httpResponse = response as? HTTPURLResponse else {
+				throw AISummaryError.invalidResponse
+			}
+
+			guard (200...299).contains(httpResponse.statusCode) else {
+				throw AISummaryError.apiError(apiErrorMessage(from: data, statusCode: httpResponse.statusCode))
+			}
+
+			return extractModelIDs(from: data)
+		} catch let error as AISummaryError {
+			throw error
+		} catch {
+			throw AISummaryError.apiError(error.localizedDescription)
+		}
 	}
 
 	func summarize(article: Article) async throws -> String {
@@ -53,7 +89,7 @@ actor AISummaryService {
 		}
 
 		let requestBody = ChatCompletionsRequest(
-			model: model,
+			model: configuration.model,
 			temperature: 0.2,
 			messages: [
 				.init(role: "system", content: "You summarize news articles. Be concise, factual, and avoid speculation."),
@@ -99,13 +135,16 @@ private extension AISummaryService {
 	struct Configuration {
 		let urlString: String
 		let apiKey: String
+		let model: String
 	}
 
 	func configurationFromDefaults() throws -> Configuration {
 		let fallbackURL = "https://api.openai.com/v1"
+		let fallbackModel = "gpt-4o-mini"
 		let defaults = UserDefaults.standard
 		let urlString = (defaults.string(forKey: "aiSummaryAPIURL") ?? fallbackURL).trimmingCharacters(in: .whitespacesAndNewlines)
 		var apiKey = (defaults.string(forKey: "aiSummaryAPIKey") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+		let model = (defaults.string(forKey: "aiSummaryModel") ?? fallbackModel).trimmingCharacters(in: .whitespacesAndNewlines)
 
 		if apiKey.lowercased().hasPrefix("bearer ") {
 			apiKey = String(apiKey.dropFirst(7)).trimmingCharacters(in: .whitespacesAndNewlines)
@@ -115,27 +154,54 @@ private extension AISummaryService {
 			throw AISummaryError.missingConfiguration
 		}
 
-		return Configuration(urlString: urlString, apiKey: apiKey)
+		return Configuration(urlString: urlString, apiKey: apiKey, model: model.isEmpty ? fallbackModel : model)
 	}
 
 	func completionEndpoint(from configuredURL: String) throws -> URL {
-		guard var url = parseURL(from: configuredURL) else {
+		let baseURL = try apiBaseURL(from: configuredURL)
+		var endpoint = baseURL
+		endpoint.appendPathComponent("chat")
+		endpoint.appendPathComponent("completions")
+		return endpoint
+	}
+
+	func modelEndpoint(from configuredURL: String) throws -> URL {
+		let baseURL = try apiBaseURL(from: configuredURL)
+		return baseURL.appendingPathComponent("models")
+	}
+
+	func apiBaseURL(from configuredURL: String) throws -> URL {
+		guard let url = parseURL(from: configuredURL),
+			  var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
 			throw AISummaryError.invalidURL
 		}
 
-		let lowercasedPath = url.path.lowercased()
-		if lowercasedPath.hasSuffix("/chat/completions") {
-			return url
+		let completionSuffix = "/chat/completions"
+		let modelsSuffix = "/models"
+		let lowercasedPath = components.path.lowercased()
+
+		if lowercasedPath.hasSuffix(completionSuffix) {
+			components.path = String(components.path.dropLast(completionSuffix.count))
+		} else if lowercasedPath.hasSuffix(modelsSuffix) {
+			components.path = String(components.path.dropLast(modelsSuffix.count))
 		}
 
-		if lowercasedPath.hasSuffix("/v1") || lowercasedPath.hasSuffix("/v1/") {
-			url.appendPathComponent("chat/completions")
-			return url
+		var basePath = components.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+		if basePath.isEmpty {
+			basePath = "v1"
+		} else if !basePath.lowercased().hasSuffix("v1") {
+			basePath += "/v1"
 		}
 
-		url.appendPathComponent("v1")
-		url.appendPathComponent("chat/completions")
-		return url
+		components.path = "/\(basePath)"
+		components.query = nil
+		components.fragment = nil
+
+		guard let normalizedURL = components.url else {
+			throw AISummaryError.invalidURL
+		}
+
+		return normalizedURL
 	}
 
 	func parseURL(from text: String) -> URL? {
@@ -200,6 +266,75 @@ private extension AISummaryService {
 
 		let format = NSLocalizedString("AI service error (HTTP %d).", comment: "AI summary HTTP status fallback")
 		return String(format: format, statusCode)
+	}
+
+	func extractModelIDs(from data: Data) -> [String] {
+		if let decoded = try? JSONDecoder().decode(ModelListResponse.self, from: data) {
+			let modelIDs = decoded.data.compactMap { $0.id?.trimmingCharacters(in: .whitespacesAndNewlines) }
+			let nonEmptyModelIDs = modelIDs.filter { !$0.isEmpty }
+			if !nonEmptyModelIDs.isEmpty {
+				return deduplicatedModels(from: nonEmptyModelIDs)
+			}
+		}
+
+		guard let json = try? JSONSerialization.jsonObject(with: data) else {
+			return []
+		}
+
+		var modelIDs = [String]()
+		if let root = json as? [String: Any] {
+			modelIDs.append(contentsOf: extractModelIDs(fromContainer: root["data"]))
+			modelIDs.append(contentsOf: extractModelIDs(fromContainer: root["models"]))
+		} else {
+			modelIDs.append(contentsOf: extractModelIDs(fromContainer: json))
+		}
+
+		return deduplicatedModels(from: modelIDs)
+	}
+
+	func extractModelIDs(fromContainer container: Any?) -> [String] {
+		guard let container else {
+			return []
+		}
+
+		if let models = container as? [[String: Any]] {
+			return models.compactMap { model in
+				guard let id = model["id"] as? String else {
+					return nil
+				}
+				let trimmed = id.trimmingCharacters(in: .whitespacesAndNewlines)
+				return trimmed.isEmpty ? nil : trimmed
+			}
+		}
+
+		if let modelIDs = container as? [String] {
+			return modelIDs.compactMap { id in
+				let trimmed = id.trimmingCharacters(in: .whitespacesAndNewlines)
+				return trimmed.isEmpty ? nil : trimmed
+			}
+		}
+
+		if let model = container as? [String: Any],
+		   let id = model["id"] as? String {
+			let trimmed = id.trimmingCharacters(in: .whitespacesAndNewlines)
+			return trimmed.isEmpty ? [] : [trimmed]
+		}
+
+		return []
+	}
+
+	func deduplicatedModels(from modelIDs: [String]) -> [String] {
+		var seen = Set<String>()
+		var deduplicated = [String]()
+
+		for modelID in modelIDs {
+			if !seen.contains(modelID) {
+				seen.insert(modelID)
+				deduplicated.append(modelID)
+			}
+		}
+
+		return deduplicated
 	}
 }
 
@@ -268,5 +403,13 @@ private struct APIErrorResponse: Decodable {
 
 	struct APIError: Decodable {
 		let message: String?
+	}
+}
+
+private struct ModelListResponse: Decodable {
+	let data: [Model]
+
+	struct Model: Decodable {
+		let id: String?
 	}
 }
