@@ -577,7 +577,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 				let summary = try await AISummaryService.shared.summarize(article: article)
 				AISummaryStore.shared.setSummary(summary, for: article)
 			} catch {
-				presentAISummaryError(error)
+				AISummaryStore.shared.setErrorMessage(error.localizedDescription, for: article)
 			}
 		}
 	}
@@ -1539,17 +1539,4 @@ private extension MainWindowController {
 		articleThemePopUpButton?.menu = articleThemeMenu
 	}
 
-	func presentAISummaryError(_ error: Error) {
-		let alert = NSAlert()
-		alert.alertStyle = .warning
-		alert.messageText = NSLocalizedString("AI Summary Failed", comment: "AI Summary Failed")
-		alert.informativeText = error.localizedDescription
-		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
-
-		if let window {
-			alert.beginSheetModal(for: window)
-		} else {
-			alert.runModal()
-		}
-	}
 }

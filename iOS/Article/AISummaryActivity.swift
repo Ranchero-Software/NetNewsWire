@@ -41,8 +41,10 @@ final class AISummaryActivity: UIActivity {
 
 	override func perform() {
 		activityDidFinish(true)
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [handler] in
-			handler()
-		}
+		perform(#selector(runHandler), with: nil, afterDelay: 0.1)
+	}
+
+	@objc private func runHandler() {
+		handler()
 	}
 }

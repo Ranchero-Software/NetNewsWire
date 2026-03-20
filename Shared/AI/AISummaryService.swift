@@ -91,6 +91,7 @@ actor AISummaryService {
 		let requestBody = ChatCompletionsRequest(
 			model: configuration.model,
 			temperature: 0.2,
+			maxTokens: nil,
 			messages: [
 				.init(role: "system", content: "You summarize news articles. Be concise, factual, and avoid speculation."),
 				.init(role: "user", content: "Summarize the following article. Keep the same language as the article.\n\nOutput format:\nSummary:\n<2-4 sentences>\n\nKey Points:\n- <point 1>\n- <point 2>\n- <point 3>\n\nArticle:\n\(source)")
@@ -122,6 +123,54 @@ actor AISummaryService {
 			}
 
 			return message
+		} catch let error as AISummaryError {
+			throw error
+		} catch {
+			throw AISummaryError.apiError(error.localizedDescription)
+		}
+	}
+
+	func validateModelAvailability(urlString: String, apiKey: String, model: String) async throws {
+		let trimmedURL = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+		var trimmedKey = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+		let trimmedModel = model.trimmingCharacters(in: .whitespacesAndNewlines)
+
+		if trimmedKey.lowercased().hasPrefix("bearer ") {
+			trimmedKey = String(trimmedKey.dropFirst(7)).trimmingCharacters(in: .whitespacesAndNewlines)
+		}
+
+		guard !trimmedURL.isEmpty, !trimmedKey.isEmpty, !trimmedModel.isEmpty else {
+			throw AISummaryError.missingConfiguration
+		}
+
+		let endpoint = try completionEndpoint(from: trimmedURL)
+		let requestBody = ChatCompletionsRequest(
+			model: trimmedModel,
+			temperature: 0,
+			maxTokens: nil,
+			messages: [
+				.init(role: "system", content: "You are a health check endpoint."),
+				.init(role: "user", content: "Reply with OK.")
+			]
+		)
+
+		var request = URLRequest(url: endpoint)
+		request.httpMethod = "POST"
+		request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+		request.setValue("application/json", forHTTPHeaderField: "Accept")
+		request.setValue("Bearer \(trimmedKey)", forHTTPHeaderField: "Authorization")
+		request.timeoutInterval = 30
+		request.httpBody = try JSONEncoder().encode(requestBody)
+
+		do {
+			let (data, response) = try await session.data(for: request)
+			guard let httpResponse = response as? HTTPURLResponse else {
+				throw AISummaryError.invalidResponse
+			}
+
+			guard (200...299).contains(httpResponse.statusCode) else {
+				throw AISummaryError.apiError(apiErrorMessage(from: data, statusCode: httpResponse.statusCode))
+			}
 		} catch let error as AISummaryError {
 			throw error
 		} catch {
@@ -341,7 +390,15 @@ private extension AISummaryService {
 private struct ChatCompletionsRequest: Encodable {
 	let model: String
 	let temperature: Double
+	let maxTokens: Int?
 	let messages: [Message]
+
+	enum CodingKeys: String, CodingKey {
+		case model
+		case temperature
+		case maxTokens = "max_tokens"
+		case messages
+	}
 
 	struct Message: Encodable {
 		let role: String

@@ -193,6 +193,22 @@ body > .systemMessage {
 	animation: nnw-ai-summary-pulse 1s ease-in-out infinite;
 }
 
+.nnw-ai-summary-error {
+	border-inline-start-color: rgba(214, 76, 76, 0.62);
+	background: rgba(214, 76, 76, 0.12);
+}
+
+.nnw-ai-summary-retry {
+	display: inline-block;
+	margin-top: 10px;
+	padding: 5px 10px;
+	border-radius: 999px;
+	border: 1px solid currentColor;
+	font-size: 0.85em;
+	font-weight: 600;
+	text-decoration: none;
+}
+
 @keyframes nnw-ai-summary-pulse {
 	0% { opacity: 0.35; }
 	50% { opacity: 1; }

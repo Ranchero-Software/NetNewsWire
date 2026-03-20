@@ -310,45 +310,20 @@ final class WebViewController: UIViewController {
 		guard let article else { return }
 		guard !AISummaryStore.shared.isLoading(for: article) else { return }
 
-		let loadingTitle = NSLocalizedString("AI Summary", comment: "AI Summary")
-		let loadingMessage = NSLocalizedString("Generating summary…", comment: "Generating summary")
-		let loadingAlert = UIAlertController(title: loadingTitle, message: loadingMessage, preferredStyle: .alert)
-		present(loadingAlert, animated: true)
 		AISummaryStore.shared.setLoading(true, for: article)
 		fullReload()
 
-		Task { @MainActor in
+		Task { @MainActor [weak self] in
+			defer {
+				AISummaryStore.shared.setLoading(false, for: article)
+				self?.fullReload()
+			}
+
 			do {
 				let summary = try await AISummaryService.shared.summarize(article: article)
-				AISummaryStore.shared.setLoading(false, for: article)
 				AISummaryStore.shared.setSummary(summary, for: article)
-				let applySummary = { [weak self] in
-					self?.fullReload()
-				}
-
-				if self.presentedViewController === loadingAlert {
-					loadingAlert.dismiss(animated: true, completion: applySummary)
-				} else {
-					applySummary()
-				}
 			} catch {
-				AISummaryStore.shared.setLoading(false, for: article)
-				let applyFailure = { [weak self] in
-					self?.fullReload()
-				}
-				let presentErrorAlert = { [weak self] in
-					self?.presentError(title: NSLocalizedString("AI Summary Failed", comment: "AI Summary Failed"), message: error.localizedDescription)
-				}
-
-				if self.presentedViewController === loadingAlert {
-					loadingAlert.dismiss(animated: true) {
-						applyFailure()
-						presentErrorAlert()
-					}
-				} else {
-					applyFailure()
-					presentErrorAlert()
-				}
+				AISummaryStore.shared.setErrorMessage(error.localizedDescription, for: article)
 			}
 		}
 	}
@@ -440,6 +415,12 @@ extension WebViewController: WKNavigationDelegate {
 		if navigationAction.navigationType == .linkActivated {
 			guard let url = navigationAction.request.url else {
 				decisionHandler(.allow)
+				return
+			}
+
+			if isAISummaryRetryURL(url) {
+				decisionHandler(.cancel)
+				showAISummary()
 				return
 			}
 
@@ -900,6 +881,12 @@ private extension WebViewController {
 			return
 		}
 		present(viewController, animated: true)
+	}
+
+	func isAISummaryRetryURL(_ url: URL) -> Bool {
+		url.scheme?.lowercased() == "nnw" &&
+		url.host?.lowercased() == "ai-summary" &&
+		url.path.lowercased() == "/retry"
 	}
 }
 

@@ -31,6 +31,7 @@ import Account
 	}
 
 	static var imageIconScheme = "nnwImageIcon"
+	static let aiSummaryRetryURLString = "nnw://ai-summary/retry"
 
 	static var blank = Page(name: "blank")
 	static var page = Page(name: "page")
@@ -269,6 +270,26 @@ private extension ArticleRenderer {
 			<div class="nnw-ai-summary nnw-ai-summary-loading">
 				<div class="nnw-ai-summary-label">\(label)</div>
 				<div class="nnw-ai-summary-content">\(escapedLoadingText)</div>
+			</div>
+			"""
+		}
+
+		if let rawError = AISummaryStore.shared.errorMessage(for: article)?
+			.trimmingCharacters(in: .whitespacesAndNewlines),
+		   !rawError.isEmpty {
+			let label = NSLocalizedString("AI Summary", comment: "AI Summary")
+			let failedText = NSLocalizedString("Summary generation failed.", comment: "AI summary failed inline text")
+			let retryText = NSLocalizedString("Retry", comment: "Retry AI summary generation")
+			let escapedError = rawError.escapingSpecialXMLCharacters.replacingOccurrences(of: "\n", with: "<br/>")
+			let escapedFailedText = failedText.escapingSpecialXMLCharacters
+			return """
+			<div class="nnw-ai-summary nnw-ai-summary-error">
+				<div class="nnw-ai-summary-label">\(label)</div>
+				<div class="nnw-ai-summary-content">
+					<div>\(escapedFailedText)</div>
+					<div>\(escapedError)</div>
+					<a class="nnw-ai-summary-retry" href="\(Self.aiSummaryRetryURLString)">\(retryText)</a>
+				</div>
 			</div>
 			"""
 		}
