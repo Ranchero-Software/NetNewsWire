@@ -555,12 +555,11 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func toggleReadFeedsFilter(_ sender: Any?) {
-		sidebarViewController?.toggleReadFilter()
+		toggleGlobalReadFilter()
 	}
 
 	@IBAction func toggleReadArticlesFilter(_ sender: Any?) {
-		timelineContainerViewController?.toggleReadFilter()
-		syncSidebarReadArticlesFilter()
+		toggleGlobalReadFilter()
 	}
 
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
@@ -1046,7 +1045,7 @@ private extension MainWindowController {
 		sidebarViewController?.restoreState(from: state.sidebarWindowState)
 
 		timelineContainerViewController?.restoreState(from: state.timelineWindowState)
-		syncSidebarReadArticlesFilter()
+		syncSidebarReadFilter()
 		restoreArticleWindowScrollY = state.detailWindowState?.windowScrollY
 
 		let isShowingExtractedArticle = state.detailWindowState?.isShowingExtractedArticle ?? false
@@ -1073,7 +1072,7 @@ private extension MainWindowController {
 		let articleWindowScrollY = state[UserInfoKey.articleWindowScrollY] as? CGFloat
 		restoreArticleWindowScrollY = articleWindowScrollY
 		timelineContainerViewController?.restoreLegacyState(from: state)
-		syncSidebarReadArticlesFilter()
+		syncSidebarReadFilter()
 
 		let isShowingExtractedArticle = state[UserInfoKey.isShowingExtractedArticle] as? Bool ?? false
 		if isShowingExtractedArticle {
@@ -1084,9 +1083,18 @@ private extension MainWindowController {
 
 	// MARK: - Command Validation
 
-	func syncSidebarReadArticlesFilter() {
-		let isReadArticlesFiltered = AppDefaults.shared.timelineReadFilterEnabled ?? false
-		sidebarViewController?.setReadArticlesFilterEnabled(isReadArticlesFiltered)
+	func syncSidebarReadFilter() {
+		let isReadFiltered = AppDefaults.shared.timelineReadFilterEnabled
+		sidebarViewController?.setReadFilterEnabled(isReadFiltered)
+		timelineContainerViewController?.setReadFilterEnabled(isReadFiltered)
+	}
+
+	func toggleGlobalReadFilter() {
+		let newValue = !AppDefaults.shared.timelineReadFilterEnabled
+		AppDefaults.shared.timelineReadFilterEnabled = newValue
+		syncSidebarReadFilter()
+		makeToolbarValidate()
+		invalidateRestorableState()
 	}
 
 	func canCopyArticleURL() -> Bool {
@@ -1257,22 +1265,14 @@ private extension MainWindowController {
 
 		let showCommand = NSLocalizedString("Show Read Feeds", comment: "Command")
 		let hideCommand = NSLocalizedString("Hide Read Feeds", comment: "Command")
-		menuItem.title = sidebarViewController?.isReadFiltered ?? false ? showCommand : hideCommand
+		menuItem.title = AppDefaults.shared.timelineReadFilterEnabled ? showCommand : hideCommand
 		return true
 	}
 
 	func validateToggleReadArticles(_ item: NSValidatedUserInterfaceItem) -> Bool {
 		let showCommand = NSLocalizedString("Show Read Articles", comment: "Command")
 		let hideCommand = NSLocalizedString("Hide Read Articles", comment: "Command")
-
-		guard let isReadFiltered = timelineContainerViewController?.isReadFiltered else {
-			(item as? NSMenuItem)?.title = hideCommand
-			if let toolbarItem = item as? NSToolbarItem, let button = toolbarItem.view as? NSButton {
-				toolbarItem.toolTip = hideCommand
-				button.image = Assets.Images.filterInactive
-			}
-			return false
-		}
+		let isReadFiltered = AppDefaults.shared.timelineReadFilterEnabled
 
 		if isReadFiltered {
 			(item as? NSMenuItem)?.title = showCommand

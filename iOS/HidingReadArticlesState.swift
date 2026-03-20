@@ -10,14 +10,11 @@ import Foundation
 import Account
 
 @MainActor final class HidingReadArticlesState {
-	private var hideReadArticles = AppDefaults.shared.hideReadArticles
-
-	func copy(from stateRestorationInfo: StateRestorationInfo) {
-		hideReadArticles = stateRestorationInfo.hideReadArticles
+	func copy(from _: StateRestorationInfo) {
+		// Uses global read filter state from AppDefaults.hideReadFeeds.
 	}
 
 	func save() {
-		AppDefaults.shared.hideReadArticles = hideReadArticles
 		// Clear per-sidebar-item legacy state now that read filtering is global.
 		AppDefaults.shared.smartFeedsHidingReadArticles = []
 		AppDefaults.shared.feedsHidingReadArticles = [:]
@@ -30,12 +27,12 @@ import Account
 			return
 		}
 
-		hideReadArticles.toggle()
+		AppDefaults.shared.hideReadFeeds.toggle()
 		save()
 	}
 
 	func isHidingReadArticles(for sidebarItemID: SidebarItemIdentifier) -> Bool {
-		isUnreadSmartFeed(sidebarItemID) ? true : hideReadArticles
+		isUnreadSmartFeed(sidebarItemID) ? true : AppDefaults.shared.hideReadFeeds
 	}
 
 	func canToggleHidingReadArticles(for sidebarItemID: SidebarItemIdentifier) -> Bool {

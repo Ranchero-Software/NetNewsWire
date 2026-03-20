@@ -150,19 +150,12 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var timelineReadFilterEnabled: Bool? {
+	var timelineReadFilterEnabled: Bool {
 		get {
-			guard UserDefaults.standard.object(forKey: Key.timelineReadFilterEnabled) != nil else {
-				return nil
-			}
 			return UserDefaults.standard.bool(forKey: Key.timelineReadFilterEnabled)
 		}
 		set {
-			if let newValue {
-				UserDefaults.standard.set(newValue, forKey: Key.timelineReadFilterEnabled)
-			} else {
-				UserDefaults.standard.removeObject(forKey: Key.timelineReadFilterEnabled)
-			}
+			UserDefaults.standard.set(newValue, forKey: Key.timelineReadFilterEnabled)
 		}
 	}
 

@@ -67,7 +67,6 @@ final class AppDefaults: Sendable {
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 		static let hideReadFeeds = "hideReadFeeds"
-		static let hideReadArticles = "hideReadArticles"
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let expandedContainers = "expandedContainers"
@@ -277,15 +276,6 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var hideReadArticles: Bool {
-		get {
-			UserDefaults.standard.bool(forKey: Key.hideReadArticles)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.hideReadArticles)
-		}
-	}
-
 	var isShowingExtractedArticle: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.isShowingExtractedArticle)
@@ -476,7 +466,6 @@ private extension AppDefaults {
 
 struct StateRestorationInfo {
 	let hideReadFeeds: Bool
-	let hideReadArticles: Bool
 	let expandedContainers: Set<ContainerIdentifier>
 	let selectedSidebarItem: SidebarItemIdentifier?
 	let smartFeedsHidingReadArticles: Set<String>
@@ -487,7 +476,6 @@ struct StateRestorationInfo {
 	let isShowingExtractedArticle: Bool
 
 	init(hideReadFeeds: Bool,
-	     hideReadArticles: Bool,
 	     expandedContainers: Set<ContainerIdentifier>,
 	     selectedSidebarItem: SidebarItemIdentifier?,
 	     smartFeedsHidingReadArticles: Set<String>,
@@ -497,7 +485,6 @@ struct StateRestorationInfo {
 	     articleWindowScrollY: Int,
 	     isShowingExtractedArticle: Bool) {
 		self.hideReadFeeds = hideReadFeeds
-		self.hideReadArticles = hideReadArticles
 		self.expandedContainers = expandedContainers
 		self.selectedSidebarItem = selectedSidebarItem
 		self.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
@@ -507,12 +494,11 @@ struct StateRestorationInfo {
 		self.articleWindowScrollY = articleWindowScrollY
 		self.isShowingExtractedArticle = isShowingExtractedArticle
 
-		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nhideReadArticles: \(hideReadArticles ? "true" : "false")\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsmartFeedsHidingReadArticles: \(smartFeedsHidingReadArticles)\nfeedsHidingReadArticles: \(feedsHidingReadArticles)\nfoldersShowingReadArticles: \(foldersShowingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
+		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsmartFeedsHidingReadArticles: \(smartFeedsHidingReadArticles)\nfeedsHidingReadArticles: \(feedsHidingReadArticles)\nfoldersShowingReadArticles: \(foldersShowingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
 	}
 
 	init() {
 		self.init(hideReadFeeds: AppDefaults.shared.hideReadFeeds,
-				  hideReadArticles: AppDefaults.shared.hideReadArticles,
 				  expandedContainers: AppDefaults.shared.expandedContainers,
 				  selectedSidebarItem: AppDefaults.shared.selectedSidebarItem,
 				  smartFeedsHidingReadArticles: AppDefaults.shared.smartFeedsHidingReadArticles,
@@ -582,17 +568,14 @@ struct StateRestorationInfo {
 
 		var smartFeedsHidingReadArticles = Set<String>()
 		var feedsHidingReadArticles = [String: Set<String>]()
-		var hideReadArticles = AppDefaults.shared.hideReadArticles
 		for sidebarItem in sidebarItemsHidingReadArticles {
 			switch sidebarItem {
 			case .smartFeed(let id):
 				smartFeedsHidingReadArticles.insert(id)
-				hideReadArticles = true
 			case .feed(let accountID, let feedID):
 				var feedIDs = feedsHidingReadArticles[accountID] ?? Set<String>()
 				feedIDs.insert(feedID)
 				feedsHidingReadArticles[accountID] = feedIDs
-				hideReadArticles = true
 			default:
 				continue
 			}
@@ -607,7 +590,6 @@ struct StateRestorationInfo {
 		}
 
 		self.init(hideReadFeeds: hideReadFeeds,
-				  hideReadArticles: hideReadArticles,
 				  expandedContainers: expandedContainers,
 				  selectedSidebarItem: selectedSidebarItem,
 				  smartFeedsHidingReadArticles: smartFeedsHidingReadArticles,

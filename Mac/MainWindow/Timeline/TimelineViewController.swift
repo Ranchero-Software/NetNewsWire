@@ -39,10 +39,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let globalReadFilterEnabled {
-			return globalReadFilterEnabled
-		}
-		return timelineFeed.defaultReadFilterType == .read
+		return globalReadFilterEnabled
 	}
 
 	var isCleanUpAvailable: Bool {
@@ -285,6 +282,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		fetchAndReplacePreservingSelection()
 	}
 
+	func setReadFilterEnabled(_ isEnabled: Bool) {
+		guard globalReadFilterEnabled != isEnabled else {
+			return
+		}
+		globalReadFilterEnabled = isEnabled
+		AppDefaults.shared.timelineReadFilterEnabled = isEnabled
+		if representedObjects != nil {
+			fetchAndReplacePreservingSelection()
+		}
+	}
+
 	func toggleReadFilter() {
 		guard let filter = isReadFiltered else {
 			return
@@ -324,8 +332,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	func restoreLegacyState(from state: [AnyHashable: Any]) {
 		if let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool],
 		   let global = readArticlesFilterStateValues.first {
-			globalReadFilterEnabled = global
-			AppDefaults.shared.timelineReadFilterEnabled = global
+			setReadFilterEnabled(global)
 		}
 
 		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable: Any],
@@ -1268,10 +1275,6 @@ private extension TimelineViewController {
 	}
 
 	func readFilterTableForCurrentFetchers(_ fetchers: [ArticleFetcher]) -> [SidebarItemIdentifier: Bool] {
-		guard let globalReadFilterEnabled else {
-			return [:]
-		}
-
 		var table = [SidebarItemIdentifier: Bool]()
 		for fetcher in fetchers {
 			guard let sidebarItem = fetcher as? SidebarItem,
