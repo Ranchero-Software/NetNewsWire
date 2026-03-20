@@ -31,6 +31,17 @@ final class ArticleViewController: UIViewController {
 	@IBOutlet private var searchBar: ArticleSearchBar!
 	@IBOutlet private var searchBarBottomConstraint: NSLayoutConstraint!
 	private var defaultControls: [UIBarButtonItem]?
+	private lazy var aiSummaryBarButtonItem: UIBarButtonItem = {
+		let item = UIBarButtonItem(
+			image: UIImage(systemName: "sparkles"),
+			style: .plain,
+			target: self,
+			action: #selector(showAISummary(_:))
+		)
+		item.accLabelText = NSLocalizedString("AI Summary", comment: "AI Summary")
+		return item
+	}()
+	private lazy var articleExtractorBarButtonItem = UIBarButtonItem(customView: articleExtractorButton)
 
 	private var pageViewController: UIPageViewController!
 
@@ -107,7 +118,7 @@ final class ArticleViewController: UIViewController {
 		navigationItem.titleView = fullScreenTapZone
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
+		configureToolbarItems()
 
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
@@ -215,6 +226,7 @@ final class ArticleViewController: UIViewController {
 			nextArticleBarButtonItem.isEnabled = false
 			readBarButtonItem.isEnabled = false
 			starBarButtonItem.isEnabled = false
+			aiSummaryBarButtonItem.isEnabled = false
 			actionBarButtonItem.isEnabled = false
 			return
 		}
@@ -224,10 +236,11 @@ final class ArticleViewController: UIViewController {
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
 		readBarButtonItem.isEnabled = true
 		starBarButtonItem.isEnabled = true
+		aiSummaryBarButtonItem.isEnabled = true
 
 		let permalinkPresent = article.preferredLink != nil
 		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.shared.isDeveloperBuild
-		actionBarButtonItem.isEnabled = permalinkPresent
+		actionBarButtonItem.isEnabled = true
 
 		if article.status.read {
 			readBarButtonItem.image = Assets.Images.circleOpen
@@ -313,6 +326,10 @@ final class ArticleViewController: UIViewController {
 
 	@IBAction func showActivityDialog(_ sender: Any) {
 		currentWebViewController?.showActivityDialog(popOverBarButtonItem: actionBarButtonItem)
+	}
+
+	@IBAction func showAISummary(_ sender: Any) {
+		currentWebViewController?.showAISummary()
 	}
 
 	@objc func toggleReaderView(_ sender: Any?) {
@@ -515,6 +532,22 @@ private extension ArticleViewController {
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
+	}
+
+	func configureToolbarItems() {
+		guard let items = toolbarItems else { return }
+
+		var updatedItems = items
+		if !updatedItems.contains(where: { $0 === aiSummaryBarButtonItem }),
+		   let starIndex = updatedItems.firstIndex(where: { $0 === starBarButtonItem }) {
+			updatedItems.insert(aiSummaryBarButtonItem, at: starIndex + 1)
+		}
+		if !updatedItems.contains(where: { $0 === articleExtractorBarButtonItem }),
+		   let actionIndex = updatedItems.firstIndex(where: { $0 === actionBarButtonItem }) {
+			updatedItems.insert(articleExtractorBarButtonItem, at: actionIndex)
+		}
+
+		setToolbarItems(updatedItems, animated: false)
 	}
 
 }

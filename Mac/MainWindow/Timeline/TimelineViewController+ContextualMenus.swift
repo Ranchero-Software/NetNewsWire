@@ -112,6 +112,7 @@ extension TimelineViewController {
 		}
 		sharingCommandInfo.perform()
 	}
+
 }
 
 private extension TimelineViewController {
@@ -292,6 +293,7 @@ private extension TimelineViewController {
 		}
 		return item
 	}
+
 }
 
 private final class SharingCommandInfo {
