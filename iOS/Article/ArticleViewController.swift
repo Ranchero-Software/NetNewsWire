@@ -227,7 +227,7 @@ final class ArticleViewController: UIViewController {
 
 		let permalinkPresent = article.preferredLink != nil
 		articleExtractorButton.isEnabled = permalinkPresent && !AppDefaults.shared.isDeveloperBuild
-		actionBarButtonItem.isEnabled = permalinkPresent
+		actionBarButtonItem.isEnabled = true
 
 		if article.status.read {
 			readBarButtonItem.image = Assets.Images.circleOpen

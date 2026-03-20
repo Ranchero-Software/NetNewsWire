@@ -43,6 +43,8 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let aiSummaryAPIURL = "aiSummaryAPIURL"
+		static let aiSummaryAPIKey = "aiSummaryAPIKey"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -317,6 +319,36 @@ final class AppDefaults: Sendable {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
 		}
+	}
+
+	var aiSummaryAPIURL: String {
+		get {
+			let fallback = "https://api.openai.com/v1"
+			guard let urlString = AppDefaults.string(for: Key.aiSummaryAPIURL)?.trimmingCharacters(in: .whitespacesAndNewlines),
+				  !urlString.isEmpty else {
+				return fallback
+			}
+			return urlString
+		}
+		set {
+			let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			AppDefaults.setString(for: Key.aiSummaryAPIURL, trimmed.isEmpty ? nil : trimmed)
+		}
+	}
+
+	var aiSummaryAPIKey: String {
+		get {
+			AppDefaults.string(for: Key.aiSummaryAPIKey) ?? ""
+		}
+		set {
+			let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			AppDefaults.setString(for: Key.aiSummaryAPIKey, trimmed.isEmpty ? nil : trimmed)
+		}
+	}
+
+	var isAISummaryConfigured: Bool {
+		!aiSummaryAPIURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+		!aiSummaryAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 	}
 
 	init() {

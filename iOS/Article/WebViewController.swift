@@ -276,8 +276,23 @@ final class WebViewController: UIViewController {
 	}
 
 	func showActivityDialog(popOverBarButtonItem: UIBarButtonItem? = nil) {
-		guard let url = article?.preferredURL else { return }
-		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [FindInArticleActivity(), OpenInBrowserActivity()])
+		guard let article else { return }
+		let activities: [UIActivity] = [
+			AISummaryActivity(handler: { [weak self] in
+				self?.showAISummary()
+			}),
+			FindInArticleActivity(),
+			OpenInBrowserActivity()
+		]
+
+		let activityViewController: UIActivityViewController
+		if let url = article.preferredURL {
+			activityViewController = UIActivityViewController(url: url, title: article.title, applicationActivities: activities)
+		} else {
+			let fallbackText = article.title ?? NSLocalizedString("Article", comment: "Article")
+			activityViewController = UIActivityViewController(activityItems: [fallbackText], applicationActivities: activities)
+		}
+
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
@@ -288,6 +303,53 @@ final class WebViewController: UIViewController {
 			UIApplication.shared.open(url, options: [:])
 		} else {
 			openURLInSafariViewController(url)
+		}
+	}
+
+	func showAISummary() {
+		guard let article else { return }
+		guard !AISummaryStore.shared.isLoading(for: article) else { return }
+
+		let loadingTitle = NSLocalizedString("AI Summary", comment: "AI Summary")
+		let loadingMessage = NSLocalizedString("Generating summary…", comment: "Generating summary")
+		let loadingAlert = UIAlertController(title: loadingTitle, message: loadingMessage, preferredStyle: .alert)
+		present(loadingAlert, animated: true)
+		AISummaryStore.shared.setLoading(true, for: article)
+		fullReload()
+
+		Task { @MainActor in
+			do {
+				let summary = try await AISummaryService.shared.summarize(article: article)
+				AISummaryStore.shared.setLoading(false, for: article)
+				AISummaryStore.shared.setSummary(summary, for: article)
+				let applySummary = { [weak self] in
+					self?.fullReload()
+				}
+
+				if self.presentedViewController === loadingAlert {
+					loadingAlert.dismiss(animated: true, completion: applySummary)
+				} else {
+					applySummary()
+				}
+			} catch {
+				AISummaryStore.shared.setLoading(false, for: article)
+				let applyFailure = { [weak self] in
+					self?.fullReload()
+				}
+				let presentErrorAlert = { [weak self] in
+					self?.presentError(title: NSLocalizedString("AI Summary Failed", comment: "AI Summary Failed"), message: error.localizedDescription)
+				}
+
+				if self.presentedViewController === loadingAlert {
+					loadingAlert.dismiss(animated: true) {
+						applyFailure()
+						presentErrorAlert()
+					}
+				} else {
+					applyFailure()
+					presentErrorAlert()
+				}
+			}
 		}
 	}
 }
@@ -349,7 +411,7 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 			}
 
 			menus.append(UIMenu(title: "", options: .displayInline, children: [self.toggleArticleExtractorAction()]))
-			menus.append(UIMenu(title: "", options: .displayInline, children: [self.shareAction()]))
+			menus.append(UIMenu(title: "", options: .displayInline, children: [self.aiSummaryAction(), self.shareAction()]))
 
 			return UIMenu(title: "", children: menus)
         }
@@ -812,6 +874,13 @@ private extension WebViewController {
 		let title = NSLocalizedString("Share", comment: "Share")
 		return UIAction(title: title, image: Assets.Images.share) { [weak self] _ in
 			self?.showActivityDialog()
+		}
+	}
+
+	func aiSummaryAction() -> UIAction {
+		let title = NSLocalizedString("AI Summary", comment: "AI Summary")
+		return UIAction(title: title, image: UIImage(systemName: "sparkles")) { [weak self] _ in
+			self?.showAISummary()
 		}
 	}
 

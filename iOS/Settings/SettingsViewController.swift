@@ -28,6 +28,7 @@ final class SettingsViewController: UITableViewController {
 	}
 
 	private weak var opmlAccount: Account?
+	private let aiSummarySettingsCellReuseIdentifier = "AISummarySettingsCell"
 
 	@IBOutlet var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet var groupByFeedSwitch: UISwitch!
@@ -142,7 +143,7 @@ final class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case .articles:
-			return traitCollection.userInterfaceIdiom == .phone ? 5 : 4
+			return traitCollection.userInterfaceIdiom == .phone ? 6 : 5
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
@@ -166,6 +167,15 @@ final class SettingsViewController: UITableViewController {
 				acctCell.comboNameLabel?.text = account.nameForDisplay
 				cell = acctCell
 			}
+		case .articles where indexPath.row == aiSummarySettingsRowIndex:
+			let aiSummaryCell = tableView.dequeueReusableCell(withIdentifier: aiSummarySettingsCellReuseIdentifier) ??
+				UITableViewCell(style: .subtitle, reuseIdentifier: aiSummarySettingsCellReuseIdentifier)
+			aiSummaryCell.textLabel?.text = NSLocalizedString("AI Summary", comment: "AI Summary")
+			aiSummaryCell.detailTextLabel?.text = aiSummarySettingsSubtitle()
+			aiSummaryCell.accessoryType = .disclosureIndicator
+			aiSummaryCell.selectionStyle = .default
+			aiSummaryCell.detailTextLabel?.textColor = .secondaryLabel
+			cell = aiSummaryCell
 		default:
 			cell = super.tableView(tableView, cellForRowAt: indexPath)
 
@@ -219,6 +229,12 @@ final class SettingsViewController: UITableViewController {
 				break
 			}
 		case .articles:
+			if indexPath.row == aiSummarySettingsRowIndex {
+				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
+				presentAISummarySettingsEditor()
+				return
+			}
+
 			switch indexPath.row {
 			case 0:
 				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
@@ -379,6 +395,83 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: - Private
 
 private extension SettingsViewController {
+
+	var aiSummarySettingsRowIndex: Int {
+		traitCollection.userInterfaceIdiom == .phone ? 5 : 4
+	}
+
+	func aiSummarySettingsSubtitle() -> String {
+		if AppDefaults.shared.isAISummaryConfigured {
+			let format = NSLocalizedString("Configured: %@", comment: "AI summary configured label")
+			return String(format: format, AppDefaults.shared.aiSummaryAPIURL)
+		}
+		return NSLocalizedString("Tap to configure URL and API Key", comment: "AI summary configuration hint")
+	}
+
+	func presentAISummarySettingsEditor() {
+		let title = NSLocalizedString("AI Summary Settings", comment: "AI Summary Settings")
+		let message = NSLocalizedString("Configure an OpenAI-compatible API URL and API Key.", comment: "AI summary settings message")
+		let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+		alert.addTextField { textField in
+			textField.placeholder = "https://api.openai.com/v1"
+			textField.text = AppDefaults.shared.aiSummaryAPIURL
+			textField.clearButtonMode = .whileEditing
+			textField.autocapitalizationType = .none
+			textField.autocorrectionType = .no
+			textField.keyboardType = .URL
+		}
+
+		alert.addTextField { textField in
+			textField.placeholder = "sk-..."
+			textField.text = AppDefaults.shared.aiSummaryAPIKey
+			textField.clearButtonMode = .whileEditing
+			textField.autocapitalizationType = .none
+			textField.autocorrectionType = .no
+			textField.isSecureTextEntry = true
+		}
+
+		let saveTitle = NSLocalizedString("Save", comment: "Save")
+		alert.addAction(UIAlertAction(title: saveTitle, style: .default) { [weak self, weak alert] _ in
+			guard let self, let alert else { return }
+			let rawURL = alert.textFields?.first?.text ?? ""
+			let rawAPIKey = alert.textFields?.last?.text ?? ""
+			let apiURL = rawURL.trimmingCharacters(in: .whitespacesAndNewlines)
+			let apiKey = rawAPIKey.trimmingCharacters(in: .whitespacesAndNewlines)
+
+			guard self.isValidAPIURL(apiURL) else {
+				self.presentError(title: NSLocalizedString("Invalid URL", comment: "Invalid URL"), message: NSLocalizedString("Please enter a valid API URL.", comment: "Invalid API URL message"))
+				return
+			}
+
+			AppDefaults.shared.aiSummaryAPIURL = apiURL
+			AppDefaults.shared.aiSummaryAPIKey = apiKey
+			self.tableView.reloadData()
+		})
+
+		let clearTitle = NSLocalizedString("Clear", comment: "Clear")
+		alert.addAction(UIAlertAction(title: clearTitle, style: .destructive) { [weak self] _ in
+			guard let self else { return }
+			AppDefaults.shared.aiSummaryAPIURL = ""
+			AppDefaults.shared.aiSummaryAPIKey = ""
+			self.tableView.reloadData()
+		})
+
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+
+		present(alert, animated: true)
+	}
+
+	func isValidAPIURL(_ text: String) -> Bool {
+		if URL(string: text)?.scheme != nil {
+			return true
+		}
+		if !text.contains("://"), URL(string: "https://\(text)")?.scheme != nil {
+			return true
+		}
+		return false
+	}
 
 	func addFeed() {
 		self.dismiss(animated: true)

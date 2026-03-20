@@ -25,6 +25,7 @@ private struct ToolbarItemIdentifier {
 	static let General = "General"
 	static let Accounts = "Accounts"
 	static let Advanced = "Advanced"
+	static let AISummary = "AISummary"
 }
 
 final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
@@ -42,6 +43,9 @@ final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
 											 name: NSLocalizedString("Advanced", comment: "Preferences"),
 											 image: Assets.Images.preferencesToolbarAdvanced)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.AISummary,
+											 name: NSLocalizedString("AI Summary", comment: "Preferences"),
+											 image: PreferencesWindowController.aiSummaryToolbarImage())]
 		return specs
 	}()
 
@@ -103,6 +107,13 @@ final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
 
 private extension PreferencesWindowController {
 
+	static func aiSummaryToolbarImage() -> NSImage? {
+		if #available(macOS 11.0, *) {
+			return NSImage(systemSymbolName: "sparkles", accessibilityDescription: NSLocalizedString("AI Summary", comment: "AI Summary"))
+		}
+		return Assets.Images.preferencesToolbarAdvanced
+	}
+
 	var currentView: NSView? {
 		return window?.contentView?.subviews.first
 	}
@@ -150,6 +161,12 @@ private extension PreferencesWindowController {
 	func viewController(identifier: String) -> NSViewController? {
 		if let cachedViewController = viewControllers[identifier] {
 			return cachedViewController
+		}
+
+		if identifier == ToolbarItemIdentifier.AISummary {
+			let viewController = AISummaryPreferencesViewController()
+			viewControllers[identifier] = viewController
+			return viewController
 		}
 
 		let storyboard = NSStoryboard(name: NSStoryboard.Name("Preferences"), bundle: nil)

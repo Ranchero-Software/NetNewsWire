@@ -171,6 +171,10 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
+
+	func reloadContentMaintainingScrollPosition() {
+		reloadHTMLMaintainingScrollPosition()
+	}
 }
 
 // MARK: - WKScriptMessageHandler
