@@ -585,7 +585,7 @@ private extension AISummarySettingsViewController {
 
 		urlLabel.font = UIFont.preferredFont(forTextStyle: .headline)
 		urlLabel.text = NSLocalizedString("URL", comment: "URL")
-		urlField.placeholder = "https://api.openai.com/v1"
+		urlField.placeholder = AISummaryService.defaultAPIURLString
 		urlField.borderStyle = .roundedRect
 		urlField.autocapitalizationType = .none
 		urlField.autocorrectionType = .no
@@ -685,7 +685,8 @@ private extension AISummarySettingsViewController {
 
 	func reloadValues() {
 		setSavingState(false)
-		urlField.text = AppDefaults.shared.aiSummaryAPIURL
+		let storedURL = (UserDefaults.standard.string(forKey: AppDefaults.Key.aiSummaryAPIURL) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+		urlField.text = storedURL.isEmpty ? "" : (normalizedAPIURL(from: storedURL) ?? storedURL)
 		apiKeyField.text = AppDefaults.shared.aiSummaryAPIKey
 		selectedModel = AppDefaults.shared.aiSummaryModel
 		setStatus(text: "", color: .secondaryLabel)
@@ -726,11 +727,11 @@ private extension AISummarySettingsViewController {
 			return
 		}
 
-		let apiURL = (urlField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+		let apiURLInput = (urlField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
 		let apiKey = (apiKeyField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
 		let model = selectedModelForSaving().trimmingCharacters(in: .whitespacesAndNewlines)
 
-		guard isValidAPIURL(apiURL) else {
+		guard let apiURL = effectiveAPIURL(from: apiURLInput) else {
 			setStatus(text: NSLocalizedString("Invalid URL", comment: "Invalid URL"), color: .systemRed)
 			return
 		}
@@ -756,9 +757,10 @@ private extension AISummarySettingsViewController {
 			do {
 				try await AISummaryService.shared.validateModelAvailability(urlString: apiURL, apiKey: apiKey, model: model)
 				await MainActor.run {
-					AppDefaults.shared.aiSummaryAPIURL = apiURL
+					AppDefaults.shared.aiSummaryAPIURL = apiURLInput.isEmpty ? "" : apiURL
 					AppDefaults.shared.aiSummaryAPIKey = apiKey
 					AppDefaults.shared.aiSummaryModel = model
+					self.urlField.text = apiURLInput.isEmpty ? "" : apiURL
 					self.setSavingState(false)
 					self.setStatus(text: NSLocalizedString("Saved", comment: "Saved"), color: .systemGreen)
 				}
@@ -840,14 +842,15 @@ private extension AISummarySettingsViewController {
 	}
 
 	func credentialsForModelLoading() -> (url: String, apiKey: String)? {
-		let url = (urlField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+		let urlInput = (urlField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
 		let apiKey = (apiKeyField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
 
-		guard !url.isEmpty, !apiKey.isEmpty, isValidAPIURL(url) else {
+		guard !apiKey.isEmpty,
+			  let normalizedURL = effectiveAPIURL(from: urlInput) else {
 			return nil
 		}
 
-		return (url, apiKey)
+		return (normalizedURL, apiKey)
 	}
 
 	func showModelPlaceholder(_ title: String) {
@@ -911,14 +914,16 @@ private extension AISummarySettingsViewController {
 		statusLabel.textColor = color
 	}
 
-	func isValidAPIURL(_ text: String) -> Bool {
-		if let url = URL(string: text), url.scheme != nil {
-			return true
+	func normalizedAPIURL(from text: String) -> String? {
+		AISummaryService.normalizedAPIURLString(from: text)
+	}
+
+	func effectiveAPIURL(from text: String) -> String? {
+		let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+		if trimmed.isEmpty {
+			return AISummaryService.defaultAPIURLString
 		}
-		if !text.contains("://"), let url = URL(string: "https://\(text)"), url.scheme != nil {
-			return true
-		}
-		return false
+		return normalizedAPIURL(from: trimmed)
 	}
 
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {

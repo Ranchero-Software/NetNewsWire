@@ -35,8 +35,13 @@ enum AISummaryError: LocalizedError {
 
 actor AISummaryService {
 	static let shared = AISummaryService()
+	static let defaultAPIURLString = "https://api.openai.com/v1"
 
 	private let session: URLSession
+
+	static func normalizedAPIURLString(from text: String) -> String? {
+		normalizedAPIBaseURL(from: text)?.absoluteString
+	}
 
 	init(session: URLSession = .shared) {
 		self.session = session
@@ -188,10 +193,9 @@ private extension AISummaryService {
 	}
 
 	func configurationFromDefaults() throws -> Configuration {
-		let fallbackURL = "https://api.openai.com/v1"
 		let fallbackModel = "gpt-4o-mini"
 		let defaults = UserDefaults.standard
-		let urlString = (defaults.string(forKey: "aiSummaryAPIURL") ?? fallbackURL).trimmingCharacters(in: .whitespacesAndNewlines)
+		let urlString = (defaults.string(forKey: "aiSummaryAPIURL") ?? Self.defaultAPIURLString).trimmingCharacters(in: .whitespacesAndNewlines)
 		var apiKey = (defaults.string(forKey: "aiSummaryAPIKey") ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
 		let model = (defaults.string(forKey: "aiSummaryModel") ?? fallbackModel).trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -220,9 +224,16 @@ private extension AISummaryService {
 	}
 
 	func apiBaseURL(from configuredURL: String) throws -> URL {
+		guard let normalizedURL = Self.normalizedAPIBaseURL(from: configuredURL) else {
+			throw AISummaryError.invalidURL
+		}
+		return normalizedURL
+	}
+
+	static func normalizedAPIBaseURL(from configuredURL: String) -> URL? {
 		guard let url = parseURL(from: configuredURL),
 			  var components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-			throw AISummaryError.invalidURL
+			return nil
 		}
 
 		let completionSuffix = "/chat/completions"
@@ -235,30 +246,27 @@ private extension AISummaryService {
 			components.path = String(components.path.dropLast(modelsSuffix.count))
 		}
 
-		var basePath = components.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-		if basePath.isEmpty {
-			basePath = "v1"
-		} else if !basePath.lowercased().hasSuffix("v1") {
-			basePath += "/v1"
+		var pathComponents = components.path
+			.split(separator: "/")
+			.map { String($0) }
+
+		if pathComponents.isEmpty || pathComponents.last?.lowercased() != "v1" {
+			pathComponents.append("v1")
 		}
 
-		components.path = "/\(basePath)"
+		components.path = "/" + pathComponents.joined(separator: "/")
 		components.query = nil
 		components.fragment = nil
-
-		guard let normalizedURL = components.url else {
-			throw AISummaryError.invalidURL
-		}
-
-		return normalizedURL
+		return components.url
 	}
 
-	func parseURL(from text: String) -> URL? {
-		if let url = URL(string: text), url.scheme != nil {
+	static func parseURL(from text: String) -> URL? {
+		let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+		if let url = URL(string: trimmed), url.scheme != nil {
 			return url
 		}
-		if !text.contains("://") {
-			return URL(string: "https://\(text)")
+		if !trimmed.contains("://") {
+			return URL(string: "https://\(trimmed)")
 		}
 		return nil
 	}

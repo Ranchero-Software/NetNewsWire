@@ -25,6 +25,7 @@ final class AISummaryPreferencesViewController: NSViewController, NSTextFieldDel
 	private var lastLoadedSignature: String?
 	private var latestRequestedSignature: String?
 	private var availableModels = [String]()
+	private var isSavingConfiguration = false
 
 	override func loadView() {
 		view = NSView(frame: NSRect(x: 0, y: 0, width: 500, height: 280))
@@ -51,7 +52,7 @@ private extension AISummaryPreferencesViewController {
 		descriptionLabel.lineBreakMode = .byWordWrapping
 		descriptionLabel.textColor = .secondaryLabelColor
 
-		urlField.placeholderString = "https://api.openai.com/v1"
+		urlField.placeholderString = AISummaryService.defaultAPIURLString
 		apiKeyField.placeholderString = "sk-..."
 		urlField.delegate = self
 		apiKeyField.delegate = self
@@ -114,7 +115,9 @@ private extension AISummaryPreferencesViewController {
 	}
 
 	func reloadValues() {
-		urlField.stringValue = AppDefaults.shared.aiSummaryAPIURL
+		setSavingState(false)
+		let storedURL = (UserDefaults.standard.string(forKey: AppDefaults.Key.aiSummaryAPIURL) ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+		urlField.stringValue = storedURL.isEmpty ? "" : (normalizedAPIURL(from: storedURL) ?? storedURL)
 		apiKeyField.stringValue = AppDefaults.shared.aiSummaryAPIKey
 		statusLabel.stringValue = ""
 		lastLoadedSignature = nil
@@ -122,11 +125,15 @@ private extension AISummaryPreferencesViewController {
 	}
 
 	@objc func saveSettings(_ sender: Any?) {
-		let apiURL = urlField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !isSavingConfiguration else {
+			return
+		}
+
+		let apiURLInput = urlField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
 		let apiKey = apiKeyField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
 		let selectedModel = selectedModelForSaving()
 
-		guard isValidAPIURL(apiURL) else {
+		guard let apiURL = effectiveAPIURL(from: apiURLInput) else {
 			statusLabel.stringValue = NSLocalizedString("Invalid URL", comment: "Invalid URL")
 			statusLabel.textColor = .systemRed
 			return
@@ -138,11 +145,44 @@ private extension AISummaryPreferencesViewController {
 			return
 		}
 
-		AppDefaults.shared.aiSummaryAPIURL = apiURL
-		AppDefaults.shared.aiSummaryAPIKey = apiKey
-		AppDefaults.shared.aiSummaryModel = selectedModel
-		statusLabel.stringValue = NSLocalizedString("Saved", comment: "Saved")
-		statusLabel.textColor = .systemGreen
+		guard !apiKey.isEmpty else {
+			statusLabel.stringValue = NSLocalizedString("API Key is required", comment: "AI Summary API key required")
+			statusLabel.textColor = .systemRed
+			return
+		}
+
+		setSavingState(true)
+		statusLabel.stringValue = NSLocalizedString("Testing model...", comment: "Testing selected model before saving")
+		statusLabel.textColor = .secondaryLabelColor
+
+		Task { [weak self] in
+			guard let self else {
+				return
+			}
+
+			do {
+				try await AISummaryService.shared.validateModelAvailability(urlString: apiURL, apiKey: apiKey, model: selectedModel)
+				await MainActor.run {
+					AppDefaults.shared.aiSummaryAPIURL = apiURLInput.isEmpty ? "" : apiURL
+					AppDefaults.shared.aiSummaryAPIKey = apiKey
+					AppDefaults.shared.aiSummaryModel = selectedModel
+					self.urlField.stringValue = apiURLInput.isEmpty ? "" : apiURL
+					self.setSavingState(false)
+					self.statusLabel.stringValue = NSLocalizedString("Saved", comment: "Saved")
+					self.statusLabel.textColor = .systemGreen
+				}
+			} catch is CancellationError {
+				await MainActor.run {
+					self.setSavingState(false)
+				}
+			} catch {
+				await MainActor.run {
+					self.setSavingState(false)
+					self.statusLabel.stringValue = error.localizedDescription
+					self.statusLabel.textColor = .systemRed
+				}
+			}
+		}
 	}
 
 	func scheduleModelListReload() {
@@ -201,14 +241,15 @@ private extension AISummaryPreferencesViewController {
 	}
 
 	func credentialsForModelLoading() -> (url: String, apiKey: String)? {
-		let url = urlField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
+		let urlInput = urlField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
 		let apiKey = apiKeyField.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
 
-		guard !url.isEmpty, !apiKey.isEmpty, isValidAPIURL(url) else {
+		guard !apiKey.isEmpty,
+			  let normalizedURL = effectiveAPIURL(from: urlInput) else {
 			return nil
 		}
 
-		return (url, apiKey)
+		return (normalizedURL, apiKey)
 	}
 
 	func showModelPlaceholder(_ title: String) {
@@ -233,7 +274,7 @@ private extension AISummaryPreferencesViewController {
 	func configureModelPopUp(with models: [String]) {
 		modelPopUpButton.removeAllItems()
 		modelPopUpButton.addItems(withTitles: models)
-		modelPopUpButton.isEnabled = true
+		modelPopUpButton.isEnabled = !isSavingConfiguration
 	}
 
 	func selectModel(from models: [String], preferredModel: String?) {
@@ -275,13 +316,23 @@ private extension AISummaryPreferencesViewController {
 		return selected
 	}
 
-	func isValidAPIURL(_ text: String) -> Bool {
-		if let url = URL(string: text), url.scheme != nil {
-			return true
+	func setSavingState(_ isSaving: Bool) {
+		isSavingConfiguration = isSaving
+		urlField.isEnabled = !isSaving
+		apiKeyField.isEnabled = !isSaving
+		saveButton.isEnabled = !isSaving
+		modelPopUpButton.isEnabled = !isSaving && !availableModels.isEmpty
+	}
+
+	func normalizedAPIURL(from text: String) -> String? {
+		AISummaryService.normalizedAPIURLString(from: text)
+	}
+
+	func effectiveAPIURL(from text: String) -> String? {
+		let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+		if trimmed.isEmpty {
+			return AISummaryService.defaultAPIURLString
 		}
-		if !text.contains("://"), let url = URL(string: "https://\(text)"), url.scheme != nil {
-			return true
-		}
-		return false
+		return normalizedAPIURL(from: trimmed)
 	}
 }
