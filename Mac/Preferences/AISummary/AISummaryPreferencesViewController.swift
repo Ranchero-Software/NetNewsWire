@@ -13,7 +13,7 @@ final class AISummaryPreferencesViewController: NSViewController, NSTextFieldDel
 	private let urlLabel = NSTextField(labelWithString: NSLocalizedString("URL", comment: "URL"))
 	private let urlField = NSTextField()
 	private let apiKeyLabel = NSTextField(labelWithString: NSLocalizedString("API Key", comment: "API Key"))
-	private let apiKeyField = NSTextField()
+	private let apiKeyField = NSSecureTextField()
 	private let modelLabel = NSTextField(labelWithString: NSLocalizedString("Model", comment: "Model"))
 	private let modelPopUpButton = NSPopUpButton()
 	private let saveButton = NSButton(title: NSLocalizedString("Save", comment: "Save"), target: nil, action: nil)
