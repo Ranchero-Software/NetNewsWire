@@ -45,12 +45,16 @@ extension Notification.Name {
 		return SidebarOutlineDataSource(treeController: treeController)
 	}()
 
+	private var isReadFeedsFiltered = false
+	private var isReadArticlesFiltered = false
+
 	var isReadFiltered: Bool {
 		get {
-			return treeControllerDelegate.isReadFiltered
+			return isReadFeedsFiltered
 		}
 		set {
-			treeControllerDelegate.isReadFiltered = newValue
+			isReadFeedsFiltered = newValue
+			updateReadFilterState()
 		}
 	}
 	var expandedTable = Set<ContainerIdentifier>()
@@ -184,7 +188,7 @@ extension Notification.Name {
 		guard notification.object is AccountManager else {
 			return
 		}
-		if isReadFiltered {
+		if isReadFilterEnabled {
 			rebuildTreeAndRestoreSelection()
 		}
 	}
@@ -204,7 +208,7 @@ extension Notification.Name {
 			return
 		}
 
-		if isReadFiltered {
+		if isReadFilterEnabled {
 			queueRebuildTreeAndRestoreSelection()
 		}
 	}
@@ -491,7 +495,7 @@ extension Notification.Name {
 	// MARK: - API
 
 	func selectFeed(_ sidebarItem: SidebarItem) {
-		if isReadFiltered, let sidebarItemID = sidebarItem.sidebarItemID {
+		if isReadFilterEnabled, let sidebarItemID = sidebarItem.sidebarItemID {
 			self.treeControllerDelegate.addFilterException(sidebarItemID)
 
 			if let feed = sidebarItem as? Feed, let account = feed.account {
@@ -518,12 +522,17 @@ extension Notification.Name {
 	}
 
 	func toggleReadFilter() {
-		if treeControllerDelegate.isReadFiltered {
-			isReadFiltered = false
-		} else {
-			isReadFiltered = true
-		}
+		isReadFiltered.toggle()
 		delegate?.sidebarInvalidatedRestorationState(self)
+		rebuildTreeAndRestoreSelection()
+	}
+
+	func setReadArticlesFilterEnabled(_ isEnabled: Bool) {
+		guard isReadArticlesFiltered != isEnabled else {
+			return
+		}
+		isReadArticlesFiltered = isEnabled
+		updateReadFilterState()
 		rebuildTreeAndRestoreSelection()
 	}
 
@@ -581,7 +590,7 @@ private extension SidebarViewController {
 	}
 
 	func addToFilterExceptionsIfNecessary(_ sidebarItem: SidebarItem?) {
-		if isReadFiltered, let sidebarItemID = sidebarItem?.sidebarItemID {
+		if isReadFilterEnabled, let sidebarItemID = sidebarItem?.sidebarItemID {
 			if sidebarItem is PseudoFeed {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 			} else if let folderFeed = sidebarItem as? Folder {
@@ -629,12 +638,21 @@ private extension SidebarViewController {
 
 	func rebuildTreeAndReloadDataIfNeeded() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
+			updateReadFilterState()
 			addAllSelectedToFilterExceptions()
 			treeController.rebuild()
 			treeControllerDelegate.resetFilterExceptions()
 			outlineView.reloadData()
 			expandNodes()
 		}
+	}
+
+	var isReadFilterEnabled: Bool {
+		isReadFeedsFiltered || isReadArticlesFiltered
+	}
+
+	func updateReadFilterState() {
+		treeControllerDelegate.isReadFiltered = isReadFilterEnabled
 	}
 
 	func expandNodes() {
