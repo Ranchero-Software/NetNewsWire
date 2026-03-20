@@ -172,7 +172,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="51"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sync Content of Unread Articles" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="syncContent-label-id">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sync Content of Unread Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="syncContent-label-id">
                                                     <rect key="frame" x="20" y="15.5" width="245" height="20.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
@@ -187,10 +187,12 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="syncContent-label-id" firstAttribute="centerY" secondItem="syncContent-content-id" secondAttribute="centerY" id="syncContent-labelCenterY-id"/>
-                                                <constraint firstItem="syncContent-label-id" firstAttribute="leading" secondItem="syncContent-content-id" secondAttribute="leading" constant="20" symbolic="YES" id="syncContent-leading-id"/>
+                                                <constraint firstItem="syncContent-switch-id" firstAttribute="leading" secondItem="syncContent-label-id" secondAttribute="trailing" constant="8" symbolic="YES" id="syncContent-labelToSwitch-id"/>
+                                                <constraint firstItem="syncContent-label-id" firstAttribute="top" secondItem="syncContent-content-id" secondAttribute="topMargin" constant="3" id="syncContent-labelTop-id"/>
+                                                <constraint firstAttribute="bottom" secondItem="syncContent-label-id" secondAttribute="bottomMargin" constant="21" id="syncContent-labelBottom-id"/>
+                                                <constraint firstItem="syncContent-label-id" firstAttribute="leading" secondItem="syncContent-content-id" secondAttribute="leadingMargin" id="syncContent-leading-id"/>
                                                 <constraint firstItem="syncContent-switch-id" firstAttribute="centerY" secondItem="syncContent-content-id" secondAttribute="centerY" id="syncContent-switchCenterY-id"/>
-                                                <constraint firstAttribute="trailing" secondItem="syncContent-switch-id" secondAttribute="trailing" constant="20" symbolic="YES" id="syncContent-trailing-id"/>
+                                                <constraint firstAttribute="trailing" secondItem="syncContent-switch-id" secondAttribute="trailing" constant="18" id="syncContent-trailing-id"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
