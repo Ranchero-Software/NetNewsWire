@@ -1315,6 +1315,7 @@ private extension Account {
 
 		Task { @MainActor in
 			guard let unreadCountDictionary = try? await database.fetchAllUnreadCountsAsync() else {
+				fetchingAllUnreadCounts = false
 				return
 			}
 
