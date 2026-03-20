@@ -131,10 +131,6 @@ struct SidebarItemNode: Hashable, Sendable {
 		return hidingReadArticlesState.isHidingReadArticles(for: sidebarItemID)
 	}
 
-	var isSidebarReadFiltered: Bool {
-		return isReadFeedsFiltered || isReadArticlesFiltered
-	}
-
 	var timelineDefaultReadFilterType: ReadFilterType {
 		return timelineFeed?.defaultReadFilterType ?? .none
 	}
@@ -381,8 +377,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
-		AppDefaults.shared.hideReadFeeds = stateInfo.hideReadFeeds
-		updateSidebarReadFilterState()
+		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
 
 		restoreSelectedSidebarItemAndArticle(stateInfo)
 	}
@@ -484,7 +479,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 
-		if isSidebarReadFiltered {
+		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
 	}
@@ -747,7 +742,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func cleanUp(conditional: Bool) {
 		Self.logger.debug("SceneCoordinator: cleanUp: conditional \(conditional ? "true" : "false")")
-		if isSidebarReadFiltered {
+		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
 		if isReadArticlesFiltered && (AppDefaults.shared.refreshClearsReadArticles || !conditional) {
@@ -759,8 +754,8 @@ struct SidebarItemNode: Hashable, Sendable {
 		Self.logger.debug("SceneCoordinator: toggleReadFeedsFilter")
 
 		let newValue = !isReadFeedsFiltered
+		treeControllerDelegate.isReadFiltered = newValue
 		AppDefaults.shared.hideReadFeeds = newValue
-		updateSidebarReadFilterState()
 		rebuildBackingStores()
 		mainFeedCollectionViewController?.updateUI()
 	}
@@ -777,8 +772,6 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 		hidingReadArticlesState.toggleHidingReadArticles(for: sidebarItemID)
-		updateSidebarReadFilterState()
-		rebuildBackingStores()
 		refreshTimeline(resetScroll: false)
 	}
 
@@ -960,7 +953,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			self.activityManager.selecting(sidebarItem: sidebarItem)
 			self.rootSplitViewController.show(.supplementary)
 			setTimelineFeed(sidebarItem, animated: false) {
-				if self.isSidebarReadFiltered {
+				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
 				AppDefaults.shared.selectedSidebarItem = sidebarItem.sidebarItemID
@@ -970,7 +963,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		} else {
 
 			setTimelineFeed(nil, animated: false) {
-				if self.isSidebarReadFiltered {
+				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
@@ -1618,7 +1611,7 @@ private extension SceneCoordinator {
 	}
 
 	func addToFilterExceptionsIfNecessary(_ sidebarItem: SidebarItem?) {
-		if isSidebarReadFiltered, let sidebarItemID = sidebarItem?.sidebarItemID {
+		if isReadFeedsFiltered, let sidebarItemID = sidebarItem?.sidebarItemID {
 			if sidebarItem is SmartFeed {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 			} else if let folderFeed = sidebarItem as? Folder {
@@ -1675,7 +1668,6 @@ private extension SceneCoordinator {
 		Self.rebuildCount += 1
 #endif
 
-		updateSidebarReadFilterState()
 		addToFilterExceptionsIfNecessary(timelineFeed)
 		treeController.rebuild()
 		treeControllerDelegate.resetFilterExceptions()
@@ -1771,10 +1763,6 @@ private extension SceneCoordinator {
 			self.mainTimelineViewController?.reinitializeArticles(resetScroll: true)
 			completion?()
 		}
-	}
-
-	func updateSidebarReadFilterState() {
-		treeControllerDelegate.isReadFiltered = isSidebarReadFiltered
 	}
 
 	func updateShowNamesAndIcons() {
