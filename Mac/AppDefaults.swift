@@ -30,6 +30,7 @@ final class AppDefaults: Sendable {
 		static let timelineFontSize = "timelineFontSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
+		static let timelineReadFilterEnabled = "timelineReadFilterEnabled"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
@@ -146,6 +147,22 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			AppDefaults.setFontSize(for: Key.timelineFontSize, newValue)
+		}
+	}
+
+	var timelineReadFilterEnabled: Bool? {
+		get {
+			guard UserDefaults.standard.object(forKey: Key.timelineReadFilterEnabled) != nil else {
+				return nil
+			}
+			return UserDefaults.standard.bool(forKey: Key.timelineReadFilterEnabled)
+		}
+		set {
+			if let newValue {
+				UserDefaults.standard.set(newValue, forKey: Key.timelineReadFilterEnabled)
+			} else {
+				UserDefaults.standard.removeObject(forKey: Key.timelineReadFilterEnabled)
+			}
 		}
 	}
 

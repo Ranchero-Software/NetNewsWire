@@ -30,7 +30,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
-	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
+	private var globalReadFilterEnabled = AppDefaults.shared.timelineReadFilterEnabled
 
 	var isReadFiltered: Bool? {
 		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
@@ -39,8 +39,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		if let sidebarItemID = timelineFeed.sidebarItemID, let readFiltered = readFilterEnabledTable[sidebarItemID] {
-			return readFiltered
+		if let globalReadFilterEnabled {
+			return globalReadFilterEnabled
 		}
 		return timelineFeed.defaultReadFilterType == .read
 	}
@@ -66,7 +66,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var representedObjects: [AnyObject]? {
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
-				seedReadFilterForFolders()
 				unreadCount = 0
 
 				selectionDidChange(nil)
@@ -84,18 +83,15 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	var windowState: TimelineWindowState {
-		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo }
-		let readArticlesFilterStateValues = readFilterEnabledTable.values.compactMap( { $0 })
-
 		if selectedArticles.count == 1 {
 			let path = selectedArticles.first!.pathUserInfo
-			return TimelineWindowState(readArticlesFilterStateKeys: readArticlesFilterStateKeys,
-									   readArticlesFilterStateValues: readArticlesFilterStateValues,
+			return TimelineWindowState(readArticlesFilterStateKeys: [],
+									   readArticlesFilterStateValues: [],
 									   selectedAccountID: path[ArticlePathKey.accountID] as? String,
 									   selectedArticleID: path[ArticlePathKey.articleID] as? String)
 		} else {
-			return TimelineWindowState(readArticlesFilterStateKeys: readArticlesFilterStateKeys,
-									   readArticlesFilterStateValues: readArticlesFilterStateValues,
+			return TimelineWindowState(readArticlesFilterStateKeys: [],
+									   readArticlesFilterStateValues: [],
 									   selectedAccountID: nil,
 									   selectedArticleID: nil)
 		}
@@ -290,41 +286,19 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func toggleReadFilter() {
-		guard let filter = isReadFiltered,
-			  let sidebarItemID = (representedObjects?.first as? SidebarItem)?.sidebarItemID else {
+		guard let filter = isReadFiltered else {
 			return
 		}
-		if filter {
-			noteSidebarItemShowsReadArticles(sidebarItemID)
-		} else {
-			noteSidebarItemHidesReadArticles(sidebarItemID)
-		}
+		let newValue = !filter
+		globalReadFilterEnabled = newValue
+		AppDefaults.shared.timelineReadFilterEnabled = newValue
 		delegate?.timelineInvalidatedRestorationState(self)
 		fetchAndReplacePreservingSelection()
 	}
 
 	// MARK: State Restoration
 
-	private func noteSidebarItemHidesReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
-		readFilterEnabledTable[sidebarItemID] = true
-	}
-
-	private func noteSidebarItemShowsReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
-		readFilterEnabledTable[sidebarItemID] = false
-	}
-
 	func restoreState(from state: TimelineWindowState) {
-		for i in 0..<state.readArticlesFilterStateKeys.count {
-			if let sidebarItemID = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
-				let hidesReadArticles = state.readArticlesFilterStateValues[i]
-				if hidesReadArticles {
-					noteSidebarItemHidesReadArticles(sidebarItemID)
-				} else {
-					noteSidebarItemShowsReadArticles(sidebarItemID)
-				}
-			}
-		}
-
 		if let selectedAccountID = state.selectedAccountID,
 		   let account = AccountManager.shared.existingAccount(accountID: selectedAccountID),
 		   let selectedArticleID = state.selectedArticleID {
@@ -348,20 +322,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	///
 	/// TODO: Delete for NetNewsWire 7.
 	func restoreLegacyState(from state: [AnyHashable: Any]) {
-		guard let readArticlesFilterStateKeys = state[UserInfoKey.readArticlesFilterStateKeys] as? [[String: String]],
-			let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool] else {
-			return
-		}
-
-		for i in 0..<readArticlesFilterStateKeys.count {
-			if let sidebarItemID = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
-				let hidesReadArticles = readArticlesFilterStateValues[i]
-				if hidesReadArticles {
-					noteSidebarItemHidesReadArticles(sidebarItemID)
-				} else {
-					noteSidebarItemShowsReadArticles(sidebarItemID)
-				}
-			}
+		if let readArticlesFilterStateValues = state[UserInfoKey.readArticlesFilterStateValues] as? [Bool],
+		   let global = readArticlesFilterStateValues.first {
+			globalReadFilterEnabled = global
+			AppDefaults.shared.timelineReadFilterEnabled = global
 		}
 
 		if let articlePathUserInfo = state[UserInfoKey.articlePath] as? [AnyHashable: Any],
@@ -1223,6 +1187,7 @@ private extension TimelineViewController {
 		if fetchers.isEmpty {
 			return Set<Article>()
 		}
+		let readFilterEnabledTable = readFilterTableForCurrentFetchers(fetchers)
 
 		var fetchedArticles = Set<Article>()
 		for fetchers in fetchers {
@@ -1245,6 +1210,7 @@ private extension TimelineViewController {
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
 		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
+		let readFilterEnabledTable = readFilterTableForCurrentFetchers(fetchers)
 		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
@@ -1301,18 +1267,21 @@ private extension TimelineViewController {
 		return representedObjects?.contains(where: { $0 is Folder }) ?? false
 	}
 
-	func seedReadFilterForFolders() {
-		guard let representedObjects else {
-			return
+	func readFilterTableForCurrentFetchers(_ fetchers: [ArticleFetcher]) -> [SidebarItemIdentifier: Bool] {
+		guard let globalReadFilterEnabled else {
+			return [:]
 		}
-		for object in representedObjects {
-			guard let folder = object as? Folder, let sidebarItemID = folder.sidebarItemID else {
+
+		var table = [SidebarItemIdentifier: Bool]()
+		for fetcher in fetchers {
+			guard let sidebarItem = fetcher as? SidebarItem,
+				  sidebarItem.defaultReadFilterType != .alwaysRead,
+				  let sidebarItemID = sidebarItem.sidebarItemID else {
 				continue
 			}
-			if readFilterEnabledTable[sidebarItemID] == nil {
-				readFilterEnabledTable[sidebarItemID] = true
-			}
+			table[sidebarItemID] = globalReadFilterEnabled
 		}
+		return table
 	}
 
 	func representedObjectsContainsAnyFeed(_ feeds: Set<Feed>) -> Bool {

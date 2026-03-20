@@ -52,12 +52,8 @@ final class GeneralPreferencesViewController: NSViewController {
 		NSWorkspace.shared.open(url)
 	}
 
-	@IBAction func articleThemePopUpDidChange(_ sender: Any) {
-		guard let menuItem = articleThemePopup.selectedItem else {
-			return
-		}
-		ArticleThemesManager.shared.currentThemeName = menuItem.title
-		updateArticleThemePopup()
+	@IBAction func articleThemePopUpDidChange(_ sender: Any?) {
+		applySelectedArticleTheme()
 	}
 
 	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
@@ -131,6 +127,18 @@ private extension GeneralPreferencesViewController {
 		if articleThemePopup.indexOfSelectedItem == -1 {
 			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
 		}
+	}
+
+	func applySelectedArticleTheme() {
+		let selectedThemeName: String
+		if let selectedItem = articleThemePopup.selectedItem {
+			selectedThemeName = selectedItem.title
+		} else {
+			selectedThemeName = ArticleTheme.defaultTheme.name
+		}
+
+		ArticleThemesManager.shared.currentThemeName = selectedThemeName
+		updateArticleThemePopup()
 	}
 
 	func updateBrowserPopup() {
