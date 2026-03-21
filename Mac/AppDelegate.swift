@@ -89,6 +89,7 @@ let appName = "NetNewsWire"
 	private var inspectorWindowController: InspectorWindowController?
 	private var errorLogWindowController: ErrorLogWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
+	private var cloudKitZoneStatsWindowController: CloudKitZoneStatsWindowController?
 	private let appMovementMonitor: RSAppMovementMonitor
 	private var softwareUpdater: SPUUpdater?
 	private var crashReporter: PLCrashReporter?
@@ -775,6 +776,13 @@ extension AppDelegate {
 		Task {
 			await AccountManager.shared.vacuumAllDatabases()
 		}
+	}
+
+	@IBAction func showCloudKitZoneStats(_ sender: Any?) {
+		if cloudKitZoneStatsWindowController == nil {
+			cloudKitZoneStatsWindowController = CloudKitZoneStatsWindowController()
+		}
+		cloudKitZoneStatsWindowController?.showWindow(self)
 	}
 
 	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
