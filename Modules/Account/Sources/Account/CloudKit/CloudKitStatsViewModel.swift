@@ -112,7 +112,7 @@ public enum CloudKitStatsFetchStatus {
 				guard self.fetchSerialNumber == serialNumber else {
 					return
 				}
-				stats = stats
+				self.stats = stats
 				fetchStatus = .completed
 			} catch {
 				guard self.fetchSerialNumber == serialNumber else {
