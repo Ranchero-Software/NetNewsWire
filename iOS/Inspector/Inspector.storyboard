@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24405"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="24504"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -16,7 +16,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="3V2-Cm-ezj">
-                            <rect key="frame" x="0.0" y="312" width="414" height="44"/>
+                            <rect key="frame" x="0.0" y="399" width="414" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dgD-uX-vcx">
@@ -163,6 +163,41 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection id="syncContent-section-id">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="syncContent-cell-id" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="330" width="374" height="51"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="syncContent-cell-id" id="syncContent-content-id">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="51"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sync Content of Unread Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="syncContent-label-id">
+                                                    <rect key="frame" x="20" y="15.5" width="245" height="20.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="syncContent-switch-id">
+                                                    <rect key="frame" x="293" y="11.5" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="syncContentSwitchDidChange:" destination="1m3-fZ-n7g" eventType="valueChanged" id="syncContent-action-id"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="syncContent-switch-id" firstAttribute="leading" secondItem="syncContent-label-id" secondAttribute="trailing" constant="8" symbolic="YES" id="syncContent-labelToSwitch-id"/>
+                                                <constraint firstItem="syncContent-label-id" firstAttribute="top" secondItem="syncContent-content-id" secondAttribute="topMargin" constant="3" id="syncContent-labelTop-id"/>
+                                                <constraint firstAttribute="bottom" secondItem="syncContent-label-id" secondAttribute="bottomMargin" constant="21" id="syncContent-labelBottom-id"/>
+                                                <constraint firstItem="syncContent-label-id" firstAttribute="leading" secondItem="syncContent-content-id" secondAttribute="leadingMargin" id="syncContent-leading-id"/>
+                                                <constraint firstItem="syncContent-switch-id" firstAttribute="centerY" secondItem="syncContent-content-id" secondAttribute="centerY" id="syncContent-switchCenterY-id"/>
+                                                <constraint firstAttribute="trailing" secondItem="syncContent-switch-id" secondAttribute="trailing" constant="18" id="syncContent-trailing-id"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="1m3-fZ-n7g" id="eTZ-Uy-P3l"/>
@@ -175,6 +210,7 @@
                         <outlet property="deleteAccountButton" destination="obv-a5-Pl6" id="idW-gm-BIJ"/>
                         <outlet property="limitationsAndSolutionsButton" destination="dgD-uX-vcx" id="5ti-AM-xms"/>
                         <outlet property="nameTextField" destination="LUW-uv-piz" id="e2P-Hq-guh"/>
+                        <outlet property="syncContentSwitch" destination="syncContent-switch-id" id="syncContent-outlet-id"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="zcI-Zg-28D" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -357,11 +393,11 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="readerViewAlwaysEnabledSwitch" destination="fUd-JB-UMK" id="kUh-ob-Ego"/>
                         <outlet property="feedURLLabel" destination="rOV-XS-bNW" id="mPv-yb-H4I"/>
                         <outlet property="homePageLabel" destination="HUP-Cu-FGT" id="EDm-vt-2r0"/>
                         <outlet property="nameTextField" destination="ZdA-rl-9eP" id="GzR-uc-fpV"/>
                         <outlet property="newArticleNotificationsEnabledSwitch" destination="g39-wK-xUs" id="ahS-ZK-6xN"/>
+                        <outlet property="readerViewAlwaysEnabledSwitch" destination="fUd-JB-UMK" id="kUh-ob-Ego"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qKF-0N-vfa" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

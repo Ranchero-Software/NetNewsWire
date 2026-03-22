@@ -1,11 +1,37 @@
 # iOS Release Notes
 
-### 7.0.2 TestFlight build 7034 15 Mar 2026 - branch: main tag: iOS-7.0.2-7034
+### 7.0.4 build 7038 19 Mar 2026 - branch: main tag: iOS-7.0.4-7038
+
+Added a new setting for the iCloud account — you can turn on/off syncing the content of unread articles. If you already have an iCloud account, the setting is on, because that’s how it’s been working this whole time. But for future iCloud accounts the settings defaults to off, since it saves so much time and energy. Note: for this setting to really turn off syncing content of unread articles, it needs to be turned off on all your devices running NetNewsWire. Also note: turning this off won’t magically erase the content that’s already been uploaded — that content will still have to sync. It will get cleaned up gradually, in the normal course of things.
+
+### 7.0.3 build 7036 18 Mar 2026 - branch: main tag: iOS-7.0.3-7036 iOS-7.0.3
+
+This was originally a TestFlight build, and then submitted to the App Store.
+
+Fixed bug storing credentials in Keychain when there's a previous item — which could cause authentication issues with syncing systems
+
+### 7.0.2 build 7034 15 Mar 2026 - branch: main tag: iOS-7.0.2-7034
+
+This was originally a TestFlight build, and then submitted to the App Store.
+
+Changes since 7033 TestFlight build:
 
 Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
 Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
 Added a 29-minute minimum on refresh for any given feed
 Moved saving feed settings/metadata to a background thread (super-small performance optimization)
+
+Changes since 7.0.1:
+
+Added a new Error Log screen — see Settings > Troubleshooting > Error Log. It shows errors from refreshing, syncing, keychain, etc. (Note: it probably doesn’t show all possible errors yet. We’re still auditing the code for places to add error logging.)
+Further improved the error message reporting for credentials errors
+Fixed the missing-endpoint-URL bug with self-hosted sync accounts (FreshRSS most commonly)
+Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
+Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
+Added a 29-minute minimum on refresh for any given feed
+Reverted a change where clicking on URLs with #fragment — when they otherwise match the current page URL — would assume an in-page navigation instead of opening in browser. Unfortunately the fragment section is very often not included in the article in the RSS, so we do need to open in browser
+Now more aggressively unloading memory on moving to the background
+Cut down on amount of disk writes — now storing account and feed settings in SQLite databases instead of in plist files, which is more efficient
 
 ### 7.0.2 TestFlight build 7033 14 Mar 2026 - branch: main tag: iOS-7.0.2-7033
 

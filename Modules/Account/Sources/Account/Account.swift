@@ -101,6 +101,8 @@ public enum FetchType {
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
 
+	public static let iCloudSyncArticleContentForUnreadArticlesKey = "iCloudSyncArticleContentForUnreadArticles"
+
 	public var isDeleted = false
 
 	public var containerID: ContainerIdentifier? {
@@ -1313,6 +1315,7 @@ private extension Account {
 
 		Task { @MainActor in
 			guard let unreadCountDictionary = try? await database.fetchAllUnreadCountsAsync() else {
+				fetchingAllUnreadCounts = false
 				return
 			}
 

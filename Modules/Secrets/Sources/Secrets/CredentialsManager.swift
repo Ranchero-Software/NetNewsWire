@@ -85,8 +85,14 @@ public struct CredentialsManager {
 			throw error
 		}
 
+		// Remove kSecValueData so the delete matches by identity
+		// (server, username, type) regardless of the stored secret.
+		// Without this, the delete fails when the token has changed
+		// (as during an OAuth refresh), and the re-add fails
+		// with errSecDuplicateItem.
 		var deleteQuery = query
 		deleteQuery.removeValue(forKey: kSecAttrAccessible as String)
+		deleteQuery.removeValue(forKey: kSecValueData as String)
 		SecItemDelete(deleteQuery as CFDictionary)
 
 		let addStatus = SecItemAdd(query as CFDictionary, nil)

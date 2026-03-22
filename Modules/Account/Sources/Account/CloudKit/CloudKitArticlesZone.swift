@@ -17,6 +17,8 @@ import SyncDatabase
 import CloudKitSync
 
 final class CloudKitArticlesZone: CloudKitZone {
+
+	private static let logger = cloudKitLogger
 	var zoneID: CKRecordZone.ID
 
 	weak var container: CKContainer?
@@ -55,6 +57,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 
+	var settings: (any CloudKitSettings)!
+
 	init(container: CKContainer) {
 		self.container = container
 		self.database = container.privateCloudDatabase
@@ -82,10 +86,21 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 		var records = [CKRecord]()
 
-		let saveArticles = articles.filter { $0.status.read == false || $0.status.starred == true }
-		for saveArticle in saveArticles {
-			records.append(makeStatusRecord(saveArticle))
-			records.append(makeArticleRecord(saveArticle))
+		let syncUnreadContent = settings.syncArticleContentForUnreadArticles
+		Self.logger.info("CloudKitArticlesZone: saveNewArticles syncUnreadContent: \(syncUnreadContent, privacy: .public)")
+
+		for article in articles {
+			if article.status.starred {
+				records.append(makeStatusRecord(article))
+				records.append(makeArticleRecord(article))
+			} else if !article.status.read {
+				records.append(makeStatusRecord(article))
+				if syncUnreadContent {
+					records.append(makeArticleRecord(article))
+				} else {
+					Self.logger.debug("CloudKitArticlesZone: saveNewArticles skipping content for unread article \(article.articleID, privacy: .public)")
+				}
+			}
 		}
 
 		let compressedRecords = await Task.detached(priority: .userInitiated) {
@@ -109,6 +124,9 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 
+		let syncUnreadContent = settings.syncArticleContentForUnreadArticles
+		Self.logger.info("CloudKitArticlesZone: modifyArticles syncUnreadContent: \(syncUnreadContent, privacy: .public)")
+
 		for statusUpdate in statusUpdates {
 			switch statusUpdate.record {
 			case .all:
@@ -116,7 +134,11 @@ final class CloudKitArticlesZone: CloudKitZone {
 				modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
 			case .new:
 				newRecords.append(self.makeStatusRecord(statusUpdate))
-				newRecords.append(self.makeArticleRecord(statusUpdate.article!))
+				if statusUpdate.article!.status.starred || syncUnreadContent {
+					newRecords.append(self.makeArticleRecord(statusUpdate.article!))
+				} else {
+					Self.logger.debug("CloudKitArticlesZone: modifyArticles skipping content for unread article \(statusUpdate.articleID, privacy: .public)")
+				}
 			case .delete:
 				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: zoneID))
 			case .statusOnly:
