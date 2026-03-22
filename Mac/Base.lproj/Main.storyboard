@@ -593,7 +593,7 @@
                                         <menuItem title="iCloud Storage Stats" id="dLy-xR-u6N">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="showCloudKitZoneStats:" target="Ady-hI-5gd" id="eMz-yS-v7O"/>
+                                                <action selector="showCloudKitStats:" target="Ady-hI-5gd" id="ypX-Ya-bcD"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
