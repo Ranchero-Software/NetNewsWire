@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias CloudKitStatsProgressHandler = @MainActor @Sendable (CloudKitStats) -> Void
+
 public struct CloudKitStats: Sendable {
 
 	public static let empty = CloudKitStats(statusCount: 0, starredStatusCount: 0, unreadStatusCount: 0, readStatusCount: 0, staleStatusCount: 0, articleCount: 0, starredArticleCount: 0, unreadArticleCount: 0, readArticleCount: 0, orphanedArticleCount: 0)
