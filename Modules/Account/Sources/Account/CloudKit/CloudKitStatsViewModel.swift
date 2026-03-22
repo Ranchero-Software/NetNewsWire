@@ -51,7 +51,7 @@ public enum CloudKitStatsFetchStatus {
 
 @Observable @MainActor public final class CloudKitStatsViewModel {
 
-	public var zoneStats = CloudKitStats.empty {
+	public var stats = CloudKitStats.empty {
 		didSet {
 			onChange?()
 		}
@@ -71,16 +71,16 @@ public enum CloudKitStatsFetchStatus {
 
 	public var statsText: String {
 		"""
-		Status Records: \(zoneStats.statusCount)
-		  Starred: \(zoneStats.starredStatusCount)
-		  Unread: \(zoneStats.unreadStatusCount)
-		  Read: \(zoneStats.readStatusCount)
-		  Stale: \(zoneStats.staleStatusCount)
-		Article Content Records: \(zoneStats.articleCount)
-		  Starred: \(zoneStats.starredArticleCount)
-		  Unread: \(zoneStats.unreadArticleCount)
-		  Read: \(zoneStats.readArticleCount)
-		  Orphaned: \(zoneStats.orphanedArticleCount)
+		Status Records: \(stats.statusCount)
+		  Starred: \(stats.starredStatusCount)
+		  Unread: \(stats.unreadStatusCount)
+		  Read: \(stats.readStatusCount)
+		  Stale: \(stats.staleStatusCount)
+		Article Content Records: \(stats.articleCount)
+		  Starred: \(stats.starredArticleCount)
+		  Unread: \(stats.unreadArticleCount)
+		  Read: \(stats.readArticleCount)
+		  Orphaned: \(stats.orphanedArticleCount)
 		"""
 	}
 
@@ -96,23 +96,23 @@ public enum CloudKitStatsFetchStatus {
 		fetchTask?.cancel()
 
 		fetchStatus = .fetching
-		zoneStats = .empty
+		stats = .empty
 
 		fetchSerialNumber += 1
 		let serialNumber = fetchSerialNumber
 
 		fetchTask = Task {
 			do {
-				let stats = try await account.fetchCloudKitStats { _, _, _, partialStats in
+				let stats = try await account.fetchCloudKitStats { partialStats in
 					guard self.fetchSerialNumber == serialNumber else {
 						return
 					}
-					self.zoneStats = partialStats
+					self.stats = partialStats
 				}
 				guard self.fetchSerialNumber == serialNumber else {
 					return
 				}
-				zoneStats = stats
+				stats = stats
 				fetchStatus = .completed
 			} catch {
 				guard self.fetchSerialNumber == serialNumber else {

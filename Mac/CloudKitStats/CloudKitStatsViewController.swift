@@ -435,7 +435,7 @@ private extension CloudKitStatsViewController {
 	}
 
 	func updateStatsValues() {
-		let stats = model.zoneStats
+		let stats = model.stats
 		statusRecordCountLabel.stringValue = "\(stats.statusCount)"
 		starredCountLabel.stringValue = "\(stats.starredStatusCount)"
 		unreadCountLabel.stringValue = "\(stats.unreadStatusCount)"
