@@ -116,7 +116,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		await withCheckedContinuation { continuation in
 			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
 			op.completionBlock = { _ in
-				Self.logger.debug("CloutKitAccountDelegate: \(#function, privacy: .public) did complete")
+				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				continuation.resume()
 			}
 			mainThreadOperationQueue.add(op)
@@ -136,13 +136,14 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		try await standardRefreshAll(for: account)
-		Self.logger.debug("CloutKitAccountDelegate: \(#function, privacy: .public) did complete")
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
 	func syncArticleStatus(for account: Account) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
+		await cleanUpContentRecordsIfNeeded()
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
@@ -497,6 +498,13 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
+	func fetchCloudKitStats(progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {
+		guard let account else {
+			throw CloudKitAccountDelegateError.unknown
+		}
+		return try await articlesZone.fetchZoneStats(account: account, progress: progress)
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
@@ -830,6 +838,36 @@ private extension CloudKitAccountDelegate {
 			syncProgress.completeTask()
 			processAccountError(account, error)
 			throw error
+		}
+	}
+
+	// MARK: - Record Cleanup
+
+	static let lastCleanUpKey = "cloudkit.lastCleanUpDate"
+
+	func cleanUpContentRecordsIfNeeded() async {
+		let lastCleanUp = UserDefaults.standard.object(forKey: Self.lastCleanUpKey) as? Date ?? .distantPast
+		let oneDayAgo = Date(timeIntervalSinceNow: -24 * 60 * 60)
+		guard lastCleanUp < oneDayAgo else {
+			return
+		}
+
+		guard let account else {
+			return
+		}
+
+		// Set this unconditionally. If it fails, we don’t want to keep trying, possibly
+		// doing a bunch of extra work that will fail. Let it rest until the next go.
+		UserDefaults.standard.set(Date(), forKey: Self.lastCleanUpKey)
+
+		Self.logger.info("CloudKitAccountDelegate: running daily record cleanup")
+		do {
+			let syncUnreadContent = Self.syncArticleContentForUnreadArticles
+			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent)
+			Self.logger.info("CloudKitAccountDelegate: daily cleanup deleted \(deleted, privacy: .public) records")
+		} catch {
+			Self.logger.error("CloudKitAccountDelegate: daily cleanup error: \(error.localizedDescription, privacy: .public)")
+			postSyncError(error, account: account, operation: "Daily record cleanup")
 		}
 	}
 }
