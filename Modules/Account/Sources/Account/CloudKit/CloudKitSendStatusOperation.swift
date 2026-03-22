@@ -21,12 +21,14 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	private var syncDatabase: SyncDatabase
 	private let settings: any CloudKitSettings
 	private static let logger = cloudKitLogger
+	let syncErrorHandler: CloudKitSyncErrorHandler?
 
-	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, settings: any CloudKitSettings) {
+	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, settings: any CloudKitSettings, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.articlesZone = articlesZone
 		self.syncDatabase = database
 		self.settings = settings
+		self.syncErrorHandler = syncErrorHandler
 		super.init(name: "CloudKitSendStatusOperation")
 	}
 
@@ -100,6 +102,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 			} catch {
 				try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 				processAccountError(account, error)
+				syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
 				Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
 				return true
 			}
