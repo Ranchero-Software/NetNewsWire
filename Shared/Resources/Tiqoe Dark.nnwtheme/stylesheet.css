@@ -488,6 +488,10 @@ a.footnote:hover,
 	--link-underline-special: color-mix(in hsl, currentColor, transparent 40%)
 	}
 
+	hr {
+	border: 1.5px solid dimgrey;
+	}
+
 	.newsfoot-footnote-popover {
 	background: #555;
 	box-shadow: 0 2px 4px rgba(255, 255, 255, 0.5), 0 3px 6px rgba(255, 255, 255, 0.25);
