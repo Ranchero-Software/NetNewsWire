@@ -240,7 +240,7 @@ final class SettingsViewController: UITableViewController {
 				case .errorLog:
 					return UIHostingController(rootView: ErrorLogView())
 				case .cloudKitZoneStats:
-					return UIHostingController(rootView: CloudKitZoneStatsView())
+					return UIHostingController(rootView: CloudKitStatsView())
 				default:
 					return nil
 				}

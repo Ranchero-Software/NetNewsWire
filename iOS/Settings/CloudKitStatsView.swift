@@ -1,5 +1,5 @@
 //
-//  CloudKitZoneStatsView.swift
+//  CloudKitStatsView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Brent Simmons on 3/20/26.
@@ -8,13 +8,10 @@
 import SwiftUI
 import Account
 
-@MainActor private enum CloudKitStatsViewModelHolder {
-	static let shared = CloudKitStatsViewModel()
-}
+struct CloudKitStatsView: View {
 
-struct CloudKitZoneStatsView: View {
-
-	private let model = CloudKitStatsViewModelHolder.shared
+	private static let model = CloudKitStatsViewModel()
+	private let model = CloudKitStatsView.model
 
 	var body: some View {
 		List {
