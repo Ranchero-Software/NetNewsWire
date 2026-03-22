@@ -470,10 +470,6 @@ a.footnote:hover,
 	opacity: 0.8;
 	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
 	}
-	
-	[href]:has(img):hover {
-	opacity: 1;	
-	}
 
 	:root {
 	color-scheme: dark;
