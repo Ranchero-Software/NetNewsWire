@@ -502,7 +502,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		guard let account else {
 			throw CloudKitAccountDelegateError.unknown
 		}
-		return try await articlesZone.fetchZoneStats(account: account, progress: progress)
+		return try await articlesZone.fetchStats(account: account, progress: progress)
 	}
 
 	// MARK: - Suspend and Resume (for iOS)
