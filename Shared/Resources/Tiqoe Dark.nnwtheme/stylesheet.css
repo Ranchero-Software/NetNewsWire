@@ -62,6 +62,10 @@ body a :not(b, code, em, i, strong, u) * {
 	color: var(--secondary-accent-color);
 }
 
+a u {
+	text-decoration: none;
+}
+
 body > header {
 	border-bottom: 1px solid var(--header-table-border-color);
 	padding-bottom: 0.5rem;
@@ -458,10 +462,6 @@ a.footnote:hover,
 
 	a :is(code, em, i, span, u) {
 	color: inherit;
-	}
-	
-	a u {
-	text-decoration: none;
 	}
 
 	[href]:hover,
