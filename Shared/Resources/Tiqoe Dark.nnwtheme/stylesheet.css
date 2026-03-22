@@ -480,7 +480,7 @@ a.footnote:hover,
 	--feedlink-color: rgba(255, 255, 255, 0.5);
 	--article-title-color: #c5c2c1;
 	--article-date-color: rgba(255, 255, 255, 0.5);
-   --table-cell-border-color: #43350e;
+	--table-cell-border-color: #43350e;
 	--primary-accent-color: #43350e;
 	--secondary-accent-color: #43350e;
 	--block-quote-border-color: rgba(255, 255, 255, 0.3);
