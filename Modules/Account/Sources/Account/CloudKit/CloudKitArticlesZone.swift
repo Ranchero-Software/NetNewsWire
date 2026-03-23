@@ -21,6 +21,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	private static let logger = cloudKitLogger
 	private static let staleStatusRecordInterval: TimeInterval = 183 * 24 * 60 * 60 // ~6 months
 	private static let cleanUpLimit = 400
+	private static let jsonEncoder = JSONEncoder()
 	private static let matchAllPredicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
 
 	struct StatusRecordInfo {
@@ -659,16 +660,14 @@ private extension CloudKitArticlesZone {
 		record[CloudKitArticle.Fields.datePublished] = article.datePublished
 		record[CloudKitArticle.Fields.dateModified] = article.dateModified
 
-		let encoder = JSONEncoder()
-		var parsedAuthors = [String]()
-
 		if let authors = article.authors, !authors.isEmpty {
+			var parsedAuthors = [String]()
 			for author in authors {
 				let parsedAuthor = ParsedAuthor(name: author.name,
 												url: author.url,
 												avatarURL: author.avatarURL,
 												emailAddress: author.emailAddress)
-				if let data = try? encoder.encode(parsedAuthor), let encodedParsedAuthor = String(data: data, encoding: .utf8) {
+				if let data = try? Self.jsonEncoder.encode(parsedAuthor), let encodedParsedAuthor = String(data: data, encoding: .utf8) {
 					parsedAuthors.append(encodedParsedAuthor)
 				}
 			}
