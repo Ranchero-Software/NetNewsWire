@@ -45,6 +45,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	private let accountZone: CloudKitAccountZone
 	private let articlesZone: CloudKitArticlesZone
+	private let syncArticleContentForUnreadArticles: @Sendable () -> Bool
 
 	private let mainThreadOperationQueue = MainThreadOperationQueue()
 	private let refresher: LocalAccountRefresher
@@ -91,15 +92,18 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	init(dataFolder: String) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		let syncArticleContentForUnreadArticles: @Sendable () -> Bool = {
+			UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		}
+		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
 		self.accountZone = CloudKitAccountZone(container: container)
-		self.articlesZone = CloudKitArticlesZone(container: container)
+		self.articlesZone = CloudKitArticlesZone(container: container, syncArticleContentForUnreadArticles: syncArticleContentForUnreadArticles)
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.syncDatabase = SyncDatabase(databasePath: databaseFilePath)
 
 		self.refresher = LocalAccountRefresher()
 		self.refresher.delegate = self
-		self.articlesZone.settings = self
 
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: refresher)
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: syncProgress)
@@ -817,7 +821,7 @@ private extension CloudKitAccountDelegate {
 			let op = CloudKitSendStatusOperation(account: account,
 												 articlesZone: articlesZone,
 												 database: syncDatabase,
-												 settings: self,
+												 syncArticleContentForUnreadArticles: syncArticleContentForUnreadArticles,
 												 syncErrorHandler: syncErrorHandler)
 			op.completionBlock = { mainThreadOperation in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")

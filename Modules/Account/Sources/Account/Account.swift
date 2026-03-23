@@ -101,7 +101,7 @@ public enum FetchType {
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
 
-	public static let iCloudSyncArticleContentForUnreadArticlesKey = "iCloudSyncArticleContentForUnreadArticles"
+	public nonisolated static let iCloudSyncArticleContentForUnreadArticlesKey = "iCloudSyncArticleContentForUnreadArticles"
 
 	public var isDeleted = false
 

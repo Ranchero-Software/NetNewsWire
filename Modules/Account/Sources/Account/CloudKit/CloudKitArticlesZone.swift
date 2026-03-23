@@ -100,12 +100,13 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 
-	var settings: (any CloudKitSettings)!
+	let syncArticleContentForUnreadArticles: @Sendable () -> Bool
 
-	init(container: CKContainer) {
+	init(container: CKContainer, syncArticleContentForUnreadArticles: @escaping @Sendable () -> Bool) {
 		self.container = container
 		self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
+		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
 		migrateChangeToken()
 	}
 
@@ -129,7 +130,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 		var records = [CKRecord]()
 
-		let syncUnreadContent = settings.syncArticleContentForUnreadArticles
+		let syncUnreadContent = syncArticleContentForUnreadArticles()
 		Self.logger.info("CloudKitArticlesZone: saveNewArticles syncUnreadContent: \(syncUnreadContent, privacy: .public)")
 
 		for article in articles {
@@ -167,7 +168,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 
-		let syncUnreadContent = settings.syncArticleContentForUnreadArticles
+		let syncUnreadContent = syncArticleContentForUnreadArticles()
 		Self.logger.info("CloudKitArticlesZone: modifyArticles syncUnreadContent: \(syncUnreadContent, privacy: .public)")
 
 		for statusUpdate in statusUpdates {
