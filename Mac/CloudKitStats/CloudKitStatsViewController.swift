@@ -59,6 +59,7 @@ import RSWeb
 
 	private let statsContainerView = NSView()
 	private var hasAppeared = false
+	private var hasShownErrorAlert = false
 	private var keyMonitor: Any?
 
 	// MARK: - NSViewController
@@ -399,6 +400,7 @@ private extension CloudKitStatsViewController {
 		case .idle:
 			break
 		case .fetching:
+			hasShownErrorAlert = false
 			spinner.isHidden = false
 			spinner.startAnimation(nil)
 			statusIcon.isHidden = true
@@ -456,16 +458,19 @@ private extension CloudKitStatsViewController {
 	}
 
 	func showErrorAlertIfNeeded() {
-		guard let fetchError = model.fetchStatus.fetchError, let window = view.window else {
+		guard let fetchError = model.fetchStatus.fetchError, !hasShownErrorAlert else {
 			return
 		}
 
-		let alert = NSAlert()
-		alert.alertStyle = .warning
-		alert.messageText = "Couldn’t complete the iCloud scan because of an error:"
-		alert.informativeText = fetchError.localizedDescription
-		alert.addButton(withTitle: "OK")
-		alert.beginSheetModal(for: window)
+		hasShownErrorAlert = true
+		DispatchQueue.main.async {
+			let alert = NSAlert()
+			alert.alertStyle = .warning
+			alert.messageText = "Couldn’t complete the iCloud scan because of an error:"
+			alert.informativeText = fetchError.localizedDescription
+			alert.addButton(withTitle: "OK")
+			alert.runModal()
+		}
 	}
 
 	// MARK: - Actions
