@@ -23,12 +23,18 @@ final class CloudKitArticlesZone: CloudKitZone {
 	private static let recordFetchChunkSize = 200
 	private static let cleanUpLimit = 200
 
+	struct StatusRecordInfo {
+		let read: Bool
+		let starred: Bool
+	}
+
 	struct StatusRecordScanResult {
 		let total: Int
 		let starred: Int
 		let unread: Int
 		let read: Int
 		let stale: Int
+		let statusByRecordID: [CKRecord.ID: StatusRecordInfo]
 	}
 
 	struct ArticleRecordScanResult {
@@ -245,7 +251,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		try Task.checkCancellation()
 		progress(makeStats(statusScan))
 
-		let contentScan = try await scanArticleContentRecords { articleResult in
+		let contentScan = try await scanArticleContentRecords(statusByRecordID: statusScan.statusByRecordID) { articleResult in
 			progress(makeStats(statusScan, articleResult))
 		}
 
@@ -387,30 +393,35 @@ private extension CloudKitArticlesZone {
 		var readCount = 0
 		var pagesCompleted = 0
 		var staleCandidateArticleIDs = [String]()
+		var statusByRecordID = [CKRecord.ID: StatusRecordInfo]()
 
 		try await queryPaginated(ckQuery, desiredKeys: desiredKeys) { pageRecords in
 			try Task.checkCancellation()
 			for record in pageRecords {
 				let read = record[CloudKitArticleStatus.Fields.read] as? String ?? "1"
 				let starred = record[CloudKitArticleStatus.Fields.starred] as? String ?? "0"
+				let isRead = read != "0"
+				let isStarred = starred == "1"
 
-				if starred == "1" {
+				statusByRecordID[record.recordID] = StatusRecordInfo(read: isRead, starred: isStarred)
+
+				if isStarred {
 					starredCount += 1
 				}
-				if read == "0" {
-					unreadCount += 1
-				} else {
+				if isRead {
 					readCount += 1
+				} else {
+					unreadCount += 1
 				}
 
-				if starred == "0", let creationDate = record.creationDate, creationDate < cutoffDate {
+				if !isStarred, let creationDate = record.creationDate, creationDate < cutoffDate {
 					let baseID = String(record.recordID.recordName.dropFirst(2))
 					staleCandidateArticleIDs.append(baseID)
 				}
 			}
 			totalCount += pageRecords.count
 			pagesCompleted += 1
-			await progress(StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: 0))
+			await progress(StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: 0, statusByRecordID: [:]))
 		}
 
 		Self.logger.info("CloudKitArticlesZone: scanStatusRecords: fetched \(totalCount, privacy: .public) ArticleStatus records in \(pagesCompleted, privacy: .public) pages")
@@ -425,11 +436,11 @@ private extension CloudKitArticlesZone {
 		}
 
 		Self.logger.info("CloudKitArticlesZone: scanStatusRecords: final — total: \(totalCount, privacy: .public), starred: \(starredCount, privacy: .public), unread: \(unreadCount, privacy: .public), read: \(readCount, privacy: .public), stale: \(staleCount, privacy: .public)")
-		return StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: staleCount)
+		return StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: staleCount, statusByRecordID: statusByRecordID)
 	}
 
-	func scanArticleContentRecords(progress: @escaping @MainActor @Sendable (ArticleRecordScanResult) async -> Void) async throws -> ArticleRecordScanResult {
-		guard let database else {
+	func scanArticleContentRecords(statusByRecordID: [CKRecord.ID: StatusRecordInfo], progress: @escaping @MainActor @Sendable (ArticleRecordScanResult) async -> Void) async throws -> ArticleRecordScanResult {
+		guard database != nil else {
 			Self.logger.info("CloudKitArticlesZone: scanArticleContentRecords: no database, returning 0")
 			return ArticleRecordScanResult(total: 0, starred: 0, unread: 0, read: 0, orphaned: 0)
 		}
@@ -439,10 +450,11 @@ private extension CloudKitArticlesZone {
 		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
 
 		var totalCount = 0
-		var statusRecordIDs = [CKRecord.ID]()
+		var starredCount = 0
+		var unreadCount = 0
+		var readCount = 0
 		var orphanedCount = 0
 
-		// Phase 1: Collect all article records, showing total as it grows
 		try await queryPaginated(ckQuery, desiredKeys: [CloudKitArticle.Fields.articleStatus]) { pageRecords in
 			try Task.checkCancellation()
 			for record in pageRecords {
@@ -450,40 +462,20 @@ private extension CloudKitArticlesZone {
 					orphanedCount += 1
 					continue
 				}
-				statusRecordIDs.append(reference.recordID)
-			}
-			totalCount += pageRecords.count
-			await progress(ArticleRecordScanResult(total: totalCount, starred: 0, unread: 0, read: 0, orphaned: orphanedCount))
-		}
-
-		Self.logger.info("CloudKitArticlesZone: scanArticleContentRecords: fetched \(totalCount, privacy: .public) Article records, \(statusRecordIDs.count, privacy: .public) with status references, \(orphanedCount, privacy: .public) with nil references")
-
-		// Phase 2: Check status records in chunks to categorize
-		let statusDesiredKeys = [CloudKitArticleStatus.Fields.read, CloudKitArticleStatus.Fields.starred]
-		var starredCount = 0
-		var unreadCount = 0
-		var readCount = 0
-
-		for chunk in statusRecordIDs.chunked(into: Self.recordFetchChunkSize) {
-			try Task.checkCancellation()
-			let results = try await database.records(for: chunk, desiredKeys: statusDesiredKeys)
-			for (_, result) in results {
-				switch result {
-				case .success(let statusRecord):
-					let starred = statusRecord[CloudKitArticleStatus.Fields.starred] as? String ?? "0"
-					let read = statusRecord[CloudKitArticleStatus.Fields.read] as? String ?? "1"
-					if starred == "1" {
+				if let statusInfo = statusByRecordID[reference.recordID] {
+					if statusInfo.starred {
 						starredCount += 1
 					}
-					if read == "0" {
-						unreadCount += 1
-					} else {
+					if statusInfo.read {
 						readCount += 1
+					} else {
+						unreadCount += 1
 					}
-				case .failure:
+				} else {
 					orphanedCount += 1
 				}
 			}
+			totalCount += pageRecords.count
 			await progress(ArticleRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, orphaned: orphanedCount))
 		}
 
