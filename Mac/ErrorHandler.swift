@@ -8,7 +8,7 @@
 
 import AppKit
 import Account
-import os.log
+import os
 
 struct ErrorHandler: Sendable {
 

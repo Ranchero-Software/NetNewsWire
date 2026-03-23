@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 protocol FeedlyGetStreamIdsOperationDelegate: AnyObject {
 	func feedlyGetStreamIdsOperation(_ operation: FeedlyGetStreamIdsOperation, didGet streamIds: FeedlyStreamIds)

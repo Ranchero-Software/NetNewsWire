@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 protocol FeedlyCollectionProviding: AnyObject {
 	var collections: [FeedlyCollection] { get }

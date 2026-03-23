@@ -7,7 +7,7 @@
 //
 
 import CloudKit
-import os.log
+import os
 import RSCore
 
 public typealias CloudKitQueryPageHandler = @MainActor @Sendable ([CKRecord]) async -> Void

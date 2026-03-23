@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 protocol FeedlyFeedsAndFoldersProviding {
 	var feedsAndFolders: [([FeedlyFeed], Folder)] { get }

@@ -10,7 +10,7 @@ import Foundation
 import CloudKit
 import ErrorLog
 import SystemConfiguration
-import os.log
+import os
 import RSCore
 import RSParser
 import RSWeb

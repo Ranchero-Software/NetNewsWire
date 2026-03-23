@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import os.log
+import os
 import RSCore
 import RSWeb
 import SyncDatabase

@@ -12,7 +12,7 @@ import RSCore
 import RSParser
 import RSWeb
 import SyncDatabase
-import os.log
+import os
 import Secrets
 
 @MainActor final class FeedlyAccountDelegate: AccountDelegate {

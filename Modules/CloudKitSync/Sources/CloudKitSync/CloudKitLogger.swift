@@ -6,6 +6,6 @@
 //
 
 import Foundation
-import os.log
+import os
 
 public let cloudKitLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
