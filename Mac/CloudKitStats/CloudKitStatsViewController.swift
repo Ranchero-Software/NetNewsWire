@@ -6,7 +6,9 @@
 //
 
 import AppKit
+import CloudKit
 import Account
+import CloudKitSync
 import RSWeb
 
 @MainActor final class CloudKitStatsViewController: NSViewController {
@@ -55,9 +57,11 @@ import RSWeb
 	private let shareButton = NSButton()
 	private let cleanUpButton = NSButton()
 
-	// MARK: - Stats container
+	// MARK: - Stats containers
 
 	private let statsContainerView = NSView()
+	private let statusSectionView = NSView()
+	private let articleSectionView = NSView()
 	private var hasAppeared = false
 	private var hasShownErrorAlert = false
 	private var keyMonitor: Any?
@@ -258,80 +262,102 @@ private extension CloudKitStatsViewController {
 	func makeStatsSection() -> NSView {
 		statsContainerView.translatesAutoresizingMaskIntoConstraints = false
 
-		var constraints = [NSLayoutConstraint]()
-		var previousAnchor = statsContainerView.topAnchor
-		var previousSpacing: CGFloat = 0
+		statusSectionView.translatesAutoresizingMaskIntoConstraints = false
+		articleSectionView.translatesAutoresizingMaskIntoConstraints = false
 
-		func addRow(_ labelView: NSView, _ valueLabel: NSTextField) {
-			labelView.translatesAutoresizingMaskIntoConstraints = false
-			valueLabel.translatesAutoresizingMaskIntoConstraints = false
-			configureValueLabel(valueLabel)
+		buildSectionRows(statusSectionView, rows: [
+			("Status Records", nil),
+			("Total", statusRecordCountLabel),
+			(makeLabelWithIcon("Starred", symbolName: "star.fill", color: Self.starColor), starredCountLabel),
+			(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor), unreadCountLabel),
+			("Read", readCountLabel),
+			("Stale", staleCountLabel)
+		])
 
-			statsContainerView.addSubview(labelView)
-			statsContainerView.addSubview(valueLabel)
+		buildSectionRows(articleSectionView, rows: [
+			("Article Content Records", nil),
+			("Total", totalContentCountLabel),
+			(makeLabelWithIcon("Starred", symbolName: "star.fill", color: Self.starColor), starredContentCountLabel),
+			(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor), unreadContentCountLabel),
+			("Read", readContentCountLabel),
+			("Orphaned", orphanedContentCountLabel)
+		])
 
-			constraints.append(contentsOf: [
-				labelView.topAnchor.constraint(equalTo: previousAnchor, constant: previousSpacing),
-				labelView.leadingAnchor.constraint(equalTo: statsContainerView.leadingAnchor),
-				valueLabel.trailingAnchor.constraint(equalTo: statsContainerView.trailingAnchor),
-				valueLabel.lastBaselineAnchor.constraint(equalTo: labelView.lastBaselineAnchor)
-			])
+		let divider = makeDivider()
 
-			previousAnchor = labelView.bottomAnchor
-			previousSpacing = Self.rowSpacing
-		}
+		statsContainerView.addSubview(statusSectionView)
+		statsContainerView.addSubview(divider)
+		statsContainerView.addSubview(articleSectionView)
 
-		func addHeader(_ title: String) {
-			let label = NSTextField(labelWithString: title)
-			label.font = .boldSystemFont(ofSize: NSFont.systemFontSize)
-			label.translatesAutoresizingMaskIntoConstraints = false
+		NSLayoutConstraint.activate([
+			statusSectionView.topAnchor.constraint(equalTo: statsContainerView.topAnchor),
+			statusSectionView.leadingAnchor.constraint(equalTo: statsContainerView.leadingAnchor),
+			statusSectionView.trailingAnchor.constraint(equalTo: statsContainerView.trailingAnchor),
 
-			statsContainerView.addSubview(label)
+			divider.topAnchor.constraint(equalTo: statusSectionView.bottomAnchor, constant: Self.sectionSpacing),
+			divider.leadingAnchor.constraint(equalTo: statsContainerView.leadingAnchor),
+			divider.trailingAnchor.constraint(equalTo: statsContainerView.trailingAnchor),
 
-			constraints.append(contentsOf: [
-				label.topAnchor.constraint(equalTo: previousAnchor, constant: previousSpacing),
-				label.leadingAnchor.constraint(equalTo: statsContainerView.leadingAnchor)
-			])
-
-			previousAnchor = label.bottomAnchor
-			previousSpacing = Self.rowSpacing
-		}
-
-		func addSectionDivider() {
-			let divider = makeDivider()
-			statsContainerView.addSubview(divider)
-
-			constraints.append(contentsOf: [
-				divider.topAnchor.constraint(equalTo: previousAnchor, constant: Self.sectionSpacing),
-				divider.leadingAnchor.constraint(equalTo: statsContainerView.leadingAnchor),
-				divider.trailingAnchor.constraint(equalTo: statsContainerView.trailingAnchor)
-			])
-
-			previousAnchor = divider.bottomAnchor
-			previousSpacing = Self.sectionSpacing
-		}
-
-		addHeader("Status Records")
-		addRow(NSTextField(labelWithString: "Total"), statusRecordCountLabel)
-		addRow(makeLabelWithIcon("Starred", symbolName: "star.fill", color: Self.starColor), starredCountLabel)
-		addRow(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor), unreadCountLabel)
-		addRow(NSTextField(labelWithString: "Read"), readCountLabel)
-		addRow(NSTextField(labelWithString: "Stale"), staleCountLabel)
-
-		addSectionDivider()
-
-		addHeader("Article Content Records")
-		addRow(NSTextField(labelWithString: "Total"), totalContentCountLabel)
-		addRow(makeLabelWithIcon("Starred", symbolName: "star.fill", color: Self.starColor), starredContentCountLabel)
-		addRow(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor), unreadContentCountLabel)
-		addRow(NSTextField(labelWithString: "Read"), readContentCountLabel)
-		addRow(NSTextField(labelWithString: "Orphaned"), orphanedContentCountLabel)
-
-		constraints.append(previousAnchor.constraint(equalTo: statsContainerView.bottomAnchor))
-
-		NSLayoutConstraint.activate(constraints)
+			articleSectionView.topAnchor.constraint(equalTo: divider.bottomAnchor, constant: Self.sectionSpacing),
+			articleSectionView.leadingAnchor.constraint(equalTo: statsContainerView.leadingAnchor),
+			articleSectionView.trailingAnchor.constraint(equalTo: statsContainerView.trailingAnchor),
+			articleSectionView.bottomAnchor.constraint(equalTo: statsContainerView.bottomAnchor)
+		])
 
 		return statsContainerView
+	}
+
+	func buildSectionRows(_ container: NSView, rows: [(Any, NSTextField?)]) {
+		var constraints = [NSLayoutConstraint]()
+		var previousAnchor = container.topAnchor
+		var previousSpacing: CGFloat = 0
+
+		for (label, valueLabel) in rows {
+			if let valueLabel {
+				// Data row
+				let labelView: NSView
+				if let string = label as? String {
+					labelView = NSTextField(labelWithString: string)
+				} else {
+					labelView = label as! NSView
+				}
+				labelView.translatesAutoresizingMaskIntoConstraints = false
+				valueLabel.translatesAutoresizingMaskIntoConstraints = false
+				configureValueLabel(valueLabel)
+
+				container.addSubview(labelView)
+				container.addSubview(valueLabel)
+
+				constraints.append(contentsOf: [
+					labelView.topAnchor.constraint(equalTo: previousAnchor, constant: previousSpacing),
+					labelView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+					valueLabel.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+					valueLabel.lastBaselineAnchor.constraint(equalTo: labelView.lastBaselineAnchor)
+				])
+
+				previousAnchor = labelView.bottomAnchor
+				previousSpacing = Self.rowSpacing
+			} else {
+				// Header row
+				let title = label as! String
+				let headerLabel = NSTextField(labelWithString: title)
+				headerLabel.font = .boldSystemFont(ofSize: NSFont.systemFontSize)
+				headerLabel.translatesAutoresizingMaskIntoConstraints = false
+
+				container.addSubview(headerLabel)
+
+				constraints.append(contentsOf: [
+					headerLabel.topAnchor.constraint(equalTo: previousAnchor, constant: previousSpacing),
+					headerLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor)
+				])
+
+				previousAnchor = headerLabel.bottomAnchor
+				previousSpacing = Self.rowSpacing
+			}
+		}
+
+		constraints.append(previousAnchor.constraint(equalTo: container.bottomAnchor))
+		NSLayoutConstraint.activate(constraints)
 	}
 
 	func configureValueLabel(_ label: NSTextField) {
@@ -420,7 +446,7 @@ private extension CloudKitStatsViewController {
 			spinner.isHidden = true
 			spinner.stopAnimation(nil)
 			statusIcon.isHidden = true
-			statusTextField.stringValue = "Scan failed."
+			statusTextField.stringValue = "Scan failed. Numbers are incomplete."
 			actionButton.title = "Refresh"
 			statusTextLeadingToSpinner.isActive = false
 			statusTextLeadingToContainer.isActive = true
@@ -449,12 +475,16 @@ private extension CloudKitStatsViewController {
 		readContentCountLabel.stringValue = "\(stats.readArticleCount)"
 		orphanedContentCountLabel.stringValue = "\(stats.orphanedArticleCount)"
 
-		statsContainerView.animator().alphaValue = model.fetchStatus.isFetching ? Self.fetchingAlpha : 1.0
+		let isFetching = model.fetchStatus.isFetching
+		let statusSectionDone = !isFetching || stats.articleCount > 0
+		statusSectionView.animator().alphaValue = statusSectionDone ? 1.0 : Self.fetchingAlpha
+		articleSectionView.animator().alphaValue = isFetching ? Self.fetchingAlpha : 1.0
 	}
 
 	func updateBottomBar() {
-		shareButton.isEnabled = model.fetchStatus.isCompleted
-		cleanUpButton.isEnabled = model.fetchStatus.isCompleted
+		let enableButtons = model.fetchStatus.isCompleted || model.fetchStatus.fetchError != nil
+		shareButton.isEnabled = enableButtons
+		cleanUpButton.isEnabled = enableButtons
 	}
 
 	func showErrorAlertIfNeeded() {
@@ -463,11 +493,17 @@ private extension CloudKitStatsViewController {
 		}
 
 		hasShownErrorAlert = true
+		let displayError: Error
+		if fetchError is CKError {
+			displayError = CloudKitError(fetchError)
+		} else {
+			displayError = fetchError
+		}
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
 			alert.messageText = "Couldn’t complete the iCloud scan because of an error:"
-			alert.informativeText = fetchError.localizedDescription
+			alert.informativeText = displayError.localizedDescription
 			alert.addButton(withTitle: "OK")
 			alert.runModal()
 		}
