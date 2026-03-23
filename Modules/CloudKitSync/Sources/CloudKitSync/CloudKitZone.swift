@@ -180,6 +180,7 @@ public extension CloudKitZone {
 	func query(_ ckQuery: CKQuery, desiredKeys: [String]? = nil, pageHandler: CloudKitQueryPageHandler? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		Self.logger.debug("CloudKitZone: query ckQuery \(self.zoneID.zoneName, privacy: .public)")
 		var records = [CKRecord]()
+		var pageStartIndex = 0
 
 		let op = CKQueryOperation(query: ckQuery)
 		op.qualityOfService = Self.qualityOfService
@@ -203,7 +204,9 @@ public extension CloudKitZone {
 					return
 				}
 
-				await pageHandler?(records)
+				let pageRecords = Array(records[pageStartIndex...])
+				pageStartIndex = records.count
+				await pageHandler?(pageRecords)
 
 				switch result {
 				case .success(let cursor):
@@ -245,6 +248,7 @@ public extension CloudKitZone {
 	func query(cursor: CKQueryOperation.Cursor, desiredKeys: [String]? = nil, carriedRecords: [CKRecord], pageHandler: CloudKitQueryPageHandler? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		Self.logger.debug("CloudKitZone: query cursor \(self.zoneID.zoneName, privacy: .public)")
 		var records = carriedRecords
+		let pageStartIndex = records.count
 
 		let op = CKQueryOperation(cursor: cursor)
 		op.qualityOfService = Self.qualityOfService
@@ -268,7 +272,8 @@ public extension CloudKitZone {
 					return
 				}
 
-				await pageHandler?(records)
+				let pageRecords = Array(records[pageStartIndex...])
+				await pageHandler?(pageRecords)
 
 				switch result {
 				case .success(let newCursor):
