@@ -21,6 +21,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	private static let logger = cloudKitLogger
 	private static let staleStatusRecordInterval: TimeInterval = 183 * 24 * 60 * 60 // ~6 months
 	private static let cleanUpLimit = 400
+	private static let matchAllPredicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
 
 	struct StatusRecordInfo {
 		let read: Bool
@@ -392,7 +393,7 @@ private extension CloudKitArticlesZone {
 	/// Used by cleanup when no cached scan data is available.
 	func fetchStatusRecordMap() async throws -> [CKRecord.ID: StatusRecordInfo] {
 		Self.logger.info("CloudKitArticlesZone: fetchStatusRecordMap: querying all ArticleStatus records")
-		let predicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
+		let predicate = Self.matchAllPredicate
 		let desiredKeys = [CloudKitArticleStatus.Fields.read, CloudKitArticleStatus.Fields.starred]
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
 		let records = try await query(ckQuery, desiredKeys: desiredKeys)
@@ -410,7 +411,7 @@ private extension CloudKitArticlesZone {
 	/// Used by the unlimited cache-miss path in cleanUpRecordsUsingCache.
 	func fetchAllContentRecordMappings() async throws -> (contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID], orphanedContentRecordIDs: [CKRecord.ID]) {
 		Self.logger.info("CloudKitArticlesZone: fetchAllContentRecordMappings: querying all Article records")
-		let predicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
+		let predicate = Self.matchAllPredicate
 		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
 		let records = try await query(ckQuery, desiredKeys: [CloudKitArticle.Fields.articleStatus])
 		Self.logger.info("CloudKitArticlesZone: fetchAllContentRecordMappings: fetched \(records.count, privacy: .public) records")
@@ -431,7 +432,7 @@ private extension CloudKitArticlesZone {
 	/// Uses the modern async CKDatabase pagination API directly.
 	func scanContentRecordsIncrementally(database: CKDatabase, statusByRecordID: [CKRecord.ID: StatusRecordInfo], syncUnreadContent: Bool, limit: Int) async throws -> [CKRecord.ID] {
 		Self.logger.info("CloudKitArticlesZone: scanContentRecordsIncrementally: querying Article records")
-		let predicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
+		let predicate = Self.matchAllPredicate
 		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
 
 		var deleteRecordIDs = [CKRecord.ID]()
@@ -497,7 +498,7 @@ private extension CloudKitArticlesZone {
 		let cutoffDate = Date(timeIntervalSinceNow: -Self.staleStatusRecordInterval)
 
 		Self.logger.info("CloudKitArticlesZone: scanStatusRecords: querying all ArticleStatus records")
-		let predicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
+		let predicate = Self.matchAllPredicate
 		let desiredKeys = [CloudKitArticleStatus.Fields.read, CloudKitArticleStatus.Fields.starred]
 		let ckQuery = CKQuery(recordType: CloudKitArticleStatus.recordType, predicate: predicate)
 
@@ -556,7 +557,7 @@ private extension CloudKitArticlesZone {
 		}
 
 		Self.logger.info("CloudKitArticlesZone: scanArticleContentRecords: querying all Article records")
-		let predicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
+		let predicate = Self.matchAllPredicate
 		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
 
 		var totalCount = 0
