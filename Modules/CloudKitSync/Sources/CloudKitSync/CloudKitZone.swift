@@ -81,10 +81,6 @@ public extension CloudKitZone {
 		cloudKitLogger
 	}
 
-	var oldChangeTokenKey: String {
-		"cloudkit.server.token.\(zoneID.zoneName)"
-	}
-
 	var changeTokenKey: String {
 		"cloudkit.server.token.\(zoneID.zoneName).\(zoneID.ownerName)"
 	}
@@ -103,15 +99,6 @@ public extension CloudKitZone {
 		}
 	}
 
-	/// Moves the change token to the new key name.  This can eventually be removed.
-	func migrateChangeToken() {
-		Self.logger.debug("CloudKitZone: migrateChangeToken \(self.zoneID.zoneName, privacy: .public)")
-		if let tokenData = UserDefaults.standard.object(forKey: oldChangeTokenKey) as? Data,
-		   let oldChangeToken = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: tokenData) {
-			changeToken = oldChangeToken
-			UserDefaults.standard.removeObject(forKey: oldChangeTokenKey)
-		}
-	}
 
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {

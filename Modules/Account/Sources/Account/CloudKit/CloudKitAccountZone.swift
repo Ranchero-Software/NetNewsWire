@@ -48,11 +48,10 @@ enum CloudKitAccountZoneError: LocalizedError {
 	}
 
 	init(container: CKContainer) {
-        self.container = container
-        self.database = container.privateCloudDatabase
+		self.container = container
+		self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Account", ownerName: CKCurrentUserDefaultName)
-		migrateChangeToken()
-    }
+	}
 
 	func importOPML(rootExternalID: String, items: [RSOPMLItem]) async throws {
 		var records = [CKRecord]()

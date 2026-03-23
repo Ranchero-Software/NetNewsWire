@@ -107,7 +107,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 		self.database = container.privateCloudDatabase
 		self.zoneID = CKRecordZone.ID(zoneName: "Articles", ownerName: CKCurrentUserDefaultName)
 		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
-		migrateChangeToken()
 	}
 
 	@MainActor func refreshArticles() async throws {
