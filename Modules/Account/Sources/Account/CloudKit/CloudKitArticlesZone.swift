@@ -26,6 +26,14 @@ final class CloudKitArticlesZone: CloudKitZone {
 		let read: Bool
 		let starred: Bool
 		let creationDate: Date?
+
+		init(record: CKRecord) {
+			let readValue = record[CloudKitArticleStatus.Fields.read] as? String ?? "1"
+			let starredValue = record[CloudKitArticleStatus.Fields.starred] as? String ?? "0"
+			self.read = readValue != "0"
+			self.starred = starredValue == "1"
+			self.creationDate = record.creationDate
+		}
 	}
 
 	struct StatusRecordScanResult {
@@ -391,9 +399,7 @@ private extension CloudKitArticlesZone {
 
 		var statusByRecordID = [CKRecord.ID: StatusRecordInfo]()
 		for record in records {
-			let read = record[CloudKitArticleStatus.Fields.read] as? String ?? "1"
-			let starred = record[CloudKitArticleStatus.Fields.starred] as? String ?? "0"
-			statusByRecordID[record.recordID] = StatusRecordInfo(read: read != "0", starred: starred == "1", creationDate: record.creationDate)
+			statusByRecordID[record.recordID] = StatusRecordInfo(record: record)
 		}
 		return statusByRecordID
 	}
@@ -519,23 +525,19 @@ private extension CloudKitArticlesZone {
 		try await queryPaginated(ckQuery, desiredKeys: desiredKeys) { pageRecords in
 			try Task.checkCancellation()
 			for record in pageRecords {
-				let read = record[CloudKitArticleStatus.Fields.read] as? String ?? "1"
-				let starred = record[CloudKitArticleStatus.Fields.starred] as? String ?? "0"
-				let isRead = read != "0"
-				let isStarred = starred == "1"
+				let statusInfo = StatusRecordInfo(record: record)
+				statusByRecordID[record.recordID] = statusInfo
 
-				statusByRecordID[record.recordID] = StatusRecordInfo(read: isRead, starred: isStarred, creationDate: record.creationDate)
-
-				if isStarred {
+				if statusInfo.starred {
 					starredCount += 1
 				}
-				if isRead {
+				if statusInfo.read {
 					readCount += 1
 				} else {
 					unreadCount += 1
 				}
 
-				if !isStarred, let creationDate = record.creationDate, creationDate < cutoffDate {
+				if !statusInfo.starred, let creationDate = statusInfo.creationDate, creationDate < cutoffDate {
 					let baseID = String(record.recordID.recordName.dropFirst(2))
 					staleCandidateArticleIDs.append(baseID)
 				}
