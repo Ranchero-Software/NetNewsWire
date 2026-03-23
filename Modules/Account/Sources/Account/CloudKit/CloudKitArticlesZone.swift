@@ -20,7 +20,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 	private static let logger = cloudKitLogger
 	private static let staleStatusRecordInterval: TimeInterval = 183 * 24 * 60 * 60 // ~6 months
-	private static let recordFetchChunkSize = 200
 	private static let cleanUpLimit = 400
 
 	struct StatusRecordInfo {
@@ -67,7 +66,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 	weak var database: CKDatabase?
 	var delegate: CloudKitZoneDelegate?
 
-	let compressionQueue = DispatchQueue(label: "Articles Zone Compression Queue")
 	private var scanCache: ScanCache?
 
 	struct CloudKitArticle: Sendable {
