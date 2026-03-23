@@ -8,7 +8,7 @@
 
 import Foundation
 import Articles
-import os.log
+import os
 import RSCore
 import RSWeb
 import SyncDatabase
@@ -19,14 +19,16 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
 	private var syncDatabase: SyncDatabase
-	private let settings: any CloudKitSettings
+	private let syncArticleContentForUnreadArticles: @Sendable () -> Bool
 	private static let logger = cloudKitLogger
+	let syncErrorHandler: CloudKitSyncErrorHandler?
 
-	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, settings: any CloudKitSettings) {
+	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, syncArticleContentForUnreadArticles: @escaping @Sendable () -> Bool, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.articlesZone = articlesZone
 		self.syncDatabase = database
-		self.settings = settings
+		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
+		self.syncErrorHandler = syncErrorHandler
 		super.init(name: "CloudKitSendStatusOperation")
 	}
 
@@ -83,7 +85,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 			result[article.articleID] = article
 		}
 		let statusUpdates = syncStatusesDict.compactMap { (key, value) in
-			CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key], settings: self.settings)
+			CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key], syncArticleContentForUnreadArticles: self.syncArticleContentForUnreadArticles)
 		}
 
 		// If this happens, we have somehow gotten into a state where we have new status records
@@ -100,6 +102,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 			} catch {
 				try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 				processAccountError(account, error)
+				syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
 				Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
 				return true
 			}

@@ -8,7 +8,7 @@
 
 import Foundation
 import RSParser
-import os.log
+import os
 
 protocol FeedlyEntryProviding {
 	var entries: [FeedlyEntry] { get }

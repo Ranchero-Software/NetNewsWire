@@ -8,7 +8,7 @@
 
 import Foundation
 import RSParser
-import os.log
+import os
 
 /// Combine the articles with their feeds for a specific account.
 final class FeedlyUpdateAccountFeedsWithItemsOperation: FeedlyOperation {

@@ -16,7 +16,7 @@ struct AddAccountHelpView: View {
 	var helpText: String
 
 	var hasiCloudAccount: Bool {
-		AccountManager.shared.accounts.contains(where: { $0.type == .cloudKit })
+		AccountManager.shared.hasiCloudAccount
 	}
 
 	var body: some View {

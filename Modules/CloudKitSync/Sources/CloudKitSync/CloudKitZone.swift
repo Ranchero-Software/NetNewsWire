@@ -7,8 +7,10 @@
 //
 
 import CloudKit
-import os.log
+import os
 import RSCore
+
+public typealias CloudKitQueryPageHandler = @MainActor @Sendable ([CKRecord]) async -> Void
 
 public enum CloudKitZoneError: LocalizedError, Sendable {
 	case userDeletedZone
@@ -18,7 +20,7 @@ public enum CloudKitZoneError: LocalizedError, Sendable {
 	public var errorDescription: String? {
 		switch self {
 		case .userDeletedZone:
-			return NSLocalizedString("The iCloud data was deleted.  Please remove the application iCloud account and add it again to continue using the application's iCloud support.", comment: "User deleted zone.")
+			return NSLocalizedString("The iCloud data was deleted. Please remove the application iCloud account and add it again to continue using the application's iCloud support.", comment: "User deleted zone.")
 		case .corruptAccount:
 			return NSLocalizedString("There is an unrecoverable problem with your application iCloud account. Please make sure you have iCloud and iCloud Drive enabled in System Preferences. Then remove the application iCloud account and add it again.", comment: "Corrupt account.")
 		default:
@@ -79,10 +81,6 @@ public extension CloudKitZone {
 		cloudKitLogger
 	}
 
-	var oldChangeTokenKey: String {
-		"cloudkit.server.token.\(zoneID.zoneName)"
-	}
-
 	var changeTokenKey: String {
 		"cloudkit.server.token.\(zoneID.zoneName).\(zoneID.ownerName)"
 	}
@@ -101,15 +99,6 @@ public extension CloudKitZone {
 		}
 	}
 
-	/// Moves the change token to the new key name.  This can eventually be removed.
-	func migrateChangeToken() {
-		Self.logger.debug("CloudKitZone: migrateChangeToken \(self.zoneID.zoneName, privacy: .public)")
-		if let tokenData = UserDefaults.standard.object(forKey: oldChangeTokenKey) as? Data,
-		   let oldChangeToken = try? NSKeyedUnarchiver.unarchivedObject(ofClass: CKServerChangeToken.self, from: tokenData) {
-			changeToken = oldChangeToken
-			UserDefaults.standard.removeObject(forKey: oldChangeTokenKey)
-		}
-	}
 
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {
@@ -175,14 +164,15 @@ public extension CloudKitZone {
     }
 
 	/// Issue a CKQuery and return the resulting CKRecords.
-	func query(_ ckQuery: CKQuery, desiredKeys: [String]? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
+	func query(_ ckQuery: CKQuery, desiredKeys: [String]? = nil, pageHandler: CloudKitQueryPageHandler? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		Self.logger.debug("CloudKitZone: query ckQuery \(self.zoneID.zoneName, privacy: .public)")
 		var records = [CKRecord]()
+		var pageStartIndex = 0
 
 		let op = CKQueryOperation(query: ckQuery)
 		op.qualityOfService = Self.qualityOfService
 
-		if let desiredKeys = desiredKeys {
+		if let desiredKeys {
 			op.desiredKeys = desiredKeys
 		}
 
@@ -201,10 +191,14 @@ public extension CloudKitZone {
 					return
 				}
 
+				let pageRecords = Array(records[pageStartIndex...])
+				pageStartIndex = records.count
+				await pageHandler?(pageRecords)
+
 				switch result {
 				case .success(let cursor):
 					if let cursor {
-						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
+						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, pageHandler: pageHandler, completion: completion)
 					} else {
 						completion(.success(records))
 					}
@@ -216,7 +210,7 @@ public extension CloudKitZone {
 						self.createZoneRecord { result in
 							switch result {
 							case .success:
-								self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
+								self.query(ckQuery, desiredKeys: desiredKeys, pageHandler: pageHandler, completion: completion)
 							case .failure(let error):
 								completion(.failure(error))
 							}
@@ -224,7 +218,7 @@ public extension CloudKitZone {
 					case .retry(let timeToWait):
 						Self.logger.debug("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) zone query retry in \(timeToWait) seconds")
 						await delaySeconds(timeToWait)
-						self.query(ckQuery, desiredKeys: desiredKeys, completion: completion)
+						self.query(ckQuery, desiredKeys: desiredKeys, pageHandler: pageHandler, completion: completion)
 					case .userDeletedZone:
 						completion(.failure(CloudKitZoneError.userDeletedZone))
 					default:
@@ -238,14 +232,15 @@ public extension CloudKitZone {
 	}
 
 	/// Query CKRecords using a CKQuery Cursor
-	func query(cursor: CKQueryOperation.Cursor, desiredKeys: [String]? = nil, carriedRecords: [CKRecord], completion: @escaping (Result<[CKRecord], Error>) -> Void) {
+	func query(cursor: CKQueryOperation.Cursor, desiredKeys: [String]? = nil, carriedRecords: [CKRecord], pageHandler: CloudKitQueryPageHandler? = nil, completion: @escaping (Result<[CKRecord], Error>) -> Void) {
 		Self.logger.debug("CloudKitZone: query cursor \(self.zoneID.zoneName, privacy: .public)")
 		var records = carriedRecords
+		let pageStartIndex = records.count
 
 		let op = CKQueryOperation(cursor: cursor)
 		op.qualityOfService = Self.qualityOfService
 
-		if let desiredKeys = desiredKeys {
+		if let desiredKeys {
 			op.desiredKeys = desiredKeys
 		}
 
@@ -264,10 +259,13 @@ public extension CloudKitZone {
 					return
 				}
 
+				let pageRecords = Array(records[pageStartIndex...])
+				await pageHandler?(pageRecords)
+
 				switch result {
 				case .success(let newCursor):
 					if let newCursor {
-						self.query(cursor: newCursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
+						self.query(cursor: newCursor, desiredKeys: desiredKeys, carriedRecords: records, pageHandler: pageHandler, completion: completion)
 					} else {
 						completion(.success(records))
 					}
@@ -279,7 +277,7 @@ public extension CloudKitZone {
 						self.createZoneRecord { result in
 							switch result {
 							case .success:
-								self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
+								self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, pageHandler: pageHandler, completion: completion)
 							case .failure(let error):
 								completion(.failure(error))
 							}
@@ -287,7 +285,7 @@ public extension CloudKitZone {
 					case .retry(let timeToWait):
 						Self.logger.debug("CloudKitZone: query cursor \(self.zoneID.zoneName, privacy: .public) zone query retry in \(timeToWait) seconds")
 						await delaySeconds(timeToWait)
-						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, completion: completion)
+						self.query(cursor: cursor, desiredKeys: desiredKeys, carriedRecords: records, pageHandler: pageHandler, completion: completion)
 					case .userDeletedZone:
 						completion(.failure(CloudKitZoneError.userDeletedZone))
 					default:
@@ -831,6 +829,36 @@ public extension CloudKitZone {
 			query(ckQuery, desiredKeys: desiredKeys) { result in
 				continuation.resume(with: result)
 			}
+		}
+	}
+
+	func queryPaginated(_ ckQuery: CKQuery, desiredKeys: [String]? = nil, pageHandler: @escaping @MainActor @Sendable ([CKRecord]) async throws -> Void) async throws {
+		nonisolated(unsafe) var pageError: Error?
+
+		let wrappedHandler: CloudKitQueryPageHandler = { records in
+			guard pageError == nil else {
+				return
+			}
+			do {
+				try await pageHandler(records)
+			} catch {
+				pageError = error
+			}
+		}
+
+		let _ = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[CKRecord], Error>) in
+			query(ckQuery, desiredKeys: desiredKeys, pageHandler: wrappedHandler, completion: { result in
+				switch result {
+				case .success(let records):
+					if let pageError {
+						continuation.resume(throwing: pageError)
+					} else {
+						continuation.resume(returning: records)
+					}
+				case .failure(let error):
+					continuation.resume(throwing: pageError ?? error)
+				}
+			})
 		}
 	}
 

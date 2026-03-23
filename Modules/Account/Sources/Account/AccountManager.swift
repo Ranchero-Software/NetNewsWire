@@ -59,13 +59,12 @@ import ErrorLog
 		sortByName(accounts)
 	}
 
+	public var iCloudAccount: Account? {
+		accounts.first(where: { $0.type == .cloudKit })
+	}
+
 	public var hasiCloudAccount: Bool {
-		for account in accounts {
-			if account.type == .cloudKit {
-				return true
-			}
-		}
-		return false
+		iCloudAccount != nil
 	}
 
 	public var activeAccounts: [Account] {
@@ -148,7 +147,7 @@ import ErrorLog
 
 	public func createAccount(type: AccountType) -> Account {
 		if type == .cloudKit {
-			if let existingiCloudAccount = accounts.first(where: { $0.type == .cloudKit }) {
+			if let existingiCloudAccount = iCloudAccount {
 				return existingiCloudAccount
 			}
 		}

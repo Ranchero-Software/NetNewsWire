@@ -27,6 +27,11 @@ final class SettingsViewController: UITableViewController {
 		case help = 7
 	}
 
+	private enum TroubleshootingRow: Int {
+		case errorLog = 0
+		case cloudKitZoneStats = 1
+	}
+
 	private weak var opmlAccount: Account?
 
 	@IBOutlet var timelineSortOrderSwitch: UISwitch!
@@ -230,8 +235,19 @@ final class SettingsViewController: UITableViewController {
 			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
 			self.navigationController?.pushViewController(colorPalette, animated: true)
 		case .troubleshooting:
-			let hosting = UIHostingController(rootView: ErrorLogView())
-			self.navigationController?.pushViewController(hosting, animated: true)
+			let viewController: UIViewController? = {
+				switch TroubleshootingRow(rawValue: indexPath.row) {
+				case .errorLog:
+					return UIHostingController(rootView: ErrorLogView())
+				case .cloudKitZoneStats:
+					return UIHostingController(rootView: CloudKitStatsView())
+				default:
+					return nil
+				}
+			}()
+			if let viewController {
+				self.navigationController?.pushViewController(viewController, animated: true)
+			}
 		case .help:
 			switch indexPath.row {
 			case 0:

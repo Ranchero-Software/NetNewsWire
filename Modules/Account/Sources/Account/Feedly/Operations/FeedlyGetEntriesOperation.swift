@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 import RSParser
 
 /// Get full entries for the entry identifiers.

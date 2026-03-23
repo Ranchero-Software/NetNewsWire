@@ -14,7 +14,7 @@ import RSParser
 import RSWeb
 import NewsBlur
 import SyncDatabase
-import os.log
+import os
 
 @MainActor extension NewsBlurAccountDelegate {
 

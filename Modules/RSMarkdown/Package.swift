@@ -10,7 +10,7 @@ let package = Package(
             targets: ["RSMarkdown"])
     ],
     dependencies: [
-		.package(url: "https://codeberg.org/brentsimmons/Tidemark", from: "0.2.0"),
+		.package(url: "https://codeberg.org/brentsimmons/Tidemark", from: "0.2.3"),
     ],
     targets: [
         .target(

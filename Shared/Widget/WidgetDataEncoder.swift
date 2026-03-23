@@ -8,7 +8,7 @@
 
 import Foundation
 import WidgetKit
-import os.log
+import os
 import UIKit
 import RSCore
 import Articles

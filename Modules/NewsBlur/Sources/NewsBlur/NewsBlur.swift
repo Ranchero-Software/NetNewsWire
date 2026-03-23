@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 public struct NewsBlur {
 	// Convention with this logger is to put "NewsBlur: " at the beginning of each message.

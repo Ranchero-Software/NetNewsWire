@@ -22,13 +22,13 @@ struct CloudKitArticleStatusUpdate {
 	var articleID: String
 	var statuses: [SyncStatus]
 	var article: Article?
-	var settings: any CloudKitSettings
+	var syncArticleContentForUnreadArticles: @Sendable () -> Bool
 
-	init?(articleID: String, statuses: [SyncStatus], article: Article?, settings: any CloudKitSettings) {
+	init?(articleID: String, statuses: [SyncStatus], article: Article?, syncArticleContentForUnreadArticles: @escaping @Sendable () -> Bool) {
 		self.articleID = articleID
 		self.statuses = statuses
 		self.article = article
-		self.settings = settings
+		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
 
 		let rec = record
 		// This is an invalid status update.  The article is required for new and all
@@ -50,7 +50,7 @@ struct CloudKitArticleStatusUpdate {
 			if article.status.starred {
 				return .all
 			}
-			if !article.status.read && settings.syncArticleContentForUnreadArticles {
+			if !article.status.read && syncArticleContentForUnreadArticles() {
 				return .all
 			}
 		}
