@@ -871,8 +871,8 @@ private extension CloudKitAccountDelegate {
 
 	func cleanUpContentRecordsIfNeeded() async {
 		let lastCleanUp = UserDefaults.standard.object(forKey: Self.lastCleanUpKey) as? Date ?? .distantPast
-		let oneDayAgo = Date(timeIntervalSinceNow: -24 * 60 * 60)
-		guard lastCleanUp < oneDayAgo else {
+		let oneWeekAgo = Date(timeIntervalSinceNow: -7 * 24 * 60 * 60)
+		guard lastCleanUp < oneWeekAgo else {
 			return
 		}
 
@@ -884,11 +884,11 @@ private extension CloudKitAccountDelegate {
 		// doing a bunch of extra work that will fail. Let it rest until the next go.
 		UserDefaults.standard.set(Date(), forKey: Self.lastCleanUpKey)
 
-		Self.logger.info("CloudKitAccountDelegate: running daily record cleanup")
+		Self.logger.info("CloudKitAccountDelegate: running weekly record cleanup")
 		do {
 			let syncUnreadContent = Self.syncArticleContentForUnreadArticles
 			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: true)
-			Self.logger.info("CloudKitAccountDelegate: daily cleanup deleted \(deleted, privacy: .public) records")
+			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: daily cleanup error: \(error.localizedDescription, privacy: .public)")
 			postSyncError(error, account: account, operation: "Daily record cleanup")
