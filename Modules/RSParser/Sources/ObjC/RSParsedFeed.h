@@ -12,7 +12,6 @@
 
 @interface RSParsedFeed : NSObject
 
-- (nonnull instancetype)initWithURLString:(NSString * _Nonnull)urlString title:(NSString * _Nullable)title homepageURLString:(NSString * _Nullable)homepageURLString language:(NSString * _Nullable)language articles:(NSArray <RSParsedArticle *>* _Nonnull)articles;
 - (nonnull instancetype)initWithURLString:(NSString * _Nonnull)urlString title:(NSString * _Nullable)title homepageURLString:(NSString * _Nullable)homepageURLString language:(NSString * _Nullable)language iconURLString:(NSString * _Nullable)iconURLString articles:(NSArray <RSParsedArticle *>* _Nonnull)articles;
 
 @property (nonatomic, readonly, nonnull) NSString *urlString;

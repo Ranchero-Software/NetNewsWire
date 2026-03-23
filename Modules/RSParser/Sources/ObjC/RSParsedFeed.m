@@ -12,10 +12,6 @@
 
 @implementation RSParsedFeed
 
-- (instancetype)initWithURLString:(NSString *)urlString title:(NSString *)title homepageURLString:(NSString *)homepageURLString language:(NSString *)language articles:(NSSet *)articles {
-	return [self initWithURLString:urlString title:title homepageURLString:homepageURLString language:language iconURLString:nil articles:articles];
-}
-
 - (instancetype)initWithURLString:(NSString *)urlString title:(NSString *)title homepageURLString:(NSString *)homepageURLString language:(NSString *)language iconURLString:(NSString *)iconURLString articles:(NSSet *)articles {
 
 	self = [super init];
