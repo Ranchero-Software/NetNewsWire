@@ -186,7 +186,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	/// - Article content records that are unread + not starred when syncUnreadContent is off
 	/// - Article content records with no status reference (orphaned)
 	/// - ArticleStatus records that are stale (unstarred, older than 6 months, no local article)
-	func cleanUpRecords(account: Account, syncUnreadContent: Bool, limit: Int = CloudKitArticlesZone.cleanUpLimit) async throws -> Int {
+	func cleanUpRecords(account: Account, syncUnreadContent: Bool, dryRun: Bool, limit: Int = CloudKitArticlesZone.cleanUpLimit) async throws -> Int {
 		guard database != nil else {
 			return 0
 		}
@@ -205,14 +205,15 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return 0
 		}
 
-		// TODO: remove dry run before shipping
-		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: DRY RUN — would delete \(deleteRecordIDs.count, privacy: .public) total records")
-		return deleteRecordIDs.count
+		if dryRun {
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: DRY RUN — would delete \(deleteRecordIDs.count, privacy: .public) total records")
+			return deleteRecordIDs.count
+		}
 
-//		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleting \(deleteRecordIDs.count, privacy: .public) total records")
-//		try await modify(recordsToSave: [], recordIDsToDelete: deleteRecordIDs)
-//		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleted \(deleteRecordIDs.count, privacy: .public) records")
-//		return deleteRecordIDs.count
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleting \(deleteRecordIDs.count, privacy: .public) total records")
+		try await modify(recordsToSave: [], recordIDsToDelete: deleteRecordIDs)
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleted \(deleteRecordIDs.count, privacy: .public) records")
+		return deleteRecordIDs.count
 	}
 
 	func fetchStats(account: Account, progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {

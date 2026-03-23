@@ -881,7 +881,7 @@ private extension CloudKitAccountDelegate {
 		Self.logger.info("CloudKitAccountDelegate: running daily record cleanup")
 		do {
 			let syncUnreadContent = Self.syncArticleContentForUnreadArticles
-			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent)
+			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: true)
 			Self.logger.info("CloudKitAccountDelegate: daily cleanup deleted \(deleted, privacy: .public) records")
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: daily cleanup error: \(error.localizedDescription, privacy: .public)")
