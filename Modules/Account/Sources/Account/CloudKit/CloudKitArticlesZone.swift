@@ -152,10 +152,10 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 
-		let compressedRecords = await Task.detached(priority: .userInitiated) {
+		await Task.detached(priority: .userInitiated) {
 			self.compressArticleRecords(records)
 		}.value
-		try await save(compressedRecords)
+		try await save(records)
 	}
 
 	func deleteArticles(_ feedExternalID: String) async throws {
@@ -196,15 +196,14 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 
-		let (compressedModifyRecords, compressedNewRecords) = await Task.detached(priority: .userInitiated) {
-			let compressedModify = self.compressArticleRecords(modifyRecords)
-			let compressedNew = self.compressArticleRecords(newRecords)
-			return (compressedModify, compressedNew)
+		await Task.detached(priority: .userInitiated) {
+			self.compressArticleRecords(modifyRecords)
+			self.compressArticleRecords(newRecords)
 		}.value
 
 		do {
-			try await modify(recordsToSave: compressedModifyRecords, recordIDsToDelete: deleteRecordIDs)
-			try await saveIfNew(compressedNewRecords)
+			try await modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs)
+			try await saveIfNew(newRecords)
 		} catch {
 			try await handleModifyArticlesError(error, statusUpdates: statusUpdates)
 		}
@@ -675,13 +674,9 @@ private extension CloudKitArticlesZone {
 		return record
 	}
 
-	nonisolated func compressArticleRecords(_ records: [CKRecord]) -> [CKRecord] {
-		var result = [CKRecord]()
-
+	nonisolated func compressArticleRecords(_ records: [CKRecord]) {
 		for record in records {
-
 			if record.recordType == CloudKitArticle.recordType {
-
 				if let contentHTML = record[CloudKitArticle.Fields.contentHTML] as? String {
 					let data = Data(contentHTML.utf8) as NSData
 					if let compressedData = try? data.compressed(using: .lzfse) {
@@ -689,7 +684,6 @@ private extension CloudKitArticlesZone {
 						record[CloudKitArticle.Fields.contentHTML] = nil
 					}
 				}
-
 				if let contentText = record[CloudKitArticle.Fields.contentText] as? String {
 					let data = Data(contentText.utf8) as NSData
 					if let compressedData = try? data.compressed(using: .lzfse) {
@@ -697,12 +691,7 @@ private extension CloudKitArticlesZone {
 						record[CloudKitArticle.Fields.contentText] = nil
 					}
 				}
-
 			}
-
-			result.append(record)
 		}
-
-		return result
 	}
 }
