@@ -21,7 +21,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	private static let logger = cloudKitLogger
 	private static let staleStatusRecordInterval: TimeInterval = 183 * 24 * 60 * 60 // ~6 months
 	private static let recordFetchChunkSize = 200
-	private static let cleanUpLimit = 200
+	private static let cleanUpLimit = 400
 
 	struct StatusRecordInfo {
 		let read: Bool
@@ -204,36 +204,18 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 	}
 
-	/// Cleans up stale CloudKit records. Deletes up to `limit` records total:
-	/// - Article content records that are read + not starred
-	/// - Article content records that are unread + not starred when syncUnreadContent is off
-	/// - Article content records with no status reference (orphaned)
-	/// - ArticleStatus records that are stale (unstarred, older than 6 months, no local article)
-	///
-	/// Uses cached scan data from `fetchStats` when available (valid for 5 minutes),
-	/// avoiding redundant CloudKit queries.
+	/// Periodic cleanup path. Scans content records incrementally, stopping when
+	/// the limit is hit. No `ScanCache` awareness — the periodic cleanup runs on
+	/// launch before the user would open the stats window.
 	func cleanUpRecords(account: Account, syncUnreadContent: Bool, dryRun: Bool, limit: Int = CloudKitArticlesZone.cleanUpLimit) async throws -> Int {
-		guard database != nil else {
+		guard let database else {
 			return 0
 		}
 
-		let statusByRecordID: [CKRecord.ID: StatusRecordInfo]
-		let contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID]
-		let orphanedContentRecordIDs: [CKRecord.ID]
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: performing incremental scan")
+		let statusByRecordID = try await fetchStatusRecordMap()
 
-		if let cache = scanCache, cache.isValid {
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: using cached scan data")
-			statusByRecordID = cache.statusByRecordID
-			contentRecordIDByStatusID = cache.contentRecordIDByStatusID
-			orphanedContentRecordIDs = cache.orphanedContentRecordIDs
-		} else {
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: performing fresh scan")
-			statusByRecordID = try await fetchStatusRecordMap()
-			(contentRecordIDByStatusID, orphanedContentRecordIDs) = try await fetchContentRecordMappings()
-		}
-		scanCache = nil
-
-		var deleteRecordIDs = contentRecordIDsToDelete(contentRecordIDByStatusID: contentRecordIDByStatusID, orphanedContentRecordIDs: orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent, limit: limit)
+		var deleteRecordIDs = try await scanContentRecordsIncrementally(database: database, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent, limit: limit)
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: \(deleteRecordIDs.count, privacy: .public) content records to delete")
 
 		if deleteRecordIDs.count < limit {
@@ -242,20 +224,39 @@ final class CloudKitArticlesZone: CloudKitZone {
 			deleteRecordIDs.append(contentsOf: statusIDs)
 		}
 
-		if deleteRecordIDs.isEmpty {
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: nothing to clean up")
+		return try await deleteCleanUpRecords(deleteRecordIDs, dryRun: dryRun)
+	}
+
+	/// Cache-aware cleanup for the CloudKit Stats "Clean Up" button.
+	/// Attempts to clean up everything — no limit. Uses `ScanCache` if valid,
+	/// falling back to a full scan. Clears the cache after use.
+	func cleanUpRecordsUsingCache(account: Account, syncUnreadContent: Bool, dryRun: Bool) async throws -> Int {
+		guard database != nil else {
 			return 0
 		}
 
-		if dryRun {
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: DRY RUN — would delete \(deleteRecordIDs.count, privacy: .public) total records")
-			return deleteRecordIDs.count
-		}
+		let statusByRecordID: [CKRecord.ID: StatusRecordInfo]
+		var deleteRecordIDs: [CKRecord.ID]
 
-		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleting \(deleteRecordIDs.count, privacy: .public) total records")
-		try await modify(recordsToSave: [], recordIDsToDelete: deleteRecordIDs)
-		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleted \(deleteRecordIDs.count, privacy: .public) records")
-		return deleteRecordIDs.count
+		if let cache = scanCache, cache.isValid {
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache: using cached scan data")
+			statusByRecordID = cache.statusByRecordID
+			deleteRecordIDs = contentRecordIDsToDelete(contentRecordIDByStatusID: cache.contentRecordIDByStatusID, orphanedContentRecordIDs: cache.orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent)
+		} else {
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache: no valid cache, performing full scan")
+			statusByRecordID = try await fetchStatusRecordMap()
+			let (contentRecordIDByStatusID, orphanedContentRecordIDs) = try await fetchAllContentRecordMappings()
+			deleteRecordIDs = contentRecordIDsToDelete(contentRecordIDByStatusID: contentRecordIDByStatusID, orphanedContentRecordIDs: orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent)
+		}
+		scanCache = nil
+
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache: \(deleteRecordIDs.count, privacy: .public) content records to delete")
+
+		let statusIDs = try await staleStatusRecordIDsToDelete(from: statusByRecordID, account: account)
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache: \(statusIDs.count, privacy: .public) status records to delete")
+		deleteRecordIDs.append(contentsOf: statusIDs)
+
+		return try await deleteCleanUpRecords(deleteRecordIDs, dryRun: dryRun)
 	}
 
 	func fetchStats(account: Account, progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {
@@ -309,7 +310,7 @@ private extension CloudKitArticlesZone {
 	/// Returns content record IDs to delete from pre-fetched scan data.
 	/// Deletes orphaned records, read + unstarred records, and unread + unstarred
 	/// records when syncUnreadContent is off.
-	func contentRecordIDsToDelete(contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID], orphanedContentRecordIDs: [CKRecord.ID], statusByRecordID: [CKRecord.ID: StatusRecordInfo], syncUnreadContent: Bool, limit: Int) -> [CKRecord.ID] {
+	func contentRecordIDsToDelete(contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID], orphanedContentRecordIDs: [CKRecord.ID], statusByRecordID: [CKRecord.ID: StatusRecordInfo], syncUnreadContent: Bool, limit: Int = .max) -> [CKRecord.ID] {
 		var deleteRecordIDs = [CKRecord.ID]()
 
 		for recordID in orphanedContentRecordIDs {
@@ -332,7 +333,7 @@ private extension CloudKitArticlesZone {
 			if statusInfo.starred {
 				continue
 			}
-			// Delete content for read articles, or for unread articles
+			// Delete content for read articles, and for unread articles
 			// when unread content syncing is off.
 			if statusInfo.read || !syncUnreadContent {
 				deleteRecordIDs.append(contentRecordID)
@@ -344,7 +345,7 @@ private extension CloudKitArticlesZone {
 
 	/// Returns stale status record IDs from pre-fetched scan data: unstarred,
 	/// older than 6 months, with no corresponding local article.
-	func staleStatusRecordIDsToDelete(from statusByRecordID: [CKRecord.ID: StatusRecordInfo], account: Account, limit: Int) async throws -> [CKRecord.ID] {
+	func staleStatusRecordIDsToDelete(from statusByRecordID: [CKRecord.ID: StatusRecordInfo], account: Account, limit: Int = .max) async throws -> [CKRecord.ID] {
 		let cutoffDate = Date(timeIntervalSinceNow: -Self.staleStatusRecordInterval)
 
 		var staleCandidates = [(articleID: String, recordID: CKRecord.ID)]()
@@ -401,13 +402,13 @@ private extension CloudKitArticlesZone {
 
 	/// Fetches all article content records and builds a mapping of status record IDs
 	/// to content record IDs, plus a list of orphaned content record IDs.
-	/// Used by cleanup when no cached scan data is available.
-	func fetchContentRecordMappings() async throws -> (contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID], orphanedContentRecordIDs: [CKRecord.ID]) {
-		Self.logger.info("CloudKitArticlesZone: fetchContentRecordMappings: querying all Article records")
+	/// Used by the unlimited cache-miss path in cleanUpRecordsUsingCache.
+	func fetchAllContentRecordMappings() async throws -> (contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID], orphanedContentRecordIDs: [CKRecord.ID]) {
+		Self.logger.info("CloudKitArticlesZone: fetchAllContentRecordMappings: querying all Article records")
 		let predicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
 		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
 		let records = try await query(ckQuery, desiredKeys: [CloudKitArticle.Fields.articleStatus])
-		Self.logger.info("CloudKitArticlesZone: fetchContentRecordMappings: fetched \(records.count, privacy: .public) records")
+		Self.logger.info("CloudKitArticlesZone: fetchAllContentRecordMappings: fetched \(records.count, privacy: .public) records")
 
 		var contentRecordIDByStatusID = [CKRecord.ID: CKRecord.ID]()
 		var orphanedContentRecordIDs = [CKRecord.ID]()
@@ -419,6 +420,83 @@ private extension CloudKitArticlesZone {
 			contentRecordIDByStatusID[reference.recordID] = record.recordID
 		}
 		return (contentRecordIDByStatusID, orphanedContentRecordIDs)
+	}
+
+	/// Scans content records incrementally, stopping when the limit is hit.
+	/// Uses the modern async CKDatabase pagination API directly.
+	func scanContentRecordsIncrementally(database: CKDatabase, statusByRecordID: [CKRecord.ID: StatusRecordInfo], syncUnreadContent: Bool, limit: Int) async throws -> [CKRecord.ID] {
+		Self.logger.info("CloudKitArticlesZone: scanContentRecordsIncrementally: querying Article records")
+		let predicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
+		let ckQuery = CKQuery(recordType: CloudKitArticle.recordType, predicate: predicate)
+
+		var deleteRecordIDs = [CKRecord.ID]()
+
+		var (matchResults, cursor) = try await database.records(
+			matching: ckQuery, inZoneWith: zoneID,
+			desiredKeys: [CloudKitArticle.Fields.articleStatus], resultsLimit: CKQueryOperation.maximumResults
+		)
+		processMatchResults(matchResults, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent, limit: limit, into: &deleteRecordIDs)
+
+		while let nextCursor = cursor, deleteRecordIDs.count < limit {
+			(matchResults, cursor) = try await database.records(
+				continuingMatchFrom: nextCursor,
+				desiredKeys: [CloudKitArticle.Fields.articleStatus], resultsLimit: CKQueryOperation.maximumResults
+			)
+			processMatchResults(matchResults, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent, limit: limit, into: &deleteRecordIDs)
+		}
+
+		Self.logger.info("CloudKitArticlesZone: scanContentRecordsIncrementally: found \(deleteRecordIDs.count, privacy: .public) records to delete")
+		return deleteRecordIDs
+	}
+
+	/// Processes a page of match results from incremental content scanning,
+	/// appending deletable record IDs to the output array.
+	func processMatchResults(_ matchResults: [(CKRecord.ID, Result<CKRecord, Error>)], statusByRecordID: [CKRecord.ID: StatusRecordInfo], syncUnreadContent: Bool, limit: Int, into deleteRecordIDs: inout [CKRecord.ID]) {
+		for (_, result) in matchResults {
+			if deleteRecordIDs.count >= limit {
+				break
+			}
+			guard case .success(let record) = result else {
+				continue
+			}
+			guard let reference = record[CloudKitArticle.Fields.articleStatus] as? CKRecord.Reference else {
+				// No status reference — content is orphaned.
+				deleteRecordIDs.append(record.recordID)
+				continue
+			}
+			guard let statusInfo = statusByRecordID[reference.recordID] else {
+				// Status not found — content is orphaned.
+				deleteRecordIDs.append(record.recordID)
+				continue
+			}
+			// Never delete content for starred articles.
+			if statusInfo.starred {
+				continue
+			}
+			// Delete content for read articles, or for unread articles
+			// when unread content syncing is off.
+			if statusInfo.read || !syncUnreadContent {
+				deleteRecordIDs.append(record.recordID)
+			}
+		}
+	}
+
+	/// Shared tail for both cleanup entry points: log, dry-run check, delete.
+	func deleteCleanUpRecords(_ deleteRecordIDs: [CKRecord.ID], dryRun: Bool) async throws -> Int {
+		if deleteRecordIDs.isEmpty {
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: nothing to clean up")
+			return 0
+		}
+
+		if dryRun {
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: DRY RUN — would delete \(deleteRecordIDs.count, privacy: .public) total records")
+			return deleteRecordIDs.count
+		}
+
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleting \(deleteRecordIDs.count, privacy: .public) total records")
+		try await modify(recordsToSave: [], recordIDsToDelete: deleteRecordIDs)
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleted \(deleteRecordIDs.count, privacy: .public) records")
+		return deleteRecordIDs.count
 	}
 
 	// MARK: - Stats Scanning
