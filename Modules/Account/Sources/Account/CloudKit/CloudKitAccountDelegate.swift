@@ -514,7 +514,13 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		guard let account else {
 			throw CloudKitAccountDelegateError.unknown
 		}
-		return try await articlesZone.fetchStats(account: account, progress: progress)
+		do {
+			return try await articlesZone.fetchStats(account: account, progress: progress)
+		} catch {
+			Self.logger.error("CloudKitAccountDelegate: fetchCloudKitStats error: \(error)")
+			postSyncError(error, account: account, operation: "Fetching iCloud stats")
+			throw error
+		}
 	}
 
 	// MARK: - Suspend and Resume (for iOS)
