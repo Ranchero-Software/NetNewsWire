@@ -313,9 +313,21 @@ private extension CloudKitArticlesZone {
 
 	// MARK: - Record Cleanup Helpers
 
+	/// Whether a content record should be deleted given its status.
+	/// Orphaned records (nil status) are always deleted. Starred content
+	/// is always kept. Read content and unread content (when syncing is off)
+	/// are deleted.
+	func shouldDeleteContentRecord(statusInfo: StatusRecordInfo?, syncUnreadContent: Bool) -> Bool {
+		guard let statusInfo else {
+			return true
+		}
+		if statusInfo.starred {
+			return false
+		}
+		return statusInfo.read || !syncUnreadContent
+	}
+
 	/// Returns content record IDs to delete from pre-fetched scan data.
-	/// Deletes orphaned records, read + unstarred records, and unread + unstarred
-	/// records when syncUnreadContent is off.
 	func contentRecordIDsToDelete(contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID], orphanedContentRecordIDs: [CKRecord.ID], statusByRecordID: [CKRecord.ID: StatusRecordInfo], syncUnreadContent: Bool, limit: Int = .max) -> [CKRecord.ID] {
 		var deleteRecordIDs = [CKRecord.ID]()
 
@@ -330,18 +342,7 @@ private extension CloudKitArticlesZone {
 			if deleteRecordIDs.count >= limit {
 				break
 			}
-			guard let statusInfo = statusByRecordID[statusID] else {
-				// Status not found — content is orphaned.
-				deleteRecordIDs.append(contentRecordID)
-				continue
-			}
-			// Never delete content for starred articles.
-			if statusInfo.starred {
-				continue
-			}
-			// Delete content for read articles, and for unread articles
-			// when unread content syncing is off.
-			if statusInfo.read || !syncUnreadContent {
+			if shouldDeleteContentRecord(statusInfo: statusByRecordID[statusID], syncUnreadContent: syncUnreadContent) {
 				deleteRecordIDs.append(contentRecordID)
 			}
 		}
@@ -463,23 +464,9 @@ private extension CloudKitArticlesZone {
 			guard case .success(let record) = result else {
 				continue
 			}
-			guard let reference = record[CloudKitArticle.Fields.articleStatus] as? CKRecord.Reference else {
-				// No status reference — content is orphaned.
-				deleteRecordIDs.append(record.recordID)
-				continue
-			}
-			guard let statusInfo = statusByRecordID[reference.recordID] else {
-				// Status not found — content is orphaned.
-				deleteRecordIDs.append(record.recordID)
-				continue
-			}
-			// Never delete content for starred articles.
-			if statusInfo.starred {
-				continue
-			}
-			// Delete content for read articles, or for unread articles
-			// when unread content syncing is off.
-			if statusInfo.read || !syncUnreadContent {
+			let reference = record[CloudKitArticle.Fields.articleStatus] as? CKRecord.Reference
+			let statusInfo = reference.flatMap { statusByRecordID[$0.recordID] }
+			if shouldDeleteContentRecord(statusInfo: statusInfo, syncUnreadContent: syncUnreadContent) {
 				deleteRecordIDs.append(record.recordID)
 			}
 		}
