@@ -127,6 +127,8 @@ public enum CloudKitCleanUpStatus {
 	// Called after each state change, so non-SwiftUI callers (AppKit) can update the UI.
 	public var onChange: (() -> Void)?
 
+	public private(set) var cleanUpPlanIsStale = false
+
 	private var fetchTask: Task<Void, Never>?
 	private var fetchSerialNumber = 0
 	private var cleanUpTask: Task<Void, Never>?
@@ -137,7 +139,7 @@ public enum CloudKitCleanUpStatus {
 	}
 
 	public var canCleanUp: Bool {
-		fetchStatus.isCompleted && !cleanUpPlan.isEmpty && !cleanUpStatus.isCleaning
+		fetchStatus.isCompleted && (cleanUpPlanIsStale || !cleanUpPlan.isEmpty) && !cleanUpStatus.isCleaning
 	}
 
 	public var statsText: String {
@@ -177,7 +179,7 @@ public enum CloudKitCleanUpStatus {
 	}
 
 	// TODO: set to false before shipping
-	private let useTestScanData = true
+	private let useTestScanData = false
 
 	public init() {
 	}
@@ -185,6 +187,7 @@ public enum CloudKitCleanUpStatus {
 	public func fetch() {
 		if useTestScanData {
 			cleanUpStatus = .idle
+			cleanUpPlanIsStale = false
 			stats = CloudKitStats(statusCount: 12102, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 7750, starredArticleCount: 5, unreadArticleCount: 200, readArticleCount: 7550, orphanedArticleCount: 0)
 			fetchStatus = .completed
 			return
@@ -199,6 +202,7 @@ public enum CloudKitCleanUpStatus {
 
 		fetchStatus = .fetching
 		cleanUpStatus = .idle
+		cleanUpPlanIsStale = false
 		stats = .empty
 
 		fetchSerialNumber += 1
@@ -236,6 +240,7 @@ public enum CloudKitCleanUpStatus {
 	public func cancelCleanUp() {
 		cleanUpTask?.cancel()
 		cleanUpTask = nil
+		cleanUpPlanIsStale = true
 		if let progress = cleanUpStatus.progress {
 			cleanUpStatus = .canceled(progress)
 		}
@@ -260,11 +265,15 @@ public enum CloudKitCleanUpStatus {
 				try await account.cleanUpCloudKit(dryRun: true) { progress in
 					self.cleanUpStatus = .cleaning(progress)
 					if progress.phase == .completed {
+						self.cleanUpPlanIsStale = true
 						self.cleanUpStatus = .completed(progress)
 					}
 				}
 			} catch {
-				cleanUpStatus = .error(error)
+				if !cleanUpStatus.isCanceled {
+					cleanUpPlanIsStale = true
+					cleanUpStatus = .error(error)
+				}
 			}
 		}
 	}
@@ -298,9 +307,13 @@ public enum CloudKitCleanUpStatus {
 				}
 
 				let finalProgress = CloudKitCleanUpProgress(phase: .completed, staleStatusDeleted: plan.staleStatusCount, readContentDeleted: plan.readContentCount, unreadContentDeleted: plan.unreadContentCount, orphanedContentDeleted: plan.orphanedContentCount)
+				cleanUpPlanIsStale = true
 				cleanUpStatus = .completed(finalProgress)
 			} catch {
-				cleanUpStatus = .error(error)
+				if !cleanUpStatus.isCanceled {
+					cleanUpPlanIsStale = true
+					cleanUpStatus = .error(error)
+				}
 			}
 		}
 	}

@@ -26,10 +26,12 @@ final class CloudKitStatsViewController: NSViewController {
 		containerView.addSubview(toolbarView)
 
 		NSLayoutConstraint.activate([
+			containerView.widthAnchor.constraint(equalToConstant: CloudKitStatsLayout.containerWidth),
+
 			contentAreaView.topAnchor.constraint(equalTo: containerView.topAnchor),
 			contentAreaView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: CloudKitStatsLayout.horizontalPadding),
 			contentAreaView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -CloudKitStatsLayout.horizontalPadding),
-			contentAreaView.bottomAnchor.constraint(equalTo: toolbarView.topAnchor),
+			contentAreaView.bottomAnchor.constraint(equalTo: toolbarView.topAnchor, constant: -CloudKitStatsLayout.sectionSpacing),
 
 			toolbarView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
 			toolbarView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
@@ -37,6 +39,11 @@ final class CloudKitStatsViewController: NSViewController {
 		])
 
 		self.view = containerView
+
+		model.onChange = { [weak self] in
+			self?.updateUI()
+		}
+		switchToScan()
 	}
 
 	override func viewDidAppear() {
@@ -44,10 +51,6 @@ final class CloudKitStatsViewController: NSViewController {
 
 		if !hasAppeared {
 			hasAppeared = true
-			model.onChange = { [weak self] in
-				self?.updateUI()
-			}
-			switchToScan()
 			model.fetch()
 		}
 		updateUI()
@@ -92,14 +95,14 @@ extension CloudKitStatsViewController {
 
 	@objc func cleanUp(_ sender: Any?) {
 		let plan = model.cleanUpPlan
-		guard !plan.isEmpty else {
+		guard model.cleanUpPlanIsStale || !plan.isEmpty else {
 			return
 		}
 
 		let alert = NSAlert()
 		alert.alertStyle = .warning
 		alert.messageText = NSLocalizedString("Clean Up iCloud Records", comment: "Clean up alert title")
-		alert.informativeText = cleanUpConfirmationText(plan)
+		alert.informativeText = model.cleanUpPlanIsStale ? staleCleanUpConfirmationText() : cleanUpConfirmationText(plan)
 		alert.addButton(withTitle: NSLocalizedString("Clean Up", comment: "Clean up alert button"))
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
@@ -145,8 +148,10 @@ private extension CloudKitStatsViewController {
 			incoming.view.bottomAnchor.constraint(equalTo: contentAreaView.bottomAnchor)
 		]
 
+		contentAreaView.addSubview(incoming.view)
+		NSLayoutConstraint.activate(constraints)
+
 		if let outgoing = currentChild {
-			NSLayoutConstraint.activate(constraints)
 			NSAnimationContext.runAnimationGroup { context in
 				context.duration = CloudKitStatsLayout.animationDuration
 				context.allowsImplicitAnimation = true
@@ -156,9 +161,6 @@ private extension CloudKitStatsViewController {
 					}
 				}
 			}
-		} else {
-			contentAreaView.addSubview(incoming.view)
-			NSLayoutConstraint.activate(constraints)
 		}
 
 		currentChild = incoming
@@ -217,5 +219,14 @@ private extension CloudKitStatsViewController {
 		}
 		let listText = lines.map { "• " + $0 }.joined(separator: "\n")
 		return NSLocalizedString("This will delete:", comment: "Clean up confirmation prefix") + "\n" + listText + "\n\n" + NSLocalizedString("This may take many minutes.", comment: "Clean up confirmation suffix")
+	}
+
+	func staleCleanUpConfirmationText() -> String {
+		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		if syncUnreadContent {
+			return NSLocalizedString("This will delete any stale status records and any read and orphaned content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
+		} else {
+			return NSLocalizedString("This will delete any stale status records and any not-starred content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when plan is stale")
+		}
 	}
 }

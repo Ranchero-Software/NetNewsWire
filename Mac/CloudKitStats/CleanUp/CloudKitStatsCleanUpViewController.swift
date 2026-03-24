@@ -88,10 +88,11 @@ private extension CloudKitStatsCleanUpViewController {
 
 		// Progress bar: visible during cleaning, hidden when canceled, visible at 100% when completed
 		if isCanceled {
-			statusView.progressBar.isHidden = true
-			statusView.cancelButton.isHidden = true
+			statusView.progressBar.isHidden = false
+			statusView.cancelButton.isHidden = false
+			statusView.cancelButton.isEnabled = false
 			statusView.phaseTextField.isHidden = false
-			statusView.phaseTextField.stringValue = NSLocalizedString("Canceled.", comment: "Cleanup status text when canceled")
+			statusView.phaseTextField.stringValue = NSLocalizedString("Cleanup canceled.", comment: "Cleanup status text when canceled")
 		} else if model.cleanUpStatus.isCompleted {
 			statusView.progressBar.isHidden = false
 			statusView.progressBar.doubleValue = 1.0

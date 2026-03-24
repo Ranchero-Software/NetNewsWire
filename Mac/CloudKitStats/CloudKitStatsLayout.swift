@@ -10,7 +10,7 @@ import AppKit
 enum CloudKitStatsLayout {
 
 	static let containerWidth: CGFloat = 400
-	static let windowHeight: CGFloat = 450
+	static let windowHeight: CGFloat = 530
 	static let buttonWidth: CGFloat = 80
 	static let sectionSpacing: CGFloat = 14
 	static let horizontalPadding: CGFloat = 20

@@ -10,8 +10,6 @@ import AppKit
 final class CloudKitStatsWindowController: NSWindowController {
 
 	private static let windowSize = NSSize(width: CloudKitStatsLayout.containerWidth, height: CloudKitStatsLayout.windowHeight)
-	private static let frameAutosaveName = "CloudKitStats"
-
 	private var hasBeenShown = false
 
 	init() {
@@ -37,7 +35,6 @@ final class CloudKitStatsWindowController: NSWindowController {
 		if !hasBeenShown {
 			hasBeenShown = true
 			window?.center()
-			window?.setFrameAutosaveName(Self.frameAutosaveName)
 		}
 		super.showWindow(sender)
 	}
