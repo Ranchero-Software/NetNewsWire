@@ -186,8 +186,7 @@ public enum CloudKitCleanUpStatus {
 
 	// TODO: set to false before shipping
 	private let useTestScanData = false
-	// TODO: set to false before shipping
-	private let dryRunCleanUp = true
+	private let dryRunCleanUp = false
 
 	public init() {
 	}
