@@ -24,4 +24,51 @@ public struct CloudKitStats: Sendable {
 	public let unreadArticleCount: Int
 	public let readArticleCount: Int
 	public let orphanedArticleCount: Int
+
+	public func cleanUpPlan(syncUnreadContent: Bool) -> CloudKitCleanUpPlan {
+		CloudKitCleanUpPlan(
+			staleStatusCount: staleStatusCount,
+			readContentCount: readArticleCount,
+			unreadContentCount: syncUnreadContent ? 0 : unreadArticleCount,
+			orphanedContentCount: orphanedArticleCount
+		)
+	}
+}
+
+public struct CloudKitCleanUpPlan: Sendable {
+
+	public let staleStatusCount: Int
+	public let readContentCount: Int
+	public let unreadContentCount: Int
+	public let orphanedContentCount: Int
+
+	public var totalCount: Int {
+		staleStatusCount + readContentCount + unreadContentCount + orphanedContentCount
+	}
+
+	public var isEmpty: Bool {
+		totalCount == 0
+	}
+}
+
+public enum CloudKitCleanUpPhase: Sendable {
+
+	case deletingStaleStatus
+	case deletingReadContent
+	case deletingUnreadContent
+	case deletingOrphanedContent
+	case completed
+}
+
+public struct CloudKitCleanUpProgress: Sendable {
+
+	public let phase: CloudKitCleanUpPhase
+	public let staleStatusDeleted: Int
+	public let readContentDeleted: Int
+	public let unreadContentDeleted: Int
+	public let orphanedContentDeleted: Int
+
+	public var totalDeleted: Int {
+		staleStatusDeleted + readContentDeleted + unreadContentDeleted + orphanedContentDeleted
+	}
 }
