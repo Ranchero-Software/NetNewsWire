@@ -1,5 +1,5 @@
 //
-//  CloudKitStatsView.swift
+//  CloudKitStatsViewController.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 3/20/26.
@@ -51,6 +51,28 @@ import RSWeb
 	private let readContentCountLabel = NSTextField(labelWithString: "0")
 	private let orphanedContentCountLabel = NSTextField(labelWithString: "0")
 
+	// MARK: - Cleanup views
+
+	private let cleanUpContainerView = NSView()
+	private let cleanUpProgressBar = NSProgressIndicator()
+	private let cleanUpCancelButton = NSButton()
+	private let cleanUpPhaseTextField = NSTextField(labelWithString: "")
+	private let cleanUpErrorTextField = NSTextField(wrappingLabelWithString: "")
+	private let cleanUpRefreshButton = NSButton()
+	private let returnToPreviousResultsButton = NSButton()
+	private let refreshScanButton = NSButton()
+	private var cleanUpButtonGroup: NSView!
+
+	private let staleStatusDeletedLabel = NSTextField(labelWithString: "0")
+	private let readContentDeletedLabel = NSTextField(labelWithString: "0")
+	private let unreadContentDeletedLabel = NSTextField(labelWithString: "0")
+	private let orphanedContentDeletedLabel = NSTextField(labelWithString: "0")
+
+	private var staleStatusDeletedRow: NSView!
+	private var readContentDeletedRow: NSView!
+	private var unreadContentDeletedRow: NSView!
+	private var orphanedContentDeletedRow: NSView!
+
 	// MARK: - Bottom bar views
 
 	private let helpButton = NSButton()
@@ -66,39 +88,62 @@ import RSWeb
 	private var hasShownErrorAlert = false
 	private var keyMonitor: Any?
 
+	// MARK: - Layout switching
+
+	private var statusBarView: NSView!
+	private var topDividerView: NSView!
+	private var normalLayoutConstraints = [NSLayoutConstraint]()
+	private var cleanUpLayoutConstraints = [NSLayoutConstraint]()
+	private var isShowingCleanUp = false
+
 	// MARK: - NSViewController
 
 	override func loadView() {
 		let containerView = NSView(frame: NSRect(origin: .zero, size: NSSize(width: Self.containerWidth, height: Self.containerWidth)))
 
-		let statusBar = makeStatusBar()
-		let topDivider = makeDivider()
+		statusBarView = makeStatusBar()
+		topDividerView = makeDivider()
 		let statsSection = makeStatsSection()
+		makeCleanUpSection()
 		let bottomDivider = makeDivider()
 		let bottomBarBackground = makeBarBackground()
 		let bottomBar = makeBottomBar()
 
-		containerView.addSubview(statusBar)
-		containerView.addSubview(topDivider)
+		containerView.addSubview(statusBarView)
+		containerView.addSubview(topDividerView)
 		containerView.addSubview(statsSection)
+		containerView.addSubview(cleanUpContainerView)
 		containerView.addSubview(bottomDivider)
 		containerView.addSubview(bottomBarBackground)
 		containerView.addSubview(bottomBar)
 
+		cleanUpContainerView.isHidden = true
+
+		normalLayoutConstraints = [
+			statusBarView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Self.sectionSpacing),
+			topDividerView.topAnchor.constraint(equalTo: statusBarView.bottomAnchor, constant: Self.sectionSpacing),
+			statsSection.topAnchor.constraint(equalTo: topDividerView.bottomAnchor, constant: Self.sectionSpacing),
+			bottomDivider.topAnchor.constraint(equalTo: statsSection.bottomAnchor, constant: Self.sectionSpacing)
+		]
+
+		cleanUpLayoutConstraints = [
+			cleanUpContainerView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Self.sectionSpacing),
+			bottomDivider.topAnchor.constraint(equalTo: cleanUpContainerView.bottomAnchor, constant: Self.sectionSpacing)
+		]
+
 		NSLayoutConstraint.activate([
-			statusBar.topAnchor.constraint(equalTo: containerView.topAnchor, constant: Self.sectionSpacing),
-			statusBar.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Self.horizontalPadding),
-			statusBar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Self.horizontalPadding),
+			statusBarView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Self.horizontalPadding),
+			statusBarView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Self.horizontalPadding),
 
-			topDivider.topAnchor.constraint(equalTo: statusBar.bottomAnchor, constant: Self.sectionSpacing),
-			topDivider.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-			topDivider.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+			topDividerView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+			topDividerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
 
-			statsSection.topAnchor.constraint(equalTo: topDivider.bottomAnchor, constant: Self.sectionSpacing),
 			statsSection.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Self.horizontalPadding),
 			statsSection.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Self.horizontalPadding),
 
-			bottomDivider.topAnchor.constraint(equalTo: statsSection.bottomAnchor, constant: Self.sectionSpacing),
+			cleanUpContainerView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: Self.horizontalPadding),
+			cleanUpContainerView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Self.horizontalPadding),
+
 			bottomDivider.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
 			bottomDivider.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
 
@@ -112,6 +157,8 @@ import RSWeb
 			bottomBar.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -Self.horizontalPadding),
 			bottomBar.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -Self.sectionSpacing)
 		])
+
+		NSLayoutConstraint.activate(normalLayoutConstraints)
 
 		self.view = containerView
 	}
@@ -228,7 +275,7 @@ private extension CloudKitStatsViewController {
 		return divider
 	}
 
-	func makeLabelWithIcon(_ text: String, symbolName: String, color: NSColor) -> NSView {
+	func makeLabelWithIcon(_ text: String, symbolName: String, color: NSColor, iconOffset: CGFloat = 0) -> NSView {
 		let container = NSView()
 		container.translatesAutoresizingMaskIntoConstraints = false
 
@@ -250,7 +297,7 @@ private extension CloudKitStatsViewController {
 			label.bottomAnchor.constraint(equalTo: container.bottomAnchor),
 
 			icon.leadingAnchor.constraint(equalTo: label.trailingAnchor, constant: Self.iconLabelGap),
-			icon.centerYAnchor.constraint(equalTo: label.centerYAnchor),
+			icon.centerYAnchor.constraint(equalTo: label.centerYAnchor, constant: iconOffset),
 			icon.widthAnchor.constraint(equalToConstant: Self.iconSize),
 			icon.heightAnchor.constraint(equalToConstant: Self.iconSize),
 			icon.trailingAnchor.constraint(equalTo: container.trailingAnchor)
@@ -269,7 +316,7 @@ private extension CloudKitStatsViewController {
 			("Status Records", nil),
 			("Total", statusRecordCountLabel),
 			(makeLabelWithIcon("Starred", symbolName: "star.fill", color: Self.starColor), starredCountLabel),
-			(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor), unreadCountLabel),
+			(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor, iconOffset: 0.5), unreadCountLabel),
 			("Read", readCountLabel),
 			("Stale", staleCountLabel)
 		])
@@ -278,7 +325,7 @@ private extension CloudKitStatsViewController {
 			("Article Content Records", nil),
 			("Total", totalContentCountLabel),
 			(makeLabelWithIcon("Starred", symbolName: "star.fill", color: Self.starColor), starredContentCountLabel),
-			(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor), unreadContentCountLabel),
+			(makeLabelWithIcon("Unread", symbolName: "circle.fill", color: .controlAccentColor, iconOffset: 0.5), unreadContentCountLabel),
 			("Read", readContentCountLabel),
 			("Orphaned", orphanedContentCountLabel)
 		])
@@ -311,6 +358,7 @@ private extension CloudKitStatsViewController {
 		var constraints = [NSLayoutConstraint]()
 		var previousAnchor = container.topAnchor
 		var previousSpacing: CGFloat = 0
+		var dataRowViews = [NSView]()
 
 		for (label, valueLabel) in rows {
 			if let valueLabel {
@@ -328,13 +376,25 @@ private extension CloudKitStatsViewController {
 				container.addSubview(labelView)
 				container.addSubview(valueLabel)
 
+				// For icon rows, the labelView is a container — find the
+				// text field inside it so baseline alignment is correct.
+				let baselineView: NSView
+				if let textField = labelView as? NSTextField {
+					baselineView = textField
+				} else if let textField = labelView.subviews.compactMap({ $0 as? NSTextField }).first {
+					baselineView = textField
+				} else {
+					baselineView = labelView
+				}
+
 				constraints.append(contentsOf: [
 					labelView.topAnchor.constraint(equalTo: previousAnchor, constant: previousSpacing),
 					labelView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
 					valueLabel.trailingAnchor.constraint(equalTo: container.trailingAnchor),
-					valueLabel.lastBaselineAnchor.constraint(equalTo: labelView.lastBaselineAnchor)
+					valueLabel.lastBaselineAnchor.constraint(equalTo: baselineView.lastBaselineAnchor)
 				])
 
+				dataRowViews.append(labelView)
 				previousAnchor = labelView.bottomAnchor
 				previousSpacing = Self.rowSpacing
 			} else {
@@ -356,6 +416,13 @@ private extension CloudKitStatsViewController {
 			}
 		}
 
+		// Make all data rows the same height (tallest wins).
+		if let firstRow = dataRowViews.first {
+			for row in dataRowViews.dropFirst() {
+				constraints.append(row.heightAnchor.constraint(equalTo: firstRow.heightAnchor))
+			}
+		}
+
 		constraints.append(previousAnchor.constraint(equalTo: container.bottomAnchor))
 		NSLayoutConstraint.activate(constraints)
 	}
@@ -363,6 +430,159 @@ private extension CloudKitStatsViewController {
 	func configureValueLabel(_ label: NSTextField) {
 		label.font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
 		label.alignment = .right
+	}
+
+	func makeCleanUpSection() {
+		cleanUpContainerView.translatesAutoresizingMaskIntoConstraints = false
+
+		let stackView = NSStackView()
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		stackView.orientation = .vertical
+		stackView.alignment = .leading
+		stackView.spacing = Self.rowSpacing
+
+		// Progress bar + Cancel button in a horizontal row
+		let progressRow = NSView()
+		progressRow.translatesAutoresizingMaskIntoConstraints = false
+
+		cleanUpProgressBar.style = .bar
+		cleanUpProgressBar.isIndeterminate = false
+		cleanUpProgressBar.minValue = 0
+		cleanUpProgressBar.maxValue = 1.0
+		cleanUpProgressBar.doubleValue = 0
+		cleanUpProgressBar.translatesAutoresizingMaskIntoConstraints = false
+
+		cleanUpCancelButton.bezelStyle = .rounded
+		cleanUpCancelButton.title = "Cancel"
+		cleanUpCancelButton.translatesAutoresizingMaskIntoConstraints = false
+		cleanUpCancelButton.target = self
+		cleanUpCancelButton.action = #selector(cleanUpCancelButtonPressed(_:))
+		cleanUpCancelButton.widthAnchor.constraint(equalToConstant: Self.buttonWidth).isActive = true
+
+		progressRow.addSubview(cleanUpProgressBar)
+		progressRow.addSubview(cleanUpCancelButton)
+
+		NSLayoutConstraint.activate([
+			cleanUpProgressBar.leadingAnchor.constraint(equalTo: progressRow.leadingAnchor),
+			cleanUpProgressBar.centerYAnchor.constraint(equalTo: cleanUpCancelButton.centerYAnchor),
+			cleanUpCancelButton.leadingAnchor.constraint(equalTo: cleanUpProgressBar.trailingAnchor, constant: Self.buttonTextGap),
+			cleanUpCancelButton.trailingAnchor.constraint(equalTo: progressRow.trailingAnchor),
+			cleanUpCancelButton.topAnchor.constraint(equalTo: progressRow.topAnchor),
+			cleanUpCancelButton.bottomAnchor.constraint(equalTo: progressRow.bottomAnchor)
+		])
+
+		cleanUpPhaseTextField.textColor = .secondaryLabelColor
+		cleanUpPhaseTextField.font = .systemFont(ofSize: NSFont.systemFontSize)
+
+		staleStatusDeletedRow = makeCleanUpStatRow("Stale Status Deleted", valueLabel: staleStatusDeletedLabel)
+		readContentDeletedRow = makeCleanUpStatRow("Read Content Deleted", valueLabel: readContentDeletedLabel)
+		unreadContentDeletedRow = makeCleanUpStatRow("Unread Content Deleted", valueLabel: unreadContentDeletedLabel)
+		orphanedContentDeletedRow = makeCleanUpStatRow("Orphaned Content Deleted", valueLabel: orphanedContentDeletedLabel)
+
+		cleanUpErrorTextField.textColor = .secondaryLabelColor
+		cleanUpErrorTextField.font = .systemFont(ofSize: NSFont.systemFontSize)
+		cleanUpErrorTextField.isHidden = true
+
+		cleanUpRefreshButton.bezelStyle = .rounded
+		cleanUpRefreshButton.title = "Refresh"
+		cleanUpRefreshButton.target = self
+		cleanUpRefreshButton.action = #selector(refreshButtonPressed(_:))
+		cleanUpRefreshButton.translatesAutoresizingMaskIntoConstraints = false
+		cleanUpRefreshButton.isHidden = true
+
+		stackView.addArrangedSubview(progressRow)
+		stackView.addArrangedSubview(cleanUpPhaseTextField)
+		stackView.addArrangedSubview(staleStatusDeletedRow)
+		stackView.addArrangedSubview(readContentDeletedRow)
+		stackView.addArrangedSubview(unreadContentDeletedRow)
+		stackView.addArrangedSubview(orphanedContentDeletedRow)
+		stackView.addArrangedSubview(cleanUpErrorTextField)
+		stackView.addArrangedSubview(cleanUpRefreshButton)
+
+		stackView.setCustomSpacing(Self.sectionSpacing, after: cleanUpPhaseTextField)
+
+		// Navigation buttons pinned to the bottom, outside the stack view
+		refreshScanButton.bezelStyle = .rounded
+		refreshScanButton.title = "Refresh Scan"
+		refreshScanButton.translatesAutoresizingMaskIntoConstraints = false
+		refreshScanButton.target = self
+		refreshScanButton.action = #selector(refreshButtonPressed(_:))
+		returnToPreviousResultsButton.bezelStyle = .rounded
+		returnToPreviousResultsButton.title = "Return to Previous Scan Results"
+		returnToPreviousResultsButton.translatesAutoresizingMaskIntoConstraints = false
+		returnToPreviousResultsButton.target = self
+		returnToPreviousResultsButton.action = #selector(returnToPreviousResultsButtonPressed(_:))
+
+		// Button group container for vertical centering
+		cleanUpButtonGroup = NSView()
+		cleanUpButtonGroup.translatesAutoresizingMaskIntoConstraints = false
+		cleanUpButtonGroup.isHidden = true
+		cleanUpButtonGroup.addSubview(returnToPreviousResultsButton)
+		cleanUpButtonGroup.addSubview(refreshScanButton)
+
+		NSLayoutConstraint.activate([
+			returnToPreviousResultsButton.topAnchor.constraint(equalTo: cleanUpButtonGroup.topAnchor),
+			returnToPreviousResultsButton.leadingAnchor.constraint(equalTo: cleanUpButtonGroup.leadingAnchor),
+			returnToPreviousResultsButton.trailingAnchor.constraint(equalTo: cleanUpButtonGroup.trailingAnchor),
+
+			refreshScanButton.topAnchor.constraint(equalTo: returnToPreviousResultsButton.bottomAnchor, constant: 8),
+			refreshScanButton.leadingAnchor.constraint(equalTo: cleanUpButtonGroup.leadingAnchor),
+			refreshScanButton.trailingAnchor.constraint(equalTo: cleanUpButtonGroup.trailingAnchor),
+			refreshScanButton.bottomAnchor.constraint(equalTo: cleanUpButtonGroup.bottomAnchor)
+		])
+
+		cleanUpContainerView.addSubview(stackView)
+		cleanUpContainerView.addSubview(cleanUpButtonGroup)
+
+		// Layout guide for the space between the stack and the bottom edge
+		let availableSpace = NSLayoutGuide()
+		cleanUpContainerView.addLayoutGuide(availableSpace)
+
+		NSLayoutConstraint.activate([
+			stackView.topAnchor.constraint(equalTo: cleanUpContainerView.topAnchor),
+			stackView.leadingAnchor.constraint(equalTo: cleanUpContainerView.leadingAnchor),
+			stackView.trailingAnchor.constraint(equalTo: cleanUpContainerView.trailingAnchor),
+
+			progressRow.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+
+			staleStatusDeletedRow.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+			readContentDeletedRow.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+			unreadContentDeletedRow.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+			orphanedContentDeletedRow.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+
+			cleanUpErrorTextField.widthAnchor.constraint(equalTo: stackView.widthAnchor),
+
+			availableSpace.topAnchor.constraint(equalTo: stackView.bottomAnchor),
+			availableSpace.bottomAnchor.constraint(equalTo: cleanUpContainerView.bottomAnchor),
+
+			cleanUpButtonGroup.centerYAnchor.constraint(equalTo: availableSpace.centerYAnchor),
+			cleanUpButtonGroup.centerXAnchor.constraint(equalTo: cleanUpContainerView.centerXAnchor)
+		])
+	}
+
+	func makeCleanUpStatRow(_ title: String, valueLabel: NSTextField) -> NSView {
+		let container = NSView()
+		container.translatesAutoresizingMaskIntoConstraints = false
+
+		let titleLabel = NSTextField(labelWithString: title)
+		titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+		valueLabel.translatesAutoresizingMaskIntoConstraints = false
+		configureValueLabel(valueLabel)
+
+		container.addSubview(titleLabel)
+		container.addSubview(valueLabel)
+
+		NSLayoutConstraint.activate([
+			titleLabel.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+			titleLabel.topAnchor.constraint(equalTo: container.topAnchor),
+			titleLabel.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+
+			valueLabel.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+			valueLabel.lastBaselineAnchor.constraint(equalTo: titleLabel.lastBaselineAnchor)
+		])
+
+		return container
 	}
 
 	func makeBottomBar() -> NSView {
@@ -411,13 +631,85 @@ private extension CloudKitStatsViewController {
 	// MARK: - UI Update
 
 	func updateUI() {
+		let isCleanUpActive = model.cleanUpStatus.isActive
+		let needsTransition = isCleanUpActive != isShowingCleanUp
+
+		if needsTransition {
+			animateLayoutTransition(toCleanUp: isCleanUpActive)
+		} else {
+			NSAnimationContext.runAnimationGroup { context in
+				context.duration = Self.animationDuration
+				context.allowsImplicitAnimation = true
+
+				if isCleanUpActive {
+					updateCleanUpView()
+				} else {
+					updateStatusBar()
+					updateStatsValues()
+				}
+				updateBottomBar()
+			}
+		}
+	}
+
+	func animateLayoutTransition(toCleanUp: Bool) {
+		// Prepare incoming views: unhide at alpha 0 so they can fade in.
+		if toCleanUp {
+			cleanUpContainerView.alphaValue = 0
+			cleanUpContainerView.isHidden = false
+		} else {
+			statusBarView.alphaValue = 0
+			topDividerView.alphaValue = 0
+			statsContainerView.alphaValue = 0
+			statusBarView.isHidden = false
+			topDividerView.isHidden = false
+			statsContainerView.isHidden = false
+		}
+
 		NSAnimationContext.runAnimationGroup { context in
 			context.duration = Self.animationDuration
 			context.allowsImplicitAnimation = true
 
-			updateStatusBar()
-			updateStatsValues()
+			if toCleanUp {
+				isShowingCleanUp = true
+				NSLayoutConstraint.deactivate(normalLayoutConstraints)
+				NSLayoutConstraint.activate(cleanUpLayoutConstraints)
+				statusBarView.animator().alphaValue = 0
+				topDividerView.animator().alphaValue = 0
+				statsContainerView.animator().alphaValue = 0
+				cleanUpContainerView.animator().alphaValue = 1
+				updateCleanUpView()
+			} else {
+				isShowingCleanUp = false
+				NSLayoutConstraint.deactivate(cleanUpLayoutConstraints)
+				NSLayoutConstraint.activate(normalLayoutConstraints)
+				cleanUpContainerView.animator().alphaValue = 0
+				statusBarView.animator().alphaValue = 1
+				topDividerView.animator().alphaValue = 1
+				statsContainerView.animator().alphaValue = 1
+				updateStatusBar()
+				updateStatsValues()
+			}
 			updateBottomBar()
+		} completionHandler: { [weak self] in
+			// Clean up: hide the faded-out views, reset their alpha for next transition.
+			Task { @MainActor in
+				guard let self else {
+					return
+				}
+				if toCleanUp {
+					self.statusBarView.isHidden = true
+					self.topDividerView.isHidden = true
+					self.statsContainerView.isHidden = true
+					self.statusBarView.alphaValue = 1
+					self.topDividerView.alphaValue = 1
+					self.statsContainerView.alphaValue = 1
+				} else {
+					self.cleanUpContainerView.isHidden = true
+					self.cleanUpContainerView.alphaValue = 1
+					self.cleanUpProgressBar.doubleValue = 0
+				}
+			}
 		}
 	}
 
@@ -428,6 +720,8 @@ private extension CloudKitStatsViewController {
 		case .fetching:
 			hasShownErrorAlert = false
 			spinner.isHidden = false
+			spinner.isIndeterminate = true
+			spinner.style = .spinning
 			spinner.startAnimation(nil)
 			statusIcon.isHidden = true
 			statusTextField.stringValue = "Scanning iCloud storage"
@@ -462,18 +756,102 @@ private extension CloudKitStatsViewController {
 		}
 	}
 
+	func updateCleanUpView() {
+		if model.cleanUpStatus.cleanUpError != nil {
+			updateCleanUpViewForError()
+			return
+		}
+
+		let isCanceled = model.cleanUpStatus.isCanceled
+
+		guard let progress = model.cleanUpStatus.progress else {
+			return
+		}
+
+		cleanUpErrorTextField.isHidden = true
+		cleanUpRefreshButton.isHidden = true
+
+		let plan = model.cleanUpPlan
+
+		// Progress bar: visible during cleaning, hidden when canceled, visible at 100% when completed
+		if isCanceled {
+			cleanUpProgressBar.isHidden = true
+			cleanUpCancelButton.isHidden = true
+			cleanUpPhaseTextField.isHidden = false
+			cleanUpPhaseTextField.stringValue = "Canceled."
+		} else if model.cleanUpStatus.isCompleted {
+			cleanUpProgressBar.isHidden = false
+			cleanUpProgressBar.doubleValue = 1.0
+			cleanUpCancelButton.isEnabled = false
+			cleanUpPhaseTextField.isHidden = false
+			cleanUpPhaseTextField.stringValue = cleanUpPhaseText(progress.phase)
+		} else {
+			cleanUpProgressBar.isHidden = false
+			cleanUpCancelButton.isHidden = false
+			cleanUpCancelButton.isEnabled = true
+			cleanUpPhaseTextField.isHidden = false
+			cleanUpPhaseTextField.stringValue = cleanUpPhaseText(progress.phase)
+			if plan.totalCount > 0 {
+				cleanUpProgressBar.doubleValue = Double(progress.totalDeleted) / Double(plan.totalCount)
+			} else {
+				cleanUpProgressBar.doubleValue = 0
+			}
+		}
+
+		updateCleanUpStatRow(staleStatusDeletedRow, label: staleStatusDeletedLabel, value: progress.staleStatusDeleted, planned: plan.staleStatusCount)
+		updateCleanUpStatRow(readContentDeletedRow, label: readContentDeletedLabel, value: progress.readContentDeleted, planned: plan.readContentCount)
+		updateCleanUpStatRow(unreadContentDeletedRow, label: unreadContentDeletedLabel, value: progress.unreadContentDeleted, planned: plan.unreadContentCount)
+		updateCleanUpStatRow(orphanedContentDeletedRow, label: orphanedContentDeletedLabel, value: progress.orphanedContentDeleted, planned: plan.orphanedContentCount)
+
+		cleanUpButtonGroup.isHidden = !(isCanceled || model.cleanUpStatus.isCompleted)
+	}
+
+	func updateCleanUpViewForError() {
+		cleanUpProgressBar.isHidden = true
+		cleanUpCancelButton.isHidden = true
+		cleanUpPhaseTextField.isHidden = true
+		staleStatusDeletedRow.isHidden = true
+		readContentDeletedRow.isHidden = true
+		unreadContentDeletedRow.isHidden = true
+		orphanedContentDeletedRow.isHidden = true
+		cleanUpButtonGroup.isHidden = true
+		cleanUpErrorTextField.isHidden = false
+		cleanUpRefreshButton.isHidden = false
+		cleanUpErrorTextField.stringValue = "Clean up failed to complete, but you may be able to clean up more if you wait a few minutes and try again.\n\nClick Refresh to see your updated stats."
+	}
+
+	func updateCleanUpStatRow(_ row: NSView, label: NSTextField, value: Int, planned: Int) {
+		row.isHidden = planned == 0
+		label.stringValue = formattedNumber(value)
+	}
+
+	func cleanUpPhaseText(_ phase: CloudKitCleanUpPhase) -> String {
+		switch phase {
+		case .deletingStaleStatus:
+			return "Deleting stale status records…"
+		case .deletingReadContent:
+			return "Deleting read content records…"
+		case .deletingUnreadContent:
+			return "Deleting unread content records…"
+		case .deletingOrphanedContent:
+			return "Deleting orphaned content records…"
+		case .completed:
+			return "iCloud storage cleanup completed."
+		}
+	}
+
 	func updateStatsValues() {
 		let stats = model.stats
-		statusRecordCountLabel.stringValue = "\(stats.statusCount)"
-		starredCountLabel.stringValue = "\(stats.starredStatusCount)"
-		unreadCountLabel.stringValue = "\(stats.unreadStatusCount)"
-		readCountLabel.stringValue = "\(stats.readStatusCount)"
-		staleCountLabel.stringValue = "\(stats.staleStatusCount)"
-		totalContentCountLabel.stringValue = "\(stats.articleCount)"
-		starredContentCountLabel.stringValue = "\(stats.starredArticleCount)"
-		unreadContentCountLabel.stringValue = "\(stats.unreadArticleCount)"
-		readContentCountLabel.stringValue = "\(stats.readArticleCount)"
-		orphanedContentCountLabel.stringValue = "\(stats.orphanedArticleCount)"
+		statusRecordCountLabel.stringValue = formattedNumber(stats.statusCount)
+		starredCountLabel.stringValue = formattedNumber(stats.starredStatusCount)
+		unreadCountLabel.stringValue = formattedNumber(stats.unreadStatusCount)
+		readCountLabel.stringValue = formattedNumber(stats.readStatusCount)
+		staleCountLabel.stringValue = formattedNumber(stats.staleStatusCount)
+		totalContentCountLabel.stringValue = formattedNumber(stats.articleCount)
+		starredContentCountLabel.stringValue = formattedNumber(stats.starredArticleCount)
+		unreadContentCountLabel.stringValue = formattedNumber(stats.unreadArticleCount)
+		readContentCountLabel.stringValue = formattedNumber(stats.readArticleCount)
+		orphanedContentCountLabel.stringValue = formattedNumber(stats.orphanedArticleCount)
 
 		let isFetching = model.fetchStatus.isFetching
 		let statusSectionDone = !isFetching || stats.articleCount > 0
@@ -482,9 +860,21 @@ private extension CloudKitStatsViewController {
 	}
 
 	func updateBottomBar() {
-		let enableButtons = model.fetchStatus.isCompleted || model.fetchStatus.fetchError != nil
-		shareButton.isEnabled = enableButtons
-		cleanUpButton.isEnabled = enableButtons
+		let isCleaning = model.cleanUpStatus.isCleaning
+		let isCleanUpDone = model.cleanUpStatus.isCompleted || model.cleanUpStatus.isCanceled || model.cleanUpStatus.cleanUpError != nil
+
+		if isCleaning {
+			cleanUpButton.isEnabled = false
+			shareButton.isEnabled = true
+		} else if isCleanUpDone {
+			cleanUpButton.isEnabled = true
+			shareButton.isEnabled = true
+		} else {
+			let enableShare = model.fetchStatus.isCompleted || model.fetchStatus.fetchError != nil
+			shareButton.isEnabled = enableShare
+			cleanUpButton.isEnabled = model.canCleanUp
+		}
+		actionButton.isEnabled = !isCleaning
 	}
 
 	func showErrorAlertIfNeeded() {
@@ -502,7 +892,7 @@ private extension CloudKitStatsViewController {
 		DispatchQueue.main.async {
 			let alert = NSAlert()
 			alert.alertStyle = .warning
-			alert.messageText = "Couldn’t complete the iCloud scan because of an error:"
+			alert.messageText = "Couldn't complete the iCloud scan because of an error:"
 			alert.informativeText = displayError.localizedDescription
 			alert.addButton(withTitle: "OK")
 			alert.runModal()
@@ -529,11 +919,73 @@ private extension CloudKitStatsViewController {
 		guard let button = sender as? NSButton else {
 			return
 		}
-		let picker = NSSharingServicePicker(items: [model.statsText])
+		let text = model.cleanUpStatus.isActive ? model.cleanUpStatsText : model.statsText
+		let picker = NSSharingServicePicker(items: [text])
 		picker.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
 	}
 
 	@objc func cleanUpButtonPressed(_ sender: Any?) {
-		// TODO: implement clean up
+		let plan = model.cleanUpPlan
+		guard !plan.isEmpty else {
+			return
+		}
+
+		let alert = NSAlert()
+		alert.alertStyle = .warning
+		alert.messageText = "Clean Up iCloud Records"
+		alert.informativeText = cleanUpConfirmationText(plan)
+		alert.addButton(withTitle: "Clean Up")
+		alert.addButton(withTitle: "Cancel")
+
+		guard let window = view.window else {
+			return
+		}
+
+		alert.beginSheetModal(for: window) { [weak self] response in
+			guard response == .alertFirstButtonReturn else {
+				return
+			}
+			self?.model.cleanUp()
+		}
+	}
+
+	@objc func cleanUpCancelButtonPressed(_ sender: Any?) {
+		model.cancelCleanUp()
+	}
+
+	@objc func refreshButtonPressed(_ sender: Any?) {
+		model.fetch()
+	}
+
+	@objc func returnToPreviousResultsButtonPressed(_ sender: Any?) {
+		model.cleanUpStatus = .idle
+		updateUI()
+	}
+
+	func cleanUpConfirmationText(_ plan: CloudKitCleanUpPlan) -> String {
+		var lines = [String]()
+		if plan.staleStatusCount > 0 {
+			lines.append(formattedCount(plan.staleStatusCount, singular: "stale status record", plural: "stale status records"))
+		}
+		if plan.readContentCount > 0 {
+			lines.append(formattedCount(plan.readContentCount, singular: "read content record", plural: "read content records"))
+		}
+		if plan.unreadContentCount > 0 {
+			lines.append(formattedCount(plan.unreadContentCount, singular: "unread content record", plural: "unread content records"))
+		}
+		if plan.orphanedContentCount > 0 {
+			lines.append(formattedCount(plan.orphanedContentCount, singular: "orphaned content record", plural: "orphaned content records"))
+		}
+		let listText = lines.map { "• " + $0 }.joined(separator: "\n")
+		return "This will delete:\n" + listText + "\n\nThis may take many minutes."
+	}
+
+	func formattedNumber(_ value: Int) -> String {
+		NumberFormatter.localizedString(from: NSNumber(value: value), number: .decimal)
+	}
+
+	func formattedCount(_ count: Int, singular: String, plural: String) -> String {
+		let label = count == 1 ? singular : plural
+		return "\(formattedNumber(count)) \(label)"
 	}
 }
