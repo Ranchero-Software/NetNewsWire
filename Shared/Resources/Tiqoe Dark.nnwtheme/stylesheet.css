@@ -56,8 +56,7 @@ hr {
 }
 
 body a,
-body a:visited,
-body a :not(b, code, em, i, strong, u) * {
+body a:visited {
 	color: var(--secondary-accent-color);
 }
 
@@ -449,21 +448,12 @@ a.footnote:hover,
 	}
 
 	body a,
-	body a:visited,
-	body a * {
+	body a:visited {
 	color: #bbb8b7;
 	}
 
 	body :is(b, strong) {
 	color: color-mix(in hsl, var(--link-underline-color), firebrick 15%);
-	}
-	
-	.articleTitle [href] :is(em, i) {
-	color: inherit;
-	}
-
-	a :is(code, em, i, span, u) {
-	color: inherit;
 	}
 
 	[href]:hover,
