@@ -5,22 +5,22 @@
 //  Created by Brent Simmons on 3/20/26.
 //
 
-@preconcurrency import AppKit
+import AppKit
 
-@MainActor final class CloudKitStatsWindowController: NSWindowController {
+final class CloudKitStatsWindowController: NSWindowController {
 
-	private static let windowSize = NSSize(width: 400, height: 450)
+	private static let windowSize = NSSize(width: CloudKitStatsLayout.containerWidth, height: CloudKitStatsLayout.windowHeight)
 	private static let frameAutosaveName = "CloudKitStats"
 
 	private var hasBeenShown = false
 
 	init() {
 		let window = NSWindow(contentRect: NSRect(origin: .zero, size: Self.windowSize), styleMask: [.titled, .closable], backing: .buffered, defer: true)
-		window.title = "iCloud Storage Stats"
+		window.title = NSLocalizedString("iCloud Storage Stats", comment: "iCloud Storage Stats window title")
 		window.isReleasedWhenClosed = false
 		window.contentViewController = CloudKitStatsViewController()
 
-		window.representedURL = URL(string: "https://icloud.com")
+		window.representedURL = URL(string: "https://icloud.com/")
 		if let iconButton = window.standardWindowButton(.documentIconButton) {
 			iconButton.image = NSImage(systemSymbolName: "icloud", accessibilityDescription: "iCloud")
 		}
