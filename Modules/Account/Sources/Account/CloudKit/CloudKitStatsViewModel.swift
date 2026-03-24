@@ -133,7 +133,13 @@ public enum CloudKitCleanUpStatus {
 	private var fetchSerialNumber = 0
 	private var cleanUpTask: Task<Void, Never>?
 
+	// TODO: remove dryRunCleanUpPlan before shipping
+	private static let dryRunCleanUpPlan = CloudKitCleanUpPlan(staleStatusCount: 876, readContentCount: 7550, unreadContentCount: 450, orphanedContentCount: 620)
+
 	public var cleanUpPlan: CloudKitCleanUpPlan {
+		if dryRunCleanUp {
+			return Self.dryRunCleanUpPlan
+		}
 		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 		return stats.cleanUpPlan(syncUnreadContent: syncUnreadContent)
 	}
@@ -180,6 +186,8 @@ public enum CloudKitCleanUpStatus {
 
 	// TODO: set to false before shipping
 	private let useTestScanData = false
+	// TODO: set to false before shipping
+	private let dryRunCleanUp = true
 
 	public init() {
 	}
@@ -262,7 +270,7 @@ public enum CloudKitCleanUpStatus {
 
 		cleanUpTask = Task {
 			do {
-				try await account.cleanUpCloudKit(dryRun: true) { progress in
+				try await account.cleanUpCloudKit(dryRun: dryRunCleanUp) { progress in
 					self.cleanUpStatus = .cleaning(progress)
 					if progress.phase == .completed {
 						self.cleanUpPlanIsStale = true

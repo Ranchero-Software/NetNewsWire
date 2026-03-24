@@ -112,10 +112,10 @@ private extension CloudKitStatsCleanUpViewController {
 			}
 		}
 
-		updateStatRow(contentView.staleStatusDeletedRow, label: contentView.staleStatusDeletedLabel, value: progress.staleStatusDeleted, planned: plan.staleStatusCount)
-		updateStatRow(contentView.readContentDeletedRow, label: contentView.readContentDeletedLabel, value: progress.readContentDeleted, planned: plan.readContentCount)
-		updateStatRow(contentView.unreadContentDeletedRow, label: contentView.unreadContentDeletedLabel, value: progress.unreadContentDeleted, planned: plan.unreadContentCount)
-		updateStatRow(contentView.orphanedContentDeletedRow, label: contentView.orphanedContentDeletedLabel, value: progress.orphanedContentDeleted, planned: plan.orphanedContentCount)
+		updateStatRow(contentView.staleStatusDeletedRow, label: contentView.staleStatusDeletedLabel, value: progress.staleStatusDeleted, phase: progress.phase, showForPhase: .deletingStaleStatus)
+		updateStatRow(contentView.readContentDeletedRow, label: contentView.readContentDeletedLabel, value: progress.readContentDeleted, phase: progress.phase, showForPhase: .deletingReadContent)
+		updateStatRow(contentView.unreadContentDeletedRow, label: contentView.unreadContentDeletedLabel, value: progress.unreadContentDeleted, phase: progress.phase, showForPhase: .deletingUnreadContent)
+		updateStatRow(contentView.orphanedContentDeletedRow, label: contentView.orphanedContentDeletedLabel, value: progress.orphanedContentDeleted, phase: progress.phase, showForPhase: .deletingOrphanedContent)
 
 		contentView.navigationButtonGroup.isHidden = !(isCanceled || model.cleanUpStatus.isCompleted)
 	}
@@ -132,8 +132,8 @@ private extension CloudKitStatsCleanUpViewController {
 		contentView.errorTextField.stringValue = NSLocalizedString("Cleanup failed to complete, but you may be able to clean up more if you wait a few minutes and try again.\n\nClick Refresh to see your updated stats.", comment: "Cleanup error message")
 	}
 
-	func updateStatRow(_ row: NSView, label: NSTextField, value: Int, planned: Int) {
-		row.isHidden = planned == 0
+	func updateStatRow(_ row: NSView, label: NSTextField, value: Int, phase: CloudKitCleanUpPhase, showForPhase: CloudKitCleanUpPhase) {
+		row.isHidden = value == 0 && phase != showForPhase
 		label.stringValue = CloudKitStatsLayout.formattedNumber(value)
 	}
 

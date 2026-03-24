@@ -889,8 +889,8 @@ private extension CloudKitAccountDelegate {
 
 	func cleanUpContentRecordsIfNeeded() async {
 		let lastCleanUp = UserDefaults.standard.object(forKey: Self.lastCleanUpKey) as? Date ?? .distantPast
-		let oneWeekAgo = Date(timeIntervalSinceNow: -7 * 24 * 60 * 60)
-		guard lastCleanUp < oneWeekAgo else {
+		let sixDaysAgo = Date(timeIntervalSinceNow: -6 * 24 * 60 * 60)
+		guard lastCleanUp < sixDaysAgo else {
 			return
 		}
 

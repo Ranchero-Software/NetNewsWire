@@ -260,9 +260,20 @@ final class CloudKitArticlesZone: CloudKitZone {
 		scanCache = nil
 
 		// Categorize content record IDs
-		let categorized = categorizeContentRecordIDs(contentRecordIDByStatusID: contentRecordIDByStatusID, orphanedContentRecordIDs: orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent)
+		var categorized = categorizeContentRecordIDs(contentRecordIDByStatusID: contentRecordIDByStatusID, orphanedContentRecordIDs: orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent)
 
-		let staleStatusIDs = try await staleStatusRecordIDsToDelete(from: statusByRecordID, account: account)
+		var staleStatusIDs = try await staleStatusRecordIDsToDelete(from: statusByRecordID, account: account)
+
+		// TODO: remove dry run test data before shipping
+		if dryRun {
+			let fakeID = { CKRecord.ID(recordName: UUID().uuidString, zoneID: self.zoneID) }
+			staleStatusIDs = (0..<876).map { _ in fakeID() }
+			categorized = CategorizedContentRecordIDs(
+				readContentIDs: (0..<7550).map { _ in fakeID() },
+				unreadContentIDs: (0..<450).map { _ in fakeID() },
+				orphanedContentIDs: (0..<620).map { _ in fakeID() }
+			)
+		}
 
 		var staleStatusDeleted = 0
 		var readContentDeleted = 0
@@ -277,48 +288,60 @@ final class CloudKitArticlesZone: CloudKitZone {
 		if !staleStatusIDs.isEmpty {
 			reportProgress(.deletingStaleStatus)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(staleStatusIDs.count, privacy: .public) stale status records")
-			if dryRun {
-				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
-			} else {
-				try await delete(recordIDs: staleStatusIDs)
+			for batch in staleStatusIDs.chunked(into: Self.cleanUpLimit) {
+				if dryRun {
+					try await Task.sleep(for: .seconds(1))
+				} else {
+					try await delete(recordIDs: batch)
+				}
+				staleStatusDeleted += batch.count
+				reportProgress(.deletingStaleStatus)
 			}
-			staleStatusDeleted = staleStatusIDs.count
 		}
 
 		// Delete read content records
 		if !categorized.readContentIDs.isEmpty {
 			reportProgress(.deletingReadContent)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.readContentIDs.count, privacy: .public) read content records")
-			if dryRun {
-				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
-			} else {
-				try await delete(recordIDs: categorized.readContentIDs)
+			for batch in categorized.readContentIDs.chunked(into: Self.cleanUpLimit) {
+				if dryRun {
+					try await Task.sleep(for: .seconds(1))
+				} else {
+					try await delete(recordIDs: batch)
+				}
+				readContentDeleted += batch.count
+				reportProgress(.deletingReadContent)
 			}
-			readContentDeleted = categorized.readContentIDs.count
 		}
 
 		// Delete unread content records
 		if !categorized.unreadContentIDs.isEmpty {
 			reportProgress(.deletingUnreadContent)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.unreadContentIDs.count, privacy: .public) unread content records")
-			if dryRun {
-				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
-			} else {
-				try await delete(recordIDs: categorized.unreadContentIDs)
+			for batch in categorized.unreadContentIDs.chunked(into: Self.cleanUpLimit) {
+				if dryRun {
+					try await Task.sleep(for: .seconds(1))
+				} else {
+					try await delete(recordIDs: batch)
+				}
+				unreadContentDeleted += batch.count
+				reportProgress(.deletingUnreadContent)
 			}
-			unreadContentDeleted = categorized.unreadContentIDs.count
 		}
 
 		// Delete orphaned content records
 		if !categorized.orphanedContentIDs.isEmpty {
 			reportProgress(.deletingOrphanedContent)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.orphanedContentIDs.count, privacy: .public) orphaned content records")
-			if dryRun {
-				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
-			} else {
-				try await delete(recordIDs: categorized.orphanedContentIDs)
+			for batch in categorized.orphanedContentIDs.chunked(into: Self.cleanUpLimit) {
+				if dryRun {
+					try await Task.sleep(for: .seconds(1))
+				} else {
+					try await delete(recordIDs: batch)
+				}
+				orphanedContentDeleted += batch.count
+				reportProgress(.deletingOrphanedContent)
 			}
-			orphanedContentDeleted = categorized.orphanedContentIDs.count
 		}
 
 		reportProgress(.completed)
@@ -555,7 +578,9 @@ private extension CloudKitArticlesZone {
 		}
 
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleting \(deleteRecordIDs.count, privacy: .public) total records")
-		try await delete(recordIDs: deleteRecordIDs)
+		for batch in deleteRecordIDs.chunked(into: Self.cleanUpLimit) {
+			try await delete(recordIDs: batch)
+		}
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleted \(deleteRecordIDs.count, privacy: .public) records")
 		return deleteRecordIDs.count
 	}
