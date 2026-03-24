@@ -527,6 +527,20 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
+	func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+		guard let account else {
+			throw CloudKitAccountDelegateError.unknown
+		}
+		let syncUnreadContent = Self.syncArticleContentForUnreadArticles
+		do {
+			try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, progress: progress)
+		} catch {
+			Self.logger.error("CloudKitAccountDelegate: cleanUpCloudKit error: \(error)")
+			postSyncError(error, account: account, operation: "Cleaning up iCloud records")
+			throw error
+		}
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
