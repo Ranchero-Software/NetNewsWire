@@ -885,7 +885,7 @@ private extension CloudKitAccountDelegate {
 
 	// MARK: - Record Cleanup
 
-	static let lastCleanUpKey = "cloudkit.lastCleanUpDate"
+	private static let lastCleanUpKey = "cloudkit.lastCleanUpDate"
 
 	func cleanUpContentRecordsIfNeeded() async {
 		if UserDefaults.standard.object(forKey: Self.lastCleanUpKey) == nil {
@@ -909,7 +909,7 @@ private extension CloudKitAccountDelegate {
 		Self.logger.info("CloudKitAccountDelegate: running weekly record cleanup")
 		do {
 			let syncUnreadContent = Self.syncArticleContentForUnreadArticles
-			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: true)
+			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false)
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: weekly cleanup error: \(error.localizedDescription, privacy: .public)")
