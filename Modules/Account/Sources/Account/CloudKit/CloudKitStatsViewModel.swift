@@ -87,6 +87,15 @@ public enum CloudKitCleanUpStatus {
 		}
 	}
 
+	public var isActive: Bool {
+		switch self {
+		case .idle:
+			return false
+		case .cleaning, .completed, .canceled, .error:
+			return true
+		}
+	}
+
 	public var cleanUpError: Error? {
 		if case .error(let error) = self {
 			return error
