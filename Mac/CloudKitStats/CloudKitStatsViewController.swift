@@ -79,7 +79,7 @@ extension CloudKitStatsViewController {
 	}
 
 	@objc func showHelp(_ sender: Any?) {
-		if let url = URL(string: "https://netnewswire.com/help/icloud.html") {
+		if let url = URL(string: "https://netnewswire.com/help/optimize-icloud.html") {
 			MacWebBrowser.openURL(url)
 		}
 	}
