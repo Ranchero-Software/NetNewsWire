@@ -612,8 +612,7 @@ private extension CloudKitArticlesZone {
 
 				if statusInfo.starred {
 					starredCount += 1
-				}
-				if statusInfo.read {
+				} else if statusInfo.read {
 					readCount += 1
 				} else {
 					unreadCount += 1
@@ -674,8 +673,7 @@ private extension CloudKitArticlesZone {
 					contentRecordIDByStatusID[reference.recordID] = record.recordID
 					if statusInfo.starred {
 						starredCount += 1
-					}
-					if statusInfo.read {
+					} else if statusInfo.read {
 						readCount += 1
 					} else {
 						unreadCount += 1
