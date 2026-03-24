@@ -269,13 +269,13 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var unreadContentDeleted = 0
 		var orphanedContentDeleted = 0
 
-		func reportProgress(_ phase: CloudKitCleanUpPhase) async {
-			await progress(CloudKitCleanUpProgress(phase: phase, staleStatusDeleted: staleStatusDeleted, readContentDeleted: readContentDeleted, unreadContentDeleted: unreadContentDeleted, orphanedContentDeleted: orphanedContentDeleted))
+		func reportProgress(_ phase: CloudKitCleanUpPhase) {
+			progress(CloudKitCleanUpProgress(phase: phase, staleStatusDeleted: staleStatusDeleted, readContentDeleted: readContentDeleted, unreadContentDeleted: unreadContentDeleted, orphanedContentDeleted: orphanedContentDeleted))
 		}
 
 		// Delete stale status records
 		if !staleStatusIDs.isEmpty {
-			await reportProgress(.deletingStaleStatus)
+			reportProgress(.deletingStaleStatus)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(staleStatusIDs.count, privacy: .public) stale status records")
 			if dryRun {
 				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
@@ -287,7 +287,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 		// Delete read content records
 		if !categorized.readContentIDs.isEmpty {
-			await reportProgress(.deletingReadContent)
+			reportProgress(.deletingReadContent)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.readContentIDs.count, privacy: .public) read content records")
 			if dryRun {
 				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
@@ -299,7 +299,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 		// Delete unread content records
 		if !categorized.unreadContentIDs.isEmpty {
-			await reportProgress(.deletingUnreadContent)
+			reportProgress(.deletingUnreadContent)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.unreadContentIDs.count, privacy: .public) unread content records")
 			if dryRun {
 				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
@@ -311,7 +311,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 
 		// Delete orphaned content records
 		if !categorized.orphanedContentIDs.isEmpty {
-			await reportProgress(.deletingOrphanedContent)
+			reportProgress(.deletingOrphanedContent)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.orphanedContentIDs.count, privacy: .public) orphaned content records")
 			if dryRun {
 				try await Task.sleep(for: .seconds(Self.dryRunSleepSeconds))
@@ -321,7 +321,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			orphanedContentDeleted = categorized.orphanedContentIDs.count
 		}
 
-		await reportProgress(.completed)
+		reportProgress(.completed)
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): completed — stale: \(staleStatusDeleted, privacy: .public), read: \(readContentDeleted, privacy: .public), unread: \(unreadContentDeleted, privacy: .public), orphaned: \(orphanedContentDeleted, privacy: .public)")
 	}
 
