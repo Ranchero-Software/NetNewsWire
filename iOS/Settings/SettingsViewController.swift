@@ -148,6 +148,12 @@ final class SettingsViewController: UITableViewController {
 			return defaultNumberOfRows
 		case .articles:
 			return traitCollection.userInterfaceIdiom == .phone ? 5 : 4
+		case .troubleshooting:
+			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
+			if !AccountManager.shared.hasiCloudAccount {
+				return defaultNumberOfRows - 1
+			}
+			return defaultNumberOfRows
 		default:
 			return super.tableView(tableView, numberOfRowsInSection: section)
 		}
