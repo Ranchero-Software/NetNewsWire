@@ -147,6 +147,16 @@ private extension CloudKitStatsScanViewController {
 		let statusSectionDone = !isFetching || stats.articleCount > 0
 		contentView.statusSectionView.animator().alphaValue = statusSectionDone ? 1.0 : CloudKitStatsLayout.fetchingAlpha
 		contentView.articleSectionView.animator().alphaValue = isFetching ? CloudKitStatsLayout.fetchingAlpha : 1.0
+
+		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		updateWarningColor(contentView.staleCountLabel, count: stats.staleStatusCount)
+		updateWarningColor(contentView.unreadContentCountLabel, count: syncUnreadContent ? 0 : stats.unreadArticleCount)
+		updateWarningColor(contentView.readContentCountLabel, count: stats.readArticleCount)
+		updateWarningColor(contentView.orphanedContentCountLabel, count: stats.orphanedArticleCount)
+	}
+
+	func updateWarningColor(_ label: NSTextField, count: Int) {
+		label.textColor = count > 0 ? CloudKitStatsLayout.warningColor : .labelColor
 	}
 
 	func showErrorAlertIfNeeded() {

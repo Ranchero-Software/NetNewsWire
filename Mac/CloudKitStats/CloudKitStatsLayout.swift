@@ -22,6 +22,7 @@ enum CloudKitStatsLayout {
 	static let fetchingAlpha: CGFloat = 0.4
 	static let animationDuration: CGFloat = 0.25
 	static let starColor = Assets.Colors.star
+	static let warningColor = NSColor.systemOrange
 
 	@MainActor static func makeDivider() -> NSView {
 		let divider = NSBox()
