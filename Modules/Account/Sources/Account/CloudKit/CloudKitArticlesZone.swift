@@ -225,7 +225,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: \(deleteRecordIDs.count, privacy: .public) content records to delete")
 
 		if deleteRecordIDs.count < limit {
-			let statusIDs = try await staleStatusRecordIDsToDelete(from: statusByRecordID, account: account, limit: limit - deleteRecordIDs.count)
+			let statusIDs = staleStatusRecordIDsToDelete(from: statusByRecordID, limit: limit - deleteRecordIDs.count)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: \(statusIDs.count, privacy: .public) status records to delete")
 			deleteRecordIDs.append(contentsOf: statusIDs)
 		}
@@ -262,7 +262,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		// Categorize content record IDs
 		var categorized = categorizeContentRecordIDs(contentRecordIDByStatusID: contentRecordIDByStatusID, orphanedContentRecordIDs: orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent)
 
-		var staleStatusIDs = try await staleStatusRecordIDsToDelete(from: statusByRecordID, account: account)
+		var staleStatusIDs = staleStatusRecordIDsToDelete(from: statusByRecordID)
 
 		// TODO: remove dry run test data before shipping
 		if dryRun {
@@ -368,7 +368,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		// Phase 1: Scan all status records
 
 		progress(makeStats())
-		let statusScan = try await scanStatusRecords(account: account) { statusResult in
+		let statusScan = try await scanStatusRecords { statusResult in
 			progress(makeStats(statusResult))
 		}
 
@@ -410,35 +410,17 @@ private extension CloudKitArticlesZone {
 		return statusInfo.read || !syncUnreadContent
 	}
 
-	/// Returns stale status record IDs from pre-fetched scan data: unstarred,
-	/// older than 6 months, with no corresponding local article.
-	func staleStatusRecordIDsToDelete(from statusByRecordID: [CKRecord.ID: StatusRecordInfo], account: Account, limit: Int = .max) async throws -> [CKRecord.ID] {
+	/// Returns stale status record IDs from pre-fetched scan data: unstarred
+	/// and older than 6 months.
+	func staleStatusRecordIDsToDelete(from statusByRecordID: [CKRecord.ID: StatusRecordInfo], limit: Int = .max) -> [CKRecord.ID] {
 		let cutoffDate = Date(timeIntervalSinceNow: -Self.staleStatusRecordInterval)
 
-		var staleCandidates = [(articleID: String, recordID: CKRecord.ID)]()
-		for (recordID, statusInfo) in statusByRecordID {
-			if !statusInfo.starred, let creationDate = statusInfo.creationDate, creationDate < cutoffDate {
-				let baseID = String(recordID.recordName.dropFirst(2))
-				staleCandidates.append((baseID, recordID))
-			}
-		}
-
-		guard !staleCandidates.isEmpty else {
-			return []
-		}
-
-		// Check stale candidates against local database.
-		// Delete records with no corresponding local article.
-		let candidateIDs = Set(staleCandidates.map { $0.articleID })
-		let existingArticles = try await account.fetchArticlesAsync(.articleIDs(candidateIDs))
-		let existingArticleIDs = Set(existingArticles.map { $0.articleID })
-
 		var deleteRecordIDs = [CKRecord.ID]()
-		for (articleID, recordID) in staleCandidates {
+		for (recordID, statusInfo) in statusByRecordID {
 			if deleteRecordIDs.count >= limit {
 				break
 			}
-			if !existingArticleIDs.contains(articleID) {
+			if !statusInfo.starred, let creationDate = statusInfo.creationDate, creationDate < cutoffDate {
 				deleteRecordIDs.append(recordID)
 			}
 		}
@@ -587,7 +569,7 @@ private extension CloudKitArticlesZone {
 
 	// MARK: - Stats Scanning
 
-	func scanStatusRecords(account: Account, progress: @escaping @MainActor @Sendable (StatusRecordScanResult) async -> Void) async throws -> StatusRecordScanResult {
+	func scanStatusRecords(progress: @escaping @MainActor @Sendable (StatusRecordScanResult) async -> Void) async throws -> StatusRecordScanResult {
 
 		let cutoffDate = Date(timeIntervalSinceNow: -Self.staleStatusRecordInterval)
 
@@ -600,8 +582,8 @@ private extension CloudKitArticlesZone {
 		var starredCount = 0
 		var unreadCount = 0
 		var readCount = 0
+		var staleCount = 0
 		var pagesCompleted = 0
-		var staleCandidateArticleIDs = [String]()
 		var statusByRecordID = [CKRecord.ID: StatusRecordInfo]()
 
 		try await queryPaginated(ckQuery, desiredKeys: desiredKeys) { pageRecords in
@@ -619,27 +601,15 @@ private extension CloudKitArticlesZone {
 				}
 
 				if !statusInfo.starred, let creationDate = statusInfo.creationDate, creationDate < cutoffDate {
-					let baseID = String(record.recordID.recordName.dropFirst(2))
-					staleCandidateArticleIDs.append(baseID)
+					staleCount += 1
 				}
 			}
 			totalCount += pageRecords.count
 			pagesCompleted += 1
-			await progress(StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: 0, statusByRecordID: [:]))
+			await progress(StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: staleCount, statusByRecordID: [:]))
 		}
 
-		Self.logger.info("CloudKitArticlesZone: scanStatusRecords: fetched \(totalCount, privacy: .public) ArticleStatus records in \(pagesCompleted, privacy: .public) pages")
-
-		try Task.checkCancellation()
-
-		var staleCount = 0
-		if !staleCandidateArticleIDs.isEmpty {
-			let existingArticles = try await account.fetchArticlesAsync(.articleIDs(Set(staleCandidateArticleIDs)))
-			let existingArticleIDs = Set(existingArticles.map { $0.articleID })
-			staleCount = staleCandidateArticleIDs.filter { !existingArticleIDs.contains($0) }.count
-		}
-
-		Self.logger.info("CloudKitArticlesZone: scanStatusRecords: final — total: \(totalCount, privacy: .public), starred: \(starredCount, privacy: .public), unread: \(unreadCount, privacy: .public), read: \(readCount, privacy: .public), stale: \(staleCount, privacy: .public)")
+		Self.logger.info("CloudKitArticlesZone: scanStatusRecords: fetched \(totalCount, privacy: .public) ArticleStatus records in \(pagesCompleted, privacy: .public) pages — starred: \(starredCount, privacy: .public), unread: \(unreadCount, privacy: .public), read: \(readCount, privacy: .public), stale: \(staleCount, privacy: .public)")
 		return StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: staleCount, statusByRecordID: statusByRecordID)
 	}
 
