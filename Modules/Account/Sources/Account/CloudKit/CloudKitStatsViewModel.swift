@@ -195,7 +195,7 @@ public enum CloudKitCleanUpStatus {
 		if useTestScanData {
 			cleanUpStatus = .idle
 			cleanUpPlanIsStale = false
-			stats = CloudKitStats(statusCount: 12102, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 7750, starredArticleCount: 5, unreadArticleCount: 200, readArticleCount: 7550, orphanedArticleCount: 0)
+			stats = CloudKitStats(statusCount: 12102, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 8370, starredArticleCount: 5, unreadArticleCount: 200, readArticleCount: 7550, orphanedArticleCount: 620)
 			fetchStatus = .completed
 			return
 		}
