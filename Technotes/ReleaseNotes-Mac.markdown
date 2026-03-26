@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.0.4b3 7040 26 Mar 2026 — branch: main tag: mac-7.0.4b3
+
+Simplified iCloud Storage Stats — focusing on cleaning up article content records that can be removed
+
 ### 7.0.4b2 7039 24 Mar 2026 — branch: main tag: mac-7.0.4b2
 
 New iCloud sync feature — Window > iCloud Storage Stats. Allows you to view stats and clean up storage. More details here: <https://netnewswire.com/help/optimize-icloud.html>
