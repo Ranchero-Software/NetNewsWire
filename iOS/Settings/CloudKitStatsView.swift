@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SafariServices
 import Account
 
 struct CloudKitStatsView: View {
@@ -15,6 +16,7 @@ struct CloudKitStatsView: View {
 	private let model = CloudKitStatsView.model
 
 	@State private var showCleanUpConfirmation = false
+	@State private var showHelp = false
 
 	var body: some View {
 		List {
@@ -40,6 +42,13 @@ struct CloudKitStatsView: View {
 						}
 					}
 				}
+				Button(NSLocalizedString("How to Optimize iCloud Syncing", comment: "Help link")) {
+					showHelp = true
+				}
+				.frame(maxWidth: .infinity)
+				.font(.subheadline)
+				.listRowBackground(Color.clear)
+				.listRowSeparator(.hidden)
 			}
 		}
 		.navigationTitle(NSLocalizedString("iCloud Storage Stats", comment: "Navigation title for iCloud stats view"))
@@ -76,6 +85,9 @@ struct CloudKitStatsView: View {
 			}
 		} message: {
 			Text(cleanUpConfirmationMessage())
+		}
+		.sheet(isPresented: $showHelp) {
+			SafariView(url: Self.helpURL)
 		}
 		.onAppear {
 			if case .idle = model.fetchStatus {
@@ -129,8 +141,8 @@ struct CloudKitStatsView: View {
 	private var statusRecordsSection: some View {
 		Section {
 			statsRow(NSLocalizedString("Status Records", comment: "Status records header"), model.stats.statusCount, isHeader: true)
-			statsRow(NSLocalizedString("Starred", comment: "Starred label"), model.stats.starredStatusCount)
-			statsRow(NSLocalizedString("Unread", comment: "Unread label"), model.stats.unreadStatusCount)
+			iconStatsRow(NSLocalizedString("Starred", comment: "Starred label"), systemImage: "star.fill", iconColor: .yellow, model.stats.starredStatusCount, iconBaselineOffset: 1)
+			iconStatsRow(NSLocalizedString("Unread", comment: "Unread label"), systemImage: "circle.fill", iconColor: .accentColor, model.stats.unreadStatusCount)
 			statsRow(NSLocalizedString("Read", comment: "Read label"), model.stats.readStatusCount)
 		}
 	}
@@ -138,8 +150,8 @@ struct CloudKitStatsView: View {
 	private var contentRecordsSection: some View {
 		Section {
 			statsRow(NSLocalizedString("Article Content Records", comment: "Article content records header"), model.stats.articleCount, isHeader: true)
-			statsRow(NSLocalizedString("Starred", comment: "Starred label"), model.stats.starredArticleCount)
-			statsRow(NSLocalizedString("Unread", comment: "Unread label"), model.stats.unreadArticleCount, isWarning: !syncUnreadContent)
+			iconStatsRow(NSLocalizedString("Starred", comment: "Starred label"), systemImage: "star.fill", iconColor: .yellow, model.stats.starredArticleCount, iconBaselineOffset: 1)
+			iconStatsRow(NSLocalizedString("Unread", comment: "Unread label"), systemImage: "circle.fill", iconColor: .accentColor, model.stats.unreadArticleCount, isWarning: !syncUnreadContent)
 			statsRow(NSLocalizedString("Read", comment: "Read label"), model.stats.readArticleCount, isWarning: true)
 		}
 	}
@@ -206,6 +218,22 @@ struct CloudKitStatsView: View {
 
 	private var syncUnreadContent: Bool {
 		UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+	}
+
+	private func iconStatsRow(_ label: String, systemImage: String, iconColor: Color, _ count: Int, iconBaselineOffset: CGFloat = 0, isWarning: Bool = false) -> some View {
+		HStack {
+			HStack(spacing: 4) {
+				Text(label)
+				Image(systemName: systemImage)
+					.foregroundStyle(iconColor)
+					.imageScale(.small)
+					.baselineOffset(iconBaselineOffset)
+			}
+			Spacer()
+			Text(formattedNumber(count))
+				.monospacedDigit()
+				.foregroundStyle(countColor(isWarning: isWarning, count: count))
+		}
 	}
 
 	private func statsRow(_ label: String, _ count: Int, isHeader: Bool = false, isWarning: Bool = false) -> some View {
@@ -297,5 +325,17 @@ struct CloudKitStatsView: View {
 	private func formattedCount(_ count: Int, singular: String, plural: String) -> String {
 		let label = count == 1 ? singular : plural
 		return "\(formattedNumber(count)) \(label)"
+	}
+}
+
+private struct SafariView: UIViewControllerRepresentable {
+
+	let url: URL
+
+	func makeUIViewController(context: Context) -> SFSafariViewController {
+		SFSafariViewController(url: url)
+	}
+
+	func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
 	}
 }
