@@ -533,7 +533,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 		let syncUnreadContent = Self.syncArticleContentForUnreadArticles
 		do {
-			try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, progress: progress)
+			try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: cleanUpCloudKit error: \(error)")
 			postSyncError(error, account: account, operation: "Cleaning up iCloud records")
@@ -909,7 +909,7 @@ private extension CloudKitAccountDelegate {
 		Self.logger.info("CloudKitAccountDelegate: running weekly record cleanup")
 		do {
 			let syncUnreadContent = Self.syncArticleContentForUnreadArticles
-			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false)
+			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: weekly cleanup error: \(error.localizedDescription, privacy: .public)")

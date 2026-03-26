@@ -213,7 +213,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	/// Periodic cleanup path. Scans content records incrementally, stopping when
 	/// the limit is hit. No `ScanCache` awareness — the periodic cleanup runs on
 	/// launch before the user would open the stats window.
-	func cleanUpRecords(account: Account, syncUnreadContent: Bool, dryRun: Bool, limit: Int = CloudKitArticlesZone.cleanUpLimit) async throws -> Int {
+	func cleanUpRecords(account: Account, syncUnreadContent: Bool, dryRun: Bool, deleteStaleRecords: Bool, limit: Int = CloudKitArticlesZone.cleanUpLimit) async throws -> Int {
 		guard let database else {
 			return 0
 		}
@@ -224,7 +224,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		var deleteRecordIDs = try await scanContentRecordsIncrementally(database: database, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent, limit: limit)
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: \(deleteRecordIDs.count, privacy: .public) content records to delete")
 
-		if deleteRecordIDs.count < limit {
+		if deleteStaleRecords && deleteRecordIDs.count < limit {
 			let statusIDs = staleStatusRecordIDsToDelete(from: statusByRecordID, limit: limit - deleteRecordIDs.count)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: \(statusIDs.count, privacy: .public) status records to delete")
 			deleteRecordIDs.append(contentsOf: statusIDs)
@@ -236,7 +236,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	/// Cache-aware cleanup with per-category progress reporting.
 	/// Deletes records in separate batches by category so the caller
 	/// can update progress after each category completes.
-	func cleanUpRecordsUsingCache(account: Account, syncUnreadContent: Bool, dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+	func cleanUpRecordsUsingCache(account: Account, syncUnreadContent: Bool, dryRun: Bool, deleteStaleRecords: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
 		guard database != nil else {
 			return
 		}
@@ -285,7 +285,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		}
 
 		// Delete stale status records
-		if !staleStatusIDs.isEmpty {
+		if deleteStaleRecords && !staleStatusIDs.isEmpty {
 			reportProgress(.deletingStaleStatus)
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(staleStatusIDs.count, privacy: .public) stale status records")
 			for batch in staleStatusIDs.chunked(into: Self.cleanUpLimit) {
