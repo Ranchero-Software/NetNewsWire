@@ -22,7 +22,6 @@ final class CloudKitStatsScanContentView: NSView {
 	let starredContentCountLabel = NSTextField(labelWithString: "0")
 	let unreadContentCountLabel = NSTextField(labelWithString: "0")
 	let readContentCountLabel = NSTextField(labelWithString: "0")
-	let orphanedContentCountLabel = NSTextField(labelWithString: "0")
 
 	// MARK: - Section containers (for alpha animation)
 
@@ -49,8 +48,7 @@ final class CloudKitStatsScanContentView: NSView {
 			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Total", comment: "Total row label")), valueLabel: totalContentCountLabel),
 			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Starred", comment: "Starred row label"), symbolName: "star.fill", color: CloudKitStatsLayout.starColor), valueLabel: starredContentCountLabel),
 			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Unread", comment: "Unread row label"), symbolName: "circle.fill", color: .controlAccentColor, iconOffset: 0.5), valueLabel: unreadContentCountLabel),
-			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Read", comment: "Read row label")), valueLabel: readContentCountLabel),
-			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Orphaned", comment: "Orphaned row label")), valueLabel: orphanedContentCountLabel)
+			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Read", comment: "Read row label")), valueLabel: readContentCountLabel)
 		])
 
 		let divider = CloudKitStatsLayout.makeDivider()

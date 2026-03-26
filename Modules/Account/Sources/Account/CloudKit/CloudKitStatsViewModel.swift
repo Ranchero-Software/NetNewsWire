@@ -134,7 +134,7 @@ public enum CloudKitCleanUpStatus {
 	private var cleanUpTask: Task<Void, Never>?
 
 	// TODO: remove dryRunCleanUpPlan before shipping
-	private static let dryRunCleanUpPlan = CloudKitCleanUpPlan(staleStatusCount: 0, readContentCount: 7550, unreadContentCount: 450, orphanedContentCount: 620)
+	private static let dryRunCleanUpPlan = CloudKitCleanUpPlan(staleStatusCount: 0, readContentCount: 8170, unreadContentCount: 450)
 
 	public var cleanUpPlan: CloudKitCleanUpPlan {
 		if dryRunCleanUp {
@@ -158,7 +158,6 @@ public enum CloudKitCleanUpStatus {
 		  Starred: \(formattedCount(stats.starredArticleCount))
 		  Unread: \(formattedCount(stats.unreadArticleCount))
 		  Read: \(formattedCount(stats.readArticleCount))
-		  Orphaned: \(formattedCount(stats.orphanedArticleCount))
 		"""
 	}
 
@@ -174,9 +173,6 @@ public enum CloudKitCleanUpStatus {
 		if progress.unreadContentDeleted > 0 {
 			lines.append("Unread Content Deleted: \(formattedCount(progress.unreadContentDeleted))")
 		}
-		if progress.orphanedContentDeleted > 0 {
-			lines.append("Orphaned Content Deleted: \(formattedCount(progress.orphanedContentDeleted))")
-		}
 		return lines.joined(separator: "\n")
 	}
 
@@ -191,7 +187,7 @@ public enum CloudKitCleanUpStatus {
 		if useTestScanData {
 			cleanUpStatus = .idle
 			cleanUpPlanIsStale = false
-			stats = CloudKitStats(statusCount: 12102, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 8370, starredArticleCount: 5, unreadArticleCount: 200, readArticleCount: 7550, orphanedArticleCount: 620)
+			stats = CloudKitStats(statusCount: 12102, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 8370, starredArticleCount: 5, unreadArticleCount: 200, readArticleCount: 8170)
 			fetchStatus = .completed
 			return
 		}
@@ -261,7 +257,7 @@ public enum CloudKitCleanUpStatus {
 			return
 		}
 
-		cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingReadContent, staleStatusDeleted: 0, readContentDeleted: 0, unreadContentDeleted: 0, orphanedContentDeleted: 0))
+		cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingReadContent, staleStatusDeleted: 0, readContentDeleted: 0, unreadContentDeleted: 0))
 
 		cleanUpTask = Task {
 			do {
@@ -284,7 +280,7 @@ public enum CloudKitCleanUpStatus {
 	private func simulateCleanUp() {
 		let plan = cleanUpPlan
 
-		cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingReadContent, staleStatusDeleted: 0, readContentDeleted: 0, unreadContentDeleted: 0, orphanedContentDeleted: 0))
+		cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingReadContent, staleStatusDeleted: 0, readContentDeleted: 0, unreadContentDeleted: 0))
 
 		cleanUpTask = Task {
 			do {
@@ -292,19 +288,14 @@ public enum CloudKitCleanUpStatus {
 
 				if plan.readContentCount > 0 {
 					try await Task.sleep(for: .seconds(sleepSeconds))
-					cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingUnreadContent, staleStatusDeleted: 0, readContentDeleted: plan.readContentCount, unreadContentDeleted: 0, orphanedContentDeleted: 0))
+					cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingUnreadContent, staleStatusDeleted: 0, readContentDeleted: plan.readContentCount, unreadContentDeleted: 0))
 				}
 
 				if plan.unreadContentCount > 0 {
 					try await Task.sleep(for: .seconds(sleepSeconds))
-					cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingOrphanedContent, staleStatusDeleted: 0, readContentDeleted: plan.readContentCount, unreadContentDeleted: plan.unreadContentCount, orphanedContentDeleted: 0))
 				}
 
-				if plan.orphanedContentCount > 0 {
-					try await Task.sleep(for: .seconds(sleepSeconds))
-				}
-
-				let finalProgress = CloudKitCleanUpProgress(phase: .completed, staleStatusDeleted: 0, readContentDeleted: plan.readContentCount, unreadContentDeleted: plan.unreadContentCount, orphanedContentDeleted: plan.orphanedContentCount)
+				let finalProgress = CloudKitCleanUpProgress(phase: .completed, staleStatusDeleted: 0, readContentDeleted: plan.readContentCount, unreadContentDeleted: plan.unreadContentCount)
 				cleanUpPlanIsStale = true
 				cleanUpStatus = .completed(finalProgress)
 			} catch {

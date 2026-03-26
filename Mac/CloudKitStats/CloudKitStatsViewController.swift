@@ -211,9 +211,6 @@ private extension CloudKitStatsViewController {
 		if plan.unreadContentCount > 0 {
 			lines.append(CloudKitStatsLayout.formattedCount(plan.unreadContentCount, singular: NSLocalizedString("unread content record", comment: "Singular label for unread content records"), plural: NSLocalizedString("unread content records", comment: "Plural label for unread content records")))
 		}
-		if plan.orphanedContentCount > 0 {
-			lines.append(CloudKitStatsLayout.formattedCount(plan.orphanedContentCount, singular: NSLocalizedString("orphaned content record", comment: "Singular label for orphaned content records"), plural: NSLocalizedString("orphaned content records", comment: "Plural label for orphaned content records")))
-		}
 		let listText = lines.map { "• " + $0 }.joined(separator: "\n")
 		return NSLocalizedString("This will delete:", comment: "Clean up confirmation prefix") + "\n" + listText + "\n\n" + NSLocalizedString("This may take many minutes.", comment: "Clean up confirmation suffix")
 	}
@@ -221,7 +218,7 @@ private extension CloudKitStatsViewController {
 	func staleCleanUpConfirmationText() -> String {
 		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 		if syncUnreadContent {
-			return NSLocalizedString("This will delete any read and orphaned content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
+			return NSLocalizedString("This will delete any read content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
 		} else {
 			return NSLocalizedString("This will delete any not-starred content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when plan is stale")
 		}

@@ -141,7 +141,6 @@ struct CloudKitStatsView: View {
 			statsRow(NSLocalizedString("Starred", comment: "Starred label"), model.stats.starredArticleCount)
 			statsRow(NSLocalizedString("Unread", comment: "Unread label"), model.stats.unreadArticleCount, isWarning: !syncUnreadContent)
 			statsRow(NSLocalizedString("Read", comment: "Read label"), model.stats.readArticleCount, isWarning: true)
-			statsRow(NSLocalizedString("Orphaned", comment: "Orphaned label"), model.stats.orphanedArticleCount, isWarning: true)
 		}
 	}
 
@@ -181,9 +180,6 @@ struct CloudKitStatsView: View {
 				}
 				if progress.unreadContentDeleted > 0 || progress.phase == .deletingUnreadContent {
 					statsRow(NSLocalizedString("Unread Content Deleted", comment: "Unread content deleted label"), progress.unreadContentDeleted)
-				}
-				if progress.orphanedContentDeleted > 0 || progress.phase == .deletingOrphanedContent {
-					statsRow(NSLocalizedString("Orphaned Content Deleted", comment: "Orphaned content deleted label"), progress.orphanedContentDeleted)
 				}
 			}
 		}
@@ -261,16 +257,13 @@ struct CloudKitStatsView: View {
 		if plan.unreadContentCount > 0 {
 			lines.append(formattedCount(plan.unreadContentCount, singular: NSLocalizedString("unread content record", comment: "Singular label for unread content records"), plural: NSLocalizedString("unread content records", comment: "Plural label for unread content records")))
 		}
-		if plan.orphanedContentCount > 0 {
-			lines.append(formattedCount(plan.orphanedContentCount, singular: NSLocalizedString("orphaned content record", comment: "Singular label for orphaned content records"), plural: NSLocalizedString("orphaned content records", comment: "Plural label for orphaned content records")))
-		}
 		let listText = lines.map { "• " + $0 }.joined(separator: "\n")
 		return NSLocalizedString("This will delete:", comment: "Clean up confirmation prefix") + "\n" + listText + "\n\n" + NSLocalizedString("This may take many minutes.", comment: "Clean up confirmation suffix")
 	}
 
 	private func staleCleanUpConfirmationText() -> String {
 		if syncUnreadContent {
-			return NSLocalizedString("This will delete any read and orphaned content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
+			return NSLocalizedString("This will delete any read content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
 		} else {
 			return NSLocalizedString("This will delete any not-starred content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when plan is stale")
 		}
@@ -284,8 +277,6 @@ struct CloudKitStatsView: View {
 			return NSLocalizedString("Deleting read content records…", comment: "Cleanup phase text")
 		case .deletingUnreadContent:
 			return NSLocalizedString("Deleting unread content records…", comment: "Cleanup phase text")
-		case .deletingOrphanedContent:
-			return NSLocalizedString("Deleting orphaned content records…", comment: "Cleanup phase text")
 		case .completed:
 			return NSLocalizedString("iCloud storage cleanup completed.", comment: "Cleanup phase text when completed")
 		}

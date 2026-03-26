@@ -269,19 +269,17 @@ final class CloudKitArticlesZone: CloudKitZone {
 			let fakeID = { CKRecord.ID(recordName: UUID().uuidString, zoneID: self.zoneID) }
 			staleStatusIDs = (0..<876).map { _ in fakeID() }
 			categorized = CategorizedContentRecordIDs(
-				readContentIDs: (0..<7550).map { _ in fakeID() },
-				unreadContentIDs: (0..<450).map { _ in fakeID() },
-				orphanedContentIDs: (0..<620).map { _ in fakeID() }
+				readContentIDs: (0..<8170).map { _ in fakeID() },
+				unreadContentIDs: (0..<450).map { _ in fakeID() }
 			)
 		}
 
 		var staleStatusDeleted = 0
 		var readContentDeleted = 0
 		var unreadContentDeleted = 0
-		var orphanedContentDeleted = 0
 
 		func reportProgress(_ phase: CloudKitCleanUpPhase) {
-			progress(CloudKitCleanUpProgress(phase: phase, staleStatusDeleted: staleStatusDeleted, readContentDeleted: readContentDeleted, unreadContentDeleted: unreadContentDeleted, orphanedContentDeleted: orphanedContentDeleted))
+			progress(CloudKitCleanUpProgress(phase: phase, staleStatusDeleted: staleStatusDeleted, readContentDeleted: readContentDeleted, unreadContentDeleted: unreadContentDeleted))
 		}
 
 		// Delete stale status records
@@ -329,23 +327,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 			}
 		}
 
-		// Delete orphaned content records
-		if !categorized.orphanedContentIDs.isEmpty {
-			reportProgress(.deletingOrphanedContent)
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.orphanedContentIDs.count, privacy: .public) orphaned content records")
-			for batch in categorized.orphanedContentIDs.chunked(into: Self.cleanUpLimit) {
-				if dryRun {
-					try await Task.sleep(for: .seconds(1))
-				} else {
-					try await delete(recordIDs: batch)
-				}
-				orphanedContentDeleted += batch.count
-				reportProgress(.deletingOrphanedContent)
-			}
-		}
-
 		reportProgress(.completed)
-		Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): completed — stale: \(staleStatusDeleted, privacy: .public), read: \(readContentDeleted, privacy: .public), unread: \(unreadContentDeleted, privacy: .public), orphaned: \(orphanedContentDeleted, privacy: .public)")
+		Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): completed — stale: \(staleStatusDeleted, privacy: .public), read: \(readContentDeleted, privacy: .public), unread: \(unreadContentDeleted, privacy: .public)")
 	}
 
 	func fetchStats(account: Account, progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {
@@ -360,8 +343,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 				articleCount: articleScan?.total ?? 0,
 				starredArticleCount: articleScan?.starred ?? 0,
 				unreadArticleCount: articleScan?.unread ?? 0,
-				readArticleCount: articleScan?.read ?? 0,
-				orphanedArticleCount: articleScan?.orphaned ?? 0
+				readArticleCount: (articleScan?.read ?? 0) + (articleScan?.orphaned ?? 0)
 			)
 		}
 
@@ -431,16 +413,18 @@ private extension CloudKitArticlesZone {
 	struct CategorizedContentRecordIDs {
 		let readContentIDs: [CKRecord.ID]
 		let unreadContentIDs: [CKRecord.ID]
-		let orphanedContentIDs: [CKRecord.ID]
 	}
 
-	/// Categorizes content record IDs into read, unread, and orphaned buckets.
-	/// Content records whose status record is missing are treated as orphaned.
+	/// Categorizes content record IDs into read and unread buckets.
+	/// Content records whose status record is missing (orphaned) are
+	/// folded into read, since they are always cleaned up.
 	/// Uses `shouldDeleteContentRecord` for the keep/delete decision.
 	func categorizeContentRecordIDs(contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID], orphanedContentRecordIDs: [CKRecord.ID], statusByRecordID: [CKRecord.ID: StatusRecordInfo], syncUnreadContent: Bool) -> CategorizedContentRecordIDs {
 		var readContentIDs = [CKRecord.ID]()
 		var unreadContentIDs = [CKRecord.ID]()
-		var allOrphanedContentIDs = orphanedContentRecordIDs
+
+		// Orphaned content records are always cleaned up — fold into read.
+		readContentIDs.append(contentsOf: orphanedContentRecordIDs)
 
 		for (statusID, contentRecordID) in contentRecordIDByStatusID {
 			let statusInfo = statusByRecordID[statusID]
@@ -448,7 +432,7 @@ private extension CloudKitArticlesZone {
 				continue
 			}
 			guard let statusInfo else {
-				allOrphanedContentIDs.append(contentRecordID)
+				readContentIDs.append(contentRecordID)
 				continue
 			}
 			if statusInfo.read {
@@ -458,7 +442,7 @@ private extension CloudKitArticlesZone {
 			}
 		}
 
-		return CategorizedContentRecordIDs(readContentIDs: readContentIDs, unreadContentIDs: unreadContentIDs, orphanedContentIDs: allOrphanedContentIDs)
+		return CategorizedContentRecordIDs(readContentIDs: readContentIDs, unreadContentIDs: unreadContentIDs)
 	}
 
 	// MARK: - Fresh Scan Helpers

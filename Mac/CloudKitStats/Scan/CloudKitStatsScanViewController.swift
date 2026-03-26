@@ -140,7 +140,6 @@ private extension CloudKitStatsScanViewController {
 		contentView.starredContentCountLabel.stringValue = CloudKitStatsLayout.formattedNumber(stats.starredArticleCount)
 		contentView.unreadContentCountLabel.stringValue = CloudKitStatsLayout.formattedNumber(stats.unreadArticleCount)
 		contentView.readContentCountLabel.stringValue = CloudKitStatsLayout.formattedNumber(stats.readArticleCount)
-		contentView.orphanedContentCountLabel.stringValue = CloudKitStatsLayout.formattedNumber(stats.orphanedArticleCount)
 
 		let isFetching = model.fetchStatus.isFetching
 		let statusSectionDone = !isFetching || stats.articleCount > 0
@@ -150,7 +149,6 @@ private extension CloudKitStatsScanViewController {
 		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 		updateWarningColor(contentView.unreadContentCountLabel, count: syncUnreadContent ? 0 : stats.unreadArticleCount)
 		updateWarningColor(contentView.readContentCountLabel, count: stats.readArticleCount)
-		updateWarningColor(contentView.orphanedContentCountLabel, count: stats.orphanedArticleCount)
 	}
 
 	func updateWarningColor(_ label: NSTextField, count: Int) {
