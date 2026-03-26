@@ -9,15 +9,11 @@ import AppKit
 
 final class CloudKitStatsCleanUpContentView: NSView {
 
-	let staleStatusDeletedLabel = NSTextField(labelWithString: "0")
 	let readContentDeletedLabel = NSTextField(labelWithString: "0")
 	let unreadContentDeletedLabel = NSTextField(labelWithString: "0")
-	let orphanedContentDeletedLabel = NSTextField(labelWithString: "0")
 
-	let staleStatusDeletedRow: NSView
 	let readContentDeletedRow: NSView
 	let unreadContentDeletedRow: NSView
-	let orphanedContentDeletedRow: NSView
 
 	let errorTextField = NSTextField(wrappingLabelWithString: "")
 	let refreshButton = NSButton()
@@ -29,10 +25,8 @@ final class CloudKitStatsCleanUpContentView: NSView {
 	private let statsStackView = NSStackView()
 
 	init() {
-		staleStatusDeletedRow = Self.makeStatRow(NSLocalizedString("Stale Status Deleted", comment: "Cleanup stat row label"), valueLabel: staleStatusDeletedLabel)
 		readContentDeletedRow = Self.makeStatRow(NSLocalizedString("Read Content Deleted", comment: "Cleanup stat row label"), valueLabel: readContentDeletedLabel)
 		unreadContentDeletedRow = Self.makeStatRow(NSLocalizedString("Unread Content Deleted", comment: "Cleanup stat row label"), valueLabel: unreadContentDeletedLabel)
-		orphanedContentDeletedRow = Self.makeStatRow(NSLocalizedString("Orphaned Content Deleted", comment: "Cleanup stat row label"), valueLabel: orphanedContentDeletedLabel)
 
 		super.init(frame: .zero)
 		translatesAutoresizingMaskIntoConstraints = false
@@ -76,18 +70,14 @@ private extension CloudKitStatsCleanUpContentView {
 		statsStackView.alignment = .leading
 		statsStackView.spacing = CloudKitStatsLayout.rowSpacing
 
-		statsStackView.addArrangedSubview(staleStatusDeletedRow)
 		statsStackView.addArrangedSubview(readContentDeletedRow)
 		statsStackView.addArrangedSubview(unreadContentDeletedRow)
-		statsStackView.addArrangedSubview(orphanedContentDeletedRow)
 		statsStackView.addArrangedSubview(errorTextField)
 		statsStackView.addArrangedSubview(refreshButton)
 
 		NSLayoutConstraint.activate([
-			staleStatusDeletedRow.widthAnchor.constraint(equalTo: statsStackView.widthAnchor),
 			readContentDeletedRow.widthAnchor.constraint(equalTo: statsStackView.widthAnchor),
 			unreadContentDeletedRow.widthAnchor.constraint(equalTo: statsStackView.widthAnchor),
-			orphanedContentDeletedRow.widthAnchor.constraint(equalTo: statsStackView.widthAnchor),
 			errorTextField.widthAnchor.constraint(equalTo: statsStackView.widthAnchor)
 		])
 	}

@@ -10,6 +10,10 @@ import Foundation
 import Synchronization
 
 public final class ArticleStatus: Hashable, Sendable {
+
+	/// ~6 months. Used for marking old articles as read on arrival
+	/// and for detecting stale CloudKit status records.
+	public static let staleIntervalInSeconds: TimeInterval = 183 * 24 * 60 * 60
 	public enum Key: String, Sendable {
 		case read
 		case starred

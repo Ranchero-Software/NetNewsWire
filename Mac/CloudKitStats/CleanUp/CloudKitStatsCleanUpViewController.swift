@@ -112,20 +112,16 @@ private extension CloudKitStatsCleanUpViewController {
 			}
 		}
 
-		updateStatRow(contentView.staleStatusDeletedRow, label: contentView.staleStatusDeletedLabel, value: progress.staleStatusDeleted, phase: progress.phase, showForPhase: .deletingStaleStatus)
 		updateStatRow(contentView.readContentDeletedRow, label: contentView.readContentDeletedLabel, value: progress.readContentDeleted, phase: progress.phase, showForPhase: .deletingReadContent)
 		updateStatRow(contentView.unreadContentDeletedRow, label: contentView.unreadContentDeletedLabel, value: progress.unreadContentDeleted, phase: progress.phase, showForPhase: .deletingUnreadContent)
-		updateStatRow(contentView.orphanedContentDeletedRow, label: contentView.orphanedContentDeletedLabel, value: progress.orphanedContentDeleted, phase: progress.phase, showForPhase: .deletingOrphanedContent)
 
 		contentView.navigationButtonGroup.isHidden = !(isCanceled || model.cleanUpStatus.isCompleted)
 	}
 
 	func updateCleanUpViewForError() {
 		statusView.isHidden = true
-		contentView.staleStatusDeletedRow.isHidden = true
 		contentView.readContentDeletedRow.isHidden = true
 		contentView.unreadContentDeletedRow.isHidden = true
-		contentView.orphanedContentDeletedRow.isHidden = true
 		contentView.navigationButtonGroup.isHidden = true
 		contentView.errorTextField.isHidden = false
 		contentView.refreshButton.isHidden = false
@@ -140,13 +136,11 @@ private extension CloudKitStatsCleanUpViewController {
 	func cleanUpPhaseText(_ phase: CloudKitCleanUpPhase) -> String {
 		switch phase {
 		case .deletingStaleStatus:
-			return NSLocalizedString("Deleting stale status records…", comment: "Cleanup phase text")
+			return ""
 		case .deletingReadContent:
 			return NSLocalizedString("Deleting read content records…", comment: "Cleanup phase text")
 		case .deletingUnreadContent:
 			return NSLocalizedString("Deleting unread content records…", comment: "Cleanup phase text")
-		case .deletingOrphanedContent:
-			return NSLocalizedString("Deleting orphaned content records…", comment: "Cleanup phase text")
 		case .completed:
 			return NSLocalizedString("iCloud storage cleanup completed.", comment: "Cleanup phase text when completed")
 		}
