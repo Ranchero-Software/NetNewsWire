@@ -43,7 +43,7 @@ public struct CloudKitCleanUpPlan: Sendable {
 	public let orphanedContentCount: Int
 
 	public var totalCount: Int {
-		staleStatusCount + readContentCount + unreadContentCount + orphanedContentCount
+		readContentCount + unreadContentCount + orphanedContentCount
 	}
 
 	public var isEmpty: Bool {
@@ -69,6 +69,6 @@ public struct CloudKitCleanUpProgress: Sendable {
 	public let orphanedContentDeleted: Int
 
 	public var totalDeleted: Int {
-		staleStatusDeleted + readContentDeleted + unreadContentDeleted + orphanedContentDeleted
+		readContentDeleted + unreadContentDeleted + orphanedContentDeleted
 	}
 }

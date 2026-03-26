@@ -132,7 +132,6 @@ struct CloudKitStatsView: View {
 			statsRow(NSLocalizedString("Starred", comment: "Starred label"), model.stats.starredStatusCount)
 			statsRow(NSLocalizedString("Unread", comment: "Unread label"), model.stats.unreadStatusCount)
 			statsRow(NSLocalizedString("Read", comment: "Read label"), model.stats.readStatusCount)
-			statsRow(NSLocalizedString("Stale", comment: "Stale label"), model.stats.staleStatusCount, isWarning: true)
 		}
 	}
 
@@ -177,9 +176,6 @@ struct CloudKitStatsView: View {
 	@ViewBuilder private var cleanUpResultsSection: some View {
 		if let progress = model.cleanUpStatus.progress {
 			Section {
-				if progress.staleStatusDeleted > 0 || progress.phase == .deletingStaleStatus {
-					statsRow(NSLocalizedString("Stale Status Deleted", comment: "Stale status deleted label"), progress.staleStatusDeleted)
-				}
 				if progress.readContentDeleted > 0 || progress.phase == .deletingReadContent {
 					statsRow(NSLocalizedString("Read Content Deleted", comment: "Read content deleted label"), progress.readContentDeleted)
 				}
@@ -259,9 +255,6 @@ struct CloudKitStatsView: View {
 
 	private func cleanUpConfirmationText(_ plan: CloudKitCleanUpPlan) -> String {
 		var lines = [String]()
-		if plan.staleStatusCount > 0 {
-			lines.append(formattedCount(plan.staleStatusCount, singular: NSLocalizedString("stale status record", comment: "Singular label for stale status records"), plural: NSLocalizedString("stale status records", comment: "Plural label for stale status records")))
-		}
 		if plan.readContentCount > 0 {
 			lines.append(formattedCount(plan.readContentCount, singular: NSLocalizedString("read content record", comment: "Singular label for read content records"), plural: NSLocalizedString("read content records", comment: "Plural label for read content records")))
 		}
@@ -277,16 +270,16 @@ struct CloudKitStatsView: View {
 
 	private func staleCleanUpConfirmationText() -> String {
 		if syncUnreadContent {
-			return NSLocalizedString("This will delete any stale status records and any read and orphaned content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
+			return NSLocalizedString("This will delete any read and orphaned content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
 		} else {
-			return NSLocalizedString("This will delete any stale status records and any not-starred content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when plan is stale")
+			return NSLocalizedString("This will delete any not-starred content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when plan is stale")
 		}
 	}
 
 	private func cleanUpPhaseText(_ phase: CloudKitCleanUpPhase) -> String {
 		switch phase {
 		case .deletingStaleStatus:
-			return NSLocalizedString("Deleting stale status records…", comment: "Cleanup phase text")
+			return ""
 		case .deletingReadContent:
 			return NSLocalizedString("Deleting read content records…", comment: "Cleanup phase text")
 		case .deletingUnreadContent:
