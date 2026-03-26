@@ -7,6 +7,19 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.4b3</title>
+            <description><![CDATA[
+            <p>Changes:
+ 				<ul>
+					<li>Simplified iCloud Storage Stats — focusing on cleaning up article content records that can be removed
+				</ul>
+			]]></description>
+        	<pubDate>Thu, 26 Mar 2026 10:50:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b3/NetNewsWire7.0.4b3.zip" sparkle:version="7040" sparkle:shortVersionString="7.0.4b3" length="9992126" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.4b2</title>
             <description><![CDATA[
             <p>Changes:
