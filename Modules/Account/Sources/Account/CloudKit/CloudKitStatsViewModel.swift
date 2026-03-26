@@ -134,7 +134,7 @@ public enum CloudKitCleanUpStatus {
 	private var cleanUpTask: Task<Void, Never>?
 
 	// TODO: remove dryRunCleanUpPlan before shipping
-	private static let dryRunCleanUpPlan = CloudKitCleanUpPlan(staleStatusCount: 0, readContentCount: 8170, unreadContentCount: 450)
+	private static let dryRunCleanUpPlan = CloudKitCleanUpPlan(staleStatusCount: 0, readContentCount: 8170, unreadContentCount: 212)
 
 	public var cleanUpPlan: CloudKitCleanUpPlan {
 		if dryRunCleanUp {
@@ -187,7 +187,7 @@ public enum CloudKitCleanUpStatus {
 		if useTestScanData {
 			cleanUpStatus = .idle
 			cleanUpPlanIsStale = false
-			stats = CloudKitStats(statusCount: 12102, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 8370, starredArticleCount: 5, unreadArticleCount: 200, readArticleCount: 8170)
+			stats = CloudKitStats(statusCount: 12107, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 8387, starredArticleCount: 5, unreadArticleCount: 212, readArticleCount: 8170)
 			fetchStatus = .completed
 			return
 		}
