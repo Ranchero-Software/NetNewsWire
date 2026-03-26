@@ -212,15 +212,15 @@ private extension CloudKitStatsViewController {
 			lines.append(CloudKitStatsLayout.formattedCount(plan.unreadContentCount, singular: NSLocalizedString("unread content record", comment: "Singular label for unread content records"), plural: NSLocalizedString("unread content records", comment: "Plural label for unread content records")))
 		}
 		let listText = lines.map { "• " + $0 }.joined(separator: "\n")
-		return NSLocalizedString("This will delete:", comment: "Clean up confirmation prefix") + "\n" + listText + "\n\n" + NSLocalizedString("This may take many minutes.", comment: "Clean up confirmation suffix")
+		return NSLocalizedString("This will delete:", comment: "Clean up confirmation prefix") + "\n" + listText + "\n\n" + NSLocalizedString("This may take several minutes.", comment: "Clean up confirmation suffix")
 	}
 
 	func staleCleanUpConfirmationText() -> String {
 		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
 		if syncUnreadContent {
-			return NSLocalizedString("This will delete any read content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
+			return NSLocalizedString("This will delete any read content records.\n\nThis may take several minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
 		} else {
-			return NSLocalizedString("This will delete any not-starred content records.\n\nThis may take many minutes.", comment: "Clean up confirmation when plan is stale")
+			return NSLocalizedString("This will delete any not-starred content records.\n\nThis may take several minutes.", comment: "Clean up confirmation when plan is stale")
 		}
 	}
 }
