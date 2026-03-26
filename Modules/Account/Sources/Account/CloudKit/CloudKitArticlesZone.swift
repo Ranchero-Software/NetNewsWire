@@ -17,7 +17,7 @@ import CloudKitSync
 final class CloudKitArticlesZone: CloudKitZone {
 
 	private static let logger = cloudKitLogger
-	private static let staleStatusRecordInterval: TimeInterval = 183 * 24 * 60 * 60 // ~6 months
+	private static let staleStatusRecordInterval: TimeInterval = ArticleStatus.staleIntervalInSeconds
 	private static let cleanUpLimit = 400
 	private static let dryRunSleepSeconds = 10
 	private static let jsonEncoder = JSONEncoder()
