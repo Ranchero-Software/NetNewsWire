@@ -14,11 +14,7 @@ final class NNW3OpenPanelAccessoryViewController: NSViewController {
 	@IBOutlet var accountPopUpButton: NSPopUpButton!
 
 	var selectedAccount: Account? {
-		guard let item: NSMenuItem = accountPopUpButton.selectedItem else {
-			return nil
-		}
-		let account: Account? = item.representedObject as? Account
-		return account
+		accountPopUpButton.selectedItem?.representedObject as? Account
 	}
 
 	init() {

@@ -31,6 +31,7 @@ import Account
 	}
 
 	static var imageIconScheme = "nnwImageIcon"
+	static let aiSummaryRetryURLString = "nnw://ai-summary/retry"
 
 	static var blank = Page(name: "blank")
 	static var page = Page(name: "page")
@@ -219,7 +220,8 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		d["body"] = body
+		let aiSummaryHTML = aiSummaryBlockHTML(for: article)
+		d["body"] = aiSummaryHTML + body
 
 		#if os(macOS)
 		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
@@ -257,6 +259,56 @@ private extension ArticleRenderer {
 		d["time_short"] = Self.shortTimeFormatter.string(from: datePublished)
 
 		return d
+	}
+
+	func aiSummaryBlockHTML(for article: Article) -> String {
+		if AISummaryStore.shared.isLoading(for: article) {
+			let label = NSLocalizedString("AI Summary", comment: "AI Summary")
+			let loadingText = NSLocalizedString("Generating summary…", comment: "Generating summary")
+			let escapedLoadingText = loadingText.escapingSpecialXMLCharacters
+			return """
+			<div class="nnw-ai-summary nnw-ai-summary-loading">
+				<div class="nnw-ai-summary-label">\(label)</div>
+				<div class="nnw-ai-summary-content">\(escapedLoadingText)</div>
+			</div>
+			"""
+		}
+
+		if let rawError = AISummaryStore.shared.errorMessage(for: article)?
+			.trimmingCharacters(in: .whitespacesAndNewlines),
+		   !rawError.isEmpty {
+			let label = NSLocalizedString("AI Summary", comment: "AI Summary")
+			let failedText = NSLocalizedString("Summary generation failed.", comment: "AI summary failed inline text")
+			let retryText = NSLocalizedString("Retry", comment: "Retry AI summary generation")
+			let escapedError = rawError.escapingSpecialXMLCharacters.replacingOccurrences(of: "\n", with: "<br/>")
+			let escapedFailedText = failedText.escapingSpecialXMLCharacters
+			return """
+			<div class="nnw-ai-summary nnw-ai-summary-error">
+				<div class="nnw-ai-summary-label">\(label)</div>
+				<div class="nnw-ai-summary-content">
+					<div>\(escapedFailedText)</div>
+					<div>\(escapedError)</div>
+					<a class="nnw-ai-summary-retry" href="\(Self.aiSummaryRetryURLString)">\(retryText)</a>
+				</div>
+			</div>
+			"""
+		}
+
+		guard let rawSummary = AISummaryStore.shared.summary(for: article)?
+			.trimmingCharacters(in: .whitespacesAndNewlines),
+			  !rawSummary.isEmpty else {
+			return ""
+		}
+
+		let escapedSummary = rawSummary.escapingSpecialXMLCharacters
+			.replacingOccurrences(of: "\n", with: "<br/>")
+		let label = NSLocalizedString("AI Summary", comment: "AI Summary")
+		return """
+		<div class="nnw-ai-summary">
+			<div class="nnw-ai-summary-label">\(label)</div>
+			<div class="nnw-ai-summary-content">\(escapedSummary)</div>
+		</div>
+		"""
 	}
 
 	func byline() -> String {
