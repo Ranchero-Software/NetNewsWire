@@ -551,7 +551,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func configureCellsForRepresentedObject(_ representedObject: AnyObject) {
-//		applyToCellsForRepresentedObject(representedObject, configure)
+		applyToCellsForRepresentedObject(representedObject, configureIcon(_:_:))
 	}
 
 	func applyToCellsForRepresentedObject(_ representedObject: AnyObject, _ completion: (MainFeedCollectionViewCell, IndexPath) -> Void) {
@@ -694,7 +694,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
 			return
 		}
-		if key == .homePageURL || key == .faviconURL {
+		if key == .iconURL || key == .homePageURL || key == .faviconURL {
 			configureCellsForRepresentedObject(feed)
 		}
 	}

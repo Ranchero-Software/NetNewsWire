@@ -597,6 +597,7 @@ private extension MainTimelineModernViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 
@@ -949,6 +950,27 @@ private extension MainTimelineModernViewController {
 			return
 		}
 		queueReloadAvailableCells()
+	}
+
+	@objc func feedSettingDidChange(_ note: Notification) {
+		Self.logger.debug("MainTimelineModernViewController: feedSettingDidChange")
+
+		guard isViewLoaded,
+			  let feed = note.object as? Feed,
+			  let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
+			return
+		}
+		guard key == .iconURL || key == .homePageURL || key == .faviconURL else {
+			return
+		}
+		guard let articles else {
+			return
+		}
+
+		let shouldReloadVisibleCells = articles.contains { $0.feed == feed }
+		if shouldReloadVisibleCells {
+			queueReloadAvailableCells()
+		}
 	}
 
 	@objc func avatarDidBecomeAvailable(_ note: Notification) {

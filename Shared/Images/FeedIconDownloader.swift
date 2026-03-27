@@ -102,6 +102,11 @@ extension Notification.Name {
 			}
 		}
 
+		if feed.iconURL != nil {
+			checkFeedIconURL()
+			return nil
+		}
+
 		if let previouslyFoundIconURL = feedURLToIconURLCache[feed.url] {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image in
 				MainActor.assumeIsolated {
