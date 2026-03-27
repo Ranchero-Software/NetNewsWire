@@ -25,6 +25,19 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 	var isPreview: Bool = false
 
+	// Thumbnail
+	private lazy var thumbnailView: UIImageView = {
+		let iv = UIImageView()
+		iv.contentMode = .scaleAspectFill
+		iv.clipsToBounds = true
+		iv.layer.cornerRadius = 6
+		iv.backgroundColor = .secondarySystemFill
+		iv.translatesAutoresizingMaskIntoConstraints = false
+		return iv
+	}()
+	private var thumbnailHeightConstraint: NSLayoutConstraint?
+	private var thumbnailTopConstraint: NSLayoutConstraint?
+
 	// Cached Values
 	private var rangeOfTitle: NSRange?
 	private var rangeOfSummary: NSRange?
@@ -79,6 +92,44 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			configureStackView()
 
 			registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(configureStackView))
+
+			// Align topSeparator leading with indicatorView (icon column) rather than articleContent
+			if let c = contentView.constraints.first(where: {
+				($0.firstItem as? UIView) === topSeparator && $0.firstAttribute == .leading
+			}) {
+				c.isActive = false
+				NSLayoutConstraint.activate([
+					topSeparator.leadingAnchor.constraint(equalTo: indicatorView.trailingAnchor, constant: 8)
+				])
+			}
+
+			// Reorder: metaDataStackView (date/feed name) on first row, articleContent below
+			for c in contentView.constraints {
+				if (c.firstItem as? UIView) === articleContent && c.firstAttribute == .top { c.isActive = false }
+				if (c.firstItem as? UIView) === metaDataStackView && c.firstAttribute == .top { c.isActive = false }
+				if c.firstAttribute == .bottom && (c.secondItem as? UIView) === metaDataStackView { c.isActive = false }
+			}
+			NSLayoutConstraint.activate([
+				metaDataStackView.topAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.topAnchor, constant: 5),
+				articleContent.topAnchor.constraint(equalTo: metaDataStackView.bottomAnchor, constant: 2),
+			])
+
+			// Thumbnail view — added programmatically below articleContent
+			contentView.addSubview(thumbnailView)
+			let top = thumbnailView.topAnchor.constraint(equalTo: articleContent.bottomAnchor, constant: 0)
+			let height = thumbnailView.heightAnchor.constraint(equalToConstant: 0)
+			thumbnailTopConstraint = top
+			thumbnailHeightConstraint = height
+			NSLayoutConstraint.activate([
+				top,
+				height,
+				thumbnailView.leadingAnchor.constraint(equalTo: indicatorView.trailingAnchor, constant: 8),
+				thumbnailView.trailingAnchor.constraint(equalTo: articleContent.trailingAnchor),
+			])
+			NSLayoutConstraint.activate([
+				contentView.bottomAnchor.constraint(greaterThanOrEqualTo: articleContent.bottomAnchor, constant: 6),
+				contentView.bottomAnchor.constraint(greaterThanOrEqualTo: thumbnailView.bottomAnchor, constant: 10),
+			])
 		}
 	}
 
@@ -88,6 +139,9 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		rangeOfSummary = nil
 		title = ""
 		summary = ""
+		thumbnailView.image = nil
+		thumbnailTopConstraint?.constant = 0
+		thumbnailHeightConstraint?.constant = 0
 	}
 
 	private func configure(_ cellData: MainTimelineCellData) {
@@ -99,12 +153,10 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			addArticleContent(configurationState)
 		}
 
-		if cellData.showFeedName == .feed {
-			articleByLine.text = cellData.feedName
-		} else if cellData.showFeedName == .byline {
+		if cellData.showFeedName == .byline, !cellData.byline.isEmpty {
 			articleByLine.text = cellData.byline
-		} else if cellData.showFeedName == .none {
-			articleByLine.text = ""
+		} else {
+			articleByLine.text = cellData.feedName
 		}
 
 		if feedIcon != nil {
@@ -113,6 +165,23 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 		articleDate.text = cellData.dateString
 		updateAccessibilityLabel()
+		updateThumbnail()
+	}
+
+	private func updateThumbnail() {
+		guard let thumbnailURL = cellData.thumbnailURL else {
+			thumbnailTopConstraint?.constant = 0
+			thumbnailHeightConstraint?.constant = 0
+			thumbnailView.image = nil
+			return
+		}
+		thumbnailTopConstraint?.constant = 8
+		thumbnailHeightConstraint?.constant = 200
+		if let imageData = ImageDownloader.shared.image(for: thumbnailURL.absoluteString) {
+			thumbnailView.image = UIImage(data: imageData)
+		} else {
+			thumbnailView.image = nil
+		}
 	}
 
 	private func updateAccessibilityLabel() {
