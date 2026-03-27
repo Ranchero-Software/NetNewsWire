@@ -1,7 +1,11 @@
 #!/bin/bash
+set -euo pipefail
 
-find "${PROJECT_DIR}" -name '*.gyb' |
-  while read file; do
-    echo "Generating ${file%.gyb}";
-    "${PROJECT_DIR}/buildscripts/gyb" --line-directive '' -o "${file%.gyb}" "$file";
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="${PROJECT_DIR:-$(cd "${SCRIPT_DIR}/.." && pwd)}"
+
+find "${PROJECT_ROOT}" -name '*.gyb' -print0 |
+  while IFS= read -r -d '' file; do
+    echo "Generating ${file%.gyb}"
+    "${PROJECT_ROOT}/buildscripts/gyb" --line-directive '' -o "${file%.gyb}" "$file"
   done
