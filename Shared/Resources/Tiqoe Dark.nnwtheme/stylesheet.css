@@ -370,23 +370,6 @@ a.footnote:hover,
 	transition: background-color 200ms ease-out;
 }
 
-.image-link-expand .icon-container svg {
-	stroke: #aaa;
-	}
-
-.image-link-expand .icon-container:hover svg {
-	text-shadow: 0 1px rgba(0, 0, 0, 2);
-	opacity: 0.8;
-	stroke: color-mix(in hsl, var(--link-underline-color), firebrick 70%)
-}
-
-[href]:hover,
-	.headerContainer a[href]:hover {
-	text-shadow: 0 1px rgba(0, 0, 0, 2);
-	opacity: 0.8;
-	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
-}
-
 /* iOS Specific */
 @supports (-webkit-touch-callout: none) {
 	body {
@@ -454,4 +437,21 @@ a.footnote:hover,
 	.nnw-overflow table {
 		border: 1px solid var(--primary-accent-color);
 	}
+}
+
+.image-link-expand .icon-container svg {
+	stroke: #aaa;
+}
+
+.image-link-expand .icon-container:hover svg {
+	text-shadow: 0 1px rgba(0, 0, 0, 2);
+	opacity: 0.8;
+	stroke: color-mix(in hsl, var(--link-underline-color), firebrick 70%)
+}
+
+[href]:hover,
+	.headerContainer a[href]:hover {
+	text-shadow: 0 1px rgba(0, 0, 0, 2);
+	opacity: 0.8;
+	color: color-mix(in hsl, var(--link-underline-color), firebrick 70%);
 }
