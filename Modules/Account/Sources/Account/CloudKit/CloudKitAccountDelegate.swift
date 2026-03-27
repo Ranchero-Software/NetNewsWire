@@ -527,6 +527,20 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
+	func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+		guard let account else {
+			throw CloudKitAccountDelegateError.unknown
+		}
+		let syncUnreadContent = Self.syncArticleContentForUnreadArticles
+		do {
+			try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
+		} catch {
+			Self.logger.error("CloudKitAccountDelegate: cleanUpCloudKit error: \(error)")
+			postSyncError(error, account: account, operation: "Cleaning up iCloud records")
+			throw error
+		}
+	}
+
 	// MARK: - Suspend and Resume (for iOS)
 
 	func suspendNetwork() {
@@ -871,12 +885,16 @@ private extension CloudKitAccountDelegate {
 
 	// MARK: - Record Cleanup
 
-	static let lastCleanUpKey = "cloudkit.lastCleanUpDate"
+	private static let lastCleanUpKey = "cloudkit.lastCleanUpDate"
 
 	func cleanUpContentRecordsIfNeeded() async {
+		if UserDefaults.standard.object(forKey: Self.lastCleanUpKey) == nil {
+			UserDefaults.standard.set(Date(), forKey: Self.lastCleanUpKey)
+			return
+		}
 		let lastCleanUp = UserDefaults.standard.object(forKey: Self.lastCleanUpKey) as? Date ?? .distantPast
-		let oneWeekAgo = Date(timeIntervalSinceNow: -7 * 24 * 60 * 60)
-		guard lastCleanUp < oneWeekAgo else {
+		let sixDaysAgo = Date(timeIntervalSinceNow: -6 * 24 * 60 * 60)
+		guard lastCleanUp < sixDaysAgo else {
 			return
 		}
 
@@ -891,7 +909,7 @@ private extension CloudKitAccountDelegate {
 		Self.logger.info("CloudKitAccountDelegate: running weekly record cleanup")
 		do {
 			let syncUnreadContent = Self.syncArticleContentForUnreadArticles
-			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: true)
+			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: weekly cleanup error: \(error.localizedDescription, privacy: .public)")

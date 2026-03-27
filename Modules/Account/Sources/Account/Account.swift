@@ -1046,6 +1046,13 @@ public enum FetchType {
 		return try await cloudKitDelegate.fetchCloudKitStats(progress: progress)
 	}
 
+	public func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+		guard type == .cloudKit, let cloudKitDelegate = delegate as? CloudKitAccountDelegate else {
+			throw AccountError.invalidParameter
+		}
+		try await cloudKitDelegate.cleanUpCloudKit(dryRun: dryRun, progress: progress)
+	}
+
 	public func debugDropConditionalGetInfo() {
 #if DEBUG
 		for feed in flattenedFeeds() {

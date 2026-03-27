@@ -1,5 +1,14 @@
 # Mac Release Notes
 
+### 7.0.4b3 7040 26 Mar 2026 — branch: main tag: mac-7.0.4b3
+
+Simplified iCloud Storage Stats — focusing on cleaning up article content records that can be removed
+
+### 7.0.4b2 7039 24 Mar 2026 — branch: main tag: mac-7.0.4b2
+
+New iCloud sync feature — Window > iCloud Storage Stats. Allows you to view stats and clean up storage. More details here: <https://netnewswire.com/help/optimize-icloud.html>
+iCloud account now does weekly cleanups in the background, which will help with syncing performance and with lowering iCloud storage use
+
 ### 7.0.4b1 7038 19 Mar 2026 — branch: main tag: mac-7.0.4b1
 
 Added a new setting for the iCloud account — you can turn on/off syncing the content of unread articles. If you already have an iCloud account, the setting is on, because that’s how it’s been working this whole time. But for future iCloud accounts the settings defaults to off, since it saves so much time and energy. Note: for this setting to really turn off syncing content of unread articles, it needs to be turned off on all your devices running NetNewsWire. Also note: turning this off won’t magically erase the content that’s already been uploaded — that content will still have to sync. It will get cleaned up gradually, in the normal course of things.

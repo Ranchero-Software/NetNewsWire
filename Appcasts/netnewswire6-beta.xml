@@ -7,19 +7,15 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.0.4b1</title>
+			<title>NetNewsWire 7.0.4b3</title>
             <description><![CDATA[
             <p>Changes:
-				<ul>
-					<li>Added a new setting for the iCloud account — you can turn on/off syncing the content of unread articles
+ 				<ul>
+					<li>Simplified iCloud Storage Stats — focusing on cleaning up article content records that can be removed
 				</ul>
-				<p>Notes…
-				<p>If you already have an iCloud account, the setting is on, because that’s how it’s been working this whole time. But for future iCloud accounts the settings defaults to off, since it saves so much time and energy.
-				<p>Note: for this setting to really turn off syncing content of unread articles, it needs to be turned off on all your devices running NetNewsWire.
-				<p>Also note: turning this off won’t magically erase the content that’s already been uploaded — that content will still have to sync. It will get cleaned up gradually, in the normal course of things.
 			]]></description>
-        	<pubDate>Thu, 19 Mar 2026 17:00:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b1/NetNewsWire7.0.4b1.zip" sparkle:version="7038" sparkle:shortVersionString="7.0.4b1" length="9781646" type="application/zip" />
+        	<pubDate>Thu, 26 Mar 2026 10:50:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b3/NetNewsWire7.0.4b3.zip" sparkle:version="7040" sparkle:shortVersionString="7.0.4b3" length="9992126" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 

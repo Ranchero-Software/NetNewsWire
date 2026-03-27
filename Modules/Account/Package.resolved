@@ -1,13 +1,13 @@
 {
-  "originHash" : "640127e71bcf4c0e8c774e3b5924b6b3a32d47605690753f0dfc739c8f716134",
+  "originHash" : "908bb93472d72615556b38478b9a4a0574fb69ecb83c886724b96e262842d36b",
   "pins" : [
     {
       "identity" : "tidemark",
       "kind" : "remoteSourceControl",
       "location" : "https://codeberg.org/brentsimmons/Tidemark",
       "state" : {
-        "revision" : "7bc497a1550963267366d229b1c2dc1a277cce82",
-        "version" : "0.2.2"
+        "revision" : "f655eebd5749e237000ba9cf4d54c43177c39096",
+        "version" : "0.2.3"
       }
     }
   ],
