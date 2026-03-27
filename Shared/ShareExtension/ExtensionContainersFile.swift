@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 import RSCore
 import RSParser
 import Account

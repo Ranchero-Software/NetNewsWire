@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 struct Feedly: Sendable {
 	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")

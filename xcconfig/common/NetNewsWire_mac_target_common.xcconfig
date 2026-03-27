@@ -1,7 +1,7 @@
 #include "./NetNewsWire_version.xcconfig"
 
 // High Level Settings common to both the Mac application and any extensions we bundle with it
-MARKETING_VERSION = 7.0.4b1
+MARKETING_VERSION = 7.0.4b3
 
 APP_GROUP_ID = group.$(ORGANIZATION_IDENTIFIER).NetNewsWire-Evergreen$(APP_GROUP_SUFFIX)
 

@@ -9,7 +9,7 @@
 import Foundation
 import Articles
 import SyncDatabase
-import os.log
+import os
 
 
 /// Take changes to statuses of articles locally and apply them to the corresponding the articles remotely.

@@ -14,7 +14,7 @@ import RSDatabase
 import RSParser
 import RSWeb
 import SyncDatabase
-import os.log
+import os
 import Secrets
 
 public enum FeedbinAccountDelegateError: String, Error, Sendable {

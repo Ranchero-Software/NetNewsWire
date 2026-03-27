@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 struct Feedbin {
 	// Convention with this logger is to put "Feedbin: " at the beginning of each message.

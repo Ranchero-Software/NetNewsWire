@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 protocol FeedlyLogoutService {
 	func logout(completion: @escaping @MainActor (Result<Void, Error>) -> ())

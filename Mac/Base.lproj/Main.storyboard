@@ -579,14 +579,21 @@
                                                 <action selector="showMainWindow:" target="Ady-hI-5gd" id="yQt-yi-4JX"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">
+                                            <connections>
+                                                <action selector="toggleInspectorWindow:" target="Ady-hI-5gd" id="Bw5-4R-iWP"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="zRZ-rO-O5O"/>
                                         <menuItem title="Error Log" keyEquivalent="9" id="erl-0g-Kw7">
                                             <connections>
                                                 <action selector="showErrorLog:" target="Ady-hI-5gd" id="erl-1h-Lx8"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Info" keyEquivalent="i" id="24r-2i-fXR">
+                                        <menuItem title="iCloud Storage Stats" id="dLy-xR-u6N">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="toggleInspectorWindow:" target="Ady-hI-5gd" id="Bw5-4R-iWP"/>
+                                                <action selector="showCloudKitStats:" target="Ady-hI-5gd" id="ypX-Ya-bcD"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>

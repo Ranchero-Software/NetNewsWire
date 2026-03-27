@@ -218,7 +218,14 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			func makeDatabaseCalls(_ database: FMDatabase) {
 				let articleIDs = parsedItems.articleIDs()
 
-				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, false, database) // 1
+				// Split by age: articles older than ~6 months default to read.
+				let cutoffDate = Date(timeIntervalSinceNow: -ArticleStatus.staleIntervalInSeconds)
+				let oldArticleIDs = Set(parsedItems.filter { ($0.datePublished ?? .distantFuture) < cutoffDate }.map { $0.articleID })
+				let recentArticleIDs = articleIDs.subtracting(oldArticleIDs)
+
+				let (recentStatusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(recentArticleIDs, false, database) // 1a
+				let (oldStatusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(oldArticleIDs, true, database) // 1b
+				let statusesDictionary = recentStatusesDictionary.merging(oldStatusesDictionary) { current, _ in current }
 				assert(statusesDictionary.count == articleIDs.count)
 
 				let incomingArticles = Article.articlesWithParsedItems(parsedItems, feedID, self.accountID, statusesDictionary) // 2

@@ -13,7 +13,7 @@ import RSParser
 import RSWeb
 import FeedFinder
 import SyncDatabase
-import os.log
+import os
 import Secrets
 
 public enum ReaderAPIAccountDelegateError: LocalizedError {

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 import RSCore
 import RSParser
 import RSWeb
@@ -24,11 +24,13 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	var syncDatabase: SyncDatabase
 	weak var articlesZone: CloudKitArticlesZone?
+	let syncErrorHandler: CloudKitSyncErrorHandler?
 
-	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone) {
+	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.syncDatabase = database
 		self.articlesZone = articlesZone
+		self.syncErrorHandler = syncErrorHandler
 	}
 
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
@@ -42,6 +44,7 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 							 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
 		} catch {
 			Self.logger.error("CloudKit: Error getting sync status records: \(error.localizedDescription)")
+			syncErrorHandler?(error, "Processing article updates", #fileID, #function, #line)
 			throw CloudKitZoneError.unknown
 		}
 	}

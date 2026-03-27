@@ -8,7 +8,7 @@
 
 import XCTest
 @testable import Account
-import os.log
+import os
 import RSCore
 
 @MainActor final class FeedlyGetCollectionsOperationTests: XCTestCase {

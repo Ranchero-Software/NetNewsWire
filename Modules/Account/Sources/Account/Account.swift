@@ -19,7 +19,7 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 import ErrorLog
-import os.log
+import os
 
 // Main thread only.
 
@@ -101,7 +101,7 @@ public enum FetchType {
 		public static let syncErrors = "syncErrors" // AccountsDidFailToSyncWithErrors
 	}
 
-	public static let iCloudSyncArticleContentForUnreadArticlesKey = "iCloudSyncArticleContentForUnreadArticles"
+	public nonisolated static let iCloudSyncArticleContentForUnreadArticlesKey = "iCloudSyncArticleContentForUnreadArticles"
 
 	public var isDeleted = false
 
@@ -1039,7 +1039,19 @@ public enum FetchType {
 		delegate.vacuumDatabases()
 	}
 
-	// MARK: - Debug
+	public func fetchCloudKitStats(progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {
+		guard type == .cloudKit, let cloudKitDelegate = delegate as? CloudKitAccountDelegate else {
+			throw AccountError.invalidParameter
+		}
+		return try await cloudKitDelegate.fetchCloudKitStats(progress: progress)
+	}
+
+	public func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+		guard type == .cloudKit, let cloudKitDelegate = delegate as? CloudKitAccountDelegate else {
+			throw AccountError.invalidParameter
+		}
+		try await cloudKitDelegate.cleanUpCloudKit(dryRun: dryRun, progress: progress)
+	}
 
 	public func debugDropConditionalGetInfo() {
 #if DEBUG
@@ -1315,6 +1327,7 @@ private extension Account {
 
 		Task { @MainActor in
 			guard let unreadCountDictionary = try? await database.fetchAllUnreadCountsAsync() else {
+				fetchingAllUnreadCounts = false
 				return
 			}
 

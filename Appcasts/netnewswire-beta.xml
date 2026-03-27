@@ -7,6 +7,33 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.4b3</title>
+            <description><![CDATA[
+            <p>Changes:
+ 				<ul>
+					<li>Simplified iCloud Storage Stats — focusing on cleaning up article content records that can be removed
+				</ul>
+			]]></description>
+        	<pubDate>Thu, 26 Mar 2026 10:50:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b3/NetNewsWire7.0.4b3.zip" sparkle:version="7040" sparkle:shortVersionString="7.0.4b3" length="9992126" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
+			<title>NetNewsWire 7.0.4b2</title>
+            <description><![CDATA[
+            <p>Changes:
+ 				<ul>
+					<li>New iCloud sync feature — Window > iCloud Storage Stats. Allows you to view stats and clean up storage. More details here: <a href=https://netnewswire.com/help/optimize-icloud.html>How to Optimize iCloud Syncing</a>
+					<li>iCloud account now does weekly cleanups in the background, which will help with syncing performance and with lowering iCloud storage use
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 24 Mar 2026 19:40:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b2/NetNewsWire7.0.4b2.zip" sparkle:version="7039" sparkle:shortVersionString="7.0.4b2" length="10019142" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.4b1</title>
             <description><![CDATA[
             <p>Changes:

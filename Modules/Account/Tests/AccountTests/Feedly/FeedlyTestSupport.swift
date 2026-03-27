@@ -10,7 +10,7 @@ import XCTest
 import RSParser
 import Secrets
 @testable import Account
-import os.log
+import os
 import SyncDatabase
 
 @MainActor final class FeedlyTestSupport {

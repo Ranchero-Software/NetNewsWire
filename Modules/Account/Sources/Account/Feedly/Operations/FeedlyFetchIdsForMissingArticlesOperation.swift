@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os.log
+import os
 
 final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEntryIdentifierProviding {
 

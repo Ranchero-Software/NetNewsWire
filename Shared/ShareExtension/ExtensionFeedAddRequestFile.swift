@@ -8,7 +8,7 @@
 
 import Foundation
 import Synchronization
-import os.log
+import os
 import Account
 
 final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
