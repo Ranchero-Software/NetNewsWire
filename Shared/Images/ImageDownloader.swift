@@ -33,6 +33,10 @@ extension Notification.Name {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+
+		queue.async { [weak self] in
+			self?.cleanupExpiredImages()
+		}
 	}
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
@@ -139,6 +143,27 @@ private extension ImageDownloader {
 
 	nonisolated func diskKey(_ url: String) -> String {
 		url.md5String
+	}
+
+	nonisolated func cleanupExpiredImages() {
+		let folderURL = URL(fileURLWithPath: diskCache.folder)
+		let expiryInterval: TimeInterval = 7 * 24 * 60 * 60
+		guard let enumerator = FileManager.default.enumerator(
+			at: folderURL,
+			includingPropertiesForKeys: [.contentModificationDateKey],
+			options: [.skipsHiddenFiles]
+		) else {
+			return
+		}
+		for case let fileURL as URL in enumerator {
+			guard let resourceValues = try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]),
+				  let modDate = resourceValues.contentModificationDate else {
+				continue
+			}
+			if Date().timeIntervalSince(modDate) > expiryInterval {
+				try? FileManager.default.removeItem(at: fileURL)
+			}
+		}
 	}
 
 	func postImageDidBecomeAvailableNotification(_ url: String) {
