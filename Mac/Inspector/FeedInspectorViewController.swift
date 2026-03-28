@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import SwiftUI
 import UserNotifications
 import Synchronization
 import Articles
@@ -19,6 +20,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet var urlTextField: NSTextField?
 	@IBOutlet var newArticleNotificationsEnabledCheckBox: NSButton!
 	@IBOutlet var readerViewAlwaysEnabledCheckBox: NSButton?
+	private var filtersButton: NSButton?
 
 	private var feed: Feed? {
 		didSet {
@@ -48,6 +50,7 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	// MARK: NSViewController
 
 	override func viewDidLoad() {
+		addFiltersButton()
 		updateUI()
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: .DidUpdateFeedPreferencesFromContextMenu, object: nil)
@@ -108,6 +111,21 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 		feed?.readerViewAlwaysEnabled = (readerViewAlwaysEnabledCheckBox?.state ?? .off) == .on ? true : false
 	}
 
+	@objc func filtersButtonClicked(_ sender: Any) {
+		guard let feed else {
+			return
+		}
+		let viewModel = ArticleFiltersViewModel(feed: feed)
+		var filtersView = ArticleFiltersView(viewModel: viewModel)
+		let hostingController = NSHostingController(rootView: filtersView)
+		filtersView.onDismiss = { [weak self] in
+			self?.dismiss(hostingController)
+			self?.updateFiltersButton()
+		}
+		hostingController.rootView = filtersView
+		presentAsSheet(hostingController)
+	}
+
 	// MARK: Notifications
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
@@ -139,6 +157,7 @@ private extension FeedInspectorViewController {
 		updateFeedURL()
 		updateNewArticleNotificationsEnabled()
 		updateReaderViewAlwaysEnabled()
+		updateFiltersButton()
 		windowTitle = feed?.nameForDisplay ?? NSLocalizedString("Feed Inspector", comment: "Feed Inspector window title")
 		readerViewAlwaysEnabledCheckBox?.isEnabled = true
 		view.needsLayout = true
@@ -177,6 +196,33 @@ private extension FeedInspectorViewController {
 
 	func updateReaderViewAlwaysEnabled() {
 		readerViewAlwaysEnabledCheckBox?.state = (feed?.readerViewAlwaysEnabled ?? false) ? .on : .off
+	}
+
+	func addFiltersButton() {
+		guard let readerViewCheckBox = readerViewAlwaysEnabledCheckBox else {
+			return
+		}
+
+		let button = NSButton(title: "Filters...", target: self, action: #selector(filtersButtonClicked(_:)))
+		button.bezelStyle = .rounded
+		button.translatesAutoresizingMaskIntoConstraints = false
+		view.addSubview(button)
+
+		NSLayoutConstraint.activate([
+			button.topAnchor.constraint(equalTo: readerViewCheckBox.bottomAnchor, constant: 8),
+			button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20)
+		])
+
+		self.filtersButton = button
+	}
+
+	func updateFiltersButton() {
+		let count = feed?.articleFilters?.count ?? 0
+		if count > 0 {
+			filtersButton?.title = "Filters (\(count))..."
+		} else {
+			filtersButton?.title = "Filters..."
+		}
 	}
 
 	func updateNotificationSettings() {

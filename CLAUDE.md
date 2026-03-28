@@ -4,76 +4,83 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build and Development Commands
 
-### Building and Testing
-- **Full build and test**: `./buildscripts/build_and_test.sh` - Builds both macOS and iOS targets and runs all tests
-- **Quiet build and test**: `./buildscripts/quiet_build_and_test.sh` - Same as above with less verbose output
-- **Manual Xcode builds**:
-  - macOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire -destination "platform=macOS,arch=arm64" build`
-  - iOS: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire-iOS -destination "platform=iOS Simulator,name=iPhone 17" build`
+### Setup
+- First-time setup: `./setup.sh` (creates `SharedXcodeSettings/DeveloperSettings.xcconfig` in parent directory)
+- Requires `xcbeautify`: https://github.com/cpisciotta/xcbeautify
+
+### Building
+- **Full build and test**: `./buildscripts/build_and_test.sh`
+- **Quiet build and test** (CI-friendly): `./buildscripts/quiet_build_and_test.sh`
+- **macOS only**: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire -destination "platform=macOS,arch=arm64" build`
+- **iOS only**: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire-iOS -destination "platform=iOS Simulator,name=iPhone 17" build`
 
 ### Testing
-- Run all tests: Use the `NetNewsWire.xctestplan` which includes tests from all modules
-- Individual test runs follow same xcodebuild pattern with `test` action instead of `build`
-
-### Setup
-- First-time setup: Run `./setup.sh` to configure development environment and code signing
-- Manual setup: Create `SharedXcodeSettings/DeveloperSettings.xcconfig` in parent directory
+- **All macOS tests**: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire -destination "platform=macOS,arch=arm64" test`
+- **Single test class**: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire -destination "platform=macOS,arch=arm64" -only-testing:AccountTests/ArticleFilterTests test`
+- **Single test method**: `xcodebuild -project NetNewsWire.xcodeproj -scheme NetNewsWire -destination "platform=macOS,arch=arm64" -only-testing:AccountTests/ArticleFilterTests/testContainsMatchesTitleKeyword test`
+- Test plans: `NetNewsWire.xctestplan` (macOS), `NetNewsWire-iOS.xctestplan` (iOS)
+- Tests use XCTest framework with `@MainActor` attribute on test classes
 
 ## Project Architecture
 
-### High-Level Structure
-NetNewsWire is a multi-platform RSS reader with separate targets for macOS and iOS, organized as a modular architecture with shared business logic.
+### Overview
+NetNewsWire is a multi-platform RSS reader (macOS/iOS) with a modular architecture. Shared business logic lives in Swift packages under `Modules/`; platform UI is in `Mac/` (AppKit) and `iOS/` (UIKit).
 
-### Key Modules (in /Modules)
-- **RSCore**: Core utilities, extensions, and shared infrastructure
-- **RSParser**: Feed parsing (RSS, Atom, JSON Feed, RSS-in-JSON)
-- **RSWeb**: HTTP networking, downloading, caching, and web services
-- **RSDatabase**: SQLite database abstraction layer using FMDB
-- **Account**: Account management (Local, Feedbin, Feedly, NewsBlur, Reader API, CloudKit)
-- **Articles**: Article and author data models
-- **ArticlesDatabase**: Article storage and search functionality
-- **SyncDatabase**: Cross-device synchronization state management
-- **Secrets**: Secure credential and API key management
+### Module Dependency Hierarchy (bottom-up)
+- **Level 0**: RSCore (base utilities)
+- **Level 1**: RSDatabase (SQLite/FMDB), RSParser (feed parsing), RSWeb (networking)
+- **Level 2**: Articles (data models), FeedFinder (feed discovery)
+- **Level 3**: ArticlesDatabase (article persistence)
+- **Level 4**: Secrets, SyncDatabase, ErrorLog
+- **Level 5**: Account (orchestrator - depends on 11 modules)
 
-### Platform-Specific Code
-- **Mac/**: macOS-specific UI (AppKit), preferences, main window management
-- **iOS/**: iOS-specific UI (UIKit), settings, navigation
-- **Shared/**: Cross-platform business logic, article rendering, smart feeds
+### Key Protocols
+- **AccountDelegate** (`Modules/Account/Sources/Account/AccountDelegate.swift`): Defines behavior for account types (Local, Feedly, Feedbin, NewsBlur, CloudKit, etc.)
+- **Container** (`Modules/Account/Sources/Account/Container.swift`): Hierarchical feed/folder organization. Adopted by Account and Folder
+- **PseudoFeed** (`Shared/SmartFeeds/PseudoFeed.swift`): Virtual feeds (Today, All Unread, Starred)
 
-### Key Architectural Patterns
-- **Account System**: Pluggable account delegates for different sync services
-- **Feed Management**: Hierarchical folder/feed organization with OPML import/export
-- **Article Rendering**: Template-based HTML rendering with custom CSS themes
-- **Smart Feeds**: Virtual feeds (Today, All Unread, Starred) implemented as PseudoFeed protocol
-- **Timeline/Detail**: Classic three-pane interface (sidebar, timeline, detail)
+### Key Patterns
+- **Notifications over KVO**: Use `NotificationCenter.default.postOnMainThread()` for state changes. KVO is entirely forbidden
+- **Delegates over subclasses**: AccountDelegate pattern for pluggable sync service backends
+- **Extensions for conformances**: Protocol implementations go in extensions, private methods in `private extension`
 
-### Extension Points
-- Share extensions for both platforms
-- Safari extension for feed subscription
-- Widget support for iOS
-- AppleScript support on macOS
-- Intent extensions for Siri shortcuts
+## Coding Guidelines
 
-### Development Notes
-- Uses Xcode project with Swift Package Manager for module dependencies
-- Requires `xcbeautify` for formatted build output in scripts
-- API keys are managed through buildscripts/updateSecrets.sh (runs during builds)
-- Some features disabled in development builds due to private API keys
-- Code signing configured through SharedXcodeSettings for development
-- Documentation and technical notes are located in the `Technotes/` folder
+These come from `Technotes/CodingGuidelines.md` -- read it for full details.
 
-## Code Formatting
+### Priority Values (in order)
+1. No data loss
+2. No crashes
+3. No other bugs
+4. Fast performance
+5. Developer productivity
 
-Prefer idiomatic modern Swift.
+### Strict Rules
+- **All classes must be `final`** (except required AppKit/UIKit subclasses). Use protocols and delegates instead of inheritance
+- **Everything runs on the main thread**. Only exceptions: feed parsing and database fetches run in the background
+- **No KVO, no bindings, no NSArrayController**. Use NotificationCenter or `didSet`
+- **No Core Data**. Use plain Swift structs/classes with RSDatabase (FMDB/SQLite)
+- **No locks** (almost never). Use serial queues for isolation instead
+- **No force unwrapping** except as intentional precondition
+- **No stack views in table/outline cells** (performance)
+- **Tabs for indentation**, not spaces
+- **Commit messages start with a present-tense verb**
+- **Storyboards preferred** over XIBs (except small UI pieces)
 
-Prefer `if let x` and `guard let x` over `if let x = x` and `guard let x = x`.
+### Code Style
+- Prefer `if let x` and `guard let x` over `if let x = x` and `guard let x = x`
+- Guard statements: always put `return` on a separate line
+- Don't use `...` or `...` in Logger messages
+- Prefer immutable structs
+- Small objects over large ones
+- Use `@MainActor` attribute on classes and protocols that must run on main thread
+- Nil-targeted actions and responder chain for UI commands
 
-Don’t use `...` or `…` in Logger messages.
-
-Guard statements should always put the return in a separate line.
-
-Don’t do force unwrapping of optionals.
+### Development Build Limitations
+Some features are disabled in dev builds due to private API keys (iCloud sync, Feedly, Reader View). API keys managed through `buildscripts/updateSecrets.sh` which runs as a pre-build action.
 
 ## Things to Know
 
-Just because unit tests pass doesn’t mean a given bug is fixed. It may not have a test. It may not even be testable — it may require manual testing.
+- Just because unit tests pass doesn't mean a bug is fixed. Many things require manual testing
+- Don't contribute features without discussing in the [Discourse forum](https://discourse.netnewswire.com/) first (see CONTRIBUTING.md)
+- Documentation and technical notes are in `Technotes/`

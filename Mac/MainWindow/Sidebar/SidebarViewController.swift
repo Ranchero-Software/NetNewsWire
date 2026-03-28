@@ -7,6 +7,7 @@
 //
 
 import AppKit
+import SwiftUI
 import RSTree
 import Articles
 import Account
@@ -538,6 +539,26 @@ extension SidebarViewController: NSUserInterfaceValidations {
 			return NSPasteboard.general.canCopyAtLeastOneObject(selectedObjects)
 		}
 		return true
+	}
+}
+
+// MARK: - Article Filters
+
+extension SidebarViewController {
+
+	func presentArticleFilters(for feed: Feed) {
+		guard let window = view.window, window.attachedSheet == nil else {
+			return
+		}
+		let viewModel = ArticleFiltersViewModel(feed: feed)
+		var filtersView = ArticleFiltersView(viewModel: viewModel)
+		let hostingController = NSHostingController(rootView: filtersView)
+		let sheetWindow = NSWindow(contentViewController: hostingController)
+		filtersView.onDismiss = {
+			window.endSheet(sheetWindow)
+		}
+		hostingController.rootView = filtersView
+		window.beginSheet(sheetWindow)
 	}
 }
 
