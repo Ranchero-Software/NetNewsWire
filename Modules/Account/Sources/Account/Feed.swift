@@ -169,6 +169,15 @@ import Articles
 		}
 	}
 
+	public var articleFilters: [ArticleFilter]? {
+		get {
+			settings.articleFilters
+		}
+		set {
+			settings.articleFilters = newValue
+		}
+	}
+
 	// Folder Name: Sync Service Relationship ID
 	public var folderRelationship: [String: String]? {
 		get {
