@@ -44,6 +44,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}()
 	private static let headlineBaseParagraphStyle: NSParagraphStyle = {
 		let style = (baseWrappingParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
+		style.hyphenationFactor = 0.5
 		return style
 	}()
 	private static let summaryBaseParagraphStyle: NSParagraphStyle = {
