@@ -702,10 +702,14 @@ public extension CloudKitZone {
 		database?.add(op)
 	}
 
-	/// Fetch all the changes in the CKZone since the last time we checked
+	/// Fetch changes in the CKZone since the last time we checked, one page at a time.
+	/// After each page, records are processed and the change token is saved
+	/// so that sync can resume from where it left off if the app is suspended.
     func fetchChangesInZone(completion: @escaping (Result<Void, Error>) -> Void) {
+
 		Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public)")
 		var savedChangeToken = changeToken
+		var moreComing = false
 
 		var changedRecords = [CKRecord]()
 		var deletedRecordKeys = [CloudKitRecordKey]()
@@ -713,15 +717,8 @@ public extension CloudKitZone {
 		let zoneConfig = CKFetchRecordZoneChangesOperation.ZoneConfiguration()
 		zoneConfig.previousServerChangeToken = changeToken
 		let op = CKFetchRecordZoneChangesOperation(recordZoneIDs: [zoneID], configurationsByRecordZoneID: [zoneID: zoneConfig])
-        op.fetchAllChanges = true
+		op.fetchAllChanges = false
 		op.qualityOfService = Self.qualityOfService
-
-        op.recordZoneChangeTokensUpdatedBlock = { _, token, _ in
-			Task { @MainActor in
-				Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) recordZoneChangeTokensUpdatedBlock token: \(token)")
-				savedChangeToken = token
-			}
-        }
 
         op.recordWasChangedBlock = { _, result in
 			Task { @MainActor in
@@ -741,15 +738,16 @@ public extension CloudKitZone {
 			}
         }
 
-        op.recordZoneFetchResultBlock = { _, result in
+		op.recordZoneFetchResultBlock = { _, result in
 			Task { @MainActor in
 				Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) recordZoneFetchResultBlock")
-				if case .success(let (serverChangeToken, _, _)) = result {
-					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) serverChangeToken \(serverChangeToken)")
+				if case .success(let (serverChangeToken, _, serverMoreComing)) = result {
+					Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) serverChangeToken \(serverChangeToken) moreComing \(serverMoreComing)")
 					savedChangeToken = serverChangeToken
+					moreComing = serverMoreComing
 				}
 			}
-        }
+		}
 
         op.fetchRecordZoneChangesResultBlock = { [weak self] result in
 			Task { @MainActor [weak self] in
@@ -766,7 +764,12 @@ public extension CloudKitZone {
 					do {
 						try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
 						self.changeToken = savedChangeToken
-						completion(.success(()))
+						if moreComing {
+							Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) more records to fetch, continuing")
+							self.fetchChangesInZone(completion: completion)
+						} else {
+							completion(.success(()))
+						}
 					} catch {
 						completion(.failure(error))
 					}
@@ -778,7 +781,12 @@ public extension CloudKitZone {
 						do {
 							try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
 							self.changeToken = savedChangeToken
-							completion(.success(()))
+							if moreComing {
+								Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) more records to fetch, continuing")
+								self.fetchChangesInZone(completion: completion)
+							} else {
+								completion(.success(()))
+							}
 						} catch {
 							completion(.failure(error))
 						}
