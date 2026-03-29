@@ -203,7 +203,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 				if statusCode == HTTPResponseCode.tooManyRequests {
 					handle429Response(dataTask, response)
 				} else if (400...499).contains(statusCode), let url = response.url {
-					http4xxResponses[url] = HTTP4xxResponse(statusCode)
+					cache4xxResponse(url: url, response: HTTP4xxResponse(statusCode))
 				}
 
 				return
@@ -448,6 +448,13 @@ private extension DownloadSession {
 	}
 
 	// MARK: - 400-499 responses
+
+	func cache4xxResponse(url: URL, response: HTTP4xxResponse) {
+		guard !url.isYoutubeURL else {
+			return
+		}
+		http4xxResponses[url] = response
+	}
 
 	// Remove 4xx responses placed in the cache more than a while ago.
 	func cleanUp4xxResponsesCache() {
