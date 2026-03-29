@@ -43,6 +43,9 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let aiSummaryAPIURL = "aiSummaryAPIURL"
+		static let aiSummaryAPIKey = "aiSummaryAPIKey"
+		static let aiSummaryModel = "aiSummaryModel"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -317,6 +320,51 @@ final class AppDefaults: Sendable {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
 		}
+	}
+
+	var aiSummaryAPIURL: String {
+		get {
+			let fallback = "https://api.openai.com/v1"
+			guard let urlString = AppDefaults.string(for: Key.aiSummaryAPIURL)?.trimmingCharacters(in: .whitespacesAndNewlines),
+				  !urlString.isEmpty else {
+				return fallback
+			}
+			return urlString
+		}
+		set {
+			let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			AppDefaults.setString(for: Key.aiSummaryAPIURL, trimmed.isEmpty ? nil : trimmed)
+		}
+	}
+
+	var aiSummaryAPIKey: String {
+		get {
+			AppDefaults.string(for: Key.aiSummaryAPIKey) ?? ""
+		}
+		set {
+			let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			AppDefaults.setString(for: Key.aiSummaryAPIKey, trimmed.isEmpty ? nil : trimmed)
+		}
+	}
+
+	var aiSummaryModel: String {
+		get {
+			let fallback = "gpt-4o-mini"
+			guard let model = AppDefaults.string(for: Key.aiSummaryModel)?.trimmingCharacters(in: .whitespacesAndNewlines),
+				  !model.isEmpty else {
+				return fallback
+			}
+			return model
+		}
+		set {
+			let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+			AppDefaults.setString(for: Key.aiSummaryModel, trimmed.isEmpty ? nil : trimmed)
+		}
+	}
+
+	var isAISummaryConfigured: Bool {
+		!aiSummaryAPIURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
+		!aiSummaryAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
 	}
 
 	init() {

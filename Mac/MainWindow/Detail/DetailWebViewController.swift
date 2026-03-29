@@ -171,6 +171,10 @@ final class DetailWebViewController: NSViewController {
 	override func scrollPageUp(_ sender: Any?) {
 		webView.scrollPageUp(sender)
 	}
+
+	func reloadContentMaintainingScrollPosition() {
+		reloadHTMLMaintainingScrollPosition()
+	}
 }
 
 // MARK: - WKScriptMessageHandler
@@ -203,6 +207,11 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void) {
 		if navigationAction.navigationType == .linkActivated {
 			if let url = navigationAction.request.url {
+				if isAISummaryRetryURL(url) {
+					_ = NSApp.sendAction(#selector(MainWindowController.summarizeCurrentArticle(_:)), to: nil, from: self)
+					decisionHandler(.cancel)
+					return
+				}
 				self.openInBrowser(url, flags: navigationAction.modifierFlags)
 			}
 			decisionHandler(.cancel)
@@ -255,6 +264,12 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 // MARK: - Private
 
 private extension DetailWebViewController {
+
+	func isAISummaryRetryURL(_ url: URL) -> Bool {
+		url.scheme?.lowercased() == "nnw" &&
+		url.host?.lowercased() == "ai-summary" &&
+		url.path.lowercased() == "/retry"
+	}
 
 	func reloadArticleImage() {
 		guard let article = article else { return }

@@ -43,6 +43,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		return window?.toolbar?.existingItem(withIdentifier: .share)
 	}
 
+	private var aiSummaryToolbarButton: NSButton? {
+		return window?.toolbar?.existingItem(withIdentifier: .aiSummary)?.view as? NSButton
+	}
+
 	private static var detailViewMinimumThickness = 384
 	private var sidebarViewController: SidebarViewController?
 	private var timelineContainerViewController: TimelineContainerViewController?
@@ -220,7 +224,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	// MARK: - Toolbar
 
 	@objc func makeToolbarValidate() {
-
+		updateAISummaryToolbarAppearance()
 		window?.toolbar?.validateVisibleItems()
 	}
 
@@ -274,6 +278,13 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 		if item.action == #selector(toolbarShowShareMenu(_:)) {
 			return canShowShareMenu()
+		}
+
+		if item.action == #selector(summarizeCurrentArticle(_:)) {
+			guard let article = oneSelectedArticle else {
+				return false
+			}
+			return !AISummaryStore.shared.isLoading(for: article)
 		}
 
 		if item.action == #selector(moveFocusToSearchField(_:)) {
@@ -543,6 +554,34 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
 	}
 
+	@IBAction func summarizeCurrentArticle(_ sender: Any?) {
+		guard let article = oneSelectedArticle else {
+			return
+		}
+		guard !AISummaryStore.shared.isLoading(for: article) else {
+			return
+		}
+
+		AISummaryStore.shared.setLoading(true, for: article)
+		detailViewController?.reloadCurrentArticleRendering()
+		makeToolbarValidate()
+
+		Task { @MainActor in
+			defer {
+				AISummaryStore.shared.setLoading(false, for: article)
+				detailViewController?.reloadCurrentArticleRendering()
+				makeToolbarValidate()
+			}
+
+			do {
+				let summary = try await AISummaryService.shared.summarize(article: article)
+				AISummaryStore.shared.setSummary(summary, for: article)
+			} catch {
+				AISummaryStore.shared.setErrorMessage(error.localizedDescription, for: article)
+			}
+		}
+	}
+
 	@IBAction func moveFocusToSearchField(_ sender: Any?) {
 		guard let searchField = currentSearchField else {
 			return
@@ -791,6 +830,7 @@ extension NSToolbarItem.Identifier {
 	static let readerView = NSToolbarItem.Identifier("readerView")
 	static let openInBrowser = NSToolbarItem.Identifier("openInBrowser")
 	static let share = NSToolbarItem.Identifier("share")
+	static let aiSummary = NSToolbarItem.Identifier("aiSummary")
 	static let articleThemeMenu = NSToolbarItem.Identifier("articleThemeMenu")
 	static let cleanUp = NSToolbarItem.Identifier("cleanUp")
 }
@@ -852,6 +892,10 @@ extension MainWindowController: NSToolbarDelegate {
 			let title = NSLocalizedString("Share", comment: "Share")
 			return buildToolbarButton(.share, title, Assets.Images.share, "toolbarShowShareMenu:")
 
+		case .aiSummary:
+			let title = NSLocalizedString("AI Summary", comment: "AI Summary")
+			return buildToolbarButton(.aiSummary, title, aiSummaryToolbarImage(), "summarizeCurrentArticle:")
+
 		case .openInBrowser:
 			let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
 			return buildToolbarButton(.openInBrowser, title, Assets.Images.openInBrowser, "openArticleInBrowser:")
@@ -895,6 +939,7 @@ extension MainWindowController: NSToolbarDelegate {
 			.markRead,
 			.markStar,
 			.readerView,
+			.aiSummary,
 			.openInBrowser,
 			.share,
 			.articleThemeMenu,
@@ -917,6 +962,7 @@ extension MainWindowController: NSToolbarDelegate {
 			.markStar,
 			.nextUnread,
 			.readerView,
+			.aiSummary,
 			.share,
 			.openInBrowser,
 			.flexibleSpace,
@@ -939,6 +985,10 @@ extension MainWindowController: NSToolbarDelegate {
 			searchItem.searchField.target = self
 			searchItem.searchField.action = #selector(runSearch(_:))
 			currentSearchField = searchItem.searchField
+		}
+
+		if item.itemIdentifier == .aiSummary {
+			updateAISummaryToolbarAppearance()
 		}
 	}
 
@@ -1424,6 +1474,32 @@ private extension MainWindowController {
 		return toolbarItem
 	}
 
+	func aiSummaryToolbarImage() -> NSImage {
+		if #available(macOS 11.0, *), let symbol = NSImage(systemSymbolName: "sparkles", accessibilityDescription: NSLocalizedString("AI Summary", comment: "AI Summary")) {
+			return symbol
+		}
+		return Assets.Images.share
+	}
+
+	func aiSummaryLoadingToolbarImage() -> NSImage {
+		if #available(macOS 11.0, *), let symbol = NSImage(systemSymbolName: "hourglass", accessibilityDescription: NSLocalizedString("Generating summary", comment: "Generating summary")) {
+			return symbol
+		}
+		return Assets.Images.share
+	}
+
+	func updateAISummaryToolbarAppearance() {
+		guard let button = aiSummaryToolbarButton else {
+			return
+		}
+
+		if let article = oneSelectedArticle, AISummaryStore.shared.isLoading(for: article) {
+			button.image = aiSummaryLoadingToolbarImage()
+		} else {
+			button.image = aiSummaryToolbarImage()
+		}
+	}
+
 	func buildNewSidebarItemMenu() -> NSMenu {
 		let menu = NSMenu()
 
@@ -1462,4 +1538,5 @@ private extension MainWindowController {
 		articleThemeMenuToolbarItem.menu = articleThemeMenu
 		articleThemePopUpButton?.menu = articleThemeMenu
 	}
+
 }

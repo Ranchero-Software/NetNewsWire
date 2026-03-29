@@ -29,7 +29,7 @@ final class OpenInBrowserActivity: UIActivity {
 	}
 
 	override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
-		return true
+		return activityItems.contains(where: { $0 is URL })
 	}
 
 	override func prepare(withActivityItems activityItems: [Any]) {

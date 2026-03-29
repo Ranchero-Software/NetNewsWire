@@ -276,8 +276,23 @@ final class WebViewController: UIViewController {
 	}
 
 	func showActivityDialog(popOverBarButtonItem: UIBarButtonItem? = nil) {
-		guard let url = article?.preferredURL else { return }
-		let activityViewController = UIActivityViewController(url: url, title: article?.title, applicationActivities: [FindInArticleActivity(), OpenInBrowserActivity()])
+		guard let article else { return }
+		let activities: [UIActivity] = [
+			AISummaryActivity(handler: { [weak self] in
+				self?.showAISummary()
+			}),
+			FindInArticleActivity(),
+			OpenInBrowserActivity()
+		]
+
+		let activityViewController: UIActivityViewController
+		if let url = article.preferredURL {
+			activityViewController = UIActivityViewController(url: url, title: article.title, applicationActivities: activities)
+		} else {
+			let fallbackText = article.title ?? NSLocalizedString("Article", comment: "Article")
+			activityViewController = UIActivityViewController(activityItems: [fallbackText], applicationActivities: activities)
+		}
+
 		activityViewController.popoverPresentationController?.barButtonItem = popOverBarButtonItem
 		present(activityViewController, animated: true)
 	}
@@ -288,6 +303,28 @@ final class WebViewController: UIViewController {
 			UIApplication.shared.open(url, options: [:])
 		} else {
 			openURLInSafariViewController(url)
+		}
+	}
+
+	func showAISummary() {
+		guard let article else { return }
+		guard !AISummaryStore.shared.isLoading(for: article) else { return }
+
+		AISummaryStore.shared.setLoading(true, for: article)
+		fullReload()
+
+		Task { @MainActor [weak self] in
+			defer {
+				AISummaryStore.shared.setLoading(false, for: article)
+				self?.fullReload()
+			}
+
+			do {
+				let summary = try await AISummaryService.shared.summarize(article: article)
+				AISummaryStore.shared.setSummary(summary, for: article)
+			} catch {
+				AISummaryStore.shared.setErrorMessage(error.localizedDescription, for: article)
+			}
 		}
 	}
 }
@@ -349,7 +386,7 @@ extension WebViewController: UIContextMenuInteractionDelegate {
 			}
 
 			menus.append(UIMenu(title: "", options: .displayInline, children: [self.toggleArticleExtractorAction()]))
-			menus.append(UIMenu(title: "", options: .displayInline, children: [self.shareAction()]))
+			menus.append(UIMenu(title: "", options: .displayInline, children: [self.aiSummaryAction(), self.shareAction()]))
 
 			return UIMenu(title: "", children: menus)
         }
@@ -378,6 +415,12 @@ extension WebViewController: WKNavigationDelegate {
 		if navigationAction.navigationType == .linkActivated {
 			guard let url = navigationAction.request.url else {
 				decisionHandler(.allow)
+				return
+			}
+
+			if isAISummaryRetryURL(url) {
+				decisionHandler(.cancel)
+				showAISummary()
 				return
 			}
 
@@ -815,6 +858,13 @@ private extension WebViewController {
 		}
 	}
 
+	func aiSummaryAction() -> UIAction {
+		let title = NSLocalizedString("AI Summary", comment: "AI Summary")
+		return UIAction(title: title, image: UIImage(systemName: "sparkles")) { [weak self] _ in
+			self?.showAISummary()
+		}
+	}
+
 	// If the resource cannot be opened with an installed app, present the web view.
 	func openURL(_ url: URL) {
 		UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { didOpen in
@@ -831,6 +881,12 @@ private extension WebViewController {
 			return
 		}
 		present(viewController, animated: true)
+	}
+
+	func isAISummaryRetryURL(_ url: URL) -> Bool {
+		url.scheme?.lowercased() == "nnw" &&
+		url.host?.lowercased() == "ai-summary" &&
+		url.path.lowercased() == "/retry"
 	}
 }
 

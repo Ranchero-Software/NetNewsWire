@@ -99,6 +99,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		await currentWebViewController.canScrollUp()
 	}
 
+	func reloadCurrentArticleRendering() {
+		currentWebViewController.reloadContentMaintainingScrollPosition()
+	}
+
 	override func scrollPageDown(_ sender: Any?) {
 		currentWebViewController.scrollPageDown(sender)
 	}
