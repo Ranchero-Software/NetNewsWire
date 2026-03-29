@@ -226,7 +226,7 @@ struct CloudKitStatsView: View {
 	// MARK: - Shared Helpers
 
 	private var syncUnreadContent: Bool {
-		UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		AccountManager.shared.syncArticleContentForUnreadArticles
 	}
 
 	private func iconStatsRow(_ label: String, systemImage: String, iconColor: Color, _ count: Int, iconBaselineOffset: CGFloat = 0, isWarning: Bool = false) -> some View {

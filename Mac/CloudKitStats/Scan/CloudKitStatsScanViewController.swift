@@ -146,7 +146,7 @@ private extension CloudKitStatsScanViewController {
 		contentView.statusSectionView.animator().alphaValue = statusSectionDone ? 1.0 : CloudKitStatsLayout.fetchingAlpha
 		contentView.articleSectionView.animator().alphaValue = isFetching ? CloudKitStatsLayout.fetchingAlpha : 1.0
 
-		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
 		updateWarningColor(contentView.unreadContentCountLabel, count: syncUnreadContent ? 0 : stats.unreadArticleCount)
 		updateWarningColor(contentView.readContentCountLabel, count: stats.readArticleCount)
 	}

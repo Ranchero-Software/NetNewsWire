@@ -32,7 +32,7 @@ final class AccountInspectorViewController: UITableViewController {
 		nameTextField.text = account.name
 		nameTextField.delegate = self
 		activeSwitch.isOn = account.isActive
-		syncContentSwitch.isOn = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		syncContentSwitch.isOn = AccountManager.shared.syncArticleContentForUnreadArticles
 
 		navigationItem.title = account.nameForDisplay
 
@@ -59,7 +59,7 @@ final class AccountInspectorViewController: UITableViewController {
 	}
 
 	@IBAction func syncContentSwitchDidChange(_ sender: UISwitch) {
-		UserDefaults.standard.set(sender.isOn, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		AccountManager.shared.syncArticleContentForUnreadArticles = sender.isOn
 	}
 
 	@objc func done() {

@@ -81,19 +81,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	static var syncArticleContentForUnreadArticles: Bool {
-		get {
-			UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
-		}
-	}
-
 	init(dataFolder: String) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		let syncArticleContentForUnreadArticles: @Sendable () -> Bool = {
-			UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+			UserDefaults.standard.bool(forKey: AccountManager.syncArticleContentForUnreadArticlesKey)
 		}
 		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
 		self.accountZone = CloudKitAccountZone(container: container)
@@ -108,15 +99,6 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: refresher)
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: syncProgress)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
-	}
-
-	static func migrateiCloudSyncArticleContentForUnreadArticlesSetting(hasiCloudAccount: Bool) {
-		// iCloudSyncArticleContentForUnreadArticles should be set to false unless
-		// the user already has an iCloud account.
-		guard UserDefaults.standard.object(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey) == nil else {
-			return
-		}
-		syncArticleContentForUnreadArticles = hasiCloudAccount
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
@@ -531,7 +513,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		guard let account else {
 			throw CloudKitAccountDelegateError.unknown
 		}
-		let syncUnreadContent = Self.syncArticleContentForUnreadArticles
+		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
 		do {
 			try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
 		} catch {
@@ -908,7 +890,7 @@ private extension CloudKitAccountDelegate {
 
 		Self.logger.info("CloudKitAccountDelegate: running weekly record cleanup")
 		do {
-			let syncUnreadContent = Self.syncArticleContentForUnreadArticles
+			let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
 			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {

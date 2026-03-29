@@ -22,7 +22,7 @@ struct AccountsDetailView: View {
 		self.onCredentials = onCredentials
 		_accountName = State(initialValue: account.name ?? "")
 		_isActive = State(initialValue: account.isActive)
-		_syncUnreadContent = State(initialValue: UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey))
+		_syncUnreadContent = State(initialValue: AccountManager.shared.syncArticleContentForUnreadArticles)
 	}
 
 	private var showCredentialsButton: Bool {
@@ -90,7 +90,7 @@ struct AccountsDetailView: View {
 			if account.type == .cloudKit {
 				Toggle("Sync content of unread articles", isOn: $syncUnreadContent)
 					.onChange(of: syncUnreadContent) {
-						UserDefaults.standard.set(syncUnreadContent, forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+						AccountManager.shared.syncArticleContentForUnreadArticles = syncUnreadContent
 					}
 					.padding(.top, 12)
 

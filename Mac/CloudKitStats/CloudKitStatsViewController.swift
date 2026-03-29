@@ -216,7 +216,7 @@ private extension CloudKitStatsViewController {
 	}
 
 	func staleCleanUpConfirmationText() -> String {
-		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
 		if syncUnreadContent {
 			return NSLocalizedString("This will delete any read content records.\n\nThis may take several minutes.", comment: "Clean up confirmation when sync unread is on and plan is stale")
 		} else {

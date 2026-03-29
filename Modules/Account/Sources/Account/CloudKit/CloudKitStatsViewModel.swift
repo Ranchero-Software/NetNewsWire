@@ -140,7 +140,7 @@ public enum CloudKitCleanUpStatus {
 		if dryRunCleanUp {
 			return Self.dryRunCleanUpPlan
 		}
-		let syncUnreadContent = UserDefaults.standard.bool(forKey: Account.iCloudSyncArticleContentForUnreadArticlesKey)
+		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
 		return stats.cleanUpPlan(syncUnreadContent: syncUnreadContent)
 	}
 
