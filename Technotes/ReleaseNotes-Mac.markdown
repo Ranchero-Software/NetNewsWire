@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 7.0.4b4 7041 29 Mar 2026 — branch: main tag: mac-7.0.4b4
+
+Sync the setting for syncing unread content in iCloud
+Do incremental syncing with iCloud, so it doesn’t have to start over if it gets interrupted
+Add special case for YouTube — don’t put a feed in timeout after a 4xx response. Keep trying. (YouTube feeds have been giving intermittent 4xx responses lately)
+
 ### 7.0.4b3 7040 26 Mar 2026 — branch: main tag: mac-7.0.4b3
 
 Simplified iCloud Storage Stats — focusing on cleaning up article content records that can be removed
