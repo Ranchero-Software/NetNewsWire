@@ -465,6 +465,10 @@ let appName = "NetNewsWire"
 			return !isDisplayingSheet && !AccountManager.shared.activeAccounts.isEmpty
 		}
 
+		if item.action == #selector(showCloudKitStats(_:)) {
+			return AccountManager.shared.hasiCloudAccount
+		}
+
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
 			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
 		}
