@@ -493,6 +493,10 @@ import ErrorLog
 private extension AccountManager {
 
 	@objc nonisolated func handleUbiquitousKeyValueStoreDidChangeExternally(_ note: Notification) {
+		guard !Platform.isRunningUnitTests else {
+			return
+		}
+
 		// Extract only Sendable primitives before hopping to the MainActor.
 		let changeReason = note.userInfo?[NSUbiquitousKeyValueStoreChangeReasonKey] as? Int
 		let changedKeys = note.userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String]
@@ -525,6 +529,10 @@ private extension AccountManager {
 			return
 		}
 
+		guard !Platform.isRunningUnitTests else {
+			return
+		}
+
 		// Check if another device already set a value via iCloud key-value store.
 		if NSUbiquitousKeyValueStore.default.object(forKey: Self.syncArticleContentForUnreadArticlesKey) != nil {
 			let iCloudValue = NSUbiquitousKeyValueStore.default.bool(forKey: Self.syncArticleContentForUnreadArticlesKey)
@@ -537,6 +545,9 @@ private extension AccountManager {
 
 	func seedSyncArticleContentForUnreadArticlesInUbiquitousKeyValueStore() {
 		assert(Thread.isMainThread)
+		guard !Platform.isRunningUnitTests else {
+			return
+		}
 		guard NSUbiquitousKeyValueStore.default.object(forKey: Self.syncArticleContentForUnreadArticlesKey) == nil else {
 			return
 		}
