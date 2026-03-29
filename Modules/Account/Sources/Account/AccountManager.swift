@@ -36,9 +36,11 @@ import ErrorLog
 
 	public var syncArticleContentForUnreadArticles: Bool {
 		get {
-			UserDefaults.standard.bool(forKey: Self.syncArticleContentForUnreadArticlesKey)
+			assert(Thread.isMainThread)
+			return UserDefaults.standard.bool(forKey: Self.syncArticleContentForUnreadArticlesKey)
 		}
 		set {
+			assert(Thread.isMainThread)
 			UserDefaults.standard.set(newValue, forKey: Self.syncArticleContentForUnreadArticlesKey)
 			NSUbiquitousKeyValueStore.default.set(newValue, forKey: Self.syncArticleContentForUnreadArticlesKey)
 		}
@@ -490,35 +492,33 @@ import ErrorLog
 
 private extension AccountManager {
 
-	@objc func handleUbiquitousKeyValueStoreDidChangeExternally(_ note: Notification) {
-		guard let changeReason = note.userInfo?[NSUbiquitousKeyValueStoreChangeReasonKey] as? Int else {
-			return
-		}
+	@objc nonisolated func handleUbiquitousKeyValueStoreDidChangeExternally(_ note: Notification) {
+		// Extract only Sendable primitives before hopping to the MainActor.
+		let changeReason = note.userInfo?[NSUbiquitousKeyValueStoreChangeReasonKey] as? Int
+		let changedKeys = note.userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String]
 
-		// Ignore account changes — the store may have been wiped, and
-		// bool(forKey:) would return false for a missing key, silently
-		// turning off the setting.
-		guard changeReason == NSUbiquitousKeyValueStoreServerChange || changeReason == NSUbiquitousKeyValueStoreInitialSyncChange else {
-			return
-		}
+		Task { @MainActor in
+			assert(Thread.isMainThread)
+			guard let changeReason, changeReason == NSUbiquitousKeyValueStoreServerChange || changeReason == NSUbiquitousKeyValueStoreInitialSyncChange else {
+				return
+			}
 
-		guard let changedKeys = note.userInfo?[NSUbiquitousKeyValueStoreChangedKeysKey] as? [String] else {
-			return
-		}
-		guard changedKeys.contains(Self.syncArticleContentForUnreadArticlesKey) else {
-			return
-		}
+			guard let changedKeys, changedKeys.contains(Self.syncArticleContentForUnreadArticlesKey) else {
+				return
+			}
 
-		// Only apply if the store actually has a value for the key.
-		guard NSUbiquitousKeyValueStore.default.object(forKey: Self.syncArticleContentForUnreadArticlesKey) != nil else {
-			return
-		}
+			// Only apply if the store actually has a value for the key.
+			guard NSUbiquitousKeyValueStore.default.object(forKey: Self.syncArticleContentForUnreadArticlesKey) != nil else {
+				return
+			}
 
-		let newValue = NSUbiquitousKeyValueStore.default.bool(forKey: Self.syncArticleContentForUnreadArticlesKey)
-		UserDefaults.standard.set(newValue, forKey: Self.syncArticleContentForUnreadArticlesKey)
+			let newValue = NSUbiquitousKeyValueStore.default.bool(forKey: Self.syncArticleContentForUnreadArticlesKey)
+			UserDefaults.standard.set(newValue, forKey: Self.syncArticleContentForUnreadArticlesKey)
+		}
 	}
 
 	func migrateSyncArticleContentForUnreadArticlesSetting(hasiCloudAccount: Bool) {
+		assert(Thread.isMainThread)
 		// syncArticleContentForUnreadArticles should be set to false unless
 		// the user already has an iCloud account.
 		guard UserDefaults.standard.object(forKey: Self.syncArticleContentForUnreadArticlesKey) == nil else {
@@ -536,6 +536,7 @@ private extension AccountManager {
 	}
 
 	func seedSyncArticleContentForUnreadArticlesInUbiquitousKeyValueStore() {
+		assert(Thread.isMainThread)
 		guard NSUbiquitousKeyValueStore.default.object(forKey: Self.syncArticleContentForUnreadArticlesKey) == nil else {
 			return
 		}
@@ -641,3 +642,4 @@ private struct AccountSpecifier {
 		return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
 	}
 }
+
