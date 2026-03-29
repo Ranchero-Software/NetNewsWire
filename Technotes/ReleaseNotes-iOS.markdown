@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 7.0.4 build 7041 29 Mar 2026 - branch: main tag: iOS-7.0.4-7041
+
+Sync the setting for syncing unread content in iCloud
+Do incremental syncing with iCloud, so it doesn’t have to start over if it gets interrupted
+Add special case for YouTube — don’t put a feed in timeout after a 4xx response. Keep trying. (YouTube feeds have been giving intermittent 4xx responses lately)
+Avoid hyphenation (almsot entirely) for titles in the timeline
+
 ### 7.0.4 build 7040 26 Mar 2026 - branch: main tag: iOS-7.0.4-7040
 
 New iCloud sync feature — Settings > iCloud Storage Stats. Allows you to view stats and clean up storage. More details here: <https://netnewswire.com/help/optimize-icloud.html>
