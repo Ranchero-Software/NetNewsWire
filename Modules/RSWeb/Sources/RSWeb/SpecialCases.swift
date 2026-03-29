@@ -13,6 +13,7 @@ nonisolated public let localeForLowercasing = Locale(identifier: "en_US")
 nonisolated public struct SpecialCase {
 	public static let rachelByTheBayHostName = "rachelbythebay.com"
 	public static let openRSSOrgHostName = "openrss.org"
+	public static let youtubeHostName = "youtube.com"
 
 	public static func urlStringContainSpecialCase(_ urlString: String, _ specialCases: [String]) -> Bool {
 		let lowerURLString = urlString.lowercased(with: localeForLowercasing)
@@ -39,6 +40,13 @@ nonisolated extension URL {
 			return false
 		}
 		return SpecialCase.urlStringContainSpecialCase(host, [SpecialCase.rachelByTheBayHostName])
+	}
+
+	public var isYoutubeURL: Bool {
+		guard let host = host() else {
+			return false
+		}
+		return SpecialCase.urlStringContainSpecialCase(host, [SpecialCase.youtubeHostName])
 	}
 }
 
