@@ -15,6 +15,8 @@
 		<string>com.red-sweater.marsedit4</string>
 		<string>com.red-sweater.marsedit5</string>
 	</array>
+	<key>com.apple.developer.ubiquity-kvstore-identifier</key>
+	<string>$(TeamIdentifierPrefix)$(ORGANIZATION_IDENTIFIER).NetNewsWire</string>
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>$(APP_GROUP_ID)</string>
