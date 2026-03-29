@@ -5,7 +5,7 @@
 Sync the setting for syncing unread content in iCloud
 Do incremental syncing with iCloud, so it doesn’t have to start over if it gets interrupted
 Add special case for YouTube — don’t put a feed in timeout after a 4xx response. Keep trying. (YouTube feeds have been giving intermittent 4xx responses lately)
-Avoid hyphenation (almsot entirely) for titles in the timeline
+Avoid hyphenation (almost entirely) for titles in the timeline
 
 ### 7.0.4 build 7040 26 Mar 2026 - branch: main tag: iOS-7.0.4-7040
 
