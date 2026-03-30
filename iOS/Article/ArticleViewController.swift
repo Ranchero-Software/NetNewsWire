@@ -42,7 +42,7 @@ final class ArticleViewController: UIViewController {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
 		button.setImage(Assets.Images.articleExtractorOff, for: .normal)
-		button.tintColor = .label
+		button.tintColor = Assets.Colors.primaryAccent
 		return button
 	}()
 
