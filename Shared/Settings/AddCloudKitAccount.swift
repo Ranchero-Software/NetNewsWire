@@ -13,6 +13,7 @@ import AppKit
 #if canImport(UIKit)
 import UIKit
 #endif
+import RSCore
 
 enum AddCloudKitAccountError: LocalizedError, RecoverableError, Sendable {
 	case iCloudDriveMissing
@@ -52,7 +53,7 @@ enum AddCloudKitAccountError: LocalizedError, RecoverableError, Sendable {
 
 struct AddCloudKitAccountUtilities {
 	static var isiCloudDriveEnabled: Bool {
-		FileManager.default.ubiquityIdentityToken != nil
+		Platform.deviceHasiCloudAccount
 	}
 
 	@MainActor static func openiCloudSettings() {

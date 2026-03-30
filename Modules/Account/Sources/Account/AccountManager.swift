@@ -42,7 +42,9 @@ import ErrorLog
 		set {
 			assert(Thread.isMainThread)
 			UserDefaults.standard.set(newValue, forKey: Self.syncArticleContentForUnreadArticlesKey)
-			NSUbiquitousKeyValueStore.default.set(newValue, forKey: Self.syncArticleContentForUnreadArticlesKey)
+			if Platform.deviceHasiCloudAccount {
+				NSUbiquitousKeyValueStore.default.set(newValue, forKey: Self.syncArticleContentForUnreadArticlesKey)
+			}
 		}
 	}
 
@@ -138,7 +140,9 @@ import ErrorLog
 		readAccountsFromDisk()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUbiquitousKeyValueStoreDidChangeExternally(_:)), name: NSUbiquitousKeyValueStore.didChangeExternallyNotification, object: NSUbiquitousKeyValueStore.default)
-		NSUbiquitousKeyValueStore.default.synchronize()
+		if Platform.deviceHasiCloudAccount {
+			NSUbiquitousKeyValueStore.default.synchronize()
+		}
 
 		migrateSyncArticleContentForUnreadArticlesSetting(hasiCloudAccount: hasiCloudAccount)
 		seedSyncArticleContentForUnreadArticlesInUbiquitousKeyValueStore()
@@ -533,6 +537,11 @@ private extension AccountManager {
 			return
 		}
 
+		guard Platform.deviceHasiCloudAccount else {
+			syncArticleContentForUnreadArticles = false
+			return
+		}
+
 		// Check if another device already set a value via iCloud key-value store.
 		if NSUbiquitousKeyValueStore.default.object(forKey: Self.syncArticleContentForUnreadArticlesKey) != nil {
 			let iCloudValue = NSUbiquitousKeyValueStore.default.bool(forKey: Self.syncArticleContentForUnreadArticlesKey)
@@ -546,6 +555,9 @@ private extension AccountManager {
 	func seedSyncArticleContentForUnreadArticlesInUbiquitousKeyValueStore() {
 		assert(Thread.isMainThread)
 		guard !Platform.isRunningUnitTests else {
+			return
+		}
+		guard Platform.deviceHasiCloudAccount else {
 			return
 		}
 		guard NSUbiquitousKeyValueStore.default.object(forKey: Self.syncArticleContentForUnreadArticlesKey) == nil else {
