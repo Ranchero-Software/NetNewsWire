@@ -317,7 +317,12 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		super.updateConfiguration(using: state)
 
-		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+		var backgroundConfig: UIBackgroundConfiguration
+		if #available(iOS 18, *) {
+			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+		} else {
+			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
+		}
 		backgroundConfig.cornerRadius = 20
 
 		backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]

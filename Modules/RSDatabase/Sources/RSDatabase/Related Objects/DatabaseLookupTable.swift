@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Synchronization
+import os
 import RSDatabaseObjC
 
 // Implement a lookup table for a many-to-many relationship.
@@ -28,7 +28,7 @@ public final class DatabaseLookupTable: Sendable {
 	// the context of a serial dispatch queue. But the Mutex proves
 	// to the compiler that this is Sendable, and the cost of that is so small.
 	// (The Mutex will never face contention.)
-	private let objectIDsWithNoRelatedObjects = Mutex(Set<String>())
+	private let objectIDsWithNoRelatedObjects = OSAllocatedUnfairLock(initialState: Set<String>())
 
 	public init(name: String, objectIDKey: String, relatedObjectIDKey: String, relatedTable: DatabaseRelatedObjectsTable, relationshipName: String) {
 		self.name = name

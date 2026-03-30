@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Synchronization
+import os
 
 public final class ArticleStatus: Hashable, Sendable {
 
@@ -27,7 +27,7 @@ public final class ArticleStatus: Hashable, Sendable {
 		var starred: Bool
 	}
 
-	private let state: Mutex<State>
+	private let state: OSAllocatedUnfairLock<State>
 
 	public var read: Bool {
 		get {
@@ -49,7 +49,7 @@ public final class ArticleStatus: Hashable, Sendable {
 
 	public init(articleID: String, read: Bool, starred: Bool, dateArrived: Date) {
 		self.articleID = articleID
-		self.state = Mutex(State(read: read, starred: starred))
+		self.state = OSAllocatedUnfairLock(initialState: State(read: read, starred: starred))
 		self.dateArrived = dateArrived
 	}
 

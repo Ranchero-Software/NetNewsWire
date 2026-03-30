@@ -8,9 +8,9 @@
 
 import Foundation
 import RSCore
-import Synchronization
+import os
 
-private let databaseIDCache = Mutex([String: String]())
+private let databaseIDCache = OSAllocatedUnfairLock(initialState: [String: String]())
 
 public func databaseIDWithString(_ s: String) -> String {
 	databaseIDCache.withLock { cache in

@@ -8,7 +8,7 @@
 
 import UIKit
 import MobileCoreServices
-import Synchronization
+import os
 import UniformTypeIdentifiers
 import Social
 import Account
@@ -24,7 +24,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	private struct State {
 		var url: URL?
 	}
-	private let state = Mutex(State())
+	private let state = OSAllocatedUnfairLock(initialState: State())
 
 	nonisolated private var url: URL? {
 		get {

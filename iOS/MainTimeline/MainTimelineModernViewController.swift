@@ -188,7 +188,9 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		navigationItem.title = nil // Don’t let "Timeline" accidentally show
 		navigationItem.largeTitleDisplayMode = .never
 		navigationItem.titleView = navigationBarTitleLabel
-		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
+		if #available(iOS 26, *) {
+			navigationItem.subtitleView = navigationBarSubtitleTitleLabel
+		}
         // Do any additional setup after loading the view.
     }
 
@@ -273,7 +275,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	}
 
 	func updateNavigationBarSubtitle(_ text: String) {
-		if let label = navigationItem.subtitleView as? UILabel {
+		if #available(iOS 26, *), let label = navigationItem.subtitleView as? UILabel {
 			label.text = text
 			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
 			label.sizeToFit()
@@ -631,7 +633,9 @@ private extension MainTimelineModernViewController {
 
 		if traitCollection.userInterfaceIdiom == .pad {
 			searchController.searchBar.selectedScopeButtonIndex = 1
-			navigationItem.searchBarPlacementAllowsExternalIntegration = true
+			if #available(iOS 26, *) {
+				navigationItem.searchBarPlacementAllowsExternalIntegration = true
+			}
 		}
 	}
 
@@ -848,7 +852,9 @@ private extension MainTimelineModernViewController {
 	func configureToolbar() {
 		if traitCollection.userInterfaceIdiom == .phone {
 			toolbarItems?.insert(.flexibleSpace(), at: 1)
-			toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
+			if #available(iOS 26, *) {
+				toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
+			}
 		}
 	}
 
@@ -857,7 +863,11 @@ private extension MainTimelineModernViewController {
 		navigationItem.rightBarButtonItem = shouldShowFilterButton ? filterButton : nil
 
 		if isReadArticlesFiltered {
-			filterButton.style = .prominent
+			if #available(iOS 26, *) {
+				filterButton.style = .prominent
+			} else {
+				filterButton.style = .done
+			}
 			filterButton.tintColor = Assets.Colors.primaryAccent
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {

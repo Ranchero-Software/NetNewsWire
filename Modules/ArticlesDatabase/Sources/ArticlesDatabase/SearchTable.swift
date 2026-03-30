@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Synchronization
 import RSCore
 import RSDatabase
 import RSDatabaseObjC

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Synchronization
+import os
 import os
 import SQLite3
 import RSDatabaseObjC
@@ -17,7 +17,7 @@ import RSDatabaseObjC
 /// On iOS, the queue can be suspended
 /// in order to support background refreshing.
 public final class DatabaseQueue: Sendable {
-	private struct State {
+	private struct State: @unchecked Sendable {
 		var isCallingDatabase = false
 		var isSuspended = false
 		let database: FMDatabase
@@ -27,7 +27,7 @@ public final class DatabaseQueue: Sendable {
 		}
 	}
 
-	private let state: Mutex<State>
+	private let state: OSAllocatedUnfairLock<State>
 	private let databasePath: String
 	private let serialDispatchQueue: DispatchQueue
 
@@ -40,7 +40,7 @@ public final class DatabaseQueue: Sendable {
 
 		self.databasePath = databasePath
 		let database = FMDatabase(path: databasePath)!
-		self.state = Mutex(State(database))
+		self.state = OSAllocatedUnfairLock(initialState: State(database))
 
 		self.state.withLock { openDatabase($0.database) }
 	}

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Synchronization
+import os
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
@@ -23,7 +23,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	private let searchTable: SearchTable
 	private let authorsLookupTable: DatabaseLookupTable
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
-	private let articlesCache = Mutex([String: Article]())
+	private let articlesCache = OSAllocatedUnfairLock(initialState: [String: Article]())
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	let articleCutoffDate = Date().bySubtracting(days: 90)

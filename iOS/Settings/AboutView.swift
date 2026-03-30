@@ -15,7 +15,7 @@ struct AboutView: View {
 				Image("nnwFeedIcon")
 					.resizable()
 					.frame(width: 100, height: 100)
-					.clipShape(ConcentricRectangle(corners: .fixed(20)))
+					.clipShape(RoundedRectangle(cornerRadius: 20))
 
 				Text(verbatim: "NetNewsWire")
 					.font(.largeTitle)

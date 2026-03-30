@@ -14,6 +14,9 @@ final class RefreshProgressView: UIView {
 	private let progressView = UIProgressView(progressViewStyle: .default)
 	private let label = UILabel()
 
+	// TODO: Remove testing flag — hardcoded 50% for testing visibility
+	private let isTesting = true
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		setup()
@@ -82,14 +85,16 @@ private extension RefreshProgressView {
 
 		isAccessibilityElement = true
 		accessibilityTraits = [.updatesFrequently, .notEnabled]
-
-		// TODO: Remove — hardcoded 50% for testing visibility
-		label.isHidden = true
-		progressView.isHidden = false
-		progressView.setProgress(0.5, animated: false)
 	}
 
 	func progressChanged(animated: Bool) {
+		if isTesting {
+			label.isHidden = true
+			progressView.isHidden = false
+			progressView.setProgress(0.5, animated: false)
+			return
+		}
+
 		// Layout may crash if not in the view hierarchy.
 		// https://github.com/Ranchero-Software/NetNewsWire/issues/1764
 		let isInViewHierarchy = self.superview != nil

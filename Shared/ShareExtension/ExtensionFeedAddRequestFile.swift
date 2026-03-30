@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Synchronization
 import os
 import Account
 
@@ -36,21 +35,19 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 		operationQueue
 	}
 
-	private let didStart = Mutex(false)
+	private let didStart = OSAllocatedUnfairLock(initialState: false)
 
 	func start() {
-		var shouldBail = false
-		didStart.withLock { didStart in
+		let alreadyStarted = didStart.withLock { didStart -> Bool in
 			if didStart {
-				shouldBail = true
-				assertionFailure("start called when already did start")
-				return
+				return true
 			}
-
 			didStart = true
+			return false
 		}
 
-		if shouldBail {
+		if alreadyStarted {
+			assertionFailure("start called when already did start")
 			return
 		}
 

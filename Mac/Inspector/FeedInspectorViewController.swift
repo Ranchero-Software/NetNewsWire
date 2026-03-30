@@ -8,7 +8,7 @@
 
 import AppKit
 import UserNotifications
-import Synchronization
+import os
 import Articles
 import Account
 

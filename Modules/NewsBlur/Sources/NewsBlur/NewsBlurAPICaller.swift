@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Synchronization
+import os
 import RSWeb
 import Secrets
 
@@ -17,13 +17,13 @@ public final class NewsBlurAPICaller: Sendable {
 	let baseURL = URL(string: "https://www.newsblur.com/")!
 	let transport: Transport
 
-	private let suspendedLock = Mutex(false)
+	private let suspendedLock = OSAllocatedUnfairLock(initialState: false)
 	var suspended: Bool {
 		get { suspendedLock.withLock { $0 }}
 		set { suspendedLock.withLock { $0 = newValue }}
 	}
 
-	private let credentialsLock = Mutex<Credentials?>(nil)
+	private let credentialsLock = OSAllocatedUnfairLock<Credentials?>(initialState: nil)
 	public var credentials: Credentials? {
 		get { credentialsLock.withLock { $0 }}
 		set { credentialsLock.withLock { $0 = newValue }}
