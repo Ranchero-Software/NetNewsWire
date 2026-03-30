@@ -30,7 +30,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
 	private let refreshProgressView = RefreshProgressView(frame: .zero)
-	private var isToolbarProgressViewConfigured = false
+	private lazy var refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
+	private var isToolbarProgressViewShowing = false
 	private var dataSource: UICollectionViewDiffableDataSource<Int, Article>?
 	var didPushArticleViewController = false
 
@@ -89,6 +90,16 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private var isRootSplitCollapsed: Bool {
 		assert(coordinator != nil)
 		return coordinator?.isRootSplitCollapsed ?? false
+	}
+
+	private func isSidebarHidden(for displayMode: UISplitViewController.DisplayMode? = nil) -> Bool {
+		if isRootSplitCollapsed {
+			return true
+		}
+		let mode = displayMode ?? splitViewController?.displayMode ?? .automatic
+		// Sidebar is hidden only in these specific modes
+		let sidebarHidden = mode == .secondaryOnly || mode == .oneBesideSecondary || mode == .oneOverSecondary
+		return sidebarHidden
 	}
 
 	private var articles: ArticleArray? {
@@ -196,6 +207,11 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
         // Do any additional setup after loading the view.
     }
 
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		updateToolbarProgressView()
+	}
+
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: viewWillAppear")
 
@@ -209,6 +225,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)
+		updateToolbarProgressView()
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -594,6 +611,45 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 
 }
 
+// MARK: - Toolbar Progress View
+
+extension MainTimelineModernViewController {
+
+	func updateToolbarProgressView(for displayMode: UISplitViewController.DisplayMode? = nil) {
+		if #available(iOS 26, *) {
+			return
+		}
+
+		// Progress view group (flex, progress, flex) is inserted after the first toolbar item.
+		let progressViewInsertionIndex = 1
+		let progressViewGroupCount = 3
+
+		let shouldShow = isSidebarHidden(for: displayMode)
+
+		if shouldShow && !isToolbarProgressViewShowing {
+			guard var items = toolbarItems, !items.isEmpty else {
+				return
+			}
+			isToolbarProgressViewShowing = true
+			items.insert(UIBarButtonItem.flexibleSpace(), at: progressViewInsertionIndex)
+			items.insert(refreshBarItem, at: progressViewInsertionIndex + 1)
+			items.insert(UIBarButtonItem.flexibleSpace(), at: progressViewInsertionIndex + 2)
+			toolbarItems = items
+		} else if !shouldShow && isToolbarProgressViewShowing {
+			guard var items = toolbarItems,
+				  let index = items.firstIndex(of: refreshBarItem) else {
+				return
+			}
+			isToolbarProgressViewShowing = false
+			// Remove the progress item and its flanking flex spaces
+			let rangeStart = max(index - 1, 0)
+			let rangeEnd = min(rangeStart + progressViewGroupCount - 1, items.count - 1)
+			items.removeSubrange(rangeStart...rangeEnd)
+			toolbarItems = items
+		}
+	}
+}
+
 // MARK: Private API
 private extension MainTimelineModernViewController {
 
@@ -858,30 +914,7 @@ private extension MainTimelineModernViewController {
 				toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
 			}
 		}
-		configureToolbarWithProgressView()
-	}
-
-	func configureToolbarWithProgressView() {
-		if #available(iOS 26, *) {
-			return
-		}
-
-		guard !isToolbarProgressViewConfigured else {
-			return
-		}
-		guard isRootSplitCollapsed else {
-			return
-		}
-		guard var items = toolbarItems, !items.isEmpty else {
-			return
-		}
-
-		isToolbarProgressViewConfigured = true
-		let refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
-		items.insert(UIBarButtonItem.flexibleSpace(), at: 1)
-		items.insert(refreshBarItem, at: 2)
-		items.insert(UIBarButtonItem.flexibleSpace(), at: 3)
-		toolbarItems = items
+		updateToolbarProgressView()
 	}
 
 	func resetUI(resetScroll: Bool) {

@@ -590,15 +590,21 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		guard !isToolbarConfigured else {
 			return
 		}
-		guard var items = toolbarItems, items.count == 3 else {
+
+		// Expect three items: left button, flex space, right button.
+		let expectedItemCount = 3
+		guard var items = toolbarItems, items.count == expectedItemCount else {
 			return
 		}
 
+		// Replace the middle flex space with: flex, progress, flex
+		// to center the progress view between the two buttons.
+		let middleIndex = 1
 		isToolbarConfigured = true
 		let refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
-		items[1] = UIBarButtonItem.flexibleSpace()
-		items.insert(refreshBarItem, at: 2)
-		items.insert(UIBarButtonItem.flexibleSpace(), at: 3)
+		items[middleIndex] = UIBarButtonItem.flexibleSpace()
+		items.insert(refreshBarItem, at: middleIndex + 1)
+		items.insert(UIBarButtonItem.flexibleSpace(), at: middleIndex + 2)
 		toolbarItems = items
 	}
 

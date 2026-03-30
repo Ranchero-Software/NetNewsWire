@@ -14,8 +14,6 @@ final class RefreshProgressView: UIView {
 	private let progressView = UIProgressView(progressViewStyle: .default)
 	private let label = UILabel()
 
-	// TODO: Remove testing flag — hardcoded 50% for testing visibility
-	private let isTesting = true
 
 	override init(frame: CGRect) {
 		super.init(frame: frame)
@@ -88,55 +86,48 @@ private extension RefreshProgressView {
 	}
 
 	func progressChanged(animated: Bool) {
-		if isTesting {
+		// Layout may crash if not in the view hierarchy.
+		// https://github.com/Ranchero-Software/NetNewsWire/issues/1764
+		let isInViewHierarchy = self.superview != nil
+
+		let progressInfo = CombinedRefreshProgress.shared.progressInfo
+
+		if progressInfo.isComplete {
+			if isInViewHierarchy {
+				progressView.setProgress(1, animated: animated)
+			}
+
+			func completeLabel() {
+				// Check that there are no pending downloads.
+				if CombinedRefreshProgress.shared.isComplete {
+					self.updateRefreshLabel()
+					self.label.isHidden = false
+					self.progressView.isHidden = true
+					if self.superview != nil {
+						self.progressView.setProgress(0, animated: animated)
+					}
+				}
+			}
+
+			if animated {
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+					completeLabel()
+				}
+			} else {
+				completeLabel()
+			}
+		} else {
 			label.isHidden = true
 			progressView.isHidden = false
-			progressView.setProgress(0.5, animated: false)
-			return
-		}
+			if isInViewHierarchy {
+				let percent = Float(progressInfo.numberCompleted) / Float(progressInfo.numberOfTasks)
 
-//		// Layout may crash if not in the view hierarchy.
-//		// https://github.com/Ranchero-Software/NetNewsWire/issues/1764
-//		let isInViewHierarchy = self.superview != nil
-//
-//		let progressInfo = CombinedRefreshProgress.shared.progressInfo
-//
-//		if progressInfo.isComplete {
-//			if isInViewHierarchy {
-//				progressView.setProgress(1, animated: animated)
-//			}
-//
-//			func completeLabel() {
-//				// Check that there are no pending downloads.
-//				if CombinedRefreshProgress.shared.isComplete {
-//					self.updateRefreshLabel()
-//					self.label.isHidden = false
-//					self.progressView.isHidden = true
-//					if self.superview != nil {
-//						self.progressView.setProgress(0, animated: animated)
-//					}
-//				}
-//			}
-//
-//			if animated {
-//				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//					completeLabel()
-//				}
-//			} else {
-//				completeLabel()
-//			}
-//		} else {
-//			label.isHidden = true
-//			progressView.isHidden = false
-//			if isInViewHierarchy {
-//				let percent = Float(progressInfo.numberCompleted) / Float(progressInfo.numberOfTasks)
-//
-//				// Don't let the progress bar go backwards unless we need to go back more than 25%
-//				if percent > progressView.progress || progressView.progress - percent > 0.25 {
-//					progressView.setProgress(percent, animated: animated)
-//				}
-//			}
-//		}
+				// Don't let the progress bar go backwards unless we need to go back more than 25%
+				if percent > progressView.progress || progressView.progress - percent > 0.25 {
+					progressView.setProgress(percent, animated: animated)
+				}
+			}
+		}
 	}
 
 	func updateRefreshLabel() {

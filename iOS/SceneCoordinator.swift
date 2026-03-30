@@ -1528,6 +1528,7 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
 		AppDefaults.shared.splitViewPreferredDisplayMode = displayMode.rawValue
+		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
 }
