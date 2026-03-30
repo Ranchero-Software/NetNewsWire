@@ -758,7 +758,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 		menuItems.append(addFolderAction)
 
-		let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
+		let contextMenu = UIMenu(title: "", image: nil, identifier: nil, options: [], children: menuItems.reversed())
 
 		self.addNewItemButton.menu = contextMenu
 	}
@@ -774,8 +774,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		let title = NSLocalizedString("Add Item", comment: "Add Item")
-		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+		let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
