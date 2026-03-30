@@ -36,6 +36,7 @@ private extension WebViewConfiguration {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
 		preferences.minimumFontSize = 12
+		preferences.isElementFullscreenEnabled = true
 
 		return preferences
 	}
