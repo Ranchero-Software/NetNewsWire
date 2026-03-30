@@ -29,6 +29,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
+	private let refreshProgressView = RefreshProgressView(frame: .zero)
+	private var isToolbarProgressViewConfigured = false
 	private var dataSource: UICollectionViewDiffableDataSource<Int, Article>?
 	var didPushArticleViewController = false
 
@@ -856,6 +858,30 @@ private extension MainTimelineModernViewController {
 				toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
 			}
 		}
+		configureToolbarWithProgressView()
+	}
+
+	func configureToolbarWithProgressView() {
+		if #available(iOS 26, *) {
+			return
+		}
+
+		guard !isToolbarProgressViewConfigured else {
+			return
+		}
+		guard isRootSplitCollapsed else {
+			return
+		}
+		guard var items = toolbarItems, !items.isEmpty else {
+			return
+		}
+
+		isToolbarProgressViewConfigured = true
+		let refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
+		items.insert(UIBarButtonItem.flexibleSpace(), at: 1)
+		items.insert(refreshBarItem, at: 2)
+		items.insert(UIBarButtonItem.flexibleSpace(), at: 3)
+		toolbarItems = items
 	}
 
 	func resetUI(resetScroll: Bool) {
