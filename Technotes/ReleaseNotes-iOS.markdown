@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0.4 build 7042 30 Mar 2026 - branch: main tag: iOS-7.0.4-7042
+
+Make the app run on iOS 17 and iOS 18
+
 ### 7.0.4 build 7041 29 Mar 2026 - branch: main tag: iOS-7.0.4-7041
 
 Sync the setting for syncing unread content in iCloud
