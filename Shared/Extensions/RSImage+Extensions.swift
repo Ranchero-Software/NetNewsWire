@@ -15,14 +15,15 @@ import UIKit
 
 extension RSImage {
 	static let maxIconSize = 48
+	static let maxIconPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * RSScreen.maxScreenScale))
 
 	static func scaledForIcon(_ data: Data, imageResultBlock: @escaping ImageResultBlock) {
 		IconScalerQueue.shared.scaledForIcon(data, imageResultBlock)
 	}
 
 	static func scaledForIcon(_ data: Data) -> RSImage? {
-		let scaledMaxPixelSize = Int(ceil(CGFloat(RSImage.maxIconSize) * RSScreen.maxScreenScale))
-		guard var cgImage = RSImage.scaleImage(data, maxPixelSize: scaledMaxPixelSize) else {
+		let scaledMaxPixelSize = RSImage.maxIconPixelSize
+		guard let cgImage = RSImage.scaleImage(data, maxPixelSize: scaledMaxPixelSize) else {
 			return nil
 		}
 

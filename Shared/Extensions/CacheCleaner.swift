@@ -14,6 +14,25 @@ struct CacheCleaner {
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
 
+	// TODO: Remove this before shipping — temporary for testing image resizing
+	static func purgeImageCachesForTesting() {
+		let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+		let foldersToRemove = [
+			cacheDir.appendingPathComponent("Favicons"),
+			cacheDir.appendingPathComponent("Images"),
+			cacheDir.appendingPathComponent("FeedIcons")
+		]
+
+		for folder in foldersToRemove {
+			do {
+				try FileManager.default.removeItem(at: folder)
+				logger.info("Purged image cache folder: \(folder.lastPathComponent, privacy: .public)")
+			} catch {
+				// Folder may not exist yet — that's fine
+			}
+		}
+	}
+
 	static func purgeIfNecessary() {
 
 		guard let flushDate = AppDefaults.shared.lastImageCacheFlushDate else {

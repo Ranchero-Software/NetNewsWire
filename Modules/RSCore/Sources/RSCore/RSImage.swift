@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import os
 
 #if os(macOS)
@@ -128,6 +129,89 @@ public extension RSImage {
 				imageResultBlock(image)
 			}
 		}
+	}
+
+	/// Scales image data down to maxPixelSize and returns the result as PNG Data.
+	/// If the image's largest dimension is already <= maxPixelSize, returns the
+	/// original data unchanged (avoids re-encoding). Returns nil if the data
+	/// can't be decoded as an image.
+	static func scaledImageData(_ data: Data, maxPixelSize: Int) -> Data? {
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
+			return nil
+		}
+
+		let count = CGImageSourceGetCount(imageSource)
+		guard count > 0 else {
+			return nil
+		}
+
+		// Find the largest frame in the image source.
+		var largestIndex = 0
+		var largestWidth = 0
+		var largestHeight = 0
+		var largestMaxDimension = 0
+
+		for i in 0..<count {
+			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
+				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
+				  let height = properties[kCGImagePropertyPixelHeight] as? Int else {
+				continue
+			}
+			let maxDimension = max(width, height)
+			if maxDimension > largestMaxDimension {
+				largestIndex = i
+				largestWidth = width
+				largestHeight = height
+				largestMaxDimension = maxDimension
+			}
+		}
+
+		guard largestMaxDimension > 0 else {
+			return nil
+		}
+
+		let needsResize = largestMaxDimension > maxPixelSize
+		let isMultiImage = count > 1
+
+		// Single-frame image already small enough — return original data as-is.
+		if !needsResize && !isMultiImage {
+			RSImageLogger.info("Image already small enough: \(largestWidth, privacy: .public)x\(largestHeight, privacy: .public) <= \(maxPixelSize, privacy: .public)px max")
+			return data
+		}
+
+		// Either too large or multi-image — extract/resize to a single PNG.
+		let cgImage: CGImage?
+		if needsResize {
+			let options: [CFString: Any] = [
+				kCGImageSourceCreateThumbnailWithTransform: true,
+				kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+				kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
+			]
+			cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestIndex, options as CFDictionary)
+		} else {
+			cgImage = CGImageSourceCreateImageAtIndex(imageSource, largestIndex, nil)
+		}
+
+		guard let cgImage else {
+			return nil
+		}
+
+		guard let mutableData = CFDataCreateMutable(nil, 0),
+			  let destination = CGImageDestinationCreateWithData(mutableData, UTType.png.identifier as CFString, 1, nil) else {
+			return nil
+		}
+		CGImageDestinationAddImage(destination, cgImage, nil)
+		guard CGImageDestinationFinalize(destination) else {
+			return nil
+		}
+
+		if needsResize {
+			RSImageLogger.info("Resized image from \(largestWidth, privacy: .public)x\(largestHeight, privacy: .public) to \(cgImage.width, privacy: .public)x\(cgImage.height, privacy: .public)")
+		} else {
+			RSImageLogger.info("Extracted largest frame (\(largestWidth, privacy: .public)x\(largestHeight, privacy: .public)) from multi-image source (\(count, privacy: .public) frames)")
+		}
+
+		return mutableData as Data
 	}
 
 	/// Create a scaled image from image data.

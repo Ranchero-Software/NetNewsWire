@@ -116,8 +116,9 @@ private extension ImageDownloader {
 			let (data, response) = try await Downloader.shared.download(imageURL)
 
 			if let data, !data.isEmpty, let response, response.statusIsOK {
-				saveToDisk(url, data)
-				return data
+				let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
+				saveToDisk(url, scaledData)
+				return scaledData
 			}
 
 			if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {

@@ -135,8 +135,9 @@ private extension SingleFaviconDownloader {
 		do {
 			let (data, response) = try await Downloader.shared.download(url)
 			if let data, !data.isEmpty, let response, response.statusIsOK {
-				saveToDisk(data)
-				let image = await RSImage.image(data: data)
+				let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
+				saveToDisk(scaledData)
+				let image = await RSImage.image(data: scaledData)
 				return image
 			}
 
