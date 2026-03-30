@@ -49,6 +49,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		return true
 	}
 
+	private let refreshProgressView = RefreshProgressView(frame: .zero)
+
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 
@@ -57,6 +59,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	/// The value is set to `true` in `viewWillAppear(_:)` if a feed is selected, and reset to `false` in
 	/// `viewDidAppear(_:)` after a delay to allow the deselection animation to complete.
 	private var isAnimating: Bool = false
+	private var isToolbarConfigured: Bool = false
 
 	var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
 
@@ -73,6 +76,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear")
 		navigationController?.isToolbarHidden = false
+		configureToolbarWithProgressView()
 		updateUI()
 		super.viewWillAppear(animated)
 
@@ -577,6 +581,26 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	// MARK: - Private
+
+	func configureToolbarWithProgressView() {
+		if #available(iOS 26, *) {
+			return
+		}
+
+		guard !isToolbarConfigured else {
+			return
+		}
+		guard var items = toolbarItems, items.count == 3 else {
+			return
+		}
+
+		isToolbarConfigured = true
+		let refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
+		items[1] = UIBarButtonItem.flexibleSpace()
+		items.insert(refreshBarItem, at: 2)
+		items.insert(UIBarButtonItem.flexibleSpace(), at: 3)
+		toolbarItems = items
+	}
 
 	/// Configure feed cell.
 	func configure(_ cell: MainFeedCollectionViewCell, sidebarItemNode: SidebarItemNode) {

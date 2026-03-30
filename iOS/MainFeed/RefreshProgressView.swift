@@ -1,5 +1,5 @@
 //
-//  RefeshProgressView.swift
+//  RefreshProgressView.swift
 //  NetNewsWire-iOS
 //
 //  Created by Maurice Parker on 10/24/19.
@@ -10,19 +10,18 @@ import UIKit
 import Account
 
 final class RefreshProgressView: UIView {
-	@IBOutlet var progressView: UIProgressView!
-	@IBOutlet var label: UILabel!
 
-	override func awakeFromNib() {
-		MainActor.assumeIsolated {
-			NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
-			NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
-			update()
-			scheduleUpdateRefreshLabel()
+	private let progressView = UIProgressView(progressViewStyle: .default)
+	private let label = UILabel()
 
-			isAccessibilityElement = true
-			accessibilityTraits = [.updatesFrequently, .notEnabled]
-		}
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		setup()
+	}
+
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setup()
 	}
 
 	func update() {
@@ -42,20 +41,53 @@ final class RefreshProgressView: UIView {
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
-		// This hack is probably necessary because custom views in the toolbar don't get
-		// notifications that the content size changed.
 		label.font = UIFont.preferredFont(forTextStyle: .footnote)
 	}
 
 	deinit {
 		NotificationCenter.default.removeObserver(self)
 	}
-
 }
 
 // MARK: Private
 
 private extension RefreshProgressView {
+
+	func setup() {
+		progressView.translatesAutoresizingMaskIntoConstraints = false
+		addSubview(progressView)
+
+		label.translatesAutoresizingMaskIntoConstraints = false
+		label.font = UIFont.preferredFont(forTextStyle: .footnote)
+		label.textColor = .secondaryLabel
+		label.textAlignment = .center
+		label.adjustsFontForContentSizeCategory = true
+		addSubview(label)
+
+		NSLayoutConstraint.activate([
+			progressView.leadingAnchor.constraint(equalTo: leadingAnchor),
+			progressView.trailingAnchor.constraint(equalTo: trailingAnchor),
+			progressView.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+			label.leadingAnchor.constraint(equalTo: leadingAnchor),
+			label.trailingAnchor.constraint(equalTo: trailingAnchor),
+			label.centerYAnchor.constraint(equalTo: centerYAnchor)
+		])
+
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
+
+		update()
+		scheduleUpdateRefreshLabel()
+
+		isAccessibilityElement = true
+		accessibilityTraits = [.updatesFrequently, .notEnabled]
+
+		// TODO: Remove — hardcoded 50% for testing visibility
+		label.isHidden = true
+		progressView.isHidden = false
+		progressView.setProgress(0.5, animated: false)
+	}
 
 	func progressChanged(animated: Bool) {
 		// Layout may crash if not in the view hierarchy.
@@ -131,5 +163,4 @@ private extension RefreshProgressView {
 			self?.scheduleUpdateRefreshLabel()
 		}
 	}
-
 }
