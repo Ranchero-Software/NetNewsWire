@@ -42,7 +42,11 @@ final class ArticleViewController: UIViewController {
 		let button = ArticleExtractorButton(type: .system)
 		button.frame = CGRect(x: 0, y: 0, width: 44.0, height: 44.0)
 		button.setImage(Assets.Images.articleExtractorOff, for: .normal)
-		button.tintColor = .label
+		if #unavailable(iOS 26) {
+			button.tintColor = Assets.Colors.primaryAccent
+		} else {
+			button.tintColor = .secondaryLabel
+		}
 		return button
 	}()
 
@@ -107,7 +111,7 @@ final class ArticleViewController: UIViewController {
 		navigationItem.titleView = fullScreenTapZone
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
+		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 5)
 
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
@@ -175,7 +179,9 @@ final class ArticleViewController: UIViewController {
 
 	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(true)
-		navigationController?.navigationBar.topItem?.subtitle = nil
+		if #available(iOS 26, *) {
+			navigationController?.navigationBar.topItem?.subtitle = nil
+		}
 		coordinator.isArticleViewControllerPending = false
 		searchBar.shouldBeginEditing = true
 		if let parentNavController = navigationController?.parent as? UINavigationController {

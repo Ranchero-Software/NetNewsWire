@@ -76,6 +76,7 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			indicatorView.isAccessibilityElement = false
 			feedIcon?.isAccessibilityElement = false
 			indicatorView.alpha = 0.0
+			topSeparator.backgroundColor = .separator.withAlphaComponent(0.1)
 			feedIcon?.translatesAutoresizingMaskIntoConstraints = false
 			configureStackView()
 
@@ -317,7 +318,12 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	override func updateConfiguration(using state: UICellConfigurationState) {
 		super.updateConfiguration(using: state)
 
-		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+		var backgroundConfig: UIBackgroundConfiguration
+		if #available(iOS 18, *) {
+			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+		} else {
+			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
+		}
 		backgroundConfig.cornerRadius = 20
 
 		backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
@@ -331,19 +337,23 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			}
 		}
 
+		let isActive = state.isSwiped || state.isSelected
+
 		if state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			topSeparator.alpha = 0.0
 		} else if state.isSwiped && !state.isSelected {
 			backgroundConfig.backgroundColor = .secondarySystemFill
-			topSeparator.alpha = 0.0
 		} else if !state.isSwiped && state.isSelected {
 			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-			topSeparator.alpha = 0.0
 		} else {
 			backgroundConfig.backgroundColor = .clear
-			topSeparator.alpha = 1.0
 		}
+
+		// Hide this cell's separator when active, or when the cell
+		// directly above is active (so no separator appears below a
+		// highlighted row).
+		let hideForPreviousCell = cellAboveIsActive()
+		topSeparator.alpha = (isActive || hideForPreviousCell) ? 0.0 : 1.0
 		adjustArticleContentColor()
 		updateIndicatorView(state)
 
@@ -355,4 +365,24 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		self.backgroundConfiguration = backgroundConfig
 	}
 
+	private func cellAboveIsActive() -> Bool {
+		guard let collectionView = superview as? UICollectionView,
+			  let myIndexPath = collectionView.indexPath(for: self) else {
+			return false
+		}
+
+		let section = myIndexPath.section
+		let item = myIndexPath.item
+		guard item > 0 else {
+			return false
+		}
+
+		let previousIndexPath = IndexPath(item: item - 1, section: section)
+		guard let previousCell = collectionView.cellForItem(at: previousIndexPath) else {
+			return false
+		}
+
+		let state = previousCell.configurationState
+		return state.isSelected || state.isSwiped
+	}
 }

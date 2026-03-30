@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import Synchronization
+import os
 
 public final class DatabaseObjectCache: Sendable {
-	private let state = Mutex([String: DatabaseObject]())
+	private let state = OSAllocatedUnfairLock(initialState: [String: DatabaseObject]())
 
 	public init() {
 		//

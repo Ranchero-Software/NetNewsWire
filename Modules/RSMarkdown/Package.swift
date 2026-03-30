@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "RSMarkdown",
-	platforms: [.macOS(.v15), .iOS(.v26)],
+	platforms: [.macOS(.v15), .iOS(.v17)],
     products: [
         .library(
             name: "RSMarkdown",

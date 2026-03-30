@@ -655,7 +655,9 @@ struct SidebarItemNode: Hashable, Sendable {
 					let refreshText = NSString.localizedStringWithFormat(localizedRefreshText as NSString, refreshed) as String
 
 					// Update Feeds with Updated text
-					self.mainFeedCollectionViewController?.navigationItem.subtitle = refreshText
+					if #available(iOS 26, *) {
+						self.mainFeedCollectionViewController?.navigationItem.subtitle = refreshText
+					}
 
 					// If unread count > 0, add unread string to timeline
 					if timelineFeed != nil, timelineUnreadCount > 0 {
@@ -672,7 +674,9 @@ struct SidebarItemNode: Hashable, Sendable {
 					}
 				} else {
 					// Use 'Updated Just Now' while <60s have passed since refresh.
-					self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+					if #available(iOS 26, *) {
+						self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updated Just Now", comment: "Updated Just Now")
+					}
 
 					// If unread count > 0, add unread string to timeline
 					if timelineFeed != nil, timelineUnreadCount > 0 {
@@ -689,7 +693,9 @@ struct SidebarItemNode: Hashable, Sendable {
 					}
 				}
 			} else {
-				self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
+				if #available(iOS 26, *) {
+					self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
+				}
 				// If unread count > 0, add unread string to timeline
 				if timelineFeed != nil, timelineUnreadCount > 0 {
 					let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
@@ -706,7 +712,9 @@ struct SidebarItemNode: Hashable, Sendable {
 			}
 		} else {
 			// Updating in progress, apply to both iPhone and iPad Feeds.
-			self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updating…", comment: "Updating…")
+			if #available(iOS 26, *) {
+				self.mainFeedCollectionViewController?.navigationItem.subtitle = NSLocalizedString("Updating…", comment: "Updating…")
+			}
 		}
 
 		scheduleNavigationBarSubtitleUpdate()
@@ -1520,6 +1528,7 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
 		AppDefaults.shared.splitViewPreferredDisplayMode = displayMode.rawValue
+		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
 }

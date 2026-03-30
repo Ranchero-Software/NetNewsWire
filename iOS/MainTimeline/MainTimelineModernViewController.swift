@@ -29,6 +29,9 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
+	private let refreshProgressView = RefreshProgressView(frame: .zero)
+	private lazy var refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
+	private var isToolbarProgressViewShowing = false
 	private var dataSource: UICollectionViewDiffableDataSource<Int, Article>?
 	var didPushArticleViewController = false
 
@@ -87,6 +90,16 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private var isRootSplitCollapsed: Bool {
 		assert(coordinator != nil)
 		return coordinator?.isRootSplitCollapsed ?? false
+	}
+
+	private func isSidebarHidden(for displayMode: UISplitViewController.DisplayMode? = nil) -> Bool {
+		if isRootSplitCollapsed {
+			return true
+		}
+		let mode = displayMode ?? splitViewController?.displayMode ?? .automatic
+		// Sidebar is hidden only in these specific modes
+		let sidebarHidden = mode == .secondaryOnly || mode == .oneBesideSecondary || mode == .oneOverSecondary
+		return sidebarHidden
 	}
 
 	private var articles: ArticleArray? {
@@ -188,9 +201,16 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		navigationItem.title = nil // Don’t let "Timeline" accidentally show
 		navigationItem.largeTitleDisplayMode = .never
 		navigationItem.titleView = navigationBarTitleLabel
-		navigationItem.subtitleView = navigationBarSubtitleTitleLabel
+		if #available(iOS 26, *) {
+			navigationItem.subtitleView = navigationBarSubtitleTitleLabel
+		}
         // Do any additional setup after loading the view.
     }
+
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		updateToolbarProgressView()
+	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: viewWillAppear")
@@ -205,6 +225,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)
+		updateToolbarProgressView()
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -273,7 +294,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	}
 
 	func updateNavigationBarSubtitle(_ text: String) {
-		if let label = navigationItem.subtitleView as? UILabel {
+		if #available(iOS 26, *), let label = navigationItem.subtitleView as? UILabel {
 			label.text = text
 			label.isUserInteractionEnabled = ((coordinator?.timelineFeed as? PseudoFeed) == nil)
 			label.sizeToFit()
@@ -590,6 +611,45 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 
 }
 
+// MARK: - Toolbar Progress View
+
+extension MainTimelineModernViewController {
+
+	func updateToolbarProgressView(for displayMode: UISplitViewController.DisplayMode? = nil) {
+		if #available(iOS 26, *) {
+			return
+		}
+
+		// Progress view group (flex, progress, flex) is inserted after the first toolbar item.
+		let progressViewInsertionIndex = 1
+		let progressViewGroupCount = 3
+
+		let shouldShow = isSidebarHidden(for: displayMode)
+
+		if shouldShow && !isToolbarProgressViewShowing {
+			guard var items = toolbarItems, !items.isEmpty else {
+				return
+			}
+			isToolbarProgressViewShowing = true
+			items.insert(UIBarButtonItem.flexibleSpace(), at: progressViewInsertionIndex)
+			items.insert(refreshBarItem, at: progressViewInsertionIndex + 1)
+			items.insert(UIBarButtonItem.flexibleSpace(), at: progressViewInsertionIndex + 2)
+			toolbarItems = items
+		} else if !shouldShow && isToolbarProgressViewShowing {
+			guard var items = toolbarItems,
+				  let index = items.firstIndex(of: refreshBarItem) else {
+				return
+			}
+			isToolbarProgressViewShowing = false
+			// Remove the progress item and its flanking flex spaces
+			let rangeStart = max(index - 1, 0)
+			let rangeEnd = min(rangeStart + progressViewGroupCount - 1, items.count - 1)
+			items.removeSubrange(rangeStart...rangeEnd)
+			toolbarItems = items
+		}
+	}
+}
+
 // MARK: Private API
 private extension MainTimelineModernViewController {
 
@@ -631,7 +691,9 @@ private extension MainTimelineModernViewController {
 
 		if traitCollection.userInterfaceIdiom == .pad {
 			searchController.searchBar.selectedScopeButtonIndex = 1
-			navigationItem.searchBarPlacementAllowsExternalIntegration = true
+			if #available(iOS 26, *) {
+				navigationItem.searchBarPlacementAllowsExternalIntegration = true
+			}
 		}
 	}
 
@@ -848,8 +910,11 @@ private extension MainTimelineModernViewController {
 	func configureToolbar() {
 		if traitCollection.userInterfaceIdiom == .phone {
 			toolbarItems?.insert(.flexibleSpace(), at: 1)
-			toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
+			if #available(iOS 26, *) {
+				toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
+			}
 		}
+		updateToolbarProgressView()
 	}
 
 	func resetUI(resetScroll: Bool) {
@@ -857,7 +922,11 @@ private extension MainTimelineModernViewController {
 		navigationItem.rightBarButtonItem = shouldShowFilterButton ? filterButton : nil
 
 		if isReadArticlesFiltered {
-			filterButton.style = .prominent
+			if #available(iOS 26, *) {
+				filterButton.style = .prominent
+			} else {
+				filterButton.style = .done
+			}
 			filterButton.tintColor = Assets.Colors.primaryAccent
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {

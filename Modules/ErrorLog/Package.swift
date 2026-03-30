@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
 	name: "ErrorLog",
-	platforms: [.macOS(.v15), .iOS(.v26)],
+	platforms: [.macOS(.v15), .iOS(.v17)],
 	products: [
 		.library(
 			name: "ErrorLog",

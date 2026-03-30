@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import Synchronization
+import os
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
@@ -272,7 +272,7 @@ private final class StatusCache: Sendable {
 		var dictionary = [String: ArticleStatus]()
 	}
 
-	private let state = Mutex(State())
+	private let state = OSAllocatedUnfairLock(initialState: State())
 
 	var cachedStatuses: Set<ArticleStatus> {
 		state.withLock { Set($0.dictionary.values) }

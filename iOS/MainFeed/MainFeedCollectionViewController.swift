@@ -49,6 +49,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		return true
 	}
 
+	private let refreshProgressView = RefreshProgressView(frame: .zero)
+
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
 
@@ -57,6 +59,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	/// The value is set to `true` in `viewWillAppear(_:)` if a feed is selected, and reset to `false` in
 	/// `viewDidAppear(_:)` after a delay to allow the deselection animation to complete.
 	private var isAnimating: Bool = false
+	private var isToolbarConfigured: Bool = false
 
 	var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
 
@@ -73,6 +76,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear")
 		navigationController?.isToolbarHidden = false
+		configureToolbarWithProgressView()
 		updateUI()
 		super.viewWillAppear(animated)
 
@@ -578,6 +582,32 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	// MARK: - Private
 
+	func configureToolbarWithProgressView() {
+		if #available(iOS 26, *) {
+			return
+		}
+
+		guard !isToolbarConfigured else {
+			return
+		}
+
+		// Expect three items: left button, flex space, right button.
+		let expectedItemCount = 3
+		guard var items = toolbarItems, items.count == expectedItemCount else {
+			return
+		}
+
+		// Replace the middle flex space with: flex, progress, flex
+		// to center the progress view between the two buttons.
+		let middleIndex = 1
+		isToolbarConfigured = true
+		let refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
+		items[middleIndex] = UIBarButtonItem.flexibleSpace()
+		items.insert(refreshBarItem, at: middleIndex + 1)
+		items.insert(UIBarButtonItem.flexibleSpace(), at: middleIndex + 2)
+		toolbarItems = items
+	}
+
 	/// Configure feed cell.
 	func configure(_ cell: MainFeedCollectionViewCell, sidebarItemNode: SidebarItemNode) {
 		let node = sidebarItemNode.node
@@ -734,7 +764,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 		menuItems.append(addFolderAction)
 
-		let contextMenu = UIMenu(title: NSLocalizedString("Add Item", comment: "Add Item"), image: nil, identifier: nil, options: [], children: menuItems.reversed())
+		let contextMenu = UIMenu(title: "", image: nil, identifier: nil, options: [], children: menuItems.reversed())
 
 		self.addNewItemButton.menu = contextMenu
 	}
@@ -750,8 +780,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	@IBAction func add(_ sender: UIBarButtonItem) {
-		let title = NSLocalizedString("Add Item", comment: "Add Item")
-		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .actionSheet)
+		let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)

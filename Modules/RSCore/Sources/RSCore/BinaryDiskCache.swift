@@ -7,11 +7,11 @@
 //
 
 import Foundation
-import Synchronization
+import os
 
 nonisolated public final class BinaryDiskCache: Sendable {
 	public let folder: String
-	private let mutex = Mutex(())
+	private let mutex = OSAllocatedUnfairLock(initialState: ())
 
 	public init(folder: String) {
 		self.folder = folder

@@ -8,7 +8,7 @@
 
 import AppKit
 import UniformTypeIdentifiers
-import Synchronization
+import os
 
 final class ShareViewController: NSViewController {
 	@IBOutlet var nameTextField: NSTextField!
@@ -17,7 +17,7 @@ final class ShareViewController: NSViewController {
 	private struct State: Sendable {
 		var url: URL?
 	}
-	private let state = Mutex(State())
+	private let state = OSAllocatedUnfairLock(initialState: State())
 
 	nonisolated private var url: URL? {
 		get {
