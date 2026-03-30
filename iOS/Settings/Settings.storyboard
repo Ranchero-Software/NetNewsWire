@@ -143,7 +143,7 @@
                                                 <constraint firstItem="Keq-Np-l9O" firstAttribute="centerY" secondItem="GhU-ib-Mz8" secondAttribute="centerY" id="Fn1-4L-3Mu"/>
                                                 <constraint firstItem="c9W-IF-u6i" firstAttribute="top" secondItem="GhU-ib-Mz8" secondAttribute="topMargin" id="I6I-av-62X"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="c9W-IF-u6i" secondAttribute="bottom" id="RKN-iP-jvM"/>
-                                                <constraint firstAttribute="trailing" secondItem="Keq-Np-l9O" secondAttribute="trailing" constant="18" id="Ry8-Ww-bwT"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Keq-Np-l9O" secondAttribute="trailing" constant="0" id="Ry8-Ww-bwT"/>
                                                 <constraint firstItem="Keq-Np-l9O" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="c9W-IF-u6i" secondAttribute="trailing" constant="8" id="crw-aM-cVp"/>
                                                 <constraint firstItem="c9W-IF-u6i" firstAttribute="leading" secondItem="GhU-ib-Mz8" secondAttribute="leadingMargin" id="hcX-Ao-zHb"/>
                                                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Keq-Np-l9O" secondAttribute="bottom" constant="6" id="zNh-Vc-Ryn"/>
@@ -172,7 +172,7 @@
                                                 </switch>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="JNi-Wz-RbU" secondAttribute="trailing" constant="18" id="99y-MA-Qbl"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="JNi-Wz-RbU" secondAttribute="trailing" constant="0" id="99y-MA-Qbl"/>
                                                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="JNi-Wz-RbU" secondAttribute="bottom" constant="6" id="Jls-0y-9cd"/>
                                                 <constraint firstItem="JNi-Wz-RbU" firstAttribute="top" relation="greaterThanOrEqual" secondItem="KHC-cc-tOC" secondAttribute="top" constant="6" id="Qoi-uf-HDC"/>
                                                 <constraint firstItem="JNi-Wz-RbU" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="cit-i1-0Hp" secondAttribute="trailing" constant="8" id="SaK-1e-1Mg"/>
@@ -209,7 +209,7 @@
                                                 <constraint firstItem="KtJ-tk-DlD" firstAttribute="leading" secondItem="XAn-lK-LoN" secondAttribute="leadingMargin" id="AOT-A0-ak0"/>
                                                 <constraint firstItem="duV-CN-JmH" firstAttribute="top" relation="greaterThanOrEqual" secondItem="XAn-lK-LoN" secondAttribute="top" constant="6" id="FeD-Le-7bK"/>
                                                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="duV-CN-JmH" secondAttribute="bottom" constant="6" id="MJP-qB-ivU"/>
-                                                <constraint firstAttribute="trailing" secondItem="duV-CN-JmH" secondAttribute="trailing" constant="18" id="Qkh-LF-zez"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="duV-CN-JmH" secondAttribute="trailing" constant="0" id="Qkh-LF-zez"/>
                                                 <constraint firstItem="duV-CN-JmH" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="KtJ-tk-DlD" secondAttribute="trailing" constant="8" id="cCz-fb-lta"/>
                                                 <constraint firstItem="duV-CN-JmH" firstAttribute="centerY" secondItem="XAn-lK-LoN" secondAttribute="centerY" id="eui-vJ-Bp8"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="KtJ-tk-DlD" secondAttribute="bottom" id="iyQ-7h-MT3"/>
@@ -302,7 +302,7 @@
                                                 <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="UOo-9z-IuL" secondAttribute="bottom" constant="6" id="RUM-9w-Q3y"/>
                                                 <constraint firstItem="UOo-9z-IuL" firstAttribute="centerY" secondItem="BpI-Hz-KH2" secondAttribute="centerY" id="V2L-l3-s1E"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="5tY-5k-v2g" secondAttribute="bottom" id="VeZ-P7-kQW"/>
-                                                <constraint firstAttribute="trailing" secondItem="UOo-9z-IuL" secondAttribute="trailing" constant="18" id="mNk-x8-oJx"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="UOo-9z-IuL" secondAttribute="trailing" constant="0" id="mNk-x8-oJx"/>
                                                 <constraint firstItem="UOo-9z-IuL" firstAttribute="top" relation="greaterThanOrEqual" secondItem="BpI-Hz-KH2" secondAttribute="top" constant="6" id="tps-aV-CKA"/>
                                                 <constraint firstItem="5tY-5k-v2g" firstAttribute="leading" secondItem="BpI-Hz-KH2" secondAttribute="leadingMargin" id="v4X-Nd-cpC"/>
                                             </constraints>
@@ -315,17 +315,14 @@
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="52"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Open Links in NetNewsWire" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wm4-Y1-7nX">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" text="Open Links in NetNewsWire" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Wm4-Y1-7nX">
                                                     <rect key="frame" x="20" y="18" width="267" height="21.5"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dhR-L2-PX3" userLabel="Open Links in NetNewsWire">
-                                                    <rect key="frame" x="295" y="12.5" width="63" height="28"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="61" id="W9X-AR-85J"/>
-                                                    </constraints>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dhR-L2-PX3" userLabel="Open Links in NetNewsWire">
+                                                    <rect key="frame" x="295" y="12.5" width="51" height="31"/>
                                                     <color key="onTintColor" name="primaryAccentColor"/>
                                                     <connections>
                                                         <action selector="switchBrowserPreference:" destination="a0p-rk-skQ" eventType="valueChanged" id="hLC-cV-Wjj"/>
@@ -334,9 +331,9 @@
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="dhR-L2-PX3" firstAttribute="leading" secondItem="Wm4-Y1-7nX" secondAttribute="trailing" constant="8" symbolic="YES" id="9kW-Cm-Jry"/>
-                                                <constraint firstItem="Wm4-Y1-7nX" firstAttribute="top" secondItem="7nz-0Y-HaW" secondAttribute="topMargin" constant="3" id="SlQ-r5-8Xc"/>
-                                                <constraint firstAttribute="bottom" secondItem="Wm4-Y1-7nX" secondAttribute="bottomMargin" constant="21" id="VUX-rB-00D"/>
-                                                <constraint firstAttribute="trailing" secondItem="dhR-L2-PX3" secondAttribute="trailing" constant="18" id="WPe-Kt-3Wb"/>
+                                                <constraint firstItem="Wm4-Y1-7nX" firstAttribute="top" secondItem="7nz-0Y-HaW" secondAttribute="topMargin" id="SlQ-r5-8Xc"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Wm4-Y1-7nX" secondAttribute="bottom" id="VUX-rB-00D"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="dhR-L2-PX3" secondAttribute="trailing" constant="0" id="WPe-Kt-3Wb"/>
                                                 <constraint firstItem="dhR-L2-PX3" firstAttribute="centerY" secondItem="7nz-0Y-HaW" secondAttribute="centerY" id="gWw-7Q-XcA"/>
                                                 <constraint firstItem="Wm4-Y1-7nX" firstAttribute="leading" secondItem="7nz-0Y-HaW" secondAttribute="leadingMargin" id="wMz-Ae-No9"/>
                                             </constraints>
@@ -378,7 +375,7 @@
                                                 <constraint firstItem="FkT-O9-gpj" firstAttribute="leading" secondItem="hhU-hw-2Lz" secondAttribute="leadingMargin" id="ILm-gL-eT3"/>
                                                 <constraint firstItem="FkT-O9-gpj" firstAttribute="bottom" secondItem="hhU-hw-2Lz" secondAttribute="bottomMargin" id="Z8D-AJ-KoP"/>
                                                 <constraint firstItem="bO3-aT-4AW" firstAttribute="leading" secondItem="hhU-hw-2Lz" secondAttribute="leadingMargin" id="bpp-cc-P7J"/>
-                                                <constraint firstAttribute="trailing" secondItem="Djo-HE-LWS" secondAttribute="trailing" constant="18" id="dmf-Re-xTV"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Djo-HE-LWS" secondAttribute="trailing" constant="0" id="dmf-Re-xTV"/>
                                                 <constraint firstItem="bO3-aT-4AW" firstAttribute="top" secondItem="hhU-hw-2Lz" secondAttribute="topMargin" id="kpO-4b-iXd"/>
                                                 <constraint firstItem="Djo-HE-LWS" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="bO3-aT-4AW" secondAttribute="trailing" constant="8" id="lgg-z7-JQE"/>
                                                 <constraint firstItem="Djo-HE-LWS" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="FkT-O9-gpj" secondAttribute="trailing" constant="8" id="prK-Kv-ZYU"/>
@@ -418,7 +415,7 @@
                                                 <constraint firstItem="a30-nc-ZS4" firstAttribute="leading" secondItem="zX8-l2-bVH" secondAttribute="leadingMargin" id="52y-SY-gbp"/>
                                                 <constraint firstItem="79e-5s-vd0" firstAttribute="top" secondItem="zX8-l2-bVH" secondAttribute="topMargin" id="9bF-Q1-sYE"/>
                                                 <constraint firstItem="2Md-2E-7Z4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="a30-nc-ZS4" secondAttribute="trailing" constant="8" id="E9l-8S-WBL"/>
-                                                <constraint firstAttribute="trailing" secondItem="2Md-2E-7Z4" secondAttribute="trailing" constant="18" id="ELH-06-H2j"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="2Md-2E-7Z4" secondAttribute="trailing" constant="0" id="ELH-06-H2j"/>
                                                 <constraint firstItem="2Md-2E-7Z4" firstAttribute="top" relation="greaterThanOrEqual" secondItem="zX8-l2-bVH" secondAttribute="top" constant="6" id="aBe-aC-mva"/>
                                                 <constraint firstItem="a30-nc-ZS4" firstAttribute="bottom" secondItem="zX8-l2-bVH" secondAttribute="bottomMargin" id="b3g-at-rjh"/>
                                                 <constraint firstItem="2Md-2E-7Z4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="79e-5s-vd0" secondAttribute="trailing" constant="8" id="lUn-8D-X20"/>
