@@ -107,7 +107,7 @@ final class ArticleViewController: UIViewController {
 		navigationItem.titleView = fullScreenTapZone
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 6)
+		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 5)
 
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self
