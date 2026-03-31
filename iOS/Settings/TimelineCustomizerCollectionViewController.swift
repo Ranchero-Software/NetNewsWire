@@ -25,7 +25,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				uniqueID: UUID().uuidString,
 				title: "At The Sign Of The Prancing Pony",
 				contentHTML: nil,
-				contentText: "Bree was the chief village of Bree-land, a small country a few miles broad whose chief claim to fame was its aluminum siding industry. The Men of Bree were cheerful and independant: they belonged to nobody but themselves. In the lands beyond Bree there were mysterious wanderers.",
+				contentText: "Bree was the chief village of Bree-land, a small country a few miles broad whose chief claim to fame was its aluminum siding industry. The Men of Bree were cheerful and independent: they belonged to nobody but themselves. In the lands beyond Bree there were mysterious wanderers.",
 				markdown: nil,
 				url: nil,
 				externalURL: nil,
