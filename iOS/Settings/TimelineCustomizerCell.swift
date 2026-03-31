@@ -14,7 +14,7 @@ enum SliderConfiguration {
 }
 
 final class TimelineCustomizerCell: UICollectionViewCell {
-	@IBOutlet var slider: UISlider!
+	@IBOutlet var slider: TickMarkSlider!
 
 	var sliderConfiguration: SliderConfiguration! {
 		didSet {
@@ -26,6 +26,7 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 					slider.trackConfiguration = .init(allowsTickValuesOnly: true, numberOfTicks: 6)
 				}
 				slider.value = Float(AppDefaults.shared.timelineNumberOfLines)
+				slider.addTickMarks()
 			case .iconSize:
 				slider.minimumValue = 1
 				slider.maximumValue = 3
@@ -33,6 +34,7 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 					slider.trackConfiguration = .init(allowsTickValuesOnly: true, numberOfTicks: 3)
 				}
 				slider.value = Float(AppDefaults.shared.timelineIconSize.rawValue)
+				slider.addTickMarks()
 			case .none:
 				return
 			}

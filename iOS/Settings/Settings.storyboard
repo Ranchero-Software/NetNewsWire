@@ -698,7 +698,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="B7g-v4-Vyj">
+                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="3" translatesAutoresizingMaskIntoConstraints="NO" id="B7g-v4-Vyj" customClass="TickMarkSlider" customModule="NetNewsWire" customModuleProvider="target">
                                             <rect key="frame" x="16" y="10" width="382" height="34"/>
                                             <color key="thumbTintColor" name="primaryAccentColor"/>
                                             <connections>
@@ -725,7 +725,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <subviews>
-                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="osf-aV-wdv">
+                                        <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minValue="1" maxValue="5" translatesAutoresizingMaskIntoConstraints="NO" id="osf-aV-wdv" customClass="TickMarkSlider" customModule="NetNewsWire" customModuleProvider="target">
                                             <rect key="frame" x="16" y="10" width="382" height="34"/>
                                             <color key="thumbTintColor" name="primaryAccentColor"/>
                                             <connections>
