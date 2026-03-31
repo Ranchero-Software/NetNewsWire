@@ -909,9 +909,14 @@ private extension MainTimelineModernViewController {
 
 	func configureToolbar() {
 		if traitCollection.userInterfaceIdiom == .phone {
-			toolbarItems?.insert(.flexibleSpace(), at: 1)
 			if #available(iOS 26, *) {
+				toolbarItems?.insert(.flexibleSpace(), at: 1)
 				toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
+			} else {
+				// Remove storyboard placeholder flex spaces so the progress view centers correctly.
+				if let markAllAsRead = toolbarItems?.first {
+					toolbarItems = [markAllAsRead]
+				}
 			}
 		}
 		updateToolbarProgressView()
