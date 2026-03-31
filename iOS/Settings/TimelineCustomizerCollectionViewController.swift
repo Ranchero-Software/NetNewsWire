@@ -42,7 +42,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-		title = NSLocalizedString("Timeline Customizer", comment: "Timeline Customizer")
+		title = NSLocalizedString("Timeline Layout", comment: "Timeline Layout")
 
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			guard let self = self else { return }

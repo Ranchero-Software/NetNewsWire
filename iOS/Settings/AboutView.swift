@@ -64,7 +64,7 @@ struct AboutView: View {
 		}
 		.multilineTextAlignment(.center)
 		.background(Color(uiColor: .systemBackground))
-		.navigationTitle(Text(verbatim: "About"))
+		.navigationTitle(Text(verbatim: "About NetNewsWire"))
     }
 }
 
