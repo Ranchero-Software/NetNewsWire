@@ -102,6 +102,12 @@ final class ArticleViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 
+		let appearance = UINavigationBarAppearance()
+		appearance.configureWithDefaultBackground()
+		navigationItem.standardAppearance = appearance
+		navigationItem.scrollEdgeAppearance = appearance
+		navigationItem.compactAppearance = appearance
+
 		let fullScreenTapZone = UIView()
 		NSLayoutConstraint.activate([
 			fullScreenTapZone.widthAnchor.constraint(equalToConstant: 150),
