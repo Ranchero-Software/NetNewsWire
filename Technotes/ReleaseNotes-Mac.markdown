@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.0.4b5 7041 29 Mar 2026 — branch: main tag: mac-7.0.4b5
+
+Made a change to how images are handled that will cut down on memory and disk use
+
 ### 7.0.4b4 7041 29 Mar 2026 — branch: main tag: mac-7.0.4b4
 
 Sync the setting for syncing unread content in iCloud
