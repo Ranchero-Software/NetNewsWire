@@ -142,9 +142,9 @@ private extension GeneralPreferencesViewController {
 		let defaultBrowser = MacWebBrowser.default
 
 		let defaultBrowserFormat = NSLocalizedString("System Default (%@)", comment: "Default browser item title format")
-		let defaultBrowserTitle = String(format: defaultBrowserFormat, defaultBrowser.name!)
+		let defaultBrowserTitle = String(format: defaultBrowserFormat, defaultBrowser.name ?? "")
 		let item = NSMenuItem(title: defaultBrowserTitle, action: nil, keyEquivalent: "")
-		let icon = defaultBrowser.icon!
+		let icon = defaultBrowser.icon ?? NSWorkspace.shared.icon(for: UTType.applicationBundle)
 		icon.size = NSSize(width: 16.0, height: 16.0)
 		item.image = icon
 
@@ -163,7 +163,12 @@ private extension GeneralPreferencesViewController {
 			menu.addItem(item)
 		}
 
-		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
+		if let savedID = AppDefaults.shared.defaultBrowserID {
+			let index = defaultBrowserPopup.indexOfItem(withRepresentedObject: savedID)
+			defaultBrowserPopup.selectItem(at: index == -1 ? 0 : index)
+		} else {
+			defaultBrowserPopup.selectItem(at: 0)
+		}
 	}
 
 	func updateNotificationSettings() {

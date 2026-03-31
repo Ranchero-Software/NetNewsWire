@@ -51,7 +51,7 @@ import UniformTypeIdentifiers
 
 	/// The filesystem URL of the default web browser.
 	private class var defaultBrowserURL: URL? {
-		return NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https:///")!)
+		return NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https://apple.com/")!)
 	}
 
 	/// The user's default web browser.
