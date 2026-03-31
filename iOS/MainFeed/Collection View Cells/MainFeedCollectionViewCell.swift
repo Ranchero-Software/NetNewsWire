@@ -89,6 +89,8 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 		var backgroundConfig: UIBackgroundConfiguration
 		if #available(iOS 18, *) {
 			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+		} else if traitCollection.userInterfaceIdiom == .pad {
+			backgroundConfig = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
 		} else {
 			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
 		}
