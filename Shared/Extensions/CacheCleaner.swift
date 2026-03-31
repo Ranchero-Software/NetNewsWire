@@ -14,7 +14,7 @@ struct CacheCleaner {
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
 
-	private static let didPurgeImageCachesForResizingKey = "didPurgeImageCachesForResizing"
+	private static let didPurgeImageCachesForResizingKey = "didPurgeImageCachesForResizing-2026-03-30"
 
 	static func purgeIfNecessary() {
 
