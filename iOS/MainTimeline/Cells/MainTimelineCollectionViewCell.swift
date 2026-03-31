@@ -324,17 +324,20 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		} else {
 			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
 		}
-		backgroundConfig.cornerRadius = 20
-
-		backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
-		if UIDevice.current.userInterfaceIdiom == .pad {
-			backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
-		} else {
-			if !isPreview {
-				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -12, bottom: 0, trailing: -12)
+		if #available(iOS 26, *) {
+			backgroundConfig.cornerRadius = 20
+			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
+			if UIDevice.current.userInterfaceIdiom == .pad {
+				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -8, bottom: 0, trailing: -8)
 			} else {
-				backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -16, bottom: 0, trailing: -16)
+				if !isPreview {
+					backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -12, bottom: 0, trailing: -12)
+				} else {
+					backgroundConfig.backgroundInsets = NSDirectionalEdgeInsets(top: 0, leading: -16, bottom: 0, trailing: -16)
+				}
 			}
+		} else {
+			backgroundConfig.cornerRadius = 0
 		}
 
 		let isActive = state.isSwiped || state.isSelected
