@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 7.0.4 build 7044 31 Mar 2026 - branch: main tag: iOS-7.0.4-7044
+
+Fixed bug on iOS 17/18 where article content would be active and not blurred behind the navbar
+Fixed layout issue on iOS 17/18 in the timeline toolbar
+Fixed bug where settings screen had a cancel button instead of a done button
+Updated the launch screens to be a plain background so it’s less jarring when the UI appears
+
 ### 7.0.4 build 7042 30 Mar 2026 - branch: main tag: iOS-7.0.4-7042
 
 Make the app run on iOS 17 and iOS 18
