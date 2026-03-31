@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import os
 
 #if os(macOS)
@@ -20,7 +21,6 @@ public typealias RSImage = UIImage
 #endif
 
 private let RSImageLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "RSImage")
-private let debugLoggingEnabled = false
 
 public extension RSImage {
 
@@ -130,110 +130,12 @@ public extension RSImage {
 		}
 	}
 
-	/// Create a scaled image from image data.
-	///
-	/// - Note: the returned image may be larger than `maxPixelSize`, but not more than `maxPixelSize * 2`.
-	/// - Parameters:
-	///   - data: The data object containing the image data.
-	///   - maxPixelSize: The maximum dimension of the image.
-	static func scaleImage(_ data: Data, maxPixelSize: Int) -> CGImage? {
+	/// Scales image data down to maxPixelSize and returns the result as PNG Data.
+	/// If the image is a single frame already at or below maxPixelSize, returns
+	/// the original data unchanged. For multi-image sources (like ICO), extracts
+	/// the largest frame. Returns nil if the data can't be decoded as an image.
+	static func scaledImageData(_ data: Data, maxPixelSize: Int) -> Data? {
 		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
-			if debugLoggingEnabled {
-				RSImageLogger.debug("RSImageLogger: couldn’t create image source")
-			}
-			return nil
-		}
-
-		let numberOfImages = CGImageSourceGetCount(imageSource)
-		if debugLoggingEnabled {
-			RSImageLogger.debug("RSImageLogger: numberOfImages == \(numberOfImages, privacy: .public)")
-		}
-		guard numberOfImages > 0 else {
-			return nil
-		}
-
-		var exactMatch: (index: Int, maxDimension: Int)?
-		var goodMatch: (index: Int, maxDimension: Int)?
-		var smallMatch: (index: Int, maxDimension: Int)?
-
-		// Single pass through all images to find the best match
-		for i in 0..<numberOfImages {
-			guard let cfImageProperties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil),
-				  let imagePixelWidth = (cfImageProperties as NSDictionary)[kCGImagePropertyPixelWidth] as? NSNumber,
-				  let imagePixelHeight = (cfImageProperties as NSDictionary)[kCGImagePropertyPixelHeight] as? NSNumber else {
-				continue
-			}
-
-			let width = imagePixelWidth.intValue
-			let height = imagePixelHeight.intValue
-			let maxDimension = max(width, height)
-
-			if debugLoggingEnabled {
-				RSImageLogger.debug("RSImageLogger: found width \(width, privacy: .public) height \(height, privacy: .public) \(maxPixelSize, privacy: .public)")
-			}
-
-			// Skip invalid dimensions
-			guard width > 0 && height > 0 else {
-				continue
-			}
-
-			// Check for exact match (largest dimension equals maxPixelSize)
-			if maxDimension == maxPixelSize {
-				exactMatch = (i, maxDimension)
-				if debugLoggingEnabled {
-					RSImageLogger.debug("RSImageLogger: found exact match for maxPixelSize: \(maxPixelSize, privacy: .public)")
-				}
-				break // Exact match is best, stop searching
-			}
-
-			// Check for good larger match
-			if maxDimension > maxPixelSize && maxDimension <= maxPixelSize * 4 {
-				if let currentGoodMatch = goodMatch {
-					if maxDimension < currentGoodMatch.maxDimension {
-						goodMatch = (i, maxDimension) // Prefer smaller size in this range
-					}
-				} else {
-					goodMatch = (i, maxDimension)
-				}
-				if debugLoggingEnabled {
-					RSImageLogger.debug("RSImageLogger: found good match \(maxDimension, privacy: .public) for maxPixelSize: \(maxPixelSize, privacy: .public)")
-				}
-			}
-
-			// Check for small match (smaller than maxPixelSize)
-			if maxDimension < maxPixelSize {
-				if let currentSmallMatch = smallMatch {
-					if maxDimension > currentSmallMatch.maxDimension {
-						smallMatch = (i, maxDimension) // Prefer larger size in this range
-					}
-				} else {
-					smallMatch = (i, maxDimension)
-				}
-				if debugLoggingEnabled {
-					RSImageLogger.debug("RSImageLogger: found small match \(maxDimension, privacy: .public) for maxPixelSize: \(maxPixelSize, privacy: .public)")
-				}
-			}
-		}
-
-		// Return best match in order of preference: exact > good > small
-		if let match = exactMatch ?? goodMatch ?? smallMatch {
-			return CGImageSourceCreateImageAtIndex(imageSource, match.index, nil)
-		}
-
-		// Fallback to creating a thumbnail
-		if debugLoggingEnabled {
-			RSImageLogger.debug("RSImageLogger: found no match — calling createThumbnail")
-		}
-		return RSImage.createThumbnail(imageSource, maxPixelSize: maxPixelSize)
-	}
-
-	/// Create a thumbnail from a CGImageSource.
-	///
-	/// - Parameters:
-	///   - imageSource: The `CGImageSource` from which to create the thumbnail.
-	///   - maxPixelSize: The maximum dimension of the resulting image.
-	static func createThumbnail(_ imageSource: CGImageSource, maxPixelSize: Int) -> CGImage? {
-		guard maxPixelSize > 0 else {
 			return nil
 		}
 
@@ -242,13 +144,72 @@ public extension RSImage {
 			return nil
 		}
 
-		if debugLoggingEnabled {
-			RSImageLogger.debug("RSImageLogger: createThumbnail image source count = \(count, privacy: .public)")
+		// Find the largest frame in the image source.
+		var largestIndex = 0
+		var largestWidth = 0
+		var largestHeight = 0
+		var largestMaxDimension = 0
+
+		for i in 0..<count {
+			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
+				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
+				  let height = properties[kCGImagePropertyPixelHeight] as? Int else {
+				continue
+			}
+			let maxDimension = max(width, height)
+			if maxDimension > largestMaxDimension {
+				largestIndex = i
+				largestWidth = width
+				largestHeight = height
+				largestMaxDimension = maxDimension
+			}
 		}
 
-		let options = [kCGImageSourceCreateThumbnailWithTransform: true,
-					   kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
-					   kCGImageSourceThumbnailMaxPixelSize: NSNumber(value: maxPixelSize)]
-		return CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary)
+		guard largestMaxDimension > 0 else {
+			return nil
+		}
+
+		let needsResize = largestMaxDimension > maxPixelSize
+		let isMultiImage = count > 1
+
+		// Single-frame image already small enough — return original data as-is.
+		if !needsResize && !isMultiImage {
+			RSImageLogger.info("Image already small enough: \(largestWidth, privacy: .public)x\(largestHeight, privacy: .public) <= \(maxPixelSize, privacy: .public)px max")
+			return data
+		}
+
+		// Either too large or multi-image — extract/resize to a single PNG.
+		let cgImage: CGImage?
+		if needsResize {
+			let options: [CFString: Any] = [
+				kCGImageSourceCreateThumbnailWithTransform: true,
+				kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+				kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
+			]
+			cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestIndex, options as CFDictionary)
+		} else {
+			cgImage = CGImageSourceCreateImageAtIndex(imageSource, largestIndex, nil)
+		}
+
+		guard let cgImage else {
+			return nil
+		}
+
+		guard let mutableData = CFDataCreateMutable(nil, 0),
+			  let destination = CGImageDestinationCreateWithData(mutableData, UTType.png.identifier as CFString, 1, nil) else {
+			return nil
+		}
+		CGImageDestinationAddImage(destination, cgImage, nil)
+		guard CGImageDestinationFinalize(destination) else {
+			return nil
+		}
+
+		if needsResize {
+			RSImageLogger.info("Resized image from \(largestWidth, privacy: .public)x\(largestHeight, privacy: .public) to \(cgImage.width, privacy: .public)x\(cgImage.height, privacy: .public)")
+		} else {
+			RSImageLogger.info("Extracted largest frame (\(largestWidth, privacy: .public)x\(largestHeight, privacy: .public)) from multi-image source (\(count, privacy: .public) frames)")
+		}
+
+		return mutableData as Data
 	}
 }

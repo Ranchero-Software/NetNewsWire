@@ -782,6 +782,10 @@ extension AppDelegate {
 		}
 	}
 
+	@IBAction func openImageCacheFolder(_ sender: Any?) {
+		NSWorkspace.shared.open(AppConfig.cacheFolder)
+	}
+
 	@IBAction func showCloudKitStats(_ sender: Any?) {
 		if cloudKitStatsWindowController == nil {
 			cloudKitStatsWindowController = CloudKitStatsWindowController()

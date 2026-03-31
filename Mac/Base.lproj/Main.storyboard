@@ -555,6 +555,13 @@
                                                 <action selector="vacuumDatabases:" target="Ady-hI-5gd" id="pQw-eT-j7Y"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="c4R-jH-7kP"/>
+                                        <menuItem title="Open Image Cache Folder" id="x9L-mW-2vQ">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="openImageCacheFolder:" target="Ady-hI-5gd" id="bT3-nF-8wR"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                             </menuItem>
