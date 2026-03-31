@@ -22,7 +22,7 @@ Every community member is expected to abide by the [code of conduct](CONTRIBUTIN
 
 #### Pull Requests
 
-See the [Contributing](CONTRIBUTING.md) page for our process. It’s pretty straightforward.
+See the [Contributing](CONTRIBUTING.md) page for our process. They key thing is to ask before doing a PR (before even starting work). The Contributing page goes into more detail as to why it’s important to ask first.
 
 #### Building
 
