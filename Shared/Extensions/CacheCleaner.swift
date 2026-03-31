@@ -14,26 +14,11 @@ struct CacheCleaner {
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
 
-	// TODO: Remove this before shipping — temporary for testing image resizing
-	static func purgeImageCachesForTesting() {
-		let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let foldersToRemove = [
-			cacheDir.appendingPathComponent("Favicons"),
-			cacheDir.appendingPathComponent("Images"),
-			cacheDir.appendingPathComponent("FeedIcons")
-		]
-
-		for folder in foldersToRemove {
-			do {
-				try FileManager.default.removeItem(at: folder)
-				logger.info("Purged image cache folder: \(folder.lastPathComponent, privacy: .public)")
-			} catch {
-				// Folder may not exist yet — that's fine
-			}
-		}
-	}
+	private static let didPurgeImageCachesForResizingKey = "didPurgeImageCachesForResizing"
 
 	static func purgeIfNecessary() {
+
+		purgeImageCachesForResizingIfNeeded()
 
 		guard let flushDate = AppDefaults.shared.lastImageCacheFlushDate else {
 			AppDefaults.shared.lastImageCacheFlushDate = Date()
@@ -63,5 +48,34 @@ struct CacheCleaner {
 				AppDefaults.shared.lastImageCacheFlushDate = Date()
 			}
 		}
+	}
+}
+
+private extension CacheCleaner {
+
+	/// One-time purge of image caches so that oversized cached images
+	/// are replaced with properly resized versions on re-download.
+	static func purgeImageCachesForResizingIfNeeded() {
+		guard !UserDefaults.standard.bool(forKey: didPurgeImageCachesForResizingKey) else {
+			return
+		}
+
+		let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+		let foldersToRemove = [
+			cacheDir.appendingPathComponent("Favicons"),
+			cacheDir.appendingPathComponent("Images"),
+			cacheDir.appendingPathComponent("FeedIcons")
+		]
+
+		for folder in foldersToRemove {
+			do {
+				try FileManager.default.removeItem(at: folder)
+				logger.info("Purged image cache folder: \(folder.lastPathComponent, privacy: .public)")
+			} catch {
+				// Folder may not exist yet — that's fine
+			}
+		}
+
+		UserDefaults.standard.set(true, forKey: didPurgeImageCachesForResizingKey)
 	}
 }

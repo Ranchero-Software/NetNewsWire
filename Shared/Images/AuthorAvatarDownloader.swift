@@ -66,7 +66,7 @@ extension Notification.Name {
 @MainActor private extension AuthorAvatarDownloader {
 
 	func scaleAndCacheImageData(_ imageData: Data, _ avatarURL: String) {
-		RSImage.scaledForIcon(imageData) { (image) in
+		RSImage.image(with: imageData) { (image) in
 			MainActor.assumeIsolated {
 				if let image {
 					self.handleImageDidBecomeAvailable(avatarURL, image)

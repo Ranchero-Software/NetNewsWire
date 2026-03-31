@@ -135,7 +135,6 @@ let appName = "NetNewsWire"
 	func applicationWillFinishLaunching(_ notification: Notification) {
 		installAppleEventHandlers()
 
-		CacheCleaner.purgeImageCachesForTesting() // TODO: Remove before shipping
 		CacheCleaner.purgeIfNecessary()
 
 		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir

@@ -73,7 +73,6 @@ import ErrorLog
 		}
 
 		registerBackgroundTasks()
-		CacheCleaner.purgeImageCachesForTesting() // TODO: Remove before shipping
 		CacheCleaner.purgeIfNecessary()
 		initializeDownloaders()
 		initializeHomeScreenQuickActions()

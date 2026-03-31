@@ -181,7 +181,7 @@ private extension FeedIconDownloader {
 			imageResultBlock(nil)
 			return
 		}
-		RSImage.scaledForIcon(imageData, imageResultBlock: imageResultBlock)
+		RSImage.image(with: imageData, imageResultBlock: imageResultBlock)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
