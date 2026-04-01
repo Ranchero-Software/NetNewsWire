@@ -1,5 +1,11 @@
 # iOS Release Notes
 
+### 7.0.4 build 7045 31 Mar 2026 - branch: main tag: iOS-7.0.4-7045
+
+Made the entire timeline row highlight in iOS 17/18 (instead of rounded/inset highlight)
+Fixed sidebar appearance in iOS 17
+Fixed crash on iOS 17 when bringing up contextual menu in sidebar
+
 ### 7.0.4 build 7044 31 Mar 2026 - branch: main tag: iOS-7.0.4-7044
 
 Fixed bug on iOS 17/18 where article content would be active and not blurred behind the navbar
