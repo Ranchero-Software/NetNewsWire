@@ -927,16 +927,10 @@ private extension MainTimelineModernViewController {
 		navigationItem.rightBarButtonItem = shouldShowFilterButton ? filterButton : nil
 
 		if isReadArticlesFiltered {
-			if #available(iOS 26, *) {
-				filterButton.style = .prominent
-			} else {
-				filterButton.style = .done
-			}
 			filterButton.tintColor = Assets.Colors.primaryAccent
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
-			filterButton.style = .plain
-			filterButton.tintColor = nil
+			filterButton.tintColor = .label
 			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
 
