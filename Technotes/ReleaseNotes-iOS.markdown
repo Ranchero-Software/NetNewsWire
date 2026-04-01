@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 7.0.4 build 7046 1 Apr 2026 - branch: main tag: iOS-7.0.4-7046
+
+Made filter button status display consistent between sidebar and timeline and across iOS 17/18/26
+Improved error messages and error location reporting in the Error Log
+Fixed some layout issues for the timeline toolbar on iOS 17/18
+Fixed a cause of runaway JavaScript (that caused at least one user to have to force-quite repeatedly)
+
 ### 7.0.4 build 7045 31 Mar 2026 - branch: main tag: iOS-7.0.4-7045
 
 Made the entire timeline row highlight in iOS 17/18 (instead of rounded/inset highlight)
