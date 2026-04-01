@@ -582,25 +582,37 @@ private extension CloudKitAccountDelegate {
 		do {
 			try await accountZone.fetchChangesInZone()
 			syncProgress.completeTask()
-
-			let feeds = account.flattenedFeeds()
-
-			try await refreshArticleStatus(for: account)
-			syncProgress.completeTask()
-
-			await refresher.refreshFeeds(feeds)
-
-			if sendArticleStatus {
-				try await self.sendArticleStatus(account: account, showProgress: true)
-			}
-
-			syncProgress.reset()
-			account.lastRefreshCompletedDate = Date()
 		} catch {
-			processAccountError(account, error, operation: "Refreshing")
+			processAccountError(account, error, operation: "Fetching zone changes")
 			syncProgress.reset()
 			throw error
 		}
+
+		let feeds = account.flattenedFeeds()
+
+		do {
+			try await refreshArticleStatus(for: account)
+			syncProgress.completeTask()
+		} catch {
+			processAccountError(account, error, operation: "Refreshing article status")
+			syncProgress.reset()
+			throw error
+		}
+
+		await refresher.refreshFeeds(feeds)
+
+		if sendArticleStatus {
+			do {
+				try await self.sendArticleStatus(account: account, showProgress: true)
+			} catch {
+				processAccountError(account, error, operation: "Sending article status")
+				syncProgress.reset()
+				throw error
+			}
+		}
+
+		syncProgress.reset()
+		account.lastRefreshCompletedDate = Date()
 	}
 
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {

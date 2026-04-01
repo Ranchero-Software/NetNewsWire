@@ -160,6 +160,8 @@ import Secrets
 			if case .success = result {
 				self?.accountSettings?.lastArticleFetchStartTime = date
 				self?.accountSettings?.lastRefreshCompletedDate = Date()
+			} else if case .failure(let error) = result {
+				self?.postSyncError(error, account: account, operation: "Refreshing")
 			}
 
 			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")

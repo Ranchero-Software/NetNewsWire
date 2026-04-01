@@ -155,6 +155,7 @@ import Secrets
 		}
 
 		if let savedError {
+			postSyncError(savedError, account: account, operation: "Sending article status")
 			throw savedError
 		}
 	}
@@ -184,6 +185,7 @@ import Secrets
 		}
 
 		if let savedError {
+			postSyncError(savedError, account: account, operation: "Refreshing article status")
 			throw savedError
 		}
 	}
