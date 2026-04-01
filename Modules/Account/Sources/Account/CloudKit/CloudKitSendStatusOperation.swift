@@ -101,7 +101,6 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 				return false
 			} catch {
 				try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
-				processAccountError(account, error)
 				syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
 				Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
 				return true
@@ -109,12 +108,4 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		}
 	}
 
-	func processAccountError(_ account: Account, _ error: Error) {
-		if case CloudKitZoneError.userDeletedZone = error {
-			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
-			for folder in account.folders ?? Set<Folder>() {
-				account.removeFolderFromTree(folder)
-			}
-		}
-	}
 }

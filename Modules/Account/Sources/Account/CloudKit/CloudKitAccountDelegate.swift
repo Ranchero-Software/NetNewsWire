@@ -217,7 +217,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			try await accountZone.renameFeed(feed, editedName: editedName)
 			feed.editedName = name
 		} catch {
-			processAccountError(account, error, operation: "Renaming feed")
+			postSyncError(error, account: account, operation: "Renaming feed")
 			throw error
 		}
 	}
@@ -255,7 +255,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			sourceContainer.removeFeedFromTreeAtTopLevel(feed)
 			destinationContainer.addFeedToTreeAtTopLevel(feed)
 		} catch {
-			processAccountError(account, error, operation: "Moving feed")
+			postSyncError(error, account: account, operation: "Moving feed")
 			throw error
 		}
 	}
@@ -272,7 +272,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			try await accountZone.addFeed(feed, to: container)
 			container.addFeedToTreeAtTopLevel(feed)
 		} catch {
-			processAccountError(account, error, operation: "Adding feed")
+			postSyncError(error, account: account, operation: "Adding feed")
 			throw error
 		}
 	}
@@ -299,7 +299,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			folder.externalID = externalID
 			return folder
 		} catch {
-			processAccountError(account, error, operation: "Creating folder")
+			postSyncError(error, account: account, operation: "Creating folder")
 			throw error
 		}
 	}
@@ -316,7 +316,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			try await accountZone.renameFolder(folder, to: name)
 			folder.name = name
 		} catch {
-			processAccountError(account, error, operation: "Renaming folder")
+			postSyncError(error, account: account, operation: "Renaming folder")
 			throw error
 		}
 	}
@@ -335,7 +335,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		} catch {
 			syncProgress.completeTask()
 			syncProgress.completeTask()
-			processAccountError(account, error, operation: "Removing folder")
+			postSyncError(error, account: account, operation: "Removing folder")
 			throw error
 		}
 
@@ -424,7 +424,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			account.addFolderToTree(folder)
 		} catch {
 			syncProgress.completeTask()
-			processAccountError(account, error, operation: "Restoring folder")
+			postSyncError(error, account: account, operation: "Restoring folder")
 			throw error
 		}
 	}
@@ -583,7 +583,13 @@ private extension CloudKitAccountDelegate {
 			try await accountZone.fetchChangesInZone()
 			syncProgress.completeTask()
 		} catch {
-			processAccountError(account, error, operation: "Fetching zone changes")
+			if case CloudKitZoneError.userDeletedZone = error {
+				account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
+				for folder in account.folders ?? Set<Folder>() {
+					account.removeFolderFromTree(folder)
+				}
+			}
+			postSyncError(error, account: account, operation: "Fetching zone changes")
 			syncProgress.reset()
 			throw error
 		}
@@ -594,7 +600,7 @@ private extension CloudKitAccountDelegate {
 			try await refreshArticleStatus(for: account)
 			syncProgress.completeTask()
 		} catch {
-			processAccountError(account, error, operation: "Refreshing article status")
+			postSyncError(error, account: account, operation: "Refreshing article status")
 			syncProgress.reset()
 			throw error
 		}
@@ -605,7 +611,7 @@ private extension CloudKitAccountDelegate {
 			do {
 				try await self.sendArticleStatus(account: account, showProgress: true)
 			} catch {
-				processAccountError(account, error, operation: "Sending article status")
+				postSyncError(error, account: account, operation: "Sending article status")
 				syncProgress.reset()
 				throw error
 			}
@@ -771,19 +777,6 @@ private extension CloudKitAccountDelegate {
 		}
 	}
 
-	func processAccountError(_ account: Account, _ error: Error, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		if case CloudKitZoneError.userDeletedZone = error {
-			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) \(error)")
-			account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
-			for folder in account.folders ?? Set<Folder>() {
-				account.removeFolderFromTree(folder)
-			}
-			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
-		} else {
-			postSyncError(error, account: account, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		}
-	}
-
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
 		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
@@ -857,7 +850,7 @@ private extension CloudKitAccountDelegate {
 		} catch {
 			syncProgress.completeTask()
 			syncProgress.completeTask()
-			processAccountError(account, error, operation: "Removing feed")
+			postSyncError(error, account: account, operation: "Removing feed")
 			throw error
 		}
 
@@ -872,7 +865,7 @@ private extension CloudKitAccountDelegate {
 			syncProgress.completeTask()
 		} catch {
 			syncProgress.completeTask()
-			processAccountError(account, error, operation: "Removing feed articles")
+			postSyncError(error, account: account, operation: "Removing feed articles")
 			throw error
 		}
 	}
