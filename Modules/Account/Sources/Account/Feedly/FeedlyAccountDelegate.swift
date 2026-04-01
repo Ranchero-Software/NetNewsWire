@@ -160,6 +160,8 @@ import Secrets
 			if case .success = result {
 				self?.accountSettings?.lastArticleFetchStartTime = date
 				self?.accountSettings?.lastRefreshCompletedDate = Date()
+			} else if case .failure(let error) = result {
+				self?.postSyncError(error, account: account, operation: "Refreshing")
 			}
 
 			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")
@@ -723,7 +725,7 @@ import Secrets
 private extension FeedlyAccountDelegate {
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

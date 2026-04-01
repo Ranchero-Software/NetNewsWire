@@ -21,7 +21,13 @@ import os
 	@MainActor func refreshFeeds(for account: Account) async throws {
 		Self.logger.info("NewsBlur: Refreshing feeds")
 
-		let (feeds, folders) = try await caller.retrieveFeeds()
+		let (feeds, folders): ([NewsBlurFeed]?, [NewsBlurFolder]?)
+		do {
+			(feeds, folders) = try await caller.retrieveFeeds()
+		} catch {
+			postSyncError(error, account: account, operation: "Refreshing feeds")
+			throw error
+		}
 
 		BatchUpdate.shared.perform {
 			MainActor.assumeIsolated {

@@ -213,7 +213,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 
 		if errorOccurred {
-			throw AccountError.unknown
+			let error = AccountError.unknown
+			postSyncError(error, account: account, operation: "Refreshing article status")
+			throw error
 		}
 	}
 
@@ -550,16 +552,21 @@ private extension ReaderAPIAccountDelegate {
 	@MainActor func refreshAccount(_ account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount")
 
-		let tags = try await caller.retrieveTags()
-		refreshProgress.completeTask()
+		do {
+			let tags = try await caller.retrieveTags()
+			refreshProgress.completeTask()
 
-		let subscriptions = try await caller.retrieveSubscriptions()
-		refreshProgress.completeTask()
+			let subscriptions = try await caller.retrieveSubscriptions()
+			refreshProgress.completeTask()
 
-		BatchUpdate.shared.perform {
-			self.syncFolders(account, tags)
-			self.syncFeeds(account, subscriptions)
-			self.syncFeedFolderRelationship(account, subscriptions)
+			BatchUpdate.shared.perform {
+				self.syncFolders(account, tags)
+				self.syncFeeds(account, subscriptions)
+				self.syncFeedFolderRelationship(account, subscriptions)
+			}
+		} catch {
+			postSyncError(error, account: account, operation: "Refreshing account")
+			throw error
 		}
 	}
 
@@ -951,7 +958,7 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

@@ -316,14 +316,10 @@ import ErrorLog
 
 		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
-				let accountName = account.nameForDisplay
-				let accountTypeRawValue = account.type.rawValue
 				group.addTask {
 					do {
 						try await account.refreshAll()
 					} catch {
-						let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountTypeRawValue, operation: "Refreshing", errorMessage: error.localizedDescription)
-						NotificationCenter.default.postOnMainThread(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 						errorHandler?(error)
 					}
 				}

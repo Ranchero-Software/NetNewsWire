@@ -680,7 +680,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func setFilterButtonToInactive() {
-		filterButton.tintColor = nil
+		filterButton.tintColor = .label
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
 

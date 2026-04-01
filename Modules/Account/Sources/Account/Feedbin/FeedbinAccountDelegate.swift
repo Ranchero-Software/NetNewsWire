@@ -109,21 +109,26 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			Self.logger.info("Feedbin: Finished sending article statuses")
 		}
 
-		guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
-			return
+		do {
+			guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+				return
+			}
+
+			let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
+			try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+
+			let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
+			try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+
+			let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
+			try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+
+			let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
+			try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+		} catch {
+			postSyncError(error, account: account, operation: "Sending article status")
+			throw error
 		}
-
-		let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
-		try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
-
-		let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
-		try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
-
-		let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
-		try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
-
-		let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
-		try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
 	}
 
 	func refreshArticleStatus(for account: Account) async throws {
@@ -149,6 +154,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 		Self.logger.info("Feedbin: Finished refreshing article statuses")
 		if let refreshError {
+			postSyncError(refreshError, account: account, operation: "Refreshing article status")
 			throw refreshError
 		}
 	}
@@ -447,20 +453,25 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func refreshAccount(_ account: Account) async throws {
-		let tags = try await caller.retrieveTags()
-		refreshProgress.completeTask()
+		do {
+			let tags = try await caller.retrieveTags()
+			refreshProgress.completeTask()
 
-		let subscriptions = try await caller.retrieveSubscriptions()
-		refreshProgress.completeTask()
-		forceExpireFolderFeedRelationship(account, tags)
+			let subscriptions = try await caller.retrieveSubscriptions()
+			refreshProgress.completeTask()
+			forceExpireFolderFeedRelationship(account, tags)
 
-		let taggings = try await caller.retrieveTaggings()
-		BatchUpdate.shared.perform {
-			syncFolders(account, tags)
-			syncFeeds(account, subscriptions)
-			syncFeedFolderRelationship(account, taggings)
+			let taggings = try await caller.retrieveTaggings()
+			BatchUpdate.shared.perform {
+				syncFolders(account, tags)
+				syncFeeds(account, subscriptions)
+				syncFeedFolderRelationship(account, taggings)
+			}
+			refreshProgress.completeTask()
+		} catch {
+			postSyncError(error, account: account, operation: "Refreshing account")
+			throw error
 		}
-		refreshProgress.completeTask()
 	}
 
 	func refreshArticlesAndStatuses(_ account: Account) async throws {
@@ -763,16 +774,21 @@ private extension FeedbinAccountDelegate {
 	func refreshArticles(_ account: Account) async throws {
 		Self.logger.info("Feedbin: Refreshing articles")
 
-		let (entries, page, updateFetchDate, lastPageNumber) = try await caller.retrieveEntries()
+		do {
+			let (entries, page, updateFetchDate, lastPageNumber) = try await caller.retrieveEntries()
 
-		if let last = lastPageNumber {
-			refreshProgress.addTasks(last - 1)
+			if let last = lastPageNumber {
+				refreshProgress.addTasks(last - 1)
+			}
+
+			try await processEntries(account: account, entries: entries)
+			refreshProgress.completeTask()
+
+			try await refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
+		} catch {
+			postSyncError(error, account: account, operation: "Refreshing articles")
+			throw error
 		}
-
-		try await processEntries(account: account, entries: entries)
-		refreshProgress.completeTask()
-
-		try await refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
 	}
 
 	func refreshMissingArticles(_ account: Account) async throws {
@@ -804,6 +820,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		if let savedError {
+			postSyncError(savedError, account: account, operation: "Refreshing missing articles")
 			throw savedError
 		}
 	}
@@ -943,7 +960,7 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: error.localizedDescription, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
+		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
