@@ -620,33 +620,8 @@ extension MainTimelineModernViewController {
 			return
 		}
 
-		// Progress view group (flex, progress, flex) is inserted after the first toolbar item.
-		let progressViewInsertionIndex = 1
-		let progressViewGroupCount = 3
-
-		let shouldShow = isSidebarHidden(for: displayMode)
-
-		if shouldShow && !isToolbarProgressViewShowing {
-			guard var items = toolbarItems, !items.isEmpty else {
-				return
-			}
-			isToolbarProgressViewShowing = true
-			items.insert(UIBarButtonItem.flexibleSpace(), at: progressViewInsertionIndex)
-			items.insert(refreshBarItem, at: progressViewInsertionIndex + 1)
-			items.insert(UIBarButtonItem.flexibleSpace(), at: progressViewInsertionIndex + 2)
-			toolbarItems = items
-		} else if !shouldShow && isToolbarProgressViewShowing {
-			guard var items = toolbarItems,
-				  let index = items.firstIndex(of: refreshBarItem) else {
-				return
-			}
-			isToolbarProgressViewShowing = false
-			// Remove the progress item and its flanking flex spaces
-			let rangeStart = max(index - 1, 0)
-			let rangeEnd = min(rangeStart + progressViewGroupCount - 1, items.count - 1)
-			items.removeSubrange(rangeStart...rangeEnd)
-			toolbarItems = items
-		}
+		isToolbarProgressViewShowing = isSidebarHidden(for: displayMode)
+		rebuildToolbarItems()
 	}
 }
 
@@ -910,10 +885,17 @@ private extension MainTimelineModernViewController {
 	func configureToolbar() {
 		if traitCollection.userInterfaceIdiom == .phone {
 			if #available(iOS 26, *) {
-				toolbarItems?.insert(.flexibleSpace(), at: 1)
-				toolbarItems?.insert(navigationItem.searchBarPlacementBarButtonItem, at: 2)
+				if let markAllAsRead = toolbarItems?.first {
+					toolbarItems = [
+						markAllAsRead,
+						.flexibleSpace(),
+						navigationItem.searchBarPlacementBarButtonItem,
+						.flexibleSpace(),
+						firstUnreadButton
+					]
+				}
 			} else {
-				// Remove storyboard placeholder flex spaces so the progress view centers correctly.
+				// Remove storyboard placeholder flex spaces so rebuildToolbarItems starts clean.
 				if let markAllAsRead = toolbarItems?.first {
 					toolbarItems = [markAllAsRead]
 				}
@@ -951,19 +933,29 @@ private extension MainTimelineModernViewController {
 	func updateToolbar() {
 		markAllAsReadButton?.isEnabled = isTimelineUnreadAvailable
 		firstUnreadButton.isEnabled = coordinator?.isAnyUnreadAvailable ?? false
-
-		if isRootSplitCollapsed {
-			if let toolbarItems = toolbarItems, toolbarItems.last != firstUnreadButton {
-				var items = toolbarItems
-				items.append(firstUnreadButton)
-				setToolbarItems(items, animated: false)
-			}
-		} else {
-			if let toolbarItems = toolbarItems, toolbarItems.last == firstUnreadButton {
-				let items = Array(toolbarItems[0..<toolbarItems.count - 1])
-				setToolbarItems(items, animated: false)
-			}
+		if #unavailable(iOS 26) {
+			rebuildToolbarItems()
 		}
+	}
+
+	/// Rebuilds toolbar items from scratch based on current state.
+	private func rebuildToolbarItems() {
+		guard let markAllAsReadButton else {
+			return
+		}
+
+		var items = [UIBarButtonItem]()
+		items.append(markAllAsReadButton)
+
+		if isToolbarProgressViewShowing {
+			items.append(.flexibleSpace())
+			items.append(refreshBarItem)
+		}
+
+		items.append(.flexibleSpace())
+		items.append(firstUnreadButton)
+
+		setToolbarItems(items, animated: false)
 	}
 
 	func applyChanges(animated: Bool, completion: (() -> Void)? = nil) {
