@@ -107,8 +107,12 @@ public enum TransportError: LocalizedError, Sendable {
 				let msg = NSLocalizedString("HTTP Status: ", comment: "Unexpected error")
 				return "\(msg) \(status)"
 			}
-		default:
-			return NSLocalizedString("An unknown network error occurred.", comment: "Unknown error")
+		case .noData:
+			return NSLocalizedString("No data was returned by the server.", comment: "No data")
+		case .noURL:
+			return NSLocalizedString("The URL for the request is missing.", comment: "No URL")
+		case .suspended:
+			return NSLocalizedString("The request was not sent because syncing is suspended.", comment: "Suspended")
 		}
 	}
 
