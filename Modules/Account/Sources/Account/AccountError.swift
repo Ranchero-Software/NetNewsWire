@@ -94,13 +94,32 @@ public enum AccountError: LocalizedError {
 	}
 }
 
-// MARK: Private
+// MARK: - Detailed Error Message
+
+extension AccountError {
+
+	/// Returns a description that includes the error domain, code, and any underlying error.
+	static func detailedErrorMessage(_ error: Error) -> String {
+		let nsError = error as NSError
+		var message = error.localizedDescription
+		if !nsError.domain.isEmpty {
+			message += " (\(nsError.domain) \(nsError.code))"
+		}
+		if let underlyingError = nsError.userInfo[NSUnderlyingErrorKey] as? Error {
+			let underlyingNSError = underlyingError as NSError
+			message += " -- underlying: \(underlyingError.localizedDescription) (\(underlyingNSError.domain) \(underlyingNSError.code))"
+		}
+		return message
+	}
+}
+
+// MARK: - Private
 
 private extension AccountError {
 
 	func unknownError(_ error: Error, _ accountName: String) -> String {
 		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
-		return NSString.localizedStringWithFormat(localizedText as NSString, accountName, error.localizedDescription) as String
+		return NSString.localizedStringWithFormat(localizedText as NSString, accountName, AccountError.detailedErrorMessage(error)) as String
 	}
 
 	func isCredentialsError(status: Int) -> Bool {
