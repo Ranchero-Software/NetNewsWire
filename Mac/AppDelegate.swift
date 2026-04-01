@@ -153,6 +153,10 @@ let appName = "NetNewsWire"
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
+		Task {
+			await WebViewConfiguration.compileContentBlockingRules()
+		}
+
 		// Ensure the Sparkle feed URL is one of the two supported URLs.
 		// Default to the release builds URL from Info.plist.
 		if let infoDictionary = Bundle.main.infoDictionary,

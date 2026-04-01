@@ -305,6 +305,7 @@ private extension DetailWebViewController {
 
 		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
+		WebViewConfiguration.addContentBlockingRules(to: webView)
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 

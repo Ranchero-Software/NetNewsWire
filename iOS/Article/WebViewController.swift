@@ -615,6 +615,7 @@ private extension WebViewController {
 //		try? html.write(to: fileURL, atomically: true, encoding: .utf8)
 //		print("article.html written to \(fileURL.path)")
 
+		WebViewConfiguration.addContentBlockingRules(to: webView)
 		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
 	}
 

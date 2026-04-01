@@ -1,0 +1,264 @@
+[{
+	"trigger": {
+		"url-filter": "googlesyndication\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "doubleclick\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "google-analytics\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "googletagmanager\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "amazon-adsystem\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "taboola\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "outbrain\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "scorecardresearch\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "quantserve\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "chartbeat\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "moatads\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "pubmatic\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "criteo\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "criteo\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "serving-sys\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "adform\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "adnxs\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "360yield\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "yieldmo\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "amx1\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "r2b2\\.io"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "3lift\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "lijit\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "a-mo\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "sharethrough\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "4dex\\.io"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "onetag-sys\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "creativecdn\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "smartadserver\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "openx\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "a-mx\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "track\\.us\\.org"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "sentry\\.io"
+	},
+	"action": {
+		"type": "block"
+	}
+}]
