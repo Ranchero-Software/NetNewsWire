@@ -7,157 +7,17 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.0.4b5</title>
+			<title>NetNewsWire 7.0.4b6</title>
             <description><![CDATA[
             <p>Changes:
  				<ul>
-					<li>Made a change to how images are handled that will cut down on memory and disk use
+					<li>Improved error messages and error location reporting in the Error Log
+					<li>Fixed a cause of runaway JavaScript
 				</ul>
 			]]></description>
-        	<pubDate>Mon, 30 Mar 2026 19:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b5/NetNewsWire7.0.4b5.zip" sparkle:version="7043" sparkle:shortVersionString="7.0.4b5" length="10053561" type="application/zip" />
+        	<pubDate>Wed, 01 Apr 2026 15:25:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b6/NetNewsWire7.0.4b6.zip" sparkle:version="7046" sparkle:shortVersionString="7.0.4b6" length="10072274" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.4b4</title>
-            <description><![CDATA[
-            <p>Changes:
- 				<ul>
-					<li>Sync the setting for syncing unread content in iCloud
-					<li>Do incremental syncing with iCloud, so it doesn’t have to start over if it gets interrupted
-					<li>Add special case for YouTube — don’t put a feed in timeout after a 4xx response. Keep trying. (YouTube feeds have been giving intermittent 4xx responses lately)
-				</ul>
-			]]></description>
-        	<pubDate>Sun, 29 Mar 2026 16:00:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b4/NetNewsWire7.0.4b4.zip" sparkle:version="7041" sparkle:shortVersionString="7.0.4b4" length="10048468" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.4b3</title>
-            <description><![CDATA[
-            <p>Changes:
- 				<ul>
-					<li>Simplified iCloud Storage Stats — focusing on cleaning up article content records that can be removed
-				</ul>
-			]]></description>
-        	<pubDate>Thu, 26 Mar 2026 10:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b3/NetNewsWire7.0.4b3.zip" sparkle:version="7040" sparkle:shortVersionString="7.0.4b3" length="9992126" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.4b2</title>
-            <description><![CDATA[
-            <p>Changes:
- 				<ul>
-					<li>New iCloud sync feature — Window > iCloud Storage Stats. Allows you to view stats and clean up storage. More details here: <a href=https://netnewswire.com/help/optimize-icloud.html>How to Optimize iCloud Syncing</a>
-					<li>iCloud account now does weekly cleanups in the background, which will help with syncing performance and with lowering iCloud storage use
-				</ul>
-			]]></description>
-        	<pubDate>Tue, 24 Mar 2026 19:40:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b2/NetNewsWire7.0.4b2.zip" sparkle:version="7039" sparkle:shortVersionString="7.0.4b2" length="10019142" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.4b1</title>
-            <description><![CDATA[
-            <p>Changes:
- 				<ul>
-					<li>Added a new setting for the iCloud account — you can turn on/off syncing the content of unread articles
-				</ul>
-				<p>Notes…
-				<p>If you already have an iCloud account, the setting is on, because that’s how it’s been working this whole time. But for future iCloud accounts the settings defaults to off, since it saves so much time and energy.
-				<p>Note: for this setting to really turn off syncing content of unread articles, it needs to be turned off on all your devices running NetNewsWire.
-				<p>Also note: turning this off won’t magically erase the content that’s already been uploaded — that content will still have to sync. It will get cleaned up gradually, in the normal course of things.
-			]]></description>
-        	<pubDate>Thu, 19 Mar 2026 17:00:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b1/NetNewsWire7.0.4b1.zip" sparkle:version="7038" sparkle:shortVersionString="7.0.4b1" length="9781646" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.3</title>
-            <description><![CDATA[
-            	<p>Changes since 7.0.2:
-				<ul>
-					<li>Fixed bug storing credentials in Keychain when there's a previous item — which could cause authentication issues with syncing systems
-				</ul>
-			]]></description>
-        	<pubDate>Thu, 19 Mar 2026 14:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.3/NetNewsWire7.0.3.zip" sparkle:version="7037" sparkle:shortVersionString="7.0.3" length="9766767" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.3b1</title>
-            <description><![CDATA[
-				<ul>
-					<li>Fixed bug storing credentials in Keychain when there's a previous item — which could cause authentication issues with syncing systems
-				</ul>
-			]]></description>
-        	<pubDate>Wed, 18 Mar 2026 16:35:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.3b1/NetNewsWire7.0.3b1.zip" sparkle:version="7036" sparkle:shortVersionString="7.0.3b1" length="9766838" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.2</title>
-            <description><![CDATA[
-				<ul>
-					<li>Added a new Error Log window — see Window > Error Log. It shows errors from refreshing, syncing, keychain, etc. (Note: it probably doesn’t show all possible errors yet. We’re still auditing the code for places to add error logging.)
-					<li>Further improved the error message reporting for credentials errors
-					<li>Fixed the missing-endpoint-URL bug with self-hosted sync accounts (FreshRSS most commonly)
-					<li>Fixed a NewsBlur syncing bug that had the app re-sending previously-sent sync statuses to the server, which was wildly inefficent
-					<li>Added Cache-Control feature: the app is now looking at the max-age and not downloading the feed again before it’s time — but with an important caveat: any max-age beyond five hours is set to five hours. (Our testing shows that lots of sites that use Cache-Control have it misconfigured for their feeds. The largest max-age we’ve seen is one year, and months are not uncommon.)
-					<li>Added a 29-minute minimum on refresh for any given feed
-					<li>Reverted a change where clicking on URLs with #fragment — when they otherwise match the current page URL — would assume an in-page navigation instead of opening in browser. Unfortunately the fragment section is very often not included in the article in the RSS, so we do need to open in browser
-					<li>Fixed a crash that could happen setting the window title
-					<li>Now more aggressively unloading memory on moving to the background
-					<li>Cut down on amount of disk writes — now storing account and feed settings in SQLite databases instead of in plist files, which is more efficient
-				</ul>
-			]]></description>
-        	<pubDate>Wed, 18 Mar 2026 13:35:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.2/NetNewsWire7.0.2.zip" sparkle:version="7035" sparkle:shortVersionString="7.0.2" length="9765858" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.1</title>
-            <description><![CDATA[
-            <p>Changes since 7.0:
-				<ul>
-					<li>Made it run on macOS 15
-					<li>Fixed a performance bug with NewsBlur syncing
-					<li>Fixed bug where the Sparkle appcast URL could be something other than the two supported URLs (release and test build URLs) — made Sparkle updating more reliable
-					<li>Fixed a crash that could happen when syncing some Reader API syncing systems
-					<li>Fixed a crash that could happen when removing an account
-					<li>Fixed a bug aligning unread counts in the sidebar
-					<li>Fixed a bug where images in the article view could get vertically stretched in some conditions
-					<li>Fixed a bug where a clicking an anchor link in the article view that should navigate to another spot in the article would open in the browser instead
-					<li>Fixed bug where multiple About windows could be shown
-					<li>Fixed a layout bug in the About window where text could get clipped on some machines
-					<li>Made the version selectable in the About window
-					<li>Fixed a typo in the About window credits
-				</ul>
-			]]></description>
-        	<pubDate>Wed, 04 Mar 2026 16:30:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.1/NetNewsWire7.0.1.zip" sparkle:version="7021" sparkle:shortVersionString="7.0.1" length="10363759" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0</title>
-            <description><![CDATA[
-				<ul>
-					<li>This build is the same as 7.0b6 — except for the version number. This is NetNewsWire 7.0.
-				</ul>
-			]]></description>
-        	<pubDate>Mon, 26 Jan 2026 21:15:00 -0800</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0/NetNewsWire7.0.zip" sparkle:version="7015" sparkle:shortVersionString="7.0" length="10356608" type="application/zip" />
-			<sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
 		</item>
 
 		<item>

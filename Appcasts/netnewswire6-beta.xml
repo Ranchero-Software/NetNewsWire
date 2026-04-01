@@ -7,15 +7,16 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.0.4b5</title>
+			<title>NetNewsWire 7.0.4b6</title>
             <description><![CDATA[
             <p>Changes:
  				<ul>
-					<li>Made a change to how images are handled that will cut down on memory and disk use
+					<li>Improved error messages and error location reporting in the Error Log
+					<li>Fixed a cause of runaway JavaScript
 				</ul>
 			]]></description>
-        	<pubDate>Mon, 30 Mar 2026 19:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b5/NetNewsWire7.0.4b5.zip" sparkle:version="7043" sparkle:shortVersionString="7.0.4b5" length="10053561" type="application/zip" />
+        	<pubDate>Wed, 01 Apr 2026 15:25:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b6/NetNewsWire7.0.4b6.zip" sparkle:version="7046" sparkle:shortVersionString="7.0.4b6" length="10072274" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
