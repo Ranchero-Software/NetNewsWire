@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.0.4b6 7046 29 Mar 2026 — branch: main tag: mac-7.0.4b6
+
+Improved error messages and error location reporting in the Error Log
+Fixed a cause of runaway JavaScript (that caused at least one user to have to force-quite repeatedly)
+
 ### 7.0.4b5 7041 29 Mar 2026 — branch: main tag: mac-7.0.4b5
 
 Made a change to how images are handled that will cut down on memory and disk use
