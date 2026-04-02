@@ -117,7 +117,24 @@ final class ArticleViewController: UIViewController {
 		navigationItem.titleView = fullScreenTapZone
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
-		toolbarItems?.insert(UIBarButtonItem(customView: articleExtractorButton), at: 5)
+		let articleExtractorBarButtonItem = UIBarButtonItem(customView: articleExtractorButton)
+
+		if #available(iOS 26, *) {
+			toolbarItems?.insert(articleExtractorBarButtonItem, at: 5)
+		} else {
+			let flex = { UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil) }
+			toolbarItems = [
+				readBarButtonItem,
+				flex(),
+				starBarButtonItem,
+				flex(),
+				nextUnreadBarButtonItem,
+				flex(),
+				articleExtractorBarButtonItem,
+				flex(),
+				actionBarButtonItem
+			]
+		}
 
 		pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal, options: [:])
 		pageViewController.delegate = self

@@ -80,6 +80,7 @@ final class ArticleExtractorButton: UIButton {
 	private func commonInit() {
 		addSubview(activityIndicator)
 		NSLayoutConstraint.activate([
+			widthAnchor.constraint(equalToConstant: 44.0),
 			activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
 			activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
 		])
