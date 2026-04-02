@@ -7,16 +7,15 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.0.4b6</title>
+			<title>NetNewsWire 7.0.4b7</title>
             <description><![CDATA[
             <p>Changes:
  				<ul>
-					<li>Improved error messages and error location reporting in the Error Log
-					<li>Fixed a cause of runaway JavaScript
+					<li>Made the in-progress mode of the reader view more obvious by using a spinning progress indicator in place of its toolbar icon (while in progress)
 				</ul>
 			]]></description>
-        	<pubDate>Wed, 01 Apr 2026 15:25:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b6/NetNewsWire7.0.4b6.zip" sparkle:version="7046" sparkle:shortVersionString="7.0.4b6" length="10072274" type="application/zip" />
+        	<pubDate>Thu, 02 Apr 2026 10:05:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4b7/NetNewsWire7.0.4b7.zip" sparkle:version="7047" sparkle:shortVersionString="7.0.4b7" length="10069031" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
