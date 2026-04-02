@@ -17,23 +17,34 @@ enum ArticleExtractorButtonState {
 
 final class ArticleExtractorButton: NSButton {
 
-	private var animatedLayer: CALayer?
+	private let progressIndicator: NSProgressIndicator = {
+		let indicator = NSProgressIndicator()
+		indicator.style = .spinning
+		indicator.controlSize = .small
+		indicator.isDisplayedWhenStopped = false
+		indicator.translatesAutoresizingMaskIntoConstraints = false
+		return indicator
+	}()
 
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
 			if buttonState != oldValue {
 				switch buttonState {
 				case .error:
-					stripAnimatedSublayer()
+					progressIndicator.stopAnimation(nil)
+					isEnabled = true
 					image = Assets.Images.articleExtractorError
 				case .animated:
 					image = nil
-					needsLayout = true
+					progressIndicator.startAnimation(nil)
+					isEnabled = false
 				case .on:
-					stripAnimatedSublayer()
+					progressIndicator.stopAnimation(nil)
+					isEnabled = true
 					image = Assets.Images.articleExtractorOn
 				case .off:
-					stripAnimatedSublayer()
+					progressIndicator.stopAnimation(nil)
+					isEnabled = true
 					image = Assets.Images.articleExtractorOff
 				}
 			}
@@ -69,41 +80,11 @@ final class ArticleExtractorButton: NSButton {
 		image = Assets.Images.articleExtractorOff
 		imageScaling = .scaleProportionallyDown
 		widthAnchor.constraint(equalTo: heightAnchor).isActive = true
+
+		addSubview(progressIndicator)
+		NSLayoutConstraint.activate([
+			progressIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+			progressIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
+		])
 	}
-
-	override func layout() {
-		super.layout()
-		guard case .animated = buttonState else {
-			return
-		}
-		stripAnimatedSublayer()
-		addAnimatedSublayer(to: layer!)
-	}
-
-	private func stripAnimatedSublayer() {
-		animatedLayer?.removeFromSuperlayer()
-	}
-
-	private func addAnimatedSublayer(to hostedLayer: CALayer) {
-		let image1 = Assets.Images.articleExtractorOff.tinted(with: NSColor.controlTextColor)
-		let image2 = Assets.Images.articleExtractorOn.tinted(with: NSColor.controlTextColor)
-		let images = [image1, image2, image1]
-
-		animatedLayer = CALayer()
-		let imageSize = Assets.Images.articleExtractorOff.size
-		animatedLayer!.bounds = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
-		animatedLayer!.position = CGPoint(x: bounds.midX, y: bounds.midY)
-
-		hostedLayer.addSublayer(animatedLayer!)
-
-		let animation = CAKeyframeAnimation(keyPath: "contents")
-		animation.calculationMode = CAAnimationCalculationMode.linear
-		animation.keyTimes = [0, 0.5, 1]
-		animation.duration = 2
-		animation.values = images
-		animation.repeatCount = HUGE
-
-		animatedLayer!.add(animation, forKey: "contents")
-	}
-
 }

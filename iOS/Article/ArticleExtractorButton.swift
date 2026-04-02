@@ -17,23 +17,32 @@ enum ArticleExtractorButtonState {
 
 final class ArticleExtractorButton: UIButton {
 
-	private var animatedLayer: CALayer?
+	private let activityIndicator: UIActivityIndicatorView = {
+		let indicator = UIActivityIndicatorView(style: .medium)
+		indicator.hidesWhenStopped = true
+		indicator.translatesAutoresizingMaskIntoConstraints = false
+		return indicator
+	}()
 
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
 			if buttonState != oldValue {
 				switch buttonState {
 				case .error:
-					stripAnimatedSublayer()
+					activityIndicator.stopAnimating()
+					isUserInteractionEnabled = true
 					setImage(Assets.Images.articleExtractorError, for: .normal)
 				case .animated:
 					setImage(nil, for: .normal)
-					setNeedsLayout()
+					activityIndicator.startAnimating()
+					isUserInteractionEnabled = false
 				case .on:
-					stripAnimatedSublayer()
+					activityIndicator.stopAnimating()
+					isUserInteractionEnabled = true
 					setImage(Assets.Images.articleExtractorOn, for: .normal)
 				case .off:
-					stripAnimatedSublayer()
+					activityIndicator.stopAnimating()
+					isUserInteractionEnabled = true
 					setImage(Assets.Images.articleExtractorOff, for: .normal)
 				}
 			}
@@ -58,39 +67,21 @@ final class ArticleExtractorButton: UIButton {
 		}
 	}
 
-	override func layoutSubviews() {
-		super.layoutSubviews()
-		guard case .animated = buttonState else {
-			return
-		}
-		stripAnimatedSublayer()
-		addAnimatedSublayer(to: layer)
+	override init(frame: CGRect) {
+		super.init(frame: frame)
+		commonInit()
 	}
 
-	private func stripAnimatedSublayer() {
-		animatedLayer?.removeFromSuperlayer()
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		commonInit()
 	}
 
-	private func addAnimatedSublayer(to hostedLayer: CALayer) {
-		let image1 = Assets.Images.articleExtractorOffTinted.cgImage!
-		let image2 = Assets.Images.articleExtractorOnTinted.cgImage!
-		let images = [image1, image2, image1]
-
-		animatedLayer = CALayer()
-		let imageSize = Assets.Images.articleExtractorOff.size
-		animatedLayer!.bounds = CGRect(x: 0, y: 0, width: imageSize.width, height: imageSize.height)
-		animatedLayer!.position = CGPoint(x: bounds.midX, y: bounds.midY)
-
-		hostedLayer.addSublayer(animatedLayer!)
-
-		let animation = CAKeyframeAnimation(keyPath: "contents")
-		animation.calculationMode = CAAnimationCalculationMode.linear
-		animation.keyTimes = [0, 0.5, 1]
-		animation.duration = 2
-		animation.values = images as [Any]
-		animation.repeatCount = HUGE
-
-		animatedLayer!.add(animation, forKey: "contents")
+	private func commonInit() {
+		addSubview(activityIndicator)
+		NSLayoutConstraint.activate([
+			activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+			activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
+		])
 	}
-
 }

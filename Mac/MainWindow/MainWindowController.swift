@@ -1186,7 +1186,7 @@ private extension MainWindowController {
 			toolbarButton.buttonState = isShowingExtractedArticle ? .on : .off
 		}
 
-		return true
+		return state != .processing
 	}
 
 	func canMarkAboveArticlesAsRead() -> Bool {
