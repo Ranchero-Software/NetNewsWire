@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0.4 build 7047 2 Apr 2026 - branch: main tag: iOS-7.0.4-7047
+
+Made the in-progress mode of the reader view more obvious by using a spinning progress indicator in place of its toolbar icon (while in progress)
+Spaced out the article view toolbar items evenly on iOS 17/18 (still grouped on iOS 26)
+
 ### 7.0.4 build 7046 1 Apr 2026 - branch: main tag: iOS-7.0.4-7046
 
 Made filter button status display consistent between sidebar and timeline and across iOS 17/18/26
