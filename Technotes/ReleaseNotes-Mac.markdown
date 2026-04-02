@@ -1,6 +1,10 @@
 # Mac Release Notes
 
-### 7.0.4b6 7046 29 Mar 2026 — branch: main tag: mac-7.0.4b6
+### 7.0.4b7 7046 02 Apr 2026 — branch: main tag: mac-7.0.4b7
+
+Make the in-progress mode of the reader view more obvious by using a spinning progress indicator in place of its toolbar icon (while in progress)
+
+### 7.0.4b6 7046 01 Apr 2026 — branch: main tag: mac-7.0.4b6
 
 Improved error messages and error location reporting in the Error Log
 Fixed a cause of runaway JavaScript (that caused at least one user to have to force-quite repeatedly)
