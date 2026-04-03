@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Name</key>
+	<string>Tiqoe Dark</string>
+	<key>ThemeIdentifier</key>
+	<string>justin-reeves.net.themes.tiqoe.dark</string>
+	<key>CreatorHomePage</key>
+	<string>https://justin-reeves.net</string>
+	<key>CreatorName</key>
+	<string>Justin Reeves</string>
+	<key>Version</key>
+	<integer>1</integer>
+</dict>
+</plist>
