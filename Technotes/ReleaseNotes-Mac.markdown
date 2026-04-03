@@ -1,6 +1,6 @@
 # Mac Release Notes
 
-### 7.0.4 7048 02 Apr 2026 — branch: main tag: mac-7.0.4
+### 7.0.4 7048 03 Apr 2026 — branch: main tag: mac-7.0.4
 
 Same as 7.0.4b7 except for the version.
 
