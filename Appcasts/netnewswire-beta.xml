@@ -7,6 +7,27 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.4</title>
+            <description><![CDATA[
+            <p>Changes since 7.0.3:
+ 				<ul>
+					<li>Added iCloud setting — turn on/off syncing content of unread articles (the setting itself syncs)
+					<li>Added iCloud sync feature — Window > iCloud Storage Stats. Allows you to view stats and clean up storage. More details here: <a href="https://netnewswire.com/help/optimize-icloud.html">https://netnewswire.com/help/optimize-icloud.html</a>
+					<li>Made iCloud start doing weekly cleanups in the background, which will help with syncing performance and with lowering iCloud storage use
+					<li>Made iCloud better at incremental syncing, so it doesn’t have to start over if it gets interrupted
+					<li>Added special case for YouTube — don’t put a feed in timeout after a 4xx response. Keep trying. (YouTube feeds have been returning intermittent 4xx responses lately)
+					<li>Made a change to how images are handled that cuts down on memory and disk use
+					<li>Improved error messages and error location reporting in the Error Log
+					<li>Fixed a cause of runaway JavaScript
+					<li>Made the in-progress mode of the reader view more obvious by using a spinning progress indicator in place of its toolbar icon (when it’s in progress)
+				</ul>
+			]]></description>
+        	<pubDate>Fri, 03 Apr 2026 07:55:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.4/NetNewsWire7.0.4.zip" sparkle:version="7048" sparkle:shortVersionString="7.0.4" length="10069053" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.4b7</title>
             <description><![CDATA[
             <p>Changes:
