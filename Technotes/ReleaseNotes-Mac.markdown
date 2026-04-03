@@ -1,6 +1,22 @@
 # Mac Release Notes
 
-### 7.0.4b7 7046 02 Apr 2026 — branch: main tag: mac-7.0.4b7
+### 7.0.4 7048 02 Apr 2026 — branch: main tag: mac-7.0.4
+
+Same as 7.0.4b7 except for the version.
+
+Changes since 7.0.3:
+
+Added iCloud setting — turn on/off syncing content of unread articles (the setting itself syncs)
+Added iCloud sync feature — Window > iCloud Storage Stats. Allows you to view stats and clean up storage. More details here: <https://netnewswire.com/help/optimize-icloud.html>
+Made iCloud start doing weekly cleanups in the background, which will help with syncing performance and with lowering iCloud storage use
+Made iCloud better at incremental syncing, so it doesn’t have to start over if it gets interrupted
+Added special case for YouTube — don’t put a feed in timeout after a 4xx response. Keep trying. (YouTube feeds have been returning intermittent 4xx responses lately)
+Made a change to how images are handled that cuts down on memory and disk use
+Improved error messages and error location reporting in the Error Log
+Fixed a cause of runaway JavaScript
+Made the in-progress mode of the reader view more obvious by using a spinning progress indicator in place of its toolbar icon (when it’s in progress)
+
+### 7.0.4b7 7047 02 Apr 2026 — branch: main tag: mac-7.0.4b7
 
 Make the in-progress mode of the reader view more obvious by using a spinning progress indicator in place of its toolbar icon (while in progress)
 
