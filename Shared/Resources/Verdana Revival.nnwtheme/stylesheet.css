@@ -1,0 +1,576 @@
+/* Verdana Revival — inspired by netnewswire.com and netnewswire.blog */
+
+body {
+	word-wrap: break-word;
+}
+
+article {
+	margin-top: 16px;
+}
+
+a {
+	text-decoration: none;
+	text-underline-offset: 0.1em;
+}
+
+.systemMessage {
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translateX(-55%) translateY(-50%);
+	-webkit-user-select: none;
+	cursor: default;
+}
+
+:root {
+	--background-color: #fafafb;
+	--text-color: #2a2e3a;
+	--link-color: #2670c4;
+	--visited-link-color: #7b5ea7;
+	--attribution-color: #6a7080;
+	--article-title-color: #2a2e3a;
+	--body-code-color: #555e6a;
+	--body-code-background: rgba(0, 0, 0, 0.05);
+	--system-message-color: #b0b4bc;
+	--separator-color: #d4dce8;
+	--table-cell-border-color: #d4dce8;
+	--blockquote-border-color: #e8a820;
+	--blockquote-text-color: rgba(0, 0, 0, 0.7);
+	--blockquote-background: rgba(0, 0, 0, 0.02);
+	--footer-color: #6a7080;
+	--pre-background: rgba(0, 0, 0, 0.04);
+	--header-top: #3b8de0;
+	--header-bottom: #2b6fc0;
+	--dateline-bar-top: #e8a820;
+	--dateline-bar-bottom: #d49618;
+}
+
+@media(prefers-color-scheme: dark) {
+	:root {
+		--background-color: #181c22;
+		--text-color: #c4ccd5;
+		--link-color: #4a8ad4;
+		--visited-link-color: #c4a050;
+		--attribution-color: #8894a0;
+		--article-title-color: #dce0e6;
+		--body-code-color: #a0a8b2;
+		--body-code-background: rgba(255, 255, 255, 0.08);
+		--system-message-color: #5f646c;
+		--separator-color: rgba(255, 255, 255, 0.12);
+		--table-cell-border-color: rgba(255, 255, 255, 0.15);
+		--blockquote-border-color: #a07818;
+		--blockquote-text-color: rgba(255, 255, 255, 0.7);
+		--blockquote-background: rgba(255, 255, 255, 0.03);
+		--footer-color: #8894a0;
+		--pre-background: rgba(255, 255, 255, 0.06);
+		--header-top: #2968aa;
+		--header-bottom: #1f528c;
+		--dateline-bar-top: #a07818;
+		--dateline-bar-bottom: #886412;
+	}
+}
+
+body {
+	background-color: var(--background-color);
+	color: var(--text-color);
+}
+
+body a, body a * {
+	color: var(--link-color);
+}
+
+body a:visited {
+	color: var(--visited-link-color);
+}
+
+body > .systemMessage {
+	color: var(--system-message-color);
+}
+
+/* Header bar — blue gradient with favicon, site name, author */
+
+.headerBar {
+	background: linear-gradient(to bottom, var(--header-top), var(--header-bottom));
+	padding: 14px 0;
+	font-size: 1em;
+	font-weight: bold;
+	line-height: 1.4;
+	color: white;
+	text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+
+.headerBarInner {
+	display: flex;
+	align-items: center;
+}
+
+.avatar {
+	vertical-align: middle;
+	border-radius: 3px;
+	height: 1.8em !important;
+	width: 1.8em;
+	min-width: 1.8em;
+	margin: 0 !important;
+	margin-right: 0.5em !important;
+}
+
+.headerBar a:link, .headerBar a:visited, .headerBar a, .feedlink {
+	color: white !important;
+	font-weight: bold;
+}
+
+.headerBar a:hover {
+	text-decoration: underline;
+}
+
+.byline {
+	color: rgba(255, 255, 255, 0.7);
+	margin-left: 0.5em;
+}
+
+body .byline a:link, .byline a:visited, .byline a {
+	color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Content containers */
+
+.barContent, .articleContent {
+	max-width: 44rem;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.articleContent {
+	margin-top: 2em;
+}
+
+/* Dateline bar — gradient with date */
+
+.datelineBar {
+	background: linear-gradient(to bottom, var(--dateline-bar-top), var(--dateline-bar-bottom));
+	padding: 8px 0;
+	font-size: 0.85em;
+	font-weight: bold;
+	line-height: 1.4;
+	color: white;
+}
+
+.datelineBarInner {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.datelineDate a:link, .datelineDate a:visited, .datelineDate a {
+	color: white !important;
+	font-weight: bold;
+}
+
+.datelineBar a:hover {
+	text-decoration: underline;
+}
+
+/* Article title */
+
+.articleTitle {
+	font-size: 1.5em;
+	font-weight: bold;
+	line-height: 1.25;
+	margin-top: 0;
+	margin-bottom: 16px;
+	color: var(--article-title-color);
+}
+
+.articleTitle a:link, .articleTitle a:visited, .articleTitle a {
+	color: var(--article-title-color);
+}
+
+.articleTitle a:hover {
+	text-decoration: underline;
+}
+
+/* Article body */
+
+.articleBody {
+	margin-top: 24px;
+	line-height: 1.8em;
+}
+
+.articleBody a {
+	text-decoration: underline;
+}
+
+.articleBody p {
+	margin-bottom: 1em;
+}
+
+/* Footer */
+
+body .footer {
+	margin-top: 28px;
+	margin-bottom: 2em;
+	color: var(--footer-color);
+	font-size: 0.85em;
+	font-style: italic;
+}
+
+body .footer a:link, .footer a:visited {
+	color: var(--link-color);
+	text-decoration: underline;
+}
+
+.externalLink {
+	width: 100%;
+}
+
+.singleLine {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Headings */
+
+h1 {
+	line-height: 1.2em;
+	font-weight: bold;
+	padding-bottom: 0;
+	margin-bottom: 8px;
+}
+
+h2 {
+	line-height: 1.25em;
+	font-weight: bold;
+	margin-bottom: 6px;
+}
+
+h3 {
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+
+/* Code */
+
+code, pre {
+	font-family: "SF Mono", Menlo, "Courier New", Courier, monospace;
+	font-size: 0.9em;
+	-webkit-hyphens: none;
+}
+
+body code, body pre {
+	color: var(--body-code-color);
+}
+
+p code {
+	background: var(--body-code-background);
+	padding: 0.15em 0.35em;
+	border-radius: 3px;
+}
+
+pre {
+	max-width: 100%;
+	margin: 0;
+	overflow: auto;
+	overflow-y: hidden;
+	word-wrap: normal;
+	word-break: normal;
+	line-height: 1.5em;
+	background: var(--pre-background);
+	padding: 10px;
+	border-radius: 4px;
+}
+
+pre code {
+	letter-spacing: -.027em;
+	font-size: 0.9375em;
+	background: none;
+	padding: 0;
+}
+
+/* Blockquotes — amber border */
+
+blockquote {
+	margin-inline-start: 0;
+	margin-inline-end: 0;
+	padding: 0.8em 1em;
+	border-inline-start: 2px solid var(--blockquote-border-color);
+	background: var(--blockquote-background);
+	border-radius: 0 4px 4px 0;
+	color: var(--blockquote-text-color);
+}
+
+blockquote > *:first-child {
+	margin-block-start: 0;
+}
+
+blockquote > *:last-child {
+	margin-block-end: 0;
+}
+
+blockquote > blockquote {
+	padding-left: 1em;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-style: italic;
+}
+
+/* Tables */
+
+.nnw-overflow {
+	overflow-x: auto;
+}
+
+.nnw-overflow table {
+	margin-bottom: 1px;
+	border-spacing: 0;
+	border: 1px solid var(--separator-color);
+	font-size: inherit;
+}
+
+.nnw-overflow table table {
+	margin-bottom: 0;
+	border: none;
+}
+
+.nnw-overflow td, .nnw-overflow th {
+	-webkit-hyphens: none;
+	word-break: normal;
+	border: 1px solid var(--table-cell-border-color);
+	border-top: none;
+	border-left: none;
+	padding: 5px;
+}
+
+.nnw-overflow tr :matches(td, th):last-child {
+	border-right: none;
+}
+
+.nnw-overflow :matches(thead, tbody, tfoot):last-child > tr:last-child :matches(td, th) {
+	border-bottom: none;
+}
+
+.nnw-overflow td pre {
+	border: none;
+	padding: 0;
+}
+
+.nnw-overflow table[border="0"] {
+	border-width: 0;
+}
+
+/* Media elements */
+
+img, figure, video, div, object {
+	max-width: 100%;
+	height: auto !important;
+	margin: 0 auto;
+}
+
+iframe {
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+iframe.nnw-constrained {
+	max-height: 50vw;
+}
+
+figure {
+	margin-bottom: 1em;
+	margin-top: 1em;
+}
+
+figcaption {
+	font-size: 0.85em;
+	line-height: 1.3em;
+	color: var(--attribution-color);
+}
+
+sup {
+	vertical-align: top;
+	position: relative;
+	bottom: 0.2rem;
+}
+
+sub {
+	vertical-align: bottom;
+	position: relative;
+	top: 0.2rem;
+}
+
+hr {
+	border: none;
+	background-color: var(--separator-color);
+	height: 1px;
+	margin-top: 1.5em;
+	margin-bottom: 1.5em;
+}
+
+.iframeWrap {
+	position: relative;
+	display: block;
+	padding-top: 56.25%;
+}
+
+.iframeWrap iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100% !important;
+	width: 100% !important;
+}
+
+/* Feed specific */
+
+.feedbin--article-wrap {
+	border-top: 1px solid var(--separator-color);
+}
+
+/* Newsfoot footnote popovers */
+
+.newsfoot-footnote-popover {
+	background: #d4dce8;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 3px 6px rgba(0, 0, 0, 0.15);
+	color: #2a2e3a;
+	padding: 1px;
+}
+
+.newsfoot-footnote-popover-arrow {
+	background: #fafcff;
+	border: 1px solid #d4dce8;
+}
+
+.newsfoot-footnote-popover-inner {
+	background: #fafcff;
+}
+
+body a.footnote,
+body a.footnote:visited,
+.newsfoot-footnote-popover + a.footnote:hover {
+	background: #8894a0;
+	color: white;
+	transition: background-color 200ms ease-out;
+}
+
+a.footnote:hover,
+.newsfoot-footnote-popover + a.footnote {
+	background: #2670c4;
+	transition: background-color 200ms ease-out;
+}
+
+@media screen and (prefers-color-scheme: dark) {
+	.newsfoot-footnote-popover {
+		background: #2e3440;
+		color: #c4ccd5;
+	}
+
+	.newsfoot-footnote-popover-arrow {
+		background: #1e2430;
+		border: 1px solid #2e3440;
+	}
+
+	.newsfoot-footnote-popover-inner {
+		background: #1e2430;
+	}
+
+	body a.footnote,
+	body a.footnote:visited,
+	.newsfoot-footnote-popover + a.footnote:hover {
+		background: #8894a0;
+		color: white;
+		transition: background-color 200ms ease-out;
+	}
+
+	a.footnote:hover,
+	.newsfoot-footnote-popover + a.footnote {
+		background: #4a8ad4;
+		transition: background-color 200ms ease-out;
+	}
+}
+
+/* iOS Specific */
+@supports (-webkit-touch-callout: none) {
+
+	body {
+		margin: 0;
+		padding: 0;
+		margin-bottom: 20px;
+
+		word-break: break-word;
+		-webkit-hyphens: auto;
+		-webkit-text-size-adjust: none;
+	}
+
+	:root {
+		color-scheme: light dark;
+		font-family: Verdana, Geneva, sans-serif;
+		/* The font-size is replaced at runtime by the dynamic type size */
+		font-size: [[font-size]]px;
+	}
+
+	.fontSize {
+		font-family: Verdana, Geneva, sans-serif;
+		font-size: [[font-size]]px;
+	}
+
+	.articleContent, .barContent {
+		padding-left: 20px;
+		padding-right: 20px;
+	}
+
+	pre {
+		border: none;
+	}
+
+	.nnw-overflow table {
+		border: 1px solid var(--separator-color);
+	}
+}
+
+/* macOS Specific */
+@supports not (-webkit-touch-callout: none) {
+
+	body {
+		margin: 0;
+		padding: 0;
+		margin-bottom: 20px;
+		font-family: Verdana, Geneva, sans-serif;
+	}
+
+	.articleContent, .barContent {
+		padding-left: 48px;
+		padding-right: 48px;
+	}
+
+	.smallText {
+		font-size: 14px;
+	}
+
+	.mediumText {
+		font-size: 16px;
+	}
+
+	.largeText {
+		font-size: 18px;
+	}
+
+	.xlargeText {
+		font-size: 20px;
+	}
+
+	.xxlargeText {
+		font-size: 22px;
+	}
+
+	:root {
+		color-scheme: light dark;
+	}
+
+	pre {
+		border: none;
+	}
+
+	.nnw-overflow table {
+		border: 1px solid var(--separator-color);
+	}
+}
