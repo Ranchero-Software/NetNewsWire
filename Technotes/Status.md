@@ -1,7 +1,7 @@
 # NetNewsWire Status
 
-Current milestone: NetNewsWire 7.0.4 on main
-https://github.com/Ranchero-Software/NetNewsWire/milestone/68
+Current milestone: NetNewsWire 7.1 on main
+https://github.com/Ranchero-Software/NetNewsWire/milestone/50
 
 ## iOS
 
