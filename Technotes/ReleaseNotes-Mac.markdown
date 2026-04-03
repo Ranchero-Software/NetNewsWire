@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.1b1 7049 03 Apr 2026 — branch: main tag: mac-7.1b1
+
+Added Biblioteca, Tiqoe Dark, and Verdana Revival themes
+
 ### 7.0.4 7048 03 Apr 2026 — branch: main tag: mac-7.0.4
 
 Same as 7.0.4b7 except for the version.
