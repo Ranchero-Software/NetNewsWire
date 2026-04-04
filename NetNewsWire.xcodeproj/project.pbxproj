@@ -472,6 +472,7 @@
 				ArticleSpecifier.swift,
 				Assets.swift,
 				"Extensions/Node+Extensions.swift",
+				Settings/FeedReadFilterOverrides.swift,
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,
 				ShareExtension/ExtensionFeedAddRequest.swift,
@@ -505,6 +506,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"Article Rendering/ArticleTextSize.swift",
+				Settings/FeedReadFilterOverrides.swift,
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,
 				ShareExtension/ExtensionFeedAddRequest.swift,

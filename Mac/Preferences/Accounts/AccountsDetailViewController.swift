@@ -25,11 +25,69 @@ final class AccountsDetailViewController: NSViewController {
 	}
 
 	override func loadView() {
-		let detailView = AccountsDetailView(account: account) { [weak self] in
-			self?.showCredentials()
-		}
+		let detailView = AccountsDetailView(
+			account: account,
+			onCredentials: { [weak self] in
+				self?.showCredentials()
+			},
+			onHideReadOverrides: { [weak self] in
+				self?.showHideReadArticlesSettings()
+			}
+		)
 		let hostingView = NSHostingView(rootView: detailView)
 		self.view = hostingView
+	}
+
+	private func showHideReadArticlesSettings() {
+		guard let window = view.window else {
+			return
+		}
+
+		let overridesView = FeedReadFilterOverridesView(
+			account: account,
+			hasOverride: { [weak self] feedID in
+				guard let accountID = self?.account.accountID else {
+					return false
+				}
+				return AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
+			},
+			setOverride: { [weak self] feedID, hasOverride in
+				guard let accountID = self?.account.accountID else {
+					return
+				}
+				var overrides = AppDefaults.shared.feedReadFilterOverrides
+
+				if hasOverride {
+					let globalHides = AppDefaults.shared.hideReadArticles
+					overrides.setOverride(accountID: accountID, feedID: feedID, globalHides ? .show : .hide)
+				} else {
+					overrides.clearOverride(accountID: accountID, feedID: feedID)
+				}
+
+				AppDefaults.shared.feedReadFilterOverrides = overrides
+			},
+			clearAllOverrides: { [weak self] in
+				guard let accountID = self?.account.accountID else {
+					return
+				}
+				var overrides = AppDefaults.shared.feedReadFilterOverrides
+				overrides.clearAll(accountID: accountID)
+				AppDefaults.shared.feedReadFilterOverrides = overrides
+			}
+		)
+
+		var viewWithDone = overridesView
+		viewWithDone.onDone = { [weak window] in
+			guard let window, let sheet = window.attachedSheet else {
+				return
+			}
+			window.endSheet(sheet)
+		}
+
+		let hostingController = NSHostingController(rootView: viewWithDone)
+		let sheetWindow = NSWindow(contentViewController: hostingController)
+		sheetWindow.title = "Hide Read Articles Settings"
+		window.beginSheet(sheetWindow)
 	}
 
 	private func showCredentials() {

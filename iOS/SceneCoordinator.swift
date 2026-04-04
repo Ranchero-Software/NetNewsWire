@@ -107,6 +107,8 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	private var hideReadArticles = AppDefaults.shared.hideReadArticles
+
 	var prefersStatusBarHidden = false
 
 	private let treeControllerDelegate = SidebarTreeControllerDelegate()
@@ -582,6 +584,15 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func userDefaultsDidChange() {
+		let newHideReadArticles = AppDefaults.shared.hideReadArticles
+		let hideReadArticlesDidChange = hideReadArticles != newHideReadArticles
+		hideReadArticles = newHideReadArticles
+		let previousOverrides = hidingReadArticlesState.feedReadFilterOverrides
+		hidingReadArticlesState.reloadFeedOverridesFromDefaults()
+		let overridesDidChange = hidingReadArticlesState.feedReadFilterOverrides != previousOverrides
+		if hideReadArticlesDidChange || overridesDidChange {
+			refreshTimeline(resetScroll: false)
+		}
 		sortDirection = AppDefaults.shared.timelineSortDirection
 		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}

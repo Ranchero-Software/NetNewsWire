@@ -29,15 +29,17 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 
 	let id: Int
 	let readFilterEnabledTable: [SidebarItemIdentifier: Bool]
+	let globalHideReadArticles: Bool
 	let resultBlock: FetchRequestOperationResultBlock
 	var isCanceled = false
 	var isFinished = false
 	private let fetchers: [ArticleFetcher]
 
-	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], globalHideReadArticles: Bool = false, fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.readFilterEnabledTable = readFilterEnabledTable
+		self.globalHideReadArticles = globalHideReadArticles
 		self.fetchers = fetchers
 		self.resultBlock = resultBlock
 	}
@@ -95,7 +97,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 			for fetcher in fetchers {
 				let articles: Set<Article>
 
-				if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+				if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable, globalHideReadArticles: globalHideReadArticles) ?? true {
 					articles = await fetcher.fetchUnreadArticlesAsync()
 				} else {
 					articles = await fetcher.fetchArticlesAsync()
