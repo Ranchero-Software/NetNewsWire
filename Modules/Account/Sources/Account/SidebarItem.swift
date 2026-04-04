@@ -22,14 +22,14 @@ nonisolated public enum ReadFilterType: Sendable {
 
 @MainActor public extension SidebarItem {
 
-	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool]) -> Bool {
+	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool], globalHideReadArticles: Bool = false) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {
 			return true
 		}
 		if let sidebarItemID, let readFilterEnabled = readFilterEnabledTable[sidebarItemID] {
 			return readFilterEnabled
 		} else {
-			return defaultReadFilterType == .read
+			return globalHideReadArticles || defaultReadFilterType == .read
 		}
 
 	}

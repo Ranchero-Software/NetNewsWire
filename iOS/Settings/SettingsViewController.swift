@@ -45,9 +45,10 @@ final class SettingsViewController: UITableViewController {
 	private enum TimelineRow: Int {
 		case sortOrder = 0
 		case groupByFeed = 1
-		case refreshClearsReadArticles = 2
-		case confirmMarkAllAsRead = 3
-		case timelineLayout = 4
+		case hideReadArticles = 2
+		case refreshClearsReadArticles = 3
+		case confirmMarkAllAsRead = 4
+		case timelineLayout = 5
 	}
 
 	private enum ArticlesRow: Int, CaseIterable {
@@ -69,6 +70,7 @@ final class SettingsViewController: UITableViewController {
 
 	@IBOutlet var timelineSortOrderSwitch: UISwitch!
 	@IBOutlet var groupByFeedSwitch: UISwitch!
+	@IBOutlet var hideReadArticlesSwitch: UISwitch!
 	@IBOutlet var refreshClearsReadArticlesSwitch: UISwitch!
 	@IBOutlet var articleThemeDetailLabel: UILabel!
 	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
@@ -110,6 +112,8 @@ final class SettingsViewController: UITableViewController {
 		} else {
 			groupByFeedSwitch.isOn = false
 		}
+
+		hideReadArticlesSwitch.isOn = AppDefaults.shared.hideReadArticles
 
 		if AppDefaults.shared.refreshClearsReadArticles {
 			refreshClearsReadArticlesSwitch.isOn = true
@@ -368,6 +372,10 @@ final class SettingsViewController: UITableViewController {
 		} else {
 			AppDefaults.shared.timelineGroupByFeed = false
 		}
+	}
+
+	@IBAction func switchHideReadArticles(_ sender: Any) {
+		AppDefaults.shared.hideReadArticles = hideReadArticlesSwitch.isOn
 	}
 
 	@IBAction func switchClearsReadArticles(_ sender: Any) {
