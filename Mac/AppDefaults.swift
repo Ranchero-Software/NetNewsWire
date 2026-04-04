@@ -43,6 +43,8 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let feedReadFilterOverrides = "feedReadFilterOverrides"
+		static let hideReadArticles = "hideReadArticles"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -316,6 +318,24 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
+		}
+	}
+
+	var feedReadFilterOverrides: FeedReadFilterOverrides {
+		get {
+			FeedReadFilterOverrides(data: UserDefaults.standard.data(forKey: Key.feedReadFilterOverrides))
+		}
+		set {
+			UserDefaults.standard.set(newValue.data, forKey: Key.feedReadFilterOverrides)
+		}
+	}
+
+	var hideReadArticles: Bool {
+		get {
+			return AppDefaults.bool(for: Key.hideReadArticles)
+		}
+		set {
+			AppDefaults.setBool(for: Key.hideReadArticles, newValue)
 		}
 	}
 
