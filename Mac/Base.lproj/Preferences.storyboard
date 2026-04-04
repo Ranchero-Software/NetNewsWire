@@ -31,11 +31,11 @@
             <objects>
                 <viewController title="General" storyboardIdentifier="General" id="iuH-lz-18x" customClass="GeneralPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="WnV-px-wCT">
-                        <rect key="frame" x="0.0" y="0.0" width="509" height="460"/>
+                        <rect key="frame" x="0.0" y="0.0" width="509" height="525"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ut3-yd-q6G">
-                                <rect key="frame" x="57" y="16" width="393" height="428"/>
+                                <rect key="frame" x="57" y="16" width="393" height="493"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pR2-Bf-7Fd">
                                         <rect key="frame" x="-2" y="404" width="106" height="16"/>
@@ -277,6 +277,34 @@
                                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="N1a-qV-4Os"/>
                                         </constraints>
                                     </popUpButton>
+                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="av1-Lb-Hdr">
+                                        <rect key="frame" x="-2" y="0.0" width="106" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" alignment="right" title="Article Visibility:" id="av1-Tc-Hdr">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hr1-Cb-Hrd">
+                                        <rect key="frame" x="110" y="0.0" width="283" height="16"/>
+                                        <buttonCell key="cell" type="check" title="Hide read articles by default" bezelStyle="regularSquare" imagePosition="left" inset="2" id="hr1-Bc-Hrd">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.hideReadArticles" id="hr1-Bd-Hrd">
+                                                <dictionary key="options">
+                                                    <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                                    <integer key="NSMultipleValuesPlaceholder" value="0"/>
+                                                    <integer key="NSNoSelectionPlaceholder" value="0"/>
+                                                    <integer key="NSNotApplicablePlaceholder" value="0"/>
+                                                    <integer key="NSNullPlaceholder" value="0"/>
+                                                    <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="Ci4-fW-KjU" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="0Do-jh-Hqq"/>
@@ -291,7 +319,7 @@
                                     <constraint firstItem="yrg-M3-Dbz" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="Bmt-Mn-CCl"/>
                                     <constraint firstItem="UI6-sq-M15" firstAttribute="top" secondItem="1w0-nA-DEO" secondAttribute="bottom" constant="12" id="DMk-OP-dpa"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="Ci4-fW-KjU" secondAttribute="bottom" constant="12" id="E3r-xf-7aZ"/>
-                                    <constraint firstAttribute="bottom" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="4" id="FAd-wh-IFu"/>
+                                    <constraint firstAttribute="bottom" secondItem="hr1-Cb-Hrd" secondAttribute="bottom" constant="4" id="FAd-wh-IFu"/>
                                     <constraint firstItem="pR2-Bf-7Fd" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="G0C-1M-LW1"/>
                                     <constraint firstItem="yrg-M3-Dbz" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="JbY-CP-pK8"/>
                                     <constraint firstAttribute="trailing" secondItem="Ubm-Pk-l7x" secondAttribute="trailing" id="KIg-w5-ceG"/>
@@ -337,6 +365,12 @@
                                     <constraint firstItem="j0t-Wa-UTL" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" constant="22" id="xSA-4l-R2v"/>
                                     <constraint firstAttribute="trailing" secondItem="ISO-Wu-R60" secondAttribute="trailing" constant="1" id="xaY-qS-LSN"/>
                                     <constraint firstItem="ucw-vG-yLt" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="xmq-Ob-wCJ"/>
+                                    <constraint firstItem="av1-Lb-Hdr" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="av1-C2-Ldg"/>
+                                    <constraint firstItem="av1-Lb-Hdr" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="av1-C3-Trl"/>
+                                    <constraint firstItem="av1-Lb-Hdr" firstAttribute="firstBaseline" secondItem="hr1-Cb-Hrd" secondAttribute="firstBaseline" id="av1-C4-Bsl"/>
+                                    <constraint firstItem="hr1-Cb-Hrd" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="hr1-C7-Cbx"/>
+                                    <constraint firstItem="hr1-Cb-Hrd" firstAttribute="top" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="12" id="hr1-C8-Cbx"/>
+                                    <constraint firstAttribute="trailing" secondItem="hr1-Cb-Hrd" secondAttribute="trailing" id="hr1-C9-Cbx"/>
                                 </constraints>
                             </customView>
                         </subviews>
