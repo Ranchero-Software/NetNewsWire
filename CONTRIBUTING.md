@@ -6,7 +6,7 @@ We welcome contributions — but it’s **really important to ask first** befor
 
 Also: just because a ticket exists doesn’t mean we’re going to implement a fix or feature. Or not now, or not before some other things happen first.
 
-Do not open a PR first. Ask first! If you open a PR, it will be ignored or closed without comment. Even a draft PR.
+**Do not open a PR first. Ask first!** If you open a PR, it will be ignored or closed without comment. Even a draft PR.
 
 Here’s how to contribute:
 
