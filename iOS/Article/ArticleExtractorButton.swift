@@ -77,10 +77,21 @@ final class ArticleExtractorButton: UIButton {
 		commonInit()
 	}
 
+	override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+
+		// Expand the hit area to cover the Liquid Glass lozenge gap.
+		// Extend to the left edge of the lozenge and to the midpoint
+		// between this button and its neighbor on the right,
+		// and extend to the top and bottom of the lozenge.
+		let expandedBounds = bounds.insetBy(dx: -20, dy: -20)
+		return expandedBounds.contains(point)
+	}
+
 	private func commonInit() {
 		addSubview(activityIndicator)
 		NSLayoutConstraint.activate([
 			widthAnchor.constraint(equalToConstant: 44.0),
+			heightAnchor.constraint(equalToConstant: 44.0),
 			activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
 			activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
 		])
