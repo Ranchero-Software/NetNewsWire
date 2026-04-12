@@ -1,7 +1,9 @@
 # Mac Release Notes
 
-### 7.1b1 7049 03 Apr 2026 — branch: main tag: mac-7.1b1
+### 7.0.5b1 7050 12 Apr 2026 — branch: main tag: mac-7.0.5b1
 
+Fixed bug where the app didn’t correctly detect the system default browser — it would show Safari even when a different browser was set as default. This was apparently a system bug that has since been fixed, but we’ve added a code change that we think would deal with this in case the system breaks in the same way again
+Added work-around for feeds with non-valid two-digit years in pubDate — they would be parsed as (for instance) the year 26 instead of 2026, and now they’re parsed as 2026
 Added Biblioteca, Tiqoe Dark, and Verdana Revival themes
 
 ### 7.0.4 7048 03 Apr 2026 — branch: main tag: mac-7.0.4
