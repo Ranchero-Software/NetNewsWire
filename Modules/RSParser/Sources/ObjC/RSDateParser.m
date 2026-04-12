@@ -337,6 +337,9 @@ static NSDate *RSParsePubDateWithBytes(const char *bytes, NSUInteger numberOfByt
 
 	month = nextMonthValue(bytes, numberOfBytes, finalIndex + 1, &finalIndex);
 	year = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 4, &finalIndex);
+	if (year != NSNotFound && year < 100) { // Check for two-digit years and assume 21st century
+		year += 2000;
+	}
 	hour = nextNumericValue(bytes, numberOfBytes, finalIndex + 1, 2, &finalIndex);
 	if (hour == NSNotFound)
 		hour = 0;

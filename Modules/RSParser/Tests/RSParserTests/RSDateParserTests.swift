@@ -101,6 +101,26 @@ final class RSDateParserTests: XCTestCase {
 		XCTAssertEqual(d, expectedDateResult)
 	}
 
+	func testTwoDigitYear() {
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5244>
+		
+		var expectedDateResult = Self.dateWithValues(2026, 4, 12, 17, 24, 19)
+
+		var d = RSDateWithString("Sun, 12 Apr 26 17:24:19 +0000")
+		XCTAssertEqual(d, expectedDateResult)
+
+		d = RSDateWithString("12 Apr 26 17:24:19 +0000")
+		XCTAssertEqual(d, expectedDateResult)
+
+		expectedDateResult = Self.dateWithValues(2099, 5, 28, 21, 3, 38)
+		d = RSDateWithString("Fri, 28 May 99 21:03:38 +0000")
+		XCTAssertEqual(d, expectedDateResult)
+
+		expectedDateResult = Self.dateWithValues(2000, 1, 1, 0, 0, 0)
+		d = RSDateWithString("01 Jan 00 00:00:00 +0000")
+		XCTAssertEqual(d, expectedDateResult)
+	}
+
 	func testHighMillisecondDate() {
 		let expectedDateResult = Self.dateWithValues(2021, 03, 29, 10, 46, 56, 516)
 		let d = RSDateWithString("2021-03-29T10:46:56.516941+00:00")
