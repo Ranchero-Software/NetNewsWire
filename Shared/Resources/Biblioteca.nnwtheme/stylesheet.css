@@ -351,6 +351,20 @@ body a.footnote:visited,
 	transition: background-color 200ms ease-out;
 }
 
+@media (prefers-color-scheme: dark) {
+	.newsfoot-footnote-popover {
+		background: #444;
+		color: #ededed;
+	}
+	.newsfoot-footnote-popover-arrow {
+		background: #2a2a2a;
+		border: 1px solid #444;
+	}
+	.newsfoot-footnote-popover-inner {
+		background: #2a2a2a;
+	}
+}
+
 /*
  Instead of the last-child bits, border-collapse: collapse
  could have been used. However, then the inter-cell borders
