@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.0.5 build 7050 13 Apr 2026 - branch: main tag: iOS-7.0.5-7050
+
+Fixed bug with fullscreen articles not expanding to cover the bottom toolbar
+Expanded the hit detection area for the reader view button
+Fixed bug with layout of the Sync Content of Unread Articles setting in iCloud account settings
+Added work-around for feeds with non-valid two-digit years in pubDate — they would be parsed as (for instance) the year 26 instead of 2026, and now they’re parsed as 2026
+Added Biblioteca, Tiqoe Dark, and Verdana Revival themes
+
 ### 7.0.4 build 7047 2 Apr 2026 - branch: main tag: iOS-7.0.4-7047
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.0.4 release version on 3 April 2026.
