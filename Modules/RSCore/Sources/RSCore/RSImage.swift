@@ -179,17 +179,16 @@ public extension RSImage {
 		}
 
 		// Either too large or multi-image — extract/resize to a single PNG.
-		let cgImage: CGImage?
-		if needsResize {
-			let options: [CFString: Any] = [
-				kCGImageSourceCreateThumbnailWithTransform: true,
-				kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
-				kCGImageSourceThumbnailMaxPixelSize: maxPixelSize
-			]
-			cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestIndex, options as CFDictionary)
-		} else {
-			cgImage = CGImageSourceCreateImageAtIndex(imageSource, largestIndex, nil)
-		}
+		// Always use CreateThumbnailAtIndex rather than CreateImageAtIndex,
+		// because the latter mishandles indexed-color ICO files (produces
+		// grayscale with a nil color space instead of correct RGB).
+		let thumbnailSize = needsResize ? maxPixelSize : largestMaxDimension
+		let options: [CFString: Any] = [
+			kCGImageSourceCreateThumbnailWithTransform: true,
+			kCGImageSourceCreateThumbnailFromImageIfAbsent: true,
+			kCGImageSourceThumbnailMaxPixelSize: thumbnailSize
+		]
+		let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestIndex, options as CFDictionary)
 
 		guard let cgImage else {
 			return nil
