@@ -347,6 +347,9 @@ private extension AppDelegate {
 		guard UIApplication.shared.applicationState == .background else {
 			return
 		}
+		guard !AccountManager.shared.isSuspended else {
+			return
+		}
 
 		AccountManager.shared.suspendNetworkAll()
 		AccountManager.shared.suspendDatabaseAll()
