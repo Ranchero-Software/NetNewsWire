@@ -50,9 +50,14 @@ public struct RSSInJSONParser {
 			let feedDescription = channelObject["description"] as? String
 			let feedLanguage = channelObject["language"] as? String
 
+			var iconURL: String?
+			if let imageObject = channelObject["image"] as? JSONDictionary {
+				iconURL = imageObject["url"] as? String
+			}
+
 			let items = parseItems(itemsObject!, parserData.url)
 
-			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, language: feedLanguage, feedDescription: feedDescription, nextURL: nil, iconURL: nil, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
+			return ParsedFeed(type: .rssInJSON, title: title, homePageURL: homePageURL, feedURL: feedURL, language: feedLanguage, feedDescription: feedDescription, nextURL: nil, iconURL: iconURL, faviconURL: nil, authors: nil, expired: false, hubs: nil, items: items)
 
 		} catch { throw error }
 	}

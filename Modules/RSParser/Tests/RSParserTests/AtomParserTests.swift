@@ -186,6 +186,12 @@ final class AtomParserTests: XCTestCase {
 		}
 	}
 
+	func testFeedIconURL() {
+		let d = parserData("root-author", "atom", "https://fvsch.com/feed.xml")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertEqual(parsedFeed.iconURL, "https://fvsch.com/assets/images/icon.png?v=ql0r5y")
+	}
+
 	func testAuthorAtRoot() {
 		let d = parserData("root-author", "atom", "https://fvsch.com/feed.xml")
 		let parsedFeed = try! FeedParser.parse(d)!
