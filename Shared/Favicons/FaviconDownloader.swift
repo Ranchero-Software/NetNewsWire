@@ -69,11 +69,17 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
 
 	// MARK: - API
 
 	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
+		singleFaviconDownloaderCache.removeAll()
+	}
+
+	@objc func handleAppDidGoToBackground(_ notification: Notification) {
 		cache.removeAll()
 		singleFaviconDownloaderCache.removeAll()
 	}

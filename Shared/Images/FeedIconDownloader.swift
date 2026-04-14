@@ -43,9 +43,14 @@ extension Notification.Name {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
+		cache.removeAll()
+	}
+
+	@objc func handleAppDidGoToBackground(_ notification: Notification) {
 		cache.removeAll()
 	}
 
