@@ -304,6 +304,7 @@ private extension DetailWebViewController {
 			if case .extracted(_, let extractedArticle, _) = state, let content = extractedArticle.content {
 				textToTranslate = content
 			}
+			textToTranslate = textToTranslate.strippingHTML(maxCharacters: 4000)
 			
 			if !textToTranslate.isEmpty {
 				if let cached = OllamaClient.shared.cachedTranslation(articleID: article.articleID) {
@@ -352,7 +353,7 @@ private extension DetailWebViewController {
 			function updateTranslation() {
 				var translationDiv = document.getElementById('ollama-translation');
 				if (translationDiv) {
-					translationDiv.innerHTML = \"\(encoded)\";
+					translationDiv.innerText = \"\(encoded)\";
 				} else {
 					setTimeout(updateTranslation, 100);
 				}

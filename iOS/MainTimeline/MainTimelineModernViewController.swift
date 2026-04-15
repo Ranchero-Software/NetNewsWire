@@ -515,7 +515,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 						if nextIndex < articles.count {
 							let limit = min(articles.count, nextIndex + count)
 							let itemsToPreload = articles[nextIndex..<limit].compactMap { (a: Article) -> (id: String, text: String)? in
-								let text = a.body ?? ""
+								let text = (a.body ?? "").strippingHTML(maxCharacters: 4000)
 								return text.isEmpty ? nil : (a.articleID, text)
 							}
 							OllamaClient.shared.preloadTranslations(items: itemsToPreload)

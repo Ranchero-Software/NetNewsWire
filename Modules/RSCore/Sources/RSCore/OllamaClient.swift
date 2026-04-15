@@ -22,7 +22,10 @@ public final class OllamaClient: @unchecked Sendable {
     }
 
     private var translationCache = [String: String]()
-    private var inProgressTranslations = Set<String>()
+    private var activeTasks = [String: URLSessionDataTask]()
+    private var completionHandlers = [String: [(Result<String, Error>) -> Void]]()
+    private var explicitRequests = Set<String>()
+    
     private let cacheQueue = DispatchQueue(label: "com.netnewswire.ollamacache")
 
     private lazy var session: URLSession = {
@@ -34,7 +37,8 @@ public final class OllamaClient: @unchecked Sendable {
 
     public init() {}
 
-    public func generate(prompt: String, completion: @escaping (Result<String, Error>) -> Void) {
+    @discardableResult
+    private func generate(prompt: String, completion: @escaping (Result<String, Error>) -> Void) -> URLSessionDataTask? {
         let url = baseURL.appendingPathComponent("generate")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -80,6 +84,7 @@ public final class OllamaClient: @unchecked Sendable {
             }
         }
         task.resume()
+        return task
     }
 
     public func cachedTranslation(articleID: String) -> String? {
@@ -101,46 +106,87 @@ public final class OllamaClient: @unchecked Sendable {
                 completion(.success(cached))
                 return
             }
+            
+            self.explicitRequests.insert(articleID)
+
+            if self.activeTasks[articleID] != nil {
+                // Task is already running (e.g., from preload), attach completion handler
+                var handlers = self.completionHandlers[articleID] ?? []
+                handlers.append(completion)
+                self.completionHandlers[articleID] = handlers
+                return
+            }
 
             let prompt = "Translate the following text to \(self.preferredLanguage). ONLY return the translated text and nothing else. Do not add any conversational filler, side notes, explanations, or multiple options. Provide exactly one translation:\n\n\(text)"
             
-            self.generate(prompt: prompt) { [weak self] result in
-                if case .success(let translation) = result {
-                    self?.cacheQueue.async {
+            self.completionHandlers[articleID] = [completion]
+            
+            let task = self.generate(prompt: prompt) { [weak self] result in
+                self?.cacheQueue.async {
+                    self?.activeTasks.removeValue(forKey: articleID)
+                    self?.explicitRequests.remove(articleID)
+                    
+                    if case .success(let translation) = result {
                         self?.translationCache[articleID] = translation
                     }
+                    
+                    if let handlers = self?.completionHandlers.removeValue(forKey: articleID) {
+                        for handler in handlers {
+                            handler(result)
+                        }
+                    }
                 }
-                completion(result)
+            }
+            
+            if let task = task {
+                self.activeTasks[articleID] = task
             }
         }
     }
 
     public func preloadTranslations(items: [(id: String, text: String)]) {
-        for item in items {
-            let id = item.id
-            let text = item.text
-            
-            cacheQueue.async {
-                guard self.translationCache[id] == nil, !self.inProgressTranslations.contains(id) else {
-                    return
+        let desiredIDs = Set(items.map { $0.id })
+        
+        cacheQueue.async {
+            // Cancel active preloads that are no longer needed
+            for (id, task) in self.activeTasks {
+                if !desiredIDs.contains(id) && !self.explicitRequests.contains(id) {
+                    task.cancel()
+                    self.activeTasks.removeValue(forKey: id)
+                    self.completionHandlers.removeValue(forKey: id)
                 }
-                guard !text.isEmpty else { return }
+            }
+            
+            // Start new preloads
+            for item in items {
+                let id = item.id
+                let text = item.text
                 
-                self.inProgressTranslations.insert(id)
-
+                guard self.translationCache[id] == nil, self.activeTasks[id] == nil else {
+                    continue
+                }
+                guard !text.isEmpty else { continue }
+                
                 let prompt = "Translate the following text to \(self.preferredLanguage). ONLY return the translated text and nothing else. Do not add any conversational filler, side notes, explanations, or multiple options. Provide exactly one translation:\n\n\(text)"
                 
-                self.generate(prompt: prompt) { [weak self] result in
+                let task = self.generate(prompt: prompt) { [weak self] result in
                     self?.cacheQueue.async {
-                        self?.inProgressTranslations.remove(id)
+                        self?.activeTasks.removeValue(forKey: id)
                         if case .success(let translation) = result {
                             self?.translationCache[id] = translation
                         }
+                        if let handlers = self?.completionHandlers.removeValue(forKey: id) {
+                            for handler in handlers {
+                                handler(result)
+                            }
+                        }
                     }
+                }
+                
+                if let task = task {
+                    self.activeTasks[id] = task
                 }
             }
         }
     }
-
-    }
-
+}
