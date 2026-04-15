@@ -60,8 +60,28 @@ extension Notification.Name {
 			return cachedImage
 		}
 
-		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog" {
+		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString) {
+			if homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog" || homePageURL.host == "services.netnewswire.com" {
+				return IconImage.nnwFeedIcon
+			}
+		}
+		if feed.url.hasPrefix("https://ranchero.com/downloads/netnewswire") {
 			return IconImage.nnwFeedIcon
+		}
+
+		if let knownIconURL = Self.knownIconURL(for: feed) {
+			icon(forURL: knownIconURL, feed: feed) { image in
+				MainActor.assumeIsolated {
+					if self.cache[feed] != nil {
+						return
+					}
+					if let image {
+						self.cache[feed] = IconImage(image)
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+					}
+				}
+			}
+			return nil
 		}
 		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
 			return nil
@@ -145,6 +165,13 @@ private extension FeedIconDownloader {
 	// falling back to the homepage icon lookup instead.
 	static let domainsToIgnoreFeedIconURL: [String] = ["stratechery.com", "propublica.org", "substack.com"]
 
+	// Domains with a known-good icon URL to use instead of the
+	// feed-specified icon or homepage lookup.
+	static let domainToIconURL: [String: String] = [
+		"github.blog": "https://github.blog/wp-content/uploads/2019/01/cropped-github-favicon-512.png",
+		"github.com": "https://github.blog/wp-content/uploads/2019/01/cropped-github-favicon-512.png"
+		]
+
 	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
 		shouldSkipDownloadingFeedIcon(feed.url)
 	}
@@ -158,6 +185,19 @@ private extension FeedIconDownloader {
 			return false
 		}
 		return SpecialCase.urlStringContainSpecialCase(feed.url, domainsToIgnoreFeedIconURL)
+	}
+
+	static func knownIconURL(for feed: Feed) -> String? {
+		guard !domainToIconURL.isEmpty else {
+			return nil
+		}
+		let lowerFeedURL = feed.url.lowercased(with: localeForLowercasing)
+		for (domain, iconURL) in domainToIconURL {
+			if lowerFeedURL.contains(domain) {
+				return iconURL
+			}
+		}
+		return nil
 	}
 
 	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (RSImage?, String?) -> Void) {
