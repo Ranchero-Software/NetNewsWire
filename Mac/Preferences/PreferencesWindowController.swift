@@ -272,10 +272,7 @@ final class OllamaPreferencesViewController: NSViewController {
 		preloadCountTextField.translatesAutoresizingMaskIntoConstraints = false
 		preloadCountTextField.widthAnchor.constraint(equalToConstant: 100).isActive = true
 		preloadCountTextField.stringValue = String(UserDefaults.standard.integer(forKey: "OllamaPreloadCount"))
-		if preloadCountTextField.stringValue == "0" {
-			preloadCountTextField.stringValue = "10"
-			UserDefaults.standard.set(10, forKey: "OllamaPreloadCount")
-		}
+
 		addFormRow(title: NSLocalizedString("Preload Next:", comment: ""), control: preloadCountTextField)
 		
 		// Auto-Translate

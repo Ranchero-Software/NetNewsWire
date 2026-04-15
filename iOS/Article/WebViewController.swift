@@ -631,7 +631,7 @@ private extension WebViewController {
 		var textToTranslate = ""
 
 		if let article = self.article, UserDefaults.standard.bool(forKey: "OllamaAutoTranslate") {
-			textToTranslate = self.extractedArticle?.content ?? article.body ?? ""
+			textToTranslate = (self.extractedArticle?.content ?? article.body ?? "").strippingHTML(maxCharacters: 4000)
 			
 			if !textToTranslate.isEmpty {
 				if let cached = OllamaClient.shared.cachedTranslation(articleID: article.articleID) {
@@ -689,7 +689,7 @@ private extension WebViewController {
 			function updateTranslation() {
 				var translationDiv = document.getElementById('ollama-translation');
 				if (translationDiv) {
-					translationDiv.innerHTML = \"\(encoded)\";
+					translationDiv.innerText = \"\(encoded)\";
 				} else {
 					setTimeout(updateTranslation, 100);
 				}
