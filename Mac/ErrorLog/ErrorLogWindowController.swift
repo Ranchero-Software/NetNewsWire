@@ -68,6 +68,10 @@ import ErrorLog
 		}
 	}
 
+	@IBAction override func performTextFinderAction(_ sender: Any?) {
+		textView.performTextFinderAction(sender)
+	}
+
 	func saveState() {
 		Self.shouldOpenAtStartup = window?.isVisible ?? false
 	}
