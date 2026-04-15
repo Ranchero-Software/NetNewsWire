@@ -87,7 +87,7 @@ extension Notification.Name {
 		}
 
 		@MainActor func checkFeedIconURL() {
-			if let iconURL = feed.iconURL {
+			if let iconURL = feed.iconURL, !Self.shouldIgnoreFeedIconURL(feed) {
 				icon(forURL: iconURL, feed: feed) { (image) in
 					Task { @MainActor in
 						if self.cache[feed] != nil {
@@ -141,12 +141,23 @@ private extension FeedIconDownloader {
 
 	static let specialCasesToSkip = ["macsparky.com", "xkcd.com", SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
+	// Domains where the feed-specified icon URL should be ignored,
+	// falling back to the homepage icon lookup instead.
+	static let domainsToIgnoreFeedIconURL: [String] = ["stratechery.com", "propublica.org", "substack.com"]
+
 	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
 		shouldSkipDownloadingFeedIcon(feed.url)
 	}
 
 	static func shouldSkipDownloadingFeedIcon(_ urlString: String) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
+	}
+
+	static func shouldIgnoreFeedIconURL(_ feed: Feed) -> Bool {
+		guard !domainsToIgnoreFeedIconURL.isEmpty else {
+			return false
+		}
+		return SpecialCase.urlStringContainSpecialCase(feed.url, domainsToIgnoreFeedIconURL)
 	}
 
 	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (RSImage?, String?) -> Void) {
