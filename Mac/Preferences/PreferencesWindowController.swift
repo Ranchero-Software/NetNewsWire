@@ -25,6 +25,7 @@ private struct ToolbarItemIdentifier {
 	static let General = "General"
 	static let Accounts = "Accounts"
 	static let Advanced = "Advanced"
+	static let Ollama = "Ollama"
 }
 
 final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
@@ -42,6 +43,9 @@ final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
 		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
 											 name: NSLocalizedString("Advanced", comment: "Preferences"),
 											 image: Assets.Images.preferencesToolbarAdvanced)]
+		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Ollama,
+											 name: NSLocalizedString("Translation", comment: "Preferences"),
+											 image: NSImage(systemSymbolName: "globe", accessibilityDescription: nil))]
 		return specs
 	}()
 
@@ -152,6 +156,12 @@ private extension PreferencesWindowController {
 			return cachedViewController
 		}
 
+		if identifier == ToolbarItemIdentifier.Ollama {
+			let viewController = OllamaPreferencesViewController()
+			viewControllers[identifier] = viewController
+			return viewController
+		}
+
 		let storyboard = NSStoryboard(name: NSStoryboard.Name("Preferences"), bundle: nil)
 		guard let viewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(identifier)) as? NSViewController else {
 			assertionFailure("Unknown preferences view controller: \(identifier)")
@@ -188,5 +198,135 @@ private extension PreferencesWindowController {
 			window!.setFrame(updatedWindowFrame, display: true, animate: true)
 			window!.contentView?.alphaValue = 1.0
 		}
+	}
+}
+
+final class OllamaPreferencesViewController: NSViewController {
+	
+	private let baseURLTextField = NSTextField()
+	private let modelTextField = NSTextField()
+	private let languageTextField = NSTextField()
+	private let autoTranslateCheckbox = NSButton(checkboxWithTitle: NSLocalizedString("Auto-Translate Articles", comment: ""), target: nil, action: nil)
+	private let preloadCountTextField = NSTextField()
+	
+	init() {
+		super.init(nibName: nil, bundle: nil)
+	}
+	
+	required init?(coder: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+	
+	override func loadView() {
+		self.view = NSView(frame: NSRect(x: 0, y: 0, width: 512, height: 250))
+		
+		let stackView = NSStackView()
+		stackView.orientation = .vertical
+		stackView.alignment = .leading
+		stackView.spacing = 16
+		stackView.edgeInsets = NSEdgeInsets(top: 20, left: 40, bottom: 20, right: 40)
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		
+		self.view.addSubview(stackView)
+		NSLayoutConstraint.activate([
+			stackView.topAnchor.constraint(equalTo: view.topAnchor),
+			stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+			stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+			stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+		])
+		
+		func addFormRow(title: String, control: NSView) {
+			let rowStack = NSStackView()
+			rowStack.orientation = .horizontal
+			rowStack.alignment = .firstBaseline
+			rowStack.spacing = 8
+			
+			let label = NSTextField(labelWithString: title)
+			label.alignment = .right
+			label.widthAnchor.constraint(equalToConstant: 120).isActive = true
+			
+			rowStack.addArrangedSubview(label)
+			rowStack.addArrangedSubview(control)
+			stackView.addArrangedSubview(rowStack)
+		}
+		
+		// Base URL
+		baseURLTextField.translatesAutoresizingMaskIntoConstraints = false
+		baseURLTextField.widthAnchor.constraint(equalToConstant: 250).isActive = true
+		baseURLTextField.stringValue = UserDefaults.standard.string(forKey: "OllamaBaseURL") ?? "http://localhost:11434/api"
+		addFormRow(title: NSLocalizedString("Base URL:", comment: ""), control: baseURLTextField)
+		
+		// Model
+		modelTextField.translatesAutoresizingMaskIntoConstraints = false
+		modelTextField.widthAnchor.constraint(equalToConstant: 250).isActive = true
+		modelTextField.stringValue = UserDefaults.standard.string(forKey: "OllamaModel") ?? "llama3"
+		addFormRow(title: NSLocalizedString("Model:", comment: ""), control: modelTextField)
+		
+		// Language
+		languageTextField.translatesAutoresizingMaskIntoConstraints = false
+		languageTextField.widthAnchor.constraint(equalToConstant: 250).isActive = true
+		languageTextField.stringValue = UserDefaults.standard.string(forKey: "OllamaPreferredLanguage") ?? "Chinese"
+		addFormRow(title: NSLocalizedString("Target Language:", comment: ""), control: languageTextField)
+
+		// Preload Count
+		preloadCountTextField.translatesAutoresizingMaskIntoConstraints = false
+		preloadCountTextField.widthAnchor.constraint(equalToConstant: 100).isActive = true
+		preloadCountTextField.stringValue = String(UserDefaults.standard.integer(forKey: "OllamaPreloadCount"))
+		if preloadCountTextField.stringValue == "0" {
+			preloadCountTextField.stringValue = "10"
+			UserDefaults.standard.set(10, forKey: "OllamaPreloadCount")
+		}
+		addFormRow(title: NSLocalizedString("Preload Next:", comment: ""), control: preloadCountTextField)
+		
+		// Auto-Translate
+		autoTranslateCheckbox.state = UserDefaults.standard.bool(forKey: "OllamaAutoTranslate") ? .on : .off
+		
+		let checkboxContainer = NSStackView()
+		checkboxContainer.orientation = .horizontal
+		let spacer = NSView()
+		spacer.translatesAutoresizingMaskIntoConstraints = false
+		spacer.widthAnchor.constraint(equalToConstant: 120 + 8).isActive = true // Label width + spacing
+		checkboxContainer.addArrangedSubview(spacer)
+		checkboxContainer.addArrangedSubview(autoTranslateCheckbox)
+		stackView.addArrangedSubview(checkboxContainer)
+		
+		// Targets/Actions
+		baseURLTextField.target = self
+		baseURLTextField.action = #selector(baseURLChanged(_:))
+		
+		modelTextField.target = self
+		modelTextField.action = #selector(modelChanged(_:))
+		
+		languageTextField.target = self
+		languageTextField.action = #selector(languageChanged(_:))
+		
+		preloadCountTextField.target = self
+		preloadCountTextField.action = #selector(preloadCountChanged(_:))
+		
+		autoTranslateCheckbox.target = self
+		autoTranslateCheckbox.action = #selector(autoTranslateChanged(_:))
+	}
+	
+	@objc private func baseURLChanged(_ sender: NSTextField) {
+		UserDefaults.standard.set(sender.stringValue, forKey: "OllamaBaseURL")
+	}
+	
+	@objc private func modelChanged(_ sender: NSTextField) {
+		UserDefaults.standard.set(sender.stringValue, forKey: "OllamaModel")
+	}
+	
+	@objc private func languageChanged(_ sender: NSTextField) {
+		UserDefaults.standard.set(sender.stringValue, forKey: "OllamaPreferredLanguage")
+	}
+	
+	@objc private func preloadCountChanged(_ sender: NSTextField) {
+		let value = max(0, min(50, sender.integerValue))
+		UserDefaults.standard.set(value, forKey: "OllamaPreloadCount")
+		sender.stringValue = String(value)
+	}
+	
+	@objc private func autoTranslateChanged(_ sender: NSButton) {
+		UserDefaults.standard.set(sender.state == .on, forKey: "OllamaAutoTranslate")
+		NotificationCenter.default.post(name: Notification.Name("OllamaAutoTranslateDidChange"), object: nil)
 	}
 }
