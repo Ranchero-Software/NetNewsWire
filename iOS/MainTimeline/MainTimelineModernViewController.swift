@@ -504,6 +504,26 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 		becomeFirstResponder()
 		if let dataSource {
 			let article = dataSource.itemIdentifier(for: indexPath)
+			
+			if UserDefaults.standard.bool(forKey: "OllamaAutoTranslate") {
+				let count = UserDefaults.standard.object(forKey: "OllamaPreloadCount") != nil ? UserDefaults.standard.integer(forKey: "OllamaPreloadCount") : 10
+				if count > 0 {
+					let snapshot = dataSource.snapshot()
+					let articles = snapshot.itemIdentifiers
+					if let article = article, let index = articles.firstIndex(of: article) {
+						let nextIndex = index + 1
+						if nextIndex < articles.count {
+							let limit = min(articles.count, nextIndex + count)
+							let itemsToPreload = articles[nextIndex..<limit].compactMap { (a: Article) -> (id: String, text: String)? in
+								let text = a.body ?? ""
+								return text.isEmpty ? nil : (a.articleID, text)
+							}
+							OllamaClient.shared.preloadTranslations(items: itemsToPreload)
+						}
+					}
+				}
+			}
+			
 			coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
 		}
 	}
