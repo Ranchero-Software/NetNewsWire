@@ -115,21 +115,20 @@ private extension IconView {
 
 		let imageSize = image.size
 		let viewSize = bounds.size
+
 		if imageSize.height == imageSize.width {
-			if imageSize.height >= viewSize.height * 0.75 {
-				// Close enough to viewSize to scale up the image.
-				return NSRect(x: 0.0, y: 0.0, width: viewSize.width, height: viewSize.height)
-			}
-			let offset = floor((viewSize.height - imageSize.height) / 2.0)
-			return NSRect(x: offset, y: offset, width: imageSize.width, height: imageSize.height)
-		} else if imageSize.height > imageSize.width {
+			return NSRect(x: 0.0, y: 0.0, width: viewSize.width, height: viewSize.height)
+		}
+
+		// Non-square: aspect fit — scale to fill one dimension, center in the other
+		if imageSize.height > imageSize.width {
 			let factor = viewSize.height / imageSize.height
 			let width = imageSize.width * factor
 			let originX = floor((viewSize.width - width) / 2.0)
 			return NSRect(x: originX, y: 0.0, width: width, height: viewSize.height)
 		}
 
-		// Wider than tall: imageSize.width > imageSize.height
+		// Wider than tall
 		let factor = viewSize.width / imageSize.width
 		let height = imageSize.height * factor
 		let originY = floor((viewSize.height - height) / 2.0)

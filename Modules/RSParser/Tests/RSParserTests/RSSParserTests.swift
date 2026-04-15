@@ -191,6 +191,20 @@ final class RSSParserTests: XCTestCase {
 		}
 	}
 
+	func testFeedIconURL() {
+		let d = parserData("KatieFloyd", "rss", "http://katiefloyd.com/")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertEqual(parsedFeed.iconURL, "https://static.feedpress.it/logo/katiefloyd.png")
+	}
+
+	func testFeedIconURLNotSetByItemLevelImages() {
+		// aktuality.rss has <image> elements inside <item>s, not at the channel level.
+		// These should not be treated as the feed icon.
+		let d = parserData("aktuality", "rss", "https://www.aktuality.sk/")
+		let parsedFeed = try! FeedParser.parse(d)!
+		XCTAssertNil(parsedFeed.iconURL)
+	}
+
 	func testMedscapeExternalURLs() {
 		let d = parserData("medscape", "rss", "https://www.medscape.com/cx/rssfeeds/2674.xml")
 		let parsedFeed = try! FeedParser.parse(d)!

@@ -33,6 +33,7 @@
 @property (nonatomic) BOOL parsingAuthor;
 @property (nonatomic, readonly) RSParsedArticle *currentArticle;
 @property (nonatomic) BOOL parsingChannelImage;
+@property (nonatomic) NSString *channelImageURLString;
 @property (nonatomic, readonly) NSDate *currentDate;
 @property (nonatomic) BOOL endRSSFound;
 @property (nonatomic) NSString *homepageURLString;
@@ -77,7 +78,7 @@
 	
 	[self parse];
 
-	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString language:self.language articles:self.articles];
+	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString iconURL:self.channelImageURLString language:self.language articles:self.articles];
 
 	return parsedFeed;
 }
@@ -452,6 +453,10 @@ static const NSInteger kLanguageLength = 9;
 	if (!self.parsingChannelImage) {
 		[self.parser beginStoringCharacters];
 	}
+	else if (!prefix && RSSAXEqualTags(localName, kURL, kURLLength)) {
+		// Channel image URL
+		[self.parser beginStoringCharacters];
+	}
 }
 
 
@@ -467,6 +472,10 @@ static const NSInteger kLanguageLength = 9;
 
 	else if (RSSAXEqualTags(localName, kRSS, kRSSLength)) {
 		self.endRSSFound = YES;
+	}
+
+	else if (self.parsingChannelImage && !self.parsingArticle && RSSAXEqualTags(localName, kURL, kURLLength)) {
+		self.channelImageURLString = [self currentString];
 	}
 
 	else if (RSSAXEqualTags(localName, kImage, kImageLength)) {

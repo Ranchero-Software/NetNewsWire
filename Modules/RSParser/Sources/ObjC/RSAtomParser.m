@@ -43,7 +43,8 @@
 @property (nonatomic) RSParsedAuthor *rootAuthor;
 @property (nonatomic, readonly) NSDate *currentDate;
 @property (nonatomic) NSString *language;
-@property (nonatomic) BOOL isDaringFireball; // Special case — sometimes permalink and external link are swapped.
+@property (nonatomic) NSString *iconURLString;
+@property (nonatomic) BOOL isDaringFireball; // Special case— sometimes permalink and external link are swapped.
 
 @end
 
@@ -85,7 +86,7 @@
 
 	[self parse];
 
-	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString language:self.language articles:self.articles];
+	RSParsedFeed *parsedFeed = [[RSParsedFeed alloc] initWithURLString:self.urlString title:self.title homepageURLString:self.homepageURLString iconURL:self.iconURLString language:self.language articles:self.articles];
 
 	return parsedFeed;
 }
@@ -209,6 +210,12 @@ static const NSInteger kEnclosureLength = 10;
 
 static const char *kLength = "length";
 static const NSInteger kLengthLength = 7;
+
+static const char *kIcon = "icon";
+static const NSInteger kIconLength = 5;
+
+static const char *kLogo = "logo";
+static const NSInteger kLogoLength = 5;
 
 #pragma mark - Parsing
 
@@ -655,6 +662,23 @@ static NSString *httpURLPrefix = @"http://";
 
 	else if (!self.parsingArticle && !self.parsingSource && RSSAXEqualTags(localName, kTitle, kTitleLength)) {
 		[self addFeedTitle];
+	}
+
+	else if (!self.parsingArticle && !self.parsingSource && RSSAXEqualTags(localName, kIcon, kIconLength)) {
+		NSString *urlString = [self currentString];
+		if (!RSParserStringIsEmpty(urlString)) {
+			self.iconURLString = urlString;
+		}
+	}
+
+	else if (!self.parsingArticle && !self.parsingSource && RSSAXEqualTags(localName, kLogo, kLogoLength)) {
+		// Use logo as fallback when icon isn’t specified
+		if (!self.iconURLString) {
+			NSString *urlString = [self currentString];
+			if (!RSParserStringIsEmpty(urlString)) {
+				self.iconURLString = urlString;
+			}
+		}
 	}
 
 	[self.attributesStack removeLastObject];
