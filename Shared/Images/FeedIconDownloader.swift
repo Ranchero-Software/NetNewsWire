@@ -187,6 +187,20 @@ private extension FeedIconDownloader {
 		return SpecialCase.urlStringContainSpecialCase(feed.url, domainsToIgnoreFeedIconURL)
 	}
 
+	static func sanitizedIconURL(_ url: String) -> String {
+		// WordPress URLs with /wp-content/uploads/ often have query params
+		// that specify a small size (32x32). Drop the query params to get a larger image.
+		guard url.contains("/wp-content/uploads/") else {
+			return url
+		}
+		guard var components = URLComponents(string: url) else {
+			return url
+		}
+		components.query = nil
+		components.fragment = nil
+		return components.string ?? url
+	}
+
 	static func knownIconURL(for feed: Feed) -> String? {
 		guard !domainToIconURL.isEmpty else {
 			return nil
@@ -232,6 +246,7 @@ private extension FeedIconDownloader {
 
 	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping ImageResultBlock) {
 
+		let url = Self.sanitizedIconURL(url)
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {
 			imageResultBlock(nil)
