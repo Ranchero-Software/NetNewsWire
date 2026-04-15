@@ -38,9 +38,10 @@ public enum ArticleExtractorState: Sendable {
 
 		let clientURL = "https://extract.feedbin.com/parser"
 		let username = SecretKey.mercuryClientID
-		let signature = articleLink.hmacUsingSHA1(key: SecretKey.mercuryClientSecret)
+		let extractionLink = ArticleExtractor.extractionURL(for: articleLink)
+		let signature = extractionLink.hmacUsingSHA1(key: SecretKey.mercuryClientSecret)
 
-		if let base64URL = articleLink.data(using: .utf8)?.base64EncodedString() {
+		if let base64URL = extractionLink.data(using: .utf8)?.base64EncodedString() {
 			let fullURL = "\(clientURL)/\(username)/\(signature)?base64_url=\(base64URL)"
 			if let url = URL(string: fullURL) {
 				self.url = url
@@ -51,7 +52,28 @@ public enum ArticleExtractorState: Sendable {
 		return nil
     }
 
-    public func process() {
+	/// Returns a URL string optimized for extraction, applying site-specific transformations where needed.
+	static func extractionURL(for articleLink: String) -> String {
+		guard let url = URL(string: articleLink),
+			  let host = url.host()?.lowercased() else {
+			return articleLink
+		}
+
+		// Naver Blog desktop URLs use a JavaScript-heavy SPA that extractors can't parse.
+		// The mobile site (m.blog.naver.com) renders as static HTML and works correctly.
+		if host == "blog.naver.com" {
+			var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+			components?.host = "m.blog.naver.com"
+			components?.query = nil
+			if let mobileURL = components?.url {
+				return mobileURL.absoluteString
+			}
+		}
+
+		return articleLink
+	}
+
+	public func process() {
 
         state = .processing
 
