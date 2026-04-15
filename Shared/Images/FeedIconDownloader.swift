@@ -69,20 +69,6 @@ extension Notification.Name {
 			return IconImage.nnwFeedIcon
 		}
 
-		if let knownIconURL = Self.knownIconURL(for: feed) {
-			icon(forURL: knownIconURL, feed: feed) { image in
-				MainActor.assumeIsolated {
-					if self.cache[feed] != nil {
-						return
-					}
-					if let image {
-						self.cache[feed] = IconImage(image)
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-					}
-				}
-			}
-			return nil
-		}
 		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
 			return nil
 		}
@@ -163,14 +149,11 @@ private extension FeedIconDownloader {
 
 	// Domains where the feed-specified icon URL should be ignored,
 	// falling back to the homepage icon lookup instead.
-	static let domainsToIgnoreFeedIconURL: [String] = ["stratechery.com", "propublica.org", "substack.com"]
+	static let domainsToIgnoreFeedIconURL: [String] = ["propublica.org"]
 
-	// Domains with a known-good icon URL to use instead of the
-	// feed-specified icon or homepage lookup.
-	static let domainToIconURL: [String: String] = [
-		"github.blog": "https://github.blog/wp-content/uploads/2019/01/cropped-github-favicon-512.png",
-		"github.com": "https://github.blog/wp-content/uploads/2019/01/cropped-github-favicon-512.png"
-		]
+	static func shouldIgnoreFeedIconURL(_ feed: Feed) -> Bool {
+		SpecialCase.urlStringContainSpecialCase(feed.url, domainsToIgnoreFeedIconURL)
+	}
 
 	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
 		shouldSkipDownloadingFeedIcon(feed.url)
@@ -178,13 +161,6 @@ private extension FeedIconDownloader {
 
 	static func shouldSkipDownloadingFeedIcon(_ urlString: String) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
-	}
-
-	static func shouldIgnoreFeedIconURL(_ feed: Feed) -> Bool {
-		guard !domainsToIgnoreFeedIconURL.isEmpty else {
-			return false
-		}
-		return SpecialCase.urlStringContainSpecialCase(feed.url, domainsToIgnoreFeedIconURL)
 	}
 
 	static func sanitizedIconURL(_ url: String) -> String {
@@ -199,19 +175,6 @@ private extension FeedIconDownloader {
 		components.query = nil
 		components.fragment = nil
 		return components.string ?? url
-	}
-
-	static func knownIconURL(for feed: Feed) -> String? {
-		guard !domainToIconURL.isEmpty else {
-			return nil
-		}
-		let lowerFeedURL = feed.url.lowercased(with: localeForLowercasing)
-		for (domain, iconURL) in domainToIconURL {
-			if lowerFeedURL.contains(domain) {
-				return iconURL
-			}
-		}
-		return nil
 	}
 
 	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (RSImage?, String?) -> Void) {
