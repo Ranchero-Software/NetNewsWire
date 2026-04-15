@@ -143,6 +143,8 @@ private extension ErrorLogWindowController {
 		let embeddedTextView = scrollView.documentView as! NSTextView
 		embeddedTextView.isEditable = false
 		embeddedTextView.isSelectable = true
+		embeddedTextView.usesFindBar = true
+		embeddedTextView.isIncrementalSearchingEnabled = true
 		embeddedTextView.textContainerInset = NSSize(width: Self.textContainerInset, height: Self.textContainerInset)
 		embeddedTextView.font = NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular)
 		self.textView = embeddedTextView
