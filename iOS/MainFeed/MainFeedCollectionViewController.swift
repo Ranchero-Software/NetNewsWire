@@ -274,6 +274,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if config.appearance == .sidebar {
 			// This defrosts the glass.
 			collectionView.backgroundColor = .clear
+		} else {
+			collectionView.backgroundColor = .systemGroupedBackground
 		}
 	}
 
