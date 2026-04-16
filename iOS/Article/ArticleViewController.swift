@@ -227,14 +227,6 @@ final class ArticleViewController: UIViewController {
 		view.layoutIfNeeded()
 	}
 
-	override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
-		// We only want to show bars when rotating to horizontalSizeClass == .regular
-		// (i.e., big) iPhones to resolve crash #4483.
-		if traitCollection.userInterfaceIdiom == .phone && newCollection.horizontalSizeClass == .regular {
-			currentWebViewController?.showBars()
-		}
-	}
-
 	func updateUI() {
 
 		guard let article = article else {
