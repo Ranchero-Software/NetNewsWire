@@ -58,7 +58,7 @@ final class AppDefaults: Sendable {
 
 		let hiding = UserDefaults.standard.dictionary(forKey: legacyKey) as? [String: [String]] ?? [:]
 
-		let overrides = FeedReadFilterOverrides(feedsHiding: hiding.mapValues { Set($0) })
+		let overrides = FeedReadFilterOverrides.migrating(legacyFeedsHiding: hiding.mapValues { Set($0) })
 
 		UserDefaults.standard.set(overrides.data, forKey: Key.feedReadFilterOverrides)
 		UserDefaults.standard.removeObject(forKey: legacyKey)
@@ -416,6 +416,22 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	func setFeedHideReadOverride(accountID: String, feedID: String, enabled: Bool) {
+		var overrides = feedReadFilterOverrides
+		if enabled {
+			overrides.setOverride(accountID: accountID, feedID: feedID, hideReadArticles ? .show : .hide)
+		} else {
+			overrides.clearOverride(accountID: accountID, feedID: feedID)
+		}
+		feedReadFilterOverrides = overrides
+	}
+
+	func clearFeedHideReadOverrides(accountID: String) {
+		var overrides = feedReadFilterOverrides
+		overrides.clearAll(accountID: accountID)
+		feedReadFilterOverrides = overrides
+	}
+
 	@MainActor static func registerDefaults() {
 		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
@@ -622,7 +638,7 @@ struct StateRestorationInfo {
 				  expandedContainers: expandedContainers,
 				  selectedSidebarItem: selectedSidebarItem,
 				  smartFeedsHidingReadArticles: smartFeedsHidingReadArticles,
-				  feedReadFilterOverrides: FeedReadFilterOverrides(feedsHiding: legacyFeedsHiding),
+				  feedReadFilterOverrides: FeedReadFilterOverrides.migrating(legacyFeedsHiding: legacyFeedsHiding),
 				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
 				  selectedArticle: AppDefaults.shared.selectedArticle,
 				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
