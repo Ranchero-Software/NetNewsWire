@@ -136,27 +136,17 @@ final class AccountInspectorViewController: UITableViewController {
 			return
 		}
 
+		let accountID = account.accountID
 		let view = FeedReadFilterOverridesView(
 			account: account,
 			hasOverride: { feedID in
-				AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: account.accountID, feedID: feedID)
+				AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
 			},
-			setOverride: { feedID, hasOverride in
-				var overrides = AppDefaults.shared.feedReadFilterOverrides
-
-				if hasOverride {
-					let globalHides = AppDefaults.shared.hideReadArticles
-					overrides.setOverride(accountID: account.accountID, feedID: feedID, globalHides ? .show : .hide)
-				} else {
-					overrides.clearOverride(accountID: account.accountID, feedID: feedID)
-				}
-
-				AppDefaults.shared.feedReadFilterOverrides = overrides
+			setOverride: { feedID, enabled in
+				AppDefaults.shared.setFeedHideReadOverride(accountID: accountID, feedID: feedID, enabled: enabled)
 			},
 			clearAllOverrides: {
-				var overrides = AppDefaults.shared.feedReadFilterOverrides
-				overrides.clearAll(accountID: account.accountID)
-				AppDefaults.shared.feedReadFilterOverrides = overrides
+				AppDefaults.shared.clearFeedHideReadOverrides(accountID: accountID)
 			}
 		)
 

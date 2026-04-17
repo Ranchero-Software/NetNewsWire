@@ -73,25 +73,6 @@ import Account
 		// The only item that can't be toggled is the unread smart feed.
 		!isUnreadSmartFeed(sidebarItemID)
 	}
-
-	func feedHasOverride(accountID: String, feedID: String) -> Bool {
-		feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
-	}
-
-	func clearFeedOverride(accountID: String, feedID: String) {
-		feedReadFilterOverrides.clearOverride(accountID: accountID, feedID: feedID)
-		saveFeedReadFilterOverrides()
-	}
-
-	func setFeedOverride(accountID: String, feedID: String, hiding: Bool) {
-		feedReadFilterOverrides.setOverride(accountID: accountID, feedID: feedID, hiding ? .hide : .show)
-		saveFeedReadFilterOverrides()
-	}
-
-	func clearAllFeedOverrides(accountID: String) {
-		feedReadFilterOverrides.clearAll(accountID: accountID)
-		saveFeedReadFilterOverrides()
-	}
 }
 
 private extension HidingReadArticlesState {
