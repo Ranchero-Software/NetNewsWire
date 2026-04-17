@@ -26,16 +26,18 @@ struct FeedReadFilterOverrides: Codable, Equatable {
 		overrides = [:]
 	}
 
-	init(feedsHiding: [String: Set<String>]) {
+	static func migrating(legacyFeedsHiding: [String: Set<String>]) -> Self {
 		var result = [String: [String: Override]]()
-		for (accountID, feedIDs) in feedsHiding {
+		for (accountID, feedIDs) in legacyFeedsHiding {
 			var accountOverrides = [String: Override]()
 			for feedID in feedIDs {
 				accountOverrides[feedID] = .hide
 			}
 			result[accountID] = accountOverrides
 		}
-		overrides = result
+		var migrated = Self()
+		migrated.overrides = result
+		return migrated
 	}
 
 	func override(accountID: String, feedID: String) -> Override? {
@@ -63,7 +65,6 @@ struct FeedReadFilterOverrides: Codable, Equatable {
 		overrides[accountID] = nil
 	}
 
-	/// All (accountID, feedID, override) tuples.
 	func allFeeds() -> [(accountID: String, feedID: String, override: Override)] {
 		var result = [(String, String, Override)]()
 		for (accountID, accountOverrides) in overrides {
