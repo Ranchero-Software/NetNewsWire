@@ -43,36 +43,17 @@ final class AccountsDetailViewController: NSViewController {
 			return
 		}
 
+		let accountID = account.accountID
 		let overridesView = FeedReadFilterOverridesView(
 			account: account,
-			hasOverride: { [weak self] feedID in
-				guard let accountID = self?.account.accountID else {
-					return false
-				}
-				return AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
+			hasOverride: { feedID in
+				AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
 			},
-			setOverride: { [weak self] feedID, hasOverride in
-				guard let accountID = self?.account.accountID else {
-					return
-				}
-				var overrides = AppDefaults.shared.feedReadFilterOverrides
-
-				if hasOverride {
-					let globalHides = AppDefaults.shared.hideReadArticles
-					overrides.setOverride(accountID: accountID, feedID: feedID, globalHides ? .show : .hide)
-				} else {
-					overrides.clearOverride(accountID: accountID, feedID: feedID)
-				}
-
-				AppDefaults.shared.feedReadFilterOverrides = overrides
+			setOverride: { feedID, enabled in
+				AppDefaults.shared.setFeedHideReadOverride(accountID: accountID, feedID: feedID, enabled: enabled)
 			},
-			clearAllOverrides: { [weak self] in
-				guard let accountID = self?.account.accountID else {
-					return
-				}
-				var overrides = AppDefaults.shared.feedReadFilterOverrides
-				overrides.clearAll(accountID: accountID)
-				AppDefaults.shared.feedReadFilterOverrides = overrides
+			clearAllOverrides: {
+				AppDefaults.shared.clearFeedHideReadOverrides(accountID: accountID)
 			}
 		)
 
