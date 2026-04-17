@@ -762,6 +762,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
 		undoManager?.removeAllActions() // Undo stack may contain actions for the deleted account.
+		if let account = note.userInfo?[Account.UserInfoKey.account] as? Account {
+			AppDefaults.shared.clearFeedHideReadOverrides(accountID: account.accountID)
+		}
 		if representedObjectsContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync()
 		}
@@ -793,13 +796,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		cachedFeedReadFilterOverrides = overrides
 
-		// Build set of feed SidebarItemIdentifiers that have persistent overrides
 		var persistedOverrides = [SidebarItemIdentifier: Bool]()
 		for entry in overrides.allFeeds() {
 			persistedOverrides[.feed(entry.accountID, entry.feedID)] = (entry.override == .hide)
 		}
 
-		// Sync feed rows with persistent overrides without mutating non-feed session state.
 		var changed = false
 		for (id, value) in persistedOverrides {
 			if readFilterEnabledTable[id] == nil || readFilterEnabledTable[id] != value {
@@ -807,7 +808,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				changed = true
 			}
 		}
-		// Remove session entries for feeds whose persistent override was cleared
 		for (id, _) in readFilterEnabledTable {
 			if case .feed = id, persistedOverrides[id] == nil {
 				readFilterEnabledTable[id] = nil
