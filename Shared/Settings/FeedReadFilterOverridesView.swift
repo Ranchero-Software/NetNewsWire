@@ -30,11 +30,11 @@ import Account
 				ForEach(feeds, id: \.feedID) { feed in
 					Toggle(feed.nameForDisplay, isOn: Binding(
 						get: { overrideStates[feed.feedID] ?? false },
-						set: { overrideStates[feed.feedID] = $0 }
+						set: { newValue in
+							overrideStates[feed.feedID] = newValue
+							setOverride(feed.feedID, newValue)
+						}
 					))
-					.onChange(of: overrideStates[feed.feedID]) {
-						setOverride(feed.feedID, overrideStates[feed.feedID] ?? false)
-					}
 				}
 			} footer: {
 				Text("When a switch is on, that feed uses its own read-article visibility setting instead of the global preference.")
