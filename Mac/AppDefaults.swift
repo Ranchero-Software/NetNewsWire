@@ -339,6 +339,22 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	func setFeedHideReadOverride(accountID: String, feedID: String, enabled: Bool) {
+		var overrides = feedReadFilterOverrides
+		if enabled {
+			overrides.setOverride(accountID: accountID, feedID: feedID, hideReadArticles ? .show : .hide)
+		} else {
+			overrides.clearOverride(accountID: accountID, feedID: feedID)
+		}
+		feedReadFilterOverrides = overrides
+	}
+
+	func clearFeedHideReadOverrides(accountID: String) {
+		var overrides = feedReadFilterOverrides
+		overrides.clearAll(accountID: accountID)
+		feedReadFilterOverrides = overrides
+	}
+
 	init() {
 		// Migrate every-10-minute refresh interval to 30 minutes.
 		let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
