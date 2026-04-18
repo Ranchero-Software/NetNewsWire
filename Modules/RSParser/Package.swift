@@ -15,12 +15,12 @@ let package = Package(
 			targets: ["RSParserObjC"])
 	],
 	dependencies: [
-		.package(path: "../RSMarkdown")
+		.package(url: "https://github.com/brentsimmons/Tidemark", from: "1.0.0")
 	],
 	targets: [
 		.target(
 			name: "RSParser",
-			dependencies: ["RSParserObjC", "RSMarkdown"],
+			dependencies: ["RSParserObjC", "Tidemark"],
 			path: "Sources/Swift",
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),

@@ -60,8 +60,8 @@ extension Notification.Name {
 			return cachedImage
 		}
 
-		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString) {
-			if homePageURL.host == "nnw.ranchero.com" || homePageURL.host == "netnewswire.blog" || homePageURL.host == "services.netnewswire.com" {
+		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), let host = homePageURL.host {
+			if host == "nnw.ranchero.com" || host == "netnewswire.blog" || host.hasSuffix("netnewswire.com") {
 				return IconImage.nnwFeedIcon
 			}
 		}
