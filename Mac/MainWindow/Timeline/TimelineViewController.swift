@@ -939,6 +939,21 @@ extension TimelineViewController: NSTableViewDelegate {
 			if !article.status.read {
 				markArticles(Set([article]), statusKey: .read, flag: true)
 			}
+			
+			if UserDefaults.standard.bool(forKey: "OllamaAutoTranslate") {
+				let count = UserDefaults.standard.object(forKey: "OllamaPreloadCount") != nil ? UserDefaults.standard.integer(forKey: "OllamaPreloadCount") : 10
+				if count > 0, let index = articles.firstIndex(of: article) {
+					let nextIndex = index + 1
+					if nextIndex < articles.count {
+						let limit = min(articles.count, nextIndex + count)
+						let itemsToPreload = articles[nextIndex..<limit].compactMap { (a: Article) -> (id: String, text: String)? in
+							let text = (a.body ?? "").strippingHTML(maxCharacters: 4000)
+							return text.isEmpty ? nil : (a.articleID, text)
+						}
+						OllamaClient.shared.preloadTranslations(items: itemsToPreload)
+					}
+				}
+			}
 		}
 
 		selectionDidChange(selectedArticles)
