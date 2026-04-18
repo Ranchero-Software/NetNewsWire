@@ -868,6 +868,9 @@ public enum FetchType {
 		precondition(type == .onMyMac || type == .cloudKit)
 
 		let articleChanges = try await database.updateAsync(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
+		if let newArticles = articleChanges.new {
+			try await applyArticleFilters(to: newArticles, parsedItems: parsedItems)
+		}
 		sendNotificationAbout(articleChanges)
 		return articleChanges
 	}
@@ -880,7 +883,11 @@ public enum FetchType {
 			return
 		}
 
+		let allParsedItems = feedIDsAndItems.values.reduce(into: Set<ParsedItem>()) { $0.formUnion($1) }
 		let newAndUpdatedArticles = try await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+		if let newArticles = newAndUpdatedArticles.new {
+			try await applyArticleFilters(to: newArticles, parsedItems: allParsedItems)
+		}
 		sendNotificationAbout(newAndUpdatedArticles)
 	}
 
@@ -1433,6 +1440,37 @@ private extension Account {
 	func noteStatusesForArticleIDsDidChange(_ articleIDs: Set<String>) {
 		_fetchAllUnreadCounts()
 		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.articleIDs: articleIDs])
+	}
+
+	func applyArticleFilters(to newArticles: Set<Article>, parsedItems: Set<ParsedItem>) async throws {
+		// Build lookup from uniqueID -> tags so filters can match RSS categories.
+		var tagsByUniqueID = [String: Set<String>]()
+		for parsedItem in parsedItems {
+			if let tags = parsedItem.tags, !tags.isEmpty {
+				tagsByUniqueID[parsedItem.uniqueID] = tags
+			}
+		}
+
+		var articlesToMarkRead = Set<Article>()
+
+		for article in newArticles {
+			guard let feed = existingFeed(withFeedID: article.feedID) else {
+				continue
+			}
+			guard let filters = feed.articleFilters, !filters.isEmpty else {
+				continue
+			}
+			let tags = tagsByUniqueID[article.uniqueID]
+			if filters.anyFilterMatches(article, tags: tags) {
+				articlesToMarkRead.insert(article)
+			}
+		}
+
+		guard !articlesToMarkRead.isEmpty else {
+			return
+		}
+
+		try await delegate.markArticles(for: self, articles: articlesToMarkRead, statusKey: .read, flag: true)
 	}
 
 	func sendNotificationAbout(_ articleChanges: ArticleChanges) {

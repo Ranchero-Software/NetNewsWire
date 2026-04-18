@@ -138,6 +138,15 @@ import Articles
 		}
 	}
 
+	var articleFilters: [ArticleFilter]? {
+		didSet {
+			if articleFilters != oldValue {
+				database.setArticleFilters(articleFilters, for: feedURL)
+				postSettingDidChange(.articleFilters)
+			}
+		}
+	}
+
 	/// Last time an attempt was made to read the feed.
 	/// (Not necessarily a successful attempt.)
 	var lastCheckDate: Date? {
@@ -168,6 +177,7 @@ import Articles
 		self.externalID = row.externalID
 		self.folderRelationship = row.folderRelationship
 		self.lastCheckDate = row.lastCheckDate
+		self.articleFilters = row.articleFilters
 	}
 
 	/// Create for a new feed not yet in the database.
