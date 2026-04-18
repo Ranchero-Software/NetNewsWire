@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import RSMarkdown
+import Tidemark
 
 public struct ParsedItem: Hashable, Sendable {
 	public let syncServiceID: String? // Nil when not syncing
@@ -67,7 +67,8 @@ public struct ParsedItem: Hashable, Sendable {
 
 		// Render Markdown when present, else use contentHTML
 		if let markdown {
-			self.contentHTML = RSMarkdown.markdownToHTML(markdown) ?? contentHTML
+			let rendered = Tidemark.markdownToHTML(markdown)
+			self.contentHTML = rendered.isEmpty ? contentHTML : rendered
 		} else {
 			self.contentHTML = contentHTML
 		}

@@ -19,13 +19,6 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSMarkdown",
-        "identifier" : "RSMarkdownTests",
-        "name" : "RSMarkdownTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:Modules\/RSWeb",
         "identifier" : "RSWebTests",
         "name" : "RSWebTests"

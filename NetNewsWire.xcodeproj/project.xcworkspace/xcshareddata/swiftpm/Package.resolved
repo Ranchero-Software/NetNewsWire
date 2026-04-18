@@ -1,5 +1,5 @@
 {
-  "originHash" : "5115e350e98bf19a05bbf55e15fa1d5d1ef9af76948e07be931bf97db7f4b070",
+  "originHash" : "5d6df0c5288b78f36e6ba0499d081087baa5623980692534bffecd646936a1f4",
   "pins" : [
     {
       "identity" : "plcrashreporter",
@@ -22,10 +22,10 @@
     {
       "identity" : "tidemark",
       "kind" : "remoteSourceControl",
-      "location" : "https://codeberg.org/brentsimmons/Tidemark",
+      "location" : "https://github.com/brentsimmons/Tidemark",
       "state" : {
-        "revision" : "f655eebd5749e237000ba9cf4d54c43177c39096",
-        "version" : "0.2.3"
+        "revision" : "2a5cd8a715ad1145d36009f5d3f146704d3f7ec0",
+        "version" : "1.0.0"
       }
     },
     {
