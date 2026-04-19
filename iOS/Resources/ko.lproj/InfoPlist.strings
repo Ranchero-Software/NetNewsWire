@@ -1,0 +1,11 @@
+/* Bundle name */
+"CFBundleName" = "NetNewsWire";
+
+/* No comment provided by engineer. */
+"NetNewsWire Theme" = "NetNewsWire 테마";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "기사의 이미지를 저장하려면 권한을 허용해 주세요.";
+
+/* No comment provided by engineer. */
+"OPML" = "OPML";

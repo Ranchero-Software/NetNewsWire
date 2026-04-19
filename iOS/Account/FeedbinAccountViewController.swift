@@ -74,10 +74,10 @@ final class FeedbinAccountViewController: UITableViewController {
 	@IBAction func showHidePassword(_ sender: Any) {
 		if passwordTextField.isSecureTextEntry {
 			passwordTextField.isSecureTextEntry = false
-			showHideButton.setTitle("Hide", for: .normal)
+			showHideButton.setTitle(NSLocalizedString("Hide", comment: "Hide password"), for: .normal)
 		} else {
 			passwordTextField.isSecureTextEntry = true
-			showHideButton.setTitle("Show", for: .normal)
+			showHideButton.setTitle(NSLocalizedString("Show", comment: "Show password"), for: .normal)
 		}
 	}
 

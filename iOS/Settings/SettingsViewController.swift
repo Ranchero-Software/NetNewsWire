@@ -418,7 +418,7 @@ private extension SettingsViewController {
 	func importOPML(sourceView: UIView, sourceRect: CGRect) {
 		switch AccountManager.shared.activeAccounts.count {
 		case 0:
-			presentError(title: "Error", message: NSLocalizedString("You must have at least one active account.", comment: "Missing active account"))
+			presentError(title: NSLocalizedString("Error", comment: "Error"), message: NSLocalizedString("You must have at least one active account.", comment: "Missing active account"))
 		case 1:
 			opmlAccount = AccountManager.shared.activeAccounts.first
 			importOPMLDocumentPicker()
@@ -516,7 +516,8 @@ private extension SettingsViewController {
 		do {
 			try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
 		} catch {
-			self.presentError(title: "OPML Export Error", message: error.localizedDescription)
+			let errorTitle = NSLocalizedString("OPML Export Error", comment: "OPML export error")
+			self.presentError(title: errorTitle, message: error.localizedDescription)
 		}
 
 		let docPicker = UIDocumentPickerViewController(forExporting: [tempFile])
