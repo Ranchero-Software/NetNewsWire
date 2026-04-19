@@ -6,8 +6,6 @@
 //
 
 // ASCII byte constants used throughout the XML scanner.
-// Pattern borrowed from Tidemark: extending UInt8 with named byte values
-// keeps the scanning code readable without paying for String comparisons.
 
 extension UInt8 {
 
