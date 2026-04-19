@@ -666,7 +666,7 @@ TOR SignUp */
 Starred article for accessibility
 Starred label
 Starred pseudo-feed title */
-"Starred" = "별표 표시됨";
+"Starred" = "별표한 기사";
 
 /* Status records header */
 "Status Records" = "상태 기록";
