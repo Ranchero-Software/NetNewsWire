@@ -8,6 +8,16 @@
 import SwiftUI
 import Account
 
+private enum AccountsDetailLocalizedStrings {
+	static let type = NSLocalizedString("Type:", comment: "Account details type label")
+	static let active = NSLocalizedString("Active", comment: "Account details active toggle")
+	static let name = NSLocalizedString("Name:", comment: "Account details name label")
+	static let nameHelp = NSLocalizedString("The name can be anything you want. You can even use emoji. 🎸", comment: "Account details name help text")
+	static let credentials = NSLocalizedString("Credentials", comment: "Account details credentials button")
+	static let syncUnreadContent = NSLocalizedString("Sync content of unread articles", comment: "Account details sync unread content toggle")
+	static let syncUnreadContentHelp = NSLocalizedString("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.", comment: "Account details sync unread content help text")
+}
+
 struct AccountsDetailView: View {
 
 	let account: Account
@@ -38,7 +48,7 @@ struct AccountsDetailView: View {
 		VStack(alignment: .leading, spacing: 0) {
 			Grid(alignment: .leading, verticalSpacing: 0) {
 				GridRow(alignment: .firstTextBaseline) {
-					Text("Type:")
+					Text(AccountsDetailLocalizedStrings.type)
 						.gridColumnAlignment(.trailing)
 					Text(account.defaultName)
 				}
@@ -46,7 +56,7 @@ struct AccountsDetailView: View {
 				GridRow {
 					Color.clear
 						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Toggle("Active", isOn: $isActive)
+					Toggle(AccountsDetailLocalizedStrings.active, isOn: $isActive)
 						.onChange(of: isActive) {
 							account.isActive = isActive
 						}
@@ -54,7 +64,7 @@ struct AccountsDetailView: View {
 				}
 
 				GridRow(alignment: .firstTextBaseline) {
-					Text("Name:")
+					Text(AccountsDetailLocalizedStrings.name)
 					TextField("", text: $accountName)
 						.frame(width: 150)
 						.onSubmit {
@@ -69,7 +79,7 @@ struct AccountsDetailView: View {
 				GridRow {
 					Color.clear
 						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Text("The name can be anything you want. You can even use emoji. 🎸")
+					Text(AccountsDetailLocalizedStrings.nameHelp)
 						.foregroundStyle(.secondary)
 						.fixedSize(horizontal: false, vertical: true)
 						.padding(.top, 1)
@@ -79,7 +89,7 @@ struct AccountsDetailView: View {
 					GridRow {
 						Color.clear
 							.gridCellUnsizedAxes([.horizontal, .vertical])
-						Button("Credentials") {
+						Button(AccountsDetailLocalizedStrings.credentials) {
 							onCredentials?()
 						}
 						.padding(.top, 12)
@@ -88,13 +98,13 @@ struct AccountsDetailView: View {
 			}
 
 			if account.type == .cloudKit {
-				Toggle("Sync content of unread articles", isOn: $syncUnreadContent)
+				Toggle(AccountsDetailLocalizedStrings.syncUnreadContent, isOn: $syncUnreadContent)
 					.onChange(of: syncUnreadContent) {
 						AccountManager.shared.syncArticleContentForUnreadArticles = syncUnreadContent
 					}
 					.padding(.top, 12)
 
-				Text("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.")
+				Text(AccountsDetailLocalizedStrings.syncUnreadContentHelp)
 					.foregroundStyle(.secondary)
 					.fixedSize(horizontal: false, vertical: true)
 					.padding(.top, 4)

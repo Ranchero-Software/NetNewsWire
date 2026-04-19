@@ -15,7 +15,7 @@ import Account
 
 	@MainActor static func createFolderPopupMenu(with rootNode: Node, restrictToSpecialAccounts: Bool = false) -> NSMenu {
 
-		let menu = NSMenu(title: "Folders")
+		let menu = NSMenu(title: NSLocalizedString("Folders", comment: "Add feed destination folder popup menu title"))
 		menu.autoenablesItems = false
 
 		for childNode in rootNode.childNodes {
