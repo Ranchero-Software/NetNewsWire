@@ -221,7 +221,7 @@ private extension JSONFeedParser {
 		guard let dateString = dateString, !dateString.isEmpty else {
 			return nil
 		}
-		return RSDateWithString(dateString)
+		return DateParser.date(from: dateString)
 	}
 
 	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {

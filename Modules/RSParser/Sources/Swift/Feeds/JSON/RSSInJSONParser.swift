@@ -88,7 +88,7 @@ private extension RSSInJSONParser {
 
 		var datePublished: Date?
 		if let datePublishedString = itemDictionary["pubDate"] as? String {
-			datePublished = RSDateWithString(datePublishedString)
+			datePublished = DateParser.date(from: datePublishedString)
 		}
 
 		let authors = parseAuthors(itemDictionary)
