@@ -6,23 +6,15 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSParser
 
-final class RSSInJSONParserTests: XCTestCase {
+@Suite struct RSSInJSONParserTests {
 
-	func testScriptingNewsPerformance() {
-
-		// 0.003 sec on my 2012 iMac.
+	@Test func feedLanguage() throws {
 		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
-	}
-
-	func testFeedLanguage() {
-		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.language, "en-us")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.language == "en-us")
 	}
 }

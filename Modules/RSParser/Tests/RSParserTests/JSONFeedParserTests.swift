@@ -6,93 +6,70 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSParser
 
-final class JSONFeedParserTests: XCTestCase {
+@Suite struct JSONFeedParserTests {
 
-	func testInessentialPerformance() {
-
-		// 0.001 sec on my 2012 iMac.
-		let d = parserData("inessential", "json", "http://inessential.com/")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
-	}
-
-	func testDaringFireballPerformance() {
-
-		// 0.009 sec on my 2012 iMac.
+	@Test func gettingFaviconAndIconURLs() throws {
 		let d = parserData("DaringFireball", "json", "http://daringfireball.net/")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		#expect(parsedFeed.faviconURL == "https://daringfireball.net/graphics/favicon-64.png")
+		#expect(parsedFeed.iconURL == "https://daringfireball.net/graphics/apple-touch-icon.png")
 	}
 
-	func testGettingFaviconAndIconURLs() {
-
-		let d = parserData("DaringFireball", "json", "http://daringfireball.net/")
-		let parsedFeed = try! FeedParser.parse(d)!
-
-		XCTAssert(parsedFeed.faviconURL == "https://daringfireball.net/graphics/favicon-64.png")
-		XCTAssert(parsedFeed.iconURL == "https://daringfireball.net/graphics/apple-touch-icon.png")
-	}
-
-	func testAllThis() {
-
+	@Test func allThis() throws {
 		let d = parserData("allthis", "json", "http://leancrew.com/allthis/")
-		let parsedFeed = try! FeedParser.parse(d)!
-
-		XCTAssertEqual(parsedFeed.items.count, 12)
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 12)
 	}
 
-	func testCurt() {
-
+	@Test func curt() throws {
 		let d = parserData("curt", "json", "http://curtclifton.net/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
-		XCTAssertEqual(parsedFeed.items.count, 26)
+		#expect(parsedFeed.items.count == 26)
 
 		var didFindTwitterQuitterArticle = false
 		for article in parsedFeed.items {
 			if article.title == "Twitter Quitter" {
 				didFindTwitterQuitterArticle = true
-				XCTAssertTrue(article.contentHTML!.hasPrefix("<p>I&#8217;ve decided to close my Twitter account. William Van Hecke <a href=\"https://tinyletter.com/fet/letters/microcosmographia-xlxi-reasons-to-stay-on-twitter\">makes a convincing case</a>"))
+				#expect(article.contentHTML?.hasPrefix("<p>I&#8217;ve decided to close my Twitter account. William Van Hecke <a href=\"https://tinyletter.com/fet/letters/microcosmographia-xlxi-reasons-to-stay-on-twitter\">makes a convincing case</a>") == true)
 			}
 		}
 
-		XCTAssertTrue(didFindTwitterQuitterArticle)
+		#expect(didFindTwitterQuitterArticle)
 	}
 
-	func testPixelEnvy() {
-
+	@Test func pixelEnvy() throws {
 		let d = parserData("pxlnv", "json", "http://pxlnv.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.items.count, 20)
-
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 20)
 	}
 
-	func testRose() {
+	@Test func rose() throws {
 		let d = parserData("rose", "json", "http://www.rosemaryorchard.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.items.count, 84)
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 84)
 	}
 
-	func test3960() {
+	@Test func threeNineSixZero() throws {
 		let d = parserData("3960", "json", "http://journal.3960.org/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.items.count, 20)
-		XCTAssertEqual(parsedFeed.language, "de-DE")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 20)
+		#expect(parsedFeed.language == "de-DE")
 
 		for item in parsedFeed.items {
-			XCTAssertEqual(item.language, "de-DE")
+			#expect(item.language == "de-DE")
 		}
 	}
 
-	func testAuthors() {
+	@Test func authors() throws {
 		let d = parserData("authors", "json", "https://example.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.items.count, 4)
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 4)
 
 		let rootAuthors = Set([
 			ParsedAuthor(name: "Root Author 1", url: nil, avatarURL: nil, emailAddress: nil),
@@ -106,19 +83,19 @@ final class JSONFeedParserTests: XCTestCase {
 			ParsedAuthor(name: "Legacy Item Author", url: nil, avatarURL: nil, emailAddress: nil)
 		])
 
-		XCTAssertEqual(parsedFeed.authors?.count, 2)
-		XCTAssertEqual(parsedFeed.authors, rootAuthors)
+		#expect(parsedFeed.authors?.count == 2)
+		#expect(parsedFeed.authors == rootAuthors)
 
-		let noAuthorsItem = parsedFeed.items.first { $0.uniqueID == "Item without authors" }!
-		XCTAssertEqual(noAuthorsItem.authors, nil)
+		let noAuthorsItem = try #require(parsedFeed.items.first { $0.uniqueID == "Item without authors" })
+		#expect(noAuthorsItem.authors == nil)
 
-		let legacyAuthorItem = parsedFeed.items.first { $0.uniqueID == "Item with legacy author" }!
-		XCTAssertEqual(legacyAuthorItem.authors, legacyItemAuthors)
+		let legacyAuthorItem = try #require(parsedFeed.items.first { $0.uniqueID == "Item with legacy author" })
+		#expect(legacyAuthorItem.authors == legacyItemAuthors)
 
-		let modernAuthorsItem = parsedFeed.items.first { $0.uniqueID == "Item with modern authors" }!
-		XCTAssertEqual(modernAuthorsItem.authors, itemAuthors)
+		let modernAuthorsItem = try #require(parsedFeed.items.first { $0.uniqueID == "Item with modern authors" })
+		#expect(modernAuthorsItem.authors == itemAuthors)
 
-		let bothAuthorsItem = parsedFeed.items.first { $0.uniqueID == "Item with both" }!
-		XCTAssertEqual(bothAuthorsItem.authors, itemAuthors)
+		let bothAuthorsItem = try #require(parsedFeed.items.first { $0.uniqueID == "Item with both" })
+		#expect(bothAuthorsItem.authors == itemAuthors)
 	}
 }

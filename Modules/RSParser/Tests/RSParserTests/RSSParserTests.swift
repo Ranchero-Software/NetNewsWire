@@ -6,221 +6,177 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSParser
 
-final class RSSParserTests: XCTestCase {
+@Suite struct RSSParserTests {
 
-	func testScriptingNewsPerformance() {
-
-		// 0.004 sec on my 2012 iMac.
-		let d = parserData("scriptingNews", "rss", "http://scripting.com/")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
-	}
-
-	func testKatieFloydPerformance() {
-
-		// 0.004 sec on my 2012 iMac.
-		let d = parserData("KatieFloyd", "rss", "http://katiefloyd.com/")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
-	}
-
-	func testEMarleyPerformance() {
-
-		// 0.001 sec on my 2012 iMac.
-		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
-	}
-
-	func testMantonPerformance() {
-
-		// 0.002 sec on my 2012 iMac.
-		let d = parserData("manton", "rss", "http://manton.org/")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
-	}
-
-	func testNatashaTheRobot() {
-
+	@Test func natashaTheRobot() throws {
 		let d = parserData("natasha", "xml", "https://www.natashatherobot.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.items.count, 10)
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 10)
 	}
 
-	func testTheOmniShowAttachments() {
-
+	@Test func theOmniShowAttachments() throws {
 		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
-			XCTAssertNotNil(article.attachments)
-			XCTAssertEqual(article.attachments!.count, 1)
-			let attachment = Array(article.attachments!).first!
-			XCTAssertNotNil(attachment.mimeType)
-			XCTAssertNotNil(attachment.sizeInBytes)
-			XCTAssert(attachment.url.contains("cloudfront"))
-			XCTAssertGreaterThanOrEqual(attachment.sizeInBytes!, 22275279)
-			XCTAssertEqual(attachment.mimeType, "audio/mpeg")
+			let attachments = try #require(article.attachments)
+			#expect(attachments.count == 1)
+			let attachment = try #require(Array(attachments).first)
+			#expect(attachment.mimeType != nil)
+			#expect(attachment.sizeInBytes != nil)
+			#expect(attachment.url.contains("cloudfront"))
+			if let size = attachment.sizeInBytes {
+				#expect(size >= 22275279)
+			}
+			#expect(attachment.mimeType == "audio/mpeg")
 		}
 	}
 
-	func testTheOmniShowUniqueIDs() {
-
+	@Test func theOmniShowUniqueIDs() throws {
 		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
-			XCTAssertNotNil(article.uniqueID)
-			XCTAssertTrue(article.uniqueID.hasPrefix("https://theomnishow.omnigroup.com/episode/"))
+			#expect(article.uniqueID.hasPrefix("https://theomnishow.omnigroup.com/episode/"))
 		}
 	}
 
-	func testMacworldUniqueIDs() {
-
+	@Test func macworldUniqueIDs() throws {
 		// Macworld’s feed doesn’t have guids, so they should be calculated unique IDs.
 
 		let d = parserData("macworld", "rss", "https://www.macworld.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
-			XCTAssertNotNil(article.uniqueID)
-			XCTAssertEqual(article.uniqueID.count, 32) // calculated unique IDs are MD5 hashes
+			#expect(article.uniqueID.count == 32) // calculated unique IDs are MD5 hashes
 		}
 	}
 
-	func testMacworldAuthors() {
-
+	@Test func macworldAuthors() throws {
 		// Macworld uses names instead of email addresses (despite the RSS spec saying they should be email addresses).
 
 		let d = parserData("macworld", "rss", "https://www.macworld.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
-
-			let author = article.authors!.first!
-			XCTAssertNil(author.emailAddress)
-			XCTAssertNil(author.url)
-			XCTAssertNotNil(author.name)
+			let author = try #require(article.authors?.first)
+			#expect(author.emailAddress == nil)
+			#expect(author.url == nil)
+			#expect(author.name != nil)
 		}
 	}
 
-	func testMonkeyDomGuids() {
-
+	@Test func monkeyDomGuids() throws {
 		// https://coding.monkeydom.de/posts.rss has a bug in the feed (at this writing):
 		// It has guids that are supposed to be permalinks, per the spec —
 		// except that they’re not actually permalinks. The RSS parser should
 		// detect this situation, and every article in the feed should have a permalink.
 
 		let d = parserData("monkeydom", "rss", "https://coding.monkeydom.de/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
-			XCTAssertNil(article.url)
-			XCTAssertNotNil(article.uniqueID)
+			#expect(article.url == nil)
 		}
 	}
 
-	func testEmptyContentEncoded() {
+	@Test func emptyContentEncoded() throws {
 		// The ATP feed (at the time of this writing) has some empty content:encoded elements. The parser should ignore those.
 		// https://github.com/brentsimmons/NetNewsWire/issues/529
 
 		let d = parserData("atp", "rss", "http://atp.fm/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
-			XCTAssertNotNil(article.contentHTML)
+			#expect(article.contentHTML != nil)
 		}
 	}
 
-	func testFeedKnownToHaveGuidsThatArentPermalinks() {
+	@Test func feedKnownToHaveGuidsThatArentPermalinks() throws {
 		let d = parserData("livemint", "xml", "https://www.livemint.com/rss/news")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 		for article in parsedFeed.items {
-			XCTAssertNil(article.url)
+			#expect(article.url == nil)
 		}
 	}
 
-	func testAuthorsWithTitlesInside() {
+	@Test func authorsWithTitlesInside() throws {
 		// This feed uses atom authors, and we don’t want author/title to be used as item/title.
 		// https://github.com/brentsimmons/NetNewsWire/issues/943
 		let d = parserData("cloudblog", "rss", "https://cloudblog.withgoogle.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 		for article in parsedFeed.items {
-			XCTAssertNotEqual(article.title, "Product Manager, Office of the CTO")
-			XCTAssertNotEqual(article.title, "Developer Programs Engineer")
-			XCTAssertNotEqual(article.title, "Product Director")
+			#expect(article.title != "Product Manager, Office of the CTO")
+			#expect(article.title != "Developer Programs Engineer")
+			#expect(article.title != "Product Director")
 		}
 	}
 
-    func testTitlesWithInvalidFeedWithImageStructures() {
-        // This invalid feed has <image> elements inside <item>s.
-        // 17 Jan 2021 bug report — we’re not parsing titles in this feed.
-        let d = parserData("aktuality", "rss", "https://www.aktuality.sk/")
-        let parsedFeed = try! FeedParser.parse(d)!
-        for article in parsedFeed.items {
-            XCTAssertNotNil(article.title)
-        }
-    }
+	@Test func titlesWithInvalidFeedWithImageStructures() throws {
+		// This invalid feed has <image> elements inside <item>s.
+		// 17 Jan 2021 bug report — we’re not parsing titles in this feed.
+		let d = parserData("aktuality", "rss", "https://www.aktuality.sk/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		for article in parsedFeed.items {
+			#expect(article.title != nil)
+		}
+	}
 
-	func testFeedLanguage() {
+	@Test func feedLanguage() throws {
 		let d = parserData("manton", "rss", "http://manton.org/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.language, "en-US")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.language == "en-US")
 	}
 
-	func testMarkdown1() {
+	@Test func markdown1() throws {
 		let d = parserData("markdown1", "rss", "https://wordland.social/scripting/237777565/rss.xml")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 		for article in parsedFeed.items {
-			XCTAssertNotNil(article.markdown)
+			#expect(article.markdown != nil)
 		}
 	}
 
-	func testMarkdown2() {
+	@Test func markdown2() throws {
 		let d = parserData("markdown2", "rss", "https://wordland.social/scripting/246529703/rss.xml")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 		for article in parsedFeed.items {
-			XCTAssertNotNil(article.markdown)
+			#expect(article.markdown != nil)
 		}
 	}
 
-	func testFeedIconURL() {
+	@Test func feedIconURL() throws {
 		let d = parserData("KatieFloyd", "rss", "http://katiefloyd.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.iconURL, "https://static.feedpress.it/logo/katiefloyd.png")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.iconURL == "https://static.feedpress.it/logo/katiefloyd.png")
 	}
 
-	func testFeedIconURLNotSetByItemLevelImages() {
+	@Test func feedIconURLNotSetByItemLevelImages() throws {
 		// aktuality.rss has <image> elements inside <item>s, not at the channel level.
 		// These should not be treated as the feed icon.
 		let d = parserData("aktuality", "rss", "https://www.aktuality.sk/")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertNil(parsedFeed.iconURL)
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.iconURL == nil)
 	}
 
-	func testMedscapeExternalURLs() {
+	@Test func medscapeExternalURLs() throws {
 		let d = parserData("medscape", "rss", "https://www.medscape.com/cx/rssfeeds/2674.xml")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 		for article in parsedFeed.items {
-			XCTAssertNotNil(article.externalURL)
+			#expect(article.externalURL != nil)
 		}
 	}
 
-//	func testFeedWithGB2312Encoding() {
-//		// This feed has an encoding we don’t run into very often.
-//		// https://github.com/Ranchero-Software/NetNewsWire/issues/1477
-//		let d = parserData("kc0011", "rss", "http://kc0011.net/")
-//		let parsedFeed = try! FeedParser.parse(d)!
-//		XCTAssert(parsedFeed.items.count > 0)
-//		for article in parsedFeed.items {
-//			XCTAssertNotNil(article.contentHTML)
-//		}
-//	}
+	@Test func feedWithGB2312Encoding() throws {
+		// https://github.com/Ranchero-Software/NetNewsWire/issues/1477
+		let d = parserData("kc0011", "rss", "http://kc0011.net/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count > 0)
+		for article in parsedFeed.items {
+			#expect(article.contentHTML != nil)
+		}
+	}
 }

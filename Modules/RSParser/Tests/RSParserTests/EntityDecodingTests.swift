@@ -6,42 +6,29 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Testing
 import RSParser
 
-final class EntityDecodingTests: XCTestCase {
+@Suite struct EntityDecodingTests {
 
-    func test39Decoding() {
-
-		// Bug found by Manton Reece — the &#39; entity was not getting decoded by NetNewsWire in JSON Feeds from micro.blog.
-
+	@Test("Decimal entity &#39; (single-quote bug from micro.blog)")
+	func decimalEntity39() {
+		// Bug found by Manton Reece — the &#39; entity was not getting decoded
+		// by NetNewsWire in JSON Feeds from micro.blog.
 		let s = "These are the times that try men&#39;s souls."
 		let decoded = s.rsparser_stringByDecodingHTMLEntities()
-
-		XCTAssertEqual(decoded, "These are the times that try men's souls.")
+		#expect(decoded == "These are the times that try men's souls.")
 	}
 
-	func testEntities() {
-		var s = "&#8230;"
-		var decoded = s.rsparser_stringByDecodingHTMLEntities()
-
-		XCTAssertEqual(decoded, "…")
-
-		s = "&#x2026;"
-		decoded = s.rsparser_stringByDecodingHTMLEntities()
-		XCTAssertEqual(decoded, "…")
-
-		s = "&#039;"
-		decoded = s.rsparser_stringByDecodingHTMLEntities()
-		XCTAssertEqual(decoded, "'")
-
-		s = "&#167;"
-		decoded = s.rsparser_stringByDecodingHTMLEntities()
-		XCTAssertEqual(decoded, "§")
-
-		s = "&#XA3;"
-		decoded = s.rsparser_stringByDecodingHTMLEntities()
-		XCTAssertEqual(decoded, "£")
-
+	@Test("Decimal and hex entities decode to the same characters",
+	      arguments: [
+	          ("&#8230;", "…"),
+	          ("&#x2026;", "…"),
+	          ("&#039;", "'"),
+	          ("&#167;", "§"),
+	          ("&#XA3;", "£")
+	      ])
+	func entityPair(_ input: String, _ expected: String) {
+		#expect(input.rsparser_stringByDecodingHTMLEntities() == expected)
 	}
 }

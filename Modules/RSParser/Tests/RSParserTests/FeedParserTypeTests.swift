@@ -6,236 +6,94 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSParser
 import RSParserObjC
 
-final class FeedParserTypeTests: XCTestCase {
+@Suite struct FeedParserTypeTests {
 
-	// MARK: HTML
+	// MARK: - HTML
 
-	func testDaringFireballHTMLType() {
-
-		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .notAFeed)
+	@Test("HTML files are detected as notAFeed",
+	      arguments: [
+	          ("DaringFireball", "html", "http://daringfireball.net/"),
+	          ("furbo", "html", "http://furbo.org/"),
+	          ("inessential", "html", "http://inessential.com/"),
+	          ("sixcolors", "html", "https://sixcolors.com/")
+	      ])
+	func htmlType(_ filename: String, _ ext: String, _ url: String) {
+		let d = parserData(filename, ext, url)
+		#expect(feedType(d) == .notAFeed)
 	}
 
-	func testFurboHTMLType() {
+	// MARK: - RSS
 
-		let d = parserData("furbo", "html", "http://furbo.org/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .notAFeed)
+	@Test("RSS feeds are detected as .rss",
+	      arguments: [
+	          ("EMarley", "rss", "https://medium.com/@emarley"),
+	          ("scriptingNews", "rss", "http://scripting.com/"),
+	          ("KatieFloyd", "rss", "https://katiefloyd.com/"),
+	          ("manton", "rss", "http://manton.org/"),
+	          ("dcrainmaker", "xml", "https://www.dcrainmaker.com/"),
+	          ("macworld", "rss", "https://www.macworld.com/"),
+	          ("natasha", "xml", "https://www.natashatherobot.com/"),
+	          ("donthitsave", "xml", "http://donthitsave.com/donthitsavefeed.xml"),
+	          ("bio", "rdf", "http://connect.biorxiv.org/"),
+	          ("phpxml", "rss", "https://www.fcutrecht.net/")
+	      ])
+	func rssType(_ filename: String, _ ext: String, _ url: String) {
+		let d = parserData(filename, ext, url)
+		#expect(feedType(d) == .rss)
 	}
 
-	func testInessentialHTMLType() {
+	// MARK: - Atom
 
-		let d = parserData("inessential", "html", "http://inessential.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .notAFeed)
+	@Test("Atom feeds are detected as .atom",
+	      arguments: [
+	          // File extension is .rss, but it’s really an Atom feed.
+	          ("DaringFireball", "rss", "http://daringfireball.net/"),
+	          ("OneFootTsunami", "atom", "http://onefoottsunami.com/"),
+	          ("russcox", "atom", "https://research.swtch.com/")
+	      ])
+	func atomType(_ filename: String, _ ext: String, _ url: String) {
+		let d = parserData(filename, ext, url)
+		#expect(feedType(d) == .atom)
 	}
 
-	func testSixColorsHTMLType() {
+	// MARK: - RSS-in-JSON
 
-		let d = parserData("sixcolors", "html", "https://sixcolors.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .notAFeed)
-	}
-
-	// MARK: RSS
-
-	func testEMarleyRSSType() {
-
-		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testScriptingNewsRSSType() {
-
-		let d = parserData("scriptingNews", "rss", "http://scripting.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testKatieFloydRSSType() {
-
-		let d = parserData("KatieFloyd", "rss", "https://katiefloyd.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testMantonRSSType() {
-
-		let d = parserData("manton", "rss", "http://manton.org/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testDCRainmakerRSSType() {
-
-		let d = parserData("dcrainmaker", "xml", "https://www.dcrainmaker.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testMacworldRSSType() {
-
-		let d = parserData("macworld", "rss", "https://www.macworld.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testNatashaTheRobotRSSType() {
-
-		let d = parserData("natasha", "xml", "https://www.natashatherobot.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testDontHitSaveRSSWithBOMType() {
-
-		let d = parserData("donthitsave", "xml", "http://donthitsave.com/donthitsavefeed.xml")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testBioRDF() {
-		let d = parserData("bio", "rdf", "http://connect.biorxiv.org/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	func testPHPXML() {
-		let d = parserData("phpxml", "rss", "https://www.fcutrecht.net/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rss)
-	}
-
-	// MARK: Atom
-
-	func testDaringFireballAtomType() {
-
-		// File extension is .rss, but it’s really an Atom feed.
-		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .atom)
-	}
-
-	func testOneFootTsunamiAtomType() {
-
-		let d = parserData("OneFootTsunami", "atom", "http://onefoottsunami.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .atom)
-	}
-
-	func testRussCoxAtomType() {
-		let d = parserData("russcox", "atom", "https://research.swtch.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .atom)
-	}
-
-	// MARK: RSS-in-JSON
-
-	func testScriptingNewsJSONType() {
-
+	@Test func scriptingNewsJSONType() {
 		let d = parserData("ScriptingNews", "json", "http://scripting.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .rssInJSON)
+		#expect(feedType(d) == .rssInJSON)
 	}
 
-	// MARK: JSON Feed
+	// MARK: - JSON Feed
 
-	func testInessentialJSONFeedType() {
-
-		let d = parserData("inessential", "json", "http://inessential.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .jsonFeed)
+	@Test("JSON Feeds are detected as .jsonFeed",
+	      arguments: [
+	          ("inessential", "json", "http://inessential.com/"),
+	          ("allthis", "json", "http://leancrew.com/allthis/"),
+	          ("curt", "json", "http://curtclifton.net/"),
+	          ("pxlnv", "json", "http://pxlnv.com/"),
+	          ("rose", "json", "https://www.rosemaryorchard.com/")
+	      ])
+	func jsonFeedType(_ filename: String, _ ext: String, _ url: String) {
+		let d = parserData(filename, ext, url)
+		#expect(feedType(d) == .jsonFeed)
 	}
 
-	func testAllThisJSONFeedType() {
+	// MARK: - Unknown
 
-		let d = parserData("allthis", "json", "http://leancrew.com/allthis/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .jsonFeed)
-	}
-
-	func testCurtJSONFeedType() {
-
-		let d = parserData("curt", "json", "http://curtclifton.net/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .jsonFeed)
-	}
-
-	func testPixelEnvyJSONFeedType() {
-
-		let d = parserData("pxlnv", "json", "http://pxlnv.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .jsonFeed)
-	}
-
-	func testRoseJSONFeedType() {
-
-		let d = parserData("rose", "json", "https://www.rosemaryorchard.com/")
-		let type = feedType(d)
-		XCTAssertTrue(type == .jsonFeed)
-	}
-
-	// MARK: Unknown
-
-	func testPartialAllThisUnknownFeedType() {
-
+	@Test func partialAllThisUnknownFeedType() {
 		// In the case of this feed, the partial data isn’t enough to detect that it’s a JSON Feed.
 		// The type detector should return .unknown rather than .notAFeed.
-
 		let d = parserData("allthis-partial", "json", "http://leancrew.com/allthis/")
-		let type = feedType(d, isPartialData: true)
-		XCTAssertEqual(type, .unknown)
+		#expect(feedType(d, isPartialData: true) == .unknown)
 	}
-
-	// MARK: Performance
-
-	func testFeedTypePerformance() {
-
-		// 0.000 on my 2012 iMac.
-
-		let d = parserData("EMarley", "rss", "https://medium.com/@emarley")
-		self.measure {
-			_ = feedType(d)
-		}
-	}
-
-	func testFeedTypePerformance2() {
-
-		// 0.000 on my 2012 iMac.
-
-		let d = parserData("inessential", "json", "http://inessential.com/")
-		self.measure {
-			_ = feedType(d)
-		}
-	}
-
-	func testFeedTypePerformance3() {
-
-		// 0.000 on my 2012 iMac.
-
-		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
-		self.measure {
-			_ = feedType(d)
-		}
-	}
-
-	func testFeedTypePerformance4() {
-
-		// 0.001 on my 2012 iMac.
-
-		let d = parserData("DaringFireball", "rss", "http://daringfireball.net/")
-		self.measure {
-			_ = feedType(d)
-		}
-	}
-
 }
+
+// MARK: - Shared helper
 
 func parserData(_ filename: String, _ fileExtension: String, _ url: String) -> ParserData {
 	let filename = "Resources/\(filename)"

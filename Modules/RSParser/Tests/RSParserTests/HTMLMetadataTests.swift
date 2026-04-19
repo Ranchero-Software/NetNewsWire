@@ -6,149 +6,99 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSParser
 import RSParserObjC
 
-final class HTMLMetadataTests: XCTestCase {
+@Suite struct HTMLMetadataTests {
 
-	func testDaringFireball() {
-
+	@Test func daringFireball() throws {
 		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
 
-		XCTAssertEqual(metadata.favicons.first?.urlString, "http://daringfireball.net/graphics/favicon.ico?v=005")
+		#expect(metadata.favicons.first?.urlString == "http://daringfireball.net/graphics/favicon.ico?v=005")
 
-		XCTAssertEqual(metadata.feedLinks.count, 1)
+		#expect(metadata.feedLinks.count == 1)
 
-		let feedLink = metadata.feedLinks.first!
-		XCTAssertNil(feedLink.title)
-		XCTAssertEqual(feedLink.type, "application/atom+xml")
-		XCTAssertEqual(feedLink.urlString, "http://daringfireball.net/feeds/main")
+		let feedLink = try #require(metadata.feedLinks.first)
+		#expect(feedLink.title == nil)
+		#expect(feedLink.type == "application/atom+xml")
+		#expect(feedLink.urlString == "http://daringfireball.net/feeds/main")
 	}
 
-	func testDaringFireballPerformance() {
-
-		// 0.002 sec on my 2012 iMac
-		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
-		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
-		}
-	}
-
-	func testFurbo() {
-
+	@Test func furbo() throws {
 		let d = parserData("furbo", "html", "http://furbo.org/")
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
 
-		XCTAssertEqual(metadata.favicons.first?.urlString, "http://furbo.org/favicon.ico")
+		#expect(metadata.favicons.first?.urlString == "http://furbo.org/favicon.ico")
 
-		XCTAssertEqual(metadata.feedLinks.count, 1)
+		#expect(metadata.feedLinks.count == 1)
 
-		let feedLink = metadata.feedLinks.first!
-		XCTAssertEqual(feedLink.title, "Iconfactory News Feed")
-		XCTAssertEqual(feedLink.type, "application/rss+xml")
+		let feedLink = try #require(metadata.feedLinks.first)
+		#expect(feedLink.title == "Iconfactory News Feed")
+		#expect(feedLink.type == "application/rss+xml")
 	}
 
-	func testFurboPerformance() {
-
-		// 0.001 sec on my 2012 iMac
-		let d = parserData("furbo", "html", "http://furbo.org/")
-		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
-		}
-	}
-
-	func testInessential() {
-
+	@Test func inessential() throws {
 		let d = parserData("inessential", "html", "http://inessential.com/")
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
 
-		XCTAssertNil(metadata.favicons.first?.urlString)
+		#expect(metadata.favicons.first?.urlString == nil)
 
-		XCTAssertEqual(metadata.feedLinks.count, 1)
-		let feedLink = metadata.feedLinks.first!
-		XCTAssertEqual(feedLink.title, "RSS")
-		XCTAssertEqual(feedLink.type, "application/rss+xml")
-		XCTAssertEqual(feedLink.urlString, "http://inessential.com/xml/rss.xml")
+		#expect(metadata.feedLinks.count == 1)
+		let feedLink = try #require(metadata.feedLinks.first)
+		#expect(feedLink.title == "RSS")
+		#expect(feedLink.type == "application/rss+xml")
+		#expect(feedLink.urlString == "http://inessential.com/xml/rss.xml")
 
-		XCTAssertEqual(metadata.appleTouchIcons.count, 0)
+		#expect(metadata.appleTouchIcons.count == 0)
 	}
 
-	func testInessentialPerformance() {
-
-		// 0.001 sec on my 2012 iMac
-		let d = parserData("inessential", "html", "http://inessential.com/")
-		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
-		}
-	}
-
-	func testCocoPerformance() {
-
-		// 0.004 sec on my 2012 iMac
-		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
-		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
-		}
-	}
-
-	func testSixColors() {
-
+	@Test func sixColors() throws {
 		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
 
-		XCTAssertEqual(metadata.favicons.first?.urlString, "https://sixcolors.com/images/favicon.ico")
+		#expect(metadata.favicons.first?.urlString == "https://sixcolors.com/images/favicon.ico")
 
-		XCTAssertEqual(metadata.feedLinks.count, 1)
-		let feedLink = metadata.feedLinks.first!
-		XCTAssertEqual(feedLink.title, "RSS")
-		XCTAssertEqual(feedLink.type, "application/rss+xml")
-		XCTAssertEqual(feedLink.urlString, "http://feedpress.me/sixcolors")
+		#expect(metadata.feedLinks.count == 1)
+		let feedLink = try #require(metadata.feedLinks.first)
+		#expect(feedLink.title == "RSS")
+		#expect(feedLink.type == "application/rss+xml")
+		#expect(feedLink.urlString == "http://feedpress.me/sixcolors")
 
-		XCTAssertEqual(metadata.appleTouchIcons.count, 6)
+		#expect(metadata.appleTouchIcons.count == 6)
 		let icon = metadata.appleTouchIcons[3]
-		XCTAssertEqual(icon.rel, "apple-touch-icon")
-		XCTAssertEqual(icon.sizes, "120x120")
-		XCTAssertEqual(icon.urlString, "https://sixcolors.com/apple-touch-icon-120.png")
+		#expect(icon.rel == "apple-touch-icon")
+		#expect(icon.sizes == "120x120")
+		#expect(icon.urlString == "https://sixcolors.com/apple-touch-icon-120.png")
 	}
 
-	func testSixColorsPerformance() {
-
-		// 0.002 sec on my 2012 iMac
-		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
-		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
-		}
-	}
-
-	func testCocoOGImage() {
-
+	@Test func cocoOGImage() throws {
 		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
 		let openGraphData = metadata.openGraphProperties
-		let image = openGraphData.images.first!
-		XCTAssert(image.url == "https://cdn.theatlantic.com/assets/media/img/mt/2017/11/1033101_first_full_length_trailer_arrives_pixars_coco/facebook.jpg?1511382177")
+		let image = try #require(openGraphData.images.first)
+		#expect(image.url == "https://cdn.theatlantic.com/assets/media/img/mt/2017/11/1033101_first_full_length_trailer_arrives_pixars_coco/facebook.jpg?1511382177")
 	}
 
-	func testCocoTwitterImage() {
-
+	@Test func cocoTwitterImage() throws {
 		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
 		let twitterData = metadata.twitterProperties
-		let imageURL = twitterData.imageURL!
-		XCTAssert(imageURL == "https://cdn.theatlantic.com/assets/media/img/mt/2017/11/1033101_first_full_length_trailer_arrives_pixars_coco/facebook.jpg?1511382177")
+		let imageURL = try #require(twitterData.imageURL)
+		#expect(imageURL == "https://cdn.theatlantic.com/assets/media/img/mt/2017/11/1033101_first_full_length_trailer_arrives_pixars_coco/facebook.jpg?1511382177")
 	}
 
-	func testYouTube() {
+	@Test func youTube() throws {
 		// YouTube is a special case — the feed links appear after the head section, in the body section.
 		let d = parserData("YouTubeTheVolvoRocks", "html", "https://www.youtube.com/user/TheVolvorocks")
 		let metadata = RSHTMLMetadataParser.htmlMetadata(with: d)
 
-		XCTAssertEqual(metadata.feedLinks.count, 1)
-		let feedLink = metadata.feedLinks.first!
-		XCTAssertEqual(feedLink.title, "RSS")
-		XCTAssertEqual(feedLink.type, "application/rss+xml")
-		XCTAssertEqual(feedLink.urlString, "https://www.youtube.com/feeds/videos.xml?channel_id=UCct7QF2jcWRY6dhXWMSq9LQ")
+		#expect(metadata.feedLinks.count == 1)
+		let feedLink = try #require(metadata.feedLinks.first)
+		#expect(feedLink.title == "RSS")
+		#expect(feedLink.type == "application/rss+xml")
+		#expect(feedLink.urlString == "https://www.youtube.com/feeds/videos.xml?channel_id=UCct7QF2jcWRY6dhXWMSq9LQ")
 	}
 }

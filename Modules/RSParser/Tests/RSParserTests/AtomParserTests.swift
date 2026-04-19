@@ -6,205 +6,168 @@
 //  Copyright © 2017 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 import RSParser
 
-final class AtomParserTests: XCTestCase {
+@Suite struct AtomParserTests {
 
-	func testDaringFireballPerformance() {
+	@Test func gettingHomePageLink() throws {
+		let cases: [(file: String, feedURL: String, expectedHomePage: String)] = [
+			("allthis", "http://leancrew.com/all-this", "http://leancrew.com/all-this"),
+			("qemu", "https://www.qemu.org/feed.xml", "https://www.qemu.org/"),
+			("yakubin", "https://yakubin.com/notes/atom.xml", "https://yakubin.com/notes"),
+			("4fsodonline", "http://4fsodonline.blogspot.com/feeds/posts/default", "http://4fsodonline.blogspot.com/"),
+			("DaringFireball", "https://daringfireball.net/feeds/main", "https://daringfireball.net/"),
+			("neverworkintheory", "https://neverworkintheory.org/atom.xml", "https://neverworkintheory.org/")
+		]
 
-		// 0.009 sec on my 2012 iMac.
-		let d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
-		self.measure {
-			_ = try! FeedParser.parse(d)
+		for c in cases {
+			let d = parserData(c.file, "atom", c.feedURL)
+			let parsedFeed = try #require(try FeedParser.parse(d))
+			#expect(parsedFeed.homePageURL == c.expectedHomePage, "homePageURL mismatch for \(c.file)")
 		}
 	}
 
-	func testAllThisPerformance() {
-
-		// 0.003 sec on my 2012 iMac.
-		let d = parserData("allthis", "atom", "http://leancrew.com/all-this")
-		self.measure {
-			_ = try! FeedParser.parse(d)
-		}
-	}
-
-	func testGettingHomePageLink() {
-
-		var d = parserData("allthis", "atom", "http://leancrew.com/all-this")
-		var parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertTrue(parsedFeed.homePageURL == "http://leancrew.com/all-this")
-
-		d = parserData("qemu", "atom", "https://www.qemu.org/feed.xml")
-		parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertTrue(parsedFeed.homePageURL == "https://www.qemu.org/")
-
-		d = parserData("yakubin", "atom", "https://yakubin.com/notes/atom.xml")
-		parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertTrue(parsedFeed.homePageURL == "https://yakubin.com/notes")
-
-		d = parserData("4fsodonline", "atom", "http://4fsodonline.blogspot.com/feeds/posts/default")
-		parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertTrue(parsedFeed.homePageURL == "http://4fsodonline.blogspot.com/")
-
-		d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
-		parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertTrue(parsedFeed.homePageURL == "https://daringfireball.net/")
-
-		d = parserData("neverworkintheory", "atom", "https://neverworkintheory.org/atom.xml")
-		parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertTrue(parsedFeed.homePageURL == "https://neverworkintheory.org/")
-	}
-
-	func testArticlePermalinks() {
-
+	@Test func articlePermalinks() throws {
 		var d = parserData("qemu", "atom", "https://www.qemu.org/feed.xml")
-		var parsedFeed = try! FeedParser.parse(d)!
+		var parsedFeed = try #require(try FeedParser.parse(d))
 
 		var foundTestArticle = false
 		for item in parsedFeed.items {
 			if item.title == "QEMU version 10.1.0 released" {
 				foundTestArticle = true
-				XCTAssertEqual(item.url, "https://www.qemu.org/2025/08/26/qemu-10-1-0/")
+				#expect(item.url == "https://www.qemu.org/2025/08/26/qemu-10-1-0/")
 			}
 		}
-		XCTAssertTrue(foundTestArticle)
+		#expect(foundTestArticle)
 
 		d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
-		parsedFeed = try! FeedParser.parse(d)!
+		parsedFeed = try #require(try FeedParser.parse(d))
 
 		foundTestArticle = false
 		for item in parsedFeed.items {
 			if item.title == "Virgin Mobile Partners With Apple to Go iPhone-Only With $1 Service" {
 				foundTestArticle = true
-				XCTAssertEqual(item.url, "https://daringfireball.net/linked/2017/06/26/virgin-mobile-iphone-only")
+				#expect(item.url == "https://daringfireball.net/linked/2017/06/26/virgin-mobile-iphone-only")
 			}
 		}
-		XCTAssertTrue(foundTestArticle)
+		#expect(foundTestArticle)
 
 		d = parserData("neverworkintheory", "atom", "https://neverworkintheory.org/atom.xml")
-		parsedFeed = try! FeedParser.parse(d)!
+		parsedFeed = try #require(try FeedParser.parse(d))
 
 		foundTestArticle = false
 		for item in parsedFeed.items {
 			if item.title == "Andreas Zeller on Creating Nasty Test Inputs" {
 				foundTestArticle = true
-				XCTAssertEqual(item.url, "https://neverworkintheory.org/2023/06/13/zeller-andreas.html")
+				#expect(item.url == "https://neverworkintheory.org/2023/06/13/zeller-andreas.html")
 			}
 		}
-		XCTAssertTrue(foundTestArticle)
-
+		#expect(foundTestArticle)
 	}
 
-	func testArticleExternalLinks() {
-
+	@Test func articleExternalLinks() throws {
 		var d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
-		var parsedFeed = try! FeedParser.parse(d)!
+		var parsedFeed = try #require(try FeedParser.parse(d))
 
 		var foundTestArticle = false
 		for item in parsedFeed.items {
 			if item.title == "Kara Swisher: ‘Susan Fowler Proved That One Person Can Make a Difference’" {
 				foundTestArticle = true
-				XCTAssertEqual(item.externalURL, "https://www.recode.net/2017/6/21/15844852/uber-toxic-bro-company-culture-susan-fowler-blog-post")
+				#expect(item.externalURL == "https://www.recode.net/2017/6/21/15844852/uber-toxic-bro-company-culture-susan-fowler-blog-post")
 			}
 		}
-		XCTAssertTrue(foundTestArticle)
+		#expect(foundTestArticle)
 
 		d = parserData("qemu", "atom", "https://www.qemu.org/feed.xml")
-		parsedFeed = try! FeedParser.parse(d)!
+		parsedFeed = try #require(try FeedParser.parse(d))
 
-		XCTAssert(parsedFeed.items.count > 0)
+		#expect(parsedFeed.items.count > 0)
 		for item in parsedFeed.items {
-			XCTAssertNil(item.externalURL)
+			#expect(item.externalURL == nil)
 		}
 	}
 
-	func testDaringFireball() {
-
+	@Test func daringFireball() throws {
 		let d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
+			#expect(article.url != nil)
+			#expect(article.uniqueID.hasPrefix("tag:daringfireball.net,2017:/"))
 
-			XCTAssertNotNil(article.url)
-
-			XCTAssertTrue(article.uniqueID.hasPrefix("tag:daringfireball.net,2017:/"))
-
-			XCTAssertEqual(article.authors!.count, 1) // TODO: parse Atom authors
-			let author = article.authors!.first!
+			let authors = try #require(article.authors)
+			#expect(authors.count == 1) // TODO: parse Atom authors
+			let author = try #require(authors.first)
 			if author.name == "Daring Fireball Department of Commerce" {
-				XCTAssertNil(author.url)
+				#expect(author.url == nil)
 			} else {
-				XCTAssertEqual(author.name, "John Gruber")
-				XCTAssertEqual(author.url, "http://daringfireball.net/")
+				#expect(author.name == "John Gruber")
+				#expect(author.url == "http://daringfireball.net/")
 			}
 
-			XCTAssertNotNil(article.datePublished)
-			XCTAssert(article.attachments == nil)
-
-			XCTAssertEqual(article.language, "en")
+			#expect(article.datePublished != nil)
+			#expect(article.attachments == nil)
+			#expect(article.language == "en")
 		}
 	}
 
-	func test4fsodonlineAttachments() {
-
+	@Test func fsodonlineAttachments() throws {
 		// Thanks to Marco for finding me some Atom podcast feeds. Apparently they’re super-rare.
 
 		let d = parserData("4fsodonline", "atom", "http://4fsodonline.blogspot.com/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
+			let attachments = try #require(article.attachments)
+			#expect(attachments.count > 0)
+			let attachment = try #require(attachments.first)
 
-			XCTAssertTrue(article.attachments!.count > 0)
-			let attachment = article.attachments!.first!
-
-			XCTAssertTrue(attachment.url.hasPrefix("http://www.blogger.com/video-play.mp4?"))
-			XCTAssertNil(attachment.sizeInBytes)
-			XCTAssertEqual(attachment.mimeType!, "video/mp4")
+			#expect(attachment.url.hasPrefix("http://www.blogger.com/video-play.mp4?"))
+			#expect(attachment.sizeInBytes == nil)
+			#expect(attachment.mimeType == "video/mp4")
 		}
 	}
 
-	func testExpertOpinionENTAttachments() {
-
+	@Test func expertOpinionENTAttachments() throws {
 		// Another from Marco.
 
 		let d = parserData("expertopinionent", "atom", "http://expertopinionent.typepad.com/my-blog/")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
-
 			guard let attachments = article.attachments else {
 				continue
 			}
 
-			XCTAssertEqual(attachments.count, 1)
-			let attachment = attachments.first!
+			#expect(attachments.count == 1)
+			let attachment = try #require(attachments.first)
 
-			XCTAssertTrue(attachment.url.hasSuffix(".mp3"))
-			XCTAssertNil(attachment.sizeInBytes)
-			XCTAssertEqual(attachment.mimeType!, "audio/mpeg")
+			#expect(attachment.url.hasSuffix(".mp3"))
+			#expect(attachment.sizeInBytes == nil)
+			#expect(attachment.mimeType == "audio/mpeg")
 		}
 	}
 
-	func testFeedIconURL() {
+	@Test func feedIconURL() throws {
 		let d = parserData("root-author", "atom", "https://fvsch.com/feed.xml")
-		let parsedFeed = try! FeedParser.parse(d)!
-		XCTAssertEqual(parsedFeed.iconURL, "https://fvsch.com/assets/images/icon.png?v=ql0r5y")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.iconURL == "https://fvsch.com/assets/images/icon.png?v=ql0r5y")
 	}
 
-	func testAuthorAtRoot() {
+	@Test func authorAtRoot() throws {
 		let d = parserData("root-author", "atom", "https://fvsch.com/feed.xml")
-		let parsedFeed = try! FeedParser.parse(d)!
+		let parsedFeed = try #require(try FeedParser.parse(d))
 
 		for article in parsedFeed.items {
 			let author = article.authors?.first
-			XCTAssertNotNil(author)
+			#expect(author != nil)
 
-			XCTAssertEqual(author?.name, "Florens Verschelde")
-
-			XCTAssertNil(author?.url)
-			XCTAssertNil(author?.avatarURL)
-			XCTAssertNil(author?.emailAddress)
+			#expect(author?.name == "Florens Verschelde")
+			#expect(author?.url == nil)
+			#expect(author?.avatarURL == nil)
+			#expect(author?.emailAddress == nil)
 		}
 	}
 }
