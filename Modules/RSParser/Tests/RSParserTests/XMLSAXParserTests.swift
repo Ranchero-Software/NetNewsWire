@@ -136,9 +136,10 @@ import Testing
 		#expect(events[1] == .characters("—"))
 	}
 
-	@Test func htmlNamedEntity() {
+	@Test func htmlNamedEntitiesPassThroughLiterally() {
+		// XML mode (libxml2-compatible, no DTD) leaves unknown named entities literal.
 		let events = parse("<a>&nbsp;&copy;&mdash;</a>")
-		#expect(events[1] == .characters("\u{00A0}\u{00A9}—"))
+		#expect(events[1] == .characters("&nbsp;&copy;&mdash;"))
 	}
 
 	@Test func unknownEntityPassesThroughLiterally() {
@@ -155,10 +156,10 @@ import Testing
 
 	// MARK: - CDATA
 
-	@Test func cdataPreservesXMLFiveEntities() {
-		// &amp; stays literal, but &nbsp; gets expanded.
+	@Test func cdataPassesThroughVerbatim() {
+		// Inside CDATA, no entities are substituted — matches libxml2 behavior.
 		let events = parse("<a><![CDATA[&amp;<b>&nbsp;</b>]]></a>")
-		#expect(events[1] == .characters("&amp;<b>\u{00A0}</b>"))
+		#expect(events[1] == .characters("&amp;<b>&nbsp;</b>"))
 	}
 
 	@Test func cdataWithClosingBrackets() {
@@ -167,9 +168,10 @@ import Testing
 		#expect(events[1] == .characters("array[0] and [1]]=="))
 	}
 
-	@Test func cdataWithNumericEntity() {
+	@Test func cdataWithNumericEntityLeavesLiteral() {
+		// CDATA is raw — numeric entities pass through unchanged.
 		let events = parse("<a><![CDATA[&#8212;]]></a>")
-		#expect(events[1] == .characters("—"))
+		#expect(events[1] == .characters("&#8212;"))
 	}
 
 	// MARK: - Liberal mode

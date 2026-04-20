@@ -104,6 +104,14 @@ import Testing
 		                 Self.dateWithValues(2010, 11, 17, 13, 40, 7))
 	}
 
+	@Test func slashDateFormat() {
+		// Dvbbs.Net and some CMS feeds emit `YYYY/M/D HH:MM:SS` (not in any spec, but common).
+		assertParsedDate("2020/1/10 14:33:00",
+		                 Self.dateWithValues(2020, 1, 10, 14, 33, 0))
+		assertParsedDate("2020/12/31 23:59:59",
+		                 Self.dateWithValues(2020, 12, 31, 23, 59, 59))
+	}
+
 	@Test func w3cWithOffset() {
 		assertParsedDate("2010-11-17T08:40:07-05:00",
 		                 Self.dateWithValues(2010, 11, 17, 13, 40, 7))
@@ -252,5 +260,55 @@ import Testing
 		// count > 150 is rejected.
 		let tooLong = String(repeating: "x", count: 200)
 		assertNilResult(tooLong)
+	}
+
+	// MARK: - Liberal-parse behavior (malformed but plausible-looking input)
+
+	// The parser is intentionally permissive: real-world feed pubDates are a mess,
+	// so it accepts more than the specs allow. These tests document current behavior
+	// (which is the contract the rest of the app depends on) so a future "tighten
+	// it up" change doesn't silently turn these cases into nil — which would, in
+	// turn, send 1000s of feed dates to the 1970 fallback in the transformer.
+
+	@Test func unknownMonthNameFallsBackToJanuary() {
+		// Unrecognized month string falls back to month=1, day-of-month preserved.
+		// Not a guarantee we'd re-derive from scratch today, but it's what real
+		// feed content has been parsed against for years.
+		let expected = Self.dateWithValues(2010, 1, 28, 21, 3, 38)
+		assertParsedDate("Fri, 28 Xyz 2010 21:03:38 GMT", expected)
+		assertParsedDate("28 Xyz 2010 21:03:38 GMT", expected)
+	}
+
+	@Test func monthPrefixMatchAccepted() {
+		// Four-letter "Februar" matches "Feb" by prefix. This was an accidental
+		// property of the prefix-match, not a designed feature — documented here
+		// so a tightening change flags explicitly.
+		assertParsedDate("28 Februar 2010 21:03:38 GMT",
+		                 Self.dateWithValues(2010, 2, 28, 21, 3, 38))
+	}
+
+	@Test func garbageInputReturnsEpoch() {
+		// No parseable digits: the parser doesn't return nil, it returns epoch.
+		// This documents the fallback so a regression that made this return nil
+		// — which would propagate into the feed transformer as a "missing date"
+		// — is caught.
+		let epoch = Self.dateWithValues(1970, 1, 1, 0, 0, 0)
+		assertParsedDate("the quick brown fox jumped over", epoch)
+	}
+
+	@Test func partialISODateAcceptedWithMissingFieldsZeroed() {
+		// `YYYY-MM` → first of month, midnight UTC. `YYYY-MM-DD` → midnight UTC.
+		// Not strictly W3C but accepted in the wild.
+		assertParsedDate("2020-02", Self.dateWithValues(2020, 2, 1, 0, 0, 0))
+		assertParsedDate("2020-02-15", Self.dateWithValues(2020, 2, 15, 0, 0, 0))
+	}
+
+	@Test func mixedSeparatorsTolerated() {
+		// The parser reads numeric fields regardless of whether `-`, `/`, or a
+		// mix sits between them. No known real-world feed produces mixed, but
+		// a feed that did would not silently drop its date.
+		let expected = Self.dateWithValues(2020, 1, 10, 14, 33, 0)
+		assertParsedDate("2020-01/10 14:33:00", expected)
+		assertParsedDate("2020/01-10 14:33:00", expected)
 	}
 }

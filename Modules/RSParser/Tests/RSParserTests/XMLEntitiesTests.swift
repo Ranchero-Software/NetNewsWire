@@ -17,7 +17,7 @@ import Testing
 	// MARK: - Helpers
 
 	/// Decode a single entity at the start of `input` and return the decoded UTF-8 as a String.
-	private func decodeOne(_ input: String, mode: XMLEntities.Mode = .normal) -> (text: String, nextIndex: Int) {
+	private func decodeOne(_ input: String, mode: XMLEntities.Mode = .html) -> (text: String, nextIndex: Int) {
 		let bytes = Array(input.utf8)
 		let result = XMLEntities.decode(bytes: bytes, at: 0, mode: mode)
 		return (String(decoding: result.bytes, as: UTF8.self), result.nextIndex)
@@ -25,7 +25,7 @@ import Testing
 
 	// MARK: - Predefined XML entities
 
-	@Test("The five predefined XML entities expand in .normal mode",
+	@Test("The five predefined XML entities expand in .html mode",
 	      arguments: [
 	          ("&amp;", "&"),
 	          ("&lt;", "<"),
@@ -39,13 +39,32 @@ import Testing
 		#expect(nextIndex == input.utf8.count)
 	}
 
-	@Test("The five predefined XML entities stay literal in .preservePredefinedXML mode",
-	      arguments: ["&amp;", "&lt;", "&gt;", "&quot;", "&apos;"])
-	func predefinedEntitiesPreserveMode(_ input: String) {
-		let (text, nextIndex) = decodeOne(input, mode: .preservePredefinedXML)
-		// Returns a bare `&` and advances only past the `&` so the caller can re-emit the literal.
+	@Test("The five predefined XML entities expand in .xmlStrict mode",
+	      arguments: [
+	          ("&amp;", "&"),
+	          ("&lt;", "<"),
+	          ("&gt;", ">"),
+	          ("&quot;", "\""),
+	          ("&apos;", "'")
+	      ])
+	func predefinedEntitiesXMLStrictMode(_ input: String, _ expected: String) {
+		let (text, nextIndex) = decodeOne(input, mode: .xmlStrict)
+		#expect(text == expected)
+		#expect(nextIndex == input.utf8.count)
+	}
+
+	@Test("HTML named entities pass through literally in .xmlStrict mode",
+	      arguments: ["&mdash;", "&copy;", "&nbsp;"])
+	func htmlNamedEntitiesLiteralInXMLStrict(_ input: String) {
+		let (text, nextIndex) = decodeOne(input, mode: .xmlStrict)
 		#expect(text == "&")
 		#expect(nextIndex == 1)
+	}
+
+	@Test("Numeric entities still expand in .xmlStrict mode")
+	func numericEntitiesExpandInXMLStrict() {
+		let (text, _) = decodeOne("&#8217;", mode: .xmlStrict)
+		#expect(text == "\u{2019}")
 	}
 
 	// MARK: - Numeric entities — decimal
@@ -262,20 +281,20 @@ import Testing
 		// Entity in the middle of a byte buffer.
 		let bytes = Array("Hello &amp; world".utf8)
 		let ampIndex = 6 // position of `&`
-		let result = XMLEntities.decode(bytes: bytes, at: ampIndex, mode: .normal)
+		let result = XMLEntities.decode(bytes: bytes, at: ampIndex, mode: .html)
 		#expect(String(decoding: result.bytes, as: UTF8.self) == "&")
 		#expect(result.nextIndex == ampIndex + 5) // past `&amp;`
 	}
 
-	// MARK: - Modes don't affect numeric or HTML named entities
+	// MARK: - Mode interactions
 
-	@Test func preserveModeStillExpandsNumericEntities() {
-		let (text, _) = decodeOne("&#65;", mode: .preservePredefinedXML)
+	@Test func xmlStrictModeStillExpandsNumericEntities() {
+		let (text, _) = decodeOne("&#65;", mode: .xmlStrict)
 		#expect(text == "A")
 	}
 
-	@Test func preserveModeStillExpandsHTMLNamedEntities() {
-		let (text, _) = decodeOne("&copy;", mode: .preservePredefinedXML)
+	@Test func htmlModeExpandsNamedEntities() {
+		let (text, _) = decodeOne("&copy;", mode: .html)
 		#expect(text == "©")
 	}
 

@@ -7,7 +7,6 @@
 
 import XCTest
 import RSParser
-import RSParserObjC
 
 // Performance tests stay in XCTest — Swift Testing doesn't have a `measure { }` equivalent yet.
 

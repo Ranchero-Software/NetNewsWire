@@ -9,7 +9,6 @@
 import Foundation
 import Testing
 import RSParser
-import RSParserObjC
 
 @Suite struct HTMLMetadataTests {
 

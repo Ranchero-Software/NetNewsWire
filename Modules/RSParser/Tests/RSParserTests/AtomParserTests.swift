@@ -170,4 +170,180 @@ import RSParser
 			#expect(author?.emailAddress == nil)
 		}
 	}
+
+	// MARK: - Content pass-through regression
+
+	@Test func xhtmlContentCapturedAsRawBytes() throws {
+		// `<content type="xhtml">` in expertopinionent is a rare case where we take
+		// the bytes between `<content>` and `</content>` verbatim from the input
+		// buffer rather than reconstructing them from SAX events. Preserves the
+		// source xmlns, attribute order, and self-closing syntax. A future change
+		// that went back to SAX reconstruction would lose those characteristics.
+		let d = parserData("expertopinionent", "atom", "http://expertopinionent.typepad.com/my-blog/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		let bodies = parsedFeed.items.compactMap { $0.contentHTML }
+		let withXmlns = bodies.contains { $0.contains("xmlns=\"http://www.w3.org/1999/xhtml\"") }
+		let withSelfClosing = bodies.contains { $0.contains("<br />") }
+		#expect(withXmlns, "expected at least one xhtml body to preserve xmlns declaration")
+		#expect(withSelfClosing, "expected at least one xhtml body to preserve self-closing <br />")
+	}
+
+	// MARK: - Byte-stability pinning (protects iCloud sync + DB row stability)
+
+	@Test func qemuAtomItemIsByteStable() throws {
+		// Pin title, uniqueID, datePublished, and contentHTML start for one
+		// specific QEMU release post. QEMU's Atom feed uses the unprefixed
+		// default namespace and plain `<content type="html">` bodies — a good
+		// complement to the xhtml-passthrough test above.
+		let d = parserData("qemu", "atom", "https://www.qemu.org/feed.xml")
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(
+			feed.items.first(where: { $0.title == "QEMU version 9.0.0 released" })
+		)
+		#expect(item.uniqueID == "/2024/04/23/qemu-9-0-0")
+		#expect(item.datePublished == Date(timeIntervalSince1970: 1_713_913_320)) // 2024-04-23 23:02:00 UTC
+		let html = try #require(item.contentHTML)
+		#expect(html.count == 2221)
+		#expect(html.hasPrefix("<p>We’d like to announce the availability of the QEMU 9.0.0 release"))
+		#expect(html.contains("2700+ commits from 220 authors"))
+	}
+
+	@Test func qemuAtomSecondItemDateParses() throws {
+		// Separate item, different date — catches bugs where datePublished
+		// handling accidentally locks onto the first-seen value.
+		let d = parserData("qemu", "atom", "https://www.qemu.org/feed.xml")
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(
+			feed.items.first(where: { $0.title == "QEMU version 9.1.0 released" })
+		)
+		#expect(item.datePublished == Date(timeIntervalSince1970: 1_725_404_880)) // 2024-09-03 23:08:00 UTC
+	}
+
+	@Test func atomSelfClosingLinkAccepted() throws {
+		// Self-closing `<link … />` is the Atom default. Pin it works as
+		// expected alongside the non-self-closing form so a scanner change
+		// doesn't drop links silently. (Belt-and-braces: qemu already uses
+		// this form; explicit test keeps the invariant clear.)
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>self-closing link</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <link rel="alternate" type="text/html" href="http://example.com/article"/>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(feed.items.first)
+		#expect(item.url == "http://example.com/article")
+	}
+
+	// MARK: - Content type, multiple authors, source (inline fixtures)
+
+	// These tests use inline Atom XML constructed directly, because the real
+	// fixtures don't cover these shapes (multiple authors per entry, explicit
+	// `type="html"`/`type="text"` on `<content>`, `<source>` attribution).
+
+	@Test func multipleAuthorsPerEntry() throws {
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>Multi-author</title>
+		  <link href="http://example.com/"/>
+		  <id>urn:example:multi</id>
+		  <entry>
+		    <id>urn:example:multi:1</id>
+		    <title>Joint post</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <author><name>Alice</name></author>
+		    <author><name>Bob</name><email>bob@example.com</email></author>
+		    <author><name>Carol</name><uri>http://carol.example.com/</uri></author>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+		let authors = try #require(item.authors)
+		#expect(authors.count == 3)
+		let names = Set(authors.compactMap { $0.name })
+		#expect(names == ["Alice", "Bob", "Carol"])
+		#expect(authors.contains { $0.emailAddress == "bob@example.com" })
+		#expect(authors.contains { $0.url == "http://carol.example.com/" })
+	}
+
+	@Test func contentTypeHTML() throws {
+		// `<content type="html">` — bytes inside are escaped HTML. When decoded,
+		// the entity-escaped tags round-trip to real HTML.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>html content</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <content type="html">&lt;p&gt;Hello &amp; welcome&lt;/p&gt;</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("<p>Hello & welcome</p>"))
+	}
+
+	@Test func contentTypeText() throws {
+		// `<content type="text">` — plain text. The parser does not distinguish
+		// based on `type` and currently routes all `<content>` bodies through
+		// `contentHTML`. Pin down that the body still reaches the caller and
+		// entities are decoded.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>text content</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <content type="text">Just plain &amp; text.</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+		let body = item.contentText ?? item.contentHTML
+		#expect(body?.contains("Just plain & text.") == true)
+	}
+
+	@Test func contentTypeDefault() throws {
+		// No `type` attribute — RFC 4287 specifies default is "text". The
+		// parser treats it as plain text (same path as `type="text"`).
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>default content</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <content>Default is text.</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+		// Either contentText or contentHTML should surface the string — the
+		// precise routing is an implementation detail, but it must not vanish.
+		let body = item.contentText ?? item.contentHTML
+		#expect(body?.contains("Default is text.") == true)
+	}
 }
