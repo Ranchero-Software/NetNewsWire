@@ -118,7 +118,9 @@ private extension DateParser {
 	}
 
 	static func looksLikeW3CDate(_ slice: ArraySlice<UInt8>) -> Bool {
-		// Skip leading whitespace, then expect 4 digits followed by `-`.
+		// Skip leading whitespace, then expect 4 digits followed by a date separator.
+		// Recognizes `-` (W3C / ISO 8601) and `/` (common non-standard format such as
+		// `2020/1/10 14:33:00` seen in Dvbbs.Net-generated feeds).
 		for i in slice.indices {
 			let b = slice[i]
 			if b == UInt8(ascii: " ") || b == UInt8(ascii: "\r") || b == UInt8(ascii: "\n") || b == UInt8(ascii: "\t") {
@@ -127,11 +129,12 @@ private extension DateParser {
 			guard slice.endIndex - i >= 5 else {
 				return false
 			}
+			let separator = slice[i + 4]
 			return isDigit(slice[i])
 				&& isDigit(slice[i + 1])
 				&& isDigit(slice[i + 2])
 				&& isDigit(slice[i + 3])
-				&& slice[i + 4] == UInt8(ascii: "-")
+				&& (separator == UInt8(ascii: "-") || separator == UInt8(ascii: "/"))
 		}
 		return false
 	}
