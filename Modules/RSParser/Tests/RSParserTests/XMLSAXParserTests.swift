@@ -320,8 +320,8 @@ import Testing
 	@Test func captureRawInnerContent() {
 		let xml = #"<root><content type="xhtml"><div>hello <em>world</em>!</div></content></root>"#
 		let delegate = TestDelegate()
-		delegate.onStart = { parser, name, _, _, attrs in
-			if name == "content" && attrs["type"] == "xhtml" {
+		delegate.onStart = { parser, name, _, _, attributes in
+			if name == "content" && attributes["type"] == "xhtml" {
 				parser.captureRawInnerContent()
 			}
 		}
@@ -483,7 +483,7 @@ private final class TestDelegate: XMLSAXParserDelegate {
 		captured = String(decoding: bytes, as: UTF8.self)
 	}
 
-	func xmlSAXParser(_ parser: XMLSAXParser, charactersFound bytes: ArraySlice<UInt8>) {
+	func xmlSAXParser(_ parser: XMLSAXParser, didFindCharacters bytes: ArraySlice<UInt8>) {
 		let s = String(decoding: bytes, as: UTF8.self)
 		// Collapse adjacent character events for simpler test assertions.
 		if case .characters(let last) = events.last ?? .done {

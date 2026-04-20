@@ -4,13 +4,14 @@
 //
 //  Created by Brent Simmons on 4/18/26.
 //
-//  Consolidated tests for `DateParser`. Every correctness test goes through
-//  `assertParsedDate` which exercises both public entry points — `date(from:)`
-//  and `date(bytes:)` — and verifies they produce identical results.
 
 import Foundation
 import Testing
 @testable import RSParser
+
+// Every correctness test goes through `assertParsedDate` which exercises both
+// public entry points — `date(from:)` and `date(bytes:)` — and verifies they
+// produce identical results.
 
 @Suite struct DateParserTests {
 

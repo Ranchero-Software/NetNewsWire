@@ -4,14 +4,14 @@
 //
 //  Created by Brent Simmons on 4/19/26.
 //
-//  Tests for the UInt8 ASCII helpers and ArraySlice<UInt8> comparison methods
-//  in XMLASCII.swift. These underpin the scanner so every code path should
-//  be pinned down by a test.
-//
 
 import Foundation
 import Testing
 @testable import RSParser
+
+// Tests for the UInt8 ASCII helpers and ArraySlice<UInt8> comparison methods in
+// XMLASCII.swift. These underpin the scanner so every code path should be pinned
+// down by a test.
 
 @Suite struct XMLASCIITests {
 

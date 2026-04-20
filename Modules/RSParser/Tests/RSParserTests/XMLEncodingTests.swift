@@ -4,14 +4,14 @@
 //
 //  Created by Brent Simmons on 4/19/26.
 //
-//  Direct unit tests for `XMLEncoding.toUTF8`. Covers BOMs, declaration-based
-//  detection, encoding-name aliases and case-insensitivity, the hand-rolled
-//  Latin-1/Windows-1252 paths, the Foundation-bridged CJK/Cyrillic paths, and
-//  boundary inputs.
 
 import Foundation
 import Testing
 @testable import RSParser
+
+// Direct unit tests for `XMLEncoding.toUTF8`. Covers BOMs, declaration-based detection,
+// encoding-name aliases and case-insensitivity, the hand-rolled Latin-1/Windows-1252
+// paths, the Foundation-bridged CJK/Cyrillic paths, and boundary inputs.
 
 @Suite struct XMLEncodingTests {
 
