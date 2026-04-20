@@ -65,7 +65,7 @@ import Secrets
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
 		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		let opmlDocument = try OPMLParser.parseOPML(with: parserData)
 
 		// TODO: throw appropriate error for empty OPML
 		guard let children = opmlDocument.children else {
