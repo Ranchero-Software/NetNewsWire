@@ -91,7 +91,7 @@ extension UInt8 {
 
 // MARK: - ArraySlice<UInt8>
 
-extension ArraySlice where Element == UInt8 {
+public extension ArraySlice where Element == UInt8 {
 
 	/// Compare the slice byte-for-byte with an ASCII literal.
 	func equals(_ ascii: StaticString) -> Bool {
