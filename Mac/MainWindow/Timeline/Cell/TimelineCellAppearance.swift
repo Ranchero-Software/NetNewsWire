@@ -40,6 +40,11 @@ struct TimelineCellAppearance: Equatable {
 	let iconAdjustmentTop: CGFloat = 4.0
 	let iconCornerRadius: CGFloat = 4.0
 
+	let thumbnailHeight: CGFloat = 200.0
+	let thumbnailMarginTop: CGFloat = 8.0
+	let thumbnailMarginBottom: CGFloat = 10.0
+	let thumbnailCornerRadius: CGFloat = 6.0
+
 	let boxLeftMargin: CGFloat
 
 	init(showIcon: Bool, fontSize: FontSize) {

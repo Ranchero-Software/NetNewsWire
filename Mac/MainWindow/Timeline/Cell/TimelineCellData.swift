@@ -24,6 +24,7 @@ import Articles
 	let showIcon: Bool // Make space even when icon is nil
 	let read: Bool
 	let starred: Bool
+	let thumbnailURL: URL?
 
 	init(article: Article, showFeedName: TimelineShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool) {
 
@@ -58,6 +59,7 @@ import Articles
 
 		self.read = article.status.read
 		self.starred = article.status.starred
+		self.thumbnailURL = article.firstBodyImageURL
 	}
 
 	init() { // Empty
@@ -72,5 +74,6 @@ import Articles
 		self.read = true
 		self.starred = false
 		self.attributedTitle = NSAttributedString()
+		self.thumbnailURL = nil
 	}
 }
