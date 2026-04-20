@@ -92,11 +92,3 @@ import RSParser
 	}
 }
 
-// MARK: - Shared helper
-
-func parserData(_ filename: String, _ fileExtension: String, _ url: String) -> ParserData {
-	let filename = "Resources/\(filename)"
-	let path = Bundle.module.path(forResource: filename, ofType: fileExtension)!
-	let data = try! Data(contentsOf: URL(fileURLWithPath: path))
-	return ParserData(url: url, data: data)
-}
