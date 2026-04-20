@@ -18,6 +18,7 @@ let package = Package(
 			name: "RSParser",
 			dependencies: ["Tidemark"],
 			swiftSettings: [
+				.swiftLanguageMode(.v6),
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances")
 			]),
@@ -26,6 +27,7 @@ let package = Package(
 			dependencies: ["RSParser"],
 			resources: [.copy("Resources")],
 			swiftSettings: [
+				.swiftLanguageMode(.v6),
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances")
 			]
