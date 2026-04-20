@@ -1,5 +1,5 @@
 //
-//  RSHTMLMetadata+Extension.swift
+//  HTMLMetadata+Extension.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 11/26/17.
@@ -9,7 +9,7 @@
 import Foundation
 import RSParser
 
-extension RSHTMLMetadata {
+extension HTMLMetadata {
 
 	func largestOpenGraphImageURL() -> String? {
 		let openGraphImages = openGraphProperties.images
@@ -18,7 +18,7 @@ extension RSHTMLMetadata {
 			return nil
 		}
 
-		var bestImage: RSHTMLOpenGraphImage?
+		var bestImage: HTMLOpenGraphImage?
 
 		for image in openGraphImages {
 			if image.width / image.height > 2 {
@@ -54,7 +54,7 @@ extension RSHTMLMetadata {
 			return nil
 		}
 
-		var bestImage: RSHTMLMetadataAppleTouchIcon?
+		var bestImage: HTMLMetadataAppleTouchIcon?
 
 		for image in icons {
 			if image.size.width / image.size.height > 2 {

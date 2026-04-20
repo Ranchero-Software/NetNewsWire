@@ -17,7 +17,7 @@ final class HTMLMetadataPerformanceTests: XCTestCase {
 		// 0.002 sec on my 2012 iMac
 		let d = parserData("DaringFireball", "html", "http://daringfireball.net/")
 		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
+			_ = HTMLMetadataParser.htmlMetadata(with: d)
 		}
 	}
 
@@ -25,7 +25,7 @@ final class HTMLMetadataPerformanceTests: XCTestCase {
 		// 0.001 sec on my 2012 iMac
 		let d = parserData("furbo", "html", "http://furbo.org/")
 		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
+			_ = HTMLMetadataParser.htmlMetadata(with: d)
 		}
 	}
 
@@ -33,7 +33,7 @@ final class HTMLMetadataPerformanceTests: XCTestCase {
 		// 0.001 sec on my 2012 iMac
 		let d = parserData("inessential", "html", "http://inessential.com/")
 		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
+			_ = HTMLMetadataParser.htmlMetadata(with: d)
 		}
 	}
 
@@ -41,7 +41,7 @@ final class HTMLMetadataPerformanceTests: XCTestCase {
 		// 0.004 sec on my 2012 iMac
 		let d = parserData("coco", "html", "https://www.theatlantic.com/entertainment/archive/2017/11/coco-is-among-pixars-best-movies-in-years/546695/")
 		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
+			_ = HTMLMetadataParser.htmlMetadata(with: d)
 		}
 	}
 
@@ -49,7 +49,7 @@ final class HTMLMetadataPerformanceTests: XCTestCase {
 		// 0.002 sec on my 2012 iMac
 		let d = parserData("sixcolors", "html", "http://sixcolors.com/")
 		self.measure {
-			_ = RSHTMLMetadataParser.htmlMetadata(with: d)
+			_ = HTMLMetadataParser.htmlMetadata(with: d)
 		}
 	}
 }
