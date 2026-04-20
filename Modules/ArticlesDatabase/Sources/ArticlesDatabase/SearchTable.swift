@@ -43,7 +43,7 @@ final class ArticleSearchInfo: Hashable, Sendable {
 		}()
 
 		self.bodyForIndex = {
-			let s = preferredText.rsparser_stringByDecodingHTMLEntities()
+			let s = preferredText.decodingHTMLEntities()
 			let sanitizedBody = s.strippingHTML()
 
 			if let authorsNames {
