@@ -233,6 +233,7 @@ private extension HTMLOpenGraphProperties {
 			images.last
 		}
 
+		@discardableResult
 		func pushImage() -> Int {
 			images.append(HTMLOpenGraphImage(url: nil, secureURL: nil, mimeType: nil, width: 0, height: 0, altText: nil))
 			return images.count - 1
@@ -263,7 +264,7 @@ private extension HTMLOpenGraphProperties {
 				if let image = currentImage(), image.url == nil {
 					images[images.count - 1].url = content
 				} else {
-					_ = pushImage()
+					pushImage()
 					images[images.count - 1].url = content
 				}
 			case ogImageURL:
