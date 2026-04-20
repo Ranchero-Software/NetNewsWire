@@ -163,8 +163,6 @@ final class StripHTMLTests: XCTestCase {
 			}
 
 			let html = try String(contentsOf: url, encoding: .utf8)
-
-			// Test both implementations can process real-world HTML
 			let result = html.strippingHTML(maxCharacters: 300)
 
 			XCTAssertFalse(result.isEmpty, "\(testFile): Result should not be empty")
