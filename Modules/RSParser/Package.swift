@@ -8,11 +8,7 @@ let package = Package(
 		.library(
 			name: "RSParser",
 			type: .dynamic,
-			targets: ["RSParser"]),
-		.library(
-			name: "RSParserObjC",
-			type: .dynamic,
-			targets: ["RSParserObjC"])
+			targets: ["RSParser"])
 	],
 	dependencies: [
 		.package(url: "https://github.com/brentsimmons/Tidemark", from: "1.0.0")
@@ -20,26 +16,18 @@ let package = Package(
 	targets: [
 		.target(
 			name: "RSParser",
-			dependencies: ["RSParserObjC", "Tidemark"],
-			path: "Sources/Swift",
+			dependencies: ["Tidemark"],
 			swiftSettings: [
+				.swiftLanguageMode(.v6),
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances")
 			]),
-		.target(
-			name: "RSParserObjC",
-			dependencies: [],
-			path: "Sources/ObjC",
-			cSettings: [
-				.headerSearchPath("include")
-			]
-		),
 		.testTarget(
 			name: "RSParserTests",
 			dependencies: ["RSParser"],
-			exclude: ["Info.plist"],
 			resources: [.copy("Resources")],
 			swiftSettings: [
+				.swiftLanguageMode(.v6),
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances")
 			]

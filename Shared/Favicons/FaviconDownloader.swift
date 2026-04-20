@@ -335,7 +335,7 @@ private extension FaviconDownloader {
 	}
 }
 
-private extension RSHTMLMetadata {
+private extension HTMLMetadata {
 
 	func usableFaviconURLs() -> [String]? {
 
@@ -346,7 +346,7 @@ private extension RSHTMLMetadata {
 
 	static let ignoredTypes = [UTType.svg]
 
-	private func shouldAllowFavicon(_ favicon: RSHTMLMetadataFavicon) -> Bool {
+	private func shouldAllowFavicon(_ favicon: HTMLMetadataFavicon) -> Bool {
 
 		// Check mime type.
 		if let mimeType = favicon.type, let utType = UTType(mimeType: mimeType) {

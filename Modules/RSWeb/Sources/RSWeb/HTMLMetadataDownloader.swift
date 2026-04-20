@@ -36,7 +36,7 @@ nonisolated public final class HTMLMetadataDownloader: Sendable {
 		cache.removeAll()
 	}
 
-	public func cachedMetadata(for url: String) -> RSHTMLMetadata? {
+	public func cachedMetadata(for url: String) -> HTMLMetadata? {
 		if Self.shouldSkipDownloadingMetadata(url) {
 			Self.logger.debug("HTMLMetadataDownloader: Skipping requested cached metadata for \(url)")
 			return nil
@@ -105,7 +105,7 @@ nonisolated private extension HTMLMetadataDownloader {
 				if let data, !data.isEmpty, let response, response.statusIsOK {
 					let urlToUse = response.url ?? actualURL
 					let parserData = ParserData(url: urlToUse.absoluteString, data: data)
-					let htmlMetadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
+					let htmlMetadata = HTMLMetadataParser.htmlMetadata(with: parserData)
 					Self.logger.debug("HTMLMetadataDownloader caching parsed metadata for \(url)")
 					cache[url] = htmlMetadata
 					return

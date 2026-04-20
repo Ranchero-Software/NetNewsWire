@@ -167,7 +167,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		let opmlData = try Data(contentsOf: opmlFile)
 		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+		let opmlDocument = try OPMLParser.parseOPML(with: parserData)
 
 		// TODO: throw appropriate error if OPML file is empty.
 		guard let opmlItems = opmlDocument.children, let rootExternalID = account.externalID else {

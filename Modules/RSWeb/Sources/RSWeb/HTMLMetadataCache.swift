@@ -25,7 +25,7 @@ nonisolated public final class HTMLMetadataCache: Sendable {
 	}
 
 	private struct HTMLMetadataCacheRecord: CacheRecord {
-		let metadata: RSHTMLMetadata
+		let metadata: HTMLMetadata
 		let dateCreated = Date()
 	}
 
@@ -35,7 +35,7 @@ nonisolated public final class HTMLMetadataCache: Sendable {
 		cache.removeAll()
 	}
 
-	subscript(_ url: String) -> RSHTMLMetadata? {
+	subscript(_ url: String) -> HTMLMetadata? {
 		get {
 			return cache[url]?.metadata
 		}
