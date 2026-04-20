@@ -65,7 +65,6 @@ private final class MetadataParserDelegate: HTMLScannerDelegate {
 			guard let link, !link.isEmpty else {
 				return
 			}
-			_ = rel
 			tags.append(HTMLTag(type: .link, attributes: attributes.dictionary()))
 			return
 		}
