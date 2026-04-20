@@ -148,7 +148,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		}
 
 		if parsingChannelImage && !parsingArticle && isUnprefixed && localName.equals("url") {
-			channelImageURLString = trimmedCurrentString(parser: parser)
+			channelImageURLString = parser.currentStringWithTrimmedWhitespace
 			return
 		}
 
@@ -186,7 +186,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		if namespace.prefix != nil {
 			if namespace.isDublinCore {
 				if localName.equals("creator") {
-					addAuthor(toArticle: article, string: trimmedCurrentString(parser: parser))
+					addAuthor(toArticle: article, string: parser.currentStringWithTrimmedWhitespace)
 				} else if localName.equals("date") {
 					if let s = parser.currentCharacters {
 						article.datePublished = DateParser.date(bytes: s[...])
@@ -195,7 +195,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 				return
 			}
 			if namespace.isContent && localName.equals("encoded") {
-				let s = trimmedCurrentString(parser: parser)
+				let s = parser.currentStringWithTrimmedWhitespace
 				if let s, !s.isEmpty {
 					article.body = s
 				}
@@ -203,7 +203,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			}
 			// `source:markdown` — scripting.com's namespace, used by WordLand-generated feeds.
 			if namespace.isSource && localName.equals("markdown") {
-				article.markdown = trimmedCurrentString(parser: parser)
+				article.markdown = parser.currentStringWithTrimmedWhitespace
 				return
 			}
 			return
@@ -216,19 +216,19 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 				article.datePublished = DateParser.date(bytes: bytes[...])
 			}
 		} else if localName.equals("author") {
-			addAuthor(toArticle: article, string: trimmedCurrentString(parser: parser))
+			addAuthor(toArticle: article, string: parser.currentStringWithTrimmedWhitespace)
 		} else if localName.equals("link") {
 			if article.link == nil {
-				if let s = trimmedCurrentString(parser: parser), !s.isEmpty {
+				if let s = parser.currentStringWithTrimmedWhitespace, !s.isEmpty {
 					article.link = resolveURL(s)
 				}
 			}
 		} else if localName.equals("description") {
 			if article.body == nil {
-				article.body = trimmedCurrentString(parser: parser)
+				article.body = parser.currentStringWithTrimmedWhitespace
 			}
 		} else if !parsingAuthor && localName.equals("title") {
-			if let s = trimmedCurrentString(parser: parser) {
+			if let s = parser.currentStringWithTrimmedWhitespace {
 				article.title = s
 			}
 		} else if localName.equals("enclosure") {
@@ -237,7 +237,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	}
 
 	private func handleGuid(article: MutableItem, parser: XMLSAXParser) {
-		guard let guid = trimmedCurrentString(parser: parser) else {
+		guard let guid = parser.currentStringWithTrimmedWhitespace else {
 			return
 		}
 		article.guid = guid
@@ -271,20 +271,16 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 		if localName.equals("link") {
 			if homepageURLString == nil || homepageURLString!.isEmpty {
-				homepageURLString = trimmedCurrentString(parser: parser)
+				homepageURLString = parser.currentStringWithTrimmedWhitespace
 			}
 		} else if localName.equals("title") {
-			title = trimmedCurrentString(parser: parser)
+			title = parser.currentStringWithTrimmedWhitespace
 		} else if localName.equals("language") {
-			language = trimmedCurrentString(parser: parser)
+			language = parser.currentStringWithTrimmedWhitespace
 		}
 	}
 
 	// MARK: Helpers
-
-	private func trimmedCurrentString(parser: XMLSAXParser) -> String? {
-		parser.currentStringWithTrimmedWhitespace
-	}
 
 	private func addAuthor(toArticle article: MutableItem, string: String?) {
 		guard let s = string, !s.isEmpty else {
