@@ -11,7 +11,7 @@
 // uninitialized storage.
 //
 // Benchmarks (Apple silicon M1, release build, best-of-10
-// from XCTest measure blocks — see `StripHTMLTests.swift`):
+// from XCTest measure blocks):
 //
 //     Benchmark                        C (before)   Swift (after)   Speedup
 //     ------------------------------   ----------   -------------   -------
