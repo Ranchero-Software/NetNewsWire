@@ -40,7 +40,7 @@ let package = Package(
 			name: "RSCoreTests",
 			dependencies: ["RSCore"],
 			resources: [.copy("Resources")],
-			swiftSettings: [.swiftLanguageMode(.v5)]
+			swiftSettings: [.swiftLanguageMode(.v6)]
 		)
 	]
 )
