@@ -13,6 +13,7 @@ import Articles
 import Account
 import ErrorLog
 import RSCore
+import RSCoreObjC
 import RSCoreResources
 import RSWeb
 import Secrets

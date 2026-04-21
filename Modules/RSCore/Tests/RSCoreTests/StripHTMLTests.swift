@@ -6,271 +6,132 @@
 //  Copyright © 2025 Ranchero Software, LLC. All rights reserved.
 //
 
-import XCTest
+import Foundation
+import Testing
 
-// Legacy Swift implementation for comparison testing
-private extension String {
+struct StripHTMLTests {
 
-	/// Removes an HTML tag and everything between its start and end tags.
-	private func removingTagAndContents(_ tag: String) -> String {
-		return self.replacingOccurrences(of: "<\(tag)>[\\s\\S]*?</\(tag)>", with: "", options: [.regularExpression, .caseInsensitive])
+	@Test func basic() {
+		#expect("<p>Hello <b>world</b>!</p>".strippingHTML() == "Hello world!")
 	}
 
-	/// Legacy Swift-based HTML stripping implementation (kept for comparison testing).
-	func legacyStrippingHTML(maxCharacters: Int? = nil) -> String {
-		if !self.contains("<") {
-
-			if let maxCharacters = maxCharacters, maxCharacters < count {
-				let ix = self.index(self.startIndex, offsetBy: maxCharacters)
-				return String(self[..<ix])
-			}
-
-			return self
-		}
-
-		var preflight = self
-
-		// NOTE: If performance on repeated invocations becomes an issue here, the regexes can be cached.
-		let options: String.CompareOptions = [.regularExpression, .caseInsensitive]
-		preflight = preflight.replacingOccurrences(of: "</?(?:blockquote|p|div)>", with: " ", options: options)
-		preflight = preflight.replacingOccurrences(of: "<p>|</?div>|<br(?: ?/)?>|</li>", with: "\n", options: options)
-		preflight = preflight.removingTagAndContents("script")
-		preflight = preflight.removingTagAndContents("style")
-
-		let preflightCount = preflight.count
-		let maxChars = maxCharacters ?? preflightCount
-
-		var s = String()
-		s.reserveCapacity(min(maxChars, preflightCount))
-		var lastCharacterWasSpace = false
-		var charactersAdded = 0
-		var level = 0
-
-		for char in preflight {
-			if char == "<" {
-				level += 1
-			} else if char == ">" {
-				level -= 1
-			} else if level == 0 {
-
-				if char == " " || char == "\r" || char == "\t" || char == "\n" {
-					if lastCharacterWasSpace {
-						continue
-					}
-					lastCharacterWasSpace = true
-					s.append(" ")
-				} else {
-					lastCharacterWasSpace = false
-					s.append(char)
-				}
-
-				charactersAdded += 1
-				if charactersAdded >= maxChars {
-					break
-				}
-			}
-		}
-
-		return s
-	}
-}
-
-final class StripHTMLTests: XCTestCase {
-
-	func testStrippingHTMLBasic() {
-		let html = "<p>Hello <b>world</b>!</p>"
-		let result = html.strippingHTML()
-		XCTAssertEqual(result, "Hello world!")
+	@Test func withScript() {
+		#expect("<p>Before</p><script>alert('test');</script><p>After</p>".strippingHTML() == "Before After")
 	}
 
-	func testStrippingHTMLWithScript() {
-		let html = "<p>Before</p><script>alert('test');</script><p>After</p>"
-		let result = html.strippingHTML()
-		XCTAssertEqual(result, "Before After")
+	@Test func withStyle() {
+		#expect("<p>Content</p><style>body { color: red; }</style><p>More</p>".strippingHTML() == "Content More")
 	}
 
-	func testStrippingHTMLWithStyle() {
-		let html = "<p>Content</p><style>body { color: red; }</style><p>More</p>"
-		let result = html.strippingHTML()
-		XCTAssertEqual(result, "Content More")
-	}
-
-	func testStrippingHTMLWithMaxCharacters() {
+	@Test func withMaxCharacters() {
 		let html = "<p>This is a long piece of text that should be truncated at some point.</p>"
 		let result = html.strippingHTML(maxCharacters: 20)
-		XCTAssertLessThanOrEqual(result.count, 20)
-		XCTAssertEqual(result, "This is a long piece")
+		#expect(result.count <= 20)
+		#expect(result == "This is a long piece")
 	}
 
-	func testStrippingHTMLWithUTF8() {
-		let html = "<p>Hello 世界 🌍</p>"
-		let result = html.strippingHTML()
-		XCTAssertEqual(result, "Hello 世界 🌍")
+	@Test func withUTF8() {
+		#expect("<p>Hello 世界 🌍</p>".strippingHTML() == "Hello 世界 🌍")
 	}
 
-	func testStrippingHTMLWhitespaceCollapsing() {
-		let html = "<p>Too     many\n\n\nspaces</p>"
-		let result = html.strippingHTML()
-		XCTAssertFalse(result.contains("  "))
-		XCTAssertEqual(result, "Too many spaces")
+	@Test func whitespaceCollapsing() {
+		let result = "<p>Too     many\n\n\nspaces</p>".strippingHTML()
+		#expect(!result.contains("  "))
+		#expect(result == "Too many spaces")
 	}
 
-	// Commented out because this doesn’t need to run every time.
-	// Un-comment it when you want to compare legacy performance to C performance.
-//	func testStrippingHTMLPerformanceLegacySwift() {
-//		let html = """
-//		<html><body>
-//		<p>This is a test article with <b>bold text</b> and <i>italic text</i>.</p>
-//		<script>console.log('test');</script>
-//		<style>body { margin: 0; }</style>
-//		<p>More content with <a href="http://example.com">links</a> and other tags.</p>
-//		<div>Nested <span>tags</span> are common in HTML.</div>
-//		</body></html>
-//		"""
-//
-//		self.measure {
-//			for _ in 0..<1000 {
-//				let _ = html.legacyStrippingHTML(maxCharacters: 300)
-//			}
-//		}
-//	}
-
-	func testStrippingHTMLPerformance() {
-		let html = """
-		<html><body>
-		<p>This is a test article with <b>bold text</b> and <i>italic text</i>.</p>
-		<script>console.log('test');</script>
-		<style>body { margin: 0; }</style>
-		<p>More content with <a href="http://example.com">links</a> and other tags.</p>
-		<div>Nested <span>tags</span> are common in HTML.</div>
-		</body></html>
-		"""
-
-		self.measure {
-			for _ in 0..<1000 {
-				_ = html.strippingHTML(maxCharacters: 300)
-			}
-		}
+	@Test func scriptAndStyleAreCaseInsensitive() {
+		#expect("<p>Before</p><SCRIPT>alert('x');</SCRIPT><P>After</P>".strippingHTML() == "Before After")
+		#expect("<p>x</p><STYLE>body{}</STYLE><p>y</p>".strippingHTML() == "x y")
+		#expect("<Script>ignored</Script>visible".strippingHTML() == "visible")
 	}
 
-	func testStrippingHTMLWithRealWorldHTML() throws {
-		let testFiles = ["daringfireball", "apple", "inessential", "scripting"]
-
-		for testFile in testFiles {
-			guard let url = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
-				XCTFail("Could not find \(testFile).html")
-				return
-			}
-
-			let html = try String(contentsOf: url, encoding: .utf8)
-
-			// Test both implementations can process real-world HTML
-			let result = html.strippingHTML(maxCharacters: 300)
-
-			XCTAssertFalse(result.isEmpty, "\(testFile): Result should not be empty")
-			XCTAssertLessThanOrEqual(result.count, 300, "\(testFile): Result should respect maxCharacters")
-			XCTAssertFalse(result.contains("<"), "\(testFile): Result should not contain HTML tags")
-			XCTAssertFalse(result.contains("//"), "\(testFile): Should fully remove script content")
-		}
+	@Test func plainText() {
+		#expect("  hello   world  ".strippingHTML() == "hello world")
+		#expect("no html here".strippingHTML() == "no html here")
+		#expect("\n\ttabs and\nnewlines\n".strippingHTML() == "tabs and newlines")
 	}
 
-	// Commented out because this doesn’t need to run every time.
-	// Un-comment it when you want to compare legacy performance to C performance.
-//	func testStrippingHTMLPerformanceRealWorldLegacySwift() throws {
-//		let testFiles = ["daringfireball", "apple", "inessential", "scripting"]
-//		var htmlFiles: [String] = []
-//
-//		for testFile in testFiles {
-//			guard let url = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
-//				XCTFail("Could not find \(testFile).html")
-//				return
-//			}
-//			let html = try String(contentsOf: url, encoding: .utf8)
-//			htmlFiles.append(html)
-//		}
-//
-//		self.measure {
-//			for _ in 0..<100 {
-//				for html in htmlFiles {
-//					let _ = html.legacyStrippingHTML(maxCharacters: 300)
-//				}
-//			}
-//		}
-//	}
-
-	func testStrippingHTMLPerformanceRealWorld() throws {
-		let testFiles = ["daringfireball", "apple", "inessential", "scripting"]
-		var htmlFiles: [String] = []
-
-		for testFile in testFiles {
-			guard let url = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
-				XCTFail("Could not find \(testFile).html")
-				return
-			}
-			let html = try String(contentsOf: url, encoding: .utf8)
-			htmlFiles.append(html)
-		}
-
-		self.measure {
-			for _ in 0..<100 {
-				for html in htmlFiles {
-					_ = html.strippingHTML(maxCharacters: 300)
-				}
-			}
-		}
+	@Test func doesNotDecodeEntities() {
+		#expect("<p>A &amp; B</p>".strippingHTML() == "A &amp; B")
+		#expect("<p>&lt;3 &gt;9 &quot;q&quot;</p>".strippingHTML() == "&lt;3 &gt;9 &quot;q&quot;")
+		#expect("<p>&#169; &#x2014;</p>".strippingHTML() == "&#169; &#x2014;")
 	}
 
-	// Un-comment this to create the .txt files that contain the expected stripped-HTML results.
-//	func testRegenerateExpectedOutputFiles() throws {
-//		let testFiles = ["apple", "daringfireball", "inessential", "scripting"]
-//
-//		for testFile in testFiles {
-//			guard let htmlURL = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
-//				XCTFail("Could not find \(testFile).html")
-//				return
-//			}
-//
-//			let html = try String(contentsOf: htmlURL, encoding: .utf8)
-//			let result = html.strippingHTML()
-//
-//			print("\n=== \(testFile) ===")
-//			print("Result length: \(result.count) characters")
-//			print("First 200 chars: \(String(result.prefix(200)))")
-//
-//			// Write to /tmp first, then user can copy to source
-//			let tmpPath = "/tmp/\(testFile).txt"
-//			try result.write(toFile: tmpPath, atomically: true, encoding: .utf8)
-//			print("Wrote to: \(tmpPath)")
-//		}
-//
-//		print("\n\nTo update the expected output files, run:")
-//		print("cp /tmp/apple.txt Tests/RSCoreTests/Resources/")
-//		print("cp /tmp/daringfireball.txt Tests/RSCoreTests/Resources/")
-//		print("cp /tmp/inessential.txt Tests/RSCoreTests/Resources/")
-//		print("cp /tmp/scripting.txt Tests/RSCoreTests/Resources/")
-//	}
-
-	func testStrippingHTMLMatchesExpectedOutput() throws {
-		let testFiles = ["apple", "daringfireball", "inessential", "scripting"]
-
-		for testFile in testFiles {
-			guard let htmlURL = Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources") else {
-				XCTFail("Could not find \(testFile).html")
-				return
-			}
-
-			guard let txtURL = Bundle.module.url(forResource: testFile, withExtension: "txt", subdirectory: "Resources") else {
-				XCTFail("Could not find \(testFile).txt")
-				return
-			}
-
-			let html = try String(contentsOf: htmlURL, encoding: .utf8)
-			let expectedOutput = try String(contentsOf: txtURL, encoding: .utf8)
-
-			// Test implementation produces expected output
-			let result = html.strippingHTML()
-
-			XCTAssertEqual(result, expectedOutput, "\(testFile): Implementation should match expected output")
-		}
+	@Test func emptyString() {
+		#expect("".strippingHTML() == "")
+		#expect("".strippingHTML(maxCharacters: 10) == "")
+		#expect("".strippingHTML(maxCharacters: 0) == "")
 	}
+
+	@Test func blockTagsInjectSpaces() {
+		#expect("a<br>b".strippingHTML() == "a b")
+		#expect("a<br/>b".strippingHTML() == "a b")
+		#expect("a<br />b".strippingHTML() == "a b")
+		#expect("<div>a</div><div>b</div>".strippingHTML() == "a b")
+		#expect("<blockquote>a</blockquote><blockquote>b</blockquote>".strippingHTML() == "a b")
+		#expect("<ul><li>a</li><li>b</li></ul>".strippingHTML() == "a b")
+		#expect("<p>a</p><p>b</p>".strippingHTML() == "a b")
+		// Adjacent block-tag-injected spaces don't double up.
+		#expect("<p>a</p><div>b</div>".strippingHTML() == "a b")
+	}
+
+	@Test func maxCharactersBoundaries() {
+		let source = "hello world"
+		#expect(source.strippingHTML(maxCharacters: nil) == "hello world")
+		#expect(source.strippingHTML(maxCharacters: 0) == "hello world")
+		#expect(source.strippingHTML(maxCharacters: 1) == "h")
+		#expect(source.strippingHTML(maxCharacters: 5) == "hello")
+		#expect(source.strippingHTML(maxCharacters: 100) == "hello world")
+	}
+
+	@Test func nestedTags() {
+		#expect("<div><div><div>x</div></div></div>".strippingHTML() == "x")
+		#expect("<b><i><u>deeply nested</u></i></b>".strippingHTML() == "deeply nested")
+		#expect("<a href=\"#\"><span>link</span></a>".strippingHTML() == "link")
+	}
+
+	@Test(arguments: ["daringfireball", "apple", "inessential", "scripting"])
+	func withRealWorldHTML(testFile: String) throws {
+		let url = try #require(Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources"))
+		let html = try String(contentsOf: url, encoding: .utf8)
+		let result = html.strippingHTML(maxCharacters: 300)
+
+		#expect(!result.isEmpty, "Result should not be empty")
+		#expect(result.count <= 300, "Result should respect maxCharacters")
+		#expect(!result.contains("<"), "Result should not contain HTML tags")
+		#expect(!result.contains("//"), "Should fully remove script content")
+	}
+
+	@Test(arguments: ["apple", "daringfireball", "inessential", "scripting"])
+	func matchesExpectedOutput(testFile: String) throws {
+		let htmlURL = try #require(Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources"))
+		let txtURL = try #require(Bundle.module.url(forResource: testFile, withExtension: "txt", subdirectory: "Resources"))
+
+		let html = try String(contentsOf: htmlURL, encoding: .utf8)
+		let expectedOutput = try String(contentsOf: txtURL, encoding: .utf8)
+
+		#expect(html.strippingHTML() == expectedOutput, "Implementation should match expected output")
+	}
+
+	// Un-comment this to regenerate the .txt files containing expected stripped-HTML results.
+	//	@Test func regenerateExpectedOutputFiles() throws {
+	//		let testFiles = ["apple", "daringfireball", "inessential", "scripting"]
+	//		for testFile in testFiles {
+	//			let htmlURL = try #require(Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources"))
+	//			let html = try String(contentsOf: htmlURL, encoding: .utf8)
+	//			let result = html.strippingHTML()
+	//			print("\n=== \(testFile) ===")
+	//			print("Result length: \(result.count) characters")
+	//			print("First 200 chars: \(String(result.prefix(200)))")
+	//			let tmpPath = "/tmp/\(testFile).txt"
+	//			try result.write(toFile: tmpPath, atomically: true, encoding: .utf8)
+	//			print("Wrote to: \(tmpPath)")
+	//		}
+	//		print("\n\nTo update the expected output files, run:")
+	//		print("cp /tmp/apple.txt Tests/RSCoreTests/Resources/")
+	//		print("cp /tmp/daringfireball.txt Tests/RSCoreTests/Resources/")
+	//		print("cp /tmp/inessential.txt Tests/RSCoreTests/Resources/")
+	//		print("cp /tmp/scripting.txt Tests/RSCoreTests/Resources/")
+	//	}
 }
