@@ -41,6 +41,12 @@ playground.xcworkspace
 # Packages/
 # Package.pins
 .build/
+.swiftpm/
+
+# Xcode performance-test baselines. Machine-dependent — an M1 ≠ M3 ≠
+# Intel. Canonical benchmark numbers belong in source comments next
+# to the measure block, where the hardware and config are recorded.
+*.xcbaseline
 
 # CocoaPods
 #
