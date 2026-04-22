@@ -34,7 +34,7 @@ import Testing
 		#expect(ArticleStringFormatter.sanitizedTitle(nil, forHTML: forHTML) == nil)
 	}
 
-	// MARK: - Allowed tags (present in the whitelist — b, i, em, etc.)
+	// MARK: - Allowed tags (b, i, em, etc.)
 
 	@Test func allowedTagForHTMLIsPreserved() {
 		#expect(ArticleStringFormatter.sanitizedTitle("Use <b>bold</b>", forHTML: true) == "Use <b>bold</b>")
@@ -58,7 +58,7 @@ import Testing
 		)
 	}
 
-	// MARK: - Disallowed tags (not in the whitelist — script, div, etc.)
+	// MARK: - Disallowed tags (script, div, etc.)
 
 	@Test("Disallowed tag is escaped with forHTML=true so it renders as text")
 	func disallowedTagForHTMLIsEscaped() {
