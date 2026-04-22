@@ -128,4 +128,134 @@ import RSParser
 		}
 		return dateFormatter.string(from: date)
 	}
+
+	// MARK: - Title sanitization
+
+	// Stored as UTF-8 byte arrays so tag-name lookup during
+	// `sanitizedTitle` can be done byte-level without converting the
+	// scanned tag back to a String per call.
+	nonisolated private static let allowedTagsBytes: Set<[UInt8]> = {
+		let names = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em",
+		             "i", "ins", "kbd", "mark", "q", "s", "samp", "small",
+		             "strong", "sub", "sup", "time", "u", "var"]
+		return Set(names.map { Array($0.utf8) })
+	}()
+
+	/// Sanitize an article title, which may contain HTML, into
+	/// either HTML-safe rendering (when `forHTML: true`) or a
+	/// plain-text form suitable for further processing (when
+	/// `forHTML: false`). Returns nil iff `title` is nil.
+	///
+	/// Behavior for each of the four (allowed, forHTML) combinations:
+	/// - allowed tag, forHTML=true: tag preserved as-is (`<b>Bold</b>`).
+	/// - allowed tag, forHTML=false: tag dropped, contents kept.
+	/// - disallowed tag, forHTML=true: tag escaped as `&lt;...&gt;` text.
+	/// - disallowed tag, forHTML=false: tag preserved literally (the
+	///   caller — typically `strippingHTML` — removes it later).
+	///
+	/// Implementation notes: single pass over UTF-8 bytes. `<`, `>`,
+	/// `/`, and ASCII tag characters are all single-byte; non-ASCII
+	/// bytes pass through as-is (correct for multi-byte text
+	/// content). The previous Scanner-based implementation went
+	/// through Foundation for every tag boundary, with per-tag
+	/// `scanUpToString` bridges and String allocations. On the cold
+	/// scroll path, that cost compounded across every unique article
+	/// title.
+	nonisolated static func sanitizedTitle(_ title: String?, forHTML: Bool) -> String? {
+		guard let title else {
+			return nil
+		}
+		if title.isEmpty {
+			return ""
+		}
+
+		let utf8 = Array(title.utf8)
+		let count = utf8.count
+		var out = [UInt8]()
+		out.reserveCapacity(count)
+
+		let lt = UInt8(ascii: "<")
+		let gt = UInt8(ascii: ">")
+		let slash = UInt8(ascii: "/")
+		// `&lt;` and `&gt;` as byte arrays — pre-encoded so the
+		// escape path doesn't pay a String-to-UTF8 conversion per tag.
+		let ltEntity: [UInt8] = [
+			UInt8(ascii: "&"), UInt8(ascii: "l"), UInt8(ascii: "t"), UInt8(ascii: ";")
+		]
+		let gtEntity: [UInt8] = [
+			UInt8(ascii: "&"), UInt8(ascii: "g"), UInt8(ascii: "t"), UInt8(ascii: ";")
+		]
+
+		var i = 0
+		while i < count {
+			let b = utf8[i]
+			if b != lt {
+				out.append(b)
+				i += 1
+				continue
+			}
+
+			// Found `<`. Scan forward for matching `>` or end of input.
+			var j = i + 1
+			while j < count && utf8[j] != gt {
+				j += 1
+			}
+
+			// Tag body is utf8[i+1..<j]. Empty-body edge case matches
+			// the Scanner quirk: `scanUpToString(">")` returns nil
+			// when no characters are scanned (either at end of
+			// string, or `>` is immediately next). In both cases we
+			// emit no tag and don't consume the `>` — the outer loop
+			// handles any trailing `>` as literal text on the next
+			// iteration.
+			let tagStart = i + 1
+			let tagEnd = j
+			if tagStart == tagEnd {
+				i += 1 // past the `<` only
+				continue
+			}
+
+			// Build a normalized tag name for lookup. The original
+			// used `tag.replacingOccurrences(of: "/", with: "")` —
+			// ALL slashes removed, case preserved. Match that.
+			var normalized = [UInt8]()
+			normalized.reserveCapacity(tagEnd - tagStart)
+			for k in tagStart..<tagEnd {
+				let byte = utf8[k]
+				if byte != slash {
+					normalized.append(byte)
+				}
+			}
+			let isAllowed = Self.allowedTagsBytes.contains(normalized)
+
+			if isAllowed {
+				if forHTML {
+					// Preserve tag literally (slashes included).
+					out.append(lt)
+					out.append(contentsOf: utf8[tagStart..<tagEnd])
+					out.append(gt)
+				}
+				// forHTML=false: tag dropped entirely.
+			} else {
+				if forHTML {
+					// Escape as `&lt;tag&gt;` so the reader sees it
+					// as text rather than an unknown element.
+					out.append(contentsOf: ltEntity)
+					out.append(contentsOf: utf8[tagStart..<tagEnd])
+					out.append(contentsOf: gtEntity)
+				} else {
+					// Preserve literally for a later HTML-stripping
+					// pass (e.g. `strippingHTML`) to remove.
+					out.append(lt)
+					out.append(contentsOf: utf8[tagStart..<tagEnd])
+					out.append(gt)
+				}
+			}
+
+			// Advance past `>` if one was found, else to end of input.
+			i = (j < count) ? j + 1 : count
+		}
+
+		return String(decoding: out, as: UTF8.self)
+	}
 }
