@@ -12,7 +12,7 @@ Added incremental searching to the Error Log window
 Replaced unsafe C-based Markdown renderer/parser with safer Swift-based parser/renderer
 Replaced unsafe C-based date parser with safer Swift-based parser (which is also an order of magnitude faster)
 Started handling dates like 2020/1/10 in the date parser (even though those dates are invalid, they appear in the wild)
-Replaced unsafe C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) to safer Swift-based parsers (which are also faster)
+Replaced unsafe C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) with safer Swift-based parsers (which are also faster)
 Removed dependency on libxml2
 Replaced unsafe C code to strip HTML with safer Swift code (which is faster)
 Replaced Objective-C code to decode entities with faster Swift code
