@@ -12,11 +12,13 @@ import RSCore
 import RSParser
 
 @MainActor final class ArticleStringFormatter {
+
 	static let shared = ArticleStringFormatter()
 
 	private var feedNameCache = [String: String]()
-	private var titleCache = [String: String]()
-	private var summaryCache = [String: String]()
+	private var titleCache = [TitleCacheKey: String]()
+	private var attributedTitleCache = [String: NSAttributedString]()
+	private var summaryCache = [ArticleCacheKey: String]()
 
 	private let dateFormatter: DateFormatter = {
 		let formatter = DateFormatter()
@@ -37,70 +39,83 @@ import RSParser
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
-	@objc func handleAppDidGoToBackground(_ notification: Notification) {
-		emptyCaches()
-	}
-
-	@objc func handleLowMemory(_ notification: Notification) {
-		emptyCaches()
-	}
-
-	private func emptyCaches() {
-		feedNameCache.removeAll()
-		titleCache.removeAll()
-		summaryCache.removeAll()
-	}
-
 	func truncatedFeedName(_ feedName: String) -> String {
 		if let cachedFeedName = feedNameCache[feedName] {
 			return cachedFeedName
 		}
 
 		let maxFeedNameLength = 100
-		if feedName.count < maxFeedNameLength {
+
+		// `utf8.count` is O(1); grapheme count <= utf8.count, so
+		// this is a conservative-but-correct short-enough check.
+		if feedName.utf8.count <= maxFeedNameLength {
 			feedNameCache[feedName] = feedName
 			return feedName
 		}
 
-		let s = (feedName as NSString).substring(to: maxFeedNameLength)
+		// Grapheme-safe truncation, bounded by `maxFeedNameLength`.
+		let endIndex = feedName.index(feedName.startIndex, offsetBy: maxFeedNameLength, limitedBy: feedName.endIndex) ?? feedName.endIndex
+		let s = String(feedName[..<endIndex])
 		feedNameCache[feedName] = s
 		return s
 	}
 
 	func truncatedTitle(_ article: Article, forHTML: Bool = false) -> String {
-		guard let title = article.sanitizedTitle(forHTML: forHTML) else {
+		guard let rawTitle = article.title, !rawTitle.isEmpty else {
 			return ""
 		}
 
-		if let cachedTitle = titleCache[title] {
+		let cacheKey = TitleCacheKey(title: rawTitle, forHTML: forHTML)
+		if let cachedTitle = titleCache[cacheKey] {
 			return cachedTitle
 		}
 
-		var s = title.replacingOccurrences(of: "\n", with: "")
-		s = s.replacingOccurrences(of: "\r", with: "")
-		s = s.replacingOccurrences(of: "\t", with: "")
+		guard let sanitized = Self.sanitizedTitle(rawTitle, forHTML: forHTML) else {
+			return ""
+		}
+
+		// Replace with " " rather than "" so words don't
+		// fuse (`"Part 1\nPart 2"` -> `"Part 1 Part 2"`).
+		// The `collapsingWhitespace` call further down removes any doubles.
+		var s = sanitized
+		if s.rangeOfCharacter(from: Self.titleControlCharacters) != nil {
+			s = s.replacingOccurrences(of: "\n", with: " ")
+			s = s.replacingOccurrences(of: "\r", with: " ")
+			s = s.replacingOccurrences(of: "\t", with: " ")
+		}
 
 		if !forHTML {
 			s = s.decodingHTMLEntities()
 		}
 
-		s = s.trimmingWhitespace
 		s = s.collapsingWhitespace
 
 		let maxLength = 1000
-		if s.count < maxLength {
-			titleCache[title] = s
+
+		if s.utf8.count <= maxLength {
+			titleCache[cacheKey] = s
 			return s
 		}
 
-		s = (s as NSString).substring(to: maxLength)
-		titleCache[title] = s
+		// Grapheme-safe truncation.
+		let endIndex = s.index(s.startIndex, offsetBy: maxLength, limitedBy: s.endIndex) ?? s.endIndex
+		s = String(s[..<endIndex])
+		titleCache[cacheKey] = s
 		return s
 	}
 
 	func attributedTruncatedTitle(_ article: Article) -> NSAttributedString {
+		guard let rawTitle = article.title, !rawTitle.isEmpty else {
+			return NSAttributedString()
+		}
+
+		if let cached = attributedTitleCache[rawTitle] {
+			return cached
+		}
+
 		let title = truncatedTitle(article, forHTML: true)
-		let attributed = NSAttributedString(html: title)
+		let attributed = NSAttributedString(simpleHTML: title)
+		attributedTitleCache[rawTitle] = attributed
 		return attributed
 	}
 
@@ -109,12 +124,18 @@ import RSParser
 			return ""
 		}
 
-		let key = article.articleID + article.accountID
+		let key = ArticleCacheKey(articleID: article.articleID, accountID: article.accountID)
 		if let cachedBody = summaryCache[key] {
 			return cachedBody
 		}
-		var s = body.decodingHTMLEntities()
-		s = s.strippingHTML(maxCharacters: 300)
+
+		// Strip first, then decode. Strip bounds the input to decode
+		// at ~300 characters regardless of body size, and it
+		// preserves author intent for entity-encoded tags like
+		// `&lt;i&gt;` (decode-then-strip would misread those as
+		// real `<i>` tags and drop the text).
+		var s = body.strippingHTML(maxCharacters: 300)
+		s = s.decodingHTMLEntities()
 		if s == "Comments" { // Hacker News.
 			s = ""
 		}
@@ -122,6 +143,9 @@ import RSParser
 		return s
 	}
 
+	// `dateString` is intentionally uncached: ~97% of dates are
+	// unique at per-second precision in a real database, so a cache
+	// is a net regression vs calling DateFormatter directly.
 	func dateString(_ date: Date) -> String {
 		if Calendar.dateIsToday(date) {
 			return timeFormatter.string(from: date)
@@ -129,38 +153,18 @@ import RSParser
 		return dateFormatter.string(from: date)
 	}
 
-	// MARK: - Title sanitization
-
-	// Stored as UTF-8 byte arrays so tag-name lookup during
-	// `sanitizedTitle` can be done byte-level without converting the
-	// scanned tag back to a String per call.
-	nonisolated private static let allowedTagsBytes: Set<[UInt8]> = {
-		let names = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em",
-		             "i", "ins", "kbd", "mark", "q", "s", "samp", "small",
-		             "strong", "sub", "sup", "time", "u", "var"]
-		return Set(names.map { Array($0.utf8) })
-	}()
-
-	/// Sanitize an article title, which may contain HTML, into
-	/// either HTML-safe rendering (when `forHTML: true`) or a
-	/// plain-text form suitable for further processing (when
-	/// `forHTML: false`). Returns nil iff `title` is nil.
+	/// Sanitize an article title that may contain HTML. Returns nil
+	/// iff `title` is nil.
 	///
-	/// Behavior for each of the four (allowed, forHTML) combinations:
-	/// - allowed tag, forHTML=true: tag preserved as-is (`<b>Bold</b>`).
+	/// Behavior per (allowed, forHTML) combination:
+	/// - allowed tag, forHTML=true: tag preserved (`<b>Bold</b>`).
 	/// - allowed tag, forHTML=false: tag dropped, contents kept.
-	/// - disallowed tag, forHTML=true: tag escaped as `&lt;...&gt;` text.
-	/// - disallowed tag, forHTML=false: tag preserved literally (the
-	///   caller — typically `strippingHTML` — removes it later).
+	/// - disallowed tag, forHTML=true: tag escaped as `&lt;...&gt;`.
+	/// - disallowed tag, forHTML=false: tag preserved literally
+	///   (a later `strippingHTML` pass removes it).
 	///
-	/// Implementation notes: single pass over UTF-8 bytes. `<`, `>`,
-	/// `/`, and ASCII tag characters are all single-byte; non-ASCII
-	/// bytes pass through as-is (correct for multi-byte text
-	/// content). The previous Scanner-based implementation went
-	/// through Foundation for every tag boundary, with per-tag
-	/// `scanUpToString` bridges and String allocations. On the cold
-	/// scroll path, that cost compounded across every unique article
-	/// title.
+	/// Single pass over UTF-8 bytes. Non-ASCII bytes pass through
+	/// unchanged — correct for multi-byte text content.
 	nonisolated static func sanitizedTitle(_ title: String?, forHTML: Bool) -> String? {
 		guard let title else {
 			return nil
@@ -177,8 +181,8 @@ import RSParser
 		let lt = UInt8(ascii: "<")
 		let gt = UInt8(ascii: ">")
 		let slash = UInt8(ascii: "/")
-		// `&lt;` and `&gt;` as byte arrays — pre-encoded so the
-		// escape path doesn't pay a String-to-UTF8 conversion per tag.
+		// Pre-encoded `&lt;` / `&gt;` so the escape path doesn't
+		// convert String to UTF-8 per tag.
 		let ltEntity: [UInt8] = [
 			UInt8(ascii: "&"), UInt8(ascii: "l"), UInt8(ascii: "t"), UInt8(ascii: ";")
 		]
@@ -195,29 +199,22 @@ import RSParser
 				continue
 			}
 
-			// Found `<`. Scan forward for matching `>` or end of input.
+			// Scan forward for `>` or end of input.
 			var j = i + 1
 			while j < count && utf8[j] != gt {
 				j += 1
 			}
 
-			// Tag body is utf8[i+1..<j]. Empty-body edge case matches
-			// the Scanner quirk: `scanUpToString(">")` returns nil
-			// when no characters are scanned (either at end of
-			// string, or `>` is immediately next). In both cases we
-			// emit no tag and don't consume the `>` — the outer loop
-			// handles any trailing `>` as literal text on the next
-			// iteration.
+			// Empty tag body — emit nothing, skip the `<`, let the
+			// next iteration handle any trailing `>` as literal text.
 			let tagStart = i + 1
 			let tagEnd = j
 			if tagStart == tagEnd {
-				i += 1 // past the `<` only
+				i += 1
 				continue
 			}
 
-			// Build a normalized tag name for lookup. The original
-			// used `tag.replacingOccurrences(of: "/", with: "")` —
-			// ALL slashes removed, case preserved. Match that.
+			// Normalize: strip ALL slashes, preserve case.
 			var normalized = [UInt8]()
 			normalized.reserveCapacity(tagEnd - tagStart)
 			for k in tagStart..<tagEnd {
@@ -226,36 +223,76 @@ import RSParser
 					normalized.append(byte)
 				}
 			}
-			let isAllowed = Self.allowedTagsBytes.contains(normalized)
+			let isAllowed = allowedTagsBytes.contains(normalized)
 
 			if isAllowed {
 				if forHTML {
-					// Preserve tag literally (slashes included).
 					out.append(lt)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
 					out.append(gt)
 				}
-				// forHTML=false: tag dropped entirely.
 			} else {
 				if forHTML {
-					// Escape as `&lt;tag&gt;` so the reader sees it
-					// as text rather than an unknown element.
 					out.append(contentsOf: ltEntity)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
 					out.append(contentsOf: gtEntity)
 				} else {
-					// Preserve literally for a later HTML-stripping
-					// pass (e.g. `strippingHTML`) to remove.
 					out.append(lt)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
 					out.append(gt)
 				}
 			}
 
-			// Advance past `>` if one was found, else to end of input.
 			i = (j < count) ? j + 1 : count
 		}
 
 		return String(decoding: out, as: UTF8.self)
+	}
+}
+
+// MARK: - Private
+
+private extension ArticleStringFormatter {
+
+	// Article-identity key for the summary cache. Hashable struct
+	// avoids per-lookup String allocation.
+	struct ArticleCacheKey: Hashable {
+		let articleID: String
+		let accountID: String
+	}
+
+	// (raw title, forHTML) key. Hit path skips `sanitizedTitle`.
+	// Including `forHTML` avoids a collision bug where tag-free
+	// titles sanitized identically but produced different output
+	// under the two flags.
+	struct TitleCacheKey: Hashable {
+		let title: String
+		let forHTML: Bool
+	}
+
+	static let titleControlCharacters = CharacterSet(charactersIn: "\n\r\t")
+
+	// UTF-8 byte arrays so tag-name lookup in `sanitizedTitle` stays
+	// byte-level — no String allocation per tag.
+	nonisolated static let allowedTagsBytes: Set<[UInt8]> = {
+		let names = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em",
+		             "i", "ins", "kbd", "mark", "q", "s", "samp", "small",
+		             "strong", "sub", "sup", "time", "u", "var"]
+		return Set(names.map { Array($0.utf8) })
+	}()
+
+	@objc func handleAppDidGoToBackground(_ notification: Notification) {
+		emptyCaches()
+	}
+
+	@objc func handleLowMemory(_ notification: Notification) {
+		emptyCaches()
+	}
+
+	func emptyCaches() {
+		feedNameCache.removeAll()
+		titleCache.removeAll()
+		attributedTitleCache.removeAll()
+		summaryCache.removeAll()
 	}
 }
