@@ -6,12 +6,6 @@
 //  Copyright © 2026 Ranchero Software, LLC. All rights reserved.
 //
 
-// Performance tests live here in XCTest because Swift Testing has no
-// `measure` block equivalent. Behavior tests are in `StripHTMLTests.swift`
-// (Swift Testing). Run in Release for meaningful numbers:
-//
-//     cd Modules/RSCore && swift test -c release --filter StripHTMLPerformanceTests
-
 import XCTest
 
 final class StripHTMLPerformanceTests: XCTestCase {
