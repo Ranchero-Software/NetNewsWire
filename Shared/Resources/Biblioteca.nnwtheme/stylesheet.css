@@ -6,8 +6,8 @@
 	--feedlink-color: #777;
 	--article-title-color: #111;
 	--article-secondary-color: rgba(0, 0, 0, 0.5);
-	--table-cell-border-color: lightgray;
-	--table-header-border-color: #dedede;
+	--table-cell-border-color: #dedede;
+	--table-header-border-color: #999;
 	--secondary-accent-color: #1145a5;
 	--block-quote-border-color: rgba(0, 0, 0, 0.3);
 	--font-serif: ui-serif, serif;
@@ -34,7 +34,7 @@
 		--body-code-color: #f5f5f5;
 		--block-quote-border-color: rgba(255, 255, 255, 0.2);
 		--table-cell-border-color: rgba(255,255,255,0.1);
-		--table-header-border-color: rgba(255,255,255,0.2);
+		--table-header-border-color: rgba(255,255,255,0.3);
 		--code-background-border: #dedede20;
 		--code-background: #424141;
 		--system-message-color: #777;
@@ -196,6 +196,41 @@ iframe.nnw-constrained {
 	left: 0;
 	height: 100% !important;
 	width: 100% !important;
+}
+table {
+	font-size: 0.9em;
+	border-collapse: collapse;
+	width: 100%;
+}
+table thead th {
+	border-bottom: 1px solid var(--table-header-border-color);
+	padding-bottom: 8px;
+	text-align: left;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+table tbody td {
+	border-bottom: 1px solid var(--table-cell-border-color);
+	padding: 8px;
+}
+table tbody tr:last-child td {
+	border-bottom: none;
+}
+table thead th:first-child,
+table tr td:first-child {
+	padding-left: 0;
+}
+table thead th:last-child,
+table tr td:last-child {
+	padding-right: 0;
+}
+/* avoid horizontal overflow on small screens */
+@media (max-width: 600px) {
+	table {
+		display: block;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+	}
 }
 
 /* Article header */
@@ -363,63 +398,6 @@ body a.footnote:visited,
 	.newsfoot-footnote-popover-inner {
 		background: #2a2a2a;
 	}
-}
-
-/*
- Instead of the last-child bits, border-collapse: collapse
- could have been used. However, then the inter-cell borders
- overlap the table border, which looks bad.
- */
-.nnw-overflow table {
-	font-family: var(--font-sans);
-	margin-bottom: 1px;
-	border-spacing: 0;
-	border: none;
-	font-size: 0.95em;
-}
-.nnw-overflow table table {
-	margin-bottom: 0;
-	border: none;
-}
-.nnw-overflow td,
-.nnw-overflow th {
-	-webkit-hyphens: none;
-	word-break: normal;
-	border-top: none;
-	border-left: none;
-	padding: 10px;
-	padding-right: 14px;
-	text-align: left;
-}
-.nnw-overflow th {
-	text-transform: uppercase;
-	font-size: 11px;
-	letter-spacing: 0.25px;
-	border-bottom: 1px solid var(--table-header-border-color);
-	padding-bottom: 5px;
-}
-.nnw-overflow td {
-	border-bottom: 1px solid var(--table-cell-border-color);
-}
-.nnw-overflow tr :matches(td, th):first-child {
-	padding-left: 0;
-	border-left: none;
-}
-.nnw-overflow tr :matches(td, th):last-child {
-	border-right: none;
-}
-.nnw-overflow
-	:matches(thead, tbody, tfoot):last-child
-	> tr:last-child
-	:matches(td, th) {
-	border-bottom: none;
-}
-.nnw-overflow td pre {
-	border: none;
-	padding: 0;
-}
-.nnw-overflow table[border="0"] {
-	border-width: 0;
 }
 
 /* Feed Specific */
