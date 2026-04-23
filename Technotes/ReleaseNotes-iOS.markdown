@@ -1,5 +1,25 @@
 # iOS Release Notes
 
+### 7.0.5 build 7051 23 Apr 2026 — branch: main tag: iOS-7.0.5-7051
+
+Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
+Fixed bug generating feed image thumbnail when image is indexed-color 4-bit palette .ico (Club iGen icon, for instance)
+Made images in the timeline always use aspect-fit
+Improved table rendering in Biblioteca theme
+Added some images caches to empty on going to background — should hopefully mean fewer memory-pressure terminations
+Started removing some webviews on going to background — also should hopefully mean fewer memory-pressure terminations
+Replaced unsafe C-based Markdown renderer/parser with safer Swift-based parser/renderer
+Replaced unsafe C-based date parser with safer Swift-based parser (which is also an order of magnitude faster)
+Started handling dates like 2020/1/10 in the date parser (even though those dates are invalid, they appear in the wild)
+Replaced unsafe C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) with safer Swift-based parsers (which are also faster)
+Removed dependency on libxml2
+Replaced unsafe C code to strip HTML with safer Swift code (which is faster)
+Replaced Objective-C code to decode entities with faster Swift code
+Made various other string manipulation functions faster that are used in generating timeline cells (scrolling performance enhancement)
+Turned off autocorrection for several username fields in various account settings
+Fixed a bug in the sidebar where the wrong background colors could appear at top and bottom of the screen
+Fixed a fullscreen article view bug on Pro Max iPhones
+
 ### 7.0.5 build 7050 13 Apr 2026 - branch: main tag: iOS-7.0.5-7050
 
 Fixed bug with fullscreen articles not expanding to cover the bottom toolbar
