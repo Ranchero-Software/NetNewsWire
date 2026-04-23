@@ -230,7 +230,7 @@ private extension TimelineTableCellView {
 		var s = text ?? NSAttributedString(string: "")
 
 		if let fieldFont = textField.font {
-			s = s.adding(font: fieldFont)
+			s = s.applyingBaseFont(fieldFont)
 		}
 
 		if textField.attributedStringValue != s {

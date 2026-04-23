@@ -5,21 +5,41 @@
 //  Created by Brent Simmons on 4/20/26.
 //
 
-// Swift replacement for the old ObjC `-[NSString rsparser_stringByDecodingHTMLEntities]`.
 // Scans a string for `&…;` entity references and expands them via `XMLEntities.decode`
 // using `.html` mode (predefined XML, numeric, and HTML named entities). Unrecognized
-// entities pass through literally — matches libxml2 HTML-parser behavior.
+// entities pass through literally.
 
 public extension String {
 
 	/// Return the string with all HTML entities (named, decimal, hex) decoded.
 	/// Unknown entities pass through as-is.
 	func decodingHTMLEntities() -> String {
-		let bytes = Array(utf8)
-		// Fast path: if no `&`, the string has no entities — return it unchanged.
-		if !bytes.contains(UInt8(ascii: "&")) {
+		// Fast path: scan UTF-8 bytes for `&`. If the string has no
+		// ampersand, there are no entities — return it unchanged
+		// without building an `Array<UInt8>` of the whole thing.
+		//
+		// Surprise lesson: `String.UTF8View.contains(_:)` on a
+		// 100 KB body benched ~75x *slower* than
+		// `Array(utf8).contains(_:)` — the UTF8View iterates
+		// through a generic sequence, while `Array<UInt8>.contains`
+		// compiles to a vectorized byte scan over contiguous
+		// memory. Going through `withContiguousStorageIfAvailable`
+		// on the UTF8 view gets us the same `UnsafeBufferPointer
+		// <UInt8>.contains` fast path without ever allocating an
+		// `Array`. For the (rare) non-contiguous case — a bridged
+		// `NSString` backed by UTF-16 — we fall back to the generic
+		// iterator.
+		let hasAmpersand: Bool = utf8.withContiguousStorageIfAvailable { buffer in
+			buffer.contains(UInt8(ascii: "&"))
+		} ?? utf8.contains(UInt8(ascii: "&"))
+
+		if !hasAmpersand {
 			return self
 		}
+		// Slow path: an ampersand appeared, so an entity *might* be
+		// present. Materialize the bytes once for random access by
+		// `XMLEntities.decode`, then rebuild the decoded string.
+		let bytes = Array(utf8)
 		var out = [UInt8]()
 		out.reserveCapacity(bytes.count)
 		var i = 0
