@@ -7,11 +7,8 @@
 
 import Foundation
 
-// Raw bytes of something to parse plus the URL they came from, so parsers and
-// scanners can resolve relative URLs against the source. Replaces the old
-// Objective-C `ParserData` class — same public API so callers in Account,
-// FeedFinder, and RSWeb need no changes.
-
+/// Bytes to parse plus the originating URL,
+/// so parsers can resolve relative URLs.
 public struct ParserData: Sendable {
 
 	public let url: String
