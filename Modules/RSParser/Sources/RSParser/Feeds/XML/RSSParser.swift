@@ -7,10 +7,7 @@
 
 import Foundation
 
-// Pure-Swift RSS/RDF feed parser.
-// Replaces the ObjC RSRSSParser. Uses the Swift XMLSAXParser and emits a
-// ParsedFeed directly — no RSParsedFeed intermediate.
-
+/// RSS feed parser.
 public struct RSSParser {
 
 	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
@@ -27,7 +24,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 	private let feedURLString: String
 
-	// Feed-level state
+	// Feed properties
 	private var title: String?
 	private var homepageURLString: String?
 	private var language: String?
@@ -35,7 +32,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	private var isRDF = false
 	private var endRSSFound = false
 
-	// Article parsing state
+	// Articles and state
 	private var items: [RSSItem] = []
 	private var parsingArticle = false
 	private var parsingAuthor = false
@@ -339,4 +336,3 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		return nil
 	}
 }
-
