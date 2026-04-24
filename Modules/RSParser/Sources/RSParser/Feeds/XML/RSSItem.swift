@@ -1,5 +1,5 @@
 //
-//  MutableItem.swift
+//  RSSItem.swift
 //  RSParser
 //
 //  Created by Brent Simmons on 2026-04-24.
@@ -9,7 +9,7 @@ import Foundation
 import RSCore
 
 /// Feed item shared by the RSS and Atom parsers.
-final class MutableItem {
+final class RSSItem {
 
 	var guid: String?
 	var title: String?

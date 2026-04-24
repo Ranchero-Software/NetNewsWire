@@ -36,7 +36,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	private var endRSSFound = false
 
 	// Article parsing state
-	private var items: [MutableItem] = []
+	private var items: [RSSItem] = []
 	private var parsingArticle = false
 	private var parsingAuthor = false
 	private var parsingChannelImage = false
@@ -67,7 +67,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		)
 	}
 
-	private var currentItem: MutableItem? {
+	private var currentItem: RSSItem? {
 		items.last
 	}
 
@@ -103,7 +103,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		}
 
 		if isUnprefixed && localName.equals("item") {
-			items.append(MutableItem())
+			items.append(RSSItem())
 			parsingArticle = true
 
 			if isRDF, let about = currentAttributes["rdf:about"], !about.isEmpty {
@@ -235,7 +235,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		}
 	}
 
-	private func handleGuid(article: MutableItem, parser: XMLSAXParser) {
+	private func handleGuid(article: RSSItem, parser: XMLSAXParser) {
 		guard let guid = parser.currentStringWithTrimmedWhitespace else {
 			return
 		}
@@ -249,7 +249,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		}
 	}
 
-	private func handleEnclosure(article: MutableItem) {
+	private func handleEnclosure(article: RSSItem) {
 		guard let url = currentAttributes["url"], !url.isEmpty else {
 			return
 		}
@@ -281,7 +281,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 	// MARK: Helpers
 
-	private func addAuthor(toArticle article: MutableItem, string: String?) {
+	private func addAuthor(toArticle article: RSSItem, string: String?) {
 		guard let s = string, !s.isEmpty else {
 			return
 		}

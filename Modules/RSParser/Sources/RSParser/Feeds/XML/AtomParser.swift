@@ -33,7 +33,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	private var logoURLString: String?
 
 	// Items + author
-	private var items: [MutableItem] = []
+	private var items: [RSSItem] = []
 	private var rootAuthor: ParsedAuthor?
 	private var currentAuthor: AtomAuthor?
 
@@ -84,7 +84,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		)
 	}
 
-	private var currentArticle: MutableItem? {
+	private var currentArticle: RSSItem? {
 		items.last
 	}
 
@@ -106,7 +106,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 
 		if localName.equals("entry") {
 			parsingArticle = true
-			items.append(MutableItem())
+			items.append(RSSItem())
 			return
 		}
 
