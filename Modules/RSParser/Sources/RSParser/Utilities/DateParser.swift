@@ -7,20 +7,14 @@
 
 import Foundation
 
-// Pure-Swift port of the old RSDateParser.m.
-//
-// Handles common web date formats — RFC 822 (RSS pubDate) and W3C/ISO 8601
-// (Atom and JSON Feed). Liberal: given garbage, it returns something, possibly
-// wrong. Meant for feed parsing where formatting is often sloppy.
-//
-// Zero-allocation per parse on the hot path: numeric accumulation is inline,
-// the month scan uses stack locals, and the time zone table is keyed by
-// packed lowercase ASCII bytes (UInt64).
-//
-// Usage:
-//   DateParser.date(from: "Fri, 28 May 2010 21:03:38 GMT")
-//   DateParser.date(bytes: slice)   // the hot path for the feed parsers
-
+/// Handles common web date formats — RFC 822 (RSS pubDate) and W3C/ISO 8601
+/// (Atom and JSON Feed). Liberal: given garbage, it returns something, possibly
+/// wrong. Meant for feed parsing where formatting is often sloppy.
+///
+/// Usage:
+///
+///     DateParser.date(from: "Fri, 28 May 2010 21:03:38 GMT")
+///     DateParser.date(bytes: slice) // Used by the feed parsers
 public enum DateParser {
 
 	/// Parse a date string. Returns nil for empty input.
@@ -29,7 +23,7 @@ public enum DateParser {
 		return date(bytes: bytes[...])
 	}
 
-	/// Parse a date from an `ArraySlice<UInt8>` — the hot path for the feed parsers.
+	/// Parse a date from an `ArraySlice<UInt8>` — fastest path for the feed parsers.
 	static func date(bytes slice: ArraySlice<UInt8>) -> Date? {
 		let count = slice.count
 		guard count >= 6 && count <= 150 else {
@@ -288,9 +282,11 @@ private extension DateParser {
 	}
 
 	/// Consume up to three alphabetic characters and interpret as a month number (1–12).
-	/// Zero-allocation: uses `UInt32` to pack up to 3 bytes (lowercased).
+	/// Zero-allocation: three `UInt8` locals live on the stack (or in registers).
 	static func nextMonthValue(_ slice: ArraySlice<UInt8>, startingIndex: Int, finalIndex: inout Int) -> Int? {
-		var packed: UInt32 = 0
+		var c0: UInt8 = 0
+		var c1: UInt8 = 0
+		var c2: UInt8 = 0
 		var charsRead = 0
 
 		var i = startingIndex
@@ -305,9 +301,11 @@ private extension DateParser {
 				break
 			}
 
+			let lower = b | 0x20
+
 			// First character is often enough: F/S/O/N/D are unambiguous.
 			if charsRead == 0 {
-				switch b | 0x20 {
+				switch lower {
 				case UInt8(ascii: "f"): return 2
 				case UInt8(ascii: "s"): return 9
 				case UInt8(ascii: "o"): return 10
@@ -315,9 +313,13 @@ private extension DateParser {
 				case UInt8(ascii: "d"): return 12
 				default: break
 				}
+				c0 = lower
+			} else if charsRead == 1 {
+				c1 = lower
+			} else {
+				c2 = lower
 			}
 
-			packed |= UInt32(b | 0x20) << (charsRead * 8)
 			charsRead += 1
 			if charsRead >= 3 {
 				break
@@ -328,10 +330,6 @@ private extension DateParser {
 		if charsRead < 2 {
 			return nil
 		}
-
-		let c0 = UInt8(packed & 0xFF)
-		let c1 = UInt8((packed >> 8) & 0xFF)
-		let c2 = UInt8((packed >> 16) & 0xFF)
 
 		switch c0 {
 		case UInt8(ascii: "j"):
