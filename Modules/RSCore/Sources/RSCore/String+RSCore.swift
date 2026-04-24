@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import CommonCrypto
 import CryptoKit
 
 private let hexDigits: [UInt8] = Array("0123456789abcdef".utf8)
@@ -25,12 +24,20 @@ public extension String {
 		return link.htmlByAddingLink(link)
 	}
 
-    func hmacUsingSHA1(key: String) -> String {
-        var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
-        CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA1), key, key.count, self, self.count, &digest)
-        let data = Data(digest)
-        return data.map { String(format: "%02hhx", $0) }.joined()
-    }
+	/// HMAC-SHA1 of `self` (as UTF-8 bytes) using `key` (as UTF-8 bytes),
+	/// formatted as 40 lowercase hex characters.
+	func hmacUsingSHA1(key: String) -> String {
+		let symmetricKey = SymmetricKey(data: Data(key.utf8))
+		let mac = HMAC<Insecure.SHA1>.authenticationCode(for: Data(utf8), using: symmetricKey)
+		var hex = [UInt8](repeating: 0, count: mac.byteCount * 2)
+		var i = 0
+		for byte in mac {
+			hex[i]     = hexDigits[Int(byte >> 4)]
+			hex[i + 1] = hexDigits[Int(byte & 0x0F)]
+			i += 2
+		}
+		return String(decoding: hex, as: UTF8.self)
+	}
 }
 
 public extension String {
