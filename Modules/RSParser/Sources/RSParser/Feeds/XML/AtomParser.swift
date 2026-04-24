@@ -34,9 +34,9 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	private var logoURLString: String?
 
 	// Items + author
-	private var items: [MutableAtomItem] = []
+	private var items: [AtomItem] = []
 	private var rootAuthor: ParsedAuthor?
-	private var currentAuthor: MutableAuthor?
+	private var currentAuthor: AtomAuthor?
 
 	// State
 	private var parsingArticle = false
@@ -85,7 +85,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		)
 	}
 
-	private var currentArticle: MutableAtomItem? {
+	private var currentArticle: AtomItem? {
 		items.last
 	}
 
@@ -107,13 +107,13 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 
 		if localName.equals("entry") {
 			parsingArticle = true
-			items.append(MutableAtomItem())
+			items.append(AtomItem())
 			return
 		}
 
 		if localName.equals("author") {
 			parsingAuthor = true
-			currentAuthor = MutableAuthor()
+			currentAuthor = AtomAuthor()
 			return
 		}
 
@@ -410,9 +410,9 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	}
 }
 
-// MARK: - MutableAtomItem
+// MARK: - AtomItem
 
-private final class MutableAtomItem {
+private final class AtomItem {
 	var guid: String?
 	var title: String?
 	var body: String?
@@ -479,7 +479,7 @@ private final class MutableAtomItem {
 	}
 }
 
-private final class MutableAuthor {
+private final class AtomAuthor {
 	var name: String?
 	var emailAddress: String?
 	var url: String?
