@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.0.5 build 7052 24 Apr 2026 — branch: main tag: iOS-7.0.5-7052
+
+Fixed a bug that could cause the timeline to always be empty (on iOS) even though there are unread counts in the sidebar
+Made the date parser a little faster (which makes the feed parsers a little faster)
+
 ### 7.0.5 build 7051 23 Apr 2026 — branch: main tag: iOS-7.0.5-7051
 
 Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
