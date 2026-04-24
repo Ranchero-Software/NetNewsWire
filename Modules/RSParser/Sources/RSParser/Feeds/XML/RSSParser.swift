@@ -7,7 +7,6 @@
 
 import Foundation
 
-/// RSS feed parser.
 public struct RSSParser {
 
 	public static func parse(_ parserData: ParserData) -> ParsedFeed? {

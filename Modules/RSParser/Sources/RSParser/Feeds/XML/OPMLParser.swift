@@ -7,9 +7,6 @@
 
 import Foundation
 
-// Pure-Swift OPML parser. Produces an `OPMLDocument` tree driven by the
-// pure-Swift XMLSAXParser.
-
 public enum OPMLParser {
 
 	/// Parse OPML data. Throws `OPMLError.dataIsWrongFormat` if the data doesn't look like OPML.

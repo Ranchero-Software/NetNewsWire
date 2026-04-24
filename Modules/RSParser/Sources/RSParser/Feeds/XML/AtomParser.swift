@@ -7,7 +7,6 @@
 
 import Foundation
 
-/// Atom feed parser.
 public struct AtomParser {
 
 	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
