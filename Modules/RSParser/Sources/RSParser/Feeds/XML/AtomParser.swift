@@ -7,10 +7,7 @@
 
 import Foundation
 
-// Pure-Swift Atom feed parser.
-// Replaces the ObjC RSAtomParser. Uses the Swift XMLSAXParser and builds a
-// ParsedFeed directly.
-
+/// Atom feed parser.
 public struct AtomParser {
 
 	public static func parse(_ parserData: ParserData) -> ParsedFeed? {
@@ -29,7 +26,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	private let dateParsed = Date()
 	private let isDaringFireball: Bool
 
-	// Feed-level accumulators
+	// Feed properties
 	private var feedTitle: String?
 	private var homepageURLString: String?
 	private var language: String?
@@ -41,16 +38,13 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	private var rootAuthor: ParsedAuthor?
 	private var currentAuthor: MutableAuthor?
 
-	// Parse state
+	// State
 	private var parsingArticle = false
 	private var parsingAuthor = false
 	private var parsingSource = false
 	private var endFeedFound = false
 
-	// Attributes captured per-open-element (stack matches element stack).
-	// Store the `XMLAttributes` value directly — it does targeted byte-level
-	// lookups without building a dictionary, so we only pay for String
-	// allocation on the attributes we actually read.
+	// Attributes per open element.
 	private var attributesStack: [XMLAttributes] = []
 
 	init(urlString: String) {
@@ -68,7 +62,10 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 			}
 		}
 
-		let iconURL = iconURLString ?? logoURLString
+		// <atom:logo> is the larger image. <atom:icon> is the favicon.
+		// If no logo, fall back to icon for both.
+		let iconURL = logoURLString ?? iconURLString
+		let faviconURL = iconURLString
 		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString, dateParsed: dateParsed) })
 
 		return ParsedFeed(
@@ -80,7 +77,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 			feedDescription: nil,
 			nextURL: nil,
 			iconURL: iconURL,
-			faviconURL: nil,
+			faviconURL: faviconURL,
 			authors: nil,
 			expired: false,
 			hubs: nil,
