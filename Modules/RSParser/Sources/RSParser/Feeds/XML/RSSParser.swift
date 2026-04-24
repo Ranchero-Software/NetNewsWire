@@ -360,7 +360,14 @@ private final class MutableItem {
 	func toParsedItem(feedURL: String, dateParsed: Date) -> ParsedItem {
 		return ParsedItem(
 			syncServiceID: nil,
-			uniqueID: calculatedUniqueID(),
+			uniqueID: UniqueIDCalculator.calculate(
+				guid: guid,
+				permalink: permalink,
+				link: link,
+				title: title,
+				body: body,
+				datePublished: datePublished
+			),
 			feedURL: feedURL,
 			url: permalink,
 			externalURL: link,
@@ -380,38 +387,4 @@ private final class MutableItem {
 		)
 	}
 
-	private func calculatedUniqueID() -> String {
-		if let guid, !guid.isEmpty {
-			return guid
-		}
-		// Match the old RSParsedArticle.calculatedArticleID logic: concatenate something
-		// useful then MD5. Preferred order: permalink+date, link+date, title+date, date alone,
-		// permalink, link, title, body.
-		var s = ""
-		let datePublishedString: String?
-		if let datePublished {
-			datePublishedString = String(format: "%.0f", datePublished.timeIntervalSince1970)
-		} else {
-			datePublishedString = nil
-		}
-
-		if let permalink, !permalink.isEmpty, let datePublishedString {
-			s = permalink + datePublishedString
-		} else if let link, !link.isEmpty, let datePublishedString {
-			s = link + datePublishedString
-		} else if let title, !title.isEmpty, let datePublishedString {
-			s = title + datePublishedString
-		} else if let datePublishedString {
-			s = datePublishedString
-		} else if let permalink, !permalink.isEmpty {
-			s = permalink
-		} else if let link, !link.isEmpty {
-			s = link
-		} else if let title, !title.isEmpty {
-			s = title
-		} else if let body, !body.isEmpty {
-			s = body
-		}
-		return s.md5String
-	}
 }

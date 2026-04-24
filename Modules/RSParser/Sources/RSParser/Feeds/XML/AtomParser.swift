@@ -437,7 +437,14 @@ private final class AtomItem {
 
 		return ParsedItem(
 			syncServiceID: nil,
-			uniqueID: calculatedUniqueID(),
+			uniqueID: UniqueIDCalculator.calculate(
+				guid: guid,
+				permalink: permalink,
+				link: link,
+				title: title,
+				body: body,
+				datePublished: datePublished
+			),
 			feedURL: feedURL,
 			url: permalink,
 			externalURL: link,
@@ -457,36 +464,6 @@ private final class AtomItem {
 		)
 	}
 
-	private func calculatedUniqueID() -> String {
-		if let guid, !guid.isEmpty {
-			return guid
-		}
-		let dpString: String?
-		if let datePublished {
-			dpString = String(format: "%.0f", datePublished.timeIntervalSince1970)
-		} else {
-			dpString = nil
-		}
-		var s = ""
-		if let permalink, !permalink.isEmpty, let dpString {
-			s = permalink + dpString
-		} else if let link, !link.isEmpty, let dpString {
-			s = link + dpString
-		} else if let title, !title.isEmpty, let dpString {
-			s = title + dpString
-		} else if let dpString {
-			s = dpString
-		} else if let permalink, !permalink.isEmpty {
-			s = permalink
-		} else if let link, !link.isEmpty {
-			s = link
-		} else if let title, !title.isEmpty {
-			s = title
-		} else if let body, !body.isEmpty {
-			s = body
-		}
-		return s.md5String
-	}
 }
 
 private final class AtomAuthor {
