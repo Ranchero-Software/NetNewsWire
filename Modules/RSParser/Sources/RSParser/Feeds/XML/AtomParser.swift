@@ -23,7 +23,6 @@ public struct AtomParser {
 private final class AtomDelegate: XMLSAXParserDelegate {
 
 	private let feedURLString: String
-	private let dateParsed = Date()
 	private let isDaringFireball: Bool
 
 	// Feed properties
@@ -34,7 +33,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	private var logoURLString: String?
 
 	// Items + author
-	private var items: [AtomItem] = []
+	private var items: [MutableItem] = []
 	private var rootAuthor: ParsedAuthor?
 	private var currentAuthor: AtomAuthor?
 
@@ -66,7 +65,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		// If no logo, fall back to icon for both.
 		let iconURL = logoURLString ?? iconURLString
 		let faviconURL = iconURLString
-		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString, dateParsed: dateParsed) })
+		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString) })
 
 		return ParsedFeed(
 			type: .atom,
@@ -85,7 +84,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		)
 	}
 
-	private var currentArticle: AtomItem? {
+	private var currentArticle: MutableItem? {
 		items.last
 	}
 
@@ -107,7 +106,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 
 		if localName.equals("entry") {
 			parsingArticle = true
-			items.append(AtomItem())
+			items.append(MutableItem())
 			return
 		}
 
@@ -408,62 +407,6 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		let lower = s.lowercased()
 		return lower.hasPrefix("http://") || lower.hasPrefix("https://")
 	}
-}
-
-// MARK: - AtomItem
-
-private final class AtomItem {
-	var guid: String?
-	var title: String?
-	var body: String?
-	var summary: String?
-	var link: String?
-	var permalink: String?
-	var language: String?
-	var datePublished: Date?
-	var dateModified: Date?
-	var authors: Set<ParsedAuthor> = []
-	var attachments: Set<ParsedAttachment> = []
-
-	func toParsedItem(feedURL: String, dateParsed: Date) -> ParsedItem {
-		// If body is empty and summary has content, promote summary to body
-		// so the entry has content to render, and drop the now-redundant summary.
-		var contentHTML = body
-		var itemSummary = summary
-		if (contentHTML == nil || contentHTML?.isEmpty == true), let s = itemSummary, !s.isEmpty {
-			contentHTML = s
-			itemSummary = nil
-		}
-
-		return ParsedItem(
-			syncServiceID: nil,
-			uniqueID: UniqueIDCalculator.calculate(
-				guid: guid,
-				permalink: permalink,
-				link: link,
-				title: title,
-				body: body,
-				datePublished: datePublished
-			),
-			feedURL: feedURL,
-			url: permalink,
-			externalURL: link,
-			title: title,
-			language: language,
-			contentHTML: contentHTML,
-			contentText: nil,
-			markdown: nil,
-			summary: itemSummary,
-			imageURL: nil,
-			bannerImageURL: nil,
-			datePublished: datePublished,
-			dateModified: dateModified,
-			authors: authors.isEmpty ? nil : authors,
-			tags: nil,
-			attachments: attachments.isEmpty ? nil : attachments
-		)
-	}
-
 }
 
 private final class AtomAuthor {

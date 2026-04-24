@@ -26,7 +26,6 @@ public struct RSSParser {
 private final class RSSDelegate: XMLSAXParserDelegate {
 
 	private let feedURLString: String
-	private let dateParsed = Date()
 
 	// Feed-level state
 	private var title: String?
@@ -50,7 +49,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	// MARK: Building output
 
 	func buildParsedFeed() -> ParsedFeed {
-		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString, dateParsed: dateParsed) })
+		let parsedItems = Set(items.map { $0.toParsedItem(feedURL: feedURLString) })
 		return ParsedFeed(
 			type: .rss,
 			title: title,
@@ -341,50 +340,3 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	}
 }
 
-// MARK: - MutableItem
-
-/// Internal mutable accumulator for one RSS item. Produces a ParsedItem at the end.
-private final class MutableItem {
-	var guid: String?
-	var title: String?
-	var body: String?
-	var markdown: String?
-	var link: String?          // External link
-	var permalink: String?     // The URL associated with this item
-	var datePublished: Date?
-	var dateModified: Date?
-	var language: String?
-	var authors: Set<ParsedAuthor> = []
-	var attachments: Set<ParsedAttachment> = []
-
-	func toParsedItem(feedURL: String, dateParsed: Date) -> ParsedItem {
-		return ParsedItem(
-			syncServiceID: nil,
-			uniqueID: UniqueIDCalculator.calculate(
-				guid: guid,
-				permalink: permalink,
-				link: link,
-				title: title,
-				body: body,
-				datePublished: datePublished
-			),
-			feedURL: feedURL,
-			url: permalink,
-			externalURL: link,
-			title: title,
-			language: language,
-			contentHTML: body,
-			contentText: nil,
-			markdown: markdown,
-			summary: nil,
-			imageURL: nil,
-			bannerImageURL: nil,
-			datePublished: datePublished,
-			dateModified: dateModified,
-			authors: authors.isEmpty ? nil : authors,
-			tags: nil,
-			attachments: attachments.isEmpty ? nil : attachments
-		)
-	}
-
-}
