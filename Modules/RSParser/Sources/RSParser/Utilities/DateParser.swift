@@ -361,87 +361,76 @@ private extension DateParser {
 	// MARK: - Time zones
 
 	/// Parse a timezone spec starting at `startingIndex`. Returns the offset in seconds.
-	/// Liberal: returns 0 if no timezone, Z, GMT, or UTC; otherwise looks up abbreviation
-	/// or parses signed numeric offset.
+	/// Liberal: returns 0 if no timezone, Z, GMT, or UTC; otherwise either looks up
+	/// an abbreviation (alpha path) or reads a signed numeric offset (numeric path).
 	///
-	/// Zero-allocation: packs up to 5 lowercase ASCII bytes into a UInt64 as it scans,
-	/// tracks `hasAlpha` and `firstByte` along the way.
+	/// The first non-whitespace/colon byte decides the path — numeric offsets
+	/// (the common case in real feeds) skip the packing/hashing overhead entirely.
 	static func parsedTimeZoneOffset(_ slice: ArraySlice<UInt8>, startingIndex: Int) -> Int {
-		var packed: UInt64 = 0
-		var charsRead = 0
-		var hasAlpha = false
-		var firstByte: UInt8 = 0
-
+		// Skip leading whitespace and colons.
 		var i = startingIndex
-		while i < slice.endIndex && charsRead < 5 {
+		while i < slice.endIndex {
 			let b = slice[i]
-			if b == UInt8(ascii: ":") || b == UInt8(ascii: " ") {
+			if b == UInt8(ascii: " ") || b == UInt8(ascii: ":") {
 				i += 1
 				continue
 			}
-			if isDigit(b) || isAlpha(b) || b == UInt8(ascii: "+") || b == UInt8(ascii: "-") {
-				let lower = b | 0x20
-				if charsRead == 0 {
-					firstByte = lower
-				}
-				if isAlpha(b) {
-					hasAlpha = true
-				}
-				packed |= UInt64(lower) << (charsRead * 8)
-				charsRead += 1
+			break
+		}
+		if i >= slice.endIndex {
+			return 0
+		}
+
+		let first = slice[i]
+		// `Z` means UTC.
+		if first == UInt8(ascii: "z") || first == UInt8(ascii: "Z") {
+			return 0
+		}
+		if first == UInt8(ascii: "+") || first == UInt8(ascii: "-") {
+			return parseNumericTimeZoneOffset(slice, startingIndex: i)
+		}
+		if isAlpha(first) {
+			return lookupAlphaTimeZone(slice, startingIndex: i)
+		}
+		return 0
+	}
+
+	/// Numeric-offset path: `+HHMM`, `-HHMM`, `+HH:MM`, `+HH`, etc.
+	/// Caller guarantees `slice[startingIndex]` is `+` or `-`.
+	static func parseNumericTimeZoneOffset(_ slice: ArraySlice<UInt8>, startingIndex: Int) -> Int {
+		let isPlus = slice[startingIndex] == UInt8(ascii: "+")
+		let end = slice.endIndex
+		var i = startingIndex + 1
+
+		// Up to 2 hour digits.
+		var hours = 0
+		var hoursRead = 0
+		while i < end && hoursRead < 2 {
+			let b = slice[i]
+			if !isDigit(b) {
+				break
 			}
+			hours = hours * 10 + Int(b - UInt8(ascii: "0"))
+			hoursRead += 1
 			i += 1
 		}
 
-		if charsRead == 0 {
-			return 0
-		}
-		// `Z` means UTC.
-		if firstByte == UInt8(ascii: "z") {
-			return 0
+		// Optional `:` or ` ` separator between hours and minutes.
+		if i < end && (slice[i] == UInt8(ascii: ":") || slice[i] == UInt8(ascii: " ")) {
+			i += 1
 		}
 
-		if hasAlpha {
-			// "gmt" and "utc" both → 0.
-			if packed == gmtPacked || packed == utcPacked {
-				return 0
-			}
-			return timeZoneOffsets[packed] ?? 0
-		}
-
-		return offsetForSignedNumericOffset(packed: packed, charsRead: charsRead)
-	}
-
-	/// Parse `+HHMM` / `-HHMM` / `+HH` / `-HH` from packed lowercase ASCII bytes.
-	static func offsetForSignedNumericOffset(packed: UInt64, charsRead: Int) -> Int {
-		guard charsRead > 0 else {
-			return 0
-		}
-		let first = UInt8(packed & 0xFF)
-		let isPlus = first == UInt8(ascii: "+")
-
-		// Bytes at positions 1...charsRead-1 are digits (possibly). Accumulate
-		// the first 2 as hours, next 2 as minutes.
-		func digit(at position: Int) -> Int? {
-			guard position < charsRead else {
-				return nil
-			}
-			let b = UInt8((packed >> (position * 8)) & 0xFF)
-			return isDigit(b) ? Int(b - UInt8(ascii: "0")) : nil
-		}
-
-		var hours = 0
-		if let d1 = digit(at: 1), let d2 = digit(at: 2) {
-			hours = d1 * 10 + d2
-		} else if let d1 = digit(at: 1) {
-			hours = d1
-		}
-
+		// Up to 2 minute digits.
 		var minutes = 0
-		if let d3 = digit(at: 3), let d4 = digit(at: 4) {
-			minutes = d3 * 10 + d4
-		} else if let d3 = digit(at: 3) {
-			minutes = d3
+		var minutesRead = 0
+		while i < end && minutesRead < 2 {
+			let b = slice[i]
+			if !isDigit(b) {
+				break
+			}
+			minutes = minutes * 10 + Int(b - UInt8(ascii: "0"))
+			minutesRead += 1
+			i += 1
 		}
 
 		if hours == 0 && minutes == 0 {
@@ -449,6 +438,38 @@ private extension DateParser {
 		}
 		let seconds = hours * 3600 + minutes * 60
 		return isPlus ? seconds : -seconds
+	}
+
+	/// Alphabetic-offset path: 2-5 letter timezone abbreviations (GMT, EST, CEST, …).
+	/// Caller guarantees `slice[startingIndex]` is alphabetic.
+	static func lookupAlphaTimeZone(_ slice: ArraySlice<UInt8>, startingIndex: Int) -> Int {
+		var packed: UInt64 = 0
+		var charsRead = 0
+
+		var i = startingIndex
+		while i < slice.endIndex && charsRead < 5 {
+			let b = slice[i]
+			if isAlpha(b) {
+				packed |= UInt64(b | 0x20) << (charsRead * 8)
+				charsRead += 1
+				i += 1
+				continue
+			}
+			if b == UInt8(ascii: ":") || b == UInt8(ascii: " ") {
+				i += 1
+				continue
+			}
+			break
+		}
+
+		if charsRead == 0 {
+			return 0
+		}
+		// "gmt" and "utc" both → 0.
+		if packed == gmtPacked || packed == utcPacked {
+			return 0
+		}
+		return timeZoneOffsets[packed] ?? 0
 	}
 
 	// MARK: - Table construction helpers
