@@ -129,8 +129,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 				currentArticle?.language = currentAttributes["xml:lang"]
 			}
 			if currentAttributes["type"] == "xhtml" {
-				// Hand off to the parser: we want the raw inner bytes, not a
-				// reconstructed walk of the children.
+				// Hand off to the parser. Get the raw inner bytes.
 				parser.captureRawInnerContent()
 				return
 			}
@@ -154,7 +153,8 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	                  didCaptureRawInnerContent bytes: ArraySlice<UInt8>,
 	                  forElement localName: ArraySlice<UInt8>,
 	                  namespace: XMLNamespace) {
-		// Only `<content type="xhtml">` and `<summary type="xhtml">` request this.
+		// `<content type="xhtml">` and `<summary type="xhtml">` use this
+		// so they don’t have to reconstruct the HTML.
 		guard let article = currentArticle else {
 			return
 		}
@@ -162,9 +162,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		if localName.equals("content") {
 			article.body = html
 		} else if localName.equals("summary") {
-			if article.body == nil || article.body?.isEmpty == true {
-				article.body = html
-			}
+			article.summary = html
 		}
 	}
 
@@ -230,14 +228,16 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		} else if localName.equals("title") {
 			article.title = parser.currentStringWithTrimmedWhitespace
 		} else if localName.equals("content") {
-			// Only overwrite if we actually accumulated characters — the xhtml path
-			// sets `body` up-front via didCaptureRawInnerContent and doesn't store chars.
+			// Overwrite only if there are characters —
+			// may have been set by didCaptureRawInnerContent for raw XHTML.
 			if let s = parser.currentStringWithTrimmedWhitespace {
 				article.body = s
 			}
 		} else if localName.equals("summary") {
-			if article.body == nil {
-				article.body = parser.currentStringWithTrimmedWhitespace
+			// Overwrite only if there are characters —
+			// may have been set by didCaptureRawInnerContent for raw XHTML.
+			if let s = parser.currentStringWithTrimmedWhitespace {
+				article.summary = s
 			}
 		} else if localName.equals("link") {
 			handleArticleLink()
@@ -416,6 +416,7 @@ private final class AtomItem {
 	var guid: String?
 	var title: String?
 	var body: String?
+	var summary: String?
 	var link: String?
 	var permalink: String?
 	var language: String?
@@ -425,6 +426,15 @@ private final class AtomItem {
 	var attachments: Set<ParsedAttachment> = []
 
 	func toParsedItem(feedURL: String, dateParsed: Date) -> ParsedItem {
+		// If body is empty and summary has content, promote summary to body
+		// so the entry has content to render, and drop the now-redundant summary.
+		var contentHTML = body
+		var itemSummary = summary
+		if (contentHTML == nil || contentHTML?.isEmpty == true), let s = itemSummary, !s.isEmpty {
+			contentHTML = s
+			itemSummary = nil
+		}
+
 		return ParsedItem(
 			syncServiceID: nil,
 			uniqueID: calculatedUniqueID(),
@@ -433,10 +443,10 @@ private final class AtomItem {
 			externalURL: link,
 			title: title,
 			language: language,
-			contentHTML: body,
+			contentHTML: contentHTML,
 			contentText: nil,
 			markdown: nil,
-			summary: nil,
+			summary: itemSummary,
 			imageURL: nil,
 			bannerImageURL: nil,
 			datePublished: datePublished,

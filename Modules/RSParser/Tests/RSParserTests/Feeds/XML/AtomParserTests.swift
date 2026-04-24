@@ -323,6 +323,112 @@ import RSParser
 		#expect(body?.contains("Just plain & text.") == true)
 	}
 
+	// MARK: - Summary / content separation
+
+	@Test func summaryAndContentBothPreserved() throws {
+		// russcox entries have both <summary type="text"> and <content type="html">.
+		// Both should survive on the ParsedItem as distinct fields.
+		let d = parserData("russcox", "atom", "http://research.swtch.com/feed.atom")
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(
+			feed.items.first(where: { $0.title == "Transparent Logs for Skeptical Clients" })
+		)
+		#expect(item.summary == "How an untrusted server can publish a verifiably append-only log.")
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("Suppose we want to maintain and publish a public, append-only log of data."))
+	}
+
+	@Test func summaryOnlyPromotedToContentHTML() throws {
+		// When an entry has <summary> but no <content>, the summary is used as
+		// contentHTML so the entry has something to render, and the summary
+		// slot is cleared to avoid duplication in downstream consumers.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>summary only</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <summary>Just a summary.</summary>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(feed.items.first)
+		#expect(item.contentHTML == "Just a summary.")
+		#expect(item.summary == nil)
+	}
+
+	@Test func contentOnlyLeavesSummaryNil() throws {
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>content only</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <content>Just content.</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(feed.items.first)
+		#expect(item.contentHTML == "Just content.")
+		#expect(item.summary == nil)
+	}
+
+	@Test func summaryAndContentKeptSeparate() throws {
+		// When both are present, each goes to its own ParsedItem field —
+		// no promotion, no clobbering.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>both</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <summary>The summary.</summary>
+		    <content>The content.</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(feed.items.first)
+		#expect(item.contentHTML == "The content.")
+		#expect(item.summary == "The summary.")
+	}
+
+	@Test func xhtmlSummaryCapturedAsRawBytes() throws {
+		// `<summary type="xhtml">` uses the raw-content-capture path, like
+		// `<content type="xhtml">`. The end-element pass must not clobber it
+		// with nil when no characters were accumulated.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>xhtml summary</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <summary type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><p>Hello <em>world</em>.</p></div></summary>
+		    <content>Body.</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "http://example.com/", data: Data(xml.utf8))
+		let feed = try #require(try FeedParser.parse(d))
+		let item = try #require(feed.items.first)
+		#expect(item.contentHTML == "Body.")
+		let summary = try #require(item.summary)
+		#expect(summary.contains("<p>Hello <em>world</em>.</p>"))
+	}
+
 	@Test func contentTypeDefault() throws {
 		// No `type` attribute — RFC 4287 specifies default is "text". The
 		// parser treats it as plain text (same path as `type="text"`).
