@@ -1,12 +1,12 @@
 //
 //  MD5PerformanceTests.swift
-//  RSParserTests
+//  RSCoreTests
 //
 //  Created by Brent Simmons on 4/19/26.
 //
 
 import XCTest
-@testable import RSParser
+@testable import RSCore
 
 // Performance tests stay in XCTest — Swift Testing doesn't have a `measure { }` equivalent yet.
 

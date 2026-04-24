@@ -1,12 +1,12 @@
 //
 //  MD5Tests.swift
-//  RSParserTests
+//  RSCoreTests
 //
 //  Created by Brent Simmons on 4/19/26.
 //
 
 import Testing
-@testable import RSParser
+@testable import RSCore
 
 @Suite struct MD5Tests {
 

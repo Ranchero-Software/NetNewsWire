@@ -11,12 +11,13 @@ let package = Package(
 			targets: ["RSParser"])
 	],
 	dependencies: [
-		.package(url: "https://github.com/brentsimmons/Tidemark", from: "1.0.0")
+		.package(url: "https://github.com/brentsimmons/Tidemark", from: "1.0.0"),
+		.package(path: "../RSCore")
 	],
 	targets: [
 		.target(
 			name: "RSParser",
-			dependencies: ["Tidemark"],
+			dependencies: ["Tidemark", "RSCore"],
 			swiftSettings: [
 				.swiftLanguageMode(.v6),
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RSCore
 
 /// Feed item shared by the RSS and Atom parsers.
 final class MutableItem {

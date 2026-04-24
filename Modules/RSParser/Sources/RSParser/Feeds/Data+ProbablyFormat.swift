@@ -9,31 +9,10 @@ import Foundation
 
 // Heuristic byte-level format detection for feed data. Direct port of the
 // ObjC `NSData (RSParser)` category. Called once per fetched feed (not hot),
-// so clarity over cleverness. Kept internal so the `isProbablyHTML` property
-// doesn't collide with the equivalent Swift property in RSCore — external
-// callers use RSCore's version; `FeedType.swift` uses this one via direct
-// module access.
+// so clarity over cleverness. For HTML detection use RSCore's public
+// `Data.isProbablyHTML`; the properties here cover feed-specific formats.
 
 extension Data {
-
-	/// True if the first few bytes (past any BOM and leading ASCII whitespace)
-	/// are `<html`, `<body`, `<meta`, or a DOCTYPE-style `<...DOCTYPE html...>`.
-	var isProbablyHTML: Bool {
-		if containsASCII("<html") || containsASCII("<HTML") {
-			return true
-		}
-		if containsASCII("<body") || containsASCII("<meta") {
-			return true
-		}
-		if containsASCII("<") {
-			if containsASCII("doctype html")
-				|| containsASCII("DOCTYPE html")
-				|| containsASCII("DOCTYPE HTML") {
-				return true
-			}
-		}
-		return false
-	}
 
 	/// True if the data begins with `<?xml` (past BOM + whitespace).
 	var isProbablyXML: Bool {
