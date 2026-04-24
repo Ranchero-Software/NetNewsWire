@@ -311,7 +311,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		if localName.equals("author") {
 			parsingAuthor = false
 			if let current = currentAuthor {
-				let author = current.build()
+				let author = current.toParsedAuthor()
 				if parsingArticle {
 					if let author {
 						currentArticle?.authors.insert(author)
@@ -494,7 +494,7 @@ private final class AtomAuthor {
 	var emailAddress: String?
 	var url: String?
 
-	func build() -> ParsedAuthor? {
+	func toParsedAuthor() -> ParsedAuthor? {
 		if name == nil && emailAddress == nil && url == nil {
 			return nil
 		}
