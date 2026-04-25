@@ -673,6 +673,13 @@ public enum FetchType {
 		return feed
 	}
 
+	func clearFeedSettings(_ feed: Feed) {
+		// Call before permanently removing a feed so the next feed created at this URL
+		// doesn’t inherit a stale feedID/externalID from the cache or database.
+		feedSettingsCache[feed.url] = nil
+		feedSettingsDatabase.deleteSettings(for: feed.url)
+	}
+
 	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {

@@ -209,6 +209,14 @@ final class FeedSettingsDatabase: Sendable {
 		}
 	}
 
+	// MARK: - Deletion
+
+	func deleteSettings(for feedURL: String) {
+		serialDispatchQueue.async {
+			self.database.executeUpdate("DELETE FROM feedSettings WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+		}
+	}
+
 	// MARK: - Cleanup on launch
 
 	func deleteSettingsForFeedsNotIn(_ feedURLs: Set<String>) {
