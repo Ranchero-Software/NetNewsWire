@@ -1,0 +1,5 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "NetNewsWire 위젯";
+
+/* Bundle name */
+"CFBundleName" = "NetNewsWire iOS 위젯 확장";

@@ -117,7 +117,7 @@ private extension ShareViewController {
 
 	func buildFolderPopupMenu() {
 
-		let menu = NSMenu(title: "Folders")
+		let menu = NSMenu(title: NSLocalizedString("Folders", comment: "Share extension destination folder popup menu title"))
 		menu.autoenablesItems = false
 
 		guard let extensionContainers = extensionContainers else {

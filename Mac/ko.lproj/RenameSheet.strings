@@ -1,0 +1,11 @@
+/* Class = "NSTextFieldCell"; title = "<<Rename prompt>>"; ObjectID = "7Os-lV-Jer"; */
+"7Os-lV-Jer.title" = "<<Rename prompt>>";
+
+/* Class = "NSButtonCell"; title = "Rename"; ObjectID = "gcS-uM-zjx"; */
+"gcS-uM-zjx.title" = "이름 변경";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "oe4-cJ-2V8"; */
+"oe4-cJ-2V8.title" = "취소";
+
+/* Class = "NSWindow"; title = "Rename"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "이름 변경";

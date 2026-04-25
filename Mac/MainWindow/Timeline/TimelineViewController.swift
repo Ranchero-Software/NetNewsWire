@@ -995,7 +995,8 @@ extension TimelineViewController: NSTableViewDelegate {
 
 		switch edge {
 		case .leading:
-			let action = NSTableViewRowAction(style: .regular, title: article.status.read ? "Unread" : "Read") { (_, _) in
+			let actionTitle = article.status.read ? NSLocalizedString("Unread", comment: "Swipe action title to mark an article unread") : NSLocalizedString("Read", comment: "Swipe action title to mark an article read")
+			let action = NSTableViewRowAction(style: .regular, title: actionTitle) { (_, _) in
 				self.toggleArticleRead(article)
 				tableView.rowActionsVisible = false
 			}
@@ -1003,7 +1004,8 @@ extension TimelineViewController: NSTableViewDelegate {
 			return [action]
 
 		case .trailing:
-			let action = NSTableViewRowAction(style: .regular, title: article.status.starred ? "Unstar" : "Star") { (_, _) in
+			let actionTitle = article.status.starred ? NSLocalizedString("Unstar", comment: "Swipe action title to remove a star from an article") : NSLocalizedString("Star", comment: "Swipe action title to star an article")
+			let action = NSTableViewRowAction(style: .regular, title: actionTitle) { (_, _) in
 				self.toggleArticleStarred(article)
 				tableView.rowActionsVisible = false
 			}
