@@ -35,20 +35,18 @@ struct AccountNotificationInspectorView: View {
 					.tint(.accentColor)
 				}
 				.navigationTitle(Text("New Article Notifications", comment: "New Article Notifications"))
-				.navigationSubtitle(Text(verbatim: account.nameForDisplay))
+				.navigationSubtitleIfAvailable(account.nameForDisplay)
 				.navigationBarTitleDisplayMode(.inline)
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
-						Button(role: .close) {
-							dismiss()
-						}
+						closeButton
 					}
 				}
 			} else {
 				List(account.flattenedFeeds().sorted(by: { a, b in
 					a.nameForDisplay < b.nameForDisplay
 				}), id: \.feedID) { feed in
-					Toggle(isOn: Binding(get: { feed.isNotifyAboutNewArticles ?? false }, set: { feed.isNotifyAboutNewArticles = $0 })) {
+					Toggle(isOn: Binding(get: { feed.newArticleNotificationsEnabled }, set: { feed.newArticleNotificationsEnabled = $0 })) {
 						HStack {
 							if let img = IconImageCache.shared.imageFor(feed.sidebarItemID!) {
 								IconImageView(icon: img)
@@ -65,12 +63,10 @@ struct AccountNotificationInspectorView: View {
 				}
 				.navigationTitle(Text("New Article Notifications", comment: "New Article Notifications"))
 				.navigationBarTitleDisplayMode(.inline)
-				.navigationSubtitle(Text(verbatim: account.nameForDisplay))
+				.navigationSubtitleIfAvailable(account.nameForDisplay)
 				.toolbar {
 					ToolbarItem(placement: .topBarTrailing) {
-						Button(role: .close) {
-							dismiss()
-						}
+						closeButton
 					}
 				}
 				.onReceive(NotificationCenter.default.publisher(for: Notification.Name.feedIconDidBecomeAvailable)) { _ in
@@ -89,4 +85,31 @@ struct AccountNotificationInspectorView: View {
 			}
 		})
     }
+
+	@ViewBuilder
+	private var closeButton: some View {
+		if #available(iOS 26, *) {
+			Button(role: .close) {
+				dismiss()
+			}
+		} else {
+			Button {
+				dismiss()
+			} label: {
+				Text("Close", comment: "Close")
+			}
+		}
+	}
+}
+
+private extension View {
+
+	@ViewBuilder
+	func navigationSubtitleIfAvailable(_ subtitle: String) -> some View {
+		if #available(iOS 26, *) {
+			self.navigationSubtitle(Text(verbatim: subtitle))
+		} else {
+			self
+		}
+	}
 }
