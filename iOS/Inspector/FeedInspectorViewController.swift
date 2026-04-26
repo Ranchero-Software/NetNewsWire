@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import SafariServices
 import UserNotifications
 import RSCore
@@ -33,6 +34,12 @@ final class FeedInspectorViewController: UITableViewController {
 
 	private var shouldHideHomePageSection: Bool {
 		return feed.homePageURL == nil
+	}
+
+	private var filtersSection: Int {
+		let storyboardSections = super.numberOfSections(in: tableView)
+		let adjustedSections = shouldHideHomePageSection ? storyboardSections - 1 : storyboardSections
+		return adjustedSections
 	}
 
 	private var authorizationStatus: UNAuthorizationStatus?
@@ -130,18 +137,33 @@ extension FeedInspectorViewController {
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
 		let numberOfSections = super.numberOfSections(in: tableView)
-		return shouldHideHomePageSection ? numberOfSections - 1 : numberOfSections
+		let adjusted = shouldHideHomePageSection ? numberOfSections - 1 : numberOfSections
+		return adjusted + 1 // +1 for filters section
 	}
 
 	override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+		if section == filtersSection {
+			return 1
+		}
 		return super.tableView(tableView, numberOfRowsInSection: shift(section))
 	}
 
 	override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+		if section == filtersSection {
+			return UITableView.automaticDimension
+		}
 		return section == 0 ? ImageHeaderView.rowHeight : super.tableView(tableView, heightForHeaderInSection: shift(section))
 	}
 
 	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		if indexPath.section == filtersSection {
+			let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+			cell.textLabel?.text = NSLocalizedString("Article Filters", comment: "Article Filters")
+			let count = feed.articleFilters?.count ?? 0
+			cell.detailTextLabel?.text = count > 0 ? "\(count)" : nil
+			cell.accessoryType = .disclosureIndicator
+			return cell
+		}
 		let cell = super.tableView(tableView, cellForRowAt: shift(indexPath))
 		if indexPath.section == 0 && indexPath.row == 1 {
 			guard let label = cell.contentView.subviews.filter({ $0.isKind(of: UILabel.self) })[0] as? UILabel else {
@@ -154,10 +176,16 @@ extension FeedInspectorViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-		super.tableView(tableView, titleForHeaderInSection: shift(section))
+		if section == filtersSection {
+			return nil
+		}
+		return super.tableView(tableView, titleForHeaderInSection: shift(section))
 	}
 
 	override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+		if section == filtersSection {
+			return nil
+		}
 		if shift(section) == 0 {
 			headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: "SectionHeader") as? InspectorIconHeaderView
 			headerView?.iconView.iconImage = iconImage
@@ -168,6 +196,11 @@ extension FeedInspectorViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		if indexPath.section == filtersSection {
+			showArticleFilters()
+			tableView.deselectRow(at: indexPath, animated: true)
+			return
+		}
 		if shift(indexPath) == homePageIndexPath,
 			let homePageUrlString = feed.homePageURL,
 			let homePageUrl = URL(string: homePageUrlString) {
@@ -180,6 +213,28 @@ extension FeedInspectorViewController {
 		}
 	}
 
+	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+		if indexPath.section == filtersSection {
+			return 0
+		}
+		return super.tableView(tableView, indentationLevelForRowAt: shift(indexPath))
+	}
+
+}
+
+// MARK: Article Filters
+
+extension FeedInspectorViewController {
+
+	func showArticleFilters() {
+		let viewModel = ArticleFiltersViewModel(feed: feed)
+		let filtersView = ArticleFiltersView(viewModel: viewModel)
+		let hostingController = UIHostingController(rootView: filtersView)
+		hostingController.modalPresentationStyle = .formSheet
+		present(hostingController, animated: true) {
+			self.tableView.reloadData()
+		}
+	}
 }
 
 // MARK: UITextFieldDelegate

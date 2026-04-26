@@ -16,6 +16,7 @@ xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME_MAC" \
   -destination "$DESTINATION_MAC" \
+  CODE_SIGNING_ALLOWED=NO \
   clean build | xcbeautify --quiet
 
 echo "🛠 Building iOS target..."
@@ -23,6 +24,7 @@ OS_ACTIVITY_MODE=disable xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME_IOS" \
   -destination "$DESTINATION_IOS" \
+  CODE_SIGNING_ALLOWED=NO \
   clean build | xcbeautify --quiet
 
 echo "✅ Builds completed."
@@ -32,6 +34,7 @@ OS_ACTIVITY_MODE=disable xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME_MAC" \
   -destination "$DESTINATION_MAC" \
+  CODE_SIGNING_ALLOWED=NO \
   test 2>&1 | xcbeautify --quiet | sed '/CoreData/d;/persistence/d'
 
 echo "🎉 All builds and tests completed successfully."
