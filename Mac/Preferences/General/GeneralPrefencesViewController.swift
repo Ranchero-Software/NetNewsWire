@@ -64,6 +64,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		guard let menuItem = defaultBrowserPopup.selectedItem else {
 			return
 		}
+
 		let bundleID = menuItem.representedObject as? String
 		AppDefaults.shared.defaultBrowserID = bundleID
 		updateBrowserPopup()
@@ -151,11 +152,36 @@ private extension GeneralPreferencesViewController {
 		menu.addItem(item)
 		menu.addItem(NSMenuItem.separator())
 
+		let baseFont = NSFont.menuFont(ofSize: 0)
+		let smallFont = NSFont.menuFont(ofSize: baseFont.pointSize - 2)
+
+		let duplicates = MacWebBrowser.duplicateBrowsersNames(in: allBrowsers)
+
 		for browser in allBrowsers {
 			guard let name = browser.name else { continue }
 
 			let item = NSMenuItem(title: name, action: nil, keyEquivalent: "")
-			item.representedObject = browser.bundleIdentifier
+			item.representedObject = browser.bundlePath
+
+			// override title with attributedTitle if browser name has duplicates
+			if duplicates.contains(name) {
+				let title = NSMutableAttributedString(
+					string: name,
+					attributes: [
+						.font: NSFont.menuFont(ofSize: 0)
+					]
+				)
+
+				title.append(NSAttributedString(
+					string: " - \(MacWebBrowser.middleTruncPath(of: browser.url))",
+					attributes: [
+						.font: smallFont,
+						.foregroundColor: NSColor.secondaryLabelColor
+					]
+				))
+
+				item.attributedTitle = title
+			}
 
 			let icon = browser.icon ?? NSWorkspace.shared.icon(for: UTType.applicationBundle)
 			icon.size = NSSize(width: 16.0, height: 16.0)

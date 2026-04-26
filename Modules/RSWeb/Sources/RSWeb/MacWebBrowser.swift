@@ -41,12 +41,38 @@ import UniformTypeIdentifiers
 		let browserAppURLs = Set(httpsAppURLs).intersection(Set(htmlAppURLs))
 
 		return browserAppURLs.compactMap { MacWebBrowser(url: $0) }.sorted {
-			if let leftName = $0.name, let rightName = $1.name {
-				return leftName < rightName
+			if let leftName = $0.name, let leftPath = $0.bundlePath, let rightName = $1.name, let rightPath = $1.bundlePath {
+				return (leftName, leftPath) < (rightName, rightPath)
 			}
 
 			return false
 		}
+	}
+
+	// Returns an array of browser names that have duplicates
+	public static func duplicateBrowsersNames(in browsers: [MacWebBrowser]) -> [String?] {
+		let duplicateBrowserNames = Dictionary(grouping: browsers, by: { $0.name })
+			.filter { $1.count > 1 }
+			.map { $0.key }
+
+		return duplicateBrowserNames
+	}
+
+	public static func middleTruncPath(of url: URL) -> String {
+		let pathComponents = url.pathComponents
+		let ellipses = "…"
+		let pathThreshold = 4
+
+		// index 0 is `/` with absolute path
+		let pathStart = "\(pathComponents[0])\(pathComponents[1])"
+
+		// truncate middle with ellipses if path components exceed threshold
+		if pathComponents.count > pathThreshold {
+			let pathEnd = pathComponents[pathComponents.count - 2]
+			return "\(pathStart)/\(ellipses)/\(pathEnd)"
+		}
+
+		return pathStart
 	}
 
 	/// The filesystem URL of the default web browser.
@@ -96,9 +122,18 @@ import UniformTypeIdentifiers
 		return Bundle(url: url)?.bundleIdentifier
 	}()
 
-	/// The bundle identifier of the web browser.
+	/// The bundle identifier of the web browser (not unique if there are duplicate browsers)
 	public var bundleIdentifier: String? {
 		return _bundleIdentifier
+	}
+
+	private lazy var _bundlePath: String? = {
+		return Bundle(url: url)?.bundlePath
+	}()
+
+	/// The bundle path of the web browser
+	public var bundlePath: String? {
+		return _bundlePath
 	}
 
 	/// Initializes a `MacWebBrowser` with a URL on disk.
