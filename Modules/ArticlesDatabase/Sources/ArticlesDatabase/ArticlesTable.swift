@@ -674,6 +674,18 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 	}
 
+	/// Delete `authorsLookup` rows whose article no longer exists, then delete `authors`
+	/// rows that are no longer referenced by any `authorsLookup` row.
+	func deleteOrphanedAuthorsLookupRows() {
+		queue.runInTransaction { databaseResult in
+			guard let database = databaseResult.database else {
+				return
+			}
+			database.executeUpdate("delete from authorsLookup where articleID not in (select articleID from articles);", withArgumentsIn: nil)
+			database.executeUpdate("delete from authors where authorID not in (select distinct authorID from authorsLookup);", withArgumentsIn: nil)
+		}
+	}
+
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,
 	/// and, via a trigger, it also deletes from the search index.
