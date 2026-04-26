@@ -55,7 +55,7 @@ nonisolated private extension FetchAllUnreadCountsOperation {
 		var unreadCountDictionary = UnreadCountDictionary()
 		while resultSet.next() {
 			let unreadCount = resultSet.long(forColumnIndex: 1)
-			if let feedID = resultSet.string(forColumnIndex: 0) {
+			if let feedID = resultSet.swiftString(forColumnIndex: 0) {
 				unreadCountDictionary[feedID] = unreadCount
 			}
 		}

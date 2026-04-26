@@ -118,7 +118,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 					return
 				}
 
-				let articleIDs = resultSet.mapToSet { $0.string(forColumnIndex: 0) }
+				let articleIDs = resultSet.mapToSet { $0.swiftString(forColumnIndex: 0) }
 				DispatchQueue.main.async {
 					completion(.success(articleIDs))
 				}
@@ -180,11 +180,11 @@ final class StatusesTable: DatabaseTable, Sendable {
 	}
 
 	func articleIDWithRow(_ row: FMResultSet) -> String? {
-		return row.string(forColumn: DatabaseKey.articleID)
+		return row.swiftString(forColumn: DatabaseKey.articleID)
 	}
 
 	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
-		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+		guard let articleID = row.swiftString(forColumn: DatabaseKey.articleID) else {
 			return nil
 		}
 		return statusWithRow(row, articleID: articleID)

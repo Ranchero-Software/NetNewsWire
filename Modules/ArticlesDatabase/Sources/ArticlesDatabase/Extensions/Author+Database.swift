@@ -17,11 +17,11 @@ import RSParser
 extension Author {
 
 	init?(row: FMResultSet) {
-		let authorID = row.string(forColumn: DatabaseKey.authorID)
-		let name = row.string(forColumn: DatabaseKey.name)
-		let url = row.string(forColumn: DatabaseKey.url)
-		let avatarURL = row.string(forColumn: DatabaseKey.avatarURL)
-		let emailAddress = row.string(forColumn: DatabaseKey.emailAddress)
+		let authorID = row.swiftString(forColumn: DatabaseKey.authorID)
+		let name = row.swiftString(forColumn: DatabaseKey.name)
+		let url = row.swiftString(forColumn: DatabaseKey.url)
+		let avatarURL = row.swiftString(forColumn: DatabaseKey.avatarURL)
+		let emailAddress = row.swiftString(forColumn: DatabaseKey.emailAddress)
 
 		self.init(authorID: authorID, name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
 	}

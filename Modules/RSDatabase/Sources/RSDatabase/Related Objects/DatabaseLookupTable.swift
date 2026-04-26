@@ -221,10 +221,10 @@ private extension DatabaseLookupTable {
 
 	func lookupValueWithRow(_ row: FMResultSet) -> LookupValue? {
 
-		guard let objectID = row.string(forColumn: objectIDKey) else {
+		guard let objectID = row.swiftString(forColumn: objectIDKey) else {
 			return nil
 		}
-		guard let relatedObjectID = row.string(forColumn: relatedObjectIDKey) else {
+		guard let relatedObjectID = row.swiftString(forColumn: relatedObjectIDKey) else {
 			return nil
 		}
 		return LookupValue(objectID: objectID, relatedObjectID: relatedObjectID)

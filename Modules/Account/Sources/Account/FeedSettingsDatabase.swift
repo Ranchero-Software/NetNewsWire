@@ -121,7 +121,7 @@ final class FeedSettingsDatabase: Sendable {
 
 			var rows = [String: Row]()
 			while resultSet.next() {
-				if let feedURL = resultSet.string(forColumn: "feedURL") {
+				if let feedURL = resultSet.swiftString(forColumn: "feedURL") {
 					rows[feedURL] = self.row(from: resultSet)
 				}
 			}
@@ -249,8 +249,8 @@ private extension FeedSettingsDatabase {
 	"""
 
 	func row(from resultSet: FMResultSet) -> Row {
-		let lastModified = resultSet.string(forColumn: Column.conditionalGetInfoLastModified.rawValue)
-		let etag = resultSet.string(forColumn: Column.conditionalGetInfoEtag.rawValue)
+		let lastModified = resultSet.swiftString(forColumn: Column.conditionalGetInfoLastModified.rawValue)
+		let etag = resultSet.swiftString(forColumn: Column.conditionalGetInfoEtag.rawValue)
 
 		var conditionalGetInfoDate: Date?
 		if !resultSet.columnIsNull(Column.conditionalGetInfoDate.rawValue) {
@@ -265,14 +265,14 @@ private extension FeedSettingsDatabase {
 		}
 
 		var authors: [Author]?
-		if let authorsJSON = resultSet.string(forColumn: Column.authors.rawValue) {
+		if let authorsJSON = resultSet.swiftString(forColumn: Column.authors.rawValue) {
 			if let authorsSet = Author.authorsWithJSON(authorsJSON) {
 				authors = Array(authorsSet)
 			}
 		}
 
 		var folderRelationship: [String: String]?
-		if let folderJSON = resultSet.string(forColumn: Column.folderRelationship.rawValue) {
+		if let folderJSON = resultSet.swiftString(forColumn: Column.folderRelationship.rawValue) {
 			if let data = folderJSON.data(using: .utf8) {
 				folderRelationship = try? JSONSerialization.jsonObject(with: data) as? [String: String]
 			}
@@ -284,19 +284,19 @@ private extension FeedSettingsDatabase {
 		}
 
 		return Row(
-			feedID: resultSet.string(forColumn: Column.feedID.rawValue) ?? "",
-			homePageURL: resultSet.string(forColumn: Column.homePageURL.rawValue),
-			iconURL: resultSet.string(forColumn: Column.iconURL.rawValue),
-			faviconURL: resultSet.string(forColumn: Column.faviconURL.rawValue),
-			editedName: resultSet.string(forColumn: Column.editedName.rawValue),
-			contentHash: resultSet.string(forColumn: Column.contentHash.rawValue),
+			feedID: resultSet.swiftString(forColumn: Column.feedID.rawValue) ?? "",
+			homePageURL: resultSet.swiftString(forColumn: Column.homePageURL.rawValue),
+			iconURL: resultSet.swiftString(forColumn: Column.iconURL.rawValue),
+			faviconURL: resultSet.swiftString(forColumn: Column.faviconURL.rawValue),
+			editedName: resultSet.swiftString(forColumn: Column.editedName.rawValue),
+			contentHash: resultSet.swiftString(forColumn: Column.contentHash.rawValue),
 			newArticleNotificationsEnabled: resultSet.bool(forColumn: Column.newArticleNotificationsEnabled.rawValue),
 			readerViewAlwaysEnabled: resultSet.bool(forColumn: Column.readerViewAlwaysEnabled.rawValue),
 			authors: authors,
 			conditionalGetInfo: HTTPConditionalGetInfo(lastModified: lastModified, etag: etag),
 			conditionalGetInfoDate: conditionalGetInfoDate,
 			cacheControlInfo: cacheControlInfo,
-			externalID: resultSet.string(forColumn: Column.externalID.rawValue),
+			externalID: resultSet.swiftString(forColumn: Column.externalID.rawValue),
 			folderRelationship: folderRelationship,
 			lastCheckDate: lastCheckDate
 		)

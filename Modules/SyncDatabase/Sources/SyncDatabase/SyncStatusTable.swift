@@ -101,8 +101,8 @@ struct SyncStatusTable {
 private extension SyncStatusTable {
 
 	static func statusWithRow(_ row: FMResultSet) -> SyncStatus? {
-		guard let articleID = row.string(forColumn: DatabaseKey.articleID),
-			let rawKey = row.string(forColumn: DatabaseKey.key),
+		guard let articleID = row.swiftString(forColumn: DatabaseKey.articleID),
+			let rawKey = row.swiftString(forColumn: DatabaseKey.key),
 			let key = SyncStatus.Key(rawValue: rawKey) else {
 				return nil
 		}
@@ -119,7 +119,7 @@ private extension SyncStatusTable {
 			return nil
 		}
 
-		let articleIDs = resultSet.mapToSet { $0.string(forColumnIndex: 0) }
+		let articleIDs = resultSet.mapToSet { $0.swiftString(forColumnIndex: 0) }
 		return articleIDs
 	}
 }

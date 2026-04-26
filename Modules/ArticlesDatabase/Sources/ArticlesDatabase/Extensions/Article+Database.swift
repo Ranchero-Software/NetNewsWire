@@ -15,27 +15,27 @@ import RSParser
 extension Article {
 
 	convenience init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
-		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+		guard let articleID = row.swiftString(forColumn: DatabaseKey.articleID) else {
 			assertionFailure("Expected articleID.")
 			return nil
 		}
-		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
+		guard let feedID = row.swiftString(forColumn: DatabaseKey.feedID) else {
 			assertionFailure("Expected feedID.")
 			return nil
 		}
-		guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
+		guard let uniqueID = row.swiftString(forColumn: DatabaseKey.uniqueID) else {
 			assertionFailure("Expected uniqueID.")
 			return nil
 		}
 
-		let title = row.string(forColumn: DatabaseKey.title)
-		let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
-		let contentText = row.string(forColumn: DatabaseKey.contentText)
-		let markdown = row.string(forColumn: DatabaseKey.markdown)
-		let url = row.string(forColumn: DatabaseKey.url)
-		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
-		let summary = row.string(forColumn: DatabaseKey.summary)
-		let imageURL = row.string(forColumn: DatabaseKey.imageURL)
+		let title = row.swiftString(forColumn: DatabaseKey.title)
+		let contentHTML = row.swiftString(forColumn: DatabaseKey.contentHTML)
+		let contentText = row.swiftString(forColumn: DatabaseKey.contentText)
+		let markdown = row.swiftString(forColumn: DatabaseKey.markdown)
+		let url = row.swiftString(forColumn: DatabaseKey.url)
+		let externalURL = row.swiftString(forColumn: DatabaseKey.externalURL)
+		let summary = row.swiftString(forColumn: DatabaseKey.summary)
+		let imageURL = row.swiftString(forColumn: DatabaseKey.imageURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 

@@ -175,12 +175,12 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
 		if let resultSet = database.executeQuery(self.articleSearchInfosQuery(with: placeholders), withArgumentsIn: parameters) {
 			return resultSet.mapToSet { (row) -> ArticleSearchInfo? in
-				let articleID = row.string(forColumn: DatabaseKey.articleID)!
-				let title = row.string(forColumn: DatabaseKey.title)
-				let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
-				let contentText = row.string(forColumn: DatabaseKey.contentText)
-				let summary = row.string(forColumn: DatabaseKey.summary)
-				let authorsNames = row.string(forColumn: DatabaseKey.authors)
+				let articleID = row.swiftString(forColumn: DatabaseKey.articleID)!
+				let title = row.swiftString(forColumn: DatabaseKey.title)
+				let contentHTML = row.swiftString(forColumn: DatabaseKey.contentHTML)
+				let contentText = row.swiftString(forColumn: DatabaseKey.contentText)
+				let summary = row.swiftString(forColumn: DatabaseKey.summary)
+				let authorsNames = row.swiftString(forColumn: DatabaseKey.authors)
 
 				let searchRowIDObject = row.object(forColumnName: DatabaseKey.searchRowID)
 				var searchRowID: Int?
@@ -403,7 +403,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				var unreadCountDictionary = UnreadCountDictionary()
 				while resultSet.next() {
 					let unreadCount = resultSet.long(forColumnIndex: 1)
-					if let feedID = resultSet.string(forColumnIndex: 0) {
+					if let feedID = resultSet.swiftString(forColumnIndex: 0) {
 						unreadCountDictionary[feedID] = unreadCount
 					}
 				}
@@ -578,7 +578,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 					return
 				}
-				let articleIDs = resultSet.mapToSet { $0.string(forColumn: DatabaseKey.articleID) }
+				let articleIDs = resultSet.mapToSet { $0.swiftString(forColumn: DatabaseKey.articleID) }
 				if articleIDs.isEmpty {
 					return
 				}
@@ -702,7 +702,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 					return
 				}
-				let articleIDs = resultSet.mapToSet { $0.string(forColumn: DatabaseKey.articleID) }
+				let articleIDs = resultSet.mapToSet { $0.swiftString(forColumn: DatabaseKey.articleID) }
 				if articleIDs.isEmpty {
 					return
 				}
@@ -798,7 +798,7 @@ nonisolated private extension ArticlesTable {
 
 		while resultSet.next() {
 
-			guard let articleID = resultSet.string(forColumn: DatabaseKey.articleID) else {
+			guard let articleID = resultSet.swiftString(forColumn: DatabaseKey.articleID) else {
 				assertionFailure("Expected articleID.")
 				continue
 			}

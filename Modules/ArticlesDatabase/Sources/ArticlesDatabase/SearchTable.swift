@@ -153,8 +153,8 @@ private extension SearchTable {
 
 		init(row: FMResultSet) {
 			self.rowID = Int(row.longLongInt(forColumn: DatabaseKey.rowID))
-			self.title = row.string(forColumn: DatabaseKey.title) ?? ""
-			self.body = row.string(forColumn: DatabaseKey.body) ?? ""
+			self.title = row.swiftString(forColumn: DatabaseKey.title) ?? ""
+			self.body = row.swiftString(forColumn: DatabaseKey.body) ?? ""
 		}
 
 		// MARK: Hashable
