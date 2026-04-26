@@ -31,6 +31,6 @@ let package = Package(
 		),
 		.testTarget(
 			name: "RSDatabaseTests",
-			dependencies: ["RSDatabase"])
+			dependencies: ["RSDatabase", "RSDatabaseObjC"])
 	]
 )
