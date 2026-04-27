@@ -265,17 +265,15 @@ private extension FeedSettingsDatabase {
 		}
 
 		var authors: [Author]?
-		if let authorsJSON = resultSet.swiftString(forColumn: Column.authors.rawValue) {
-			if let authorsSet = Author.authorsWithJSON(authorsJSON) {
+		if let authorsData = resultSet.data(forColumn: Column.authors.rawValue) {
+			if let authorsSet = Author.authorsWithJSON(authorsData) {
 				authors = Array(authorsSet)
 			}
 		}
 
 		var folderRelationship: [String: String]?
-		if let folderJSON = resultSet.swiftString(forColumn: Column.folderRelationship.rawValue) {
-			if let data = folderJSON.data(using: .utf8) {
-				folderRelationship = try? JSONSerialization.jsonObject(with: data) as? [String: String]
-			}
+		if let folderData = resultSet.data(forColumn: Column.folderRelationship.rawValue) {
+			folderRelationship = try? JSONSerialization.jsonObject(with: folderData) as? [String: String]
 		}
 
 		var lastCheckDate: Date?

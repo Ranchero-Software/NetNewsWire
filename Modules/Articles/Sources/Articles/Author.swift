@@ -35,18 +35,16 @@ public struct Author: Codable, Hashable, Sendable {
 		}
 	}
 
-	public static func authorsWithJSON(_ jsonString: String) -> Set<Author>? {
+	public static func authorsWithJSON(_ data: Data) -> Set<Author>? {
 		// This is JSON stored in the database, not the JSON Feed version of an author.
-		guard let data = jsonString.data(using: .utf8) else {
-			return nil
-		}
-
+		// Sometimes this shows up as the site of a leak. It’s a real leak, but small.
+		// The leak appears to be in Apple code.
 		let decoder = JSONDecoder()
 		do {
 			let authors = try decoder.decode([Author].self, from: data)
 			return Set(authors)
 		} catch {
-			assertionFailure("JSON representation of Author array could not be decoded: \(jsonString) error: \(error)")
+			assertionFailure("JSON representation of Author array could not be decoded, error: \(error)")
 		}
 		return nil
 	}
