@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.0.5 build 7053 27 Apr 2026 — branch: main tag: iOS-7.0.5-7053
+
+Added notifications settings feature — long-press on an account in the Feeds list, choose Notifications, then toggle notifications per feed
+Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
+Made timeline fetches faster and use less memory for articles
+Added additional database cleanup code at startup — now gets rid of unused author data
+Reverted a webview-cache-emptying change (in 7051) that triggered an intermittent bug where the article view could be blank
+
 ### 7.0.5 build 7052 24 Apr 2026 — branch: main tag: iOS-7.0.5-7052
 
 Fixed a bug that could cause the timeline to always be empty (on iOS) even though there are unread counts in the sidebar
