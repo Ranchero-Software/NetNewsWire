@@ -230,11 +230,10 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 	}
 
 	public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-		guard let windowScrollY else {
-			return
+		if let windowScrollY {
+			webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
+			self.windowScrollY = nil
 		}
-		webView.evaluateJavaScript("window.scrollTo(0, \(windowScrollY));")
-		self.windowScrollY = nil
 	}
 
 	// WKUIDelegate
@@ -296,17 +295,72 @@ private extension DetailWebViewController {
 			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
 		}
 
+		var bodyHTML = rendering.html
+		var requestTranslation = false
+		var textToTranslate = ""
+
+		if let article = self.article, UserDefaults.standard.bool(forKey: "OllamaAutoTranslate") {
+			textToTranslate = article.body ?? ""
+			if case .extracted(_, let extractedArticle, _) = state, let content = extractedArticle.content {
+				textToTranslate = content
+			}
+			textToTranslate = textToTranslate.strippingHTML(maxCharacters: 4000)
+			
+			if !textToTranslate.isEmpty {
+				if let cached = OllamaClient.shared.cachedTranslation(articleID: article.articleID) {
+					bodyHTML += "<hr id='ollama-divider' style='margin: 2em 0;'><div id='ollama-translation'>\(cached)</div>"
+				} else {
+					bodyHTML += "<hr id='ollama-divider' style='margin: 2em 0;'><div id='ollama-translation'><i>Translating...</i></div>"
+					requestTranslation = true
+				}
+			}
+		}
+
 		let substitutions = [
 			"title": rendering.title,
 			"baseURL": rendering.baseURL,
 			"style": rendering.style,
-			"body": rendering.html
+			"body": bodyHTML
 		]
 
 		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
 		WebViewConfiguration.addContentBlockingRules(to: webView)
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
+
+		if requestTranslation {
+			OllamaClient.shared.translate(articleID: self.article!.articleID, text: textToTranslate) { [weak self, articleID = self.article!.articleID] result in
+				DispatchQueue.main.async {
+					guard let self = self, self.article?.articleID == articleID else { return }
+					if case .success(let translated) = result {
+						self.injectTranslation(translated)
+					} else if case .failure(let error) = result {
+						self.injectTranslation("<i>Translation failed: \(error.localizedDescription)</i>")
+					}
+				}
+			}
+		}
+	}
+
+	func injectTranslation(_ translatedText: String) {
+		let encoded = translatedText
+			.replacingOccurrences(of: "\\", with: "\\\\")
+			.replacingOccurrences(of: "\"", with: "\\\"")
+			.replacingOccurrences(of: "\n", with: "\\n")
+			.replacingOccurrences(of: "\r", with: "\\r")
+		
+		let js = """
+			function updateTranslation() {
+				var translationDiv = document.getElementById('ollama-translation');
+				if (translationDiv) {
+					translationDiv.innerText = \"\(encoded)\";
+				} else {
+					setTimeout(updateTranslation, 100);
+				}
+			}
+			updateTranslation();
+		"""
+		webView.evaluateJavaScript(js)
 	}
 
 	func fetchScrollInfo() async -> ScrollInfo? {

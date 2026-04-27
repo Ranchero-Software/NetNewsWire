@@ -399,7 +399,12 @@ final class AppDefaults: Sendable {
 										Key.confirmMarkAllAsRead: true,
 										Key.articleContentJavascriptEnabled: true,
 										Key.currentThemeName: Self.defaultThemeName,
-									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue]
+									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue,
+									   Key.ollamaBaseURL: "http://localhost:11434/api",
+									   Key.ollamaModel: "llama3",
+									   Key.ollamaPreferredLanguage: "Chinese",
+									   Key.ollamaPreloadCount: 10,
+									   Key.ollamaAutoTranslate: false]
 		AppDefaults.store.register(defaults: defaults)
 	}
 }
