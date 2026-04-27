@@ -500,6 +500,10 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 // MARK: - UICollectionViewDelegate
 
 extension MainTimelineModernViewController: UICollectionViewDelegate {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		prefetchThumbnailsAroundVisibleRows()
+	}
+
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		if let dataSource {
@@ -646,10 +650,26 @@ private extension MainTimelineModernViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(thumbnailImageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: nil)
 	}
 
-	private func configureSearchController() {
-		// Setup the Search Controller
+	@objc private func thumbnailImageDidBecomeAvailable(_ note: Notification) {
+		guard let urlStr = note.userInfo?[UserInfoKey.url] as? String,
+			  let collectionView,
+			  let dataSource else {
+			return
+		}
+		let articlesToReload = collectionView.indexPathsForVisibleItems.compactMap {
+			dataSource.itemIdentifier(for: $0)
+		}.filter {
+			$0.firstBodyImageURL?.absoluteString == urlStr
+		}
+		if !articlesToReload.isEmpty {
+			reloadCells(articlesToReload)
+		}
+	}
+
+	private func configureSearchController() {		// Setup the Search Controller
 		searchController.delegate = self
 		searchController.searchResultsUpdater = self
 		searchController.obscuresBackgroundDuringPresentation = false
@@ -902,6 +922,25 @@ private extension MainTimelineModernViewController {
 			}
 		}
 		updateToolbarProgressView()
+	}
+
+	private func prefetchThumbnailsAroundVisibleRows() {
+		guard let collectionView, let dataSource else {
+			return
+		}
+		let visibleRows = collectionView.indexPathsForVisibleItems.map { $0.row }
+		guard !visibleRows.isEmpty else {
+			return
+		}
+		let minRow = max(0, (visibleRows.min() ?? 0) - 5)
+		let maxRow = (visibleRows.max() ?? 0) + 5
+		for row in minRow...maxRow {
+			guard let article = dataSource.itemIdentifier(for: IndexPath(row: row, section: 0)),
+				  let thumbnailURL = article.firstBodyImageURL else {
+				continue
+			}
+			ImageDownloader.shared.image(for: thumbnailURL.absoluteString)
+		}
 	}
 
 	func resetUI(resetScroll: Bool) {

@@ -20,6 +20,14 @@ final class TimelineTableCellView: NSTableCellView {
 
 	private lazy var iconView = IconView()
 
+	private lazy var thumbnailView: NSView = {
+		let v = NSView(frame: .zero)
+		v.wantsLayer = true
+		v.layer?.contentsGravity = .resizeAspectFill
+		v.layer?.masksToBounds = true
+		return v
+	}()
+
 	private var starView = TimelineTableCellView.imageView(with: Assets.Images.timelineStarUnselected, scaling: .scaleNone)
 
 	private lazy var textFields = {
@@ -31,6 +39,7 @@ final class TimelineTableCellView: NSTableCellView {
 			if cellAppearance != oldValue {
 				updateTextFieldFonts()
 				iconView.layer?.cornerRadius = cellAppearance.iconCornerRadius
+				thumbnailView.layer?.cornerRadius = cellAppearance.thumbnailCornerRadius
 				needsLayout = true
 			}
 		}
@@ -107,6 +116,13 @@ final class TimelineTableCellView: NSTableCellView {
 		feedNameView.setFrame(ifNotEqualTo: layoutRects.feedNameRect)
 		iconView.setFrame(ifNotEqualTo: layoutRects.iconImageRect)
 		starView.setFrame(ifNotEqualTo: layoutRects.starRect)
+
+		if layoutRects.thumbnailRect == .zero {
+			hideView(thumbnailView)
+		} else {
+			showView(thumbnailView)
+			thumbnailView.setFrame(ifNotEqualTo: layoutRects.thumbnailRect)
+		}
 	}
 }
 
@@ -188,6 +204,7 @@ private extension TimelineTableCellView {
 		addSubviewAtInit(feedNameView, hidden: true)
 		addSubviewAtInit(iconView, hidden: true)
 		addSubviewAtInit(starView, hidden: true)
+		addSubviewAtInit(thumbnailView, hidden: true)
 
 		makeTextFieldColorsNormal()
 	}
@@ -240,15 +257,18 @@ private extension TimelineTableCellView {
 	}
 
 	func updateFeedNameView() {
+		let name: String
 		switch cellData.showFeedName {
 		case .byline:
-			showView(feedNameView)
-			updateTextFieldText(feedNameView, cellData.byline)
-		case .feed:
-			showView(feedNameView)
-			updateTextFieldText(feedNameView, cellData.feedName)
-		case .none:
+			name = cellData.byline.isEmpty ? cellData.feedName : cellData.byline
+		case .feed, .none:
+			name = cellData.feedName
+		}
+		if name.isEmpty {
 			hideView(feedNameView)
+		} else {
+			showView(feedNameView)
+			updateTextFieldText(feedNameView, name)
 		}
 	}
 
@@ -315,5 +335,20 @@ private extension TimelineTableCellView {
 		updateUnreadIndicator()
 		updateStarView()
 		updateIcon()
+		updateThumbnail()
+	}
+
+	func updateThumbnail() {
+		guard let url = cellData?.thumbnailURL else {
+			thumbnailView.layer?.contents = nil
+			return
+		}
+		guard let data = ImageDownloader.shared.image(for: url.absoluteString),
+			  let nsImage = NSImage(data: data),
+			  let cgImage = nsImage.cgImage(forProposedRect: nil, context: nil, hints: nil) else {
+			thumbnailView.layer?.contents = nil
+			return
+		}
+		thumbnailView.layer?.contents = cgImage
 	}
 }

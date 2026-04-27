@@ -87,6 +87,61 @@ extension Article {
 		return contentHTML ?? contentText ?? summary
 	}
 
+	var firstBodyImageURL: URL? {
+		if let imageURL {
+			return imageURL
+		}
+		guard let html = contentHTML else {
+			return nil
+		}
+		// Try each attribute in priority order: data-src (lazy-load), src
+		for regex in [Article.imgDataSrcRegex, Article.imgSrcRegex] {
+			guard let match = regex.firstMatch(in: html, range: NSRange(html.startIndex..., in: html)),
+				  let range = Range(match.range(at: 1), in: html) else {
+				continue
+			}
+			let raw = String(html[range])
+				.trimmingCharacters(in: .whitespaces)
+				.rsparser_stringByDecodingHTMLEntities()
+			guard !raw.isEmpty, !raw.hasPrefix("data:") else {
+				continue
+			}
+			if let resolved = Article.resolveImageSrc(raw, articleURL: url) {
+				return resolved
+			}
+		}
+		return nil
+	}
+
+	private static func resolveImageSrc(_ src: String, articleURL: URL?) -> URL? {
+		// Protocol-relative: //cdn.example.com/img.jpg
+		if src.hasPrefix("//") {
+			return URL(string: "https:" + src)
+		}
+		// Absolute URL
+		if src.hasPrefix("http://") || src.hasPrefix("https://") {
+			return URL.encodeSpacesIfNeeded(src)
+		}
+		// Relative URL — resolve against article URL
+		if let base = articleURL {
+			return URL(string: src, relativeTo: base)?.absoluteURL
+		}
+		return nil
+	}
+
+	// Matches data-src="..." or data-src='...' (lazy-load pattern common in WeChat etc.)
+	private static let imgDataSrcRegex: NSRegularExpression = {
+		// swiftlint:disable force_try
+		return try! NSRegularExpression(pattern: #"<img[^>]+data-src=["']([^"']+)["']"#, options: [.caseInsensitive])
+		// swiftlint:enable force_try
+	}()
+
+	private static let imgSrcRegex: NSRegularExpression = {
+		// swiftlint:disable force_try
+		return try! NSRegularExpression(pattern: #"<img[^>]*\ssrc=["']([^"']+)["']"#, options: [.caseInsensitive])
+		// swiftlint:enable force_try
+	}()
+
 	var logicalDatePublished: Date {
 		return datePublished ?? dateModified ?? status.dateArrived
 	}
