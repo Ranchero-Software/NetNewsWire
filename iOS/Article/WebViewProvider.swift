@@ -27,10 +27,6 @@ import WebKit
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
 	}
 
-	func flushQueue() {
-		queue.removeAllObjects()
-	}
-
 	func dequeueWebView(completion: @escaping (PreloadedWebView) -> Void) {
 		operationQueue.add(WebViewProviderDequeueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler, completion: completion))
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))

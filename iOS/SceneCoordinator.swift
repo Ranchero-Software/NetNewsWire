@@ -603,7 +603,6 @@ struct SidebarItemNode: Hashable, Sendable {
 		if !fetchRequestQueue.isAnyCurrentRequest {
 			queueFetchAndMergeArticles()
 		}
-		webViewProvider.replenishQueueIfNeeded()
 	}
 
 	@objc func importDownloadedTheme(_ note: Notification) {
@@ -744,7 +743,6 @@ struct SidebarItemNode: Hashable, Sendable {
 		fetchAndMergeArticlesQueue.performCallsImmediately()
 		rebuildBackingStoresQueue.performCallsImmediately()
 		fetchRequestQueue.cancelAllRequests()
-		webViewProvider.flushQueue()
 	}
 
 	func saveExpandedContainers() {
