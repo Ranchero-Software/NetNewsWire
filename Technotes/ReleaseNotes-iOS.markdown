@@ -2,11 +2,42 @@
 
 ### 7.0.5 build 7053 27 Apr 2026 — branch: main tag: iOS-7.0.5-7053
 
+This was originally a TestFlight release. It was submitted to the App Store as the 7.0.5 release version on 28 April 2026.
+
+Changes in this build:
+
 Added notifications settings feature — long-press on an account in the Feeds list, choose Notifications, then toggle notifications per feed
 Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
 Made timeline fetches faster and use less memory for articles
 Added additional database cleanup code at startup — now gets rid of unused author data
 Reverted a webview-cache-emptying change (in 7051) that triggered an intermittent bug where the article view could be blank
+
+Changes since 7.0.4:
+
+Added notifications settings feature — long-press on an account in the Feeds list, choose Notifications, then toggle notifications per feed
+Fixed a bug that could cause the timeline to always be empty even though there are unread counts in the sidebar
+Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
+Added Biblioteca, Tiqoe Dark, and Verdana Revival themes
+Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
+Made timeline fetches faster and use less memory for articles
+Made various other string manipulation functions faster that are used in generating timeline cells (scrolling performance enhancement)
+Added additional database cleanup code at startup — now gets rid of unused author data
+Fixed bug generating feed image thumbnail when image is indexed-color 4-bit palette .ico (Club iGen icon, for instance)
+Made images in the timeline always use aspect-fit
+Replaced C-based Markdown renderer/parser with safer Swift-based parser/renderer
+Replaced C-based date parser with safer Swift-based parser (which is also an order of magnitude faster)
+Started handling dates like 2020/1/10 in the date parser (even though those dates are invalid, they appear in the wild)
+Started handling non-valid two-digit years in pubDate — they would be parsed as (for instance) the year 26 instead of 2026, and now they’re parsed as 2026
+Replaced C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) with safer Swift-based parsers (which are also faster)
+Removed dependency on libxml2
+Replaced C code to strip HTML with safer Swift code (which is faster)
+Replaced Objective-C code to decode entities with faster Swift code
+Turned off autocorrection for several username fields in various account settings
+Fixed a bug in the sidebar where the wrong background colors could appear at top and bottom of the screen
+Fixed a fullscreen article view bug on Pro Max iPhones
+Fixed bug with fullscreen articles not expanding to cover the bottom toolbar
+Expanded the hit detection area for the reader view button
+Fixed bug with layout of the Sync Content of Unread Articles setting in iCloud account settings
 
 ### 7.0.5 build 7052 24 Apr 2026 — branch: main tag: iOS-7.0.5-7052
 
