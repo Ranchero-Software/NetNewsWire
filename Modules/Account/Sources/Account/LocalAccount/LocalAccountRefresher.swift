@@ -241,6 +241,24 @@ private extension LocalAccountRefresher {
 	/// use of the Twitter API. (Which Twitter took away.)
 	static let badHosts = ["twitter.com", "www.twitter.com", "x.com", "www.x.com"]
 
+	/// Hosts that are exempt from the 29-minute minimum between refreshes.
+	/// For these we use Cache-Control (when present) for the minimum.
+	/// The 5-hour Cache-Control cap in
+	/// `feedShouldBeSkippedForCacheControlReasons` still applies.
+	///
+	/// We have permissions from the feed owners for each of these.
+	///
+	/// One possible future is that we decide that any feed that has
+	/// Cache-Control headers should be exempt from the 29-minute
+	/// minimum — instead we’d just use whatever Cache-Control says.
+	static let domainsWithNoMinimumTime: Set<String> = [
+		"inessential.com", "ranchero.com", "netnewswire.blog",
+		"daringfireball.net", "redsweater.com", "indiestack.com",
+		"blog.plunkitup.com", "bitsplitting.org", "allenpike.com",
+		"hypercritical.co", "micro.inessential.com", "discourse.netnewswire.com",
+		"onefoottsunami.com"
+	]
+
 	/// Return true if we won’t download that feed.
 	static func feedIsDisallowed(_ feed: Feed) -> Bool {
 
@@ -253,7 +271,7 @@ private extension LocalAccountRefresher {
 
 		for badHost in badHosts {
 			if lowercaseHost == badHost {
-				Self.logger.info("LocalAccountRefresher: Dropping request becasue it’s X/Twitter, which doesn’t provide feeds: \(feed.url)")
+				Self.logger.info("LocalAccountRefresher: Dropping request because it’s X/Twitter, which doesn’t provide feeds: \(feed.url)")
 				return true
 			}
 		}
@@ -271,6 +289,10 @@ private extension LocalAccountRefresher {
 
 	static func feedShouldBeSkippedForTimingReasons(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
 		guard let lastCheckDate = feed.lastCheckDate else {
+			return false
+		}
+
+		if SpecialCase.urlStringMatchesDomain(feed.url, Array(domainsWithNoMinimumTime)) {
 			return false
 		}
 

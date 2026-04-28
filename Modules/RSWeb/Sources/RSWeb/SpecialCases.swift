@@ -24,6 +24,21 @@ nonisolated public struct SpecialCase {
 		}
 		return false
 	}
+
+	/// Returns true if the URL’s host matches one of the supplied domain names exactly.
+	/// Unlike `urlStringContainSpecialCase`, this checks only the host component — not the path or query.
+	/// The supplied `domains` are assumed to already be lowercased.
+	public static func urlStringMatchesDomain(_ urlString: String, _ domains: [String]) -> Bool {
+		guard let url = URL(string: urlString), let host = url.host()?.lowercased(with: localeForLowercasing) else {
+			return false
+		}
+		for domain in domains {
+			if host == domain {
+				return true
+			}
+		}
+		return false
+	}
 }
 
 nonisolated extension URL {
