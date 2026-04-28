@@ -7,6 +7,36 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.5</title>
+            <description><![CDATA[
+				 <p>Changes since 7.0.4:</p>
+  				 <ul>
+				  <li>Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
+				  <li>Added paths to default browser popup in settings, for when there are duplicate names, so you can tell which instance of Firefox (or whatever) is which
+				  <li>Added Biblioteca, Tiqoe Dark, and Verdana Revival themes
+				  <li>Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
+				  <li>Made timeline fetches faster and use less memory for articles
+				  <li>Made various other string manipulation functions faster that are used in generating timeline cells (scrolling performance enhancement)
+				  <li>Added additional database cleanup code at startup — now gets rid of unused author data
+				  <li>Fixed bug generating feed image thumbnail when image is indexed-color 4-bit palette .ico (Club iGen icon, for instance)
+				  <li>Made images in the timeline always use aspect-fit
+				  <li>Added incremental searching to the Error Log window
+				  <li>Replaced C-based Markdown renderer/parser with safer Swift-based parser/renderer
+				  <li>Replaced C-based date parser with safer Swift-based parser (which is also an order of magnitude faster)
+				  <li>Started handling dates like 2020/1/10 in the date parser (even though those dates are invalid, they appear in the wild)
+				  <li>Started handling non-valid two-digit years in pubDate — they would be parsed as (for instance) the year 26 instead of 2026, and now they’re parsed as 2026
+				  <li>Replaced C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) with safer Swift-based parsers (which are also faster)
+				  <li>Removed dependency on libxml2
+				  <li>Replaced C code to strip HTML with safer Swift code (which is faster)
+				  <li>Replaced Objective-C code to decode entities with faster Swift code
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 28 Apr 2026 09:50:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.5/NetNewsWire7.0.5.zip" sparkle:version="7054" sparkle:shortVersionString="7.0.5" length="10266451" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.5b3</title>
             <description><![CDATA[
   				<ul>
