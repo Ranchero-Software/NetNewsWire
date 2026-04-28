@@ -7,28 +7,18 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.0.5b2</title>
+			<title>NetNewsWire 7.0.5b3</title>
             <description><![CDATA[
   				<ul>
-				  <li>Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
-				  <li>Fixed bug generating feed image thumbnail when image is indexed-color 4-bit palette .ico (Club iGen icon, for instance)
-				  <li>Made images in the timeline always use aspect-fit
-				  <li>Improved table rendering in Biblioteca theme
-				  <li>Added some images caches to empty on going to background
-				  <li>Started removing some webviews on going to background
-				  <li>Added incremental searching to the Error Log window
-				  <li>Replaced unsafe C-based Markdown renderer/parser with safer Swift-based parser/renderer
-				  <li>Replaced unsafe C-based date parser with safer Swift-based parser (which is also an order of magnitude faster)
-				  <li>Started handling dates like 2020/1/10 in the date parser (even though those dates are invalid, they appear in the wild)
-				  <li>Replaced unsafe C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) with safer Swift-based parsers (which are also faster)
-				  <li>Removed dependency on libxml2
-				  <li>Replaced unsafe C code to strip HTML with safer Swift code (which is faster)
-				  <li>Replaced Objective-C code to decode entities with faster Swift code
-				  <li>Made various other string manipulation functions faster that are used in generating timeline cells (scrolling performance enhancement)
+				  <li>Added paths to default browser popup in settings, for when there are duplicate names, so you can tell which instance of Firefox (or whatever) is which
+				  <li>Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
+				  <li>Made timeline fetches faster and use less memory for articles
+				  <li>Added additional database cleanup code at startup — now gets rid of unused author data
+				  <li>Made the date parser a little faster (which makes the feed parsers a little faster)
 				</ul>
 			]]></description>
-        	<pubDate>Thu, 23 Apr 2026 09:25:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.5b2/NetNewsWire7.0.5b2.zip" sparkle:version="7051" sparkle:shortVersionString="7.0.5b2" length="10260976" type="application/zip" />
+        	<pubDate>Mon, 27 Apr 2026 21:05:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.5b3/NetNewsWire7.0.5b3.zip" sparkle:version="7053" sparkle:shortVersionString="7.0.5b3" length="10266365" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
