@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+### 7.0.5b3 7053 27 Apr 2026 — branch: main tag: mac-7.0.5b3
+
+Added paths to default browser popup in settings, for when there are duplicate names, so you can tell which instance of Firefox (or whatever) is which
+Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
+Made timeline fetches faster and use less memory for articles
+Added additional database cleanup code at startup — now gets rid of unused author data
+Made the date parser a little faster (which makes the feed parsers a little faster)
+
 ### 7.0.5b2 7051 23 Apr 2026 — branch: main tag: mac-7.0.5b2
 
 Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
