@@ -155,7 +155,7 @@ private extension GeneralPreferencesViewController {
 		let baseFont = NSFont.menuFont(ofSize: 0)
 		let smallFont = NSFont.menuFont(ofSize: baseFont.pointSize - 2)
 
-		let duplicates = MacWebBrowser.duplicateBrowsersNames(in: allBrowsers)
+		let duplicates = MacWebBrowser.duplicateBrowserNames(in: allBrowsers)
 
 		for browser in allBrowsers {
 			guard let name = browser.name else { continue }
@@ -173,7 +173,7 @@ private extension GeneralPreferencesViewController {
 				)
 
 				title.append(NSAttributedString(
-					string: " - \(MacWebBrowser.middleTruncPath(of: browser.url))",
+					string: " - \(MacWebBrowser.displayPath(of: browser.url))",
 					attributes: [
 						.font: smallFont,
 						.foregroundColor: NSColor.secondaryLabelColor

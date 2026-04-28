@@ -10,10 +10,10 @@
 import AppKit
 import UniformTypeIdentifiers
 
-@MainActor public class MacWebBrowser {
+@MainActor public final class MacWebBrowser {
 
 	/// Opens a URL in the default browser.
-	@discardableResult public class func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
+	@discardableResult public static func openURL(_ url: URL, inBackground: Bool = false) -> Bool {
 
 		guard let preparedURL = url.preparedForOpeningInBrowser() else {
 			return false
@@ -40,48 +40,67 @@ import UniformTypeIdentifiers
 		let htmlAppURLs = NSWorkspace.shared.urlsForApplications(toOpen: UTType.html)
 		let browserAppURLs = Set(httpsAppURLs).intersection(Set(htmlAppURLs))
 
-		return browserAppURLs.compactMap { MacWebBrowser(url: $0) }.sorted {
-			if let leftName = $0.name, let leftPath = $0.bundlePath, let rightName = $1.name, let rightPath = $1.bundlePath {
-				return (leftName, leftPath) < (rightName, rightPath)
+		return browserAppURLs.compactMap { MacWebBrowser(url: $0) }.sorted { left, right in
+			guard let leftName = left.name, let rightName = right.name else {
+				return false
 			}
-
-			return false
+			let nameComparison = leftName.localizedCaseInsensitiveCompare(rightName)
+			if nameComparison != .orderedSame {
+				return nameComparison == .orderedAscending
+			}
+			let leftDisplay = MacWebBrowser.displayPath(of: left.url)
+			let rightDisplay = MacWebBrowser.displayPath(of: right.url)
+			return leftDisplay.localizedCaseInsensitiveCompare(rightDisplay) == .orderedAscending
 		}
 	}
 
-	// Returns an array of browser names that have duplicates
-	public static func duplicateBrowsersNames(in browsers: [MacWebBrowser]) -> [String?] {
-		let duplicateBrowserNames = Dictionary(grouping: browsers, by: { $0.name })
-			.filter { $1.count > 1 }
-			.map { $0.key }
+	/// Returns set of duplicate browser names in an array of browsers.
+	public static func duplicateBrowserNames(in browsers: [MacWebBrowser]) -> Set<String> {
+		var browserNames = Set<String>()
+		var duplicates = Set<String>()
 
-		return duplicateBrowserNames
-	}
-
-	public static func middleTruncPath(of url: URL) -> String {
-		let pathComponents = url.pathComponents
-		let ellipses = "…"
-		let pathThreshold = 4
-
-		// index 0 is `/` with absolute path
-		let pathStart = "\(pathComponents[0])\(pathComponents[1])"
-
-		// truncate middle with ellipses if path components exceed threshold
-		if pathComponents.count > pathThreshold {
-			let pathEnd = pathComponents[pathComponents.count - 2]
-			return "\(pathStart)/\(ellipses)/\(pathEnd)"
+		for browser in browsers {
+			if let oneBrowserName = browser.name {
+				if browserNames.contains(oneBrowserName) {
+					duplicates.insert(oneBrowserName)
+				}
+				browserNames.insert(oneBrowserName)
+			}
 		}
 
-		return pathStart
+		return duplicates
 	}
 
-	/// The filesystem URL of the default web browser.
-	private class var defaultBrowserURL: URL? {
-		return NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https://apple.com/")!)
+	/// A short human-readable path for the parent directory of the browser at `url`,
+	/// to use with duplicate browser names in a menu.
+	///
+	/// - Boot volume system path: `/Applications`
+	/// - Boot volume user path: `/Users/brent/Applications`
+	/// - Non-boot volume: leads with the volume name as Finder shows it, e.g.
+	///   `/Macintosh HD/Applications` or `/Macintosh HD/Users/brent/Applications`.
+	/// - Long interior paths are middle-truncated, e.g. `/Macintosh HD/…/Foo`.
+	public static func displayPath(of url: URL) -> String {
+		let parentPath = canonicalParentPath(for: url)
+		return displayPath(forCanonicalParentPath: parentPath)
+	}
+
+	/// Pure formatting logic with no system dependencies, factored out for testing.
+	/// `parentPath` is the firmlink-resolved parent directory of the browser bundle.
+	static func displayPath(forCanonicalParentPath parentPath: String) -> String {
+		let components = (parentPath as NSString).pathComponents
+
+		// /Volumes/<volumeName>/<rest> — lead with the volume name.
+		if components.count >= 3 && components[0] == "/" && components[1] == "Volumes" {
+			let volumeName = components[2]
+			let inside = components.dropFirst(3).joined(separator: "/")
+			return composedVolumePath(volumeName: volumeName, inside: inside)
+		}
+
+		return shortenedRootPath(parentPath)
 	}
 
 	/// The user's default web browser.
-	public class var `default`: MacWebBrowser {
+	public static var `default`: MacWebBrowser {
 		return MacWebBrowser(url: defaultBrowserURL!)
 	}
 
@@ -186,6 +205,49 @@ extension MacWebBrowser: CustomDebugStringConvertible {
 		} else {
 			return "MacWebBrowser"
 		}
+	}
+}
+
+private extension MacWebBrowser {
+
+	/// Returns the parent directory of `url` resolved through `canonicalPathKey`.
+	/// On modern macOS, this rewrites firmlink-alias mount points such as
+	/// `/Volumes/Data/...` to the friendly form `/Volumes/<VolumeName>/...`.
+	static func canonicalParentPath(for url: URL) -> String {
+		let parent = url.deletingLastPathComponent().path
+		let parentURL = URL(fileURLWithPath: parent)
+		if let canonical = (try? parentURL.resourceValues(forKeys: [.canonicalPathKey]))?.canonicalPath {
+			return canonical
+		}
+		return parent
+	}
+
+	static func composedVolumePath(volumeName: String, inside: String) -> String {
+		if inside.isEmpty {
+			return "/\(volumeName)"
+		}
+		let parts = inside.split(separator: "/", omittingEmptySubsequences: true)
+		if parts.count <= 3 {
+			return "/\(volumeName)/\(inside)"
+		}
+		let trailing = String(parts.last ?? "")
+		return "/\(volumeName)/…/\(trailing)"
+	}
+
+	static func shortenedRootPath(_ path: String) -> String {
+		let components = (path as NSString).pathComponents
+		let maxComponents = 4
+		if components.count <= maxComponents {
+			return path
+		}
+		let leading = "/\(components[1])"
+		let trailing = components.last ?? ""
+		return "\(leading)/…/\(trailing)"
+	}
+
+	/// The filesystem URL of the default web browser.
+	static var defaultBrowserURL: URL? {
+		NSWorkspace.shared.urlForApplication(toOpen: URL(string: "https://apple.com/")!)
 	}
 }
 
