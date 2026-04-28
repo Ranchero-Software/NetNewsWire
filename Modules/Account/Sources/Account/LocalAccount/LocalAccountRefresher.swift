@@ -256,7 +256,7 @@ private extension LocalAccountRefresher {
 		"daringfireball.net", "redsweater.com", "indiestack.com",
 		"blog.plunkitup.com", "bitsplitting.org", "allenpike.com",
 		"hypercritical.co", "micro.inessential.com", "discourse.netnewswire.com",
-		"onefoottsunami.com"
+		"onefoottsunami.com", "manton.org", "randsinrepose.com"
 	]
 
 	/// Return true if we won’t download that feed.
