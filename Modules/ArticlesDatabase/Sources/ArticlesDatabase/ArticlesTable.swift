@@ -21,7 +21,6 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	private let queue: DatabaseQueue
 	private let statusesTable: StatusesTable
 	private let searchTable: SearchTable
-	private let authorsLookupTable: DatabaseLookupTable
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
 	private let articlesCache = OSAllocatedUnfairLock(initialState: [String: Article]())
 
@@ -37,9 +36,6 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		self.queue = queue
 		self.statusesTable = StatusesTable(queue: queue)
 		self.retentionStyle = retentionStyle
-
-		let authorsTable = AuthorsTable(name: DatabaseTableName.authors)
-		self.authorsLookupTable = DatabaseLookupTable(name: DatabaseTableName.authorsLookup, objectIDKey: DatabaseKey.articleID, relatedObjectIDKey: DatabaseKey.authorID, relatedTable: authorsTable, relationshipName: RelationshipName.authors)
 
 		self.searchTable = SearchTable(queue: queue)
 		self.searchTable.articlesTable = self
@@ -674,18 +670,6 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 	}
 
-	/// Delete `authorsLookup` rows whose article no longer exists, then delete `authors`
-	/// rows that are no longer referenced by any `authorsLookup` row.
-	func deleteOrphanedAuthorsLookupRows() {
-		queue.runInTransaction { databaseResult in
-			guard let database = databaseResult.database else {
-				return
-			}
-			database.executeUpdate("delete from authorsLookup where articleID not in (select articleID from articles);", withArgumentsIn: nil)
-			database.executeUpdate("delete from authors where authorID not in (select distinct authorID from authorsLookup);", withArgumentsIn: nil)
-		}
-	}
-
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,
 	/// and, via a trigger, it also deletes from the search index.
@@ -793,8 +777,7 @@ nonisolated private extension ArticlesTable {
 	}
 
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {
-		var cachedArticles = Set<Article>()
-		var fetchedArticles = Set<Article>()
+		var articles = Set<Article>()
 
 		while resultSet.next() {
 
@@ -803,8 +786,8 @@ nonisolated private extension ArticlesTable {
 				continue
 			}
 
-			if let article = articlesCache.withLock({ $0[articleID] }) {
-				cachedArticles.insert(article)
+			if let cachedArticle = articlesCache.withLock({ $0[articleID] }) {
+				articles.insert(cachedArticle)
 				continue
 			}
 
@@ -818,32 +801,12 @@ nonisolated private extension ArticlesTable {
 			guard let article = Article(accountID: accountID, row: resultSet, status: status) else {
 				continue
 			}
-			fetchedArticles.insert(article)
+			articlesCache.withLock { $0[articleID] = article }
+			articles.insert(article)
 		}
+
 		resultSet.close()
-
-		if fetchedArticles.isEmpty {
-			return cachedArticles
-		}
-
-		// Fetch authors for non-cached articles. (Articles from the cache already have authors.)
-		let fetchedArticleIDs = fetchedArticles.articleIDs()
-		let authorsMap = authorsLookupTable.fetchRelatedObjects(for: fetchedArticleIDs, in: database)
-		let articlesWithFetchedAuthors = fetchedArticles.map { (article) -> Article in
-			if let authors = authorsMap?.authors(for: article.articleID) {
-				return article.byAdding(authors)
-			}
-			return article
-		}
-
-		// Add fetchedArticles to cache, now that they have attached authors.
-		articlesCache.withLock { articlesCache in
-			for article in articlesWithFetchedAuthors {
-				articlesCache[article.articleID] = article
-			}
-		}
-
-		return cachedArticles.union(articlesWithFetchedAuthors)
+		return articles
 	}
 
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Set<Article> {
@@ -1021,40 +984,10 @@ nonisolated private extension ArticlesTable {
 	}
 
 	func saveNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-		saveRelatedObjectsForNewArticles(articles, database)
-
-		if let databaseDictionaries = articles.databaseDictionaries() {
-			insertRows(databaseDictionaries, insertType: .orReplace, in: database)
-		}
-	}
-
-	func saveRelatedObjectsForNewArticles(_ articles: Set<Article>, _ database: FMDatabase) {
-		let databaseObjects = articles.databaseObjects()
-		authorsLookupTable.saveRelatedObjects(for: databaseObjects, in: database)
+		insertRows(articles.databaseDictionaries(), insertType: .orReplace, in: database)
 	}
 
 	// MARK: - Updating Existing Articles
-
-	func articlesWithRelatedObjectChanges<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article]) -> Set<Article> {
-		return updatedArticles.filter { (updatedArticle) -> Bool in
-			if let fetchedArticle = fetchedArticles[updatedArticle.articleID] {
-				return updatedArticle[keyPath: comparisonKeyPath] != fetchedArticle[keyPath: comparisonKeyPath]
-			}
-			assertionFailure("Expected to find matching fetched article.")
-			return true
-		}
-	}
-
-	func updateRelatedObjects<T>(_ comparisonKeyPath: KeyPath<Article, Set<T>?>, _ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ lookupTable: DatabaseLookupTable, _ database: FMDatabase) {
-		let articlesWithChanges = articlesWithRelatedObjectChanges(comparisonKeyPath, updatedArticles, fetchedArticles)
-		if !articlesWithChanges.isEmpty {
-			lookupTable.saveRelatedObjects(for: articlesWithChanges.databaseObjects(), in: database)
-		}
-	}
-
-	func saveUpdatedRelatedObjects(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-		updateRelatedObjects(\Article.authors, updatedArticles, fetchedArticles, authorsLookupTable, database)
-	}
 
 	func findUpdatedArticles(_ incomingArticles: Set<Article>, _ fetchedArticlesDictionary: [String: Article]) -> Set<Article>? {
 		let updatedArticles = incomingArticles.filter { (incomingArticle) -> Bool in // 6
@@ -1078,8 +1011,6 @@ nonisolated private extension ArticlesTable {
 	}
 
 	func saveUpdatedArticles(_ updatedArticles: Set<Article>, _ fetchedArticles: [String: Article], _ database: FMDatabase) {
-		saveUpdatedRelatedObjects(updatedArticles, fetchedArticles, database)
-
 		for updatedArticle in updatedArticles {
 			saveUpdatedArticle(updatedArticle, fetchedArticles, database)
 		}

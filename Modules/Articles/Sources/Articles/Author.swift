@@ -42,7 +42,7 @@ public struct Author: Codable, Hashable, Sendable {
 		let decoder = JSONDecoder()
 		do {
 			let authors = try decoder.decode([Author].self, from: data)
-			return Set(authors)
+			return AuthorCache.shared.add(Set(authors))
 		} catch {
 			assertionFailure("JSON representation of Author array could not be decoded, error: \(error)")
 		}

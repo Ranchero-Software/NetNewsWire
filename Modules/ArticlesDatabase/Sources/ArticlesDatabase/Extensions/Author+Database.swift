@@ -8,23 +8,9 @@
 
 import Foundation
 import Articles
-import RSDatabase
-import RSDatabaseObjC
 import RSParser
 
-// MARK: - DatabaseObject
-
 extension Author {
-
-	init?(row: FMResultSet) {
-		let authorID = row.swiftString(forColumn: DatabaseKey.authorID)
-		let name = row.swiftString(forColumn: DatabaseKey.name)
-		let url = row.swiftString(forColumn: DatabaseKey.url)
-		let avatarURL = row.swiftString(forColumn: DatabaseKey.avatarURL)
-		let emailAddress = row.swiftString(forColumn: DatabaseKey.emailAddress)
-
-		self.init(authorID: authorID, name: name, url: url, avatarURL: avatarURL, emailAddress: emailAddress)
-	}
 
 	init?(parsedAuthor: ParsedAuthor) {
 		self.init(authorID: nil, name: parsedAuthor.name, url: parsedAuthor.url, avatarURL: parsedAuthor.avatarURL, emailAddress: parsedAuthor.emailAddress)
@@ -37,29 +23,5 @@ extension Author {
 
 		let authors = Set(parsedAuthors.compactMap { Author(parsedAuthor: $0) })
 		return authors.isEmpty ? nil: authors
-	}
-}
-
-extension Author: @retroactive DatabaseObject {
-
-	public var databaseID: String {
-		return authorID
-	}
-
-	public func databaseDictionary() -> DatabaseDictionary? {
-		var d: DatabaseDictionary = [DatabaseKey.authorID: authorID]
-		if let name = name {
-			d[DatabaseKey.name] = name
-		}
-		if let url = url {
-			d[DatabaseKey.url] = url
-		}
-		if let avatarURL = avatarURL {
-			d[DatabaseKey.avatarURL] = avatarURL
-		}
-		if let emailAddress = emailAddress {
-			d[DatabaseKey.emailAddress] = emailAddress
-		}
-		return d
 	}
 }
