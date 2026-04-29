@@ -24,6 +24,9 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
 	private let articlesCache = OSAllocatedUnfairLock(initialState: [String: Article]())
 
+	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticlesTable")
+	private static let signposter = OSSignposter(subsystem: Bundle.main.bundleIdentifier!, category: .pointsOfInterest)
+
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	let articleCutoffDate = Date().bySubtracting(days: 90)
 
@@ -861,10 +864,20 @@ nonisolated private extension ArticlesTable {
 	}
 
 	func articlesWithSQL(_ sql: String, _ parameters: [AnyObject], _ database: FMDatabase) -> Set<Article> {
+		let signpostState = Self.signposter.beginInterval("Fetch articles")
+		let startTime = Date()
+
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+			Self.signposter.endInterval("Fetch articles", signpostState, "no result set")
 			return Set<Article>()
 		}
-		return articlesWithResultSet(resultSet, database)
+		let articles = articlesWithResultSet(resultSet, database)
+
+		let elapsed = Date().timeIntervalSince(startTime)
+		Self.signposter.endInterval("Fetch articles", signpostState, "\(articles.count) articles")
+		Self.logger.info("ArticlesTable: fetched \(articles.count, privacy: .public) articles in \(elapsed, privacy: .public) seconds in account \(self.accountID, privacy: .public)")
+
+		return articles
 	}
 
 	func fetchArticles(_ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
