@@ -29,12 +29,6 @@ public typealias DatabaseBlock = @Sendable (DatabaseResult) -> Void
 /// Completion block that provides an optional DatabaseError.
 public typealias DatabaseCompletionBlock = @Sendable (DatabaseError?) -> Void
 
-/// Result type for fetching an Int or getting a DatabaseError.
-public typealias DatabaseIntResult = Result<Int, DatabaseError>
-
-/// Completion block for DatabaseIntResult.
-public typealias DatabaseIntCompletionBlock = (DatabaseIntResult) -> Void
-
 /// Dictionary representing one row of database values, keyed by column name.
 public typealias DatabaseDictionary = [String: Any]
 
