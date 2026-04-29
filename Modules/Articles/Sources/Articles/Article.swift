@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 
 public typealias ArticleSetBlock = (Set<Article>) -> Void
 
@@ -53,7 +54,7 @@ public final class Article: Hashable, Sendable {
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
-		return databaseIDWithString("\(feedID) \(uniqueID)")
+		return "\(feedID) \(uniqueID)".md5String
 	}
 
 	// MARK: - Hashable
@@ -91,4 +92,3 @@ public extension Array where Element == Article {
 		return map { $0.articleID }
 	}
 }
-

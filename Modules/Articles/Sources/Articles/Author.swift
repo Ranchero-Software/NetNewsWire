@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 
 public struct Author: Codable, Hashable, Sendable {
 	public let authorID: String // calculated
@@ -31,7 +32,7 @@ public struct Author: Codable, Hashable, Sendable {
 			s += url ?? ""
 			s += avatarURL ?? ""
 			s += emailAddress ?? ""
-			self.authorID = databaseIDWithString(s)
+			self.authorID = s.md5String
 		}
 	}
 
