@@ -70,12 +70,23 @@ public struct ArticleChanges: Sendable {
 				Self.logger.debug("ArticlesDatabase: adding markdown column \(accountID, privacy: .public)")
 				database.executeStatements("ALTER TABLE articles add column markdown TEXT;")
 			}
+			if !self.articlesTable.containsColumn("authors", in: database) {
+				Self.logger.debug("ArticlesDatabase: adding authors column \(accountID, privacy: .public)")
+				database.executeStatements("ALTER TABLE articles add column authors TEXT;")
+			}
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
 		}
 
 		DispatchQueue.main.async {
 			self.articlesTable.indexUnindexedArticles()
+		}
+
+		// Backfill the authors JSON column cooperatively, yielding between batches
+		// so that other database work (fetches, etc.) can interleave.
+		Task.detached { [accountID, queue] in
+			let migration = AuthorsSchemaMigration(accountID: accountID, queue: queue)
+			await migration.run()
 		}
 	}
 
@@ -404,7 +415,7 @@ public struct ArticleChanges: Sendable {
 private extension ArticlesDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER);
+	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER, authors TEXT);
 
 	CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
