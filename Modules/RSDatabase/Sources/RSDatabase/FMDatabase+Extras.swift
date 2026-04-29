@@ -30,47 +30,14 @@ public extension FMDatabase {
 		commit()
 	}
 
-	/// Vacuum the database if it’s been more than `daysBetweenVacuums` since the last vacuum.
-	/// Call this as part of an init method.
-	func vacuumIfNeeded(daysBetweenVacuums: Int, filepath: String) {
-		let defaultsKey = "FMDatabase-LastVacuumDate-\(filepath)"
-		let now = Date()
-
-		guard let lastVacuumDate = UserDefaults.standard.object(forKey: defaultsKey) as? Date else {
-			// Never vacuumed — probably a new database.
-			// Set the LastVacuumDate pref to now and skip vacuuming.
-			UserDefaults.standard.set(now, forKey: defaultsKey)
-			return
-		}
-
-		let minimumVacuumInterval = TimeInterval(daysBetweenVacuums * (60 * 60 * 24)) // Doesn’t have to be precise
-		let cutoffDate = now - minimumVacuumInterval
-		if lastVacuumDate < cutoffDate {
-			vacuum()
-			UserDefaults.standard.set(now, forKey: defaultsKey)
-		}
-	}
-
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FMDatabase")
 
 	func vacuum() {
-		let shortName: String
-		if let path = databasePath() {
-			let components = (path as NSString).pathComponents
-			let count = components.count
-			if count >= 2 {
-				shortName = components[count - 2] + "/" + components[count - 1]
-			} else {
-				shortName = components.last ?? path
-			}
-		} else {
-			shortName = "unknown"
-		}
-
-		let start = CFAbsoluteTimeGetCurrent()
+		let path = databasePath() ?? "unknown"
+		let start = Date()
 		executeStatements("vacuum;")
-		let duration = CFAbsoluteTimeGetCurrent() - start
-		Self.logger.debug("VACUUM \(shortName) took \(duration, format: .fixed(precision: 4)) seconds")
+		let duration = Date().timeIntervalSince(start)
+		Self.logger.debug("VACUUM \(path, privacy: .public) took \(duration, format: .fixed(precision: 4), privacy: .public) seconds")
 	}
 
 	func runCreateStatements(_ statements: String) {

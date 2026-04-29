@@ -8,7 +8,6 @@
 
 import Foundation
 import os
-import os
 import SQLite3
 import RSDatabaseObjC
 
@@ -163,41 +162,14 @@ public final class DatabaseQueue: Sendable {
 	/// Compact the database. This should be done from time to time —
 	/// weekly-ish? — to keep up the performance level of a database.
 	/// Generally a thing to do at startup, if it’s been a while
-	/// since the last vacuum() call. You almost certainly want to call
-	/// vacuumIfNeeded instead.
+	/// since the last vacuum() call.
 	public func vacuum() {
 		runInDatabase { result in
-			Self.logger.debug("DatabaseQueue: vacuum")
 			guard let database = try? result.get() else {
 				return
 			}
-			database.executeStatements("vacuum;")
+			database.vacuum()
 		}
-	}
-
-	/// Vacuum the database if it’s been more than `daysBetweenVacuums` since the last vacuum.
-	/// Normally you would call this right after initing a DatabaseQueue.
-	///
-	/// - Returns: true if database will be vacuumed.
-	@discardableResult
-	public func vacuumIfNeeded(daysBetweenVacuums: Int) -> Bool {
-		let defaultsKey = "DatabaseQueue-LastVacuumDate-\(databasePath)"
-		let minimumVacuumInterval = TimeInterval(daysBetweenVacuums * (60 * 60 * 24)) // Doesn’t have to be precise
-		let now = Date()
-		let cutoffDate = now - minimumVacuumInterval
-		if let lastVacuumDate = UserDefaults.standard.object(forKey: defaultsKey) as? Date {
-			if lastVacuumDate < cutoffDate {
-				vacuum()
-				UserDefaults.standard.set(now, forKey: defaultsKey)
-				return true
-			}
-			return false
-		}
-
-		// Never vacuumed — almost certainly a new database.
-		// Just set the LastVacuumDate pref to now and skip vacuuming.
-		UserDefaults.standard.set(now, forKey: defaultsKey)
-		return false
 	}
 }
 
