@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.0.6b1 7055 29 Apr 2026 — branch: main tag: mac-7.0.6b1
+
+Made timeline fetches faster by making a schema change (authors are now stored in an authors column instead of in a separate table)
+
 ### 7.0.5 7054 28 Apr 2026 — branch: main tag: mac-7.0.5
 
 Changes since 7.0.4:
