@@ -38,8 +38,16 @@ extension Article {
 		let imageURL = row.swiftString(forColumn: DatabaseKey.imageURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+		let authors = Self.authorsFromRow(row)
 
-		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
+		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+	}
+
+	private static func authorsFromRow(_ row: FMResultSet) -> Set<Author>? {
+		guard let json = row.swiftString(forColumn: DatabaseKey.authors), !json.isEmpty, let data = json.data(using: .utf8) else {
+			return nil
+		}
+		return Author.authorsWithJSON(data)
 	}
 
 	convenience init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
@@ -68,13 +76,6 @@ extension Article {
 		}
 	}
 
-	func byAdding(_ authors: Set<Author>) -> Article {
-		if authors.isEmpty {
-			return self
-		}
-		return Article(accountID: self.accountID, articleID: self.articleID, feedID: self.feedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, markdown: self.markdown, url: self.rawLink, externalURL: self.rawExternalLink, summary: self.summary, imageURL: self.rawImageLink, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
-	}
-
 	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
 		if self == existingArticle {
 			return nil
@@ -92,6 +93,14 @@ extension Article {
 		addPossibleStringChangeWithKeyPath(\Article.rawExternalLink, existingArticle, DatabaseKey.externalURL, &d)
 		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)
 		addPossibleStringChangeWithKeyPath(\Article.rawImageLink, existingArticle, DatabaseKey.imageURL, &d)
+
+		if authors != existingArticle.authors {
+			if let authors, !authors.isEmpty, let json = authors.json() {
+				d[DatabaseKey.authors] = json
+			} else {
+				d[DatabaseKey.authors] = ""
+			}
+		}
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
@@ -137,9 +146,9 @@ extension Article {
 	}
 }
 
-extension Article: @retroactive DatabaseObject {
+extension Article {
 
-	public func databaseDictionary() -> DatabaseDictionary? {
+	func databaseDictionary() -> DatabaseDictionary {
 		var d = DatabaseDictionary()
 
 		d[DatabaseKey.articleID] = articleID
@@ -176,27 +185,10 @@ extension Article: @retroactive DatabaseObject {
 		if let dateModified = dateModified {
 			d[DatabaseKey.dateModified] = dateModified
 		}
+		if let authors, !authors.isEmpty, let json = authors.json() {
+			d[DatabaseKey.authors] = json
+		}
 		return d
-	}
-
-	public var databaseID: String {
-		return articleID
-	}
-
-	public func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
-		switch name {
-		case RelationshipName.authors:
-			return databaseObjectArray(with: authors)
-		default:
-			return nil
-		}
-	}
-
-	private func databaseObjectArray<T: DatabaseObject>(with objects: Set<T>?) -> [DatabaseObject]? {
-		guard let objects = objects else {
-			return nil
-		}
-		return Array(objects)
 	}
 }
 
@@ -214,11 +206,7 @@ extension Set where Element == Article {
 		return d
 	}
 
-	func databaseObjects() -> [DatabaseObject] {
-		return self.map { $0 as DatabaseObject }
-	}
-
-	func databaseDictionaries() -> [DatabaseDictionary]? {
-		return self.compactMap { $0.databaseDictionary() }
+	func databaseDictionaries() -> [DatabaseDictionary] {
+		return self.map { $0.databaseDictionary() }
 	}
 }

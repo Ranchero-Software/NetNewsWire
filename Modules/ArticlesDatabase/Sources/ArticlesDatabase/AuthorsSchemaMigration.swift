@@ -49,6 +49,8 @@ struct AuthorsSchemaMigration: Sendable {
 			try? await Task.sleep(for: .milliseconds(100))
 		}
 
+		await dropLegacyTables()
+
 		if didLogStart {
 			let elapsed = Date().timeIntervalSince(startTime)
 			Self.logger.info("AuthorsSchemaMigration: finished for \(totalCount, privacy: .public) articles in account \(self.accountID, privacy: .public) — \(elapsed, privacy: .public) seconds")
@@ -80,6 +82,19 @@ private extension AuthorsSchemaMigration {
 				}
 				resultSet.close()
 				continuation.resume(returning: ids)
+			}
+		}
+	}
+
+	func dropLegacyTables() async {
+		await withCheckedContinuation { continuation in
+			queue.runInDatabase { result in
+				guard let database = try? result.get() else {
+					continuation.resume()
+					return
+				}
+				database.executeStatements("drop index if exists authorsLookup_articleID; drop table if exists authorsLookup; drop table if exists authors;")
+				continuation.resume()
 			}
 		}
 	}

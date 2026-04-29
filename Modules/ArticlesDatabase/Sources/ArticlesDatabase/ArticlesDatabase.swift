@@ -406,7 +406,6 @@ public struct ArticleChanges: Sendable {
 		}
 		articlesTable.deleteArticlesNotInSubscribedToFeedIDs(subscribedToFeedIDs)
 		articlesTable.deleteOldStatuses()
-		articlesTable.deleteOrphanedAuthorsLookupRows()
 	}
 }
 
@@ -419,14 +418,9 @@ private extension ArticlesDatabase {
 
 	CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
 
-	CREATE TABLE if not EXISTS authors (authorID TEXT NOT NULL PRIMARY KEY, name TEXT, url TEXT, avatarURL TEXT, emailAddress TEXT);
-	CREATE TABLE if not EXISTS authorsLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
-
 	CREATE INDEX if not EXISTS articles_feedID_datePublished_articleID on articles (feedID, datePublished, articleID);
 
 	CREATE INDEX if not EXISTS statuses_starred_index on statuses (starred);
-
-	CREATE INDEX if not EXISTS authorsLookup_articleID on authorsLookup (articleID);
 
 	CREATE VIRTUAL TABLE if not EXISTS search using fts4(title, body);
 
