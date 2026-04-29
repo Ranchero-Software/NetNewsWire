@@ -35,6 +35,9 @@ public typealias DatabaseIntResult = Result<Int, DatabaseError>
 /// Completion block for DatabaseIntResult.
 public typealias DatabaseIntCompletionBlock = (DatabaseIntResult) -> Void
 
+/// Dictionary representing one row of database values, keyed by column name.
+public typealias DatabaseDictionary = [String: Any]
+
 // MARK: - Extensions
 
 public extension DatabaseResult {

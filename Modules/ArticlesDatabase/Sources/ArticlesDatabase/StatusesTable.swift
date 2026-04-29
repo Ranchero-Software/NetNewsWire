@@ -237,7 +237,7 @@ private extension StatusesTable {
 	// MARK: - Creating
 
 	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
-		let statusArray = statuses.map { $0.databaseDictionary()! }
+		let statusArray = statuses.map { $0.databaseDictionary() }
 		self.insertRows(statusArray, insertType: .orIgnore, in: database)
 	}
 
