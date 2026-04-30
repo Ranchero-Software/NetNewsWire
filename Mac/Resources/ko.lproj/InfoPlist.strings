@@ -1,0 +1,14 @@
+/* Bundle name */
+"CFBundleName" = "NetNewsWire";
+
+/* No comment provided by engineer. */
+"NetNewsWire Theme" = "NetNewsWire 테마";
+
+/* Privacy - AppleEvents Sending Usage Description */
+"NSAppleEventsUsageDescription" = "NetNewsWire는 기사를 공유하기로 선택하면 Mac의 다른 앱과 통신합니다.";
+
+/* Copyright (human-readable) */
+"NSHumanReadableCopyright" = "저작권 © 2002-2026 Brent Simmons. 모든 권리 보유.";
+
+/* No comment provided by engineer. */
+"OPML" = "OPML";

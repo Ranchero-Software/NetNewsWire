@@ -224,7 +224,7 @@ extension AccountInspectorViewController {
 
 	override func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
 		if displayedSections[section] == .syncContent {
-			return "Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced."
+			return NSLocalizedString("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.", comment: "Sync content footer text")
 		}
 		let storyboardIndex = displayedSections[section].rawValue
 		return super.tableView(tableView, titleForFooterInSection: storyboardIndex)

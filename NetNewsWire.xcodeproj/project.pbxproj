@@ -291,13 +291,17 @@
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+		DBF0EFE02F95019A001F6B23 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Intents.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		842E25332DB9F9B800FF7DD8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				/Localized/SafariExtension/InfoPlist.strings,
 				/Localized/SafariExtension/SafariExtensionViewController.xib,
+				/Localized/ShareExtension/InfoPlist.strings,
+				/Localized/ShareExtension/Localizable.strings,
 				/Localized/ShareExtension/ShareViewController.xib,
 				Resources/Info.plist,
 				Resources/NetNewsWire.provisionprofile,
@@ -319,6 +323,7 @@
 		842E25352DB9F9B800FF7DD8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				/Localized/SafariExtension/InfoPlist.strings,
 				/Localized/SafariExtension/SafariExtensionViewController.xib,
 				"SafariExtension/netnewswire-subscribe-to-feed.js",
 				SafariExtension/SafariExtensionHandler.swift,
@@ -330,6 +335,8 @@
 		842E25362DB9F9B800FF7DD8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				/Localized/ShareExtension/InfoPlist.strings,
+				/Localized/ShareExtension/Localizable.strings,
 				/Localized/ShareExtension/ShareViewController.xib,
 				AppDefaults.swift,
 				ShareExtension/icon.icns,
@@ -361,6 +368,10 @@
 		84A6D03F2D1B4EC500F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				/Localized/IntentsExtension/InfoPlist.strings,
+				/Localized/IntentsExtension/Localizable.strings,
+				/Localized/ShareExtension/InfoPlist.strings,
+				/Localized/ShareExtension/Localizable.strings,
 				/Localized/ShareExtension/MainInterface.storyboard,
 				IntentsExtension/Info.plist,
 				IntentsExtension/IntentHandler.swift,
@@ -377,6 +388,8 @@
 		84A6D0402D1B4EC500F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				/Localized/ShareExtension/InfoPlist.strings,
+				/Localized/ShareExtension/Localizable.strings,
 				/Localized/ShareExtension/MainInterface.storyboard,
 				AppDefaults.swift,
 				Resources/Assets.xcassets,
@@ -391,6 +404,8 @@
 		84A6D0412D1B4EC500F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				/Localized/IntentsExtension/InfoPlist.strings,
+				/Localized/IntentsExtension/Localizable.strings,
 				IntentsExtension/IntentHandler.swift,
 			);
 			target = 51314636235A7BBE00387FDC /* NetNewsWire iOS Intents Extension */;
@@ -986,6 +1001,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 849C64571ED37A5D003D8FC0;
 			packageReferences = (
@@ -1340,6 +1356,7 @@
 			children = (
 				51314706235C41FC00387FDC /* Base */,
 				51314714235C420900387FDC /* en */,
+				DBF0EFE02F95019A001F6B23 /* ko */,
 			);
 			name = Intents.intentdefinition;
 			sourceTree = "<group>";

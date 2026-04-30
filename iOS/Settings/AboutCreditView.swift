@@ -10,13 +10,13 @@ import SwiftUI
 
 struct AboutCreditView: View {
 
-	let contributorType: String
+	let contributorType: LocalizedStringKey
 	let contributors: [Contributors]
 
     var body: some View {
 		HStack(alignment: .top) {
 			Spacer()
-			Text(verbatim: contributorType)
+			Text(contributorType)
 				.foregroundStyle(.secondary)
 				.frame(maxWidth: .infinity, alignment: .trailing)
 				.lineLimit(3)
