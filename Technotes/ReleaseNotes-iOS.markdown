@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0.6 build 7055 29 Apr 2026 — branch: main tag: iOS-7.0.6-7055
+
+Made timeline fetches faster by making a schema change (authors are now stored in an authors column instead of in a separate table)
+
 ### 7.0.5 build 7053 27 Apr 2026 — branch: main tag: iOS-7.0.5-7053
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.0.5 release version on 28 April 2026.
