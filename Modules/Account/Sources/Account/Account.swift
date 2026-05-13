@@ -706,6 +706,18 @@ public enum FetchType {
 		try await delegate.renameFeed(for: self, with: feed, to: name)
 	}
 
+	/// Set the order of `orderedFeeds` within `container` (an account or a folder).
+	/// Assigns `0..<count` as each feed's `sortIndex`, applies the change locally
+	/// (which persists it and rebuilds the sidebar), then asks the delegate to
+	/// propagate it to the account's backend if it can (see `AccountDelegate.reorderFeeds`).
+	public func reorderFeeds(_ orderedFeeds: [Feed], in container: Container) async throws {
+		for (index, feed) in orderedFeeds.enumerated() {
+			feed.sortIndex = index
+		}
+		container.postChildrenDidChangeNotification()
+		try await delegate.reorderFeeds(for: self, container: container, orderedFeeds: orderedFeeds)
+	}
+
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {

@@ -277,6 +277,22 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
+	func reorderFeeds(for account: Account, container: Container, orderedFeeds: [Feed]) async throws {
+		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		syncProgress.addTask()
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+			syncProgress.completeTask()
+		}
+
+		do {
+			try await accountZone.saveSortIndexes(for: orderedFeeds)
+		} catch {
+			postSyncError(error, account: account, operation: "Reordering feeds")
+			throw error
+		}
+	}
+
 	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
 		try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)

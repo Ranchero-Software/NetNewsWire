@@ -95,7 +95,7 @@ private extension SidebarTreeControllerDelegate {
 			}
 		}
 
-		return updatedChildNodes.sortedAlphabeticallyWithFoldersAtEnd()
+		return updatedChildNodes.sortedByFeedOrderWithFoldersAtEnd()
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {

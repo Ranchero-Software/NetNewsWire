@@ -189,6 +189,17 @@ import Articles
 			settings.lastCheckDate = newValue
 		}
 	}
+
+	/// Position of the feed within its container in the sidebar.
+	/// See `FeedSettings.sortIndex` and `Account.reorderFeeds(_:in:)`.
+	public var sortIndex: Int {
+		get {
+			settings.sortIndex
+		}
+		set {
+			settings.sortIndex = newValue
+		}
+	}
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {
@@ -330,5 +341,26 @@ extension Feed: OPMLRepresentable {
 			}
 			return feed1.nameForDisplay.localizedStandardCompare(feed2.nameForDisplay) == .orderedAscending
 		})
+	}
+}
+
+public extension Array where Element == Feed {
+
+	/// Returns the array with `feed` moved so it immediately precedes `beforeFeed`,
+	/// or moved to the end when `beforeFeed` is `nil` or not in the array.
+	/// Dropping a feed before itself is a no-op. Used to turn a sidebar drag-and-drop
+	/// into the order passed to `Account.reorderFeeds(_:in:)`.
+	func reordered(moving feed: Feed, before beforeFeed: Feed?) -> [Feed] {
+		guard let currentIndex = firstIndex(of: feed), beforeFeed != feed else {
+			return self
+		}
+		var result = self
+		result.remove(at: currentIndex)
+		if let beforeFeed, let insertIndex = result.firstIndex(of: beforeFeed) {
+			result.insert(feed, at: insertIndex)
+		} else {
+			result.append(feed)
+		}
+		return result
 	}
 }
