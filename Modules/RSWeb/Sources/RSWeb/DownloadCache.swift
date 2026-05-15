@@ -22,7 +22,7 @@ struct DownloadCacheRecord: CacheRecord, Sendable {
 nonisolated final class DownloadCache: Sendable {
 	static let shared = DownloadCache()
 
-	private let cache = Cache<DownloadCacheRecord>(timeToLive: 60 * 13, timeBetweenCleanups: 60 * 2)
+	private let cache = Cache<DownloadCacheRecord>(timeToLive: 60 * 3, timeBetweenCleanups: 60)
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
