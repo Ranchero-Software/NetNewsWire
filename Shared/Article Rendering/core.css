@@ -74,9 +74,9 @@ img[src*="share-buttons"] {
 	position: absolute;
 	display: block;
 	padding: 0em 1em;
-	margin: 1em;
+	margin: 1em auto;
 	top: 0.75em;
-	max-width: none;
+	max-width: 44em;
 	border-radius: 0.3em;
 	box-sizing: border-box;
 }
