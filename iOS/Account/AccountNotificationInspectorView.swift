@@ -44,7 +44,7 @@ struct AccountNotificationInspectorView: View {
 				}
 			} else {
 				List(account.flattenedFeeds().sorted(by: { a, b in
-					a.nameForDisplay < b.nameForDisplay
+					a.nameForDisplay.localizedCaseInsensitiveCompare(b.nameForDisplay) == .orderedAscending
 				}), id: \.feedID) { feed in
 					Toggle(isOn: Binding(get: { feed.newArticleNotificationsEnabled }, set: { feed.newArticleNotificationsEnabled = $0 })) {
 						HStack {
