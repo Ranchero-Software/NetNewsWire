@@ -65,6 +65,13 @@
         "identifier" : "849C64701ED37A5D003D8FC0",
         "name" : "NetNewsWireTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/Articles",
+        "identifier" : "ArticlesTests",
+        "name" : "ArticlesTests"
+      }
     }
   ],
   "version" : 1
