@@ -50,6 +50,9 @@
             reference = "container:NetNewsWire.xctestplan"
             default = "YES">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:NetNewsWire-CI.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference
