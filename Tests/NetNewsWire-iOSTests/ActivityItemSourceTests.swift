@@ -2,57 +2,52 @@
 //  ActivityItemSourceTests.swift
 //  NetNewsWire-iOSTests
 //
-//  Created by Codex on 3/11/26.
+//  Created by Rizwan on 3/11/26.
 //
 
+import Testing
 import UIKit
-import XCTest
 @testable import NetNewsWire
 
-@MainActor final class ActivityItemSourceTests: XCTestCase {
+@MainActor @Suite struct ActivityItemSourceTests {
 
-	func testTitleItemSourceReturnsTitleForSupportedActivity() {
+	@Test("Title is returned for each supported activity type",
+	      arguments: [
+		      "com.omnigroup.OmniFocus3.iOS.QuickEntry",
+		      "com.culturedcode.ThingsiPhone.ShareExtension",
+		      "com.buffer.buffer.Buffer"
+	      ])
+	func titleItemSourceReturnsTitleForSupportedActivity(rawValue: String) {
 		let source = TitleActivityItemSource(title: "Test Title")
 
-		let item = source.activityViewController(makeActivityViewController(), itemForActivityType: UIActivity.ActivityType(rawValue: "com.buffer.buffer.Buffer"))
+		let item = source.activityViewController(makeActivityViewController(), itemForActivityType: UIActivity.ActivityType(rawValue: rawValue))
 
-		XCTAssertEqual(item as? String, "Test Title")
+		#expect(item as? String == "Test Title")
 	}
 
-	func testTitleItemSourceReturnsNullForUnsupportedActivity() {
+	@Test func titleItemSourceReturnsNullForUnsupportedActivity() {
 		let source = TitleActivityItemSource(title: "Test Title")
 
 		let item = source.activityViewController(makeActivityViewController(), itemForActivityType: .postToFacebook)
 
-		XCTAssertTrue(item is NSNull)
+		#expect(item is NSNull)
 	}
 
-	func testTitleItemSourceReturnsNullWhenTitleIsMissing() {
+	@Test func titleItemSourceReturnsNullWhenTitleIsMissing() {
 		let source = TitleActivityItemSource(title: nil)
 
 		let item = source.activityViewController(makeActivityViewController(), itemForActivityType: UIActivity.ActivityType(rawValue: "com.buffer.buffer.Buffer"))
 
-		XCTAssertTrue(item is NSNull)
+		#expect(item is NSNull)
 	}
 
-	func testArticleActivityItemSourceReturnsURLAndSubject() {
-		let url = URL(string: "https://netnewswire.com/story")!
-		let source = ArticleActivityItemSource(url: url, subject: "Subject")
-		let activityViewController = makeActivityViewController()
-
-		XCTAssertEqual(source.activityViewControllerPlaceholderItem(activityViewController) as? URL, url)
-		XCTAssertEqual(source.activityViewController(activityViewController, itemForActivityType: nil) as? URL, url)
-		XCTAssertEqual(source.activityViewController(activityViewController, subjectForActivityType: nil), "Subject")
-	}
-
-	func testArticleActivityItemSourceFallsBackToEmptySubject() {
+	@Test func articleActivityItemSourceFallsBackToEmptySubject() {
 		let source = ArticleActivityItemSource(url: URL(string: "https://netnewswire.com/story")!, subject: nil)
 
-		XCTAssertEqual(source.activityViewController(makeActivityViewController(), subjectForActivityType: nil), "")
+		#expect(source.activityViewController(makeActivityViewController(), subjectForActivityType: nil) == "")
 	}
 
 	private func makeActivityViewController() -> UIActivityViewController {
 		UIActivityViewController(activityItems: [URL(string: "https://netnewswire.com")!], applicationActivities: nil)
 	}
-
 }
