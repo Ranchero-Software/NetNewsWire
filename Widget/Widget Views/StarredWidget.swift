@@ -45,11 +45,9 @@ struct StarredWidgetView: View {
 				}
 				.widgetURL(WidgetDeepLink.starred.url)
 				Divider()
-				if entry.widgetData.starredArticles.count > 0 {
-					ForEach(0..<maxCount(), id: \.self, content: { i in
-						ArticleItemView(article: entry.widgetData.starredArticles[i],
-										deepLink: WidgetDeepLink.starredArticle(id: entry.widgetData.starredArticles[i].id).url)
-					})
+				ForEach(entry.widgetData.starredArticles.prefix(maxCount())) { article in
+					ArticleItemView(article: article,
+									deepLink: WidgetDeepLink.starredArticle(id: article.id).url)
 				}
 				Spacer()
 			}

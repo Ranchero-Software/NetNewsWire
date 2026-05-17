@@ -45,11 +45,9 @@ struct UnreadWidgetView: View {
 				}
 				.widgetURL(WidgetDeepLink.unread.url)
 				Divider()
-				if entry.widgetData.unreadArticles.count > 0 {
-					ForEach(0..<maxCount(), id: \.self, content: { i in
-						ArticleItemView(article: entry.widgetData.unreadArticles[i],
-										deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-					})
+				ForEach(entry.widgetData.unreadArticles.prefix(maxCount())) { article in
+					ArticleItemView(article: article,
+									deepLink: WidgetDeepLink.unreadArticle(id: article.id).url)
 				}
 				Spacer()
 			}

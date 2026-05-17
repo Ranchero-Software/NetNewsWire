@@ -46,11 +46,9 @@ struct TodayWidgetView: View {
 				}
 				.widgetURL(WidgetDeepLink.today.url)
 				Divider()
-				if entry.widgetData.todayArticles.count > 0 {
-					ForEach(0..<maxCount(), id: \.self, content: { i in
-						ArticleItemView(article: entry.widgetData.todayArticles[i],
-										deepLink: WidgetDeepLink.todayArticle(id: entry.widgetData.todayArticles[i].id).url)
-					})
+				ForEach(entry.widgetData.todayArticles.prefix(maxCount())) { article in
+					ArticleItemView(article: article,
+									deepLink: WidgetDeepLink.todayArticle(id: article.id).url)
 				}
 				Spacer()
 			}
