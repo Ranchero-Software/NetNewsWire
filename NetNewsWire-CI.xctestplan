@@ -61,6 +61,20 @@
         "identifier" : "RSWebTests",
         "name" : "RSWebTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/ErrorLog",
+        "identifier" : "ErrorLogTests",
+        "name" : "ErrorLogTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/Articles",
+        "identifier" : "ArticlesTests",
+        "name" : "ArticlesTests"
+      }
     }
   ],
   "version" : 1
