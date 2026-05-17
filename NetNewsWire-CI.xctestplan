@@ -26,13 +26,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSMarkdown",
-        "identifier" : "RSMarkdownTests",
-        "name" : "RSMarkdownTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:Modules\/RSCore",
         "identifier" : "RSCoreTests",
         "name" : "RSCoreTests"
