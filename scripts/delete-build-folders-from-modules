@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Delete all .build directories under Modules/.
+
+set -e
+
+cd "$(dirname "$0")/.."
+find Modules -type d -name .build -prune -exec rm -rf {} +
