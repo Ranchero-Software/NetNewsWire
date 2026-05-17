@@ -2,7 +2,7 @@
 //  ActivityItemSourceTests.swift
 //  NetNewsWire-iOSTests
 //
-//  Created by Rizwan on 3/11/26.
+//  Created by Rizwan Mohamed Ibrahim on 3/11/26.
 //
 
 import Testing
