@@ -200,22 +200,3 @@ struct ArticlePathKey {
 	}
 }
 
-// MARK: SortableArticle
-
-@MainActor extension Article: SortableArticle {
-	var sortableName: String {
-		return feed?.name ?? ""
-	}
-
-	var sortableDate: Date {
-		return logicalDatePublished
-	}
-
-	var sortableArticleID: String {
-		return articleID
-	}
-
-	var sortableFeedID: String {
-		return feedID
-	}
-}

@@ -209,8 +209,8 @@ import Account
 
 		let pubDate = article.datePublished?.description ?? ""
 
-		let latestArticle = LatestArticle(id: article.sortableArticleID,
-										  feedTitle: article.sortableName,
+		let latestArticle = LatestArticle(id: article.articleID,
+										  feedTitle: article.feed?.nameForDisplay ?? "",
 										  articleTitle: articleTitle,
 										  articleSummary: article.summary,
 										  feedIconPath: feedIconPath,
