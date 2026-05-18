@@ -216,13 +216,13 @@ final class WebViewController: UIViewController {
 		loadWebView(replaceExistingWebView: true)
 	}
 
-	func showBars() {
+	func showBars(animated: Bool = true) {
 		AppDefaults.shared.articleFullscreenEnabled = false
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
 		bottomShowBarsViewConstraint?.constant = 0
-		navigationController?.setNavigationBarHidden(false, animated: true)
-		navigationController?.setToolbarHidden(false, animated: true)
+		navigationController?.setNavigationBarHidden(false, animated: animated)
+		navigationController?.setToolbarHidden(false, animated: animated)
 		additionalSafeAreaInsets.bottom = 0
 		configureContextMenuInteraction()
 	}
