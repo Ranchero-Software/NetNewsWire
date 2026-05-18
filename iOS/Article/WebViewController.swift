@@ -217,6 +217,12 @@ final class WebViewController: UIViewController {
 	}
 
 	func showBars(animated: Bool = true) {
+		// Skip when bars aren't hidden. Avoids redundant layout work on every back-navigation
+		// and — more importantly — avoids triggering a layout pass during viewWillDisappear,
+		// which has tripped an Auto Layout (NSISEngine) assertion in production crash reports.
+		guard AppDefaults.shared.articleFullscreenEnabled else {
+			return
+		}
 		AppDefaults.shared.articleFullscreenEnabled = false
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
