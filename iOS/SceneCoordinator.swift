@@ -1176,7 +1176,18 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 
 		selectNextUnreadFeed {
-			self.selectNextUnreadArticleInTimeline()
+			// The supplementary push from selectSidebarItem may still be animating when
+			// this completion fires — the async data fetch can outrun the push animation
+			// in compact mode. Wait for the in-flight transition before pushing the
+			// article view controller, or UIKit aborts with NSInternalInconsistencyException
+			// from -[UINavigationController pushViewController:transition:forceImmediate:].
+			if let coordinator = self.mainTimelineViewController?.navigationController?.transitionCoordinator {
+				coordinator.animate(alongsideTransition: nil) { _ in
+					self.selectNextUnreadArticleInTimeline()
+				}
+			} else {
+				self.selectNextUnreadArticleInTimeline()
+			}
 		}
 	}
 
