@@ -817,7 +817,7 @@ private extension MainTimelineModernViewController {
 			/// calculations (leading swipe actions with sidebar visible)
 			section.contentInsets = NSDirectionalEdgeInsets(
 				top: 0,
-				leading: self.view.safeAreaInsets.left, // Sidebar width
+				leading: layoutEnvironment.container.contentInsets.leading, // Sidebar width
 				bottom: 0,
 				trailing: 0
 			)
