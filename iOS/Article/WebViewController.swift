@@ -101,6 +101,14 @@ final class WebViewController: UIViewController {
 		}
 	}
 
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		// Pause in-flight media before the view goes away. Leaving a video playing during
+		// dismissal lets WebKit's full-screen entry continuation fire on a stale view
+		// hierarchy and trip a RELEASE_ASSERT in WebFullScreenManagerProxy on iOS 26.
+		stopWebViewActivity()
+	}
+
 	// MARK: Notifications
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
