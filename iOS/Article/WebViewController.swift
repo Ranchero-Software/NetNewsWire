@@ -232,6 +232,9 @@ final class WebViewController: UIViewController {
 		navigationController?.setNavigationBarHidden(false, animated: animated)
 		navigationController?.setToolbarHidden(false, animated: animated)
 		additionalSafeAreaInsets.bottom = 0
+		if let parentView = parent?.view {
+			setScrollEdgeEffectsHidden(false, in: parentView)
+		}
 		configureContextMenuInteraction()
 	}
 
@@ -243,7 +246,9 @@ final class WebViewController: UIViewController {
 			bottomShowBarsViewConstraint?.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
-			updateBottomSafeAreaForFullScreen()
+			if let parentView = parent?.view {
+				setScrollEdgeEffectsHidden(true, in: parentView)
+			}
 			configureContextMenuInteraction()
 		}
 	}
@@ -761,6 +766,18 @@ private extension WebViewController {
 	func updateBottomSafeAreaForFullScreen() {
 		let rawBottom = view.safeAreaInsets.bottom - additionalSafeAreaInsets.bottom
 		additionalSafeAreaInsets.bottom = -rawBottom
+	}
+
+	/// Hide or show any ScrollEdgeEffectView.
+	///
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5298>
+	func setScrollEdgeEffectsHidden(_ hidden: Bool, in containerView: UIView) {
+		for subview in containerView.subviews {
+			if NSStringFromClass(type(of: subview)).contains("ScrollEdgeEffectView") {
+				subview.isHidden = hidden
+			}
+			setScrollEdgeEffectsHidden(hidden, in: subview)
+		}
 	}
 
 	func configureContextMenuInteraction() {
