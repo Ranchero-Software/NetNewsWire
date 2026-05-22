@@ -241,16 +241,16 @@ private extension LocalAccountRefresher {
 	/// use of the Twitter API. (Which Twitter took away.)
 	static let badHosts = ["twitter.com", "www.twitter.com", "x.com", "www.x.com"]
 
-	/// Hosts that are exempt from the 29-minute minimum between refreshes.
-	/// For these we use Cache-Control (when present) for the minimum.
+	/// Hosts that are exempt from the minimum time between refreshes
+	/// even when they don’t send a Cache-Control header.
+	///
+	/// Feeds that send Cache-Control are already exempt (see
+	/// `feedShouldBeSkippedForTimingReasons`); this list is a safety
+	/// net for some domains that may or may not send Cache-Control.
 	/// The 5-hour Cache-Control cap in
 	/// `feedShouldBeSkippedForCacheControlReasons` still applies.
 	///
 	/// We have permissions from the feed owners for each of these.
-	///
-	/// One possible future is that we decide that any feed that has
-	/// Cache-Control headers should be exempt from the 29-minute
-	/// minimum — instead we’d just use whatever Cache-Control says.
 	static let domainsWithNoMinimumTime: Set<String> = [
 		"inessential.com", "ranchero.com", "netnewswire.blog",
 		"daringfireball.net", "redsweater.com", "indiestack.com",
@@ -293,6 +293,14 @@ private extension LocalAccountRefresher {
 			return false
 		}
 
+		// Feeds that send a Cache-Control header are governed solely
+		// by Cache-Control (with the 5-hour cap enforced in
+		// feedShouldBeSkippedForCacheControlReasons). The
+		// minimumTimeBetweenChecks clamp does not apply to them.
+		if feed.cacheControlInfo != nil {
+			return false
+		}
+
 		if SpecialCase.urlStringMatchesDomain(feed.url, Array(domainsWithNoMinimumTime)) {
 			return false
 		}
@@ -305,7 +313,7 @@ private extension LocalAccountRefresher {
 		}
 
 		if Date().timeIntervalSince(lastCheckDate) < minimumTimeBetweenChecks {
-			Self.logger.info("LocalAccountRefresher: Dropping request — last checked less than 29 minutes ago: \(feed.url)")
+			Self.logger.info("LocalAccountRefresher: Dropping request — last checked less than \(Int(minimumTimeBetweenChecks / 60)) minutes ago: \(feed.url)")
 			return true
 		}
 
