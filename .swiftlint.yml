@@ -31,6 +31,7 @@ disabled_rules:
   - function_name_whitespace
   - nesting
   - class_delegate_protocol
+  - optional_data_string_conversion
 
 excluded:
   - ".build"
