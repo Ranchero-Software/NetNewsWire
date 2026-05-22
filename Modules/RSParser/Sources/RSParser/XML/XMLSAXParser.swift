@@ -316,7 +316,7 @@ private extension XMLSAXParser {
 		let incomingLocal = utf8[localRange]
 
 		// Find matching open element (scan from top).
-		var matchIndex: Int? = nil
+		var matchIndex: Int?
 		for i in elementStack.indices.reversed() {
 			let entry = elementStack[i]
 			if entry.namespace.prefix == incomingPrefix && bytesEqual(entry.localNameSlice, incomingLocal) {

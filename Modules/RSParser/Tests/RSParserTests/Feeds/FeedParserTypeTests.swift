@@ -91,4 +91,3 @@ import RSParser
 		#expect(feedType(d, isPartialData: true) == .unknown)
 	}
 }
-

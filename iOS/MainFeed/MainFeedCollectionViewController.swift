@@ -809,7 +809,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			}
 			alertController.addAction(addFolderAction)
 		}
-		
+
 		alertController.addAction(cancelAction)
 
 		alertController.popoverPresentationController?.barButtonItem = sender

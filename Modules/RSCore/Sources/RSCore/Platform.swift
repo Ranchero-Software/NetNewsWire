@@ -16,7 +16,7 @@ public struct Platform {
 	nonisolated public static var deviceHasiCloudAccount: Bool {
 		FileManager.default.ubiquityIdentityToken != nil
 	}
-	
+
 	/// Returns true if the app is currently running unit tests.
 	nonisolated public static var isRunningUnitTests: Bool {
 		return _isRunningUnitTests

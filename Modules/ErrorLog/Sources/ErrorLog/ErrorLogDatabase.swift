@@ -52,7 +52,7 @@ public actor ErrorLogDatabase {
 			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
 			return
 		}
-		
+
 		let operation = notification.userInfo?[ErrorLogUserInfoKey.operation] as? String ?? ""
 		let fileName = notification.userInfo?[ErrorLogUserInfoKey.fileName] as? String ?? ""
 		let functionName = notification.userInfo?[ErrorLogUserInfoKey.functionName] as? String ?? ""

@@ -420,4 +420,3 @@ private final class AtomAuthor {
 		return ParsedAuthor(name: name, url: url, avatarURL: nil, emailAddress: emailAddress)
 	}
 }
-

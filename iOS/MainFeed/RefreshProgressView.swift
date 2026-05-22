@@ -14,7 +14,6 @@ final class RefreshProgressView: UIView {
 	private let progressView = UIProgressView(progressViewStyle: .default)
 	private let label = UILabel()
 
-
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		setup()

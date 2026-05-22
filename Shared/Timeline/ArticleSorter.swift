@@ -55,7 +55,7 @@ private extension ArticleSorter {
 // MARK: - Sorting
 
 @MainActor extension Article {
-	
+
 	fileprivate var sortableFeedName: String {
 		feed?.nameForDisplay ?? ""
 	}

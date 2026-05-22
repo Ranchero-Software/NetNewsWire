@@ -99,7 +99,6 @@ public extension CloudKitZone {
 		}
 	}
 
-
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken() {
 		Self.logger.debug("CloudKitZone: resetChangeToken \(self.zoneID.zoneName, privacy: .public)")
@@ -854,7 +853,7 @@ public extension CloudKitZone {
 			}
 		}
 
-		let _ = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[CKRecord], Error>) in
+		_ = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[CKRecord], Error>) in
 			query(ckQuery, desiredKeys: desiredKeys, pageHandler: wrappedHandler, completion: { result in
 				switch result {
 				case .success(let records):

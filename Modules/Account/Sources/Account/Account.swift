@@ -748,7 +748,6 @@ public enum FetchType {
 		}
 	}
 
-
 	func addFolderToTree(_ folder: Folder) {
 		folders!.insert(folder)
 		postChildrenDidChangeNotification()

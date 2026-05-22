@@ -67,7 +67,7 @@ final class RSSItem {
 		// promote summary to body and drop summary.
 		var contentHTML = body
 		var itemSummary = summary
-		if (contentHTML == nil || contentHTML?.isEmpty == true), let s = itemSummary, !s.isEmpty {
+		if contentHTML == nil || contentHTML?.isEmpty == true, let s = itemSummary, !s.isEmpty {
 			contentHTML = s
 			itemSummary = nil
 		}

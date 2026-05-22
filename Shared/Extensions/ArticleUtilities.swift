@@ -199,4 +199,3 @@ struct ArticlePathKey {
 		]
 	}
 }
-
