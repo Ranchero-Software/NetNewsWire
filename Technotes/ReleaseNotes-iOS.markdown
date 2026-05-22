@@ -1,5 +1,16 @@
 # iOS Release Notes
 
+### 7.0.6 build 7056 22 May 2026 — branch: main tag: iOS-7.0.6-7056
+
+Fixed bug where the scroll edge effect could obscure the bottom of the fullscreen article view
+Fixed iPhone crash when going to Next Unread across feeds
+Fixed crash when changing articles during a page transition
+Fixed WebKit crash with fullscreen video content
+Fixed layout-loop crash in the timeline
+Fixed crash when dismissing an article view while toolbars were animating
+Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
+Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
+
 ### 7.0.6 build 7055 29 Apr 2026 — branch: main tag: iOS-7.0.6-7055
 
 Made timeline fetches faster by making a schema change (authors are now stored in an authors column instead of in a separate table)
