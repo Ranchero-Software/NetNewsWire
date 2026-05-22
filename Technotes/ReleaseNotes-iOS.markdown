@@ -8,6 +8,7 @@ Fixed crash when changing articles during a page transition
 Fixed WebKit crash with fullscreen video content
 Fixed layout-loop crash in the timeline
 Fixed crash when dismissing an article view while toolbars were animating
+Lowered memory use by shrinking the Downloader cache
 Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
 Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
 
