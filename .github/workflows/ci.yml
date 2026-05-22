@@ -48,8 +48,10 @@ jobs:
           set -euo pipefail
 
           result_bundle="${RUNNER_TEMP}/NetNewsWire-macOS.xcresult"
+          build_log="${RUNNER_TEMP}/NetNewsWire-macOS-build.log"
           rm -rf "$result_bundle"
 
+          set -o pipefail
           xcodebuild \
             -project NetNewsWire.xcodeproj \
             -scheme NetNewsWire \
@@ -57,7 +59,9 @@ jobs:
             -xcconfig .github/macos-ci-no-signing.xcconfig \
             -destination "platform=macOS,arch=arm64" \
             -resultBundlePath "$result_bundle" \
-            test | xcbeautify --renderer github-actions
+            test 2>&1 | tee "$build_log" | xcbeautify --renderer github-actions
+
+          ./buildscripts/fail_on_warnings.sh "$build_log"
 
       - name: Upload macOS Result Bundle
         if: failure()
@@ -89,8 +93,10 @@ jobs:
           set -euo pipefail
 
           result_bundle="${RUNNER_TEMP}/NetNewsWire-iOS.xcresult"
+          build_log="${RUNNER_TEMP}/NetNewsWire-iOS-build.log"
           rm -rf "$result_bundle"
 
+          set -o pipefail
           xcodebuild \
             -project NetNewsWire.xcodeproj \
             -scheme NetNewsWire-iOS \
@@ -99,7 +105,9 @@ jobs:
             -destination "platform=iOS Simulator,name=iPhone 17" \
             OTHER_SWIFT_FLAGS='$(inherited) -DDEBUG -DSKIP_APP_GROUP_ACCESS' \
             -resultBundlePath "$result_bundle" \
-            test | xcbeautify --renderer github-actions
+            test 2>&1 | tee "$build_log" | xcbeautify --renderer github-actions
+
+          ./buildscripts/fail_on_warnings.sh "$build_log"
 
       - name: Upload iOS Result Bundle
         if: failure()
