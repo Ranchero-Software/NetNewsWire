@@ -286,7 +286,7 @@ private extension LocalAccountRefresher {
 		feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
 	}
 
-	static let minimumTimeBetweenChecks: TimeInterval = 29 * 60 // 29 minutes
+	static let minimumTimeBetweenChecks: TimeInterval = 9 * 60 // 9 minutes
 
 	static func feedShouldBeSkippedForTimingReasons(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
 		guard let lastCheckDate = feed.lastCheckDate else {
