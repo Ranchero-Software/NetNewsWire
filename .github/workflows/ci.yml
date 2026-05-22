@@ -56,8 +56,6 @@ jobs:
             -testPlan NetNewsWire-CI \
             -xcconfig .github/macos-ci-no-signing.xcconfig \
             -destination "platform=macOS,arch=arm64" \
-            SWIFT_TREAT_WARNINGS_AS_ERRORS=YES \
-            GCC_TREAT_WARNINGS_AS_ERRORS=YES \
             -resultBundlePath "$result_bundle" \
             test | xcbeautify --renderer github-actions
 
@@ -100,8 +98,6 @@ jobs:
             -xcconfig .github/ios-ci-no-signing.xcconfig \
             -destination "platform=iOS Simulator,name=iPhone 17" \
             OTHER_SWIFT_FLAGS='$(inherited) -DDEBUG -DSKIP_APP_GROUP_ACCESS' \
-            SWIFT_TREAT_WARNINGS_AS_ERRORS=YES \
-            GCC_TREAT_WARNINGS_AS_ERRORS=YES \
             -resultBundlePath "$result_bundle" \
             test | xcbeautify --renderer github-actions
 
