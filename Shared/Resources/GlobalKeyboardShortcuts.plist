@@ -30,14 +30,6 @@
 	</dict>
 	<dict>
 		<key>key</key>
-		<string>[uparrow]</string>
-		<key>shiftModifier</key>
-		<true/>
-		<key>action</key>
-		<string>goToPreviousUnread:</string>
-	</dict>
-	<dict>
-		<key>key</key>
 		<string>+</string>
 		<key>action</key>
 		<string>nextUnread:</string>
