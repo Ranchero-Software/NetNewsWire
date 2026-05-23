@@ -171,6 +171,17 @@ import UniformTypeIdentifiers
 		self.init(url: url)
 	}
 
+	/// Initializes a `MacWebBrowser` from a path.
+	/// - Parameter path: Path to the app, as in `/Applications/Firefox.app`.
+	/// - Returns: `nil` if no app exists at `path`.
+	public convenience init?(path: String) {
+		let url = URL(fileURLWithPath: path)
+		guard Bundle(url: url) != nil else {
+			return nil
+		}
+		self.init(url: url)
+	}
+
 	/// Opens a URL in this browser.
 	/// - Parameters:
 	///   - url: The URL to open.
