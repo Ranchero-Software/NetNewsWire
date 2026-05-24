@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.0.6 build 7058 23 May 2026 — branch: main tag: iOS-7.0.6-7058
+
+Fixed bug, introduced in the previous beta, where the bottom of the article view could turn low-res and weird
+
 ### 7.0.6 build 7056 22 May 2026 — branch: main tag: iOS-7.0.6-7056
 
 Fixed bug where the scroll edge effect could obscure the bottom of the fullscreen article view
