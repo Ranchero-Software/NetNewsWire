@@ -770,6 +770,10 @@ extension MainWindowController: ScriptingMainWindowController {
     var scriptingSelectedArticles: [Article] {
         selectedArticles ?? []
     }
+
+    var scriptingSelectedFeeds: [Feed] {
+        selectedObjectsInSidebar()?.compactMap { $0 as? Feed } ?? []
+    }
 }
 
 // MARK: - NSToolbarDelegate

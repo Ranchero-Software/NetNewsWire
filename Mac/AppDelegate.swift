@@ -1004,15 +1004,19 @@ extension AppDelegate {
 */
 extension AppDelegate: ScriptingAppDelegate {
     var scriptingMainWindowController: ScriptingMainWindowController? {
-        return mainWindowController
+        mainWindowController
     }
 
     var scriptingCurrentArticle: Article? {
-        return self.scriptingMainWindowController?.scriptingCurrentArticle
+        scriptingMainWindowController?.scriptingCurrentArticle
     }
 
     var scriptingSelectedArticles: [Article] {
-        return self.scriptingMainWindowController?.scriptingSelectedArticles ?? []
+        scriptingMainWindowController?.scriptingSelectedArticles ?? []
+    }
+
+    var scriptingSelectedFeeds: [Feed] {
+        scriptingMainWindowController?.scriptingSelectedFeeds ?? []
     }
 }
 
