@@ -5,7 +5,6 @@
 Fixed bug where the default browser setting wasn’t being respected
 Fixed bug where shift-upArrow didn’t extend the timeline selection upward
 Added AppleScript `selected feeds` property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
-Made feed sorting case-insensitive and locale-aware
 Improved footnote layout in the article view
 Lowered memory use by shrinking the Downloader cache
 Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
