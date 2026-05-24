@@ -232,9 +232,7 @@ final class WebViewController: UIViewController {
 		navigationController?.setNavigationBarHidden(false, animated: animated)
 		navigationController?.setToolbarHidden(false, animated: animated)
 		additionalSafeAreaInsets.bottom = 0
-		if let parentView = parent?.view {
-			setScrollEdgeEffectsHidden(false, in: parentView)
-		}
+		setBottomScrollEdgeEffectHidden(false)
 		configureContextMenuInteraction()
 	}
 
@@ -246,9 +244,7 @@ final class WebViewController: UIViewController {
 			bottomShowBarsViewConstraint?.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
-			if let parentView = parent?.view {
-				setScrollEdgeEffectsHidden(true, in: parentView)
-			}
+			setBottomScrollEdgeEffectHidden(true)
 			configureContextMenuInteraction()
 		}
 	}
@@ -768,16 +764,20 @@ private extension WebViewController {
 		additionalSafeAreaInsets.bottom = -rawBottom
 	}
 
-	/// Hide or show any ScrollEdgeEffectView.
+	/// Hide or show the toolbar scroll edge effect at the bottom of the web view.
+	///
+	/// Hidden when entering fullscreen so a residual effect doesn't obscure the
+	/// bottom of the article.
 	///
 	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5298>
-	func setScrollEdgeEffectsHidden(_ hidden: Bool, in containerView: UIView) {
-		for subview in containerView.subviews {
-			if NSStringFromClass(type(of: subview)).contains("ScrollEdgeEffectView") {
-				subview.isHidden = hidden
-			}
-			setScrollEdgeEffectsHidden(hidden, in: subview)
+	func setBottomScrollEdgeEffectHidden(_ hidden: Bool) {
+		guard #available(iOS 26, *) else {
+			return
 		}
+		guard let scrollView = webView?.scrollView else {
+			return
+		}
+		scrollView.bottomEdgeEffect.isHidden = hidden
 	}
 
 	func configureContextMenuInteraction() {
