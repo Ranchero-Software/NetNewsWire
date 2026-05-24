@@ -1,5 +1,16 @@
 # Mac Release Notes
 
+### 7.0.6b2 7057 23 May 2026 — branch: main tag: mac-7.0.6b2
+
+Fixed bug where the default browser setting wasn’t being respected
+Fixed bug where shift-upArrow didn’t extend the timeline selection upward
+Added AppleScript `selected feeds` property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
+Made feed sorting case-insensitive and locale-aware
+Improved footnote layout in the article view
+Lowered memory use by shrinking the Downloader cache
+Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
+Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
+
 ### 7.0.6b1 7055 29 Apr 2026 — branch: main tag: mac-7.0.6b1
 
 Made timeline fetches faster by making a schema change (authors are now stored in an authors column instead of in a separate table)
