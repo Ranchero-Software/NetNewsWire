@@ -25,18 +25,6 @@
 		</item>
 
 		<item>
-			<title>NetNewsWire 7.0.6b1</title>
-            <description><![CDATA[
-  				<ul>
-				  <li>Made timeline fetches faster by making a schema change (authors are now stored in an authors column instead of in a separate table)
-				</ul>
-			]]></description>
-        	<pubDate>Wed, 29 Apr 2026 16:55:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.6b1/NetNewsWire7.0.6b1.zip" sparkle:version="7055" sparkle:shortVersionString="7.0.6b1" length="10231793" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
 			<title>NetNewsWire 6.2.1</title>
             <description><![CDATA[
 				<p>Changes since 6.2:</p>
