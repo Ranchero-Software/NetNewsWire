@@ -2,7 +2,7 @@
 
 ### 7.0.6b2 7057 23 May 2026 — branch: main tag: mac-7.0.6b2
 
-Fixed bug where the default browser setting wasn’t being respected
+Fixed bug where the browser setting wasn’t being respected
 Fixed bug where shift-upArrow didn’t extend the timeline selection upward
 Added AppleScript `selected feeds` property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
 Improved footnote layout in the article view
