@@ -63,6 +63,7 @@ final class DetailWebViewController: NSViewController {
 
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
+	private var isReloadingHTML = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	private var windowScrollY: CGFloat?
 
@@ -276,6 +277,15 @@ private extension DetailWebViewController {
 	}
 
 	func reloadHTML() {
+		// Guard against a re-entrancy crash.
+		if isReloadingHTML {
+			return
+		}
+		isReloadingHTML = true
+		defer {
+			isReloadingHTML = false
+		}
+
 		delegate?.mouseDidExit(self)
 
 		let theme = ArticleThemesManager.shared.currentTheme
