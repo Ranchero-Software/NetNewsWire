@@ -158,7 +158,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		var config = UICollectionLayoutListConfiguration(appearance: useSidebarAppearance ? .sidebar : .insetGrouped)
 		config.headerMode = .supplementary
 
-		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+		config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+			guard let self else {
+				return nil
+			}
 			if indexPath.section == 0 { return UISwipeActionsConfiguration(actions: []) }
 			var actions = [UIContextualAction]()
 

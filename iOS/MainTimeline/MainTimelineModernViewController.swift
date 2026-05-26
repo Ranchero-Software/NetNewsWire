@@ -676,7 +676,10 @@ private extension MainTimelineModernViewController {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
 		config.showsSeparators = false
 		config.headerMode = .none
-		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+		config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+			guard let self else {
+				return nil
+			}
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			var actions = [UIContextualAction]()
 
@@ -766,7 +769,10 @@ private extension MainTimelineModernViewController {
 
 			return config
 		}
-		config.leadingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+		config.leadingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+			guard let self else {
+				return nil
+			}
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
 			var actions = [UIContextualAction]()

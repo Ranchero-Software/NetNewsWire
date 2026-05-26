@@ -321,7 +321,10 @@ private extension AppDelegate {
 
 		isSyncArticleStatusRunning = true
 
-		let completeProcessing = { [unowned self] in
+		let completeProcessing = { [weak self] in
+			guard let self else {
+				return
+			}
 			self.isSyncArticleStatusRunning = false
 			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
 			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
