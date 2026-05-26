@@ -147,7 +147,7 @@ final class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case .articles:
-			return traitCollection.userInterfaceIdiom == .phone ? 5 : 4
+			return traitCollection.userInterfaceIdiom == .phone ? 4 : 3
 		case .troubleshooting:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if !AccountManager.shared.hasiCloudAccount {
@@ -223,7 +223,7 @@ final class SettingsViewController: UITableViewController {
 			}
 		case .timeline:
 			switch indexPath.row {
-			case 3:
+			case 4:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerCollectionViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
