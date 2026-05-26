@@ -7,6 +7,25 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.0.6</title>
+            <description><![CDATA[
+  				<ul>
+				  <li>Made timeline fetches faster
+				  <li>Fixed bug where the browser setting wasn’t being respected
+				  <li>Fixed bug where shift-upArrow didn’t extend the timeline selection upward
+				  <li>Added AppleScript `selected feeds` property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
+				  <li>Improved footnote layout in the article view
+				  <li>Lowered memory use by shrinking the Downloader cache
+				  <li>Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
+				  <li>Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 26 May 2026 09:05:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.6/NetNewsWire7.0.6.zip" sparkle:version="7059" sparkle:shortVersionString="7.0.6" length="10232195" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.5</title>
             <description><![CDATA[
 				 <p>Changes since 7.0.4:</p>
