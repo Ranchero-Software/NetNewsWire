@@ -2,7 +2,25 @@
 
 ### 7.0.6 build 7058 23 May 2026 — branch: main tag: iOS-7.0.6-7058
 
+This was originally a TestFlight release. It was submitted to the App Store as the 7.0.6 release version on 26 May 2026.
+
+Changes in this build:
+
 Fixed bug, introduced in the previous beta, where the bottom of the article view could turn low-res and weird
+
+Changes since 7.0.5:
+
+Made timeline fetches faster
+Improved footnote layout in the article view
+Lowered memory use by shrinking the Downloader cache
+Fixed bug where the scroll edge effect could obscure the bottom of the fullscreen article view
+Fixed iPhone crash when going to Next Unread across feeds
+Fixed crash when changing articles during a page transition
+Fixed WebKit crash with fullscreen video content
+Fixed layout-loop crash in the timeline
+Fixed crash when dismissing an article view while toolbars were animating
+Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
+Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
 
 ### 7.0.6 build 7056 22 May 2026 — branch: main tag: iOS-7.0.6-7056
 
