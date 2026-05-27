@@ -86,6 +86,7 @@ final class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSceneDidEnterBackground(_:)), name: UIScene.didEnterBackgroundNotification, object: nil)
 
 		// Configure the tap zones
 		configureTopShowBarsView()
@@ -110,6 +111,15 @@ final class WebViewController: UIViewController {
 	}
 
 	// MARK: Notifications
+
+	@objc func handleSceneDidEnterBackground(_ notification: Notification) {
+		// The share sheet is a popover on iPad. Opening the article in another browser
+		// from it backgrounds NetNewsWire mid-presentation, orphaning the popover so it
+		// can't be dismissed by tapping outside on return. Dismiss it on backgrounding. (#4269)
+		if presentedViewController is UIActivityViewController {
+			dismiss(animated: false)
+		}
+	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
