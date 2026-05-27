@@ -43,6 +43,13 @@ playground.xcworkspace
 .build/
 .swiftpm/
 
+# Resolved-dependency files for the local module packages. These are written
+# only when a module is resolved/built standalone (swift build inside the
+# module) and aren't used by the app build. The app's lock file at
+# NetNewsWire.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+# stays tracked, so dependency versions remain pinned for everyone and CI.
+Modules/*/Package.resolved
+
 # Xcode performance-test baselines. Machine-dependent — an M1 ≠ M3 ≠
 # Intel. Canonical benchmark numbers belong in source comments next
 # to the measure block, where the hardware and config are recorded.
