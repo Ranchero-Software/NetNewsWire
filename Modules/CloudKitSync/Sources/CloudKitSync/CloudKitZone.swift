@@ -10,6 +10,10 @@ import CloudKit
 import os
 import RSCore
 
+// Retry on CKError.networkFailure (which is transient).
+private let networkFailureRetryCount = 3
+private let networkFailureRetryDelay: TimeInterval = 3
+
 public typealias CloudKitQueryPageHandler = @MainActor @Sendable ([CKRecord]) async -> Void
 
 public enum CloudKitZoneError: LocalizedError, Sendable {
@@ -604,6 +608,10 @@ public extension CloudKitZone {
 
 	/// Modify and delete the supplied CKRecords and CKRecord.IDs
 	func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], completion: @escaping (Result<Void, Error>) -> Void) {
+		modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, retriesRemaining: networkFailureRetryCount, completion: completion)
+	}
+
+	private func modify(recordsToSave: [CKRecord], recordIDsToDelete: [CKRecord.ID], retriesRemaining: Int, completion: @escaping (Result<Void, Error>) -> Void) {
 		Self.logger.debug("CloudKitZone: modify recordsToSave recordIDsToDelete \(self.zoneID.zoneName, privacy: .public)")
 		guard !(recordsToSave.isEmpty && recordIDsToDelete.isEmpty) else {
 			completion(.success(()))
@@ -633,7 +641,7 @@ public extension CloudKitZone {
 						self.createZoneRecord { result in
 							switch result {
 							case .success:
-								self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
+								self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, retriesRemaining: retriesRemaining, completion: completion)
 							case .failure(let error):
 								completion(.failure(error))
 							}
@@ -692,7 +700,13 @@ public extension CloudKitZone {
 						}
 
 					default:
-						completion(.failure(CloudKitError(error)))
+						if let ckError = error as? CKError, ckError.code == .networkFailure, retriesRemaining > 0 {
+							Self.logger.debug("CloudKitZone: \(self.zoneID.zoneName, privacy: .public) modify network failure — retrying, \(retriesRemaining) attempts left")
+							await delaySeconds(networkFailureRetryDelay)
+							self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, retriesRemaining: retriesRemaining - 1, completion: completion)
+						} else {
+							completion(.failure(CloudKitError(error)))
+						}
 					}
 				}
 			}
