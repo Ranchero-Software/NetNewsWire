@@ -1,0 +1,1148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xml:lang="en" xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:s="http://jadedpixel.com/-/spec/shopify">
+  <id>https://draw-down.com/collections/all.atom</id>
+  <link rel="alternate" type="text/html" href="https://draw-down.com/collections/all"/>
+  <link rel="self" type="application/atom+xml" href="https://draw-down.com/collections/magazines.atom"/>
+  <title>Draw Down</title>
+  <updated>2026-05-15T15:53:50-04:00</updated>
+  <author>
+    <name>Draw Down</name>
+  </author>
+  <entry>
+    <id>https://draw-down.com/products/9225111929086</id>
+    <published>2026-05-15T15:53:50-04:00</published>
+    <updated>2026-05-15T15:53:50-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-56-reading-until-i-sleep-manuel-raeder"/>
+    <title>Revue Faire — no. 56 (Reading Until I Sleep: Manuel Raeder)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaire_no.56_ReadingUntilISleepManuelRaeder.jpg?v=1778874818"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            15.50
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><em>Reading Until I Sleep</em> reflects on the work of designer and publisher Manuel Raeder. </p>
+<p>His practice unfolds between readers and books, artists and places, bodies and infrastructures, materials and memories, working with objects that bear their histories openly and resist disposability by insisting on the ongoing life of things.</p>
+<p>Joel Mu's essay brings multiple perspectives into contact with the inequities that determine who can work, rest, make, and be seen; within this landscape, Raeder's practice, like reading and sleep, becomes an act of resistance, an interval that reopens the possibility of relation, autonomy, and care.</p>
+<p>Across two decades he has developed a distinctive body of work spanning books, furniture, textiles, exhibitions, and long-term collaborations, founding Studio Manuel Raeder and remaining co-founder of BOM DIA BOA TARDE BOA NOITE, which continues as a collaborative team based in his Berlin studio.</p>
+<p>Published by Editions Empire, 2026<br>Bilingual, in French and English</p>
+<p>Softcover, [52] pages, color and b&amp;w, 8.25 × 11.75 inches</p>
+<p>ISBN: 979-1-09-599186-1</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Activism</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Publishing</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9225111929086</id>
+      <title>Default Title</title>
+      <s:price currency="USD">15.50</s:price>
+      <s:sku/>
+      <s:grams>204</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9181983801598</id>
+    <published>2026-04-05T17:22:30-04:00</published>
+    <updated>2026-04-05T17:22:30-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/a-line-which-forms-a-volume-8"/>
+    <title>A Line Which Forms a Volume 8</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/ALineWhichFormsaVolume8.jpg?v=1775424142"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            11.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><div class="rte mt-8">
+<p><em>A Line Which Forms a Volume</em> is a critical reader and symposium of graphic design-led research that is written, edited, designed and published by participants of the MA Graphic Media Design course at London College of Communication (LCC).</p>
+<p>This eighth issue uses the notion of refraction—"how knowledge and experiences can be fragmented and redirected"—to explore shifts in graphic design education and discourse, with insights from students and external practitioners alike. <br><br>The issue features an interview with Astrid Vorsterman of Valiz Publishers, conversations with designers and researchers Paul Bailey and Irene Sempere, and an excerpt from "Chimeric Worlding" by Tiger Dingsun that explores the potentialities that exist between graphic design, poetics, and worldbuilding, as well as a selection of graphic design-led research  projects.<br><br>With a striking lime green cover, it adds red and blue to its palette inside, in reference to the splitting of light. </p>
+<p>The team have also penned their own "Refractive Manifesto," which begins as a footer on the front cover and continues, line by line, at the bottom of each page throughout the issue. </p>
+<p>Edited by Aditi Sharma, Gunesh Garibli, Hanyu Yang, Kealani Espinda, Wang Li-Ting</p>
+<p>Designed by Aastha Chauhan, Ge Gan, Jiayi Gu, Jingping Jiang, Juyi Wang, Olivia Zuo, Regina González Rossi, Runbin Xiao, Sadie Lee, and Shreya Joshi</p>
+<p>Published by MA Graphic Design Media, London College of Communication, 2025<br>Printed in a limited edition of 500 copies<br></p>
+<p>Softcover with clear spiral binding, 152 pages, multi-color Risograph printing, 6 × 7.5 inches</p>
+<p>ISSN: 2515-9801</p>
+</div></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Publishing</s:tag>
+    <s:tag>Risograph</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9181983801598</id>
+      <title>Default Title</title>
+      <s:price currency="USD">11.00</s:price>
+      <s:sku/>
+      <s:grams>272</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9926014090</id>
+    <published>2026-03-20T16:38:35-04:00</published>
+    <updated>2026-03-20T16:38:35-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/graphic-18-workshop"/>
+    <title>Graphic 18: Workshop</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/products/Graphic18_21.jpg?v=1621724601"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            35.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><meta charset="utf-8">
+<p>This issue highlights sixteen workshops on graphic design mounted between 2009 and 2011. It revisits these workshops—held around the world by an international array of designers—and provides details about graphic design education taking place outside traditional school curriculums. As summer programs and workshops continue to emerge as an important site of graphic design practice and experimentation, this volume becomes a critical resource for design workshop history.</p>
+<p>Contributors include: åbäke, Charlotte Cheetham, Daijiro Mizuno &amp; Yuma Harada, Lovis Caputo, David Reinfurt, Fraser Muggeridge, Guy Meldem, David Keshavjee &amp; Julien Tavelli, Julia Born, James Goggin, Min Choi, Nicolas Bourquin &amp; Thibaud Tissot, Our polite society, Radim Peško, Sheila Levrant de Bretteville, Susan Sellers, Temp &amp; Tankboys, Urs Lehni, Uta Eisenreich &amp; Saskia Janssen</p>
+<p>Concept and design: Na Kim</p>
+<p>Published by Propaganda Press, 2011</p>
+<p>Text in Korean and English</p>
+<p>208 pages, full color and b&amp;w illustrations, 9 × 12 in.</p>
+<p>ISBN 978-89-966622-0-4</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Design Education</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9926014090</id>
+      <title>Default Title</title>
+      <s:price currency="USD">35.00</s:price>
+      <s:sku></s:sku>
+      <s:grams>567</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9121329938686</id>
+    <published>2026-01-31T11:20:32-05:00</published>
+    <updated>2026-01-31T11:20:32-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/shelf-life-magazine"/>
+    <title>Shelf Life Magazine</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/ShelfLifeMagazine.jpg?v=1769876429"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            28.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><em>Shelf Life Magazine</em> uses the visual logic of food expiration dates to examine the lifespan of human experience. Objects associated with different stages of life are placed inside food containers, pairing familiar systems of packaging and labeling with personal artifacts and memory.</p>
+<p>By aligning expiration dates with moments of emotional intensity, this publication considers how experiences peak, fade, and transform over time. Childhood objects, such as toys, remain materially intact, even as our relationship to them shifts. What changes is not their existence, but their relevance and the conditions under which they are encountered.</p>
+<p>Expiration is treated not as loss, but as accumulation. Past experiences retain value without needing to remain active or unchanged. <br><br>Through the everyday metaphor of storage, preservation, and disposal, <em>Shelf Life Magazine</em> offers a restrained reflection on growth, memory, and the passage of time.</p>
+<p>Edited by Katherine Baker</p>
+<p>Designed by Olivia Sommo</p>
+<p>Published by Moretti Design, 2024</p>
+<p>Softcover, 54 pages, full color, </p>
+<p>ISBN: 979-8-99-062500-6</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Artist Books</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9121329938686</id>
+      <title>Default Title</title>
+      <s:price currency="USD">28.00</s:price>
+      <s:sku/>
+      <s:grams>268</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9109606072574</id>
+    <published>2026-01-16T16:22:28-05:00</published>
+    <updated>2026-01-16T16:22:28-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/soft-hard-no-2"/>
+    <title>Soft Hard: No 2</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/SoftHardNo2.jpg?v=1768599992"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            14.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><em>Soft Hard</em> is an experimental, multilingual publication. Its loose, nonlinear structure aims to serve as both a newsletter and a creative playground for cultural workers.</p>
+<p>Each issue invites a wide range of professionals from diverse backgrounds — designers, architects, artists, curators, writers, and inde­pendent publishers, among others — to share glimpses of their recent work in response to a given theme. <br><br>The theme of the second issue, “Side” reflects on the complexity of balancing commissioned and self-initiated endeavors.</p>
+<p>Issue 2 includes contributions from Rok Hudobivnik, Jiin Oh, 818 architects, Filip Birkner, Whitney Mallett, Mira Ying, and Jaekook Han.</p>
+<p>Compiled, edited, and designed by Yuseon Park and Immanuel Yang</p>
+<p>Published by Plane and Vertical, 2025<br>Bilingual, in English and Korean</p>
+<p>Softcover, 56 pages, CMYK + spot color offset printing, 7.25 × 10.25 inches</p>
+<p>ISBN 979-1-19-795772-7</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9109606072574</id>
+      <title>Default Title</title>
+      <s:price currency="USD">14.00</s:price>
+      <s:sku/>
+      <s:grams>159</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9104099246334</id>
+    <published>2026-01-02T16:48:12-05:00</published>
+    <updated>2026-01-02T16:48:12-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/slanted-46-cairo"/>
+    <title>Slanted 46: Cairo</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/Slanted46Cairo.jpg?v=1767390483"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            32.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>A visual journey into the vibrant heart of Egypt’s creative scene. The dynamic design culture of Cairo—and beyond—reveals just how diverse, innovative, and powerful creative voices in Egypt are today.</p>
+<p>From graphic design, typography, and visual communication to architecture and product design, <em>Slanted #46</em> showcases outstanding projects that are shaping the cultural present and future of the region. Whether through progressive branding concepts, experimental approaches, or striking visual storytelling, this issue reflects the powerful creative energy flowing through Egypt. This issue gives space to designers, illustrators, and artists from Cairo, other Egyptian cities, and abroad—highlighting their work and personal statements. In-depth essays and articles on cultural, social, and creative topics related to Cairo and Egypt round out the issue.</p>
+<p><em>Slanted Magazine #46—Cairo</em> is a compelling portrait of a design scene in motion—bold, diverse, and brimming with fresh perspectives.</p>
+<p>Edited by Luna Şenyurt, Markus Lange, and Slanted Publishers</p>
+<p>Designed by Juliane Lipp, Lars Harmsen (CD), Luna Şenyurt, and Slanted Publishers </p>
+<p>Published by Slanted Publishers, 2025</p>
+<p>Softcover with hot foil embossing, 224 pages, Swiss binding with flaps, full color offset + 1-color spot color on colored paper, 6.3 × 9.45 inches</p>
+<p>ISBN: 978-3-94-844091-6 </p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Travel</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9104099246334</id>
+      <title>Default Title</title>
+      <s:price currency="USD">32.00</s:price>
+      <s:sku/>
+      <s:grams>635</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9079909155070</id>
+    <published>2025-12-12T15:12:11-05:00</published>
+    <updated>2025-12-12T15:12:11-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-43-a-typeface-typographic-writing"/>
+    <title>Revue Faire — no. 43 (A typeface: &quot;Typographic Writing&quot;)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaire_no.43_Atypeface.jpg?v=1765570325"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            11.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span>n°43 — A typeface: "Typographic writing"<br>By Thierry Chancogne</span></p>
+<p>The reissue of issue 43 of the critical graphic design journal <em>Revue Faire</em> offers a reflection on the dynamics between writing and typography. In <em>La Lettre d’imprimerie</em> (1920), Francis Thibaudeau dedicated his manual of modern typography to Georges Auriol, whom he called “the innovator of typographic writing.” The book showcases several of Auriol’s distinctive typefaces—including Auriol-champlevé, Auriol labeur, Française Légère, and Robur Noir. Among these, Auriol labeur stands out: a stencil typeface that merges the expressive, hand-brushed vitality of writing with the mechanical precision of industrial production - an oxymoron Thibaudeau captured in the phrase “typographic writing.”</p>
+<p>This issue revisits enduring questions: How does the personal gesture of writing coexist with the standardized logic of typography? Can typefaces—these abstract, repeatable forms—carry the living energy of handwriting and history?<span></span></p>
+<p><span>Published by Editions Empire<br>Bilingual, in French and English<br></span></p>
+<p><span>Softcover, 36 pages, color and b&amp;w, 8.25 × 11.75 inches<br><br>ISBN: 979-1-09-599157-1</span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Graphic Design History</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9079909155070</id>
+      <title>Default Title</title>
+      <s:price currency="USD">11.00</s:price>
+      <s:sku/>
+      <s:grams>113</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9079918395646</id>
+    <published>2025-12-12T15:09:56-05:00</published>
+    <updated>2025-12-12T15:09:56-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-34-an-award-what-is-a-most-beautiful-book"/>
+    <title>Revue Faire — no. 34 (An award: What is a most beautiful book?)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaire_no.34.jpg?v=1765570193"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            11.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span>n°34 — An award: What is a most beautiful book?<br>By Thierry Chancogne</span></p>
+<p><span>This reissue of issue 34 of the critical graphic design journal <em>Revue Faire</em> questions the very notion of “beauty” in typography and the challenges surrounding the Most Beautiful Swiss Books award. </span></p>
+<p><span>Tracing the evolution of aesthetics from the Enlightenment to the age of industrial design, it asks what “beauty” means in the art of bookmaking today—since Jan Tschichold’s influential role in shaping the award in 1943.<br><br>Published by Editions Empire<br>Bilingual, in French and English<br></span></p>
+<p><span>Softcover, 28 pages, color and b&amp;w, 8.25 × 11.75 inches<br><br>ISBN: 979-1-09-599158-8</span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Graphic Design History</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9079918395646</id>
+      <title>Default Title</title>
+      <s:price currency="USD">11.00</s:price>
+      <s:sku/>
+      <s:grams>113</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9079333814526</id>
+    <published>2025-12-05T14:58:11-05:00</published>
+    <updated>2025-12-05T14:58:11-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-53-graphic-designers-as-icongraphers"/>
+    <title>Revue Faire — no. 53 (Graphic Designers as Iconographers)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaire_no.53.jpg?v=1765570242"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            25.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span>n°53 — Graphic Designers as Iconographers.<br>By Thierry Chancogne</span></p>
+<p style="padding-left: 40px;">Scene 1: The painter-iconographer “describes any subject through drawing.” Working in a studio or, from direct observation, in the midst of nature, they produce an image based on an object. They were already engaged in what Erwin Panofsky referred to as iconographies.<br><br>Scene 2: The painter-iconographer creates an image based on another image or metaphorical text, such as a painting, a photograph, or even an ekphrasis. In other words, the most complete possible textual representation or depiction of an image was one of the primary means of distributing it.<br><br>Scene 3: The artist—and no longer exclusively the painter-iconographer—selects an existing, “ready-made” image. In doing so, the artist becomes part of the body of professions linked to the multiplicity of images. The artist becomes a kind of librarian, curator, artistic director, editor: an iconographer aligned with what typographers and graphic designers have long asserted as an inherent means of regenerating the old tradition of illustration.<br><br>Scene 4: What happens, then, when contemporary graphic designers appear to take up the torch of an iconography that so-called iconographer-artists had already reclaimed—since the beginning of the last century—from graphic designers themselves, along with their culture and skills?</p>
+<p><span><em>Faire</em> is a bi-monthly publication dedicated to graphic design. Produced by Empire, the publishing arm of French design studio Syndicat (designers Sacha Léopold and François Havegeer), <em>Faire</em> is aimed at students as well as researchers and professional designers. Each issue addresses a specific object or theme and is written by a renowned author.</span></p>
+<p><span>Published by Editions Empire, 2025<br>Bilingual, in French and English<br></span></p>
+<p><span>Softcover, 80 pages, CMYK + 1 PMS, 8.25 × 11.75 inches<br><br>ISBN: 979-1-09-599159-5</span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Graphic Design History</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9079333814526</id>
+      <title>Default Title</title>
+      <s:price currency="USD">25.00</s:price>
+      <s:sku/>
+      <s:grams>186</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/1319934558298</id>
+    <published>2025-10-31T15:40:59-04:00</published>
+    <updated>2025-10-31T15:40:59-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/amalgam-op-1"/>
+    <title>Amalgam Op.1</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/AmalgamOp.1.jpg?v=1761939339"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            25.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span><em>Amalgam</em> is an ad hoc transdisciplinary journal that works at the intersection of typography, language, and the visual arts. </span><span></span></p>
+<p><span><em>Amalgam Op.I</em> brings together a selection of writings, transcribed performances, and interviews with a diverse group of designers, linguists, and visual artists. The second edition includes a new editorial piece ("Language Constructed, Language Unmade") with contributions from Rouzbeh Rashidi, Alexandru Balgiu, Alice J Lee, Dinamo, David Jonathan Ross, Meghan Ferrill, Gregory Vines, Gerry Leonidas, Paul McNeil, Devin King, and others</span></p>
+<p>The inaugural issue explores typography as a site of epistemic tension, where ideals of clarity, universality, and perfection collide with historical contingency, materiality, and ideological control. Contributions interrogate the myth of typographic neutrality through inquiries into language reform, spatial inscription, analog production, and digital transformation. From Hangul’s deliberate invention to asemic poetics and cinematic sequencing, the issue frames typography as both system and rupture where utopian aspirations generate their own exclusions, and legibility becomes a contested terrain.<br></p>
+<p>Designed and edited by Pouya Ahmadi</p>
+<p>Published by Amalgam<br>Second edition, 2025<br>(Image currently shows first edition)<span></span></p>
+<p><span>Softcover, 160 pages, b&amp;w, 6.5 × 9 inches</span></p>
+<p><span>ISBN: 978-0-99-983335-3</span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Typography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/1319934558298</id>
+      <title>Default Title</title>
+      <s:price currency="USD">25.00</s:price>
+      <s:sku></s:sku>
+      <s:grams>454</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9030312984830</id>
+    <published>2025-10-31T15:40:24-04:00</published>
+    <updated>2025-10-31T15:40:24-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/amalgam-op-ii"/>
+    <title>Amalgam—Op. II (Issue 2)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/Amalgam_Op.II.jpg?v=1761939616"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            25.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>Amalgam is an ad hoc transdisciplinary and transnational journal that explores the intersection of typography, language, and the visual arts.</p>
+<p>The contributions in this issue range from an essay on artist billboards by Benjamin Duvall, two conversation with AATB (Andrea Anner and Thibault Brevet) and Kia Tasbihgou, a speculative essay around the origins of all languages and the sun symbol by Lara Schoorl, extracts from <em>Mind Walks</em> by Karl Nawrot, and a map of queer zines by Nate Pyper.<br><br>With contributions from John Tipton, AATB (Andrea Anner and Thibault Brevet), Hanna Bergman (The Reading School), Laura Csocsan, Benjamin Duvall, Robin Fuller, Jerome Harris, Jeffery Keedy, Karl Nawrot, Nate Pyper, Charlotte Rohde, Lara Schoorl, Leila Seyedzadeh, Tamar Shafrir, Kia Tasbihgou, Ramon Tejada, and Till Wittwer. </p>
+<p>Designed and edited by Pouya Ahmadi</p>
+<p>Published by Amalgam<br>Second edition, 2025<br>Printed in an edition of 500 copies</p>
+<p>Softcover, [180] pages, b&amp;w, 6.5 × 9 inches</p>
+<p>ISBN: 978-0-99-983336-0</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9030312984830</id>
+      <title>Default Title</title>
+      <s:price currency="USD">25.00</s:price>
+      <s:sku/>
+      <s:grams>425</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9022159585534</id>
+    <published>2025-10-17T15:33:19-04:00</published>
+    <updated>2025-10-17T15:33:19-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/plates-2"/>
+    <title>PLATES #2: Body Issue</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/PLATES_2BodyIssue.jpg?v=1760729595"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            32.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>The physicality of a human body denotes our essential relationship to forms and being. Yet, if placed in different contexts, the notion of body could collapse into a synonym to a surface, a machine, a system, or an automated assemblage in capitalism, media technology, politics, and the Internet. A body could lack transparency, concreteness and authenticity while still claiming its very identity and functionality. </p>
+<p>In its second iteration–the Body Issue, <em>PLATES</em> presents collective voices which address issues around a corporal body, a virtual entity, body politic, identity, body mechanics, bodilessness, expressive/performative body, body as tools, or any body issue in relation to their practice.</p>
+<p>In this issue, publisher RELATED DEPARTMENT collaborated with London-based multidisciplinary artist and visual designer Can Yang on creative direction and design. </p>
+<p><em>PLATES </em>is an editorial and curatorial response to contemporary design practice and criticism. Each issue dives into a specific topic that is pertinent to the design reality we live in, presented and archived in a series of image and textual plates in an organic, iterative and evolving format.</p>
+<p>Includes 18 individual plates—writings, diagrams, photographs, posters, and typographic specimens—by contributors Bryson Lee, Can Can Press, Clement Valla, Common Imprint, Laura Coombs + Mindy Seu, Luna Maurer, Studio Moniker, Radical Characters + Body &amp; Forma, Source Type + Mara Frazier, Stephanie Specht, Tiger Dingsun</p>
+<p>Creative direction and design: Related Department and Can Yang</p>
+<p>Published by Page Bureau, 2025</p>
+<p>Rubber band binding (removable), [64 pages] + 1 poster, b&amp;w and multi-color, 8.4 × 11.25 inches (individual pieces with varying dimensions)<br></p>
+<!----></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Artist Books</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Typography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9022159585534</id>
+      <title>Default Title</title>
+      <s:price currency="USD">32.00</s:price>
+      <s:sku/>
+      <s:grams>454</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9011195478270</id>
+    <published>2025-10-13T15:32:21-04:00</published>
+    <updated>2025-10-13T15:32:21-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/graphic-51-art-book-fair-now"/>
+    <title>Graphic 51: Art Book Fair Now</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/Graphic51ArtBookFairNow.jpg?v=1760383931"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            40.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>Against the backdrop of the flourishing of art book fairs, Korea's <em>GRAPHIC</em> invited numerous book fair organizers to share their views on the current state of book fairs and on what role they should ultimately play, and publishes this issue based on their responses. Figuratively speaking, this issue can be seen as a large-scale roundtable where more than 30 art book fairs—ranging from well-known to newly established ones, and differing in tradition, scale, background, and motivation—participate in discussing the role of book fairs. </p>
+<p>Book fairs around the world are now undergoing intense aesthetic diversification. Some newer fairs, standing in opposition to economies of scale, are presenting formats that differ strikingly from existing ones, while other noteworthy attempts are being made to overcome the mainstream ecologically and ethically in terms of organization and operation.</p>
+<p>This issue of <em>GRAPHIC</em> captures the living voices from the frontlines of art book fairs today. With an unprecedented number of insiders participating through interviews, conversations, reports, and essays, this issue serves as a reference point for continuing the discussion—and for those envisioning new kinds of book fairs.</p>
+<p>Contributors include include organizers of the New York Art Book Fair, Miss Read, Bergen Art Book Fair, Taipei Art Book Fair, African Art Book Fair, Tokyo Art Book Fair, Focal Point: Sharjah Art Book Fair, Recreo Valencia Art Book Fair, Rehearsal Art Book Fair, and many more around the world. </p>
+<p>Designed by Sam Kim and Shin Dokho</p>
+<p>Published by Propaganda Press, 2025</p>
+<p>Softcover, 250 pages, color and b&amp;w, 9 × 11.75 inches</p>
+<p>ISSN: 1975-7905</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Artist Books</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Publishing</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9011195478270</id>
+      <title>Default Title</title>
+      <s:price currency="USD">40.00</s:price>
+      <s:sku/>
+      <s:grams>943</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/9011111133438</id>
+    <published>2025-10-03T15:43:31-04:00</published>
+    <updated>2025-10-03T15:43:31-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-52-a-mode-of-representation"/>
+    <title>Revue Faire — no. 52 (A Mode of Representation)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaireno.52_AModeofRepresentation.jpg?v=1759520609"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            30.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span>n°52 — A Mode of Representation</span></p>
+<p><span>By Manon Bruet</span></p>
+<p>Through a combination of critical texts and a visual essay, this issue of France's <em>Faire</em> explores 3D computer graphics, sometimes called CGI, 3-D-CGI or three-dimensional computer graphics.</p>
+<p>From the early visuals used as Mac screensavers to the creation of entirely virtual worlds, this issue aims to examine various approaches to representing reality and to highlight some of the aesthetic and economic issues associated with the development of this now indispensable method of image production.</p>
+<p>For this edition, artist Harriet Davey was invited to take full creative license. Drawing from the realms of science fiction and fantasy, Davey crafts images of avatars that are at once strange and familiar, evolving within dark or enchanted world. Thought their work—most notably the long-running project <em>The Real Unreal</em>—they explore themes of fluidity and queer identity. </p>
+<p><span><em>Faire</em> is a bi-monthly publication dedicated to graphic design. Produced by Empire, the publishing arm of French design studio Syndicat (designers Sacha Léopold and François Havegeer), <em>Faire</em> is aimed at students as well as researchers and professional designers. Each issue addresses a specific object or theme and is written by a renowned author.</span><span></span></p>
+<p><span>Designed by Syndicat and Arthur Chaput</span></p>
+<p><span>Published by Editions Empire, 2025<br>Bilingual, in French and English<br></span></p>
+<p><span>Softcover, 96 pages, CMYK and 1 PMS on cover, 8.25 × 11.75 inches<br><br>ISSN: 2558-2062<br></span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Technology</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/9011111133438</id>
+      <title>Default Title</title>
+      <s:price currency="USD">30.00</s:price>
+      <s:sku/>
+      <s:grams>454</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/10817598026</id>
+    <published>2025-08-17T09:56:52-04:00</published>
+    <updated>2025-08-17T09:56:52-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/dot-dot-dot-20"/>
+    <title>Dot Dot Dot 20</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Rare</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/products/Dot20_17s.jpg?v=1496233653"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Rare<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            28.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><em>Dot Dot Dot</em><span> covers design in the widest possible sense. Steering clear of both commercial portfolio presentations and impenetrable academic theory, it offers intelligent, passionate, and clever writing on the tangled web of influences that determine the shape of contemporary cultural production. Art, music, language, film, literature—you never know what you might discover on its offbeat pages. Featuring a design as unexpected as its content, </span><em>Dot Dot Dot 20</em><span> presented new artifacts from its ongoing investigation into the past, present, and future of visual culture.</span></p>
+<p>Published by Princeton Architectural Press, 2010</p>
+<p>Softcover, 144 pages, with 25 color plates, 6.5 × 9.25 inches</p>
+<p><span>ISBN: </span><span></span><span>978-0-9794654-5-1</span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/10817598026</id>
+      <title>Default Title</title>
+      <s:price currency="USD">28.00</s:price>
+      <s:sku></s:sku>
+      <s:grams>320</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8955685404926</id>
+    <published>2025-08-15T16:42:53-04:00</published>
+    <updated>2025-08-15T16:42:53-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/slanted-45-sex"/>
+    <title>Slanted 45: Sex</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/slanted45se.jpg?v=1755290364"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            30.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>A thought-provoking journey through themes of gender, body image, and sexuality, created in partnership with Munich’s Archive Artist Publications (AAP), directed by artist and archivist Hubert Kretschmer. <br><br>This edition of Germany's <em>Slanted</em> draws from one of the world’s most extensive private collections of artist publications, home to over 89,988 rare zines, booklets, posters, and other printed matter collected since the 1980s. The issue showcases zines, booklets, posters, and publications that engage with body politics, self-image, and identity from contemporary and historical perspectives.</p>
+<p>As visual narratives shape norms, marginalized bodies—non-binary, queer, disabled, racialized—are often underrepresented or portrayed in tokenized ways. <em>Slanted Magazine #45—Sex</em> invites readers to question these conventions and encourages a critical look at the media‘s role in representing bodies.</p>
+<p>Through provocative visuals and diverse stories, <em>Slanted Magazine #45—Sex</em> opens the door to a deeper, multifaceted dialogue on bodies and belonging.<br><br>Cover design and artwork by Guillaume Kashima</p>
+<p>Designed by Juliane Lipp, Lars Harmsen, and Samira Niedermayer</p>
+<p>Published by Slanted, 2025</p>
+<p>Softcover, 224 pages, full color offset with spot colors, 6.3 × 9.45 inches</p>
+<p>ISBN 978-3-94-844083-1</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Health</s:tag>
+    <s:tag>Publishing</s:tag>
+    <s:tag>Wellness</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8955685404926</id>
+      <title>Default Title</title>
+      <s:price currency="USD">30.00</s:price>
+      <s:sku/>
+      <s:grams>531</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8946606211326</id>
+    <published>2025-07-25T15:19:19-04:00</published>
+    <updated>2025-07-25T15:19:19-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/pre-sale-plain-text-2"/>
+    <title>Plain Text 2</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/PlainText2.jpg?v=1778874549"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            28.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>From fiction to theory, from mystical analyses to visual works, <em>Plain Text </em>explores typographic imaginaries, moving beyond a strictly historical and technical framework, with a taste for the unknown and the dormant potential of writing.</p>
+<p>This second issue of Plain Text features Hervé Aracil, Marcus Leis Allion, Mardi Forestier, Aliona Ciobanu, Alec Vivier-Reynaud, HAW Hamburg + Pierre Pané-Farré, Simon Renaud, Tim Brookes, Inscript collective, Benjamin Dumond and Lucas Descroix.</p>
+<p><em></em>Published by Plain Form, 2025<br>Bilingual, in English and French<br></p>
+<p>Softcover, 80 pages, b&amp;w, 8.3 × 11.6 inches</p>
+<p>ISBN: 978-2-95-972541-8<br></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Typography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8946606211326</id>
+      <title>Default Title</title>
+      <s:price currency="USD">28.00</s:price>
+      <s:sku/>
+      <s:grams>454</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8925561618686</id>
+    <published>2025-07-11T16:28:43-04:00</published>
+    <updated>2025-07-11T16:28:43-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-51-international-library-of-fashion-research"/>
+    <title>Revue Faire — no. 51 (International Library of Fashion Research)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaire_no.51_InternationalLibraryofFashionResearch.jpg?v=1752265723"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            22.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span>n°51 — ‘Yell Outside’: International Library of Fashion Research.<br>By Aude Fellay</span></p>
+<p style="padding-left: 40px;">I approach the man behind the glass. He doesn’t look at me. I hand him my passport. <br>"Why are you in Norway?" he asks, flipping through its pages. "To work," I reply, plainly. "What kind of work?" "Research," I respond, reveling in the evasiveness (surely, a privilege). He goes again: "What kind of research?" I finally spill the beans: "fashion research." He repeats the F*word as his eyes finally meet mine. Norway and fashion. Fashion and research. I can’t work out which combination of words threw him. Perhaps all four.</p>
+<p style="padding-left: 40px;">Fashion with a capital M goes with Paris. Research, surely, with something like science. What’s the point of studying something so frivolous? Can one we really think<em> through fashion</em>? Yes sir, my sense of self hinges on it. And that is how I pay my rent. In this case, it involves writing something about the International Library of Fashion Research for the glossy pages you are holding in your hands. The library holds fashion ephemera, i.e. printed matter, which include show invitations, studio memos, look books, a range of fashion magazines and a modest selection of academic writing, among other things. Hence Revue Faire’s interest in the library, and my being in Oslo for two days.</p>
+<p><em>Faire</em> is a bi-monthly publication dedicated to graphic design. Produced by Empire, the publishing arm of French design studio Syndicat (designers Sacha Léopold and François Havegeer), <em>Faire </em>is aimed at students as well as researchers and professional designers. Each issue addresses a specific object or theme and is written by a renowned author.</p>
+<p>Published by Editions Empire, 2025<br>Bilingual, in French and English</p>
+<p>Softcover, 76 pages, b&amp;w and color images, 8.25 × 11.75 inches</p>
+<p>ISBN: 979-1-09-599149-6</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Fashion</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8925561618686</id>
+      <title>Default Title</title>
+      <s:price currency="USD">22.00</s:price>
+      <s:sku></s:sku>
+      <s:grams>295</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8880117940478</id>
+    <published>2025-05-30T17:18:20-04:00</published>
+    <updated>2025-05-30T17:18:20-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-50-a-site-the-palace-of-typographic-masonry"/>
+    <title>Revue Faire — no. 50 (A Site: The Palace of Typographic Masonry)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaire_no.50_ASiteThePalaceofTypographicMasonry.jpg?v=1748639899"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            15.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span>n°50 — A Site: The Palace of Typographic Masonry<br></span></p>
+<p><span>By Thierry Chancogne<br></span></p>
+<p>The “About” section of the Palace of Typographic Masonry website reads as follows: <br><br>“The Palace of Typographic Masonry was established as a foundation on May 15, 2018. The foundation pursues the following objectives:<br><br>1. Provide a physical and/or virtual environment for the creation of graphic design and a platform for the publication and presentation of associated work-graphic or otherwise;<br>2. Build a reference framework for graphic design;<br>3. Familiarize a diverse audience with a varied and relevant graphic design landscape;<br>4. Draw attention to graphic design as a unique discipline and profession;<br>5. Promote the recognition of individuals who have proven important to graphie design as a profession and/or the development of the field.”</p>
+<p>In this edition of <em>Faire</em>, <span class="">Thierry Chancogne and Richard Niessen have a palatial discussion, over the course of four epistolary exchanges, about the content, issues, and the principles of classification of this palace devoted to “the splendor and variety of graphic languages”—a place dedicated to the promotion, dissemination, and support of an open and adventurous approach to our discipline of graphism, graphic design, and typography.</span><br></p>
+<p><span>Designed by Syndicat</span></p>
+<p><span>Published by Editions Empire, 2025<br>Bilingual, in French and English<br></span></p>
+<p><span>Softcover, 60 pages, CMYK and 1 PMS on cover, 8.25 × 11.75 inches<br><br>ISBN:  979-1-09-599146-5<br></span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Typography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8880117940478</id>
+      <title>Default Title</title>
+      <s:price currency="USD">15.00</s:price>
+      <s:sku/>
+      <s:grams>240</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8860875194622</id>
+    <published>2025-04-13T19:29:47-04:00</published>
+    <updated>2025-04-13T19:29:47-04:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/revue-faire-no-49-a-b-lawrence-weiner"/>
+    <title>Revue Faire — no. 49 a/b (Lawrence Weiner)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/RevueFaire_no.49a_b_LawrenceWeiner.jpg?v=1744586986"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            16.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><span>n°46 — Lawrence Weiner: We Are Ships at Sea, Not Ducks On a Pond</span></p>
+<p><span>By Joris Kritis, with interviews with Nora Turato and Linda van Deursen</span></p>
+<p>Lawrence Weiner’s use of graphic design has always been of fascination for graphic designers. "What makes Weiner’s work seductive to graphic designers is his resolutely non-apologetic method of displaying words without need for any explanation."* But in this text a comparative analysis is made of different voices about Weiner’s use of graphics &amp; typography.</p>
+<p>Next to a speculative history of Weiner’s formal language, two interviews—with graphic designer Linda Van Deursen and artist Nora Turato—pay attention to Weiner’s enduring legacy.</p>
+<p><span><em>Faire</em> is a bi-monthly publication dedicated to graphic design. Produced by Empire, the publishing arm of French design studio Syndicat (designers Sacha Léopold and François Havegeer), <em>Faire</em> is aimed at students as well as researchers and professional designers. Each issue addresses a specific object or theme and is written by a renowned author.</span></p>
+<p><span>*Russel Holmes, “The Work Must Be Read,”<em> Eye Magazine</em>, Autumn 1998</span></p>
+<p><span>Designed by Syndicat</span></p>
+<p><span>Published by Editions Empire, 2025<br>Bilingual, in French and English<br></span></p>
+<p><span>Softcover, 62 pages [44 pages A4 + 16 pages A5, 2 volumes], CMYK and 1 PMS on cover, 8.25 × 11.75 inches<br><br>ISBN: 979-1-09-599148-8<br></span></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Typography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8860875194622</id>
+      <title>Default Title</title>
+      <s:price currency="USD">16.00</s:price>
+      <s:sku/>
+      <s:grams>150</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8822252208382</id>
+    <published>2025-03-07T11:25:37-05:00</published>
+    <updated>2025-03-07T11:25:37-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/all-things-measured-01-length"/>
+    <title>All Things Measured: 01 — Length</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/AllThingsMeasured01_Length.jpg?v=1741364722"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            25.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>People measure things everyday: precisely, imprecisely and unconsciously, whether they have a scale in hand or not. This new magazine explores one unit at a time (i.e.: length, temperature, luminosity) through stories of cultural, historical and societal implications that measurements have on our daily lives. The purpose of the magazine is to highlight a side of technology that is less about breakthrough or innovation, but more about the people who measure things daily.</p>
+<p>Issue 01 (Length) explores the awkward teen years of the measuring units we use today, and the fine tuning done over thousands of years, “perfected" (depending on how you define perfect) into the measuring standards of today— and how we collectively misuse them.</p>
+<p>Consider that the word <em>thermometer</em> began to circulate a century and a half before the invention of the meter. Even if this inaugural issue is all about length, meter (<em>metron</em> in Greek – μέτρον) first meant “to measure”, and only after became a dimension.</p>
+<p>Shock yourself at the incredibly recent imprecision of things we consider to be done at the highest caliber since time immemorial, such as flight and marathon record setting. Look up at the moon and know that you are just one thumb, or two clicks away, to finding out how far it is from you.</p>
+<p>Contributors include write Maggie Oran, architect Ioana Gotia-Ciurea, artist Willem de Haan, Boey Wang, Joanne van der Wal, and many more.</p>
+<p>Edited by Andreea Samoilă<br></p>
+<p>Art direction and graphic design: Andreea Samoilă (in consultation with Rebecca Wilkinson and Sixin Zeng)<br></p>
+<p>Published by Iminent Studio S.R.L. <br>Autumn/Winter 2024</p>
+<p>Softcover, 104 pages, full color offset, 6.7 × 9.4 inches</p>
+<p>ISBN: 977-3-06-140900-6</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:tag>Language and Writing</s:tag>
+    <s:tag>Technology</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8822252208382</id>
+      <title>Default Title</title>
+      <s:price currency="USD">25.00</s:price>
+      <s:sku></s:sku>
+      <s:grams>245</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8822211838206</id>
+    <published>2025-02-28T16:06:59-05:00</published>
+    <updated>2025-02-28T16:06:59-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/soft-hard-no-1"/>
+    <title>Soft Hard: No 1</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/SoftHardNo1.jpg?v=1740776810"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            14.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><em>Soft Hard</em> is an experimental, multilingual publication. Its loose, nonlinear structure aims to serve as both a newsletter and a creative playground for cultural workers.</p>
+<p>Each issue invites a wide range of professionals from diverse backgrounds — designers, architects, artists, curators, writers, and inde­pendent publishers, among others — to share glimpses of their recent work in response to a given theme. <br><br>The theme of the inaugural issue, “in conver­sation,” reflects on the various connections and dialogues that arise as different practices evolve.</p>
+<p>Issue 1 includes contributions from Anouk Beckers, Sheila Levrant de Bretteville, Yuseon Park, Jessica Flemming, Avery Youngblood, Miguel Gajdos, Jeemin Shim, J. Chen, and Immanuel Yang<br></p>
+<p>Compiled, edit, and designed by Yuseon Park and Immanuel Yang</p>
+<p>Published by Plane and Vertical, 2024<br>Bilingual, English and Korean</p>
+<p>Softcover, 52 pages, CMYK + Silver offset printing, 7.25 × 10.25 inches</p>
+<p>ISBN 979-1-19-795772-7</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Culture and Theory</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8822211838206</id>
+      <title>Default Title</title>
+      <s:price currency="USD">14.00</s:price>
+      <s:sku></s:sku>
+      <s:grams>150</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8739354476798</id>
+    <published>2025-01-03T16:04:51-05:00</published>
+    <updated>2025-01-03T16:04:51-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/slanted-44-type-fashion"/>
+    <title>Slanted 44: Type Fashion</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/Slanted44TypeFashion.jpg?v=1735938289"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            30.00
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p><em>Slanted Magazine #44—Type Fashion </em>explores the intersection of typography and fashion. Exploring the boundaries of conventional design and embracing cutting-edge typography as a dynamic canvas for fashion expression, this volume presents art pieces, conceptual works, unconventional positioning, bold messages, weird concepts, and off-road applications that challenge the status quo of fashion industries.</p>
+<p>In addition to showcasing outstanding works, this issue features insightful essays by Christina Donoghue, Ann Marie Wainscott, Graphéine, Jelena Drobac, Ian Lynam, Jimmy Henderson, Kylièn Bergh, and Karmen Samson. Furthermore, interviews with Golnar Kat-Rahmani, Mirko Borsche, Jochen Smuda and Martin Fussenegger (Ucon Acrobatics), as well as Jean-Baptiste Levée, provide valuable insights into the intersection of typography and fashion. The issue concludes with an extensive appendix, listing all participating contributors.</p>
+<p><em>Slanted</em> covers typography, graphic design and culture around the world. Begun as a weblog in 2004, the first printed edition of<em> Slanted</em> magazine was published in 2005, becoming the first German magazine devoted to typography.<br></p>
+<p>Published and designed by Slanted Publishers, Fall/Winter 2024-2025</p>
+<p>Softcover (Swiss brochure with flaps, open thread stitching), 224 pages, full color offset with spot color, 6.3 × 9.5 inches</p>
+<p>ISBN: 978-3-94-844076-3</p>
+<!----></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Fashion</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Typography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8739354476798</id>
+      <title>Default Title</title>
+      <s:price currency="USD">30.00</s:price>
+      <s:sku/>
+      <s:grams>680</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8725879587070</id>
+    <published>2024-12-19T15:07:01-05:00</published>
+    <updated>2024-12-19T15:07:01-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/unidentified-paper-object-2-i-wish-i-was-there"/>
+    <title>Unidentified Paper Object 2: I Wish I Was There</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/UnidentifiedPaperObject2IWishIWasThere.jpg?v=1734638802"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            49.50
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>A fragile and powerful object, <em>UPO</em> 2 offers a singular reading experience, defined by serendipity and stark juxtaposition. Each copy is unique: approximately thirty photographs by Xenia Naselou (b. 1989) are randomly inserted over double-page spreads, where a dark, inky river flows—a graphic form designed by Rejane Dal Bello.</p>
+<p>Printed on delicate, bible-like paper, the design is both magnetic and uncompromising, with sparse, fragmented texts in the margins that invite careful attention. Naselou’s photographs, born from her intimate observations of people and places, resonate deeply against the somber river, amplifying themes of displacement and human fragility.<br><br>As publisher Elodie Boyer notes, "instead of creating a graphic design to be an accompaniment to an artistic project, we set off on a search for photographs which would complement the magnetic and unwedded design of Rejane Dal Bello... Xenia was getting ready to go to the Greek island of Lesbos, to photograph refugees. We helped her modestly and together we created this UPO, a conjoining of serendipities."<br></p>
+<p>The work within invites reader to touch the traces of human misery and handle them with care. </p>
+<p>Winner of European Design Award, Gold (Oslo, 2018). Gold.</p>
+<p>Designed by Rejane Dal Bello</p>
+<p>Published by Éditions Non Standard, 2017<br>Bilingual, in French and English<br></p>
+<p>Softcover, 180 pages + 32 loose photographs in 3 formats, </p>
+<p>ISBN: 979-1-09-693901-5</p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Artist Books</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Photography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8725879587070</id>
+      <title>Default Title</title>
+      <s:price currency="USD">49.50</s:price>
+      <s:sku></s:sku>
+      <s:grams>624</s:grams>
+    </s:variant>
+  </entry>
+  <entry>
+    <id>https://draw-down.com/products/8726135046398</id>
+    <published>2024-12-19T15:00:38-05:00</published>
+    <updated>2024-12-19T15:00:38-05:00</updated>
+    <link rel="alternate" type="text/html" href="https://draw-down.com/products/unidentified-paper-object-3-no-one-can-fail"/>
+    <title>Unidentified Paper Object 3: No One Can Fail (Personne ne peut se tromper)</title>
+    <s:type>Periodical</s:type>
+    <s:vendor>Curated</s:vendor>
+    <summary type="html">
+      <![CDATA[<table border="0">
+  <tr>
+    <td width="200"><img width="200" src="https://cdn.shopify.com/s/files/1/1681/2497/files/UnidentifiedPaperObject3NoOneCanFail_Personnenepeutsetromper.jpg?v=1734638436"></td>
+    <td valign="bottom">
+      <p>
+
+        <strong>Vendor: </strong>Curated<br>
+        <strong>Type: </strong>Periodical<br>
+        <strong>Price: </strong>
+            38.50
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2"><p>The third installment of<em> Unidentified Paper Object</em> (UPO) explores Marion Bataille’s playful and profound approach to reading and writing. Published following <em>Writing One's Name</em>, her double exhibition in Le Havre (May–July 2018), this issue reflects on Bataille’s workshops, which offer alternative tools for literacy—an inventive second chance to complete the learning of reading and writing.<br></p>
+<p>Through black, white, and red letters, the results of Bataille's workshops capture the beauty of effort: the recognizable forms shaped by clumsy, dignified gestures, daring creativity, and the inventiveness of learning. Observing these workshops, the editors sensed something significant taking place. To investigate further, <em>UPO</em> invited contributions from former schoolteacher Marie-Thérèse Zerbato Poudou, typography historian Sébastien Morlighem, philosopher Aude Lambert, and curator Lucile Haguet. <br></p>
+<p>This issue includes an AOZ kit (scissors and glue not included) to encourage readers to engage in their own experiments—because nothing replaces the experience of making.</p>
+<p>Winner of Fedrigoni Top Award, 1st place (Milan 2021).</p>
+<p>Designed by Rejane Dal Bello</p>
+<p>Published by Éditions Non Standard, 2019<br>Bilingual, in French and English<br></p>
+<p>Softcover, 204 pages, color, 9.06 × 12.8 inches<br></p>
+<p>ISBN: 979-1-09-693904-6<br></p></td>
+  </tr>
+</table>
+]]>
+    </summary>
+    <s:tag>Art</s:tag>
+    <s:tag>Artist Books</s:tag>
+    <s:tag>Graphic Design</s:tag>
+    <s:tag>Language and Writing</s:tag>
+    <s:tag>Typography</s:tag>
+    <s:variant>
+      <id>https://draw-down.com/products/8726135046398</id>
+      <title>Default Title</title>
+      <s:price currency="USD">38.50</s:price>
+      <s:sku/>
+      <s:grams>862</s:grams>
+    </s:variant>
+  </entry>
+</feed>

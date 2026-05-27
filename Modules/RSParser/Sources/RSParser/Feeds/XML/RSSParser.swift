@@ -38,6 +38,10 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	private var parsingChannelImage = false
 	private var currentAttributes: [String: String] = [:]
 
+	// Keep track of depth to ignore unprefixed <title> (for instance)
+	// inside of namespaced section (<s:variant>, for instance).
+	private var namespaceElementDepth = 0
+
 	init(urlString: String) {
 		self.feedURLString = urlString
 	}
@@ -78,6 +82,20 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		}
 
 		let isUnprefixed = namespace.prefix == nil
+
+		if namespaceElementDepth > 0 {
+			namespaceElementDepth += 1
+			return
+		}
+		if parsingArticle && namespace.prefix != nil
+			&& !namespace.isDublinCore && !namespace.isContent && !namespace.isSource {
+			// Skip this element (in an unexpected namespace) and its subtree, so a nested
+			// unprefixed element (e.g. Shopify's <title>Default Title</title>) can't be
+			// mistaken for one of the item's own elements. The namespaces RSS actually
+			// consumes (Dublin Core, content, source) are excluded so they still parse.
+			namespaceElementDepth = 1
+			return
+		}
 
 		// RDF root. The element is always prefixed in practice (`<rdf:RDF>`), so
 		// the check ignores prefix — only the local name matters. Matches the
@@ -131,6 +149,11 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		}
 
 		let isUnprefixed = namespace.prefix == nil
+
+		if namespaceElementDepth > 0 {
+			namespaceElementDepth -= 1
+			return
+		}
 
 		if isRDF && localName.equals("RDF") {
 			endRSSFound = true

@@ -361,4 +361,18 @@ import RSParser
 		}
 		#expect(jan10Items.count > 0, "Expected at least one kc0011 item dated 2020-01-10 — date format regression?")
 	}
+
+	@Test func shopifyNamespaceDoesNotOverwriteTitle() throws {
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4422>
+		// An unprefixed <title>Default Title</title> nested inside a
+		// namespaced <s:variant> must not overwrite the item's real <title>. The namespaces
+		// RSS actually consumes (Dublin Core, content) must keep parsing — guard against the skip
+		// logic being too broad.
+		let d = parserData("shopify-namespace", "rss", "https://example.com/feed")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+		#expect(item.title == "Real Product Title")
+		#expect(item.contentHTML == "<p>Body HTML</p>")
+		#expect(item.authors?.first?.name == "Jane Maker")
+	}
 }

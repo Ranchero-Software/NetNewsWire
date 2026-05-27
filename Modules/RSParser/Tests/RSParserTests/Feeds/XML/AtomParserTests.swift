@@ -452,4 +452,19 @@ import RSParser
 		let body = item.contentText ?? item.contentHTML
 		#expect(body?.contains("Default is text.") == true)
 	}
+
+	// MARK: - Namespaced subtrees
+
+	@Test func shopifyNamespaceDoesNotOverwriteTitle() throws {
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4422>
+		// This Shopify feed nests an unprefixed <title>Default Title</title>
+		// inside a namespaced <s:variant> container. That nested title must not
+		// overwrite the entry's real <title>.
+		let d = parserData("draw-down", "atom", "https://draw-down.com/collections/magazines.atom")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 25)
+		#expect(!parsedFeed.items.contains { $0.title == "Default Title" })
+		let item = try #require(parsedFeed.items.first { $0.uniqueID == "https://draw-down.com/products/9225111929086" })
+		#expect(item.title == "Revue Faire — no. 56 (Reading Until I Sleep: Manuel Raeder)")
+	}
 }

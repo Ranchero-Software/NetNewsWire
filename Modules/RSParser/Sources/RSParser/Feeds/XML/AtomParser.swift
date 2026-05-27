@@ -42,6 +42,10 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	private var parsingSource = false
 	private var endFeedFound = false
 
+	// Keep track of depth to ignore unprefixed <title> (for instance)
+	// inside of namespaced section (<s:variant>, for instance).
+	private var namespaceElementDepth = 0
+
 	// Attributes per open element.
 	private var attributesStack: [XMLAttributes] = []
 
@@ -102,6 +106,18 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		}
 
 		attributesStack.append(attributes)
+
+		if namespaceElementDepth > 0 {
+			namespaceElementDepth += 1
+			return
+		}
+		if parsingArticle && namespace.prefix != nil {
+			// Skip this namespaced element and its entire subtree, so a nested
+			// unprefixed element (e.g. Shopify's <title>Default Title</title>) can't be
+			// mistaken for one of the entry's own elements.
+			namespaceElementDepth = 1
+			return
+		}
 
 		if localName.equals("entry") {
 			parsingArticle = true
@@ -181,6 +197,11 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		}
 
 		if endFeedFound {
+			return
+		}
+
+		if namespaceElementDepth > 0 {
+			namespaceElementDepth -= 1
 			return
 		}
 
