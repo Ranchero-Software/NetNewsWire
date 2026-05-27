@@ -116,6 +116,7 @@ let appName = "NetNewsWire"
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(willSleepNotification(_:)), name: NSWorkspace.willSleepNotification, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 	}
 
@@ -381,9 +382,18 @@ let appName = "NetNewsWire"
 		updateDockBadge()
 	}
 
+	@objc func willSleepNotification(_ note: Notification) {
+		// Pause feed refreshing while the Mac is asleep. Article status syncing is
+		// left running on purpose.
+		Task { @MainActor in
+			refreshTimer?.suspend()
+		}
+	}
+
 	@objc func didWakeNotification(_ note: Notification) {
-		MainActor.assumeIsolated {
-			fireOldTimers()
+		Task { @MainActor in
+			refreshTimer?.resume()
+			ArticleStatusSyncTimer.shared.fireOldTimer()
 		}
 	}
 

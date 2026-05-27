@@ -16,6 +16,7 @@ import Account
 	private var internalTimer: Timer?
 	private var lastTimedRefresh: Date?
 	private let launchTime = Date()
+	private var suspendedFireDate: Date?
 
 	func fireOldTimer() {
 		if let timer = internalTimer {
@@ -35,6 +36,24 @@ import Account
 			timer.invalidate()
 		}
 		internalTimer = nil
+	}
+
+	func suspend() {
+		suspendedFireDate = internalTimer?.fireDate
+		invalidate()
+	}
+
+	func resume() {
+		guard !shuttingDown else {
+			return
+		}
+		let dueDate = suspendedFireDate
+		suspendedFireDate = nil
+		if let dueDate, dueDate < Date() {
+			timedRefresh(nil)
+		} else {
+			update()
+		}
 	}
 
 	func update() {
