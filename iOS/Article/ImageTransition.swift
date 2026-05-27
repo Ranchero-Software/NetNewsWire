@@ -52,8 +52,9 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 			usingSpringWithDamping: 0.8,
 			initialSpringVelocity: 0.2,
 			animations: {
-				let imageController = transitionContext.viewController(forKey: .to) as! ImageViewController
-				imageView.frame = imageController.zoomedFrame
+				if let imageController = self.imageViewController(forKey: .to, in: transitionContext) {
+					imageView.frame = imageController.zoomedFrame
+				}
 			}, completion: { _ in
 				imageView.removeFromSuperview()
 				let toView = transitionContext.view(forKey: .to)!
@@ -63,7 +64,10 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 	}
 
 	private func animateTransitionReturning(using transitionContext: UIViewControllerContextTransitioning) {
-		let imageController = transitionContext.viewController(forKey: .from) as! ImageViewController
+		guard let imageController = imageViewController(forKey: .from, in: transitionContext) else {
+			transitionContext.completeTransition(false)
+			return
+		}
 		let imageView = UIImageView(image: originImage)
 		imageView.frame = imageController.zoomedFrame
 
@@ -105,6 +109,11 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 					transitionContext.completeTransition(true)
 				}
 		})
+	}
+
+	private func imageViewController(forKey key: UITransitionContextViewControllerKey, in context: UIViewControllerContextTransitioning) -> ImageViewController? {
+		let navigationController = context.viewController(forKey: key) as? UINavigationController
+		return navigationController?.viewControllers.first as? ImageViewController
 	}
 
 }

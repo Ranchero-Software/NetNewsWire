@@ -741,41 +741,10 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RmY-a3-hUg">
-                                <rect key="frame" x="350" y="124" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="56o-Zr-T0w"/>
-                                    <constraint firstAttribute="height" constant="44" id="lBg-Wy-k9P"/>
-                                </constraints>
-                                <color key="tintColor" name="primaryAccentColor"/>
-                                <state key="normal" image="square.and.arrow.up.fill" catalog="system"/>
-                                <buttonConfiguration key="configuration" style="tinted" image="square.and.arrow.up" catalog="system" cornerStyle="capsule"/>
-                                <connections>
-                                    <action selector="share:" destination="vO9-a3-Dnu" eventType="touchUpInside" id="m8y-Gs-YF1"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" clipsSubviews="YES" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cXR-ll-xBx">
-                                <rect key="frame" x="8" y="124" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="6kc-Gw-KbZ"/>
-                                    <constraint firstAttribute="width" constant="44" id="cBq-gs-WzN"/>
-                                </constraints>
-                                <color key="tintColor" name="primaryAccentColor"/>
-                                <state key="normal" image="multiply.circle.fill" catalog="system">
-                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
-                                </state>
-                                <buttonConfiguration key="configuration" style="tinted" image="multiply.circle" catalog="system" cornerStyle="capsule">
-                                    <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large" weight="regular"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="done:" destination="vO9-a3-Dnu" eventType="touchUpInside" id="tgd-ov-4Ft"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="mbY-02-GFL"/>
                         <color key="backgroundColor" name="fullScreenBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="RmY-a3-hUg" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="A0i-Hs-1Ac"/>
                             <constraint firstAttribute="bottom" secondItem="msG-pz-EKk" secondAttribute="bottom" id="AtA-bA-jDr"/>
                             <constraint firstItem="eMj-1g-3xm" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="mbY-02-GFL" secondAttribute="trailing" id="E7e-Lv-6ZA"/>
                             <constraint firstItem="eMj-1g-3xm" firstAttribute="centerX" secondItem="w6Q-vH-063" secondAttribute="centerX" id="H2b-IA-6hz"/>
@@ -783,20 +752,15 @@
                             <constraint firstAttribute="trailing" secondItem="msG-pz-EKk" secondAttribute="trailing" id="R49-qV-8nm"/>
                             <constraint firstItem="msG-pz-EKk" firstAttribute="leading" secondItem="w6Q-vH-063" secondAttribute="leading" id="XN1-xN-hYS"/>
                             <constraint firstItem="eMj-1g-3xm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="mbY-02-GFL" secondAttribute="leading" id="Xni-Dn-I3Z"/>
-                            <constraint firstItem="mbY-02-GFL" firstAttribute="trailing" secondItem="RmY-a3-hUg" secondAttribute="trailing" constant="8" id="Zlz-lM-LV8"/>
                             <constraint firstItem="mbY-02-GFL" firstAttribute="bottom" secondItem="eMj-1g-3xm" secondAttribute="bottom" constant="8" id="eaS-iG-yMv"/>
                             <constraint firstItem="bHh-pW-oTS" firstAttribute="leading" secondItem="eMj-1g-3xm" secondAttribute="leading" constant="-4" id="f8r-dq-Irr"/>
                             <constraint firstItem="bHh-pW-oTS" firstAttribute="top" secondItem="eMj-1g-3xm" secondAttribute="top" constant="-4" id="gTP-i5-FYQ"/>
                             <constraint firstItem="msG-pz-EKk" firstAttribute="top" secondItem="w6Q-vH-063" secondAttribute="top" id="p1a-s0-wdK"/>
                             <constraint firstItem="bHh-pW-oTS" firstAttribute="trailing" secondItem="eMj-1g-3xm" secondAttribute="trailing" constant="4" id="qB9-zk-5JN"/>
-                            <constraint firstItem="cXR-ll-xBx" firstAttribute="leading" secondItem="mbY-02-GFL" secondAttribute="leading" constant="8" id="vJs-LN-Ydd"/>
-                            <constraint firstItem="cXR-ll-xBx" firstAttribute="top" secondItem="mbY-02-GFL" secondAttribute="top" id="xVN-Qt-WYA"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="closeButton" destination="cXR-ll-xBx" id="sDG-49-joi"/>
                         <outlet property="imageScrollView" destination="msG-pz-EKk" id="dGi-M6-dcO"/>
-                        <outlet property="shareButton" destination="RmY-a3-hUg" id="Z54-ah-WAI"/>
                         <outlet property="titleBackground" destination="bHh-pW-oTS" id="o2K-cY-90c"/>
                         <outlet property="titleLabel" destination="eMj-1g-3xm" id="6wF-IZ-fNw"/>
                         <outlet property="titleLeading" destination="Xni-Dn-I3Z" id="8Ik-la-Qkw"/>

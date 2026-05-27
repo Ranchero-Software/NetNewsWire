@@ -1420,9 +1420,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
 		imageVC.image = image
 		imageVC.imageTitle = imageTitle
-		imageVC.modalPresentationStyle = .currentContext
-		imageVC.transitioningDelegate = transitioningDelegate
-		rootSplitViewController.present(imageVC, animated: true)
+		let navController = UINavigationController(rootViewController: imageVC)
+		navController.modalPresentationStyle = .currentContext
+		navController.transitioningDelegate = transitioningDelegate
+		rootSplitViewController.present(navController, animated: true)
 	}
 
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
