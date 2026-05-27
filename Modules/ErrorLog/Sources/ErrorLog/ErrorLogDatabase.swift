@@ -23,7 +23,7 @@ public actor ErrorLogDatabase {
 		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
 		ErrorLogTable.pruneEntries(limit: Self.pruneLimit, database: database)
-		database.vacuum()
+		database.vacuumIfNeeded()
 
 		self.database = database
 
