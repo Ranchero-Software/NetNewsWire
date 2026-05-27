@@ -40,6 +40,22 @@ public extension FMDatabase {
 		Self.logger.debug("VACUUM \(path, privacy: .public) took \(duration, format: .fixed(precision: 4), privacy: .public) seconds")
 	}
 
+	/// Vacuum if at least `daysBetweenVacuums` have passed since last time.
+	/// The last vacuum date is stored in the database.
+	func vacuumIfNeeded(daysBetweenVacuums: Int = RSDatabaseInfoTable.defaultDaysBetweenVacuums) {
+		RSDatabaseInfoTable.createTableIfNeeded(database: self)
+
+		if let lastVacuumDate = RSDatabaseInfoTable.lastVacuumDate(database: self) {
+			let secondsBetweenVacuums = TimeInterval(daysBetweenVacuums) * 24 * 60 * 60
+			if Date().timeIntervalSince(lastVacuumDate) < secondsBetweenVacuums {
+				return
+			}
+		}
+
+		vacuum()
+		RSDatabaseInfoTable.setLastVacuumDate(Date(), database: self)
+	}
+
 	func runCreateStatements(_ statements: String) {
 		statements.enumerateLines { (line, stop) in
 			if line.lowercased().hasPrefix("create") {
