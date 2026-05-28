@@ -36,6 +36,7 @@ enum CloudKitAccountZoneError: LocalizedError {
 			static let editedName = "editedName"
 			static let homePageURL = "homePageURL"
 			static let containerExternalIDs = "containerExternalIDs"
+			static let sortIndex = "sortIndex"
 		}
 	}
 
@@ -109,6 +110,24 @@ enum CloudKitAccountZoneError: LocalizedError {
 
 		try await save(record)
 		return record.externalID
+	}
+
+	/// Persist new sidebar positions for the given feeds. Leaves every other field untouched
+	/// (the modify operation uses a changed-keys save policy), so it's safe to send bare records.
+	func saveSortIndexes(for feeds: [Feed]) async throws {
+		let records: [CKRecord] = feeds.compactMap { feed in
+			guard let externalID = feed.externalID else {
+				return nil
+			}
+			let recordID = CKRecord.ID(recordName: externalID, zoneID: zoneID)
+			let record = CKRecord(recordType: CloudKitFeed.recordType, recordID: recordID)
+			record[CloudKitFeed.Fields.sortIndex] = feed.sortIndex
+			return record
+		}
+		guard !records.isEmpty else {
+			return
+		}
+		try await save(records)
 	}
 
 	/// Rename the given feed

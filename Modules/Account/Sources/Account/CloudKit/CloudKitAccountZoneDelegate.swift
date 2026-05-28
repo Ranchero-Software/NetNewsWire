@@ -16,7 +16,7 @@ import CloudKitSync
 
 final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
-	private typealias UnclaimedFeed = (url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String)
+	private typealias UnclaimedFeed = (url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, sortIndex: Int?)
 	private var newUnclaimedFeeds = [String: [UnclaimedFeed]]()
 	private var existingUnclaimedFeeds = [String: [Feed]]()
 
@@ -63,15 +63,16 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 		let name = record[CloudKitAccountZone.CloudKitFeed.Fields.name] as? String
 		let editedName = record[CloudKitAccountZone.CloudKitFeed.Fields.editedName] as? String
 		let homePageURL = record[CloudKitAccountZone.CloudKitFeed.Fields.homePageURL] as? String
+		let sortIndex = record[CloudKitAccountZone.CloudKitFeed.Fields.sortIndex] as? Int
 
 		if let feed = account.existingFeed(withExternalID: record.externalID) {
-			updateFeed(feed, name: name, editedName: editedName, homePageURL: homePageURL, containerExternalIDs: containerExternalIDs)
+			updateFeed(feed, name: name, editedName: editedName, homePageURL: homePageURL, sortIndex: sortIndex, containerExternalIDs: containerExternalIDs)
 		} else {
 			for containerExternalID in containerExternalIDs {
 				if let container = account.existingContainer(withExternalID: containerExternalID) {
-					createFeedIfNecessary(url: url, name: name, editedName: editedName, homePageURL: homePageURL, feedExternalID: record.externalID, container: container)
+					createFeedIfNecessary(url: url, name: name, editedName: editedName, homePageURL: homePageURL, sortIndex: sortIndex, feedExternalID: record.externalID, container: container)
 				} else {
-					addNewUnclaimedFeed(url: url, name: name, editedName: editedName, homePageURL: homePageURL, feedExternalID: record.externalID, containerExternalID: containerExternalID)
+					addNewUnclaimedFeed(url: url, name: name, editedName: editedName, homePageURL: homePageURL, sortIndex: sortIndex, feedExternalID: record.externalID, containerExternalID: containerExternalID)
 				}
 			}
 		}
@@ -110,6 +111,7 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 										 name: newUnclaimedFeed.name,
 										 editedName: newUnclaimedFeed.editedName,
 										 homePageURL: newUnclaimedFeed.homePageURL,
+										 sortIndex: newUnclaimedFeed.sortIndex,
 										 feedExternalID: newUnclaimedFeed.feedExternalID,
 										 container: container)
 			}
@@ -135,12 +137,15 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 private extension CloudKitAcountZoneDelegate {
 
-	@MainActor func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, containerExternalIDs: [String]) {
+	@MainActor func updateFeed(_ feed: Feed, name: String?, editedName: String?, homePageURL: String?, sortIndex: Int?, containerExternalIDs: [String]) {
 		guard let account = account else { return }
 
 		feed.name = name
 		feed.editedName = editedName
 		feed.homePageURL = homePageURL
+		if let sortIndex {
+			feed.sortIndex = sortIndex
+		}
 
 		let existingContainers = account.existingContainers(withFeed: feed)
 		let existingContainerExternalIds = existingContainers.compactMap { $0.externalID }
@@ -163,7 +168,7 @@ private extension CloudKitAcountZoneDelegate {
 		}
 	}
 
-	@MainActor func createFeedIfNecessary(url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, container: Container) {
+	@MainActor func createFeedIfNecessary(url: URL, name: String?, editedName: String?, homePageURL: String?, sortIndex: Int?, feedExternalID: String, container: Container) {
 		guard let account = account else { return  }
 
 		if account.existingFeed(withExternalID: feedExternalID) != nil {
@@ -173,16 +178,19 @@ private extension CloudKitAcountZoneDelegate {
 		let feed = account.createFeed(with: name, url: url.absoluteString, feedID: url.absoluteString, homePageURL: homePageURL)
 		feed.editedName = editedName
 		feed.externalID = feedExternalID
+		if let sortIndex {
+			feed.sortIndex = sortIndex
+		}
 		container.addFeedToTreeAtTopLevel(feed)
 	}
 
-	func addNewUnclaimedFeed(url: URL, name: String?, editedName: String?, homePageURL: String?, feedExternalID: String, containerExternalID: String) {
+	func addNewUnclaimedFeed(url: URL, name: String?, editedName: String?, homePageURL: String?, sortIndex: Int?, feedExternalID: String, containerExternalID: String) {
 		if var unclaimedFeeds = self.newUnclaimedFeeds[containerExternalID] {
-			unclaimedFeeds.append(UnclaimedFeed(url: url, name: name, editedName: editedName, homePageURL: homePageURL, feedExternalID: feedExternalID))
+			unclaimedFeeds.append(UnclaimedFeed(url: url, name: name, editedName: editedName, homePageURL: homePageURL, feedExternalID: feedExternalID, sortIndex: sortIndex))
 			self.newUnclaimedFeeds[containerExternalID] = unclaimedFeeds
 		} else {
 			var unclaimedFeeds = [UnclaimedFeed]()
-			unclaimedFeeds.append(UnclaimedFeed(url: url, name: name, editedName: editedName, homePageURL: homePageURL, feedExternalID: feedExternalID))
+			unclaimedFeeds.append(UnclaimedFeed(url: url, name: name, editedName: editedName, homePageURL: homePageURL, feedExternalID: feedExternalID, sortIndex: sortIndex))
 			self.newUnclaimedFeeds[containerExternalID] = unclaimedFeeds
 		}
 	}

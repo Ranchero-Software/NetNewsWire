@@ -204,7 +204,8 @@ private extension SidebarOutlineDataSource {
 			return SidebarOutlineDataSource.dragOperationNone
 		}
 		if nodeHasChildRepresentingDraggedFeed(dropTargetNode, draggedFeed) {
-			return SidebarOutlineDataSource.dragOperationNone
+			// The feed already lives in this container: this is a reorder within it, not a move.
+			return validateLocalFeedReorder(outlineView, dropTargetNode, index)
 		}
 		if violatesAccountSpecificBehavior(dropTargetNode, draggedFeed) {
 			return SidebarOutlineDataSource.dragOperationNone
@@ -217,6 +218,20 @@ private extension SidebarOutlineDataSource {
 			outlineView.setDropItem(dropTargetNode, dropChildIndex: updatedIndex)
 		}
 		return localDragOperation(parentNode: parentNode, Set([draggedFeed]))
+	}
+
+	func validateLocalFeedReorder(_ outlineView: NSOutlineView, _ containerNode: Node, _ index: Int) -> NSDragOperation {
+		// Reordering needs a specific position between children, and it must be a move (not an Option-copy).
+		guard index != NSOutlineViewDropOnItemIndex, !(NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false) else {
+			return SidebarOutlineDataSource.dragOperationNone
+		}
+		// Feeds sort before folders, so a feed can’t be dropped down among the folders.
+		let feedCount = containerNode.childNodes.filter { $0.representedObject is Feed }.count
+		let targetIndex = min(index, feedCount)
+		if targetIndex != index {
+			outlineView.setDropItem(containerNode, dropChildIndex: targetIndex)
+		}
+		return .move
 	}
 
 	func validateLocalFeedsDrop(_ outlineView: NSOutlineView, _ draggedFeeds: Set<PasteboardFeed>, _ parentNode: Node, _ index: Int) -> NSDragOperation {
@@ -338,6 +353,25 @@ private extension SidebarOutlineDataSource {
 		}
 	}
 
+	func reorderFeedInAccount(_ feed: Feed, in container: Container, droppedAt childIndex: Int, among childNodes: [Node]) {
+		guard let account = container.account else {
+			return
+		}
+		let beforeFeed = childNodes.indices.contains(childIndex) ? (childNodes[childIndex].representedObject as? Feed) : nil
+		let currentOrder = container.topLevelFeedsInDisplayOrder()
+		let newOrder = currentOrder.reordered(moving: feed, before: beforeFeed)
+		guard newOrder != currentOrder else {
+			return
+		}
+		Task { @MainActor in
+			do {
+				try await account.reorderFeeds(newOrder, in: container)
+			} catch {
+				NSApplication.shared.presentError(error)
+			}
+		}
+	}
+
 	func copyFeedBetweenAccounts(_ feed: Feed, _ destinationContainer: Container) {
 		guard let destinationAccount = destinationContainer.account  else {
 			return
@@ -391,6 +425,8 @@ private extension SidebarOutlineDataSource {
 			if sameAccount(pasteboardFeed, parentNode) {
 				if NSApplication.shared.currentEvent?.modifierFlags.contains(.option) ?? false {
 					copyFeedInAccount(feed, destinationContainer)
+				} else if destinationContainer.topLevelFeeds.contains(feed) {
+					reorderFeedInAccount(feed, in: destinationContainer, droppedAt: index, among: parentNode.childNodes)
 				} else {
 					moveFeedInAccount(feed, sourceContainer, destinationContainer)
 				}

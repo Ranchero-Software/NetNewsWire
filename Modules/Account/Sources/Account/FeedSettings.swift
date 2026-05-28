@@ -149,6 +149,17 @@ import Articles
 		}
 	}
 
+	/// Position of the feed within its container in the sidebar. Lower sorts first;
+	/// feeds with equal `sortIndex` fall back to alphabetical order. Default 0.
+	var sortIndex = 0 {
+		didSet {
+			if sortIndex != oldValue {
+				database.setInt(sortIndex, for: feedURL, column: .sortIndex)
+				postSettingDidChange(.sortIndex)
+			}
+		}
+	}
+
 	/// Create from database row (bulk load at startup).
 	init(feedURL: String, row: FeedSettingsDatabase.Row, database: FeedSettingsDatabase) {
 		self.feedURL = feedURL
@@ -168,6 +179,7 @@ import Articles
 		self.externalID = row.externalID
 		self.folderRelationship = row.folderRelationship
 		self.lastCheckDate = row.lastCheckDate
+		self.sortIndex = row.sortIndex
 	}
 
 	/// Create for a new feed not yet in the database.

@@ -86,6 +86,16 @@ extension Notification.Name {
 		return feeds
 	}
 
+	/// The container’s top-level feeds in sidebar order: by `Feed.sortIndex`, then alphabetically.
+	func topLevelFeedsInDisplayOrder() -> [Feed] {
+		topLevelFeeds.sorted { lhs, rhs in
+			if lhs.sortIndex != rhs.sortIndex {
+				return lhs.sortIndex < rhs.sortIndex
+			}
+			return lhs.nameForDisplay.localizedStandardCompare(rhs.nameForDisplay) == .orderedAscending
+		}
+	}
+
 	func hasFeed(with feedID: String) -> Bool {
 		return existingFeed(withFeedID: feedID) != nil
 	}

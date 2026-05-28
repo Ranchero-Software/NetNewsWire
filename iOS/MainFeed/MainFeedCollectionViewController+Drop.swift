@@ -19,8 +19,8 @@ import UniformTypeIdentifiers
 extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 
 	func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: any UICollectionViewDropCoordinator) {
-		guard let dragItem = coordinator.items.first?.dragItem,
-			  let dragNode = dragItem.localObject as? Node,
+		guard let dropItem = coordinator.items.first,
+			  let dragNode = dropItem.dragItem.localObject as? Node,
 			  let source = dragNode.parent?.representedObject as? Container,
 			  let destIndexPath = coordinator.destinationIndexPath else {
 				  return
@@ -64,9 +64,39 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		guard let destination = destinationContainer, let feed = dragNode.representedObject as? Feed else { return }
 
 		if source.account == destination.account {
-			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
+			if source === destination, !isFolderDrop, destination.topLevelFeeds.contains(feed) {
+				reorderFeedInAccount(feed: feed, in: destination, sourceIndexPath: dropItem.sourceIndexPath, destinationIndexPath: destIndexPath)
+			} else {
+				moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
+			}
 		} else {
 			moveFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
+		}
+	}
+
+	func reorderFeedInAccount(feed: Feed, in container: Container, sourceIndexPath: IndexPath?, destinationIndexPath: IndexPath) {
+		guard let account = container.account else { return }
+
+		// `destinationIndexPath` is in the post-removal coordinate space (the dragged item is
+		// treated as already removed). When the dragged feed sits at or above that row in the
+		// current snapshot, the node to insert *before* is one row further down.
+		let beforeRow: Int
+		if let sourceRow = sourceIndexPath?.row, sourceRow <= destinationIndexPath.row {
+			beforeRow = destinationIndexPath.row + 1
+		} else {
+			beforeRow = destinationIndexPath.row
+		}
+		let beforeFeed = dataSource.itemIdentifier(for: IndexPath(row: beforeRow, section: destinationIndexPath.section))?.node.representedObject as? Feed
+
+		let currentOrder = container.topLevelFeedsInDisplayOrder()
+		let newOrder = currentOrder.reordered(moving: feed, before: beforeFeed)
+		guard newOrder != currentOrder else { return }
+		Task { @MainActor in
+			do {
+				try await account.reorderFeeds(newOrder, in: container)
+			} catch {
+				self.presentError(error)
+			}
 		}
 	}
 

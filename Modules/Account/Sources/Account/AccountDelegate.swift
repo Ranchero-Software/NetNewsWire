@@ -40,6 +40,7 @@ import Secrets
 	func addFeed(account: Account, feed: Feed, container: Container) async throws
 	func removeFeed(account: Account, feed: Feed, container: Container) async throws
 	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws
+	func reorderFeeds(for account: Account, container: Container, orderedFeeds: [Feed]) async throws
 
 	func restoreFeed(for account: Account, feed: Feed, container: Container) async throws
 	func restoreFolder(for account: Account, folder: Folder) async throws
@@ -63,4 +64,13 @@ import Secrets
 
 	/// Make sure no SQLite databases are open and we are ready to issue network requests.
 	func resume(account: Account)
+}
+
+extension AccountDelegate {
+
+	/// The new `sortIndex` values have already been written to the local feed-settings
+	/// store by `Account.reorderFeeds(_:in:)`. Only account types whose backend can sync
+	/// a feed order (currently just iCloud) need to override this to propagate it.
+	func reorderFeeds(for account: Account, container: Container, orderedFeeds: [Feed]) async throws {
+	}
 }
