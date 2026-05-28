@@ -36,6 +36,13 @@ import os
 	var accountID: String?
 
 	private var refreshActivityID: Int?
+	private var feedsTotal = 0
+	private var feedsSkipped = 0
+	private var feedsErrored = 0
+	private var newArticlesCount = 0
+	private var updatedArticlesCount = 0
+	private var outstandingParseTasks = 0
+	private var downloadSessionIsComplete = false
 
 	private var completion: (() -> Void)?
 	private var isSuspended = false
@@ -62,9 +69,48 @@ import os
 
 	@MainActor private func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		let specialCaseCutoffDate = Date().bySubtracting(hours: 25)
-		let filteredFeeds = feeds.filter { !Self.feedShouldBeSkipped($0, specialCaseCutoffDate) }
+
+		var filteredFeeds = Set<Feed>()
+		var skippedFeeds = [(Feed, String)]() // feed and skip reason
+
+		for feed in feeds {
+			if let reason = Self.skipReason(for: feed, specialCaseCutoffDate) {
+				skippedFeeds.append((feed, reason))
+			} else {
+				filteredFeeds.insert(feed)
+			}
+		}
+
+		feedsTotal = feeds.count
+		feedsSkipped = skippedFeeds.count
+		feedsErrored = 0
+		newArticlesCount = 0
+		updatedArticlesCount = 0
+		outstandingParseTasks = 0
+		downloadSessionIsComplete = false
+
+		// Create activities for every feed (filtered + skipped) so the windows
+		// reflect the full set. Skipped feeds are completed immediately with
+		// their reason; the rest are completed by the DownloadSessionDelegate
+		// callbacks below.
+		if let owner = activityOwner {
+			let activityLog = ActivityLog.shared
+			refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
+			activityLog.didStart(id: refreshActivityID!)
+			for feed in feeds {
+				activityLog.createActivity(owner: owner, kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay)
+			}
+			for (feed, reason) in skippedFeeds {
+				let kind = ActivityKind.refreshFeedContent(feedURL: feed.url)
+				activityLog.didStart(owner, kind: kind)
+				activityLog.didComplete(owner, kind: kind, message: reason, durationIsSignificant: false)
+			}
+		}
 
 		guard !filteredFeeds.isEmpty else {
+			// All feeds were skipped. Still need to complete the parent activity.
+			downloadSessionIsComplete = true
+			completeRefreshActivityIfReady()
 			Task { @MainActor in
 				completion?()
 			}
@@ -74,19 +120,6 @@ import os
 		urlToFeedDictionary.removeAll()
 		for feed in filteredFeeds {
 			urlToFeedDictionary[feed.url] = feed
-		}
-
-		// Track the overall refresh and create one pending activity per feed.
-		// Each feed's activity is completed (or failed) in the DownloadSessionDelegate
-		// callbacks below. `didComplete` is pending-tolerant, so feeds that never
-		// reach `didStart` still get cleaned up.
-		if let owner = activityOwner {
-			let activityLog = ActivityLog.shared
-			refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
-			activityLog.didStart(id: refreshActivityID!)
-			for feed in filteredFeeds {
-				activityLog.createActivity(owner: owner, kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay)
-			}
 		}
 
 		let urls = filteredFeeds.compactMap { Self.url(for: $0) }
@@ -152,6 +185,22 @@ import os
 		return conditionalGetInfo
 	}
 
+	func downloadSession(_ downloadSession: DownloadSession, didReceiveResponse url: URL) {
+		guard let feed = urlToFeedDictionary[url.absoluteString], let owner = activityOwner else {
+			return
+		}
+		ActivityLog.shared.didStart(owner, kind: .refreshFeedContent(feedURL: feed.url))
+	}
+
+	func downloadSession(_ downloadSession: DownloadSession, didSkip url: URL, reason: String) {
+		guard let owner = activityOwner else {
+			return
+		}
+		let kind = ActivityKind.refreshFeedContent(feedURL: url.absoluteString)
+		ActivityLog.shared.startIfNeeded(owner, kind: kind)
+		ActivityLog.shared.didComplete(owner, kind: kind, message: reason, durationIsSignificant: false)
+	}
+
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete url: URL, response: URLResponse?, data: Data, error: NSError?) {
 
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
@@ -159,26 +208,28 @@ import os
 		}
 		feed.lastCheckDate = Date()
 
-		// Every exit from this method represents a per-feed completion (success
-		// or harmless skip — actual HTTP failures land in httpError below).
 		let activityOwner = self.activityOwner
 		let activityKind = ActivityKind.refreshFeedContent(feedURL: feed.url)
-		defer {
+
+		guard error == nil else {
 			if let activityOwner {
 				ActivityLog.shared.didComplete(activityOwner, kind: activityKind)
 			}
-		}
-
-		guard error == nil else {
 			return
 		}
 		guard let httpResponse = response as? HTTPURLResponse else {
+			if let activityOwner {
+				ActivityLog.shared.didComplete(activityOwner, kind: activityKind)
+			}
 			return
 		}
 
 		let statusIsOK = httpResponse.statusIsOK
 		let statusIsOKOrNotModified = statusIsOK || httpResponse.statusCode == HTTPResponseCode.notModified
 		guard statusIsOKOrNotModified else {
+			if let activityOwner {
+				ActivityLog.shared.didComplete(activityOwner, kind: activityKind)
+			}
 			return
 		}
 
@@ -189,6 +240,10 @@ import os
 		}
 
 		guard statusIsOK else {
+			// 304 Not Modified
+			if let activityOwner {
+				ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: "304 Not Modified", durationIsSignificant: false)
+			}
 			return
 		}
 
@@ -198,22 +253,39 @@ import os
 		}
 
 		let dataHash = data.md5String
+		let dataSizeMessage = Int64(data.count).formatted(.byteCount(style: .memory))
 		if dataHash == feed.contentHash {
+			if let activityOwner {
+				ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: "\(dataSizeMessage), content unchanged", durationIsSignificant: false)
+			}
 			return
 		}
 
+		outstandingParseTasks += 1
 		Task { @MainActor in
+			defer {
+				self.outstandingParseTasks -= 1
+				self.completeRefreshActivityIfReady()
+			}
+
 			Self.logger.debug("LocalAccountRefresher: parsing feed for \(url.absoluteString)")
 
 			let parserData = ParserData(url: feed.url, data: data)
 			let parsedFeed: ParsedFeed
 			do {
 				guard let result = try await FeedParser.parse(parserData) else {
+					if let activityOwner {
+						ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: dataSizeMessage)
+					}
 					return
 				}
 				parsedFeed = result
 			} catch {
 				Self.logger.error("LocalAccountRefresher: feed parse error for \(url.absoluteString): \(error.localizedDescription)")
+				if let activityOwner {
+					ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
+				}
+				self.feedsErrored += 1
 				if let account = feed.account {
 					let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Parsing feed", errorMessage: "\(error.localizedDescription): \(url.absoluteString)")
 					NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
@@ -221,16 +293,29 @@ import os
 				return
 			}
 			guard let account = feed.account else {
+				if let activityOwner {
+					ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: dataSizeMessage)
+				}
 				return
 			}
 
 			assert(Thread.isMainThread)
 			guard let articleChanges = try? await account.updateAsync(feed: feed, parsedFeed: parsedFeed) else {
+				if let activityOwner {
+					ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: dataSizeMessage)
+				}
 				return
 			}
 
+			self.newArticlesCount += articleChanges.new?.count ?? 0
+			self.updatedArticlesCount += articleChanges.updated?.count ?? 0
+
 			Self.logger.debug("LocalAccountRefresher: setting contentHash for \(url.absoluteString)")
 			feed.contentHash = dataHash
+
+			if let activityOwner {
+				ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: dataSizeMessage)
+			}
 
 			self.delegate?.localAccountRefresher(self, articleChanges: articleChanges)
 		}
@@ -250,6 +335,7 @@ import os
 		if let owner = activityOwner {
 			ActivityLog.shared.didFail(owner, kind: .refreshFeedContent(feedURL: feed.url), error: error)
 		}
+		feedsErrored += 1
 
 		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Downloading feed", errorMessage: AccountError.detailedErrorMessage(error))
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
@@ -265,16 +351,64 @@ import os
 
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession) {
 
-		if let refreshActivityID {
-			ActivityLog.shared.didComplete(id: refreshActivityID)
-			self.refreshActivityID = nil
+		if let accountID {
+			completeRemainingActivities(accountID: accountID)
 		}
+
+		downloadSessionIsComplete = true
+		completeRefreshActivityIfReady()
 
 		Task { @MainActor in
 			completion?()
 			completion = nil
 		}
 	}
+}
+
+// MARK: - Activity Helpers
+
+@MainActor private extension LocalAccountRefresher {
+
+	func completeRefreshActivityIfReady() {
+		guard downloadSessionIsComplete && outstandingParseTasks == 0 else {
+			return
+		}
+		guard let refreshActivityID else {
+			return
+		}
+
+		var parts = [String]()
+		parts.append("\(feedsTotal) feeds")
+		if feedsSkipped > 0 {
+			parts.append("\(feedsSkipped) skipped")
+		}
+		if feedsErrored > 0 {
+			parts.append("\(feedsErrored) errors")
+		}
+		parts.append("\(newArticlesCount) new articles")
+		parts.append("\(updatedArticlesCount) updated articles")
+		let message = parts.joined(separator: ", ")
+
+		ActivityLog.shared.didComplete(id: refreshActivityID, message: message)
+		self.refreshActivityID = nil
+	}
+
+	/// Cleans up any leftover per-feed activities at the end of a refresh.
+	/// Defense-in-depth for paths we didn’t explicitly cover (e.g. a feed
+	/// the DownloadSession dropped without a `didSkip` callback).
+	func completeRemainingActivities(accountID: String) {
+		let owner = ActivityOwner.account(accountID)
+		let activityLog = ActivityLog.shared
+
+		for activity in activityLog.pendingActivities(for: owner) where activity.kind != .refreshAll {
+			activityLog.startIfNeeded(owner, kind: activity.kind)
+			activityLog.didComplete(owner, kind: activity.kind)
+		}
+		for activity in activityLog.runningActivities(for: owner) where activity.kind != .refreshAll {
+			activityLog.didComplete(owner, kind: activity.kind)
+		}
+	}
+
 }
 
 // MARK: - Private
@@ -306,88 +440,111 @@ private extension LocalAccountRefresher {
 		"micro.blog", "shapeof.com", "flyingmeat.com"
 	]
 
-	/// Return true if we won’t download that feed.
-	static func feedIsDisallowed(_ feed: Feed) -> Bool {
+	/// Return the reason this feed should be skipped, or nil if it shouldn’t.
+	static func skipReason(for feed: Feed, _ specialCaseCutoffDate: Date) -> String? {
+		if let reason = skipReasonForCacheControl(feed) {
+			return reason
+		}
+		if let reason = skipReasonForDisallowedHost(feed) {
+			return reason
+		}
+		if let reason = skipReasonForTiming(feed, specialCaseCutoffDate) {
+			return reason
+		}
+		return nil
+	}
 
+	static func skipReasonForDisallowedHost(_ feed: Feed) -> String? {
 		guard let url = url(for: feed) else {
-			return true
+			return "Skipped — invalid URL"
 		}
 		guard let lowercaseHost = url.host()?.lowercased() else {
-			return true
+			return "Skipped — no host"
 		}
 
 		for badHost in badHosts {
 			if lowercaseHost == badHost {
 				Self.logger.info("LocalAccountRefresher: Dropping request because it’s X/Twitter, which doesn’t provide feeds: \(feed.url)")
-				return true
+				return "Skipped — host does not provide feeds"
 			}
 		}
 
-		return false
-	}
-
-	static func feedShouldBeSkipped(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
-		feedShouldBeSkippedForCacheControlReasons(feed) ||
-		feedIsDisallowed(feed) ||
-		feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
+		return nil
 	}
 
 	static let minimumTimeBetweenChecks: TimeInterval = 9 * 60 // 9 minutes
 
-	static func feedShouldBeSkippedForTimingReasons(_ feed: Feed, _ specialCaseCutoffDate: Date) -> Bool {
+	static func skipReasonForTiming(_ feed: Feed, _ specialCaseCutoffDate: Date) -> String? {
 		guard let lastCheckDate = feed.lastCheckDate else {
-			return false
+			return nil
 		}
 
-		// Feeds that send a Cache-Control header are governed solely
-		// by Cache-Control (with the 5-hour cap enforced in
-		// feedShouldBeSkippedForCacheControlReasons). The
-		// minimumTimeBetweenChecks clamp does not apply to them.
+		// PRESERVED (commit fd547da76): feeds that send a Cache-Control header
+		// are governed solely by Cache-Control (with the 5-hour cap enforced in
+		// skipReasonForCacheControl). The minimumTimeBetweenChecks clamp does
+		// not apply to them.
 		if feed.cacheControlInfo != nil {
-			return false
+			return nil
 		}
 
+		// PRESERVED (commits c509f2324 + follow-ons): hosts exempt from the
+		// minimum time between refreshes even when they don’t send a
+		// Cache-Control header.
 		if SpecialCase.urlStringMatchesDomain(feed.url, Array(domainsWithNoMinimumTime)) {
-			return false
+			return nil
 		}
+
+		let minutesAgo = Int(Date().timeIntervalSince(lastCheckDate) / 60)
 
 		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]) {
 			if lastCheckDate > specialCaseCutoffDate {
 				Self.logger.info("LocalAccountRefresher: Dropping request for special case timing reasons: \(feed.url)")
-				return true
+				return "Skipped — previous check was \(minutesAgo) minutes ago"
 			}
 		}
 
 		if Date().timeIntervalSince(lastCheckDate) < minimumTimeBetweenChecks {
-			Self.logger.info("LocalAccountRefresher: Dropping request — last checked less than \(Int(minimumTimeBetweenChecks / 60)) minutes ago: \(feed.url)")
-			return true
+			Self.logger.info("LocalAccountRefresher: Dropping request — previous check was \(minutesAgo) minutes ago: \(feed.url)")
+			return "Skipped — previous check was \(minutesAgo) minutes ago"
 		}
 
-		return false
+		return nil
 	}
 
 	static let cacheControlMaxMaxAge: TimeInterval = 5 * 60 * 60 // 5 hours
 
-	static func feedShouldBeSkippedForCacheControlReasons(_ feed: Feed) -> Bool {
+	static let cacheControlTimeFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateStyle = .none
+		formatter.timeStyle = .short
+		return formatter
+	}()
+
+	static func skipReasonForCacheControl(_ feed: Feed) -> String? {
 		guard let cacheControlInfo = feed.cacheControlInfo, !cacheControlInfo.canResume else {
-			return false
+			return nil
 		}
 
 		// openrss.org gets unclamped Cache-Control — they configure it correctly.
 		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.openRSSOrgHostName]) {
+			let resumeDate = cacheControlInfo.dateCreated + cacheControlInfo.maxAge
+			let readyTime = cacheControlTimeFormatter.string(from: resumeDate)
 			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons (openrss.org): \(feed.url)")
-			return true
+			return "Skipped — Cache-Control, ready at \(readyTime)"
 		}
 
 		// All other feeds: honor Cache-Control with a max max-age
 		// because many sites misconfigure it. We’ve seen max-age as
 		// long as one year (for a feed that updates frequently).
 		if !cacheControlInfo.canResume(maxMaxAge: cacheControlMaxMaxAge) {
+			let clampedMaxAge = min(cacheControlMaxMaxAge, cacheControlInfo.maxAge)
+			let resumeDate = cacheControlInfo.dateCreated + clampedMaxAge
+			let readyTime = cacheControlTimeFormatter.string(from: resumeDate)
 			Self.logger.info("LocalAccountRefresher: Dropping request for Cache-Control reasons: \(feed.url)")
-			return true
+			return "Skipped — Cache-Control, ready at \(readyTime)"
 		}
 
-		return false
+		return nil
 	}
 
 	static func url(for feed: Feed) -> URL? {

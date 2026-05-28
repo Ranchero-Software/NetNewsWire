@@ -16,6 +16,8 @@ import RSCore
 @MainActor public protocol DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
+	func downloadSession(_ downloadSession: DownloadSession, didReceiveResponse url: URL)
+	func downloadSession(_ downloadSession: DownloadSession, didSkip url: URL, reason: String)
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, url: URL) -> Bool
 	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL)
@@ -174,6 +176,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 			let taskInfo = infoForTask(dataTask)
 			if let taskInfo {
 				taskInfo.urlResponse = response
+				delegate.downloadSession(self, didReceiveResponse: taskInfo.url)
 			}
 
 			let statusCode = response.forcedStatusCode
@@ -232,10 +235,12 @@ private extension DownloadSession {
 
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 429: \(urlToUse)")
+			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 429 Too Many Requests")
 			return
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 400-499: \(urlToUse)")
+			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 4xx error")
 			return
 		}
 
