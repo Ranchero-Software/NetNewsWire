@@ -8,6 +8,7 @@
 
 import Foundation
 import os
+import ActivityLog
 import RSCore
 import RSWeb
 
@@ -132,17 +133,25 @@ private extension SingleFaviconDownloader {
 			return nil
 		}
 
+		let activityLog = ActivityLog.shared
+		let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
+		activityLog.createActivity(owner: .faviconDownloader, kind: kind)
+		activityLog.didStart(.faviconDownloader, kind: kind)
+
 		do {
 			let (data, response) = try await Downloader.shared.download(url)
 			if let data, !data.isEmpty, let response, response.statusIsOK {
 				let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
 				saveToDisk(scaledData)
 				let image = await RSImage.image(data: scaledData)
+				activityLog.didComplete(.faviconDownloader, kind: kind)
 				return image
 			}
 
+			activityLog.didComplete(.faviconDownloader, kind: kind, durationIsSignificant: false)
 		} catch {
 			Self.logger.error("Error downloading image at \(url.absoluteString): \(error.localizedDescription)")
+			activityLog.didFail(.faviconDownloader, kind: kind, error: error)
 		}
 
 		return nil

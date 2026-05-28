@@ -385,6 +385,10 @@ private extension ActivityWindowController {
 			return NSLocalizedString("Feed Finder", comment: "Activity owner name")
 		case .feedImageDownloader:
 			return NSLocalizedString("Feed Images", comment: "Activity owner name")
+		case .faviconDownloader:
+			return NSLocalizedString("Favicons", comment: "Activity owner name")
+		case .avatarDownloader:
+			return NSLocalizedString("Avatars", comment: "Activity owner name")
 		case .htmlMetadataDownloader:
 			return NSLocalizedString("HTML Metadata", comment: "Activity owner name")
 		}
@@ -416,13 +420,29 @@ private extension ActivityWindowController {
 			let result = NSMutableAttributedString(string: "\(prefix) ", attributes: primaryAttributes)
 			result.append(NSAttributedString(string: feedURL, attributes: secondaryAttributes))
 			return result
+		case .downloadFavicon(let faviconURL):
+			let prefix = NSLocalizedString("Downloading favicon", comment: "Activity kind — downloading favicon")
+			let result = NSMutableAttributedString(string: "\(prefix) ", attributes: primaryAttributes)
+			result.append(NSAttributedString(string: faviconURL, attributes: secondaryAttributes))
+			return result
+		case .downloadAvatar(let avatarURL):
+			let prefix = NSLocalizedString("Downloading avatar", comment: "Activity kind — downloading avatar")
+			let result = NSMutableAttributedString(string: "\(prefix) ", attributes: primaryAttributes)
+			result.append(NSAttributedString(string: avatarURL, attributes: secondaryAttributes))
+			return result
 		case .downloadHTMLMetadata(let urlString):
 			let prefix = NSLocalizedString("Downloading metadata", comment: "Activity kind — downloading HTML metadata")
 			let result = NSMutableAttributedString(string: "\(prefix) ", attributes: primaryAttributes)
 			result.append(NSAttributedString(string: urlString, attributes: secondaryAttributes))
 			return result
 		default:
-			return NSAttributedString(string: plainDisplayName(for: activity.kind), attributes: primaryAttributes)
+			let name = plainDisplayName(for: activity.kind)
+			if let detail = activity.detail {
+				let result = NSMutableAttributedString(string: name, attributes: primaryAttributes)
+				result.append(NSAttributedString(string: " \(detail)", attributes: secondaryAttributes))
+				return result
+			}
+			return NSAttributedString(string: name, attributes: primaryAttributes)
 		}
 	}
 
@@ -440,7 +460,7 @@ private extension ActivityWindowController {
 			return NSLocalizedString("Refreshing missing articles", comment: "Activity kind")
 		case .importOPML:
 			return NSLocalizedString("Importing OPML", comment: "Activity kind")
-		case .refreshFeedContent, .findFeed, .downloadFeedImage, .downloadHTMLMetadata:
+		case .refreshFeedContent, .findFeed, .downloadFeedImage, .downloadFavicon, .downloadAvatar, .downloadHTMLMetadata:
 			return ""
 		}
 	}

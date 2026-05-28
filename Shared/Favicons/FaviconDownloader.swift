@@ -123,6 +123,12 @@ extension Notification.Name {
 		return nil
 	}
 
+	/// Returns the in-memory favicon for `feed` without triggering a download.
+	/// Used by `IconImageCache` for read-only lookups and prefetch paths.
+	func cachedFaviconAsIcon(for feed: Feed) -> IconImage? {
+		cache[feed]
+	}
+
 	func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
 		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
 		return downloader.iconImage

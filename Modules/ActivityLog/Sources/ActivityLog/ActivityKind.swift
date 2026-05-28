@@ -26,5 +26,7 @@ public enum ActivityKind: Sendable, Hashable {
 
 	case findFeed(urlString: String)
 	case downloadFeedImage(feedURL: String)
+	case downloadFavicon(faviconURL: String)
+	case downloadAvatar(avatarURL: String)
 	case downloadHTMLMetadata(urlString: String)
 }

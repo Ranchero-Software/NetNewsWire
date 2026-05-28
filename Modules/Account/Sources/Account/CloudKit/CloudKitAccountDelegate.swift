@@ -52,6 +52,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	private let refresher: LocalAccountRefresher
 	private var syncErrorHandler: CloudKitSyncErrorHandler?
 
+	private var lastNoChangeSyncDate: Date?
+	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
+
 	weak var account: Account?
 
 	let behaviors: AccountBehaviors = []
@@ -103,6 +106,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+		lastNoChangeSyncDate = nil
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		await withCheckedContinuation { continuation in
 			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, accountID: account.accountID, userInfo: userInfo)
@@ -132,10 +136,37 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	func syncArticleStatus(for account: Account) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+
+		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
+			Self.logger.debug("CloudKitAccountDelegate: Skipping sync — no changes on last check, backing off")
+			return
+		}
+
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
+
+		if articlesZoneHasNoChanges && accountZoneHasNoChanges {
+			lastNoChangeSyncDate = Date()
+		} else {
+			lastNoChangeSyncDate = nil
+		}
+
 		await cleanUpContentRecordsIfNeeded()
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	private var articlesZoneHasNoChanges: Bool {
+		guard let delegate = articlesZone.delegate as? CloudKitArticlesZoneDelegate else {
+			return true
+		}
+		return delegate.lastChangedCount == 0 && delegate.lastDeletedCount == 0
+	}
+
+	private var accountZoneHasNoChanges: Bool {
+		guard let delegate = accountZone.delegate as? CloudKitAcountZoneDelegate else {
+			return true
+		}
+		return delegate.lastChangedCount == 0 && delegate.lastDeletedCount == 0
 	}
 
 	func sendArticleStatus(for account: Account) async throws {
@@ -573,6 +604,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func performRefreshAll(for account: Account, sendArticleStatus: Bool) async throws {
+		lastNoChangeSyncDate = nil
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) sendArticleStatus: \(sendArticleStatus ? "true" : "false")")
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")

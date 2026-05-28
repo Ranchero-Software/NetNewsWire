@@ -26,6 +26,11 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var articlesZone: CloudKitArticlesZone?
 	let syncErrorHandler: CloudKitSyncErrorHandler?
 
+	/// Number of records changed in the most recent sync.
+	private(set) var lastChangedCount = 0
+	/// Number of records deleted in the most recent sync.
+	private(set) var lastDeletedCount = 0
+
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.syncDatabase = database
@@ -34,6 +39,8 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	}
 
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		lastChangedCount = changed.count
+		lastDeletedCount = deleted.count
 		do {
 			let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
 			let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()

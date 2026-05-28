@@ -23,12 +23,19 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	weak var articlesZone: CloudKitArticlesZone?
 
+	/// Number of records changed in the most recent sync.
+	private(set) var lastChangedCount = 0
+	/// Number of records deleted in the most recent sync.
+	private(set) var lastDeletedCount = 0
+
 	init(account: Account, articlesZone: CloudKitArticlesZone) {
 		self.account = account
 		self.articlesZone = articlesZone
 	}
 
 	@MainActor func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		lastChangedCount = changed.count
+		lastDeletedCount = deleted.count
 		for deletedRecordKey in deleted {
 			switch deletedRecordKey.recordType {
 			case CloudKitAccountZone.CloudKitFeed.recordType:

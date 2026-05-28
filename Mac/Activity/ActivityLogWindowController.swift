@@ -461,6 +461,10 @@ private extension ActivityLogWindowController {
 			return "Feed Finder"
 		case .feedImageDownloader:
 			return "Feed Images"
+		case .faviconDownloader:
+			return "Favicons"
+		case .avatarDownloader:
+			return "Avatars"
 		case .htmlMetadataDownloader:
 			return "HTML Metadata"
 		}
@@ -489,6 +493,10 @@ private extension ActivityLogWindowController {
 			return "Finding feed \(urlString)"
 		case .downloadFeedImage(let feedURL):
 			return "Downloading image \(feedURL)"
+		case .downloadFavicon(let faviconURL):
+			return "Downloading favicon \(faviconURL)"
+		case .downloadAvatar(let avatarURL):
+			return "Downloading avatar \(avatarURL)"
 		case .downloadHTMLMetadata(let urlString):
 			return "Downloading metadata \(urlString)"
 		}
@@ -501,7 +509,7 @@ private extension ActivityLogWindowController {
 				return .secondaryLabelColor
 			}
 			return account.type.logColor
-		case .app, .feedFinder, .feedImageDownloader, .htmlMetadataDownloader:
+		case .app, .feedFinder, .feedImageDownloader, .faviconDownloader, .avatarDownloader, .htmlMetadataDownloader:
 			return .secondaryLabelColor
 		}
 	}

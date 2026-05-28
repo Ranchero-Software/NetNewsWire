@@ -11,6 +11,7 @@ import Account
 import RSCore
 import RSWeb
 import HTMLMetadata
+import ActivityLog
 
 extension Notification.Name {
 
@@ -139,7 +140,17 @@ extension Notification.Name {
 			return
 		}
 		waitingForFeedURLs[url] = nil
+
+		let kind = ActivityKind.downloadFeedImage(feedURL: url)
+		ActivityLog.shared.didComplete(.feedImageDownloader, kind: kind)
+
 		_ = icon(for: feed)
+	}
+
+	/// Returns the in-memory icon for `feed` without triggering a download.
+	/// Used by `IconImageCache.prefetchImagesForArticles` and read-only lookups.
+	func cachedIcon(for feed: Feed) -> IconImage? {
+		cache[feed]
 	}
 }
 
@@ -210,10 +221,29 @@ private extension FeedIconDownloader {
 	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping ImageResultBlock) {
 
 		let url = Self.sanitizedIconURL(url)
+
+		// Multiple feeds can share the same icon URL. Only produce the activity
+		// once per URL — the imageDidBecomeAvailable notification will complete
+		// the single in-flight activity.
+		let alreadyInFlight = waitingForFeedURLs[url] != nil
+		let kind = ActivityKind.downloadFeedImage(feedURL: url)
+		let activityLog = ActivityLog.shared
+
+		if !alreadyInFlight {
+			activityLog.createActivity(owner: .feedImageDownloader, kind: kind, detail: feed.nameForDisplay)
+			activityLog.didStart(.feedImageDownloader, kind: kind)
+		}
+
 		waitingForFeedURLs[url] = feed
 		guard let imageData = imageDownloader.image(for: url) else {
+			// Download dispatched — completion comes via imageDidBecomeAvailable.
 			imageResultBlock(nil)
 			return
+		}
+
+		// Image was already on disk — no actual download.
+		if !alreadyInFlight {
+			activityLog.didComplete(.feedImageDownloader, kind: kind, durationIsSignificant: false)
 		}
 		RSImage.image(with: imageData, imageResultBlock: imageResultBlock)
 	}

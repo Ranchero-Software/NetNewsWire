@@ -99,8 +99,13 @@ private extension HTMLMetadataTable {
 		)
 	}
 
-	static func jsonString<T: Encodable>(_ value: T) -> String? {
-		guard let data = try? JSONEncoder().encode(value) else {
+	static func jsonString<T: Encodable>(_ values: [T]) -> String? {
+		if values.isEmpty {
+			return nil
+		}
+		let encoder = JSONEncoder()
+		encoder.outputFormatting = .withoutEscapingSlashes
+		guard let data = try? encoder.encode(values) else {
 			return nil
 		}
 		return String(data: data, encoding: .utf8)

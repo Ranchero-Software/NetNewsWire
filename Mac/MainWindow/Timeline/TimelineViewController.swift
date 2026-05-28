@@ -147,6 +147,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
+			IconImageCache.shared.prefetchImagesForArticles(articles)
 		}
 	}
 

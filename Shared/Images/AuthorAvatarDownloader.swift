@@ -9,6 +9,7 @@
 import Foundation
 import Articles
 import RSCore
+import ActivityLog
 
 extension Notification.Name {
 	static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // UserInfoKey.imageURL (which is an avatarURL)
@@ -48,10 +49,29 @@ extension Notification.Name {
 		if let imageData = imageDownloader.image(for: avatarURL) {
 			scaleAndCacheImageData(imageData, avatarURL)
 		} else {
+			// Multiple authors can share the same avatar URL. Only produce the
+			// activity once per URL — the imageDidBecomeAvailable notification
+			// will complete the single in-flight activity.
+			if !waitingForAvatarURLs.contains(avatarURL) {
+				let activityLog = ActivityLog.shared
+				let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
+				activityLog.createActivity(owner: .avatarDownloader, kind: kind)
+				activityLog.didStart(.avatarDownloader, kind: kind)
+			}
+
 			waitingForAvatarURLs.insert(avatarURL)
 		}
 
 		return nil
+	}
+
+	/// Returns the in-memory avatar for `author` without triggering a download.
+	/// Used by `IconImageCache.prefetchImagesForArticles` and read-only lookups.
+	func cachedImage(for author: Author) -> IconImage? {
+		guard let avatarURL = author.avatarURL else {
+			return nil
+		}
+		return cache[avatarURL]
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
@@ -65,6 +85,9 @@ extension Notification.Name {
 			return
 		}
 		scaleAndCacheImageData(imageData, avatarURL)
+
+		let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
+		ActivityLog.shared.didComplete(.avatarDownloader, kind: kind)
 	}
 }
 

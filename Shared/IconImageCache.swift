@@ -57,6 +57,29 @@ import RSCore
 		return nil
 	}
 
+	func prefetchImagesForArticles(_ articles: ArticleArray) {
+
+		var feedsSeen = Set<SidebarItemIdentifier>()
+		var authorsSeen = Set<String>()
+
+		for article in articles {
+			if let authors = article.authors {
+				for author in authors {
+					if let avatarURL = author.avatarURL, !authorsSeen.contains(avatarURL) {
+						authorsSeen.insert(avatarURL)
+						_ = AuthorAvatarDownloader.shared.image(for: author)
+					}
+				}
+			}
+
+			if let feed = article.feed, let feedID = feed.sidebarItemID, !feedsSeen.contains(feedID) {
+				feedsSeen.insert(feedID)
+				_ = FeedIconDownloader.shared.icon(for: feed)
+				_ = FaviconDownloader.shared.faviconAsIcon(for: feed)
+			}
+		}
+	}
+
 	func imageForArticle(_ article: Article) -> IconImage? {
 		if let iconImage = imageForAuthors(article.authors) {
 			return iconImage
@@ -93,14 +116,14 @@ private extension IconImageCache {
 		if let iconImage = feedIconImageCache[feedID] {
 			return iconImage
 		}
-		if let iconImage = FeedIconDownloader.shared.icon(for: feed) {
+		if let iconImage = FeedIconDownloader.shared.cachedIcon(for: feed) {
 			feedIconImageCache[feedID] = iconImage
 			return iconImage
 		}
 		if let faviconImage = faviconImageCache[feedID] {
 			return faviconImage
 		}
-		if let faviconImage = FaviconDownloader.shared.faviconAsIcon(for: feed) {
+		if let faviconImage = FaviconDownloader.shared.cachedFaviconAsIcon(for: feed) {
 			faviconImageCache[feedID] = faviconImage
 			return faviconImage
 		}
@@ -129,7 +152,7 @@ private extension IconImageCache {
 		if let iconImage = authorIconImageCache[author] {
 			return iconImage
 		}
-		if let iconImage = AuthorAvatarDownloader.shared.image(for: author) {
+		if let iconImage = AuthorAvatarDownloader.shared.cachedImage(for: author) {
 			authorIconImageCache[author] = iconImage
 			return iconImage
 		}
