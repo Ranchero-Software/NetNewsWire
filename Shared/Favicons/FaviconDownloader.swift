@@ -125,8 +125,33 @@ extension Notification.Name {
 
 	/// Returns the in-memory favicon for `feed` without triggering a download.
 	/// Used by `IconImageCache` for read-only lookups and prefetch paths.
+	///
+	/// First checks the `feed`-keyed cache; falls back to peeking at any existing
+	/// `SingleFaviconDownloader` for the feed's favicon URL — so sidebar redraws
+	/// triggered by `FaviconDidBecomeAvailable` pick up newly-loaded icons.
+	/// Never creates a new `SingleFaviconDownloader`; never triggers a download.
 	func cachedFaviconAsIcon(for feed: Feed) -> IconImage? {
-		cache[feed]
+		if let image = cache[feed] {
+			return image
+		}
+		guard let faviconURL = cachedFaviconURL(for: feed) else {
+			return nil
+		}
+		guard let iconImage = singleFaviconDownloaderCache[faviconURL]?.iconImage else {
+			return nil
+		}
+		cache[feed] = iconImage
+		return iconImage
+	}
+
+	private func cachedFaviconURL(for feed: Feed) -> String? {
+		if let faviconURL = feed.faviconURL {
+			return faviconURL
+		}
+		if let homePageURL = feed.homePageURL, let faviconURL = homePageToFaviconURLCache[homePageURL] {
+			return faviconURL
+		}
+		return nil
 	}
 
 	func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
