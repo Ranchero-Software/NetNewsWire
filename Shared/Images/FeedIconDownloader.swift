@@ -140,10 +140,6 @@ extension Notification.Name {
 			return
 		}
 		waitingForFeedURLs[url] = nil
-
-		let kind = ActivityKind.downloadFeedImage(feedURL: url)
-		ActivityLog.shared.didComplete(.feedImageDownloader, kind: kind)
-
 		_ = icon(for: feed)
 	}
 
@@ -222,24 +218,16 @@ private extension FeedIconDownloader {
 
 		let url = Self.sanitizedIconURL(url)
 
-		// If the ImageDownloader already has it in memory, process inline and
-		// skip activity logging — no fetch is happening.
-		if let imageData = imageDownloader.image(for: url) {
+		// `ImageDownloader.image(for:)` handles the activity log itself — it
+		// fires the activity only if the fetch goes to network. Disk-cached
+		// fetches stay silent.
+		let kind = ActivityKind.downloadFeedImage(feedURL: url)
+		if let imageData = imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: kind, activityDetail: feed.nameForDisplay) {
 			RSImage.image(with: imageData, imageResultBlock: imageResultBlock)
 			return
 		}
 
-		// Data not in memory — `imageDownloader.image(for:)` has dispatched an
-		// async findImage (disk or network). Completion arrives via
-		// imageDidBecomeAvailable. Multiple feeds can share the same icon URL;
-		// only produce one activity per URL.
-		if waitingForFeedURLs[url] == nil {
-			let kind = ActivityKind.downloadFeedImage(feedURL: url)
-			let activityLog = ActivityLog.shared
-			activityLog.createActivity(owner: .feedImageDownloader, kind: kind, detail: feed.nameForDisplay)
-			activityLog.didStart(.feedImageDownloader, kind: kind)
-		}
-
+		// Async fetch dispatched — completion arrives via imageDidBecomeAvailable.
 		waitingForFeedURLs[url] = feed
 		imageResultBlock(nil)
 	}

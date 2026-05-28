@@ -10,6 +10,7 @@ import Foundation
 import os
 import RSCore
 import RSWeb
+import ActivityLog
 
 extension Notification.Name {
 	static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
@@ -43,15 +44,22 @@ extension Notification.Name {
 		imageCache.removeAll()
 	}
 
+	/// Returns the image data if it's already in the in-memory cache. Otherwise
+	/// dispatches an async fetch — disk first, then network — and returns nil;
+	/// completion arrives via `.imageDidBecomeAvailable`.
+	///
+	/// Pass `activityOwner` / `activityKind` (and optionally `activityDetail`)
+	/// to have an entry written to the activity log if and only if the fetch
+	/// goes to network. Disk-only fetches stay silent.
 	@discardableResult
-	func image(for url: String) -> Data? {
+	func image(for url: String, activityOwner: ActivityOwner? = nil, activityKind: ActivityKind? = nil, activityDetail: String? = nil) -> Data? {
 		assert(Thread.isMainThread)
 		if let data = imageCache[url] {
 			return data
 		}
 
 		Task { @MainActor in
-			await findImage(url)
+			await findImage(url, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 		}
 
 		return nil
@@ -66,7 +74,7 @@ private extension ImageDownloader {
 		postImageDidBecomeAvailableNotification(url)
 	}
 
-	func findImage(_ url: String) async {
+	func findImage(_ url: String, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async {
 		guard !urlsInProgress.contains(url) && !badURLs.contains(url) else {
 			return
 		}
@@ -78,10 +86,27 @@ private extension ImageDownloader {
 			return
 		}
 
-		if let image = await downloadImage(url) {
-			cacheImage(url, image)
-			urlsInProgress.remove(url)
+		// Disk missed — going to network. Produce activity if the caller asked.
+		let activityLog = ActivityLog.shared
+		if let activityOwner, let activityKind {
+			activityLog.createActivity(owner: activityOwner, kind: activityKind, detail: activityDetail)
+			activityLog.didStart(activityOwner, kind: activityKind)
 		}
+
+		let image = await downloadImage(url)
+		if let activityOwner, let activityKind {
+			if image != nil {
+				activityLog.didComplete(activityOwner, kind: activityKind)
+			} else {
+				let error = NSError(domain: "ImageDownloader", code: 0, userInfo: [NSLocalizedDescriptionKey: "Download failed"])
+				activityLog.didFail(activityOwner, kind: activityKind, error: error)
+			}
+		}
+
+		if let image {
+			cacheImage(url, image)
+		}
+		urlsInProgress.remove(url)
 	}
 
 	func readFromDisk(url: String) async -> Data? {

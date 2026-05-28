@@ -46,19 +46,13 @@ extension Notification.Name {
 			return cachedImage
 		}
 
-		if let imageData = imageDownloader.image(for: avatarURL) {
+		// `ImageDownloader.image(for:)` handles the activity log itself — it
+		// fires the activity only if the fetch goes to network. Disk-cached
+		// fetches stay silent.
+		let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
+		if let imageData = imageDownloader.image(for: avatarURL, activityOwner: .avatarDownloader, activityKind: kind) {
 			scaleAndCacheImageData(imageData, avatarURL)
 		} else {
-			// Multiple authors can share the same avatar URL. Only produce the
-			// activity once per URL — the imageDidBecomeAvailable notification
-			// will complete the single in-flight activity.
-			if !waitingForAvatarURLs.contains(avatarURL) {
-				let activityLog = ActivityLog.shared
-				let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
-				activityLog.createActivity(owner: .avatarDownloader, kind: kind)
-				activityLog.didStart(.avatarDownloader, kind: kind)
-			}
-
 			waitingForAvatarURLs.insert(avatarURL)
 		}
 
@@ -85,9 +79,6 @@ extension Notification.Name {
 			return
 		}
 		scaleAndCacheImageData(imageData, avatarURL)
-
-		let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
-		ActivityLog.shared.didComplete(.avatarDownloader, kind: kind)
 	}
 }
 
