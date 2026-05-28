@@ -582,6 +582,23 @@ private extension CloudKitAccountDelegate {
 
 		let activityLog = ActivityLog.shared
 		let owner = ActivityOwner.account(account.accountID)
+
+		// Overall .refreshAll activity for this account, wrapping every stage
+		// below. Individual activities (fetchChangesInZone, receive/send operations)
+		// log their own entries, while this one provides the account-is-refreshing
+		// status at the account level.
+		let refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
+		activityLog.didStart(id: refreshActivityID)
+		var refreshFinishedSuccessfully = false
+		defer {
+			if refreshFinishedSuccessfully {
+				activityLog.didComplete(id: refreshActivityID)
+			} else {
+				let error = NSError(domain: "CloudKitAccountDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "Refresh interrupted"])
+				activityLog.didFail(id: refreshActivityID, error: error)
+			}
+		}
+
 		let fetchChangesTaskNumber = activityLog.nextTaskNumberString()
 		let fetchChangesID = activityLog.createActivity(owner: owner, kind: .refreshFeedList, detail: "Fetching account zone changes \(fetchChangesTaskNumber)")
 		activityLog.didStart(id: fetchChangesID)
@@ -629,6 +646,7 @@ private extension CloudKitAccountDelegate {
 
 		syncProgress.reset()
 		account.lastRefreshCompletedDate = Date()
+		refreshFinishedSuccessfully = true
 	}
 
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
