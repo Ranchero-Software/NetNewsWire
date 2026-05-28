@@ -123,6 +123,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
+			rebuildThumbnailArticleIDs()
+
 			if articles.representSameArticlesInSameOrder(as: oldValue) {
 				// When the array is the same — same articles, same order —
 				// but some data in some of the articles may have changed.
@@ -178,6 +180,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	private var showIcons = false
 	private var currentRowHeight: CGFloat = 0.0
+	private var thumbnailArticleIDs = Set<String>()
 
 	private var didRegisterForNotifications = false
 	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5, maxInterval: 2.0)
@@ -238,6 +241,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(thumbnailImageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
@@ -249,6 +253,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				}
 			}
 			didRegisterForNotifications = true
+		}
+
+		if let clipView = tableView.enclosingScrollView?.contentView {
+			NotificationCenter.default.addObserver(self, selector: #selector(scrollViewDidScroll(_:)), name: NSView.boundsDidChangeNotification, object: clipView)
 		}
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.view.window)
@@ -698,6 +706,25 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
+	@objc func thumbnailImageDidBecomeAvailable(_ note: Notification) {
+		guard let url = note.userInfo?[UserInfoKey.url] as? String else {
+			return
+		}
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { [weak self] row -> Bool in
+			guard let self, let article = articles.articleAtRow(row) else {
+				return false
+			}
+			return article.firstBodyImageURL?.absoluteString == url
+		}
+		if let indexesToReload {
+			reloadCells(for: indexesToReload)
+		}
+	}
+
+	@objc func scrollViewDidScroll(_ note: Notification) {
+		prefetchThumbnailsAroundVisibleRows()
+	}
+
 	@objc func accountDidDownloadArticles(_ note: Notification) {
 		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
 			return
@@ -886,7 +913,16 @@ extension TimelineViewController: NSTableViewDataSource {
 	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
 		// Keeping -[NSTableViewDelegate tableView:heightOfRow:] implemented fixes
 		// an issue that the bottom inset of NSTableView disappears on macOS Monterey.
-		return tableView.rowHeight
+		guard let article = articles.articleAtRow(row),
+			  thumbnailArticleIDs.contains(article.articleID) else {
+			return currentRowHeight
+		}
+		let width = tableView.bounds.width > 0 ? tableView.bounds.width : 400
+		guard let appearance = showIcons ? cellAppearanceWithIcon : cellAppearance else {
+			return currentRowHeight
+		}
+		let cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: nil, showIcon: showIcons)
+		return TimelineCellLayout.height(for: width, cellData: cellData, appearance: appearance)
 	}
 }
 
@@ -1054,6 +1090,34 @@ private extension TimelineViewController {
 
 	func updateTableViewRowHeight() {
 		tableView.rowHeight = currentRowHeight
+	}
+
+	func rebuildThumbnailArticleIDs() {
+		thumbnailArticleIDs = Set(articles.compactMap { $0.firstBodyImageURL != nil ? $0.articleID : nil })
+	}
+
+	func prefetchThumbnailsAroundVisibleRows() {
+		guard let scrollView = tableView.enclosingScrollView else {
+			return
+		}
+		let visibleRect = scrollView.contentView.bounds
+		let visibleRows = tableView.rows(in: visibleRect)
+		guard visibleRows.length > 0 else {
+			return
+		}
+		let prefetchCount = 5
+		let start = max(0, visibleRows.location - prefetchCount)
+		let end = min(articles.count - 1, visibleRows.location + visibleRows.length - 1 + prefetchCount)
+		guard start <= end else {
+			return
+		}
+		for row in start...end where !visibleRows.contains(row) {
+			guard let article = articles.articleAtRow(row),
+				  let url = article.firstBodyImageURL else {
+				continue
+			}
+			ImageDownloader.shared.image(for: url.absoluteString)
+		}
 	}
 
 	func updateShowIcons() {

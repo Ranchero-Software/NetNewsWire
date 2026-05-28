@@ -26,6 +26,7 @@ import Articles
 	let starred: Bool
 	let numberOfLines: Int
 	let iconSize: IconSize
+	let thumbnailURL: URL?
 
 	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize) {
 
@@ -62,6 +63,7 @@ import Articles
 		self.starred = article.status.starred
 		self.numberOfLines = numberOfLines
 		self.iconSize = iconSize
+		self.thumbnailURL = article.firstBodyImageURL
 
 	}
 
@@ -79,6 +81,7 @@ import Articles
 		self.starred = false
 		self.numberOfLines = 0
 		self.iconSize = .medium
+		self.thumbnailURL = nil
 	}
 
 }
