@@ -7,7 +7,6 @@
 
 import Foundation
 import os
-import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import RSWeb
@@ -63,14 +62,18 @@ final class FeedSettingsDatabase: Sendable {
 			database.executeStatements("PRAGMA journal_mode = WAL;")
 			database.runCreateStatements(Self.tableCreationStatements)
 		}
-		if !Platform.isRunningUnitTests {
-			vacuum()
-		}
+		vacuumIfNeeded()
 	}
 
 	func vacuum() {
 		serialDispatchQueue.async {
 			self.database.vacuum()
+		}
+	}
+
+	func vacuumIfNeeded() {
+		serialDispatchQueue.async {
+			self.database.vacuumIfNeeded()
 		}
 	}
 

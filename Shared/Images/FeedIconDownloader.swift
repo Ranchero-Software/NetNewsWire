@@ -10,7 +10,7 @@ import Foundation
 import Account
 import RSCore
 import RSWeb
-import RSParser
+import HTMLMetadata
 
 extension Notification.Name {
 

@@ -54,6 +54,13 @@
     },
     {
       "target" : {
+        "containerPath" : "container:Modules\/ActivityLog",
+        "identifier" : "ActivityLogTests",
+        "name" : "ActivityLogTests"
+      }
+    },
+    {
+      "target" : {
         "containerPath" : "container:Modules\/RSParser",
         "identifier" : "RSParserTests",
         "name" : "RSParserTests"

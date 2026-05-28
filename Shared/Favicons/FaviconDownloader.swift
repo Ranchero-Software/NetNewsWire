@@ -12,7 +12,7 @@ import Articles
 import Account
 import RSCore
 import RSWeb
-import RSParser
+import HTMLMetadata
 import UniformTypeIdentifiers
 
 extension Notification.Name {
@@ -193,7 +193,7 @@ extension Notification.Name {
 
 	@objc func htmlMetadataIsAvailable(_ note: Notification) {
 
-		guard let url = note.userInfo?[HTMLMetadataCache.UserInfoKey.url] as? String else {
+		guard let url = note.userInfo?[HTMLMetadataUserInfoKey.url] as? String else {
 			assertionFailure("Expected URL string in .htmlMetadataAvailable Notification userInfo.")
 			return
 		}
@@ -335,7 +335,7 @@ private extension FaviconDownloader {
 	}
 }
 
-private extension HTMLMetadata {
+private extension HTMLMetadataRecord {
 
 	func usableFaviconURLs() -> [String]? {
 
@@ -346,7 +346,7 @@ private extension HTMLMetadata {
 
 	static let ignoredTypes = [UTType.svg]
 
-	private func shouldAllowFavicon(_ favicon: HTMLMetadataFavicon) -> Bool {
+	private func shouldAllowFavicon(_ favicon: HTMLMetadataRecord.Favicon) -> Bool {
 
 		// Check mime type.
 		if let mimeType = favicon.type, let utType = UTType(mimeType: mimeType) {
