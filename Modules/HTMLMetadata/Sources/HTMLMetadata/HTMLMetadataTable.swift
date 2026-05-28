@@ -46,7 +46,7 @@ struct HTMLMetadataTable {
 			resultSet.close()
 		}
 
-		guard let record = record(from: resultSet) else {
+		guard resultSet.next(), let record = record(from: resultSet) else {
 			return nil
 		}
 
