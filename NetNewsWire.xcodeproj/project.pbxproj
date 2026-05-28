@@ -54,6 +54,14 @@
 		843E2F182CF2B8A700ED170F /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F162CF2B8A700ED170F /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		843E2F1A2CF2B8C500ED170F /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F192CF2B8C500ED170F /* RSWeb */; };
 		843E2F1B2CF2B8C500ED170F /* RSWeb in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F192CF2B8C500ED170F /* RSWeb */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D1A7E100000000000000A002 /* HTMLMetadata in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000A001 /* HTMLMetadata */; };
+		D1A7E100000000000000A003 /* HTMLMetadata in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000A001 /* HTMLMetadata */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D1A7E100000000000000A005 /* HTMLMetadata in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000A004 /* HTMLMetadata */; };
+		D1A7E100000000000000A006 /* HTMLMetadata in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000A004 /* HTMLMetadata */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D1A7E100000000000000B002 /* ActivityLog in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000B001 /* ActivityLog */; };
+		D1A7E100000000000000B003 /* ActivityLog in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000B001 /* ActivityLog */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D1A7E100000000000000B005 /* ActivityLog in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000B004 /* ActivityLog */; };
+		D1A7E100000000000000B006 /* ActivityLog in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000B004 /* ActivityLog */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		843E2F1D2CF2B8D300ED170F /* RSWeb in Frameworks */ = {isa = PBXBuildFile; productRef = 843E2F1C2CF2B8D300ED170F /* RSWeb */; };
 		848E84CD2DB749440023F3BA /* RSCore in Frameworks */ = {isa = PBXBuildFile; productRef = 848E84CC2DB749440023F3BA /* RSCore */; };
 		848E84CE2DB749440023F3BA /* RSCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = 848E84CC2DB749440023F3BA /* RSCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -209,6 +217,8 @@
 				8424B31C2DB73D530053AA11 /* RSParser in Embed Frameworks */,
 				513F32782593EE6F0003048F /* Secrets in Embed Frameworks */,
 				843E2F1B2CF2B8C500ED170F /* RSWeb in Embed Frameworks */,
+				D1A7E100000000000000A003 /* HTMLMetadata in Embed Frameworks */,
+				D1A7E100000000000000B003 /* ActivityLog in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				84EE3F162DB8A0A0009D3A8D /* RSTree in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
@@ -253,6 +263,8 @@
 				513277442590FBB60064F1E7 /* Account in Embed Frameworks */,
 				5132775F2590FC640064F1E7 /* Articles in Embed Frameworks */,
 				843E2F182CF2B8A700ED170F /* RSWeb in Embed Frameworks */,
+				D1A7E100000000000000A006 /* HTMLMetadata in Embed Frameworks */,
+				D1A7E100000000000000B006 /* ActivityLog in Embed Frameworks */,
 				84EE3F132DB8A088009D3A8D /* RSTree in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
@@ -576,6 +588,8 @@
 				516B695F24D2F33B00B5702F /* Account in Frameworks */,
 				CEE687C900324CE2908FCF98 /* ErrorLog in Frameworks */,
 				843E2F1A2CF2B8C500ED170F /* RSWeb in Frameworks */,
+				D1A7E100000000000000A002 /* HTMLMetadata in Frameworks */,
+				D1A7E100000000000000B002 /* ActivityLog in Frameworks */,
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
 				84EE434B2DB8A44C009D3A8D /* RSDatabase in Frameworks */,
@@ -602,6 +616,8 @@
 				27692BB9F5D9450894A7EDA4 /* ErrorLog in Frameworks */,
 				848E84CD2DB749440023F3BA /* RSCore in Frameworks */,
 				843E2F172CF2B8A700ED170F /* RSWeb in Frameworks */,
+				D1A7E100000000000000A005 /* HTMLMetadata in Frameworks */,
+				D1A7E100000000000000B005 /* ActivityLog in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -833,6 +849,8 @@
 				513F32792593EE6F0003048F /* SyncDatabase */,
 				179D280A26F6F93D003B2E0A /* Zip */,
 				843E2F192CF2B8C500ED170F /* RSWeb */,
+				D1A7E100000000000000A001 /* HTMLMetadata */,
+				D1A7E100000000000000B001 /* ActivityLog */,
 				8424B31A2DB73D530053AA11 /* RSParser */,
 				848E84D42DB749670023F3BA /* RSCore */,
 				84EE3F142DB8A0A0009D3A8D /* RSTree */,
@@ -879,6 +897,8 @@
 				513277632590FC640064F1E7 /* SyncDatabase */,
 				179C39E926F76B0500D4E741 /* Zip */,
 				843E2F162CF2B8A700ED170F /* RSWeb */,
+				D1A7E100000000000000A004 /* HTMLMetadata */,
+				D1A7E100000000000000B004 /* ActivityLog */,
 				8424B3172DB73D4C0053AA11 /* RSParser */,
 				848E84CC2DB749440023F3BA /* RSCore */,
 				848E84CF2DB749440023F3BA /* RSCoreResources */,
@@ -1734,6 +1754,22 @@
 		843E2F1C2CF2B8D300ED170F /* RSWeb */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RSWeb;
+		};
+		D1A7E100000000000000A001 /* HTMLMetadata */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HTMLMetadata;
+		};
+		D1A7E100000000000000A004 /* HTMLMetadata */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = HTMLMetadata;
+		};
+		D1A7E100000000000000B001 /* ActivityLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ActivityLog;
+		};
+		D1A7E100000000000000B004 /* ActivityLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ActivityLog;
 		};
 		848E84CC2DB749440023F3BA /* RSCore */ = {
 			isa = XCSwiftPackageProductDependency;
