@@ -88,6 +88,8 @@ let appName = "NetNewsWire"
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
+	private var activityWindowController: ActivityWindowController?
+	private var activityLogWindowController: ActivityLogWindowController?
 	private var errorLogWindowController: ErrorLogWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private var cloudKitStatsWindowController: CloudKitStatsWindowController?
@@ -216,6 +218,14 @@ let appName = "NetNewsWire"
 
 		if InspectorWindowController.shouldOpenAtStartup {
 			toggleInspectorWindow(self)
+		}
+
+		if ActivityWindowController.shouldOpenAtStartup {
+			showActivityWindow(self)
+		}
+
+		if ActivityLogWindowController.shouldOpenAtStartup {
+			showActivityLog(self)
 		}
 
 		if ErrorLogWindowController.shouldOpenAtStartup {
@@ -560,6 +570,20 @@ let appName = "NetNewsWire"
 			errorLogWindowController = ErrorLogWindowController()
 		}
 		errorLogWindowController!.showWindow(self)
+	}
+
+	@IBAction func showActivityWindow(_ sender: Any?) {
+		if activityWindowController == nil {
+			activityWindowController = ActivityWindowController()
+		}
+		activityWindowController?.showWindow(self)
+	}
+
+	@IBAction func showActivityLog(_ sender: Any?) {
+		if activityLogWindowController == nil {
+			activityLogWindowController = ActivityLogWindowController()
+		}
+		activityLogWindowController?.showWindow(self)
 	}
 
 	@IBAction func refreshAll(_ sender: Any?) {

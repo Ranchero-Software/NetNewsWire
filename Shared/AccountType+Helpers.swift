@@ -43,6 +43,33 @@ extension AccountType {
 		}
 	}
 
+	// MARK: - Log Colors
+
+	#if os(macOS)
+	var logColor: NSColor {
+		switch self {
+		case .onMyMac:
+			return .labelColor
+		case .cloudKit:
+			return .systemPurple
+		case .feedly:
+			return .systemGreen
+		case .feedbin:
+			return .systemBlue
+		case .newsBlur:
+			return .systemOrange
+		case .freshRSS:
+			return .systemTeal
+		case .inoreader:
+			return .systemBrown
+		case .bazQux:
+			return .systemIndigo
+		case .theOldReader:
+			return .systemPink
+		}
+	}
+	#endif
+
 	// MARK: - SwiftUI Images
 	@MainActor func image() -> Image {
 		switch self {
