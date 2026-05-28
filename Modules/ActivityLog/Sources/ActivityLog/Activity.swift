@@ -14,6 +14,7 @@ import Foundation
 	public let owner: ActivityOwner
 	public let kind: ActivityKind
 	public let detail: String?
+	public let creationDate: Date
 
 	public private(set) var state: ActivityState
 	public private(set) var startDate: Date?
@@ -29,6 +30,7 @@ import Foundation
 		self.owner = owner
 		self.kind = kind
 		self.detail = detail
+		self.creationDate = Date()
 		self.state = .pending
 	}
 
