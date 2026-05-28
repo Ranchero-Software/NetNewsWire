@@ -49,7 +49,7 @@ import Foundation
 	func didComplete(_ message: String? = nil) {
 		state = .completed
 		endDate = Date()
-		self.completionMessage = message
+		completionMessage = message
 	}
 
 	func didFail(_ error: any Error) {
