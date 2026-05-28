@@ -14,6 +14,7 @@ import WebKit
 import RSCore
 import RSTree
 import RSWeb
+import HTMLMetadata
 import Account
 import Articles
 
