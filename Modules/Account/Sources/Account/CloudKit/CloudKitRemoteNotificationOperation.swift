@@ -10,16 +10,19 @@ import Foundation
 import os
 import RSCore
 import CloudKitSync
+import ActivityLog
 
 @MainActor final class CloudKitRemoteNotificationOperation: MainThreadOperation, @unchecked Sendable {
 	private weak var accountZone: CloudKitAccountZone?
 	private weak var articlesZone: CloudKitArticlesZone?
+	private let accountID: String
 	nonisolated(unsafe) private var userInfo: [AnyHashable: Any]
 	private static let logger = cloudKitLogger
 
-	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, userInfo: [AnyHashable: Any]) {
+	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, accountID: String, userInfo: [AnyHashable: Any]) {
 		self.accountZone = accountZone
 		self.articlesZone = articlesZone
+		self.accountID = accountID
 		self.userInfo = userInfo
 		super.init(name: "CloudKitRemoteNotificationOperation")
 	}
@@ -31,9 +34,21 @@ import CloudKitSync
 		}
 
 		Task { @MainActor in
+			let activityLog = ActivityLog.shared
+			let owner = ActivityOwner.account(accountID)
+			let taskNumber = activityLog.nextTaskNumberString()
+
+			let accountZoneActivityID = activityLog.createActivity(owner: owner, kind: .refreshFeedList, detail: "Receiving account changes \(taskNumber)")
+			activityLog.didStart(id: accountZoneActivityID)
+
 			Self.logger.debug("iCloud: Processing remote notification")
 			await accountZone.receiveRemoteNotification(userInfo: userInfo)
+			activityLog.didComplete(id: accountZoneActivityID)
+
+			let articlesZoneActivityID = activityLog.createActivity(owner: owner, kind: .refreshArticleStatuses, detail: "Receiving article changes \(taskNumber)")
+			activityLog.didStart(id: articlesZoneActivityID)
 			await articlesZone.receiveRemoteNotification(userInfo: self.userInfo)
+			activityLog.didComplete(id: articlesZoneActivityID)
 
 			Self.logger.debug("iCloud: Finished processing remote notification")
 			didComplete()

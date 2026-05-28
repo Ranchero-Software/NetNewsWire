@@ -11,6 +11,7 @@ import CloudKit
 import ErrorLog
 import SystemConfiguration
 import os
+import ActivityLog
 import RSCore
 import RSParser
 import RSWeb
@@ -104,7 +105,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		await withCheckedContinuation { continuation in
-			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
+			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, accountID: account.accountID, userInfo: userInfo)
 			op.completionBlock = { _ in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				continuation.resume()
@@ -146,7 +147,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	func refreshArticleStatus(for account: Account) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
+			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone, accountID: account.accountID)
 			op.completionBlock = { mainThreadOperation in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				if mainThreadOperation.isCanceled {
@@ -579,10 +580,18 @@ private extension CloudKitAccountDelegate {
 
 		syncProgress.addTasks(3)
 
+		let activityLog = ActivityLog.shared
+		let owner = ActivityOwner.account(account.accountID)
+		let fetchChangesTaskNumber = activityLog.nextTaskNumberString()
+		let fetchChangesID = activityLog.createActivity(owner: owner, kind: .refreshFeedList, detail: "Fetching account zone changes \(fetchChangesTaskNumber)")
+		activityLog.didStart(id: fetchChangesID)
+
 		do {
 			try await accountZone.fetchChangesInZone()
+			activityLog.didComplete(id: fetchChangesID)
 			syncProgress.completeTask()
 		} catch {
+			activityLog.didFail(id: fetchChangesID, error: error)
 			if case CloudKitZoneError.userDeletedZone = error {
 				account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 				for folder in account.folders ?? Set<Folder>() {
@@ -605,6 +614,7 @@ private extension CloudKitAccountDelegate {
 			throw error
 		}
 
+		refresher.accountID = account.accountID
 		await refresher.refreshFeeds(feeds)
 
 		if sendArticleStatus {

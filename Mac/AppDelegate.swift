@@ -11,6 +11,7 @@ import UserNotifications
 import os
 import Articles
 import Account
+import ActivityLog
 import ErrorLog
 import RSCore
 import RSCoreObjC
@@ -861,6 +862,8 @@ extension AppDelegate {
 	func saveState() {
 		mainWindowController?.saveStateToUserDefaults()
 		inspectorWindowController?.saveState()
+		activityWindowController?.saveState()
+		activityLogWindowController?.saveState()
 		errorLogWindowController?.saveState()
 	}
 

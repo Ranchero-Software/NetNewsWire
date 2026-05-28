@@ -13,6 +13,7 @@ import RSParser
 import RSWeb
 import Articles
 import ArticlesDatabase
+import ActivityLog
 import os
 
 @MainActor protocol LocalAccountRefresherDelegate {
@@ -29,6 +30,12 @@ import os
 			}
 		}
 	}
+
+	/// Settable by the caller (LocalAccountDelegate / CloudKitAccountDelegate) so
+	/// per-refresh activities can be scoped to the right account.
+	var accountID: String?
+
+	private var refreshActivityID: Int?
 
 	private var completion: (() -> Void)?
 	private var isSuspended = false
@@ -69,10 +76,30 @@ import os
 			urlToFeedDictionary[feed.url] = feed
 		}
 
+		// Track the overall refresh and create one pending activity per feed.
+		// Each feed's activity is completed (or failed) in the DownloadSessionDelegate
+		// callbacks below. `didComplete` is pending-tolerant, so feeds that never
+		// reach `didStart` still get cleaned up.
+		if let owner = activityOwner {
+			let activityLog = ActivityLog.shared
+			refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
+			activityLog.didStart(id: refreshActivityID!)
+			for feed in filteredFeeds {
+				activityLog.createActivity(owner: owner, kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay)
+			}
+		}
+
 		let urls = filteredFeeds.compactMap { Self.url(for: $0) }
 
 		self.completion = completion
 		downloadSession.download(Set(urls))
+	}
+
+	private var activityOwner: ActivityOwner? {
+		guard let accountID else {
+			return nil
+		}
+		return .account(accountID)
 	}
 
 	@MainActor public func suspend() {
@@ -131,6 +158,16 @@ import os
 			return
 		}
 		feed.lastCheckDate = Date()
+
+		// Every exit from this method represents a per-feed completion (success
+		// or harmless skip — actual HTTP failures land in httpError below).
+		let activityOwner = self.activityOwner
+		let activityKind = ActivityKind.refreshFeedContent(feedURL: feed.url)
+		defer {
+			if let activityOwner {
+				ActivityLog.shared.didComplete(activityOwner, kind: activityKind)
+			}
+		}
 
 		guard error == nil else {
 			return
@@ -210,6 +247,10 @@ import os
 		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
 		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
 
+		if let owner = activityOwner {
+			ActivityLog.shared.didFail(owner, kind: .refreshFeedContent(feedURL: feed.url), error: error)
+		}
+
 		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Downloading feed", errorMessage: AccountError.detailedErrorMessage(error))
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
@@ -223,6 +264,11 @@ import os
 	}
 
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession) {
+
+		if let refreshActivityID {
+			ActivityLog.shared.didComplete(id: refreshActivityID)
+			self.refreshActivityID = nil
+		}
 
 		Task { @MainActor in
 			completion?()

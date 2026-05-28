@@ -49,6 +49,7 @@ import Secrets
 		}
 
 		let feeds = account.flattenedFeeds()
+		refresher.accountID = account.accountID
 		await refresher.refreshFeeds(feeds)
 		account.lastRefreshCompletedDate = Date()
 	}

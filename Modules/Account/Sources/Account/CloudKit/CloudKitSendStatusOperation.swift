@@ -13,11 +13,13 @@ import RSCore
 import RSWeb
 import SyncDatabase
 import CloudKitSync
+import ActivityLog
 
 final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendable {
 	private let blockSize = 150
 	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
+	private let accountID: String
 	private var syncDatabase: SyncDatabase
 	private let syncArticleContentForUnreadArticles: @Sendable () -> Bool
 	private static let logger = cloudKitLogger
@@ -25,6 +27,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, syncArticleContentForUnreadArticles: @escaping @Sendable () -> Bool, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
+		self.accountID = account.accountID
 		self.articlesZone = articlesZone
 		self.syncDatabase = database
 		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
@@ -35,9 +38,15 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	@MainActor override func run() {
 		Self.logger.debug("iCloud: Sending article statuses")
 
+		let activityLog = ActivityLog.shared
+		let taskNumber = activityLog.nextTaskNumberString()
+		let activityID = activityLog.createActivity(owner: .account(accountID), kind: .sendArticleStatuses, detail: "Sending article statuses \(taskNumber)")
+		activityLog.didStart(id: activityID)
+
 		Task { @MainActor in
 			await selectForProcessing()
 			Self.logger.debug("iCloud: Finished sending article statuses")
+			activityLog.didComplete(id: activityID)
 			didComplete()
 		}
 	}
