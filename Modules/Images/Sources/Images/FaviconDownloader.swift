@@ -126,6 +126,9 @@ extension Notification.Name {
 	}
 
 	public func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
+		if !faviconURL.hasPrefix("http://") && !faviconURL.hasPrefix("https://") {
+			return nil
+		}
 		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
 			return nil
 		}

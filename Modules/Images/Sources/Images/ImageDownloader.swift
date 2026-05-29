@@ -69,6 +69,9 @@ extension ImageDownloadError: LocalizedError {
 	@discardableResult
 	public func image(for url: String, activityOwner: ActivityOwner? = nil, activityKind: ActivityKind? = nil, activityDetail: String? = nil) -> Data? {
 		assert(Thread.isMainThread)
+		if !url.hasPrefix("http://") && !url.hasPrefix("https://") {
+			return nil
+		}
 		if let data = imageCache[url] {
 			return data
 		}
