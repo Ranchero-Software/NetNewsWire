@@ -274,7 +274,7 @@ import os
 		let dataSizeMessage = Int64(data.count).formatted(.byteCount(style: .memory))
 		if dataHash == feed.contentHash {
 			if let activityOwner {
-				ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: "\(dataSizeMessage), content unchanged", durationIsSignificant: false)
+				ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: "\(dataSizeMessage), content unchanged")
 			}
 			return
 		}
@@ -510,14 +510,18 @@ private extension LocalAccountRefresher {
 
 		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]) {
 			if lastCheckDate > specialCaseCutoffDate {
+				let minimumHours = Int(-specialCaseCutoffDate.timeIntervalSinceNow / 3600)
+				let minimumHoursText = "\(minimumHours) hour\(minimumHours == 1 ? "" : "s")"
 				Self.logger.info("LocalAccountRefresher: Dropping request for special case timing reasons: \(feed.url)")
-				return "Skipped — previous check was \(minutesAgoText)"
+				return "Skipped — previous check was \(minutesAgoText) — minimum is \(minimumHoursText)"
 			}
 		}
 
 		if Date().timeIntervalSince(lastCheckDate) < minimumTimeBetweenChecks {
+			let minimumMinutes = Int(minimumTimeBetweenChecks / 60)
+			let minimumMinutesText = "\(minimumMinutes) minute\(minimumMinutes == 1 ? "" : "s")"
 			Self.logger.info("LocalAccountRefresher: Dropping request — previous check was \(minutesAgoText): \(feed.url)")
-			return "Skipped — previous check was \(minutesAgoText)"
+			return "Skipped — previous check was \(minutesAgoText) — minimum is \(minimumMinutesText)"
 		}
 
 		return nil
