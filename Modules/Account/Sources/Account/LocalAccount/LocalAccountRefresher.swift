@@ -35,6 +35,24 @@ import os
 	/// per-refresh activities can be scoped to the right account.
 	var accountID: String?
 
+	/// When false, refreshFeeds does not create its own `.refreshAll` activity.
+	var publishesRefreshActivity = true
+
+	/// Human-readable stats summary for the most recent (or in-progress) refresh.
+	var refreshStatsMessage: String {
+		var parts = [String]()
+		parts.append("\(feedsTotal) feeds")
+		if feedsSkipped > 0 {
+			parts.append("\(feedsSkipped) skipped")
+		}
+		if feedsErrored > 0 {
+			parts.append("\(feedsErrored) errors")
+		}
+		parts.append("\(newArticlesCount) new articles")
+		parts.append("\(updatedArticlesCount) updated articles")
+		return parts.joined(separator: ", ")
+	}
+
 	private var refreshActivityID: Int?
 	private var feedsTotal = 0
 	private var feedsSkipped = 0
@@ -95,8 +113,10 @@ import os
 		// callbacks below.
 		if let owner = activityOwner {
 			let activityLog = ActivityLog.shared
-			refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
-			activityLog.didStart(id: refreshActivityID!)
+			if publishesRefreshActivity {
+				refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
+				activityLog.didStart(id: refreshActivityID!)
+			}
 			for feed in feeds {
 				activityLog.createActivity(owner: owner, kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay)
 			}
@@ -380,19 +400,7 @@ import os
 			return
 		}
 
-		var parts = [String]()
-		parts.append("\(feedsTotal) feeds")
-		if feedsSkipped > 0 {
-			parts.append("\(feedsSkipped) skipped")
-		}
-		if feedsErrored > 0 {
-			parts.append("\(feedsErrored) errors")
-		}
-		parts.append("\(newArticlesCount) new articles")
-		parts.append("\(updatedArticlesCount) updated articles")
-		let message = parts.joined(separator: ", ")
-
-		ActivityLog.shared.didComplete(id: refreshActivityID, message: message)
+		ActivityLog.shared.didComplete(id: refreshActivityID, message: refreshStatsMessage)
 		self.refreshActivityID = nil
 	}
 

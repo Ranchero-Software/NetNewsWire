@@ -636,9 +636,10 @@ private extension CloudKitAccountDelegate {
 		let refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
 		activityLog.didStart(id: refreshActivityID)
 		var refreshFinishedSuccessfully = false
+		var refreshCompletionMessage: String?
 		defer {
 			if refreshFinishedSuccessfully {
-				activityLog.didComplete(id: refreshActivityID)
+				activityLog.didComplete(id: refreshActivityID, message: refreshCompletionMessage)
 			} else {
 				let error = NSError(domain: "CloudKitAccountDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "Refresh interrupted"])
 				activityLog.didFail(id: refreshActivityID, error: error)
@@ -678,7 +679,9 @@ private extension CloudKitAccountDelegate {
 		}
 
 		refresher.accountID = account.accountID
+		refresher.publishesRefreshActivity = false
 		await refresher.refreshFeeds(feeds)
+		refreshCompletionMessage = refresher.refreshStatsMessage
 
 		if sendArticleStatus {
 			do {
