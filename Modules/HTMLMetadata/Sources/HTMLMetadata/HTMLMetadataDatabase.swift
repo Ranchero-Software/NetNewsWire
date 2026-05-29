@@ -26,13 +26,11 @@ final actor HTMLMetadataDatabase {
 		let lastChecked: Date
 		let statusCode: Int
 
-		/// True when the last contact for this URL returned a 4xx — a dead or
-		/// missing homepage we shouldn’t keep re-requesting.
+		/// True when the last contact returned a 4xx.
 		var isPersistentFailure: Bool {
 			(400...499).contains(statusCode)
 		}
-		/// True when the last contact failed before getting a response (DNS,
-		/// TLS, network) — likely transient, retry sooner than persistent failures.
+		/// True when the last contact failed before getting a response (DNS, TLS, network).
 		var isTransientFailure: Bool {
 			statusCode == 0
 		}
@@ -48,15 +46,8 @@ final actor HTMLMetadataDatabase {
 	/// 73 hours — prime number close to 3 days.
 	private static let cacheExpirationHours = 73
 
-	/// Entries that haven't been checked in a number of days are deleted on init.
 	private static let maximumDaysWithoutCheck = 30
-
-	/// A homepage that returned a 4xx isn't retried until this many days pass.
 	private static let persistentFailureRetryDays = 11
-
-	/// A homepage that failed before getting a response (DNS, TLS, network)
-	/// isn't retried until this many hours pass. Shorter than the persistent
-	/// window since these failures are often transient.
 	private static let transientFailureRetryHours = 5
 
 	private init(databasePath: String) {
@@ -70,7 +61,6 @@ final actor HTMLMetadataDatabase {
 			name: .appDidGoToBackground, object: nil
 		)
 
-		// Run maintenance off the main thread (init may be evaluated there).
 		Task {
 			await performStartupMaintenance()
 		}
@@ -87,8 +77,7 @@ final actor HTMLMetadataDatabase {
 		}
 	}
 
-	/// Returns the cached entry for a URL — in-memory if present, otherwise loaded
-	/// from SQLite and cached. Returns nil only when there’s no row at all.
+	/// Returns the entry, loading from disk if not in memory.
 	private func cachedOrFetched(_ url: String) -> CachedRecord? {
 		if let cached = cache[url] {
 			return cached
@@ -103,8 +92,7 @@ final actor HTMLMetadataDatabase {
 		return cached
 	}
 
-	/// Returns a non-expired, successfully-fetched record. Returns nil if there’s
-	/// no record, it’s a failure entry, or it has expired.
+	/// Returns a non-expired success record, or nil.
 	func cachedRecord(for url: String) -> HTMLMetadataRecord? {
 		guard let cached = cachedOrFetched(url), !cached.isFailure, let record = cached.record else {
 			return nil
@@ -115,7 +103,7 @@ final actor HTMLMetadataDatabase {
 		return record
 	}
 
-	/// Returns a successfully-fetched record regardless of expiration. Used for stale fallback.
+	/// Returns a success record regardless of expiration.
 	func staleCachedRecord(for url: String) -> HTMLMetadataRecord? {
 		guard let cached = cachedOrFetched(url), !cached.isFailure else {
 			return nil
@@ -123,8 +111,7 @@ final actor HTMLMetadataDatabase {
 		return cached.record
 	}
 
-	/// True if the last contact for this URL was a recent failure of any kind
-	/// (4xx or transient), and we shouldn't re-attempt yet.
+	/// True if the last contact failed recently (4xx or transient).
 	func recentlyFailed(for url: String) -> Bool {
 		guard let cached = cachedOrFetched(url) else {
 			return false
@@ -143,11 +130,7 @@ final actor HTMLMetadataDatabase {
 		HTMLMetadataTable.insertOrReplace(record: record, statusCode: statusCode, database: database)
 	}
 
-	/// Records a failure outcome for a URL so we stop re-requesting it across
-	/// launches. Used for both 4xx responses and transient pre-response errors
-	/// (DNS, TLS, network) — the latter via `noteTransientFailure`. The WHERE
-	/// guard in the underlying SQL preserves any existing successful entry —
-	/// keep serving its metadata, don't downgrade.
+	/// Records a failure outcome. Accepts both 4xx and transient (statusCode 0).
 	func noteFailure(url: String, statusCode: Int) {
 		if cache[url]?.isFailure ?? true {
 			cache[url] = CachedRecord(record: nil, lastChecked: Date(), statusCode: statusCode)
@@ -155,8 +138,7 @@ final actor HTMLMetadataDatabase {
 		HTMLMetadataTable.noteFailure(url: url, statusCode: statusCode, database: database)
 	}
 
-	/// Records a pre-response failure (DNS, TLS, network unreachable) so we
-	/// back off for `transientFailureRetryHours` before trying again.
+	/// Records a pre-response failure (DNS, TLS, network).
 	func noteTransientFailure(url: String) {
 		noteFailure(url: url, statusCode: 0)
 	}
