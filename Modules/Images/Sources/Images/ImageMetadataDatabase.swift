@@ -24,7 +24,7 @@ public actor ImageMetadataDatabase {
 	private let database: FMDatabase
 
 	private static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL, lastStatusCode INTEGER NOT NULL DEFAULT 0);
+	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, statusCode INTEGER, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL, lastChecked REAL NOT NULL);
 	"""
@@ -66,7 +66,7 @@ public actor ImageMetadataDatabase {
 		DownloadFailureTable.fetchAll(database: database)
 	}
 
-	public func recordDownloadFailure(url: String, statusCode: Int) {
+	public func recordDownloadFailure(url: String, statusCode: Int?) {
 		DownloadFailureTable.save(url: url, statusCode: statusCode, database: database)
 	}
 

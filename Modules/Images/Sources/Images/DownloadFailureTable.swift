@@ -17,7 +17,7 @@ struct DownloadFailureTable {
 	private struct Column {
 		static let url = "url"
 		static let lastChecked = "lastChecked"
-		static let lastStatusCode = "lastStatusCode"
+		static let statusCode = "statusCode"
 	}
 
 	/// Returns all failures as `url : lastFailureDate`.
@@ -39,11 +39,11 @@ struct DownloadFailureTable {
 		return results
 	}
 
-	static func save(url: String, statusCode: Int, database: FMDatabase) {
+	static func save(url: String, statusCode: Int?, database: FMDatabase) {
 		let dictionary: DatabaseDictionary = [
 			Column.url: url,
 			Column.lastChecked: Date().timeIntervalSince1970,
-			Column.lastStatusCode: statusCode
+			Column.statusCode: statusCode as Any
 		]
 		database.insertRow(dictionary, insertType: .orReplace, tableName: name)
 	}
