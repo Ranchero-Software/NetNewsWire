@@ -460,6 +460,32 @@ private extension ActivityWindowController {
 			return NSLocalizedString("Refreshing missing articles", comment: "Activity kind")
 		case .importOPML:
 			return NSLocalizedString("Importing OPML", comment: "Activity kind")
+		case .subscribeFeed:
+			return NSLocalizedString("Subscribing to feed", comment: "Activity kind")
+		case .renameFeed:
+			return NSLocalizedString("Renaming feed", comment: "Activity kind")
+		case .removeFeed:
+			return NSLocalizedString("Removing feed", comment: "Activity kind")
+		case .moveFeed:
+			return NSLocalizedString("Moving feed", comment: "Activity kind")
+		case .addFeed:
+			return NSLocalizedString("Adding feed", comment: "Activity kind")
+		case .createFolder:
+			return NSLocalizedString("Creating folder", comment: "Activity kind")
+		case .renameFolder:
+			return NSLocalizedString("Renaming folder", comment: "Activity kind")
+		case .removeFolder:
+			return NSLocalizedString("Removing folder", comment: "Activity kind")
+		case .restoreFolder:
+			return NSLocalizedString("Restoring folder", comment: "Activity kind")
+		case .markArticles:
+			return NSLocalizedString("Marking articles", comment: "Activity kind")
+		case .cleanUpCloudKitRecords:
+			return NSLocalizedString("Weekly record cleanup", comment: "Activity kind")
+		case .uploadNewArticles:
+			return NSLocalizedString("Uploading new articles", comment: "Activity kind")
+		case .subscribeToCloudKitZone:
+			return NSLocalizedString("Subscribing to zone changes", comment: "Activity kind")
 		case .refreshFeedContent, .findFeed, .downloadFeedImage, .downloadFavicon, .downloadAvatar, .downloadHTMLMetadata:
 			return ""
 		}

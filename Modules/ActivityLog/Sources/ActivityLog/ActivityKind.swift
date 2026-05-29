@@ -18,6 +18,25 @@ public enum ActivityKind: Sendable, Hashable {
 	case refreshMissingArticles
 	case importOPML
 
+	// CloudKit user-action edits
+
+	case subscribeFeed
+	case renameFeed
+	case removeFeed
+	case moveFeed
+	case addFeed
+	case createFolder
+	case renameFolder
+	case removeFolder
+	case restoreFolder
+
+	// CloudKit background work
+
+	case markArticles
+	case cleanUpCloudKitRecords
+	case uploadNewArticles
+	case subscribeToCloudKitZone
+
 	// App-level
 
 	case refreshAll

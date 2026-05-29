@@ -499,7 +499,40 @@ private extension ActivityLogWindowController {
 			return "Downloading avatar \(avatarURL)"
 		case .downloadHTMLMetadata(let urlString):
 			return "Downloading metadata \(urlString)"
+		case .subscribeFeed:
+			return descriptionWithDetail("Subscribing to feed", activity: activity)
+		case .renameFeed:
+			return descriptionWithDetail("Renaming feed", activity: activity)
+		case .removeFeed:
+			return descriptionWithDetail("Removing feed", activity: activity)
+		case .moveFeed:
+			return descriptionWithDetail("Moving feed", activity: activity)
+		case .addFeed:
+			return descriptionWithDetail("Adding feed", activity: activity)
+		case .createFolder:
+			return descriptionWithDetail("Creating folder", activity: activity)
+		case .renameFolder:
+			return descriptionWithDetail("Renaming folder", activity: activity)
+		case .removeFolder:
+			return descriptionWithDetail("Removing folder", activity: activity)
+		case .restoreFolder:
+			return descriptionWithDetail("Restoring folder", activity: activity)
+		case .markArticles:
+			return descriptionWithDetail("Marking articles", activity: activity)
+		case .cleanUpCloudKitRecords:
+			return "Weekly record cleanup"
+		case .uploadNewArticles:
+			return descriptionWithDetail("Uploading new articles", activity: activity)
+		case .subscribeToCloudKitZone:
+			return descriptionWithDetail("Subscribing to zone changes", activity: activity)
 		}
+	}
+
+	private func descriptionWithDetail(_ prefix: String, activity: Activity) -> String {
+		if let detail = activity.detail {
+			return "\(prefix): \(detail)"
+		}
+		return prefix
 	}
 
 	func color(for owner: ActivityOwner) -> NSColor {
