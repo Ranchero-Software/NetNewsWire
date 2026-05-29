@@ -16,7 +16,7 @@ struct HTMLMetadataTable {
 	private struct Column {
 		static let url = "url"
 		static let lastChecked = "lastChecked"
-		static let lastStatusCode = "lastStatusCode"
+		static let statusCode = "statusCode"
 		static let favicons = "favicons"
 		static let appleTouchIcons = "appleTouchIcons"
 		static let feedLinks = "feedLinks"
@@ -28,7 +28,7 @@ struct HTMLMetadataTable {
 		let dictionary: DatabaseDictionary = [
 			Column.url: record.url,
 			Column.lastChecked: Date().timeIntervalSince1970,
-			Column.lastStatusCode: statusCode,
+			Column.statusCode: statusCode,
 			Column.favicons: jsonString(record.favicons) as Any,
 			Column.appleTouchIcons: jsonString(record.appleTouchIcons) as Any,
 			Column.feedLinks: jsonString(record.feedLinks) as Any,
@@ -51,7 +51,7 @@ struct HTMLMetadataTable {
 		}
 
 		let lastChecked = Date(timeIntervalSince1970: resultSet.double(forColumn: Column.lastChecked))
-		let statusCode = resultSet.long(forColumn: Column.lastStatusCode)
+		let statusCode = resultSet.long(forColumn: Column.statusCode)
 		return (record, lastChecked, statusCode)
 	}
 
@@ -60,7 +60,7 @@ struct HTMLMetadataTable {
 	/// that hold a successful (2xx) fetch, so a transient 4xx never erases good
 	/// cached metadata.
 	static func noteFailure(url: String, statusCode: Int, database: FMDatabase) {
-		let sql = "INSERT INTO \(name) (\(Column.url), \(Column.lastChecked), \(Column.lastStatusCode)) VALUES (?, ?, ?) ON CONFLICT(\(Column.url)) DO UPDATE SET \(Column.lastChecked) = excluded.\(Column.lastChecked), \(Column.lastStatusCode) = excluded.\(Column.lastStatusCode) WHERE \(Column.lastStatusCode) >= 400;"
+		let sql = "INSERT INTO \(name) (\(Column.url), \(Column.lastChecked), \(Column.statusCode)) VALUES (?, ?, ?) ON CONFLICT(\(Column.url)) DO UPDATE SET \(Column.lastChecked) = excluded.\(Column.lastChecked), \(Column.statusCode) = excluded.\(Column.statusCode) WHERE \(Column.statusCode) >= 400;"
 		database.executeUpdate(sql, withArgumentsIn: [url, Date().timeIntervalSince1970, statusCode])
 	}
 

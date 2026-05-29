@@ -10,7 +10,7 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
-actor HTMLMetadataDatabase {
+final actor HTMLMetadataDatabase {
 
 	@MainActor static let shared: HTMLMetadataDatabase = {
 		let databasePath = AppConfig.dataFolder
@@ -34,7 +34,7 @@ actor HTMLMetadataDatabase {
 	}
 
 	private static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS metadata (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL, lastStatusCode INTEGER NOT NULL DEFAULT 200, favicons TEXT, appleTouchIcons TEXT, feedLinks TEXT, openGraphImages TEXT, twitterImageURL TEXT);
+	CREATE TABLE IF NOT EXISTS metadata (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL, statusCode INTEGER NOT NULL DEFAULT 200, favicons TEXT, appleTouchIcons TEXT, feedLinks TEXT, openGraphImages TEXT, twitterImageURL TEXT);
 	"""
 
 	/// 73 hours — prime number close to 3 days.
