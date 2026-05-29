@@ -1,0 +1,31 @@
+// swift-tools-version:6.2
+import PackageDescription
+
+let package = Package(
+	name: "Images",
+	platforms: [.macOS(.v15), .iOS(.v17)],
+	products: [
+		.library(
+			name: "Images",
+			type: .dynamic,
+			targets: ["Images"])
+	],
+	dependencies: [
+		.package(path: "../RSCore"),
+		.package(path: "../RSDatabase")
+	],
+	targets: [
+		.target(
+			name: "Images",
+			dependencies: [
+				"RSCore",
+				"RSDatabase"
+			],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances"),
+				.unsafeFlags(["-warnings-as-errors"])
+			]
+		)
+	]
+)

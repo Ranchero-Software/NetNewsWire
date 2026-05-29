@@ -86,6 +86,10 @@
 		D1A7E100000000000000B003 /* ActivityLog in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000B001 /* ActivityLog */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D1A7E100000000000000B005 /* ActivityLog in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000B004 /* ActivityLog */; };
 		D1A7E100000000000000B006 /* ActivityLog in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000B004 /* ActivityLog */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D1A7E100000000000000C002 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C001 /* Images */; };
+		D1A7E100000000000000C003 /* Images in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C001 /* Images */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D1A7E100000000000000C005 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C004 /* Images */; };
+		D1A7E100000000000000C006 /* Images in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C004 /* Images */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -219,6 +223,7 @@
 				843E2F1B2CF2B8C500ED170F /* RSWeb in Embed Frameworks */,
 				D1A7E100000000000000A003 /* HTMLMetadata in Embed Frameworks */,
 				D1A7E100000000000000B003 /* ActivityLog in Embed Frameworks */,
+				D1A7E100000000000000C003 /* Images in Embed Frameworks */,
 				513F327B2593EE6F0003048F /* SyncDatabase in Embed Frameworks */,
 				84EE3F162DB8A0A0009D3A8D /* RSTree in Embed Frameworks */,
 				513F32722593EE6F0003048F /* Articles in Embed Frameworks */,
@@ -265,6 +270,7 @@
 				843E2F182CF2B8A700ED170F /* RSWeb in Embed Frameworks */,
 				D1A7E100000000000000A006 /* HTMLMetadata in Embed Frameworks */,
 				D1A7E100000000000000B006 /* ActivityLog in Embed Frameworks */,
+				D1A7E100000000000000C006 /* Images in Embed Frameworks */,
 				84EE3F132DB8A088009D3A8D /* RSTree in Embed Frameworks */,
 				513277662590FC780064F1E7 /* Secrets in Embed Frameworks */,
 				513277652590FC640064F1E7 /* SyncDatabase in Embed Frameworks */,
@@ -590,6 +596,7 @@
 				843E2F1A2CF2B8C500ED170F /* RSWeb in Frameworks */,
 				D1A7E100000000000000A002 /* HTMLMetadata in Frameworks */,
 				D1A7E100000000000000B002 /* ActivityLog in Frameworks */,
+				D1A7E100000000000000C002 /* Images in Frameworks */,
 				513F32712593EE6F0003048F /* Articles in Frameworks */,
 				513F32772593EE6F0003048F /* Secrets in Frameworks */,
 				84EE434B2DB8A44C009D3A8D /* RSDatabase in Frameworks */,
@@ -618,6 +625,7 @@
 				843E2F172CF2B8A700ED170F /* RSWeb in Frameworks */,
 				D1A7E100000000000000A005 /* HTMLMetadata in Frameworks */,
 				D1A7E100000000000000B005 /* ActivityLog in Frameworks */,
+				D1A7E100000000000000C005 /* Images in Frameworks */,
 				519CA8E525841DB700EB079A /* CrashReporter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -860,6 +868,7 @@
 				843E2F192CF2B8C500ED170F /* RSWeb */,
 				D1A7E100000000000000A001 /* HTMLMetadata */,
 				D1A7E100000000000000B001 /* ActivityLog */,
+				D1A7E100000000000000C001 /* Images */,
 				8424B31A2DB73D530053AA11 /* RSParser */,
 				848E84D42DB749670023F3BA /* RSCore */,
 				84EE3F142DB8A0A0009D3A8D /* RSTree */,
@@ -908,6 +917,7 @@
 				843E2F162CF2B8A700ED170F /* RSWeb */,
 				D1A7E100000000000000A004 /* HTMLMetadata */,
 				D1A7E100000000000000B004 /* ActivityLog */,
+				D1A7E100000000000000C004 /* Images */,
 				8424B3172DB73D4C0053AA11 /* RSParser */,
 				848E84CC2DB749440023F3BA /* RSCore */,
 				848E84CF2DB749440023F3BA /* RSCoreResources */,
@@ -1839,6 +1849,14 @@
 		D1A7E100000000000000B004 /* ActivityLog */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = ActivityLog;
+		};
+		D1A7E100000000000000C001 /* Images */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Images;
+		};
+		D1A7E100000000000000C004 /* Images */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Images;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
