@@ -46,6 +46,10 @@ public protocol CloudKitZoneDelegate: AnyObject {
 
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
 
+/// Called after each page of `fetchChangesInZone` completes.
+/// Parameters: zone name, changed count, deleted count, moreComing.
+public typealias CloudKitZoneFetchPageHandler = @MainActor @Sendable (String, Int, Int, Bool) -> Void
+
 @MainActor public protocol CloudKitZone: AnyObject {
 	static var qualityOfService: QualityOfService { get }
 
@@ -54,6 +58,9 @@ public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID:
 	var container: CKContainer? { get }
 	var database: CKDatabase? { get }
 	var delegate: CloudKitZoneDelegate? { get set }
+
+	/// Called after each page of fetchChangesInZone completes.
+	var fetchChangesPageHandler: CloudKitZoneFetchPageHandler? { get set }
 
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken()
@@ -777,6 +784,7 @@ public extension CloudKitZone {
 					do {
 						try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
 						self.changeToken = savedChangeToken
+						self.fetchChangesPageHandler?(self.zoneID.zoneName, changedRecords.count, deletedRecordKeys.count, moreComing)
 						if moreComing {
 							Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) more records to fetch, continuing")
 							self.fetchChangesInZone(completion: completion)
@@ -794,6 +802,7 @@ public extension CloudKitZone {
 						do {
 							try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
 							self.changeToken = savedChangeToken
+							self.fetchChangesPageHandler?(self.zoneID.zoneName, changedRecords.count, deletedRecordKeys.count, moreComing)
 							if moreComing {
 								Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) more records to fetch, continuing")
 								self.fetchChangesInZone(completion: completion)

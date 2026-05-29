@@ -74,6 +74,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 	weak var container: CKContainer?
 	weak var database: CKDatabase?
 	var delegate: CloudKitZoneDelegate?
+	var fetchChangesPageHandler: CloudKitZoneFetchPageHandler?
 
 	private var scanCache: ScanCache?
 
