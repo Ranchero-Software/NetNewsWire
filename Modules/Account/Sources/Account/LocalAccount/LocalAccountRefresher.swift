@@ -41,15 +41,15 @@ import os
 	/// Human-readable stats summary for the most recent (or in-progress) refresh.
 	var refreshStatsMessage: String {
 		var parts = [String]()
-		parts.append("\(feedsTotal) feeds")
+		parts.append("\(feedsTotal) \(feedsTotal == 1 ? "feed" : "feeds")")
 		if feedsSkipped > 0 {
 			parts.append("\(feedsSkipped) skipped")
 		}
 		if feedsErrored > 0 {
-			parts.append("\(feedsErrored) errors")
+			parts.append("\(feedsErrored) \(feedsErrored == 1 ? "error" : "errors")")
 		}
-		parts.append("\(newArticlesCount) new articles")
-		parts.append("\(updatedArticlesCount) updated articles")
+		parts.append("\(newArticlesCount) new \(newArticlesCount == 1 ? "article" : "articles")")
+		parts.append("\(updatedArticlesCount) updated \(updatedArticlesCount == 1 ? "article" : "articles")")
 		return parts.joined(separator: ", ")
 	}
 
