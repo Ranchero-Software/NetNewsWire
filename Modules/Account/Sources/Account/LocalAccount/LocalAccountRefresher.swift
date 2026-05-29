@@ -211,15 +211,16 @@ import os
 		let activityOwner = self.activityOwner
 		let activityKind = ActivityKind.refreshFeedContent(feedURL: feed.url)
 
-		guard error == nil else {
+		if let error {
 			if let activityOwner {
-				ActivityLog.shared.didComplete(activityOwner, kind: activityKind)
+				ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
 			}
 			return
 		}
 		guard let httpResponse = response as? HTTPURLResponse else {
 			if let activityOwner {
-				ActivityLog.shared.didComplete(activityOwner, kind: activityKind)
+				let error = NSError(domain: "LocalAccountRefresher", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unexpected response (not HTTP)"])
+				ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
 			}
 			return
 		}
@@ -228,7 +229,9 @@ import os
 		let statusIsOKOrNotModified = statusIsOK || httpResponse.statusCode == HTTPResponseCode.notModified
 		guard statusIsOKOrNotModified else {
 			if let activityOwner {
-				ActivityLog.shared.didComplete(activityOwner, kind: activityKind)
+				let statusCode = httpResponse.statusCode
+				let error = NSError(domain: "LocalAccountRefresher", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"])
+				ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
 			}
 			return
 		}
