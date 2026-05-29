@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
@@ -17,6 +18,8 @@ import RSDatabaseObjC
 
 	public static let failureRetryDays = 5
 	private static let failureRetentionDays = 33
+
+	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageMetadataDatabase")
 
 	private let queue: DatabaseQueue
 
@@ -136,15 +139,28 @@ private extension ImageMetadataDatabase {
 		nonisolated(unsafe) var homePageRecords = [HomePageFaviconRecord]()
 		nonisolated(unsafe) var feedIcons = [String: String]()
 		nonisolated(unsafe) var failures = [String: Date]()
+		nonisolated(unsafe) var homePageDuration: TimeInterval = 0
+		nonisolated(unsafe) var feedIconDuration: TimeInterval = 0
+		nonisolated(unsafe) var failureDuration: TimeInterval = 0
 
+		let totalStart = Date()
 		queue.runInDatabaseSync { result in
 			guard let database = try? result.get() else {
 				return
 			}
+			var stepStart = Date()
 			homePageRecords = HomePageFaviconTable.fetchAll(database: database)
+			homePageDuration = Date().timeIntervalSince(stepStart)
+
+			stepStart = Date()
 			feedIcons = FeedIconURLTable.fetchAll(database: database)
+			feedIconDuration = Date().timeIntervalSince(stepStart)
+
+			stepStart = Date()
 			failures = DownloadFailureTable.fetchAll(database: database)
+			failureDuration = Date().timeIntervalSince(stepStart)
 		}
+		let totalDuration = Date().timeIntervalSince(totalStart)
 
 		for record in homePageRecords {
 			if let faviconURL = record.faviconURL {
@@ -155,5 +171,7 @@ private extension ImageMetadataDatabase {
 		}
 		feedURLToIconURL = feedIcons
 		failureDates = failures
+
+		Self.logger.info("Initial fetches: homePageFavicon \(homePageRecords.count) rows in \(homePageDuration) seconds, feedIconURL \(feedIcons.count) rows in \(feedIconDuration) seconds, downloadFailure \(failures.count) rows in \(failureDuration) seconds, total \(totalDuration) seconds")
 	}
 }
