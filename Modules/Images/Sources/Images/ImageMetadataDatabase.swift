@@ -35,6 +35,12 @@ import RSDatabaseObjC
 		let databasePath = AppConfig.dataFolder
 			.appendingPathComponent("ImageMetadata.db").path
 		let queue = DatabaseQueue(databasePath: databasePath)
+		queue.runInDatabaseSync { result in
+			guard let database = try? result.get() else {
+				return
+			}
+			database.executeStatements("PRAGMA journal_mode = WAL;")
+		}
 		try? queue.runCreateStatements(Self.tableCreationStatements)
 		self.queue = queue
 
