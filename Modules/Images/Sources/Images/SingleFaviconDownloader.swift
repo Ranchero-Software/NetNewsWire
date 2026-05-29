@@ -170,6 +170,12 @@ private extension SingleFaviconDownloader {
 		}
 
 		let statusCode = (response as? HTTPURLResponse)?.statusCode
+		// 2xx with empty / missing body — server said OK but gave us no image bytes.
+		if let response, response.statusIsOK {
+			let error = ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: false)
+			activityLog.didFail(.faviconDownloader, kind: kind, error: error)
+			throw error
+		}
 		let isTransient = statusCode.map { (500...599).contains($0) } ?? true
 		let error = ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient)
 		activityLog.didFail(.faviconDownloader, kind: kind, error: error)

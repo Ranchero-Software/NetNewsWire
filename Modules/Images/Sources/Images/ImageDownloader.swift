@@ -172,6 +172,10 @@ private extension ImageDownloader {
 		}
 
 		let statusCode = (response as? HTTPURLResponse)?.statusCode
+		// 2xx with empty / missing body — server said OK but gave us no image bytes.
+		if let response, response.statusIsOK {
+			throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: false)
+		}
 		let isTransient = statusCode.map { (500...599).contains($0) } ?? true
 		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient)
 	}
