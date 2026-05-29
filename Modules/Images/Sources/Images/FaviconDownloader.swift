@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os
 import CoreServices
 import Articles
 import Account
@@ -22,6 +23,8 @@ extension Notification.Name {
 
 @MainActor public final class FaviconDownloader {
 	public static let shared = FaviconDownloader()
+
+	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FaviconDownloader")
 
 	private let folder: String
 	private let diskCache: BinaryDiskCache
@@ -127,9 +130,11 @@ extension Notification.Name {
 
 	public func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
 		if !faviconURL.hasPrefix("http://") && !faviconURL.hasPrefix("https://") {
+			Self.logger.debug("Skipping non-http(s) URL: \(faviconURL)")
 			return nil
 		}
 		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
+			Self.logger.debug("Skipping recently-failed URL: \(faviconURL)")
 			return nil
 		}
 		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)

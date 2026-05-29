@@ -70,12 +70,14 @@ extension ImageDownloadError: LocalizedError {
 	public func image(for url: String, activityOwner: ActivityOwner? = nil, activityKind: ActivityKind? = nil, activityDetail: String? = nil) -> Data? {
 		assert(Thread.isMainThread)
 		if !url.hasPrefix("http://") && !url.hasPrefix("https://") {
+			Self.logger.debug("Skipping non-http(s) URL: \(url)")
 			return nil
 		}
 		if let data = imageCache[url] {
 			return data
 		}
 		if ImageMetadataDatabase.shared.recentlyFailed(url: url) {
+			Self.logger.debug("Skipping recently-failed URL: \(url)")
 			return nil
 		}
 
