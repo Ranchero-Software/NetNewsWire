@@ -45,12 +45,14 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 		Task { @MainActor in
 			do {
-				try await selectForProcessing()
+				let sent = try await selectForProcessing()
 				Self.logger.debug("iCloud: Finished sending article statuses")
 				if isCanceled {
 					activityLog.didFail(id: activityID, error: CloudKitAccountDelegateError.unknown)
+				} else if sent == 0 {
+					activityLog.didComplete(id: activityID, message: "No statuses to send", durationIsSignificant: false)
 				} else {
-					activityLog.didComplete(id: activityID)
+					activityLog.didComplete(id: activityID, message: "\(sent) status\(sent == 1 ? "" : "es") sent")
 				}
 			} catch {
 				Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
@@ -63,24 +65,25 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 @MainActor private extension CloudKitSendStatusOperation {
 
-	func selectForProcessing() async throws {
+	/// Returns the total number of statuses sent across all batches.
+	func selectForProcessing() async throws -> Int {
 		guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
 			  !syncStatuses.isEmpty else {
-			return
+			return 0
 		}
 
-		let stopProcessing = try await processStatuses(Array(syncStatuses))
-		if stopProcessing {
-			return
+		guard let sent = try await processStatuses(Array(syncStatuses)) else {
+			return 0
 		}
 
-		try await selectForProcessing()
+		return sent + (try await selectForProcessing())
 	}
 
-	/// Returns true if processing should stop.
-	func processStatuses(_ syncStatuses: [SyncStatus]) async throws -> Bool {
+	/// Returns the count of statuses sent in this batch, or nil if processing
+	/// should stop (account/zone gone, or no usable articles for the batch).
+	func processStatuses(_ syncStatuses: [SyncStatus]) async throws -> Int? {
 		guard let account, let articlesZone else {
-			return true
+			return nil
 		}
 
 		let articleIDs = syncStatuses.map({ $0.articleID })
@@ -106,13 +109,13 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		// in the fetch. Clean up those sync records and stop processing.
 		if statusUpdates.isEmpty {
 			try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
-			return true
+			return nil
 		}
 
 		do {
 			try await articlesZone.modifyArticles(statusUpdates)
 			try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
-			return false
+			return statusUpdates.count
 		} catch {
 			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 			syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)

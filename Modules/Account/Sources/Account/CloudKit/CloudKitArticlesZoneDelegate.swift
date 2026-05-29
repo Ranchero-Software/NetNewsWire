@@ -31,6 +31,11 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	/// Number of records deleted in the most recent sync.
 	private(set) var lastDeletedCount = 0
 
+	/// Running totals across all pages of the current `refreshArticles` call.
+	/// Reset by `resetAccumulation()`; accumulated in `cloudKitDidModify`.
+	private(set) var accumulatedChangedCount = 0
+	private(set) var accumulatedDeletedCount = 0
+
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.syncDatabase = database
@@ -38,9 +43,16 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		self.syncErrorHandler = syncErrorHandler
 	}
 
+	func resetAccumulation() {
+		accumulatedChangedCount = 0
+		accumulatedDeletedCount = 0
+	}
+
 	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
 		lastChangedCount = changed.count
 		lastDeletedCount = deleted.count
+		accumulatedChangedCount += changed.count
+		accumulatedDeletedCount += deleted.count
 		do {
 			let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
 			let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()

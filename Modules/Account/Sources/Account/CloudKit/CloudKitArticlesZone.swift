@@ -117,17 +117,25 @@ final class CloudKitArticlesZone: CloudKitZone {
 		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
 	}
 
-	@MainActor func refreshArticles() async throws {
+	/// Fetches article-status changes for the zone and returns the cumulative
+	/// changed/deleted record counts across every page of the fetch.
+	@discardableResult
+	@MainActor func refreshArticles() async throws -> (changed: Int, deleted: Int) {
+		let articlesDelegate = self.delegate as? CloudKitArticlesZoneDelegate
+		articlesDelegate?.resetAccumulation()
 		do {
 			try await fetchChangesInZone()
 		} catch {
 			if case CloudKitZoneError.userDeletedZone = error {
 				try await createZoneRecord()
-				try await refreshArticles()
-			} else {
-				throw error
+				return try await refreshArticles()
 			}
+			throw error
 		}
+		return (
+			changed: articlesDelegate?.accumulatedChangedCount ?? 0,
+			deleted: articlesDelegate?.accumulatedDeletedCount ?? 0
+		)
 	}
 
 	@MainActor func saveNewArticles(_ articles: Set<Article>) async throws {
