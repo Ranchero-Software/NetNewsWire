@@ -148,7 +148,9 @@ nonisolated private extension HTMLMetadataDownloader {
 				activityLog.didFail(.htmlMetadataDownloader, kind: kind, error: statusError)
 
 			} catch {
-				// Download failed — try returning stale cached data.
+				// Pre-response failure (DNS, TLS, network). Record so we back off
+				// across launches, then try returning stale cached data.
+				await HTMLMetadataDatabase.shared.noteTransientFailure(url: url)
 				await returnStaleCacheIfAvailable(url)
 
 				activityLog.didFail(.htmlMetadataDownloader, kind: kind, error: error)

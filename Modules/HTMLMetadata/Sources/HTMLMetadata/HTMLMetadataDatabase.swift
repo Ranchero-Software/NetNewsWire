@@ -28,8 +28,16 @@ final actor HTMLMetadataDatabase {
 
 		/// True when the last contact for this URL returned a 4xx — a dead or
 		/// missing homepage we shouldn’t keep re-requesting.
-		var isFailure: Bool {
+		var isPersistentFailure: Bool {
 			(400...499).contains(statusCode)
+		}
+		/// True when the last contact failed before getting a response (DNS,
+		/// TLS, network) — likely transient, retry sooner than persistent failures.
+		var isTransientFailure: Bool {
+			statusCode == 0
+		}
+		var isFailure: Bool {
+			isPersistentFailure || isTransientFailure
 		}
 	}
 
@@ -44,7 +52,12 @@ final actor HTMLMetadataDatabase {
 	private static let maximumDaysWithoutCheck = 30
 
 	/// A homepage that returned a 4xx isn't retried until this many days pass.
-	private static let failureRetryDays = 11
+	private static let persistentFailureRetryDays = 11
+
+	/// A homepage that failed before getting a response (DNS, TLS, network)
+	/// isn't retried until this many hours pass. Shorter than the persistent
+	/// window since these failures are often transient.
+	private static let transientFailureRetryHours = 5
 
 	private init(databasePath: String) {
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
@@ -110,13 +123,19 @@ final actor HTMLMetadataDatabase {
 		return cached.record
 	}
 
-	/// True if the last contact for this URL was a recent 4xx, meaning we should
-	/// skip re-downloading it for now.
+	/// True if the last contact for this URL was a recent failure of any kind
+	/// (4xx or transient), and we shouldn't re-attempt yet.
 	func recentlyFailed(for url: String) -> Bool {
-		guard let cached = cachedOrFetched(url), cached.isFailure else {
+		guard let cached = cachedOrFetched(url) else {
 			return false
 		}
-		return Date().timeIntervalSince(cached.lastChecked) < TimeInterval(days: Self.failureRetryDays)
+		if cached.isPersistentFailure {
+			return Date().timeIntervalSince(cached.lastChecked) < TimeInterval(days: Self.persistentFailureRetryDays)
+		}
+		if cached.isTransientFailure {
+			return Date().timeIntervalSince(cached.lastChecked) < TimeInterval(hours: Self.transientFailureRetryHours)
+		}
+		return false
 	}
 
 	func save(_ record: HTMLMetadataRecord, statusCode: Int) {
@@ -124,15 +143,22 @@ final actor HTMLMetadataDatabase {
 		HTMLMetadataTable.insertOrReplace(record: record, statusCode: statusCode, database: database)
 	}
 
-	/// Records a 4xx outcome for a URL so we stop re-requesting it across launches.
-	/// Mirrors the SQLite guard in HTMLMetadataTable.noteFailure: never downgrade a
-	/// successful entry — keep serving its metadata. Only record the failure when
-	/// there’s no successful entry to protect.
+	/// Records a failure outcome for a URL so we stop re-requesting it across
+	/// launches. Used for both 4xx responses and transient pre-response errors
+	/// (DNS, TLS, network) — the latter via `noteTransientFailure`. The WHERE
+	/// guard in the underlying SQL preserves any existing successful entry —
+	/// keep serving its metadata, don't downgrade.
 	func noteFailure(url: String, statusCode: Int) {
 		if cache[url]?.isFailure ?? true {
 			cache[url] = CachedRecord(record: nil, lastChecked: Date(), statusCode: statusCode)
 		}
 		HTMLMetadataTable.noteFailure(url: url, statusCode: statusCode, database: database)
+	}
+
+	/// Records a pre-response failure (DNS, TLS, network unreachable) so we
+	/// back off for `transientFailureRetryHours` before trying again.
+	func noteTransientFailure(url: String) {
+		noteFailure(url: url, statusCode: 0)
 	}
 
 	func emptyCache() {

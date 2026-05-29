@@ -55,12 +55,13 @@ struct HTMLMetadataTable {
 		return (record, lastChecked, statusCode)
 	}
 
-	/// Records a 4xx outcome for a URL: inserts a failure marker, or updates an
-	/// existing failure row's status and date. The `WHERE` guard preserves rows
-	/// that hold a successful (2xx) fetch, so a transient 4xx never erases good
-	/// cached metadata.
+	/// Records a failure outcome for a URL: inserts a failure marker, or updates
+	/// an existing failure row's status and date. The `WHERE` guard preserves
+	/// rows that hold a successful (2xx) fetch — a transient failure never
+	/// erases good cached metadata. Accepts both 4xx (persistent) and 0
+	/// (transient pre-response failure).
 	static func noteFailure(url: String, statusCode: Int, database: FMDatabase) {
-		let sql = "INSERT INTO \(name) (\(Column.url), \(Column.lastChecked), \(Column.statusCode)) VALUES (?, ?, ?) ON CONFLICT(\(Column.url)) DO UPDATE SET \(Column.lastChecked) = excluded.\(Column.lastChecked), \(Column.statusCode) = excluded.\(Column.statusCode) WHERE \(Column.statusCode) >= 400;"
+		let sql = "INSERT INTO \(name) (\(Column.url), \(Column.lastChecked), \(Column.statusCode)) VALUES (?, ?, ?) ON CONFLICT(\(Column.url)) DO UPDATE SET \(Column.lastChecked) = excluded.\(Column.lastChecked), \(Column.statusCode) = excluded.\(Column.statusCode) WHERE \(Column.statusCode) >= 400 OR \(Column.statusCode) = 0;"
 		database.executeUpdate(sql, withArgumentsIn: [url, Date().timeIntervalSince1970, statusCode])
 	}
 
