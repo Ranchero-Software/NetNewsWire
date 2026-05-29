@@ -19,6 +19,7 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 import ErrorLog
+import ActivityLog
 import os
 
 // Main thread only.
@@ -457,6 +458,28 @@ public enum FetchType {
 
 	public func refreshAll() async throws {
 		try await delegate.refreshAll(for: self)
+	}
+
+	// MARK: - Activity Log
+
+	@discardableResult
+	public func logActivity<T>(
+		kind: ActivityKind,
+		detail: String? = nil,
+		successMessage: ((T) -> String?)? = nil,
+		_ work: () async throws -> T
+	) async throws -> T {
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .account(accountID), kind: kind, detail: detail)
+		activityLog.didStart(id: id)
+		do {
+			let result = try await work()
+			activityLog.didComplete(id: id, message: successMessage?(result))
+			return result
+		} catch {
+			activityLog.didFail(id: id, error: error)
+			throw error
+		}
 	}
 
 	// MARK: - Syncing Article Status
