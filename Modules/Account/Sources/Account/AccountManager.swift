@@ -13,6 +13,7 @@ import RSWeb
 import Articles
 import ArticlesDatabase
 import ErrorLog
+import ActivityLog
 
 @MainActor public final class AccountManager: UnreadCountProvider {
 
@@ -442,9 +443,14 @@ import ErrorLog
 	// MARK: - Vacuum
 
 	public func vacuumAllDatabases() async {
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .app, kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(errorLogDatabase.databasePath))
+		activityLog.didStart(id: id)
 		await errorLogDatabase.vacuum()
+		activityLog.didComplete(id: id)
+
 		for account in accounts {
-			account.vacuumDatabases()
+			await account.vacuumDatabases()
 		}
 	}
 

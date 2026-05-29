@@ -145,7 +145,7 @@ import Secrets
 		nil
 	}
 
-	func vacuumDatabases() {
+	func vacuumDatabases(for account: Account) async {
 	}
 
 	// MARK: Suspend and Resume (for iOS)

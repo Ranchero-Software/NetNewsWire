@@ -19,6 +19,8 @@ import RSDatabaseObjC
 	public static let failureRetryDays = 5
 	private static let failureRetentionDays = 33
 
+	public let databasePath: String
+
 	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageMetadataDatabase")
 
 	private let queue: DatabaseQueue
@@ -37,6 +39,7 @@ import RSDatabaseObjC
 	private init() {
 		let databasePath = AppConfig.dataFolder
 			.appendingPathComponent("ImageMetadata.db").path
+		self.databasePath = databasePath
 		let queue = DatabaseQueue(databasePath: databasePath)
 		queue.runInDatabaseSync { result in
 			guard let database = try? result.get() else {
@@ -57,6 +60,12 @@ import RSDatabaseObjC
 			DownloadFailureTable.removeExpired(olderThan: cutoff, database: database)
 			database.vacuumIfNeeded()
 		}
+	}
+
+	// MARK: - Vacuum
+
+	public func vacuum() async {
+		await queue.vacuum()
 	}
 
 	// MARK: - HomePageFavicon

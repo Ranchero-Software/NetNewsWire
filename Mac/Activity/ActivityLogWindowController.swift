@@ -500,45 +500,38 @@ private extension ActivityLogWindowController {
 		case .downloadHTMLMetadata(let urlString):
 			return "Downloading metadata \(urlString)"
 		case .subscribeFeed:
-			return descriptionWithDetail("Subscribing to feed", activity: activity)
+			return "Subscribing to feed"
 		case .renameFeed:
-			return descriptionWithDetail("Renaming feed", activity: activity)
+			return "Renaming feed"
 		case .removeFeed:
-			return descriptionWithDetail("Removing feed", activity: activity)
+			return "Removing feed"
 		case .moveFeed:
-			return descriptionWithDetail("Moving feed", activity: activity)
+			return "Moving feed"
 		case .addFeed:
-			return descriptionWithDetail("Adding feed", activity: activity)
+			return "Adding feed"
 		case .createFolder:
-			return descriptionWithDetail("Creating folder", activity: activity)
+			return "Creating folder"
 		case .renameFolder:
-			return descriptionWithDetail("Renaming folder", activity: activity)
+			return "Renaming folder"
 		case .removeFolder:
-			return descriptionWithDetail("Removing folder", activity: activity)
+			return "Removing folder"
 		case .restoreFolder:
-			return descriptionWithDetail("Restoring folder", activity: activity)
+			return "Restoring folder"
 		case .markArticles:
-			return descriptionWithDetail("Marking articles", activity: activity)
+			return "Marking articles"
 		case .cleanUpCloudKitRecords:
 			return "Weekly record cleanup"
 		case .uploadNewArticles:
-			return descriptionWithDetail("Uploading new articles", activity: activity)
+			return "Uploading new articles"
 		case .subscribeToCloudKitZone:
-			return descriptionWithDetail("Subscribing to zone changes", activity: activity)
+			return "Subscribing to zone changes"
 		case .vacuumDatabase:
-			return descriptionWithDetail("Vacuuming databases", activity: activity)
+			return "Vacuuming database"
 		case .validateCredentials:
-			return descriptionWithDetail("Validating credentials", activity: activity)
+			return "Validating credentials"
 		case .exportOPML:
-			return descriptionWithDetail("Exporting OPML", activity: activity)
+			return "Exporting OPML"
 		}
-	}
-
-	private func descriptionWithDetail(_ prefix: String, activity: Activity) -> String {
-		if let detail = activity.detail {
-			return "\(prefix): \(detail)"
-		}
-		return prefix
 	}
 
 	func color(for owner: ActivityOwner) -> NSColor {

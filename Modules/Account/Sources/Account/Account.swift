@@ -1092,16 +1092,14 @@ public enum FetchType {
 
 	// MARK: - Vacuum
 
-	public func vacuumDatabases() {
-		// Underlying vacuum work is dispatched async behind each `vacuum()` call,
-		// so we can't await actual completion here — report initiation only.
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .account(accountID), kind: .vacuumDatabase, detail: nameForDisplay)
-		activityLog.didStart(id: id)
-		database.vacuum()
-		feedSettingsDatabase.vacuum()
-		delegate.vacuumDatabases()
-		activityLog.didComplete(id: id, durationIsSignificant: false)
+	public func vacuumDatabases() async {
+		try? await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(database.databasePath)) {
+			await database.vacuum()
+		}
+		try? await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(feedSettingsDatabase.databasePath)) {
+			await feedSettingsDatabase.vacuum()
+		}
+		await delegate.vacuumDatabases(for: self)
 	}
 
 	public func fetchCloudKitStats(progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {

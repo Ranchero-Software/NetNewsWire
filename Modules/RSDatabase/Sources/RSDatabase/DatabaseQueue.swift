@@ -163,12 +163,14 @@ public final class DatabaseQueue: Sendable {
 	/// weekly-ish? — to keep up the performance level of a database.
 	/// Generally a thing to do at startup, if it’s been a while
 	/// since the last vacuum() call.
-	public func vacuum() {
-		runInDatabase { result in
-			guard let database = try? result.get() else {
-				return
+	public func vacuum() async {
+		await withCheckedContinuation { continuation in
+			runInDatabase { result in
+				if let database = try? result.get() {
+					database.vacuum()
+				}
+				continuation.resume()
 			}
-			database.vacuum()
 		}
 	}
 }

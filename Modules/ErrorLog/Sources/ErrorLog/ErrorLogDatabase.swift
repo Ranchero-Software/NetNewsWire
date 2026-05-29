@@ -12,6 +12,8 @@ import RSDatabaseObjC
 
 public actor ErrorLogDatabase {
 
+	public nonisolated let databasePath: String
+
 	private let database: FMDatabase
 
 	private static let tableCreationStatements = "CREATE TABLE if not EXISTS errors (id INTEGER PRIMARY KEY AUTOINCREMENT, date REAL NOT NULL, sourceName TEXT NOT NULL, sourceID INTEGER NOT NULL, operation TEXT NOT NULL DEFAULT '', fileName TEXT NOT NULL DEFAULT '', functionName TEXT NOT NULL DEFAULT '', lineNumber INTEGER NOT NULL DEFAULT 0, errorMessage TEXT NOT NULL);"
@@ -19,6 +21,7 @@ public actor ErrorLogDatabase {
 	private static let pruneLimit = 200
 
 	public init(databasePath: String) {
+		self.databasePath = databasePath
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)

@@ -42,6 +42,8 @@ public struct ArticleChanges: Sendable {
 		case syncSystem // Feedbin, Feedly, etc.: article retention is defined by external system
 	}
 
+	public nonisolated let databasePath: String
+
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
 	private let operationQueue = MainThreadOperationQueue()
@@ -53,6 +55,7 @@ public struct ArticleChanges: Sendable {
 	public init(databaseFilePath: String, accountID: String, retentionStyle: RetentionStyle) {
 		Self.logger.debug("Articles Database init \(accountID, privacy: .public)")
 
+		self.databasePath = databaseFilePath
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		self.queue = queue
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue, retentionStyle: retentionStyle)
@@ -92,8 +95,8 @@ public struct ArticleChanges: Sendable {
 
 	// MARK: - Vacuum
 
-	public func vacuum() {
-		queue.vacuum()
+	public func vacuum() async {
+		await queue.vacuum()
 	}
 
 	// MARK: - Fetching Articles

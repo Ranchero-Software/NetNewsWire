@@ -10,13 +10,15 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
-final actor HTMLMetadataDatabase {
+public final actor HTMLMetadataDatabase {
 
-	@MainActor static let shared: HTMLMetadataDatabase = {
+	@MainActor public static let shared: HTMLMetadataDatabase = {
 		let databasePath = AppConfig.dataFolder
 			.appendingPathComponent("HTMLMetadata.db").path
 		return HTMLMetadataDatabase(databasePath: databasePath)
 	}()
+
+	public nonisolated let databasePath: String
 
 	private let database: FMDatabase
 	private var cache = [String: CachedRecord]()
@@ -51,6 +53,7 @@ final actor HTMLMetadataDatabase {
 	private static let transientFailureRetryHours = 5
 
 	private init(databasePath: String) {
+		self.databasePath = databasePath
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
@@ -69,6 +72,10 @@ final actor HTMLMetadataDatabase {
 	private func performStartupMaintenance() {
 		removeExpiredEntries()
 		database.vacuumIfNeeded()
+	}
+
+	public func vacuum() {
+		database.vacuum()
 	}
 
 	@objc nonisolated func handleAppDidGoToBackground(_ notification: Notification) {

@@ -395,11 +395,18 @@ private extension ActivityWindowController {
 	}
 
 	func attributedDisplayName(for activity: Activity) -> NSAttributedString {
+		// AppKit ignores NSTextField.lineBreakMode for attributedStringValue,
+		// so the paragraph style has to ride along on the attributed string.
+		let paragraphStyle = NSMutableParagraphStyle()
+		paragraphStyle.lineBreakMode = .byTruncatingTail
+
 		let primaryAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: NSColor.labelColor
+			.foregroundColor: NSColor.labelColor,
+			.paragraphStyle: paragraphStyle
 		]
 		let secondaryAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: NSColor.secondaryLabelColor
+			.foregroundColor: NSColor.secondaryLabelColor,
+			.paragraphStyle: paragraphStyle
 		]
 
 		switch activity.kind {
@@ -487,7 +494,7 @@ private extension ActivityWindowController {
 		case .subscribeToCloudKitZone:
 			return NSLocalizedString("Subscribing to zone changes", comment: "Activity kind")
 		case .vacuumDatabase:
-			return NSLocalizedString("Vacuuming databases", comment: "Activity kind")
+			return NSLocalizedString("Vacuuming database", comment: "Activity kind")
 		case .validateCredentials:
 			return NSLocalizedString("Validating credentials", comment: "Activity kind")
 		case .exportOPML:

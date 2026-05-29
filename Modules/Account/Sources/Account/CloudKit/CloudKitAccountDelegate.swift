@@ -573,8 +573,8 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		nil
 	}
 
-	func vacuumDatabases() {
-		Task {
+	func vacuumDatabases(for account: Account) async {
+		try? await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}
