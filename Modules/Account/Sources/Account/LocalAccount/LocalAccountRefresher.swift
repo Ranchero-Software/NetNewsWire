@@ -506,17 +506,18 @@ private extension LocalAccountRefresher {
 		}
 
 		let minutesAgo = Int(Date().timeIntervalSince(lastCheckDate) / 60)
+		let minutesAgoText = "\(minutesAgo) minute\(minutesAgo == 1 ? "" : "s") ago"
 
 		if SpecialCase.urlStringContainSpecialCase(feed.url, [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]) {
 			if lastCheckDate > specialCaseCutoffDate {
 				Self.logger.info("LocalAccountRefresher: Dropping request for special case timing reasons: \(feed.url)")
-				return "Skipped — previous check was \(minutesAgo) minutes ago"
+				return "Skipped — previous check was \(minutesAgoText)"
 			}
 		}
 
 		if Date().timeIntervalSince(lastCheckDate) < minimumTimeBetweenChecks {
-			Self.logger.info("LocalAccountRefresher: Dropping request — previous check was \(minutesAgo) minutes ago: \(feed.url)")
-			return "Skipped — previous check was \(minutesAgo) minutes ago"
+			Self.logger.info("LocalAccountRefresher: Dropping request — previous check was \(minutesAgoText): \(feed.url)")
+			return "Skipped — previous check was \(minutesAgoText)"
 		}
 
 		return nil
