@@ -11,6 +11,7 @@ import AppKit
 import RSCore
 import RSWeb
 import Articles
+import Images
 
 @MainActor protocol DetailWebViewControllerDelegate: AnyObject {
 	func mouseDidEnter(_: DetailWebViewController, link: String)

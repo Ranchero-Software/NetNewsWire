@@ -11,6 +11,7 @@ import UserNotifications
 import os
 import Articles
 import Account
+import Images
 
 final class FeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet var iconView: IconView!

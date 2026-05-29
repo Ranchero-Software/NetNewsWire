@@ -1,6 +1,6 @@
 //
 //  IconImage.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Maurice Parker on 11/5/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
@@ -14,11 +14,15 @@ import UIKit
 
 import RSCore
 
-final class IconImage: @unchecked Sendable {
-	let image: RSImage
-	let isSymbol: Bool
-	let isBackgroundSuppressed: Bool
-	let preferredColor: CGColor?
+extension RSImage {
+	public static let maxIconPixelSize = Int(ceil(48.0 * RSScreen.maxScreenScale))
+}
+
+public final class IconImage: @unchecked Sendable {
+	public let image: RSImage
+	public let isSymbol: Bool
+	public let isBackgroundSuppressed: Bool
+	public let preferredColor: CGColor?
 
 	private lazy var luminanceType: ImageLuminanceType = {
 		#if os(macOS)
@@ -29,15 +33,15 @@ final class IconImage: @unchecked Sendable {
 		return cgImage.calculateLuminanceType() ?? .regular
 	}()
 
-	var isDark: Bool {
+	public var isDark: Bool {
 		luminanceType == .dark
 	}
 
-	var isBright: Bool {
+	public var isBright: Bool {
 		luminanceType == .bright
 	}
 
-	init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSuppressed: Bool = false, preferredColor: CGColor? = nil) {
+	public init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSuppressed: Bool = false, preferredColor: CGColor? = nil) {
 		self.image = image
 		self.isSymbol = isSymbol
 		self.preferredColor = preferredColor
@@ -45,7 +49,7 @@ final class IconImage: @unchecked Sendable {
 	}
 }
 
-enum IconSize: Int, CaseIterable, Sendable {
+public enum IconSize: Int, CaseIterable, Sendable {
 	case small = 1
 	case medium = 2
 	case large = 3
@@ -54,7 +58,7 @@ enum IconSize: Int, CaseIterable, Sendable {
 	private static let mediumDimension = CGFloat(integerLiteral: 36)
 	private static let largeDimension = CGFloat(integerLiteral: 48)
 
-	var size: CGSize {
+	public var size: CGSize {
 		switch self {
 		case .small:
 			return CGSize(width: IconSize.smallDimension, height: IconSize.smallDimension)

@@ -20,6 +20,7 @@ import RSWeb
 import Secrets
 import CrashReporter
 import Sparkle
+import Images
 
 let appName = "NetNewsWire"
 
@@ -138,6 +139,8 @@ let appName = "NetNewsWire"
 	// MARK: - NSApplicationDelegate
 
 	func applicationWillFinishLaunching(_ notification: Notification) {
+		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
+
 		installAppleEventHandlers()
 
 		CacheCleaner.purgeIfNecessary()

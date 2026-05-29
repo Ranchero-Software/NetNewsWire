@@ -10,6 +10,7 @@ import Foundation
 import RSCore
 import Account
 import RSTree
+import Images
 
 final class SidebarCell: NSTableCellView {
 

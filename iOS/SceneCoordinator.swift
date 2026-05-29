@@ -15,6 +15,7 @@ import RSCore
 import RSTree
 import SafariServices
 import SwiftUI
+import Images
 
 enum SearchScope: Int {
 	case timeline = 0

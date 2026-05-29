@@ -90,6 +90,7 @@
 		D1A7E100000000000000C003 /* Images in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C001 /* Images */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D1A7E100000000000000C005 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C004 /* Images */; };
 		D1A7E100000000000000C006 /* Images in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C004 /* Images */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		D1A7E100000000000000C008 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C007 /* Images */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -446,7 +447,6 @@
 			membershipExceptions = (
 				ArticleSpecifier.swift,
 				Assets.swift,
-				Extensions/IconImage.swift,
 				"Extensions/Node+Extensions.swift",
 				ShareExtension/ExtensionContainers.swift,
 				ShareExtension/ExtensionContainersFile.swift,
@@ -566,6 +566,7 @@
 				51BC2F3824D3439A00E90810 /* Account in Frameworks */,
 				848E84D82DB749720023F3BA /* RSCore in Frameworks */,
 				84EE3F182DB8A0AC009D3A8D /* RSTree in Frameworks */,
+				D1A7E100000000000000C008 /* Images in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -794,6 +795,7 @@
 				51BC2F3724D3439A00E90810 /* Account */,
 				848E84D72DB749720023F3BA /* RSCore */,
 				84EE3F172DB8A0AC009D3A8D /* RSTree */,
+				D1A7E100000000000000C007 /* Images */,
 			);
 			productName = "NetNewsWire iOS Share Extension";
 			productReference = 513C5CE6232571C2003D4054 /* NetNewsWire iOS Share Extension.appex */;
@@ -1855,6 +1857,10 @@
 			productName = Images;
 		};
 		D1A7E100000000000000C004 /* Images */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Images;
+		};
+		D1A7E100000000000000C007 /* Images */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Images;
 		};

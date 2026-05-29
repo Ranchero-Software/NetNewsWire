@@ -12,14 +12,24 @@ let package = Package(
 	],
 	dependencies: [
 		.package(path: "../RSCore"),
-		.package(path: "../RSDatabase")
+		.package(path: "../RSDatabase"),
+		.package(path: "../RSWeb"),
+		.package(path: "../Account"),
+		.package(path: "../Articles"),
+		.package(path: "../HTMLMetadata"),
+		.package(path: "../ActivityLog")
 	],
 	targets: [
 		.target(
 			name: "Images",
 			dependencies: [
 				"RSCore",
-				"RSDatabase"
+				"RSDatabase",
+				"RSWeb",
+				"Account",
+				"Articles",
+				"HTMLMetadata",
+				"ActivityLog"
 			],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),

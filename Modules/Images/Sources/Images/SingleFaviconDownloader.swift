@@ -1,6 +1,6 @@
 //
 //  SingleFaviconDownloader.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Brent Simmons on 11/23/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -13,23 +13,23 @@ import RSCore
 import RSWeb
 
 extension Notification.Name {
-	static let DidLoadFavicon = Notification.Name("DidLoadFaviconNotification")
+	public static let DidLoadFavicon = Notification.Name("DidLoadFaviconNotification")
 }
 
 /// Reads from disk, falls back to network. Posts `.DidLoadFavicon` on both
 /// success and persistent failure.
-@MainActor final class SingleFaviconDownloader {
+@MainActor public final class SingleFaviconDownloader {
 	private enum DiskStatus {
 		case unknown, notOnDisk, onDisk
 	}
 
-	let faviconURL: String
-	let homePageURL: String?
+	public let faviconURL: String
+	public let homePageURL: String?
 
-	var iconImage: IconImage?
+	public var iconImage: IconImage?
 
 	/// The persistent failure, if any. Nil after success or for transient failures.
-	private(set) var error: ImageDownloadError?
+	public private(set) var error: ImageDownloadError?
 
 	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SingleFaviconDownloader")
 
@@ -40,7 +40,7 @@ extension Notification.Name {
 	private var lastDownloadAttemptDate: Date
 	private var diskStatus = DiskStatus.unknown
 
-	init(faviconURL: String, homePageURL: String?, diskCache: BinaryDiskCache, queue: DispatchQueue) {
+	public init(faviconURL: String, homePageURL: String?, diskCache: BinaryDiskCache, queue: DispatchQueue) {
 		self.faviconURL = faviconURL
 		self.homePageURL = homePageURL
 		self.diskCache = diskCache
@@ -53,7 +53,7 @@ extension Notification.Name {
 		}
 	}
 
-	func downloadFaviconIfNeeded() -> Bool {
+	public func downloadFaviconIfNeeded() -> Bool {
 		// If we don’t have an image, and lastDownloadAttemptDate is a while ago, try again.
 		guard iconImage == nil else {
 			return false

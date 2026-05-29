@@ -1,6 +1,6 @@
 //
 //  AuthorAvatarDownloader.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Brent Simmons on 11/26/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -12,10 +12,10 @@ import RSCore
 import ActivityLog
 
 extension Notification.Name {
-	static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // UserInfoKey.imageURL (which is an avatarURL)
+	public static let AvatarDidBecomeAvailable = Notification.Name("AvatarDidBecomeAvailableNotification") // userInfo key: "url" (the avatarURL)
 }
 
-@MainActor final class AuthorAvatarDownloader {
+@MainActor public final class AuthorAvatarDownloader {
 	public static let shared = AuthorAvatarDownloader()
 
 	private let imageDownloader = ImageDownloader.shared
@@ -36,7 +36,7 @@ extension Notification.Name {
 		cache.removeAll()
 	}
 
-	func image(for author: Author) -> IconImage? {
+	public func image(for author: Author) -> IconImage? {
 
 		guard let avatarURL = author.avatarURL else {
 			return nil
@@ -56,7 +56,7 @@ extension Notification.Name {
 		return nil
 	}
 
-	func cachedImage(for author: Author) -> IconImage? {
+	public func cachedImage(for author: Author) -> IconImage? {
 		guard let avatarURL = author.avatarURL else {
 			return nil
 		}
@@ -64,7 +64,7 @@ extension Notification.Name {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let avatarURL = note.userInfo?[UserInfoKey.url] as? String else {
+		guard let avatarURL = note.userInfo?["url"] as? String else {
 			return
 		}
 		guard waitingForAvatarURLs.contains(avatarURL) else {
@@ -101,7 +101,7 @@ extension Notification.Name {
 
 	func postAvatarDidBecomeAvailableNotification(_ avatarURL: String) {
 		DispatchQueue.main.async {
- 			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: avatarURL])
+ 			NotificationCenter.default.post(name: .AvatarDidBecomeAvailable, object: self, userInfo: ["url": avatarURL])
 		}
 	}
 }

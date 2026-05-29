@@ -10,6 +10,7 @@ import Foundation
 import Account
 import Articles
 import RSCore
+import Images
 
 @MainActor final class IconImageCache {
 
@@ -101,6 +102,15 @@ import RSCore
 
 private extension IconImageCache {
 
+	static func isNetNewsWireBrandedFeed(_ feed: Feed) -> Bool {
+		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), let host = homePageURL.host {
+			if host == "nnw.ranchero.com" || host == "netnewswire.blog" || host.hasSuffix("netnewswire.com") {
+				return true
+			}
+		}
+		return feed.url.hasPrefix("https://ranchero.com/downloads/netnewswire")
+	}
+
 	func imageForSmartFeed(_ smartFeed: PseudoFeed, _ feedID: SidebarItemIdentifier) -> IconImage? {
 		if let iconImage = smartFeedIconImageCache[feedID] {
 			return iconImage
@@ -113,6 +123,9 @@ private extension IconImageCache {
 	}
 
 	func imageForFeed(_ feed: Feed, _ feedID: SidebarItemIdentifier) -> IconImage? {
+		if Self.isNetNewsWireBrandedFeed(feed) {
+			return IconImage.nnwFeedIcon
+		}
 		if let iconImage = feedIconImageCache[feedID] {
 			return iconImage
 		}

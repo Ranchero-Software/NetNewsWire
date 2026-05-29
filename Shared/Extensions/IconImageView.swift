@@ -9,6 +9,7 @@
 // SwiftUI wrapper for `IconImage`
 
 import SwiftUI
+import Images
 #if os(macOS)
 import AppKit
 typealias PlatformColor = NSColor

@@ -1,11 +1,12 @@
 //
 //  ColorHash.swift
-//  ColorHash
+//  Images
 //
 //  Created by Atsushi Nagase on 11/25/15.
 //  Copyright © 2015 LittleApps Inc. All rights reserved.
 //
-// Original Project: https://github.com/ngs/color-hash.swift
+//  Original Project: https://github.com/ngs/color-hash.swift
+//
 
 import Foundation
 #if os(iOS) || os(tvOS)

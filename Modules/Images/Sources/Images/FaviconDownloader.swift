@@ -1,6 +1,6 @@
 //
 //  FaviconDownloader.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Brent Simmons on 11/19/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -13,16 +13,15 @@ import Account
 import RSCore
 import RSWeb
 import HTMLMetadata
-import Images
 import UniformTypeIdentifiers
 
 extension Notification.Name {
 
-	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
+	public static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-@MainActor final class FaviconDownloader {
-	static let shared = FaviconDownloader()
+@MainActor public final class FaviconDownloader {
+	public static let shared = FaviconDownloader()
 
 	private let folder: String
 	private let diskCache: BinaryDiskCache
@@ -33,8 +32,8 @@ extension Notification.Name {
 	private let queue: DispatchQueue
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
-	struct UserInfoKey {
-		static let faviconURL = "faviconURL"
+	public struct UserInfoKey {
+		public static let faviconURL = "faviconURL"
 	}
 
 	init() {
@@ -62,7 +61,7 @@ extension Notification.Name {
 		singleFaviconDownloaderCache.removeAll()
 	}
 
-	func favicon(for feed: Feed) -> IconImage? {
+	public func favicon(for feed: Feed) -> IconImage? {
 		assert(Thread.isMainThread)
 
 		if shouldSkipDownloadingFavicon(feed: feed) {
@@ -87,7 +86,7 @@ extension Notification.Name {
 		return nil
 	}
 
-	func faviconAsIcon(for feed: Feed) -> IconImage? {
+	public func faviconAsIcon(for feed: Feed) -> IconImage? {
 
 		if let image = cache[feed] {
 			return image
@@ -102,7 +101,7 @@ extension Notification.Name {
 	}
 
 	/// Returns the in-memory favicon for `feed` without triggering a download.
-	func cachedFaviconAsIcon(for feed: Feed) -> IconImage? {
+	public func cachedFaviconAsIcon(for feed: Feed) -> IconImage? {
 		if let image = cache[feed] {
 			return image
 		}
@@ -126,7 +125,7 @@ extension Notification.Name {
 		return nil
 	}
 
-	func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
+	public func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
 		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
 			return nil
 		}
@@ -134,15 +133,9 @@ extension Notification.Name {
 		return downloader.iconImage
 	}
 
-	func favicon(withHomePageURL homePageURL: String) -> IconImage? {
+	public func favicon(withHomePageURL homePageURL: String) -> IconImage? {
 
 		let url = homePageURL.normalizedURL
-
-		if let url = URL(string: homePageURL) {
-			if url.host == "nnw.ranchero.com" || url.host == "netnewswire.blog" {
-				return IconImage.nnwFeedIcon
-			}
-		}
 
 		if ImageMetadataDatabase.shared.homePageHasNoFavicon(url) {
 			return nil

@@ -8,6 +8,7 @@
 
 import UIKit
 import RSCore
+import Images
 
 @IBDesignable
 final class IconView: UIView {

@@ -1,6 +1,6 @@
 //
 //  FeedIconDownloader.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Brent Simmons on 11/26/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -11,12 +11,11 @@ import Account
 import RSCore
 import RSWeb
 import HTMLMetadata
-import Images
 import ActivityLog
 
 extension Notification.Name {
 
-	static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable") // UserInfoKey.feed
+	public static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable") // userInfo key: "feed"
 }
 
 @MainActor public final class FeedIconDownloader {
@@ -42,19 +41,10 @@ extension Notification.Name {
 		cache.removeAll()
 	}
 
-	func icon(for feed: Feed) -> IconImage? {
+	public func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
-		}
-
-		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), let host = homePageURL.host {
-			if host == "nnw.ranchero.com" || host == "netnewswire.blog" || host.hasSuffix("netnewswire.com") {
-				return IconImage.nnwFeedIcon
-			}
-		}
-		if feed.url.hasPrefix("https://ranchero.com/downloads/netnewswire") {
-			return IconImage.nnwFeedIcon
 		}
 
 		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
@@ -123,7 +113,7 @@ extension Notification.Name {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let url = note.userInfo?[UserInfoKey.url] as? String, let feed = waitingForFeedURLs[url] else {
+		guard let url = note.userInfo?["url"] as? String, let feed = waitingForFeedURLs[url] else {
 			return
 		}
 		waitingForFeedURLs[url] = nil
@@ -131,7 +121,7 @@ extension Notification.Name {
 	}
 
 	/// Returns the in-memory icon for `feed` without triggering a download.
-	func cachedIcon(for feed: Feed) -> IconImage? {
+	public func cachedIcon(for feed: Feed) -> IconImage? {
 		cache[feed]
 	}
 }
@@ -217,7 +207,7 @@ private extension FeedIconDownloader {
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
+			let userInfo: [AnyHashable: Any] = ["feed": feed]
 			NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}

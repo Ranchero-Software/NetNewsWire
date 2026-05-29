@@ -1,6 +1,6 @@
 //
 //  ImageDownloader.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Brent Simmons on 11/25/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -11,20 +11,19 @@ import os
 import RSCore
 import RSWeb
 import ActivityLog
-import Images
 
 extension Notification.Name {
-	static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
+	public static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // userInfo key: "url"
 }
 
-struct ImageDownloadError: Error {
-	let statusCode: Int?
-	let decodingFailed: Bool
-	let isTransient: Bool // No network, DNS issues, timeout, 5xx response, etc.
+public struct ImageDownloadError: Error {
+	public let statusCode: Int?
+	public let decodingFailed: Bool
+	public let isTransient: Bool // No network, DNS issues, timeout, 5xx response, etc.
 }
 
 extension ImageDownloadError: LocalizedError {
-	var errorDescription: String? {
+	public var errorDescription: String? {
 		if decodingFailed {
 			if let statusCode {
 				return "Couldn’t decode image bytes (HTTP \(statusCode))"
@@ -38,7 +37,7 @@ extension ImageDownloadError: LocalizedError {
 	}
 }
 
-@MainActor final class ImageDownloader {
+@MainActor public final class ImageDownloader {
 	public static let shared = ImageDownloader()
 
 	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
@@ -68,7 +67,7 @@ extension ImageDownloadError: LocalizedError {
 	/// Returns the data if in memory, else dispatches a disk-then-network fetch and returns nil.
 	/// Activity log fires only when the fetch reaches the network.
 	@discardableResult
-	func image(for url: String, activityOwner: ActivityOwner? = nil, activityKind: ActivityKind? = nil, activityDetail: String? = nil) -> Data? {
+	public func image(for url: String, activityOwner: ActivityOwner? = nil, activityKind: ActivityKind? = nil, activityDetail: String? = nil) -> Data? {
 		assert(Thread.isMainThread)
 		if let data = imageCache[url] {
 			return data
@@ -189,6 +188,6 @@ private extension ImageDownloader {
 
 	func postImageDidBecomeAvailableNotification(_ url: String) {
 		assert(Thread.isMainThread)
-		NotificationCenter.default.post(name: .imageDidBecomeAvailable, object: self, userInfo: [UserInfoKey.url: url])
+		NotificationCenter.default.post(name: .imageDidBecomeAvailable, object: self, userInfo: ["url": url])
 	}
 }

@@ -11,6 +11,7 @@ import SafariServices
 import UserNotifications
 import RSCore
 import Account
+import Images
 
 final class FeedInspectorViewController: UITableViewController {
 

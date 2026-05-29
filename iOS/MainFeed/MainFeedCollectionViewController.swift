@@ -17,6 +17,7 @@ import RSWeb
 import HTMLMetadata
 import Account
 import Articles
+import Images
 
 private let reuseIdentifier = "FeedCell"
 private let folderIdentifier = "Folder"

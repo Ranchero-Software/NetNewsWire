@@ -16,6 +16,7 @@ import Account
 import Articles
 import Secrets
 import ErrorLog
+import Images
 
 @MainActor var appDelegate: AppDelegate!
 
@@ -60,6 +61,8 @@ import ErrorLog
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
+
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
