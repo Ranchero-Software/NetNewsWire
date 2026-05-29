@@ -46,9 +46,6 @@ extension Notification.Name {
 			return cachedImage
 		}
 
-		// `ImageDownloader.image(for:)` handles the activity log itself — it
-		// fires the activity only if the fetch goes to network. Disk-cached
-		// fetches stay silent.
 		let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
 		if let imageData = imageDownloader.image(for: avatarURL, activityOwner: .avatarDownloader, activityKind: kind) {
 			scaleAndCacheImageData(imageData, avatarURL)
@@ -59,8 +56,6 @@ extension Notification.Name {
 		return nil
 	}
 
-	/// Returns the in-memory avatar for `author` without triggering a download.
-	/// Used by `IconImageCache.prefetchImagesForArticles` and read-only lookups.
 	func cachedImage(for author: Author) -> IconImage? {
 		guard let avatarURL = author.avatarURL else {
 			return nil
