@@ -486,6 +486,12 @@ private extension ActivityWindowController {
 			return NSLocalizedString("Uploading new articles", comment: "Activity kind")
 		case .subscribeToCloudKitZone:
 			return NSLocalizedString("Subscribing to zone changes", comment: "Activity kind")
+		case .vacuumDatabase:
+			return NSLocalizedString("Vacuuming databases", comment: "Activity kind")
+		case .validateCredentials:
+			return NSLocalizedString("Validating credentials", comment: "Activity kind")
+		case .exportOPML:
+			return NSLocalizedString("Exporting OPML", comment: "Activity kind")
 		case .refreshFeedContent, .findFeed, .downloadFeedImage, .downloadFavicon, .downloadAvatar, .downloadHTMLMetadata:
 			return ""
 		}

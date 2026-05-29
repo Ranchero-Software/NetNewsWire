@@ -64,7 +64,7 @@ import Secrets
 	}
 
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
-		try await account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+		try account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
 			let opmlData = try Data(contentsOf: opmlFile)
 			let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
 			let opmlDocument = try OPMLParser.parseOPML(with: parserData)

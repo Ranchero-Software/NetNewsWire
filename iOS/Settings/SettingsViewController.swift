@@ -13,6 +13,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import RSCore
 import Account
+import ActivityLog
 
 final class SettingsViewController: UITableViewController {
 
@@ -542,9 +543,11 @@ private extension SettingsViewController {
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
 		let filename = "Subscriptions-\(accountName).opml"
 		let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-		let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
 		do {
-			try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
+			try account.logActivity(kind: .exportOPML, detail: filename) {
+				let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
+				try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
+			}
 		} catch {
 			self.presentError(title: "OPML Export Error", message: error.localizedDescription)
 		}

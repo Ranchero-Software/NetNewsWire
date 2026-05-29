@@ -37,6 +37,12 @@ public enum ActivityKind: Sendable, Hashable {
 	case uploadNewArticles
 	case subscribeToCloudKitZone
 
+	// Maintenance and lifecycle
+
+	case vacuumDatabase
+	case validateCredentials
+	case exportOPML
+
 	// App-level
 
 	case refreshAll

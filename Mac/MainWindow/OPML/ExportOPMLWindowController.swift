@@ -8,6 +8,7 @@
 
 import AppKit
 import Account
+import ActivityLog
 import UniformTypeIdentifiers
 
 final class ExportOPMLWindowController: NSWindowController {
@@ -98,9 +99,11 @@ final class ExportOPMLWindowController: NSWindowController {
 			if result == NSApplication.ModalResponse.OK, let url = panel.url {
 				DispatchQueue.main.async {
 					let filename = url.lastPathComponent
-					let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
 					do {
-						try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
+						try account.logActivity(kind: .exportOPML, detail: filename) {
+							let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
+							try opmlString.write(to: url, atomically: true, encoding: String.Encoding.utf8)
+						}
 					} catch let error as NSError {
 						NSApplication.shared.presentError(error)
 					}

@@ -525,6 +525,12 @@ private extension ActivityLogWindowController {
 			return descriptionWithDetail("Uploading new articles", activity: activity)
 		case .subscribeToCloudKitZone:
 			return descriptionWithDetail("Subscribing to zone changes", activity: activity)
+		case .vacuumDatabase:
+			return descriptionWithDetail("Vacuuming databases", activity: activity)
+		case .validateCredentials:
+			return descriptionWithDetail("Validating credentials", activity: activity)
+		case .exportOPML:
+			return descriptionWithDetail("Exporting OPML", activity: activity)
 		}
 	}
 
