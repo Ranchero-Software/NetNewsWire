@@ -208,33 +208,28 @@ import os
 		}
 		feed.lastCheckDate = Date()
 
-		let activityOwner = self.activityOwner
 		let activityKind = ActivityKind.refreshFeedContent(feedURL: feed.url)
 
 		if let error {
-			if let activityOwner {
-				ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
-			}
+			reportFeedRefreshError(feed: feed, error: error, activityKind: activityKind)
 			return
 		}
 		guard let httpResponse = response as? HTTPURLResponse else {
-			if let activityOwner {
-				let error = NSError(domain: "LocalAccountRefresher", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unexpected response (not HTTP)"])
-				ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
-			}
+			let error = NSError(domain: "LocalAccountRefresher", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unexpected response (not HTTP)"])
+			reportFeedRefreshError(feed: feed, error: error, activityKind: activityKind)
 			return
 		}
 
 		let statusIsOK = httpResponse.statusIsOK
 		let statusIsOKOrNotModified = statusIsOK || httpResponse.statusCode == HTTPResponseCode.notModified
 		guard statusIsOKOrNotModified else {
-			if let activityOwner {
-				let statusCode = httpResponse.statusCode
-				let error = NSError(domain: "LocalAccountRefresher", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"])
-				ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
-			}
+			let statusCode = httpResponse.statusCode
+			let error = NSError(domain: "LocalAccountRefresher", code: statusCode, userInfo: [NSLocalizedDescriptionKey: "HTTP \(statusCode)"])
+			reportFeedRefreshError(feed: feed, error: error, activityKind: activityKind)
 			return
 		}
+
+		let activityOwner = self.activityOwner
 
 		let conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 		if conditionalGetInfo != feed.conditionalGetInfo {
@@ -325,8 +320,7 @@ import os
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL) {
-		guard let feed = urlToFeedDictionary[url.absoluteString],
-			  let account = feed.account else {
+		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
 
@@ -335,11 +329,17 @@ import os
 		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
 		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
 
-		if let owner = activityOwner {
-			ActivityLog.shared.didFail(owner, kind: .refreshFeedContent(feedURL: feed.url), error: error)
+		reportFeedRefreshError(feed: feed, error: error, activityKind: .refreshFeedContent(feedURL: feed.url))
+	}
+
+	private func reportFeedRefreshError(feed: Feed, error: Error, activityKind: ActivityKind) {
+		if let activityOwner {
+			ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
 		}
 		feedsErrored += 1
-
+		guard let account = feed.account else {
+			return
+		}
 		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: "Downloading feed", errorMessage: AccountError.detailedErrorMessage(error))
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
