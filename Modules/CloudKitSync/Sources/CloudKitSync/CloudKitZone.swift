@@ -932,6 +932,19 @@ public extension CloudKitZone {
 		}
 	}
 
+	/// Async overload of `subscribeToZoneChanges()` that throws on failure
+	/// so callers can surface failures to register for remote-change pushes.
+	/// Without a successful subscription, this device won't receive silent
+	/// pushes when other devices change records — it'll only sync on manual
+	/// refresh or relaunch.
+	func subscribeToZoneChanges() async throws {
+		let subscription = CKRecordZoneSubscription(zoneID: zoneID, subscriptionID: zoneID.zoneName)
+		let info = CKSubscription.NotificationInfo()
+		info.shouldSendContentAvailable = true
+		subscription.notificationInfo = info
+		_ = try await save(subscription)
+	}
+
 	func delete(ckQuery: CKQuery) async throws {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 			delete(ckQuery: ckQuery) { result in

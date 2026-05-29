@@ -44,9 +44,18 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		activityLog.didStart(id: activityID)
 
 		Task { @MainActor in
-			await selectForProcessing()
-			Self.logger.debug("iCloud: Finished sending article statuses")
-			activityLog.didComplete(id: activityID)
+			do {
+				try await selectForProcessing()
+				Self.logger.debug("iCloud: Finished sending article statuses")
+				if isCanceled {
+					activityLog.didFail(id: activityID, error: CloudKitAccountDelegateError.unknown)
+				} else {
+					activityLog.didComplete(id: activityID)
+				}
+			} catch {
+				Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
+				activityLog.didFail(id: activityID, error: error)
+			}
 			didComplete()
 		}
 	}
@@ -54,26 +63,22 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 @MainActor private extension CloudKitSendStatusOperation {
 
-	func selectForProcessing() async {
-		do {
-			guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
-				  !syncStatuses.isEmpty else {
-				return
-			}
-
-			let stopProcessing = await processStatuses(Array(syncStatuses))
-			if stopProcessing {
-				return
-			}
-
-			await selectForProcessing()
-		} catch {
-			Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
+	func selectForProcessing() async throws {
+		guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
+			  !syncStatuses.isEmpty else {
+			return
 		}
+
+		let stopProcessing = try await processStatuses(Array(syncStatuses))
+		if stopProcessing {
+			return
+		}
+
+		try await selectForProcessing()
 	}
 
 	/// Returns true if processing should stop.
-	func processStatuses(_ syncStatuses: [SyncStatus]) async -> Bool {
+	func processStatuses(_ syncStatuses: [SyncStatus]) async throws -> Bool {
 		guard let account, let articlesZone else {
 			return true
 		}
@@ -86,7 +91,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		} catch {
 			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 			Self.logger.error("iCloud: Send article status fetch articles error: \(error.localizedDescription)")
-			return true
+			throw error
 		}
 
 		let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
@@ -97,23 +102,22 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 			CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key], syncArticleContentForUnreadArticles: self.syncArticleContentForUnreadArticles)
 		}
 
-		// If this happens, we have somehow gotten into a state where we have new status records
-		// but the articles didn't come back in the fetch. We need to clean up those sync records
-		// and stop processing.
+		// We somehow have new status records but the articles didn't come back
+		// in the fetch. Clean up those sync records and stop processing.
 		if statusUpdates.isEmpty {
 			try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
 			return true
-		} else {
-			do {
-				try await articlesZone.modifyArticles(statusUpdates)
-				try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
-				return false
-			} catch {
-				try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
-				syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
-				Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
-				return true
-			}
+		}
+
+		do {
+			try await articlesZone.modifyArticles(statusUpdates)
+			try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
+			return false
+		} catch {
+			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+			syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
+			Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
+			throw error
 		}
 	}
 
