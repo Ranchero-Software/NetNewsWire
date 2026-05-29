@@ -40,7 +40,6 @@ struct DownloadFailureTable {
 	}
 
 	static func save(url: String, statusCode: Int, database: FMDatabase) {
-		assert(statusCode >= 400 || statusCode == 0, "Expected failure status code, got \(statusCode)")
 		let dictionary: DatabaseDictionary = [
 			Column.url: url,
 			Column.lastChecked: Date().timeIntervalSince1970,
