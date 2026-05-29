@@ -142,7 +142,7 @@ private extension SingleFaviconDownloader {
 
 		let activityLog = ActivityLog.shared
 		let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
-		activityLog.createActivity(owner: .faviconDownloader, kind: kind)
+		activityLog.createActivity(owner: .faviconDownloader, kind: kind, detail: homePageURL)
 		activityLog.didStart(.faviconDownloader, kind: kind)
 
 		let data: Data?

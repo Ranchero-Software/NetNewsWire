@@ -47,7 +47,7 @@ extension Notification.Name {
 		}
 
 		let kind = ActivityKind.downloadAvatar(avatarURL: avatarURL)
-		if let imageData = imageDownloader.image(for: avatarURL, activityOwner: .avatarDownloader, activityKind: kind) {
+		if let imageData = imageDownloader.image(for: avatarURL, activityOwner: .avatarDownloader, activityKind: kind, activityDetail: author.name) {
 			scaleAndCacheImageData(imageData, avatarURL)
 		} else {
 			waitingForAvatarURLs.insert(avatarURL)
