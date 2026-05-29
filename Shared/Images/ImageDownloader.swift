@@ -11,9 +11,31 @@ import os
 import RSCore
 import RSWeb
 import ActivityLog
+import Images
 
 extension Notification.Name {
 	static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // UserInfoKey.url
+}
+
+struct ImageDownloadError: Error {
+	let statusCode: Int?
+	let decodingFailed: Bool
+	let isTransient: Bool // No network, DNS issues, timeout, 5xx response, etc.
+}
+
+extension ImageDownloadError: LocalizedError {
+	var errorDescription: String? {
+		if decodingFailed {
+			if let statusCode {
+				return "Couldn’t decode image bytes (HTTP \(statusCode))"
+			}
+			return "Couldn’t decode image bytes"
+		}
+		guard let statusCode else {
+			return isTransient ? "No response" : "Bad URL"
+		}
+		return "HTTP \(statusCode)"
+	}
 }
 
 @MainActor final class ImageDownloader {
@@ -25,7 +47,6 @@ extension Notification.Name {
 	private let queue: DispatchQueue
 	private var imageCache = [String: Data]() // url: image
 	private var urlsInProgress = Set<String>()
-	private var badURLs = Set<String>() // That return a 404 or whatever. Just skip them in the future.
 
 	init() {
 		let folder = AppConfig.cacheSubfolder(named: "Images")
@@ -44,18 +65,16 @@ extension Notification.Name {
 		imageCache.removeAll()
 	}
 
-	/// Returns the image data if it's already in the in-memory cache. Otherwise
-	/// dispatches an async fetch — disk first, then network — and returns nil;
-	/// completion arrives via `.imageDidBecomeAvailable`.
-	///
-	/// Pass `activityOwner` / `activityKind` (and optionally `activityDetail`)
-	/// to have an entry written to the activity log if and only if the fetch
-	/// goes to network. Disk-only fetches stay silent.
+	/// Returns the data if in memory, else dispatches a disk-then-network fetch and returns nil.
+	/// Activity log fires only when the fetch reaches the network.
 	@discardableResult
 	func image(for url: String, activityOwner: ActivityOwner? = nil, activityKind: ActivityKind? = nil, activityDetail: String? = nil) -> Data? {
 		assert(Thread.isMainThread)
 		if let data = imageCache[url] {
 			return data
+		}
+		if ImageMetadataDatabase.shared.recentlyFailed(url: url) {
+			return nil
 		}
 
 		Task { @MainActor in
@@ -75,7 +94,7 @@ private extension ImageDownloader {
 	}
 
 	func findImage(_ url: String, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async {
-		guard !urlsInProgress.contains(url) && !badURLs.contains(url) else {
+		guard !urlsInProgress.contains(url) else {
 			return
 		}
 		urlsInProgress.insert(url)
@@ -86,25 +105,26 @@ private extension ImageDownloader {
 			return
 		}
 
-		// Disk missed — going to network. Produce activity if the caller asked.
 		let activityLog = ActivityLog.shared
 		if let activityOwner, let activityKind {
 			activityLog.createActivity(owner: activityOwner, kind: activityKind, detail: activityDetail)
 			activityLog.didStart(activityOwner, kind: activityKind)
 		}
 
-		let image = await downloadImage(url)
-		if let activityOwner, let activityKind {
-			if image != nil {
+		do {
+			let image = try await downloadImage(url)
+			if let activityOwner, let activityKind {
 				activityLog.didComplete(activityOwner, kind: activityKind)
-			} else {
-				let error = NSError(domain: "ImageDownloader", code: 0, userInfo: [NSLocalizedDescriptionKey: "Download failed"])
+			}
+			cacheImage(url, image)
+			ImageMetadataDatabase.shared.clearFailure(url: url)
+		} catch {
+			if let activityOwner, let activityKind {
 				activityLog.didFail(activityOwner, kind: activityKind, error: error)
 			}
-		}
-
-		if let image {
-			cacheImage(url, image)
+			if !error.isTransient {
+				ImageMetadataDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
+			}
 		}
 		urlsInProgress.remove(url)
 	}
@@ -132,29 +152,29 @@ private extension ImageDownloader {
 		}
 	}
 
-	func downloadImage(_ url: String) async -> Data? {
+	func downloadImage(_ url: String) async throws(ImageDownloadError) -> Data {
 		guard let imageURL = URL(string: url) else {
-			return nil
+			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false)
 		}
 
+		let data: Data?
+		let response: URLResponse?
 		do {
-			let (data, response) = try await Downloader.shared.download(imageURL)
-
-			if let data, !data.isEmpty, let response, response.statusIsOK {
-				let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
-				saveToDisk(url, scaledData)
-				return scaledData
-			}
-
-			if let response = response as? HTTPURLResponse, response.statusCode >= HTTPResponseCode.badRequest && response.statusCode <= HTTPResponseCode.notAcceptable {
-				badURLs.insert(url)
-			}
-
-			return nil
+			(data, response) = try await Downloader.shared.download(imageURL)
 		} catch {
 			Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
-			return nil
+			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)
 		}
+
+		if let data, !data.isEmpty, let response, response.statusIsOK {
+			let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
+			saveToDisk(url, scaledData)
+			return scaledData
+		}
+
+		let statusCode = (response as? HTTPURLResponse)?.statusCode
+		let isTransient = statusCode.map { (500...599).contains($0) } ?? true
+		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient)
 	}
 
 	func saveToDisk(_ url: String, _ data: Data) {

@@ -11,6 +11,7 @@ import Account
 import RSCore
 import RSWeb
 import HTMLMetadata
+import Images
 import ActivityLog
 
 extension Notification.Name {
@@ -23,25 +24,11 @@ extension Notification.Name {
 	public static let shared = FeedIconDownloader()
 
 	private let imageDownloader = ImageDownloader.shared
-	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 	private var homePagesWithNoIconURL = Set<String>()
 	private var cache = [Feed: IconImage]()
 	private var waitingForFeedURLs = [String: Feed]()
 
-	private var feedURLToIconURLCache = [String: String]()
-	private var feedURLToIconURLCachePath: URL
-	private var feedURLToIconURLCacheDirty = false {
-		didSet {
-			queueSaveFeedURLToIconURLCacheIfNeeded()
-		}
-	}
-
 	init() {
-
-		let folder = AppConfig.cacheSubfolder(named: "FeedIcons")
-		self.feedURLToIconURLCachePath = folder.appendingPathComponent("FeedURLToIconURLCache.plist")
-		loadFeedURLToIconURLCache()
-
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
@@ -114,7 +101,7 @@ extension Notification.Name {
 			}
 		}
 
-		if let previouslyFoundIconURL = feedURLToIconURLCache[feed.url] {
+		if let previouslyFoundIconURL = ImageMetadataDatabase.shared.iconURL(forFeedURL: feed.url) {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image in
 				MainActor.assumeIsolated {
 					if self.cache[feed] != nil {
@@ -144,7 +131,6 @@ extension Notification.Name {
 	}
 
 	/// Returns the in-memory icon for `feed` without triggering a download.
-	/// Used by `IconImageCache.prefetchImagesForArticles` and read-only lookups.
 	func cachedIcon(for feed: Feed) -> IconImage? {
 		cache[feed]
 	}
@@ -218,16 +204,12 @@ private extension FeedIconDownloader {
 
 		let url = Self.sanitizedIconURL(url)
 
-		// `ImageDownloader.image(for:)` handles the activity log itself — it
-		// fires the activity only if the fetch goes to network. Disk-cached
-		// fetches stay silent.
 		let kind = ActivityKind.downloadFeedImage(feedURL: url)
 		if let imageData = imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: kind, activityDetail: feed.nameForDisplay) {
 			RSImage.image(with: imageData, imageResultBlock: imageResultBlock)
 			return
 		}
 
-		// Async fetch dispatched — completion arrives via imageDidBecomeAvailable.
 		waitingForFeedURLs[url] = feed
 		imageResultBlock(nil)
 	}
@@ -241,44 +223,6 @@ private extension FeedIconDownloader {
 	}
 
 	func cacheIconURLForFeedURL(iconURL: String, feedURL: String) {
-
-		feedURLToIconURLCache[feedURL] = iconURL
-		feedURLToIconURLCacheDirty = true
-	}
-
-	func loadFeedURLToIconURLCache() {
-
-		guard let data = try? Data(contentsOf: feedURLToIconURLCachePath) else {
-			return
-		}
-		let decoder = PropertyListDecoder()
-		feedURLToIconURLCache = (try? decoder.decode([String: String].self, from: data)) ?? [String: String]()
-	}
-
-	@objc func saveFeedURLToIconURLCacheIfNeeded() {
-
-		assert(Thread.isMainThread)
-		if feedURLToIconURLCacheDirty {
-			saveFeedURLToIconURLCache()
-		}
-	}
-
-	func queueSaveFeedURLToIconURLCacheIfNeeded() {
-
-		assert(Thread.isMainThread)
-		FeedIconDownloader.saveQueue.add(self, #selector(saveFeedURLToIconURLCacheIfNeeded))
-	}
-
-	func saveFeedURLToIconURLCache() {
-		feedURLToIconURLCacheDirty = false
-
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		do {
-			let data = try encoder.encode(feedURLToIconURLCache)
-			try data.write(to: feedURLToIconURLCachePath)
-		} catch {
-			assertionFailure(error.localizedDescription)
-		}
+		ImageMetadataDatabase.shared.saveFeedIconURL(feedURL: feedURL, iconURL: iconURL)
 	}
 }

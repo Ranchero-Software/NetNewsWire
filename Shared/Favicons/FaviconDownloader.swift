@@ -13,6 +13,7 @@ import Account
 import RSCore
 import RSWeb
 import HTMLMetadata
+import Images
 import UniformTypeIdentifiers
 
 extension Notification.Name {
@@ -23,29 +24,11 @@ extension Notification.Name {
 @MainActor final class FaviconDownloader {
 	static let shared = FaviconDownloader()
 
-	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
-
 	private let folder: String
 	private let diskCache: BinaryDiskCache
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
-
-	private var homePageToFaviconURLCache = [String: String]() // homePageURL: faviconURL
-	private var homePageToFaviconURLCachePath: String
-	private var homePageToFaviconURLCacheDirty = false {
-		didSet {
-			queueSaveHomePageToFaviconURLCacheIfNeeded()
-		}
-	}
-
-	private var homePageURLsWithNoFaviconURLCache = Set<String>()
-	private var homePageURLsWithNoFaviconURLCachePath: String
-	private var homePageURLsWithNoFaviconURLCacheDirty = false {
-		didSet {
-			queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded()
-		}
-	}
 
 	private let queue: DispatchQueue
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
@@ -60,11 +43,6 @@ extension Notification.Name {
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
-
-		self.homePageToFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToFaviconURLCache.plist")
-		self.homePageURLsWithNoFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
-		loadHomePageToFaviconURLCache()
-		loadHomePageURLsWithNoFaviconURLCache()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
@@ -124,12 +102,6 @@ extension Notification.Name {
 	}
 
 	/// Returns the in-memory favicon for `feed` without triggering a download.
-	/// Used by `IconImageCache` for read-only lookups and prefetch paths.
-	///
-	/// First checks the `feed`-keyed cache; falls back to peeking at any existing
-	/// `SingleFaviconDownloader` for the feed's favicon URL — so sidebar redraws
-	/// triggered by `FaviconDidBecomeAvailable` pick up newly-loaded icons.
-	/// Never creates a new `SingleFaviconDownloader`; never triggers a download.
 	func cachedFaviconAsIcon(for feed: Feed) -> IconImage? {
 		if let image = cache[feed] {
 			return image
@@ -148,13 +120,16 @@ extension Notification.Name {
 		if let faviconURL = feed.faviconURL {
 			return faviconURL
 		}
-		if let homePageURL = feed.homePageURL, let faviconURL = homePageToFaviconURLCache[homePageURL] {
+		if let homePageURL = feed.homePageURL, let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
 			return faviconURL
 		}
 		return nil
 	}
 
 	func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
+		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
+			return nil
+		}
 		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
 		return downloader.iconImage
 	}
@@ -169,11 +144,11 @@ extension Notification.Name {
 			}
 		}
 
-		if homePageURLsWithNoFaviconURLCache.contains(url) {
+		if ImageMetadataDatabase.shared.homePageHasNoFavicon(url) {
 			return nil
 		}
 
-		if let faviconURL = homePageToFaviconURLCache[url] {
+		if let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: url) {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
@@ -197,6 +172,14 @@ extension Notification.Name {
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
 			return
 		}
+
+		// URL-level outcome runs before the homePageURL guard so we record it even when homePageURL is nil.
+		if let error = singleFaviconDownloader.error {
+			ImageMetadataDatabase.shared.recordFailure(url: singleFaviconDownloader.faviconURL, statusCode: error.statusCode)
+		} else if singleFaviconDownloader.iconImage != nil {
+			ImageMetadataDatabase.shared.clearFailure(url: singleFaviconDownloader.faviconURL)
+		}
+
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
 			return
 		}
@@ -209,8 +192,7 @@ extension Notification.Name {
 					remainingFaviconURLs[homePageURL] = nil
 
 					if currentHomePageHasOnlyFaviconICO {
-						self.homePageURLsWithNoFaviconURLCache.insert(homePageURL)
-						self.homePageURLsWithNoFaviconURLCacheDirty = true
+						ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 					}
 				}
 			}
@@ -230,20 +212,7 @@ extension Notification.Name {
 		}
 
 		Task { @MainActor in
-			// This will fetch the favicon (if possible) and post a .FaviconDidBecomeAvailable Notification.
 			_ = favicon(withHomePageURL: url)
-		}
-	}
-
-	@objc func saveHomePageToFaviconURLCacheIfNeeded() {
-		if homePageToFaviconURLCacheDirty {
-			saveHomePageToFaviconURLCache()
-		}
-	}
-
-	@objc func saveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
-		if homePageURLsWithNoFaviconURLCacheDirty {
-			saveHomePageURLsWithNoFaviconURLCache()
 		}
 	}
 }
@@ -280,9 +249,8 @@ private extension FaviconDownloader {
 
 		var firstTimeSeeingHomepageURL = false
 
-		if let homePageURL = homePageURL, self.homePageToFaviconURLCache[homePageURL] == nil {
-			self.homePageToFaviconURLCache[homePageURL] = faviconURL
-			self.homePageToFaviconURLCacheDirty = true
+		if let homePageURL, ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) == nil {
+			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
 			firstTimeSeeingHomepageURL = true
 		}
 
@@ -307,61 +275,6 @@ private extension FaviconDownloader {
 		DispatchQueue.main.async {
 			let userInfo: [AnyHashable: Any] = [UserInfoKey.faviconURL: faviconURL]
 			NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
-		}
-	}
-
-	func loadHomePageToFaviconURLCache() {
-		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
-			return
-		}
-		let decoder = PropertyListDecoder()
-		homePageToFaviconURLCache = (try? decoder.decode([String: String].self, from: data)) ?? [String: String]()
-	}
-
-	func loadHomePageURLsWithNoFaviconURLCache() {
-		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
-			return
-		}
-		let decoder = PropertyListDecoder()
-		let decoded = (try? decoder.decode([String].self, from: data)) ?? [String]()
-		homePageURLsWithNoFaviconURLCache = Set(decoded)
-	}
-
-	func queueSaveHomePageToFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageToFaviconURLCacheIfNeeded))
-	}
-
-	func queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageURLsWithNoFaviconURLCacheIfNeeded))
-	}
-
-	func saveHomePageToFaviconURLCache() {
-		homePageToFaviconURLCacheDirty = false
-
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
-		do {
-			let data = try encoder.encode(homePageToFaviconURLCache)
-			try data.write(to: url)
-		} catch {
-			assertionFailure(error.localizedDescription)
-		}
-	}
-
-	func saveHomePageURLsWithNoFaviconURLCache() {
-		homePageURLsWithNoFaviconURLCacheDirty = false
-
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
-		do {
-			let data = try encoder.encode(Array(homePageURLsWithNoFaviconURLCache))
-			try data.write(to: url)
-		} catch {
-			assertionFailure(error.localizedDescription)
 		}
 	}
 }
