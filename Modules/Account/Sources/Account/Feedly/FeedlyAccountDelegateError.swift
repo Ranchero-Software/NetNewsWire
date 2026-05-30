@@ -25,9 +25,9 @@ enum FeedlyAccountDelegateError: LocalizedError {
 		case .notLoggedIn:
 			return NSLocalizedString("Please add the Feedly account again. If this problem persists, open Keychain Access and delete all feedly.com entries, then try again.", comment: "Feedly – Credentials not found.")
 
-		case .unexpectedResourceID(let resourceId):
+		case .unexpectedResourceID(let resourceID):
 			let template = NSLocalizedString("Could not encode the identifier “%@”.", comment: "Feedly – Could not encode resource id to send to Feedly.")
-			return String(format: template, resourceId)
+			return String(format: template, resourceID)
 
 		case .unableToAddFolder(let name):
 			let template = NSLocalizedString("Could not create a folder named “%@”.", comment: "Feedly – Could not create a folder/collection.")

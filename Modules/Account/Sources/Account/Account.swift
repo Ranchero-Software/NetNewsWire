@@ -440,8 +440,7 @@ public enum FetchType {
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
 	                                           client: OAuthAuthorizationClient,
 	                                           accountType: AccountType,
-	                                           transport: Transport = URLSession.webserviceTransport(),
-	                                           completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> Void) {
+	                                           transport: Transport = URLSession.webserviceTransport()) async throws -> OAuthAuthorizationGrant {
 		let grantingType: OAuthAuthorizationGranting.Type
 
 		switch accountType {
@@ -451,7 +450,7 @@ public enum FetchType {
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
 
-		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
+		return try await grantingType.requestOAuthAccessToken(with: response, transport: transport)
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {

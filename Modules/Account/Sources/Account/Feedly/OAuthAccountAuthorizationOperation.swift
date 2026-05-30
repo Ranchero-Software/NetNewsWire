@@ -92,8 +92,8 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 			return
 		}
 
-		guard let redirectUri = URL(string: oauthClient.redirectUri), let scheme = redirectUri.scheme else {
-			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectUri)")
+		guard let redirectURI = URL(string: oauthClient.redirectURI), let scheme = redirectURI.scheme else {
+			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectURI)")
 			didEndAuthentication(url: nil, error: URLError(.badURL))
 			return
 		}
@@ -185,7 +185,14 @@ private extension OAuthAccountAuthorizationOperation {
 
 			let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
 
-			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, completion: didEndRequestingAccessToken(_:))
+			Task { @MainActor in
+				do {
+					let grant = try await Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType)
+					self.didEndRequestingAccessToken(.success(grant))
+				} catch {
+					self.didEndRequestingAccessToken(.failure(error))
+				}
+			}
 
 		} catch is ASWebAuthenticationSessionError {
 			didComplete() // Primarily, cancellation.
