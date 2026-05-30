@@ -174,14 +174,16 @@ final class CloudKitArticlesZone: CloudKitZone {
 		try await delete(ckQuery: ckQuery)
 	}
 
-	@MainActor func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
+	/// Returns the count of articles whose content (not just status) was uploaded.
+	@MainActor func modifyArticles(_ statusUpdates: [CloudKitArticleStatusUpdate]) async throws -> Int {
 		guard !statusUpdates.isEmpty else {
-			return
+			return 0
 		}
 
 		var modifyRecords = [CKRecord]()
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
+		var contentUploadCount = 0
 
 		let syncUnreadContent = syncArticleContentForUnreadArticles()
 		Self.logger.info("CloudKitArticlesZone: modifyArticles syncUnreadContent: \(syncUnreadContent, privacy: .public)")
@@ -191,10 +193,12 @@ final class CloudKitArticlesZone: CloudKitZone {
 			case .all:
 				modifyRecords.append(self.makeStatusRecord(statusUpdate))
 				modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
+				contentUploadCount += 1
 			case .new:
 				newRecords.append(self.makeStatusRecord(statusUpdate))
 				if statusUpdate.article!.status.starred || syncUnreadContent {
 					newRecords.append(self.makeArticleRecord(statusUpdate.article!))
+					contentUploadCount += 1
 				} else {
 					Self.logger.debug("CloudKitArticlesZone: modifyArticles skipping content for unread article \(statusUpdate.articleID, privacy: .public)")
 				}
@@ -217,6 +221,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 		} catch {
 			try await handleModifyArticlesError(error, statusUpdates: statusUpdates)
 		}
+		return contentUploadCount
 	}
 
 	/// Periodic cleanup path. Scans content records incrementally, stopping when

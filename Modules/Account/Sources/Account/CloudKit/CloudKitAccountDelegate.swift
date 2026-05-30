@@ -896,25 +896,19 @@ private extension CloudKitAccountDelegate {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		Task {
 			do {
-				let successMessage: (Int) -> String? = { count in
-					"\(count) article\(count == 1 ? "" : "s") uploaded"
-				}
-				try await account.logActivity(kind: .uploadNewArticles, detail: feed.url, successMessage: successMessage) { () -> Int in
-					let articles = try await account.fetchArticlesAsync(.feed(feed))
+				let articles = try await account.fetchArticlesAsync(.feed(feed))
 
-					await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
-					syncProgress.completeTask()
+				await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
+				syncProgress.completeTask()
 
-					try await sendArticleStatus(account: account, showProgress: true)
-					do {
-						try await articlesZone.fetchChangesInZone()
-					} catch {
-						Self.logger.error("CloudKitAccountDelegate: fetchChangesInZone error: \(error.localizedDescription)")
-						if let account = self.account {
-							postSyncError(error, account: account, operation: "Fetching zone changes")
-						}
+				try await sendArticleStatus(account: account, showProgress: true)
+				do {
+					try await articlesZone.fetchChangesInZone()
+				} catch {
+					Self.logger.error("CloudKitAccountDelegate: fetchChangesInZone error: \(error.localizedDescription)")
+					if let account = self.account {
+						postSyncError(error, account: account, operation: "Fetching zone changes")
 					}
-					return articles.count
 				}
 			} catch {
 				Self.logger.error("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")

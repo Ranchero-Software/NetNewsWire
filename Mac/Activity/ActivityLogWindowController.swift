@@ -523,8 +523,6 @@ private extension ActivityLogWindowController {
 			return "Cleaning up iCloud records"
 		case .fetchCloudKitStats:
 			return "Fetching iCloud stats"
-		case .uploadNewArticles:
-			return "Uploading new articles"
 		case .subscribeToCloudKitZone:
 			return "Subscribing to zone changes"
 		case .vacuumDatabase:
