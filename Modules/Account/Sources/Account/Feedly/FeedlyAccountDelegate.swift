@@ -129,21 +129,27 @@ import Secrets
 		progressInfo = ProgressInfo()
 		let startDate = Date()
 
+		let successMessage: (RefreshAllSummary) -> String? = { summary in
+			Self.refreshAllMessage(summary: summary)
+		}
+
 		do {
-			try await account.logActivity(kind: .refreshAll) {
-				try await sendArticleStatus(for: account)
+			try await account.logActivity(kind: .refreshAll, successMessage: successMessage) { () -> RefreshAllSummary in
+				var summary = RefreshAllSummary()
+				summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
 				refreshProgress.completeTask()
-				try await refreshFeedList(for: account)
+				summary.feedListChanges = try await refreshFeedList(for: account)
 				refreshProgress.completeTask()
 				try await ingestStreamArticleIDs(for: account, userID: credentials.username)
 				refreshProgress.completeTask()
-				try await refreshArticleStatus(for: account)
+				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account)
 				refreshProgress.completeTask()
 				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
 				let missingIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
-				try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
+				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
 				refreshProgress.completeTask()
+				return summary
 			}
 			accountSettings?.lastArticleFetchStartTime = startDate
 			accountSettings?.lastRefreshCompletedDate = Date()
@@ -549,23 +555,20 @@ import Secrets
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: markArticles")
 		let detail = "\(articles.count) (\(statusKey.rawValue) = \(flag))"
-		let successMessage: ((queued: Int, sendTriggered: Bool)) -> String? = { info in
-			let suffix = info.sendTriggered ? ", send triggered" : ""
-			return "\(info.queued) status\(info.queued == 1 ? "" : "es") queued\(suffix)"
+		let successMessage: (Int) -> String? = { queued in
+			"\(queued) status\(queued == 1 ? "" : "es") queued"
 		}
-		try await account.logActivity(kind: .markArticles, detail: detail, successMessage: successMessage) { () -> (queued: Int, sendTriggered: Bool) in
+		try await account.logActivity(kind: .markArticles, detail: detail, successMessage: successMessage) { () -> Int in
 			let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 			let syncStatuses = Set(updatedArticles.map { article in
 				SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 			})
 
 			try await syncDatabase.insertStatuses(syncStatuses)
-			var sendTriggered = false
 			if let count = try? await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
-				sendTriggered = true
 				try await sendArticleStatus(for: account)
 			}
-			return (queued: syncStatuses.count, sendTriggered: sendTriggered)
+			return syncStatuses.count
 		}
 	}
 
@@ -652,7 +655,8 @@ private extension FeedlyAccountDelegate {
 		return (folder, collectionID)
 	}
 
-	func refreshFeedList(for account: Account) async throws {
+	@discardableResult
+	func refreshFeedList(for account: Account) async throws -> FeedListChanges {
 		let successMessage: (FeedListChanges) -> String? = { changes in
 			Self.feedListMessage(changes: changes)
 		}
@@ -661,7 +665,7 @@ private extension FeedlyAccountDelegate {
 		}
 
 		do {
-			try await account.logActivity(kind: .refreshFeedList, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> FeedListChanges in
+			return try await account.logActivity(kind: .refreshFeedList, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> FeedListChanges in
 				// Snapshot before reconciliation so we can diff what actually changed.
 				let foldersBefore = account.folders ?? Set()
 				let feedsBefore = account.flattenedFeeds()
@@ -777,20 +781,25 @@ private extension FeedlyAccountDelegate {
 	}
 
 	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks.
-	func downloadEntries(for account: Account, articleIDs: Set<String>) async throws {
+	/// Returns the count of articles ingested.
+	@discardableResult
+	func downloadEntries(for account: Account, articleIDs: Set<String>) async throws -> Int {
 		guard !articleIDs.isEmpty else {
-			return
+			return 0
 		}
 
 		Self.logger.info("Feedly: Requesting \(articleIDs.count) articles")
 
 		do {
-			try await account.logActivity(kind: .refreshMissingArticles) {
+			return try await account.logActivity(kind: .refreshMissingArticles) { () -> Int in
+				var ingested = 0
 				let chunks = Array(articleIDs).chunked(into: Self.articleDownloadChunkSize)
 				for chunk in chunks {
 					let entries = try await caller.getEntries(for: Set(chunk))
 					try await ingest(entries: entries, into: account)
+					ingested += entries.count
 				}
+				return ingested
 			}
 		} catch {
 			postSyncError(error, account: account, operation: "Downloading articles")
@@ -897,6 +906,14 @@ extension FeedlyAccountDelegate {
 		}
 	}
 
+	/// Aggregate counts produced by a full account refresh.
+	struct RefreshAllSummary {
+		var statusesSent = 0
+		var feedListChanges = FeedListChanges()
+		var statusRefreshCounts = StatusRefreshCounts()
+		var articlesDownloaded = 0
+	}
+
 	static func sendStatusMessage(count: Int) -> String {
 		if count == 0 {
 			return "No statuses to send"
@@ -940,6 +957,49 @@ extension FeedlyAccountDelegate {
 		}
 		if changes.feedsRenamed > 0 {
 			parts.append("\(changes.feedsRenamed) feed\(changes.feedsRenamed == 1 ? "" : "s") renamed")
+		}
+		if parts.isEmpty {
+			return "No changes"
+		}
+		return parts.joined(separator: ", ")
+	}
+
+	static func refreshAllMessage(summary: RefreshAllSummary) -> String {
+		var parts = [String]()
+		if summary.articlesDownloaded > 0 {
+			parts.append("\(summary.articlesDownloaded) article\(summary.articlesDownloaded == 1 ? "" : "s") downloaded")
+		}
+		let refresh = summary.statusRefreshCounts
+		if refresh.unreadAdded > 0 {
+			parts.append("\(refresh.unreadAdded) marked unread")
+		}
+		if refresh.unreadRemoved > 0 {
+			parts.append("\(refresh.unreadRemoved) marked read")
+		}
+		if refresh.starredAdded > 0 {
+			parts.append("\(refresh.starredAdded) starred")
+		}
+		if refresh.starredRemoved > 0 {
+			parts.append("\(refresh.starredRemoved) unstarred")
+		}
+		if summary.statusesSent > 0 {
+			parts.append("\(summary.statusesSent) status\(summary.statusesSent == 1 ? "" : "es") sent")
+		}
+		let feedList = summary.feedListChanges
+		if feedList.foldersAdded > 0 {
+			parts.append("\(feedList.foldersAdded) folder\(feedList.foldersAdded == 1 ? "" : "s") added")
+		}
+		if feedList.foldersRemoved > 0 {
+			parts.append("\(feedList.foldersRemoved) folder\(feedList.foldersRemoved == 1 ? "" : "s") removed")
+		}
+		if feedList.feedsAdded > 0 {
+			parts.append("\(feedList.feedsAdded) feed\(feedList.feedsAdded == 1 ? "" : "s") added")
+		}
+		if feedList.feedsRemoved > 0 {
+			parts.append("\(feedList.feedsRemoved) feed\(feedList.feedsRemoved == 1 ? "" : "s") removed")
+		}
+		if feedList.feedsRenamed > 0 {
+			parts.append("\(feedList.feedsRenamed) feed\(feedList.feedsRenamed == 1 ? "" : "s") renamed")
 		}
 		if parts.isEmpty {
 			return "No changes"
