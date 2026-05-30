@@ -23,6 +23,10 @@ import Account
 	/// True when the most recent timed run was a no-op; the next fire is pushed out.
 	private var lastRunWasIdle = false
 
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountDidQueueArticleStatuses(_:)), name: .AccountDidQueueArticleStatuses, object: nil)
+	}
+
 	func fireOldTimer() {
 		if let timer = internalTimer {
 			if timer.fireDate < Date() {
@@ -88,5 +92,15 @@ import Account
 			// Re-schedule now that we know whether to back off.
 			self.update()
 		}
+	}
+
+	/// User-initiated status changes were queued — exit idle backoff so the
+	/// next fire happens on the normal cadence instead of 30 minutes out.
+	@objc func handleAccountDidQueueArticleStatuses(_ notification: Notification) {
+		guard lastRunWasIdle else {
+			return
+		}
+		lastRunWasIdle = false
+		update()
 	}
 }

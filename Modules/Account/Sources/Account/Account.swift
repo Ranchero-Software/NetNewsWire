@@ -32,6 +32,9 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
+	/// Posted when a delegate enqueues one or more status changes for upstream send.
+	/// Distinct from `StatusesDidChange`, which also fires for remote-sourced changes.
+	static let AccountDidQueueArticleStatuses = Notification.Name(rawValue: "AccountDidQueueArticleStatuses")
 }
 
 nonisolated public enum AccountType: Int, Codable, Sendable {

@@ -502,6 +502,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			})
 
 			try await syncDatabase.insertStatuses(syncStatuses)
+			if !syncStatuses.isEmpty {
+				NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
+			}
 			if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 				try await sendArticleStatus(for: account)
 			}

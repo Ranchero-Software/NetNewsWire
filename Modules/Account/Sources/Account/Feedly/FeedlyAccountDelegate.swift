@@ -565,6 +565,9 @@ import Secrets
 			})
 
 			try await syncDatabase.insertStatuses(syncStatuses)
+			if !syncStatuses.isEmpty {
+				NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
+			}
 			if let count = try? await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
 				try await sendArticleStatus(for: account)
 			}
