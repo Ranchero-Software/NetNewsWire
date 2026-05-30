@@ -523,12 +523,21 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		let accountID = account.accountID
 		func makePageHandler(kind: ActivityKind) -> CloudKitZoneFetchPageHandler {
-			{ zoneName, changed, deleted, _ in
+			let what: String
+			switch kind {
+			case .refreshArticleStatuses:
+				what = "status and content changes"
+			case .refreshFeedList:
+				what = "feed list changes"
+			default:
+				what = "changes"
+			}
+			return { _, changed, deleted, _ in
 				let activityLog = ActivityLog.shared
 				let owner = ActivityOwner.account(accountID)
 				let taskNumber = activityLog.nextTaskNumberString()
 				let message = cloudKitSyncMessage(changed: changed, deleted: deleted)
-				let detail = "Fetching \(zoneName.lowercased()) changes \(taskNumber)"
+				let detail = "Fetching \(what) \(taskNumber)"
 				let id = activityLog.createActivity(owner: owner, kind: kind, detail: detail)
 				activityLog.didStart(id: id)
 				activityLog.didComplete(id: id, message: message)
