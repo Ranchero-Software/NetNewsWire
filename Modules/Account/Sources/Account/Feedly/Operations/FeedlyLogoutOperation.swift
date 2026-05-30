@@ -24,6 +24,7 @@ final class FeedlyLogoutOperation: FeedlyOperation {
 	}
 
 	override func run() {
+		startActivityIfNeeded()
 		Feedly.logger.info("Feedly: Requesting logout \(self.account.accountID, privacy: .public)")
 		service.logout(completion: didCompleteLogout(_:))
 	}

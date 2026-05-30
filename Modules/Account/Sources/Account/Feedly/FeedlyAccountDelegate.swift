@@ -709,6 +709,9 @@ import Secrets
 	func accountWillBeDeleted(_ account: Account) {
 		Self.logger.debug("FeedlyAccountDelegate: accountWillBeDeleted")
 		let logout = FeedlyLogoutOperation(account: account, service: caller)
+		logout.activityKind = .validateCredentials
+		logout.activityDetail = "Logging out of Feedly"
+		logout.activityAccountID = account.accountID
 		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
 		FeedlyMainThreadOperationQueue.shared.add(logout)
 	}
@@ -788,6 +791,9 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 
 		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient)
 		refreshAccessToken.downloadProgress = refreshProgress
+		refreshAccessToken.activityKind = .validateCredentials
+		refreshAccessToken.activityDetail = "Refreshing access token"
+		refreshAccessToken.activityAccountID = account.accountID
 
 		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.
 		let refreshAccessTokenDelegate = RefreshAccessTokenOperationDelegate()

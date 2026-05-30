@@ -9,6 +9,7 @@
 import Foundation
 @preconcurrency import AuthenticationServices
 import os
+import ActivityLog
 import RSCore
 
 @MainActor public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
@@ -66,6 +67,7 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 	nonisolated(unsafe) private let anchorProvider = PresentationAnchorProvider()
 	nonisolated(unsafe) private var session: ASWebAuthenticationSession?
 	private var error: Error?
+	private var activityID: Int?
 	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "OAuthAccountAuthorizationOperation")
 
 	public init(accountType: AccountType) {
@@ -77,6 +79,11 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 	public override func run() {
 		Self.logger.debug("OAuthAccountAuthorizationOperation: run")
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
+
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .app, kind: .validateCredentials, detail: "Authorizing \(accountType.displayName)")
+		activityLog.didStart(id: id)
+		activityID = id
 
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
 
@@ -105,6 +112,18 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 
 	override public func noteDidComplete() {
 		Self.logger.debug("OAuthAccountAuthorizationOperation: noteDidComplete")
+
+		if let activityID {
+			let activityLog = ActivityLog.shared
+			if let error {
+				activityLog.didFail(id: activityID, error: error)
+			} else if isCanceled {
+				activityLog.didFail(id: activityID, error: CocoaError(.userCancelled))
+			} else {
+				activityLog.didComplete(id: activityID)
+			}
+			self.activityID = nil
+		}
 
 		if isCanceled {
 			Self.logger.debug("OAuthAccountAuthorizationOperation: noteDidComplete — canceled")
