@@ -15,6 +15,7 @@ import RSCore
 import RSTree
 import SafariServices
 import SwiftUI
+import Images
 
 enum SearchScope: Int {
 	case timeline = 0
@@ -2127,6 +2128,7 @@ private extension SceneCoordinator {
 			}
 
 			updateShowNamesAndIcons()
+			IconImageCache.shared.prefetchImagesForArticles(articles)
 			updateUnreadCount()
 			mainTimelineViewController?.reloadArticles(animated: animated)
 		}

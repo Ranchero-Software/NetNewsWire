@@ -11,6 +11,7 @@ import CloudKit
 import ErrorLog
 import SystemConfiguration
 import os
+import ActivityLog
 import RSCore
 import RSParser
 import RSWeb
@@ -50,6 +51,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	private let mainThreadOperationQueue = MainThreadOperationQueue()
 	private let refresher: LocalAccountRefresher
 	private var syncErrorHandler: CloudKitSyncErrorHandler?
+
+	private var lastNoChangeSyncDate: Date?
+	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
 
 	weak var account: Account?
 
@@ -102,9 +106,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	}
 
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+		lastNoChangeSyncDate = nil
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		await withCheckedContinuation { continuation in
-			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, userInfo: userInfo)
+			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, accountID: account.accountID, userInfo: userInfo)
 			op.completionBlock = { _ in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				continuation.resume()
@@ -131,10 +136,37 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	func syncArticleStatus(for account: Account) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+
+		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
+			Self.logger.debug("CloudKitAccountDelegate: Skipping sync — no changes on last check, backing off")
+			return
+		}
+
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
+
+		if articlesZoneHasNoChanges && accountZoneHasNoChanges {
+			lastNoChangeSyncDate = Date()
+		} else {
+			lastNoChangeSyncDate = nil
+		}
+
 		await cleanUpContentRecordsIfNeeded()
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	private var articlesZoneHasNoChanges: Bool {
+		guard let delegate = articlesZone.delegate as? CloudKitArticlesZoneDelegate else {
+			return true
+		}
+		return delegate.lastChangedCount == 0 && delegate.lastDeletedCount == 0
+	}
+
+	private var accountZoneHasNoChanges: Bool {
+		guard let delegate = accountZone.delegate as? CloudKitAcountZoneDelegate else {
+			return true
+		}
+		return delegate.lastChangedCount == 0 && delegate.lastDeletedCount == 0
 	}
 
 	func sendArticleStatus(for account: Account) async throws {
@@ -146,7 +178,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	func refreshArticleStatus(for account: Account) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone)
+			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone, accountID: account.accountID)
 			op.completionBlock = { mainThreadOperation in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				if mainThreadOperation.isCanceled {
@@ -182,7 +214,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		do {
-			try await accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems)
+			try await account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+				try await accountZone.importOPML(rootExternalID: rootExternalID, items: normalizedItems)
+			}
 			try? await standardRefreshAll(for: account)
 		} catch {
 			postSyncError(error, account: account, operation: "Importing OPML")
@@ -201,7 +235,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		let editedName = name == nil || name!.isEmpty ? nil : name
-		return try await createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed)
+		return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
+			try await createRSSFeed(for: account, url: url, editedName: editedName, container: container, validateFeed: validateFeed)
+		}
 	}
 
 	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
@@ -214,8 +250,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		do {
-			try await accountZone.renameFeed(feed, editedName: editedName)
-			feed.editedName = name
+			try await account.logActivity(kind: .renameFeed, detail: feed.url) {
+				try await accountZone.renameFeed(feed, editedName: editedName)
+				feed.editedName = name
+			}
 		} catch {
 			postSyncError(error, account: account, operation: "Renaming feed")
 			throw error
@@ -229,8 +267,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		do {
-			try await removeFeedFromCloud(for: account, with: feed, from: container)
-			container.removeFeedFromTreeAtTopLevel(feed)
+			try await account.logActivity(kind: .removeFeed, detail: feed.url) {
+				try await removeFeedFromCloud(for: account, with: feed, from: container)
+				container.removeFeedFromTreeAtTopLevel(feed)
+			}
 		} catch {
 			switch error {
 			case CloudKitZoneError.corruptAccount:
@@ -251,9 +291,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		do {
-			try await accountZone.moveFeed(feed, from: sourceContainer, to: destinationContainer)
-			sourceContainer.removeFeedFromTreeAtTopLevel(feed)
-			destinationContainer.addFeedToTreeAtTopLevel(feed)
+			try await account.logActivity(kind: .moveFeed, detail: feed.url) {
+				try await accountZone.moveFeed(feed, from: sourceContainer, to: destinationContainer)
+				sourceContainer.removeFeedFromTreeAtTopLevel(feed)
+				destinationContainer.addFeedToTreeAtTopLevel(feed)
+			}
 		} catch {
 			postSyncError(error, account: account, operation: "Moving feed")
 			throw error
@@ -269,8 +311,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		do {
-			try await accountZone.addFeed(feed, to: container)
-			container.addFeedToTreeAtTopLevel(feed)
+			try await account.logActivity(kind: .addFeed, detail: feed.url) {
+				try await accountZone.addFeed(feed, to: container)
+				container.addFeedToTreeAtTopLevel(feed)
+			}
 		} catch {
 			postSyncError(error, account: account, operation: "Adding feed")
 			throw error
@@ -292,12 +336,14 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		do {
-			let externalID = try await accountZone.createFolder(name: name)
-			guard let folder = account.ensureFolder(with: name) else {
-				throw AccountError.invalidParameter
+			return try await account.logActivity(kind: .createFolder, detail: name) {
+				let externalID = try await accountZone.createFolder(name: name)
+				guard let folder = account.ensureFolder(with: name) else {
+					throw AccountError.invalidParameter
+				}
+				folder.externalID = externalID
+				return folder
 			}
-			folder.externalID = externalID
-			return folder
 		} catch {
 			postSyncError(error, account: account, operation: "Creating folder")
 			throw error
@@ -312,9 +358,12 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		syncProgress.addTask()
 		defer { syncProgress.completeTask() }
 
+		let oldName = folder.name ?? ""
 		do {
-			try await accountZone.renameFolder(folder, to: name)
-			folder.name = name
+			try await account.logActivity(kind: .renameFolder, detail: "\(oldName) → \(name)") {
+				try await accountZone.renameFolder(folder, to: name)
+				folder.name = name
+			}
 		} catch {
 			postSyncError(error, account: account, operation: "Renaming folder")
 			throw error
@@ -326,55 +375,61 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete name: \(folder.name ?? "")")
 		}
-		syncProgress.addTask()
 
-		let feedExternalIDs: [String]
-		do {
-			feedExternalIDs = try await accountZone.findFeedExternalIDs(for: folder)
-			syncProgress.completeTask()
-		} catch {
-			syncProgress.completeTask()
-			syncProgress.completeTask()
-			postSyncError(error, account: account, operation: "Removing folder")
-			throw error
-		}
+		let folderName = folder.name ?? ""
+		try await account.logActivity(kind: .removeFolder, detail: folderName) {
+			syncProgress.addTask()
 
-		let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
-		var errorOccurred = false
+			let feedExternalIDs: [String]
+			do {
+				feedExternalIDs = try await accountZone.findFeedExternalIDs(for: folder)
+				syncProgress.completeTask()
+			} catch {
+				syncProgress.completeTask()
+				syncProgress.completeTask()
+				postSyncError(error, account: account, operation: "Removing folder")
+				throw error
+			}
 
-		await withTaskGroup(of: Result<Void, Error>.self) { group in
-			for feed in feeds {
-				group.addTask {
-					do {
-						try await self.removeFeedFromCloud(for: account, with: feed, from: folder)
-						return .success(())
-					} catch {
-						Self.logger.error("CloudKit: Remove folder, remove feed error: \(error.localizedDescription)")
-						return .failure(error)
+			let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
+			var errorOccurred = false
+
+			await withTaskGroup(of: Result<Void, Error>.self) { group in
+				for feed in feeds {
+					group.addTask {
+						do {
+							try await account.logActivity(kind: .removeFeed, detail: feed.url) {
+								try await self.removeFeedFromCloud(for: account, with: feed, from: folder)
+							}
+							return .success(())
+						} catch {
+							Self.logger.error("CloudKit: Remove folder, remove feed error: \(error.localizedDescription)")
+							return .failure(error)
+						}
+					}
+				}
+
+				for await result in group {
+					if case .failure(let error) = result {
+						errorOccurred = true
+						postSyncError(error, account: account, operation: "Removing folder")
 					}
 				}
 			}
 
-			for await result in group {
-				if case .failure(let error) = result {
-					errorOccurred = true
-					postSyncError(error, account: account, operation: "Removing folder")
-				}
+			guard !errorOccurred else {
+				syncProgress.completeTask()
+				throw CloudKitAccountDelegateError.unknown
 			}
-		}
 
-		guard !errorOccurred else {
-			syncProgress.completeTask()
-			throw CloudKitAccountDelegateError.unknown
-		}
-
-		do {
-			try await accountZone.removeFolder(folder)
-			syncProgress.completeTask()
-			account.removeFolderFromTree(folder)
-		} catch {
-			syncProgress.completeTask()
-			throw error
+			do {
+				try await accountZone.removeFolder(folder)
+				syncProgress.completeTask()
+				account.removeFolderFromTree(folder)
+			} catch {
+				syncProgress.completeTask()
+				throw error
+			}
 		}
 	}
 
@@ -391,37 +446,39 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		syncProgress.addTasks(1 + feedsToRestore.count)
 
 		do {
-			let externalID = try await accountZone.createFolder(name: name)
-			syncProgress.completeTask()
+			try await account.logActivity(kind: .restoreFolder, detail: name) {
+				let externalID = try await accountZone.createFolder(name: name)
+				syncProgress.completeTask()
 
-			folder.externalID = externalID
-			account.addFolderToTree(folder)
+				folder.externalID = externalID
+				account.addFolderToTree(folder)
 
-			await withTaskGroup(of: Error?.self) { group in
-				for feed in feedsToRestore {
-					folder.topLevelFeeds.remove(feed)
+				await withTaskGroup(of: Error?.self) { group in
+					for feed in feedsToRestore {
+						folder.topLevelFeeds.remove(feed)
 
-					group.addTask {
-						do {
-							try await self.restoreFeed(for: account, feed: feed, container: folder)
-							await self.syncProgress.completeTask()
-							return nil
-						} catch {
-							Self.logger.error("CloudKit: Restore folder feed error: \(error.localizedDescription)")
-							await self.syncProgress.completeTask()
-							return error
+						group.addTask {
+							do {
+								try await self.restoreFeed(for: account, feed: feed, container: folder)
+								await self.syncProgress.completeTask()
+								return nil
+							} catch {
+								Self.logger.error("CloudKit: Restore folder feed error: \(error.localizedDescription)")
+								await self.syncProgress.completeTask()
+								return error
+							}
+						}
+					}
+
+					for await error in group {
+						if let error {
+							postSyncError(error, account: account, operation: "Restoring folder")
 						}
 					}
 				}
 
-				for await error in group {
-					if let error {
-						postSyncError(error, account: account, operation: "Restoring folder")
-					}
-				}
+				account.addFolderToTree(folder)
 			}
-
-			account.addFolderToTree(folder)
 		} catch {
 			syncProgress.completeTask()
 			postSyncError(error, account: account, operation: "Restoring folder")
@@ -431,15 +488,27 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
-		let syncStatuses = Set(articles.map { article in
-			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
-		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
-			try await sendArticleStatus(for: account)
+		let detail = "\(articles.count) (\(statusKey.rawValue) = \(flag))"
+		let successMessage: ((queued: Int, sendTriggered: Bool)) -> String? = { info in
+			let suffix = info.sendTriggered ? ", send triggered" : ""
+			return "\(info.queued) status\(info.queued == 1 ? "" : "es") queued\(suffix)"
 		}
+		try await account.logActivity(kind: .markArticles, detail: detail, successMessage: successMessage) { () -> (queued: Int, sendTriggered: Bool) in
+			let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+			let syncStatuses = Set(updatedArticles.map { article in
+				SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+			})
+
+			try await syncDatabase.insertStatuses(syncStatuses)
+			var sendTriggered = false
+			if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+				sendTriggered = true
+				try await sendArticleStatus(for: account)
+			}
+			return (queued: syncStatuses.count, sendTriggered: sendTriggered)
+		}
+
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
@@ -457,6 +526,22 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		accountZone.delegate = CloudKitAcountZoneDelegate(account: account, articlesZone: articlesZone)
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: syncDatabase, articlesZone: articlesZone, syncErrorHandler: syncErrorHandler)
 
+		let accountID = account.accountID
+		func makePageHandler(kind: ActivityKind) -> CloudKitZoneFetchPageHandler {
+			{ zoneName, changed, deleted, _ in
+				let activityLog = ActivityLog.shared
+				let owner = ActivityOwner.account(accountID)
+				let taskNumber = activityLog.nextTaskNumberString()
+				let message = cloudKitSyncMessage(changed: changed, deleted: deleted)
+				let detail = "Fetching \(zoneName.lowercased()) changes \(taskNumber)"
+				let id = activityLog.createActivity(owner: owner, kind: kind, detail: detail)
+				activityLog.didStart(id: id)
+				activityLog.didComplete(id: id, message: message)
+			}
+		}
+		accountZone.fetchChangesPageHandler = makePageHandler(kind: .refreshFeedList)
+		articlesZone.fetchChangesPageHandler = makePageHandler(kind: .refreshArticleStatuses)
+
 		syncDatabase.resetAllSelectedForProcessing()
 
 		// Check to see if this is a new account and initialize anything we need
@@ -473,8 +558,8 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 					}
 				}
 			}
-			accountZone.subscribeToZoneChanges()
-			articlesZone.subscribeToZoneChanges()
+			subscribeToZoneChangesWithActivity(account: account, zone: accountZone)
+			subscribeToZoneChangesWithActivity(account: account, zone: articlesZone)
 		}
 
 	}
@@ -490,8 +575,8 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		nil
 	}
 
-	func vacuumDatabases() {
-		Task {
+	func vacuumDatabases(for account: Account) async {
+		try? await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}
@@ -501,7 +586,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			throw CloudKitAccountDelegateError.unknown
 		}
 		do {
-			return try await articlesZone.fetchStats(account: account, progress: progress)
+			return try await account.logActivity(kind: .fetchCloudKitStats) {
+				try await articlesZone.fetchStats(account: account, progress: progress)
+			}
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: fetchCloudKitStats error: \(error)")
 			postSyncError(error, account: account, operation: "Fetching iCloud stats")
@@ -514,8 +601,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			throw CloudKitAccountDelegateError.unknown
 		}
 		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
+		let detail = dryRun ? "Dry run" : "Manual"
 		do {
-			try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
+			try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: detail) {
+				try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
+			}
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: cleanUpCloudKit error: \(error)")
 			postSyncError(error, account: account, operation: "Cleaning up iCloud records")
@@ -559,6 +649,33 @@ private extension CloudKitAccountDelegate {
 	}
 }
 
+// MARK: - Activity Log helper
+
+private extension CloudKitAccountDelegate {
+
+	/// Push-subscription setup runs once per zone at first iCloud account add.
+	/// Wraps it in an activity so silent failures (offline, account issues) become
+	/// visible — without it, a failed subscription means no future remote pushes.
+	func subscribeToZoneChangesWithActivity(account: Account, zone: any CloudKitZone) {
+		let zoneName = zone.zoneID.zoneName
+		Task { [weak self] in
+			guard let self else {
+				return
+			}
+			do {
+				try await account.logActivity(kind: .subscribeToCloudKitZone, detail: zoneName) {
+					try await zone.subscribeToZoneChanges()
+				}
+			} catch {
+				Self.logger.error("CloudKitAccountDelegate: subscribeToZoneChanges \(zoneName, privacy: .public) error: \(error.localizedDescription)")
+				if let account = self.account {
+					self.postSyncError(error, account: account, operation: "Subscribing to zone changes")
+				}
+			}
+		}
+	}
+}
+
 // MARK: - Private
 
 private extension CloudKitAccountDelegate {
@@ -572,6 +689,7 @@ private extension CloudKitAccountDelegate {
 	}
 
 	func performRefreshAll(for account: Account, sendArticleStatus: Bool) async throws {
+		lastNoChangeSyncDate = nil
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) sendArticleStatus: \(sendArticleStatus ? "true" : "false")")
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
@@ -579,10 +697,36 @@ private extension CloudKitAccountDelegate {
 
 		syncProgress.addTasks(3)
 
+		let activityLog = ActivityLog.shared
+		let owner = ActivityOwner.account(account.accountID)
+
+		// Overall .refreshAll activity for this account, wrapping every stage
+		// below. Individual activities (fetchChangesInZone, receive/send operations)
+		// log their own entries, while this one provides the account-is-refreshing
+		// status at the account level.
+		let refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
+		activityLog.didStart(id: refreshActivityID)
+		var refreshFinishedSuccessfully = false
+		var refreshCompletionMessage: String?
+		defer {
+			if refreshFinishedSuccessfully {
+				activityLog.didComplete(id: refreshActivityID, message: refreshCompletionMessage)
+			} else {
+				let error = NSError(domain: "CloudKitAccountDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "Refresh interrupted"])
+				activityLog.didFail(id: refreshActivityID, error: error)
+			}
+		}
+
+		let fetchChangesTaskNumber = activityLog.nextTaskNumberString()
+		let fetchChangesID = activityLog.createActivity(owner: owner, kind: .refreshFeedList, detail: "Fetching account zone changes \(fetchChangesTaskNumber)")
+		activityLog.didStart(id: fetchChangesID)
+
 		do {
 			try await accountZone.fetchChangesInZone()
+			activityLog.didComplete(id: fetchChangesID)
 			syncProgress.completeTask()
 		} catch {
+			activityLog.didFail(id: fetchChangesID, error: error)
 			if case CloudKitZoneError.userDeletedZone = error {
 				account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 				for folder in account.folders ?? Set<Folder>() {
@@ -605,7 +749,10 @@ private extension CloudKitAccountDelegate {
 			throw error
 		}
 
+		refresher.accountID = account.accountID
+		refresher.publishesRefreshActivity = false
 		await refresher.refreshFeeds(feeds)
+		refreshCompletionMessage = refresher.refreshStatsMessage
 
 		if sendArticleStatus {
 			do {
@@ -619,6 +766,7 @@ private extension CloudKitAccountDelegate {
 
 		syncProgress.reset()
 		account.lastRefreshCompletedDate = Date()
+		refreshFinishedSuccessfully = true
 	}
 
 	func createRSSFeed(for account: Account, url: URL, editedName: String?, container: Container, validateFeed: Bool) async throws -> Feed {
@@ -753,19 +901,25 @@ private extension CloudKitAccountDelegate {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		Task {
 			do {
-				let articles = try await account.fetchArticlesAsync(.feed(feed))
+				let successMessage: (Int) -> String? = { count in
+					"\(count) article\(count == 1 ? "" : "s") uploaded"
+				}
+				try await account.logActivity(kind: .uploadNewArticles, detail: feed.url, successMessage: successMessage) { () -> Int in
+					let articles = try await account.fetchArticlesAsync(.feed(feed))
 
-				await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
-				syncProgress.completeTask()
+					await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
+					syncProgress.completeTask()
 
-				try await sendArticleStatus(account: account, showProgress: true)
-				do {
-					try await articlesZone.fetchChangesInZone()
-				} catch {
-					Self.logger.error("CloudKitAccountDelegate: fetchChangesInZone error: \(error.localizedDescription)")
-					if let account = self.account {
-						postSyncError(error, account: account, operation: "Fetching zone changes")
+					try await sendArticleStatus(account: account, showProgress: true)
+					do {
+						try await articlesZone.fetchChangesInZone()
+					} catch {
+						Self.logger.error("CloudKitAccountDelegate: fetchChangesInZone error: \(error.localizedDescription)")
+						if let account = self.account {
+							postSyncError(error, account: account, operation: "Fetching zone changes")
+						}
 					}
+					return articles.count
 				}
 			} catch {
 				Self.logger.error("CloudKitAccountDelegate: \(#function, privacy: .public) error: \(error.localizedDescription)")
@@ -896,7 +1050,12 @@ private extension CloudKitAccountDelegate {
 		Self.logger.info("CloudKitAccountDelegate: running weekly record cleanup")
 		do {
 			let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
-			let deleted = try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
+			let successMessage: (Int) -> String? = { count in
+				count == 0 ? "no records deleted" : "deleted \(count) record\(count == 1 ? "" : "s")"
+			}
+			let deleted = try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: "Weekly", successMessage: successMessage) { () -> Int in
+				try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
+			}
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: weekly cleanup error: \(error.localizedDescription, privacy: .public)")

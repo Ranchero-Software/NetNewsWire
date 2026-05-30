@@ -12,6 +12,11 @@ public extension Notification.Name {
 	static let activityDidChange = Notification.Name(rawValue: "ActivityDidChangeNotification")
 }
 
+public enum ActivityLogError: Error, Sendable {
+	/// As determined by `removeStaleRunningActivities`.
+	case timedOut
+}
+
 /// In-memory log of app activities (refreshes, downloads, status syncs).
 /// Each activity moves through pending → running → completed/failed.
 /// An `.activityDidChange` notification is posted onchange.
@@ -32,6 +37,10 @@ public extension Notification.Name {
 
 	/// Maximum number of completed activities to retain.
 	public let completedActivitiesLimit = 500
+
+	/// A running activity older than this gets set to `completed` with
+	/// `ActivityLogError.timedOut`.
+	public let runningStaleAfterSeconds: TimeInterval = 15 * 60 // 15 minutes
 
 	private var nextID = 0
 	private var nextTaskNumber = 1
@@ -251,7 +260,21 @@ private extension ActivityLog {
 		}
 	}
 
+	/// Move any running activity older than `runningStaleAfterSeconds` to
+	/// completed with error `ActivityLogError.timedOut`.
+	func removeStaleRunningActivities() {
+		let cutoff = Date().addingTimeInterval(-runningStaleAfterSeconds)
+		let stale = runningActivities.filter { activity in
+			(activity.startDate ?? activity.creationDate) < cutoff
+		}
+		for activity in stale {
+			activity.didFail(ActivityLogError.timedOut)
+			moveToCompleted(activity)
+		}
+	}
+
 	func postDidChangeNotification() {
+		removeStaleRunningActivities()
 		NotificationCenter.default.post(name: .activityDidChange, object: self)
 	}
 }

@@ -8,10 +8,12 @@
 
 import Foundation
 import Account
+import ActivityLog
 
 @MainActor final class AccountRefreshTimer {
 
 	var shuttingDown = false
+	var isSystemSleeping = false
 
 	private var internalTimer: Timer?
 	private var lastTimedRefresh: Date?
@@ -86,6 +88,17 @@ import Account
 	@objc func timedRefresh(_ sender: Timer?) {
 
 		guard !shuttingDown else {
+			return
+		}
+
+		if isSystemSleeping {
+			let activityLog = ActivityLog.shared
+			let id = activityLog.createActivity(owner: .app, kind: .refreshAll)
+			activityLog.didStart(id: id)
+			activityLog.didComplete(id: id, message: "Skipped — computer is asleep", durationIsSignificant: false)
+
+			lastTimedRefresh = Date()
+			update()
 			return
 		}
 

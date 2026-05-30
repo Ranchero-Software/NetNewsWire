@@ -10,13 +10,15 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
-actor HTMLMetadataDatabase {
+public final actor HTMLMetadataDatabase {
 
-	@MainActor static let shared: HTMLMetadataDatabase = {
+	@MainActor public static let shared: HTMLMetadataDatabase = {
 		let databasePath = AppConfig.dataFolder
 			.appendingPathComponent("HTMLMetadata.db").path
 		return HTMLMetadataDatabase(databasePath: databasePath)
 	}()
+
+	public nonisolated let databasePath: String
 
 	private let database: FMDatabase
 	private var cache = [String: CachedRecord]()
@@ -26,27 +28,32 @@ actor HTMLMetadataDatabase {
 		let lastChecked: Date
 		let statusCode: Int
 
-		/// True when the last contact for this URL returned a 4xx — a dead or
-		/// missing homepage we shouldn’t keep re-requesting.
-		var isFailure: Bool {
+		/// True when the last contact returned a 4xx.
+		var isPersistentFailure: Bool {
 			(400...499).contains(statusCode)
+		}
+		/// True when the last contact failed before getting a response (DNS, TLS, network).
+		var isTransientFailure: Bool {
+			statusCode == 0
+		}
+		var isFailure: Bool {
+			isPersistentFailure || isTransientFailure
 		}
 	}
 
 	private static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS metadata (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL, lastStatusCode INTEGER NOT NULL DEFAULT 200, favicons TEXT, appleTouchIcons TEXT, feedLinks TEXT, openGraphImages TEXT, twitterImageURL TEXT);
+	CREATE TABLE IF NOT EXISTS metadata (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL, statusCode INTEGER NOT NULL DEFAULT 200, favicons TEXT, appleTouchIcons TEXT, feedLinks TEXT, openGraphImages TEXT, twitterImageURL TEXT);
 	"""
 
 	/// 73 hours — prime number close to 3 days.
 	private static let cacheExpirationHours = 73
 
-	/// Entries that haven't been checked in a number of days are deleted on init.
 	private static let maximumDaysWithoutCheck = 30
-
-	/// A homepage that returned a 4xx isn't retried until this many days pass.
-	private static let failureRetryDays = 11
+	private static let persistentFailureRetryDays = 11
+	private static let transientFailureRetryHours = 5
 
 	private init(databasePath: String) {
+		self.databasePath = databasePath
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
@@ -57,7 +64,6 @@ actor HTMLMetadataDatabase {
 			name: .appDidGoToBackground, object: nil
 		)
 
-		// Run maintenance off the main thread (init may be evaluated there).
 		Task {
 			await performStartupMaintenance()
 		}
@@ -68,14 +74,17 @@ actor HTMLMetadataDatabase {
 		database.vacuumIfNeeded()
 	}
 
+	public func vacuum() {
+		database.vacuum()
+	}
+
 	@objc nonisolated func handleAppDidGoToBackground(_ notification: Notification) {
 		Task {
 			await emptyCache()
 		}
 	}
 
-	/// Returns the cached entry for a URL — in-memory if present, otherwise loaded
-	/// from SQLite and cached. Returns nil only when there’s no row at all.
+	/// Returns the entry, loading from disk if not in memory.
 	private func cachedOrFetched(_ url: String) -> CachedRecord? {
 		if let cached = cache[url] {
 			return cached
@@ -90,8 +99,7 @@ actor HTMLMetadataDatabase {
 		return cached
 	}
 
-	/// Returns a non-expired, successfully-fetched record. Returns nil if there’s
-	/// no record, it’s a failure entry, or it has expired.
+	/// Returns a non-expired success record, or nil.
 	func cachedRecord(for url: String) -> HTMLMetadataRecord? {
 		guard let cached = cachedOrFetched(url), !cached.isFailure, let record = cached.record else {
 			return nil
@@ -102,7 +110,7 @@ actor HTMLMetadataDatabase {
 		return record
 	}
 
-	/// Returns a successfully-fetched record regardless of expiration. Used for stale fallback.
+	/// Returns a success record regardless of expiration.
 	func staleCachedRecord(for url: String) -> HTMLMetadataRecord? {
 		guard let cached = cachedOrFetched(url), !cached.isFailure else {
 			return nil
@@ -110,13 +118,18 @@ actor HTMLMetadataDatabase {
 		return cached.record
 	}
 
-	/// True if the last contact for this URL was a recent 4xx, meaning we should
-	/// skip re-downloading it for now.
+	/// True if the last contact failed recently (4xx or transient).
 	func recentlyFailed(for url: String) -> Bool {
-		guard let cached = cachedOrFetched(url), cached.isFailure else {
+		guard let cached = cachedOrFetched(url) else {
 			return false
 		}
-		return Date().timeIntervalSince(cached.lastChecked) < TimeInterval(days: Self.failureRetryDays)
+		if cached.isPersistentFailure {
+			return Date().timeIntervalSince(cached.lastChecked) < TimeInterval(days: Self.persistentFailureRetryDays)
+		}
+		if cached.isTransientFailure {
+			return Date().timeIntervalSince(cached.lastChecked) < TimeInterval(hours: Self.transientFailureRetryHours)
+		}
+		return false
 	}
 
 	func save(_ record: HTMLMetadataRecord, statusCode: Int) {
@@ -124,15 +137,17 @@ actor HTMLMetadataDatabase {
 		HTMLMetadataTable.insertOrReplace(record: record, statusCode: statusCode, database: database)
 	}
 
-	/// Records a 4xx outcome for a URL so we stop re-requesting it across launches.
-	/// Mirrors the SQLite guard in HTMLMetadataTable.noteFailure: never downgrade a
-	/// successful entry — keep serving its metadata. Only record the failure when
-	/// there’s no successful entry to protect.
+	/// Records a failure outcome. Accepts both 4xx and transient (statusCode 0).
 	func noteFailure(url: String, statusCode: Int) {
 		if cache[url]?.isFailure ?? true {
 			cache[url] = CachedRecord(record: nil, lastChecked: Date(), statusCode: statusCode)
 		}
 		HTMLMetadataTable.noteFailure(url: url, statusCode: statusCode, database: database)
+	}
+
+	/// Records a pre-response failure (DNS, TLS, network).
+	func noteTransientFailure(url: String) {
+		noteFailure(url: url, statusCode: 0)
 	}
 
 	func emptyCache() {

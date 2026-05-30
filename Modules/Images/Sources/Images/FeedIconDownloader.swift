@@ -1,6 +1,6 @@
 //
 //  FeedIconDownloader.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Brent Simmons on 11/26/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
@@ -11,10 +11,11 @@ import Account
 import RSCore
 import RSWeb
 import HTMLMetadata
+import ActivityLog
 
 extension Notification.Name {
 
-	static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable") // UserInfoKey.feed
+	public static let feedIconDidBecomeAvailable = Notification.Name("FeedIconDidBecomeAvailable") // userInfo key: "feed"
 }
 
 @MainActor public final class FeedIconDownloader {
@@ -22,25 +23,11 @@ extension Notification.Name {
 	public static let shared = FeedIconDownloader()
 
 	private let imageDownloader = ImageDownloader.shared
-	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
 	private var homePagesWithNoIconURL = Set<String>()
 	private var cache = [Feed: IconImage]()
 	private var waitingForFeedURLs = [String: Feed]()
 
-	private var feedURLToIconURLCache = [String: String]()
-	private var feedURLToIconURLCachePath: URL
-	private var feedURLToIconURLCacheDirty = false {
-		didSet {
-			queueSaveFeedURLToIconURLCacheIfNeeded()
-		}
-	}
-
 	init() {
-
-		let folder = AppConfig.cacheSubfolder(named: "FeedIcons")
-		self.feedURLToIconURLCachePath = folder.appendingPathComponent("FeedURLToIconURLCache.plist")
-		loadFeedURLToIconURLCache()
-
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
@@ -54,19 +41,10 @@ extension Notification.Name {
 		cache.removeAll()
 	}
 
-	func icon(for feed: Feed) -> IconImage? {
+	public func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
 			return cachedImage
-		}
-
-		if let homePageURLString = feed.homePageURL, let homePageURL = URL(string: homePageURLString), let host = homePageURL.host {
-			if host == "nnw.ranchero.com" || host == "netnewswire.blog" || host.hasSuffix("netnewswire.com") {
-				return IconImage.nnwFeedIcon
-			}
-		}
-		if feed.url.hasPrefix("https://ranchero.com/downloads/netnewswire") {
-			return IconImage.nnwFeedIcon
 		}
 
 		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
@@ -113,7 +91,7 @@ extension Notification.Name {
 			}
 		}
 
-		if let previouslyFoundIconURL = feedURLToIconURLCache[feed.url] {
+		if let previouslyFoundIconURL = ImageMetadataDatabase.shared.iconURL(forFeedURL: feed.url) {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image in
 				MainActor.assumeIsolated {
 					if self.cache[feed] != nil {
@@ -135,11 +113,16 @@ extension Notification.Name {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let url = note.userInfo?[UserInfoKey.url] as? String, let feed = waitingForFeedURLs[url] else {
+		guard let url = note.userInfo?["url"] as? String, let feed = waitingForFeedURLs[url] else {
 			return
 		}
 		waitingForFeedURLs[url] = nil
 		_ = icon(for: feed)
+	}
+
+	/// Returns the in-memory icon for `feed` without triggering a download.
+	public func cachedIcon(for feed: Feed) -> IconImage? {
+		cache[feed]
 	}
 }
 
@@ -210,61 +193,26 @@ private extension FeedIconDownloader {
 	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping ImageResultBlock) {
 
 		let url = Self.sanitizedIconURL(url)
-		waitingForFeedURLs[url] = feed
-		guard let imageData = imageDownloader.image(for: url) else {
-			imageResultBlock(nil)
+
+		let kind = ActivityKind.downloadFeedImage(feedURL: url)
+		if let imageData = imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: kind, activityDetail: feed.nameForDisplay) {
+			RSImage.image(with: imageData, imageResultBlock: imageResultBlock)
 			return
 		}
-		RSImage.image(with: imageData, imageResultBlock: imageResultBlock)
+
+		waitingForFeedURLs[url] = feed
+		imageResultBlock(nil)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
 
 		DispatchQueue.main.async {
-			let userInfo: [AnyHashable: Any] = [UserInfoKey.feed: feed]
+			let userInfo: [AnyHashable: Any] = ["feed": feed]
 			NotificationCenter.default.post(name: .feedIconDidBecomeAvailable, object: self, userInfo: userInfo)
 		}
 	}
 
 	func cacheIconURLForFeedURL(iconURL: String, feedURL: String) {
-
-		feedURLToIconURLCache[feedURL] = iconURL
-		feedURLToIconURLCacheDirty = true
-	}
-
-	func loadFeedURLToIconURLCache() {
-
-		guard let data = try? Data(contentsOf: feedURLToIconURLCachePath) else {
-			return
-		}
-		let decoder = PropertyListDecoder()
-		feedURLToIconURLCache = (try? decoder.decode([String: String].self, from: data)) ?? [String: String]()
-	}
-
-	@objc func saveFeedURLToIconURLCacheIfNeeded() {
-
-		assert(Thread.isMainThread)
-		if feedURLToIconURLCacheDirty {
-			saveFeedURLToIconURLCache()
-		}
-	}
-
-	func queueSaveFeedURLToIconURLCacheIfNeeded() {
-
-		assert(Thread.isMainThread)
-		FeedIconDownloader.saveQueue.add(self, #selector(saveFeedURLToIconURLCacheIfNeeded))
-	}
-
-	func saveFeedURLToIconURLCache() {
-		feedURLToIconURLCacheDirty = false
-
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		do {
-			let data = try encoder.encode(feedURLToIconURLCache)
-			try data.write(to: feedURLToIconURLCachePath)
-		} catch {
-			assertionFailure(error.localizedDescription)
-		}
+		ImageMetadataDatabase.shared.saveFeedIconURL(feedURL: feedURL, iconURL: iconURL)
 	}
 }

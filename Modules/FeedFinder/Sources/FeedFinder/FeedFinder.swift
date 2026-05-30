@@ -11,6 +11,7 @@ import os
 import RSParser
 import RSWeb
 import RSCore
+import ActivityLog
 
 public enum FeedFinderError: LocalizedError {
 	case feedNotFound
@@ -27,6 +28,18 @@ public final class FeedFinder {
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
 
 	@concurrent public static func find(url: URL) async throws -> Set<FeedSpecifier> {
+		let activityID = await activityStart(url: url)
+		do {
+			let result = try await performFind(url: url)
+			await activityComplete(id: activityID, result: result)
+			return result
+		} catch {
+			await activityFail(id: activityID, error: error)
+			throw error
+		}
+	}
+
+	@concurrent private static func performFind(url: URL) async throws -> Set<FeedSpecifier> {
 		// Check special cases first.
 		if let feedSpecifier = FeedSpecifier.knownFeedSpecifier(url: url) {
 			logger.info("FeedFinder: found special case feed URL: \(url.absoluteString) - \(feedSpecifier.urlString)")
@@ -64,6 +77,22 @@ public final class FeedFinder {
 		}
 
 		return try await FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString)
+	}
+
+	@MainActor private static func activityStart(url: URL) -> Int {
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .feedFinder, kind: .findFeed(urlString: url.absoluteString))
+		activityLog.didStart(id: id)
+		return id
+	}
+
+	@MainActor private static func activityComplete(id: Int, result: Set<FeedSpecifier>) {
+		let message = result.isEmpty ? "No feeds found" : "\(result.count) feed\(result.count == 1 ? "" : "s") found"
+		ActivityLog.shared.didComplete(id: id, message: message)
+	}
+
+	@MainActor private static func activityFail(id: Int, error: any Error) {
+		ActivityLog.shared.didFail(id: id, error: error)
 	}
 }
 

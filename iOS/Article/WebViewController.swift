@@ -14,6 +14,7 @@ import Account
 import Articles
 import SafariServices
 import MessageUI
+import Images
 
 @MainActor protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)

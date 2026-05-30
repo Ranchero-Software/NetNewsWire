@@ -13,11 +13,13 @@ import RSCore
 import RSWeb
 import SyncDatabase
 import CloudKitSync
+import ActivityLog
 
 final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendable {
 	private let blockSize = 150
 	private weak var account: Account?
 	private weak var articlesZone: CloudKitArticlesZone?
+	private let accountID: String
 	private var syncDatabase: SyncDatabase
 	private let syncArticleContentForUnreadArticles: @Sendable () -> Bool
 	private static let logger = cloudKitLogger
@@ -25,6 +27,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, syncArticleContentForUnreadArticles: @escaping @Sendable () -> Bool, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
+		self.accountID = account.accountID
 		self.articlesZone = articlesZone
 		self.syncDatabase = database
 		self.syncArticleContentForUnreadArticles = syncArticleContentForUnreadArticles
@@ -35,9 +38,26 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	@MainActor override func run() {
 		Self.logger.debug("iCloud: Sending article statuses")
 
+		let activityLog = ActivityLog.shared
+		let taskNumber = activityLog.nextTaskNumberString()
+		let activityID = activityLog.createActivity(owner: .account(accountID), kind: .sendArticleStatuses, detail: "Sending article statuses \(taskNumber)")
+		activityLog.didStart(id: activityID)
+
 		Task { @MainActor in
-			await selectForProcessing()
-			Self.logger.debug("iCloud: Finished sending article statuses")
+			do {
+				let sent = try await selectForProcessing()
+				Self.logger.debug("iCloud: Finished sending article statuses")
+				if isCanceled {
+					activityLog.didFail(id: activityID, error: CloudKitAccountDelegateError.unknown)
+				} else if sent == 0 {
+					activityLog.didComplete(id: activityID, message: "No statuses to send", durationIsSignificant: false)
+				} else {
+					activityLog.didComplete(id: activityID, message: "\(sent) status\(sent == 1 ? "" : "es") sent")
+				}
+			} catch {
+				Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
+				activityLog.didFail(id: activityID, error: error)
+			}
 			didComplete()
 		}
 	}
@@ -45,28 +65,25 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 @MainActor private extension CloudKitSendStatusOperation {
 
-	func selectForProcessing() async {
-		do {
-			guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
-				  !syncStatuses.isEmpty else {
-				return
-			}
-
-			let stopProcessing = await processStatuses(Array(syncStatuses))
-			if stopProcessing {
-				return
-			}
-
-			await selectForProcessing()
-		} catch {
-			Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
+	/// Returns the total number of statuses sent across all batches.
+	func selectForProcessing() async throws -> Int {
+		guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
+			  !syncStatuses.isEmpty else {
+			return 0
 		}
+
+		guard let sent = try await processStatuses(Array(syncStatuses)) else {
+			return 0
+		}
+
+		return sent + (try await selectForProcessing())
 	}
 
-	/// Returns true if processing should stop.
-	func processStatuses(_ syncStatuses: [SyncStatus]) async -> Bool {
+	/// Returns the count of statuses sent in this batch, or nil if processing
+	/// should stop (account/zone gone, or no usable articles for the batch).
+	func processStatuses(_ syncStatuses: [SyncStatus]) async throws -> Int? {
 		guard let account, let articlesZone else {
-			return true
+			return nil
 		}
 
 		let articleIDs = syncStatuses.map({ $0.articleID })
@@ -77,7 +94,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		} catch {
 			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 			Self.logger.error("iCloud: Send article status fetch articles error: \(error.localizedDescription)")
-			return true
+			throw error
 		}
 
 		let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
@@ -88,23 +105,22 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 			CloudKitArticleStatusUpdate(articleID: key, statuses: value, article: articlesDict[key], syncArticleContentForUnreadArticles: self.syncArticleContentForUnreadArticles)
 		}
 
-		// If this happens, we have somehow gotten into a state where we have new status records
-		// but the articles didn't come back in the fetch. We need to clean up those sync records
-		// and stop processing.
+		// We somehow have new status records but the articles didn't come back
+		// in the fetch. Clean up those sync records and stop processing.
 		if statusUpdates.isEmpty {
 			try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
-			return true
-		} else {
-			do {
-				try await articlesZone.modifyArticles(statusUpdates)
-				try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
-				return false
-			} catch {
-				try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
-				syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
-				Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
-				return true
-			}
+			return nil
+		}
+
+		do {
+			try await articlesZone.modifyArticles(statusUpdates)
+			try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
+			return statusUpdates.count
+		} catch {
+			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+			syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
+			Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
+			throw error
 		}
 	}
 

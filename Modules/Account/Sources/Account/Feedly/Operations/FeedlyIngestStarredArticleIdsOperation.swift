@@ -38,6 +38,7 @@ final class FeedlyIngestStarredArticleIdsOperation: FeedlyOperation {
 	}
 
 	override func run() {
+		startActivityIfNeeded()
 		getStreamIds(nil)
 	}
 

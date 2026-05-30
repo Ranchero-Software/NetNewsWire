@@ -11,6 +11,7 @@ import RSCore
 import Account
 import Articles
 import ArticlesDatabase
+import Images
 
 struct SearchFeedDelegate: SmartFeedDelegate {
 

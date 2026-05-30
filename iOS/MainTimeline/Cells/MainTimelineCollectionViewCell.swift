@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Images
 
 class MainTimelineCollectionViewCell: UICollectionViewCell {
 	@IBOutlet var articleContent: UILabel!

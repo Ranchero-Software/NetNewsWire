@@ -19,6 +19,7 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 import ErrorLog
+import ActivityLog
 import os
 
 // Main thread only.
@@ -392,15 +393,26 @@ public enum FetchType {
 	}
 
 	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
-		switch type {
-		case .feedbin:
-			return try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
-		case .newsBlur:
-			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
-		case .freshRSS, .inoreader, .bazQux, .theOldReader:
-			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
-		default:
-			return nil
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .app, kind: .validateCredentials, detail: type.displayName)
+		activityLog.didStart(id: id)
+		do {
+			let result: Credentials?
+			switch type {
+			case .feedbin:
+				result = try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
+			case .newsBlur:
+				result = try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
+			case .freshRSS, .inoreader, .bazQux, .theOldReader:
+				result = try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
+			default:
+				result = nil
+			}
+			activityLog.didComplete(id: id, message: result == nil ? "Invalid credentials" : "Credentials valid")
+			return result
+		} catch {
+			activityLog.didFail(id: id, error: error)
+			throw error
 		}
 	}
 
@@ -457,6 +469,49 @@ public enum FetchType {
 
 	public func refreshAll() async throws {
 		try await delegate.refreshAll(for: self)
+	}
+
+	// MARK: - Activity Log
+
+	@discardableResult
+	public func logActivity<T>(
+		kind: ActivityKind,
+		detail: String? = nil,
+		successMessage: ((T) -> String?)? = nil,
+		_ work: () async throws -> T
+	) async throws -> T {
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .account(accountID), kind: kind, detail: detail)
+		activityLog.didStart(id: id)
+		do {
+			let result = try await work()
+			activityLog.didComplete(id: id, message: successMessage?(result))
+			return result
+		} catch {
+			activityLog.didFail(id: id, error: error)
+			throw error
+		}
+	}
+
+	/// Synchronous overload of `logActivity` for non-async work.
+	@discardableResult
+	public func logActivity<T>(
+		kind: ActivityKind,
+		detail: String? = nil,
+		successMessage: ((T) -> String?)? = nil,
+		_ work: () throws -> T
+	) rethrows -> T {
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .account(accountID), kind: kind, detail: detail)
+		activityLog.didStart(id: id)
+		do {
+			let result = try work()
+			activityLog.didComplete(id: id, message: successMessage?(result))
+			return result
+		} catch {
+			activityLog.didFail(id: id, error: error)
+			throw error
+		}
 	}
 
 	// MARK: - Syncing Article Status
@@ -1037,10 +1092,14 @@ public enum FetchType {
 
 	// MARK: - Vacuum
 
-	public func vacuumDatabases() {
-		database.vacuum()
-		feedSettingsDatabase.vacuum()
-		delegate.vacuumDatabases()
+	public func vacuumDatabases() async {
+		try? await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(database.databasePath)) {
+			await database.vacuum()
+		}
+		try? await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(feedSettingsDatabase.databasePath)) {
+			await feedSettingsDatabase.vacuum()
+		}
+		await delegate.vacuumDatabases(for: self)
 	}
 
 	public func fetchCloudKitStats(progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {

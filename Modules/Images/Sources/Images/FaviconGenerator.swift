@@ -1,6 +1,6 @@
 //
 //  FaviconGenerator.swift
-//  NetNewsWire-iOS
+//  Images
 //
 //  Created by Maurice Parker on 4/29/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
@@ -10,8 +10,12 @@ import Foundation
 import RSCore
 import Account
 
-@MainActor final class FaviconGenerator {
-	static let shared = FaviconGenerator()
+@MainActor public final class FaviconGenerator {
+	public static let shared = FaviconGenerator()
+
+	/// The template image used to synthesize colored placeholders. The app must
+	/// set this at launch (see Mac/iOS AppDelegate) before any feed is shown.
+	public static var templateImage: RSImage?
 
 	private var cache = [String: IconImage]() // feedURL: IconImage
 
@@ -28,18 +32,22 @@ import Account
 		cache.removeAll()
 	}
 
-	func favicon(_ feed: Feed) -> IconImage {
+	public func favicon(_ feed: Feed) -> IconImage {
+		guard let template = Self.templateImage else {
+			preconditionFailure("FaviconGenerator.templateImage must be set at app launch")
+		}
+
 		if let favicon = cache[feed.url] {
 			return favicon
 		}
 
 		let colorHash = ColorHash(feed.url)
-		if let favicon = Assets.Images.faviconTemplate.maskWithColor(color: colorHash.color.cgColor) {
+		if let favicon = template.maskWithColor(color: colorHash.color.cgColor) {
 			let iconImage = IconImage(favicon, isBackgroundSuppressed: true)
 			cache[feed.url] = iconImage
 			return iconImage
 		} else {
-			return IconImage(Assets.Images.faviconTemplate, isBackgroundSuppressed: true)
+			return IconImage(template, isBackgroundSuppressed: true)
 		}
 	}
 }

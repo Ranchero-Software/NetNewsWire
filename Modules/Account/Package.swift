@@ -11,6 +11,7 @@ let package = Package(
 			targets: ["Account"])
 	],
 	dependencies: [
+		.package(path: "../ActivityLog"),
 		.package(path: "../Articles"),
 		.package(path: "../ArticlesDatabase"),
 		.package(path: "../CloudKitSync"),
@@ -32,6 +33,7 @@ let package = Package(
 				"RSDatabase",
 				"RSParser",
 				"RSWeb",
+				"ActivityLog",
 				"Articles",
 				"ArticlesDatabase",
 				"CloudKitSync",

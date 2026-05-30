@@ -20,6 +20,7 @@ final class FeedlyFetchIdsForMissingArticlesOperation: FeedlyOperation, FeedlyEn
 	}
 
 	override func run() {
+		startActivityIfNeeded()
 		Task {
 			do {
 				let articleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()

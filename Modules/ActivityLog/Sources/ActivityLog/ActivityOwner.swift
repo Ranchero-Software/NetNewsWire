@@ -11,5 +11,7 @@ public enum ActivityOwner: Sendable, Hashable {
 	case account(String) // accountID
 	case feedFinder
 	case feedImageDownloader
+	case faviconDownloader
+	case avatarDownloader
 	case htmlMetadataDownloader
 }

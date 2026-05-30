@@ -49,6 +49,7 @@ import Secrets
 		}
 
 		let feeds = account.flattenedFeeds()
+		refresher.accountID = account.accountID
 		await refresher.refreshFeeds(feeds)
 		account.lastRefreshCompletedDate = Date()
 	}
@@ -63,17 +64,19 @@ import Secrets
 	}
 
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
-		let opmlData = try Data(contentsOf: opmlFile)
-		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		let opmlDocument = try OPMLParser.parseOPML(with: parserData)
+		try account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+			let opmlData = try Data(contentsOf: opmlFile)
+			let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
+			let opmlDocument = try OPMLParser.parseOPML(with: parserData)
 
-		// TODO: throw appropriate error for empty OPML
-		guard let children = opmlDocument.children else {
-			return
-		}
+			// TODO: throw appropriate error for empty OPML
+			guard let children = opmlDocument.children else {
+				return
+			}
 
-		BatchUpdate.shared.perform {
-			account.loadOPMLItems(children)
+			BatchUpdate.shared.perform {
+				account.loadOPMLItems(children)
+			}
 		}
 	}
 
@@ -82,7 +85,9 @@ import Secrets
 			throw AccountError.invalidParameter
 		}
 
-		return try await createFeed(account: account, url: url, editedName: name, container: container)
+		return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
+			try await createFeed(account: account, url: url, editedName: name, container: container)
+		}
 	}
 
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
@@ -140,7 +145,7 @@ import Secrets
 		nil
 	}
 
-	func vacuumDatabases() {
+	func vacuumDatabases(for account: Account) async {
 	}
 
 	// MARK: Suspend and Resume (for iOS)

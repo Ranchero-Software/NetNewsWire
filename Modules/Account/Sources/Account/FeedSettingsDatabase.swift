@@ -51,11 +51,14 @@ final class FeedSettingsDatabase: Sendable {
 		let lastCheckDate: Date?
 	}
 
+	let databasePath: String
+
 	nonisolated(unsafe) private let database: FMDatabase // Used on serial dispatch queue only
 	private let serialDispatchQueue: DispatchQueue
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedSettingsDatabase")
 
 	init(databasePath: String) {
+		self.databasePath = databasePath
 		self.serialDispatchQueue = DispatchQueue(label: "FeedSettingsDatabase")
 		self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		serialDispatchQueue.sync { [database] in
@@ -65,9 +68,12 @@ final class FeedSettingsDatabase: Sendable {
 		vacuumIfNeeded()
 	}
 
-	func vacuum() {
-		serialDispatchQueue.async {
-			self.database.vacuum()
+	func vacuum() async {
+		await withCheckedContinuation { continuation in
+			serialDispatchQueue.async {
+				self.database.vacuum()
+				continuation.resume()
+			}
 		}
 	}
 

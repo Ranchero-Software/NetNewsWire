@@ -11,6 +11,7 @@ import RSCore
 import Articles
 import Account
 import os
+import Images
 
 @MainActor protocol TimelineDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
@@ -147,6 +148,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
+			IconImageCache.shared.prefetchImagesForArticles(articles)
 		}
 	}
 

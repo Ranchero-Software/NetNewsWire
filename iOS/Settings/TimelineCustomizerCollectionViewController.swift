@@ -8,6 +8,7 @@
 
 import UIKit
 import Articles
+import Images
 
 class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	private var previewArticle: Article {

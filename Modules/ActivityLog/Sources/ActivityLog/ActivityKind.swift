@@ -18,6 +18,32 @@ public enum ActivityKind: Sendable, Hashable {
 	case refreshMissingArticles
 	case importOPML
 
+	// CloudKit user-action edits
+
+	case subscribeFeed
+	case renameFeed
+	case removeFeed
+	case moveFeed
+	case addFeed
+	case createFolder
+	case renameFolder
+	case removeFolder
+	case restoreFolder
+
+	// CloudKit background work
+
+	case markArticles
+	case cleanUpCloudKitRecords
+	case uploadNewArticles
+	case subscribeToCloudKitZone
+	case fetchCloudKitStats
+
+	// Maintenance and lifecycle
+
+	case vacuumDatabase
+	case validateCredentials
+	case exportOPML
+
 	// App-level
 
 	case refreshAll
@@ -26,5 +52,7 @@ public enum ActivityKind: Sendable, Hashable {
 
 	case findFeed(urlString: String)
 	case downloadFeedImage(feedURL: String)
+	case downloadFavicon(faviconURL: String)
+	case downloadAvatar(avatarURL: String)
 	case downloadHTMLMetadata(urlString: String)
 }

@@ -461,6 +461,10 @@ private extension ActivityLogWindowController {
 			return "Feed Finder"
 		case .feedImageDownloader:
 			return "Feed Images"
+		case .faviconDownloader:
+			return "Favicons"
+		case .avatarDownloader:
+			return "Avatars"
 		case .htmlMetadataDownloader:
 			return "HTML Metadata"
 		}
@@ -489,8 +493,46 @@ private extension ActivityLogWindowController {
 			return "Finding feed \(urlString)"
 		case .downloadFeedImage(let feedURL):
 			return "Downloading image \(feedURL)"
+		case .downloadFavicon(let faviconURL):
+			return "Downloading favicon \(faviconURL)"
+		case .downloadAvatar(let avatarURL):
+			return "Downloading avatar \(avatarURL)"
 		case .downloadHTMLMetadata(let urlString):
 			return "Downloading metadata \(urlString)"
+		case .subscribeFeed:
+			return "Subscribing to feed"
+		case .renameFeed:
+			return "Renaming feed"
+		case .removeFeed:
+			return "Removing feed"
+		case .moveFeed:
+			return "Moving feed"
+		case .addFeed:
+			return "Adding feed"
+		case .createFolder:
+			return "Creating folder"
+		case .renameFolder:
+			return "Renaming folder"
+		case .removeFolder:
+			return "Removing folder"
+		case .restoreFolder:
+			return "Restoring folder"
+		case .markArticles:
+			return "Marking articles"
+		case .cleanUpCloudKitRecords:
+			return "Cleaning up iCloud records"
+		case .fetchCloudKitStats:
+			return "Fetching iCloud stats"
+		case .uploadNewArticles:
+			return "Uploading new articles"
+		case .subscribeToCloudKitZone:
+			return "Subscribing to zone changes"
+		case .vacuumDatabase:
+			return "Vacuuming database"
+		case .validateCredentials:
+			return "Validating credentials"
+		case .exportOPML:
+			return "Exporting OPML"
 		}
 	}
 
@@ -501,7 +543,7 @@ private extension ActivityLogWindowController {
 				return .secondaryLabelColor
 			}
 			return account.type.logColor
-		case .app, .feedFinder, .feedImageDownloader, .htmlMetadataDownloader:
+		case .app, .feedFinder, .feedImageDownloader, .faviconDownloader, .avatarDownloader, .htmlMetadataDownloader:
 			return .secondaryLabelColor
 		}
 	}

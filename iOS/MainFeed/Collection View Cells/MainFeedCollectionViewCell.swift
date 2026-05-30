@@ -10,6 +10,7 @@ import UIKit
 import RSCore
 import Account
 import RSTree
+import Images
 
 final class MainFeedCollectionViewCell: UICollectionViewCell {
 	@IBOutlet var feedTitle: UILabel!

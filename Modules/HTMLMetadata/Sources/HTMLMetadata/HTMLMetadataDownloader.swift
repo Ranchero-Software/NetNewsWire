@@ -23,11 +23,7 @@ nonisolated public final class HTMLMetadataDownloader: Sendable {
 
 	private let attemptDates = OSAllocatedUnfairLock(initialState: [String: Date]())
 
-	// Synchronous in-memory mirror of records that have been loaded from the
-	// database or freshly downloaded this session. The database (see
-	// HTMLMetadataDatabase) is the persistent store; this cache exists so
-	// `cachedMetadata(for:)` can answer synchronously after a record has been
-	// posted via .htmlMetadataAvailable. Cleared on background and low memory.
+	/// In-memory mirror so `cachedMetadata(for:)` can answer synchronously.
 	private let cache = OSAllocatedUnfairLock(initialState: [String: HTMLMetadataRecord]())
 
 	init() {
@@ -43,9 +39,8 @@ nonisolated public final class HTMLMetadataDownloader: Sendable {
 		cache.withLock { $0.removeAll() }
 	}
 
-	/// Returns cached metadata synchronously if available, otherwise kicks off a fetch.
-	/// When the fetch (database lookup or download) finishes, the record is cached
-	/// and a .htmlMetadataAvailable notification is posted — callers re-query then.
+	/// Returns cached metadata synchronously, or kicks off a fetch and returns nil.
+	/// Callers re-query after observing `.htmlMetadataAvailable`.
 	public func cachedMetadata(for url: String) -> HTMLMetadataRecord? {
 		if Self.shouldSkipDownloadingMetadata(url) {
 			return nil
@@ -148,7 +143,8 @@ nonisolated private extension HTMLMetadataDownloader {
 				activityLog.didFail(.htmlMetadataDownloader, kind: kind, error: statusError)
 
 			} catch {
-				// Download failed — try returning stale cached data.
+				// Pre-response failure (DNS, TLS, network).
+				await HTMLMetadataDatabase.shared.noteTransientFailure(url: url)
 				await returnStaleCacheIfAvailable(url)
 
 				activityLog.didFail(.htmlMetadataDownloader, kind: kind, error: error)

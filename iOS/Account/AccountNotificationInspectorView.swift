@@ -9,6 +9,7 @@
 import SwiftUI
 import UserNotifications
 import Account
+import Images
 
 struct AccountNotificationInspectorView: View {
 

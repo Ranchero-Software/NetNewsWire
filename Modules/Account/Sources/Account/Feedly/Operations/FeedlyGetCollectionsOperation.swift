@@ -26,6 +26,7 @@ final class FeedlyGetCollectionsOperation: FeedlyOperation, FeedlyCollectionProv
 
 	override func run() {
 		Feedly.logger.info("Feedly: Requesting collections")
+		startActivityIfNeeded()
 
 		service.getCollections { result in
 			Task { @MainActor in

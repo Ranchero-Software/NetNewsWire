@@ -11,6 +11,7 @@ import UserNotifications
 import os
 import Articles
 import Account
+import ActivityLog
 import ErrorLog
 import RSCore
 import RSCoreObjC
@@ -19,6 +20,8 @@ import RSWeb
 import Secrets
 import CrashReporter
 import Sparkle
+import Images
+import HTMLMetadata
 
 let appName = "NetNewsWire"
 
@@ -137,6 +140,8 @@ let appName = "NetNewsWire"
 	// MARK: - NSApplicationDelegate
 
 	func applicationWillFinishLaunching(_ notification: Notification) {
+		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
+
 		installAppleEventHandlers()
 
 		CacheCleaner.purgeIfNecessary()
@@ -818,7 +823,21 @@ extension AppDelegate {
 	@IBAction func vacuumDatabases(_ sender: Any?) {
 		Task {
 			await AccountManager.shared.vacuumAllDatabases()
+			await vacuumAndLog(databasePath: HTMLMetadataDatabase.shared.databasePath) {
+				await HTMLMetadataDatabase.shared.vacuum()
+			}
+			await vacuumAndLog(databasePath: ImageMetadataDatabase.shared.databasePath) {
+				await ImageMetadataDatabase.shared.vacuum()
+			}
 		}
+	}
+
+	private func vacuumAndLog(databasePath: String, _ work: () async -> Void) async {
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: .app, kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(databasePath))
+		activityLog.didStart(id: id)
+		await work()
+		activityLog.didComplete(id: id)
 	}
 
 	@IBAction func openImageCacheFolder(_ sender: Any?) {
@@ -861,6 +880,8 @@ extension AppDelegate {
 	func saveState() {
 		mainWindowController?.saveStateToUserDefaults()
 		inspectorWindowController?.saveState()
+		activityWindowController?.saveState()
+		activityLogWindowController?.saveState()
 		errorLogWindowController?.saveState()
 	}
 

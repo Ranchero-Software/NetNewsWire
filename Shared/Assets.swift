@@ -14,6 +14,7 @@ import UIKit
 
 import RSCore
 import Account
+import Images
 
 #if os(macOS)
 typealias RSColor = NSColor

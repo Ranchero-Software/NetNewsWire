@@ -91,6 +91,10 @@ public extension FMDatabase {
 		rs_deleteRowsWhereKey(key, inValues: values, tableName: tableName)
 	}
 
+	func deleteRowsWhere(key: String, equals value: Any, tableName: String) {
+		rs_deleteRowsWhereKey(key, equalsValue: value, tableName: tableName)
+	}
+
 	func selectRowsWhere(key: String, equalsAnyValue values: [Any], tableName: String) -> FMResultSet? {
 		rs_selectRowsWhereKey(key, inValues: values, tableName: tableName)
 	}

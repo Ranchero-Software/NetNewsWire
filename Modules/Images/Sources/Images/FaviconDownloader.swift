@@ -1,12 +1,13 @@
 //
 //  FaviconDownloader.swift
-//  NetNewsWire
+//  Images
 //
 //  Created by Brent Simmons on 11/19/17.
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
 import Foundation
+import os
 import CoreServices
 import Articles
 import Account
@@ -17,13 +18,13 @@ import UniformTypeIdentifiers
 
 extension Notification.Name {
 
-	static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
+	public static let FaviconDidBecomeAvailable = Notification.Name("FaviconDidBecomeAvailableNotification") // userInfo key: FaviconDownloader.UserInfoKey.faviconURL
 }
 
-@MainActor final class FaviconDownloader {
-	static let shared = FaviconDownloader()
+@MainActor public final class FaviconDownloader {
+	public static let shared = FaviconDownloader()
 
-	private static let saveQueue = CoalescingQueue(name: "Cache Save Queue", interval: 1.0)
+	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FaviconDownloader")
 
 	private let folder: String
 	private let diskCache: BinaryDiskCache
@@ -31,27 +32,11 @@ extension Notification.Name {
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
 
-	private var homePageToFaviconURLCache = [String: String]() // homePageURL: faviconURL
-	private var homePageToFaviconURLCachePath: String
-	private var homePageToFaviconURLCacheDirty = false {
-		didSet {
-			queueSaveHomePageToFaviconURLCacheIfNeeded()
-		}
-	}
-
-	private var homePageURLsWithNoFaviconURLCache = Set<String>()
-	private var homePageURLsWithNoFaviconURLCachePath: String
-	private var homePageURLsWithNoFaviconURLCacheDirty = false {
-		didSet {
-			queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded()
-		}
-	}
-
 	private let queue: DispatchQueue
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
-	struct UserInfoKey {
-		static let faviconURL = "faviconURL"
+	public struct UserInfoKey {
+		public static let faviconURL = "faviconURL"
 	}
 
 	init() {
@@ -60,11 +45,6 @@ extension Notification.Name {
 		self.folder = folder
 		self.diskCache = BinaryDiskCache(folder: folder)
 		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
-
-		self.homePageToFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageToFaviconURLCache.plist")
-		self.homePageURLsWithNoFaviconURLCachePath = (folder as NSString).appendingPathComponent("HomePageURLsWithNoFaviconURLCache.plist")
-		loadHomePageToFaviconURLCache()
-		loadHomePageURLsWithNoFaviconURLCache()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
@@ -84,7 +64,7 @@ extension Notification.Name {
 		singleFaviconDownloaderCache.removeAll()
 	}
 
-	func favicon(for feed: Feed) -> IconImage? {
+	public func favicon(for feed: Feed) -> IconImage? {
 		assert(Thread.isMainThread)
 
 		if shouldSkipDownloadingFavicon(feed: feed) {
@@ -109,7 +89,7 @@ extension Notification.Name {
 		return nil
 	}
 
-	func faviconAsIcon(for feed: Feed) -> IconImage? {
+	public func faviconAsIcon(for feed: Feed) -> IconImage? {
 
 		if let image = cache[feed] {
 			return image
@@ -123,26 +103,53 @@ extension Notification.Name {
 		return nil
 	}
 
-	func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
+	/// Returns the in-memory favicon for `feed` without triggering a download.
+	public func cachedFaviconAsIcon(for feed: Feed) -> IconImage? {
+		if let image = cache[feed] {
+			return image
+		}
+		guard let faviconURL = cachedFaviconURL(for: feed) else {
+			return nil
+		}
+		guard let iconImage = singleFaviconDownloaderCache[faviconURL]?.iconImage else {
+			return nil
+		}
+		cache[feed] = iconImage
+		return iconImage
+	}
+
+	private func cachedFaviconURL(for feed: Feed) -> String? {
+		if let faviconURL = feed.faviconURL {
+			return faviconURL
+		}
+		if let homePageURL = feed.homePageURL, let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
+			return faviconURL
+		}
+		return nil
+	}
+
+	public func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
+		if !faviconURL.hasPrefix("http://") && !faviconURL.hasPrefix("https://") {
+			Self.logger.debug("Skipping non-http(s) URL: \(faviconURL)")
+			return nil
+		}
+		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
+			Self.logger.debug("Skipping recently-failed URL: \(faviconURL)")
+			return nil
+		}
 		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
 		return downloader.iconImage
 	}
 
-	func favicon(withHomePageURL homePageURL: String) -> IconImage? {
+	public func favicon(withHomePageURL homePageURL: String) -> IconImage? {
 
 		let url = homePageURL.normalizedURL
 
-		if let url = URL(string: homePageURL) {
-			if url.host == "nnw.ranchero.com" || url.host == "netnewswire.blog" {
-				return IconImage.nnwFeedIcon
-			}
-		}
-
-		if homePageURLsWithNoFaviconURLCache.contains(url) {
+		if ImageMetadataDatabase.shared.homePageHasNoFavicon(url) {
 			return nil
 		}
 
-		if let faviconURL = homePageToFaviconURLCache[url] {
+		if let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: url) {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
@@ -166,6 +173,14 @@ extension Notification.Name {
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
 			return
 		}
+
+		// URL-level outcome runs before the homePageURL guard so we record it even when homePageURL is nil.
+		if let error = singleFaviconDownloader.error {
+			ImageMetadataDatabase.shared.recordFailure(url: singleFaviconDownloader.faviconURL, statusCode: error.statusCode)
+		} else if singleFaviconDownloader.iconImage != nil {
+			ImageMetadataDatabase.shared.clearFailure(url: singleFaviconDownloader.faviconURL)
+		}
+
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
 			return
 		}
@@ -178,8 +193,7 @@ extension Notification.Name {
 					remainingFaviconURLs[homePageURL] = nil
 
 					if currentHomePageHasOnlyFaviconICO {
-						self.homePageURLsWithNoFaviconURLCache.insert(homePageURL)
-						self.homePageURLsWithNoFaviconURLCacheDirty = true
+						ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 					}
 				}
 			}
@@ -199,20 +213,7 @@ extension Notification.Name {
 		}
 
 		Task { @MainActor in
-			// This will fetch the favicon (if possible) and post a .FaviconDidBecomeAvailable Notification.
 			_ = favicon(withHomePageURL: url)
-		}
-	}
-
-	@objc func saveHomePageToFaviconURLCacheIfNeeded() {
-		if homePageToFaviconURLCacheDirty {
-			saveHomePageToFaviconURLCache()
-		}
-	}
-
-	@objc func saveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
-		if homePageURLsWithNoFaviconURLCacheDirty {
-			saveHomePageURLsWithNoFaviconURLCache()
 		}
 	}
 }
@@ -249,9 +250,8 @@ private extension FaviconDownloader {
 
 		var firstTimeSeeingHomepageURL = false
 
-		if let homePageURL = homePageURL, self.homePageToFaviconURLCache[homePageURL] == nil {
-			self.homePageToFaviconURLCache[homePageURL] = faviconURL
-			self.homePageToFaviconURLCacheDirty = true
+		if let homePageURL, ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) == nil {
+			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
 			firstTimeSeeingHomepageURL = true
 		}
 
@@ -276,61 +276,6 @@ private extension FaviconDownloader {
 		DispatchQueue.main.async {
 			let userInfo: [AnyHashable: Any] = [UserInfoKey.faviconURL: faviconURL]
 			NotificationCenter.default.post(name: .FaviconDidBecomeAvailable, object: self, userInfo: userInfo)
-		}
-	}
-
-	func loadHomePageToFaviconURLCache() {
-		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
-			return
-		}
-		let decoder = PropertyListDecoder()
-		homePageToFaviconURLCache = (try? decoder.decode([String: String].self, from: data)) ?? [String: String]()
-	}
-
-	func loadHomePageURLsWithNoFaviconURLCache() {
-		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
-		guard let data = try? Data(contentsOf: url) else {
-			return
-		}
-		let decoder = PropertyListDecoder()
-		let decoded = (try? decoder.decode([String].self, from: data)) ?? [String]()
-		homePageURLsWithNoFaviconURLCache = Set(decoded)
-	}
-
-	func queueSaveHomePageToFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageToFaviconURLCacheIfNeeded))
-	}
-
-	func queueSaveHomePageURLsWithNoFaviconURLCacheIfNeeded() {
-		FaviconDownloader.saveQueue.add(self, #selector(saveHomePageURLsWithNoFaviconURLCacheIfNeeded))
-	}
-
-	func saveHomePageToFaviconURLCache() {
-		homePageToFaviconURLCacheDirty = false
-
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePageToFaviconURLCachePath)
-		do {
-			let data = try encoder.encode(homePageToFaviconURLCache)
-			try data.write(to: url)
-		} catch {
-			assertionFailure(error.localizedDescription)
-		}
-	}
-
-	func saveHomePageURLsWithNoFaviconURLCache() {
-		homePageURLsWithNoFaviconURLCacheDirty = false
-
-		let encoder = PropertyListEncoder()
-		encoder.outputFormat = .binary
-		let url = URL(fileURLWithPath: homePageURLsWithNoFaviconURLCachePath)
-		do {
-			let data = try encoder.encode(Array(homePageURLsWithNoFaviconURLCache))
-			try data.write(to: url)
-		} catch {
-			assertionFailure(error.localizedDescription)
 		}
 	}
 }

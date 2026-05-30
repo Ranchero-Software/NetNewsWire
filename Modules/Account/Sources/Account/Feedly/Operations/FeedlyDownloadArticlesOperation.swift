@@ -33,6 +33,7 @@ final class FeedlyDownloadArticlesOperation: FeedlyOperation {
 	}
 
 	override func run() {
+		startActivityIfNeeded()
 		var articleIds = missingArticleEntryIdProvider.entryIDs
 		articleIds.formUnion(updatedArticleEntryIdProvider.entryIDs)
 

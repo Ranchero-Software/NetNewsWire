@@ -91,8 +91,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		refreshProgress.addTasks(5)
 
 		do {
-			try await refreshAccount(account)
-			try await refreshArticlesAndStatuses(account)
+			try await account.logActivity(kind: .refreshAll) {
+				try await refreshAccount(account)
+				try await refreshArticlesAndStatuses(account)
+			}
 		} catch {
 			refreshProgress.reset()
 			throw AccountError.wrapped(error, account)
@@ -111,21 +113,23 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 
 		do {
-			guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
-				return
+			try await account.logActivity(kind: .sendArticleStatuses) {
+				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+					return
+				}
+
+				let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
+				try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+
+				let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
+				try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+
+				let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
+				try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+
+				let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
+				try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
 			}
-
-			let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
-			try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
-
-			let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
-			try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
-
-			let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
-			try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
-
-			let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
-			try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
 		} catch {
 			postSyncError(error, account: account, operation: "Sending article status")
 			throw error
@@ -134,29 +138,31 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 	func refreshArticleStatus(for account: Account) async throws {
 		Self.logger.info("Feedbin: Refreshing article statuses")
-		var refreshError: Error?
 
-		do {
-			let articleIDs = try await caller.retrieveUnreadEntries()
-			await self.syncArticleReadState(account: account, articleIDs: articleIDs)
+		try await account.logActivity(kind: .refreshArticleStatuses) {
+			var refreshError: Error?
 
-		} catch {
-			refreshError = error
-			Self.logger.error("Feedbin: Retrieving unread entries failed: \(error.localizedDescription)")
-		}
+			do {
+				let articleIDs = try await caller.retrieveUnreadEntries()
+				await self.syncArticleReadState(account: account, articleIDs: articleIDs)
+			} catch {
+				refreshError = error
+				Self.logger.error("Feedbin: Retrieving unread entries failed: \(error.localizedDescription)")
+			}
 
-		do {
-			let articleIDs = try await caller.retrieveStarredEntries()
-			await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
-		} catch {
-			refreshError = error
-			Self.logger.error("Feedbin: Retrieving starred entries failed: \(error.localizedDescription)")
-		}
+			do {
+				let articleIDs = try await caller.retrieveStarredEntries()
+				await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
+			} catch {
+				refreshError = error
+				Self.logger.error("Feedbin: Retrieving starred entries failed: \(error.localizedDescription)")
+			}
 
-		Self.logger.info("Feedbin: Finished refreshing article statuses")
-		if let refreshError {
-			postSyncError(refreshError, account: account, operation: "Refreshing article status")
-			throw refreshError
+			Self.logger.info("Feedbin: Finished refreshing article statuses")
+			if let refreshError {
+				postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				throw refreshError
+			}
 		}
 	}
 
@@ -175,12 +181,14 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 
 		do {
-			let importResult = try await caller.importOPML(opmlData: opmlData)
-			if importResult.complete {
-				Self.logger.info("Feedbin: Finished importing OPML")
-			} else {
-				// This will retry until success or error.
-				try await self.checkImportResult(opmlImportResultID: importResult.importResultID)
+			try await account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+				let importResult = try await caller.importOPML(opmlData: opmlData)
+				if importResult.complete {
+					Self.logger.info("Feedbin: Finished importing OPML")
+				} else {
+					// This will retry until success or error.
+					try await self.checkImportResult(opmlImportResultID: importResult.importResultID)
+				}
 			}
 		} catch {
 			Self.logger.info("Feedbin: OPML import failed: \(error.localizedDescription)")
@@ -261,16 +269,18 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		defer { refreshProgress.completeTask() }
 
 		do {
-			let subResult = try await caller.createSubscription(url: urlString)
-			switch subResult {
-			case .created(let subscription):
-				return try await createFeed(account: account, subscription: subscription, name: name, container: container)
-			case .multipleChoice(let choices):
-				return try await decideBestFeedChoice(account: account, url: urlString, name: name, container: container, choices: choices)
-			case .alreadySubscribed:
-				throw AccountError.createErrorAlreadySubscribed
-			case .notFound:
-				throw AccountError.createErrorNotFound
+			return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
+				let subResult = try await caller.createSubscription(url: urlString)
+				switch subResult {
+				case .created(let subscription):
+					return try await createFeed(account: account, subscription: subscription, name: name, container: container)
+				case .multipleChoice(let choices):
+					return try await decideBestFeedChoice(account: account, url: urlString, name: name, container: container, choices: choices)
+				case .alreadySubscribed:
+					throw AccountError.createErrorAlreadySubscribed
+				case .notFound:
+					throw AccountError.createErrorNotFound
+				}
 			}
 		} catch {
 			throw AccountError.wrapped(error, account)
@@ -289,47 +299,55 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 
 		do {
-			try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
-			feed.editedName = name
+			try await account.logActivity(kind: .renameFeed, detail: feed.url) {
+				try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
+				feed.editedName = name
+			}
 		} catch {
 			throw AccountError.wrapped(error, account)
 		}
 	}
 
 	func removeFeed(account: Account, feed: Feed, container: Container) async throws {
-		if feed.folderRelationship?.count ?? 0 > 1 {
-			try await deleteTagging(for: account, with: feed, from: container)
-		} else {
-			try await deleteSubscription(for: account, with: feed, from: container)
+		try await account.logActivity(kind: .removeFeed, detail: feed.url) {
+			if feed.folderRelationship?.count ?? 0 > 1 {
+				try await deleteTagging(for: account, with: feed, from: container)
+			} else {
+				try await deleteSubscription(for: account, with: feed, from: container)
+			}
 		}
 	}
 
 	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
-		if sourceContainer is Account {
-			try await addFeed(account: account, feed: feed, container: destinationContainer)
-		} else {
-			try await deleteTagging(for: account, with: feed, from: sourceContainer)
-			try await addFeed(account: account, feed: feed, container: destinationContainer)
+		try await account.logActivity(kind: .moveFeed, detail: feed.url) {
+			if sourceContainer is Account {
+				try await addFeed(account: account, feed: feed, container: destinationContainer)
+			} else {
+				try await deleteTagging(for: account, with: feed, from: sourceContainer)
+				try await addFeed(account: account, feed: feed, container: destinationContainer)
+			}
 		}
 	}
 
 	func addFeed(account: Account, feed: Feed, container: Container) async throws {
-		if let folder = container as? Folder, let feedID = Int(feed.feedID) {
+		try await account.logActivity(kind: .addFeed, detail: feed.url) {
+			if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 
-			refreshProgress.addTask()
-			defer { refreshProgress.completeTask() }
+				refreshProgress.addTask()
+				defer { refreshProgress.completeTask() }
 
-			do {
-				let taggingID = try await caller.createTagging(feedID: feedID, name: folder.name ?? "")
+				do {
+					let taggingID = try await caller.createTagging(feedID: feedID, name: folder.name ?? "")
 
-				saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
-				account.removeFeedFromTreeAtTopLevel(feed)
-				folder.addFeedToTreeAtTopLevel(feed)
-			} catch {
-				throw AccountError.wrapped(error, account)
+					saveFolderRelationship(for: feed, withFolderName: folder.name ?? "", id: String(taggingID))
+					account.removeFeedFromTreeAtTopLevel(feed)
+					folder.addFeedToTreeAtTopLevel(feed)
+				} catch {
+					throw AccountError.wrapped(error, account)
+				}
+			} else if let containerAccount = container as? Account {
+				containerAccount.addFeedIfNotInAnyFolder(feed)
 			}
-		} else if let account = container as? Account {
-			account.addFeedIfNotInAnyFolder(feed)
 		}
 	}
 
@@ -342,30 +360,42 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func restoreFolder(for account: Account, folder: Folder) async throws {
-		for feed in folder.topLevelFeeds {
+		try await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+			for feed in folder.topLevelFeeds {
 
-			folder.topLevelFeeds.remove(feed)
+				folder.topLevelFeeds.remove(feed)
 
-			do {
-				try await restoreFeed(for: account, feed: feed, container: folder)
-			} catch {
-				Self.logger.error("Feedbin: Restore folder feed error: \(error.localizedDescription)")
-				postSyncError(error, account: account, operation: "Restoring feed")
+				do {
+					try await restoreFeed(for: account, feed: feed, container: folder)
+				} catch {
+					Self.logger.error("Feedbin: Restore folder feed error: \(error.localizedDescription)")
+					postSyncError(error, account: account, operation: "Restoring feed")
+				}
 			}
-		}
 
-		account.addFolderToTree(folder)
+			account.addFolderToTree(folder)
+		}
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
-		let syncStatuses = Set(articles.map { article in
-			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-		})
+		let detail = "\(articles.count) (\(statusKey.rawValue) = \(flag))"
+		let successMessage: ((queued: Int, sendTriggered: Bool)) -> String? = { info in
+			let suffix = info.sendTriggered ? ", send triggered" : ""
+			return "\(info.queued) status\(info.queued == 1 ? "" : "es") queued\(suffix)"
+		}
+		try await account.logActivity(kind: .markArticles, detail: detail, successMessage: successMessage) { () -> (queued: Int, sendTriggered: Bool) in
+			let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+			let syncStatuses = Set(updatedArticles.map { article in
+				SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+			})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
-		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
-			try await sendArticleStatus(for: account)
+			try await syncDatabase.insertStatuses(syncStatuses)
+			var sendTriggered = false
+			if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+				sendTriggered = true
+				try await sendArticleStatus(for: account)
+			}
+			return (queued: syncStatuses.count, sendTriggered: sendTriggered)
 		}
 	}
 
@@ -382,8 +412,8 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		return try await caller.validateCredentials()
 	}
 
-	func vacuumDatabases() {
-		Task {
+	func vacuumDatabases(for account: Account) async {
+		try? await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}
@@ -800,30 +830,32 @@ private extension FeedbinAccountDelegate {
 			Self.logger.info("Feedbin: Finished refreshing missing articles")
 		}
 
-		var savedError: Error?
+		try await account.logActivity(kind: .refreshMissingArticles) {
+			var savedError: Error?
 
-		do {
-			let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
-			let articleIDs = Array(fetchedArticleIDs)
-			let chunkedArticleIDs = articleIDs.chunked(into: 100)
+			do {
+				let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+				let articleIDs = Array(fetchedArticleIDs)
+				let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
-			for chunk in chunkedArticleIDs {
-				do {
-					let entries = try await caller.retrieveEntries(articleIDs: chunk)
-					try await processEntries(account: account, entries: entries)
-				} catch {
-					savedError = error
-					Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
+				for chunk in chunkedArticleIDs {
+					do {
+						let entries = try await caller.retrieveEntries(articleIDs: chunk)
+						try await processEntries(account: account, entries: entries)
+					} catch {
+						savedError = error
+						Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
+					}
 				}
+			} catch {
+				savedError = error
+				Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
 			}
-		} catch {
-			savedError = error
-			Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
-		}
 
-		if let savedError {
-			postSyncError(savedError, account: account, operation: "Refreshing missing articles")
-			throw savedError
+			if let savedError {
+				postSyncError(savedError, account: account, operation: "Refreshing missing articles")
+				throw savedError
+			}
 		}
 	}
 

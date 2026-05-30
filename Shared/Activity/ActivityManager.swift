@@ -14,6 +14,7 @@ import Account
 import Articles
 import Intents
 import UniformTypeIdentifiers
+import Images
 
 @MainActor final class ActivityManager {
 

@@ -46,6 +46,10 @@ public protocol CloudKitZoneDelegate: AnyObject {
 
 public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID: CKRecord.ID)
 
+/// Called after each page of `fetchChangesInZone` completes.
+/// Parameters: zone name, changed count, deleted count, moreComing.
+public typealias CloudKitZoneFetchPageHandler = @MainActor @Sendable (String, Int, Int, Bool) -> Void
+
 @MainActor public protocol CloudKitZone: AnyObject {
 	static var qualityOfService: QualityOfService { get }
 
@@ -54,6 +58,9 @@ public typealias CloudKitRecordKey = (recordType: CKRecord.RecordType, recordID:
 	var container: CKContainer? { get }
 	var database: CKDatabase? { get }
 	var delegate: CloudKitZoneDelegate? { get set }
+
+	/// Called after each page of fetchChangesInZone completes.
+	var fetchChangesPageHandler: CloudKitZoneFetchPageHandler? { get set }
 
 	/// Reset the change token used to determine what point in time we are doing changes fetches
 	func resetChangeToken()
@@ -777,6 +784,7 @@ public extension CloudKitZone {
 					do {
 						try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
 						self.changeToken = savedChangeToken
+						self.fetchChangesPageHandler?(self.zoneID.zoneName, changedRecords.count, deletedRecordKeys.count, moreComing)
 						if moreComing {
 							Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) more records to fetch, continuing")
 							self.fetchChangesInZone(completion: completion)
@@ -794,6 +802,7 @@ public extension CloudKitZone {
 						do {
 							try await self.delegate?.cloudKitDidModify(changed: changedRecords, deleted: deletedRecordKeys)
 							self.changeToken = savedChangeToken
+							self.fetchChangesPageHandler?(self.zoneID.zoneName, changedRecords.count, deletedRecordKeys.count, moreComing)
 							if moreComing {
 								Self.logger.debug("CloudKitZone: fetchChangesInZone \(self.zoneID.zoneName, privacy: .public) more records to fetch, continuing")
 								self.fetchChangesInZone(completion: completion)
@@ -921,6 +930,19 @@ public extension CloudKitZone {
 				continuation.resume(with: result)
 			}
 		}
+	}
+
+	/// Async overload of `subscribeToZoneChanges()` that throws on failure
+	/// so callers can surface failures to register for remote-change pushes.
+	/// Without a successful subscription, this device won't receive silent
+	/// pushes when other devices change records — it'll only sync on manual
+	/// refresh or relaunch.
+	func subscribeToZoneChanges() async throws {
+		let subscription = CKRecordZoneSubscription(zoneID: zoneID, subscriptionID: zoneID.zoneName)
+		let info = CKSubscription.NotificationInfo()
+		info.shouldSendContentAvailable = true
+		subscription.notificationInfo = info
+		_ = try await save(subscription)
 	}
 
 	func delete(ckQuery: CKQuery) async throws {

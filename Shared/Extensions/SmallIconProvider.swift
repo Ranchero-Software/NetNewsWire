@@ -10,6 +10,7 @@ import Foundation
 import Articles
 import Account
 import RSCore
+import Images
 
 protocol SmallIconProvider {
 	@MainActor var smallIcon: IconImage? { get }

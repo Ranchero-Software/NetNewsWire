@@ -24,6 +24,7 @@ final class FeedlyRefreshAccessTokenOperation: FeedlyOperation {
 	}
 
 	override func run() {
+		startActivityIfNeeded()
 		let refreshToken: Credentials
 
 		do {
