@@ -132,12 +132,18 @@ import Secrets
 		do {
 			try await account.logActivity(kind: .refreshAll) {
 				try await sendArticleStatus(for: account)
+				refreshProgress.completeTask()
 				try await refreshFeedList(for: account)
+				refreshProgress.completeTask()
 				try await ingestStreamArticleIDs(for: account, userID: credentials.username)
+				refreshProgress.completeTask()
 				try await refreshArticleStatus(for: account)
+				refreshProgress.completeTask()
 				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
 				let missingIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+				refreshProgress.completeTask()
 				try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
+				refreshProgress.completeTask()
 			}
 			accountSettings?.lastArticleFetchStartTime = startDate
 			accountSettings?.lastRefreshCompletedDate = Date()
@@ -153,8 +159,18 @@ import Secrets
 	}
 
 	func syncArticleStatus(for account: Account) async throws {
+		refreshProgress.reset()
+		refreshProgress.addTasks(2)
+		progressInfo = ProgressInfo()
+		defer {
+			refreshProgress.reset()
+			progressInfo = ProgressInfo()
+		}
+
 		try await sendArticleStatus(for: account)
+		refreshProgress.completeTask()
 		try await refreshArticleStatus(for: account)
+		refreshProgress.completeTask()
 	}
 
 	func sendArticleStatus(for account: Account) async throws {
@@ -607,7 +623,6 @@ private extension FeedlyAccountDelegate {
 				let collections = try await caller.getCollections()
 				let pairs = mirrorCollectionsAsFolders(collections, in: account)
 				syncFeedsForCollectionFolders(pairs, in: account)
-				refreshProgress.completeTask()
 			}
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing feed list")
@@ -625,7 +640,6 @@ private extension FeedlyAccountDelegate {
 			try await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
 			continuation = page.continuation
 		} while continuation != nil
-		refreshProgress.completeTask()
 	}
 
 	/// Mirror the remote unread set onto local statuses.
@@ -643,7 +657,6 @@ private extension FeedlyAccountDelegate {
 		try await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
 		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs)
 		try await account.markAsReadAsync(articleIDs: toMarkRead)
-		refreshProgress.completeTask()
 	}
 
 	/// Mirror the remote starred set onto local statuses.
@@ -659,7 +672,6 @@ private extension FeedlyAccountDelegate {
 		try await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
 		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs)
 		try await account.markAsUnstarredAsync(articleIDs: toUnstar)
-		refreshProgress.completeTask()
 	}
 
 	/// IDs of articles updated on Feedly since `newerThan`.
@@ -690,7 +702,6 @@ private extension FeedlyAccountDelegate {
 	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks.
 	func downloadEntries(for account: Account, articleIDs: Set<String>) async throws {
 		guard !articleIDs.isEmpty else {
-			refreshProgress.completeTask()
 			return
 		}
 
@@ -703,7 +714,6 @@ private extension FeedlyAccountDelegate {
 					let entries = try await caller.getEntries(for: Set(chunk))
 					try await ingest(entries: entries, into: account)
 				}
-				refreshProgress.completeTask()
 			}
 		} catch {
 			postSyncError(error, account: account, operation: "Downloading articles")
