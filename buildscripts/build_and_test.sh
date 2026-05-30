@@ -16,6 +16,7 @@ xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME_MAC" \
   -destination "$DESTINATION_MAC" \
+  CODE_SIGNING_ALLOWED=NO \
   clean build | xcbeautify
 
 echo "🛠 Building iOS target..."
@@ -23,6 +24,7 @@ xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME_IOS" \
   -destination "$DESTINATION_IOS" \
+  CODE_SIGNING_ALLOWED=NO \
   clean build | xcbeautify
 
 echo "✅ Builds completed."
@@ -32,6 +34,7 @@ xcodebuild \
   -project "$PROJECT_PATH" \
   -scheme "$SCHEME_MAC" \
   -destination "$DESTINATION_MAC" \
+  CODE_SIGNING_ALLOWED=NO \
   test | xcbeautify
 
 echo "🎉 All builds and tests completed successfully."

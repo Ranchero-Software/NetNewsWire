@@ -31,6 +31,7 @@ final class FeedSettingsDatabase: Sendable {
 		case externalID
 		case folderRelationship
 		case lastCheckDate
+		case articleFilters
 	}
 
 	struct Row {
@@ -49,6 +50,7 @@ final class FeedSettingsDatabase: Sendable {
 		let externalID: String?
 		let folderRelationship: [String: String]?
 		let lastCheckDate: Date?
+		let articleFilters: [ArticleFilter]?
 	}
 
 	let databasePath: String
@@ -64,6 +66,7 @@ final class FeedSettingsDatabase: Sendable {
 		serialDispatchQueue.sync { [database] in
 			database.executeStatements("PRAGMA journal_mode = WAL;")
 			database.runCreateStatements(Self.tableCreationStatements)
+			Self.addArticleFiltersColumnIfNeeded(database)
 		}
 		vacuumIfNeeded()
 	}
@@ -206,6 +209,18 @@ final class FeedSettingsDatabase: Sendable {
 		}
 	}
 
+	func setArticleFilters(_ filters: [ArticleFilter]?, for feedURL: String) {
+		serialDispatchQueue.async {
+			if let filters {
+				if let jsonString = filters.json() {
+					self.database.executeUpdate("UPDATE feedSettings SET articleFilters = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString, feedURL])
+				}
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET articleFilters = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
+		}
+	}
+
 	func setFolderRelationship(_ relationship: [String: String]?, for feedURL: String) {
 		serialDispatchQueue.async {
 			if let relationship {
@@ -254,8 +269,17 @@ final class FeedSettingsDatabase: Sendable {
 private extension FeedSettingsDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS feedSettings (feedURL TEXT PRIMARY KEY, feedID TEXT NOT NULL DEFAULT '', homePageURL TEXT, iconURL TEXT, faviconURL TEXT, editedName TEXT, contentHash TEXT, newArticleNotificationsEnabled INTEGER NOT NULL DEFAULT 0, readerViewAlwaysEnabled INTEGER NOT NULL DEFAULT 0, authors TEXT, conditionalGetInfoLastModified TEXT, conditionalGetInfoEtag TEXT, conditionalGetInfoDate REAL, cacheControlInfoDateCreated REAL, cacheControlInfoMaxAge REAL, externalID TEXT, folderRelationship TEXT, lastCheckDate REAL);
+	CREATE TABLE IF NOT EXISTS feedSettings (feedURL TEXT PRIMARY KEY, feedID TEXT NOT NULL DEFAULT '', homePageURL TEXT, iconURL TEXT, faviconURL TEXT, editedName TEXT, contentHash TEXT, newArticleNotificationsEnabled INTEGER NOT NULL DEFAULT 0, readerViewAlwaysEnabled INTEGER NOT NULL DEFAULT 0, authors TEXT, conditionalGetInfoLastModified TEXT, conditionalGetInfoEtag TEXT, conditionalGetInfoDate REAL, cacheControlInfoDateCreated REAL, cacheControlInfoMaxAge REAL, externalID TEXT, folderRelationship TEXT, lastCheckDate REAL, articleFilters TEXT);
 	"""
+
+	static func addArticleFiltersColumnIfNeeded(_ database: FMDatabase) {
+		if let resultSet = database.executeQuery("SELECT * FROM feedSettings LIMIT 1;", withArgumentsIn: []) {
+			if let columnMap = resultSet.columnNameToIndexMap, columnMap["articlefilters"] == nil {
+				database.executeStatements("ALTER TABLE feedSettings ADD COLUMN articleFilters TEXT;")
+			}
+			resultSet.close()
+		}
+	}
 
 	func row(from resultSet: FMResultSet) -> Row {
 		let lastModified = resultSet.swiftString(forColumn: Column.conditionalGetInfoLastModified.rawValue)
@@ -290,6 +314,11 @@ private extension FeedSettingsDatabase {
 			lastCheckDate = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastCheckDate.rawValue))
 		}
 
+		var articleFilters: [ArticleFilter]?
+		if let filtersJSON = resultSet.string(forColumn: Column.articleFilters.rawValue) {
+			articleFilters = [ArticleFilter].filtersWithJSON(filtersJSON)
+		}
+
 		return Row(
 			feedID: resultSet.swiftString(forColumn: Column.feedID.rawValue) ?? "",
 			homePageURL: resultSet.swiftString(forColumn: Column.homePageURL.rawValue),
@@ -305,7 +334,8 @@ private extension FeedSettingsDatabase {
 			cacheControlInfo: cacheControlInfo,
 			externalID: resultSet.swiftString(forColumn: Column.externalID.rawValue),
 			folderRelationship: folderRelationship,
-			lastCheckDate: lastCheckDate
+			lastCheckDate: lastCheckDate,
+			articleFilters: articleFilters
 		)
 	}
 }

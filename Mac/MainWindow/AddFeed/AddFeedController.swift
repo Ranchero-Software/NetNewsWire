@@ -48,7 +48,7 @@ import RSParser
 
 	// MARK: - AddFeedWindowControllerDelegate
 
-	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container) {
+	func addFeedWindowController(_: AddFeedWindowController, userEnteredURL url: URL, userEnteredTitle title: String?, container: Container, articleFilter: ArticleFilter?) {
 		closeAddFeedSheet(NSApplication.ModalResponse.OK)
 
 		guard let accountAndFolderSpecifier = accountAndFolderFromContainer(container) else {
@@ -65,19 +65,20 @@ import RSParser
 
 			DispatchQueue.main.async {
 				self.endShowingProgress()
-			}
 
-			switch result {
-			case .success(let feed):
-				NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
-			case .failure(let error):
-				switch error {
-				case AccountError.createErrorAlreadySubscribed:
-					self.showAlreadySubscribedError(url.absoluteString)
-				case AccountError.createErrorNotFound:
-					self.showNoFeedsErrorMessage()
-				default:
-					DispatchQueue.main.async {
+				switch result {
+				case .success(let feed):
+					if let articleFilter {
+						feed.articleFilters = [articleFilter]
+					}
+					NotificationCenter.default.post(name: .UserDidAddFeed, object: self, userInfo: [UserInfoKey.feed: feed])
+				case .failure(let error):
+					switch error {
+					case AccountError.createErrorAlreadySubscribed:
+						self.showAlreadySubscribedError(url.absoluteString)
+					case AccountError.createErrorNotFound:
+						self.showNoFeedsErrorMessage()
+					default:
 						NSApplication.shared.presentError(error)
 					}
 				}
