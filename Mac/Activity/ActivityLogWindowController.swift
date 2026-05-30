@@ -519,8 +519,6 @@ private extension ActivityLogWindowController {
 			return "Removing folder"
 		case .restoreFolder:
 			return "Restoring folder"
-		case .markArticles:
-			return "Marking articles"
 		case .cleanUpCloudKitRecords:
 			return "Cleaning up iCloud records"
 		case .fetchCloudKitStats:

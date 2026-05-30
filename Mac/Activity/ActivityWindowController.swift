@@ -490,8 +490,6 @@ private extension ActivityWindowController {
 			return NSLocalizedString("Removing folder", comment: "Activity kind")
 		case .restoreFolder:
 			return NSLocalizedString("Restoring folder", comment: "Activity kind")
-		case .markArticles:
-			return NSLocalizedString("Marking articles", comment: "Activity kind")
 		case .cleanUpCloudKitRecords:
 			return NSLocalizedString("Cleaning up iCloud records", comment: "Activity kind")
 		case .fetchCloudKitStats:

@@ -32,7 +32,6 @@ public enum ActivityKind: Sendable, Hashable {
 
 	// CloudKit background work
 
-	case markArticles
 	case cleanUpCloudKitRecords
 	case uploadNewArticles
 	case subscribeToCloudKitZone

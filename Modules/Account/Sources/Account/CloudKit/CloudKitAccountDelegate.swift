@@ -491,24 +491,17 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 
-		let detail = "\(articles.count) (\(statusKey.rawValue) = \(flag))"
-		let successMessage: (Int) -> String? = { queued in
-			"\(queued) status\(queued == 1 ? "" : "es") queued"
-		}
-		try await account.logActivity(kind: .markArticles, detail: detail, successMessage: successMessage) { () -> Int in
-			let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
-			let syncStatuses = Set(updatedArticles.map { article in
-				SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-			})
+		let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(updatedArticles.map { article in
+			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		})
 
-			try await syncDatabase.insertStatuses(syncStatuses)
-			if !syncStatuses.isEmpty {
-				NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
-			}
-			if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
-				try await sendArticleStatus(for: account)
-			}
-			return syncStatuses.count
+		try await syncDatabase.insertStatuses(syncStatuses)
+		if !syncStatuses.isEmpty {
+			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
+		}
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+			try await sendArticleStatus(for: account)
 		}
 
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
