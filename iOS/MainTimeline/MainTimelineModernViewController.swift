@@ -120,6 +120,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		label.addGestureRecognizer(tap)
 		let pointerInteraction = UIPointerInteraction(delegate: nil)
 		label.addInteraction(pointerInteraction)
+		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.sizeToFit()
 		return label
 	}()
 
@@ -132,6 +134,8 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		label.adjustsFontForContentSizeCategory = false
 		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 		label.addGestureRecognizer(tap)
+		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.sizeToFit()
 		return label
 	}()
 
