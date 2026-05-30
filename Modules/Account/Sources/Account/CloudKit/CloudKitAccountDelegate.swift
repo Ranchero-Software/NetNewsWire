@@ -527,18 +527,20 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: syncDatabase, articlesZone: articlesZone, syncErrorHandler: syncErrorHandler)
 
 		let accountID = account.accountID
-		let pageHandler: CloudKitZoneFetchPageHandler = { zoneName, changed, deleted, _ in
-			let activityLog = ActivityLog.shared
-			let owner = ActivityOwner.account(accountID)
-			let taskNumber = activityLog.nextTaskNumberString()
-			let message = cloudKitSyncMessage(changed: changed, deleted: deleted)
-			let detail = "Fetching \(zoneName) changes \(taskNumber)"
-			let id = activityLog.createActivity(owner: owner, kind: .refreshFeedList, detail: detail)
-			activityLog.didStart(id: id)
-			activityLog.didComplete(id: id, message: message)
+		func makePageHandler(kind: ActivityKind) -> CloudKitZoneFetchPageHandler {
+			{ zoneName, changed, deleted, _ in
+				let activityLog = ActivityLog.shared
+				let owner = ActivityOwner.account(accountID)
+				let taskNumber = activityLog.nextTaskNumberString()
+				let message = cloudKitSyncMessage(changed: changed, deleted: deleted)
+				let detail = "Fetching \(zoneName.lowercased()) changes \(taskNumber)"
+				let id = activityLog.createActivity(owner: owner, kind: kind, detail: detail)
+				activityLog.didStart(id: id)
+				activityLog.didComplete(id: id, message: message)
+			}
 		}
-		accountZone.fetchChangesPageHandler = pageHandler
-		articlesZone.fetchChangesPageHandler = pageHandler
+		accountZone.fetchChangesPageHandler = makePageHandler(kind: .refreshFeedList)
+		articlesZone.fetchChangesPageHandler = makePageHandler(kind: .refreshArticleStatuses)
 
 		syncDatabase.resetAllSelectedForProcessing()
 
