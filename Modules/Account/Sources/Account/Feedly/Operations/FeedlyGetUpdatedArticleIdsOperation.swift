@@ -40,6 +40,7 @@ final class FeedlyGetUpdatedArticleIdsOperation: FeedlyOperation, FeedlyEntryIde
 	private var storedUpdatedArticleIds = Set<String>()
 
 	override func run() {
+		startActivityIfNeeded()
 		getStreamIds(nil)
 	}
 

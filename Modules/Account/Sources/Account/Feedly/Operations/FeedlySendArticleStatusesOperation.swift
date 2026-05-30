@@ -25,6 +25,7 @@ final class FeedlySendArticleStatusesOperation: FeedlyOperation {
 
 	override func run() {
 		Feedly.logger.info("Feedly: Sending article statuses")
+		startActivityIfNeeded()
 
 		Task {
 			do {
