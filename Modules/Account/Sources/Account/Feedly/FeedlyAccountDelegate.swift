@@ -120,9 +120,11 @@ import Secrets
 	}
 
 	func refreshAll(for account: Account) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			refreshAll(for: account) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .refreshAll) {
+			try await withCheckedThrowingContinuation { continuation in
+				refreshAll(for: account) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -182,9 +184,11 @@ import Secrets
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: sendArticleStatus")
-		try await withCheckedThrowingContinuation { continuation in
-			sendArticleStatus(for: account) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .sendArticleStatuses) {
+			try await withCheckedThrowingContinuation { continuation in
+				sendArticleStatus(for: account) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -208,9 +212,11 @@ import Secrets
 	/// - Parameter account: The account whose articles have a remote status.
 	@MainActor func refreshArticleStatus(for account: Account) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: refreshArticleStatus")
-		try await withCheckedThrowingContinuation { continuation in
-			refreshArticleStatus(for: account) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .refreshArticleStatuses) {
+			try await withCheckedThrowingContinuation { continuation in
+				refreshArticleStatus(for: account) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -246,9 +252,11 @@ import Secrets
 
 
 	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			importOPML(for: account, opmlFile: opmlFile) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+			try await withCheckedThrowingContinuation { continuation in
+				importOPML(for: account, opmlFile: opmlFile) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -292,9 +300,11 @@ import Secrets
 
 	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
 		Self.logger.debug("FeedlyAccountDelegate: createFolder")
-		return try await withCheckedThrowingContinuation { continuation in
-			createFolder(for: account, name: name) { result in
-				continuation.resume(with: result)
+		return try await account.logActivity(kind: .createFolder, detail: name) {
+			try await withCheckedThrowingContinuation { continuation in
+				createFolder(for: account, name: name) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -325,9 +335,11 @@ import Secrets
 
 	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: renameFolder")
-		try await withCheckedThrowingContinuation { continuation in
-			renameFolder(for: account, with: folder, to: name) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .renameFolder, detail: "\(folder.name ?? "") → \(name)") {
+			try await withCheckedThrowingContinuation { continuation in
+				renameFolder(for: account, with: folder, to: name) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -359,9 +371,11 @@ import Secrets
 
 	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: removeFolder")
-		try await withCheckedThrowingContinuation { continuation in
-			removeFolder(for: account, with: folder) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .removeFolder, detail: folder.name ?? "") {
+			try await withCheckedThrowingContinuation { continuation in
+				removeFolder(for: account, with: folder) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -393,9 +407,11 @@ import Secrets
 
 	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
 		Self.logger.debug("FeedlyAccountDelegate: createFeed")
-		return try await withCheckedThrowingContinuation { continuation in
-			createFeed(for: account, url: urlString, name: name, container: container, validateFeed: validateFeed) { result in
-				continuation.resume(with: result)
+		return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
+			try await withCheckedThrowingContinuation { continuation in
+				createFeed(for: account, url: urlString, name: name, container: container, validateFeed: validateFeed) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -434,9 +450,11 @@ import Secrets
 
 	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: renameFeed")
-		try await withCheckedThrowingContinuation { continuation in
-			renameFeed(for: account, with: feed, to: name) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .renameFeed, detail: feed.url) {
+			try await withCheckedThrowingContinuation { continuation in
+				renameFeed(for: account, with: feed, to: name) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -472,9 +490,11 @@ import Secrets
 
 	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: addFeed")
-		try await withCheckedThrowingContinuation { continuation in
-			addFeed(for: account, with: feed, to: container) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .addFeed, detail: feed.url) {
+			try await withCheckedThrowingContinuation { continuation in
+				addFeed(for: account, with: feed, to: container) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -511,9 +531,11 @@ import Secrets
 
 	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: removeFeed")
-		try await withCheckedThrowingContinuation { continuation in
-			removeFeed(for: account, with: feed, from: container) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .removeFeed, detail: feed.url) {
+			try await withCheckedThrowingContinuation { continuation in
+				removeFeed(for: account, with: feed, from: container) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -542,9 +564,11 @@ import Secrets
 
 	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: moveFeed")
-		try await withCheckedThrowingContinuation{ continuation in
-			moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .moveFeed, detail: feed.url) {
+			try await withCheckedThrowingContinuation{ continuation in
+				moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -618,9 +642,11 @@ import Secrets
 
 	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: restoreFolder")
-		try await withCheckedThrowingContinuation { continuation in
-			restoreFolder(for: account, folder: folder) { result in
-				continuation.resume(with: result)
+		try await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+			try await withCheckedThrowingContinuation { continuation in
+				restoreFolder(for: account, folder: folder) { result in
+					continuation.resume(with: result)
+				}
 			}
 		}
 	}
@@ -653,14 +679,24 @@ import Secrets
 
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: markArticles")
-		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
-		let syncStatuses = Set(articles.map { article in
-			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
-		})
+		let detail = "\(articles.count) (\(statusKey.rawValue) = \(flag))"
+		let successMessage: ((queued: Int, sendTriggered: Bool)) -> String? = { info in
+			let suffix = info.sendTriggered ? ", send triggered" : ""
+			return "\(info.queued) status\(info.queued == 1 ? "" : "es") queued\(suffix)"
+		}
+		try await account.logActivity(kind: .markArticles, detail: detail, successMessage: successMessage) { () -> (queued: Int, sendTriggered: Bool) in
+			let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+			let syncStatuses = Set(updatedArticles.map { article in
+				SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+			})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
-		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
-			sendArticleStatus(for: account) { _ in }
+			try await syncDatabase.insertStatuses(syncStatuses)
+			var sendTriggered = false
+			if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+				sendTriggered = true
+				sendArticleStatus(for: account) { _ in }
+			}
+			return (queued: syncStatuses.count, sendTriggered: sendTriggered)
 		}
 	}
 
