@@ -422,6 +422,11 @@ private extension ActivityWindowController {
 			let result = NSMutableAttributedString(string: "\(prefix) ", attributes: primaryAttributes)
 			result.append(NSAttributedString(string: urlString, attributes: secondaryAttributes))
 			return result
+		case .fetchFeedCandidate(let urlString):
+			let prefix = NSLocalizedString("Fetching", comment: "Activity kind — fetching a candidate URL during feed finding")
+			let result = NSMutableAttributedString(string: "\(prefix) ", attributes: primaryAttributes)
+			result.append(NSAttributedString(string: urlString, attributes: secondaryAttributes))
+			return result
 		case .downloadFeedImage(let feedURL):
 			let prefix = NSLocalizedString("Downloading image", comment: "Activity kind — downloading feed image")
 			let result = NSMutableAttributedString(string: "\(prefix) ", attributes: primaryAttributes)
@@ -501,7 +506,7 @@ private extension ActivityWindowController {
 			return NSLocalizedString("Validating credentials", comment: "Activity kind")
 		case .exportOPML:
 			return NSLocalizedString("Exporting OPML", comment: "Activity kind")
-		case .refreshFeedContent, .findFeed, .downloadFeedImage, .downloadFavicon, .downloadAvatar, .downloadHTMLMetadata:
+		case .refreshFeedContent, .findFeed, .fetchFeedCandidate, .downloadFeedImage, .downloadFavicon, .downloadAvatar, .downloadHTMLMetadata:
 			return ""
 		}
 	}

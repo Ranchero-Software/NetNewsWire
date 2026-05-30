@@ -491,6 +491,8 @@ private extension ActivityLogWindowController {
 			return "Importing OPML"
 		case .findFeed(let urlString):
 			return "Finding feed \(urlString)"
+		case .fetchFeedCandidate(let urlString):
+			return "Fetching \(urlString)"
 		case .downloadFeedImage(let feedURL):
 			return "Downloading image \(feedURL)"
 		case .downloadFavicon(let faviconURL):

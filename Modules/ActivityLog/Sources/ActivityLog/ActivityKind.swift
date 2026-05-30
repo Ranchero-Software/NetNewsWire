@@ -51,6 +51,7 @@ public enum ActivityKind: Sendable, Hashable {
 	// Non-account
 
 	case findFeed(urlString: String)
+	case fetchFeedCandidate(urlString: String)
 	case downloadFeedImage(feedURL: String)
 	case downloadFavicon(faviconURL: String)
 	case downloadAvatar(avatarURL: String)
