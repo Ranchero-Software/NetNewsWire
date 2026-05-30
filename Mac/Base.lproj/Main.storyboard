@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -592,13 +592,12 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="zRZ-rO-O5O"/>
-                                        <menuItem title="Current Activity" keyEquivalent="8" id="act-Wn-d0w">
+                                        <menuItem title="Current Activity" keyEquivalent="7" id="act-Wn-d0w">
                                             <connections>
                                                 <action selector="showActivityWindow:" target="Ady-hI-5gd" id="act-Cn-x1a"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Activity Log" id="alg-Wn-m1q">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        <menuItem title="Activity Log" keyEquivalent="8" id="alg-Wn-m1q">
                                             <connections>
                                                 <action selector="showActivityLog:" target="Ady-hI-5gd" id="alg-Cn-y2b"/>
                                             </connections>
