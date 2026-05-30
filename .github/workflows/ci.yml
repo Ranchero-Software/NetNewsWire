@@ -102,7 +102,7 @@ jobs:
             -scheme NetNewsWire-iOS \
             -testPlan NetNewsWire-iOS \
             -xcconfig .github/ios-ci-no-signing.xcconfig \
-            -destination "platform=iOS Simulator,name=iPhone 16" \
+            -destination "platform=iOS Simulator,genericDeviceType=iPhone" \
             OTHER_SWIFT_FLAGS='$(inherited) -DDEBUG -DSKIP_APP_GROUP_ACCESS' \
             -resultBundlePath "$result_bundle" \
             test 2>&1 | tee "$build_log" | xcbeautify --renderer github-actions
