@@ -36,6 +36,7 @@ public enum ActivityKind: Sendable, Hashable {
 	case cleanUpCloudKitRecords
 	case uploadNewArticles
 	case subscribeToCloudKitZone
+	case fetchCloudKitStats
 
 	// Maintenance and lifecycle
 

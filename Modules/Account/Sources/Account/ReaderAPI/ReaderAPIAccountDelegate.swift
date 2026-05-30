@@ -838,19 +838,21 @@ private extension ReaderAPIAccountDelegate {
 
 		refreshProgress.addTasks(5)
 
-		// Download the initial articles
-		let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID)
+		try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay) {
+			// Download the initial articles
+			let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID)
 
-		refreshProgress.completeTask()
+			refreshProgress.completeTask()
 
-		_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
-		refreshProgress.completeTask()
+			_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
+			refreshProgress.completeTask()
 
-		try? await refreshArticleStatus(for: account)
-		refreshProgress.completeTask()
+			try? await refreshArticleStatus(for: account)
+			refreshProgress.completeTask()
 
-		await refreshMissingArticles(account)
-		refreshProgress.reset()
+			await refreshMissingArticles(account)
+			refreshProgress.reset()
+		}
 
 		return feed
 	}

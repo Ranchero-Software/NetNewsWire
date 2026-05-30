@@ -520,7 +520,9 @@ private extension ActivityLogWindowController {
 		case .markArticles:
 			return "Marking articles"
 		case .cleanUpCloudKitRecords:
-			return "Weekly record cleanup"
+			return "Cleaning up iCloud records"
+		case .fetchCloudKitStats:
+			return "Fetching iCloud stats"
 		case .uploadNewArticles:
 			return "Uploading new articles"
 		case .subscribeToCloudKitZone:

@@ -488,7 +488,9 @@ private extension ActivityWindowController {
 		case .markArticles:
 			return NSLocalizedString("Marking articles", comment: "Activity kind")
 		case .cleanUpCloudKitRecords:
-			return NSLocalizedString("Weekly record cleanup", comment: "Activity kind")
+			return NSLocalizedString("Cleaning up iCloud records", comment: "Activity kind")
+		case .fetchCloudKitStats:
+			return NSLocalizedString("Fetching iCloud stats", comment: "Activity kind")
 		case .uploadNewArticles:
 			return NSLocalizedString("Uploading new articles", comment: "Activity kind")
 		case .subscribeToCloudKitZone:

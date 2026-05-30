@@ -586,7 +586,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			throw CloudKitAccountDelegateError.unknown
 		}
 		do {
-			return try await articlesZone.fetchStats(account: account, progress: progress)
+			return try await account.logActivity(kind: .fetchCloudKitStats) {
+				try await articlesZone.fetchStats(account: account, progress: progress)
+			}
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: fetchCloudKitStats error: \(error)")
 			postSyncError(error, account: account, operation: "Fetching iCloud stats")
@@ -599,8 +601,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			throw CloudKitAccountDelegateError.unknown
 		}
 		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
+		let detail = dryRun ? "Dry run" : "Manual"
 		do {
-			try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
+			try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: detail) {
+				try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
+			}
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: cleanUpCloudKit error: \(error)")
 			postSyncError(error, account: account, operation: "Cleaning up iCloud records")
@@ -1048,7 +1053,7 @@ private extension CloudKitAccountDelegate {
 			let successMessage: (Int) -> String? = { count in
 				count == 0 ? "no records deleted" : "deleted \(count) record\(count == 1 ? "" : "s")"
 			}
-			let deleted = try await account.logActivity(kind: .cleanUpCloudKitRecords, successMessage: successMessage) { () -> Int in
+			let deleted = try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: "Weekly", successMessage: successMessage) { () -> Int in
 				try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
 			}
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")

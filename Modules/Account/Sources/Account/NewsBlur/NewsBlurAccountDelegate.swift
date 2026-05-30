@@ -476,7 +476,9 @@ import Secrets
 
 	func accountWillBeDeleted(_ account: Account) {
 		Task { @MainActor in
-			try await caller.logout()
+			try? await account.logActivity(kind: .validateCredentials, detail: "Logging out of NewsBlur") {
+				try await caller.logout()
+			}
 		}
 	}
 
