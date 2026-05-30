@@ -467,7 +467,7 @@ private extension AppDelegate {
 		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
 
 		Task { @MainActor in
-			try? await account.syncArticleStatus()
+			_ = try? await account.syncArticleStatus()
 			prepareAccountsForBackground()
 			suspendApplication()
 		}

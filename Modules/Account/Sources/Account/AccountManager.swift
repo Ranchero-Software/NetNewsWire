@@ -344,13 +344,24 @@ import ActivityLog
 		}
 	}
 
-	public func syncArticleStatusAll() async {
-		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
+	/// Returns `true` if any account reported meaningful work this round;
+	/// `false` only if every account was idle.
+	@discardableResult
+	public func syncArticleStatusAll() async -> Bool {
+		await withTaskGroup(of: Bool.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
 				group.addTask {
-					try? await account.syncArticleStatus()
+					(try? await account.syncArticleStatus()) ?? false
 				}
 			}
+
+			var anyWork = false
+			for await didWork in group {
+				if didWork {
+					anyWork = true
+				}
+			}
+			return anyWork
 		}
 	}
 

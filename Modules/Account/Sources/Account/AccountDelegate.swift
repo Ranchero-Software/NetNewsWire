@@ -25,7 +25,9 @@ import Secrets
 	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async
 
 	func refreshAll(for account: Account) async throws
-	func syncArticleStatus(for account: Account) async throws
+	/// Returns `true` if any meaningful work was done (statuses sent or local
+	/// statuses changed); `false` if the round was a no-op.
+	func syncArticleStatus(for account: Account) async throws -> Bool
 	func sendArticleStatus(for account: Account) async throws
 	func refreshArticleStatus(for account: Account) async throws
 

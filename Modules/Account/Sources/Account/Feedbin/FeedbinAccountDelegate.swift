@@ -101,9 +101,11 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func syncArticleStatus(for account: Account) async throws {
+	func syncArticleStatus(for account: Account) async throws -> Bool {
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
+		// This delegate doesn't track per-sync change counts.
+		return true
 	}
 
 	func sendArticleStatus(for account: Account) async throws {

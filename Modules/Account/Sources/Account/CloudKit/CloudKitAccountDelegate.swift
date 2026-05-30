@@ -134,12 +134,12 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func syncArticleStatus(for account: Account) async throws {
+	func syncArticleStatus(for account: Account) async throws -> Bool {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 
 		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
 			Self.logger.debug("CloudKitAccountDelegate: Skipping sync — no changes on last check, backing off")
-			return
+			return true
 		}
 
 		try await sendArticleStatus(for: account)
@@ -153,6 +153,8 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		await cleanUpContentRecordsIfNeeded()
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+		// CloudKit has its own per-account no-change backoff (lastNoChangeSyncDate).
+		return true
 	}
 
 	private var articlesZoneHasNoChanges: Bool {

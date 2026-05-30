@@ -165,15 +165,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws {
+	@MainActor func syncArticleStatus(for account: Account) async throws -> Bool {
 		guard variant != .inoreader else {
-			return
+			// Inoreader: no-op for this delegate.
+			return false
 		}
 
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
 
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
+		// This delegate doesn't track per-sync change counts.
+		return true
 	}
 
 	public func sendArticleStatus(for account: Account) async throws {

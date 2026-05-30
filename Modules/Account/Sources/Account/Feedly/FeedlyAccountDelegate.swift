@@ -158,7 +158,7 @@ import Secrets
 		progressInfo = ProgressInfo()
 	}
 
-	func syncArticleStatus(for account: Account) async throws {
+	func syncArticleStatus(for account: Account) async throws -> Bool {
 		refreshProgress.reset()
 		refreshProgress.addTasks(2)
 		progressInfo = ProgressInfo()
@@ -167,25 +167,40 @@ import Secrets
 			progressInfo = ProgressInfo()
 		}
 
-		try await sendArticleStatus(for: account)
+		let sentCount = try await sendArticleStatusReturningCount(for: account)
 		refreshProgress.completeTask()
-		try await refreshArticleStatus(for: account)
+		let refreshCounts = try await refreshArticleStatusReturningCounts(for: account)
 		refreshProgress.completeTask()
+
+		return sentCount > 0 || refreshCounts.totalChanged > 0
 	}
 
 	func sendArticleStatus(for account: Account) async throws {
+		_ = try await sendArticleStatusReturningCount(for: account)
+	}
+
+	/// Sends queued local status changes upstream. Returns the count successfully sent.
+	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.info("Feedly: Sending article statuses")
 		defer {
 			Self.logger.info("Feedly: Finished sending article statuses")
 		}
 
+		let successMessage: (Int) -> String? = { count in
+			Self.sendStatusMessage(count: count)
+		}
+		let durationIsSignificant: (Int) -> Bool = { count in
+			count > 0
+		}
+
 		do {
-			try await account.logActivity(kind: .sendArticleStatuses) {
+			return try await account.logActivity(kind: .sendArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> Int in
 				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
-					return
+					return 0
 				}
 
 				var savedError: Error?
+				var sentCount = 0
 				let pairings: [(key: SyncStatus.Key, flag: Bool, action: FeedlyMarkAction)] = [
 					(.read, false, .unread),
 					(.read, true, .read),
@@ -202,6 +217,7 @@ import Secrets
 					do {
 						try await caller.mark(articleIDs, as: pairing.action)
 						try? await syncDatabase.deleteSelectedForProcessing(articleIDs)
+						sentCount += articleIDs.count
 					} catch {
 						Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
 						try? await syncDatabase.resetSelectedForProcessing(articleIDs)
@@ -212,6 +228,7 @@ import Secrets
 				if let savedError {
 					throw savedError
 				}
+				return sentCount
 			}
 		} catch {
 			postSyncError(error, account: account, operation: "Sending article status")
@@ -219,28 +236,45 @@ import Secrets
 		}
 	}
 
+	func refreshArticleStatus(for account: Account) async throws {
+		_ = try await refreshArticleStatusReturningCounts(for: account)
+	}
+
 	/// Attempt to bring local read/starred statuses in line with the remote ones.
 	/// If the user is using another Feedly client at roughly the same time as this app,
 	/// this app does its part to ensure articles have a consistent status between both.
-	func refreshArticleStatus(for account: Account) async throws {
+	/// Returns counts of articles whose unread/starred state actually flipped.
+	private func refreshArticleStatusReturningCounts(for account: Account) async throws -> StatusRefreshCounts {
 		Self.logger.info("Feedly: Refreshing article statuses")
 
 		guard let credentials else {
-			return
+			return StatusRefreshCounts()
 		}
 
-		try await account.logActivity(kind: .refreshArticleStatuses) {
+		let successMessage: (StatusRefreshCounts) -> String? = { counts in
+			Self.refreshStatusMessage(counts: counts)
+		}
+		let durationIsSignificant: (StatusRefreshCounts) -> Bool = { counts in
+			counts.totalChanged > 0
+		}
+
+		return try await account.logActivity(kind: .refreshArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> StatusRefreshCounts in
 			var refreshError: Error?
+			var counts = StatusRefreshCounts()
 
 			do {
-				try await ingestUnreadArticleIDs(for: account, userID: credentials.username)
+				let unread = try await ingestUnreadArticleIDs(for: account, userID: credentials.username)
+				counts.unreadAdded = unread.added
+				counts.unreadRemoved = unread.removed
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedly: Ingesting unread article IDs failed: \(error.localizedDescription)")
 			}
 
 			do {
-				try await ingestStarredArticleIDs(for: account, userID: credentials.username)
+				let starred = try await ingestStarredArticleIDs(for: account, userID: credentials.username)
+				counts.starredAdded = starred.added
+				counts.starredRemoved = starred.removed
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedly: Ingesting starred article IDs failed: \(error.localizedDescription)")
@@ -251,6 +285,7 @@ import Secrets
 				postSyncError(refreshError, account: account, operation: "Refreshing article status")
 				throw refreshError
 			}
+			return counts
 		}
 	}
 
@@ -618,11 +653,39 @@ private extension FeedlyAccountDelegate {
 	}
 
 	func refreshFeedList(for account: Account) async throws {
+		let successMessage: (FeedListChanges) -> String? = { changes in
+			Self.feedListMessage(changes: changes)
+		}
+		let durationIsSignificant: (FeedListChanges) -> Bool = { changes in
+			changes.totalChanged > 0
+		}
+
 		do {
-			try await account.logActivity(kind: .refreshFeedList) {
+			try await account.logActivity(kind: .refreshFeedList, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> FeedListChanges in
+				// Snapshot before reconciliation so we can diff what actually changed.
+				let foldersBefore = account.folders ?? Set()
+				let feedsBefore = account.flattenedFeeds()
+				let feedNamesBefore = Dictionary(uniqueKeysWithValues: feedsBefore.map { ($0.feedID, $0.nameForDisplay) })
+
 				let collections = try await caller.getCollections()
 				let pairs = mirrorCollectionsAsFolders(collections, in: account)
 				syncFeedsForCollectionFolders(pairs, in: account)
+
+				let foldersAfter = account.folders ?? Set()
+				let feedsAfter = account.flattenedFeeds()
+
+				let feedsRenamed = feedsAfter.reduce(into: 0) { count, feed in
+					if let before = feedNamesBefore[feed.feedID], before != feed.nameForDisplay {
+						count += 1
+					}
+				}
+
+				return FeedListChanges(
+					foldersAdded: foldersAfter.subtracting(foldersBefore).count,
+					foldersRemoved: foldersBefore.subtracting(foldersAfter).count,
+					feedsAdded: feedsAfter.subtracting(feedsBefore).count,
+					feedsRemoved: feedsBefore.subtracting(feedsAfter).count,
+					feedsRenamed: feedsRenamed)
 			}
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing feed list")
@@ -645,7 +708,10 @@ private extension FeedlyAccountDelegate {
 	/// Mirror the remote unread set onto local statuses.
 	/// Articles in the remote unread set become unread locally; the rest become read.
 	/// Pending local edits are excluded so we don't temporarily clobber them.
-	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws {
+	/// Returns counts of articles whose unread status actually flipped:
+	/// `added` became unread, `removed` became read.
+	@discardableResult
+	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 		let remoteUnreadIDs = try await collectStreamIDs(for: resource, unreadOnly: true)
 
@@ -654,13 +720,20 @@ private extension FeedlyAccountDelegate {
 
 		let localUnreadIDs = try await account.fetchUnreadArticleIDsAsync()
 
-		try await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
+		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
 		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs)
+
+		try await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
 		try await account.markAsReadAsync(articleIDs: toMarkRead)
+
+		return (added: newlyUnread.count, removed: toMarkRead.count)
 	}
 
 	/// Mirror the remote starred set onto local statuses.
-	func ingestStarredArticleIDs(for account: Account, userID: String) async throws {
+	/// Returns counts of articles whose starred status actually flipped:
+	/// `added` became starred, `removed` became unstarred.
+	@discardableResult
+	func ingestStarredArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		let remoteStarredIDs = try await collectStreamIDs(for: resource, unreadOnly: nil)
 
@@ -669,9 +742,13 @@ private extension FeedlyAccountDelegate {
 
 		let localStarredIDs = try await account.fetchStarredArticleIDsAsync()
 
-		try await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
+		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
 		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs)
+
+		try await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
 		try await account.markAsUnstarredAsync(articleIDs: toUnstar)
+
+		return (added: newlyStarred.count, removed: toUnstar.count)
 	}
 
 	/// IDs of articles updated on Feedly since `newerThan`.
@@ -788,5 +865,85 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			Self.logger.error("Feedly: Refresh access token failed: \(error.localizedDescription)")
 			return false
 		}
+	}
+}
+
+// MARK: - Activity Log Messages
+
+extension FeedlyAccountDelegate {
+
+	/// Counts of articles whose status actually flipped during a refresh.
+	struct StatusRefreshCounts {
+		var unreadAdded = 0
+		var unreadRemoved = 0
+		var starredAdded = 0
+		var starredRemoved = 0
+
+		var totalChanged: Int {
+			unreadAdded + unreadRemoved + starredAdded + starredRemoved
+		}
+	}
+
+	/// Counts of folder/feed structural changes during a feed-list refresh.
+	struct FeedListChanges {
+		var foldersAdded = 0
+		var foldersRemoved = 0
+		var feedsAdded = 0
+		var feedsRemoved = 0
+		var feedsRenamed = 0
+
+		var totalChanged: Int {
+			foldersAdded + foldersRemoved + feedsAdded + feedsRemoved + feedsRenamed
+		}
+	}
+
+	static func sendStatusMessage(count: Int) -> String {
+		if count == 0 {
+			return "No statuses to send"
+		}
+		return "\(count) status\(count == 1 ? "" : "es") sent"
+	}
+
+	static func refreshStatusMessage(counts: StatusRefreshCounts) -> String {
+		var parts = [String]()
+		if counts.unreadAdded > 0 {
+			parts.append("\(counts.unreadAdded) marked unread")
+		}
+		if counts.unreadRemoved > 0 {
+			parts.append("\(counts.unreadRemoved) marked read")
+		}
+		if counts.starredAdded > 0 {
+			parts.append("\(counts.starredAdded) starred")
+		}
+		if counts.starredRemoved > 0 {
+			parts.append("\(counts.starredRemoved) unstarred")
+		}
+		if parts.isEmpty {
+			return "No changes"
+		}
+		return parts.joined(separator: ", ")
+	}
+
+	static func feedListMessage(changes: FeedListChanges) -> String {
+		var parts = [String]()
+		if changes.foldersAdded > 0 {
+			parts.append("\(changes.foldersAdded) folder\(changes.foldersAdded == 1 ? "" : "s") added")
+		}
+		if changes.foldersRemoved > 0 {
+			parts.append("\(changes.foldersRemoved) folder\(changes.foldersRemoved == 1 ? "" : "s") removed")
+		}
+		if changes.feedsAdded > 0 {
+			parts.append("\(changes.feedsAdded) feed\(changes.feedsAdded == 1 ? "" : "s") added")
+		}
+		if changes.feedsRemoved > 0 {
+			parts.append("\(changes.feedsRemoved) feed\(changes.feedsRemoved == 1 ? "" : "s") removed")
+		}
+		if changes.feedsRenamed > 0 {
+			parts.append("\(changes.feedsRenamed) feed\(changes.feedsRenamed == 1 ? "" : "s") renamed")
+		}
+		if parts.isEmpty {
+			return "No changes"
+		}
+		return parts.joined(separator: ", ")
 	}
 }

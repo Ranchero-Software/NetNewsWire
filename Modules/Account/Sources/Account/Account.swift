@@ -477,6 +477,7 @@ public enum FetchType {
 		kind: ActivityKind,
 		detail: String? = nil,
 		successMessage: ((T) -> String?)? = nil,
+		durationIsSignificant: ((T) -> Bool)? = nil,
 		_ work: () async throws -> T
 	) async throws -> T {
 		let activityLog = ActivityLog.shared
@@ -484,7 +485,8 @@ public enum FetchType {
 		activityLog.didStart(id: id)
 		do {
 			let result = try await work()
-			activityLog.didComplete(id: id, message: successMessage?(result))
+			let significant = durationIsSignificant?(result) ?? true
+			activityLog.didComplete(id: id, message: successMessage?(result), durationIsSignificant: significant)
 			return result
 		} catch {
 			activityLog.didFail(id: id, error: error)
@@ -498,6 +500,7 @@ public enum FetchType {
 		kind: ActivityKind,
 		detail: String? = nil,
 		successMessage: ((T) -> String?)? = nil,
+		durationIsSignificant: ((T) -> Bool)? = nil,
 		_ work: () throws -> T
 	) rethrows -> T {
 		let activityLog = ActivityLog.shared
@@ -505,7 +508,8 @@ public enum FetchType {
 		activityLog.didStart(id: id)
 		do {
 			let result = try work()
-			activityLog.didComplete(id: id, message: successMessage?(result))
+			let significant = durationIsSignificant?(result) ?? true
+			activityLog.didComplete(id: id, message: successMessage?(result), durationIsSignificant: significant)
 			return result
 		} catch {
 			activityLog.didFail(id: id, error: error)
@@ -519,7 +523,8 @@ public enum FetchType {
 		try await delegate.sendArticleStatus(for: self)
 	}
 
-	public func syncArticleStatus() async throws {
+	@discardableResult
+	public func syncArticleStatus() async throws -> Bool {
 		try await delegate.syncArticleStatus(for: self)
 	}
 

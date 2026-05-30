@@ -54,7 +54,8 @@ import Secrets
 		account.lastRefreshCompletedDate = Date()
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws {
+	@MainActor func syncArticleStatus(for account: Account) async throws -> Bool {
+		false
 	}
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {

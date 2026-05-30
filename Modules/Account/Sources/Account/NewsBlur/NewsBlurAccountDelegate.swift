@@ -103,9 +103,11 @@ import Secrets
 		}
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws {
+	@MainActor func syncArticleStatus(for account: Account) async throws -> Bool {
 		try await sendArticleStatus(for: account)
 		try await refreshArticleStatus(for: account)
+		// This delegate doesn't track per-sync change counts.
+		return true
 	}
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {
