@@ -72,7 +72,13 @@ final class ArticleViewController: UIViewController {
 					DispatchQueue.main.async {
 						// You have to set the view controller to clear out the UIPageViewController child controller cache.
 						// You also have to do it in an async call or you will get a strange assertion error.
-						self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+						// Re-check the transition state: a user swipe between enqueue and execution can flip
+						// isPageTransitionInProgress to true, and calling setViewControllers then would crash.
+						if self.isPageTransitionInProgress {
+							self.pendingSetViewController = controller
+						} else {
+							self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+						}
 					}
 				}
 			}
