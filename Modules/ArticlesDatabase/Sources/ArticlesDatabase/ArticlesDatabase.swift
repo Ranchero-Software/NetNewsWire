@@ -136,6 +136,11 @@ public struct ArticleChanges: Sendable {
 		return try articlesTable.fetchStarredArticlesCount(feedIDs)
 	}
 
+	public func fetchAllArticlesCount(feedIDs: Set<String>) throws -> Int {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		return try articlesTable.fetchAllArticlesCount(feedIDs)
+	}
+
 	public func fetchArticlesMatching(searchString: String, feedIDs: Set<String>) throws -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticlesMatching(searchString, feedIDs)

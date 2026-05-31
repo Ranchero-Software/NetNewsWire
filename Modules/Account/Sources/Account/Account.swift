@@ -235,7 +235,7 @@ public enum FetchType {
 	private var fetchingAllUnreadCounts = false
 	var areUnreadCountsInitialized = false
 
-	let dataFolder: String
+	public let dataFolder: String
 	let database: ArticlesDatabase
 	var delegate: AccountDelegate
 
@@ -878,6 +878,10 @@ public enum FetchType {
 
 	public func fetchCountForStarredArticles() throws -> Int {
 		try database.fetchStarredArticlesCount(feedIDs: flattenedFeedsIDs)
+	}
+
+	public func fetchAllArticlesCount() throws -> Int {
+		try database.fetchAllArticlesCount(feedIDs: flattenedFeedsIDs)
 	}
 
 	public func fetchUnreadCountForTodayAsync() async throws -> Int {

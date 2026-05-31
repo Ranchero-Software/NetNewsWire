@@ -96,6 +96,7 @@ let appName = "NetNewsWire"
 	private var errorLogWindowController: ErrorLogWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private var cloudKitStatsWindowController: CloudKitStatsWindowController?
+	private var accountStatsWindowController: AccountStatsWindowController?
 	private let appMovementMonitor: RSAppMovementMonitor
 	private var softwareUpdater: SPUUpdater?
 	private var crashReporter: PLCrashReporter?
@@ -235,6 +236,10 @@ let appName = "NetNewsWire"
 
 		if ErrorLogWindowController.shouldOpenAtStartup {
 			showErrorLog(self)
+		}
+
+		if AccountStatsWindowController.shouldOpenAtStartup {
+			showAccountStats(self)
 		}
 
 		ArticleThemesManager.shared.start()
@@ -851,6 +856,13 @@ extension AppDelegate {
 		cloudKitStatsWindowController?.showWindow(self)
 	}
 
+	@IBAction func showAccountStats(_ sender: Any?) {
+		if accountStatsWindowController == nil {
+			accountStatsWindowController = AccountStatsWindowController()
+		}
+		accountStatsWindowController?.showWindow(self)
+	}
+
 	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
 		// Manual testing for alert in AccountsAddCloudKitWindowController
 		// Check for:
@@ -883,6 +895,7 @@ extension AppDelegate {
 		activityWindowController?.saveState()
 		activityLogWindowController?.saveState()
 		errorLogWindowController?.saveState()
+		accountStatsWindowController?.saveState()
 	}
 
 	@MainActor func updateSortMenuItems() {
