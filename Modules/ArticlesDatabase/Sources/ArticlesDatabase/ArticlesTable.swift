@@ -108,6 +108,10 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		return try fetchArticlesCount { self.fetchStarredArticlesCount(feedIDs, $0) }
 	}
 
+	func fetchAllArticlesCount(_ feedIDs: Set<String>) throws -> Int {
+		return try fetchArticlesCount { self.fetchAllArticlesCount(feedIDs, $0) }
+	}
+
 	// MARK: - Fetching Search Articles
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
@@ -957,6 +961,16 @@ nonisolated private extension ArticlesTable {
 		let parameters = feedIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
 		let whereClause = "feedID in \(placeholders) and starred=1"
+		return fetchArticleCountsWithWhereClause(database, whereClause: whereClause, parameters: parameters)
+	}
+
+	func fetchAllArticlesCount(_ feedIDs: Set<String>, _ database: FMDatabase) -> Int {
+		if feedIDs.isEmpty {
+			return 0
+		}
+		let parameters = feedIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let whereClause = "feedID in \(placeholders)"
 		return fetchArticleCountsWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
