@@ -27,13 +27,11 @@ import ActivityLog
 	private var copyButton: NSButton?
 	private var hasBeenShown = false
 
-	/// Activity IDs for which we've logged the start entry.
-	private var loggedStartIDs = Set<Int>()
 	/// Activity IDs for which we've logged the completion entry.
 	private var loggedCompletionIDs = Set<Int>()
 	/// Number of text entries appended to the text view.
 	private var textEntryCount = 0
-	/// Maximum text entries before rebuilding (2 per activity: start + completion).
+	/// Maximum text entries before rebuilding.
 	private static let maxTextEntries = 1000
 
 	private var needsRebuild = false
@@ -221,7 +219,6 @@ private extension ActivityLogWindowController {
 	}
 
 	func reloadEntries() {
-		loggedStartIDs.removeAll()
 		loggedCompletionIDs.removeAll()
 		textEntryCount = 0
 
@@ -230,11 +227,6 @@ private extension ActivityLogWindowController {
 
 		let combined = NSMutableAttributedString()
 		for activity in allActivities {
-			if activity.state == .running || activity.state == .completed || activity.state == .failed {
-				combined.append(startAttributedString(for: activity))
-				loggedStartIDs.insert(activity.id)
-				textEntryCount += 1
-			}
 			if activity.state == .completed || activity.state == .failed {
 				combined.append(completionAttributedString(for: activity))
 				loggedCompletionIDs.insert(activity.id)
@@ -259,14 +251,6 @@ private extension ActivityLogWindowController {
 		var didAppend = false
 
 		for activity in allActivities {
-			let isStarted = activity.state == .running || activity.state == .completed || activity.state == .failed
-			if isStarted && !loggedStartIDs.contains(activity.id) {
-				textView.textStorage?.append(startAttributedString(for: activity))
-				loggedStartIDs.insert(activity.id)
-				textEntryCount += 1
-				didAppend = true
-			}
-
 			let isFinished = activity.state == .completed || activity.state == .failed
 			if isFinished && !loggedCompletionIDs.contains(activity.id) {
 				textView.textStorage?.append(completionAttributedString(for: activity))
@@ -299,26 +283,6 @@ private extension ActivityLogWindowController {
 	}
 
 	// MARK: - Attributed Strings
-
-	func startAttributedString(for activity: Activity) -> NSAttributedString {
-		let result = NSMutableAttributedString()
-
-		let date = activity.startDate ?? Date()
-		appendTimestamp(date, to: result)
-
-		let startAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: NSColor.systemBlue,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .medium),
-			.paragraphStyle: Self.entryParagraphStyle
-		]
-		result.append(NSAttributedString(string: "▶ ", attributes: startAttributes))
-
-		appendSource(for: activity, to: result)
-		appendKindAndDetail(for: activity, to: result)
-		appendNewline(to: result)
-
-		return result
-	}
 
 	func completionAttributedString(for activity: Activity) -> NSAttributedString {
 		let result = NSMutableAttributedString()
