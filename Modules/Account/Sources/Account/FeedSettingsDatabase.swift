@@ -62,7 +62,6 @@ final class FeedSettingsDatabase: Sendable {
 		self.serialDispatchQueue = DispatchQueue(label: "FeedSettingsDatabase")
 		self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		serialDispatchQueue.sync { [database] in
-			database.executeStatements("PRAGMA journal_mode = WAL;")
 			database.runCreateStatements(Self.tableCreationStatements)
 		}
 		vacuumIfNeeded()

@@ -23,7 +23,6 @@ public actor ErrorLogDatabase {
 	public init(databasePath: String) {
 		self.databasePath = databasePath
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
-		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
 		ErrorLogTable.pruneEntries(limit: Self.pruneLimit, database: database)
 		database.vacuumIfNeeded()

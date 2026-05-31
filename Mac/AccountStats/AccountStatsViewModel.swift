@@ -60,7 +60,7 @@ struct AccountStatsData {
 		NotificationCenter.default.post(name: .AccountStatsDidChange, object: self)
 
 		Task {
-			await AccountManager.shared.vacuumAllDatabases()
+			await appDelegate.vacuumAllDatabases()
 			isVacuuming = false
 			refresh()
 		}
@@ -118,17 +118,13 @@ private extension AccountStatsViewModel {
 	func databaseSize(for account: Account) -> Int {
 		let dataFolder = account.dataFolder as NSString
 		let baseNames = ["DB.sqlite3", "FeedSettings.db", "Sync.sqlite3"]
-		// WAL databases create multiple files.
-		let suffixes = ["", "-wal", "-shm", "-journal"]
 		var totalSize = 0
 
 		for baseName in baseNames {
-			for suffix in suffixes {
-				let path = dataFolder.appendingPathComponent(baseName + suffix)
-				if let attributes = try? FileManager.default.attributesOfItem(atPath: path),
-				   let size = attributes[FileAttributeKey.size] as? Int {
-					totalSize += size
-				}
+			let path = dataFolder.appendingPathComponent(baseName)
+			if let attributes = try? FileManager.default.attributesOfItem(atPath: path),
+			   let size = attributes[FileAttributeKey.size] as? Int {
+				totalSize += size
 			}
 		}
 

@@ -15,6 +15,9 @@ public extension FMDatabase {
 		let database = FMDatabase(path: path)!
 
 		database.open()
+		// All databases are single-connection and serialized — WAL gains us nothing
+		// and produces extra -wal/-shm files that bloat on disk.
+		database.executeStatements("PRAGMA journal_mode = DELETE;")
 		database.executeStatements("PRAGMA synchronous = 1;")
 		database.setShouldCacheStatements(true)
 

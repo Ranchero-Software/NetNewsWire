@@ -827,13 +827,19 @@ extension AppDelegate {
 
 	@IBAction func vacuumDatabases(_ sender: Any?) {
 		Task {
-			await AccountManager.shared.vacuumAllDatabases()
-			await vacuumAndLog(databasePath: HTMLMetadataDatabase.shared.databasePath) {
-				await HTMLMetadataDatabase.shared.vacuum()
-			}
-			await vacuumAndLog(databasePath: ImageMetadataDatabase.shared.databasePath) {
-				await ImageMetadataDatabase.shared.vacuum()
-			}
+			await vacuumAllDatabases()
+		}
+	}
+
+	/// Vacuum every database the app owns — per-account databases plus the
+	/// app-level HTMLMetadata and ImageMetadata databases.
+	func vacuumAllDatabases() async {
+		await AccountManager.shared.vacuumAllDatabases()
+		await vacuumAndLog(databasePath: HTMLMetadataDatabase.shared.databasePath) {
+			await HTMLMetadataDatabase.shared.vacuum()
+		}
+		await vacuumAndLog(databasePath: ImageMetadataDatabase.shared.databasePath) {
+			await ImageMetadataDatabase.shared.vacuum()
 		}
 	}
 
