@@ -55,7 +55,6 @@ public final actor HTMLMetadataDatabase {
 	private init(databasePath: String) {
 		self.databasePath = databasePath
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
-		database.executeStatements("PRAGMA journal_mode = WAL;")
 		database.runCreateStatements(Self.tableCreationStatements)
 		self.database = database
 
