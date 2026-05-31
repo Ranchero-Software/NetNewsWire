@@ -662,7 +662,7 @@ private extension CloudKitArticlesZone {
 	func handleModifyArticlesError(_ error: Error, statusUpdates: [CloudKitArticleStatusUpdate]) async throws {
 		if case CloudKitZoneError.userDeletedZone = error {
 			try await createZoneRecord()
-			try await modifyArticles(statusUpdates)
+			_ = try await modifyArticles(statusUpdates)
 		} else {
 			throw error
 		}
