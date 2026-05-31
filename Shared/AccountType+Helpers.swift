@@ -49,7 +49,7 @@ extension AccountType {
 	var logColor: NSColor {
 		switch self {
 		case .onMyMac:
-			return .labelColor
+			return .onMyMacLogColor
 		case .cloudKit:
 			return .systemPurple
 		case .feedly:
@@ -104,3 +104,17 @@ extension AccountType {
 	}
 
 }
+
+#if os(macOS)
+extension NSColor {
+
+	private static let onMyMacLogLightColor = NSColor(red: 0x4A / 255.0, green: 0x55 / 255.0, blue: 0x60 / 255.0, alpha: 1.0)
+	private static let onMyMacLogDarkColor = NSColor(red: 0xB0 / 255.0, green: 0xBA / 255.0, blue: 0xC4 / 255.0, alpha: 1.0)
+
+	/// Activity Log color for the On My Mac account. Slate gray — darker on light backgrounds, lighter on dark.
+	static let onMyMacLogColor = NSColor(name: "onMyMacLogColor") { appearance in
+		let isDark = appearance.bestMatch(from: [.darkAqua, .vibrantDark, .accessibilityHighContrastDarkAqua, .accessibilityHighContrastVibrantDark]) != nil
+		return isDark ? onMyMacLogDarkColor : onMyMacLogLightColor
+	}
+}
+#endif
