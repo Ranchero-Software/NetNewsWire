@@ -548,13 +548,6 @@
                                                 <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="Xut-dI-qDw"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="vDb-aB-q9Z"/>
-                                        <menuItem title="Vacuum Databases" id="kLm-nR-v3X">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="vacuumDatabases:" target="Ady-hI-5gd" id="pQw-eT-j7Y"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="c4R-jH-7kP"/>
                                         <menuItem title="Open Image Cache Folder" id="x9L-mW-2vQ">
                                             <modifierMask key="keyEquivalentModifierMask"/>

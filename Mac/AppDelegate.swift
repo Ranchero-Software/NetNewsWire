@@ -825,12 +825,6 @@ extension AppDelegate {
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 
-	@IBAction func vacuumDatabases(_ sender: Any?) {
-		Task {
-			await vacuumAllDatabases()
-		}
-	}
-
 	/// Vacuum every database the app owns — per-account databases plus the
 	/// app-level HTMLMetadata and ImageMetadata databases.
 	func vacuumAllDatabases() async {
