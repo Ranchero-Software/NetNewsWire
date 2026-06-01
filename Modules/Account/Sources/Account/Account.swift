@@ -880,8 +880,8 @@ public enum FetchType {
 		try database.fetchStarredArticlesCount(feedIDs: flattenedFeedsIDs)
 	}
 
-	public func fetchAllArticlesCount() throws -> Int {
-		try database.fetchAllArticlesCount(feedIDs: flattenedFeedsIDs)
+	public func fetchArticleCountsAsync() async throws -> ArticleCounts {
+		try await database.fetchArticleCountsAsync(feedIDs: flattenedFeedsIDs)
 	}
 
 	/// Returns a dictionary of feedID → latest article date for all feeds with articles.

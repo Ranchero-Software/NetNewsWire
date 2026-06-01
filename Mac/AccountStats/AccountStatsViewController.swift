@@ -108,7 +108,7 @@ private extension AccountStatsViewController {
 
 	enum ColumnKind: String, CaseIterable {
 
-		case account, feeds, folders, articles, unread, starred, dbSize
+		case account, feeds, folders, articles, statuses, unread, starred, dbSize
 
 		var identifier: NSUserInterfaceItemIdentifier {
 			NSUserInterfaceItemIdentifier(rawValue)
@@ -124,6 +124,8 @@ private extension AccountStatsViewController {
 				return NSLocalizedString("Folders", comment: "Folders column header")
 			case .articles:
 				return NSLocalizedString("Articles", comment: "Articles column header")
+			case .statuses:
+				return NSLocalizedString("Statuses", comment: "Statuses column header")
 			case .unread:
 				return NSLocalizedString("Unread", comment: "Unread column header")
 			case .starred:
@@ -137,7 +139,7 @@ private extension AccountStatsViewController {
 			switch self {
 			case .account:
 				return 130
-			case .feeds, .folders, .articles, .unread, .starred, .dbSize:
+			case .feeds, .folders, .articles, .statuses, .unread, .starred, .dbSize:
 				return 80
 			}
 		}
@@ -213,11 +215,13 @@ private extension AccountStatsViewController {
 		case .folders:
 			return AccountStatsLayout.formattedNumber(stats.folderCount)
 		case .articles:
-			return AccountStatsLayout.formattedNumber(stats.totalArticleCount)
+			return stats.totalArticleCount.map { AccountStatsLayout.formattedNumber($0) } ?? "—"
+		case .statuses:
+			return stats.statusesCount.map { AccountStatsLayout.formattedNumber($0) } ?? "—"
 		case .unread:
-			return AccountStatsLayout.formattedNumber(stats.unreadCount)
+			return stats.unreadCount.map { AccountStatsLayout.formattedNumber($0) } ?? "—"
 		case .starred:
-			return AccountStatsLayout.formattedNumber(stats.starredCount)
+			return stats.starredCount.map { AccountStatsLayout.formattedNumber($0) } ?? "—"
 		case .dbSize:
 			return AccountStatsLayout.formattedSize(stats.databaseSizeBytes)
 		}
