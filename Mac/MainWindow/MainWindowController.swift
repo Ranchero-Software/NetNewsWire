@@ -126,6 +126,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		return sidebarViewController?.selectedObjects
 	}
 
+	func selectFeedInSidebar(_ feed: Feed) {
+		sidebarViewController?.selectFeed(feed)
+	}
+
 	func handle(_ response: UNNotificationResponse) {
 		let userInfo = response.notification.request.content.userInfo
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any] else { return }

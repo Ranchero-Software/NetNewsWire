@@ -151,6 +151,16 @@ public struct ArticleChanges: Sendable {
 		return try articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 	}
 
+	/// Returns a dictionary of feedID → latest article date for all feeds with articles.
+	public func fetchLastUpdateDates() async throws -> [String: Date] {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		return try await withCheckedThrowingContinuation { continuation in
+			articlesTable.fetchLastUpdateDatesAsync { result in
+				continuation.resume(with: result)
+			}
+		}
+	}
+
 	// MARK: - Fetching Articles Async
 
 	public func fetchArticlesAsync(feedID: String) async throws -> Set<Article> {

@@ -240,6 +240,8 @@ import os
 			return
 		}
 
+		feed.lastResponseCode = httpResponse.statusCode
+
 		let statusIsOK = httpResponse.statusIsOK
 		let statusIsOKOrNotModified = statusIsOK || httpResponse.statusCode == HTTPResponseCode.notModified
 		guard statusIsOKOrNotModified else {

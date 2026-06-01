@@ -94,6 +94,7 @@ let appName = "NetNewsWire"
 	private var activityWindowController: ActivityWindowController?
 	private var activityLogWindowController: ActivityLogWindowController?
 	private var errorLogWindowController: ErrorLogWindowController?
+	private var dinosaurWindowController: DinosaurWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private var cloudKitStatsWindowController: CloudKitStatsWindowController?
 	private var accountStatsWindowController: AccountStatsWindowController?
@@ -580,6 +581,13 @@ let appName = "NetNewsWire"
 			errorLogWindowController = ErrorLogWindowController()
 		}
 		errorLogWindowController!.showWindow(self)
+	}
+
+	@IBAction func showDinosaursWindow(_ sender: Any?) {
+		if dinosaurWindowController == nil {
+			dinosaurWindowController = DinosaurWindowController()
+		}
+		dinosaurWindowController!.showWindow(self)
 	}
 
 	@IBAction func showActivityWindow(_ sender: Any?) {

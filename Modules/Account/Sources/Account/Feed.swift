@@ -189,6 +189,17 @@ import Articles
 			settings.lastCheckDate = newValue
 		}
 	}
+
+	/// HTTP status code from the most recent feed download attempt.
+	public var lastResponseCode: Int? {
+		get {
+			settings.lastResponseCode
+		}
+		set {
+			settings.lastResponseCode = newValue
+		}
+	}
+
 	// MARK: - DisplayNameProvider
 
 	public var nameForDisplay: String {

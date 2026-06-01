@@ -112,6 +112,24 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		return try fetchArticlesCount { self.fetchAllArticlesCount(feedIDs, $0) }
 	}
 
+	// MARK: - Fetching Last Update Dates
+
+	func fetchLastUpdateDatesAsync(_ completion: @escaping @Sendable (Result<[String: Date], DatabaseError>) -> Void) {
+		queue.runInDatabase { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				let result = self.fetchLastUpdateDates(database)
+				DispatchQueue.main.async {
+					completion(.success(result))
+				}
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(.failure(databaseError))
+				}
+			}
+		}
+	}
+
 	// MARK: - Fetching Search Articles
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
@@ -984,6 +1002,26 @@ nonisolated private extension ArticlesTable {
 		let articles = fetchArticlesMatching(searchString, database)
 		// TODO: include the articleIDs in the SQL rather than filtering here.
 		return articles.filter { articleIDs.contains($0.articleID) }
+	}
+
+	func fetchLastUpdateDates(_ database: FMDatabase) -> [String: Date] {
+		guard let resultSet = database.executeQuery("SELECT feedID, MAX(coalesce(datePublished, dateModified)) as latestDate FROM articles GROUP BY feedID;", withArgumentsIn: []) else {
+			return [:]
+		}
+		defer {
+			resultSet.close()
+		}
+
+		var result = [String: Date]()
+		while resultSet.next() {
+			guard let feedID = resultSet.string(forColumn: "feedID") else {
+				continue
+			}
+			if !resultSet.columnIsNull("latestDate") {
+				result[feedID] = resultSet.date(forColumn: "latestDate")
+			}
+		}
+		return result
 	}
 
 	// MARK: - Saving Parsed Items

@@ -31,6 +31,7 @@ final class FeedSettingsDatabase: Sendable {
 		case externalID
 		case folderRelationship
 		case lastCheckDate
+		case lastResponseCode
 	}
 
 	struct Row {
@@ -49,6 +50,7 @@ final class FeedSettingsDatabase: Sendable {
 		let externalID: String?
 		let folderRelationship: [String: String]?
 		let lastCheckDate: Date?
+		let lastResponseCode: Int?
 	}
 
 	let databasePath: String
@@ -63,6 +65,9 @@ final class FeedSettingsDatabase: Sendable {
 		self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		serialDispatchQueue.sync { [database] in
 			database.runCreateStatements(Self.tableCreationStatements)
+			if !database.columnExists("lastResponseCode", inTableWithName: "feedSettings") {
+				database.executeStatements("ALTER TABLE feedSettings ADD COLUMN lastResponseCode INTEGER;")
+			}
 		}
 		vacuumIfNeeded()
 	}
@@ -156,6 +161,19 @@ final class FeedSettingsDatabase: Sendable {
 		let name = column.rawValue
 		serialDispatchQueue.async {
 			self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
+		}
+	}
+
+	// MARK: - Int
+
+	func setInt(_ value: Int?, for feedURL: String, column: Column) {
+		let name = column.rawValue
+		serialDispatchQueue.async {
+			if let value {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
 		}
 	}
 
@@ -253,7 +271,7 @@ final class FeedSettingsDatabase: Sendable {
 private extension FeedSettingsDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS feedSettings (feedURL TEXT PRIMARY KEY, feedID TEXT NOT NULL DEFAULT '', homePageURL TEXT, iconURL TEXT, faviconURL TEXT, editedName TEXT, contentHash TEXT, newArticleNotificationsEnabled INTEGER NOT NULL DEFAULT 0, readerViewAlwaysEnabled INTEGER NOT NULL DEFAULT 0, authors TEXT, conditionalGetInfoLastModified TEXT, conditionalGetInfoEtag TEXT, conditionalGetInfoDate REAL, cacheControlInfoDateCreated REAL, cacheControlInfoMaxAge REAL, externalID TEXT, folderRelationship TEXT, lastCheckDate REAL);
+	CREATE TABLE IF NOT EXISTS feedSettings (feedURL TEXT PRIMARY KEY, feedID TEXT NOT NULL DEFAULT '', homePageURL TEXT, iconURL TEXT, faviconURL TEXT, editedName TEXT, contentHash TEXT, newArticleNotificationsEnabled INTEGER NOT NULL DEFAULT 0, readerViewAlwaysEnabled INTEGER NOT NULL DEFAULT 0, authors TEXT, conditionalGetInfoLastModified TEXT, conditionalGetInfoEtag TEXT, conditionalGetInfoDate REAL, cacheControlInfoDateCreated REAL, cacheControlInfoMaxAge REAL, externalID TEXT, folderRelationship TEXT, lastCheckDate REAL, lastResponseCode INTEGER);
 	"""
 
 	func row(from resultSet: FMResultSet) -> Row {
@@ -289,6 +307,11 @@ private extension FeedSettingsDatabase {
 			lastCheckDate = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastCheckDate.rawValue))
 		}
 
+		var lastResponseCode: Int?
+		if !resultSet.columnIsNull(Column.lastResponseCode.rawValue) {
+			lastResponseCode = Int(resultSet.int(forColumn: Column.lastResponseCode.rawValue))
+		}
+
 		return Row(
 			feedID: resultSet.swiftString(forColumn: Column.feedID.rawValue) ?? "",
 			homePageURL: resultSet.swiftString(forColumn: Column.homePageURL.rawValue),
@@ -304,7 +327,8 @@ private extension FeedSettingsDatabase {
 			cacheControlInfo: cacheControlInfo,
 			externalID: resultSet.swiftString(forColumn: Column.externalID.rawValue),
 			folderRelationship: folderRelationship,
-			lastCheckDate: lastCheckDate
+			lastCheckDate: lastCheckDate,
+			lastResponseCode: lastResponseCode
 		)
 	}
 }
