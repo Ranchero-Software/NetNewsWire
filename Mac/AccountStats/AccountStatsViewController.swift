@@ -6,12 +6,13 @@
 //
 
 import AppKit
+import RSWeb
 
 final class AccountStatsViewController: NSViewController {
 
 	private let model = AccountStatsViewModel()
 	private let scrollView = NSScrollView()
-	private let tableView = NSTableView()
+	private let tableView = AccountStatsTableView()
 	private let footerView = AccountStatsFooterView()
 
 	override func loadView() {
@@ -59,6 +60,12 @@ final class AccountStatsViewController: NSViewController {
 	@objc func vacuum(_ sender: Any?) {
 		model.vacuum()
 	}
+
+	@objc func showHelp(_ sender: Any?) {
+		if let url = URL(string: "https://netnewswire.com/help/account-stats.html") {
+			MacWebBrowser.openURL(url)
+		}
+	}
 }
 
 // MARK: - NSTableViewDataSource
@@ -66,7 +73,7 @@ final class AccountStatsViewController: NSViewController {
 extension AccountStatsViewController: NSTableViewDataSource {
 
 	func numberOfRows(in tableView: NSTableView) -> Int {
-		model.accountStats.count
+		model.accountStats.count + (showsTotalsRow ? 1 : 0)
 	}
 }
 
@@ -78,10 +85,6 @@ extension AccountStatsViewController: NSTableViewDelegate {
 		guard let tableColumn else {
 			return nil
 		}
-		guard row < model.accountStats.count else {
-			return nil
-		}
-		let stats = model.accountStats[row]
 		let identifier = tableColumn.identifier
 		let columnKind = columnKind(for: identifier)
 
@@ -91,8 +94,31 @@ extension AccountStatsViewController: NSTableViewDelegate {
 		} else {
 			cell = Self.makeCell(identifier: identifier, alignment: columnKind.alignment)
 		}
-
 		let textField = cell.textField!
+
+		if row == totalsRowIndex {
+			let font = columnKind.usesMonospacedDigits
+				? NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .bold)
+				: NSFont.boldSystemFont(ofSize: NSFont.systemFontSize)
+			let paragraphStyle = NSMutableParagraphStyle()
+			paragraphStyle.alignment = columnKind.alignment
+			textField.font = font
+			textField.textColor = .labelColor
+			textField.attributedStringValue = NSAttributedString(
+				string: totalsText(for: columnKind),
+				attributes: [
+					.font: font,
+					.foregroundColor: NSColor.labelColor,
+					.paragraphStyle: paragraphStyle
+				]
+			)
+			return cell
+		}
+
+		guard row < model.accountStats.count else {
+			return nil
+		}
+		let stats = model.accountStats[row]
 		textField.stringValue = text(for: columnKind, stats: stats)
 		textField.textColor = stats.isActive ? .labelColor : .secondaryLabelColor
 		textField.font = columnKind.usesMonospacedDigits
@@ -108,7 +134,7 @@ private extension AccountStatsViewController {
 
 	enum ColumnKind: String, CaseIterable {
 
-		case account, feeds, folders, articles, statuses, unread, starred, dbSize
+		case account, dbSize, feeds, folders, articles, statuses, unread, starred
 
 		var identifier: NSUserInterfaceItemIdentifier {
 			NSUserInterfaceItemIdentifier(rawValue)
@@ -131,7 +157,7 @@ private extension AccountStatsViewController {
 			case .starred:
 				return NSLocalizedString("Starred", comment: "Starred column header")
 			case .dbSize:
-				return NSLocalizedString("Database", comment: "Database size column header")
+				return NSLocalizedString("Databases", comment: "Databases size column header")
 			}
 		}
 
@@ -139,8 +165,12 @@ private extension AccountStatsViewController {
 			switch self {
 			case .account:
 				return 130
-			case .feeds, .folders, .articles, .statuses, .unread, .starred, .dbSize:
+			case .dbSize:
 				return 80
+			case .articles, .statuses:
+				return 70
+			case .feeds, .folders, .unread, .starred:
+				return 55
 			}
 		}
 
@@ -195,12 +225,40 @@ private extension AccountStatsViewController {
 
 	func updateUI() {
 		tableView.reloadData()
-		footerView.updateTotals(model)
 		footerView.updateVacuumState(model.isVacuuming)
+	}
+
+	var showsTotalsRow: Bool {
+		model.accountStats.count > 1
+	}
+
+	var totalsRowIndex: Int? {
+		showsTotalsRow ? model.accountStats.count : nil
 	}
 
 	func columnKind(for identifier: NSUserInterfaceItemIdentifier) -> ColumnKind {
 		ColumnKind(rawValue: identifier.rawValue) ?? .account
+	}
+
+	func totalsText(for kind: ColumnKind) -> String {
+		switch kind {
+		case .account:
+			return NSLocalizedString("Totals", comment: "Totals row label")
+		case .feeds:
+			return AccountStatsLayout.formattedNumber(model.totalFeedCount)
+		case .folders:
+			return AccountStatsLayout.formattedNumber(model.totalFolderCount)
+		case .articles:
+			return AccountStatsLayout.formattedNumber(model.totalArticleCount)
+		case .statuses:
+			return AccountStatsLayout.formattedNumber(model.totalStatusesCount)
+		case .unread:
+			return AccountStatsLayout.formattedNumber(model.totalUnreadCount)
+		case .starred:
+			return AccountStatsLayout.formattedNumber(model.totalStarredCount)
+		case .dbSize:
+			return AccountStatsLayout.formattedSize(model.totalDatabaseSizeBytes)
+		}
 	}
 
 	func text(for kind: ColumnKind, stats: AccountStatsData) -> String {
@@ -245,5 +303,32 @@ private extension AccountStatsViewController {
 		])
 
 		return cell
+	}
+}
+
+// MARK: - AccountStatsTableView
+
+/// NSTableView that doesn't extend its alternating-row stripes below the last row.
+final class AccountStatsTableView: NSTableView {
+
+	override func drawBackground(inClipRect clipRect: NSRect) {
+		super.drawBackground(inClipRect: clipRect)
+
+		guard numberOfRows > 0 else {
+			return
+		}
+		let belowLastRowY = rect(ofRow: numberOfRows - 1).maxY
+		guard belowLastRowY < clipRect.maxY else {
+			return
+		}
+
+		let coverRect = NSRect(
+			x: clipRect.minX,
+			y: belowLastRowY,
+			width: clipRect.width,
+			height: clipRect.maxY - belowLastRowY
+		)
+		(backgroundColor).setFill()
+		coverRect.fill()
 	}
 }

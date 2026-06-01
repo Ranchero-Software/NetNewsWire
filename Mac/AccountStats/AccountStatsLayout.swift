@@ -9,11 +9,11 @@ import AppKit
 
 enum AccountStatsLayout {
 
-	static let windowDefaultWidth: CGFloat = 920
+	static let windowDefaultWidth: CGFloat = 800
 	// Wide enough to fit all NSTableView columns at their initial widths plus inset-style
 	// chrome, intercell spacing, vertical scroller, and header padding. Clamps any prior
 	// narrow autosaved frame on next open.
-	static let windowMinWidth: CGFloat = 860
+	static let windowMinWidth: CGFloat = 740
 	static let windowMinHeight: CGFloat = 260
 	static let windowDefaultHeight: CGFloat = 460
 	static let horizontalPadding: CGFloat = 16

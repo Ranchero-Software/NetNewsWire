@@ -36,10 +36,11 @@ struct AccountStatsData {
 	private var refreshGeneration = 0
 	private var pendingAccountIDs = Set<String>()
 
-	// Footer totals stay stable through a refresh — they only update once every account has reported.
+	// Async-derived totals stay stable through a refresh — they only update once every account has reported.
 	private var cachedTotalArticleCount = 0
 	private var cachedTotalUnreadCount = 0
 	private var cachedTotalStarredCount = 0
+	private var cachedTotalStatusesCount = 0
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
@@ -124,6 +125,10 @@ struct AccountStatsData {
 		cachedTotalStarredCount
 	}
 
+	var totalStatusesCount: Int {
+		cachedTotalStatusesCount
+	}
+
 	var totalDatabaseSizeBytes: Int {
 		accountStats.reduce(0) { $0 + $1.databaseSizeBytes }
 	}
@@ -167,6 +172,7 @@ private extension AccountStatsViewModel {
 		cachedTotalArticleCount = accountStats.reduce(0) { $0 + ($1.totalArticleCount ?? 0) }
 		cachedTotalUnreadCount = accountStats.reduce(0) { $0 + ($1.unreadCount ?? 0) }
 		cachedTotalStarredCount = accountStats.reduce(0) { $0 + ($1.starredCount ?? 0) }
+		cachedTotalStatusesCount = accountStats.reduce(0) { $0 + ($1.statusesCount ?? 0) }
 	}
 
 	func databaseSize(for account: Account) -> Int {

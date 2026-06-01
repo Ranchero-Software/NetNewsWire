@@ -9,10 +9,12 @@ import AppKit
 
 final class AccountStatsFooterView: NSView {
 
-	private let totalsLabel = NSTextField(wrappingLabelWithString: "")
+	private static let vacuumButtonTitle = NSLocalizedString("Vacuum Databases", comment: "Vacuum Databases button title")
+
 	private let refreshButton: NSButton
 	private let vacuumButton: NSButton
 	private let vacuumSpinner = NSProgressIndicator()
+	private let helpButton: NSButton
 	private let explanationLabel: NSTextField
 
 	init() {
@@ -25,28 +27,36 @@ final class AccountStatsFooterView: NSView {
 
 		vacuumButton = NSButton()
 		vacuumButton.bezelStyle = .rounded
-		vacuumButton.title = NSLocalizedString("Vacuum Databases", comment: "Vacuum Databases button title")
+		vacuumButton.title = Self.vacuumButtonTitle
 		vacuumButton.translatesAutoresizingMaskIntoConstraints = false
 		vacuumButton.target = nil
 		vacuumButton.action = #selector(AccountStatsViewController.vacuum(_:))
+
+		helpButton = NSButton()
+		helpButton.bezelStyle = .helpButton
+		helpButton.title = ""
+		helpButton.translatesAutoresizingMaskIntoConstraints = false
+		helpButton.setAccessibilityLabel(NSLocalizedString("Help — opens in browser", comment: "Help button accessibility label"))
+		helpButton.target = nil
+		helpButton.action = #selector(AccountStatsViewController.showHelp(_:))
 
 		explanationLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Vacuuming may make databases faster.", comment: "Vacuum explanation text"))
 		explanationLabel.translatesAutoresizingMaskIntoConstraints = false
 		explanationLabel.font = NSFont.systemFont(ofSize: AccountStatsLayout.bottomBarFontSize)
 		explanationLabel.textColor = .secondaryLabelColor
+		explanationLabel.alignment = .natural
 
 		super.init(frame: .zero)
 		translatesAutoresizingMaskIntoConstraints = false
-
-		totalsLabel.translatesAutoresizingMaskIntoConstraints = false
-		totalsLabel.font = NSFont.systemFont(ofSize: AccountStatsLayout.bottomBarFontSize)
-		totalsLabel.textColor = .secondaryLabelColor
 
 		vacuumSpinner.translatesAutoresizingMaskIntoConstraints = false
 		vacuumSpinner.style = .spinning
 		vacuumSpinner.controlSize = .small
 		vacuumSpinner.isHidden = true
 		vacuumSpinner.isIndeterminate = true
+
+		// Spinner is centered inside the button so it visually replaces the title during vacuum.
+		vacuumButton.addSubview(vacuumSpinner)
 
 		let divider = NSBox()
 		divider.boxType = .separator
@@ -57,34 +67,32 @@ final class AccountStatsFooterView: NSView {
 		background.blendingMode = .withinWindow
 		background.material = .titlebar
 
-		// Top row: totals leading, Refresh trailing.
-		let topRow = NSStackView(views: [totalsLabel, refreshButton])
-		topRow.translatesAutoresizingMaskIntoConstraints = false
-		topRow.orientation = .horizontal
-		topRow.alignment = .centerY
-		topRow.spacing = 8
-		topRow.distribution = .fill
+		// Empty view between the helper text and the Refresh button — absorbs slack
+		// so the helper text stays next to the Vacuum Databases button on the left
+		// and the Refresh button stays pinned to the trailing edge.
+		let spacer = NSView()
+		spacer.translatesAutoresizingMaskIntoConstraints = false
 
-		// Bottom row: prose leading, spinner + Vacuum trailing.
-		let bottomRow = NSStackView(views: [explanationLabel, vacuumSpinner, vacuumButton])
-		bottomRow.translatesAutoresizingMaskIntoConstraints = false
-		bottomRow.orientation = .horizontal
-		bottomRow.alignment = .centerY
-		bottomRow.spacing = 8
-		bottomRow.distribution = .fill
+		let row = NSStackView(views: [vacuumButton, explanationLabel, spacer, refreshButton, helpButton])
+		row.translatesAutoresizingMaskIntoConstraints = false
+		row.orientation = .horizontal
+		row.alignment = .centerY
+		row.spacing = 8
+		row.distribution = .fill
 
-		// Let the text labels absorb extra horizontal space so buttons stay at the trailing edge.
-		totalsLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-		totalsLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-		explanationLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-		explanationLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+		spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
+		spacer.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+		// Helper text sizes to its content so it sits next to the Vacuum button.
+		explanationLabel.setContentHuggingPriority(.required, for: .horizontal)
+		explanationLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
 		refreshButton.setContentHuggingPriority(.required, for: .horizontal)
 		vacuumButton.setContentHuggingPriority(.required, for: .horizontal)
+		helpButton.setContentHuggingPriority(.required, for: .horizontal)
 
 		addSubview(divider)
 		addSubview(background)
-		addSubview(topRow)
-		addSubview(bottomRow)
+		addSubview(row)
 
 		let padding = AccountStatsLayout.horizontalPadding
 		let spacing = AccountStatsLayout.verticalSpacing
@@ -99,17 +107,16 @@ final class AccountStatsFooterView: NSView {
 			background.trailingAnchor.constraint(equalTo: trailingAnchor),
 			background.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-			topRow.topAnchor.constraint(equalTo: divider.bottomAnchor, constant: spacing),
-			topRow.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
-			topRow.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-
-			bottomRow.topAnchor.constraint(equalTo: topRow.bottomAnchor, constant: spacing),
-			bottomRow.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
-			bottomRow.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
-			bottomRow.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -spacing),
+			row.topAnchor.constraint(equalTo: divider.bottomAnchor, constant: spacing),
+			row.leadingAnchor.constraint(equalTo: leadingAnchor, constant: padding),
+			row.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -padding),
+			row.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -spacing),
 
 			vacuumButton.widthAnchor.constraint(equalToConstant: AccountStatsLayout.buttonWidth),
-			refreshButton.widthAnchor.constraint(equalTo: vacuumButton.widthAnchor)
+			refreshButton.widthAnchor.constraint(equalTo: vacuumButton.widthAnchor),
+
+			vacuumSpinner.centerXAnchor.constraint(equalTo: vacuumButton.centerXAnchor),
+			vacuumSpinner.centerYAnchor.constraint(equalTo: vacuumButton.centerYAnchor)
 		])
 	}
 
@@ -118,20 +125,9 @@ final class AccountStatsFooterView: NSView {
 		fatalError("init(coder:) is not supported")
 	}
 
-	func updateTotals(_ model: AccountStatsViewModel) {
-		let feeds = AccountStatsLayout.formattedNumber(model.totalFeedCount)
-		let folders = AccountStatsLayout.formattedNumber(model.totalFolderCount)
-		let articles = AccountStatsLayout.formattedNumber(model.totalArticleCount)
-		let size = AccountStatsLayout.formattedSize(model.totalDatabaseSizeBytes)
-
-		totalsLabel.stringValue = String(
-			format: NSLocalizedString("%@ feeds, %@ folders, %@ articles, %@", comment: "Account stats totals line"),
-			feeds, folders, articles, size
-		)
-	}
-
 	func updateVacuumState(_ isVacuuming: Bool) {
 		vacuumButton.isEnabled = !isVacuuming
+		vacuumButton.title = isVacuuming ? "" : Self.vacuumButtonTitle
 		vacuumSpinner.isHidden = !isVacuuming
 		if isVacuuming {
 			vacuumSpinner.startAnimation(nil)
