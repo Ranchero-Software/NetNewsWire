@@ -136,9 +136,9 @@ private extension SidebarCell {
 	}
 
 	func layoutWith(_ layout: SidebarCellLayout) {
-		faviconImageView.setFrame(ifNotEqualTo: layout.faviconRect)
-		titleView.setFrame(ifNotEqualTo: layout.titleRect)
-		unreadCountView.setFrame(ifNotEqualTo: layout.unreadCountRect)
+		faviconImageView.setFrameIfNotEqual(layout.faviconRect)
+		titleView.setFrameIfNotEqual(layout.titleRect)
+		unreadCountView.setFrameIfNotEqual(layout.unreadCountRect)
 	}
 
 	func updateFaviconImage() {
