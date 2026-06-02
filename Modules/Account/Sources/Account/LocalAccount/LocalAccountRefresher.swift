@@ -346,6 +346,8 @@ import os
 			return
 		}
 
+		feed.lastResponseCode = statusCode
+
 		let transportError = TransportError.httpError(status: statusCode)
 		let statusDescription = transportError.localizedDescription
 		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
