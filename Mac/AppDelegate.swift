@@ -243,6 +243,10 @@ let appName = "NetNewsWire"
 			showAccountStats(self)
 		}
 
+		if DinosaurWindowController.shouldOpenAtStartup {
+			showDinosaursWindow(self)
+		}
+
 		ArticleThemesManager.shared.start()
 		NetworkMonitor.shared.start()
 		MemoryPressureMonitor.shared.start()
@@ -590,6 +594,17 @@ let appName = "NetNewsWire"
 		dinosaurWindowController!.showWindow(self)
 	}
 
+	@objc func selectFeedInSidebar(_ sender: Any?) {
+		guard let feed = sender as? Feed else {
+			return
+		}
+		guard let mainWindowController else {
+			return
+		}
+		mainWindowController.showWindow(self)
+		mainWindowController.selectFeedInSidebar(feed)
+	}
+
 	@IBAction func showActivityWindow(_ sender: Any?) {
 		if activityWindowController == nil {
 			activityWindowController = ActivityWindowController()
@@ -904,6 +919,7 @@ extension AppDelegate {
 		activityLogWindowController?.saveState()
 		errorLogWindowController?.saveState()
 		accountStatsWindowController?.saveState()
+		dinosaurWindowController?.saveState()
 	}
 
 	@MainActor func updateSortMenuItems() {
