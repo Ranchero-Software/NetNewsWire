@@ -42,9 +42,9 @@ final class AccountStatsWindowController: NSWindowController {
 
 	override func windowDidLoad() {
 		super.windowDidLoad()
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountsDidChange(_:)), name: .AccountStateDidChange, object: nil)
 	}
 
 	override func showWindow(_ sender: Any?) {
@@ -64,15 +64,7 @@ final class AccountStatsWindowController: NSWindowController {
 		Self.shouldOpenAtStartup = window?.isVisible ?? false
 	}
 
-	@objc func handleUserDidAddAccount(_ notification: Notification) {
-		refreshModel()
-	}
-
-	@objc func handleUserDidDeleteAccount(_ notification: Notification) {
-		refreshModel()
-	}
-
-	@objc func handleAccountStateDidChange(_ notification: Notification) {
+	@objc func handleAccountsDidChange(_ notification: Notification) {
 		refreshModel()
 	}
 
@@ -110,7 +102,7 @@ extension AccountStatsWindowController: NSTableViewDataSource {
 	func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
 		model.sortDescriptor = tableView.sortDescriptors.first
 		model.applySort()
-		reloadData()
+		tableView.reloadData()
 	}
 }
 
@@ -191,17 +183,8 @@ private extension AccountStatsWindowController {
 	func refreshModel() {
 		Task {
 			await model.refresh()
-			reloadData()
+			tableView?.reloadData()
 		}
-	}
-
-	func reloadData() {
-		tableView?.reloadData()
-		updateUI()
-	}
-
-	func updateUI() {
-		updateVacuumUI()
 	}
 
 	func updateVacuumUI() {
@@ -213,7 +196,6 @@ private extension AccountStatsWindowController {
 			vacuumSpinner?.stopAnimation(nil)
 		}
 	}
-
 
 	func fitColumnsToLocalizedHeaders() {
 		guard let tableView else {
@@ -274,19 +256,19 @@ private extension AccountStatsWindowController {
 		case .account:
 			return NSLocalizedString("Totals", comment: "Totals row label")
 		case .feeds:
-			return Self.formattedNumber(model.totalFeedCount)
+			return Self.formattedNumber(model.totals.feedCount)
 		case .folders:
-			return Self.formattedNumber(model.totalFolderCount)
+			return Self.formattedNumber(model.totals.folderCount)
 		case .articles:
-			return Self.formattedNumber(model.totalArticleCount)
+			return Self.formattedNumber(model.totals.articleCount)
 		case .statuses:
-			return Self.formattedNumber(model.totalStatusesCount)
+			return Self.formattedNumber(model.totals.statusesCount)
 		case .unread:
-			return Self.formattedNumber(model.totalUnreadCount)
+			return Self.formattedNumber(model.totals.unreadCount)
 		case .starred:
-			return Self.formattedNumber(model.totalStarredCount)
+			return Self.formattedNumber(model.totals.starredCount)
 		case .dbSize:
-			return Self.formattedSize(model.totalDatabaseSizeBytes)
+			return Self.formattedSize(model.totals.databaseSizeBytes)
 		}
 	}
 
@@ -302,20 +284,20 @@ private extension AccountStatsWindowController {
 		case .folders:
 			return Self.formattedNumber(stats.folderCount)
 		case .articles:
-			return stats.totalArticleCount.map { Self.formattedNumber($0) } ?? "—"
+			return Self.formattedNumber(stats.articleCount)
 		case .statuses:
-			return stats.statusesCount.map { Self.formattedNumber($0) } ?? "—"
+			return Self.formattedNumber(stats.statusesCount)
 		case .unread:
-			return stats.unreadCount.map { Self.formattedNumber($0) } ?? "—"
+			return Self.formattedNumber(stats.unreadCount)
 		case .starred:
-			return stats.starredCount.map { Self.formattedNumber($0) } ?? "—"
+			return Self.formattedNumber(stats.starredCount)
 		case .dbSize:
 			return Self.formattedSize(stats.databaseSizeBytes)
 		}
 	}
 
 	static func formattedNumber(_ value: Int) -> String {
-		NumberFormatter.localizedString(from: NSNumber(value: value), number: .decimal)
+		value.formatted(.number)
 	}
 
 	static func formattedSize(_ bytes: Int) -> String {
