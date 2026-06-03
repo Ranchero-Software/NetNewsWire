@@ -9,11 +9,7 @@ import Foundation
 import Account
 import ArticlesDatabase
 
-extension Notification.Name {
-	static let AccountStatsDidChange = Notification.Name("AccountStatsDidChange")
-}
-
-struct AccountStatsData {
+struct AccountStatsRowData {
 
 	let accountID: String
 	let name: String
@@ -30,87 +26,86 @@ struct AccountStatsData {
 
 @MainActor final class AccountStatsViewModel {
 
-	var accountStats = [AccountStatsData]()
-	var isVacuuming = false
+	var accountStats = [String: AccountStatsRowData]()
+	private(set) var sortedAccountStats = [AccountStatsRowData]()
+	var sortDescriptor: NSSortDescriptor?
 
-	private var refreshGeneration = 0
-	private var pendingAccountIDs = Set<String>()
-
-	// Async-derived totals stay stable through a refresh — they only update once every account has reported.
 	private var cachedTotalArticleCount = 0
 	private var cachedTotalUnreadCount = 0
 	private var cachedTotalStarredCount = 0
 	private var cachedTotalStatusesCount = 0
 
-	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-	}
-
-	@objc func handleUserDidAddAccount(_ notification: Notification) {
-		refresh()
-	}
-
-	@objc func handleUserDidDeleteAccount(_ notification: Notification) {
-		refresh()
-	}
-
-	@objc func handleAccountStateDidChange(_ notification: Notification) {
-		refresh()
-	}
-
-	func refresh() {
-		refreshGeneration += 1
-		let generation = refreshGeneration
-
+	func refresh() async {
 		let accounts = AccountManager.shared.sortedAccounts
-		let previousByID = Dictionary(uniqueKeysWithValues: accountStats.map { ($0.accountID, $0) })
+		let previous = accountStats
 
-		// Preserve previous async-loaded counts while the new fetches are in flight — cells stay
-		// at their old values instead of flickering to "—".
-		accountStats = accounts.map { account in
-			let previous = previousByID[account.accountID]
-			return AccountStatsData(
+		// Preserve previous async-loaded counts so cells keep their values until the new fetches return.
+		var newStats = [String: AccountStatsRowData]()
+		for account in accounts {
+			let previousData = previous[account.accountID]
+			newStats[account.accountID] = AccountStatsRowData(
 				accountID: account.accountID,
 				name: account.nameForDisplay,
 				typeName: account.type.displayName,
 				isActive: account.isActive,
 				feedCount: account.flattenedFeeds().count,
 				folderCount: account.folders?.count ?? 0,
-				totalArticleCount: previous?.totalArticleCount,
-				statusesCount: previous?.statusesCount,
-				unreadCount: previous?.unreadCount,
-				starredCount: previous?.starredCount,
+				totalArticleCount: previousData?.totalArticleCount,
+				statusesCount: previousData?.statusesCount,
+				unreadCount: previousData?.unreadCount,
+				starredCount: previousData?.starredCount,
 				databaseSizeBytes: databaseSize(for: account)
 			)
 		}
-
-		pendingAccountIDs = Set(accounts.map { $0.accountID })
-		NotificationCenter.default.post(name: .AccountStatsDidChange, object: self)
+		accountStats = newStats
 
 		for account in accounts {
-			loadCounts(for: account, generation: generation)
+			guard let counts = try? await account.fetchArticleCountsAsync(), var stats = accountStats[account.accountID] else {
+				continue
+			}
+			stats.totalArticleCount = counts.totalCount
+			stats.unreadCount = counts.unreadCount
+			stats.starredCount = counts.starredCount
+			stats.statusesCount = counts.statusesCount
+			accountStats[account.accountID] = stats
 		}
+
+		recomputeCachedTotals()
+		applySort()
 	}
 
-	func vacuum() {
-		isVacuuming = true
-		NotificationCenter.default.post(name: .AccountStatsDidChange, object: self)
-
-		Task {
-			await appDelegate.vacuumAllDatabases()
-			isVacuuming = false
-			refresh()
+	func applySort() {
+		let unsorted = Array(accountStats.values)
+		let ascending = sortDescriptor?.ascending ?? true
+		let key = sortDescriptor?.key ?? "account"
+		switch key {
+		case "account":
+			sortedAccountStats = unsorted.sorted { Self.compareStrings($0.name, $1.name, ascending: ascending) }
+		case "dbSize":
+			sortedAccountStats = unsorted.sorted { Self.compareInts($0.databaseSizeBytes, $1.databaseSizeBytes, ascending: ascending) }
+		case "feeds":
+			sortedAccountStats = unsorted.sorted { Self.compareInts($0.feedCount, $1.feedCount, ascending: ascending) }
+		case "folders":
+			sortedAccountStats = unsorted.sorted { Self.compareInts($0.folderCount, $1.folderCount, ascending: ascending) }
+		case "articles":
+			sortedAccountStats = unsorted.sorted { Self.compareOptionalInts($0.totalArticleCount, $1.totalArticleCount, ascending: ascending) }
+		case "statuses":
+			sortedAccountStats = unsorted.sorted { Self.compareOptionalInts($0.statusesCount, $1.statusesCount, ascending: ascending) }
+		case "unread":
+			sortedAccountStats = unsorted.sorted { Self.compareOptionalInts($0.unreadCount, $1.unreadCount, ascending: ascending) }
+		case "starred":
+			sortedAccountStats = unsorted.sorted { Self.compareOptionalInts($0.starredCount, $1.starredCount, ascending: ascending) }
+		default:
+			sortedAccountStats = unsorted
 		}
 	}
 
 	var totalFeedCount: Int {
-		accountStats.reduce(0) { $0 + $1.feedCount }
+		accountStats.values.reduce(0) { $0 + $1.feedCount }
 	}
 
 	var totalFolderCount: Int {
-		accountStats.reduce(0) { $0 + $1.folderCount }
+		accountStats.values.reduce(0) { $0 + $1.folderCount }
 	}
 
 	var totalArticleCount: Int {
@@ -130,58 +125,48 @@ struct AccountStatsData {
 	}
 
 	var totalDatabaseSizeBytes: Int {
-		accountStats.reduce(0) { $0 + $1.databaseSizeBytes }
+		accountStats.values.reduce(0) { $0 + $1.databaseSizeBytes }
 	}
 }
 
 private extension AccountStatsViewModel {
 
-	func loadCounts(for account: Account, generation: Int) {
-		let accountID = account.accountID
-		Task { @MainActor in
-			let counts = try? await account.fetchArticleCountsAsync()
-			guard generation == refreshGeneration else {
-				return
-			}
-			guard let counts else {
-				// Fetch failed (database suspended, etc.) — leave previous values in place.
-				pendingAccountIDs.remove(accountID)
-				if pendingAccountIDs.isEmpty {
-					recomputeCachedTotals()
-					NotificationCenter.default.post(name: .AccountStatsDidChange, object: self)
-				}
-				return
-			}
-			guard let index = accountStats.firstIndex(where: { $0.accountID == accountID }) else {
-				return
-			}
-			accountStats[index].totalArticleCount = counts.totalCount
-			accountStats[index].unreadCount = counts.unreadCount
-			accountStats[index].starredCount = counts.starredCount
-			accountStats[index].statusesCount = counts.statusesCount
+	static func compareStrings(_ lhs: String, _ rhs: String, ascending: Bool) -> Bool {
+		let result = lhs.localizedCaseInsensitiveCompare(rhs)
+		return ascending ? result == .orderedAscending : result == .orderedDescending
+	}
 
-			pendingAccountIDs.remove(accountID)
-			if pendingAccountIDs.isEmpty {
-				recomputeCachedTotals()
-			}
-			NotificationCenter.default.post(name: .AccountStatsDidChange, object: self)
+	static func compareInts(_ lhs: Int, _ rhs: Int, ascending: Bool) -> Bool {
+		ascending ? lhs < rhs : lhs > rhs
+	}
+
+	static func compareOptionalInts(_ lhs: Int?, _ rhs: Int?, ascending: Bool) -> Bool {
+		switch (lhs, rhs) {
+		case (nil, nil):
+			return false
+		case (nil, _):
+			return ascending
+		case (_, nil):
+			return !ascending
+		case let (l?, r?):
+			return ascending ? l < r : l > r
 		}
 	}
 
 	func recomputeCachedTotals() {
-		cachedTotalArticleCount = accountStats.reduce(0) { $0 + ($1.totalArticleCount ?? 0) }
-		cachedTotalUnreadCount = accountStats.reduce(0) { $0 + ($1.unreadCount ?? 0) }
-		cachedTotalStarredCount = accountStats.reduce(0) { $0 + ($1.starredCount ?? 0) }
-		cachedTotalStatusesCount = accountStats.reduce(0) { $0 + ($1.statusesCount ?? 0) }
+		cachedTotalArticleCount = accountStats.values.reduce(0) { $0 + ($1.totalArticleCount ?? 0) }
+		cachedTotalUnreadCount = accountStats.values.reduce(0) { $0 + ($1.unreadCount ?? 0) }
+		cachedTotalStarredCount = accountStats.values.reduce(0) { $0 + ($1.starredCount ?? 0) }
+		cachedTotalStatusesCount = accountStats.values.reduce(0) { $0 + ($1.statusesCount ?? 0) }
 	}
 
 	func databaseSize(for account: Account) -> Int {
 		let dataFolder = account.dataFolder as NSString
-		let baseNames = ["DB.sqlite3", "FeedSettings.db", "Sync.sqlite3"]
+		let databaseNames = ["DB.sqlite3", "FeedSettings.db", "Sync.sqlite3"]
 		var totalSize = 0
 
-		for baseName in baseNames {
-			let path = dataFolder.appendingPathComponent(baseName)
+		for databaseName in databaseNames {
+			let path = dataFolder.appendingPathComponent(databaseName)
 			if let attributes = try? FileManager.default.attributesOfItem(atPath: path),
 			   let size = attributes[FileAttributeKey.size] as? Int {
 				totalSize += size
