@@ -9,10 +9,9 @@ import AppKit
 import Account
 import ActivityLog
 
-@MainActor final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
+final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 
 	private static let windowIsOpenKey = "ActivityLogWindowIsOpen"
-	private static let activityLogWindowAutosaveFrameName = "ActivityLogWindow"
 
 	static private(set) var shouldOpenAtStartup: Bool {
 		get {
@@ -23,8 +22,9 @@ import ActivityLog
 		}
 	}
 
-	private var textView = NSTextView()
-	private var copyButton: NSButton?
+	@IBOutlet private var textView: NSTextView?
+	@IBOutlet private var copyButton: NSButton?
+
 	private var hasBeenShown = false
 
 	/// Activity IDs for which we've logged the completion entry.
@@ -36,29 +36,24 @@ import ActivityLog
 
 	private var needsRebuild = false
 
-	private static let defaultWindowSize = NSSize(width: 640, height: 400)
-	private static let minimumWindowSize = NSSize(width: 640, height: 300)
 	private static let aboveCenterOffset: CGFloat = 40
 
-	init() {
-		let window = NSWindow(contentRect: NSRect(origin: .zero, size: Self.defaultWindowSize), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: true)
-		window.title = NSLocalizedString("Activity Log", comment: "Activity Log window title")
-		window.minSize = Self.minimumWindowSize
-		window.isReleasedWhenClosed = false
+	convenience init() {
+		self.init(windowNibName: "ActivityLogWindow")
+	}
 
-		super.init(window: window)
-		setupUI()
+	override func windowDidLoad() {
+		super.windowDidLoad()
+		window?.delegate = self
+
+		textView?.font = NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular)
+		textView?.textContainerInset = NSSize(width: Self.textContainerInset, height: Self.textContainerInset)
+
+		updateCopyButtonState()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleActivityDidChange(_:)), name: .activityDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleWindowDidResignMain(_:)), name: NSWindow.didResignMainNotification, object: window)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidResignActive(_:)), name: NSApplication.didResignActiveNotification, object: nil)
-
-		window.delegate = self
-	}
-
-	@available(*, unavailable)
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) is not supported")
 	}
 
 	override func showWindow(_ sender: Any?) {
@@ -69,7 +64,6 @@ import ActivityLog
 				frame.origin.y += Self.aboveCenterOffset
 				window?.setFrame(frame, display: false)
 			}
-			window?.setFrameAutosaveName(Self.activityLogWindowAutosaveFrameName)
 		}
 		super.showWindow(sender)
 		reloadEntries()
@@ -82,7 +76,7 @@ import ActivityLog
 	// MARK: - NSWindowDelegate
 
 	func windowDidResize(_ notification: Notification) {
-		guard let container = textView.textContainer else {
+		guard let textView, let container = textView.textContainer else {
 			return
 		}
 		container.size = NSSize(width: textView.bounds.width - textView.textContainerInset.width * 2, height: CGFloat.greatestFiniteMagnitude)
@@ -105,6 +99,16 @@ import ActivityLog
 	@objc func handleAppDidResignActive(_ notification: Notification) {
 		rebuildIfNeeded()
 	}
+
+	// MARK: - Actions
+
+	@IBAction func copyContents(_ sender: Any?) {
+		guard let text = textView?.string, !text.isEmpty else {
+			return
+		}
+		NSPasteboard.general.clearContents()
+		NSPasteboard.general.setString(text, forType: .string)
+	}
 }
 
 // MARK: - Private
@@ -119,10 +123,6 @@ private extension ActivityLogWindowController {
 
 	static let fontSize: CGFloat = 16.0
 	static let textContainerInset: CGFloat = 8
-	static let separatorHeight: CGFloat = 1
-	static let separatorWhite: CGFloat = 0.75
-	static let bottomBarHeight: CGFloat = 52
-	static let bottomBarPadding: CGFloat = 16
 	static let lineSpacing: CGFloat = 4
 	static let paragraphSpacing: CGFloat = 7
 	static let entryParagraphStyle: NSParagraphStyle = {
@@ -131,84 +131,6 @@ private extension ActivityLogWindowController {
 		style.paragraphSpacing = paragraphSpacing
 		return style
 	}()
-
-	func setupUI() {
-		guard let contentView = window?.contentView else {
-			return
-		}
-
-		let scrollView = NSTextView.scrollableTextView()
-		scrollView.translatesAutoresizingMaskIntoConstraints = false
-		scrollView.hasVerticalScroller = true
-		scrollView.autohidesScrollers = true
-		scrollView.drawsBackground = true
-
-		let embeddedTextView = scrollView.documentView as! NSTextView
-		embeddedTextView.isEditable = false
-		embeddedTextView.isSelectable = true
-		embeddedTextView.usesFindBar = true
-		embeddedTextView.isIncrementalSearchingEnabled = true
-		embeddedTextView.textContainerInset = NSSize(width: Self.textContainerInset, height: Self.textContainerInset)
-		embeddedTextView.font = NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular)
-		self.textView = embeddedTextView
-
-		let separator = NSView()
-		separator.translatesAutoresizingMaskIntoConstraints = false
-		separator.wantsLayer = true
-		separator.layer?.backgroundColor = NSColor(white: Self.separatorWhite, alpha: 1.0).cgColor
-
-		let bottomBar = NSVisualEffectView()
-		bottomBar.translatesAutoresizingMaskIntoConstraints = false
-		bottomBar.blendingMode = .withinWindow
-		bottomBar.material = .titlebar
-
-		let warningLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("This log may contain feed URLs and other information you may not want to share publicly.", comment: "Activity log privacy warning"))
-		warningLabel.translatesAutoresizingMaskIntoConstraints = false
-		warningLabel.font = NSFont.systemFont(ofSize: Self.fontSize)
-		warningLabel.textColor = .secondaryLabelColor
-
-		let copyButton = NSButton(title: NSLocalizedString("Copy Contents", comment: "Copy Contents button"), target: self, action: #selector(copyContents(_:)))
-		copyButton.translatesAutoresizingMaskIntoConstraints = false
-		copyButton.controlSize = .large
-		copyButton.font = NSFont.systemFont(ofSize: NSFont.systemFontSize)
-		copyButton.isEnabled = false
-		self.copyButton = copyButton
-
-		bottomBar.addSubview(warningLabel)
-		bottomBar.addSubview(copyButton)
-
-		warningLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-		copyButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-		copyButton.setContentHuggingPriority(.required, for: .horizontal)
-
-		contentView.addSubview(scrollView)
-		contentView.addSubview(separator)
-		contentView.addSubview(bottomBar)
-
-		NSLayoutConstraint.activate([
-			scrollView.topAnchor.constraint(equalTo: contentView.topAnchor),
-			scrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			scrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-			scrollView.bottomAnchor.constraint(equalTo: separator.topAnchor),
-
-			separator.heightAnchor.constraint(equalToConstant: Self.separatorHeight),
-			separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-			separator.bottomAnchor.constraint(equalTo: bottomBar.topAnchor),
-
-			warningLabel.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: Self.bottomBarPadding),
-			warningLabel.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
-			warningLabel.trailingAnchor.constraint(lessThanOrEqualTo: copyButton.leadingAnchor, constant: -Self.bottomBarPadding),
-
-			copyButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor, constant: -Self.bottomBarPadding),
-			copyButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
-
-			bottomBar.heightAnchor.constraint(equalToConstant: Self.bottomBarHeight),
-			bottomBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			bottomBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-			bottomBar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-		])
-	}
 
 	func rebuildIfNeeded() {
 		guard needsRebuild else {
@@ -219,6 +141,9 @@ private extension ActivityLogWindowController {
 	}
 
 	func reloadEntries() {
+		guard let textView else {
+			return
+		}
 		loggedCompletionIDs.removeAll()
 		textEntryCount = 0
 
@@ -240,6 +165,9 @@ private extension ActivityLogWindowController {
 	}
 
 	func appendNewEntries() {
+		guard let textView else {
+			return
+		}
 		if textEntryCount > Self.maxTextEntries {
 			needsRebuild = true
 		}
@@ -269,11 +197,11 @@ private extension ActivityLogWindowController {
 	}
 
 	func updateCopyButtonState() {
-		copyButton?.isEnabled = !textView.string.isEmpty
+		copyButton?.isEnabled = !(textView?.string.isEmpty ?? true)
 	}
 
 	var isScrolledToBottom: Bool {
-		guard let scrollView = textView.enclosingScrollView else {
+		guard let textView, let scrollView = textView.enclosingScrollView else {
 			return true
 		}
 		let contentView = scrollView.contentView
@@ -508,14 +436,5 @@ private extension ActivityLogWindowController {
 		case .app, .feedFinder, .feedImageDownloader, .faviconDownloader, .avatarDownloader, .htmlMetadataDownloader:
 			return .secondaryLabelColor
 		}
-	}
-
-	@objc func copyContents(_ sender: Any?) {
-		let text = textView.string
-		guard !text.isEmpty else {
-			return
-		}
-		NSPasteboard.general.clearContents()
-		NSPasteboard.general.setString(text, forType: .string)
 	}
 }

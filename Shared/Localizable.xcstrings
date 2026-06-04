@@ -34,7 +34,7 @@
       "comment" : "Activity window Activity column"
     },
     "Activity Log" : {
-      "comment" : "Activity Log button\nActivity Log window title"
+      "comment" : "Activity Log button"
     },
     "Add Account" : {
 
@@ -718,9 +718,6 @@
     },
     "There is already an account of this type with that username created." : {
       "comment" : "Duplicate Error"
-    },
-    "This log may contain feed URLs and other information you may not want to share publicly." : {
-      "comment" : "Activity log privacy warning"
     },
     "This may take several minutes." : {
       "comment" : "Clean up confirmation suffix"
