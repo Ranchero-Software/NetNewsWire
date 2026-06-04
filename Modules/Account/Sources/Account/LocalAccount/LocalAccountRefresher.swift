@@ -240,6 +240,8 @@ import os
 			return
 		}
 
+		feed.lastResponseCode = httpResponse.statusCode
+
 		let statusIsOK = httpResponse.statusIsOK
 		let statusIsOKOrNotModified = statusIsOK || httpResponse.statusCode == HTTPResponseCode.notModified
 		guard statusIsOKOrNotModified else {
@@ -343,6 +345,8 @@ import os
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
+
+		feed.lastResponseCode = statusCode
 
 		let transportError = TransportError.httpError(status: statusCode)
 		let statusDescription = transportError.localizedDescription

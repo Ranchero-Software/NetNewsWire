@@ -84,7 +84,7 @@ final class IconView: NSView {
 	}
 
 	override func resizeSubviews(withOldSize oldSize: NSSize) {
-		imageView.setFrame(ifNotEqualTo: rectForImageView())
+		imageView.setFrameIfNotEqual(rectForImageView())
 	}
 
 	override func draw(_ dirtyRect: NSRect) {

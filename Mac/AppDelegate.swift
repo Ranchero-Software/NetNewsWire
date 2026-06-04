@@ -94,6 +94,7 @@ let appName = "NetNewsWire"
 	private var activityWindowController: ActivityWindowController?
 	private var activityLogWindowController: ActivityLogWindowController?
 	private var errorLogWindowController: ErrorLogWindowController?
+	private var dinosaurWindowController: DinosaursWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private var cloudKitStatsWindowController: CloudKitStatsWindowController?
 	private var accountStatsWindowController: AccountStatsWindowController?
@@ -240,6 +241,10 @@ let appName = "NetNewsWire"
 
 		if AccountStatsWindowController.shouldOpenAtStartup {
 			showAccountStats(self)
+		}
+
+		if DinosaursWindowController.shouldOpenAtStartup {
+			showDinosaursWindow(self)
 		}
 
 		ArticleThemesManager.shared.start()
@@ -582,6 +587,24 @@ let appName = "NetNewsWire"
 		errorLogWindowController!.showWindow(self)
 	}
 
+	@IBAction func showDinosaursWindow(_ sender: Any?) {
+		if dinosaurWindowController == nil {
+			dinosaurWindowController = DinosaursWindowController()
+		}
+		dinosaurWindowController!.showWindow(self)
+	}
+
+	@objc func selectFeedInSidebar(_ sender: Any?) {
+		guard let feed = sender as? Feed else {
+			return
+		}
+		guard let mainWindowController else {
+			return
+		}
+		mainWindowController.showWindow(self)
+		mainWindowController.selectFeedInSidebar(feed)
+	}
+
 	@IBAction func showActivityWindow(_ sender: Any?) {
 		if activityWindowController == nil {
 			activityWindowController = ActivityWindowController()
@@ -896,6 +919,7 @@ extension AppDelegate {
 		activityLogWindowController?.saveState()
 		errorLogWindowController?.saveState()
 		accountStatsWindowController?.saveState()
+		dinosaurWindowController?.saveState()
 	}
 
 	@MainActor func updateSortMenuItems() {

@@ -7,12 +7,10 @@
 
 import Foundation
 import Account
+import ArticlesDatabase
+import RSCore
 
-extension Notification.Name {
-	static let AccountStatsDidChange = Notification.Name("AccountStatsDidChange")
-}
-
-struct AccountStatsData {
+struct AccountStatsRowData {
 
 	let accountID: String
 	let name: String
@@ -20,108 +18,97 @@ struct AccountStatsData {
 	let isActive: Bool
 	let feedCount: Int
 	let folderCount: Int
-	let totalArticleCount: Int
+	let articleCount: Int
+	let statusesCount: Int
 	let unreadCount: Int
 	let starredCount: Int
 	let databaseSizeBytes: Int
 }
 
+struct AccountStatsTotals {
+
+	let feedCount: Int
+	let folderCount: Int
+	let articleCount: Int
+	let statusesCount: Int
+	let unreadCount: Int
+	let starredCount: Int
+	let databaseSizeBytes: Int
+
+	init(rows: [AccountStatsRowData]) {
+		feedCount = rows.reduce(0) { $0 + $1.feedCount }
+		folderCount = rows.reduce(0) { $0 + $1.folderCount }
+		articleCount = rows.reduce(0) { $0 + $1.articleCount }
+		statusesCount = rows.reduce(0) { $0 + $1.statusesCount }
+		unreadCount = rows.reduce(0) { $0 + $1.unreadCount }
+		starredCount = rows.reduce(0) { $0 + $1.starredCount }
+		databaseSizeBytes = rows.reduce(0) { $0 + $1.databaseSizeBytes }
+	}
+}
+
 @MainActor final class AccountStatsViewModel {
 
-	var accountStats = [AccountStatsData]()
-	var isVacuuming = false
+	private(set) var sortedAccountStats = [AccountStatsRowData]()
+	private(set) var totals = AccountStatsTotals(rows: [])
+	var sortDescriptor: NSSortDescriptor?
 
-	init() {
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidAddAccount(_:)), name: .UserDidAddAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
-	}
-
-	@objc func handleUserDidAddAccount(_ notification: Notification) {
-		refresh()
-	}
-
-	@objc func handleUserDidDeleteAccount(_ notification: Notification) {
-		refresh()
-	}
-
-	@objc func handleAccountStateDidChange(_ notification: Notification) {
-		refresh()
-	}
-
-	func refresh() {
-		let accounts = AccountManager.shared.sortedAccounts
-		accountStats = accounts.map { accountStatsData(for: $0) }
-		NotificationCenter.default.post(name: .AccountStatsDidChange, object: self)
-	}
-
-	func vacuum() {
-		isVacuuming = true
-		NotificationCenter.default.post(name: .AccountStatsDidChange, object: self)
-
-		Task {
-			await appDelegate.vacuumAllDatabases()
-			isVacuuming = false
-			refresh()
+	func refresh() async {
+		var rows = [AccountStatsRowData]()
+		for account in AccountManager.shared.sortedAccounts {
+			let counts = try? await account.fetchArticleCountsAsync()
+			rows.append(AccountStatsRowData(
+				accountID: account.accountID,
+				name: account.nameForDisplay,
+				typeName: account.type.displayName,
+				isActive: account.isActive,
+				feedCount: account.flattenedFeeds().count,
+				folderCount: account.folders?.count ?? 0,
+				articleCount: counts?.totalCount ?? 0,
+				statusesCount: counts?.statusesCount ?? 0,
+				unreadCount: counts?.unreadCount ?? 0,
+				starredCount: counts?.starredCount ?? 0,
+				databaseSizeBytes: databaseSize(for: account)
+			))
 		}
+		totals = AccountStatsTotals(rows: rows)
+		sortedAccountStats = rows
+		applySort()
 	}
 
-	var totalFeedCount: Int {
-		accountStats.reduce(0) { $0 + $1.feedCount }
-	}
-
-	var totalFolderCount: Int {
-		accountStats.reduce(0) { $0 + $1.folderCount }
-	}
-
-	var totalArticleCount: Int {
-		accountStats.reduce(0) { $0 + $1.totalArticleCount }
-	}
-
-	var totalUnreadCount: Int {
-		accountStats.reduce(0) { $0 + $1.unreadCount }
-	}
-
-	var totalStarredCount: Int {
-		accountStats.reduce(0) { $0 + $1.starredCount }
-	}
-
-	var totalDatabaseSizeBytes: Int {
-		accountStats.reduce(0) { $0 + $1.databaseSizeBytes }
+	func applySort() {
+		let ascending = sortDescriptor?.ascending ?? true
+		switch sortDescriptor?.key ?? "name" {
+		case "name":
+			sortedAccountStats.sort { compareStrings($0.name, $1.name, ascending: ascending) }
+		case "databaseSizeBytes":
+			sortedAccountStats.sort { compareValues($0.databaseSizeBytes, $1.databaseSizeBytes, ascending: ascending) }
+		case "feedCount":
+			sortedAccountStats.sort { compareValues($0.feedCount, $1.feedCount, ascending: ascending) }
+		case "folderCount":
+			sortedAccountStats.sort { compareValues($0.folderCount, $1.folderCount, ascending: ascending) }
+		case "articleCount":
+			sortedAccountStats.sort { compareValues($0.articleCount, $1.articleCount, ascending: ascending) }
+		case "statusesCount":
+			sortedAccountStats.sort { compareValues($0.statusesCount, $1.statusesCount, ascending: ascending) }
+		case "unreadCount":
+			sortedAccountStats.sort { compareValues($0.unreadCount, $1.unreadCount, ascending: ascending) }
+		case "starredCount":
+			sortedAccountStats.sort { compareValues($0.starredCount, $1.starredCount, ascending: ascending) }
+		default:
+			break
+		}
 	}
 }
 
 private extension AccountStatsViewModel {
 
-	func accountStatsData(for account: Account) -> AccountStatsData {
-		let feedCount = account.flattenedFeeds().count
-		let folderCount = account.folders?.count ?? 0
-		let unreadCount = account.unreadCount
-		let starredCount = (try? account.fetchCountForStarredArticles()) ?? 0
-		let totalArticleCount = (try? account.fetchAllArticlesCount()) ?? 0
-		let databaseSizeBytes = databaseSize(for: account)
-
-		return AccountStatsData(
-			accountID: account.accountID,
-			name: account.nameForDisplay,
-			typeName: account.type.displayName,
-			isActive: account.isActive,
-			feedCount: feedCount,
-			folderCount: folderCount,
-			totalArticleCount: totalArticleCount,
-			unreadCount: unreadCount,
-			starredCount: starredCount,
-			databaseSizeBytes: databaseSizeBytes
-		)
-	}
-
 	func databaseSize(for account: Account) -> Int {
 		let dataFolder = account.dataFolder as NSString
-		let baseNames = ["DB.sqlite3", "FeedSettings.db", "Sync.sqlite3"]
+		let databaseNames = ["DB.sqlite3", "FeedSettings.db", "Sync.sqlite3"]
 		var totalSize = 0
 
-		for baseName in baseNames {
-			let path = dataFolder.appendingPathComponent(baseName)
+		for databaseName in databaseNames {
+			let path = dataFolder.appendingPathComponent(databaseName)
 			if let attributes = try? FileManager.default.attributesOfItem(atPath: path),
 			   let size = attributes[FileAttributeKey.size] as? Int {
 				totalSize += size

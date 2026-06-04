@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "0cO-dq-wRh.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Starred\"; ObjectID = \"0cO-dq-wRh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Starred"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destacados"
+          }
+        }
+      }
+    },
+    "1Nz-s2-tlh.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Refresh\"; ObjectID = \"1Nz-s2-tlh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Refresh"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar"
+          }
+        }
+      }
+    },
+    "5F9-ka-Ic8.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Feeds\"; ObjectID = \"5F9-ka-Ic8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Feeds"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuentes"
+          }
+        }
+      }
+    },
+    "A8s-1h-rFK.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Articles\"; ObjectID = \"A8s-1h-rFK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Articles"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artículos"
+          }
+        }
+      }
+    },
+    "el9-XU-UyQ.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Databases\"; ObjectID = \"el9-XU-UyQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Databases"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bases de datos"
+          }
+        }
+      }
+    },
+    "JJX-19-V6q.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Statuses\"; ObjectID = \"JJX-19-V6q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Statuses"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estados"
+          }
+        }
+      }
+    },
+    "JLZ-2v-hkU.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Account\"; ObjectID = \"JLZ-2v-hkU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Account"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta"
+          }
+        }
+      }
+    },
+    "Jvt-nt-V8z.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Folders\"; ObjectID = \"Jvt-nt-V8z\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Folders"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carpetas"
+          }
+        }
+      }
+    },
+    "KiW-Nc-bVK.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Vacuum Databases\"; ObjectID = \"KiW-Nc-bVK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Vacuum Databases"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compactar bases de datos"
+          }
+        }
+      }
+    },
+    "QvC-M9-y7g.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Account Stats\"; ObjectID = \"QvC-M9-y7g\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Account Stats"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estadísticas de cuentas"
+          }
+        }
+      }
+    },
+    "RQ5-kB-Icw.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Unread\"; ObjectID = \"RQ5-kB-Icw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No leídos"
+          }
+        }
+      }
+    },
+    "xwg-oc-6B1.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Vacuuming may make databases faster.\"; ObjectID = \"xwg-oc-6B1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Vacuuming may make databases faster."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compactar puede acelerar las bases de datos."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

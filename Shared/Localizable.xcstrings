@@ -1,0 +1,832 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "(No Text)" : {
+      "comment" : "No Text"
+    },
+    "%@ of %@" : {
+      "comment" : "Status bar progress",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        }
+      }
+    },
+    "%d unread" : {
+      "comment" : "Unread"
+    },
+    "A web browser will open the Feedly login for you to authorize access." : {
+      "comment" : "Alert informative text when adding a Feedly account and waiting for authorization from the user."
+    },
+    "Accounts" : {
+      "comment" : "Preferences"
+    },
+    "Active" : {
+
+    },
+    "Activity" : {
+      "comment" : "Activity window Activity column"
+    },
+    "Activity Log" : {
+      "comment" : "Activity Log button\nActivity Log window title"
+    },
+    "Add Account" : {
+
+    },
+    "Add an account by clicking the + button." : {
+      "comment" : "Add Account Explainer"
+    },
+    "Add Item" : {
+      "comment" : "Add Item"
+    },
+    "Adding feed" : {
+      "comment" : "Activity kind"
+    },
+    "Advanced" : {
+      "comment" : "Preferences"
+    },
+    "All Unread" : {
+      "comment" : "All Unread pseudo-feed title"
+    },
+    "Already subscribed" : {
+      "comment" : "Feed finder"
+    },
+    "Always Use Reader View" : {
+      "comment" : "Always Use Reader View"
+    },
+    "Are you sure you want to delete %d feeds?" : {
+      "comment" : "Delete feeds alert message"
+    },
+    "Are you sure you want to delete the “%@” feed?" : {
+      "comment" : "Feed delete text"
+    },
+    "Are you sure you want to delete the “%@” folder?" : {
+      "comment" : "Folder delete text"
+    },
+    "Are you sure you want to delete the %d selected items?" : {
+      "comment" : "Items delete text"
+    },
+    "Are you sure you want to delete the feed “%@”?" : {
+      "comment" : "Delete feed alert message"
+    },
+    "Article" : {
+      "comment" : "Article"
+    },
+    "Article Content Records" : {
+      "comment" : "Article content records section header"
+    },
+    "Article Theme" : {
+      "comment" : "Article Theme"
+    },
+    "Author‘s website:" : {
+      "comment" : "Author's Website"
+    },
+    "Avatars" : {
+      "comment" : "Activity owner name"
+    },
+    "BazQux" : {
+      "comment" : "Account name"
+    },
+    "Can’t add a feed because no feed was found." : {
+      "comment" : "Feed finder"
+    },
+    "Can’t Add iCloud Account" : {
+      "comment" : "CloudKit account setup failure description — iCloud Drive not enabled."
+    },
+    "Can’t add this feed because of a download error: “%@”" : {
+      "comment" : "Feed finder"
+    },
+    "Can’t add this feed because you’ve already subscribed to it." : {
+      "comment" : "Feed finder"
+    },
+    "Cancel" : {
+      "comment" : "Cancel\nCancel Delete Account\nCancel Install Theme\nCancel button"
+    },
+    "Canceled." : {
+      "comment" : "Scan status text when canceled"
+    },
+    "Choose a location for the exported OPML file." : {
+      "comment" : "Export OPML"
+    },
+    "Choose a Subscriptions.plist file:" : {
+      "comment" : "NNW3 Import"
+    },
+    "Choose an account type to add…" : {
+
+    },
+    "Clean Up" : {
+      "comment" : "Clean Up\nClean Up button title\nClean up alert button"
+    },
+    "Clean Up iCloud Records" : {
+      "comment" : "Clean up alert title"
+    },
+    "Cleaning up iCloud records" : {
+      "comment" : "Activity kind"
+    },
+    "Cleanup canceled." : {
+      "comment" : "Cleanup status text when canceled"
+    },
+    "Cleanup failed to complete, but you may be able to clean up more if you wait a few minutes and try again.\n\nClick Refresh to see your updated stats." : {
+      "comment" : "Cleanup error message"
+    },
+    "Cleanup progress" : {
+      "comment" : "Progress bar accessibility label"
+    },
+    "Close" : {
+      "comment" : "Close"
+    },
+    "Completed" : {
+      "comment" : "Status icon accessibility description"
+    },
+    "Continue" : {
+
+    },
+    "Copy Article URL" : {
+      "comment" : "Command"
+    },
+    "Copy Contents" : {
+      "comment" : "Copy Contents button"
+    },
+    "Copy External URL" : {
+      "comment" : "Command"
+    },
+    "Copy Feed URL" : {
+      "comment" : "Command"
+    },
+    "Copy Home Page URL" : {
+      "comment" : "Command"
+    },
+    "Couldn’t complete the iCloud scan because of an error:" : {
+      "comment" : "Scan error alert title"
+    },
+    "Create" : {
+      "comment" : "Add Account\nCreate"
+    },
+    "Create a local account on your Mac." : {
+      "comment" : "Account Local"
+    },
+    "Creating folder" : {
+      "comment" : "Activity kind"
+    },
+    "Credentials" : {
+
+    },
+    "Current Activity" : {
+      "comment" : "Current Activity window title"
+    },
+    "Default" : {
+      "comment" : "Default"
+    },
+    "Delete" : {
+      "comment" : "Command\nDelete\nDelete Account\nDelete button"
+    },
+    "Delete Feed" : {
+      "comment" : "Delete Feed\nDelete feed alert title\nUndo action name\ncommand"
+    },
+    "Delete Feeds" : {
+      "comment" : "Delete feeds alert title\nUndo action name\ncommand"
+    },
+    "Delete Feeds and Folders" : {
+      "comment" : "command"
+    },
+    "Delete Folder" : {
+      "comment" : "Delete Folder\ncommand"
+    },
+    "Delete Folders" : {
+      "comment" : "command"
+    },
+    "Delete Items" : {
+      "comment" : "Delete Items"
+    },
+    "Deleting read content records…" : {
+      "comment" : "Cleanup phase text"
+    },
+    "Deleting unread content records…" : {
+      "comment" : "Cleanup phase text"
+    },
+    "Dismiss" : {
+      "comment" : "Dismiss"
+    },
+    "Don’t have a BazQux account?" : {
+      "comment" : "No BazQux"
+    },
+    "Don’t have a FreshRSS instance?" : {
+      "comment" : "No FreshRSS"
+    },
+    "Don’t have a The Old Reader account?" : {
+      "comment" : "No OldReader"
+    },
+    "Don’t have an Inoreader account?" : {
+      "comment" : "No Inoreader"
+    },
+    "Download Error" : {
+      "comment" : "Feed finder"
+    },
+    "Downloading avatar" : {
+      "comment" : "Activity kind — downloading avatar"
+    },
+    "Downloading favicon" : {
+      "comment" : "Activity kind — downloading favicon"
+    },
+    "Downloading image" : {
+      "comment" : "Activity kind — downloading feed image"
+    },
+    "Downloading metadata" : {
+      "comment" : "Activity kind — downloading HTML metadata"
+    },
+    "Enable Notifications" : {
+      "comment" : "Notifications"
+    },
+    "Error - Reader View" : {
+      "comment" : "Error - Reader View"
+    },
+    "Error Log" : {
+      "comment" : "Error Log button\nError Log window title"
+    },
+    "Errors may contain feed URLs and other information you may not want to share publicly." : {
+      "comment" : "Error log privacy warning"
+    },
+    "Every 2 Hours" : {
+      "comment" : "Every 2 Hours"
+    },
+    "Every 4 Hours" : {
+      "comment" : "Every 4 Hours"
+    },
+    "Every 8 Hours" : {
+      "comment" : "Every 8 Hours"
+    },
+    "Every 30 Minutes" : {
+      "comment" : "Every 30 Minutes"
+    },
+    "Every Hour" : {
+      "comment" : "Every Hour"
+    },
+    "Export OPML" : {
+      "comment" : "Export OPML"
+    },
+    "Export to:" : {
+      "comment" : "Export OPML"
+    },
+    "Exporting OPML" : {
+      "comment" : "Activity kind"
+    },
+    "Extra Extra Large" : {
+      "comment" : "XX-Large"
+    },
+    "Extra Large" : {
+      "comment" : "X-Large"
+    },
+    "Favicons" : {
+      "comment" : "Activity owner name"
+    },
+    "Feed Finder" : {
+      "comment" : "Activity owner name"
+    },
+    "Feed Images" : {
+      "comment" : "Activity owner name"
+    },
+    "Feed Inspector" : {
+      "comment" : "Feed Inspector window title"
+    },
+    "Feed not found" : {
+      "comment" : "Feed finder"
+    },
+    "Feedbin" : {
+      "comment" : "Account name"
+    },
+    "Feedly" : {
+      "comment" : "Account name"
+    },
+    "Fetching" : {
+      "comment" : "Activity kind — fetching a candidate URL during feed finding"
+    },
+    "Fetching iCloud stats" : {
+      "comment" : "Activity kind"
+    },
+    "Find out more" : {
+      "comment" : "No FreshRSS Button"
+    },
+    "Finding feed" : {
+      "comment" : "Activity kind — finding a feed"
+    },
+    "Finding feed…" : {
+      "comment" : "Feed finder"
+    },
+    "Folder Inspector" : {
+      "comment" : "Folder Inspector window title"
+    },
+    "FreshRSS" : {
+      "comment" : "Account name"
+    },
+    "General" : {
+      "comment" : "Preferences"
+    },
+    "Help — opens in browser" : {
+      "comment" : "Help button accessibility label"
+    },
+    "Hide Read Articles" : {
+      "comment" : "Command"
+    },
+    "Hide Read Feeds" : {
+      "comment" : "Command"
+    },
+    "HTML Metadata" : {
+      "comment" : "Activity owner name"
+    },
+    "https://fresh.rss.net/api/greader.php" : {
+      "comment" : "FreshRSS API Helper"
+    },
+    "iCloud" : {
+      "comment" : "Account name\niCloud Account"
+    },
+    "iCloud storage cleanup completed." : {
+      "comment" : "Cleanup phase text when completed"
+    },
+    "iCloud Storage Stats" : {
+      "comment" : "iCloud Storage Stats window title"
+    },
+    "Importing OPML" : {
+      "comment" : "Activity kind"
+    },
+    "Inoreader" : {
+      "comment" : "Account name"
+    },
+    "Inspector" : {
+      "comment" : "Inspector window title"
+    },
+    "Install Theme" : {
+      "comment" : "Install Theme"
+    },
+    "Install theme “%@” by %@?" : {
+      "comment" : "Theme message text",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Install theme “%1$@” by %2$@?"
+          }
+        }
+      }
+    },
+    "Invalid API URL." : {
+      "comment" : "Invalid API URL"
+    },
+    "Invalid email/password combination." : {
+      "comment" : "Credentials Error"
+    },
+    "Keyboard Shortcuts" : {
+      "comment" : "window title"
+    },
+    "Keychain error while storing credentials." : {
+      "comment" : "Credentials Error"
+    },
+    "Large" : {
+      "comment" : "Large"
+    },
+    "Link:" : {
+      "comment" : "Link"
+    },
+    "Local" : {
+      "comment" : "Local Account"
+    },
+    "Local accounts do not sync feeds across devices" : {
+      "comment" : "Local Account"
+    },
+    "Manually" : {
+      "comment" : "Manually"
+    },
+    "Mark Above as Read" : {
+      "comment" : "Command"
+    },
+    "Mark All as Read" : {
+      "comment" : "Command\nMark All as Read"
+    },
+    "Mark All as Read in “%@”" : {
+      "comment" : "Command"
+    },
+    "Mark as Read" : {
+      "comment" : "Command\nMark as Read"
+    },
+    "Mark as Starred" : {
+      "comment" : "Command\nMark as Starred"
+    },
+    "Mark as Unread" : {
+      "comment" : "Command"
+    },
+    "Mark as Unstarred" : {
+      "comment" : "Command"
+    },
+    "Mark Below as Read" : {
+      "comment" : "Command"
+    },
+    "Mark Read" : {
+      "comment" : "Mark Read\ncommand"
+    },
+    "Mark Starred" : {
+      "comment" : "command"
+    },
+    "Mark Unread" : {
+      "comment" : "command"
+    },
+    "Mark Unstarred" : {
+      "comment" : "command"
+    },
+    "Medium" : {
+      "comment" : "Medium"
+    },
+    "Moving feed" : {
+      "comment" : "Activity kind"
+    },
+    "Multiple" : {
+      "comment" : "Multiple"
+    },
+    "Name" : {
+      "comment" : "Name column header"
+    },
+    "Name:" : {
+
+    },
+    "NetNewsWire" : {
+      "comment" : "Activity owner name"
+    },
+    "Network error. Try again later." : {
+      "comment" : "Credentials Error"
+    },
+    "New Feed" : {
+      "comment" : "Command"
+    },
+    "New Feed…" : {
+      "comment" : "New Feed"
+    },
+    "New Folder" : {
+      "comment" : "Command"
+    },
+    "New Folder…" : {
+      "comment" : "New Folder"
+    },
+    "NewsBlur" : {
+      "comment" : "Account name"
+    },
+    "Next Unread" : {
+      "comment" : "Next Unread"
+    },
+    "Notifications are not enabled" : {
+      "comment" : "Notifications are not enabled."
+    },
+    "OK" : {
+      "comment" : "OK\nOK button"
+    },
+    "Open" : {
+      "comment" : "Open"
+    },
+    "Open Home Page" : {
+      "comment" : "Command"
+    },
+    "Open in Browser" : {
+      "comment" : "Command\nOpen in Browser"
+    },
+    "Open in Browser in Background" : {
+      "comment" : "Open in Browser in Background menu item title"
+    },
+    "Open in Browser in Foreground" : {
+      "comment" : "Open in Browser in Foreground menu item title"
+    },
+    "Open Settings" : {
+      "comment" : "Open Settings button"
+    },
+    "Open Settings to configure iCloud and enable iCloud Drive." : {
+      "comment" : "CloudKit account setup recovery suggestion"
+    },
+    "Open System Preferences" : {
+      "comment" : "Open System Preferences"
+    },
+    "Open System Settings" : {
+      "comment" : "Open System Settings button"
+    },
+    "Open System Settings to configure iCloud and enable iCloud Drive." : {
+      "comment" : "CloudKit account setup recovery suggestion"
+    },
+    "Open Theme Folder" : {
+      "comment" : "Open Theme Folder"
+    },
+    "Overwrite" : {
+      "comment" : "Overwrite"
+    },
+    "Processing - Reader View" : {
+      "comment" : "Processing - Reader View"
+    },
+    "Read" : {
+      "comment" : "Read row label"
+    },
+    "Read Articles Filter" : {
+      "comment" : "Read Articles Filter"
+    },
+    "Read Content Deleted" : {
+      "comment" : "Cleanup stat row label"
+    },
+    "read content record" : {
+      "comment" : "Singular label for read content records"
+    },
+    "read content records" : {
+      "comment" : "Plural label for read content records"
+    },
+    "Reader View" : {
+      "comment" : "Reader View"
+    },
+    "Refresh" : {
+      "comment" : "Refresh\nRefresh button"
+    },
+    "Refresh all" : {
+      "comment" : "Activity kind"
+    },
+    "Refresh Scan" : {
+      "comment" : "Refresh scan button"
+    },
+    "Refreshing feed list" : {
+      "comment" : "Activity kind"
+    },
+    "Refreshing missing articles" : {
+      "comment" : "Activity kind"
+    },
+    "Refreshing statuses" : {
+      "comment" : "Activity kind"
+    },
+    "Removing feed" : {
+      "comment" : "Activity kind"
+    },
+    "Removing folder" : {
+      "comment" : "Activity kind"
+    },
+    "Rename" : {
+      "comment" : "Command"
+    },
+    "Rename %@ to:" : {
+      "comment" : "Rename sheet"
+    },
+    "Renaming feed" : {
+      "comment" : "Activity kind"
+    },
+    "Renaming folder" : {
+      "comment" : "Activity kind"
+    },
+    "Restoring folder" : {
+      "comment" : "Activity kind"
+    },
+    "Return to Previous Scan Results" : {
+      "comment" : "Return to previous scan results button"
+    },
+    "Scan completed." : {
+      "comment" : "Scan status text when completed"
+    },
+    "Scan failed. Numbers are incomplete." : {
+      "comment" : "Scan status text on error"
+    },
+    "Scanning" : {
+      "comment" : "Spinner accessibility label"
+    },
+    "Scanning iCloud storage" : {
+      "comment" : "Scan status text while fetching"
+    },
+    "Search" : {
+      "comment" : "Search"
+    },
+    "Search: " : {
+      "comment" : "Search smart feed title prefix"
+    },
+    "Search: %@" : {
+      "comment" : "Search"
+    },
+    "See articles in  “%@”" : {
+      "comment" : "See articles in Folder"
+    },
+    "See first unread article" : {
+      "comment" : "First Unread"
+    },
+    "Select “%@” in Sidebar" : {
+      "comment" : "Command"
+    },
+    "Selected - Reader View" : {
+      "comment" : "Selected - Reader View"
+    },
+    "Self-hosted" : {
+      "comment" : "Self hosted Account"
+    },
+    "Self-hosted accounts sync your feeds across all your devices" : {
+      "comment" : "Self hosted Account"
+    },
+    "Sending statuses" : {
+      "comment" : "Activity kind"
+    },
+    "Share" : {
+      "comment" : "Share\nShare button accessibility description"
+    },
+    "Share…" : {
+      "comment" : "Share…"
+    },
+    "Show notifications for new articles" : {
+      "comment" : "Show notifications for new articles"
+    },
+    "Show Read Articles" : {
+      "comment" : "Command"
+    },
+    "Show Read Feeds" : {
+      "comment" : "Command"
+    },
+    "Sign in to your BazQux account." : {
+      "comment" : "BazQux"
+    },
+    "Sign in to your Feedbin account." : {
+      "comment" : "SignIn"
+    },
+    "Sign in to your FreshRSS account." : {
+      "comment" : "FreshRSS"
+    },
+    "Sign in to your Inoreader account." : {
+      "comment" : "Inoreader"
+    },
+    "Sign in to your NewsBlur account." : {
+      "comment" : "SignIn"
+    },
+    "Sign in to your The Old Reader account." : {
+      "comment" : "The Old Reader"
+    },
+    "Small" : {
+      "comment" : "Small"
+    },
+    "Smart Feed Inspector" : {
+      "comment" : "Smart Feed Inspector window title"
+    },
+    "Smart Feeds" : {
+      "comment" : "Smart Feeds group title"
+    },
+    "Source" : {
+      "comment" : "Activity window Source column"
+    },
+    "Star" : {
+      "comment" : "Star"
+    },
+    "Starred" : {
+      "comment" : "Starred pseudo-feed title\nStarred row label"
+    },
+    "Status Records" : {
+      "comment" : "Status records section header"
+    },
+    "Subscribing to feed" : {
+      "comment" : "Activity kind"
+    },
+    "Subscribing to zone changes" : {
+      "comment" : "Activity kind"
+    },
+    "Sync content of unread articles" : {
+
+    },
+    "Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced." : {
+
+    },
+    "System Default (%@)" : {
+      "comment" : "Default browser item title format"
+    },
+    "The name can be anything you want. You can even use emoji. 🎸" : {
+
+    },
+    "The Old Reader" : {
+      "comment" : "Account name"
+    },
+    "The theme “%@” already exists. Overwrite it?" : {
+      "comment" : "Overwrite theme"
+    },
+    "The theme “%@” has been installed." : {
+      "comment" : "Theme installed"
+    },
+    "Theme Error" : {
+      "comment" : "Theme download error"
+    },
+    "Theme installed" : {
+      "comment" : "Theme installed"
+    },
+    "There is already a Feedbin account with that username created." : {
+      "comment" : "Duplicate Error"
+    },
+    "There is already a NewsBlur account with that username created." : {
+      "comment" : "Duplicate Error"
+    },
+    "There is already an account of this type with that username created." : {
+      "comment" : "Duplicate Error"
+    },
+    "This log may contain feed URLs and other information you may not want to share publicly." : {
+      "comment" : "Activity log privacy warning"
+    },
+    "This may take several minutes." : {
+      "comment" : "Clean up confirmation suffix"
+    },
+    "This theme cannot be used because of data corruption in the Info.plist: %@." : {
+      "comment" : "Decoding key missing"
+    },
+    "This theme cannot be used because the the key—“%@”—is not found in the Info.plist." : {
+      "comment" : "Decoding key missing"
+    },
+    "This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist" : {
+      "comment" : "Type mismatch"
+    },
+    "This theme cannot be used because the the value—“%@”—is not found in the Info.plist." : {
+      "comment" : "Decoding value missing"
+    },
+    "This will delete any not-starred content records.\n\nThis may take several minutes." : {
+      "comment" : "Clean up confirmation when plan is stale"
+    },
+    "This will delete any read content records.\n\nThis may take several minutes." : {
+      "comment" : "Clean up confirmation when sync unread is on and plan is stale"
+    },
+    "This will delete:" : {
+      "comment" : "Clean up confirmation prefix"
+    },
+    "Timeline" : {
+      "comment" : "Timeline"
+    },
+    "To add an account to NetNewsWire,\nclick its icon above.\n\nOr click the + button in the lower left." : {
+      "comment" : "Add Account Explainer"
+    },
+    "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list." : {
+      "comment" : "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list."
+    },
+    "Today" : {
+      "comment" : "Today pseudo-feed title"
+    },
+    "Total" : {
+      "comment" : "Total row label"
+    },
+    "Totals" : {
+      "comment" : "Totals row label"
+    },
+    "Type:" : {
+
+    },
+    "Unknown" : {
+      "comment" : "Unknown Value"
+    },
+    "unread" : {
+      "comment" : "Unread label for accessibility"
+    },
+    "Unread" : {
+      "comment" : "Unread row label"
+    },
+    "Unread Content Deleted" : {
+      "comment" : "Cleanup stat row label"
+    },
+    "unread content record" : {
+      "comment" : "Singular label for unread content records"
+    },
+    "unread content records" : {
+      "comment" : "Plural label for unread content records"
+    },
+    "Unrecognized account type." : {
+      "comment" : "Bad account type"
+    },
+    "Update" : {
+      "comment" : "Update"
+    },
+    "Update your Feedbin account credentials." : {
+      "comment" : "SignIn"
+    },
+    "Update your NewsBlur account credentials." : {
+      "comment" : "SignIn"
+    },
+    "Username & password required." : {
+      "comment" : "Credentials Error"
+    },
+    "Username required." : {
+      "comment" : "Credentials Error"
+    },
+    "Username, password & API URL are required." : {
+      "comment" : "Credentials Error"
+    },
+    "Vacuuming database" : {
+      "comment" : "Activity kind"
+    },
+    "Validating credentials" : {
+      "comment" : "Activity kind"
+    },
+    "Waiting for access to Feedly" : {
+      "comment" : "Alert title when adding a Feedly account and waiting for authorization from the user."
+    },
+    "Web" : {
+      "comment" : "Web Account"
+    },
+    "Web accounts sync your feeds across all your devices" : {
+      "comment" : "Web Account"
+    },
+    "You can enable NetNewsWire notifications in System Preferences." : {
+      "comment" : "Notifications are not enabled."
+    },
+    "Your iCloud account syncs your feeds across your Mac and iOS devices" : {
+      "comment" : "iCloud Account"
+    }
+  },
+  "version" : "1.0"
+}

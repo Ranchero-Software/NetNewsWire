@@ -102,11 +102,11 @@ final class TimelineTableCellView: NSTableCellView {
 		setFrame(for: summaryView, rect: layoutRects.summaryRect)
 		setFrame(for: textView, rect: layoutRects.textRect)
 
-		dateView.setFrame(ifNotEqualTo: layoutRects.dateRect)
-		unreadIndicatorView.setFrame(ifNotEqualTo: layoutRects.unreadIndicatorRect)
-		feedNameView.setFrame(ifNotEqualTo: layoutRects.feedNameRect)
-		iconView.setFrame(ifNotEqualTo: layoutRects.iconImageRect)
-		starView.setFrame(ifNotEqualTo: layoutRects.starRect)
+		dateView.setFrameIfNotEqual(layoutRects.dateRect)
+		unreadIndicatorView.setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
+		feedNameView.setFrameIfNotEqual(layoutRects.feedNameRect)
+		iconView.setFrameIfNotEqual(layoutRects.iconImageRect)
+		starView.setFrameIfNotEqual(layoutRects.starRect)
 	}
 }
 
@@ -151,7 +151,7 @@ private extension TimelineTableCellView {
 			hideView(textField)
 		} else {
 			showView(textField)
-			textField.setFrame(ifNotEqualTo: rect)
+			textField.setFrameIfNotEqual(rect)
 		}
 	}
 

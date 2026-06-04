@@ -585,6 +585,11 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="zRZ-rO-O5O"/>
+                                        <menuItem title="Dinosaurs" keyEquivalent="6" id="din-0s-aUR">
+                                            <connections>
+                                                <action selector="showDinosaursWindow:" target="Ady-hI-5gd" id="din-1w-rCn"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Current Activity" keyEquivalent="7" id="act-Wn-d0w">
                                             <connections>
                                                 <action selector="showActivityWindow:" target="Ady-hI-5gd" id="act-Cn-x1a"/>

@@ -36,6 +36,14 @@ public struct ArticleChanges: Sendable {
 	}
 }
 
+/// Aggregate counts for a single account's articles database.
+public struct ArticleCounts: Sendable {
+	public let totalCount: Int
+	public let unreadCount: Int
+	public let starredCount: Int
+	public let statusesCount: Int
+}
+
 @MainActor public final class ArticlesDatabase {
 	public enum RetentionStyle: Sendable {
 		case feedBased // Local and iCloud: article retention is defined by contents of feed
@@ -136,9 +144,14 @@ public struct ArticleChanges: Sendable {
 		return try articlesTable.fetchStarredArticlesCount(feedIDs)
 	}
 
-	public func fetchAllArticlesCount(feedIDs: Set<String>) throws -> Int {
+	/// Returns aggregate article counts (total, unread, starred, statuses) for the given feeds.
+	public func fetchArticleCountsAsync(feedIDs: Set<String>) async throws -> ArticleCounts {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchAllArticlesCount(feedIDs)
+		return try await withCheckedThrowingContinuation { continuation in
+			articlesTable.fetchArticleCountsAsync(feedIDs) { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	public func fetchArticlesMatching(searchString: String, feedIDs: Set<String>) throws -> Set<Article> {
@@ -149,6 +162,16 @@ public struct ArticleChanges: Sendable {
 	public func fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) throws -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		return try articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+	}
+
+	/// Returns a dictionary of feedID → latest article date for all feeds with articles.
+	public func fetchLastUpdateDates() async throws -> [String: Date] {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		return try await withCheckedThrowingContinuation { continuation in
+			articlesTable.fetchLastUpdateDatesAsync { result in
+				continuation.resume(with: result)
+			}
+		}
 	}
 
 	// MARK: - Fetching Articles Async

@@ -108,8 +108,40 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		return try fetchArticlesCount { self.fetchStarredArticlesCount(feedIDs, $0) }
 	}
 
-	func fetchAllArticlesCount(_ feedIDs: Set<String>) throws -> Int {
-		return try fetchArticlesCount { self.fetchAllArticlesCount(feedIDs, $0) }
+	// MARK: - Fetching Counts Async
+
+	func fetchArticleCountsAsync(_ feedIDs: Set<String>, _ completion: @escaping @Sendable (Result<ArticleCounts, DatabaseError>) -> Void) {
+		queue.runInDatabase { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				let counts = self.articleCounts(feedIDs: feedIDs, database: database)
+				DispatchQueue.main.async {
+					completion(.success(counts))
+				}
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(.failure(databaseError))
+				}
+			}
+		}
+	}
+
+	// MARK: - Fetching Last Update Dates
+
+	func fetchLastUpdateDatesAsync(_ completion: @escaping @Sendable (Result<[String: Date], DatabaseError>) -> Void) {
+		queue.runInDatabase { databaseResult in
+			switch databaseResult {
+			case .success(let database):
+				let result = self.fetchLastUpdateDates(database)
+				DispatchQueue.main.async {
+					completion(.success(result))
+				}
+			case .failure(let databaseError):
+				DispatchQueue.main.async {
+					completion(.failure(databaseError))
+				}
+			}
+		}
 	}
 
 	// MARK: - Fetching Search Articles
@@ -964,14 +996,42 @@ nonisolated private extension ArticlesTable {
 		return fetchArticleCountsWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
-	func fetchAllArticlesCount(_ feedIDs: Set<String>, _ database: FMDatabase) -> Int {
-		if feedIDs.isEmpty {
+	static func statusesCount(_ database: FMDatabase) -> Int {
+		guard let resultSet = database.executeQuery("select count(*) from statuses;", withArgumentsIn: nil) else {
 			return 0
 		}
-		let parameters = feedIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-		let whereClause = "feedID in \(placeholders)"
-		return fetchArticleCountsWithWhereClause(database, whereClause: whereClause, parameters: parameters)
+		var count = 0
+		if resultSet.next() {
+			count = Int(resultSet.int(forColumnIndex: 0))
+		}
+		resultSet.close()
+		return count
+	}
+
+	func articleCounts(feedIDs: Set<String>, database: FMDatabase) -> ArticleCounts {
+		let totalCount: Int
+		let unreadCount: Int
+		let starredCount: Int
+
+		if feedIDs.isEmpty {
+			totalCount = 0
+			unreadCount = 0
+			starredCount = 0
+		} else {
+			let parameters = feedIDs.map { $0 as AnyObject }
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let feedIDClause = "feedID in \(placeholders)"
+			totalCount = fetchArticleCountsWithWhereClause(database, whereClause: feedIDClause, parameters: parameters)
+			unreadCount = fetchArticleCountsWithWhereClause(database, whereClause: "\(feedIDClause) and read=0", parameters: parameters)
+			starredCount = fetchArticleCountsWithWhereClause(database, whereClause: "\(feedIDClause) and starred=1", parameters: parameters)
+		}
+
+		return ArticleCounts(
+			totalCount: totalCount,
+			unreadCount: unreadCount,
+			starredCount: starredCount,
+			statusesCount: Self.statusesCount(database)
+		)
 	}
 
 	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>, _ database: FMDatabase) -> Set<Article> {
@@ -984,6 +1044,26 @@ nonisolated private extension ArticlesTable {
 		let articles = fetchArticlesMatching(searchString, database)
 		// TODO: include the articleIDs in the SQL rather than filtering here.
 		return articles.filter { articleIDs.contains($0.articleID) }
+	}
+
+	func fetchLastUpdateDates(_ database: FMDatabase) -> [String: Date] {
+		guard let resultSet = database.executeQuery("SELECT feedID, MAX(coalesce(datePublished, dateModified)) as latestDate FROM articles GROUP BY feedID;", withArgumentsIn: []) else {
+			return [:]
+		}
+		defer {
+			resultSet.close()
+		}
+
+		var result = [String: Date]()
+		while resultSet.next() {
+			guard let feedID = resultSet.string(forColumn: "feedID") else {
+				continue
+			}
+			if !resultSet.columnIsNull("latestDate") {
+				result[feedID] = resultSet.date(forColumn: "latestDate")
+			}
+		}
+		return result
 	}
 
 	// MARK: - Saving Parsed Items
