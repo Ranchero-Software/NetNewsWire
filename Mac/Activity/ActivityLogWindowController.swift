@@ -26,15 +26,11 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 	@IBOutlet private var copyButton: NSButton?
 
 	private var hasBeenShown = false
-
-	/// Activity IDs for which we've logged the completion entry.
 	private var loggedCompletionIDs = Set<Int>()
-	/// Number of text entries appended to the text view.
 	private var textEntryCount = 0
-	/// Maximum text entries before rebuilding.
-	private static let maxTextEntries = 1000
-
 	private var needsRebuild = false
+
+	private static let maxTextEntries = 1000
 
 	private static let aboveCenterOffset: CGFloat = 40
 
@@ -118,6 +114,7 @@ private extension ActivityLogWindowController {
 	static let dateFormatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+		formatter.locale = Locale(identifier: "en_US_POSIX")
 		return formatter
 	}()
 
@@ -147,16 +144,11 @@ private extension ActivityLogWindowController {
 		loggedCompletionIDs.removeAll()
 		textEntryCount = 0
 
-		let activityLog = ActivityLog.shared
-		let allActivities = activityLog.runningActivities + activityLog.completedActivities
-
 		let combined = NSMutableAttributedString()
-		for activity in allActivities {
-			if activity.state == .completed || activity.state == .failed {
-				combined.append(completionAttributedString(for: activity))
-				loggedCompletionIDs.insert(activity.id)
-				textEntryCount += 1
-			}
+		for activity in ActivityLog.shared.completedActivities {
+			combined.append(completionAttributedString(for: activity))
+			loggedCompletionIDs.insert(activity.id)
+			textEntryCount += 1
 		}
 
 		textView.textStorage?.setAttributedString(combined)
@@ -172,20 +164,17 @@ private extension ActivityLogWindowController {
 			needsRebuild = true
 		}
 
-		let activityLog = ActivityLog.shared
-		let allActivities = activityLog.runningActivities + activityLog.completedActivities
-
 		let wasScrolledToBottom = isScrolledToBottom
 		var didAppend = false
 
-		for activity in allActivities {
-			let isFinished = activity.state == .completed || activity.state == .failed
-			if isFinished && !loggedCompletionIDs.contains(activity.id) {
-				textView.textStorage?.append(completionAttributedString(for: activity))
-				loggedCompletionIDs.insert(activity.id)
-				textEntryCount += 1
-				didAppend = true
+		for activity in ActivityLog.shared.completedActivities {
+			guard !loggedCompletionIDs.contains(activity.id) else {
+				continue
 			}
+			textView.textStorage?.append(completionAttributedString(for: activity))
+			loggedCompletionIDs.insert(activity.id)
+			textEntryCount += 1
+			didAppend = true
 		}
 
 		if didAppend {
@@ -216,126 +205,63 @@ private extension ActivityLogWindowController {
 		let result = NSMutableAttributedString()
 
 		let date = activity.endDate ?? Date()
-		appendTimestamp(date, to: result)
+		appendText("[\(Self.dateFormatter.string(from: date))] ", color: .secondaryLabelColor, to: result)
 
 		let isFailed = activity.state == .failed
 		let indicator = isFailed ? "✗ " : "✓ "
-		let indicatorColor: NSColor = isFailed ? .systemRed : .systemGreen
-		let indicatorAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: indicatorColor,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .bold),
-			.paragraphStyle: Self.entryParagraphStyle
-		]
-		result.append(NSAttributedString(string: indicator, attributes: indicatorAttributes))
+		appendText(indicator, color: isFailed ? .systemRed : .systemGreen, weight: .bold, to: result)
 
-		appendSource(for: activity, to: result)
-		appendKindAndDetail(for: activity, to: result)
+		let sourceColor = color(for: activity.owner)
+		appendText("\(displayName(for: activity.owner)): ", color: sourceColor, weight: .medium, to: result)
+		appendText(plainDescription(for: activity), color: sourceColor, weight: .medium, to: result)
 
-		// Duration
+		if let detail = secondaryDetail(for: activity) {
+			appendText(" \(detail)", color: .secondaryLabelColor, to: result)
+		}
+
 		if activity.durationIsSignificant, let startDate = activity.startDate, let endDate = activity.endDate {
 			let duration = endDate.timeIntervalSince(startDate)
-			let durationText = " (\(formattedDuration(duration)))"
-			let durationAttributes: [NSAttributedString.Key: Any] = [
-				.foregroundColor: NSColor.secondaryLabelColor,
-				.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-				.paragraphStyle: Self.entryParagraphStyle
-			]
-			result.append(NSAttributedString(string: durationText, attributes: durationAttributes))
+			appendText(" (\(formattedDuration(duration)))", color: .secondaryLabelColor, to: result)
 		}
 
-		// Completion message (e.g. skip reason)
+		// e.g. skip reason
 		if let message = activity.completionMessage {
-			let messageAttributes: [NSAttributedString.Key: Any] = [
-				.foregroundColor: NSColor.secondaryLabelColor,
-				.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-				.paragraphStyle: Self.entryParagraphStyle
-			]
-			result.append(NSAttributedString(string: " — \(message)", attributes: messageAttributes))
+			appendText(" — \(message)", color: .secondaryLabelColor, to: result)
 		}
 
-		// Error
 		if isFailed, let error = activity.error {
-			let errorAttributes: [NSAttributedString.Key: Any] = [
-				.foregroundColor: NSColor.systemRed,
-				.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-				.paragraphStyle: Self.entryParagraphStyle
-			]
-			result.append(NSAttributedString(string: " — \(error.localizedDescription)", attributes: errorAttributes))
+			appendText(" — \(error.localizedDescription)", color: .systemRed, to: result)
 		}
 
-		appendNewline(to: result)
-
+		appendText("\n", to: result)
 		return result
 	}
 
-	func appendTimestamp(_ date: Date, to result: NSMutableAttributedString) {
-		let timestampString = "[\(Self.dateFormatter.string(from: date))] "
-		let timestampAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: NSColor.secondaryLabelColor,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
+	func appendText(_ string: String, color: NSColor = .labelColor, weight: NSFont.Weight = .regular, to result: NSMutableAttributedString) {
+		let attributes: [NSAttributedString.Key: Any] = [
+			.foregroundColor: color,
+			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: weight),
 			.paragraphStyle: Self.entryParagraphStyle
 		]
-		result.append(NSAttributedString(string: timestampString, attributes: timestampAttributes))
+		result.append(NSAttributedString(string: string, attributes: attributes))
 	}
 
-	func appendSource(for activity: Activity, to result: NSMutableAttributedString) {
-		let sourceName = displayName(for: activity.owner)
-		let sourceColor = color(for: activity.owner)
-		let sourceAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: sourceColor,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .medium),
-			.paragraphStyle: Self.entryParagraphStyle
-		]
-		result.append(NSAttributedString(string: "\(sourceName): ", attributes: sourceAttributes))
-	}
-
-	func appendKindAndDetail(for activity: Activity, to result: NSMutableAttributedString) {
-		let sourceColor = color(for: activity.owner)
-		let messageAttributes: [NSAttributedString.Key: Any] = [
-			.foregroundColor: sourceColor,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .medium),
-			.paragraphStyle: Self.entryParagraphStyle
-		]
-		result.append(NSAttributedString(string: plainDescription(for: activity), attributes: messageAttributes))
-
-		let secondaryText = secondaryDetail(for: activity)
-		if !secondaryText.isEmpty {
-			let detailAttributes: [NSAttributedString.Key: Any] = [
-				.foregroundColor: NSColor.secondaryLabelColor,
-				.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-				.paragraphStyle: Self.entryParagraphStyle
-			]
-			result.append(NSAttributedString(string: " \(secondaryText)", attributes: detailAttributes))
-		}
-	}
-
-	/// Returns secondary detail text for the log entry.
-	/// For feed content activities with a name, shows the URL; otherwise shows the detail string.
-	func secondaryDetail(for activity: Activity) -> String {
+	/// Feed-content activities show the URL as detail when the feed name is the primary text.
+	func secondaryDetail(for activity: Activity) -> String? {
 		switch activity.kind {
 		case .refreshFeedContent(let feedURL):
-			if activity.detail != nil {
-				return feedURL
-			}
-			return ""
+			return activity.detail == nil ? nil : feedURL
 		default:
-			return activity.detail ?? ""
+			return activity.detail
 		}
-	}
-
-	func appendNewline(to result: NSMutableAttributedString) {
-		let attributes: [NSAttributedString.Key: Any] = [
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-			.paragraphStyle: Self.entryParagraphStyle
-		]
-		result.append(NSAttributedString(string: "\n", attributes: attributes))
 	}
 
 	func formattedDuration(_ duration: TimeInterval) -> String {
+		let posix = Locale(identifier: "en_US_POSIX")
 		if duration < 10.0 {
-			return String(format: "%.2fs", duration)
+			return String(format: "%.2fs", locale: posix, duration)
 		} else if duration < 60.0 {
-			return String(format: "%.1fs", duration)
+			return String(format: "%.1fs", locale: posix, duration)
 		} else {
 			let minutes = Int(duration) / 60
 			let seconds = Int(duration) % 60
@@ -350,79 +276,83 @@ private extension ActivityLogWindowController {
 		case .account(let accountID):
 			return AccountManager.shared.existingAccount(accountID: accountID)?.nameForDisplay ?? accountID
 		case .feedFinder:
-			return "Feed Finder"
+			return NSLocalizedString("Feed Finder", comment: "Activity owner name")
 		case .feedImageDownloader:
-			return "Feed Images"
+			return NSLocalizedString("Feed Images", comment: "Activity owner name")
 		case .faviconDownloader:
-			return "Favicons"
+			return NSLocalizedString("Favicons", comment: "Activity owner name")
 		case .avatarDownloader:
-			return "Avatars"
+			return NSLocalizedString("Avatars", comment: "Activity owner name")
 		case .htmlMetadataDownloader:
-			return "HTML Metadata"
+			return NSLocalizedString("HTML Metadata", comment: "Activity owner name")
 		}
 	}
 
 	func plainDescription(for activity: Activity) -> String {
 		switch activity.kind {
 		case .refreshAll:
-			return "Refresh all"
+			return NSLocalizedString("Refresh all", comment: "Activity kind")
 		case .sendArticleStatuses:
-			return "Sending statuses"
+			return NSLocalizedString("Sending statuses", comment: "Activity kind")
 		case .refreshArticleStatuses:
-			return "Refreshing statuses"
+			return NSLocalizedString("Refreshing statuses", comment: "Activity kind")
 		case .refreshFeedList:
-			return "Refreshing feed list"
+			return NSLocalizedString("Refreshing feed list", comment: "Activity kind")
 		case .refreshFeedContent(let feedURL):
-			if let feedName = activity.detail {
-				return "Refreshing feed: \(feedName)"
-			}
-			return "Refreshing feed: \(feedURL)"
+			let format = NSLocalizedString("Refreshing feed: %@", comment: "Activity kind — refreshing a feed; %@ is the feed name or URL")
+			return String(format: format, activity.detail ?? feedURL)
 		case .refreshMissingArticles:
-			return "Refreshing missing articles"
+			return NSLocalizedString("Refreshing missing articles", comment: "Activity kind")
 		case .importOPML:
-			return "Importing OPML"
+			return NSLocalizedString("Importing OPML", comment: "Activity kind")
 		case .findFeed(let urlString):
-			return "Finding feed \(urlString)"
+			let format = NSLocalizedString("Finding feed %@", comment: "Activity kind — finding a feed at %@ URL")
+			return String(format: format, urlString)
 		case .fetchFeedCandidate(let urlString):
-			return "Fetching \(urlString)"
+			let format = NSLocalizedString("Fetching %@", comment: "Activity kind — fetching a candidate URL during feed finding")
+			return String(format: format, urlString)
 		case .downloadFeedImage(let feedURL):
-			return "Downloading image \(feedURL)"
+			let format = NSLocalizedString("Downloading image %@", comment: "Activity kind — downloading a feed image; %@ is the URL")
+			return String(format: format, feedURL)
 		case .downloadFavicon(let faviconURL):
-			return "Downloading favicon \(faviconURL)"
+			let format = NSLocalizedString("Downloading favicon %@", comment: "Activity kind — downloading a favicon; %@ is the URL")
+			return String(format: format, faviconURL)
 		case .downloadAvatar(let avatarURL):
-			return "Downloading avatar \(avatarURL)"
+			let format = NSLocalizedString("Downloading avatar %@", comment: "Activity kind — downloading an author avatar; %@ is the URL")
+			return String(format: format, avatarURL)
 		case .downloadHTMLMetadata(let urlString):
-			return "Downloading metadata \(urlString)"
+			let format = NSLocalizedString("Downloading metadata %@", comment: "Activity kind — downloading HTML metadata; %@ is the URL")
+			return String(format: format, urlString)
 		case .subscribeFeed:
-			return "Subscribing to feed"
+			return NSLocalizedString("Subscribing to feed", comment: "Activity kind")
 		case .renameFeed:
-			return "Renaming feed"
+			return NSLocalizedString("Renaming feed", comment: "Activity kind")
 		case .removeFeed:
-			return "Removing feed"
+			return NSLocalizedString("Removing feed", comment: "Activity kind")
 		case .moveFeed:
-			return "Moving feed"
+			return NSLocalizedString("Moving feed", comment: "Activity kind")
 		case .addFeed:
-			return "Adding feed"
+			return NSLocalizedString("Adding feed", comment: "Activity kind")
 		case .createFolder:
-			return "Creating folder"
+			return NSLocalizedString("Creating folder", comment: "Activity kind")
 		case .renameFolder:
-			return "Renaming folder"
+			return NSLocalizedString("Renaming folder", comment: "Activity kind")
 		case .removeFolder:
-			return "Removing folder"
+			return NSLocalizedString("Removing folder", comment: "Activity kind")
 		case .restoreFolder:
-			return "Restoring folder"
+			return NSLocalizedString("Restoring folder", comment: "Activity kind")
 		case .cleanUpCloudKitRecords:
-			return "Cleaning up iCloud records"
+			return NSLocalizedString("Cleaning up iCloud records", comment: "Activity kind")
 		case .fetchCloudKitStats:
-			return "Fetching iCloud stats"
+			return NSLocalizedString("Fetching iCloud stats", comment: "Activity kind")
 		case .subscribeToCloudKitZone:
-			return "Subscribing to zone changes"
+			return NSLocalizedString("Subscribing to zone changes", comment: "Activity kind")
 		case .vacuumDatabase:
-			return "Vacuuming database"
+			return NSLocalizedString("Vacuuming database", comment: "Activity kind")
 		case .validateCredentials:
-			return "Validating credentials"
+			return NSLocalizedString("Validating credentials", comment: "Activity kind")
 		case .exportOPML:
-			return "Exporting OPML"
+			return NSLocalizedString("Exporting OPML", comment: "Activity kind")
 		}
 	}
 

@@ -21,21 +21,21 @@
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1410"/>
             <value key="minSize" type="size" width="640" height="300"/>
             <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="640" height="400"/>
+                <rect key="frame" x="0.0" y="0.0" width="768" height="400"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kJF-uq-4TQ">
-                        <rect key="frame" x="0.0" y="65" width="768" height="256"/>
+                        <rect key="frame" x="0.0" y="69" width="768" height="331"/>
                         <clipView key="contentView" id="Ypo-Qv-ix4">
-                            <rect key="frame" x="0.0" y="0.0" width="768" height="256"/>
+                            <rect key="frame" x="0.0" y="0.0" width="768" height="331"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textView wantsLayer="YES" importsGraphics="NO" richText="NO" editable="NO" selectable="YES" usesFindBar="YES" incrementalSearchingEnabled="YES" verticallyResizable="YES" spellingCorrection="YES" smartInsertDelete="YES" id="OtL-Sx-OU0">
-                                    <rect key="frame" x="0.0" y="0.0" width="768" height="256"/>
+                                <textView wantsLayer="YES" editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" incrementalSearchingEnabled="YES" spellingCorrection="YES" smartInsertDelete="YES" id="OtL-Sx-OU0">
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="331"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    <size key="minSize" width="768" height="256"/>
+                                    <size key="minSize" width="768" height="331"/>
                                     <size key="maxSize" width="768" height="10000000"/>
                                 </textView>
                             </subviews>
@@ -48,28 +48,28 @@
                             <rect key="frame" x="-100" y="-100" width="240" height="17"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="pRJ-De-3rI">
+                        <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="pRJ-De-3rI">
                             <rect key="frame" x="751" y="0.0" width="17" height="256"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
                     <visualEffectView blendingMode="withinWindow" material="titlebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="U19-VM-vwr">
-                        <rect key="frame" x="0.0" y="0.0" width="768" height="65"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="69"/>
                         <subviews>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Kf8-Md-KPZ">
-                                <rect key="frame" x="0.0" y="62" width="768" height="5"/>
+                                <rect key="frame" x="0.0" y="66" width="768" height="5"/>
                             </box>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="te9-50-gJu">
-                                <rect key="frame" x="18" y="24" width="546" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="wordWrap" title="This log may contain feed URLs and other information you may not want to share publicly." id="lKl-03-8bv">
+                            <textField wantsLayer="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="te9-50-gJu">
+                                <rect key="frame" x="18" y="26" width="546" height="16"/>
+                                <textFieldCell key="cell" title="This log may contain feed URLs and other information you may not want to share publicly." id="lKl-03-8bv">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TeH-NA-QRq">
-                                <rect key="frame" x="634" y="20" width="114" height="24"/>
-                                <buttonCell key="cell" type="push" title="Copy Contents" controlSize="large" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k75-bg-mhK">
+                                <rect key="frame" x="630" y="20" width="118" height="28"/>
+                                <buttonCell key="cell" type="push" title="Copy Contents" bezelStyle="rounded" alignment="center" controlSize="large" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k75-bg-mhK">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
