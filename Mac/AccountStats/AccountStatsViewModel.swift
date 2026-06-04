@@ -8,6 +8,7 @@
 import Foundation
 import Account
 import ArticlesDatabase
+import RSCore
 
 struct AccountStatsRowData {
 
@@ -78,21 +79,21 @@ struct AccountStatsTotals {
 		let ascending = sortDescriptor?.ascending ?? true
 		switch sortDescriptor?.key ?? "name" {
 		case "name":
-			sortedAccountStats.sort { Self.compareStrings($0.name, $1.name, ascending: ascending) }
+			sortedAccountStats.sort { compareStrings($0.name, $1.name, ascending: ascending) }
 		case "databaseSizeBytes":
-			sortedAccountStats.sort { Self.compareInts($0.databaseSizeBytes, $1.databaseSizeBytes, ascending: ascending) }
+			sortedAccountStats.sort { compareValues($0.databaseSizeBytes, $1.databaseSizeBytes, ascending: ascending) }
 		case "feedCount":
-			sortedAccountStats.sort { Self.compareInts($0.feedCount, $1.feedCount, ascending: ascending) }
+			sortedAccountStats.sort { compareValues($0.feedCount, $1.feedCount, ascending: ascending) }
 		case "folderCount":
-			sortedAccountStats.sort { Self.compareInts($0.folderCount, $1.folderCount, ascending: ascending) }
+			sortedAccountStats.sort { compareValues($0.folderCount, $1.folderCount, ascending: ascending) }
 		case "articleCount":
-			sortedAccountStats.sort { Self.compareInts($0.articleCount, $1.articleCount, ascending: ascending) }
+			sortedAccountStats.sort { compareValues($0.articleCount, $1.articleCount, ascending: ascending) }
 		case "statusesCount":
-			sortedAccountStats.sort { Self.compareInts($0.statusesCount, $1.statusesCount, ascending: ascending) }
+			sortedAccountStats.sort { compareValues($0.statusesCount, $1.statusesCount, ascending: ascending) }
 		case "unreadCount":
-			sortedAccountStats.sort { Self.compareInts($0.unreadCount, $1.unreadCount, ascending: ascending) }
+			sortedAccountStats.sort { compareValues($0.unreadCount, $1.unreadCount, ascending: ascending) }
 		case "starredCount":
-			sortedAccountStats.sort { Self.compareInts($0.starredCount, $1.starredCount, ascending: ascending) }
+			sortedAccountStats.sort { compareValues($0.starredCount, $1.starredCount, ascending: ascending) }
 		default:
 			break
 		}
@@ -100,15 +101,6 @@ struct AccountStatsTotals {
 }
 
 private extension AccountStatsViewModel {
-
-	static func compareStrings(_ lhs: String, _ rhs: String, ascending: Bool) -> Bool {
-		let result = lhs.localizedCaseInsensitiveCompare(rhs)
-		return ascending ? result == .orderedAscending : result == .orderedDescending
-	}
-
-	static func compareInts(_ lhs: Int, _ rhs: Int, ascending: Bool) -> Bool {
-		ascending ? lhs < rhs : lhs > rhs
-	}
 
 	func databaseSize(for account: Account) -> Int {
 		let dataFolder = account.dataFolder as NSString
