@@ -10,6 +10,13 @@ import SwiftUI
 import Account
 import RSCore
 
+private enum AddAccountsLocalizedStrings {
+	static let chooseAccountType = NSLocalizedString("Choose an account type to add…", comment: "Add account picker title")
+	static let cancel = NSLocalizedString("Cancel", comment: "Cancel add account button")
+	static let continueButton = NSLocalizedString("Continue", comment: "Continue add account button")
+	static let addAccountHelp = NSLocalizedString("Add Account", comment: "Add account button help")
+}
+
 enum AddAccountSections: Int, CaseIterable {
 	case local = 0
 	case icloud
@@ -83,7 +90,7 @@ struct AddAccountsView: View {
 
 	var body: some View {
 		VStack(alignment: .leading, spacing: 8) {
-			Text("Choose an account type to add…")
+			Text(AddAccountsLocalizedStrings.chooseAccountType)
 				.font(.headline)
 				.padding()
 
@@ -101,19 +108,19 @@ struct AddAccountsView: View {
 				Button(action: {
 					parent?.dismiss(nil)
 				}, label: {
-					Text("Cancel")
+					Text(AddAccountsLocalizedStrings.cancel)
 						.frame(width: 76)
 				})
-				.help("Cancel")
+				.help(AddAccountsLocalizedStrings.cancel)
 				.keyboardShortcut(.cancelAction)
 				Button(action: {
 					addAccountDelegate?.presentSheetForAccount(selectedAccount)
 					parent?.dismiss(nil)
 				}, label: {
-					Text("Continue")
+					Text(AddAccountsLocalizedStrings.continueButton)
 						.frame(width: 76)
 				})
-				.help("Add Account")
+				.help(AddAccountsLocalizedStrings.addAccountHelp)
 				.keyboardShortcut(.defaultAction)
 			}
 			.padding(.top, 12)
@@ -127,7 +134,7 @@ struct AddAccountsView: View {
 
 	var localAccount: some View {
 		VStack(alignment: .leading) {
-			Text("Local")
+			Text(AddAccountSections.local.sectionHeader)
 				.font(.headline)
 				.padding(.horizontal)
 
@@ -158,7 +165,7 @@ struct AddAccountsView: View {
 
 	var icloudAccount: some View {
 		VStack(alignment: .leading) {
-			Text("iCloud")
+			Text(AddAccountSections.icloud.sectionHeader)
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
@@ -190,7 +197,7 @@ struct AddAccountsView: View {
 	@ViewBuilder
 	var webAccounts: some View {
 		VStack(alignment: .leading) {
-			Text("Web")
+			Text(AddAccountSections.web.sectionHeader)
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)
@@ -228,7 +235,7 @@ struct AddAccountsView: View {
 
 	var selfhostedAccounts: some View {
 		VStack(alignment: .leading) {
-			Text("Self-hosted")
+			Text(AddAccountSections.selfhosted.sectionHeader)
 				.font(.headline)
 				.padding(.horizontal)
 				.padding(.top, 8)

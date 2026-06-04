@@ -9,6 +9,12 @@
             "state" : "translated",
             "value" : "Summary"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "요약"
+          }
         }
       }
     },
@@ -19,6 +25,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The Lock Screen Summary displays current article counts across the Smart Feeds. "
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "잠금 화면 요약은 스마트 피드 전체의 현재 기사 수를 표시합니다."
           }
         }
       }
@@ -31,6 +43,12 @@
             "state" : "translated",
             "value" : "Starred"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "별표한 기사"
+          }
         }
       }
     },
@@ -41,6 +59,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "There are no starred articles."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "별표한 기사가 없습니다."
           }
         }
       }
@@ -53,6 +77,12 @@
             "state" : "translated",
             "value" : "This widget displays your starred articles."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 위젯은 별표한 기사를 표시합니다."
+          }
         }
       }
     },
@@ -63,6 +93,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Today"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오늘"
           }
         }
       }
@@ -75,6 +111,12 @@
             "state" : "translated",
             "value" : "There are no recent articles."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 기사가 없습니다."
+          }
         }
       }
     },
@@ -85,6 +127,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This widget displays articles posted within the last 24 hours."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 위젯은 지난 24시간 동안 게시된 기사를 표시합니다."
           }
         }
       }
@@ -97,6 +145,12 @@
             "state" : "translated",
             "value" : "Unread"
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽지 않음"
+          }
         }
       }
     },
@@ -108,6 +162,12 @@
             "state" : "translated",
             "value" : "There are no unread articles."
           }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "읽지 않은 기사가 없습니다."
+          }
         }
       }
     },
@@ -118,6 +178,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This widget display unread articles."
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 위젯은 읽지 않은 기사를 표시합니다."
           }
         }
       }

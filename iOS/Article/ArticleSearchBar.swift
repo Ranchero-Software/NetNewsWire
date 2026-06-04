@@ -38,7 +38,8 @@ import UIKit
 	weak var delegate: SearchBarDelegate?
 
 	override var keyCommands: [UIKeyCommand]? {
-		return [UIKeyCommand(title: "Exit Find", action: #selector(donePressed(_:)), input: UIKeyCommand.inputEscape)]
+		let exitFindTitle = NSLocalizedString("Exit Find", comment: "Exit find")
+		return [UIKeyCommand(title: exitFindTitle, action: #selector(donePressed(_:)), input: UIKeyCommand.inputEscape)]
 	}
 
 	override init(frame: CGRect) {
@@ -129,14 +130,14 @@ private extension ArticleSearchBar {
 
 		prevButton = UIButton(type: .system)
 		prevButton.setImage(UIImage(systemName: "chevron.up"), for: .normal)
-		prevButton.accessibilityLabel = "Previous Result"
+		prevButton.accessibilityLabel = NSLocalizedString("Previous Result", comment: "Previous search result")
 		prevButton.isAccessibilityElement = true
 		prevButton.addTarget(self, action: #selector(previousPressed), for: .touchUpInside)
 		addArrangedSubview(prevButton)
 
 		nextButton = UIButton(type: .system)
 		nextButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
-		nextButton.accessibilityLabel = "Next Result"
+		nextButton.accessibilityLabel = NSLocalizedString("Next Result", comment: "Next search result")
 		nextButton.isAccessibilityElement = true
 		nextButton.addTarget(self, action: #selector(nextPressed), for: .touchUpInside)
 		addArrangedSubview(nextButton)

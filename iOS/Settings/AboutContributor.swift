@@ -61,7 +61,8 @@ public enum Contributors: CaseIterable {
 		case .ryanDotson:
 			return AboutContributor(name: "Ryan Dotson", url: URL(string: "https://github.com/nostodnayr")!)
 		case .others:
-			return AboutContributor(name: "and many more", url: URL(string: "https://github.com/Ranchero-Software/NetNewsWire/graphs/contributors")!)
+			let othersTitle = NSLocalizedString("and many more", comment: "Additional contributors")
+			return AboutContributor(name: othersTitle, url: URL(string: "https://github.com/Ranchero-Software/NetNewsWire/graphs/contributors")!)
 		}
 	}
 }

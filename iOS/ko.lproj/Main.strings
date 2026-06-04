@@ -1,0 +1,104 @@
+/* Class = "UILabel"; text = "Label"; ObjectID = "0Hz-Dv-MhU"; */
+"0Hz-Dv-MhU.text" = "날짜";
+
+/* Class = "UILabel"; text = "Article Content"; ObjectID = "1rh-TG-4t8"; */
+"1rh-TG-4t8.text" = "기사 내용";
+
+/* Class = "UILabel"; text = "articleDate"; ObjectID = "1tb-Fr-7LL"; */
+"1tb-Fr-7LL.text" = "게시일";
+
+/* Class = "UIBarButtonItem"; title = "Next Article"; ObjectID = "2qz-M5-Yhk"; */
+"2qz-M5-Yhk.title" = "다음 기사";
+
+/* Class = "UIBarButtonItem"; title = "Next Unread"; ObjectID = "2w5-e9-C2V"; */
+"2w5-e9-C2V.title" = "다음 읽지 않은 기사";
+
+/* Class = "UICollectionViewController"; title = "Feeds"; ObjectID = "6Bn-mF-MPS"; */
+"6Bn-mF-MPS.title" = "피드";
+
+/* Class = "UILabel"; text = "Blog Author"; ObjectID = "7GV-PV-YVq"; */
+"7GV-PV-YVq.text" = "블로그 작성자";
+
+/* Class = "UILabel"; text = "authorByLine"; ObjectID = "9nR-Dd-ZuE"; */
+"9nR-Dd-ZuE.text" = "작성자";
+
+/* Class = "UILabel"; text = "articleDate"; ObjectID = "aGY-Xq-5YU"; */
+"aGY-Xq-5YU.text" = "게시일";
+
+/* Class = "UILabel"; text = "Feed Title"; ObjectID = "fHH-rW-0hD"; */
+"fHH-rW-0hD.text" = "피드 제목";
+
+/* Class = "UILabel"; text = "Article Content"; ObjectID = "h4j-SE-f60"; */
+"h4j-SE-f60.text" = "기사 내용";
+
+/* Class = "UIBarButtonItem"; title = "Toggle Read"; ObjectID = "hy0-LS-MzE"; */
+"hy0-LS-MzE.title" = "읽음 상태 전환";
+
+/* Class = "UILabel"; text = "Article Title"; ObjectID = "iFp-rn-HhQ"; */
+"iFp-rn-HhQ.text" = "기사 제목";
+
+/* Class = "UIBarButtonItem"; title = "Add"; ObjectID = "iTI-PO-3e6"; */
+"iTI-PO-3e6.title" = "추가";
+
+/* Class = "UIViewController"; title = "Detail"; ObjectID = "JEX-9P-axG"; */
+"JEX-9P-axG.title" = "상세";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "jGC-TX-BdL"; */
+"jGC-TX-BdL.title" = "항목";
+
+/* Class = "UILabel"; text = "authorByLine"; ObjectID = "kYC-07-iWu"; */
+"kYC-07-iWu.text" = "작성자";
+
+/* Class = "UILabel"; text = "8888"; ObjectID = "LVW-Zu-z90"; */
+"LVW-Zu-z90.text" = "8888";
+
+/* Class = "UIBarButtonItem"; title = "Settings"; ObjectID = "N0L-yy-Bfq"; */
+"N0L-yy-Bfq.title" = "설정";
+
+/* Class = "UIButton"; normalTitle = "Button"; ObjectID = "noV-fz-88z"; */
+"noV-fz-88z.normalTitle" = "버튼";
+
+/* Class = "UILabel"; text = "authorByLine"; ObjectID = "NSi-68-toP"; */
+"NSi-68-toP.text" = "작성자";
+
+/* Class = "UILabel"; text = "Article Content"; ObjectID = "O03-6u-AcE"; */
+"O03-6u-AcE.text" = "기사 내용";
+
+/* Class = "UILabel"; text = "authorByLine"; ObjectID = "o3c-FZ-gKE"; */
+"o3c-FZ-gKE.text" = "작성자";
+
+/* Class = "UILabel"; text = "8888"; ObjectID = "oRt-Cv-vvU"; */
+"oRt-Cv-vvU.text" = "8888";
+
+/* Class = "UILabel"; text = "ContainerTitle"; ObjectID = "p16-Uj-CBX"; */
+"p16-Uj-CBX.text" = "섹션 제목";
+
+/* Class = "UILabel"; text = "articleDate"; ObjectID = "pk2-pA-n2G"; */
+"pk2-pA-n2G.text" = "게시일";
+
+/* Class = "UILabel"; text = "articleDate"; ObjectID = "pLf-h1-h8G"; */
+"pLf-h1-h8G.text" = "게시일";
+
+/* Class = "UIViewController"; title = "Timeline"; ObjectID = "QJM-al-rDe"; */
+"QJM-al-rDe.title" = "타임라인";
+
+/* Class = "UILabel"; text = "Folder Title"; ObjectID = "qoe-rn-pwE"; */
+"qoe-rn-pwE.text" = "폴더 제목";
+
+/* Class = "UILabel"; text = "8888"; ObjectID = "TBA-io-5jo"; */
+"TBA-io-5jo.text" = "8888";
+
+/* Class = "UIBarButtonItem"; title = "Previous Article"; ObjectID = "v4j-fq-23N"; */
+"v4j-fq-23N.title" = "이전 기사";
+
+/* Class = "UIBarButtonItem"; title = "Toggle Starred"; ObjectID = "wU4-eH-wC9"; */
+"wU4-eH-wC9.title" = "별표 상태 전환";
+
+/* Class = "UILabel"; text = "Article Content"; ObjectID = "Yan-r6-V5Z"; */
+"Yan-r6-V5Z.text" = "기사 내용";
+
+/* Class = "UILabel"; text = "Blog Name"; ObjectID = "YsT-Lt-Zry"; */
+"YsT-Lt-Zry.text" = "블로그 이름";
+
+/* Class = "UINavigationItem"; title = "Feeds"; ObjectID = "zgM-dx-bIO"; */
+"zgM-dx-bIO.title" = "피드";

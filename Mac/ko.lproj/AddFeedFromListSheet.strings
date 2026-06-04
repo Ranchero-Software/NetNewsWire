@@ -1,0 +1,23 @@
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "6NK-Ql-drk"; */
+"6NK-Ql-drk.title" = "추가";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "APc-af-7Um"; */
+"APc-af-7Um.title" = "항목 2";
+
+/* Class = "NSTextFieldCell"; title = "Add feed(s)?"; ObjectID = "CRI-fB-GoB"; */
+"CRI-fB-GoB.title" = "피드를 추가하시겠습니까?";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "Dop-HC-6Q9"; */
+"Dop-HC-6Q9.title" = "취소";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "j09-9b-bGs"; */
+"j09-9b-bGs.title" = "항목 3";
+
+/* Class = "NSTextFieldCell"; title = "Folder:"; ObjectID = "Kwx-7B-CIu"; */
+"Kwx-7B-CIu.title" = "폴더:";
+
+/* Class = "NSWindow"; title = "Add Feed"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "피드 추가";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "tLJ-zY-CcZ"; */
+"tLJ-zY-CcZ.title" = "항목 1";

@@ -1,0 +1,11 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "피드 구독";
+
+/* Bundle name */
+"CFBundleName" = "피드 구독";
+
+/* Copyright (human-readable) */
+"NSHumanReadableCopyright" = "저작권 © 2019-2026 Brent Simmons. 모든 권리 보유.";
+
+/* Human readable description */
+"NSHumanReadableDescription" = "이 확장 프로그램은 현재 페이지의 피드를 쉽게 구독할 수 있도록 Safari 도구 막대에 버튼을 추가합니다.";

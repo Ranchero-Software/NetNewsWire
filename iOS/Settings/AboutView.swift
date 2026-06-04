@@ -20,12 +20,12 @@ struct AboutView: View {
 				Text(verbatim: "NetNewsWire")
 					.font(.largeTitle)
 
-				Text(verbatim: "By Brent Simmons and the Ranchero Software team")
+				Text("By Brent Simmons and the Ranchero Software team")
 					.foregroundStyle(.secondary)
 				Text("[netnewswire.com](https://netnewswire.com/)")
 
 				VStack(spacing: 6) {
-					Text(verbatim: "Credits")
+					Text("Credits")
 						.bold()
 						.foregroundStyle(.secondary)
 						.padding(.top, 16)
@@ -40,7 +40,7 @@ struct AboutView: View {
 				}
 
 				VStack(spacing: 6) {
-					Text(verbatim: "Thanks")
+					Text("Thanks")
 						.bold()
 						.foregroundStyle(.secondary)
 						.padding(.top, 16)
@@ -48,14 +48,14 @@ struct AboutView: View {
 				}
 
 				VStack(spacing: 6) {
-					Text(verbatim: "Dedication")
+					Text("Dedication")
 						.bold()
 						.foregroundStyle(.secondary)
 						.padding(.top, 16)
 					Text("NetNewsWire 7 is dedicated to everyone working to save democracy in the United States and around the world.")
 				}
 
-				Text(verbatim: "Copyright © 2002-2026 Brent Simmons")
+				Text("Copyright © 2002-2026 Brent Simmons")
 					.font(.caption)
 					.foregroundStyle(.secondary)
 					.padding(.bottom)
@@ -64,7 +64,7 @@ struct AboutView: View {
 		}
 		.multilineTextAlignment(.center)
 		.background(Color(uiColor: .systemBackground))
-		.navigationTitle(Text(verbatim: "About NetNewsWire"))
+		.navigationTitle("About NetNewsWire")
     }
 }
 

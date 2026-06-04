@@ -1,0 +1,386 @@
+/* Class = "NSMenu"; title = "Find"; ObjectID = "1b7-l0-nxx"; */
+"1b7-l0-nxx.title" = "찾기";
+
+/* Class = "NSMenuItem"; title = "Check for Updates…"; ObjectID = "1nF-7O-aKU"; */
+"1nF-7O-aKU.title" = "업데이트 확인…";
+
+/* Class = "NSMenuItem"; title = "Customize Toolbar…"; ObjectID = "1UK-8n-QPP"; */
+"1UK-8n-QPP.title" = "도구 막대 사용자화…";
+
+/* Class = "NSMenuItem"; title = "NetNewsWire"; ObjectID = "1Xt-HY-uBw"; */
+"1Xt-HY-uBw.title" = "NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Transformations"; ObjectID = "2oI-Rn-ZJC"; */
+"2oI-Rn-ZJC.title" = "변환";
+
+/* Class = "NSMenu"; title = "Spelling"; ObjectID = "3IN-sU-3Bg"; */
+"3IN-sU-3Bg.title" = "맞춤법";
+
+/* Class = "NSMenu"; title = "Speech"; ObjectID = "3rS-ZA-NoH"; */
+"3rS-ZA-NoH.title" = "말하기";
+
+/* Class = "NSMenuItem"; title = "Find"; ObjectID = "4EN-yA-p0u"; */
+"4EN-yA-p0u.title" = "찾기";
+
+/* Class = "NSMenuItem"; title = "Open in Browser"; ObjectID = "4iQ-1v-dTa"; */
+"4iQ-1v-dTa.title" = "브라우저에서 열기";
+
+/* Class = "NSMenuItem"; title = "Enter Full Screen"; ObjectID = "4J7-dP-txa"; */
+"4J7-dP-txa.title" = "전체 화면으로 전환";
+
+/* Class = "NSMenuItem"; title = "Quit NetNewsWire"; ObjectID = "4sb-4s-VLi"; */
+"4sb-4s-VLi.title" = "NetNewsWire 종료";
+
+/* Class = "NSMenuItem"; title = "About NetNewsWire"; ObjectID = "5kV-Vb-QxS"; */
+"5kV-Vb-QxS.title" = "NetNewsWire 정보";
+
+/* Class = "NSMenuItem"; title = "Edit"; ObjectID = "5QF-Oa-p0T"; */
+"5QF-Oa-p0T.title" = "편집";
+
+/* Class = "NSMenuItem"; title = "Redo"; ObjectID = "6dh-zS-Vam"; */
+"6dh-zS-Vam.title" = "다시 실행";
+
+/* Class = "NSMenuItem"; title = "Mark Below as Read"; ObjectID = "8lZ-XI-I4y"; */
+"8lZ-XI-I4y.title" = "아래를 읽음으로 표시";
+
+/* Class = "NSMenuItem"; title = "All Unread"; ObjectID = "8ZT-ew-JNc"; */
+"8ZT-ew-JNc.title" = "읽지 않은 글 모두";
+
+/* Class = "NSMenuItem"; title = "Substitutions"; ObjectID = "9ic-FL-obx"; */
+"9ic-FL-obx.title" = "대치";
+
+/* Class = "NSMenuItem"; title = "Debug Search"; ObjectID = "9Ot-wC-s5U"; */
+"9Ot-wC-s5U.title" = "디버그 검색";
+
+/* Class = "NSMenuItem"; title = "Smart Copy/Paste"; ObjectID = "9yt-4B-nSM"; */
+"9yt-4B-nSM.title" = "스마트 복사/붙여넣기";
+
+/* Class = "NSMenuItem"; title = "Info"; ObjectID = "24r-2i-fXR"; */
+"24r-2i-fXR.title" = "정보";
+
+/* Class = "NSMenu"; title = "Article"; ObjectID = "57V-gv-vEw"; */
+"57V-gv-vEw.title" = "기사";
+
+/* Class = "NSMenuItem"; title = "Correct Spelling Automatically"; ObjectID = "78Y-hA-62v"; */
+"78Y-hA-62v.title" = "맞춤법 자동 수정";
+
+/* Class = "NSMenuItem"; title = "Window"; ObjectID = "aUF-d1-5bR"; */
+"aUF-d1-5bR.title" = "윈도우";
+
+/* Class = "NSMenu"; title = "Main Menu"; ObjectID = "AYu-sK-qS6"; */
+"AYu-sK-qS6.title" = "메인 메뉴";
+
+/* Class = "NSMenuItem"; title = "Release Notes"; ObjectID = "b5s-xg-B1w"; */
+"b5s-xg-B1w.title" = "릴리스 노트";
+
+/* Class = "NSMenuItem"; title = "Hide Read Articles"; ObjectID = "b10-sA-Yzi"; */
+"b10-sA-Yzi.title" = "읽은 기사 가리기";
+
+/* Class = "NSMenu"; title = "File"; ObjectID = "bib-Uj-vzu"; */
+"bib-Uj-vzu.title" = "파일";
+
+/* Class = "NSMenuItem"; title = "Preferences…"; ObjectID = "BOF-NM-1cW"; */
+"BOF-NM-1cW.title" = "설정…";
+
+/* Class = "NSMenuItem"; title = "Use Selection for Find"; ObjectID = "buJ-ug-pKt"; */
+"buJ-ug-pKt.title" = "선택한 내용으로 찾기";
+
+/* Class = "NSMenu"; title = "Transformations"; ObjectID = "c8a-y6-VQd"; */
+"c8a-y6-VQd.title" = "변환";
+
+/* Class = "NSMenuItem"; title = "Add NetNewsWire News Feed"; ObjectID = "cmP-uH-mS8"; */
+"cmP-uH-mS8.title" = "NetNewsWire 뉴스 피드 추가";
+
+/* Class = "NSMenuItem"; title = "Smart Links"; ObjectID = "cwL-P1-jid"; */
+"cwL-P1-jid.title" = "스마트 링크";
+
+/* Class = "NSMenuItem"; title = "Make Lower Case"; ObjectID = "d9M-CD-aMd"; */
+"d9M-CD-aMd.title" = "소문자로";
+
+/* Class = "NSMenuItem"; title = "iCloud Storage Stats"; ObjectID = "dLy-xR-u6N"; */
+"dLy-xR-u6N.title" = "iCloud 저장 공간 통계";
+
+/* Class = "NSMenuItem"; title = "File"; ObjectID = "dMs-cI-mzQ"; */
+"dMs-cI-mzQ.title" = "파일";
+
+/* Class = "NSMenuItem"; title = "Undo"; ObjectID = "dRJ-4n-Yzg"; */
+"dRJ-4n-Yzg.title" = "실행 취소";
+
+/* Class = "NSMenuItem"; title = "Spelling and Grammar"; ObjectID = "Dv1-io-Yv7"; */
+"Dv1-io-Yv7.title" = "맞춤법 및 문법";
+
+/* Class = "NSMenuItem"; title = "Close Window"; ObjectID = "DVo-aG-piG"; */
+"DVo-aG-piG.title" = "창 닫기";
+
+/* Class = "NSMenuItem"; title = "Hide Read Feeds"; ObjectID = "E9K-zV-nLv"; */
+"E9K-zV-nLv.title" = "읽은 피드 가리기";
+
+/* Class = "NSMenuItem"; title = "Open in Browser Inverted"; ObjectID = "EjD-X9-Pjf"; */
+"EjD-X9-Pjf.title" = "브라우저에서 반대 방식으로 열기";
+
+/* Class = "NSMenuItem"; title = "Error Log"; ObjectID = "erl-0g-Kw7"; */
+"erl-0g-Kw7.title" = "오류 로그";
+
+/* Class = "NSMenuItem"; title = "Enable Web Inspector"; ObjectID = "EwI-z4-ZA3"; */
+"EwI-z4-ZA3.title" = "웹 검사기 활성화";
+
+/* Class = "NSMenu"; title = "Help"; ObjectID = "F2S-fz-NVQ"; */
+"F2S-fz-NVQ.title" = "도움말";
+
+/* Class = "NSMenuItem"; title = "Mark as Read"; ObjectID = "Fc9-c7-2AY"; */
+"Fc9-c7-2AY.title" = "읽음으로 표시";
+
+/* Class = "NSMenu"; title = "Substitutions"; ObjectID = "FeM-D8-WVr"; */
+"FeM-D8-WVr.title" = "대치";
+
+/* Class = "NSMenuItem"; title = "NetNewsWire Help"; ObjectID = "FKE-Sm-Kum"; */
+"FKE-Sm-Kum.title" = "NetNewsWire 도움말";
+
+/* Class = "NSMenuItem"; title = "Copy External URL"; ObjectID = "fOF-99-6Iv"; */
+"fOF-99-6Iv.title" = "외부 URL 복사";
+
+/* Class = "NSMenuItem"; title = "Go"; ObjectID = "FPs-q4-hLT"; */
+"FPs-q4-hLT.title" = "이동";
+
+/* Class = "NSMenuItem"; title = "Paste"; ObjectID = "gVA-U4-sdL"; */
+"gVA-U4-sdL.title" = "붙여넣기";
+
+/* Class = "NSMenuItem"; title = "Test Crash Reporter Window"; ObjectID = "gVd-kQ-efj"; */
+"gVd-kQ-efj.title" = "충돌 보고기 창 테스트";
+
+/* Class = "NSMenuItem"; title = "Force Crash"; ObjectID = "gVt-cz-eoJ"; */
+"gVt-cz-eoJ.title" = "강제 충돌";
+
+/* Class = "NSMenuItem"; title = "View"; ObjectID = "H8h-7b-M4v"; */
+"H8h-7b-M4v.title" = "보기";
+
+/* Class = "NSMenuItem"; title = "Mark All as Read"; ObjectID = "HdN-Ks-cwh"; */
+"HdN-Ks-cwh.title" = "모두 읽음으로 표시";
+
+/* Class = "NSMenuItem"; title = "Show Spelling and Grammar"; ObjectID = "HFo-cy-zxI"; */
+"HFo-cy-zxI.title" = "맞춤법 및 문법 보기";
+
+/* Class = "NSMenuItem"; title = "Text Replacement"; ObjectID = "HFQ-gK-NFA"; */
+"HFQ-gK-NFA.title" = "텍스트 대치";
+
+/* Class = "NSMenuItem"; title = "Smart Quotes"; ObjectID = "hQb-2v-fYv"; */
+"hQb-2v-fYv.title" = "스마트 따옴표";
+
+/* Class = "NSMenu"; title = "View"; ObjectID = "HyV-fh-RgO"; */
+"HyV-fh-RgO.title" = "보기";
+
+/* Class = "NSMenuItem"; title = "Check Document Now"; ObjectID = "hz2-CU-CR7"; */
+"hz2-CU-CR7.title" = "문서 지금 검사";
+
+/* Class = "NSMenu"; title = "Services"; ObjectID = "hz9-B4-Xy5"; */
+"hz9-B4-Xy5.title" = "서비스";
+
+/* Class = "NSMenuItem"; title = "Import NNW 3 Subscriptions…"; ObjectID = "i8e-24-dto"; */
+"i8e-24-dto.title" = "NNW 3 구독 가져오기…";
+
+/* Class = "NSMenuItem"; title = "Oldest Article on Top"; ObjectID = "iii-kP-qoF"; */
+"iii-kP-qoF.title" = "오래된 기사를 위로";
+
+/* Class = "NSMenuItem"; title = "Clean Up Articles"; ObjectID = "J5h-uQ-57w"; */
+"J5h-uQ-57w.title" = "기사 정리";
+
+/* Class = "NSMenuItem"; title = "Show All"; ObjectID = "Kd2-mp-pUS"; */
+"Kd2-mp-pUS.title" = "모두 보기";
+
+/* Class = "NSMenuItem"; title = "How To Support NetNewsWire"; ObjectID = "kfC-NQ-g3E"; */
+"kfC-NQ-g3E.title" = "NetNewsWire를 후원하는 방법";
+
+/* Class = "NSMenuItem"; title = "Show Sidebar"; ObjectID = "kIP-vf-haE"; */
+"kIP-vf-haE.title" = "사이드바 보기";
+
+/* Class = "NSMenuItem"; title = "Vacuum Databases"; ObjectID = "kLm-nR-v3X"; */
+"kLm-nR-v3X.title" = "데이터베이스 VACUUM";
+
+/* Class = "NSMenuItem"; title = "Today"; ObjectID = "L20-jv-7c9"; */
+"L20-jv-7c9.title" = "오늘";
+
+/* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "LE2-aR-0XJ"; */
+"LE2-aR-0XJ.title" = "모두 앞으로 가져오기";
+
+/* Class = "NSMenuItem"; title = "Main Window"; ObjectID = "LSZ-ci-Jb5"; */
+"LSZ-ci-Jb5.title" = "메인 창";
+
+/* Class = "NSMenuItem"; title = "Show iCloud Drive Missing Alert"; ObjectID = "m0T-w3-neT"; */
+"m0T-w3-neT.title" = "iCloud Drive 없음 경고 표시";
+
+/* Class = "NSMenuItem"; title = "Bug Tracker"; ObjectID = "mE2-pM-rQF"; */
+"mE2-pM-rQF.title" = "버그 추적기";
+
+/* Class = "NSMenuItem"; title = "Check Grammar With Spelling"; ObjectID = "mK6-2p-4JG"; */
+"mK6-2p-4JG.title" = "맞춤법 검사와 함께 문법 검사";
+
+/* Class = "NSMenuItem"; title = "Article Search…"; ObjectID = "nB2-mv-2i5"; */
+"nB2-mv-2i5.title" = "기사 검색…";
+
+/* Class = "NSMenuItem"; title = "Sort Articles By"; ObjectID = "nLP-fa-KUi"; */
+"nLP-fa-KUi.title" = "기사 정렬 기준";
+
+/* Class = "NSMenuItem"; title = "Services"; ObjectID = "NMo-om-nkz"; */
+"NMo-om-nkz.title" = "서비스";
+
+/* Class = "NSMenu"; title = "Debug"; ObjectID = "NOT-8E-ykF"; */
+"NOT-8E-ykF.title" = "디버그";
+
+/* Class = "NSMenu"; title = "Go"; ObjectID = "NQW-Ph-lw2"; */
+"NQW-Ph-lw2.title" = "이동";
+
+/* Class = "NSMenuItem"; title = "Discourse Forum"; ObjectID = "OKC-FV-V33"; */
+"OKC-FV-V33.title" = "Discourse 포럼";
+
+/* Class = "NSMenu"; title = "Sort Articles By"; ObjectID = "OlJ-93-6OP"; */
+"OlJ-93-6OP.title" = "기사 정렬 기준";
+
+/* Class = "NSMenuItem"; title = "Hide NetNewsWire"; ObjectID = "Olw-nP-bQN"; */
+"Olw-nP-bQN.title" = "NetNewsWire 가리기";
+
+/* Class = "NSMenuItem"; title = "Find Previous"; ObjectID = "OwM-mh-QMV"; */
+"OwM-mh-QMV.title" = "이전 찾기";
+
+/* Class = "NSMenuItem"; title = "Minimize"; ObjectID = "OY7-WF-poV"; */
+"OY7-WF-poV.title" = "최소화";
+
+/* Class = "NSMenuItem"; title = "Stop Speaking"; ObjectID = "Oyz-dy-DGm"; */
+"Oyz-dy-DGm.title" = "말하기 중지";
+
+/* Class = "NSMenuItem"; title = "Mark Above as Read"; ObjectID = "p1o-EG-Uo8"; */
+"p1o-EG-Uo8.title" = "위를 읽음으로 표시";
+
+/* Class = "NSMenuItem"; title = "Show Reader View"; ObjectID = "p5x-Xq-1fW"; */
+"p5x-Xq-1fW.title" = "리더 보기 표시";
+
+/* Class = "NSMenuItem"; title = "Delete"; ObjectID = "pa3-QI-u2k"; */
+"pa3-QI-u2k.title" = "삭제";
+
+/* Class = "NSMenuItem"; title = "New Window"; ObjectID = "pGg-Gc-PU2"; */
+"pGg-Gc-PU2.title" = "새 윈도우";
+
+/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Ppm-uh-K5n"; */
+"Ppm-uh-K5n.title" = "새로 고침";
+
+/* Class = "NSMenuItem"; title = "Website"; ObjectID = "q2Z-9K-GBd"; */
+"q2Z-9K-GBd.title" = "웹사이트";
+
+/* Class = "NSMenuItem"; title = "Next Unread"; ObjectID = "q3p-nE-m2k"; */
+"q3p-nE-m2k.title" = "다음 읽지 않은 글";
+
+/* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "q09-fT-Sye"; */
+"q09-fT-Sye.title" = "다음 찾기";
+
+/* Class = "NSMenuItem"; title = "GitHub Repository"; ObjectID = "QfD-Xw-sdF"; */
+"QfD-Xw-sdF.title" = "GitHub 저장소";
+
+/* Class = "NSMenuItem"; title = "Copy Article URL"; ObjectID = "qNk-By-jKp"; */
+"qNk-By-jKp.title" = "기사 URL 복사";
+
+/* Class = "NSMenuItem"; title = "Open Application Support Folder"; ObjectID = "QxZ-DC-21I"; */
+"QxZ-DC-21I.title" = "Application Support 폴더 열기";
+
+/* Class = "NSMenuItem"; title = "Zoom"; ObjectID = "R4o-n2-Eq4"; */
+"R4o-n2-Eq4.title" = "확대/축소";
+
+/* Class = "NSMenuItem"; title = "Check Spelling While Typing"; ObjectID = "rbD-Rh-wIN"; */
+"rbD-Rh-wIN.title" = "입력하는 동안 맞춤법 검사";
+
+/* Class = "NSMenuItem"; title = "Smart Dashes"; ObjectID = "rgM-f4-ycn"; */
+"rgM-f4-ycn.title" = "스마트 대시";
+
+/* Class = "NSMenuItem"; title = "Import Subscriptions…"; ObjectID = "rSl-F4-qo7"; */
+"rSl-F4-qo7.title" = "구독 가져오기…";
+
+/* Class = "NSMenuItem"; title = "Select All"; ObjectID = "Ruw-6m-B2m"; */
+"Ruw-6m-B2m.title" = "모두 선택";
+
+/* Class = "NSMenuItem"; title = "Jump to Selection"; ObjectID = "S0p-oC-mLd"; */
+"S0p-oC-mLd.title" = "선택 항목으로 이동";
+
+/* Class = "NSMenuItem"; title = "Show Toolbar"; ObjectID = "snW-S8-Cw5"; */
+"snW-S8-Cw5.title" = "도구 막대 보기";
+
+/* Class = "NSMenu"; title = "Window"; ObjectID = "Td7-aD-5lo"; */
+"Td7-aD-5lo.title" = "윈도우";
+
+/* Class = "NSMenuItem"; title = "Newest Article on Top"; ObjectID = "TNS-TV-n0U"; */
+"TNS-TV-n0U.title" = "최신 기사를 위로";
+
+/* Class = "NSMenuItem"; title = "Data Detectors"; ObjectID = "tRr-pd-1PS"; */
+"tRr-pd-1PS.title" = "데이터 감지기";
+
+/* Class = "NSMenuItem"; title = "Article"; ObjectID = "TzI-3g-N0v"; */
+"TzI-3g-N0v.title" = "기사";
+
+/* Class = "NSMenuItem"; title = "Capitalize"; ObjectID = "UEZ-Bs-lqG"; */
+"UEZ-Bs-lqG.title" = "첫 글자 대문자로";
+
+/* Class = "NSMenuItem"; title = "Debug"; ObjectID = "UqE-mp-gtV"; */
+"UqE-mp-gtV.title" = "디버그";
+
+/* Class = "NSMenu"; title = "NetNewsWire"; ObjectID = "uQy-DD-JDr"; */
+"uQy-DD-JDr.title" = "NetNewsWire";
+
+/* Class = "NSMenuItem"; title = "Cut"; ObjectID = "uRl-iY-unG"; */
+"uRl-iY-unG.title" = "잘라내기";
+
+/* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "Vdr-fp-XzO"; */
+"Vdr-fp-XzO.title" = "나머지 가리기";
+
+/* Class = "NSMenuItem"; title = "Refresh"; ObjectID = "Veh-SV-KWy"; */
+"Veh-SV-KWy.title" = "새로 고침";
+
+/* Class = "NSMenuItem"; title = "Make Upper Case"; ObjectID = "vmV-6d-7jI"; */
+"vmV-6d-7jI.title" = "대문자로";
+
+/* Class = "NSMenuItem"; title = "Mark as Starred"; ObjectID = "vvo-ZM-8kl"; */
+"vvo-ZM-8kl.title" = "별표 표시";
+
+/* Class = "NSMenuItem"; title = "Keyboard Shortcuts"; ObjectID = "w6o-j8-cda"; */
+"w6o-j8-cda.title" = "키보드 단축키";
+
+/* Class = "NSMenu"; title = "Edit"; ObjectID = "W48-6f-4Dl"; */
+"W48-6f-4Dl.title" = "편집";
+
+/* Class = "NSMenuItem"; title = "New Feed…"; ObjectID = "Was-JA-tGl"; */
+"Was-JA-tGl.title" = "새 피드…";
+
+/* Class = "NSMenuItem"; title = "Paste and Match Style"; ObjectID = "WeT-3V-zwk"; */
+"WeT-3V-zwk.title" = "스타일에 맞춰 붙여넣기";
+
+/* Class = "NSMenuItem"; title = "New Folder…"; ObjectID = "wkh-LX-Xp1"; */
+"wkh-LX-Xp1.title" = "새 폴더…";
+
+/* Class = "NSMenuItem"; title = "Help"; ObjectID = "wpr-3q-Mcd"; */
+"wpr-3q-Mcd.title" = "도움말";
+
+/* Class = "NSMenuItem"; title = "Copy"; ObjectID = "x3v-GG-iWU"; */
+"x3v-GG-iWU.title" = "복사";
+
+/* Class = "NSMenuItem"; title = "Open Image Cache Folder"; ObjectID = "x9L-mW-2vQ"; */
+"x9L-mW-2vQ.title" = "이미지 캐시 폴더 열기";
+
+/* Class = "NSMenuItem"; title = "Test Crash Log Sender"; ObjectID = "XJG-gO-OKi"; */
+"XJG-gO-OKi.title" = "충돌 로그 전송기 테스트";
+
+/* Class = "NSMenuItem"; title = "Speech"; ObjectID = "xrE-MZ-jX0"; */
+"xrE-MZ-jX0.title" = "말하기";
+
+/* Class = "NSMenuItem"; title = "Export Subscriptions…"; ObjectID = "Xy2-v8-Lj8"; */
+"Xy2-v8-Lj8.title" = "구독 내보내기…";
+
+/* Class = "NSMenuItem"; title = "Find…"; ObjectID = "Xz5-n4-O0W"; */
+"Xz5-n4-O0W.title" = "찾기…";
+
+/* Class = "NSMenuItem"; title = "Start Speaking"; ObjectID = "Ynk-f8-cLZ"; */
+"Ynk-f8-cLZ.title" = "말하기 시작";
+
+/* Class = "NSMenuItem"; title = "Show Substitutions"; ObjectID = "z6F-FW-3nz"; */
+"z6F-FW-3nz.title" = "대치 보기";
+
+/* Class = "NSMenuItem"; title = "Starred"; ObjectID = "ZRx-me-QXO"; */
+"ZRx-me-QXO.title" = "별표 표시한 글";
+
+/* Class = "NSMenuItem"; title = "Group By Feed"; ObjectID = "Zxm-O6-NRE"; */
+"Zxm-O6-NRE.title" = "피드별로 그룹화";

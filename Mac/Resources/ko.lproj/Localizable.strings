@@ -1,0 +1,715 @@
+/* No Text */
+"(No Text)" = "(텍스트 없음)";
+
+/* Status bar progress */
+"%@ of %@" = "%2$@ 중 %1$@";
+
+/* Unread */
+"%d unread" = "읽지 않은 항목 %d개";
+
+/* Alert informative text when adding a Feedly account and waiting for authorization from the user. */
+"A web browser will open the Feedly login for you to authorize access." = "액세스 승인을 위해 웹 브라우저에서 Feedly 로그인 페이지가 열립니다.";
+
+/* Preferences */
+"Accounts" = "계정";
+
+/* Account details active toggle */
+"Active" = "활성";
+
+/* Add account button help */
+"Add Account" = "계정 추가";
+
+/* Add Account Explainer */
+"Add an account by clicking the + button." = "+ 버튼을 클릭하여 계정을 추가하세요.";
+
+/* Add Item */
+"Add Item" = "항목 추가";
+
+/* Preferences */
+"Advanced" = "고급";
+
+/* All Unread pseudo-feed title */
+"All Unread" = "전체 읽지 않음";
+
+/* Feed finder */
+"Already subscribed" = "이미 구독 중";
+
+/* Always Use Reader View */
+"Always Use Reader View" = "항상 리더 보기 사용";
+
+/* Feed delete text */
+"Are you sure you want to delete the “%@” feed?" = "“%@” 피드를 정말 삭제하시겠습니까?";
+
+/* Folder delete text */
+"Are you sure you want to delete the “%@” folder?" = "“%@” 폴더를 정말 삭제하시겠습니까?";
+
+/* Items delete text */
+"Are you sure you want to delete the %d selected items?" = "선택한 %d개 항목을 정말 삭제하시겠습니까?";
+
+/* Delete account alert text */
+"Are you sure you want to delete the account “%@”? This cannot be undone." = "계정 “%@”을 삭제하시겠습니까? 이 작업은 실행 취소할 수 없습니다.";
+
+/* Article */
+"Article" = "기사";
+
+/* Article content records section header */
+"Article Content Records" = "기사 콘텐츠 레코드";
+
+/* Article Theme */
+"Article Theme" = "기사 테마";
+
+/* Author's Website */
+"Author‘s website:" = "작성자 웹사이트:";
+
+/* Account name */
+"BazQux" = "BazQux";
+
+/* Feed finder */
+"Can’t add a feed because no feed was found." = "피드를 찾지 못해 추가할 수 없습니다.";
+
+/* CloudKit account setup failure description — iCloud Drive not enabled. */
+"Can’t Add iCloud Account" = "iCloud 계정을 추가할 수 없음";
+
+/* Feed finder */
+"Can’t add this feed because of a download error: “%@”" = "다운로드 오류로 인해 이 피드를 추가할 수 없습니다: “%@”";
+
+/* Feed finder */
+"Can’t add this feed because you’ve already subscribed to it." = "이미 구독 중인 피드이므로 이 피드를 추가할 수 없습니다.";
+
+/* Cancel
+Cancel Delete Account
+Cancel Install Theme
+Cancel add account button
+Cancel button */
+"Cancel" = "취소";
+
+/* Scan status text when canceled */
+"Canceled." = "취소되었습니다.";
+
+/* Export OPML */
+"Choose a location for the exported OPML file." = "내보낼 OPML 파일의 위치를 선택하세요.";
+
+/* NNW3 Import */
+"Choose a Subscriptions.plist file:" = "Subscriptions.plist 파일을 선택하세요:";
+
+/* Add account picker title */
+"Choose an account type to add…" = "추가할 계정 유형을 선택하세요…";
+
+/* Clean Up
+Clean Up button title
+Clean up alert button */
+"Clean Up" = "정리";
+
+/* Clean up alert title */
+"Clean Up iCloud Records" = "iCloud 레코드 정리";
+
+/* Cleanup status text when canceled */
+"Cleanup canceled." = "정리가 취소되었습니다.";
+
+/* Cleanup error message */
+"Cleanup failed to complete, but you may be able to clean up more if you wait a few minutes and try again.\n\nClick Refresh to see your updated stats." = "정리를 완료하지 못했습니다. 몇 분 기다렸다가 다시 시도하면 더 정리될 수 있습니다.\n\n새로 고침을 클릭하면 업데이트된 통계를 볼 수 있습니다.";
+
+/* Progress bar accessibility label */
+"Cleanup progress" = "정리 진행률";
+
+/* Close */
+"Close" = "닫기";
+
+/* Status icon accessibility description */
+"Completed" = "완료됨";
+
+/* Continue add account button */
+"Continue" = "계속";
+
+/* Command */
+"Copy Article URL" = "기사 URL 복사";
+
+/* Copy Contents button */
+"Copy Contents" = "내용 복사";
+
+/* Command */
+"Copy External URL" = "외부 URL 복사";
+
+/* Command */
+"Copy Feed URL" = "피드 URL 복사";
+
+/* Command */
+"Copy Home Page URL" = "홈페이지 URL 복사";
+
+/* Scan error alert title */
+"Couldn’t complete the iCloud scan because of an error:" = "오류로 인해 iCloud 스캔을 완료하지 못했습니다:";
+
+/* Add Account
+Create */
+"Create" = "생성";
+
+/* Account Local */
+"Create a local account on your Mac." = "Mac에 로컬 계정을 생성합니다.";
+
+/* Account details credentials button */
+"Credentials" = "자격 증명";
+
+/* Default */
+"Default" = "기본";
+
+/* Command
+Delete Account */
+"Delete" = "삭제";
+
+/* Delete account alert title */
+"Delete “%@”?" = "“%@”을 삭제할까요?";
+
+/* Delete Feed
+command */
+"Delete Feed" = "피드 삭제";
+
+/* command */
+"Delete Feeds" = "피드 삭제";
+
+/* command */
+"Delete Feeds and Folders" = "피드 및 폴더 삭제";
+
+/* Delete Folder
+command */
+"Delete Folder" = "폴더 삭제";
+
+/* command */
+"Delete Folders" = "폴더 삭제";
+
+/* Delete Items */
+"Delete Items" = "항목 삭제";
+
+/* Cleanup phase text */
+"Deleting read content records…" = "읽은 콘텐츠 레코드를 삭제하는 중…";
+
+/* Cleanup phase text */
+"Deleting unread content records…" = "읽지 않은 콘텐츠 레코드를 삭제하는 중…";
+
+/* Dismiss */
+"Dismiss" = "닫기";
+
+/* No BazQux */
+"Don’t have a BazQux account?" = "BazQux 계정이 없으신가요?";
+
+/* No FreshRSS */
+"Don’t have a FreshRSS instance?" = "FreshRSS 인스턴스가 없으신가요?";
+
+/* No OldReader */
+"Don’t have a The Old Reader account?" = "The Old Reader 계정이 없으신가요?";
+
+/* No Inoreader */
+"Don’t have an Inoreader account?" = "Inoreader 계정이 없으신가요?";
+
+/* Feed finder */
+"Download Error" = "다운로드 오류";
+
+/* Notifications */
+"Enable Notifications" = "알림 활성화";
+
+/* Error - Reader View */
+"Error - Reader View" = "오류 - 리더 보기";
+
+/* Error Log window title */
+"Error Log" = "오류 로그";
+
+/* Error log privacy warning */
+"Errors may contain feed URLs and other information you may not want to share publicly." = "오류에는 공개적으로 공유하고 싶지 않을 수 있는 피드 URL 및 기타 정보가 포함될 수 있습니다.";
+
+/* Every 2 Hours */
+"Every 2 Hours" = "2시간마다";
+
+/* Every 4 Hours */
+"Every 4 Hours" = "4시간마다";
+
+/* Every 8 Hours */
+"Every 8 Hours" = "8시간마다";
+
+/* Every 30 Minutes */
+"Every 30 Minutes" = "30분마다";
+
+/* Every Hour */
+"Every Hour" = "1시간마다";
+
+/* Export OPML */
+"Export OPML" = "OPML 내보내기";
+
+/* Export OPML */
+"Export to:" = "내보내기 위치:";
+
+/* XX-Large */
+"Extra Extra Large" = "아주 크게";
+
+/* X-Large */
+"Extra Large" = "매우 크게";
+
+/* Feed Inspector window title */
+"Feed Inspector" = "피드 인스펙터";
+
+/* Feed finder */
+"Feed not found" = "피드를 찾을 수 없음";
+
+/* Account name */
+"Feedbin" = "Feedbin";
+
+/* Account name */
+"Feedly" = "Feedly";
+
+/* No FreshRSS Button */
+"Find out more" = "자세히 알아보기";
+
+/* Feed finder */
+"Finding feed…" = "피드를 찾는 중…";
+
+/* Folder Inspector window title */
+"Folder Inspector" = "폴더 인스펙터";
+
+/* Add feed destination folder popup menu title */
+"Folders" = "폴더";
+
+/* Account name */
+"FreshRSS" = "FreshRSS";
+
+/* Preferences */
+"General" = "일반";
+
+/* Help button accessibility label */
+"Help — opens in browser" = "도움말 — 브라우저에서 열림";
+
+/* Command */
+"Hide Read Articles" = "읽은 기사 숨기기";
+
+/* Command */
+"Hide Read Feeds" = "읽은 피드 숨기기";
+
+/* FreshRSS API Helper */
+"https://fresh.rss.net/api/greader.php" = "https://fresh.rss.net/api/greader.php";
+
+/* Account name
+iCloud Account */
+"iCloud" = "iCloud";
+
+/* Cleanup phase text when completed */
+"iCloud storage cleanup completed." = "iCloud 저장 공간 정리가 완료되었습니다.";
+
+/* iCloud Storage Stats window title */
+"iCloud Storage Stats" = "iCloud 저장 공간 통계";
+
+/* Account name */
+"Inoreader" = "Inoreader";
+
+/* Inspector window title */
+"Inspector" = "인스펙터";
+
+/* Install Theme */
+"Install Theme" = "테마 설치";
+
+/* Theme message text */
+"Install theme “%@” by %@?" = "%2$@의 테마 “%1$@”을 설치하시겠습니까?";
+
+/* Invalid API URL */
+"Invalid API URL." = "올바르지 않은 API URL입니다.";
+
+/* Credentials Error */
+"Invalid email/password combination." = "이메일/비밀번호 조합이 올바르지 않습니다.";
+
+/* window title */
+"Keyboard Shortcuts" = "키보드 단축키";
+
+/* Credentials Error */
+"Keychain error while storing credentials." = "자격 증명을 저장하는 동안 키체인 오류가 발생했습니다.";
+
+/* Large */
+"Large" = "크게";
+
+/* Link */
+"Link:" = "링크:";
+
+/* Local Account */
+"Local" = "로컬";
+
+/* Local Account */
+"Local accounts do not sync feeds across devices" = "로컬 계정은 기기 간에 피드를 동기화하지 않습니다";
+
+/* Manually */
+"Manually" = "수동";
+
+/* Command */
+"Mark Above as Read" = "위를 읽음으로 표시";
+
+/* Command
+Mark All as Read */
+"Mark All as Read" = "모두 읽음으로 표시";
+
+/* Command */
+"Mark All as Read in “%@”" = "“%@”에서 모두 읽음으로 표시";
+
+/* Command
+Mark as Read */
+"Mark as Read" = "읽음으로 표시";
+
+/* Command
+Mark as Starred */
+"Mark as Starred" = "별표 표시";
+
+/* Command */
+"Mark as Unread" = "읽지 않음으로 표시";
+
+/* Command */
+"Mark as Unstarred" = "별표 해제";
+
+/* Command */
+"Mark Below as Read" = "아래를 읽음으로 표시";
+
+/* Mark Read
+command */
+"Mark Read" = "읽음 표시";
+
+/* command */
+"Mark Starred" = "별표 표시";
+
+/* command */
+"Mark Unread" = "읽지 않음 표시";
+
+/* command */
+"Mark Unstarred" = "별표 해제";
+
+/* Medium */
+"Medium" = "보통";
+
+/* Multiple */
+"Multiple" = "여러 항목";
+
+/* Account details name label */
+"Name:" = "이름:";
+
+/* Credentials Error */
+"Network error. Try again later." = "네트워크 오류입니다. 나중에 다시 시도하세요.";
+
+/* Command */
+"New Feed" = "새 피드";
+
+/* New Feed */
+"New Feed…" = "새 피드…";
+
+/* Command */
+"New Folder" = "새 폴더";
+
+/* New Folder */
+"New Folder…" = "새 폴더…";
+
+/* Account name */
+"NewsBlur" = "NewsBlur";
+
+/* Next Unread */
+"Next Unread" = "다음 읽지 않은 기사";
+
+/* Notifications are not enabled. */
+"Notifications are not enabled" = "알림이 활성화되어 있지 않습니다";
+
+/* OK
+OK button */
+"OK" = "확인";
+
+/* Open */
+"Open" = "열기";
+
+/* Command */
+"Open Home Page" = "홈페이지 열기";
+
+/* Command
+Open in Browser */
+"Open in Browser" = "브라우저에서 열기";
+
+/* Open in Browser in Background menu item title */
+"Open in Browser in Background" = "브라우저를 백그라운드에서 열기";
+
+/* Open in Browser in Foreground menu item title */
+"Open in Browser in Foreground" = "브라우저를 포그라운드에서 열기";
+
+/* Open Settings button */
+"Open Settings" = "설정 열기";
+
+/* CloudKit account setup recovery suggestion */
+"Open Settings to configure iCloud and enable iCloud Drive." = "설정을 열어 iCloud를 구성하고 iCloud Drive를 활성화하세요.";
+
+/* Open System Preferences */
+"Open System Preferences" = "시스템 환경설정 열기";
+
+/* Open System Settings button */
+"Open System Settings" = "시스템 설정 열기";
+
+/* CloudKit account setup recovery suggestion */
+"Open System Settings to configure iCloud and enable iCloud Drive." = "시스템 설정을 열어 iCloud를 구성하고 iCloud Drive를 활성화하세요.";
+
+/* Open Theme Folder */
+"Open Theme Folder" = "테마 폴더 열기";
+
+/* Overwrite */
+"Overwrite" = "덮어쓰기";
+
+/* Processing - Reader View */
+"Processing - Reader View" = "처리 중 - 리더 보기";
+
+/* Read row label
+Swipe action title to mark an article read */
+"Read" = "읽음";
+
+/* Read Articles Filter */
+"Read Articles Filter" = "읽은 기사 필터";
+
+/* Cleanup stat row label */
+"Read Content Deleted" = "읽은 콘텐츠 삭제됨";
+
+/* Singular label for read content records */
+"read content record" = "읽은 콘텐츠 레코드";
+
+/* Plural label for read content records */
+"read content records" = "읽은 콘텐츠 레코드";
+
+/* Reader View */
+"Reader View" = "리더 보기";
+
+/* Refresh
+Refresh button */
+"Refresh" = "새로고침";
+
+/* Refresh scan button */
+"Refresh Scan" = "스캔 새로고침";
+
+/* Command */
+"Rename" = "이름 변경";
+
+/* Rename sheet */
+"Rename %@ to:" = "%@의 새 이름:";
+
+/* Return to previous scan results button */
+"Return to Previous Scan Results" = "이전 스캔 결과로 돌아가기";
+
+/* Scan status text when completed */
+"Scan completed." = "스캔이 완료되었습니다.";
+
+/* Scan status text on error */
+"Scan failed. Numbers are incomplete." = "스캔에 실패했습니다. 수치가 완전하지 않습니다.";
+
+/* Spinner accessibility label */
+"Scanning" = "스캔 중";
+
+/* Scan status text while fetching */
+"Scanning iCloud storage" = "iCloud 저장 공간을 스캔하는 중";
+
+/* Search */
+"Search" = "검색";
+
+/* Search smart feed title prefix */
+"Search: " = "검색:";
+
+/* Search */
+"Search: %@" = "검색: %@";
+
+/* See articles in Folder */
+"See articles in  “%@”" = "“%@”의 기사 보기";
+
+/* First Unread */
+"See first unread article" = "첫 번째 읽지 않은 기사 보기";
+
+/* Command */
+"Select “%@” in Sidebar" = "사이드바에서 “%@” 선택";
+
+/* Selected - Reader View */
+"Selected - Reader View" = "선택됨 - 리더 보기";
+
+/* Self hosted Account */
+"Self-hosted" = "자체 호스팅";
+
+/* Self hosted Account */
+"Self-hosted accounts sync your feeds across all your devices" = "자체 호스팅 계정은 모든 기기에서 피드를 동기화합니다";
+
+/* Share
+Share button accessibility description */
+"Share" = "공유";
+
+/* Share… */
+"Share…" = "공유…";
+
+/* Show notifications for new articles */
+"Show notifications for new articles" = "새 기사 알림 표시";
+
+/* Command */
+"Show Read Articles" = "읽은 기사 보기";
+
+/* Command */
+"Show Read Feeds" = "읽은 피드 보기";
+
+/* BazQux */
+"Sign in to your BazQux account." = "BazQux 계정에 로그인하세요.";
+
+/* SignIn */
+"Sign in to your Feedbin account." = "Feedbin 계정에 로그인하세요.";
+
+/* FreshRSS */
+"Sign in to your FreshRSS account." = "FreshRSS 계정에 로그인하세요.";
+
+/* Inoreader */
+"Sign in to your Inoreader account." = "Inoreader 계정에 로그인하세요.";
+
+/* SignIn */
+"Sign in to your NewsBlur account." = "NewsBlur 계정에 로그인하세요.";
+
+/* The Old Reader */
+"Sign in to your The Old Reader account." = "The Old Reader 계정에 로그인하세요.";
+
+/* Small */
+"Small" = "작게";
+
+/* Smart Feed Inspector window title */
+"Smart Feed Inspector" = "스마트 피드 인스펙터";
+
+/* Smart Feeds group title */
+"Smart Feeds" = "스마트 피드";
+
+/* Star
+Swipe action title to star an article */
+"Star" = "별표";
+
+/* Starred pseudo-feed title
+Starred row label */
+"Starred" = "별표한 기사";
+
+/* Status records section header */
+"Status Records" = "상태 레코드";
+
+/* Account details sync unread content toggle */
+"Sync content of unread articles" = "읽지 않은 기사 콘텐츠 동기화";
+
+/* Account details sync unread content help text */
+"Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced." = "기사 콘텐츠를 동기화하면 iCloud 저장 공간 사용량, 동기화 시간, 배터리 사용량이 늘어납니다.\n\n기사 상태와 별표한 기사 콘텐츠는 항상 동기화됩니다.";
+
+/* Default browser item title format */
+"System Default (%@)" = "시스템 기본값 (%@)";
+
+/* Account details name help text */
+"The name can be anything you want. You can even use emoji. 🎸" = "이름은 원하는 대로 정할 수 있습니다. 이모지도 사용할 수 있습니다. 🎸";
+
+/* Account name */
+"The Old Reader" = "The Old Reader";
+
+/* Overwrite theme */
+"The theme “%@” already exists. Overwrite it?" = "테마 “%@”이 이미 있습니다. 덮어쓸까요?";
+
+/* Theme installed */
+"The theme “%@” has been installed." = "테마 “%@”이 설치되었습니다.";
+
+/* Theme download error */
+"Theme Error" = "테마 오류";
+
+/* Theme installed */
+"Theme installed" = "테마 설치 완료";
+
+/* Duplicate Error */
+"There is already a Feedbin account with that username created." = "해당 사용자 이름으로 생성된 Feedbin 계정이 이미 있습니다.";
+
+/* Duplicate Error */
+"There is already a NewsBlur account with that username created." = "해당 사용자 이름으로 생성된 NewsBlur 계정이 이미 있습니다.";
+
+/* Duplicate Error */
+"There is already an account of this type with that username created." = "해당 사용자 이름으로 생성된 이 유형의 계정이 이미 있습니다.";
+
+/* Clean up confirmation suffix */
+"This may take several minutes." = "몇 분 정도 걸릴 수 있습니다.";
+
+/* Decoding key missing */
+"This theme cannot be used because of data corruption in the Info.plist: %@." = "Info.plist의 데이터가 손상되어 이 테마를 사용할 수 없습니다: %@.";
+
+/* Decoding key missing */
+"This theme cannot be used because the the key—“%@”—is not found in the Info.plist." = "Info.plist에서 키—“%@”—를 찾을 수 없어 이 테마를 사용할 수 없습니다.";
+
+/* Type mismatch */
+"This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist" = "Info.plist에서 타입—“%@”—이 일치하지 않아 이 테마를 사용할 수 없습니다";
+
+/* Decoding value missing */
+"This theme cannot be used because the the value—“%@”—is not found in the Info.plist." = "Info.plist에서 값—“%@”—를 찾을 수 없어 이 테마를 사용할 수 없습니다.";
+
+/* Clean up confirmation when plan is stale */
+"This will delete any not-starred content records.\n\nThis may take several minutes." = "별표하지 않은 콘텐츠 레코드가 모두 삭제됩니다.\n\n몇 분 정도 걸릴 수 있습니다.";
+
+/* Clean up confirmation when sync unread is on and plan is stale */
+"This will delete any read content records.\n\nThis may take several minutes." = "읽은 콘텐츠 레코드가 모두 삭제됩니다.\n\n몇 분 정도 걸릴 수 있습니다.";
+
+/* Clean up confirmation prefix */
+"This will delete:" = "삭제할 항목:";
+
+/* Timeline */
+"Timeline" = "타임라인";
+
+/* Add Account Explainer */
+"To add an account to NetNewsWire,\nclick its icon above.\n\nOr click the + button in the lower left." = "NetNewsWire에 계정을 추가하려면,\n위의 아이콘을 클릭하세요.\n\n또는 왼쪽 아래의 + 버튼을 클릭하세요.";
+
+/* To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list. */
+"To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list." = "알림을 켜려면 시스템 환경설정에서 알림을 연 다음 목록에서 NetNewsWire를 찾으세요.";
+
+/* Today pseudo-feed title */
+"Today" = "오늘";
+
+/* Total row label */
+"Total" = "합계";
+
+/* Account details type label */
+"Type:" = "유형:";
+
+/* Unknown Value */
+"Unknown" = "알 수 없음";
+
+/* Unread label for accessibility */
+"unread" = "읽지 않음";
+
+/* Swipe action title to mark an article unread
+Unread row label */
+"Unread" = "읽지 않음";
+
+/* Cleanup stat row label */
+"Unread Content Deleted" = "읽지 않은 콘텐츠 삭제됨";
+
+/* Singular label for unread content records */
+"unread content record" = "읽지 않은 콘텐츠 레코드";
+
+/* Plural label for unread content records */
+"unread content records" = "읽지 않은 콘텐츠 레코드";
+
+/* Bad account type */
+"Unrecognized account type." = "인식할 수 없는 계정 유형입니다.";
+
+/* Swipe action title to remove a star from an article */
+"Unstar" = "별표 해제";
+
+/* Update */
+"Update" = "업데이트";
+
+/* SignIn */
+"Update your Feedbin account credentials." = "Feedbin 계정 로그인 정보를 업데이트하세요.";
+
+/* SignIn */
+"Update your NewsBlur account credentials." = "NewsBlur 계정 로그인 정보를 업데이트하세요.";
+
+/* Credentials Error */
+"Username & password required." = "사용자 이름과 비밀번호가 필요합니다.";
+
+/* Credentials Error */
+"Username required." = "사용자 이름이 필요합니다.";
+
+/* Credentials Error */
+"Username, password & API URL are required." = "사용자 이름, 비밀번호 및 API URL이 필요합니다.";
+
+/* Alert title when adding a Feedly account and waiting for authorization from the user. */
+"Waiting for access to Feedly" = "Feedly 접근 권한을 기다리는 중";
+
+/* Web Account */
+"Web" = "웹";
+
+/* Web Account */
+"Web accounts sync your feeds across all your devices" = "웹 계정은 모든 기기에서 피드를 동기화합니다";
+
+/* Notifications are not enabled. */
+"You can enable NetNewsWire notifications in System Preferences." = "시스템 환경설정에서 NetNewsWire 알림을 켤 수 있습니다.";
+
+/* iCloud Account */
+"Your iCloud account syncs your feeds across your Mac and iOS devices" = "iCloud 계정은 Mac과 iOS 기기 간에 피드를 동기화합니다";

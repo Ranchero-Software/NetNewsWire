@@ -1,0 +1,35 @@
+/* Every 2 Hours */
+"Every 2 Hours" = "2시간마다";
+
+/* Every 4 Hours */
+"Every 4 Hours" = "4시간마다";
+
+/* Every 8 Hours */
+"Every 8 Hours" = "8시간마다";
+
+/* Every 30 Minutes */
+"Every 30 Minutes" = "30분마다";
+
+/* Every Hour */
+"Every Hour" = "1시간마다";
+
+/* XX-Large */
+"Extra Extra Large" = "가장 크게";
+
+/* X-Large */
+"Extra Large" = "매우 크게";
+
+/* Share extension destination folder popup menu title */
+"Folders" = "폴더";
+
+/* Large */
+"Large" = "크게";
+
+/* Manually */
+"Manually" = "수동";
+
+/* Medium */
+"Medium" = "보통";
+
+/* Small */
+"Small" = "작게";

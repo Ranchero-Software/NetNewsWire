@@ -1,0 +1,8 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "NetNewsWire";
+
+/* Bundle name */
+"CFBundleName" = "NetNewsWire 공유 확장 프로그램";
+
+/* Copyright (human-readable) */
+"NSHumanReadableCopyright" = "저작권 © 2002-2026 Brent Simmons. 모든 권리 보유.";
