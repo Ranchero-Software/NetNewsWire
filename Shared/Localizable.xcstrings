@@ -24,9 +24,6 @@
     "A web browser will open the Feedly login for you to authorize access." : {
       "comment" : "Alert informative text when adding a Feedly account and waiting for authorization from the user."
     },
-    "Account" : {
-      "comment" : "Account column header"
-    },
     "Accounts" : {
       "comment" : "Preferences"
     },
@@ -187,13 +184,13 @@
       "comment" : "Default"
     },
     "Delete" : {
-      "comment" : "Command\nDelete\nDelete Account\nDelete button\nDelete button title"
+      "comment" : "Command\nDelete\nDelete Account\nDelete button"
     },
     "Delete Feed" : {
-      "comment" : "Delete Feed\nDelete feed alert title\ncommand"
+      "comment" : "Delete Feed\nDelete feed alert title\nUndo action name\ncommand"
     },
     "Delete Feeds" : {
-      "comment" : "Delete feeds alert title\ncommand"
+      "comment" : "Delete feeds alert title\nUndo action name\ncommand"
     },
     "Delete Feeds and Folders" : {
       "comment" : "command"
@@ -212,9 +209,6 @@
     },
     "Deleting unread content records…" : {
       "comment" : "Cleanup phase text"
-    },
-    "Dinosaurs" : {
-      "comment" : "Dinosaurs window title"
     },
     "Dismiss" : {
       "comment" : "Dismiss"
@@ -395,12 +389,6 @@
     "Large" : {
       "comment" : "Large"
     },
-    "Last Article" : {
-      "comment" : "Last Article column header"
-    },
-    "Last Response" : {
-      "comment" : "Last Response column header"
-    },
     "Link:" : {
       "comment" : "Link"
     },
@@ -452,9 +440,6 @@
     "Medium" : {
       "comment" : "Medium"
     },
-    "months" : {
-      "comment" : "Dinosaurs filter unit"
-    },
     "Moving feed" : {
       "comment" : "Activity kind"
     },
@@ -501,7 +486,7 @@
       "comment" : "Open"
     },
     "Open Home Page" : {
-      "comment" : "Command\nOpen Home Page button title"
+      "comment" : "Command"
     },
     "Open in Browser" : {
       "comment" : "Command\nOpen in Browser"
@@ -626,9 +611,6 @@
     "Select “%@” in Sidebar" : {
       "comment" : "Command"
     },
-    "Select in Sidebar" : {
-      "comment" : "Select in Sidebar button title"
-    },
     "Selected - Reader View" : {
       "comment" : "Selected - Reader View"
     },
@@ -646,9 +628,6 @@
     },
     "Share…" : {
       "comment" : "Share…"
-    },
-    "Show feeds that haven’t updated in" : {
-      "comment" : "Dinosaurs filter prefix"
     },
     "Show notifications for new articles" : {
       "comment" : "Show notifications for new articles"
@@ -817,9 +796,6 @@
     },
     "Update your NewsBlur account credentials." : {
       "comment" : "SignIn"
-    },
-    "URL" : {
-      "comment" : "URL column header"
     },
     "Username & password required." : {
       "comment" : "Credentials Error"
