@@ -212,7 +212,7 @@ private extension ActivityLogWindowController {
 		appendText(indicator, color: isFailed ? .systemRed : .systemGreen, weight: .bold, to: result)
 
 		let sourceColor = color(for: activity.owner)
-		appendText("\(displayName(for: activity.owner)): ", color: sourceColor, weight: .medium, to: result)
+		appendText("\(activity.owner.displayName): ", color: sourceColor, weight: .medium, to: result)
 		appendText(plainDescription(for: activity), color: sourceColor, weight: .medium, to: result)
 
 		if let detail = secondaryDetail(for: activity) {
@@ -266,25 +266,6 @@ private extension ActivityLogWindowController {
 			let minutes = Int(duration) / 60
 			let seconds = Int(duration) % 60
 			return "\(minutes)m \(seconds)s"
-		}
-	}
-
-	func displayName(for owner: ActivityOwner) -> String {
-		switch owner {
-		case .app:
-			return "NetNewsWire"
-		case .account(let accountID):
-			return AccountManager.shared.existingAccount(accountID: accountID)?.nameForDisplay ?? accountID
-		case .feedFinder:
-			return NSLocalizedString("Feed Finder", comment: "Activity owner name")
-		case .feedImageDownloader:
-			return NSLocalizedString("Feed Images", comment: "Activity owner name")
-		case .faviconDownloader:
-			return NSLocalizedString("Favicons", comment: "Activity owner name")
-		case .avatarDownloader:
-			return NSLocalizedString("Avatars", comment: "Activity owner name")
-		case .htmlMetadataDownloader:
-			return NSLocalizedString("HTML Metadata", comment: "Activity owner name")
 		}
 	}
 

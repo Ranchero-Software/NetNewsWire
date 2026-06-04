@@ -91,7 +91,7 @@ let appName = "NetNewsWire"
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
-	private var activityWindowController: ActivityWindowController?
+	private var activityWindowController: CurrentActivityWindowController?
 	private var activityLogWindowController: ActivityLogWindowController?
 	private var errorLogWindowController: ErrorLogWindowController?
 	private var dinosaurWindowController: DinosaursWindowController?
@@ -227,7 +227,7 @@ let appName = "NetNewsWire"
 			toggleInspectorWindow(self)
 		}
 
-		if ActivityWindowController.shouldOpenAtStartup {
+		if CurrentActivityWindowController.shouldOpenAtStartup {
 			showActivityWindow(self)
 		}
 
@@ -607,7 +607,7 @@ let appName = "NetNewsWire"
 
 	@IBAction func showActivityWindow(_ sender: Any?) {
 		if activityWindowController == nil {
-			activityWindowController = ActivityWindowController()
+			activityWindowController = CurrentActivityWindowController()
 		}
 		activityWindowController?.showWindow(self)
 	}

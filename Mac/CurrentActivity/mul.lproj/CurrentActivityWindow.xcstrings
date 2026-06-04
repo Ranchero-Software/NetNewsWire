@@ -1,0 +1,96 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "2tU-5T-uVX.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Source\"; ObjectID = \"2tU-5T-uVX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Source"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Origen"
+          }
+        }
+      }
+    },
+    "3gn-ze-9Iw.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Activity Log\"; ObjectID = \"3gn-ze-9Iw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Activity Log"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de actividad"
+          }
+        }
+      }
+    },
+    "bqz-DW-5Ae.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Error Log\"; ObjectID = \"bqz-DW-5Ae\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Log"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de errores"
+          }
+        }
+      }
+    },
+    "QvC-M9-y7g.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Current Activity\"; ObjectID = \"QvC-M9-y7g\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Current Activity"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actividad actual"
+          }
+        }
+      }
+    },
+    "WdD-T6-KBR.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Activity\"; ObjectID = \"WdD-T6-KBR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Activity"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actividad"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

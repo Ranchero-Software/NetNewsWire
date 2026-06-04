@@ -30,12 +30,6 @@
     "Active" : {
 
     },
-    "Activity" : {
-      "comment" : "Activity window Activity column"
-    },
-    "Activity Log" : {
-      "comment" : "Activity Log button"
-    },
     "Add Account" : {
 
     },
@@ -177,9 +171,6 @@
     "Credentials" : {
 
     },
-    "Current Activity" : {
-      "comment" : "Current Activity window title"
-    },
     "Default" : {
       "comment" : "Default"
     },
@@ -259,7 +250,7 @@
       "comment" : "Error - Reader View"
     },
     "Error Log" : {
-      "comment" : "Error Log button\nError Log window title"
+      "comment" : "Error Log window title"
     },
     "Errors may contain feed URLs and other information you may not want to share publicly." : {
       "comment" : "Error log privacy warning"
@@ -469,9 +460,6 @@
     },
     "Name:" : {
 
-    },
-    "NetNewsWire" : {
-      "comment" : "Activity owner name"
     },
     "Network error. Try again later." : {
       "comment" : "Credentials Error"
@@ -685,9 +673,6 @@
     },
     "Smart Feeds" : {
       "comment" : "Smart Feeds group title"
-    },
-    "Source" : {
-      "comment" : "Activity window Source column"
     },
     "Star" : {
       "comment" : "Star"
