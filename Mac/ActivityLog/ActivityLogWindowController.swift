@@ -270,22 +270,13 @@ private extension ActivityLogWindowController {
 	}
 
 	func plainDescription(for activity: Activity) -> String {
+		if let simple = activity.kind.simpleDisplayName {
+			return simple
+		}
 		switch activity.kind {
-		case .refreshAll:
-			return NSLocalizedString("Refresh all", comment: "Activity kind")
-		case .sendArticleStatuses:
-			return NSLocalizedString("Sending statuses", comment: "Activity kind")
-		case .refreshArticleStatuses:
-			return NSLocalizedString("Refreshing statuses", comment: "Activity kind")
-		case .refreshFeedList:
-			return NSLocalizedString("Refreshing feed list", comment: "Activity kind")
 		case .refreshFeedContent(let feedURL):
 			let format = NSLocalizedString("Refreshing feed: %@", comment: "Activity kind — refreshing a feed; %@ is the feed name or URL")
 			return String(format: format, activity.detail ?? feedURL)
-		case .refreshMissingArticles:
-			return NSLocalizedString("Refreshing missing articles", comment: "Activity kind")
-		case .importOPML:
-			return NSLocalizedString("Importing OPML", comment: "Activity kind")
 		case .findFeed(let urlString):
 			let format = NSLocalizedString("Finding feed %@", comment: "Activity kind — finding a feed at %@ URL")
 			return String(format: format, urlString)
@@ -304,36 +295,8 @@ private extension ActivityLogWindowController {
 		case .downloadHTMLMetadata(let urlString):
 			let format = NSLocalizedString("Downloading metadata %@", comment: "Activity kind — downloading HTML metadata; %@ is the URL")
 			return String(format: format, urlString)
-		case .subscribeFeed:
-			return NSLocalizedString("Subscribing to feed", comment: "Activity kind")
-		case .renameFeed:
-			return NSLocalizedString("Renaming feed", comment: "Activity kind")
-		case .removeFeed:
-			return NSLocalizedString("Removing feed", comment: "Activity kind")
-		case .moveFeed:
-			return NSLocalizedString("Moving feed", comment: "Activity kind")
-		case .addFeed:
-			return NSLocalizedString("Adding feed", comment: "Activity kind")
-		case .createFolder:
-			return NSLocalizedString("Creating folder", comment: "Activity kind")
-		case .renameFolder:
-			return NSLocalizedString("Renaming folder", comment: "Activity kind")
-		case .removeFolder:
-			return NSLocalizedString("Removing folder", comment: "Activity kind")
-		case .restoreFolder:
-			return NSLocalizedString("Restoring folder", comment: "Activity kind")
-		case .cleanUpCloudKitRecords:
-			return NSLocalizedString("Cleaning up iCloud records", comment: "Activity kind")
-		case .fetchCloudKitStats:
-			return NSLocalizedString("Fetching iCloud stats", comment: "Activity kind")
-		case .subscribeToCloudKitZone:
-			return NSLocalizedString("Subscribing to zone changes", comment: "Activity kind")
-		case .vacuumDatabase:
-			return NSLocalizedString("Vacuuming database", comment: "Activity kind")
-		case .validateCredentials:
-			return NSLocalizedString("Validating credentials", comment: "Activity kind")
-		case .exportOPML:
-			return NSLocalizedString("Exporting OPML", comment: "Activity kind")
+		default:
+			return ""
 		}
 	}
 
