@@ -91,6 +91,22 @@
 		D1A7E100000000000000C005 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C004 /* Images */; };
 		D1A7E100000000000000C006 /* Images in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C004 /* Images */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D1A7E100000000000000C008 /* Images in Frameworks */ = {isa = PBXBuildFile; productRef = D1A7E100000000000000C007 /* Images */; };
+		849182CC2FD32B1B005C3020 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3010 /* Appanoose.nnwtheme */; };
+		849182CC2FD32B1B005C3021 /* Biblioteca.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3011 /* Biblioteca.nnwtheme */; };
+		849182CC2FD32B1B005C3022 /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3012 /* Hyperlegible.nnwtheme */; };
+		849182CC2FD32B1B005C3023 /* NewsFax.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3013 /* NewsFax.nnwtheme */; };
+		849182CC2FD32B1B005C3024 /* Promenade.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3014 /* Promenade.nnwtheme */; };
+		849182CC2FD32B1B005C3025 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */; };
+		849182CC2FD32B1B005C3026 /* Tiqoe Dark.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */; };
+		849182CC2FD32B1B005C3027 /* Verdana Revival.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */; };
+		849182DD2FD32B1B005C3030 /* Appanoose.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3010 /* Appanoose.nnwtheme */; };
+		849182DD2FD32B1B005C3031 /* Biblioteca.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3011 /* Biblioteca.nnwtheme */; };
+		849182DD2FD32B1B005C3032 /* Hyperlegible.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3012 /* Hyperlegible.nnwtheme */; };
+		849182DD2FD32B1B005C3033 /* NewsFax.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3013 /* NewsFax.nnwtheme */; };
+		849182DD2FD32B1B005C3034 /* Promenade.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3014 /* Promenade.nnwtheme */; };
+		849182DD2FD32B1B005C3035 /* Sepia.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */; };
+		849182DD2FD32B1B005C3036 /* Tiqoe Dark.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */; };
+		849182DD2FD32B1B005C3037 /* Verdana Revival.nnwtheme in Resources */ = {isa = PBXBuildFile; fileRef = 849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -313,6 +329,14 @@
 		849C64601ED37A5D003D8FC0 /* NetNewsWire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetNewsWire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		849C64711ED37A5D003D8FC0 /* NetNewsWireTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetNewsWireTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84D2200922B0BC4B0019E085 /* CONTRIBUTING.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CONTRIBUTING.md; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3010 /* Appanoose.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Appanoose.nnwtheme; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3011 /* Biblioteca.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Biblioteca.nnwtheme; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3012 /* Hyperlegible.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Hyperlegible.nnwtheme; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3013 /* NewsFax.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = NewsFax.nnwtheme; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3014 /* Promenade.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Promenade.nnwtheme; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Sepia.nnwtheme; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Tiqoe Dark.nnwtheme"; sourceTree = "<group>"; };
+		849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Verdana Revival.nnwtheme"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -526,7 +550,6 @@
 		8448F1F62D1E36BF0048BA50 /* Widget */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (8448F2052D1E36BF0048BA50 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Widget; sourceTree = "<group>"; };
 		84719F0E2DB9C52B00EEF332 /* Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84719F272DB9C52B00EEF332 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Tests; sourceTree = "<group>"; };
 		84719F372DB9C60400EEF332 /* xcconfig */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84719F392DB9C60500EEF332 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (common, ); path = xcconfig; sourceTree = "<group>"; };
-		849182072FD32B1B005C3150 /* Themes */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Themes; sourceTree = "<group>"; };
 		84A6CFB52D1B4EC500F23315 /* iOS */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84A6D03F2D1B4EC500F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84A6D0402D1B4EC500F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84A6D0412D1B4EC500F23315 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = iOS; sourceTree = "<group>"; };
 		84CB35042DB9B5E2002AC251 /* Modules */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Modules; sourceTree = "<group>"; };
 		84D35D422DB9F32D004AA60E /* Shared */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (84D35E0A2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84D35E0B2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84D35E0C2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84D35E0D2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84D35E0E2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 84D35E0F2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Shared; sourceTree = "<group>"; };
@@ -704,6 +727,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		849182072FD32B1B005C3150 /* Themes */ = {
+			isa = PBXGroup;
+			children = (
+				849182BB2FD32B1B005C3010 /* Appanoose.nnwtheme */,
+				849182BB2FD32B1B005C3011 /* Biblioteca.nnwtheme */,
+				849182BB2FD32B1B005C3012 /* Hyperlegible.nnwtheme */,
+				849182BB2FD32B1B005C3013 /* NewsFax.nnwtheme */,
+				849182BB2FD32B1B005C3014 /* Promenade.nnwtheme */,
+				849182BB2FD32B1B005C3015 /* Sepia.nnwtheme */,
+				849182BB2FD32B1B005C3016 /* Tiqoe Dark.nnwtheme */,
+				849182BB2FD32B1B005C3017 /* Verdana Revival.nnwtheme */,
+			);
+			path = Themes;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -857,7 +895,6 @@
 				176813FF2564BB2D00D98635 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				849182072FD32B1B005C3150 /* Themes */,
 				84A6CFB52D1B4EC500F23315 /* iOS */,
 				84D35D422DB9F32D004AA60E /* Shared */,
 			);
@@ -906,7 +943,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				842E249F2DB9F9B800FF7DD8 /* Mac */,
-				849182072FD32B1B005C3150 /* Themes */,
 				84D35D422DB9F32D004AA60E /* Shared */,
 			);
 			name = NetNewsWire;
@@ -1108,6 +1144,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849182DD2FD32B1B005C3030 /* Appanoose.nnwtheme in Resources */,
+				849182DD2FD32B1B005C3031 /* Biblioteca.nnwtheme in Resources */,
+				849182DD2FD32B1B005C3032 /* Hyperlegible.nnwtheme in Resources */,
+				849182DD2FD32B1B005C3033 /* NewsFax.nnwtheme in Resources */,
+				849182DD2FD32B1B005C3034 /* Promenade.nnwtheme in Resources */,
+				849182DD2FD32B1B005C3035 /* Sepia.nnwtheme in Resources */,
+				849182DD2FD32B1B005C3036 /* Tiqoe Dark.nnwtheme in Resources */,
+				849182DD2FD32B1B005C3037 /* Verdana Revival.nnwtheme in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1115,6 +1159,14 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				849182CC2FD32B1B005C3020 /* Appanoose.nnwtheme in Resources */,
+				849182CC2FD32B1B005C3021 /* Biblioteca.nnwtheme in Resources */,
+				849182CC2FD32B1B005C3022 /* Hyperlegible.nnwtheme in Resources */,
+				849182CC2FD32B1B005C3023 /* NewsFax.nnwtheme in Resources */,
+				849182CC2FD32B1B005C3024 /* Promenade.nnwtheme in Resources */,
+				849182CC2FD32B1B005C3025 /* Sepia.nnwtheme in Resources */,
+				849182CC2FD32B1B005C3026 /* Tiqoe Dark.nnwtheme in Resources */,
+				849182CC2FD32B1B005C3027 /* Verdana Revival.nnwtheme in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
