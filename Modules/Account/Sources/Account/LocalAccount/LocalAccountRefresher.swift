@@ -152,7 +152,8 @@ import os
 		guard let accountID else {
 			return nil
 		}
-		return .account(accountID)
+		let displayName = AccountManager.shared.existingAccount(accountID: accountID)?.nameForDisplay ?? accountID
+		return .account(accountID: accountID, displayName: displayName)
 	}
 
 	@MainActor public func suspend() {
@@ -412,7 +413,8 @@ import os
 	/// Defense-in-depth for paths we didn’t explicitly cover (e.g. a feed
 	/// the DownloadSession dropped without a `didSkip` callback).
 	func completeRemainingActivities(accountID: String) {
-		let owner = ActivityOwner.account(accountID)
+		let displayName = AccountManager.shared.existingAccount(accountID: accountID)?.nameForDisplay ?? accountID
+		let owner = ActivityOwner.account(accountID: accountID, displayName: displayName)
 		let activityLog = ActivityLog.shared
 
 		for activity in activityLog.pendingActivities(for: owner) where activity.kind != .refreshAll {

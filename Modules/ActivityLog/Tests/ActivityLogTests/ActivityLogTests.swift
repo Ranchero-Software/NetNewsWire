@@ -33,7 +33,7 @@ import Foundation
 
 	@Test func didStartByKind() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
 		activityLog.createActivity(owner: owner, kind: .sendArticleStatuses)
 		activityLog.didStart(owner, kind: .sendArticleStatuses)
@@ -46,7 +46,7 @@ import Foundation
 
 	@Test func didCompleteByKind() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
 		activityLog.createActivity(owner: owner, kind: .sendArticleStatuses)
 		activityLog.didStart(owner, kind: .sendArticleStatuses)
@@ -61,7 +61,7 @@ import Foundation
 
 	@Test func didFailByKind() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 		let error = NSError(domain: "test", code: 1)
 
 		activityLog.createActivity(owner: owner, kind: .refreshFeedList)
@@ -112,7 +112,7 @@ import Foundation
 
 	@Test func didCompleteByKindStartsPendingActivity() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
 		// Complete without an explicit didStart — the pending activity should be
 		// promoted and completed, not orphaned.
@@ -129,7 +129,7 @@ import Foundation
 
 	@Test func didFailByKindStartsPendingActivity() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 		let error = NSError(domain: "test", code: 1)
 
 		activityLog.createActivity(owner: owner, kind: .refreshFeedList)
@@ -167,7 +167,7 @@ import Foundation
 
 	@Test func completedActivitiesTrimming() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
 		for i in 0..<510 {
 			let kind = ActivityKind.refreshFeedContent(feedURL: "Feed \(i)")
@@ -184,8 +184,8 @@ import Foundation
 
 	@Test func pendingActivitiesForOwner() {
 		let activityLog = ActivityLog()
-		let owner1 = ActivityOwner.account("account1")
-		let owner2 = ActivityOwner.account("account2")
+		let owner1 = ActivityOwner.account(accountID: "account1", displayName: "Account One")
+		let owner2 = ActivityOwner.account(accountID: "account2", displayName: "Account Two")
 
 		activityLog.createActivity(owner: owner1, kind: .sendArticleStatuses)
 		activityLog.createActivity(owner: owner2, kind: .sendArticleStatuses)
@@ -197,7 +197,7 @@ import Foundation
 
 	@Test func multipleKindsForSameOwner() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
 		activityLog.createActivity(owner: owner, kind: .sendArticleStatuses)
 		activityLog.createActivity(owner: owner, kind: .refreshArticleStatuses)
@@ -228,7 +228,7 @@ import Foundation
 
 	@Test func startIfNeededStartsPendingWithoutTimestamp() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
 		activityLog.createActivity(owner: owner, kind: .refreshFeedList)
 		activityLog.startIfNeeded(owner, kind: .refreshFeedList)
@@ -241,7 +241,7 @@ import Foundation
 
 	@Test func startIfNeededDoesNothingWhenAlreadyRunning() {
 		let activityLog = ActivityLog()
-		let owner = ActivityOwner.account("account1")
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
 		activityLog.createActivity(owner: owner, kind: .refreshFeedList)
 		activityLog.didStart(owner, kind: .refreshFeedList)

@@ -40,7 +40,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 		let activityLog = ActivityLog.shared
 		let taskNumber = activityLog.nextTaskNumberString()
-		let activityID = activityLog.createActivity(owner: .account(accountID), kind: .sendArticleStatuses, detail: "Sending article statuses \(taskNumber)")
+		let activityID = activityLog.createActivity(owner: .account(accountID: accountID, displayName: account?.nameForDisplay ?? accountID), kind: .sendArticleStatuses, detail: "Sending article statuses \(taskNumber)")
 		activityLog.didStart(id: activityID)
 
 		Task { @MainActor in

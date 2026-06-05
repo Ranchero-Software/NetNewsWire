@@ -1,0 +1,84 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Adding feed" : {
+      "comment" : "Activity kind"
+    },
+    "Avatars" : {
+      "comment" : "Activity owner name"
+    },
+    "Cleaning up iCloud records" : {
+      "comment" : "Activity kind"
+    },
+    "Creating folder" : {
+      "comment" : "Activity kind"
+    },
+    "Exporting OPML" : {
+      "comment" : "Activity kind"
+    },
+    "Favicons" : {
+      "comment" : "Activity owner name"
+    },
+    "Feed Finder" : {
+      "comment" : "Activity owner name"
+    },
+    "Feed Images" : {
+      "comment" : "Activity owner name"
+    },
+    "Fetching iCloud stats" : {
+      "comment" : "Activity kind"
+    },
+    "HTML Metadata" : {
+      "comment" : "Activity owner name"
+    },
+    "Importing OPML" : {
+      "comment" : "Activity kind"
+    },
+    "Moving feed" : {
+      "comment" : "Activity kind"
+    },
+    "Refresh all" : {
+      "comment" : "Activity kind"
+    },
+    "Refreshing feed list" : {
+      "comment" : "Activity kind"
+    },
+    "Refreshing missing articles" : {
+      "comment" : "Activity kind"
+    },
+    "Refreshing statuses" : {
+      "comment" : "Activity kind"
+    },
+    "Removing feed" : {
+      "comment" : "Activity kind"
+    },
+    "Removing folder" : {
+      "comment" : "Activity kind"
+    },
+    "Renaming feed" : {
+      "comment" : "Activity kind"
+    },
+    "Renaming folder" : {
+      "comment" : "Activity kind"
+    },
+    "Restoring folder" : {
+      "comment" : "Activity kind"
+    },
+    "Sending statuses" : {
+      "comment" : "Activity kind"
+    },
+    "Subscribing to feed" : {
+      "comment" : "Activity kind"
+    },
+    "Subscribing to zone changes" : {
+      "comment" : "Activity kind"
+    },
+    "Vacuuming database" : {
+      "comment" : "Activity kind"
+    },
+    "Validating credentials" : {
+      "comment" : "Activity kind"
+    }
+  },
+  "version" : "1.0"
+}

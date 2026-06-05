@@ -15,11 +15,13 @@ import ActivityLog
 final class CloudKitReceiveStatusOperation: MainThreadOperation, @unchecked Sendable {
 	private weak var articlesZone: CloudKitArticlesZone?
 	private let accountID: String
+	private let accountDisplayName: String
 	private static let logger = cloudKitLogger
 
-	init(articlesZone: CloudKitArticlesZone, accountID: String) {
+	init(articlesZone: CloudKitArticlesZone, accountID: String, accountDisplayName: String) {
 		self.articlesZone = articlesZone
 		self.accountID = accountID
+		self.accountDisplayName = accountDisplayName
 		super.init(name: "CloudKitReceiveStatusOperation")
 	}
 
@@ -36,7 +38,7 @@ final class CloudKitReceiveStatusOperation: MainThreadOperation, @unchecked Send
 
 			let activityLog = ActivityLog.shared
 			let taskNumber = activityLog.nextTaskNumberString()
-			let activityID = activityLog.createActivity(owner: .account(accountID), kind: .refreshArticleStatuses, detail: "Receiving article statuses \(taskNumber)")
+			let activityID = activityLog.createActivity(owner: .account(accountID: accountID, displayName: accountDisplayName), kind: .refreshArticleStatuses, detail: "Receiving article statuses \(taskNumber)")
 			activityLog.didStart(id: activityID)
 
 			Self.logger.debug("iCloud: Refreshing article statuses")

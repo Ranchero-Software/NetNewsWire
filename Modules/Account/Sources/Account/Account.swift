@@ -484,7 +484,7 @@ public enum FetchType {
 		_ work: () async throws -> T
 	) async throws -> T {
 		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .account(accountID), kind: kind, detail: detail)
+		let id = activityLog.createActivity(owner: .account(accountID: accountID, displayName: nameForDisplay), kind: kind, detail: detail)
 		activityLog.didStart(id: id)
 		do {
 			let result = try await work()
@@ -507,7 +507,7 @@ public enum FetchType {
 		_ work: () throws -> T
 	) rethrows -> T {
 		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .account(accountID), kind: kind, detail: detail)
+		let id = activityLog.createActivity(owner: .account(accountID: accountID, displayName: nameForDisplay), kind: kind, detail: detail)
 		activityLog.didStart(id: id)
 		do {
 			let result = try work()

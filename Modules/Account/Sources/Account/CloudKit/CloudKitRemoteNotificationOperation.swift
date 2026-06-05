@@ -16,13 +16,15 @@ import ActivityLog
 	private weak var accountZone: CloudKitAccountZone?
 	private weak var articlesZone: CloudKitArticlesZone?
 	private let accountID: String
+	private let accountDisplayName: String
 	nonisolated(unsafe) private var userInfo: [AnyHashable: Any]
 	private static let logger = cloudKitLogger
 
-	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, accountID: String, userInfo: [AnyHashable: Any]) {
+	init(accountZone: CloudKitAccountZone, articlesZone: CloudKitArticlesZone, accountID: String, accountDisplayName: String, userInfo: [AnyHashable: Any]) {
 		self.accountZone = accountZone
 		self.articlesZone = articlesZone
 		self.accountID = accountID
+		self.accountDisplayName = accountDisplayName
 		self.userInfo = userInfo
 		super.init(name: "CloudKitRemoteNotificationOperation")
 	}
@@ -35,7 +37,7 @@ import ActivityLog
 
 		Task { @MainActor in
 			let activityLog = ActivityLog.shared
-			let owner = ActivityOwner.account(accountID)
+			let owner = ActivityOwner.account(accountID: accountID, displayName: accountDisplayName)
 			let taskNumber = activityLog.nextTaskNumberString()
 
 			let accountZoneActivityID = activityLog.createActivity(owner: owner, kind: .refreshFeedList, detail: "Receiving account changes \(taskNumber)")

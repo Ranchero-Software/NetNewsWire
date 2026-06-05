@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
 	name: "ActivityLog",
+	defaultLocalization: "en",
 	platforms: [.macOS(.v15), .iOS(.v17)],
 	products: [
 		.library(
@@ -13,6 +14,7 @@ let package = Package(
 	targets: [
 		.target(
 			name: "ActivityLog",
+			resources: [.process("Resources")],
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances"),

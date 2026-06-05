@@ -109,7 +109,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		lastNoChangeSyncDate = nil
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		await withCheckedContinuation { continuation in
-			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, accountID: account.accountID, userInfo: userInfo)
+			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, accountID: account.accountID, accountDisplayName: account.nameForDisplay, userInfo: userInfo)
 			op.completionBlock = { _ in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				continuation.resume()
@@ -180,7 +180,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	func refreshArticleStatus(for account: Account) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone, accountID: account.accountID)
+			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone, accountID: account.accountID, accountDisplayName: account.nameForDisplay)
 			op.completionBlock = { mainThreadOperation in
 				Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 				if mainThreadOperation.isCanceled {
@@ -522,6 +522,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		articlesZone.delegate = CloudKitArticlesZoneDelegate(account: account, database: syncDatabase, articlesZone: articlesZone, syncErrorHandler: syncErrorHandler)
 
 		let accountID = account.accountID
+		let accountDisplayName = account.nameForDisplay
 		func makePageHandler(kind: ActivityKind) -> CloudKitZoneFetchPageHandler {
 			let what: String
 			switch kind {
@@ -534,7 +535,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			}
 			return { _, changed, deleted, _ in
 				let activityLog = ActivityLog.shared
-				let owner = ActivityOwner.account(accountID)
+				let owner = ActivityOwner.account(accountID: accountID, displayName: accountDisplayName)
 				let taskNumber = activityLog.nextTaskNumberString()
 				let message = cloudKitSyncMessage(changed: changed, deleted: deleted)
 				let detail = "Fetching \(what) \(taskNumber)"
@@ -702,7 +703,7 @@ private extension CloudKitAccountDelegate {
 		syncProgress.addTasks(3)
 
 		let activityLog = ActivityLog.shared
-		let owner = ActivityOwner.account(account.accountID)
+		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
 
 		// Overall .refreshAll activity for this account, wrapping every stage
 		// below. Individual activities (fetchChangesInZone, receive/send operations)

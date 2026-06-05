@@ -66,9 +66,6 @@
     "Add Item" : {
       "comment" : "Add Item"
     },
-    "Adding feed" : {
-      "comment" : "Activity kind"
-    },
     "Advanced" : {
       "comment" : "Preferences"
     },
@@ -115,7 +112,7 @@
       "comment" : "Article"
     },
     "Article Content Records" : {
-      "comment" : "Article content records header"
+      "comment" : "Article content records section header"
     },
     "Article Search" : {
       "comment" : "Article Search"
@@ -132,11 +129,8 @@
     "Automatic" : {
       "comment" : "Automatic"
     },
-    "Avatars" : {
-      "comment" : "Activity owner name"
-    },
     "BazQux" : {
-      "comment" : "Account name\nBazQux"
+      "comment" : "Account name"
     },
     "Can’t add a feed because no feed was found." : {
       "comment" : "Feed finder"
@@ -151,10 +145,10 @@
       "comment" : "Feed finder"
     },
     "Cancel" : {
-      "comment" : "Cancel\nCancel button"
+      "comment" : "Cancel\nCancel Delete Account\nCancel Install Theme\nCancel button"
     },
     "Canceled." : {
-      "comment" : "Scan canceled text"
+      "comment" : "Scan status text when canceled"
     },
     "Choose a location for the exported OPML file." : {
       "comment" : "Export OPML"
@@ -172,16 +166,13 @@
       "comment" : "Export Account"
     },
     "Clean Up" : {
-      "comment" : "Clean Up\nClean up alert button"
+      "comment" : "Clean Up\nClean Up button title\nClean up alert button"
     },
     "Clean Up iCloud Records" : {
       "comment" : "Clean up alert title"
     },
     "Clean Up…" : {
       "comment" : "Clean up button"
-    },
-    "Cleaning up iCloud records" : {
-      "comment" : "Activity kind"
     },
     "Cleanup canceled." : {
       "comment" : "Cleanup status text when canceled"
@@ -211,19 +202,19 @@
 
     },
     "Copy Article URL" : {
-      "comment" : "Copy Article URL"
+      "comment" : "Command"
     },
     "Copy Contents" : {
       "comment" : "Copy Contents button"
     },
     "Copy External URL" : {
-      "comment" : "Copy External URL"
+      "comment" : "Command"
     },
     "Copy Feed URL" : {
-      "comment" : "Copy Feed URL"
+      "comment" : "Command"
     },
     "Copy Home Page URL" : {
-      "comment" : "Copy Home Page URL"
+      "comment" : "Command"
     },
     "Couldn’t complete the iCloud scan because of an error:" : {
       "comment" : "Scan error alert title"
@@ -233,9 +224,6 @@
     },
     "Create a local account on your Mac." : {
       "comment" : "Account Local"
-    },
-    "Creating folder" : {
-      "comment" : "Activity kind"
     },
     "Credentials" : {
 
@@ -250,19 +238,19 @@
       "comment" : "Default"
     },
     "Delete" : {
-      "comment" : "Delete"
+      "comment" : "Command\nDelete\nDelete Account\nDelete button"
     },
     "Delete Feed" : {
-      "comment" : "Delete feed\ncommand"
+      "comment" : "Delete Feed\nDelete feed alert title\nUndo action name\ncommand"
     },
     "Delete Feeds" : {
-      "comment" : "command"
+      "comment" : "Delete feeds alert title\nUndo action name\ncommand"
     },
     "Delete Feeds and Folders" : {
       "comment" : "command"
     },
     "Delete Folder" : {
-      "comment" : "Delete folder\ncommand"
+      "comment" : "Delete Folder\ncommand"
     },
     "Delete Folders" : {
       "comment" : "command"
@@ -369,9 +357,6 @@
     "Export to:" : {
       "comment" : "Export OPML"
     },
-    "Exporting OPML" : {
-      "comment" : "Activity kind"
-    },
     "Extra Extra Large" : {
       "comment" : "XX-Large"
     },
@@ -379,12 +364,6 @@
       "comment" : "X-Large"
     },
     "Favicons" : {
-      "comment" : "Activity owner name"
-    },
-    "Feed Finder" : {
-      "comment" : "Activity owner name"
-    },
-    "Feed Images" : {
       "comment" : "Activity owner name"
     },
     "Feed Inspector" : {
@@ -404,9 +383,6 @@
     },
     "Fetching %@" : {
       "comment" : "Activity kind — fetching a candidate URL during feed finding"
-    },
-    "Fetching iCloud stats" : {
-      "comment" : "Activity kind"
     },
     "Filter Read Articles" : {
       "comment" : "Filter Read Articles"
@@ -439,7 +415,7 @@
       "comment" : "Folder Inspector window title"
     },
     "FreshRSS" : {
-      "comment" : "Account name\nFreshRSS"
+      "comment" : "Account name"
     },
     "General" : {
       "comment" : "Preferences"
@@ -483,9 +459,6 @@
     "How to Optimize iCloud Syncing" : {
       "comment" : "Help link"
     },
-    "HTML Metadata" : {
-      "comment" : "Activity owner name"
-    },
     "https://fresh.rss.net/api/greader.php" : {
       "comment" : "FreshRSS API Helper"
     },
@@ -496,7 +469,7 @@
       "comment" : "Cleanup phase text when completed"
     },
     "iCloud Storage Stats" : {
-      "comment" : "Navigation title for iCloud stats view"
+      "comment" : "iCloud Storage Stats window title"
     },
     "Icon Preview" : {
       "comment" : "Icon Preview"
@@ -510,11 +483,8 @@
     "Import Theme" : {
       "comment" : "Import Theme"
     },
-    "Importing OPML" : {
-      "comment" : "Activity kind"
-    },
     "Inoreader" : {
-      "comment" : "Account name\nInoreader"
+      "comment" : "Account name"
     },
     "Inspector" : {
       "comment" : "Inspector window title"
@@ -573,37 +543,37 @@
       "comment" : "Manually"
     },
     "Mark Above as Read" : {
-      "comment" : "Mark Above as Read"
+      "comment" : "Command"
     },
     "Mark All as Read" : {
-      "comment" : "Mark All as Read"
+      "comment" : "Command\nMark All as Read"
     },
     "Mark All as Read in “%@”" : {
-      "comment" : "Command\nMark All as Read in Feed"
+      "comment" : "Command"
     },
     "Mark Article Unread" : {
       "comment" : "Mark Article Unread"
     },
     "Mark as Read" : {
-      "comment" : "Mark as Read"
+      "comment" : "Command\nMark as Read"
     },
     "Mark As Read" : {
       "comment" : "Mark As Read"
     },
     "Mark as Starred" : {
-      "comment" : "Mark as Starred"
+      "comment" : "Command\nMark as Starred"
     },
     "Mark as Unread" : {
-      "comment" : "Mark as Unread"
+      "comment" : "Command"
     },
     "Mark as Unstarred" : {
-      "comment" : "Mark as Unstarred"
+      "comment" : "Command"
     },
     "Mark Below as Read" : {
-      "comment" : "Mark Below as Read"
+      "comment" : "Command"
     },
     "Mark Read" : {
-      "comment" : "command"
+      "comment" : "Mark Read\ncommand"
     },
     "Mark Starred" : {
       "comment" : "command"
@@ -625,9 +595,6 @@
     },
     "More" : {
       "comment" : "More\nMore menu label"
-    },
-    "Moving feed" : {
-      "comment" : "Activity kind"
     },
     "Multiple" : {
       "comment" : "Multiple"
@@ -655,13 +622,13 @@
       "comment" : "New Article Notifications"
     },
     "New Feed" : {
-      "comment" : "New Feed"
+      "comment" : "Command"
     },
     "New Feed…" : {
       "comment" : "New Feed"
     },
     "New Folder" : {
-      "comment" : "New Folder"
+      "comment" : "Command"
     },
     "New Folder…" : {
       "comment" : "New Folder"
@@ -705,16 +672,16 @@
       "comment" : "Number of Lines"
     },
     "OK" : {
-      "comment" : "OK"
+      "comment" : "OK\nOK button"
     },
     "Open" : {
       "comment" : "Open"
     },
     "Open Home Page" : {
-      "comment" : "Open Home Page"
+      "comment" : "Command"
     },
     "Open in Browser" : {
-      "comment" : "Open in Browser"
+      "comment" : "Command\nOpen in Browser"
     },
     "Open In Browser" : {
       "comment" : "Open In Browser"
@@ -726,7 +693,7 @@
       "comment" : "Open in Browser in Foreground menu item title"
     },
     "Open Settings" : {
-      "comment" : "Open Settings\nOpen Settings button"
+      "comment" : "Open Settings button"
     },
     "Open Settings to configure iCloud and enable iCloud Drive." : {
       "comment" : "CloudKit account setup recovery suggestion"
@@ -753,13 +720,13 @@
       "comment" : "Processing - Reader View"
     },
     "Read" : {
-      "comment" : "Read label"
+      "comment" : "Read row label"
     },
     "Read Articles Filter" : {
       "comment" : "Read Articles Filter"
     },
     "Read Content Deleted" : {
-      "comment" : "Read content deleted label"
+      "comment" : "Cleanup stat row label"
     },
     "read content record" : {
       "comment" : "Singular label for read content records"
@@ -773,23 +740,11 @@
     "Refresh" : {
       "comment" : "Refresh\nRefresh button"
     },
-    "Refresh all" : {
-      "comment" : "Activity kind"
-    },
     "Refresh Scan" : {
       "comment" : "Refresh scan button"
     },
-    "Refreshing feed list" : {
-      "comment" : "Activity kind"
-    },
     "Refreshing feed: %@" : {
       "comment" : "Activity kind — refreshing a feed; %@ is the feed name or URL"
-    },
-    "Refreshing missing articles" : {
-      "comment" : "Activity kind"
-    },
-    "Refreshing statuses" : {
-      "comment" : "Activity kind"
     },
     "Remove" : {
       "comment" : "Remove"
@@ -797,14 +752,8 @@
     "Remove Account" : {
       "comment" : "Remove Account"
     },
-    "Removing feed" : {
-      "comment" : "Activity kind"
-    },
-    "Removing folder" : {
-      "comment" : "Activity kind"
-    },
     "Rename" : {
-      "comment" : "Rename"
+      "comment" : "Command"
     },
     "Rename “%@”" : {
       "comment" : "Rename feed"
@@ -812,20 +761,11 @@
     "Rename %@ to:" : {
       "comment" : "Rename sheet"
     },
-    "Renaming feed" : {
-      "comment" : "Activity kind"
-    },
-    "Renaming folder" : {
-      "comment" : "Activity kind"
-    },
-    "Restoring folder" : {
-      "comment" : "Activity kind"
-    },
     "Return to Previous Scan Results" : {
-      "comment" : "Return to scan results button"
+      "comment" : "Return to previous scan results button"
     },
     "Scan completed." : {
-      "comment" : "Scan completed text"
+      "comment" : "Scan status text when completed"
     },
     "Scan failed." : {
       "comment" : "Scan failed text"
@@ -837,7 +777,7 @@
       "comment" : "Spinner accessibility label"
     },
     "Scanning iCloud storage" : {
-      "comment" : "Scan status text"
+      "comment" : "Scan status text while fetching"
     },
     "Search" : {
       "comment" : "Search"
@@ -887,11 +827,8 @@
     "Self-hosted accounts sync your feeds across all your devices" : {
       "comment" : "Self hosted Account"
     },
-    "Sending statuses" : {
-      "comment" : "Activity kind"
-    },
     "Share" : {
-      "comment" : "Share"
+      "comment" : "Share\nShare button accessibility description"
     },
     "Share Stats" : {
       "comment" : "Share stats menu item"
@@ -972,16 +909,10 @@
       "comment" : "Star Article"
     },
     "Starred" : {
-      "comment" : "Accessibility announcement\nStarred article for accessibility\nStarred label\nStarred pseudo-feed title"
+      "comment" : "Starred pseudo-feed title\nStarred row label"
     },
     "Status Records" : {
-      "comment" : "Status records header"
-    },
-    "Subscribing to feed" : {
-      "comment" : "Activity kind"
-    },
-    "Subscribing to zone changes" : {
-      "comment" : "Activity kind"
+      "comment" : "Status records section header"
     },
     "Sync content of unread articles" : {
 
@@ -1000,7 +931,7 @@
 
     },
     "The Old Reader" : {
-      "comment" : "Account name\nThe Old Reader"
+      "comment" : "Account name"
     },
     "The theme “%@” already exists. Overwrite it?" : {
       "comment" : "Overwrite theme"
@@ -1105,10 +1036,10 @@
       "comment" : "Unread label for accessibility"
     },
     "Unread" : {
-      "comment" : "Unread\nUnread label"
+      "comment" : "Unread row label"
     },
     "Unread Content Deleted" : {
-      "comment" : "Unread content deleted label"
+      "comment" : "Cleanup stat row label"
     },
     "unread content record" : {
       "comment" : "Singular label for unread content records"
@@ -1163,12 +1094,6 @@
     },
     "Username, password, and API URL are required." : {
       "comment" : "Credentials Error"
-    },
-    "Vacuuming database" : {
-      "comment" : "Activity kind"
-    },
-    "Validating credentials" : {
-      "comment" : "Activity kind"
     },
     "Waiting for access to Feedly" : {
       "comment" : "Alert title when adding a Feedly account and waiting for authorization from the user."

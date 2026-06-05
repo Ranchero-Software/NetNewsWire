@@ -302,7 +302,7 @@ private extension ActivityLogWindowController {
 
 	func color(for owner: ActivityOwner) -> NSColor {
 		switch owner {
-		case .account(let accountID):
+		case .account(let accountID, _):
 			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 				return .secondaryLabelColor
 			}
