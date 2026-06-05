@@ -33,7 +33,7 @@ import RSWeb
 
 	private static let aboveCenterOffset: CGFloat = 40
 	private static let updateCoalesceInterval: TimeInterval = 0.5
-	private static let lingerDuration: TimeInterval = 5.0
+	private static let lingerDuration: TimeInterval = 2.0
 
 	convenience init() {
 		self.init(windowNibName: "CurrentActivityWindow")
