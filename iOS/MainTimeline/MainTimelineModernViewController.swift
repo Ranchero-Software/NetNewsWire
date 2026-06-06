@@ -127,7 +127,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 
 	private lazy var navigationBarSubtitleTitleLabel: UILabel = {
 		let label = UILabel()
-		label.font = UIFont(name: "Helvetica", size: 12)
+		label.font = .systemFont(ofSize: 12)
 		label.textColor = .systemGray
 		label.textAlignment = .center
 		label.isUserInteractionEnabled = true
