@@ -1385,13 +1385,9 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func showFeedInspector(for feed: Feed) {
-		let feedInspectorNavController =
-			UIStoryboard.inspector.instantiateViewController(identifier: "FeedInspectorNavigationViewController") as! UINavigationController
-		let feedInspectorController = feedInspectorNavController.topViewController as! FeedInspectorViewController
-		feedInspectorNavController.modalPresentationStyle = .formSheet
-		feedInspectorNavController.preferredContentSize = FeedInspectorViewController.preferredContentSizeForFormSheetDisplay
-		feedInspectorController.feed = feed
-		rootSplitViewController.present(feedInspectorNavController, animated: true)
+		let feedInspectorView = FeedInspectorView(feed: feed)
+		let feedInspectorHostingController = UIHostingController(rootView: feedInspectorView)
+		rootSplitViewController.present(feedInspectorHostingController, animated: true)
 	}
 
 	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
