@@ -8,6 +8,7 @@
 import AppKit
 import Account
 import ActivityLog
+import RSCore
 
 final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 
@@ -18,7 +19,7 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 			UserDefaults.standard.bool(forKey: windowIsOpenKey)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Self.windowIsOpenKey)
+			UserDefaults.standard.set(newValue, forKey: windowIsOpenKey)
 		}
 	}
 
@@ -32,8 +33,6 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 
 	private static let maxTextEntries = 1000
 
-	private static let aboveCenterOffset: CGFloat = 40
-
 	convenience init() {
 		self.init(windowNibName: "ActivityLogWindow")
 	}
@@ -42,8 +41,8 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 		super.windowDidLoad()
 		window?.delegate = self
 
-		textView?.font = NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular)
-		textView?.textContainerInset = NSSize(width: Self.textContainerInset, height: Self.textContainerInset)
+		textView?.font = NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: .regular)
+		textView?.textContainerInset = NSSize(width: LogTextStyle.textContainerInset, height: LogTextStyle.textContainerInset)
 
 		updateCopyButtonState()
 
@@ -55,11 +54,7 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 	override func showWindow(_ sender: Any?) {
 		if !hasBeenShown {
 			hasBeenShown = true
-			window?.center()
-			if var frame = window?.frame {
-				frame.origin.y += Self.aboveCenterOffset
-				window?.setFrame(frame, display: false)
-			}
+			window?.centerAboveCenter(by: LogTextStyle.aboveCenterOffset)
 		}
 		super.showWindow(sender)
 		reloadEntries()
@@ -72,11 +67,7 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 	// MARK: - NSWindowDelegate
 
 	func windowDidResize(_ notification: Notification) {
-		guard let textView, let container = textView.textContainer else {
-			return
-		}
-		container.size = NSSize(width: textView.bounds.width - textView.textContainerInset.width * 2, height: CGFloat.greatestFiniteMagnitude)
-		textView.layoutManager?.ensureLayout(for: container)
+		textView?.updateContainerSizeForLiveResize()
 	}
 
 	// MARK: - Notifications
@@ -99,35 +90,13 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 	// MARK: - Actions
 
 	@IBAction func copyContents(_ sender: Any?) {
-		guard let text = textView?.string, !text.isEmpty else {
-			return
-		}
-		NSPasteboard.general.clearContents()
-		NSPasteboard.general.setString(text, forType: .string)
+		textView?.copyAllToPasteboard()
 	}
 }
 
 // MARK: - Private
 
 private extension ActivityLogWindowController {
-
-	static let dateFormatter: DateFormatter = {
-		let formatter = DateFormatter()
-		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-		formatter.locale = Locale(identifier: "en_US_POSIX")
-		return formatter
-	}()
-
-	static let fontSize: CGFloat = 16.0
-	static let textContainerInset: CGFloat = 8
-	static let lineSpacing: CGFloat = 4
-	static let paragraphSpacing: CGFloat = 7
-	static let entryParagraphStyle: NSParagraphStyle = {
-		let style = NSMutableParagraphStyle()
-		style.lineSpacing = lineSpacing
-		style.paragraphSpacing = paragraphSpacing
-		return style
-	}()
 
 	func rebuildIfNeeded() {
 		guard needsRebuild else {
@@ -164,7 +133,7 @@ private extension ActivityLogWindowController {
 			needsRebuild = true
 		}
 
-		let wasScrolledToBottom = isScrolledToBottom
+		let wasScrolledToBottom = textView.isScrolledToBottom
 		var didAppend = false
 
 		for activity in ActivityLog.shared.completedActivities {
@@ -189,23 +158,13 @@ private extension ActivityLogWindowController {
 		copyButton?.isEnabled = !(textView?.string.isEmpty ?? true)
 	}
 
-	var isScrolledToBottom: Bool {
-		guard let textView, let scrollView = textView.enclosingScrollView else {
-			return true
-		}
-		let contentView = scrollView.contentView
-		let visibleMaxY = contentView.bounds.maxY
-		let documentMaxY = textView.frame.maxY
-		return visibleMaxY >= documentMaxY - 1
-	}
-
 	// MARK: - Attributed Strings
 
 	func completionAttributedString(for activity: Activity) -> NSAttributedString {
 		let result = NSMutableAttributedString()
 
 		let date = activity.endDate ?? Date()
-		appendText("[\(Self.dateFormatter.string(from: date))] ", color: .secondaryLabelColor, to: result)
+		appendText("[\(DateFormatter.logTimestamp.string(from: date))] ", color: .secondaryLabelColor, to: result)
 
 		let isFailed = activity.state == .failed
 		let indicator = isFailed ? "✗ " : "✓ "
@@ -240,8 +199,8 @@ private extension ActivityLogWindowController {
 	func appendText(_ string: String, color: NSColor = .labelColor, weight: NSFont.Weight = .regular, to result: NSMutableAttributedString) {
 		let attributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: color,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: weight),
-			.paragraphStyle: Self.entryParagraphStyle
+			.font: NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: weight),
+			.paragraphStyle: LogTextStyle.entryParagraphStyle
 		]
 		result.append(NSAttributedString(string: string, attributes: attributes))
 	}

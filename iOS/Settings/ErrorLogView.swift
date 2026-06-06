@@ -8,6 +8,7 @@
 import SwiftUI
 import Account
 import ErrorLog
+import RSCore
 
 struct ErrorLogView: View {
 
@@ -49,7 +50,7 @@ struct ErrorLogView: View {
 			plainText = buildPlainText(entries)
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .appDidEncounterError)) { notification in
-			guard let entry = errorLogEntry(from: notification) else {
+			guard let entry = ErrorLogEntry(notification: notification) else {
 				return
 			}
 			entries.append(entry)
@@ -72,12 +73,6 @@ struct ErrorLogView: View {
 
 private extension ErrorLogView {
 
-	static let dateFormatter: DateFormatter = {
-		let formatter = DateFormatter()
-		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-		return formatter
-	}()
-
 	func buildAttributedString(_ entries: [ErrorLogEntry]) -> AttributedString {
 		var result = AttributedString()
 		for entry in entries {
@@ -87,7 +82,7 @@ private extension ErrorLogView {
 	}
 
 	func attributedString(for entry: ErrorLogEntry) -> AttributedString {
-		var timestamp = AttributedString("[\(Self.dateFormatter.string(from: entry.date))] ")
+		var timestamp = AttributedString("[\(DateFormatter.logTimestamp.string(from: entry.date))] ")
 		timestamp.foregroundColor = .secondary
 
 		let sourceString: String
@@ -120,7 +115,7 @@ private extension ErrorLogView {
 	func buildPlainText(_ entries: [ErrorLogEntry]) -> String {
 		var result = ""
 		for entry in entries {
-			result += "[\(Self.dateFormatter.string(from: entry.date))] "
+			result += "[\(DateFormatter.logTimestamp.string(from: entry.date))] "
 			if entry.operation.isEmpty {
 				result += "\(entry.sourceName): "
 			} else {
@@ -133,19 +128,5 @@ private extension ErrorLogView {
 			result += "\n\n"
 		}
 		return result
-	}
-
-	func errorLogEntry(from notification: Notification) -> ErrorLogEntry? {
-		guard let errorMessage = notification.userInfo?[ErrorLogUserInfoKey.errorMessage] as? String,
-			  let sourceName = notification.userInfo?[ErrorLogUserInfoKey.sourceName] as? String,
-			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
-			return nil
-		}
-		let operation = notification.userInfo?[ErrorLogUserInfoKey.operation] as? String ?? ""
-		let fileName = notification.userInfo?[ErrorLogUserInfoKey.fileName] as? String ?? ""
-		let functionName = notification.userInfo?[ErrorLogUserInfoKey.functionName] as? String ?? ""
-		let lineNumber = notification.userInfo?[ErrorLogUserInfoKey.lineNumber] as? Int ?? 0
-
-		return ErrorLogEntry(id: 0, date: Date(), sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage)
 	}
 }
