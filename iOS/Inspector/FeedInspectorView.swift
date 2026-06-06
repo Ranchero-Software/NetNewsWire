@@ -22,20 +22,20 @@ struct FeedInspectorView: View {
 	@State private var authorizationStatus: UNAuthorizationStatus?
 	@State private var navigationTitle: String?
 	@State private var newArticleNotificationEnabled: Bool = false
-	
+
 	// MARK: Bindings
-	
+
 	// MARK: Constants
-	
+
 	// MARK: Variables
 	var feed: Feed!
-	
+
 	init(feed: Feed) {
 		self.feed = feed
 	}
-	
+
 	// MARK: Views
-	
+
 	var body: some View {
 		NavigationStack {
 			Form {
@@ -53,13 +53,13 @@ struct FeedInspectorView: View {
 							}
 					}
 				}
-				
+
 				if feed.homePageURL != nil {
 					Section {
 						homePageURL
 					}
 				}
-				
+
 				Section {
 					feedURL
 				}
@@ -86,7 +86,7 @@ struct FeedInspectorView: View {
 			}
 		}
     }
-	
+
 	private var headerView: some View {
 		HStack {
 			Spacer()
@@ -96,10 +96,10 @@ struct FeedInspectorView: View {
 			Spacer()
 		}
 	}
-	
+
 	private var feedTitle: some View {
 		TextField("Feed Title",
-				  text: Binding(get: { feed.nameForDisplay } ,
+				  text: Binding(get: { feed.nameForDisplay },
 								set: { newTitle in
 			let newName = newTitle.isEmpty ? (feed.name ?? NSLocalizedString("Untitled", comment: "Feed name")) : newTitle
 			feed.rename(to: newName) { _  in
@@ -107,7 +107,7 @@ struct FeedInspectorView: View {
 			}
 		}))
 	}
-	
+
 	private var newArticleNotificationToggle: some View {
 		Toggle(isOn: Binding(get: { feed.newArticleNotificationsEnabled }, set: { newValue in
 			feed.newArticleNotificationsEnabled = newValue
@@ -117,7 +117,7 @@ struct FeedInspectorView: View {
 		.tint(Color.accentColor)
 		.disabled(authorizationStatus != .authorized)
 	}
-	
+
 	private var alwaysUseReaderViewToggle: some View {
 		Toggle(isOn: Binding(get: { feed.readerViewAlwaysEnabled }, set: { newValue in
 			feed.readerViewAlwaysEnabled = newValue
@@ -127,7 +127,7 @@ struct FeedInspectorView: View {
 		.tint(Color.accentColor)
 		.disabled(AppDefaults.shared.isDeveloperBuild)
 	}
-	
+
 	private var homePageURL: some View {
 		HStack {
 			Text(feed.homePageURL ?? "")
@@ -151,7 +151,7 @@ struct FeedInspectorView: View {
 			}
 		}
 	}
-	
+
 	private var feedURL: some View {
 		HStack {
 			Text(feed.url)
@@ -165,10 +165,9 @@ struct FeedInspectorView: View {
 			}
 		}
 	}
-	
-	
+
 	// MARK: Functions
-	
+
 	private func updateNotificationSettings() {
 		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
 			let updatedAuthorizationStatus = settings.authorizationStatus
@@ -181,5 +180,3 @@ struct FeedInspectorView: View {
 		}
 	}
 }
-
-
