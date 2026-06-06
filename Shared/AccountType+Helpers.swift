@@ -68,6 +68,29 @@ extension AccountType {
 			return .systemPink
 		}
 	}
+	#else
+	var logColor: Color {
+		switch self {
+		case .onMyMac:
+			return .secondary
+		case .cloudKit:
+			return .purple
+		case .feedly:
+			return .green
+		case .feedbin:
+			return .blue
+		case .newsBlur:
+			return .orange
+		case .freshRSS:
+			return .teal
+		case .inoreader:
+			return .brown
+		case .bazQux:
+			return .indigo
+		case .theOldReader:
+			return .pink
+		}
+	}
 	#endif
 
 	// MARK: - SwiftUI Images

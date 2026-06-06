@@ -97,7 +97,7 @@ private extension ErrorLogView {
 			sourceString = "\(entry.sourceName) — \(entry.operation): "
 		}
 		var source = AttributedString(sourceString)
-		source.foregroundColor = color(for: entry.sourceID)
+		source.foregroundColor = AccountType(rawValue: entry.sourceID)?.logColor ?? .secondary
 		source.font = .system(.body, design: .monospaced).weight(.medium)
 
 		var message = AttributedString(entry.errorMessage)
@@ -133,33 +133,6 @@ private extension ErrorLogView {
 			result += "\n\n"
 		}
 		return result
-	}
-
-	func color(for sourceID: Int) -> Color {
-		guard let type = AccountType(rawValue: sourceID) else {
-			return .secondary
-		}
-
-		switch type {
-		case .onMyMac:
-			return .secondary
-		case .cloudKit:
-			return .purple
-		case .feedly:
-			return .green
-		case .feedbin:
-			return .blue
-		case .newsBlur:
-			return .orange
-		case .freshRSS:
-			return .teal
-		case .inoreader:
-			return .brown
-		case .bazQux:
-			return .indigo
-		case .theOldReader:
-			return .pink
-		}
 	}
 
 	func errorLogEntry(from notification: Notification) -> ErrorLogEntry? {
