@@ -52,6 +52,13 @@ extension TimelineViewController {
 		markBelowArticlesRead(articles)
 	}
 
+	@objc func markAllAsReadExceptStarredFromContextualMenu(_ sender: Any?) {
+		guard let unreadUnstarred = self.articles.unreadUnstarredArticles() else {
+			return
+		}
+		markArticles(unreadUnstarred, read: true)
+	}
+
 	@objc func markArticlesStarredFromContextualMenu(_ sender: Any?) {
 		guard let articles = articles(from: sender) else { return }
 		markArticles(articles, starred: true)
@@ -167,6 +174,9 @@ private extension TimelineViewController {
 		if let last = articles.last, self.articles.articlesBelow(article: last).canMarkAllAsRead() {
 			menu.addItem(markBelowReadMenuItem(articles))
 		}
+		if self.articles.canMarkAllAsReadExceptStarred() {
+			menu.addItem(markAllAsReadExceptStarredMenuItem(articles))
+		}
 
 		menu.addSeparatorIfNeeded()
 
@@ -250,6 +260,10 @@ private extension TimelineViewController {
 
 	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
 		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"), #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.markBelowAsRead)
+	}
+
+	func markAllAsReadExceptStarredMenuItem(_ articles: [Article]) -> NSMenuItem {
+		return menuItem(NSLocalizedString("Mark Unstarred as Read", comment: "Command"), #selector(markAllAsReadExceptStarredFromContextualMenu(_:)), articles, image: Assets.Images.markAllAsReadMenu)
 	}
 
 	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
