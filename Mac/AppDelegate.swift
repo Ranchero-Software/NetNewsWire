@@ -320,7 +320,11 @@ let appName = "NetNewsWire"
 		guard let mainWindowController, mainWindowController.isWindowLoaded else {
 			return false
 		}
-		mainWindowController.showWindow(self)
+		// Only bring the main window forward when it’s been closed — leave it
+		// alone if it’s already open (or miniaturized).
+		if !mainWindowController.isOpen {
+			mainWindowController.showWindow(self)
+		}
 		return false
 	}
 
