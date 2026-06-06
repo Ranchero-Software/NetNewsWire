@@ -110,7 +110,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Counts Async
 
-	func fetchArticleCountsAsync(_ feedIDs: Set<String>, _ completion: @escaping @Sendable (Result<ArticleCounts, DatabaseError>) -> Void) {
+	func fetchArticleCountsAsync(_ feedIDs: Set<String>, _ completion: @escaping @Sendable (Result<ArticleCounts, Error>) -> Void) {
 		queue.runInDatabase { databaseResult in
 			switch databaseResult {
 			case .success(let database):
@@ -128,7 +128,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Last Update Dates
 
-	func fetchLastUpdateDatesAsync(_ completion: @escaping @Sendable (Result<[String: Date], DatabaseError>) -> Void) {
+	func fetchLastUpdateDatesAsync(_ completion: @escaping @Sendable (Result<[String: Date], Error>) -> Void) {
 		queue.runInDatabase { databaseResult in
 			switch databaseResult {
 			case .success(let database):
@@ -148,7 +148,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
 		nonisolated(unsafe) var articles: Set<Article> = Set<Article>()
-		nonisolated(unsafe) var error: DatabaseError?
+		nonisolated(unsafe) var error: Error?
 
 		queue.runInDatabaseSync { (databaseResult) in
 			switch databaseResult {
@@ -429,7 +429,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				let parameters = Array(feedIDs) as [Any]
 
 				guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
-					throw DatabaseError.isSuspended
+					return UnreadCountDictionary()
 				}
 				defer {
 					resultSet.close()
@@ -764,7 +764,7 @@ nonisolated private extension ArticlesTable {
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) throws -> Set<Article> {
 		nonisolated(unsafe) var articles = Set<Article>()
-		nonisolated(unsafe) var error: DatabaseError?
+		nonisolated(unsafe) var error: Error?
 
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {
@@ -782,7 +782,7 @@ nonisolated private extension ArticlesTable {
 
 	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
 		nonisolated(unsafe) var articlesCount = 0
-		nonisolated(unsafe) var error: DatabaseError?
+		nonisolated(unsafe) var error: Error?
 
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {

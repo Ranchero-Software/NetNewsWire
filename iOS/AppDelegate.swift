@@ -119,7 +119,7 @@ import Images
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		Task { @MainActor in
-			self.resumeDatabaseProcessingIfNecessary()
+			self.resumeIfNecessary()
 			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 			self.suspendApplication()
 			completionHandler(.newData)
@@ -165,7 +165,8 @@ import Images
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: errorHandler)
 	}
 
-	func resumeDatabaseProcessingIfNecessary() {
+	/// Un-suspend network activity if it was suspended on background entry.
+	func resumeIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			Self.logger.info("Application processing resumed.")
@@ -358,7 +359,7 @@ private extension AppDelegate {
 		}
 
 		AccountManager.shared.suspendNetworkAll()
-		AccountManager.shared.suspendDatabaseAll()
+		AccountManager.shared.saveAll()
 		ArticleThemeDownloader.shared.cleanUp()
 
 		AppNotification.postAppDidGoToBackground()
@@ -449,7 +450,7 @@ private extension AppDelegate {
 				return
 		}
 
-		resumeDatabaseProcessingIfNecessary()
+		resumeIfNecessary()
 
 		guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			assertionFailure("Expected account with \(accountID)")

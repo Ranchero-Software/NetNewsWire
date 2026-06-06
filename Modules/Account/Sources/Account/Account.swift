@@ -558,19 +558,8 @@ public enum FetchType {
 		delegate.suspendNetwork()
 	}
 
-	public func suspendDatabase() {
-		#if os(iOS)
-		database.cancelAndSuspend()
-		#endif
-		save()
-	}
-
-	/// Re-open the SQLite database and allow database calls.
-	/// Call this *before* calling resume.
-	public func resumeDatabaseAndDelegate() {
-		#if os(iOS)
-		database.resume()
-		#endif
+	/// Resume network activity for the delegate after a previous `suspendNetwork()`.
+	public func resumeDelegate() {
 		delegate.resume(account: self)
 	}
 

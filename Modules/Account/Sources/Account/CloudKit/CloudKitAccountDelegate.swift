@@ -497,12 +497,12 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
+		await syncDatabase.insertStatuses(syncStatuses)
 		if !syncStatuses.isEmpty {
 			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = await syncDatabase.selectPendingCount(), count > 100 {
 			try await sendArticleStatus(for: account)
 		}
 
@@ -620,22 +620,16 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	// MARK: - Suspend and Resume (for iOS)
+	// MARK: - Suspend and Resume
 
 	func suspendNetwork() {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		refresher.suspend()
 	}
 
-	func suspendDatabase() {
-		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		syncDatabase.suspend()
-	}
-
 	func resume(account: Account) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		refresher.resume()
-		syncDatabase.resume()
 	}
 }
 
@@ -967,7 +961,7 @@ private extension CloudKitAccountDelegate {
 			SyncStatus(articleID: article.articleID, key: statusKey, flag: flag)
 		})
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		try? await syncDatabase.insertStatuses(syncStatuses)
+		await syncDatabase.insertStatuses(syncStatuses)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 

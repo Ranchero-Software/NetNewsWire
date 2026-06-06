@@ -117,7 +117,7 @@ import Secrets
 		}
 
 		try await account.logActivity(kind: .sendArticleStatuses) {
-			guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+			guard let syncStatuses = await syncDatabase.selectForProcessing() else {
 				return
 			}
 
@@ -456,11 +456,11 @@ import Secrets
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
+		await syncDatabase.insertStatuses(syncStatuses)
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = await syncDatabase.selectPendingCount(), count > 100 {
 			try await sendArticleStatus(for: account)
 		}
 	}
@@ -496,18 +496,12 @@ import Secrets
 		caller.suspend()
 	}
 
-	/// Suspend the SQLLite databases
-	func suspendDatabase() {
-		syncDatabase.suspend()
-	}
-
-	/// Make sure no SQLite databases are open and we are ready to issue network requests.
+	/// Resume network activity after a previous `suspendNetwork()`.
 	func resume(account: Account) {
 		if credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
 		}
 		caller.resume()
-		syncDatabase.resume()
 	}
 
 	// MARK: - Notifications

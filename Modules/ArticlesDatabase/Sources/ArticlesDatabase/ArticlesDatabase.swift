@@ -388,32 +388,6 @@ public struct ArticleCounts: Sendable {
 		}
 	}
 
-#if os(iOS)
-	// MARK: - Suspend and Resume (for iOS)
-
-	/// Cancel current operations and close the database.
-	@MainActor public func cancelAndSuspend() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		cancelOperations()
-		suspend()
-	}
-
-	/// Close the database and stop running database calls.
-	/// Any pending calls will complete first.
-	@MainActor public func suspend() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		operationQueue.suspend()
-		queue.suspend()
-	}
-
-	/// Open the database and allow for running database calls again.
-	@MainActor public func resume() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		queue.resume()
-		operationQueue.resume()
-	}
-#endif
-
 	// MARK: - Caches
 
 	/// Call to free up some memory. Should be done when the app is backgrounded, for instance.
@@ -478,19 +452,19 @@ private extension ArticlesDatabase {
 typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary, Error>
 typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionaryCompletionResult) -> Void
 
-typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
+typealias UpdateArticlesResult = Result<ArticleChanges, Error>
 typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
 
-typealias SingleUnreadCountResult = Result<Int, DatabaseError>
+typealias SingleUnreadCountResult = Result<Int, Error>
 typealias SingleUnreadCountCompletionBlock = @Sendable (SingleUnreadCountResult) -> Void
 
-typealias ArticleSetResult = Result<Set<Article>, DatabaseError>
+typealias ArticleSetResult = Result<Set<Article>, Error>
 typealias ArticleSetResultBlock = @Sendable (ArticleSetResult) -> Void
 
 typealias ArticleIDsResult = Result<Set<String>, Error>
 typealias ArticleIDsCompletionBlock = @Sendable (ArticleIDsResult) -> Void
 
-typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
+typealias ArticleStatusesResult = Result<Set<ArticleStatus>, Error>
 typealias ArticleStatusesResultBlock = @Sendable (ArticleStatusesResult) -> Void
 
 private extension ArticlesDatabase {
@@ -504,7 +478,7 @@ private extension ArticlesDatabase {
 			}
 			operation.completionBlock = { operation in
 				let fetchOperation = operation as! FetchAllUnreadCountsOperation
-				completion(fetchOperation.result ?? .failure(DatabaseError.isSuspended))
+				completion(fetchOperation.result ?? .success(UnreadCountDictionary()))
 			}
 			operationQueue.add(operation)
 		}

@@ -12,13 +12,9 @@ import SQLite3
 import RSDatabaseObjC
 
 /// Manage a serial queue and a SQLite database.
-///
-/// On iOS, the queue can be suspended
-/// in order to support background refreshing.
 public final class DatabaseQueue: Sendable {
 	private struct State: @unchecked Sendable {
 		var isCallingDatabase = false
-		var isSuspended = false
 		let database: FMDatabase
 
 		init(_ database: FMDatabase) {
@@ -44,56 +40,12 @@ public final class DatabaseQueue: Sendable {
 		self.state.withLock { openDatabase($0.database) }
 	}
 
-	// MARK: - Suspend and Resume
-
-	/// Close the SQLite database and don’t allow database calls until resumed.
-	/// This is for iOS, where we need to close the SQLite database in some conditions.
-	///
-	/// After calling suspend, if you call into the database before calling resume,
-	/// your code will not run, and runInDatabaseSync and runInTransactionSync will
-	/// both throw DatabaseQueueError.isSuspended.
-	///
-	/// On Mac, suspend() and resume() are no-ops, since there isn’t a need for them.
-	public func suspend() {
-		#if os(iOS)
-		Self.logger.info("DatabaseQueue: suspending")
-		state.withLock { state in
-			guard !state.isSuspended else {
-				assertionFailure("DatabaseQueue: suspend called when already suspended")
-				return
-			}
-
-			state.isSuspended = true
-			serialDispatchQueue.suspend()
-			state.database.close()
-		}
-		#endif
-	}
-
-	/// Open the SQLite database. Allow database calls again.
-	/// iOS only — does nothing on macOS.
-	public func resume() {
-		#if os(iOS)
-		Self.logger.info("DatabaseQueue: resuming")
-		state.withLock { state in
-			guard state.isSuspended else {
-				assertionFailure("DatabaseQueue: resume called when already resumed")
-				return
-			}
-
-			state.isSuspended = false
-			openDatabase(state.database)
-			serialDispatchQueue.resume()
-		}
-		#endif
-	}
-
 	// MARK: - Make Database Calls
 
 	/// Run a DatabaseBlock synchronously. This call will block the main thread
 	/// potentially for a while, depending on how long it takes to execute
 	/// the DatabaseBlock *and* depending on how many other calls have been
-	/// scheduled on the queue. Use sparingly — prefer async versions.
+	/// scheduled on the queue. Use sparingly — prefer async versions.
 	public func runInDatabaseSync(_ databaseBlock: DatabaseBlock) {
 		serialDispatchQueue.sync {
 			self.state.withLock { state in
@@ -136,7 +88,7 @@ public final class DatabaseQueue: Sendable {
 	/// Run all the lines that start with "create".
 	/// Use this to create tables, indexes, etc.
 	public func runCreateStatements(_ statements: String) throws {
-		nonisolated(unsafe) var error: DatabaseError?
+		nonisolated(unsafe) var error: Error?
 
 		runInDatabaseSync { result in
 			Self.logger.debug("DatabaseQueue: runCreateStatements")
@@ -186,16 +138,12 @@ private extension DatabaseQueue {
 		}
 
 		autoreleasepool {
-			if state.isSuspended {
-				databaseBlock(.failure(.isSuspended))
-			} else {
-				if useTransaction {
-					state.database.beginTransaction()
-				}
-				databaseBlock(.success(state.database))
-				if useTransaction {
-					state.database.commit()
-				}
+			if useTransaction {
+				state.database.beginTransaction()
+			}
+			databaseBlock(.success(state.database))
+			if useTransaction {
+				state.database.commit()
 			}
 		}
 	}

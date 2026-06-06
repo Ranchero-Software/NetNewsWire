@@ -60,9 +60,6 @@ import Secrets
 	/// Suspend all network activity
 	func suspendNetwork()
 
-	/// Suspend the SQLite databases
-	func suspendDatabase()
-
-	/// Make sure no SQLite databases are open and we are ready to issue network requests.
+	/// Resume network activity after a previous `suspendNetwork()`.
 	func resume(account: Account)
 }

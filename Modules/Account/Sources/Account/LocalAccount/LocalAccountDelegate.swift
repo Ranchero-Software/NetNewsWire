@@ -155,10 +155,6 @@ import Secrets
 		refresher.suspend()
 	}
 
-	@MainActor func suspendDatabase() {
-		// Nothing to do
-	}
-
 	@MainActor func resume(account: Account) {
 		refresher.resume()
 	}

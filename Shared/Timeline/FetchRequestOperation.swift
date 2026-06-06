@@ -223,12 +223,7 @@ private extension FetchRequestOperation {
 
 	static func postFetchError(_ error: Error, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
 		let typeName = String(describing: type(of: error))
-		let description: String
-		if let databaseError = error as? DatabaseError {
-			description = "\(typeName).\(databaseError): \(error.localizedDescription)"
-		} else {
-			description = "\(typeName): \(error.localizedDescription)"
-		}
+		let description = "\(typeName): \(error.localizedDescription)"
 		let userInfo = ErrorLogUserInfoKey.userInfo(sourceName: "Timeline", sourceID: errorLogSourceID, operation: "Fetching articles", errorMessage: description, fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: nil, userInfo: userInfo)
 	}

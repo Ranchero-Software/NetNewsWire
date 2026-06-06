@@ -272,16 +272,10 @@ import ActivityLog
 		}
 	}
 
-	public func suspendDatabaseAll() {
-		for account in accounts {
-			account.suspendDatabase()
-		}
-	}
-
 	public func resumeAll() {
 		isSuspended = false
 		for account in accounts {
-			account.resumeDatabaseAndDelegate()
+			account.resumeDelegate()
 		}
 		for account in accounts {
 			account.resume()

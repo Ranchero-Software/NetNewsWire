@@ -54,8 +54,8 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		accumulatedChangedCount += changed.count
 		accumulatedDeletedCount += deleted.count
 		do {
-			let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
-			let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
+			let pendingReadStatusArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
+			let pendingStarredStatusArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
 
 			await delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
 			try await update(records: changed,
@@ -80,7 +80,7 @@ private extension CloudKitArticlesZoneDelegate {
 			return
 		}
 
-		try? await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
+		await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
 		try? await account?.delete(articleIDs: deletableArticleIDs)
 	}
 
@@ -141,7 +141,7 @@ private extension CloudKitArticlesZoneDelegate {
 					continue
 				}
 				let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
-				try? await self.syncDatabase.insertStatuses(syncStatuses)
+				await self.syncDatabase.insertStatuses(syncStatuses)
 			} catch {
 				updateError = error
 				Self.logger.error("CloudKit: Error while storing articles: \(error.localizedDescription)")

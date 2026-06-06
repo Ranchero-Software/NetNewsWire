@@ -160,7 +160,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 	}
 
 	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
-		nonisolated(unsafe) var error: DatabaseError?
+		nonisolated(unsafe) var error: Error?
 		nonisolated(unsafe) var articleIDs = Set<String>()
 		queue.runInDatabaseSync { databaseResult in
 			switch databaseResult {

@@ -215,7 +215,7 @@ import Secrets
 
 		do {
 			return try await account.logActivity(kind: .sendArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> Int in
-				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
 					return 0
 				}
 
@@ -236,11 +236,11 @@ import Secrets
 					let articleIDs = Set(pending.map { $0.articleID })
 					do {
 						try await caller.mark(articleIDs, as: pairing.action)
-						try? await syncDatabase.deleteSelectedForProcessing(articleIDs)
+						await syncDatabase.deleteSelectedForProcessing(articleIDs)
 						sentCount += articleIDs.count
 					} catch {
 						Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
-						try? await syncDatabase.resetSelectedForProcessing(articleIDs)
+						await syncDatabase.resetSelectedForProcessing(articleIDs)
 						savedError = error
 					}
 				}
@@ -574,12 +574,12 @@ import Secrets
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
+		await syncDatabase.insertStatuses(syncStatuses)
 		if !syncStatuses.isEmpty {
 			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = try? await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
+		if let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
 			try await sendArticleStatus(for: account)
 		}
 	}
@@ -628,19 +628,12 @@ import Secrets
 		caller.suspend()
 	}
 
-	/// Suspend the SQLite databases.
-	func suspendDatabase() {
-		Self.logger.debug("FeedlyAccountDelegate: suspendDatabase")
-		syncDatabase.suspend()
-	}
-
-	/// Open the databases and resume network activity.
+	/// Resume network activity after a previous `suspendNetwork()`.
 	func resume(account: Account) {
 		Self.logger.debug("FeedlyAccountDelegate: resume")
 		if credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		}
-		syncDatabase.resume()
 		caller.resume()
 	}
 
@@ -731,7 +724,7 @@ private extension FeedlyAccountDelegate {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 		let remoteUnreadIDs = try await collectStreamIDs(for: resource, unreadOnly: true)
 
-		let pendingArticleIDs = (try await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+		let pendingArticleIDs = (await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
 
 		let localUnreadIDs = try await account.fetchUnreadArticleIDsAsync()
@@ -753,7 +746,7 @@ private extension FeedlyAccountDelegate {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		let remoteStarredIDs = try await collectStreamIDs(for: resource, unreadOnly: nil)
 
-		let pendingArticleIDs = (try await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+		let pendingArticleIDs = (await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
 
 		let localStarredIDs = try await account.fetchStarredArticleIDsAsync()

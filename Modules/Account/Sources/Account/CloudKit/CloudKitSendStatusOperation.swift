@@ -78,7 +78,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 	/// Returns the total number of statuses sent and the subset whose article content was also uploaded.
 	func selectForProcessing() async throws -> SendResult {
-		guard let syncStatuses = try await syncDatabase.selectForProcessing(limit: blockSize),
+		guard let syncStatuses = await syncDatabase.selectForProcessing(limit: blockSize),
 			  !syncStatuses.isEmpty else {
 			return (0, 0)
 		}
@@ -104,7 +104,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		do {
 			articles = try await account.fetchArticlesAsync(.articleIDs(Set(articleIDs)))
 		} catch {
-			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+			await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 			Self.logger.error("iCloud: Send article status fetch articles error: \(error.localizedDescription)")
 			throw error
 		}
@@ -120,16 +120,16 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		// We somehow have new status records but the articles didn't come back
 		// in the fetch. Clean up those sync records and stop processing.
 		if statusUpdates.isEmpty {
-			try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
+			await syncDatabase.deleteSelectedForProcessing(Set(articleIDs))
 			return nil
 		}
 
 		do {
 			let withContent = try await articlesZone.modifyArticles(statusUpdates)
-			try? await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
+			await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
 			return (statusUpdates.count, withContent)
 		} catch {
-			try? await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
+			await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
 			syncErrorHandler?(error, "Sending article status", #fileID, #function, #line)
 			Self.logger.error("iCloud: Send article status modify articles error: \(error.localizedDescription)")
 			throw error

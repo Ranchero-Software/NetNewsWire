@@ -183,7 +183,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
 
 		try await account.logActivity(kind: .sendArticleStatuses) {
-			let syncStatuses = (try await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
+			let syncStatuses = (await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
 			let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 			let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
@@ -510,11 +510,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
+		await syncDatabase.insertStatuses(syncStatuses)
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = await syncDatabase.selectPendingCount(), count > 100 {
 			try? await sendArticleStatus(for: account)
 		}
 	}
@@ -553,19 +553,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		caller.cancelAll()
 	}
 
-	/// Suspend the SQLLite databases
-	func suspendDatabase() {
-		Self.logger.debug("ReaderAPIAccountDelegate: suspendDatabase")
-
-		syncDatabase.suspend()
-	}
-
-	/// Make sure no SQLite databases are open and we are ready to issue network requests.
+	/// Resume network activity after a previous `suspendNetwork()`.
 	func resume(account: Account) {
 		Self.logger.debug("ReaderAPIAccountDelegate: resume")
 
 		retrieveCredentialsIfNeeded(account)
-		syncDatabase.resume()
 	}
 
 	// MARK: - Notifications
@@ -786,10 +778,10 @@ private extension ReaderAPIAccountDelegate {
 
 			do {
 				_ = try await apiCall(articleIDGroup)
-				try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
+				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
 			} catch {
 				Self.logger.error("ReaderAPIAccountDelegate: sendArticleStatuses — error \(error.localizedDescription)")
-				try? await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup))
+				await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup))
 			}
 		}
 	}
@@ -949,7 +941,7 @@ private extension ReaderAPIAccountDelegate {
 		Task { @MainActor in
 			do {
 
-				let pendingArticleIDs = (try await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+				let pendingArticleIDs = (await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 
 				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
@@ -978,7 +970,7 @@ private extension ReaderAPIAccountDelegate {
 
 		do {
 
-			let pendingArticleIDs = (try await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+			let pendingArticleIDs = (await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
 			let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 

@@ -29,13 +29,10 @@ import RSDatabaseObjC
 
 			switch databaseResult {
 			case .success(let database):
-				if let unreadCountDictionary = self.fetchUnreadCounts(database) {
-					self.result = .success(unreadCountDictionary)
-				} else {
-					self.result = .failure(DatabaseError.isSuspended)
-				}
-			case .failure:
-				self.result = .failure(DatabaseError.isSuspended)
+				let unreadCountDictionary = self.fetchUnreadCounts(database) ?? UnreadCountDictionary()
+				self.result = .success(unreadCountDictionary)
+			case .failure(let error):
+				self.result = .failure(error)
 			}
 
 			self.didComplete()

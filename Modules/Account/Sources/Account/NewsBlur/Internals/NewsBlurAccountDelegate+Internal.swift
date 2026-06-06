@@ -278,11 +278,11 @@ import os
 		for storyHashGroup in storyHashGroups {
 			do {
 				try await apiCall(Set(storyHashGroup))
-				try? await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup))
+				await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup))
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
-				try? await syncDatabase.resetSelectedForProcessing(Set(storyHashGroup))
+				await syncDatabase.resetSelectedForProcessing(Set(storyHashGroup))
 			}
 		}
 
@@ -297,7 +297,7 @@ import os
 		}
 
 		do {
-			guard let pendingStoryHashes = try await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			guard let pendingStoryHashes = await syncDatabase.selectPendingReadStatusArticleIDs() else {
 				return
 			}
 
@@ -325,7 +325,7 @@ import os
 		}
 
 		do {
-			guard let pendingStoryHashes = try await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			guard let pendingStoryHashes = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 				return
 			}
 

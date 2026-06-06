@@ -116,7 +116,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 		do {
 			try await account.logActivity(kind: .sendArticleStatuses) {
-				guard let syncStatuses = try await syncDatabase.selectForProcessing() else {
+				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
 					return
 				}
 
@@ -385,11 +385,11 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
+		await syncDatabase.insertStatuses(syncStatuses)
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = await syncDatabase.selectPendingCount(), count > 100 {
 			try await sendArticleStatus(for: account)
 		}
 	}
@@ -413,25 +413,19 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	// MARK: Suspend and Resume (for iOS)
+	// MARK: Suspend and Resume
 
 	/// Suspend all network activity
 	func suspendNetwork() {
 		caller.suspend()
 	}
 
-	/// Suspend the SQLLite databases
-	func suspendDatabase() {
-		syncDatabase.suspend()
-	}
-
-	/// Make sure no SQLite databases are open and we are ready to issue network requests.
+	/// Resume network activity after a previous `suspendNetwork()`.
 	func resume(account: Account) {
 		if credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .basic)
 		}
 		caller.resume()
-		syncDatabase.resume()
 	}
 
 	// MARK: - Notifications
@@ -710,11 +704,11 @@ private extension FeedbinAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 			do {
 				try await apiCall(articleIDGroup)
-				try? await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
+				await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
 			} catch {
 				savedError = error
 				Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
-				try? await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
+				await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
 			}
 		}
 
@@ -897,7 +891,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		do {
-			guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
 				return
 			}
 
@@ -925,7 +919,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		do {
-			guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 				return
 			}
 
