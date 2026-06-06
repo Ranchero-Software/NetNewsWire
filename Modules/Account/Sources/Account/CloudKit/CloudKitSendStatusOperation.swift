@@ -25,6 +25,10 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	private static let logger = cloudKitLogger
 	let syncErrorHandler: CloudKitSyncErrorHandler?
 
+	/// Number of statuses successfully sent during this run. Read after the
+	/// operation completes.
+	private(set) var sentCount = 0
+
 	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, syncArticleContentForUnreadArticles: @escaping @Sendable () -> Bool, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.accountID = account.accountID
@@ -46,6 +50,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		Task { @MainActor in
 			do {
 				let result = try await selectForProcessing()
+				self.sentCount = result.sent
 				Self.logger.debug("iCloud: Finished sending article statuses")
 				if isCanceled {
 					activityLog.didFail(id: activityID, error: CloudKitAccountDelegateError.unknown)

@@ -71,6 +71,9 @@ import Secrets
 	private static let articleDownloadChunkSize = 1000
 	private static let pendingStatusSendThreshold = 100
 
+	private var lastNoChangeSyncDate: Date?
+	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
+
 	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
 
 		if let transport {
@@ -165,6 +168,11 @@ import Secrets
 	}
 
 	func syncArticleStatus(for account: Account) async throws -> Bool {
+		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
+			Self.logger.debug("Feedly: Skipping sync — no changes on last check, backing off")
+			return false
+		}
+
 		refreshProgress.reset()
 		refreshProgress.addTasks(2)
 		progressInfo = ProgressInfo()
@@ -177,6 +185,12 @@ import Secrets
 		refreshProgress.completeTask()
 		let refreshCounts = try await refreshArticleStatusReturningCounts(for: account)
 		refreshProgress.completeTask()
+
+		if sentCount == 0 && refreshCounts.totalChanged == 0 {
+			lastNoChangeSyncDate = Date()
+		} else {
+			lastNoChangeSyncDate = nil
+		}
 
 		return sentCount > 0 || refreshCounts.totalChanged > 0
 	}
@@ -562,6 +576,7 @@ import Secrets
 
 		try await syncDatabase.insertStatuses(syncStatuses)
 		if !syncStatuses.isEmpty {
+			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = try? await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {

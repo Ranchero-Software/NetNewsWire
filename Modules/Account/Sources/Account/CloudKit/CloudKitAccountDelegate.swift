@@ -139,22 +139,23 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
 			Self.logger.debug("CloudKitAccountDelegate: Skipping sync — no changes on last check, backing off")
-			return true
+			return false
 		}
 
-		try await sendArticleStatus(for: account)
+		let sentCount = try await sendArticleStatus(account: account, showProgress: false)
 		try await refreshArticleStatus(for: account)
 
-		if articlesZoneHasNoChanges && accountZoneHasNoChanges {
-			lastNoChangeSyncDate = Date()
-		} else {
+		let didReceiveChanges = !(articlesZoneHasNoChanges && accountZoneHasNoChanges)
+		let didWork = sentCount > 0 || didReceiveChanges
+		if didWork {
 			lastNoChangeSyncDate = nil
+		} else {
+			lastNoChangeSyncDate = Date()
 		}
 
 		await cleanUpContentRecordsIfNeeded()
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
-		// CloudKit has its own per-account no-change backoff (lastNoChangeSyncDate).
-		return true
+		return didWork
 	}
 
 	private var articlesZoneHasNoChanges: Bool {
@@ -173,7 +174,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	func sendArticleStatus(for account: Account) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		try await sendArticleStatus(account: account, showProgress: false)
+		_ = try await sendArticleStatus(account: account, showProgress: false)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
@@ -498,6 +499,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		try await syncDatabase.insertStatuses(syncStatuses)
 		if !syncStatuses.isEmpty {
+			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
@@ -761,7 +763,7 @@ private extension CloudKitAccountDelegate {
 
 		if sendArticleStatus {
 			do {
-				try await self.sendArticleStatus(account: account, showProgress: true)
+				_ = try await self.sendArticleStatus(account: account, showProgress: true)
 			} catch {
 				postSyncError(error, account: account, operation: "Sending article status")
 				syncProgress.reset()
@@ -911,7 +913,7 @@ private extension CloudKitAccountDelegate {
 				await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
 				syncProgress.completeTask()
 
-				try await sendArticleStatus(account: account, showProgress: true)
+				_ = try await sendArticleStatus(account: account, showProgress: true)
 				do {
 					try await articlesZone.fetchChangesInZone()
 				} catch {
@@ -969,9 +971,10 @@ private extension CloudKitAccountDelegate {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func sendArticleStatus(account: Account, showProgress: Bool) async throws {
+	/// Returns the number of statuses successfully sent.
+	func sendArticleStatus(account: Account, showProgress: Bool) async throws -> Int {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Int, Error>) in
 			let op = CloudKitSendStatusOperation(account: account,
 												 articlesZone: articlesZone,
 												 database: syncDatabase,
@@ -982,7 +985,7 @@ private extension CloudKitAccountDelegate {
 				if mainThreadOperation.isCanceled {
 					continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
 				} else {
-					continuation.resume(returning: ())
+					continuation.resume(returning: op.sentCount)
 				}
 			}
 			mainThreadOperationQueue.add(op)
