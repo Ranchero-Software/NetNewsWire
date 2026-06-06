@@ -112,7 +112,7 @@
       "comment" : "Article"
     },
     "Article Content Records" : {
-      "comment" : "Article content records section header"
+      "comment" : "Article content records header"
     },
     "Article Search" : {
       "comment" : "Article Search"
@@ -130,7 +130,7 @@
       "comment" : "Automatic"
     },
     "BazQux" : {
-      "comment" : "Account name"
+      "comment" : "Account name\nBazQux"
     },
     "Can’t add a feed because no feed was found." : {
       "comment" : "Feed finder"
@@ -145,10 +145,10 @@
       "comment" : "Feed finder"
     },
     "Cancel" : {
-      "comment" : "Cancel\nCancel Delete Account\nCancel Install Theme\nCancel button"
+      "comment" : "Cancel\nCancel button"
     },
     "Canceled." : {
-      "comment" : "Scan status text when canceled"
+      "comment" : "Scan canceled text"
     },
     "Choose a location for the exported OPML file." : {
       "comment" : "Export OPML"
@@ -166,7 +166,7 @@
       "comment" : "Export Account"
     },
     "Clean Up" : {
-      "comment" : "Clean Up\nClean Up button title\nClean up alert button"
+      "comment" : "Clean Up\nClean up alert button"
     },
     "Clean Up iCloud Records" : {
       "comment" : "Clean up alert title"
@@ -202,19 +202,19 @@
 
     },
     "Copy Article URL" : {
-      "comment" : "Command"
+      "comment" : "Copy Article URL"
     },
     "Copy Contents" : {
       "comment" : "Copy Contents button"
     },
     "Copy External URL" : {
-      "comment" : "Command"
+      "comment" : "Copy External URL"
     },
     "Copy Feed URL" : {
-      "comment" : "Command"
+      "comment" : "Copy Feed URL"
     },
     "Copy Home Page URL" : {
-      "comment" : "Command"
+      "comment" : "Copy Home Page URL"
     },
     "Couldn’t complete the iCloud scan because of an error:" : {
       "comment" : "Scan error alert title"
@@ -238,19 +238,19 @@
       "comment" : "Default"
     },
     "Delete" : {
-      "comment" : "Command\nDelete\nDelete Account\nDelete button"
+      "comment" : "Delete"
     },
     "Delete Feed" : {
-      "comment" : "Delete Feed\nDelete feed alert title\nUndo action name\ncommand"
+      "comment" : "Delete feed\ncommand"
     },
     "Delete Feeds" : {
-      "comment" : "Delete feeds alert title\nUndo action name\ncommand"
+      "comment" : "command"
     },
     "Delete Feeds and Folders" : {
       "comment" : "command"
     },
     "Delete Folder" : {
-      "comment" : "Delete Folder\ncommand"
+      "comment" : "Delete folder\ncommand"
     },
     "Delete Folders" : {
       "comment" : "command"
@@ -415,7 +415,7 @@
       "comment" : "Folder Inspector window title"
     },
     "FreshRSS" : {
-      "comment" : "Account name"
+      "comment" : "Account name\nFreshRSS"
     },
     "General" : {
       "comment" : "Preferences"
@@ -469,7 +469,7 @@
       "comment" : "Cleanup phase text when completed"
     },
     "iCloud Storage Stats" : {
-      "comment" : "iCloud Storage Stats window title"
+      "comment" : "Navigation title for iCloud stats view"
     },
     "Icon Preview" : {
       "comment" : "Icon Preview"
@@ -484,7 +484,7 @@
       "comment" : "Import Theme"
     },
     "Inoreader" : {
-      "comment" : "Account name"
+      "comment" : "Account name\nInoreader"
     },
     "Inspector" : {
       "comment" : "Inspector window title"
@@ -543,37 +543,37 @@
       "comment" : "Manually"
     },
     "Mark Above as Read" : {
-      "comment" : "Command"
+      "comment" : "Mark Above as Read"
     },
     "Mark All as Read" : {
-      "comment" : "Command\nMark All as Read"
+      "comment" : "Mark All as Read"
     },
     "Mark All as Read in “%@”" : {
-      "comment" : "Command"
+      "comment" : "Command\nMark All as Read in Feed"
     },
     "Mark Article Unread" : {
       "comment" : "Mark Article Unread"
     },
     "Mark as Read" : {
-      "comment" : "Command\nMark as Read"
+      "comment" : "Mark as Read"
     },
     "Mark As Read" : {
       "comment" : "Mark As Read"
     },
     "Mark as Starred" : {
-      "comment" : "Command\nMark as Starred"
+      "comment" : "Mark as Starred"
     },
     "Mark as Unread" : {
-      "comment" : "Command"
+      "comment" : "Mark as Unread"
     },
     "Mark as Unstarred" : {
-      "comment" : "Command"
+      "comment" : "Mark as Unstarred"
     },
     "Mark Below as Read" : {
-      "comment" : "Command"
+      "comment" : "Mark Below as Read"
     },
     "Mark Read" : {
-      "comment" : "Mark Read\ncommand"
+      "comment" : "command"
     },
     "Mark Starred" : {
       "comment" : "command"
@@ -622,13 +622,13 @@
       "comment" : "New Article Notifications"
     },
     "New Feed" : {
-      "comment" : "Command"
+      "comment" : "New Feed"
     },
     "New Feed…" : {
       "comment" : "New Feed"
     },
     "New Folder" : {
-      "comment" : "Command"
+      "comment" : "New Folder"
     },
     "New Folder…" : {
       "comment" : "New Folder"
@@ -672,16 +672,16 @@
       "comment" : "Number of Lines"
     },
     "OK" : {
-      "comment" : "OK\nOK button"
+      "comment" : "OK"
     },
     "Open" : {
       "comment" : "Open"
     },
     "Open Home Page" : {
-      "comment" : "Command"
+      "comment" : "Open Home Page"
     },
     "Open in Browser" : {
-      "comment" : "Command\nOpen in Browser"
+      "comment" : "Open in Browser"
     },
     "Open In Browser" : {
       "comment" : "Open In Browser"
@@ -693,7 +693,7 @@
       "comment" : "Open in Browser in Foreground menu item title"
     },
     "Open Settings" : {
-      "comment" : "Open Settings button"
+      "comment" : "Open Settings\nOpen Settings button"
     },
     "Open Settings to configure iCloud and enable iCloud Drive." : {
       "comment" : "CloudKit account setup recovery suggestion"
@@ -720,13 +720,13 @@
       "comment" : "Processing - Reader View"
     },
     "Read" : {
-      "comment" : "Read row label"
+      "comment" : "Read label"
     },
     "Read Articles Filter" : {
       "comment" : "Read Articles Filter"
     },
     "Read Content Deleted" : {
-      "comment" : "Cleanup stat row label"
+      "comment" : "Read content deleted label"
     },
     "read content record" : {
       "comment" : "Singular label for read content records"
@@ -753,7 +753,7 @@
       "comment" : "Remove Account"
     },
     "Rename" : {
-      "comment" : "Command"
+      "comment" : "Rename"
     },
     "Rename “%@”" : {
       "comment" : "Rename feed"
@@ -762,10 +762,10 @@
       "comment" : "Rename sheet"
     },
     "Return to Previous Scan Results" : {
-      "comment" : "Return to previous scan results button"
+      "comment" : "Return to scan results button"
     },
     "Scan completed." : {
-      "comment" : "Scan status text when completed"
+      "comment" : "Scan completed text"
     },
     "Scan failed." : {
       "comment" : "Scan failed text"
@@ -777,7 +777,7 @@
       "comment" : "Spinner accessibility label"
     },
     "Scanning iCloud storage" : {
-      "comment" : "Scan status text while fetching"
+      "comment" : "Scan status text"
     },
     "Search" : {
       "comment" : "Search"
@@ -828,7 +828,7 @@
       "comment" : "Self hosted Account"
     },
     "Share" : {
-      "comment" : "Share\nShare button accessibility description"
+      "comment" : "Share"
     },
     "Share Stats" : {
       "comment" : "Share stats menu item"
@@ -909,10 +909,10 @@
       "comment" : "Star Article"
     },
     "Starred" : {
-      "comment" : "Starred pseudo-feed title\nStarred row label"
+      "comment" : "Accessibility announcement\nStarred article for accessibility\nStarred label\nStarred pseudo-feed title"
     },
     "Status Records" : {
-      "comment" : "Status records section header"
+      "comment" : "Status records header"
     },
     "Sync content of unread articles" : {
 
@@ -931,7 +931,7 @@
 
     },
     "The Old Reader" : {
-      "comment" : "Account name"
+      "comment" : "Account name\nThe Old Reader"
     },
     "The theme “%@” already exists. Overwrite it?" : {
       "comment" : "Overwrite theme"
@@ -1036,10 +1036,10 @@
       "comment" : "Unread label for accessibility"
     },
     "Unread" : {
-      "comment" : "Unread row label"
+      "comment" : "Unread\nUnread label"
     },
     "Unread Content Deleted" : {
-      "comment" : "Cleanup stat row label"
+      "comment" : "Unread content deleted label"
     },
     "unread content record" : {
       "comment" : "Singular label for unread content records"
