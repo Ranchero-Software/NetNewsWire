@@ -221,7 +221,7 @@ import Foundation
 	@Test func detailIsPreserved() {
 		let activityLog = ActivityLog()
 
-		activityLog.createActivity(owner: .account("account1"), kind: .sendArticleStatuses, detail: "42 statuses")
+		activityLog.createActivity(owner: .account(accountID: "account1", displayName: "Account One"), kind: .sendArticleStatuses, detail: "42 statuses")
 
 		#expect(activityLog.pendingActivities[0].detail == "42 statuses")
 	}
