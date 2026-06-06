@@ -693,7 +693,7 @@
       "comment" : "Open in Browser in Foreground menu item title"
     },
     "Open Settings" : {
-      "comment" : "Open Settings\nOpen Settings button"
+      "comment" : "Open Settings button"
     },
     "Open Settings to configure iCloud and enable iCloud Drive." : {
       "comment" : "CloudKit account setup recovery suggestion"

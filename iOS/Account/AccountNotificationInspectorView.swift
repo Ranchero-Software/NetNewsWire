@@ -30,7 +30,7 @@ struct AccountNotificationInspectorView: View {
 					Button {
 						UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
 					} label: {
-						Text("Open Settings", comment: "Open Settings")
+						Text("Open Settings", comment: "Open Settings button")
 					}
 					.buttonStyle(.borderedProminent)
 					.tint(.accentColor)

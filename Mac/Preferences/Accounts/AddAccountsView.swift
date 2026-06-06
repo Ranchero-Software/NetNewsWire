@@ -101,10 +101,10 @@ struct AddAccountsView: View {
 				Button(action: {
 					parent?.dismiss(nil)
 				}, label: {
-					Text("Cancel")
+					Text("Cancel", comment: "Cancel button")
 						.frame(width: 76)
 				})
-				.help("Cancel")
+				.help(Text("Cancel", comment: "Cancel button"))
 				.keyboardShortcut(.cancelAction)
 				Button(action: {
 					addAccountDelegate?.presentSheetForAccount(selectedAccount)
