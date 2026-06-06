@@ -47,8 +47,8 @@ extension UIBarButtonItem: MarkAsReadAlertControllerSourceType {}
 		let title = NSLocalizedString("Mark As Read", comment: "Mark As Read")
 		let message = NSLocalizedString("You can turn this confirmation off in Settings.",
 										comment: "You can turn this confirmation off in Settings.")
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
-		let settingsTitle = NSLocalizedString("Open Settings", comment: "Open Settings")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
+		let settingsTitle = NSLocalizedString("Open Settings", comment: "Open Settings button")
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .actionSheet)
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in

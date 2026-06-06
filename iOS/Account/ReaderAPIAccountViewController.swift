@@ -49,14 +49,14 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		if let unwrappedAccountType = accountType {
 			switch unwrappedAccountType {
 			case .freshRSS:
-				title = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+				title = NSLocalizedString("FreshRSS", comment: "Account name")
 				apiURLTextField.placeholder = NSLocalizedString("API URL: https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
 			case .inoreader:
-				title = NSLocalizedString("Inoreader", comment: "Inoreader")
+				title = NSLocalizedString("Inoreader", comment: "Account name")
 			case .bazQux:
-				title = NSLocalizedString("BazQux", comment: "BazQux")
+				title = NSLocalizedString("BazQux", comment: "Account name")
 			case .theOldReader:
-				title = NSLocalizedString("The Old Reader", comment: "The Old Reader")
+				title = NSLocalizedString("The Old Reader", comment: "Account name")
 			default:
 				title = ""
 			}

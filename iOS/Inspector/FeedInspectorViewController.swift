@@ -213,7 +213,7 @@ extension FeedInspectorViewController {
 	func notificationUpdateErrorAlert() -> UIAlertController {
 		let alert = UIAlertController(title: NSLocalizedString("Enable Notifications", comment: "Notifications"),
 									  message: NSLocalizedString("Notifications need to be enabled in the Settings app.", comment: "Notifications need to be enabled in the Settings app."), preferredStyle: .alert)
-		let openSettings = UIAlertAction(title: NSLocalizedString("Open Settings", comment: "Open Settings"), style: .default) { _ in
+		let openSettings = UIAlertAction(title: NSLocalizedString("Open Settings", comment: "Open Settings button"), style: .default) { _ in
 			UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!, options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false], completionHandler: nil)
 		}
 		let dismiss = UIAlertAction(title: NSLocalizedString("Dismiss", comment: "Dismiss"), style: .cancel, handler: nil)

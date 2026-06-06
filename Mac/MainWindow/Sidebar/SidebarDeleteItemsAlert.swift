@@ -19,7 +19,7 @@ enum SidebarDeleteItemsAlert {
 
 		if nodes.count == 1 {
 			if let folder = nodes.first?.representedObject as? Folder {
-				alert.messageText = NSLocalizedString("Delete Folder", comment: "Delete Folder")
+				alert.messageText = NSLocalizedString("Delete Folder", comment: "Command")
 				let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
 				alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, folder.nameForDisplay) as String
 			} else if let sidebarItem = nodes.first?.representedObject as? SidebarItem {
@@ -33,8 +33,8 @@ enum SidebarDeleteItemsAlert {
 			alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, nodes.count) as String
 		}
 
-		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete Account"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Delete Account"))
+		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete button"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 		return alert
 	}

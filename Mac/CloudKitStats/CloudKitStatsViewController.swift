@@ -103,7 +103,7 @@ extension CloudKitStatsViewController {
 		alert.alertStyle = .warning
 		alert.messageText = NSLocalizedString("Clean Up iCloud Records", comment: "Clean up alert title")
 		alert.informativeText = model.cleanUpPlanIsStale ? staleCleanUpConfirmationText() : cleanUpConfirmationText(plan)
-		alert.addButton(withTitle: NSLocalizedString("Clean Up", comment: "Clean up alert button"))
+		alert.addButton(withTitle: NSLocalizedString("Clean Up", comment: "Clean Up button"))
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 		guard let window = view.window else {

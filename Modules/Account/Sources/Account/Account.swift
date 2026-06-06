@@ -66,13 +66,13 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 		case .newsBlur:
 			return NSLocalizedString("NewsBlur", comment: "NewsBlur")
 		case .freshRSS:
-			return NSLocalizedString("FreshRSS", comment: "FreshRSS")
+			return NSLocalizedString("FreshRSS", comment: "Account name")
 		case .inoreader:
-			return NSLocalizedString("Inoreader", comment: "Inoreader")
+			return NSLocalizedString("Inoreader", comment: "Account name")
 		case .bazQux:
-			return NSLocalizedString("BazQux", comment: "BazQux")
+			return NSLocalizedString("BazQux", comment: "Account name")
 		case .theOldReader:
-			return NSLocalizedString("The Old Reader", comment: "The Old Reader")
+			return NSLocalizedString("The Old Reader", comment: "Account name")
 		}
 	}
 }

@@ -21,7 +21,7 @@ import UIKit
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		if let websiteURL = URL(string: theme.creatorHomePage) {
@@ -58,7 +58,7 @@ import UIKit
 
 				let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 				alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 				let overwriteAction = UIAlertAction(title: NSLocalizedString("Overwrite", comment: "Overwrite"), style: .default) { _ in

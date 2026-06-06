@@ -85,7 +85,7 @@ private extension UIViewController {
 
 		}
 
-		let dismissTitle = NSLocalizedString("OK", comment: "OK")
+		let dismissTitle = NSLocalizedString("OK", comment: "OK button")
 		let dismissAction = UIAlertAction(title: dismissTitle, style: .default) { _ in
 			dismiss?()
 		}

@@ -974,7 +974,7 @@ extension AppDelegate {
 			alert.accessoryView = textView
 
 			alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
-			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 			func importTheme() {
 				do {
@@ -996,7 +996,7 @@ extension AppDelegate {
 						alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
 
 						alert.addButton(withTitle: NSLocalizedString("Overwrite", comment: "Overwrite"))
-						alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+						alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 						alert.beginSheetModal(for: window) { result in
 							if result == NSApplication.ModalResponse.alertFirstButtonReturn {
@@ -1023,7 +1023,7 @@ extension AppDelegate {
 		let localizedInformativeText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
 		alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, themeName) as String
 
-		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK button"))
 
 		alert.beginSheetModal(for: window)
 	}
@@ -1068,7 +1068,7 @@ extension AppDelegate {
 			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
 			alert.informativeText = informativeText
 			alert.addButton(withTitle: NSLocalizedString("Open Theme Folder", comment: "Open Theme Folder"))
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK button"))
 
 			let button = alert.buttons.first
 			button?.target = self

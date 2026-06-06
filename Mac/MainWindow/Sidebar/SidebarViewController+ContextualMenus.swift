@@ -295,7 +295,7 @@ private extension SidebarViewController {
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects, image: Assets.Images.delete)
+		return menuItem(NSLocalizedString("Delete", comment: "Delete button"), #selector(deleteFromContextualMenu(_:)), objects, image: Assets.Images.delete)
 	}
 
 	func renameMenuItem(_ object: Any) -> NSMenuItem {

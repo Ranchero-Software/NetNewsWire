@@ -68,12 +68,12 @@ final class AccountsPreferencesViewController: NSViewController {
 
 		let alert = NSAlert()
 		alert.alertStyle = .warning
-		let deletePrompt = NSLocalizedString("Delete", comment: "Delete")
+		let deletePrompt = NSLocalizedString("Delete", comment: "Delete button")
 		alert.messageText = "\(deletePrompt) “\(accountName)”?"
 		alert.informativeText = NSLocalizedString("Are you sure you want to delete the account “\(accountName)”? This cannot be undone.", comment: "Delete text")
 
-		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete Account"))
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Delete Account"))
+		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete button"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 		guard let window = view.window else {
 			return
@@ -208,7 +208,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 		alert.informativeText = NSLocalizedString("A web browser will open the Feedly login for you to authorize access.",
 												  comment: "Alert informative text when adding a Feedly account and waiting for authorization from the user.")
 
-		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel"))
+		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 		let attachedWindow = self.view.window!
 

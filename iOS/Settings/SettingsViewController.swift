@@ -475,7 +475,7 @@ private extension SettingsViewController {
 			alert.addAction(action)
 		}
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		self.present(alert, animated: true)
@@ -531,7 +531,7 @@ private extension SettingsViewController {
 			alert.addAction(action)
 		}
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		self.present(alert, animated: true)

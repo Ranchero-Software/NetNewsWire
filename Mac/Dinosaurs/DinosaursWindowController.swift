@@ -111,11 +111,11 @@ final class DinosaursWindowController: NSWindowController {
 		let alert = NSAlert()
 		alert.alertStyle = .warning
 		if rows.count == 1, let only = rows.first {
-			alert.messageText = NSLocalizedString("Delete Feed", comment: "Delete feed alert title")
+			alert.messageText = NSLocalizedString("Delete Feed", comment: "Delete Feed")
 			let format = NSLocalizedString("Are you sure you want to delete the feed “%@”?", comment: "Delete feed alert message")
 			alert.informativeText = String(format: format, only.feedName)
 		} else {
-			alert.messageText = NSLocalizedString("Delete Feeds", comment: "Delete feeds alert title")
+			alert.messageText = NSLocalizedString("Delete Feeds", comment: "Delete Feeds")
 			let format = NSLocalizedString("Are you sure you want to delete %d feeds?", comment: "Delete feeds alert message")
 			alert.informativeText = String(format: format, rows.count)
 		}
@@ -299,8 +299,8 @@ private extension DinosaursWindowController {
 			controller.refreshModel()
 		}
 		let actionName = deletions.count == 1
-			? NSLocalizedString("Delete Feed", comment: "Undo action name")
-			: NSLocalizedString("Delete Feeds", comment: "Undo action name")
+			? NSLocalizedString("Delete Feed", comment: "Delete Feed")
+			: NSLocalizedString("Delete Feeds", comment: "Delete Feeds")
 		undoManager.setActionName(actionName)
 	}
 

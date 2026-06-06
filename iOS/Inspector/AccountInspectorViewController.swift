@@ -108,7 +108,7 @@ final class AccountInspectorViewController: UITableViewController {
 			}
 		}()
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 		alertController.addAction(cancelAction)
 
