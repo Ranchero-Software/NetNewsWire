@@ -25,12 +25,12 @@
             <rect key="contentRect" x="839" y="541" width="776" height="493"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1410"/>
             <value key="minSize" type="size" width="680" height="260"/>
-            <view key="contentView" wantsLayer="YES" misplaced="YES" id="EiT-Mj-1SZ">
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="776" height="493"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="emL-ea-nLw">
-                        <rect key="frame" x="0.0" y="371" width="776" height="64"/>
+                        <rect key="frame" x="0.0" y="429" width="776" height="64"/>
                         <subviews>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8g2-jD-Dio">
                                 <rect key="frame" x="18" y="24" width="218" height="16"/>
@@ -85,13 +85,13 @@
                         </constraints>
                     </customView>
                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="hU8-QM-p8K">
-                        <rect key="frame" x="0.0" y="64" width="776" height="307"/>
+                        <rect key="frame" x="0.0" y="64" width="776" height="365"/>
                         <clipView key="contentView" id="Xrs-tj-3LT">
-                            <rect key="frame" x="0.0" y="0.0" width="776" height="307"/>
+                            <rect key="frame" x="0.0" y="0.0" width="776" height="365"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="inset" alternatingRowBackgroundColors="YES" columnReordering="NO" autosaveColumns="NO" rowHeight="24" rowSizeStyle="medium" headerView="s3M-ws-fms" viewBased="YES" id="QfN-Xy-42E" customClass="UtilityTableView" customModule="RSCore">
-                                    <rect key="frame" x="0.0" y="0.0" width="776" height="279"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="776" height="337"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
