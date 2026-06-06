@@ -41,6 +41,7 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 		super.windowDidLoad()
 		window?.delegate = self
 
+		textView?.usesFindBar = true
 		textView?.font = NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: .regular)
 		textView?.textContainerInset = NSSize(width: LogTextStyle.textContainerInset, height: LogTextStyle.textContainerInset)
 
@@ -58,6 +59,10 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 		}
 		super.showWindow(sender)
 		reloadEntries()
+	}
+
+	@IBAction override func performTextFinderAction(_ sender: Any?) {
+		textView?.performTextFinderAction(sender)
 	}
 
 	func saveState() {
