@@ -142,6 +142,12 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 		postChildrenDidChangeNotification()
 	}
 
+	/// Replace the entire top-level feed set in one shot, posting a single change notification.
+	public func replaceTopLevelFeeds(_ feeds: Set<Feed>) {
+		topLevelFeeds = feeds
+		postChildrenDidChangeNotification()
+	}
+
 	// MARK: - Hashable
 
 	public func hash(into hasher: inout Hasher) {

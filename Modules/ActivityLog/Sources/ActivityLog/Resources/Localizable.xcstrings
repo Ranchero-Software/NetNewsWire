@@ -221,6 +221,9 @@
         }
       }
     },
+    "Restoring feed" : {
+      "comment" : "Activity kind"
+    },
     "Restoring folder" : {
       "comment" : "Activity kind",
       "localizations" : {

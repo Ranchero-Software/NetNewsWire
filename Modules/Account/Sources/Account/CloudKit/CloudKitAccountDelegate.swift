@@ -269,19 +269,18 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
 		}
 
+		// Optimistic local removal — sidebar updates immediately.
+		container.removeFeedFromTreeAtTopLevel(feed)
+
 		do {
 			try await account.logActivity(kind: .removeFeed, detail: feed.url) {
 				try await removeFeedFromCloud(for: account, with: feed, from: container)
-				container.removeFeedFromTreeAtTopLevel(feed)
 			}
+		} catch CloudKitZoneError.corruptAccount {
+			// Account is corrupt. Leave the feed removed locally to clear the bad state.
 		} catch {
-			switch error {
-			case CloudKitZoneError.corruptAccount:
-				// We got into a bad state and should remove the feed to clear up the bad data
-				container.removeFeedFromTreeAtTopLevel(feed)
-			default:
-				throw error
-			}
+			container.addFeedToTreeAtTopLevel(feed)
+			throw error
 		}
 	}
 
@@ -326,8 +325,32 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
-		try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
-		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
+		defer {
+			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
+		}
+
+		// The feed was already validated when first added. Skip Feed Finder and re-create the
+		// CloudKit record directly, restoring the local tree position the user expects.
+		syncProgress.addTask()
+
+		container.addFeedToTreeAtTopLevel(feed)
+
+		do {
+			try await account.logActivity(kind: .restoreFeed, detail: feed.url) {
+				let externalID = try await accountZone.createFeed(url: feed.url,
+																  name: feed.name,
+																  editedName: feed.editedName,
+																  homePageURL: feed.homePageURL,
+																  container: container)
+				feed.externalID = externalID
+			}
+			syncProgress.completeTask()
+		} catch {
+			syncProgress.completeTask()
+			container.removeFeedFromTreeAtTopLevel(feed)
+			postSyncError(error, account: account, operation: "Restoring feed")
+			throw error
+		}
 	}
 
 	func createFolder(for account: Account, name: String) async throws -> Folder {
@@ -380,6 +403,11 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		let folderName = folder.name ?? ""
+		let originalFeeds = folder.topLevelFeeds
+
+		// Optimistic local removal — sidebar updates immediately.
+		account.removeFolderFromTree(folder)
+
 		try await account.logActivity(kind: .removeFolder, detail: folderName) {
 			syncProgress.addTask()
 
@@ -390,47 +418,56 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			} catch {
 				syncProgress.completeTask()
 				syncProgress.completeTask()
+				folder.replaceTopLevelFeeds(originalFeeds)
+				account.addFolderToTree(folder)
 				postSyncError(error, account: account, operation: "Removing folder")
 				throw error
 			}
 
 			let feeds = feedExternalIDs.compactMap { account.existingFeed(withExternalID: $0) }
-			var errorOccurred = false
+			var failedFeeds: Set<Feed> = []
 
-			await withTaskGroup(of: Result<Void, Error>.self) { group in
+			await withTaskGroup(of: (Feed, Error?).self) { group in
 				for feed in feeds {
 					group.addTask {
 						do {
 							try await account.logActivity(kind: .removeFeed, detail: feed.url) {
 								try await self.removeFeedFromCloud(for: account, with: feed, from: folder)
 							}
-							return .success(())
+							return (feed, nil)
 						} catch {
 							Self.logger.error("CloudKit: Remove folder, remove feed error: \(error.localizedDescription)")
-							return .failure(error)
+							return (feed, error)
 						}
 					}
 				}
 
-				for await result in group {
-					if case .failure(let error) = result {
-						errorOccurred = true
+				for await (feed, error) in group {
+					if let error {
+						failedFeeds.insert(feed)
 						postSyncError(error, account: account, operation: "Removing folder")
 					}
 				}
 			}
 
-			guard !errorOccurred else {
+			guard failedFeeds.isEmpty else {
+				// Best-effort restore: bring the folder back with only the feeds that failed to delete
+				// from CloudKit. Successfully-removed feeds stay gone locally to match cloud state.
 				syncProgress.completeTask()
+				folder.replaceTopLevelFeeds(failedFeeds)
+				account.addFolderToTree(folder)
 				throw CloudKitAccountDelegateError.unknown
 			}
 
 			do {
 				try await accountZone.removeFolder(folder)
 				syncProgress.completeTask()
-				account.removeFolderFromTree(folder)
 			} catch {
 				syncProgress.completeTask()
+				// All feeds were removed from CloudKit but the folder record removal failed.
+				// Restore an empty folder locally so it matches the cloud and the user can retry.
+				folder.replaceTopLevelFeeds([])
+				account.addFolderToTree(folder)
 				throw error
 			}
 		}

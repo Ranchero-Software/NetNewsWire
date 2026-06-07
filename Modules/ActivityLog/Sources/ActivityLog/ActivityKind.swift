@@ -27,6 +27,7 @@ public enum ActivityKind: Sendable, Hashable {
 	case removeFeed
 	case moveFeed
 	case addFeed
+	case restoreFeed
 	case createFolder
 	case renameFolder
 	case removeFolder
@@ -83,6 +84,8 @@ public enum ActivityKind: Sendable, Hashable {
 			return NSLocalizedString("Moving feed", bundle: .module, comment: "Activity kind")
 		case .addFeed:
 			return NSLocalizedString("Adding feed", bundle: .module, comment: "Activity kind")
+		case .restoreFeed:
+			return NSLocalizedString("Restoring feed", bundle: .module, comment: "Activity kind")
 		case .createFolder:
 			return NSLocalizedString("Creating folder", bundle: .module, comment: "Activity kind")
 		case .renameFolder:
