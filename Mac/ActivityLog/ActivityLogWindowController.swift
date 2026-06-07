@@ -6,9 +6,10 @@
 //
 
 import AppKit
+import RSCore
+import RSWeb
 import Account
 import ActivityLog
-import RSCore
 
 final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 
@@ -96,6 +97,12 @@ final class ActivityLogWindowController: NSWindowController, NSWindowDelegate {
 
 	@IBAction func copyContents(_ sender: Any?) {
 		textView?.copyAllToPasteboard()
+	}
+
+	@IBAction func showActivityLogHelp(_ sender: Any?) {
+		if let url = URL(string: "https://netnewswire.com/help/activity-log.html") {
+			MacWebBrowser.openURL(url)
+		}
 	}
 }
 

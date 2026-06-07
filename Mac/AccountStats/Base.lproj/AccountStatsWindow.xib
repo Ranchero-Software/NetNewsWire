@@ -27,13 +27,13 @@
                 <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                 <subviews>
                     <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="24" horizontalPageScroll="10" verticalLineScroll="24" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Lnf-gd-W5z">
-                        <rect key="frame" x="0.0" y="64" width="700" height="192"/>
+                        <rect key="frame" x="0.0" y="65" width="700" height="191"/>
                         <clipView key="contentView" id="aS7-wc-rRc">
-                            <rect key="frame" x="0.0" y="0.0" width="700" height="192"/>
+                            <rect key="frame" x="0.0" y="0.0" width="700" height="191"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" tableStyle="inset" alternatingRowBackgroundColors="YES" multipleSelection="NO" autosaveName="AccountStatsTable" rowHeight="24" rowSizeStyle="medium" headerView="88L-NM-yhV" viewBased="YES" id="JP4-Kx-0oU" customClass="UtilityTableView" customModule="RSCore">
-                                    <rect key="frame" x="0.0" y="0.0" width="700" height="164"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="700" height="163"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="17" height="0.0"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -325,41 +325,13 @@
                         </tableHeaderView>
                     </scrollView>
                     <visualEffectView wantsLayer="YES" blendingMode="withinWindow" material="titlebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="3Ct-jP-dkh">
-                        <rect key="frame" x="0.0" y="0.0" width="700" height="64"/>
+                        <rect key="frame" x="0.0" y="0.0" width="700" height="65"/>
                         <subviews>
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="CCY-aO-S6G">
-                                <rect key="frame" x="0.0" y="61" width="700" height="5"/>
+                                <rect key="frame" x="0.0" y="62" width="700" height="5"/>
                             </box>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vpw-Lo-UEL">
-                                <rect key="frame" x="20" y="20" width="141" height="24"/>
-                                <buttonCell key="cell" type="push" title="Vacuum Databases" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KiW-Nc-bVK">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="vacuum:" target="-2" id="bn-vac-act"/>
-                                </connections>
-                            </button>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5xO-up-t4V">
-                                <rect key="frame" x="167" y="24" width="244" height="16"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" title="Vacuuming may make databases faster." id="xwg-oc-6B1">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
-                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="RbZ-Ko-8zv">
-                                <rect key="frame" x="417" y="24" width="16" height="16"/>
-                            </progressIndicator>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N0p-CD-tr7">
-                                <rect key="frame" x="504" y="20" width="140" height="24"/>
-                                <buttonCell key="cell" type="push" title="Refresh" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1Nz-s2-tlh">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                            </button>
                             <button horizontalHuggingPriority="1000" verticalHuggingPriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="a3Q-Bq-vCh">
-                                <rect key="frame" x="656" y="20" width="24" height="24"/>
+                                <rect key="frame" x="20" y="20" width="24" height="24"/>
                                 <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="d7a-Y9-drR">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -368,25 +340,52 @@
                                     <action selector="showHelp:" target="-2" id="bn-hlp-act"/>
                                 </connections>
                             </button>
+                            <progressIndicator wantsLayer="YES" horizontalHuggingPriority="1000" verticalHuggingPriority="1000" maxValue="100" displayedWhenStopped="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="RbZ-Ko-8zv">
+                                <rect key="frame" x="115" y="24" width="16" height="16"/>
+                            </progressIndicator>
+                            <textField wantsLayer="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5xO-up-t4V">
+                                <rect key="frame" x="137" y="24" width="244" height="16"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Vacuuming may make databases faster." id="xwg-oc-6B1">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="N0p-CD-tr7">
+                                <rect key="frame" x="540" y="20" width="140" height="24"/>
+                                <buttonCell key="cell" type="push" title="Refresh" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="1Nz-s2-tlh">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Vpw-Lo-UEL">
+                                <rect key="frame" x="387" y="20" width="141" height="24"/>
+                                <buttonCell key="cell" type="push" title="Vacuum Databases" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KiW-Nc-bVK">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="vacuum:" target="-2" id="bn-vac-act"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="Vpw-Lo-UEL" firstAttribute="leading" secondItem="3Ct-jP-dkh" secondAttribute="leading" constant="20" symbolic="YES" id="26q-33-E6k"/>
-                            <constraint firstAttribute="trailing" secondItem="a3Q-Bq-vCh" secondAttribute="trailing" constant="20" symbolic="YES" id="3NL-hn-osY"/>
-                            <constraint firstItem="RbZ-Ko-8zv" firstAttribute="leading" secondItem="5xO-up-t4V" secondAttribute="trailing" constant="8" symbolic="YES" id="3yz-i2-1eP"/>
+                            <constraint firstItem="Vpw-Lo-UEL" firstAttribute="top" secondItem="CCY-aO-S6G" secondAttribute="bottom" constant="20" symbolic="YES" id="0e5-wG-eEs"/>
+                            <constraint firstItem="RbZ-Ko-8zv" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="a3Q-Bq-vCh" secondAttribute="trailing" constant="12" symbolic="YES" id="4Cf-wx-lvb"/>
                             <constraint firstItem="CCY-aO-S6G" firstAttribute="top" secondItem="3Ct-jP-dkh" secondAttribute="top" id="4jT-du-UCY"/>
-                            <constraint firstAttribute="bottom" secondItem="a3Q-Bq-vCh" secondAttribute="bottom" constant="20" symbolic="YES" id="5dl-Hi-dkf"/>
-                            <constraint firstItem="Vpw-Lo-UEL" firstAttribute="top" secondItem="3Ct-jP-dkh" secondAttribute="top" constant="20" symbolic="YES" id="DlI-jz-BTc"/>
-                            <constraint firstItem="5xO-up-t4V" firstAttribute="leading" secondItem="Vpw-Lo-UEL" secondAttribute="trailing" constant="8" symbolic="YES" id="Gas-rG-sQ0"/>
+                            <constraint firstItem="a3Q-Bq-vCh" firstAttribute="leading" secondItem="3Ct-jP-dkh" secondAttribute="leading" constant="20" symbolic="YES" id="F0R-aZ-Iep"/>
+                            <constraint firstItem="5xO-up-t4V" firstAttribute="leading" secondItem="RbZ-Ko-8zv" secondAttribute="trailing" constant="8" symbolic="YES" id="MCK-MW-UFl"/>
                             <constraint firstItem="CCY-aO-S6G" firstAttribute="leading" secondItem="3Ct-jP-dkh" secondAttribute="leading" id="N0y-xe-yEK"/>
-                            <constraint firstItem="N0p-CD-tr7" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="RbZ-Ko-8zv" secondAttribute="trailing" constant="8" symbolic="YES" id="YPb-D4-rYl"/>
+                            <constraint firstItem="N0p-CD-tr7" firstAttribute="leading" secondItem="Vpw-Lo-UEL" secondAttribute="trailing" constant="12" symbolic="YES" id="R1K-Td-Rdy"/>
+                            <constraint firstItem="Vpw-Lo-UEL" firstAttribute="centerY" secondItem="RbZ-Ko-8zv" secondAttribute="centerY" id="a77-T3-vBF"/>
+                            <constraint firstItem="Vpw-Lo-UEL" firstAttribute="firstBaseline" secondItem="a3Q-Bq-vCh" secondAttribute="firstBaseline" id="awC-KF-gh9"/>
                             <constraint firstItem="5xO-up-t4V" firstAttribute="firstBaseline" secondItem="Vpw-Lo-UEL" secondAttribute="firstBaseline" id="dW6-4x-rvJ"/>
-                            <constraint firstItem="RbZ-Ko-8zv" firstAttribute="centerY" secondItem="3Ct-jP-dkh" secondAttribute="centerY" id="dYd-Jh-TeT"/>
+                            <constraint firstAttribute="trailing" secondItem="N0p-CD-tr7" secondAttribute="trailing" constant="20" symbolic="YES" id="fte-Xk-6RK"/>
                             <constraint firstAttribute="bottom" secondItem="Vpw-Lo-UEL" secondAttribute="bottom" constant="20" symbolic="YES" id="ivQ-6G-EpO"/>
-                            <constraint firstItem="a3Q-Bq-vCh" firstAttribute="leading" secondItem="N0p-CD-tr7" secondAttribute="trailing" constant="12" symbolic="YES" id="njx-pJ-4RF"/>
                             <constraint firstAttribute="trailing" secondItem="CCY-aO-S6G" secondAttribute="trailing" id="qyl-sa-fMa"/>
+                            <constraint firstItem="Vpw-Lo-UEL" firstAttribute="leading" secondItem="5xO-up-t4V" secondAttribute="trailing" constant="8" symbolic="YES" id="s2L-8P-LDL"/>
                             <constraint firstItem="N0p-CD-tr7" firstAttribute="firstBaseline" secondItem="Vpw-Lo-UEL" secondAttribute="firstBaseline" id="s7K-jR-lor"/>
                             <constraint firstItem="N0p-CD-tr7" firstAttribute="width" secondItem="Vpw-Lo-UEL" secondAttribute="width" id="vgD-kQ-FB8"/>
-                            <constraint firstItem="a3Q-Bq-vCh" firstAttribute="top" secondItem="3Ct-jP-dkh" secondAttribute="top" constant="20" symbolic="YES" id="yeO-rS-dVm"/>
                         </constraints>
                     </visualEffectView>
                 </subviews>

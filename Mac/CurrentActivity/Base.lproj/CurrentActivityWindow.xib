@@ -145,8 +145,18 @@
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Ea0-ws-qki">
                                 <rect key="frame" x="0.0" y="62" width="500" height="5"/>
                             </box>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9lc-kA-RXM">
+                                <rect key="frame" x="20" y="20" width="24" height="24"/>
+                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="feS-WO-zId">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showHelp:" target="-2" id="cAW-Hl-act"/>
+                                </connections>
+                            </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RGV-0U-ZEp">
-                                <rect key="frame" x="20" y="20" width="96" height="24"/>
+                                <rect key="frame" x="277" y="20" width="96" height="24"/>
                                 <buttonCell key="cell" type="push" title="Activity Log" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="3gn-ze-9Iw">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -156,7 +166,7 @@
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="oa7-Hq-G8w">
-                                <rect key="frame" x="128" y="20" width="95" height="24"/>
+                                <rect key="frame" x="385" y="20" width="95" height="24"/>
                                 <buttonCell key="cell" type="push" title="Error Log" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bqz-DW-5Ae">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
@@ -165,27 +175,17 @@
                                     <action selector="showErrorLog:" target="-1" id="cAW-El-act"/>
                                 </connections>
                             </button>
-                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9lc-kA-RXM">
-                                <rect key="frame" x="456" y="20" width="24" height="24"/>
-                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="feS-WO-zId">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <connections>
-                                    <action selector="showHelp:" target="-2" id="cAW-Hl-act"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="9lc-kA-RXM" firstAttribute="firstBaseline" secondItem="RGV-0U-ZEp" secondAttribute="firstBaseline" id="1de-ep-zDG"/>
                             <constraint firstItem="RGV-0U-ZEp" firstAttribute="top" secondItem="Ea0-ws-qki" secondAttribute="bottom" constant="20" symbolic="YES" id="61h-1X-kXq"/>
                             <constraint firstItem="oa7-Hq-G8w" firstAttribute="leading" secondItem="RGV-0U-ZEp" secondAttribute="trailing" constant="12" symbolic="YES" id="8kp-tb-Q0I"/>
-                            <constraint firstItem="RGV-0U-ZEp" firstAttribute="leading" secondItem="ZEd-Og-ylK" secondAttribute="leading" constant="20" symbolic="YES" id="AVP-IK-IIK"/>
-                            <constraint firstItem="9lc-kA-RXM" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="oa7-Hq-G8w" secondAttribute="trailing" constant="12" symbolic="YES" id="D5A-9Z-uZ4"/>
+                            <constraint firstItem="9lc-kA-RXM" firstAttribute="leading" secondItem="ZEd-Og-ylK" secondAttribute="leading" constant="20" symbolic="YES" id="GWs-KG-Gbe"/>
+                            <constraint firstItem="RGV-0U-ZEp" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="9lc-kA-RXM" secondAttribute="trailing" constant="12" symbolic="YES" id="MtR-vC-Ydf"/>
                             <constraint firstAttribute="bottom" secondItem="RGV-0U-ZEp" secondAttribute="bottom" constant="20" symbolic="YES" id="ZTe-cP-Cod"/>
-                            <constraint firstAttribute="trailing" secondItem="9lc-kA-RXM" secondAttribute="trailing" constant="20" symbolic="YES" id="ZWo-iC-6q9"/>
                             <constraint firstItem="oa7-Hq-G8w" firstAttribute="width" secondItem="RGV-0U-ZEp" secondAttribute="width" id="aQ7-zr-DUa"/>
                             <constraint firstItem="oa7-Hq-G8w" firstAttribute="firstBaseline" secondItem="RGV-0U-ZEp" secondAttribute="firstBaseline" id="blN-YK-75O"/>
+                            <constraint firstAttribute="trailing" secondItem="oa7-Hq-G8w" secondAttribute="trailing" constant="20" symbolic="YES" id="h0L-Nn-roX"/>
                             <constraint firstItem="Ea0-ws-qki" firstAttribute="leading" secondItem="ZEd-Og-ylK" secondAttribute="leading" id="hZ6-PT-kiX"/>
                             <constraint firstItem="Ea0-ws-qki" firstAttribute="top" secondItem="ZEd-Og-ylK" secondAttribute="top" id="qIZ-14-e0Y"/>
                             <constraint firstAttribute="trailing" secondItem="Ea0-ws-qki" secondAttribute="trailing" id="us2-W5-Fxg"/>

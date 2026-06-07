@@ -36,7 +36,7 @@
                                     <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     <size key="minSize" width="768" height="331"/>
-                                    <size key="maxSize" width="768" height="10000000"/>
+                                    <size key="maxSize" width="769" height="10000000"/>
                                 </textView>
                             </subviews>
                         </clipView>
@@ -59,8 +59,18 @@
                             <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Kf8-Md-KPZ">
                                 <rect key="frame" x="0.0" y="66" width="768" height="5"/>
                             </box>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h2n-nV-NdW">
+                                <rect key="frame" x="20" y="22" width="24" height="24"/>
+                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bYe-iP-E0U">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showErrorLogHelp:" target="-2" id="EPI-BA-OK8"/>
+                                </connections>
+                            </button>
                             <textField wantsLayer="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="te9-50-gJu">
-                                <rect key="frame" x="18" y="26" width="546" height="16"/>
+                                <rect key="frame" x="90" y="26" width="534" height="16"/>
                                 <textFieldCell key="cell" title="Errors may contain feed URLs and other information you may not want to share publicly." id="lKl-03-8bv">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -79,15 +89,17 @@
                             </button>
                         </subviews>
                         <constraints>
+                            <constraint firstItem="te9-50-gJu" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="h2n-nV-NdW" secondAttribute="trailing" constant="8" symbolic="YES" id="MM1-eZ-4jK"/>
                             <constraint firstItem="Kf8-Md-KPZ" firstAttribute="leading" secondItem="U19-VM-vwr" secondAttribute="leading" id="QyU-Q1-Wp9"/>
-                            <constraint firstItem="te9-50-gJu" firstAttribute="leading" secondItem="U19-VM-vwr" secondAttribute="leading" constant="20" symbolic="YES" id="RFM-aV-AaM"/>
                             <constraint firstAttribute="trailing" secondItem="Kf8-Md-KPZ" secondAttribute="trailing" id="Szn-da-iY2"/>
                             <constraint firstAttribute="bottom" secondItem="TeH-NA-QRq" secondAttribute="bottom" constant="20" symbolic="YES" id="Uxn-0p-YPX"/>
                             <constraint firstItem="Kf8-Md-KPZ" firstAttribute="top" secondItem="U19-VM-vwr" secondAttribute="top" id="dVT-fU-zJI"/>
+                            <constraint firstItem="TeH-NA-QRq" firstAttribute="firstBaseline" secondItem="h2n-nV-NdW" secondAttribute="firstBaseline" id="eld-wf-N09"/>
                             <constraint firstItem="TeH-NA-QRq" firstAttribute="firstBaseline" secondItem="te9-50-gJu" secondAttribute="firstBaseline" id="i9n-ax-BCp"/>
-                            <constraint firstItem="TeH-NA-QRq" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="te9-50-gJu" secondAttribute="trailing" constant="8" symbolic="YES" id="jCG-W2-tLx"/>
+                            <constraint firstItem="TeH-NA-QRq" firstAttribute="leading" secondItem="te9-50-gJu" secondAttribute="trailing" constant="8" symbolic="YES" id="jCG-W2-tLx"/>
                             <constraint firstAttribute="trailing" secondItem="TeH-NA-QRq" secondAttribute="trailing" constant="20" symbolic="YES" id="u5X-Bh-ELF"/>
                             <constraint firstItem="TeH-NA-QRq" firstAttribute="top" secondItem="Kf8-Md-KPZ" secondAttribute="bottom" constant="20" symbolic="YES" id="yPO-y0-lEk"/>
+                            <constraint firstItem="h2n-nV-NdW" firstAttribute="leading" secondItem="U19-VM-vwr" secondAttribute="leading" constant="20" symbolic="YES" id="zqM-yT-GO6"/>
                         </constraints>
                     </visualEffectView>
                 </subviews>

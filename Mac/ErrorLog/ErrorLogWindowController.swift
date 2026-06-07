@@ -6,9 +6,10 @@
 //
 
 import AppKit
+import RSCore
+import RSWeb
 import Account
 import ErrorLog
-import RSCore
 
 final class ErrorLogWindowController: NSWindowController, NSWindowDelegate {
 
@@ -87,6 +88,12 @@ final class ErrorLogWindowController: NSWindowController, NSWindowDelegate {
 
 	@IBAction func copyContents(_ sender: Any?) {
 		textView?.copyAllToPasteboard()
+	}
+
+	@IBAction func showErrorLogHelp(_ sender: Any?) {
+		if let url = URL(string: "https://netnewswire.com/help/error-log.html") {
+			MacWebBrowser.openURL(url)
+		}
 	}
 }
 
