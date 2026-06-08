@@ -2,6 +2,11 @@
 
 # NetNewsWire
 
+> ⚠️ **Note on this Fork:** This is a custom fork maintained by [@Ian729](https://github.com/Ian729).
+> Unlike the official upstream [Ranchero-Software/NetNewsWire](https://github.com/Ranchero-Software/NetNewsWire), this version includes:
+> - **AI-Powered Automatic Translation & Preloading:** Integrated with a local Ollama client to automatically translate feeds into your preferred language.
+> - **Beautiful AI Translation Interface:** Displayed in a gorgeous, modern rounded card matching the official styling (with seamless dark & light mode support).
+
 NetNewsWire is a free and open-source feed reader for macOS and iOS.
 
 It supports [RSS](https://cyber.harvard.edu/rss/rss.html), [Atom](https://datatracker.ietf.org/doc/html/rfc4287), [JSON Feed](https://jsonfeed.org/), and [RSS-in-JSON](https://github.com/scripting/Scripting-News/blob/master/rss-in-json/README.md) formats.
