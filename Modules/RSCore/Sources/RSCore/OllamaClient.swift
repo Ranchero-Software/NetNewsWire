@@ -189,4 +189,38 @@ public final class OllamaClient: @unchecked Sendable {
             }
         }
     }
+
+    public static func translationHTML(content: String) -> String {
+        let preferredLanguage = UserDefaults.standard.string(forKey: "OllamaPreferredLanguage") ?? "Chinese"
+        let title: String
+        if preferredLanguage.lowercased().contains("chinese") || preferredLanguage.contains("中文") {
+            title = "AI 翻译"
+        } else {
+            title = "AI Translation"
+        }
+        
+        return """
+        <style>
+        :root {
+            --ollama-bg: #faf9ff;
+            --ollama-border: #dbd5ff;
+            --ollama-brand: #7c3aed;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --ollama-bg: #17153b;
+                --ollama-border: #3e3875;
+                --ollama-brand: #a78bfa;
+            }
+        }
+        </style>
+        <div class="ollama-translation-container" style="margin: 30px 0; padding: 20px; background-color: var(--ollama-bg, #faf9ff); border: 1.5px solid var(--ollama-border, #dbd5ff); border-radius: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; box-sizing: border-box;">
+            <div class="ollama-translation-header" style="display: flex; align-items: center; margin-bottom: 12px;">
+                <span class="ollama-translation-icon" style="font-size: 1.1em; margin-right: 8px; color: var(--ollama-brand, #7c3aed); display: inline-flex; align-items: center;">✨</span>
+                <span class="ollama-translation-title" style="font-size: 0.9em; font-weight: 600; color: var(--ollama-brand, #7c3aed); letter-spacing: 0.03em;">\(title)</span>
+            </div>
+            <div id="ollama-translation" class="ollama-translation-content" style="font-size: 0.95em; line-height: 1.6; color: inherit; white-space: pre-wrap;">\(content)</div>
+        </div>
+        """
+    }
 }

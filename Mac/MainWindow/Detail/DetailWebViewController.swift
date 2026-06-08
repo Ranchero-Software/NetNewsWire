@@ -319,9 +319,9 @@ private extension DetailWebViewController {
 			
 			if !textToTranslate.isEmpty {
 				if let cached = OllamaClient.shared.cachedTranslation(articleID: article.articleID) {
-					bodyHTML += "<hr id='ollama-divider' style='margin: 2em 0;'><div id='ollama-translation'>\(cached)</div>"
+					bodyHTML += OllamaClient.translationHTML(content: cached)
 				} else {
-					bodyHTML += "<hr id='ollama-divider' style='margin: 2em 0;'><div id='ollama-translation'><i>Translating...</i></div>"
+					bodyHTML += OllamaClient.translationHTML(content: "<i>Translating...</i>")
 					requestTranslation = true
 				}
 			}
@@ -346,7 +346,7 @@ private extension DetailWebViewController {
 					if case .success(let translated) = result {
 						self.injectTranslation(translated)
 					} else if case .failure(let error) = result {
-						self.injectTranslation("<i>Translation failed: \(error.localizedDescription)</i>")
+						self.injectTranslation("Translation failed: \(error.localizedDescription)")
 					}
 				}
 			}
