@@ -700,7 +700,7 @@ private extension MainTimelineModernViewController {
 				// doesn't lag behind user actions.
 				let announcement = article.status.starred ?
 					NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
-					NSLocalizedString("Starred", comment: "Starred label")
+					NSLocalizedString("Starred", comment: "Starred")
 				UIAccessibility.post(notification: .announcement, argument: announcement)
 
 				/// The call to `toggleStar` is delayed in order to allow
@@ -1161,7 +1161,7 @@ extension MainTimelineModernViewController {
 			// doesn't lag behind user actions.
 			let announcement = article.status.starred ?
 				NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
-				NSLocalizedString("Starred", comment: "Starred label")
+				NSLocalizedString("Starred", comment: "Starred")
 			UIAccessibility.post(notification: .announcement, argument: announcement)
 
 			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {

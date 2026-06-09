@@ -119,8 +119,8 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 
 	private func updateAccessibilityLabel() {
-		let starredStatus = cellData.starred ? "\(NSLocalizedString("Starred", comment: "Starred label")), " : ""
-		let unreadStatus = cellData.read ? "" : "\(NSLocalizedString("Unread", comment: "Unread label")), "
+		let starredStatus = cellData.starred ? "\(NSLocalizedString("Starred", comment: "Starred")), " : ""
+		let unreadStatus = cellData.read ? "" : "\(NSLocalizedString("Unread", comment: "Unread")), "
 		let label = starredStatus + unreadStatus + "\(cellData.feedName), \(cellData.title), \(cellData.summary), \(cellData.dateString)"
 		accessibilityLabel = label
 	}

@@ -30,7 +30,8 @@ final class SettingsViewController: UITableViewController {
 
 	private enum TroubleshootingRow: Int {
 		case errorLog = 0
-		case cloudKitZoneStats = 1
+		case accountStats = 1
+		case cloudKitZoneStats = 2
 	}
 
 	private enum FeedsRow: Int {
@@ -276,6 +277,8 @@ final class SettingsViewController: UITableViewController {
 				switch TroubleshootingRow(rawValue: indexPath.row) {
 				case .errorLog:
 					return UIHostingController(rootView: ErrorLogView())
+				case .accountStats:
+					return UIHostingController(rootView: AccountStatsView())
 				case .cloudKitZoneStats:
 					return UIHostingController(rootView: CloudKitStatsView())
 				default:
