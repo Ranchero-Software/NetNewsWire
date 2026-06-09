@@ -45,6 +45,9 @@
     "Account Error" : {
       "comment" : "Account Error"
     },
+    "Account Stats" : {
+      "comment" : "Account Stats screen title"
+    },
     "Accounts" : {
       "comment" : "Preferences"
     },
@@ -119,6 +122,9 @@
     },
     "Article Theme" : {
       "comment" : "Article Theme"
+    },
+    "Articles" : {
+      "comment" : "Articles"
     },
     "Author‘s website:" : {
       "comment" : "Author's Website"
@@ -230,6 +236,9 @@
     },
     "Dark" : {
       "comment" : "Dark"
+    },
+    "Databases" : {
+      "comment" : "Database size row label"
     },
     "Deactivate" : {
       "comment" : "Deactivate"
@@ -378,6 +387,9 @@
     "Feedly" : {
       "comment" : "Account name"
     },
+    "Feeds" : {
+      "comment" : "Feeds"
+    },
     "Fetching" : {
       "comment" : "Activity kind — fetching a candidate URL during feed finding"
     },
@@ -414,6 +426,9 @@
     "Folder Inspector" : {
       "comment" : "Folder Inspector window title"
     },
+    "Folders" : {
+      "comment" : "Folders"
+    },
     "FreshRSS" : {
       "comment" : "Account name"
     },
@@ -442,7 +457,7 @@
       "comment" : "Go To Today"
     },
     "Help" : {
-      "comment" : "Help menu item"
+      "comment" : "Help"
     },
     "Help — opens in browser" : {
       "comment" : "Help button accessibility label"
@@ -909,10 +924,13 @@
       "comment" : "Star Article"
     },
     "Starred" : {
-      "comment" : "Starred label"
+      "comment" : "Starred"
     },
     "Status Records" : {
       "comment" : "Status records section header"
+    },
+    "Statuses" : {
+      "comment" : "Statuses"
     },
     "Sync content of unread articles" : {
 
@@ -1024,7 +1042,7 @@
       "comment" : "Total row label"
     },
     "Totals" : {
-      "comment" : "Totals row label"
+      "comment" : "Totals section"
     },
     "Type:" : {
 
@@ -1036,7 +1054,7 @@
       "comment" : "Unread label for accessibility"
     },
     "Unread" : {
-      "comment" : "Unread label"
+      "comment" : "Unread"
     },
     "Unread Content Deleted" : {
       "comment" : "Cleanup stat row label"
@@ -1094,6 +1112,15 @@
     },
     "Username, password, and API URL are required." : {
       "comment" : "Credentials Error"
+    },
+    "Vacuum Databases" : {
+      "comment" : "Vacuum databases button"
+    },
+    "Vacuuming may make databases faster." : {
+      "comment" : "Vacuum explanation"
+    },
+    "Vacuuming…" : {
+      "comment" : "Vacuum status text"
     },
     "Waiting for access to Feedly" : {
       "comment" : "Alert title when adding a Feedly account and waiting for authorization from the user."

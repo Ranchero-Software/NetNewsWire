@@ -254,7 +254,7 @@ private extension AccountStatsWindowController {
 	func totalsText(for kind: ColumnKind) -> String {
 		switch kind {
 		case .account:
-			return NSLocalizedString("Totals", comment: "Totals row label")
+			return NSLocalizedString("Totals", comment: "Totals section")
 		case .feeds:
 			return Self.formattedNumber(model.totals.feedCount)
 		case .folders:
