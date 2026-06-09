@@ -7,6 +7,30 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.1b1</title>
+            <description><![CDATA[
+  				<ul>
+				  <li>Added <a href="https://netnewswire.com/help/activity-log.html">Activity Log window</a> — shows what the app has been doing
+				  <li>Added <a href="https://netnewswire.com/help/current-activity.html">Current Activity window</a> — shows what the app is doing right now 
+				  <li>Added <a href="https://netnewswire.com/help/account-stats.html">Account Stats window</a> — shows per-account article and status counts and database sizes, plus a Vacuum Databases button 
+				  <li>Added <a href="https://netnewswire.com/help/dinosaurs.html">Dinosaurs window</a> — lists feeds that haven’t updated in n months (with a text field where you specify n) 
+				  <li>Started deleting feeds and folders optimistically from iCloud — sidebar updates immediately instead of waiting for the server
+				  <li>Fixed bug where iCloud feed renames could fail on transient network errors — they’re now retried
+				  <li>Started backing off Feedly status sync to 30 minutes between checks when the last sync had no changes
+				  <li>Stopped feed refreshing while the Mac is asleep
+				  <li>Started handling transient feed-refresh failures (DNS, certificate, etc.) by retrying after a few hours instead of treating them as permanent failures
+				  <li>Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (&lt;s:variant&gt;, for instance)
+				  <li>Added more trackers to the block list
+				  <li>Fixed WebKit crash in the detail view caused by re-entrancy
+				  <li>Started setting the response code for 4xx and 5xx responses so the error log shows the right info
+				</ul>
+			]]></description>
+        	<pubDate>Mon, 08 Jun 2026 09:35:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b1/NetNewsWire7.1b1.zip" sparkle:version="7100" sparkle:shortVersionString="7.1b1" length="10640230" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.0.6</title>
             <description><![CDATA[
   				<ul>
