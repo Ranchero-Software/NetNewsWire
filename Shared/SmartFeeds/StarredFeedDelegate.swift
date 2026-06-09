@@ -19,7 +19,7 @@ import Images
 		return SidebarItemIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
 	}
 
-	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred label")
+	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred")
 	let fetchType: FetchType = .starred(nil)
 	var smallIcon: IconImage? {
 		Assets.Images.starredFeed
