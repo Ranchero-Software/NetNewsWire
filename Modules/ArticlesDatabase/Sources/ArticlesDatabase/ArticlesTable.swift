@@ -1047,7 +1047,7 @@ nonisolated private extension ArticlesTable {
 	}
 
 	func fetchLastUpdateDates(_ database: FMDatabase) -> [String: Date] {
-		guard let resultSet = database.executeQuery("SELECT feedID, MAX(coalesce(datePublished, dateModified)) as latestDate FROM articles GROUP BY feedID;", withArgumentsIn: []) else {
+		guard let resultSet = database.executeQuery("SELECT feedID, MAX(coalesce(datePublished, dateModified, dateArrived)) as latestDate FROM articles natural join statuses GROUP BY feedID;", withArgumentsIn: []) else {
 			return [:]
 		}
 		defer {
