@@ -44,24 +44,20 @@ struct AccountStatsView: View {
 			}
 
 			Section {
-				if isVacuuming {
-					HStack(spacing: 6) {
-						ProgressView()
-							.controlSize(.small)
-						Text(NSLocalizedString("Vacuuming…", comment: "Vacuum status text"))
-							.foregroundStyle(.secondary)
-					}
-					.frame(maxWidth: .infinity)
-				} else {
-					Button(NSLocalizedString("Vacuum Databases", comment: "Vacuum databases button")) {
-						vacuum()
-					}
-					.frame(maxWidth: .infinity)
+				Button(NSLocalizedString("Vacuum Databases", comment: "Vacuum databases button")) {
+					vacuum()
 				}
+				.frame(maxWidth: .infinity)
+				.disabled(isVacuuming)
 			} footer: {
-				Text(NSLocalizedString("Vacuuming may make databases faster.", comment: "Vacuum explanation"))
-					.frame(maxWidth: .infinity, alignment: .center)
-					.multilineTextAlignment(.center)
+				VStack(spacing: 8) {
+					Text(NSLocalizedString("Vacuuming may make databases faster.", comment: "Vacuum explanation"))
+						.frame(maxWidth: .infinity, alignment: .center)
+						.multilineTextAlignment(.center)
+					ProgressView()
+						.controlSize(.small)
+						.opacity(isVacuuming ? 1 : 0)
+				}
 			}
 
 			Section {

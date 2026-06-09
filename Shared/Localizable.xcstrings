@@ -1122,9 +1122,6 @@
     "Vacuuming may make databases faster." : {
       "comment" : "Vacuum explanation"
     },
-    "Vacuuming…" : {
-      "comment" : "Vacuum status text"
-    },
     "Waiting for access to Feedly" : {
       "comment" : "Alert title when adding a Feedly account and waiting for authorization from the user."
     },
