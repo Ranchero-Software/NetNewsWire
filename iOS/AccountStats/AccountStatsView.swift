@@ -51,13 +51,22 @@ struct AccountStatsView: View {
 						Text(NSLocalizedString("Vacuuming…", comment: "Vacuum status text"))
 							.foregroundStyle(.secondary)
 					}
+					.frame(maxWidth: .infinity)
 				} else {
 					Button(NSLocalizedString("Vacuum Databases", comment: "Vacuum databases button")) {
 						vacuum()
 					}
+					.frame(maxWidth: .infinity)
 				}
 			} footer: {
 				Text(NSLocalizedString("Vacuuming may make databases faster.", comment: "Vacuum explanation"))
+					.frame(maxWidth: .infinity, alignment: .center)
+					.multilineTextAlignment(.center)
+			}
+
+			Section {
+			} footer: {
+				helpLinkFooter
 			}
 		}
 		.navigationTitle(NSLocalizedString("Account Stats", comment: "Account Stats screen title"))
@@ -71,13 +80,6 @@ struct AccountStatsView: View {
 					Label(NSLocalizedString("Refresh", comment: "Refresh button"), systemImage: "arrow.clockwise")
 				}
 				.disabled(isVacuuming)
-			}
-			ToolbarItem(placement: .topBarTrailing) {
-				Button {
-					showHelp = true
-				} label: {
-					Label(NSLocalizedString("Help", comment: "Help"), systemImage: "questionmark.circle")
-				}
 			}
 		}
 		.sheet(isPresented: $showHelp) {
@@ -114,6 +116,15 @@ private extension AccountStatsView {
 		let value: String
 
 		var id: String { label }
+	}
+
+	var helpLinkFooter: some View {
+		Button(NSLocalizedString("Account Stats Help", comment: "Help link")) {
+			showHelp = true
+		}
+		.font(.subheadline)
+		.frame(maxWidth: .infinity)
+		.padding(.top, 8)
 	}
 
 	func statsRow(_ item: StatItem, isBold: Bool) -> some View {

@@ -48,6 +48,9 @@
     "Account Stats" : {
       "comment" : "Account Stats screen title"
     },
+    "Account Stats Help" : {
+      "comment" : "Help link"
+    },
     "Accounts" : {
       "comment" : "Preferences"
     },
