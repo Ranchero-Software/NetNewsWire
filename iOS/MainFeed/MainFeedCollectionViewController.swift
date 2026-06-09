@@ -353,6 +353,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func applySnapshot(_ snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>, animatingDifferences: Bool, completion: (() -> Void)? = nil) {
+		let feeds = snapshot.itemIdentifiers.compactMap { $0.node.representedObject as? Feed }
+		IconImageCache.shared.prefetchImagesForFeeds(feeds)
+
 		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
 			completion?()
 		}

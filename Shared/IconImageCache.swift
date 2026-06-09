@@ -81,6 +81,13 @@ import Images
 		}
 	}
 
+	func prefetchImagesForFeeds(_ feeds: [Feed]) {
+		for feed in feeds {
+			_ = FeedIconDownloader.shared.icon(for: feed)
+			_ = FaviconDownloader.shared.faviconAsIcon(for: feed)
+		}
+	}
+
 	func imageForArticle(_ article: Article) -> IconImage? {
 		if let iconImage = imageForAuthors(article.authors) {
 			return iconImage
