@@ -56,19 +56,19 @@
       }
     },
     "20O-mq-mzx.title" : {
-      "comment" : "Class = \"NSButtonCell\"; title = \"Select in Sidebar\"; ObjectID = \"20O-mq-mzx\";",
+      "comment" : "Class = \"NSButtonCell\"; title = \"Go to Feed\"; ObjectID = \"20O-mq-mzx\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Select in Sidebar"
+            "value" : "Go to Feed"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seleccionar en la barra lateral"
+            "value" : "Ir a la fuente"
           }
         }
       }
