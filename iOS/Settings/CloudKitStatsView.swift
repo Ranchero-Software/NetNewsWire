@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SafariServices
+import RSCore
 import Account
 
 struct CloudKitStatsView: View {
@@ -334,17 +334,5 @@ struct CloudKitStatsView: View {
 	private func formattedCount(_ count: Int, singular: String, plural: String) -> String {
 		let label = count == 1 ? singular : plural
 		return "\(formattedNumber(count)) \(label)"
-	}
-}
-
-private struct SafariView: UIViewControllerRepresentable {
-
-	let url: URL
-
-	func makeUIViewController(context: Context) -> SFSafariViewController {
-		SFSafariViewController(url: url)
-	}
-
-	func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
 	}
 }

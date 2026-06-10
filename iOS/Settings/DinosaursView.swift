@@ -7,7 +7,7 @@
 //
 
 import SwiftUI
-import SafariServices
+import RSCore
 
 struct DinosaursView: View {
 
@@ -18,6 +18,7 @@ struct DinosaursView: View {
 	@State private var dinosaurPendingDeletion: DinosaurRow?
 	@State private var showDeleteConfirmation = false
 	@State private var showHelp = false
+	@State private var homePageURL: HomePageURL?
 
 	// MARK: Constants
 	let dismissAndPresent: (_ dinosaur: DinosaurRow) -> Void
@@ -46,8 +47,10 @@ struct DinosaursView: View {
 								}
 								Button {
 									guard let homePage = dinosaur.feed.homePageURL,
-										  let url = URL(string: homePage) else { return }
-									UIApplication.shared.open(url)
+										  let url = URL(string: homePage) else {
+										return
+									}
+									homePageURL = HomePageURL(url: url)
 								} label: {
 									Text("Open Home Page", comment: "Open Home Page")
 									Image(systemName: "safari")
@@ -106,6 +109,9 @@ struct DinosaursView: View {
 		.sheet(isPresented: $showHelp) {
 			SafariView(url: Self.helpURL)
 		}
+		.sheet(item: $homePageURL) { homePageURL in
+			SafariView(url: homePageURL.url)
+		}
 		.alert("Delete Feed", isPresented: $showDeleteConfirmation, actions: {
 			Button(role: .destructive) {
 				if let dinosaur = dinosaurPendingDeletion {
@@ -143,14 +149,9 @@ private extension DinosaursView {
 	}
 }
 
-private struct SafariView: UIViewControllerRepresentable {
+private struct HomePageURL: Identifiable {
 
 	let url: URL
 
-	func makeUIViewController(context: Context) -> SFSafariViewController {
-		SFSafariViewController(url: url)
-	}
-
-	func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
-	}
+	var id: String { url.absoluteString }
 }

@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SafariServices
+import RSCore
 import Account
 
 struct AccountStatsView: View {
@@ -176,17 +176,5 @@ private extension AccountStatsView {
 
 	static func formattedSize(_ bytes: Int) -> String {
 		Int64(bytes).formatted(.byteCount(style: .file))
-	}
-}
-
-private struct SafariView: UIViewControllerRepresentable {
-
-	let url: URL
-
-	func makeUIViewController(context: Context) -> SFSafariViewController {
-		SFSafariViewController(url: url)
-	}
-
-	func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
 	}
 }

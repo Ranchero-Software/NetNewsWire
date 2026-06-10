@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import SafariServices
+import RSCore
 import ActivityLog
 
 struct CurrentActivityView: View {
@@ -116,17 +116,5 @@ private extension CurrentActivityView {
 		case .failed:
 			return .red
 		}
-	}
-}
-
-private struct SafariView: UIViewControllerRepresentable {
-
-	let url: URL
-
-	func makeUIViewController(context: Context) -> SFSafariViewController {
-		SFSafariViewController(url: url)
-	}
-
-	func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
 	}
 }
