@@ -31,7 +31,8 @@ final class SettingsViewController: UITableViewController {
 	private enum TroubleshootingRow: Int {
 		case errorLog = 0
 		case accountStats = 1
-		case cloudKitZoneStats = 2
+		case dinosaurs = 2
+		case cloudKitZoneStats = 3
 	}
 
 	private enum FeedsRow: Int {
@@ -281,6 +282,17 @@ final class SettingsViewController: UITableViewController {
 					return UIHostingController(rootView: AccountStatsView())
 				case .cloudKitZoneStats:
 					return UIHostingController(rootView: CloudKitStatsView())
+				case .dinosaurs:
+					return UIHostingController(rootView: DinosaursView(dismissAndPresent: { [weak self] dinosaur in
+						guard let self else {
+							return
+						}
+						self.dismiss(animated: true) {
+							if let rootSplit = self.presentingParentController as? RootSplitViewController {
+								rootSplit.coordinator.selectFeed(dinosaur.feed)
+							}
+						}
+					}))
 				default:
 					return nil
 				}

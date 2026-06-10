@@ -397,7 +397,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			guard let dataSource = self.dataSource else {
 				return
 			}
-			dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			dataSource.apply(snapshot, animatingDifferences: false) { [weak self = self] in
 				self?.restoreSelectionIfNecessary(adjustScroll: false)
 			}
 		})
