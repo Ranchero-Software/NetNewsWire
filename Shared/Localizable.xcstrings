@@ -233,7 +233,7 @@
       "comment" : "Command"
     },
     "Copy Feed URL" : {
-      "comment" : "Command\nCopy Feed URL"
+      "comment" : "Command"
     },
     "Copy Home Page URL" : {
       "comment" : "Command"
@@ -242,7 +242,7 @@
       "comment" : "Scan error alert title"
     },
     "Create" : {
-      "comment" : "Add Account\nCreate"
+      "comment" : "Create"
     },
     "Create a local account on your Mac." : {
       "comment" : "Account Local"
@@ -269,7 +269,7 @@
       "comment" : "Default"
     },
     "Delete" : {
-      "comment" : "Delete\nDelete button"
+      "comment" : "Delete button"
     },
     "Delete Feed" : {
       "comment" : "Delete Feed"
@@ -733,7 +733,7 @@
       "comment" : "Open"
     },
     "Open Home Page" : {
-      "comment" : "Command\nOpen Home Page"
+      "comment" : "Command"
     },
     "Open in Browser" : {
       "comment" : "Command"

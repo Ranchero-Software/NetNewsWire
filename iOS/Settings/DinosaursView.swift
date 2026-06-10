@@ -52,14 +52,14 @@ struct DinosaursView: View {
 									}
 									homePageURL = HomePageURL(url: url)
 								} label: {
-									Text("Open Home Page", comment: "Open Home Page")
+									Text("Open Home Page", comment: "Command")
 									Image(systemName: "safari")
 								}
 
 								Button {
 									UIPasteboard.general.string = dinosaur.feedURL
 								} label: {
-									Text("Copy Feed URL", comment: "Copy Feed URL")
+									Text("Copy Feed URL", comment: "Command")
 									Image(systemName: "document.on.document")
 								}
 							} label: {
@@ -127,7 +127,7 @@ struct DinosaursView: View {
 				}
 
 			} label: {
-				Text("Delete", comment: "Delete")
+				Text("Delete", comment: "Delete button")
 			}
 		}, message: {
 			Text("Are you sure you want to delete the feed ”\(dinosaurPendingDeletion?.feedName ?? "")”?", comment: "Delete feed confirmation text.")
