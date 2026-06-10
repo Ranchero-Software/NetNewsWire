@@ -111,17 +111,10 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Fetching Counts Async
 
 	func fetchArticleCountsAsync(_ feedIDs: Set<String>, _ completion: @escaping @Sendable (Result<ArticleCounts, Error>) -> Void) {
-		queue.runInDatabase { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				let counts = self.articleCounts(feedIDs: feedIDs, database: database)
-				DispatchQueue.main.async {
-					completion(.success(counts))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+		queue.runInDatabase { database in
+			let counts = self.articleCounts(feedIDs: feedIDs, database: database)
+			DispatchQueue.main.async {
+				completion(.success(counts))
 			}
 		}
 	}
@@ -129,17 +122,10 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Fetching Last Update Dates
 
 	func fetchLastUpdateDatesAsync(_ completion: @escaping @Sendable (Result<[String: Date], Error>) -> Void) {
-		queue.runInDatabase { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				let result = self.fetchLastUpdateDates(database)
-				DispatchQueue.main.async {
-					completion(.success(result))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+		queue.runInDatabase { database in
+			let result = self.fetchLastUpdateDates(database)
+			DispatchQueue.main.async {
+				completion(.success(result))
 			}
 		}
 	}
@@ -148,20 +134,11 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
 		nonisolated(unsafe) var articles: Set<Article> = Set<Article>()
-		nonisolated(unsafe) var error: Error?
 
-		queue.runInDatabaseSync { (databaseResult) in
-			switch databaseResult {
-			case .success(let database):
-				articles = self.fetchArticlesMatching(searchString, database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
+		queue.runInDatabaseSync { database in
+			articles = self.fetchArticlesMatching(searchString, database)
 		}
 
-		if let error = error {
-			throw(error)
-		}
 		return articles
 	}
 
@@ -248,9 +225,9 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		// 8. Delete Articles in database no longer present in the feed.
 		// 9. Update search index.
 
-		self.queue.runInTransaction { (databaseResult) in
+		self.queue.runInTransaction { database in
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
+			func makeDatabaseCalls() {
 				let articleIDs = parsedItems.articleIDs()
 
 				// Split by age: articles older than ~6 months default to read.
@@ -307,14 +284,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				}
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
+			makeDatabaseCalls()
 		}
 	}
 
@@ -334,9 +304,9 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		// 7. Call back with new and updated Articles.
 		// 8. Update search index.
 
-		self.queue.runInTransaction { (databaseResult) in
+		self.queue.runInTransaction { database in
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
+			func makeDatabaseCalls() {
 				var articleIDs = Set<String>()
 				for (_, parsedItems) in feedIDsAndItems {
 					articleIDs.formUnion(parsedItems.articleIDs())
@@ -378,38 +348,17 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				}
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
-			}
+			makeDatabaseCalls()
 		}
 	}
 
 	public func delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
-		self.queue.runInTransaction { (databaseResult) in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				self.removeArticles(articleIDs, database)
-				DispatchQueue.main.async {
-					completion?(nil)
-				}
+		self.queue.runInTransaction { database in
+			self.removeArticles(articleIDs, database)
+			DispatchQueue.main.async {
+				completion?(nil)
 			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion?(databaseError)
-				}
-			}
-
 		}
-
 	}
 
 	// MARK: - Unread Counts
@@ -420,7 +369,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			return
 		}
 
-		queue.runInDatabase { databaseResult in
+		queue.runInDatabase { database in
 
 			func makeDatabaseCalls(_ database: FMDatabase) throws -> UnreadCountDictionary {
 				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
@@ -445,19 +394,12 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				return unreadCountDictionary
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				do {
-					let unreadCountDictionary = try makeDatabaseCalls(database)
-					DispatchQueue.main.async {
-						completion(.success(unreadCountDictionary))
-					}
-				} catch {
-					DispatchQueue.main.async {
-						completion(.failure(error))
-					}
+			do {
+				let unreadCountDictionary = try makeDatabaseCalls(database)
+				DispatchQueue.main.async {
+					completion(.success(unreadCountDictionary))
 				}
-			case .failure(let error):
+			} catch {
 				DispatchQueue.main.async {
 					completion(.failure(error))
 				}
@@ -472,31 +414,19 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			return
 		}
 
-		queue.runInDatabase { databaseResult in
+		queue.runInDatabase { database in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
+			var parameters = [Any]()
+			parameters += Array(feedIDs) as [Any]
+			parameters += [since] as [Any]
+			parameters += [since] as [Any]
 
-				var parameters = [Any]()
-				parameters += Array(feedIDs) as [Any]
-				parameters += [since] as [Any]
-				parameters += [since] as [Any]
+			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
-				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
-
-				DispatchQueue.main.async {
-					completion(.success(unreadCount))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+			DispatchQueue.main.async {
+				completion(.success(unreadCount))
 			}
 		}
 	}
@@ -507,27 +437,15 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			return
 		}
 
-		queue.runInDatabase { databaseResult in
+		queue.runInDatabase { database in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
+			let parameters = Array(feedIDs) as [Any]
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-				let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
-				let parameters = Array(feedIDs) as [Any]
+			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
-				let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
-
-				DispatchQueue.main.async {
-					completion(.success(unreadCount))
-				}
-			}
-
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+			DispatchQueue.main.async {
+				completion(.success(unreadCount))
 			}
 		}
 	}
@@ -551,33 +469,19 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	}
 
 	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
-		self.queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
-				DispatchQueue.main.async {
-					completion(.success(statuses ?? Set<ArticleStatus>()))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+		self.queue.runInTransaction { database in
+			let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
+			DispatchQueue.main.async {
+				completion(.success(statuses ?? Set<ArticleStatus>()))
 			}
 		}
 	}
 
 	func markAndFetchNew(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleIDsCompletionBlock) {
-		queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				let newStatusIDs = self.statusesTable.markAndFetchNew(articleIDs, statusKey, flag, database)
-				DispatchQueue.main.async {
-					completion(.success(newStatusIDs))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+		queue.runInTransaction { database in
+			let newStatusIDs = self.statusesTable.markAndFetchNew(articleIDs, statusKey, flag, database)
+			DispatchQueue.main.async {
+				completion(.success(newStatusIDs))
 			}
 		}
 	}
@@ -588,17 +492,10 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			return
 		}
 
-		queue.runInTransaction { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
-				DispatchQueue.main.async {
-					completion(nil)
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(databaseError)
-				}
+		queue.runInTransaction { database in
+			self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
+			DispatchQueue.main.async {
+				completion(nil)
 			}
 		}
 	}
@@ -606,26 +503,19 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	// MARK: - Indexing
 
 	func indexUnindexedArticles() {
-		queue.runInDatabase { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let sql = "select articleID from articles where searchRowID is null limit 500;"
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-					return
-				}
-				let articleIDs = resultSet.mapToSet { $0.swiftString(forColumn: DatabaseKey.articleID) }
-				if articleIDs.isEmpty {
-					return
-				}
-				self.searchTable.ensureIndexedArticles(articleIDs, database)
-
-				DispatchQueue.main.async {
-					self.indexUnindexedArticles()
-				}
+		queue.runInDatabase { database in
+			let sql = "select articleID from articles where searchRowID is null limit 500;"
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
+				return
 			}
+			let articleIDs = resultSet.mapToSet { $0.swiftString(forColumn: DatabaseKey.articleID) }
+			if articleIDs.isEmpty {
+				return
+			}
+			self.searchTable.ensureIndexedArticles(articleIDs, database)
 
-			if let database = databaseResult.database {
-				makeDatabaseCalls(database)
+			DispatchQueue.main.async {
+				self.indexUnindexedArticles()
 			}
 		}
 	}
@@ -657,11 +547,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	func deleteOldArticles() {
 		precondition(retentionStyle == .syncSystem)
 
-		queue.runInTransaction { databaseResult in
-			guard let database = databaseResult.database else {
-				return
-			}
-
+		queue.runInTransaction { database in
 			func deleteOldArticles(cutoffDate: Date) {
 				let sql = "delete from articles where articleID in (select articleID from articles natural join statuses where dateArrived<? and read=1 and starred=0);"
 				let parameters = [cutoffDate] as [Any]
@@ -687,11 +573,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	/// Delete old statuses.
 	func deleteOldStatuses() {
-		queue.runInTransaction { databaseResult in
-			guard let database = databaseResult.database else {
-				return
-			}
-
+		queue.runInTransaction { database in
 			let sql: String
 			let cutoffDate: Date
 
@@ -716,26 +598,19 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		if feedIDs.isEmpty {
 			return
 		}
-		queue.runInDatabase { databaseResult in
-
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-				let sql = "select articleID from articles where feedID not in \(placeholders);"
-				let parameters = Array(feedIDs) as [Any]
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
-					return
-				}
-				let articleIDs = resultSet.mapToSet { $0.swiftString(forColumn: DatabaseKey.articleID) }
-				if articleIDs.isEmpty {
-					return
-				}
-				self.removeArticles(articleIDs, database)
-				self.statusesTable.removeStatuses(articleIDs, database)
+		queue.runInDatabase { database in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select articleID from articles where feedID not in \(placeholders);"
+			let parameters = Array(feedIDs) as [Any]
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+				return
 			}
-
-			if let database = databaseResult.database {
-				makeDatabaseCalls(database)
+			let articleIDs = resultSet.mapToSet { $0.swiftString(forColumn: DatabaseKey.articleID) }
+			if articleIDs.isEmpty {
+				return
 			}
+			self.removeArticles(articleIDs, database)
+			self.statusesTable.removeStatuses(articleIDs, database)
 		}
 	}
 
@@ -744,11 +619,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	/// This is not intended for wide use: this is part of implementing
 	/// the April 2020 retention policy change for feed-based accounts.
 	func markOlderStatusesAsRead() {
-		queue.runInDatabase { databaseResult in
-			guard let database = databaseResult.database else {
-				return
-			}
-
+		queue.runInDatabase { database in
 			let sql = "update statuses set read = 1 where dateArrived<?;"
 			let parameters = [self.articleCutoffDate] as [Any]
 			database.executeUpdate(sql, withArgumentsIn: parameters)
@@ -764,53 +635,27 @@ nonisolated private extension ArticlesTable {
 
 	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) throws -> Set<Article> {
 		nonisolated(unsafe) var articles = Set<Article>()
-		nonisolated(unsafe) var error: Error?
 
-		queue.runInDatabaseSync { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				articles = fetchMethod(database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
-		}
-		if let error = error {
-			throw(error)
+		queue.runInDatabaseSync { database in
+			articles = fetchMethod(database)
 		}
 		return articles
 	}
 
 	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
 		nonisolated(unsafe) var articlesCount = 0
-		nonisolated(unsafe) var error: Error?
 
-		queue.runInDatabaseSync { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				articlesCount = fetchMethod(database)
-			case .failure(let databaseError):
-				error = databaseError
-			}
-		}
-		if let error = error {
-			throw(error)
+		queue.runInDatabaseSync { database in
+			articlesCount = fetchMethod(database)
 		}
 		return articlesCount
 	}
 
 	private func fetchArticlesAsync(_ fetchMethod: @escaping ArticlesFetchMethod, _ completion: @escaping ArticleSetResultBlock) {
-		queue.runInDatabase { databaseResult in
-
-			switch databaseResult {
-			case .success(let database):
-				let articles = fetchMethod(database)
-				DispatchQueue.main.async {
-					completion(.success(articles))
-				}
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+		queue.runInDatabase { database in
+			let articles = fetchMethod(database)
+			DispatchQueue.main.async {
+				completion(.success(articles))
 			}
 		}
 	}

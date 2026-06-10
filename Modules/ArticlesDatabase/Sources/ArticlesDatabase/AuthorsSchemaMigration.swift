@@ -62,8 +62,8 @@ private extension AuthorsSchemaMigration {
 
 	func fetchNextBatch(limit: Int) async -> Set<String> {
 		await withCheckedContinuation { continuation in
-			queue.runInDatabase { result in
-				guard let database = try? result.get(), database.tableExists("authorsLookup") else {
+			queue.runInDatabase { database in
+				guard database.tableExists("authorsLookup") else {
 					continuation.resume(returning: Set<String>())
 					return
 				}
@@ -88,11 +88,7 @@ private extension AuthorsSchemaMigration {
 
 	func dropLegacyTables() async {
 		await withCheckedContinuation { continuation in
-			queue.runInDatabase { result in
-				guard let database = try? result.get() else {
-					continuation.resume()
-					return
-				}
+			queue.runInDatabase { database in
 				database.executeStatements("drop index if exists authorsLookup_articleID; drop table if exists authorsLookup; drop table if exists authors;")
 				continuation.resume()
 			}
@@ -101,11 +97,7 @@ private extension AuthorsSchemaMigration {
 
 	func backfillBatch(_ articleIDs: Set<String>) async {
 		await withCheckedContinuation { continuation in
-			queue.runInDatabase { result in
-				guard let database = try? result.get() else {
-					continuation.resume()
-					return
-				}
+			queue.runInDatabase { database in
 				let authorsByArticleID = fetchAuthorsByArticleID(articleIDs, database: database)
 				if authorsByArticleID.isEmpty {
 					continuation.resume()

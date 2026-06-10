@@ -70,10 +70,9 @@ public struct ArticleCounts: Sendable {
 		self.retentionStyle = retentionStyle
 		self.accountID = accountID
 
-		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
-		queue.runInDatabase { databaseResult in
+		queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
+		queue.runInDatabase { database in
 			Self.logger.debug("ArticlesDatabase: creating tables \(accountID, privacy: .public)")
-			let database = databaseResult.database!
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
 				database.executeStatements("ALTER TABLE articles add column searchRowID INTEGER;")
 			}

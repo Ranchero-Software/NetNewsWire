@@ -21,19 +21,14 @@ import RSDatabaseObjC
 	}
 
 	public override func run() {
-		queue.runInDatabase { databaseResult in
+		queue.runInDatabase { database in
 			if self.isCanceled {
 				self.didComplete()
 				return
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				let unreadCountDictionary = self.fetchUnreadCounts(database) ?? UnreadCountDictionary()
-				self.result = .success(unreadCountDictionary)
-			case .failure(let error):
-				self.result = .failure(error)
-			}
+			let unreadCountDictionary = self.fetchUnreadCounts(database) ?? UnreadCountDictionary()
+			self.result = .success(unreadCountDictionary)
 
 			self.didComplete()
 		}

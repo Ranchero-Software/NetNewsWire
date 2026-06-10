@@ -41,16 +41,13 @@ import RSDatabaseObjC
 			.appendingPathComponent("ImageMetadata.db").path
 		self.databasePath = databasePath
 		let queue = DatabaseQueue(databasePath: databasePath)
-		try? queue.runCreateStatements(Self.tableCreationStatements)
+		queue.runCreateStatements(Self.tableCreationStatements)
 		self.queue = queue
 
 		loadCachesFromDatabase()
 
 		let cutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetentionDays)
-		queue.runInDatabase { result in
-			guard let database = try? result.get() else {
-				return
-			}
+		queue.runInDatabase { database in
 			DownloadFailureTable.removeExpired(olderThan: cutoff, database: database)
 			database.vacuumIfNeeded()
 		}
@@ -80,10 +77,7 @@ import RSDatabaseObjC
 			homePagesWithNoFavicon.insert(homePageURL)
 			homePageToFaviconURL.removeValue(forKey: homePageURL)
 		}
-		queue.runInDatabase { result in
-			guard let database = try? result.get() else {
-				return
-			}
+		queue.runInDatabase { database in
 			HomePageFaviconTable.save(homePageURL: homePageURL, faviconURL: faviconURL, database: database)
 		}
 	}
@@ -96,10 +90,7 @@ import RSDatabaseObjC
 
 	public func saveFeedIconURL(feedURL: String, iconURL: String) {
 		feedURLToIconURL[feedURL] = iconURL
-		queue.runInDatabase { result in
-			guard let database = try? result.get() else {
-				return
-			}
+		queue.runInDatabase { database in
 			FeedIconURLTable.save(feedURL: feedURL, iconURL: iconURL, database: database)
 		}
 	}
@@ -115,10 +106,7 @@ import RSDatabaseObjC
 
 	public func recordFailure(url: String, statusCode: Int?) {
 		failureDates[url] = Date()
-		queue.runInDatabase { result in
-			guard let database = try? result.get() else {
-				return
-			}
+		queue.runInDatabase { database in
 			DownloadFailureTable.save(url: url, statusCode: statusCode, database: database)
 		}
 	}
@@ -127,10 +115,7 @@ import RSDatabaseObjC
 		guard failureDates.removeValue(forKey: url) != nil else {
 			return
 		}
-		queue.runInDatabase { result in
-			guard let database = try? result.get() else {
-				return
-			}
+		queue.runInDatabase { database in
 			DownloadFailureTable.clear(url: url, database: database)
 		}
 	}
@@ -147,10 +132,7 @@ private extension ImageMetadataDatabase {
 		nonisolated(unsafe) var failureDuration: TimeInterval = 0
 
 		let totalStart = Date()
-		queue.runInDatabaseSync { result in
-			guard let database = try? result.get() else {
-				return
-			}
+		queue.runInDatabaseSync { database in
 			var stepStart = Date()
 			homePageRecords = HomePageFaviconTable.fetchAll(database: database)
 			homePageDuration = Date().timeIntervalSince(stepStart)

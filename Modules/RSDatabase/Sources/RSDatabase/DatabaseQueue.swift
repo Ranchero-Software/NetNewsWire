@@ -87,27 +87,16 @@ public final class DatabaseQueue: Sendable {
 
 	/// Run all the lines that start with "create".
 	/// Use this to create tables, indexes, etc.
-	public func runCreateStatements(_ statements: String) throws {
-		nonisolated(unsafe) var error: Error?
-
-		runInDatabaseSync { result in
+	public func runCreateStatements(_ statements: String) {
+		runInDatabaseSync { database in
 			Self.logger.debug("DatabaseQueue: runCreateStatements")
 
-			switch result {
-			case .success(let database):
-				statements.enumerateLines { (line, stop) in
-					if line.lowercased().hasPrefix("create") {
-						database.executeStatements(line)
-					}
-					stop = false
+			statements.enumerateLines { (line, stop) in
+				if line.lowercased().hasPrefix("create") {
+					database.executeStatements(line)
 				}
-			case .failure(let databaseError):
-				error = databaseError
+				stop = false
 			}
-		}
-
-		if let error {
-			throw(error)
 		}
 	}
 
@@ -117,10 +106,8 @@ public final class DatabaseQueue: Sendable {
 	/// since the last vacuum() call.
 	public func vacuum() async {
 		await withCheckedContinuation { continuation in
-			runInDatabase { result in
-				if let database = try? result.get() {
-					database.vacuum()
-				}
+			runInDatabase { database in
+				database.vacuum()
 				continuation.resume()
 			}
 		}
@@ -141,7 +128,7 @@ private extension DatabaseQueue {
 			if useTransaction {
 				state.database.beginTransaction()
 			}
-			databaseBlock(.success(state.database))
+			databaseBlock(state.database)
 			if useTransaction {
 				state.database.commit()
 			}

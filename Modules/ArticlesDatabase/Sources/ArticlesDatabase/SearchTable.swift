@@ -90,10 +90,8 @@ final class SearchTable: DatabaseTable, @unchecked Sendable {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		queue.runInTransaction { databaseResult in
-			if let database = databaseResult.database {
-				self.ensureIndexedArticles(articleIDs, database)
-			}
+		queue.runInTransaction { database in
+			self.ensureIndexedArticles(articleIDs, database)
 		}
 	}
 
