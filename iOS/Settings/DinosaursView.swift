@@ -42,7 +42,7 @@ struct DinosaursView: View {
 								Button {
 									dismissAndPresent(dinosaur)
 								} label: {
-									Text("Show Feed", comment: "Show Feed")
+									Text("Go to Feed", comment: "Go to Feed")
 									Image(systemName: "arrow.up.right")
 								}
 								Button {
@@ -63,9 +63,10 @@ struct DinosaursView: View {
 									Image(systemName: "document.on.document")
 								}
 							} label: {
-								Image(systemName: "ellipsis")
+								Label("More", systemImage: "ellipsis")
 							}
-							.help("Menu: Select in Sidebar, Open Home Page, Copy Feed URL")
+							.labelStyle(.iconOnly)
+							.help("Menu: Go to Feed, Open Home Page, Copy Feed URL")
 						}
 				}
 			} header: {

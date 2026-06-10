@@ -642,7 +642,7 @@
     "Medium" : {
       "comment" : "Medium"
     },
-    "Menu: Select in Sidebar, Open Home Page, Copy Feed URL" : {
+    "Menu: Go to Feed, Open Home Page, Copy Feed URL" : {
 
     },
     "More" : {
@@ -896,9 +896,6 @@
     },
     "Share…" : {
       "comment" : "Share…"
-    },
-    "Show Feed" : {
-      "comment" : "Show Feed"
     },
     "Show Feed Article" : {
       "comment" : "Show Feed Article"
