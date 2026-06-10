@@ -16,6 +16,7 @@ import RSTree
 import RSWeb
 import HTMLMetadata
 import Account
+import ActivityLog
 import Articles
 import Images
 
@@ -52,6 +53,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	private let refreshProgressView = RefreshProgressView(frame: .zero)
+	private var currentActivityButton: UIBarButtonItem?
 
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
@@ -68,12 +70,42 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		registerForNotifications()
+		configureCurrentActivityButton()
 		configureCollectionView()
 		configureDiffableDataSource()
 		collectionView.dragDelegate = self
 		collectionView.dropDelegate = self
 		becomeFirstResponder()
     }
+
+	func configureCurrentActivityButton() {
+		if #available(iOS 26, *) {
+			// Toolbar button to open Current Activity. It lights up while activity is happening.
+			let settingsButtonIndex = 0
+			let button = UIBarButtonItem(image: Assets.Images.currentActivity, style: .plain, target: self, action: #selector(showCurrentActivity(_:)))
+			button.accessibilityLabel = NSLocalizedString("Current Activity", comment: "Current Activity")
+			toolbarItems?.insert(button, at: settingsButtonIndex + 1)
+			currentActivityButton = button
+			NotificationCenter.default.addObserver(self, selector: #selector(activityDidChange(_:)), name: .activityDidChange, object: nil)
+			updateCurrentActivityButtonState()
+		} else {
+			// Tap progress view in the toolbar to open Current Activity.
+			refreshProgressView.isUserInteractionEnabled = true
+			refreshProgressView.accessibilityTraits = .button
+			refreshProgressView.accessibilityHint = NSLocalizedString("Shows current activity", comment: "Current Activity accessibility hint")
+			let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showCurrentActivity(_:)))
+			refreshProgressView.addGestureRecognizer(tapGestureRecognizer)
+		}
+	}
+
+	@objc func activityDidChange(_ note: Notification) {
+		updateCurrentActivityButtonState()
+	}
+
+	func updateCurrentActivityButtonState() {
+		let hasCurrentActivity = !ActivityLog.shared.runningActivities.isEmpty || !ActivityLog.shared.pendingActivities.isEmpty
+		currentActivityButton?.tintColor = hasCurrentActivity ? Assets.Colors.primaryAccent : .label
+	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear")
@@ -363,6 +395,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
+	}
+
+	@objc func showCurrentActivity(_ sender: Any?) {
+		coordinator.showCurrentActivity()
 	}
 
     // MARK: UICollectionViewDelegate

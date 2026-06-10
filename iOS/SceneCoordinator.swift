@@ -1360,6 +1360,15 @@ struct SidebarItemNode: Hashable, Sendable {
 		rootSplitViewController.present(settingsNavController, animated: true)
 	}
 
+	func showCurrentActivity() {
+		let hostingController = UIHostingController(rootView: NavigationStack { CurrentActivityView() })
+		if let sheet = hostingController.sheetPresentationController {
+			sheet.detents = [.medium(), .large()]
+			sheet.prefersGrabberVisible = true
+		}
+		rootSplitViewController.present(hostingController, animated: true)
+	}
+
 	func showAccountInspector(for account: Account) {
 		let accountInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController

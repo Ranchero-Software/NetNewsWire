@@ -30,7 +30,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="500" height="235"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="inset" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="medium" headerView="D9c-Lw-2XY" viewBased="YES" id="xgZ-GN-UvA" customClass="UtilityTableView" customModule="RSCore">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" tableStyle="inset" alternatingRowBackgroundColors="YES" columnReordering="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="24" rowSizeStyle="medium" headerView="D9c-Lw-2XY" viewBased="YES" id="xgZ-GN-UvA">
                                     <rect key="frame" x="0.0" y="0.0" width="500" height="207"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <size key="intercellSpacing" width="17" height="0.0"/>
