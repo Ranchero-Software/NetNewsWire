@@ -71,7 +71,7 @@ struct CloudKitStatsView: View {
 							Label(NSLocalizedString("Help", comment: "Help"), systemImage: "questionmark.circle")
 						}
 					} label: {
-						Label(NSLocalizedString("More", comment: "More menu label"), systemImage: "ellipsis.circle")
+						Label(NSLocalizedString("More", comment: "More"), systemImage: "ellipsis.circle")
 					}
 					.disabled(!model.fetchStatus.isCompleted && !model.cleanUpStatus.isActive)
 				}
@@ -126,7 +126,7 @@ struct CloudKitStatsView: View {
 					Text(NSLocalizedString("Scan completed.", comment: "Scan status text when completed"))
 						.foregroundStyle(.secondary)
 					Spacer()
-					Button(NSLocalizedString("Refresh", comment: "Refresh button")) {
+					Button(NSLocalizedString("Refresh", comment: "Refresh")) {
 						model.fetch()
 					}
 				}
@@ -172,7 +172,7 @@ struct CloudKitStatsView: View {
 			if model.cleanUpStatus.cleanUpError != nil {
 				Text(NSLocalizedString("Cleanup failed to complete, but you may be able to clean up more if you wait a few minutes and try again.", comment: "Cleanup error message"))
 					.foregroundStyle(.red)
-				Button(NSLocalizedString("Refresh", comment: "Refresh button")) {
+				Button(NSLocalizedString("Refresh", comment: "Refresh")) {
 					model.fetch()
 				}
 			} else if let progress = model.cleanUpStatus.progress {
@@ -261,7 +261,7 @@ struct CloudKitStatsView: View {
 			Text(text)
 				.foregroundStyle(.secondary)
 			Spacer()
-			Button(NSLocalizedString("Refresh", comment: "Refresh button")) {
+			Button(NSLocalizedString("Refresh", comment: "Refresh")) {
 				model.fetch()
 			}
 		}

@@ -73,7 +73,7 @@ struct AccountStatsView: View {
 						await refresh()
 					}
 				} label: {
-					Label(NSLocalizedString("Refresh", comment: "Refresh button"), systemImage: "arrow.clockwise")
+					Label(NSLocalizedString("Refresh", comment: "Refresh"), systemImage: "arrow.clockwise")
 				}
 				.disabled(isVacuuming)
 			}

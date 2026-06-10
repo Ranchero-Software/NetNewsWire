@@ -201,7 +201,7 @@ final class SettingsViewController: UITableViewController {
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
+				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Add Account")
 			} else {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsComboTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 				acctCell.applyThemeProperties()

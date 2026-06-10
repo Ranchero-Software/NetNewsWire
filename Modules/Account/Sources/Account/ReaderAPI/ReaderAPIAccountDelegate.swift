@@ -30,7 +30,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		case .invalidParameter:
 			return NSLocalizedString("An invalid parameter was passed.", comment: "An invalid parameter was passed.")
 		case .invalidResponse:
-			return NSLocalizedString("There was an invalid response from the server.", comment: "There was an invalid response from the server.")
+			return NSLocalizedString("There was an invalid response from the server.", comment: "Invalid response")
 		case .urlNotFound:
 			return NSLocalizedString("The API URL wasn't found.", comment: "The API URL wasn't found.")
 		}

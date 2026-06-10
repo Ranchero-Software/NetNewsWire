@@ -101,7 +101,7 @@ private extension CloudKitStatsScanViewController {
 			statusView.spinner.stopAnimation(nil)
 			statusView.statusIcon.isHidden = false
 			statusView.statusTextField.stringValue = NSLocalizedString("Scan completed.", comment: "Scan status text when completed")
-			statusView.actionButton.title = NSLocalizedString("Refresh", comment: "Refresh button")
+			statusView.actionButton.title = NSLocalizedString("Refresh", comment: "Refresh")
 			statusView.actionButton.keyEquivalent = ""
 			statusView.actionButton.action = #selector(CloudKitStatsViewController.refreshScan(_:))
 			statusView.statusTextLeadingToSpinner.isActive = true
@@ -111,7 +111,7 @@ private extension CloudKitStatsScanViewController {
 			statusView.spinner.stopAnimation(nil)
 			statusView.statusIcon.isHidden = true
 			statusView.statusTextField.stringValue = NSLocalizedString("Scan failed. Numbers are incomplete.", comment: "Scan status text on error")
-			statusView.actionButton.title = NSLocalizedString("Refresh", comment: "Refresh button")
+			statusView.actionButton.title = NSLocalizedString("Refresh", comment: "Refresh")
 			statusView.actionButton.keyEquivalent = ""
 			statusView.actionButton.action = #selector(CloudKitStatsViewController.refreshScan(_:))
 			statusView.statusTextLeadingToSpinner.isActive = false
@@ -122,7 +122,7 @@ private extension CloudKitStatsScanViewController {
 			statusView.spinner.stopAnimation(nil)
 			statusView.statusIcon.isHidden = true
 			statusView.statusTextField.stringValue = NSLocalizedString("Canceled.", comment: "Scan status text when canceled")
-			statusView.actionButton.title = NSLocalizedString("Refresh", comment: "Refresh button")
+			statusView.actionButton.title = NSLocalizedString("Refresh", comment: "Refresh")
 			statusView.actionButton.keyEquivalent = ""
 			statusView.actionButton.action = #selector(CloudKitStatsViewController.refreshScan(_:))
 			statusView.statusTextLeadingToSpinner.isActive = false

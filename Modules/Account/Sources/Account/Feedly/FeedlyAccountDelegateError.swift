@@ -34,7 +34,7 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return String(format: template, name)
 
 		case .unableToRenameFolder(let from, let to):
-			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Feedly – Could not rename a folder/collection.")
+			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Could not rename.")
 			return String(format: template, from, to)
 
 		case .unableToRemoveFolder(let name):
@@ -53,7 +53,7 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return String(format: template, folderName)
 
 		case .unableToRenameFeed(let from, let to):
-			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Feedly – Could not rename a feed.")
+			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Could not rename.")
 			return String(format: template, from, to)
 
 		case .unableToRemoveFeed(let feedName):

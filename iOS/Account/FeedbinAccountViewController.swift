@@ -148,7 +148,7 @@ final class FeedbinAccountViewController: UITableViewController {
 	}
 
 	private func showError(_ message: String) {
-		presentError(title: NSLocalizedString("Error", comment: "Credentials Error"), message: message)
+		presentError(title: NSLocalizedString("Error", comment: "Error"), message: message)
 	}
 
 	private func setNavigationEnabled(to value: Bool) {

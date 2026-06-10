@@ -57,16 +57,17 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 		switch self {
 		case .onMyMac:
 			return NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
+		// These proper names don’t have a translation.
 		case .cloudKit:
-			return NSLocalizedString("iCloud", comment: "iCloud")
+			return "iCloud"
 		case .feedly:
-			return NSLocalizedString("Feedly", comment: "Feedly")
+			return "Feedly"
 		case .feedbin:
-			return NSLocalizedString("Feedbin", comment: "Feedbin")
+			return "Feedbin"
 		case .newsBlur:
-			return NSLocalizedString("NewsBlur", comment: "NewsBlur")
+			return "NewsBlur"
 		case .freshRSS:
-			return NSLocalizedString("FreshRSS", comment: "Account name")
+			return "FreshRSS"
 		case .inoreader:
 			return NSLocalizedString("Inoreader", comment: "Account name")
 		case .bazQux:
