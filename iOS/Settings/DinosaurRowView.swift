@@ -6,14 +6,13 @@
 //  Copyright © 2026 Ranchero Software. All rights reserved.
 //
 
-
 import SwiftUI
 
 struct DinosaurRowView: View {
-	
+
 	// MARK: Variables
 	var dinosaur: DinosaurRow
-	
+
 	var body: some View {
 		VStack(alignment: .leading) {
 			HStack(alignment: .top) {
@@ -52,7 +51,7 @@ struct DinosaurRowView: View {
 					}
 				}
 			}
-			
+
 		}
 	}
 }

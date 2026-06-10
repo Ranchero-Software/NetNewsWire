@@ -9,16 +9,15 @@
 import SwiftUI
 
 struct DinosaursView: View {
-	
+
 	// MARK: State
 	@State private var model = DinosaursViewModel()
-	@State private var dinosaurPendingDeletion: DinosaurRow? = nil
+	@State private var dinosaurPendingDeletion: DinosaurRow?
 	@State private var showDeleteConfirmation = false
-	
+
 	// MARK: Constants
 	let dismissAndPresent: (_ dinosaur: DinosaurRow) -> Void
-	
-	
+
 	var body: some View {
 		List {
 			Section {
@@ -33,7 +32,7 @@ struct DinosaursView: View {
 							}
 							.tint(.red)
 							.help("Delete Feed")
-							
+
 							Menu {
 								Button {
 									dismissAndPresent(dinosaur)
@@ -49,7 +48,7 @@ struct DinosaursView: View {
 									Text("Open Home Page", comment: "Open Home Page")
 									Image(systemName: "safari")
 								}
-								
+
 								Button {
 									UIPasteboard.general.string = dinosaur.feedURL
 								} label: {
@@ -67,7 +66,7 @@ struct DinosaursView: View {
 					Text("Show feeds that haven’t updated in…", comment: "Show stale feeds text")
 						.font(.subheadline)
 					Picker("", selection: $model.monthThreshold) {
-						ForEach([3,6,12,24], id: \.self) { month in
+						ForEach([3, 6, 12, 24], id: \.self) { month in
 							Text("\(month) months", comment: "Dinosaur staleness threshold in months").tag(month)
 						}
 					}
@@ -101,18 +100,13 @@ struct DinosaursView: View {
 					}
 					dinosaurPendingDeletion = nil
 				}
-				
+
 			} label: {
 				Text("Delete", comment: "Delete")
 			}
 		}, message: {
 			Text("Are you sure you want to delete the feed ”\(dinosaurPendingDeletion?.feedName ?? "")”?", comment: "Delete feed confirmation text.")
 		})
-		
+
 	}
 }
-
-
-
-
-
