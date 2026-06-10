@@ -10,6 +10,15 @@ import os
 import Account
 import RSCore
 
+enum DinosaurSortKey: String {
+
+	case feedName
+	case feedURL
+	case accountName
+	case lastArticleDate
+	case lastResponseCode
+}
+
 struct DinosaurRow: Identifiable {
 
 	let id: String
@@ -35,7 +44,7 @@ struct DinosaurRow: Identifiable {
 	private(set) var rows = [DinosaurRow]()
 	private(set) var showAccountColumn = false
 	var monthThreshold = 6
-	var sortDescriptor: NSSortDescriptor?
+	private var sortDescriptor: NSSortDescriptor?
 
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DinosaursViewModel")
 
@@ -76,22 +85,31 @@ struct DinosaurRow: Identifiable {
 		applySort()
 	}
 
-	func applySort() {
+	private func applySort() {
 		let ascending = sortDescriptor?.ascending ?? true
-		switch sortDescriptor?.key ?? "feedName" {
-		case "feedName":
+		let key: DinosaurSortKey = {
+			guard let rawKey = sortDescriptor?.key, let sortKey = DinosaurSortKey(rawValue: rawKey) else {
+				return .feedName
+			}
+			return sortKey
+		}()
+		switch key {
+		case .feedName:
 			sortWithURLTiebreaker(ascending: ascending) { $0.feedName.localizedCaseInsensitiveCompare($1.feedName) }
-		case "feedURL":
+		case .feedURL:
 			rows.sort { compareStrings($0.feedURL, $1.feedURL, ascending: ascending) }
-		case "accountName":
+		case .accountName:
 			sortWithURLTiebreaker(ascending: ascending) { $0.accountName.localizedCaseInsensitiveCompare($1.accountName) }
-		case "lastArticleDate":
+		case .lastArticleDate:
 			sortWithURLTiebreaker(ascending: ascending) { compareOptionals($0.lastArticleDate, $1.lastArticleDate) }
-		case "lastResponseCode":
+		case .lastResponseCode:
 			sortWithURLTiebreaker(ascending: ascending) { compareOptionals($0.lastResponseCode, $1.lastResponseCode) }
-		default:
-			break
 		}
+	}
+
+	func sortBy(_ key: DinosaurSortKey, ascending: Bool) {
+		sortDescriptor = NSSortDescriptor(key: key.rawValue, ascending: ascending)
+		applySort()
 	}
 
 	func deleteFeeds(at indexes: IndexSet) -> [DinosaurDeletion] {

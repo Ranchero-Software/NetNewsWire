@@ -57,9 +57,8 @@ final class DinosaursWindowController: NSWindowController {
 		model.monthThreshold = Self.savedMonthThreshold
 		setThresholdControls(model.monthThreshold)
 
-		let defaultDescriptor = NSSortDescriptor(key: "lastArticleDate", ascending: false)
-		tableView?.sortDescriptors = [defaultDescriptor]
-		model.sortDescriptor = defaultDescriptor
+		tableView?.sortDescriptors = [NSSortDescriptor(key: DinosaurSortKey.lastArticleDate.rawValue, ascending: false)]
+		model.sortBy(.lastArticleDate, ascending: false)
 
 		updateActionBarEnabledState()
 
@@ -191,8 +190,10 @@ extension DinosaursWindowController: NSTableViewDataSource {
 	}
 
 	func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
-		model.sortDescriptor = tableView.sortDescriptors.first
-		model.applySort()
+		guard let descriptor = tableView.sortDescriptors.first, let rawKey = descriptor.key, let key = DinosaurSortKey(rawValue: rawKey) else {
+			return
+		}
+		model.sortBy(key, ascending: descriptor.ascending)
 		tableView.reloadData()
 	}
 }

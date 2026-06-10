@@ -7,13 +7,17 @@
 //
 
 import SwiftUI
+import SafariServices
 
 struct DinosaursView: View {
+
+	private static let helpURL = URL(string: "https://netnewswire.com/help/dinosaurs.html")!
 
 	// MARK: State
 	@State private var model = DinosaursViewModel()
 	@State private var dinosaurPendingDeletion: DinosaurRow?
 	@State private var showDeleteConfirmation = false
+	@State private var showHelp = false
 
 	// MARK: Constants
 	let dismissAndPresent: (_ dinosaur: DinosaurRow) -> Void
@@ -37,7 +41,7 @@ struct DinosaursView: View {
 								Button {
 									dismissAndPresent(dinosaur)
 								} label: {
-									Text("Show Feed", comment: "Show Feed")
+									Text("Select in Sidebar", comment: "Select in Sidebar")
 									Image(systemName: "arrow.up.right")
 								}
 								Button {
@@ -58,19 +62,21 @@ struct DinosaursView: View {
 							} label: {
 								Image(systemName: "ellipsis")
 							}
-							.help("Menu: Show Feed, Open Home Page, Copy Feed URL")
+							.help("Menu: Select in Sidebar, Open Home Page, Copy Feed URL")
 						}
 				}
 			} header: {
 				VStack(alignment: .leading) {
 					Text("Show feeds that haven’t updated in…", comment: "Show stale feeds text")
 						.font(.subheadline)
+						.foregroundStyle(Color.primary)
 					Picker("", selection: $model.monthThreshold) {
 						ForEach([3, 6, 12, 24], id: \.self) { month in
 							Text("\(month) months", comment: "Dinosaur staleness threshold in months").tag(month)
 						}
 					}
 					.pickerStyle(.segmented)
+					.padding(.bottom, 12)
 					.onChange(of: model.monthThreshold) {
 						Task { @MainActor in
 							await model.refresh()
@@ -80,13 +86,25 @@ struct DinosaursView: View {
 			} footer: {
 				if model.rows.count == 0 {
 					Text("There are no dinosaurs. All feeds have published articles within the last \(model.monthThreshold) months.", comment: "No dinosaurs footer text.")
+				} else {
+					Text("Swipe a feed to show the action menu and delete button.", comment: "Dinosaurs swipe hint.")
+						.padding(.top, 8)
 				}
+			}
+
+			Section {
+			} footer: {
+				helpLinkFooter
 			}
 		}
 		.navigationTitle("🦖 Dinosaurs")
 		.navigationBarTitleDisplayMode(.inline)
 		.task {
+			model.sortBy(.lastArticleDate, ascending: true)
 			await model.refresh()
+		}
+		.sheet(isPresented: $showHelp) {
+			SafariView(url: Self.helpURL)
 		}
 		.alert("Delete Feed", isPresented: $showDeleteConfirmation, actions: {
 			Button(role: .destructive) {
@@ -108,5 +126,31 @@ struct DinosaursView: View {
 			Text("Are you sure you want to delete the feed ”\(dinosaurPendingDeletion?.feedName ?? "")”?", comment: "Delete feed confirmation text.")
 		})
 
+	}
+}
+
+// MARK: - Private
+
+private extension DinosaursView {
+
+	var helpLinkFooter: some View {
+		Button(NSLocalizedString("Dinosaurs Help", comment: "Help link")) {
+			showHelp = true
+		}
+		.font(.subheadline)
+		.frame(maxWidth: .infinity)
+		.padding(.top, 8)
+	}
+}
+
+private struct SafariView: UIViewControllerRepresentable {
+
+	let url: URL
+
+	func makeUIViewController(context: Context) -> SFSafariViewController {
+		SFSafariViewController(url: url)
+	}
+
+	func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
 	}
 }

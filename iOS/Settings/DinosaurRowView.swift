@@ -35,7 +35,7 @@ struct DinosaurRowView: View {
 					.font(.caption)
 					if let lastArticleDate = dinosaur.lastArticleDate {
 						LabeledContent {
-							Text(verbatim: lastArticleDate.formatted(date: .abbreviated, time: .shortened))
+							Text(verbatim: lastArticleDate.formatted(date: .abbreviated, time: .omitted))
 						} label: {
 							Text("Last Article", comment: "Last Article Date")
 						}
