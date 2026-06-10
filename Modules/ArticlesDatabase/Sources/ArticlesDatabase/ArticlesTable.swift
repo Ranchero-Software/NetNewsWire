@@ -370,39 +370,31 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 
 		queue.runInDatabase { database in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
 
-			func makeDatabaseCalls(_ database: FMDatabase) throws -> UnreadCountDictionary {
-				let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-				let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
+			let parameters = Array(feedIDs) as [Any]
 
-				let parameters = Array(feedIDs) as [Any]
-
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
-					return UnreadCountDictionary()
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
+				DispatchQueue.main.async {
+					completion(.success(UnreadCountDictionary()))
 				}
-				defer {
-					resultSet.close()
-				}
-
-				var unreadCountDictionary = UnreadCountDictionary()
-				while resultSet.next() {
-					let unreadCount = resultSet.long(forColumnIndex: 1)
-					if let feedID = resultSet.swiftString(forColumnIndex: 0) {
-						unreadCountDictionary[feedID] = unreadCount
-					}
-				}
-				return unreadCountDictionary
+				return
+			}
+			defer {
+				resultSet.close()
 			}
 
-			do {
-				let unreadCountDictionary = try makeDatabaseCalls(database)
-				DispatchQueue.main.async {
-					completion(.success(unreadCountDictionary))
+			var unreadCountDictionary = UnreadCountDictionary()
+			while resultSet.next() {
+				let unreadCount = resultSet.long(forColumnIndex: 1)
+				if let feedID = resultSet.swiftString(forColumnIndex: 0) {
+					unreadCountDictionary[feedID] = unreadCount
 				}
-			} catch {
-				DispatchQueue.main.async {
-					completion(.failure(error))
-				}
+			}
+
+			DispatchQueue.main.async {
+				completion(.success(unreadCountDictionary))
 			}
 		}
 	}
