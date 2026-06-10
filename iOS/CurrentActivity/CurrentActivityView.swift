@@ -39,9 +39,17 @@ struct CurrentActivityView: View {
 		.navigationTitle(NSLocalizedString("Current Activity", comment: "Current Activity"))
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
-			ToolbarItem(placement: .topBarTrailing) {
-				Button(NSLocalizedString("Done", comment: "Done")) {
-					dismiss()
+			if #available(iOS 26, *) {
+				ToolbarItem(placement: .topBarTrailing) {
+					Button(role: .close) {
+						dismiss()
+					}
+				}
+			} else {
+				ToolbarItem(placement: .confirmationAction) {
+					Button(NSLocalizedString("Done", comment: "Done")) {
+						dismiss()
+					}
 				}
 			}
 		}

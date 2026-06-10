@@ -77,9 +77,20 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
     }
 
 	func configureCurrentActivityButton() {
-		let button = UIBarButtonItem(image: Assets.Images.currentActivity, style: .plain, target: self, action: #selector(showCurrentActivity(_:)))
-		button.accessibilityLabel = NSLocalizedString("Current Activity", comment: "Current Activity")
-		navigationItem.leftBarButtonItem = button
+		if #available(iOS 26, *) {
+			// Toolbar button to open Current Activity.
+			let settingsButtonIndex = 0
+			let button = UIBarButtonItem(image: Assets.Images.currentActivity, style: .plain, target: self, action: #selector(showCurrentActivity(_:)))
+			button.accessibilityLabel = NSLocalizedString("Current Activity", comment: "Current Activity")
+			toolbarItems?.insert(button, at: settingsButtonIndex + 1)
+		} else {
+			// Tap progress view in the toolbar to open Current Activity.
+			refreshProgressView.isUserInteractionEnabled = true
+			refreshProgressView.accessibilityTraits = .button
+			refreshProgressView.accessibilityHint = NSLocalizedString("Shows current activity", comment: "Current Activity accessibility hint")
+			let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showCurrentActivity(_:)))
+			refreshProgressView.addGestureRecognizer(tapGestureRecognizer)
+		}
 	}
 
 	override func viewWillAppear(_ animated: Bool) {

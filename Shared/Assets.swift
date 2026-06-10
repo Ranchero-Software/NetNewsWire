@@ -133,7 +133,7 @@ struct Assets {
 		static var circleOpen: RSImage { RSImage(symbol: "circle")! }
 		static var disclosure: RSImage { RSImage(named: "disclosure")! }
 		static var deactivate: RSImage { RSImage(symbol: "minus.circle")! }
-		static var currentActivity: RSImage { RSImage(symbol: "dot.radiowaves.up.forward")! }
+		static var currentActivity: RSImage { RSImage(symbol: "text.pad.header")! }
 		static var edit: RSImage { RSImage(symbol: "square.and.pencil")! }
 		static var filter: RSImage { RSImage(symbol: "line.3.horizontal.decrease")! }
 		static var folderOutlinePlus: RSImage { RSImage(symbol: "folder.badge.plus")! }
