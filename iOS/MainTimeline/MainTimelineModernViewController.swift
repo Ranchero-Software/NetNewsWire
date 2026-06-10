@@ -1299,11 +1299,11 @@ extension MainTimelineModernViewController {
 	}
 
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let feed = article.feed else { return nil }
-		guard let fetchedArticles = try? feed.fetchArticles() else {
+		guard let feed = article.feed else {
 			return nil
 		}
 
+		let fetchedArticles = feed.fetchArticles()
 		let articles = Array(fetchedArticles)
 		guard articles.canMarkAllAsRead(), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
@@ -1321,11 +1321,11 @@ extension MainTimelineModernViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = article.feed else { return nil }
-		guard let fetchedArticles = try? feed.fetchArticles() else {
+		guard let feed = article.feed else {
 			return nil
 		}
 
+		let fetchedArticles = feed.fetchArticles()
 		let articles = Array(fetchedArticles)
 		guard articles.canMarkAllAsRead(), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil

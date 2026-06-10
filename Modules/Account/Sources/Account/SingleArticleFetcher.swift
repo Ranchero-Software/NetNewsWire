@@ -20,19 +20,19 @@ public struct SingleArticleFetcher: ArticleFetcher {
 		self.articleID = articleID
 	}
 
-	public func fetchArticles() throws -> Set<Article> {
-		try account.fetchArticles(.articleIDs(Set([articleID])))
+	public func fetchArticles() -> Set<Article> {
+		account.fetchArticles(.articleIDs(Set([articleID])))
 	}
 
-	public func fetchArticlesAsync() async throws -> Set<Article> {
-		try await account.fetchArticlesAsync(.articleIDs(Set([articleID])))
+	public func fetchArticlesAsync() async -> Set<Article> {
+		await account.fetchArticlesAsync(.articleIDs(Set([articleID])))
 	}
 
-	public func fetchUnreadArticles() throws -> Set<Article> {
-		try account.fetchArticles(.articleIDs(Set([articleID])))
+	public func fetchUnreadArticles() -> Set<Article> {
+		account.fetchArticles(.articleIDs(Set([articleID])))
 	}
 
-	public func fetchUnreadArticlesAsync() async throws -> Set<Article> {
-		try await account.fetchArticlesAsync(.articleIDs(Set([articleID])))
+	public func fetchUnreadArticlesAsync() async -> Set<Article> {
+		await account.fetchArticlesAsync(.articleIDs(Set([articleID])))
 	}
 }

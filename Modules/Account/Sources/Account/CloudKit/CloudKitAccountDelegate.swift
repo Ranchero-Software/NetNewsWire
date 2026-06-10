@@ -939,12 +939,13 @@ private extension CloudKitAccountDelegate {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		Task {
 			do {
-				let articles = try await account.fetchArticlesAsync(.feed(feed))
+				let articles = await account.fetchArticlesAsync(.feed(feed))
 
 				await storeArticleChanges(new: articles, updated: Set<Article>(), deleted: Set<Article>())
 				syncProgress.completeTask()
 
 				_ = try await sendArticleStatus(account: account, showProgress: true)
+
 				do {
 					try await articlesZone.fetchChangesInZone()
 				} catch {

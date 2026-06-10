@@ -153,14 +153,14 @@ public struct ArticleCounts: Sendable {
 		}
 	}
 
-	public func fetchArticlesMatching(searchString: String, feedIDs: Set<String>) throws -> Set<Article> {
+	public func fetchArticlesMatching(searchString: String, feedIDs: Set<String>) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticlesMatching(searchString, feedIDs)
+		return articlesTable.fetchArticlesMatching(searchString, feedIDs)
 	}
 
-	public func fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) throws -> Set<Article> {
+	public func fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+		return articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
 	}
 
 	/// Returns a dictionary of feedID → latest article date for all feeds with articles.
@@ -175,66 +175,66 @@ public struct ArticleCounts: Sendable {
 
 	// MARK: - Fetching Articles Async
 
-	public func fetchArticlesAsync(feedID: String) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesAsync(feedID: feedID) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesAsync(feedID: String) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesAsync(feedID: feedID) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesAsync(feedIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesAsync(feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesAsync(feedIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesAsync(feedIDs: feedIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesAsync(articleIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesAsync(articleIDs: articleIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesAsync(articleIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesAsync(articleIDs: articleIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchUnreadArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadArticlesAsync(feedIDs: feedIDs, limit: limit) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchUnreadArticlesAsync(feedIDs: feedIDs, limit: limit) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchTodayArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchTodayArticlesAsync(feedIDs: feedIDs, limit: limit) { result in
-				continuation.resume(with: result)
+	public func fetchTodayArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchTodayArticlesAsync(feedIDs: feedIDs, limit: limit) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchedStarredArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchedStarredArticlesAsync(feedIDs: feedIDs, limit: limit) { result in
-				continuation.resume(with: result)
+	public func fetchedStarredArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchedStarredArticlesAsync(feedIDs: feedIDs, limit: limit) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesMatchingAsync(searchString: String, feedIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesMatchingAsync(searchString: searchString, feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesMatchingAsync(searchString: String, feedIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesMatchingAsync(searchString: searchString, feedIDs: feedIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
@@ -294,8 +294,8 @@ public struct ArticleCounts: Sendable {
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
 	public func updateAsync(parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool) async throws -> ArticleChanges {
 		try await withCheckedThrowingContinuation { continuation in
-			_update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { result in
-				continuation.resume(with: result)
+			_update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { articleChanges in
+				continuation.resume(returning: articleChanges)
 			}
 		}
 	}
@@ -303,8 +303,8 @@ public struct ArticleCounts: Sendable {
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
 	public func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws -> ArticleChanges {
 		try await withCheckedThrowingContinuation { continuation in
-			_update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { result in
-				continuation.resume(with: result)
+			_update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { articleChanges in
+				continuation.resume(returning: articleChanges)
 			}
 		}
 	}
@@ -327,16 +327,16 @@ public struct ArticleCounts: Sendable {
 	/// Fetch the articleIDs of unread articles.
 	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
 		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadArticleIDsAsync { result in
-				continuation.resume(with: result)
+			_fetchUnreadArticleIDsAsync { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
 
 	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
 		try await withCheckedThrowingContinuation { continuation in
-			_fetchStarredArticleIDsAsync { result in
-				continuation.resume(with: result)
+			_fetchStarredArticleIDsAsync { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
@@ -344,8 +344,8 @@ public struct ArticleCounts: Sendable {
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either starred or newer than the article cutoff date.
 	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
 		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-				continuation.resume(with: result)
+			_fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
@@ -354,16 +354,16 @@ public struct ArticleCounts: Sendable {
 
 	public func markAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<ArticleStatus> {
 		try await withCheckedThrowingContinuation { continuation in
-			_mark(articles: articles, statusKey: statusKey, flag: flag) { result in
-				continuation.resume(with: result)
+			_mark(articles: articles, statusKey: statusKey, flag: flag) { statuses in
+				continuation.resume(returning: statuses)
 			}
 		}
 	}
 
 	public func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<String> {
 		try await withCheckedThrowingContinuation { continuation in
-			_markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { result in
-				continuation.resume(with: result)
+			_markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
@@ -444,20 +444,11 @@ private extension ArticlesDatabase {
 // MARK: - Articles Table (Private)
 
 typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionary) -> Void
-
-typealias UpdateArticlesResult = Result<ArticleChanges, Error>
-typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
-
+typealias UpdateArticlesCompletionBlock = @Sendable (ArticleChanges) -> Void
 typealias SingleUnreadCountCompletionBlock = @Sendable (Int) -> Void
-
-typealias ArticleSetResult = Result<Set<Article>, Error>
-typealias ArticleSetResultBlock = @Sendable (ArticleSetResult) -> Void
-
-typealias ArticleIDsResult = Result<Set<String>, Error>
-typealias ArticleIDsCompletionBlock = @Sendable (ArticleIDsResult) -> Void
-
-typealias ArticleStatusesResult = Result<Set<ArticleStatus>, Error>
-typealias ArticleStatusesResultBlock = @Sendable (ArticleStatusesResult) -> Void
+typealias ArticleSetResultBlock = @Sendable (Set<Article>) -> Void
+typealias ArticleIDsCompletionBlock = @Sendable (Set<String>) -> Void
+typealias ArticleStatusesResultBlock = @Sendable (Set<ArticleStatus>) -> Void
 
 private extension ArticlesDatabase {
 

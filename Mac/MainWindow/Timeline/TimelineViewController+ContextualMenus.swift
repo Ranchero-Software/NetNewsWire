@@ -77,7 +77,8 @@ extension TimelineViewController {
 			return
 		}
 
-		guard let unreadArticles = try? feed.fetchUnreadArticles(), !unreadArticles.isEmpty else {
+		let unreadArticles = feed.fetchUnreadArticles()
+		guard !unreadArticles.isEmpty else {
 			return
 		}
 		guard let undoManager, let markReadCommand = MarkStatusCommand(

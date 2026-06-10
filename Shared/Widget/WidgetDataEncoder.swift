@@ -57,15 +57,7 @@ import Account
 
 		removeStaleFaviconsFromSharedContainer()
 
-		let latestData: WidgetData
-		do {
-			latestData = try fetchWidgetData()
-			Self.logger.debug("WidgetDataEncoder: fetched latest widget data")
-		} catch {
-			Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
-			return
-		}
-
+		let latestData = fetchWidgetData()
 		let encodedData: Data
 		do {
 			encodedData = try JSONEncoder().encode(latestData)
@@ -118,15 +110,15 @@ import Account
 
 @MainActor private extension WidgetDataEncoder {
 
-	func fetchWidgetData() throws -> WidgetData {
-		let fetchedUnreadArticles = try AccountManager.shared.fetchArticles(.unread(fetchLimit))
+	func fetchWidgetData() -> WidgetData {
+		let fetchedUnreadArticles = AccountManager.shared.fetchArticles(.unread(fetchLimit))
 		let unreadArticles = sortedLatestArticles(fetchedUnreadArticles)
 
-		let fetchedStarredArticles = try AccountManager.shared.fetchArticles(.starred(fetchLimit))
+		let fetchedStarredArticles = AccountManager.shared.fetchArticles(.starred(fetchLimit))
 		let starredArticles = sortedLatestArticles(fetchedStarredArticles)
 
-		let fetchedTodayArticles = try AccountManager.shared.fetchArticles(.today(fetchLimit))
-		let fetchedTodayTotal = try AccountManager.shared.fetchArticles(.today())
+		let fetchedTodayArticles = AccountManager.shared.fetchArticles(.today(fetchLimit))
+		let fetchedTodayTotal = AccountManager.shared.fetchArticles(.today())
 		let fetchedTodayTotalCount = fetchedTodayTotal.count
 		let fetchedTodayUnreadCount = fetchedTodayTotal.filter({ $0.status.read == false }).count
 		let todayArticles = sortedLatestArticles(fetchedTodayArticles)
@@ -134,7 +126,7 @@ import Account
 		let latestData = WidgetData(totalUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
 									totalTodayCount: fetchedTodayTotalCount,
 									totalTodayUnreadCount: fetchedTodayUnreadCount,
-									totalStarredCount: (try? AccountManager.shared.fetchCountForStarredArticles()) ?? 0,
+									totalStarredCount: AccountManager.shared.fetchCountForStarredArticles(),
 									unreadArticles: unreadArticles,
 									starredArticles: starredArticles,
 									todayArticles: todayArticles,

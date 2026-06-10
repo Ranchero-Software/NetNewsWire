@@ -1229,13 +1229,11 @@ private extension TimelineViewController {
 		var fetchedArticles = Set<Article>()
 		for fetchers in fetchers {
 			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
-				if let articles = try? fetchers.fetchUnreadArticles() {
-					fetchedArticles.formUnion(articles)
-				}
+				let articles = fetchers.fetchUnreadArticles()
+				fetchedArticles.formUnion(articles)
 			} else {
-				if let articles = try? fetchers.fetchArticles() {
-					fetchedArticles.formUnion(articles)
-				}
+				let articles = fetchers.fetchArticles()
+				fetchedArticles.formUnion(articles)
 			}
 		}
 		return fetchedArticles

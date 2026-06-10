@@ -300,12 +300,11 @@ import Images
 	static func identifiers(for feed: Feed) -> [String] {
 		var ids = [String]()
 		ids.append(identifier(for: feed))
-		if let articles = try? feed.fetchArticles() {
-			for article in articles {
-				ids.append(identifier(for: article))
-			}
+		let articles = feed.fetchArticles()
+		for article in articles {
+			ids.append(identifier(for: article))
 		}
-
+		
 		return ids
 	}
 }

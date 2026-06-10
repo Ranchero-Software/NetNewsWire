@@ -94,17 +94,13 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 
 			for fetcher in fetchers {
 				let articles: Set<Article>
-				do {
-					if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
-						articles = try await fetcher.fetchUnreadArticlesAsync()
-					} else {
-						articles = try await fetcher.fetchArticlesAsync()
-					}
-				} catch {
-					Self.logger.error("FetchRequestOperation \(self.id, privacy: .public): fetcher threw — \(String(describing: error), privacy: .public)")
-					Self.postFetchError(error)
-					articles = []
+
+				if (fetcher as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+					articles = await fetcher.fetchUnreadArticlesAsync()
+				} else {
+					articles = await fetcher.fetchArticlesAsync()
 				}
+
 				process(articles)
 			}
 
@@ -193,16 +189,10 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 
 			for fetcher in fetchers {
 				let articles: Set<Article>
-				do {
-					if fetcherHidesReadArticles(fetcher) {
-						articles = try await fetcher.fetchUnreadArticlesAsync()
-					} else {
-						articles = try await fetcher.fetchArticlesAsync()
-					}
-				} catch {
-					Self.logger.error("FetchRequestOperation \(self.id, privacy: .public): fetcher threw — \(String(describing: error), privacy: .public)")
-					Self.postFetchError(error)
-					articles = []
+				if fetcherHidesReadArticles(fetcher) {
+					articles = await fetcher.fetchUnreadArticlesAsync()
+				} else {
+					articles = await fetcher.fetchArticlesAsync()
 				}
 				process(articles)
 			}

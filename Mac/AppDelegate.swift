@@ -1155,7 +1155,8 @@ private extension AppDelegate {
 				return
 			}
 
-			guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
+			let singleArticleSet = account.fetchArticles(.articleIDs([articleID]))
+			guard singleArticleSet.count > 0 else {
 				assertionFailure("Expected article with \(articleID)")
 				Self.logger.error("No article with articleID found \(articleID) from status notification")
 				return

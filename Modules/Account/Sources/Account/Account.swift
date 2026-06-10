@@ -812,7 +812,7 @@ public enum FetchType {
 
 	// MARK: - Fetching Articles
 
-	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	public func fetchArticles(_ fetchType: FetchType) -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
 			return _fetchStarredArticles(limit: limit)
@@ -831,34 +831,34 @@ public enum FetchType {
 		case .articleIDs(let articleIDs):
 			return _fetchArticles(articleIDs: articleIDs)
 		case .search(let searchString):
-			return try _fetchArticlesMatching(searchString: searchString)
+			return _fetchArticlesMatching(searchString: searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try _fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
+			return _fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
 		}
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+	public func fetchArticlesAsync(_ fetchType: FetchType) async -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
-			return try await _fetchStarredArticlesAsync(limit: limit)
+			return await _fetchStarredArticlesAsync(limit: limit)
 		case .unread(let limit):
-			return try await _fetchUnreadArticlesAsync(limit: limit)
+			return await _fetchUnreadArticlesAsync(limit: limit)
 		case .today(let limit):
-			return try await _fetchTodayArticlesAsync(limit: limit)
+			return await _fetchTodayArticlesAsync(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
-				return try await _fetchUnreadArticlesAsync(container: folder)
+				return await _fetchUnreadArticlesAsync(container: folder)
 			} else {
-				return try await _fetchArticlesAsync(container: folder)
+				return await _fetchArticlesAsync(container: folder)
 			}
 		case .feed(let feed):
-			return try await _fetchArticlesAsync(feed: feed)
+			return await _fetchArticlesAsync(feed: feed)
 		case .articleIDs(let articleIDs):
-			return try await _fetchArticlesAsync(articleIDs: articleIDs)
+			return await _fetchArticlesAsync(articleIDs: articleIDs)
 		case .search(let searchString):
-			return try await _fetchArticlesMatchingAsync(searchString: searchString)
+			return await _fetchArticlesMatchingAsync(searchString: searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try await _fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
+			return await _fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
 		}
 	}
 
@@ -1133,7 +1133,7 @@ public enum FetchType {
 	public func debugRunSearch() {
 		#if DEBUG
 		let t1 = Date()
-		let articles = try! _fetchArticlesMatching(searchString: "Brent NetNewsWire")
+		let articles = _fetchArticlesMatching(searchString: "Brent NetNewsWire")
 		let t2 = Date()
 		print(t2.timeIntervalSince(t1))
 		print(articles.count)
@@ -1207,8 +1207,8 @@ private extension Account {
 		database.fetchStarredArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
-	func _fetchStarredArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await database.fetchedStarredArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchStarredArticlesAsync(limit: Int? = nil) async -> Set<Article> {
+		await database.fetchedStarredArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	// MARK: - Account Unread Articles
@@ -1217,8 +1217,8 @@ private extension Account {
 		_fetchUnreadArticles(container: self, limit: limit)
 	}
 
-	func _fetchUnreadArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await _fetchUnreadArticlesAsync(container: self, limit: limit)
+	func _fetchUnreadArticlesAsync(limit: Int? = nil) async -> Set<Article> {
+		await _fetchUnreadArticlesAsync(container: self, limit: limit)
 	}
 
 	// MARK: - Today Articles
@@ -1227,8 +1227,8 @@ private extension Account {
 		database.fetchTodayArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
-	func _fetchTodayArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await database.fetchTodayArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchTodayArticlesAsync(limit: Int? = nil) async -> Set<Article> {
+		await database.fetchTodayArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	// MARK: - Container Articles
@@ -1240,9 +1240,9 @@ private extension Account {
 		return articles
 	}
 
-	func _fetchArticlesAsync(container: Container) async throws -> Set<Article> {
+	func _fetchArticlesAsync(container: Container) async -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try await database.fetchArticlesAsync(feedIDs: feeds.feedIDs())
+		let articles = await database.fetchArticlesAsync(feedIDs: feeds.feedIDs())
 		validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		return articles
 	}
@@ -1260,9 +1260,9 @@ private extension Account {
 		return articles
 	}
 
-	func _fetchUnreadArticlesAsync(container: Container, limit: Int? = nil) async throws -> Set<Article> {
+	func _fetchUnreadArticlesAsync(container: Container, limit: Int? = nil) async -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try await database.fetchUnreadArticlesAsync(feedIDs: feeds.feedIDs(), limit: limit)
+		let articles = await database.fetchUnreadArticlesAsync(feedIDs: feeds.feedIDs(), limit: limit)
 
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.
@@ -1281,8 +1281,8 @@ private extension Account {
 		return articles
 	}
 
-	func _fetchArticlesAsync(feed: Feed) async throws -> Set<Article> {
-		let articles = try await database.fetchArticlesAsync(feedID: feed.feedID)
+	func _fetchArticlesAsync(feed: Feed) async -> Set<Article> {
+		let articles = await database.fetchArticlesAsync(feedID: feed.feedID)
 		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
@@ -1299,26 +1299,26 @@ private extension Account {
 		database.fetchArticles(articleIDs: articleIDs)
 	}
 
-	func _fetchArticlesAsync(articleIDs: Set<String>) async throws -> Set<Article> {
-		try await database.fetchArticlesAsync(articleIDs: articleIDs)
+	func _fetchArticlesAsync(articleIDs: Set<String>) async -> Set<Article> {
+		await database.fetchArticlesAsync(articleIDs: articleIDs)
 	}
 
 	// MARK: - Search Articles
 
-	func _fetchArticlesMatching(searchString: String) throws -> Set<Article> {
-		try database.fetchArticlesMatching(searchString: searchString, feedIDs: flattenedFeedsIDs)
+	func _fetchArticlesMatching(searchString: String) -> Set<Article> {
+		database.fetchArticlesMatching(searchString: searchString, feedIDs: flattenedFeedsIDs)
 	}
 
-	func _fetchArticlesMatchingAsync(searchString: String) async throws -> Set<Article> {
-		try await database.fetchArticlesMatchingAsync(searchString: searchString, feedIDs: flattenedFeedsIDs)
+	func _fetchArticlesMatchingAsync(searchString: String) async -> Set<Article> {
+		await database.fetchArticlesMatchingAsync(searchString: searchString, feedIDs: flattenedFeedsIDs)
 	}
 
-	func _fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) throws -> Set<Article> {
-		try database.fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
+	func _fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) -> Set<Article> {
+		database.fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
 	}
 
-	func _fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async throws -> Set<Article> {
-		try await database.fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
+	func _fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async -> Set<Article> {
+		await database.fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
 	}
 
 	// MARK: - Unread Counts

@@ -1132,8 +1132,11 @@ extension MainFeedCollectionViewController {
 
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
-			feed.unreadCount > 0,
-			let articles = try? feed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+			  feed.unreadCount > 0 else {
+			return nil
+		}
+		let articles = feed.fetchArticles()
+		guard let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
 				return nil
 		}
 
@@ -1229,9 +1232,8 @@ extension MainFeedCollectionViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, sidebarItem.nameForDisplay) as String
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? sidebarItem.fetchUnreadArticles() {
-					self?.coordinator.markAllAsRead(Array(articles))
-				}
+				let articles = sidebarItem.fetchUnreadArticles()
+				self?.coordinator.markAllAsRead(Array(articles))
 			}
 		}
 
@@ -1249,9 +1251,8 @@ extension MainFeedCollectionViewController {
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				// If you don't have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-					if let articles = try? account.fetchArticles(.unread()) {
-						self?.coordinator.markAllAsRead(Array(articles))
-					}
+					let articles = account.fetchArticles(.unread())
+					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}

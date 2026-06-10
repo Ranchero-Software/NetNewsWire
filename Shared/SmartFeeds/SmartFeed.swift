@@ -85,20 +85,20 @@ import Images
 
 extension SmartFeed: ArticleFetcher {
 
-	func fetchArticles() throws -> Set<Article> {
-		try delegate.fetchArticles()
+	func fetchArticles() -> Set<Article> {
+		delegate.fetchArticles()
 	}
 
-	func fetchArticlesAsync() async throws -> Set<Article> {
-		try await delegate.fetchArticlesAsync()
+	func fetchArticlesAsync() async -> Set<Article> {
+		await delegate.fetchArticlesAsync()
 	}
 
-	func fetchUnreadArticles() throws -> Set<Article> {
-		try delegate.fetchUnreadArticles()
+	func fetchUnreadArticles() -> Set<Article> {
+		delegate.fetchUnreadArticles()
 	}
 
-	func fetchUnreadArticlesAsync() async throws -> Set<Article> {
-		try await delegate.fetchUnreadArticlesAsync()
+	func fetchUnreadArticlesAsync() async -> Set<Article> {
+		await delegate.fetchUnreadArticlesAsync()
 	}
 }
 

@@ -99,15 +99,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		}
 
 		let articleIDs = syncStatuses.map({ $0.articleID })
-		let articles: Set<Article>
-
-		do {
-			articles = try await account.fetchArticlesAsync(.articleIDs(Set(articleIDs)))
-		} catch {
-			await syncDatabase.resetSelectedForProcessing(Set(syncStatuses.map({ $0.articleID })))
-			Self.logger.error("iCloud: Send article status fetch articles error: \(error.localizedDescription)")
-			throw error
-		}
+		let articles = await account.fetchArticlesAsync(.articleIDs(Set(articleIDs)))
 
 		let syncStatusesDict = Dictionary(grouping: syncStatuses, by: { $0.articleID })
 		let articlesDict = articles.reduce(into: [String: Article]()) { result, article in

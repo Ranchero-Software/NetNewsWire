@@ -132,7 +132,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Search Articles
 
-	func fetchArticlesMatching(_ searchString: String) throws -> Set<Article> {
+	func fetchArticlesMatching(_ searchString: String) -> Set<Article> {
 		nonisolated(unsafe) var articles: Set<Article> = Set<Article>()
 
 		queue.runInDatabaseSync { database in
@@ -142,14 +142,14 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		return articles
 	}
 
-	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) throws -> Set<Article> {
-		var articles = try fetchArticlesMatching(searchString)
+	func fetchArticlesMatching(_ searchString: String, _ feedIDs: Set<String>) -> Set<Article> {
+		var articles = fetchArticlesMatching(searchString)
 		articles = articles.filter { feedIDs.contains($0.feedID) }
 		return articles
 	}
 
-	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) throws -> Set<Article> {
-		var articles = try fetchArticlesMatching(searchString)
+	func fetchArticlesMatchingWithArticleIDs(_ searchString: String, _ articleIDs: Set<String>) -> Set<Article> {
+		var articles = fetchArticlesMatching(searchString)
 		articles = articles.filter { articleIDs.contains($0.articleID) }
 		return articles
 	}
@@ -464,7 +464,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		self.queue.runInTransaction { database in
 			let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
 			DispatchQueue.main.async {
-				completion(.success(statuses ?? Set<ArticleStatus>()))
+				completion(statuses ?? Set<ArticleStatus>())
 			}
 		}
 	}
@@ -473,7 +473,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		queue.runInTransaction { database in
 			let newStatusIDs = self.statusesTable.markAndFetchNew(articleIDs, statusKey, flag, database)
 			DispatchQueue.main.async {
-				completion(.success(newStatusIDs))
+				completion(newStatusIDs)
 			}
 		}
 	}
@@ -647,7 +647,7 @@ nonisolated private extension ArticlesTable {
 		queue.runInDatabase { database in
 			let articles = fetchMethod(database)
 			DispatchQueue.main.async {
-				completion(.success(articles))
+				completion(articles)
 			}
 		}
 	}
@@ -908,7 +908,7 @@ nonisolated private extension ArticlesTable {
 	func callUpdateArticlesCompletionBlock(_ newArticles: Set<Article>?, _ updatedArticles: Set<Article>?, _ deletedArticles: Set<Article>?, _ completion: @escaping UpdateArticlesCompletionBlock) {
 		let articleChanges = ArticleChanges(new: newArticles, updated: updatedArticles, deleted: deletedArticles)
 		DispatchQueue.main.async {
-			completion(.success(articleChanges))
+			completion(articleChanges)
 		}
 	}
 

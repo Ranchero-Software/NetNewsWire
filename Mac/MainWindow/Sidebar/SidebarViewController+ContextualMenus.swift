@@ -346,9 +346,8 @@ private extension SidebarViewController {
 		var articles = Set<Article>()
 		for object in objects {
 			if let articleFetcher = object as? ArticleFetcher {
-				if let unreadArticles = try? articleFetcher.fetchUnreadArticles() {
-					articles.formUnion(unreadArticles)
-				}
+				let unreadArticles = articleFetcher.fetchUnreadArticles()
+				articles.formUnion(unreadArticles)
 			}
 		}
 		return articles

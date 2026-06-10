@@ -111,14 +111,14 @@ final class StatusesTable: DatabaseTable, Sendable {
 
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 				DispatchQueue.main.async {
-					completion(.success(Set<String>()))
+					completion(Set<String>())
 				}
 				return
 			}
 
 			let articleIDs = resultSet.mapToSet { $0.swiftString(forColumnIndex: 0) }
 			DispatchQueue.main.async {
-				completion(.success(articleIDs))
+				completion(articleIDs)
 			}
 		}
 	}
@@ -134,7 +134,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 			}
 
 			DispatchQueue.main.async {
-				completion(.success(articleIDs))
+				completion(articleIDs)
 			}
 		}
 	}
