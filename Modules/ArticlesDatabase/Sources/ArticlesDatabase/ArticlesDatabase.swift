@@ -242,38 +242,33 @@ public struct ArticleCounts: Sendable {
 	// MARK: - Unread Counts
 
 	/// Fetch all non-zero unread counts.
-	public func fetchAllUnreadCountsAsync() async throws -> UnreadCountDictionary? {
-		return try await withCheckedThrowingContinuation { continuation in
-			_fetchAllUnreadCounts { result in
-				continuation.resume(with: result)
+	public func fetchAllUnreadCountsAsync() async -> UnreadCountDictionary? {
+		await withCheckedContinuation { continuation in
+			_fetchAllUnreadCounts { unreadCountDictionary in
+				continuation.resume(returning: unreadCountDictionary)
 			}
 		}
 	}
 
 	/// Fetch unread count for a single feed.
-	public func fetchUnreadCountAsync(feedID: String) async throws -> Int {
+	public func fetchUnreadCountAsync(feedID: String) async -> Int {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadCounts(feedIDs: Set([feedID])) { result in
-				switch result {
-				case .success(let unreadCountDictionary):
-					if let unreadCount = unreadCountDictionary[feedID] {
-						continuation.resume(returning: unreadCount)
-					} else {
-						continuation.resume(returning: 0)
-					}
-				case .failure(let error):
-					continuation.resume(throwing: error)
+		return await withCheckedContinuation { continuation in
+			_fetchUnreadCounts(feedIDs: Set([feedID])) { unreadCountDictionary in
+				if let unreadCount = unreadCountDictionary[feedID] {
+					continuation.resume(returning: unreadCount)
+				} else {
+					continuation.resume(returning: 0)
 				}
 			}
 		}
 	}
 
 	/// Fetch non-zero unread counts for given feedIDs.
-	public func fetchUnreadCountsAsync(feedIDs: Set<String>) async throws -> UnreadCountDictionary {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadCounts(feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadCountsAsync(feedIDs: Set<String>) async -> UnreadCountDictionary {
+		await withCheckedContinuation { continuation in
+			_fetchUnreadCounts(feedIDs: feedIDs) { unreadCountDictionary in
+				continuation.resume(returning: unreadCountDictionary)
 			}
 		}
 	}
@@ -448,8 +443,7 @@ private extension ArticlesDatabase {
 
 // MARK: - Articles Table (Private)
 
-typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary, Error>
-typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionaryCompletionResult) -> Void
+typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionary) -> Void
 
 typealias UpdateArticlesResult = Result<ArticleChanges, Error>
 typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
@@ -477,7 +471,7 @@ private extension ArticlesDatabase {
 			}
 			operation.completionBlock = { operation in
 				let fetchOperation = operation as! FetchAllUnreadCountsOperation
-				completion(fetchOperation.result ?? .success(UnreadCountDictionary()))
+				completion(fetchOperation.unreadCountDictionary ?? UnreadCountDictionary())
 			}
 			operationQueue.add(operation)
 		}

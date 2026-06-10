@@ -365,7 +365,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		if feedIDs.isEmpty {
-			completion(.success(UnreadCountDictionary()))
+			completion(UnreadCountDictionary())
 			return
 		}
 
@@ -377,7 +377,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
 				DispatchQueue.main.async {
-					completion(.success(UnreadCountDictionary()))
+					completion(UnreadCountDictionary())
 				}
 				return
 			}
@@ -394,7 +394,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			}
 
 			DispatchQueue.main.async {
-				completion(.success(unreadCountDictionary))
+				completion(unreadCountDictionary)
 			}
 		}
 	}

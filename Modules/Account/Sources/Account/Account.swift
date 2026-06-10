@@ -1375,18 +1375,14 @@ private extension Account {
 
 	func _fetchUnreadCount(feed: Feed) {
 		Task { @MainActor in
-			guard let unreadCount = try? await database.fetchUnreadCountAsync(feedID: feed.feedID) else {
-				return
-			}
+			let unreadCount = await database.fetchUnreadCountAsync(feedID: feed.feedID)
 			feed.unreadCount = unreadCount
 		}
 	}
 
 	func _fetchUnreadCounts(feeds: Set<Feed>) {
 		Task { @MainActor in
-			guard let unreadCountDictionary = try? await database.fetchUnreadCountsAsync(feedIDs: feeds.feedIDs()) else {
-				return
-			}
+			let unreadCountDictionary = await database.fetchUnreadCountsAsync(feedIDs: feeds.feedIDs())
 			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
 		}
 	}
@@ -1395,7 +1391,7 @@ private extension Account {
 		fetchingAllUnreadCounts = true
 
 		Task { @MainActor in
-			guard let unreadCountDictionary = try? await database.fetchAllUnreadCountsAsync() else {
+			guard let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() else {
 				fetchingAllUnreadCounts = false
 				return
 			}

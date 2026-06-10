@@ -12,7 +12,7 @@ import RSDatabase
 import RSDatabaseObjC
 
 @MainActor public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecked Sendable {
-	nonisolated(unsafe) var result: UnreadCountDictionaryCompletionResult?
+	nonisolated(unsafe) var unreadCountDictionary: UnreadCountDictionary?
 	private let queue: DatabaseQueue
 
 	init(databaseQueue: DatabaseQueue) {
@@ -27,8 +27,7 @@ import RSDatabaseObjC
 				return
 			}
 
-			let unreadCountDictionary = self.fetchUnreadCounts(database) ?? UnreadCountDictionary()
-			self.result = .success(unreadCountDictionary)
+			self.unreadCountDictionary = self.fetchUnreadCounts(database)
 
 			self.didComplete()
 		}
