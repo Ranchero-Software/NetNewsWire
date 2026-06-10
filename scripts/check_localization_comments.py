@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """
-Find NSLocalizedString literals that are used with more than one `comment:`.
+Find localized literals that are used with more than one `comment:`.
+
+This covers both `NSLocalizedString("literal", comment: "…")` and SwiftUI
+`Text("literal", comment: "…")` — they write to the same String Catalog.
 
 A String Catalog keys on the source string, so the same literal with differing
 comments makes every build rewrite/merge the comment in Localizable.xcstrings —
@@ -24,11 +27,14 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SKIP_DIRECTORIES = {".git", ".build", "build", "DerivedData", "Pods", ".swiftpm"}
 
-# Matches NSLocalizedString("literal", <anything>, comment: "comment"), including
-# multi-line calls and an optional bundle:/tableName: between the two strings.
+# Matches NSLocalizedString(…) and SwiftUI Text(…) calls of the form
+# Call("literal", <anything>, comment: "comment") — including multi-line calls and
+# an optional bundle:/tableName: between the two strings. The lookbehind keeps
+# `Text(` from matching identifiers that merely end in "Text" (e.g. someText().
 # The string bodies allow escaped characters (e.g. \" inside the literal).
-NS_LOCALIZED_STRING = re.compile(
-	r'NSLocalizedString\(\s*'
+LOCALIZED_CALL = re.compile(
+	r'(?<![A-Za-z0-9_])'
+	r'(?:NSLocalizedString|Text)\(\s*'
 	r'"((?:[^"\\]|\\.)*)"'   # 1: the literal (the catalog key)
 	r'\s*,\s*'
 	r'(.*?)'                 # 2: anything between the literal and the comment
@@ -71,7 +77,7 @@ def collect_comments(root):
 		except (OSError, UnicodeDecodeError):
 			continue
 
-		for match in NS_LOCALIZED_STRING.finditer(text):
+		for match in LOCALIZED_CALL.finditer(text):
 			literal, between_strings, comment = match.group(1), match.group(2), match.group(3)
 			scope = catalog_scope(path, between_strings)
 			location = "%s:%d" % (os.path.relpath(path, root), line_number(text, match.start()))
