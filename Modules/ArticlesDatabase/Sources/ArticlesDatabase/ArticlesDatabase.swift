@@ -138,9 +138,9 @@ public struct ArticleCounts: Sendable {
 		return articlesTable.fetchStarredArticles(feedIDs, limit)
 	}
 
-	public func fetchStarredArticlesCount(feedIDs: Set<String>) throws -> Int {
+	public func fetchStarredArticlesCount(feedIDs: Set<String>) -> Int {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchStarredArticlesCount(feedIDs)
+		return articlesTable.fetchStarredArticlesCount(feedIDs)
 	}
 
 	/// Returns aggregate article counts (total, unread, starred, statuses) for the given feeds.

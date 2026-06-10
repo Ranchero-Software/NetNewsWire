@@ -440,7 +440,7 @@ import ActivityLog
 		precondition(Thread.isMainThread)
 		var count = 0
 		for account in activeAccounts {
-			count += try account.fetchCountForStarredArticles()
+			count += account.fetchCountForStarredArticles()
 		}
 		return count
 	}

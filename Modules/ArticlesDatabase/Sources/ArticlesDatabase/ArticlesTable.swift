@@ -104,8 +104,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		fetchArticlesAsync({ self.fetchStarredArticles(feedIDs, limit, $0) }, completion)
 	}
 
-	func fetchStarredArticlesCount(_ feedIDs: Set<String>) throws -> Int {
-		return try fetchArticlesCount { self.fetchStarredArticlesCount(feedIDs, $0) }
+	func fetchStarredArticlesCount(_ feedIDs: Set<String>) -> Int {
+		fetchArticlesCount { self.fetchStarredArticlesCount(feedIDs, $0) }
 	}
 
 	// MARK: - Fetching Counts Async
@@ -634,7 +634,7 @@ nonisolated private extension ArticlesTable {
 		return articles
 	}
 
-	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) throws -> Int {
+	private func fetchArticlesCount(_ fetchMethod: @escaping ArticlesCountFetchMethod) -> Int {
 		nonisolated(unsafe) var articlesCount = 0
 
 		queue.runInDatabaseSync { database in
