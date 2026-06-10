@@ -273,18 +273,18 @@ public struct ArticleCounts: Sendable {
 		}
 	}
 
-	public func fetchUnreadCountForTodayAsync(feedIDs: Set<String>) async throws -> Int {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadCount(feedIDs: feedIDs, since: todayCutoffDate()) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadCountForTodayAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			_fetchUnreadCount(feedIDs: feedIDs, since: todayCutoffDate()) { unreadCount in
+				continuation.resume(returning: unreadCount)
 			}
 		}
 	}
 
-	public func fetchUnreadCountForStarredArticlesAsync(feedIDs: Set<String>) async throws -> Int {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchStarredAndUnreadCount(feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadCountForStarredArticlesAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			_fetchStarredAndUnreadCount(feedIDs: feedIDs) { unreadCount in
+				continuation.resume(returning: unreadCount)
 			}
 		}
 	}
@@ -448,8 +448,7 @@ typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionar
 typealias UpdateArticlesResult = Result<ArticleChanges, Error>
 typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
 
-typealias SingleUnreadCountResult = Result<Int, Error>
-typealias SingleUnreadCountCompletionBlock = @Sendable (SingleUnreadCountResult) -> Void
+typealias SingleUnreadCountCompletionBlock = @Sendable (Int) -> Void
 
 typealias ArticleSetResult = Result<Set<Article>, Error>
 typealias ArticleSetResultBlock = @Sendable (ArticleSetResult) -> Void

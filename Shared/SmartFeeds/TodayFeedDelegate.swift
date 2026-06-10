@@ -24,7 +24,7 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 		Assets.Images.todayFeed
 	}
 
-	func fetchUnreadCount(account: Account) async throws -> Int? {
-		try await account.fetchUnreadCountForTodayAsync()
+	func fetchUnreadCount(account: Account) async -> Int {
+		await account.fetchUnreadCountForTodayAsync()
 	}
 }

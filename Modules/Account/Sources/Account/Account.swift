@@ -862,8 +862,8 @@ public enum FetchType {
 		}
 	}
 
-	public func fetchUnreadCountForStarredArticlesAsync() async throws -> Int? {
-		try await database.fetchUnreadCountForStarredArticlesAsync(feedIDs: flattenedFeedsIDs)
+	public func fetchUnreadCountForStarredArticlesAsync() async -> Int {
+		await database.fetchUnreadCountForStarredArticlesAsync(feedIDs: flattenedFeedsIDs)
 	}
 
 	public func fetchCountForStarredArticles() throws -> Int {
@@ -879,8 +879,8 @@ public enum FetchType {
 		try await database.fetchLastUpdateDates()
 	}
 
-	public func fetchUnreadCountForTodayAsync() async throws -> Int {
-		try await database.fetchUnreadCountForTodayAsync(feedIDs: flattenedFeedsIDs)
+	public func fetchUnreadCountForTodayAsync() async -> Int {
+		await database.fetchUnreadCountForTodayAsync(feedIDs: flattenedFeedsIDs)
 	}
 
 	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {

@@ -24,7 +24,7 @@ import Images
 	var smallIcon: IconImage? {
 		Assets.Images.starredFeed
 	}
-	func fetchUnreadCount(account: Account) async throws -> Int? {
-		try await account.fetchUnreadCountForStarredArticlesAsync()
+	func fetchUnreadCount(account: Account) async -> Int {
+		await account.fetchUnreadCountForStarredArticlesAsync()
 	}
 }

@@ -402,7 +402,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	func fetchUnreadCount(_ feedIDs: Set<String>, _ since: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		// Get unread count for today, for instance.
 		if feedIDs.isEmpty {
-			completion(.success(0))
+			completion(0)
 			return
 		}
 
@@ -418,14 +418,14 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
 			DispatchQueue.main.async {
-				completion(.success(unreadCount))
+				completion(unreadCount)
 			}
 		}
 	}
 
 	func fetchStarredAndUnreadCount(_ feedIDs: Set<String>, _ completion: @escaping SingleUnreadCountCompletionBlock) {
 		if feedIDs.isEmpty {
-			completion(.success(0))
+			completion(0)
 			return
 		}
 
@@ -437,7 +437,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
 			DispatchQueue.main.async {
-				completion(.success(unreadCount))
+				completion(unreadCount)
 			}
 		}
 	}

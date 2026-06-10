@@ -110,9 +110,7 @@ private extension SmartFeed {
 
 	func fetchUnreadCount(account: Account) {
 		Task { @MainActor in
-			guard let unreadCount = try? await delegate.fetchUnreadCount(account: account) else {
-				return
-			}
+			let unreadCount = await delegate.fetchUnreadCount(account: account)
 			unreadCounts[account.accountID] = unreadCount
 			updateUnreadCount()
 		}
