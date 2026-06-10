@@ -29,6 +29,7 @@ struct DinosaurRow: Identifiable {
 	let containers: [Container]
 }
 
+@Observable
 @MainActor final class DinosaursViewModel {
 
 	private(set) var rows = [DinosaurRow]()
