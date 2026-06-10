@@ -375,6 +375,9 @@
     "Extra Large" : {
       "comment" : "X-Large"
     },
+    "Failed" : {
+      "comment" : "Failed"
+    },
     "Favicons" : {
       "comment" : "Activity owner name"
     },
@@ -731,6 +734,9 @@
     "Overwrite" : {
       "comment" : "Overwrite"
     },
+    "Pending" : {
+      "comment" : "Pending"
+    },
     "Previous Article" : {
       "comment" : "Previous Article"
     },
@@ -781,6 +787,9 @@
     },
     "Return to Previous Scan Results" : {
       "comment" : "Return to previous scan results button"
+    },
+    "Running" : {
+      "comment" : "Running"
     },
     "Scan completed." : {
       "comment" : "Scan status text when completed"
