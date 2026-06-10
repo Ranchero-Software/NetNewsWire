@@ -815,21 +815,21 @@ public enum FetchType {
 	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
-			return try _fetchStarredArticles(limit: limit)
+			return _fetchStarredArticles(limit: limit)
 		case .unread(let limit):
-			return try _fetchUnreadArticles(limit: limit)
+			return _fetchUnreadArticles(limit: limit)
 		case .today(let limit):
-			return try _fetchTodayArticles(limit: limit)
+			return _fetchTodayArticles(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
-				return try _fetchUnreadArticles(container: folder)
+				return _fetchUnreadArticles(container: folder)
 			} else {
-				return try _fetchArticles(container: folder)
+				return _fetchArticles(container: folder)
 			}
 		case .feed(let feed):
-			return try _fetchArticles(feed: feed)
+			return _fetchArticles(feed: feed)
 		case .articleIDs(let articleIDs):
-			return try _fetchArticles(articleIDs: articleIDs)
+			return _fetchArticles(articleIDs: articleIDs)
 		case .search(let searchString):
 			return try _fetchArticlesMatching(searchString: searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
@@ -1203,8 +1203,8 @@ private extension Account {
 
 	// MARK: - Starred Articles
 
-	func _fetchStarredArticles(limit: Int? = nil) throws -> Set<Article> {
-		try database.fetchStarredArticles(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchStarredArticles(limit: Int? = nil) -> Set<Article> {
+		database.fetchStarredArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	func _fetchStarredArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
@@ -1213,8 +1213,8 @@ private extension Account {
 
 	// MARK: - Account Unread Articles
 
-	func _fetchUnreadArticles(limit: Int? = nil) throws -> Set<Article> {
-		try _fetchUnreadArticles(container: self, limit: limit)
+	func _fetchUnreadArticles(limit: Int? = nil) -> Set<Article> {
+		_fetchUnreadArticles(container: self, limit: limit)
 	}
 
 	func _fetchUnreadArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
@@ -1223,8 +1223,8 @@ private extension Account {
 
 	// MARK: - Today Articles
 
-	func _fetchTodayArticles(limit: Int? = nil) throws -> Set<Article> {
-		try database.fetchTodayArticles(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchTodayArticles(limit: Int? = nil) -> Set<Article> {
+		database.fetchTodayArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	func _fetchTodayArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
@@ -1233,9 +1233,9 @@ private extension Account {
 
 	// MARK: - Container Articles
 
-	func _fetchArticles(container: Container) throws -> Set<Article> {
+	func _fetchArticles(container: Container) -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchArticles(feedIDs: feeds.feedIDs())
+		let articles = database.fetchArticles(feedIDs: feeds.feedIDs())
 		validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		return articles
 	}
@@ -1247,9 +1247,9 @@ private extension Account {
 		return articles
 	}
 
-	func _fetchUnreadArticles(container: Container, limit: Int? = nil) throws -> Set<Article> {
+	func _fetchUnreadArticles(container: Container, limit: Int? = nil) -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchUnreadArticles(feedIDs: feeds.feedIDs(), limit: limit)
+		let articles = database.fetchUnreadArticles(feedIDs: feeds.feedIDs(), limit: limit)
 
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.
@@ -1275,8 +1275,8 @@ private extension Account {
 
 	// MARK: - Feed Articles
 
-	func _fetchArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchArticles(feedID: feed.feedID)
+	func _fetchArticles(feed: Feed) -> Set<Article> {
+		let articles = database.fetchArticles(feedID: feed.feedID)
 		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
@@ -1287,16 +1287,16 @@ private extension Account {
 		return articles
 	}
 
-	func _fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchUnreadArticles(feedIDs: Set([feed.feedID]))
+	func _fetchUnreadArticles(feed: Feed) -> Set<Article> {
+		let articles = database.fetchUnreadArticles(feedIDs: Set([feed.feedID]))
 		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
 
 	// MARK: - ArticleIDs Articles
 
-	func _fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
-		try database.fetchArticles(articleIDs: articleIDs)
+	func _fetchArticles(articleIDs: Set<String>) -> Set<Article> {
+		database.fetchArticles(articleIDs: articleIDs)
 	}
 
 	func _fetchArticlesAsync(articleIDs: Set<String>) async throws -> Set<Article> {

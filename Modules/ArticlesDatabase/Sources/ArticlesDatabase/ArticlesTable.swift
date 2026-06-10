@@ -48,16 +48,16 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Articles for Feed
 
-	func fetchArticles(_ feedID: String) throws -> Set<Article> {
-		return try fetchArticles { self.fetchArticlesForFeedID(feedID, $0) }
+	func fetchArticles(_ feedID: String) -> Set<Article> {
+		fetchArticles { self.fetchArticlesForFeedID(feedID, $0) }
 	}
 
 	func fetchArticlesAsync(_ feedID: String, _ completion: @escaping ArticleSetResultBlock) {
 		fetchArticlesAsync({ self.fetchArticlesForFeedID(feedID, $0) }, completion)
 	}
 
-	func fetchArticles(_ feedIDs: Set<String>) throws -> Set<Article> {
-		return try fetchArticles { self.fetchArticles(feedIDs, $0) }
+	func fetchArticles(_ feedIDs: Set<String>) -> Set<Article> {
+		fetchArticles { self.fetchArticles(feedIDs, $0) }
 	}
 
 	func fetchArticlesAsync(_ feedIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
@@ -66,8 +66,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Articles by articleID
 
-	func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
-		return try fetchArticles { self.fetchArticles(articleIDs: articleIDs, $0) }
+	func fetchArticles(articleIDs: Set<String>) -> Set<Article> {
+		fetchArticles { self.fetchArticles(articleIDs: articleIDs, $0) }
 	}
 
 	func fetchArticlesAsync(articleIDs: Set<String>, _ completion: @escaping ArticleSetResultBlock) {
@@ -76,8 +76,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Unread Articles
 
-	func fetchUnreadArticles(_ feedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
-		return try fetchArticles { self.fetchUnreadArticles(feedIDs, limit, $0) }
+	func fetchUnreadArticles(_ feedIDs: Set<String>, _ limit: Int?) -> Set<Article> {
+		fetchArticles { self.fetchUnreadArticles(feedIDs, limit, $0) }
 	}
 
 	func fetchUnreadArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -86,8 +86,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Today Articles
 
-	func fetchArticlesSince(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?) throws -> Set<Article> {
-		return try fetchArticles { self.fetchArticlesSince(feedIDs, cutoffDate, limit, $0) }
+	func fetchArticlesSince(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?) -> Set<Article> {
+		fetchArticles { self.fetchArticlesSince(feedIDs, cutoffDate, limit, $0) }
 	}
 
 	func fetchArticlesSinceAsync(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -96,8 +96,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Starred Articles
 
-	func fetchStarredArticles(_ feedIDs: Set<String>, _ limit: Int?) throws -> Set<Article> {
-		return try fetchArticles { self.fetchStarredArticles(feedIDs, limit, $0) }
+	func fetchStarredArticles(_ feedIDs: Set<String>, _ limit: Int?) -> Set<Article> {
+		fetchArticles { self.fetchStarredArticles(feedIDs, limit, $0) }
 	}
 
 	func fetchStarredArticlesAsync(_ feedIDs: Set<String>, _ limit: Int?, _ completion: @escaping ArticleSetResultBlock) {
@@ -625,7 +625,7 @@ nonisolated private extension ArticlesTable {
 
 	// MARK: - Fetching
 
-	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) throws -> Set<Article> {
+	private func fetchArticles(_ fetchMethod: @escaping ArticlesFetchMethod) -> Set<Article> {
 		nonisolated(unsafe) var articles = Set<Article>()
 
 		queue.runInDatabaseSync { database in

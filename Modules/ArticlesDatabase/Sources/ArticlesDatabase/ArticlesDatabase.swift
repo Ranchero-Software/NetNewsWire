@@ -108,34 +108,34 @@ public struct ArticleCounts: Sendable {
 
 	// MARK: - Fetching Articles
 
-	public func fetchArticles(feedID: String) throws -> Set<Article> {
+	public func fetchArticles(feedID: String) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticles(feedID)
+		return articlesTable.fetchArticles(feedID)
 	}
 
-	public func fetchArticles(feedIDs: Set<String>) throws -> Set<Article> {
+	public func fetchArticles(feedIDs: Set<String>) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticles(feedIDs)
+		return articlesTable.fetchArticles(feedIDs)
 	}
 
-	public func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
+	public func fetchArticles(articleIDs: Set<String>) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticles(articleIDs: articleIDs)
+		return articlesTable.fetchArticles(articleIDs: articleIDs)
 	}
 
-	public func fetchUnreadArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
+	public func fetchUnreadArticles(feedIDs: Set<String>, limit: Int? = nil) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchUnreadArticles(feedIDs, limit)
+		return articlesTable.fetchUnreadArticles(feedIDs, limit)
 	}
 
-	public func fetchTodayArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
+	public func fetchTodayArticles(feedIDs: Set<String>, limit: Int? = nil) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticlesSince(feedIDs, todayCutoffDate(), limit)
+		return articlesTable.fetchArticlesSince(feedIDs, todayCutoffDate(), limit)
 	}
 
-	public func fetchStarredArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
+	public func fetchStarredArticles(feedIDs: Set<String>, limit: Int? = nil) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchStarredArticles(feedIDs, limit)
+		return articlesTable.fetchStarredArticles(feedIDs, limit)
 	}
 
 	public func fetchStarredArticlesCount(feedIDs: Set<String>) throws -> Int {
