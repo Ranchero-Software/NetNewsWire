@@ -861,9 +861,6 @@
     "Select “%@” in Sidebar" : {
       "comment" : "Command"
     },
-    "Select in Sidebar" : {
-      "comment" : "Select in Sidebar"
-    },
     "Select Next Down" : {
       "comment" : "Select Next Down"
     },
@@ -899,6 +896,9 @@
     },
     "Share…" : {
       "comment" : "Share…"
+    },
+    "Show Feed" : {
+      "comment" : "Show Feed"
     },
     "Show Feed Article" : {
       "comment" : "Show Feed Article"

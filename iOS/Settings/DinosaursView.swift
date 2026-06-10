@@ -41,7 +41,7 @@ struct DinosaursView: View {
 								Button {
 									dismissAndPresent(dinosaur)
 								} label: {
-									Text("Select in Sidebar", comment: "Select in Sidebar")
+									Text("Show Feed", comment: "Show Feed")
 									Image(systemName: "arrow.up.right")
 								}
 								Button {
