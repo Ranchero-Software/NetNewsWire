@@ -68,12 +68,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		registerForNotifications()
+		configureCurrentActivityButton()
 		configureCollectionView()
 		configureDiffableDataSource()
 		collectionView.dragDelegate = self
 		collectionView.dropDelegate = self
 		becomeFirstResponder()
     }
+
+	func configureCurrentActivityButton() {
+		let button = UIBarButtonItem(image: Assets.Images.currentActivity, style: .plain, target: self, action: #selector(showCurrentActivity(_:)))
+		button.accessibilityLabel = NSLocalizedString("Current Activity", comment: "Current Activity")
+		navigationItem.leftBarButtonItem = button
+	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear")
@@ -363,6 +370,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
+	}
+
+	@objc func showCurrentActivity(_ sender: Any?) {
+		coordinator.showCurrentActivity()
 	}
 
     // MARK: UICollectionViewDelegate

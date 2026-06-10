@@ -205,7 +205,7 @@
       "comment" : "Disclosure button collapsed state for accessibility"
     },
     "Completed" : {
-      "comment" : "Status icon accessibility description"
+      "comment" : "Completed"
     },
     "Continue" : {
 
@@ -301,25 +301,25 @@
       "comment" : "Feed finder"
     },
     "Downloading avatar" : {
-      "comment" : "Activity kind — downloading avatar"
+      "comment" : "Downloading avatar"
     },
     "Downloading avatar %@" : {
       "comment" : "Activity kind — downloading an author avatar; %@ is the URL"
     },
     "Downloading favicon" : {
-      "comment" : "Activity kind — downloading favicon"
+      "comment" : "Downloading favicon"
     },
     "Downloading favicon %@" : {
       "comment" : "Activity kind — downloading a favicon; %@ is the URL"
     },
     "Downloading image" : {
-      "comment" : "Activity kind — downloading feed image"
+      "comment" : "Downloading image"
     },
     "Downloading image %@" : {
       "comment" : "Activity kind — downloading a feed image; %@ is the URL"
     },
     "Downloading metadata" : {
-      "comment" : "Activity kind — downloading HTML metadata"
+      "comment" : "Downloading metadata"
     },
     "Downloading metadata %@" : {
       "comment" : "Activity kind — downloading HTML metadata; %@ is the URL"
@@ -394,7 +394,7 @@
       "comment" : "Feeds"
     },
     "Fetching" : {
-      "comment" : "Activity kind — fetching a candidate URL during feed finding"
+      "comment" : "Fetching"
     },
     "Fetching %@" : {
       "comment" : "Activity kind — fetching a candidate URL during feed finding"
@@ -415,7 +415,7 @@
       "comment" : "FreshRSS SignUp"
     },
     "Finding feed" : {
-      "comment" : "Activity kind — finding a feed"
+      "comment" : "Finding feed"
     },
     "Finding feed %@" : {
       "comment" : "Activity kind — finding a feed at %@ URL"

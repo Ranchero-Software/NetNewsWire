@@ -28,7 +28,7 @@ final class CloudKitStatsScanStatusView: NSView {
 		spinner.startAnimation(nil)
 
 		statusIcon.translatesAutoresizingMaskIntoConstraints = false
-		statusIcon.image = NSImage(systemSymbolName: "checkmark.circle.fill", accessibilityDescription: NSLocalizedString("Completed", comment: "Status icon accessibility description"))
+		statusIcon.image = NSImage(systemSymbolName: "checkmark.circle.fill", accessibilityDescription: NSLocalizedString("Completed", comment: "Completed"))
 		statusIcon.contentTintColor = .systemGreen
 		statusIcon.isHidden = true
 
