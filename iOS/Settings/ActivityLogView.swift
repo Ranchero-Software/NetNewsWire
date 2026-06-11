@@ -12,27 +12,31 @@ import RSCore
 
 struct ActivityLogView: View {
 
+	private static let helpURL = URL(string: "https://netnewswire.com/help/activity-log.html")!
+
 	@State private var isEmpty = true
 	@State private var attributedText = AttributedString()
 	@State private var plainText = ""
+	@State private var showHelp = false
 
 	var body: some View {
-		Group {
+		VStack(spacing: 0) {
 			if isEmpty {
 				ContentUnavailableView("No Activity Logged", systemImage: "checkmark.circle")
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			} else {
-				VStack(spacing: 0) {
-					privacyWarning
-					Divider()
-					ScrollView {
-						Text(attributedText)
-							.font(.system(.body, design: .monospaced))
-							.textSelection(.enabled)
-							.frame(maxWidth: .infinity, alignment: .leading)
-							.padding()
-					}
+				privacyWarning
+				Divider()
+				ScrollView {
+					Text(attributedText)
+						.font(.system(.body, design: .monospaced))
+						.textSelection(.enabled)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding()
 				}
 			}
+			Divider()
+			helpLinkFooter
 		}
 		.navigationTitle("Activity Log")
 		.toolbar {
@@ -42,6 +46,9 @@ struct ActivityLogView: View {
 				}
 				.disabled(isEmpty)
 			}
+		}
+		.sheet(isPresented: $showHelp) {
+			SafariView(url: Self.helpURL)
 		}
 		.task {
 			reload()
@@ -56,6 +63,15 @@ struct ActivityLogView: View {
 			.font(.footnote)
 			.foregroundStyle(.secondary)
 			.padding()
+	}
+
+	private var helpLinkFooter: some View {
+		Button("Activity Log Help") {
+			showHelp = true
+		}
+		.font(.subheadline)
+		.frame(maxWidth: .infinity)
+		.padding(.vertical, 12)
 	}
 }
 
