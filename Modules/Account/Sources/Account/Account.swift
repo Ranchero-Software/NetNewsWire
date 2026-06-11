@@ -926,20 +926,20 @@ public enum FetchType {
 			return ArticleChanges()
 		}
 
-		return try await updateAsync(feedID: feed.feedID, parsedItems: parsedItems)
+		return await updateAsync(feedID: feed.feedID, parsedItems: parsedItems)
 	}
 
-	func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
+	func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async -> ArticleChanges {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
-		let articleChanges = try await database.updateAsync(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
+		let articleChanges = await database.updateAsync(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
 		sendNotificationAbout(articleChanges)
 		return articleChanges
 	}
 
-	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
+	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
@@ -947,7 +947,7 @@ public enum FetchType {
 			return
 		}
 
-		let newAndUpdatedArticles = try await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+		let newAndUpdatedArticles = await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
 		sendNotificationAbout(newAndUpdatedArticles)
 	}
 

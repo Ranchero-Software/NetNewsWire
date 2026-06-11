@@ -247,7 +247,7 @@ import os
 		}
 
 		let (stories, date) = try await caller.retrieveStories(hashes: hashesToFetch)
-		try await processStories(account: account, stories: stories)
+		await processStories(account: account, stories: stories)
 		try await refreshUnreadStories(for: account, hashes: Array(hashes[numberOfStories...]), updateFetchDate: date)
 	}
 
@@ -365,7 +365,7 @@ import os
 
 		let since: Date? = Calendar.current.date(byAdding: .month, value: -3, to: Date())
 
-		let hasStories = try await processStories(account: account, stories: stories, since: since)
+		let hasStories = await processStories(account: account, stories: stories, since: since)
 		if hasStories {
 			try await downloadFeed(account: account, feed: feed, page: page + 1)
 		}

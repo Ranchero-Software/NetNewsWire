@@ -801,7 +801,7 @@ private extension FeedlyAccountDelegate {
 				let chunks = Array(articleIDs).chunked(into: Self.articleDownloadChunkSize)
 				for chunk in chunks {
 					let entries = try await caller.getEntries(for: Set(chunk))
-					try await ingest(entries: entries, into: account)
+					await ingest(entries: entries, into: account)
 					ingested += entries.count
 				}
 				return ingested
@@ -817,15 +817,15 @@ private extension FeedlyAccountDelegate {
 		var continuation: String?
 		repeat {
 			let stream = try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil)
-			try await ingest(entries: stream.items, into: account)
+			await ingest(entries: stream.items, into: account)
 			continuation = paginated ? stream.continuation : nil
 		} while continuation != nil
 	}
 
-	func ingest(entries: [FeedlyEntry], into account: Account) async throws {
+	func ingest(entries: [FeedlyEntry], into account: Account) async {
 		let parsedItems = entries.compactMap { FeedlyEntryParser(entry: $0).parsedItemRepresentation }
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { $0.feedURL }).mapValues { Set($0) }
-		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 }
 

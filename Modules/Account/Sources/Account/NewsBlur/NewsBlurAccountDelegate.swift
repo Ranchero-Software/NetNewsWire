@@ -235,7 +235,7 @@ import Secrets
 			for chunk in chunkedStoryHashes {
 				do {
 					let (stories, _) = try await caller.retrieveStories(hashes: chunk)
-					try await processStories(account: account, stories: stories)
+					await processStories(account: account, stories: stories)
 				} catch {
 					savedError = error
 					Self.logger.error("NewsBlur: Refresh missing stories error: \(error.localizedDescription)")
@@ -250,7 +250,7 @@ import Secrets
 	}
 
 	@discardableResult
-	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil) async throws -> Bool {
+	func processStories(account: Account, stories: [NewsBlurStory]?, since: Date? = nil) async -> Bool {
 		let parsedItems = mapStoriesToParsedItems(stories: stories).filter {
 			guard let datePublished = $0.datePublished, let since else {
 				return true
@@ -261,7 +261,7 @@ import Secrets
 			Set($0)
 		}
 
-		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 		return !feedIDsAndItems.isEmpty
 	}
 

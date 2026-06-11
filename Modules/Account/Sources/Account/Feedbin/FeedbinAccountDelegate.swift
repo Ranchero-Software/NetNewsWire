@@ -784,7 +784,7 @@ private extension FeedbinAccountDelegate {
 	func initialFeedDownload(account: Account, feed: Feed) async throws -> Feed {
 		// Download the initial articles
 		let (entries, page) = try await caller.retrieveEntries(feedID: feed.feedID)
-		try await processEntries(account: account, entries: entries)
+		await processEntries(account: account, entries: entries)
 		try await refreshArticleStatus(for: account)
 		try await refreshArticles(account, page: page, updateFetchDate: nil)
 		try await refreshMissingArticles(account)
@@ -802,7 +802,7 @@ private extension FeedbinAccountDelegate {
 				refreshProgress.addTasks(last - 1)
 			}
 
-			try await processEntries(account: account, entries: entries)
+			await processEntries(account: account, entries: entries)
 			refreshProgress.completeTask()
 
 			try await refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
@@ -829,7 +829,7 @@ private extension FeedbinAccountDelegate {
 			for chunk in chunkedArticleIDs {
 				do {
 					let entries = try await caller.retrieveEntries(articleIDs: chunk)
-					try await processEntries(account: account, entries: entries)
+					await processEntries(account: account, entries: entries)
 				} catch {
 					savedError = error
 					Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
@@ -854,16 +854,16 @@ private extension FeedbinAccountDelegate {
 
 		let (entries, nextPage) = try await caller.retrieveEntries(page: page)
 
-		try await processEntries(account: account, entries: entries)
+		await processEntries(account: account, entries: entries)
 		refreshProgress.completeTask()
 
 		try await refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate)
 	}
 
-	func processEntries(account: Account, entries: [FeedbinEntry]?) async throws {
+	func processEntries(account: Account, entries: [FeedbinEntry]?) async {
 		let parsedItems = mapEntriesToParsedItems(entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
-		try await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
 	func mapEntriesToParsedItems(entries: [FeedbinEntry]?) -> Set<ParsedItem> {

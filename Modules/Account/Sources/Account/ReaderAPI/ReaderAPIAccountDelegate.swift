@@ -880,7 +880,7 @@ private extension ReaderAPIAccountDelegate {
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
 
-		try? await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {

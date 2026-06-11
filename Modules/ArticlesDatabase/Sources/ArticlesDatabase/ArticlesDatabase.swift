@@ -292,8 +292,8 @@ public struct ArticleCounts: Sendable {
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	public func updateAsync(parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool) async throws -> ArticleChanges {
-		try await withCheckedThrowingContinuation { continuation in
+	public func updateAsync(parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool) async -> ArticleChanges {
+		await withCheckedContinuation { continuation in
 			_update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { articleChanges in
 				continuation.resume(returning: articleChanges)
 			}
@@ -301,8 +301,8 @@ public struct ArticleCounts: Sendable {
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
-	public func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws -> ArticleChanges {
-		try await withCheckedThrowingContinuation { continuation in
+	public func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async -> ArticleChanges {
+		await withCheckedContinuation { continuation in
 			_update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { articleChanges in
 				continuation.resume(returning: articleChanges)
 			}
