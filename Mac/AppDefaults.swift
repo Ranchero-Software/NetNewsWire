@@ -43,6 +43,11 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let ollamaBaseURL = "OllamaBaseURL"
+		static let ollamaModel = "OllamaModel"
+		static let ollamaPreferredLanguage = "OllamaPreferredLanguage"
+		static let ollamaPreloadCount = "OllamaPreloadCount"
+		static let ollamaAutoTranslate = "OllamaAutoTranslate"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -344,7 +349,12 @@ final class AppDefaults: Sendable {
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
-			Key.articleContentJavascriptEnabled: true
+			Key.articleContentJavascriptEnabled: true,
+			Key.ollamaBaseURL: "http://localhost:11434/api",
+			Key.ollamaModel: "llama3",
+			Key.ollamaPreferredLanguage: "Chinese",
+			Key.ollamaPreloadCount: 10,
+			Key.ollamaAutoTranslate: false
 		]
 
 		UserDefaults.standard.register(defaults: defaults)
