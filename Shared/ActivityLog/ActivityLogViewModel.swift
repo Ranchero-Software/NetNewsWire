@@ -8,16 +8,12 @@
 import Foundation
 import ActivityLog
 
-/// Platform-neutral formatting for the Activity Log. Builds the styled segments and plain
-/// text for one completed activity. Each platform maps the semantic colors and weights to
-/// its own color and font types.
-
 enum ActivityLogTextColor {
 	case primary
 	case secondary
 	case success
 	case failure
-	case account(accountID: String?) // resolves to the account's logColor, or secondary
+	case account(accountID: String?)
 }
 
 enum ActivityLogTextWeight {
@@ -68,15 +64,13 @@ struct ActivityLogTextSegment {
 
 		return result
 	}
-
-	static func plainText(for activity: Activity) -> String {
-		segments(for: activity).map { $0.text }.joined()
-	}
 }
 
 // MARK: - Private
 
 private extension ActivityLogViewModel {
+
+	static let posixLocale = Locale(identifier: "en_US_POSIX")
 
 	static func ownerColor(for owner: ActivityOwner) -> ActivityLogTextColor {
 		switch owner {
@@ -98,11 +92,10 @@ private extension ActivityLogViewModel {
 	}
 
 	static func formattedDuration(_ duration: TimeInterval) -> String {
-		let posix = Locale(identifier: "en_US_POSIX")
 		if duration < 10.0 {
-			return String(format: "%.2fs", locale: posix, duration)
+			return String(format: "%.2fs", locale: posixLocale, duration)
 		} else if duration < 60.0 {
-			return String(format: "%.1fs", locale: posix, duration)
+			return String(format: "%.1fs", locale: posixLocale, duration)
 		} else {
 			let minutes = Int(duration) / 60
 			let seconds = Int(duration) % 60

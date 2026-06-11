@@ -12,19 +12,20 @@ import RSCore
 
 struct ActivityLogView: View {
 
-	@State private var entries = [Activity]()
+	@State private var isEmpty = true
+	@State private var attributedText = AttributedString()
 	@State private var plainText = ""
 
 	var body: some View {
 		Group {
-			if entries.isEmpty {
+			if isEmpty {
 				ContentUnavailableView("No Activity Logged", systemImage: "checkmark.circle")
 			} else {
 				VStack(spacing: 0) {
 					privacyWarning
 					Divider()
 					ScrollView {
-						Text(buildAttributedString(entries))
+						Text(attributedText)
 							.font(.system(.body, design: .monospaced))
 							.textSelection(.enabled)
 							.frame(maxWidth: .infinity, alignment: .leading)
@@ -39,7 +40,7 @@ struct ActivityLogView: View {
 				Button("Copy Contents") {
 					UIPasteboard.general.string = plainText
 				}
-				.disabled(entries.isEmpty)
+				.disabled(isEmpty)
 			}
 		}
 		.task {
@@ -62,38 +63,28 @@ struct ActivityLogView: View {
 
 private extension ActivityLogView {
 
+	/// Builds the attributed and plain text once per change, from a single pass over
+	/// the activities, so the body doesn't rebuild them on every render.
 	func reload() {
-		entries = ActivityLog.shared.completedActivities
-		plainText = buildPlainText(entries)
-	}
+		let entries = ActivityLog.shared.completedActivities
+		var attributed = AttributedString()
+		var plain = ""
 
-	func buildAttributedString(_ entries: [Activity]) -> AttributedString {
-		var result = AttributedString()
 		for entry in entries {
-			result.append(attributedString(for: entry))
-			result.append(AttributedString("\n\n"))
+			for segment in ActivityLogViewModel.segments(for: entry) {
+				var piece = AttributedString(segment.text)
+				piece.foregroundColor = color(for: segment.color)
+				piece.font = .system(.body, design: .monospaced).weight(fontWeight(for: segment.weight))
+				attributed.append(piece)
+				plain += segment.text
+			}
+			attributed.append(AttributedString("\n\n"))
+			plain += "\n\n"
 		}
-		return result
-	}
 
-	func attributedString(for activity: Activity) -> AttributedString {
-		var result = AttributedString()
-		for segment in ActivityLogViewModel.segments(for: activity) {
-			var piece = AttributedString(segment.text)
-			piece.foregroundColor = color(for: segment.color)
-			piece.font = .system(.body, design: .monospaced).weight(fontWeight(for: segment.weight))
-			result.append(piece)
-		}
-		return result
-	}
-
-	func buildPlainText(_ entries: [Activity]) -> String {
-		var result = ""
-		for entry in entries {
-			result += ActivityLogViewModel.plainText(for: entry)
-			result += "\n\n"
-		}
-		return result
+		isEmpty = entries.isEmpty
+		attributedText = attributed
+		plainText = plain
 	}
 
 	func color(for color: ActivityLogTextColor) -> Color {
