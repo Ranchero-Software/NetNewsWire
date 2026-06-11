@@ -487,7 +487,7 @@ public enum FetchType {
 		let activityLog = ActivityLog.shared
 		let id = activityLog.createActivity(owner: .account(accountID: accountID, displayName: nameForDisplay), kind: kind, detail: detail)
 		activityLog.didStart(id: id)
-		
+
 		do {
 			let result = try await work()
 			let significant = durationIsSignificant?(result) ?? true

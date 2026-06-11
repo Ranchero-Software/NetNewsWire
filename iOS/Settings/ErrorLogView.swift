@@ -14,26 +14,29 @@ struct ErrorLogView: View {
 
 	@State private var entries = [ErrorLogEntry]()
 	@State private var plainText = ""
+	@State private var showHelp = false
 
 	private static let maxEntries = 200
+	private static let helpURL = URL(string: "https://netnewswire.com/help/error-log.html")!
 
 	var body: some View {
-		Group {
+		VStack(spacing: 0) {
 			if entries.isEmpty {
-				ContentUnavailableView("No Errors Logged", systemImage: "checkmark.circle")
+				ContentUnavailableView(NSLocalizedString("No Errors Logged", comment: "Error log empty state"), systemImage: "checkmark.circle")
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			} else {
-				VStack(spacing: 0) {
-					privacyWarning
-					Divider()
-					ScrollView {
-						Text(buildAttributedString(entries))
-							.font(.system(.body, design: .monospaced))
-							.textSelection(.enabled)
-							.frame(maxWidth: .infinity, alignment: .leading)
-							.padding()
-					}
+				privacyWarning
+				Divider()
+				ScrollView {
+					Text(buildAttributedString(entries))
+						.font(.system(.body, design: .monospaced))
+						.textSelection(.enabled)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding()
 				}
 			}
+			Divider()
+			helpLinkFooter
 		}
 		.navigationTitle("Error Log")
 		.toolbar {
@@ -43,6 +46,9 @@ struct ErrorLogView: View {
 				}
 				.disabled(entries.isEmpty)
 			}
+		}
+		.sheet(isPresented: $showHelp) {
+			SafariView(url: Self.helpURL)
 		}
 		.task {
 			let allEntries = await AccountManager.shared.errorLogDatabase.allEntries()
@@ -66,6 +72,15 @@ struct ErrorLogView: View {
 			.font(.footnote)
 			.foregroundStyle(.secondary)
 			.padding()
+	}
+
+	private var helpLinkFooter: some View {
+		Button(NSLocalizedString("Error Log Help", comment: "Help link")) {
+			showHelp = true
+		}
+		.font(.subheadline)
+		.frame(maxWidth: .infinity)
+		.padding(.vertical, 12)
 	}
 }
 

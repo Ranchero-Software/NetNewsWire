@@ -260,4 +260,33 @@ import Foundation
 		#expect(activityLog.nextTaskNumberString() == "#2")
 		#expect(activityLog.nextTaskNumberString() == "#3")
 	}
+
+	@Test func kindDisplayNameForSimpleKind() {
+		#expect(ActivityKind.refreshAll.displayName(detail: nil) == "Refresh all")
+	}
+
+	@Test func kindDisplayNameUsesDetailForFeedContent() {
+		let kind = ActivityKind.refreshFeedContent(feedURL: "https://example.com/feed.json")
+		#expect(kind.displayName(detail: "My Feed") == "Refreshing feed: My Feed")
+		#expect(kind.displayName(detail: nil) == "Refreshing feed: https://example.com/feed.json")
+	}
+
+	@Test func kindDisplayNameForURLKind() {
+		#expect(ActivityKind.findFeed(urlString: "https://example.com").displayName(detail: nil) == "Finding feed https://example.com")
+	}
+
+	@Test func formattedDurationUnderTenSecondsHasTwoDecimals() {
+		#expect(Activity.formattedDuration(0.456) == "0.46s")
+		#expect(Activity.formattedDuration(9.999) == "10.00s")
+	}
+
+	@Test func formattedDurationUnderOneMinuteHasOneDecimal() {
+		#expect(Activity.formattedDuration(10.0) == "10.0s")
+		#expect(Activity.formattedDuration(12.34) == "12.3s")
+	}
+
+	@Test func formattedDurationOneMinuteOrMoreUsesMinutesAndSeconds() {
+		#expect(Activity.formattedDuration(60.0) == "1m 0s")
+		#expect(Activity.formattedDuration(135.0) == "2m 15s")
+	}
 }

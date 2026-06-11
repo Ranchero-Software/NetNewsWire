@@ -30,9 +30,10 @@ final class SettingsViewController: UITableViewController {
 
 	private enum TroubleshootingRow: Int {
 		case errorLog = 0
-		case accountStats = 1
-		case dinosaurs = 2
-		case cloudKitZoneStats = 3
+		case activityLog = 1
+		case accountStats = 2
+		case dinosaurs = 3
+		case cloudKitZoneStats = 4
 	}
 
 	private enum FeedsRow: Int {
@@ -282,6 +283,8 @@ final class SettingsViewController: UITableViewController {
 					return UIHostingController(rootView: AccountStatsView())
 				case .cloudKitZoneStats:
 					return UIHostingController(rootView: CloudKitStatsView())
+				case .activityLog:
+					return UIHostingController(rootView: ActivityLogView())
 				case .dinosaurs:
 					return UIHostingController(rootView: DinosaursView(dismissAndPresent: { [weak self] dinosaur in
 						guard let self else {
