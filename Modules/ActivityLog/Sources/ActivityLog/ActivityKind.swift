@@ -110,4 +110,37 @@ public enum ActivityKind: Sendable, Hashable {
 			return nil
 		}
 	}
+
+	/// Full localized display name for the activity. For kinds that show a feed name
+	/// or URL, `detail` provides the feed name, falling back to the URL.
+	public func displayName(detail: String?) -> String {
+		if let simpleDisplayName {
+			return simpleDisplayName
+		}
+		switch self {
+		case .refreshFeedContent(let feedURL):
+			let format = NSLocalizedString("Refreshing feed: %@", bundle: .module, comment: "Activity kind — refreshing a feed; %@ is the feed name or URL")
+			return String(format: format, detail ?? feedURL)
+		case .findFeed(let urlString):
+			let format = NSLocalizedString("Finding feed %@", bundle: .module, comment: "Activity kind — finding a feed at %@ URL")
+			return String(format: format, urlString)
+		case .fetchFeedCandidate(let urlString):
+			let format = NSLocalizedString("Fetching %@", bundle: .module, comment: "Activity kind — fetching a candidate URL during feed finding")
+			return String(format: format, urlString)
+		case .downloadFeedImage(let feedURL):
+			let format = NSLocalizedString("Downloading image %@", bundle: .module, comment: "Activity kind — downloading a feed image; %@ is the URL")
+			return String(format: format, feedURL)
+		case .downloadFavicon(let faviconURL):
+			let format = NSLocalizedString("Downloading favicon %@", bundle: .module, comment: "Activity kind — downloading a favicon; %@ is the URL")
+			return String(format: format, faviconURL)
+		case .downloadAvatar(let avatarURL):
+			let format = NSLocalizedString("Downloading avatar %@", bundle: .module, comment: "Activity kind — downloading an author avatar; %@ is the URL")
+			return String(format: format, avatarURL)
+		case .downloadHTMLMetadata(let urlString):
+			let format = NSLocalizedString("Downloading metadata %@", bundle: .module, comment: "Activity kind — downloading HTML metadata; %@ is the URL")
+			return String(format: format, urlString)
+		default:
+			return ""
+		}
+	}
 }
