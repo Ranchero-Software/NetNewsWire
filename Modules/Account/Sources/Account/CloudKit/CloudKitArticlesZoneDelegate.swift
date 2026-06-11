@@ -104,33 +104,10 @@ private extension CloudKitArticlesZoneDelegate {
 
 		nonisolated(unsafe) var updateError: Error?
 
-		do {
-			try await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing unread statuses: \(error.localizedDescription)")
-		}
-
-		do {
-			try await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing read statuses: \(error.localizedDescription)")
-		}
-
-		do {
-			try await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing unstarred statuses: \(error.localizedDescription)")
-		}
-
-		do {
-			try await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing starred statuses: \(error.localizedDescription)")
-		}
+		await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
+		await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
+		await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
+		await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
 
 		for (feedID, parsedItems) in feedIDsAndItems {
 			do {

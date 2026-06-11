@@ -953,12 +953,12 @@ public enum FetchType {
 
 	/// Returns set of Article whose statuses did change.
 	@discardableResult
-	func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
+	func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<Article> {
 		guard !articles.isEmpty else {
 			return Set<Article>()
 		}
 
-		let updatedStatuses = try await database.markAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let updatedStatuses = await database.markAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let updatedArticleIDs = updatedStatuses.articleIDs()
 		let updatedArticles = Set(articles.filter { updatedArticleIDs.contains($0.articleID) })
 		noteStatusesForArticlesDidChange(updatedArticles)
@@ -983,12 +983,12 @@ public enum FetchType {
 	///
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<String> {
+	func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
 		guard !articleIDs.isEmpty else {
 			return Set<String>()
 		}
 
-		let newArticleStatusIDs = try await database.markAndFetchNewAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		let newArticleStatusIDs = await database.markAndFetchNewAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 		noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 		return newArticleStatusIDs
 	}
@@ -998,32 +998,32 @@ public enum FetchType {
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsReadAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: true)
+	func markAsReadAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: true)
 	}
 
 	/// Mark articleIDs as unread.
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsUnreadAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: false)
+	func markAsUnreadAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: false)
 	}
 
 	/// Mark articleIDs as starred.
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsStarredAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: true)
+	func markAsStarredAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: true)
 	}
 
 	/// Mark articleIDs as unstarred.
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsUnstarredAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: false)
+	func markAsUnstarredAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: false)
 	}
 
 	// Delete the articles associated with the given set of articleIDs

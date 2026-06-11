@@ -529,7 +529,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 
-		let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(updatedArticles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})

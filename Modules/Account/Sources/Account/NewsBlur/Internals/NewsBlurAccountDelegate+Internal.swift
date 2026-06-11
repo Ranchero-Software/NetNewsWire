@@ -296,55 +296,44 @@ import os
 			return
 		}
 
-		do {
-			guard let pendingStoryHashes = await syncDatabase.selectPendingReadStatusArticleIDs() else {
-				return
-			}
-
-			let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash })
-			let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-
-			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
-
-			// Mark articles as unread
-			let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-			try await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
-
-			// Mark articles as read
-			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
-		} catch {
-			Self.logger.error("NewsBlur: Sync Story Read Status failed: \(error.localizedDescription)")
-			postSyncError(error, account: account, operation: "Syncing read status")
+		guard let pendingStoryHashes = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			return
 		}
+
+		let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash })
+		let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
+
+		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
+
+		// Mark articles as unread
+		let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+		await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
+
+		// Mark articles as read
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+		await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 	}
 
 	func syncStoryStarredState(account: Account, hashes: Set<NewsBlurStoryHash>?) async {
 		guard let hashes else {
 			return
 		}
-
-		do {
-			guard let pendingStoryHashes = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
-				return
-			}
-
-			let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash })
-			let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
-
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
-
-			// Mark articles as starred
-			let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-			try await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
-
-			// Mark articles as unstarred
-			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
-		} catch {
-			Self.logger.error("NewsBlur: Sync Story Starred Status failed: \(error.localizedDescription)")
-			postSyncError(error, account: account, operation: "Syncing starred status")
+		guard let pendingStoryHashes = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			return
 		}
+
+		let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash })
+		let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
+
+		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
+
+		// Mark articles as starred
+		let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+		await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
+
+		// Mark articles as unstarred
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+		await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 	}
 
 	@MainActor func createFeed(account: Account, newsBlurFeed: NewsBlurFeed, name: String?, container: Container) async throws -> Feed {

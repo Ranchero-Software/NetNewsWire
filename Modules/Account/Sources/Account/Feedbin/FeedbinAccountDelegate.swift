@@ -380,7 +380,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(updatedArticles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
@@ -822,23 +822,18 @@ private extension FeedbinAccountDelegate {
 		try await account.logActivity(kind: .refreshMissingArticles) {
 			var savedError: Error?
 
-			do {
-				let fetchedArticleIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
-				let articleIDs = Array(fetchedArticleIDs)
-				let chunkedArticleIDs = articleIDs.chunked(into: 100)
+			let fetchedArticleIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+			let articleIDs = Array(fetchedArticleIDs)
+			let chunkedArticleIDs = articleIDs.chunked(into: 100)
 
-				for chunk in chunkedArticleIDs {
-					do {
-						let entries = try await caller.retrieveEntries(articleIDs: chunk)
-						try await processEntries(account: account, entries: entries)
-					} catch {
-						savedError = error
-						Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
-					}
+			for chunk in chunkedArticleIDs {
+				do {
+					let entries = try await caller.retrieveEntries(articleIDs: chunk)
+					try await processEntries(account: account, entries: entries)
+				} catch {
+					savedError = error
+					Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
 				}
-			} catch {
-				savedError = error
-				Self.logger.error("Feedbin: Refresh missing articles error: \(error.localizedDescription)")
 			}
 
 			if let savedError {
@@ -890,27 +885,22 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
-		do {
-			guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
-				return
-			}
-
-			let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) })
-			let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
-
-			let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
-
-			// Mark articles as unread
-			let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			try await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
-
-			// Mark articles as read
-			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-			try await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
-		} catch {
-			Self.logger.error("Feedbin: Sync Article Read Status failed: \(error.localizedDescription)")
-			postSyncError(error, account: account, operation: "Syncing read status")
+		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			return
 		}
+
+		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) })
+		let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
+
+		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
+
+		// Mark articles as unread
+		let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
+
+		// Mark articles as read
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+		await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 	}
 
 	func syncArticleStarredState(account: Account, articleIDs: [Int]?) async {
@@ -918,27 +908,22 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
-		do {
-			guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
-				return
-			}
-
-			let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) })
-			let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
-
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
-
-			// Mark articles as starred
-			let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-			try await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
-
-			// Mark articles as unstarred
-			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-			try await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
-		} catch {
-			Self.logger.error("Feedbin: Sync Article Starred Status failed: \(error.localizedDescription)")
-			postSyncError(error, account: account, operation: "Syncing starred status")
+		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			return
 		}
+
+		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) })
+		let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
+
+		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
+
+		// Mark articles as starred
+		let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+		await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
+
+		// Mark articles as unstarred
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
+		await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 	}
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?) async throws {

@@ -148,7 +148,7 @@ import Secrets
 				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account)
 				refreshProgress.completeTask()
 				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
-				let missingIDs = try await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
 				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
 				refreshProgress.completeTask()
@@ -569,7 +569,7 @@ import Secrets
 	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: markArticles")
 
-		let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(updatedArticles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
@@ -727,13 +727,13 @@ private extension FeedlyAccountDelegate {
 		let pendingArticleIDs = (await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
 
-		let localUnreadIDs = try await account.fetchUnreadArticleIDsAsync()
+		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
 
 		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
 		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs)
 
-		try await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
-		try await account.markAsReadAsync(articleIDs: toMarkRead)
+		await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
+		await account.markAsReadAsync(articleIDs: toMarkRead)
 
 		return (added: newlyUnread.count, removed: toMarkRead.count)
 	}
@@ -749,13 +749,13 @@ private extension FeedlyAccountDelegate {
 		let pendingArticleIDs = (await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
 
-		let localStarredIDs = try await account.fetchStarredArticleIDsAsync()
+		let localStarredIDs = await account.fetchStarredArticleIDsAsync()
 
 		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
 		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs)
 
-		try await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
-		try await account.markAsUnstarredAsync(articleIDs: toUnstar)
+		await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
+		await account.markAsUnstarredAsync(articleIDs: toUnstar)
 
 		return (added: newlyStarred.count, removed: toUnstar.count)
 	}

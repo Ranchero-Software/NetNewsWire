@@ -130,7 +130,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				let articleIDs = try await caller.retrieveItemIDs(type: .allForAccount)
 				refreshProgress.completeTask()
 
-				_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
+				_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
 				try? await refreshArticleStatus(for: account)
 				refreshProgress.completeTask()
 
@@ -205,12 +205,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 			let articleIDs = try await caller.retrieveItemIDs(type: .unread)
 
-			do {
-				try await syncArticleReadState(account: account, articleIDs: articleIDs)
-			} catch {
-				errorOccurred = true
-				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving unread entries failed: \(error.localizedDescription)")
-			}
+			await syncArticleReadState(account: account, articleIDs: articleIDs)
 
 			do {
 				let articleIDs = try await caller.retrieveItemIDs(type: .starred)
@@ -505,7 +500,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: markArticles — statusKey \(statusKey.rawValue)")
 
-		let updatedArticles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(updatedArticles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
@@ -832,7 +827,7 @@ private extension ReaderAPIAccountDelegate {
 
 			refreshProgress.completeTask()
 
-			_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
+			_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
 			refreshProgress.completeTask()
 
 			try? await refreshArticleStatus(for: account)
@@ -849,7 +844,7 @@ private extension ReaderAPIAccountDelegate {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshMissingArticles")
 
 		try? await account.logActivity(kind: .refreshMissingArticles) {
-			let fetchedArticleIDs = (try? await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()) ?? Set<String>()
+			let fetchedArticleIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 
 			if fetchedArticleIDs.isEmpty {
 				return
@@ -931,7 +926,7 @@ private extension ReaderAPIAccountDelegate {
 
 	}
 
-	func syncArticleReadState(account: Account, articleIDs: [String]?) async throws {
+	func syncArticleReadState(account: Account, articleIDs: [String]?) async {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleReadState — articleIDs.count \(articleIDs?.count ?? 0)")
 
 		guard let articleIDs else {
@@ -939,25 +934,19 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		Task { @MainActor in
-			do {
+			let pendingArticleIDs = (await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 
-				let pendingArticleIDs = (await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+			let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+			let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 
-				let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
+			// Mark articles as unread
+			let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+			_ = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
-				// Mark articles as unread
-				let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-				_ = try? await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
-
-				// Mark articles as read
-				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-				_ = try? await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
-
-			} catch {
-				Self.logger.error("ReaderAPIAccountDelegate: syncArticleReadState — error \(error.localizedDescription)")
-			}
+			// Mark articles as read
+			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+			_ = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 		}
 	}
 
@@ -968,25 +957,17 @@ private extension ReaderAPIAccountDelegate {
 			return
 		}
 
-		do {
+		let pendingArticleIDs = (await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+		let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
 
-			let pendingArticleIDs = (await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+		// Mark articles as starred
+		let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+		_ = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
-			let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
-
-			// Mark articles as starred
-			let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-			_ = try? await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
-
-			// Mark articles as unstarred
-			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-			_ = try? await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
-
-		} catch {
-			Self.logger.error("ReaderAPIAccountDelegate: syncArticleStarredState — error \(error.localizedDescription)")
-		}
+		// Mark articles as unstarred
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+		_ = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 	}
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
