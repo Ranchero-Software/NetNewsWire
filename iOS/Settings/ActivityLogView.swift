@@ -22,7 +22,7 @@ struct ActivityLogView: View {
 	var body: some View {
 		VStack(spacing: 0) {
 			if isEmpty {
-				ContentUnavailableView("No Activity Logged", systemImage: "checkmark.circle")
+				ContentUnavailableView(NSLocalizedString("No Activity Logged", comment: "Activity log empty state"), systemImage: "checkmark.circle")
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			} else {
 				privacyWarning
@@ -38,7 +38,7 @@ struct ActivityLogView: View {
 			Divider()
 			helpLinkFooter
 		}
-		.navigationTitle("Activity Log")
+		.navigationTitle(NSLocalizedString("Activity Log", comment: "Activity Log screen title"))
 		.toolbar {
 			ToolbarItem(placement: .topBarTrailing) {
 				Button("Copy Contents") {
@@ -59,14 +59,14 @@ struct ActivityLogView: View {
 	}
 
 	private var privacyWarning: some View {
-		Text("Activity may contain feed URLs and other information you may not want to share publicly.")
+		Text("Activity may contain feed URLs and other information you may not want to share publicly.", comment: "Activity log privacy warning")
 			.font(.footnote)
 			.foregroundStyle(.secondary)
 			.padding()
 	}
 
 	private var helpLinkFooter: some View {
-		Button("Activity Log Help") {
+		Button(NSLocalizedString("Activity Log Help", comment: "Help link")) {
 			showHelp = true
 		}
 		.font(.subheadline)

@@ -22,7 +22,7 @@ struct ErrorLogView: View {
 	var body: some View {
 		VStack(spacing: 0) {
 			if entries.isEmpty {
-				ContentUnavailableView("No Errors Logged", systemImage: "checkmark.circle")
+				ContentUnavailableView(NSLocalizedString("No Errors Logged", comment: "Error log empty state"), systemImage: "checkmark.circle")
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			} else {
 				privacyWarning
@@ -75,7 +75,7 @@ struct ErrorLogView: View {
 	}
 
 	private var helpLinkFooter: some View {
-		Button("Error Log Help") {
+		Button(NSLocalizedString("Error Log Help", comment: "Help link")) {
 			showHelp = true
 		}
 		.font(.subheadline)

@@ -45,6 +45,18 @@
         }
       }
     },
+    "Downloading avatar %@" : {
+      "comment" : "Activity kind — downloading an author avatar — %@ is the URL"
+    },
+    "Downloading favicon %@" : {
+      "comment" : "Activity kind — downloading a favicon — %@ is the URL"
+    },
+    "Downloading image %@" : {
+      "comment" : "Activity kind — downloading a feed image — %@ is the URL"
+    },
+    "Downloading metadata %@" : {
+      "comment" : "Activity kind — downloading HTML metadata — %@ is the URL"
+    },
     "Exporting OPML" : {
       "comment" : "Activity kind",
       "localizations" : {
@@ -89,6 +101,9 @@
         }
       }
     },
+    "Fetching %@" : {
+      "comment" : "Activity kind — fetching a candidate URL during feed finding"
+    },
     "Fetching iCloud stats" : {
       "comment" : "Activity kind",
       "localizations" : {
@@ -99,6 +114,9 @@
           }
         }
       }
+    },
+    "Finding feed %@" : {
+      "comment" : "Activity kind — finding a feed at %@ URL"
     },
     "HTML Metadata" : {
       "comment" : "Activity owner name",
@@ -154,6 +172,9 @@
           }
         }
       }
+    },
+    "Refreshing feed: %@" : {
+      "comment" : "Activity kind — refreshing a feed — %@ is the feed name or URL"
     },
     "Refreshing missing articles" : {
       "comment" : "Activity kind",
