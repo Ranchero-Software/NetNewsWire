@@ -174,36 +174,9 @@ private extension ActivityLogWindowController {
 
 	func completionAttributedString(for activity: Activity) -> NSAttributedString {
 		let result = NSMutableAttributedString()
-
-		let date = activity.endDate ?? Date()
-		appendText("[\(DateFormatter.logTimestamp.string(from: date))] ", color: .secondaryLabelColor, to: result)
-
-		let isFailed = activity.state == .failed
-		let indicator = isFailed ? "✗ " : "✓ "
-		appendText(indicator, color: isFailed ? .systemRed : .systemGreen, weight: .bold, to: result)
-
-		let sourceColor = color(for: activity.owner)
-		appendText("\(activity.owner.displayName): ", color: sourceColor, weight: .medium, to: result)
-		appendText(plainDescription(for: activity), color: sourceColor, weight: .medium, to: result)
-
-		if let detail = secondaryDetail(for: activity) {
-			appendText(" \(detail)", color: .secondaryLabelColor, to: result)
+		for segment in ActivityLogViewModel.segments(for: activity) {
+			appendText(segment.text, color: nsColor(for: segment.color), weight: fontWeight(for: segment.weight), to: result)
 		}
-
-		if activity.durationIsSignificant, let startDate = activity.startDate, let endDate = activity.endDate {
-			let duration = endDate.timeIntervalSince(startDate)
-			appendText(" (\(formattedDuration(duration)))", color: .secondaryLabelColor, to: result)
-		}
-
-		// e.g. skip reason
-		if let message = activity.completionMessage {
-			appendText(" — \(message)", color: .secondaryLabelColor, to: result)
-		}
-
-		if isFailed, let error = activity.error {
-			appendText(" — \(error.localizedDescription)", color: .systemRed, to: result)
-		}
-
 		appendText("\n", to: result)
 		return result
 	}
@@ -217,69 +190,32 @@ private extension ActivityLogWindowController {
 		result.append(NSAttributedString(string: string, attributes: attributes))
 	}
 
-	/// Feed-content activities show the URL as detail when the feed name is the primary text.
-	func secondaryDetail(for activity: Activity) -> String? {
-		switch activity.kind {
-		case .refreshFeedContent(let feedURL):
-			return activity.detail == nil ? nil : feedURL
-		default:
-			return activity.detail
-		}
-	}
-
-	func formattedDuration(_ duration: TimeInterval) -> String {
-		let posix = Locale(identifier: "en_US_POSIX")
-		if duration < 10.0 {
-			return String(format: "%.2fs", locale: posix, duration)
-		} else if duration < 60.0 {
-			return String(format: "%.1fs", locale: posix, duration)
-		} else {
-			let minutes = Int(duration) / 60
-			let seconds = Int(duration) % 60
-			return "\(minutes)m \(seconds)s"
-		}
-	}
-
-	func plainDescription(for activity: Activity) -> String {
-		if let simple = activity.kind.simpleDisplayName {
-			return simple
-		}
-		switch activity.kind {
-		case .refreshFeedContent(let feedURL):
-			let format = NSLocalizedString("Refreshing feed: %@", comment: "Activity kind — refreshing a feed; %@ is the feed name or URL")
-			return String(format: format, activity.detail ?? feedURL)
-		case .findFeed(let urlString):
-			let format = NSLocalizedString("Finding feed %@", comment: "Activity kind — finding a feed at %@ URL")
-			return String(format: format, urlString)
-		case .fetchFeedCandidate(let urlString):
-			let format = NSLocalizedString("Fetching %@", comment: "Activity kind — fetching a candidate URL during feed finding")
-			return String(format: format, urlString)
-		case .downloadFeedImage(let feedURL):
-			let format = NSLocalizedString("Downloading image %@", comment: "Activity kind — downloading a feed image; %@ is the URL")
-			return String(format: format, feedURL)
-		case .downloadFavicon(let faviconURL):
-			let format = NSLocalizedString("Downloading favicon %@", comment: "Activity kind — downloading a favicon; %@ is the URL")
-			return String(format: format, faviconURL)
-		case .downloadAvatar(let avatarURL):
-			let format = NSLocalizedString("Downloading avatar %@", comment: "Activity kind — downloading an author avatar; %@ is the URL")
-			return String(format: format, avatarURL)
-		case .downloadHTMLMetadata(let urlString):
-			let format = NSLocalizedString("Downloading metadata %@", comment: "Activity kind — downloading HTML metadata; %@ is the URL")
-			return String(format: format, urlString)
-		default:
-			return ""
-		}
-	}
-
-	func color(for owner: ActivityOwner) -> NSColor {
-		switch owner {
-		case .account(let accountID, _):
-			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
+	func nsColor(for color: ActivityLogTextColor) -> NSColor {
+		switch color {
+		case .primary:
+			return .labelColor
+		case .secondary:
+			return .secondaryLabelColor
+		case .success:
+			return .systemGreen
+		case .failure:
+			return .systemRed
+		case .account(let accountID):
+			guard let accountID, let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 				return .secondaryLabelColor
 			}
 			return account.type.logColor
-		case .app, .feedFinder, .feedImageDownloader, .faviconDownloader, .avatarDownloader, .htmlMetadataDownloader:
-			return .secondaryLabelColor
+		}
+	}
+
+	func fontWeight(for weight: ActivityLogTextWeight) -> NSFont.Weight {
+		switch weight {
+		case .regular:
+			return .regular
+		case .medium:
+			return .medium
+		case .bold:
+			return .bold
 		}
 	}
 }
