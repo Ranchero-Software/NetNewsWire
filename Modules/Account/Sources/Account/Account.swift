@@ -870,30 +870,30 @@ public enum FetchType {
 		database.fetchStarredArticlesCount(feedIDs: flattenedFeedsIDs)
 	}
 
-	public func fetchArticleCountsAsync() async throws -> ArticleCounts {
-		try await database.fetchArticleCountsAsync(feedIDs: flattenedFeedsIDs)
+	public func fetchArticleCountsAsync() async -> ArticleCounts {
+		await database.fetchArticleCountsAsync(feedIDs: flattenedFeedsIDs)
 	}
 
 	/// Returns a dictionary of feedID → latest article date for all feeds with articles.
-	public func fetchLastUpdateDates() async throws -> [String: Date] {
-		try await database.fetchLastUpdateDates()
+	public func fetchLastUpdateDates() async -> [String: Date] {
+		await database.fetchLastUpdateDates()
 	}
 
 	public func fetchUnreadCountForTodayAsync() async -> Int {
 		await database.fetchUnreadCountForTodayAsync(feedIDs: flattenedFeedsIDs)
 	}
 
-	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
-		try await database.fetchUnreadArticleIDsAsync()
+	public func fetchUnreadArticleIDsAsync() async -> Set<String> {
+		await database.fetchUnreadArticleIDsAsync()
 	}
 
-	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
-		try await database.fetchStarredArticleIDsAsync()
+	public func fetchStarredArticleIDsAsync() async -> Set<String> {
+		await database.fetchStarredArticleIDsAsync()
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
-		try await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async -> Set<String> {
+		await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 	}
 
 	// MARK: - Unread Counts
@@ -971,11 +971,11 @@ public enum FetchType {
 	/// Make sure statuses exist. Any existing statuses won’t be touched.
 	/// All created statuses will be marked as read and not starred.
 	/// Sends a .StatusesDidChange notification.
-	func createStatusesIfNeededAsync(articleIDs: Set<String>) async throws {
+	func createStatusesIfNeededAsync(articleIDs: Set<String>) async {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		try await database.createStatusesIfNeededAsync(articleIDs: articleIDs)
+		await database.createStatusesIfNeededAsync(articleIDs: articleIDs)
 		noteStatusesForArticleIDsDidChange(articleIDs)
 	}
 
@@ -1027,11 +1027,11 @@ public enum FetchType {
 	}
 
 	// Delete the articles associated with the given set of articleIDs
-	func delete(articleIDs: Set<String>) async throws {
+	func delete(articleIDs: Set<String>) async {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		try await database.deleteAsync(articleIDs: articleIDs)
+		await database.deleteAsync(articleIDs: articleIDs)
 	}
 
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.

@@ -55,7 +55,7 @@ struct AccountStatsTotals {
 	func refresh() async {
 		var rows = [AccountStatsRowData]()
 		for account in AccountManager.shared.sortedAccounts {
-			let counts = try? await account.fetchArticleCountsAsync()
+			let counts = await account.fetchArticleCountsAsync()
 			rows.append(AccountStatsRowData(
 				accountID: account.accountID,
 				name: account.nameForDisplay,
@@ -63,10 +63,10 @@ struct AccountStatsTotals {
 				isActive: account.isActive,
 				feedCount: account.flattenedFeeds().count,
 				folderCount: account.folders?.count ?? 0,
-				articleCount: counts?.totalCount ?? 0,
-				statusesCount: counts?.statusesCount ?? 0,
-				unreadCount: counts?.unreadCount ?? 0,
-				starredCount: counts?.starredCount ?? 0,
+				articleCount: counts.totalCount,
+				statusesCount: counts.statusesCount,
+				unreadCount: counts.unreadCount,
+				starredCount: counts.starredCount,
 				databaseSizeBytes: databaseSize(for: account)
 			))
 		}

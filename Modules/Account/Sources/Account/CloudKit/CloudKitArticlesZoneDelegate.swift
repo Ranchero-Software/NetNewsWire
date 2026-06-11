@@ -81,7 +81,7 @@ private extension CloudKitArticlesZoneDelegate {
 		}
 
 		await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
-		try? await account?.delete(articleIDs: deletableArticleIDs)
+		await account?.delete(articleIDs: deletableArticleIDs)
 	}
 
 	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>) async throws {

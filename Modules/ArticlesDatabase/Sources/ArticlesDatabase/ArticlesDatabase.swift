@@ -144,11 +144,11 @@ public struct ArticleCounts: Sendable {
 	}
 
 	/// Returns aggregate article counts (total, unread, starred, statuses) for the given feeds.
-	public func fetchArticleCountsAsync(feedIDs: Set<String>) async throws -> ArticleCounts {
+	public func fetchArticleCountsAsync(feedIDs: Set<String>) async -> ArticleCounts {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try await withCheckedThrowingContinuation { continuation in
-			articlesTable.fetchArticleCountsAsync(feedIDs) { result in
-				continuation.resume(with: result)
+		return await withCheckedContinuation { continuation in
+			articlesTable.fetchArticleCountsAsync(feedIDs) { articleCounts in
+				continuation.resume(returning: articleCounts)
 			}
 		}
 	}
@@ -164,11 +164,11 @@ public struct ArticleCounts: Sendable {
 	}
 
 	/// Returns a dictionary of feedID → latest article date for all feeds with articles.
-	public func fetchLastUpdateDates() async throws -> [String: Date] {
+	public func fetchLastUpdateDates() async -> [String: Date] {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try await withCheckedThrowingContinuation { continuation in
-			articlesTable.fetchLastUpdateDatesAsync { result in
-				continuation.resume(with: result)
+		return await withCheckedContinuation { continuation in
+			articlesTable.fetchLastUpdateDatesAsync { lastUpdateDates in
+				continuation.resume(returning: lastUpdateDates)
 			}
 		}
 	}
@@ -310,14 +310,10 @@ public struct ArticleCounts: Sendable {
 	}
 
 	/// Delete articles
-	public func deleteAsync(articleIDs: Set<String>) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			_delete(articleIDs: articleIDs) { error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: ())
-				}
+	public func deleteAsync(articleIDs: Set<String>) async {
+		await withCheckedContinuation { continuation in
+			_delete(articleIDs: articleIDs) {
+				continuation.resume()
 			}
 		}
 	}
@@ -325,16 +321,16 @@ public struct ArticleCounts: Sendable {
 	// MARK: - ArticleIDs
 
 	/// Fetch the articleIDs of unread articles.
-	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
+	public func fetchUnreadArticleIDsAsync() async -> Set<String> {
+		await withCheckedContinuation { continuation in
 			_fetchUnreadArticleIDsAsync { articleIDs in
 				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
 
-	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
+	public func fetchStarredArticleIDsAsync() async -> Set<String> {
+		await withCheckedContinuation { continuation in
 			_fetchStarredArticleIDsAsync { articleIDs in
 				continuation.resume(returning: articleIDs)
 			}
@@ -342,8 +338,8 @@ public struct ArticleCounts: Sendable {
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either starred or newer than the article cutoff date.
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async -> Set<String> {
+		await withCheckedContinuation { continuation in
 			_fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDs in
 				continuation.resume(returning: articleIDs)
 			}
@@ -352,16 +348,16 @@ public struct ArticleCounts: Sendable {
 
 	// MARK: - Statuses
 
-	public func markAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<ArticleStatus> {
-		try await withCheckedThrowingContinuation { continuation in
+	public func markAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<ArticleStatus> {
+		await withCheckedContinuation { continuation in
 			_mark(articles: articles, statusKey: statusKey, flag: flag) { statuses in
 				continuation.resume(returning: statuses)
 			}
 		}
 	}
 
-	public func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
+	public func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
+		await withCheckedContinuation { continuation in
 			_markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { articleIDs in
 				continuation.resume(returning: articleIDs)
 			}
@@ -370,14 +366,10 @@ public struct ArticleCounts: Sendable {
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
 	/// For newly-created statuses, mark them as read and not-starred.
-	public func createStatusesIfNeededAsync(articleIDs: Set<String>) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			_createStatusesIfNeeded(articleIDs: articleIDs) { error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: ())
-				}
+	public func createStatusesIfNeededAsync(articleIDs: Set<String>) async {
+		await withCheckedContinuation { continuation in
+			_createStatusesIfNeeded(articleIDs: articleIDs) {
+				continuation.resume()
 			}
 		}
 	}

@@ -709,7 +709,7 @@ private extension FeedlyAccountDelegate {
 		var continuation: String?
 		repeat {
 			let page = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil)
-			try await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
+			await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
 			continuation = page.continuation
 		} while continuation != nil
 	}

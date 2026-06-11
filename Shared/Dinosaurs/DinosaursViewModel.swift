@@ -59,9 +59,7 @@ struct DinosaurRow: Identifiable {
 
 		var newRows = [DinosaurRow]()
 		for account in accounts {
-			guard let latestDates = try? await account.fetchLastUpdateDates() else {
-				continue
-			}
+			let latestDates = await account.fetchLastUpdateDates()
 			for feed in account.flattenedFeeds() {
 				let latestDate = latestDates[feed.feedID]
 				guard latestDate.map({ $0 < cutoffDate }) ?? true else {

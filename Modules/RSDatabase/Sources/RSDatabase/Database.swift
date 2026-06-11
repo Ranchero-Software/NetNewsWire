@@ -12,8 +12,8 @@ import RSDatabaseObjC
 /// Block that executes database code.
 public typealias DatabaseBlock = @Sendable (FMDatabase) -> Void
 
-/// Completion block that provides an optional Error.
-public typealias DatabaseCompletionBlock = @Sendable (Error?) -> Void
+/// Completion block that signals a database operation finished.
+public typealias DatabaseCompletionBlock = @Sendable () -> Void
 
 /// Dictionary representing one row of database values, keyed by column name.
 public typealias DatabaseDictionary = [String: Any]

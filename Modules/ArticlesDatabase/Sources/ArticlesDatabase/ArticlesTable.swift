@@ -110,22 +110,22 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching Counts Async
 
-	func fetchArticleCountsAsync(_ feedIDs: Set<String>, _ completion: @escaping @Sendable (Result<ArticleCounts, Error>) -> Void) {
+	func fetchArticleCountsAsync(_ feedIDs: Set<String>, _ completion: @escaping @Sendable (ArticleCounts) -> Void) {
 		queue.runInDatabase { database in
 			let counts = self.articleCounts(feedIDs: feedIDs, database: database)
 			DispatchQueue.main.async {
-				completion(.success(counts))
+				completion(counts)
 			}
 		}
 	}
 
 	// MARK: - Fetching Last Update Dates
 
-	func fetchLastUpdateDatesAsync(_ completion: @escaping @Sendable (Result<[String: Date], Error>) -> Void) {
+	func fetchLastUpdateDatesAsync(_ completion: @escaping @Sendable ([String: Date]) -> Void) {
 		queue.runInDatabase { database in
-			let result = self.fetchLastUpdateDates(database)
+			let lastUpdateDates = self.fetchLastUpdateDates(database)
 			DispatchQueue.main.async {
-				completion(.success(result))
+				completion(lastUpdateDates)
 			}
 		}
 	}
@@ -356,7 +356,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		self.queue.runInTransaction { database in
 			self.removeArticles(articleIDs, database)
 			DispatchQueue.main.async {
-				completion?(nil)
+				completion?()
 			}
 		}
 	}
@@ -480,14 +480,14 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	func createStatusesIfNeeded(_ articleIDs: Set<String>, _ completion: @escaping DatabaseCompletionBlock) {
 		guard !articleIDs.isEmpty else {
-			completion(nil)
+			completion()
 			return
 		}
 
 		queue.runInTransaction { database in
 			self.statusesTable.ensureStatusesForArticleIDs(articleIDs, true, database)
 			DispatchQueue.main.async {
-				completion(nil)
+				completion()
 			}
 		}
 	}
