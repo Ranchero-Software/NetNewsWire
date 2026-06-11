@@ -409,12 +409,6 @@
     "Feed not found" : {
       "comment" : "Feed finder"
     },
-    "Feedbin" : {
-      "comment" : "Account name"
-    },
-    "Feedly" : {
-      "comment" : "Account name"
-    },
     "Feeds" : {
       "comment" : "Feeds"
     },
@@ -678,9 +672,6 @@
     },
     "New Folder…" : {
       "comment" : "New Folder"
-    },
-    "NewsBlur" : {
-      "comment" : "Account name"
     },
     "Next Article" : {
       "comment" : "Next Article"
