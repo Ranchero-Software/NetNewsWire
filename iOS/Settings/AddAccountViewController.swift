@@ -125,17 +125,17 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 
 		switch indexPath.section {
 		case AddAccountSections.local.rawValue:
-			cell.comboNameLabel?.text = AddAccountSections.local.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboNameLabel?.text = AddAccountSections.local.sectionContent[indexPath.row].displayName
 			cell.comboImage?.image = Assets.accountImage(.onMyMac)
 		case AddAccountSections.icloud.rawValue:
-			cell.comboNameLabel?.text = AddAccountSections.icloud.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboNameLabel?.text = AddAccountSections.icloud.sectionContent[indexPath.row].displayName
 			cell.comboImage?.image = Assets.accountImage(AddAccountSections.icloud.sectionContent[indexPath.row])
 			if AppDefaults.shared.isDeveloperBuild || AccountManager.shared.hasiCloudAccount {
 				cell.isUserInteractionEnabled = false
 				cell.comboNameLabel?.isEnabled = false
 			}
 		case AddAccountSections.web.rawValue:
-			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboNameLabel?.text = AddAccountSections.web.sectionContent[indexPath.row].displayName
 			cell.comboImage?.image = Assets.accountImage(AddAccountSections.web.sectionContent[indexPath.row])
 			let type = AddAccountSections.web.sectionContent[indexPath.row]
 			if (type == .feedly || type == .inoreader) && AppDefaults.shared.isDeveloperBuild {
@@ -143,7 +143,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 				cell.comboNameLabel?.isEnabled = false
 			}
 		case AddAccountSections.selfhosted.rawValue:
-			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].localizedAccountName()
+			cell.comboNameLabel?.text = AddAccountSections.selfhosted.sectionContent[indexPath.row].displayName
 			cell.comboImage?.image = Assets.accountImage(AddAccountSections.selfhosted.sectionContent[indexPath.row])
 
 		default:

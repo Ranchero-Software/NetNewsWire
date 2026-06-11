@@ -17,33 +17,6 @@ import SwiftUI
 
 extension AccountType {
 
-	// TODO: Move this to the Account Package.
-
-	func localizedAccountName() -> String {
-
-		switch self {
-		case .onMyMac:
-			return NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
-		// These proper names are the same in all languages.
-		case .bazQux:
-			return "BazQux"
-		case .cloudKit:
-			return "iCloud"
-		case .feedbin:
-			return "Feedbin"
-		case .feedly:
-			return "Feedly"
-		case .freshRSS:
-			return "FreshRSS"
-		case .inoreader:
-			return "Inoreader"
-		case .newsBlur:
-			return "NewsBlur"
-		case .theOldReader:
-			return "The Old Reader"
-		}
-	}
-
 	// MARK: - Log Colors
 
 	#if os(macOS)
