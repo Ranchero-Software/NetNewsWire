@@ -56,6 +56,7 @@ final class DinosaursWindowController: NSWindowController {
 
 		model.monthThreshold = Self.savedMonthThreshold
 		setThresholdControls(model.monthThreshold)
+		monthThresholdField?.delegate = self
 
 		tableView?.sortDescriptors = [NSSortDescriptor(key: DinosaurSortKey.lastArticleDate.rawValue, ascending: false)]
 		model.sortBy(.lastArticleDate, ascending: false)
@@ -178,6 +179,21 @@ extension DinosaursWindowController: NSWindowDelegate {
 
 	func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
 		dinosaursUndoManager
+	}
+}
+
+// MARK: - NSTextFieldDelegate
+
+extension DinosaursWindowController: NSTextFieldDelegate {
+
+	func controlTextDidChange(_ notification: Notification) {
+		guard let field = notification.object as? NSTextField, field === monthThresholdField else {
+			return
+		}
+		let digitsOnly = field.stringValue.filter { $0.isASCII && $0.isNumber }
+		if digitsOnly != field.stringValue {
+			field.stringValue = digitsOnly
+		}
 	}
 }
 
