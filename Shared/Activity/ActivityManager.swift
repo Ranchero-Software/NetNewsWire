@@ -304,7 +304,7 @@ import Images
 		for article in articles {
 			ids.append(identifier(for: article))
 		}
-		
+
 		return ids
 	}
 }
