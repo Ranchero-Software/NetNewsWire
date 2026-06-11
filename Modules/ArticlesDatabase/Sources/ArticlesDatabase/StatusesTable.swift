@@ -95,12 +95,12 @@ final class StatusesTable: DatabaseTable, Sendable {
 
 	// MARK: - Fetching
 
-	func fetchUnreadArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where read=0;")
+	func fetchUnreadArticleIDs() -> Set<String> {
+		fetchArticleIDs("select articleID from statuses where read=0;")
 	}
 
-	func fetchStarredArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where starred=1;")
+	func fetchStarredArticleIDs() -> Set<String> {
+		fetchArticleIDs("select articleID from statuses where starred=1;")
 	}
 
 	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ completion: @escaping ArticleIDsCompletionBlock) {
@@ -139,7 +139,7 @@ final class StatusesTable: DatabaseTable, Sendable {
 		}
 	}
 
-	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
+	func fetchArticleIDs(_ sql: String) -> Set<String> {
 		nonisolated(unsafe) var articleIDs = Set<String>()
 		queue.runInDatabaseSync { database in
 			if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {

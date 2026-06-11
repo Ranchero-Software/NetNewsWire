@@ -452,8 +452,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		statusesTable.fetchArticleIDsAsync(.starred, true, completion)
 	}
 
-	func fetchStarredArticleIDs() throws -> Set<String> {
-		return try statusesTable.fetchStarredArticleIDs()
+	func fetchStarredArticleIDs() -> Set<String> {
+		statusesTable.fetchStarredArticleIDs()
 	}
 
 	func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate(_ completion: @escaping ArticleIDsCompletionBlock) {
