@@ -321,12 +321,7 @@ import os
 			}
 
 			assert(Thread.isMainThread)
-			guard let articleChanges = try? await account.updateAsync(feed: feed, parsedFeed: parsedFeed) else {
-				if let activityOwner {
-					ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: dataSizeMessage)
-				}
-				return
-			}
+			let articleChanges = await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 
 			self.newArticlesCount += articleChanges.new?.count ?? 0
 			self.updatedArticlesCount += articleChanges.updated?.count ?? 0

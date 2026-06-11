@@ -182,7 +182,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	public func sendArticleStatus(for account: Account) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
 
-		try await account.logActivity(kind: .sendArticleStatuses) {
+		await account.logActivity(kind: .sendArticleStatuses) {
 			let syncStatuses = (await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
 			let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
@@ -480,7 +480,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func restoreFolder(for account: Account, folder: Folder) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: restoreFolder — name \(folder.nameForDisplay)")
 
-		try await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
 			for feed in folder.topLevelFeeds {
 
 				folder.topLevelFeeds.remove(feed)
@@ -534,7 +534,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	func vacuumDatabases(for account: Account) async {
-		try? await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
+		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}
@@ -843,7 +843,7 @@ private extension ReaderAPIAccountDelegate {
 	func refreshMissingArticles(_ account: Account) async {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshMissingArticles")
 
-		try? await account.logActivity(kind: .refreshMissingArticles) {
+		await account.logActivity(kind: .refreshMissingArticles) {
 			let fetchedArticleIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 
 			if fetchedArticleIDs.isEmpty {

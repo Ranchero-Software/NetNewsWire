@@ -483,10 +483,11 @@ public enum FetchType {
 		successMessage: ((T) -> String?)? = nil,
 		durationIsSignificant: ((T) -> Bool)? = nil,
 		_ work: () async throws -> T
-	) async throws -> T {
+	) async rethrows -> T {
 		let activityLog = ActivityLog.shared
 		let id = activityLog.createActivity(owner: .account(accountID: accountID, displayName: nameForDisplay), kind: kind, detail: detail)
 		activityLog.didStart(id: id)
+		
 		do {
 			let result = try await work()
 			let significant = durationIsSignificant?(result) ?? true
@@ -916,7 +917,7 @@ public enum FetchType {
 	// MARK: - Updating Feeds
 
 	@discardableResult
-	func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+	func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async -> ArticleChanges {
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
@@ -1099,10 +1100,10 @@ public enum FetchType {
 	// MARK: - Vacuum
 
 	public func vacuumDatabases() async {
-		try? await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(database.databasePath)) {
+		await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(database.databasePath)) {
 			await database.vacuum()
 		}
-		try? await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(feedSettingsDatabase.databasePath)) {
+		await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(feedSettingsDatabase.databasePath)) {
 			await feedSettingsDatabase.vacuum()
 		}
 		await delegate.vacuumDatabases(for: self)

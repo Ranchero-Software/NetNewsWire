@@ -362,7 +362,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func restoreFolder(for account: Account, folder: Folder) async throws {
-		try await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
 			for feed in folder.topLevelFeeds {
 
 				folder.topLevelFeeds.remove(feed)
@@ -408,7 +408,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func vacuumDatabases(for account: Account) async {
-		try? await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
+		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}

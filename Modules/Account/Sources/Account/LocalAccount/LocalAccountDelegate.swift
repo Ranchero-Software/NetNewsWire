@@ -212,7 +212,7 @@ private extension LocalAccountDelegate {
 		container.addFeedToTreeAtTopLevel(feed)
 
 		Task {
-			try? await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
+			await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 		}
 
 		return feed

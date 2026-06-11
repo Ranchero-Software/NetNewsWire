@@ -620,7 +620,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	}
 
 	func vacuumDatabases(for account: Account) async {
-		try? await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
+		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}
@@ -897,7 +897,7 @@ private extension CloudKitAccountDelegate {
 
 	func updateAndCreateFeedInCloud(account: Account, feed: Feed, parsedFeed: ParsedFeed, bestFeedSpecifier: FeedSpecifier, editedName: String?, container: Container) async throws {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
-		_ = try await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
+		await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 
 		let externalID = try await accountZone.createFeed(url: bestFeedSpecifier.urlString,
 														  name: parsedFeed.title,
