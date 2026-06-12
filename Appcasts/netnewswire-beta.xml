@@ -7,6 +7,22 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.1b2</title>
+            <description><![CDATA[
+  				<ul>
+				  <li>Fixed Dinosaurs bug where feeds with articles with no dates were ranked using the wrong date — they now use the date the article arrived when there are no other dates
+				  <li>Made the Dinosaurs months field ignore any character that isn’t 0-9
+				  <li>Fixed a performance issue with the Current Activity window
+				  <li>Stopped removing long-running activities from the Activity Log and Current Activity windows — some activities do run for hours. (Unfortunately. iCloud, of course.)
+				  <li>Fixed bug where feed icons didn’t always appear promptly in the sidebar
+				</ul>
+			]]></description>
+        	<pubDate>Fri, 12 Jun 2026 07:50:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b2/NetNewsWire7.1b2.zip" sparkle:version="7101" sparkle:shortVersionString="7.1b2" length="10585308" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.1b1</title>
             <description><![CDATA[
   				<ul>
