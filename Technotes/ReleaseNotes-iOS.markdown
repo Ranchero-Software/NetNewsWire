@@ -1,5 +1,30 @@
 # iOS Release Notes
 
+### 7.1 build 7101 12 June 2026 - branch: main tag: iOS-7.1-7101
+
+Changes since 7.0.6:
+
+Added Activity Log to Settings. It shows what the app has been doing <https://netnewswire.com/help/activity-log.html>
+Added Current Activity — open via new icon lower-left on Feeds screen. It shows what the app is doing right now <https://netnewswire.com/help/current-activity.html>
+Added Account Stats to Settings. It shows per-account article and status counts and database sizes, and includes a Vacuum Databases button <https://netnewswire.com/help/account-stats.html>
+Added 🦖 Dinosaurs to Settings. It lists feeds that haven’t published in a while (you pick the number of months) <https://netnewswire.com/help/dinosaurs.html>
+Started deleting feeds and folders optimistically from iCloud — the sidebar updates immediately instead of waiting for the server
+Fixed bug where iCloud feed renames could fail on transient network errors — they’re now retried
+Started backing off Feedly status sync to 30 minutes between checks when the last sync had no changes, and waking it immediately when you mark articles read or unread
+Started handling transient feed-refresh failures (DNS, certificate, etc.) by retrying after a few hours instead of treating them as permanent failures
+Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (`<s:variant>`, for instance)
+Fixed bug where feed icons didn’t always appear promptly in the sidebar
+Added more trackers to the block list
+Started saving the response code for 4xx and 5xx responses so the error log shows the right info
+Moved the Confirm Mark All as Read setting to Timeline settings, where it belongs
+Fixed bug where the share sheet could get stuck after switching to another app and back
+Fixed image-viewer layout so the close and share buttons line up correctly on iPad
+Replaced Helvetica with the system font in the timeline subtitle
+Fixed a crash during article page transitions
+Fixed a crash when dismissing the search bar on iOS 26
+Fixed a navigation-bar crash on iOS 26
+Fixed a crash caused by a dangling reference
+
 ### 7.0.6 build 7058 23 May 2026 — branch: main tag: iOS-7.0.6-7058
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.0.6 release version on 26 May 2026.

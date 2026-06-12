@@ -22,7 +22,7 @@ Started handling transient feed-refresh failures (DNS, certificate, etc.) by ret
 Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (`<s:variant>`, for instance)
 Added more trackers to the block list
 Fixed WebKit crash in the detail view caused by re-entrancy
-Started setting the response code for 4xx and 5xx responses so the error log shows the right info
+Started saving the response code for 4xx and 5xx responses so the error log shows the right info
 
 ### 7.0.6 7059 26 May 2026 — branch: main tag: mac-7.0.6
 
