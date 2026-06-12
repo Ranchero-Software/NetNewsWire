@@ -1,5 +1,13 @@
 # Mac Release Notes
 
+### 7.1b2 7101 1 June 2026 — branch: main tag: mac-7.1b2
+
+Fixed Dinosaurs bug where feeds with articles with no dates were ranked using the wrong date — they now use the date the article arrived
+Made the Dinosaurs months field ignore any character that isn’t 0-9
+Fixed a performance issue with the Current Activity window
+Stopped removing long-running activities from the Activity Log and Current Activity windows — some activities do run for hours. (Unfortunately. iCloud, of course.)
+Fixed bug where feed icons didn’t always appear promptly in the sidebar
+
 ### 7.1b1 7100 8 June 2026 — branch: main tag: mac-7.1b1
 
 Added Activity Log window — shows what the app has been doing <https://netnewswire.com/help/activity-log.html>
