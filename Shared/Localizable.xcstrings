@@ -160,9 +160,6 @@
     "Automatic" : {
       "comment" : "Automatic"
     },
-    "BazQux" : {
-      "comment" : "Account name"
-    },
     "Can’t add a feed because no feed was found." : {
       "comment" : "Feed finder"
     },
@@ -445,9 +442,6 @@
     "Folders" : {
       "comment" : "Folders"
     },
-    "FreshRSS" : {
-      "comment" : "Account name"
-    },
     "General" : {
       "comment" : "Preferences"
     },
@@ -513,9 +507,6 @@
     },
     "Import Theme" : {
       "comment" : "Import Theme"
-    },
-    "Inoreader" : {
-      "comment" : "Account name"
     },
     "Inspector" : {
       "comment" : "Inspector window title"
@@ -986,9 +977,6 @@
     },
     "The name can be anything you want. You can even use emoji. 🎸" : {
 
-    },
-    "The Old Reader" : {
-      "comment" : "Account name"
     },
     "The theme “%@” already exists. Overwrite it?" : {
       "comment" : "Overwrite theme"
