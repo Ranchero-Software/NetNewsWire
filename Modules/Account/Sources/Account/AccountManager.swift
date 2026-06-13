@@ -441,6 +441,33 @@ import ActivityLog
 		return count
 	}
 
+	public func fetchCountForStarredArticlesAsync() async -> Int {
+		precondition(Thread.isMainThread)
+		var count = 0
+		for account in activeAccounts {
+			count += await account.fetchCountForStarredArticlesAsync()
+		}
+		return count
+	}
+
+	public func fetchCountForTodayArticlesAsync() async -> Int {
+		precondition(Thread.isMainThread)
+		var count = 0
+		for account in activeAccounts {
+			count += await account.fetchCountForTodayArticlesAsync()
+		}
+		return count
+	}
+
+	public func fetchUnreadCountForTodayAsync() async -> Int {
+		precondition(Thread.isMainThread)
+		var count = 0
+		for account in activeAccounts {
+			count += await account.fetchUnreadCountForTodayAsync()
+		}
+		return count
+	}
+
 	// MARK: - Vacuum
 
 	public func vacuumAllDatabases() async {

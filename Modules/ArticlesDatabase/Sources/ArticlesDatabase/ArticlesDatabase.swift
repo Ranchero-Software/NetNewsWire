@@ -289,6 +289,22 @@ public struct ArticleCounts: Sendable {
 		}
 	}
 
+	public func fetchTodayArticlesCountAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			articlesTable.fetchArticlesCountSince(feedIDs, todayCutoffDate()) { count in
+				continuation.resume(returning: count)
+			}
+		}
+	}
+
+	public func fetchStarredArticlesCountAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			articlesTable.fetchStarredArticlesCountAsync(feedIDs) { count in
+				continuation.resume(returning: count)
+			}
+		}
+	}
+
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).

@@ -413,7 +413,7 @@ private extension AppDelegate {
 			}
 			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			if !AccountManager.shared.isSuspended {
-				WidgetDataEncoder.shared?.encode()
+				await WidgetDataEncoder.shared?.encodeAndWait()
 				self.suspendApplication()
 				Self.logger.info("Background refresh completed.")
 				task.setTaskCompleted(success: true)

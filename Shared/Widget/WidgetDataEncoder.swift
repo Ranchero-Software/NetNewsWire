@@ -46,18 +46,35 @@ import Account
 		}
 	}
 
+	/// Fire-and-forget. Sets `isRunning` synchronously so the background-task wait loop
+	/// (see AppDelegate.waitToComplete) holds the app awake until encoding finishes.
 	func encode() {
 		guard !isRunning else {
 			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
 			return
 		}
-
 		isRunning = true
+		Task { @MainActor in
+			await performEncode()
+		}
+	}
+
+	/// Awaitable variant for callers that must finish encoding before suspending the app.
+	func encodeAndWait() async {
+		guard !isRunning else {
+			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
+			return
+		}
+		isRunning = true
+		await performEncode()
+	}
+
+	private func performEncode() async {
 		defer { isRunning = false }
 
 		removeStaleFaviconsFromSharedContainer()
 
-		let latestData = fetchWidgetData()
+		let latestData = await fetchWidgetData()
 		let encodedData: Data
 		do {
 			encodedData = try JSONEncoder().encode(latestData)
@@ -110,23 +127,24 @@ import Account
 
 @MainActor private extension WidgetDataEncoder {
 
-	func fetchWidgetData() -> WidgetData {
-		let fetchedUnreadArticles = AccountManager.shared.fetchArticles(.unread(fetchLimit))
+	func fetchWidgetData() async -> WidgetData {
+		let fetchedUnreadArticles = await AccountManager.shared.fetchArticlesAsync(.unread(fetchLimit))
 		let unreadArticles = sortedLatestArticles(fetchedUnreadArticles)
 
-		let fetchedStarredArticles = AccountManager.shared.fetchArticles(.starred(fetchLimit))
+		let fetchedStarredArticles = await AccountManager.shared.fetchArticlesAsync(.starred(fetchLimit))
 		let starredArticles = sortedLatestArticles(fetchedStarredArticles)
 
-		let fetchedTodayArticles = AccountManager.shared.fetchArticles(.today(fetchLimit))
-		let fetchedTodayTotal = AccountManager.shared.fetchArticles(.today())
-		let fetchedTodayTotalCount = fetchedTodayTotal.count
-		let fetchedTodayUnreadCount = fetchedTodayTotal.filter({ $0.status.read == false }).count
+		let fetchedTodayArticles = await AccountManager.shared.fetchArticlesAsync(.today(fetchLimit))
 		let todayArticles = sortedLatestArticles(fetchedTodayArticles)
 
+		let totalTodayCount = await AccountManager.shared.fetchCountForTodayArticlesAsync()
+		let totalTodayUnreadCount = await AccountManager.shared.fetchUnreadCountForTodayAsync()
+		let totalStarredCount = await AccountManager.shared.fetchCountForStarredArticlesAsync()
+
 		let latestData = WidgetData(totalUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
-									totalTodayCount: fetchedTodayTotalCount,
-									totalTodayUnreadCount: fetchedTodayUnreadCount,
-									totalStarredCount: AccountManager.shared.fetchCountForStarredArticles(),
+									totalTodayCount: totalTodayCount,
+									totalTodayUnreadCount: totalTodayUnreadCount,
+									totalStarredCount: totalStarredCount,
 									unreadArticles: unreadArticles,
 									starredArticles: starredArticles,
 									todayArticles: todayArticles,

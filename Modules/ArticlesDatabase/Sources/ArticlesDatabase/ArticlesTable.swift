@@ -442,6 +442,49 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 	}
 
+	func fetchArticlesCountSince(_ feedIDs: Set<String>, _ cutoffDate: Date, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		// Total count (read and unread) since a cutoff date — today's count, for instance.
+		if feedIDs.isEmpty {
+			completion(0)
+			return
+		}
+
+		queue.runInDatabase { database in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?));"
+
+			var parameters = [Any]()
+			parameters += Array(feedIDs) as [Any]
+			parameters += [cutoffDate] as [Any]
+			parameters += [cutoffDate] as [Any]
+
+			let count = self.numberWithSQLAndParameters(sql, parameters, in: database)
+
+			DispatchQueue.main.async {
+				completion(count)
+			}
+		}
+	}
+
+	func fetchStarredArticlesCountAsync(_ feedIDs: Set<String>, _ completion: @escaping SingleUnreadCountCompletionBlock) {
+		if feedIDs.isEmpty {
+			completion(0)
+			return
+		}
+
+		queue.runInDatabase { database in
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and starred=1;"
+			let parameters = Array(feedIDs) as [Any]
+
+			let count = self.numberWithSQLAndParameters(sql, parameters, in: database)
+
+			DispatchQueue.main.async {
+				completion(count)
+			}
+		}
+	}
+
 	// MARK: - Statuses
 
 	func fetchUnreadArticleIDsAsync(_ completion: @escaping ArticleIDsCompletionBlock) {
