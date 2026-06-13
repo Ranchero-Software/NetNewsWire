@@ -80,55 +80,59 @@ struct ActivityLogView: View {
 private extension ActivityLogView {
 
 	/// Builds the attributed and plain text once per change, from a single pass over
-	/// the activities, so the body doesn't rebuild them on every render.
+	/// the activities. Uses NSMutableAttributedString — appending hundreds of times to a
+	/// value-type AttributedString is slow enough to stall the screen as it appears.
 	func reload() {
 		let entries = ActivityLog.shared.completedActivities
-		var attributed = AttributedString()
+		let attributed = NSMutableAttributedString()
 		var plain = ""
 
 		for entry in entries {
 			for segment in ActivityLogViewModel.segments(for: entry) {
-				var piece = AttributedString(segment.text)
-				piece.foregroundColor = color(for: segment.color)
-				piece.font = .system(.body, design: .monospaced).weight(fontWeight(for: segment.weight))
-				attributed.append(piece)
+				attributed.append(NSAttributedString(string: segment.text, attributes: [
+					.foregroundColor: uiColor(for: segment.color),
+					.font: font(for: segment.weight)
+				]))
 				plain += segment.text
 			}
-			attributed.append(AttributedString("\n\n"))
+			attributed.append(NSAttributedString(string: "\n\n"))
 			plain += "\n\n"
 		}
 
 		isEmpty = entries.isEmpty
-		attributedText = attributed
+		attributedText = AttributedString(attributed)
 		plainText = plain
 	}
 
-	func color(for color: ActivityLogTextColor) -> Color {
+	func uiColor(for color: ActivityLogTextColor) -> UIColor {
 		switch color {
 		case .primary:
-			return .primary
+			return .label
 		case .secondary:
-			return .secondary
+			return .secondaryLabel
 		case .success:
-			return .green
+			return .systemGreen
 		case .failure:
-			return .red
+			return .systemRed
 		case .account(let accountID):
 			guard let accountID, let account = AccountManager.shared.existingAccount(accountID: accountID) else {
-				return .secondary
+				return .secondaryLabel
 			}
-			return account.type.logColor
+			return UIColor(account.type.logColor)
 		}
 	}
 
-	func fontWeight(for weight: ActivityLogTextWeight) -> Font.Weight {
+	func font(for weight: ActivityLogTextWeight) -> UIFont {
+		let uiWeight: UIFont.Weight
 		switch weight {
 		case .regular:
-			return .regular
+			uiWeight = .regular
 		case .medium:
-			return .medium
+			uiWeight = .medium
 		case .bold:
-			return .bold
+			uiWeight = .bold
 		}
+		let bodySize = UIFont.preferredFont(forTextStyle: .body).pointSize
+		return UIFont.monospacedSystemFont(ofSize: bodySize, weight: uiWeight)
 	}
 }
