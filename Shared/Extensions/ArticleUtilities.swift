@@ -105,11 +105,14 @@ extension Article {
 
 	func iconImageUrl(feed: Feed) -> URL? {
 		if let image = iconImage() {
+			guard let imageData = image.image.dataRepresentation() else {
+				return nil
+			}
 			let fm = FileManager.default
 			var path = fm.urls(for: .cachesDirectory, in: .userDomainMask)[0]
 			let feedID = feed.feedID.replacingOccurrences(of: "/", with: "_")
 			path.appendPathComponent(feedID + "_smallIcon.png")
-			fm.createFile(atPath: path.path, contents: image.image.dataRepresentation()!, attributes: nil)
+			fm.createFile(atPath: path.path, contents: imageData, attributes: nil)
 			return path
 		} else {
 			return nil
