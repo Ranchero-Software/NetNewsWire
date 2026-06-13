@@ -91,9 +91,12 @@ enum FeedlyMarkAction: String, Sendable {
 		self.transport = transport
 		self.baseURLComponents = api.baseURLComponents
 
-		var urlHostAllowed = CharacterSet.urlHostAllowed
-		urlHostAllowed.remove("+")
-		self.uriComponentAllowed = urlHostAllowed
+		// Encode against a path-safe set. urlHostAllowed permits characters like [ and ]
+		// that are illegal in a path, which makes the percentEncodedPath setter trap.
+		var pathComponentAllowed = CharacterSet.urlPathAllowed
+		pathComponentAllowed.remove("/")
+		pathComponentAllowed.remove("+")
+		self.uriComponentAllowed = pathComponentAllowed
 	}
 
 	func cancelAll() {
