@@ -45,8 +45,8 @@ public final actor HTMLMetadataDatabase {
 	CREATE TABLE IF NOT EXISTS metadata (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL, statusCode INTEGER NOT NULL DEFAULT 200, favicons TEXT, appleTouchIcons TEXT, feedLinks TEXT, openGraphImages TEXT, twitterImageURL TEXT);
 	"""
 
-	/// 73 hours — prime number close to 3 days.
-	private static let cacheExpirationHours = 73
+	/// 149 hours — prime number close to 6 days.
+	private static let cacheExpirationHours = 149
 
 	private static let maximumDaysWithoutCheck = 30
 	private static let persistentFailureRetryDays = 11
@@ -115,6 +115,14 @@ public final actor HTMLMetadataDatabase {
 			return nil
 		}
 		return cached.record
+	}
+
+	/// The date metadata was last successfully downloaded for this URL, or nil if there's no successful record.
+	func lastDownloadDate(for url: String) -> Date? {
+		guard let cached = cachedOrFetched(url), !cached.isFailure, cached.record != nil else {
+			return nil
+		}
+		return cached.lastChecked
 	}
 
 	/// True if the last contact failed recently (4xx or transient).

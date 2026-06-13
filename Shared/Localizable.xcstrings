@@ -4,6 +4,9 @@
     "" : {
 
     },
+    "(last downloaded %@)" : {
+      "comment" : "Activity log — when HTML metadata for a URL was last downloaded — %@ is a date"
+    },
     "(No Text)" : {
       "comment" : "No Text"
     },

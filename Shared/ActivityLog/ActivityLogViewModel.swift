@@ -83,6 +83,12 @@ private extension ActivityLogViewModel {
 		switch activity.kind {
 		case .refreshFeedContent(let feedURL):
 			return activity.detail == nil ? nil : feedURL
+		case .downloadHTMLMetadata:
+			guard let detail = activity.detail else {
+				return nil
+			}
+			let format = NSLocalizedString("(last downloaded %@)", comment: "Activity log — when HTML metadata for a URL was last downloaded — %@ is a date")
+			return String(format: format, detail)
 		default:
 			return activity.detail
 		}

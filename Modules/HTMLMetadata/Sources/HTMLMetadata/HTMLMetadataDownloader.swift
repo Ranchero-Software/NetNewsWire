@@ -109,7 +109,11 @@ nonisolated private extension HTMLMetadataDownloader {
 		Task { @MainActor in
 			let activityLog = ActivityLog.shared
 			let kind = ActivityKind.downloadHTMLMetadata(urlString: url)
-			activityLog.createActivity(owner: .htmlMetadataDownloader, kind: kind)
+
+			let lastDownloadDate = await HTMLMetadataDatabase.shared.lastDownloadDate(for: url)
+			let detail = lastDownloadDate.map { DateFormatter.logTimestamp.string(from: $0) }
+
+			activityLog.createActivity(owner: .htmlMetadataDownloader, kind: kind, detail: detail)
 			activityLog.didStart(.htmlMetadataDownloader, kind: kind)
 
 			do {
