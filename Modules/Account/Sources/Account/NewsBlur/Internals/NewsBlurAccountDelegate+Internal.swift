@@ -266,12 +266,13 @@ import os
 		_ statuses: Set<SyncStatus>,
 		throttle: Bool,
 		apiCall: (Set<String>) async throws -> Void)
-	async throws {
+	async throws -> Int {
 		guard !statuses.isEmpty else {
-			return
+			return 0
 		}
 
 		var savedError: Error?
+		var sentCount = 0
 
 		let storyHashes = statuses.compactMap { $0.articleID }
 		let storyHashGroups = storyHashes.chunked(into: throttle ? 1 : 100) // API limit
@@ -279,6 +280,7 @@ import os
 			do {
 				try await apiCall(Set(storyHashGroup))
 				await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup))
+				sentCount += storyHashGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
@@ -289,15 +291,16 @@ import os
 		if let savedError {
 			throw savedError
 		}
+		return sentCount
 	}
 
-	func syncStoryReadState(account: Account, hashes: Set<NewsBlurStoryHash>?) async {
+	func syncStoryReadState(account: Account, hashes: Set<NewsBlurStoryHash>?) async -> Int {
 		guard let hashes else {
-			return
+			return 0
 		}
 
 		guard let pendingStoryHashes = await syncDatabase.selectPendingReadStatusArticleIDs() else {
-			return
+			return 0
 		}
 
 		let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash })
@@ -307,19 +310,21 @@ import os
 
 		// Mark articles as unread
 		let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
-		await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
+		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 		// Mark articles as read
 		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-		await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
+		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
+
+		return markedUnread.count + markedRead.count
 	}
 
-	func syncStoryStarredState(account: Account, hashes: Set<NewsBlurStoryHash>?) async {
+	func syncStoryStarredState(account: Account, hashes: Set<NewsBlurStoryHash>?) async -> Int {
 		guard let hashes else {
-			return
+			return 0
 		}
 		guard let pendingStoryHashes = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
-			return
+			return 0
 		}
 
 		let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash })
@@ -329,11 +334,13 @@ import os
 
 		// Mark articles as starred
 		let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
-		await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
+		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
-		await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+
+		return markedStarred.count + markedUnstarred.count
 	}
 
 	@MainActor func createFeed(account: Account, newsBlurFeed: NewsBlurFeed, name: String?, container: Container) async throws -> Feed {

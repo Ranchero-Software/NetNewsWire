@@ -102,35 +102,43 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func syncArticleStatus(for account: Account) async throws -> Bool {
-		try await sendArticleStatus(for: account)
-		try await refreshArticleStatus(for: account)
-		// This delegate doesn't track per-sync change counts.
-		return true
+		let sentCount = try await sendArticleStatusReturningCount(for: account)
+		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
+		return sentCount > 0 || refreshChangedCount > 0
 	}
 
 	func sendArticleStatus(for account: Account) async throws {
+		_ = try await sendArticleStatusReturningCount(for: account)
+	}
+
+	/// Sends queued local status changes upstream. Returns the count successfully sent.
+	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.info("Feedbin: Sending article statuses")
 		defer {
 			Self.logger.info("Feedbin: Finished sending article statuses")
 		}
 
 		do {
-			try await account.logActivity(kind: .sendArticleStatuses) {
+			return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
 				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
-					return
+					return 0
 				}
 
+				var sentCount = 0
+
 				let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
-				try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+				sentCount += try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
 
 				let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
-				try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+				sentCount += try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
 
 				let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
-				try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+				sentCount += try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
 
 				let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
-				try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+				sentCount += try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+
+				return sentCount
 			}
 		} catch {
 			postSyncError(error, account: account, operation: "Sending article status")
@@ -139,14 +147,21 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	func refreshArticleStatus(for account: Account) async throws {
+		_ = try await refreshArticleStatusReturningCount(for: account)
+	}
+
+	/// Brings local read/starred statuses in line with the server. Returns the count
+	/// of articles whose local state actually changed.
+	private func refreshArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.info("Feedbin: Refreshing article statuses")
 
-		try await account.logActivity(kind: .refreshArticleStatuses) {
+		return try await account.logActivity(kind: .refreshArticleStatuses) { () -> Int in
+			var changedCount = 0
 			var refreshError: Error?
 
 			do {
 				let articleIDs = try await caller.retrieveUnreadEntries()
-				await self.syncArticleReadState(account: account, articleIDs: articleIDs)
+				changedCount += await self.syncArticleReadState(account: account, articleIDs: articleIDs)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving unread entries failed: \(error.localizedDescription)")
@@ -154,7 +169,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 			do {
 				let articleIDs = try await caller.retrieveStarredEntries()
-				await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
+				changedCount += await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving starred entries failed: \(error.localizedDescription)")
@@ -165,6 +180,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				postSyncError(refreshError, account: account, operation: "Refreshing article status")
 				throw refreshError
 			}
+			return changedCount
 		}
 	}
 
@@ -692,12 +708,13 @@ private extension FeedbinAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int]) async throws -> Void) async throws {
+	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int]) async throws -> Void) async throws -> Int {
 		guard !statuses.isEmpty else {
-			return
+			return 0
 		}
 
 		var savedError: Error?
+		var sentCount = 0
 
 		let articleIDs = statuses.compactMap { Int($0.articleID) }
 		let articleIDGroups = articleIDs.chunked(into: 1000)
@@ -705,6 +722,7 @@ private extension FeedbinAccountDelegate {
 			do {
 				try await apiCall(articleIDGroup)
 				await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
+				sentCount += articleIDGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
@@ -715,6 +733,7 @@ private extension FeedbinAccountDelegate {
 		if let savedError {
 			throw savedError
 		}
+		return sentCount
 	}
 
 	func renameFolderRelationship(for account: Account, fromName: String, toName: String) {
@@ -880,13 +899,13 @@ private extension FeedbinAccountDelegate {
 
 	}
 
-	func syncArticleReadState(account: Account, articleIDs: [Int]?) async {
+	func syncArticleReadState(account: Account, articleIDs: [Int]?) async -> Int {
 		guard let articleIDs else {
-			return
+			return 0
 		}
 
 		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
-			return
+			return 0
 		}
 
 		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) })
@@ -896,20 +915,22 @@ private extension FeedbinAccountDelegate {
 
 		// Mark articles as unread
 		let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-		await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
+		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 		// Mark articles as read
 		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
-		await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
+		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
+
+		return markedUnread.count + markedRead.count
 	}
 
-	func syncArticleStarredState(account: Account, articleIDs: [Int]?) async {
+	func syncArticleStarredState(account: Account, articleIDs: [Int]?) async -> Int {
 		guard let articleIDs else {
-			return
+			return 0
 		}
 
 		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
-			return
+			return 0
 		}
 
 		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) })
@@ -919,11 +940,13 @@ private extension FeedbinAccountDelegate {
 
 		// Mark articles as starred
 		let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
-		await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
+		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
-		await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+
+		return markedStarred.count + markedUnstarred.count
 	}
 
 	func deleteTagging(for account: Account, with feed: Feed, from container: Container?) async throws {

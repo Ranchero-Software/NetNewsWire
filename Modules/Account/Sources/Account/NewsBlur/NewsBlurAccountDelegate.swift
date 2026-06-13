@@ -104,21 +104,25 @@ import Secrets
 	}
 
 	@MainActor func syncArticleStatus(for account: Account) async throws -> Bool {
-		try await sendArticleStatus(for: account)
-		try await refreshArticleStatus(for: account)
-		// This delegate doesn't track per-sync change counts.
-		return true
+		let sentCount = try await sendArticleStatusReturningCount(for: account)
+		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
+		return sentCount > 0 || refreshChangedCount > 0
 	}
 
 	@MainActor func sendArticleStatus(for account: Account) async throws {
+		_ = try await sendArticleStatusReturningCount(for: account)
+	}
+
+	/// Sends queued local status changes upstream. Returns the count successfully sent.
+	@MainActor private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.info("NewsBlur: Sending story statuses")
 		defer {
 			Self.logger.info("NewsBlur: Finished sending article statuses")
 		}
 
-		try await account.logActivity(kind: .sendArticleStatuses) {
+		return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
 			guard let syncStatuses = await syncDatabase.selectForProcessing() else {
-				return
+				return 0
 			}
 
 			let createUnreadStatuses = syncStatuses.filter {
@@ -134,28 +138,29 @@ import Secrets
 				$0.key == SyncStatus.Key.starred && $0.flag == false
 			}
 
+			var sentCount = 0
 			var savedError: Error?
 
 			do {
-				try await sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: caller.markAsUnread)
+				sentCount += try await sendStoryStatuses(createUnreadStatuses, throttle: true, apiCall: caller.markAsUnread)
 			} catch {
 				savedError = error
 			}
 
 			do {
-				try await sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: caller.markAsRead)
+				sentCount += try await sendStoryStatuses(deleteUnreadStatuses, throttle: false, apiCall: caller.markAsRead)
 			} catch {
 				savedError = error
 			}
 
 			do {
-				try await sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: caller.star)
+				sentCount += try await sendStoryStatuses(createStarredStatuses, throttle: true, apiCall: caller.star)
 			} catch {
 				savedError = error
 			}
 
 			do {
-				try await sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: caller.unstar)
+				sentCount += try await sendStoryStatuses(deleteStarredStatuses, throttle: true, apiCall: caller.unstar)
 			} catch {
 				savedError = error
 			}
@@ -164,21 +169,29 @@ import Secrets
 				postSyncError(savedError, account: account, operation: "Sending article status")
 				throw savedError
 			}
+			return sentCount
 		}
 	}
 
 	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		_ = try await refreshArticleStatusReturningCount(for: account)
+	}
+
+	/// Brings local read/starred statuses in line with the server. Returns the count
+	/// of articles whose local state actually changed.
+	@MainActor private func refreshArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.info("NewsBlur: Refreshing story statuses")
 		defer {
 			Self.logger.info("NewsBlur: Finished refreshing article statuses")
 		}
 
-		try await account.logActivity(kind: .refreshArticleStatuses) {
+		return try await account.logActivity(kind: .refreshArticleStatuses) { () -> Int in
+			var changedCount = 0
 			var savedError: Error?
 
 			do {
 				let storyHashes = try await caller.retrieveUnreadStoryHashes()
-				await syncStoryReadState(account: account, hashes: storyHashes)
+				changedCount += await syncStoryReadState(account: account, hashes: storyHashes)
 			} catch {
 				Self.logger.error("NewsBlur: error retrieving unread stories: \(error.localizedDescription)")
 				savedError = error
@@ -186,7 +199,7 @@ import Secrets
 
 			do {
 				let storyHashes = try await caller.retrieveStarredStoryHashes()
-				await syncStoryStarredState(account: account, hashes: storyHashes)
+				changedCount += await syncStoryStarredState(account: account, hashes: storyHashes)
 			} catch {
 				Self.logger.error("NewsBlur: error retrieving starred stories: \(error.localizedDescription)")
 				savedError = error
@@ -196,6 +209,7 @@ import Secrets
 				postSyncError(savedError, account: account, operation: "Refreshing article status")
 				throw savedError
 			}
+			return changedCount
 		}
 	}
 

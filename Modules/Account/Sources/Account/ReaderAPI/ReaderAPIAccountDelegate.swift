@@ -173,16 +173,20 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
 
-		try await sendArticleStatus(for: account)
-		try await refreshArticleStatus(for: account)
-		// This delegate doesn't track per-sync change counts.
-		return true
+		let sentCount = try await sendArticleStatusReturningCount(for: account)
+		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
+		return sentCount > 0 || refreshChangedCount > 0
 	}
 
 	public func sendArticleStatus(for account: Account) async throws {
+		_ = try await sendArticleStatusReturningCount(for: account)
+	}
+
+	/// Sends queued local status changes upstream. Returns the count successfully sent.
+	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
 
-		await account.logActivity(kind: .sendArticleStatuses) {
+		return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
 			let syncStatuses = (await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
 			let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
@@ -190,26 +194,60 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
 			let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
 
-			await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
-			await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
-			await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
-			await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+			var sentCount = 0
+			var savedError: Error?
+
+			do {
+				sentCount += try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+			} catch {
+				savedError = error
+			}
+
+			do {
+				sentCount += try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+			} catch {
+				savedError = error
+			}
+
+			do {
+				sentCount += try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+			} catch {
+				savedError = error
+			}
+
+			do {
+				sentCount += try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+			} catch {
+				savedError = error
+			}
+
+			if let savedError {
+				postSyncError(savedError, account: account, operation: "Sending article status")
+				throw savedError
+			}
+			return sentCount
 		}
 	}
 
 	@MainActor func refreshArticleStatus(for account: Account) async throws {
+		_ = try await refreshArticleStatusReturningCount(for: account)
+	}
+
+	/// Brings local read/starred statuses in line with the server. Returns the count
+	/// of articles whose local state actually changed.
+	@MainActor private func refreshArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshArticleStatus")
 
-		try await account.logActivity(kind: .refreshArticleStatuses) {
+		return try await account.logActivity(kind: .refreshArticleStatuses) { () -> Int in
+			var changedCount = 0
 			var errorOccurred = false
 
 			let articleIDs = try await caller.retrieveItemIDs(type: .unread)
-
-			await syncArticleReadState(account: account, articleIDs: articleIDs)
+			changedCount += await syncArticleReadState(account: account, articleIDs: articleIDs)
 
 			do {
 				let articleIDs = try await caller.retrieveItemIDs(type: .starred)
-				await syncArticleStarredState(account: account, articleIDs: articleIDs)
+				changedCount += await syncArticleStarredState(account: account, articleIDs: articleIDs)
 			} catch {
 				errorOccurred = true
 				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving starred entries failed: \(error.localizedDescription)")
@@ -220,6 +258,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				postSyncError(error, account: account, operation: "Refreshing article status")
 				throw error
 			}
+			return changedCount
 		}
 	}
 
@@ -760,25 +799,53 @@ private extension ReaderAPIAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: Set<SyncStatus>, apiCall: ([String]) async throws -> Void) async {
+	func sendArticleStatuses(_ statuses: Set<SyncStatus>, apiCall: ([String]) async throws -> Void) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses")
 
 		guard !statuses.isEmpty else {
-			return
+			return 0
 		}
 
 		let articleIDs = statuses.compactMap { $0.articleID }
-		let articleIDGroups = articleIDs.chunked(into: 1000)
+
+		// Article IDs that can't be encoded for this server can never be sent — they would
+		// fail every sync forever, churning the database. Delete them instead of retrying.
+		let unsendableArticleIDs = Set(articleIDs.filter { !articleIDIsSendable($0) })
+		if !unsendableArticleIDs.isEmpty {
+			Self.logger.error("ReaderAPIAccountDelegate: dropping \(unsendableArticleIDs.count) unsendable article IDs from the status queue")
+			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs)
+		}
+		let sendableArticleIDs = articleIDs.filter { articleIDIsSendable($0) }
+
+		var sentCount = 0
+		var savedError: Error?
+		let articleIDGroups = sendableArticleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
 
 			do {
-				_ = try await apiCall(articleIDGroup)
+				try await apiCall(articleIDGroup)
 				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
+				sentCount += articleIDGroup.count
 			} catch {
+				savedError = error
 				Self.logger.error("ReaderAPIAccountDelegate: sendArticleStatuses — error \(error.localizedDescription)")
 				await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup))
 			}
 		}
+
+		if let savedError {
+			throw savedError
+		}
+		return sentCount
+	}
+
+	/// Whether an article ID can be encoded for this server's edit-tag API. Mirrors the
+	/// ID encoding in ReaderAPICaller.updateStateToEntries.
+	private func articleIDIsSendable(_ articleID: String) -> Bool {
+		if variant == .theOldReader {
+			return true
+		}
+		return Int(articleID) != nil
 	}
 
 	func clearFolderRelationship(for feed: Feed, folderExternalID: String?) {
@@ -926,35 +993,35 @@ private extension ReaderAPIAccountDelegate {
 
 	}
 
-	func syncArticleReadState(account: Account, articleIDs: [String]?) async {
+	func syncArticleReadState(account: Account, articleIDs: [String]?) async -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleReadState — articleIDs.count \(articleIDs?.count ?? 0)")
 
 		guard let articleIDs else {
-			return
+			return 0
 		}
 
-		Task { @MainActor in
-			let pendingArticleIDs = (await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+		let pendingArticleIDs = (await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 
-			let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+		let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
 
-			let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
+		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 
-			// Mark articles as unread
-			let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-			_ = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
+		// Mark articles as unread
+		let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
-			// Mark articles as read
-			let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-			_ = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
-		}
+		// Mark articles as read
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
+
+		return markedUnread.count + markedRead.count
 	}
 
-	func syncArticleStarredState(account: Account, articleIDs: [String]?) async {
+	func syncArticleStarredState(account: Account, articleIDs: [String]?) async -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStarredState — articleIDs.count \(articleIDs?.count ?? 0)")
 
 		guard let articleIDs else {
-			return
+			return 0
 		}
 
 		let pendingArticleIDs = (await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
@@ -963,11 +1030,13 @@ private extension ReaderAPIAccountDelegate {
 
 		// Mark articles as starred
 		let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-		_ = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
+		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
 		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-		_ = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+
+		return markedStarred.count + markedUnstarred.count
 	}
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
