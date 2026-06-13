@@ -223,28 +223,25 @@ let appName = "NetNewsWire"
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
-		if InspectorWindowController.shouldOpenAtStartup {
-			toggleInspectorWindow(self)
-		}
-
-		if CurrentActivityWindowController.shouldOpenAtStartup {
-			showActivityWindow(self)
-		}
-
-		if ActivityLogWindowController.shouldOpenAtStartup {
-			showActivityLog(self)
-		}
-
-		if ErrorLogWindowController.shouldOpenAtStartup {
-			showErrorLog(self)
-		}
-
-		if AccountStatsWindowController.shouldOpenAtStartup {
-			showAccountStats(self)
-		}
-
-		if DinosaursWindowController.shouldOpenAtStartup {
-			showDinosaursWindow(self)
+		if !Platform.isRunningUnitTests {
+			if InspectorWindowController.shouldOpenAtStartup {
+				toggleInspectorWindow(self)
+			}
+			if CurrentActivityWindowController.shouldOpenAtStartup {
+				showActivityWindow(self)
+			}
+			if ActivityLogWindowController.shouldOpenAtStartup {
+				showActivityLog(self)
+			}
+			if ErrorLogWindowController.shouldOpenAtStartup {
+				showErrorLog(self)
+			}
+			if AccountStatsWindowController.shouldOpenAtStartup {
+				showAccountStats(self)
+			}
+			if DinosaursWindowController.shouldOpenAtStartup {
+				showDinosaursWindow(self)
+			}
 		}
 
 		ArticleThemesManager.shared.start()
@@ -892,7 +889,12 @@ extension AppDelegate {
 	}
 
 	func saveState() {
+		guard !Platform.isRunningUnitTests else {
+			return
+		}
+
 		mainWindowController?.saveStateToUserDefaults()
+
 		inspectorWindowController?.saveState()
 		activityWindowController?.saveState()
 		activityLogWindowController?.saveState()
