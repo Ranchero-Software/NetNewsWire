@@ -311,6 +311,16 @@ final class WebViewController: UIViewController {
 		present(activityViewController, animated: true)
 	}
 
+	func getSelectedText(completion: @escaping (String?) -> Void) {
+		webView?.evaluateJavaScript("getSelectedText()") { result, error in
+			guard error == nil, let text = result as? String, !text.isEmpty else {
+				completion(nil)
+				return
+			}
+			completion(text)
+		}
+	}
+
 	func openInAppBrowser() {
 		guard let url = article?.preferredURL else { return }
 		if AppDefaults.shared.useSystemBrowser {
@@ -587,6 +597,7 @@ private extension WebViewController {
 				webView.navigationDelegate = self
 				webView.uiDelegate = self
 				webView.scrollView.delegate = self
+				webView.editMenuDelegate = self
 				self.configureContextMenuInteraction()
 
 				// Remove possible existing message handlers
@@ -945,4 +956,13 @@ extension WebViewController {
 		webView?.evaluateJavaScript("selectPreviousResult()")
 	}
 
+}
+
+// MARK: PreloadedWebViewDelegate
+
+extension WebViewController: PreloadedWebViewDelegate {
+
+	var articleURL: URL? {
+		return article?.preferredURL
+	}
 }
