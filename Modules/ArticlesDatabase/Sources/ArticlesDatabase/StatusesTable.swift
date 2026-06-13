@@ -245,19 +245,6 @@ private final class StatusCache: Sendable {
 
 	private let state = OSAllocatedUnfairLock(initialState: State())
 
-	var cachedStatuses: Set<ArticleStatus> {
-		state.withLock { Set($0.dictionary.values) }
-	}
-
-	func add(_ statuses: Set<ArticleStatus>) {
-		// Replaces any cached statuses.
-		state.withLock { state in
-			for status in statuses {
-				state.dictionary[status.articleID] = status
-			}
-		}
-	}
-
 	func addStatusIfNotCached(_ status: ArticleStatus) {
 		addIfNotCached(Set([status]))
 	}
