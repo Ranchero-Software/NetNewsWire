@@ -15,7 +15,7 @@ import XCTest
 
 	override func setUp() async throws {
 		try await super.setUp()
-		account = accountManager.createAccount(type: .feedly, transport: TestTransport())
+		account = accountManager.createAccount(type: .feedly)
 	}
 
 	override func tearDown() async throws {

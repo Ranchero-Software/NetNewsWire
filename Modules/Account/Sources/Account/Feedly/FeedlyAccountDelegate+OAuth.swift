@@ -35,10 +35,10 @@ extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 		return FeedlyAPICaller.authorizationCodeURLRequest(for: authorizationRequest, baseURLComponents: environment.baseURLComponents)
 	}
 
-	@MainActor static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport) async throws -> OAuthAuthorizationGrant {
+	@MainActor static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse) async throws -> OAuthAuthorizationGrant {
 		let client = environment.oauthAuthorizationClient
 		let request = OAuthAccessTokenRequest(authorizationResponse: response, scope: oauthAuthorizationGrantScope, client: client)
-		let caller = FeedlyAPICaller(transport: transport, api: environment)
+		let caller = FeedlyAPICaller(api: environment)
 		let tokenResponse = try await caller.requestAccessToken(request)
 
 		let accessToken = Credentials(type: .oauthAccessToken, username: tokenResponse.id, secret: tokenResponse.accessToken)

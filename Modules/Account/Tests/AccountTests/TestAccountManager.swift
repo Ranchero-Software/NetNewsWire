@@ -20,7 +20,7 @@ import RSWeb
 
 	}
 
-	func createAccount(type: AccountType, username: String? = nil, password: String? = nil, transport: Transport) -> Account {
+	func createAccount(type: AccountType, username: String? = nil, password: String? = nil) -> Account {
 
 		let accountID = UUID().uuidString
 		let accountFolder = accountsFolder.appendingPathComponent("\(type.rawValue)_\(accountID)")
@@ -32,7 +32,7 @@ import RSWeb
 			abort()
 		}
 
-		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID, transport: transport)
+		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID)
 
 		return account
 

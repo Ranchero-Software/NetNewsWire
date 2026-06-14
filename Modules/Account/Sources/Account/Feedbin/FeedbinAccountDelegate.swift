@@ -56,28 +56,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	private var articlesRefreshedCount = 0
 	private static let logger = Feedbin.logger
 
-	init(dataFolder: String, transport: Transport?) {
+	init(dataFolder: String) {
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		syncDatabase = SyncDatabase(databasePath: databaseFilePath)
-
-		if let transport {
-			caller = FeedbinAPICaller(transport: transport)
-		} else {
-			let sessionConfiguration = URLSessionConfiguration.default
-			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-			sessionConfiguration.timeoutIntervalForRequest = 60.0
-			sessionConfiguration.httpShouldSetCookies = false
-			sessionConfiguration.httpCookieAcceptPolicy = .never
-			sessionConfiguration.httpMaximumConnectionsPerHost = 1
-			sessionConfiguration.httpCookieStorage = nil
-			sessionConfiguration.urlCache = nil
-
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
-
-			caller = FeedbinAPICaller(transport: URLSession(configuration: sessionConfiguration))
-		}
+		caller = FeedbinAPICaller()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
@@ -470,8 +452,8 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	func accountWillBeDeleted() {
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
-		let caller = FeedbinAPICaller(transport: transport)
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		let caller = FeedbinAPICaller()
 		caller.credentials = credentials
 		return try await caller.validateCredentials()
 	}

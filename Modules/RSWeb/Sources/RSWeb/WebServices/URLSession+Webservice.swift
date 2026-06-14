@@ -1,15 +1,14 @@
 //
-//  Transport.swift
+//  URLSession+Webservice.swift
 //  RSWeb
 //
 //  Created by Maurice Parker on 5/4/19.
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
-// Inspired by: http://robnapier.net/a-mockery-of-protocols
-
 import Foundation
+import RSCore
 
-public enum TransportError: LocalizedError, Sendable {
+public enum WebserviceError: LocalizedError, Sendable {
 	case noData
     case noURL
 	case suspended
@@ -118,33 +117,32 @@ public enum TransportError: LocalizedError, Sendable {
 
 }
 
-nonisolated public protocol Transport: Sendable {
+nonisolated extension URLSession {
 
-	/// Cancels all pending requests
-	func cancelAll()
+	/// The single shared session used for all web service calls.
+	/// When running unit tests, it routes requests through `TestingURLProtocol`
+	/// so no outside code needs any knowledge of testing.
+	public static let webservice: URLSession = {
 
-	/// Sends URLRequest and returns the HTTP headers and the data payload.
-	@discardableResult
-	func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?)
+		let sessionConfiguration = URLSessionConfiguration.default
+		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
+		sessionConfiguration.timeoutIntervalForRequest = 60.0
+		sessionConfiguration.httpShouldSetCookies = false
+		sessionConfiguration.httpCookieAcceptPolicy = .never
+		sessionConfiguration.httpMaximumConnectionsPerHost = 1
+		sessionConfiguration.httpCookieStorage = nil
+		sessionConfiguration.urlCache = nil
 
-	/// Sends URLRequest and returns the HTTP headers and the data payload.
-	func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void)
+		if let userAgentHeaders = UserAgent.headers() {
+			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
+		}
 
-	/// Sends URLRequest that doesn't require any result information.
-	func send(request: URLRequest, method: String) async throws
+		if Platform.isRunningUnitTests {
+			sessionConfiguration.protocolClasses = [TestingURLProtocol.self]
+		}
 
-	/// Sends URLRequest that doesn't require any result information.
-	func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void)
-
-	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
-	func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?)
-
-	/// Sends URLRequest with a data payload and returns the HTTP headers and the data payload.
-	func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void)
-
-}
-
-nonisolated extension URLSession: Transport {
+		return URLSession(configuration: sessionConfiguration)
+	}()
 
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
@@ -176,14 +174,14 @@ nonisolated extension URLSession: Transport {
 				}
 
 				guard let response = response as? HTTPURLResponse, let data = data else {
-					return completion(.failure(TransportError.noData))
+					return completion(.failure(WebserviceError.noData))
 				}
 
 				switch response.forcedStatusCode {
 				case 200...399:
 					completion(.success((response, data)))
 				default:
-					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
+					completion(.failure(WebserviceError.httpError(status: response.forcedStatusCode)))
 				}
 			}
 		}
@@ -210,14 +208,14 @@ nonisolated extension URLSession: Transport {
 				}
 
 				guard let response = response as? HTTPURLResponse else {
-					return completion(.failure(TransportError.noData))
+					return completion(.failure(WebserviceError.noData))
 				}
 
 				switch response.forcedStatusCode {
 				case 200...399:
 					completion(.success(()))
 				default:
-					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
+					completion(.failure(WebserviceError.httpError(status: response.forcedStatusCode)))
 				}
 			}
 		}
@@ -244,14 +242,14 @@ nonisolated extension URLSession: Transport {
 				}
 
 				guard let response = response as? HTTPURLResponse, let data = data else {
-					return completion(.failure(TransportError.noData))
+					return completion(.failure(WebserviceError.noData))
 				}
 
 				switch response.forcedStatusCode {
 				case 200...399:
 					completion(.success((response, data)))
 				default:
-					completion(.failure(TransportError.httpError(status: response.forcedStatusCode)))
+					completion(.failure(WebserviceError.httpError(status: response.forcedStatusCode)))
 				}
 
 			}
@@ -259,21 +257,4 @@ nonisolated extension URLSession: Transport {
 		task.resume()
 	}
 
-	public static func webserviceTransport() -> Transport {
-
-		let sessionConfiguration = URLSessionConfiguration.default
-		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-		sessionConfiguration.timeoutIntervalForRequest = 60.0
-		sessionConfiguration.httpShouldSetCookies = false
-		sessionConfiguration.httpCookieAcceptPolicy = .never
-		sessionConfiguration.httpMaximumConnectionsPerHost = 2
-		sessionConfiguration.httpCookieStorage = nil
-		sessionConfiguration.urlCache = nil
-
-		if let userAgentHeaders = UserAgent.headers() {
-			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-		}
-
-		return URLSession(configuration: sessionConfiguration)
-	}
 }

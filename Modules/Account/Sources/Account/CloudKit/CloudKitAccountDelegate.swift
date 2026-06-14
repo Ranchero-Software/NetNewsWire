@@ -668,7 +668,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		nil
 	}
 

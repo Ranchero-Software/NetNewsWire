@@ -78,7 +78,7 @@ enum FeedlyMarkAction: String, Sendable {
 		return baseURLComponents.host
 	}
 
-	private let transport: Transport
+	private let session = URLSession.webservice
 	private let baseURLComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
 	private var isSuspended = false
@@ -86,8 +86,7 @@ enum FeedlyMarkAction: String, Sendable {
 	private static let streamContentsCount = 1000
 	private static let streamIDsCount = 10000
 
-	init(transport: Transport, api: API) {
-		self.transport = transport
+	init(api: API) {
 		self.baseURLComponents = api.baseURLComponents
 
 		// Encode against a path-safe set. urlHostAllowed permits characters like [ and ]
@@ -99,12 +98,12 @@ enum FeedlyMarkAction: String, Sendable {
 	}
 
 	func cancelAll() {
-		transport.cancelAll()
+		session.cancelAll()
 	}
 
 	/// Cancels all pending requests and rejects any that come in later.
 	func suspend() {
-		transport.cancelAll()
+		session.cancelAll()
 		isSuspended = true
 	}
 
@@ -301,7 +300,7 @@ extension FeedlyAPICaller {
 
 	func importOPML(_ opmlData: Data) async throws {
 		guard !isSuspended else {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 		guard let accessToken = credentials?.secret else {
 			throw CredentialsError.missingAccessToken
@@ -333,7 +332,7 @@ extension FeedlyAPICaller {
 
 	func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse {
 		guard !isSuspended else {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		var components = baseURLComponents
@@ -411,8 +410,8 @@ private extension FeedlyAPICaller {
 	func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
 
 		do {
-			return try await transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
-		} catch TransportError.httpError(let status) where status == 401 {
+			return try await session.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		} catch WebserviceError.httpError(let status) where status == 401 {
 			return try await retryAfterReauthorization(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
 		}
 	}
@@ -421,7 +420,7 @@ private extension FeedlyAPICaller {
 
 		guard let delegate else {
 			assertionFailure("Check the delegate is set to \(FeedlyAccountDelegate.self).")
-			throw TransportError.httpError(status: 401)
+			throw WebserviceError.httpError(status: 401)
 		}
 
 		// Capture credentials before reauthorization so we can detect that they actually changed.
@@ -429,13 +428,13 @@ private extension FeedlyAPICaller {
 
 		let didReauthorize = await delegate.reauthorizeFeedlyAPICaller()
 		guard didReauthorize else {
-			throw TransportError.httpError(status: 401)
+			throw WebserviceError.httpError(status: 401)
 		}
 
 		// Catches an infinitely recursive attempt to refresh.
 		guard let accessToken = credentials?.secret, accessToken != credentialsBefore?.secret else {
 			assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: delegate)) set them on \(self)?")
-			throw TransportError.httpError(status: 401)
+			throw WebserviceError.httpError(status: 401)
 		}
 
 		var reauthorizedRequest = request
@@ -489,7 +488,7 @@ private extension FeedlyAPICaller {
 
 	func ensureReadyForRequest() throws {
 		if isSuspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 	}
 
@@ -506,7 +505,7 @@ private extension FeedlyAPICaller {
 
 	func postOAuthTokenRequest<T: Encodable>(body: T) async throws -> FeedlyOAuthAccessTokenResponse {
 		guard !isSuspended else {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		var components = baseURLComponents

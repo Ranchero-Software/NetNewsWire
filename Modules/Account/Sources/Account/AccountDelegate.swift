@@ -58,7 +58,7 @@ import Secrets
 
 	func accountWillBeDeleted()
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials?
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials?
 
 	func vacuumDatabases() async
 

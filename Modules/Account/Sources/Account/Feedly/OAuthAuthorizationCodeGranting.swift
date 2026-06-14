@@ -173,5 +173,5 @@ protocol OAuthAuthorizationGranting: AccountDelegate {
 
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport) async throws -> OAuthAuthorizationGrant
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse) async throws -> OAuthAuthorizationGrant
 }

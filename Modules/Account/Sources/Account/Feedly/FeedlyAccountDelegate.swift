@@ -76,27 +76,9 @@ import Secrets
 	private var lastNoChangeSyncDate: Date?
 	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
 
-	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
+	init(dataFolder: String, api: FeedlyAPICaller.API) {
 
-		if let transport {
-			self.caller = FeedlyAPICaller(transport: transport, api: api)
-		} else {
-			let sessionConfiguration = URLSessionConfiguration.default
-			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-			sessionConfiguration.timeoutIntervalForRequest = 60.0
-			sessionConfiguration.httpShouldSetCookies = false
-			sessionConfiguration.httpCookieAcceptPolicy = .never
-			sessionConfiguration.httpMaximumConnectionsPerHost = 1
-			sessionConfiguration.httpCookieStorage = nil
-			sessionConfiguration.urlCache = nil
-
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
-
-			let session = URLSession(configuration: sessionConfiguration)
-			self.caller = FeedlyAPICaller(transport: session, api: api)
-		}
+		self.caller = FeedlyAPICaller(api: api)
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.syncDatabase = SyncDatabase(databasePath: databaseFilePath)
@@ -665,7 +647,7 @@ import Secrets
 		}
 	}
 
-	static func validateCredentials(transport: any Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		Self.logger.debug("FeedlyAccountDelegate: validateCredentials")
 		// Feedly accounts validate via the OAuth refresh-token flow rather than this entry point.
 		assertionFailure("An account instance should refresh its access token instead of calling validateCredentials.")
@@ -932,7 +914,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			try await account.logActivity(kind: .validateCredentials, detail: "Refreshing access token") {
 				guard let refreshCredentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
 					Self.logger.error("Feedly: Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
-					throw TransportError.httpError(status: 403)
+					throw WebserviceError.httpError(status: 403)
 				}
 
 				Self.logger.info("Feedly: Refreshing access token")
