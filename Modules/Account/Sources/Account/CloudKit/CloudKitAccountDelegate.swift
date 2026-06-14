@@ -1048,7 +1048,8 @@ private extension CloudKitAccountDelegate {
 		}
 
 		do {
-			try await articlesZone.deleteArticles(feedExternalID)
+			let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+			try await articlesZone.deleteArticles(feedExternalID, owner: owner)
 			feed.dropConditionalGetInfo()
 			syncProgress.completeTask()
 		} catch {

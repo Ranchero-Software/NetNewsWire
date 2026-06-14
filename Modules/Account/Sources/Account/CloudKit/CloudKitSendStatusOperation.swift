@@ -117,7 +117,14 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 		}
 
 		do {
-			let withContent = try await articlesZone.modifyArticles(statusUpdates)
+			let withContent = try await account.logActivity(
+				kind: .sendArticleStatuses,
+				detail: ActivityLog.shared.nextTaskNumberString(),
+				successMessage: { "\(statusUpdates.count) status\(statusUpdates.count == 1 ? "" : "es") sent\($0 > 0 ? " (\($0) with content)" : "")" },
+				{
+					try await articlesZone.modifyArticles(statusUpdates)
+				}
+			)
 			await syncDatabase.deleteSelectedForProcessing(Set(statusUpdates.map({ $0.articleID })))
 			return (statusUpdates.count, withContent)
 		} catch {

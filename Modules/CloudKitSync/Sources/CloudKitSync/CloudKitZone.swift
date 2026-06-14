@@ -476,7 +476,7 @@ public extension CloudKitZone {
 	}
 
 	/// Delete CKRecords using a CKQuery
-	func delete(ckQuery: CKQuery, completion: @escaping (Result<Void, Error>) -> Void) {
+	func delete(ckQuery: CKQuery, pageHandler: CloudKitQueryPageHandler? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
 		Self.logger.debug("CloudKitZone: delete ckQuery \(self.zoneID.zoneName, privacy: .public)")
 
 		var records = [CKRecord]()
@@ -500,8 +500,9 @@ public extension CloudKitZone {
 
 				switch result {
 				case .success(let cursor):
+					await pageHandler?(records)
 					if let cursor {
-						self.delete(cursor: cursor, carriedRecords: records, completion: completion)
+						self.delete(cursor: cursor, carriedRecords: records, pageHandler: pageHandler, completion: completion)
 					} else {
 						guard !records.isEmpty else {
 							completion(.success(()))
@@ -521,7 +522,7 @@ public extension CloudKitZone {
 	}
 
 	/// Delete CKRecords using a CKQuery
-	func delete(cursor: CKQueryOperation.Cursor, carriedRecords: [CKRecord], completion: @escaping (Result<Void, Error>) -> Void) {
+	func delete(cursor: CKQueryOperation.Cursor, carriedRecords: [CKRecord], pageHandler: CloudKitQueryPageHandler? = nil, completion: @escaping (Result<Void, Error>) -> Void) {
 		Self.logger.debug("CloudKitZone: delete cursor \(self.zoneID.zoneName, privacy: .public)")
 
 		var records = [CKRecord]()
@@ -545,10 +546,11 @@ public extension CloudKitZone {
 
 				switch result {
 				case .success(let cursor):
+					await pageHandler?(records)
 					records.append(contentsOf: carriedRecords)
 
 					if let cursor {
-						self.delete(cursor: cursor, carriedRecords: records, completion: completion)
+						self.delete(cursor: cursor, carriedRecords: records, pageHandler: pageHandler, completion: completion)
 					} else {
 						let recordIDs = records.map { $0.recordID }
 						self.modify(recordsToSave: [], recordIDsToDelete: recordIDs, completion: completion)
@@ -945,9 +947,9 @@ public extension CloudKitZone {
 		_ = try await save(subscription)
 	}
 
-	func delete(ckQuery: CKQuery) async throws {
+	func delete(ckQuery: CKQuery, pageHandler: CloudKitQueryPageHandler? = nil) async throws {
 		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			delete(ckQuery: ckQuery) { result in
+			delete(ckQuery: ckQuery, pageHandler: pageHandler) { result in
 				continuation.resume(with: result)
 			}
 		}
