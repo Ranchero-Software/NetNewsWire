@@ -46,26 +46,8 @@ import Secrets
 
 	static let logger = NewsBlur.logger
 
-	init(dataFolder: String, transport: Transport?) {
-		if let transport = transport {
-			caller = NewsBlurAPICaller(transport: transport)
-		} else {
-			let sessionConfiguration = URLSessionConfiguration.default
-			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-			sessionConfiguration.timeoutIntervalForRequest = 60.0
-			sessionConfiguration.httpShouldSetCookies = false
-			sessionConfiguration.httpCookieAcceptPolicy = .never
-			sessionConfiguration.httpMaximumConnectionsPerHost = 1
-			sessionConfiguration.httpCookieStorage = nil
-			sessionConfiguration.urlCache = nil
-
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
-
-			let session = URLSession(configuration: sessionConfiguration)
-			caller = NewsBlurAPICaller(transport: session)
-		}
+	init(dataFolder: String) {
+		caller = NewsBlurAPICaller()
 
 		syncDatabase = SyncDatabase(databasePath: dataFolder.appending("/DB.sqlite3"))
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
@@ -540,8 +522,8 @@ import Secrets
 		}
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
-		let caller = NewsBlurAPICaller(transport: transport)
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		let caller = NewsBlurAPICaller()
 		caller.credentials = credentials
 		return try await caller.validateCredentials()
 	}

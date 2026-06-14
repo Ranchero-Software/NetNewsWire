@@ -1,5 +1,5 @@
 //
-//  JSONTransport.swift
+//  URLSession+WebserviceJSON.swift
 //  RSWeb
 //
 //  Created by Maurice Parker on 5/6/19.
@@ -8,7 +8,7 @@
 
 import Foundation
 
-nonisolated extension Transport {
+nonisolated extension URLSession {
 
 	/// Send an HTTP GET and return JSON object(s)
 	public func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {

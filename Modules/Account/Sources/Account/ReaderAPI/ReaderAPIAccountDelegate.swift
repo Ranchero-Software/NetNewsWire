@@ -84,28 +84,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
+	init(dataFolder: String, variant: ReaderAPIVariant) {
 		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		syncDatabase = SyncDatabase(databasePath: databasePath)
 
-		if transport != nil {
-			self.caller = ReaderAPICaller(transport: transport!, logger: Self.logger)
-		} else {
-			let sessionConfiguration = URLSessionConfiguration.default
-			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-			sessionConfiguration.timeoutIntervalForRequest = 60.0
-			sessionConfiguration.httpShouldSetCookies = false
-			sessionConfiguration.httpCookieAcceptPolicy = .never
-			sessionConfiguration.httpMaximumConnectionsPerHost = 1
-			sessionConfiguration.httpCookieStorage = nil
-			sessionConfiguration.urlCache = nil
-
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
-
-			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), logger: Self.logger)
-		}
+		self.caller = ReaderAPICaller(logger: Self.logger)
 
 		self.caller.variant = variant
 		self.variant = variant
@@ -616,14 +599,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	func accountWillBeDeleted() {
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		Self.logger.debug("ReaderAPIAccountDelegate: validateCredentials")
 
 		guard let endpoint else {
-			throw TransportError.noURL
+			throw WebserviceError.noURL
 		}
 
-		let caller = ReaderAPICaller(transport: transport, logger: Self.logger)
+		let caller = ReaderAPICaller(logger: Self.logger)
 		caller.credentials = credentials
 		return try await caller.validateCredentials(endpoint: endpoint)
 	}

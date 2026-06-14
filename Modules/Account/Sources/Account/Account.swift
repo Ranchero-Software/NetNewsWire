@@ -288,26 +288,26 @@ public enum FetchType {
 		}
 	}
 
-	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
 		case .cloudKit:
 			self.delegate = CloudKitAccountDelegate(dataFolder: dataFolder)
 		case .feedbin:
-			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
+			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder)
 		case .feedly:
-			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
+			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, api: FeedlyAccountDelegate.environment)
 		case .newsBlur:
-			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
+			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder)
 		case .freshRSS:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .freshRSS)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .freshRSS)
 		case .inoreader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .inoreader)
 		case .bazQux:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .bazQux)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .bazQux)
 		case .theOldReader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .theOldReader)
 		}
 
 		self.accountID = accountID
@@ -397,7 +397,7 @@ public enum FetchType {
 		}
 	}
 
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
+	public static func validateCredentials(type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
 		let activityLog = ActivityLog.shared
 		let id = activityLog.createActivity(owner: .app, kind: .validateCredentials, detail: type.displayName)
 		activityLog.didStart(id: id)
@@ -405,11 +405,11 @@ public enum FetchType {
 			let result: Credentials?
 			switch type {
 			case .feedbin:
-				result = try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
+				result = try await FeedbinAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			case .newsBlur:
-				result = try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
+				result = try await NewsBlurAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			case .freshRSS, .inoreader, .bazQux, .theOldReader:
-				result = try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
+				result = try await ReaderAPIAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			default:
 				result = nil
 			}
@@ -444,8 +444,7 @@ public enum FetchType {
 
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
 	                                           client: OAuthAuthorizationClient,
-	                                           accountType: AccountType,
-	                                           transport: Transport = URLSession.webserviceTransport()) async throws -> OAuthAuthorizationGrant {
+	                                           accountType: AccountType) async throws -> OAuthAuthorizationGrant {
 		let grantingType: OAuthAuthorizationGranting.Type
 
 		switch accountType {
@@ -455,7 +454,7 @@ public enum FetchType {
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
 
-		return try await grantingType.requestOAuthAccessToken(with: response, transport: transport)
+		return try await grantingType.requestOAuthAccessToken(with: response)
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {

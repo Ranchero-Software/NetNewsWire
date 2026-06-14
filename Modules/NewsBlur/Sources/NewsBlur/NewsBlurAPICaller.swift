@@ -15,7 +15,7 @@ public final class NewsBlurAPICaller: Sendable {
 	public static let sessionIDCookieKey = "newsblur_sessionid"
 
 	let baseURL = URL(string: "https://www.newsblur.com/")!
-	let transport: Transport
+	let session = URLSession.webservice
 
 	private let suspendedLock = OSAllocatedUnfairLock(initialState: false)
 	var suspended: Bool {
@@ -29,13 +29,12 @@ public final class NewsBlurAPICaller: Sendable {
 		set { credentialsLock.withLock { $0 = newValue }}
 	}
 
-	public init(transport: Transport!) {
-		self.transport = transport
+	public init() {
 	}
 
 	/// Cancel all pending requests and reject future requests.
 	public func suspend() {
-		transport.cancelAll()
+		session.cancelAll()
 		suspended = true
 	}
 

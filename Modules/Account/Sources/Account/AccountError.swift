@@ -22,7 +22,7 @@ public enum AccountError: LocalizedError {
 
 	public var isCredentialsError: Bool {
 		if case .wrappedError(let error, _, _) = self {
-			if case TransportError.httpError(let status) = error {
+			if case WebserviceError.httpError(let status) = error {
 				return isCredentialsError(status: status)
 			}
 		}
@@ -58,7 +58,7 @@ public enum AccountError: LocalizedError {
 			return NSLocalizedString("Unknown error", comment: "Unknown error")
 		case .wrappedError(let error, _, let accountName):
 			switch error {
-			case TransportError.httpError(let status):
+			case WebserviceError.httpError(let status):
 				if isCredentialsError(status: status) {
 					let localizedText = NSLocalizedString("Your “%@” credentials are invalid or expired.", comment: "Invalid or expired")
 					return NSString.localizedStringWithFormat(localizedText as NSString, accountName) as String
@@ -79,7 +79,7 @@ public enum AccountError: LocalizedError {
 			return nil
 		case .wrappedError(let error, _, _):
 			switch error {
-			case TransportError.httpError(let status):
+			case WebserviceError.httpError(let status):
 				if isCredentialsError(status: status) {
 					return NSLocalizedString("Please update your credentials for this account, or ensure that your account with this service is still valid.", comment: "Expired credentials")
 				} else {
