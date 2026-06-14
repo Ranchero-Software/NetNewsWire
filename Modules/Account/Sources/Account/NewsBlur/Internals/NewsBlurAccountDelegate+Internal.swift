@@ -8,6 +8,7 @@
 //
 
 import Foundation
+import ActivityLog
 import Articles
 import RSCore
 import RSDatabase
@@ -22,21 +23,28 @@ import os
 	@MainActor func refreshFeeds(for account: Account) async throws {
 		Self.logger.info("NewsBlur: Refreshing feeds")
 
-		let (feeds, folders): ([NewsBlurFeed]?, [NewsBlurFolder]?)
 		do {
-			(feeds, folders) = try await caller.retrieveFeeds()
+			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
+				let (feeds, folders) = try await caller.retrieveFeeds()
+				BatchUpdate.shared.perform {
+					MainActor.assumeIsolated {
+						self.syncFolders(account, folders)
+						self.syncFeeds(account, feeds)
+						self.syncFeedFolderRelationship(account, folders)
+					}
+				}
+				return (folders: folders?.count ?? 0, feeds: feeds?.count ?? 0)
+			})
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing feeds")
 			throw error
 		}
+	}
 
-		BatchUpdate.shared.perform {
-			MainActor.assumeIsolated {
-				self.syncFolders(account, folders)
-				self.syncFeeds(account, feeds)
-				self.syncFeedFolderRelationship(account, folders)
-			}
-		}
+	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
+	/// sub-activity of `kind`, reporting the page's item count.
+	func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
+		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
 	}
 
 	@MainActor func syncFolders(_ account: Account, _ folders: [NewsBlurFolder]?) {
@@ -365,7 +373,7 @@ import os
 			refreshProgress.completeTask()
 		}
 
-		let (stories, _) = try await caller.retrieveStories(feedID: feed.feedID, page: page)
+		let (stories, _) = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(feedID: feed.feedID, page: page) })
 		guard let stories, stories.count > 0 else {
 			return
 		}
@@ -385,7 +393,9 @@ import os
 		}
 
 		// Download the initial articles
-		try await downloadFeed(account: account, feed: feed, page: 1)
+		try await account.logActivity(kind: .refreshArticles, detail: feed.nameForDisplay) {
+			try await downloadFeed(account: account, feed: feed, page: 1)
+		}
 		try await refreshArticleStatus(for: account)
 		try await refreshMissingStories(for: account)
 	}

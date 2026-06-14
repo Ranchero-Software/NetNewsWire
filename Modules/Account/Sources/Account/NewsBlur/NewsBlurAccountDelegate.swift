@@ -248,7 +248,7 @@ import Secrets
 
 			for chunk in chunkedStoryHashes {
 				do {
-					let (stories, _) = try await caller.retrieveStories(hashes: chunk)
+					let (stories, _) = try await logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(hashes: chunk) })
 					await processStories(account: account, stories: stories)
 				} catch {
 					savedError = error
