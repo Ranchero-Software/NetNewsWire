@@ -83,7 +83,6 @@ enum FeedlyMarkAction: String, Sendable {
 	private let uriComponentAllowed: CharacterSet
 	private var isSuspended = false
 
-	private static let articleIDChunkSize = 300
 	private static let streamContentsCount = 1000
 	private static let streamIDsCount = 10000
 
@@ -277,6 +276,8 @@ extension FeedlyAPICaller {
 		return entries
 	}
 
+	/// Marks one batch of article IDs. The caller is responsible for chunking to
+	/// stay within the Feedly markers limit (see `FeedlyAccountDelegate.markChunkSize`).
 	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction) async throws {
 		struct MarkerEntriesBody: Encodable {
 			let type = "entries"
@@ -284,15 +285,12 @@ extension FeedlyAPICaller {
 			var entryIds: [String]
 		}
 
-		let chunks = Array(articleIDs).chunked(into: Self.articleIDChunkSize)
-		for chunk in chunks {
-			var request = try makeAuthorizedRequest(path: "/v3/markers", method: HTTPMethod.post)
-			request.httpBody = try JSONEncoder().encode(MarkerEntriesBody(action: action.actionValue, entryIds: chunk))
+		var request = try makeAuthorizedRequest(path: "/v3/markers", method: HTTPMethod.post)
+		request.httpBody = try JSONEncoder().encode(MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIDs)))
 
-			let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-			guard httpResponse.statusCode == 200 else {
-				throw URLError(.cannotDecodeContentData)
-			}
+		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200 else {
+			throw URLError(.cannotDecodeContentData)
 		}
 	}
 }

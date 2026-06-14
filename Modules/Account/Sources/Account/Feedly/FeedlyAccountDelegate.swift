@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ActivityLog
 import Articles
 import ErrorLog
 import RSCore
@@ -69,6 +70,7 @@ import Secrets
 	private static let logger = Feedly.logger
 
 	private static let articleDownloadChunkSize = 1000
+	private static let markChunkSize = 300 // Feedly /v3/markers limit
 	private static let pendingStatusSendThreshold = 100
 
 	private var lastNoChangeSyncDate: Date?
@@ -235,7 +237,10 @@ import Secrets
 					}
 					let articleIDs = Set(pending.map { $0.articleID })
 					do {
-						try await caller.mark(articleIDs, as: pairing.action)
+						for chunk in Array(articleIDs).chunked(into: Self.markChunkSize) {
+							let chunkIDs = Set(chunk)
+							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+						}
 						await syncDatabase.deleteSelectedForProcessing(articleIDs)
 						sentCount += articleIDs.count
 					} catch {
@@ -706,12 +711,17 @@ private extension FeedlyAccountDelegate {
 	/// status sync has something to attach to.
 	func ingestStreamArticleIDs(for account: Account, userID: String) async throws {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		var continuation: String?
-		repeat {
-			let page = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil)
-			await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
-			continuation = page.continuation
-		} while continuation != nil
+		_ = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0) article IDs" }, { () -> Int in
+			var total = 0
+			var continuation: String?
+			repeat {
+				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil) })
+				await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
+				total += page.ids.count
+				continuation = page.continuation
+			} while continuation != nil
+			return total
+		})
 	}
 
 	/// Mirror the remote unread set onto local statuses.
@@ -722,7 +732,7 @@ private extension FeedlyAccountDelegate {
 	@discardableResult
 	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		let remoteUnreadIDs = try await collectStreamIDs(for: resource, unreadOnly: true)
+		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: true)
 
 		let pendingArticleIDs = (await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
@@ -744,7 +754,7 @@ private extension FeedlyAccountDelegate {
 	@discardableResult
 	func ingestStarredArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
-		let remoteStarredIDs = try await collectStreamIDs(for: resource, unreadOnly: nil)
+		let remoteStarredIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
 
 		let pendingArticleIDs = (await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
@@ -768,21 +778,30 @@ private extension FeedlyAccountDelegate {
 			return Set<String>()
 		}
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		let ids = try await collectStreamIDs(for: resource, newerThan: newerThan)
+		let ids = try await account.logActivity(kind: .fetchArticleIDs, detail: "Updated articles", successMessage: { "\($0.count) article IDs" }, { () -> Set<String> in
+			try await self.collectStreamIDs(for: account, resource: resource, kind: .fetchArticleIDs, newerThan: newerThan)
+		})
 		Self.logger.info("Feedly: Articles updated since last successful sync start date: \(ids.count)")
 		return ids
 	}
 
 	/// Page through stream IDs for `resource`, returning the union of every page.
-	func collectStreamIDs(for resource: FeedlyResourceID, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> Set<String> {
+	/// Each page is logged as a numbered sub-activity of `kind`.
+	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> Set<String> {
 		var collected = Set<String>()
 		var continuation: String?
 		repeat {
-			let page = try await caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly)
+			let page = try await logRefreshPage(for: account, kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
 			collected.formUnion(page.ids)
 			continuation = page.continuation
 		} while continuation != nil
 		return collected
+	}
+
+	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
+	/// sub-activity of `kind`, reporting the page's item count.
+	private func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
+		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
 	}
 
 	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks.
@@ -800,8 +819,8 @@ private extension FeedlyAccountDelegate {
 				var ingested = 0
 				let chunks = Array(articleIDs).chunked(into: Self.articleDownloadChunkSize)
 				for chunk in chunks {
-					let entries = try await caller.getEntries(for: Set(chunk))
-					await ingest(entries: entries, into: account)
+					let entries = try await self.logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
+					await self.ingest(entries: entries, into: account)
 					ingested += entries.count
 				}
 				return ingested
@@ -816,7 +835,7 @@ private extension FeedlyAccountDelegate {
 	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?) async throws {
 		var continuation: String?
 		repeat {
-			let stream = try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil)
+			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 			await ingest(entries: stream.items, into: account)
 			continuation = paginated ? stream.continuation : nil
 		} while continuation != nil
