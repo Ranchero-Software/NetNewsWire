@@ -158,6 +158,7 @@ nonisolated extension URLSession {
 		}
 	}
 
+	@discardableResult
 	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?) {
 		try await withCheckedThrowingContinuation { continuation in
 			self.send(request: request) { result in
@@ -166,7 +167,7 @@ nonisolated extension URLSession {
 		}
 	}
 
-	public func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+	func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 		let task = self.dataTask(with: request) { (data, response, error) in
 			DispatchQueue.main.async {
 				if let error = error {
@@ -196,7 +197,7 @@ nonisolated extension URLSession {
 		}
 	}
 
-	public func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
+	func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 
 		var sendRequest = request
 		sendRequest.httpMethod = method
@@ -230,7 +231,7 @@ nonisolated extension URLSession {
 		}
 	}
 
-	public func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
+	func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
 
 		var sendRequest = request
 		sendRequest.httpMethod = method
@@ -251,10 +252,8 @@ nonisolated extension URLSession {
 				default:
 					completion(.failure(WebserviceError.httpError(status: response.forcedStatusCode)))
 				}
-
 			}
 		}
 		task.resume()
 	}
-
 }
