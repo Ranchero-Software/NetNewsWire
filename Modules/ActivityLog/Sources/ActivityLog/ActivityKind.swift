@@ -18,6 +18,7 @@ public enum ActivityKind: Sendable, Hashable {
 	case refreshFeedList
 	case refreshFeedContent(feedURL: String) // per-feed
 	case followFeedRedirect
+	case refreshArticles
 	case refreshMissingArticles
 	case importOPML
 
@@ -75,6 +76,8 @@ public enum ActivityKind: Sendable, Hashable {
 			return NSLocalizedString("Refreshing feed list", bundle: .module, comment: "Activity kind")
 		case .followFeedRedirect:
 			return NSLocalizedString("Feed redirect", bundle: .module, comment: "Activity kind")
+		case .refreshArticles:
+			return NSLocalizedString("Refreshing articles", bundle: .module, comment: "Activity kind")
 		case .refreshMissingArticles:
 			return NSLocalizedString("Refreshing missing articles", bundle: .module, comment: "Activity kind")
 		case .importOPML:

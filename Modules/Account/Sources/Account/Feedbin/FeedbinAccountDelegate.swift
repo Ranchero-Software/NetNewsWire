@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ActivityLog
 import Articles
 import ErrorLog
 import FeedFinder
@@ -51,6 +52,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 	private let syncDatabase: SyncDatabase
 	private let caller: FeedbinAPICaller
+	private var articlesRefreshedCount = 0
 	private static let logger = Feedbin.logger
 
 	init(dataFolder: String, transport: Transport?) {
@@ -233,9 +235,11 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 
 		do {
-			try await caller.renameTag(oldName: folder.name ?? "", newName: name)
-			renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
-			folder.name = name
+			try await account.logActivity(kind: .renameFolder, detail: folder.name) {
+				try await caller.renameTag(oldName: folder.name ?? "", newName: name)
+				renameFolderRelationship(for: account, fromName: folder.name ?? "", toName: name)
+				folder.name = name
+			}
 		} catch {
 			throw AccountError.wrapped(error, account)
 		}
@@ -491,20 +495,23 @@ private extension FeedbinAccountDelegate {
 
 	func refreshAccount(_ account: Account) async throws {
 		do {
-			let tags = try await caller.retrieveTags()
-			refreshProgress.completeTask()
+			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
+				let tags = try await self.caller.retrieveTags()
+				self.refreshProgress.completeTask()
 
-			let subscriptions = try await caller.retrieveSubscriptions()
-			refreshProgress.completeTask()
-			forceExpireFolderFeedRelationship(account, tags)
+				let subscriptions = try await self.caller.retrieveSubscriptions()
+				self.refreshProgress.completeTask()
+				self.forceExpireFolderFeedRelationship(account, tags)
 
-			let taggings = try await caller.retrieveTaggings()
-			BatchUpdate.shared.perform {
-				syncFolders(account, tags)
-				syncFeeds(account, subscriptions)
-				syncFeedFolderRelationship(account, taggings)
-			}
-			refreshProgress.completeTask()
+				let taggings = try await self.caller.retrieveTaggings()
+				BatchUpdate.shared.perform {
+					self.syncFolders(account, tags)
+					self.syncFeeds(account, subscriptions)
+					self.syncFeedFolderRelationship(account, taggings)
+				}
+				self.refreshProgress.completeTask()
+				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
+			})
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing account")
 			throw error
@@ -815,16 +822,20 @@ private extension FeedbinAccountDelegate {
 		Self.logger.info("Feedbin: Refreshing articles")
 
 		do {
-			let (entries, page, updateFetchDate, lastPageNumber) = try await caller.retrieveEntries()
+			articlesRefreshedCount = 0
+			try await account.logActivity(kind: .refreshArticles, successMessage: { _ in "\(self.articlesRefreshedCount) articles" }, {
+				let (entries, page, updateFetchDate, lastPageNumber) = try await self.refreshArticlesPage(for: account, articleCount: { $0.0?.count ?? 0 }, { try await self.caller.retrieveEntries() })
 
-			if let last = lastPageNumber {
-				refreshProgress.addTasks(last - 1)
-			}
+				if let last = lastPageNumber {
+					self.refreshProgress.addTasks(last - 1)
+				}
 
-			await processEntries(account: account, entries: entries)
-			refreshProgress.completeTask()
+				self.articlesRefreshedCount += entries?.count ?? 0
+				await self.processEntries(account: account, entries: entries)
+				self.refreshProgress.completeTask()
 
-			try await refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
+				try await self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
+			})
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing articles")
 			throw error
@@ -871,12 +882,20 @@ private extension FeedbinAccountDelegate {
 			return
 		}
 
-		let (entries, nextPage) = try await caller.retrieveEntries(page: page)
+		let (entries, nextPage) = try await refreshArticlesPage(for: account, articleCount: { $0.0?.count ?? 0 }, { try await caller.retrieveEntries(page: page) })
 
+		articlesRefreshedCount += entries?.count ?? 0
 		await processEntries(account: account, entries: entries)
 		refreshProgress.completeTask()
 
 		try await refreshArticles(account, page: nextPage, updateFetchDate: updateFetchDate)
+	}
+
+	/// Fetches one page of the article refresh as its own numbered, timed sub-activity,
+	/// reporting the page's article count — the per-page detail under the parent
+	/// `.refreshArticles` activity.
+	private func refreshArticlesPage<T>(for account: Account, articleCount: @escaping (T) -> Int, _ fetch: () async throws -> T) async throws -> T {
+		try await account.logActivity(kind: .refreshArticles, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: { "\(articleCount($0)) articles" }, fetch)
 	}
 
 	func processEntries(account: Account, entries: [FeedbinEntry]?) async {
