@@ -19,6 +19,7 @@ import os
 import Secrets
 
 @MainActor final class NewsBlurAccountDelegate: AccountDelegate {
+	weak var account: Account?
 	var behaviors: AccountBehaviors = []
 
 	var isOPMLImportInProgress: Bool = false
@@ -70,10 +71,13 @@ import Secrets
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
+	func refreshAll() async throws {
+		guard let account else {
+			return
+		}
 		if credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
 		}
@@ -86,10 +90,10 @@ import Secrets
 				try await refreshFeeds(for: account)
 				refreshProgress.completeTask()
 
-				try await sendArticleStatus(for: account)
+				try await sendArticleStatus()
 				refreshProgress.completeTask()
 
-				try await refreshArticleStatus(for: account)
+				try await refreshArticleStatus()
 				refreshProgress.completeTask()
 
 				try await refreshMissingStories(for: account)
@@ -103,13 +107,19 @@ import Secrets
 		}
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws -> Bool {
+	@MainActor func syncArticleStatus() async throws -> Bool {
+		guard let account else {
+			return false
+		}
 		let sentCount = try await sendArticleStatusReturningCount(for: account)
 		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
 		return sentCount > 0 || refreshChangedCount > 0
 	}
 
-	@MainActor func sendArticleStatus(for account: Account) async throws {
+	@MainActor func sendArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await sendArticleStatusReturningCount(for: account)
 	}
 
@@ -173,7 +183,10 @@ import Secrets
 		}
 	}
 
-	@MainActor func refreshArticleStatus(for account: Account) async throws {
+	@MainActor func refreshArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await refreshArticleStatusReturningCount(for: account)
 	}
 
@@ -279,10 +292,13 @@ import Secrets
 		return !feedIDsAndItems.isEmpty
 	}
 
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+	@MainActor func importOPML(opmlFile: URL) async throws {
 	}
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+	@MainActor func createFolder(name: String) async throws -> Folder {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
@@ -298,7 +314,10 @@ import Secrets
 		}
 	}
 
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	@MainActor func renameFolder(with folder: Folder, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		guard let folderToRename = folder.name else {
 			throw AccountError.invalidParameter
 		}
@@ -321,7 +340,10 @@ import Secrets
 		}
 	}
 
-	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
+	@MainActor func removeFolder(with folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		guard let folderToRemove = folder.name else {
 			throw AccountError.invalidParameter
 		}
@@ -347,7 +369,10 @@ import Secrets
 	}
 
 	@discardableResult
-	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	@MainActor func createFeed(url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		refreshProgress.addTask()
 		defer {
 			refreshProgress.completeTask()
@@ -368,7 +393,10 @@ import Secrets
 		}
 	}
 
-	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	@MainActor func renameFeed(with feed: Feed, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		guard let feedID = feed.externalID else {
 			throw AccountError.invalidParameter
 		}
@@ -388,7 +416,10 @@ import Secrets
 		}
 	}
 
-	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
+	@MainActor func addFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		account.logActivity(kind: .addFeed, detail: feed.url) {
 			if let containerAccount = container as? Account {
 				containerAccount.addFeedToTreeAtTopLevel(feed)
@@ -405,13 +436,19 @@ import Secrets
 		}
 	}
 
-	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	@MainActor func removeFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		try await account.logActivity(kind: .removeFeed, detail: feed.url) {
 			try await deleteFeed(for: account, with: feed, from: container)
 		}
 	}
 
-	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	@MainActor func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		guard let account else {
+			return
+		}
 		guard let feedID = feed.externalID else {
 			throw AccountError.invalidParameter
 		}
@@ -431,15 +468,21 @@ import Secrets
 		}
 	}
 
-	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	@MainActor func restoreFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
 		} else {
-			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
+			try await createFeed(url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
-	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
+	@MainActor func restoreFolder(folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		guard let folderName = folder.name else {
 			throw AccountError.invalidParameter
 		}
@@ -452,9 +495,9 @@ import Secrets
 
 		do {
 			try await account.logActivity(kind: .restoreFolder, detail: folderName) {
-				let folder = try await createFolder(for: account, name: folderName)
+				let folder = try await createFolder(name: folderName)
 				for feed in feedsToRestore {
-					try await restoreFeed(for: account, feed: feed, container: folder)
+					try await restoreFeed(feed: feed, container: folder)
 				}
 			}
 		} catch {
@@ -464,7 +507,10 @@ import Secrets
 		}
 	}
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	@MainActor func markArticles(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		guard let account else {
+			return
+		}
 		await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(articles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
@@ -475,15 +521,18 @@ import Secrets
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = await syncDatabase.selectPendingCount(), count > 100 {
-			try await sendArticleStatus(for: account)
+			try await sendArticleStatus()
 		}
 	}
 
-	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
+	func accountDidInitialize() {
+		credentials = try? account?.retrieveCredentials(type: .newsBlurSessionID)
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
+		guard let account else {
+			return
+		}
 		Task { @MainActor in
 			try? await account.logActivity(kind: .validateCredentials, detail: "Logging out of NewsBlur") {
 				try await caller.logout()
@@ -497,7 +546,10 @@ import Secrets
 		return try await caller.validateCredentials()
 	}
 
-	func vacuumDatabases(for account: Account) async {
+	func vacuumDatabases() async {
+		guard let account else {
+			return
+		}
 		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
@@ -511,8 +563,8 @@ import Secrets
 	}
 
 	/// Resume network activity after a previous `suspendNetwork()`.
-	func resume(account: Account) {
-		if credentials == nil {
+	func resume() {
+		if let account, credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .newsBlurSessionID)
 		}
 		caller.resume()

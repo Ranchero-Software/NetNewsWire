@@ -25,6 +25,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 }
 
 @MainActor final class FeedbinAccountDelegate: AccountDelegate {
+	weak var account: Account?
 	let behaviors: AccountBehaviors = [.disallowFeedCopyInRootFolder]
 	let server: String? = "api.feedbin.com"
 	var isOPMLImportInProgress = false
@@ -81,10 +82,13 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
+	func refreshAll() async throws {
+		guard let account else {
+			return
+		}
 		if credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .basic)
 		}
@@ -103,13 +107,19 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func syncArticleStatus(for account: Account) async throws -> Bool {
+	func syncArticleStatus() async throws -> Bool {
+		guard let account else {
+			return false
+		}
 		let sentCount = try await sendArticleStatusReturningCount(for: account)
 		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
 		return sentCount > 0 || refreshChangedCount > 0
 	}
 
-	func sendArticleStatus(for account: Account) async throws {
+	func sendArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await sendArticleStatusReturningCount(for: account)
 	}
 
@@ -148,7 +158,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func refreshArticleStatus(for account: Account) async throws {
+	func refreshArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await refreshArticleStatusReturningCount(for: account)
 	}
 
@@ -186,7 +199,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func importOPML(for account: Account, opmlFile: URL) async throws {
+	func importOPML(opmlFile: URL) async throws {
+		guard let account else {
+			return
+		}
 		let opmlData = try Data(contentsOf: opmlFile)
 		guard !opmlData.isEmpty else {
 			return
@@ -216,14 +232,20 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func createFolder(for account: Account, name: String) async throws -> Folder {
+	func createFolder(name: String) async throws -> Folder {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		guard let folder = account.ensureFolder(with: name) else {
 			throw AccountError.invalidParameter
 		}
 		return folder
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	func renameFolder(with folder: Folder, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		guard folder.hasAtLeastOneFeed() else {
 			folder.name = name
 			return
@@ -245,7 +267,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder) async throws {
+	func removeFolder(with folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		// Feedbin uses tags and if at least one feed isn't tagged, then the folder doesn't exist on their system
 		guard folder.hasAtLeastOneFeed() else {
 			account.removeFolderFromTree(folder)
@@ -286,7 +311,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	@discardableResult
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createFeed(url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
@@ -309,7 +337,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	func renameFeed(with feed: Feed, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		// This error should never happen
 		guard let subscriptionID = feed.externalID else {
 			throw AccountError.invalidParameter
@@ -330,7 +361,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	func removeFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		try await account.logActivity(kind: .removeFeed, detail: feed.url) {
 			if feed.folderRelationship?.count ?? 0 > 1 {
 				try await deleteTagging(for: account, with: feed, from: container)
@@ -340,18 +374,24 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		guard let account else {
+			return
+		}
 		try await account.logActivity(kind: .moveFeed, detail: feed.url) {
 			if sourceContainer is Account {
-				try await addFeed(account: account, feed: feed, container: destinationContainer)
+				try await addFeed(feed: feed, container: destinationContainer)
 			} else {
 				try await deleteTagging(for: account, with: feed, from: sourceContainer)
-				try await addFeed(account: account, feed: feed, container: destinationContainer)
+				try await addFeed(feed: feed, container: destinationContainer)
 			}
 		}
 	}
 
-	func addFeed(account: Account, feed: Feed, container: Container) async throws {
+	func addFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		try await account.logActivity(kind: .addFeed, detail: feed.url) {
 			if let folder = container as? Folder, let feedID = Int(feed.feedID) {
 
@@ -373,22 +413,28 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	func restoreFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
 		} else {
-			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
+			try await createFeed(url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
 			for feed in folder.topLevelFeeds {
 
 				folder.topLevelFeeds.remove(feed)
 
 				do {
-					try await restoreFeed(for: account, feed: feed, container: folder)
+					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("Feedbin: Restore folder feed error: \(error.localizedDescription)")
 					postSyncError(error, account: account, operation: "Restoring feed")
@@ -399,7 +445,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	func markArticles(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		guard let account else {
+			return
+		}
 		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
 		let syncStatuses = Set(updatedArticles.map { article in
 			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
@@ -410,15 +459,15 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = await syncDatabase.selectPendingCount(), count > 100 {
-			try await sendArticleStatus(for: account)
+			try await sendArticleStatus()
 		}
 	}
 
-	func accountDidInitialize(_ account: Account) {
-		credentials = try? account.retrieveCredentials(type: .basic)
+	func accountDidInitialize() {
+		credentials = try? account?.retrieveCredentials(type: .basic)
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
 	}
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
@@ -427,7 +476,10 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		return try await caller.validateCredentials()
 	}
 
-	func vacuumDatabases(for account: Account) async {
+	func vacuumDatabases() async {
+		guard let account else {
+			return
+		}
 		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
@@ -441,8 +493,8 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 	}
 
 	/// Resume network activity after a previous `suspendNetwork()`.
-	func resume(account: Account) {
-		if credentials == nil {
+	func resume() {
+		if let account, credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .basic)
 		}
 		caller.resume()
@@ -519,8 +571,8 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func refreshArticlesAndStatuses(_ account: Account) async throws {
-		try await sendArticleStatus(for: account)
-		try await refreshArticleStatus(for: account)
+		try await sendArticleStatus()
+		try await refreshArticleStatus()
 		try await refreshArticles(account)
 		try await refreshMissingArticles(account)
 		refreshProgress.reset()
@@ -781,7 +833,7 @@ private extension FeedbinAccountDelegate {
 		}
 
 		if let bestSpecifier = FeedSpecifier.bestFeed(in: Set(feedSpecifiers)) {
-			let feed = try await createFeed(for: account, url: bestSpecifier.urlString, name: name, container: container, validateFeed: true)
+			let feed = try await createFeed(url: bestSpecifier.urlString, name: name, container: container, validateFeed: true)
 			return feed
 		} else {
 			throw AccountError.invalidParameter
@@ -811,7 +863,7 @@ private extension FeedbinAccountDelegate {
 		// Download the initial articles
 		let (entries, page) = try await caller.retrieveEntries(feedID: feed.feedID)
 		await processEntries(account: account, entries: entries)
-		try await refreshArticleStatus(for: account)
+		try await refreshArticleStatus()
 		try await refreshArticles(account, page: page, updateFetchDate: nil)
 		try await refreshMissingArticles(account)
 

@@ -66,7 +66,7 @@ import Secrets
 
 	let caller: FeedlyAPICaller
 	private let syncDatabase: SyncDatabase
-	private weak var initializedAccount: Account?
+	weak var account: Account?
 	private static let logger = Feedly.logger
 
 	private static let articleDownloadChunkSize = 1000
@@ -109,10 +109,13 @@ import Secrets
 
 	// MARK: - Account API
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
+	func refreshAll() async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: refreshAll")
 
 		if credentials == nil {
@@ -169,7 +172,10 @@ import Secrets
 		progressInfo = ProgressInfo()
 	}
 
-	func syncArticleStatus(for account: Account) async throws -> Bool {
+	func syncArticleStatus() async throws -> Bool {
+		guard let account else {
+			return false
+		}
 		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
 			Self.logger.debug("Feedly: Skipping sync — no changes on last check, backing off")
 			return false
@@ -197,7 +203,10 @@ import Secrets
 		return sentCount > 0 || refreshCounts.totalChanged > 0
 	}
 
-	func sendArticleStatus(for account: Account) async throws {
+	func sendArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await sendArticleStatusReturningCount(for: account)
 	}
 
@@ -261,7 +270,10 @@ import Secrets
 		}
 	}
 
-	func refreshArticleStatus(for account: Account) async throws {
+	func refreshArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await refreshArticleStatusReturningCounts(for: account)
 	}
 
@@ -314,7 +326,10 @@ import Secrets
 		}
 	}
 
-	func importOPML(for account: Account, opmlFile: URL) async throws {
+	func importOPML(opmlFile: URL) async throws {
+		guard let account else {
+			return
+		}
 		let opmlData = try Data(contentsOf: opmlFile)
 		guard !opmlData.isEmpty else {
 			return
@@ -339,7 +354,10 @@ import Secrets
 		}
 	}
 
-	func createFolder(for account: Account, name: String) async throws -> Folder {
+	func createFolder(name: String) async throws -> Folder {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		Self.logger.debug("FeedlyAccountDelegate: createFolder")
 		refreshProgress.addTask()
 		defer {
@@ -357,7 +375,10 @@ import Secrets
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	func renameFolder(with folder: Folder, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: renameFolder")
 
 		guard let id = folder.externalID else {
@@ -379,7 +400,10 @@ import Secrets
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder) async throws {
+	func removeFolder(with folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: removeFolder")
 
 		guard let id = folder.externalID else {
@@ -398,7 +422,10 @@ import Secrets
 	}
 
 	@discardableResult
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createFeed(url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		Self.logger.debug("FeedlyAccountDelegate: createFeed")
 
 		guard let credentials else {
@@ -441,7 +468,10 @@ import Secrets
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	func renameFeed(with feed: Feed, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: renameFeed")
 
 		let folderCollectionIDs = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
@@ -466,7 +496,10 @@ import Secrets
 		}
 	}
 
-	func addFeed(account: Account, feed: Feed, container: Container) async throws {
+	func addFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: addFeed")
 
 		guard credentials != nil else {
@@ -490,7 +523,10 @@ import Secrets
 		}
 	}
 
-	func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	func removeFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: removeFeed")
 
 		guard let folder = container as? Folder, let collectionID = folder.externalID else {
@@ -510,7 +546,10 @@ import Secrets
 		}
 	}
 
-	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: moveFeed")
 
 		guard let from = sourceContainer as? Folder, let to = destinationContainer as? Folder,
@@ -542,17 +581,23 @@ import Secrets
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	func restoreFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: restoreFeed")
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
 		} else {
-			_ = try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
+			_ = try await createFeed(url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: restoreFolder")
 
 		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
@@ -561,7 +606,7 @@ import Secrets
 				folder.topLevelFeeds.remove(feed)
 
 				do {
-					try await restoreFeed(for: account, feed: feed, container: folder)
+					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("Feedly: Restore folder feed error: \(error.localizedDescription)")
 					postSyncError(error, account: account, operation: "Restoring feed")
@@ -571,7 +616,10 @@ import Secrets
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	func markArticles(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: markArticles")
 
 		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
@@ -585,17 +633,22 @@ import Secrets
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
-			try await sendArticleStatus(for: account)
+			try await sendArticleStatus()
 		}
 	}
 
-	func accountDidInitialize(_ account: Account) {
+	func accountDidInitialize() {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: accountDidInitialize")
-		initializedAccount = account
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: accountWillBeDeleted")
 
 		// Capture `caller` so the logout outlives the delegate.
@@ -619,7 +672,10 @@ import Secrets
 		return credentials
 	}
 
-	func vacuumDatabases(for account: Account) async {
+	func vacuumDatabases() async {
+		guard let account else {
+			return
+		}
 		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
@@ -634,9 +690,9 @@ import Secrets
 	}
 
 	/// Resume network activity after a previous `suspendNetwork()`.
-	func resume(account: Account) {
+	func resume() {
 		Self.logger.debug("FeedlyAccountDelegate: resume")
-		if credentials == nil {
+		if let account, credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		}
 		caller.resume()
@@ -868,7 +924,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	func reauthorizeFeedlyAPICaller() async -> Bool {
 		Self.logger.debug("FeedlyAccountDelegate: reauthorizeFeedlyAPICaller")
 
-		guard let account = initializedAccount else {
+		guard let account else {
 			return false
 		}
 

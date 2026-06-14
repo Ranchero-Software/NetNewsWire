@@ -105,7 +105,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
+		guard let account else {
+			return
+		}
 		lastNoChangeSyncDate = nil
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		await withCheckedContinuation { continuation in
@@ -118,7 +121,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func refreshAll(for account: Account) async throws {
+	func refreshAll() async throws {
+		guard let account else {
+			return
+		}
 		guard refreshProgressInfo.isComplete else {
 			return
 		}
@@ -134,7 +140,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func syncArticleStatus(for account: Account) async throws -> Bool {
+	func syncArticleStatus() async throws -> Bool {
+		guard let account else {
+			return false
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 
 		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
@@ -143,7 +152,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 
 		let sentCount = try await sendArticleStatus(account: account, showProgress: false)
-		try await refreshArticleStatus(for: account)
+		try await refreshArticleStatus()
 
 		let didReceiveChanges = !(articlesZoneHasNoChanges && accountZoneHasNoChanges)
 		let didWork = sentCount > 0 || didReceiveChanges
@@ -172,13 +181,19 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		return delegate.lastChangedCount == 0 && delegate.lastDeletedCount == 0
 	}
 
-	func sendArticleStatus(for account: Account) async throws {
+	func sendArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		_ = try await sendArticleStatus(account: account, showProgress: false)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func refreshArticleStatus(for account: Account) async throws {
+	func refreshArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
 			let op = CloudKitReceiveStatusOperation(articlesZone: articlesZone, accountID: account.accountID, accountDisplayName: account.nameForDisplay)
@@ -194,7 +209,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func importOPML(for account: Account, opmlFile: URL) async throws {
+	func importOPML(opmlFile: URL) async throws {
+		guard let account else {
+			return
+		}
 		guard refreshProgressInfo.isComplete else {
 			return
 		}
@@ -228,7 +246,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	}
 
 	@discardableResult
-	func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createFeed(url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) url: \(urlString)")
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete url: \(urlString)")
@@ -243,7 +264,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	func renameFeed(with feed: Feed, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
 		let editedName = name.isEmpty ? nil : name
 		syncProgress.addTask()
@@ -263,7 +287,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	func removeFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
@@ -284,7 +311,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
 		syncProgress.addTask()
 		defer {
@@ -304,7 +334,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func addFeed(account: Account, feed: Feed, container: Container) async throws {
+	func addFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
 		syncProgress.addTask()
 		defer {
@@ -323,7 +356,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	func restoreFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) feed.url: \(feed.url)")
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete feed.url: \(feed.url)")
@@ -353,7 +389,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func createFolder(for account: Account, name: String) async throws -> Folder {
+	func createFolder(name: String) async throws -> Folder {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) name: \(name)")
 		syncProgress.addTask()
 		defer {
@@ -376,7 +415,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	func renameFolder(with folder: Folder, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) new name: \(name)")
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete new name: \(name)")
@@ -396,7 +438,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder) async throws {
+	func removeFolder(with folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) name: \(folder.name ?? "")")
 		defer {
 			Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete name: \(folder.name ?? "")")
@@ -473,7 +518,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(folder: Folder) async throws {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		guard let name = folder.name else {
 			throw AccountError.invalidParameter
 		}
@@ -499,7 +547,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 						group.addTask {
 							do {
-								try await self.restoreFeed(for: account, feed: feed, container: folder)
+								try await self.restoreFeed(feed: feed, container: folder)
 								await self.syncProgress.completeTask()
 								return nil
 							} catch {
@@ -526,7 +574,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	func markArticles(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 
 		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
@@ -540,15 +591,17 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = await syncDatabase.selectPendingCount(), count > 100 {
-			try await sendArticleStatus(for: account)
+			try await sendArticleStatus()
 		}
 
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	func accountDidInitialize(_ account: Account) {
+	func accountDidInitialize() {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		self.account = account
 
 		syncErrorHandler = { [weak self] error, operation, fileName, functionName, lineNumber in
 			Task { @MainActor [weak self] in
@@ -608,7 +661,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		accountZone.resetChangeToken()
 		articlesZone.resetChangeToken()
@@ -619,7 +672,10 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		nil
 	}
 
-	func vacuumDatabases(for account: Account) async {
+	func vacuumDatabases() async {
+		guard let account else {
+			return
+		}
 		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
@@ -664,7 +720,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		refresher.suspend()
 	}
 
-	func resume(account: Account) {
+	func resume() {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		refresher.resume()
 	}
@@ -779,7 +835,7 @@ private extension CloudKitAccountDelegate {
 		let feeds = account.flattenedFeeds()
 
 		do {
-			try await refreshArticleStatus(for: account)
+			try await refreshArticleStatus()
 			syncProgress.completeTask()
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing article status")

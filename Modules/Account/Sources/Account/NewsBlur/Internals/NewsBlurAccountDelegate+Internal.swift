@@ -396,7 +396,7 @@ import os
 		try await account.logActivity(kind: .refreshArticles, detail: feed.nameForDisplay) {
 			try await downloadFeed(account: account, feed: feed, page: 1)
 		}
-		try await refreshArticleStatus(for: account)
+		try await refreshArticleStatus()
 		try await refreshMissingStories(for: account)
 	}
 
