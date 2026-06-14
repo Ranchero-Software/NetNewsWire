@@ -21,6 +21,7 @@ import RSCore
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, url: URL) -> Bool
 	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL)
+	func downloadSession(_ downloadSession: DownloadSession, didFollowRedirectFor url: URL, from fromURL: URL, to toURL: URL, statusCode: Int)
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
 }
 
@@ -150,6 +151,11 @@ extension DownloadSession: @preconcurrency URLSessionTaskDelegate {
 			if let oldURL = task.originalRequest?.url, let newURL = request.url {
 				cacheRedirect(oldURL, newURL)
 			}
+		}
+
+		if let taskInfo = infoForTask(task), let toURL = request.url {
+			let fromURL = response.url ?? taskInfo.url
+			delegate.downloadSession(self, didFollowRedirectFor: taskInfo.url, from: fromURL, to: toURL, statusCode: response.statusCode)
 		}
 
 		var modifiedRequest = request

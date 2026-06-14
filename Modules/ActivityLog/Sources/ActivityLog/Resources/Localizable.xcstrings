@@ -101,6 +101,9 @@
         }
       }
     },
+    "Feed redirect" : {
+      "comment" : "Activity kind"
+    },
     "Fetching %@" : {
       "comment" : "Activity kind — fetching a candidate URL during feed finding"
     },

@@ -213,6 +213,17 @@ import os
 		ActivityLog.shared.didStart(owner, kind: .refreshFeedContent(feedURL: feed.url))
 	}
 
+	func downloadSession(_ downloadSession: DownloadSession, didFollowRedirectFor url: URL, from fromURL: URL, to toURL: URL, statusCode: Int) {
+		guard let owner = activityOwner else {
+			return
+		}
+		let detail = urlToFeedDictionary[url.absoluteString]?.nameForDisplay
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: owner, kind: .followFeedRedirect, detail: detail)
+		activityLog.didStart(id: id)
+		activityLog.didComplete(id: id, message: "\(Self.redirectStatusDescription(statusCode)): \(fromURL.absoluteString) → \(toURL.absoluteString)", durationIsSignificant: false)
+	}
+
 	func downloadSession(_ downloadSession: DownloadSession, didSkip url: URL, reason: String) {
 		guard let owner = activityOwner else {
 			return
@@ -566,6 +577,23 @@ private extension LocalAccountRefresher {
 
 	static func url(for feed: Feed) -> URL? {
 		URL(string: feed.url)
+	}
+
+	static func redirectStatusDescription(_ statusCode: Int) -> String {
+		switch statusCode {
+		case HTTPResponseCode.redirectPermanent:
+			return "301 Moved Permanently"
+		case HTTPResponseCode.redirectTemporary:
+			return "302 Found"
+		case HTTPResponseCode.redirectSeeOther:
+			return "303 See Other"
+		case HTTPResponseCode.redirectVeryTemporary:
+			return "307 Temporary Redirect"
+		case HTTPResponseCode.redirectPermanentPreservingMethod:
+			return "308 Permanent Redirect"
+		default:
+			return "\(statusCode)"
+		}
 	}
 }
 
