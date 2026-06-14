@@ -40,6 +40,8 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
 
+	weak var account: Account?
+
 	private let variant: ReaderAPIVariant
 
 	private let syncDatabase: SyncDatabase
@@ -111,10 +113,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
+	func refreshAll() async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
 
 		retrieveCredentialsIfNeeded(account)
@@ -125,7 +130,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			try await account.logActivity(kind: .refreshAll) {
 				try await refreshAccount(account)
 
-				try await sendArticleStatus(for: account)
+				try await sendArticleStatus()
 				refreshProgress.completeTask()
 
 				let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
@@ -134,7 +139,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				refreshProgress.completeTask()
 
 				_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
-				try? await refreshArticleStatus(for: account)
+				try? await refreshArticleStatus()
 				refreshProgress.completeTask()
 
 				await refreshMissingArticles(account)
@@ -153,7 +158,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					if let apiCredentials = try await caller.validateCredentials(endpoint: endpoint) {
 						try? account.storeCredentials(apiCredentials)
 						caller.credentials = apiCredentials
-						try await refreshAll(for: account)
+						try await refreshAll()
 						return
 					}
 					throw wrappedError
@@ -168,7 +173,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws -> Bool {
+	@MainActor func syncArticleStatus() async throws -> Bool {
+		guard let account else {
+			return false
+		}
 		guard variant != .inoreader else {
 			// Inoreader: no-op for this delegate.
 			return false
@@ -181,7 +189,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		return sentCount > 0 || refreshChangedCount > 0
 	}
 
-	public func sendArticleStatus(for account: Account) async throws {
+	public func sendArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await sendArticleStatusReturningCount(for: account)
 	}
 
@@ -232,7 +243,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func refreshArticleStatus(for account: Account) async throws {
+	@MainActor func refreshArticleStatus() async throws {
+		guard let account else {
+			return
+		}
 		_ = try await refreshArticleStatusReturningCount(for: account)
 	}
 
@@ -265,14 +279,20 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
+	@MainActor func importOPML(opmlFile: URL) async throws {
+		guard let account else {
+			return
+		}
 		try await account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
 			let opmlData = try Data(contentsOf: opmlFile)
 			try await caller.importOPML(opmlData: opmlData)
 		}
 	}
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+	@MainActor func createFolder(name: String) async throws -> Folder {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: createFolder — name \(name)")
 
 		return try account.logActivity(kind: .createFolder, detail: name) {
@@ -284,7 +304,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	func renameFolder(with folder: Folder, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: renameFolder — name \(folder.nameForDisplay) to \(name)")
 
 		refreshProgress.addTask()
@@ -302,7 +325,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder) async throws {
+	func removeFolder(with folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		try await account.logActivity(kind: .removeFolder, detail: folder.name ?? "") {
 			try await removeFolderImpl(for: account, with: folder)
 		}
@@ -360,7 +386,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	@discardableResult
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createFeed(url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		retrieveCredentialsIfNeeded(account)
 
 		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — url \(url) name \(name ?? "")")
@@ -399,7 +428,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	func renameFeed(with feed: Feed, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: renameFeed — name \(feed.nameForDisplay) to name \(name)")
 
 		// This error should never happen
@@ -423,7 +455,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func removeFeed(account: Account, feed: Feed, container: any Container) async throws {
+	func removeFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: removeFeed — url \(feed.url)")
 
 		guard let subscriptionID = feed.externalID else {
@@ -446,12 +481,15 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: moveFeed — url \(feed.url)")
 
 		try await account.logActivity(kind: .moveFeed, detail: feed.url) {
 			if sourceContainer is Account {
-				try await addFeed(account: account, feed: feed, container: destinationContainer)
+				try await addFeed(feed: feed, container: destinationContainer)
 			} else {
 
 				guard
@@ -477,7 +515,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func addFeed(account: Account, feed: Feed, container: any Container) async throws {
+	func addFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: addFeed — url \(feed.url)")
 
 		try await account.logActivity(kind: .addFeed, detail: feed.url) {
@@ -509,17 +550,23 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	func restoreFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: restoreFeed — url \(feed.url)")
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
 		} else {
-			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
+			try await createFeed(url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: restoreFolder — name \(folder.nameForDisplay)")
 
 		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
@@ -528,7 +575,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				folder.topLevelFeeds.remove(feed)
 
 				do {
-					try await restoreFeed(for: account, feed: feed, container: folder)
+					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("ReaderAPIAccountDelegate: restoreFolder error: \(error.localizedDescription)")
 					postSyncError(error, account: account, operation: "Restoring feed to folder")
@@ -539,7 +586,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	@MainActor func markArticles(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: markArticles — statusKey \(statusKey.rawValue)")
 
 		let updatedArticles = await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
@@ -552,15 +602,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = await syncDatabase.selectPendingCount(), count > 100 {
-			try? await sendArticleStatus(for: account)
+			try? await sendArticleStatus()
 		}
 	}
 
-	func accountDidInitialize(_ account: Account) {
+	func accountDidInitialize() {
+		guard let account else {
+			return
+		}
 		retrieveCredentialsIfNeeded(account)
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
 	}
 
 	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
@@ -575,7 +628,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		return try await caller.validateCredentials(endpoint: endpoint)
 	}
 
-	func vacuumDatabases(for account: Account) async {
+	func vacuumDatabases() async {
+		guard let account else {
+			return
+		}
 		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
@@ -591,10 +647,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	/// Resume network activity after a previous `suspendNetwork()`.
-	func resume(account: Account) {
+	func resume() {
 		Self.logger.debug("ReaderAPIAccountDelegate: resume")
 
-		retrieveCredentialsIfNeeded(account)
+		if let account {
+			retrieveCredentialsIfNeeded(account)
+		}
 	}
 
 	// MARK: - Notifications
@@ -899,7 +957,7 @@ private extension ReaderAPIAccountDelegate {
 
 		try await account.addFeed(feed, container: container)
 		if let name {
-			try await renameFeed(for: account, with: feed, to: name)
+			try await renameFeed(with: feed, to: name)
 		}
 		try await initialFeedDownload(account: account, feed: feed)
 
@@ -921,7 +979,7 @@ private extension ReaderAPIAccountDelegate {
 			_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
 			refreshProgress.completeTask()
 
-			try? await refreshArticleStatus(for: account)
+			try? await refreshArticleStatus()
 			refreshProgress.completeTask()
 
 			await refreshMissingArticles(account)

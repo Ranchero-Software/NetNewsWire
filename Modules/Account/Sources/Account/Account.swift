@@ -344,7 +344,8 @@ public enum FetchType {
 			self._fetchAllUnreadCounts()
 		}
 
-		delegate.accountDidInitialize(self)
+		delegate.account = self
+		delegate.accountDidInitialize()
 	}
 
 	// MARK: - Credentials
@@ -458,7 +459,7 @@ public enum FetchType {
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
-		await delegate.receiveRemoteNotification(for: self, userInfo: userInfo)
+		await delegate.receiveRemoteNotification(userInfo: userInfo)
 	}
 
 	// MARK: - Refreshing
@@ -471,7 +472,7 @@ public enum FetchType {
 	}
 
 	public func refreshAll() async throws {
-		try await delegate.refreshAll(for: self)
+		try await delegate.refreshAll()
 	}
 
 	// MARK: - Activity Log
@@ -525,12 +526,12 @@ public enum FetchType {
 	// MARK: - Syncing Article Status
 
 	public func sendArticleStatus() async throws {
-		try await delegate.sendArticleStatus(for: self)
+		try await delegate.sendArticleStatus()
 	}
 
 	@discardableResult
 	public func syncArticleStatus() async throws -> Bool {
-		try await delegate.syncArticleStatus(for: self)
+		try await delegate.syncArticleStatus()
 	}
 
 	// MARK: - OPML
@@ -543,10 +544,10 @@ public enum FetchType {
 
 		Task { @MainActor in
 			do {
-				try await delegate.importOPML(for: self, opmlFile: opmlFile)
+				try await delegate.importOPML(opmlFile: opmlFile)
 				// Reset the last fetch date to get the article history for the added feeds.
 				lastArticleFetchStartTime = nil
-				try? await delegate.refreshAll(for: self)
+				try? await delegate.refreshAll()
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -562,7 +563,7 @@ public enum FetchType {
 
 	/// Resume network activity for the delegate after a previous `suspendNetwork()`.
 	public func resumeDelegate() {
-		delegate.resume(account: self)
+		delegate.resume()
 	}
 
 	/// Reload OPML, etc.
@@ -579,7 +580,7 @@ public enum FetchType {
 	}
 
 	public func prepareForDeletion() {
-		delegate.accountWillBeDeleted(self)
+		delegate.accountWillBeDeleted()
 	}
 
 	func deleteSettings() {
@@ -612,7 +613,7 @@ public enum FetchType {
 	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
+				try await delegate.markArticles(articles: articles, statusKey: statusKey, flag: flag)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -693,13 +694,13 @@ public enum FetchType {
 	}
 
 	func addFeed(_ feed: Feed, container: Container) async throws {
-		try await delegate.addFeed(account: self, feed: feed, container: container)
+		try await delegate.addFeed(feed: feed, container: container)
 	}
 
 	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.addFeed(account: self, feed: feed, container: container)
+				try await delegate.addFeed(feed: feed, container: container)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -710,7 +711,7 @@ public enum FetchType {
 	public func createFeed(url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				let feed = try await delegate.createFeed(for: self, url: url, name: name, container: container, validateFeed: validateFeed)
+				let feed = try await delegate.createFeed(url: url, name: name, container: container, validateFeed: validateFeed)
 				completion(.success(feed))
 			} catch {
 				completion(.failure(error))
@@ -736,7 +737,7 @@ public enum FetchType {
 	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.removeFeed(account: self, feed: feed, container: container)
+				try await delegate.removeFeed(feed: feed, container: container)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -747,7 +748,7 @@ public enum FetchType {
 	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.moveFeed(account: self, feed: feed, sourceContainer: from, destinationContainer: to)
+				try await delegate.moveFeed(feed: feed, sourceContainer: from, destinationContainer: to)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -756,13 +757,13 @@ public enum FetchType {
 	}
 
 	public func renameFeed(_ feed: Feed, name: String) async throws {
-		try await delegate.renameFeed(for: self, with: feed, to: name)
+		try await delegate.renameFeed(with: feed, to: name)
 	}
 
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.restoreFeed(for: self, feed: feed, container: container)
+				try await delegate.restoreFeed(feed: feed, container: container)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -772,13 +773,13 @@ public enum FetchType {
 
 	@discardableResult
 	public func addFolder(_ name: String) async throws -> Folder {
-		try await delegate.createFolder(for: self, name: name)
+		try await delegate.createFolder(name: name)
 	}
 
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.removeFolder(for: self, with: folder)
+				try await delegate.removeFolder(with: folder)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -787,13 +788,13 @@ public enum FetchType {
 	}
 
 	public func renameFolder(_ folder: Folder, to name: String) async throws {
-		try await delegate.renameFolder(for: self, with: folder, to: name)
+		try await delegate.renameFolder(with: folder, to: name)
 	}
 
 	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.restoreFolder(for: self, folder: folder)
+				try await delegate.restoreFolder(folder: folder)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -1114,7 +1115,7 @@ public enum FetchType {
 		await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(feedSettingsDatabase.databasePath)) {
 			await feedSettingsDatabase.vacuum()
 		}
-		await delegate.vacuumDatabases(for: self)
+		await delegate.vacuumDatabases()
 	}
 
 	public func fetchCloudKitStats(progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {

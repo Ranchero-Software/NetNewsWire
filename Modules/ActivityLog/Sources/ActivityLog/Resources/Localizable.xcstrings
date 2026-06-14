@@ -107,6 +107,9 @@
     "Fetching %@" : {
       "comment" : "Activity kind — fetching a candidate URL during feed finding"
     },
+    "Fetching article IDs" : {
+      "comment" : "Activity kind"
+    },
     "Fetching iCloud stats" : {
       "comment" : "Activity kind",
       "localizations" : {
@@ -164,6 +167,9 @@
           }
         }
       }
+    },
+    "Refreshing articles" : {
+      "comment" : "Activity kind"
     },
     "Refreshing feed list" : {
       "comment" : "Activity kind",
