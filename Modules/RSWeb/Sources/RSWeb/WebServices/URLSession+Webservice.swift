@@ -144,7 +144,6 @@ nonisolated extension URLSession {
 		return URLSession(configuration: sessionConfiguration)
 	}()
 
-
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
 			for task in dataTasks {
