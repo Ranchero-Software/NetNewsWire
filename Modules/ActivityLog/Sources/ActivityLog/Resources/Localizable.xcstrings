@@ -256,6 +256,12 @@
         }
       }
     },
+    "Scanning iCloud article records" : {
+      "comment" : "Activity kind"
+    },
+    "Scanning iCloud status records" : {
+      "comment" : "Activity kind"
+    },
     "Sending statuses" : {
       "comment" : "Activity kind",
       "localizations" : {

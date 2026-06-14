@@ -11,6 +11,7 @@ import os
 import RSParser
 import CloudKit
 import Articles
+import ActivityLog
 import SyncDatabase
 import CloudKitSync
 
@@ -361,11 +362,18 @@ final class CloudKitArticlesZone: CloudKitZone {
 			)
 		}
 
+		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+
 		// Phase 1: Scan all status records
 
 		progress(makeStats())
-		let statusScan = try await scanStatusRecords { statusResult in
-			progress(makeStats(statusResult))
+		let statusScan = try await account.logActivity(
+			kind: .scanCloudKitStatusRecords,
+			successMessage: { "\($0.total) status records — \($0.unread) unread, \($0.starred) starred, \($0.stale) stale" }
+		) {
+			try await scanStatusRecords(owner: owner) { statusResult in
+				progress(makeStats(statusResult))
+			}
 		}
 
 		// Phase 2: Scan all article content records
@@ -373,8 +381,13 @@ final class CloudKitArticlesZone: CloudKitZone {
 		try Task.checkCancellation()
 		progress(makeStats(statusScan))
 
-		let contentScan = try await scanArticleContentRecords(statusByRecordID: statusScan.statusByRecordID) { articleResult in
-			progress(makeStats(statusScan, articleResult))
+		let contentScan = try await account.logActivity(
+			kind: .scanCloudKitArticleRecords,
+			successMessage: { "\($0.total) article records — \($0.orphaned) orphaned" }
+		) {
+			try await scanArticleContentRecords(owner: owner, statusByRecordID: statusScan.statusByRecordID) { articleResult in
+				progress(makeStats(statusScan, articleResult))
+			}
 		}
 
 		scanCache = ScanCache(
@@ -567,7 +580,15 @@ private extension CloudKitArticlesZone {
 
 	// MARK: - Stats Scanning
 
-	func scanStatusRecords(progress: @escaping @MainActor @Sendable (StatusRecordScanResult) async -> Void) async throws -> StatusRecordScanResult {
+	/// Logs one page of a stats scan as its own activity.
+	func logPageActivity(owner: ActivityOwner, kind: ActivityKind, recordCount: Int) {
+		let activityLog = ActivityLog.shared
+		let id = activityLog.createActivity(owner: owner, kind: kind, detail: activityLog.nextTaskNumberString())
+		activityLog.didStart(id: id)
+		activityLog.didComplete(id: id, message: "\(recordCount) records", durationIsSignificant: false)
+	}
+
+	func scanStatusRecords(owner: ActivityOwner, progress: @escaping @MainActor @Sendable (StatusRecordScanResult) async -> Void) async throws -> StatusRecordScanResult {
 
 		let cutoffDate = Date(timeIntervalSinceNow: -Self.staleStatusRecordInterval)
 
@@ -604,6 +625,7 @@ private extension CloudKitArticlesZone {
 			}
 			totalCount += pageRecords.count
 			pagesCompleted += 1
+			self.logPageActivity(owner: owner, kind: .scanCloudKitStatusRecords, recordCount: pageRecords.count)
 			await progress(StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: staleCount, statusByRecordID: [:]))
 		}
 
@@ -611,7 +633,7 @@ private extension CloudKitArticlesZone {
 		return StatusRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, stale: staleCount, statusByRecordID: statusByRecordID)
 	}
 
-	func scanArticleContentRecords(statusByRecordID: [CKRecord.ID: StatusRecordInfo], progress: @escaping @MainActor @Sendable (ArticleRecordScanResult) async -> Void) async throws -> ArticleRecordScanResult {
+	func scanArticleContentRecords(owner: ActivityOwner, statusByRecordID: [CKRecord.ID: StatusRecordInfo], progress: @escaping @MainActor @Sendable (ArticleRecordScanResult) async -> Void) async throws -> ArticleRecordScanResult {
 		guard database != nil else {
 			Self.logger.info("CloudKitArticlesZone: scanArticleContentRecords: no database, returning 0")
 			return ArticleRecordScanResult(total: 0, starred: 0, unread: 0, read: 0, orphaned: 0, contentRecordIDByStatusID: [:], orphanedContentRecordIDs: [])
@@ -652,6 +674,7 @@ private extension CloudKitArticlesZone {
 				}
 			}
 			totalCount += pageRecords.count
+			self.logPageActivity(owner: owner, kind: .scanCloudKitArticleRecords, recordCount: pageRecords.count)
 			await progress(ArticleRecordScanResult(total: totalCount, starred: starredCount, unread: unreadCount, read: readCount, orphaned: orphanedCount, contentRecordIDByStatusID: [:], orphanedContentRecordIDs: []))
 		}
 

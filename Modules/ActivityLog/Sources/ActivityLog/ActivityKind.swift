@@ -38,6 +38,8 @@ public enum ActivityKind: Sendable, Hashable {
 	case cleanUpCloudKitRecords
 	case subscribeToCloudKitZone
 	case fetchCloudKitStats
+	case scanCloudKitStatusRecords
+	case scanCloudKitArticleRecords
 
 	// Maintenance and lifecycle
 
@@ -98,6 +100,10 @@ public enum ActivityKind: Sendable, Hashable {
 			return NSLocalizedString("Cleaning up iCloud records", bundle: .module, comment: "Activity kind")
 		case .fetchCloudKitStats:
 			return NSLocalizedString("Fetching iCloud stats", bundle: .module, comment: "Activity kind")
+		case .scanCloudKitStatusRecords:
+			return NSLocalizedString("Scanning iCloud status records", bundle: .module, comment: "Activity kind")
+		case .scanCloudKitArticleRecords:
+			return NSLocalizedString("Scanning iCloud article records", bundle: .module, comment: "Activity kind")
 		case .subscribeToCloudKitZone:
 			return NSLocalizedString("Subscribing to zone changes", bundle: .module, comment: "Activity kind")
 		case .vacuumDatabase:
