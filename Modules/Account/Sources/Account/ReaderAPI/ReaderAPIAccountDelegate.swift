@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ActivityLog
 import Articles
 import ErrorLog
 import RSCore
@@ -127,7 +128,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				try await sendArticleStatus(for: account)
 				refreshProgress.completeTask()
 
-				let articleIDs = try await caller.retrieveItemIDs(type: .allForAccount)
+				let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
+					try await caller.retrieveItemIDs(type: .allForAccount, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
+				})
 				refreshProgress.completeTask()
 
 				_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
@@ -198,25 +201,25 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			var savedError: Error?
 
 			do {
-				sentCount += try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+				sentCount += try await sendArticleStatuses(createUnreadStatuses, account: account, label: "unread", apiCall: caller.createUnreadEntries)
 			} catch {
 				savedError = error
 			}
 
 			do {
-				sentCount += try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+				sentCount += try await sendArticleStatuses(deleteUnreadStatuses, account: account, label: "read", apiCall: caller.deleteUnreadEntries)
 			} catch {
 				savedError = error
 			}
 
 			do {
-				sentCount += try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+				sentCount += try await sendArticleStatuses(createStarredStatuses, account: account, label: "starred", apiCall: caller.createStarredEntries)
 			} catch {
 				savedError = error
 			}
 
 			do {
-				sentCount += try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+				sentCount += try await sendArticleStatuses(deleteStarredStatuses, account: account, label: "unstarred", apiCall: caller.deleteStarredEntries)
 			} catch {
 				savedError = error
 			}
@@ -242,11 +245,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			var changedCount = 0
 			var errorOccurred = false
 
-			let articleIDs = try await caller.retrieveItemIDs(type: .unread)
+			let articleIDs = try await caller.retrieveItemIDs(type: .unread, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
 			changedCount += await syncArticleReadState(account: account, articleIDs: articleIDs)
 
 			do {
-				let articleIDs = try await caller.retrieveItemIDs(type: .starred)
+				let articleIDs = try await caller.retrieveItemIDs(type: .starred, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
 				changedCount += await syncArticleStarredState(account: account, articleIDs: articleIDs)
 			} catch {
 				errorOccurred = true
@@ -615,20 +618,41 @@ private extension ReaderAPIAccountDelegate {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount")
 
 		do {
-			let tags = try await caller.retrieveTags()
-			refreshProgress.completeTask()
+			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
+				let tags = try await caller.retrieveTags()
+				refreshProgress.completeTask()
 
-			let subscriptions = try await caller.retrieveSubscriptions()
-			refreshProgress.completeTask()
+				let subscriptions = try await caller.retrieveSubscriptions()
+				refreshProgress.completeTask()
 
-			BatchUpdate.shared.perform {
-				self.syncFolders(account, tags)
-				self.syncFeeds(account, subscriptions)
-				self.syncFeedFolderRelationship(account, subscriptions)
-			}
+				BatchUpdate.shared.perform {
+					self.syncFolders(account, tags)
+					self.syncFeeds(account, subscriptions)
+					self.syncFeedFolderRelationship(account, subscriptions)
+				}
+				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
+			})
 		} catch {
 			postSyncError(error, account: account, operation: "Refreshing account")
 			throw error
+		}
+	}
+
+	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
+	/// sub-activity of `kind`, reporting the page's item count.
+	func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
+		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
+	}
+
+	/// Returns a per-page handler for paginated `retrieveItemIDs` calls, logging each
+	/// page as a numbered sub-activity of `kind` reporting the page's article-ID count.
+	func articleIDPageHandler(for account: Account, kind: ActivityKind) -> @MainActor (Int) -> Void {
+		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+		return { count in
+			let activityLog = ActivityLog.shared
+			let id = activityLog.createActivity(owner: owner, kind: kind, detail: activityLog.nextTaskNumberString())
+			activityLog.didStart(id: id)
+			activityLog.didComplete(id: id, message: "\(count) article IDs", durationIsSignificant: false)
 		}
 	}
 
@@ -799,7 +823,7 @@ private extension ReaderAPIAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: Set<SyncStatus>, apiCall: ([String]) async throws -> Void) async throws -> Int {
+	func sendArticleStatuses(_ statuses: Set<SyncStatus>, account: Account, label: String, apiCall: ([String]) async throws -> Void) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses")
 
 		guard !statuses.isEmpty else {
@@ -823,7 +847,7 @@ private extension ReaderAPIAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 
 			do {
-				try await apiCall(articleIDGroup)
+				try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(articleIDGroup.count) \(label)" }, { try await apiCall(articleIDGroup) })
 				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
 				sentCount += articleIDGroup.count
 			} catch {
@@ -890,7 +914,7 @@ private extension ReaderAPIAccountDelegate {
 
 		try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay) {
 			// Download the initial articles
-			let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID)
+			let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
 
 			refreshProgress.completeTask()
 
@@ -927,7 +951,7 @@ private extension ReaderAPIAccountDelegate {
 			for chunk in chunkedArticleIDs {
 
 				do {
-					let entries = try await caller.retrieveEntries(articleIDs: chunk)
+					let entries = try await logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0?.count ?? 0) articles" }, { try await caller.retrieveEntries(articleIDs: chunk) })
 					refreshProgress.completeTask()
 					await processEntries(account: account, entries: entries)
 				} catch {

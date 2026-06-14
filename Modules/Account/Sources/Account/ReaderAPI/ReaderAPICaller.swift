@@ -434,7 +434,7 @@ enum CreateReaderAPISubscriptionResult {
 		return entryWrapper.entries
 	}
 
-	@MainActor public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
+	@MainActor public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil, pageHandler: (@MainActor (Int) -> Void)? = nil) async throws -> [String] {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.missingEndpointURL
@@ -491,11 +491,12 @@ enum CreateReaderAPISubscriptionResult {
 
 		let dateInfo = HTTPDateInfo(urlResponse: response)
 		let itemIDs = entriesItemRefs.compactMap { $0.itemId }
+		pageHandler?(itemIDs.count)
 
-		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
+		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
 	}
 
-	@MainActor func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?) async throws -> [String] {
+	@MainActor func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?, pageHandler: (@MainActor (Int) -> Void)? = nil) async throws -> [String] {
 
 		guard let continuation else {
 			if type == .allForAccount {
@@ -523,13 +524,16 @@ enum CreateReaderAPISubscriptionResult {
 		let (_, entries) = try await self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
 
 		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
-			return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
+			return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
 		}
 
-		var totalItemIDs = itemIDs
-		totalItemIDs.append(contentsOf: entriesItemRefs.compactMap { $0.itemId })
+		let pageItemIDs = entriesItemRefs.compactMap { $0.itemId }
+		pageHandler?(pageItemIDs.count)
 
-		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation)
+		var totalItemIDs = itemIDs
+		totalItemIDs.append(contentsOf: pageItemIDs)
+
+		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
 	}
 
     @MainActor func importOPML(opmlData: Data) async throws {
