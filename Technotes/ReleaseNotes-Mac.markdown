@@ -1,6 +1,13 @@
 # Mac Release Notes
 
-### 7.1b2 7101 1 June 2026 — branch: main tag: mac-7.1b2
+### 7.1b3 7102 15 June 2026 — branch: main tag: mac-7.1b3
+
+Added more activities and detail to the Activity Log and Current Activity windows
+Reduced unneeded disk writes while syncing article statuses
+Fixed a crash that could happen when deleting Feedly folders
+Fixed a crash that could happen when building notification thumbnails
+
+### 7.1b2 7101 11 June 2026 — branch: main tag: mac-7.1b2
 
 Fixed Dinosaurs bug where feeds with articles with no dates were ranked using the wrong date — they now use the date the article arrived when there are no other dates
 Made the Dinosaurs months field ignore any character that isn’t 0-9
