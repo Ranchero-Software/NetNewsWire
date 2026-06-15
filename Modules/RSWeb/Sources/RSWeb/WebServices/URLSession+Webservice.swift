@@ -158,12 +158,8 @@ nonisolated extension URLSession {
 		}
 	}
 
-	// These methods run on the cooperative thread pool, not the caller’s actor,
-	// because the extension is nonisolated — so JSON decoding done by callers in
-	// URLSession+WebserviceJSON happens off the main actor.
-
 	@discardableResult
-	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?) {
+	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data) {
 		let (data, response) = try await data(for: request)
 		return (try Self.validatedHTTPResponse(response), data)
 	}
@@ -172,10 +168,10 @@ nonisolated extension URLSession {
 		var sendRequest = request
 		sendRequest.httpMethod = method
 		let (_, response) = try await data(for: sendRequest)
-		_ = try Self.validatedHTTPResponse(response)
+		try Self.validatedHTTPResponse(response)
 	}
 
-	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?) {
+	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data) {
 		var sendRequest = request
 		sendRequest.httpMethod = method
 		let (data, response) = try await upload(for: sendRequest, from: payload)
@@ -183,6 +179,7 @@ nonisolated extension URLSession {
 	}
 
 	/// Require an HTTP response with a 200...399 status code, or throw the matching `WebserviceError`.
+	@discardableResult
 	private static func validatedHTTPResponse(_ response: URLResponse) throws -> HTTPURLResponse {
 		guard let httpResponse = response as? HTTPURLResponse else {
 			throw WebserviceError.noData

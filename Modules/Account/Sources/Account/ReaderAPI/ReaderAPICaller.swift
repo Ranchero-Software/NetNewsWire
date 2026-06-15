@@ -99,10 +99,6 @@ enum CreateReaderAPISubscriptionResult {
 		do {
 			let (_, data) = try await session.send(request: request)
 
-			guard let data else {
-				throw WebserviceError.noData
-			}
-
 			// Convert the return data to UTF8 and then parse out the Auth token
 			guard let rawData = String(data: data, encoding: .utf8) else {
 				throw WebserviceError.noData
@@ -151,7 +147,7 @@ enum CreateReaderAPISubscriptionResult {
 		let (_, data) = try await session.send(request: request)
 
 		// Convert the return data to UTF8 and then parse out the Auth token
-		guard let data, let updatedAccessToken = String(data: data, encoding: .utf8) else {
+		guard let updatedAccessToken = String(data: data, encoding: .utf8) else {
 			throw WebserviceError.noData
 		}
 		// Remove unwanted \n character.

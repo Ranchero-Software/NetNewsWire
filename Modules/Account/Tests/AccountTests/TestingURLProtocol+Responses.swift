@@ -19,7 +19,7 @@ extension TestingURLProtocol {
 		do {
 			data = try Data(contentsOf: fileURL)
 		} catch {
-			fatalError("Unable to read fixture at \(fileURL) because \(error).")
+			fatalError("Unable to read response file at \(fileURL) because \(error).")
 		}
 		responses[urlSubstring] = Response(statusCode: statusCode, data: data)
 	}

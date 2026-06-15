@@ -14,7 +14,7 @@ nonisolated extension URLSession {
 	public func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
 
 		let (response, data) = try await send(request: request)
-		guard let data, !data.isEmpty else {
+		guard !data.isEmpty else {
 			return (response, nil)
 		}
 		let decoded = try await Self.decode(R.self, from: data, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
@@ -35,7 +35,7 @@ nonisolated extension URLSession {
 	public func send<R: Decodable & Sendable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
 
 		let (response, responseData) = try await send(request: request, method: method, payload: data)
-		guard let responseData, !responseData.isEmpty else {
+		guard !responseData.isEmpty else {
 			return (response, nil)
 		}
 		let decoded = try await Self.decode(R.self, from: responseData, dateDecoding: dateDecoding, keyDecoding: keyDecoding)

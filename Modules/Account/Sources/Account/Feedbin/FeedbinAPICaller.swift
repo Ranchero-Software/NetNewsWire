@@ -78,10 +78,6 @@ enum CreateSubscriptionResult {
 
 		let (_, data) = try await session.send(request: request, method: HTTPMethod.post, payload: opmlData)
 
-		guard let data else {
-			throw WebserviceError.noData
-		}
-
 		let importResult = try JSONDecoder().decode(FeedbinImportResult.self, from: data)
 		return importResult
 	}
@@ -159,21 +155,15 @@ enum CreateSubscriptionResult {
 
 			switch response.forcedStatusCode {
 			case HTTPResponseCode.created: // 201
-				guard let subData = data else {
-					throw WebserviceError.noData
-				}
 				do {
-					let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: subData)
+					let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: data)
 					return .created(subscription)
 				} catch {
 					throw error
 				}
 			case HTTPResponseCode.redirectMultipleChoices: // 300
-				guard let subData = data else {
-					throw WebserviceError.noData
-				}
 				do {
-					let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: subData)
+					let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: data)
 					return .multipleChoice(subscriptions)
 				} catch {
 					throw error
