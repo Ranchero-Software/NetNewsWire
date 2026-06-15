@@ -158,102 +158,40 @@ nonisolated extension URLSession {
 		}
 	}
 
+	// These methods run on the cooperative thread pool, not the caller’s actor,
+	// because the extension is nonisolated — so JSON decoding done by callers in
+	// URLSession+WebserviceJSON happens off the main actor.
+
 	@discardableResult
 	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data?) {
-		try await withCheckedThrowingContinuation { continuation in
-			self.send(request: request) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func send(request: URLRequest, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
-		let task = self.dataTask(with: request) { (data, response, error) in
-			DispatchQueue.main.async {
-				if let error = error {
-					return completion(.failure(error))
-				}
-
-				guard let response = response as? HTTPURLResponse, let data = data else {
-					return completion(.failure(WebserviceError.noData))
-				}
-
-				switch response.forcedStatusCode {
-				case 200...399:
-					completion(.success((response, data)))
-				default:
-					completion(.failure(WebserviceError.httpError(status: response.forcedStatusCode)))
-				}
-			}
-		}
-		task.resume()
+		let (data, response) = try await data(for: request)
+		return (try Self.validatedHTTPResponse(response), data)
 	}
 
 	public func send(request: URLRequest, method: String) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			self.send(request: request, method: method) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func send(request: URLRequest, method: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-
 		var sendRequest = request
 		sendRequest.httpMethod = method
-
-		let task = self.dataTask(with: sendRequest) { (_, response, error) in
-			DispatchQueue.main.async {
-				if let error = error {
-					return completion(.failure(error))
-				}
-
-				guard let response = response as? HTTPURLResponse else {
-					return completion(.failure(WebserviceError.noData))
-				}
-
-				switch response.forcedStatusCode {
-				case 200...399:
-					completion(.success(()))
-				default:
-					completion(.failure(WebserviceError.httpError(status: response.forcedStatusCode)))
-				}
-			}
-		}
-		task.resume()
+		let (_, response) = try await data(for: sendRequest)
+		_ = try Self.validatedHTTPResponse(response)
 	}
 
 	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data?) {
-		try await withCheckedThrowingContinuation { continuation in
-			self.send(request: request, method: method, payload: payload) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func send(request: URLRequest, method: String, payload: Data, completion: @escaping @Sendable (Result<(HTTPURLResponse, Data?), Error>) -> Void) {
-
 		var sendRequest = request
 		sendRequest.httpMethod = method
+		let (data, response) = try await upload(for: sendRequest, from: payload)
+		return (try Self.validatedHTTPResponse(response), data)
+	}
 
-		let task = self.uploadTask(with: sendRequest, from: payload) { (data, response, error) in
-			DispatchQueue.main.async {
-				if let error = error {
-					return completion(.failure(error))
-				}
-
-				guard let response = response as? HTTPURLResponse, let data = data else {
-					return completion(.failure(WebserviceError.noData))
-				}
-
-				switch response.forcedStatusCode {
-				case 200...399:
-					completion(.success((response, data)))
-				default:
-					completion(.failure(WebserviceError.httpError(status: response.forcedStatusCode)))
-				}
-			}
+	/// Require an HTTP response with a 200...399 status code, or throw the matching `WebserviceError`.
+	private static func validatedHTTPResponse(_ response: URLResponse) throws -> HTTPURLResponse {
+		guard let httpResponse = response as? HTTPURLResponse else {
+			throw WebserviceError.noData
 		}
-		task.resume()
+		switch httpResponse.forcedStatusCode {
+		case 200...399:
+			return httpResponse
+		default:
+			throw WebserviceError.httpError(status: httpResponse.forcedStatusCode)
+		}
 	}
 }

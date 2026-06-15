@@ -10,138 +10,50 @@ import Foundation
 
 nonisolated extension URLSession {
 
-	/// Send an HTTP GET and return JSON object(s)
+	/// Send an HTTP GET and return JSON object(s).
 	public func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
-		try await withCheckedThrowingContinuation { continuation in
-			send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
-				continuation.resume(with: result)
-			}
+
+		let (response, data) = try await send(request: request)
+		guard let data, !data.isEmpty else {
+			return (response, nil)
 		}
+		let decoded = try await Self.decode(R.self, from: data, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		return (response, decoded)
 	}
 
-	/**
-	 Sends an HTTP get and returns JSON object(s)
-	 */
-    func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping @Sendable (Result<(HTTPURLResponse, R?), Error>) -> Void) {
-
-		send(request: request) { result in
-			DispatchQueue.main.async {
-
-				switch result {
-				case .success(let (response, data)):
-					if let data = data, !data.isEmpty {
-						// PBS 27 Sep. 2019: decode the JSON on a background thread.
-						// The profiler says that this is 45% of what’s happening on the main thread
-						// during an initial sync with Feedbin.
-						DispatchQueue.global(qos: .background).async {
-							let decoder = JSONDecoder()
-							decoder.dateDecodingStrategy = dateDecoding
-							decoder.keyDecodingStrategy = keyDecoding
-							do {
-								let decoded = try decoder.decode(R.self, from: data)
-								DispatchQueue.main.async {
-									completion(.success((response, decoded)))
-								}
-							} catch {
-								DispatchQueue.main.async {
-									completion(.failure(error))
-								}
-							}
-						}
-					} else {
-						completion(.success((response, nil)))
-					}
-
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		}
-	}
-
+	/// Send the specified HTTP method with a JSON payload.
 	public func send<P: Encodable & Sendable>(request: URLRequest, method: String, payload: P) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			self.send(request: request, method: method, payload: payload) { result in
-				switch result {
-				case .success:
-					continuation.resume()
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
-		}
-	}
-
-	/**
-	Sends the specified HTTP method with a JSON payload.
-	*/
-	func send<P: Encodable>(request: URLRequest, method: String, payload: P, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 
 		var postRequest = request
 		postRequest.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		let data: Data
-		do {
-			data = try JSONEncoder().encode(payload)
-		} catch {
-			completion(.failure(error))
-			return
-		}
-
-		send(request: postRequest, method: method, payload: data) { result in
-			DispatchQueue.main.async {
-				switch result {
-				case .success((_, _)):
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		}
+		let data = try await Self.encode(payload)
+		_ = try await send(request: postRequest, method: method, payload: data)
 	}
 
+	/// Send the specified HTTP method with a raw payload and return JSON object(s).
 	public func send<R: Decodable & Sendable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
 
-		try await withCheckedThrowingContinuation { continuation in
-			self.send(request: request, method: method, data: data, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { result in
-
-				switch result {
-				case .success(let (response, decoded)):
-					continuation.resume(returning: (response, decoded))
-				case .failure(let error):
-					continuation.resume(throwing: error)
-				}
-			}
+		let (response, responseData) = try await send(request: request, method: method, payload: data)
+		guard let responseData, !responseData.isEmpty else {
+			return (response, nil)
 		}
+		let decoded = try await Self.decode(R.self, from: responseData, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		return (response, decoded)
 	}
 
-    /**
-     Sends the specified HTTP method with a Raw payload and returns JSON object(s).
-     */
-	func send<R: Decodable>(request: URLRequest, method: String, data: Data, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping @Sendable (Result<(HTTPURLResponse, R?), Error>) -> Void) {
+	@concurrent
+	private static func encode<P: Encodable & Sendable>(_ payload: P) async throws -> Data {
+		assert(!Thread.isMainThread, "JSON encoding should not happen on the main thread.")
+		return try JSONEncoder().encode(payload)
+	}
 
-		send(request: request, method: method, payload: data) { result in
-			DispatchQueue.main.async {
-
-				switch result {
-				case .success(let (response, data)):
-					do {
-						if let data = data, !data.isEmpty {
-							let decoder = JSONDecoder()
-							decoder.dateDecodingStrategy = dateDecoding
-                            decoder.keyDecodingStrategy = keyDecoding
-							let decoded = try decoder.decode(R.self, from: data)
-							completion(.success((response, decoded)))
-						} else {
-							completion(.success((response, nil)))
-						}
-					} catch {
-						completion(.failure(error))
-					}
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		}
+	@concurrent
+	private static func decode<R: Decodable & Sendable>(_ type: R.Type, from data: Data, dateDecoding: JSONDecoder.DateDecodingStrategy, keyDecoding: JSONDecoder.KeyDecodingStrategy) async throws -> R {
+		assert(!Thread.isMainThread, "JSON decoding should not happen on the main thread.")
+		let decoder = JSONDecoder()
+		decoder.dateDecodingStrategy = dateDecoding
+		decoder.keyDecodingStrategy = keyDecoding
+		return try decoder.decode(R.self, from: data)
 	}
 }
