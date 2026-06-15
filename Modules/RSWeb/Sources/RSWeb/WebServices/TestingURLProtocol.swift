@@ -2,9 +2,7 @@
 //  TestingURLProtocol.swift
 //  RSWeb
 //
-//  Used only when running unit tests. `URLSession.webservice` installs this
-//  protocol so that web service requests are answered from registered fixtures
-//  instead of hitting the network. Production code has no knowledge of it.
+//  Created by Brent Simmons on 6/16/26.
 //
 
 import Foundation
