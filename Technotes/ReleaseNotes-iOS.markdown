@@ -1,5 +1,15 @@
 # iOS Release Notes
 
+### 7.1 build 7102 18 June 2026 - branch: main tag: iOS-7.1-7102
+
+Added more activities and detail to the Activity Log and Current Activity screens
+Fixed a performance issue with the Activity Log
+Fixed a memory use issue with marking read/unread/starred/unstarred
+Reduced disk writes while syncing article statuses
+Fixed a hang that could happen when encoding widget data
+Fixed a crash that could happen when deleting Feedly folders
+Fixed a crash that could happen when building notification thumbnails
+
 ### 7.1 build 7101 12 June 2026 - branch: main tag: iOS-7.1-7101
 
 Changes since 7.0.6:
