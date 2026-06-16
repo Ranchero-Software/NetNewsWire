@@ -7,79 +7,18 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.1b2</title>
+			<title>NetNewsWire 7.1b3</title>
             <description><![CDATA[
   				<ul>
-				  <li>Fixed Dinosaurs bug where feeds with articles with no dates were ranked using the wrong date — they now use the date the article arrived when there are no other dates
-				  <li>Made the Dinosaurs months field ignore any character that isn’t 0-9
-				  <li>Fixed a performance issue with the Current Activity window
-				  <li>Stopped removing long-running activities from the Activity Log and Current Activity windows — some activities do run for hours. (Unfortunately. iCloud, of course.)
-				  <li>Fixed bug where feed icons didn’t always appear promptly in the sidebar
+				  <li>Added more activities and detail to the Activity Log and Current Activity windows
+				  <li>Fixed a memory use issue with marking read/unread/starred/unstarred
+				  <li>Reduced disk writes while syncing article statuses
+				  <li>Fixed a crash that could happen when deleting Feedly folders
+				  <li>Fixed a crash that could happen when building notification thumbnails
 				</ul>
 			]]></description>
-        	<pubDate>Fri, 12 Jun 2026 07:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b2/NetNewsWire7.1b2.zip" sparkle:version="7101" sparkle:shortVersionString="7.1b2" length="10585308" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.1b1</title>
-            <description><![CDATA[
-  				<ul>
-				  <li>Added <a href="https://netnewswire.com/help/activity-log.html">Activity Log window</a> — shows what the app has been doing
-				  <li>Added <a href="https://netnewswire.com/help/current-activity.html">Current Activity window</a> — shows what the app is doing right now 
-				  <li>Added <a href="https://netnewswire.com/help/account-stats.html">Account Stats window</a> — shows per-account article and status counts and database sizes, plus a Vacuum Databases button 
-				  <li>Added <a href="https://netnewswire.com/help/dinosaurs.html">Dinosaurs window</a> — lists feeds that haven’t updated in n months (with a text field where you specify n) 
-				  <li>Started deleting feeds and folders optimistically from iCloud — sidebar updates immediately instead of waiting for the server
-				  <li>Fixed bug where iCloud feed renames could fail on transient network errors — they’re now retried
-				  <li>Started backing off Feedly status sync to 30 minutes between checks when the last sync had no changes
-				  <li>Stopped feed refreshing while the Mac is asleep
-				  <li>Started handling transient feed-refresh failures (DNS, certificate, etc.) by retrying after a few hours instead of treating them as permanent failures
-				  <li>Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (&lt;s:variant&gt;, for instance)
-				  <li>Added more trackers to the block list
-				  <li>Fixed WebKit crash in the detail view caused by re-entrancy
-				  <li>Started setting the response code for 4xx and 5xx responses so the error log shows the right info
-				</ul>
-			]]></description>
-        	<pubDate>Mon, 08 Jun 2026 09:35:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b1/NetNewsWire7.1b1.zip" sparkle:version="7100" sparkle:shortVersionString="7.1b1" length="10640230" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.6</title>
-            <description><![CDATA[
-  				<ul>
-				  <li>Made timeline fetches faster
-				  <li>Fixed bug where the browser setting wasn’t being respected
-				  <li>Fixed bug where shift-upArrow didn’t extend the timeline selection upward
-				  <li>Added AppleScript `selected feeds` property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
-				  <li>Improved footnote layout in the article view
-				  <li>Lowered memory use by shrinking the Downloader cache
-				  <li>Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
-				  <li>Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
-				</ul>
-			]]></description>
-        	<pubDate>Tue, 26 May 2026 09:05:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.6/NetNewsWire7.0.6.zip" sparkle:version="7059" sparkle:shortVersionString="7.0.6" length="10232195" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.0.6b2</title>
-            <description><![CDATA[
-  				<ul>
-				  <li>Fixed bug where the browser setting wasn’t being respected
-				  <li>Fixed bug where shift-upArrow didn’t extend the timeline selection upward
-				  <li>Added AppleScript selected feeds property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
-				  <li>Improved footnote layout in the article view
-				  <li>Lowered memory use by shrinking the Downloader cache
-				  <li>Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
-				  <li>Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
-				</ul>
-			]]></description>
-        	<pubDate>Sat, 23 May 2026 21:40:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.0.6b2/NetNewsWire7.0.6b2.zip" sparkle:version="7057" sparkle:shortVersionString="7.0.6b2" length="10232339" type="application/zip" />
+        	<pubDate>Tue, 16 Jun 2026 08:20:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b3/NetNewsWire7.1b3.zip" sparkle:version="7102" sparkle:shortVersionString="7.1b3" length="10612703" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
