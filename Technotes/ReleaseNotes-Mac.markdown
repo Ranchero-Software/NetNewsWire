@@ -1,9 +1,10 @@
 # Mac Release Notes
 
-### 7.1b3 7102 15 June 2026 — branch: main tag: mac-7.1b3
+### 7.1b3 7102 16 June 2026 — branch: main tag: mac-7.1b3
 
 Added more activities and detail to the Activity Log and Current Activity windows
-Reduced unneeded disk writes while syncing article statuses
+Fixed a memory use issue with marking read/unread/starred/unstarred
+Reduced disk writes while syncing article statuses
 Fixed a crash that could happen when deleting Feedly folders
 Fixed a crash that could happen when building notification thumbnails
 
