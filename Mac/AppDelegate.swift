@@ -1117,7 +1117,7 @@ private extension AppDelegate {
 	}
 
 	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
-		MainActor.assumeIsolated {
+		Task { @MainActor in
 			guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 				  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 				  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
@@ -1132,15 +1132,7 @@ private extension AppDelegate {
 				return
 			}
 
-			let singleArticleSet = account.fetchArticles(.articleIDs([articleID]))
-			guard singleArticleSet.count > 0 else {
-				assertionFailure("Expected article with \(articleID)")
-				Self.logger.error("No article with articleID found \(articleID) from status notification")
-				return
-			}
-
-			assert(singleArticleSet.count == 1)
-			account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
+			try? await account.markArticles(articleIDs: [articleID], statusKey: statusKey, flag: true)
 		}
 	}
 }

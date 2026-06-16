@@ -364,10 +364,11 @@ public struct ArticleCounts: Sendable {
 
 	// MARK: - Statuses
 
-	public func markAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<ArticleStatus> {
+	/// Mark statuses for articleIDs. Returns the articleIDs whose status actually changed.
+	public func markAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
 		await withCheckedContinuation { continuation in
-			_mark(articles: articles, statusKey: statusKey, flag: flag) { statuses in
-				continuation.resume(returning: statuses)
+			_mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { changedArticleIDs in
+				continuation.resume(returning: changedArticleIDs)
 			}
 		}
 	}
@@ -456,7 +457,6 @@ typealias UpdateArticlesCompletionBlock = @Sendable (ArticleChanges) -> Void
 typealias SingleUnreadCountCompletionBlock = @Sendable (Int) -> Void
 typealias ArticleSetResultBlock = @Sendable (Set<Article>) -> Void
 typealias ArticleIDsCompletionBlock = @Sendable (Set<String>) -> Void
-typealias ArticleStatusesResultBlock = @Sendable (Set<ArticleStatus>) -> Void
 
 private extension ArticlesDatabase {
 
@@ -490,9 +490,9 @@ private extension ArticlesDatabase {
 		articlesTable.fetchStarredAndUnreadCount(feedIDs, completion)
 	}
 
-	func _mark(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
+	func _mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return articlesTable.mark(articles, statusKey, flag, completion)
+		articlesTable.mark(articleIDs, statusKey, flag, completion)
 	}
 
 	func _markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {

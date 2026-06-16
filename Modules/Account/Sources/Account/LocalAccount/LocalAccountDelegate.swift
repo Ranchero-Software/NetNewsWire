@@ -143,8 +143,8 @@ import Secrets
 		account?.addFolderToTree(folder)
 	}
 
-	@MainActor func markArticles(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		await account?.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+	@MainActor func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		_ = await account?.updateStatusesAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 	}
 
 	func accountDidInitialize() {

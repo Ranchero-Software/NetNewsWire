@@ -503,11 +503,11 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		statusesTable.fetchArticleIDsForStatusesWithoutArticlesNewerThan(articleCutoffDate, completion)
 	}
 
-	func mark(_ articles: Set<Article>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleStatusesResultBlock) {
-		self.queue.runInTransaction { database in
-			let statuses = self.statusesTable.mark(articles.statuses(), statusKey, flag, database)
+	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ completion: @escaping ArticleIDsCompletionBlock) {
+		queue.runInTransaction { database in
+			let changedArticleIDs = self.statusesTable.mark(articleIDs, statusKey, flag, database)
 			DispatchQueue.main.async {
-				completion(statuses ?? Set<ArticleStatus>())
+				completion(changedArticleIDs)
 			}
 		}
 	}

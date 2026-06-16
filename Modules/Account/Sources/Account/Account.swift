@@ -609,15 +609,8 @@ public enum FetchType {
 		addOPMLItems(OPMLNormalizer.normalize(items))
 	}
 
-	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		Task { @MainActor in
-			do {
-				try await delegate.markArticles(articles: articles, statusKey: statusKey, flag: flag)
-				completion(.success(()))
-			} catch {
-				completion(.failure(error))
-			}
-		}
+	public func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		try await delegate.markArticles(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 	}
 
 	func existingContainer(withExternalID externalID: String) -> Container? {
@@ -960,19 +953,20 @@ public enum FetchType {
 		sendNotificationAbout(newAndUpdatedArticles)
 	}
 
-	/// Returns set of Article whose statuses did change.
+	/// Mark statuses for articleIDs. Returns the articleIDs whose status actually changed.
 	@discardableResult
-	func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<Article> {
-		guard !articles.isEmpty else {
-			return Set<Article>()
+	func updateStatusesAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
+		guard !articleIDs.isEmpty else {
+			return Set<String>()
 		}
 
-		let updatedStatuses = await database.markAsync(articles: articles, statusKey: statusKey, flag: flag)
-		let updatedArticleIDs = updatedStatuses.articleIDs()
-		let updatedArticles = Set(articles.filter { updatedArticleIDs.contains($0.articleID) })
-		noteStatusesForArticlesDidChange(updatedArticles)
+		let changedArticleIDs = await database.markAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		guard !changedArticleIDs.isEmpty else {
+			return Set<String>()
+		}
+		noteStatusesForArticleIDsDidChange(articleIDs: changedArticleIDs, statusKey: statusKey, flag: flag)
 
-		return updatedArticles
+		return changedArticleIDs
 	}
 
 	// MARK: - Article Statuses
@@ -1483,22 +1477,6 @@ private extension Account {
 			updatedUnreadCount += feed.unreadCount
 		}
 		unreadCount = updatedUnreadCount
-    }
-
-	func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
-		guard !articles.isEmpty else {
-			return
-		}
-
-		let feeds = Set(articles.compactMap { $0.feed })
-		let statuses = Set(articles.map { $0.status })
-		let articleIDs = Set(articles.map { $0.articleID })
-
-        // .UnreadCountDidChange notification will get sent to Folder and Account objects,
-        // which will update their own unread counts.
-        updateUnreadCounts(feeds: feeds)
-
-		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.feeds: feeds])
     }
 
 	func noteStatusesForArticleIDsDidChange(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) {

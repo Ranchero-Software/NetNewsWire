@@ -194,10 +194,6 @@ extension Article {
 
 extension Set where Element == Article {
 
-	func statuses() -> Set<ArticleStatus> {
-		return Set<ArticleStatus>(map { $0.status })
-	}
-
 	func dictionary() -> [String: Article] {
 		var d = [String: Article]()
 		for article in self {
