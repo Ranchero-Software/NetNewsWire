@@ -457,11 +457,8 @@ private extension AppDelegate {
 			return
 		}
 
-		let singleArticleSet = account.fetchArticles(.articleIDs([articleID]))
-		assert(singleArticleSet.count == 1)
-		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
-
 		Task { @MainActor in
+			try? await account.markArticles(articleIDs: [articleID], statusKey: statusKey, flag: true)
 			_ = try? await account.syncArticleStatus()
 			prepareAccountsForBackground()
 			suspendApplication()

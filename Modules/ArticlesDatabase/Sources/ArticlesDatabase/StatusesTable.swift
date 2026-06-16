@@ -93,6 +93,13 @@ final class StatusesTable: DatabaseTable, Sendable {
 		return newStatusIDs
 	}
 
+	/// Mark statuses for articleIDs in both memory and database. Returns the articleIDs whose status actually changed.
+	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<String> {
+		let (statusesDictionary, _) = ensureStatusesForArticleIDs(articleIDs, flag, database)
+		let updatedStatuses = mark(Set(statusesDictionary.values), statusKey, flag, database)
+		return updatedStatuses?.articleIDs() ?? Set<String>()
+	}
+
 	// MARK: - Fetching
 
 	func fetchUnreadArticleIDs() -> Set<String> {

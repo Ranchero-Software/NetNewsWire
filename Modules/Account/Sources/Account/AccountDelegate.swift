@@ -51,7 +51,7 @@ import Secrets
 	func restoreFeed(feed: Feed, container: Container) async throws
 	func restoreFolder(folder: Folder) async throws
 
-	func markArticles(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws
+	func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws
 
 	// Called at the end of account’s init method.
 	func accountDidInitialize()

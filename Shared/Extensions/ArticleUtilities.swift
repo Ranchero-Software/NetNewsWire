@@ -15,28 +15,24 @@ import Images
 // These handle multiple accounts.
 
 @MainActor func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
-	let d: [String: Set<Article>] = accountAndArticlesDictionary(articles)
+	markArticleIDs(articleIDsByAccountID(articles), statusKey: statusKey, flag: flag, completion: completion)
+}
 
-	let group = DispatchGroup()
-
-	for (accountID, accountArticles) in d {
-		guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
-			continue
+@MainActor func markArticleIDs(_ articleIDsByAccountID: [String: Set<String>], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
+	Task { @MainActor in
+		for (accountID, articleIDs) in articleIDsByAccountID {
+			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
+				continue
+			}
+			try? await account.markArticles(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 		}
-		group.enter()
-		account.markArticles(accountArticles, statusKey: statusKey, flag: flag) { _ in
-			group.leave()
-		}
-	}
-
-	group.notify(queue: .main) {
 		completion?()
 	}
 }
 
-private func accountAndArticlesDictionary(_ articles: Set<Article>) -> [String: Set<Article>] {
+private func articleIDsByAccountID(_ articles: Set<Article>) -> [String: Set<String>] {
 	let d = Dictionary(grouping: articles, by: { $0.accountID })
-	return d.mapValues { Set($0) }
+	return d.mapValues { Set($0.articleIDs()) }
 }
 
 extension Article {

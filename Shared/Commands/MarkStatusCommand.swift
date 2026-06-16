@@ -16,7 +16,7 @@ import Articles
 
 	let undoActionName: String
 	let redoActionName: String
-    let articles: Set<Article>
+	let articleIDsByAccountID: [String: Set<String>]
 	let undoManager: UndoManager
 	let flag: Bool
 	let statusKey: ArticleStatus.Key
@@ -30,7 +30,7 @@ import Articles
 			completion?()
 			return nil
 		}
-		self.articles = Set(articlesToMark)
+		self.articleIDsByAccountID = Dictionary(grouping: articlesToMark, by: { $0.accountID }).mapValues { Set($0.articleIDs()) }
 
 		self.flag = flag
 		self.statusKey = statusKey
@@ -64,7 +64,7 @@ import Articles
 @MainActor private extension MarkStatusCommand {
 
 	func mark(_ statusKey: ArticleStatus.Key, _ flag: Bool) {
-        markArticles(articles, statusKey: statusKey, flag: flag, completion: completion)
+		markArticleIDs(articleIDsByAccountID, statusKey: statusKey, flag: flag, completion: completion)
 		completion = nil
     }
 
