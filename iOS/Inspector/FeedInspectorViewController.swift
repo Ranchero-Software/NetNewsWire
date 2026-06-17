@@ -22,8 +22,8 @@ final class FeedInspectorViewController: UITableViewController {
 	@IBOutlet var nameTextField: UITextField!
 	@IBOutlet var newArticleNotificationsEnabledSwitch: UISwitch!
 	@IBOutlet var readerViewAlwaysEnabledSwitch: UISwitch!
-	@IBOutlet var homePageLabel: InteractiveLabel!
-	@IBOutlet var feedURLLabel: InteractiveLabel!
+	@IBOutlet var homePageLabel: UILabel!
+	@IBOutlet var feedURLLabel: UILabel!
 
 	private var headerView: InspectorIconHeaderView?
 	private var iconImage: IconImage? {
@@ -31,6 +31,7 @@ final class FeedInspectorViewController: UITableViewController {
 	}
 
 	private let homePageIndexPath = IndexPath(row: 0, section: 1)
+	private let feedURLIndexPath = IndexPath(row: 0, section: 2)
 
 	private var shouldHideHomePageSection: Bool {
 		return feed.homePageURL == nil
@@ -178,6 +179,30 @@ extension FeedInspectorViewController {
 			present(safari, animated: true) {
 				tableView.deselectRow(at: indexPath, animated: true)
 			}
+		}
+	}
+
+	override func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+		let logicalIndexPath = shift(indexPath)
+		let title: String
+		let urlString: String?
+		if logicalIndexPath == homePageIndexPath {
+			title = NSLocalizedString("Copy Home Page URL", comment: "Command")
+			urlString = feed.homePageURL
+		} else if logicalIndexPath == feedURLIndexPath {
+			title = NSLocalizedString("Copy Feed URL", comment: "Command")
+			urlString = feed.url
+		} else {
+			return nil
+		}
+		guard let urlString else {
+			return nil
+		}
+		return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+			let copyAction = UIAction(title: title, image: Assets.Images.copy) { _ in
+				UIPasteboard.general.string = urlString
+			}
+			return UIMenu(title: "", children: [copyAction])
 		}
 	}
 
