@@ -59,13 +59,10 @@ struct Assets {
 		static var addNewSidebarItem: RSImage { RSImage(symbol: "plus")! }
 		static var articleTheme: RSImage { RSImage(symbol: "doc.richtext")! }
 		static var cleanUp: RSImage { RSImage(symbol: "bubbles.and.sparkles")! }
-		static var delete: RSImage { RSImage(symbol: "xmark.bin")! }
 		static var marsEdit: RSImage { RSImage(named: "MarsEditIcon")! }
 		static var microblog: RSImage { RSImage(named: "MicroblogIcon")! }
 		static var filterActive: RSImage { RSImage(symbol: "line.horizontal.3.decrease.circle.fill")! }
 		static var filterInactive: RSImage { RSImage(symbol: "line.horizontal.3.decrease.circle")! }
-		static var markAllAsReadMenu: RSImage { RSImage(named: "markAllAsRead")! }
-		static var notification: RSImage { RSImage(symbol: "bell.badge")! }
 		static var openInBrowser: RSImage { RSImage(symbol: "safari")! }
 		static var preferencesToolbarAccounts: RSImage { RSImage(symbol: "at")! }
 		static var preferencesToolbarGeneral: RSImage { RSImage(symbol: "gearshape")! }
@@ -73,7 +70,6 @@ struct Assets {
 		static var readClosed: RSImage { RSImage(symbol: "largecircle.fill.circle")! }
 		static var readOpen: RSImage { RSImage(symbol: "circle")! }
 		static var refresh: RSImage { RSImage(symbol: "arrow.clockwise")! }
-		static var rename: RSImage { RSImage(symbol: "pencil")! }
 		static var swipeMarkUnstarred: RSImage { RSImage(symbol: "star")! }
 		static var timelineStarSelected: RSImage { RSImage(named: "timelineStar")!.tinted(with: .white) }
 		static var timelineStarUnselected: RSImage { RSImage(named: "timelineStar")!.tinted(with: Assets.Colors.star) }
