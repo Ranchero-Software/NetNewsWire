@@ -42,9 +42,9 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 
 	private var expandedStateMessage: String {
 		if disclosureExpanded {
-			return NSLocalizedString("Expanded", comment: "Disclosure button expanded state for accessibility")
+			return NSLocalizedString("Expanded", comment: "Expanded")
 		}
-		return NSLocalizedString("Collapsed", comment: "Disclosure button collapsed state for accessibility")
+		return NSLocalizedString("Collapsed", comment: "Collapsed")
 	}
 
 	private var _unreadCount: Int = 0

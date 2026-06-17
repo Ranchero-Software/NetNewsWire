@@ -223,8 +223,11 @@
     "Close Image" : {
       "comment" : "Close Image"
     },
+    "Collapse" : {
+      "comment" : "Collapse"
+    },
     "Collapsed" : {
-      "comment" : "Disclosure button collapsed state for accessibility"
+      "comment" : "Collapsed"
     },
     "Completed" : {
       "comment" : "Completed"
@@ -382,8 +385,11 @@
     "Every Hour" : {
       "comment" : "Every Hour"
     },
+    "Expand" : {
+      "comment" : "Expand"
+    },
     "Expanded" : {
-      "comment" : "Disclosure button expanded state for accessibility"
+      "comment" : "Expanded"
     },
     "Export OPML" : {
       "comment" : "Export OPML"
