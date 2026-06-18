@@ -164,7 +164,7 @@ private extension SingleFaviconDownloader {
 				throw error
 			}
 			saveToDisk(scaledData)
-			activityLog.didComplete(.faviconDownloader, kind: kind, returnedFromCache: downloadResponse.returnedFromCache)
+			activityLog.didComplete(.faviconDownloader, kind: kind, message: ActivityLog.dataSizeMessage(data), returnedFromCache: downloadResponse.returnedFromCache)
 			return image
 		}
 

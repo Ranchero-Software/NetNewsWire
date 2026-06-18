@@ -282,8 +282,7 @@ private extension FeedFinder {
 		}
 		let statusPart = formattedStatus(response.forcedStatusCode)
 		if response.statusIsOK, let data, !data.isEmpty {
-			let sizeText = Int64(data.count).formatted(.byteCount(style: .file))
-			return "\(statusPart) · \(sizeText)"
+			return "\(statusPart) · \(ActivityLog.dataSizeMessage(data))"
 		}
 		return statusPart
 	}

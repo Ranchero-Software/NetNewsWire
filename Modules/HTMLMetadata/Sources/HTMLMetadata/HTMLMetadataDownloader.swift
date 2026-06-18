@@ -130,7 +130,7 @@ nonisolated private extension HTMLMetadataDownloader {
 					cacheRecord(record)
 					postNotification(record)
 
-					activityLog.didComplete(.htmlMetadataDownloader, kind: kind, returnedFromCache: downloadResponse.returnedFromCache)
+					activityLog.didComplete(.htmlMetadataDownloader, kind: kind, message: ActivityLog.dataSizeMessage(data), returnedFromCache: downloadResponse.returnedFromCache)
 					return
 				}
 

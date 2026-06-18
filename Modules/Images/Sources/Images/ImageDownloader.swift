@@ -116,9 +116,10 @@ private extension ImageDownloader {
 		}
 
 		do {
-			let (image, fromCache) = try await downloadImage(url)
+			let (image, downloadResponse) = try await downloadImage(url)
 			if let activityOwner, let activityKind {
-				activityLog.didComplete(activityOwner, kind: activityKind, returnedFromCache: fromCache)
+				let message = downloadResponse.data.map(ActivityLog.dataSizeMessage)
+				activityLog.didComplete(activityOwner, kind: activityKind, message: message, returnedFromCache: downloadResponse.returnedFromCache)
 			}
 			cacheImage(url, image)
 			ImageMetadataDatabase.shared.clearFailure(url: url)
@@ -156,7 +157,7 @@ private extension ImageDownloader {
 		}
 	}
 
-	func downloadImage(_ url: String) async throws(ImageDownloadError) -> (Data, Bool) {
+	func downloadImage(_ url: String) async throws(ImageDownloadError) -> (Data, DownloadResponse) {
 		guard let imageURL = URL(string: url) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false)
 		}
@@ -172,7 +173,7 @@ private extension ImageDownloader {
 		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 			let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
 			saveToDisk(url, scaledData)
-			return (scaledData, downloadResponse.returnedFromCache)
+			return (scaledData, downloadResponse)
 		}
 
 		let statusCode = (downloadResponse.response as? HTTPURLResponse)?.statusCode

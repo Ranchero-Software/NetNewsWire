@@ -285,7 +285,7 @@ import os
 		}
 
 		let dataHash = data.md5String
-		let dataSizeMessage = Int64(data.count).formatted(.byteCount(style: .memory))
+		let dataSizeMessage = ActivityLog.dataSizeMessage(data)
 		if dataHash == feed.contentHash {
 			if let activityOwner {
 				ActivityLog.shared.didComplete(activityOwner, kind: activityKind, message: "\(dataSizeMessage), content unchanged")
