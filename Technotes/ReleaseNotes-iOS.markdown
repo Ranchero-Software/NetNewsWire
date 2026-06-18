@@ -1,6 +1,12 @@
 # iOS Release Notes
 
-### 7.1 build 7102 18 June 2026 - branch: main tag: iOS-7.1-7102
+### 7.1 build 7103 18 June 2026 - branch: main tag: iOS-7.1-7103
+
+Added contextual menus to copy the home page URL and feed URL in the feed inspector
+Added an accessibility action to expand and collapse folders on the Feeds screen
+Added more detail to the Activity Log: download sizes for image and HTML‑metadata downloads, and a note when a download was served from the cache (instead of over the web)
+
+### 7.1 build 7102 16 June 2026 - branch: main tag: iOS-7.1-7102
 
 Added more activities and detail to the Activity Log and Current Activity screens
 Fixed a performance issue with the Activity Log
