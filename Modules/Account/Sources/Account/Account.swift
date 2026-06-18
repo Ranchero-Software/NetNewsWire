@@ -48,6 +48,7 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 	case inoreader = 21
 	case bazQux = 22
 	case theOldReader = 23
+	case miniflux = 24
 
 	public var isDeveloperRestricted: Bool {
 		return self == .cloudKit || self == .feedbin || self == .feedly || self == .inoreader
@@ -74,6 +75,8 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 			return NSLocalizedString("BazQux", comment: "Account name")
 		case .theOldReader:
 			return NSLocalizedString("The Old Reader", comment: "Account name")
+		case .miniflux:
+			return "Miniflux"
 		}
 	}
 }
@@ -312,6 +315,8 @@ public enum FetchType {
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .bazQux)
 		case .theOldReader:
 			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .theOldReader)
+			case .miniflux:
+				self.delegate = MinifluxAccountDelegate(dataFolder: dataFolder)
 		}
 
 		self.accountID = accountID
@@ -410,6 +415,8 @@ public enum FetchType {
 				return try await NewsBlurAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			case .freshRSS, .inoreader, .bazQux, .theOldReader:
 				return try await ReaderAPIAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+			case .miniflux:
+				return try await MinifluxAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			default:
 				return nil
 			}
