@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.1b4 7104 18 June 2026 — branch: main tag: mac-7.1b4
+
+Removed images from items in contextual menus in sidebar and timeline
+Added more detail to the Activity Log: download sizes for image and HTML‑metadata downloads, and a note when a download was served from the cache (instead of over the web)
+
 ### 7.1b3 7102 16 June 2026 — branch: main tag: mac-7.1b3
 
 Added more activities and detail to the Activity Log and Current Activity windows
