@@ -451,6 +451,9 @@
     "Folders" : {
       "comment" : "Folders"
     },
+    "from cache" : {
+      "comment" : "Activity log — appended when a download was served from cache instead of the network"
+    },
     "General" : {
       "comment" : "Preferences"
     },

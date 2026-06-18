@@ -56,7 +56,9 @@ public final class FeedFinder {
 			return (Set([feedSpecifier]), .specialCase)
 		}
 
-		let (data, response) = try await downloadAndLog(url)
+		let downloadResponse = try await downloadAndLog(url)
+		let data = downloadResponse.data
+		let response = downloadResponse.response
 
 		if response?.forcedStatusCode == 404 {
 			if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false), urlComponents.host == "micro.blog" {
@@ -89,21 +91,15 @@ public final class FeedFinder {
 		return try await FeedFinder.findFeedsInHTMLPage(htmlData: data, urlString: url.absoluteString)
 	}
 
-	/// Wraps `Downloader.shared.download(url)` with a per-URL activity entry so
-	/// the activity log shows every URL that was tried and what came back.
-	/// HTTP non-2xx is recorded as a *completed* activity (the network call
-	/// worked, the server returned a status); a thrown error (network failure,
-	/// timeout, DNS) records as `failed`.
-	///
-	/// Public so callers performing feed-finding-adjacent fetches (e.g. the
-	/// post-find download that validates the chosen feed) can have their
-	/// fetches appear in the same Feed Finder activity stream.
-	public static func downloadAndLog(_ url: URL) async throws -> (Data?, URLResponse?) {
+	/// Wraps `Downloader.shared.download(url)` with a per-URL activity entry so the
+	/// fetch shows up in the Feed Finder activity stream. Public so feed-finding-adjacent
+	/// fetches can join the same stream.
+	public static func downloadAndLog(_ url: URL) async throws -> DownloadResponse {
 		let id = await activityFetchStart(url: url)
 		do {
-			let (data, response) = try await Downloader.shared.download(url)
-			await activityFetchComplete(id: id, data: data, response: response)
-			return (data, response)
+			let downloadResponse = try await Downloader.shared.download(url)
+			await activityFetchComplete(id: id, data: downloadResponse.data, response: downloadResponse.response, returnedFromCache: downloadResponse.returnedFromCache)
+			return downloadResponse
 		} catch {
 			await activityFetchFail(id: id, error: error)
 			throw error
@@ -133,10 +129,9 @@ public final class FeedFinder {
 		return id
 	}
 
-	@MainActor private static func activityFetchComplete(id: Int, data: Data?, response: URLResponse?) {
+	@MainActor private static func activityFetchComplete(id: Int, data: Data?, response: URLResponse?, returnedFromCache: Bool) {
 		let message = fetchCompletionMessage(data: data, response: response)
-		// A cached fetch can complete in zero seconds; suppress the misleading "(0.00s)".
-		ActivityLog.shared.didComplete(id: id, message: message, durationIsSignificant: false)
+		ActivityLog.shared.didComplete(id: id, message: message, durationIsSignificant: !returnedFromCache, returnedFromCache: returnedFromCache)
 	}
 
 	@MainActor private static func activityFetchFail(id: Int, error: any Error) {
@@ -227,8 +222,8 @@ private extension FeedFinder {
 
 				group.addTask {
 					do {
-						let (data, response) = try await downloadAndLog(url)
-						if let data, let response, response.statusIsOK {
+						let downloadResponse = try await downloadAndLog(url)
+						if let data = downloadResponse.data, let response = downloadResponse.response, response.statusIsOK {
 							if self.isFeed(data, downloadFeedSpecifier.urlString) {
 								return downloadFeedSpecifier
 							}

@@ -117,9 +117,9 @@ nonisolated private extension HTMLMetadataDownloader {
 			activityLog.didStart(.htmlMetadataDownloader, kind: kind)
 
 			do {
-				let (data, response) = try await Downloader.shared.download(actualURL)
+				let downloadResponse = try await Downloader.shared.download(actualURL)
 
-				if let data, !data.isEmpty, let response, response.statusIsOK {
+				if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 					let urlToUse = response.url ?? actualURL
 					let parserData = ParserData(url: urlToUse.absoluteString, data: data)
 					let htmlMetadata = HTMLMetadataParser.htmlMetadata(with: parserData)
@@ -130,11 +130,11 @@ nonisolated private extension HTMLMetadataDownloader {
 					cacheRecord(record)
 					postNotification(record)
 
-					activityLog.didComplete(.htmlMetadataDownloader, kind: kind)
+					activityLog.didComplete(.htmlMetadataDownloader, kind: kind, returnedFromCache: downloadResponse.returnedFromCache)
 					return
 				}
 
-				let statusCode = response?.forcedStatusCode ?? -1
+				let statusCode = downloadResponse.response?.forcedStatusCode ?? -1
 				if (400...499).contains(statusCode) {
 					await HTMLMetadataDatabase.shared.noteFailure(url: url, statusCode: statusCode)
 				}

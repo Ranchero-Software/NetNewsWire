@@ -145,17 +145,16 @@ private extension SingleFaviconDownloader {
 		activityLog.createActivity(owner: .faviconDownloader, kind: kind, detail: homePageURL)
 		activityLog.didStart(.faviconDownloader, kind: kind)
 
-		let data: Data?
-		let response: URLResponse?
+		let downloadResponse: DownloadResponse
 		do {
-			(data, response) = try await Downloader.shared.download(url)
+			downloadResponse = try await Downloader.shared.download(url)
 		} catch {
 			Self.logger.error("Error downloading image at \(url.absoluteString): \(error.localizedDescription)")
 			activityLog.didFail(.faviconDownloader, kind: kind, error: error)
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)
 		}
 
-		if let data, !data.isEmpty, let response, response.statusIsOK {
+		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 			let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
 			let image = await RSImage.image(data: scaledData)
 			guard let image else {
@@ -165,13 +164,13 @@ private extension SingleFaviconDownloader {
 				throw error
 			}
 			saveToDisk(scaledData)
-			activityLog.didComplete(.faviconDownloader, kind: kind)
+			activityLog.didComplete(.faviconDownloader, kind: kind, returnedFromCache: downloadResponse.returnedFromCache)
 			return image
 		}
 
-		let statusCode = (response as? HTTPURLResponse)?.statusCode
+		let statusCode = (downloadResponse.response as? HTTPURLResponse)?.statusCode
 		// 2xx with empty / missing body — server said OK but gave us no image bytes.
-		if let response, response.statusIsOK {
+		if let response = downloadResponse.response, response.statusIsOK {
 			let error = ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: false)
 			activityLog.didFail(.faviconDownloader, kind: kind, error: error)
 			throw error

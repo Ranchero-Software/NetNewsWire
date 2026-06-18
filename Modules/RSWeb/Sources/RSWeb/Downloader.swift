@@ -10,7 +10,7 @@ import Foundation
 import os
 import RSCore
 
-public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> Swift.Void
+public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swift.Void
 
 /// Simple downloader, for a one-shot download like an image
 /// or a web page. For a download-feeds session, see DownloadSession.
@@ -18,7 +18,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 @MainActor public final class Downloader {
 	public static let shared = Downloader()
 	private let urlSession: URLSession
-	private var callbacks = [URL: [DownloadCallback]]()
+	private var callbacks = [URL: [(callback: DownloadCallback, fromCache: Bool)]]()
 	private let cache = DownloadCache.shared
 
 	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
@@ -42,13 +42,13 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		urlSession.invalidateAndCancel()
 	}
 
-	public func download(_ url: URL) async throws -> (Data?, URLResponse?) {
+	public func download(_ url: URL) async throws -> DownloadResponse {
 		try await withCheckedThrowingContinuation { continuation in
-			download(url) { data, response, error in
+			download(url) { downloadResponse, error in
 				if let error {
 					continuation.resume(throwing: error)
 				} else {
-					continuation.resume(returning: (data, response))
+					continuation.resume(returning: downloadResponse)
 				}
 			}
 		}
@@ -69,7 +69,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 
 		guard url.isHTTPOrHTTPSURL() else {
 			Self.logger.debug("Downloader: skipping download for non-http/https URL: \(url)")
-			callback(nil, nil, nil)
+			callback(DownloadResponse(data: nil, response: nil, returnedFromCache: false), nil)
 			return
 		}
 
@@ -79,7 +79,7 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		if isCacheableRequest {
 			if let cachedRecord = cache[url.absoluteString] {
 				Self.logger.debug("Downloader: returning cached record for \(url)")
-				callback(cachedRecord.data, cachedRecord.response, nil)
+				callback(DownloadResponse(data: cachedRecord.data, response: cachedRecord.response, returnedFromCache: true), nil)
 				return
 			}
 		}
@@ -87,12 +87,13 @@ public typealias DownloadCallback = @MainActor (Data?, URLResponse?, Error?) -> 
 		// Add callback. If there is already a download in progress for this URL, return early.
 		if callbacks[url] == nil {
 			Self.logger.debug("Downloader: downloading \(url)")
-			callbacks[url] = [callback]
+			callbacks[url] = [(callback, false)]
 		} else {
-			// A download is already be in progress for this URL. Don’t start a separate download.
-			// Add the callback to the callbacks array for this URL.
+			// A download is already in progress for this URL. Don’t start a separate download.
+			// Add the callback to the callbacks array for this URL. This caller is coalesced
+			// onto the in-progress download, so it makes no network request of its own.
 			Self.logger.debug("Downloader: download in progress for \(url) — adding callback")
-			callbacks[url]?.append(callback)
+			callbacks[url]?.append((callback, true))
 			return
 		}
 
@@ -136,8 +137,9 @@ private extension Downloader {
 			Self.logger.debug("Downloader: calling \(count) callbacks for URL \(url)")
 		}
 
-		for callback in callbacksForURL {
-			callback(data, response, error)
+		for entry in callbacksForURL {
+			let downloadResponse = DownloadResponse(data: data, response: response, returnedFromCache: entry.fromCache)
+			entry.callback(downloadResponse, error)
 		}
 	}
 }

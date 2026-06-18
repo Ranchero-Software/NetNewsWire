@@ -95,14 +95,14 @@ public extension Notification.Name {
 	/// pending first if it was never explicitly started. Best-effort: does nothing
 	/// if no activity matches. Assumes at most one active activity per
 	/// `(owner, kind)` — for concurrent same-kind work, use the id-based API.
-	public func didComplete(_ owner: ActivityOwner, kind: ActivityKind, message: String? = nil, durationIsSignificant: Bool = true) {
+	public func didComplete(_ owner: ActivityOwner, kind: ActivityKind, message: String? = nil, durationIsSignificant: Bool = true, returnedFromCache: Bool = false) {
 
 		guard let activity = ensureRunning(owner: owner, kind: kind) else {
 			return
 		}
 
 		activity.durationIsSignificant = durationIsSignificant
-		activity.didComplete(message)
+		activity.didComplete(message, returnedFromCache: returnedFromCache)
 		moveToCompleted(activity)
 		postDidChangeNotification()
 	}
@@ -139,7 +139,7 @@ public extension Notification.Name {
 
 	/// Completes the activity with `id`, promoting it from pending first if it was
 	/// never explicitly started. A missing id is a programmer error (asserts).
-	public func didComplete(id: Int, message: String? = nil, durationIsSignificant: Bool = true) {
+	public func didComplete(id: Int, message: String? = nil, durationIsSignificant: Bool = true, returnedFromCache: Bool = false) {
 
 		guard let activity = ensureRunning(id: id) else {
 			assertionFailure("didComplete: no pending or running activity with id \(id)")
@@ -147,7 +147,7 @@ public extension Notification.Name {
 		}
 
 		activity.durationIsSignificant = durationIsSignificant
-		activity.didComplete(message)
+		activity.didComplete(message, returnedFromCache: returnedFromCache)
 		moveToCompleted(activity)
 		postDidChangeNotification()
 	}

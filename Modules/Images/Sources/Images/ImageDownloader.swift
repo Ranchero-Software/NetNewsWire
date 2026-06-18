@@ -116,9 +116,9 @@ private extension ImageDownloader {
 		}
 
 		do {
-			let image = try await downloadImage(url)
+			let (image, fromCache) = try await downloadImage(url)
 			if let activityOwner, let activityKind {
-				activityLog.didComplete(activityOwner, kind: activityKind)
+				activityLog.didComplete(activityOwner, kind: activityKind, returnedFromCache: fromCache)
 			}
 			cacheImage(url, image)
 			ImageMetadataDatabase.shared.clearFailure(url: url)
@@ -156,29 +156,28 @@ private extension ImageDownloader {
 		}
 	}
 
-	func downloadImage(_ url: String) async throws(ImageDownloadError) -> Data {
+	func downloadImage(_ url: String) async throws(ImageDownloadError) -> (Data, Bool) {
 		guard let imageURL = URL(string: url) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false)
 		}
 
-		let data: Data?
-		let response: URLResponse?
+		let downloadResponse: DownloadResponse
 		do {
-			(data, response) = try await Downloader.shared.download(imageURL)
+			downloadResponse = try await Downloader.shared.download(imageURL)
 		} catch {
 			Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)
 		}
 
-		if let data, !data.isEmpty, let response, response.statusIsOK {
+		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 			let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
 			saveToDisk(url, scaledData)
-			return scaledData
+			return (scaledData, downloadResponse.returnedFromCache)
 		}
 
-		let statusCode = (response as? HTTPURLResponse)?.statusCode
+		let statusCode = (downloadResponse.response as? HTTPURLResponse)?.statusCode
 		// 2xx with empty / missing body — server said OK but gave us no image bytes.
-		if let response, response.statusIsOK {
+		if let response = downloadResponse.response, response.statusIsOK {
 			throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: false)
 		}
 		let isTransient = statusCode.map { (500...599).contains($0) } ?? true

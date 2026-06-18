@@ -57,6 +57,11 @@ struct ActivityLogTextSegment {
 			result.append(ActivityLogTextSegment(text: " — \(message)", color: .secondary, weight: .regular))
 		}
 
+		if activity.returnedFromCache {
+			let fromCacheText = NSLocalizedString("from cache", comment: "Activity log — appended when a download was served from cache instead of the network")
+			result.append(ActivityLogTextSegment(text: " — \(fromCacheText)", color: .secondary, weight: .regular))
+		}
+
 		if isFailed, let error = activity.error {
 			result.append(ActivityLogTextSegment(text: " — \(error.localizedDescription)", color: .failure, weight: .regular))
 		}

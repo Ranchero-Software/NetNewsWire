@@ -59,7 +59,7 @@ import CrashReporter
 		request.httpBody = formData
 
 		Task { @MainActor in
-			Downloader.shared.download(request) { _, _, _ in }
+			Downloader.shared.download(request) { _, _ in }
 		}
 	}
 

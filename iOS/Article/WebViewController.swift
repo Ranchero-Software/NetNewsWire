@@ -696,8 +696,8 @@ private extension WebViewController {
 
 		guard let imageURL = URL(string: clickMessage.imageURL) else { return }
 
-		Downloader.shared.download(imageURL) { [weak self] data, _, error in
-			guard let self, let data, error == nil, !data.isEmpty,
+		Downloader.shared.download(imageURL) { [weak self] downloadResponse, error in
+			guard let self, let data = downloadResponse.data, error == nil, !data.isEmpty,
 				  let image = UIImage(data: data) else {
 				return
 			}

@@ -20,6 +20,7 @@ import Foundation
 	public private(set) var endDate: Date?
 	public private(set) var error: (any Error)?
 	public private(set) var completionMessage: String?
+	public private(set) var returnedFromCache = false
 
 	/// Hide or show the duration in the UI.
 	public var durationIsSignificant = true
@@ -44,10 +45,11 @@ import Foundation
 		state = .running
 	}
 
-	func didComplete(_ message: String? = nil) {
+	func didComplete(_ message: String? = nil, returnedFromCache: Bool = false) {
 		state = .completed
 		endDate = Date()
 		completionMessage = message
+		self.returnedFromCache = returnedFromCache
 	}
 
 	func didFail(_ error: any Error) {
