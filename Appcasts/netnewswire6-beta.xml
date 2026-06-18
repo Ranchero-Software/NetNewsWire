@@ -7,18 +7,15 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.1b3</title>
+			<title>NetNewsWire 7.1b4</title>
             <description><![CDATA[
   				<ul>
-				  <li>Added more activities and detail to the Activity Log and Current Activity windows
-				  <li>Fixed a memory use issue with marking read/unread/starred/unstarred
-				  <li>Reduced disk writes while syncing article statuses
-				  <li>Fixed a crash that could happen when deleting Feedly folders
-				  <li>Fixed a crash that could happen when building notification thumbnails
+				  <li>Removed images from items in contextual menus in sidebar and timeline
+				  <li>Added more detail to the Activity Log: download sizes for image and HTML‑metadata downloads, and a note when a download was served from the cache (instead of over the web)
 				</ul>
 			]]></description>
-        	<pubDate>Tue, 16 Jun 2026 08:20:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b3/NetNewsWire7.1b3.zip" sparkle:version="7102" sparkle:shortVersionString="7.1b3" length="10612703" type="application/zip" />
+        	<pubDate>Thu, 18 Jun 2026 10:30:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b4/NetNewsWire7.1b4.zip" sparkle:version="7103" sparkle:shortVersionString="7.1b4" length="10613003" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
