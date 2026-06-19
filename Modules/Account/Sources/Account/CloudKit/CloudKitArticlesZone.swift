@@ -235,7 +235,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return 0
 		}
 
-		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+		let owner = account.activityOwner
 
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: performing incremental scan")
 		let statusByRecordID = try await fetchStatusRecordMap(owner: owner)
@@ -260,7 +260,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return
 		}
 
-		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+		let owner = account.activityOwner
 
 		let statusByRecordID: [CKRecord.ID: StatusRecordInfo]
 		let contentRecordIDByStatusID: [CKRecord.ID: CKRecord.ID]
@@ -374,7 +374,7 @@ final class CloudKitArticlesZone: CloudKitZone {
 			)
 		}
 
-		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+		let owner = account.activityOwner
 
 		// Phase 1: Scan all status records
 

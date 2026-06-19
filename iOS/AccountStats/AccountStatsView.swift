@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 import RSCore
 import Account
 
@@ -164,7 +165,7 @@ private extension AccountStatsView {
 		}
 		isVacuuming = true
 		Task {
-			await AccountManager.shared.vacuumAllDatabases()
+			await (UIApplication.shared.delegate as? AppDelegate)?.vacuumAllDatabases()
 			isVacuuming = false
 			await refresh()
 		}

@@ -124,6 +124,10 @@ public enum FetchType {
 		return name
 	}
 
+	public var activityOwner: ActivityOwner {
+		.account(accountID: accountID, displayName: nameForDisplay)
+	}
+
 	public var name: String? {
 		get {
 			settings.name
@@ -398,26 +402,17 @@ public enum FetchType {
 	}
 
 	public static func validateCredentials(type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .app, kind: .validateCredentials, detail: type.displayName)
-		activityLog.didStart(id: id)
-		do {
-			let result: Credentials?
+		try await ActivityLog.shared.logActivity(owner: .app, kind: .validateCredentials, detail: type.displayName, successMessage: { $0 == nil ? "Invalid credentials" : "Credentials valid" }) {
 			switch type {
 			case .feedbin:
-				result = try await FeedbinAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+				return try await FeedbinAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			case .newsBlur:
-				result = try await NewsBlurAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+				return try await NewsBlurAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			case .freshRSS, .inoreader, .bazQux, .theOldReader:
-				result = try await ReaderAPIAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+				return try await ReaderAPIAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			default:
-				result = nil
+				return nil
 			}
-			activityLog.didComplete(id: id, message: result == nil ? "Invalid credentials" : "Credentials valid")
-			return result
-		} catch {
-			activityLog.didFail(id: id, error: error)
-			throw error
 		}
 	}
 
@@ -484,19 +479,7 @@ public enum FetchType {
 		durationIsSignificant: ((T) -> Bool)? = nil,
 		_ work: () async throws -> T
 	) async rethrows -> T {
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .account(accountID: accountID, displayName: nameForDisplay), kind: kind, detail: detail)
-		activityLog.didStart(id: id)
-
-		do {
-			let result = try await work()
-			let significant = durationIsSignificant?(result) ?? true
-			activityLog.didComplete(id: id, message: successMessage?(result), durationIsSignificant: significant)
-			return result
-		} catch {
-			activityLog.didFail(id: id, error: error)
-			throw error
-		}
+		try await ActivityLog.shared.logActivity(owner: activityOwner, kind: kind, detail: detail, successMessage: successMessage, durationIsSignificant: durationIsSignificant, work)
 	}
 
 	/// Synchronous overload of `logActivity` for non-async work.
@@ -508,18 +491,7 @@ public enum FetchType {
 		durationIsSignificant: ((T) -> Bool)? = nil,
 		_ work: () throws -> T
 	) rethrows -> T {
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .account(accountID: accountID, displayName: nameForDisplay), kind: kind, detail: detail)
-		activityLog.didStart(id: id)
-		do {
-			let result = try work()
-			let significant = durationIsSignificant?(result) ?? true
-			activityLog.didComplete(id: id, message: successMessage?(result), durationIsSignificant: significant)
-			return result
-		} catch {
-			activityLog.didFail(id: id, error: error)
-			throw error
-		}
+		try ActivityLog.shared.logActivity(owner: activityOwner, kind: kind, detail: detail, successMessage: successMessage, durationIsSignificant: durationIsSignificant, work)
 	}
 
 	// MARK: - Syncing Article Status

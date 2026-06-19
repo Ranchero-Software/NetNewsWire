@@ -107,9 +107,8 @@ public final class FeedFinder {
 	}
 
 	@MainActor private static func activityStart(url: URL) -> Int {
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .feedFinder, kind: .findFeed(urlString: url.absoluteString))
-		activityLog.didStart(id: id)
+		let id = ActivityLog.shared.createActivity(owner: .feedFinder, kind: .findFeed(urlString: url.absoluteString))
+		ActivityLog.shared.didStart(id: id)
 		return id
 	}
 
@@ -123,9 +122,8 @@ public final class FeedFinder {
 	}
 
 	@MainActor private static func activityFetchStart(url: URL) -> Int {
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .feedFinder, kind: .fetchFeedCandidate(urlString: url.absoluteString))
-		activityLog.didStart(id: id)
+		let id = ActivityLog.shared.createActivity(owner: .feedFinder, kind: .fetchFeedCandidate(urlString: url.absoluteString))
+		ActivityLog.shared.didStart(id: id)
 		return id
 	}
 

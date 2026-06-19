@@ -61,6 +61,60 @@ public extension Notification.Name {
 		return id
 	}
 
+	/// Creates and completes an activity in one call — for instantaneous markers or
+	/// work already finished by the time it's logged. No start timestamp is recorded,
+	/// so no duration is shown.
+	public func logCompletedActivity(owner: ActivityOwner, kind: ActivityKind, detail: String? = nil, message: String? = nil) {
+		let id = createActivity(owner: owner, kind: kind, detail: detail)
+		didComplete(id: id, message: message, durationIsSignificant: false)
+	}
+
+	/// Wraps `work` in an activity that times it: created and started before `work`
+	/// runs, completed with `successMessage` after, or failed (rethrowing) if `work`
+	/// throws. `durationIsSignificant` can suppress the duration for trivially fast work.
+	@discardableResult
+	public func logActivity<T>(
+		owner: ActivityOwner,
+		kind: ActivityKind,
+		detail: String? = nil,
+		successMessage: ((T) -> String?)? = nil,
+		durationIsSignificant: ((T) -> Bool)? = nil,
+		_ work: () async throws -> T
+	) async rethrows -> T {
+		let id = createActivity(owner: owner, kind: kind, detail: detail)
+		didStart(id: id)
+		do {
+			let result = try await work()
+			didComplete(id: id, message: successMessage?(result), durationIsSignificant: durationIsSignificant?(result) ?? true)
+			return result
+		} catch {
+			didFail(id: id, error: error)
+			throw error
+		}
+	}
+
+	/// Synchronous overload of `logActivity` for non-async work.
+	@discardableResult
+	public func logActivity<T>(
+		owner: ActivityOwner,
+		kind: ActivityKind,
+		detail: String? = nil,
+		successMessage: ((T) -> String?)? = nil,
+		durationIsSignificant: ((T) -> Bool)? = nil,
+		_ work: () throws -> T
+	) rethrows -> T {
+		let id = createActivity(owner: owner, kind: kind, detail: detail)
+		didStart(id: id)
+		do {
+			let result = try work()
+			didComplete(id: id, message: successMessage?(result), durationIsSignificant: durationIsSignificant?(result) ?? true)
+			return result
+		} catch {
+			didFail(id: id, error: error)
+			throw error
+		}
+	}
+
 	// MARK: - Lifecycle by Kind
 
 	public func didStart(_ owner: ActivityOwner, kind: ActivityKind) {

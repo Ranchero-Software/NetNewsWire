@@ -43,6 +43,7 @@ public enum ActivityKind: Sendable, Hashable {
 	case fetchCloudKitStats
 	case scanCloudKitStatusRecords
 	case scanCloudKitArticleRecords
+	case receiveCloudKitNotification
 
 	// Maintenance and lifecycle
 
@@ -113,6 +114,8 @@ public enum ActivityKind: Sendable, Hashable {
 			return NSLocalizedString("Scanning iCloud status records", bundle: .module, comment: "Activity kind")
 		case .scanCloudKitArticleRecords:
 			return NSLocalizedString("Scanning iCloud article records", bundle: .module, comment: "Activity kind")
+		case .receiveCloudKitNotification:
+			return NSLocalizedString("Receiving sync notification", bundle: .module, comment: "Activity kind")
 		case .subscribeToCloudKitZone:
 			return NSLocalizedString("Subscribing to zone changes", bundle: .module, comment: "Activity kind")
 		case .vacuumDatabase:

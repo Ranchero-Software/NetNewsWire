@@ -470,13 +470,7 @@ import ActivityLog
 
 	// MARK: - Vacuum
 
-	public func vacuumAllDatabases() async {
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .app, kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(errorLogDatabase.databasePath))
-		activityLog.didStart(id: id)
-		await errorLogDatabase.vacuum()
-		activityLog.didComplete(id: id)
-
+	public func vacuumAccountDatabases() async {
 		for account in accounts {
 			await account.vacuumDatabases()
 		}

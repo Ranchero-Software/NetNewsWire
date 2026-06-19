@@ -59,6 +59,89 @@ import Foundation
 		#expect(activityLog.completedActivities[0].endDate != nil)
 	}
 
+	@Test func logCompletedActivityCompletesWithoutDuration() {
+		let activityLog = ActivityLog()
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
+
+		activityLog.logCompletedActivity(owner: owner, kind: .sendArticleStatuses, message: "Done")
+
+		#expect(activityLog.pendingActivities.isEmpty)
+		#expect(activityLog.runningActivities.isEmpty)
+		#expect(activityLog.completedActivities.count == 1)
+
+		let activity = activityLog.completedActivities[0]
+		#expect(activity.state == .completed)
+		#expect(activity.completionMessage == "Done")
+		#expect(activity.endDate != nil)
+		// No start timestamp is recorded, so no duration is shown.
+		#expect(activity.startDate == nil)
+		#expect(activity.formattedDuration == nil)
+	}
+
+	@Test func logActivityReturnsResultAndCompletesWithMessage() async {
+		let activityLog = ActivityLog()
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
+
+		let result = await activityLog.logActivity(owner: owner, kind: .sendArticleStatuses, successMessage: { "sent \($0)" }) {
+			42
+		}
+
+		#expect(result == 42)
+		#expect(activityLog.pendingActivities.isEmpty)
+		#expect(activityLog.runningActivities.isEmpty)
+		#expect(activityLog.completedActivities.count == 1)
+
+		let activity = activityLog.completedActivities[0]
+		#expect(activity.state == .completed)
+		#expect(activity.completionMessage == "sent 42")
+		// Unlike logCompletedActivity, the timed wrapper starts the activity, so it has a duration.
+		#expect(activity.startDate != nil)
+		#expect(activity.endDate != nil)
+	}
+
+	@Test func logActivityRecordsFailureAndRethrows() async {
+		let activityLog = ActivityLog()
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
+		struct TestError: Error {}
+
+		await #expect(throws: TestError.self) {
+			try await activityLog.logActivity(owner: owner, kind: .refreshFeedList) {
+				throw TestError()
+			}
+		}
+
+		#expect(activityLog.runningActivities.isEmpty)
+		#expect(activityLog.completedActivities.count == 1)
+		#expect(activityLog.completedActivities[0].state == .failed)
+		#expect(activityLog.completedActivities[0].error != nil)
+	}
+
+	@Test func logActivitySuppressesDurationWhenNotSignificant() async {
+		let activityLog = ActivityLog()
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
+
+		await activityLog.logActivity(owner: owner, kind: .sendArticleStatuses, durationIsSignificant: { _ in false }) {
+		}
+
+		let activity = activityLog.completedActivities[0]
+		#expect(activity.state == .completed)
+		#expect(activity.startDate != nil)
+		#expect(activity.formattedDuration == nil)
+	}
+
+	@Test func logActivitySyncOverloadCompletes() {
+		let activityLog = ActivityLog()
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
+
+		let result = activityLog.logActivity(owner: owner, kind: .vacuumDatabase) {
+			"done"
+		}
+
+		#expect(result == "done")
+		#expect(activityLog.completedActivities.count == 1)
+		#expect(activityLog.completedActivities[0].state == .completed)
+	}
+
 	@Test func didFailByKind() {
 		let activityLog = ActivityLog()
 		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")

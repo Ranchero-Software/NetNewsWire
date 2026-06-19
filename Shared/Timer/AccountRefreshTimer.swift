@@ -92,10 +92,7 @@ import ActivityLog
 		}
 
 		if isSystemSleeping {
-			let activityLog = ActivityLog.shared
-			let id = activityLog.createActivity(owner: .app, kind: .refreshAll)
-			activityLog.didStart(id: id)
-			activityLog.didComplete(id: id, message: "Skipped — computer is asleep", durationIsSignificant: false)
+			ActivityLog.shared.logCompletedActivity(owner: .app, kind: .refreshAll, message: "Skipped — computer is asleep")
 
 			lastTimedRefresh = Date()
 			update()

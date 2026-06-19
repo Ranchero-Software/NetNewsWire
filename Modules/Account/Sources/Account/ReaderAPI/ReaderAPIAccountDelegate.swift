@@ -688,12 +688,10 @@ private extension ReaderAPIAccountDelegate {
 	/// Returns a per-page handler for paginated `retrieveItemIDs` calls, logging each
 	/// page as a numbered sub-activity of `kind` reporting the page's article-ID count.
 	func articleIDPageHandler(for account: Account, kind: ActivityKind) -> @MainActor (Int) -> Void {
-		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+		let owner = account.activityOwner
 		return { count in
-			let activityLog = ActivityLog.shared
-			let id = activityLog.createActivity(owner: owner, kind: kind, detail: activityLog.nextTaskNumberString())
-			activityLog.didStart(id: id)
-			activityLog.didComplete(id: id, message: "\(count) article IDs", durationIsSignificant: false)
+			let detail = ActivityLog.shared.nextTaskNumberString()
+			ActivityLog.shared.logCompletedActivity(owner: owner, kind: kind, detail: detail, message: "\(count) article IDs")
 		}
 	}
 

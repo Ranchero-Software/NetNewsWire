@@ -80,9 +80,8 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 		Self.logger.debug("OAuthAccountAuthorizationOperation: run")
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .app, kind: .validateCredentials, detail: "Authorizing \(accountType.displayName)")
-		activityLog.didStart(id: id)
+		let id = ActivityLog.shared.createActivity(owner: .app, kind: .validateCredentials, detail: "Authorizing \(accountType.displayName)")
+		ActivityLog.shared.didStart(id: id)
 		activityID = id
 
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
@@ -114,13 +113,12 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 		Self.logger.debug("OAuthAccountAuthorizationOperation: noteDidComplete")
 
 		if let activityID {
-			let activityLog = ActivityLog.shared
 			if let error {
-				activityLog.didFail(id: activityID, error: error)
+				ActivityLog.shared.didFail(id: activityID, error: error)
 			} else if isCanceled {
-				activityLog.didFail(id: activityID, error: CocoaError(.userCancelled))
+				ActivityLog.shared.didFail(id: activityID, error: CocoaError(.userCancelled))
 			} else {
-				activityLog.didComplete(id: activityID)
+				ActivityLog.shared.didComplete(id: activityID)
 			}
 			self.activityID = nil
 		}

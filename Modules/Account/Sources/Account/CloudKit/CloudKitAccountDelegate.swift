@@ -111,6 +111,8 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 		lastNoChangeSyncDate = nil
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
+		ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .receiveCloudKitNotification)
+
 		await withCheckedContinuation { continuation in
 			let op = CloudKitRemoteNotificationOperation(accountZone: accountZone, articlesZone: articlesZone, accountID: account.accountID, accountDisplayName: account.nameForDisplay, userInfo: userInfo)
 			op.completionBlock = { _ in
@@ -626,14 +628,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 				what = "changes"
 			}
 			return { _, changed, deleted, _ in
-				let activityLog = ActivityLog.shared
-				let owner = ActivityOwner.account(accountID: accountID, displayName: accountDisplayName)
-				let taskNumber = activityLog.nextTaskNumberString()
+				let detail = "Fetching \(what) \(ActivityLog.shared.nextTaskNumberString())"
 				let message = cloudKitSyncMessage(changed: changed, deleted: deleted)
-				let detail = "Fetching \(what) \(taskNumber)"
-				let id = activityLog.createActivity(owner: owner, kind: kind, detail: detail)
-				activityLog.didStart(id: id)
-				activityLog.didComplete(id: id, message: message)
+				ActivityLog.shared.logCompletedActivity(owner: .account(accountID: accountID, displayName: accountDisplayName), kind: kind, detail: detail, message: message)
 			}
 		}
 		accountZone.fetchChangesPageHandler = makePageHandler(kind: .refreshFeedList)
@@ -792,7 +789,7 @@ private extension CloudKitAccountDelegate {
 		syncProgress.addTasks(3)
 
 		let activityLog = ActivityLog.shared
-		let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
+		let owner = account.activityOwner
 
 		// Overall .refreshAll activity for this account, wrapping every stage
 		// below. Individual activities (fetchChangesInZone, receive/send operations)
@@ -811,16 +808,14 @@ private extension CloudKitAccountDelegate {
 			}
 		}
 
-		let fetchChangesTaskNumber = activityLog.nextTaskNumberString()
-		let fetchChangesID = activityLog.createActivity(owner: owner, kind: .refreshFeedList, detail: "Fetching account zone changes \(fetchChangesTaskNumber)")
-		activityLog.didStart(id: fetchChangesID)
+		let fetchChangesDetail = "Fetching account zone changes \(activityLog.nextTaskNumberString())"
 
 		do {
-			try await accountZone.fetchChangesInZone()
-			activityLog.didComplete(id: fetchChangesID)
+			try await activityLog.logActivity(owner: owner, kind: .refreshFeedList, detail: fetchChangesDetail) {
+				try await accountZone.fetchChangesInZone()
+			}
 			syncProgress.completeTask()
 		} catch {
-			activityLog.didFail(id: fetchChangesID, error: error)
 			if case CloudKitZoneError.userDeletedZone = error {
 				account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
 				for folder in account.folders ?? Set<Folder>() {
@@ -1104,8 +1099,7 @@ private extension CloudKitAccountDelegate {
 		}
 
 		do {
-			let owner = ActivityOwner.account(accountID: account.accountID, displayName: account.nameForDisplay)
-			try await articlesZone.deleteArticles(feedExternalID, owner: owner)
+			try await articlesZone.deleteArticles(feedExternalID, owner: account.activityOwner)
 			feed.dropConditionalGetInfo()
 			syncProgress.completeTask()
 		} catch {

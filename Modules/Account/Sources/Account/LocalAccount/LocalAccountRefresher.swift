@@ -107,23 +107,20 @@ import os
 		outstandingParseTasks = 0
 		downloadSessionIsComplete = false
 
-		// Create activities for every feed (filtered + skipped) so the windows
-		// reflect the full set. Skipped feeds are completed immediately with
-		// their reason; the rest are completed by the DownloadSessionDelegate
-		// callbacks below.
+		// Create a pending activity for each feed that will be fetched,
+		// to be completed later by the DownloadSessionDelegate callbacks.
+		// Log skipped feeds as already completed with their reason.
 		if let owner = activityOwner {
 			let activityLog = ActivityLog.shared
 			if publishesRefreshActivity {
 				refreshActivityID = activityLog.createActivity(owner: owner, kind: .refreshAll)
 				activityLog.didStart(id: refreshActivityID!)
 			}
-			for feed in feeds {
+			for feed in filteredFeeds {
 				activityLog.createActivity(owner: owner, kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay)
 			}
 			for (feed, reason) in skippedFeeds {
-				let kind = ActivityKind.refreshFeedContent(feedURL: feed.url)
-				activityLog.didStart(owner, kind: kind)
-				activityLog.didComplete(owner, kind: kind, message: reason, durationIsSignificant: false)
+				activityLog.logCompletedActivity(owner: owner, kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay, message: reason)
 			}
 		}
 
@@ -218,10 +215,7 @@ import os
 			return
 		}
 		let detail = urlToFeedDictionary[url.absoluteString]?.nameForDisplay
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: owner, kind: .followFeedRedirect, detail: detail)
-		activityLog.didStart(id: id)
-		activityLog.didComplete(id: id, message: "\(statusCode) \(HTTPURLResponse.localizedString(forStatusCode: statusCode)): \(fromURL.absoluteString) → \(toURL.absoluteString)", durationIsSignificant: false)
+		ActivityLog.shared.logCompletedActivity(owner: owner, kind: .followFeedRedirect, detail: detail, message: "\(statusCode) \(HTTPURLResponse.localizedString(forStatusCode: statusCode)): \(fromURL.absoluteString) → \(toURL.absoluteString)")
 	}
 
 	func downloadSession(_ downloadSession: DownloadSession, didSkip url: URL, reason: String) {

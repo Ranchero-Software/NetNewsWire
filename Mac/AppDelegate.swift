@@ -824,26 +824,6 @@ extension AppDelegate {
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 
-	/// Vacuum every database the app owns — per-account databases plus the
-	/// app-level HTMLMetadata and ImageMetadata databases.
-	func vacuumAllDatabases() async {
-		await AccountManager.shared.vacuumAllDatabases()
-		await vacuumAndLog(databasePath: HTMLMetadataDatabase.shared.databasePath) {
-			await HTMLMetadataDatabase.shared.vacuum()
-		}
-		await vacuumAndLog(databasePath: ImageMetadataDatabase.shared.databasePath) {
-			await ImageMetadataDatabase.shared.vacuum()
-		}
-	}
-
-	private func vacuumAndLog(databasePath: String, _ work: () async -> Void) async {
-		let activityLog = ActivityLog.shared
-		let id = activityLog.createActivity(owner: .app, kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(databasePath))
-		activityLog.didStart(id: id)
-		await work()
-		activityLog.didComplete(id: id)
-	}
-
 	@IBAction func openImageCacheFolder(_ sender: Any?) {
 		NSWorkspace.shared.open(AppConfig.cacheFolder)
 	}
