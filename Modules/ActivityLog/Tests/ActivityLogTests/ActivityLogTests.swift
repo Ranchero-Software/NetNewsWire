@@ -82,9 +82,9 @@ import Foundation
 		let activityLog = ActivityLog()
 		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
-		let result = await activityLog.logActivity(owner: owner, kind: .sendArticleStatuses, successMessage: { "sent \($0)" }) {
+		let result = await activityLog.logActivity(owner: owner, kind: .sendArticleStatuses, successMessage: { "sent \($0)" }, {
 			42
-		}
+		})
 
 		#expect(result == 42)
 		#expect(activityLog.pendingActivities.isEmpty)
@@ -120,8 +120,8 @@ import Foundation
 		let activityLog = ActivityLog()
 		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
 
-		await activityLog.logActivity(owner: owner, kind: .sendArticleStatuses, durationIsSignificant: { _ in false }) {
-		}
+		await activityLog.logActivity(owner: owner, kind: .sendArticleStatuses, durationIsSignificant: { _ in false }, {
+		})
 
 		let activity = activityLog.completedActivities[0]
 		#expect(activity.state == .completed)

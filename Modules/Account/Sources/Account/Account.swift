@@ -402,7 +402,7 @@ public enum FetchType {
 	}
 
 	public static func validateCredentials(type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
-		try await ActivityLog.shared.logActivity(owner: .app, kind: .validateCredentials, detail: type.displayName, successMessage: { $0 == nil ? "Invalid credentials" : "Credentials valid" }) {
+		try await ActivityLog.shared.logActivity(owner: .app, kind: .validateCredentials, detail: type.displayName, successMessage: { $0 == nil ? "Invalid credentials" : "Credentials valid" }, {
 			switch type {
 			case .feedbin:
 				return try await FeedbinAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
@@ -413,7 +413,7 @@ public enum FetchType {
 			default:
 				return nil
 			}
-		}
+		})
 	}
 
 	nonisolated internal static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
