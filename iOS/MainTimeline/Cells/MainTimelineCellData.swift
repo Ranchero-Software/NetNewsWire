@@ -27,6 +27,7 @@ import Images
 	let starred: Bool
 	let numberOfLines: Int
 	let iconSize: IconSize
+	let thumbnailURL: URL? // Article thumbnail URL
 
 	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize) {
 
@@ -64,6 +65,12 @@ import Images
 		self.numberOfLines = numberOfLines
 		self.iconSize = iconSize
 
+		// Prefer the article's imageURL; fall back to the first image in its content.
+		if let imageURL = article.imageURL {
+			self.thumbnailURL = imageURL
+		} else {
+			self.thumbnailURL = article.extractFirstImageURL()
+		}
 	}
 
 	init() { // Empty
@@ -80,6 +87,7 @@ import Images
 		self.starred = false
 		self.numberOfLines = 0
 		self.iconSize = .medium
+		self.thumbnailURL = nil
 	}
 
 }
