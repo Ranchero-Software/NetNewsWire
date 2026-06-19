@@ -142,6 +142,23 @@ import Foundation
 		#expect(activityLog.completedActivities[0].state == .completed)
 	}
 
+	@Test func logActivitySyncOverloadRecordsFailureAndRethrows() {
+		let activityLog = ActivityLog()
+		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
+		struct TestError: Error {}
+
+		#expect(throws: TestError.self) {
+			try activityLog.logActivity(owner: owner, kind: .vacuumDatabase) {
+				throw TestError()
+			}
+		}
+
+		#expect(activityLog.runningActivities.isEmpty)
+		#expect(activityLog.completedActivities.count == 1)
+		#expect(activityLog.completedActivities[0].state == .failed)
+		#expect(activityLog.completedActivities[0].error != nil)
+	}
+
 	@Test func didFailByKind() {
 		let activityLog = ActivityLog()
 		let owner = ActivityOwner.account(accountID: "account1", displayName: "Account One")
