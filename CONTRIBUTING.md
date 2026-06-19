@@ -8,6 +8,8 @@ Also: just because a ticket exists doesn’t mean we’re going to implement a f
 
 **Do not open a PR first. Ask first!** If you open a PR, it will be ignored or closed without comment. Even a draft PR.
 
+Also: **We are not adding AI features right now.** Maybe later and maybe not. If your PR adds AI features, we will close it.
+
 Here’s how to contribute:
 
 1. Find or file a ticket describing the bug you want to fix or feature you want to add.
