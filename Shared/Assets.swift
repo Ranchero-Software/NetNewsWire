@@ -71,8 +71,7 @@ struct Assets {
 		static var readOpen: RSImage { RSImage(symbol: "circle")! }
 		static var refresh: RSImage { RSImage(symbol: "arrow.clockwise")! }
 		static var swipeMarkUnstarred: RSImage { RSImage(symbol: "star")! }
-		static var timelineStarSelected: RSImage { RSImage(named: "timelineStar")!.tinted(with: .white) }
-		static var timelineStarUnselected: RSImage { RSImage(named: "timelineStar")!.tinted(with: Assets.Colors.star) }
+		static var timelineStar: RSImage { RSImage(named: "timelineStar")! }
 		static var markBelowAsRead: RSImage { RSImage(named: "markBelowAsRead")! }
 		static var markAboveAsRead: RSImage { RSImage(named: "markAboveAsRead")! }
 		static var searchFeed: IconImage {
