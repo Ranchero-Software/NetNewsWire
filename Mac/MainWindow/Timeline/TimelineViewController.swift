@@ -162,6 +162,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var undoableCommands = [UndoableCommand]()
 
+	// MARK: - Layout Configuration
+	private var useModernLayout: Bool {
+		// Modern layout is on by default.
+		return true
+	}
+
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 	private var exceptionArticleFetcher: ArticleFetcher?
@@ -888,6 +894,16 @@ extension TimelineViewController: NSTableViewDataSource {
 	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
 		// Keeping -[NSTableViewDelegate tableView:heightOfRow:] implemented fixes
 		// an issue that the bottom inset of NSTableView disappears on macOS Monterey.
+
+		// Modern layout: self-size the height from the actual content (title up to 2 lines + summary up to 2 lines), with symmetric vertical padding.
+		if useModernLayout {
+			guard let article = articles.articleAtRow(row) else {
+				return tableView.rowHeight
+			}
+			let cellData = configureTimelineCellData(for: article)
+			return TimelineModernCellLayout.height(for: tableView.bounds.width, cellData: cellData)
+		}
+
 		return tableView.rowHeight
 	}
 }
@@ -907,9 +923,15 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private static let timelineCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineCell")
+	private static let modernCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "modernTimelineCell")
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+		// Modern layout.
+		if useModernLayout {
+			return configureModernCell(tableView, row: row)
+		}
 
+		// Legacy layout, kept for compatibility.
 		func configure(_ cell: TimelineTableCellView) {
 			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
 			if let article = articles.articleAtRow(row) {
@@ -928,6 +950,36 @@ extension TimelineViewController: NSTableViewDelegate {
 		cell.identifier = TimelineViewController.timelineCellIdentifier
 		configure(cell)
 		return cell
+	}
+
+	private func configureModernCell(_ tableView: NSTableView, row: Int) -> NSView? {
+		guard let article = articles.articleAtRow(row) else {
+			return nil
+		}
+
+		let cellData = configureTimelineCellData(for: article)
+
+		if let cell = tableView.makeView(withIdentifier: TimelineViewController.modernCellIdentifier, owner: nil) as? TimelineModernCellView {
+			cell.cellData = cellData
+			return cell
+		}
+
+		let cell = TimelineModernCellView()
+		cell.identifier = TimelineViewController.modernCellIdentifier
+		cell.cellData = cellData
+		return cell
+	}
+
+	private func configureTimelineCellData(for article: Article) -> TimelineCellData {
+		let iconImage = article.iconImage()
+		return TimelineCellData(
+			article: article,
+			showFeedName: showFeedNames,
+			feedName: article.feed?.nameForDisplay,
+			byline: article.byline(),
+			iconImage: iconImage,
+			showIcon: true
+		)
 	}
 
 	func tableViewSelectionDidChange(_ notification: Notification) {

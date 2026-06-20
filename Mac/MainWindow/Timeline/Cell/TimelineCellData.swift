@@ -25,6 +25,7 @@ import Images
 	let showIcon: Bool // Make space even when icon is nil
 	let read: Bool
 	let starred: Bool
+	let thumbnailURL: URL? // Article thumbnail URL
 
 	init(article: Article, showFeedName: TimelineShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool) {
 
@@ -59,6 +60,13 @@ import Images
 
 		self.read = article.status.read
 		self.starred = article.status.starred
+
+		// Prefer the article's imageURL; fall back to the first image in its content.
+		if let imageURL = article.imageURL {
+			self.thumbnailURL = imageURL
+		} else {
+			self.thumbnailURL = article.extractFirstImageURL()
+		}
 	}
 
 	init() { // Empty
@@ -73,5 +81,6 @@ import Images
 		self.read = true
 		self.starred = false
 		self.attributedTitle = NSAttributedString()
+		self.thumbnailURL = nil
 	}
 }

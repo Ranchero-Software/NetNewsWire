@@ -23,6 +23,13 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		static let standardIndex0 = "MainTimelineCellIndexZero"
 		static let icon = "MainTimelineCellIcon"
 		static let iconIndex0 = "MainTimelineCellIconIndexZero"
+		static let modern = "MainTimelineModernCell"
+	}
+
+	// MARK: - Layout Configuration
+	private var useModernLayout: Bool {
+		// Modern layout is on by default.
+		return true
 	}
 
 	// MARK: Private Variables
@@ -209,6 +216,11 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		navigationItem.titleView = navigationBarTitleLabel
 		if #available(iOS 26, *) {
 			navigationItem.subtitleView = navigationBarSubtitleTitleLabel
+		}
+
+		// Enforce a minimum width so the thumbnail and title are not too cramped.
+		if let collectionView = collectionView {
+			collectionView.widthAnchor.constraint(greaterThanOrEqualToConstant: 320).isActive = true
 		}
         // Do any additional setup after loading the view.
     }
@@ -679,6 +691,9 @@ private extension MainTimelineModernViewController {
 	}
 
 	private func configureCollectionView(_ dataSource: UICollectionViewDiffableDataSource<Int, Article>) {
+		// Register the modern cell.
+		collectionView?.register(MainTimelineModernCell.self, forCellWithReuseIdentifier: CellIdentifier.modern)
+
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
 		config.showsSeparators = false
 		config.headerMode = .none
@@ -846,7 +861,17 @@ private extension MainTimelineModernViewController {
 				guard let self else {
 					return nil
 				}
+
 				let cellData = self.configure(article: article)
+
+				// Modern layout.
+				if self.useModernLayout {
+					let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.modern, for: indexPath) as! MainTimelineModernCell
+					cell.cellData = cellData
+					return cell
+				}
+
+				// Legacy layout, kept for compatibility.
 				if self.showIcons {
 					if indexPath.row == 0 {
 						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.iconIndex0, for: indexPath) as! MainTimelineCollectionViewCell
