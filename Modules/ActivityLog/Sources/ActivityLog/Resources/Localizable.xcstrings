@@ -157,6 +157,9 @@
         }
       }
     },
+    "Receiving sync notification" : {
+      "comment" : "Activity kind"
+    },
     "Refresh all" : {
       "comment" : "Activity kind",
       "localizations" : {
