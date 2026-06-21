@@ -155,22 +155,22 @@ struct Assets {
 
 	@MainActor struct Colors {
 #if os(macOS)
-		static var primaryAccent: RSColor { RSColor(named: "AccentColor")! }
-		static var timelineSeparator: RSColor { NSColor(named: "timelineSeparatorColor")! }
-		static var iconLightBackground: RSColor { NSColor(named: "iconLightBackgroundColor")! }
-		static var iconDarkBackground: RSColor { NSColor(named: "iconDarkBackgroundColor")! }
-		static var star: RSColor { RSColor(named: "StarColor")! }
-		static var sidebarUnreadCountBackground: RSColor { RSColor(named: "SidebarUnreadCountBackground")! }
-		static var sidebarUnreadCountText: RSColor { RSColor(named: "SidebarUnreadCountText")! }
+		static let primaryAccent = RSColor(named: "AccentColor")!
+		static let timelineSeparator = NSColor(named: "timelineSeparatorColor")!
+		static let iconLightBackground = NSColor(named: "iconLightBackgroundColor")!
+		static let iconDarkBackground = NSColor(named: "iconDarkBackgroundColor")!
+		static let star = RSColor(named: "StarColor")!
+		static let sidebarUnreadCountBackground = RSColor(named: "SidebarUnreadCountBackground")!
+		static let sidebarUnreadCountText = RSColor(named: "SidebarUnreadCountText")!
 #else // iOS
-		static var primaryAccent: RSColor { RSColor(named: "primaryAccentColor")! }
-		static var secondaryAccent: RSColor { RSColor(named: "secondaryAccentColor")! }
-		static var star: RSColor { RSColor(named: "starColor")! }
-		static var vibrantText: RSColor { RSColor(named: "vibrantTextColor")! }
-		static var controlBackground: RSColor { RSColor(named: "controlBackgroundColor")! }
-		static var iconBackground: RSColor { RSColor(named: "iconBackgroundColor")! }
-		static var fullScreenBackground: RSColor { RSColor(named: "fullScreenBackgroundColor")! }
-		static var sectionHeader: RSColor { RSColor(named: "sectionHeaderColor")! }
+		static let primaryAccent = RSColor(named: "primaryAccentColor")!
+		static let secondaryAccent = RSColor(named: "secondaryAccentColor")!
+		static let star = RSColor(named: "starColor")!
+		static let vibrantText = RSColor(named: "vibrantTextColor")!
+		static let controlBackground = RSColor(named: "controlBackgroundColor")!
+		static let iconBackground = RSColor(named: "iconBackgroundColor")!
+		static let fullScreenBackground = RSColor(named: "fullScreenBackgroundColor")!
+		static let sectionHeader = RSColor(named: "sectionHeaderColor")!
 #endif
 	}
 }
