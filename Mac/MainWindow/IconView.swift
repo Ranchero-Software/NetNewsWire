@@ -19,17 +19,19 @@ final class IconView: NSView {
 					imageView.contentTintColor = NSColor(cgColor: tintColor)
 				}
 
-				if NSApplication.shared.effectiveAppearance.isDarkMode {
-					if self.iconImage?.isDark ?? false {
-						self.isDiscernable = false
+				if iconImage?.isBackgroundSuppressed ?? false {
+					isDiscernable = true
+				} else if NSApplication.shared.effectiveAppearance.isDarkMode {
+					if iconImage?.isDark ?? false {
+						isDiscernable = false
 					} else {
-						self.isDiscernable = true
+						isDiscernable = true
 					}
 				} else {
-					if self.iconImage?.isBright ?? false {
-						self.isDiscernable = false
+					if iconImage?.isBright ?? false {
+						isDiscernable = false
 					} else {
-						self.isDiscernable = true
+						isDiscernable = true
 					}
 				}
 
