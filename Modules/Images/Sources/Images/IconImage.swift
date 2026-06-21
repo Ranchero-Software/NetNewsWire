@@ -22,7 +22,7 @@ public final class IconImage: @unchecked Sendable {
 	public let image: RSImage
 	public let isSymbol: Bool
 	public let isBackgroundSuppressed: Bool
-	public let preferredColor: CGColor?
+	public let preferredColor: RSColor?
 
 	private let cachedLuminanceType = OSAllocatedUnfairLock<ImageLuminanceType?>(initialState: nil)
 	private static let luminanceQueue = DispatchQueue(label: "com.ranchero.NetNewsWire.IconImage.luminance", qos: .utility, attributes: .concurrent)
@@ -35,7 +35,7 @@ public final class IconImage: @unchecked Sendable {
 		luminanceType == .bright
 	}
 
-	public init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSuppressed: Bool = false, preferredColor: CGColor? = nil) {
+	public init(_ image: RSImage, isSymbol: Bool = false, isBackgroundSuppressed: Bool = false, preferredColor: RSColor? = nil) {
 		self.image = image
 		self.isSymbol = isSymbol
 		self.preferredColor = preferredColor

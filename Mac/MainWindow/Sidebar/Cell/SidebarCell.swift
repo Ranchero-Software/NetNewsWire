@@ -145,14 +145,14 @@ private extension SidebarCell {
 		var updatedIconImage = iconImage
 
 		if let iconImage = iconImage, iconImage.isSymbol {
-			var tintColor: CGColor
+			var tintColor: NSColor
 			if backgroundStyle != .normal {
-				tintColor = NSColor.white.cgColor
+				tintColor = NSColor.white
 			} else {
 				if let preferredColor = iconImage.preferredColor {
 					tintColor = preferredColor
 				} else {
-					tintColor = NSColor.controlAccentColor.cgColor
+					tintColor = NSColor.controlAccentColor
 				}
 			}
 			updatedIconImage = IconImage(iconImage.image, isSymbol: iconImage.isSymbol, isBackgroundSuppressed: iconImage.isBackgroundSuppressed, preferredColor: tintColor)

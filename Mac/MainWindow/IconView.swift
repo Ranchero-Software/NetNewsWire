@@ -16,7 +16,7 @@ final class IconView: NSView {
 			if iconImage !== oldValue {
 				imageView.image = iconImage?.image
 				if let tintColor = iconImage?.preferredColor {
-					imageView.contentTintColor = NSColor(cgColor: tintColor)
+					imageView.contentTintColor = tintColor
 				}
 
 				if iconImage?.isBackgroundSuppressed ?? false {

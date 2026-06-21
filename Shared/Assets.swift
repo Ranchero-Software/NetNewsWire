@@ -47,12 +47,7 @@ struct Assets {
 		static var articleExtractorOff: RSImage { RSImage(named: "articleExtractorOff")! }
 		static let share = RSImage(symbol: "square.and.arrow.up")!
 		static let folder = RSImage(symbol: "folder")!
-		static var starredFeed: IconImage {
-			IconImage(starClosed,
-					  isSymbol: true,
-					  isBackgroundSuppressed: true,
-					  preferredColor: Assets.Colors.star.cgColor)
-		}
+		static let starredFeed = IconImage(starClosed, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.star)
 
 #if os(macOS)
 		static var accountLocal: RSImage { RSImage(named: "accountLocal")! }
@@ -74,32 +69,13 @@ struct Assets {
 		static var timelineStar: RSImage { RSImage(named: "timelineStar")! }
 		static var markBelowAsRead: RSImage { RSImage(named: "markBelowAsRead")! }
 		static var markAboveAsRead: RSImage { RSImage(named: "markAboveAsRead")! }
-		static var searchFeed: IconImage {
-			IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
-		}
+		static let searchFeed = IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
 		static let swipeMarkStarred = RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
 		static let swipeMarkRead = RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
 		static let swipeMarkUnread = RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
-		static var mainFolder: IconImage {
-			IconImage(folder,
-					  isSymbol: true,
-					  isBackgroundSuppressed: true,
-					  preferredColor: Assets.Colors.primaryAccent.cgColor)
-		}
-		static var todayFeed: IconImage {
-			let image = RSImage(symbol: "sun.max.fill")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: NSColor.orange.cgColor)
-		}
-		static var unreadFeed: IconImage {
-			let image = RSImage(symbol: "largecircle.fill.circle")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: Assets.Colors.primaryAccent.cgColor)
-		}
+		static let mainFolder = IconImage(folder, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.primaryAccent)
+		static let todayFeed = IconImage(RSImage(symbol: "sun.max.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: NSColor.orange)
+		static let unreadFeed = IconImage(RSImage(symbol: "largecircle.fill.circle")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.primaryAccent)
 
 #else // iOS
 		static var accountLocalPadImage: RSImage { RSImage(named: "accountLocalPad")! }
@@ -134,40 +110,15 @@ struct Assets {
 		static let smartFeed = RSImage(symbol: "gear")!
 		static let trash = RSImage(symbol: "trash")!
 
-		static var searchFeed: IconImage {
-			IconImage(RSImage(symbol: "magnifyingglass")!, isSymbol: true)
-		}
-		static var mainFolder: IconImage {
-			IconImage(folder,
-					  isSymbol: true,
-					  isBackgroundSuppressed: true,
-					  preferredColor: Assets.Colors.secondaryAccent.cgColor)
-		}
-		static var todayFeed: IconImage {
-			let image = RSImage(symbol: "sun.max.fill")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: UIColor.systemOrange.cgColor)
-		}
-		static var unreadFeed: IconImage {
-			let image = RSImage(symbol: "largecircle.fill.circle")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: Assets.Colors.secondaryAccent.cgColor)
-		}
+		static let searchFeed = IconImage(RSImage(symbol: "magnifyingglass")!, isSymbol: true)
+		static let mainFolder = IconImage(folder, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.secondaryAccent)
+		static let todayFeed = IconImage(RSImage(symbol: "sun.max.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange)
+		static let unreadFeed = IconImage(RSImage(symbol: "largecircle.fill.circle")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.secondaryAccent)
 		static var timelineStar: RSImage {
 			let image = RSImage(symbol: "star.fill")!
 			return image.withTintColor(Assets.Colors.star, renderingMode: .alwaysOriginal)
 		}
-		static var unreadCellIndicator: IconImage {
-			let image = RSImage(symbol: "circle.fill")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: Assets.Colors.secondaryAccent.cgColor)
-		}
+		static let unreadCellIndicator = IconImage(RSImage(symbol: "circle.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.secondaryAccent)
 #endif
 	}
 
