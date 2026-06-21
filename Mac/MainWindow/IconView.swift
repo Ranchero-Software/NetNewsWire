@@ -43,7 +43,7 @@ final class IconView: NSView {
 
 	private var isDiscernable = true
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 
