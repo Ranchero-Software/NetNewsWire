@@ -23,6 +23,7 @@ import Images
 		let numberOfLines: Int
 		let contentSizeCategory: UIContentSizeCategory
 		let attributedText: NSAttributedString
+		let lineBreakMode: NSLineBreakMode
 		let rangeOfTitle: NSRange?
 		let rangeOfSummary: NSRange?
 	}
@@ -92,7 +93,7 @@ final class MainTimelineCollectionViewCell: UICollectionViewCell {
 	// Paragraph Styles
 	private static let baseWrappingParagraphStyle: NSParagraphStyle = {
 		let style = NSMutableParagraphStyle()
-		style.lineBreakMode = .byTruncatingTail
+		style.lineBreakMode = .byWordWrapping
 		style.lineBreakStrategy = []
 		style.hyphenationFactor = 1.0
 		style.allowsDefaultTighteningForTruncation = true
@@ -265,6 +266,7 @@ final class MainTimelineCollectionViewCell: UICollectionViewCell {
 		}
 
 		articleContent.attributedText = entry.attributedText
+		articleContent.lineBreakMode = entry.lineBreakMode
 		rangeOfTitle = entry.rangeOfTitle
 		rangeOfSummary = entry.rangeOfSummary
 	}
@@ -289,11 +291,12 @@ final class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
 
-			// 2. If the title already fills the available lines, it occupies the whole label.
+			// 2. If the title already fills the available lines, it occupies the whole label and
+			// truncates with an ellipsis if it overflows.
 			let linesUsed = countLines(titleAttributed, width: width)
 			if linesUsed >= numberOfLines {
 				let titleRange = NSRange(location: 0, length: titleAttributed.length)
-				return Self.entry(width, numberOfLines, contentSizeCategory, titleAttributed, titleRange, nil)
+				return Self.entry(width, numberOfLines, contentSizeCategory, titleAttributed, .byTruncatingTail, titleRange, nil)
 			}
 
 			attributedCellText.append(titleAttributed)
@@ -323,11 +326,15 @@ final class MainTimelineCollectionViewCell: UICollectionViewCell {
 			attributedCellText.append(summaryAttributed)
 		}
 
-		return Self.entry(width, numberOfLines, contentSizeCategory, attributedCellText, rangeOfTitle, rangeOfSummary)
+		// The whole label truncates with an ellipsis only when the combined title+summary overflows;
+		// when it fits, wrap so a fitting title isn't given a spurious ellipsis by the trailing summary.
+		let linesUsed = countLines(attributedCellText, width: width)
+		let lineBreakMode: NSLineBreakMode = linesUsed >= numberOfLines ? .byTruncatingTail : .byWordWrapping
+		return Self.entry(width, numberOfLines, contentSizeCategory, attributedCellText, lineBreakMode, rangeOfTitle, rangeOfSummary)
 	}
 
-	private static func entry(_ width: CGFloat, _ numberOfLines: Int, _ contentSizeCategory: UIContentSizeCategory, _ attributedText: NSAttributedString, _ rangeOfTitle: NSRange?, _ rangeOfSummary: NSRange?) -> ArticleContentCache.Entry {
-		ArticleContentCache.Entry(width: width, numberOfLines: numberOfLines, contentSizeCategory: contentSizeCategory, attributedText: attributedText, rangeOfTitle: rangeOfTitle, rangeOfSummary: rangeOfSummary)
+	private static func entry(_ width: CGFloat, _ numberOfLines: Int, _ contentSizeCategory: UIContentSizeCategory, _ attributedText: NSAttributedString, _ lineBreakMode: NSLineBreakMode, _ rangeOfTitle: NSRange?, _ rangeOfSummary: NSRange?) -> ArticleContentCache.Entry {
+		ArticleContentCache.Entry(width: width, numberOfLines: numberOfLines, contentSizeCategory: contentSizeCategory, attributedText: attributedText, lineBreakMode: lineBreakMode, rangeOfTitle: rangeOfTitle, rangeOfSummary: rangeOfSummary)
 	}
 
 	func adjustArticleContentColor() {
