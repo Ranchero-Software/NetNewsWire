@@ -38,8 +38,6 @@ public struct Author: Codable, Hashable, Sendable {
 
 	public static func authorsWithJSON(_ data: Data) -> Set<Author>? {
 		// This is JSON stored in the database, not the JSON Feed version of an author.
-		// Sometimes this shows up as the site of a leak. It’s a real leak, but small.
-		// The leak appears to be in Apple code.
 		let decoder = JSONDecoder()
 		do {
 			let authors = try decoder.decode([Author].self, from: data)
