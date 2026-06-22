@@ -39,6 +39,10 @@ public extension CGImage {
 		// is (2^10)^3 = 1 billion color options!
 		guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorSpace, bitmapInfo: bitmapInfo) else { return nil }
 
+		// We only need an average, so nearest-neighbor sampling is plenty — and much faster
+		// than the default interpolation when downscaling a large source image.
+		context.interpolationQuality = .none
+
 		// Draw our resized image
 		context.draw(self, in: CGRect(origin: .zero, size: size))
 

@@ -37,8 +37,12 @@ struct IconImageView: View {
 	}
 
 	private var tintColor: Color? {
-		guard let cg = icon.preferredColor else { return nil }
-		return Color(cgColor: cg)
+		guard let preferredColor = icon.preferredColor else { return nil }
+		#if os(macOS)
+		return Color(nsColor: preferredColor)
+		#else
+		return Color(uiColor: preferredColor)
+		#endif
 	}
 
 	var body: some View {

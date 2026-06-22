@@ -21,11 +21,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	var iconImage: IconImage? {
 		didSet {
 			faviconView.iconImage = iconImage
-			if let preferredColor = iconImage?.preferredColor {
-				faviconView.tintColor = UIColor(cgColor: preferredColor)
-			} else {
-				faviconView.tintColor = Assets.Colors.secondaryAccent
-			}
+			faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
 		}
 	}
 
@@ -118,11 +114,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 			unreadCountLabel.textColor = .secondaryLabel
 			if traitCollection.userInterfaceIdiom == .phone {
 				if feedTitle.text == "All Unread" {
-					if let preferredColor = iconImage?.preferredColor {
-						faviconView.tintColor = UIColor(cgColor: preferredColor)
-					} else {
-						faviconView.tintColor = Assets.Colors.secondaryAccent
-					}
+					faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
 				}
 			}
 		}

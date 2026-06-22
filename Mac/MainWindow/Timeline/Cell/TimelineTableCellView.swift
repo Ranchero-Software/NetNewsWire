@@ -56,7 +56,7 @@ final class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 

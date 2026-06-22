@@ -19,7 +19,9 @@ final class IconView: UIView {
 				return
 			}
 			imageView.image = iconImage?.image
-			if traitCollection.userInterfaceStyle == .dark {
+			if iconImage?.isBackgroundSuppressed ?? false {
+				isDiscernable = true
+			} else if traitCollection.userInterfaceStyle == .dark {
 				let isDark = iconImage?.isDark ?? false
 				isDiscernable = !isDark
 			} else {

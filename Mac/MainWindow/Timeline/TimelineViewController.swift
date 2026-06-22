@@ -695,8 +695,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if showIcons {
-			queueReloadAvailableCells()
+		guard showIcons, let faviconURL = note.userInfo?[FaviconDownloader.UserInfoKey.faviconURL] as? String else {
+			return
+		}
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
+			guard let article = articles.articleAtRow(row), let feed = article.feed else {
+				return false
+			}
+			return FaviconDownloader.shared.cachedFaviconURL(for: feed) == faviconURL
+		}
+		if let indexesToReload = indexesToReload {
+			reloadCells(for: indexesToReload)
 		}
 	}
 
@@ -1034,12 +1043,6 @@ private extension TimelineViewController {
 		}
 	}
 
-	@objc func reloadAvailableCells() {
-		if let indexesToReload = tableView.indexesOfAvailableRows() {
-			reloadCells(for: indexesToReload)
-		}
-	}
-
 	func updateUnreadCount() {
 		var count = 0
 		for article in articles {
@@ -1048,10 +1051,6 @@ private extension TimelineViewController {
 			}
 		}
 		unreadCount = count
-	}
-
-	func queueReloadAvailableCells() {
-		CoalescingQueue.standard.add(self, #selector(reloadAvailableCells))
 	}
 
 	func updateTableViewRowHeight() {

@@ -41,11 +41,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	var iconImage: IconImage? {
 		didSet {
 			faviconView.iconImage = iconImage
-			if let preferredColor = iconImage?.preferredColor {
-				faviconView.tintColor = UIColor(cgColor: preferredColor)
-			} else {
-				faviconView.tintColor = Assets.Colors.secondaryAccent
-			}
+			faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
 		}
 	}
 

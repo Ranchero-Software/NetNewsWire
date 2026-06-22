@@ -38,7 +38,7 @@ final class DetailStatusBarView: NSView {
 		return false
 	}
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 

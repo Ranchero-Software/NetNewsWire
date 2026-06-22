@@ -29,32 +29,41 @@ import RSParser
 		let mutable = self.mutableCopy() as! NSMutableAttributedString
 		let fullRange = NSRange(location: 0, length: mutable.length)
 
-		let size = baseFont.pointSize
-		let baseDescriptor = baseFont.fontDescriptor
-		let baseSymbolicTraits = baseDescriptor.symbolicTraits
-
 		mutable.enumerateAttribute(.font, in: fullRange, options: []) { (font, range, _) in
 			guard let font = font as? RSFont else {
 				return
 			}
-
-			let currentDescriptor = font.fontDescriptor
-			let symbolicTraits = baseSymbolicTraits.union(currentDescriptor.symbolicTraits)
-
-			var descriptor = currentDescriptor.addingAttributes(baseDescriptor.fontAttributes)
-
-			#if canImport(AppKit)
-			descriptor = descriptor.withSymbolicTraits(symbolicTraits)
-			#else
-			descriptor = descriptor.withSymbolicTraits(symbolicTraits)!
-			#endif
-
-			let newFont = RSFont(descriptor: descriptor, size: size)
-
-			mutable.addAttribute(.font, value: newFont as Any, range: range)
+			let mergedFont = Self.mergedFont(font, baseFont: baseFont)
+			mutable.addAttribute(.font, value: mergedFont, range: range)
 		}
 
 		return mutable.copy() as! NSAttributedString
+	}
+
+	/// Merge `baseFont`'s family and size into `runFont`, preserving `runFont`'s traits. Cached: the
+	/// timeline applies the same base font to the same handful of run fonts on every cell, so this
+	/// avoids rebuilding an RSFont from a descriptor each time.
+	static func mergedFont(_ runFont: RSFont, baseFont: RSFont) -> RSFont {
+		let key = BaseFontMergeKey(runFont: runFont, baseFont: baseFont)
+		if let cached = baseFontMergeCache[key] {
+			return cached
+		}
+
+		let baseDescriptor = baseFont.fontDescriptor
+		let currentDescriptor = runFont.fontDescriptor
+		let symbolicTraits = baseDescriptor.symbolicTraits.union(currentDescriptor.symbolicTraits)
+
+		var descriptor = currentDescriptor.addingAttributes(baseDescriptor.fontAttributes)
+		#if canImport(AppKit)
+		descriptor = descriptor.withSymbolicTraits(symbolicTraits)
+		let mergedFont = RSFont(descriptor: descriptor, size: baseFont.pointSize) ?? baseFont
+		#else
+		descriptor = descriptor.withSymbolicTraits(symbolicTraits)!
+		let mergedFont = RSFont(descriptor: descriptor, size: baseFont.pointSize)
+		#endif
+
+		baseFontMergeCache[key] = mergedFont
+		return mergedFont
 	}
 
 	/// Initialize an attributed string from text. Style the text
@@ -403,6 +412,15 @@ private struct FontStyleKey: OptionSet, Hashable {
 // eliminates 90%+ of that cost after warmup. The base font is
 // effectively constant across calls, so it isn't part of the key.
 @MainActor private var htmlFontCache: [FontStyleKey: RSFont] = [:]
+
+// Cache key for applyingBaseFont's per-run merge. Both fonts matter: the run's font supplies the
+// traits, the base font supplies family/size. A small set of combinations recurs across all cells.
+private struct BaseFontMergeKey: Hashable {
+	let runFont: RSFont
+	let baseFont: RSFont
+}
+
+@MainActor private var baseFontMergeCache: [BaseFontMergeKey: RSFont] = [:]
 
 // MARK: - CountedSet
 

@@ -118,7 +118,9 @@ extension Notification.Name {
 		return iconImage
 	}
 
-	private func cachedFaviconURL(for feed: Feed) -> String? {
+	/// The known favicon URL for `feed` (from feed settings or the home-page→favicon map), without
+	/// triggering any download. Both lookups are in-memory, so this is cheap to call per row.
+	public func cachedFaviconURL(for feed: Feed) -> String? {
 		if let faviconURL = feed.faviconURL {
 			return faviconURL
 		}
