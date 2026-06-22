@@ -163,36 +163,20 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	}
 
 	// MARK: - Fetching Articles for Indexer
-	private func articleSearchInfosQuery(with placeholders: String) -> String {
-		return """
-        SELECT
-            art.articleID,
-            art.title,
-            art.contentHTML,
-            art.contentText,
-            art.summary,
-            art.searchRowID,
-            (SELECT GROUP_CONCAT(name, ' ')
-                FROM authorsLookup as autL
-                JOIN authors as aut ON autL.authorID = aut.authorID
-                WHERE art.articleID = autL.articleID
-                GROUP BY autl.articleID) as authors
-        FROM articles as art
-        WHERE articleID in \(placeholders);
-        """
-	}
 
 	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
 		let parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-		if let resultSet = database.executeQuery(self.articleSearchInfosQuery(with: placeholders), withArgumentsIn: parameters) {
+		let query = "select articleID, title, contentHTML, contentText, summary, searchRowID, authors from articles where articleID in \(placeholders);"
+
+		if let resultSet = database.executeQuery(query, withArgumentsIn: parameters) {
 			return resultSet.mapToSet { (row) -> ArticleSearchInfo? in
 				let articleID = row.swiftString(forColumn: DatabaseKey.articleID)!
 				let title = row.swiftString(forColumn: DatabaseKey.title)
 				let contentHTML = row.swiftString(forColumn: DatabaseKey.contentHTML)
 				let contentText = row.swiftString(forColumn: DatabaseKey.contentText)
 				let summary = row.swiftString(forColumn: DatabaseKey.summary)
-				let authorsNames = row.swiftString(forColumn: DatabaseKey.authors)
+				let authorsNames = Self.authorsNames(from: row)
 
 				let searchRowIDObject = row.object(forColumnName: DatabaseKey.searchRowID)
 				var searchRowID: Int?
@@ -204,6 +188,20 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			}
 		}
 		return nil
+	}
+
+	private static func authorsNames(from row: FMResultSet) -> String? {
+		guard let json = row.swiftString(forColumn: DatabaseKey.authors), !json.isEmpty, let data = json.data(using: .utf8) else {
+			return nil
+		}
+		guard let authors = Author.authorsWithJSON(data) else {
+			return nil
+		}
+		let names = authors.compactMap { $0.name }
+		if names.isEmpty {
+			return nil
+		}
+		return names.joined(separator: " ")
 	}
 
 	// MARK: - Updating and Deleting
