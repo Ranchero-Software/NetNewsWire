@@ -7,9 +7,63 @@
 //
 
 import UIKit
+import Account
+import Articles
 import Images
 
-class MainTimelineCollectionViewCell: UICollectionViewCell {
+@MainActor private final class ArticleContentCache: NSObject {
+
+	struct Key: Hashable {
+		let accountID: String
+		let articleID: String
+	}
+
+	struct Entry {
+		let width: CGFloat
+		let numberOfLines: Int
+		let contentSizeCategory: UIContentSizeCategory
+		let attributedText: NSAttributedString
+		let rangeOfTitle: NSRange?
+		let rangeOfSummary: NSRange?
+	}
+
+	private var storage = [Key: Entry]()
+
+	override init() {
+		super.init()
+		NotificationCenter.default.addObserver(self, selector: #selector(articlesDidDownload(_:)), name: .AccountDidDownloadArticles, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+	}
+
+	func entry(for key: Key) -> Entry? {
+		storage[key]
+	}
+
+	func setEntry(_ entry: Entry, for key: Key) {
+		storage[key] = entry
+	}
+
+	@objc private func articlesDidDownload(_ note: Notification) {
+		guard let updatedArticles = note.userInfo?[Account.UserInfoKey.updatedArticles] as? Set<Article> else {
+			return
+		}
+		for article in updatedArticles {
+			storage.removeValue(forKey: Key(accountID: article.accountID, articleID: article.articleID))
+		}
+	}
+
+	@objc private func handleLowMemory(_ note: Notification) {
+		storage.removeAll()
+	}
+
+	@objc private func handleAppDidGoToBackground(_ note: Notification) {
+		storage.removeAll()
+	}
+}
+
+final class MainTimelineCollectionViewCell: UICollectionViewCell {
+
 	@IBOutlet var articleContent: UILabel!
 	@IBOutlet var articleByLine: UILabel!
 	@IBOutlet var feedIcon: IconView?
@@ -31,13 +85,14 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	private var rangeOfSummary: NSRange?
 	private var title: String = ""
 	private var summary: String = ""
+	private var appliedIconSize: CGSize?
 
 	private static let indicatorAnimationDuration = 0.25
 
 	// Paragraph Styles
 	private static let baseWrappingParagraphStyle: NSParagraphStyle = {
 		let style = NSMutableParagraphStyle()
-		style.lineBreakMode = .byWordWrapping
+		style.lineBreakMode = .byTruncatingTail
 		style.lineBreakStrategy = []
 		style.hyphenationFactor = 1.0
 		style.allowsDefaultTighteningForTruncation = true
@@ -52,6 +107,8 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 		let style = (baseWrappingParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
 		return style
 	}()
+
+	private static let contentCache = ArticleContentCache()
 
 	// Text Storage
 	private lazy var lineCountTextStorage = NSTextStorage()
@@ -173,21 +230,46 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 	}
 
 	private func updateIconViewSizeConstraints(to size: CGSize) {
-		guard feedIcon != nil else { return }
+		guard let feedIcon, appliedIconSize != size else {
+			return
+		}
+		appliedIconSize = size
 
-		for constraint in feedIcon!.constraints.compactMap({ $0 }) {
+		for constraint in feedIcon.constraints {
 			constraint.isActive = false
 		}
 
 		NSLayoutConstraint.activate([
-			feedIcon!.widthAnchor.constraint(equalToConstant: size.width),
-			feedIcon!.heightAnchor.constraint(equalToConstant: size.height)
+			feedIcon.widthAnchor.constraint(equalToConstant: size.width),
+			feedIcon.heightAnchor.constraint(equalToConstant: size.height)
 		])
 
 		setNeedsLayout()
 	}
 
 	private func addArticleContent(_ state: UICellConfigurationState) {
+		let width = articleContent.bounds.width
+		let numberOfLines = cellData.numberOfLines
+		let contentSizeCategory = traitCollection.preferredContentSizeCategory
+
+		let key = ArticleContentCache.Key(accountID: cellData.accountID, articleID: cellData.articleID)
+		let entry: ArticleContentCache.Entry
+		if let cached = Self.contentCache.entry(for: key),
+		   cached.width == width, cached.numberOfLines == numberOfLines, cached.contentSizeCategory == contentSizeCategory {
+			entry = cached
+		} else {
+			entry = buildArticleContent(width: width, numberOfLines: numberOfLines, contentSizeCategory: contentSizeCategory)
+			if width > 0 {
+				Self.contentCache.setEntry(entry, for: key)
+			}
+		}
+
+		articleContent.attributedText = entry.attributedText
+		rangeOfTitle = entry.rangeOfTitle
+		rangeOfSummary = entry.rangeOfSummary
+	}
+
+	private func buildArticleContent(width: CGFloat, numberOfLines: Int, contentSizeCategory: UIContentSizeCategory) -> ArticleContentCache.Entry {
 		let attributedCellText = NSMutableAttributedString()
 
 		// 1. Prepare Title
@@ -206,26 +288,21 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 			]
 
 			let titleAttributed = NSAttributedString(string: cellData.title, attributes: titleAttributes)
-			let titleLength = titleAttributed.length
-			let tentativeTitleRange = NSRange(location: 0, length: titleLength)
-			rangeOfTitle = tentativeTitleRange
 
-			let linesUsed = countLines(titleAttributed, width: articleContent.bounds.width)
-			// 2. Measure Title Height
-			if linesUsed >= cellData.numberOfLines {
-				// The title already fills the available lines, set it and exit
-				articleContent.attributedText = titleAttributed
-				articleContent.lineBreakMode = .byTruncatingTail
-				// Title occupies the whole label content in this path
-				rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
-				return
+			// 2. If the title already fills the available lines, it occupies the whole label.
+			let linesUsed = countLines(titleAttributed, width: width)
+			if linesUsed >= numberOfLines {
+				let titleRange = NSRange(location: 0, length: titleAttributed.length)
+				return Self.entry(width, numberOfLines, contentSizeCategory, titleAttributed, titleRange, nil)
 			}
 
 			attributedCellText.append(titleAttributed)
-			rangeOfTitle = NSRange(location: 0, length: titleAttributed.length)
 		}
 
-		// 3. Prepare Summary (Only reached if Title < 3 lines)
+		let rangeOfTitle = cellData.title != "" ? NSRange(location: 0, length: attributedCellText.length) : nil
+
+		// 3. Prepare Summary (only reached if the title is under numberOfLines).
+		var rangeOfSummary: NSRange?
 		if cellData.summary != "" {
 			let summaryFont = UIFont.preferredFont(forTextStyle: .body)
 			let summaryLineHeight = summaryFont.lineHeight
@@ -242,25 +319,15 @@ class MainTimelineCollectionViewCell: UICollectionViewCell {
 
 			let prefix = cellData.title != "" ? "\n" : ""
 			let summaryAttributed = NSAttributedString(string: prefix + cellData.summary, attributes: summaryAttributes)
-			let currentLength = attributedCellText.length
-			let start = currentLength
-			let length = summaryAttributed.length
-			rangeOfSummary = NSRange(location: start, length: length)
-
+			rangeOfSummary = NSRange(location: attributedCellText.length, length: summaryAttributed.length)
 			attributedCellText.append(summaryAttributed)
 		}
 
-		let linesUsed = countLines(attributedCellText, width: articleContent.bounds.width)
-		if linesUsed >= cellData.numberOfLines {
-			// The title already fills 3 lines, set it and exit
-			articleContent.attributedText = attributedCellText
-			articleContent.lineBreakMode = .byTruncatingTail
-			return
-		} else {
-			articleContent.attributedText = attributedCellText
-			articleContent.lineBreakMode = .byWordWrapping
-		}
+		return Self.entry(width, numberOfLines, contentSizeCategory, attributedCellText, rangeOfTitle, rangeOfSummary)
+	}
 
+	private static func entry(_ width: CGFloat, _ numberOfLines: Int, _ contentSizeCategory: UIContentSizeCategory, _ attributedText: NSAttributedString, _ rangeOfTitle: NSRange?, _ rangeOfSummary: NSRange?) -> ArticleContentCache.Entry {
+		ArticleContentCache.Entry(width: width, numberOfLines: numberOfLines, contentSizeCategory: contentSizeCategory, attributedText: attributedText, rangeOfTitle: rangeOfTitle, rangeOfSummary: rangeOfSummary)
 	}
 
 	func adjustArticleContentColor() {

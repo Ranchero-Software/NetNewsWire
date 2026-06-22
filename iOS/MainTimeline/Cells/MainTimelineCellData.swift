@@ -14,6 +14,8 @@ import Images
 
 	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
 
+	let accountID: String
+	let articleID: String
 	let title: String
 	let attributedTitle: NSAttributedString
 	let summary: String
@@ -30,6 +32,8 @@ import Images
 
 	init(article: Article, showFeedName: ShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, numberOfLines: Int, iconSize: IconSize) {
 
+		self.accountID = article.accountID
+		self.articleID = article.articleID
 		self.title = ArticleStringFormatter.shared.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.shared.attributedTruncatedTitle(article)
 
@@ -67,6 +71,8 @@ import Images
 	}
 
 	init() { // Empty
+		self.accountID = ""
+		self.articleID = ""
 		self.title = ""
 		self.attributedTitle = NSAttributedString()
 		self.summary = ""
