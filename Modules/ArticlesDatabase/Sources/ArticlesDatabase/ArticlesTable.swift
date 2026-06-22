@@ -225,64 +225,60 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 		self.queue.runInTransaction { database in
 
-			func makeDatabaseCalls() {
-				let articleIDs = parsedItems.articleIDs()
+			let articleIDs = parsedItems.articleIDs()
 
-				// Split by age: articles older than ~6 months default to read.
-				let cutoffDate = Date(timeIntervalSinceNow: -ArticleStatus.staleIntervalInSeconds)
-				let oldArticleIDs = Set(parsedItems.filter { ($0.datePublished ?? .distantFuture) < cutoffDate }.map { $0.articleID })
-				let recentArticleIDs = articleIDs.subtracting(oldArticleIDs)
+			// Split by age: articles older than ~6 months default to read.
+			let cutoffDate = Date(timeIntervalSinceNow: -ArticleStatus.staleIntervalInSeconds)
+			let oldArticleIDs = Set(parsedItems.filter { ($0.datePublished ?? .distantFuture) < cutoffDate }.map { $0.articleID })
+			let recentArticleIDs = articleIDs.subtracting(oldArticleIDs)
 
-				let (recentStatusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(recentArticleIDs, false, database) // 1a
-				let (oldStatusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(oldArticleIDs, true, database) // 1b
-				let statusesDictionary = recentStatusesDictionary.merging(oldStatusesDictionary) { current, _ in current }
-				assert(statusesDictionary.count == articleIDs.count)
+			let (recentStatusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(recentArticleIDs, false, database) // 1a
+			let (oldStatusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(oldArticleIDs, true, database) // 1b
+			let statusesDictionary = recentStatusesDictionary.merging(oldStatusesDictionary) { current, _ in current }
+			assert(statusesDictionary.count == articleIDs.count)
 
-				let incomingArticles = Article.articlesWithParsedItems(parsedItems, feedID, self.accountID, statusesDictionary) // 2
-				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-					return
-				}
-
-				let fetchedArticles = self.fetchArticlesForFeedID(feedID, database) // 4
-				let fetchedArticlesDictionary = fetchedArticles.dictionary()
-
-				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) // 5
-				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) // 6
-
-				// Articles to delete are 1) not starred and 2) older than 30 days and 3) no longer in feed.
-				let articlesToDelete: Set<Article>
-				if deleteOlder {
-					let cutoffDate = Date().bySubtracting(days: 30)
-					articlesToDelete = fetchedArticles.filter { (article) -> Bool in
-						return !article.status.starred && article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
-					}
-				} else {
-					articlesToDelete = Set<Article>()
-				}
-
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) // 7
-
-				self.addArticlesToCache(newArticles)
-				self.addArticlesToCache(updatedArticles)
-
-				// 8. Delete articles no longer in feed.
-				let articleIDsToDelete = articlesToDelete.articleIDs()
-				if !articleIDsToDelete.isEmpty {
-					self.removeArticles(articleIDsToDelete, database)
-					self.removeArticleIDsFromCache(articleIDsToDelete)
-				}
-
-				// 9. Update search index.
-				if let newArticles = newArticles {
-					self.searchTable.indexNewArticles(newArticles, database)
-				}
-				if let updatedArticles = updatedArticles {
-					self.searchTable.indexUpdatedArticles(updatedArticles, database)
-				}
+			let incomingArticles = Article.articlesWithParsedItems(parsedItems, feedID, self.accountID, statusesDictionary) // 2
+			if incomingArticles.isEmpty {
+				self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+				return
 			}
 
-			makeDatabaseCalls()
+			let fetchedArticles = self.fetchArticlesForFeedID(feedID, database) // 4
+			let fetchedArticlesDictionary = fetchedArticles.dictionary()
+
+			let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) // 5
+			let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) // 6
+
+			// Articles to delete are 1) not starred and 2) older than 30 days and 3) no longer in feed.
+			let articlesToDelete: Set<Article>
+			if deleteOlder {
+				let cutoffDate = Date().bySubtracting(days: 30)
+				articlesToDelete = fetchedArticles.filter { (article) -> Bool in
+					return !article.status.starred && article.status.dateArrived < cutoffDate && !articleIDs.contains(article.articleID)
+				}
+			} else {
+				articlesToDelete = Set<Article>()
+			}
+
+			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, articlesToDelete, completion) // 7
+
+			self.addArticlesToCache(newArticles)
+			self.addArticlesToCache(updatedArticles)
+
+			// 8. Delete articles no longer in feed.
+			let articleIDsToDelete = articlesToDelete.articleIDs()
+			if !articleIDsToDelete.isEmpty {
+				self.removeArticles(articleIDsToDelete, database)
+				self.removeArticleIDsFromCache(articleIDsToDelete)
+			}
+
+			// 9. Update search index.
+			if let newArticles = newArticles {
+				self.searchTable.indexNewArticles(newArticles, database)
+			}
+			if let updatedArticles = updatedArticles {
+				self.searchTable.indexUpdatedArticles(updatedArticles, database)
+			}
 		}
 	}
 
@@ -304,49 +300,45 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 		self.queue.runInTransaction { database in
 
-			func makeDatabaseCalls() {
-				var articleIDs = Set<String>()
-				for (_, parsedItems) in feedIDsAndItems {
-					articleIDs.formUnion(parsedItems.articleIDs())
-				}
-
-				let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) // 1
-				assert(statusesDictionary.count == articleIDs.count)
-
-				let allIncomingArticles = Article.articlesWithFeedIDsAndItems(feedIDsAndItems, self.accountID, statusesDictionary) // 2
-				if allIncomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-					return
-				}
-
-				let incomingArticles = self.filterIncomingArticles(allIncomingArticles) // 3
-				if incomingArticles.isEmpty {
-					self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
-					return
-				}
-
-				let incomingArticleIDs = incomingArticles.articleIDs()
-				let fetchedArticles = self.fetchArticles(articleIDs: incomingArticleIDs, database) // 4
-				let fetchedArticlesDictionary = fetchedArticles.dictionary()
-
-				let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //
-				let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) // 6
-
-				self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, nil, completion) // 7
-
-				self.addArticlesToCache(newArticles)
-				self.addArticlesToCache(updatedArticles)
-
-				// 8. Update search index.
-				if let newArticles = newArticles {
-					self.searchTable.indexNewArticles(newArticles, database)
-				}
-				if let updatedArticles = updatedArticles {
-					self.searchTable.indexUpdatedArticles(updatedArticles, database)
-				}
+			var articleIDs = Set<String>()
+			for (_, parsedItems) in feedIDsAndItems {
+				articleIDs.formUnion(parsedItems.articleIDs())
 			}
 
-			makeDatabaseCalls()
+			let (statusesDictionary, _) = self.statusesTable.ensureStatusesForArticleIDs(articleIDs, read, database) // 1
+			assert(statusesDictionary.count == articleIDs.count)
+
+			let allIncomingArticles = Article.articlesWithFeedIDsAndItems(feedIDsAndItems, self.accountID, statusesDictionary) // 2
+			if allIncomingArticles.isEmpty {
+				self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+				return
+			}
+
+			let incomingArticles = self.filterIncomingArticles(allIncomingArticles) // 3
+			if incomingArticles.isEmpty {
+				self.callUpdateArticlesCompletionBlock(nil, nil, nil, completion)
+				return
+			}
+
+			let incomingArticleIDs = incomingArticles.articleIDs()
+			let fetchedArticles = self.fetchArticles(articleIDs: incomingArticleIDs, database) // 4
+			let fetchedArticlesDictionary = fetchedArticles.dictionary()
+
+			let newArticles = self.findAndSaveNewArticles(incomingArticles, fetchedArticlesDictionary, database) //
+			let updatedArticles = self.findAndSaveUpdatedArticles(incomingArticles, fetchedArticlesDictionary, database) // 6
+
+			self.callUpdateArticlesCompletionBlock(newArticles, updatedArticles, nil, completion) // 7
+
+			self.addArticlesToCache(newArticles)
+			self.addArticlesToCache(updatedArticles)
+
+			// 8. Update search index.
+			if let newArticles = newArticles {
+				self.searchTable.indexNewArticles(newArticles, database)
+			}
+			if let updatedArticles = updatedArticles {
+				self.searchTable.indexUpdatedArticles(updatedArticles, database)
+			}
 		}
 	}
 
