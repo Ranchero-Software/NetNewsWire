@@ -645,6 +645,8 @@ private extension MainTimelineModernViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
 
 	private func configureSearchController() {
@@ -1046,6 +1048,19 @@ private extension MainTimelineModernViewController {
 	@objc func willEnterForeground(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: willEnterForeground")
 		queueUpdateUI()
+	}
+
+	@objc func handleLowMemory(_ note: Notification) {
+		emptyTextSizerCaches()
+	}
+
+	@objc func handleAppDidGoToBackground(_ note: Notification) {
+		emptyTextSizerCaches()
+	}
+
+	func emptyTextSizerCaches() {
+		MultilineUILabelSizer.emptyCache()
+		SingleLineUILabelSizer.emptyCache()
 	}
 
 	@objc func scrollPositionDidChange() {
