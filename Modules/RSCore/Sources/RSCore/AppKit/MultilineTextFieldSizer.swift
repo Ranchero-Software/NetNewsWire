@@ -37,6 +37,11 @@ public struct TextFieldSizeInfo: Sendable {
 	private var attributedCache = [NSAttributedString: WidthHeightCache]()
 	private static var sizers = [TextFieldSizerSpecifier: MultilineTextFieldSizer]()
 
+	// cellSize(forBounds:) lays text out inside the cell's content inset, so it wraps a few points
+	// narrower than NSTextField.fittingSize does at the same width. Widen the bounds by this much so
+	// the heights match fittingSize exactly. Verified in MultilineTextFieldSizerTests.
+	private static let cellWidthInsetCompensation = CGFloat(4)
+
 	private init(numberOfLines: Int, font: NSFont) {
 
 		self.numberOfLines = numberOfLines
@@ -165,16 +170,24 @@ private extension MultilineTextFieldSizer {
 	func calculateHeight(_ attributedString: NSAttributedString, _ width: Int) -> Int {
 
 		textField.attributedStringValue = attributedString
-		textField.preferredMaxLayoutWidth = CGFloat(width)
-		let size = textField.fittingSize
-		return Int(ceil(size.height))
+		return MultilineTextFieldSizer.cellHeight(textField, width)
 	}
 
 	static func calculateHeight(_ string: String, _ width: Int, _ textField: NSTextField) -> Int {
 
 		textField.stringValue = string
-		textField.preferredMaxLayoutWidth = CGFloat(width)
-		let size = textField.fittingSize
+		return cellHeight(textField, width)
+	}
+
+	static func cellHeight(_ textField: NSTextField, _ width: Int) -> Int {
+
+		guard let cell = textField.cell else {
+			return 0
+		}
+
+		let boundsWidth = CGFloat(width) + cellWidthInsetCompensation
+		let bounds = NSRect(x: 0, y: 0, width: boundsWidth, height: CGFloat.greatestFiniteMagnitude)
+		let size = cell.cellSize(forBounds: bounds)
 		return Int(ceil(size.height))
 	}
 
