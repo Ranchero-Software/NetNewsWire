@@ -18,13 +18,6 @@ import Images
 
 final class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
 
-	struct CellIdentifier {
-		static let standard = "MainTimelineCellStandard"
-		static let standardIndex0 = "MainTimelineCellIndexZero"
-		static let icon = "MainTimelineCellIcon"
-		static let iconIndex0 = "MainTimelineCellIconIndexZero"
-	}
-
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -841,33 +834,16 @@ private extension MainTimelineModernViewController {
 	}
 
 	private func makeDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Int, Article> {
+		collectionView.register(MainTimelineCell.self, forCellWithReuseIdentifier: MainTimelineCell.reuseIdentifier)
+
 		let dataSource: UICollectionViewDiffableDataSource<Int, Article> =
 			MainTimelineCollectionViewDataSource(collectionView: collectionView, cellProvider: { [weak self] collectionView, indexPath, article in
 				guard let self else {
 					return nil
 				}
-				let cellData = self.configure(article: article)
-				if self.showIcons {
-					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.iconIndex0, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.icon, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					}
-				} else {
-					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standardIndex0, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standard, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					}
-				}
+				let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
+				cell.cellData = self.configure(article: article)
+				return cell
 			})
 
 		return dataSource
