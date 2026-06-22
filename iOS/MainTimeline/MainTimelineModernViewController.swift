@@ -18,13 +18,6 @@ import Images
 
 final class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
 
-	struct CellIdentifier {
-		static let standard = "MainTimelineCellStandard"
-		static let standardIndex0 = "MainTimelineCellIndexZero"
-		static let icon = "MainTimelineCellIcon"
-		static let iconIndex0 = "MainTimelineCellIconIndexZero"
-	}
-
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
@@ -652,6 +645,8 @@ private extension MainTimelineModernViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
 
 	private func configureSearchController() {
@@ -841,33 +836,16 @@ private extension MainTimelineModernViewController {
 	}
 
 	private func makeDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Int, Article> {
+		collectionView.register(MainTimelineCell.self, forCellWithReuseIdentifier: MainTimelineCell.reuseIdentifier)
+
 		let dataSource: UICollectionViewDiffableDataSource<Int, Article> =
 			MainTimelineCollectionViewDataSource(collectionView: collectionView, cellProvider: { [weak self] collectionView, indexPath, article in
 				guard let self else {
 					return nil
 				}
-				let cellData = self.configure(article: article)
-				if self.showIcons {
-					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.iconIndex0, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.icon, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					}
-				} else {
-					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standardIndex0, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standard, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					}
-				}
+				let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
+				cell.cellData = self.configure(article: article)
+				return cell
 			})
 
 		return dataSource
@@ -1070,6 +1048,19 @@ private extension MainTimelineModernViewController {
 	@objc func willEnterForeground(_ note: Notification) {
 		Self.logger.debug("MainTimelineModernViewController: willEnterForeground")
 		queueUpdateUI()
+	}
+
+	@objc func handleLowMemory(_ note: Notification) {
+		emptyTextSizerCaches()
+	}
+
+	@objc func handleAppDidGoToBackground(_ note: Notification) {
+		emptyTextSizerCaches()
+	}
+
+	func emptyTextSizerCaches() {
+		MultilineUILabelSizer.emptyCache()
+		SingleLineUILabelSizer.emptyCache()
 	}
 
 	@objc func scrollPositionDidChange() {
