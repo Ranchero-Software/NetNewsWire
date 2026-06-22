@@ -139,7 +139,7 @@ extension DownloadSession: @preconcurrency URLSessionTaskDelegate {
 				return
 			}
 
-			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
+			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data, error: error as NSError?)
 		}
 	}
 
@@ -217,7 +217,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 			}
 			info.addData(data)
 
-			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
+			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data, url: info.url) {
 				dataTask.cancel()
 				removeTask(dataTask)
 			}
@@ -519,7 +519,7 @@ extension URLSessionTask {
 private final class DownloadInfo {
 
 	let url: URL
-	let data = NSMutableData()
+	var data = Data()
 	var urlResponse: URLResponse?
 
 	init(_ url: URL) {
