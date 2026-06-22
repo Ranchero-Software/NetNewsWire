@@ -1,5 +1,11 @@
 # iOS Release Notes
 
+### 7.1 build 7104 22 June 2026 - branch: main tag: iOS-7.1-7104
+
+Made timeline scrolling faster and smoother
+Fixed bug (introduced in 7.0.6) where newly-arrived articles weren’t added to the search index
+Fixed a memory leak
+
 ### 7.1 build 7103 18 June 2026 - branch: main tag: iOS-7.1-7103
 
 Added contextual menus to copy the home page URL and feed URL in the feed inspector
