@@ -62,7 +62,7 @@ struct DinosaurRow: Identifiable {
 			let latestDates = await account.fetchLastUpdateDates()
 			for feed in account.flattenedFeeds() {
 				let latestDate = latestDates[feed.feedID]
-				guard latestDate.map({ $0 < cutoffDate }) ?? true else {
+				guard let latestDate, latestDate < cutoffDate else {
 					continue
 				}
 				newRows.append(DinosaurRow(
@@ -81,6 +81,10 @@ struct DinosaurRow: Identifiable {
 		rows = newRows
 		showAccountColumn = accounts.count > 1
 		applySort()
+	}
+
+	func clear() {
+		rows = []
 	}
 
 	private func applySort() {

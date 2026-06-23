@@ -691,6 +691,9 @@
     "No current activity." : {
       "comment" : "Current Activity empty state"
     },
+    "No dinosaurs" : {
+      "comment" : "No dinosaurs footer text."
+    },
     "No Errors Logged" : {
       "comment" : "Error log empty state"
     },
@@ -1001,9 +1004,6 @@
     },
     "Theme installed" : {
       "comment" : "Theme installed"
-    },
-    "There are no dinosaurs. All feeds have published articles within the last %lld months." : {
-      "comment" : "No dinosaurs footer text."
     },
     "There is already a Feedbin account with that username created." : {
       "comment" : "Duplicate Error"
