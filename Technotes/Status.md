@@ -16,5 +16,5 @@ https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-7.1-7104
 Mac shipping: 7.0.6
 https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-7.0.6
 
-Mac beta: 7.1b5
-https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-7.1b5
+Mac beta: 7.1b6
+https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-7.1b6
