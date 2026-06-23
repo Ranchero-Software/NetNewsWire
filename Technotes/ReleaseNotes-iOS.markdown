@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.1 build 7105 23 June 2026 - branch: main tag: iOS-7.1-7105
+
+Exclude dinosaurs that have no articles in the database — we might just not have those articles yet
+
 ### 7.1 build 7104 22 June 2026 - branch: main tag: iOS-7.1-7104
 
 Made timeline scrolling faster and smoother
