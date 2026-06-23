@@ -9,6 +9,7 @@
 import Foundation
 @preconcurrency import AuthenticationServices
 import os
+import ActivityLog
 import RSCore
 
 @MainActor public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
@@ -66,6 +67,7 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 	nonisolated(unsafe) private let anchorProvider = PresentationAnchorProvider()
 	nonisolated(unsafe) private var session: ASWebAuthenticationSession?
 	private var error: Error?
+	private var activityID: Int?
 	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "OAuthAccountAuthorizationOperation")
 
 	public init(accountType: AccountType) {
@@ -78,6 +80,10 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 		Self.logger.debug("OAuthAccountAuthorizationOperation: run")
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 
+		let id = ActivityLog.shared.createActivity(owner: .app, kind: .validateCredentials, detail: "Authorizing \(accountType.displayName)")
+		ActivityLog.shared.didStart(id: id)
+		activityID = id
+
 		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
 
 		guard let url = request.url else {
@@ -85,8 +91,8 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 			return
 		}
 
-		guard let redirectUri = URL(string: oauthClient.redirectUri), let scheme = redirectUri.scheme else {
-			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectUri)")
+		guard let redirectURI = URL(string: oauthClient.redirectURI), let scheme = redirectURI.scheme else {
+			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectURI)")
 			didEndAuthentication(url: nil, error: URLError(.badURL))
 			return
 		}
@@ -105,6 +111,17 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 
 	override public func noteDidComplete() {
 		Self.logger.debug("OAuthAccountAuthorizationOperation: noteDidComplete")
+
+		if let activityID {
+			if let error {
+				ActivityLog.shared.didFail(id: activityID, error: error)
+			} else if isCanceled {
+				ActivityLog.shared.didFail(id: activityID, error: CocoaError(.userCancelled))
+			} else {
+				ActivityLog.shared.didComplete(id: activityID)
+			}
+			self.activityID = nil
+		}
 
 		if isCanceled {
 			Self.logger.debug("OAuthAccountAuthorizationOperation: noteDidComplete — canceled")
@@ -166,7 +183,14 @@ private extension OAuthAccountAuthorizationOperation {
 
 			let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
 
-			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, completion: didEndRequestingAccessToken(_:))
+			Task { @MainActor in
+				do {
+					let grant = try await Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType)
+					self.didEndRequestingAccessToken(.success(grant))
+				} catch {
+					self.didEndRequestingAccessToken(.failure(error))
+				}
+			}
 
 		} catch is ASWebAuthenticationSessionError {
 			didComplete() // Primarily, cancellation.

@@ -36,11 +36,21 @@ public struct ArticleChanges: Sendable {
 	}
 }
 
+/// Aggregate counts for a single account's articles database.
+public struct ArticleCounts: Sendable {
+	public let totalCount: Int
+	public let unreadCount: Int
+	public let starredCount: Int
+	public let statusesCount: Int
+}
+
 @MainActor public final class ArticlesDatabase {
 	public enum RetentionStyle: Sendable {
 		case feedBased // Local and iCloud: article retention is defined by contents of feed
 		case syncSystem // Feedbin, Feedly, etc.: article retention is defined by external system
 	}
+
+	public nonisolated let databasePath: String
 
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
@@ -53,22 +63,26 @@ public struct ArticleChanges: Sendable {
 	public init(databaseFilePath: String, accountID: String, retentionStyle: RetentionStyle) {
 		Self.logger.debug("Articles Database init \(accountID, privacy: .public)")
 
+		self.databasePath = databaseFilePath
 		let queue = DatabaseQueue(databasePath: databaseFilePath)
 		self.queue = queue
 		self.articlesTable = ArticlesTable(name: DatabaseTableName.articles, accountID: accountID, queue: queue, retentionStyle: retentionStyle)
 		self.retentionStyle = retentionStyle
 		self.accountID = accountID
 
-		try! queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
-		queue.runInDatabase { databaseResult in
+		queue.runCreateStatements(ArticlesDatabase.tableCreationStatements)
+		queue.runInDatabase { database in
 			Self.logger.debug("ArticlesDatabase: creating tables \(accountID, privacy: .public)")
-			let database = databaseResult.database!
 			if !self.articlesTable.containsColumn("searchRowID", in: database) {
 				database.executeStatements("ALTER TABLE articles add column searchRowID INTEGER;")
 			}
 			if !self.articlesTable.containsColumn("markdown", in: database) {
 				Self.logger.debug("ArticlesDatabase: adding markdown column \(accountID, privacy: .public)")
 				database.executeStatements("ALTER TABLE articles add column markdown TEXT;")
+			}
+			if !self.articlesTable.containsColumn("authors", in: database) {
+				Self.logger.debug("ArticlesDatabase: adding authors column \(accountID, privacy: .public)")
+				database.executeStatements("ALTER TABLE articles add column authors TEXT;")
 			}
 			database.executeStatements("CREATE INDEX if not EXISTS articles_searchRowID on articles(searchRowID);")
 			database.executeStatements("DROP TABLE if EXISTS tags;DROP INDEX if EXISTS tags_tagName_index;DROP INDEX if EXISTS articles_feedID_index;DROP INDEX if EXISTS statuses_read_index;DROP TABLE if EXISTS attachments;DROP TABLE if EXISTS attachmentsLookup;")
@@ -77,123 +91,150 @@ public struct ArticleChanges: Sendable {
 		DispatchQueue.main.async {
 			self.articlesTable.indexUnindexedArticles()
 		}
+
+		// Backfill the authors JSON column cooperatively, yielding between batches
+		// so that other database work (fetches, etc.) can interleave.
+		Task.detached { [accountID, queue] in
+			let migration = AuthorsSchemaMigration(accountID: accountID, queue: queue)
+			await migration.run()
+		}
 	}
 
 	// MARK: - Vacuum
 
-	public func vacuum() {
-		queue.vacuum()
+	public func vacuum() async {
+		await queue.vacuum()
 	}
 
 	// MARK: - Fetching Articles
 
-	public func fetchArticles(feedID: String) throws -> Set<Article> {
+	public func fetchArticles(feedID: String) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticles(feedID)
+		return articlesTable.fetchArticles(feedID)
 	}
 
-	public func fetchArticles(feedIDs: Set<String>) throws -> Set<Article> {
+	public func fetchArticles(feedIDs: Set<String>) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticles(feedIDs)
+		return articlesTable.fetchArticles(feedIDs)
 	}
 
-	public func fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
+	public func fetchArticles(articleIDs: Set<String>) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticles(articleIDs: articleIDs)
+		return articlesTable.fetchArticles(articleIDs: articleIDs)
 	}
 
-	public func fetchUnreadArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
+	public func fetchUnreadArticles(feedIDs: Set<String>, limit: Int? = nil) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchUnreadArticles(feedIDs, limit)
+		return articlesTable.fetchUnreadArticles(feedIDs, limit)
 	}
 
-	public func fetchTodayArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
+	public func fetchTodayArticles(feedIDs: Set<String>, limit: Int? = nil) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticlesSince(feedIDs, todayCutoffDate(), limit)
+		return articlesTable.fetchArticlesSince(feedIDs, todayCutoffDate(), limit)
 	}
 
-	public func fetchStarredArticles(feedIDs: Set<String>, limit: Int? = nil) throws -> Set<Article> {
+	public func fetchStarredArticles(feedIDs: Set<String>, limit: Int? = nil) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchStarredArticles(feedIDs, limit)
+		return articlesTable.fetchStarredArticles(feedIDs, limit)
 	}
 
-	public func fetchStarredArticlesCount(feedIDs: Set<String>) throws -> Int {
+	public func fetchStarredArticlesCount(feedIDs: Set<String>) -> Int {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchStarredArticlesCount(feedIDs)
+		return articlesTable.fetchStarredArticlesCount(feedIDs)
 	}
 
-	public func fetchArticlesMatching(searchString: String, feedIDs: Set<String>) throws -> Set<Article> {
+	/// Returns aggregate article counts (total, unread, starred, statuses) for the given feeds.
+	public func fetchArticleCountsAsync(feedIDs: Set<String>) async -> ArticleCounts {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticlesMatching(searchString, feedIDs)
+		return await withCheckedContinuation { continuation in
+			articlesTable.fetchArticleCountsAsync(feedIDs) { articleCounts in
+				continuation.resume(returning: articleCounts)
+			}
+		}
 	}
 
-	public func fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) throws -> Set<Article> {
+	public func fetchArticlesMatching(searchString: String, feedIDs: Set<String>) -> Set<Article> {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+		return articlesTable.fetchArticlesMatching(searchString, feedIDs)
+	}
+
+	public func fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) -> Set<Article> {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		return articlesTable.fetchArticlesMatchingWithArticleIDs(searchString, articleIDs)
+	}
+
+	/// Returns a dictionary of feedID → latest article date for all feeds with articles.
+	public func fetchLastUpdateDates() async -> [String: Date] {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		return await withCheckedContinuation { continuation in
+			articlesTable.fetchLastUpdateDatesAsync { lastUpdateDates in
+				continuation.resume(returning: lastUpdateDates)
+			}
+		}
 	}
 
 	// MARK: - Fetching Articles Async
 
-	public func fetchArticlesAsync(feedID: String) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesAsync(feedID: feedID) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesAsync(feedID: String) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesAsync(feedID: feedID) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesAsync(feedIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesAsync(feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesAsync(feedIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesAsync(feedIDs: feedIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesAsync(articleIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesAsync(articleIDs: articleIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesAsync(articleIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesAsync(articleIDs: articleIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchUnreadArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadArticlesAsync(feedIDs: feedIDs, limit: limit) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchUnreadArticlesAsync(feedIDs: feedIDs, limit: limit) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchTodayArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchTodayArticlesAsync(feedIDs: feedIDs, limit: limit) { result in
-				continuation.resume(with: result)
+	public func fetchTodayArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchTodayArticlesAsync(feedIDs: feedIDs, limit: limit) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchedStarredArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchedStarredArticlesAsync(feedIDs: feedIDs, limit: limit) { result in
-				continuation.resume(with: result)
+	public func fetchedStarredArticlesAsync(feedIDs: Set<String>, limit: Int? = nil) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchedStarredArticlesAsync(feedIDs: feedIDs, limit: limit) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesMatchingAsync(searchString: String, feedIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesMatchingAsync(searchString: searchString, feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesMatchingAsync(searchString: String, feedIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesMatchingAsync(searchString: searchString, feedIDs: feedIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
 
-	public func fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async throws -> Set<Article> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs) { result in
-				continuation.resume(with: result)
+	public func fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async -> Set<Article> {
+		await withCheckedContinuation { continuation in
+			_fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs) { articles in
+				continuation.resume(returning: articles)
 			}
 		}
 	}
@@ -201,54 +242,65 @@ public struct ArticleChanges: Sendable {
 	// MARK: - Unread Counts
 
 	/// Fetch all non-zero unread counts.
-	public func fetchAllUnreadCountsAsync() async throws -> UnreadCountDictionary? {
-		return try await withCheckedThrowingContinuation { continuation in
-			_fetchAllUnreadCounts { result in
-				continuation.resume(with: result)
+	public func fetchAllUnreadCountsAsync() async -> UnreadCountDictionary? {
+		await withCheckedContinuation { continuation in
+			_fetchAllUnreadCounts { unreadCountDictionary in
+				continuation.resume(returning: unreadCountDictionary)
 			}
 		}
 	}
 
 	/// Fetch unread count for a single feed.
-	public func fetchUnreadCountAsync(feedID: String) async throws -> Int {
+	public func fetchUnreadCountAsync(feedID: String) async -> Int {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadCounts(feedIDs: Set([feedID])) { result in
-				switch result {
-				case .success(let unreadCountDictionary):
-					if let unreadCount = unreadCountDictionary[feedID] {
-						continuation.resume(returning: unreadCount)
-					} else {
-						continuation.resume(returning: 0)
-					}
-				case .failure(let error):
-					continuation.resume(throwing: error)
+		return await withCheckedContinuation { continuation in
+			_fetchUnreadCounts(feedIDs: Set([feedID])) { unreadCountDictionary in
+				if let unreadCount = unreadCountDictionary[feedID] {
+					continuation.resume(returning: unreadCount)
+				} else {
+					continuation.resume(returning: 0)
 				}
 			}
 		}
 	}
 
 	/// Fetch non-zero unread counts for given feedIDs.
-	public func fetchUnreadCountsAsync(feedIDs: Set<String>) async throws -> UnreadCountDictionary {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadCounts(feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadCountsAsync(feedIDs: Set<String>) async -> UnreadCountDictionary {
+		await withCheckedContinuation { continuation in
+			_fetchUnreadCounts(feedIDs: feedIDs) { unreadCountDictionary in
+				continuation.resume(returning: unreadCountDictionary)
 			}
 		}
 	}
 
-	public func fetchUnreadCountForTodayAsync(feedIDs: Set<String>) async throws -> Int {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadCount(feedIDs: feedIDs, since: todayCutoffDate()) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadCountForTodayAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			_fetchUnreadCount(feedIDs: feedIDs, since: todayCutoffDate()) { unreadCount in
+				continuation.resume(returning: unreadCount)
 			}
 		}
 	}
 
-	public func fetchUnreadCountForStarredArticlesAsync(feedIDs: Set<String>) async throws -> Int {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchStarredAndUnreadCount(feedIDs: feedIDs) { result in
-				continuation.resume(with: result)
+	public func fetchUnreadCountForStarredArticlesAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			_fetchStarredAndUnreadCount(feedIDs: feedIDs) { unreadCount in
+				continuation.resume(returning: unreadCount)
+			}
+		}
+	}
+
+	public func fetchTodayArticlesCountAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			articlesTable.fetchArticlesCountSince(feedIDs, todayCutoffDate()) { count in
+				continuation.resume(returning: count)
+			}
+		}
+	}
+
+	public func fetchStarredArticlesCountAsync(feedIDs: Set<String>) async -> Int {
+		await withCheckedContinuation { continuation in
+			articlesTable.fetchStarredArticlesCountAsync(feedIDs) { count in
+				continuation.resume(returning: count)
 			}
 		}
 	}
@@ -256,32 +308,28 @@ public struct ArticleChanges: Sendable {
 	// MARK: - Saving, Updating, and Deleting Articles
 
 	/// Update articles and save new ones — for feed-based systems (local and iCloud).
-	public func updateAsync(parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool) async throws -> ArticleChanges {
-		try await withCheckedThrowingContinuation { continuation in
-			_update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { result in
-				continuation.resume(with: result)
+	public func updateAsync(parsedItems: Set<ParsedItem>, feedID: String, deleteOlder: Bool) async -> ArticleChanges {
+		await withCheckedContinuation { continuation in
+			_update(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder) { articleChanges in
+				continuation.resume(returning: articleChanges)
 			}
 		}
 	}
 
 	/// Update articles and save new ones — for sync systems (Feedbin, Feedly, etc.).
-	public func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws -> ArticleChanges {
-		try await withCheckedThrowingContinuation { continuation in
-			_update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { result in
-				continuation.resume(with: result)
+	public func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async -> ArticleChanges {
+		await withCheckedContinuation { continuation in
+			_update(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead) { articleChanges in
+				continuation.resume(returning: articleChanges)
 			}
 		}
 	}
 
 	/// Delete articles
-	public func deleteAsync(articleIDs: Set<String>) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			_delete(articleIDs: articleIDs) { error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: ())
-				}
+	public func deleteAsync(articleIDs: Set<String>) async {
+		await withCheckedContinuation { continuation in
+			_delete(articleIDs: articleIDs) {
+				continuation.resume()
 			}
 		}
 	}
@@ -289,88 +337,59 @@ public struct ArticleChanges: Sendable {
 	// MARK: - ArticleIDs
 
 	/// Fetch the articleIDs of unread articles.
-	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchUnreadArticleIDsAsync { result in
-				continuation.resume(with: result)
+	public func fetchUnreadArticleIDsAsync() async -> Set<String> {
+		await withCheckedContinuation { continuation in
+			_fetchUnreadArticleIDsAsync { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
 
-	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchStarredArticleIDsAsync { result in
-				continuation.resume(with: result)
+	public func fetchStarredArticleIDsAsync() async -> Set<String> {
+		await withCheckedContinuation { continuation in
+			_fetchStarredArticleIDsAsync { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either starred or newer than the article cutoff date.
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			_fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { result in
-				continuation.resume(with: result)
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async -> Set<String> {
+		await withCheckedContinuation { continuation in
+			_fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
 
 	// MARK: - Statuses
 
-	public func markAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<ArticleStatus> {
-		try await withCheckedThrowingContinuation { continuation in
-			_mark(articles: articles, statusKey: statusKey, flag: flag) { result in
-				continuation.resume(with: result)
+	/// Mark statuses for articleIDs. Returns the articleIDs whose status actually changed.
+	public func markAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
+		await withCheckedContinuation { continuation in
+			_mark(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { changedArticleIDs in
+				continuation.resume(returning: changedArticleIDs)
 			}
 		}
 	}
 
-	public func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<String> {
-		try await withCheckedThrowingContinuation { continuation in
-			_markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { result in
-				continuation.resume(with: result)
+	public func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
+		await withCheckedContinuation { continuation in
+			_markAndFetchNew(articleIDs: articleIDs, statusKey: statusKey, flag: flag) { articleIDs in
+				continuation.resume(returning: articleIDs)
 			}
 		}
 	}
 
 	/// Create statuses for specified articleIDs. For existing statuses, don’t do anything.
 	/// For newly-created statuses, mark them as read and not-starred.
-	public func createStatusesIfNeededAsync(articleIDs: Set<String>) async throws {
-		try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-			_createStatusesIfNeeded(articleIDs: articleIDs) { error in
-				if let error {
-					continuation.resume(throwing: error)
-				} else {
-					continuation.resume(returning: ())
-				}
+	public func createStatusesIfNeededAsync(articleIDs: Set<String>) async {
+		await withCheckedContinuation { continuation in
+			_createStatusesIfNeeded(articleIDs: articleIDs) {
+				continuation.resume()
 			}
 		}
 	}
-
-#if os(iOS)
-	// MARK: - Suspend and Resume (for iOS)
-
-	/// Cancel current operations and close the database.
-	@MainActor public func cancelAndSuspend() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		cancelOperations()
-		suspend()
-	}
-
-	/// Close the database and stop running database calls.
-	/// Any pending calls will complete first.
-	@MainActor public func suspend() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		operationQueue.suspend()
-		queue.suspend()
-	}
-
-	/// Open the database and allow for running database calls again.
-	@MainActor public func resume() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		queue.resume()
-		operationQueue.resume()
-	}
-#endif
 
 	// MARK: - Caches
 
@@ -403,12 +422,9 @@ public struct ArticleChanges: Sendable {
 private extension ArticlesDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER);
+	CREATE TABLE if not EXISTS articles (articleID TEXT NOT NULL PRIMARY KEY, feedID TEXT NOT NULL, uniqueID TEXT NOT NULL, title TEXT, contentHTML TEXT, contentText TEXT, markdown TEXT, url TEXT, externalURL TEXT, summary TEXT, imageURL TEXT, bannerImageURL TEXT, datePublished DATE, dateModified DATE, searchRowID INTEGER, authors TEXT);
 
 	CREATE TABLE if not EXISTS statuses (articleID TEXT NOT NULL PRIMARY KEY, read BOOL NOT NULL DEFAULT 0, starred BOOL NOT NULL DEFAULT 0, dateArrived DATE NOT NULL DEFAULT 0);
-
-	CREATE TABLE if not EXISTS authors (authorID TEXT NOT NULL PRIMARY KEY, name TEXT, url TEXT, avatarURL TEXT, emailAddress TEXT);
-	CREATE TABLE if not EXISTS authorsLookup (authorID TEXT NOT NULL, articleID TEXT NOT NULL, PRIMARY KEY(authorID, articleID));
 
 	CREATE INDEX if not EXISTS articles_feedID_datePublished_articleID on articles (feedID, datePublished, articleID);
 
@@ -436,23 +452,11 @@ private extension ArticlesDatabase {
 
 // MARK: - Articles Table (Private)
 
-typealias UnreadCountDictionaryCompletionResult = Result<UnreadCountDictionary, Error>
-typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionaryCompletionResult) -> Void
-
-typealias UpdateArticlesResult = Result<ArticleChanges, DatabaseError>
-typealias UpdateArticlesCompletionBlock = @Sendable (UpdateArticlesResult) -> Void
-
-typealias SingleUnreadCountResult = Result<Int, DatabaseError>
-typealias SingleUnreadCountCompletionBlock = @Sendable (SingleUnreadCountResult) -> Void
-
-typealias ArticleSetResult = Result<Set<Article>, DatabaseError>
-typealias ArticleSetResultBlock = @Sendable (ArticleSetResult) -> Void
-
-typealias ArticleIDsResult = Result<Set<String>, Error>
-typealias ArticleIDsCompletionBlock = @Sendable (ArticleIDsResult) -> Void
-
-typealias ArticleStatusesResult = Result<Set<ArticleStatus>, DatabaseError>
-typealias ArticleStatusesResultBlock = @Sendable (ArticleStatusesResult) -> Void
+typealias UnreadCountDictionaryCompletionBlock = @Sendable (UnreadCountDictionary) -> Void
+typealias UpdateArticlesCompletionBlock = @Sendable (ArticleChanges) -> Void
+typealias SingleUnreadCountCompletionBlock = @Sendable (Int) -> Void
+typealias ArticleSetResultBlock = @Sendable (Set<Article>) -> Void
+typealias ArticleIDsCompletionBlock = @Sendable (Set<String>) -> Void
 
 private extension ArticlesDatabase {
 
@@ -465,7 +469,7 @@ private extension ArticlesDatabase {
 			}
 			operation.completionBlock = { operation in
 				let fetchOperation = operation as! FetchAllUnreadCountsOperation
-				completion(fetchOperation.result ?? .failure(DatabaseError.isSuspended))
+				completion(fetchOperation.unreadCountDictionary ?? UnreadCountDictionary())
 			}
 			operationQueue.add(operation)
 		}
@@ -486,9 +490,9 @@ private extension ArticlesDatabase {
 		articlesTable.fetchStarredAndUnreadCount(feedIDs, completion)
 	}
 
-	func _mark(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleStatusesResultBlock) {
+	func _mark(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		return articlesTable.mark(articles, statusKey, flag, completion)
+		articlesTable.mark(articleIDs, statusKey, flag, completion)
 	}
 
 	func _markAndFetchNew(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping ArticleIDsCompletionBlock) {

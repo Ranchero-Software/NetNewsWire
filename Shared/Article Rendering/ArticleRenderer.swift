@@ -109,7 +109,7 @@ import Account
 		self.article = article
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
-		self.title = article?.sanitizedTitle() ?? ""
+		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
 		if let content = extractedArticle?.content {
 			self.body = content
 			self.baseURL = extractedArticle?.url

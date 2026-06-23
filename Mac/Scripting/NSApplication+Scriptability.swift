@@ -70,6 +70,29 @@ extension NSApplication: @preconcurrency ScriptingObjectContainer {
         }
     }
 
+    @objc(selectedFeeds)
+    func selectedFeeds() -> NSArray {
+        let feeds = appDelegate.scriptingSelectedFeeds
+        let scriptableFeeds: [ScriptableFeed] = feeds.compactMap { feed in
+            return ScriptableFeed.scriptableFeed(for: feed)
+        }
+        return scriptableFeeds as NSArray
+    }
+
+    @objc(countOfSelectedFeeds)
+    func countOfSelectedFeeds() -> Int {
+        appDelegate.scriptingSelectedFeeds.count
+    }
+
+    @objc(objectInSelectedFeedsAtIndex:)
+    func objectInSelectedFeedsAtIndex(_ index: Int) -> ScriptableFeed? {
+        let feeds = appDelegate.scriptingSelectedFeeds
+        guard index >= 0 && index < feeds.count else {
+            return nil
+        }
+        return ScriptableFeed.scriptableFeed(for: feeds[index])
+    }
+
     // MARK: --- scriptable elements ---
 
     @objc(accounts)

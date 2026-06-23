@@ -11,17 +11,12 @@ import os
 import WebKit
 import RSCore
 import RSWeb
+import HTMLMetadata
 import Account
 import Articles
+import Images
 
 final class MainTimelineModernViewController: UIViewController, UndoableCommandRunner {
-
-	struct CellIdentifier {
-		static let standard = "MainTimelineCellStandard"
-		static let standardIndex0 = "MainTimelineCellIndexZero"
-		static let icon = "MainTimelineCellIcon"
-		static let iconIndex0 = "MainTimelineCellIconIndexZero"
-	}
 
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
@@ -118,18 +113,22 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		label.addGestureRecognizer(tap)
 		let pointerInteraction = UIPointerInteraction(delegate: nil)
 		label.addInteraction(pointerInteraction)
+		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.sizeToFit()
 		return label
 	}()
 
 	private lazy var navigationBarSubtitleTitleLabel: UILabel = {
 		let label = UILabel()
-		label.font = UIFont(name: "Helvetica", size: 12)
+		label.font = .systemFont(ofSize: 12)
 		label.textColor = .systemGray
 		label.textAlignment = .center
 		label.isUserInteractionEnabled = true
 		label.adjustsFontForContentSizeCategory = false
 		let tap = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 		label.addGestureRecognizer(tap)
+		label.text = " " // Placeholder avoids iOS 26 UINavigationBar crash.
+		label.sizeToFit()
 		return label
 	}()
 
@@ -391,7 +390,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			guard let dataSource = self.dataSource else {
 				return
 			}
-			dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			dataSource.apply(snapshot, animatingDifferences: false) { [weak self = self] in
 				self?.restoreSelectionIfNecessary(adjustScroll: false)
 			}
 		})
@@ -458,7 +457,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	}
 
 	@IBAction func markAllAsRead(_ sender: Any?) {
-		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		let title = NSLocalizedString("Mark All as Read", comment: "Command")
 
 		if let source = sender as? UIBarButtonItem {
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: source) { [weak self] in
@@ -646,6 +645,8 @@ private extension MainTimelineModernViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
 
 	private func configureSearchController() {
@@ -676,7 +677,10 @@ private extension MainTimelineModernViewController {
 		var config = UICollectionLayoutListConfiguration(appearance: .plain)
 		config.showsSeparators = false
 		config.headerMode = .none
-		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+		config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+			guard let self else {
+				return nil
+			}
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			var actions = [UIContextualAction]()
 
@@ -691,7 +695,7 @@ private extension MainTimelineModernViewController {
 				// doesn't lag behind user actions.
 				let announcement = article.status.starred ?
 					NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
-					NSLocalizedString("Starred", comment: "Accessibility announcement")
+					NSLocalizedString("Starred", comment: "Starred")
 				UIAccessibility.post(notification: .announcement, argument: announcement)
 
 				/// The call to `toggleStar` is delayed in order to allow
@@ -744,7 +748,7 @@ private extension MainTimelineModernViewController {
 						alert.addAction(action)
 					}
 
-					let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+					let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 					alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 						completion(true)
 					})
@@ -766,15 +770,18 @@ private extension MainTimelineModernViewController {
 
 			return config
 		}
-		config.leadingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+		config.leadingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+			guard let self else {
+				return nil
+			}
 			guard let article = dataSource.itemIdentifier(for: indexPath) else { return nil }
 			guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
 			var actions = [UIContextualAction]()
 
 			// Set up the read action
 			let readTitle = article.status.read ?
-				NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
-				NSLocalizedString("Mark as Read", comment: "Mark as Read")
+				NSLocalizedString("Mark as Unread", comment: "Command") :
+				NSLocalizedString("Mark as Read", comment: "Command")
 
 			let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] _, _, completion in
 
@@ -817,7 +824,7 @@ private extension MainTimelineModernViewController {
 			/// calculations (leading swipe actions with sidebar visible)
 			section.contentInsets = NSDirectionalEdgeInsets(
 				top: 0,
-				leading: self.view.safeAreaInsets.left, // Sidebar width
+				leading: layoutEnvironment.container.contentInsets.leading, // Sidebar width
 				bottom: 0,
 				trailing: 0
 			)
@@ -829,33 +836,16 @@ private extension MainTimelineModernViewController {
 	}
 
 	private func makeDataSource(_ collectionView: UICollectionView) -> UICollectionViewDiffableDataSource<Int, Article> {
+		collectionView.register(MainTimelineCell.self, forCellWithReuseIdentifier: MainTimelineCell.reuseIdentifier)
+
 		let dataSource: UICollectionViewDiffableDataSource<Int, Article> =
 			MainTimelineCollectionViewDataSource(collectionView: collectionView, cellProvider: { [weak self] collectionView, indexPath, article in
 				guard let self else {
 					return nil
 				}
-				let cellData = self.configure(article: article)
-				if self.showIcons {
-					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.iconIndex0, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.icon, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					}
-				} else {
-					if indexPath.row == 0 {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standardIndex0, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					} else {
-						let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CellIdentifier.standard, for: indexPath) as! MainTimelineCollectionViewCell
-						cell.cellData = cellData
-						return cell
-					}
-				}
+				let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
+				cell.cellData = self.configure(article: article)
+				return cell
 			})
 
 		return dataSource
@@ -1060,6 +1050,19 @@ private extension MainTimelineModernViewController {
 		queueUpdateUI()
 	}
 
+	@objc func handleLowMemory(_ note: Notification) {
+		emptyTextSizerCaches()
+	}
+
+	@objc func handleAppDidGoToBackground(_ note: Notification) {
+		emptyTextSizerCaches()
+	}
+
+	func emptyTextSizerCaches() {
+		MultilineUILabelSizer.emptyCache()
+		SingleLineUILabelSizer.emptyCache()
+	}
+
 	@objc func scrollPositionDidChange() {
 		Self.logger.debug("MainTimelineModernViewController: scrollPositionDidChange")
 		timelineMiddleIndexPath = collectionView?.middleVisibleRow()
@@ -1077,7 +1080,10 @@ extension MainTimelineModernViewController: UISearchControllerDelegate {
 	func willDismissSearchController(_ searchController: UISearchController) {
 		coordinator?.endSearching()
 		searchController.searchBar.showsScopeBar = false
-		updateToolbar()
+		// Async to avoid an iOS 26 UINavigationBar crash during the search-bar dismissal transition.
+		DispatchQueue.main.async {
+			self.updateToolbar()
+		}
 	}
 
 }
@@ -1109,8 +1115,8 @@ extension MainTimelineModernViewController {
 		guard !article.status.read || article.isAvailableToMarkUnread else { return nil }
 
 		let title = article.status.read ?
-			NSLocalizedString("Mark as Unread", comment: "Mark as Unread") :
-			NSLocalizedString("Mark as Read", comment: "Mark as Read")
+			NSLocalizedString("Mark as Unread", comment: "Command") :
+			NSLocalizedString("Mark as Read", comment: "Command")
 		let image = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
@@ -1137,8 +1143,8 @@ extension MainTimelineModernViewController {
 	func toggleArticleStarStatusAction(_ article: Article) -> UIAction {
 
 		let title = article.status.starred ?
-			NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") :
-			NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
+			NSLocalizedString("Mark as Unstarred", comment: "Command") :
+			NSLocalizedString("Mark as Starred", comment: "Command")
 		let image = article.status.starred ? Assets.Images.starOpen : Assets.Images.starClosed
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
@@ -1146,7 +1152,7 @@ extension MainTimelineModernViewController {
 			// doesn't lag behind user actions.
 			let announcement = article.status.starred ?
 				NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
-				NSLocalizedString("Starred", comment: "Accessibility announcement")
+				NSLocalizedString("Starred", comment: "Starred")
 			UIAccessibility.post(notification: .announcement, argument: announcement)
 
 			DispatchQueue.main.asyncAfter(wallDeadline: .now() + 1.0) {
@@ -1172,7 +1178,7 @@ extension MainTimelineModernViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+		let title = NSLocalizedString("Mark Above as Read", comment: "Command")
 		let image = Assets.Images.markAboveAsRead
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -1197,7 +1203,7 @@ extension MainTimelineModernViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let title = NSLocalizedString("Mark Below as Read", comment: "Command")
 		let image = Assets.Images.markBelowAsRead
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
@@ -1212,7 +1218,7 @@ extension MainTimelineModernViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Mark Above as Read", comment: "Mark Above as Read")
+		let title = NSLocalizedString("Mark Above as Read", comment: "Command")
 		let cancel = {
 			completion(true)
 		}
@@ -1231,7 +1237,7 @@ extension MainTimelineModernViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Mark Below as Read", comment: "Mark Below as Read")
+		let title = NSLocalizedString("Mark Below as Read", comment: "Command")
 		let cancel = {
 			completion(true)
 		}
@@ -1284,11 +1290,11 @@ extension MainTimelineModernViewController {
 	}
 
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
-		guard let feed = article.feed else { return nil }
-		guard let fetchedArticles = try? feed.fetchArticles() else {
+		guard let feed = article.feed else {
 			return nil
 		}
 
+		let fetchedArticles = feed.fetchArticles()
 		let articles = Array(fetchedArticles)
 		guard articles.canMarkAllAsRead(), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
@@ -1306,17 +1312,17 @@ extension MainTimelineModernViewController {
 	}
 
 	func markAllInFeedAsReadAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
-		guard let feed = article.feed else { return nil }
-		guard let fetchedArticles = try? feed.fetchArticles() else {
+		guard let feed = article.feed else {
 			return nil
 		}
 
+		let fetchedArticles = feed.fetchArticles()
 		let articles = Array(fetchedArticles)
 		guard articles.canMarkAllAsRead(), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
-		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Mark All as Read in Feed")
+		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 		let cancel = {
 			completion(true)
@@ -1333,7 +1339,7 @@ extension MainTimelineModernViewController {
 
 	func copyArticleURLAction(_ article: Article) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
-		let title = NSLocalizedString("Copy Article URL", comment: "Copy Article URL")
+		let title = NSLocalizedString("Copy Article URL", comment: "Command")
 		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
@@ -1342,7 +1348,7 @@ extension MainTimelineModernViewController {
 
 	func copyExternalURLAction(_ article: Article) -> UIAction? {
 		guard let externalLink = article.externalLink, externalLink != article.preferredLink, let url = URL(string: externalLink) else { return nil }
-		let title = NSLocalizedString("Copy External URL", comment: "Copy External URL")
+		let title = NSLocalizedString("Copy External URL", comment: "Command")
 		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
@@ -1358,7 +1364,7 @@ extension MainTimelineModernViewController {
 		guard article.preferredURL != nil else {
 			return nil
 		}
-		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+		let title = NSLocalizedString("Open in Browser", comment: "Command")
 		let action = UIAction(title: title, image: Assets.Images.safari) { [weak self] _ in
 			self?.showBrowserForArticle(article)
 		}
@@ -1370,7 +1376,7 @@ extension MainTimelineModernViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Open in Browser", comment: "Open in Browser")
+		let title = NSLocalizedString("Open in Browser", comment: "Command")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			self?.showBrowserForArticle(article)
 			completion(true)
@@ -1393,7 +1399,7 @@ extension MainTimelineModernViewController {
 
 	func shareAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
 		guard let url = article.preferredURL else { return nil }
-		let title = NSLocalizedString("Share", comment: "Share")
+		let title = NSLocalizedString("Share", comment: "Share button")
 		let action = UIAction(title: title, image: Assets.Images.share) { [weak self] _ in
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)
 		}
@@ -1402,7 +1408,7 @@ extension MainTimelineModernViewController {
 
 	func shareAlertAction(_ article: Article, indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let url = article.preferredURL else { return nil }
-		let title = NSLocalizedString("Share", comment: "Share")
+		let title = NSLocalizedString("Share", comment: "Share button")
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			completion(true)
 			self?.shareDialogForTableCell(indexPath: indexPath, url: url, title: article.title)

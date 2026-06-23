@@ -20,7 +20,7 @@ final class TimelineTableCellView: NSTableCellView {
 
 	private lazy var iconView = IconView()
 
-	private var starView = TimelineTableCellView.imageView(with: Assets.Images.timelineStarUnselected, scaling: .scaleNone)
+	private var starView = TimelineTableCellView.imageView(with: Assets.Images.timelineStar, scaling: .scaleNone)
 
 	private lazy var textFields = {
 		return [self.dateView, self.feedNameView, self.titleView, self.summaryView, self.textView]
@@ -56,7 +56,7 @@ final class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 
@@ -102,11 +102,11 @@ final class TimelineTableCellView: NSTableCellView {
 		setFrame(for: summaryView, rect: layoutRects.summaryRect)
 		setFrame(for: textView, rect: layoutRects.textRect)
 
-		dateView.setFrame(ifNotEqualTo: layoutRects.dateRect)
-		unreadIndicatorView.setFrame(ifNotEqualTo: layoutRects.unreadIndicatorRect)
-		feedNameView.setFrame(ifNotEqualTo: layoutRects.feedNameRect)
-		iconView.setFrame(ifNotEqualTo: layoutRects.iconImageRect)
-		starView.setFrame(ifNotEqualTo: layoutRects.starRect)
+		dateView.setFrameIfNotEqual(layoutRects.dateRect)
+		unreadIndicatorView.setFrameIfNotEqual(layoutRects.unreadIndicatorRect)
+		feedNameView.setFrameIfNotEqual(layoutRects.feedNameRect)
+		iconView.setFrameIfNotEqual(layoutRects.iconImageRect)
+		starView.setFrameIfNotEqual(layoutRects.starRect)
 	}
 }
 
@@ -151,7 +151,7 @@ private extension TimelineTableCellView {
 			hideView(textField)
 		} else {
 			showView(textField)
-			textField.setFrame(ifNotEqualTo: rect)
+			textField.setFrameIfNotEqual(rect)
 		}
 	}
 
@@ -230,7 +230,7 @@ private extension TimelineTableCellView {
 		var s = text ?? NSAttributedString(string: "")
 
 		if let fieldFont = textField.font {
-			s = s.adding(font: fieldFont)
+			s = s.applyingBaseFont(fieldFont)
 		}
 
 		if textField.attributedStringValue != s {
@@ -257,11 +257,7 @@ private extension TimelineTableCellView {
 	}
 
 	func updateStarView() {
-		if isSelected && isEmphasized {
-			starView.image = Assets.Images.timelineStarSelected
-		} else {
-			starView.image = Assets.Images.timelineStarUnselected
-		}
+		starView.contentTintColor = (isSelected && isEmphasized) ? .white : Assets.Colors.star
 		showOrHideView(starView, !cellData.starred)
 	}
 

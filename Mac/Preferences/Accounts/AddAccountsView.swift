@@ -101,10 +101,10 @@ struct AddAccountsView: View {
 				Button(action: {
 					parent?.dismiss(nil)
 				}, label: {
-					Text("Cancel")
+					Text("Cancel", comment: "Cancel button")
 						.frame(width: 76)
 				})
-				.help("Cancel")
+				.help(Text("Cancel", comment: "Cancel button"))
 				.keyboardShortcut(.cancelAction)
 				Button(action: {
 					addAccountDelegate?.presentSheetForAccount(selectedAccount)
@@ -139,7 +139,7 @@ struct AddAccountsView: View {
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
-						Text(account.localizedAccountName())
+						Text(account.displayName)
 					}
 					.tag(account)
 				})
@@ -172,7 +172,7 @@ struct AddAccountsView: View {
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 
-						Text(account.localizedAccountName())
+						Text(account.displayName)
 					}
 					.tag(account)
 				})
@@ -207,7 +207,7 @@ struct AddAccountsView: View {
 										.aspectRatio(contentMode: .fit)
 										.frame(width: 20, height: 20, alignment: .center)
 										.padding(.leading, 4)
-									Text(account.localizedAccountName())
+									Text(account.displayName)
 								}
 								.tag(account)
 
@@ -242,7 +242,7 @@ struct AddAccountsView: View {
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 
-						Text(account.localizedAccountName())
+						Text(account.displayName)
 					}.tag(account)
 				})
 			})

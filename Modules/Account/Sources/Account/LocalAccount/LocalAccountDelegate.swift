@@ -40,107 +40,124 @@ import Secrets
 		return refresher
 	}()
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 	}
 
-	@MainActor func refreshAll(for account: Account) async throws {
+	@MainActor func refreshAll() async throws {
+		guard let account else {
+			return
+		}
 		guard progressInfo.isComplete, !Platform.isRunningUnitTests else {
 			return
 		}
 
 		let feeds = account.flattenedFeeds()
+		refresher.accountID = account.accountID
 		await refresher.refreshFeeds(feeds)
 		account.lastRefreshCompletedDate = Date()
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws {
+	@MainActor func syncArticleStatus() async throws -> Bool {
+		false
 	}
 
-	@MainActor func sendArticleStatus(for account: Account) async throws {
+	@MainActor func sendArticleStatus() async throws {
 	}
 
-	@MainActor func refreshArticleStatus(for account: Account) async throws {
+	@MainActor func refreshArticleStatus() async throws {
 	}
 
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
-		let opmlData = try Data(contentsOf: opmlFile)
-		let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
-		let opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
-
-		// TODO: throw appropriate error for empty OPML
-		guard let children = opmlDocument.children else {
+	@MainActor func importOPML(opmlFile: URL) async throws {
+		guard let account else {
 			return
 		}
+		try account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+			let opmlData = try Data(contentsOf: opmlFile)
+			let parserData = ParserData(url: opmlFile.absoluteString, data: opmlData)
+			let opmlDocument = try OPMLParser.parseOPML(with: parserData)
 
-		BatchUpdate.shared.perform {
-			account.loadOPMLItems(children)
+			// TODO: throw appropriate error for empty OPML
+			guard let children = opmlDocument.children else {
+				return
+			}
+
+			BatchUpdate.shared.perform {
+				account.loadOPMLItems(children)
+			}
 		}
 	}
 
-	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	@MainActor func createFeed(url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		guard let url = URL(string: urlString) else {
 			throw AccountError.invalidParameter
 		}
 
-		return try await createFeed(account: account, url: url, editedName: name, container: container)
+		return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
+			try await createFeed(account: account, url: url, editedName: name, container: container)
+		}
 	}
 
-	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	@MainActor func renameFeed(with feed: Feed, to name: String) async throws {
 		feed.editedName = name
 	}
 
-	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	@MainActor func removeFeed(feed: Feed, container: Container) async throws {
 		container.removeFeedFromTreeAtTopLevel(feed)
 	}
 
-	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	@MainActor func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
 		sourceContainer.removeFeedFromTreeAtTopLevel(feed)
 		destinationContainer.addFeedToTreeAtTopLevel(feed)
 	}
 
-	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
+	@MainActor func addFeed(feed: Feed, container: Container) async throws {
 		container.addFeedToTreeAtTopLevel(feed)
 	}
 
-	@MainActor func restoreFeed(for account: Account, feed: Feed, container: Container) async throws {
+	@MainActor func restoreFeed(feed: Feed, container: Container) async throws {
 		container.addFeedToTreeAtTopLevel(feed)
 	}
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+	@MainActor func createFolder(name: String) async throws -> Folder {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		guard let folder = account.ensureFolder(with: name) else {
 			throw AccountError.invalidParameter
 		}
 		return folder
 	}
 
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	@MainActor func renameFolder(with folder: Folder, to name: String) async throws {
 		folder.name = name
 	}
 
-	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
-		account.removeFolderFromTree(folder)
+	@MainActor func removeFolder(with folder: Folder) async throws {
+		account?.removeFolderFromTree(folder)
 	}
 
-	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
-		account.addFolderToTree(folder)
+	@MainActor func restoreFolder(folder: Folder) async throws {
+		account?.addFolderToTree(folder)
 	}
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
-		try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
+	@MainActor func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		_ = await account?.updateStatusesAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 	}
 
-	func accountDidInitialize(_ account: Account) {
-		self.account = account
+	func accountDidInitialize() {
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		nil
 	}
 
-	func vacuumDatabases() {
+	func vacuumDatabases() async {
 	}
 
 	// MARK: Suspend and Resume (for iOS)
@@ -149,11 +166,7 @@ import Secrets
 		refresher.suspend()
 	}
 
-	@MainActor func suspendDatabase() {
-		// Nothing to do
-	}
-
-	@MainActor func resume(account: Account) {
+	@MainActor func resume() {
 		refresher.resume()
 	}
 
@@ -210,7 +223,7 @@ private extension LocalAccountDelegate {
 		container.addFeedToTreeAtTopLevel(feed)
 
 		Task {
-			try? await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
+			await account.updateAsync(feed: feed, parsedFeed: parsedFeed)
 		}
 
 		return feed

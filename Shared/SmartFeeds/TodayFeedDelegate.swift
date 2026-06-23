@@ -11,6 +11,7 @@ import RSCore
 import Articles
 import ArticlesDatabase
 import Account
+import Images
 
 struct TodayFeedDelegate: SmartFeedDelegate {
 	var sidebarItemID: SidebarItemIdentifier? {
@@ -23,7 +24,7 @@ struct TodayFeedDelegate: SmartFeedDelegate {
 		Assets.Images.todayFeed
 	}
 
-	func fetchUnreadCount(account: Account) async throws -> Int? {
-		try await account.fetchUnreadCountForTodayAsync()
+	func fetchUnreadCount(account: Account) async -> Int {
+		await account.fetchUnreadCountForTodayAsync()
 	}
 }

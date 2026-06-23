@@ -8,6 +8,7 @@
 
 import UIKit
 import Articles
+import Images
 
 class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	private var previewArticle: Article {
@@ -70,6 +71,8 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			withReuseIdentifier: TimelineHeaderView.reuseIdentifier
 		)
 
+		collectionView.register(MainTimelineCell.self, forCellWithReuseIdentifier: MainTimelineCell.reuseIdentifier)
+
 		var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
 		config.showsSeparators = false
 		config.headerMode = .supplementary
@@ -105,7 +108,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		}
 
 		if indexPath.section == 2 {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainTimelineCellStandard", for: indexPath) as! MainTimelineCollectionViewCell
+			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
 												 feedName: "The Fellowship of the Ring",
@@ -119,7 +122,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		}
 
 		if indexPath.section == 3 {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainTimelineCellIcon", for: indexPath) as! MainTimelineCollectionViewCell
+			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
 			cell.cellData = MainTimelineCellData(article: previewArticle,
 												 showFeedName: .byline,
 												 feedName: "The Fellowship of the Ring",
@@ -132,7 +135,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			return cell
 		}
 
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MainTimelineCellStandard", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath)
         return cell
     }
 

@@ -8,31 +8,35 @@
 import SwiftUI
 import Account
 import ErrorLog
+import RSCore
 
 struct ErrorLogView: View {
 
 	@State private var entries = [ErrorLogEntry]()
 	@State private var plainText = ""
+	@State private var showHelp = false
 
 	private static let maxEntries = 200
+	private static let helpURL = URL(string: "https://netnewswire.com/help/error-log.html")!
 
 	var body: some View {
-		Group {
+		VStack(spacing: 0) {
 			if entries.isEmpty {
-				ContentUnavailableView("No Errors Logged", systemImage: "checkmark.circle")
+				ContentUnavailableView(NSLocalizedString("No Errors Logged", comment: "Error log empty state"), systemImage: "checkmark.circle")
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			} else {
-				VStack(spacing: 0) {
-					privacyWarning
-					Divider()
-					ScrollView {
-						Text(buildAttributedString(entries))
-							.font(.system(.body, design: .monospaced))
-							.textSelection(.enabled)
-							.frame(maxWidth: .infinity, alignment: .leading)
-							.padding()
-					}
+				privacyWarning
+				Divider()
+				ScrollView {
+					Text(buildAttributedString(entries))
+						.font(.system(.body, design: .monospaced))
+						.textSelection(.enabled)
+						.frame(maxWidth: .infinity, alignment: .leading)
+						.padding()
 				}
 			}
+			Divider()
+			helpLinkFooter
 		}
 		.navigationTitle("Error Log")
 		.toolbar {
@@ -43,13 +47,16 @@ struct ErrorLogView: View {
 				.disabled(entries.isEmpty)
 			}
 		}
+		.sheet(isPresented: $showHelp) {
+			SafariView(url: Self.helpURL)
+		}
 		.task {
 			let allEntries = await AccountManager.shared.errorLogDatabase.allEntries()
 			entries = Array(allEntries.suffix(Self.maxEntries))
 			plainText = buildPlainText(entries)
 		}
 		.onReceive(NotificationCenter.default.publisher(for: .appDidEncounterError)) { notification in
-			guard let entry = errorLogEntry(from: notification) else {
+			guard let entry = ErrorLogEntry(notification: notification) else {
 				return
 			}
 			entries.append(entry)
@@ -66,17 +73,20 @@ struct ErrorLogView: View {
 			.foregroundStyle(.secondary)
 			.padding()
 	}
+
+	private var helpLinkFooter: some View {
+		Button(NSLocalizedString("Error Log Help", comment: "Help link")) {
+			showHelp = true
+		}
+		.font(.subheadline)
+		.frame(maxWidth: .infinity)
+		.padding(.vertical, 12)
+	}
 }
 
 // MARK: - Private
 
 private extension ErrorLogView {
-
-	static let dateFormatter: DateFormatter = {
-		let formatter = DateFormatter()
-		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-		return formatter
-	}()
 
 	func buildAttributedString(_ entries: [ErrorLogEntry]) -> AttributedString {
 		var result = AttributedString()
@@ -87,7 +97,7 @@ private extension ErrorLogView {
 	}
 
 	func attributedString(for entry: ErrorLogEntry) -> AttributedString {
-		var timestamp = AttributedString("[\(Self.dateFormatter.string(from: entry.date))] ")
+		var timestamp = AttributedString("[\(DateFormatter.logTimestamp.string(from: entry.date))] ")
 		timestamp.foregroundColor = .secondary
 
 		let sourceString: String
@@ -97,7 +107,7 @@ private extension ErrorLogView {
 			sourceString = "\(entry.sourceName) — \(entry.operation): "
 		}
 		var source = AttributedString(sourceString)
-		source.foregroundColor = color(for: entry.sourceID)
+		source.foregroundColor = AccountType(rawValue: entry.sourceID)?.logColor ?? .secondary
 		source.font = .system(.body, design: .monospaced).weight(.medium)
 
 		var message = AttributedString(entry.errorMessage)
@@ -120,7 +130,7 @@ private extension ErrorLogView {
 	func buildPlainText(_ entries: [ErrorLogEntry]) -> String {
 		var result = ""
 		for entry in entries {
-			result += "[\(Self.dateFormatter.string(from: entry.date))] "
+			result += "[\(DateFormatter.logTimestamp.string(from: entry.date))] "
 			if entry.operation.isEmpty {
 				result += "\(entry.sourceName): "
 			} else {
@@ -133,46 +143,5 @@ private extension ErrorLogView {
 			result += "\n\n"
 		}
 		return result
-	}
-
-	func color(for sourceID: Int) -> Color {
-		guard let type = AccountType(rawValue: sourceID) else {
-			return .secondary
-		}
-
-		switch type {
-		case .onMyMac:
-			return .secondary
-		case .cloudKit:
-			return .purple
-		case .feedly:
-			return .green
-		case .feedbin:
-			return .blue
-		case .newsBlur:
-			return .orange
-		case .freshRSS:
-			return .teal
-		case .inoreader:
-			return .brown
-		case .bazQux:
-			return .indigo
-		case .theOldReader:
-			return .pink
-		}
-	}
-
-	func errorLogEntry(from notification: Notification) -> ErrorLogEntry? {
-		guard let errorMessage = notification.userInfo?[ErrorLogUserInfoKey.errorMessage] as? String,
-			  let sourceName = notification.userInfo?[ErrorLogUserInfoKey.sourceName] as? String,
-			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
-			return nil
-		}
-		let operation = notification.userInfo?[ErrorLogUserInfoKey.operation] as? String ?? ""
-		let fileName = notification.userInfo?[ErrorLogUserInfoKey.fileName] as? String ?? ""
-		let functionName = notification.userInfo?[ErrorLogUserInfoKey.functionName] as? String ?? ""
-		let lineNumber = notification.userInfo?[ErrorLogUserInfoKey.lineNumber] as? Int ?? 0
-
-		return ErrorLogEntry(id: 0, date: Date(), sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage)
 	}
 }

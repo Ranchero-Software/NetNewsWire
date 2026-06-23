@@ -94,7 +94,7 @@ final class UnreadCountView: NSView {
 		return _intrinsicContentSize
 	}
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 

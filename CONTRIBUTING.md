@@ -1,10 +1,14 @@
 # Contributing
 
+## Please ask first!
+
 We welcome contributions — but it’s **really important to ask first** before working on a new feature or bug fix. Just because the app is open source doesn’t mean we add features just whenever someone codes one up. The app is planned the same way it would be if it weren’t open source. (See NetNewsWire [milestones](https://github.com/Ranchero-Software/NetNewsWire/milestones).)
 
 Also: just because a ticket exists doesn’t mean we’re going to implement a fix or feature. Or not now, or not before some other things happen first.
 
-Do not open a PR first. Ask first! If you open a PR, it will be ignored or closed without comment. Even a draft PR.
+**Do not open a PR first. Ask first!** If you open a PR, it will be ignored or closed without comment. Even a draft PR.
+
+Also: **We are not adding AI features right now.** Maybe later and maybe not. If your PR adds AI features, we will close it.
 
 Here’s how to contribute:
 

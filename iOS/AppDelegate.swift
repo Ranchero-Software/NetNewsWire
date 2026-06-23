@@ -16,6 +16,7 @@ import Account
 import Articles
 import Secrets
 import ErrorLog
+import Images
 
 @MainActor var appDelegate: AppDelegate!
 
@@ -60,6 +61,8 @@ import ErrorLog
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
+
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
@@ -107,7 +110,6 @@ import ErrorLog
 
 		#if DEBUG
 		ArticleStatusSyncTimer.shared.update()
-		postFakeErrorsForTesting()
 		#endif
 
 		return true
@@ -116,7 +118,7 @@ import ErrorLog
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		Task { @MainActor in
-			self.resumeDatabaseProcessingIfNecessary()
+			self.resumeIfNecessary()
 			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 			self.suspendApplication()
 			completionHandler(.newData)
@@ -162,7 +164,8 @@ import ErrorLog
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: errorHandler)
 	}
 
-	func resumeDatabaseProcessingIfNecessary() {
+	/// Un-suspend network activity if it was suspended on background entry.
+	func resumeIfNecessary() {
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			Self.logger.info("Application processing resumed.")
@@ -321,7 +324,10 @@ private extension AppDelegate {
 
 		isSyncArticleStatusRunning = true
 
-		let completeProcessing = { [unowned self] in
+		let completeProcessing = { [weak self] in
+			guard let self else {
+				return
+			}
 			self.isSyncArticleStatusRunning = false
 			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
 			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
@@ -347,9 +353,12 @@ private extension AppDelegate {
 		guard UIApplication.shared.applicationState == .background else {
 			return
 		}
+		guard !AccountManager.shared.isSuspended else {
+			return
+		}
 
 		AccountManager.shared.suspendNetworkAll()
-		AccountManager.shared.suspendDatabaseAll()
+		AccountManager.shared.saveAll()
 		ArticleThemeDownloader.shared.cleanUp()
 
 		AppNotification.postAppDidGoToBackground()
@@ -404,7 +413,7 @@ private extension AppDelegate {
 			}
 			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			if !AccountManager.shared.isSuspended {
-				WidgetDataEncoder.shared?.encode()
+				await WidgetDataEncoder.shared?.encodeAndWait()
 				self.suspendApplication()
 				Self.logger.info("Background refresh completed.")
 				task.setTaskCompleted(success: true)
@@ -440,7 +449,7 @@ private extension AppDelegate {
 				return
 		}
 
-		resumeDatabaseProcessingIfNecessary()
+		resumeIfNecessary()
 
 		guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			assertionFailure("Expected account with \(accountID)")
@@ -448,45 +457,11 @@ private extension AppDelegate {
 			return
 		}
 
-		guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
-			assertionFailure("Expected article with \(articleID)")
-			Self.logger.error("No article with articleID found \(articleID) from status notification")
-			return
-		}
-
-		assert(singleArticleSet.count == 1)
-		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
-
 		Task { @MainActor in
-			try? await account.syncArticleStatus()
+			try? await account.markArticles(articleIDs: [articleID], statusKey: statusKey, flag: true)
+			_ = try? await account.syncArticleStatus()
 			prepareAccountsForBackground()
 			suspendApplication()
 		}
 	}
-}
-
-// MARK: - Debug
-
-extension AppDelegate {
-
-	#if DEBUG
-	func postFakeErrorsForTesting() {
-		let fakeErrors: [(String, Int, String, String)] = [
-			("On My Mac", AccountType.onMyMac.rawValue, "Downloading feed", "HTTP 404 Not Found: https://example.com/feed.xml"),
-			("Feedbin", AccountType.feedbin.rawValue, "Syncing starred status", "HTTP 401 Unauthorized"),
-			("iCloud", AccountType.cloudKit.rawValue, "Refreshing", "HTTP 429 Too Many Requests: https://daringfireball.net/feeds/main"),
-			("Feedly", AccountType.feedly.rawValue, "Fetching articles", "The request timed out."),
-			("NewsBlur", AccountType.newsBlur.rawValue, "Refreshing feeds", "HTTP 503 Service Unavailable"),
-			("FreshRSS", AccountType.freshRSS.rawValue, "Syncing", "Could not connect to the server."),
-			("Inoreader", AccountType.inoreader.rawValue, "Fetching unread counts", "HTTP 500 Internal Server Error"),
-			("BazQux", AccountType.bazQux.rawValue, "Syncing articles", "The Internet connection appears to be offline."),
-			("The Old Reader", AccountType.theOldReader.rawValue, "Refreshing articles", "A server with the specified hostname could not be found.")
-		]
-
-		for (accountName, accountType, operation, message) in fakeErrors {
-			let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountType, operation: operation, errorMessage: message)
-			NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
-		}
-	}
-	#endif
 }

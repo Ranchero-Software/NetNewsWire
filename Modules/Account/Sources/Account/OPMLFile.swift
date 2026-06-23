@@ -87,12 +87,12 @@ private extension OPMLFile {
 		return fileData
 	}
 
-	func parsedOPMLItems(fileData: Data) -> [RSOPMLItem]? {
+	func parsedOPMLItems(fileData: Data) -> [OPMLItem]? {
 		let parserData = ParserData(url: fileURL.absoluteString, data: fileData)
-		var opmlDocument: RSOPMLDocument?
+		var opmlDocument: OPMLDocument?
 
 		do {
-			opmlDocument = try RSOPMLParser.parseOPML(with: parserData)
+			opmlDocument = try OPMLParser.parseOPML(with: parserData)
 		} catch {
 			Self.logger.error("OPML import failed: \(error.localizedDescription)")
 			return nil

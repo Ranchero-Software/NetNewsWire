@@ -11,10 +11,34 @@ import RSCore
 import RSWeb
 import Secrets
 
-protocol FeedlyAPICallerDelegate: AnyObject {
-	/// Implemented by the `FeedlyAccountDelegate` reauthorize the client with a fresh OAuth token so the client can retry the unauthorized request.
-	/// Pass `true` to the completion handler if the failing request should be retried with a fresh token or `false` if the unauthorized request should complete with the original failure error.
-	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ())
+@MainActor protocol FeedlyAPICallerDelegate: AnyObject {
+
+	/// Refresh the OAuth credentials so the caller can retry the failed request.
+	/// Returns `true` if the caller should retry the request with the new token,
+	/// or `false` if the original 401 failure should be surfaced.
+	func reauthorizeFeedlyAPICaller() async -> Bool
+}
+
+enum FeedlyMarkAction: String, Sendable {
+	case read
+	case unread
+	case saved
+	case unsaved
+
+	/// Paired with the `action` key in POST requests to the markers API.
+	/// See https://developer.feedly.com/v3/markers/#mark-one-or-multiple-articles-as-read
+	var actionValue: String {
+		switch self {
+		case .read:
+			return "markAsRead"
+		case .unread:
+			return "keepUnread"
+		case .saved:
+			return "markAsSaved"
+		case .unsaved:
+			return "markAsUnsaved"
+		}
+	}
 }
 
 @MainActor final class FeedlyAPICaller {
@@ -23,10 +47,10 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		case sandbox
 		case cloud
 
-		var baseUrlComponents: URLComponents {
+		var baseURLComponents: URLComponents {
 			var components = URLComponents()
 			components.scheme = "https"
-			switch self{
+			switch self {
 			case .sandbox:
 				// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
 				components.host = "sandbox7.feedly.com"
@@ -47,416 +71,302 @@ protocol FeedlyAPICallerDelegate: AnyObject {
 		}
 	}
 
-	private let transport: Transport
-	private let baseUrlComponents: URLComponents
-	private let uriComponentAllowed: CharacterSet
-
-	init(transport: Transport, api: API) {
-		self.transport = transport
-		self.baseUrlComponents = api.baseUrlComponents
-
-		var urlHostAllowed = CharacterSet.urlHostAllowed
-		urlHostAllowed.remove("+")
-		uriComponentAllowed = urlHostAllowed
-	}
-
 	weak var delegate: FeedlyAPICallerDelegate?
-
 	var credentials: Credentials?
 
 	var server: String? {
-		return baseUrlComponents.host
+		return baseURLComponents.host
+	}
+
+	private let session = URLSession.webservice
+	private let baseURLComponents: URLComponents
+	private let uriComponentAllowed: CharacterSet
+	private var isSuspended = false
+
+	private static let streamContentsCount = 1000
+	private static let streamIDsCount = 10000
+
+	init(api: API) {
+		self.baseURLComponents = api.baseURLComponents
+
+		// Encode against a path-safe set. urlHostAllowed permits characters like [ and ]
+		// that are illegal in a path, which makes the percentEncodedPath setter trap.
+		var pathComponentAllowed = CharacterSet.urlPathAllowed
+		pathComponentAllowed.remove("/")
+		pathComponentAllowed.remove("+")
+		self.uriComponentAllowed = pathComponentAllowed
 	}
 
 	func cancelAll() {
-		transport.cancelAll()
+		session.cancelAll()
 	}
 
-	private var isSuspended = false
-
-	/// Cancels all pending requests rejects any that come in later
+	/// Cancels all pending requests and rejects any that come in later.
 	func suspend() {
-		transport.cancelAll()
+		session.cancelAll()
 		isSuspended = true
 	}
 
 	func resume() {
 		isSuspended = false
 	}
+}
 
-	func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys, completion: @escaping @Sendable (Result<(HTTPURLResponse, R?), Error>) -> Void) {
-		transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding) { [weak self] result in
-			Task { @MainActor in
-				assert(Thread.isMainThread)
-				
-				switch result {
-				case .success:
-					completion(result)
-				case .failure(let error):
-					switch error {
-					case TransportError.httpError(let statusCode) where statusCode == 401:
-						
-						assert(self == nil ? true : self?.delegate != nil, "Check the delegate is set to \(FeedlyAccountDelegate.self).")
-						
-						guard let self = self, let delegate = self.delegate else {
-							completion(result)
-							return
-						}
-						
-						/// Capture the credentials before the reauthorization to check for a change.
-						let credentialsBefore = self.credentials
+// MARK: - Collections
 
-						delegate.reauthorizeFeedlyAPICaller(self) { [weak self] isReauthorizedAndShouldRetry in
-							assert(Thread.isMainThread)
-							
-							guard isReauthorizedAndShouldRetry, let self = self else {
-								completion(result)
-								return
-							}
-							
-							// Check for a change. Not only would it help debugging, but it'll also catch an infinitely recursive attempt to refresh.
-							guard let accessToken = self.credentials?.secret, accessToken != credentialsBefore?.secret else {
-								assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: self.delegate)) set them on \(self)?")
-								completion(result)
-								return
-							}
-							
-							var reauthorizedRequest = request
-							reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-							
-							self.send(request: reauthorizedRequest, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding, completion: completion)
-						}
-					default:
-						completion(result)
-					}
-				}
-			}
+extension FeedlyAPICaller {
+
+	func getCollections() async throws -> [FeedlyCollection] {
+		let request = try makeAuthorizedRequest(path: "/v3/collections")
+		let (_, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let collections else {
+			throw URLError(.cannotDecodeContentData)
+		}
+		return collections
+	}
+
+	func createCollection(named label: String) async throws -> FeedlyCollection {
+		struct CreateCollectionBody: Encodable {
+			var label: String
+		}
+
+		var request = try makeAuthorizedRequest(path: "/v3/collections", method: HTTPMethod.post)
+		request.httpBody = try JSONEncoder().encode(CreateCollectionBody(label: label))
+
+		let (httpResponse, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200, let collection = collections?.first else {
+			throw URLError(.cannotDecodeContentData)
+		}
+		return collection
+	}
+
+	func renameCollection(with id: String, to name: String) async throws -> FeedlyCollection {
+		struct RenameCollectionBody: Encodable {
+			var id: String
+			var label: String
+		}
+
+		var request = try makeAuthorizedRequest(path: "/v3/collections", method: HTTPMethod.post)
+		request.httpBody = try JSONEncoder().encode(RenameCollectionBody(id: id, label: name))
+
+		let (httpResponse, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200, let collection = collections?.first else {
+			throw URLError(.cannotDecodeContentData)
+		}
+		return collection
+	}
+
+	func deleteCollection(with id: String) async throws {
+		guard let encodedID = encodeForURLPath(id) else {
+			throw FeedlyAccountDelegateError.unexpectedResourceID(id)
+		}
+		let request = try makeAuthorizedRequest(percentEncodedPath: "/v3/collections/\(encodedID)", method: HTTPMethod.delete)
+
+		let (httpResponse, _) = try await send(request: request, resultType: Optional<FeedlyCollection>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200 else {
+			throw URLError(.cannotDecodeContentData)
 		}
 	}
 
-	func importOpml(_ opmlData: Data, completion: @escaping @Sendable (Result<Void, Error>) -> ()) {
+	func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
+		struct AddFeedBody: Encodable {
+			var id: String
+			var title: String?
+		}
+
+		guard let encodedID = encodeForURLPath(collectionID) else {
+			throw FeedlyAccountDelegateError.unexpectedResourceID(collectionID)
+		}
+		var request = try makeAuthorizedRequest(percentEncodedPath: "/v3/collections/\(encodedID)/feeds", method: HTTPMethod.put)
+		request.httpBody = try JSONEncoder().encode(AddFeedBody(id: feedID.id, title: title))
+
+		let (_, feeds) = try await send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let feeds else {
+			throw URLError(.cannotDecodeContentData)
+		}
+		return feeds
+	}
+
+	func removeFeed(_ feedID: String, fromCollectionWith collectionID: String) async throws {
+		struct RemovableFeed: Encodable {
+			let id: String
+		}
+
+		guard let encodedCollectionID = encodeForURLPath(collectionID) else {
+			throw FeedlyAccountDelegateError.unexpectedResourceID(collectionID)
+		}
+		var request = try makeAuthorizedRequest(percentEncodedPath: "/v3/collections/\(encodedCollectionID)/feeds/.mdelete", method: HTTPMethod.delete)
+		request.httpBody = try JSONEncoder().encode([RemovableFeed(id: feedID)])
+
+		// `resultType` is optional because the Feedly API has gone from returning an array of removed feeds to returning `null`.
+		// https://developer.feedly.com/v3/collections/#remove-multiple-feeds-from-a-personal-collection
+		let (httpResponse, _) = try await send(request: request, resultType: Optional<[FeedlyFeed]>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200 else {
+			throw URLError(.cannotDecodeContentData)
+		}
+	}
+}
+
+// MARK: - Streams
+
+extension FeedlyAPICaller {
+
+	func getStreamContents(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream {
+		var queryItems = [URLQueryItem]()
+
+		if let date = newerThan {
+			let value = String(Int(date.timeIntervalSince1970 * 1000))
+			queryItems.append(URLQueryItem(name: "newerThan", value: value))
+		}
+		if let flag = unreadOnly {
+			queryItems.append(URLQueryItem(name: "unreadOnly", value: flag ? "true" : "false"))
+		}
+		if let value = continuation, !value.isEmpty {
+			queryItems.append(URLQueryItem(name: "continuation", value: value))
+		}
+		queryItems.append(URLQueryItem(name: "count", value: String(Self.streamContentsCount)))
+		queryItems.append(URLQueryItem(name: "streamId", value: resource.id))
+
+		let request = try makeAuthorizedRequest(path: "/v3/streams/contents", queryItems: queryItems)
+		let (_, stream) = try await send(request: request, resultType: FeedlyStream.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let stream else {
+			throw URLError(.cannotDecodeContentData)
+		}
+		return stream
+	}
+
+	func getStreamIDs(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStreamIDs {
+		var queryItems = [URLQueryItem]()
+
+		if let date = newerThan {
+			let value = String(Int(date.timeIntervalSince1970 * 1000))
+			queryItems.append(URLQueryItem(name: "newerThan", value: value))
+		}
+		if let flag = unreadOnly {
+			queryItems.append(URLQueryItem(name: "unreadOnly", value: flag ? "true" : "false"))
+		}
+		if let value = continuation, !value.isEmpty {
+			queryItems.append(URLQueryItem(name: "continuation", value: value))
+		}
+		queryItems.append(URLQueryItem(name: "count", value: String(Self.streamIDsCount)))
+		queryItems.append(URLQueryItem(name: "streamId", value: resource.id))
+
+		let request = try makeAuthorizedRequest(path: "/v3/streams/ids", queryItems: queryItems)
+		let (_, streamIDs) = try await send(request: request, resultType: FeedlyStreamIDs.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let streamIDs else {
+			throw URLError(.cannotDecodeContentData)
+		}
+		return streamIDs
+	}
+}
+
+// MARK: - Entries and Markers
+
+extension FeedlyAPICaller {
+
+	func getEntries(for ids: Set<String>) async throws -> [FeedlyEntry] {
+		var request = try makeAuthorizedRequest(path: "/v3/entries/.mget", method: HTTPMethod.post)
+		request.httpBody = try JSONEncoder().encode(Array(ids))
+
+		let (_, entries) = try await send(request: request, resultType: [FeedlyEntry].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let entries else {
+			throw URLError(.cannotDecodeContentData)
+		}
+		return entries
+	}
+
+	/// Marks one batch of article IDs. The caller is responsible for chunking to
+	/// stay within the Feedly markers limit (see `FeedlyAccountDelegate.markChunkSize`).
+	func mark(_ articleIDs: Set<String>, as action: FeedlyMarkAction) async throws {
+		struct MarkerEntriesBody: Encodable {
+			let type = "entries"
+			var action: String
+			var entryIds: [String]
+		}
+
+		var request = try makeAuthorizedRequest(path: "/v3/markers", method: HTTPMethod.post)
+		request.httpBody = try JSONEncoder().encode(MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIDs)))
+
+		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200 else {
+			throw URLError(.cannotDecodeContentData)
+		}
+	}
+}
+
+// MARK: - OPML
+
+extension FeedlyAPICaller {
+
+	func importOPML(_ opmlData: Data) async throws {
 		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
+			throw WebserviceError.suspended
 		}
-
 		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
+			throw CredentialsError.missingAccessToken
 		}
-		var components = baseUrlComponents
-		components.path = "/v3/opml"
 
+		var components = baseURLComponents
+		components.path = "/v3/opml"
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 
 		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
+		request.httpMethod = HTTPMethod.post
 		request.addValue("text/xml", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		request.httpBody = opmlData
 
-		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (httpResponse, _)):
-				if httpResponse.statusCode == 200 {
-					completion(.success(()))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-
-	func createCollection(named label: String, completion: @escaping @Sendable (Result<FeedlyCollection, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-		var components = baseUrlComponents
-		components.path = "/v3/collections"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		do {
-			struct CreateCollectionBody: Encodable {
-				var label: String
-			}
-			let encoder = JSONEncoder()
-			let data = try encoder.encode(CreateCollectionBody(label: label))
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-		}
-
-		send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (httpResponse, collections)):
-				if httpResponse.statusCode == 200, let collection = collections?.first {
-					completion(.success(collection))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-
-	func renameCollection(with id: String, to name: String, completion: @escaping @Sendable (Result<FeedlyCollection, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-		var components = baseUrlComponents
-		components.path = "/v3/collections"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		do {
-			struct RenameCollectionBody: Encodable {
-				var id: String
-				var label: String
-			}
-			let encoder = JSONEncoder()
-			let data = try encoder.encode(RenameCollectionBody(id: id, label: name))
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-		}
-
-		send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (httpResponse, collections)):
-				if httpResponse.statusCode == 200, let collection = collections?.first {
-					completion(.success(collection))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-
-	private func encodeForURLPath(_ pathComponent: String) -> String? {
-		return pathComponent.addingPercentEncoding(withAllowedCharacters: uriComponentAllowed)
-	}
-
-	func deleteCollection(with id: String, completion: @escaping @Sendable (Result<Void, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-		guard let encodedId = encodeForURLPath(id) else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(id)))
-			}
-		}
-		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedId)"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "DELETE"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		send(request: request, resultType: Optional<FeedlyCollection>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (httpResponse, _)):
-				if httpResponse.statusCode == 200 {
-					completion(.success(()))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-
-	func removeFeed(_ feedId: String, fromCollectionWith collectionId: String, completion: @escaping @Sendable (Result<Void, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-
-		guard let encodedCollectionId = encodeForURLPath(collectionId) else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionId)))
-			}
-		}
-
-		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedCollectionId)/feeds/.mdelete"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "DELETE"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		do {
-			struct RemovableFeed: Encodable {
-				let id: String
-			}
-			let encoder = JSONEncoder()
-			let data = try encoder.encode([RemovableFeed(id: feedId)])
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-		}
-
-        // `resultType` is optional because the Feedly API has gone from returning an array of removed feeds to returning `null`.
-        // https://developer.feedly.com/v3/collections/#remove-multiple-feeds-from-a-personal-collection
-		send(request: request, resultType: Optional<[FeedlyFeed]>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success((let httpResponse, _)):
-				if httpResponse.statusCode == 200 {
-					completion(.success(()))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200 else {
+			throw URLError(.cannotDecodeContentData)
 		}
 	}
 }
 
-extension FeedlyAPICaller: FeedlyAddFeedToCollectionService {
+// MARK: - Search
 
-	func addFeed(with feedId: FeedlyFeedResourceId, title: String? = nil, toCollectionWith collectionId: String, completion: @escaping @Sendable (Result<[FeedlyFeed], Error>) -> ()) {
+extension FeedlyAPICaller {
+
+	func getFeeds(for query: String, count: Int, locale: String) async throws -> FeedlyFeedsSearchResponse {
 		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
+			throw WebserviceError.suspended
 		}
 
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-
-		guard let encodedId = encodeForURLPath(collectionId) else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unexpectedResourceID(collectionId)))
-			}
-		}
-		var components = baseUrlComponents
-		components.percentEncodedPath = "/v3/collections/\(encodedId)/feeds"
-
+		var components = baseURLComponents
+		components.path = "/v3/search/feeds"
+		components.queryItems = [
+			URLQueryItem(name: "query", value: query),
+			URLQueryItem(name: "count", value: String(count)),
+			URLQueryItem(name: "locale", value: locale)
+		]
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 
 		var request = URLRequest(url: url)
-		request.httpMethod = "PUT"
+		request.httpMethod = HTTPMethod.get
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 
-		do {
-			struct AddFeedBody: Encodable {
-				var id: String
-				var title: String?
-			}
-			let encoder = JSONEncoder()
-			let data = try encoder.encode(AddFeedBody(id: feedId.id, title: title))
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
+		let (_, response) = try await send(request: request, resultType: FeedlyFeedsSearchResponse.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let response else {
+			throw URLError(.cannotDecodeContentData)
 		}
-
-		send(request: request, resultType: [FeedlyFeed].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			Task { @MainActor in
-				switch result {
-				case .success((_, let collectionFeeds)):
-					if let feeds = collectionFeeds {
-						completion(.success(feeds))
-					} else {
-						completion(.failure(URLError(.cannotDecodeContentData)))
-					}
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		}
+		return response
 	}
 }
 
-extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
+// MARK: - OAuth
 
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest {
-		var components = baseUrlComponents
+extension FeedlyAPICaller {
+
+	/// Build the URL request that authorizes a Feedly account.
+	/// Loaded by a web view to ask the user to consent to the client having access to their account.
+	static func authorizationCodeURLRequest(for request: OAuthAuthorizationRequest, baseURLComponents: URLComponents) -> URLRequest {
+		var components = baseURLComponents
 		components.path = "/v3/auth/auth"
 		components.queryItems = request.queryItems
 
@@ -466,499 +376,157 @@ extension FeedlyAPICaller: OAuthAuthorizationCodeGrantRequesting {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 
-		var request = URLRequest(url: url)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		var urlRequest = URLRequest(url: url)
+		urlRequest.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		return urlRequest
+	}
 
+	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
+		return try await postOAuthTokenRequest(body: authorizationRequest)
+	}
+
+	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest) async throws -> FeedlyOAuthAccessTokenResponse {
+		return try await postOAuthTokenRequest(body: refreshRequest)
+	}
+}
+
+// MARK: - Logout
+
+extension FeedlyAPICaller {
+
+	func logout() async throws {
+		let request = try makeAuthorizedRequest(path: "/v3/auth/logout", method: HTTPMethod.post)
+		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard httpResponse.statusCode == 200 else {
+			throw URLError(.cannotDecodeContentData)
+		}
+	}
+}
+
+// MARK: - Send and 401 Retry
+
+private extension FeedlyAPICaller {
+
+	func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
+
+		do {
+			return try await session.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		} catch WebserviceError.httpError(let status) where status == 401 {
+			return try await retryAfterReauthorization(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		}
+	}
+
+	func retryAfterReauthorization<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy, keyDecoding: JSONDecoder.KeyDecodingStrategy) async throws -> (HTTPURLResponse, R?) {
+
+		guard let delegate else {
+			assertionFailure("Check the delegate is set to \(FeedlyAccountDelegate.self).")
+			throw WebserviceError.httpError(status: 401)
+		}
+
+		// Capture credentials before reauthorization so we can detect that they actually changed.
+		let credentialsBefore = credentials
+
+		let didReauthorize = await delegate.reauthorizeFeedlyAPICaller()
+		guard didReauthorize else {
+			throw WebserviceError.httpError(status: 401)
+		}
+
+		// Catches an infinitely recursive attempt to refresh.
+		guard let accessToken = credentials?.secret, accessToken != credentialsBefore?.secret else {
+			assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: delegate)) set them on \(self)?")
+			throw WebserviceError.httpError(status: 401)
+		}
+
+		var reauthorizedRequest = request
+		reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+
+		return try await send(request: reauthorizedRequest, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+	}
+}
+
+// MARK: - Request Builders
+
+private extension FeedlyAPICaller {
+
+	func makeAuthorizedRequest(path: String, queryItems: [URLQueryItem]? = nil, method: String = HTTPMethod.get) throws -> URLRequest {
+		try ensureReadyForRequest()
+		let accessToken = try requireAccessToken()
+
+		var components = baseURLComponents
+		components.path = path
+		if let queryItems {
+			components.queryItems = queryItems
+		}
+		guard let url = components.url else {
+			fatalError("\(components) does not produce a valid URL.")
+		}
+
+		return makeJSONRequest(url: url, method: method, accessToken: accessToken)
+	}
+
+	func makeAuthorizedRequest(percentEncodedPath: String, method: String = HTTPMethod.get) throws -> URLRequest {
+		try ensureReadyForRequest()
+		let accessToken = try requireAccessToken()
+
+		var components = baseURLComponents
+		components.percentEncodedPath = percentEncodedPath
+		guard let url = components.url else {
+			fatalError("\(components) does not produce a valid URL.")
+		}
+
+		return makeJSONRequest(url: url, method: method, accessToken: accessToken)
+	}
+
+	func makeJSONRequest(url: URL, method: String, accessToken: String) -> URLRequest {
+		var request = URLRequest(url: url)
+		request.httpMethod = method
+		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
+		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
+		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		return request
 	}
 
-	typealias AccessTokenResponse = FeedlyOAuthAccessTokenResponse
+	func ensureReadyForRequest() throws {
+		if isSuspended {
+			throw WebserviceError.suspended
+		}
+	}
 
-	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping @Sendable (Result<FeedlyOAuthAccessTokenResponse, Error>) -> ()) {
+	func requireAccessToken() throws -> String {
+		guard let secret = credentials?.secret else {
+			throw CredentialsError.missingAccessToken
+		}
+		return secret
+	}
+
+	func encodeForURLPath(_ pathComponent: String) -> String? {
+		return pathComponent.addingPercentEncoding(withAllowedCharacters: uriComponentAllowed)
+	}
+
+	func postOAuthTokenRequest<T: Encodable>(body: T) async throws -> FeedlyOAuthAccessTokenResponse {
 		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
+			throw WebserviceError.suspended
 		}
 
-		var components = baseUrlComponents
+		var components = baseURLComponents
 		components.path = "/v3/auth/token"
-
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
 
 		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-
-		do {
-			let encoder = JSONEncoder()
-			encoder.keyEncodingStrategy = .convertToSnakeCase
-			request.httpBody = try encoder.encode(authorizationRequest)
-		} catch {
-			DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-			return
-		}
-
-		send(request: request, resultType: AccessTokenResponse.self, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, tokenResponse)):
-				if let response = tokenResponse {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-}
-
-extension FeedlyAPICaller: OAuthAcessTokenRefreshRequesting {
-
-	func refreshAccessToken(_ refreshRequest: OAuthRefreshAccessTokenRequest, completion: @escaping @Sendable (Result<FeedlyOAuthAccessTokenResponse, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		var components = baseUrlComponents
-		components.path = "/v3/auth/token"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-
-		do {
-			let encoder = JSONEncoder()
-			encoder.keyEncodingStrategy = .convertToSnakeCase
-			request.httpBody = try encoder.encode(refreshRequest)
-		} catch {
-			DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-			return
-		}
-
-		send(request: request, resultType: AccessTokenResponse.self, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, tokenResponse)):
-				if let response = tokenResponse {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-}
-
-extension FeedlyAPICaller: FeedlyGetCollectionsService {
-
-	func getCollections(completion: @escaping @Sendable (Result<[FeedlyCollection], Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-		var components = baseUrlComponents
-		components.path = "/v3/collections"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, collections)):
-				if let response = collections {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-}
-
-extension FeedlyAPICaller: FeedlyGetStreamContentsService {
-
-	func getStreamContents(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @Sendable @escaping (Result<FeedlyStream, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-
-		var components = baseUrlComponents
-		components.path = "/v3/streams/contents"
-
-		var queryItems = [URLQueryItem]()
-
-		if let date = newerThan {
-			let value = String(Int(date.timeIntervalSince1970 * 1000))
-			let queryItem = URLQueryItem(name: "newerThan", value: value)
-			queryItems.append(queryItem)
-		}
-
-		if let flag = unreadOnly {
-			let value = flag ? "true" : "false"
-			let queryItem = URLQueryItem(name: "unreadOnly", value: value)
-			queryItems.append(queryItem)
-		}
-
-		if let value = continuation, !value.isEmpty {
-			let queryItem = URLQueryItem(name: "continuation", value: value)
-			queryItems.append(queryItem)
-		}
-
-		queryItems.append(contentsOf: [
-			URLQueryItem(name: "count", value: "1000"),
-			URLQueryItem(name: "streamId", value: resource.id),
-		])
-
-		components.queryItems = queryItems
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		send(request: request, resultType: FeedlyStream.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, collections)):
-				if let response = collections {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-}
-
-extension FeedlyAPICaller: FeedlyGetStreamIdsService {
-
-	@MainActor func getStreamIds(for resource: FeedlyResourceId, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, completion: @escaping @MainActor (Result<FeedlyStreamIds, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-
-		var components = baseUrlComponents
-		components.path = "/v3/streams/ids"
-
-		var queryItems = [URLQueryItem]()
-
-		if let date = newerThan {
-			let value = String(Int(date.timeIntervalSince1970 * 1000))
-			let queryItem = URLQueryItem(name: "newerThan", value: value)
-			queryItems.append(queryItem)
-		}
-
-		if let flag = unreadOnly {
-			let value = flag ? "true" : "false"
-			let queryItem = URLQueryItem(name: "unreadOnly", value: value)
-			queryItems.append(queryItem)
-		}
-
-		if let value = continuation, !value.isEmpty {
-			let queryItem = URLQueryItem(name: "continuation", value: value)
-			queryItems.append(queryItem)
-		}
-
-		queryItems.append(contentsOf: [
-			URLQueryItem(name: "count", value: "10000"),
-			URLQueryItem(name: "streamId", value: resource.id),
-		])
-
-		components.queryItems = queryItems
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		send(request: request, resultType: FeedlyStreamIds.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			Task { @MainActor in
-				switch result {
-				case .success(let (_, collections)):
-					if let response = collections {
-						completion(.success(response))
-					} else {
-						completion(.failure(URLError(.cannotDecodeContentData)))
-					}
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		}
-	}
-}
-
-extension FeedlyAPICaller: FeedlyGetEntriesService {
-
-	func getEntries(for ids: Set<String>, completion: @escaping @Sendable (Result<[FeedlyEntry], Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-
-		var components = baseUrlComponents
-		components.path = "/v3/entries/.mget"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-
-		do {
-			let body = Array(ids)
-			let encoder = JSONEncoder()
-			let data = try encoder.encode(body)
-			request.httpBody = data
-		} catch {
-			return DispatchQueue.main.async {
-				completion(.failure(error))
-			}
-		}
-
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		send(request: request, resultType: [FeedlyEntry].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, entries)):
-				if let response = entries {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
-		}
-	}
-}
-
-extension FeedlyAPICaller: FeedlyMarkArticlesService {
-
-	private struct MarkerEntriesBody: Encodable {
-		let type = "entries"
-		var action: String
-		var entryIds: [String]
-	}
-
-	func mark(_ articleIds: Set<String>, as action: FeedlyMarkAction, completion: @escaping (Result<Void, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-		var components = baseUrlComponents
-		components.path = "/v3/markers"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		let articleIdChunks = Array(articleIds).chunked(into: 300)
-		let dispatchGroup = DispatchGroup()
-		nonisolated(unsafe) var groupError: Error? = nil
-
-		for articleIdChunk in articleIdChunks {
-
-			var request = URLRequest(url: url)
-			request.httpMethod = "POST"
-			request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-			request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-			request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-			do {
-				let body = MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIdChunk))
-				let encoder = JSONEncoder()
-				let data = try encoder.encode(body)
-				request.httpBody = data
-			} catch {
-				return DispatchQueue.main.async {
-					completion(.failure(error))
-				}
-			}
-
-			dispatchGroup.enter()
-			send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-				switch result {
-				case .success(let (httpResponse, _)):
-					if httpResponse.statusCode != 200 {
-						groupError = URLError(.cannotDecodeContentData)
-					}
-				case .failure(let error):
-					groupError = error
-				}
-				dispatchGroup.leave()
-			}
-		}
-
-		dispatchGroup.notify(queue: .main) {
-			if let groupError = groupError {
-				completion(.failure(groupError))
-			} else {
-				completion(.success(()))
-			}
-		}
-	}
-}
-
-extension FeedlyAPICaller: FeedlySearchService {
-
-	func getFeeds(for query: String, count: Int, locale: String, completion: @escaping @Sendable (Result<FeedlyFeedsSearchResponse, Error>) -> ()) {
-
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		var components = baseUrlComponents
-		components.path = "/v3/search/feeds"
-
-		components.queryItems = [
-			URLQueryItem(name: "query", value: query),
-			URLQueryItem(name: "count", value: String(count)),
-			URLQueryItem(name: "locale", value: locale)
-		]
-
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "GET"
+		request.httpMethod = HTTPMethod.post
 		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
 
-		send(request: request, resultType: FeedlyFeedsSearchResponse.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			switch result {
-			case .success(let (_, searchResponse)):
-				if let response = searchResponse {
-					completion(.success(response))
-				} else {
-					completion(.failure(URLError(.cannotDecodeContentData)))
-				}
-			case .failure(let error):
-				completion(.failure(error))
-			}
+		let encoder = JSONEncoder()
+		encoder.keyEncodingStrategy = .convertToSnakeCase
+		request.httpBody = try encoder.encode(body)
+
+		let (_, response) = try await send(request: request, resultType: FeedlyOAuthAccessTokenResponse.self, keyDecoding: .convertFromSnakeCase)
+		guard let response else {
+			throw URLError(.cannotDecodeContentData)
 		}
+		return response
 	}
 }
-
-extension FeedlyAPICaller: FeedlyLogoutService {
-
-	func logout(completion: @escaping @MainActor (Result<Void, Error>) -> ()) {
-		guard !isSuspended else {
-			return DispatchQueue.main.async {
-				completion(.failure(TransportError.suspended))
-			}
-		}
-
-		guard let accessToken = credentials?.secret else {
-			return DispatchQueue.main.async {
-				completion(.failure(CredentialsError.missingAccessToken))
-			}
-		}
-		var components = baseUrlComponents
-		components.path = "/v3/auth/logout"
-
-		guard let url = components.url else {
-			fatalError("\(components) does not produce a valid URL.")
-		}
-
-		var request = URLRequest(url: url)
-		request.httpMethod = "POST"
-		request.addValue("application/json", forHTTPHeaderField: HTTPRequestHeader.contentType)
-		request.addValue("application/json", forHTTPHeaderField: "Accept-Type")
-		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase) { result in
-			Task { @MainActor in
-				switch result {
-				case .success(let (httpResponse, _)):
-					if httpResponse.statusCode == 200 {
-						completion(.success(()))
-					} else {
-						completion(.failure(URLError(.cannotDecodeContentData)))
-					}
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		}
-	}
-}
-

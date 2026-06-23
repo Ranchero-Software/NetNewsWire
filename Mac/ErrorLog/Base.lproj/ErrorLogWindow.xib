@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="ErrorLogWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="copyButton" destination="TeH-NA-QRq" id="o8C-q3-FO7"/>
+                <outlet property="textView" destination="OtL-Sx-OU0" id="bff-Xp-YUM"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="aLw-Wn-out"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Error Log" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" frameAutosaveName="ErrorLogWindow" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="640" height="400"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1410"/>
+            <value key="minSize" type="size" width="640" height="300"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="768" height="400"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kJF-uq-4TQ">
+                        <rect key="frame" x="0.0" y="69" width="768" height="331"/>
+                        <clipView key="contentView" id="Ypo-Qv-ix4">
+                            <rect key="frame" x="0.0" y="0.0" width="768" height="331"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                            <subviews>
+                                <textView wantsLayer="YES" editable="NO" importsGraphics="NO" richText="NO" verticallyResizable="YES" incrementalSearchingEnabled="YES" spellingCorrection="YES" smartInsertDelete="YES" id="OtL-Sx-OU0">
+                                    <rect key="frame" x="0.0" y="0.0" width="768" height="331"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <size key="minSize" width="768" height="331"/>
+                                    <size key="maxSize" width="769" height="10000000"/>
+                                </textView>
+                            </subviews>
+                        </clipView>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="768" id="i3T-Hz-zYO"/>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="256" id="xYp-MP-yQU"/>
+                        </constraints>
+                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="6eX-un-x8T">
+                            <rect key="frame" x="-100" y="-100" width="240" height="17"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                        <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="pRJ-De-3rI">
+                            <rect key="frame" x="751" y="0.0" width="17" height="256"/>
+                            <autoresizingMask key="autoresizingMask"/>
+                        </scroller>
+                    </scrollView>
+                    <visualEffectView blendingMode="withinWindow" material="titlebar" state="followsWindowActiveState" translatesAutoresizingMaskIntoConstraints="NO" id="U19-VM-vwr">
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="69"/>
+                        <subviews>
+                            <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Kf8-Md-KPZ">
+                                <rect key="frame" x="0.0" y="66" width="768" height="5"/>
+                            </box>
+                            <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="h2n-nV-NdW">
+                                <rect key="frame" x="20" y="22" width="24" height="24"/>
+                                <buttonCell key="cell" type="help" bezelStyle="helpButton" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bYe-iP-E0U">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="showErrorLogHelp:" target="-2" id="EPI-BA-OK8"/>
+                                </connections>
+                            </button>
+                            <textField wantsLayer="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="te9-50-gJu">
+                                <rect key="frame" x="90" y="26" width="534" height="16"/>
+                                <textFieldCell key="cell" title="Errors may contain feed URLs and other information you may not want to share publicly." id="lKl-03-8bv">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="TeH-NA-QRq">
+                                <rect key="frame" x="630" y="20" width="118" height="28"/>
+                                <buttonCell key="cell" type="push" title="Copy Contents" bezelStyle="rounded" alignment="center" controlSize="large" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="k75-bg-mhK">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="copyContents:" target="-2" id="Zw7-Db-af2"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="te9-50-gJu" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="h2n-nV-NdW" secondAttribute="trailing" constant="8" symbolic="YES" id="MM1-eZ-4jK"/>
+                            <constraint firstItem="Kf8-Md-KPZ" firstAttribute="leading" secondItem="U19-VM-vwr" secondAttribute="leading" id="QyU-Q1-Wp9"/>
+                            <constraint firstAttribute="trailing" secondItem="Kf8-Md-KPZ" secondAttribute="trailing" id="Szn-da-iY2"/>
+                            <constraint firstAttribute="bottom" secondItem="TeH-NA-QRq" secondAttribute="bottom" constant="20" symbolic="YES" id="Uxn-0p-YPX"/>
+                            <constraint firstItem="Kf8-Md-KPZ" firstAttribute="top" secondItem="U19-VM-vwr" secondAttribute="top" id="dVT-fU-zJI"/>
+                            <constraint firstItem="TeH-NA-QRq" firstAttribute="firstBaseline" secondItem="h2n-nV-NdW" secondAttribute="firstBaseline" id="eld-wf-N09"/>
+                            <constraint firstItem="TeH-NA-QRq" firstAttribute="firstBaseline" secondItem="te9-50-gJu" secondAttribute="firstBaseline" id="i9n-ax-BCp"/>
+                            <constraint firstItem="TeH-NA-QRq" firstAttribute="leading" secondItem="te9-50-gJu" secondAttribute="trailing" constant="8" symbolic="YES" id="jCG-W2-tLx"/>
+                            <constraint firstAttribute="trailing" secondItem="TeH-NA-QRq" secondAttribute="trailing" constant="20" symbolic="YES" id="u5X-Bh-ELF"/>
+                            <constraint firstItem="TeH-NA-QRq" firstAttribute="top" secondItem="Kf8-Md-KPZ" secondAttribute="bottom" constant="20" symbolic="YES" id="yPO-y0-lEk"/>
+                            <constraint firstItem="h2n-nV-NdW" firstAttribute="leading" secondItem="U19-VM-vwr" secondAttribute="leading" constant="20" symbolic="YES" id="zqM-yT-GO6"/>
+                        </constraints>
+                    </visualEffectView>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="U19-VM-vwr" firstAttribute="top" secondItem="kJF-uq-4TQ" secondAttribute="bottom" id="ES3-Fu-XNe"/>
+                    <constraint firstAttribute="trailing" secondItem="kJF-uq-4TQ" secondAttribute="trailing" id="ZI5-xh-GTb"/>
+                    <constraint firstItem="U19-VM-vwr" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="Zfc-tO-Etl"/>
+                    <constraint firstAttribute="trailing" secondItem="U19-VM-vwr" secondAttribute="trailing" id="aVN-xe-Qft"/>
+                    <constraint firstAttribute="bottom" secondItem="U19-VM-vwr" secondAttribute="bottom" id="bEJ-hv-zAD"/>
+                    <constraint firstItem="kJF-uq-4TQ" firstAttribute="top" secondItem="EiT-Mj-1SZ" secondAttribute="top" id="enk-H1-xIp"/>
+                    <constraint firstItem="kJF-uq-4TQ" firstAttribute="leading" secondItem="EiT-Mj-1SZ" secondAttribute="leading" id="uCM-y7-M54"/>
+                </constraints>
+            </view>
+            <point key="canvasLocation" x="276.5" y="-15"/>
+        </window>
+    </objects>
+</document>

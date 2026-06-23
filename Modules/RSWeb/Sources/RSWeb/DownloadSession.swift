@@ -16,9 +16,12 @@ import RSCore
 @MainActor public protocol DownloadSessionDelegate {
 
 	func downloadSession(_ downloadSession: DownloadSession, conditionalGetInfoFor: URL) -> HTTPConditionalGetInfo?
+	func downloadSession(_ downloadSession: DownloadSession, didReceiveResponse url: URL)
+	func downloadSession(_ downloadSession: DownloadSession, didSkip url: URL, reason: String)
 	func downloadSession(_ downloadSession: DownloadSession, downloadDidComplete: URL, response: URLResponse?, data: Data, error: NSError?)
 	func downloadSession(_ downloadSession: DownloadSession, shouldContinueAfterReceivingData: Data, url: URL) -> Bool
 	func downloadSession(_ downloadSession: DownloadSession, httpError statusCode: Int, url: URL)
+	func downloadSession(_ downloadSession: DownloadSession, didFollowRedirectFor url: URL, from fromURL: URL, to toURL: URL, statusCode: Int)
 	func downloadSessionDidComplete(_ downloadSession: DownloadSession)
 }
 
@@ -41,7 +44,6 @@ struct HTTP4xxResponse {
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [URL: URL]()
 	private var queue = [URL]()
-	private let cache = DownloadCache.shared
 
 	public var progressInfo = ProgressInfo() {
 		didSet {
@@ -137,12 +139,7 @@ extension DownloadSession: @preconcurrency URLSessionTaskDelegate {
 				return
 			}
 
-			if let url = task.originalRequest?.url, error == nil {
-				Self.logger.debug("DownloadSession: Caching response for \(url)")
-				cache.add(url.absoluteString, data: info.data as Data, response: info.urlResponse)
-			}
-
-			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
+			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data, error: error as NSError?)
 		}
 	}
 
@@ -154,6 +151,11 @@ extension DownloadSession: @preconcurrency URLSessionTaskDelegate {
 			if let oldURL = task.originalRequest?.url, let newURL = request.url {
 				cacheRedirect(oldURL, newURL)
 			}
+		}
+
+		if let taskInfo = infoForTask(task), let toURL = request.url {
+			let fromURL = response.url ?? taskInfo.url
+			delegate.downloadSession(self, didFollowRedirectFor: taskInfo.url, from: fromURL, to: toURL, statusCode: response.statusCode)
 		}
 
 		var modifiedRequest = request
@@ -180,17 +182,11 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 			let taskInfo = infoForTask(dataTask)
 			if let taskInfo {
 				taskInfo.urlResponse = response
+				delegate.downloadSession(self, didReceiveResponse: taskInfo.url)
 			}
 
 			let statusCode = response.forcedStatusCode
 			if statusCode >= 400 {
-				if statusCode != HTTPResponseCode.tooManyRequests {
-					if let urlString = response.url?.absoluteString {
-						Self.logger.debug("DownloadSession: Caching >= 400 response for \(urlString)")
-						cache.add(urlString, data: nil, response: response)
-					}
-				}
-
 				Self.logger.debug("DownloadSession: canceling task due to >= 400 response \(response)")
 
 				if let url = taskInfo?.url {
@@ -221,7 +217,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 			}
 			info.addData(data)
 
-			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
+			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data, url: info.url) {
 				dataTask.cancel()
 				removeTask(dataTask)
 			}
@@ -245,17 +241,12 @@ private extension DownloadSession {
 
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 429: \(urlToUse)")
+			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 429 Too Many Requests")
 			return
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 400-499: \(urlToUse)")
-			return
-		}
-
-		// Check cache
-		if let cachedResponse = cache[urlToUse.absoluteString] {
-			Self.logger.info("DownloadSession: using cached response for \(urlToUse) - \(cachedResponse.response?.forcedStatusCode ?? -1)")
-			delegate.downloadSession(self, downloadDidComplete: url, response: cachedResponse.response, data: cachedResponse.data ?? Data(), error: nil)
+			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 4xx error")
 			return
 		}
 
@@ -528,7 +519,7 @@ extension URLSessionTask {
 private final class DownloadInfo {
 
 	let url: URL
-	let data = NSMutableData()
+	var data = Data()
 	var urlResponse: URLResponse?
 
 	init(_ url: URL) {

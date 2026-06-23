@@ -8,6 +8,7 @@
 // TODO: Delete this file in 7.2.
 
 import Foundation
+import RSDatabase
 import RSDatabaseObjC
 
 @MainActor final class AccountSettingsDatabase {
@@ -35,11 +36,11 @@ import RSDatabaseObjC
 
 		if let resultSet = database.executeQuery("SELECT accountID, username, endpointURL FROM accountSettings;", withArgumentsIn: []) {
 			while resultSet.next() {
-				guard let accountID = resultSet.string(forColumn: "accountID") else {
+				guard let accountID = resultSet.swiftString(forColumn: "accountID") else {
 					continue
 				}
-				let username = resultSet.string(forColumn: "username")
-				let endpointURL = resultSet.string(forColumn: "endpointURL")
+				let username = resultSet.swiftString(forColumn: "username")
+				let endpointURL = resultSet.swiftString(forColumn: "endpointURL")
 				if username != nil || endpointURL != nil {
 					credentials[accountID] = AccountCredentials(username: username, endpointURL: endpointURL)
 				}

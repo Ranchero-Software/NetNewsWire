@@ -94,16 +94,16 @@
 			const popoverHalfWidth = this.popover.clientWidth / 2;
 			const marginLeft = stripPx(this.style.marginLeft);
 			const marginRight = stripPx(this.style.marginRight);
-  
-		    const rightOverhang = center + popoverHalfWidth + marginRight > window.innerWidth;
-		    const leftOverhang = center - (popoverHalfWidth + marginLeft) < 0;
-										   
+
+			const rightOverhang = center + popoverHalfWidth + marginRight > window.innerWidth;
+			const leftOverhang = center - (popoverHalfWidth + marginLeft) < 0;
+
 			let offset = 0;
-			if (!leftOverhang && rightOverhang) {
-				offset = -((center + popoverHalfWidth + marginRight) - window.innerWidth);
-			}
-			else if (leftOverhang && !rightOverhang) {
-				offset = (popoverHalfWidth + marginLeft) - center;
+			if (leftOverhang || rightOverhang) {
+				// Popover can't be centered on the ref without overflowing the viewport.
+				// Center it horizontally in the viewport so left/right margins are balanced.
+				// The arrow gets the inverse transform below and stays anchored to the ref.
+				offset = (window.innerWidth / 2) - center;
 			}
 			this.popover.style.transform = `translate(${offset}px)`;
 			this.arrow.style.transform = `translate(${-offset}px) rotate(45deg)`;

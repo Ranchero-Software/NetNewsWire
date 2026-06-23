@@ -14,6 +14,7 @@ import Account
 import Articles
 import SafariServices
 import MessageUI
+import Images
 
 @MainActor protocol WebViewControllerDelegate: AnyObject {
 	func webViewController(_: WebViewController, articleExtractorButtonStateDidUpdate: ArticleExtractorButtonState)
@@ -38,7 +39,7 @@ final class WebViewController: UIViewController {
 
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
-		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone && coordinator.isRootSplitCollapsed
+		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone
 	}
 	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 	private lazy var transition = ImageTransition(controller: self)
@@ -86,6 +87,7 @@ final class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSceneDidEnterBackground(_:)), name: UIScene.didEnterBackgroundNotification, object: nil)
 
 		// Configure the tap zones
 		configureTopShowBarsView()
@@ -94,7 +96,31 @@ final class WebViewController: UIViewController {
 		loadWebView()
 	}
 
+	override func viewSafeAreaInsetsDidChange() {
+		super.viewSafeAreaInsetsDidChange()
+		if isFullScreenAvailable && AppDefaults.shared.logicalArticleFullscreenEnabled {
+			updateBottomSafeAreaForFullScreen()
+		}
+	}
+
+	override func viewWillDisappear(_ animated: Bool) {
+		super.viewWillDisappear(animated)
+		// Pause in-flight media before the view goes away. Leaving a video playing during
+		// dismissal lets WebKit's full-screen entry continuation fire on a stale view
+		// hierarchy and trip a RELEASE_ASSERT in WebFullScreenManagerProxy on iOS 26.
+		stopWebViewActivity()
+	}
+
 	// MARK: Notifications
+
+	@objc func handleSceneDidEnterBackground(_ notification: Notification) {
+		// The share sheet is a popover on iPad. Opening the article in another browser
+		// from it backgrounds NetNewsWire mid-presentation, orphaning the popover so it
+		// can't be dismissed by tapping outside on return. Dismiss it on backgrounding. (#4269)
+		if presentedViewController is UIActivityViewController {
+			dismiss(animated: false)
+		}
+	}
 
 	@objc func feedIconDidBecomeAvailable(_ note: Notification) {
 		reloadArticleImage()
@@ -209,13 +235,15 @@ final class WebViewController: UIViewController {
 		loadWebView(replaceExistingWebView: true)
 	}
 
-	func showBars() {
+	func showBars(animated: Bool = true) {
 		AppDefaults.shared.articleFullscreenEnabled = false
 		coordinator.showStatusBar()
 		topShowBarsViewConstraint?.constant = 0
 		bottomShowBarsViewConstraint?.constant = 0
-		navigationController?.setNavigationBarHidden(false, animated: true)
-		navigationController?.setToolbarHidden(false, animated: true)
+		navigationController?.setNavigationBarHidden(false, animated: animated)
+		navigationController?.setToolbarHidden(false, animated: animated)
+		additionalSafeAreaInsets.bottom = 0
+		setBottomScrollEdgeEffectHidden(false)
 		configureContextMenuInteraction()
 	}
 
@@ -227,6 +255,7 @@ final class WebViewController: UIViewController {
 			bottomShowBarsViewConstraint?.constant = 44.0
 			navigationController?.setNavigationBarHidden(true, animated: true)
 			navigationController?.setToolbarHidden(true, animated: true)
+			setBottomScrollEdgeEffectHidden(true)
 			configureContextMenuInteraction()
 		}
 	}
@@ -667,8 +696,8 @@ private extension WebViewController {
 
 		guard let imageURL = URL(string: clickMessage.imageURL) else { return }
 
-		Downloader.shared.download(imageURL) { [weak self] data, _, error in
-			guard let self, let data, error == nil, !data.isEmpty,
+		Downloader.shared.download(imageURL) { [weak self] downloadResponse, error in
+			guard let self, let data = downloadResponse.data, error == nil, !data.isEmpty,
 				  let image = UIImage(data: data) else {
 				return
 			}
@@ -724,7 +753,7 @@ private extension WebViewController {
 
 	func configureBottomShowBarsView() {
 		bottomShowBarsView = UIView()
-		topShowBarsView.backgroundColor = .clear
+		bottomShowBarsView.backgroundColor = .clear
 		bottomShowBarsView.translatesAutoresizingMaskIntoConstraints = false
 		view.addSubview(bottomShowBarsView)
 		if AppDefaults.shared.logicalArticleFullscreenEnabled {
@@ -739,6 +768,27 @@ private extension WebViewController {
 			bottomShowBarsView.heightAnchor.constraint(equalToConstant: 44.0)
 		])
 		bottomShowBarsView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showBars(_:))))
+	}
+
+	func updateBottomSafeAreaForFullScreen() {
+		let rawBottom = view.safeAreaInsets.bottom - additionalSafeAreaInsets.bottom
+		additionalSafeAreaInsets.bottom = -rawBottom
+	}
+
+	/// Hide or show the toolbar scroll edge effect at the bottom of the web view.
+	///
+	/// Hidden when entering fullscreen so a residual effect doesn't obscure the
+	/// bottom of the article.
+	///
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5298>
+	func setBottomScrollEdgeEffectHidden(_ hidden: Bool) {
+		guard #available(iOS 26, *) else {
+			return
+		}
+		guard let scrollView = webView?.scrollView else {
+			return
+		}
+		scrollView.bottomEdgeEffect.isHidden = hidden
 	}
 
 	func configureContextMenuInteraction() {
@@ -776,7 +826,7 @@ private extension WebViewController {
 	func toggleReadAction() -> UIAction? {
 		guard let article = article, !article.status.read || article.isAvailableToMarkUnread else { return nil }
 
-		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Mark as Unread") : NSLocalizedString("Mark as Read", comment: "Mark as Read")
+		let title = article.status.read ? NSLocalizedString("Mark as Unread", comment: "Command") : NSLocalizedString("Mark as Read", comment: "Command")
 		let readImage = article.status.read ? Assets.Images.circleClosed : Assets.Images.circleOpen
 		return UIAction(title: title, image: readImage) { [weak self] _ in
 			self?.coordinator.toggleReadForCurrentArticle()
@@ -785,7 +835,7 @@ private extension WebViewController {
 
 	func toggleStarredAction() -> UIAction {
 		let starred = article?.status.starred ?? false
-		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Mark as Unstarred") : NSLocalizedString("Mark as Starred", comment: "Mark as Starred")
+		let title = starred ? NSLocalizedString("Mark as Unstarred", comment: "Command") : NSLocalizedString("Mark as Starred", comment: "Command")
 		let starredImage = starred ? Assets.Images.starOpen : Assets.Images.starClosed
 		return UIAction(title: title, image: starredImage) { [weak self] _ in
 			self?.coordinator.toggleStarredForCurrentArticle()
@@ -810,7 +860,7 @@ private extension WebViewController {
 	}
 
 	func shareAction() -> UIAction {
-		let title = NSLocalizedString("Share", comment: "Share")
+		let title = NSLocalizedString("Share", comment: "Share button")
 		return UIAction(title: title, image: Assets.Images.share) { [weak self] _ in
 			self?.showActivityDialog()
 		}

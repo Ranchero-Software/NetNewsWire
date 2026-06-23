@@ -43,7 +43,7 @@ final class ArticleSearchInfo: Hashable, Sendable {
 		}()
 
 		self.bodyForIndex = {
-			let s = preferredText.rsparser_stringByDecodingHTMLEntities()
+			let s = preferredText.decodingHTMLEntities()
 			let sanitizedBody = s.strippingHTML()
 
 			if let authorsNames {
@@ -90,10 +90,8 @@ final class SearchTable: DatabaseTable, @unchecked Sendable {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		queue.runInTransaction { databaseResult in
-			if let database = databaseResult.database {
-				self.ensureIndexedArticles(articleIDs, database)
-			}
+		queue.runInTransaction { database in
+			self.ensureIndexedArticles(articleIDs, database)
 		}
 	}
 
@@ -153,8 +151,8 @@ private extension SearchTable {
 
 		init(row: FMResultSet) {
 			self.rowID = Int(row.longLongInt(forColumn: DatabaseKey.rowID))
-			self.title = row.string(forColumn: DatabaseKey.title) ?? ""
-			self.body = row.string(forColumn: DatabaseKey.body) ?? ""
+			self.title = row.swiftString(forColumn: DatabaseKey.title) ?? ""
+			self.body = row.swiftString(forColumn: DatabaseKey.body) ?? ""
 		}
 
 		// MARK: Hashable

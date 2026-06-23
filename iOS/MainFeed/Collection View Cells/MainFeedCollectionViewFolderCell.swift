@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Images
 
 @MainActor protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
 	func mainFeedCollectionFolderViewCellDisclosureDidToggle(_ sender: MainFeedCollectionViewFolderCell, expanding: Bool)
@@ -40,11 +41,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	var iconImage: IconImage? {
 		didSet {
 			faviconView.iconImage = iconImage
-			if let preferredColor = iconImage?.preferredColor {
-				faviconView.tintColor = UIColor(cgColor: preferredColor)
-			} else {
-				faviconView.tintColor = Assets.Colors.secondaryAccent
-			}
+			faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
 		}
 	}
 
@@ -107,10 +104,34 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			let name = folderTitle.text ?? ""
 			if unreadCount > 0 {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
-				return "\(name) \(unreadCount) \(unreadLabel)"
+				return "\(name) \(unreadCount) \(unreadLabel) \(expandedStateMessage)"
 			} else {
-				return name
+				return "\(name) \(expandedStateMessage)"
 			}
+		}
+		set {}
+	}
+
+	private var expandedStateMessage: String {
+		if disclosureExpanded {
+			return NSLocalizedString("Expanded", comment: "Expanded")
+		}
+		return NSLocalizedString("Collapsed", comment: "Collapsed")
+	}
+
+	override var accessibilityCustomActions: [UIAccessibilityCustomAction]? {
+		get {
+			let name: String
+			if disclosureExpanded {
+				name = NSLocalizedString("Collapse", comment: "Collapse")
+			} else {
+				name = NSLocalizedString("Expand", comment: "Expand")
+			}
+			let toggleAction = UIAccessibilityCustomAction(name: name) { [weak self] _ in
+				self?.toggleDisclosure()
+				return true
+			}
+			return [toggleAction]
 		}
 		set {}
 	}

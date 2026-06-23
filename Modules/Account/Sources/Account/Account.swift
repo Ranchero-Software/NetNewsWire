@@ -19,6 +19,7 @@ import ArticlesDatabase
 import RSWeb
 import Secrets
 import ErrorLog
+import ActivityLog
 import os
 
 // Main thread only.
@@ -31,6 +32,9 @@ public extension Notification.Name {
 	static let AccountDidDownloadArticles = Notification.Name(rawValue: "AccountDidDownloadArticles")
 	static let AccountStateDidChange = Notification.Name(rawValue: "AccountStateDidChange")
 	static let StatusesDidChange = Notification.Name(rawValue: "StatusesDidChange")
+	/// Posted when a delegate enqueues one or more status changes for upstream send.
+	/// Distinct from `StatusesDidChange`, which also fires for remote-sourced changes.
+	static let AccountDidQueueArticleStatuses = Notification.Name(rawValue: "AccountDidQueueArticleStatuses")
 }
 
 nonisolated public enum AccountType: Int, Codable, Sendable {
@@ -53,22 +57,23 @@ nonisolated public enum AccountType: Int, Codable, Sendable {
 		switch self {
 		case .onMyMac:
 			return NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On My iPhone")
+		// These proper names don’t have a translation.
 		case .cloudKit:
-			return NSLocalizedString("iCloud", comment: "iCloud")
+			return "iCloud"
 		case .feedly:
-			return NSLocalizedString("Feedly", comment: "Feedly")
+			return "Feedly"
 		case .feedbin:
-			return NSLocalizedString("Feedbin", comment: "Feedbin")
+			return "Feedbin"
 		case .newsBlur:
-			return NSLocalizedString("NewsBlur", comment: "NewsBlur")
+			return "NewsBlur"
 		case .freshRSS:
-			return NSLocalizedString("FreshRSS", comment: "FreshRSS")
+			return "FreshRSS"
 		case .inoreader:
-			return NSLocalizedString("Inoreader", comment: "Inoreader")
+			return NSLocalizedString("Inoreader", comment: "Account name")
 		case .bazQux:
-			return NSLocalizedString("BazQux", comment: "BazQux")
+			return NSLocalizedString("BazQux", comment: "Account name")
 		case .theOldReader:
-			return NSLocalizedString("The Old Reader", comment: "The Old Reader")
+			return NSLocalizedString("The Old Reader", comment: "Account name")
 		}
 	}
 }
@@ -117,6 +122,10 @@ public enum FetchType {
 			return defaultName
 		}
 		return name
+	}
+
+	public var activityOwner: ActivityOwner {
+		.account(accountID: accountID, displayName: nameForDisplay)
 	}
 
 	public var name: String? {
@@ -231,7 +240,7 @@ public enum FetchType {
 	private var fetchingAllUnreadCounts = false
 	var areUnreadCountsInitialized = false
 
-	let dataFolder: String
+	public let dataFolder: String
 	let database: ArticlesDatabase
 	var delegate: AccountDelegate
 
@@ -283,26 +292,26 @@ public enum FetchType {
 		}
 	}
 
-	init(dataFolder: String, type: AccountType, accountID: String, transport: Transport? = nil) {
+	init(dataFolder: String, type: AccountType, accountID: String) {
 		switch type {
 		case .onMyMac:
 			self.delegate = LocalAccountDelegate()
 		case .cloudKit:
 			self.delegate = CloudKitAccountDelegate(dataFolder: dataFolder)
 		case .feedbin:
-			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder, transport: transport)
+			self.delegate = FeedbinAccountDelegate(dataFolder: dataFolder)
 		case .feedly:
-			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, transport: transport, api: FeedlyAccountDelegate.environment)
+			self.delegate = FeedlyAccountDelegate(dataFolder: dataFolder, api: FeedlyAccountDelegate.environment)
 		case .newsBlur:
-			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder, transport: transport)
+			self.delegate = NewsBlurAccountDelegate(dataFolder: dataFolder)
 		case .freshRSS:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .freshRSS)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .freshRSS)
 		case .inoreader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .inoreader)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .inoreader)
 		case .bazQux:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .bazQux)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .bazQux)
 		case .theOldReader:
-			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, transport: transport, variant: .theOldReader)
+			self.delegate = ReaderAPIAccountDelegate(dataFolder: dataFolder, variant: .theOldReader)
 		}
 
 		self.accountID = accountID
@@ -339,7 +348,8 @@ public enum FetchType {
 			self._fetchAllUnreadCounts()
 		}
 
-		delegate.accountDidInitialize(self)
+		delegate.account = self
+		delegate.accountDidInitialize()
 	}
 
 	// MARK: - Credentials
@@ -391,17 +401,19 @@ public enum FetchType {
 		}
 	}
 
-	public static func validateCredentials(transport: Transport = URLSession.webserviceTransport(), type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
-		switch type {
-		case .feedbin:
-			return try await FeedbinAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
-		case .newsBlur:
-			return try await NewsBlurAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
-		case .freshRSS, .inoreader, .bazQux, .theOldReader:
-			return try await ReaderAPIAccountDelegate.validateCredentials(transport: transport, credentials: credentials, endpoint: endpoint)
-		default:
-			return nil
-		}
+	public static func validateCredentials(type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
+		try await ActivityLog.shared.logActivity(owner: .app, kind: .validateCredentials, detail: type.displayName, successMessage: { $0 == nil ? "Invalid credentials" : "Credentials valid" }, {
+			switch type {
+			case .feedbin:
+				return try await FeedbinAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+			case .newsBlur:
+				return try await NewsBlurAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+			case .freshRSS, .inoreader, .bazQux, .theOldReader:
+				return try await ReaderAPIAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+			default:
+				return nil
+			}
+		})
 	}
 
 	nonisolated internal static func oauthAuthorizationClient(for type: AccountType) -> OAuthAuthorizationClient {
@@ -427,9 +439,7 @@ public enum FetchType {
 
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
 	                                           client: OAuthAuthorizationClient,
-	                                           accountType: AccountType,
-	                                           transport: Transport = URLSession.webserviceTransport(),
-	                                           completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> Void) {
+	                                           accountType: AccountType) async throws -> OAuthAuthorizationGrant {
 		let grantingType: OAuthAuthorizationGranting.Type
 
 		switch accountType {
@@ -439,11 +449,11 @@ public enum FetchType {
 			fatalError("\(accountType) does not support OAuth authorization code granting.")
 		}
 
-		grantingType.requestOAuthAccessToken(with: response, transport: transport, completion: completion)
+		return try await grantingType.requestOAuthAccessToken(with: response)
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
-		await delegate.receiveRemoteNotification(for: self, userInfo: userInfo)
+		await delegate.receiveRemoteNotification(userInfo: userInfo)
 	}
 
 	// MARK: - Refreshing
@@ -456,17 +466,43 @@ public enum FetchType {
 	}
 
 	public func refreshAll() async throws {
-		try await delegate.refreshAll(for: self)
+		try await delegate.refreshAll()
+	}
+
+	// MARK: - Activity Log
+
+	@discardableResult
+	public func logActivity<T>(
+		kind: ActivityKind,
+		detail: String? = nil,
+		successMessage: ((T) -> String?)? = nil,
+		durationIsSignificant: ((T) -> Bool)? = nil,
+		_ work: () async throws -> T
+	) async rethrows -> T {
+		try await ActivityLog.shared.logActivity(owner: activityOwner, kind: kind, detail: detail, successMessage: successMessage, durationIsSignificant: durationIsSignificant, work)
+	}
+
+	/// Synchronous overload of `logActivity` for non-async work.
+	@discardableResult
+	public func logActivity<T>(
+		kind: ActivityKind,
+		detail: String? = nil,
+		successMessage: ((T) -> String?)? = nil,
+		durationIsSignificant: ((T) -> Bool)? = nil,
+		_ work: () throws -> T
+	) rethrows -> T {
+		try ActivityLog.shared.logActivity(owner: activityOwner, kind: kind, detail: detail, successMessage: successMessage, durationIsSignificant: durationIsSignificant, work)
 	}
 
 	// MARK: - Syncing Article Status
 
 	public func sendArticleStatus() async throws {
-		try await delegate.sendArticleStatus(for: self)
+		try await delegate.sendArticleStatus()
 	}
 
-	public func syncArticleStatus() async throws {
-		try await delegate.syncArticleStatus(for: self)
+	@discardableResult
+	public func syncArticleStatus() async throws -> Bool {
+		try await delegate.syncArticleStatus()
 	}
 
 	// MARK: - OPML
@@ -479,10 +515,10 @@ public enum FetchType {
 
 		Task { @MainActor in
 			do {
-				try await delegate.importOPML(for: self, opmlFile: opmlFile)
+				try await delegate.importOPML(opmlFile: opmlFile)
 				// Reset the last fetch date to get the article history for the added feeds.
 				lastArticleFetchStartTime = nil
-				try? await delegate.refreshAll(for: self)
+				try? await delegate.refreshAll()
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -496,20 +532,9 @@ public enum FetchType {
 		delegate.suspendNetwork()
 	}
 
-	public func suspendDatabase() {
-		#if os(iOS)
-		database.cancelAndSuspend()
-		#endif
-		save()
-	}
-
-	/// Re-open the SQLite database and allow database calls.
-	/// Call this *before* calling resume.
-	public func resumeDatabaseAndDelegate() {
-		#if os(iOS)
-		database.resume()
-		#endif
-		delegate.resume(account: self)
+	/// Resume network activity for the delegate after a previous `suspendNetwork()`.
+	public func resumeDelegate() {
+		delegate.resume()
 	}
 
 	/// Reload OPML, etc.
@@ -526,20 +551,20 @@ public enum FetchType {
 	}
 
 	public func prepareForDeletion() {
-		delegate.accountWillBeDeleted(self)
+		delegate.accountWillBeDeleted()
 	}
 
 	func deleteSettings() {
 		settings.deleteSettings()
 	}
 
-	func addOPMLItems(_ items: [RSOPMLItem]) {
+	func addOPMLItems(_ items: [OPMLItem]) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
 				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
-					folder.externalID = item.attributes?["nnw_externalID"] as? String
+					folder.externalID = item.attributes?["nnw_externalID"]
 					if let itemChildren = item.children {
 						for itemChild in itemChildren {
 							if let feedSpecifier = itemChild.feedSpecifier {
@@ -552,19 +577,12 @@ public enum FetchType {
 		}
 	}
 
-	func loadOPMLItems(_ items: [RSOPMLItem]) {
+	func loadOPMLItems(_ items: [OPMLItem]) {
 		addOPMLItems(OPMLNormalizer.normalize(items))
 	}
 
-	public func markArticles(_ articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-		Task { @MainActor in
-			do {
-				try await delegate.markArticles(for: self, articles: articles, statusKey: statusKey, flag: flag)
-				completion(.success(()))
-			} catch {
-				completion(.failure(error))
-			}
-		}
+	public func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		try await delegate.markArticles(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 	}
 
 	func existingContainer(withExternalID externalID: String) -> Container? {
@@ -627,7 +645,7 @@ public enum FetchType {
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 
-	func newFeed(with opmlFeedSpecifier: RSOPMLFeedSpecifier) -> Feed {
+	func newFeed(with opmlFeedSpecifier: OPMLFeedSpecifier) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
@@ -640,13 +658,13 @@ public enum FetchType {
 	}
 
 	func addFeed(_ feed: Feed, container: Container) async throws {
-		try await delegate.addFeed(account: self, feed: feed, container: container)
+		try await delegate.addFeed(feed: feed, container: container)
 	}
 
 	public func addFeed(_ feed: Feed, to container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.addFeed(account: self, feed: feed, container: container)
+				try await delegate.addFeed(feed: feed, container: container)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -657,7 +675,7 @@ public enum FetchType {
 	public func createFeed(url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				let feed = try await delegate.createFeed(for: self, url: url, name: name, container: container, validateFeed: validateFeed)
+				let feed = try await delegate.createFeed(url: url, name: name, container: container, validateFeed: validateFeed)
 				completion(.success(feed))
 			} catch {
 				completion(.failure(error))
@@ -673,10 +691,17 @@ public enum FetchType {
 		return feed
 	}
 
+	func clearFeedSettings(_ feed: Feed) {
+		// Call before permanently removing a feed so the next feed created at this URL
+		// doesn’t inherit a stale feedID/externalID from the cache or database.
+		feedSettingsCache[feed.url] = nil
+		feedSettingsDatabase.deleteSettings(for: feed.url)
+	}
+
 	public func removeFeed(_ feed: Feed, from container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.removeFeed(account: self, feed: feed, container: container)
+				try await delegate.removeFeed(feed: feed, container: container)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -687,7 +712,7 @@ public enum FetchType {
 	public func moveFeed(_ feed: Feed, from: Container, to: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.moveFeed(account: self, feed: feed, sourceContainer: from, destinationContainer: to)
+				try await delegate.moveFeed(feed: feed, sourceContainer: from, destinationContainer: to)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -696,13 +721,13 @@ public enum FetchType {
 	}
 
 	public func renameFeed(_ feed: Feed, name: String) async throws {
-		try await delegate.renameFeed(for: self, with: feed, to: name)
+		try await delegate.renameFeed(with: feed, to: name)
 	}
 
 	public func restoreFeed(_ feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.restoreFeed(for: self, feed: feed, container: container)
+				try await delegate.restoreFeed(feed: feed, container: container)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -712,13 +737,13 @@ public enum FetchType {
 
 	@discardableResult
 	public func addFolder(_ name: String) async throws -> Folder {
-		try await delegate.createFolder(for: self, name: name)
+		try await delegate.createFolder(name: name)
 	}
 
 	public func removeFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.removeFolder(for: self, with: folder)
+				try await delegate.removeFolder(with: folder)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
@@ -727,20 +752,19 @@ public enum FetchType {
 	}
 
 	public func renameFolder(_ folder: Folder, to name: String) async throws {
-		try await delegate.renameFolder(for: self, with: folder, to: name)
+		try await delegate.renameFolder(with: folder, to: name)
 	}
 
 	public func restoreFolder(_ folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
 		Task { @MainActor in
 			do {
-				try await delegate.restoreFolder(for: self, folder: folder)
+				try await delegate.restoreFolder(folder: folder)
 				completion(.success(()))
 			} catch {
 				completion(.failure(error))
 			}
 		}
 	}
-
 
 	func addFolderToTree(_ folder: Folder) {
 		folders!.insert(folder)
@@ -754,79 +778,96 @@ public enum FetchType {
 
 	// MARK: - Fetching Articles
 
-	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	public func fetchArticles(_ fetchType: FetchType) -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
-			return try _fetchStarredArticles(limit: limit)
+			return _fetchStarredArticles(limit: limit)
 		case .unread(let limit):
-			return try _fetchUnreadArticles(limit: limit)
+			return _fetchUnreadArticles(limit: limit)
 		case .today(let limit):
-			return try _fetchTodayArticles(limit: limit)
+			return _fetchTodayArticles(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
-				return try _fetchUnreadArticles(container: folder)
+				return _fetchUnreadArticles(container: folder)
 			} else {
-				return try _fetchArticles(container: folder)
+				return _fetchArticles(container: folder)
 			}
 		case .feed(let feed):
-			return try _fetchArticles(feed: feed)
+			return _fetchArticles(feed: feed)
 		case .articleIDs(let articleIDs):
-			return try _fetchArticles(articleIDs: articleIDs)
+			return _fetchArticles(articleIDs: articleIDs)
 		case .search(let searchString):
-			return try _fetchArticlesMatching(searchString: searchString)
+			return _fetchArticlesMatching(searchString: searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try _fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
+			return _fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
 		}
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+	public func fetchArticlesAsync(_ fetchType: FetchType) async -> Set<Article> {
 		switch fetchType {
 		case .starred(let limit):
-			return try await _fetchStarredArticlesAsync(limit: limit)
+			return await _fetchStarredArticlesAsync(limit: limit)
 		case .unread(let limit):
-			return try await _fetchUnreadArticlesAsync(limit: limit)
+			return await _fetchUnreadArticlesAsync(limit: limit)
 		case .today(let limit):
-			return try await _fetchTodayArticlesAsync(limit: limit)
+			return await _fetchTodayArticlesAsync(limit: limit)
 		case .folder(let folder, let readFilter):
 			if readFilter {
-				return try await _fetchUnreadArticlesAsync(container: folder)
+				return await _fetchUnreadArticlesAsync(container: folder)
 			} else {
-				return try await _fetchArticlesAsync(container: folder)
+				return await _fetchArticlesAsync(container: folder)
 			}
 		case .feed(let feed):
-			return try await _fetchArticlesAsync(feed: feed)
+			return await _fetchArticlesAsync(feed: feed)
 		case .articleIDs(let articleIDs):
-			return try await _fetchArticlesAsync(articleIDs: articleIDs)
+			return await _fetchArticlesAsync(articleIDs: articleIDs)
 		case .search(let searchString):
-			return try await _fetchArticlesMatchingAsync(searchString: searchString)
+			return await _fetchArticlesMatchingAsync(searchString: searchString)
 		case .searchWithArticleIDs(let searchString, let articleIDs):
-			return try await _fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
+			return await _fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
 		}
 	}
 
-	public func fetchUnreadCountForStarredArticlesAsync() async throws -> Int? {
-		try await database.fetchUnreadCountForStarredArticlesAsync(feedIDs: flattenedFeedsIDs)
+	public func fetchUnreadCountForStarredArticlesAsync() async -> Int {
+		await database.fetchUnreadCountForStarredArticlesAsync(feedIDs: flattenedFeedsIDs)
 	}
 
-	public func fetchCountForStarredArticles() throws -> Int {
-		try database.fetchStarredArticlesCount(feedIDs: flattenedFeedsIDs)
+	public func fetchCountForStarredArticles() -> Int {
+		database.fetchStarredArticlesCount(feedIDs: flattenedFeedsIDs)
 	}
 
-	public func fetchUnreadCountForTodayAsync() async throws -> Int {
-		try await database.fetchUnreadCountForTodayAsync(feedIDs: flattenedFeedsIDs)
+	public func fetchArticleCountsAsync() async -> ArticleCounts {
+		await database.fetchArticleCountsAsync(feedIDs: flattenedFeedsIDs)
 	}
 
-	public func fetchUnreadArticleIDsAsync() async throws -> Set<String> {
-		try await database.fetchUnreadArticleIDsAsync()
+	/// Returns a dictionary of feedID → latest article date for all feeds with articles.
+	public func fetchLastUpdateDates() async -> [String: Date] {
+		await database.fetchLastUpdateDates()
 	}
 
-	public func fetchStarredArticleIDsAsync() async throws -> Set<String> {
-		try await database.fetchStarredArticleIDsAsync()
+	public func fetchUnreadCountForTodayAsync() async -> Int {
+		await database.fetchUnreadCountForTodayAsync(feedIDs: flattenedFeedsIDs)
+	}
+
+	public func fetchCountForTodayArticlesAsync() async -> Int {
+		await database.fetchTodayArticlesCountAsync(feedIDs: flattenedFeedsIDs)
+	}
+
+	public func fetchCountForStarredArticlesAsync() async -> Int {
+		await database.fetchStarredArticlesCountAsync(feedIDs: flattenedFeedsIDs)
+	}
+
+	public func fetchUnreadArticleIDsAsync() async -> Set<String> {
+		await database.fetchUnreadArticleIDsAsync()
+	}
+
+	public func fetchStarredArticleIDsAsync() async -> Set<String> {
+		await database.fetchStarredArticleIDsAsync()
 	}
 
 	/// Fetch articleIDs for articles that we should have, but don’t. These articles are either (starred) or (newer than the article cutoff date).
-	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async throws -> Set<String> {
-		try await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+	public func fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync() async -> Set<String> {
+		await database.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 	}
 
 	// MARK: - Unread Counts
@@ -849,7 +890,7 @@ public enum FetchType {
 	// MARK: - Updating Feeds
 
 	@discardableResult
-	func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async throws -> ArticleChanges {
+	func updateAsync(feed: Feed, parsedFeed: ParsedFeed) async -> ArticleChanges {
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
@@ -859,20 +900,20 @@ public enum FetchType {
 			return ArticleChanges()
 		}
 
-		return try await updateAsync(feedID: feed.feedID, parsedItems: parsedItems)
+		return await updateAsync(feedID: feed.feedID, parsedItems: parsedItems)
 	}
 
-	func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async throws -> ArticleChanges {
+	func updateAsync(feedID: String, parsedItems: Set<ParsedItem>, deleteOlder: Bool = true) async -> ArticleChanges {
 		// Used only by an On My Mac or iCloud account.
 		precondition(Thread.isMainThread)
 		precondition(type == .onMyMac || type == .cloudKit)
 
-		let articleChanges = try await database.updateAsync(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
+		let articleChanges = await database.updateAsync(parsedItems: parsedItems, feedID: feedID, deleteOlder: deleteOlder)
 		sendNotificationAbout(articleChanges)
 		return articleChanges
 	}
 
-	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async throws {
+	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
@@ -880,23 +921,24 @@ public enum FetchType {
 			return
 		}
 
-		let newAndUpdatedArticles = try await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
+		let newAndUpdatedArticles = await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
 		sendNotificationAbout(newAndUpdatedArticles)
 	}
 
-	/// Returns set of Article whose statuses did change.
+	/// Mark statuses for articleIDs. Returns the articleIDs whose status actually changed.
 	@discardableResult
-	func updateAsync(articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<Article> {
-		guard !articles.isEmpty else {
-			return Set<Article>()
+	func updateStatusesAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
+		guard !articleIDs.isEmpty else {
+			return Set<String>()
 		}
 
-		let updatedStatuses = try await database.markAsync(articles: articles, statusKey: statusKey, flag: flag)
-		let updatedArticleIDs = updatedStatuses.articleIDs()
-		let updatedArticles = Set(articles.filter { updatedArticleIDs.contains($0.articleID) })
-		noteStatusesForArticlesDidChange(updatedArticles)
+		let changedArticleIDs = await database.markAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		guard !changedArticleIDs.isEmpty else {
+			return Set<String>()
+		}
+		noteStatusesForArticleIDsDidChange(articleIDs: changedArticleIDs, statusKey: statusKey, flag: flag)
 
-		return updatedArticles
+		return changedArticleIDs
 	}
 
 	// MARK: - Article Statuses
@@ -904,11 +946,11 @@ public enum FetchType {
 	/// Make sure statuses exist. Any existing statuses won’t be touched.
 	/// All created statuses will be marked as read and not starred.
 	/// Sends a .StatusesDidChange notification.
-	func createStatusesIfNeededAsync(articleIDs: Set<String>) async throws {
+	func createStatusesIfNeededAsync(articleIDs: Set<String>) async {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		try await database.createStatusesIfNeededAsync(articleIDs: articleIDs)
+		await database.createStatusesIfNeededAsync(articleIDs: articleIDs)
 		noteStatusesForArticleIDsDidChange(articleIDs)
 	}
 
@@ -916,12 +958,12 @@ public enum FetchType {
 	///
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	/// Returns a set of new article statuses.
-	func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws -> Set<String> {
+	func markAndFetchNewAsync(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async -> Set<String> {
 		guard !articleIDs.isEmpty else {
 			return Set<String>()
 		}
 
-		let newArticleStatusIDs = try await database.markAndFetchNewAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		let newArticleStatusIDs = await database.markAndFetchNewAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 		noteStatusesForArticleIDsDidChange(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
 		return newArticleStatusIDs
 	}
@@ -931,40 +973,40 @@ public enum FetchType {
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsReadAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: true)
+	func markAsReadAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: true)
 	}
 
 	/// Mark articleIDs as unread.
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsUnreadAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: false)
+	func markAsUnreadAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .read, flag: false)
 	}
 
 	/// Mark articleIDs as starred.
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsStarredAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: true)
+	func markAsStarredAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: true)
 	}
 
 	/// Mark articleIDs as unstarred.
 	/// - Returns: Set of new article statuses.
 	/// Will create statuses in the database and in memory as needed. Sends a .StatusesDidChange notification.
 	@discardableResult
-	func markAsUnstarredAsync(articleIDs: Set<String>) async throws -> Set<String> {
-		try await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: false)
+	func markAsUnstarredAsync(articleIDs: Set<String>) async -> Set<String> {
+		await markAndFetchNewAsync(articleIDs: articleIDs, statusKey: .starred, flag: false)
 	}
 
 	// Delete the articles associated with the given set of articleIDs
-	func delete(articleIDs: Set<String>) async throws {
+	func delete(articleIDs: Set<String>) async {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		try await database.deleteAsync(articleIDs: articleIDs)
+		await database.deleteAsync(articleIDs: articleIDs)
 	}
 
 	/// Empty caches that can reasonably be emptied. Call when the app goes in the background, for instance.
@@ -1031,10 +1073,14 @@ public enum FetchType {
 
 	// MARK: - Vacuum
 
-	public func vacuumDatabases() {
-		database.vacuum()
-		feedSettingsDatabase.vacuum()
-		delegate.vacuumDatabases()
+	public func vacuumDatabases() async {
+		await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(database.databasePath)) {
+			await database.vacuum()
+		}
+		await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(feedSettingsDatabase.databasePath)) {
+			await feedSettingsDatabase.vacuum()
+		}
+		await delegate.vacuumDatabases()
 	}
 
 	public func fetchCloudKitStats(progress: @escaping CloudKitStatsProgressHandler) async throws -> CloudKitStats {
@@ -1062,7 +1108,7 @@ public enum FetchType {
 	public func debugRunSearch() {
 		#if DEBUG
 		let t1 = Date()
-		let articles = try! _fetchArticlesMatching(searchString: "Brent NetNewsWire")
+		let articles = _fetchArticlesMatching(searchString: "Brent NetNewsWire")
 		let t2 = Date()
 		print(t2.timeIntervalSince(t1))
 		print(articles.count)
@@ -1132,53 +1178,53 @@ private extension Account {
 
 	// MARK: - Starred Articles
 
-	func _fetchStarredArticles(limit: Int? = nil) throws -> Set<Article> {
-		try database.fetchStarredArticles(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchStarredArticles(limit: Int? = nil) -> Set<Article> {
+		database.fetchStarredArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
-	func _fetchStarredArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await database.fetchedStarredArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchStarredArticlesAsync(limit: Int? = nil) async -> Set<Article> {
+		await database.fetchedStarredArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	// MARK: - Account Unread Articles
 
-	func _fetchUnreadArticles(limit: Int? = nil) throws -> Set<Article> {
-		try _fetchUnreadArticles(container: self, limit: limit)
+	func _fetchUnreadArticles(limit: Int? = nil) -> Set<Article> {
+		_fetchUnreadArticles(container: self, limit: limit)
 	}
 
-	func _fetchUnreadArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await _fetchUnreadArticlesAsync(container: self, limit: limit)
+	func _fetchUnreadArticlesAsync(limit: Int? = nil) async -> Set<Article> {
+		await _fetchUnreadArticlesAsync(container: self, limit: limit)
 	}
 
 	// MARK: - Today Articles
 
-	func _fetchTodayArticles(limit: Int? = nil) throws -> Set<Article> {
-		try database.fetchTodayArticles(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchTodayArticles(limit: Int? = nil) -> Set<Article> {
+		database.fetchTodayArticles(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
-	func _fetchTodayArticlesAsync(limit: Int? = nil) async throws -> Set<Article> {
-		try await database.fetchTodayArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
+	func _fetchTodayArticlesAsync(limit: Int? = nil) async -> Set<Article> {
+		await database.fetchTodayArticlesAsync(feedIDs: flattenedFeedsIDs, limit: limit)
 	}
 
 	// MARK: - Container Articles
 
-	func _fetchArticles(container: Container) throws -> Set<Article> {
+	func _fetchArticles(container: Container) -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchArticles(feedIDs: feeds.feedIDs())
+		let articles = database.fetchArticles(feedIDs: feeds.feedIDs())
 		validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		return articles
 	}
 
-	func _fetchArticlesAsync(container: Container) async throws -> Set<Article> {
+	func _fetchArticlesAsync(container: Container) async -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try await database.fetchArticlesAsync(feedIDs: feeds.feedIDs())
+		let articles = await database.fetchArticlesAsync(feedIDs: feeds.feedIDs())
 		validateUnreadCountsAfterFetchingUnreadArticles(feeds: feeds, articles: articles)
 		return articles
 	}
 
-	func _fetchUnreadArticles(container: Container, limit: Int? = nil) throws -> Set<Article> {
+	func _fetchUnreadArticles(container: Container, limit: Int? = nil) -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try database.fetchUnreadArticles(feedIDs: feeds.feedIDs(), limit: limit)
+		let articles = database.fetchUnreadArticles(feedIDs: feeds.feedIDs(), limit: limit)
 
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.
@@ -1189,9 +1235,9 @@ private extension Account {
 		return articles
 	}
 
-	func _fetchUnreadArticlesAsync(container: Container, limit: Int? = nil) async throws -> Set<Article> {
+	func _fetchUnreadArticlesAsync(container: Container, limit: Int? = nil) async -> Set<Article> {
 		let feeds = container.flattenedFeeds()
-		let articles = try await database.fetchUnreadArticlesAsync(feedIDs: feeds.feedIDs(), limit: limit)
+		let articles = await database.fetchUnreadArticlesAsync(feedIDs: feeds.feedIDs(), limit: limit)
 
 		// We don't validate limit queries because they, by definition, won't correctly match the
 		// complete unread state for the given container.
@@ -1204,50 +1250,50 @@ private extension Account {
 
 	// MARK: - Feed Articles
 
-	func _fetchArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchArticles(feedID: feed.feedID)
+	func _fetchArticles(feed: Feed) -> Set<Article> {
+		let articles = database.fetchArticles(feedID: feed.feedID)
 		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
 
-	func _fetchArticlesAsync(feed: Feed) async throws -> Set<Article> {
-		let articles = try await database.fetchArticlesAsync(feedID: feed.feedID)
+	func _fetchArticlesAsync(feed: Feed) async -> Set<Article> {
+		let articles = await database.fetchArticlesAsync(feedID: feed.feedID)
 		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
 
-	func _fetchUnreadArticles(feed: Feed) throws -> Set<Article> {
-		let articles = try database.fetchUnreadArticles(feedIDs: Set([feed.feedID]))
+	func _fetchUnreadArticles(feed: Feed) -> Set<Article> {
+		let articles = database.fetchUnreadArticles(feedIDs: Set([feed.feedID]))
 		validateUnreadCount(feed: feed, articles: articles)
 		return articles
 	}
 
 	// MARK: - ArticleIDs Articles
 
-	func _fetchArticles(articleIDs: Set<String>) throws -> Set<Article> {
-		try database.fetchArticles(articleIDs: articleIDs)
+	func _fetchArticles(articleIDs: Set<String>) -> Set<Article> {
+		database.fetchArticles(articleIDs: articleIDs)
 	}
 
-	func _fetchArticlesAsync(articleIDs: Set<String>) async throws -> Set<Article> {
-		try await database.fetchArticlesAsync(articleIDs: articleIDs)
+	func _fetchArticlesAsync(articleIDs: Set<String>) async -> Set<Article> {
+		await database.fetchArticlesAsync(articleIDs: articleIDs)
 	}
 
 	// MARK: - Search Articles
 
-	func _fetchArticlesMatching(searchString: String) throws -> Set<Article> {
-		try database.fetchArticlesMatching(searchString: searchString, feedIDs: flattenedFeedsIDs)
+	func _fetchArticlesMatching(searchString: String) -> Set<Article> {
+		database.fetchArticlesMatching(searchString: searchString, feedIDs: flattenedFeedsIDs)
 	}
 
-	func _fetchArticlesMatchingAsync(searchString: String) async throws -> Set<Article> {
-		try await database.fetchArticlesMatchingAsync(searchString: searchString, feedIDs: flattenedFeedsIDs)
+	func _fetchArticlesMatchingAsync(searchString: String) async -> Set<Article> {
+		await database.fetchArticlesMatchingAsync(searchString: searchString, feedIDs: flattenedFeedsIDs)
 	}
 
-	func _fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) throws -> Set<Article> {
-		try database.fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
+	func _fetchArticlesMatchingWithArticleIDs(searchString: String, articleIDs: Set<String>) -> Set<Article> {
+		database.fetchArticlesMatchingWithArticleIDs(searchString: searchString, articleIDs: articleIDs)
 	}
 
-	func _fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async throws -> Set<Article> {
-		try await database.fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
+	func _fetchArticlesMatchingWithArticleIDsAsync(searchString: String, articleIDs: Set<String>) async -> Set<Article> {
+		await database.fetchArticlesMatchingWithArticleIDsAsync(searchString: searchString, articleIDs: articleIDs)
 	}
 
 	// MARK: - Unread Counts
@@ -1304,18 +1350,14 @@ private extension Account {
 
 	func _fetchUnreadCount(feed: Feed) {
 		Task { @MainActor in
-			guard let unreadCount = try? await database.fetchUnreadCountAsync(feedID: feed.feedID) else {
-				return
-			}
+			let unreadCount = await database.fetchUnreadCountAsync(feedID: feed.feedID)
 			feed.unreadCount = unreadCount
 		}
 	}
 
 	func _fetchUnreadCounts(feeds: Set<Feed>) {
 		Task { @MainActor in
-			guard let unreadCountDictionary = try? await database.fetchUnreadCountsAsync(feedIDs: feeds.feedIDs()) else {
-				return
-			}
+			let unreadCountDictionary = await database.fetchUnreadCountsAsync(feedIDs: feeds.feedIDs())
 			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: feeds)
 		}
 	}
@@ -1324,7 +1366,7 @@ private extension Account {
 		fetchingAllUnreadCounts = true
 
 		Task { @MainActor in
-			guard let unreadCountDictionary = try? await database.fetchAllUnreadCountsAsync() else {
+			guard let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() else {
 				fetchingAllUnreadCounts = false
 				return
 			}
@@ -1407,22 +1449,6 @@ private extension Account {
 			updatedUnreadCount += feed.unreadCount
 		}
 		unreadCount = updatedUnreadCount
-    }
-
-	func noteStatusesForArticlesDidChange(_ articles: Set<Article>) {
-		guard !articles.isEmpty else {
-			return
-		}
-
-		let feeds = Set(articles.compactMap { $0.feed })
-		let statuses = Set(articles.map { $0.status })
-		let articleIDs = Set(articles.map { $0.articleID })
-
-        // .UnreadCountDidChange notification will get sent to Folder and Account objects,
-        // which will update their own unread counts.
-        updateUnreadCounts(feeds: feeds)
-
-		NotificationCenter.default.post(name: .StatusesDidChange, object: self, userInfo: [UserInfoKey.statuses: statuses, UserInfoKey.articles: articles, UserInfoKey.articleIDs: articleIDs, UserInfoKey.feeds: feeds])
     }
 
 	func noteStatusesForArticleIDsDidChange(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) {

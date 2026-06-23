@@ -7,7 +7,6 @@
 
 import Foundation
 import os
-import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import RSWeb
@@ -32,6 +31,7 @@ final class FeedSettingsDatabase: Sendable {
 		case externalID
 		case folderRelationship
 		case lastCheckDate
+		case lastResponseCode
 	}
 
 	struct Row {
@@ -43,34 +43,47 @@ final class FeedSettingsDatabase: Sendable {
 		let contentHash: String?
 		let newArticleNotificationsEnabled: Bool
 		let readerViewAlwaysEnabled: Bool
-		let authors: [Author]?
+		let authors: Set<Author>?
 		let conditionalGetInfo: HTTPConditionalGetInfo?
 		let conditionalGetInfoDate: Date?
 		let cacheControlInfo: CacheControlInfo?
 		let externalID: String?
 		let folderRelationship: [String: String]?
 		let lastCheckDate: Date?
+		let lastResponseCode: Int?
 	}
+
+	let databasePath: String
 
 	nonisolated(unsafe) private let database: FMDatabase // Used on serial dispatch queue only
 	private let serialDispatchQueue: DispatchQueue
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedSettingsDatabase")
 
 	init(databasePath: String) {
+		self.databasePath = databasePath
 		self.serialDispatchQueue = DispatchQueue(label: "FeedSettingsDatabase")
 		self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		serialDispatchQueue.sync { [database] in
-			database.executeStatements("PRAGMA journal_mode = WAL;")
 			database.runCreateStatements(Self.tableCreationStatements)
+			if !database.columnExists("lastResponseCode", inTableWithName: "feedSettings") {
+				database.executeStatements("ALTER TABLE feedSettings ADD COLUMN lastResponseCode INTEGER;")
+			}
 		}
-		if !Platform.isRunningUnitTests {
-			vacuum()
+		vacuumIfNeeded()
+	}
+
+	func vacuum() async {
+		await withCheckedContinuation { continuation in
+			serialDispatchQueue.async {
+				self.database.vacuum()
+				continuation.resume()
+			}
 		}
 	}
 
-	func vacuum() {
+	func vacuumIfNeeded() {
 		serialDispatchQueue.async {
-			self.database.vacuum()
+			self.database.vacuumIfNeeded()
 		}
 	}
 
@@ -121,7 +134,7 @@ final class FeedSettingsDatabase: Sendable {
 
 			var rows = [String: Row]()
 			while resultSet.next() {
-				if let feedURL = resultSet.string(forColumn: "feedURL") {
+				if let feedURL = resultSet.swiftString(forColumn: "feedURL") {
 					rows[feedURL] = self.row(from: resultSet)
 				}
 			}
@@ -148,6 +161,19 @@ final class FeedSettingsDatabase: Sendable {
 		let name = column.rawValue
 		serialDispatchQueue.async {
 			self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
+		}
+	}
+
+	// MARK: - Int
+
+	func setInt(_ value: Int?, for feedURL: String, column: Column) {
+		let name = column.rawValue
+		serialDispatchQueue.async {
+			if let value {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
+			} else {
+				self.database.executeUpdate("UPDATE feedSettings SET \(name) = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
+			}
 		}
 	}
 
@@ -186,10 +212,10 @@ final class FeedSettingsDatabase: Sendable {
 		}
 	}
 
-	func setAuthors(_ authors: [Author]?, for feedURL: String) {
+	func setAuthors(_ authors: Set<Author>?, for feedURL: String) {
 		serialDispatchQueue.async {
 			if let authors {
-				let jsonString = Set(authors).json()
+				let jsonString = authors.json()
 				self.database.executeUpdate("UPDATE feedSettings SET authors = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString as Any, feedURL])
 			} else {
 				self.database.executeUpdate("UPDATE feedSettings SET authors = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
@@ -206,6 +232,14 @@ final class FeedSettingsDatabase: Sendable {
 			} else {
 				self.database.executeUpdate("UPDATE feedSettings SET folderRelationship = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
 			}
+		}
+	}
+
+	// MARK: - Deletion
+
+	func deleteSettings(for feedURL: String) {
+		serialDispatchQueue.async {
+			self.database.executeUpdate("DELETE FROM feedSettings WHERE feedURL = ?;", withArgumentsIn: [feedURL])
 		}
 	}
 
@@ -237,12 +271,12 @@ final class FeedSettingsDatabase: Sendable {
 private extension FeedSettingsDatabase {
 
 	static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS feedSettings (feedURL TEXT PRIMARY KEY, feedID TEXT NOT NULL DEFAULT '', homePageURL TEXT, iconURL TEXT, faviconURL TEXT, editedName TEXT, contentHash TEXT, newArticleNotificationsEnabled INTEGER NOT NULL DEFAULT 0, readerViewAlwaysEnabled INTEGER NOT NULL DEFAULT 0, authors TEXT, conditionalGetInfoLastModified TEXT, conditionalGetInfoEtag TEXT, conditionalGetInfoDate REAL, cacheControlInfoDateCreated REAL, cacheControlInfoMaxAge REAL, externalID TEXT, folderRelationship TEXT, lastCheckDate REAL);
+	CREATE TABLE IF NOT EXISTS feedSettings (feedURL TEXT PRIMARY KEY, feedID TEXT NOT NULL DEFAULT '', homePageURL TEXT, iconURL TEXT, faviconURL TEXT, editedName TEXT, contentHash TEXT, newArticleNotificationsEnabled INTEGER NOT NULL DEFAULT 0, readerViewAlwaysEnabled INTEGER NOT NULL DEFAULT 0, authors TEXT, conditionalGetInfoLastModified TEXT, conditionalGetInfoEtag TEXT, conditionalGetInfoDate REAL, cacheControlInfoDateCreated REAL, cacheControlInfoMaxAge REAL, externalID TEXT, folderRelationship TEXT, lastCheckDate REAL, lastResponseCode INTEGER);
 	"""
 
 	func row(from resultSet: FMResultSet) -> Row {
-		let lastModified = resultSet.string(forColumn: Column.conditionalGetInfoLastModified.rawValue)
-		let etag = resultSet.string(forColumn: Column.conditionalGetInfoEtag.rawValue)
+		let lastModified = resultSet.swiftString(forColumn: Column.conditionalGetInfoLastModified.rawValue)
+		let etag = resultSet.swiftString(forColumn: Column.conditionalGetInfoEtag.rawValue)
 
 		var conditionalGetInfoDate: Date?
 		if !resultSet.columnIsNull(Column.conditionalGetInfoDate.rawValue) {
@@ -256,18 +290,14 @@ private extension FeedSettingsDatabase {
 			cacheControlInfo = CacheControlInfo(dateCreated: dateCreated, maxAge: maxAge)
 		}
 
-		var authors: [Author]?
-		if let authorsJSON = resultSet.string(forColumn: Column.authors.rawValue) {
-			if let authorsSet = Author.authorsWithJSON(authorsJSON) {
-				authors = Array(authorsSet)
-			}
+		var authors: Set<Author>?
+		if let authorsData = resultSet.data(forColumn: Column.authors.rawValue) {
+			authors = Author.authorsWithJSON(authorsData)
 		}
 
 		var folderRelationship: [String: String]?
-		if let folderJSON = resultSet.string(forColumn: Column.folderRelationship.rawValue) {
-			if let data = folderJSON.data(using: .utf8) {
-				folderRelationship = try? JSONSerialization.jsonObject(with: data) as? [String: String]
-			}
+		if let folderData = resultSet.data(forColumn: Column.folderRelationship.rawValue) {
+			folderRelationship = try? JSONSerialization.jsonObject(with: folderData) as? [String: String]
 		}
 
 		var lastCheckDate: Date?
@@ -275,22 +305,28 @@ private extension FeedSettingsDatabase {
 			lastCheckDate = Date(timeIntervalSinceReferenceDate: resultSet.double(forColumn: Column.lastCheckDate.rawValue))
 		}
 
+		var lastResponseCode: Int?
+		if !resultSet.columnIsNull(Column.lastResponseCode.rawValue) {
+			lastResponseCode = Int(resultSet.int(forColumn: Column.lastResponseCode.rawValue))
+		}
+
 		return Row(
-			feedID: resultSet.string(forColumn: Column.feedID.rawValue) ?? "",
-			homePageURL: resultSet.string(forColumn: Column.homePageURL.rawValue),
-			iconURL: resultSet.string(forColumn: Column.iconURL.rawValue),
-			faviconURL: resultSet.string(forColumn: Column.faviconURL.rawValue),
-			editedName: resultSet.string(forColumn: Column.editedName.rawValue),
-			contentHash: resultSet.string(forColumn: Column.contentHash.rawValue),
+			feedID: resultSet.swiftString(forColumn: Column.feedID.rawValue) ?? "",
+			homePageURL: resultSet.swiftString(forColumn: Column.homePageURL.rawValue),
+			iconURL: resultSet.swiftString(forColumn: Column.iconURL.rawValue),
+			faviconURL: resultSet.swiftString(forColumn: Column.faviconURL.rawValue),
+			editedName: resultSet.swiftString(forColumn: Column.editedName.rawValue),
+			contentHash: resultSet.swiftString(forColumn: Column.contentHash.rawValue),
 			newArticleNotificationsEnabled: resultSet.bool(forColumn: Column.newArticleNotificationsEnabled.rawValue),
 			readerViewAlwaysEnabled: resultSet.bool(forColumn: Column.readerViewAlwaysEnabled.rawValue),
 			authors: authors,
 			conditionalGetInfo: HTTPConditionalGetInfo(lastModified: lastModified, etag: etag),
 			conditionalGetInfoDate: conditionalGetInfoDate,
 			cacheControlInfo: cacheControlInfo,
-			externalID: resultSet.string(forColumn: Column.externalID.rawValue),
+			externalID: resultSet.swiftString(forColumn: Column.externalID.rawValue),
 			folderRelationship: folderRelationship,
-			lastCheckDate: lastCheckDate
+			lastCheckDate: lastCheckDate,
+			lastResponseCode: lastResponseCode
 		)
 	}
 }

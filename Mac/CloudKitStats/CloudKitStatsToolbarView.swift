@@ -24,14 +24,14 @@ final class CloudKitStatsToolbarView: NSView {
 
 		shareButton = NSButton()
 		shareButton.bezelStyle = .rounded
-		shareButton.image = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: NSLocalizedString("Share", comment: "Share button accessibility description"))
+		shareButton.image = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: NSLocalizedString("Share", comment: "Share button"))
 		shareButton.translatesAutoresizingMaskIntoConstraints = false
 		shareButton.target = nil
 		shareButton.action = #selector(CloudKitStatsViewController.shareStats(_:))
 
 		cleanUpButton = NSButton()
 		cleanUpButton.bezelStyle = .rounded
-		cleanUpButton.title = NSLocalizedString("Clean Up", comment: "Clean Up button title")
+		cleanUpButton.title = NSLocalizedString("Clean Up", comment: "Clean Up button")
 		cleanUpButton.translatesAutoresizingMaskIntoConstraints = false
 		cleanUpButton.target = nil
 		cleanUpButton.action = #selector(CloudKitStatsViewController.cleanUp(_:))

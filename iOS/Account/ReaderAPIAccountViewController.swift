@@ -49,14 +49,14 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		if let unwrappedAccountType = accountType {
 			switch unwrappedAccountType {
 			case .freshRSS:
-				title = NSLocalizedString("FreshRSS", comment: "FreshRSS")
+				title = "FreshRSS"
 				apiURLTextField.placeholder = NSLocalizedString("API URL: https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper")
 			case .inoreader:
-				title = NSLocalizedString("Inoreader", comment: "Inoreader")
+				title = "Inoreader"
 			case .bazQux:
-				title = NSLocalizedString("BazQux", comment: "BazQux")
+				title = "BazQux"
 			case .theOldReader:
-				title = NSLocalizedString("The Old Reader", comment: "The Old Reader")
+				title = "The Old Reader"
 			default:
 				title = ""
 			}
@@ -73,16 +73,16 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		switch accountType {
 		case .bazQux:
 			footerLabel.text = NSLocalizedString("Sign in to your BazQux account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a BazQux account?", comment: "BazQux")
-			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "BazQux SignUp"), for: .normal)
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Sign Up"), for: .normal)
 		case .inoreader:
 			footerLabel.text = NSLocalizedString("Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?", comment: "Inoreader")
-			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Inoreader SignUp"), for: .normal)
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Sign Up"), for: .normal)
 		case .theOldReader:
 			footerLabel.text = NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
-			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "TOR SignUp"), for: .normal)
+			signUpButton.setTitle(NSLocalizedString("Sign Up Here", comment: "Sign Up"), for: .normal)
 		case .freshRSS:
 			footerLabel.text = NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
-			signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "FreshRSS SignUp"), for: .normal)
+			signUpButton.setTitle(NSLocalizedString("Find Out More", comment: "Find Out More"), for: .normal)
 		default:
 			return
 		}

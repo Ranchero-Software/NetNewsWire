@@ -17,31 +17,55 @@ import SwiftUI
 
 extension AccountType {
 
-	// TODO: Move this to the Account Package.
+	// MARK: - Log Colors
 
-	func localizedAccountName() -> String {
-
+	#if os(macOS)
+	var logColor: NSColor {
 		switch self {
 		case .onMyMac:
-			return NSLocalizedString("account.name.on-my-device", tableName: "DefaultAccountNames", comment: "Device specific default account name, e.g: On my iPhone")
-		case .bazQux:
-			return NSLocalizedString("BazQux", comment: "Account name")
+			return .onMyMacLogColor
 		case .cloudKit:
-			return NSLocalizedString("iCloud", comment: "Account name")
-		case .feedbin:
-			return NSLocalizedString("Feedbin", comment: "Account name")
+			return .systemPurple
 		case .feedly:
-			return NSLocalizedString("Feedly", comment: "Account name")
-		case .freshRSS:
-			return NSLocalizedString("FreshRSS", comment: "Account name")
-		case .inoreader:
-			return NSLocalizedString("Inoreader", comment: "Account name")
+			return .systemGreen
+		case .feedbin:
+			return .systemBlue
 		case .newsBlur:
-			return NSLocalizedString("NewsBlur", comment: "Account name")
+			return .systemOrange
+		case .freshRSS:
+			return .systemTeal
+		case .inoreader:
+			return .systemBrown
+		case .bazQux:
+			return .systemIndigo
 		case .theOldReader:
-			return NSLocalizedString("The Old Reader", comment: "Account name")
+			return .systemPink
 		}
 	}
+	#else
+	var logColor: Color {
+		switch self {
+		case .onMyMac:
+			return .secondary
+		case .cloudKit:
+			return .purple
+		case .feedly:
+			return .green
+		case .feedbin:
+			return .blue
+		case .newsBlur:
+			return .orange
+		case .freshRSS:
+			return .teal
+		case .inoreader:
+			return .brown
+		case .bazQux:
+			return .indigo
+		case .theOldReader:
+			return .pink
+		}
+	}
+	#endif
 
 	// MARK: - SwiftUI Images
 	@MainActor func image() -> Image {
@@ -77,3 +101,17 @@ extension AccountType {
 	}
 
 }
+
+#if os(macOS)
+extension NSColor {
+
+	private static let onMyMacLogLightColor = NSColor(red: 0x4A / 255.0, green: 0x55 / 255.0, blue: 0x60 / 255.0, alpha: 1.0)
+	private static let onMyMacLogDarkColor = NSColor(red: 0xB0 / 255.0, green: 0xBA / 255.0, blue: 0xC4 / 255.0, alpha: 1.0)
+
+	/// Activity Log color for the On My Mac account. Slate gray — darker on light backgrounds, lighter on dark.
+	static let onMyMacLogColor = NSColor(name: "onMyMacLogColor") { appearance in
+		let isDark = appearance.bestMatch(from: [.darkAqua, .vibrantDark, .accessibilityHighContrastDarkAqua, .accessibilityHighContrastVibrantDark]) != nil
+		return isDark ? onMyMacLogDarkColor : onMyMacLogLightColor
+	}
+}
+#endif

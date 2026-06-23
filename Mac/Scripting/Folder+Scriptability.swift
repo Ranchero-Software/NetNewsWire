@@ -106,7 +106,7 @@ import RSCore
 	var articles: NSArray {
 		let feeds = Array(folder.topLevelFeeds)
 		let allArticles = feeds.flatMap { feed in
-			(try? feed.fetchArticles()) ?? Set<Article>()
+			feed.fetchArticles()
 		}
 		// Sort articles by logical date published like Feed does
 		let sortedArticles = allArticles.sorted(by: {
@@ -119,7 +119,7 @@ import RSCore
 	func countOfArticles() -> Int {
 		let feeds = Array(folder.topLevelFeeds)
 		return feeds.reduce(0) { count, feed in
-			let feedArticles = (try? feed.fetchArticles()) ?? Set<Article>()
+			let feedArticles = feed.fetchArticles()
 			return count + feedArticles.count
 		}
 	}
@@ -128,7 +128,7 @@ import RSCore
 	func objectInArticlesAtIndex(_ index: Int) -> ScriptableArticle? {
 		let feeds = Array(folder.topLevelFeeds)
 		let allArticles = feeds.flatMap { feed in
-			(try? feed.fetchArticles()) ?? Set<Article>()
+			feed.fetchArticles()
 		}
 		let sortedArticles = allArticles.sorted(by: {
 			return $0.logicalDatePublished > $1.logicalDatePublished

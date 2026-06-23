@@ -14,6 +14,8 @@ import Articles
 import RSCore
 import RSTree
 import SafariServices
+import SwiftUI
+import Images
 
 enum SearchScope: Int {
 	case timeline = 0
@@ -1175,7 +1177,18 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 
 		selectNextUnreadFeed {
-			self.selectNextUnreadArticleInTimeline()
+			// The supplementary push from selectSidebarItem may still be animating when
+			// this completion fires — the async data fetch can outrun the push animation
+			// in compact mode. Wait for the in-flight transition before pushing the
+			// article view controller, or UIKit aborts with NSInternalInconsistencyException
+			// from -[UINavigationController pushViewController:transition:forceImmediate:].
+			if let coordinator = self.mainTimelineViewController?.navigationController?.transitionCoordinator {
+				coordinator.animate(alongsideTransition: nil) { _ in
+					self.selectNextUnreadArticleInTimeline()
+				}
+			} else {
+				self.selectNextUnreadArticleInTimeline()
+			}
 		}
 	}
 
@@ -1347,6 +1360,15 @@ struct SidebarItemNode: Hashable, Sendable {
 		rootSplitViewController.present(settingsNavController, animated: true)
 	}
 
+	func showCurrentActivity() {
+		let hostingController = UIHostingController(rootView: NavigationStack { CurrentActivityView() })
+		if let sheet = hostingController.sheetPresentationController {
+			sheet.detents = [.medium(), .large()]
+			sheet.prefersGrabberVisible = true
+		}
+		rootSplitViewController.present(hostingController, animated: true)
+	}
+
 	func showAccountInspector(for account: Account) {
 		let accountInspectorNavController =
 			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
@@ -1356,6 +1378,12 @@ struct SidebarItemNode: Hashable, Sendable {
 		accountInspectorController.isModal = true
 		accountInspectorController.account = account
 		rootSplitViewController.present(accountInspectorNavController, animated: true)
+	}
+
+	func showNotificationInspector(for account: Account) {
+		let hostingController = UIHostingController(rootView: AccountNotificationInspectorView(account: account))
+		hostingController.modalPresentationStyle = .formSheet
+		rootSplitViewController.present(hostingController, animated: true)
 	}
 
 	func showFeedInspector() {
@@ -1402,9 +1430,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
 		imageVC.image = image
 		imageVC.imageTitle = imageTitle
-		imageVC.modalPresentationStyle = .currentContext
-		imageVC.transitioningDelegate = transitioningDelegate
-		rootSplitViewController.present(imageVC, animated: true)
+		let navController = UINavigationController(rootViewController: imageVC)
+		navController.modalPresentationStyle = .currentContext
+		navController.transitioningDelegate = transitioningDelegate
+		rootSplitViewController.present(navController, animated: true)
 	}
 
 	func homePageURLForFeed(_ indexPath: IndexPath) -> URL? {
@@ -2108,6 +2137,7 @@ private extension SceneCoordinator {
 			}
 
 			updateShowNamesAndIcons()
+			IconImageCache.shared.prefetchImagesForArticles(articles)
 			updateUnreadCount()
 			mainTimelineViewController?.reloadArticles(animated: animated)
 		}

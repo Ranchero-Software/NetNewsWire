@@ -11,6 +11,7 @@ import RSCore
 import Articles
 import ArticlesDatabase
 import Account
+import Images
 
 @MainActor struct StarredFeedDelegate: SmartFeedDelegate {
 
@@ -18,12 +19,12 @@ import Account
 		return SidebarItemIdentifier.smartFeed(String(describing: StarredFeedDelegate.self))
 	}
 
-	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred pseudo-feed title")
+	let nameForDisplay = NSLocalizedString("Starred", comment: "Starred")
 	let fetchType: FetchType = .starred(nil)
 	var smallIcon: IconImage? {
 		Assets.Images.starredFeed
 	}
-	func fetchUnreadCount(account: Account) async throws -> Int? {
-		try await account.fetchUnreadCountForStarredArticlesAsync()
+	func fetchUnreadCount(account: Account) async -> Int {
+		await account.fetchUnreadCountForStarredArticlesAsync()
 	}
 }

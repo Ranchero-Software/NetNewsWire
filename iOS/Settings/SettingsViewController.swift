@@ -13,6 +13,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import RSCore
 import Account
+import ActivityLog
 
 final class SettingsViewController: UITableViewController {
 
@@ -29,7 +30,39 @@ final class SettingsViewController: UITableViewController {
 
 	private enum TroubleshootingRow: Int {
 		case errorLog = 0
-		case cloudKitZoneStats = 1
+		case activityLog = 1
+		case accountStats = 2
+		case dinosaurs = 3
+		case cloudKitZoneStats = 4
+	}
+
+	private enum FeedsRow: Int {
+		case importSubscriptions = 0
+		case exportSubscriptions = 1
+		case addNetNewsWireNewsFeed = 2
+	}
+
+	private enum TimelineRow: Int {
+		case sortOrder = 0
+		case groupByFeed = 1
+		case refreshClearsReadArticles = 2
+		case confirmMarkAllAsRead = 3
+		case timelineLayout = 4
+	}
+
+	private enum ArticlesRow: Int, CaseIterable {
+		case theme = 0
+		case openLinksInNetNewsWire = 1
+		case enableJavaScript = 2
+		case enableFullScreenArticles = 3
+	}
+
+	private enum HelpRow: Int {
+		case help = 0
+		case forum = 1
+		case releaseNotes = 2
+		case bugTracker = 3
+		case about = 4
 	}
 
 	private weak var opmlAccount: Account?
@@ -147,7 +180,8 @@ final class SettingsViewController: UITableViewController {
 			}
 			return defaultNumberOfRows
 		case .articles:
-			return traitCollection.userInterfaceIdiom == .phone ? 5 : 4
+			// The Full Screen Articles row is iPhone-only.
+			return traitCollection.userInterfaceIdiom == .phone ? ArticlesRow.allCases.count : ArticlesRow.allCases.count - 1
 		case .troubleshooting:
 			let defaultNumberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
 			if !AccountManager.shared.hasiCloudAccount {
@@ -168,7 +202,7 @@ final class SettingsViewController: UITableViewController {
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
 				cell = tableView.dequeueReusableCell(withIdentifier: "SettingsTableViewCell", for: indexPath)
-				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Accounts")
+				cell.textLabel?.text = NSLocalizedString("Add Account", comment: "Add Account")
 			} else {
 				let acctCell = tableView.dequeueReusableCell(withIdentifier: "SettingsComboTableViewCell", for: indexPath) as! SettingsComboTableViewCell
 				acctCell.applyThemeProperties()
@@ -202,36 +236,36 @@ final class SettingsViewController: UITableViewController {
 				self.navigationController?.pushViewController(controller, animated: true)
 			}
 		case .feeds:
-			switch indexPath.row {
-			case 0:
+			switch FeedsRow(rawValue: indexPath.row) {
+			case .importSubscriptions:
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					importOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
-			case 1:
+			case .exportSubscriptions:
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 				if let sourceView = tableView.cellForRow(at: indexPath) {
 					let sourceRect = tableView.rectForRow(at: indexPath)
 					exportOPML(sourceView: sourceView, sourceRect: sourceRect)
 				}
-			case 2:
+			case .addNetNewsWireNewsFeed:
 				addFeed()
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 			default:
 				break
 			}
 		case .timeline:
-			switch indexPath.row {
-			case 3:
+			switch TimelineRow(rawValue: indexPath.row) {
+			case .timelineLayout:
 				let timeline = UIStoryboard.settings.instantiateController(ofType: TimelineCustomizerCollectionViewController.self)
 				self.navigationController?.pushViewController(timeline, animated: true)
 			default:
 				break
 			}
 		case .articles:
-			switch indexPath.row {
-			case 0:
+			switch ArticlesRow(rawValue: indexPath.row) {
+			case .theme:
 				let articleThemes = UIStoryboard.settings.instantiateController(ofType: ArticleThemesTableViewController.self)
 				self.navigationController?.pushViewController(articleThemes, animated: true)
 			default:
@@ -245,8 +279,23 @@ final class SettingsViewController: UITableViewController {
 				switch TroubleshootingRow(rawValue: indexPath.row) {
 				case .errorLog:
 					return UIHostingController(rootView: ErrorLogView())
+				case .accountStats:
+					return UIHostingController(rootView: AccountStatsView())
 				case .cloudKitZoneStats:
 					return UIHostingController(rootView: CloudKitStatsView())
+				case .activityLog:
+					return UIHostingController(rootView: ActivityLogView())
+				case .dinosaurs:
+					return UIHostingController(rootView: DinosaursView(dismissAndPresent: { [weak self] dinosaur in
+						guard let self else {
+							return
+						}
+						self.dismiss(animated: true) {
+							if let rootSplit = self.presentingParentController as? RootSplitViewController {
+								rootSplit.coordinator.discloseFeed(dinosaur.feed, animations: [.scroll, .navigation])
+							}
+						}
+					}))
 				default:
 					return nil
 				}
@@ -255,20 +304,20 @@ final class SettingsViewController: UITableViewController {
 				self.navigationController?.pushViewController(viewController, animated: true)
 			}
 		case .help:
-			switch indexPath.row {
-			case 0:
+			switch HelpRow(rawValue: indexPath.row) {
+			case .help:
 				openURL(HelpURL.helpHome.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 1:
+			case .forum:
 				openURL(HelpURL.discourse.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 2:
+			case .releaseNotes:
 				openURL(HelpURL.releaseNotes.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 3:
+			case .bugTracker:
 				openURL(HelpURL.bugTracker.rawValue)
 				tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
-			case 4:
+			case .about:
 				let hosting = UIHostingController(rootView: AboutView())
 				self.navigationController?.pushViewController(hosting, animated: true)
 			default:
@@ -296,7 +345,7 @@ final class SettingsViewController: UITableViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
-		return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: 1))
+		return super.tableView(tableView, indentationLevelForRowAt: IndexPath(row: 0, section: Section.accounts.rawValue))
 	}
 
 	// MARK: Actions
@@ -444,7 +493,7 @@ private extension SettingsViewController {
 			alert.addAction(action)
 		}
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		self.present(alert, animated: true)
@@ -500,7 +549,7 @@ private extension SettingsViewController {
 			alert.addAction(action)
 		}
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 		self.present(alert, animated: true)
@@ -512,9 +561,11 @@ private extension SettingsViewController {
 		let accountName = account.nameForDisplay.replacingOccurrences(of: " ", with: "").trimmingCharacters(in: .whitespaces)
 		let filename = "Subscriptions-\(accountName).opml"
 		let tempFile = FileManager.default.temporaryDirectory.appendingPathComponent(filename)
-		let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
 		do {
-			try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
+			try account.logActivity(kind: .exportOPML, detail: filename) {
+				let opmlString = OPMLExporter.OPMLString(with: account, title: filename)
+				try opmlString.write(to: tempFile, atomically: true, encoding: String.Encoding.utf8)
+			}
 		} catch {
 			self.presentError(title: "OPML Export Error", message: error.localizedDescription)
 		}

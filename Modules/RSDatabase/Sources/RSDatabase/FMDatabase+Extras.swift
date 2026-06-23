@@ -15,6 +15,9 @@ public extension FMDatabase {
 		let database = FMDatabase(path: path)!
 
 		database.open()
+		// All databases are single-connection and serialized — WAL gains us nothing
+		// and produces extra -wal/-shm files that bloat on disk.
+		database.executeStatements("PRAGMA journal_mode = DELETE;")
 		database.executeStatements("PRAGMA synchronous = 1;")
 		database.setShouldCacheStatements(true)
 
@@ -30,47 +33,30 @@ public extension FMDatabase {
 		commit()
 	}
 
-	/// Vacuum the database if it’s been more than `daysBetweenVacuums` since the last vacuum.
-	/// Call this as part of an init method.
-	func vacuumIfNeeded(daysBetweenVacuums: Int, filepath: String) {
-		let defaultsKey = "FMDatabase-LastVacuumDate-\(filepath)"
-		let now = Date()
-
-		guard let lastVacuumDate = UserDefaults.standard.object(forKey: defaultsKey) as? Date else {
-			// Never vacuumed — probably a new database.
-			// Set the LastVacuumDate pref to now and skip vacuuming.
-			UserDefaults.standard.set(now, forKey: defaultsKey)
-			return
-		}
-
-		let minimumVacuumInterval = TimeInterval(daysBetweenVacuums * (60 * 60 * 24)) // Doesn’t have to be precise
-		let cutoffDate = now - minimumVacuumInterval
-		if lastVacuumDate < cutoffDate {
-			vacuum()
-			UserDefaults.standard.set(now, forKey: defaultsKey)
-		}
-	}
-
 	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FMDatabase")
 
 	func vacuum() {
-		let shortName: String
-		if let path = databasePath() {
-			let components = (path as NSString).pathComponents
-			let count = components.count
-			if count >= 2 {
-				shortName = components[count - 2] + "/" + components[count - 1]
-			} else {
-				shortName = components.last ?? path
+		let path = databasePath() ?? "unknown"
+		let start = Date()
+		executeStatements("vacuum;")
+		let duration = Date().timeIntervalSince(start)
+		Self.logger.debug("VACUUM \(path, privacy: .public) took \(duration, format: .fixed(precision: 4), privacy: .public) seconds")
+	}
+
+	/// Vacuum if at least `daysBetweenVacuums` have passed since last time.
+	/// The last vacuum date is stored in the database.
+	func vacuumIfNeeded(daysBetweenVacuums: Int = RSDatabaseInfoTable.defaultDaysBetweenVacuums) {
+		RSDatabaseInfoTable.createTableIfNeeded(database: self)
+
+		if let lastVacuumDate = RSDatabaseInfoTable.lastVacuumDate(database: self) {
+			let secondsBetweenVacuums = TimeInterval(daysBetweenVacuums) * 24 * 60 * 60
+			if Date().timeIntervalSince(lastVacuumDate) < secondsBetweenVacuums {
+				return
 			}
-		} else {
-			shortName = "unknown"
 		}
 
-		let start = CFAbsoluteTimeGetCurrent()
-		executeStatements("vacuum;")
-		let duration = CFAbsoluteTimeGetCurrent() - start
-		Self.logger.debug("VACUUM \(shortName) took \(duration, format: .fixed(precision: 4)) seconds")
+		vacuum()
+		RSDatabaseInfoTable.setLastVacuumDate(Date(), database: self)
 	}
 
 	func runCreateStatements(_ statements: String) {
@@ -106,6 +92,10 @@ public extension FMDatabase {
 
 	func deleteRowsWhere(key: String, equalsAnyValue values: [Any], tableName: String) {
 		rs_deleteRowsWhereKey(key, inValues: values, tableName: tableName)
+	}
+
+	func deleteRowsWhere(key: String, equals value: Any, tableName: String) {
+		rs_deleteRowsWhereKey(key, equalsValue: value, tableName: tableName)
 	}
 
 	func selectRowsWhere(key: String, equalsAnyValue values: [Any], tableName: String) -> FMResultSet? {

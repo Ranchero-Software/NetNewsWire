@@ -48,7 +48,7 @@ enum CreateReaderAPISubscriptionResult {
 		case editTag = "/reader/api/0/edit-tag"
 	}
 
-	private let transport: Transport
+	private let session = URLSession.webservice
 	private let uriComponentAllowed: CharacterSet
 	private let logger: Logger
 	private var accessToken: String?
@@ -74,8 +74,7 @@ enum CreateReaderAPISubscriptionResult {
 		}
 	}
 
-	init(transport: Transport, logger: Logger) {
-		self.transport = transport
+	init(logger: Logger) {
 		self.logger = logger
 
 		var urlHostAllowed = CharacterSet.urlHostAllowed
@@ -85,7 +84,7 @@ enum CreateReaderAPISubscriptionResult {
 	}
 
 	func cancelAll() {
-		transport.cancelAll()
+		session.cancelAll()
 	}
 
 	public func validateCredentials(endpoint: URL) async throws -> Credentials? {
@@ -98,15 +97,11 @@ enum CreateReaderAPISubscriptionResult {
 		addVariantHeaders(&request)
 
 		do {
-			let (_, data) = try await transport.send(request: request)
-
-			guard let data else {
-				throw TransportError.noData
-			}
+			let (_, data) = try await session.send(request: request)
 
 			// Convert the return data to UTF8 and then parse out the Auth token
 			guard let rawData = String(data: data, encoding: .utf8) else {
-				throw TransportError.noData
+				throw WebserviceError.noData
 			}
 
 			var authData: [String: String] = [:]
@@ -127,7 +122,7 @@ enum CreateReaderAPISubscriptionResult {
 			return self.credentials
 
 		} catch {
-			if let transportError = error as? TransportError, case .httpError(let code) = transportError, code == 404 {
+			if let webserviceError = error as? WebserviceError, case .httpError(let code) = webserviceError, code == 404 {
 				throw AccountError.urlNotFound
 			} else {
 				throw error
@@ -149,11 +144,11 @@ enum CreateReaderAPISubscriptionResult {
 		var request = URLRequest(url: endpoint.appendingPathComponent(ReaderAPIEndpoints.token.rawValue), readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		let (_, data) = try await transport.send(request: request)
+		let (_, data) = try await session.send(request: request)
 
 		// Convert the return data to UTF8 and then parse out the Auth token
-		guard let data, let updatedAccessToken = String(data: data, encoding: .utf8) else {
-			throw TransportError.noData
+		guard let updatedAccessToken = String(data: data, encoding: .utf8) else {
+			throw WebserviceError.noData
 		}
 		// Remove unwanted \n character.
 		var trimmedUpdatedAccessToken = updatedAccessToken
@@ -180,13 +175,13 @@ enum CreateReaderAPISubscriptionResult {
 		}
 
 		guard let callURL = url else {
-			throw TransportError.noURL
+			throw WebserviceError.noURL
 		}
 
 		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		let (_, wrapper) = try await transport.send(request: request, resultType: ReaderAPITagContainer.self)
+		let (_, wrapper) = try await session.send(request: request, resultType: ReaderAPITagContainer.self)
 		return wrapper?.tags
 	}
 
@@ -211,7 +206,7 @@ enum CreateReaderAPISubscriptionResult {
 		let newTagName = "user/-/label/\(encodedNewName)"
 		let postData = Data("T=\(token)&s=\(oldTagName)&dest=\(newTagName)".utf8)
 
-		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
+		_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 
 	@MainActor public func deleteTag(folderExternalID: String) async throws {
@@ -229,7 +224,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		let postData = Data("T=\(token)&s=\(folderExternalID)".utf8)
 
-		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData)
+		_ = try await self.session.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 
 	@MainActor public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
@@ -246,14 +241,14 @@ enum CreateReaderAPISubscriptionResult {
 
 		guard let callURL = url else {
 			logger.error("ReaderAPICaller: retrieveSubscriptions — expected non-nil callURL")
-			throw TransportError.noURL
+			throw WebserviceError.noURL
 		}
 
 		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
 		do {
-			let (_, container) = try await transport.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
+			let (_, container) = try await session.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
 			return container?.subscriptions
 		} catch {
 			logger.error("ReaderAPICaller: retrieveSubscriptions — error calling API: \(error.localizedDescription)")
@@ -284,7 +279,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		let postData = Data("T=\(token)&quickadd=\(encodedFeedURL)".utf8)
 
-		let (_, subResult) = try await self.transport.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIQuickAddResult.self)
+		let (_, subResult) = try await self.session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIQuickAddResult.self)
 
 		guard let subResult else {
 			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — expected non-nil result from API call")
@@ -329,7 +324,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		let postData = Data("T=\(token)&s=\(subscriptionID)&ac=unsubscribe".utf8)
 
-		_ = try await self.transport.send(request: request, method: HTTPMethod.post, payload: postData)
+		_ = try await self.session.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 
 	public func createTagging(subscriptionID: String, tagName: String) async throws {
@@ -384,7 +379,7 @@ enum CreateReaderAPISubscriptionResult {
 			logger.debug("ReaderAPICaller: changeSubscription — checking post data encoding: \(debugPostString ?? "nil")")
 #endif
 
-			_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
+			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
 		} catch {
 			logger.error("ReaderAPICaller: changeSubscription — error: \(error.localizedDescription)")
 		}
@@ -425,7 +420,7 @@ enum CreateReaderAPISubscriptionResult {
 
 		let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
 
-		let (_, entryWrapper) = try await transport.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
+		let (_, entryWrapper) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
 
 		guard let entryWrapper else {
 			throw AccountError.invalidResponse
@@ -434,7 +429,7 @@ enum CreateReaderAPISubscriptionResult {
 		return entryWrapper.entries
 	}
 
-	@MainActor public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil) async throws -> [String] {
+	@MainActor public func retrieveItemIDs(type: ItemIDType, feedID: String? = nil, pageHandler: (@MainActor (Int) -> Void)? = nil) async throws -> [String] {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.missingEndpointURL
@@ -477,13 +472,13 @@ enum CreateReaderAPISubscriptionResult {
 			.appendingQueryItems(queryItems)
 
 		guard let callURL = url else {
-			throw TransportError.noURL
+			throw WebserviceError.noURL
 		}
 
 		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		let (response, entries) = try await transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		let (response, entries) = try await session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
 
 		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
 			return [String]()
@@ -491,11 +486,12 @@ enum CreateReaderAPISubscriptionResult {
 
 		let dateInfo = HTTPDateInfo(urlResponse: response)
 		let itemIDs = entriesItemRefs.compactMap { $0.itemId }
+		pageHandler?(itemIDs.count)
 
-		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
+		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
 	}
 
-	@MainActor func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?) async throws -> [String] {
+	@MainActor func retrieveItemIDs(type: ItemIDType, url: URL, dateInfo: HTTPDateInfo?, itemIDs: [String], continuation: String?, pageHandler: (@MainActor (Int) -> Void)? = nil) async throws -> [String] {
 
 		guard let continuation else {
 			if type == .allForAccount {
@@ -514,22 +510,25 @@ enum CreateReaderAPISubscriptionResult {
 		urlComponents.queryItems = queryItems
 
 		guard let callURL = urlComponents.url else {
-			throw TransportError.noURL
+			throw WebserviceError.noURL
 		}
 
 		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		let (_, entries) = try await self.transport.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		let (_, entries) = try await self.session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
 
 		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
-			return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation)
+			return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
 		}
 
-		var totalItemIDs = itemIDs
-		totalItemIDs.append(contentsOf: entriesItemRefs.compactMap { $0.itemId })
+		let pageItemIDs = entriesItemRefs.compactMap { $0.itemId }
+		pageHandler?(pageItemIDs.count)
 
-		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation)
+		var totalItemIDs = itemIDs
+		totalItemIDs.append(contentsOf: pageItemIDs)
+
+		return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: totalItemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
 	}
 
     @MainActor func importOPML(opmlData: Data) async throws {
@@ -545,7 +544,7 @@ enum CreateReaderAPISubscriptionResult {
         request.httpMethod = "POST"
         request.httpBody = opmlData
 
-        let (response, _) = try await transport.send(request: request)
+        let (response, _) = try await session.send(request: request)
 
 		guard response.statusCode == 200 else {
 			throw AccountError.invalidResponse
@@ -618,6 +617,6 @@ private extension ReaderAPICaller {
 
 		let postData = Data("T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".utf8)
 
-		_ = try await transport.send(request: request, method: HTTPMethod.post, payload: postData)
+		_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
 	}
 }

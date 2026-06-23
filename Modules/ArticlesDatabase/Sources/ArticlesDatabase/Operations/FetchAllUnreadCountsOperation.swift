@@ -12,7 +12,7 @@ import RSDatabase
 import RSDatabaseObjC
 
 @MainActor public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecked Sendable {
-	nonisolated(unsafe) var result: UnreadCountDictionaryCompletionResult?
+	nonisolated(unsafe) var unreadCountDictionary: UnreadCountDictionary?
 	private let queue: DatabaseQueue
 
 	init(databaseQueue: DatabaseQueue) {
@@ -21,22 +21,13 @@ import RSDatabaseObjC
 	}
 
 	public override func run() {
-		queue.runInDatabase { databaseResult in
+		queue.runInDatabase { database in
 			if self.isCanceled {
 				self.didComplete()
 				return
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				if let unreadCountDictionary = self.fetchUnreadCounts(database) {
-					self.result = .success(unreadCountDictionary)
-				} else {
-					self.result = .failure(DatabaseError.isSuspended)
-				}
-			case .failure:
-				self.result = .failure(DatabaseError.isSuspended)
-			}
+			self.unreadCountDictionary = self.fetchUnreadCounts(database)
 
 			self.didComplete()
 		}
@@ -55,7 +46,7 @@ nonisolated private extension FetchAllUnreadCountsOperation {
 		var unreadCountDictionary = UnreadCountDictionary()
 		while resultSet.next() {
 			let unreadCount = resultSet.long(forColumnIndex: 1)
-			if let feedID = resultSet.string(forColumnIndex: 0) {
+			if let feedID = resultSet.swiftString(forColumnIndex: 0) {
 				unreadCountDictionary[feedID] = unreadCount
 			}
 		}

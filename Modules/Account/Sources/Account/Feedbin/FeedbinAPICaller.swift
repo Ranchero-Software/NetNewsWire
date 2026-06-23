@@ -31,20 +31,16 @@ enum CreateSubscriptionResult {
 	}
 
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
-	private let transport: Transport
+	private let session = URLSession.webservice
 	private var suspended = false
 	private var lastBackdateStartTime: Date?
 
 	var credentials: Credentials?
 	var accountSettings: AccountSettings?
 
-	init(transport: Transport) {
-		self.transport = transport
-	}
-
 	/// Cancels all pending requests rejects any that come in later
 	func suspend() {
-		transport.cancelAll()
+		session.cancelAll()
 		suspended = true
 	}
 
@@ -54,17 +50,17 @@ enum CreateSubscriptionResult {
 
 	func validateCredentials() async throws -> Credentials? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("authentication.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 
 		do {
-			try await transport.send(request: request)
+			try await session.send(request: request)
 			return credentials
 		} catch {
-			if case TransportError.httpError(let status) = error, status == 401 {
+			if case WebserviceError.httpError(let status) = error, status == 401 {
 				return nil
 			}
 			throw error
@@ -73,18 +69,14 @@ enum CreateSubscriptionResult {
 
 	func importOPML(opmlData: Data) async throws -> FeedbinImportResult {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("imports.json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("text/xml; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		let (_, data) = try await transport.send(request: request, method: HTTPMethod.post, payload: opmlData)
-
-		guard let data else {
-			throw TransportError.noData
-		}
+		let (_, data) = try await session.send(request: request, method: HTTPMethod.post, payload: opmlData)
 
 		let importResult = try JSONDecoder().decode(FeedbinImportResult.self, from: data)
 		return importResult
@@ -92,46 +84,46 @@ enum CreateSubscriptionResult {
 
 	func retrieveOPMLImportResult(importID: Int) async throws -> FeedbinImportResult? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("imports/\(importID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 
-		let (_, importResult) = try await transport.send(request: request, resultType: FeedbinImportResult.self)
+		let (_, importResult) = try await session.send(request: request, resultType: FeedbinImportResult.self)
 
 		return importResult
 	}
 
 	func retrieveTags() async throws -> [FeedbinTag]? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.tags)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		let (response, tags) = try await transport.send(request: request, resultType: [FeedbinTag].self)
+		let (response, tags) = try await session.send(request: request, resultType: [FeedbinTag].self)
 		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
 		return tags
 	}
 
 	func renameTag(oldName: String, newName: String) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("tags.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinRenameTag(oldName: oldName, newName: newName)
 
-		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+		try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
 	func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
@@ -140,14 +132,14 @@ enum CreateSubscriptionResult {
 		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.subscriptions)
 		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 
-		let (response, subscriptions) = try await transport.send(request: request, resultType: [FeedbinSubscription].self)
+		let (response, subscriptions) = try await session.send(request: request, resultType: [FeedbinSubscription].self)
 		storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
 		return subscriptions
 	}
 
 	func createSubscription(url: String) async throws -> CreateSubscriptionResult {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		var callComponents = URLComponents(url: feedbinBaseURL.appendingPathComponent("subscriptions.json"), resolvingAgainstBaseURL: false)!
@@ -159,25 +151,19 @@ enum CreateSubscriptionResult {
 		let payload = try JSONEncoder().encode(FeedbinCreateSubscription(feedURL: url))
 
 		do {
-			let (response, data) = try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+			let (response, data) = try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 
 			switch response.forcedStatusCode {
 			case HTTPResponseCode.created: // 201
-				guard let subData = data else {
-					throw TransportError.noData
-				}
 				do {
-					let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: subData)
+					let subscription = try JSONDecoder().decode(FeedbinSubscription.self, from: data)
 					return .created(subscription)
 				} catch {
 					throw error
 				}
 			case HTTPResponseCode.redirectMultipleChoices: // 300
-				guard let subData = data else {
-					throw TransportError.noData
-				}
 				do {
-					let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: subData)
+					let subscriptions = try JSONDecoder().decode([FeedbinSubscriptionChoice].self, from: data)
 					return .multipleChoice(subscriptions)
 				} catch {
 					throw error
@@ -185,11 +171,11 @@ enum CreateSubscriptionResult {
 			case HTTPResponseCode.redirectTemporary: // 302
 				return .alreadySubscribed
 			default:
-				throw TransportError.httpError(status: response.forcedStatusCode)
+				throw WebserviceError.httpError(status: response.forcedStatusCode)
 			}
 		} catch {
 			switch error {
-			case TransportError.httpError(let status):
+			case WebserviceError.httpError(let status):
 				switch status {
 				case HTTPResponseCode.unauthorized: // 401
 					// I don’t know why we get 401s here. This looks like a Feedbin bug, but it only happens
@@ -208,44 +194,44 @@ enum CreateSubscriptionResult {
 
 	func renameSubscription(subscriptionID: String, newName: String) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID)/update.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUpdateSubscription(title: newName)
 
-		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+		try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
 	func deleteSubscription(subscriptionID: String) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("subscriptions/\(subscriptionID).json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 
-		try await transport.send(request: request, method: HTTPMethod.delete)
+		try await session.send(request: request, method: HTTPMethod.delete)
 	}
 
 	func retrieveTaggings() async throws -> [FeedbinTagging]? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
 		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.taggings)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		let (response, taggings) = try await transport.send(request: request, resultType: [FeedbinTagging].self)
+		let (response, taggings) = try await session.send(request: request, resultType: [FeedbinTagging].self)
 		storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
 		return taggings
 	}
 
 	func createTagging(feedID: Int, name: String) async throws -> Int {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings.json")
@@ -254,7 +240,7 @@ enum CreateSubscriptionResult {
 
 		let payload = try JSONEncoder().encode(FeedbinCreateTagging(feedID: feedID, name: name))
 
-		let (response, _) = try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+		let (response, _) = try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 
 		if let taggingLocation = response.valueForHTTPHeaderField(HTTPResponseHeader.location),
 			let lowerBound = taggingLocation.range(of: "v2/taggings/")?.upperBound,
@@ -262,25 +248,25 @@ enum CreateSubscriptionResult {
 			let taggingID = Int(taggingLocation[lowerBound..<upperBound]) {
 				return taggingID
 		} else {
-			throw TransportError.noData
+			throw WebserviceError.noData
 		}
 	}
 
 	func deleteTagging(taggingID: String) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("taggings/\(taggingID).json")
 		var request = URLRequest(url: callURL, credentials: credentials)
 		request.addValue("application/json; charset=utf-8", forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		try await transport.send(request: request, method: HTTPMethod.delete)
+		try await session.send(request: request, method: HTTPMethod.delete)
 	}
 
 	func retrieveEntries(articleIDs: [String]) async throws -> [FeedbinEntry]? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 		guard !articleIDs.isEmpty else {
 			return [FeedbinEntry]()
@@ -296,13 +282,13 @@ enum CreateSubscriptionResult {
 			])
 		let request = URLRequest(url: url!, credentials: credentials)
 
-		let (_, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		let (_, entries) = try await session.send(request: request, resultType: [FeedbinEntry].self)
 		return entries
 	}
 
 	func retrieveEntries(feedID: String) async throws -> ([FeedbinEntry]?, String?) {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let since = Calendar.current.date(byAdding: .month, value: -3, to: Date()) ?? Date()
@@ -316,14 +302,14 @@ enum CreateSubscriptionResult {
 			])
 		let request = URLRequest(url: url!, credentials: credentials)
 
-		let (response, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		let (response, entries) = try await session.send(request: request, resultType: [FeedbinEntry].self)
 		let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
 		return (entries, pagingInfo.nextPage)
 	}
 
 	func retrieveEntries() async throws -> ([FeedbinEntry]?, String?, Date?, Int?) {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		// If this is an initial sync, go and grab the previous 3 months of entries.  If not, use the last
@@ -360,7 +346,7 @@ enum CreateSubscriptionResult {
 			])
 		let request = URLRequest(url: url!, credentials: credentials)
 
-		let (response, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		let (response, entries) = try await session.send(request: request, resultType: [FeedbinEntry].self)
 		let dateInfo = HTTPDateInfo(urlResponse: response)
 		let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
 		let lastPageNumber = extractPageNumber(link: pagingInfo.lastPage)
@@ -369,7 +355,7 @@ enum CreateSubscriptionResult {
 
 	func retrieveEntries(page: String) async throws -> ([FeedbinEntry]?, String?) {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		guard let url = URL(string: page) else {
@@ -377,85 +363,85 @@ enum CreateSubscriptionResult {
 		}
 
 		let request = URLRequest(url: url, credentials: credentials)
-		let (response, entries) = try await transport.send(request: request, resultType: [FeedbinEntry].self)
+		let (response, entries) = try await session.send(request: request, resultType: [FeedbinEntry].self)
 		let pagingInfo = HTTPLinkPagingInfo(urlResponse: response)
 		return (entries, pagingInfo.nextPage)
 	}
 
 	func retrieveUnreadEntries() async throws -> [Int]? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.unreadEntries)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		let (response, unreadEntries) = try await transport.send(request: request, resultType: [Int].self)
+		let (response, unreadEntries) = try await session.send(request: request, resultType: [Int].self)
 		storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
 		return unreadEntries
 	}
 
 	func createUnreadEntries(entries: [Int]) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
 
-		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+		try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
 	func deleteUnreadEntries(entries: [Int]) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("unread_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinUnreadEntry(unreadEntries: entries)
 
-		try await transport.send(request: request, method: HTTPMethod.delete, payload: payload)
+		try await session.send(request: request, method: HTTPMethod.delete, payload: payload)
 	}
 
 	func retrieveStarredEntries() async throws -> [Int]? {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.starredEntries)
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
-		let (response, starredEntries) = try await transport.send(request: request, resultType: [Int].self)
+		let (response, starredEntries) = try await session.send(request: request, resultType: [Int].self)
 		storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
 		return starredEntries
 	}
 
 	func createStarredEntries(entries: [Int]) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
 
-		try await transport.send(request: request, method: HTTPMethod.post, payload: payload)
+		try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
 	func deleteStarredEntries(entries: [Int]) async throws {
 		if suspended {
-			throw TransportError.suspended
+			throw WebserviceError.suspended
 		}
 
 		let callURL = feedbinBaseURL.appendingPathComponent("starred_entries.json")
 		let request = URLRequest(url: callURL, credentials: credentials)
 		let payload = FeedbinStarredEntry(starredEntries: entries)
 
-		try await transport.send(request: request, method: HTTPMethod.delete, payload: payload)
+		try await session.send(request: request, method: HTTPMethod.delete, payload: payload)
 	}
 }
 

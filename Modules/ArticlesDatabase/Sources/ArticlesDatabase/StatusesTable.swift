@@ -93,98 +93,76 @@ final class StatusesTable: DatabaseTable, Sendable {
 		return newStatusIDs
 	}
 
-	// MARK: - Fetching
-
-	func fetchUnreadArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where read=0;")
+	/// Mark statuses for articleIDs in both memory and database. Returns the articleIDs whose status actually changed.
+	func mark(_ articleIDs: Set<String>, _ statusKey: ArticleStatus.Key, _ flag: Bool, _ database: FMDatabase) -> Set<String> {
+		let (statusesDictionary, _) = ensureStatusesForArticleIDs(articleIDs, flag, database)
+		let updatedStatuses = mark(Set(statusesDictionary.values), statusKey, flag, database)
+		return updatedStatuses?.articleIDs() ?? Set<String>()
 	}
 
-	func fetchStarredArticleIDs() throws -> Set<String> {
-		return try fetchArticleIDs("select articleID from statuses where starred=1;")
+	// MARK: - Fetching
+
+	func fetchUnreadArticleIDs() -> Set<String> {
+		fetchArticleIDs("select articleID from statuses where read=0;")
+	}
+
+	func fetchStarredArticleIDs() -> Set<String> {
+		fetchArticleIDs("select articleID from statuses where starred=1;")
 	}
 
 	func fetchArticleIDsAsync(_ statusKey: ArticleStatus.Key, _ value: Bool, _ completion: @escaping ArticleIDsCompletionBlock) {
-		queue.runInDatabase { databaseResult in
+		queue.runInDatabase { database in
+			var sql = "select articleID from statuses where \(statusKey.rawValue)="
+			sql += value ? "1" : "0"
+			sql += ";"
 
-			func makeDatabaseCalls(_ database: FMDatabase) {
-				var sql = "select articleID from statuses where \(statusKey.rawValue)="
-				sql += value ? "1" : "0"
-				sql += ";"
-
-				guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-					DispatchQueue.main.async {
-						completion(.success(Set<String>()))
-					}
-					return
-				}
-
-				let articleIDs = resultSet.mapToSet { $0.string(forColumnIndex: 0) }
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 				DispatchQueue.main.async {
-					completion(.success(articleIDs))
+					completion(Set<String>())
 				}
+				return
 			}
 
-			switch databaseResult {
-			case .success(let database):
-				makeDatabaseCalls(database)
-			case .failure(let databaseError):
-				DispatchQueue.main.async {
-					completion(.failure(databaseError))
-				}
+			let articleIDs = resultSet.mapToSet { $0.swiftString(forColumnIndex: 0) }
+			DispatchQueue.main.async {
+				completion(articleIDs)
 			}
 		}
 	}
 
 	func fetchArticleIDsForStatusesWithoutArticlesNewerThan(_ cutoffDate: Date, _ completion: @escaping ArticleIDsCompletionBlock) {
-		queue.runInDatabase { databaseResult in
-
-			let result: Result<Set<String>, Error>
-
-			switch databaseResult {
-			case .success(let database):
-				let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
-					let articleIDs = resultSet.mapToSet(self.articleIDWithRow)
-					result = .success(articleIDs)
-				} else {
-					result = .success(Set<String>())
-				}
-			case .failure(let databaseError):
-				result = .failure(databaseError)
+		queue.runInDatabase { database in
+			let sql = "select articleID from statuses s where (starred=1 or dateArrived>?) and not exists (select 1 from articles a where a.articleID = s.articleID);"
+			let articleIDs: Set<String>
+			if let resultSet = database.executeQuery(sql, withArgumentsIn: [cutoffDate]) {
+				articleIDs = resultSet.mapToSet(self.articleIDWithRow)
+			} else {
+				articleIDs = Set<String>()
 			}
 
 			DispatchQueue.main.async {
-				completion(result)
+				completion(articleIDs)
 			}
 		}
 	}
 
-	func fetchArticleIDs(_ sql: String) throws -> Set<String> {
-		nonisolated(unsafe) var error: DatabaseError?
+	func fetchArticleIDs(_ sql: String) -> Set<String> {
 		nonisolated(unsafe) var articleIDs = Set<String>()
-		queue.runInDatabaseSync { databaseResult in
-			switch databaseResult {
-			case .success(let database):
-				if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
-					articleIDs = resultSet.mapToSet(self.articleIDWithRow)
-				}
-			case .failure(let databaseError):
-				error = databaseError
+		queue.runInDatabaseSync { database in
+			if let resultSet = database.executeQuery(sql, withArgumentsIn: nil) {
+				articleIDs = resultSet.mapToSet(self.articleIDWithRow)
 			}
 		}
 
-		if let error = error {
-			throw(error)
-		}
 		return articleIDs
 	}
 
 	func articleIDWithRow(_ row: FMResultSet) -> String? {
-		return row.string(forColumn: DatabaseKey.articleID)
+		return row.swiftString(forColumn: DatabaseKey.articleID)
 	}
 
 	func statusWithRow(_ row: FMResultSet) -> ArticleStatus? {
-		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+		guard let articleID = row.swiftString(forColumn: DatabaseKey.articleID) else {
 			return nil
 		}
 		return statusWithRow(row, articleID: articleID)
@@ -237,7 +215,7 @@ private extension StatusesTable {
 	// MARK: - Creating
 
 	func saveStatuses(_ statuses: Set<ArticleStatus>, _ database: FMDatabase) {
-		let statusArray = statuses.map { $0.databaseDictionary()! }
+		let statusArray = statuses.map { $0.databaseDictionary() }
 		self.insertRows(statusArray, insertType: .orIgnore, in: database)
 	}
 
@@ -273,19 +251,6 @@ private final class StatusCache: Sendable {
 	}
 
 	private let state = OSAllocatedUnfairLock(initialState: State())
-
-	var cachedStatuses: Set<ArticleStatus> {
-		state.withLock { Set($0.dictionary.values) }
-	}
-
-	func add(_ statuses: Set<ArticleStatus>) {
-		// Replaces any cached statuses.
-		state.withLock { state in
-			for status in statuses {
-				state.dictionary[status.articleID] = status
-			}
-		}
-	}
 
 	func addStatusIfNotCached(_ status: ArticleStatus) {
 		addIfNotCached(Set([status]))

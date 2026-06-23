@@ -9,13 +9,13 @@
 import UIKit
 
 final class ImageViewController: UIViewController {
-	@IBOutlet var closeButton: UIButton!
-	@IBOutlet var shareButton: UIButton!
 	@IBOutlet var imageScrollView: ImageScrollView!
 	@IBOutlet var titleLabel: UILabel!
 	@IBOutlet var titleBackground: UIVisualEffectView!
 	@IBOutlet var titleLeading: NSLayoutConstraint!
 	@IBOutlet var titleTrailing: NSLayoutConstraint!
+
+	private var shareButtonItem: UIBarButtonItem?
 
 	var image: UIImage!
 	var imageTitle: String?
@@ -36,11 +36,19 @@ final class ImageViewController: UIViewController {
 	override func viewDidLoad() {
         super.viewDidLoad()
 
-		closeButton.imageView?.contentMode = .scaleAspectFit
-		closeButton.accessibilityLabel = NSLocalizedString("Close", comment: "Close")
-		shareButton.accessibilityLabel = NSLocalizedString("Share", comment: "Share")
+		let closeButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(done(_:)))
+		closeButtonItem.tintColor = Assets.Colors.primaryAccent
+		let shareButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(share(_:)))
+		shareButtonItem.tintColor = Assets.Colors.primaryAccent
+		navigationItem.leftBarButtonItem = closeButtonItem
+		navigationItem.rightBarButtonItem = shareButtonItem
+		self.shareButtonItem = shareButtonItem
 
         imageScrollView.setup()
+        // The image viewer is full-screen, so the scroll view ignores
+        // the navigation bar and safe area insets. Otherwise the image is pushed down
+        // and doesn’t match the zoom transition’s target frame.
+        imageScrollView.contentInsetAdjustmentBehavior = .never
         imageScrollView.imageScrollViewDelegate = self
         imageScrollView.imageContentMode = .aspectFit
         imageScrollView.initialOffset = .center
@@ -64,10 +72,11 @@ final class ImageViewController: UIViewController {
 	}
 
 	@IBAction func share(_ sender: Any) {
-		guard let image = image else { return }
+		guard let image else {
+			return
+		}
 		let activityViewController = UIActivityViewController(activityItems: [image], applicationActivities: nil)
-		activityViewController.popoverPresentationController?.sourceView = shareButton
-		activityViewController.popoverPresentationController?.sourceRect = shareButton.bounds
+		activityViewController.popoverPresentationController?.barButtonItem = shareButtonItem
 		present(activityViewController, animated: true)
 	}
 

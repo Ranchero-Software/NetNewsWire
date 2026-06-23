@@ -15,31 +15,39 @@ import RSParser
 extension Article {
 
 	convenience init?(accountID: String, row: FMResultSet, status: ArticleStatus) {
-		guard let articleID = row.string(forColumn: DatabaseKey.articleID) else {
+		guard let articleID = row.swiftString(forColumn: DatabaseKey.articleID) else {
 			assertionFailure("Expected articleID.")
 			return nil
 		}
-		guard let feedID = row.string(forColumn: DatabaseKey.feedID) else {
+		guard let feedID = row.swiftString(forColumn: DatabaseKey.feedID) else {
 			assertionFailure("Expected feedID.")
 			return nil
 		}
-		guard let uniqueID = row.string(forColumn: DatabaseKey.uniqueID) else {
+		guard let uniqueID = row.swiftString(forColumn: DatabaseKey.uniqueID) else {
 			assertionFailure("Expected uniqueID.")
 			return nil
 		}
 
-		let title = row.string(forColumn: DatabaseKey.title)
-		let contentHTML = row.string(forColumn: DatabaseKey.contentHTML)
-		let contentText = row.string(forColumn: DatabaseKey.contentText)
-		let markdown = row.string(forColumn: DatabaseKey.markdown)
-		let url = row.string(forColumn: DatabaseKey.url)
-		let externalURL = row.string(forColumn: DatabaseKey.externalURL)
-		let summary = row.string(forColumn: DatabaseKey.summary)
-		let imageURL = row.string(forColumn: DatabaseKey.imageURL)
+		let title = row.swiftString(forColumn: DatabaseKey.title)
+		let contentHTML = row.swiftString(forColumn: DatabaseKey.contentHTML)
+		let contentText = row.swiftString(forColumn: DatabaseKey.contentText)
+		let markdown = row.swiftString(forColumn: DatabaseKey.markdown)
+		let url = row.swiftString(forColumn: DatabaseKey.url)
+		let externalURL = row.swiftString(forColumn: DatabaseKey.externalURL)
+		let summary = row.swiftString(forColumn: DatabaseKey.summary)
+		let imageURL = row.swiftString(forColumn: DatabaseKey.imageURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
+		let authors = Self.authorsFromRow(row)
 
-		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: nil, status: status)
+		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+	}
+
+	private static func authorsFromRow(_ row: FMResultSet) -> Set<Author>? {
+		guard let json = row.swiftString(forColumn: DatabaseKey.authors), !json.isEmpty, let data = json.data(using: .utf8) else {
+			return nil
+		}
+		return Author.authorsWithJSON(data)
 	}
 
 	convenience init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
@@ -68,13 +76,6 @@ extension Article {
 		}
 	}
 
-	func byAdding(_ authors: Set<Author>) -> Article {
-		if authors.isEmpty {
-			return self
-		}
-		return Article(accountID: self.accountID, articleID: self.articleID, feedID: self.feedID, uniqueID: self.uniqueID, title: self.title, contentHTML: self.contentHTML, contentText: self.contentText, markdown: self.markdown, url: self.rawLink, externalURL: self.rawExternalLink, summary: self.summary, imageURL: self.rawImageLink, datePublished: self.datePublished, dateModified: self.dateModified, authors: authors, status: self.status)
-	}
-
 	func changesFrom(_ existingArticle: Article) -> DatabaseDictionary? {
 		if self == existingArticle {
 			return nil
@@ -92,6 +93,14 @@ extension Article {
 		addPossibleStringChangeWithKeyPath(\Article.rawExternalLink, existingArticle, DatabaseKey.externalURL, &d)
 		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)
 		addPossibleStringChangeWithKeyPath(\Article.rawImageLink, existingArticle, DatabaseKey.imageURL, &d)
+
+		if authors != existingArticle.authors {
+			if let authors, !authors.isEmpty, let json = authors.json() {
+				d[DatabaseKey.authors] = json
+			} else {
+				d[DatabaseKey.authors] = ""
+			}
+		}
 
 		// If updated versions of dates are nil, and we have existing dates, keep the existing dates.
 		// This is data that’s good to have, and it’s likely that a feed removing dates is doing so in error.
@@ -137,9 +146,9 @@ extension Article {
 	}
 }
 
-extension Article: @retroactive DatabaseObject {
+extension Article {
 
-	public func databaseDictionary() -> DatabaseDictionary? {
+	func databaseDictionary() -> DatabaseDictionary {
 		var d = DatabaseDictionary()
 
 		d[DatabaseKey.articleID] = articleID
@@ -176,35 +185,14 @@ extension Article: @retroactive DatabaseObject {
 		if let dateModified = dateModified {
 			d[DatabaseKey.dateModified] = dateModified
 		}
+		if let authors, !authors.isEmpty, let json = authors.json() {
+			d[DatabaseKey.authors] = json
+		}
 		return d
-	}
-
-	public var databaseID: String {
-		return articleID
-	}
-
-	public func relatedObjectsWithName(_ name: String) -> [DatabaseObject]? {
-		switch name {
-		case RelationshipName.authors:
-			return databaseObjectArray(with: authors)
-		default:
-			return nil
-		}
-	}
-
-	private func databaseObjectArray<T: DatabaseObject>(with objects: Set<T>?) -> [DatabaseObject]? {
-		guard let objects = objects else {
-			return nil
-		}
-		return Array(objects)
 	}
 }
 
 extension Set where Element == Article {
-
-	func statuses() -> Set<ArticleStatus> {
-		return Set<ArticleStatus>(map { $0.status })
-	}
 
 	func dictionary() -> [String: Article] {
 		var d = [String: Article]()
@@ -214,11 +202,7 @@ extension Set where Element == Article {
 		return d
 	}
 
-	func databaseObjects() -> [DatabaseObject] {
-		return self.map { $0 as DatabaseObject }
-	}
-
-	func databaseDictionaries() -> [DatabaseDictionary]? {
-		return self.compactMap { $0.databaseDictionary() }
+	func databaseDictionaries() -> [DatabaseDictionary] {
+		return self.map { $0.databaseDictionary() }
 	}
 }

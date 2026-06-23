@@ -19,13 +19,6 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:Modules\/RSMarkdown",
-        "identifier" : "RSMarkdownTests",
-        "name" : "RSMarkdownTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:Modules\/RSWeb",
         "identifier" : "RSWebTests",
         "name" : "RSWebTests"
@@ -61,6 +54,13 @@
     },
     {
       "target" : {
+        "containerPath" : "container:Modules\/ActivityLog",
+        "identifier" : "ActivityLogTests",
+        "name" : "ActivityLogTests"
+      }
+    },
+    {
+      "target" : {
         "containerPath" : "container:Modules\/RSParser",
         "identifier" : "RSParserTests",
         "name" : "RSParserTests"
@@ -71,6 +71,13 @@
         "containerPath" : "container:NetNewsWire.xcodeproj",
         "identifier" : "849C64701ED37A5D003D8FC0",
         "name" : "NetNewsWireTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/Articles",
+        "identifier" : "ArticlesTests",
+        "name" : "ArticlesTests"
       }
     }
   ],

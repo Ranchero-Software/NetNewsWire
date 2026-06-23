@@ -10,14 +10,6 @@ import XCTest
 
 final class StringRSCoreTests: XCTestCase {
 
-	func testCollapsingWhitespace() {
-
-		let str = "   lots\t\tof   random\n\nwhitespace\r\n"
-		let expected = "lots of random whitespace"
-		XCTAssertEqual(str.collapsingWhitespace, expected)
-
-	}
-
 	func testTrimmingWhitespace() {
 		let str = "   lots\t\tof   random\n\nwhitespace\r\n"
 		let expected = "lots\t\tof   random\n\nwhitespace"

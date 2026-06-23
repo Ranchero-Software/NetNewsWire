@@ -36,6 +36,7 @@ final class ShareViewController: SLComposeServiceViewController, ShareFolderPick
 	}
 
 	override func viewDidLoad() {
+		super.viewDidLoad()
 		extensionContainers = ExtensionContainersFile.read()
 		flattenedContainers = extensionContainers?.flattened ?? [ExtensionContainer]()
 		if let extensionContainers {

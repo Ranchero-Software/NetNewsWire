@@ -15,11 +15,15 @@ import RSWeb
 	/// The user-assigned default browser, or `nil` if none was assigned
 	/// (i.e., the system default should be used).
 	static var defaultBrowser: MacWebBrowser? {
-		if let bundleID = AppDefaults.shared.defaultBrowserID, let browser = MacWebBrowser(bundleIdentifier: bundleID) {
-			return browser
+		guard let browserID = AppDefaults.shared.defaultBrowserID else {
+			return nil
 		}
-
-		return nil
+		// Older versions stored a bundle ID rather than a path.
+		// Paths always start with "/" and bundle IDs never do.
+		if browserID.hasPrefix("/") {
+			return MacWebBrowser(path: browserID)
+		}
+		return MacWebBrowser(bundleIdentifier: browserID)
 	}
 
 	/// Opens a URL in the default browser.

@@ -14,13 +14,13 @@ import Secrets
 /// Accounts are responsible for the scope.
 nonisolated public struct OAuthAuthorizationClient: Equatable, Sendable {
 	public let id: String
-	public let redirectUri: String
+	public let redirectURI: String
 	public let state: String?
 	public let secret: String
 
-	public init(id: String, redirectUri: String, state: String?, secret: String) {
+	public init(id: String, redirectURI: String, state: String?, secret: String) {
 		self.id = id
-		self.redirectUri = redirectUri
+		self.redirectURI = redirectURI
 		self.state = state
 		self.secret = secret
 	}
@@ -30,14 +30,14 @@ nonisolated public struct OAuthAuthorizationClient: Equatable, Sendable {
 /// https://tools.ietf.org/html/rfc6749#section-4.1.1
 nonisolated public struct OAuthAuthorizationRequest: Sendable {
 	public let responseType = "code"
-	public var clientId: String
-	public var redirectUri: String
+	public var clientID: String
+	public var redirectURI: String
 	public var scope: String
 	public var state: String?
 
-	public init(clientId: String, redirectUri: String, scope: String, state: String?) {
-		self.clientId = clientId
-		self.redirectUri = redirectUri
+	public init(clientID: String, redirectURI: String, scope: String, state: String?) {
+		self.clientID = clientID
+		self.redirectURI = redirectURI
 		self.scope = scope
 		self.state = state
 	}
@@ -45,9 +45,9 @@ nonisolated public struct OAuthAuthorizationRequest: Sendable {
 	public var queryItems: [URLQueryItem] {
 		return [
 			URLQueryItem(name: "response_type", value: responseType),
-			URLQueryItem(name: "client_id", value: clientId),
+			URLQueryItem(name: "client_id", value: clientID),
 			URLQueryItem(name: "scope", value: scope),
-			URLQueryItem(name: "redirect_uri", value: redirectUri),
+			URLQueryItem(name: "redirect_uri", value: redirectURI)
 		]
 	}
 }
@@ -62,7 +62,7 @@ nonisolated public struct OAuthAuthorizationResponse {
 public extension OAuthAuthorizationResponse {
 
 	init(url: URL, client: OAuthAuthorizationClient) throws {
-		guard let scheme = url.scheme, client.redirectUri.hasPrefix(scheme) else {
+		guard let scheme = url.scheme, client.redirectURI.hasPrefix(scheme) else {
 			throw URLError(.unsupportedURL)
 		}
 		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
@@ -112,25 +112,44 @@ nonisolated public enum OAuthAuthorizationError: String, Sendable {
 nonisolated public struct OAuthAccessTokenRequest: Encodable, Sendable {
 	public let grantType = "authorization_code"
 	public let code: String
-	public let redirectUri: String
+	public let redirectURI: String
 	public let state: String?
-	public let clientId: String
+	public let clientID: String
 
-	// Possibly not part of the standard but specific to certain implementations (e.g.: Feedly).
+	// Possibly not part of the standard but specific to certain implementations (e.g. Feedly).
 	public var clientSecret: String
 	public var scope: String
 
 	public init(authorizationResponse: OAuthAuthorizationResponse, scope: String, client: OAuthAuthorizationClient) {
 		self.code = authorizationResponse.code
-		self.redirectUri = client.redirectUri
+		self.redirectURI = client.redirectURI
 		self.state = authorizationResponse.state
-		self.clientId = client.id
+		self.clientID = client.id
 		self.clientSecret = client.secret
 		self.scope = scope
 	}
 }
 
-/// Models the minimum subset of properties of a response in section 4.1.4 of the OAuth 2.0 Authorization Framework
+/// Models section 6 of the OAuth 2.0 Authorization Framework
+/// https://tools.ietf.org/html/rfc6749#section-6
+nonisolated public struct OAuthRefreshAccessTokenRequest: Encodable, Sendable {
+	public let grantType = "refresh_token"
+	public var refreshToken: String
+	public var scope: String?
+
+	// Possibly not part of the standard but specific to certain implementations (e.g. Feedly).
+	public var clientID: String
+	public var clientSecret: String
+
+	public init(refreshToken: String, scope: String?, client: OAuthAuthorizationClient) {
+		self.refreshToken = refreshToken
+		self.scope = scope
+		self.clientID = client.id
+		self.clientSecret = client.secret
+	}
+}
+
+/// Models the minimum subset of properties of a response in section 4.1.4 of the OAuth 2.0 Authorization Framework.
 /// Concrete types model other parameters beyond the scope of the OAuth spec.
 /// For example, Feedly provides the ID of the user who has consented to the grant.
 /// https://tools.ietf.org/html/rfc6749#section-4.1.4
@@ -148,26 +167,11 @@ nonisolated public struct OAuthAuthorizationGrant: Equatable, Sendable {
 	public let refreshToken: Credentials?
 }
 
-/// Conformed to by API callers to provide a consistent interface for `AccountDelegate` types to enable OAuth Authorization Grants. Conformers provide an associated type that models any custom parameters/properties, as well as the standard ones, in the response to a request for an access token.
-/// https://tools.ietf.org/html/rfc6749#section-4.1
-public protocol OAuthAuthorizationCodeGrantRequesting {
-	associatedtype AccessTokenResponse: OAuthAccessTokenResponse
-
-	/// Provides the URL request that allows users to consent to the client having access to their information. Typically loaded by a web view.
-	/// - Parameter request: The information about the client requesting authorization to be granted access tokens.
-	/// - Parameter baseUrlComponents: The scheme and host of the url except for the path.
-	static func authorizationCodeUrlRequest(for request: OAuthAuthorizationRequest, baseUrlComponents: URLComponents) -> URLRequest
-
-
-	/// Performs the request for the access token given an authorization code.
-	/// - Parameter authorizationRequest: The authorization code and other information the authorization server requires to grant the client access tokens on the user's behalf.
-	/// - Parameter completion: On success, the access token response appropriate for concrete type's service. On failure, possibly a `URLError` or `OAuthAuthorizationErrorResponse` value.
-	func requestAccessToken(_ authorizationRequest: OAuthAccessTokenRequest, completion: @escaping @Sendable (Result<AccessTokenResponse, Error>) -> ())
-}
-
+/// Implemented by `AccountDelegate` types that support OAuth authorization code grants.
+/// Account dispatches sign-in requests to the concrete delegate via this protocol.
 protocol OAuthAuthorizationGranting: AccountDelegate {
 
 	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
 
-	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse, transport: Transport, completion: @escaping @MainActor (Result<OAuthAuthorizationGrant, Error>) -> ())
+	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse) async throws -> OAuthAuthorizationGrant
 }

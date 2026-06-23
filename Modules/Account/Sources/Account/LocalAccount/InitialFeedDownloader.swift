@@ -9,17 +9,20 @@
 import Foundation
 import RSParser
 import RSWeb
+import FeedFinder
 
 struct InitialFeedDownloader {
 
 	@MainActor static func download(_ url: URL) async throws -> (ParsedFeed?, URLResponse?) {
-		let (data, response) = try await Downloader.shared.download(url)
-		guard let data else {
-			return (nil, response)
+		// Route through FeedFinder.downloadAndLog so the fetch shows up in the
+		// activity log alongside the candidate fetches that preceded it.
+		let downloadResponse = try await FeedFinder.downloadAndLog(url)
+		guard let data = downloadResponse.data else {
+			return (nil, downloadResponse.response)
 		}
 
 		let parserData = ParserData(url: url.absoluteString, data: data)
 		let parsedFeed = try await FeedParser.parse(parserData)
-		return (parsedFeed, response)
+		return (parsedFeed, downloadResponse.response)
 	}
 }

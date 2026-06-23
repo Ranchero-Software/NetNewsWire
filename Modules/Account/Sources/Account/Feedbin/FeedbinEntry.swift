@@ -28,7 +28,7 @@ final class FeedbinEntry: Decodable, Sendable {
 	// and letting the one date fail when parsed.
 	var parsedDatePublished: Date? {
 		if let datePublished {
-			return RSDateWithString(datePublished)
+			return DateParser.date(from: datePublished)
 		}
 		return nil
 	}

@@ -13,9 +13,10 @@ import RSWeb
 import Articles
 import ArticlesDatabase
 import ErrorLog
+import ActivityLog
 
 @MainActor public final class AccountManager: UnreadCountProvider {
-	
+
 	public static var shared = AccountManager()
 
 	public static let netNewsWireNewsURL = "https://netnewswire.blog/feed.xml"
@@ -271,16 +272,10 @@ import ErrorLog
 		}
 	}
 
-	public func suspendDatabaseAll() {
-		for account in accounts {
-			account.suspendDatabase()
-		}
-	}
-
 	public func resumeAll() {
 		isSuspended = false
 		for account in accounts {
-			account.resumeDatabaseAndDelegate()
+			account.resumeDelegate()
 		}
 		for account in accounts {
 			account.resume()
@@ -343,13 +338,24 @@ import ErrorLog
 		}
 	}
 
-	public func syncArticleStatusAll() async {
-		await withTaskGroup(of: Void.self, isolation: MainActor.shared) { group in
+	/// Returns `true` if any account reported meaningful work this round;
+	/// `false` only if every account was idle.
+	@discardableResult
+	public func syncArticleStatusAll() async -> Bool {
+		await withTaskGroup(of: Bool.self, isolation: MainActor.shared) { group in
 			for account in activeAccounts {
 				group.addTask {
-					try? await account.syncArticleStatus()
+					(try? await account.syncArticleStatus()) ?? false
 				}
 			}
+
+			var anyWork = false
+			for await didWork in group {
+				if didWork {
+					anyWork = true
+				}
+			}
+			return anyWork
 		}
 	}
 
@@ -386,17 +392,17 @@ import ErrorLog
 
 	// These fetch articles from active accounts and return a merged Set<Article>.
 
-	public func fetchArticles(_ fetchType: FetchType) throws -> Set<Article> {
+	public func fetchArticles(_ fetchType: FetchType) -> Set<Article> {
 		precondition(Thread.isMainThread)
 
 		var articles = Set<Article>()
 		for account in activeAccounts {
-			articles.formUnion(try account.fetchArticles(fetchType))
+			articles.formUnion(account.fetchArticles(fetchType))
 		}
 		return articles
 	}
 
-	public func fetchArticlesAsync(_ fetchType: FetchType) async throws -> Set<Article> {
+	public func fetchArticlesAsync(_ fetchType: FetchType) async -> Set<Article> {
 		precondition(Thread.isMainThread)
 
 		guard activeAccounts.count > 0 else {
@@ -405,7 +411,7 @@ import ErrorLog
 
 		var allFetchedArticles = Set<Article>()
 		for account in activeAccounts {
-			let articles = try await account.fetchArticlesAsync(fetchType)
+			let articles = await account.fetchArticlesAsync(fetchType)
 			allFetchedArticles.formUnion(articles)
 		}
 
@@ -420,31 +426,53 @@ import ErrorLog
 			return nil
 		}
 
-		do {
-			let articles = try account.fetchArticles(.articleIDs(Set([articleID])))
-			return articles.first
-		} catch {
-			return nil
-		}
+		let articles = account.fetchArticles(.articleIDs(Set([articleID])))
+		return articles.first
 	}
 
 	// MARK: - Fetching Article Counts
 
-	public func fetchCountForStarredArticles() throws -> Int {
+	public func fetchCountForStarredArticles() -> Int {
 		precondition(Thread.isMainThread)
 		var count = 0
 		for account in activeAccounts {
-			count += try account.fetchCountForStarredArticles()
+			count += account.fetchCountForStarredArticles()
+		}
+		return count
+	}
+
+	public func fetchCountForStarredArticlesAsync() async -> Int {
+		precondition(Thread.isMainThread)
+		var count = 0
+		for account in activeAccounts {
+			count += await account.fetchCountForStarredArticlesAsync()
+		}
+		return count
+	}
+
+	public func fetchCountForTodayArticlesAsync() async -> Int {
+		precondition(Thread.isMainThread)
+		var count = 0
+		for account in activeAccounts {
+			count += await account.fetchCountForTodayArticlesAsync()
+		}
+		return count
+	}
+
+	public func fetchUnreadCountForTodayAsync() async -> Int {
+		precondition(Thread.isMainThread)
+		var count = 0
+		for account in activeAccounts {
+			count += await account.fetchUnreadCountForTodayAsync()
 		}
 		return count
 	}
 
 	// MARK: - Vacuum
 
-	public func vacuumAllDatabases() async {
-		await errorLogDatabase.vacuum()
+	public func vacuumAccountDatabases() async {
 		for account in accounts {
-			account.vacuumDatabases()
+			await account.vacuumDatabases()
 		}
 	}
 
@@ -661,4 +689,3 @@ private struct AccountSpecifier {
 		return NSString(string: folderPath).appendingPathComponent(accountDataFileName)
 	}
 }
-

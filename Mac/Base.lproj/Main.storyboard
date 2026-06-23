@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24506" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24506"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -580,13 +580,6 @@
                                                 <action selector="importNNW3FromFile:" target="Voe-Tx-rLC" id="Xut-dI-qDw"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem isSeparatorItem="YES" id="vDb-aB-q9Z"/>
-                                        <menuItem title="Vacuum Databases" id="kLm-nR-v3X">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="vacuumDatabases:" target="Ady-hI-5gd" id="pQw-eT-j7Y"/>
-                                            </connections>
-                                        </menuItem>
                                         <menuItem isSeparatorItem="YES" id="c4R-jH-7kP"/>
                                         <menuItem title="Open Image Cache Folder" id="x9L-mW-2vQ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
@@ -624,6 +617,21 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="zRZ-rO-O5O"/>
+                                        <menuItem title="Dinosaurs" keyEquivalent="6" id="din-0s-aUR">
+                                            <connections>
+                                                <action selector="showDinosaursWindow:" target="Ady-hI-5gd" id="din-1w-rCn"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Current Activity" keyEquivalent="7" id="act-Wn-d0w">
+                                            <connections>
+                                                <action selector="showActivityWindow:" target="Ady-hI-5gd" id="act-Cn-x1a"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Activity Log" keyEquivalent="8" id="alg-Wn-m1q">
+                                            <connections>
+                                                <action selector="showActivityLog:" target="Ady-hI-5gd" id="alg-Cn-y2b"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Error Log" keyEquivalent="9" id="erl-0g-Kw7">
                                             <connections>
                                                 <action selector="showErrorLog:" target="Ady-hI-5gd" id="erl-1h-Lx8"/>
@@ -633,6 +641,12 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="showCloudKitStats:" target="Ady-hI-5gd" id="ypX-Ya-bcD"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Account Stats" id="aS7-kP-m3Q">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="showAccountStats:" target="Ady-hI-5gd" id="bR2-nL-v8X"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>

@@ -1,7 +1,132 @@
 # Mac Release Notes
 
-### 7.1b1 7049 03 Apr 2026 — branch: main tag: mac-7.1b1
+### 7.1b5 7104 22 June 2026 — branch: main tag: mac-7.1b5
 
+Made timeline scrolling faster and smoother
+Fixed bug (introduced in 7.0.6) where newly-arrived articles weren’t added to the search index
+Fixed a memory leak
+
+### 7.1b4 7103 18 June 2026 — branch: main tag: mac-7.1b4
+
+Removed images from items in contextual menus in sidebar and timeline
+Added more detail to the Activity Log: download sizes for image and HTML‑metadata downloads, and a note when a download was served from the cache (instead of over the web)
+
+### 7.1b3 7102 16 June 2026 — branch: main tag: mac-7.1b3
+
+Added more activities and detail to the Activity Log and Current Activity windows
+Fixed a memory use issue with marking read/unread/starred/unstarred
+Reduced disk writes while syncing article statuses
+Fixed a crash that could happen when deleting Feedly folders
+Fixed a crash that could happen when building notification thumbnails
+
+### 7.1b2 7101 11 June 2026 — branch: main tag: mac-7.1b2
+
+Fixed Dinosaurs bug where feeds with articles with no dates were ranked using the wrong date — they now use the date the article arrived when there are no other dates
+Made the Dinosaurs months field ignore any character that isn’t 0-9
+Fixed a performance issue with the Current Activity window
+Stopped removing long-running activities from the Activity Log and Current Activity windows — some activities do run for hours. (Unfortunately. iCloud, of course.)
+Fixed bug where feed icons didn’t always appear promptly in the sidebar
+
+### 7.1b1 7100 8 June 2026 — branch: main tag: mac-7.1b1
+
+Added Activity Log window — shows what the app has been doing <https://netnewswire.com/help/activity-log.html>
+Added Current Activity window — shows what the app is doing right now <https://netnewswire.com/help/current-activity.html>
+Added Account Stats window — shows per-account article and status counts and database sizes, plus a Vacuum Databases button <https://netnewswire.com/help/account-stats.html>
+Added Dinosaurs window — lists feeds that haven’t updated in n months (with a text field where you specify n) <https://netnewswire.com/help/dinosaurs.html>
+Started deleting feeds and folders optimistically from iCloud — sidebar updates immediately instead of waiting for the server
+Fixed bug where iCloud feed renames could fail on transient network errors — they’re now retried
+Started backing off Feedly status sync to 30 minutes between checks when the last sync had no changes
+Stopped feed refreshing while the Mac is asleep
+Started handling transient feed-refresh failures (DNS, certificate, etc.) by retrying after a few hours instead of treating them as permanent failures
+Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (`<s:variant>`, for instance)
+Added more trackers to the block list
+Fixed WebKit crash in the detail view caused by re-entrancy
+Started saving the response code for 4xx and 5xx responses so the error log shows the right info
+
+### 7.0.6 7059 26 May 2026 — branch: main tag: mac-7.0.6
+
+Changes since 7.0.5:
+
+Made timeline fetches faster
+Fixed bug where the browser setting wasn’t being respected
+Fixed bug where shift-upArrow didn’t extend the timeline selection upward
+Added AppleScript `selected feeds` property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
+Improved footnote layout in the article view
+Lowered memory use by shrinking the Downloader cache
+Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
+Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
+
+### 7.0.6b2 7057 23 May 2026 — branch: main tag: mac-7.0.6b2
+
+Fixed bug where the browser setting wasn’t being respected
+Fixed bug where shift-upArrow didn’t extend the timeline selection upward
+Added AppleScript `selected feeds` property — returns the feeds currently selected in the sidebar (folders and smart feeds not included)
+Improved footnote layout in the article view
+Lowered memory use by shrinking the Downloader cache
+Lowered the minimum time between feed refreshes from 29 minutes to 9 minutes
+Started respecting Cache-Control headers (when present) for minimum time between feed refreshes (with a limit of 5 hours as the maximum minimum)
+
+### 7.0.6b1 7055 29 Apr 2026 — branch: main tag: mac-7.0.6b1
+
+Made timeline fetches faster by making a schema change (authors are now stored in an authors column instead of in a separate table)
+
+### 7.0.5 7054 28 Apr 2026 — branch: main tag: mac-7.0.5
+
+Changes since 7.0.4:
+
+Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
+Added paths to default browser popup in settings, for when there are duplicate names, so you can tell which instance of Firefox (or whatever) is which
+Added Biblioteca, Tiqoe Dark, and Verdana Revival themes
+Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
+Made timeline fetches faster and use less memory for articles
+Made various other string manipulation functions faster that are used in generating timeline cells (scrolling performance enhancement)
+Added additional database cleanup code at startup — now gets rid of unused author data
+Fixed bug generating feed image thumbnail when image is indexed-color 4-bit palette .ico (Club iGen icon, for instance)
+Made images in the timeline always use aspect-fit
+Added incremental searching to the Error Log window
+Replaced C-based Markdown renderer/parser with safer Swift-based parser/renderer
+Replaced C-based date parser with safer Swift-based parser (which is also an order of magnitude faster)
+Started handling dates like 2020/1/10 in the date parser (even though those dates are invalid, they appear in the wild)
+Started handling non-valid two-digit years in pubDate — they would be parsed as (for instance) the year 26 instead of 2026, and now they’re parsed as 2026
+Replaced C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) with safer Swift-based parsers (which are also faster)
+Removed dependency on libxml2
+Replaced C code to strip HTML with safer Swift code (which is faster)
+Replaced Objective-C code to decode entities with faster Swift code
+
+Changes since 7.0.5b3:
+
+Added additional domains to no-minimum-interval list.
+
+### 7.0.5b3 7053 27 Apr 2026 — branch: main tag: mac-7.0.5b3
+
+Added paths to default browser popup in settings, for when there are duplicate names, so you can tell which instance of Firefox (or whatever) is which
+Fixed a bug where FreshRSS feed settings could get messed up. (This should heal itself, though not necessarily instantly)
+Made timeline fetches faster and use less memory for articles
+Added additional database cleanup code at startup — now gets rid of unused author data
+Made the date parser a little faster (which makes the feed parsers a little faster)
+
+### 7.0.5b2 7051 23 Apr 2026 — branch: main tag: mac-7.0.5b2
+
+Started using feed images as specified in the feed. We used to not do this because these weren’t likely to be square, and the app wants square images. It appears these days that those images do tend to be square. Note: due to caching, this change will happen gradually, over several days and weeks
+Fixed bug generating feed image thumbnail when image is indexed-color 4-bit palette .ico (Club iGen icon, for instance)
+Made images in the timeline always use aspect-fit
+Improved table rendering in Biblioteca theme
+Added some images caches to empty on going to background
+Started removing some webviews on going to background
+Added incremental searching to the Error Log window
+Replaced unsafe C-based Markdown renderer/parser with safer Swift-based parser/renderer
+Replaced unsafe C-based date parser with safer Swift-based parser (which is also an order of magnitude faster)
+Started handling dates like 2020/1/10 in the date parser (even though those dates are invalid, they appear in the wild)
+Replaced unsafe C and Objective-C XML and HTML parsers (RSS, Atom, OPML, page metadata, page links) with safer Swift-based parsers (which are also faster)
+Removed dependency on libxml2
+Replaced unsafe C code to strip HTML with safer Swift code (which is faster)
+Replaced Objective-C code to decode entities with faster Swift code
+Made various other string manipulation functions faster that are used in generating timeline cells (scrolling performance enhancement)
+
+### 7.0.5b1 7050 12 Apr 2026 — branch: main tag: mac-7.0.5b1
+
+Fixed bug where the app didn’t correctly detect the system default browser — it would show Safari even when a different browser was set as default. This was apparently a system bug that has since been fixed, but we’ve added a code change that we think would deal with this in case the system breaks in the same way again
+Added work-around for feeds with non-valid two-digit years in pubDate — they would be parsed as (for instance) the year 26 instead of 2026, and now they’re parsed as 2026
 Added Biblioteca, Tiqoe Dark, and Verdana Revival themes
 
 ### 7.0.4 7048 03 Apr 2026 — branch: main tag: mac-7.0.4

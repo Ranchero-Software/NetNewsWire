@@ -11,6 +11,7 @@ import RSCore
 import Articles
 import Account
 import os
+import Images
 
 @MainActor protocol TimelineDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
@@ -147,6 +148,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 			articleRowMap = [String: [Int]]()
 			tableView.reloadData()
+			IconImageCache.shared.prefetchImagesForArticles(articles)
 		}
 	}
 
@@ -693,8 +695,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func faviconDidBecomeAvailable(_ note: Notification) {
-		if showIcons {
-			queueReloadAvailableCells()
+		guard showIcons, let faviconURL = note.userInfo?[FaviconDownloader.UserInfoKey.faviconURL] as? String else {
+			return
+		}
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { (row) -> Bool in
+			guard let article = articles.articleAtRow(row), let feed = article.feed else {
+				return false
+			}
+			return FaviconDownloader.shared.cachedFaviconURL(for: feed) == faviconURL
+		}
+		if let indexesToReload = indexesToReload {
+			reloadCells(for: indexesToReload)
 		}
 	}
 
@@ -1032,12 +1043,6 @@ private extension TimelineViewController {
 		}
 	}
 
-	@objc func reloadAvailableCells() {
-		if let indexesToReload = tableView.indexesOfAvailableRows() {
-			reloadCells(for: indexesToReload)
-		}
-	}
-
 	func updateUnreadCount() {
 		var count = 0
 		for article in articles {
@@ -1046,10 +1051,6 @@ private extension TimelineViewController {
 			}
 		}
 		unreadCount = count
-	}
-
-	func queueReloadAvailableCells() {
-		CoalescingQueue.standard.add(self, #selector(reloadAvailableCells))
 	}
 
 	func updateTableViewRowHeight() {
@@ -1227,13 +1228,11 @@ private extension TimelineViewController {
 		var fetchedArticles = Set<Article>()
 		for fetchers in fetchers {
 			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
-				if let articles = try? fetchers.fetchUnreadArticles() {
-					fetchedArticles.formUnion(articles)
-				}
+				let articles = fetchers.fetchUnreadArticles()
+				fetchedArticles.formUnion(articles)
 			} else {
-				if let articles = try? fetchers.fetchArticles() {
-					fetchedArticles.formUnion(articles)
-				}
+				let articles = fetchers.fetchArticles()
+				fetchedArticles.formUnion(articles)
 			}
 		}
 		return fetchedArticles

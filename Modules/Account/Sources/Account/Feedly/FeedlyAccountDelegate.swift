@@ -6,6 +6,8 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
+import Foundation
+import ActivityLog
 import Articles
 import ErrorLog
 import RSCore
@@ -16,6 +18,7 @@ import os
 import Secrets
 
 @MainActor final class FeedlyAccountDelegate: AccountDelegate {
+
 	/// Feedly has a sandbox API and a production API.
 	/// This property is referred to when clients need to know which environment it should be pointing to.
 	/// The value of this property must match any `OAuthAuthorizationClient` used.
@@ -24,20 +27,11 @@ import Secrets
 		return .cloud
 	}
 
-	var progressInfo = ProgressInfo() {
-		didSet {
-			if progressInfo != oldValue {
-				postProgressInfoDidChangeNotification()
-			}
-		}
-	}
-
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
 	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(31)]
 
 	let isOPMLImportSupported = false
-
 	var isOPMLImportInProgress = false
 
 	var server: String? {
@@ -53,55 +47,38 @@ import Secrets
 				return
 			}
 			#endif
-			 caller.credentials = credentials
+			caller.credentials = credentials
 		}
 	}
 
-	let oauthAuthorizationClient: OAuthAuthorizationClient
-
 	var accountSettings: AccountSettings?
 
-	let refreshProgress = DownloadProgress(numberOfTasks: 0)
+	let oauthAuthorizationClient: OAuthAuthorizationClient
+	let refreshProgress = RSProgress()
 
-	/// Set on `accountDidInitialize` for the purposes of refreshing OAuth tokens when they expire.
-	/// See the implementation for `FeedlyAPICallerDelegate`.
-	private weak var initializedAccount: Account?
+	var progressInfo = ProgressInfo() {
+		didSet {
+			if progressInfo != oldValue {
+				postProgressInfoDidChangeNotification()
+			}
+		}
+	}
 
 	let caller: FeedlyAPICaller
-
-	nonisolated private static let logger = Feedly.logger
 	private let syncDatabase: SyncDatabase
+	weak var account: Account?
+	private static let logger = Feedly.logger
 
-	private weak var currentSyncAllOperation: FeedlyMainThreadOperation?
-	private let operationQueue = FeedlyMainThreadOperationQueue()
+	private static let articleDownloadChunkSize = 1000
+	private static let markChunkSize = 300 // Feedly /v3/markers limit
+	private static let pendingStatusSendThreshold = 100
 
-	init(dataFolder: String, transport: Transport?, api: FeedlyAPICaller.API) {
-		// Many operations have their own operation queues, such as the sync all operation.
-		// Making this a serial queue at this higher level of abstraction means we can ensure,
-		// for example, a `FeedlyRefreshAccessTokenOperation` occurs before a `FeedlySyncAllOperation`,
-		// improving our ability to debug, reason about and predict the behaviour of the code.
+	private var lastNoChangeSyncDate: Date?
+	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
 
-		if let transport = transport {
-			self.caller = FeedlyAPICaller(transport: transport, api: api)
+	init(dataFolder: String, api: FeedlyAPICaller.API) {
 
-		} else {
-
-			let sessionConfiguration = URLSessionConfiguration.default
-			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-			sessionConfiguration.timeoutIntervalForRequest = 60.0
-			sessionConfiguration.httpShouldSetCookies = false
-			sessionConfiguration.httpCookieAcceptPolicy = .never
-			sessionConfiguration.httpMaximumConnectionsPerHost = 1
-			sessionConfiguration.httpCookieStorage = nil
-			sessionConfiguration.urlCache = nil
-
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
-
-			let session = URLSession(configuration: sessionConfiguration)
-			self.caller = FeedlyAPICaller(transport: session, api: api)
-		}
+		self.caller = FeedlyAPICaller(api: api)
 
 		let databaseFilePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		self.syncDatabase = SyncDatabase(databasePath: databaseFilePath)
@@ -109,25 +86,18 @@ import Secrets
 
 		self.caller.delegate = self
 
-		NotificationCenter.default.addObserver(self, selector: #selector(downloadProgressDidChange(_:)), name: .DownloadProgressDidChange, object: refreshProgress)
-
+		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
-	// MARK: Account API
+	// MARK: - Account API
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			refreshAll(for: account) { result in
-				continuation.resume(with: result)
-			}
+	func refreshAll() async throws {
+		guard let account else {
+			return
 		}
-	}
-
-	@MainActor func refreshAll(for account: Account, completion: @escaping (Result<Void, Error>) -> Void) {
-		assert(Thread.isMainThread)
 		Self.logger.debug("FeedlyAccountDelegate: refreshAll")
 
 		if credentials == nil {
@@ -136,587 +106,783 @@ import Secrets
 
 		guard !Platform.isRunningUnitTests else {
 			Self.logger.debug("FeedlyAccountDelegate: Ignoring refreshAll: running unit tests")
-			completion(.success(()))
-			return
-		}
-		guard currentSyncAllOperation == nil else {
-			Self.logger.debug("FeedlyAccountDelegate: Ignoring refreshAll: sync already in progress")
-			completion(.success(()))
 			return
 		}
 
-		guard let credentials = credentials else {
+		guard let credentials else {
 			Self.logger.info("FeedlyAccountDelegate: Ignoring refreshAll: account has no credentials")
-			completion(.failure(FeedlyAccountDelegateError.notLoggedIn))
-			return
+			throw FeedlyAccountDelegateError.notLoggedIn
 		}
 
+		refreshProgress.reset()
+		refreshProgress.addTasks(6)
 		progressInfo = ProgressInfo()
+		let startDate = Date()
 
-		let syncAllOperation = FeedlySyncAllOperation(account: account, feedlyUserId: credentials.username, caller: caller, database: syncDatabase, lastSuccessfulFetchStartDate: accountSettings?.lastArticleFetchStartTime, downloadProgress: refreshProgress)
-
-		let date = Date()
-		syncAllOperation.syncCompletionHandler = { [weak self] result in
-			if case .success = result {
-				self?.accountSettings?.lastArticleFetchStartTime = date
-				self?.accountSettings?.lastRefreshCompletedDate = Date()
-			} else if case .failure(let error) = result {
-				self?.postSyncError(error, account: account, operation: "Refreshing")
-			}
-
-			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-date.timeIntervalSinceNow, privacy: .public) seconds")
-			completion(result)
-			self?.refreshProgress.reset()
-			self?.progressInfo = ProgressInfo()
+		let successMessage: (RefreshAllSummary) -> String? = { summary in
+			Self.refreshAllMessage(summary: summary)
 		}
-
-		currentSyncAllOperation = syncAllOperation
-		operationQueue.add(syncAllOperation)
-	}
-
-	@MainActor func syncArticleStatus(for account: Account) async throws {
-		try await sendArticleStatus(for: account)
-		try await refreshArticleStatus(for: account)
-	}
-
-	@MainActor func sendArticleStatus(for account: Account) async throws {
-		Self.logger.debug("FeedlyAccountDelegate: sendArticleStatus")
-		try await withCheckedThrowingContinuation { continuation in
-			sendArticleStatus(for: account) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	@MainActor private func sendArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		// Ensure remote articles have the same status as they do locally.
-		let send = FeedlySendArticleStatusesOperation(database: syncDatabase, service: caller)
-		send.completionBlock = { operation in
-			// TODO: not call with success if operation was canceled? Not sure.
-			DispatchQueue.main.async {
-				completion(.success(()))
-			}
-		}
-		operationQueue.add(send)
-	}
-
-	/// Attempts to ensure local articles have the same status as they do remotely.
-	/// So if the user is using another client roughly simultaneously with this app,
-	/// this app does its part to ensure the articles have a consistent status between both.
-	///
-	/// - Parameter account: The account whose articles have a remote status.
-	@MainActor func refreshArticleStatus(for account: Account) async throws {
-		Self.logger.debug("FeedlyAccountDelegate: refreshArticleStatus")
-		try await withCheckedThrowingContinuation { continuation in
-			refreshArticleStatus(for: account) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	@MainActor func refreshArticleStatus(for account: Account, completion: @escaping ((Result<Void, Error>) -> Void)) {
-		guard let credentials = credentials else {
-			return completion(.success(()))
-		}
-
-		let group = DispatchGroup()
-
-		let ingestUnread = FeedlyIngestUnreadArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: syncDatabase, newerThan: nil)
-
-		group.enter()
-		ingestUnread.completionBlock = { _ in
-			group.leave()
-
-		}
-
-		let ingestStarred = FeedlyIngestStarredArticleIdsOperation(account: account, userId: credentials.username, service: caller, database: syncDatabase, newerThan: nil)
-
-		group.enter()
-		ingestStarred.completionBlock = { _ in
-			group.leave()
-		}
-
-		group.notify(queue: .main) {
-			completion(.success(()))
-		}
-
-		operationQueue.addOperations([ingestUnread, ingestStarred])
-	}
-
-
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
-		try await withCheckedThrowingContinuation { continuation in
-			importOPML(for: account, opmlFile: opmlFile) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	func importOPML(for account: Account, opmlFile: URL, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-		let data: Data
 
 		do {
-			data = try Data(contentsOf: opmlFile)
+			try await account.logActivity(kind: .refreshAll, successMessage: successMessage) { () -> RefreshAllSummary in
+				var summary = RefreshAllSummary()
+				summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
+				refreshProgress.completeTask()
+				summary.feedListChanges = try await refreshFeedList(for: account)
+				refreshProgress.completeTask()
+				try await ingestStreamArticleIDs(for: account, userID: credentials.username)
+				refreshProgress.completeTask()
+				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account)
+				refreshProgress.completeTask()
+				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
+				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
+				refreshProgress.completeTask()
+				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
+				refreshProgress.completeTask()
+				return summary
+			}
+			accountSettings?.lastArticleFetchStartTime = startDate
+			accountSettings?.lastRefreshCompletedDate = Date()
+			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-startDate.timeIntervalSinceNow, privacy: .public) seconds")
 		} catch {
-			completion(.failure(error))
+			refreshProgress.reset()
+			progressInfo = ProgressInfo()
+			throw AccountError.wrapped(error, account)
+		}
+
+		refreshProgress.reset()
+		progressInfo = ProgressInfo()
+	}
+
+	func syncArticleStatus() async throws -> Bool {
+		guard let account else {
+			return false
+		}
+		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
+			Self.logger.debug("Feedly: Skipping sync — no changes on last check, backing off")
+			return false
+		}
+
+		refreshProgress.reset()
+		refreshProgress.addTasks(2)
+		progressInfo = ProgressInfo()
+		defer {
+			refreshProgress.reset()
+			progressInfo = ProgressInfo()
+		}
+
+		let sentCount = try await sendArticleStatusReturningCount(for: account)
+		refreshProgress.completeTask()
+		let refreshCounts = try await refreshArticleStatusReturningCounts(for: account)
+		refreshProgress.completeTask()
+
+		if sentCount == 0 && refreshCounts.totalChanged == 0 {
+			lastNoChangeSyncDate = Date()
+		} else {
+			lastNoChangeSyncDate = nil
+		}
+
+		return sentCount > 0 || refreshCounts.totalChanged > 0
+	}
+
+	func sendArticleStatus() async throws {
+		guard let account else {
+			return
+		}
+		_ = try await sendArticleStatusReturningCount(for: account)
+	}
+
+	/// Sends queued local status changes upstream. Returns the count successfully sent.
+	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
+		Self.logger.info("Feedly: Sending article statuses")
+		defer {
+			Self.logger.info("Feedly: Finished sending article statuses")
+		}
+
+		let successMessage: (Int) -> String? = { count in
+			Self.sendStatusMessage(count: count)
+		}
+		let durationIsSignificant: (Int) -> Bool = { count in
+			count > 0
+		}
+
+		do {
+			return try await account.logActivity(kind: .sendArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> Int in
+				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
+					return 0
+				}
+
+				var savedError: Error?
+				var sentCount = 0
+				let pairings: [(key: SyncStatus.Key, flag: Bool, action: FeedlyMarkAction)] = [
+					(.read, false, .unread),
+					(.read, true, .read),
+					(.starred, true, .saved),
+					(.starred, false, .unsaved)
+				]
+
+				for pairing in pairings {
+					let pending = syncStatuses.filter { $0.key == pairing.key && $0.flag == pairing.flag }
+					guard !pending.isEmpty else {
+						continue
+					}
+					let articleIDs = Set(pending.map { $0.articleID })
+					do {
+						for chunk in Array(articleIDs).chunked(into: Self.markChunkSize) {
+							let chunkIDs = Set(chunk)
+							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+						}
+						await syncDatabase.deleteSelectedForProcessing(articleIDs)
+						sentCount += articleIDs.count
+					} catch {
+						Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
+						await syncDatabase.resetSelectedForProcessing(articleIDs)
+						savedError = error
+					}
+				}
+
+				if let savedError {
+					throw savedError
+				}
+				return sentCount
+			}
+		} catch {
+			postSyncError(error, account: account, operation: "Sending article status")
+			throw error
+		}
+	}
+
+	func refreshArticleStatus() async throws {
+		guard let account else {
+			return
+		}
+		_ = try await refreshArticleStatusReturningCounts(for: account)
+	}
+
+	/// Attempt to bring local read/starred statuses in line with the remote ones.
+	/// If the user is using another Feedly client at roughly the same time as this app,
+	/// this app does its part to ensure articles have a consistent status between both.
+	/// Returns counts of articles whose unread/starred state actually flipped.
+	private func refreshArticleStatusReturningCounts(for account: Account) async throws -> StatusRefreshCounts {
+		Self.logger.info("Feedly: Refreshing article statuses")
+
+		guard let credentials else {
+			return StatusRefreshCounts()
+		}
+
+		let successMessage: (StatusRefreshCounts) -> String? = { counts in
+			Self.refreshStatusMessage(counts: counts)
+		}
+		let durationIsSignificant: (StatusRefreshCounts) -> Bool = { counts in
+			counts.totalChanged > 0
+		}
+
+		return try await account.logActivity(kind: .refreshArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> StatusRefreshCounts in
+			var refreshError: Error?
+			var counts = StatusRefreshCounts()
+
+			do {
+				let unread = try await ingestUnreadArticleIDs(for: account, userID: credentials.username)
+				counts.unreadAdded = unread.added
+				counts.unreadRemoved = unread.removed
+			} catch {
+				refreshError = error
+				Self.logger.error("Feedly: Ingesting unread article IDs failed: \(error.localizedDescription)")
+			}
+
+			do {
+				let starred = try await ingestStarredArticleIDs(for: account, userID: credentials.username)
+				counts.starredAdded = starred.added
+				counts.starredRemoved = starred.removed
+			} catch {
+				refreshError = error
+				Self.logger.error("Feedly: Ingesting starred article IDs failed: \(error.localizedDescription)")
+			}
+
+			Self.logger.info("Feedly: Finished refreshing article statuses")
+			if let refreshError {
+				postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				throw refreshError
+			}
+			return counts
+		}
+	}
+
+	func importOPML(opmlFile: URL) async throws {
+		guard let account else {
+			return
+		}
+		let opmlData = try Data(contentsOf: opmlFile)
+		guard !opmlData.isEmpty else {
 			return
 		}
 
-		Self.logger.info("FeedlyAccountDelegate: Begin importing OPML")
+		Self.logger.info("Feedly: Did begin importing OPML")
 		isOPMLImportInProgress = true
-		refreshProgress.addToNumberOfTasksAndRemaining(1)
+		refreshProgress.addTask()
+		defer {
+			isOPMLImportInProgress = false
+			refreshProgress.completeTask()
+		}
 
-		caller.importOpml(data) { result in
-			Task { @MainActor in
-				switch result {
-				case .success:
-					Self.logger.debug("FeedlyAccountDelegate: OPML import finished")
-					self.refreshProgress.completeTask()
-					self.isOPMLImportInProgress = false
-					DispatchQueue.main.async {
-						completion(.success(()))
-					}
-				case .failure(let error):
-					Self.logger.error("FeedlyAccountDelegate: OPML import failed: \(error.localizedDescription)")
-					self.refreshProgress.completeTask()
-					self.isOPMLImportInProgress = false
-					DispatchQueue.main.async {
-						let wrappedError = AccountError.wrapped(error, account)
-						completion(.failure(wrappedError))
-					}
-				}
+		do {
+			try await account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+				try await caller.importOPML(opmlData)
+				Self.logger.info("Feedly: Finished importing OPML")
 			}
+		} catch {
+			Self.logger.info("Feedly: OPML import failed: \(error.localizedDescription)")
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
+	func createFolder(name: String) async throws -> Folder {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		Self.logger.debug("FeedlyAccountDelegate: createFolder")
-		return try await withCheckedThrowingContinuation { continuation in
-			createFolder(for: account, name: name) { result in
-				continuation.resume(with: result)
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
+
+		return try await account.logActivity(kind: .createFolder, detail: name) {
+			let collection = try await caller.createCollection(named: name)
+			guard let folder = account.ensureFolder(with: collection.label) else {
+				// Is the name empty? Or one of the global resource names?
+				throw FeedlyAccountDelegateError.unableToAddFolder(name)
 			}
+			folder.externalID = collection.id
+			return folder
 		}
 	}
 
-	@MainActor func createFolder(for account: Account, name: String, completion: @escaping @Sendable (Result<Folder, Error>) -> Void) {
-
-		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
-
-		caller.createCollection(named: name) { result in
-			Task { @MainActor in
-				progress.completeTask()
-				switch result {
-				case .success(let collection):
-					if let folder = account.ensureFolder(with: collection.label) {
-						folder.externalID = collection.id
-						completion(.success(folder))
-					} else {
-						// Is the name empty? Or one of the global resource names?
-						completion(.failure(FeedlyAccountDelegateError.unableToAddFolder(name)))
-					}
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+	func renameFolder(with folder: Folder, to name: String) async throws {
+		guard let account else {
+			return
 		}
-	}
-
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: renameFolder")
-		try await withCheckedThrowingContinuation { continuation in
-			renameFolder(for: account, with: folder, to: name) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
 
-	@MainActor func renameFolder(for account: Account, with folder: Folder, to name: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
 		guard let id = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)))
-			}
+			throw FeedlyAccountDelegateError.unableToRenameFolder(folder.nameForDisplay, name)
 		}
 
 		let nameBefore = folder.name
-
-		caller.renameCollection(with: id, to: name) { result in
-			Task { @MainActor in
-				switch result {
-				case .success(let collection):
-					folder.name = collection.label
-					completion(.success(()))
-				case .failure(let error):
-					folder.name = nameBefore
-					completion(.failure(error))
-				}
-			}
-		}
-
+		// Optimistically apply the new name; revert on failure.
 		folder.name = name
-	}
-
-	@MainActor func removeFolder(for account: Account, with folder: Folder) async throws {
-		Self.logger.debug("FeedlyAccountDelegate: removeFolder")
-		try await withCheckedThrowingContinuation { continuation in
-			removeFolder(for: account, with: folder) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	private func removeFolder(for account: Account, with folder: Folder, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-		guard let id = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)))
-			}
-		}
-
-		let progress = refreshProgress
-		progress.addToNumberOfTasksAndRemaining(1)
-
-		caller.deleteCollection(with: id) { result in
-			Task { @MainActor in
-				progress.completeTask()
-
-				switch result {
-				case .success:
-					account.removeFolderFromTree(folder)
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
-		}
-	}
-
-	@MainActor func createFeed(for account: Account, url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
-		Self.logger.debug("FeedlyAccountDelegate: createFeed")
-		return try await withCheckedThrowingContinuation { continuation in
-			createFeed(for: account, url: urlString, name: name, container: container, validateFeed: validateFeed) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	@MainActor private func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool, completion: @escaping (Result<Feed, Error>) -> Void) {
 
 		do {
-			guard let credentials = credentials else {
-				throw FeedlyAccountDelegateError.notLoggedIn
+			try await account.logActivity(kind: .renameFolder, detail: "\(nameBefore ?? "") → \(name)") {
+				let collection = try await caller.renameCollection(with: id, to: name)
+				folder.name = collection.label
 			}
-
-			let addNewFeed = try FeedlyAddNewFeedOperation(account: account,
-														   credentials: credentials,
-														   url: url,
-														   feedName: name,
-														   searchService: caller,
-														   addToCollectionService: caller,
-														   syncUnreadIdsService: caller,
-														   getStreamContentsService: caller,
-														   database: syncDatabase,
-														   container: container,
-														   progress: refreshProgress)
-
-			addNewFeed.addCompletionHandler = { result in
-				completion(result)
-			}
-
-			operationQueue.add(addNewFeed)
-
 		} catch {
-			DispatchQueue.main.async {
-				completion(.failure(error))
-			}
+			folder.name = nameBefore
+			throw error
 		}
 	}
 
-	@MainActor func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
-		Self.logger.debug("FeedlyAccountDelegate: renameFeed")
-		try await withCheckedThrowingContinuation { continuation in
-			renameFeed(for: account, with: feed, to: name) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
-
-	@MainActor private func renameFeed(for account: Account, with feed: Feed, to name: String, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-		let folderCollectionIds = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
-		guard let collectionIds = folderCollectionIds, let collectionId = collectionIds.first else {
-			completion(.failure(FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)))
+	func removeFolder(with folder: Folder) async throws {
+		guard let account else {
 			return
 		}
+		Self.logger.debug("FeedlyAccountDelegate: removeFolder")
 
-		let feedId = FeedlyFeedResourceId(id: feed.feedID)
-		let editedNameBefore = feed.editedName
-
-		// Adding an existing feed updates it.
-		// Updating feed name in one folder/collection updates it for all folders/collections.
-		caller.addFeed(with: feedId, title: name, toCollectionWith: collectionId) { result in
-			Task { @MainActor in
-				switch result {
-				case .success:
-					completion(.success(()))
-
-				case .failure(let error):
-					feed.editedName = editedNameBefore
-					completion(.failure(error))
-				}
-			}
+		guard let id = folder.externalID else {
+			throw FeedlyAccountDelegateError.unableToRemoveFolder(folder.nameForDisplay)
 		}
 
-		// optimistically set the name
-		feed.editedName = name
-	}
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
 
-	@MainActor func addFeed(account: Account, feed: Feed, container: Container) async throws {
-		Self.logger.debug("FeedlyAccountDelegate: addFeed")
-		try await withCheckedThrowingContinuation { continuation in
-			addFeed(for: account, with: feed, to: container) { result in
-				continuation.resume(with: result)
-			}
+		try await account.logActivity(kind: .removeFolder, detail: folder.name ?? "") {
+			try await caller.deleteCollection(with: id)
+			account.removeFolderFromTree(folder)
 		}
 	}
 
-	@MainActor private func addFeed(for account: Account, with feed: Feed, to container: Container, completion: @escaping @MainActor (Result<Void, Error>) -> Void) {
+	@discardableResult
+	func createFeed(url urlString: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
+		Self.logger.debug("FeedlyAccountDelegate: createFeed")
+
+		guard let credentials else {
+			throw FeedlyAccountDelegateError.notLoggedIn
+		}
+
+		let (folder, collectionID) = try folderAndCollectionID(for: container)
+
+		refreshProgress.addTasks(5)
+		defer {
+			refreshProgress.completeTasks(5)
+		}
 
 		do {
-			guard let credentials = credentials else {
-				throw FeedlyAccountDelegateError.notLoggedIn
+			return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
+
+				let searchResponse = try await caller.getFeeds(for: urlString, count: 1, locale: Locale.current.identifier)
+				guard let firstResult = searchResponse.results.first else {
+					throw AccountError.createErrorNotFound
+				}
+				let feedResource = FeedlyFeedResourceID(id: firstResult.feedID)
+
+				let collectionFeeds = try await caller.addFeed(with: feedResource, title: name, toCollectionWith: collectionID)
+				guard collectionFeeds.contains(where: { $0.id == feedResource.id }) else {
+					throw AccountError.createErrorNotFound
+				}
+
+				syncFeedsForCollectionFolders([(collectionFeeds, folder)], in: account)
+
+				try await ingestUnreadArticleIDs(for: account, userID: credentials.username)
+				try await syncStreamContents(for: account, resource: feedResource, paginated: false, newerThan: nil)
+
+				guard let feed = folder.existingFeed(withFeedID: feedResource.id) else {
+					throw AccountError.createErrorNotFound
+				}
+				return feed
 			}
-
-			let resource = FeedlyFeedResourceId(id: feed.feedID)
-            let addExistingFeed = try FeedlyAddExistingFeedOperation(account: account,
-                                                                     credentials: credentials,
-                                                                     resource: resource,
-                                                                     service: caller,
-                                                                     container: container,
-																	 progress: refreshProgress,
-																	 customFeedName: feed.editedName)
-
-
-			addExistingFeed.addCompletionHandler = { result in
-				completion(result)
-			}
-
-			operationQueue.add(addExistingFeed)
-
 		} catch {
-			DispatchQueue.main.async {
-				completion(.failure(error))
-			}
+			throw AccountError.wrapped(error, account)
 		}
 	}
 
-	@MainActor func removeFeed(account: Account, feed: Feed, container: Container) async throws {
+	func renameFeed(with feed: Feed, to name: String) async throws {
+		guard let account else {
+			return
+		}
+		Self.logger.debug("FeedlyAccountDelegate: renameFeed")
+
+		let folderCollectionIDs = account.folders?.filter { $0.has(feed) }.compactMap { $0.externalID }
+		guard let collectionID = folderCollectionIDs?.first else {
+			throw FeedlyAccountDelegateError.unableToRenameFeed(feed.nameForDisplay, name)
+		}
+
+		let editedNameBefore = feed.editedName
+		// Optimistically set the name; revert on failure.
+		feed.editedName = name
+
+		do {
+			try await account.logActivity(kind: .renameFeed, detail: feed.url) {
+				let feedResource = FeedlyFeedResourceID(id: feed.feedID)
+				// Adding an existing feed updates it.
+				// Updating a feed name in one folder/collection updates it for all folders/collections.
+				_ = try await caller.addFeed(with: feedResource, title: name, toCollectionWith: collectionID)
+			}
+		} catch {
+			feed.editedName = editedNameBefore
+			throw error
+		}
+	}
+
+	func addFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
+		Self.logger.debug("FeedlyAccountDelegate: addFeed")
+
+		guard credentials != nil else {
+			throw FeedlyAccountDelegateError.notLoggedIn
+		}
+
+		let (folder, collectionID) = try folderAndCollectionID(for: container)
+
+		refreshProgress.addTask()
+		defer {
+			refreshProgress.completeTask()
+		}
+
+		try await account.logActivity(kind: .addFeed, detail: feed.url) {
+			let resource = FeedlyFeedResourceID(id: feed.feedID)
+			let collectionFeeds = try await caller.addFeed(with: resource, title: feed.editedName, toCollectionWith: collectionID)
+			guard collectionFeeds.contains(where: { $0.id == resource.id }) else {
+				throw AccountError.createErrorNotFound
+			}
+			syncFeedsForCollectionFolders([(collectionFeeds, folder)], in: account)
+		}
+	}
+
+	func removeFeed(feed: Feed, container: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: removeFeed")
-		try await withCheckedThrowingContinuation { continuation in
-			removeFeed(for: account, with: feed, from: container) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
 
-	private func removeFeed(for account: Account, with feed: Feed, from container: Container, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-		guard let folder = container as? Folder, let collectionId = folder.externalID else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)))
-			}
+		guard let folder = container as? Folder, let collectionID = folder.externalID else {
+			throw FeedlyAccountDelegateError.unableToRemoveFeed(feed.nameForDisplay)
 		}
 
-		caller.removeFeed(feed.feedID, fromCollectionWith: collectionId) { result in
-			Task { @MainActor in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					folder.addFeedToTreeAtTopLevel(feed)
-					completion(.failure(error))
-				}
-			}
-		}
-
+		// Optimistically remove the feed; restore on failure.
 		folder.removeFeedFromTreeAtTopLevel(feed)
+
+		do {
+			try await account.logActivity(kind: .removeFeed, detail: feed.url) {
+				try await caller.removeFeed(feed.feedID, fromCollectionWith: collectionID)
+			}
+		} catch {
+			folder.addFeedToTreeAtTopLevel(feed)
+			throw error
+		}
 	}
 
-	@MainActor func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: moveFeed")
-		try await withCheckedThrowingContinuation{ continuation in
-			moveFeed(for: account, with: feed, from: sourceContainer, to: destinationContainer) { result in
-				continuation.resume(with: result)
+
+		guard let from = sourceContainer as? Folder, let to = destinationContainer as? Folder,
+		      let fromCollectionID = from.externalID, let toCollectionID = to.externalID else {
+			throw FeedlyAccountDelegateError.addFeedChooseFolder
+		}
+
+		let resource = FeedlyFeedResourceID(id: feed.feedID)
+
+		try await account.logActivity(kind: .moveFeed, detail: feed.url) {
+			// Optimistically move the feed.
+			from.removeFeedFromTreeAtTopLevel(feed)
+			to.addFeedToTreeAtTopLevel(feed)
+
+			do {
+				_ = try await caller.addFeed(with: resource, title: feed.editedName, toCollectionWith: toCollectionID)
+			} catch {
+				from.addFeedToTreeAtTopLevel(feed)
+				to.removeFeedFromTreeAtTopLevel(feed)
+				throw error
+			}
+
+			do {
+				try await caller.removeFeed(feed.feedID, fromCollectionWith: fromCollectionID)
+			} catch {
+				from.addFeedToTreeAtTopLevel(feed)
+				throw FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)
 			}
 		}
 	}
 
-	@MainActor private func moveFeed(for account: Account, with feed: Feed, from: Container, to: Container, completion: @escaping @Sendable (Result<Void, Error>) -> Void) {
-		guard let from = from as? Folder, let to = to as? Folder else {
-			return DispatchQueue.main.async {
-				completion(.failure(FeedlyAccountDelegateError.addFeedChooseFolder))
-			}
+	func restoreFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
 		}
-
-		addFeed(for: account, with: feed, to: to) { [weak self] addResult in
-			Task { @MainActor in
-				switch addResult {
-					// now that we have added the feed, remove it from the other collection
-				case .success:
-					self?.removeFeed(for: account, with: feed, from: from) { removeResult in
-						Task { @MainActor in
-							switch removeResult {
-							case .success:
-								completion(.success(()))
-							case .failure:
-								from.addFeedToTreeAtTopLevel(feed)
-								completion(.failure(FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)))
-							}
-						}
-					}
-				case .failure(let error):
-					from.addFeedToTreeAtTopLevel(feed)
-					to.removeFeedFromTreeAtTopLevel(feed)
-					completion(.failure(error))
-				}
-			}
-		}
-
-		// optimistically move the feed, undoing as appropriate to the failure
-		from.removeFeedFromTreeAtTopLevel(feed)
-		to.addFeedToTreeAtTopLevel(feed)
-	}
-
-	@MainActor func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
 		Self.logger.debug("FeedlyAccountDelegate: restoreFeed")
-		try await withCheckedThrowingContinuation { continuation in
-			restoreFeed(for: account, feed: feed, container: container) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
 
-	@MainActor private func restoreFeed(for account: Account, feed: Feed, container: Container, completion: @escaping (Result<Void, Error>) -> Void) {
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
-			account.addFeed(existingFeed, to: container) { result in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			try await account.addFeed(existingFeed, container: container)
 		} else {
-			createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true) { result in
-				switch result {
-				case .success:
-					completion(.success(()))
-				case .failure(let error):
-					completion(.failure(error))
-				}
-			}
+			_ = try await createFeed(url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
-	@MainActor func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: restoreFolder")
-		try await withCheckedThrowingContinuation { continuation in
-			restoreFolder(for: account, folder: folder) { result in
-				continuation.resume(with: result)
-			}
-		}
-	}
 
-	@MainActor private func restoreFolder(for account: Account, folder: Folder, completion: @escaping (Result<Void, Error>) -> Void) {
-		let group = DispatchGroup()
+		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+			for feed in folder.topLevelFeeds {
 
-		for feed in folder.topLevelFeeds {
+				folder.topLevelFeeds.remove(feed)
 
-			folder.topLevelFeeds.remove(feed)
-
-			group.enter()
-			restoreFeed(for: account, feed: feed, container: folder) { result in
-				group.leave()
-				switch result {
-				case .success:
-					break
-				case .failure(let error):
+				do {
+					try await restoreFeed(feed: feed, container: folder)
+				} catch {
 					Self.logger.error("Feedly: Restore folder feed error: \(error.localizedDescription)")
-					self.postSyncError(error, account: account, operation: "Restoring feed")
+					postSyncError(error, account: account, operation: "Restoring feed")
 				}
 			}
-		}
-
-		group.notify(queue: .main) {
 			account.addFolderToTree(folder)
-			completion(.success(()))
 		}
 	}
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: markArticles")
-		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
-		let syncStatuses = Set(articles.map { article in
-			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+
+		let changedArticleIDs = await account.updateStatusesAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(changedArticleIDs.map { articleID in
+			SyncStatus(articleID: articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
-		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
-			sendArticleStatus(for: account) { _ in }
+		await syncDatabase.insertStatuses(syncStatuses)
+		if !syncStatuses.isEmpty {
+			lastNoChangeSyncDate = nil
+			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
+		}
+		if let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
+			try await sendArticleStatus()
 		}
 	}
 
-	func accountDidInitialize(_ account: Account) {
+	func accountDidInitialize() {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: accountDidInitialize")
-		initializedAccount = account
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("FeedlyAccountDelegate: accountWillBeDeleted")
-		let logout = FeedlyLogoutOperation(account: account, service: caller)
-		// Dispatch on the shared queue because the lifetime of the account delegate is uncertain.
-		FeedlyMainThreadOperationQueue.shared.add(logout)
+
+		// Capture `caller` so the logout outlives the delegate.
+		Task { @MainActor [caller] in
+			do {
+				try await account.logActivity(kind: .validateCredentials, detail: "Logging out of Feedly") {
+					try await caller.logout()
+					try? account.removeCredentials(type: .oauthAccessToken)
+					try? account.removeCredentials(type: .oauthRefreshToken)
+				}
+			} catch {
+				Self.logger.error("Feedly: Logout failed: \(error.localizedDescription)")
+			}
+		}
 	}
 
-	static func validateCredentials(transport: any Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		Self.logger.debug("FeedlyAccountDelegate: validateCredentials")
-		assertionFailure("An account instance should enqueue an \(FeedlyRefreshAccessTokenOperation.self) instead.")
+		// Feedly accounts validate via the OAuth refresh-token flow rather than this entry point.
+		assertionFailure("An account instance should refresh its access token instead of calling validateCredentials.")
 		return credentials
 	}
 
-	func vacuumDatabases() {
-		Task {
+	func vacuumDatabases() async {
+		guard let account else {
+			return
+		}
+		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}
 
 	// MARK: Suspend and Resume (for iOS)
 
-	/// Suspend all network activity
+	/// Suspend all network activity.
 	func suspendNetwork() {
 		Self.logger.debug("FeedlyAccountDelegate: suspendNetwork")
 		caller.suspend()
-		operationQueue.cancelAllOperations()
 	}
 
-	/// Suspend the SQLLite databases
-	func suspendDatabase() {
-		Self.logger.debug("FeedlyAccountDelegate: suspendDatabase")
-		syncDatabase.suspend()
-	}
-
-	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume(account: Account) {
+	/// Resume network activity after a previous `suspendNetwork()`.
+	func resume() {
 		Self.logger.debug("FeedlyAccountDelegate: resume")
-		if credentials == nil {
+		if let account, credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
 		}
-		syncDatabase.resume()
 		caller.resume()
 	}
 
 	// MARK: - Notifications
 
-	@objc func downloadProgressDidChange(_ notification: Notification) {
+	@objc func progressInfoDidChange(_ notification: Notification) {
 		progressInfo = refreshProgress.progressInfo
+	}
+}
+
+// MARK: - Sync Phases
+
+private extension FeedlyAccountDelegate {
+
+	/// Feedly requires feeds to live inside a folder (collection). Validate the container and
+	/// pull out the folder plus its Feedly collection ID.
+	func folderAndCollectionID(for container: Container) throws -> (folder: Folder, collectionID: String) {
+		guard let folder = container as? Folder else {
+			throw FeedlyAccountDelegateError.addFeedChooseFolder
+		}
+		guard let collectionID = folder.externalID else {
+			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder.nameForDisplay)
+		}
+		return (folder, collectionID)
+	}
+
+	@discardableResult
+	func refreshFeedList(for account: Account) async throws -> FeedListChanges {
+		let successMessage: (FeedListChanges) -> String? = { changes in
+			Self.feedListMessage(changes: changes)
+		}
+		let durationIsSignificant: (FeedListChanges) -> Bool = { changes in
+			changes.totalChanged > 0
+		}
+
+		do {
+			return try await account.logActivity(kind: .refreshFeedList, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> FeedListChanges in
+				// Snapshot before reconciliation so we can diff what actually changed.
+				let foldersBefore = account.folders ?? Set()
+				let feedsBefore = account.flattenedFeeds()
+				let feedNamesBefore = Dictionary(uniqueKeysWithValues: feedsBefore.map { ($0.feedID, $0.nameForDisplay) })
+
+				let collections = try await caller.getCollections()
+				let pairs = mirrorCollectionsAsFolders(collections, in: account)
+				syncFeedsForCollectionFolders(pairs, in: account)
+
+				let foldersAfter = account.folders ?? Set()
+				let feedsAfter = account.flattenedFeeds()
+
+				let feedsRenamed = feedsAfter.reduce(into: 0) { count, feed in
+					if let before = feedNamesBefore[feed.feedID], before != feed.nameForDisplay {
+						count += 1
+					}
+				}
+
+				return FeedListChanges(
+					foldersAdded: foldersAfter.subtracting(foldersBefore).count,
+					foldersRemoved: foldersBefore.subtracting(foldersAfter).count,
+					feedsAdded: feedsAfter.subtracting(feedsBefore).count,
+					feedsRemoved: feedsBefore.subtracting(feedsAfter).count,
+					feedsRenamed: feedsRenamed)
+			}
+		} catch {
+			postSyncError(error, account: account, operation: "Refreshing feed list")
+			throw error
+		}
+	}
+
+	/// Pages through global.all stream IDs, creating a status for each so that downstream
+	/// status sync has something to attach to.
+	func ingestStreamArticleIDs(for account: Account, userID: String) async throws {
+		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+		_ = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0) article IDs" }, { () -> Int in
+			var total = 0
+			var continuation: String?
+			repeat {
+				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil) })
+				await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
+				total += page.ids.count
+				continuation = page.continuation
+			} while continuation != nil
+			return total
+		})
+	}
+
+	/// Mirror the remote unread set onto local statuses.
+	/// Articles in the remote unread set become unread locally; the rest become read.
+	/// Pending local edits are excluded so we don't temporarily clobber them.
+	/// Returns counts of articles whose unread status actually flipped:
+	/// `added` became unread, `removed` became read.
+	@discardableResult
+	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
+		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: true)
+
+		let pendingArticleIDs = (await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
+
+		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
+
+		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
+		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs)
+
+		await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
+		await account.markAsReadAsync(articleIDs: toMarkRead)
+
+		return (added: newlyUnread.count, removed: toMarkRead.count)
+	}
+
+	/// Mirror the remote starred set onto local statuses.
+	/// Returns counts of articles whose starred status actually flipped:
+	/// `added` became starred, `removed` became unstarred.
+	@discardableResult
+	func ingestStarredArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
+		let resource = FeedlyTagResourceID.Global.saved(for: userID)
+		let remoteStarredIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
+
+		let pendingArticleIDs = (await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
+
+		let localStarredIDs = await account.fetchStarredArticleIDsAsync()
+
+		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
+		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs)
+
+		await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
+		await account.markAsUnstarredAsync(articleIDs: toUnstar)
+
+		return (added: newlyStarred.count, removed: toUnstar.count)
+	}
+
+	/// IDs of articles updated on Feedly since `newerThan`.
+	/// When `newerThan` is nil, returns an empty set (everything is new, nothing is updated).
+	func updatedArticleIDs(for account: Account, userID: String, newerThan: Date?) async throws -> Set<String> {
+		guard let newerThan else {
+			Self.logger.debug("Feedly: No date provided so everything must be new (nothing is updated)")
+			return Set<String>()
+		}
+		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+		let ids = try await account.logActivity(kind: .fetchArticleIDs, detail: "Updated articles", successMessage: { "\($0.count) article IDs" }, { () -> Set<String> in
+			try await self.collectStreamIDs(for: account, resource: resource, kind: .fetchArticleIDs, newerThan: newerThan)
+		})
+		Self.logger.info("Feedly: Articles updated since last successful sync start date: \(ids.count)")
+		return ids
+	}
+
+	/// Page through stream IDs for `resource`, returning the union of every page.
+	/// Each page is logged as a numbered sub-activity of `kind`.
+	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> Set<String> {
+		var collected = Set<String>()
+		var continuation: String?
+		repeat {
+			let page = try await logRefreshPage(for: account, kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
+			collected.formUnion(page.ids)
+			continuation = page.continuation
+		} while continuation != nil
+		return collected
+	}
+
+	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
+	/// sub-activity of `kind`, reporting the page's item count.
+	private func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
+		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
+	}
+
+	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks.
+	/// Returns the count of articles ingested.
+	@discardableResult
+	func downloadEntries(for account: Account, articleIDs: Set<String>) async throws -> Int {
+		guard !articleIDs.isEmpty else {
+			return 0
+		}
+
+		Self.logger.info("Feedly: Requesting \(articleIDs.count) articles")
+
+		do {
+			return try await account.logActivity(kind: .refreshMissingArticles) { () -> Int in
+				var ingested = 0
+				let chunks = Array(articleIDs).chunked(into: Self.articleDownloadChunkSize)
+				for chunk in chunks {
+					let entries = try await self.logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
+					await self.ingest(entries: entries, into: account)
+					ingested += entries.count
+				}
+				return ingested
+			}
+		} catch {
+			postSyncError(error, account: account, operation: "Downloading articles")
+			throw error
+		}
+	}
+
+	/// Pull stream contents for `resource`, optionally paginated, and update the account.
+	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?) async throws {
+		var continuation: String?
+		repeat {
+			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
+			await ingest(entries: stream.items, into: account)
+			continuation = paginated ? stream.continuation : nil
+		} while continuation != nil
+	}
+
+	func ingest(entries: [FeedlyEntry], into account: Account) async {
+		let parsedItems = entries.compactMap { FeedlyEntryParser(entry: $0).parsedItemRepresentation }
+		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { $0.feedURL }).mapValues { Set($0) }
+		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 }
 
@@ -730,37 +896,176 @@ private extension FeedlyAccountDelegate {
 	}
 }
 
+// MARK: - FeedlyAPICallerDelegate
+
 extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 
-	@MainActor func reauthorizeFeedlyAPICaller(_ caller: FeedlyAPICaller, completionHandler: @escaping (Bool) -> ()) {
+	/// The caller invokes this on a 401 to refresh the OAuth credentials before retrying.
+	/// Storing credentials updates `self.credentials` via `Account.storeCredentials`, which in turn
+	/// hands the fresh access token to the caller.
+	func reauthorizeFeedlyAPICaller() async -> Bool {
 		Self.logger.debug("FeedlyAccountDelegate: reauthorizeFeedlyAPICaller")
-		guard let account = initializedAccount else {
-			completionHandler(false)
-			return
+
+		guard let account else {
+			return false
 		}
 
-		/// Captures a failure to refresh a token, assuming that it was refreshed unless told otherwise.
-		final class RefreshAccessTokenOperationDelegate: FeedlyOperationDelegate {
+		do {
+			try await account.logActivity(kind: .validateCredentials, detail: "Refreshing access token") {
+				guard let refreshCredentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
+					Self.logger.error("Feedly: Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
+					throw WebserviceError.httpError(status: 403)
+				}
 
-			private(set) var didReauthorize = true
+				Self.logger.info("Feedly: Refreshing access token")
+				let refreshRequest = OAuthRefreshAccessTokenRequest(refreshToken: refreshCredentials.secret, scope: nil, client: oauthAuthorizationClient)
+				let response = try await caller.refreshAccessToken(refreshRequest)
 
-			func feedlyOperation(_ operation: FeedlyOperation, didFailWith error: Error) {
-				didReauthorize = false
+				// Store the refresh token first because `Account.storeCredentials` propagates
+				// the new value to this delegate; we want the access token to win that race.
+				if let refreshToken = response.refreshToken {
+					let newRefreshCredentials = Credentials(type: .oauthRefreshToken, username: response.id, secret: refreshToken)
+					try account.storeCredentials(newRefreshCredentials)
+				}
+
+				let newAccessCredentials = Credentials(type: .oauthAccessToken, username: response.id, secret: response.accessToken)
+				try account.storeCredentials(newAccessCredentials)
 			}
+			return true
+		} catch {
+			Self.logger.error("Feedly: Refresh access token failed: \(error.localizedDescription)")
+			return false
 		}
+	}
+}
 
-		let refreshAccessToken = FeedlyRefreshAccessTokenOperation(account: account, service: self, oauthClient: oauthAuthorizationClient)
-		refreshAccessToken.downloadProgress = refreshProgress
+// MARK: - Activity Log Messages
 
-		/// This must be strongly referenced by the completionBlock of the `FeedlyRefreshAccessTokenOperation`.
-		let refreshAccessTokenDelegate = RefreshAccessTokenOperationDelegate()
-		refreshAccessToken.delegate = refreshAccessTokenDelegate
+extension FeedlyAccountDelegate {
 
-		refreshAccessToken.completionBlock = { operation in
-			assert(Thread.isMainThread)
-			completionHandler(refreshAccessTokenDelegate.didReauthorize && !operation.isCanceled)
+	/// Counts of articles whose status actually flipped during a refresh.
+	struct StatusRefreshCounts {
+		var unreadAdded = 0
+		var unreadRemoved = 0
+		var starredAdded = 0
+		var starredRemoved = 0
+
+		var totalChanged: Int {
+			unreadAdded + unreadRemoved + starredAdded + starredRemoved
 		}
+	}
 
-		FeedlyMainThreadOperationQueue.shared.add(refreshAccessToken)
+	/// Counts of folder/feed structural changes during a feed-list refresh.
+	struct FeedListChanges {
+		var foldersAdded = 0
+		var foldersRemoved = 0
+		var feedsAdded = 0
+		var feedsRemoved = 0
+		var feedsRenamed = 0
+
+		var totalChanged: Int {
+			foldersAdded + foldersRemoved + feedsAdded + feedsRemoved + feedsRenamed
+		}
+	}
+
+	/// Aggregate counts produced by a full account refresh.
+	struct RefreshAllSummary {
+		var statusesSent = 0
+		var feedListChanges = FeedListChanges()
+		var statusRefreshCounts = StatusRefreshCounts()
+		var articlesDownloaded = 0
+	}
+
+	static func sendStatusMessage(count: Int) -> String {
+		if count == 0 {
+			return "No statuses to send"
+		}
+		return "\(count) status\(count == 1 ? "" : "es") sent"
+	}
+
+	static func refreshStatusMessage(counts: StatusRefreshCounts) -> String {
+		var parts = [String]()
+		if counts.unreadAdded > 0 {
+			parts.append("\(counts.unreadAdded) marked unread")
+		}
+		if counts.unreadRemoved > 0 {
+			parts.append("\(counts.unreadRemoved) marked read")
+		}
+		if counts.starredAdded > 0 {
+			parts.append("\(counts.starredAdded) starred")
+		}
+		if counts.starredRemoved > 0 {
+			parts.append("\(counts.starredRemoved) unstarred")
+		}
+		if parts.isEmpty {
+			return "No changes"
+		}
+		return parts.joined(separator: ", ")
+	}
+
+	static func feedListMessage(changes: FeedListChanges) -> String {
+		var parts = [String]()
+		if changes.foldersAdded > 0 {
+			parts.append("\(changes.foldersAdded) folder\(changes.foldersAdded == 1 ? "" : "s") added")
+		}
+		if changes.foldersRemoved > 0 {
+			parts.append("\(changes.foldersRemoved) folder\(changes.foldersRemoved == 1 ? "" : "s") removed")
+		}
+		if changes.feedsAdded > 0 {
+			parts.append("\(changes.feedsAdded) feed\(changes.feedsAdded == 1 ? "" : "s") added")
+		}
+		if changes.feedsRemoved > 0 {
+			parts.append("\(changes.feedsRemoved) feed\(changes.feedsRemoved == 1 ? "" : "s") removed")
+		}
+		if changes.feedsRenamed > 0 {
+			parts.append("\(changes.feedsRenamed) feed\(changes.feedsRenamed == 1 ? "" : "s") renamed")
+		}
+		if parts.isEmpty {
+			return "No changes"
+		}
+		return parts.joined(separator: ", ")
+	}
+
+	static func refreshAllMessage(summary: RefreshAllSummary) -> String {
+		var parts = [String]()
+		if summary.articlesDownloaded > 0 {
+			parts.append("\(summary.articlesDownloaded) article\(summary.articlesDownloaded == 1 ? "" : "s") downloaded")
+		}
+		let refresh = summary.statusRefreshCounts
+		if refresh.unreadAdded > 0 {
+			parts.append("\(refresh.unreadAdded) marked unread")
+		}
+		if refresh.unreadRemoved > 0 {
+			parts.append("\(refresh.unreadRemoved) marked read")
+		}
+		if refresh.starredAdded > 0 {
+			parts.append("\(refresh.starredAdded) starred")
+		}
+		if refresh.starredRemoved > 0 {
+			parts.append("\(refresh.starredRemoved) unstarred")
+		}
+		if summary.statusesSent > 0 {
+			parts.append("\(summary.statusesSent) status\(summary.statusesSent == 1 ? "" : "es") sent")
+		}
+		let feedList = summary.feedListChanges
+		if feedList.foldersAdded > 0 {
+			parts.append("\(feedList.foldersAdded) folder\(feedList.foldersAdded == 1 ? "" : "s") added")
+		}
+		if feedList.foldersRemoved > 0 {
+			parts.append("\(feedList.foldersRemoved) folder\(feedList.foldersRemoved == 1 ? "" : "s") removed")
+		}
+		if feedList.feedsAdded > 0 {
+			parts.append("\(feedList.feedsAdded) feed\(feedList.feedsAdded == 1 ? "" : "s") added")
+		}
+		if feedList.feedsRemoved > 0 {
+			parts.append("\(feedList.feedsRemoved) feed\(feedList.feedsRemoved == 1 ? "" : "s") removed")
+		}
+		if feedList.feedsRenamed > 0 {
+			parts.append("\(feedList.feedsRenamed) feed\(feedList.feedsRenamed == 1 ? "" : "s") renamed")
+		}
+		if parts.isEmpty {
+			return "No changes"
+		}
+		return parts.joined(separator: ", ")
 	}
 }

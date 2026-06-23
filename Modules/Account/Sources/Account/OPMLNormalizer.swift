@@ -11,16 +11,16 @@ import RSParser
 
 final class OPMLNormalizer {
 
-	var normalizedOPMLItems = [RSOPMLItem]()
+	var normalizedOPMLItems = [OPMLItem]()
 
-	static func normalize(_ items: [RSOPMLItem]) -> [RSOPMLItem] {
+	static func normalize(_ items: [OPMLItem]) -> [OPMLItem] {
 		let opmlNormalizer = OPMLNormalizer()
 		opmlNormalizer.normalize(items)
 		return opmlNormalizer.normalizedOPMLItems
 	}
 
-	private func normalize(_ items: [RSOPMLItem], parentFolder: RSOPMLItem? = nil) {
-		var feedsToAdd = [RSOPMLItem]()
+	private func normalize(_ items: [OPMLItem], parentFolder: OPMLItem? = nil) {
+		var feedsToAdd = [OPMLItem]()
 
 		for item in items {
 

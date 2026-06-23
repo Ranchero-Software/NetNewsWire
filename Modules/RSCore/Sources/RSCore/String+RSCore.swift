@@ -7,8 +7,9 @@
 //
 
 import Foundation
-import CommonCrypto
-import RSCoreObjC
+import CryptoKit
+
+private let hexDigits: [UInt8] = Array("0123456789abcdef".utf8)
 
 public extension String {
 
@@ -23,12 +24,20 @@ public extension String {
 		return link.htmlByAddingLink(link)
 	}
 
-    func hmacUsingSHA1(key: String) -> String {
-        var digest = [UInt8](repeating: 0, count: Int(CC_SHA1_DIGEST_LENGTH))
-        CCHmac(CCHmacAlgorithm(kCCHmacAlgSHA1), key, key.count, self, self.count, &digest)
-        let data = Data(digest)
-        return data.map { String(format: "%02hhx", $0) }.joined()
-    }
+	/// HMAC-SHA1 of `self` (as UTF-8 bytes) using `key` (as UTF-8 bytes),
+	/// formatted as 40 lowercase hex characters.
+	func hmacUsingSHA1(key: String) -> String {
+		let symmetricKey = SymmetricKey(data: Data(key.utf8))
+		let mac = HMAC<Insecure.SHA1>.authenticationCode(for: Data(utf8), using: symmetricKey)
+		var hex = [UInt8](repeating: 0, count: mac.byteCount * 2)
+		var i = 0
+		for byte in mac {
+			hex[i]     = hexDigits[Int(byte >> 4)]
+			hex[i + 1] = hexDigits[Int(byte & 0x0F)]
+			i += 2
+		}
+		return String(decoding: hex, as: UTF8.self)
+	}
 }
 
 public extension String {
@@ -37,16 +46,64 @@ public extension String {
 		self.data(using: .utf8)!.md5Hash
 	}
 
-	/// A hexadecimal representation of an MD5 hash of the string's UTF-8 representation.
+	/// MD5 hash of the string's UTF-8 bytes, formatted as 32 lowercase hex characters.
+	/// Defined for the empty string — MD5("") is "d41d8cd98f00b204e9800998ecf8427e".
 	var md5String: String {
-		self.md5Hash.hexadecimalString!
+		let digest = Insecure.MD5.hash(data: Data(utf8))
+		// Build the 32-byte hex buffer directly from the 16 digest bytes — no per-byte
+		// String allocations, no printf format-string parsing.
+		var hex = [UInt8](repeating: 0, count: 32)
+		var i = 0
+		for byte in digest {
+			hex[i]     = hexDigits[Int(byte >> 4)]
+			hex[i + 1] = hexDigits[Int(byte & 0x0F)]
+			i += 2
+		}
+		return String(decoding: hex, as: UTF8.self)
 	}
 
-	/// Trims leading and trailing whitespace, and collapses other whitespace into a single space.
+	/// Trims leading and trailing whitespace and collapses other whitespace into a single space.
+	///
+	/// The original version used `trimmingCharacters` and `replacingOccurrences`
+	/// with regex: `"\\s+"`
+	///
+	/// This faster version loops through UTF-8 bytes. Handles the six
+	/// ASCII whitespace characters matched by NSRegularExpression's `\s`
+	/// (space, tab, LF, VT, FF, CR). Non-ASCII bytes pass through unchanged —
+	/// same as the regex version.
 	var collapsingWhitespace: String {
-		var dest = self
-		dest = dest.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-		return dest.replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+		let spaceByte = UInt8(ascii: " ")
+		let tabByte = UInt8(ascii: "\t")
+		let crByte = UInt8(ascii: "\r")
+
+		let utf8 = self.utf8
+		var out = [UInt8]()
+		out.reserveCapacity(utf8.count)
+
+		var sawNonSpace = false
+		var pendingSpace = false
+
+		for byte in utf8 {
+			if byte == spaceByte || (byte >= tabByte && byte <= crByte) {
+				// Is whitespace. Emit at most one space —
+				// and only after we've seen a non-space (skips
+				// leading whitespace).
+				if sawNonSpace {
+					pendingSpace = true
+				}
+				continue
+			}
+			if pendingSpace {
+				out.append(spaceByte)
+				pendingSpace = false
+			}
+			sawNonSpace = true
+			out.append(byte)
+		}
+		// Trailing `pendingSpace` is discarded — that's the "trim
+		// trailing whitespace" half of the behavior.
+
+		return String(decoding: out, as: UTF8.self)
 	}
 
 	/// Trims whitespace from the beginning and end of the string.
@@ -179,35 +236,6 @@ public extension String {
 		}
 
 		return self
-	}
-
-	/// Strips HTML from a string.
-	/// - Parameter maxCharacters: The maximum characters in the return string.
-	///	If `nil`, the whole string is used.
-	///
-	/// This function removes HTML tags and script/style content, collapses whitespace, and trims leading/trailing whitespace.
-	/// Works on plain text as well to trim and collapse whitespace.
-	///
-	/// History: the original implementation, written in Swift, took up about 10% of the work during scrolling the timeline,
-	/// and was the single biggest chunk of work during scrolling. (According to the Instruments Time Profiler.)
-	/// This replacement implementation takes up about 2%.
-	func strippingHTML(maxCharacters: Int? = nil) -> String {
-		self.withCString { cString in
-			let inputLength = strlen(cString)
-			let outputCapacity = inputLength + 1
-			let outputBuffer = UnsafeMutablePointer<CChar>.allocate(capacity: outputCapacity)
-			defer { outputBuffer.deallocate() }
-
-			_ = stripHTML(
-				cString,
-				inputLength,
-				outputBuffer,
-				outputCapacity,
-				maxCharacters ?? 0
-			)
-
-			return String(cString: outputBuffer)
-		}
 	}
 
 	/// A copy of an HTML string converted to plain text.

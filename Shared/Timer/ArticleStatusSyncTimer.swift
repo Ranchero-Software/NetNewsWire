@@ -12,13 +12,20 @@ import Account
 @MainActor final class ArticleStatusSyncTimer {
 	static let shared = ArticleStatusSyncTimer()
 
-	private static let intervalSeconds = Double(120)
+	private static let normalIntervalSeconds: TimeInterval = 120        // 2 minutes
+	private static let idleBackoffIntervalSeconds: TimeInterval = 1800  // 30 minutes
 
 	var shuttingDown = false
 
 	private var internalTimer: Timer?
 	private var lastTimedRefresh: Date?
 	private let launchTime = Date()
+	/// True when the most recent timed run was a no-op; the next fire is pushed out.
+	private var lastRunWasIdle = false
+
+	init() {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountDidQueueArticleStatuses(_:)), name: .AccountDidQueueArticleStatuses, object: nil)
+	}
 
 	func fireOldTimer() {
 		if let timer = internalTimer {
@@ -53,10 +60,11 @@ import Account
 			return
 		}
 
+		let interval = lastRunWasIdle ? Self.idleBackoffIntervalSeconds : Self.normalIntervalSeconds
 		let lastRefreshDate = lastTimedRefresh ?? launchTime
-		var nextRefreshTime = lastRefreshDate.addingTimeInterval(ArticleStatusSyncTimer.intervalSeconds)
+		var nextRefreshTime = lastRefreshDate.addingTimeInterval(interval)
 		if nextRefreshTime < Date() {
-			nextRefreshTime = Date().addingTimeInterval(ArticleStatusSyncTimer.intervalSeconds)
+			nextRefreshTime = Date().addingTimeInterval(interval)
 		}
 		if let currentNextFireDate = internalTimer?.fireDate, currentNextFireDate == nextRefreshTime {
 			return
@@ -78,6 +86,21 @@ import Account
 		lastTimedRefresh = Date()
 		update()
 
-		AccountManager.shared.syncArticleStatusAllWithoutWaiting()
+		Task {
+			let didWork = await AccountManager.shared.syncArticleStatusAll()
+			self.lastRunWasIdle = !didWork
+			// Re-schedule now that we know whether to back off.
+			self.update()
+		}
+	}
+
+	/// User-initiated status changes were queued — exit idle backoff so the
+	/// next fire happens on the normal cadence instead of 30 minutes out.
+	@objc func handleAccountDidQueueArticleStatuses(_ notification: Notification) {
+		guard lastRunWasIdle else {
+			return
+		}
+		lastRunWasIdle = false
+		update()
 	}
 }

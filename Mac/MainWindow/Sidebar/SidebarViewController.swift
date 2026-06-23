@@ -11,6 +11,7 @@ import RSTree
 import Articles
 import Account
 import RSCore
+import Images
 
 extension Notification.Name {
 	static let appleSideBarDefaultIconSizeChanged = Notification.Name("AppleSideBarDefaultIconSizeChanged")
@@ -98,7 +99,7 @@ extension Notification.Name {
 			}
 		}
 		expandNodes()
-
+		prefetchFeedIcons()
 	}
 
 	// MARK: State Restoration
@@ -303,7 +304,7 @@ extension Notification.Name {
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
-		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedFeed?.fetchUnreadArticles() {
+		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = singleSelectedFeed?.fetchUnreadArticles() {
 			if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) {
 				runCommand(markReadCommand)
 			}
@@ -457,6 +458,10 @@ extension Notification.Name {
 			expandedTable.insert(containerID)
 			delegate?.sidebarInvalidatedRestorationState(self)
 		}
+
+		var feeds = [Feed]()
+		collectExpandedFeeds(in: node, into: &feeds)
+		IconImageCache.shared.prefetchImagesForFeeds(feeds)
  	}
 
 	func outlineViewItemDidCollapse(_ notification: Notification) {
@@ -639,6 +644,24 @@ private extension SidebarViewController {
 			treeControllerDelegate.resetFilterExceptions()
 			outlineView.reloadData()
 			expandNodes()
+			prefetchFeedIcons()
+		}
+	}
+
+	func prefetchFeedIcons() {
+		var feeds = [Feed]()
+		collectExpandedFeeds(in: treeController.rootNode, into: &feeds)
+		IconImageCache.shared.prefetchImagesForFeeds(feeds)
+	}
+
+	private func collectExpandedFeeds(in node: Node, into feeds: inout [Feed]) {
+		for childNode in node.childNodes {
+			if let feed = childNode.representedObject as? Feed {
+				feeds.append(feed)
+			}
+			if outlineView.isItemExpanded(childNode) {
+				collectExpandedFeeds(in: childNode, into: &feeds)
+			}
 		}
 	}
 

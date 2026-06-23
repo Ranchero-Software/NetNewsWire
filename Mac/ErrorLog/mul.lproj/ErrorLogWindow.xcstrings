@@ -1,0 +1,60 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "k75-bg-mhK.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy Contents\"; ObjectID = \"k75-bg-mhK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy Contents"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar contenido"
+          }
+        }
+      }
+    },
+    "lKl-03-8bv.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Errors may contain feed URLs and other information you may not want to share publicly.\"; ObjectID = \"lKl-03-8bv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Errors may contain feed URLs and other information you may not want to share publicly."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Los errores pueden contener URL de fuentes y otra información que quizás no quieras compartir públicamente."
+          }
+        }
+      }
+    },
+    "QvC-M9-y7g.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Error Log\"; ObjectID = \"QvC-M9-y7g\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Log"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de errores"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

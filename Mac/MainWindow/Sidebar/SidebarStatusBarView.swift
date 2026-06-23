@@ -20,7 +20,7 @@ final class SidebarStatusBarView: NSView {
 
 	private var isAnimatingProgress = false
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 

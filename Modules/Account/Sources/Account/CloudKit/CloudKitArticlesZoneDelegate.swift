@@ -26,6 +26,16 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 	weak var articlesZone: CloudKitArticlesZone?
 	let syncErrorHandler: CloudKitSyncErrorHandler?
 
+	/// Number of records changed in the most recent sync.
+	private(set) var lastChangedCount = 0
+	/// Number of records deleted in the most recent sync.
+	private(set) var lastDeletedCount = 0
+
+	/// Running totals across all pages of the current `refreshArticles` call.
+	/// Reset by `resetAccumulation()`; accumulated in `cloudKitDidModify`.
+	private(set) var accumulatedChangedCount = 0
+	private(set) var accumulatedDeletedCount = 0
+
 	init(account: Account, database: SyncDatabase, articlesZone: CloudKitArticlesZone, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.syncDatabase = database
@@ -33,20 +43,24 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		self.syncErrorHandler = syncErrorHandler
 	}
 
-	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
-		do {
-			let pendingReadStatusArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
-			let pendingStarredStatusArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
+	func resetAccumulation() {
+		accumulatedChangedCount = 0
+		accumulatedDeletedCount = 0
+	}
 
-			await delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
-			try await update(records: changed,
-							 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
-							 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
-		} catch {
-			Self.logger.error("CloudKit: Error getting sync status records: \(error.localizedDescription)")
-			syncErrorHandler?(error, "Processing article updates", #fileID, #function, #line)
-			throw CloudKitZoneError.unknown
-		}
+	func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		lastChangedCount = changed.count
+		lastDeletedCount = deleted.count
+		accumulatedChangedCount += changed.count
+		accumulatedDeletedCount += deleted.count
+
+		let pendingReadStatusArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
+		let pendingStarredStatusArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
+
+		await delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
+		await update(records: changed,
+					 pendingReadStatusArticleIDs: pendingReadStatusArticleIDs,
+					 pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
 	}
 }
 
@@ -61,11 +75,11 @@ private extension CloudKitArticlesZoneDelegate {
 			return
 		}
 
-		try? await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
-		try? await account?.delete(articleIDs: deletableArticleIDs)
+		await syncDatabase.deleteSelectedForProcessing(deletableArticleIDs)
+		await account?.delete(articleIDs: deletableArticleIDs)
 	}
 
-	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>) async throws {
+	func update(records: [CKRecord], pendingReadStatusArticleIDs: Set<String>, pendingStarredStatusArticleIDs: Set<String>) async {
 
 		let receivedUnreadArticleIDs = Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "0" }).map({ stripPrefix($0.externalID) }))
 		let receivedReadArticleIDs =  Set(records.filter({ $0[CloudKitArticlesZone.CloudKitArticleStatus.Fields.read] == "1" }).map({ stripPrefix($0.externalID) }))
@@ -83,54 +97,20 @@ private extension CloudKitArticlesZoneDelegate {
 			return Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
 		}.value
 
-		nonisolated(unsafe) var updateError: Error?
-
-		do {
-			try await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing unread statuses: \(error.localizedDescription)")
-		}
-
-		do {
-			try await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing read statuses: \(error.localizedDescription)")
-		}
-
-		do {
-			try await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing unstarred statuses: \(error.localizedDescription)")
-		}
-
-		do {
-			try await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
-		} catch {
-			updateError = error
-			Self.logger.error("CloudKit: Error while storing starred statuses: \(error.localizedDescription)")
-		}
+		await self.account?.markAsUnreadAsync(articleIDs: updateableUnreadArticleIDs)
+		await self.account?.markAsReadAsync(articleIDs: updateableReadArticleIDs)
+		await self.account?.markAsUnstarredAsync(articleIDs: updateableUnstarredArticleIDs)
+		await self.account?.markAsStarredAsync(articleIDs: updateableStarredArticleIDs)
 
 		for (feedID, parsedItems) in feedIDsAndItems {
-			do {
-				guard let articleChanges = try await self.account?.updateAsync(feedID: feedID, parsedItems: parsedItems, deleteOlder: false) else {
-					continue
-				}
-				guard let deletes = articleChanges.deleted, !deletes.isEmpty else {
-					continue
-				}
-				let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
-				try? await self.syncDatabase.insertStatuses(syncStatuses)
-			} catch {
-				updateError = error
-				Self.logger.error("CloudKit: Error while storing articles: \(error.localizedDescription)")
+			guard let articleChanges = await self.account?.updateAsync(feedID: feedID, parsedItems: parsedItems, deleteOlder: false) else {
+				continue
 			}
-		}
-
-		if let updateError {
-			throw updateError
+			guard let deletes = articleChanges.deleted, !deletes.isEmpty else {
+				continue
+			}
+			let syncStatuses = Set(deletes.map { SyncStatus(articleID: $0.articleID, key: .deleted, flag: true) })
+			await self.syncDatabase.insertStatuses(syncStatuses)
 		}
 	}
 

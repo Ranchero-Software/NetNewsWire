@@ -261,4 +261,76 @@
 	"action": {
 		"type": "block"
 	}
+},
+{
+	"trigger": {
+		"url-filter": "adsrvr\\.org"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "demdex\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "facebook\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "go-mpulse\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "imrworldwide\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "liadm\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "omtrdc\\.net"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "rezync\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
+},
+{
+	"trigger": {
+		"url-filter": "rlcdn\\.com"
+	},
+	"action": {
+		"type": "block"
+	}
 }]

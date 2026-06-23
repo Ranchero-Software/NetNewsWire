@@ -38,7 +38,7 @@ final class AccountsFeedbinWindowController: NSWindowController {
 			noAccountTextField.isHidden = true
 			createNewAccountButton.isHidden = true
 		} else {
-			actionButton.title = NSLocalizedString("Create", comment: "Add Account")
+			actionButton.title = NSLocalizedString("Create", comment: "Create")
 			signInTextField.stringValue = NSLocalizedString("Sign in to your Feedbin account.", comment: "SignIn")
 		}
 

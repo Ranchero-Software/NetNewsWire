@@ -10,6 +10,7 @@ import UIKit
 import os
 import Account
 import Articles
+import Images
 
 enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	case automatic = 0

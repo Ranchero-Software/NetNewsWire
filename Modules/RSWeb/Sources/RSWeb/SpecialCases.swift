@@ -24,6 +24,37 @@ nonisolated public struct SpecialCase {
 		}
 		return false
 	}
+
+	/// Returns true if the URL’s host belongs to one of the supplied domains.
+	///
+	/// Unlike `urlStringContainSpecialCase`, this checks only the host component — not the path or query.
+	/// A leading `www.` on the URL’s host is treated as optional, so `example.com` in `domains` matches a host of either `example.com` or `www.example.com`.
+	/// Subdomains also match: `micro.blog` in `domains` matches a host of `gruber.micro.blog`.
+	/// The supplied `domains` are assumed to already be lowercased and to have any leading `www.` stripped.
+	public static func urlStringMatchesDomain(_ urlString: String, _ domains: [String]) -> Bool {
+		guard let url = URL(string: urlString), let host = url.host()?.lowercased(with: localeForLowercasing) else {
+			return false
+		}
+		let normalizedHost = stringByStrippingWWWPrefix(host)
+		for domain in domains {
+			if domain.isEmpty {
+				continue
+			}
+			if normalizedHost == domain || normalizedHost.hasSuffix("." + domain) {
+				return true
+			}
+		}
+		return false
+	}
+
+	private static let wwwPrefix = "www."
+
+	private static func stringByStrippingWWWPrefix(_ host: String) -> String {
+		if host.hasPrefix(wwwPrefix) {
+			return String(host.dropFirst(wwwPrefix.count))
+		}
+		return host
+	}
 }
 
 nonisolated extension URL {

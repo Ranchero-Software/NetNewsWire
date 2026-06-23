@@ -67,6 +67,10 @@
                  <type type="article" list="yes"/>
                  <cocoa key="selectedArticles"/>
              </property>
+             <property name="selected feeds" code="SelF" access="r" description="All feeds in the main window sidebar that are currently selected, if any. Folders and smart feeds are not included.">
+                 <type type="feed" list="yes"/>
+                 <cocoa key="selectedFeeds"/>
+             </property>
              <element type="account">
                  <cocoa key="accounts"/>
              </element>
@@ -76,6 +80,9 @@
              <element type="feed">
 				 <synonym name="webFeed"/>
                  <cocoa key="feeds"/>
+             </element>
+             <element type="feed">
+                 <cocoa key="selectedFeeds"/>
              </element>
          </class>
 
