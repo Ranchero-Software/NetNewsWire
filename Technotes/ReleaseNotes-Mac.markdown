@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.1b6 7105 23 June 2026 — branch: main tag: mac-7.1b6
+
+Exclude dinosaurs that have no articles in the database — we might just not have those articles yet
+Make Dinosaurs window text field live (don’t require committing editing)
+
 ### 7.1b5 7104 22 June 2026 — branch: main tag: mac-7.1b5
 
 Made timeline scrolling faster and smoother
