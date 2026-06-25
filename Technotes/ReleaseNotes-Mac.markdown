@@ -1,5 +1,30 @@
 # Mac Release Notes
 
+### 7.1 7106 25 June 2026 — branch: main tag: mac-7.1
+
+Changes since 7.0.6:
+
+Added Activity Log window — shows what the app has been doing <https://netnewswire.com/help/activity-log.html>
+Added Current Activity window — shows what the app is doing right now <https://netnewswire.com/help/current-activity.html>
+Added Account Stats window — shows per-account article and status counts and database sizes, plus a Vacuum Databases button <https://netnewswire.com/help/account-stats.html>
+Added Dinosaurs window — lists feeds that haven’t updated in n months (with a text field where you specify n) <https://netnewswire.com/help/dinosaurs.html>
+Started deleting feeds and folders optimistically from iCloud — sidebar updates immediately instead of waiting for the server
+Fixed a memory use issue with marking read/unread/starred/unstarred
+Made timeline scrolling faster and smoother
+Fixed bug where iCloud feed renames could fail on transient network errors — they’re now retried
+Started backing off Feedly status sync to 30 minutes between checks when the last sync had no changes
+Stopped feed refreshing while the Mac is asleep
+Started handling transient feed-refresh failures (DNS, certificate, etc.) by retrying after a few hours instead of treating them as permanent failures
+Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (`<s:variant>`, for instance)
+Added more trackers to the block list
+Fixed WebKit crash in the detail view caused by re-entrancy
+Started saving the response code for 4xx and 5xx responses so the error log shows the right info
+Reduced disk writes while syncing article statuses
+Fixed a crash that could happen when deleting Feedly folders
+Fixed a crash that could happen when building notification thumbnails
+Removed images from items in contextual menus in sidebar and timeline
+Fixed bug (introduced in 7.0.6) where newly-arrived articles weren’t added to the search index
+
 ### 7.1b6 7105 23 June 2026 — branch: main tag: mac-7.1b6
 
 Exclude dinosaurs that have no articles in the database — we might just not have those articles yet
