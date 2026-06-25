@@ -10,6 +10,7 @@
 			<title>NetNewsWire 7.1</title>
             <description><![CDATA[
   				<ul>
+  				<p>Changes since 7.0.6:</p>
 				  <li>Added <a href=https://netnewswire.com/help/activity-log.html>Activity Log</a> window — shows what the app has been doing
 				  <li>Added <a href=https://netnewswire.com/help/current-activity.html>Current Activity</a> window — shows what the app is doing right now
 				  <li>Added <a href=https://netnewswire.com/help/account-stats.html>Account Stats</a> window — shows per-account article and status counts and database sizes, plus a Vacuum Databases button
