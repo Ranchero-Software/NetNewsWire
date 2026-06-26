@@ -2,6 +2,43 @@
 
 ### 7.1 build 7105 23 June 2026 - branch: main tag: iOS-7.1-7105
 
+This was originally a TestFlight release. It was submitted to the App Store as the 7.1 release version on 26 June 2026.
+
+Changes since 7.0.6:
+
+Added Activity Log to Settings. It shows what the app has been doing <https://netnewswire.com/help/activity-log.html>
+Added Current Activity — open via new icon lower-left on Feeds screen. It shows what the app is doing right now <https://netnewswire.com/help/current-activity.html>
+Added Account Stats to Settings. It shows per-account article and status counts and database sizes, and includes a Vacuum Databases button <https://netnewswire.com/help/account-stats.html>
+Added 🦖 Dinosaurs to Settings. It lists feeds that haven’t published in a while (you pick the number of months) <https://netnewswire.com/help/dinosaurs.html>
+Made timeline scrolling faster and smoother
+Started deleting feeds and folders optimistically from iCloud — the sidebar updates immediately instead of waiting for the server
+Fixed bug where iCloud feed renames could fail on transient network errors — they’re now retried
+Started backing off Feedly status sync to 30 minutes between checks when the last sync had no changes, and waking it immediately when you mark articles read or unread
+Started handling transient feed-refresh failures (DNS, certificate, etc.) by retrying after a few hours instead of treating them as permanent failures
+Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (`<s:variant>`, for instance)
+Fixed bug where feed icons didn’t always appear promptly in the sidebar
+Added more trackers to the block list
+Started saving the response code for 4xx and 5xx responses so the error log shows the right info
+Moved the Confirm Mark All as Read setting to Timeline settings, where it belongs
+Fixed bug where the share sheet could get stuck after switching to another app and back
+Fixed image-viewer layout so the close and share buttons line up correctly on iPad
+Replaced Helvetica with the system font in the timeline subtitle
+Reduced disk writes while syncing article statuses
+Added contextual menus to copy the home page URL and feed URL in the feed inspector
+Added an accessibility action to expand and collapse folders on the Feeds screen
+Fixed bug (introduced in 7.0.6) where newly-arrived articles weren’t added to the search index
+Fixed a memory leak
+Fixed a crash during article page transitions
+Fixed a crash when dismissing the search bar on iOS 26
+Fixed a navigation-bar crash on iOS 26
+Fixed a crash caused by a dangling reference
+Fixed a crash that could happen when deleting Feedly folders
+Fixed a crash that could happen when building notification thumbnails
+Fixed a memory use issue with marking read/unread/starred/unstarred
+Fixed a hang that could happen when encoding widget data
+
+Changes since 7104:
+
 Exclude dinosaurs that have no articles in the database — we might just not have those articles yet
 
 ### 7.1 build 7104 22 June 2026 - branch: main tag: iOS-7.1-7104
