@@ -67,7 +67,7 @@ final class AccountsDetailViewController: NSViewController {
 
 		let hostingController = NSHostingController(rootView: viewWithDone)
 		let sheetWindow = NSWindow(contentViewController: hostingController)
-		sheetWindow.title = "Hide Read Articles Settings"
+		sheetWindow.title = "Global Overrides"
 		window.beginSheet(sheetWindow)
 	}
 
