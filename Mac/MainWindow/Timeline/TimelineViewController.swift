@@ -83,6 +83,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
 				seedReadFilterForFolders()
+				seedReadFilterFromOverrides()
 				unreadCount = 0
 
 				selectionDidChange(nil)
@@ -100,8 +101,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	var windowState: TimelineWindowState {
-		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo }
-		let readArticlesFilterStateValues = readFilterEnabledTable.values.compactMap( { $0 })
+		// Feed read-filter state lives in feedReadFilterOverrides (UserDefaults); window
+		// state persists only folder and smart-feed entries.
+		var readArticlesFilterStateKeys = [[String: String]]()
+		var readArticlesFilterStateValues = [Bool]()
+		for (sidebarItemID, hidesReadArticles) in readFilterEnabledTable {
+			if case .feed = sidebarItemID {
+				continue
+			}
+			readArticlesFilterStateKeys.append(sidebarItemID.userInfo)
+			readArticlesFilterStateValues.append(hidesReadArticles)
+		}
 
 		if selectedArticles.count == 1 {
 			let path = selectedArticles.first!.pathUserInfo
@@ -362,6 +372,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		AppDefaults.shared.feedReadFilterOverrides = cachedFeedReadFilterOverrides
 	}
 
+	/// Migrate a feed's legacy window-state read-filter setting into
+	/// feedReadFilterOverrides, without overwriting an existing override.
+	private func migrateLegacyFeedReadFilterIfNeeded(_ sidebarItemID: SidebarItemIdentifier, hiding: Bool) {
+		guard case let .feed(accountID, feedID) = sidebarItemID,
+			  cachedFeedReadFilterOverrides.override(accountID: accountID, feedID: feedID) == nil else {
+			return
+		}
+		persistFeedOverride(sidebarItemID, hiding: hiding)
+	}
+
 	func restoreState(from state: TimelineWindowState) {
 		for i in 0..<state.readArticlesFilterStateKeys.count {
 			if let sidebarItemID = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
@@ -371,6 +391,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				} else {
 					noteSidebarItemShowsReadArticles(sidebarItemID, persistOverride: false)
 				}
+				migrateLegacyFeedReadFilterIfNeeded(sidebarItemID, hiding: hidesReadArticles)
 			}
 		}
 
@@ -410,6 +431,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				} else {
 					noteSidebarItemShowsReadArticles(sidebarItemID, persistOverride: false)
 				}
+				migrateLegacyFeedReadFilterIfNeeded(sidebarItemID, hiding: hidesReadArticles)
 			}
 		}
 
@@ -1448,6 +1470,22 @@ private extension TimelineViewController {
 			if readFilterEnabledTable[sidebarItemID] == nil {
 				readFilterEnabledTable[sidebarItemID] = true
 			}
+		}
+	}
+
+	/// Seed the represented feed's read-filter state from feedReadFilterOverrides,
+	/// since feed entries are no longer restored from window state.
+	private func seedReadFilterFromOverrides() {
+		guard let representedObjects else {
+			return
+		}
+		for object in representedObjects {
+			guard let feed = object as? Feed, let sidebarItemID = feed.sidebarItemID,
+				  readFilterEnabledTable[sidebarItemID] == nil,
+				  let override = cachedFeedReadFilterOverrides.override(accountID: feed.accountID, feedID: feed.feedID) else {
+				continue
+			}
+			readFilterEnabledTable[sidebarItemID] = override == .hide
 		}
 	}
 
