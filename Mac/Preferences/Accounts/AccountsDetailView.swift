@@ -91,9 +91,10 @@ struct AccountsDetailView: View {
 				GridRow {
 					Color.clear
 						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Button("Read Article Filtering…") {
+					Button("Hide Read Articles Settings…") {
 						onHideReadOverrides?()
 					}
+					.fixedSize()
 					.padding(.top, 12)
 				}
 			}
