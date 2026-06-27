@@ -106,8 +106,10 @@ final class MainTimelineCell: UICollectionViewCell {
 
 		topSeparator.alpha = (isActive || isPreview) ? 0.0 : 1.0
 
-		updateColors(active: isActive)
-		updateIndicatorView(active: isActive)
+		// White foreground is only for the selected state (blue accent background).
+		// The swiped state uses a subtle gray fill, so it keeps normal label colors.
+		updateColors(active: state.isSelected)
+		updateIndicatorView(active: state.isSelected)
 	}
 
 	func setIconImage(_ image: IconImage) {
