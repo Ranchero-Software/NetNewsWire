@@ -14,6 +14,7 @@ nonisolated public struct SpecialCase {
 	public static let rachelByTheBayHostName = "rachelbythebay.com"
 	public static let openRSSOrgHostName = "openrss.org"
 	public static let youtubeHostName = "youtube.com"
+	public static let redditHostName = "reddit.com"
 
 	public static func urlStringContainSpecialCase(_ urlString: String, _ specialCases: [String]) -> Bool {
 		let lowerURLString = urlString.lowercased(with: localeForLowercasing)
@@ -78,6 +79,10 @@ nonisolated extension URL {
 			return false
 		}
 		return SpecialCase.urlStringContainSpecialCase(host, [SpecialCase.youtubeHostName])
+	}
+
+	public var isRedditURL: Bool {
+		SpecialCase.urlStringMatchesDomain(absoluteString, [SpecialCase.redditHostName])
 	}
 }
 
