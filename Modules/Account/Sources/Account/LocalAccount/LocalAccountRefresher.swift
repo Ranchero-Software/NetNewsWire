@@ -496,7 +496,7 @@ private extension LocalAccountRefresher {
 		if feed.url == redditURLToRefresh {
 			return (false, nil)
 		}
-		var reason = "Skipped — Reddit allows only one feed per refresh"
+		var reason = "Skipped — Reddit allows only one feed per minute"
 		if let redditURLToRefresh {
 			reason += " — refreshing \(redditURLToRefresh) this time"
 		}
