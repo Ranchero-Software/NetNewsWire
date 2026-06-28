@@ -496,7 +496,11 @@ private extension LocalAccountRefresher {
 		if feed.url == redditURLToRefresh {
 			return (false, nil)
 		}
-		return (true, "Skipped — Reddit allows only one feed per refresh")
+		var reason = "Skipped — Reddit allows only one feed per refresh"
+		if let redditURLToRefresh {
+			reason += " — refreshing \(redditURLToRefresh) this time"
+		}
+		return (true, reason)
 	}
 
 	static func feedShouldBeSkippedForDisallowedHostReasons(_ feed: Feed) -> (Bool, String?) {
