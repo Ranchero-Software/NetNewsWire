@@ -7,47 +7,16 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.1</title>
+			<title>NetNewsWire 7.1.1</title>
             <description><![CDATA[
   				<ul>
-  				<p>Changes since 7.0.6:</p>
-				  <li>Added <a href=https://netnewswire.com/help/activity-log.html>Activity Log</a> window — shows what the app has been doing
-				  <li>Added <a href=https://netnewswire.com/help/current-activity.html>Current Activity</a> window — shows what the app is doing right now
-				  <li>Added <a href=https://netnewswire.com/help/account-stats.html>Account Stats</a> window — shows per-account article and status counts and database sizes, plus a Vacuum Databases button
-				  <li>Added <a href=https://netnewswire.com/help/dinosaurs.html>Dinosaurs</a> window — lists feeds that haven’t updated in n months (with a text field where you specify n)
-				  <li>Started deleting feeds and folders optimistically from iCloud — sidebar updates immediately instead of waiting for the server
-				  <li>Fixed a memory use issue with marking read/unread/starred/unstarred
-				  <li>Made timeline scrolling faster and smoother
-				  <li>Fixed bug where iCloud feed renames could fail on transient network errors — they’re now retried
-				  <li>Started backing off Feedly status sync to 30 minutes between checks when the last sync had no changes
-				  <li>Stopped feed refreshing while the Mac is asleep
-				  <li>Started handling transient feed-refresh failures (DNS, certificate, etc.) by retrying after a few hours instead of treating them as permanent failures
-				  <li>Fixed bug parsing feeds where a title (or other tag) without a prefix appears inside a namespaced section (<code><s:variant></code>, for instance)
-				  <li>Added more trackers to the block list
-				  <li>Fixed WebKit crash in the detail view caused by re-entrancy
-				  <li>Started saving the response code for 4xx and 5xx responses so the error log shows the right info
-				  <li>Reduced disk writes while syncing article statuses
-				  <li>Fixed a crash that could happen when deleting Feedly folders
-				  <li>Fixed a crash that could happen when building notification thumbnails
-				  <li>Removed images from items in contextual menus in sidebar and timeline
-				  <li>Fixed bug (introduced in 7.0.6) where newly-arrived articles weren’t added to the search index
+				  <li>Handled Reddit’s new rate limiting (one feed per minute) by refreshing just one Reddit feed — the least-recently-checked one — per refresh session
+				  <li>Stopped scaling up small feed images — the blurriness is worse than the smallness
+				  <li>Fixed bug where transparent pixels in a feed icon were counted as black when picking a background color
 				</ul>
 			]]></description>
-        	<pubDate>Thu, 25 Jun 2026 10:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1/NetNewsWire7.1.zip" sparkle:version="7106" sparkle:shortVersionString="7.1" length="10629272" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.1b6</title>
-            <description><![CDATA[
-  				<ul>
-				  <li>Exclude dinosaurs that have no articles in the database — we might just not have those articles yet
-				  <li>Make Dinosaurs window text field live (don’t require committing editing)
-				</ul>
-			]]></description>
-        	<pubDate>Tue, 23 Jun 2026 09:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1b6/NetNewsWire7.1b6.zip" sparkle:version="7105" sparkle:shortVersionString="7.1b6" length="10630544" type="application/zip" />
+        	<pubDate>Mon, 29 Jun 2026 07:35:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.1b1/NetNewsWire7.1.1b1.zip" sparkle:version="7107" sparkle:shortVersionString="7.1.1b1" length="10635275" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
