@@ -1,5 +1,12 @@
 # iOS Release Notes
 
+### 7.1.1 build 7107 29 June 2026 - branch: main tag: iOS-7.1.1-7107
+
+Handled Reddit’s new rate limiting (one feed per minute) by refreshing just one Reddit feed — the least-recently-checked one — per refresh session
+Stopped scaling up small feed images — the blurriness is worse than the smallness
+Fixed bug where transparent pixels in a feed icon were counted as black when picking a background color
+Fixed text contrast bug when swiping an article in the timeline
+
 ### 7.1 build 7105 23 June 2026 - branch: main tag: iOS-7.1-7105
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.1 release version on 26 June 2026.
