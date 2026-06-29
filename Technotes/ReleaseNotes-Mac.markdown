@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 7.1.1b1 7107 28 June 2026 — branch: main tag: mac-7.1.1b1
+
+Handled Reddit’s new rate limiting (one feed per minute) by refreshing just one Reddit feed — the least-recently-checked one — per refresh session
+Stopped scaling up small feed images — the blurriness is worse than the smallness
+Fixed bug where transparent pixels in a feed icon were counted as black when picking a background color
+
 ### 7.1 7106 25 June 2026 — branch: main tag: mac-7.1
 
 Changes since 7.0.6:
