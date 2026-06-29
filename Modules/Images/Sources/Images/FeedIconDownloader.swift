@@ -132,7 +132,7 @@ private extension FeedIconDownloader {
 
 	// Substrings matched (case-insensitive) anywhere in the feed URL. A match makes us ignore the
 	// feed-specified icon URL and fall back to the homepage icon lookup instead.
-	static let feedURLSubstringsToIgnoreFeedIconURL: [String] = ["propublica.org", "clubic.com", "comptoir-hardware.com", "cowcotland", "404media.co"]
+	static let feedURLSubstringsToIgnoreFeedIconURL: [String] = ["propublica.org", "clubic.com", "comptoir-hardware.com", "cowcotland", "404media.co", "awfulannouncing.com", "michalzelazny.com"]
 
 	static func shouldIgnoreFeedIconURL(_ feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, feedURLSubstringsToIgnoreFeedIconURL)
