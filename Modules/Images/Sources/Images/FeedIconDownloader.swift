@@ -130,12 +130,12 @@ private extension FeedIconDownloader {
 
 	static let specialCasesToSkip = ["macsparky.com", "xkcd.com", SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
-	// Domains where the feed-specified icon URL should be ignored,
-	// falling back to the homepage icon lookup instead.
-	static let domainsToIgnoreFeedIconURL: [String] = ["propublica.org"]
+	// Substrings matched (case-insensitive) anywhere in the feed URL. A match makes us ignore the
+	// feed-specified icon URL and fall back to the homepage icon lookup instead.
+	static let feedURLSubstringsToIgnoreFeedIconURL: [String] = ["propublica.org", "clubic.com", "comptoir-hardware.com", "cowcotland", "404media.co", "awfulannouncing.com", "michalzelazny.com"]
 
 	static func shouldIgnoreFeedIconURL(_ feed: Feed) -> Bool {
-		SpecialCase.urlStringContainSpecialCase(feed.url, domainsToIgnoreFeedIconURL)
+		SpecialCase.urlStringContainSpecialCase(feed.url, feedURLSubstringsToIgnoreFeedIconURL)
 	}
 
 	static func shouldSkipDownloadingFeedIcon(feed: Feed) -> Bool {
