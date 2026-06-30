@@ -29,6 +29,20 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	}
 }
 
+enum ArticleThemeSelectionMode: Int, CaseIterable, Sendable {
+	case single = 0
+	case appearance = 1
+
+	var title: String {
+		switch self {
+		case .single:
+			return NSLocalizedString("Same Theme for All Appearances", comment: "Article theme selection mode")
+		case .appearance:
+			return NSLocalizedString("Match Appearance", comment: "Article theme selection mode")
+		}
+	}
+}
+
 extension Notification.Name {
 	public static let userInterfaceColorPaletteDidUpdate = Notification.Name("UserInterfaceColorPaletteDidUpdateNotification")
 	public static let timelineIconSizeDidChange = Notification.Name("TimelineIconSizeDidChangeNotification")
@@ -66,6 +80,9 @@ final class AppDefaults: Sendable {
 		static let addFolderAccountID = "addFolderAccountID"
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
+		static let articleThemeSelectionMode = "articleThemeSelectionMode"
+		static let lightThemeName = "lightThemeName"
+		static let darkThemeName = "darkThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 		static let hideReadFeeds = "hideReadFeeds"
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
@@ -268,6 +285,33 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var articleThemeSelectionMode: ArticleThemeSelectionMode {
+		get {
+			ArticleThemeSelectionMode(rawValue: AppDefaults.int(for: Key.articleThemeSelectionMode)) ?? .single
+		}
+		set {
+			AppDefaults.setInt(for: Key.articleThemeSelectionMode, newValue.rawValue)
+		}
+	}
+
+	var lightThemeName: String? {
+		get {
+			return AppDefaults.string(for: Key.lightThemeName)
+		}
+		set {
+			AppDefaults.setString(for: Key.lightThemeName, newValue)
+		}
+	}
+
+	var darkThemeName: String? {
+		get {
+			return AppDefaults.string(for: Key.darkThemeName)
+		}
+		set {
+			AppDefaults.setString(for: Key.darkThemeName, newValue)
+		}
+	}
+
 	var hideReadFeeds: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.hideReadFeeds)
@@ -389,6 +433,11 @@ final class AppDefaults: Sendable {
 	}
 
 	@MainActor static func registerDefaults() {
+		if AppDefaults.store.object(forKey: Key.articleThemeSelectionMode) == nil,
+		   let storedMode = UserDefaults.standard.object(forKey: Key.articleThemeSelectionMode) as? Int {
+			AppDefaults.store.set(storedMode, forKey: Key.articleThemeSelectionMode)
+		}
+
 		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
@@ -398,6 +447,7 @@ final class AppDefaults: Sendable {
 										Key.articleFullscreenAvailable: false,
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true,
+										Key.articleThemeSelectionMode: ArticleThemeSelectionMode.single.rawValue,
 										Key.articleContentJavascriptEnabled: true,
 										Key.currentThemeName: Self.defaultThemeName,
 									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue]

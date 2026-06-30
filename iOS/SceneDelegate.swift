@@ -69,6 +69,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		completionHandler(true)
 	}
 
+	func windowScene(_ windowScene: UIWindowScene, didUpdate previousCoordinateSpace: UICoordinateSpace, interfaceOrientation previousInterfaceOrientation: UIInterfaceOrientation, traitCollection previousTraitCollection: UITraitCollection) {
+		if windowScene.traitCollection.userInterfaceStyle != previousTraitCollection.userInterfaceStyle {
+			updateArticleThemeAppearance(for: windowScene.traitCollection)
+		}
+	}
+
 	func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
 		appDelegate.resumeIfNecessary()
 		coordinator.handle(userActivity)
@@ -254,5 +260,20 @@ private extension SceneDelegate {
 		case .dark:
 			self.window?.overrideUserInterfaceStyle = .dark
 		}
+		updateArticleThemeAppearance()
+	}
+
+	@MainActor func updateArticleThemeAppearance(for traitCollection: UITraitCollection? = nil) {
+		let appearance: ArticleThemeAppearance
+		switch AppDefaults.userInterfaceColorPalette {
+		case .automatic:
+			let effectiveTraitCollection = traitCollection ?? self.window?.windowScene?.traitCollection ?? self.window?.traitCollection
+			appearance = effectiveTraitCollection?.userInterfaceStyle == .dark ? .dark : .light
+		case .light:
+			appearance = .light
+		case .dark:
+			appearance = .dark
+		}
+		ArticleThemesManager.shared.updateCurrentAppearance(appearance)
 	}
 }
