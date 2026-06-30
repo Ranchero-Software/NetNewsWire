@@ -233,6 +233,18 @@ import ActivityLog
 		return false
 	}
 
+	public func duplicateServiceAccount(type: AccountType, endpointURL: URL?) -> Bool {
+		guard type != .onMyMac else {
+			return false
+		}
+		for account in accounts {
+			if account.type == type && account.endpointURL == endpointURL {
+				return true
+			}
+		}
+		return false
+	}
+
 	public func existingAccount(accountID: String) -> Account? {
 		return accountsDictionary[accountID]
 	}

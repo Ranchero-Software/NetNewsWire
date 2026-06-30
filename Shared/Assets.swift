@@ -30,6 +30,7 @@ struct Assets {
 		static var accountFeedly: RSImage { RSImage(named: "accountFeedly")! }
 		static var accountFreshRSS: RSImage { RSImage(named: "accountFreshRSS")! }
 		static var accountInoreader: RSImage { RSImage(named: "accountInoreader")! }
+		static var accountMiniflux: RSImage { RSImage(named: "accountMiniflux")! }
 		static var accountNewsBlur: RSImage { RSImage(named: "accountNewsBlur")! }
 		static var accountTheOldReader: RSImage { RSImage(named: "accountTheOldReader")! }
 
@@ -144,6 +145,8 @@ struct Assets {
 			return Assets.Images.accountFeedly
 		case .freshRSS:
 			return Assets.Images.accountFreshRSS
+		case .miniflux:
+			return Assets.Images.accountMiniflux
 		case .inoreader:
 			return Assets.Images.accountInoreader
 		case .newsBlur:

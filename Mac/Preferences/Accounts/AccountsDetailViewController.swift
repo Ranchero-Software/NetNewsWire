@@ -44,6 +44,13 @@ final class AccountsDetailViewController: NSViewController {
 			accountsFeedbinWindowController.account = account
 			accountsFeedbinWindowController.runSheetOnWindow(window)
 
+		case .miniflux:
+			let accountsMinifluxWindowController = AccountsMinifluxWindowController()
+			accountsWindowController = accountsMinifluxWindowController
+			accountsMinifluxWindowController.accountType = account.type
+			accountsMinifluxWindowController.account = account
+			accountsMinifluxWindowController.runSheetOnWindow(window)
+
 		case .inoreader, .bazQux, .theOldReader, .freshRSS:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsWindowController = accountsReaderAPIWindowController
