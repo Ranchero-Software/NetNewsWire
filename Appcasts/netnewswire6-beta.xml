@@ -9,14 +9,15 @@
 		<item>
 			<title>NetNewsWire 7.1.1</title>
             <description><![CDATA[
+            <p>Changes since 7.1:</p>
   				<ul>
 				  <li>Handled Reddit’s new rate limiting (one feed per minute) by refreshing just one Reddit feed — the least-recently-checked one — per refresh session
 				  <li>Stopped scaling up small feed images — the blurriness is worse than the smallness
 				  <li>Fixed bug where transparent pixels in a feed icon were counted as black when picking a background color
 				</ul>
 			]]></description>
-        	<pubDate>Mon, 29 Jun 2026 07:35:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.1b1/NetNewsWire7.1.1b1.zip" sparkle:version="7107" sparkle:shortVersionString="7.1.1b1" length="10635275" type="application/zip" />
+        	<pubDate>Tue, 30 Jun 2026 09:45:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.1/NetNewsWire7.1.1.zip" sparkle:version="7108" sparkle:shortVersionString="7.1.1" length="10635532" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
