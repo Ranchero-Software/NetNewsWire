@@ -12,14 +12,16 @@ struct AccountsDetailView: View {
 
 	let account: Account
 	var onCredentials: (() -> Void)?
+	var onHideReadOverrides: (() -> Void)?
 
 	@State private var accountName: String
 	@State private var isActive: Bool
 	@State private var syncUnreadContent: Bool
 
-	init(account: Account, onCredentials: (() -> Void)? = nil) {
+	init(account: Account, onCredentials: (() -> Void)? = nil, onHideReadOverrides: (() -> Void)? = nil) {
 		self.account = account
 		self.onCredentials = onCredentials
+		self.onHideReadOverrides = onHideReadOverrides
 		_accountName = State(initialValue: account.name ?? "")
 		_isActive = State(initialValue: account.isActive)
 		_syncUnreadContent = State(initialValue: AccountManager.shared.syncArticleContentForUnreadArticles)
@@ -84,6 +86,16 @@ struct AccountsDetailView: View {
 						}
 						.padding(.top, 12)
 					}
+				}
+
+				GridRow {
+					Color.clear
+						.gridCellUnsizedAxes([.horizontal, .vertical])
+					Button("Hide Read Articles Settings…") {
+						onHideReadOverrides?()
+					}
+					.fixedSize()
+					.padding(.top, 12)
 				}
 			}
 

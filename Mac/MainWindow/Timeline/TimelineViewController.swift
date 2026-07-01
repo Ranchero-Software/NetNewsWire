@@ -31,19 +31,33 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
 
+	private var hideReadArticles = AppDefaults.shared.hideReadArticles
+	private var cachedFeedReadFilterOverrides = AppDefaults.shared.feedReadFilterOverrides
 	private var readFilterEnabledTable = [SidebarItemIdentifier: Bool]()
 
 	var isReadFiltered: Bool? {
-		guard representedObjects?.count == 1, let timelineFeed = representedObjects?.first as? SidebarItem else {
+		guard representedObjects?.count == 1,
+			  let timelineFeed = representedObjects?.first as? SidebarItem,
+			  timelineFeed.defaultReadFilterType != .alwaysRead else {
 			return nil
 		}
-		guard timelineFeed.defaultReadFilterType != .alwaysRead else {
+		if let sidebarItemID = timelineFeed.sidebarItemID {
+			if let readFiltered = readFilterEnabledTable[sidebarItemID] {
+				return readFiltered
+			}
+			if let override = persistedFeedOverride(sidebarItemID) {
+				return override
+			}
+		}
+		return hideReadArticles || timelineFeed.defaultReadFilterType == .read
+	}
+
+	private func persistedFeedOverride(_ sidebarItemID: SidebarItemIdentifier) -> Bool? {
+		guard case .feed(let accountID, let feedID) = sidebarItemID,
+			  let override = cachedFeedReadFilterOverrides.override(accountID: accountID, feedID: feedID) else {
 			return nil
 		}
-		if let sidebarItemID = timelineFeed.sidebarItemID, let readFiltered = readFilterEnabledTable[sidebarItemID] {
-			return readFiltered
-		}
-		return timelineFeed.defaultReadFilterType == .read
+		return override == .hide
 	}
 
 	var isCleanUpAvailable: Bool {
@@ -68,6 +82,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		didSet {
 			if !representedObjectArraysAreEqual(oldValue, representedObjects) {
 				seedReadFilterForFolders()
+				seedReadFilterFromOverrides()
 				unreadCount = 0
 
 				selectionDidChange(nil)
@@ -85,8 +100,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	var windowState: TimelineWindowState {
-		let readArticlesFilterStateKeys = readFilterEnabledTable.keys.compactMap { $0.userInfo }
-		let readArticlesFilterStateValues = readFilterEnabledTable.values.compactMap( { $0 })
+		// Feed read-filter state lives in feedReadFilterOverrides (UserDefaults); window
+		// state persists only folder and smart-feed entries.
+		var readArticlesFilterStateKeys = [[String: String]]()
+		var readArticlesFilterStateValues = [Bool]()
+		for (sidebarItemID, hidesReadArticles) in readFilterEnabledTable {
+			if case .feed = sidebarItemID {
+				continue
+			}
+			readArticlesFilterStateKeys.append(sidebarItemID.userInfo)
+			readArticlesFilterStateValues.append(hidesReadArticles)
+		}
 
 		if selectedArticles.count == 1 {
 			let path = selectedArticles.first!.pathUserInfo
@@ -307,12 +331,36 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: State Restoration
 
-	private func noteSidebarItemHidesReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
+	private func noteSidebarItemHidesReadArticles(_ sidebarItemID: SidebarItemIdentifier, persistOverride: Bool = true) {
 		readFilterEnabledTable[sidebarItemID] = true
+		if persistOverride {
+			persistFeedOverride(sidebarItemID, hiding: true)
+		}
 	}
 
-	private func noteSidebarItemShowsReadArticles(_ sidebarItemID: SidebarItemIdentifier) {
+	private func noteSidebarItemShowsReadArticles(_ sidebarItemID: SidebarItemIdentifier, persistOverride: Bool = true) {
 		readFilterEnabledTable[sidebarItemID] = false
+		if persistOverride {
+			persistFeedOverride(sidebarItemID, hiding: false)
+		}
+	}
+
+	private func persistFeedOverride(_ sidebarItemID: SidebarItemIdentifier, hiding: Bool) {
+		guard case let .feed(accountID, feedID) = sidebarItemID else {
+			return
+		}
+		cachedFeedReadFilterOverrides.setOverride(accountID: accountID, feedID: feedID, hiding ? .hide : .show)
+		AppDefaults.shared.feedReadFilterOverrides = cachedFeedReadFilterOverrides
+	}
+
+	/// Migrate a feed's legacy window-state read-filter setting into
+	/// feedReadFilterOverrides, without overwriting an existing override.
+	private func migrateLegacyFeedReadFilterIfNeeded(_ sidebarItemID: SidebarItemIdentifier, hiding: Bool) {
+		guard case let .feed(accountID, feedID) = sidebarItemID,
+			  cachedFeedReadFilterOverrides.override(accountID: accountID, feedID: feedID) == nil else {
+			return
+		}
+		persistFeedOverride(sidebarItemID, hiding: hiding)
 	}
 
 	func restoreState(from state: TimelineWindowState) {
@@ -320,10 +368,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			if let sidebarItemID = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
 				let hidesReadArticles = state.readArticlesFilterStateValues[i]
 				if hidesReadArticles {
-					noteSidebarItemHidesReadArticles(sidebarItemID)
+					noteSidebarItemHidesReadArticles(sidebarItemID, persistOverride: false)
 				} else {
-					noteSidebarItemShowsReadArticles(sidebarItemID)
+					noteSidebarItemShowsReadArticles(sidebarItemID, persistOverride: false)
 				}
+				migrateLegacyFeedReadFilterIfNeeded(sidebarItemID, hiding: hidesReadArticles)
 			}
 		}
 
@@ -359,10 +408,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			if let sidebarItemID = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
 				let hidesReadArticles = readArticlesFilterStateValues[i]
 				if hidesReadArticles {
-					noteSidebarItemHidesReadArticles(sidebarItemID)
+					noteSidebarItemHidesReadArticles(sidebarItemID, persistOverride: false)
 				} else {
-					noteSidebarItemShowsReadArticles(sidebarItemID)
+					noteSidebarItemShowsReadArticles(sidebarItemID, persistOverride: false)
 				}
+				migrateLegacyFeedReadFilterIfNeeded(sidebarItemID, hiding: hidesReadArticles)
 			}
 		}
 
@@ -734,6 +784,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
 		undoManager?.removeAllActions() // Undo stack may contain actions for the deleted account.
+		if let account = note.userInfo?[Account.UserInfoKey.account] as? Account {
+			AppDefaults.shared.clearFeedHideReadOverrides(accountID: account.accountID)
+		}
 		if representedObjectsContainsAnyPseudoFeed() {
 			fetchAndReplaceArticlesAsync()
 		}
@@ -747,8 +800,43 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@MainActor func userDefaultsDidChange() {
 		fontSize = AppDefaults.shared.timelineFontSize
+		let newHideReadArticles = AppDefaults.shared.hideReadArticles
+		let hideReadArticlesDidChange = hideReadArticles != newHideReadArticles
+		hideReadArticles = newHideReadArticles
+		let readFilterTableDidChange = syncReadFilterTableFromDefaults()
 		sortDirection = AppDefaults.shared.timelineSortDirection
 		groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		if hideReadArticlesDidChange || readFilterTableDidChange {
+			fetchAndReplacePreservingSelection()
+		}
+	}
+
+	private func syncReadFilterTableFromDefaults() -> Bool {
+		let overrides = AppDefaults.shared.feedReadFilterOverrides
+		guard overrides != cachedFeedReadFilterOverrides else {
+			return false
+		}
+		cachedFeedReadFilterOverrides = overrides
+
+		var persistedOverrides = [SidebarItemIdentifier: Bool]()
+		for entry in overrides.allFeeds() {
+			persistedOverrides[.feed(entry.accountID, entry.feedID)] = (entry.override == .hide)
+		}
+
+		var changed = false
+		for (id, value) in persistedOverrides {
+			if readFilterEnabledTable[id] == nil || readFilterEnabledTable[id] != value {
+				readFilterEnabledTable[id] = value
+				changed = true
+			}
+		}
+		for (id, _) in readFilterEnabledTable {
+			if case .feed = id, persistedOverrides[id] == nil {
+				readFilterEnabledTable[id] = nil
+				changed = true
+			}
+		}
+		return changed
 	}
 
 	// MARK: - Reloading Data
@@ -1227,7 +1315,7 @@ private extension TimelineViewController {
 
 		var fetchedArticles = Set<Article>()
 		for fetchers in fetchers {
-			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable) ?? true {
+			if (fetchers as? SidebarItem)?.readFiltered(readFilterEnabledTable: readFilterEnabledTable, globalHideReadArticles: hideReadArticles) ?? true {
 				let articles = fetchers.fetchUnreadArticles()
 				fetchedArticles.formUnion(articles)
 			} else {
@@ -1244,7 +1332,7 @@ private extension TimelineViewController {
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
 		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, globalHideReadArticles: hideReadArticles, fetchers: fetchers) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return
@@ -1311,6 +1399,22 @@ private extension TimelineViewController {
 			if readFilterEnabledTable[sidebarItemID] == nil {
 				readFilterEnabledTable[sidebarItemID] = true
 			}
+		}
+	}
+
+	/// Seed the represented feed's read-filter state from feedReadFilterOverrides,
+	/// since feed entries are no longer restored from window state.
+	private func seedReadFilterFromOverrides() {
+		guard let representedObjects else {
+			return
+		}
+		for object in representedObjects {
+			guard let feed = object as? Feed, let sidebarItemID = feed.sidebarItemID,
+				  readFilterEnabledTable[sidebarItemID] == nil,
+				  let override = cachedFeedReadFilterOverrides.override(accountID: feed.accountID, feedID: feed.feedID) else {
+				continue
+			}
+			readFilterEnabledTable[sidebarItemID] = override == .hide
 		}
 	}
 
