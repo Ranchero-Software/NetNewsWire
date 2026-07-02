@@ -25,10 +25,13 @@ extension Notification.Name {
 	private let imageDownloader = ImageDownloader.shared
 	private var homePagesWithNoIconURL = Set<String>()
 	private var cache = [Feed: IconImage]()
-	private var waitingForFeedURLs = [String: Feed]()
+	private var waitingForFeedURLs = [String: Set<Feed>]()
+	private var feedsWaitingForHTMLMetadata = Set<Feed>()
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
@@ -113,11 +116,35 @@ extension Notification.Name {
 	}
 
 	@objc func imageDidBecomeAvailable(_ note: Notification) {
-		guard let url = note.userInfo?["url"] as? String, let feed = waitingForFeedURLs[url] else {
+		guard let url = note.userInfo?["url"] as? String, let feeds = waitingForFeedURLs[url] else {
 			return
 		}
+		// A single image URL may be shared by multiple feeds.
 		waitingForFeedURLs[url] = nil
-		_ = icon(for: feed)
+		for feed in feeds {
+			_ = icon(for: feed)
+		}
+	}
+
+	@objc func handleFeedSettingDidChange(_ note: Notification) {
+		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
+			return
+		}
+		if key == .iconURL || key == .homePageURL {
+			_ = icon(for: feed)
+		}
+	}
+
+	@objc func handleHTMLMetadataAvailable(_ note: Notification) {
+		guard let url = note.userInfo?[HTMLMetadataUserInfoKey.url] as? String else {
+			return
+		}
+		// A homepage URL may be shared by multiple feeds.
+		let feeds = feedsWaitingForHTMLMetadata.filter { $0.homePageURL == url }
+		feedsWaitingForHTMLMetadata.subtract(feeds)
+		for feed in feeds {
+			_ = icon(for: feed)
+		}
 	}
 
 	/// Returns the in-memory icon for `feed` without triggering a download.
@@ -172,6 +199,7 @@ private extension FeedIconDownloader {
 		}
 
 		guard let metadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
+			feedsWaitingForHTMLMetadata.insert(feed)
 			resultBlock(nil, nil)
 			return
 		}
@@ -200,7 +228,7 @@ private extension FeedIconDownloader {
 			return
 		}
 
-		waitingForFeedURLs[url] = feed
+		waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
 		imageResultBlock(nil)
 	}
 
