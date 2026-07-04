@@ -77,6 +77,40 @@ import Testing
 		)
 	}
 
+	// MARK: - abbr (issue #3325)
+
+	// The Register and similar feeds put `<abbr title="…">` in titles.
+	// The tag is matched by name (attributes ignored), so it's recognized
+	// as an allowed tag rather than shown as raw markup.
+
+	@Test("abbr with attribute is preserved under forHTML (real element in detail pane)")
+	func abbrWithAttributeForHTML() {
+		#expect(
+			ArticleStringFormatter.sanitizedTitle("[<abbr title=\"Not Safe For Work\">NSFW</abbr>]", forHTML: true)
+			== "[<abbr title=\"Not Safe For Work\">NSFW</abbr>]"
+		)
+	}
+
+	@Test("abbr with attribute is dropped under forHTML=false, contents kept")
+	func abbrWithAttributeNotForHTML() {
+		#expect(
+			ArticleStringFormatter.sanitizedTitle("[<abbr title=\"Not Safe For Work\">NSFW</abbr>]", forHTML: false)
+			== "[NSFW]"
+		)
+	}
+
+	// Matching is by tag name, so an allowed tag carrying an attribute
+	// is still recognized (previously it was matched whole-body and
+	// treated as disallowed).
+
+	@Test func allowedTagWithAttributeForHTML() {
+		#expect(ArticleStringFormatter.sanitizedTitle("<cite id=\"x\">Book</cite>", forHTML: true) == "<cite id=\"x\">Book</cite>")
+	}
+
+	@Test func allowedTagWithAttributeNotForHTML() {
+		#expect(ArticleStringFormatter.sanitizedTitle("<cite id=\"x\">Book</cite>", forHTML: false) == "Book")
+	}
+
 	// MARK: - Slash handling
 
 	// The implementation strips ALL slashes from the tag name before

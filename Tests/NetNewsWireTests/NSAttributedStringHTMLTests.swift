@@ -98,4 +98,15 @@ import UIKit
 		XCTAssertEqual(s.string, "Café résumé")
 	}
 
+	// MARK: - Timeline title end-to-end (issue #3325)
+
+	// The timeline title is `simpleHTML(sanitizedTitle(forHTML: true))`.
+	// A feed title with `<abbr title="…">` must show as plain text, not
+	// raw markup.
+	func testAbbrTitleRendersAsPlainText() {
+		let sanitized = ArticleStringFormatter.sanitizedTitle("[<abbr title=\"Not Safe For Work\">NSFW</abbr>]", forHTML: true)!
+		let s = NSAttributedString(simpleHTML: sanitized)
+		XCTAssertEqual(s.string, "[NSFW]")
+	}
+
 }
