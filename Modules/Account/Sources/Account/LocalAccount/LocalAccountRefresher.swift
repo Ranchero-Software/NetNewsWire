@@ -355,7 +355,7 @@ import os
 
 		feed.lastCheckDate = Date()
 		feed.lastResponseCode = statusCode
-		if statusCode == HTTPResponseCode.tooManyRequests && SpecialCase.urlStringMatchesDomain(feed.url, [SpecialCase.redditHostName]) {
+		if Self.feedHasRedditRateLimitResponse(feed) {
 			hasDetectedRedditRateLimit = true
 		}
 
@@ -502,10 +502,12 @@ private extension LocalAccountRefresher {
 	}
 
 	static func feedsContainRedditRateLimitResponse(_ feeds: Set<Feed>) -> Bool {
-		feeds.contains {
-			$0.lastResponseCode == HTTPResponseCode.tooManyRequests &&
-			SpecialCase.urlStringMatchesDomain($0.url, [SpecialCase.redditHostName])
-		}
+		feeds.contains { feedHasRedditRateLimitResponse($0) }
+	}
+
+	static func feedHasRedditRateLimitResponse(_ feed: Feed) -> Bool {
+		feed.lastResponseCode == HTTPResponseCode.tooManyRequests &&
+		SpecialCase.urlStringMatchesDomain(feed.url, [SpecialCase.redditHostName])
 	}
 
 	static func feedShouldBeSkippedForRedditReasons(_ feed: Feed, _ redditURLToRefresh: String?) -> (Bool, String?) {
