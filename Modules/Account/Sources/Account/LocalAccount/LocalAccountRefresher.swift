@@ -88,10 +88,11 @@ import os
 
 	@MainActor private func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		let specialCaseCutoffDate = Date().bySubtracting(hours: 25)
-		if Self.feedsContainRedditRateLimitResponse(feeds) {
+		let (hasRedditRateLimitResponse, redditURL) = Self.redditURLToRefresh(in: feeds)
+		if hasRedditRateLimitResponse {
 			hasDetectedRedditRateLimit = true
 		}
-		let redditURLToRefresh = Self.redditURLToRefresh(in: feeds, hasDetectedRedditRateLimit: hasDetectedRedditRateLimit)
+		let redditURLToRefresh = hasDetectedRedditRateLimit ? redditURL : nil
 
 		var filteredFeeds = Set<Feed>()
 		var skippedFeeds = [(Feed, String)]() // feed and skip reason
@@ -355,9 +356,6 @@ import os
 
 		feed.lastCheckDate = Date()
 		feed.lastResponseCode = statusCode
-		if Self.feedHasRedditRateLimitResponse(feed) {
-			hasDetectedRedditRateLimit = true
-		}
 
 		let webserviceError = WebserviceError.httpError(status: statusCode)
 		let statusDescription = webserviceError.localizedDescription
@@ -492,22 +490,11 @@ private extension LocalAccountRefresher {
 
 	/// Reddit rate-limits to one feed per minute, so once we get a 429,
 	/// we refresh the least recently checked feed.
-	static func redditURLToRefresh(in feeds: Set<Feed>, hasDetectedRedditRateLimit: Bool) -> String? {
-		guard hasDetectedRedditRateLimit else {
-			return nil
-		}
+	static func redditURLToRefresh(in feeds: Set<Feed>) -> (Bool, String?) {
 		let redditFeeds = feeds.filter { SpecialCase.urlStringMatchesDomain($0.url, [SpecialCase.redditHostName]) }
+		let hasRedditRateLimitResponse = redditFeeds.contains { $0.lastResponseCode == HTTPResponseCode.tooManyRequests }
 		let winner = redditFeeds.min { ($0.lastCheckDate ?? .distantPast) < ($1.lastCheckDate ?? .distantPast) }
-		return winner?.url
-	}
-
-	static func feedsContainRedditRateLimitResponse(_ feeds: Set<Feed>) -> Bool {
-		feeds.contains { feedHasRedditRateLimitResponse($0) }
-	}
-
-	static func feedHasRedditRateLimitResponse(_ feed: Feed) -> Bool {
-		feed.lastResponseCode == HTTPResponseCode.tooManyRequests &&
-		SpecialCase.urlStringMatchesDomain(feed.url, [SpecialCase.redditHostName])
+		return (hasRedditRateLimitResponse, winner?.url)
 	}
 
 	static func feedShouldBeSkippedForRedditReasons(_ feed: Feed, _ redditURLToRefresh: String?) -> (Bool, String?) {
