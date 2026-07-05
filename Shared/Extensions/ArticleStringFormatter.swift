@@ -233,25 +233,37 @@ import RSParser
 			let tagName = Array(utf8[nameStart..<nameEnd])
 			let isAllowed = allowedTagsBytes.contains(tagName)
 
+			// Only emit a closing `>` if the input actually had one. An
+			// unclosed tag (no `>` before end of input) must not gain a
+			// synthesized `>` — otherwise a title like `<16s in UK…`
+			// renders with a spurious trailing `>` (issue #4742).
+			let tagWasClosed = j < count
+
 			if isAllowed {
 				if forHTML {
 					out.append(lt)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
-					out.append(gt)
+					if tagWasClosed {
+						out.append(gt)
+					}
 				}
 			} else {
 				if forHTML {
 					out.append(contentsOf: ltEntity)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
-					out.append(contentsOf: gtEntity)
+					if tagWasClosed {
+						out.append(contentsOf: gtEntity)
+					}
 				} else {
 					out.append(lt)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
-					out.append(gt)
+					if tagWasClosed {
+						out.append(gt)
+					}
 				}
 			}
 
-			i = (j < count) ? j + 1 : count
+			i = tagWasClosed ? j + 1 : count
 		}
 
 		return String(decoding: out, as: UTF8.self)

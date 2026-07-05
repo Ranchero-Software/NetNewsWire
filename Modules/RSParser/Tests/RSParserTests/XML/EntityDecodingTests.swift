@@ -53,6 +53,21 @@ import RSParser
 		#expect("it&apos;s".decodingHTMLEntities() == "it's")
 	}
 
+	// MARK: - HTML named entities
+
+	@Test("Zero-width joiner/non-joiner named entities decode (issue #3220)",
+	      arguments: [
+	          ("&zwj;", "\u{200D}"),
+	          ("&zwnj;", "\u{200C}")
+	      ])
+	func zeroWidthEntity(_ input: String, _ expected: String) {
+		#expect(input.decodingHTMLEntities() == expected)
+	}
+
+	@Test func zeroWidthJoinerInContext() {
+		#expect("a&zwj;b".decodingHTMLEntities() == "a\u{200D}b")
+	}
+
 	// MARK: - Malformed entities pass through literally
 
 	// "Pass through" here means: the raw characters must appear verbatim in
