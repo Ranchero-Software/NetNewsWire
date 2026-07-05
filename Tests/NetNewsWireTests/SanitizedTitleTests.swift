@@ -137,19 +137,34 @@ import Testing
 
 	// MARK: - Malformed input
 
-	// Unclosed tag (no `>` to terminate). We scan to end of input as
-	// the tag body and still emit closing punctuation — a slightly
-	// weird but stable behavior inherited from the Scanner-based
-	// predecessor, which tests pinned to preserve.
+	// Unclosed tag (no `>` to terminate). The `<` and its trailing text
+	// are kept, but no closing `>` is synthesized — so a literal `<`
+	// followed by text stays faithful to the input (issue #4742).
 
-	@Test("Unclosed tag with forHTML=false emits literal `<tag>` with synthesized `>`")
+	@Test("Unclosed tag with forHTML=false keeps `<tag`, no synthesized `>`")
 	func unclosedTagNotForHTML() {
-		#expect(ArticleStringFormatter.sanitizedTitle("foo <bar", forHTML: false) == "foo <bar>")
+		#expect(ArticleStringFormatter.sanitizedTitle("foo <bar", forHTML: false) == "foo <bar")
 	}
 
-	@Test("Unclosed tag with forHTML=true emits escaped `&lt;tag&gt;`")
+	@Test("Unclosed tag with forHTML=true escapes `<` and keeps text, no synthesized `>`")
 	func unclosedTagForHTML() {
-		#expect(ArticleStringFormatter.sanitizedTitle("foo <bar", forHTML: true) == "foo &lt;bar&gt;")
+		#expect(ArticleStringFormatter.sanitizedTitle("foo <bar", forHTML: true) == "foo &lt;bar")
+	}
+
+	// #4742: a title with a literal `<` (from an entity like `&#x3C;`)
+	// followed by non-tag text — here `<16s` — must not be truncated at
+	// the `<`, and must not gain a spurious trailing `>`. The whole
+	// title survives; the `<` is escaped so `simpleHTML` shows it as text.
+	@Test func literalLessThanInTitleIsNotTruncated() {
+		let input = "No place in children's hands: <16s in UK to be banned"
+		#expect(
+			ArticleStringFormatter.sanitizedTitle(input, forHTML: true)
+			== "No place in children's hands: &lt;16s in UK to be banned"
+		)
+		#expect(
+			ArticleStringFormatter.sanitizedTitle(input, forHTML: false)
+			== "No place in children's hands: <16s in UK to be banned"
+		)
 	}
 
 	// Bare `<` at end of input: no tag body, emit nothing for it.

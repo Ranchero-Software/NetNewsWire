@@ -109,4 +109,14 @@ import UIKit
 		XCTAssertEqual(s.string, "[NSFW]")
 	}
 
+	// #4742: a title with a literal `<` followed by non-tag text must
+	// render in full in the timeline — not truncated at the `<`, and with
+	// no spurious trailing `>`.
+	func testLiteralLessThanTitleIsNotTruncated() {
+		let input = "No place in children's hands: <16s in UK to be banned"
+		let sanitized = ArticleStringFormatter.sanitizedTitle(input, forHTML: true)!
+		let s = NSAttributedString(simpleHTML: sanitized)
+		XCTAssertEqual(s.string, "No place in children's hands: <16s in UK to be banned")
+	}
+
 }
