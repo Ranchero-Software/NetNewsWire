@@ -64,12 +64,6 @@ final class DetailWebViewController: NSViewController {
 
 	private let detailIconSchemeHandler = DetailIconSchemeHandler()
 	private var waitingForFirstReload = false
-
-	// True from just before we load our own article HTML until that load's navigation is
-	// decided. Any other main-frame navigation is a page script trying to replace the
-	// article (e.g. `<script>location.href=…</script>`) and is cancelled.
-	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4150>
-	private var contentLoadPending = false
 	private var isReloadingHTML = false
 	private let keyboardDelegate = DetailKeyboardDelegate()
 	private var windowScrollY: CGFloat?
@@ -217,18 +211,6 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			return
 		}
 
-		// Allow our own content load and subframe (iframe) content, but don't let a page
-		// script navigate the main frame away from the article.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4150>
-		if navigationAction.targetFrame?.isMainFrame == true {
-			if contentLoadPending {
-				contentLoadPending = false
-			} else {
-				decisionHandler(.cancel)
-				return
-			}
-		}
-
 		decisionHandler(.allow)
 	}
 
@@ -335,7 +317,6 @@ private extension DetailWebViewController {
 		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
 		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
 		WebViewConfiguration.addContentBlockingRules(to: webView)
-		contentLoadPending = true
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
