@@ -11,15 +11,31 @@ import Foundation
 struct ArticleRenderingSpecialCases {
 
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {
-		guard let url = URL(string: baseURL) else {
+		var filteredHTML = removeLocationHrefRedirectScripts(html)
+
+		if let url = URL(string: baseURL), isVergeSpecialCase(url) {
+			filteredHTML = filterVergeHTML(filteredHTML)
+		}
+
+		return filteredHTML
+	}
+
+	// Matches a `<script>` that assigns to `location.href` — `location.href =` but not `==`
+	// (a comparison) or a read like `location.href.includes(…)`.
+	private static let redirectScriptRegex = try? NSRegularExpression(
+		pattern: "<script[^>]*>[^<]*location\\.href\\s*=(?!=)[^<]*</script>",
+		options: [.caseInsensitive]
+	)
+
+	// Remove any `<script>location.href='…'</script>`
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4150>
+	static func removeLocationHrefRedirectScripts(_ html: String) -> String {
+		guard html.contains("location.href"), let redirectScriptRegex else {
 			return html
 		}
 
-		if isVergeSpecialCase(url) {
-			return filterVergeHTML(html)
-		}
-
-		return html
+		let range = NSRange(html.startIndex..., in: html)
+		return redirectScriptRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "")
 	}
 
 	static func isVergeSpecialCase(_ baseURL: URL) -> Bool {
