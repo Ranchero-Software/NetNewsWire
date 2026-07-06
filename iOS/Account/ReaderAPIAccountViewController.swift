@@ -172,14 +172,9 @@ final class ReaderAPIAccountViewController: UITableViewController {
 						try account?.storeCredentials(credentials)
 						try account?.storeCredentials(validatedCredentials)
 
+						account?.triggerRefreshAll()
+
 						dismiss(animated: true, completion: nil)
-
-						do {
-							try await account?.refreshAll()
-						} catch {
-							showError(NSLocalizedString(error.localizedDescription, comment: "Account Refresh Error"))
-						}
-
 						delegate?.dismiss()
 					} catch {
 						showError(NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error"))
