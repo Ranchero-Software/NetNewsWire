@@ -257,7 +257,7 @@ final class ArticleViewController: UIViewController {
 			return
 		}
 
-		nextUnreadBarButtonItem.isEnabled = coordinator.isAnyUnreadAvailable
+		nextUnreadBarButtonItem.isEnabled = coordinator.isNextUnreadAvailable
 		prevArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
 		readBarButtonItem.isEnabled = true

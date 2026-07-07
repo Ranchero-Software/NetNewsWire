@@ -843,7 +843,7 @@ private extension WebViewController {
 	}
 
 	func nextUnreadArticleAction() -> UIAction? {
-		guard coordinator.isAnyUnreadAvailable else { return nil }
+		guard coordinator.isNextUnreadAvailable else { return nil }
 		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
 		return UIAction(title: title, image: Assets.Images.nextUnread) { [weak self] _ in
 			self?.coordinator.selectNextUnread()
