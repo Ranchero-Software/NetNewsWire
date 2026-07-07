@@ -75,7 +75,13 @@ final class MainTimelineCell: UICollectionViewCell {
 		} else {
 			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
 		}
-		if #available(iOS 26, *) {
+		if state.traitCollection.horizontalSizeClass == .compact {
+			// Full-bleed rectangle selection in compact width; iPad (regular width) keeps the
+			// rounded, inset selection below.
+			backgroundConfig.cornerRadius = 0
+			backgroundConfig.backgroundInsets = .zero
+			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = []
+		} else if #available(iOS 26, *) {
 			backgroundConfig.cornerRadius = 20
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			if UIDevice.current.userInterfaceIdiom == .pad {
