@@ -99,7 +99,6 @@ struct Assets {
 		static var accountLocalPadImage: RSImage { RSImage(named: "accountLocalPad")! }
 		static var accountLocalPhoneImage: RSImage { RSImage(named: "accountLocalPhone")! }
 
-
 		static let circleClosed = RSImage(symbol: "largecircle.fill.circle")!
 		static let markBelowAsRead = RSImage(symbol: "arrowtriangle.down.circle")!
 		static let markAboveAsRead = RSImage(symbol: "arrowtriangle.up.circle")!
