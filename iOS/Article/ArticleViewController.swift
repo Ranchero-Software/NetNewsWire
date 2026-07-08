@@ -47,7 +47,7 @@ final class ArticleViewController: UIViewController {
 		if #unavailable(iOS 26) {
 			button.tintColor = Assets.Colors.primaryAccent
 		} else {
-			button.tintColor = .secondaryLabel
+			button.tintColor = .label
 		}
 		return button
 	}()

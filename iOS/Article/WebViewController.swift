@@ -853,7 +853,7 @@ private extension WebViewController {
 	func toggleArticleExtractorAction() -> UIAction {
 		let extracted = articleExtractorButtonState == .on
 		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
-		let extractorImage = extracted ? Assets.Images.articleExtractorOffSF : Assets.Images.articleExtractorOnSF
+		let extractorImage = extracted ? Assets.Images.articleExtractorOff : Assets.Images.articleExtractorOn
 		return UIAction(title: title, image: extractorImage) { [weak self] _ in
 			self?.toggleArticleExtractor()
 		}

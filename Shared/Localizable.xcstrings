@@ -412,9 +412,6 @@
     "Feed Inspector" : {
       "comment" : "Feed Inspector window title"
     },
-    "Feed not found" : {
-      "comment" : "Feed finder"
-    },
     "Feeds" : {
       "comment" : "Feeds"
     },
@@ -1088,6 +1085,9 @@
     },
     "Type:" : {
 
+    },
+    "Unable to Add Feed" : {
+      "comment" : "Feed finder"
     },
     "Unknown" : {
       "comment" : "Unknown Value"
