@@ -28,6 +28,10 @@ import WebKit
 		configuration.setURLSchemeHandler(urlSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		configuration.userContentController = userContentController
 
+		// Present article content as NetNewsWire on top of WebKit's default browser UA, rather than a non-browser string.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4453>
+		configuration.applicationNameForUserAgent = "NetNewsWire"
+
 #if os(iOS)
 		configuration.allowsInlineMediaPlayback = true
 #endif
