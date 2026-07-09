@@ -15,6 +15,37 @@ public extension Notification.Name {
 	static let CurrentArticleThemeDidChangeNotification = Notification.Name("CurrentArticleThemeDidChangeNotification")
 }
 
+enum ArticleThemeAppearance: Sendable {
+	case light
+	case dark
+
+	var themeSetting: ArticleThemeSetting {
+		switch self {
+		case .light:
+			return .lightAppearance
+		case .dark:
+			return .darkAppearance
+		}
+	}
+}
+
+enum ArticleThemeSetting: Sendable {
+	case single
+	case lightAppearance
+	case darkAppearance
+
+	var title: String {
+		switch self {
+		case .single:
+			return NSLocalizedString("Theme", comment: "Article theme setting")
+		case .lightAppearance:
+			return NSLocalizedString("Light Appearance Theme", comment: "Article theme setting")
+		case .darkAppearance:
+			return NSLocalizedString("Dark Appearance Theme", comment: "Article theme setting")
+		}
+	}
+}
+
 final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 	static let shared = ArticleThemesManager()
 	public let folderPath: String
@@ -22,16 +53,32 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 	let presentedItemOperationQueue = OperationQueue.main // NSFilePresenter
 	let presentedItemURL: URL? // NSFilePresenter
 
-	var currentThemeName: String {
+	var themeSelectionMode: ArticleThemeSelectionMode {
 		get {
-			AppDefaults.shared.currentThemeName ?? AppDefaults.defaultThemeName
+			AppDefaults.shared.articleThemeSelectionMode
 		}
 		set {
-			if newValue != currentThemeName {
-				AppDefaults.shared.currentThemeName = newValue
-				updateThemeNames()
-				updateCurrentTheme()
+			guard newValue != themeSelectionMode else {
+				return
 			}
+			AppDefaults.shared.articleThemeSelectionMode = newValue
+			updateCurrentTheme()
+		}
+	}
+
+	var currentThemeName: String {
+		get {
+			themeName(for: .single)
+		}
+		set {
+			let modeDidChange = themeSelectionMode != .single
+			guard newValue != currentThemeName || modeDidChange else {
+				return
+			}
+			setStoredThemeName(newValue, for: .single)
+			AppDefaults.shared.articleThemeSelectionMode = .single
+			updateThemeNames()
+			updateCurrentTheme()
 		}
 	}
 
@@ -55,9 +102,28 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 		}
 	}
 
+	var activeThemeName: String {
+		themeName(for: activeThemeSetting)
+	}
+
+	var currentAppearance: ArticleThemeAppearance {
+		state.withLock { $0.currentAppearance }
+	}
+
+	var themeSelectionSummary: String {
+		switch themeSelectionMode {
+		case .single:
+			return themeName(for: .single)
+		case .appearance:
+			let format = NSLocalizedString("%@ / %@", comment: "Light and dark article theme summary")
+			return String(format: format, themeName(for: .lightAppearance), themeName(for: .darkAppearance))
+		}
+	}
+
 	private struct State {
 		var currentTheme = ArticleTheme.defaultTheme
 		var themeNames = [AppDefaults.defaultThemeName]
+		var currentAppearance = ArticleThemeAppearance.light
 	}
 	private let state = OSAllocatedUnfairLock(initialState: State())
 
@@ -97,6 +163,50 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 	}
 
 	// MARK: API
+
+	func updateCurrentAppearance(_ appearance: ArticleThemeAppearance) {
+		let didChange = state.withLock { state in
+			guard state.currentAppearance != appearance else {
+				return false
+			}
+			state.currentAppearance = appearance
+			return true
+		}
+
+		if didChange {
+			updateCurrentTheme()
+		}
+	}
+
+	func themeName(for setting: ArticleThemeSetting) -> String {
+		switch setting {
+		case .single:
+			return AppDefaults.shared.currentThemeName ?? AppDefaults.defaultThemeName
+		case .lightAppearance:
+			return AppDefaults.shared.lightThemeName ?? themeName(for: .single)
+		case .darkAppearance:
+			return AppDefaults.shared.darkThemeName ?? themeName(for: .single)
+		}
+	}
+
+	func setThemeName(_ themeName: String, for setting: ArticleThemeSetting) {
+		guard themeName != self.themeName(for: setting) else {
+			return
+		}
+
+		setStoredThemeName(themeName, for: setting)
+		updateThemeNames()
+		updateCurrentTheme()
+	}
+
+	func setActiveAppearanceThemeName(_ themeName: String) {
+		switch themeSelectionMode {
+		case .single:
+			currentThemeName = themeName
+		case .appearance:
+			setThemeName(themeName, for: activeThemeSetting)
+		}
+	}
 
 	func themeExists(filename: String) -> Bool {
 		let filenameLastPathComponent = (filename as NSString).lastPathComponent
@@ -151,6 +261,15 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 
 private extension ArticleThemesManager {
 
+	var activeThemeSetting: ArticleThemeSetting {
+		switch themeSelectionMode {
+		case .single:
+			return .single
+		case .appearance:
+			return currentAppearance.themeSetting
+		}
+	}
+
 	func updateThemeNames() {
 		let appThemeFilenames = Bundle.main.paths(forResourcesOfType: ArticleTheme.nnwThemeSuffix, inDirectory: nil)
 		let appThemeNames = Set(appThemeFilenames.map { ArticleTheme.themeNameForPath($0) })
@@ -163,6 +282,8 @@ private extension ArticleThemesManager {
 		if sortedThemeNames != themeNames {
 			themeNames = sortedThemeNames
 		}
+
+		validateStoredThemeNames()
 	}
 
 	func defaultArticleTheme() -> ArticleTheme {
@@ -170,20 +291,48 @@ private extension ArticleThemesManager {
 	}
 
 	func updateCurrentTheme() {
-		var themeName = currentThemeName
-		if !themeNames.contains(themeName) {
+		var themeName = activeThemeName
+		if !isValidThemeName(themeName) {
 			themeName = AppDefaults.defaultThemeName
-			currentThemeName = AppDefaults.defaultThemeName
+			setStoredThemeName(AppDefaults.defaultThemeName, for: activeThemeSetting)
 		}
 
 		var articleTheme = articleThemeWithThemeName(themeName)
 		if articleTheme == nil {
 			articleTheme = defaultArticleTheme()
-			currentThemeName = AppDefaults.defaultThemeName
+			setStoredThemeName(AppDefaults.defaultThemeName, for: activeThemeSetting)
 		}
 
 		if let articleTheme = articleTheme, articleTheme != currentTheme {
 			currentTheme = articleTheme
+		}
+	}
+
+	func validateStoredThemeNames() {
+		validateThemeName(for: .single)
+		validateThemeName(for: .lightAppearance)
+		validateThemeName(for: .darkAppearance)
+	}
+
+	func validateThemeName(for setting: ArticleThemeSetting) {
+		let themeName = themeName(for: setting)
+		if !isValidThemeName(themeName) {
+			setStoredThemeName(AppDefaults.defaultThemeName, for: setting)
+		}
+	}
+
+	func isValidThemeName(_ themeName: String) -> Bool {
+		themeName == AppDefaults.defaultThemeName || themeNames.contains(themeName)
+	}
+
+	func setStoredThemeName(_ themeName: String, for setting: ArticleThemeSetting) {
+		switch setting {
+		case .single:
+			AppDefaults.shared.currentThemeName = themeName
+		case .lightAppearance:
+			AppDefaults.shared.lightThemeName = themeName
+		case .darkAppearance:
+			AppDefaults.shared.darkThemeName = themeName
 		}
 	}
 

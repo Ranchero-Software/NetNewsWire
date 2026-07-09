@@ -18,6 +18,11 @@ final class GeneralPreferencesViewController: NSViewController {
 	@IBOutlet var articleThemePopup: NSPopUpButton!
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
 
+	private enum ArticleThemePopupItem {
+		case selectionMode(ArticleThemeSelectionMode)
+		case theme(ArticleThemeSetting)
+	}
+
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
 		commonInit()
@@ -56,7 +61,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		guard let menuItem = articleThemePopup.selectedItem else {
 			return
 		}
-		ArticleThemesManager.shared.currentThemeName = menuItem.title
+		applyArticleThemePopupItem(menuItem)
 		updateArticleThemePopup()
 	}
 
@@ -121,17 +126,73 @@ private extension GeneralPreferencesViewController {
 		let menu = articleThemePopup.menu!
 		menu.removeAllItems()
 
-		menu.addItem(NSMenuItem(title: ArticleTheme.defaultTheme.name, action: nil, keyEquivalent: ""))
+		let sameThemeItem = articleThemeMenuItem(title: ArticleThemeSelectionMode.single.title, representedObject: ArticleThemePopupItem.selectionMode(.single))
+		sameThemeItem.state = ArticleThemesManager.shared.themeSelectionMode == .single ? .on : .off
+		menu.addItem(sameThemeItem)
+
+		let matchAppearanceItem = articleThemeMenuItem(title: ArticleThemeSelectionMode.appearance.title, representedObject: ArticleThemePopupItem.selectionMode(.appearance))
+		matchAppearanceItem.state = ArticleThemesManager.shared.themeSelectionMode == .appearance ? .on : .off
+		menu.addItem(matchAppearanceItem)
+		menu.addItem(NSMenuItem.separator())
+
+		switch ArticleThemesManager.shared.themeSelectionMode {
+		case .single:
+			addThemeMenuItems(to: menu, setting: .single)
+			articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
+			if articleThemePopup.indexOfSelectedItem == -1 {
+				articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
+			}
+		case .appearance:
+			addThemeSubmenu(to: menu, setting: .lightAppearance)
+			addThemeSubmenu(to: menu, setting: .darkAppearance)
+			articleThemePopup.selectItem(withTitle: ArticleThemeSelectionMode.appearance.title)
+		}
+	}
+
+	@objc func articleThemeMenuItemSelected(_ menuItem: NSMenuItem) {
+		applyArticleThemePopupItem(menuItem)
+		updateArticleThemePopup()
+	}
+
+	func applyArticleThemePopupItem(_ menuItem: NSMenuItem) {
+		guard let item = menuItem.representedObject as? ArticleThemePopupItem else {
+			return
+		}
+
+		switch item {
+		case .selectionMode(let mode):
+			ArticleThemesManager.shared.themeSelectionMode = mode
+		case .theme(let setting):
+			ArticleThemesManager.shared.setThemeName(menuItem.title, for: setting)
+		}
+	}
+
+	func addThemeSubmenu(to menu: NSMenu, setting: ArticleThemeSetting) {
+		let submenuItem = NSMenuItem(title: setting.title, action: nil, keyEquivalent: "")
+		let submenu = NSMenu()
+		addThemeMenuItems(to: submenu, setting: setting)
+		submenuItem.submenu = submenu
+		menu.addItem(submenuItem)
+	}
+
+	func addThemeMenuItems(to menu: NSMenu, setting: ArticleThemeSetting) {
+		let defaultThemeItem = articleThemeMenuItem(title: ArticleTheme.defaultTheme.name, representedObject: ArticleThemePopupItem.theme(setting))
+		defaultThemeItem.state = ArticleTheme.defaultTheme.name == ArticleThemesManager.shared.themeName(for: setting) ? .on : .off
+		menu.addItem(defaultThemeItem)
 		menu.addItem(NSMenuItem.separator())
 
 		for themeName in ArticleThemesManager.shared.themeNames {
-			menu.addItem(NSMenuItem(title: themeName, action: nil, keyEquivalent: ""))
+			let themeItem = articleThemeMenuItem(title: themeName, representedObject: ArticleThemePopupItem.theme(setting))
+			themeItem.state = themeName == ArticleThemesManager.shared.themeName(for: setting) ? .on : .off
+			menu.addItem(themeItem)
 		}
+	}
 
-		articleThemePopup.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
-		if articleThemePopup.indexOfSelectedItem == -1 {
-			articleThemePopup.selectItem(withTitle: ArticleTheme.defaultTheme.name)
-		}
+	private func articleThemeMenuItem(title: String, representedObject: ArticleThemePopupItem) -> NSMenuItem {
+		let menuItem = NSMenuItem(title: title, action: #selector(articleThemeMenuItemSelected(_:)), keyEquivalent: "")
+		menuItem.target = self
+		menuItem.representedObject = representedObject
+		return menuItem
 	}
 
 	func updateBrowserPopup() {
