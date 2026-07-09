@@ -138,11 +138,13 @@ function error() {
 
 // Takes into account absoluting of URLs.
 function isLocalFootnote(target) {
-	return target.hash.startsWith("#fn") && target.href.indexOf(document.baseURI) === 0;
+	return (target.hash.startsWith("#fn") || target.hash.startsWith("#footnote")) && target.href.indexOf(document.baseURI) === 0;
 }
 
 function styleLocalFootnotes() {
-	for (elem of document.querySelectorAll("sup > a[href*='#fn'], sup > div > a[href*='#fn']")) {
+	// Multimarkdown-style: <sup><a href="#fn…">. Substack-style: a bare
+	// <a id="footnote-anchor-N" href="#footnote-N"> with no <sup> wrapper.
+	for (elem of document.querySelectorAll("sup > a[href*='#fn'], sup > div > a[href*='#fn'], a[id^='footnote-anchor-']")) {
 		if (isLocalFootnote(elem)) {
 			elem.classList.add("footnote");
 		}

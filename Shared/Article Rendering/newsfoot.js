@@ -123,12 +123,37 @@
 		if (!target.hash) return;
 		return decodeURIComponent(target.hash.substring(1));
 	}
-	/** @type {{fnref(target:HTMLAnchorElement): string|undefined}[]} */
+	/**
+	 * @type {{
+	 *   fnref(target:HTMLAnchorElement): string|undefined,
+	 *   content(targetElement:HTMLElement): string
+	 * }[]}
+	 */
 	const footnoteFormats = [
+		{ // Substack: the ref <a id="footnote-anchor-N" href="#footnote-N">
+		  // points at a backlink <a id="footnote-N">N</a> whose note text lives
+		  // in the sibling elements that follow it, not inside the anchor.
+			fnref(target) {
+				if (!target.matches("a[id^='footnote-anchor-']")) return;
+				return idFromHash(target);
+			},
+			content(targetElement) {
+				let html = "";
+				let node = targetElement.nextElementSibling;
+				while (node && !node.matches("a[id^='footnote-']")) {
+					html += node.outerHTML;
+					node = node.nextElementSibling;
+				}
+				return html;
+			}
+		},
 		{ // Multimarkdown
 			fnref(target) {
 				if (!target.matches(".footnote")) return;
 				return idFromHash(target);
+			},
+			content(targetElement) {
+				return targetElement.innerHTML;
 			}
 		}
 	];
@@ -138,22 +163,26 @@
 		if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
 
 		let targetId = undefined;
+		let format = undefined;
 		for(const f of footnoteFormats) {
 			targetId = f.fnref(ev.target);
-			if (targetId) break;
+			if (targetId) {
+				format = f;
+				break;
+			}
 		}
 		if (targetId === undefined) return;
-		
+
 		// Only override the default behaviour when we know we can find the
 		// target element
 		const targetElement = document.getElementById(targetId);
 		if (targetElement === null) return;
-				
+
 		ev.preventDefault();
 
 		installContainer(ev.target);
-				
-		void new Footnote(targetElement.innerHTML, ev.target);
+
+		void new Footnote(format.content(targetElement), ev.target);
     });
 										   
 	// Handle clicks on the footnote reverse link
