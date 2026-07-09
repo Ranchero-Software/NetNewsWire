@@ -137,6 +137,32 @@ public final class FeedFinder {
 	}
 }
 
+extension FeedFinder {
+
+	/// True when `feedURLString` is on the same host as `pageURLString` and its
+	/// path equals or is nested under the page's path. The page must have a
+	/// non-root path — a root request (e.g. example.com/) gets no on-path
+	/// preference, preserving the existing <head>-feed behavior for whole sites.
+	static func feedURLString(_ feedURLString: String, isUnderRequestedPageURLString pageURLString: String) -> Bool {
+		guard let feedURL = URL(string: feedURLString), let pageURL = URL(string: pageURLString),
+			let feedHost = feedURL.host(), let pageHost = pageURL.host() else {
+			return false
+		}
+		func normalizedHost(_ host: String) -> String {
+			let lowered = host.lowercased(with: localeForLowercasing)
+			return lowered.hasPrefix("www.") ? String(lowered.dropFirst("www.".count)) : lowered
+		}
+		guard normalizedHost(feedHost) == normalizedHost(pageHost) else {
+			return false
+		}
+		let pagePath = pageURL.path.hasSuffix("/") ? String(pageURL.path.dropLast()) : pageURL.path
+		guard pagePath.count > 1 else {
+			return false
+		}
+		return feedURL.path == pagePath || feedURL.path.hasPrefix(pagePath + "/")
+	}
+}
+
 private extension FeedFinder {
 
 	static func addFeedSpecifier(_ feedSpecifier: FeedSpecifier, feedSpecifiers: inout [String: FeedSpecifier]) {
@@ -170,6 +196,23 @@ private extension FeedFinder {
 				if feedSpecifiers[oneFeedSpecifier.urlString] == nil {
 					feedSpecifiersToDownload.insert(oneFeedSpecifier)
 				}
+			}
+		}
+
+		// A body-linked feed whose URL lives *under* the requested page's path
+		// (e.g. /blog/feed for a /blog request) is more specific than a
+		// site-wide feed declared in <head> (e.g. a network master feed). Prefer
+		// it: validate the on-path body candidates and, if any are real feeds,
+		// return those instead of the <head> feed. Without this, any <head> feed
+		// unconditionally suppressed every body feed, so a page-specific feed was
+		// discarded before it could be considered. (#5299)
+		let onPathToDownload = feedSpecifiersToDownload.filter {
+			Self.feedURLString($0.urlString, isUnderRequestedPageURLString: urlString)
+		}
+		if !onPathToDownload.isEmpty {
+			let onPathFeeds = await downloadFeedSpecifiers(onPathToDownload, feedSpecifiers: [:])
+			if !onPathFeeds.isEmpty {
+				return (onPathFeeds, .candidates)
 			}
 		}
 
