@@ -89,16 +89,6 @@ final class DetailWebView: WKWebView {
 
 		super.willOpenMenu(menu, with: event)
 	}
-
-	override func viewWillStartLiveResize() {
-		super.viewWillStartLiveResize()
-		evaluateJavaScript("document.body.style.overflow = 'hidden';", completionHandler: nil)
-	}
-
-	override func viewDidEndLiveResize() {
-		super.viewDidEndLiveResize()
-		evaluateJavaScript("document.body.style.overflow = 'visible';", completionHandler: nil)
-	}
 }
 
 // MARK: - Private

@@ -16,20 +16,22 @@ final class IconView: NSView {
 			if iconImage !== oldValue {
 				imageView.image = iconImage?.image
 				if let tintColor = iconImage?.preferredColor {
-					imageView.contentTintColor = NSColor(cgColor: tintColor)
+					imageView.contentTintColor = tintColor
 				}
 
-				if NSApplication.shared.effectiveAppearance.isDarkMode {
-					if self.iconImage?.isDark ?? false {
-						self.isDiscernable = false
+				if iconImage?.isBackgroundSuppressed ?? false {
+					isDiscernable = true
+				} else if NSApplication.shared.effectiveAppearance.isDarkMode {
+					if iconImage?.isDark ?? false {
+						isDiscernable = false
 					} else {
-						self.isDiscernable = true
+						isDiscernable = true
 					}
 				} else {
-					if self.iconImage?.isBright ?? false {
-						self.isDiscernable = false
+					if iconImage?.isBright ?? false {
+						isDiscernable = false
 					} else {
-						self.isDiscernable = true
+						isDiscernable = true
 					}
 				}
 
@@ -41,7 +43,7 @@ final class IconView: NSView {
 
 	private var isDiscernable = true
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 
@@ -116,23 +118,16 @@ private extension IconView {
 
 		let imageSize = image.size
 		let viewSize = bounds.size
-
-		if imageSize.height == imageSize.width {
-			return NSRect(x: 0.0, y: 0.0, width: viewSize.width, height: viewSize.height)
+		guard imageSize.width > 0.0, imageSize.height > 0.0 else {
+			return NSRect.zero
 		}
 
-		// Non-square: aspect fit — scale to fill one dimension, center in the other
-		if imageSize.height > imageSize.width {
-			let factor = viewSize.height / imageSize.height
-			let width = imageSize.width * factor
-			let originX = floor((viewSize.width - width) / 2.0)
-			return NSRect(x: originX, y: 0.0, width: width, height: viewSize.height)
-		}
-
-		// Wider than tall
-		let factor = viewSize.width / imageSize.width
+		// Aspect-fit, but never scale up — small icons render at natural size, centered.
+		let factor = min(viewSize.width / imageSize.width, viewSize.height / imageSize.height, 1.0)
+		let width = imageSize.width * factor
 		let height = imageSize.height * factor
+		let originX = floor((viewSize.width - width) / 2.0)
 		let originY = floor((viewSize.height - height) / 2.0)
-		return NSRect(x: 0.0, y: originY, width: viewSize.width, height: height)
+		return NSRect(x: originX, y: originY, width: width, height: height)
 	}
 }

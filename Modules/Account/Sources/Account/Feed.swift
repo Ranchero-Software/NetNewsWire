@@ -72,17 +72,10 @@ import Articles
 
 	public var authors: Set<Author>? {
 		get {
-			if let authorsArray = settings.authors {
-				return Set(authorsArray)
-			}
-			return nil
+			settings.authors
 		}
 		set {
-			if let authorsSet = newValue {
-				settings.authors = Array(authorsSet)
-			} else {
-				settings.authors = nil
-			}
+			settings.authors = newValue
 		}
 	}
 

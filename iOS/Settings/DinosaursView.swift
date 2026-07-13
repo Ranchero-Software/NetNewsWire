@@ -89,7 +89,7 @@ struct DinosaursView: View {
 				}
 			} footer: {
 				if model.rows.count == 0 {
-					Text("There are no dinosaurs. All feeds have published articles within the last \(model.monthThreshold) months.", comment: "No dinosaurs footer text.")
+					Text("No dinosaurs", comment: "No dinosaurs footer text.")
 				} else {
 					Text("Swipe a feed to show the action menu and delete button.", comment: "Dinosaurs swipe hint.")
 						.padding(.top, 8)

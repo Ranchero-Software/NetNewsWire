@@ -23,7 +23,7 @@ typealias RSColor = UIColor
 #endif
 
 struct Assets {
-	struct Images {
+	@MainActor struct Images {
 		static var accountBazQux: RSImage { RSImage(named: "accountBazQux")! }
 		static var accountCloudKit: RSImage { RSImage(named: "accountCloudKit")! }
 		static var accountFeedbin: RSImage { RSImage(named: "accountFeedbin")! }
@@ -34,147 +34,101 @@ struct Assets {
 		static var accountNewsBlur: RSImage { RSImage(named: "accountNewsBlur")! }
 		static var accountTheOldReader: RSImage { RSImage(named: "accountTheOldReader")! }
 
-		static var starOpen: RSImage { RSImage(symbol: "star")! }
-		static var starClosed: RSImage { RSImage(symbol: "star.fill")! }
-		static var copy: RSImage? { RSImage(symbol: "document.on.document") }
+		static let starOpen = RSImage(symbol: "star")!
+		static let starClosed = RSImage(symbol: "star.fill")!
+		static let copy = RSImage(symbol: "document.on.document")
 		static var markAllAsRead: RSImage { RSImage(named: "markAllAsRead")! }
-		static var nextUnread: RSImage { RSImage(symbol: "chevron.down.circle")! }
+		static let nextUnread = RSImage(symbol: "chevron.down.circle")!
 
-		static var nnwFeedIcon: RSImage { RSImage(named: "nnwFeedIcon")! }
+		nonisolated static var nnwFeedIcon: RSImage { RSImage(named: "nnwFeedIcon")! }
 		static var faviconTemplate: RSImage { RSImage(named: "faviconTemplateImage")! }
 
-		static var articleExtractorError: RSImage { RSImage(named: "articleExtractorError")! }
-		static var articleExtractorOn: RSImage { RSImage(named: "articleExtractorOn")! }
-		static var articleExtractorOff: RSImage { RSImage(named: "articleExtractorOff")! }
-		static var share: RSImage { RSImage(symbol: "square.and.arrow.up")! }
-		static var folder: RSImage { RSImage(symbol: "folder")! }
-		static var starredFeed: IconImage {
-			IconImage(starClosed,
-					  isSymbol: true,
-					  isBackgroundSuppressed: true,
-					  preferredColor: Assets.Colors.star.cgColor)
-		}
+		static let articleExtractorOff: RSImage = {
+			if #available(iOS 18, macOS 15, *) {
+				return RSImage(symbol: "text.page")!
+			} else {
+				return RSImage(symbol: "doc.plaintext")!
+			}
+		}()
+		static let articleExtractorOn: RSImage = {
+			if #available(iOS 18, macOS 15, *) {
+				return RSImage(symbol: "text.page.fill")!
+			} else {
+				return RSImage(symbol: "doc.plaintext.fill")!
+			}
+		}()
+		static let articleExtractorError: RSImage = {
+			if #available(iOS 18, macOS 15, *) {
+				return RSImage(symbol: "text.page.slash")!
+			} else {
+				return RSImage(symbol: "exclamationmark.triangle")!
+			}
+		}()
+		static let share = RSImage(symbol: "square.and.arrow.up")!
+		static let folder = RSImage(symbol: "folder")!
+		static let starredFeed = IconImage(starClosed, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.star)
 
 #if os(macOS)
 		static var accountLocal: RSImage { RSImage(named: "accountLocal")! }
-		static var addNewSidebarItem: RSImage { RSImage(symbol: "plus")! }
-		static var articleTheme: RSImage { RSImage(symbol: "doc.richtext")! }
-		static var cleanUp: RSImage { RSImage(symbol: "bubbles.and.sparkles")! }
+		static let addNewSidebarItem = RSImage(symbol: "plus")!
+		static let articleTheme = RSImage(symbol: "doc.richtext")!
+		static let cleanUp = RSImage(symbol: "bubbles.and.sparkles")!
 		static var marsEdit: RSImage { RSImage(named: "MarsEditIcon")! }
 		static var microblog: RSImage { RSImage(named: "MicroblogIcon")! }
-		static var filterActive: RSImage { RSImage(symbol: "line.horizontal.3.decrease.circle.fill")! }
-		static var filterInactive: RSImage { RSImage(symbol: "line.horizontal.3.decrease.circle")! }
-		static var openInBrowser: RSImage { RSImage(symbol: "safari")! }
-		static var preferencesToolbarAccounts: RSImage { RSImage(symbol: "at")! }
-		static var preferencesToolbarGeneral: RSImage { RSImage(symbol: "gearshape")! }
-		static var preferencesToolbarAdvanced: RSImage { RSImage(symbol: "gearshape.2")! }
-		static var readClosed: RSImage { RSImage(symbol: "largecircle.fill.circle")! }
-		static var readOpen: RSImage { RSImage(symbol: "circle")! }
-		static var refresh: RSImage { RSImage(symbol: "arrow.clockwise")! }
-		static var swipeMarkUnstarred: RSImage { RSImage(symbol: "star")! }
+		static let filterActive = RSImage(symbol: "line.horizontal.3.decrease.circle.fill")!
+		static let filterInactive = RSImage(symbol: "line.horizontal.3.decrease.circle")!
+		static let openInBrowser = RSImage(symbol: "safari")!
+		static let preferencesToolbarAccounts = RSImage(symbol: "at")!
+		static let preferencesToolbarGeneral = RSImage(symbol: "gearshape")!
+		static let preferencesToolbarAdvanced = RSImage(symbol: "gearshape.2")!
+		static let readClosed = RSImage(symbol: "largecircle.fill.circle")!
+		static let readOpen = RSImage(symbol: "circle")!
+		static let refresh = RSImage(symbol: "arrow.clockwise")!
+		static let swipeMarkUnstarred = RSImage(symbol: "star")!
 		static var timelineStar: RSImage { RSImage(named: "timelineStar")! }
 		static var markBelowAsRead: RSImage { RSImage(named: "markBelowAsRead")! }
 		static var markAboveAsRead: RSImage { RSImage(named: "markAboveAsRead")! }
-		static var searchFeed: IconImage {
-			IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
-		}
-		static var swipeMarkStarred: RSImage {
-			RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
-		}
-		static var swipeMarkRead: RSImage {
-			RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
-		}
-		static var swipeMarkUnread: RSImage {
-			RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
-		}
-		static var mainFolder: IconImage {
-			IconImage(folder,
-					  isSymbol: true,
-					  isBackgroundSuppressed: true,
-					  preferredColor: Assets.Colors.primaryAccent.cgColor)
-		}
-		static var todayFeed: IconImage {
-			let image = RSImage(symbol: "sun.max.fill")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: NSColor.orange.cgColor)
-		}
-		static var unreadFeed: IconImage {
-			let image = RSImage(symbol: "largecircle.fill.circle")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: Assets.Colors.primaryAccent.cgColor)
-		}
+		static let searchFeed = IconImage(RSImage(named: NSImage.smartBadgeTemplateName)!, isSymbol: true, isBackgroundSuppressed: true)
+		static let swipeMarkStarred = RSImage(systemSymbolName: "star.fill", accessibilityDescription: "Star")!
+		static let swipeMarkRead = RSImage(systemSymbolName: "circle", accessibilityDescription: "Mark Read")!
+		static let swipeMarkUnread = RSImage(systemSymbolName: "largecircle.fill.circle", accessibilityDescription: "Mark Unread")!
+		static let mainFolder = IconImage(folder, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.primaryAccent)
+		static let todayFeed = IconImage(RSImage(symbol: "sun.max.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: NSColor.orange)
+		static let unreadFeed = IconImage(RSImage(symbol: "largecircle.fill.circle")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.primaryAccent)
 
 #else // iOS
 		static var accountLocalPadImage: RSImage { RSImage(named: "accountLocalPad")! }
 		static var accountLocalPhoneImage: RSImage { RSImage(named: "accountLocalPhone")! }
 
-		static var articleExtractorOnSF: RSImage { RSImage(named: "articleExtractorOnSF")! }
-		static var articleExtractorOffSF: RSImage { RSImage(symbol: "doc.plaintext")! }
-		@MainActor static var articleExtractorOnTinted: RSImage {
-			articleExtractorOn.tinted(color: Assets.Colors.primaryAccent)!
-		}
-		@MainActor static var articleExtractorOffTinted: RSImage {
-			articleExtractorOff.tinted(color: Assets.Colors.primaryAccent)!
-		}
-
-		static var circleClosed: RSImage { RSImage(symbol: "largecircle.fill.circle")! }
-		static var markBelowAsRead: RSImage { RSImage(symbol: "arrowtriangle.down.circle")! }
-		static var markAboveAsRead: RSImage { RSImage(symbol: "arrowtriangle.up.circle")! }
-		static var more: RSImage { RSImage(symbol: "ellipsis.circle")! }
-		static var nextArticle: RSImage { RSImage(symbol: "chevron.down")! }
-		static var circleOpen: RSImage { RSImage(symbol: "circle")! }
+		static let circleClosed = RSImage(symbol: "largecircle.fill.circle")!
+		static let markBelowAsRead = RSImage(symbol: "arrowtriangle.down.circle")!
+		static let markAboveAsRead = RSImage(symbol: "arrowtriangle.up.circle")!
+		static let more = RSImage(symbol: "ellipsis.circle")!
+		static let nextArticle = RSImage(symbol: "chevron.down")!
+		static let circleOpen = RSImage(symbol: "circle")!
 		static var disclosure: RSImage { RSImage(named: "disclosure")! }
-		static var deactivate: RSImage { RSImage(symbol: "minus.circle")! }
-		static var currentActivity: RSImage { RSImage(symbol: "text.pad.header")! }
-		static var edit: RSImage { RSImage(symbol: "square.and.pencil")! }
-		static var filter: RSImage { RSImage(symbol: "line.3.horizontal.decrease")! }
-		static var folderOutlinePlus: RSImage { RSImage(symbol: "folder.badge.plus")! }
-		static var info: RSImage { RSImage(symbol: "info.circle")! }
-		static var plus: RSImage { RSImage(symbol: "plus")! }
-		static var prevArticle: RSImage { RSImage(symbol: "chevron.up")! }
-		static var openInSidebar: RSImage { RSImage(symbol: "arrow.turn.down.left")! }
-		static var safari: RSImage { RSImage(symbol: "safari")! }
-		static var smartFeed: RSImage { RSImage(symbol: "gear")! }
-		static var trash: RSImage { RSImage(symbol: "trash")! }
+		static let deactivate = RSImage(symbol: "minus.circle")!
+		static let currentActivity = RSImage(symbol: "text.pad.header")!
+		static let edit = RSImage(symbol: "square.and.pencil")!
+		static let filter = RSImage(symbol: "line.3.horizontal.decrease")!
+		static let folderOutlinePlus = RSImage(symbol: "folder.badge.plus")!
+		static let info = RSImage(symbol: "info.circle")!
+		static let plus = RSImage(symbol: "plus")!
+		static let prevArticle = RSImage(symbol: "chevron.up")!
+		static let openInSidebar = RSImage(symbol: "arrow.turn.down.left")!
+		static let safari = RSImage(symbol: "safari")!
+		static let smartFeed = RSImage(symbol: "gear")!
+		static let trash = RSImage(symbol: "trash")!
 
-		static var searchFeed: IconImage {
-			IconImage(RSImage(symbol: "magnifyingglass")!, isSymbol: true)
-		}
-		static var mainFolder: IconImage {
-			IconImage(folder,
-					  isSymbol: true,
-					  isBackgroundSuppressed: true,
-					  preferredColor: Assets.Colors.secondaryAccent.cgColor)
-		}
-		static var todayFeed: IconImage {
-			let image = RSImage(symbol: "sun.max.fill")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: UIColor.systemOrange.cgColor)
-		}
-		static var unreadFeed: IconImage {
-			let image = RSImage(symbol: "largecircle.fill.circle")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: Assets.Colors.secondaryAccent.cgColor)
-		}
+		static let searchFeed = IconImage(RSImage(symbol: "magnifyingglass")!, isSymbol: true)
+		static let mainFolder = IconImage(folder, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.secondaryAccent)
+		static let todayFeed = IconImage(RSImage(symbol: "sun.max.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: UIColor.systemOrange)
+		static let unreadFeed = IconImage(RSImage(symbol: "largecircle.fill.circle")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.secondaryAccent)
 		static var timelineStar: RSImage {
 			let image = RSImage(symbol: "star.fill")!
 			return image.withTintColor(Assets.Colors.star, renderingMode: .alwaysOriginal)
 		}
-		static var unreadCellIndicator: IconImage {
-			let image = RSImage(symbol: "circle.fill")!
-			return IconImage(image,
-							 isSymbol: true,
-							 isBackgroundSuppressed: true,
-							 preferredColor: Assets.Colors.secondaryAccent.cgColor)
-		}
+		static let unreadCellIndicator = IconImage(RSImage(symbol: "circle.fill")!, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.secondaryAccent)
 #endif
 	}
 
@@ -211,24 +165,24 @@ struct Assets {
 		}
 	}
 
-	struct Colors {
+	@MainActor struct Colors {
 #if os(macOS)
-		static var primaryAccent: RSColor { RSColor(named: "AccentColor")! }
-		static var timelineSeparator: RSColor { NSColor(named: "timelineSeparatorColor")! }
-		static var iconLightBackground: RSColor { NSColor(named: "iconLightBackgroundColor")! }
-		static var iconDarkBackground: RSColor { NSColor(named: "iconDarkBackgroundColor")! }
-		static var star: RSColor { RSColor(named: "StarColor")! }
-		static var sidebarUnreadCountBackground: RSColor { RSColor(named: "SidebarUnreadCountBackground")! }
-		static var sidebarUnreadCountText: RSColor { RSColor(named: "SidebarUnreadCountText")! }
+		static let primaryAccent = RSColor(named: "AccentColor")!
+		static let timelineSeparator = NSColor(named: "timelineSeparatorColor")!
+		static let iconLightBackground = NSColor(named: "iconLightBackgroundColor")!
+		static let iconDarkBackground = NSColor(named: "iconDarkBackgroundColor")!
+		static let star = RSColor(named: "StarColor")!
+		static let sidebarUnreadCountBackground = RSColor(named: "SidebarUnreadCountBackground")!
+		static let sidebarUnreadCountText = RSColor(named: "SidebarUnreadCountText")!
 #else // iOS
-		static var primaryAccent: RSColor { RSColor(named: "primaryAccentColor")! }
-		static var secondaryAccent: RSColor { RSColor(named: "secondaryAccentColor")! }
-		static var star: RSColor { RSColor(named: "starColor")! }
-		static var vibrantText: RSColor { RSColor(named: "vibrantTextColor")! }
-		static var controlBackground: RSColor { RSColor(named: "controlBackgroundColor")! }
-		static var iconBackground: RSColor { RSColor(named: "iconBackgroundColor")! }
-		static var fullScreenBackground: RSColor { RSColor(named: "fullScreenBackgroundColor")! }
-		static var sectionHeader: RSColor { RSColor(named: "sectionHeaderColor")! }
+		static let primaryAccent = RSColor(named: "primaryAccentColor")!
+		static let secondaryAccent = RSColor(named: "secondaryAccentColor")!
+		static let star = RSColor(named: "starColor")!
+		static let vibrantText = RSColor(named: "vibrantTextColor")!
+		static let controlBackground = RSColor(named: "controlBackgroundColor")!
+		static let iconBackground = RSColor(named: "iconBackgroundColor")!
+		static let fullScreenBackground = RSColor(named: "fullScreenBackgroundColor")!
+		static let sectionHeader = RSColor(named: "sectionHeaderColor")!
 #endif
 	}
 }

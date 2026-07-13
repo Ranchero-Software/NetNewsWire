@@ -645,7 +645,7 @@ private extension WebViewController {
 //		print("article.html written to \(fileURL.path)")
 
 		WebViewConfiguration.addContentBlockingRules(to: webView)
-		webView.loadHTMLString(html, baseURL: ArticleRenderer.page.baseURL)
+		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}
 
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
@@ -843,7 +843,7 @@ private extension WebViewController {
 	}
 
 	func nextUnreadArticleAction() -> UIAction? {
-		guard coordinator.isAnyUnreadAvailable else { return nil }
+		guard coordinator.isNextUnreadAvailable else { return nil }
 		let title = NSLocalizedString("Next Unread Article", comment: "Next Unread Article")
 		return UIAction(title: title, image: Assets.Images.nextUnread) { [weak self] _ in
 			self?.coordinator.selectNextUnread()
@@ -853,7 +853,7 @@ private extension WebViewController {
 	func toggleArticleExtractorAction() -> UIAction {
 		let extracted = articleExtractorButtonState == .on
 		let title = extracted ? NSLocalizedString("Show Feed Article", comment: "Show Feed Article") : NSLocalizedString("Show Reader View", comment: "Show Reader View")
-		let extractorImage = extracted ? Assets.Images.articleExtractorOffSF : Assets.Images.articleExtractorOnSF
+		let extractorImage = extracted ? Assets.Images.articleExtractorOff : Assets.Images.articleExtractorOn
 		return UIAction(title: title, image: extractorImage) { [weak self] _ in
 			self?.toggleArticleExtractor()
 		}

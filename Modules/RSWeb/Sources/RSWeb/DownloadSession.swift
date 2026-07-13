@@ -139,7 +139,7 @@ extension DownloadSession: @preconcurrency URLSessionTaskDelegate {
 				return
 			}
 
-			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data as Data, error: error as NSError?)
+			delegate.downloadSession(self, downloadDidComplete: info.url, response: info.urlResponse, data: info.data, error: error as NSError?)
 		}
 	}
 
@@ -217,7 +217,7 @@ extension DownloadSession: @preconcurrency URLSessionDataDelegate {
 			}
 			info.addData(data)
 
-			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data as Data, url: info.url) {
+			if !delegate.downloadSession(self, shouldContinueAfterReceivingData: info.data, url: info.url) {
 				dataTask.cancel()
 				removeTask(dataTask)
 			}
@@ -378,6 +378,9 @@ private extension DownloadSession {
 		cancelAndRemoveTasksWithHost(message.host)
 	}
 
+	// Default for sites like Reddit that don’t send a value.
+	static let defaultRetryAfter: TimeInterval = 10 * 60 // 10 minutes
+
 	func createHTTPResponse429(_ dataTask: URLSessionDataTask, _ response: URLResponse) -> HTTPResponse429? {
 
 		guard let url = dataTask.currentRequest?.url ?? dataTask.originalRequest?.url else {
@@ -386,12 +389,16 @@ private extension DownloadSession {
 		guard let httpResponse = response as? HTTPURLResponse else {
 			return nil
 		}
-		guard let retryAfterValue = httpResponse.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) else {
+
+		let parsedRetryAfter: TimeInterval? = {
+			if let retryAfterValue = httpResponse.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter),
+			   let parsed = TimeInterval(retryAfterValue),
+			   parsed > 0 {
+				return parsed
+			}
 			return nil
-		}
-		guard let retryAfter = TimeInterval(retryAfterValue), retryAfter > 0 else {
-			return nil
-		}
+		}()
+		let retryAfter = parsedRetryAfter ?? Self.defaultRetryAfter
 
 		return HTTPResponse429(url: url, retryAfter: retryAfter)
 	}
@@ -407,10 +414,10 @@ private extension DownloadSession {
 		let lowercaseHost = host.lowercased(with: localeForLowercasing)
 
 		let tasksToRemove = tasks.filter { task in
-			if let taskHost = task.lowercaseHost, taskHost.contains(lowercaseHost) {
+			guard let taskHost = task.lowercaseHost else {
 				return false
 			}
-			return true
+			return taskHost.contains(lowercaseHost)
 		}
 
 		for task in tasksToRemove {
@@ -519,7 +526,7 @@ extension URLSessionTask {
 private final class DownloadInfo {
 
 	let url: URL
-	let data = NSMutableData()
+	var data = Data()
 	var urlResponse: URLResponse?
 
 	init(_ url: URL) {

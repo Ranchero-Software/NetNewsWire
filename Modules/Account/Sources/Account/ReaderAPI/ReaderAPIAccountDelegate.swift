@@ -113,7 +113,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			try await account.logActivity(kind: .refreshAll) {
 				try await refreshAccount(account)
 
-				try await sendArticleStatus()
+				// A failed status send must not block fetching new articles.
+				// <https://discourse.netnewswire.com/t/no-feed-updates/336>
+				try? await sendArticleStatus()
 				refreshProgress.completeTask()
 
 				let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
@@ -585,7 +587,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
 		if let count = await syncDatabase.selectPendingCount(), count > 100 {
-			try? await sendArticleStatus()
+			// Flush in the background so marking doesn't block the caller
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
+			Task { try? await sendArticleStatus() }
 		}
 	}
 

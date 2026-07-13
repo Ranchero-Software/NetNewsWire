@@ -47,7 +47,7 @@ final class ArticleViewController: UIViewController {
 		if #unavailable(iOS 26) {
 			button.tintColor = Assets.Colors.primaryAccent
 		} else {
-			button.tintColor = .secondaryLabel
+			button.tintColor = .label
 		}
 		return button
 	}()
@@ -257,7 +257,7 @@ final class ArticleViewController: UIViewController {
 			return
 		}
 
-		nextUnreadBarButtonItem.isEnabled = coordinator.isAnyUnreadAvailable
+		nextUnreadBarButtonItem.isEnabled = coordinator.isNextUnreadAvailable
 		prevArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
 		readBarButtonItem.isEnabled = true

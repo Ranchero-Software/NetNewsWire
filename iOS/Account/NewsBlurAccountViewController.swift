@@ -119,11 +119,7 @@ final class NewsBlurAccountViewController: UITableViewController {
 						try account?.storeCredentials(basicCredentials)
 						try account?.storeCredentials(sessionCredentials)
 
-						do {
-							try await account?.refreshAll()
-						} catch {
-							presentError(error)
-						}
+						account?.triggerRefreshAll()
 
 						dismiss(animated: true, completion: nil)
 						delegate?.dismiss()

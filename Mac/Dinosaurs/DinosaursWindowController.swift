@@ -85,6 +85,10 @@ final class DinosaursWindowController: NSWindowController {
 		guard let control = sender as? NSControl else {
 			return
 		}
+		if control === monthThresholdField && control.stringValue.isEmpty {
+			// Empty field shows nothing; handled live in controlTextDidChange. Don't snap to a value on commit.
+			return
+		}
 		let value = max(1, min(350, control.integerValue))
 		setThresholdControls(value)
 		guard value != model.monthThreshold else {
@@ -194,6 +198,7 @@ extension DinosaursWindowController: NSTextFieldDelegate {
 		if digitsOnly != field.stringValue {
 			field.stringValue = digitsOnly
 		}
+		applyTypedThreshold(digitsOnly)
 	}
 }
 
@@ -366,6 +371,20 @@ private extension DinosaursWindowController {
 	func setThresholdControls(_ value: Int) {
 		monthThresholdField?.integerValue = value
 		monthThresholdStepper?.integerValue = value
+	}
+
+	func applyTypedThreshold(_ text: String) {
+		guard let value = Int(text), value >= 1 else {
+			// Empty field, or no usable number: show nothing.
+			model.clear()
+			updateUI()
+			return
+		}
+		let clamped = min(350, value)
+		monthThresholdStepper?.integerValue = clamped
+		model.monthThreshold = clamped
+		Self.savedMonthThreshold = clamped
+		refreshModel()
 	}
 
 	func updateActionBarEnabledState() {

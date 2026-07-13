@@ -17,7 +17,7 @@ import Articles
 import ArticlesDatabase
 import Images
 
-// This just shows the global unread count, which appDelegate already has. Easy.
+// This just shows the global unread count, which AccountManager already has. Easy.
 
 @MainActor final class UnreadFeed: PseudoFeed {
 
@@ -54,14 +54,14 @@ import Images
 
 	init() {
 
-		self.unreadCount = appDelegate.unreadCount
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: appDelegate)
+		self.unreadCount = AccountManager.shared.unreadCount
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 
-		assert(note.object is AppDelegate)
-		unreadCount = appDelegate.unreadCount
+		assert(note.object is AccountManager)
+		unreadCount = AccountManager.shared.unreadCount
 	}
 }
 

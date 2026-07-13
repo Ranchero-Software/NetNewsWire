@@ -389,6 +389,8 @@ private extension XMLEntities {
 		"yen": "¥",
 		"yuml": "ÿ",
 		"infin": "∞",
-		"nbsp": "\u{00A0}" // U+00A0 NO-BREAK SPACE — looks like plain space, so keep escaped
+		"nbsp": "\u{00A0}", // U+00A0 NO-BREAK SPACE — looks like plain space, so keep escaped
+		"zwj": "\u{200D}", // U+200D ZERO WIDTH JOINER — invisible, so keep escaped
+		"zwnj": "\u{200C}" // U+200C ZERO WIDTH NON-JOINER — invisible, so keep escaped
 	]
 }

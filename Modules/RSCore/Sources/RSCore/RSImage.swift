@@ -13,11 +13,13 @@ import os
 #if os(macOS)
 import AppKit
 public typealias RSImage = NSImage
+public typealias RSColor = NSColor
 #endif
 
 #if os(iOS)
 import UIKit
 public typealias RSImage = UIImage
+public typealias RSColor = UIColor
 #endif
 
 private let RSImageLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "RSImage")

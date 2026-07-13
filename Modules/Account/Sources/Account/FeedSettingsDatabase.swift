@@ -43,7 +43,7 @@ final class FeedSettingsDatabase: Sendable {
 		let contentHash: String?
 		let newArticleNotificationsEnabled: Bool
 		let readerViewAlwaysEnabled: Bool
-		let authors: [Author]?
+		let authors: Set<Author>?
 		let conditionalGetInfo: HTTPConditionalGetInfo?
 		let conditionalGetInfoDate: Date?
 		let cacheControlInfo: CacheControlInfo?
@@ -212,10 +212,10 @@ final class FeedSettingsDatabase: Sendable {
 		}
 	}
 
-	func setAuthors(_ authors: [Author]?, for feedURL: String) {
+	func setAuthors(_ authors: Set<Author>?, for feedURL: String) {
 		serialDispatchQueue.async {
 			if let authors {
-				let jsonString = Set(authors).json()
+				let jsonString = authors.json()
 				self.database.executeUpdate("UPDATE feedSettings SET authors = ? WHERE feedURL = ?;", withArgumentsIn: [jsonString as Any, feedURL])
 			} else {
 				self.database.executeUpdate("UPDATE feedSettings SET authors = NULL WHERE feedURL = ?;", withArgumentsIn: [feedURL])
@@ -290,11 +290,9 @@ private extension FeedSettingsDatabase {
 			cacheControlInfo = CacheControlInfo(dateCreated: dateCreated, maxAge: maxAge)
 		}
 
-		var authors: [Author]?
+		var authors: Set<Author>?
 		if let authorsData = resultSet.data(forColumn: Column.authors.rawValue) {
-			if let authorsSet = Author.authorsWithJSON(authorsData) {
-				authors = Array(authorsSet)
-			}
+			authors = Author.authorsWithJSON(authorsData)
 		}
 
 		var folderRelationship: [String: String]?

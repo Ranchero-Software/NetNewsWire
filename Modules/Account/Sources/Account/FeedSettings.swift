@@ -78,7 +78,7 @@ import Articles
 		}
 	}
 
-	var authors: [Author]? {
+	var authors: Set<Author>? {
 		didSet {
 			if authors != oldValue {
 				database.setAuthors(authors, for: feedURL)

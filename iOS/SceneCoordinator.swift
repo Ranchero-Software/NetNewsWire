@@ -288,8 +288,14 @@ struct SidebarItemNode: Hashable, Sendable {
 		return timelineUnreadCount > 0
 	}
 
-	var isAnyUnreadAvailable: Bool {
-		return appDelegate.unreadCount > 0
+	var isNextUnreadAvailable: Bool {
+		// Return false when the only unread article is the selected article.
+		// With nothing selected — e.g. the collapsed timeline — this falls through to "is there any unread at all".
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5008>
+		if AccountManager.shared.unreadCount == 1, let article = currentArticle, !article.status.read {
+			return false
+		}
+		return AccountManager.shared.unreadCount > 0
 	}
 
 	var timelineUnreadCount: Int = 0 {
@@ -1128,17 +1134,11 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func selectFirstUnread() {
-		if selectFirstUnreadArticleInTimeline() {
-			activityManager.selectingNextUnread()
-		}
-	}
-
 	func selectPrevUnread() {
 
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
-		if appDelegate.unreadCount < 1 {
+		if AccountManager.shared.unreadCount < 1 {
 			return
 		}
 
@@ -1159,7 +1159,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
-		if appDelegate.unreadCount < 1 {
+		if AccountManager.shared.unreadCount < 1 {
 			return
 		}
 

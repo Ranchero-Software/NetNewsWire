@@ -229,19 +229,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
 
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
-		let rootViewController = view.window?.rootViewController
-
-		Task { @MainActor in
-			do {
-				try await account.refreshAll()
-			} catch {
-				guard let viewController = rootViewController else {
-					return
-				}
-				viewController.presentError(error)
-			}
-		}
-
+		account.triggerRefreshAll()
 		dismiss()
 	}
 
