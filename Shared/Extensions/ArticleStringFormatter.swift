@@ -156,6 +156,10 @@ import RSParser
 	/// Sanitize an article title that may contain HTML. Returns nil
 	/// iff `title` is nil.
 	///
+	/// A tag is allowed or disallowed by its name alone (the leading run
+	/// of letters after any `/`); attributes are ignored, so
+	/// `<abbr title="…">` is recognized as `abbr`.
+	///
 	/// Behavior per (allowed, forHTML) combination:
 	/// - allowed tag, forHTML=true: tag preserved (`<b>Bold</b>`).
 	/// - allowed tag, forHTML=false: tag dropped, contents kept.
@@ -214,36 +218,52 @@ import RSParser
 				continue
 			}
 
-			// Normalize: strip ALL slashes, preserve case.
-			var normalized = [UInt8]()
-			normalized.reserveCapacity(tagEnd - tagStart)
-			for k in tagStart..<tagEnd {
-				let byte = utf8[k]
-				if byte != slash {
-					normalized.append(byte)
-				}
+			// Extract the tag name: skip a leading `/` (closing tags),
+			// then take the run of ASCII letters up to the first
+			// non-letter (space, `/`, digit, quote). Attributes are
+			// ignored, so `<abbr title="…">` is recognized as `abbr`.
+			var nameStart = tagStart
+			if nameStart < tagEnd && utf8[nameStart] == slash {
+				nameStart += 1
 			}
-			let isAllowed = allowedTagsBytes.contains(normalized)
+			var nameEnd = nameStart
+			while nameEnd < tagEnd && Self.isASCIILetter(utf8[nameEnd]) {
+				nameEnd += 1
+			}
+			let tagName = Array(utf8[nameStart..<nameEnd])
+			let isAllowed = allowedTagsBytes.contains(tagName)
+
+			// Only emit a closing `>` if the input actually had one. An
+			// unclosed tag (no `>` before end of input) must not gain a
+			// synthesized `>` — otherwise a title like `<16s in UK…`
+			// renders with a spurious trailing `>` (issue #4742).
+			let tagWasClosed = j < count
 
 			if isAllowed {
 				if forHTML {
 					out.append(lt)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
-					out.append(gt)
+					if tagWasClosed {
+						out.append(gt)
+					}
 				}
 			} else {
 				if forHTML {
 					out.append(contentsOf: ltEntity)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
-					out.append(contentsOf: gtEntity)
+					if tagWasClosed {
+						out.append(contentsOf: gtEntity)
+					}
 				} else {
 					out.append(lt)
 					out.append(contentsOf: utf8[tagStart..<tagEnd])
-					out.append(gt)
+					if tagWasClosed {
+						out.append(gt)
+					}
 				}
 			}
 
-			i = (j < count) ? j + 1 : count
+			i = tagWasClosed ? j + 1 : count
 		}
 
 		return String(decoding: out, as: UTF8.self)
@@ -275,11 +295,15 @@ private extension ArticleStringFormatter {
 	// UTF-8 byte arrays so tag-name lookup in `sanitizedTitle` stays
 	// byte-level — no String allocation per tag.
 	nonisolated static let allowedTagsBytes: Set<[UInt8]> = {
-		let names = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em",
-		             "i", "ins", "kbd", "mark", "q", "s", "samp", "small",
+		let names = ["abbr", "b", "bdi", "bdo", "cite", "code", "del", "dfn",
+		             "em", "i", "ins", "kbd", "mark", "q", "s", "samp", "small",
 		             "strong", "sub", "sup", "time", "u", "var"]
 		return Set(names.map { Array($0.utf8) })
 	}()
+
+	nonisolated static func isASCIILetter(_ byte: UInt8) -> Bool {
+		(byte >= UInt8(ascii: "a") && byte <= UInt8(ascii: "z")) || (byte >= UInt8(ascii: "A") && byte <= UInt8(ascii: "Z"))
+	}
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
 		emptyCaches()

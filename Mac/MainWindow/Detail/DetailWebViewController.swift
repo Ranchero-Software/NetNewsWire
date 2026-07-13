@@ -9,7 +9,6 @@
 import AppKit
 @preconcurrency import WebKit
 import RSCore
-import RSWeb
 import Articles
 import Images
 
@@ -96,9 +95,6 @@ final class DetailWebViewController: NSViewController {
 		webView.navigationDelegate = self
 		webView.keyboardDelegate = keyboardDelegate
 		webView.translatesAutoresizingMaskIntoConstraints = false
-		if let userAgent = UserAgent.fromInfoPlist() {
-			webView.customUserAgent = userAgent
-		}
 
 		view = webView
 

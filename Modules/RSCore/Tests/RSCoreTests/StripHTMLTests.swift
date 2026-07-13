@@ -91,7 +91,16 @@ struct StripHTMLTests {
 		#expect("<a href=\"#\"><span>link</span></a>".strippingHTML() == "link")
 	}
 
-	@Test(arguments: ["daringfireball", "apple", "inessential", "scripting"])
+	@Test func greaterThanInsideQuotedAttribute() {
+		// Issue #5339: a '>' inside a quoted attribute value (a CSS media query)
+		// must not be treated as the end of the tag.
+		let html = "<source media=\"(resolution >= 2x) and (width >= 700px)\" type=\"image/avif\"><p>Hello</p>"
+		#expect(html.strippingHTML() == "Hello")
+		#expect("<a title=\"a > b\">link</a>".strippingHTML() == "link")
+		#expect("<div data-x='1 > 0'>text</div>".strippingHTML() == "text")
+	}
+
+	@Test(arguments: ["daringfireball", "apple", "inessential", "scripting", "unsung"])
 	func withRealWorldHTML(testFile: String) throws {
 		let url = try #require(Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources"))
 		let html = try String(contentsOf: url, encoding: .utf8)
@@ -103,7 +112,7 @@ struct StripHTMLTests {
 		#expect(!result.contains("//"), "Should fully remove script content")
 	}
 
-	@Test(arguments: ["apple", "daringfireball", "inessential", "scripting"])
+	@Test(arguments: ["apple", "daringfireball", "inessential", "scripting", "unsung"])
 	func matchesExpectedOutput(testFile: String) throws {
 		let htmlURL = try #require(Bundle.module.url(forResource: testFile, withExtension: "html", subdirectory: "Resources"))
 		let txtURL = try #require(Bundle.module.url(forResource: testFile, withExtension: "txt", subdirectory: "Resources"))

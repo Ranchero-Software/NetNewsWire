@@ -144,9 +144,7 @@ private enum StripHTML {
 	// MARK: Main entry (called from `String.strippingHTML`)
 
 	/// Strip HTML tags from a UTF-8 byte buffer, writing the plain-text
-	/// result into `output`. Produces byte-for-byte the same output as the
-	/// previous `striphtml.c`, so the expected-output fixtures in
-	/// `StripHTMLTests.swift` stay valid.
+	/// result into `output`.
 	///
 	/// Behavior:
 	/// - Tags (`<…>`) are removed; their inner markup is discarded.
@@ -167,6 +165,9 @@ private enum StripHTML {
 	///   the style pair). While either is true, a `<` does **not** bump
 	///   `tagLevel`, so the `>` at the end of the closing tag is what brings
 	///   `tagLevel` back to zero. That's the one subtle bit of the algorithm.
+	/// - `inQuote` / `quoteByte`: true while inside a quoted attribute value
+	///   within a tag. While true, `<` and `>` are literal content, so a `>`
+	///   inside a media query like `"(width >= 700px)"` doesn't close the tag.
 	/// - `lastCharacterWasSpace`: prevents doubled spaces. Starts `true` so
 	///   leading whitespace is skipped without a separate branch.
 	/// - `charactersAdded`: counts output characters for the `maxCharacters`
@@ -191,6 +192,8 @@ private enum StripHTML {
 		var inStyle = false
 		var lastCharacterWasSpace = true
 		var charactersAdded = 0
+		var inQuote = false
+		var quoteByte: UInt8 = 0
 
 		while inputIndex < inputCount && outputIndex < outputCapacity {
 
@@ -201,6 +204,12 @@ private enum StripHTML {
 			let byte = inputBase[inputIndex]
 
 			if byte == UInt8(ascii: "<") {
+
+				// A '<' inside a quoted attribute value is literal content.
+				if inQuote {
+					inputIndex += 1
+					continue
+				}
 
 				if !inScript && !inStyle {
 					tagLevel += 1
@@ -242,8 +251,30 @@ private enum StripHTML {
 			}
 
 			if byte == UInt8(ascii: ">") {
+				// A '>' inside a quoted attribute value is literal content — it
+				// does not close the tag.
+				if inQuote {
+					inputIndex += 1
+					continue
+				}
 				if !inScript && !inStyle && tagLevel > 0 {
 					tagLevel -= 1
+				}
+				inputIndex += 1
+				continue
+			}
+
+			// Track quoted attribute values inside a tag so that '<' and '>'
+			// appearing inside them — e.g. a media query like "(width >= 700px)" —
+			// are treated as literal characters, not as tag delimiters.
+			if tagLevel > 0 && !inScript && !inStyle && (byte == UInt8(ascii: "\"") || byte == UInt8(ascii: "'")) {
+				if inQuote {
+					if byte == quoteByte {
+						inQuote = false
+					}
+				} else {
+					inQuote = true
+					quoteByte = byte
 				}
 				inputIndex += 1
 				continue

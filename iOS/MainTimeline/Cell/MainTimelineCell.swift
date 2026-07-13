@@ -75,7 +75,13 @@ final class MainTimelineCell: UICollectionViewCell {
 		} else {
 			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
 		}
-		if #available(iOS 26, *) {
+		if state.traitCollection.horizontalSizeClass == .compact {
+			// Full-bleed rectangle selection in compact width; iPad (regular width) keeps the
+			// rounded, inset selection below.
+			backgroundConfig.cornerRadius = 0
+			backgroundConfig.backgroundInsets = .zero
+			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = []
+		} else if #available(iOS 26, *) {
 			backgroundConfig.cornerRadius = 20
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = [.leading, .trailing]
 			if UIDevice.current.userInterfaceIdiom == .pad {
@@ -89,11 +95,10 @@ final class MainTimelineCell: UICollectionViewCell {
 			backgroundConfig.cornerRadius = 0
 		}
 
-		if state.isSelected {
-			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
-		} else if state.isSwiped {
+		// Selected cells keep the standard system selection color from updated(for: state).
+		if state.isSwiped {
 			backgroundConfig.backgroundColor = .secondarySystemFill
-		} else {
+		} else if !state.isSelected {
 			backgroundConfig.backgroundColor = .clear
 		}
 
@@ -106,10 +111,8 @@ final class MainTimelineCell: UICollectionViewCell {
 
 		topSeparator.alpha = (isActive || isPreview) ? 0.0 : 1.0
 
-		// White foreground is only for the selected state (blue accent background).
-		// The swiped state uses a subtle gray fill, so it keeps normal label colors.
-		updateColors(active: state.isSelected)
-		updateIndicatorView(active: state.isSelected)
+		updateColors()
+		updateIndicatorView()
 	}
 
 	func setIconImage(_ image: IconImage) {
@@ -198,31 +201,31 @@ private extension MainTimelineCell {
 			iconView.isHidden = true
 		}
 
-		updateColors(active: configurationState.isSelected)
-		updateIndicatorView(active: configurationState.isSelected)
+		updateColors()
+		updateIndicatorView()
 		updateAccessibilityLabel()
 		setNeedsLayout()
 	}
 
-	func updateColors(active: Bool) {
-		titleView.textColor = active ? .white : .label
-		summaryView.textColor = active ? .white : (cellData.title.isEmpty ? .label : .secondaryLabel)
-		dateView.textColor = active ? .white : .secondaryLabel
-		feedNameView.textColor = active ? .white : .secondaryLabel
+	func updateColors() {
+		titleView.textColor = .label
+		summaryView.textColor = cellData.title.isEmpty ? .label : .secondaryLabel
+		dateView.textColor = .secondaryLabel
+		feedNameView.textColor = .secondaryLabel
 	}
 
-	func updateIndicatorView(active: Bool) {
+	func updateIndicatorView() {
 		guard cellData != nil else {
 			indicatorView.isHidden = true
 			return
 		}
 		if cellData.starred {
 			indicatorView.iconImage = Assets.Images.starredFeed
-			indicatorView.tintColor = active ? .white : Assets.Colors.star
+			indicatorView.tintColor = Assets.Colors.star
 			indicatorView.isHidden = false
 		} else if !cellData.read {
 			indicatorView.iconImage = Assets.Images.unreadCellIndicator
-			indicatorView.tintColor = active ? .white : Assets.Colors.secondaryAccent
+			indicatorView.tintColor = Assets.Colors.secondaryAccent
 			indicatorView.isHidden = false
 		} else {
 			indicatorView.isHidden = true

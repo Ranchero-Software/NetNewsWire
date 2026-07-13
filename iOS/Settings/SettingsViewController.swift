@@ -576,7 +576,25 @@ private extension SettingsViewController {
 	}
 
 	func openURL(_ urlString: String) {
-		let vc = SFSafariViewController(url: URL(string: urlString)!)
+		guard let url = URL(string: urlString) else {
+			return
+		}
+
+		// Open GitHub links in the GitHub app when installed.
+		if let host = url.host, host == "github.com" || host.hasSuffix(".github.com") {
+			UIApplication.shared.open(url, options: [.universalLinksOnly: true]) { [weak self] openedInApp in
+				if !openedInApp {
+					self?.presentSafariViewController(for: url)
+				}
+			}
+			return
+		}
+
+		presentSafariViewController(for: url)
+	}
+
+	private func presentSafariViewController(for url: URL) {
+		let vc = SFSafariViewController(url: url)
 		vc.modalPresentationStyle = .pageSheet
 		present(vc, animated: true)
 	}

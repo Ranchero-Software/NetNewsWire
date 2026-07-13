@@ -160,6 +160,20 @@ enum CreateReaderAPISubscriptionResult {
 		return trimmedUpdatedAccessToken
 	}
 
+	/// Runs a token-authenticated request, refetching the token and retrying once on a 401/403.
+	/// Reader API write tokens are short-lived, so a cached-stale token would otherwise fail every status sync until relaunch.
+	func withWriteToken<T>(endpoint: URL, _ operation: (String) async throws -> T) async throws -> T {
+
+		let token = try await requestAuthorizationToken(endpoint: endpoint)
+		do {
+			return try await operation(token)
+		} catch WebserviceError.httpError(let status) where status == 401 || status == 403 {
+			accessToken = nil
+			let freshToken = try await requestAuthorizationToken(endpoint: endpoint)
+			return try await operation(freshToken)
+		}
+	}
+
 	@MainActor public func retrieveTags() async throws -> [ReaderAPITag]? {
 
 		guard let baseURL = apiBaseURL else {
@@ -191,8 +205,6 @@ enum CreateReaderAPISubscriptionResult {
 			throw CredentialsError.missingEndpointURL
 		}
 
-		let token = try await requestAuthorizationToken(endpoint: baseURL)
-
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.renameTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
@@ -204,9 +216,11 @@ enum CreateReaderAPISubscriptionResult {
 
 		let oldTagName = "user/-/label/\(encodedOldName)"
 		let newTagName = "user/-/label/\(encodedNewName)"
-		let postData = Data("T=\(token)&s=\(oldTagName)&dest=\(newTagName)".utf8)
 
-		_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+		try await withWriteToken(endpoint: baseURL) { token in
+			let postData = Data("T=\(token)&s=\(oldTagName)&dest=\(newTagName)".utf8)
+			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+		}
 	}
 
 	@MainActor public func deleteTag(folderExternalID: String) async throws {
@@ -215,16 +229,15 @@ enum CreateReaderAPISubscriptionResult {
 			throw CredentialsError.missingEndpointURL
 		}
 
-		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
-
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.disableTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		let postData = Data("T=\(token)&s=\(folderExternalID)".utf8)
-
-		_ = try await self.session.send(request: request, method: HTTPMethod.post, payload: postData)
+		try await withWriteToken(endpoint: baseURL) { token in
+			let postData = Data("T=\(token)&s=\(folderExternalID)".utf8)
+			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+		}
 	}
 
 	@MainActor public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
@@ -262,8 +275,6 @@ enum CreateReaderAPISubscriptionResult {
 			throw CredentialsError.missingEndpointURL
 		}
 
-		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
-
 		let callURL = baseURL
 			.appendingPathComponent(ReaderAPIEndpoints.subscriptionAdd.rawValue)
 
@@ -277,9 +288,11 @@ enum CreateReaderAPISubscriptionResult {
 			throw AccountError.invalidParameter
 		}
 
-		let postData = Data("T=\(token)&quickadd=\(encodedFeedURL)".utf8)
-
-		let (_, subResult) = try await self.session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIQuickAddResult.self)
+		let subResult = try await withWriteToken(endpoint: baseURL) { token -> ReaderAPIQuickAddResult? in
+			let postData = Data("T=\(token)&quickadd=\(encodedFeedURL)".utf8)
+			let (_, result) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIQuickAddResult.self)
+			return result
+		}
 
 		guard let subResult else {
 			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — expected non-nil result from API call")
@@ -315,16 +328,15 @@ enum CreateReaderAPISubscriptionResult {
 			throw CredentialsError.missingEndpointURL
 		}
 
-		let token = try await self.requestAuthorizationToken(endpoint: baseURL)
-
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		let postData = Data("T=\(token)&s=\(subscriptionID)&ac=unsubscribe".utf8)
-
-		_ = try await self.session.send(request: request, method: HTTPMethod.post, payload: postData)
+		try await withWriteToken(endpoint: baseURL) { token in
+			let postData = Data("T=\(token)&s=\(subscriptionID)&ac=unsubscribe".utf8)
+			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+		}
 	}
 
 	public func createTagging(subscriptionID: String, tagName: String) async throws {
@@ -355,31 +367,30 @@ enum CreateReaderAPISubscriptionResult {
 		}
 
 		do {
-			let token = try await requestAuthorizationToken(endpoint: baseURL)
-
 			var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.subscriptionEdit.rawValue), readerAPICredentials: self.credentials)
 			self.addVariantHeaders(&request)
 			request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 			request.httpMethod = "POST"
 
-			var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
-			if let fromLabel = self.encodeForURLPath(removeTagName) {
-				postString += "&r=user/-/label/\(fromLabel)"
-			}
-			if let toLabel = self.encodeForURLPath(addTagName) {
-				postString += "&a=user/-/label/\(toLabel)"
-			}
-			if let encodedTitle = self.encodeForURLPath(title) {
-				postString += "&t=\(encodedTitle)"
-			}
-			logger.debug("ReaderAPICaller: changeSubscription — sending post data: \(postString)")
-			let postData = Data(postString.utf8)
+			try await withWriteToken(endpoint: baseURL) { token in
+				var postString = "T=\(token)&s=\(subscriptionID)&ac=edit"
+				if let fromLabel = self.encodeForURLPath(removeTagName) {
+					postString += "&r=user/-/label/\(fromLabel)"
+				}
+				if let toLabel = self.encodeForURLPath(addTagName) {
+					postString += "&a=user/-/label/\(toLabel)"
+				}
+				if let encodedTitle = self.encodeForURLPath(title) {
+					postString += "&t=\(encodedTitle)"
+				}
+				logger.debug("ReaderAPICaller: changeSubscription — sending post data: \(postString)")
+				let postData = Data(postString.utf8)
 #if DEBUG
-			let debugPostString = String(data: postData, encoding: .utf8)
-			logger.debug("ReaderAPICaller: changeSubscription — checking post data encoding: \(debugPostString ?? "nil")")
+				let debugPostString = String(data: postData, encoding: .utf8)
+				logger.debug("ReaderAPICaller: changeSubscription — checking post data encoding: \(debugPostString ?? "nil")")
 #endif
-
-			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+				_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+			}
 		} catch {
 			logger.error("ReaderAPICaller: changeSubscription — error: \(error.localizedDescription)")
 		}
@@ -393,8 +404,6 @@ enum CreateReaderAPISubscriptionResult {
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.missingEndpointURL
 		}
-
-		let token = try await requestAuthorizationToken(endpoint: baseURL)
 
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.contents.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
@@ -418,9 +427,11 @@ enum CreateReaderAPISubscriptionResult {
 			return nil
 		}
 
-		let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
-
-		let (_, entryWrapper) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
+		let entryWrapper = try await withWriteToken(endpoint: baseURL) { token -> ReaderAPIEntryWrapper? in
+			let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
+			let (_, wrapper) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
+			return wrapper
+		}
 
 		guard let entryWrapper else {
 			throw AccountError.invalidResponse
@@ -594,8 +605,6 @@ private extension ReaderAPICaller {
 			throw CredentialsError.missingEndpointURL
 		}
 
-		let token = try await requestAuthorizationToken(endpoint: baseURL)
-
 		// Do POST asking for data about all the new articles
 		var request = URLRequest(url: baseURL.appendingPathComponent(ReaderAPIEndpoints.editTag.rawValue), readerAPICredentials: self.credentials)
 		self.addVariantHeaders(&request)
@@ -615,8 +624,9 @@ private extension ReaderAPICaller {
 
 		let actionIndicator = add ? "a" : "r"
 
-		let postData = Data("T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".utf8)
-
-		_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+		try await withWriteToken(endpoint: baseURL) { token in
+			let postData = Data("T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".utf8)
+			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+		}
 	}
 }
