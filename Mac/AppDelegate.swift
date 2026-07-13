@@ -780,10 +780,18 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func sortFeedsByName(_ sender: Any?) {
+		// Switching sort type resets direction to that type’s natural default,
+		// like clicking a different column header: name A–Z, most unread first.
+		if AppDefaults.shared.sidebarSortType != .alphabetically {
+			AppDefaults.shared.sidebarSortAscending = true
+		}
 		AppDefaults.shared.sidebarSortType = .alphabetically
 	}
 
 	@IBAction func sortFeedsByUnreadCount(_ sender: Any?) {
+		if AppDefaults.shared.sidebarSortType != .byUnreadCount {
+			AppDefaults.shared.sidebarSortAscending = false
+		}
 		AppDefaults.shared.sidebarSortType = .byUnreadCount
 	}
 
