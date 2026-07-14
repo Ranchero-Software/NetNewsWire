@@ -383,6 +383,47 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="Cm1-g0-ca1" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="895" width="374" height="110"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Cm1-g0-ca1" id="Cm2-g0-ca2">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="110"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="751" ambiguous="YES" text="Cache Images for Offline" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cm3-g0-ca3" userLabel="Cache Images for Offline">
+                                                    <rect key="frame" x="20" y="11" width="135.5" height="15.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Cm4-g0-ca4">
+                                                    <rect key="frame" x="295" y="6" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchCacheImagesForOffline:" destination="a0p-rk-skQ" eventType="valueChanged" id="Cm6-g0-ca6"/>
+                                                    </connections>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" ambiguous="YES" text="Download article images during refresh so articles can be read offline. Uses more storage and data." textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cm5-g0-ca5">
+                                                    <rect key="frame" x="20" y="33" width="263" height="0.0"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleFootnote"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Cm4-g0-ca4" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Cm2-g0-ca2" secondAttribute="top" constant="6" id="Cn1-g0-cn1"/>
+                                                <constraint firstItem="Cm5-g0-ca5" firstAttribute="top" secondItem="Cm3-g0-ca3" secondAttribute="bottom" constant="6.5" id="Cn2-g0-cn2"/>
+                                                <constraint firstItem="Cm5-g0-ca5" firstAttribute="leading" secondItem="Cm2-g0-ca2" secondAttribute="leadingMargin" id="Cn3-g0-cn3"/>
+                                                <constraint firstItem="Cm5-g0-ca5" firstAttribute="bottom" secondItem="Cm2-g0-ca2" secondAttribute="bottomMargin" id="Cn4-g0-cn4"/>
+                                                <constraint firstItem="Cm3-g0-ca3" firstAttribute="leading" secondItem="Cm2-g0-ca2" secondAttribute="leadingMargin" id="Cn5-g0-cn5"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Cm4-g0-ca4" secondAttribute="trailing" constant="0" id="Cn6-g0-cn6"/>
+                                                <constraint firstItem="Cm3-g0-ca3" firstAttribute="top" secondItem="Cm2-g0-ca2" secondAttribute="topMargin" id="Cn7-g0-cn7"/>
+                                                <constraint firstItem="Cm4-g0-ca4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Cm3-g0-ca3" secondAttribute="trailing" constant="8" id="Cn8-g0-cn8"/>
+                                                <constraint firstItem="Cm4-g0-ca4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Cm5-g0-ca5" secondAttribute="trailing" constant="8" id="Cn9-g0-cn9"/>
+                                                <constraint firstItem="Cm4-g0-ca4" firstAttribute="centerY" secondItem="Cm3-g0-ca3" secondAttribute="centerY" id="Cn0-g0-cn0"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="WR6-xo-ty2" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="1004" width="374" height="92"/>
                                         <autoresizingMask key="autoresizingMask"/>
@@ -663,6 +704,8 @@
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>
                         <outlet property="refreshClearsReadArticlesSwitch" destination="duV-CN-JmH" id="xTd-jF-Ei1"/>
                         <outlet property="showFullscreenArticlesSwitch" destination="2Md-2E-7Z4" id="lEN-VP-wEO"/>
+                        <outlet property="cacheImagesForOfflineSwitch" destination="Cm4-g0-ca4" id="Cm7-g0-ca7"/>
+                        <outlet property="cacheImagesForOfflineDetailLabel" destination="Cm5-g0-ca5" id="Cmf-g0-caf"/>
                         <outlet property="timelineSortOrderSwitch" destination="Keq-Np-l9O" id="Zm7-HG-r5h"/>
                     </connections>
                 </tableViewController>

@@ -20,6 +20,16 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 	private let urlSession: URLSession
 	private var callbacks = [URL: [(callback: DownloadCallback, fromCache: Bool)]]()
 	private let cache = DownloadCache.shared
+	private let redirectBlocker = RedirectBlocker()
+
+	/// Optional policy consulted before following an HTTP redirect: return `false` for a
+	/// destination URL that should not be followed (e.g. a tracker/ad domain), and the redirect
+	/// is not followed — the request completes with the redirect response instead. `nil` (the
+	/// default) follows all redirects. Applies to every download this shared instance performs.
+	public var redirectValidator: (@Sendable (URL) -> Bool)? {
+		get { redirectBlocker.validator }
+		set { redirectBlocker.validator = newValue }
+	}
 
 	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
 
@@ -35,7 +45,7 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
 
-		urlSession = URLSession(configuration: sessionConfiguration)
+		urlSession = URLSession(configuration: sessionConfiguration, delegate: redirectBlocker, delegateQueue: nil)
 	}
 
 	deinit {
@@ -112,6 +122,37 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 			}
 		}
 		task.resume()
+	}
+}
+
+/// URLSession delegate that can veto redirects via an injected policy. Thread-safe: the session
+/// calls its delegate on a background queue, while the policy is set from the main actor.
+private final class RedirectBlocker: NSObject, URLSessionTaskDelegate, @unchecked Sendable {
+
+	private let lock = NSLock()
+	private var _validator: (@Sendable (URL) -> Bool)?
+
+	var validator: (@Sendable (URL) -> Bool)? {
+		get {
+			lock.lock()
+			defer { lock.unlock() }
+			return _validator
+		}
+		set {
+			lock.lock()
+			defer { lock.unlock() }
+			_validator = newValue
+		}
+	}
+
+	func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+		if let url = request.url, let validator = validator, !validator(url) {
+			// Don't follow the redirect: the task completes with the redirect response, so nothing
+			// is fetched from (or cached for) the disallowed destination.
+			completionHandler(nil)
+			return
+		}
+		completionHandler(request)
 	}
 }
 

@@ -219,7 +219,16 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		d["body"] = body
+		if AppDefaults.shared.cacheImagesForOffline {
+			// Tell main.js to route article images through the offline cache (see
+			// rewriteImagesForOfflineCache). This is a hidden marker element rather than an inline
+			// <script> so it works even when the reader has article JavaScript turned off: that
+			// setting gates *content* JavaScript, but main.js runs as an injected user script and
+			// reads the marker from the DOM.
+			d["body"] = "<div id=\"nnwCacheImagesForOffline\" hidden></div>" + body
+		} else {
+			d["body"] = body
+		}
 
 		#if os(macOS)
 		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
