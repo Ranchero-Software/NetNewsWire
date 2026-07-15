@@ -74,6 +74,10 @@ final class AccountInspectorViewController: UITableViewController {
 			let hostingController = UIHostingController(rootView: CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil))
 			hostingController.modalPresentationStyle = .currentContext
 			present(hostingController, animated: true)
+		case .miniflux:
+			let hostingController = UIHostingController(rootView: MinifluxAccountView(account: account, didAddAccount: nil))
+			hostingController.modalPresentationStyle = .currentContext
+			present(hostingController, animated: true)
 		default:
 			break
 		}

@@ -200,6 +200,11 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			let accountsNewsBlurWindowController = AccountsNewsBlurWindowController()
 			addAccountWindowController = accountsNewsBlurWindowController
 			accountsNewsBlurWindowController.runSheetOnWindow(window)
+
+		case .miniflux:
+			let accountsMinifluxWindowController = AccountsMinifluxWindowController()
+			addAccountWindowController = accountsMinifluxWindowController
+			accountsMinifluxWindowController.runSheetOnWindow(window)
 		}
 	}
 
