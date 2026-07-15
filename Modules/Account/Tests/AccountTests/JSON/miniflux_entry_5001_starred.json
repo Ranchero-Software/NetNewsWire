@@ -1,0 +1,15 @@
+{
+	"id": 5001,
+	"feed_id": 101,
+	"status": "unread",
+	"hash": "hash5001",
+	"title": "Unread and starred entry",
+	"url": "https://general.example/posts/1",
+	"published_at": "2026-07-07T05:12:06.668113Z",
+	"created_at": "2026-07-07T05:13:22.668113Z",
+	"changed_at": "2026-07-07T05:13:22.668113Z",
+	"content": "<p>Body of the unread starred entry.</p>",
+	"author": "Jane Doe",
+	"starred": true,
+	"reading_time": 2
+}
