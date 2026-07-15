@@ -1,0 +1,14 @@
+[
+	{
+		"id": 1,
+		"title": "All",
+		"user_id": 35,
+		"hide_globally": false
+	},
+	{
+		"id": 2,
+		"title": "Tech",
+		"user_id": 35,
+		"hide_globally": false
+	}
+]

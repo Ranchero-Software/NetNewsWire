@@ -1,0 +1,9 @@
+{
+	"version": "2.1.0",
+	"commit": "def5678",
+	"build_date": "2026-01-01T00:00:00Z",
+	"go_version": "go1.23.0",
+	"compiler": "gc",
+	"arch": "amd64",
+	"os": "linux"
+}
