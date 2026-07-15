@@ -50,7 +50,7 @@ let package = Package(
 		),
 		.testTarget(
 			name: "AccountTests",
-			dependencies: ["Account"],
+			dependencies: ["Account", "SyncDatabase"],
 			resources: [
 				.copy("JSON")
 			],
