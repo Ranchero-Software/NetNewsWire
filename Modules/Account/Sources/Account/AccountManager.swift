@@ -251,6 +251,28 @@ import ActivityLog
 		return false
 	}
 
+	public func duplicateServiceAccount(type: AccountType, endpointURL: URL?) -> Bool {
+		guard type != .onMyMac, let normalizedEndpoint = Self.normalizedEndpointForComparison(endpointURL) else {
+			return false
+		}
+		return accounts.contains { $0.type == type && Self.normalizedEndpointForComparison($0.endpointURL) == normalizedEndpoint }
+	}
+
+	/// Normalizes for duplicate-server comparison: lowercases scheme/host (case-insensitive
+	/// per RFC 3986) and drops a trailing slash from the path, so `https://Host.example/` and
+	/// `https://host.example` compare equal.
+	static func normalizedEndpointForComparison(_ url: URL?) -> String? {
+		guard var components = url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) }) else {
+			return nil
+		}
+		components.scheme = components.scheme?.lowercased()
+		components.host = components.host?.lowercased()
+		if components.path.hasSuffix("/") {
+			components.path.removeLast()
+		}
+		return components.string
+	}
+
 	public func existingAccount(accountID: String) -> Account? {
 		return accountsDictionary[accountID]
 	}

@@ -344,6 +344,18 @@ public struct ArticleCounts: Sendable {
 		}
 	}
 
+	/// Delete statuses — only for articles the sync service has affirmatively reported
+	/// as deleted. Statuses intentionally outlive their articles (see
+	/// `ArticlesTable.deleteStatuses`); deleting one on any weaker signal reintroduces
+	/// the old-articles-reappear-as-unread class of bugs.
+	public func deleteStatusesAsync(articleIDs: Set<String>) async {
+		await withCheckedContinuation { continuation in
+			_deleteStatuses(articleIDs: articleIDs) {
+				continuation.resume()
+			}
+		}
+	}
+
 	// MARK: - ArticleIDs
 
 	/// Fetch the articleIDs of unread articles.
@@ -570,6 +582,11 @@ private extension ArticlesDatabase {
 	func _delete(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		articlesTable.delete(articleIDs: articleIDs, completion: completion)
+	}
+
+	func _deleteStatuses(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		articlesTable.deleteStatuses(articleIDs: articleIDs, completion: completion)
 	}
 
 	func _fetchUnreadArticleIDsAsync(completion: @escaping ArticleIDsCompletionBlock) {

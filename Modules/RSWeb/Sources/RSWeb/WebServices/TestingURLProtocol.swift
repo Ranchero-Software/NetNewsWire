@@ -24,9 +24,13 @@ public final class TestingURLProtocol: URLProtocol {
 	/// Populated by tests; consulted per request, so it may change between requests.
 	nonisolated(unsafe) public static var responses = [String: Response]()
 
-	/// Clears all registered responses. Call between tests.
+	/// Every request URL seen since the last `reset()`. Populated by `startLoading()`.
+	nonisolated(unsafe) public static var requestedURLs = [String]()
+
+	/// Clears all registered responses and requested-URL history. Call between tests.
 	public static func reset() {
 		responses = [:]
+		requestedURLs = []
 	}
 
 	public override static func canInit(with request: URLRequest) -> Bool {
@@ -45,6 +49,7 @@ public final class TestingURLProtocol: URLProtocol {
 		}
 
 		let urlString = url.absoluteString
+		Self.requestedURLs.append(urlString)
 		let match = Self.responses.first { urlString.contains($0.key) }?.value
 
 		let httpResponse = HTTPURLResponse(url: url, statusCode: match?.statusCode ?? 200, httpVersion: "HTTP/1.1", headerFields: nil)!
