@@ -37,6 +37,16 @@ struct AccountsDetailView: View {
 	}
 
 	var body: some View {
+		// Scrolls so nothing clips when the pane is shorter than its content
+		// (e.g. an iCloud account with the sync controls). `.basedOnSize` keeps
+		// it from rubber-banding when the content already fits.
+		ScrollView {
+			accountForm
+		}
+		.scrollBounceBehavior(.basedOnSize)
+	}
+
+	private var accountForm: some View {
 		Grid(alignment: .leading, verticalSpacing: 0) {
 			GridRow(alignment: .firstTextBaseline) {
 				Text("Type:")
@@ -120,7 +130,7 @@ struct AccountsDetailView: View {
 			}
 		}
 		.padding(20)
-		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+		.frame(maxWidth: .infinity, alignment: .topLeading)
 	}
 
 	private func commitName() {
