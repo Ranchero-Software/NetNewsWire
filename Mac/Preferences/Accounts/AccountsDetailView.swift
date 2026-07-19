@@ -37,80 +37,86 @@ struct AccountsDetailView: View {
 	}
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 0) {
-			Grid(alignment: .leading, verticalSpacing: 0) {
-				GridRow(alignment: .firstTextBaseline) {
-					Text("Type:")
-						.gridColumnAlignment(.trailing)
-					Text(account.defaultName)
-				}
+		Grid(alignment: .leading, verticalSpacing: 0) {
+			GridRow(alignment: .firstTextBaseline) {
+				Text("Type:")
+					.gridColumnAlignment(.trailing)
+				Text(account.defaultName)
+			}
 
-				GridRow {
-					Color.clear
-						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Toggle("Active", isOn: $isActive)
-						.onChange(of: isActive) {
-							account.isActive = isActive
-						}
-						.padding(.top, 9)
-				}
-
-				GridRow(alignment: .firstTextBaseline) {
-					Text("Name:")
-					TextField("", text: $accountName)
-						.frame(width: 150)
-						.onSubmit {
-							commitName()
-						}
-						.onChange(of: accountName) {
-							commitName()
-						}
-				}
-				.padding(.top, 14)
-
-				GridRow {
-					Color.clear
-						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Text("The name can be anything you want. You can even use emoji. 🎸")
-						.foregroundStyle(.secondary)
-						.fixedSize(horizontal: false, vertical: true)
-						.padding(.top, 1)
-				}
-
-				if showCredentialsButton {
-					GridRow {
-						Color.clear
-							.gridCellUnsizedAxes([.horizontal, .vertical])
-						Button("Credentials") {
-							onCredentials?()
-						}
-						.padding(.top, 12)
+			GridRow {
+				Color.clear
+					.gridCellUnsizedAxes([.horizontal, .vertical])
+				Toggle("Active", isOn: $isActive)
+					.onChange(of: isActive) {
+						account.isActive = isActive
 					}
-				}
+					.padding(.top, 9)
+			}
 
+			GridRow(alignment: .firstTextBaseline) {
+				Text("Name:")
+				TextField("", text: $accountName)
+					.frame(width: 150)
+					.onSubmit {
+						commitName()
+					}
+					.onChange(of: accountName) {
+						commitName()
+					}
+			}
+			.padding(.top, 14)
+
+			GridRow {
+				Color.clear
+					.gridCellUnsizedAxes([.horizontal, .vertical])
+				Text("The name can be anything you want. You can even use emoji. 🎸")
+					.foregroundStyle(.secondary)
+					.fixedSize(horizontal: false, vertical: true)
+					.padding(.top, 1)
+			}
+
+			if showCredentialsButton {
 				GridRow {
 					Color.clear
 						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Button("Hide Read Articles Settings…") {
-						onHideReadOverrides?()
+					Button("Credentials") {
+						onCredentials?()
 					}
-					.fixedSize()
 					.padding(.top, 12)
 				}
 			}
 
 			if account.type == .cloudKit {
-				Toggle("Sync content of unread articles", isOn: $syncUnreadContent)
-					.onChange(of: syncUnreadContent) {
-						AccountManager.shared.syncArticleContentForUnreadArticles = syncUnreadContent
-					}
-					.padding(.top, 12)
+				GridRow {
+					Color.clear
+						.gridCellUnsizedAxes([.horizontal, .vertical])
+					Toggle("Sync content of unread articles", isOn: $syncUnreadContent)
+						.onChange(of: syncUnreadContent) {
+							AccountManager.shared.syncArticleContentForUnreadArticles = syncUnreadContent
+						}
+						.padding(.top, 12)
+				}
 
-				Text("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.")
-					.foregroundStyle(.secondary)
-					.fixedSize(horizontal: false, vertical: true)
-					.padding(.top, 4)
-					.padding(.leading, 21)
+				GridRow {
+					Color.clear
+						.gridCellUnsizedAxes([.horizontal, .vertical])
+					Text("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.")
+						.foregroundStyle(.secondary)
+						.fixedSize(horizontal: false, vertical: true)
+						.padding(.top, 4)
+				}
+			}
+
+			// Placed last so it sits at the bottom for every account type.
+			GridRow {
+				Color.clear
+					.gridCellUnsizedAxes([.horizontal, .vertical])
+				Button("Hide Read Articles Settings…") {
+					onHideReadOverrides?()
+				}
+				.fixedSize()
+				.padding(.top, 12)
 			}
 		}
 		.padding(20)
