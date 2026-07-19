@@ -374,9 +374,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	func restoreState(from state: TimelineWindowState) {
-		for i in 0..<state.readArticlesFilterStateKeys.count {
-			if let sidebarItemID = SidebarItemIdentifier(userInfo: state.readArticlesFilterStateKeys[i]) {
-				restoreReadFilterState(sidebarItemID, hidesReadArticles: state.readArticlesFilterStateValues[i])
+		for (key, hidesReadArticles) in zip(state.readArticlesFilterStateKeys, state.readArticlesFilterStateValues) {
+			if let sidebarItemID = SidebarItemIdentifier(userInfo: key) {
+				restoreReadFilterState(sidebarItemID, hidesReadArticles: hidesReadArticles)
 			}
 		}
 
@@ -408,9 +408,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return
 		}
 
-		for i in 0..<readArticlesFilterStateKeys.count {
-			if let sidebarItemID = SidebarItemIdentifier(userInfo: readArticlesFilterStateKeys[i]) {
-				restoreReadFilterState(sidebarItemID, hidesReadArticles: readArticlesFilterStateValues[i])
+		for (key, hidesReadArticles) in zip(readArticlesFilterStateKeys, readArticlesFilterStateValues) {
+			if let sidebarItemID = SidebarItemIdentifier(userInfo: key) {
+				restoreReadFilterState(sidebarItemID, hidesReadArticles: hidesReadArticles)
 			}
 		}
 
