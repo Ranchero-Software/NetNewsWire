@@ -64,6 +64,7 @@ import os
 
 	private var completion: (() -> Void)?
 	private var isSuspended = false
+	private var hasDetectedRedditRateLimit = false
 
 	private lazy var downloadSession: DownloadSession = {
 		let session = DownloadSession(delegate: self)
@@ -87,7 +88,11 @@ import os
 
 	@MainActor private func refreshFeeds(_ feeds: Set<Feed>, completion: (() -> Void)? = nil) {
 		let specialCaseCutoffDate = Date().bySubtracting(hours: 25)
-		let redditURLToRefresh = Self.redditURLToRefresh(in: feeds)
+		let (hasRedditRateLimitResponse, redditURL) = Self.redditURLToRefresh(in: feeds)
+		if hasRedditRateLimitResponse {
+			hasDetectedRedditRateLimit = true
+		}
+		let redditURLToRefresh = hasDetectedRedditRateLimit ? redditURL : nil
 
 		var filteredFeeds = Set<Feed>()
 		var skippedFeeds = [(Feed, String)]() // feed and skip reason
@@ -470,9 +475,11 @@ private extension LocalAccountRefresher {
 		if skipForDisallowedHost {
 			return (true, disallowedHostReason)
 		}
-		let (skipForReddit, redditReason) = feedShouldBeSkippedForRedditReasons(feed, redditURLToRefresh)
-		if skipForReddit {
-			return (true, redditReason)
+		if redditURLToRefresh != nil {
+			let (skipForReddit, redditReason) = feedShouldBeSkippedForRedditReasons(feed, redditURLToRefresh)
+			if skipForReddit {
+				return (true, redditReason)
+			}
 		}
 		let (skipForTiming, timingReason) = feedShouldBeSkippedForTimingReasons(feed, specialCaseCutoffDate)
 		if skipForTiming {
@@ -481,12 +488,13 @@ private extension LocalAccountRefresher {
 		return (false, nil)
 	}
 
-	/// Reddit rate-limits to one feed per minute, so we
-	/// refresh the least recently checked one.
-	static func redditURLToRefresh(in feeds: Set<Feed>) -> String? {
+	/// Reddit rate-limits to one feed per minute, so once we get a 429,
+	/// we refresh the least recently checked feed.
+	static func redditURLToRefresh(in feeds: Set<Feed>) -> (Bool, String?) {
 		let redditFeeds = feeds.filter { SpecialCase.urlStringMatchesDomain($0.url, [SpecialCase.redditHostName]) }
+		let hasRedditRateLimitResponse = redditFeeds.contains { $0.lastResponseCode == HTTPResponseCode.tooManyRequests }
 		let winner = redditFeeds.min { ($0.lastCheckDate ?? .distantPast) < ($1.lastCheckDate ?? .distantPast) }
-		return winner?.url
+		return (hasRedditRateLimitResponse, winner?.url)
 	}
 
 	static func feedShouldBeSkippedForRedditReasons(_ feed: Feed, _ redditURLToRefresh: String?) -> (Bool, String?) {
