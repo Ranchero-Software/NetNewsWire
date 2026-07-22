@@ -1,3 +1,11 @@
+/* This makes the leading edge of the article stable.
+   <https://discourse.netnewswire.com/t/account-for-layout-shift-from-macos-scrollbar-in-themes/328>
+*/
+
+html {
+	scrollbar-gutter: stable;
+}
+
 /* This is the activity indicator (currently iOS only) that is used while image zooming */
 
 .activityIndicatorWrap {

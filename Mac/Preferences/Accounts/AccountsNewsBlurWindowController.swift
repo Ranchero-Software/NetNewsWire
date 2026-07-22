@@ -104,13 +104,9 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 					try account?.storeCredentials(credentials)
 					try account?.storeCredentials(validatedCredentials)
 
-					do {
-						try await account?.refreshAll()
-					} catch {
-						NSApplication.shared.presentError(error)
-					}
-
 					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
+
+					account?.triggerRefreshAll()
 				} catch {
 					self.errorMessageLabel.stringValue = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 				}

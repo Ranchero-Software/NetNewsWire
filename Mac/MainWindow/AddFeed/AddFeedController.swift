@@ -146,7 +146,7 @@ private extension AddFeedController {
 	func showNoFeedsErrorMessage() {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Feed not found", comment: "Feed finder")
+		alert.messageText = NSLocalizedString("Unable to Add Feed", comment: "Feed finder")
 		alert.informativeText = NSLocalizedString("Can’t add a feed because no feed was found.", comment: "Feed finder")
 		alert.beginSheetModal(for: hostWindow)
 	}

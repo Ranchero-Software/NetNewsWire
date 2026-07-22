@@ -23,7 +23,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	private var iconSize = IconSize.medium
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
-	private lazy var firstUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(firstUnread(_:)))
+	private lazy var nextUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(nextUnread(_:)))
 	private let refreshProgressView = RefreshProgressView(frame: .zero)
 	private lazy var refreshBarItem = UIBarButtonItem(customView: refreshProgressView)
 	private var isToolbarProgressViewShowing = false
@@ -479,9 +479,9 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		}
 	}
 
-	@IBAction func firstUnread(_ sender: Any) {
+	@IBAction func nextUnread(_ sender: Any) {
 		assert(coordinator != nil)
-		coordinator?.selectFirstUnread()
+		coordinator?.selectNextUnread()
 	}
 
     /*
@@ -881,7 +881,7 @@ private extension MainTimelineModernViewController {
 						.flexibleSpace(),
 						navigationItem.searchBarPlacementBarButtonItem,
 						.flexibleSpace(),
-						firstUnreadButton
+						nextUnreadButton
 					]
 				}
 			} else {
@@ -922,7 +922,7 @@ private extension MainTimelineModernViewController {
 
 	func updateToolbar() {
 		markAllAsReadButton?.isEnabled = isTimelineUnreadAvailable
-		firstUnreadButton.isEnabled = coordinator?.isAnyUnreadAvailable ?? false
+		nextUnreadButton.isEnabled = coordinator?.isNextUnreadAvailable ?? false
 		if #unavailable(iOS 26) {
 			rebuildToolbarItems()
 		}
@@ -943,7 +943,7 @@ private extension MainTimelineModernViewController {
 		}
 
 		items.append(.flexibleSpace())
-		items.append(firstUnreadButton)
+		items.append(nextUnreadButton)
 
 		setToolbarItems(items, animated: false)
 	}
