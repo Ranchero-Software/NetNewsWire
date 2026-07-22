@@ -26,6 +26,13 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.showsSecondaryOnlyButton = true
 		rootViewController.preferredDisplayMode = UISplitViewController.DisplayMode(rawValue: AppDefaults.shared.splitViewPreferredDisplayMode) ?? .oneBesideSecondary
 
+		// On iOS 27, UIKit hits an assert in UINavigationBar layout when the split view
+		// collapses, which happens when rotating a Max-size iPhone from landscape to portrait.
+		// Keep iPhones compact so the split view never expands and collapses.
+		if #available(iOS 27, *), UIDevice.current.userInterfaceIdiom == .phone {
+			rootViewController.traitOverrides.horizontalSizeClass = .compact
+		}
+
 		// On first run on iPad, show all three columns so the sidebar is visible
 		if AppDefaults.shared.isFirstRun && UIDevice.current.userInterfaceIdiom == .pad {
 			rootViewController.preferredDisplayMode = .twoBesideSecondary
