@@ -185,6 +185,11 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			accountsReaderAPIWindowController.accountType = accountType
 			accountsReaderAPIWindowController.runSheetOnWindow(window)
 
+		case .miniflux:
+			let accountsMinifluxWindowController = AccountsMinifluxWindowController()
+			addAccountWindowController = accountsMinifluxWindowController
+			accountsMinifluxWindowController.runSheetOnWindow(window)
+
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
