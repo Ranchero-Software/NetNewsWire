@@ -217,6 +217,9 @@
     "Cleanup progress" : {
       "comment" : "Progress bar accessibility label"
     },
+    "Clear All" : {
+
+    },
     "Close" : {
       "comment" : "Close"
     },
@@ -460,6 +463,9 @@
     "Get Info" : {
       "comment" : "Get Info"
     },
+    "Global Overrides" : {
+
+    },
     "Go To All Unread" : {
       "comment" : "Go To All Unread"
     },
@@ -486,6 +492,9 @@
     },
     "Hide Read Articles" : {
       "comment" : "Command"
+    },
+    "Hide Read Articles Settings…" : {
+
     },
     "Hide Read Feeds" : {
       "comment" : "Command"
@@ -1172,6 +1181,9 @@
     },
     "Web accounts sync your feeds across all your devices" : {
       "comment" : "Web Account"
+    },
+    "When a switch is on, that feed uses its own read-article visibility setting instead of the global preference." : {
+
     },
     "You can enable NetNewsWire notifications in System Preferences." : {
       "comment" : "Notifications are not enabled."
