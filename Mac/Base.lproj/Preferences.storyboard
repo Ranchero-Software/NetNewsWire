@@ -31,11 +31,11 @@
             <objects>
                 <viewController title="General" storyboardIdentifier="General" id="iuH-lz-18x" customClass="GeneralPreferencesViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" id="WnV-px-wCT">
-                        <rect key="frame" x="0.0" y="0.0" width="509" height="460"/>
+                        <rect key="frame" x="0.0" y="0.0" width="509" height="560"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ut3-yd-q6G">
-                                <rect key="frame" x="57" y="16" width="393" height="428"/>
+                                <rect key="frame" x="57" y="16" width="393" height="528"/>
                                 <subviews>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="pR2-Bf-7Fd">
                                         <rect key="frame" x="-2" y="404" width="106" height="16"/>
@@ -146,8 +146,37 @@
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Cm8-g0-ca8">
+                                        <rect key="frame" x="110" y="232" width="283" height="16"/>
+                                        <buttonCell key="cell" type="check" title="Cache article images for offline reading" bezelStyle="regularSquare" imagePosition="left" inset="2" id="Cm9-g0-ca9">
+                                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                        <connections>
+                                            <action selector="cacheImagesForOfflineChanged:" target="iuH-lz-18x" id="Cmo-g0-cao"/>
+                                            <binding destination="mAF-gO-1PI" name="value" keyPath="values.cacheImagesForOffline" id="Cm0-g0-ca0">
+                                                <dictionary key="options">
+                                                    <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                                    <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                                    <integer key="NSMultipleValuesPlaceholder" value="1"/>
+                                                    <integer key="NSNoSelectionPlaceholder" value="1"/>
+                                                    <integer key="NSNotApplicablePlaceholder" value="1"/>
+                                                    <integer key="NSNullPlaceholder" value="1"/>
+                                                    <bool key="NSRaisesForNotApplicableKeys" value="NO"/>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </button>
+                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Cmh-g0-cah">
+                                        <rect key="frame" x="110" y="212" width="283" height="14"/>
+                                        <textFieldCell key="cell" controlSize="small" selectable="YES" title="" id="Cmi-g0-cai">
+                                            <font key="font" usesAppearanceFont="YES"/>
+                                            <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                     <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="Tdg-6Y-gvW">
-                                        <rect key="frame" x="0.0" y="221" width="392" height="5"/>
+                                        <rect key="frame" x="0.0" y="180" width="392" height="5"/>
                                     </box>
                                     <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wsb-Lr-8Q7">
                                         <rect key="frame" x="-2" y="183" width="106" height="16"/>
@@ -282,7 +311,13 @@
                                     <constraint firstItem="Ci4-fW-KjU" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="0Do-jh-Hqq"/>
                                     <constraint firstItem="92N-8I-bOs" firstAttribute="trailing" secondItem="S2Z-bG-jYk" secondAttribute="trailing" id="2ZD-KR-H5A"/>
                                     <constraint firstItem="S2Z-bG-jYk" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="4wu-2O-1fb"/>
-                                    <constraint firstItem="Tdg-6Y-gvW" firstAttribute="top" secondItem="0W5-tO-S63" secondAttribute="bottom" constant="20" id="5a3-LF-TvY"/>
+                                    <constraint firstItem="Cm8-g0-ca8" firstAttribute="top" secondItem="0W5-tO-S63" secondAttribute="bottom" constant="12" id="Cn3-M3-aa3"/>
+                                    <constraint firstItem="Cm8-g0-ca8" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="Cn1-M1-aa1"/>
+                                    <constraint firstAttribute="trailing" secondItem="Cm8-g0-ca8" secondAttribute="trailing" id="Cn2-M2-aa2"/>
+                                    <constraint firstItem="Cmh-g0-cah" firstAttribute="top" secondItem="Cm8-g0-ca8" secondAttribute="bottom" constant="6" id="Cmj-g0-caj"/>
+                                    <constraint firstItem="Cmh-g0-cah" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="Cmk-g0-cak"/>
+                                    <constraint firstAttribute="trailing" secondItem="Cmh-g0-cah" secondAttribute="trailing" id="Cml-g0-cal"/>
+                                    <constraint firstItem="Tdg-6Y-gvW" firstAttribute="top" secondItem="Cmh-g0-cah" secondAttribute="bottom" constant="20" id="5a3-LF-TvY"/>
                                     <constraint firstItem="0W5-tO-S63" firstAttribute="top" secondItem="UI6-sq-M15" secondAttribute="bottom" constant="8" id="5mw-aE-uy4"/>
                                     <constraint firstItem="Z6O-Zt-V1g" firstAttribute="top" secondItem="Ut3-yd-q6G" secondAttribute="top" constant="4" id="6nC-a3-QOy"/>
                                     <constraint firstItem="Z6O-Zt-V1g" firstAttribute="firstBaseline" secondItem="pR2-Bf-7Fd" secondAttribute="firstBaseline" id="72z-7d-9Qn"/>
@@ -291,7 +326,8 @@
                                     <constraint firstItem="yrg-M3-Dbz" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="Bmt-Mn-CCl"/>
                                     <constraint firstItem="UI6-sq-M15" firstAttribute="top" secondItem="1w0-nA-DEO" secondAttribute="bottom" constant="12" id="DMk-OP-dpa"/>
                                     <constraint firstItem="Ubm-Pk-l7x" firstAttribute="top" secondItem="Ci4-fW-KjU" secondAttribute="bottom" constant="12" id="E3r-xf-7aZ"/>
-                                    <constraint firstAttribute="bottom" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="4" id="FAd-wh-IFu"/>
+                                    <constraint firstAttribute="bottom" secondItem="SFF-mL-yc8" secondAttribute="bottom" constant="8" id="FAd-wh-IFu"/>
+                                    <constraint firstItem="SFF-mL-yc8" firstAttribute="height" secondItem="Ci4-fW-KjU" secondAttribute="height" id="SFh-Eq-001"/>
                                     <constraint firstItem="pR2-Bf-7Fd" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="G0C-1M-LW1"/>
                                     <constraint firstItem="yrg-M3-Dbz" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="JbY-CP-pK8"/>
                                     <constraint firstAttribute="trailing" secondItem="Ubm-Pk-l7x" secondAttribute="trailing" id="KIg-w5-ceG"/>
@@ -309,7 +345,7 @@
                                     <constraint firstItem="Ci4-fW-KjU" firstAttribute="top" secondItem="Tdg-6Y-gvW" secondAttribute="bottom" constant="20" id="UkR-wd-4Oe"/>
                                     <constraint firstAttribute="trailing" secondItem="0W5-tO-S63" secondAttribute="trailing" id="WMd-dg-Zmr"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="1w0-nA-DEO" secondAttribute="trailing" id="X8P-Hj-l5H"/>
-                                    <constraint firstItem="ucw-vG-yLt" firstAttribute="firstBaseline" secondItem="SFF-mL-yc8" secondAttribute="firstBaseline" id="XHk-Fk-1pC"/>
+                                    <constraint firstItem="ucw-vG-yLt" firstAttribute="centerY" secondItem="SFF-mL-yc8" secondAttribute="centerY" id="XHk-Fk-1pC"/>
                                     <constraint firstAttribute="trailing" secondItem="wtY-Zd-Ps9" secondAttribute="trailing" id="YAf-to-Ruz"/>
                                     <constraint firstItem="1w0-nA-DEO" firstAttribute="top" secondItem="ISO-Wu-R60" secondAttribute="bottom" constant="12" id="Yal-X7-BjE"/>
                                     <constraint firstAttribute="trailing" secondItem="hQy-ng-ijd" secondAttribute="trailing" constant="1" id="aaL-6A-h6v"/>
@@ -325,7 +361,7 @@
                                     <constraint firstItem="0W5-tO-S63" firstAttribute="leading" secondItem="UI6-sq-M15" secondAttribute="leading" constant="22" id="jmc-lb-wp2"/>
                                     <constraint firstAttribute="trailing" secondItem="Yrc-6Q-kx8" secondAttribute="trailing" id="o3L-x4-mEr"/>
                                     <constraint firstItem="Wsb-Lr-8Q7" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="obL-84-81H"/>
-                                    <constraint firstItem="Wsb-Lr-8Q7" firstAttribute="firstBaseline" secondItem="Ci4-fW-KjU" secondAttribute="firstBaseline" id="pCJ-eR-07V"/>
+                                    <constraint firstItem="Wsb-Lr-8Q7" firstAttribute="centerY" secondItem="Ci4-fW-KjU" secondAttribute="centerY" id="pCJ-eR-07V"/>
                                     <constraint firstItem="Yrc-6Q-kx8" firstAttribute="top" secondItem="wtY-Zd-Ps9" secondAttribute="bottom" constant="6" symbolic="YES" id="pbM-DF-ATO"/>
                                     <constraint firstItem="hQy-ng-ijd" firstAttribute="leading" secondItem="Ut3-yd-q6G" secondAttribute="leading" id="qE2-WJ-0I9"/>
                                     <constraint firstAttribute="trailing" secondItem="j0t-Wa-UTL" secondAttribute="trailing" id="qc4-hF-DW3"/>
@@ -351,6 +387,7 @@
                         <outlet property="articleTextSizePopup" destination="Z6O-Zt-V1g" id="aTS-pU-7Vg"/>
                         <outlet property="articleThemePopup" destination="ISO-Wu-R60" id="oI3-6W-dPa"/>
                         <outlet property="defaultBrowserPopup" destination="Ci4-fW-KjU" id="7Nh-nU-Sbc"/>
+                        <outlet property="cacheImagesSizeLabel" destination="Cmh-g0-cah" id="Cmn-g0-can"/>
                     </connections>
                 </viewController>
                 <customObject id="bSQ-tq-wd3" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

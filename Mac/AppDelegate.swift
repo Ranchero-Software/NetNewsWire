@@ -147,6 +147,7 @@ let appName = "NetNewsWire"
 		installAppleEventHandlers()
 
 		CacheCleaner.purgeIfNecessary()
+		ArticleImagePrefetcher.shared.start()
 
 		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
 		let cacheFolder: String

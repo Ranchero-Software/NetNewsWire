@@ -32,11 +32,21 @@ struct CacheCleaner {
 				let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 				let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 				let imagesFolderURL = tempDir.appendingPathComponent("Images")
+				let articleImagesFolderURL = tempDir.appendingPathComponent("ArticleImages")
 				let feedURLToIconURL = tempDir.appendingPathComponent("FeedURLToIconURLCache.plist")
 				let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
 				let homePagesWithNoIconURL = tempDir.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
 
-				for tempItem in [faviconsFolderURL, imagesFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
+				var itemsToRemove = [faviconsFolderURL, imagesFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL]
+				// The ArticleImages cache is user-requested persistent data when offline caching is
+				// on — purging it on the routine flush would silently drop images for already-saved
+				// articles that the refresh-time prefetch won't re-cache. Only reclaim it when the
+				// setting is off.
+				if !AppDefaults.shared.cacheImagesForOffline {
+					itemsToRemove.append(articleImagesFolderURL)
+				}
+
+				for tempItem in itemsToRemove {
 					do {
 						logger.info("Removing cache file: \(tempItem.absoluteString)")
 						try FileManager.default.removeItem(at: tempItem)

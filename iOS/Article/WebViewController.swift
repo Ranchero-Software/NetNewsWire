@@ -696,12 +696,31 @@ private extension WebViewController {
 
 		guard let imageURL = URL(string: clickMessage.imageURL) else { return }
 
-		Downloader.shared.download(imageURL) { [weak self] downloadResponse, error in
-			guard let self, let data = downloadResponse.data, error == nil, !data.isEmpty,
-				  let image = UIImage(data: data) else {
-				return
+		// Feed HTML is untrusted, so don't let a tapped image trigger a fetch to a tracker/ad
+		// domain — apply the same block list the article web view and cache path use.
+		guard !ArticleImageContentBlocker.shared.isBlocked(clickMessage.imageURL) else {
+			return
+		}
+
+		if AppDefaults.shared.cacheImagesForOffline {
+			// Resolve through the offline image cache (memory → disk → network) so a cached
+			// image still zooms while offline. clickMessage.imageURL is the pre-rewrite URL,
+			// which is the same key the cache is stored under.
+			Task { @MainActor [weak self] in
+				guard let self, let data = await ArticleImageDownloader.shared.data(for: clickMessage.imageURL, allowNetwork: true),
+					  !data.isEmpty, let image = UIImage(data: data) else {
+					return
+				}
+				self.showFullScreenImage(image: image, clickMessage: clickMessage, webView: webView)
 			}
-			self.showFullScreenImage(image: image, clickMessage: clickMessage, webView: webView)
+		} else {
+			Downloader.shared.download(imageURL) { [weak self] downloadResponse, error in
+				guard let self, let data = downloadResponse.data, error == nil, !data.isEmpty,
+					  let image = UIImage(data: data) else {
+					return
+				}
+				self.showFullScreenImage(image: image, clickMessage: clickMessage, webView: webView)
+			}
 		}
 	}
 

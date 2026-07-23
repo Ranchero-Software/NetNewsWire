@@ -7,8 +7,10 @@
 //
 
 import AppKit
+import Account
 import RSCore
 import RSWeb
+import Images
 import UserNotifications
 import UniformTypeIdentifiers
 
@@ -17,6 +19,7 @@ final class GeneralPreferencesViewController: NSViewController {
 	@IBOutlet var articleTextSizePopup: NSPopUpButton!
 	@IBOutlet var articleThemePopup: NSPopUpButton!
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
+	@IBOutlet var cacheImagesSizeLabel: NSTextField!
 
 	public override init(nibName nibNameOrNil: NSNib.Name?, bundle nibBundleOrNil: Bundle?) {
 		super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -70,6 +73,20 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateBrowserPopup()
 	}
 
+	/// The checkbox is bound to the default; this action (also wired to it) updates the
+	/// cache-size line and, when the setting is switched on, offers to cache existing
+	/// articles' images right away.
+	@IBAction func cacheImagesForOfflineChanged(_ sender: Any) {
+		updateOfflineImagesUI()
+		if AppDefaults.shared.cacheImagesForOffline {
+			promptToCacheAllImages()
+		}
+	}
+
+	@objc func cacheAllImagesProgressDidChange(_ note: Notification) {
+		updateOfflineImagesUI()
+	}
+
 }
 
 // MARK: - Private
@@ -110,11 +127,67 @@ private extension GeneralPreferencesViewController {
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(cacheAllImagesProgressDidChange(_:)), name: .ArticleImageCacheAllProgressDidChange, object: nil)
 	}
 
 	func updateUI() {
 		updateArticleThemePopup()
 		updateBrowserPopup()
+		updateOfflineImagesUI()
+	}
+
+	/// Show live progress during a "cache all" run, otherwise the current on-disk cache size,
+	/// in the line beneath the checkbox. The size is only recomputed when a run isn't in
+	/// progress, to avoid enumerating the cache folder on every progress tick.
+	func updateOfflineImagesUI() {
+		let prefetcher = ArticleImagePrefetcher.shared
+		guard prefetcher.isCachingAll else {
+			refreshCacheImagesSize()
+			return
+		}
+		if prefetcher.cacheAllTotal > 0 {
+			let format = NSLocalizedString("Caching Images… %d of %d", comment: "Cache-all progress")
+			cacheImagesSizeLabel.stringValue = String(format: format, prefetcher.cacheAllCompleted, prefetcher.cacheAllTotal)
+		} else {
+			cacheImagesSizeLabel.stringValue = NSLocalizedString("Caching Images…", comment: "Cache-all starting")
+		}
+	}
+
+	/// When offline caching is switched on, offer to backfill images for existing unread
+	/// articles now — prefetch otherwise only catches images from future refreshes, and the
+	/// moment someone enables this is usually right before they go offline.
+	func promptToCacheAllImages() {
+		guard !ArticleImagePrefetcher.shared.isCachingAll else {
+			return
+		}
+		let unreadCount = AccountManager.shared.unreadCount
+		guard unreadCount > 0 else {
+			return
+		}
+		let alert = NSAlert()
+		alert.alertStyle = .informational
+		alert.messageText = NSLocalizedString("Cache Images Now?", comment: "Cache images now alert title")
+		let format = NSLocalizedString("Download images for your %d unread articles now, so they can be read offline?", comment: "Cache images now alert message")
+		alert.informativeText = String(format: format, unreadCount)
+		alert.addButton(withTitle: NSLocalizedString("Cache Images", comment: "Cache Images now button"))
+		alert.addButton(withTitle: NSLocalizedString("Not Now", comment: "Not Now"))
+		if alert.runModal() == .alertFirstButtonReturn {
+			ArticleImagePrefetcher.shared.cacheAllArticleImagesNow()
+			updateOfflineImagesUI()
+		}
+	}
+
+	func refreshCacheImagesSize() {
+		Task { @MainActor in
+			let stats = await ArticleImageDownloader.shared.cacheStats()
+			if stats.byteCount > 0 {
+				let size = stats.byteCount.formatted(.byteCount(style: .file))
+				let format = NSLocalizedString("%d images · %@ used", comment: "Cached image count and size")
+				cacheImagesSizeLabel.stringValue = String(format: format, stats.fileCount, size)
+			} else {
+				cacheImagesSizeLabel.stringValue = ""
+			}
+		}
 	}
 
 	func updateArticleThemePopup() {

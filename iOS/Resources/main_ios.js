@@ -1,5 +1,22 @@
 var activeImageViewer = null;
 
+// The real URL to hand native code for a tapped image. When offline caching rewrote src to
+// nnwimage://cache/?u=<encoded>, decode that embedded URL — the same one the scheme handler
+// serves the displayed image from — instead of trusting any feed-settable attribute. That keeps
+// the tapped download identical to what's shown, so feed HTML can't point it elsewhere.
+function originalImageURL(img) {
+	var src = img.src || "";
+	var match = src.match(/^nnwimage:\/\/cache\/\?u=(.+)$/i);
+	if (match) {
+		try {
+			return decodeURIComponent(match[1]);
+		} catch (e) {
+			return src;
+		}
+	}
+	return src;
+}
+
 class ImageViewer {
 	constructor(img) {
 		this.img = img;
@@ -43,7 +60,7 @@ class ImageViewer {
 			width: rect.width,
 			height: rect.height,
 			imageTitle: this.img.title,
-			imageURL: this.img.src,
+			imageURL: originalImageURL(this.img),
 		};
 
 		var jsonMessage = JSON.stringify(message);

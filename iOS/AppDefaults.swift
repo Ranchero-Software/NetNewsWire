@@ -67,6 +67,7 @@ final class AppDefaults: Sendable {
 		static let useSystemBrowser = "useSystemBrowser"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let cacheImagesForOffline = "cacheImagesForOffline"
 		static let hideReadFeeds = "hideReadFeeds"
 		static let isShowingExtractedArticle = "isShowingExtractedArticle"
 		static let articleWindowScrollY = "articleWindowScrollY"
@@ -217,6 +218,15 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			AppDefaults.setBool(for: Key.articleContentJavascriptEnabled, newValue)
+		}
+	}
+
+	var cacheImagesForOffline: Bool {
+		get {
+			return AppDefaults.bool(for: Key.cacheImagesForOffline)
+		}
+		set {
+			AppDefaults.setBool(for: Key.cacheImagesForOffline, newValue)
 		}
 	}
 
@@ -399,6 +409,7 @@ final class AppDefaults: Sendable {
 										Key.articleFullscreenEnabled: false,
 										Key.confirmMarkAllAsRead: true,
 										Key.articleContentJavascriptEnabled: true,
+										Key.cacheImagesForOffline: false,
 										Key.currentThemeName: Self.defaultThemeName,
 									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue]
 		AppDefaults.store.register(defaults: defaults)

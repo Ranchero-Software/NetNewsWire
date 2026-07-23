@@ -26,6 +26,7 @@ import WebKit
 		configuration.defaultWebpagePreferences = webpagePreferences
 		configuration.mediaTypesRequiringUserActionForPlayback = .all
 		configuration.setURLSchemeHandler(urlSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
+		configuration.setURLSchemeHandler(ArticleImageSchemeHandler.shared, forURLScheme: ArticleImageSchemeHandler.scheme)
 		configuration.userContentController = userContentController
 
 		// Present article content as NetNewsWire on top of WebKit's default browser UA, rather than a non-browser string.
