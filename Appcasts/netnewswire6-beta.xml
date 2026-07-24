@@ -7,17 +7,27 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.1.1</title>
+			<title>NetNewsWire 7.1.2b1</title>
             <description><![CDATA[
-            <p>Changes since 7.1:</p>
   				<ul>
-				  <li>Handled Reddit’s new rate limiting (one feed per minute) by refreshing just one Reddit feed — the least-recently-checked one — per refresh session
-				  <li>Stopped scaling up small feed images — the blurriness is worse than the smallness
-				  <li>Fixed bug where transparent pixels in a feed icon were counted as black when picking a background color
+				  <li>Fixed bug where code inside a quoted attribute value (such as a `srcset` media query containing `&gt;=`) could appear in place of the article summary in the timeline
+				  <li>Fixed bug where a title containing a “&lt;” that didn’t begin an HTML tag was truncated
+				  <li>Made `&lt;abbr>` and other attributed title tags — including tags with uppercase letters — render as text instead of raw markup (in article titles)
+				  <li>Fixed bug where zero-width joiner entities (`&amp;zwj;` and `&amp;zwnj;`) weren’t decoded
+				  <li>Fixed bug where iframes (such as Apple Podcasts embeds) with a unit in the height attribute were sized incorrectly
+				  <li>Prevented article web content from navigating away, via JavaScript, to a full webpage in the detail view
+				  <li>Made the reader view toolbar button the right size by switching to an SF Symbol
+				  <li>Fixed bug where the Next Unread button was enabled when the only unread article was the1 one already selected
+				  <li>Fixed bug where scrollbars set to always show would disappear during live resize
+				  <li>Kept the article’s left edge stable when a scrollbar appears or disappears
+				  <li>Fixed bug where Reader API accounts (like FreshRSS) could stop syncing — authentication tokens are now refreshed as needed, and a refresh continues even when sending article statuses fails
+				  <li>Stopped waiting for an initial refresh to finish before closing the add-account sheet — the account appears right away
+				  <li>Restored human-readable CloudKit error messages
+				  <li>Used a WebKit user-agent string (with NetNewsWire as the app name) for web content shown in the app
 				</ul>
 			]]></description>
-        	<pubDate>Tue, 30 Jun 2026 09:45:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.1/NetNewsWire7.1.1.zip" sparkle:version="7108" sparkle:shortVersionString="7.1.1" length="10635532" type="application/zip" />
+        	<pubDate>Fri, 24 Jul 2026 14:21:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.2b1/NetNewsWire7.1.2b1.zip" sparkle:version="7109" sparkle:shortVersionString="7.1.2b1" length="10656083" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
