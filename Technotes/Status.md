@@ -1,7 +1,7 @@
 # NetNewsWire Status
 
-Current milestone: NetNewsWire 7.1 on main
-https://github.com/Ranchero-Software/NetNewsWire/milestone/71
+Current milestone: NetNewsWire 7.1.2 on main
+https://github.com/Ranchero-Software/NetNewsWire/milestone/73
 
 ## iOS
 
@@ -16,4 +16,5 @@ https://github.com/Ranchero-Software/NetNewsWire/releases/tag/iOS-7.1.1-7107
 Mac shipping: 7.1.1
 https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-7.1.1
 
-Mac beta: none
+Mac beta: 7.1.2b1
+https://github.com/Ranchero-Software/NetNewsWire/releases/tag/mac-7.1.2b1

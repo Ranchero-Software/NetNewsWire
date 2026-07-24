@@ -1,5 +1,22 @@
 # Mac Release Notes
 
+### 7.1.2b1 7109 24 July 2026 — branch: main tag: mac-7.1.2b1
+
+Fixed bug where code inside a quoted attribute value (such as a `srcset` media query containing `>=`) could appear in place of the article summary in the timeline
+Fixed bug where a title containing a “<” that didn’t begin an HTML tag was truncated
+Made `<abbr>` and other attributed title tags — including tags with uppercase letters — render as text instead of raw markup (in article titles)
+Fixed bug where zero-width joiner entities (`&zwj;` and `&zwnj;`) weren’t decoded
+Fixed bug where iframes (such as Apple Podcasts embeds) with a unit in the height attribute were sized incorrectly
+Prevented article web content from navigating away, via JavaScript, to a full webpage in the detail view
+Made the reader view toolbar button the right size by switching to an SF Symbol
+Fixed bug where the Next Unread button was enabled when the only unread article was the1 one already selected
+Fixed bug where scrollbars set to always show would disappear during live resize
+Kept the article’s left edge stable when a scrollbar appears or disappears
+Fixed bug where Reader API accounts (like FreshRSS) could stop syncing — authentication tokens are now refreshed as needed, and a refresh continues even when sending article statuses fails
+Stopped waiting for an initial refresh to finish before closing the add-account sheet — the account appears right away
+Restored human-readable CloudKit error messages
+Used a WebKit user-agent string (with NetNewsWire as the app name) for web content shown in the app
+
 ### 7.1.1 7108 30 June 2026 — branch: main tag: mac-7.1.1
 
 Changes since 7.1:
