@@ -136,6 +136,12 @@ function error() {
 	document.body.innerHTML = "error";
 }
 
+// Returns the currently selected text in the WebView, or empty string if no selection
+function getSelectedText() {
+	const selection = window.getSelection();
+	return selection ? selection.toString().trim() : "";
+}
+
 // Takes into account absoluting of URLs.
 function isLocalFootnote(target) {
 	return target.hash.startsWith("#fn") && target.href.indexOf(document.baseURI) === 0;
