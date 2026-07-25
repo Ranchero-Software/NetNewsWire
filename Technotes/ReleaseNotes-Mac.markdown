@@ -16,7 +16,7 @@ Fixed bug where zero-width joiner entities (`&zwj;` and `&zwnj;`) weren’t deco
 Fixed bug where iframes (such as Apple Podcasts embeds) with a unit in the height attribute were sized incorrectly
 Prevented article web content from navigating away, via JavaScript, to a full webpage in the detail view
 Made the reader view toolbar button the right size by switching to an SF Symbol
-Fixed bug where the Next Unread button was enabled when the only unread article was the1 one already selected
+Fixed bug where the Next Unread button was enabled when the only unread article was the one already selected
 Fixed bug where scrollbars set to always show would disappear during live resize
 Kept the article’s left edge stable when a scrollbar appears or disappears
 Fixed bug where Reader API accounts (like FreshRSS) could stop syncing — authentication tokens are now refreshed as needed, and a refresh continues even when sending article statuses fails
