@@ -387,6 +387,9 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return
 		}
 
+		// Flush coalesced unread-count updates so folder counts are current.
+		CoalescingQueue.standard.performCallsImmediately()
+
 		NSCursor.setHiddenUntilMouseMoves(true)
 
 		// TODO: handle search mode

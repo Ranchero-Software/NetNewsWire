@@ -1157,6 +1157,9 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func selectNextUnread() {
 
+		// Flush coalesced unread-count updates so folder counts are current.
+		CoalescingQueue.standard.performCallsImmediately()
+
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
 		if AccountManager.shared.unreadCount < 1 {

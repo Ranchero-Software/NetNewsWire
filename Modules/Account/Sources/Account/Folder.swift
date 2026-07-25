@@ -92,13 +92,21 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if let object = note.object {
 			if objectIsChild(object as AnyObject) {
-				updateUnreadCount()
+				CoalescingQueue.standard.add(self, #selector(updateUnreadCount))
 			}
 		}
 	}
 
 	@objc func childrenDidChange(_ note: Notification) {
 		updateUnreadCount()
+	}
+
+	@objc func updateUnreadCount() {
+		var updatedUnreadCount = 0
+		for feed in topLevelFeeds {
+			updatedUnreadCount += feed.unreadCount
+		}
+		unreadCount = updatedUnreadCount
 	}
 
 	// MARK: Container
@@ -164,14 +172,6 @@ public final class Folder: SidebarItem, Renamable, Container, Hashable {
 // MARK: - Private
 
 private extension Folder {
-
-	func updateUnreadCount() {
-		var updatedUnreadCount = 0
-		for feed in topLevelFeeds {
-			updatedUnreadCount += feed.unreadCount
-		}
-		unreadCount = updatedUnreadCount
-	}
 
 	func childrenContain(_ feed: Feed) -> Bool {
 		return topLevelFeeds.contains(feed)
