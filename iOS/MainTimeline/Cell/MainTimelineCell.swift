@@ -75,9 +75,13 @@ final class MainTimelineCell: UICollectionViewCell {
 		} else {
 			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
 		}
-		if state.traitCollection.horizontalSizeClass == .compact {
-			// Full-bleed rectangle selection in compact width; iPad (regular width) keeps the
-			// rounded, inset selection below.
+		// The Settings timeline preview isn't in the split view hierarchy, so style it
+		// the way the timeline usually looks on the device.
+		let usesExpandedStyle = isPreview ? UIDevice.current.userInterfaceIdiom == .pad : isInExpandedSplitView
+		if !usesExpandedStyle {
+			// Full-bleed rectangle selection when the timeline has the screen to itself.
+			// When the split view is expanded — iPad, or a large iPhone in landscape —
+			// it gets the rounded, inset selection below.
 			backgroundConfig.cornerRadius = 0
 			backgroundConfig.backgroundInsets = .zero
 			backgroundConfig.edgesAddingLayoutMarginsToBackgroundInsets = []
@@ -95,10 +99,17 @@ final class MainTimelineCell: UICollectionViewCell {
 			backgroundConfig.cornerRadius = 0
 		}
 
-		// Selected cells keep the standard system selection color from updated(for: state).
 		if state.isSwiped {
 			backgroundConfig.backgroundColor = .secondarySystemFill
-		} else if !state.isSelected {
+		} else if state.isSelected {
+			// When the split view is expanded, force the accent color so the selection stays
+			// blue even when the timeline isn't first responder (updated(for: state) would
+			// otherwise dim it to gray). When collapsed, keep the standard system selection
+			// color from updated(for: state).
+			if isInExpandedSplitView {
+				backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
+			}
+		} else {
 			backgroundConfig.backgroundColor = .clear
 		}
 
@@ -111,8 +122,12 @@ final class MainTimelineCell: UICollectionViewCell {
 
 		topSeparator.alpha = (isActive || isPreview) ? 0.0 : 1.0
 
-		updateColors()
-		updateIndicatorView()
+		// Expanded split view: the selected cell has an accent-colored background, so its text
+		// goes white. Collapsed: the selection is a light system color, so labels keep their
+		// normal colors.
+		let active = state.isSelected && isInExpandedSplitView
+		updateColors(active: active)
+		updateIndicatorView(active: active)
 	}
 
 	func setIconImage(_ image: IconImage) {
@@ -123,6 +138,20 @@ final class MainTimelineCell: UICollectionViewCell {
 // MARK: - Private
 
 private extension MainTimelineCell {
+
+	// True when the timeline is showing beside the article view — on iPad,
+	// and on large iPhones in landscape. Found via the responder chain, so this
+	// is false for a cell that isn't in the view hierarchy yet.
+	var isInExpandedSplitView: Bool {
+		var responder: UIResponder? = self
+		while let currentResponder = responder {
+			if let viewController = currentResponder as? UIViewController {
+				return viewController.splitViewController?.isCollapsed == false
+			}
+			responder = currentResponder.next
+		}
+		return false
+	}
 
 	static func singleLineLabel() -> UILabel {
 		let label = NonIntrinsicLabel()
@@ -201,31 +230,32 @@ private extension MainTimelineCell {
 			iconView.isHidden = true
 		}
 
-		updateColors()
-		updateIndicatorView()
+		let active = configurationState.isSelected && isInExpandedSplitView
+		updateColors(active: active)
+		updateIndicatorView(active: active)
 		updateAccessibilityLabel()
 		setNeedsLayout()
 	}
 
-	func updateColors() {
-		titleView.textColor = .label
-		summaryView.textColor = cellData.title.isEmpty ? .label : .secondaryLabel
-		dateView.textColor = .secondaryLabel
-		feedNameView.textColor = .secondaryLabel
+	func updateColors(active: Bool) {
+		titleView.textColor = active ? .white : .label
+		summaryView.textColor = active ? .white : (cellData.title.isEmpty ? .label : .secondaryLabel)
+		dateView.textColor = active ? .white : .secondaryLabel
+		feedNameView.textColor = active ? .white : .secondaryLabel
 	}
 
-	func updateIndicatorView() {
+	func updateIndicatorView(active: Bool) {
 		guard cellData != nil else {
 			indicatorView.isHidden = true
 			return
 		}
 		if cellData.starred {
 			indicatorView.iconImage = Assets.Images.starredFeed
-			indicatorView.tintColor = Assets.Colors.star
+			indicatorView.tintColor = active ? .white : Assets.Colors.star
 			indicatorView.isHidden = false
 		} else if !cellData.read {
 			indicatorView.iconImage = Assets.Images.unreadCellIndicator
-			indicatorView.tintColor = Assets.Colors.secondaryAccent
+			indicatorView.tintColor = active ? .white : Assets.Colors.secondaryAccent
 			indicatorView.isHidden = false
 		} else {
 			indicatorView.isHidden = true

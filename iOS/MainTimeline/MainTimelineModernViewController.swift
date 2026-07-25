@@ -624,6 +624,23 @@ extension MainTimelineModernViewController {
 	}
 }
 
+// MARK: - Split View State
+
+extension MainTimelineModernViewController {
+
+	/// The selection style — full-bleed gray when collapsed, rounded accent when
+	/// expanded — depends on the split view state, so visible cells need a refresh
+	/// when it changes.
+	func splitViewStateDidChange() {
+		guard let collectionView else {
+			return
+		}
+		for cell in collectionView.visibleCells {
+			cell.setNeedsUpdateConfiguration()
+		}
+	}
+}
+
 // MARK: Private API
 private extension MainTimelineModernViewController {
 

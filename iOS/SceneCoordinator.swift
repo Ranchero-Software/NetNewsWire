@@ -1560,6 +1560,14 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
+	func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+		mainTimelineViewController?.splitViewStateDidChange()
+	}
+
+	func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+		mainTimelineViewController?.splitViewStateDidChange()
+	}
+
 }
 
 // MARK: UINavigationControllerDelegate
