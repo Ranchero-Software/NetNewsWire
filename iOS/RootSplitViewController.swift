@@ -79,7 +79,7 @@ final class RootSplitViewController: UISplitViewController {
 	}
 
 	@objc func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		coordinator.markAllAsReadInTimeline {
+		coordinator.markAsReadAndShowSidebar(coordinator.articles) {
 			self.coordinator.selectNextUnread()
 		}
 	}

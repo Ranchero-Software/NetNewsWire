@@ -1213,8 +1213,8 @@ struct SidebarItemNode: Hashable, Sendable {
 		markArticlesWithUndo(articles, statusKey: .read, flag: true, completion: completion)
 	}
 
-	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
-		markAllAsRead(articles) {
+	func markAsReadAndShowSidebar(_ articlesToMark: [Article], completion: (() -> Void)? = nil) {
+		markAllAsRead(articlesToMark) {
 			self.rootSplitViewController.preferredDisplayMode = .twoBesideSecondary
 			self.rootSplitViewController.show(.primary)
 			completion?()

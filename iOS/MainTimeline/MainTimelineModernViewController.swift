@@ -451,17 +451,18 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		coordinator?.toggleReadArticlesFilter()
 	}
 
-	private func markAllAsReadInTimeline() {
-		assert(coordinator != nil)
-		coordinator?.markAllAsReadInTimeline()
-	}
-
 	@IBAction func markAllAsRead(_ sender: Any?) {
+		guard let coordinator else {
+			assertionFailure("Expected coordinator")
+			return
+		}
 		let title = NSLocalizedString("Mark All as Read", comment: "Command")
+
+		let articlesToMark = coordinator.articles
 
 		if let source = sender as? UIBarButtonItem {
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: source) { [weak self] in
-				self?.markAllAsReadInTimeline()
+				self?.coordinator?.markAsReadAndShowSidebar(articlesToMark)
 			}
 		}
 
@@ -474,7 +475,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			}
 
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				self?.markAllAsReadInTimeline()
+				self?.coordinator?.markAsReadAndShowSidebar(articlesToMark)
 			}
 		}
 	}

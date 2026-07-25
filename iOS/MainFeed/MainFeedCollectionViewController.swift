@@ -492,8 +492,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		let title = NSLocalizedString("Mark All as Read", comment: "Command")
+		let articlesToMark = coordinator.articles
+
 		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-			self?.coordinator.markAllAsReadInTimeline()
+			self?.coordinator.markAsReadAndShowSidebar(articlesToMark)
 		}
 	}
 
