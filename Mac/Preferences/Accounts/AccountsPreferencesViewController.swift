@@ -90,13 +90,11 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 
 	@objc func displayNameDidChange(_ note: Notification) {
-		updateSortedAccounts()
-		tableView.reloadData()
+		reloadTablePreservingSelection()
 	}
 
 	@objc func accountsDidChange(_ note: Notification) {
-		updateSortedAccounts()
-		tableView.reloadData()
+		reloadTablePreservingSelection()
 	}
 
 	@objc func handleAccountRefreshStateChanged(_ note: Notification) {
@@ -168,10 +166,8 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			let accountsAddCloudKitWindowController = AccountsAddCloudKitWindowController()
 			addAccountWindowController = accountsAddCloudKitWindowController
 			Task { @MainActor in
-				if let response = await accountsAddCloudKitWindowController.runSheetOnWindow(window),
-				   response == .OK {
-					tableView.reloadData()
-				}
+				// No reload needed on OK — createAccount posts UserDidAddAccount, which reloads the table.
+				_ = await accountsAddCloudKitWindowController.runSheetOnWindow(window)
 			}
 
 		case .feedbin:
@@ -237,6 +233,16 @@ private extension AccountsPreferencesViewController {
 
 	func updateSortedAccounts() {
 		sortedAccounts = AccountManager.shared.sortedAccounts
+	}
+
+	func reloadTablePreservingSelection() {
+		let selectedAccountBeforeReload = selectedAccount
+		updateSortedAccounts()
+		tableView.reloadData()
+		if let selectedAccountBeforeReload, let row = sortedAccounts.firstIndex(of: selectedAccountBeforeReload) {
+			tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
+		}
+		updateDeleteButtonState()
 	}
 
 	func updateDeleteButtonState() {
