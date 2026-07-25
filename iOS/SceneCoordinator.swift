@@ -1275,6 +1275,13 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	func toggleReaderViewForCurrentArticle() {
+		guard currentArticle != nil else {
+			return
+		}
+		articleViewController?.toggleReaderView(nil)
+	}
+
 	func toggleRead(_ article: Article) {
 		guard !article.status.read || article.isAvailableToMarkUnread else {
 			return
