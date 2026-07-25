@@ -47,16 +47,13 @@ public extension NSTableView {
 		let rMidY = r.midY
 		var scrollPoint = NSPoint.zero
 		scrollPoint.y = floor(rMidY - (documentVisibleRect.size.height / 2.0)) + CGFloat(extraHeight)
-		scrollPoint.y = max(scrollPoint.y, 0)
-
-		let maxScrollPointY = frame.size.height - documentVisibleRect.size.height
-		scrollPoint.y = min(maxScrollPointY, scrollPoint.y)
 
 		let clipView = scrollView.contentView
 
 		let rClipView = NSRect(x: scrollPoint.x, y: scrollPoint.y, width: clipView.bounds.width, height: clipView.bounds.height)
 
-		clipView.animator().bounds = rClipView
+		// constrainBoundsRect clamps to the legal range, accounting for content insets.
+		clipView.animator().bounds = clipView.constrainBoundsRect(rClipView)
 	}
 
 	func scrollToRowIfNotVisible(_ row: Int) {
