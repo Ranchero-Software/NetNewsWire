@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 7.1.2 build 7109 24 July 2026 - branch: main tag: iOS-7.1.2-7109
+### 7.1.2 build 7109 24 July 2026 - branch: main tag: iOS-7.1.2-7110
 
 Fixed bug where code inside a quoted attribute value (such as a `srcset` media query containing `>=`) could appear in place of the article summary in the timeline
 Fixed bug where a title containing a “<” that didn’t begin an HTML tag was truncated
