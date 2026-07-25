@@ -623,7 +623,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			if adjustScroll {
 				collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
-				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
 			}
 		}
 	}

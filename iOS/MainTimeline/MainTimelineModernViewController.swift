@@ -277,7 +277,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				let indexPaths = collectionView.indexPathsForSelectedItems ?? []
 				if !indexPaths.contains(indexPath) {
 					Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary does not contain selected index path")
-					collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+					collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
 				}
 			}
 		}
