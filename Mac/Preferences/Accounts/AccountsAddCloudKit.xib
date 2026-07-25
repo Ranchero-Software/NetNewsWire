@@ -5,9 +5,8 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="AccountsAddLocalWindowController" customModule="NetNewsWire" customModuleProvider="target">
+        <customObject id="-2" userLabel="File's Owner" customClass="AccountsAddCloudKitWindowController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
-                <outlet property="localAccountNameTextField" destination="80D-3X-rL2" id="B6t-AS-hDh"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="ENN-6Q-J5m"/>
             </connections>
         </customObject>
@@ -16,14 +15,14 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="453" height="151"/>
+            <rect key="contentRect" x="196" y="240" width="453" height="136"/>
             <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1410"/>
-            <view key="contentView" wantsLayer="YES" misplaced="YES" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="453" height="151"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="453" height="128"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ySx-qg-WbT">
-                        <rect key="frame" x="20" y="66" width="50" height="50"/>
+                        <rect key="frame" x="20" y="58" width="50" height="50"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="50" id="LlV-kM-gHE"/>
                             <constraint firstAttribute="height" constant="50" id="MjL-TR-9ey"/>
@@ -31,7 +30,7 @@
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="accountCloudKit" id="9RZ-J3-ioX"/>
                     </imageView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="80D-3X-rL2">
-                        <rect key="frame" x="76" y="100" width="359" height="16"/>
+                        <rect key="frame" x="76" y="92" width="359" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Use your iCloud account" id="1d2-Mx-TKe">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -39,7 +38,7 @@
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Kj-Cl-FJQ">
-                        <rect key="frame" x="76" y="60" width="359" height="32"/>
+                        <rect key="frame" x="76" y="52" width="359" height="32"/>
                         <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="NetNewsWire will use your iCloud account to sync your feeds across your Mac and iOS devices." id="wfr-Dv-UIF">
                             <font key="font" usesAppearanceFont="YES"/>
                             <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
@@ -47,7 +46,7 @@
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="xqo-gP-MPl">
-                        <rect key="frame" x="343" y="20" width="90" height="32"/>
+                        <rect key="frame" x="343" y="20" width="90" height="24"/>
                         <buttonCell key="cell" type="push" title="Use iCloud" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="oih-6c-KbS">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -60,7 +59,7 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9eG-vV-s8c">
-                        <rect key="frame" x="241" y="24" width="90" height="24"/>
+                        <rect key="frame" x="241" y="20" width="90" height="24"/>
                         <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="iVd-bO-4LN">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -82,7 +81,6 @@ Gw
                     <constraint firstAttribute="bottom" secondItem="xqo-gP-MPl" secondAttribute="bottom" constant="20" symbolic="YES" id="HgX-ud-184"/>
                     <constraint firstAttribute="trailing" secondItem="3Kj-Cl-FJQ" secondAttribute="trailing" constant="20" symbolic="YES" id="QS1-QM-lOc"/>
                     <constraint firstItem="3Kj-Cl-FJQ" firstAttribute="leading" secondItem="ySx-qg-WbT" secondAttribute="trailing" constant="8" symbolic="YES" id="Ue2-Kp-nGw"/>
-                    <constraint firstItem="9eG-vV-s8c" firstAttribute="top" secondItem="3Kj-Cl-FJQ" secondAttribute="bottom" constant="12" id="VYR-uJ-Qmy"/>
                     <constraint firstItem="xqo-gP-MPl" firstAttribute="top" secondItem="3Kj-Cl-FJQ" secondAttribute="bottom" constant="8" symbolic="YES" id="mg9-pV-zid"/>
                     <constraint firstItem="9eG-vV-s8c" firstAttribute="width" secondItem="xqo-gP-MPl" secondAttribute="width" id="oNb-To-cBK"/>
                     <constraint firstItem="xqo-gP-MPl" firstAttribute="leading" secondItem="9eG-vV-s8c" secondAttribute="trailing" constant="12" symbolic="YES" id="p6M-6b-ybu"/>
