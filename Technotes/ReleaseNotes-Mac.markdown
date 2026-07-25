@@ -1,5 +1,12 @@
 # Mac Release Notes
 
+### 7.1.2b2 7111 25 July 2026 — branch: main tag: mac-7.1.2b2
+
+Made updating unread counts for folders more efficient — coalesce calculations instead of once per feed
+Fixed bug where arrowing up to the top of the timeline left the top article half hidden under the toolbar — and the similar bug where arrowing down could overshoot the last article
+Fixed bug where subscribing in a Feedly account using a home page URL sometimes failed to find the feed — when Feedly search comes up empty, the app now finds the feed itself and tries again
+Fixed double border around the accounts list in the Accounts pane of Settings
+
 ### 7.1.2b1 7109 24 July 2026 — branch: main tag: mac-7.1.2b1
 
 Fixed bug where code inside a quoted attribute value (such as a `srcset` media query containing `>=`) could appear in place of the article summary in the timeline
