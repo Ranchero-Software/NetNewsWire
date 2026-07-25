@@ -10,6 +10,7 @@ import Foundation
 import ActivityLog
 import Articles
 import ErrorLog
+import FeedFinder
 import RSCore
 import RSParser
 import RSWeb
@@ -424,10 +425,7 @@ import Secrets
 		do {
 			return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
 
-				let searchResponse = try await caller.getFeeds(for: urlString, count: 1, locale: Locale.current.identifier)
-				guard let firstResult = searchResponse.results.first else {
-					throw AccountError.createErrorNotFound
-				}
+				let firstResult = try await searchForFeed(url: urlString)
 				let feedResource = FeedlyFeedResourceID(id: firstResult.feedID)
 
 				let collectionFeeds = try await caller.addFeed(with: feedResource, title: name, toCollectionWith: collectionID)
@@ -703,6 +701,30 @@ private extension FeedlyAccountDelegate {
 			throw FeedlyAccountDelegateError.addFeedInvalidFolder(folder.nameForDisplay)
 		}
 		return (folder, collectionID)
+	}
+
+	/// Feedly search sometimes fails to resolve a home page URL to its feed.
+	/// When it does, discover the feed URL locally and search again with that.
+	func searchForFeed(url urlString: String) async throws -> FeedlyFeedsSearchResponse.Feed {
+		let searchResponse = try await caller.getFeeds(for: urlString, count: 1, locale: Locale.current.identifier)
+		if let firstResult = searchResponse.results.first {
+			return firstResult
+		}
+
+		guard let url = URL(string: urlString) else {
+			throw AccountError.createErrorNotFound
+		}
+		let feedSpecifiers = try await FeedFinder.find(url: url)
+		let filteredFeedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
+		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: filteredFeedSpecifiers), bestFeedSpecifier.urlString != urlString else {
+			throw AccountError.createErrorNotFound
+		}
+
+		let retryResponse = try await caller.getFeeds(for: bestFeedSpecifier.urlString, count: 1, locale: Locale.current.identifier)
+		guard let firstResult = retryResponse.results.first else {
+			throw AccountError.createErrorNotFound
+		}
+		return firstResult
 	}
 
 	@discardableResult
