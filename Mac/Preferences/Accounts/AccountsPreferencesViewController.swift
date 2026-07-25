@@ -94,7 +94,11 @@ final class AccountsPreferencesViewController: NSViewController {
 	}
 
 	@objc func accountsDidChange(_ note: Notification) {
-		reloadTablePreservingSelection()
+		if note.name == .UserDidAddAccount, let addedAccount = note.userInfo?[Account.UserInfoKey.account] as? Account {
+			reloadTable(selecting: addedAccount)
+		} else {
+			reloadTablePreservingSelection()
+		}
 	}
 
 	@objc func handleAccountRefreshStateChanged(_ note: Notification) {
@@ -236,10 +240,13 @@ private extension AccountsPreferencesViewController {
 	}
 
 	func reloadTablePreservingSelection() {
-		let selectedAccountBeforeReload = selectedAccount
+		reloadTable(selecting: selectedAccount)
+	}
+
+	func reloadTable(selecting accountToSelect: Account?) {
 		updateSortedAccounts()
 		tableView.reloadData()
-		if let selectedAccountBeforeReload, let row = sortedAccounts.firstIndex(of: selectedAccountBeforeReload) {
+		if let accountToSelect, let row = sortedAccounts.firstIndex(of: accountToSelect) {
 			tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
 		}
 		updateDeleteButtonState()
