@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import RSCore
 import WebKit
 
@@ -21,10 +22,19 @@ import WebKit
 		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 		super.init()
 		replenishQueueIfNeeded()
+		NotificationCenter.default.addObserver(self, selector: #selector(handleWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
 	}
 
 	func replenishQueueIfNeeded() {
 		operationQueue.add(WebViewProviderReplenishQueueOperation(queue: queue, articleIconSchemeHandler: articleIconSchemeHandler))
+	}
+
+	// Pooled web views can lose their content process while the app is in the
+	// background. A load into a dead web view can fail silently, showing blank —
+	// so start over with fresh web views.
+	@objc func handleWillEnterForeground(_ note: Notification) {
+		queue.removeAllObjects()
+		replenishQueueIfNeeded()
 	}
 
 	func dequeueWebView(completion: @escaping (PreloadedWebView) -> Void) {

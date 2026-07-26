@@ -37,6 +37,8 @@ final class WebViewController: UIViewController {
 		return view.subviews[0] as? PreloadedWebView
 	}
 
+	private var webViewProcessDidTerminate = false
+
 	private lazy var contextMenuInteraction = UIContextMenuInteraction(delegate: self)
 	private var isFullScreenAvailable: Bool {
 		return AppDefaults.shared.articleFullscreenAvailable && traitCollection.userInterfaceIdiom == .phone
@@ -454,6 +456,7 @@ extension WebViewController: WKNavigationDelegate {
 	}
 
 	func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+		webViewProcessDidTerminate = true
 		fullReload()
 	}
 
@@ -554,10 +557,14 @@ private extension WebViewController {
 	func loadWebView(replaceExistingWebView: Bool = false) {
 		guard isViewLoaded else { return }
 
-		if !replaceExistingWebView, let webView = webView {
+		// Never render into a web view whose content process died — the load
+		// can fail silently, leaving the article view blank.
+		if !replaceExistingWebView, !webViewProcessDidTerminate, let webView = webView {
 			self.renderPage(webView)
 			return
 		}
+
+		webViewProcessDidTerminate = false
 
 		coordinator.webViewProvider.dequeueWebView { webView in
 
