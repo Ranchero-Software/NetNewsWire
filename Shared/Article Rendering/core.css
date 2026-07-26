@@ -6,6 +6,14 @@ html {
 	scrollbar-gutter: stable;
 }
 
+/* Keep absolutely positioned feed content from escaping the body and overlapping the title.
+   (.article-body is the Biblioteca theme's name for .articleBody.) */
+
+.articleBody,
+.article-body {
+	position: relative;
+}
+
 /* This is the activity indicator (currently iOS only) that is used while image zooming */
 
 .activityIndicatorWrap {

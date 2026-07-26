@@ -31,7 +31,10 @@ function constrainBodyRelativeIframes() {
 	let iframes = document.getElementsByTagName("iframe");
 
 	for (iframe of iframes) {
-		if (iframe.offsetParent === document.body) {
+		// The article body container is positioned, so it — not document.body —
+		// is the offsetParent for iframes with no positioned ancestor in the content.
+		const offsetParent = iframe.offsetParent;
+		if (offsetParent === document.body || (offsetParent && (offsetParent.classList.contains("articleBody") || offsetParent.classList.contains("article-body")))) {
 			let heightAttribute = iframe.style.height;
 
 			if (/%|vw|vh$/i.test(heightAttribute)) {
