@@ -149,7 +149,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		Self.logger.debug("MainWindowController: Saving state to UserDefaults: \(state)")
 		let data = try? NSKeyedArchiver.archivedData(withRootObject: state, requiringSecureCoding: true)
 		AppDefaults.shared.secureWindowState = data
-		window?.saveFrame(usingName: windowAutosaveName)
+		// Don't save the frame in full screen — it would replace the saved windowed frame with the screen's frame.
+		if let window, !window.styleMask.contains(.fullScreen) {
+			window.saveFrame(usingName: windowAutosaveName)
+		}
 	}
 
 	func restoreStateFromUserDefaults() {
@@ -1047,7 +1050,14 @@ private extension MainWindowController {
 
 	func restoreState(from state: MainWindowState) {
 		if state.isFullScreen {
-			window?.toggleFullScreen(self)
+			// Defer the toggle — during launch the window isn't on screen yet,
+			// and AppKit ignores toggleFullScreen for windows not yet on screen.
+			Task { @MainActor in
+				guard let window = self.window, !window.styleMask.contains(.fullScreen) else {
+					return
+				}
+				window.toggleFullScreen(nil)
+			}
 		}
 		restoreSplitViewState(from: state)
 
