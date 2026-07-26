@@ -16,11 +16,23 @@ struct ErrorHandler: Sendable {
 
 	@Sendable public static func present(_ error: Error) {
 		Task { @MainActor in
-			NSApplication.shared.presentError(error)
+			NSApplication.shared.presentError(errorForPresentation(error))
 		}
 	}
 
 	public static func log(_ error: Error) {
 		logger.error("\(error.localizedDescription)")
+	}
+
+	// Drop a recovery suggestion when there are no recovery options to act on it.
+	private static func errorForPresentation(_ error: Error) -> NSError {
+		let nsError = error as NSError
+		guard nsError.localizedRecoverySuggestion != nil, nsError.localizedRecoveryOptions == nil else {
+			return nsError
+		}
+		var userInfo = nsError.userInfo
+		userInfo[NSLocalizedDescriptionKey] = nsError.localizedDescription
+		userInfo[NSLocalizedRecoverySuggestionErrorKey] = nil
+		return NSError(domain: nsError.domain, code: nsError.code, userInfo: userInfo)
 	}
 }
