@@ -37,6 +37,28 @@ html {
     max-height: 1em !important;
 }
 
+/* Material for MkDocs and Twemoji render emoji and icons in a .twemoji span or img.
+   The inline SVGs have no width or height — without the site's stylesheet
+   they'd render at full column width. */
+
+.twemoji {
+	display: inline-flex;
+	height: 1.125em;
+	vertical-align: text-top;
+}
+
+.twemoji svg {
+	width: 1.125em;
+	max-height: 100%;
+	fill: currentColor;
+}
+
+img.twemoji, img.emoji {
+	height: 1em !important;
+	max-height: 1em !important;
+	width: auto;
+}
+
 /* Hide the external link at the bottom of Daring Fireball posts */
 
 .x-netnewswire-hide {

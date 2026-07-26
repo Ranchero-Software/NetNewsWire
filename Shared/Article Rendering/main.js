@@ -162,6 +162,23 @@ function styleLocalFootnotes() {
 }
 
 // convert <img alt="📰" src="[...]" class="wp-smiley"> to a text node containing 📰
+// Tailwind size classes like w-[22px] and h-[22px] encode an SVG icon's intended size.
+// The site stylesheet that implements them is stripped, so apply the sizes directly —
+// otherwise an SVG with no width and height renders at full column width.
+function sizeTailwindSVGs() {
+	document.querySelectorAll("div.articleBody svg").forEach(svg => {
+		const classAttribute = svg.getAttribute("class") || "";
+		const width = classAttribute.match(/(?:^|\s)w-\[([\d.]+(?:px|em|rem))\]/);
+		if (width) {
+			svg.style.width = width[1];
+		}
+		const height = classAttribute.match(/(?:^|\s)h-\[([\d.]+(?:px|em|rem))\]/);
+		if (height) {
+			svg.style.height = height[1];
+		}
+	});
+}
+
 function removeWpSmiley() {
 	for (const img of document.querySelectorAll("img.wp-smiley[alt]")) {
 		 img.parentNode.replaceChild(document.createTextNode(img.alt), img);
@@ -173,6 +190,7 @@ function processPage() {
 	wrapTables();
 	inlineVideos();
 	stripStyles();
+	sizeTailwindSVGs();
 	constrainBodyRelativeIframes();
 	convertImgSrc();
 	flattenPreElements();
