@@ -64,6 +64,15 @@ function wrapTables() {
 		wrapper.className = "nnw-overflow";
 		table.parentNode.insertBefore(wrapper, table);
 		wrapper.appendChild(table);
+
+		// A negative side margin — usually from the site's own page layout —
+		// would put part of the table where the wrapper can't scroll to it.
+		if (parseFloat(getComputedStyle(table).marginLeft) < 0) {
+			table.style.marginLeft = "0";
+		}
+		if (parseFloat(getComputedStyle(table).marginRight) < 0) {
+			table.style.marginRight = "0";
+		}
 	}
 }
 
