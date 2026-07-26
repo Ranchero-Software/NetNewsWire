@@ -1,6 +1,14 @@
 # iOS Release Notes
 
-### 7.1.2 build 7109 24 July 2026 - branch: main tag: iOS-7.1.2-7110
+### 7.1.2 build 7112 25 July 2026 - branch: main tag: iOS-7.1.2-7112
+
+Fixed bug where the timeline scroll position was yanked back repeatedly while scrolling during a refresh
+Fixed bug where confirming Mark All as Read and then quickly tapping a different folder marked the wrong folder’s articles as read
+Made the Toggle Reader View keyboard shortcut (Shift-Cmd-R) work — and show in the shortcuts list — no matter which pane has focus
+Fixed bug where subscribing in a Feedly account using a home page URL sometimes failed to find the feed — when Feedly search comes up empty, the app now finds the feed itself and tries again
+Made updating unread counts for folders more efficient — coalesce calculations instead of once per feed
+
+### 7.1.2 build 7110 24 July 2026 - branch: main tag: iOS-7.1.2-7110
 
 Fixed bug where code inside a quoted attribute value (such as a `srcset` media query containing `>=`) could appear in place of the article summary in the timeline
 Fixed bug where a title containing a “<” that didn’t begin an HTML tag was truncated
