@@ -221,12 +221,16 @@ import ActivityLog
 		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
 
-	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
+	public func duplicateServiceAccount(type: AccountType, username: String?, endpoint: URL? = nil) -> Bool {
 		guard type != .onMyMac else {
 			return false
 		}
 		for account in accounts {
 			if account.type == type && username == account.username {
+				// Self-hosted services can have the same username on different servers.
+				if let endpoint, let existingEndpoint = account.endpointURL, endpoint != existingEndpoint {
+					continue
+				}
 				return true
 			}
 		}
@@ -633,7 +637,7 @@ private extension AccountManager {
 	}
 
 	func duplicateServiceAccount(_ account: Account) -> Bool {
-		duplicateServiceAccount(type: account.type, username: account.username)
+		duplicateServiceAccount(type: account.type, username: account.username, endpoint: account.endpointURL)
 	}
 
 	func sortByName(_ accounts: [Account]) -> [Account] {
