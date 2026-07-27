@@ -48,9 +48,10 @@ extension Notification.Name {
 
 	var isReadFiltered: Bool {
 		get {
-			return treeControllerDelegate.isReadFiltered
+			return AppDefaults.shared.timelineReadFilterEnabled
 		}
 		set {
+			AppDefaults.shared.timelineReadFilterEnabled = newValue
 			treeControllerDelegate.isReadFiltered = newValue
 		}
 	}
@@ -70,6 +71,7 @@ extension Notification.Name {
 	// MARK: - NSViewController
 
 	override func viewDidLoad() {
+		treeControllerDelegate.isReadFiltered = isReadFiltered
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
@@ -523,12 +525,16 @@ extension Notification.Name {
 	}
 
 	func toggleReadFilter() {
-		if treeControllerDelegate.isReadFiltered {
-			isReadFiltered = false
-		} else {
-			isReadFiltered = true
-		}
+		isReadFiltered.toggle()
 		delegate?.sidebarInvalidatedRestorationState(self)
+		rebuildTreeAndRestoreSelection()
+	}
+
+	func setReadFilterEnabled(_ isEnabled: Bool) {
+		guard treeControllerDelegate.isReadFiltered != isEnabled else {
+			return
+		}
+		isReadFiltered = isEnabled
 		rebuildTreeAndRestoreSelection()
 	}
 
@@ -634,6 +640,7 @@ private extension SidebarViewController {
 
 	func rebuildTreeAndReloadDataIfNeeded() {
 		if !animatingChanges && !BatchUpdate.shared.isPerforming {
+			treeControllerDelegate.isReadFiltered = isReadFiltered
 			addAllSelectedToFilterExceptions()
 			treeController.rebuild()
 			treeControllerDelegate.resetFilterExceptions()
