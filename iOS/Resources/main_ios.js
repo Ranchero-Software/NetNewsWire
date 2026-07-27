@@ -8,7 +8,8 @@ class ImageViewer {
 	}
 
 	isLoaded() {
-		return this.img.classList.contains("nnwLoaded");
+		// img.complete covers images that loaded before the onload handler was added.
+		return this.img.classList.contains("nnwLoaded") || this.img.complete;
 	}
 
 	clicked() {
@@ -95,6 +96,9 @@ class ImageViewer {
 		// Add the click listener for images
 		window.onclick = function(event) {
 			if (event.target.matches("img") && !event.target.classList.contains("nnw-nozoom")) {
+				// Without this, tapping an image wrapped in a link also navigates.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5275>
+				event.preventDefault();
 				if (activeImageViewer && activeImageViewer.img === event.target) {
 					cancelImageLoad();
 				} else {
