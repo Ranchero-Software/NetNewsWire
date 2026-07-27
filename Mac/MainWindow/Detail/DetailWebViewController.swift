@@ -362,7 +362,8 @@ private extension DetailWebViewController {
 		// loading new HTML — replacing the web view is what keeps a flick on the old
 		// article from scrolling the new one.
 		// The old web view stays on top until the new one finishes loading, which also
-		// covers the new web view's first paint — see bug #901.
+		// covers the new web view's first paint.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/901>
 		if !webView.isHidden && webViewMayStillBeScrolling {
 			Self.logger.debug("DetailWebViewController: swapping in a fresh web view because the old one may still be scrolling")
 			let newWebView = createWebView()

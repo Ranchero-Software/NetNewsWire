@@ -148,9 +148,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.isAnimating = false
 		}
 
-		// Rotating a Pro Max to landscape expands the split view — wait for the transition to settle. #5043
+		// Rotating a Pro Max to landscape expands the split view — wait for the transition to settle.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5043>
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-			// Deselect only when the feeds list is full screen. #4691
+			// Deselect only when the feeds list is full screen.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4691>
 			if self.coordinator.isRootSplitCollapsed, self.collectionView.indexPathsForSelectedItems?.first != nil {
 				self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 			}
