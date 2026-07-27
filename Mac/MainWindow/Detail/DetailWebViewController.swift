@@ -159,6 +159,18 @@ final class DetailWebViewController: NSViewController {
 		webView.evaluateJavaScript("stopMediaPlayback();")
 	}
 
+	// MARK: Selection
+
+	func fetchSelectedHTML(_ completion: @escaping (String?) -> Void) {
+		webView.evaluateJavaScript("selectedHTML()") { result, _ in
+			guard let selectedHTML = (result as? String)?.trimmingWhitespace, !selectedHTML.isEmpty else {
+				completion(nil)
+				return
+			}
+			completion(selectedHTML)
+		}
+	}
+
 	// MARK: Scrolling
 
 	func canScrollDown() async -> Bool {

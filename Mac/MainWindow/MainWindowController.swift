@@ -26,7 +26,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	private var isShowingExtractedArticle = false
 	private var articleExtractor: ArticleExtractor?
-	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
+	private var sharingServicePickerDelegate: SharingServicePickerDelegate?
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
 	private static let mainWindowWidthsStateKey = "mainWindowWidthsStateKey"
@@ -546,9 +546,13 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 		let sortedArticles = selectedArticles.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
-		let sharingServicePicker = NSSharingServicePicker(items: items)
-		sharingServicePicker.delegate = sharingServicePickerDelegate
-		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+
+		detailViewController?.fetchSelectedHTML { selectedHTML in
+			self.sharingServicePickerDelegate?.selectedHTML = selectedHTML
+			let sharingServicePicker = NSSharingServicePicker(items: items)
+			sharingServicePicker.delegate = self.sharingServicePickerDelegate
+			sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+		}
 	}
 
 	@IBAction func moveFocusToSearchField(_ sender: Any?) {

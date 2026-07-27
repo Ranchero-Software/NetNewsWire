@@ -38,14 +38,14 @@ import Articles
 				return
 			}
 
-			send(article, to: app)
+			send(article, to: app, selectedText: selectedText)
 		}
 	}
 }
 
 private extension SendToMarsEditCommand {
 
-	func send(_ article: Article, to app: UserApp) {
+	func send(_ article: Article, to app: UserApp, selectedText: String?) {
 
 		// App has already been launched.
 
@@ -53,7 +53,8 @@ private extension SendToMarsEditCommand {
 			return
 		}
 
-		let body = article.contentHTML ?? article.contentText ?? article.summary
+		// The selection, when there is one, is the body.
+		let body = selectedText ?? article.contentHTML ?? article.contentText ?? article.summary
 		let authorName = article.authors?.first?.name
 
 		let sender = SendToBlogEditorApp(targetDescriptor: targetDescriptor, title: article.title, body: body, summary: article.summary, link: article.externalLink, permalink: article.link, subject: nil, creator: authorName, commentsURL: nil, guid: article.uniqueID, sourceName: article.feed?.nameForDisplay, sourceHomeURL: article.feed?.homePageURL, sourceFeedURL: article.feed?.url)
