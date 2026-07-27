@@ -1338,14 +1338,22 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 
 		rebuildBackingStores(initialLoad: initialLoad, completion: {
-			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(nil) {
-				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+				// Deselecting rebuilds the sidebar, which can hide the feed when
+				// read feeds are filtered — put it back right before selecting it.
+				let ensureAndSelect: @MainActor () -> Void = {
+					if self.isReadFeedsFiltered {
+						self.ensureFeedIsAvailableToSelect(feed) {
+							self.selectFeed(feed, animations: animations, completion: completion)
+						}
+					} else {
 						self.selectFeed(feed, animations: animations, completion: completion)
 					}
+				}
+				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: ensureAndSelect)
 				} else {
-					self.selectFeed(feed, animations: animations, completion: completion)
+					ensureAndSelect()
 				}
 			}
 		})
