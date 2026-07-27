@@ -953,6 +953,10 @@ struct SidebarItemNode: Hashable, Sendable {
 			tappedFeed = nodeFor(indexPath)?.representedObject as AnyObject?
 		}
 		guard tappedFeed !== timelineFeed as AnyObject? else {
+			// Same feed — just make sure the timeline is showing.
+			if indexPath != nil {
+				rootSplitViewController.show(.supplementary)
+			}
 			completion?()
 			return
 		}
