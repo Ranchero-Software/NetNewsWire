@@ -556,6 +556,11 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func moveFocusToSearchField(_ sender: Any?) {
+		// The search field lives in the toolbar — show it if hidden.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4896>
+		if let toolbar = window?.toolbar, !toolbar.isVisible {
+			toolbar.isVisible = true
+		}
 		guard let searchField = currentSearchField else {
 			return
 		}
