@@ -49,6 +49,15 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 	// Attributes per open element.
 	private var attributesStack: [XMLAttributes] = []
 
+	// Effective xml:base per open element — kept exactly parallel to attributesStack.
+	private var baseURLStack: [URL?] = []
+
+	private lazy var documentURL: URL? = URL(string: feedURLString)
+
+	private var effectiveBaseURL: URL? {
+		baseURLStack.last ?? nil
+	}
+
 	init(urlString: String) {
 		self.feedURLString = urlString
 		self.isDaringFireball = urlString.contains("daringfireball.net/")
@@ -106,6 +115,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		}
 
 		attributesStack.append(attributes)
+		pushBaseURL(attributes)
 
 		if namespaceElementDepth > 0 {
 			namespaceElementDepth += 1
@@ -172,7 +182,17 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		guard let article = currentArticle else {
 			return
 		}
-		let html = String(decoding: bytes, as: UTF8.self)
+
+		// The content element is still on the stacks here, so effectiveBaseURL
+		// includes its own xml:base. An xml:base on an element inside the captured
+		// content is invisible (pass-through emits no events) and unsupported.
+		let html: String
+		if let base = effectiveBaseURL {
+			html = HTMLRelativeURLResolver.resolvingRelativeURLs(inBytes: bytes, baseURL: base)
+		} else {
+			html = String(decoding: bytes, as: UTF8.self)
+		}
+
 		if localName.equals("content") {
 			article.body = html
 		} else if localName.equals("summary") {
@@ -188,6 +208,9 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		defer {
 			if !attributesStack.isEmpty {
 				attributesStack.removeLast()
+			}
+			if !baseURLStack.isEmpty {
+				baseURLStack.removeLast()
 			}
 		}
 
@@ -250,13 +273,13 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 			// Overwrite only if there are characters —
 			// may have been set by didCaptureRawInnerContent for raw XHTML.
 			if let s = parser.currentStringWithTrimmedWhitespace {
-				article.body = s
+				article.body = resolvedHTMLBody(s)
 			}
 		} else if localName.equals("summary") {
 			// Overwrite only if there are characters —
 			// may have been set by didCaptureRawInnerContent for raw XHTML.
 			if let s = parser.currentStringWithTrimmedWhitespace {
-				article.summary = s
+				article.summary = resolvedHTMLBody(s)
 			}
 		} else if localName.equals("link") {
 			handleArticleLink()
@@ -352,7 +375,9 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		} else if localName.equals("email") {
 			author.emailAddress = parser.currentStringWithTrimmedWhitespace
 		} else if localName.equals("uri") {
-			author.url = parser.currentStringWithTrimmedWhitespace
+			if let s = parser.currentStringWithTrimmedWhitespace {
+				author.url = resolvedURLString(s) ?? s
+			}
 		}
 	}
 
@@ -368,11 +393,11 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 			}
 		} else if localName.equals("icon") {
 			if let s = parser.currentStringWithTrimmedWhitespace, !s.isEmpty {
-				iconURLString = s
+				iconURLString = resolvedURLString(s) ?? s
 			}
 		} else if localName.equals("logo") {
 			if logoURLString == nil, let s = parser.currentStringWithTrimmedWhitespace, !s.isEmpty {
-				logoURLString = s
+				logoURLString = resolvedURLString(s) ?? s
 			}
 		}
 	}
@@ -401,9 +426,44 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 
 	// MARK: - URL resolution
 
+	// RFC 4287: xml:base applies to its element and everything below it,
+	// and a relative xml:base resolves against the nearest enclosing base —
+	// the document (feed) URL when there is none.
+	private func pushBaseURL(_ attributes: XMLAttributes) {
+		let inherited = baseURLStack.last ?? nil
+		guard !attributes.isEmpty, let xmlBase = attributes["xml:base"], !xmlBase.isEmpty else {
+			baseURLStack.append(inherited)
+			return
+		}
+		let outerBase = inherited ?? documentURL
+		guard let resolved = URL(string: xmlBase, relativeTo: outerBase)?.absoluteURL,
+		      let scheme = resolved.scheme?.lowercased(), scheme == "http" || scheme == "https" else {
+			// A garbage or non-http base (tag:, urn:) would poison resolution — inherit instead.
+			baseURLStack.append(inherited)
+			return
+		}
+		baseURLStack.append(resolved)
+	}
+
+	// Rewrite relative URLs in an escaped-HTML body when an xml:base is in effect.
+	// RFC 4287 allows a MIME type as well as the "html" keyword.
+	// type="text" (and absent type, which means text) is never rewritten.
+	private func resolvedHTMLBody(_ html: String) -> String {
+		let type = currentAttributes["type"]
+		guard type == "html" || type == "text/html", let base = effectiveBaseURL else {
+			return html
+		}
+		return HTMLRelativeURLResolver.resolvingRelativeURLs(in: html, baseURL: base)
+	}
+
 	private func resolvedURLString(_ s: String) -> String? {
 		if isValidURLString(s) {
 			return s
+		}
+		if let base = effectiveBaseURL,
+		   let resolved = URL(string: s, relativeTo: base)?.absoluteString,
+		   isValidURLString(resolved) {
+			return resolved
 		}
 		var base: String? = homepageURLString
 		if base?.isEmpty ?? true {

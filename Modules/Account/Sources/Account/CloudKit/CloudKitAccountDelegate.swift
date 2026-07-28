@@ -456,7 +456,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		account.removeFolderFromTree(folder)
 
 		try await account.logActivity(kind: .removeFolder, detail: folderName) {
-			syncProgress.addTask()
+			// Two tasks: finding the folder's feed externalIDs, removing the folder record.
+			// Every path below completes exactly two.
+			syncProgress.addTasks(2)
 
 			let feedExternalIDs: [String]
 			do {
@@ -570,7 +572,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 				account.addFolderToTree(folder)
 			}
 		} catch {
-			syncProgress.completeTask()
+			// Only reachable when createFolder throws, before any of the
+			// 1 + feedsToRestore.count tasks completed — complete them all.
+			syncProgress.completeTasks(1 + feedsToRestore.count)
 			postSyncError(error, account: account, operation: "Restoring folder")
 			throw error
 		}
@@ -893,7 +897,9 @@ private extension CloudKitAccountDelegate {
 											   editedName: editedName,
 											   container: container)
 		} catch {
-			syncProgress.completeTasks(3)
+			// When FeedFinder.find is what threw, none of the five tasks have completed yet —
+			// four here plus one more from the validateFeed path or addDeadFeed.
+			syncProgress.completeTasks(4)
 			if validateFeed {
 				syncProgress.completeTask()
 				throw AccountError.createErrorNotFound
@@ -991,6 +997,11 @@ private extension CloudKitAccountDelegate {
 	func sendNewArticlesToTheCloud(_ account: Account, _ feed: Feed) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		Task {
+			// Completes createRSSFeed's fifth task.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4538>
+			defer {
+				syncProgress.completeTask()
+			}
 			do {
 				let articles = await account.fetchArticlesAsync(.feed(feed))
 
