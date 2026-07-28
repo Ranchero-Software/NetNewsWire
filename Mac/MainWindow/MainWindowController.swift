@@ -539,8 +539,16 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			assertionFailure("Expected toolbarShowShareMenu to be called only by the Share item in the toolbar.")
 			return
 		}
-		guard let view = shareToolbarItem.view else {
-			// TODO: handle menu form representation
+		// In the toolbar's Text Only mode or overflow menu the item's view isn't on-window, so anchor the picker to the window instead.
+		let anchorView: NSView
+		let anchorRect: NSRect
+		if let view = shareToolbarItem.view, view.window != nil {
+			anchorView = view
+			anchorRect = view.bounds
+		} else if let contentView = window?.contentView {
+			anchorView = contentView
+			anchorRect = NSRect(x: contentView.frame.width / 2.0, y: contentView.frame.height - 4, width: 1, height: 1)
+		} else {
 			return
 		}
 
@@ -551,7 +559,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			self.sharingServicePickerDelegate?.selectedHTML = selectedHTML
 			let sharingServicePicker = NSSharingServicePicker(items: items)
 			sharingServicePicker.delegate = self.sharingServicePickerDelegate
-			sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+			sharingServicePicker.show(relativeTo: anchorRect, of: anchorView, preferredEdge: .minY)
 		}
 	}
 
@@ -862,6 +870,7 @@ extension MainWindowController: NSToolbarDelegate {
 			let button = ArticleExtractorButton()
 			button.action = #selector(toggleArticleExtractor(_:))
 			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: description, action: #selector(toggleArticleExtractor(_:)), keyEquivalent: "")
 			return toolbarItem
 
 		case .share:
@@ -1174,6 +1183,10 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			// Text Only toolbar mode shows the label and menu form representation, so they need to track state too.
+			let shortName = markingRead ? NSLocalizedString("Mark Read", comment: "command") : NSLocalizedString("Mark Unread", comment: "command")
+			toolbarItem.label = shortName
+			toolbarItem.menuFormRepresentation?.title = shortName
 		}
 
 		if let menuItem = item as? NSMenuItem {
@@ -1258,6 +1271,10 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			// Text Only toolbar mode shows the label and menu form representation, so they need to track state too.
+			let shortName = starring ? NSLocalizedString("Star", comment: "Star") : NSLocalizedString("Unstar", comment: "Unstar")
+			toolbarItem.label = shortName
+			toolbarItem.menuFormRepresentation?.title = shortName
 		}
 
 		if let menuItem = item as? NSMenuItem {
@@ -1452,6 +1469,8 @@ private extension MainWindowController {
 		toolbarItem.view = button
 		toolbarItem.toolTip = title
 		toolbarItem.label = title
+		// A menu form representation keeps view-based items working in the toolbar's Text Only mode and overflow menu.
+		toolbarItem.menuFormRepresentation = NSMenuItem(title: title, action: Selector((selector)), keyEquivalent: "")
 		return toolbarItem
 	}
 
