@@ -120,11 +120,26 @@ private extension WebViewConfiguration {
 		let filenames = ["main", "main_mac", "newsfoot"]
 #endif
 
-		let scripts = filenames.map { filename in
+		var scripts = filenames.map { filename in
 			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
 			let scriptSource = try! String(contentsOf: scriptURL, encoding: .utf8)
 			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
 		}
+
+#if os(iOS)
+		scripts.insert(feedInfoLabelScript, at: 0)
+#endif
 		return scripts
 	}()
+
+#if os(iOS)
+	// main_ios.js uses nnwGetFeedInfoLabel as the feed icon's accessibility label.
+	// The label is passed in from here because localized strings can't live in a static .js file.
+	// JSON encoding escapes the translation so it's a valid JavaScript string literal.
+	static let feedInfoLabelScript: WKUserScript = {
+		let label = NSLocalizedString("Get Feed Info", comment: "Get Feed Info")
+		let json = String(data: try! JSONSerialization.data(withJSONObject: label, options: .fragmentsAllowed), encoding: .utf8)!
+		return WKUserScript(source: "const nnwGetFeedInfoLabel = \(json);", injectionTime: .atDocumentStart, forMainFrameOnly: true)
+	}()
+#endif
 }
