@@ -67,6 +67,189 @@ import RSParser
 		#expect(foundTestArticle)
 	}
 
+	// MARK: - xml:base
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5088>
+
+	@Test func xmlBaseResolvesRelativeURLsInXHTMLContent() throws {
+		let d = parserData("pappacoda", "atom", "https://andrea.pappacoda.it/blog/feed.atom")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		// Root-relative <icon> and <logo> resolve against the feed-level xml:base.
+		// iconURL prefers the logo, faviconURL is the icon.
+		#expect(parsedFeed.iconURL == "https://andrea.pappacoda.it/assets/debian-button.gif")
+		#expect(parsedFeed.faviconURL == "https://andrea.pappacoda.it/andrea_pappacoda.jpg")
+
+		let item = try #require(parsedFeed.items.first(where: { $0.title == "C su Windows" }))
+
+		// <id> is never resolved, even though it looks nothing like the base.
+		#expect(item.uniqueID == "tag:andrea.pappacoda.it,2023-06-09:c_su_windows")
+		#expect(item.url == "https://andrea.pappacoda.it/blog/c_su_windows/")
+
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("src=\"https://andrea.pappacoda.it/blog/c_su_windows/c_su_windows_visual_studio_componenti.png\""))
+		#expect(html.contains("srcset=\"https://andrea.pappacoda.it/blog/c_su_windows/c_su_windows_visual_studio_componenti_light.png\""))
+		#expect(html.contains("src=\"https://andrea.pappacoda.it/blog/c_su_windows/clangd_path.png\""))
+		#expect(!html.contains("src=\"clangd_path.png\""))
+
+		// The xhtml wrapper still comes through verbatim.
+		#expect(html.contains("xmlns=\"http://www.w3.org/1999/xhtml\""))
+	}
+
+	@Test func nestedRelativeXMLBase() throws {
+		// A feed-level base and a relative content-level base compose,
+		// a relative entry link resolves against xml:base rather than
+		// the homepage fallback, and an xml:base on the link element itself wins.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com/blog/">
+		  <title>t</title><id>urn:t</id>
+		  <link rel="alternate" href="https://homepage.example.org/"/>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>nested base</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <link rel="alternate" href="post1/"/>
+		    <link rel="related" xml:base="https://elsewhere.example.net/dir/" href="related.html"/>
+		    <content type="html" xml:base="post1/">&lt;a href="pic.png"&gt;pic&lt;/a&gt;</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "https://example.com/blog/feed.atom", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		#expect(item.url == "https://example.com/blog/post1/")
+		#expect(item.externalURL == "https://elsewhere.example.net/dir/related.html")
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("href=\"https://example.com/blog/post1/pic.png\""))
+	}
+
+	@Test func mimeTypeHTMLContentWithXMLBaseResolved() throws {
+		// RFC 4287 allows type="text/html" as well as type="html".
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>mime type html</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <content type="text/html" xml:base="https://example.com/post/">&lt;img src="pic.png"&gt;</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "https://example.com/feed.atom", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("src=\"https://example.com/post/pic.png\""))
+	}
+
+	@Test func relativeXMLBaseResolvesAgainstFeedURL() throws {
+		// qemu-style: a root-relative xml:base with no enclosing base
+		// resolves against the document (feed) URL.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>/2024/04/23/qemu-9-0-0</id>
+		    <title>release</title>
+		    <updated>2024-04-23T23:02:00Z</updated>
+		    <content type="html" xml:base="/2024/04/23/qemu-9-0-0/">&lt;a href="changelog.html"&gt;changelog&lt;/a&gt;</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "https://www.qemu.org/feed.xml", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		// The relative-looking <id> stays verbatim.
+		#expect(item.uniqueID == "/2024/04/23/qemu-9-0-0")
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("href=\"https://www.qemu.org/2024/04/23/qemu-9-0-0/changelog.html\""))
+	}
+
+	@Test func fragmentAndEmptyHrefsSurviveXMLBase() throws {
+		// One Foot Tsunami has per-entry xml:base plus footnote links like
+		// href="#fn…" in bodies — those must stay untouched (the footnote JS
+		// in the app depends on fragment-only hrefs). Some entries also have
+		// empty link hrefs, which must not resolve to the base URL itself.
+		let d = parserData("OneFootTsunami", "atom", "http://onefoottsunami.com/feed/atom/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		let bodies = parsedFeed.items.compactMap { $0.contentHTML }
+		let fragmentHrefs = bodies.filter { $0.contains("href=\"#fn") }
+		#expect(!fragmentHrefs.isEmpty, "fragment-only hrefs must stay fragment-only")
+
+		#expect(!parsedFeed.items.contains { $0.url?.hasSuffix("wp-atom.php") ?? false }, "empty link hrefs must not resolve to the base")
+	}
+
+	@Test func summaryWithXMLBaseResolved() throws {
+		// A summary promoted to the body (no content element) is resolved
+		// against its own element's base at parse time.
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>summary only</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <summary type="html" xml:base="https://example.com/post/">&lt;img src="pic.png"&gt;</summary>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "https://example.com/feed.atom", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("src=\"https://example.com/post/pic.png\""))
+	}
+
+	@Test func relativeAuthorURIResolvesAgainstXMLBase() throws {
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom" xml:base="https://example.com/blog/">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>relative author uri</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <author><name>Alice</name><uri>about/</uri></author>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "https://example.com/blog/feed.atom", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+		let author = try #require(item.authors?.first)
+		#expect(author.url == "https://example.com/blog/about/")
+	}
+
+	@Test func textContentWithXMLBaseUntouched() throws {
+		let xml = """
+		<?xml version="1.0" encoding="utf-8"?>
+		<feed xmlns="http://www.w3.org/2005/Atom">
+		  <title>t</title><id>urn:t</id>
+		  <entry>
+		    <id>urn:t:1</id>
+		    <title>text content</title>
+		    <updated>2020-05-01T00:00:00Z</updated>
+		    <content type="text" xml:base="https://example.com/post/">See src="pic.png" for details.</content>
+		  </entry>
+		</feed>
+		"""
+		let d = ParserData(url: "https://example.com/feed.atom", data: Data(xml.utf8))
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		let html = try #require(item.contentHTML)
+		#expect(html.contains("src=\"pic.png\""))
+	}
+
 	@Test func articleExternalLinks() throws {
 		var d = parserData("DaringFireball", "atom", "https://daringfireball.net/feeds/main")
 		var parsedFeed = try #require(try FeedParser.parse(d))
