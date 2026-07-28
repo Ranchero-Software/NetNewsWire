@@ -650,8 +650,9 @@ public enum FetchType {
 		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
 		if let feedTitle = opmlFeedSpecifier.title {
-			if feed.name == nil {
-				feed.name = feedTitle
+			// Store as editedName so the imported title survives the next refresh, which overwrites name with the feed's own title.
+			if feed.editedName == nil {
+				feed.editedName = feedTitle
 			}
 		}
 		return feed

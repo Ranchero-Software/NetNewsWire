@@ -40,12 +40,11 @@ import Images
 	}
 	#else // iOS
 	var stateRestorationActivity: NSUserActivity {
-		// State restoration is now handled via UserDefaults (AppDefaults.selectedSidebarItem and AppDefaults.selectedArticle).
-		// The reading/selecting activities are still maintained for Handoff, Spotlight, and Siri Shortcuts,
-		// but we don't use them for same-device state restoration anymore.
+		// State restoration uses UserDefaults; this activity is left non-current so it doesn't displace
+		// the reading/selecting activity that Handoff advertises.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5368>
 		let activity = NSUserActivity(activityType: ActivityType.restoration.rawValue)
 		activity.persistentIdentifier = UUID().uuidString
-		activity.becomeCurrent()
 		return activity
 	}
 	#endif
