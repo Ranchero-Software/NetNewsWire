@@ -166,6 +166,7 @@ import Images
 
 	/// Un-suspend network activity if it was suspended on background entry.
 	func resumeIfNecessary() {
+		AppNotification.postAppDidBecomeActive()
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			Self.logger.info("Application processing resumed.")

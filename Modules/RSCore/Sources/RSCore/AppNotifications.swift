@@ -8,13 +8,12 @@
 import Foundation
 import os
 
+// These are all posted on the main thread.
+
 public extension Notification.Name {
-
-	/// Posted on actual low memory condition. Main thread.
 	static let lowMemory = Notification.Name("LowMemoryNotification")
-
-	/// Posted when the app goes to background. Main thread.
 	static let appDidGoToBackground = Notification.Name("AppDidGoToBackgroundNotification")
+	static let appDidBecomeActive = Notification.Name("AppDidBecomeActiveNotification")
 }
 
 public struct AppNotification {
@@ -29,5 +28,10 @@ public struct AppNotification {
 	public static func postAppDidGoToBackground() {
 		notificationLogger.info("Posting app did go to background notification.")
 		NotificationCenter.default.postOnMainThread(name: .appDidGoToBackground, object: nil)
+	}
+
+	public static func postAppDidBecomeActive() {
+		notificationLogger.info("Posting app did become active notification.")
+		NotificationCenter.default.postOnMainThread(name: .appDidBecomeActive, object: nil)
 	}
 }

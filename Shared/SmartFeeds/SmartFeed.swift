@@ -52,12 +52,27 @@ import Images
 	init(delegate: SmartFeedDelegate) {
 		self.delegate = delegate
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		// Refetch on activation and on day change to prevent staleness.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3936>
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidBecomeActive(_:)), name: .appDidBecomeActive, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleCalendarDayChanged(_:)), name: .NSCalendarDayChanged, object: nil)
 		queueFetchUnreadCounts() // Fetch unread count at startup
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 		if note.object is AppDelegate {
 			queueFetchUnreadCounts()
+		}
+	}
+
+	@objc func handleAppDidBecomeActive(_ note: Notification) {
+		queueFetchUnreadCounts()
+	}
+
+	// NSCalendarDayChanged isn't guaranteed to arrive on the main thread.
+	@objc nonisolated func handleCalendarDayChanged(_ note: Notification) {
+		Task { @MainActor in
+			self.queueFetchUnreadCounts()
 		}
 	}
 
