@@ -1528,6 +1528,14 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	func beganBrowsing(url: URL) {
+		activityManager.browsing(url: url)
+	}
+
+	func endedBrowsing() {
+		activityManager.invalidateBrowsing()
+	}
+
 	func navigateToFeeds() {
 		mainFeedCollectionViewController?.focus()
 		selectArticle(nil)

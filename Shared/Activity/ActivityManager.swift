@@ -22,6 +22,7 @@ import Images
 	private var selectingActivity: NSUserActivity?
 	private var readingActivity: NSUserActivity?
 	private var readingArticle: Article?
+	private var browsingActivity: NSUserActivity?
 
 	#if os(macOS)
 	var stateRestorationActivity: NSUserActivity {
@@ -54,9 +55,28 @@ import Images
 	}
 
 	func invalidateCurrentActivities() {
+		invalidateBrowsing()
 		invalidateReading()
 		invalidateSelecting()
 		invalidateNextUnread()
+	}
+
+	// Handoff advertises the in-app browser's page, not the article behind it.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5369>
+	func browsing(url: URL) {
+		browsingActivity?.invalidate()
+
+		let activity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+		activity.webpageURL = url
+		activity.isEligibleForHandoff = true
+		browsingActivity = activity
+		activity.becomeCurrent()
+	}
+
+	func invalidateBrowsing() {
+		browsingActivity?.invalidate()
+		browsingActivity = nil
+		readingActivity?.becomeCurrent()
 	}
 
 	func selecting(sidebarItem: SidebarItem) {
@@ -98,6 +118,7 @@ import Images
 	}
 
 	func reading(feed: SidebarItem?, article: Article?) {
+		invalidateBrowsing()
 		invalidateReading()
 		invalidateNextUnread()
 

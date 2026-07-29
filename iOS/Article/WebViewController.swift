@@ -888,7 +888,18 @@ private extension WebViewController {
 		guard let viewController = SFSafariViewController.safeSafariViewController(url) else {
 			return
 		}
+		viewController.delegate = self
+		coordinator?.beganBrowsing(url: url)
 		present(viewController, animated: true)
+	}
+}
+
+// MARK: SFSafariViewControllerDelegate
+
+extension WebViewController: @preconcurrency SFSafariViewControllerDelegate {
+
+	func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+		coordinator?.endedBrowsing()
 	}
 }
 
