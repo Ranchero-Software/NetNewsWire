@@ -327,6 +327,7 @@ let appName = "NetNewsWire"
 
 	func applicationDidBecomeActive(_ notification: Notification) {
 		fireOldTimers()
+		AppNotification.postAppDidBecomeActive()
 	}
 
 	func applicationDidResignActive(_ notification: Notification) {
