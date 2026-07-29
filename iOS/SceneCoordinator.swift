@@ -304,13 +304,32 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	private static let minimumTimelineWidth: CGFloat = 280
+	private static let maximumTimelineWidth: CGFloat = 440
+
+	private static func clampTimelineWidth(_ width: CGFloat) -> CGFloat {
+		if width < minimumTimelineWidth {
+			return minimumTimelineWidth
+		}
+		if width > maximumTimelineWidth {
+			return maximumTimelineWidth
+		}
+		return width
+	}
+
 	init(rootSplitViewController: RootSplitViewController) {
 		self.rootSplitViewController = rootSplitViewController
 		self.rootSplitViewController.minimumPrimaryColumnWidth = 300
 		self.rootSplitViewController.maximumPrimaryColumnWidth = 500
-		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
-		self.rootSplitViewController.preferredSupplementaryColumnWidth = 320
-		self.rootSplitViewController.maximumSupplementaryColumnWidth = 360
+		self.rootSplitViewController.minimumSupplementaryColumnWidth = SceneCoordinator.minimumTimelineWidth
+		self.rootSplitViewController.maximumSupplementaryColumnWidth = SceneCoordinator.maximumTimelineWidth
+		let restoredTimelineWidth: CGFloat
+		if let savedTimelineWidth = AppDefaults.shared.timelineWidth {
+			restoredTimelineWidth = CGFloat(savedTimelineWidth)
+		} else {
+			restoredTimelineWidth = 320
+		}
+		self.rootSplitViewController.preferredSupplementaryColumnWidth = Self.clampTimelineWidth(restoredTimelineWidth)
 		self.rootSplitViewController.preferredSplitBehavior = .tile
 
 		self.treeController = TreeController(delegate: treeControllerDelegate)
@@ -744,6 +763,19 @@ struct SidebarItemNode: Hashable, Sendable {
 	func didEnterBackground() {
 		hidingReadArticlesState.save()
 		saveExpandedContainers()
+		saveTimelineWidth()
+	}
+
+	private func saveTimelineWidth() {
+		// Only meaningful when the timeline is its own column (iPad, expanded); when collapsed its view fills the screen.
+		guard !rootSplitViewController.isCollapsed else {
+			return
+		}
+		let width = mainTimelineViewController?.view.bounds.width ?? 0
+		guard width > 0 else {
+			return
+		}
+		AppDefaults.shared.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
 	}
 
 	func suspend() {
