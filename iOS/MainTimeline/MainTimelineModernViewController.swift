@@ -222,6 +222,10 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			navigationController?.navigationBar.alpha = 0
 		}
 
+		// Re-assert small title in case the shared iPhone nav bar was left in large mode.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5141>
+		navigationItem.largeTitleDisplayMode = .never
+
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)
 		updateToolbarProgressView()

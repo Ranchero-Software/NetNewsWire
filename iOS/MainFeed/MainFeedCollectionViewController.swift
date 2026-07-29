@@ -118,7 +118,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.navigationController?.navigationBar.prefersLargeTitles = true
 			self.navigationItem.largeTitleDisplayMode = .always
 			DispatchQueue.main.async {
-				/// This sizes the navigation bar to large.
+				// Sizes the bar to large. Skip if a pushed VC (e.g. the timeline, which shares this bar
+				// on iPhone) is now on top, or it would be forced large too.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5141>
+				guard self.navigationController?.topViewController === self else {
+					return
+				}
 				self.navigationController?.navigationBar.sizeToFit()
 			}
 
