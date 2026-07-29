@@ -8,15 +8,19 @@
 
 import Foundation
 import Zip
+import RSWeb
 
 public final class ArticleThemeDownloader: Sendable {
 	public static let shared = ArticleThemeDownloader()
 
 	public enum ArticleThemeDownloaderError: LocalizedError {
+		case downloadFailed
 		case noThemeFile
 
 		public var errorDescription: String? {
 			switch self {
+			case .downloadFailed:
+				return "The NetNewsWire theme could not be downloaded."
 			case .noThemeFile:
 				return "There is no NetNewsWire theme available."
 			}
@@ -24,6 +28,29 @@ public final class ArticleThemeDownloader: Sendable {
 	}
 
 	private init() {}
+
+	@MainActor public func downloadTheme(from url: URL) {
+		NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
+
+		Task { @MainActor in
+			do {
+				let downloadResponse = try await Downloader.shared.download(url, userAgentStyle: .browser)
+				guard let data = downloadResponse.data, !data.isEmpty,
+					  let response = downloadResponse.response, response.statusIsOK else {
+					throw ArticleThemeDownloaderError.downloadFailed
+				}
+
+				// handleFile expects a file whose .tmp name becomes the .zip name.
+				let temporaryFileURL = FileManager.default.temporaryDirectory
+					.appendingPathComponent(UUID().uuidString)
+					.appendingPathExtension("tmp")
+				try data.write(to: temporaryFileURL)
+				try handleFile(at: temporaryFileURL)
+			} catch {
+				NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
+			}
+		}
+	}
 
 	public func handleFile(at location: URL) throws {
 		createDownloadDirectoryIfRequired()

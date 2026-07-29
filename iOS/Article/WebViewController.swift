@@ -703,7 +703,7 @@ private extension WebViewController {
 
 		guard let imageURL = URL(string: clickMessage.imageURL) else { return }
 
-		Downloader.shared.download(imageURL) { [weak self] downloadResponse, error in
+		Downloader.shared.download(imageURL, userAgentStyle: .browser) { [weak self] downloadResponse, error in
 			guard let self, let data = downloadResponse.data, error == nil, !data.isEmpty,
 				  let image = UIImage(data: data) else {
 				return
@@ -888,7 +888,18 @@ private extension WebViewController {
 		guard let viewController = SFSafariViewController.safeSafariViewController(url) else {
 			return
 		}
+		viewController.delegate = self
+		coordinator?.beganBrowsing(url: url)
 		present(viewController, animated: true)
+	}
+}
+
+// MARK: SFSafariViewControllerDelegate
+
+extension WebViewController: @preconcurrency SFSafariViewControllerDelegate {
+
+	func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+		coordinator?.endedBrowsing()
 	}
 }
 
