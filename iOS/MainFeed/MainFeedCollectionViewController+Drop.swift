@@ -66,7 +66,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		if source.account == destination.account {
 			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
 		} else {
-			moveFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
+			copyFeedBetweenAccounts(feed: feed, destinationContainer: destination)
 		}
 	}
 
@@ -90,15 +90,19 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 
+		// Cross-account drops copy the feed; same-account drops move it.
+		let sourceFeed = (session.localDragSession?.items.first?.localObject as? Node)?.representedObject as? Feed
+		let operation: UIDropOperation = (sourceFeed?.account?.accountID != destAccount.accountID) ? .copy : .move
+
 		// Determine the correct drop proposal
 		if destFeed is Folder {
 			if session.location(in: destCell).y >= 0 {
-				return UICollectionViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+				return UICollectionViewDropProposal(operation: operation, intent: .insertIntoDestinationIndexPath)
 			} else {
-				return UICollectionViewDropProposal(operation: .move, intent: .unspecified)
+				return UICollectionViewDropProposal(operation: operation, intent: .unspecified)
 			}
 		} else {
-			return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+			return UICollectionViewDropProposal(operation: operation, intent: .insertAtDestinationIndexPath)
 		}
 	}
 
@@ -124,25 +128,17 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		}
 	}
 
-	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+	func copyFeedBetweenAccounts(feed: Feed, destinationContainer: Container) {
 
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 
 			BatchUpdate.shared.start()
 			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
+				BatchUpdate.shared.end()
 				switch result {
 				case .success:
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.presentError(error)
-						}
-					}
+					break
 				case .failure(let error):
-					BatchUpdate.shared.end()
 					self.presentError(error)
 				}
 			}
@@ -151,19 +147,11 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 
 			BatchUpdate.shared.start()
 			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
+				BatchUpdate.shared.end()
 				switch result {
 				case .success:
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.presentError(error)
-						}
-					}
+					break
 				case .failure(let error):
-					BatchUpdate.shared.end()
 					self.presentError(error)
 				}
 			}
