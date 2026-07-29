@@ -117,7 +117,7 @@ nonisolated private extension HTMLMetadataDownloader {
 			activityLog.didStart(.htmlMetadataDownloader, kind: kind)
 
 			do {
-				let downloadResponse = try await Downloader.shared.download(actualURL)
+				let downloadResponse = try await Downloader.shared.download(actualURL, userAgentStyle: .browser)
 
 				if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 					let urlToUse = response.url ?? actualURL

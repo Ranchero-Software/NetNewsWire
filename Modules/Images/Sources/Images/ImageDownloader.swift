@@ -164,7 +164,7 @@ private extension ImageDownloader {
 
 		let downloadResponse: DownloadResponse
 		do {
-			downloadResponse = try await Downloader.shared.download(imageURL)
+			downloadResponse = try await Downloader.shared.download(imageURL, userAgentStyle: .browser)
 		} catch {
 			Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)

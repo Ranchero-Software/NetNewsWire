@@ -9,6 +9,7 @@
 import Foundation
 import os
 import WebKit
+import RSWeb
 
 @MainActor final class WebViewConfiguration {
 
@@ -16,6 +17,10 @@ import WebKit
 
 	private static var contentBlockingRuleList: WKContentRuleList?
 	private static var configuredContentControllers = NSHashTable<WKUserContentController>.weakObjects()
+	private static let applicationNameForUserAgent = "NetNewsWire"
+
+	// Keeps the web view alive while resolveBrowserUserAgent() waits for its answer.
+	private static var userAgentWebView: WKWebView?
 
 	static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
 		assert(Thread.isMainThread)
@@ -30,7 +35,7 @@ import WebKit
 
 		// Present article content as NetNewsWire on top of WebKit's default browser UA, rather than a non-browser string.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4453>
-		configuration.applicationNameForUserAgent = "NetNewsWire"
+		configuration.applicationNameForUserAgent = applicationNameForUserAgent
 
 #if os(iOS)
 		configuration.allowsInlineMediaPlayback = true
@@ -48,6 +53,23 @@ import WebKit
 		if !configuredContentControllers.contains(contentController) {
 			contentController.add(contentBlockingRuleList)
 			configuredContentControllers.add(contentController)
+		}
+	}
+
+	/// Ask WebKit for the article web view's user agent and use it for favicon
+	/// and homepage-HTML downloads, so the two match. Call early at app startup.
+	/// Until it resolves — or if it fails — UserAgent.browserUserAgent's fallback value applies.
+	static func resolveBrowserUserAgent() {
+		let configuration = WKWebViewConfiguration()
+		configuration.applicationNameForUserAgent = applicationNameForUserAgent
+		let webView = WKWebView(frame: .zero, configuration: configuration)
+		userAgentWebView = webView
+
+		webView.evaluateJavaScript("navigator.userAgent") { result, _ in
+			if let userAgent = result as? String, userAgent.hasPrefix("Mozilla/") {
+				UserAgent.browserUserAgent = userAgent
+			}
+			userAgentWebView = nil
 		}
 	}
 

@@ -147,7 +147,7 @@ private extension SingleFaviconDownloader {
 
 		let downloadResponse: DownloadResponse
 		do {
-			downloadResponse = try await Downloader.shared.download(url)
+			downloadResponse = try await Downloader.shared.download(url, userAgentStyle: .browser)
 		} catch {
 			Self.logger.error("Error downloading image at \(url.absoluteString): \(error.localizedDescription)")
 			activityLog.didFail(.faviconDownloader, kind: kind, error: error)

@@ -150,7 +150,8 @@ private extension ImageMetadataDatabase {
 		for record in homePageRecords {
 			if let faviconURL = record.faviconURL {
 				homePageToFaviconURL[record.homePageURL] = faviconURL
-			} else {
+			} else if Date().timeIntervalSince(record.lastChecked) < TimeInterval(days: Self.failureRetryDays) {
+				// A no-favicon verdict expires after failureRetryDays, so the homepage gets rechecked.
 				homePagesWithNoFavicon.insert(record.homePageURL)
 			}
 		}

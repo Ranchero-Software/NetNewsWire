@@ -131,12 +131,7 @@ extension Notification.Name {
 	}
 
 	public func favicon(with faviconURL: String, homePageURL: String?) -> IconImage? {
-		if !faviconURL.hasPrefix("http://") && !faviconURL.hasPrefix("https://") {
-			Self.logger.debug("Skipping non-http(s) URL: \(faviconURL)")
-			return nil
-		}
-		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
-			Self.logger.debug("Skipping recently-failed URL: \(faviconURL)")
+		guard canAttemptDownload(faviconURL) else {
 			return nil
 		}
 		let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
@@ -158,11 +153,8 @@ extension Notification.Name {
 		if let faviconURLs = findFaviconURLs(with: url) {
 			// If the site explicitly specifies favicon.ico, it will appear twice.
 			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
-
-			if let firstIconURL = faviconURLs.first {
-				_ = self.favicon(with: firstIconURL, homePageURL: url)
-				self.remainingFaviconURLs[url] = faviconURLs.dropFirst()
-			}
+			self.remainingFaviconURLs[url] = faviconURLs[...]
+			downloadNextFavicon(forHomePageURL: url)
 		}
 
 		return nil
@@ -187,17 +179,8 @@ extension Notification.Name {
 			return
 		}
 		guard singleFaviconDownloader.iconImage != nil else {
-			if let faviconURLs = remainingFaviconURLs[homePageURL] {
-				if let nextIconURL = faviconURLs.first {
-					_ = favicon(with: nextIconURL, homePageURL: singleFaviconDownloader.homePageURL)
-					remainingFaviconURLs[homePageURL] = faviconURLs.dropFirst()
-				} else {
-					remainingFaviconURLs[homePageURL] = nil
-
-					if currentHomePageHasOnlyFaviconICO {
-						ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
-					}
-				}
+			if remainingFaviconURLs[homePageURL] != nil {
+				downloadNextFavicon(forHomePageURL: homePageURL)
 			}
 			return
 		}
@@ -248,6 +231,36 @@ private extension FaviconDownloader {
 		return faviconURLs + [defaultFaviconURL]
 	}
 
+	func canAttemptDownload(_ faviconURL: String) -> Bool {
+		if !faviconURL.hasPrefix("http://") && !faviconURL.hasPrefix("https://") {
+			Self.logger.debug("Skipping non-http(s) URL: \(faviconURL)")
+			return false
+		}
+		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
+			Self.logger.debug("Skipping recently-failed URL: \(faviconURL)")
+			return false
+		}
+		return true
+	}
+
+	// A skipped candidate advances to the next one — otherwise the queue
+	// would stall and the remaining candidates would never be tried.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4868>
+	func downloadNextFavicon(forHomePageURL homePageURL: String) {
+		while let faviconURL = remainingFaviconURLs[homePageURL]?.first {
+			remainingFaviconURLs[homePageURL] = remainingFaviconURLs[homePageURL]?.dropFirst()
+			if canAttemptDownload(faviconURL) {
+				_ = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
+				return
+			}
+		}
+
+		remainingFaviconURLs[homePageURL] = nil
+		if currentHomePageHasOnlyFaviconICO {
+			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
+		}
+	}
+
 	func faviconDownloader(withURL faviconURL: String, homePageURL: String?) -> SingleFaviconDownloader {
 
 		var firstTimeSeeingHomepageURL = false
@@ -295,6 +308,12 @@ private extension HTMLMetadataRecord {
 
 	private func shouldAllowFavicon(_ favicon: HTMLMetadataRecord.Favicon) -> Bool {
 
+		// Only http(s) — a data: or other non-web URL can't be downloaded as a favicon.
+		guard let urlString = favicon.urlString,
+			  urlString.hasPrefix("http://") || urlString.hasPrefix("https://") else {
+			return false
+		}
+
 		// Check mime type.
 		if let mimeType = favicon.type, let utType = UTType(mimeType: mimeType) {
 			if Self.ignoredTypes.contains(utType) {
@@ -303,7 +322,7 @@ private extension HTMLMetadataRecord {
 		}
 
 		// Check file extension.
-		if let urlString = favicon.urlString, let url = URL(string: urlString), let utType = UTType(filenameExtension: url.pathExtension) {
+		if let url = URL(string: urlString), let utType = UTType(filenameExtension: url.pathExtension) {
 			if Self.ignoredTypes.contains(utType) {
 				return false
 			}
