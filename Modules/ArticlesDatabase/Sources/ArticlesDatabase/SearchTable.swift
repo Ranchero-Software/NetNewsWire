@@ -16,6 +16,7 @@ import RSParser
 final class ArticleSearchInfo: Hashable, Sendable {
 	let articleID: String
 	let title: String?
+	let titleForIndex: String
 	let contentHTML: String?
 	let contentText: String?
 	let summary: String?
@@ -26,6 +27,7 @@ final class ArticleSearchInfo: Hashable, Sendable {
 	init(articleID: String, title: String?, contentHTML: String?, contentText: String?, summary: String?, authorsNames: String?, searchRowID: Int?) {
 		self.articleID = articleID
 		self.title = title
+		self.titleForIndex = (title ?? "").normalizedForSearchIndex
 		self.authorsNames = authorsNames
 		self.contentHTML = contentHTML
 		self.contentText = contentText
@@ -51,7 +53,7 @@ final class ArticleSearchInfo: Hashable, Sendable {
 			} else {
 				return sanitizedBody
 			}
-		}()
+		}().normalizedForSearchIndex
 	}
 
 	convenience init(article: Article) {
@@ -139,7 +141,7 @@ private extension SearchTable {
 	}
 
 	func insert(_ article: ArticleSearchInfo, _ database: FMDatabase) -> Int {
-		let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.title ?? ""]
+		let rowDictionary: DatabaseDictionary = [DatabaseKey.body: article.bodyForIndex, DatabaseKey.title: article.titleForIndex]
 		insertRow(rowDictionary, insertType: .normal, in: database)
 		return Int(database.lastInsertRowId())
 	}
@@ -192,7 +194,7 @@ private extension SearchTable {
 			return
 		}
 
-		let title = article.title ?? ""
+		let title = article.titleForIndex
 		if title == searchInfo.title && article.bodyForIndex == searchInfo.body {
 			return
 		}
@@ -218,5 +220,28 @@ private extension SearchTable {
 			return nil
 		}
 		return resultSet.mapToSet { SearchInfo(row: $0) }
+	}
+}
+
+private extension String {
+
+	static let searchIndexCharactersToReplace = CharacterSet.punctuationCharacters.union(.symbols)
+
+	/// The search table's tokenizer treats non-ASCII punctuation and symbols as
+	/// word characters — “‘BeReal’” would index as a token that a search for
+	/// “bereal” can’t match. Replace them with spaces before indexing.
+	/// Collapsing afterward keeps the replacements from growing the stored text.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/3531>
+	var normalizedForSearchIndex: String {
+		guard rangeOfCharacter(from: Self.searchIndexCharactersToReplace) != nil else {
+			return self
+		}
+
+		var scalars = [Unicode.Scalar]()
+		scalars.reserveCapacity(unicodeScalars.count)
+		for scalar in unicodeScalars {
+			scalars.append(Self.searchIndexCharactersToReplace.contains(scalar) ? " " : scalar)
+		}
+		return String(String.UnicodeScalarView(scalars)).collapsingWhitespace
 	}
 }
