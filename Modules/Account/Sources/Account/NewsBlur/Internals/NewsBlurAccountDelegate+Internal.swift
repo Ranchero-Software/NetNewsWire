@@ -112,25 +112,27 @@ import os
 
 		// Add any feeds we don't have and update any we do
 		var feedsToAdd = Set<NewsBlurFeed>()
-		feeds.forEach { feed in
-			let subFeedId = String(feed.feedID)
+		feeds.forEach { newsBlurFeed in
+			let subFeedId = String(newsBlurFeed.feedID)
 
 			if let feed = account.existingFeed(withFeedID: subFeedId) {
-				feed.name = feed.name
-				// If the name has been changed on the server remove the locally edited name
-				feed.editedName = nil
-				feed.homePageURL = feed.homePageURL
-				feed.externalID = String(feed.feedID)
-				feed.faviconURL = feed.faviconURL
+				// If the name has been changed on the server, remove the locally edited name.
+				if feed.name != newsBlurFeed.name {
+					feed.editedName = nil
+				}
+				feed.name = newsBlurFeed.name
+				feed.homePageURL = newsBlurFeed.homePageURL
+				feed.externalID = String(newsBlurFeed.feedID)
+				feed.faviconURL = newsBlurFeed.faviconURL
 			} else {
-				feedsToAdd.insert(feed)
+				feedsToAdd.insert(newsBlurFeed)
 			}
 		}
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
-		for feed in feedsToAdd {
-			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			feed.externalID = String(feed.feedID)
+		for newsBlurFeed in feedsToAdd {
+			let feed = account.createFeed(with: newsBlurFeed.name, url: newsBlurFeed.feedURL, feedID: String(newsBlurFeed.feedID), homePageURL: newsBlurFeed.homePageURL)
+			feed.externalID = String(newsBlurFeed.feedID)
 			account.addFeedToTreeAtTopLevel(feed)
 		}
 	}
@@ -163,7 +165,10 @@ import os
 
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
 
-			guard let folder = folderDict[folderName] else { return }
+			// A missing folder must not abort the rest of the relationship sync.
+			guard let folder = folderDict[folderName] else {
+				continue
+			}
 
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
