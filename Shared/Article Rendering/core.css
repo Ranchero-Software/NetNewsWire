@@ -105,6 +105,12 @@ img[src*="/img/social/"] {
 	display: none !important;
 }
 
+/* Mailchimp newsletters end with a follow-our-socials icon wall */
+
+.mcnFollowBlock {
+	display: none !important;
+}
+
 /* Newsfoot specific styles. Structural styles come first, theme styles second */
 
 .newsfoot-footnote-container {
