@@ -741,7 +741,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() || representedObjectsContainAnyFolder() {
-			fetchAndReplacePreservingSelectionAsync()
+			// Merge, don't replace — replacing drops articles read this session
+			// from All Unread. Matches iOS.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/3832>
+			queueFetchAndMergeArticles()
 		}
 	}
 
