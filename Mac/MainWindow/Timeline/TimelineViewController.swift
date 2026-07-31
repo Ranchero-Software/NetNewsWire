@@ -244,6 +244,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarDidAcceptDrop(_:)), name: .SidebarDidAcceptDrop, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 				Task { @MainActor in
@@ -737,6 +738,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		if representedObjectsContainsAnyPseudoFeed() {
 			fetchAndReplacePreservingSelectionAsync()
 		}
+	}
+
+	@objc func handleSidebarDidAcceptDrop(_ note: Notification) {
+		// Drops aren't undoable — without this, ⌘Z could silently undo an older, unrelated action.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3583>
+		undoManager?.removeAllActions()
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
