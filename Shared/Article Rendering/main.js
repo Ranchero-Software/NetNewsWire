@@ -1,13 +1,30 @@
 // Here we are making iframes responsive.  Particularly useful for inline Youtube videos.
 function wrapFrames() {
 	document.querySelectorAll("iframe").forEach(element => {
-		if (parseInt(element.height) > 0)
+		if (parseInt(element.height) > 0) {
+			preserveAspectRatioOfFixedSizeFrame(element);
 			return;
+		}
 		var wrapper = document.createElement("div");
 		wrapper.classList.add("iframeWrap");
 		element.parentNode.insertBefore(wrapper, element);
 		wrapper.appendChild(element);
 	});
+}
+
+// The stylesheet clamps iframes to the article width with max-width: 100%,
+// which leaves an attribute-sized iframe with its full height — distorted,
+// and a huge blank box when the embed fails to load. Let the height follow
+// the width instead.
+function preserveAspectRatioOfFixedSizeFrame(element) {
+	const numeric = /^[1-9]\d*$/;
+	const width = element.getAttribute("width");
+	const height = element.getAttribute("height");
+	if (!numeric.test(width) || !numeric.test(height) || element.style.height) {
+		return;
+	}
+	element.style.aspectRatio = width + " / " + height;
+	element.style.height = "auto";
 }
 
 // Strip out color and font styling
