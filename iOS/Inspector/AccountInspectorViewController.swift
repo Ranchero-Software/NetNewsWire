@@ -70,7 +70,7 @@ final class AccountInspectorViewController: UITableViewController {
 	@IBAction func credentials(_ sender: Any) {
 		guard let account = account else { return }
 		switch account.type {
-		case .feedbin, .newsBlur, .inoreader, .bazQux, .theOldReader, .freshRSS:
+		case .feedbin, .newsBlur, .inoreader, .bazQux, .theOldReader, .freshRSS, .wordpressCom:
 			let hostingController = UIHostingController(rootView: CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil))
 			hostingController.modalPresentationStyle = .currentContext
 			present(hostingController, animated: true)

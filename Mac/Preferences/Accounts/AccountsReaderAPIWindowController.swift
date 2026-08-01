@@ -59,6 +59,11 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 				titleLabel.stringValue = NSLocalizedString("Sign in to your The Old Reader account.", comment: "The Old Reader")
 				gridView.row(at: 2).isHidden = true
 				noAccountTextField.stringValue = NSLocalizedString("Don’t have a The Old Reader account?", comment: "No OldReader")
+			case .wordpressCom:
+				titleImageView.image = Assets.Images.accountWordPress
+				titleLabel.stringValue = NSLocalizedString("Sign in to your WordPress.com account.", comment: "WordPress.com")
+				gridView.row(at: 2).isHidden = true
+				noAccountTextField.stringValue = NSLocalizedString("Need to set up an application password?", comment: "WordPress.com application password")
 			default:
 				break
 			}
@@ -122,6 +127,8 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			apiURL =  URL(string: ReaderAPIVariant.bazQux.host)!
 		case .theOldReader:
 			apiURL =  URL(string: ReaderAPIVariant.theOldReader.host)!
+		case .wordpressCom:
+			apiURL =  URL(string: ReaderAPIVariant.wordpressCom.host)!
 		default:
 			self.errorMessageLabel.stringValue = NSLocalizedString("Unrecognized account type.", comment: "Bad account type")
 			return
@@ -187,6 +194,8 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			NSWorkspace.shared.open(URL(string: "https://bazqux.com")!)
 		case .theOldReader:
 			NSWorkspace.shared.open(URL(string: "https://theoldreader.com")!)
+		case .wordpressCom:
+			NSWorkspace.shared.open(URL(string: "https://wordpress.com/support/reader/use-a-third-party-rss-reader-with-wordpress-com/")!)
 		default:
 			return
 		}

@@ -13,6 +13,7 @@ nonisolated public enum ReaderAPIVariant: Sendable {
 	case inoreader
 	case bazQux
 	case theOldReader
+	case wordpressCom
 
 	public var host: String {
 		switch self {
@@ -22,6 +23,8 @@ nonisolated public enum ReaderAPIVariant: Sendable {
 			return "https://bazqux.com"
 		case .theOldReader:
 			return "https://theoldreader.com"
+		case .wordpressCom:
+			return "https://public-api.wordpress.com/wpcom/v2/reader/greader"
 		default:
 			return ""
 		}

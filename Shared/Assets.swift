@@ -32,6 +32,7 @@ struct Assets {
 		static var accountInoreader: RSImage { RSImage(named: "accountInoreader")! }
 		static var accountNewsBlur: RSImage { RSImage(named: "accountNewsBlur")! }
 		static var accountTheOldReader: RSImage { RSImage(named: "accountTheOldReader")! }
+		static var accountWordPress: RSImage { RSImage(named: "accountWordPress")! }
 
 		static let starOpen = RSImage(symbol: "star")!
 		static let starClosed = RSImage(symbol: "star.fill")!
@@ -159,6 +160,8 @@ struct Assets {
 			return Assets.Images.accountNewsBlur
 		case .theOldReader:
 			return Assets.Images.accountTheOldReader
+		case .wordpressCom:
+			return Assets.Images.accountWordPress
 		}
 	}
 

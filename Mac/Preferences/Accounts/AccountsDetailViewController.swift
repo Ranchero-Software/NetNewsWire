@@ -44,7 +44,7 @@ final class AccountsDetailViewController: NSViewController {
 			accountsFeedbinWindowController.account = account
 			accountsFeedbinWindowController.runSheetOnWindow(window)
 
-		case .inoreader, .bazQux, .theOldReader, .freshRSS:
+		case .inoreader, .bazQux, .theOldReader, .freshRSS, .wordpressCom:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			accountsWindowController = accountsReaderAPIWindowController
 			accountsReaderAPIWindowController.accountType = account.type
