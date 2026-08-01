@@ -18,10 +18,10 @@ public enum AccountError: LocalizedError {
 	case invalidResponse
 	case urlNotFound
 	case unknown
-	case wrappedError(error: Error, accountID: String, accountName: String)
+	case wrappedError(error: Error, accountID: String, accountName: String, accountType: AccountType)
 
 	public var isCredentialsError: Bool {
-		if case .wrappedError(let error, _, _) = self {
+		if case .wrappedError(let error, _, _, _) = self {
 			if case WebserviceError.httpError(let status) = error {
 				return isCredentialsError(status: status)
 			}
@@ -30,11 +30,11 @@ public enum AccountError: LocalizedError {
 	}
 
 	@MainActor static func wrapped(_ error: Error, _ account: Account) -> AccountError {
-		AccountError.wrappedError(error: error, accountID: account.accountID, accountName: account.nameForDisplay)
+		AccountError.wrappedError(error: error, accountID: account.accountID, accountName: account.nameForDisplay, accountType: account.type)
 	}
 
 	@MainActor public static func account(from error: AccountError?) -> Account? {
-		if case let .wrappedError(_, accountID, _) = error {
+		if case let .wrappedError(_, accountID, _, _) = error {
 			return AccountManager.shared.existingAccount(accountID: accountID)
 		}
 		return nil
@@ -56,17 +56,17 @@ public enum AccountError: LocalizedError {
 			return NSLocalizedString("The URL request resulted in a not found error.", comment: "URL not found")
 		case .unknown:
 			return NSLocalizedString("Unknown error", comment: "Unknown error")
-		case .wrappedError(let error, _, let accountName):
+		case .wrappedError(let error, _, let accountName, let accountType):
 			switch error {
 			case WebserviceError.httpError(let status):
 				if isCredentialsError(status: status) {
 					let localizedText = NSLocalizedString("Your “%@” credentials are invalid or expired.", comment: "Invalid or expired")
 					return NSString.localizedStringWithFormat(localizedText as NSString, accountName) as String
 				} else {
-					return unknownError(error, accountName)
+					return syncError(error, accountName, accountType)
 				}
 			default:
-				return unknownError(error, accountName)
+				return syncError(error, accountName, accountType)
 			}
 		}
 	}
@@ -77,7 +77,7 @@ public enum AccountError: LocalizedError {
 			return nil
 		case .createErrorAlreadySubscribed:
 			return nil
-		case .wrappedError(let error, _, _):
+		case .wrappedError(let error, _, _, _):
 			switch error {
 			case WebserviceError.httpError(let status):
 				if isCredentialsError(status: status) {
@@ -100,6 +100,12 @@ extension AccountError {
 
 	/// Returns a description that includes the error domain, code, and any underlying error.
 	static func detailedErrorMessage(_ error: Error) -> String {
+		// A parser diagnostic wouldn't help anybody — this usually means the
+		// service is down and returning an error page.
+		if error is DecodingError {
+			return NSLocalizedString("The service returned an invalid response.", comment: "Invalid response from service")
+		}
+
 		let nsError = error as NSError
 		var message = error.localizedDescription
 		if !nsError.domain.isEmpty {
@@ -117,9 +123,9 @@ extension AccountError {
 
 private extension AccountError {
 
-	func unknownError(_ error: Error, _ accountName: String) -> String {
-		let localizedText = NSLocalizedString("An error occurred while processing the “%@” account: %@", comment: "Unknown error")
-		return NSString.localizedStringWithFormat(localizedText as NSString, accountName, AccountError.detailedErrorMessage(error)) as String
+	func syncError(_ error: Error, _ accountName: String, _ accountType: AccountType) -> String {
+		let localizedText = NSLocalizedString("An error occurred while syncing the %1$@ account “%2$@”: %3$@", comment: "Account sync error — account type, account name, error details")
+		return NSString.localizedStringWithFormat(localizedText as NSString, accountType.displayName, accountName, AccountError.detailedErrorMessage(error)) as String
 	}
 
 	func isCredentialsError(status: Int) -> Bool {

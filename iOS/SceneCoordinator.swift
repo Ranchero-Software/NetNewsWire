@@ -648,7 +648,8 @@ struct SidebarItemNode: Hashable, Sendable {
 				  return
 			  }
 		DispatchQueue.main.async {
-			self.rootSplitViewController.presentError(error, dismiss: nil)
+			let title = NSLocalizedString("Theme Error", comment: "Theme download error")
+			self.rootSplitViewController.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
 		}
 	}
 

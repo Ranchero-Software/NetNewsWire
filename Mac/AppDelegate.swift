@@ -993,33 +993,7 @@ extension AppDelegate {
 				  return
 			  }
 		themeImportPath = userInfo["path"] as? String
-		var informativeText: String = ""
-		if let decodingError = error as? DecodingError {
-			switch decodingError {
-			case .typeMismatch(let type, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist", comment: "Type mismatch")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, type as! CVarArg) as String
-			case .valueNotFound(let value, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the value—“%@”—is not found in the Info.plist.", comment: "Decoding value missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, value as! CVarArg) as String
-			case .keyNotFound(let codingKey, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the key—“%@”—is not found in the Info.plist.", comment: "Decoding key missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
-			case .dataCorrupted(let context):
-				guard let underlyingError = context.underlyingError as NSError?,
-					  let debugDescription = underlyingError.userInfo["NSDebugDescription"] as? String else {
-					informativeText = error.localizedDescription
-					break
-				}
-				let localizedError = NSLocalizedString("This theme cannot be used because of data corruption in the Info.plist: %@.", comment: "Decoding key missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
-
-			default:
-				informativeText = error.localizedDescription
-			}
-		} else {
-			informativeText = error.localizedDescription
-		}
+		let informativeText = ArticleThemesManager.importErrorMessage(for: error)
 
 		DispatchQueue.main.async {
 			let alert = NSAlert()
