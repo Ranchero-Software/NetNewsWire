@@ -79,8 +79,19 @@ final class RootSplitViewController: UISplitViewController {
 	}
 
 	@objc func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		coordinator.markAsReadAndShowSidebar(coordinator.articles) {
-			self.coordinator.selectNextUnread()
+		if !coordinator.isTimelineUnreadAvailable {
+			coordinator.selectNextUnread()
+			return
+		}
+		let articlesToMark = coordinator.articles
+		let title = NSLocalizedString("Mark All as Read", comment: "Command")
+		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: view as UIView) { [weak self] in
+			guard let self else {
+				return
+			}
+			self.coordinator.markAsReadAndShowSidebar(articlesToMark) {
+				self.coordinator.selectNextUnread()
+			}
 		}
 	}
 
