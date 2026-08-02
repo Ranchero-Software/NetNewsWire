@@ -16,6 +16,14 @@ enum CreateReaderAPISubscriptionResult {
 	case notFound
 }
 
+/// Inoreader’s per-zone API usage, reported on every response. Zone 1 is reads.
+/// <https://www.inoreader.com/developers/rate-limiting>
+struct ReaderAPIUsageLimits {
+	let zone1Usage: Int
+	let zone1Limit: Int
+	let resetDate: Date
+}
+
 @MainActor final class ReaderAPICaller {
 	enum ItemIDType {
 		case unread
@@ -57,6 +65,9 @@ enum CreateReaderAPISubscriptionResult {
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
+
+	/// Most recent usage report. Nil for services that don’t send the headers.
+	private(set) var usageLimits: ReaderAPIUsageLimits?
 
 	@MainActor var server: String? {
 		apiBaseURL?.host
@@ -417,7 +428,8 @@ enum CreateReaderAPISubscriptionResult {
 
 		let entryWrapper = try await withWriteToken(endpoint: baseURL) { token -> ReaderAPIEntryWrapper? in
 			let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
-			let (_, wrapper) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
+			let (response, wrapper) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
+			noteUsageLimits(from: response)
 			return wrapper
 		}
 
@@ -478,6 +490,7 @@ enum CreateReaderAPISubscriptionResult {
 		addVariantHeaders(&request)
 
 		let (response, entries) = try await session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		noteUsageLimits(from: response)
 
 		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
 			return [String]()
@@ -515,7 +528,8 @@ enum CreateReaderAPISubscriptionResult {
 		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		let (_, entries) = try await self.session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		let (response, entries) = try await self.session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		noteUsageLimits(from: response)
 
 		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
 			return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
@@ -605,8 +619,26 @@ private extension ReaderAPICaller {
 
 		try await withWriteToken(endpoint: baseURL) { token in
 			let postData = Data("T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".utf8)
-			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+			let (response, _) = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+			noteUsageLimits(from: response)
 		}
+	}
+
+	private enum UsageLimitHeader {
+		static let zone1Usage = "X-Reader-Zone1-Usage"
+		static let zone1Limit = "X-Reader-Zone1-Limit"
+		static let resetAfter = "X-Reader-Limits-Reset-After"
+	}
+
+	private static let defaultUsageLimitsResetAfter: TimeInterval = 60 * 60 * 24
+
+	private func noteUsageLimits(from response: HTTPURLResponse) {
+		guard let usageValue = response.value(forHTTPHeaderField: UsageLimitHeader.zone1Usage), let usage = Int(usageValue),
+			  let limitValue = response.value(forHTTPHeaderField: UsageLimitHeader.zone1Limit), let limit = Int(limitValue), limit > 0 else {
+			return
+		}
+		let resetAfter = response.value(forHTTPHeaderField: UsageLimitHeader.resetAfter).flatMap { TimeInterval($0) } ?? Self.defaultUsageLimitsResetAfter
+		usageLimits = ReaderAPIUsageLimits(zone1Usage: usage, zone1Limit: limit, resetDate: Date().addingTimeInterval(resetAfter))
 	}
 
 	/// Long-form item parameter for an articleID — i=tag:google.com,2005:reader/item/000000000004c608.

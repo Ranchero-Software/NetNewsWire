@@ -57,6 +57,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3001>
 	private var rateLimitResumeDate: Date?
 	private static let defaultRetryAfter: TimeInterval = 60 * 60
+	private static let zone1UsageThreshold = 0.9
 
 	var progressInfo = ProgressInfo() {
 		didSet {
@@ -283,6 +284,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	/// of articles whose local state actually changed.
 	@MainActor private func refreshArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshArticleStatus")
+
+		if shouldSkipStatusDownloadsToConserveQuota() {
+			return 0
+		}
 
 		return try await account.logActivity(kind: .refreshArticleStatuses) { () -> Int in
 			var changedCount = 0
@@ -1202,6 +1207,22 @@ private extension ReaderAPIAccountDelegate {
 			return true
 		}
 		return false
+	}
+
+	/// True when the reported Zone 1 (read) usage is close enough to the daily limit
+	/// that the full status downloads should be skipped until the limits reset.
+	private func shouldSkipStatusDownloadsToConserveQuota() -> Bool {
+		guard let usageLimits = caller.usageLimits else {
+			return false
+		}
+		guard usageLimits.resetDate > Date() else {
+			return false
+		}
+		guard Double(usageLimits.zone1Usage) >= Double(usageLimits.zone1Limit) * Self.zone1UsageThreshold else {
+			return false
+		}
+		Self.logger.info("ReaderAPIAccountDelegate: skipping status downloads — Zone 1 API usage is \(usageLimits.zone1Usage) of \(usageLimits.zone1Limit)")
+		return true
 	}
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
