@@ -1708,17 +1708,19 @@ private extension SceneCoordinator {
 	// two-pane, and three-pane layouts, so arrow-key navigation isn't limited to the
 	// case where all columns are already visible.
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3138>
-	func revealColumn(_ column: UISplitViewController.Column, thenFocus focus: @escaping () -> Void) {
+	func revealColumn(_ column: UISplitViewController.Column, thenFocus focus: @escaping @MainActor () -> Void) {
 		if isRootSplitCollapsed {
 			revealColumnInCollapsedMode(column, thenFocus: focus)
 		} else {
 			rootSplitViewController.show(column, bypassDisplayModeRestriction: true)
 			// Defer focus so becomeFirstResponder targets the revealed column, not the outgoing one.
-			DispatchQueue.main.async(execute: focus)
+			Task { @MainActor in
+				focus()
+			}
 		}
 	}
 
-	func revealColumnInCollapsedMode(_ column: UISplitViewController.Column, thenFocus focus: @escaping () -> Void) {
+	func revealColumnInCollapsedMode(_ column: UISplitViewController.Column, thenFocus focus: @escaping @MainActor () -> Void) {
 		guard !isNavigationDisabled, let navController = mainFeedCollectionViewController.navigationController else {
 			return
 		}
@@ -1739,7 +1741,9 @@ private extension SceneCoordinator {
 
 		if navController.topViewController === targetViewController {
 			// Already on the destination column — just move focus.
-			DispatchQueue.main.async(execute: focus)
+			Task { @MainActor in
+				focus()
+			}
 		} else if navController.viewControllers.contains(targetViewController) {
 			// Backward navigation. The pop fires navigationController(_:didShow:), which performs
 			// the existing collapsed-mode cleanup. Don't duplicate that here.
@@ -1754,13 +1758,15 @@ private extension SceneCoordinator {
 
 	// Focus once the navigation transition finishes, so becomeFirstResponder lands on the
 	// revealed column rather than firing mid-animation. Falls back to the next runloop.
-	func focusWhenTransitionCompletes(in navController: UINavigationController, thenFocus focus: @escaping () -> Void) {
+	func focusWhenTransitionCompletes(in navController: UINavigationController, thenFocus focus: @escaping @MainActor () -> Void) {
 		if let transitionCoordinator = navController.transitionCoordinator {
 			transitionCoordinator.animate(alongsideTransition: nil) { _ in
 				focus()
 			}
 		} else {
-			DispatchQueue.main.async(execute: focus)
+			Task { @MainActor in
+				focus()
+			}
 		}
 	}
 
