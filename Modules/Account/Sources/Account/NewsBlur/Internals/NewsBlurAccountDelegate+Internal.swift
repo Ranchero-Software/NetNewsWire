@@ -317,16 +317,16 @@ import os
 		}
 
 		let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash })
-		let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-
 		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+
 		// Mark articles as unread
-		let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+		let deltaUnreadArticleIDs = newsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs).subtracting(pendingStoryHashes)
 		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(newsBlurUnreadStoryHashes).subtracting(pendingStoryHashes)
 		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 
 		return markedUnread.count + markedRead.count
@@ -341,16 +341,16 @@ import os
 		}
 
 		let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash })
-		let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
-
 		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+
 		// Mark articles as starred
-		let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+		let deltaStarredArticleIDs = newsBlurStarredStoryHashes.subtracting(currentStarredArticleIDs).subtracting(pendingStoryHashes)
 		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(newsBlurStarredStoryHashes).subtracting(pendingStoryHashes)
 		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
 		return markedStarred.count + markedUnstarred.count

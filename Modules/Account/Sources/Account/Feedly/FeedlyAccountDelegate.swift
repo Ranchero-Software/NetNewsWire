@@ -808,13 +808,16 @@ private extension FeedlyAccountDelegate {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: true)
 
-		let pendingArticleIDs = (await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			return (added: 0, removed: 0)
+		}
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
 
 		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
 
 		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
-		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs)
+		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs).subtracting(pendingArticleIDs)
 
 		await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
 		await account.markAsReadAsync(articleIDs: toMarkRead)
@@ -830,13 +833,16 @@ private extension FeedlyAccountDelegate {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		let remoteStarredIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
 
-		let pendingArticleIDs = (await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			return (added: 0, removed: 0)
+		}
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
 
 		let localStarredIDs = await account.fetchStarredArticleIDsAsync()
 
 		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
-		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs)
+		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs).subtracting(pendingArticleIDs)
 
 		await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
 		await account.markAsUnstarredAsync(articleIDs: toUnstar)
