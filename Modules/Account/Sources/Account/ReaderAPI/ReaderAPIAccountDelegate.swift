@@ -52,6 +52,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let caller: ReaderAPICaller
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ReaderAPI")
 
+	// Set on a 429 Too Many Requests response. Refreshing and status syncing are skipped
+	// until this date so we don’t keep burning the shared per-application API quota.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3001>
+	private var rateLimitResumeDate: Date?
+	private static let defaultRetryAfter: TimeInterval = 60 * 60
+
 	var progressInfo = ProgressInfo() {
 		didSet {
 			if progressInfo != oldValue {
@@ -106,6 +112,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return
 		}
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
 
 		retrieveCredentialsIfNeeded(account)
@@ -133,6 +142,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				await refreshMissingArticles(account)
 				refreshProgress.reset()
 			}
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			refreshProgress.reset()
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Refreshing account")
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: refreshAll 1 — error \(error.localizedDescription)")
 			refreshProgress.reset()
@@ -165,27 +177,42 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return false
 		}
+		if shouldSkipBecauseRateLimited() {
+			return false
+		}
 
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
 
-		let sentCount = try await sendArticleStatusReturningCount(for: account)
+		do {
+			let sentCount = try await sendArticleStatusReturningCount(for: account)
 
-		// Inoreader: skip downloading statuses, to conserve its API rate limits — but do send,
-		// since a send is a single cheap request and skipping it loses stars.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
-		if variant == .inoreader {
-			return sentCount > 0
+			// Inoreader: skip downloading statuses, to conserve its API rate limits — but do send,
+			// since a send is a single cheap request and skipping it loses stars.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
+			if variant == .inoreader {
+				return sentCount > 0
+			}
+
+			let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
+			return sentCount > 0 || refreshChangedCount > 0
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Syncing article status")
+			return false
 		}
-
-		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
-		return sentCount > 0 || refreshChangedCount > 0
 	}
 
 	public func sendArticleStatus() async throws {
 		guard let account else {
 			return
 		}
-		_ = try await sendArticleStatusReturningCount(for: account)
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
+		do {
+			_ = try await sendArticleStatusReturningCount(for: account)
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Sending article status")
+		}
 	}
 
 	/// Sends queued local status changes upstream. Returns the count successfully sent.
@@ -228,7 +255,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Sending article status")
+				// A 429 gets one Error Log entry from noteRateLimited, not one per send.
+				if !isTooManyRequests(savedError) {
+					postSyncError(savedError, account: account, operation: "Sending article status")
+				}
 				throw savedError
 			}
 			return sentCount
@@ -239,7 +269,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return
 		}
-		_ = try await refreshArticleStatusReturningCount(for: account)
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
+		do {
+			_ = try await refreshArticleStatusReturningCount(for: account)
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Refreshing article status")
+		}
 	}
 
 	/// Brings local read/starred statuses in line with the server. Returns the count
@@ -270,7 +307,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Refreshing article status")
+				// A 429 gets one Error Log entry from noteRateLimited, not one per refresh.
+				if !isTooManyRequests(savedError) {
+					postSyncError(savedError, account: account, operation: "Refreshing article status")
+				}
 				throw savedError
 			}
 			return changedCount
@@ -1129,6 +1169,39 @@ private extension ReaderAPIAccountDelegate {
 		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
 		return markedStarred.count + markedUnstarred.count
+	}
+
+	// MARK: - Rate Limiting
+
+	/// True when a 429 response has paused syncing and the pause hasn’t expired.
+	private func shouldSkipBecauseRateLimited() -> Bool {
+		guard let rateLimitResumeDate else {
+			return false
+		}
+		guard rateLimitResumeDate > Date() else {
+			self.rateLimitResumeDate = nil
+			return false
+		}
+		Self.logger.info("ReaderAPIAccountDelegate: skipping — rate limited until \(rateLimitResumeDate)")
+		return true
+	}
+
+	/// Pause syncing until the server’s Retry-After (or a default) and post one Error Log entry.
+	private func noteRateLimited(retryAfter: TimeInterval?, account: Account, operation: String) {
+		let alreadyRateLimited = (rateLimitResumeDate ?? .distantPast) > Date()
+		rateLimitResumeDate = Date().addingTimeInterval(retryAfter ?? Self.defaultRetryAfter)
+		Self.logger.error("ReaderAPIAccountDelegate: rate limited — pausing syncing until \(self.rateLimitResumeDate ?? .distantPast)")
+
+		if !alreadyRateLimited {
+			postSyncError(WebserviceError.tooManyRequests(retryAfter: retryAfter), account: account, operation: operation)
+		}
+	}
+
+	private func isTooManyRequests(_ error: Error) -> Bool {
+		if case WebserviceError.tooManyRequests = error {
+			return true
+		}
+		return false
 	}
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
