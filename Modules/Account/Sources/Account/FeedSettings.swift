@@ -11,9 +11,18 @@ import Articles
 
 @MainActor final class FeedSettings {
 	private let feedURL: String
-	let feedID: String
 	private let database: FeedSettingsDatabase
 	weak var feed: Feed?
+
+	// Reassign only before a Feed is created from these settings — Feed copies feedID at init and hashes on it.
+	var feedID: String {
+		didSet {
+			if feedID != oldValue {
+				database.setString(feedID, for: feedURL, column: .feedID)
+				postSettingDidChange(.feedID)
+			}
+		}
+	}
 
 	var homePageURL: String? {
 		didSet {

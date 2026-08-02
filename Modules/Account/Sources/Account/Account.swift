@@ -91,7 +91,7 @@ public enum FetchType {
 
 @MainActor public final class Account: ProgressInfoReporter, DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Account")
 
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
@@ -686,6 +686,14 @@ public enum FetchType {
 
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		let settings = feedSettings(feedURL: url, feedID: feedID)
+
+		// The caller’s feedID is authoritative — repair a stored feedID that disagrees.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4172>
+		if settings.feedID != feedID {
+			Self.logger.info("Account: repairing feedID for \(url, privacy: .public): \(settings.feedID, privacy: .public) is now \(feedID, privacy: .public)")
+			settings.feedID = feedID
+		}
+
 		let feed = Feed(account: self, url: url, settings: settings)
 		feed.name = name
 		feed.homePageURL = homePageURL
