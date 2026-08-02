@@ -185,4 +185,23 @@ import RSParser
 		let metadata = HTMLMetadataParser.htmlMetadata(with: d)
 		#expect(metadata.feedLinks.isEmpty)
 	}
+
+	@Test func unquotedAttributeValues() throws {
+		// Unquoted attribute values are valid HTML5, and a `/` is part of the
+		// value — `type=application/rss+xml` and full URLs must survive.
+		// ranchero.com writes its feed links this way.
+		let html = """
+		<html><head>
+		<link rel=alternate type=application/rss+xml title="ranchero.com RSS feed" href=https://ranchero.com/xml/rss.xml>
+		<link rel=alternate type=application/json title="ranchero.com JSON feed" href=https://ranchero.com/feed.json>
+		</head><body></body></html>
+		"""
+		let d = ParserData(url: "https://ranchero.com/", data: Data(html.utf8))
+		let metadata = HTMLMetadataParser.htmlMetadata(with: d)
+
+		#expect(metadata.feedLinks.count == 2)
+		let rssLink = try #require(metadata.feedLinks.first(where: { $0.type == "application/rss+xml" }))
+		#expect(rssLink.urlString == "https://ranchero.com/xml/rss.xml")
+		#expect(rssLink.title == "ranchero.com RSS feed")
+	}
 }

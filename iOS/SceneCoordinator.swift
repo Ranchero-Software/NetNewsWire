@@ -375,12 +375,12 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func restoreWindowState(activity: NSUserActivity?) {
+	func restoreWindowState(activity: NSUserActivity?, restoreSelection: Bool) {
 		let stateInfo = StateRestorationInfo(legacyState: activity)
-		restoreWindowState(stateInfo)
+		restoreWindowState(stateInfo, restoreSelection: restoreSelection)
 	}
 
-	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
+	private func restoreWindowState(_ stateInfo: StateRestorationInfo, restoreSelection: Bool) {
 		Self.logger.debug("SceneCoordinator: restoreWindowState")
 
 		isRestoringState = true
@@ -405,6 +405,11 @@ struct SidebarItemNode: Hashable, Sendable {
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
 		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
+
+		guard restoreSelection else {
+			isRestoringState = false
+			return
+		}
 
 		restoreSelectedSidebarItemAndArticle(stateInfo)
 	}
@@ -2401,6 +2406,9 @@ private extension SceneCoordinator {
 		guard let userInfo = userInfo else {
 			return
 		}
+
+		// A deep link supersedes any in-flight state restoration.
+		isRestoringState = false
 
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,

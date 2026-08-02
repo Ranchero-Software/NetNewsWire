@@ -35,7 +35,17 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.coordinator = coordinator
 		rootViewController.delegate = coordinator
 
-		coordinator.restoreWindowState(activity: session.stateRestorationActivity)
+		// An external action (notification tap, URL, shortcut, or user activity)
+		// dictates navigation. Also doing selection restoration — previously selected feed
+		// and article — at the same time would start two competing navigations.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4638>
+		// Restore the window state, but skip restoring the selection.
+		let hasPendingExternalAction = connectionOptions.notificationResponse != nil ||
+			connectionOptions.urlContexts.first?.url != nil ||
+			connectionOptions.shortcutItem != nil ||
+			!connectionOptions.userActivities.isEmpty
+
+		coordinator.restoreWindowState(activity: session.stateRestorationActivity, restoreSelection: !hasPendingExternalAction)
 
 		updateUserInterfaceStyle()
 
