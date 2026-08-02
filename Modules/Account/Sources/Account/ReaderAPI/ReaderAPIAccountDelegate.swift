@@ -1071,18 +1071,21 @@ private extension ReaderAPIAccountDelegate {
 			return 0
 		}
 
-		let pendingArticleIDs = (await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			return 0
+		}
 
-		let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
+		let serverUnreadArticleIDs = Set(articleIDs)
 		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
 		// Mark articles as unread
-		let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		let deltaUnreadArticleIDs = serverUnreadArticleIDs.subtracting(currentUnreadArticleIDs).subtracting(pendingArticleIDs)
 		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(serverUnreadArticleIDs).subtracting(pendingArticleIDs)
 		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 
 		return markedUnread.count + markedRead.count
@@ -1095,16 +1098,24 @@ private extension ReaderAPIAccountDelegate {
 			return 0
 		}
 
-		let pendingArticleIDs = (await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
-		let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			return 0
+		}
+
+		let serverStarredArticleIDs = Set(articleIDs)
 		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+		// Previously a pending unsent star landed in the unstarred delta and got visibly reverted.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
+
 		// Mark articles as starred
-		let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+		let deltaStarredArticleIDs = serverStarredArticleIDs.subtracting(currentStarredArticleIDs).subtracting(pendingArticleIDs)
 		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(serverStarredArticleIDs).subtracting(pendingArticleIDs)
 		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
 		return markedStarred.count + markedUnstarred.count
