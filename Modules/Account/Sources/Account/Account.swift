@@ -914,16 +914,18 @@ public enum FetchType {
 		return articleChanges
 	}
 
-	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async {
+	@discardableResult
+	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async -> ArticleChanges {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
 		guard !feedIDsAndItems.isEmpty else {
-			return
+			return ArticleChanges()
 		}
 
 		let newAndUpdatedArticles = await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
 		sendNotificationAbout(newAndUpdatedArticles)
+		return newAndUpdatedArticles
 	}
 
 	/// Mark statuses for articleIDs. Returns the articleIDs whose status actually changed.
