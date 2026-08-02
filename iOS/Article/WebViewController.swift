@@ -45,6 +45,7 @@ final class WebViewController: UIViewController {
 	}
 	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 	private lazy var transition = ImageTransition(controller: self)
+	private var imageDownloadTask: Task<Void, Never>?
 	private var clickedImageCompletion: (() -> Void)?
 
 	private var articleExtractor: ArticleExtractor?
@@ -300,6 +301,8 @@ final class WebViewController: UIViewController {
 	}
 
 	func stopWebViewActivity() {
+		imageDownloadTask?.cancel()
+		imageDownloadTask = nil
 		if let webView = webView {
 			stopMediaPlayback(webView)
 			cancelImageLoad(webView)
@@ -688,8 +691,14 @@ private extension WebViewController {
 
 		guard let imageURL = URL(string: clickMessage.imageURL) else { return }
 
-		Downloader.shared.download(imageURL, userAgentStyle: .browser) { [weak self] downloadResponse, error in
-			guard let self, let data = downloadResponse.data, error == nil, !data.isEmpty,
+		imageDownloadTask?.cancel()
+		imageDownloadTask = Task { [weak self] in
+			guard let downloadResponse = try? await Downloader.shared.download(imageURL, userAgentStyle: .browser) else {
+				return
+			}
+			// A late completion must not present the viewer over a different article
+			// or a returning app.
+			guard !Task.isCancelled, let self, let data = downloadResponse.data, !data.isEmpty,
 				  let image = UIImage(data: data) else {
 				return
 			}
