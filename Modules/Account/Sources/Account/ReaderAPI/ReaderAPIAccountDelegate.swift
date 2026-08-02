@@ -131,14 +131,22 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				try? await sendArticleStatus()
 				refreshProgress.completeTask()
 
-				let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
-					try await caller.retrieveItemIDs(type: .allForAccount, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
-				})
-				refreshProgress.completeTask()
+				// The mark-as-read of all fetched article IDs and the unread download that
+				// corrects it are a pair — skipping just the second half would leave new
+				// articles wrongly marked read. Skip or run the whole reconcile together.
+				if shouldSkipStatusDownloadsToConserveQuota() {
+					refreshProgress.completeTask()
+					refreshProgress.completeTask()
+				} else {
+					let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
+						try await caller.retrieveItemIDs(type: .allForAccount, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
+					})
+					refreshProgress.completeTask()
 
-				_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
-				try? await refreshArticleStatus()
-				refreshProgress.completeTask()
+					_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
+					try? await refreshArticleStatus()
+					refreshProgress.completeTask()
+				}
 
 				await refreshMissingArticles(account)
 				refreshProgress.reset()

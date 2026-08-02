@@ -41,6 +41,11 @@ struct ReaderAPIUsageLimits {
 		case readingList = "user/-/state/com.google/reading-list"
 	}
 
+	private struct ConditionalGetKeys {
+		static let subscriptions = "subscriptions"
+		static let tags = "tags"
+	}
+
 	private enum ReaderAPIEndpoints: String {
 		case login = "/accounts/ClientLogin"
 		case token = "/reader/api/0/token"
@@ -203,10 +208,13 @@ struct ReaderAPIUsageLimits {
 			throw WebserviceError.noURL
 		}
 
-		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.tags)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials, conditionalGet: conditionalGet)
 		addVariantHeaders(&request)
 
-		let (_, wrapper) = try await session.send(request: request, resultType: ReaderAPITagContainer.self)
+		// A 304 Not Modified comes back with an empty body, so this returns nil — callers skip syncing.
+		let (response, wrapper) = try await session.send(request: request, resultType: ReaderAPITagContainer.self)
+		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
 		return wrapper?.tags
 	}
 
@@ -268,11 +276,14 @@ struct ReaderAPIUsageLimits {
 			throw WebserviceError.noURL
 		}
 
-		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.subscriptions)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials, conditionalGet: conditionalGet)
 		addVariantHeaders(&request)
 
 		do {
-			let (_, container) = try await session.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
+			// A 304 Not Modified comes back with an empty body, so this returns nil — callers skip syncing.
+			let (response, container) = try await session.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
+			storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
 			return container?.subscriptions
 		} catch {
 			logger.error("ReaderAPICaller: retrieveSubscriptions — error calling API: \(error.localizedDescription)")
@@ -631,6 +642,10 @@ private extension ReaderAPICaller {
 	}
 
 	private static let defaultUsageLimitsResetAfter: TimeInterval = 60 * 60 * 24
+
+	private func storeConditionalGet(key: String, headers: [AnyHashable: Any]) {
+		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: headers), for: key)
+	}
 
 	private func noteUsageLimits(from response: HTTPURLResponse) {
 		guard let usageValue = response.value(forHTTPHeaderField: UsageLimitHeader.zone1Usage), let usage = Int(usageValue),
