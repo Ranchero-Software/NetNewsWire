@@ -67,7 +67,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SceneCoordinator")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "SceneCoordinator")
 
 	// Which Containers are expanded
 	private var expandedContainers = Set<ContainerIdentifier>()
@@ -304,13 +304,32 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	private static let minimumTimelineWidth: CGFloat = 280
+	private static let maximumTimelineWidth: CGFloat = 440
+
+	private static func clampTimelineWidth(_ width: CGFloat) -> CGFloat {
+		if width < minimumTimelineWidth {
+			return minimumTimelineWidth
+		}
+		if width > maximumTimelineWidth {
+			return maximumTimelineWidth
+		}
+		return width
+	}
+
 	init(rootSplitViewController: RootSplitViewController) {
 		self.rootSplitViewController = rootSplitViewController
 		self.rootSplitViewController.minimumPrimaryColumnWidth = 300
 		self.rootSplitViewController.maximumPrimaryColumnWidth = 500
-		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
-		self.rootSplitViewController.preferredSupplementaryColumnWidth = 320
-		self.rootSplitViewController.maximumSupplementaryColumnWidth = 360
+		self.rootSplitViewController.minimumSupplementaryColumnWidth = SceneCoordinator.minimumTimelineWidth
+		self.rootSplitViewController.maximumSupplementaryColumnWidth = SceneCoordinator.maximumTimelineWidth
+		let restoredTimelineWidth: CGFloat
+		if let savedTimelineWidth = AppDefaults.shared.timelineWidth {
+			restoredTimelineWidth = CGFloat(savedTimelineWidth)
+		} else {
+			restoredTimelineWidth = 320
+		}
+		self.rootSplitViewController.preferredSupplementaryColumnWidth = Self.clampTimelineWidth(restoredTimelineWidth)
 		self.rootSplitViewController.preferredSplitBehavior = .tile
 
 		self.treeController = TreeController(delegate: treeControllerDelegate)
@@ -356,12 +375,12 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func restoreWindowState(activity: NSUserActivity?) {
+	func restoreWindowState(activity: NSUserActivity?, restoreSelection: Bool) {
 		let stateInfo = StateRestorationInfo(legacyState: activity)
-		restoreWindowState(stateInfo)
+		restoreWindowState(stateInfo, restoreSelection: restoreSelection)
 	}
 
-	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
+	private func restoreWindowState(_ stateInfo: StateRestorationInfo, restoreSelection: Bool) {
 		Self.logger.debug("SceneCoordinator: restoreWindowState")
 
 		isRestoringState = true
@@ -386,6 +405,11 @@ struct SidebarItemNode: Hashable, Sendable {
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
 		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
+
+		guard restoreSelection else {
+			isRestoringState = false
+			return
+		}
 
 		restoreSelectedSidebarItemAndArticle(stateInfo)
 	}
@@ -629,7 +653,8 @@ struct SidebarItemNode: Hashable, Sendable {
 				  return
 			  }
 		DispatchQueue.main.async {
-			self.rootSplitViewController.presentError(error, dismiss: nil)
+			let title = NSLocalizedString("Theme Error", comment: "Theme download error")
+			self.rootSplitViewController.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
 		}
 	}
 
@@ -744,6 +769,19 @@ struct SidebarItemNode: Hashable, Sendable {
 	func didEnterBackground() {
 		hidingReadArticlesState.save()
 		saveExpandedContainers()
+		saveTimelineWidth()
+	}
+
+	private func saveTimelineWidth() {
+		// Only meaningful when the timeline is its own column (iPad, expanded); when collapsed its view fills the screen.
+		guard !rootSplitViewController.isCollapsed else {
+			return
+		}
+		let width = mainTimelineViewController?.view.bounds.width ?? 0
+		guard width > 0 else {
+			return
+		}
+		AppDefaults.shared.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
 	}
 
 	func suspend() {
@@ -953,6 +991,10 @@ struct SidebarItemNode: Hashable, Sendable {
 			tappedFeed = nodeFor(indexPath)?.representedObject as AnyObject?
 		}
 		guard tappedFeed !== timelineFeed as AnyObject? else {
+			// Same feed — just make sure the timeline is showing.
+			if indexPath != nil {
+				rootSplitViewController.show(.supplementary)
+			}
 			completion?()
 			return
 		}
@@ -1334,14 +1376,22 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 
 		rebuildBackingStores(initialLoad: initialLoad, completion: {
-			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(nil) {
-				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+				// Deselecting rebuilds the sidebar, which can hide the feed when
+				// read feeds are filtered — put it back right before selecting it.
+				let ensureAndSelect: @MainActor () -> Void = {
+					if self.isReadFeedsFiltered {
+						self.ensureFeedIsAvailableToSelect(feed) {
+							self.selectFeed(feed, animations: animations, completion: completion)
+						}
+					} else {
 						self.selectFeed(feed, animations: animations, completion: completion)
 					}
+				}
+				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: ensureAndSelect)
 				} else {
-					self.selectFeed(feed, animations: animations, completion: completion)
+					ensureAndSelect()
 				}
 			}
 		})
@@ -1484,20 +1534,50 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	func beganBrowsing(url: URL) {
+		activityManager.browsing(url: url)
+	}
+
+	func endedBrowsing() {
+		activityManager.invalidateBrowsing()
+	}
+
 	func navigateToFeeds() {
-		mainFeedCollectionViewController?.focus()
-		selectArticle(nil)
+		if !isRootSplitCollapsed {
+			// In three-pane mode, focusing the sidebar deselects the article.
+			// In collapsed mode the pop below drives cleanup via navigationController(_:didShow:).
+			selectArticle(nil)
+		}
+		revealColumn(.primary) { [weak self] in
+			self?.mainFeedCollectionViewController?.focus()
+		}
 	}
 
 	func navigateToTimeline() {
-		if currentArticle == nil && articles.count > 0 {
+		// Only auto-select the first article in three-pane mode, where it populates the
+		// detail pane without hiding the timeline.
+		let displayMode = rootSplitViewController.preferredDisplayMode
+		let isThreePane = !isRootSplitCollapsed && displayMode != .oneBesideSecondary && displayMode != .secondaryOnly
+		if isThreePane && currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
 		}
-		mainTimelineViewController?.focus()
+		revealColumn(.supplementary) { [weak self] in
+			self?.mainTimelineViewController?.focus()
+		}
 	}
 
 	func navigateToDetail() {
-		articleViewController?.focus()
+		// If nothing is selected, open the first article so right-arrow reveals the detail even in
+		// collapsed and two-pane layouts. selectArticle reveals/pushes the detail column itself.
+		if currentArticle == nil {
+			guard articles.count > 0 else {
+				return
+			}
+			selectArticle(articles[0])
+		}
+		revealColumn(.secondary) { [weak self] in
+			self?.articleViewController?.focus()
+		}
 	}
 
 	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
@@ -1623,6 +1703,66 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 // MARK: Private
 
 private extension SceneCoordinator {
+
+	// Reveal the destination column, then focus it. Works across collapsed (iPhone),
+	// two-pane, and three-pane layouts, so arrow-key navigation isn't limited to the
+	// case where all columns are already visible.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3138>
+	func revealColumn(_ column: UISplitViewController.Column, thenFocus focus: @escaping () -> Void) {
+		if isRootSplitCollapsed {
+			revealColumnInCollapsedMode(column, thenFocus: focus)
+		} else {
+			rootSplitViewController.show(column, bypassDisplayModeRestriction: true)
+			// Defer focus so becomeFirstResponder targets the revealed column, not the outgoing one.
+			DispatchQueue.main.async(execute: focus)
+		}
+	}
+
+	func revealColumnInCollapsedMode(_ column: UISplitViewController.Column, thenFocus focus: @escaping () -> Void) {
+		guard !isNavigationDisabled, let navController = mainFeedCollectionViewController.navigationController else {
+			return
+		}
+		let targetViewController: UIViewController?
+		switch column {
+		case .primary:
+			targetViewController = mainFeedCollectionViewController
+		case .supplementary:
+			targetViewController = mainTimelineViewController
+		case .secondary:
+			targetViewController = articleViewController
+		default:
+			targetViewController = nil
+		}
+		guard let targetViewController else {
+			return
+		}
+
+		if navController.topViewController === targetViewController {
+			// Already on the destination column — just move focus.
+			DispatchQueue.main.async(execute: focus)
+		} else if navController.viewControllers.contains(targetViewController) {
+			// Backward navigation. The pop fires navigationController(_:didShow:), which performs
+			// the existing collapsed-mode cleanup. Don't duplicate that here.
+			navController.popToViewController(targetViewController, animated: true)
+			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		} else {
+			// Forward navigation — push the destination column onto the stack.
+			rootSplitViewController.show(column)
+			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		}
+	}
+
+	// Focus once the navigation transition finishes, so becomeFirstResponder lands on the
+	// revealed column rather than firing mid-animation. Falls back to the next runloop.
+	func focusWhenTransitionCompletes(in navController: UINavigationController, thenFocus focus: @escaping () -> Void) {
+		if let transitionCoordinator = navController.transitionCoordinator {
+			transitionCoordinator.animate(alongsideTransition: nil) { _ in
+				focus()
+			}
+		} else {
+			DispatchQueue.main.async(execute: focus)
+		}
+	}
 
 	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager,
@@ -2348,6 +2488,9 @@ private extension SceneCoordinator {
 		guard let userInfo = userInfo else {
 			return
 		}
+
+		// A deep link supersedes any in-flight state restoration.
+		isRestoringState = false
 
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,

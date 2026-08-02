@@ -14,6 +14,7 @@ public enum WebserviceError: LocalizedError, Sendable {
     case noURL
 	case suspended
 	case httpError(status: Int)
+	case tooManyRequests(retryAfter: TimeInterval?)
 
 	public var errorDescription: String? {
 		switch self {
@@ -25,6 +26,8 @@ public enum WebserviceError: LocalizedError, Sendable {
 			return NSLocalizedString("The URL for the request is missing.", comment: "No URL")
 		case .suspended:
 			return NSLocalizedString("The request was not sent because syncing is suspended.", comment: "Suspended")
+		case .tooManyRequests:
+			return NSLocalizedString("The server reported too many requests. Syncing is paused temporarily.", comment: "Too many requests")
 		}
 	}
 
@@ -100,6 +103,12 @@ nonisolated extension URLSession {
 		switch httpResponse.forcedStatusCode {
 		case 200...399:
 			return httpResponse
+		case HTTPResponseCode.tooManyRequests:
+			var retryAfter: TimeInterval?
+			if let headerValue = httpResponse.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) {
+				retryAfter = TimeInterval(headerValue)
+			}
+			throw WebserviceError.tooManyRequests(retryAfter: retryAfter)
 		default:
 			throw WebserviceError.httpError(status: httpResponse.forcedStatusCode)
 		}

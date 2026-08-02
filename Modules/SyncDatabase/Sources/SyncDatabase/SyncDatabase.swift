@@ -55,12 +55,14 @@ public actor SyncDatabase {
 		}
 	}
 
-	public func resetSelectedForProcessing(_ articleIDs: Set<String>) {
-		SyncStatusTable.resetSelectedForProcessing(articleIDs, database: database)
+	/// Pass `key` when sending one status kind at a time. A nil key matches all kinds —
+	/// correct only when every queued kind for these articleIDs was sent together.
+	public func resetSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
+		SyncStatusTable.resetSelectedForProcessing(articleIDs, key: key, database: database)
 	}
 
-	public func deleteSelectedForProcessing(_ articleIDs: Set<String>) {
-		SyncStatusTable.deleteSelectedForProcessing(articleIDs, database: database)
+	public func deleteSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
+		SyncStatusTable.deleteSelectedForProcessing(articleIDs, key: key, database: database)
 	}
 }
 

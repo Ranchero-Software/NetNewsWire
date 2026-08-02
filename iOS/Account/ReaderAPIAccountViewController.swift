@@ -142,7 +142,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedUsername = username.trimmingWhitespace
 
-		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: type, username: trimmedUsername, endpoint: url) else {
 			showError(NSLocalizedString("There is already an account of that type with that username created.", comment: "Duplicate Error"))
 			return
 		}

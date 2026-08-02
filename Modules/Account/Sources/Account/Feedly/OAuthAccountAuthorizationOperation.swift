@@ -68,7 +68,7 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 	nonisolated(unsafe) private var session: ASWebAuthenticationSession?
 	private var error: Error?
 	private var activityID: Int?
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "OAuthAccountAuthorizationOperation")
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "OAuthAccountAuthorizationOperation")
 
 	public init(accountType: AccountType) {
 		self.accountType = accountType
@@ -245,4 +245,3 @@ private extension OAuthAccountAuthorizationOperation {
 		didComplete()
 	}
 }
-

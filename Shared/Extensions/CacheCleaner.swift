@@ -7,12 +7,13 @@
 //
 
 import Foundation
+import RSCore
 import os
 import RSWeb
 
 struct CacheCleaner {
 
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CacheCleaner")
+	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "CacheCleaner")
 
 	private static let didPurgeImageCachesForResizingKey = "didPurgeImageCachesForResizing-2026-03-30"
 

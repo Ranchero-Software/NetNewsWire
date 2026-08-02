@@ -33,7 +33,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedCollectionViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainFeedCollectionViewController")
 
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
@@ -118,7 +118,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.navigationController?.navigationBar.prefersLargeTitles = true
 			self.navigationItem.largeTitleDisplayMode = .always
 			DispatchQueue.main.async {
-				/// This sizes the navigation bar to large.
+				// Sizes the bar to large. Skip if a pushed VC (e.g. the timeline, which shares this bar
+				// on iPhone) is now on top, or it would be forced large too.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5141>
+				guard self.navigationController?.topViewController === self else {
+					return
+				}
 				self.navigationController?.navigationBar.sizeToFit()
 			}
 
@@ -148,26 +153,15 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.isAnimating = false
 		}
 
-		// Pro Max may have split view in landscape — give the device some
-		// time to change its size class and then decide to deselect
+		// Rotating a Pro Max to landscape expands the split view — wait for the transition to settle.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5043>
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-			// If the iPhone is in portrait, deselect.
-			if UIDevice.current.orientation.isPortrait {
-				if self.collectionView.indexPathsForSelectedItems != nil {
-					self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				}
-				return
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			// Deselect only when the feeds list is full screen.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4691>
+			if self.coordinator.isRootSplitCollapsed, self.collectionView.indexPathsForSelectedItems?.first != nil {
+				self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 			}
-
-			// If the iPhone is in landscape, and the horizontal
-			// size class is compact, deselect.
-			if self.view.window?.traitCollection.horizontalSizeClass == .compact {
-				if self.collectionView.indexPathsForSelectedItems != nil { self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				}
-				return
-			}
-		})
+		}
 	}
 
 	func registerForNotifications() {
@@ -405,7 +399,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
+	}
+
+	// Fires on every tap — even on the already-selected feed, which doesn't get didSelectItemAt.
+	override func collectionView(_ collectionView: UICollectionView, performPrimaryActionForItemAt indexPath: IndexPath) {
+		becomeFirstResponder()
 		coordinator.selectSidebarItem(indexPath: indexPath, animations: [.navigation, .select, .scroll])
+	}
+
+	override func collectionView(_ collectionView: UICollectionView, canPerformPrimaryActionForItemAt indexPath: IndexPath) -> Bool {
+		if traitCollection.userInterfaceIdiom == .pad {
+			return true
+		}
+		return !isAnimating
 	}
 
     // MARK: UICollectionViewDelegate

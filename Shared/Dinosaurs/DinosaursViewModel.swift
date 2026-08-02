@@ -46,7 +46,7 @@ struct DinosaurRow: Identifiable {
 	var monthThreshold = 6
 	private var sortDescriptor: NSSortDescriptor?
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DinosaursViewModel")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "DinosaursViewModel")
 
 	func refresh() async {
 		let start = Date()

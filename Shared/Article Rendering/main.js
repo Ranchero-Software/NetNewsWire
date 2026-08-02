@@ -1,13 +1,30 @@
 // Here we are making iframes responsive.  Particularly useful for inline Youtube videos.
 function wrapFrames() {
 	document.querySelectorAll("iframe").forEach(element => {
-		if (parseInt(element.height) > 0)
+		if (parseInt(element.height) > 0) {
+			preserveAspectRatioOfFixedSizeFrame(element);
 			return;
+		}
 		var wrapper = document.createElement("div");
 		wrapper.classList.add("iframeWrap");
 		element.parentNode.insertBefore(wrapper, element);
 		wrapper.appendChild(element);
 	});
+}
+
+// The stylesheet clamps iframes to the article width with max-width: 100%,
+// which leaves an attribute-sized iframe with its full height — distorted,
+// and a huge blank box when the embed fails to load. Let the height follow
+// the width instead.
+function preserveAspectRatioOfFixedSizeFrame(element) {
+	const numeric = /^[1-9]\d*$/;
+	const width = element.getAttribute("width");
+	const height = element.getAttribute("height");
+	if (!numeric.test(width) || !numeric.test(height) || element.style.height) {
+		return;
+	}
+	element.style.aspectRatio = width + " / " + height;
+	element.style.height = "auto";
 }
 
 // Strip out color and font styling
@@ -31,7 +48,10 @@ function constrainBodyRelativeIframes() {
 	let iframes = document.getElementsByTagName("iframe");
 
 	for (iframe of iframes) {
-		if (iframe.offsetParent === document.body) {
+		// The article body container is positioned, so it — not document.body —
+		// is the offsetParent for iframes with no positioned ancestor in the content.
+		const offsetParent = iframe.offsetParent;
+		if (offsetParent === document.body || (offsetParent && (offsetParent.classList.contains("articleBody") || offsetParent.classList.contains("article-body")))) {
 			let heightAttribute = iframe.style.height;
 
 			if (/%|vw|vh$/i.test(heightAttribute)) {
@@ -61,6 +81,15 @@ function wrapTables() {
 		wrapper.className = "nnw-overflow";
 		table.parentNode.insertBefore(wrapper, table);
 		wrapper.appendChild(table);
+
+		// A negative side margin — usually from the site's own page layout —
+		// would put part of the table where the wrapper can't scroll to it.
+		if (parseFloat(getComputedStyle(table).marginLeft) < 0) {
+			table.style.marginLeft = "0";
+		}
+		if (parseFloat(getComputedStyle(table).marginRight) < 0) {
+			table.style.marginRight = "0";
+		}
 	}
 }
 
@@ -150,6 +179,23 @@ function styleLocalFootnotes() {
 }
 
 // convert <img alt="📰" src="[...]" class="wp-smiley"> to a text node containing 📰
+// Tailwind size classes like w-[22px] and h-[22px] encode an SVG icon's intended size.
+// The site stylesheet that implements them is stripped, so apply the sizes directly —
+// otherwise an SVG with no width and height renders at full column width.
+function sizeTailwindSVGs() {
+	document.querySelectorAll("div.articleBody svg").forEach(svg => {
+		const classAttribute = svg.getAttribute("class") || "";
+		const width = classAttribute.match(/(?:^|\s)w-\[([\d.]+(?:px|em|rem))\]/);
+		if (width) {
+			svg.style.width = width[1];
+		}
+		const height = classAttribute.match(/(?:^|\s)h-\[([\d.]+(?:px|em|rem))\]/);
+		if (height) {
+			svg.style.height = height[1];
+		}
+	});
+}
+
 function removeWpSmiley() {
 	for (const img of document.querySelectorAll("img.wp-smiley[alt]")) {
 		 img.parentNode.replaceChild(document.createTextNode(img.alt), img);
@@ -161,6 +207,7 @@ function processPage() {
 	wrapTables();
 	inlineVideos();
 	stripStyles();
+	sizeTailwindSVGs();
 	constrainBodyRelativeIframes();
 	convertImgSrc();
 	flattenPreElements();

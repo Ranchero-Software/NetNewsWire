@@ -1021,19 +1021,16 @@
       "comment" : "Clean up confirmation suffix"
     },
     "This theme cannot be used because of data corruption in the Info.plist: %@." : {
-      "comment" : "Decoding key missing"
+      "comment" : "Theme import error — Info.plist data corruption"
     },
-    "This theme cannot be used because of data corruption in the Info.plist. %@." : {
-      "comment" : "Decoding key missing"
+    "This theme cannot be used because the key “%@” is not found in the Info.plist." : {
+      "comment" : "Theme import error — key missing from Info.plist"
     },
-    "This theme cannot be used because the the key—“%@”—is not found in the Info.plist." : {
-      "comment" : "Decoding key missing"
+    "This theme cannot be used because the type “%@” is mismatched in the Info.plist." : {
+      "comment" : "Theme import error — type mismatch in Info.plist"
     },
-    "This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist" : {
-      "comment" : "Type mismatch"
-    },
-    "This theme cannot be used because the the value—“%@”—is not found in the Info.plist." : {
-      "comment" : "Decoding value missing"
+    "This theme cannot be used because the value “%@” is not found in the Info.plist." : {
+      "comment" : "Theme import error — value missing from Info.plist"
     },
     "This will delete any not-starred content records.\n\nThis may take several minutes." : {
       "comment" : "Clean up confirmation when plan is stale"

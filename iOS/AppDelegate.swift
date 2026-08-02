@@ -36,7 +36,7 @@ import Images
 		}
 	}
 
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Application")
 
 	var unreadCount = 0 {
 		didSet {
@@ -63,6 +63,7 @@ import Images
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
 
+		WebViewConfiguration.resolveBrowserUserAgent()
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
@@ -166,6 +167,7 @@ import Images
 
 	/// Un-suspend network activity if it was suspended on background entry.
 	func resumeIfNecessary() {
+		AppNotification.postAppDidBecomeActive()
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			Self.logger.info("Application processing resumed.")

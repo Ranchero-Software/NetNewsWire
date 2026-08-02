@@ -91,7 +91,7 @@ public enum FetchType {
 
 @MainActor public final class Account: ProgressInfoReporter, DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Account")
 
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
@@ -650,8 +650,9 @@ public enum FetchType {
 		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
 		if let feedTitle = opmlFeedSpecifier.title {
-			if feed.name == nil {
-				feed.name = feedTitle
+			// Store as editedName so the imported title survives the next refresh, which overwrites name with the feed's own title.
+			if feed.editedName == nil {
+				feed.editedName = feedTitle
 			}
 		}
 		return feed
@@ -685,6 +686,14 @@ public enum FetchType {
 
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		let settings = feedSettings(feedURL: url, feedID: feedID)
+
+		// The caller’s feedID is authoritative — repair a stored feedID that disagrees.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4172>
+		if settings.feedID != feedID {
+			Self.logger.info("Account: repairing feedID for \(url, privacy: .public): \(settings.feedID, privacy: .public) is now \(feedID, privacy: .public)")
+			settings.feedID = feedID
+		}
+
 		let feed = Feed(account: self, url: url, settings: settings)
 		feed.name = name
 		feed.homePageURL = homePageURL
@@ -913,16 +922,18 @@ public enum FetchType {
 		return articleChanges
 	}
 
-	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async {
+	@discardableResult
+	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async -> ArticleChanges {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
 		guard !feedIDsAndItems.isEmpty else {
-			return
+			return ArticleChanges()
 		}
 
 		let newAndUpdatedArticles = await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
 		sendNotificationAbout(newAndUpdatedArticles)
+		return newAndUpdatedArticles
 	}
 
 	/// Mark statuses for articleIDs. Returns the articleIDs whose status actually changed.

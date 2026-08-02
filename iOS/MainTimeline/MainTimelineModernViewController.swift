@@ -150,7 +150,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: Private Constants
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineModernViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineModernViewController")
 
 	// MARK: Constants
 	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
@@ -221,6 +221,10 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		if navigationController?.navigationBar.isHidden ?? false {
 			navigationController?.navigationBar.alpha = 0
 		}
+
+		// Re-assert small title in case the shared iPhone nav bar was left in large mode.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5141>
+		navigationItem.largeTitleDisplayMode = .never
 
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)

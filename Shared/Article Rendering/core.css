@@ -6,6 +6,14 @@ html {
 	scrollbar-gutter: stable;
 }
 
+/* Keep absolutely positioned feed content from escaping the body and overlapping the title.
+   (.article-body is the Biblioteca theme's name for .articleBody.) */
+
+.articleBody,
+.article-body {
+	position: relative;
+}
+
 /* This is the activity indicator (currently iOS only) that is used while image zooming */
 
 .activityIndicatorWrap {
@@ -27,6 +35,28 @@ html {
 .wp-smiley {
     height: 1em !important;
     max-height: 1em !important;
+}
+
+/* Material for MkDocs and Twemoji render emoji and icons in a .twemoji span or img.
+   The inline SVGs have no width or height — without the site's stylesheet
+   they'd render at full column width. */
+
+.twemoji {
+	display: inline-flex;
+	height: 1.125em;
+	vertical-align: text-top;
+}
+
+.twemoji svg {
+	width: 1.125em;
+	max-height: 100%;
+	fill: currentColor;
+}
+
+img.twemoji, img.emoji {
+	height: 1em !important;
+	max-height: 1em !important;
+	width: auto;
 }
 
 /* Hide the external link at the bottom of Daring Fireball posts */
@@ -66,7 +96,18 @@ img[src*="doubleclick"],
 img[src*="feedads"],
 img[src*="feedburner"],
 img[src*="feedblitz"],
-img[src*="share-buttons"] {
+img[src*="share-buttons"],
+img[src*="/img/social/"] {
+	display: none !important;
+}
+
+.social_items {
+	display: none !important;
+}
+
+/* Mailchimp newsletters end with a follow-our-socials icon wall */
+
+.mcnFollowBlock {
 	display: none !important;
 }
 

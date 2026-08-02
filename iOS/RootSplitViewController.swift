@@ -26,6 +26,13 @@ final class RootSplitViewController: UISplitViewController {
 	}
 
 	override func show(_ column: UISplitViewController.Column) {
+		show(column, bypassDisplayModeRestriction: false)
+	}
+
+	/// Pass `bypassDisplayModeRestriction: true` for user-initiated keyboard navigation, so it can
+	/// reveal a column the display-mode suppression below would otherwise keep hidden.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/3138>
+	func show(_ column: UISplitViewController.Column, bypassDisplayModeRestriction: Bool) {
 		guard !coordinator.isNavigationDisabled else { return }
 
 		/// Always show the column on iPhone
@@ -37,15 +44,17 @@ final class RootSplitViewController: UISplitViewController {
 		/// In certain scenarios, we don't want to select a feed or article
 		/// and have the display mode change as this interferes with state
 		/// restoration of the feeds and timeline display modes.
+		if !bypassDisplayModeRestriction {
 
-		/// Don't show primary when the preferred display mode is timeline + article or article only.
-		if column == .primary && (preferredDisplayMode == .oneBesideSecondary || preferredDisplayMode == .secondaryOnly) {
-			return
-		}
+			/// Don't show primary when the preferred display mode is timeline + article or article only.
+			if column == .primary && (preferredDisplayMode == .oneBesideSecondary || preferredDisplayMode == .secondaryOnly) {
+				return
+			}
 
-		/// Don't show the timeline when the preferred display mode is article only.
-		if column == .supplementary && preferredDisplayMode == .secondaryOnly {
-			return
+			/// Don't show the timeline when the preferred display mode is article only.
+			if column == .supplementary && preferredDisplayMode == .secondaryOnly {
+				return
+			}
 		}
 
 		super.show(column)
@@ -79,8 +88,28 @@ final class RootSplitViewController: UISplitViewController {
 	}
 
 	@objc func markAllAsReadAndGoToNextUnread(_ sender: Any?) {
-		coordinator.markAsReadAndShowSidebar(coordinator.articles) {
-			self.coordinator.selectNextUnread()
+		if !coordinator.isTimelineUnreadAvailable {
+			coordinator.selectNextUnread()
+			return
+		}
+		let articlesToMark = coordinator.articles
+		let title = NSLocalizedString("Mark All as Read", comment: "Command")
+
+		let completion: () -> Void = { [weak self] in
+			guard let self else {
+				return
+			}
+			self.coordinator.markAsReadAndShowSidebar(articlesToMark) {
+				self.coordinator.selectNextUnread()
+			}
+		}
+
+		// Anchor to the Mark All as Read button (keyboard shortcut has no source view).
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5370>
+		if let markAllAsReadButton = (viewController(for: .supplementary) as? MainTimelineModernViewController)?.markAllAsReadButton {
+			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: markAllAsReadButton, completion: completion)
+		} else {
+			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: view as UIView, completion: completion)
 		}
 	}
 

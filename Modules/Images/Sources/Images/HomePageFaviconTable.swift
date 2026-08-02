@@ -13,6 +13,7 @@ import RSDatabaseObjC
 public struct HomePageFaviconRecord: Sendable {
 	public let homePageURL: String
 	public let faviconURL: String?
+	public let lastChecked: Date
 }
 
 struct HomePageFaviconTable {
@@ -27,7 +28,7 @@ struct HomePageFaviconTable {
 
 	static func fetchAll(database: FMDatabase) -> [HomePageFaviconRecord] {
 		var results = [HomePageFaviconRecord]()
-		guard let resultSet = database.executeQuery("SELECT \(Column.homePageURL), \(Column.faviconURL) FROM \(name);", withArgumentsIn: []) else {
+		guard let resultSet = database.executeQuery("SELECT \(Column.homePageURL), \(Column.faviconURL), \(Column.lastChecked) FROM \(name);", withArgumentsIn: []) else {
 			return results
 		}
 		defer {
@@ -38,7 +39,8 @@ struct HomePageFaviconTable {
 				continue
 			}
 			let faviconURL = resultSet.string(forColumn: Column.faviconURL)
-			results.append(HomePageFaviconRecord(homePageURL: homePageURL, faviconURL: faviconURL))
+			let lastChecked = Date(timeIntervalSince1970: resultSet.double(forColumn: Column.lastChecked))
+			results.append(HomePageFaviconRecord(homePageURL: homePageURL, faviconURL: faviconURL, lastChecked: lastChecked))
 		}
 		return results
 	}

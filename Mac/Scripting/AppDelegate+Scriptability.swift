@@ -61,21 +61,7 @@ extension AppDelegate: AppDelegateAppleEvents {
 				  }
 
 			if let themeURL = URL(string: themeURLString) {
-				let request = URLRequest(url: themeURL)
-				let task = URLSession.shared.downloadTask(with: request) { location, _, error in
-					guard let location = location else {
-						return
-					}
-
-					Task { @MainActor in
-						do {
-							try ArticleThemeDownloader.shared.handleFile(at: location)
-						} catch {
-							NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-						}
-					}
-				}
-				task.resume()
+				ArticleThemeDownloader.shared.downloadTheme(from: themeURL)
 			}
 			return
 		}

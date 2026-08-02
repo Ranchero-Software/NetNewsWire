@@ -40,7 +40,7 @@ extension ImageDownloadError: LocalizedError {
 @MainActor public final class ImageDownloader {
 	public static let shared = ImageDownloader()
 
-	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
+	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageDownloader")
 
 	nonisolated private let diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
@@ -164,7 +164,7 @@ private extension ImageDownloader {
 
 		let downloadResponse: DownloadResponse
 		do {
-			downloadResponse = try await Downloader.shared.download(imageURL)
+			downloadResponse = try await Downloader.shared.download(imageURL, userAgentStyle: .browser)
 		} catch {
 			Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)

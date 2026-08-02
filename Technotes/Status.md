@@ -3,6 +3,9 @@
 Current milestone: NetNewsWire 7.1.3 on 7.1.3-pre
 https://github.com/Ranchero-Software/NetNewsWire/milestone/74
 
+Doing advance work on 7.1.3 on 7.1.3-pre
+https://github.com/Ranchero-Software/NetNewsWire/milestone/74
+
 ## iOS
 
 iOS shipping: 7.1.2 (7112)

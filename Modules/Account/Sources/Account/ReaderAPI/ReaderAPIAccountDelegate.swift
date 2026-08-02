@@ -23,6 +23,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case invalidParameter
 	case invalidResponse
 	case urlNotFound
+	case unsendableStatuses(Int)
 
 	public var errorDescription: String? {
 		switch self {
@@ -34,6 +35,8 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 			return NSLocalizedString("There was an invalid response from the server.", comment: "Invalid response")
 		case .urlNotFound:
 			return NSLocalizedString("The API URL wasn't found.", comment: "The API URL wasn't found.")
+		case .unsendableStatuses(let count):
+			return String(format: NSLocalizedString("Dropped %d article status changes that can’t be encoded for this service.", comment: "Dropped unsendable article status changes"), count)
 		}
 	}
 }
@@ -47,7 +50,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let syncDatabase: SyncDatabase
 
 	private let caller: ReaderAPICaller
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ReaderAPI")
+
+	// Set on a 429 Too Many Requests response. Refreshing and status syncing are skipped
+	// until this date so we don’t keep burning the shared per-application API quota.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3001>
+	private var rateLimitResumeDate: Date?
+	private static let defaultRetryAfter: TimeInterval = 60 * 60
+	private static let zone1UsageThreshold = 0.9
 
 	var progressInfo = ProgressInfo() {
 		didSet {
@@ -103,6 +113,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return
 		}
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
 
 		retrieveCredentialsIfNeeded(account)
@@ -118,18 +131,29 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				try? await sendArticleStatus()
 				refreshProgress.completeTask()
 
-				let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
-					try await caller.retrieveItemIDs(type: .allForAccount, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
-				})
-				refreshProgress.completeTask()
+				// The mark-as-read of all fetched article IDs and the unread download that
+				// corrects it are a pair — skipping just the second half would leave new
+				// articles wrongly marked read. Skip or run the whole reconcile together.
+				if shouldSkipStatusDownloadsToConserveQuota() {
+					refreshProgress.completeTask()
+					refreshProgress.completeTask()
+				} else {
+					let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
+						try await caller.retrieveItemIDs(type: .allForAccount, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
+					})
+					refreshProgress.completeTask()
 
-				_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
-				try? await refreshArticleStatus()
-				refreshProgress.completeTask()
+					_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
+					try? await refreshArticleStatus()
+					refreshProgress.completeTask()
+				}
 
 				await refreshMissingArticles(account)
 				refreshProgress.reset()
 			}
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			refreshProgress.reset()
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Refreshing account")
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: refreshAll 1 — error \(error.localizedDescription)")
 			refreshProgress.reset()
@@ -162,23 +186,42 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return false
 		}
-		guard variant != .inoreader else {
-			// Inoreader: no-op for this delegate.
+		if shouldSkipBecauseRateLimited() {
 			return false
 		}
 
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
 
-		let sentCount = try await sendArticleStatusReturningCount(for: account)
-		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
-		return sentCount > 0 || refreshChangedCount > 0
+		do {
+			let sentCount = try await sendArticleStatusReturningCount(for: account)
+
+			// Inoreader: skip downloading statuses, to conserve its API rate limits — but do send,
+			// since a send is a single cheap request and skipping it loses stars.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
+			if variant == .inoreader {
+				return sentCount > 0
+			}
+
+			let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
+			return sentCount > 0 || refreshChangedCount > 0
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Syncing article status")
+			return false
+		}
 	}
 
 	public func sendArticleStatus() async throws {
 		guard let account else {
 			return
 		}
-		_ = try await sendArticleStatusReturningCount(for: account)
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
+		do {
+			_ = try await sendArticleStatusReturningCount(for: account)
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Sending article status")
+		}
 	}
 
 	/// Sends queued local status changes upstream. Returns the count successfully sent.
@@ -221,7 +264,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Sending article status")
+				// A 429 gets one Error Log entry from noteRateLimited, not one per send.
+				if !isTooManyRequests(savedError) {
+					postSyncError(savedError, account: account, operation: "Sending article status")
+				}
 				throw savedError
 			}
 			return sentCount
@@ -232,7 +278,14 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return
 		}
-		_ = try await refreshArticleStatusReturningCount(for: account)
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
+		do {
+			_ = try await refreshArticleStatusReturningCount(for: account)
+		} catch WebserviceError.tooManyRequests(let retryAfter) {
+			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Refreshing article status")
+		}
 	}
 
 	/// Brings local read/starred statuses in line with the server. Returns the count
@@ -240,25 +293,38 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	@MainActor private func refreshArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshArticleStatus")
 
+		if shouldSkipStatusDownloadsToConserveQuota() {
+			return 0
+		}
+
 		return try await account.logActivity(kind: .refreshArticleStatuses) { () -> Int in
 			var changedCount = 0
-			var errorOccurred = false
+			var savedError: Error?
 
-			let articleIDs = try await caller.retrieveItemIDs(type: .unread, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
-			changedCount += await syncArticleReadState(account: account, articleIDs: articleIDs)
+			do {
+				let articleIDs = try await caller.retrieveItemIDs(type: .unread, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
+				changedCount += await syncArticleReadState(account: account, articleIDs: articleIDs)
+			} catch {
+				savedError = error
+				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving unread entries failed: \(error.localizedDescription)")
+			}
 
 			do {
 				let articleIDs = try await caller.retrieveItemIDs(type: .starred, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
 				changedCount += await syncArticleStarredState(account: account, articleIDs: articleIDs)
 			} catch {
-				errorOccurred = true
+				if savedError == nil {
+					savedError = error
+				}
 				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving starred entries failed: \(error.localizedDescription)")
 			}
 
-			if errorOccurred {
-				let error = AccountError.unknown
-				postSyncError(error, account: account, operation: "Refreshing article status")
-				throw error
+			if let savedError {
+				// A 429 gets one Error Log entry from noteRateLimited, not one per refresh.
+				if !isTooManyRequests(savedError) {
+					postSyncError(savedError, account: account, operation: "Refreshing article status")
+				}
+				throw savedError
 			}
 			return changedCount
 		}
@@ -869,7 +935,7 @@ private extension ReaderAPIAccountDelegate {
 	func sendArticleStatuses(_ statuses: Set<SyncStatus>, account: Account, label: String, apiCall: ([String]) async throws -> Void) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses")
 
-		guard !statuses.isEmpty else {
+		guard let key = statuses.first?.key else {
 			return 0
 		}
 
@@ -880,7 +946,8 @@ private extension ReaderAPIAccountDelegate {
 		let unsendableArticleIDs = Set(articleIDs.filter { !articleIDIsSendable($0) })
 		if !unsendableArticleIDs.isEmpty {
 			Self.logger.error("ReaderAPIAccountDelegate: dropping \(unsendableArticleIDs.count) unsendable article IDs from the status queue")
-			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs)
+			postSyncError(ReaderAPIAccountDelegateError.unsendableStatuses(unsendableArticleIDs.count), account: account, operation: "Sending article status")
+			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs, key: key)
 		}
 		let sendableArticleIDs = articleIDs.filter { articleIDIsSendable($0) }
 
@@ -891,12 +958,12 @@ private extension ReaderAPIAccountDelegate {
 
 			do {
 				try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(articleIDGroup.count) \(label)" }, { try await apiCall(articleIDGroup) })
-				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
+				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup), key: key)
 				sentCount += articleIDGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("ReaderAPIAccountDelegate: sendArticleStatuses — error \(error.localizedDescription)")
-				await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup))
+				await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup), key: key)
 			}
 		}
 
@@ -1067,18 +1134,21 @@ private extension ReaderAPIAccountDelegate {
 			return 0
 		}
 
-		let pendingArticleIDs = (await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			return 0
+		}
 
-		let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
+		let serverUnreadArticleIDs = Set(articleIDs)
 		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
 		// Mark articles as unread
-		let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		let deltaUnreadArticleIDs = serverUnreadArticleIDs.subtracting(currentUnreadArticleIDs).subtracting(pendingArticleIDs)
 		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(serverUnreadArticleIDs).subtracting(pendingArticleIDs)
 		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 
 		return markedUnread.count + markedRead.count
@@ -1091,19 +1161,76 @@ private extension ReaderAPIAccountDelegate {
 			return 0
 		}
 
-		let pendingArticleIDs = (await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
-		let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			return 0
+		}
+
+		let serverStarredArticleIDs = Set(articleIDs)
 		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+		// Previously a pending unsent star landed in the unstarred delta and got visibly reverted.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
+
 		// Mark articles as starred
-		let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
+		let deltaStarredArticleIDs = serverStarredArticleIDs.subtracting(currentStarredArticleIDs).subtracting(pendingArticleIDs)
 		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(serverStarredArticleIDs).subtracting(pendingArticleIDs)
 		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
 		return markedStarred.count + markedUnstarred.count
+	}
+
+	// MARK: - Rate Limiting
+
+	/// True when a 429 response has paused syncing and the pause hasn’t expired.
+	private func shouldSkipBecauseRateLimited() -> Bool {
+		guard let rateLimitResumeDate else {
+			return false
+		}
+		guard rateLimitResumeDate > Date() else {
+			self.rateLimitResumeDate = nil
+			return false
+		}
+		Self.logger.info("ReaderAPIAccountDelegate: skipping — rate limited until \(rateLimitResumeDate)")
+		return true
+	}
+
+	/// Pause syncing until the server’s Retry-After (or a default) and post one Error Log entry.
+	private func noteRateLimited(retryAfter: TimeInterval?, account: Account, operation: String) {
+		let alreadyRateLimited = (rateLimitResumeDate ?? .distantPast) > Date()
+		rateLimitResumeDate = Date().addingTimeInterval(retryAfter ?? Self.defaultRetryAfter)
+		Self.logger.error("ReaderAPIAccountDelegate: rate limited — pausing syncing until \(self.rateLimitResumeDate ?? .distantPast)")
+
+		if !alreadyRateLimited {
+			postSyncError(WebserviceError.tooManyRequests(retryAfter: retryAfter), account: account, operation: operation)
+		}
+	}
+
+	private func isTooManyRequests(_ error: Error) -> Bool {
+		if case WebserviceError.tooManyRequests = error {
+			return true
+		}
+		return false
+	}
+
+	/// True when the reported Zone 1 (read) usage is close enough to the daily limit
+	/// that the full status downloads should be skipped until the limits reset.
+	private func shouldSkipStatusDownloadsToConserveQuota() -> Bool {
+		guard let usageLimits = caller.usageLimits else {
+			return false
+		}
+		guard usageLimits.resetDate > Date() else {
+			return false
+		}
+		guard Double(usageLimits.zone1Usage) >= Double(usageLimits.zone1Limit) * Self.zone1UsageThreshold else {
+			return false
+		}
+		Self.logger.info("ReaderAPIAccountDelegate: skipping status downloads — Zone 1 API usage is \(usageLimits.zone1Usage) of \(usageLimits.zone1Limit)")
+		return true
 	}
 
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
