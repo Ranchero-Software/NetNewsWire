@@ -505,21 +505,6 @@ extension WebViewController: WKScriptMessageHandler {
 
 }
 
-// MARK: UIViewControllerTransitioningDelegate
-
-extension WebViewController: UIViewControllerTransitioningDelegate {
-
-	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		transition.presenting = true
-		return transition
-	}
-
-	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-		transition.presenting = false
-		return transition
-	}
-}
-
 // MARK:
 
 extension WebViewController: UIScrollViewDelegate {
@@ -726,7 +711,7 @@ private extension WebViewController {
 
 		transition.originImage = image
 
-		coordinator.showFullScreenImage(image: image, imageTitle: clickMessage.imageTitle, transitioningDelegate: self)
+		coordinator.showFullScreenImage(image: image, imageTitle: clickMessage.imageTitle, transition: transition)
 	}
 
 	func stopMediaPlayback(_ webView: WKWebView) {
