@@ -7,17 +7,32 @@
         <language>en</language>
 
 		<item>
-			<title>NetNewsWire 7.1.2b2</title>
+			<title>NetNewsWire 7.1.2</title>
             <description><![CDATA[
+            <b>Changes since 7.1.1</b>
   				<ul>
+				  <li>Fixed bug where code inside a quoted attribute value (such as a `srcset` media query containing `>=`) could appear in place of the article summary in the timeline
+				  <li>Fixed bug where a title containing a &lt; that didn’t begin an HTML tag was truncated
+				  <li>Made &lt;abbr&gt; and other attributed title tags — including tags with uppercase letters — render as text instead of raw markup (in article titles)
+				  <li>Fixed bug where zero-width joiner entities (&amp;zwj; and &amp;zwnj;) weren’t decoded
+				  <li>Fixed bug where iframes (such as Apple Podcasts embeds) with a unit in the height attribute were sized incorrectly
+				  <li>Prevented article web content from navigating away, via JavaScript, to a full webpage in the detail view
+				  <li>Made the reader view toolbar button the right size by switching to an SF Symbol
+				  <li>Fixed bug where the Next Unread button was enabled when the only unread article was the one already selected
+				  <li>Fixed bug where scrollbars set to always show would disappear during live resize
+				  <li>Kept the article’s left edge stable when a scrollbar appears or disappears
+				  <li>Fixed bug where Reader API accounts (like FreshRSS) could stop syncing — authentication tokens are now refreshed as needed, and a refresh continues even when sending article statuses fails
+				  <li>Stopped waiting for an initial refresh to finish before closing the add-account sheet — the account appears right away
+				  <li>Restored human-readable CloudKit error messages
+				  <li>Used a WebKit user-agent string (with NetNewsWire as the app name) for web content shown in the app
 				  <li>Made updating unread counts for folders more efficient — coalesce calculations instead of once per feed
 				  <li>Fixed bug where arrowing up to the top of the timeline left the top article half hidden under the toolbar — and the similar bug where arrowing down could overshoot the last article
 				  <li>Fixed bug where subscribing in a Feedly account using a home page URL sometimes failed to find the feed — when Feedly search comes up empty, the app now finds the feed itself and tries again
 				  <li>Fixed double border around the accounts list in the Accounts pane of Settings
 				</ul>
 			]]></description>
-        	<pubDate>Sat, 25 Jul 2026 15:41:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.2b2/NetNewsWire7.1.2b2.zip" sparkle:version="7111" sparkle:shortVersionString="7.1.2b2" length="10660520" type="application/zip" />
+        	<pubDate>Sun, 02 Aug 2026 15:45:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.2/NetNewsWire7.1.2.zip" sparkle:version="7113" sparkle:shortVersionString="7.1.2" length="10661969" type="application/zip" />
 			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 		</item>
 
