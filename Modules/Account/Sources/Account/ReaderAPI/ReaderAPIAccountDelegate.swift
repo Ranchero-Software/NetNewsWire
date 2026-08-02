@@ -873,7 +873,7 @@ private extension ReaderAPIAccountDelegate {
 	func sendArticleStatuses(_ statuses: Set<SyncStatus>, account: Account, label: String, apiCall: ([String]) async throws -> Void) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses")
 
-		guard !statuses.isEmpty else {
+		guard let key = statuses.first?.key else {
 			return 0
 		}
 
@@ -884,7 +884,7 @@ private extension ReaderAPIAccountDelegate {
 		let unsendableArticleIDs = Set(articleIDs.filter { !articleIDIsSendable($0) })
 		if !unsendableArticleIDs.isEmpty {
 			Self.logger.error("ReaderAPIAccountDelegate: dropping \(unsendableArticleIDs.count) unsendable article IDs from the status queue")
-			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs)
+			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs, key: key)
 		}
 		let sendableArticleIDs = articleIDs.filter { articleIDIsSendable($0) }
 
@@ -895,12 +895,12 @@ private extension ReaderAPIAccountDelegate {
 
 			do {
 				try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(articleIDGroup.count) \(label)" }, { try await apiCall(articleIDGroup) })
-				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
+				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup), key: key)
 				sentCount += articleIDGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("ReaderAPIAccountDelegate: sendArticleStatuses — error \(error.localizedDescription)")
-				await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup))
+				await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup), key: key)
 			}
 		}
 

@@ -752,7 +752,7 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int]) async throws -> Void) async throws -> Int {
-		guard !statuses.isEmpty else {
+		guard let key = statuses.first?.key else {
 			return 0
 		}
 
@@ -764,12 +764,12 @@ private extension FeedbinAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 			do {
 				try await apiCall(articleIDGroup)
-				await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
+				await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }), key: key)
 				sentCount += articleIDGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
-				await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
+				await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) }), key: key)
 			}
 		}
 

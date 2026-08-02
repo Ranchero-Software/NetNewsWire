@@ -280,7 +280,7 @@ import os
 		throttle: Bool,
 		apiCall: (Set<String>) async throws -> Void)
 	async throws -> Int {
-		guard !statuses.isEmpty else {
+		guard let key = statuses.first?.key else {
 			return 0
 		}
 
@@ -292,12 +292,12 @@ import os
 		for storyHashGroup in storyHashGroups {
 			do {
 				try await apiCall(Set(storyHashGroup))
-				await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup))
+				await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup), key: key)
 				sentCount += storyHashGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
-				await syncDatabase.resetSelectedForProcessing(Set(storyHashGroup))
+				await syncDatabase.resetSelectedForProcessing(Set(storyHashGroup), key: key)
 			}
 		}
 

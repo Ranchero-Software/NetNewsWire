@@ -239,11 +239,11 @@ import Secrets
 							let chunkIDs = Set(chunk)
 							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
 						}
-						await syncDatabase.deleteSelectedForProcessing(articleIDs)
+						await syncDatabase.deleteSelectedForProcessing(articleIDs, key: pairing.key)
 						sentCount += articleIDs.count
 					} catch {
 						Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
-						await syncDatabase.resetSelectedForProcessing(articleIDs)
+						await syncDatabase.resetSelectedForProcessing(articleIDs, key: pairing.key)
 						savedError = error
 					}
 				}
