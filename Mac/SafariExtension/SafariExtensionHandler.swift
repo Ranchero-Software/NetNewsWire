@@ -54,7 +54,11 @@ final class SafariExtensionHandler: SFSafariExtensionHandler {
 				}
 
 				if openInDefaultBrowser == false {
-						feedURLString = feedURLString.replacingOccurrences(of: "feed:", with: "x-netnewswire-feed:")
+					if feedURLString.hasPrefix("feeds:") {
+						feedURLString = "x-netnewswire-feed:" + feedURLString.dropFirst("feeds:".count)
+					} else if feedURLString.hasPrefix("feed:") {
+						feedURLString = "x-netnewswire-feed:" + feedURLString.dropFirst("feed:".count)
+					}
 				}
 
 				if let feedURL = URL(string: feedURLString) {
