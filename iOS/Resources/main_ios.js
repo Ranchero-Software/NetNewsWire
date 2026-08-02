@@ -96,9 +96,12 @@ class ImageViewer {
 		// Add the click listener for images
 		window.onclick = function(event) {
 			if (event.target.matches("img") && !event.target.classList.contains("nnw-nozoom")) {
-				// Without this, tapping an image wrapped in a link also navigates.
-				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5275>
-				event.preventDefault();
+				// An image inside a link navigates — it might be the only link to an
+				// important page. Zoom only standalone images.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/3641>
+				if (event.target.closest("a[href]")) {
+					return;
+				}
 				if (activeImageViewer && activeImageViewer.img === event.target) {
 					cancelImageLoad();
 				} else {
