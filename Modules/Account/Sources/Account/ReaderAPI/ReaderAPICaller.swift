@@ -410,19 +410,7 @@ enum CreateReaderAPISubscriptionResult {
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		// Get ids from above into hex representation of value
-		let idsToFetch = articleIDs.compactMap({ articleID -> String? in
-			if self.variant == .theOldReader {
-				return "i=tag:google.com,2005:reader/item/\(articleID)"
-			} else {
-				if let idValue = Int(articleID) {
-					let idHexString = String(idValue, radix: 16, uppercase: false)
-					return "i=tag:google.com,2005:reader/item/\(idHexString)"
-				} else {
-					return nil
-				}
-			}
-		}).joined(separator: "&")
+		let idsToFetch = articleIDs.compactMap(itemIDParameter).joined(separator: "&")
 		if idsToFetch.isEmpty {
 			return nil
 		}
@@ -611,16 +599,7 @@ private extension ReaderAPICaller {
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		// Get ids from above into hex representation of value
-		let idsToFetch = entries.compactMap({ idValue -> String? in
-			if self.variant == .theOldReader {
-				return "i=tag:google.com,2005:reader/item/\(idValue)"
-			} else {
-				guard let intValue = Int(idValue) else { return nil }
-				let idHexString = String(format: "%.16llx", intValue)
-				return "i=tag:google.com,2005:reader/item/\(idHexString)"
-			}
-		}).joined(separator: "&")
+		let idsToFetch = entries.compactMap(itemIDParameter).joined(separator: "&")
 
 		let actionIndicator = add ? "a" : "r"
 
@@ -628,5 +607,19 @@ private extension ReaderAPICaller {
 			let postData = Data("T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".utf8)
 			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
 		}
+	}
+
+	/// Long-form item parameter for an articleID — i=tag:google.com,2005:reader/item/000000000004c608.
+	/// The long form is zero-padded 16-digit hex, two’s-complement for negative IDs.
+	/// Returns nil for an articleID that can’t be encoded for this server.
+	private func itemIDParameter(_ articleID: String) -> String? {
+		if variant == .theOldReader {
+			return "i=tag:google.com,2005:reader/item/\(articleID)"
+		}
+		guard let idValue = Int(articleID) else {
+			return nil
+		}
+		let idHexString = String(format: "%.16llx", idValue)
+		return "i=tag:google.com,2005:reader/item/\(idHexString)"
 	}
 }

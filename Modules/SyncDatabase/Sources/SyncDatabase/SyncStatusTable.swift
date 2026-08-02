@@ -66,25 +66,36 @@ struct SyncStatusTable {
 		database.executeUpdateInTransaction(updateSQL)
 	}
 
-	static func resetSelectedForProcessing(_ articleIDs: Set<String>, database: FMDatabase) {
+	// An articleID can have both a read row and a starred row queued. Callers that send
+	// one status kind at a time must pass `key` so they don’t touch the other kind’s rows.
+
+	static func resetSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key?, database: FMDatabase) {
 		guard !articleIDs.isEmpty else {
 			return
 		}
 
-		let parameters = articleIDs.map { $0 as AnyObject }
+		var parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-		let updateSQL = "update \(name) set selected = false where articleID in \(placeholders)"
+		var updateSQL = "update \(name) set selected = false where articleID in \(placeholders)"
+		if let key {
+			updateSQL += " and key = ?"
+			parameters.append(key.rawValue as AnyObject)
+		}
 		database.executeUpdateInTransaction(updateSQL, withArgumentsIn: parameters)
 	}
 
-	static func deleteSelectedForProcessing(_ articleIDs: Set<String>, database: FMDatabase) {
+	static func deleteSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key?, database: FMDatabase) {
 		guard !articleIDs.isEmpty else {
 			return
 		}
 
-		let parameters = articleIDs.map { $0 as AnyObject }
+		var parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
-		let deleteSQL = "delete from \(name) where selected = true and articleID in \(placeholders)"
+		var deleteSQL = "delete from \(name) where selected = true and articleID in \(placeholders)"
+		if let key {
+			deleteSQL += " and key = ?"
+			parameters.append(key.rawValue as AnyObject)
+		}
 		database.executeUpdateInTransaction(deleteSQL, withArgumentsIn: parameters)
 	}
 
