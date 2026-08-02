@@ -1543,19 +1543,41 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func navigateToFeeds() {
-		mainFeedCollectionViewController?.focus()
-		selectArticle(nil)
+		if !isRootSplitCollapsed {
+			// In three-pane mode, focusing the sidebar deselects the article.
+			// In collapsed mode the pop below drives cleanup via navigationController(_:didShow:).
+			selectArticle(nil)
+		}
+		revealColumn(.primary) { [weak self] in
+			self?.mainFeedCollectionViewController?.focus()
+		}
 	}
 
 	func navigateToTimeline() {
-		if currentArticle == nil && articles.count > 0 {
+		// Only auto-select the first article in three-pane mode, where it populates the
+		// detail pane without hiding the timeline.
+		let displayMode = rootSplitViewController.preferredDisplayMode
+		let isThreePane = !isRootSplitCollapsed && displayMode != .oneBesideSecondary && displayMode != .secondaryOnly
+		if isThreePane && currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
 		}
-		mainTimelineViewController?.focus()
+		revealColumn(.supplementary) { [weak self] in
+			self?.mainTimelineViewController?.focus()
+		}
 	}
 
 	func navigateToDetail() {
-		articleViewController?.focus()
+		// If nothing is selected, open the first article so right-arrow reveals the detail even in
+		// collapsed and two-pane layouts. selectArticle reveals/pushes the detail column itself.
+		if currentArticle == nil {
+			guard articles.count > 0 else {
+				return
+			}
+			selectArticle(articles[0])
+		}
+		revealColumn(.secondary) { [weak self] in
+			self?.articleViewController?.focus()
+		}
 	}
 
 	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
@@ -1681,6 +1703,66 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 // MARK: Private
 
 private extension SceneCoordinator {
+
+	// Reveal the destination column, then focus it. Works across collapsed (iPhone),
+	// two-pane, and three-pane layouts, so arrow-key navigation isn't limited to the
+	// case where all columns are already visible.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3138>
+	func revealColumn(_ column: UISplitViewController.Column, thenFocus focus: @escaping () -> Void) {
+		if isRootSplitCollapsed {
+			revealColumnInCollapsedMode(column, thenFocus: focus)
+		} else {
+			rootSplitViewController.show(column, bypassDisplayModeRestriction: true)
+			// Defer focus so becomeFirstResponder targets the revealed column, not the outgoing one.
+			DispatchQueue.main.async(execute: focus)
+		}
+	}
+
+	func revealColumnInCollapsedMode(_ column: UISplitViewController.Column, thenFocus focus: @escaping () -> Void) {
+		guard !isNavigationDisabled, let navController = mainFeedCollectionViewController.navigationController else {
+			return
+		}
+		let targetViewController: UIViewController?
+		switch column {
+		case .primary:
+			targetViewController = mainFeedCollectionViewController
+		case .supplementary:
+			targetViewController = mainTimelineViewController
+		case .secondary:
+			targetViewController = articleViewController
+		default:
+			targetViewController = nil
+		}
+		guard let targetViewController else {
+			return
+		}
+
+		if navController.topViewController === targetViewController {
+			// Already on the destination column — just move focus.
+			DispatchQueue.main.async(execute: focus)
+		} else if navController.viewControllers.contains(targetViewController) {
+			// Backward navigation. The pop fires navigationController(_:didShow:), which performs
+			// the existing collapsed-mode cleanup. Don't duplicate that here.
+			navController.popToViewController(targetViewController, animated: true)
+			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		} else {
+			// Forward navigation — push the destination column onto the stack.
+			rootSplitViewController.show(column)
+			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		}
+	}
+
+	// Focus once the navigation transition finishes, so becomeFirstResponder lands on the
+	// revealed column rather than firing mid-animation. Falls back to the next runloop.
+	func focusWhenTransitionCompletes(in navController: UINavigationController, thenFocus focus: @escaping () -> Void) {
+		if let transitionCoordinator = navController.transitionCoordinator {
+			transitionCoordinator.animate(alongsideTransition: nil) { _ in
+				focus()
+			}
+		} else {
+			DispatchQueue.main.async(execute: focus)
+		}
+	}
 
 	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager,

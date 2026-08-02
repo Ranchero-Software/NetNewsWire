@@ -26,6 +26,13 @@ final class RootSplitViewController: UISplitViewController {
 	}
 
 	override func show(_ column: UISplitViewController.Column) {
+		show(column, bypassDisplayModeRestriction: false)
+	}
+
+	/// Pass `bypassDisplayModeRestriction: true` for user-initiated keyboard navigation, so it can
+	/// reveal a column the display-mode suppression below would otherwise keep hidden.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/3138>
+	func show(_ column: UISplitViewController.Column, bypassDisplayModeRestriction: Bool) {
 		guard !coordinator.isNavigationDisabled else { return }
 
 		/// Always show the column on iPhone
@@ -37,15 +44,17 @@ final class RootSplitViewController: UISplitViewController {
 		/// In certain scenarios, we don't want to select a feed or article
 		/// and have the display mode change as this interferes with state
 		/// restoration of the feeds and timeline display modes.
+		if !bypassDisplayModeRestriction {
 
-		/// Don't show primary when the preferred display mode is timeline + article or article only.
-		if column == .primary && (preferredDisplayMode == .oneBesideSecondary || preferredDisplayMode == .secondaryOnly) {
-			return
-		}
+			/// Don't show primary when the preferred display mode is timeline + article or article only.
+			if column == .primary && (preferredDisplayMode == .oneBesideSecondary || preferredDisplayMode == .secondaryOnly) {
+				return
+			}
 
-		/// Don't show the timeline when the preferred display mode is article only.
-		if column == .supplementary && preferredDisplayMode == .secondaryOnly {
-			return
+			/// Don't show the timeline when the preferred display mode is article only.
+			if column == .supplementary && preferredDisplayMode == .secondaryOnly {
+				return
+			}
 		}
 
 		super.show(column)
