@@ -47,7 +47,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let syncDatabase: SyncDatabase
 
 	private let caller: ReaderAPICaller
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ReaderAPI")
 
 	var progressInfo = ProgressInfo() {
 		didSet {

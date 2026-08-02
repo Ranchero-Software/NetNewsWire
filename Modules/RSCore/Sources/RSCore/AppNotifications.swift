@@ -18,7 +18,7 @@ public extension Notification.Name {
 
 public struct AppNotification {
 
-	private static let notificationLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppNotification")
+	private static let notificationLogger = Logger(subsystem: Logger.nnwSubsystem, category: "AppNotification")
 
 	public static func postLowMemory() {
 		notificationLogger.info("Posting low memory notification.")

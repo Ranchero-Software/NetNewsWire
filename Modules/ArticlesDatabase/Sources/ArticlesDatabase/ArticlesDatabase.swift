@@ -58,7 +58,7 @@ public struct ArticleCounts: Sendable {
 	private let retentionStyle: RetentionStyle
 	private let accountID: String
 
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticlesDatabase")
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticlesDatabase")
 
 	public init(databaseFilePath: String, accountID: String, retentionStyle: RetentionStyle) {
 		Self.logger.debug("Articles Database init \(accountID, privacy: .public)")

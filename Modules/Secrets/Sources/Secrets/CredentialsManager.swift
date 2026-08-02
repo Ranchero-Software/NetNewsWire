@@ -16,7 +16,7 @@ public struct CredentialsManager {
 
 	static let CredentialsManagerErrorSourceID = 100
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CredentialsManager")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "CredentialsManager")
 
 	private static let keychainGroup: String? = {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {

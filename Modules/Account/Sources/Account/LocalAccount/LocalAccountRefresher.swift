@@ -73,7 +73,7 @@ import os
 
 	private var urlToFeedDictionary = [String: Feed]()
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccountRefresher")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "LocalAccountRefresher")
 
 	@MainActor public func refreshFeeds(_ feeds: Set<Feed>) async {
 		await withCheckedContinuation { continuation in

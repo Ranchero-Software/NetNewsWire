@@ -25,7 +25,7 @@ public enum FeedFinderError: LocalizedError {
 }
 
 public final class FeedFinder {
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedFinder")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FeedFinder")
 
 	/// Which discovery path produced the result. Used to write a more useful
 	/// completion message on the parent `findFeed` activity.

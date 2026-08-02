@@ -23,7 +23,7 @@ import Account
 	private let imageContainer: URL
 	private let dataURL: URL
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WidgetDataEncoder")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "WidgetDataEncoder")
 
 	init?() {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {

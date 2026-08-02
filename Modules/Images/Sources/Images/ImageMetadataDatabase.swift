@@ -21,7 +21,7 @@ import RSDatabaseObjC
 
 	public let databasePath: String
 
-	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageMetadataDatabase")
+	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageMetadataDatabase")
 
 	private let queue: DatabaseQueue
 

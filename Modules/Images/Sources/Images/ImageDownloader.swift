@@ -40,7 +40,7 @@ extension ImageDownloadError: LocalizedError {
 @MainActor public final class ImageDownloader {
 	public static let shared = ImageDownloader()
 
-	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ImageDownloader")
+	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageDownloader")
 
 	nonisolated private let diskCache: BinaryDiskCache
 	private let queue: DispatchQueue

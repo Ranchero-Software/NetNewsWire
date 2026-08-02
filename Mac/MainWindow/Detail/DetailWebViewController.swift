@@ -20,7 +20,7 @@ import Images
 
 final class DetailWebViewController: NSViewController {
 
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DetailWebViewController")
+	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "DetailWebViewController")
 
 	weak var delegate: DetailWebViewControllerDelegate?
 	var webView: DetailWebView!

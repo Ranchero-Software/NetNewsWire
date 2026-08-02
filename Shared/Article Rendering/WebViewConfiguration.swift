@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import RSCore
 import os
 import WebKit
 import RSWeb
 
 @MainActor final class WebViewConfiguration {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WebViewConfiguration")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "WebViewConfiguration")
 
 	private static var contentBlockingRuleList: WKContentRuleList?
 	private static var configuredContentControllers = NSHashTable<WKUserContentController>.weakObjects()

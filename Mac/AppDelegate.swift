@@ -30,7 +30,7 @@ let appName = "NetNewsWire"
 @main
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
+	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDelegate")
 
 	private struct WindowRestorationIdentifiers {
 		static let mainWindow = "mainWindow"
