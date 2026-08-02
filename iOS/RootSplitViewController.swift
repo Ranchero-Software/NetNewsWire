@@ -85,13 +85,22 @@ final class RootSplitViewController: UISplitViewController {
 		}
 		let articlesToMark = coordinator.articles
 		let title = NSLocalizedString("Mark All as Read", comment: "Command")
-		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: view as UIView) { [weak self] in
+
+		let completion: () -> Void = { [weak self] in
 			guard let self else {
 				return
 			}
 			self.coordinator.markAsReadAndShowSidebar(articlesToMark) {
 				self.coordinator.selectNextUnread()
 			}
+		}
+
+		// Anchor to the Mark All as Read button (keyboard shortcut has no source view).
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5370>
+		if let markAllAsReadButton = (viewController(for: .supplementary) as? MainTimelineModernViewController)?.markAllAsReadButton {
+			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: markAllAsReadButton, completion: completion)
+		} else {
+			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: view as UIView, completion: completion)
 		}
 	}
 
