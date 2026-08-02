@@ -9,6 +9,7 @@ import SwiftUI
 import UIKit
 import RSCore
 import Account
+import Images
 
 struct AccountStatsView: View {
 
@@ -18,6 +19,7 @@ struct AccountStatsView: View {
 
 	@State private var rows = [AccountStatsRowData]()
 	@State private var totals: AccountStatsTotals?
+	@State private var imageCacheStats: ArticleImageDownloader.CacheStats?
 	@State private var isVacuuming = false
 	@State private var showHelp = false
 
@@ -41,6 +43,15 @@ struct AccountStatsView: View {
 					}
 				} header: {
 					Text(NSLocalizedString("Totals", comment: "Totals section"))
+				}
+			}
+
+			if let imageCacheStats {
+				Section {
+					statsRow(StatItem(label: NSLocalizedString("Cached Images", comment: "Cached images count"), value: Self.formattedNumber(imageCacheStats.fileCount)), isBold: false)
+					statsRow(StatItem(label: NSLocalizedString("Image Cache Size", comment: "Image cache size"), value: Int64(imageCacheStats.byteCount).formatted(.byteCount(style: .file))), isBold: false)
+				} header: {
+					Text(NSLocalizedString("Offline Images", comment: "Offline images section"))
 				}
 			}
 
@@ -157,6 +168,7 @@ private extension AccountStatsView {
 		await model.refresh()
 		rows = model.sortedAccountStats
 		totals = model.totals
+		imageCacheStats = await ArticleImageDownloader.shared.cacheStats()
 	}
 
 	func vacuum() {

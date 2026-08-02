@@ -80,6 +80,7 @@ import Images
 
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
+		ArticleImagePrefetcher.shared.start()
 		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 

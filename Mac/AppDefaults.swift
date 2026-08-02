@@ -43,6 +43,7 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let cacheImagesForOffline = "cacheImagesForOffline"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -319,6 +320,15 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var cacheImagesForOffline: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.cacheImagesForOffline)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.cacheImagesForOffline)
+		}
+	}
+
 	init() {
 		// Migrate every-10-minute refresh interval to 30 minutes.
 		let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
@@ -344,7 +354,8 @@ final class AppDefaults: Sendable {
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
-			Key.articleContentJavascriptEnabled: true
+			Key.articleContentJavascriptEnabled: true,
+			Key.cacheImagesForOffline: false
 		]
 
 		UserDefaults.standard.register(defaults: defaults)

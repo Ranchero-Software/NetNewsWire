@@ -14,6 +14,7 @@ import UniformTypeIdentifiers
 import RSCore
 import Account
 import ActivityLog
+import Images
 
 final class SettingsViewController: UITableViewController {
 
@@ -54,7 +55,8 @@ final class SettingsViewController: UITableViewController {
 		case theme = 0
 		case openLinksInNetNewsWire = 1
 		case enableJavaScript = 2
-		case enableFullScreenArticles = 3
+		case cacheImagesForOffline = 3
+		case enableFullScreenArticles = 4
 	}
 
 	private enum HelpRow: Int {
@@ -76,6 +78,10 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var colorPaletteDetailLabel: UILabel!
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
+	@IBOutlet var cacheImagesForOfflineSwitch: UISwitch!
+	@IBOutlet var cacheImagesForOfflineDetailLabel: UILabel!
+
+	private let cacheImagesForOfflineBaseText = NSLocalizedString("Download article images during refresh so articles can be read offline. Uses more storage and data.", comment: "Cache images footnote")
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
@@ -88,6 +94,7 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(cacheAllImagesProgressDidChange), name: .ArticleImageCacheAllProgressDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
@@ -136,6 +143,9 @@ final class SettingsViewController: UITableViewController {
 		} else {
 			enableJavaScriptSwitch.isOn = false
 		}
+
+		cacheImagesForOfflineSwitch.isOn = AppDefaults.shared.cacheImagesForOffline
+		updateCacheImagesDetailLabel()
 
 		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 
@@ -405,6 +415,77 @@ final class SettingsViewController: UITableViewController {
 	@IBAction func switchJavaScriptPreference(_ sender: Any) {
 		AppDefaults.shared.isArticleContentJavascriptEnabled = enableJavaScriptSwitch.isOn
  	}
+
+	@IBAction func switchCacheImagesForOffline(_ sender: Any) {
+		let isOn = cacheImagesForOfflineSwitch.isOn
+		AppDefaults.shared.cacheImagesForOffline = isOn
+		updateCacheImagesDetailLabel()
+		if isOn {
+			promptToCacheAllImages()
+		}
+	}
+
+	/// When the user turns offline caching on, offer to backfill images for existing unread
+	/// articles right away — prefetch otherwise only catches images from future refreshes,
+	/// and the moment someone enables this is usually right before they go offline.
+	private func promptToCacheAllImages() {
+		guard !ArticleImagePrefetcher.shared.isCachingAll else {
+			return
+		}
+		let unreadCount = AccountManager.shared.unreadCount
+		guard unreadCount > 0 else {
+			return
+		}
+		let title = NSLocalizedString("Cache Images Now?", comment: "Cache images now alert title")
+		let messageFormat = NSLocalizedString("Download images for your %d unread articles now, so they can be read offline?", comment: "Cache images now alert message")
+		let alert = UIAlertController(title: title, message: String(format: messageFormat, unreadCount), preferredStyle: .alert)
+		alert.addAction(UIAlertAction(title: NSLocalizedString("Not Now", comment: "Not Now"), style: .cancel))
+		let cacheTitle = NSLocalizedString("Cache Images", comment: "Cache Images now button")
+		alert.addAction(UIAlertAction(title: cacheTitle, style: .default) { _ in
+			ArticleImagePrefetcher.shared.cacheAllArticleImagesNow()
+		})
+		present(alert, animated: true)
+	}
+
+	@objc func cacheAllImagesProgressDidChange() {
+		updateCacheImagesDetailLabel()
+	}
+
+	/// Show the offline-images footnote, with live "N of M" progress appended during a
+	/// cache-all run and the current on-disk cache size when idle. The size is only recomputed
+	/// when a run isn't in progress, to avoid enumerating the cache folder per progress tick.
+	private func updateCacheImagesDetailLabel() {
+		guard let cacheImagesForOfflineDetailLabel else {
+			return
+		}
+		let prefetcher = ArticleImagePrefetcher.shared
+		guard !prefetcher.isCachingAll else {
+			let progress: String
+			if prefetcher.cacheAllTotal > 0 {
+				let format = NSLocalizedString("Caching Images… %d of %d", comment: "Cache-all progress")
+				progress = String(format: format, prefetcher.cacheAllCompleted, prefetcher.cacheAllTotal)
+			} else {
+				progress = NSLocalizedString("Caching Images…", comment: "Cache-all starting")
+			}
+			cacheImagesForOfflineDetailLabel.text = cacheImagesForOfflineBaseText + "\n\n" + progress
+			return
+		}
+		Task { @MainActor in
+			let stats = await ArticleImageDownloader.shared.cacheStats()
+			// A run may have started while awaiting; if so, leave the progress text alone.
+			guard !ArticleImagePrefetcher.shared.isCachingAll else {
+				return
+			}
+			guard stats.byteCount > 0 else {
+				cacheImagesForOfflineDetailLabel.text = cacheImagesForOfflineBaseText
+				return
+			}
+			let size = stats.byteCount.formatted(.byteCount(style: .file))
+			let countFormat = NSLocalizedString("%d images · %@ used", comment: "Cached image count and size")
+			let usage = String(format: countFormat, stats.fileCount, size)
+			cacheImagesForOfflineDetailLabel.text = cacheImagesForOfflineBaseText + "\n\n" + usage
+		}
+	}
 
 	// MARK: - Notifications
 

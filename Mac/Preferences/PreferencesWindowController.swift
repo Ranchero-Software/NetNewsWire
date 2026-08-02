@@ -167,7 +167,9 @@ private extension PreferencesWindowController {
 		let windowFrame = window!.frame
 		let contentViewFrame = window!.contentView!.frame
 
-		let deltaHeight = contentViewFrame.height - viewFrame.height
+		let heightForView = fittingHeight(of: view)
+
+		let deltaHeight = contentViewFrame.height - heightForView
 		let heightForWindow = windowFrame.height - deltaHeight
 		let windowOriginY = windowFrame.minY + deltaHeight
 
@@ -179,6 +181,7 @@ private extension PreferencesWindowController {
 		var updatedViewFrame = viewFrame
 		updatedViewFrame.origin = NSPoint.zero
 		updatedViewFrame.size.width = windowWidth
+		updatedViewFrame.size.height = heightForView
 		if viewFrame != updatedViewFrame {
 			view.frame = updatedViewFrame
 		}
@@ -188,5 +191,26 @@ private extension PreferencesWindowController {
 			window!.setFrame(updatedWindowFrame, display: true, animate: true)
 			window!.contentView?.alphaValue = 1.0
 		}
+	}
+
+	/// Measure the pane's natural Auto Layout height at the fixed window width. This is
+	/// called before the view is added to the window (see `switchToView`), so the view's
+	/// height is free and `fittingSize` reflects its content — letting the window grow to
+	/// fit taller panes instead of squishing/clipping their contents. Falls back to the
+	/// storyboard frame height if the measurement looks implausible.
+	func fittingHeight(of view: NSView) -> CGFloat {
+		let hadTranslates = view.translatesAutoresizingMaskIntoConstraints
+		view.translatesAutoresizingMaskIntoConstraints = false
+		let widthConstraint = view.widthAnchor.constraint(equalToConstant: windowWidth)
+		widthConstraint.isActive = true
+		view.layoutSubtreeIfNeeded()
+		let measured = view.fittingSize.height
+		widthConstraint.isActive = false
+		view.translatesAutoresizingMaskIntoConstraints = hadTranslates
+
+		guard measured > 0, measured < 2000 else {
+			return view.frame.height
+		}
+		return measured
 	}
 }

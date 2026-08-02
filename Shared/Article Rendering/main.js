@@ -52,6 +52,32 @@ function convertImgSrc() {
 	});
 }
 
+// When offline image caching is enabled, route http(s) article images through the
+// offline cache via a custom scheme. Run after convertImgSrc() so srcs are absolute.
+function rewriteImagesForOfflineCache() {
+	if (!document.getElementById("nnwCacheImagesForOffline")) {
+		return;
+	}
+	document.querySelectorAll("img").forEach(element => {
+		var src = element.src;
+		if (/^https?:\/\//i.test(src)) {
+			element.src = "nnwimage://cache/?u=" + encodeURIComponent(src);
+			// Drop this img's srcset so WebKit uses the rewritten (cached) src rather than
+			// selecting an original https candidate that would bypass the cache offline. We only
+			// do this when src itself is an http(s) URL we just rewrote — clearing srcset on an
+			// img with a non-http (e.g. data-URI) src could leave it with no loadable image.
+			element.removeAttribute("srcset");
+			// If this img is the fallback inside a <picture>, drop the <source> candidates too:
+			// WebKit would otherwise select an original-URL <source> over our rewritten fallback
+			// and bypass the cache offline.
+			var parent = element.parentElement;
+			if (parent && parent.tagName.toLowerCase() === "picture") {
+				parent.querySelectorAll("source").forEach(source => source.remove());
+			}
+		}
+	});
+}
+
 // Wrap tables in an overflow-x: auto; div
 function wrapTables() {
 	var tables = document.querySelectorAll("div.articleBody table");
@@ -163,6 +189,7 @@ function processPage() {
 	stripStyles();
 	constrainBodyRelativeIframes();
 	convertImgSrc();
+	rewriteImagesForOfflineCache();
 	flattenPreElements();
 	styleLocalFootnotes();
 	removeWpSmiley()
