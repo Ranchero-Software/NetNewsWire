@@ -22,7 +22,7 @@ public typealias RSImage = UIImage
 public typealias RSColor = UIColor
 #endif
 
-private let RSImageLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "RSImage")
+private let RSImageLogger = Logger(subsystem: Logger.nnwSubsystem, category: "RSImage")
 
 public extension RSImage {
 

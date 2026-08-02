@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RSCore
 import os
 import RSDatabase
 import RSDatabaseObjC
@@ -25,7 +26,7 @@ struct AuthorsSchemaMigration: Sendable {
 	let accountID: String
 	let queue: DatabaseQueue
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AuthorsSchemaMigration")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AuthorsSchemaMigration")
 
 	func run() async {
 		let startTime = Date()

@@ -55,7 +55,7 @@ final class ArticleViewController: UIViewController {
 	weak var coordinator: SceneCoordinator!
 
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticleViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticleViewController")
 
 	var article: Article? {
 		didSet {

@@ -49,7 +49,7 @@ import ActivityLog
 		}
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountManager")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AccountManager")
 
 	public var areUnreadCountsInitialized: Bool {
 		for account in activeAccounts {

@@ -24,7 +24,7 @@ extension Notification.Name {
 @MainActor public final class FaviconDownloader {
 	public static let shared = FaviconDownloader()
 
-	nonisolated static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FaviconDownloader")
+	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FaviconDownloader")
 
 	private let folder: String
 	private let diskCache: BinaryDiskCache

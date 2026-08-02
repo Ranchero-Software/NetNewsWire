@@ -36,7 +36,7 @@ import Images
 		}
 	}
 
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Application")
 
 	var unreadCount = 0 {
 		didSet {

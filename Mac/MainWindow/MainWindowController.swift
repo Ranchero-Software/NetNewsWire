@@ -18,7 +18,7 @@ enum TimelineSourceMode {
 }
 
 final class MainWindowController: NSWindowController, NSUserInterfaceValidations {
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainWindowController")
+	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainWindowController")
 
 	@IBOutlet var articleThemePopUpButton: NSPopUpButton?
 

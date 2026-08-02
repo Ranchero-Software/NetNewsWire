@@ -6,6 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
+import RSCore
 import UIKit
 import os
 import Account
@@ -38,7 +39,7 @@ extension Notification.Name {
 final class AppDefaults: Sendable {
 	static let shared = AppDefaults()
 	static let defaultThemeName = "Default"
-	fileprivate static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDefaults")
+	fileprivate static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDefaults")
 
 	private init() {}
 

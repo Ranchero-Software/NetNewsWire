@@ -215,7 +215,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "TimelineViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "TimelineViewController")
 
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)

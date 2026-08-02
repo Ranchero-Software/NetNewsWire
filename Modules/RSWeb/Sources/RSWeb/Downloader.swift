@@ -21,7 +21,7 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 	private var callbacks = [URL: [(callback: DownloadCallback, fromCache: Bool)]]()
 	private let cache = DownloadCache.shared
 
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Downloader")
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Downloader")
 
 	private init() {
 		let sessionConfiguration = URLSessionConfiguration.ephemeral

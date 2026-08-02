@@ -160,6 +160,53 @@ import XCTest
 		XCTAssertTrue(originalFeed === updatedFeed, "Renaming a feed should reuse the existing Feed instance.")
 	}
 
+	func testSyncFeedsForCollectionFoldersRepairsStaleFeedID() {
+		let url = "https://example.com/feed.xml"
+		let canonicalFeedID = "feed/\(url)"
+		let folder = makeFolder(name: "Folder", externalID: "folder/1")
+
+		// A feed created from OPML before its settings row existed gets the bare URL as its feedID.
+		let staleFeed = account.createFeed(with: "Example", url: url, feedID: url, homePageURL: nil)
+		staleFeed.newArticleNotificationsEnabled = true
+		folder.addFeedToTreeAtTopLevel(staleFeed)
+
+		syncFeedsForCollectionFolders([
+			([FeedlyFeed(id: canonicalFeedID, title: "Example", updated: nil, website: nil)], folder)
+		], in: account)
+
+		let feeds = account.flattenedFeeds()
+		XCTAssertEqual(feeds.count, 1)
+
+		let repairedFeed = feeds.first
+		XCTAssertEqual(repairedFeed?.feedID, canonicalFeedID)
+		XCTAssertEqual(repairedFeed?.url, url)
+		assertFolder(folder, contains: [canonicalFeedID])
+
+		XCTAssertEqual(repairedFeed?.newArticleNotificationsEnabled, true, "Settings should survive a feedID repair.")
+	}
+
+	func testSyncFeedsForCollectionFoldersAfterRepairReusesFeedInstance() {
+		let url = "https://example.com/feed.xml"
+		let canonicalFeedID = "feed/\(url)"
+		let folder = makeFolder(name: "Folder", externalID: "folder/1")
+
+		let staleFeed = account.createFeed(with: "Example", url: url, feedID: url, homePageURL: nil)
+		folder.addFeedToTreeAtTopLevel(staleFeed)
+
+		let collectionFeeds = [FeedlyFeed(id: canonicalFeedID, title: "Example", updated: nil, website: nil)]
+
+		syncFeedsForCollectionFolders([(collectionFeeds, folder)], in: account)
+		let repairedFeed = folder.existingFeed(withFeedID: canonicalFeedID)
+		XCTAssertNotNil(repairedFeed)
+
+		// A second pass must not remove and recreate the feed — that was the pre-repair flapping.
+		syncFeedsForCollectionFolders([(collectionFeeds, folder)], in: account)
+		let secondPassFeed = folder.existingFeed(withFeedID: canonicalFeedID)
+
+		XCTAssertTrue(repairedFeed === secondPassFeed, "A repaired feed should be reused on subsequent syncs.")
+		XCTAssertEqual(account.flattenedFeeds().count, 1)
+	}
+
 	// MARK: - Combined behavior
 
 	func testMirrorThenRemoveAllRemovesFeedsToo() {

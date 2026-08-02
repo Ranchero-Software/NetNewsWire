@@ -6,13 +6,14 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
+import RSCore
 import AppKit
 import Account
 import os
 
 struct ErrorHandler: Sendable {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ErrorHandler")
 
 	@Sendable public static func present(_ error: Error) {
 		Task { @MainActor in

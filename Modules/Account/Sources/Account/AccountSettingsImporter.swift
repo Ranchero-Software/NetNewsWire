@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RSCore
 import os
 import RSWeb
 
@@ -23,7 +24,7 @@ import RSWeb
 		let conditionalGetInfo: [String: HTTPConditionalGetInfo]?
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountSettingsImporter")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AccountSettingsImporter")
 
 	/// Returns ImportedSettings if there is a Settings.plist to read.
 	/// Returns nil if there is no plist or it can't be read.

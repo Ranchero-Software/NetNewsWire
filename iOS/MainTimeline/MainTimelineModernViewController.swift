@@ -150,7 +150,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: Private Constants
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineModernViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineModernViewController")
 
 	// MARK: Constants
 	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)

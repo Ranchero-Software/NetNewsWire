@@ -67,7 +67,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SceneCoordinator")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "SceneCoordinator")
 
 	// Which Containers are expanded
 	private var expandedContainers = Set<ContainerIdentifier>()
