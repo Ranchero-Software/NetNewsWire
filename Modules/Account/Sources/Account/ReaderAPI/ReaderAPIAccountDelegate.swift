@@ -162,14 +162,18 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return false
 		}
-		guard variant != .inoreader else {
-			// Inoreader: no-op for this delegate.
-			return false
-		}
 
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
 
 		let sentCount = try await sendArticleStatusReturningCount(for: account)
+
+		// Inoreader: skip downloading statuses, to conserve its API rate limits — but do send,
+		// since a send is a single cheap request and skipping it loses stars.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
+		if variant == .inoreader {
+			return sentCount > 0
+		}
+
 		let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
 		return sentCount > 0 || refreshChangedCount > 0
 	}
