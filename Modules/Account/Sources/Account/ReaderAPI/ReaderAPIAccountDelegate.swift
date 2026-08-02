@@ -23,6 +23,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case invalidParameter
 	case invalidResponse
 	case urlNotFound
+	case unsendableStatuses(Int)
 
 	public var errorDescription: String? {
 		switch self {
@@ -34,6 +35,8 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 			return NSLocalizedString("There was an invalid response from the server.", comment: "Invalid response")
 		case .urlNotFound:
 			return NSLocalizedString("The API URL wasn't found.", comment: "The API URL wasn't found.")
+		case .unsendableStatuses(let count):
+			return String(format: NSLocalizedString("Dropped %d article status changes that can’t be encoded for this service.", comment: "Dropped unsendable article status changes"), count)
 		}
 	}
 }
@@ -246,23 +249,29 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		return try await account.logActivity(kind: .refreshArticleStatuses) { () -> Int in
 			var changedCount = 0
-			var errorOccurred = false
+			var savedError: Error?
 
-			let articleIDs = try await caller.retrieveItemIDs(type: .unread, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
-			changedCount += await syncArticleReadState(account: account, articleIDs: articleIDs)
+			do {
+				let articleIDs = try await caller.retrieveItemIDs(type: .unread, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
+				changedCount += await syncArticleReadState(account: account, articleIDs: articleIDs)
+			} catch {
+				savedError = error
+				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving unread entries failed: \(error.localizedDescription)")
+			}
 
 			do {
 				let articleIDs = try await caller.retrieveItemIDs(type: .starred, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
 				changedCount += await syncArticleStarredState(account: account, articleIDs: articleIDs)
 			} catch {
-				errorOccurred = true
+				if savedError == nil {
+					savedError = error
+				}
 				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving starred entries failed: \(error.localizedDescription)")
 			}
 
-			if errorOccurred {
-				let error = AccountError.unknown
-				postSyncError(error, account: account, operation: "Refreshing article status")
-				throw error
+			if let savedError {
+				postSyncError(savedError, account: account, operation: "Refreshing article status")
+				throw savedError
 			}
 			return changedCount
 		}
@@ -884,6 +893,7 @@ private extension ReaderAPIAccountDelegate {
 		let unsendableArticleIDs = Set(articleIDs.filter { !articleIDIsSendable($0) })
 		if !unsendableArticleIDs.isEmpty {
 			Self.logger.error("ReaderAPIAccountDelegate: dropping \(unsendableArticleIDs.count) unsendable article IDs from the status queue")
+			postSyncError(ReaderAPIAccountDelegateError.unsendableStatuses(unsendableArticleIDs.count), account: account, operation: "Sending article status")
 			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs, key: key)
 		}
 		let sendableArticleIDs = articleIDs.filter { articleIDIsSendable($0) }
