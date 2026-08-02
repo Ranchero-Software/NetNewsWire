@@ -2,6 +2,34 @@
 
 ### 7.1.2 build 7112 25 July 2026 - branch: main tag: iOS-7.1.2-7112
 
+This was originally a TestFlight release. It was submitted to the App Store as the 7.1.2 release version on 2 Aug 2026.
+
+Changes since 7.1.1:
+
+Fixed bug where code inside a quoted attribute value (such as a `srcset` media query containing `>=`) could appear in place of the article summary in the timeline
+Fixed bug where a title containing a “<” that didn’t begin an HTML tag was truncated
+Made `<abbr>` and other attributed title tags — including tags with uppercase letters — render as text instead of raw markup (in article titles)
+Fixed bug where zero-width joiner entities (`&zwj;` and `&zwnj;`) weren’t decoded
+Fixed bug where iframes (such as Apple Podcasts embeds) with a unit in the height attribute were sized incorrectly
+Prevented article web content from navigating away, via JavaScript, to a full webpage in the detail view
+Used a WebKit user-agent string (with NetNewsWire as the app name) for web content shown in the app
+Switched the reader view button to an SF Symbol
+Switched, when in compact mode, to standard selection colors and to full-bleed selection in the timeline
+Fixed bug where the Next Unread button was enabled when the only unread article was the one already selected
+Fixed bug where Reader API accounts (like FreshRSS) could stop syncing — authentication tokens are now refreshed as needed, and a refresh continues even when sending article statuses fails
+Restored human-readable CloudKit error messages
+Started sending queued article statuses in the background on mark-all-read, so you return to the feeds list right away instead of waiting
+Stopped waiting for an initial refresh to finish before closing the add-account screen — the account appears right away
+Made GitHub links in Settings open in the GitHub app when it’s installed
+Used the Safari icon instead of a globe to match other open-in-browser commands
+Fixed bug where the timeline scroll position was yanked back repeatedly while scrolling during a refresh
+Fixed bug where confirming Mark All as Read and then quickly tapping a different folder marked the wrong folder’s articles as read
+Made the Toggle Reader View keyboard shortcut (Shift-Cmd-R) work — and show in the shortcuts list — no matter which pane has focus
+Fixed bug where subscribing in a Feedly account using a home page URL sometimes failed to find the feed — when Feedly search comes up empty, the app now finds the feed itself and tries again
+Made updating unread counts for folders more efficient — coalesce calculations instead of once per feed
+
+Changes in this build:
+
 Fixed bug where the timeline scroll position was yanked back repeatedly while scrolling during a refresh
 Fixed bug where confirming Mark All as Read and then quickly tapping a different folder marked the wrong folder’s articles as read
 Made the Toggle Reader View keyboard shortcut (Shift-Cmd-R) work — and show in the shortcuts list — no matter which pane has focus
