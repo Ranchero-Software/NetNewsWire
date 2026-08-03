@@ -152,9 +152,12 @@ import Secrets
 			return
 		}
 
+		// Clear progressInfo before addTasks — the other way around wipes the progress
+		// addTasks just published, so refreshInProgress reads false until the first
+		// completed task, and the account can even be deleted mid-sync.
 		refreshProgress.reset()
-		refreshProgress.addTasks(7)
 		progressInfo = ProgressInfo()
+		refreshProgress.addTasks(7)
 		let startDate = Date()
 
 		let successMessage: (RefreshAllSummary) -> String? = { summary in
@@ -224,8 +227,8 @@ import Secrets
 		}
 
 		refreshProgress.reset()
-		refreshProgress.addTasks(2)
 		progressInfo = ProgressInfo()
+		refreshProgress.addTasks(2)
 		defer {
 			refreshProgress.reset()
 			progressInfo = ProgressInfo()
