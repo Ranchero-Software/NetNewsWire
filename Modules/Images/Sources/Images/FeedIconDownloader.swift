@@ -75,7 +75,7 @@ extension Notification.Name {
 
 		@MainActor func checkFeedIconURL() {
 			if let iconURL = feed.iconURL, !Self.shouldIgnoreFeedIconURL(feed) {
-				icon(forURL: iconURL, feed: feed) { (image) in
+				icon(forURL: iconURL, feed: feed) { (image, isDefinitive) in
 					Task { @MainActor in
 						if self.cache[feed] != nil {
 							return // already cached
@@ -84,7 +84,10 @@ extension Notification.Name {
 							self.cache[feed] = IconImage(image)
 							self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
 							self.postFeedIconDidBecomeAvailableNotification(feed)
-						} else {
+						} else if isDefinitive {
+							// The declared icon failed or isn’t an image. A still-downloading
+							// icon is no reason to fall back to the home page’s icon.
+							// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
 							checkHomePageURL()
 						}
 					}
@@ -95,7 +98,7 @@ extension Notification.Name {
 		}
 
 		if let previouslyFoundIconURL = ImageMetadataDatabase.shared.iconURL(forFeedURL: feed.url) {
-			icon(forURL: previouslyFoundIconURL, feed: feed) { image in
+			icon(forURL: previouslyFoundIconURL, feed: feed) { image, _ in
 				MainActor.assumeIsolated {
 					if self.cache[feed] != nil {
 						return // already cached
@@ -206,7 +209,7 @@ private extension FeedIconDownloader {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			homePagesWithNoIconURL.remove(homePageURL)
-			icon(forURL: url, feed: feed) { image in
+			icon(forURL: url, feed: feed) { image, _ in
 				Task { @MainActor in
 					resultBlock(image, url)
 				}
@@ -218,18 +221,28 @@ private extension FeedIconDownloader {
 		resultBlock(nil, nil)
 	}
 
-	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping ImageResultBlock) {
+	/// `isDefinitive` is false when the image is still downloading — imageDidBecomeAvailable
+	/// re-runs icon(for:) when it arrives.
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @MainActor (RSImage?, _ isDefinitive: Bool) -> Void) {
 
 		let url = Self.sanitizedIconURL(url)
 
 		let kind = ActivityKind.downloadFeedImage(feedURL: url)
 		if let imageData = imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: kind, activityDetail: feed.nameForDisplay) {
-			RSImage.image(with: imageData, imageResultBlock: imageResultBlock)
+			RSImage.image(with: imageData) { image in
+				imageResultBlock(image, true)
+			}
+			return
+		}
+
+		let urlIsUnfetchable = !url.hasPrefix("http://") && !url.hasPrefix("https://")
+		if urlIsUnfetchable || ImageMetadataDatabase.shared.recentlyFailed(url: url) {
+			imageResultBlock(nil, true)
 			return
 		}
 
 		waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
-		imageResultBlock(nil)
+		imageResultBlock(nil, false)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
