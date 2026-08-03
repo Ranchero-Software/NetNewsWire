@@ -74,6 +74,11 @@ private extension CloudKitZoneResult {
 		if errors.values.contains(where: { $0.code == .userDeletedZone }) {
 			return .userDeletedZone
 		}
+		// An unavailable account inside a partial failure is the real story —
+		// don’t report it as “some items failed, but the operation succeeded overall.”
+		if let accountError = errors.values.first(where: { $0.code == .accountTemporarilyUnavailable || $0.code == .notAuthenticated }) {
+			return .failure(error: CloudKitError(accountError))
+		}
 		return nil
 	}
 }
