@@ -14,17 +14,14 @@ import RSDatabaseObjC
 struct SyncStatusTable {
 	static let name = "syncStatus"
 
+	// Selects first, then marks just the rows being returned. Marking every row would flag rows
+	// past the limit as in-flight, and `deleteSelectedForProcessing` with a nil key would then
+	// delete a queued status that was never sent.
 	static func selectForProcessing(limit: Int?, database: FMDatabase) -> Set<SyncStatus>? {
 		database.beginTransaction()
 
-		let updateSQL = "update \(name) set selected = true"
-		guard database.executeUpdate(updateSQL, withArgumentsIn: nil) else {
-			database.rollback()
-			return nil
-		}
-
 		let selectSQL = {
-			var sql = "select * from \(name) where selected == true"
+			var sql = "select * from \(name)"
 			if let limit {
 				sql = "\(sql) limit \(limit)"
 			}
@@ -37,10 +34,28 @@ struct SyncStatusTable {
 		}
 
 		let statuses = resultSet.mapToSet(statusWithRow)
+		guard !statuses.isEmpty else {
+			database.commit()
+			return statuses
+		}
+
+		// An articleID can have both a read row and a starred row, so match on the pair.
+		var parameters = [AnyObject]()
+		let conditions = statuses.map { status -> String in
+			parameters.append(status.articleID as AnyObject)
+			parameters.append(status.key.rawValue as AnyObject)
+			return "(articleID = ? and key = ?)"
+		}
+
+		let updateSQL = "update \(name) set selected = true where \(conditions.joined(separator: " or "))"
+		guard database.executeUpdate(updateSQL, withArgumentsIn: parameters) else {
+			database.rollback()
+			return nil
+		}
 
 		database.commit()
 
-		return statuses
+		return Set(statuses.map { SyncStatus(articleID: $0.articleID, key: $0.key, flag: $0.flag, selected: true) })
 	}
 
 	static func selectPendingCount(database: FMDatabase) -> Int? {
