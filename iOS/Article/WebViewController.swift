@@ -26,6 +26,7 @@ final class WebViewController: UIViewController {
 		static let imageWasClicked = "imageWasClicked"
 		static let imageWasShown = "imageWasShown"
 		static let showFeedInspector = "showFeedInspector"
+		static let mediaSourceURLs = "mediaSourceURLs"
 	}
 
 	private var topShowBarsView: UIView!
@@ -46,6 +47,7 @@ final class WebViewController: UIViewController {
 	private lazy var articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 	private lazy var transition = ImageTransition(controller: self)
 	private var imageDownloadTask: Task<Void, Never>?
+	private var mediaSourceURLs = Set<String>()
 	private var clickedImageCompletion: (() -> Void)?
 
 	private var articleExtractor: ArticleExtractor?
@@ -415,6 +417,14 @@ extension WebViewController: WKNavigationDelegate {
 				return
 			}
 
+			// WebKit reports a tap on a not-yet-loaded video’s controls as a link activation
+			// targeting the media source. The tap already operates the control — don’t open a browser.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/3788>
+			if mediaSourceURLs.contains(url.absoluteString) {
+				decisionHandler(.cancel)
+				return
+			}
+
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
 				decisionHandler(.cancel)
@@ -501,6 +511,8 @@ extension WebViewController: WKScriptMessageHandler {
 			if let feed = article?.feed {
 				coordinator.showFeedInspector(for: feed)
 			}
+		case MessageName.mediaSourceURLs:
+			mediaSourceURLs = Set((message.body as? [String]) ?? [])
 		default:
 			return
 		}
@@ -588,11 +600,13 @@ private extension WebViewController {
 				webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasClicked)
 				webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.imageWasShown)
 				webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.showFeedInspector)
+				webView.configuration.userContentController.removeScriptMessageHandler(forName: MessageName.mediaSourceURLs)
 
 				// Add handlers
 				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasClicked)
 				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.imageWasShown)
 				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.showFeedInspector)
+				webView.configuration.userContentController.add(WrapperScriptMessageHandler(self), name: MessageName.mediaSourceURLs)
 
 				self.renderPage(webView)
 			}
