@@ -183,7 +183,7 @@ import Secrets
 				refreshProgress.completeTask()
 				let ingestedIDs = try await ingestStreamArticleIDs(for: account, userID: credentials.username)
 				refreshProgress.completeTask()
-				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account)
+				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account, includeStarred: true)
 				refreshProgress.completeTask()
 				// The ingest walk just fetched exactly the IDs changed since the last sync —
 				// reuse them instead of walking global.all a second time with the same bounds.
@@ -240,7 +240,10 @@ import Secrets
 		do {
 			let sentCount = try await sendArticleStatusReturningCount(for: account)
 			refreshProgress.completeTask()
-			let refreshCounts = try await refreshArticleStatusReturningCounts(for: account)
+			// The starred stream has no date bound, so a full starred walk every two minutes
+			// is expensive for heavy savers. Stars still send promptly — remote star changes
+			// arrive with each refreshAll.
+			let refreshCounts = try await refreshArticleStatusReturningCounts(for: account, includeStarred: false)
 			refreshProgress.completeTask()
 
 			if sentCount == 0 && refreshCounts.totalChanged == 0 {
@@ -386,7 +389,7 @@ import Secrets
 			return
 		}
 		do {
-			_ = try await refreshArticleStatusReturningCounts(for: account)
+			_ = try await refreshArticleStatusReturningCounts(for: account, includeStarred: true)
 		} catch where isRateLimitError(error) {
 			noteRateLimited(error, account: account, operation: "Refreshing article status")
 		}
@@ -396,7 +399,7 @@ import Secrets
 	/// If the user is using another Feedly client at roughly the same time as this app,
 	/// this app does its part to ensure articles have a consistent status between both.
 	/// Returns counts of articles whose unread/starred state actually flipped.
-	private func refreshArticleStatusReturningCounts(for account: Account) async throws -> StatusRefreshCounts {
+	private func refreshArticleStatusReturningCounts(for account: Account, includeStarred: Bool) async throws -> StatusRefreshCounts {
 		Self.logger.info("Feedly: Refreshing article statuses")
 
 		guard let credentials else {
@@ -423,13 +426,15 @@ import Secrets
 				Self.logger.error("Feedly: Ingesting unread article IDs failed: \(error.localizedDescription)")
 			}
 
-			do {
-				let starred = try await ingestStarredArticleIDs(for: account, userID: credentials.username)
-				counts.starredAdded = starred.added
-				counts.starredRemoved = starred.removed
-			} catch {
-				refreshError = error
-				Self.logger.error("Feedly: Ingesting starred article IDs failed: \(error.localizedDescription)")
+			if includeStarred {
+				do {
+					let starred = try await ingestStarredArticleIDs(for: account, userID: credentials.username)
+					counts.starredAdded = starred.added
+					counts.starredRemoved = starred.removed
+				} catch {
+					refreshError = error
+					Self.logger.error("Feedly: Ingesting starred article IDs failed: \(error.localizedDescription)")
+				}
 			}
 
 			Self.logger.info("Feedly: Finished refreshing article statuses")
