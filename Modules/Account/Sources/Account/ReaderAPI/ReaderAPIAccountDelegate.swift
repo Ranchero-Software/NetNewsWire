@@ -52,11 +52,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	private let caller: ReaderAPICaller
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ReaderAPI")
 
-	// Set on a 429 Too Many Requests response. Refreshing and status syncing are skipped
-	// until this date so we don’t keep burning the shared per-application API quota.
+	// Skipping while rate limited protects the shared per-application API quota.
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3001>
-	private var rateLimitResumeDate: Date?
-	private static let defaultRetryAfter: TimeInterval = 60 * 60
+	private let rateLimiter = SyncRateLimiter(serviceName: "ReaderAPI", treatsForbiddenAsRateLimited: false, logger: ReaderAPIAccountDelegate.logger)
 	private static let zone1UsageThreshold = 0.9
 
 	var progressInfo = ProgressInfo() {
@@ -113,9 +111,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return
 		}
-		if shouldSkipBecauseRateLimited() {
-			if let rateLimitResumeDate {
-				let resumeTime = DateFormatter.localizedString(from: rateLimitResumeDate, dateStyle: .none, timeStyle: .short)
+		if rateLimiter.shouldSkip() {
+			if let resumeDate = rateLimiter.resumeDate {
+				let resumeTime = DateFormatter.localizedString(from: resumeDate, dateStyle: .none, timeStyle: .short)
 				ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .refreshAll, message: "Skipped — rate limited by \(account.type.displayName) until \(resumeTime)")
 			}
 			return
@@ -155,9 +153,9 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				await refreshMissingArticles(account)
 				refreshProgress.reset()
 			}
-		} catch WebserviceError.tooManyRequests(let retryAfter) {
+		} catch where rateLimiter.isRateLimitError(error) {
 			refreshProgress.reset()
-			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Refreshing account")
+			rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing account")
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: refreshAll 1 — error \(error.localizedDescription)")
 			refreshProgress.reset()
@@ -190,7 +188,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return false
 		}
-		if shouldSkipBecauseRateLimited() {
+		if rateLimiter.shouldSkip() {
 			return false
 		}
 
@@ -208,8 +206,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 			let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
 			return sentCount > 0 || refreshChangedCount > 0
-		} catch WebserviceError.tooManyRequests(let retryAfter) {
-			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Syncing article status")
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Syncing article status")
 			return false
 		}
 	}
@@ -218,13 +216,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return
 		}
-		if shouldSkipBecauseRateLimited() {
+		if rateLimiter.shouldSkip() {
 			return
 		}
 		do {
 			_ = try await sendArticleStatusReturningCount(for: account)
-		} catch WebserviceError.tooManyRequests(let retryAfter) {
-			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Sending article status")
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Sending article status")
 		}
 	}
 
@@ -269,7 +267,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 			if let savedError {
 				// A 429 gets one Error Log entry from noteRateLimited, not one per send.
-				if !isTooManyRequests(savedError) {
+				if !rateLimiter.isRateLimitError(savedError) {
 					account.postSyncError(savedError, operation: "Sending article status")
 				}
 				throw savedError
@@ -282,13 +280,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		guard let account else {
 			return
 		}
-		if shouldSkipBecauseRateLimited() {
+		if rateLimiter.shouldSkip() {
 			return
 		}
 		do {
 			_ = try await refreshArticleStatusReturningCount(for: account)
-		} catch WebserviceError.tooManyRequests(let retryAfter) {
-			noteRateLimited(retryAfter: retryAfter, account: account, operation: "Refreshing article status")
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing article status")
 		}
 	}
 
@@ -325,7 +323,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 			if let savedError {
 				// A 429 gets one Error Log entry from noteRateLimited, not one per refresh.
-				if !isTooManyRequests(savedError) {
+				if !rateLimiter.isRateLimitError(savedError) {
 					account.postSyncError(savedError, operation: "Refreshing article status")
 				}
 				throw savedError
@@ -1213,37 +1211,6 @@ private extension ReaderAPIAccountDelegate {
 	}
 
 	// MARK: - Rate Limiting
-
-	/// True when a 429 response has paused syncing and the pause hasn’t expired.
-	private func shouldSkipBecauseRateLimited() -> Bool {
-		guard let rateLimitResumeDate else {
-			return false
-		}
-		guard rateLimitResumeDate > Date() else {
-			self.rateLimitResumeDate = nil
-			return false
-		}
-		Self.logger.info("ReaderAPIAccountDelegate: skipping — rate limited until \(rateLimitResumeDate)")
-		return true
-	}
-
-	/// Pause syncing until the server’s Retry-After (or a default) and post one Error Log entry.
-	private func noteRateLimited(retryAfter: TimeInterval?, account: Account, operation: String) {
-		let alreadyRateLimited = (rateLimitResumeDate ?? .distantPast) > Date()
-		rateLimitResumeDate = Date().addingTimeInterval(retryAfter ?? Self.defaultRetryAfter)
-		Self.logger.error("ReaderAPIAccountDelegate: rate limited — pausing syncing until \(self.rateLimitResumeDate ?? .distantPast)")
-
-		if !alreadyRateLimited {
-			account.postSyncError(WebserviceError.tooManyRequests(retryAfter: retryAfter), operation: operation)
-		}
-	}
-
-	private func isTooManyRequests(_ error: Error) -> Bool {
-		if case WebserviceError.tooManyRequests = error {
-			return true
-		}
-		return false
-	}
 
 	/// True when the reported Zone 1 (read) usage is close enough to the daily limit
 	/// that the full status downloads should be skipped until the limits reset.

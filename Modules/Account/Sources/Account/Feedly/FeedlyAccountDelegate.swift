@@ -98,12 +98,9 @@ import Secrets
 	// refreshAll — overlapping runs double the request volume and corrupt progress.
 	private var refreshAllIsRunning = false
 
-	// Set on a 429 Too Many Requests response — or a 403, which is how Feedly’s abuse
-	// protection reports a rate-limit ban. Refreshing and status syncing are skipped
-	// until this date so we don’t keep hammering and extend the ban.
+	// Feedly’s abuse protection reports its rate-limit ban as a 403, so that counts too.
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
-	private var rateLimitResumeDate: Date?
-	private static let defaultRetryAfter: TimeInterval = 60 * 60
+	private let rateLimiter = SyncRateLimiter(serviceName: "Feedly", treatsForbiddenAsRateLimited: true, logger: FeedlyAccountDelegate.logger)
 
 	init(dataFolder: String, api: FeedlyAPICaller.API) {
 
@@ -143,9 +140,9 @@ import Secrets
 			throw FeedlyAccountDelegateError.notLoggedIn
 		}
 
-		if shouldSkipBecauseRateLimited() {
-			if let rateLimitResumeDate {
-				let resumeTime = DateFormatter.localizedString(from: rateLimitResumeDate, dateStyle: .none, timeStyle: .short)
+		if rateLimiter.shouldSkip() {
+			if let resumeDate = rateLimiter.resumeDate {
+				let resumeTime = DateFormatter.localizedString(from: resumeDate, dateStyle: .none, timeStyle: .short)
 				ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .refreshAll, message: "Skipped — rate limited by Feedly until \(resumeTime)")
 			}
 			return
@@ -181,7 +178,7 @@ import Secrets
 					// A failed status send must not block fetching new articles.
 					// <https://discourse.netnewswire.com/t/no-feed-updates/336>
 					// A rate limit is the exception — continuing would just extend the ban.
-					if isRateLimitError(error) {
+					if rateLimiter.isRateLimitError(error) {
 						throw error
 					}
 					Self.logger.error("Feedly: continuing refresh despite status send failure: \(error.localizedDescription)")
@@ -214,8 +211,8 @@ import Secrets
 		} catch {
 			refreshProgress.reset()
 			progressInfo = ProgressInfo()
-			if isRateLimitError(error) {
-				noteRateLimited(error, account: account, operation: "Refreshing account")
+			if rateLimiter.isRateLimitError(error) {
+				rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing account")
 				return
 			}
 			throw AccountError.wrapped(error, account)
@@ -229,7 +226,7 @@ import Secrets
 		guard let account else {
 			return false
 		}
-		if shouldSkipBecauseRateLimited() {
+		if rateLimiter.shouldSkip() {
 			return false
 		}
 		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
@@ -261,8 +258,8 @@ import Secrets
 			}
 
 			return sentCount > 0 || refreshCounts.totalChanged > 0
-		} catch where isRateLimitError(error) {
-			noteRateLimited(error, account: account, operation: "Syncing article status")
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Syncing article status")
 			return false
 		}
 	}
@@ -271,13 +268,13 @@ import Secrets
 		guard let account else {
 			return
 		}
-		if shouldSkipBecauseRateLimited() {
+		if rateLimiter.shouldSkip() {
 			return
 		}
 		do {
 			_ = try await sendArticleStatusReturningCount(for: account)
-		} catch where isRateLimitError(error) {
-			noteRateLimited(error, account: account, operation: "Sending article status")
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Sending article status")
 		}
 	}
 
@@ -355,7 +352,7 @@ import Secrets
 							let unsentIDs = Set(chunks[chunkIndex...].flatMap { $0 })
 							await syncDatabase.resetSelectedForProcessing(unsentIDs, key: pairing.key)
 							savedError = error
-							if isRateLimitError(error) {
+							if rateLimiter.isRateLimitError(error) {
 								break pairingLoop
 							}
 							break
@@ -364,7 +361,7 @@ import Secrets
 				}
 
 				if let savedError {
-					if isRateLimitError(savedError) {
+					if rateLimiter.isRateLimitError(savedError) {
 						// Pairings skipped after a rate limit stay queued — clear their in-progress mark.
 						syncDatabase.resetAllSelectedForProcessing()
 					}
@@ -374,7 +371,7 @@ import Secrets
 			}
 		} catch {
 			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per send.
-			if !isRateLimitError(error) {
+			if !rateLimiter.isRateLimitError(error) {
 				account.postSyncError(error, operation: "Sending article status")
 			}
 			throw error
@@ -396,13 +393,13 @@ import Secrets
 		guard let account else {
 			return
 		}
-		if shouldSkipBecauseRateLimited() {
+		if rateLimiter.shouldSkip() {
 			return
 		}
 		do {
 			_ = try await refreshArticleStatusReturningCounts(for: account, includeStarred: true)
-		} catch where isRateLimitError(error) {
-			noteRateLimited(error, account: account, operation: "Refreshing article status")
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing article status")
 		}
 	}
 
@@ -451,7 +448,7 @@ import Secrets
 			Self.logger.info("Feedly: Finished refreshing article statuses")
 			if let refreshError {
 				// A rate-limit error gets one Error Log entry from noteRateLimited, not one per refresh.
-				if !isRateLimitError(refreshError) {
+				if !rateLimiter.isRateLimitError(refreshError) {
 					account.postSyncError(refreshError, operation: "Refreshing article status")
 				}
 				throw refreshError
@@ -769,7 +766,7 @@ import Secrets
 			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if !shouldSkipBecauseRateLimited(), let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
+		if !rateLimiter.shouldSkip(), let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -1145,49 +1142,6 @@ private extension FeedlyAccountDelegate {
 
 private extension FeedlyAccountDelegate {
 
-	// MARK: - Rate Limiting
-
-	/// True when a rate-limit response has paused syncing and the pause hasn’t expired.
-	private func shouldSkipBecauseRateLimited() -> Bool {
-		guard let rateLimitResumeDate else {
-			return false
-		}
-		guard rateLimitResumeDate > Date() else {
-			self.rateLimitResumeDate = nil
-			return false
-		}
-		Self.logger.info("Feedly: skipping — rate limited until \(rateLimitResumeDate)")
-		return true
-	}
-
-	/// Pause syncing until the server’s Retry-After (or a default) and post one Error Log entry.
-	private func noteRateLimited(_ error: Error, account: Account, operation: String) {
-		let alreadyRateLimited = (rateLimitResumeDate ?? .distantPast) > Date()
-		rateLimitResumeDate = Date().addingTimeInterval(retryAfter(for: error) ?? Self.defaultRetryAfter)
-		Self.logger.error("Feedly: rate limited — pausing syncing until \(self.rateLimitResumeDate ?? .distantPast)")
-
-		if !alreadyRateLimited {
-			account.postSyncError(error, operation: operation)
-		}
-	}
-
-	/// Feedly’s abuse protection reports its ban as a 403, so that counts too.
-	private func isRateLimitError(_ error: Error) -> Bool {
-		if case WebserviceError.tooManyRequests = error {
-			return true
-		}
-		if case WebserviceError.httpError(let status) = error, status == HTTPResponseCode.forbidden {
-			return true
-		}
-		return false
-	}
-
-	private func retryAfter(for error: Error) -> TimeInterval? {
-		if case WebserviceError.tooManyRequests(let retryAfter) = error {
-			return retryAfter
-		}
-		return nil
-	}
 }
 
 // MARK: - FeedlyAPICallerDelegate
