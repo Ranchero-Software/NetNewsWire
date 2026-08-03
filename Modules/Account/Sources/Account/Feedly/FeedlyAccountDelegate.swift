@@ -93,6 +93,7 @@ import Secrets
 	private static let pendingStatusSendThreshold = 100
 
 	private static let feedsToRefreshPerSync = 5
+	private static let individualFeedRefreshCount = 100
 	// Slightly over a day so each feed's schedule drifts, rather than hitting the server at the same time daily.
 	private static let minimumFeedRefreshInterval: TimeInterval = 24.5 * 60 * 60
 
@@ -1075,12 +1076,16 @@ private extension FeedlyAccountDelegate {
 
 		var newArticleCount = 0
 		for feed in due {
+			let lastCheckDate = feed.lastCheckDate
 			feed.lastCheckDate = now // mark the attempt; a failed feed retries next rotation, not immediately
 			do {
 				let successMessage: (IngestResult) -> String? = { "\($0.newArticleCount) new article\($0.newArticleCount == 1 ? "" : "s")" }
 				let result = try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay, successMessage: successMessage) {
 					let resource = FeedlyFeedResourceID(id: feed.feedID)
-					return try await self.syncStreamContents(for: account, resource: resource, paginated: false, newerThan: nil)
+					// Backfilling needs only what arrived since this feed's last check —
+					// unbounded, this was up to 1000 full-content entries per feed per sync.
+					let newerThan = lastCheckDate ?? now.bySubtracting(days: Self.streamIngestDaysLimit)
+					return try await self.syncStreamContents(for: account, resource: resource, paginated: false, newerThan: newerThan, count: Self.individualFeedRefreshCount)
 				}
 				newArticleCount += result.newArticleCount
 				// ingest marks new articles read by default; restore the server's unread state for the ones that are unread.
@@ -1097,12 +1102,12 @@ private extension FeedlyAccountDelegate {
 	/// Pull stream contents for `resource`, optionally paginated, and update the account.
 	/// Returns the aggregate ingest result across pages.
 	@discardableResult
-	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?) async throws -> IngestResult {
+	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?, count: Int? = nil) async throws -> IngestResult {
 		var result = IngestResult()
 		var continuation: String?
 		var pageCount = 0
 		repeat {
-			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
+			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil, count: count) })
 			let pageResult = await ingest(entries: stream.items, into: account)
 			result.newArticleCount += pageResult.newArticleCount
 			result.newUnreadArticleIDs.formUnion(pageResult.newUnreadArticleIDs)

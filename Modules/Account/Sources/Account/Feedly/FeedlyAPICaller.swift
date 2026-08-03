@@ -211,7 +211,7 @@ extension FeedlyAPICaller {
 
 extension FeedlyAPICaller {
 
-	func getStreamContents(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream {
+	func getStreamContents(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, count: Int? = nil) async throws -> FeedlyStream {
 		var queryItems = [URLQueryItem]()
 
 		if let date = newerThan {
@@ -224,7 +224,7 @@ extension FeedlyAPICaller {
 		if let value = continuation, !value.isEmpty {
 			queryItems.append(URLQueryItem(name: "continuation", value: value))
 		}
-		queryItems.append(URLQueryItem(name: "count", value: String(Self.streamContentsCount)))
+		queryItems.append(URLQueryItem(name: "count", value: String(count ?? Self.streamContentsCount)))
 		queryItems.append(URLQueryItem(name: "streamId", value: resource.id))
 
 		let request = try makeAuthorizedRequest(path: "/v3/streams/contents", queryItems: queryItems)
