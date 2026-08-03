@@ -44,30 +44,18 @@ enum FeedlyMarkAction: String, Sendable {
 @MainActor final class FeedlyAPICaller {
 
 	enum API: Sendable {
-		case sandbox
 		case cloud
 
 		var baseURLComponents: URLComponents {
 			var components = URLComponents()
 			components.scheme = "https"
-			switch self {
-			case .sandbox:
-				// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
-				components.host = "sandbox7.feedly.com"
-			case .cloud:
-				// https://developer.feedly.com/cloud/
-				components.host = "cloud.feedly.com"
-			}
+			// https://developer.feedly.com/cloud/
+			components.host = "cloud.feedly.com"
 			return components
 		}
 
 		var oauthAuthorizationClient: OAuthAuthorizationClient {
-			switch self {
-			case .sandbox:
-				return .feedlySandboxClient
-			case .cloud:
-				return .feedlyCloudClient
-			}
+			return .feedlyCloudClient
 		}
 	}
 

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  FeedlyModel.swift
 //  Account
 //
 //  Created by Brent Simmons on 11/17/25.
@@ -221,7 +221,7 @@ struct FeedlyEntryParser {
 		return rightToLeftTextSantizer.sanitize(entry.title)
 	}
 
-	var contentHMTL: String? {
+	var contentHTML: String? {
 		return entry.content?.content ?? entry.summary?.content
 	}
 
@@ -285,7 +285,7 @@ struct FeedlyEntryParser {
 						  externalURL: externalURL,
 						  title: title,
 						  language: nil,
-						  contentHTML: contentHMTL,
+						  contentHTML: contentHTML,
 						  contentText: contentText,
 						  markdown: nil,
 						  summary: summary,

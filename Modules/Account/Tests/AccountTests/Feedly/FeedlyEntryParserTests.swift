@@ -42,7 +42,7 @@ import XCTest
 		XCTAssertEqual(parser.feedURL, origin.streamID)
 		XCTAssertEqual(parser.externalURL, canonicalLink.href)
 		XCTAssertEqual(parser.title, entry.title)
-		XCTAssertEqual(parser.contentHMTL, content.content)
+		XCTAssertEqual(parser.contentHTML, content.content)
 		XCTAssertEqual(parser.summary, summary.content)
 		XCTAssertEqual(parser.datePublished, .distantPast)
 		XCTAssertEqual(parser.dateModified, Date(timeIntervalSinceReferenceDate: 0))
@@ -102,7 +102,7 @@ import XCTest
 		XCTAssertEqual(parser.summary, summaryContent)
 
 		// These should not be sanitized because it is supposed to be HTML content.
-		XCTAssertEqual(parser.contentHMTL, content.content)
+		XCTAssertEqual(parser.contentHTML, content.content)
 	}
 
 	func testLocatesCanonicalExternalURL() {
@@ -174,7 +174,7 @@ import XCTest
 
 		let parser = FeedlyEntryParser(entry: entry)
 
-		XCTAssertEqual(parser.contentHMTL, content.content)
+		XCTAssertEqual(parser.contentHTML, content.content)
 	}
 
 	func testPublishedDateUsedWhenNotAfterCrawlDate() {
@@ -213,7 +213,7 @@ import XCTest
 
 		let parser = FeedlyEntryParser(entry: entry)
 
-		XCTAssertEqual(parser.contentHMTL, summary.content)
+		XCTAssertEqual(parser.contentHTML, summary.content)
 	}
 
 	private func makeEntry(crawled: Date, published: Date?) -> FeedlyEntry {

@@ -20,16 +20,10 @@ import Secrets
 
 @MainActor final class FeedlyAccountDelegate: AccountDelegate {
 
-	/// Feedly has a sandbox API and a production API.
-	/// This property is referred to when clients need to know which environment it should be pointing to.
-	/// The value of this property must match any `OAuthAuthorizationClient` used.
-	/// Currently this is always returning the cloud API, but we are leaving it stubbed out for now.
 	nonisolated static var environment: FeedlyAPICaller.API {
 		return .cloud
 	}
 
-	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
-	// See https://developer.feedly.com/v3/opml/
 	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(FeedlyAccountDelegate.markAsReadDaysLimit)]
 
 	// Feedly can’t apply mark-as-read to entries crawled more than ~31 days ago.

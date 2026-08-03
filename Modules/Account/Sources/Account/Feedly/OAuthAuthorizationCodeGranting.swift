@@ -15,13 +15,11 @@ import Secrets
 nonisolated public struct OAuthAuthorizationClient: Equatable, Sendable {
 	public let id: String
 	public let redirectURI: String
-	public let state: String?
 	public let secret: String
 
-	public init(id: String, redirectURI: String, state: String?, secret: String) {
+	public init(id: String, redirectURI: String, secret: String) {
 		self.id = id
 		self.redirectURI = redirectURI
-		self.state = state
 		self.secret = secret
 	}
 }
@@ -85,30 +83,6 @@ public extension OAuthAuthorizationResponse {
 
 		self.init(code: codeValue, state: stateValue)
 	}
-}
-
-/// Models section 4.1.2.1 of the OAuth 2.0 Authorization Framework
-/// https://tools.ietf.org/html/rfc6749#section-4.1.2.1
-nonisolated public struct OAuthAuthorizationErrorResponse: Error, Sendable {
-	public let error: OAuthAuthorizationError
-	public let state: String?
-	public let errorDescription: String?
-
-	public var localizedDescription: String {
-		return errorDescription ?? error.rawValue
-	}
-}
-
-/// Error values as enumerated in section 4.1.2.1 of the OAuth 2.0 Authorization Framework.
-/// https://tools.ietf.org/html/rfc6749#section-4.1.2.1
-nonisolated public enum OAuthAuthorizationError: String, Sendable {
-	case invalidRequest = "invalid_request"
-	case unauthorizedClient = "unauthorized_client"
-	case accessDenied = "access_denied"
-	case unsupportedResponseType = "unsupported_response_type"
-	case invalidScope = "invalid_scope"
-	case serverError = "server_error"
-	case temporarilyUnavailable = "temporarily_unavailable"
 }
 
 /// Models section 4.1.3 of the OAuth 2.0 Authorization Framework
