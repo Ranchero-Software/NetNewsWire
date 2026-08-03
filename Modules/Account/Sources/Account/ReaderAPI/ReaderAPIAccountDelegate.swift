@@ -766,12 +766,6 @@ private extension ReaderAPIAccountDelegate {
 		}
 	}
 
-	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
-	/// sub-activity of `kind`, reporting the page's item count.
-	func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
-		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
-	}
-
 	/// Returns a per-page handler for paginated `retrieveItemIDs` calls, logging each
 	/// page as a numbered sub-activity of `kind` reporting the page's article-ID count.
 	func articleIDPageHandler(for account: Account, kind: ActivityKind) -> @MainActor (Int) -> Void {
@@ -978,7 +972,7 @@ private extension ReaderAPIAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 
 			do {
-				try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(articleIDGroup.count) \(label)" }, { try await apiCall(articleIDGroup) })
+				try await account.logRefreshPage(kind: .sendArticleStatuses, message: { _ in "\(articleIDGroup.count) \(label)" }, { try await apiCall(articleIDGroup) })
 				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup), key: key)
 				sentCount += articleIDGroup.count
 			} catch {
@@ -1095,7 +1089,7 @@ private extension ReaderAPIAccountDelegate {
 			for chunk in chunkedArticleIDs {
 
 				do {
-					let entries = try await logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0?.count ?? 0) articles" }, { try await caller.retrieveEntries(articleIDs: chunk) })
+					let entries = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0?.count ?? 0) articles" }, { try await caller.retrieveEntries(articleIDs: chunk) })
 					refreshProgress.completeTask()
 					await processEntries(account: account, entries: entries)
 				} catch {

@@ -347,7 +347,7 @@ import Secrets
 					for (chunkIndex, chunk) in chunks.enumerated() {
 						let chunkIDs = Set(chunk)
 						do {
-							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+							try await account.logRefreshPage(kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
 							await syncDatabase.deleteSelectedForProcessing(chunkIDs, key: pairing.key)
 							sentCount += chunkIDs.count
 						} catch {
@@ -944,7 +944,7 @@ private extension FeedlyAccountDelegate {
 			var continuation: String?
 			var pageCount = 0
 			repeat {
-				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
+				let page = try await account.logRefreshPage(kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 				await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
 				collected.formUnion(page.ids)
 				continuation = page.continuation
@@ -1020,7 +1020,7 @@ private extension FeedlyAccountDelegate {
 		var continuation: String?
 		var pageCount = 0
 		repeat {
-			let page = try await logRefreshPage(for: account, kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
+			let page = try await account.logRefreshPage(kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
 			collected.formUnion(page.ids)
 			continuation = page.continuation
 			pageCount += 1
@@ -1029,12 +1029,6 @@ private extension FeedlyAccountDelegate {
 			Self.logger.info("Feedly: stopped a stream ID walk at the page cap")
 		}
 		return collected
-	}
-
-	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
-	/// sub-activity of `kind`, reporting the page's item count.
-	private func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
-		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
 	}
 
 	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks,
@@ -1056,7 +1050,7 @@ private extension FeedlyAccountDelegate {
 					Self.logger.info("Feedly: downloading \(Self.maxArticleDownloadChunksPerSync * Self.articleDownloadChunkSize) of \(articleIDs.count) articles this sync — the rest follow on later syncs")
 				}
 				for chunk in chunks.prefix(Self.maxArticleDownloadChunksPerSync) {
-					let entries = try await self.logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
+					let entries = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
 					await self.ingest(entries: entries, into: account)
 					ingested += entries.count
 				}
@@ -1117,7 +1111,7 @@ private extension FeedlyAccountDelegate {
 		var continuation: String?
 		var pageCount = 0
 		repeat {
-			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil, count: count) })
+			let stream = try await account.logRefreshPage(kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil, count: count) })
 			let pageResult = await ingest(entries: stream.items, into: account)
 			result.newArticleCount += pageResult.newArticleCount
 			result.newUnreadArticleIDs.formUnion(pageResult.newUnreadArticleIDs)

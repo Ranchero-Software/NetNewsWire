@@ -41,12 +41,6 @@ import os
 		}
 	}
 
-	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
-	/// sub-activity of `kind`, reporting the page's item count.
-	func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
-		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
-	}
-
 	@MainActor func syncFolders(_ account: Account, _ folders: [NewsBlurFolder]?) {
 		guard let folders else { return }
 		assert(Thread.isMainThread)
@@ -378,7 +372,7 @@ import os
 			refreshProgress.completeTask()
 		}
 
-		let (stories, _) = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(feedID: feed.feedID, page: page) })
+		let (stories, _) = try await account.logRefreshPage(kind: .refreshArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(feedID: feed.feedID, page: page) })
 		guard let stories, stories.count > 0 else {
 			return
 		}
