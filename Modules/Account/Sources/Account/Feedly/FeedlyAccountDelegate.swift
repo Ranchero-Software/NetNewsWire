@@ -1122,10 +1122,11 @@ private extension FeedlyAccountDelegate {
 				let successMessage: (IngestResult) -> String? = { "\($0.newArticleCount) new article\($0.newArticleCount == 1 ? "" : "s")" }
 				let result = try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay, successMessage: successMessage) {
 					let resource = FeedlyFeedResourceID(id: feed.feedID)
-					// Backfilling needs only what arrived since this feed's last check —
-					// unbounded, this was up to 1000 full-content entries per feed per sync.
+					// Only what arrived since this feed's last check, in small pages. Paginated —
+					// an unpaginated fetch silently dropped everything past the first page while
+					// lastCheckDate advanced anyway, losing those articles for good.
 					let newerThan = lastCheckDate ?? now.bySubtracting(days: Self.streamIngestDaysLimit)
-					return try await self.syncStreamContents(for: account, resource: resource, paginated: false, newerThan: newerThan, count: Self.individualFeedRefreshCount)
+					return try await self.syncStreamContents(for: account, resource: resource, paginated: true, newerThan: newerThan, count: Self.individualFeedRefreshCount)
 				}
 				newArticleCount += result.newArticleCount
 				// ingest marks new articles read by default; restore the server's unread state for the ones that are unread.
@@ -1154,6 +1155,9 @@ private extension FeedlyAccountDelegate {
 			continuation = paginated ? stream.continuation : nil
 			pageCount += 1
 		} while continuation != nil && pageCount < Self.maxStreamPageCount
+		if continuation != nil {
+			Self.logger.info("Feedly: stopped a stream contents walk at the page cap")
+		}
 		return result
 	}
 
