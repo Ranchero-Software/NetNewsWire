@@ -30,7 +30,10 @@ import Secrets
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
-	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(31)]
+	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(FeedlyAccountDelegate.markAsReadDaysLimit)]
+
+	// Feedly can’t apply mark-as-read to entries crawled more than ~31 days ago.
+	static let markAsReadDaysLimit = 31
 
 	let isOPMLImportSupported = false
 	var isOPMLImportInProgress = false
@@ -277,7 +280,27 @@ import Secrets
 					guard !pending.isEmpty else {
 						continue
 					}
-					let chunks = Array(Set(pending.map { $0.articleID })).chunked(into: Self.markChunkSize)
+					var articleIDs = Set(pending.map { $0.articleID })
+
+					// Sending mark-as-read for articles past Feedly’s marker limit can never
+					// succeed — they’d requeue forever and grow the backlog without bound.
+					// <https://github.com/Ranchero-Software/NetNewsWire/issues/3779>
+					if pairing.key == .read, pairing.flag == true {
+						let articles = await account.fetchArticlesAsync(.articleIDs(articleIDs))
+						let datesByArticleID = Dictionary(uniqueKeysWithValues: articles.map { ($0.articleID, $0.datePublished ?? $0.status.dateArrived) })
+						let cutoffDate = Date().bySubtracting(days: Self.markAsReadDaysLimit)
+						let unmarkableIDs = Self.unmarkableAsReadArticleIDs(articleIDs, datesByArticleID: datesByArticleID, cutoffDate: cutoffDate)
+						if !unmarkableIDs.isEmpty {
+							Self.logger.info("Feedly: dropping \(unmarkableIDs.count) mark-as-read statuses past Feedly's marker limit")
+							await syncDatabase.deleteSelectedForProcessing(unmarkableIDs, key: .read)
+							articleIDs.subtract(unmarkableIDs)
+						}
+						guard !articleIDs.isEmpty else {
+							continue
+						}
+					}
+
+					let chunks = Array(articleIDs).chunked(into: Self.markChunkSize)
 
 					// Delete each chunk’s rows as it succeeds, so a later failure can’t
 					// resurrect statuses the server already accepted — that’s how the
@@ -318,6 +341,17 @@ import Secrets
 			}
 			throw error
 		}
+	}
+
+	/// ArticleIDs whose mark-as-read can never succeed at Feedly: the article is older
+	/// than the marker limit, or is gone from the database entirely (older still).
+	nonisolated static func unmarkableAsReadArticleIDs(_ articleIDs: Set<String>, datesByArticleID: [String: Date], cutoffDate: Date) -> Set<String> {
+		Set(articleIDs.filter { articleID in
+			guard let date = datesByArticleID[articleID] else {
+				return true
+			}
+			return date < cutoffDate
+		})
 	}
 
 	func refreshArticleStatus() async throws {
