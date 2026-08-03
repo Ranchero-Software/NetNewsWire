@@ -35,10 +35,11 @@ public enum WebserviceError: LocalizedError, Sendable {
 
 nonisolated extension URLSession {
 
-	/// The single shared session used for all web service calls.
+	/// A session configured for web service calls. Each API caller owns its own session,
+	/// so canceling one account’s requests can’t cancel another account’s.
 	/// When running unit tests, it routes requests through `TestingURLProtocol`
 	/// so no outside code needs any knowledge of testing.
-	public static let webservice: URLSession = {
+	public static func makeWebserviceSession() -> URLSession {
 
 		let sessionConfiguration = URLSessionConfiguration.default
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -58,7 +59,7 @@ nonisolated extension URLSession {
 		}
 
 		return URLSession(configuration: sessionConfiguration)
-	}()
+	}
 
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in

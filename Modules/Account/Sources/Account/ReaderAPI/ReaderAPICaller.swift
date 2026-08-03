@@ -61,7 +61,7 @@ struct ReaderAPIUsageLimits {
 		case editTag = "/reader/api/0/edit-tag"
 	}
 
-	private let session = URLSession.webservice
+	private let session = URLSession.makeWebserviceSession()
 	private let uriComponentAllowed: CharacterSet
 	private let logger: Logger
 	private var accessToken: String?

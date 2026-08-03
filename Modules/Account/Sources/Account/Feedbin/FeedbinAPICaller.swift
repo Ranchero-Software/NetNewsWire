@@ -31,7 +31,7 @@ enum CreateSubscriptionResult {
 	}
 
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
-	private let session = URLSession.webservice
+	private let session = URLSession.makeWebserviceSession()
 	private var suspended = false
 	private var lastBackdateStartTime: Date?
 

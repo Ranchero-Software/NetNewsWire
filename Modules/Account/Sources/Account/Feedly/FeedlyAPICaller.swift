@@ -66,7 +66,7 @@ enum FeedlyMarkAction: String, Sendable {
 		return baseURLComponents.host
 	}
 
-	private let session = URLSession.webservice
+	private let session = URLSession.makeWebserviceSession()
 	private let baseURLComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
 	private var isSuspended = false
