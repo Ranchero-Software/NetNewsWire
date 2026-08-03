@@ -533,7 +533,11 @@ private extension FeedlyAPICaller {
 		encoder.keyEncodingStrategy = .convertToSnakeCase
 		request.httpBody = try encoder.encode(body)
 
-		let (_, response) = try await send(request: request, resultType: FeedlyOAuthAccessTokenResponse.self, keyDecoding: .convertFromSnakeCase)
+		// The raw session, deliberately — a 401 here means the refresh token itself is bad,
+		// and going through send would trigger reauthorization, which calls back into this
+		// method and recurses without bound.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
+		let (_, response) = try await session.send(request: request, resultType: FeedlyOAuthAccessTokenResponse.self, keyDecoding: .convertFromSnakeCase)
 		guard let response else {
 			throw URLError(.cannotDecodeContentData)
 		}

@@ -1204,7 +1204,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			try await account.logActivity(kind: .validateCredentials, detail: "Refreshing access token") {
 				guard let refreshCredentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
 					Self.logger.error("Feedly: Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
-					throw WebserviceError.httpError(status: 403)
+					throw FeedlyAccountDelegateError.notLoggedIn
 				}
 
 				Self.logger.info("Feedly: Refreshing access token")
