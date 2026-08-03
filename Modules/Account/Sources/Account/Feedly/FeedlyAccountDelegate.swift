@@ -983,7 +983,7 @@ private extension FeedlyAccountDelegate {
 		// stream can’t reach anywhere near the retention limit anyway. An article absent
 		// from the bounded fetch still gets marked read below, same as an unbounded one.
 		let newerThan = Date().bySubtracting(days: Self.streamIngestDaysLimit)
-		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
+		let (remoteUnreadIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
@@ -994,10 +994,15 @@ private extension FeedlyAccountDelegate {
 		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
 
 		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
-		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs).subtracting(pendingArticleIDs)
-
 		await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
-		await account.markAsReadAsync(articleIDs: toMarkRead)
+
+		// A truncated walk isn’t authoritative about absence — marking read from it
+		// would flip everything past the page cap.
+		var toMarkRead = Set<String>()
+		if !truncated {
+			toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs).subtracting(pendingArticleIDs)
+			await account.markAsReadAsync(articleIDs: toMarkRead)
+		}
 
 		return (added: newlyUnread.count, removed: toMarkRead.count)
 	}
@@ -1008,7 +1013,7 @@ private extension FeedlyAccountDelegate {
 	@discardableResult
 	func ingestStarredArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
-		let remoteStarredIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
+		let (remoteStarredIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
@@ -1019,17 +1024,23 @@ private extension FeedlyAccountDelegate {
 		let localStarredIDs = await account.fetchStarredArticleIDsAsync()
 
 		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
-		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs).subtracting(pendingArticleIDs)
-
 		await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
-		await account.markAsUnstarredAsync(articleIDs: toUnstar)
+
+		// A truncated walk isn’t authoritative about absence — unstarring from it
+		// would strip every star past the page cap.
+		var toUnstar = Set<String>()
+		if !truncated {
+			toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs).subtracting(pendingArticleIDs)
+			await account.markAsUnstarredAsync(articleIDs: toUnstar)
+		}
 
 		return (added: newlyStarred.count, removed: toUnstar.count)
 	}
 
 	/// Page through stream IDs for `resource`, returning the union of every page.
 	/// Each page is logged as a numbered sub-activity of `kind`.
-	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> Set<String> {
+	/// `truncated` is true when the walk stopped at the page cap before reaching the stream’s end.
+	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> (ids: Set<String>, truncated: Bool) {
 		var collected = Set<String>()
 		var continuation: String?
 		var pageCount = 0
@@ -1042,7 +1053,7 @@ private extension FeedlyAccountDelegate {
 		if continuation != nil {
 			Self.logger.info("Feedly: stopped a stream ID walk at the page cap")
 		}
-		return collected
+		return (collected, continuation != nil)
 	}
 
 	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks,
