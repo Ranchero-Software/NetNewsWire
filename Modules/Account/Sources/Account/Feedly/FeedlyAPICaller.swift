@@ -121,8 +121,8 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(path: "/v3/collections", method: HTTPMethod.post)
 		request.httpBody = try JSONEncoder().encode(CreateCollectionBody(label: label))
 
-		let (httpResponse, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200, let collection = collections?.first else {
+		let (_, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let collection = collections?.first else {
 			throw URLError(.cannotDecodeContentData)
 		}
 		return collection
@@ -137,8 +137,8 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(path: "/v3/collections", method: HTTPMethod.post)
 		request.httpBody = try JSONEncoder().encode(RenameCollectionBody(id: id, label: name))
 
-		let (httpResponse, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200, let collection = collections?.first else {
+		let (_, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let collection = collections?.first else {
 			throw URLError(.cannotDecodeContentData)
 		}
 		return collection
@@ -150,10 +150,7 @@ extension FeedlyAPICaller {
 		}
 		let request = try makeAuthorizedRequest(percentEncodedPath: "/v3/collections/\(encodedID)", method: HTTPMethod.delete)
 
-		let (httpResponse, _) = try await send(request: request, resultType: Optional<FeedlyCollection>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 
 	func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
@@ -186,12 +183,7 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(percentEncodedPath: "/v3/collections/\(encodedCollectionID)/feeds/.mdelete", method: HTTPMethod.delete)
 		request.httpBody = try JSONEncoder().encode([RemovableFeed(id: feedID)])
 
-		// `resultType` is optional because the Feedly API has gone from returning an array of removed feeds to returning `null`.
-		// https://developer.feedly.com/v3/collections/#remove-multiple-feeds-from-a-personal-collection
-		let (httpResponse, _) = try await send(request: request, resultType: Optional<[FeedlyFeed]>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
@@ -277,10 +269,7 @@ extension FeedlyAPICaller {
 
 		// The markers response body is irrelevant to success — decoding it could
 		// turn a successful mark into a spurious failure that requeues forever.
-		let httpResponse = try await sendIgnoringResponseBody(request: request)
-		guard (200...299).contains(httpResponse.statusCode) else {
-			throw WebserviceError.httpError(status: httpResponse.statusCode)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
