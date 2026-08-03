@@ -36,7 +36,7 @@ import os
 				return (folders: folders?.count ?? 0, feeds: feeds?.count ?? 0)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing feeds")
+			account.postSyncError(error, operation: "Refreshing feeds")
 			throw error
 		}
 	}

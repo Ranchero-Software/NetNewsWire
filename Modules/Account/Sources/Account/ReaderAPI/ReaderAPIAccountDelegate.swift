@@ -270,7 +270,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			if let savedError {
 				// A 429 gets one Error Log entry from noteRateLimited, not one per send.
 				if !isTooManyRequests(savedError) {
-					postSyncError(savedError, account: account, operation: "Sending article status")
+					account.postSyncError(savedError, operation: "Sending article status")
 				}
 				throw savedError
 			}
@@ -326,7 +326,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			if let savedError {
 				// A 429 gets one Error Log entry from noteRateLimited, not one per refresh.
 				if !isTooManyRequests(savedError) {
-					postSyncError(savedError, account: account, operation: "Refreshing article status")
+					account.postSyncError(savedError, operation: "Refreshing article status")
 				}
 				throw savedError
 			}
@@ -417,7 +417,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					} catch {
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder — remove feed 1 error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed from folder")
+						account.postSyncError(error, operation: "Removing feed from folder")
 					}
 				}
 
@@ -434,7 +434,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder - remove feed 2 error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed from folder")
+						account.postSyncError(error, operation: "Removing feed from folder")
 					}
 				}
 			}
@@ -646,7 +646,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("ReaderAPIAccountDelegate: restoreFolder error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Restoring feed to folder")
+					account.postSyncError(error, operation: "Restoring feed to folder")
 				}
 			}
 
@@ -761,7 +761,7 @@ private extension ReaderAPIAccountDelegate {
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing account")
+			account.postSyncError(error, operation: "Refreshing account")
 			throw error
 		}
 	}
@@ -967,7 +967,7 @@ private extension ReaderAPIAccountDelegate {
 		let unsendableArticleIDs = Set(articleIDs.filter { !articleIDIsSendable($0) })
 		if !unsendableArticleIDs.isEmpty {
 			Self.logger.error("ReaderAPIAccountDelegate: dropping \(unsendableArticleIDs.count) unsendable article IDs from the status queue")
-			postSyncError(ReaderAPIAccountDelegateError.unsendableStatuses(unsendableArticleIDs.count), account: account, operation: "Sending article status")
+			account.postSyncError(ReaderAPIAccountDelegateError.unsendableStatuses(unsendableArticleIDs.count), operation: "Sending article status")
 			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs, key: key)
 		}
 		let sendableArticleIDs = articleIDs.filter { articleIDIsSendable($0) }
@@ -1100,7 +1100,7 @@ private extension ReaderAPIAccountDelegate {
 					await processEntries(account: account, entries: entries)
 				} catch {
 					Self.logger.error("ReaderAPI: Refresh missing articles error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Refreshing missing articles")
+					account.postSyncError(error, operation: "Refreshing missing articles")
 				}
 			}
 
@@ -1240,7 +1240,7 @@ private extension ReaderAPIAccountDelegate {
 		Self.logger.error("ReaderAPIAccountDelegate: rate limited — pausing syncing until \(self.rateLimitResumeDate ?? .distantPast)")
 
 		if !alreadyRateLimited {
-			postSyncError(WebserviceError.tooManyRequests(retryAfter: retryAfter), account: account, operation: operation)
+			account.postSyncError(WebserviceError.tooManyRequests(retryAfter: retryAfter), operation: operation)
 		}
 	}
 
@@ -1265,10 +1265,5 @@ private extension ReaderAPIAccountDelegate {
 		}
 		Self.logger.info("ReaderAPIAccountDelegate: skipping status downloads — Zone 1 API usage is \(usageLimits.zone1Usage) of \(usageLimits.zone1Limit)")
 		return true
-	}
-
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

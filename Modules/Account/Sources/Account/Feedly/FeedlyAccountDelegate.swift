@@ -375,7 +375,7 @@ import Secrets
 		} catch {
 			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per send.
 			if !isRateLimitError(error) {
-				postSyncError(error, account: account, operation: "Sending article status")
+				account.postSyncError(error, operation: "Sending article status")
 			}
 			throw error
 		}
@@ -452,7 +452,7 @@ import Secrets
 			if let refreshError {
 				// A rate-limit error gets one Error Log entry from noteRateLimited, not one per refresh.
 				if !isRateLimitError(refreshError) {
-					postSyncError(refreshError, account: account, operation: "Refreshing article status")
+					account.postSyncError(refreshError, operation: "Refreshing article status")
 				}
 				throw refreshError
 			}
@@ -746,7 +746,7 @@ import Secrets
 					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("Feedly: Restore folder feed error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Restoring feed")
+					account.postSyncError(error, operation: "Restoring feed")
 				}
 			}
 			account.addFolderToTree(folder)
@@ -921,7 +921,7 @@ private extension FeedlyAccountDelegate {
 					feedsRenamed: feedsRenamed)
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing feed list")
+			account.postSyncError(error, operation: "Refreshing feed list")
 			throw error
 		}
 	}
@@ -1063,7 +1063,7 @@ private extension FeedlyAccountDelegate {
 				return ingested
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Downloading articles")
+			account.postSyncError(error, operation: "Downloading articles")
 			throw error
 		}
 	}
@@ -1103,7 +1103,7 @@ private extension FeedlyAccountDelegate {
 					await account.markAsUnreadAsync(articleIDs: result.newUnreadArticleIDs)
 				}
 			} catch {
-				postSyncError(error, account: account, operation: "Refreshing feed \(feed.nameForDisplay)")
+				account.postSyncError(error, operation: "Refreshing feed \(feed.nameForDisplay)")
 			}
 		}
 		return newArticleCount
@@ -1173,7 +1173,7 @@ private extension FeedlyAccountDelegate {
 		Self.logger.error("Feedly: rate limited — pausing syncing until \(self.rateLimitResumeDate ?? .distantPast)")
 
 		if !alreadyRateLimited {
-			postSyncError(error, account: account, operation: operation)
+			account.postSyncError(error, operation: operation)
 		}
 	}
 
@@ -1193,11 +1193,6 @@ private extension FeedlyAccountDelegate {
 			return retryAfter
 		}
 		return nil
-	}
-
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
 
@@ -1240,7 +1235,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 		} catch {
 			Self.logger.error("Feedly: Refresh access token failed: \(error.localizedDescription)")
 			if isDefinitiveReauthorizationError(error) {
-				postSyncError(error, account: account, operation: "Refreshing access token")
+				account.postSyncError(error, operation: "Refreshing access token")
 			}
 			return false
 		}

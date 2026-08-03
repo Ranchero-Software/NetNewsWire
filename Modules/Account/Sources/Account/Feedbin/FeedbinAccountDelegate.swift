@@ -135,7 +135,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				return sentCount
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Sending article status")
+			account.postSyncError(error, operation: "Sending article status")
 			throw error
 		}
 	}
@@ -174,7 +174,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 			Self.logger.info("Feedbin: Finished refreshing article statuses")
 			if let refreshError {
-				postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				account.postSyncError(refreshError, operation: "Refreshing article status")
 				throw refreshError
 			}
 			return changedCount
@@ -273,7 +273,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed")
+						account.postSyncError(error, operation: "Removing feed")
 					}
 				}
 			} else {
@@ -283,7 +283,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						account.clearFeedSettings(feed)
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed")
+						account.postSyncError(error, operation: "Removing feed")
 					}
 				}
 			}
@@ -419,7 +419,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("Feedbin: Restore folder feed error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Restoring feed")
+					account.postSyncError(error, operation: "Restoring feed")
 				}
 			}
 
@@ -549,7 +549,7 @@ private extension FeedbinAccountDelegate {
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing account")
+			account.postSyncError(error, operation: "Refreshing account")
 			throw error
 		}
 	}
@@ -873,7 +873,7 @@ private extension FeedbinAccountDelegate {
 				try await self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing articles")
+			account.postSyncError(error, operation: "Refreshing articles")
 			throw error
 		}
 	}
@@ -903,7 +903,7 @@ private extension FeedbinAccountDelegate {
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Refreshing missing articles")
+				account.postSyncError(savedError, operation: "Refreshing missing articles")
 				throw savedError
 			}
 		}
@@ -1039,15 +1039,10 @@ private extension FeedbinAccountDelegate {
 			try await caller.deleteSubscription(subscriptionID: subscriptionID)
 		} catch {
 			Self.logger.error("Feedbin: Unable to remove feed from Feedbin. Removing locally and continuing processing: \(error.localizedDescription)")
-			postSyncError(error, account: account, operation: "Removing feed")
+			account.postSyncError(error, operation: "Removing feed")
 		}
 
 		account.clearFeedSettings(feed)
 		account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
-	}
-
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }
