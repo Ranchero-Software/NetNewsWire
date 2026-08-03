@@ -2547,21 +2547,20 @@ private extension SceneCoordinator {
 			return false
 		}
 
-		// Read values from UserDefaults (migration happens in restoreWindowState)
-		let isShowingExtractedArticle = AppDefaults.shared.isShowingExtractedArticle
-		let articleWindowScrollY = AppDefaults.shared.articleWindowScrollY
-
+		// A handoff or deep link opens the article at the top — the persisted scroll
+		// position belongs to launch state restoration, not to this article.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
 		switch sidebarItemID {
 
 		case .smartFeed, .folder:
-			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 			return found
 
 		case .feed:
-			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 				if let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let folder = sidebarItemNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
@@ -2599,13 +2598,13 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func selectSidebarItemAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+	func selectSidebarItemAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String) -> Bool {
 		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let sidebarItemIndexPath = indexPathFor(sidebarItemNode) else {
 			return false
 		}
 
 		selectSidebarItem(indexPath: sidebarItemIndexPath) {
-			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			self.selectArticleInCurrentFeed(articleID)
 		}
 
 		return true

@@ -156,6 +156,9 @@ final class WebViewController: UIViewController {
 
 		if article != self.article {
 			self.article = article
+			// A restoration offset belongs only to the article it was saved for.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
+			restoreWindowScrollY = nil
 			if updateView {
 				if article?.feed?.readerViewAlwaysEnabled == true {
 					startArticleExtractor()
@@ -343,6 +346,7 @@ extension WebViewController: ArticleExtractorDelegate {
 			self.extractedArticle = extractedArticle
 			if let restoreWindowScrollY = restoreWindowScrollY {
 				windowScrollY = restoreWindowScrollY
+				self.restoreWindowScrollY = nil
 			}
 			isShowingExtractedArticle = true
 			loadWebView()
@@ -529,8 +533,14 @@ extension WebViewController: UIScrollViewDelegate {
 	}
 
 	@objc func scrollPositionDidChange() {
+		let articleIDWhenAsked = article?.articleID
 		webView?.evaluateJavaScript("window.scrollY") { (scrollY, error) in
 			guard error == nil else { return }
+			// A late callback must not record the previous article’s offset.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
+			guard articleIDWhenAsked == self.article?.articleID else {
+				return
+			}
 			let javascriptScrollY = scrollY as? Int ?? 0
 			// I don't know why this value gets returned sometimes, but it is in error
 			guard javascriptScrollY != 33554432 else { return }

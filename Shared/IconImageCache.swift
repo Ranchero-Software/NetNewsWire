@@ -133,18 +133,23 @@ private extension IconImageCache {
 		if Self.isNetNewsWireBrandedFeed(feed) {
 			return IconImage.nnwFeedIcon
 		}
-		if let iconImage = feedIconImageCache[feedID] {
-			return iconImage
-		}
+
+		// The downloaders are the source of truth — consult them ahead of the local
+		// dictionaries so a newly arrived icon replaces a stale one. The dictionaries
+		// keep the last known icons across the downloaders’ low-memory and background flushes.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
 		if let iconImage = FeedIconDownloader.shared.cachedIcon(for: feed) {
 			feedIconImageCache[feedID] = iconImage
 			return iconImage
 		}
-		if let faviconImage = faviconImageCache[feedID] {
-			return faviconImage
+		if let iconImage = feedIconImageCache[feedID] {
+			return iconImage
 		}
 		if let faviconImage = FaviconDownloader.shared.cachedFaviconAsIcon(for: feed) {
 			faviconImageCache[feedID] = faviconImage
+			return faviconImage
+		}
+		if let faviconImage = faviconImageCache[feedID] {
 			return faviconImage
 		}
 		return nil
