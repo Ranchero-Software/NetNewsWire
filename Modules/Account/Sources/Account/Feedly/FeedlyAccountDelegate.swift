@@ -740,6 +740,10 @@ import Secrets
 			do {
 				try await caller.removeFeed(feed.feedID, fromCollectionWith: fromCollectionID)
 			} catch {
+				// Undo the whole move — without removing the remote add and the local
+				// destination copy, the feed ends up in both folders permanently.
+				try? await caller.removeFeed(feed.feedID, fromCollectionWith: toCollectionID)
+				to.removeFeedFromTreeAtTopLevel(feed)
 				from.addFeedToTreeAtTopLevel(feed)
 				throw FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)
 			}
