@@ -55,6 +55,13 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 	private var lastNoChangeSyncDate: Date?
 	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
 
+	// Set when CKContainer reports the iCloud account isn’t available — signed out,
+	// restricted, or paused pending Terms and Conditions acceptance. While set, iCloud
+	// stages are skipped (feeds still refresh) and one Error Log entry is posted.
+	// Cleared when the system posts CKAccountChanged.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4115>
+	private var iCloudAccountIsUnavailable = false
+
 	weak var account: Account?
 
 	let behaviors: AccountBehaviors = []
@@ -102,7 +109,20 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: refresher)
 		NotificationCenter.default.addObserver(self, selector: #selector(syncProgressDidChange(_:)), name: .progressInfoDidChange, object: syncProgress)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleCKAccountChanged(_:)), name: .CKAccountChanged, object: nil)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
+	}
+
+	// CKAccountChanged can arrive on any thread.
+	@objc nonisolated func handleCKAccountChanged(_ note: Notification) {
+		Task { @MainActor in
+			let wasUnavailable = iCloudAccountIsUnavailable
+			iCloudAccountIsUnavailable = false
+			if wasUnavailable {
+				Self.logger.info("CloudKitAccountDelegate: iCloud account changed — refreshing")
+				try? await refreshAll()
+			}
+		}
 	}
 
 	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
@@ -137,6 +157,18 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			return
 		}
 
+		// When the iCloud account is unavailable, refresh feeds only — no doomed
+		// CloudKit requests, no modal alert. CKAccountChanged resumes syncing.
+		if let unavailableError = await iCloudAccountUnavailableError() {
+			if !iCloudAccountIsUnavailable {
+				iCloudAccountIsUnavailable = true
+				postSyncError(unavailableError, account: account, operation: "Refreshing account")
+			}
+			await refreshFeedsSkippingSync(for: account)
+			return
+		}
+		iCloudAccountIsUnavailable = false
+
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
 		try await standardRefreshAll(for: account)
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
@@ -144,6 +176,9 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 
 	func syncArticleStatus() async throws -> Bool {
 		guard let account else {
+			return false
+		}
+		guard !iCloudAccountIsUnavailable else {
 			return false
 		}
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
@@ -783,6 +818,31 @@ private extension CloudKitAccountDelegate {
 
 	func standardRefreshAll(for account: Account) async throws {
 		try await performRefreshAll(for: account, sendArticleStatus: true)
+	}
+
+	/// Nil when the iCloud account is available (or the status check itself failed).
+	/// Otherwise an error whose message describes the unavailable state.
+	private func iCloudAccountUnavailableError() async -> Error? {
+		guard let status = try? await container.accountStatus() else {
+			return nil
+		}
+		switch status {
+		case .available:
+			return nil
+		case .temporarilyUnavailable:
+			return CloudKitError(CKError(.accountTemporarilyUnavailable))
+		default:
+			return CloudKitError(CKError(.notAuthenticated))
+		}
+	}
+
+	/// Feed downloading needs no iCloud — refresh feeds and leave syncing for later.
+	private func refreshFeedsSkippingSync(for account: Account) async {
+		Self.logger.info("CloudKitAccountDelegate: iCloud account unavailable — refreshing feeds without syncing")
+		refresher.accountID = account.accountID
+		refresher.publishesRefreshActivity = true
+		await refresher.refreshFeeds(account.flattenedFeeds())
+		account.lastRefreshCompletedDate = Date()
 	}
 
 	func performRefreshAll(for account: Account, sendArticleStatus: Bool) async throws {
