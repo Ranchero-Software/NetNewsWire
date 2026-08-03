@@ -1243,10 +1243,34 @@ extension FeedlyAccountDelegate {
 		if count == 0 {
 			return "No statuses to send"
 		}
-		return "\(count) status\(count == 1 ? "" : "es") sent"
+		return "\(pluralCount(count, "status", plural: "statuses")) sent"
 	}
 
 	static func refreshStatusMessage(counts: StatusRefreshCounts) -> String {
+		joinedOrNoChanges(refreshStatusMessageParts(counts))
+	}
+
+	static func feedListMessage(changes: FeedListChanges) -> String {
+		joinedOrNoChanges(feedListMessageParts(changes))
+	}
+
+	static func refreshAllMessage(summary: RefreshAllSummary) -> String {
+		var parts = [String]()
+		if summary.articlesDownloaded > 0 {
+			parts.append("\(pluralCount(summary.articlesDownloaded, "article")) downloaded")
+		}
+		if summary.newArticlesFromFeedRefresh > 0 {
+			parts.append("\(summary.newArticlesFromFeedRefresh) new from feed refresh")
+		}
+		parts += refreshStatusMessageParts(summary.statusRefreshCounts)
+		if summary.statusesSent > 0 {
+			parts.append("\(pluralCount(summary.statusesSent, "status", plural: "statuses")) sent")
+		}
+		parts += feedListMessageParts(summary.feedListChanges)
+		return joinedOrNoChanges(parts)
+	}
+
+	private static func refreshStatusMessageParts(_ counts: StatusRefreshCounts) -> [String] {
 		var parts = [String]()
 		if counts.unreadAdded > 0 {
 			parts.append("\(counts.unreadAdded) marked unread")
@@ -1260,78 +1284,35 @@ extension FeedlyAccountDelegate {
 		if counts.starredRemoved > 0 {
 			parts.append("\(counts.starredRemoved) unstarred")
 		}
-		if parts.isEmpty {
-			return "No changes"
-		}
-		return parts.joined(separator: ", ")
+		return parts
 	}
 
-	static func feedListMessage(changes: FeedListChanges) -> String {
+	private static func feedListMessageParts(_ changes: FeedListChanges) -> [String] {
 		var parts = [String]()
 		if changes.foldersAdded > 0 {
-			parts.append("\(changes.foldersAdded) folder\(changes.foldersAdded == 1 ? "" : "s") added")
+			parts.append("\(pluralCount(changes.foldersAdded, "folder")) added")
 		}
 		if changes.foldersRemoved > 0 {
-			parts.append("\(changes.foldersRemoved) folder\(changes.foldersRemoved == 1 ? "" : "s") removed")
+			parts.append("\(pluralCount(changes.foldersRemoved, "folder")) removed")
 		}
 		if changes.feedsAdded > 0 {
-			parts.append("\(changes.feedsAdded) feed\(changes.feedsAdded == 1 ? "" : "s") added")
+			parts.append("\(pluralCount(changes.feedsAdded, "feed")) added")
 		}
 		if changes.feedsRemoved > 0 {
-			parts.append("\(changes.feedsRemoved) feed\(changes.feedsRemoved == 1 ? "" : "s") removed")
+			parts.append("\(pluralCount(changes.feedsRemoved, "feed")) removed")
 		}
 		if changes.feedsRenamed > 0 {
-			parts.append("\(changes.feedsRenamed) feed\(changes.feedsRenamed == 1 ? "" : "s") renamed")
+			parts.append("\(pluralCount(changes.feedsRenamed, "feed")) renamed")
 		}
-		if parts.isEmpty {
-			return "No changes"
-		}
-		return parts.joined(separator: ", ")
+		return parts
 	}
 
-	static func refreshAllMessage(summary: RefreshAllSummary) -> String {
-		var parts = [String]()
-		if summary.articlesDownloaded > 0 {
-			parts.append("\(summary.articlesDownloaded) article\(summary.articlesDownloaded == 1 ? "" : "s") downloaded")
-		}
-		if summary.newArticlesFromFeedRefresh > 0 {
-			parts.append("\(summary.newArticlesFromFeedRefresh) new from feed refresh")
-		}
-		let refresh = summary.statusRefreshCounts
-		if refresh.unreadAdded > 0 {
-			parts.append("\(refresh.unreadAdded) marked unread")
-		}
-		if refresh.unreadRemoved > 0 {
-			parts.append("\(refresh.unreadRemoved) marked read")
-		}
-		if refresh.starredAdded > 0 {
-			parts.append("\(refresh.starredAdded) starred")
-		}
-		if refresh.starredRemoved > 0 {
-			parts.append("\(refresh.starredRemoved) unstarred")
-		}
-		if summary.statusesSent > 0 {
-			parts.append("\(summary.statusesSent) status\(summary.statusesSent == 1 ? "" : "es") sent")
-		}
-		let feedList = summary.feedListChanges
-		if feedList.foldersAdded > 0 {
-			parts.append("\(feedList.foldersAdded) folder\(feedList.foldersAdded == 1 ? "" : "s") added")
-		}
-		if feedList.foldersRemoved > 0 {
-			parts.append("\(feedList.foldersRemoved) folder\(feedList.foldersRemoved == 1 ? "" : "s") removed")
-		}
-		if feedList.feedsAdded > 0 {
-			parts.append("\(feedList.feedsAdded) feed\(feedList.feedsAdded == 1 ? "" : "s") added")
-		}
-		if feedList.feedsRemoved > 0 {
-			parts.append("\(feedList.feedsRemoved) feed\(feedList.feedsRemoved == 1 ? "" : "s") removed")
-		}
-		if feedList.feedsRenamed > 0 {
-			parts.append("\(feedList.feedsRenamed) feed\(feedList.feedsRenamed == 1 ? "" : "s") renamed")
-		}
-		if parts.isEmpty {
-			return "No changes"
-		}
-		return parts.joined(separator: ", ")
+	/// "1 feed", "2 feeds" — pass an explicit plural for irregular nouns.
+	private static func pluralCount(_ count: Int, _ singular: String, plural: String? = nil) -> String {
+		"\(count) \(count == 1 ? singular : (plural ?? singular + "s"))"
+	}
+
+	private static func joinedOrNoChanges(_ parts: [String]) -> String {
+		parts.isEmpty ? "No changes" : parts.joined(separator: ", ")
 	}
 }
