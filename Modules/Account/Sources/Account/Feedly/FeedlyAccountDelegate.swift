@@ -1138,6 +1138,11 @@ private extension FeedlyAccountDelegate {
 					await account.markAsUnreadAsync(articleIDs: result.newUnreadArticleIDs)
 				}
 			} catch {
+				// Arm the limiter and stop the rotation — refreshing more feeds would extend the ban.
+				if rateLimiter.isRateLimitError(error) {
+					rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing feed \(feed.nameForDisplay)")
+					break
+				}
 				account.postSyncError(error, operation: "Refreshing feed \(feed.nameForDisplay)")
 			}
 		}
