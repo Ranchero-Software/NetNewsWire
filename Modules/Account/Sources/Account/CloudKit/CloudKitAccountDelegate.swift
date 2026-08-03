@@ -805,22 +805,25 @@ private extension CloudKitAccountDelegate {
 		activityLog.didStart(id: refreshActivityID)
 		var refreshFinishedSuccessfully = false
 		var refreshCompletionMessage: String?
+		var iCloudError: Error?
 		defer {
 			if refreshFinishedSuccessfully {
 				activityLog.didComplete(id: refreshActivityID, message: refreshCompletionMessage)
 			} else {
-				let error = NSError(domain: "CloudKitAccountDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "Refresh interrupted"])
+				let error = iCloudError ?? NSError(domain: "CloudKitAccountDelegate", code: 0, userInfo: [NSLocalizedDescriptionKey: "Refresh interrupted"])
 				activityLog.didFail(id: refreshActivityID, error: error)
 			}
 		}
 
 		let fetchChangesDetail = "Fetching account zone changes \(activityLog.nextTaskNumberString())"
 
+		// When iCloud fails, note the error but keep going — downloading feeds requires
+		// no iCloud, and syncing catches up on a later refresh.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4115>
 		do {
 			try await activityLog.logActivity(owner: owner, kind: .refreshFeedList, detail: fetchChangesDetail) {
 				try await accountZone.fetchChangesInZone()
 			}
-			syncProgress.completeTask()
 		} catch {
 			if case CloudKitZoneError.userDeletedZone = error {
 				account.removeFeedsFromTreeAtTopLevel(account.topLevelFeeds)
@@ -829,37 +832,43 @@ private extension CloudKitAccountDelegate {
 				}
 			}
 			postSyncError(error, account: account, operation: "Fetching zone changes")
-			syncProgress.reset()
-			throw error
+			iCloudError = error
 		}
+		syncProgress.completeTask()
 
 		let feeds = account.flattenedFeeds()
 
-		do {
-			try await refreshArticleStatus()
-			syncProgress.completeTask()
-		} catch {
-			postSyncError(error, account: account, operation: "Refreshing article status")
-			syncProgress.reset()
-			throw error
+		// Skip the remaining iCloud stages when one has already failed — they’d fail the same way.
+		if iCloudError == nil {
+			do {
+				try await refreshArticleStatus()
+			} catch {
+				postSyncError(error, account: account, operation: "Refreshing article status")
+				iCloudError = error
+			}
 		}
+		syncProgress.completeTask()
 
 		refresher.accountID = account.accountID
 		refresher.publishesRefreshActivity = false
 		await refresher.refreshFeeds(feeds)
 		refreshCompletionMessage = refresher.refreshStatsMessage
 
-		if sendArticleStatus {
+		if sendArticleStatus && iCloudError == nil {
 			do {
 				_ = try await self.sendArticleStatus(account: account, showProgress: true)
 			} catch {
 				postSyncError(error, account: account, operation: "Sending article status")
-				syncProgress.reset()
-				throw error
+				iCloudError = error
 			}
 		}
 
 		syncProgress.reset()
+
+		if let iCloudError {
+			throw iCloudError
+		}
+
 		account.lastRefreshCompletedDate = Date()
 		refreshFinishedSuccessfully = true
 	}
