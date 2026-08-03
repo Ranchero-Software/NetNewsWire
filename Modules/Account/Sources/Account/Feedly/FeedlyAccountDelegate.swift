@@ -453,6 +453,10 @@ import Secrets
 				counts.unreadAdded = unread.added
 				counts.unreadRemoved = unread.removed
 			} catch {
+				// Don’t start the starred walk into an active rate limit — up to 40 more requests.
+				if rateLimiter.isRateLimitError(error) {
+					throw error
+				}
 				refreshError = error
 				Self.logger.error("Feedly: Ingesting unread article IDs failed: \(error.localizedDescription)")
 			}
