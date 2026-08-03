@@ -452,21 +452,28 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func handle(_ activity: NSUserActivity) {
+		guard let activityType = ActivityType(rawValue: activity.activityType) else {
+			return
+		}
+
+		// Add Feed just presents a sheet — unlike the activities below, it doesn't navigate,
+		// so it must not clear the current selection.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
+		if activityType == .addFeedIntent {
+			showAddFeed()
+			return
+		}
+
 		selectSidebarItem(indexPath: nil) {
-			guard let activityType = ActivityType(rawValue: activity.activityType) else {
-				return
-			}
 			switch activityType {
-			case .restoration:
-				break
 			case .selectFeed:
 				self.handleSelectFeed(activity.userInfo)
 			case .nextUnread:
 				self.selectFirstUnreadInAllUnread()
 			case .readArticle:
 				self.handleReadArticle(activity.userInfo)
-			case .addFeedIntent:
-				self.showAddFeed()
+			case .restoration, .addFeedIntent:
+				break
 			}
 		}
 	}
@@ -608,6 +615,14 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
+
+		// Disclosing navigates away from whatever the user was reading, so do it only when
+		// nothing is selected — otherwise adding a feed would cost them their place.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
+		guard timelineFeed == nil else {
+			return
+		}
+
 		discloseFeed(feed, animations: [.scroll, .navigation])
 	}
 
@@ -1465,8 +1480,8 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 
-		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
-		selectFeed(nil)
+		// The sheet appears over the current screen, so the feed and article selection stay as they are.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
 
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
 
@@ -1476,7 +1491,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedCollectionViewController.present(addNavViewController, animated: true)
+		rootSplitViewController.present(addNavViewController, animated: true)
 	}
 
 	func showAddFolder() {
