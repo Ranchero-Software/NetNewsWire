@@ -346,6 +346,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 		Self.logger.debug("ReaderAPIAccountDelegate: createFolder — name \(name)")
 
+		// Reader API has no endpoint for creating a tag — the server creates one when a feed is
+		// tagged with it. The folder stays local, with no externalID, until it gets its first feed.
 		return try account.logActivity(kind: .createFolder, detail: name) {
 			guard let folder = account.ensureFolder(with: name) else {
 				Self.logger.error("ReaderAPIAccountDelegate: createFolder failed — account.ensureFolder failed")
@@ -361,13 +363,21 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 		Self.logger.debug("ReaderAPIAccountDelegate: renameFolder — name \(folder.nameForDisplay) to \(name)")
 
+		// A folder with no externalID has no tag on the server yet, so there’s nothing to rename there.
+		guard folder.externalID != nil else {
+			account.logActivity(kind: .renameFolder, detail: "\(folder.name ?? "") → \(name)") {
+				folder.name = name
+			}
+			return
+		}
+
 		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
 			try await account.logActivity(kind: .renameFolder, detail: "\(folder.name ?? "") → \(name)") {
 				try await caller.renameTag(oldName: folder.name ?? "", newName: name)
-				folder.externalID = "user/-/label/\(name)"
+				folder.externalID = Self.folderExternalID(forFolderName: name)
 				folder.name = name
 			}
 		} catch {
@@ -546,7 +556,8 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 				guard
 					let subscriptionID = feed.externalID,
 					let sourceTag = (sourceContainer as? Folder)?.name,
-					let destinationTag = (destinationContainer as? Folder)?.name
+					let destinationFolder = destinationContainer as? Folder,
+					let destinationTag = destinationFolder.name
 				else {
 					throw AccountError.invalidParameter
 				}
@@ -556,6 +567,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 				do {
 					try await caller.moveSubscription(subscriptionID: subscriptionID, sourceTag: sourceTag, destinationTag: destinationTag)
+					Self.ensureFolderExternalID(destinationFolder)
 					sourceContainer.removeFeedFromTreeAtTopLevel(feed)
 					destinationContainer.addFeedToTreeAtTopLevel(feed)
 				} catch {
@@ -581,6 +593,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 					try await caller.createTagging(subscriptionID: feedExternalID, tagName: folder.name ?? "")
 
+					Self.ensureFolderExternalID(folder)
 					self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
 					account.removeFeedFromTreeAtTopLevel(feed)
 					folder.addFeedToTreeAtTopLevel(feed)
@@ -782,10 +795,14 @@ private extension ReaderAPIAccountDelegate {
 
 		let readerFolderExternalIDs = folderTags.compactMap { $0.tagID }
 
-		// Delete any folders not at Reader
+		// Delete any folders not at Reader. A folder with no externalID has never been sent to the
+		// server — it’s waiting for its first feed — so leave it alone.
 		if let folders = account.folders {
 			for folder in folders {
-				if !readerFolderExternalIDs.contains(folder.externalID ?? "") {
+				guard let folderExternalID = folder.externalID else {
+					continue
+				}
+				if !readerFolderExternalIDs.contains(folderExternalID) {
 					for feed in folder.topLevelFeeds {
 						account.addFeedToTreeAtTopLevel(feed)
 						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
@@ -980,6 +997,19 @@ private extension ReaderAPIAccountDelegate {
 			return true
 		}
 		return Int(articleID) != nil
+	}
+
+	static func folderExternalID(forFolderName name: String) -> String {
+		"user/-/label/\(name)"
+	}
+
+	/// Give a folder an externalID now that tagging a feed has created its tag on the server.
+	static func ensureFolderExternalID(_ folder: Folder) {
+		guard folder.externalID == nil, let name = folder.name else {
+			return
+		}
+		logger.debug("ReaderAPIAccountDelegate: ensureFolderExternalID — \(name)")
+		folder.externalID = folderExternalID(forFolderName: name)
 	}
 
 	func clearFolderRelationship(for feed: Feed, folderExternalID: String?) {
