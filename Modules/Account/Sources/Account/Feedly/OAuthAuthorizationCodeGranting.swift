@@ -136,7 +136,7 @@ public protocol OAuthAccessTokenResponse {
 	var tokenType: String { get }
 	var expiresIn: Int { get }
 	var refreshToken: String? { get }
-	var scope: String { get }
+	var scope: String? { get }
 }
 
 /// The access and refresh tokens from a successful authorization grant.
