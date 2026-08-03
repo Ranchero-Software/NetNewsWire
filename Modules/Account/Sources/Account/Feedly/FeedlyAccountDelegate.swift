@@ -1018,14 +1018,16 @@ private extension FeedlyAccountDelegate {
 		let newerThan = Date().bySubtracting(days: Self.streamIngestDaysLimit)
 		let (remoteUnreadIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
 
+		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
+
+		// Read the pending set last, right before the diffs — an edit made during the
+		// fetches above must be in it, or the marks below would briefly revert the edit.
 		// A failed pending-statuses read must not read as “nothing pending” — that would
 		// revert pending edits and arm the no-change backoff.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			throw FeedlyAccountDelegateError.databaseReadFailed
 		}
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
-
-		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
 
 		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
 		await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
@@ -1049,14 +1051,16 @@ private extension FeedlyAccountDelegate {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		let (remoteStarredIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
 
+		let localStarredIDs = await account.fetchStarredArticleIDsAsync()
+
+		// Read the pending set last, right before the diffs — an edit made during the
+		// fetches above must be in it, or the marks below would briefly revert the edit.
 		// A failed pending-statuses read must not read as “nothing pending” — that would
 		// revert pending edits and arm the no-change backoff.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			throw FeedlyAccountDelegateError.databaseReadFailed
 		}
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
-
-		let localStarredIDs = await account.fetchStarredArticleIDsAsync()
 
 		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
 		await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
