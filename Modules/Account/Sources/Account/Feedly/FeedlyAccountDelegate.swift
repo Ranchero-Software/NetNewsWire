@@ -102,6 +102,10 @@ import Secrets
 	// start a status send. Overlapping sends would select and post the same queued rows.
 	private var statusSendTask: Task<Int, Error>?
 
+	// Concurrent 401s must share one token refresh — parallel POSTs to the token
+	// endpoint read as abuse to Feedly and earn the 403 ban.
+	private var reauthorizeTask: Task<Bool, Never>?
+
 	// The refresh timer, background refresh, and the Refresh command can all fire
 	// refreshAll — overlapping runs double the request volume and corrupt progress.
 	private var refreshAllIsRunning = false
@@ -1198,10 +1202,6 @@ private extension FeedlyAccountDelegate {
 
 // MARK: - Sync Error Posting
 
-private extension FeedlyAccountDelegate {
-
-}
-
 // MARK: - FeedlyAPICallerDelegate
 
 extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
@@ -1210,6 +1210,20 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	/// Storing credentials updates `self.credentials` via `Account.storeCredentials`, which in turn
 	/// hands the fresh access token to the caller.
 	func reauthorizeFeedlyAPICaller() async -> Bool {
+		if let reauthorizeTask {
+			return await reauthorizeTask.value
+		}
+		let task = Task { () -> Bool in
+			defer {
+				reauthorizeTask = nil
+			}
+			return await performReauthorization()
+		}
+		reauthorizeTask = task
+		return await task.value
+	}
+
+	private func performReauthorization() async -> Bool {
 		Self.logger.debug("FeedlyAccountDelegate: reauthorizeFeedlyAPICaller")
 
 		guard let account else {
