@@ -124,8 +124,11 @@ private extension SyncStatusTable {
 		return SyncStatus(articleID: articleID, key: key, flag: flag, selected: selected)
 	}
 
+	// Includes rows that are selected — a send in flight hasn’t been confirmed by the server yet,
+	// and skipping those let a concurrent refresh revert the change the send was carrying.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
 	static func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key, database: FMDatabase) -> Set<String>? {
-		let sql = "select articleID from \(name) where selected == false and key = \"\(statusKey.rawValue)\";"
+		let sql = "select articleID from \(name) where key = \"\(statusKey.rawValue)\";"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 			return nil
 		}
