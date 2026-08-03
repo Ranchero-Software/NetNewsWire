@@ -97,16 +97,19 @@ extension Notification.Name {
 			}
 		}
 
-		if let previouslyFoundIconURL = ImageMetadataDatabase.shared.iconURL(forFeedURL: feed.url) {
+		// The stored icon URL remembers an icon discovered via the home page. A feed
+		// that declares its own icon supersedes it.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
+		let feedDeclaresIconURL = feed.iconURL != nil && !Self.shouldIgnoreFeedIconURL(feed)
+
+		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageMetadataDatabase.shared.iconURL(forFeedURL: feed.url) {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image, _ in
-				MainActor.assumeIsolated {
-					if self.cache[feed] != nil {
-						return // already cached
-					}
-					if let image {
-						self.cache[feed] = IconImage(image)
-						self.postFeedIconDidBecomeAvailableNotification(feed)
-					}
+				if self.cache[feed] != nil {
+					return // already cached
+				}
+				if let image {
+					self.cache[feed] = IconImage(image)
+					self.postFeedIconDidBecomeAvailableNotification(feed)
 				}
 			}
 
