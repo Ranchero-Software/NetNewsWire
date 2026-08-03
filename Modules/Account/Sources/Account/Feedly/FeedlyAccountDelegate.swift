@@ -828,12 +828,13 @@ import Secrets
 			do {
 				try await account.logActivity(kind: .validateCredentials, detail: "Logging out of Feedly") {
 					try await caller.logout()
-					try? account.removeCredentials(type: .oauthAccessToken)
-					try? account.removeCredentials(type: .oauthRefreshToken)
 				}
 			} catch {
 				Self.logger.error("Feedly: Logout failed: \(error.localizedDescription)")
 			}
+			// Remove the tokens even when the logout request fails — the account is gone either way.
+			try? account.removeCredentials(type: .oauthAccessToken)
+			try? account.removeCredentials(type: .oauthRefreshToken)
 		}
 	}
 
@@ -1261,9 +1262,10 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 		}
 	}
 
-	/// A failure that won’t resolve on retry — missing refresh token or a rejected refresh request.
+	/// A failure that won’t resolve on retry — missing refresh token, a rejected refresh
+	/// request, or a token response we can’t decode.
 	private func isDefinitiveReauthorizationError(_ error: Error) -> Bool {
-		if error is FeedlyAccountDelegateError {
+		if error is FeedlyAccountDelegateError || error is DecodingError {
 			return true
 		}
 		if case WebserviceError.httpError(let status) = error, (400...499).contains(status) {

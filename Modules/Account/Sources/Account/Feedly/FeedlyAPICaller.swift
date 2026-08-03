@@ -309,10 +309,7 @@ extension FeedlyAPICaller {
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		request.httpBody = opmlData
 
-		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
@@ -388,10 +385,7 @@ extension FeedlyAPICaller {
 
 	func logout() async throws {
 		let request = try makeAuthorizedRequest(path: "/v3/auth/logout", method: HTTPMethod.post)
-		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
