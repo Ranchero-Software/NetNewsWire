@@ -146,7 +146,17 @@ import Secrets
 		do {
 			try await account.logActivity(kind: .refreshAll, successMessage: successMessage) { () -> RefreshAllSummary in
 				var summary = RefreshAllSummary()
-				summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
+				do {
+					summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
+				} catch {
+					// A failed status send must not block fetching new articles.
+					// <https://discourse.netnewswire.com/t/no-feed-updates/336>
+					// A rate limit is the exception — continuing would just extend the ban.
+					if isRateLimitError(error) {
+						throw error
+					}
+					Self.logger.error("Feedly: continuing refresh despite status send failure: \(error.localizedDescription)")
+				}
 				refreshProgress.completeTask()
 				summary.feedListChanges = try await refreshFeedList(for: account)
 				refreshProgress.completeTask()
@@ -262,27 +272,41 @@ import Secrets
 					(.starred, false, .unsaved)
 				]
 
-				for pairing in pairings {
+				pairingLoop: for pairing in pairings {
 					let pending = syncStatuses.filter { $0.key == pairing.key && $0.flag == pairing.flag }
 					guard !pending.isEmpty else {
 						continue
 					}
-					let articleIDs = Set(pending.map { $0.articleID })
-					do {
-						for chunk in Array(articleIDs).chunked(into: Self.markChunkSize) {
-							let chunkIDs = Set(chunk)
+					let chunks = Array(Set(pending.map { $0.articleID })).chunked(into: Self.markChunkSize)
+
+					// Delete each chunk’s rows as it succeeds, so a later failure can’t
+					// resurrect statuses the server already accepted — that’s how the
+					// backlog grew without bound.
+					// <https://github.com/Ranchero-Software/NetNewsWire/issues/3779>
+					for (chunkIndex, chunk) in chunks.enumerated() {
+						let chunkIDs = Set(chunk)
+						do {
 							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+							await syncDatabase.deleteSelectedForProcessing(chunkIDs, key: pairing.key)
+							sentCount += chunkIDs.count
+						} catch {
+							Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
+							let unsentIDs = Set(chunks[chunkIndex...].flatMap { $0 })
+							await syncDatabase.resetSelectedForProcessing(unsentIDs, key: pairing.key)
+							savedError = error
+							if isRateLimitError(error) {
+								break pairingLoop
+							}
+							break
 						}
-						await syncDatabase.deleteSelectedForProcessing(articleIDs, key: pairing.key)
-						sentCount += articleIDs.count
-					} catch {
-						Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
-						await syncDatabase.resetSelectedForProcessing(articleIDs, key: pairing.key)
-						savedError = error
 					}
 				}
 
 				if let savedError {
+					if isRateLimitError(savedError) {
+						// Pairings skipped after a rate limit stay queued — clear their in-progress mark.
+						syncDatabase.resetAllSelectedForProcessing()
+					}
 					throw savedError
 				}
 				return sentCount
