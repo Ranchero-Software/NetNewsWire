@@ -155,6 +155,12 @@ private extension OAuthAccountAuthorizationOperation {
 		// Assign before starting so cancellation can always reach the session.
 		self.session = session
 
+		// The operation may have been canceled before the session existed — don’t open the browser.
+		guard !isCanceled else {
+			self.session = nil
+			return
+		}
+
 		guard session.start() else {
 			self.session = nil
 			Task { @MainActor in
@@ -201,6 +207,11 @@ private extension OAuthAccountAuthorizationOperation {
 				}
 			}
 
+		} catch let errorResponse as OAuthAuthorizationErrorResponse where errorResponse.isAccessDenied {
+			// The user clicked Deny on the consent page — a cancellation, not a failure.
+			userCancelledAuthentication = true
+			didComplete()
+
 		} catch let sessionError as ASWebAuthenticationSessionError {
 			if sessionError.code == .canceledLogin {
 				userCancelledAuthentication = true
@@ -234,13 +245,13 @@ private extension OAuthAccountAuthorizationOperation {
 
 	func saveAccount(for grant: OAuthAuthorizationGrant) {
 		Self.logger.debug("OAuthAccountAuthorizationOperation: saveAccount")
-		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
+		guard !AccountManager.shared.duplicateServiceAccount(type: accountType, username: grant.accessToken.username) else {
 			self.error = OAuthAccountAuthorizationOperationError.duplicateAccount
 			didComplete()
 			return
 		}
 
-		let account = AccountManager.shared.createAccount(type: .feedly)
+		let account = AccountManager.shared.createAccount(type: accountType)
 		do {
 
 			// Store the refresh token first because it sends this token to the account delegate.

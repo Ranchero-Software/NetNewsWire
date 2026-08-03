@@ -61,6 +61,21 @@ nonisolated public struct OAuthAuthorizationResponse {
 	public let state: String?
 }
 
+/// An error returned on the authorization callback, per section 4.1.2.1 of the OAuth 2.0
+/// Authorization Framework. https://tools.ietf.org/html/rfc6749#section-4.1.2.1
+nonisolated struct OAuthAuthorizationErrorResponse: LocalizedError, Sendable {
+	let error: String
+	let serverDescription: String?
+
+	var isAccessDenied: Bool {
+		return error == "access_denied"
+	}
+
+	var errorDescription: String? {
+		return serverDescription ?? error
+	}
+}
+
 public extension OAuthAuthorizationResponse {
 
 	init(url: URL, client: OAuthAuthorizationClient) throws {
@@ -73,6 +88,13 @@ public extension OAuthAuthorizationResponse {
 		guard let queryItems = components.queryItems, !queryItems.isEmpty else {
 			throw URLError(.unsupportedURL)
 		}
+
+		// A denial or failure arrives as ?error=… rather than ?code=….
+		if let errorValue = queryItems.first(where: { $0.name.lowercased() == "error" })?.value, !errorValue.isEmpty {
+			let serverDescription = queryItems.first { $0.name.lowercased() == "error_description" }?.value
+			throw OAuthAuthorizationErrorResponse(error: errorValue, serverDescription: serverDescription)
+		}
+
 		let code = queryItems.first { $0.name.lowercased() == "code" }
 		guard let codeValue = code?.value, !codeValue.isEmpty else {
 			throw URLError(.unsupportedURL)
