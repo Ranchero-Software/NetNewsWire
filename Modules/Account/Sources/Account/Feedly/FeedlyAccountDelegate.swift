@@ -1108,8 +1108,8 @@ private extension FeedlyAccountDelegate {
 				}
 				for chunk in chunks.prefix(Self.maxArticleDownloadChunksPerSync) {
 					let entries = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
-					await self.ingest(entries: entries, into: account)
-					ingested += entries.count
+					let pageResult = await self.ingest(entries: entries, into: account)
+					ingested += pageResult.newArticleCount
 				}
 				return ingested
 			}
