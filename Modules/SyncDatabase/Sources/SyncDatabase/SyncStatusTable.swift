@@ -125,7 +125,10 @@ private extension SyncStatusTable {
 	}
 
 	static func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key, database: FMDatabase) -> Set<String>? {
-		let sql = "select articleID from \(name) where selected == false and key = \"\(statusKey.rawValue)\";"
+		// Rows selected for an in-flight send are still pending — they’re only deleted
+		// once the send is confirmed. Excluding them let a concurrent send make every
+		// pending edit invisible to status ingestion, which then reverted the edits.
+		let sql = "select articleID from \(name) where key = \"\(statusKey.rawValue)\";"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
 			return nil
 		}
