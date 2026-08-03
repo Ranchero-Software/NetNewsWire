@@ -108,10 +108,14 @@ import Foundation
 		}
 		.compactMap { (collectionFeed, folder) -> (Feed, Folder) in
 
+			let parser = FeedlyFeedParser(feed: collectionFeed)
+
 			if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
-				// If the feed was renamed on Feedly, ingest the new name.
-				if feed.nameForDisplay != collectionFeed.title {
-					feed.name = collectionFeed.title
+				// If the feed was renamed on Feedly, ingest the new name. Compare against the
+				// parsed title — feeds are created from it, and the raw title differs for RTL
+				// and untitled feeds, so comparing it rewrote their names every sync.
+				if feed.name != parser.title {
+					feed.name = parser.title
 
 					// Let the rest of the app (e.g. the sidebar) know the name changed.
 					// Setting `editedName` would post this; setting `name` does not.
@@ -129,7 +133,6 @@ import Foundation
 				return (existing, folder)
 			}
 
-			let parser = FeedlyFeedParser(feed: collectionFeed)
 			let feed = account.createFeed(with: parser.title, url: parser.url, feedID: parser.feedID, homePageURL: parser.homePageURL)
 			feedsAdded.insert(feed)
 			return (feed, folder)

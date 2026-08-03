@@ -46,7 +46,7 @@ struct FeedlyFeedParser {
 	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
 
 	var title: String? {
-		return rightToLeftTextSantizer.sanitize(feed.title) ?? ""
+		return rightToLeftTextSantizer.sanitize(feed.title)
 	}
 
 	var feedID: String {

@@ -198,6 +198,34 @@ import XCTest
 		XCTAssertTrue(originalFeed === updatedFeed, "Renaming a feed should reuse the existing Feed instance.")
 	}
 
+	func testSyncFeedsForCollectionFoldersLeavesUntitledFeedNameAlone() {
+		let collections = [
+			FeedlyCollection(feeds: [FeedlyFeed(id: "feed/1", title: nil, updated: nil, website: nil)], label: "One", id: "collections/1")
+		]
+
+		let pairs = mirrorCollectionsAsFolders(collections, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+
+		let feed = account.existingFeed(withFeedID: "feed/1")
+		XCTAssertNotNil(feed)
+		XCTAssertNil(feed?.name)
+	}
+
+	func testSyncFeedsForCollectionFoldersKeepsRightToLeftFeedNameSanitized() {
+		let rawTitle = "<div style=\"direction:rtl;text-align:right\">חדשות</div>"
+		let collections = [
+			FeedlyCollection(feeds: [FeedlyFeed(id: "feed/1", title: rawTitle, updated: nil, website: nil)], label: "One", id: "collections/1")
+		]
+
+		let pairs = mirrorCollectionsAsFolders(collections, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+
+		let feed = account.existingFeed(withFeedID: "feed/1")
+		XCTAssertEqual(feed?.name, "חדשות", "The stored name should stay sanitized, not get rewritten to the raw RTL markup.")
+	}
+
 	func testSyncFeedsForCollectionFoldersRepairsStaleFeedID() {
 		let url = "https://example.com/feed.xml"
 		let canonicalFeedID = "feed/\(url)"
