@@ -323,8 +323,9 @@ import Secrets
 
 		do {
 			return try await account.logActivity(kind: .sendArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> Int in
+				// A failed read must not read as “nothing to send” — zero would arm the no-change backoff.
 				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
-					return 0
+					throw FeedlyAccountDelegateError.databaseReadFailed
 				}
 
 				var savedError: Error?
@@ -1017,9 +1018,10 @@ private extension FeedlyAccountDelegate {
 		let newerThan = Date().bySubtracting(days: Self.streamIngestDaysLimit)
 		let (remoteUnreadIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
 
-		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		// A failed pending-statuses read must not read as “nothing pending” — that would
+		// revert pending edits and arm the no-change backoff.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
-			return (added: 0, removed: 0)
+			throw FeedlyAccountDelegateError.databaseReadFailed
 		}
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
 
@@ -1047,9 +1049,10 @@ private extension FeedlyAccountDelegate {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
 		let (remoteStarredIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
 
-		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		// A failed pending-statuses read must not read as “nothing pending” — that would
+		// revert pending edits and arm the no-change backoff.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
-			return (added: 0, removed: 0)
+			throw FeedlyAccountDelegateError.databaseReadFailed
 		}
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
 
