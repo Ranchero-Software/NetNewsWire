@@ -237,23 +237,19 @@ import Secrets
 			Self.logger.debug("Feedly: Skipping sync — no changes on last check, backing off")
 			return false
 		}
-
-		refreshProgress.reset()
-		progressInfo = ProgressInfo()
-		refreshProgress.addTasks(2)
-		defer {
-			refreshProgress.reset()
-			progressInfo = ProgressInfo()
+		// refreshAll sends and refreshes statuses itself — and resetting the shared
+		// refreshProgress here would wipe an in-flight refresh’s task counts, letting
+		// the account be deleted mid-sync.
+		guard !refreshAllIsRunning else {
+			return false
 		}
 
 		do {
 			let sentCount = try await sendArticleStatusReturningCount(for: account)
-			refreshProgress.completeTask()
 			// The starred stream has no date bound, so a full starred walk every two minutes
 			// is expensive for heavy savers. Stars still send promptly — remote star changes
 			// arrive with each refreshAll.
 			let refreshCounts = try await refreshArticleStatusReturningCounts(for: account, includeStarred: false)
-			refreshProgress.completeTask()
 
 			if sentCount == 0 && refreshCounts.totalChanged == 0 {
 				lastNoChangeSyncDate = Date()
