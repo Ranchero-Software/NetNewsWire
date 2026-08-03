@@ -155,6 +155,22 @@ function showFeedInspectorSetup() {
 function postRenderProcessing() {
 	ImageViewer.init();
 	showFeedInspectorSetup();
+	postMediaSourceURLs();
+}
+
+// Tell the app which URLs are embedded media, so it can tell a real link tap
+// from WebKit’s synthesized link activation for a video’s source.
+function postMediaSourceURLs() {
+	var urls = new Set();
+	document.querySelectorAll("video, audio, video source, audio source").forEach(element => {
+		if (element.src) {
+			urls.add(element.src);
+		}
+		if (element.currentSrc) {
+			urls.add(element.currentSrc);
+		}
+	});
+	window.webkit.messageHandlers.mediaSourceURLs.postMessage(Array.from(urls));
 }
 
 function onResize() {
