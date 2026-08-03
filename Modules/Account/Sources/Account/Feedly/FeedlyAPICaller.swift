@@ -287,9 +287,11 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(path: "/v3/markers", method: HTTPMethod.post)
 		request.httpBody = try JSONEncoder().encode(MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIDs)))
 
-		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
+		// The markers response body is irrelevant to success — decoding it could
+		// turn a successful mark into a spurious failure that requeues forever.
+		let httpResponse = try await sendIgnoringResponseBody(request: request)
+		guard (200...299).contains(httpResponse.statusCode) else {
+			throw WebserviceError.httpError(status: httpResponse.statusCode)
 		}
 	}
 }
@@ -408,39 +410,47 @@ extension FeedlyAPICaller {
 private extension FeedlyAPICaller {
 
 	func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
-
-		do {
-			return try await session.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
-		} catch WebserviceError.httpError(let status) where status == 401 {
-			return try await retryAfterReauthorization(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		try await withReauthorizationRetry(request: request) { request in
+			try await session.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
 		}
 	}
 
-	func retryAfterReauthorization<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy, keyDecoding: JSONDecoder.KeyDecodingStrategy) async throws -> (HTTPURLResponse, R?) {
-
-		guard let delegate else {
-			assertionFailure("Check the delegate is set to \(FeedlyAccountDelegate.self).")
-			throw WebserviceError.httpError(status: 401)
+	/// For requests where only the status code matters — the response body is not decoded.
+	func sendIgnoringResponseBody(request: URLRequest) async throws -> HTTPURLResponse {
+		try await withReauthorizationRetry(request: request) { request in
+			let (response, _) = try await session.send(request: request)
+			return response
 		}
+	}
 
-		// Capture credentials before reauthorization so we can detect that they actually changed.
-		let credentialsBefore = credentials
+	/// Performs the request, reauthorizing and retrying exactly once on a 401.
+	private func withReauthorizationRetry<T>(request: URLRequest, _ perform: (URLRequest) async throws -> T) async throws -> T {
+		do {
+			return try await perform(request)
+		} catch WebserviceError.httpError(let status) where status == 401 {
+			guard let delegate else {
+				assertionFailure("Check the delegate is set to \(FeedlyAccountDelegate.self).")
+				throw WebserviceError.httpError(status: 401)
+			}
 
-		let didReauthorize = await delegate.reauthorizeFeedlyAPICaller()
-		guard didReauthorize else {
-			throw WebserviceError.httpError(status: 401)
+			// Capture credentials before reauthorization so we can detect that they actually changed.
+			let credentialsBefore = credentials
+
+			let didReauthorize = await delegate.reauthorizeFeedlyAPICaller()
+			guard didReauthorize else {
+				throw WebserviceError.httpError(status: 401)
+			}
+
+			guard let accessToken = credentials?.secret, accessToken != credentialsBefore?.secret else {
+				assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: delegate)) set them on \(self)?")
+				throw WebserviceError.httpError(status: 401)
+			}
+
+			var reauthorizedRequest = request
+			reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+
+			return try await perform(reauthorizedRequest)
 		}
-
-		// Catches an infinitely recursive attempt to refresh.
-		guard let accessToken = credentials?.secret, accessToken != credentialsBefore?.secret else {
-			assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: delegate)) set them on \(self)?")
-			throw WebserviceError.httpError(status: 401)
-		}
-
-		var reauthorizedRequest = request
-		reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		return try await send(request: reauthorizedRequest, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
 	}
 }
 
