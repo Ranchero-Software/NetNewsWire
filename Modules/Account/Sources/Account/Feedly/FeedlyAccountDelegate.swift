@@ -100,6 +100,10 @@ import Secrets
 	private var lastNoChangeSyncDate: Date?
 	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
 
+	// The refresh timer, background refresh, and the Refresh command can all fire
+	// refreshAll — overlapping runs double the request volume and corrupt progress.
+	private var refreshAllIsRunning = false
+
 	// Set on a 429 Too Many Requests response — or a 403, which is how Feedly’s abuse
 	// protection reports a rate-limit ban. Refreshing and status syncing are skipped
 	// until this date so we don’t keep hammering and extend the ban.
@@ -151,6 +155,15 @@ import Secrets
 				ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .refreshAll, message: "Skipped — rate limited by Feedly until \(resumeTime)")
 			}
 			return
+		}
+
+		guard !refreshAllIsRunning else {
+			Self.logger.info("Feedly: Ignoring refreshAll — a refresh is already running")
+			return
+		}
+		refreshAllIsRunning = true
+		defer {
+			refreshAllIsRunning = false
 		}
 
 		// Clear progressInfo before addTasks — the other way around wipes the progress
