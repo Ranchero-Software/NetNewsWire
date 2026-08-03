@@ -425,7 +425,7 @@ public enum FetchType {
 		}
 	}
 
-	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType) -> URLRequest {
+	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, state: String) -> URLRequest {
 		let grantingType: OAuthAuthorizationGranting.Type
 		switch type {
 		case .feedly:
@@ -434,7 +434,7 @@ public enum FetchType {
 			fatalError("\(type) does not support OAuth authorization code granting.")
 		}
 
-		return grantingType.oauthAuthorizationCodeGrantRequest()
+		return grantingType.oauthAuthorizationCodeGrantRequest(state: state)
 	}
 
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,

@@ -1245,8 +1245,22 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			return true
 		} catch {
 			Self.logger.error("Feedly: Refresh access token failed: \(error.localizedDescription)")
+			if isDefinitiveReauthorizationError(error) {
+				postSyncError(error, account: account, operation: "Refreshing access token")
+			}
 			return false
 		}
+	}
+
+	/// A failure that won’t resolve on retry — missing refresh token or a rejected refresh request.
+	private func isDefinitiveReauthorizationError(_ error: Error) -> Bool {
+		if error is FeedlyAccountDelegateError {
+			return true
+		}
+		if case WebserviceError.httpError(let status) = error, (400...499).contains(status) {
+			return true
+		}
+		return false
 	}
 }
 

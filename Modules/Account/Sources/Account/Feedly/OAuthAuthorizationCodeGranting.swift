@@ -43,12 +43,16 @@ nonisolated public struct OAuthAuthorizationRequest: Sendable {
 	}
 
 	public var queryItems: [URLQueryItem] {
-		return [
+		var items = [
 			URLQueryItem(name: "response_type", value: responseType),
 			URLQueryItem(name: "client_id", value: clientID),
 			URLQueryItem(name: "scope", value: scope),
 			URLQueryItem(name: "redirect_uri", value: redirectURI)
 		]
+		if let state {
+			items.append(URLQueryItem(name: "state", value: state))
+		}
+		return items
 	}
 }
 
@@ -62,7 +66,7 @@ nonisolated public struct OAuthAuthorizationResponse {
 public extension OAuthAuthorizationResponse {
 
 	init(url: URL, client: OAuthAuthorizationClient) throws {
-		guard let scheme = url.scheme, client.redirectURI.hasPrefix(scheme) else {
+		guard let scheme = url.scheme, let redirectScheme = URL(string: client.redirectURI)?.scheme, scheme.caseInsensitiveCompare(redirectScheme) == .orderedSame else {
 			throw URLError(.unsupportedURL)
 		}
 		guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
@@ -171,7 +175,7 @@ nonisolated public struct OAuthAuthorizationGrant: Equatable, Sendable {
 /// Account dispatches sign-in requests to the concrete delegate via this protocol.
 protocol OAuthAuthorizationGranting: AccountDelegate {
 
-	static func oauthAuthorizationCodeGrantRequest() -> URLRequest
+	static func oauthAuthorizationCodeGrantRequest(state: String) -> URLRequest
 
 	static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse) async throws -> OAuthAuthorizationGrant
 }
