@@ -156,6 +156,9 @@ final class WebViewController: UIViewController {
 
 		if article != self.article {
 			self.article = article
+			// A restoration offset belongs only to the article it was saved for.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
+			restoreWindowScrollY = nil
 			if updateView {
 				if article?.feed?.readerViewAlwaysEnabled == true {
 					startArticleExtractor()
@@ -343,6 +346,7 @@ extension WebViewController: ArticleExtractorDelegate {
 			self.extractedArticle = extractedArticle
 			if let restoreWindowScrollY = restoreWindowScrollY {
 				windowScrollY = restoreWindowScrollY
+				self.restoreWindowScrollY = nil
 			}
 			isShowingExtractedArticle = true
 			loadWebView()

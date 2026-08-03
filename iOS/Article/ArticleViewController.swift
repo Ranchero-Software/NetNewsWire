@@ -61,6 +61,12 @@ final class ArticleViewController: UIViewController {
 		didSet {
 			Self.logger.debug("ArticleViewController: article didSet: \(self.article?.accountID ?? "nil") \(self.article?.articleID ?? "nil") \(self.article?.title ?? "nil")")
 
+			if oldValue != article {
+				// The launch-restoration scroll position belongs only to the restored article.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
+				restoreScrollPosition = nil
+			}
+
 			if let controller = currentWebViewController, controller.article != article {
 				controller.setArticle(article)
 				if isPageTransitionInProgress {
