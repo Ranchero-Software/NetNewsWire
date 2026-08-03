@@ -315,7 +315,6 @@
 		842E25332DB9F9B800FF7DD8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				/Localized/SafariExtension/SafariExtensionViewController.xib,
 				/Localized/ShareExtension/ShareViewController.xib,
 				Resources/Info.plist,
 				Resources/NetNewsWire.provisionprofile,
@@ -324,9 +323,7 @@
 				"Resources/org.sparkle-project.InstallerLauncher.xpc",
 				"Resources/org.sparkle-project.InstallerStatus.xpc",
 				SafariExtension/Info.plist,
-				"SafariExtension/netnewswire-subscribe-to-feed.js",
 				SafariExtension/SafariExtensionHandler.swift,
-				SafariExtension/SafariExtensionViewController.swift,
 				SafariExtension/ToolbarItemIcon.pdf,
 				ShareExtension/icon.icns,
 				ShareExtension/Info.plist,
@@ -337,10 +334,7 @@
 		842E25352DB9F9B800FF7DD8 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				/Localized/SafariExtension/SafariExtensionViewController.xib,
-				"SafariExtension/netnewswire-subscribe-to-feed.js",
 				SafariExtension/SafariExtensionHandler.swift,
-				SafariExtension/SafariExtensionViewController.swift,
 				SafariExtension/ToolbarItemIcon.pdf,
 			);
 			target = 6581C73220CED60000F4AD34 /* Subscribe to Feed */;
