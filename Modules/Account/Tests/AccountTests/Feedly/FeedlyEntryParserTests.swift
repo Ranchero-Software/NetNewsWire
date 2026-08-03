@@ -27,6 +27,7 @@ import XCTest
 								author: "Bob Alice",
 								crawled: .distantPast,
 								recrawled: Date(timeIntervalSinceReferenceDate: 0),
+								published: nil,
 								origin: origin,
 								canonical: [canonicalLink],
 								alternate: nil,
@@ -85,6 +86,7 @@ import XCTest
 								author: nil,
 								crawled: .distantPast,
 								recrawled: nil,
+								published: nil,
 								origin: origin,
 								canonical: nil,
 								alternate: nil,
@@ -113,6 +115,7 @@ import XCTest
 								author: nil,
 								crawled: .distantPast,
 								recrawled: Date(timeIntervalSinceReferenceDate: 0),
+								published: nil,
 								origin: nil,
 								canonical: [canonicalLink],
 								alternate: [alternateLink],
@@ -136,6 +139,7 @@ import XCTest
 								author: nil,
 								crawled: .distantPast,
 								recrawled: Date(timeIntervalSinceReferenceDate: 0),
+								published: nil,
 								origin: nil,
 								canonical: [canonicalLink],
 								alternate: [alternateLink],
@@ -159,6 +163,7 @@ import XCTest
 								author: nil,
 								crawled: .distantPast,
 								recrawled: Date(timeIntervalSinceReferenceDate: 0),
+								published: nil,
 								origin: nil,
 								canonical: nil,
 								alternate: nil,
@@ -172,6 +177,22 @@ import XCTest
 		XCTAssertEqual(parser.contentHMTL, content.content)
 	}
 
+	func testPublishedDateUsedWhenNotAfterCrawlDate() {
+		let crawled = Date(timeIntervalSinceReferenceDate: 1_000_000)
+		let published = Date(timeIntervalSinceReferenceDate: 500_000)
+		let entry = makeEntry(crawled: crawled, published: published)
+
+		XCTAssertEqual(FeedlyEntryParser(entry: entry).datePublished, published)
+	}
+
+	func testFutureDatedPublishedDateFallsBackToCrawlDate() {
+		let crawled = Date(timeIntervalSinceReferenceDate: 1_000_000)
+		let published = Date(timeIntervalSinceReferenceDate: 2_000_000)
+		let entry = makeEntry(crawled: crawled, published: published)
+
+		XCTAssertEqual(FeedlyEntryParser(entry: entry).datePublished, crawled)
+	}
+
 	func testSummaryUsedAsContentWhenContentMissing() {
 		let summary = FeedlyEntry.Content(content: "Test Summary", direction: .leftToRight)
 		let entry = FeedlyEntry(id: "tests/feeds/1/entries/1",
@@ -181,6 +202,7 @@ import XCTest
 								author: nil,
 								crawled: .distantPast,
 								recrawled: Date(timeIntervalSinceReferenceDate: 0),
+								published: nil,
 								origin: nil,
 								canonical: nil,
 								alternate: nil,
@@ -192,5 +214,23 @@ import XCTest
 		let parser = FeedlyEntryParser(entry: entry)
 
 		XCTAssertEqual(parser.contentHMTL, summary.content)
+	}
+
+	private func makeEntry(crawled: Date, published: Date?) -> FeedlyEntry {
+		FeedlyEntry(id: "tests/feeds/1/entries/1",
+					title: "Test Entry 1",
+					content: nil,
+					summary: nil,
+					author: nil,
+					crawled: crawled,
+					recrawled: nil,
+					published: published,
+					origin: nil,
+					canonical: nil,
+					alternate: nil,
+					unread: false,
+					tags: nil,
+					categories: nil,
+					enclosure: nil)
 	}
 }

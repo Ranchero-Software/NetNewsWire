@@ -162,6 +162,9 @@ struct FeedlyEntry: Decodable, Sendable {
 	/// the timestamp, in ms, when this article was re-processed and updated by the feedly Cloud servers.
 	let recrawled: Date?
 
+	/// When this article was published, as reported by the feed.
+	let published: Date?
+
 	/// the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
 	let origin: FeedlyOrigin?
 
@@ -232,6 +235,14 @@ struct FeedlyEntryParser {
 	}
 
 	var datePublished: Date {
+		// The publisher’s date when the feed provides one. Crawled is when Feedly’s
+		// servers processed the article — using it dated a newly added feed’s entire
+		// archive “now.” Publisher dates aren’t always reliable (per Feedly), so a
+		// future-dated article falls back to crawled rather than pinning itself to
+		// the top of a date-sorted timeline.
+		if let published = entry.published, published <= entry.crawled {
+			return published
+		}
 		return entry.crawled
 	}
 

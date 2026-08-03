@@ -328,7 +328,10 @@ import Secrets
 					// <https://github.com/Ranchero-Software/NetNewsWire/issues/3779>
 					if pairing.key == .read, pairing.flag == true {
 						let articles = await account.fetchArticlesAsync(.articleIDs(articleIDs))
-						let datesByArticleID = Dictionary(uniqueKeysWithValues: articles.map { ($0.articleID, $0.datePublished ?? $0.status.dateArrived) })
+						// Feedly’s marker limit is on the crawl date, which isn’t stored. dateArrived
+						// can’t precede the crawl, so if even the newer of these two dates is past the
+						// cutoff, the crawl certainly is. An old article crawled recently is kept.
+						let datesByArticleID = Dictionary(uniqueKeysWithValues: articles.map { ($0.articleID, max($0.datePublished ?? .distantPast, $0.status.dateArrived)) })
 						let cutoffDate = Date().bySubtracting(days: Self.markAsReadDaysLimit)
 						let unmarkableIDs = Self.unmarkableAsReadArticleIDs(articleIDs, datesByArticleID: datesByArticleID, cutoffDate: cutoffDate)
 						if !unmarkableIDs.isEmpty {
