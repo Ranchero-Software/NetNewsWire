@@ -114,6 +114,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			return
 		}
 		if shouldSkipBecauseRateLimited() {
+			if let rateLimitResumeDate {
+				let resumeTime = DateFormatter.localizedString(from: rateLimitResumeDate, dateStyle: .none, timeStyle: .short)
+				ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .refreshAll, message: "Skipped — rate limited by \(account.type.displayName) until \(resumeTime)")
+			}
 			return
 		}
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")

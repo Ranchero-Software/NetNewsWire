@@ -30,7 +30,25 @@ import Secrets
 
 	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
 	// See https://developer.feedly.com/v3/opml/
-	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(31)]
+	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(FeedlyAccountDelegate.markAsReadDaysLimit)]
+
+	// Feedly can’t apply mark-as-read to entries crawled more than ~31 days ago.
+	static let markAsReadDaysLimit = 31
+
+	// Bound for the stream ID walks, matching NNW's own article retention (the 90-day
+	// articleCutoffDate) — older IDs create statuses for articles that are never
+	// downloaded and are immediately cleaned up. Deliberately not markAsReadDaysLimit:
+	// that governs mark-as-read writes, and 31 days would shallow out first-sync history.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
+	private static let streamIngestDaysLimit = 90
+
+	// Safety net so no continuation loop can run away.
+	private static let maxStreamPageCount = 40
+
+	// At most this many article-download chunks per sync — an initial sync of a large
+	// account could otherwise fire hundreds of requests back to back. The remainder
+	// is picked up on subsequent syncs, since missing articles are recomputed each time.
+	private static let maxArticleDownloadChunksPerSync = 20
 
 	let isOPMLImportSupported = false
 	var isOPMLImportInProgress = false
@@ -81,6 +99,13 @@ import Secrets
 	private var lastNoChangeSyncDate: Date?
 	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
 
+	// Set on a 429 Too Many Requests response — or a 403, which is how Feedly’s abuse
+	// protection reports a rate-limit ban. Refreshing and status syncing are skipped
+	// until this date so we don’t keep hammering and extend the ban.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
+	private var rateLimitResumeDate: Date?
+	private static let defaultRetryAfter: TimeInterval = 60 * 60
+
 	init(dataFolder: String, api: FeedlyAPICaller.API) {
 
 		self.caller = FeedlyAPICaller(api: api)
@@ -119,6 +144,14 @@ import Secrets
 			throw FeedlyAccountDelegateError.notLoggedIn
 		}
 
+		if shouldSkipBecauseRateLimited() {
+			if let rateLimitResumeDate {
+				let resumeTime = DateFormatter.localizedString(from: rateLimitResumeDate, dateStyle: .none, timeStyle: .short)
+				ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .refreshAll, message: "Skipped — rate limited by Feedly until \(resumeTime)")
+			}
+			return
+		}
+
 		refreshProgress.reset()
 		refreshProgress.addTasks(7)
 		progressInfo = ProgressInfo()
@@ -131,7 +164,17 @@ import Secrets
 		do {
 			try await account.logActivity(kind: .refreshAll, successMessage: successMessage) { () -> RefreshAllSummary in
 				var summary = RefreshAllSummary()
-				summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
+				do {
+					summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
+				} catch {
+					// A failed status send must not block fetching new articles.
+					// <https://discourse.netnewswire.com/t/no-feed-updates/336>
+					// A rate limit is the exception — continuing would just extend the ban.
+					if isRateLimitError(error) {
+						throw error
+					}
+					Self.logger.error("Feedly: continuing refresh despite status send failure: \(error.localizedDescription)")
+				}
 				refreshProgress.completeTask()
 				summary.feedListChanges = try await refreshFeedList(for: account)
 				refreshProgress.completeTask()
@@ -142,7 +185,10 @@ import Secrets
 				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
 				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
-				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
+				// Updated articles first — missing ones are recomputed every sync, so they
+				// survive the per-sync download cap. A truncated update would be lost.
+				let downloadIDs = Array(updatedIDs) + Array(missingIDs.subtracting(updatedIDs))
+				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: downloadIDs)
 				refreshProgress.completeTask()
 				summary.newArticlesFromFeedRefresh = await refreshIndividualFeeds(for: account)
 				refreshProgress.completeTask()
@@ -154,6 +200,10 @@ import Secrets
 		} catch {
 			refreshProgress.reset()
 			progressInfo = ProgressInfo()
+			if isRateLimitError(error) {
+				noteRateLimited(error, account: account, operation: "Refreshing account")
+				return
+			}
 			throw AccountError.wrapped(error, account)
 		}
 
@@ -163,6 +213,9 @@ import Secrets
 
 	func syncArticleStatus() async throws -> Bool {
 		guard let account else {
+			return false
+		}
+		if shouldSkipBecauseRateLimited() {
 			return false
 		}
 		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
@@ -178,25 +231,37 @@ import Secrets
 			progressInfo = ProgressInfo()
 		}
 
-		let sentCount = try await sendArticleStatusReturningCount(for: account)
-		refreshProgress.completeTask()
-		let refreshCounts = try await refreshArticleStatusReturningCounts(for: account)
-		refreshProgress.completeTask()
+		do {
+			let sentCount = try await sendArticleStatusReturningCount(for: account)
+			refreshProgress.completeTask()
+			let refreshCounts = try await refreshArticleStatusReturningCounts(for: account)
+			refreshProgress.completeTask()
 
-		if sentCount == 0 && refreshCounts.totalChanged == 0 {
-			lastNoChangeSyncDate = Date()
-		} else {
-			lastNoChangeSyncDate = nil
+			if sentCount == 0 && refreshCounts.totalChanged == 0 {
+				lastNoChangeSyncDate = Date()
+			} else {
+				lastNoChangeSyncDate = nil
+			}
+
+			return sentCount > 0 || refreshCounts.totalChanged > 0
+		} catch where isRateLimitError(error) {
+			noteRateLimited(error, account: account, operation: "Syncing article status")
+			return false
 		}
-
-		return sentCount > 0 || refreshCounts.totalChanged > 0
 	}
 
 	func sendArticleStatus() async throws {
 		guard let account else {
 			return
 		}
-		_ = try await sendArticleStatusReturningCount(for: account)
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
+		do {
+			_ = try await sendArticleStatusReturningCount(for: account)
+		} catch where isRateLimitError(error) {
+			noteRateLimited(error, account: account, operation: "Sending article status")
+		}
 	}
 
 	/// Sends queued local status changes upstream. Returns the count successfully sent.
@@ -228,42 +293,97 @@ import Secrets
 					(.starred, false, .unsaved)
 				]
 
-				for pairing in pairings {
+				pairingLoop: for pairing in pairings {
 					let pending = syncStatuses.filter { $0.key == pairing.key && $0.flag == pairing.flag }
 					guard !pending.isEmpty else {
 						continue
 					}
-					let articleIDs = Set(pending.map { $0.articleID })
-					do {
-						for chunk in Array(articleIDs).chunked(into: Self.markChunkSize) {
-							let chunkIDs = Set(chunk)
-							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+					var articleIDs = Set(pending.map { $0.articleID })
+
+					// Sending mark-as-read for articles past Feedly’s marker limit can never
+					// succeed — they’d requeue forever and grow the backlog without bound.
+					// <https://github.com/Ranchero-Software/NetNewsWire/issues/3779>
+					if pairing.key == .read, pairing.flag == true {
+						let articles = await account.fetchArticlesAsync(.articleIDs(articleIDs))
+						let datesByArticleID = Dictionary(uniqueKeysWithValues: articles.map { ($0.articleID, $0.datePublished ?? $0.status.dateArrived) })
+						let cutoffDate = Date().bySubtracting(days: Self.markAsReadDaysLimit)
+						let unmarkableIDs = Self.unmarkableAsReadArticleIDs(articleIDs, datesByArticleID: datesByArticleID, cutoffDate: cutoffDate)
+						if !unmarkableIDs.isEmpty {
+							Self.logger.info("Feedly: dropping \(unmarkableIDs.count) mark-as-read statuses past Feedly's marker limit")
+							await syncDatabase.deleteSelectedForProcessing(unmarkableIDs, key: .read)
+							articleIDs.subtract(unmarkableIDs)
 						}
-						await syncDatabase.deleteSelectedForProcessing(articleIDs, key: pairing.key)
-						sentCount += articleIDs.count
-					} catch {
-						Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
-						await syncDatabase.resetSelectedForProcessing(articleIDs, key: pairing.key)
-						savedError = error
+						guard !articleIDs.isEmpty else {
+							continue
+						}
+					}
+
+					let chunks = Array(articleIDs).chunked(into: Self.markChunkSize)
+
+					// Delete each chunk’s rows as it succeeds, so a later failure can’t
+					// resurrect statuses the server already accepted — that’s how the
+					// backlog grew without bound.
+					// <https://github.com/Ranchero-Software/NetNewsWire/issues/3779>
+					for (chunkIndex, chunk) in chunks.enumerated() {
+						let chunkIDs = Set(chunk)
+						do {
+							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+							await syncDatabase.deleteSelectedForProcessing(chunkIDs, key: pairing.key)
+							sentCount += chunkIDs.count
+						} catch {
+							Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
+							let unsentIDs = Set(chunks[chunkIndex...].flatMap { $0 })
+							await syncDatabase.resetSelectedForProcessing(unsentIDs, key: pairing.key)
+							savedError = error
+							if isRateLimitError(error) {
+								break pairingLoop
+							}
+							break
+						}
 					}
 				}
 
 				if let savedError {
+					if isRateLimitError(savedError) {
+						// Pairings skipped after a rate limit stay queued — clear their in-progress mark.
+						syncDatabase.resetAllSelectedForProcessing()
+					}
 					throw savedError
 				}
 				return sentCount
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Sending article status")
+			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per send.
+			if !isRateLimitError(error) {
+				postSyncError(error, account: account, operation: "Sending article status")
+			}
 			throw error
 		}
+	}
+
+	/// ArticleIDs whose mark-as-read can never succeed at Feedly: the article is older
+	/// than the marker limit, or is gone from the database entirely (older still).
+	nonisolated static func unmarkableAsReadArticleIDs(_ articleIDs: Set<String>, datesByArticleID: [String: Date], cutoffDate: Date) -> Set<String> {
+		Set(articleIDs.filter { articleID in
+			guard let date = datesByArticleID[articleID] else {
+				return true
+			}
+			return date < cutoffDate
+		})
 	}
 
 	func refreshArticleStatus() async throws {
 		guard let account else {
 			return
 		}
-		_ = try await refreshArticleStatusReturningCounts(for: account)
+		if shouldSkipBecauseRateLimited() {
+			return
+		}
+		do {
+			_ = try await refreshArticleStatusReturningCounts(for: account)
+		} catch where isRateLimitError(error) {
+			noteRateLimited(error, account: account, operation: "Refreshing article status")
+		}
 	}
 
 	/// Attempt to bring local read/starred statuses in line with the remote ones.
@@ -308,7 +428,10 @@ import Secrets
 
 			Self.logger.info("Feedly: Finished refreshing article statuses")
 			if let refreshError {
-				postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				// A rate-limit error gets one Error Log entry from noteRateLimited, not one per refresh.
+				if !isRateLimitError(refreshError) {
+					postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				}
 				throw refreshError
 			}
 			return counts
@@ -624,7 +747,7 @@ import Secrets
 			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
+		if !shouldSkipBecauseRateLimited(), let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -790,15 +913,25 @@ private extension FeedlyAccountDelegate {
 	/// status sync has something to attach to.
 	func ingestStreamArticleIDs(for account: Account, userID: String) async throws {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+
+		// Bounded — walking the entire global.all history every sync was a big part of
+		// the request volume that got users rate limited.
+		let newerThan = max(accountSettings?.lastArticleFetchStartTime ?? .distantPast, Date().bySubtracting(days: Self.streamIngestDaysLimit))
+
 		_ = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0) article IDs" }, { () -> Int in
 			var total = 0
 			var continuation: String?
+			var pageCount = 0
 			repeat {
-				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil) })
+				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 				await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
 				total += page.ids.count
 				continuation = page.continuation
-			} while continuation != nil
+				pageCount += 1
+			} while continuation != nil && pageCount < Self.maxStreamPageCount
+			if continuation != nil {
+				Self.logger.info("Feedly: stopped the article ID walk at the page cap")
+			}
 			return total
 		})
 	}
@@ -811,7 +944,11 @@ private extension FeedlyAccountDelegate {
 	@discardableResult
 	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: true)
+		// The floor is a safety net — Feedly auto-reads at about a month, so its unread
+		// stream can’t reach anywhere near the retention limit anyway. An article absent
+		// from the bounded fetch still gets marked read below, same as an unbounded one.
+		let newerThan = Date().bySubtracting(days: Self.streamIngestDaysLimit)
+		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
@@ -875,11 +1012,16 @@ private extension FeedlyAccountDelegate {
 	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> Set<String> {
 		var collected = Set<String>()
 		var continuation: String?
+		var pageCount = 0
 		repeat {
 			let page = try await logRefreshPage(for: account, kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
 			collected.formUnion(page.ids)
 			continuation = page.continuation
-		} while continuation != nil
+			pageCount += 1
+		} while continuation != nil && pageCount < Self.maxStreamPageCount
+		if continuation != nil {
+			Self.logger.info("Feedly: stopped a stream ID walk at the page cap")
+		}
 		return collected
 	}
 
@@ -889,10 +1031,11 @@ private extension FeedlyAccountDelegate {
 		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
 	}
 
-	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks.
+	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks,
+	/// in order — the front of the list survives the per-sync cap.
 	/// Returns the count of articles ingested.
 	@discardableResult
-	func downloadEntries(for account: Account, articleIDs: Set<String>) async throws -> Int {
+	func downloadEntries(for account: Account, articleIDs: [String]) async throws -> Int {
 		guard !articleIDs.isEmpty else {
 			return 0
 		}
@@ -902,8 +1045,11 @@ private extension FeedlyAccountDelegate {
 		do {
 			return try await account.logActivity(kind: .refreshMissingArticles) { () -> Int in
 				var ingested = 0
-				let chunks = Array(articleIDs).chunked(into: Self.articleDownloadChunkSize)
-				for chunk in chunks {
+				let chunks = articleIDs.chunked(into: Self.articleDownloadChunkSize)
+				if chunks.count > Self.maxArticleDownloadChunksPerSync {
+					Self.logger.info("Feedly: downloading \(Self.maxArticleDownloadChunksPerSync * Self.articleDownloadChunkSize) of \(articleIDs.count) articles this sync — the rest follow on later syncs")
+				}
+				for chunk in chunks.prefix(Self.maxArticleDownloadChunksPerSync) {
 					let entries = try await self.logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
 					await self.ingest(entries: entries, into: account)
 					ingested += entries.count
@@ -959,13 +1105,15 @@ private extension FeedlyAccountDelegate {
 	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?) async throws -> IngestResult {
 		var result = IngestResult()
 		var continuation: String?
+		var pageCount = 0
 		repeat {
 			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 			let pageResult = await ingest(entries: stream.items, into: account)
 			result.newArticleCount += pageResult.newArticleCount
 			result.newUnreadArticleIDs.formUnion(pageResult.newUnreadArticleIDs)
 			continuation = paginated ? stream.continuation : nil
-		} while continuation != nil
+			pageCount += 1
+		} while continuation != nil && pageCount < Self.maxStreamPageCount
 		return result
 	}
 
@@ -993,6 +1141,50 @@ private extension FeedlyAccountDelegate {
 
 private extension FeedlyAccountDelegate {
 
+	// MARK: - Rate Limiting
+
+	/// True when a rate-limit response has paused syncing and the pause hasn’t expired.
+	private func shouldSkipBecauseRateLimited() -> Bool {
+		guard let rateLimitResumeDate else {
+			return false
+		}
+		guard rateLimitResumeDate > Date() else {
+			self.rateLimitResumeDate = nil
+			return false
+		}
+		Self.logger.info("Feedly: skipping — rate limited until \(rateLimitResumeDate)")
+		return true
+	}
+
+	/// Pause syncing until the server’s Retry-After (or a default) and post one Error Log entry.
+	private func noteRateLimited(_ error: Error, account: Account, operation: String) {
+		let alreadyRateLimited = (rateLimitResumeDate ?? .distantPast) > Date()
+		rateLimitResumeDate = Date().addingTimeInterval(retryAfter(for: error) ?? Self.defaultRetryAfter)
+		Self.logger.error("Feedly: rate limited — pausing syncing until \(self.rateLimitResumeDate ?? .distantPast)")
+
+		if !alreadyRateLimited {
+			postSyncError(error, account: account, operation: operation)
+		}
+	}
+
+	/// Feedly’s abuse protection reports its ban as a 403, so that counts too.
+	private func isRateLimitError(_ error: Error) -> Bool {
+		if case WebserviceError.tooManyRequests = error {
+			return true
+		}
+		if case WebserviceError.httpError(let status) = error, status == HTTPResponseCode.forbidden {
+			return true
+		}
+		return false
+	}
+
+	private func retryAfter(for error: Error) -> TimeInterval? {
+		if case WebserviceError.tooManyRequests(let retryAfter) = error {
+			return retryAfter
+		}
+		return nil
+	}
+
 	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
 		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
@@ -1017,7 +1209,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			try await account.logActivity(kind: .validateCredentials, detail: "Refreshing access token") {
 				guard let refreshCredentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
 					Self.logger.error("Feedly: Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
-					throw WebserviceError.httpError(status: 403)
+					throw FeedlyAccountDelegateError.notLoggedIn
 				}
 
 				Self.logger.info("Feedly: Refreshing access token")
