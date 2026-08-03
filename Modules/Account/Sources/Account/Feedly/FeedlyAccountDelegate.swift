@@ -94,6 +94,10 @@ import Secrets
 	private var lastNoChangeSyncDate: Date?
 	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
 
+	// The refresh, the status-sync timer, and the markArticles background flush can all
+	// start a status send. Overlapping sends would select and post the same queued rows.
+	private var statusSendTask: Task<Int, Error>?
+
 	// The refresh timer, background refresh, and the Refresh command can all fire
 	// refreshAll — overlapping runs double the request volume and corrupt progress.
 	private var refreshAllIsRunning = false
@@ -280,6 +284,20 @@ import Secrets
 
 	/// Sends queued local status changes upstream. Returns the count successfully sent.
 	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
+		if let statusSendTask {
+			return try await statusSendTask.value
+		}
+		let task = Task { () -> Int in
+			defer {
+				statusSendTask = nil
+			}
+			return try await performStatusSend(for: account)
+		}
+		statusSendTask = task
+		return try await task.value
+	}
+
+	private func performStatusSend(for account: Account) async throws -> Int {
 		Self.logger.info("Feedly: Sending article statuses")
 		defer {
 			Self.logger.info("Feedly: Finished sending article statuses")
@@ -361,10 +379,8 @@ import Secrets
 				}
 
 				if let savedError {
-					if rateLimiter.isRateLimitError(savedError) {
-						// Pairings skipped after a rate limit stay queued — clear their in-progress mark.
-						syncDatabase.resetAllSelectedForProcessing()
-					}
+					// Rows of pairings skipped after a rate limit stay selected — harmless,
+					// since the next selectForProcessing claims them again.
 					throw savedError
 				}
 				return sentCount
