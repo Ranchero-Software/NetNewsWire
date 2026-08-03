@@ -950,7 +950,10 @@ private extension FeedlyAccountDelegate {
 					feedsRenamed: feedsRenamed)
 			}
 		} catch {
-			account.postSyncError(error, operation: "Refreshing feed list")
+			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per operation.
+			if !rateLimiter.isRateLimitError(error) {
+				account.postSyncError(error, operation: "Refreshing feed list")
+			}
 			throw error
 		}
 	}
@@ -1097,7 +1100,10 @@ private extension FeedlyAccountDelegate {
 				return ingested
 			}
 		} catch {
-			account.postSyncError(error, operation: "Downloading articles")
+			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per operation.
+			if !rateLimiter.isRateLimitError(error) {
+				account.postSyncError(error, operation: "Downloading articles")
+			}
 			throw error
 		}
 	}
