@@ -344,6 +344,8 @@ extension FeedlyAPICaller {
 			URLQueryItem(name: "count", value: String(count)),
 			URLQueryItem(name: "locale", value: locale)
 		]
+		// A user-typed query can contain + — see makeAuthorizedRequest.
+		components.percentEncodedQuery = components.enhancedPercentEncodedQuery
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
@@ -466,6 +468,10 @@ private extension FeedlyAPICaller {
 		components.path = path
 		if let queryItems {
 			components.queryItems = queryItems
+			// URLComponents leaves + unencoded in query values, and Feedly form-decodes
+			// it as a space — which breaks streamIds for feed URLs containing + and
+			// makes pagination restart when a continuation token contains one.
+			components.percentEncodedQuery = components.enhancedPercentEncodedQuery
 		}
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
