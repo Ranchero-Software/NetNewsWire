@@ -449,6 +449,11 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 	func accountDidInitialize() {
 		credentials = try? account?.retrieveCredentials(type: .basic)
+
+		// A send in progress when the app was killed left its statuses selected. Clear them so
+		// they get sent, instead of waiting for the next selectForProcessing to pick them up.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
+		syncDatabase.resetAllSelectedForProcessing()
 	}
 
 	func accountWillBeDeleted() {
