@@ -181,11 +181,14 @@ import Secrets
 				refreshProgress.completeTask()
 				summary.feedListChanges = try await refreshFeedList(for: account)
 				refreshProgress.completeTask()
-				try await ingestStreamArticleIDs(for: account, userID: credentials.username)
+				let ingestedIDs = try await ingestStreamArticleIDs(for: account, userID: credentials.username)
 				refreshProgress.completeTask()
 				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account)
 				refreshProgress.completeTask()
-				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
+				// The ingest walk just fetched exactly the IDs changed since the last sync —
+				// reuse them instead of walking global.all a second time with the same bounds.
+				// On a first sync there is no updated set: everything is new.
+				let updatedIDs = accountSettings?.lastArticleFetchStartTime == nil ? Set<String>() : ingestedIDs
 				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
 				// Updated articles first — missing ones are recomputed every sync, so they
@@ -909,28 +912,32 @@ private extension FeedlyAccountDelegate {
 
 	/// Pages through global.all stream IDs, creating a status for each so that downstream
 	/// status sync has something to attach to.
-	func ingestStreamArticleIDs(for account: Account, userID: String) async throws {
+	/// Pages through global.all stream IDs, creating a status for each so that downstream
+	/// status sync has something to attach to. Returns the collected IDs so refreshAll can
+	/// reuse them as the updated-articles set instead of walking the same stream twice.
+	@discardableResult
+	func ingestStreamArticleIDs(for account: Account, userID: String) async throws -> Set<String> {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 
 		// Bounded — walking the entire global.all history every sync was a big part of
 		// the request volume that got users rate limited.
 		let newerThan = max(accountSettings?.lastArticleFetchStartTime ?? .distantPast, Date().bySubtracting(days: Self.streamIngestDaysLimit))
 
-		_ = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0) article IDs" }, { () -> Int in
-			var total = 0
+		return try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, { () -> Set<String> in
+			var collected = Set<String>()
 			var continuation: String?
 			var pageCount = 0
 			repeat {
 				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 				await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
-				total += page.ids.count
+				collected.formUnion(page.ids)
 				continuation = page.continuation
 				pageCount += 1
 			} while continuation != nil && pageCount < Self.maxStreamPageCount
 			if continuation != nil {
 				Self.logger.info("Feedly: stopped the article ID walk at the page cap")
 			}
-			return total
+			return collected
 		})
 	}
 
@@ -988,21 +995,6 @@ private extension FeedlyAccountDelegate {
 		await account.markAsUnstarredAsync(articleIDs: toUnstar)
 
 		return (added: newlyStarred.count, removed: toUnstar.count)
-	}
-
-	/// IDs of articles updated on Feedly since `newerThan`.
-	/// When `newerThan` is nil, returns an empty set (everything is new, nothing is updated).
-	func updatedArticleIDs(for account: Account, userID: String, newerThan: Date?) async throws -> Set<String> {
-		guard let newerThan else {
-			Self.logger.debug("Feedly: No date provided so everything must be new (nothing is updated)")
-			return Set<String>()
-		}
-		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		let ids = try await account.logActivity(kind: .fetchArticleIDs, detail: "Updated articles", successMessage: { "\($0.count) article IDs" }, { () -> Set<String> in
-			try await self.collectStreamIDs(for: account, resource: resource, kind: .fetchArticleIDs, newerThan: newerThan)
-		})
-		Self.logger.info("Feedly: Articles updated since last successful sync start date: \(ids.count)")
-		return ids
 	}
 
 	/// Page through stream IDs for `resource`, returning the union of every page.
