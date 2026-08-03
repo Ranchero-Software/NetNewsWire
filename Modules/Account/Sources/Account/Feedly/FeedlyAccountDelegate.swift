@@ -765,7 +765,12 @@ import Secrets
 		}
 		Self.logger.debug("FeedlyAccountDelegate: restoreFolder")
 
-		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+		try await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+			// removeFolder deleted the collection — recreate it first, or restoring the feeds
+			// would target a dead collection ID and the next refresh would drop the folder again.
+			let collection = try await caller.createCollection(named: folder.name ?? "")
+			folder.externalID = collection.id
+
 			for feed in folder.topLevelFeeds {
 
 				folder.topLevelFeeds.remove(feed)
