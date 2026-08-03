@@ -1,5 +1,71 @@
 # iOS Release Notes
 
+### 7.1.3 build 7200 3 Aug 2026 - branch: main tag: iOS-7.1.3-7200
+
+Overhauled Feedly syncing to prevent the request floods that could get users temporarily banned — syncing pauses when Feedly reports rate limiting, fetches only what changed since the last sync, caps article downloads per refresh, and directly refreshes a few feeds each sync to backfill articles missing from Feedly’s aggregate stream
+Fixed the Feedly mark-as-read backlog that could grow forever and re-send the same statuses — sent statuses are recorded as they succeed, and statuses Feedly can no longer accept (articles past its 31-day marker limit) are dropped
+Used the published dates Feedly reports for articles, so a newly added feed’s archive is no longer dated all today
+Fixed Feedly folder and feed bugs — renaming a folder during a refresh could delete it, restoring a deleted folder restored nothing, a failed move could leave a feed in two folders, same-named folders collapsed into one, and right-to-left and untitled feed names were rewritten every sync
+Made Feedly sign-in and token refresh more robust — canceling on the consent page no longer shows an error, expired tokens refresh reliably, and removing the account always removes its tokens from the Keychain
+Fixed bug where a Feedly feed the server no longer knows about could never be deleted
+Paused Reader API syncing when the server reports too many requests, honoring its retry time — and Inoreader additionally conserves its API quota by skipping status downloads when near its daily limit
+Sent queued article statuses for Inoreader on every status sync, so read and starred changes no longer wait out the quota throttle
+Fixed folder creation for Reader API accounts (FreshRSS, BazQux, The Old Reader) — new folders no longer disappear before a feed makes them real on the server
+Fixed Reader API article ID encoding that could make article downloads fail
+Used conditional GET for Reader API tag and subscription lists
+Posted real errors to the Error Log from Reader API status syncing, and kept an unread fetch failure from skipping the starred fetch
+Fixed NewsBlur folder syncing aborting on a missing folder, applied server-side feed updates, and preserved locally edited feed names
+Checked iCloud account status before syncing — feeds still refresh, without repeated error alerts, while iCloud is unavailable (such as when new Terms and Conditions need accepting, which now shows a clear message), and syncing resumes automatically when iCloud comes back
+Fixed bug where an iCloud feed moved between folders could disappear until the destination folder synced
+Fixed iCloud sync progress leaks that left refresh wrongly showing as in progress
+Fixed bugs in Feedbin, Feedly, NewsBlur, and Reader API accounts where a status refresh could briefly revert just-made read and starred changes
+Fixed bug where sending an article’s read status could delete its queued starred status
+Made statuses queued when the app was killed get sent at next launch
+Repaired a feed’s stored ID when a sync service reports a different authoritative one
+Allowed accounts with the same username on different servers
+Showed the account name and type in sync error messages, and stopped showing sync decoding errors as theme import errors
+Fixed feed discovery bugs caused by slashes in unquoted HTML attribute values
+Supported Atom xml:base for resolving relative URLs
+Preserved custom feed titles from imported OPML across refreshes
+Added a feed-finding special case for relay.fm/blog
+Extracted the article body from feeds that put a full HTML page in an article
+Used a browser user-agent string for image and theme downloads
+Removed punctuation and symbols when indexing search text, so words in curly quotes (for instance) are findable
+Updated smart feed unread counts on app activation and at the day change
+Added a special case for blog.naver.com to Reader View
+Preserved the aspect ratio of fixed-size iframes when the article width shrinks them
+Hid Mailchimp newsletter social icon walls and social-share icon blocks whose unsized SVG icons rendered at full width
+Sized inline SVG icons that depend on stripped stylesheets — Tailwind classes and Material for MkDocs markup
+Zeroed negative side margins on tables so they stay inside the article
+Kept absolutely positioned feed content from escaping the article body and overlapping the title
+Fixed text selection in a footnote within a footnote
+Fixed mailto links that were already percent-encoded showing a literal %20 in the subject line
+Fixed Handoff showing “No selection” after the source device was locked
+Handed off the web page instead of the article while the in-app browser is open
+Made tapping an image that’s a link open the link instead of zooming the image — tapping a plain image still zooms it, and tapping the feed icon opens Feed Info
+Fixed blank screen after dismissing a full-screen image
+Fixed bug where a slow image download could open the image viewer after you’d left the article
+Stopped taps on an embedded video’s controls from opening the video URL in a browser
+Fixed bugs where articles could open scrolled to the middle instead of the top — reader view articles, and articles opened via Handoff or deep links
+Recovered from WebKit content-process termination, so articles no longer come up blank after the system reclaims the web views
+Fixed article layout issues caused by running the layout script twice
+Fixed bug where the timeline could briefly show large titles in the navigation bar
+Kept the current article when adding a feed — showing the Add Feed sheet no longer clears the selection
+Fixed bug where opening the app from a notification could fight with state restoration at launch
+Scrolled the selected timeline item fully into view when it was only partially visible
+Made tapping the already-selected feed navigate to it again
+Made go-to-feed work when the feed is filtered out of the feeds list
+Fixed arrow-key navigation between panels in two-panel and collapsed layouts
+Saved and restored the timeline width between runs on iPad
+Made the l key respect the setting for confirming mark-all-read
+Added a Clean Up keyboard shortcut
+Fixed the Mark All as Read confirmation appearing centered when triggered by keyboard shortcut
+Made dragging a feed from account to account a copy rather than a move, matching the Mac version
+Replaced the legacy Add Feed Siri intent with an App Intent so it appears in Shortcuts again
+Shared the article URL as the primary share-sheet item so Shortcuts receives input
+Replaced the share extension’s form with a custom form
+Made VoiceOver announce the article-view feed icon as a Get Feed Info button
+
 ### 7.1.2 build 7112 25 July 2026 - branch: main tag: iOS-7.1.2-7112
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.1.2 release version on 2 Aug 2026.
