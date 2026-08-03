@@ -45,6 +45,11 @@ import Secrets
 	// Safety net so no continuation loop can run away.
 	private static let maxStreamPageCount = 40
 
+	// At most this many article-download chunks per sync — an initial sync of a large
+	// account could otherwise fire hundreds of requests back to back. The remainder
+	// is picked up on subsequent syncs, since missing articles are recomputed each time.
+	private static let maxArticleDownloadChunksPerSync = 20
+
 	let isOPMLImportSupported = false
 	var isOPMLImportInProgress = false
 
@@ -180,7 +185,10 @@ import Secrets
 				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
 				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
-				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
+				// Updated articles first — missing ones are recomputed every sync, so they
+				// survive the per-sync download cap. A truncated update would be lost.
+				let downloadIDs = Array(updatedIDs) + Array(missingIDs.subtracting(updatedIDs))
+				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: downloadIDs)
 				refreshProgress.completeTask()
 				summary.newArticlesFromFeedRefresh = await refreshIndividualFeeds(for: account)
 				refreshProgress.completeTask()
@@ -1018,10 +1026,11 @@ private extension FeedlyAccountDelegate {
 		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
 	}
 
-	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks.
+	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks,
+	/// in order — the front of the list survives the per-sync cap.
 	/// Returns the count of articles ingested.
 	@discardableResult
-	func downloadEntries(for account: Account, articleIDs: Set<String>) async throws -> Int {
+	func downloadEntries(for account: Account, articleIDs: [String]) async throws -> Int {
 		guard !articleIDs.isEmpty else {
 			return 0
 		}
@@ -1031,8 +1040,11 @@ private extension FeedlyAccountDelegate {
 		do {
 			return try await account.logActivity(kind: .refreshMissingArticles) { () -> Int in
 				var ingested = 0
-				let chunks = Array(articleIDs).chunked(into: Self.articleDownloadChunkSize)
-				for chunk in chunks {
+				let chunks = articleIDs.chunked(into: Self.articleDownloadChunkSize)
+				if chunks.count > Self.maxArticleDownloadChunksPerSync {
+					Self.logger.info("Feedly: downloading \(Self.maxArticleDownloadChunksPerSync * Self.articleDownloadChunkSize) of \(articleIDs.count) articles this sync — the rest follow on later syncs")
+				}
+				for chunk in chunks.prefix(Self.maxArticleDownloadChunksPerSync) {
 					let entries = try await self.logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
 					await self.ingest(entries: entries, into: account)
 					ingested += entries.count
