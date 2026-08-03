@@ -35,6 +35,16 @@ import Secrets
 	// Feedly can’t apply mark-as-read to entries crawled more than ~31 days ago.
 	static let markAsReadDaysLimit = 31
 
+	// Bound for the stream ID walks, matching NNW's own article retention (the 90-day
+	// articleCutoffDate) — older IDs create statuses for articles that are never
+	// downloaded and are immediately cleaned up. Deliberately not markAsReadDaysLimit:
+	// that governs mark-as-read writes, and 31 days would shallow out first-sync history.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
+	private static let streamIngestDaysLimit = 90
+
+	// Safety net so no continuation loop can run away.
+	private static let maxStreamPageCount = 40
+
 	let isOPMLImportSupported = false
 	var isOPMLImportInProgress = false
 
@@ -890,15 +900,25 @@ private extension FeedlyAccountDelegate {
 	/// status sync has something to attach to.
 	func ingestStreamArticleIDs(for account: Account, userID: String) async throws {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
+
+		// Bounded — walking the entire global.all history every sync was a big part of
+		// the request volume that got users rate limited.
+		let newerThan = max(accountSettings?.lastArticleFetchStartTime ?? .distantPast, Date().bySubtracting(days: Self.streamIngestDaysLimit))
+
 		_ = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0) article IDs" }, { () -> Int in
 			var total = 0
 			var continuation: String?
+			var pageCount = 0
 			repeat {
-				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil) })
+				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 				await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
 				total += page.ids.count
 				continuation = page.continuation
-			} while continuation != nil
+				pageCount += 1
+			} while continuation != nil && pageCount < Self.maxStreamPageCount
+			if continuation != nil {
+				Self.logger.info("Feedly: stopped the article ID walk at the page cap")
+			}
 			return total
 		})
 	}
@@ -911,7 +931,11 @@ private extension FeedlyAccountDelegate {
 	@discardableResult
 	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: true)
+		// The floor is a safety net — Feedly auto-reads at about a month, so its unread
+		// stream can’t reach anywhere near the retention limit anyway. An article absent
+		// from the bounded fetch still gets marked read below, same as an unbounded one.
+		let newerThan = Date().bySubtracting(days: Self.streamIngestDaysLimit)
+		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
 		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
@@ -975,11 +999,16 @@ private extension FeedlyAccountDelegate {
 	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> Set<String> {
 		var collected = Set<String>()
 		var continuation: String?
+		var pageCount = 0
 		repeat {
 			let page = try await logRefreshPage(for: account, kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
 			collected.formUnion(page.ids)
 			continuation = page.continuation
-		} while continuation != nil
+			pageCount += 1
+		} while continuation != nil && pageCount < Self.maxStreamPageCount
+		if continuation != nil {
+			Self.logger.info("Feedly: stopped a stream ID walk at the page cap")
+		}
 		return collected
 	}
 
@@ -1059,13 +1088,15 @@ private extension FeedlyAccountDelegate {
 	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?) async throws -> IngestResult {
 		var result = IngestResult()
 		var continuation: String?
+		var pageCount = 0
 		repeat {
 			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 			let pageResult = await ingest(entries: stream.items, into: account)
 			result.newArticleCount += pageResult.newArticleCount
 			result.newUnreadArticleIDs.formUnion(pageResult.newUnreadArticleIDs)
 			continuation = paginated ? stream.continuation : nil
-		} while continuation != nil
+			pageCount += 1
+		} while continuation != nil && pageCount < Self.maxStreamPageCount
 		return result
 	}
 
