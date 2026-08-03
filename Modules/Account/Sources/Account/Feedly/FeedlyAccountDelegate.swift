@@ -44,6 +44,10 @@ import Secrets
 	// is picked up on subsequent syncs, since missing articles are recomputed each time.
 	private static let maxArticleDownloadChunksPerSync = 20
 
+	// The watermark is a local clock reading compared against Feedly’s server-side crawl
+	// times — back-dating it covers clock skew, and re-fetching the overlap is idempotent.
+	private static let articleFetchOverlapInterval: TimeInterval = 5 * 60
+
 	let isOPMLImportSupported = false
 	var isOPMLImportInProgress = false
 
@@ -173,6 +177,8 @@ import Secrets
 			Self.refreshAllMessage(summary: summary)
 		}
 
+		var ingestTruncated = false
+
 		do {
 			try await account.logActivity(kind: .refreshAll, successMessage: successMessage) { () -> RefreshAllSummary in
 				var summary = RefreshAllSummary()
@@ -190,14 +196,15 @@ import Secrets
 				refreshProgress.completeTask()
 				summary.feedListChanges = try await refreshFeedList(for: account)
 				refreshProgress.completeTask()
-				let ingestedIDs = try await ingestStreamArticleIDs(for: account, userID: credentials.username)
+				let (ingestedIDs, truncated) = try await ingestStreamArticleIDs(for: account, userID: credentials.username)
+				ingestTruncated = truncated
 				refreshProgress.completeTask()
 				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account, includeStarred: true)
 				refreshProgress.completeTask()
 				// The ingest walk just fetched exactly the IDs changed since the last sync —
 				// reuse them instead of walking global.all a second time with the same bounds.
 				// On a first sync there is no updated set: everything is new.
-				let updatedIDs = accountSettings?.lastArticleFetchStartTime == nil ? Set<String>() : ingestedIDs
+					let updatedIDs = accountSettings?.lastArticleFetchStartTime == nil ? Set<String>() : ingestedIDs
 				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
 				// Updated articles first — missing ones are recomputed every sync, so they
@@ -209,7 +216,11 @@ import Secrets
 				refreshProgress.completeTask()
 				return summary
 			}
-			accountSettings?.lastArticleFetchStartTime = startDate
+			// Don’t advance the watermark when the ID walk stopped at the page cap —
+			// the unwalked window would fall outside every future fetch and be lost.
+			if !ingestTruncated {
+				accountSettings?.lastArticleFetchStartTime = startDate.addingTimeInterval(-Self.articleFetchOverlapInterval)
+			}
 			accountSettings?.lastRefreshCompletedDate = Date()
 			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-startDate.timeIntervalSinceNow, privacy: .public) seconds")
 		} catch {
@@ -946,14 +957,14 @@ private extension FeedlyAccountDelegate {
 	/// status sync has something to attach to. Returns the collected IDs so refreshAll can
 	/// reuse them as the updated-articles set instead of walking the same stream twice.
 	@discardableResult
-	func ingestStreamArticleIDs(for account: Account, userID: String) async throws -> Set<String> {
+	func ingestStreamArticleIDs(for account: Account, userID: String) async throws -> (ids: Set<String>, truncated: Bool) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
 
 		// Bounded — walking the entire global.all history every sync was a big part of
 		// the request volume that got users rate limited.
 		let newerThan = max(accountSettings?.lastArticleFetchStartTime ?? .distantPast, Date().bySubtracting(days: Self.streamIngestDaysLimit))
 
-		return try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, { () -> Set<String> in
+		return try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.ids.count) article IDs" }, { () -> (ids: Set<String>, truncated: Bool) in
 			var collected = Set<String>()
 			var continuation: String?
 			var pageCount = 0
@@ -967,7 +978,7 @@ private extension FeedlyAccountDelegate {
 			if continuation != nil {
 				Self.logger.info("Feedly: stopped the article ID walk at the page cap")
 			}
-			return collected
+			return (collected, continuation != nil)
 		})
 	}
 
