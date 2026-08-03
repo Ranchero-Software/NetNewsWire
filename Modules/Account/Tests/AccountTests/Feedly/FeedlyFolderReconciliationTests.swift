@@ -58,6 +58,44 @@ import XCTest
 		XCTAssertTrue(folders.isEmpty, "Folders should be removed when their collection no longer exists.")
 	}
 
+	func testMirrorCollectionsAsFoldersMatchesByExternalIDAcrossRename() {
+		let pairsBefore = mirrorCollectionsAsFolders([
+			FeedlyCollection(feeds: [], label: "News", id: "collections/1")
+		], in: account)
+		let folderBefore = pairsBefore.first?.folder
+		XCTAssertNotNil(folderBefore)
+
+		// A local rename applied optimistically, with the refresh's collection snapshot still stale.
+		folderBefore?.name = "Nachrichten"
+
+		let pairsAfter = mirrorCollectionsAsFolders([
+			FeedlyCollection(feeds: [], label: "News", id: "collections/1")
+		], in: account)
+
+		XCTAssertEqual(account.folders?.count, 1)
+		XCTAssertTrue(pairsAfter.first?.folder === folderBefore, "The folder should be matched by external ID, not dropped and recreated.")
+		XCTAssertEqual(folderBefore?.name, "News")
+	}
+
+	func testMirrorCollectionsAsFoldersKeepsSameLabelCollectionsDistinct() {
+		let collections = [
+			FeedlyCollection(feeds: [], label: "News", id: "collections/1"),
+			FeedlyCollection(feeds: [], label: "News", id: "collections/2")
+		]
+
+		let pairs = mirrorCollectionsAsFolders(collections, in: account)
+
+		XCTAssertEqual(pairs.count, 2)
+		XCTAssertEqual(account.folders?.count, 2)
+		let externalIDs = Set((account.folders ?? Set()).compactMap { $0.externalID })
+		XCTAssertEqual(externalIDs, Set(["collections/1", "collections/2"]))
+
+		// A second pass matches by ID and keeps both folders — no churn.
+		let secondPairs = mirrorCollectionsAsFolders(collections, in: account)
+		XCTAssertEqual(account.folders?.count, 2)
+		XCTAssertEqual(Set(secondPairs.map { ObjectIdentifier($0.folder) }), Set(pairs.map { ObjectIdentifier($0.folder) }))
+	}
+
 	func testMirrorCollectionsAsFoldersReturnsCollectionFeedsPairedWithFolders() {
 		let feedsForOne = [
 			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
