@@ -1,6 +1,6 @@
 # iOS Release Notes
 
-### 7.1.3 build 7200 3 Aug 2026 - branch: main tag: iOS-7.1.3-7200
+### 7.1.3 build 7200 3 Aug 2026 - branch: main tag: iOS-7.1.3-7201
 
 Overhauled Feedly syncing to prevent the request floods that could get users temporarily banned — syncing pauses when Feedly reports rate limiting, fetches only what changed since the last sync, caps article downloads per refresh, and directly refreshes a few feeds each sync to backfill articles missing from Feedly’s aggregate stream
 Fixed the Feedly mark-as-read backlog that could grow forever and re-send the same statuses — sent statuses are recorded as they succeed, and statuses Feedly can no longer accept (articles past its 31-day marker limit) are dropped
