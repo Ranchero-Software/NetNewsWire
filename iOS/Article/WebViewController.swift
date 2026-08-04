@@ -308,7 +308,21 @@ final class WebViewController: UIViewController {
 	func stopWebViewActivity() {
 		imageDownloadTask?.cancel()
 		imageDownloadTask = nil
-		if let webView = webView {
+		guard let webView = webView else {
+			return
+		}
+		// Resetting iframe src during an element-fullscreen transition triggers a WebKit
+		// RELEASE_ASSERT. Exit fullscreen first.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5382>
+		if webView.fullscreenState != .notInFullscreen {
+			webView.closeAllMediaPresentations { [weak self] in
+				guard let self else {
+					return
+				}
+				self.stopMediaPlayback(webView)
+				self.cancelImageLoad(webView)
+			}
+		} else {
 			stopMediaPlayback(webView)
 			cancelImageLoad(webView)
 		}
@@ -625,6 +639,17 @@ private extension WebViewController {
 
 	func renderPage(_ webView: PreloadedWebView?) {
 		guard let webView = webView else { return }
+
+		// Rendering during an element-fullscreen transition triggers a WebKit
+		// RELEASE_ASSERT. Exit fullscreen first — the strong webView capture
+		// keeps it alive until then.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5382>
+		if webView.fullscreenState != .notInFullscreen {
+			webView.closeAllMediaPresentations { [weak self] in
+				self?.renderPage(webView)
+			}
+			return
+		}
 
 		let theme = ArticleThemesManager.shared.currentTheme
 		let rendering: ArticleRenderer.Rendering
