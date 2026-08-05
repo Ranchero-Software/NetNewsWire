@@ -525,7 +525,15 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 
 		if let pending = pendingSetViewController {
 			pendingSetViewController = nil
-			pageViewController.setViewControllers([pending], direction: .forward, animated: false, completion: nil)
+			// Async because UIKit is still finishing the swipe — a synchronous
+			// setViewControllers here triggers an assertion in _UIQueuingScrollView.
+			DispatchQueue.main.async {
+				if self.isPageTransitionInProgress {
+					self.pendingSetViewController = pending
+				} else {
+					self.pageViewController.setViewControllers([pending], direction: .forward, animated: false, completion: nil)
+				}
+			}
 		}
 
 		guard finished, completed else { return }
