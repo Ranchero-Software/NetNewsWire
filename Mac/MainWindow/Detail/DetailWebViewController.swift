@@ -229,6 +229,12 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			return
 		}
 
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5381>
+		if navigationAction.navigationType == .backForward {
+			decisionHandler(.cancel)
+			return
+		}
+
 		decisionHandler(.allow)
 	}
 
