@@ -931,6 +931,9 @@ private extension WebViewController {
 		guard let viewController = SFSafariViewController.safeSafariViewController(url) else {
 			return
 		}
+		// Apply the resolved userInterfaceStyle before presenting to avoid a white flash in dark mode.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5383>
+		viewController.overrideUserInterfaceStyle = traitCollection.userInterfaceStyle
 		viewController.delegate = self
 		coordinator?.beganBrowsing(url: url)
 		present(viewController, animated: true)

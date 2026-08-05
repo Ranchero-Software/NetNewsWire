@@ -559,7 +559,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	func openInAppBrowser() {
 		if let indexPath = coordinator.currentFeedIndexPath,
 			let url = coordinator.homePageURLForFeed(indexPath) {
-			let vc = SFSafariViewController(url: url)
+			guard let vc = SFSafariViewController.safeSafariViewController(url) else {
+				return
+			}
+			// Apply the resolved userInterfaceStyle before presenting to avoid a white flash in dark mode.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5383>
+			vc.overrideUserInterfaceStyle = traitCollection.userInterfaceStyle
 			vc.modalPresentationStyle = .overFullScreen
 			present(vc, animated: true)
 		}
