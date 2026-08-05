@@ -1,5 +1,5 @@
 {
-  "originHash" : "1dc84bfa5ec4e6d8fb1e2092be6a131b44546f89608b898a48152662e8f5b1dd",
+  "originHash" : "5953c29570620373a6da43d60a8253af0dab8dd80e8d23607224a78036b1ec0c",
   "pins" : [
     {
       "identity" : "plcrashreporter",
@@ -11,12 +11,12 @@
       }
     },
     {
-      "identity" : "sparkle-binary",
+      "identity" : "sparkle",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ranchero-Software/Sparkle-Binary.git",
+      "location" : "https://github.com/sparkle-project/Sparkle.git",
       "state" : {
-        "revision" : "d1a8b3c98d96c601453f2e4230f1dd65b60d0581",
-        "version" : "2.0.1"
+        "revision" : "79bc9e872948e47877e76f194cb0c8e0412b0b90",
+        "version" : "2.9.5"
       }
     },
     {
