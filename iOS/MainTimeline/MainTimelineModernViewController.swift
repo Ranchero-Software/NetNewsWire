@@ -1100,14 +1100,14 @@ extension MainTimelineModernViewController: UISearchControllerDelegate {
 	}
 
 	func willDismissSearchController(_ searchController: UISearchController) {
-		coordinator?.endSearching()
 		searchController.searchBar.showsScopeBar = false
-		// Async to avoid an iOS 26 UINavigationBar crash during the search-bar dismissal transition.
+		// Async to avoid iOS 26 UINavigationBar crashes during the search-bar dismissal
+		// transition — endSearching() mutates the timeline and the navigation stack.
 		DispatchQueue.main.async {
+			self.coordinator?.endSearching()
 			self.updateToolbar()
 		}
 	}
-
 }
 
 extension MainTimelineModernViewController: UISearchResultsUpdating {
