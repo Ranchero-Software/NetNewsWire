@@ -502,7 +502,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func showSearch() {
 		selectSidebarItem(indexPath: nil) {
-			self.rootSplitViewController.show(.supplementary)
+			self.rootSplitViewController.showColumn(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
 				self.mainTimelineViewController!.showSearchAll()
 			}
@@ -1008,7 +1008,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard tappedFeed !== timelineFeed as AnyObject? else {
 			// Same feed — just make sure the timeline is showing.
 			if indexPath != nil {
-				rootSplitViewController.show(.supplementary)
+				rootSplitViewController.showColumn(.supplementary)
 			}
 			completion?()
 			return
@@ -1024,7 +1024,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		if let ip = indexPath, let node = nodeFor(ip), let sidebarItem = node.representedObject as? SidebarItem {
 
 			self.activityManager.selecting(sidebarItem: sidebarItem)
-			self.rootSplitViewController.show(.supplementary)
+			self.rootSplitViewController.showColumn(.supplementary)
 			setTimelineFeed(sidebarItem, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
@@ -1040,7 +1040,7 @@ struct SidebarItemNode: Hashable, Sendable {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
-				self.rootSplitViewController.show(.primary)
+				self.rootSplitViewController.showColumn(.primary)
 				AppDefaults.shared.selectedSidebarItem = nil
 				completion?()
 			}
@@ -1092,12 +1092,12 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		if article == nil {
 			articleViewController?.article = nil
-			rootSplitViewController.show(.supplementary)
+			rootSplitViewController.showColumn(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
 		}
 
-		rootSplitViewController.show(.secondary)
+		rootSplitViewController.showColumn(.secondary)
 		mainTimelineViewController?.didPushArticleViewController = true
 
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
@@ -1273,7 +1273,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	func markAsReadAndShowSidebar(_ articlesToMark: [Article], completion: (() -> Void)? = nil) {
 		markAllAsRead(articlesToMark) {
 			self.rootSplitViewController.preferredDisplayMode = .twoBesideSecondary
-			self.rootSplitViewController.show(.primary)
+			self.rootSplitViewController.showColumn(.primary, bypassDisplayModeRestriction: true)
 			completion?()
 		}
 	}
@@ -1572,7 +1572,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	func navigateToTimeline() {
 		// Only auto-select the first article in three-pane mode, where it populates the
 		// detail pane without hiding the timeline.
-		let displayMode = rootSplitViewController.preferredDisplayMode
+		let displayMode = rootSplitViewController.displayMode
 		let isThreePane = !isRootSplitCollapsed && displayMode != .oneBesideSecondary && displayMode != .secondaryOnly
 		if isThreePane && currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
@@ -1728,7 +1728,7 @@ private extension SceneCoordinator {
 		if isRootSplitCollapsed {
 			revealColumnInCollapsedMode(column, thenFocus: focus)
 		} else {
-			rootSplitViewController.show(column, bypassDisplayModeRestriction: true)
+			rootSplitViewController.showColumn(column, bypassDisplayModeRestriction: true)
 			// Defer focus so becomeFirstResponder targets the revealed column, not the outgoing one.
 			Task { @MainActor in
 				focus()
@@ -1767,7 +1767,7 @@ private extension SceneCoordinator {
 			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
 		} else {
 			// Forward navigation — push the destination column onto the stack.
-			rootSplitViewController.show(column)
+			rootSplitViewController.showColumn(column, bypassDisplayModeRestriction: true)
 			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
 		}
 	}

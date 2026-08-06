@@ -222,7 +222,7 @@ final class ArticleViewController: UIViewController {
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(true)
+		super.viewDidAppear(animated)
 		if #available(iOS 26, *) {
 			navigationController?.navigationBar.topItem?.subtitle = nil
 		}

@@ -22,22 +22,20 @@ final class RootSplitViewController: UISplitViewController {
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
+		super.viewDidAppear(animated)
 		coordinator.resetFocus()
 	}
 
-	override func show(_ column: UISplitViewController.Column) {
-		show(column, bypassDisplayModeRestriction: false)
-	}
-
-	/// Pass `bypassDisplayModeRestriction: true` for user-initiated keyboard navigation, so it can
+	/// Show a column for programmatic navigation.
+	/// Pass `bypassDisplayModeRestriction: true` for user-initiated navigation, so it can
 	/// reveal a column the display-mode suppression below would otherwise keep hidden.
 	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/3138>
-	func show(_ column: UISplitViewController.Column, bypassDisplayModeRestriction: Bool) {
+	func showColumn(_ column: UISplitViewController.Column, bypassDisplayModeRestriction: Bool = false) {
 		guard !coordinator.isNavigationDisabled else { return }
 
 		/// Always show the column on iPhone
 		if UIDevice.current.userInterfaceIdiom == .phone {
-			super.show(column)
+			show(column)
 			return
 		}
 
@@ -46,18 +44,18 @@ final class RootSplitViewController: UISplitViewController {
 		/// restoration of the feeds and timeline display modes.
 		if !bypassDisplayModeRestriction {
 
-			/// Don't show primary when the preferred display mode is timeline + article or article only.
-			if column == .primary && (preferredDisplayMode == .oneBesideSecondary || preferredDisplayMode == .secondaryOnly) {
+			/// Don't show primary when the display mode is timeline + article or article only.
+			if column == .primary && (displayMode == .oneBesideSecondary || displayMode == .secondaryOnly) {
 				return
 			}
 
-			/// Don't show the timeline when the preferred display mode is article only.
-			if column == .supplementary && preferredDisplayMode == .secondaryOnly {
+			/// Don't show the timeline when the display mode is article only.
+			if column == .supplementary && displayMode == .secondaryOnly {
 				return
 			}
 		}
 
-		super.show(column)
+		show(column)
 	}
 
 	// MARK: Keyboard Shortcuts

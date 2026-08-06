@@ -234,7 +234,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	override func viewDidAppear(_ animated: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: viewDidAppear")
 
-		super.viewDidAppear(true)
+		super.viewDidAppear(animated)
 		isTimelineViewControllerPending = false
 		if navigationController?.navigationBar.alpha == 0 {
 			UIView.animate(withDuration: 0.5) {
