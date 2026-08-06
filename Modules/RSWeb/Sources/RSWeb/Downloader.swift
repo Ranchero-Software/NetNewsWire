@@ -114,7 +114,8 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 
 		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
 
-			if isCacheableRequest {
+			// Don’t cache errors — a retry should hit the network.
+			if isCacheableRequest && error == nil {
 				Self.logger.debug("Downloader: caching response for \(url)")
 				self.cache.add(url.absoluteString, data: data, response: response)
 			}
