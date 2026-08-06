@@ -47,6 +47,9 @@ final class MainTimelineCell: UICollectionViewCell {
 	}
 
 	override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+		guard layoutAttributes.frame.width > 0 else {
+			return layoutAttributes
+		}
 		let layout = updatedLayout(width: layoutAttributes.frame.width)
 		layoutAttributes.frame.size.height = layout.height
 		return layoutAttributes
