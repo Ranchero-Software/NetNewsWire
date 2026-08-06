@@ -133,15 +133,14 @@ private extension Downloader {
 	func callAndReleaseCallbacks(_ url: URL, _ data: Data? = nil, _ response: URLResponse? = nil, _ error: Error? = nil) {
 		assert(Thread.isMainThread)
 
-		defer {
-			callbacks[url] = nil
-		}
-
 		guard let callbacksForURL = callbacks[url] else {
 			assertionFailure("Downloader: downloaded URL \(url) but no callbacks found")
 			Self.logger.fault("Downloader: downloaded URL \(url) but no callbacks found")
 			return
 		}
+
+		// Release before calling — a callback may start a new download of the same URL.
+		callbacks[url] = nil
 
 		let count = callbacksForURL.count
 		if count == 1 {
