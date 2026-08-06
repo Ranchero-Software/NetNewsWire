@@ -206,7 +206,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	private var previouslySelectedArticles: ArticleArray?
+	private struct ArticleIdentityKey: Equatable {
+		let accountID: String
+		let articleID: String
+	}
+
+	private var previouslySelectedArticleKeys: [ArticleIdentityKey]?
 
 	private var oneSelectedArticle: Article? {
 		return selectedArticles.count == 1 ? selectedArticles.first : nil
@@ -966,8 +971,14 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func selectionDidChange(_ selectedArticles: ArticleArray?) {
-		guard selectedArticles != previouslySelectedArticles else { return }
-		previouslySelectedArticles = selectedArticles
+		// Compare by identity, not content — re-pushing an updated article that the user is reading
+		// would reset the article view scroll position.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5387>
+		let selectedArticleKeys = selectedArticles?.map { ArticleIdentityKey(accountID: $0.accountID, articleID: $0.articleID) }
+		guard selectedArticleKeys != previouslySelectedArticleKeys else {
+			return
+		}
+		previouslySelectedArticleKeys = selectedArticleKeys
 		delegate?.timelineSelectionDidChange(self, selectedArticles: selectedArticles)
 		delegate?.timelineInvalidatedRestorationState(self)
 	}
