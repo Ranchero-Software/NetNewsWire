@@ -412,19 +412,23 @@ import os
 		self.refreshActivityID = nil
 	}
 
-	/// Cleans up any leftover per-feed activities at the end of a refresh.
-	/// Defense-in-depth for paths we didn’t explicitly cover (e.g. a feed
-	/// the DownloadSession dropped without a `didSkip` callback).
+	/// Clean up any leftover per-feed activities at the end of a refresh.
 	func completeRemainingActivities(accountID: String) {
 		let displayName = AccountManager.shared.existingAccount(accountID: accountID)?.nameForDisplay ?? accountID
 		let owner = ActivityOwner.account(accountID: accountID, displayName: displayName)
 		let activityLog = ActivityLog.shared
 
-		for activity in activityLog.pendingActivities(for: owner) where activity.kind != .refreshAll {
+		for activity in activityLog.pendingActivities(for: owner) {
+			guard case .refreshFeedContent = activity.kind else {
+				continue
+			}
 			activityLog.startIfNeeded(owner, kind: activity.kind)
 			activityLog.didComplete(owner, kind: activity.kind)
 		}
-		for activity in activityLog.runningActivities(for: owner) where activity.kind != .refreshAll {
+		for activity in activityLog.runningActivities(for: owner) {
+			guard case .refreshFeedContent = activity.kind else {
+				continue
+			}
 			activityLog.didComplete(owner, kind: activity.kind)
 		}
 	}
