@@ -7,6 +7,22 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.1.3b2</title>
+            <description><![CDATA[
+            <p><b>Changes since 7.1.3b1:</b></p>
+  				<ul>
+				  <li>Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning (after this update)
+				  <li>Fixed bug where an article updated during a refresh could reload the article view and reset the scroll position
+				  <li>Fixed bug where finishing a refresh could wrongly complete unrelated Activity Log activities, such as an in-progress feed subscribe
+				  <li>Removed the system-generated Back and Forward commands from the article view contextual menu
+				</ul>
+			]]></description>
+        	<pubDate>Fri, 07 Aug 2026 11:10:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b2/NetNewsWire7.1.3b2.zip" sparkle:version="7202" sparkle:shortVersionString="7.1.3b2" length="9745906" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.1.3b1</title>
             <description><![CDATA[
             <p><b>There are lots of bug fixes in this build</b> — which means a lot of code was touched, which could mean there are brand-new bugs. Your help testing is appreciated!</p>
