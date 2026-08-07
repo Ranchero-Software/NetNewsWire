@@ -844,9 +844,11 @@ private extension MainTimelineModernViewController {
 
 			/// Note to future self: apply insets that affect cell width
 			/// calculations (leading swipe actions with sidebar visible)
+			let sidebarOverlapWidth = layoutEnvironment.container.contentInsets.leading
+			let remainingWidth = layoutEnvironment.container.effectiveContentSize.width - sidebarOverlapWidth
 			section.contentInsets = NSDirectionalEdgeInsets(
 				top: 0,
-				leading: layoutEnvironment.container.contentInsets.leading, // Sidebar width
+				leading: remainingWidth > 0 ? sidebarOverlapWidth : 0,
 				bottom: 0,
 				trailing: 0
 			)
