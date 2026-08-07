@@ -1,5 +1,14 @@
 # Mac Release Notes
 
+### 7.1.3b2 7202 7 Aug 2026 — brent: main tag: mac-7.1.3b2
+
+Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning
+Fixed bug where an article updated during a refresh could reload the article view and reset the scroll position
+Fixed bug where finishing a refresh could wrongly complete unrelated Activity Log activities, such as an in-progress feed subscribe
+Stopped caching failed downloads, so retrying a feed right after a timeout tries the network instead of reporting the feed not found
+Fixed bug where a download callback that started a new download of the same URL was silently dropped
+Removed the system-generated Back and Forward commands from the article view contextual menu
+
 ### 7.1.3b1 7200 3 Aug 2026 - branch: main tag: mac-7.1.3b1
 
 Overhauled Feedly syncing to prevent the request floods that could get users temporarily banned — syncing pauses when Feedly reports rate limiting, fetches only what changed since the last sync, caps article downloads per refresh, and directly refreshes a few feeds each sync to backfill articles missing from Feedly’s aggregate stream
