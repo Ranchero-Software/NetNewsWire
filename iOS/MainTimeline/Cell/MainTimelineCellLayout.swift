@@ -171,7 +171,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		let feedNameWidth = textAreaWidth - (Self.feedRightMargin + self.dateRect.size.width)
 		self.feedNameRect = Self.rectForFeedName(cellData, currentPoint, feedNameWidth)
 
-		self.height = [self.iconImageRect, self.feedNameRect].maxY() + Self.cellPadding.bottom
+		self.height = [self.iconImageRect, self.feedNameRect, self.dateRect].maxY() + Self.cellPadding.bottom
 	}
 
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
