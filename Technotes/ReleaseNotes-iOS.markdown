@@ -1,5 +1,18 @@
 # iOS Release Notes
 
+### 7.1.3 build 7202 7 Aug 2026 - branch: main tag: iOS-7.1.3-7202
+
+Fixed bug where timeline rows on iPad could stop responding to taps
+Fixed bug where timeline rows could collapse to a single truncated line for both title and body, ignoring the number-of-lines setting
+Fixed bug where the date could be clipped in timeline rows with no feed name or byline
+Fixed crash when ending a search while the split view expands (iPad)
+Fixed crash when swiping between articles
+Fixed bug where a video playing fullscreen could break the article view when the article re-rendered
+Reduced the flash of white when opening an article link in the in-app browser in dark mode
+Fixed bug where finishing a refresh could wrongly complete unrelated Activity Log activities, such as an in-progress feed subscribe
+Stopped caching failed downloads, so retrying a feed right after a timeout tries the network instead of reporting the feed not found
+Fixed bug where a download callback that started a new download of the same URL was silently dropped
+
 ### 7.1.3 build 7200 3 Aug 2026 - branch: main tag: iOS-7.1.3-7201
 
 Overhauled Feedly syncing to prevent the request floods that could get users temporarily banned — syncing pauses when Feedly reports rate limiting, fetches only what changed since the last sync, caps article downloads per refresh, and directly refreshes a few feeds each sync to backfill articles missing from Feedly’s aggregate stream
