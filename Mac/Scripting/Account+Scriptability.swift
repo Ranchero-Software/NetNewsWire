@@ -230,6 +230,8 @@ import RSCore
 			osType = "Bzqx"
 		case .theOldReader:
 			osType = "Tord"
+		case .miniflux:
+			osType = "Mnfl"
 		}
 		return osType.fourCharCode
 	}

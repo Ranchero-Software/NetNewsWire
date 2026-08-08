@@ -40,6 +40,8 @@ extension AccountType {
 			return .systemIndigo
 		case .theOldReader:
 			return .systemPink
+		case .miniflux:
+			return .systemMint
 		}
 	}
 	#else
@@ -61,6 +63,8 @@ extension AccountType {
 			return .brown
 		case .bazQux:
 			return .indigo
+		case .miniflux:
+			return .mint
 		case .theOldReader:
 			return .pink
 		}
@@ -95,6 +99,8 @@ extension AccountType {
 			return Image("accountInoreader")
 		case .newsBlur:
 			return Image("accountNewsBlur")
+		case .miniflux:
+			return Image("accountMiniflux")
 		case .theOldReader:
 			return Image("accountTheOldReader")
 		}

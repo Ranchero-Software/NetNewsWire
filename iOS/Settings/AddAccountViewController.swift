@@ -203,6 +203,13 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			let addViewController = navController.topViewController as! NewsBlurAccountViewController
 			addViewController.delegate = self
 			present(navController, animated: true)
+		case .miniflux:
+			let addViewController = MinifluxAccountViewController(style: .grouped)
+			addViewController.accountType = accountType
+			addViewController.delegate = self
+			let navController = UINavigationController(rootViewController: addViewController)
+			navController.modalPresentationStyle = .currentContext
+			present(navController, animated: true)
 		case .bazQux, .inoreader, .freshRSS, .theOldReader:
 			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "ReaderAPIAccountNavigationViewController") as! UINavigationController
 			navController.modalPresentationStyle = .currentContext
