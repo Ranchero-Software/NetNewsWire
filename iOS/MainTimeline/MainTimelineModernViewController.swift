@@ -922,10 +922,17 @@ private extension MainTimelineModernViewController {
 		let shouldShowFilterButton = coordinator?.shouldShowFilterButton() ?? false
 		navigationItem.rightBarButtonItem = shouldShowFilterButton ? filterButton : nil
 
+		// On iOS 26, prominent style fills the whole glass circle with the tint color.
 		if isReadArticlesFiltered {
+			if #available(iOS 26, *) {
+				filterButton.style = .prominent
+			}
 			filterButton.tintColor = Assets.Colors.primaryAccent
 			filterButton.accLabelText = NSLocalizedString("Selected - Filter Read Articles", comment: "Selected - Filter Read Articles")
 		} else {
+			if #available(iOS 26, *) {
+				filterButton.style = .plain
+			}
 			filterButton.tintColor = .label
 			filterButton.accLabelText = NSLocalizedString("Filter Read Articles", comment: "Filter Read Articles")
 		}
