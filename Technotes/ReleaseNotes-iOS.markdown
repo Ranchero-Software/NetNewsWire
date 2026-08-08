@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.1.3 build 7203 7 Aug 2026 - branch: main tag: iOS-7.1.3-7203
+
+Use prominent style for the filter buttons when they are on
+
 ### 7.1.3 build 7202 7 Aug 2026 - branch: main tag: iOS-7.1.3-7202
 
 Fixed bug where timeline rows on iPad could stop responding to taps
