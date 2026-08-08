@@ -183,8 +183,41 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="5wo-fM-0l6" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="hRA-c1-Xvz" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
                                         <rect key="frame" x="20" y="581.5" width="374" height="51.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hRA-c1-Xvz" id="hRA-c2-Xvz">
+                                            <rect key="frame" x="0.0" y="0.0" width="374" height="51.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="250" text="Hide Read Articles" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hRA-l1-Xvz" customClass="VibrantLabel" customModule="NetNewsWire" customModuleProvider="target">
+                                                    <rect key="frame" x="20" y="15" width="148" height="21.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="hRA-s1-Xvz">
+                                                    <rect key="frame" x="295" y="12" width="63" height="28"/>
+                                                    <color key="onTintColor" name="primaryAccentColor"/>
+                                                    <connections>
+                                                        <action selector="switchHideReadArticles:" destination="a0p-rk-skQ" eventType="valueChanged" id="hRA-a1-Xvz"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="hRA-l1-Xvz" firstAttribute="top" secondItem="hRA-c2-Xvz" secondAttribute="topMargin" id="hRA-t1-Xvz"/>
+                                                <constraint firstItem="hRA-l1-Xvz" firstAttribute="leading" secondItem="hRA-c2-Xvz" secondAttribute="leadingMargin" id="hRA-t2-Xvz"/>
+                                                <constraint firstItem="hRA-s1-Xvz" firstAttribute="top" relation="greaterThanOrEqual" secondItem="hRA-c2-Xvz" secondAttribute="top" constant="6" id="hRA-t3-Xvz"/>
+                                                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="hRA-s1-Xvz" secondAttribute="bottom" constant="6" id="hRA-t4-Xvz"/>
+                                                <constraint firstAttribute="trailing" secondItem="hRA-s1-Xvz" secondAttribute="trailing" constant="18" id="hRA-t5-Xvz"/>
+                                                <constraint firstItem="hRA-s1-Xvz" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hRA-l1-Xvz" secondAttribute="trailing" constant="8" id="hRA-t6-Xvz"/>
+                                                <constraint firstItem="hRA-s1-Xvz" firstAttribute="centerY" secondItem="hRA-c2-Xvz" secondAttribute="centerY" id="hRA-t7-Xvz"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="hRA-l1-Xvz" secondAttribute="bottom" id="hRA-t8-Xvz"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" id="5wo-fM-0l6" customClass="VibrantTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="633" width="374" height="51.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="5wo-fM-0l6" id="XAn-lK-LoN">
                                             <rect key="frame" x="0.0" y="0.0" width="374" height="51.5"/>
@@ -660,6 +693,7 @@
                         <outlet property="confirmMarkAllAsReadSwitch" destination="UOo-9z-IuL" id="yLZ-Kf-wDt"/>
                         <outlet property="enableJavaScriptSwitch" destination="Djo-HE-LWS" id="muL-I5-eDE"/>
                         <outlet property="groupByFeedSwitch" destination="JNi-Wz-RbU" id="TwH-Kd-o6N"/>
+                        <outlet property="hideReadArticlesSwitch" destination="hRA-s1-Xvz" id="hRA-o1-Xvz"/>
                         <outlet property="openLinksInNetNewsWire" destination="dhR-L2-PX3" id="z1b-pX-bwG"/>
                         <outlet property="refreshClearsReadArticlesSwitch" destination="duV-CN-JmH" id="xTd-jF-Ei1"/>
                         <outlet property="showFullscreenArticlesSwitch" destination="2Md-2E-7Z4" id="lEN-VP-wEO"/>

@@ -25,11 +25,50 @@ final class AccountsDetailViewController: NSViewController {
 	}
 
 	override func loadView() {
-		let detailView = AccountsDetailView(account: account) { [weak self] in
-			self?.showCredentials()
-		}
+		let detailView = AccountsDetailView(
+			account: account,
+			onCredentials: { [weak self] in
+				self?.showCredentials()
+			},
+			onHideReadOverrides: { [weak self] in
+				self?.showHideReadArticlesSettings()
+			}
+		)
 		let hostingView = NSHostingView(rootView: detailView)
 		self.view = hostingView
+	}
+
+	private func showHideReadArticlesSettings() {
+		guard let window = view.window else {
+			return
+		}
+
+		let accountID = account.accountID
+		let overridesView = FeedReadFilterOverridesView(
+			account: account,
+			hasOverride: { feedID in
+				AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
+			},
+			setOverride: { feedID, enabled in
+				AppDefaults.shared.setFeedHideReadOverride(accountID: accountID, feedID: feedID, enabled: enabled)
+			},
+			clearAllOverrides: {
+				AppDefaults.shared.clearFeedHideReadOverrides(accountID: accountID)
+			}
+		)
+
+		var viewWithDone = overridesView
+		viewWithDone.onDone = { [weak window] in
+			guard let window, let sheet = window.attachedSheet else {
+				return
+			}
+			window.endSheet(sheet)
+		}
+
+		let hostingController = NSHostingController(rootView: viewWithDone)
+		let sheetWindow = NSWindow(contentViewController: hostingController)
+		sheetWindow.title = "Global Overrides"
+		window.beginSheet(sheetWindow)
 	}
 
 	private func showCredentials() {
