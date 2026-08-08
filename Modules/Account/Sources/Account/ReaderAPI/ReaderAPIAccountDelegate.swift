@@ -860,11 +860,11 @@ private extension ReaderAPIAccountDelegate {
 		// Add any feeds we don't have and update any we do
 		for subscription in subscriptions {
 			if let feed = account.existingFeed(withFeedID: subscription.feedID) {
-				feed.name = subscription.name
+				feed.name = subscription.name?.decodingFullwidthEscapedCharacters
 				feed.editedName = nil
 				feed.homePageURL = subscription.homePageURL
 			} else {
-				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)
+				let feed = account.createFeed(with: subscription.name?.decodingFullwidthEscapedCharacters, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)
 				feed.externalID = subscription.feedID
 				account.addFeedToTreeAtTopLevel(feed)
 			}
@@ -1131,7 +1131,7 @@ private extension ReaderAPIAccountDelegate {
 				guard let name = entry.author else {
 					return nil
 				}
-				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
+				return Set([ParsedAuthor(name: name.decodingFullwidthEscapedCharacters, url: nil, avatarURL: nil, emailAddress: nil)])
 			}
 
 			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
@@ -1139,7 +1139,7 @@ private extension ReaderAPIAccountDelegate {
 							  feedURL: streamID,
 							  url: nil,
 							  externalURL: entry.alternates?.first?.url,
-							  title: entry.title,
+							  title: entry.title?.decodingFullwidthEscapedCharacters,
 							  language: nil,
 							  contentHTML: entry.summary.content,
 							  contentText: nil,
@@ -1231,5 +1231,20 @@ private extension ReaderAPIAccountDelegate {
 		}
 		Self.logger.info("ReaderAPIAccountDelegate: skipping status downloads — Zone 1 API usage is \(usageLimits.zone1Usage) of \(usageLimits.zone1Limit)")
 		return true
+	}
+}
+
+private extension String {
+
+	// FreshRSS escapes & < > as their fullwidth equivalents in article titles,
+	// author names, and feed names. Map them back.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5143>
+	var decodingFullwidthEscapedCharacters: String {
+		guard contains("＆") || contains("＜") || contains("＞") else {
+			return self
+		}
+		return replacingOccurrences(of: "＆", with: "&")
+			.replacingOccurrences(of: "＜", with: "<")
+			.replacingOccurrences(of: "＞", with: ">")
 	}
 }
