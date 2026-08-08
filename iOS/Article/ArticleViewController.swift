@@ -84,11 +84,13 @@ final class ArticleViewController: UIViewController {
 							self.pendingSetViewController = controller
 						} else {
 							self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+							self.syncArticleExtractorButtonState()
 						}
 					}
 				}
 			}
 			updateUI()
+			syncArticleExtractorButtonState()
 		}
 	}
 
@@ -481,9 +483,10 @@ extension ArticleViewController {
 extension ArticleViewController: WebViewControllerDelegate {
 
 	func webViewController(_ webViewController: WebViewController, articleExtractorButtonStateDidUpdate buttonState: ArticleExtractorButtonState) {
-		if webViewController === currentWebViewController {
-			articleExtractorButton.buttonState = buttonState
+		guard webViewController === currentWebViewController else {
+			return
 		}
+		syncArticleExtractorButtonState()
 	}
 
 }
@@ -532,15 +535,18 @@ extension ArticleViewController: UIPageViewControllerDelegate {
 					self.pendingSetViewController = pending
 				} else {
 					self.pageViewController.setViewControllers([pending], direction: .forward, animated: false, completion: nil)
+					self.syncArticleExtractorButtonState()
 				}
 			}
 		}
+
+		syncArticleExtractorButtonState()
 
 		guard finished, completed else { return }
 		guard let article = currentWebViewController?.article else { return }
 
 		coordinator.selectArticle(article, animations: [.select, .scroll, .navigation])
-		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
+		syncArticleExtractorButtonState()
 
 		for viewController in previousViewControllers {
 			if let webViewController = viewController as? WebViewController {
@@ -578,6 +584,10 @@ private extension ArticleViewController {
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
+	}
+
+	func syncArticleExtractorButtonState() {
+		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
 	}
 
 }

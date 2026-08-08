@@ -61,6 +61,9 @@ public enum ArticleExtractorState: Sendable {
 				guard let self else {
 					return
 				}
+				guard self.state != .cancelled else {
+					return
+				}
 
 				if let error = error {
 					self.state = .failedToParse

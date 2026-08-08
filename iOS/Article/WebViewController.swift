@@ -350,22 +350,26 @@ final class WebViewController: UIViewController {
 extension WebViewController: ArticleExtractorDelegate {
 
 	func articleExtractionDidFail(with: Error) {
+		guard articleExtractor != nil else {
+			return
+		}
 		stopArticleExtractor()
 		articleExtractorButtonState = .error
 		loadWebView()
 	}
 
 	func articleExtractionDidComplete(extractedArticle: ExtractedArticle) {
-		if articleExtractor?.state != .cancelled {
-			self.extractedArticle = extractedArticle
-			if let restoreWindowScrollY = restoreWindowScrollY {
-				windowScrollY = restoreWindowScrollY
-				self.restoreWindowScrollY = nil
-			}
-			isShowingExtractedArticle = true
-			loadWebView()
-			articleExtractorButtonState = .on
+		guard let articleExtractor, articleExtractor.state != .cancelled else {
+			return
 		}
+		self.extractedArticle = extractedArticle
+		if let restoreWindowScrollY = restoreWindowScrollY {
+			windowScrollY = restoreWindowScrollY
+			self.restoreWindowScrollY = nil
+		}
+		isShowingExtractedArticle = true
+		loadWebView()
+		articleExtractorButtonState = .on
 	}
 
 }
