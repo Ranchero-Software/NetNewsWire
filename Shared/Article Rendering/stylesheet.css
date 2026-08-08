@@ -154,6 +154,10 @@ body > .systemMessage {
 	letter-spacing: 0em;
 }
 
+.articleTitle, .articleDateline, .articleDatelineTitle, .articleBody {
+	text-autospace: normal;
+}
+
 .articleBody {
 	margin-top: 20px;
 	line-height: 1.6em;
