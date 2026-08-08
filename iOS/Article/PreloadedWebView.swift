@@ -7,9 +7,17 @@
 //
 
 import Foundation
+import UIKit
 import WebKit
 
+@MainActor protocol PreloadedWebViewDelegate: AnyObject {
+	var articleURL: URL? { get }
+	func getSelectedText(completion: @escaping (String?) -> Void)
+}
+
 final class PreloadedWebView: WKWebView {
+
+	weak var editMenuDelegate: PreloadedWebViewDelegate?
 
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
@@ -48,6 +56,24 @@ final class PreloadedWebView: WKWebView {
 			reload()
 		}
 	}
+
+	override func buildMenu(with builder: any UIMenuBuilder) {
+		super.buildMenu(with: builder)
+
+		guard builder.system == .context else {
+			return
+		}
+
+		let copyLinkAction = UIAction(
+			title: NSLocalizedString("Copy Link with Highlight", comment: "Copy Link with Highlight"),
+			image: UIImage(systemName: "link")
+		) { [weak self] _ in
+			self?.copyLinkWithHighlight()
+		}
+
+		let menu = UIMenu(title: "", options: .displayInline, children: [copyLinkAction])
+		builder.insertSibling(menu, afterMenu: .lookup)
+	}
 }
 
 // MARK: WKScriptMessageHandler
@@ -71,5 +97,22 @@ private extension PreloadedWebView {
 		isReady = false
 		navigationDelegate = nil
 		completion()
+	}
+
+	func copyLinkWithHighlight() {
+		guard let delegate = editMenuDelegate, let baseURL = delegate.articleURL else {
+			return
+		}
+
+		delegate.getSelectedText { selectedText in
+			let urlToCopy: URL
+			if let selectedText, !selectedText.isEmpty,
+			   let textFragmentURL = TextFragmentURL.url(from: baseURL, selectedText: selectedText) {
+				urlToCopy = textFragmentURL
+			} else {
+				urlToCopy = baseURL
+			}
+			UIPasteboard.general.url = urlToCopy
+		}
 	}
 }
