@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.1.3b3 7204 10 Aug 2026 — brent: main tag: mac-7.1.3b3
+
+Fixed bug where article titles, author names, and feed names from FreshRSS could show full-width versions of & < >
+
 ### 7.1.3b2 7202 7 Aug 2026 — brent: main tag: mac-7.1.3b2
 
 Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning
