@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.1.3 build 7204 10 Aug 2026 - branch: main tag: iOS-7.1.3-7204
+
+Fixed crash (again) when entering fullscreen video while the article changed or was swiped away
+Fixed bug where the timeline could slide under the sidebar and get clipped when columns were resized (iPad)
+Fixed bug where the Reader View button could disappear from the article toolbar
+Fixed bug where article titles, author names, and feed names from FreshRSS could show full-width versions of & < >
+Reverted the prominent style for the filter buttons from build 7203
+
 ### 7.1.3 build 7203 7 Aug 2026 - branch: main tag: iOS-7.1.3-7203
 
 Use prominent style for the filter buttons when they are on
