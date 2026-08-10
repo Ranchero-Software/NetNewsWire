@@ -40,6 +40,7 @@ Turn into release — NetNewsWire 6.1.5b4 for Mac
 Add change notes
 Zip app - NetNewsWire6.1.5b4.zip
 
+## Start with 7.2 beta
 Sign the zip with the EdDSA key (key is in the login Keychain):
 sign_update NetNewsWire6.1.5b4.zip
 (sign_update is in Sparkle’s bin folder — in the release distribution download, or in DerivedData under SourcePackages/artifacts/sparkle/Sparkle/bin)
