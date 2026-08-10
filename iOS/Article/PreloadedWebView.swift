@@ -13,6 +13,7 @@ final class PreloadedWebView: WKWebView {
 
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
+	private var fullscreenStateObservation: NSKeyValueObservation?
 
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
@@ -20,6 +21,14 @@ final class PreloadedWebView: WKWebView {
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
 				self?.userDefaultsDidChange()
+			}
+		}
+		fullscreenStateObservation = observe(\.fullscreenState, options: []) { [weak self] _, _ in
+			Task { @MainActor in
+				guard let self else {
+					return
+				}
+				WebViewFullscreenKeeper.shared.updateRetention(for: self)
 			}
 		}
 	}
