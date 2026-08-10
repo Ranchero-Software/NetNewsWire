@@ -734,18 +734,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func setFilterButtonToActive() {
-		// On iOS 26, prominent style fills the whole glass circle with the tint color.
-		if #available(iOS 26, *) {
-			filterButton.style = .prominent
-		}
 		filterButton.tintColor = Assets.Colors.primaryAccent
 		filterButton?.accLabelText = NSLocalizedString("Selected - Filter Read Feeds", comment: "Selected - Filter Read Feeds")
 	}
 
 	func setFilterButtonToInactive() {
-		if #available(iOS 26, *) {
-			filterButton.style = .plain
-		}
 		filterButton.tintColor = .label
 		filterButton?.accLabelText = NSLocalizedString("Filter Read Feeds", comment: "Filter Read Feeds")
 	}
