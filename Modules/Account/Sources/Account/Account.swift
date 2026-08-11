@@ -1090,6 +1090,12 @@ public enum FetchType {
 
 	// MARK: - Vacuum
 
+	/// Update article status rows that disagree with their in-memory statuses,
+	/// which is super-rare but possible.
+	func repairStatuses() {
+		database.repairStatuses()
+	}
+
 	public func vacuumDatabases() async {
 		await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(database.databasePath)) {
 			await database.vacuum()
@@ -1344,6 +1350,13 @@ private extension Account {
 				feedUnreadCount += 1
 			}
 		}
+
+		// The stored count is database-derived. Disagreement means some
+		// status rows are stale (a lost write) — repair them.
+		if feedUnreadCount != feed.unreadCount {
+			repairStatuses()
+		}
+
 		feed.unreadCount = feedUnreadCount
 	}
 }

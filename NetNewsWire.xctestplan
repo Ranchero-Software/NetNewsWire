@@ -79,6 +79,20 @@
         "identifier" : "ArticlesTests",
         "name" : "ArticlesTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/ArticlesDatabase",
+        "identifier" : "ArticlesDatabaseTests",
+        "name" : "ArticlesDatabaseTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/FeedFinder",
+        "identifier" : "FeedFinderTests",
+        "name" : "FeedFinderTests"
+      }
     }
   ],
   "version" : 1

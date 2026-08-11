@@ -29,6 +29,18 @@ let package = Package(
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances")
 			]
+		),
+		.testTarget(
+			name: "ArticlesDatabaseTests",
+			dependencies: [
+				"ArticlesDatabase",
+				"Articles",
+				"RSParser"
+			],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]
 		)
 	]
 )

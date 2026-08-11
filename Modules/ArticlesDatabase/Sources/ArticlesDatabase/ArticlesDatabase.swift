@@ -106,6 +106,16 @@ public struct ArticleCounts: Sendable {
 		await queue.vacuum()
 	}
 
+	// MARK: - Repairing
+
+	/// Repair status rows that disagree with their in-memory statuses,
+	/// which can happen when a database write was lost.
+	public func repairStatuses() {
+		queue.runInDatabase { database in
+			self.articlesTable.repairStatuses(database)
+		}
+	}
+
 	// MARK: - Fetching Articles
 
 	public func fetchArticles(feedID: String) -> Set<Article> {

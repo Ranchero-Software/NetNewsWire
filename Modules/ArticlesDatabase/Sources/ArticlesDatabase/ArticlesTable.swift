@@ -616,6 +616,12 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 	}
 
+	// MARK: - Repairing
+
+	func repairStatuses(_ database: FMDatabase) {
+		statusesTable.repairStatuses(database)
+	}
+
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,
 	/// and, via a trigger, it also deletes from the search index.
