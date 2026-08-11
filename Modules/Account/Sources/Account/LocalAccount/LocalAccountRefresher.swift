@@ -161,6 +161,7 @@ import os
 	}
 
 	@MainActor public func resume() {
+		downloadSession.recreateURLSession()
 		isSuspended = false
 	}
 
@@ -234,7 +235,12 @@ import os
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
-		feed.lastCheckDate = Date()
+
+		// Skip updating lastCheckDate on connectivity errors, so the feed
+		// isn't skipped for timing reasons on the next refresh.
+		if !errorIsConnectivityRelated(error) {
+			feed.lastCheckDate = Date()
+		}
 
 		let activityKind = ActivityKind.refreshFeedContent(feedURL: feed.url)
 
@@ -358,6 +364,14 @@ import os
 		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
 
 		reportFeedRefreshError(feed: feed, error: error, activityKind: .refreshFeedContent(feedURL: feed.url))
+	}
+
+	private func errorIsConnectivityRelated(_ error: NSError?) -> Bool {
+		guard let error, error.domain == NSURLErrorDomain else {
+			return false
+		}
+		let connectivityErrorCodes = [NSURLErrorTimedOut, NSURLErrorCannotConnectToHost, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet]
+		return connectivityErrorCodes.contains(error.code)
 	}
 
 	private func reportFeedRefreshError(feed: Feed, error: Error, activityKind: ActivityKind) {

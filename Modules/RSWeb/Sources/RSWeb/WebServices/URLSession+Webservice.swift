@@ -44,6 +44,8 @@ nonisolated extension URLSession {
 		let sessionConfiguration = URLSessionConfiguration.default
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 60.0
+		sessionConfiguration.timeoutIntervalForResource = 120.0
+		sessionConfiguration.waitsForConnectivity = true
 		sessionConfiguration.httpShouldSetCookies = false
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1

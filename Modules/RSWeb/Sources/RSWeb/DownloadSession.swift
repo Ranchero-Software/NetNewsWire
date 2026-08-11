@@ -68,9 +68,22 @@ struct HTTP4xxResponse {
 
 		super.init()
 
+		urlSession = makeURLSession()
+	}
+
+	/// Invalidate the session and build a new one, discarding pooled connections,
+	/// which go dead while the app is suspended.
+	public func recreateURLSession() {
+		urlSession.invalidateAndCancel()
+		urlSession = makeURLSession()
+	}
+
+	private func makeURLSession() -> URLSession {
 		let sessionConfiguration = URLSessionConfiguration.ephemeral
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 15.0
+		sessionConfiguration.timeoutIntervalForResource = 60.0
+		sessionConfiguration.waitsForConnectivity = true
 		sessionConfiguration.httpShouldSetCookies = false
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1
@@ -81,7 +94,7 @@ struct HTTP4xxResponse {
 			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
 		}
 
-		urlSession = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
+		return URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: OperationQueue.main)
 	}
 
 	deinit {
