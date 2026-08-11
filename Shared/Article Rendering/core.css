@@ -69,7 +69,8 @@ img.twemoji, img.emoji {
 
 iframe[src*="feedads"],
 iframe[src*="doubleclick"],
-iframe[src*="plusone.google"] {
+iframe[src*="plusone.google"],
+iframe[src*="slashdot-it.pl"] {
 	display: none !important;
 }
 
