@@ -1,5 +1,12 @@
 # Mac Release Notes
 
+### 7.1.3b4 7205 11 Aug 2026 — brent: main tag: mac-7.1.3b4
+
+Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
+Made feed and sync requests wait for connectivity instead of failing when the network isn't ready, such as right after waking from sleep
+Stopped skipping feeds on the next refresh when the previous attempt failed with a connectivity error
+Hid the Slashdot discussion iframe that showed a cookie-consent banner in the article view
+
 ### 7.1.3b3 7204 10 Aug 2026 — brent: main tag: mac-7.1.3b3
 
 Fixed bug where article titles, author names, and feed names from FreshRSS could show full-width versions of & < >
