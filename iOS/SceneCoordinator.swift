@@ -31,18 +31,23 @@ enum ShowFeedName {
 struct SidebarItemNode: Hashable, Sendable {
 	let node: Node
 	let sidebarItemID: SidebarItemIdentifier
+	// The parent scoping keeps identifiers distinct when the same feed
+	// appears in more than one folder.
+	let parentContainerID: ContainerIdentifier?
 
 	@MainActor init(_ node: Node) {
 		self.node = node
 		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
+		self.parentContainerID = (node.parent?.representedObject as? ContainerIdentifiable)?.containerID
 	}
 
 	nonisolated func hash(into hasher: inout Hasher) {
-		hasher.combine(ObjectIdentifier(node))
+		hasher.combine(sidebarItemID)
+		hasher.combine(parentContainerID)
 	}
 
 	nonisolated static func == (lhs: SidebarItemNode, rhs: SidebarItemNode) -> Bool {
-		lhs.node === rhs.node
+		lhs.sidebarItemID == rhs.sidebarItemID && lhs.parentContainerID == rhs.parentContainerID
 	}
 }
 
