@@ -7,6 +7,22 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.1.3b4</title>
+            <description><![CDATA[
+            <p><b>Changes since 7.1.3b3:</b></p>
+  				<ul>
+				  <li>Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
+				  <li>Made feed and sync requests wait for connectivity instead of failing when the network isn't ready, such as right after waking from sleep
+				  <li>Stopped skipping feeds on the next refresh when the previous attempt failed with a connectivity error
+				  <li>Hid the Slashdot discussion iframe that showed a cookie-consent banner in the article view
+				</ul>
+			]]></description>
+        	<pubDate>Tue, 11 Aug 2026 20:55:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b4/NetNewsWire7.1.3b4.zip" sparkle:version="7205" sparkle:shortVersionString="7.1.3b4" length="9758767" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.1.3b3</title>
             <description><![CDATA[
             <p><b>Changes since 7.1.3b2:</b></p>
