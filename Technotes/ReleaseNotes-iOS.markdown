@@ -1,5 +1,13 @@
 # iOS Release Notes
 
+### 7.1.3 build 7205 11 Aug 2026 - branch: main tag: iOS-7.1.3-7205
+
+Fixed bug where feeds-list rows could overlap or cover the wrong row when toggling Hide Read Feeds
+Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
+Fixed bug where refreshing on return to foreground could fail with timeouts for every feed when networking wasn't ready yet
+Stopped skipping feeds on the next refresh when the previous attempt failed with a connectivity error
+Hid the Slashdot discussion iframe that showed a cookie-consent banner in the article view
+
 ### 7.1.3 build 7204 10 Aug 2026 - branch: main tag: iOS-7.1.3-7204
 
 Fixed crash (again) when entering fullscreen video while the article changed or was swiped away
