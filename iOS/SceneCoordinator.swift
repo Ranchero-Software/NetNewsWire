@@ -1899,15 +1899,20 @@ private extension SceneCoordinator {
 
 		updateExpandedNodes?()
 
-		// Update currentFeedIndexPath if needed
-		if currentFeedIndexPath != nil {
-			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
-		}
-
 		lastExpandedContainers = expandedContainers
 
 		let snapshot = createSidebarSnapshot()
-		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad, completion: completion)
+		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad) { [weak self] in
+			guard let self else {
+				return
+			}
+			// The data source reflects the new snapshot only after the apply
+			// completes — recomputing earlier would read the old layout.
+			if self.currentFeedIndexPath != nil {
+				self.currentFeedIndexPath = self.indexPathFor(self.timelineFeed as AnyObject)
+			}
+			completion?()
+		}
 	}
 
 	private func createSidebarSnapshot() -> NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
