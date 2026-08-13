@@ -563,7 +563,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.collapse(node)
 			if let folder = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
-				folder.disclosureExpanded = false
+				folder.setDisclosure(isExpanded: false, animated: true)
 			}
 		}
 	}
@@ -582,7 +582,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.expand(node)
 			if let folder = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
-				folder.disclosureExpanded = true
+				folder.setDisclosure(isExpanded: true, animated: true)
 			}
 		}
 	}
