@@ -69,7 +69,9 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	private var isApplyingSnapshot = false
 	private var queuedSidebarUpdates = [QueuedSidebarUpdate]()
 
-	var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
+	// Write via applySnapshot/reconfigureItems. Read via currentSidebarSnapshot
+	// and the lookup methods — in an apply completion if you need post-update state.
+	private var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -391,6 +393,20 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	func reconfigureItems(_ items: [SidebarItemNode], completion: (() -> Void)? = nil) {
 		enqueueSidebarUpdate(.reconfigure(items), completion: completion)
+	}
+
+	// MARK: - Data Source Queries
+
+	var currentSidebarSnapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
+		dataSource.snapshot()
+	}
+
+	func sidebarItemNode(for indexPath: IndexPath) -> SidebarItemNode? {
+		dataSource.itemIdentifier(for: indexPath)
+	}
+
+	func indexPath(for sidebarItemNode: SidebarItemNode) -> IndexPath? {
+		dataSource.indexPath(for: sidebarItemNode)
 	}
 
 	// MARK: - Serialized Snapshot Updates

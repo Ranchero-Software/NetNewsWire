@@ -27,7 +27,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			  }
 
 		let isFolderDrop: Bool = {
-			if dataSource.itemIdentifier(for: destIndexPath)?.node.representedObject is Folder, let propCell = collectionView.cellForItem(at: destIndexPath) {
+			if sidebarItemNode(for: destIndexPath)?.node.representedObject is Folder, let propCell = collectionView.cellForItem(at: destIndexPath) {
 				return coordinator.session.location(in: propCell).y >= 0
 			}
 			return false
@@ -37,12 +37,12 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		let destNode: Node? = {
 
 			if isFolderDrop {
-				return dataSource.itemIdentifier(for: destIndexPath)?.node
+				return sidebarItemNode(for: destIndexPath)?.node
 			} else {
 				if destIndexPath.row == 0 {
-					return dataSource.itemIdentifier(for: IndexPath(row: 0, section: destIndexPath.section))?.node
+					return sidebarItemNode(for: IndexPath(row: 0, section: destIndexPath.section))?.node
 				} else if destIndexPath.row > 0 {
-					return dataSource.itemIdentifier(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))?.node
+					return sidebarItemNode(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))?.node
 				} else {
 					return nil
 				}
@@ -56,7 +56,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 				return container
 			} else {
 				// If we got here, we are trying to drop on an empty section header.  Go and find the Account for this section
-				let sectionID = dataSource.snapshot().sectionIdentifiers[destIndexPath.section]
+				let sectionID = currentSidebarSnapshot.sectionIdentifiers[destIndexPath.section]
 				return AccountManager.shared.existingAccount(accountID: sectionID)
 			}
 		}()
@@ -76,7 +76,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 
-		guard let destFeed = dataSource.itemIdentifier(for: destIndexPath)?.node.representedObject as? SidebarItem,
+		guard let destFeed = sidebarItemNode(for: destIndexPath)?.node.representedObject as? SidebarItem,
 			  let destAccount = destFeed.account,
 			  let destCell = collectionView.cellForItem(at: destIndexPath) else {
 				  return UICollectionViewDropProposal(operation: .forbidden)

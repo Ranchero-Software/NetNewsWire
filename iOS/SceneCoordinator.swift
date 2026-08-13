@@ -175,7 +175,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			return nil
 		}
 
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 
 		let prevIndexPath: IndexPath? = {
 			if indexPath.row - 1 < 0 {
@@ -199,7 +199,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			return nil
 		}
 
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 
 		let nextIndexPath: IndexPath? = {
@@ -862,7 +862,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard let sidebarItemNode = mainFeedCollectionViewController.dataSource.itemIdentifier(for: indexPath) else {
+		guard let sidebarItemNode = mainFeedCollectionViewController.sidebarItemNode(for: indexPath) else {
 			return nil
 		}
 		return sidebarItemNode.node
@@ -870,7 +870,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
 		let sidebarItemNode = SidebarItemNode(node)
-		return mainFeedCollectionViewController.dataSource.indexPath(for: sidebarItemNode)
+		return mainFeedCollectionViewController.indexPath(for: sidebarItemNode)
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
@@ -1863,7 +1863,7 @@ private extension SceneCoordinator {
 	}
 
 	func addVisibleSidebarItemsToFilterExceptions() {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		for sidebarItemNode in snapshot.itemIdentifiers {
 			if let feed = sidebarItemNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
 				treeControllerDelegate.addFilterException(sidebarItemID)
@@ -1944,7 +1944,7 @@ private extension SceneCoordinator {
 	}
 
 	func reconfigureSidebarItem(_ sidebarItem: SidebarItem) {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 
 		// Find all nodes that represent this sidebar item
 		var nodesToReconfigure: [SidebarItemNode] = []
@@ -1963,7 +1963,7 @@ private extension SceneCoordinator {
 	}
 
 	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		for sidebarItemNode in snapshot.itemIdentifiers {
 			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
 				return true
@@ -2109,7 +2109,7 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
 			if indexPath.row - 1 < 0 {
@@ -2138,7 +2138,7 @@ private extension SceneCoordinator {
 
 	@discardableResult
 	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 
 		for i in (0...indexPath.section).reversed() {
 
@@ -2225,7 +2225,7 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
 			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
@@ -2253,7 +2253,7 @@ private extension SceneCoordinator {
 	}
 
 	func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 
 		for i in indexPath.section..<numberOfSections {
