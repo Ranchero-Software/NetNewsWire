@@ -855,19 +855,15 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		for cell in collectionView.visibleCells {
-			guard let indexPath = collectionView.indexPath(for: cell),
-				  let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
-				  sidebarItemNode.node.representedObject === unreadCountProvider as AnyObject else {
-				continue
-			}
-			if let feedCell = cell as? MainFeedCollectionViewCell {
-				feedCell.unreadCount = unreadCountProvider.unreadCount
-			}
-			if let folderCell = cell as? MainFeedCollectionViewFolderCell {
-				folderCell.unreadCount = unreadCountProvider.unreadCount
-			}
+		// Reconfigure through the serialized funnel — mutating visible cells directly
+		// can change their size in the middle of an animated snapshot apply.
+		let nodesToReconfigure = dataSource.snapshot().itemIdentifiers.filter {
+			$0.node.representedObject === unreadCountProvider as AnyObject
 		}
+		guard !nodesToReconfigure.isEmpty else {
+			return
+		}
+		reconfigureItems(nodesToReconfigure)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
