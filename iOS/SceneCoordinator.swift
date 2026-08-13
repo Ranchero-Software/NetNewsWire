@@ -1938,7 +1938,7 @@ private extension SceneCoordinator {
 	}
 
 	func reconfigureSidebarItem(_ sidebarItem: SidebarItem) {
-		var snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
 
 		// Find all nodes that represent this sidebar item
 		var nodesToReconfigure: [SidebarItemNode] = []
@@ -1953,8 +1953,7 @@ private extension SceneCoordinator {
 			return
 		}
 
-		snapshot.reconfigureItems(nodesToReconfigure)
-		mainFeedCollectionViewController.dataSource.apply(snapshot, animatingDifferences: false)
+		mainFeedCollectionViewController.reconfigureItems(nodesToReconfigure)
 	}
 
 	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
