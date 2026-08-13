@@ -363,7 +363,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				headerView.sectionHeaderType = .smartFeeds
 				headerView.headerTitle.text = SmartFeedsController.shared.nameForDisplay
 				headerView.unreadCount = 0
-				headerView.disclosureExpanded = self.coordinator.isExpanded(SmartFeedsController.shared)
+				headerView.setDisclosure(isExpanded: self.coordinator.isExpanded(SmartFeedsController.shared), animated: false)
 				return headerView
 			}
 
@@ -375,7 +375,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			headerView.sectionHeaderType = .account(sectionID)
 			headerView.headerTitle.text = account.nameForDisplay
 			headerView.unreadCount = account.unreadCount
-			headerView.disclosureExpanded = self.coordinator.isExpanded(account)
+			headerView.setDisclosure(isExpanded: self.coordinator.isExpanded(account), animated: false)
 			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
 
 			return headerView
@@ -986,10 +986,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		if coordinator.isExpanded(containerID) {
-			headerView.disclosureExpanded = false
+			headerView.setDisclosure(isExpanded: false, animated: true)
 			coordinator.collapse(containerID)
 		} else {
-			headerView.disclosureExpanded = true
+			headerView.setDisclosure(isExpanded: true, animated: true)
 			coordinator.expand(containerID)
 		}
 	}
