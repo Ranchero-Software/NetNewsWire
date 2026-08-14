@@ -350,8 +350,19 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		updateToolbar()
 	}
 
-	func hideSearch() {
-		navigationItem.searchController?.isActive = false
+	func hideSearch(completion: (() -> Void)? = nil) {
+		guard let searchController = navigationItem.searchController, searchController.isActive else {
+			completion?()
+			return
+		}
+		searchController.isActive = false
+		guard let transitionCoordinator = searchController.transitionCoordinator else {
+			completion?()
+			return
+		}
+		transitionCoordinator.animate(alongsideTransition: nil) { _ in
+			completion?()
+		}
 	}
 
 	func showSearchAll() {

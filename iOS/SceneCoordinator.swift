@@ -1498,7 +1498,15 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		rootSplitViewController.present(addNavViewController, animated: true)
+
+		// Presenting over an active nav-bar-hosted search bar crashes inside UIKit.
+		guard let mainTimelineViewController else {
+			rootSplitViewController.present(addNavViewController, animated: true)
+			return
+		}
+		mainTimelineViewController.hideSearch {
+			self.rootSplitViewController.present(addNavViewController, animated: true)
+		}
 	}
 
 	func showAddFolder() {
