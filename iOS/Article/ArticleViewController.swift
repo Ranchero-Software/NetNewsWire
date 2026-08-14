@@ -55,6 +55,7 @@ final class ArticleViewController: UIViewController {
 	weak var coordinator: SceneCoordinator!
 
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
+	private weak var originalPopGestureRecognizerDelegate: UIGestureRecognizerDelegate?
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticleViewController")
 
 	var article: Article? {
@@ -230,9 +231,14 @@ final class ArticleViewController: UIViewController {
 		}
 		coordinator.isArticleViewControllerPending = false
 		searchBar.shouldBeginEditing = true
-		if let parentNavController = navigationController?.parent as? UINavigationController {
+		// Scoped to the article screen — restored in viewDidDisappear.
+		if let parentNavController = navigationController?.parent as? UINavigationController,
+			let gestureRecognizer = parentNavController.interactivePopGestureRecognizer {
+			if gestureRecognizer.delegate !== poppableDelegate {
+				originalPopGestureRecognizerDelegate = gestureRecognizer.delegate
+			}
 			poppableDelegate.navigationController = parentNavController
-			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
+			gestureRecognizer.delegate = poppableDelegate
 		}
 	}
 
@@ -245,6 +251,11 @@ final class ArticleViewController: UIViewController {
 		// Pass animated: false — animating the nav bar / toolbar visibility change during the
 		// disappear transition triggers an Auto Layout assertion (NSISEngine) and crashes.
 		currentWebViewController?.showBars(animated: false)
+	}
+
+	override func viewDidDisappear(_ animated: Bool) {
+		super.viewDidDisappear(animated)
+		restoreOriginalPopGestureRecognizerDelegate()
 	}
 
 	override func viewSafeAreaInsetsDidChange() {
@@ -588,6 +599,14 @@ private extension ArticleViewController {
 
 	func syncArticleExtractorButtonState() {
 		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
+	}
+
+	func restoreOriginalPopGestureRecognizerDelegate() {
+		guard let gestureRecognizer = poppableDelegate.navigationController?.interactivePopGestureRecognizer,
+			gestureRecognizer.delegate === poppableDelegate else {
+			return
+		}
+		gestureRecognizer.delegate = originalPopGestureRecognizerDelegate
 	}
 
 }
