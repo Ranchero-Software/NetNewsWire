@@ -110,11 +110,9 @@ import os
 			let subFeedId = String(newsBlurFeed.feedID)
 
 			if let feed = account.existingFeed(withFeedID: subFeedId) {
-				// If the name has been changed on the server, remove the locally edited name.
-				if feed.name != newsBlurFeed.name {
-					feed.editedName = nil
+				if !newsBlurFeed.name.isEmpty {
+					feed.name = newsBlurFeed.name
 				}
-				feed.name = newsBlurFeed.name
 				feed.homePageURL = newsBlurFeed.homePageURL
 				feed.externalID = String(newsBlurFeed.feedID)
 				feed.faviconURL = newsBlurFeed.faviconURL

@@ -564,17 +564,17 @@ public enum FetchType {
 		settings.deleteSettings()
 	}
 
-	func addOPMLItems(_ items: [OPMLItem]) {
+	func addOPMLItems(_ items: [OPMLItem], isManualImport: Bool) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
-				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
+				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier, isManualImport: isManualImport))
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
 					folder.externalID = item.attributes?["nnw_externalID"]
 					if let itemChildren = item.children {
 						for itemChild in itemChildren {
 							if let feedSpecifier = itemChild.feedSpecifier {
-								folder.addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
+								folder.addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier, isManualImport: isManualImport))
 							}
 						}
 					}
@@ -583,8 +583,9 @@ public enum FetchType {
 		}
 	}
 
-	func loadOPMLItems(_ items: [OPMLItem]) {
-		addOPMLItems(OPMLNormalizer.normalize(items))
+	/// Pass `isManualImport: true` for a file the user chose to import, `false` when restoring our own file.
+	func loadOPMLItems(_ items: [OPMLItem], isManualImport: Bool) {
+		addOPMLItems(OPMLNormalizer.normalize(items), isManualImport: isManualImport)
 	}
 
 	public func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
@@ -651,16 +652,22 @@ public enum FetchType {
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 
-	func newFeed(with opmlFeedSpecifier: OPMLFeedSpecifier) -> Feed {
+	func newFeed(with opmlFeedSpecifier: OPMLFeedSpecifier, isManualImport: Bool) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
+
 		if let feedTitle = opmlFeedSpecifier.title {
-			// Store as editedName so the imported title survives the next refresh, which overwrites name with the feed's own title.
-			if feed.editedName == nil {
+			feed.name = feedTitle
+
+			// A title in a file the user imported is a title the user chose, so it goes in
+			// editedName too and survives refreshes. A title in our own file is just the name.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/609>
+			if isManualImport && feed.editedName == nil {
 				feed.editedName = feedTitle
 			}
 		}
+
 		return feed
 	}
 

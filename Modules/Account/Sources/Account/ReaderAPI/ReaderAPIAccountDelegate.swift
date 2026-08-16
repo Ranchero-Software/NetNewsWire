@@ -860,8 +860,9 @@ private extension ReaderAPIAccountDelegate {
 		// Add any feeds we don't have and update any we do
 		for subscription in subscriptions {
 			if let feed = account.existingFeed(withFeedID: subscription.feedID) {
-				feed.name = subscription.name?.decodingFullwidthEscapedCharacters
-				feed.editedName = nil
+				if let name = subscription.name?.decodingFullwidthEscapedCharacters, !name.isEmpty {
+					feed.name = name
+				}
 				feed.homePageURL = subscription.homePageURL
 			} else {
 				let feed = account.createFeed(with: subscription.name?.decodingFullwidthEscapedCharacters, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)

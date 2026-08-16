@@ -38,7 +38,7 @@ import RSParser
 		}
 
 		BatchUpdate.shared.perform {
-			account.loadOPMLItems(opmlItems)
+			account.loadOPMLItems(opmlItems, isManualImport: false)
 		}
 	}
 

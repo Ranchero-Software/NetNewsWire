@@ -114,16 +114,8 @@ import Foundation
 				// If the feed was renamed on Feedly, ingest the new name. Compare against the
 				// parsed title — feeds are created from it, and the raw title differs for RTL
 				// and untitled feeds, so comparing it rewrote their names every sync.
-				if feed.name != parser.title {
-					feed.name = parser.title
-
-					// Let the rest of the app (e.g. the sidebar) know the name changed.
-					// Setting `editedName` would post this; setting `name` does not.
-					if feed.editedName != nil {
-						feed.editedName = nil
-					} else {
-						feed.postDisplayNameDidChangeNotification()
-					}
+				if let title = parser.title, !title.isEmpty, feed.name != title {
+					feed.name = title
 				}
 				return (feed, folder)
 			}

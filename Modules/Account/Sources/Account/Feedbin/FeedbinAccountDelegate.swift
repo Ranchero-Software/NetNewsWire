@@ -659,9 +659,9 @@ private extension FeedbinAccountDelegate {
 			let subFeedId = String(subscription.feedID)
 
 			if let feed = account.existingFeed(withFeedID: subFeedId) {
-				feed.name = subscription.name
-				// If the name has been changed on the server remove the locally edited name
-				feed.editedName = nil
+				if let name = subscription.name, !name.isEmpty {
+					feed.name = name
+				}
 				feed.homePageURL = subscription.homePageURL
 				feed.externalID = String(subscription.subscriptionID)
 				feed.faviconURL = subscription.jsonFeed?.favicon
