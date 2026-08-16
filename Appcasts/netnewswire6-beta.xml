@@ -7,6 +7,19 @@
         <language>en</language>
 
 		<item>
+			<title>NetNewsWire 7.1.3b5</title>
+			<description><![CDATA[
+			<p><b>Changes since 7.1.3b4:</b></p>
+				  <ul>
+				  <li>Fixed bug where feeds could lose their names and display as Untitled
+				</ul>
+			]]></description>
+			<pubDate>Sun, 16 Aug 2026 15:50:00 -0700</pubDate>
+			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b5/NetNewsWire7.1.3b5.zip" sparkle:version="7206" sparkle:shortVersionString="7.1.3b5" length="9760795" type="application/zip" />
+			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+		</item>
+
+		<item>
 			<title>NetNewsWire 7.1.3b4</title>
             <description><![CDATA[
             <p><b>Changes since 7.1.3b3:</b></p>
