@@ -17,7 +17,6 @@ import RSWeb
 
 	var accountsFolder: URL {
 		return try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-
 	}
 
 	func createAccount(type: AccountType, username: String? = nil, password: String? = nil) -> Account {
@@ -35,7 +34,6 @@ import RSWeb
 		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID)
 
 		return account
-
 	}
 
 	func deleteAccount(_ account: Account) {
@@ -44,15 +42,11 @@ import RSWeb
 
 		do {
 			try FileManager.default.removeItem(atPath: account.dataFolder)
-		}
-		catch let error as CocoaError where error.code == .fileNoSuchFile {
+		} catch let error as CocoaError where error.code == .fileNoSuchFile {
 
-		}
-		catch {
+		} catch {
 			assertionFailure("Could not delete folder at: \(account.dataFolder) because \(error)")
 			abort()
 		}
-
 	}
-
 }
