@@ -1,5 +1,14 @@
 # iOS Release Notes
 
+### 7.1.3 build 7206 16 Aug 2026 - branch: main tag: iOS-7.1.3-7206
+
+Fixed bug where feeds could lose their names and display as Untitled
+Fixed crash in the feeds list triggered by two folders with the same name
+Fixed crash adding a feed when search is showing
+Fixed bug where timeline rows could stop responding to taps
+Fixed bug where the feeds list could select/scroll to the wrong row after feeds list changed
+Fixed feeds list animation glitches with disclosure triangles and unread counts
+
 ### 7.1.3 build 7205 11 Aug 2026 - branch: main tag: iOS-7.1.3-7205
 
 Fixed bug where feeds-list rows could overlap or cover the wrong row when toggling Hide Read Feeds
