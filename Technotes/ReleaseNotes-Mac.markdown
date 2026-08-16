@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.1.3b5 7206 16 Aug 2026 — brent: main tag: mac-7.1.3b5
+
+Fixed bug where feeds could lose their names and display as Untitled
+
 ### 7.1.3b4 7205 11 Aug 2026 — brent: main tag: mac-7.1.3b4
 
 Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
