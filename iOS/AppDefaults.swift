@@ -41,7 +41,29 @@ final class AppDefaults: Sendable {
 	static let defaultThemeName = "Default"
 	fileprivate static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDefaults")
 
-	private init() {}
+	private init() {
+		migrateFeedReadFilterOverridesIfNeeded()
+	}
+
+	/// Migrate legacy `feedsHidingReadArticles` into the unified
+	/// `feedReadFilterOverrides` format.
+	private func migrateFeedReadFilterOverridesIfNeeded() {
+		let legacyKey = "feedsHidingReadArticles"
+
+		guard UserDefaults.standard.dictionary(forKey: legacyKey) != nil else {
+			return
+		}
+		guard UserDefaults.standard.data(forKey: Key.feedReadFilterOverrides) == nil else {
+			return
+		}
+
+		let hiding = UserDefaults.standard.dictionary(forKey: legacyKey) as? [String: [String]] ?? [:]
+
+		let overrides = FeedReadFilterOverrides.migrating(legacyFeedsHiding: hiding.mapValues { Set($0) })
+
+		UserDefaults.standard.set(overrides.data, forKey: Key.feedReadFilterOverrides)
+		UserDefaults.standard.removeObject(forKey: legacyKey)
+	}
 
 	nonisolated(unsafe) static let store: UserDefaults = {
 		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
@@ -73,13 +95,14 @@ final class AppDefaults: Sendable {
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let expandedContainers = "expandedContainers"
 		static let smartFeedsHidingReadArticles = "smartFeedsHidingReadArticles"
-		static let feedsHidingReadArticles = "feedsHidingReadArticles"
 		static let foldersShowingReadArticles = "foldersShowingReadArticles"
 		static let selectedSidebarItem = "selectedSidebarItem"
 		static let selectedArticle = "selectedArticle"
 		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
 		static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
 		static let timelineWidth = "timelineWidth"
+		static let feedReadFilterOverrides = "feedReadFilterOverrides"
+		static let hideReadArticles = "hideReadArticles"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -337,19 +360,6 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var feedsHidingReadArticles: [String: Set<String>] { // Account id: Set<feed.feedID>
-		get {
-			guard let d = UserDefaults.standard.dictionary(forKey: Key.feedsHidingReadArticles) as? [String: [String]] else {
-				return [String: Set<String>]()
-			}
-			return d.mapValues { Set($0) }
-		}
-		set {
-			let d = newValue.mapValues { Array($0) }
-			UserDefaults.standard.set(d, forKey: Key.feedsHidingReadArticles)
-		}
-	}
-
 	var foldersShowingReadArticles: [String: Set<String>] { // Account id: Set<folder.nameForDisplay>
 		get {
 			guard let d = UserDefaults.standard.dictionary(forKey: Key.foldersShowingReadArticles) as? [String: [String]] else {
@@ -402,6 +412,40 @@ final class AppDefaults: Sendable {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.didMigrateLegacyStateRestorationInfo)
 		}
+	}
+
+	var feedReadFilterOverrides: FeedReadFilterOverrides {
+		get {
+			FeedReadFilterOverrides(data: UserDefaults.standard.data(forKey: Key.feedReadFilterOverrides))
+		}
+		set {
+			UserDefaults.standard.set(newValue.data, forKey: Key.feedReadFilterOverrides)
+		}
+	}
+
+	var hideReadArticles: Bool {
+		get {
+			return AppDefaults.bool(for: Key.hideReadArticles)
+		}
+		set {
+			AppDefaults.setBool(for: Key.hideReadArticles, newValue)
+		}
+	}
+
+	func setFeedHideReadOverride(accountID: String, feedID: String, enabled: Bool) {
+		var overrides = feedReadFilterOverrides
+		if enabled {
+			overrides.setOverride(accountID: accountID, feedID: feedID, hideReadArticles ? .show : .hide)
+		} else {
+			overrides.clearOverride(accountID: accountID, feedID: feedID)
+		}
+		feedReadFilterOverrides = overrides
+	}
+
+	func clearFeedHideReadOverrides(accountID: String) {
+		var overrides = feedReadFilterOverrides
+		overrides.clearAll(accountID: accountID)
+		feedReadFilterOverrides = overrides
 	}
 
 	@MainActor static func registerDefaults() {
@@ -486,7 +530,7 @@ struct StateRestorationInfo {
 	let expandedContainers: Set<ContainerIdentifier>
 	let selectedSidebarItem: SidebarItemIdentifier?
 	let smartFeedsHidingReadArticles: Set<String>
-	let feedsHidingReadArticles: [String: Set<String>]
+	let feedReadFilterOverrides: FeedReadFilterOverrides
 	let foldersShowingReadArticles: [String: Set<String>]
 	let selectedArticle: ArticleSpecifier?
 	let articleWindowScrollY: Int
@@ -496,7 +540,7 @@ struct StateRestorationInfo {
 	     expandedContainers: Set<ContainerIdentifier>,
 	     selectedSidebarItem: SidebarItemIdentifier?,
 	     smartFeedsHidingReadArticles: Set<String>,
-	     feedsHidingReadArticles: [String: Set<String>],
+	     feedReadFilterOverrides: FeedReadFilterOverrides,
 	     foldersShowingReadArticles: [String: Set<String>],
 	     selectedArticle: ArticleSpecifier?,
 	     articleWindowScrollY: Int,
@@ -505,13 +549,13 @@ struct StateRestorationInfo {
 		self.expandedContainers = expandedContainers
 		self.selectedSidebarItem = selectedSidebarItem
 		self.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
-		self.feedsHidingReadArticles = feedsHidingReadArticles
+		self.feedReadFilterOverrides = feedReadFilterOverrides
 		self.foldersShowingReadArticles = foldersShowingReadArticles
 		self.selectedArticle = selectedArticle
 		self.articleWindowScrollY = articleWindowScrollY
 		self.isShowingExtractedArticle = isShowingExtractedArticle
 
-		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsmartFeedsHidingReadArticles: \(smartFeedsHidingReadArticles)\nfeedsHidingReadArticles: \(feedsHidingReadArticles)\nfoldersShowingReadArticles: \(foldersShowingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
+		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsmartFeedsHidingReadArticles: \(smartFeedsHidingReadArticles)\nfeedReadFilterOverrides: \(String(describing: feedReadFilterOverrides))\nfoldersShowingReadArticles: \(foldersShowingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
 	}
 
 	init() {
@@ -519,7 +563,7 @@ struct StateRestorationInfo {
 				  expandedContainers: AppDefaults.shared.expandedContainers,
 				  selectedSidebarItem: AppDefaults.shared.selectedSidebarItem,
 				  smartFeedsHidingReadArticles: AppDefaults.shared.smartFeedsHidingReadArticles,
-				  feedsHidingReadArticles: AppDefaults.shared.feedsHidingReadArticles,
+				  feedReadFilterOverrides: AppDefaults.shared.feedReadFilterOverrides,
 				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
 				  selectedArticle: AppDefaults.shared.selectedArticle,
 				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
@@ -584,15 +628,15 @@ struct StateRestorationInfo {
 		}
 
 		var smartFeedsHidingReadArticles = Set<String>()
-		var feedsHidingReadArticles = [String: Set<String>]()
+		var legacyFeedsHiding = [String: Set<String>]()
 		for sidebarItem in sidebarItemsHidingReadArticles {
 			switch sidebarItem {
 			case .smartFeed(let id):
 				smartFeedsHidingReadArticles.insert(id)
 			case .feed(let accountID, let feedID):
-				var feedIDs = feedsHidingReadArticles[accountID] ?? Set<String>()
+				var feedIDs = legacyFeedsHiding[accountID] ?? Set<String>()
 				feedIDs.insert(feedID)
-				feedsHidingReadArticles[accountID] = feedIDs
+				legacyFeedsHiding[accountID] = feedIDs
 			default:
 				continue
 			}
@@ -610,7 +654,7 @@ struct StateRestorationInfo {
 				  expandedContainers: expandedContainers,
 				  selectedSidebarItem: selectedSidebarItem,
 				  smartFeedsHidingReadArticles: smartFeedsHidingReadArticles,
-				  feedsHidingReadArticles: feedsHidingReadArticles,
+				  feedReadFilterOverrides: FeedReadFilterOverrides.migrating(legacyFeedsHiding: legacyFeedsHiding),
 				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
 				  selectedArticle: AppDefaults.shared.selectedArticle,
 				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
