@@ -50,6 +50,8 @@ public extension URLRequest {
 		case .readerAPIKey:
 			let auth = "GoogleLogin auth=\(credentials.secret)"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
+		case .minifluxAPIKey:
+			setValue(credentials.secret, forHTTPHeaderField: "X-Auth-Token")
 		case .oauthAccessToken:
 			let auth = "OAuth \(credentials.secret)"
 			setValue(auth, forHTTPHeaderField: "Authorization")
