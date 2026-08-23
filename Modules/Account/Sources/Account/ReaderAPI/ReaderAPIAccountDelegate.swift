@@ -86,6 +86,12 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
+	var customHTTPHeaders = [ReaderAPICustomHTTPHeader]() {
+		didSet {
+			caller.customHTTPHeaders = customHTTPHeaders
+		}
+	}
+
 	var accountSettings: AccountSettings? {
 		didSet {
 			caller.accountSettings = accountSettings
@@ -164,6 +170,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 			if wrappedError.isCredentialsError, let basicCredentials = try? account.retrieveCredentials(type: .readerBasic), let endpoint = account.endpointURL {
 
 				self.caller.credentials = basicCredentials
+				self.customHTTPHeaders = (try? account.retrieveReaderAPICustomHTTPHeaders()) ?? []
 
 				do {
 					if let apiCredentials = try await caller.validateCredentials(endpoint: endpoint) {
@@ -690,6 +697,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+		try await validateCredentials(credentials: credentials, endpoint: endpoint, customHTTPHeaders: [])
+	}
+
+	static func validateCredentials(credentials: Credentials, endpoint: URL?, customHTTPHeaders: [ReaderAPICustomHTTPHeader]) async throws -> Credentials? {
 		Self.logger.debug("ReaderAPIAccountDelegate: validateCredentials")
 
 		guard let endpoint else {
@@ -698,6 +709,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 		let caller = ReaderAPICaller(logger: Self.logger)
 		caller.credentials = credentials
+		caller.customHTTPHeaders = customHTTPHeaders
 		return try await caller.validateCredentials(endpoint: endpoint)
 	}
 
@@ -743,6 +755,7 @@ private extension ReaderAPIAccountDelegate {
 		if credentials == nil {
 			credentials = try? account.retrieveCredentials(type: .readerAPIKey)
 		}
+		customHTTPHeaders = (try? account.retrieveReaderAPICustomHTTPHeaders()) ?? []
 	}
 
 	@MainActor func refreshAccount(_ account: Account) async throws {

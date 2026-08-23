@@ -28,6 +28,15 @@ final class ReaderAPIAccountViewController: UITableViewController {
 	var accountType: AccountType?
 	weak var delegate: AddAccountDismissDelegate?
 
+	private struct CustomHeaderInput {
+		var name: String
+		var value: String
+	}
+
+	private static let customHeaderCellIdentifier = "CustomHeaderCell"
+	private static let addCustomHeaderCellIdentifier = "AddCustomHeaderCell"
+	private var customHeaderInputs = [CustomHeaderInput]()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 		setupFooter()
@@ -42,6 +51,9 @@ final class ReaderAPIAccountViewController: UITableViewController {
 			actionButton.isEnabled = true
 			usernameTextField.text = credentials.username
 			passwordTextField.text = credentials.secret
+			apiURLTextField.text = unwrappedAccount.endpointURL?.absoluteString
+			let customHeaders = (try? unwrappedAccount.retrieveReaderAPICustomHTTPHeaders()) ?? []
+			customHeaderInputs = customHeaders.map { CustomHeaderInput(name: $0.name, value: $0.value) }
 		} else {
 			actionButton.setTitle(NSLocalizedString("Add Account", comment: "Add Account"), for: .normal)
 		}
@@ -66,6 +78,8 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(textDidChange(_:)), name: UITextField.textDidChangeNotification, object: passwordTextField)
 
 		tableView.register(ImageHeaderView.self, forHeaderFooterViewReuseIdentifier: "SectionHeader")
+		tableView.register(CustomHTTPHeaderCell.self, forCellReuseIdentifier: Self.customHeaderCellIdentifier)
+		tableView.register(AddCustomHTTPHeaderCell.self, forCellReuseIdentifier: Self.addCustomHeaderCellIdentifier)
 
     }
 
@@ -107,13 +121,82 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		case 0:
 			switch accountType {
 			case .freshRSS:
-				return 3
+				return 4 + customHeaderInputs.count
 			default:
 				return 2
 			}
 		default:
 			return 1
 		}
+	}
+
+	override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+		if accountType == .freshRSS, indexPath.section == 0, indexPath.row > 2 {
+			return UITableView.automaticDimension
+		}
+		return UITableView.automaticDimension
+	}
+
+	override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+		if accountType == .freshRSS, indexPath.section == 0, indexPath.row > 2 {
+			return 51
+		}
+		return 44
+	}
+
+	override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+		return 0
+	}
+
+	override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		guard accountType == .freshRSS, indexPath.section == 0, indexPath.row > 2 else {
+			return super.tableView(tableView, cellForRowAt: indexPath)
+		}
+
+		let addHeaderRow = 3 + customHeaderInputs.count
+		if indexPath.row == addHeaderRow {
+			let cell = tableView.dequeueReusableCell(withIdentifier: Self.addCustomHeaderCellIdentifier, for: indexPath) as! AddCustomHTTPHeaderCell
+			cell.configure { [weak self] in
+				self?.appendCustomHeader()
+			}
+			cell.selectionStyle = .default
+			return cell
+		}
+
+		let headerIndex = indexPath.row - 3
+		let cell = tableView.dequeueReusableCell(withIdentifier: Self.customHeaderCellIdentifier, for: indexPath) as! CustomHTTPHeaderCell
+		let input = customHeaderInputs[headerIndex]
+		cell.configure(name: input.name, value: input.value) { [weak self] name, value in
+			self?.customHeaderInputs[headerIndex] = CustomHeaderInput(name: name, value: value)
+		}
+		return cell
+	}
+
+	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		guard accountType == .freshRSS, indexPath.section == 0, indexPath.row == 3 + customHeaderInputs.count else {
+			return
+		}
+
+		tableView.deselectRow(at: indexPath, animated: true)
+		appendCustomHeader()
+	}
+
+	private func appendCustomHeader() {
+		let insertedRow = 3 + customHeaderInputs.count
+		customHeaderInputs.append(CustomHeaderInput(name: "", value: ""))
+		tableView.insertRows(at: [IndexPath(row: insertedRow, section: 0)], with: .automatic)
+	}
+
+	override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+		accountType == .freshRSS && indexPath.section == 0 && indexPath.row >= 3 && indexPath.row < 3 + customHeaderInputs.count
+	}
+
+	override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+		guard editingStyle == .delete, self.tableView(tableView, canEditRowAt: indexPath) else {
+			return
+		}
+		customHeaderInputs.remove(at: indexPath.row - 3)
+		tableView.reloadData()
 	}
 
 	@IBAction func cancel(_ sender: Any) {
@@ -138,6 +221,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		let username = usernameTextField.text!
 		let password = passwordTextField.text!
 		let url = apiURL()!
+		let customHTTPHeaders = readerAPICustomHTTPHeaders()
 
 		// When you fill in the email address via auto-complete it adds extra whitespace
 		let trimmedUsername = username.trimmingWhitespace
@@ -158,7 +242,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 
 			let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: password)
 			do {
-				let validatedCredentials = try await Account.validateCredentials(type: type, credentials: credentials, endpoint: url)
+				let validatedCredentials = try await Account.validateCredentials(type: type, credentials: credentials, endpoint: url, customHTTPHeaders: customHTTPHeaders)
 				stopAnimation()
 
 				if let validatedCredentials {
@@ -171,6 +255,7 @@ final class ReaderAPIAccountViewController: UITableViewController {
 
 						try account?.storeCredentials(credentials)
 						try account?.storeCredentials(validatedCredentials)
+						try account?.storeReaderAPICustomHTTPHeaders(customHTTPHeaders)
 
 						account?.triggerRefreshAll()
 
@@ -227,6 +312,10 @@ final class ReaderAPIAccountViewController: UITableViewController {
 				showError(NSLocalizedString("Invalid API URL.", comment: "Invalid API URL"))
 				return false
 			}
+			guard customHeaderFieldsAreValid() else {
+				showError(NSLocalizedString("Custom header names and values must be valid.", comment: "Custom Headers Error"))
+				return false
+			}
 		default:
 			if !usernameTextField.hasText || !passwordTextField.hasText {
 				showError(NSLocalizedString("Username and password are required.", comment: "Credentials Error"))
@@ -270,6 +359,27 @@ final class ReaderAPIAccountViewController: UITableViewController {
 		}
 	}
 
+	private func readerAPICustomHTTPHeaders() -> [ReaderAPICustomHTTPHeader] {
+		customHeaderInputs.compactMap { input in
+			ReaderAPICustomHTTPHeader(name: input.name, value: input.value)
+		}
+	}
+
+	private func customHeaderFieldsAreValid() -> Bool {
+		for input in customHeaderInputs {
+			let trimmedName = input.name.trimmingWhitespace
+			let trimmedValue = input.value.trimmingWhitespace
+
+			if trimmedName.isEmpty && trimmedValue.isEmpty {
+				continue
+			}
+			guard ReaderAPICustomHTTPHeader(name: trimmedName, value: trimmedValue) != nil else {
+				return false
+			}
+		}
+		return true
+	}
+
 	@objc func textDidChange(_ note: Notification) {
 		actionButton.isEnabled = !(usernameTextField.text?.isEmpty ?? false)
 	}
@@ -304,5 +414,113 @@ extension ReaderAPIAccountViewController: UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		textField.resignFirstResponder()
 		return true
+	}
+}
+
+private final class CustomHTTPHeaderCell: UITableViewCell {
+
+	private let nameTextField = UITextField()
+	private let valueTextField = UITextField()
+	private var onChange: ((String, String) -> Void)?
+
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		setup()
+	}
+
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setup()
+	}
+
+	func configure(name: String, value: String, onChange: @escaping (String, String) -> Void) {
+		self.onChange = onChange
+		nameTextField.text = name
+		valueTextField.text = value
+	}
+
+	private func setup() {
+		selectionStyle = .none
+
+		nameTextField.placeholder = NSLocalizedString("Header Name", comment: "Header Name")
+		nameTextField.autocorrectionType = .no
+		nameTextField.spellCheckingType = .no
+		nameTextField.smartDashesType = .no
+		nameTextField.smartInsertDeleteType = .no
+		nameTextField.smartQuotesType = .no
+		nameTextField.adjustsFontForContentSizeCategory = true
+		nameTextField.font = UIFont.preferredFont(forTextStyle: .body)
+		nameTextField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
+
+		valueTextField.placeholder = NSLocalizedString("Header Value", comment: "Header Value")
+		valueTextField.autocorrectionType = .no
+		valueTextField.spellCheckingType = .no
+		valueTextField.smartDashesType = .no
+		valueTextField.smartInsertDeleteType = .no
+		valueTextField.smartQuotesType = .no
+		valueTextField.adjustsFontForContentSizeCategory = true
+		valueTextField.font = UIFont.preferredFont(forTextStyle: .body)
+		valueTextField.addTarget(self, action: #selector(textDidChange(_:)), for: .editingChanged)
+
+		let stackView = UIStackView(arrangedSubviews: [nameTextField, valueTextField])
+		stackView.axis = .horizontal
+		stackView.spacing = 12
+		stackView.distribution = .fillEqually
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		contentView.addSubview(stackView)
+
+		NSLayoutConstraint.activate([
+			stackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 14),
+			stackView.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+			stackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+			stackView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10)
+		])
+	}
+
+	@objc private func textDidChange(_ sender: UITextField) {
+		onChange?(nameTextField.text ?? "", valueTextField.text ?? "")
+	}
+}
+
+private final class AddCustomHTTPHeaderCell: UITableViewCell {
+
+	private let addButton = UIButton(type: .system)
+	private var onAdd: (() -> Void)?
+
+	override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+		super.init(style: style, reuseIdentifier: reuseIdentifier)
+		setup()
+	}
+
+	required init?(coder: NSCoder) {
+		super.init(coder: coder)
+		setup()
+	}
+
+	func configure(onAdd: @escaping () -> Void) {
+		self.onAdd = onAdd
+	}
+
+	private func setup() {
+		addButton.setTitle(NSLocalizedString("Add Custom Header", comment: "Add Custom Header"), for: .normal)
+		addButton.setImage(UIImage(systemName: "plus.circle"), for: .normal)
+		addButton.contentHorizontalAlignment = .leading
+		addButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+		addButton.titleLabel?.adjustsFontForContentSizeCategory = true
+		addButton.translatesAutoresizingMaskIntoConstraints = false
+		addButton.addTarget(self, action: #selector(addHeader(_:)), for: .touchUpInside)
+
+		contentView.addSubview(addButton)
+
+		NSLayoutConstraint.activate([
+			addButton.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 14),
+			addButton.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+			addButton.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+			addButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
+		])
+	}
+
+	@objc private func addHeader(_ sender: UIButton) {
+		onAdd?()
 	}
 }

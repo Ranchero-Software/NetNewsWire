@@ -61,7 +61,7 @@ struct ReaderAPIUsageLimits {
 		case editTag = "/reader/api/0/edit-tag"
 	}
 
-	private let session = URLSession.makeWebserviceSession()
+	private var session = URLSession.makeWebserviceSession()
 	private let uriComponentAllowed: CharacterSet
 	private let logger: Logger
 	private var accessToken: String?
@@ -70,6 +70,14 @@ struct ReaderAPIUsageLimits {
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
+	var customHTTPHeaders = [ReaderAPICustomHTTPHeader]() {
+		didSet {
+			let additionalHeaders = customHTTPHeaders.reduce(into: [String: String]()) { headers, customHeader in
+				headers[customHeader.name] = customHeader.value
+			}
+			session = URLSession.makeWebserviceSession(additionalHeaders: additionalHeaders)
+		}
+	}
 
 	/// Most recent usage report. Nil for services that don’t send the headers.
 	private(set) var usageLimits: ReaderAPIUsageLimits?
@@ -120,15 +128,7 @@ struct ReaderAPIUsageLimits {
 				throw WebserviceError.noData
 			}
 
-			var authData: [String: String] = [:]
-			for line in rawData.split(separator: "\n") {
-				let items = line.split(separator: "=").map { String($0) }
-				if items.count == 2 {
-					authData[items[0]] = items[1]
-				}
-			}
-
-			guard let authString = authData["Auth"] else {
+			guard let authString = Self.clientLoginAuthToken(in: rawData) else {
 				throw CredentialsError.missingAccessToken
 			}
 
@@ -144,6 +144,21 @@ struct ReaderAPIUsageLimits {
 				throw error
 			}
 		}
+	}
+
+	nonisolated static func clientLoginAuthToken(in rawData: String) -> String? {
+		clientLoginAuthData(in: rawData)["Auth"]
+	}
+
+	nonisolated private static func clientLoginAuthData(in rawData: String) -> [String: String] {
+		var authData: [String: String] = [:]
+		for line in rawData.split(separator: "\n") {
+			let items = line.split(separator: "=", maxSplits: 1, omittingEmptySubsequences: false).map { String($0) }
+			if items.count == 2 {
+				authData[items[0]] = items[1]
+			}
+		}
+		return authData
 	}
 
 	func requestAuthorizationToken(endpoint: URL) async throws -> String {
@@ -606,6 +621,10 @@ private extension ReaderAPICaller {
 	}
 
 	func addVariantHeaders(_ request: inout URLRequest) {
+		for header in customHTTPHeaders {
+			request.setValue(header.value, forHTTPHeaderField: header.name)
+		}
+
 		if variant == .inoreader {
 			request.addValue(SecretKey.inoreaderAppID, forHTTPHeaderField: "AppId")
 			request.addValue(SecretKey.inoreaderAppKey, forHTTPHeaderField: "AppKey")
