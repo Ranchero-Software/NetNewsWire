@@ -209,6 +209,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	override func viewDidLayoutSubviews() {
 		super.viewDidLayoutSubviews()
 		updateToolbarProgressView()
+		coordinator?.timelineDidLayout()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {

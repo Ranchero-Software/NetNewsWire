@@ -70,6 +70,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 0.5)
+	private let saveTimelineWidthQueue = CoalescingQueue(name: "Save Timeline Width", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
@@ -791,15 +792,19 @@ struct SidebarItemNode: Hashable, Sendable {
 	func didEnterBackground() {
 		hidingReadArticlesState.save()
 		saveExpandedContainers()
-		saveTimelineWidth()
 	}
 
-	private func saveTimelineWidth() {
-		// Only meaningful when the timeline is its own column (iPad, expanded); when collapsed its view fills the screen.
-		guard !rootSplitViewController.isCollapsed else {
+	func timelineDidLayout() {
+		saveTimelineWidthQueue.add(self, #selector(saveTimelineWidth))
+	}
+
+	@objc private func saveTimelineWidth() {
+		guard !rootSplitViewController.isCollapsed, rootSplitViewController.displayMode != .secondaryOnly else {
 			return
 		}
-		let width = mainTimelineViewController?.view.bounds.width ?? 0
+		// The timeline view extends under the sidebar, so its bounds are wider than the column looks.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5401>
+		let width = mainTimelineViewController?.view.safeAreaLayoutGuide.layoutFrame.width ?? 0
 		guard width > 0 else {
 			return
 		}
