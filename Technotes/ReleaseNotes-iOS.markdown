@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.1.4 build 7208 25 Aug 2026 - branch: main tag: iOS-7.1.4-7208
+
+Fix bug restoring timeline width on iPad
+
 ### 7.1.3 build 7206 16 Aug 2026 - branch: main tag: iOS-7.1.3-7206
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.1.3 release version on 22 Aug 2026.
