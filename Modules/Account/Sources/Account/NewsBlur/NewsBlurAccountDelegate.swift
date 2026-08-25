@@ -158,7 +158,7 @@ import Secrets
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Sending article status")
+				account.postSyncError(savedError, operation: "Sending article status")
 				throw savedError
 			}
 			return sentCount
@@ -201,7 +201,7 @@ import Secrets
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Refreshing article status")
+				account.postSyncError(savedError, operation: "Refreshing article status")
 				throw savedError
 			}
 			return changedCount
@@ -243,12 +243,12 @@ import Secrets
 
 			for chunk in chunkedStoryHashes {
 				do {
-					let (stories, _) = try await logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(hashes: chunk) })
+					let (stories, _) = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(hashes: chunk) })
 					await processStories(account: account, stories: stories)
 				} catch {
 					savedError = error
 					Self.logger.error("NewsBlur: Refresh missing stories error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Refreshing stories")
+					account.postSyncError(error, operation: "Refreshing stories")
 				}
 			}
 
@@ -484,7 +484,7 @@ import Secrets
 			}
 		} catch {
 			Self.logger.error("NewsBlur: Restore folder error: \(error.localizedDescription)")
-			postSyncError(error, account: account, operation: "Restoring folder")
+			account.postSyncError(error, operation: "Restoring folder")
 			throw error
 		}
 	}
@@ -511,6 +511,11 @@ import Secrets
 
 	func accountDidInitialize() {
 		credentials = try? account?.retrieveCredentials(type: .newsBlurSessionID)
+
+		// A send in progress when the app was killed left its statuses selected. Clear them so
+		// they get sent, instead of waiting for the next selectForProcessing to pick them up.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
+		syncDatabase.resetAllSelectedForProcessing()
 	}
 
 	func accountWillBeDeleted() {
@@ -564,9 +569,4 @@ import Secrets
 // MARK: - Sync Error Posting
 
 extension NewsBlurAccountDelegate {
-
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
-	}
 }

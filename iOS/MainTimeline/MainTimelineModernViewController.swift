@@ -150,7 +150,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	// MARK: Private Constants
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainTimelineModernViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineModernViewController")
 
 	// MARK: Constants
 	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
@@ -222,6 +222,10 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			navigationController?.navigationBar.alpha = 0
 		}
 
+		// Re-assert small title in case the shared iPhone nav bar was left in large mode.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5141>
+		navigationItem.largeTitleDisplayMode = .never
+
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)
 		updateToolbarProgressView()
@@ -230,7 +234,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	override func viewDidAppear(_ animated: Bool) {
 		Self.logger.debug("MainTimelineModernViewController: viewDidAppear")
 
-		super.viewDidAppear(true)
+		super.viewDidAppear(animated)
 		isTimelineViewControllerPending = false
 		if navigationController?.navigationBar.alpha == 0 {
 			UIView.animate(withDuration: 0.5) {
@@ -277,7 +281,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 				let indexPaths = collectionView.indexPathsForSelectedItems ?? []
 				if !indexPaths.contains(indexPath) {
 					Self.logger.debug("MainTimelineModernViewController: restoreSelectionIfNecessary does not contain selected index path")
-					collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+					collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
 				}
 			}
 		}
@@ -346,8 +350,19 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		updateToolbar()
 	}
 
-	func hideSearch() {
-		navigationItem.searchController?.isActive = false
+	func hideSearch(completion: (() -> Void)? = nil) {
+		guard let searchController = navigationItem.searchController, searchController.isActive else {
+			completion?()
+			return
+		}
+		searchController.isActive = false
+		guard let transitionCoordinator = searchController.transitionCoordinator else {
+			completion?()
+			return
+		}
+		transitionCoordinator.animate(alongsideTransition: nil) { _ in
+			completion?()
+		}
 	}
 
 	func showSearchAll() {
@@ -451,17 +466,18 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		coordinator?.toggleReadArticlesFilter()
 	}
 
-	private func markAllAsReadInTimeline() {
-		assert(coordinator != nil)
-		coordinator?.markAllAsReadInTimeline()
-	}
-
 	@IBAction func markAllAsRead(_ sender: Any?) {
+		guard let coordinator else {
+			assertionFailure("Expected coordinator")
+			return
+		}
 		let title = NSLocalizedString("Mark All as Read", comment: "Command")
+
+		let articlesToMark = coordinator.articles
 
 		if let source = sender as? UIBarButtonItem {
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: source) { [weak self] in
-				self?.markAllAsReadInTimeline()
+				self?.coordinator?.markAsReadAndShowSidebar(articlesToMark)
 			}
 		}
 
@@ -474,7 +490,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			}
 
 			MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				self?.markAllAsReadInTimeline()
+				self?.coordinator?.markAsReadAndShowSidebar(articlesToMark)
 			}
 		}
 	}
@@ -621,6 +637,23 @@ extension MainTimelineModernViewController {
 
 		isToolbarProgressViewShowing = isSidebarHidden(for: displayMode)
 		rebuildToolbarItems()
+	}
+}
+
+// MARK: - Split View State
+
+extension MainTimelineModernViewController {
+
+	/// The selection style — full-bleed gray when collapsed, rounded accent when
+	/// expanded — depends on the split view state, so visible cells need a refresh
+	/// when it changes.
+	func splitViewStateDidChange() {
+		guard let collectionView else {
+			return
+		}
+		for cell in collectionView.visibleCells {
+			cell.setNeedsUpdateConfiguration()
+		}
 	}
 }
 
@@ -822,9 +855,12 @@ private extension MainTimelineModernViewController {
 
 			/// Note to future self: apply insets that affect cell width
 			/// calculations (leading swipe actions with sidebar visible)
+			let sidebarOverlapWidth = layoutEnvironment.container.contentInsets.leading
+			// container.contentSize includes the width under the sidebar.
+			let remainingWidth = layoutEnvironment.container.contentSize.width - sidebarOverlapWidth
 			section.contentInsets = NSDirectionalEdgeInsets(
 				top: 0,
-				leading: layoutEnvironment.container.contentInsets.leading, // Sidebar width
+				leading: remainingWidth > 0 ? sidebarOverlapWidth : 0,
 				bottom: 0,
 				trailing: 0
 			)
@@ -1078,14 +1114,14 @@ extension MainTimelineModernViewController: UISearchControllerDelegate {
 	}
 
 	func willDismissSearchController(_ searchController: UISearchController) {
-		coordinator?.endSearching()
 		searchController.searchBar.showsScopeBar = false
-		// Async to avoid an iOS 26 UINavigationBar crash during the search-bar dismissal transition.
+		// Async to avoid iOS 26 UINavigationBar crashes during the search-bar dismissal
+		// transition — endSearching() mutates the timeline and the navigation stack.
 		DispatchQueue.main.async {
+			self.coordinator?.endSearching()
 			self.updateToolbar()
 		}
 	}
-
 }
 
 extension MainTimelineModernViewController: UISearchResultsUpdating {

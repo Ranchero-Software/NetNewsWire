@@ -30,13 +30,6 @@
 		<string>com.apple.Safari.extension</string>
 		<key>NSExtensionPrincipalClass</key>
 		<string>$(PRODUCT_MODULE_NAME).SafariExtensionHandler</string>
-		<key>SFSafariContentScript</key>
-		<array>
-			<dict>
-				<key>Script</key>
-				<string>netnewswire-subscribe-to-feed.js</string>
-			</dict>
-		</array>
 		<key>SFSafariToolbarItem</key>
 		<dict>
 			<key>Action</key>

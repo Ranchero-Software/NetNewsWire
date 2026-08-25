@@ -168,6 +168,9 @@ private extension KeyboardManager {
 		let toggleReadArticlesFilter = NSLocalizedString("Toggle Read Articles Filter", comment: "Toggle Read Articles Filter")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleReadArticlesFilter, action: "toggleReadArticlesFilter:", input: "h", modifiers: [.command, .shift]))
 
+		let toggleReaderView = NSLocalizedString("Toggle Reader View", comment: "Toggle Reader View")
+		keys.append(KeyboardManager.createKeyCommand(title: toggleReaderView, action: "toggleReaderView:", input: "r", modifiers: [.command, .shift]))
+
 		return keys
 	}
 
@@ -212,9 +215,6 @@ private extension KeyboardManager {
 
 		let toggleSidebar = NSLocalizedString("Toggle Sidebar", comment: "Toggle Sidebar")
 		keys.append(KeyboardManager.createKeyCommand(title: toggleSidebar, action: "toggleSidebar:", input: "s", modifiers: [.command, .control]))
-
-		let toggleReaderView = NSLocalizedString("Toggle Reader View", comment: "Toggle Reader View")
-		keys.append(KeyboardManager.createKeyCommand(title: toggleReaderView, action: "toggleReaderView:", input: "r", modifiers: [.command, .shift]))
 
 		return keys
 	}

@@ -31,7 +31,7 @@ extension Notification.Name {
 	/// The persistent failure, if any. Nil after success or for transient failures.
 	public private(set) var error: ImageDownloadError?
 
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SingleFaviconDownloader")
+	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "SingleFaviconDownloader")
 
 	private let diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
@@ -147,7 +147,7 @@ private extension SingleFaviconDownloader {
 
 		let downloadResponse: DownloadResponse
 		do {
-			downloadResponse = try await Downloader.shared.download(url)
+			downloadResponse = try await Downloader.shared.download(url, userAgentStyle: .browser)
 		} catch {
 			Self.logger.error("Error downloading image at \(url.absoluteString): \(error.localizedDescription)")
 			activityLog.didFail(.faviconDownloader, kind: kind, error: error)

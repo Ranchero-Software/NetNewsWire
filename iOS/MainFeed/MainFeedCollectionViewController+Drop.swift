@@ -27,7 +27,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			  }
 
 		let isFolderDrop: Bool = {
-			if dataSource.itemIdentifier(for: destIndexPath)?.node.representedObject is Folder, let propCell = collectionView.cellForItem(at: destIndexPath) {
+			if sidebarItemNode(for: destIndexPath)?.node.representedObject is Folder, let propCell = collectionView.cellForItem(at: destIndexPath) {
 				return coordinator.session.location(in: propCell).y >= 0
 			}
 			return false
@@ -37,12 +37,12 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		let destNode: Node? = {
 
 			if isFolderDrop {
-				return dataSource.itemIdentifier(for: destIndexPath)?.node
+				return sidebarItemNode(for: destIndexPath)?.node
 			} else {
 				if destIndexPath.row == 0 {
-					return dataSource.itemIdentifier(for: IndexPath(row: 0, section: destIndexPath.section))?.node
+					return sidebarItemNode(for: IndexPath(row: 0, section: destIndexPath.section))?.node
 				} else if destIndexPath.row > 0 {
-					return dataSource.itemIdentifier(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))?.node
+					return sidebarItemNode(for: IndexPath(row: destIndexPath.row - 1, section: destIndexPath.section))?.node
 				} else {
 					return nil
 				}
@@ -56,7 +56,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 				return container
 			} else {
 				// If we got here, we are trying to drop on an empty section header.  Go and find the Account for this section
-				let sectionID = dataSource.snapshot().sectionIdentifiers[destIndexPath.section]
+				let sectionID = currentSidebarSnapshot.sectionIdentifiers[destIndexPath.section]
 				return AccountManager.shared.existingAccount(accountID: sectionID)
 			}
 		}()
@@ -66,7 +66,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		if source.account == destination.account {
 			moveFeedInAccount(feed: feed, sourceContainer: source, destinationContainer: destination)
 		} else {
-			moveFeedBetweenAccounts(feed: feed, sourceContainer: source, destinationContainer: destination)
+			copyFeedBetweenAccounts(feed: feed, destinationContainer: destination)
 		}
 	}
 
@@ -76,7 +76,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 
-		guard let destFeed = dataSource.itemIdentifier(for: destIndexPath)?.node.representedObject as? SidebarItem,
+		guard let destFeed = sidebarItemNode(for: destIndexPath)?.node.representedObject as? SidebarItem,
 			  let destAccount = destFeed.account,
 			  let destCell = collectionView.cellForItem(at: destIndexPath) else {
 				  return UICollectionViewDropProposal(operation: .forbidden)
@@ -90,15 +90,19 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 			return UICollectionViewDropProposal(operation: .forbidden)
 		}
 
+		// Cross-account drops copy the feed; same-account drops move it.
+		let sourceFeed = (session.localDragSession?.items.first?.localObject as? Node)?.representedObject as? Feed
+		let operation: UIDropOperation = (sourceFeed?.account?.accountID != destAccount.accountID) ? .copy : .move
+
 		// Determine the correct drop proposal
 		if destFeed is Folder {
 			if session.location(in: destCell).y >= 0 {
-				return UICollectionViewDropProposal(operation: .move, intent: .insertIntoDestinationIndexPath)
+				return UICollectionViewDropProposal(operation: operation, intent: .insertIntoDestinationIndexPath)
 			} else {
-				return UICollectionViewDropProposal(operation: .move, intent: .unspecified)
+				return UICollectionViewDropProposal(operation: operation, intent: .unspecified)
 			}
 		} else {
-			return UICollectionViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+			return UICollectionViewDropProposal(operation: operation, intent: .insertAtDestinationIndexPath)
 		}
 	}
 
@@ -124,25 +128,17 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		}
 	}
 
-	func moveFeedBetweenAccounts(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
+	func copyFeedBetweenAccounts(feed: Feed, destinationContainer: Container) {
 
 		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
 
 			BatchUpdate.shared.start()
 			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
+				BatchUpdate.shared.end()
 				switch result {
 				case .success:
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.presentError(error)
-						}
-					}
+					break
 				case .failure(let error):
-					BatchUpdate.shared.end()
 					self.presentError(error)
 				}
 			}
@@ -151,19 +147,11 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 
 			BatchUpdate.shared.start()
 			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
+				BatchUpdate.shared.end()
 				switch result {
 				case .success:
-					sourceContainer.account?.removeFeed(feed, from: sourceContainer) { result in
-						BatchUpdate.shared.end()
-						switch result {
-						case .success:
-							break
-						case .failure(let error):
-							self.presentError(error)
-						}
-					}
+					break
 				case .failure(let error):
-					BatchUpdate.shared.end()
 					self.presentError(error)
 				}
 			}

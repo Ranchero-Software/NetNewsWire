@@ -96,10 +96,12 @@ final class DetailWebView: WKWebView {
 private extension NSUserInterfaceItemIdentifier {
 	static let DetailMenuItemIdentifierReload = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierReload")
 	static let DetailMenuItemIdentifierOpenLink = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierOpenLink")
+	static let DetailMenuItemIdentifierGoBack = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierGoBack")
+	static let DetailMenuItemIdentifierGoForward = NSUserInterfaceItemIdentifier(rawValue: "WKMenuItemIdentifierGoForward")
 }
 
 private extension DetailWebView {
-	static let menuItemIdentifiersToHide: [NSUserInterfaceItemIdentifier] = [.DetailMenuItemIdentifierReload]
+	static let menuItemIdentifiersToHide: [NSUserInterfaceItemIdentifier] = [.DetailMenuItemIdentifierReload, .DetailMenuItemIdentifierGoBack, .DetailMenuItemIdentifierGoForward]
 	static let menuItemIdentifierMatchStrings = ["newwindow", "download"]
 
 	func shouldHideMenuItem(_ menuItem: NSMenuItem) -> Bool {

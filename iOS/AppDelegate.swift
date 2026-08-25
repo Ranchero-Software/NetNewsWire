@@ -36,7 +36,7 @@ import Images
 		}
 	}
 
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Application")
 
 	var unreadCount = 0 {
 		didSet {
@@ -63,6 +63,7 @@ import Images
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
 
+		WebViewConfiguration.resolveBrowserUserAgent()
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
@@ -166,6 +167,7 @@ import Images
 
 	/// Un-suspend network activity if it was suspended on background entry.
 	func resumeIfNecessary() {
+		AppNotification.postAppDidBecomeActive()
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			Self.logger.info("Application processing resumed.")
@@ -208,36 +210,40 @@ import Images
 		completionHandler([.list, .banner, .badge, .sound])
     }
 
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+	// Wrapper to safely transfer non-Sendable values to MainActor
+	private struct UnsafeSendable<T>: @unchecked Sendable {
+		let value: T
+	}
 
-		// Wrapper to safely transfer non-Sendable values to MainActor
-		struct UnsafeSendable<T>: @unchecked Sendable {
-			let value: T
-		}
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
 		let wrappedResponse = UnsafeSendable(value: response)
 		let wrappedCompletionHandler = UnsafeSendable(value: completionHandler)
 
 		Task { @MainActor in
-			let response = wrappedResponse.value
-			let userInfo = response.notification.request.content.userInfo
-
-			switch response.actionIdentifier {
-			case UserNotificationManager.ActionIdentifier.markAsRead:
-				handleMarkAsRead(userInfo: userInfo)
-			case UserNotificationManager.ActionIdentifier.markAsStarred:
-				handleMarkAsStarred(userInfo: userInfo)
-			default:
-				if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
-					sceneDelegate.handle(response)
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-						sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
-					})
-				}
-			}
+			handle(notificationResponse: wrappedResponse.value)
 			wrappedCompletionHandler.value()
 		}
     }
+
+	private func handle(notificationResponse response: UNNotificationResponse) {
+
+		let userInfo = response.notification.request.content.userInfo
+
+		switch response.actionIdentifier {
+		case UserNotificationManager.ActionIdentifier.markAsRead:
+			handleMarkAsRead(userInfo: userInfo)
+		case UserNotificationManager.ActionIdentifier.markAsStarred:
+			handleMarkAsStarred(userInfo: userInfo)
+		default:
+			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
+				sceneDelegate.handle(response)
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+					sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
+				})
+			}
+		}
+	}
 }
 
 // MARK: App Initialization
@@ -386,14 +392,16 @@ private extension AppDelegate {
 		}
 	}
 
-	/// Schedule a background app refresh based on `AppDefaults.refreshInterval`.
+	/// Ask the system for the next background app refresh.
+	/// The actual timing is up to the system.
 	nonisolated func scheduleBackgroundFeedRefresh() {
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
 		backgroundTaskDispatchQueue.async {
 			do {
+				let earliestBeginInterval: TimeInterval = 15 * 60
 				let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
-				request.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
+				request.earliestBeginDate = Date(timeIntervalSinceNow: earliestBeginInterval)
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
 				Self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")

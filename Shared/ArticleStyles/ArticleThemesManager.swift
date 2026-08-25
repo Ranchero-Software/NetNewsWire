@@ -19,6 +19,34 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 	static let shared = ArticleThemesManager()
 	public let folderPath: String
 
+	/// User-facing message for a failed theme import.
+	static func importErrorMessage(for error: Error) -> String {
+		guard let decodingError = error as? DecodingError else {
+			return error.localizedDescription
+		}
+
+		switch decodingError {
+		case .typeMismatch(let type, _):
+			let localizedError = NSLocalizedString("This theme cannot be used because the type “%@” is mismatched in the Info.plist.", comment: "Theme import error — type mismatch in Info.plist")
+			return NSString.localizedStringWithFormat(localizedError as NSString, String(describing: type)) as String
+		case .valueNotFound(let value, _):
+			let localizedError = NSLocalizedString("This theme cannot be used because the value “%@” is not found in the Info.plist.", comment: "Theme import error — value missing from Info.plist")
+			return NSString.localizedStringWithFormat(localizedError as NSString, String(describing: value)) as String
+		case .keyNotFound(let codingKey, _):
+			let localizedError = NSLocalizedString("This theme cannot be used because the key “%@” is not found in the Info.plist.", comment: "Theme import error — key missing from Info.plist")
+			return NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
+		case .dataCorrupted(let context):
+			guard let underlyingError = context.underlyingError as NSError?,
+				  let debugDescription = underlyingError.userInfo["NSDebugDescription"] as? String else {
+				return error.localizedDescription
+			}
+			let localizedError = NSLocalizedString("This theme cannot be used because of data corruption in the Info.plist: %@.", comment: "Theme import error — Info.plist data corruption")
+			return NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
+		default:
+			return error.localizedDescription
+		}
+	}
+
 	let presentedItemOperationQueue = OperationQueue.main // NSFilePresenter
 	let presentedItemURL: URL? // NSFilePresenter
 

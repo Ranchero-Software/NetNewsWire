@@ -19,6 +19,10 @@ final class ImageViewController: UIViewController {
 
 	var image: UIImage!
 	var imageTitle: String?
+
+	// Strong reference — the navigation controller’s transitioningDelegate is weak,
+	// and the transition must outlive the WebViewController that configured it.
+	var transition: ImageTransition?
 	var zoomedFrame: CGRect {
 		return imageScrollView.zoomedFrame
 	}

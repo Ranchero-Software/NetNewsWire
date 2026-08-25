@@ -206,7 +206,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	private var previouslySelectedArticles: ArticleArray?
+	private struct ArticleIdentityKey: Equatable {
+		let accountID: String
+		let articleID: String
+	}
+
+	private var previouslySelectedArticleKeys: [ArticleIdentityKey]?
 
 	private var oneSelectedArticle: Article? {
 		return selectedArticles.count == 1 ? selectedArticles.first : nil
@@ -215,7 +220,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private let keyboardDelegate = TimelineKeyboardDelegate()
 	private var timelineShowsSeparatorsObserver: NSKeyValueObservation?
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "TimelineViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "TimelineViewController")
 
 	convenience init(delegate: TimelineDelegate) {
 		self.init(nibName: "TimelineTableView", bundle: nil)
@@ -244,6 +249,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarDidAcceptDrop(_:)), name: .SidebarDidAcceptDrop, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 				Task { @MainActor in
@@ -722,26 +728,35 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@objc func accountStateDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync()
+			fetchAndReplacePreservingSelectionAsync()
 		}
 	}
 
 	@objc func accountsDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync()
+			fetchAndReplacePreservingSelectionAsync()
 		}
 	}
 
 	@objc func userDidDeleteAccount(_ note: Notification) {
 		undoManager?.removeAllActions() // Undo stack may contain actions for the deleted account.
 		if representedObjectsContainsAnyPseudoFeed() {
-			fetchAndReplaceArticlesAsync()
+			fetchAndReplacePreservingSelectionAsync()
 		}
+	}
+
+	@objc func handleSidebarDidAcceptDrop(_ note: Notification) {
+		// Drops aren't undoable — without this, ⌘Z could silently undo an older, unrelated action.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3583>
+		undoManager?.removeAllActions()
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		if representedObjectsContainsAnyPseudoFeed() || representedObjectsContainAnyFolder() {
-			fetchAndReplaceArticlesAsync()
+			// Merge, don't replace — replacing drops articles read this session
+			// from All Unread. Matches iOS.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/3832>
+			queueFetchAndMergeArticles()
 		}
 	}
 
@@ -956,8 +971,14 @@ extension TimelineViewController: NSTableViewDelegate {
 	}
 
 	private func selectionDidChange(_ selectedArticles: ArticleArray?) {
-		guard selectedArticles != previouslySelectedArticles else { return }
-		previouslySelectedArticles = selectedArticles
+		// Compare by identity, not content — re-pushing an updated article that the user is reading
+		// would reset the article view scroll position.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5387>
+		let selectedArticleKeys = selectedArticles?.map { ArticleIdentityKey(accountID: $0.accountID, articleID: $0.articleID) }
+		guard selectedArticleKeys != previouslySelectedArticleKeys else {
+			return
+		}
+		previouslySelectedArticleKeys = selectedArticleKeys
 		delegate?.timelineSelectionDidChange(self, selectedArticles: selectedArticles)
 		delegate?.timelineInvalidatedRestorationState(self)
 	}
@@ -1040,6 +1061,19 @@ private extension TimelineViewController {
 		}
 		performBlockAndRestoreSelection {
 			fetchAndReplaceArticlesSync()
+		}
+	}
+
+	// The current article should stay in the timeline, and stay selected,
+	// when the timeline updates and the sidebar selection hasn't changed —
+	// even if the new fetch wouldn't otherwise include it.
+	func fetchAndReplacePreservingSelectionAsync() {
+		if let article = oneSelectedArticle, let account = article.account {
+			exceptionArticleFetcher = SingleArticleFetcher(account: account, articleID: article.articleID)
+		}
+		let savedSelection = selectedArticleIDs()
+		fetchAndReplaceArticlesAsync { [weak self] in
+			self?.restoreSelection(savedSelection)
 		}
 	}
 
@@ -1190,7 +1224,7 @@ private extension TimelineViewController {
 		replaceArticles(with: fetchedArticles)
 	}
 
-	func fetchAndReplaceArticlesAsync() {
+	func fetchAndReplaceArticlesAsync(completion: (() -> Void)? = nil) {
 		// To be called when we need to do an entire fetch, but an async delay is okay.
 		// Example: we have the Today feed selected, and the calendar day just changed.
 		cancelPendingAsyncFetches()
@@ -1206,6 +1240,7 @@ private extension TimelineViewController {
 
 		fetchUnsortedArticlesAsync(for: representedObjects) { [weak self] (articles) in
 			self?.replaceArticles(with: articles)
+			completion?()
 		}
 	}
 

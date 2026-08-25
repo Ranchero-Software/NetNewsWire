@@ -7,15 +7,21 @@
 //
 
 import Foundation
+import RSCore
 import os
 import WebKit
+import RSWeb
 
 @MainActor final class WebViewConfiguration {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WebViewConfiguration")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "WebViewConfiguration")
 
 	private static var contentBlockingRuleList: WKContentRuleList?
 	private static var configuredContentControllers = NSHashTable<WKUserContentController>.weakObjects()
+	private static let applicationNameForUserAgent = "NetNewsWire"
+
+	// Keeps the web view alive while resolveBrowserUserAgent() waits for its answer.
+	private static var userAgentWebView: WKWebView?
 
 	static func configuration(with urlSchemeHandler: WKURLSchemeHandler) -> WKWebViewConfiguration {
 		assert(Thread.isMainThread)
@@ -30,7 +36,7 @@ import WebKit
 
 		// Present article content as NetNewsWire on top of WebKit's default browser UA, rather than a non-browser string.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4453>
-		configuration.applicationNameForUserAgent = "NetNewsWire"
+		configuration.applicationNameForUserAgent = applicationNameForUserAgent
 
 #if os(iOS)
 		configuration.allowsInlineMediaPlayback = true
@@ -48,6 +54,23 @@ import WebKit
 		if !configuredContentControllers.contains(contentController) {
 			contentController.add(contentBlockingRuleList)
 			configuredContentControllers.add(contentController)
+		}
+	}
+
+	/// Ask WebKit for the article web view's user agent and use it for favicon
+	/// and homepage-HTML downloads, so the two match. Call early at app startup.
+	/// Until it resolves — or if it fails — UserAgent.browserUserAgent's fallback value applies.
+	static func resolveBrowserUserAgent() {
+		let configuration = WKWebViewConfiguration()
+		configuration.applicationNameForUserAgent = applicationNameForUserAgent
+		let webView = WKWebView(frame: .zero, configuration: configuration)
+		userAgentWebView = webView
+
+		webView.evaluateJavaScript("navigator.userAgent") { result, _ in
+			if let userAgent = result as? String, userAgent.hasPrefix("Mozilla/") {
+				UserAgent.browserUserAgent = userAgent
+			}
+			userAgentWebView = nil
 		}
 	}
 
@@ -120,11 +143,26 @@ private extension WebViewConfiguration {
 		let filenames = ["main", "main_mac", "newsfoot"]
 #endif
 
-		let scripts = filenames.map { filename in
+		var scripts = filenames.map { filename in
 			let scriptURL = Bundle.main.url(forResource: filename, withExtension: ".js")!
 			let scriptSource = try! String(contentsOf: scriptURL, encoding: .utf8)
 			return WKUserScript(source: scriptSource, injectionTime: .atDocumentStart, forMainFrameOnly: true)
 		}
+
+#if os(iOS)
+		scripts.insert(feedInfoLabelScript, at: 0)
+#endif
 		return scripts
 	}()
+
+#if os(iOS)
+	// main_ios.js uses nnwGetFeedInfoLabel as the feed icon's accessibility label.
+	// The label is passed in from here because localized strings can't live in a static .js file.
+	// JSON encoding escapes the translation so it's a valid JavaScript string literal.
+	static let feedInfoLabelScript: WKUserScript = {
+		let label = NSLocalizedString("Get Feed Info", comment: "Get Feed Info")
+		let json = String(data: try! JSONSerialization.data(withJSONObject: label, options: .fragmentsAllowed), encoding: .utf8)!
+		return WKUserScript(source: "const nnwGetFeedInfoLabel = \(json);", injectionTime: .atDocumentStart, forMainFrameOnly: true)
+	}()
+#endif
 }

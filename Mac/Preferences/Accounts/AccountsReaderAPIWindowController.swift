@@ -108,11 +108,6 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 
 		let trimmedUsername = usernameTextField.stringValue.trimmingWhitespace
 
-		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: trimmedUsername) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
-			return
-		}
-
 		let apiURL: URL
 		switch accountType {
 		case .freshRSS:
@@ -129,6 +124,11 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			apiURL =  URL(string: ReaderAPIVariant.theOldReader.host)!
 		default:
 			self.errorMessageLabel.stringValue = NSLocalizedString("Unrecognized account type.", comment: "Bad account type")
+			return
+		}
+
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: trimmedUsername, endpoint: apiURL) else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
 			return
 		}
 

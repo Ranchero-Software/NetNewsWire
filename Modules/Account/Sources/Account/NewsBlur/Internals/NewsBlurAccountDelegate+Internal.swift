@@ -36,15 +36,9 @@ import os
 				return (folders: folders?.count ?? 0, feeds: feeds?.count ?? 0)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing feeds")
+			account.postSyncError(error, operation: "Refreshing feeds")
 			throw error
 		}
-	}
-
-	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
-	/// sub-activity of `kind`, reporting the page's item count.
-	func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
-		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
 	}
 
 	@MainActor func syncFolders(_ account: Account, _ folders: [NewsBlurFolder]?) {
@@ -112,25 +106,25 @@ import os
 
 		// Add any feeds we don't have and update any we do
 		var feedsToAdd = Set<NewsBlurFeed>()
-		feeds.forEach { feed in
-			let subFeedId = String(feed.feedID)
+		feeds.forEach { newsBlurFeed in
+			let subFeedId = String(newsBlurFeed.feedID)
 
 			if let feed = account.existingFeed(withFeedID: subFeedId) {
-				feed.name = feed.name
-				// If the name has been changed on the server remove the locally edited name
-				feed.editedName = nil
-				feed.homePageURL = feed.homePageURL
-				feed.externalID = String(feed.feedID)
-				feed.faviconURL = feed.faviconURL
+				if !newsBlurFeed.name.isEmpty {
+					feed.name = newsBlurFeed.name
+				}
+				feed.homePageURL = newsBlurFeed.homePageURL
+				feed.externalID = String(newsBlurFeed.feedID)
+				feed.faviconURL = newsBlurFeed.faviconURL
 			} else {
-				feedsToAdd.insert(feed)
+				feedsToAdd.insert(newsBlurFeed)
 			}
 		}
 
 		// Actually add feeds all in one go, so we don’t trigger various rebuilding things that Account does.
-		for feed in feedsToAdd {
-			let feed = account.createFeed(with: feed.name, url: feed.feedURL, feedID: String(feed.feedID), homePageURL: feed.homePageURL)
-			feed.externalID = String(feed.feedID)
+		for newsBlurFeed in feedsToAdd {
+			let feed = account.createFeed(with: newsBlurFeed.name, url: newsBlurFeed.feedURL, feedID: String(newsBlurFeed.feedID), homePageURL: newsBlurFeed.homePageURL)
+			feed.externalID = String(newsBlurFeed.feedID)
 			account.addFeedToTreeAtTopLevel(feed)
 		}
 	}
@@ -163,7 +157,10 @@ import os
 
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
 
-			guard let folder = folderDict[folderName] else { return }
+			// A missing folder must not abort the rest of the relationship sync.
+			guard let folder = folderDict[folderName] else {
+				continue
+			}
 
 			// Move any feeds not in the folder to the account
 			for feed in folder.topLevelFeeds {
@@ -275,7 +272,7 @@ import os
 		throttle: Bool,
 		apiCall: (Set<String>) async throws -> Void)
 	async throws -> Int {
-		guard !statuses.isEmpty else {
+		guard let key = statuses.first?.key else {
 			return 0
 		}
 
@@ -287,12 +284,12 @@ import os
 		for storyHashGroup in storyHashGroups {
 			do {
 				try await apiCall(Set(storyHashGroup))
-				await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup))
+				await syncDatabase.deleteSelectedForProcessing(Set(storyHashGroup), key: key)
 				sentCount += storyHashGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("NewsBlur: Story status sync call failed: \(error.localizedDescription)")
-				await syncDatabase.resetSelectedForProcessing(Set(storyHashGroup))
+				await syncDatabase.resetSelectedForProcessing(Set(storyHashGroup), key: key)
 			}
 		}
 
@@ -312,16 +309,16 @@ import os
 		}
 
 		let newsBlurUnreadStoryHashes = Set(hashes.map { $0.hash })
-		let updatableNewsBlurUnreadStoryHashes = newsBlurUnreadStoryHashes.subtracting(pendingStoryHashes)
-
 		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+
 		// Mark articles as unread
-		let deltaUnreadArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs)
+		let deltaUnreadArticleIDs = newsBlurUnreadStoryHashes.subtracting(currentUnreadArticleIDs).subtracting(pendingStoryHashes)
 		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(newsBlurUnreadStoryHashes).subtracting(pendingStoryHashes)
 		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 
 		return markedUnread.count + markedRead.count
@@ -336,16 +333,16 @@ import os
 		}
 
 		let newsBlurStarredStoryHashes = Set(hashes.map { $0.hash })
-		let updatableNewsBlurUnreadStoryHashes = newsBlurStarredStoryHashes.subtracting(pendingStoryHashes)
-
 		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+
 		// Mark articles as starred
-		let deltaStarredArticleIDs = updatableNewsBlurUnreadStoryHashes.subtracting(currentStarredArticleIDs)
+		let deltaStarredArticleIDs = newsBlurStarredStoryHashes.subtracting(currentStarredArticleIDs).subtracting(pendingStoryHashes)
 		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableNewsBlurUnreadStoryHashes)
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(newsBlurStarredStoryHashes).subtracting(pendingStoryHashes)
 		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
 		return markedStarred.count + markedUnstarred.count
@@ -373,7 +370,7 @@ import os
 			refreshProgress.completeTask()
 		}
 
-		let (stories, _) = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(feedID: feed.feedID, page: page) })
+		let (stories, _) = try await account.logRefreshPage(kind: .refreshArticles, message: { "\($0.0?.count ?? 0) articles" }, { try await caller.retrieveStories(feedID: feed.feedID, page: page) })
 		guard let stories, stories.count > 0 else {
 			return
 		}

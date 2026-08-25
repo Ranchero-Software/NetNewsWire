@@ -10,6 +10,7 @@ import Foundation
 import ActivityLog
 import Articles
 import ErrorLog
+import FeedFinder
 import RSCore
 import RSParser
 import RSWeb
@@ -19,17 +20,33 @@ import Secrets
 
 @MainActor final class FeedlyAccountDelegate: AccountDelegate {
 
-	/// Feedly has a sandbox API and a production API.
-	/// This property is referred to when clients need to know which environment it should be pointing to.
-	/// The value of this property must match any `OAuthAuthorizationClient` used.
-	/// Currently this is always returning the cloud API, but we are leaving it stubbed out for now.
 	nonisolated static var environment: FeedlyAPICaller.API {
 		return .cloud
 	}
 
-	// TODO: Kiel, if you decide not to support OPML import you will have to disallow it in the behaviors
-	// See https://developer.feedly.com/v3/opml/
-	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(31)]
+	var behaviors: AccountBehaviors = [.disallowFeedInRootFolder, .disallowMarkAsUnreadAfterPeriod(FeedlyAccountDelegate.markAsReadDaysLimit)]
+
+	// Feedly can’t apply mark-as-read to entries crawled more than ~31 days ago.
+	static let markAsReadDaysLimit = 31
+
+	// Bound for the stream ID walks, matching NNW's own article retention (the 90-day
+	// articleCutoffDate) — older IDs create statuses for articles that are never
+	// downloaded and are immediately cleaned up. Deliberately not markAsReadDaysLimit:
+	// that governs mark-as-read writes, and 31 days would shallow out first-sync history.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
+	private static let streamIngestDaysLimit = 90
+
+	// Safety net so no continuation loop can run away.
+	private static let maxStreamPageCount = 40
+
+	// At most this many article-download chunks per sync — an initial sync of a large
+	// account could otherwise fire hundreds of requests back to back. The remainder
+	// is picked up on subsequent syncs, since missing articles are recomputed each time.
+	private static let maxArticleDownloadChunksPerSync = 20
+
+	// The watermark is a local clock reading compared against Feedly’s server-side crawl
+	// times — back-dating it covers clock skew, and re-fetching the overlap is idempotent.
+	private static let articleFetchOverlapInterval: TimeInterval = 5 * 60
 
 	let isOPMLImportSupported = false
 	var isOPMLImportInProgress = false
@@ -73,8 +90,29 @@ import Secrets
 	private static let markChunkSize = 300 // Feedly /v3/markers limit
 	private static let pendingStatusSendThreshold = 100
 
+	private static let feedsToRefreshPerSync = 5
+	private static let individualFeedRefreshCount = 100
+	// Slightly over a day so each feed's schedule drifts, rather than hitting the server at the same time daily.
+	private static let minimumFeedRefreshInterval: TimeInterval = 24.5 * 60 * 60
+
 	private var lastNoChangeSyncDate: Date?
 	private static let noChangeBackoffInterval: TimeInterval = 30 * 60
+
+	// The refresh, the status-sync timer, and the markArticles background flush can all
+	// start a status send. Overlapping sends would select and post the same queued rows.
+	private var statusSendTask: Task<Int, Error>?
+
+	// Concurrent 401s must share one token refresh — parallel POSTs to the token
+	// endpoint read as abuse to Feedly and earn the 403 ban.
+	private var reauthorizeTask: Task<Bool, Never>?
+
+	// The refresh timer, background refresh, and the Refresh command can all fire
+	// refreshAll — overlapping runs double the request volume and corrupt progress.
+	private var refreshAllIsRunning = false
+
+	// Feedly’s abuse protection reports its rate-limit ban as a 403, so that counts too.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
+	private let rateLimiter = SyncRateLimiter(serviceName: "Feedly", treatsForbiddenAsRateLimited: true, logger: FeedlyAccountDelegate.logger)
 
 	init(dataFolder: String, api: FeedlyAPICaller.API) {
 
@@ -114,39 +152,88 @@ import Secrets
 			throw FeedlyAccountDelegateError.notLoggedIn
 		}
 
+		if rateLimiter.shouldSkip() {
+			if let resumeDate = rateLimiter.resumeDate {
+				let resumeTime = DateFormatter.localizedString(from: resumeDate, dateStyle: .none, timeStyle: .short)
+				ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .refreshAll, message: "Skipped — rate limited by Feedly until \(resumeTime)")
+			}
+			return
+		}
+
+		guard !refreshAllIsRunning else {
+			Self.logger.info("Feedly: Ignoring refreshAll — a refresh is already running")
+			return
+		}
+		refreshAllIsRunning = true
+		defer {
+			refreshAllIsRunning = false
+		}
+
+		// Clear progressInfo before addTasks — the other way around wipes the progress
+		// addTasks just published, so refreshInProgress reads false until the first
+		// completed task, and the account can even be deleted mid-sync.
 		refreshProgress.reset()
-		refreshProgress.addTasks(6)
 		progressInfo = ProgressInfo()
+		refreshProgress.addTasks(7)
 		let startDate = Date()
 
 		let successMessage: (RefreshAllSummary) -> String? = { summary in
 			Self.refreshAllMessage(summary: summary)
 		}
 
+		var ingestTruncated = false
+
 		do {
 			try await account.logActivity(kind: .refreshAll, successMessage: successMessage) { () -> RefreshAllSummary in
 				var summary = RefreshAllSummary()
-				summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
+				do {
+					summary.statusesSent = try await sendArticleStatusReturningCount(for: account)
+				} catch {
+					// A failed status send must not block fetching new articles.
+					// <https://discourse.netnewswire.com/t/no-feed-updates/336>
+					// A rate limit is the exception — continuing would just extend the ban.
+					if rateLimiter.isRateLimitError(error) {
+						throw error
+					}
+					Self.logger.error("Feedly: continuing refresh despite status send failure: \(error.localizedDescription)")
+				}
 				refreshProgress.completeTask()
 				summary.feedListChanges = try await refreshFeedList(for: account)
 				refreshProgress.completeTask()
-				try await ingestStreamArticleIDs(for: account, userID: credentials.username)
+				let (ingestedIDs, truncated) = try await ingestStreamArticleIDs(for: account, userID: credentials.username)
+				ingestTruncated = truncated
 				refreshProgress.completeTask()
-				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account)
+				summary.statusRefreshCounts = try await refreshArticleStatusReturningCounts(for: account, includeStarred: true)
 				refreshProgress.completeTask()
-				let updatedIDs = try await updatedArticleIDs(for: account, userID: credentials.username, newerThan: accountSettings?.lastArticleFetchStartTime)
+				// The ingest walk just fetched exactly the IDs changed since the last sync —
+				// reuse them instead of walking global.all a second time with the same bounds.
+				// On a first sync there is no updated set: everything is new.
+					let updatedIDs = accountSettings?.lastArticleFetchStartTime == nil ? Set<String>() : ingestedIDs
 				let missingIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 				refreshProgress.completeTask()
-				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: missingIDs.union(updatedIDs))
+				// Updated articles first — missing ones are recomputed every sync, so they
+				// survive the per-sync download cap. A truncated update would be lost.
+				let downloadIDs = Array(updatedIDs) + Array(missingIDs.subtracting(updatedIDs))
+				summary.articlesDownloaded = try await downloadEntries(for: account, articleIDs: downloadIDs)
+				refreshProgress.completeTask()
+				summary.newArticlesFromFeedRefresh = await refreshIndividualFeeds(for: account)
 				refreshProgress.completeTask()
 				return summary
 			}
-			accountSettings?.lastArticleFetchStartTime = startDate
+			// Don’t advance the watermark when the ID walk stopped at the page cap —
+			// the unwalked window would fall outside every future fetch and be lost.
+			if !ingestTruncated {
+				accountSettings?.lastArticleFetchStartTime = startDate.addingTimeInterval(-Self.articleFetchOverlapInterval)
+			}
 			accountSettings?.lastRefreshCompletedDate = Date()
 			Self.logger.debug("FeedlyAccountDelegate: Sync took \(-startDate.timeIntervalSinceNow, privacy: .public) seconds")
 		} catch {
 			refreshProgress.reset()
 			progressInfo = ProgressInfo()
+			if rateLimiter.isRateLimitError(error) {
+				rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing account")
+				return
+			}
 			throw AccountError.wrapped(error, account)
 		}
 
@@ -158,42 +245,70 @@ import Secrets
 		guard let account else {
 			return false
 		}
+		if rateLimiter.shouldSkip() {
+			return false
+		}
 		if let lastNoChangeSyncDate, Date().timeIntervalSince(lastNoChangeSyncDate) < Self.noChangeBackoffInterval {
 			Self.logger.debug("Feedly: Skipping sync — no changes on last check, backing off")
 			return false
 		}
-
-		refreshProgress.reset()
-		refreshProgress.addTasks(2)
-		progressInfo = ProgressInfo()
-		defer {
-			refreshProgress.reset()
-			progressInfo = ProgressInfo()
+		// refreshAll sends and refreshes statuses itself — and resetting the shared
+		// refreshProgress here would wipe an in-flight refresh’s task counts, letting
+		// the account be deleted mid-sync.
+		guard !refreshAllIsRunning else {
+			return false
 		}
 
-		let sentCount = try await sendArticleStatusReturningCount(for: account)
-		refreshProgress.completeTask()
-		let refreshCounts = try await refreshArticleStatusReturningCounts(for: account)
-		refreshProgress.completeTask()
+		do {
+			let sentCount = try await sendArticleStatusReturningCount(for: account)
+			// The starred stream has no date bound, so a full starred walk every two minutes
+			// is expensive for heavy savers. Stars still send promptly — remote star changes
+			// arrive with each refreshAll.
+			let refreshCounts = try await refreshArticleStatusReturningCounts(for: account, includeStarred: false)
 
-		if sentCount == 0 && refreshCounts.totalChanged == 0 {
-			lastNoChangeSyncDate = Date()
-		} else {
-			lastNoChangeSyncDate = nil
+			if sentCount == 0 && refreshCounts.totalChanged == 0 {
+				lastNoChangeSyncDate = Date()
+			} else {
+				lastNoChangeSyncDate = nil
+			}
+
+			return sentCount > 0 || refreshCounts.totalChanged > 0
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Syncing article status")
+			return false
 		}
-
-		return sentCount > 0 || refreshCounts.totalChanged > 0
 	}
 
 	func sendArticleStatus() async throws {
 		guard let account else {
 			return
 		}
-		_ = try await sendArticleStatusReturningCount(for: account)
+		if rateLimiter.shouldSkip() {
+			return
+		}
+		do {
+			_ = try await sendArticleStatusReturningCount(for: account)
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Sending article status")
+		}
 	}
 
 	/// Sends queued local status changes upstream. Returns the count successfully sent.
 	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
+		if let statusSendTask {
+			return try await statusSendTask.value
+		}
+		let task = Task { () -> Int in
+			defer {
+				statusSendTask = nil
+			}
+			return try await performStatusSend(for: account)
+		}
+		statusSendTask = task
+		return try await task.value
+	}
+
+	private func performStatusSend(for account: Account) async throws -> Int {
 		Self.logger.info("Feedly: Sending article statuses")
 		defer {
 			Self.logger.info("Feedly: Finished sending article statuses")
@@ -208,8 +323,9 @@ import Secrets
 
 		do {
 			return try await account.logActivity(kind: .sendArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> Int in
+				// A failed read must not read as “nothing to send” — zero would arm the no-change backoff.
 				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
-					return 0
+					throw FeedlyAccountDelegateError.databaseReadFailed
 				}
 
 				var savedError: Error?
@@ -221,49 +337,105 @@ import Secrets
 					(.starred, false, .unsaved)
 				]
 
-				for pairing in pairings {
+				pairingLoop: for pairing in pairings {
 					let pending = syncStatuses.filter { $0.key == pairing.key && $0.flag == pairing.flag }
 					guard !pending.isEmpty else {
 						continue
 					}
-					let articleIDs = Set(pending.map { $0.articleID })
-					do {
-						for chunk in Array(articleIDs).chunked(into: Self.markChunkSize) {
-							let chunkIDs = Set(chunk)
-							try await logRefreshPage(for: account, kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+					var articleIDs = Set(pending.map { $0.articleID })
+
+					// Sending mark-as-read for articles past Feedly’s marker limit can never
+					// succeed — they’d requeue forever and grow the backlog without bound.
+					// <https://github.com/Ranchero-Software/NetNewsWire/issues/3779>
+					if pairing.key == .read, pairing.flag == true {
+						let articles = await account.fetchArticlesAsync(.articleIDs(articleIDs))
+						// Feedly’s marker limit is on the crawl date, which isn’t stored. dateArrived
+						// can’t precede the crawl, so if even the newer of these two dates is past the
+						// cutoff, the crawl certainly is. An old article crawled recently is kept.
+						let datesByArticleID = Dictionary(uniqueKeysWithValues: articles.map { ($0.articleID, max($0.datePublished ?? .distantPast, $0.status.dateArrived)) })
+						let cutoffDate = Date().bySubtracting(days: Self.markAsReadDaysLimit)
+						let unmarkableIDs = Self.unmarkableAsReadArticleIDs(articleIDs, datesByArticleID: datesByArticleID, cutoffDate: cutoffDate)
+						if !unmarkableIDs.isEmpty {
+							Self.logger.info("Feedly: dropping \(unmarkableIDs.count) mark-as-read statuses past Feedly's marker limit")
+							await syncDatabase.deleteSelectedForProcessing(unmarkableIDs, key: .read)
+							articleIDs.subtract(unmarkableIDs)
 						}
-						await syncDatabase.deleteSelectedForProcessing(articleIDs)
-						sentCount += articleIDs.count
-					} catch {
-						Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
-						await syncDatabase.resetSelectedForProcessing(articleIDs)
-						savedError = error
+						guard !articleIDs.isEmpty else {
+							continue
+						}
+					}
+
+					let chunks = Array(articleIDs).chunked(into: Self.markChunkSize)
+
+					// Delete each chunk’s rows as it succeeds, so a later failure can’t
+					// resurrect statuses the server already accepted — that’s how the
+					// backlog grew without bound.
+					// <https://github.com/Ranchero-Software/NetNewsWire/issues/3779>
+					for (chunkIndex, chunk) in chunks.enumerated() {
+						let chunkIDs = Set(chunk)
+						do {
+							try await account.logRefreshPage(kind: .sendArticleStatuses, message: { _ in "\(chunkIDs.count) \(pairing.action.rawValue)" }, { try await caller.mark(chunkIDs, as: pairing.action) })
+							await syncDatabase.deleteSelectedForProcessing(chunkIDs, key: pairing.key)
+							sentCount += chunkIDs.count
+						} catch {
+							Self.logger.error("Feedly: Article status sync call failed: \(error.localizedDescription)")
+							let unsentIDs = Set(chunks[chunkIndex...].flatMap { $0 })
+							await syncDatabase.resetSelectedForProcessing(unsentIDs, key: pairing.key)
+							savedError = error
+							if rateLimiter.isRateLimitError(error) {
+								break pairingLoop
+							}
+							break
+						}
 					}
 				}
 
 				if let savedError {
+					// Rows of pairings skipped after a rate limit stay selected — harmless,
+					// since the next selectForProcessing claims them again.
 					throw savedError
 				}
 				return sentCount
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Sending article status")
+			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per send.
+			if !rateLimiter.isRateLimitError(error) {
+				account.postSyncError(error, operation: "Sending article status")
+			}
 			throw error
 		}
+	}
+
+	/// ArticleIDs whose mark-as-read can never succeed at Feedly: the article is older
+	/// than the marker limit, or is gone from the database entirely (older still).
+	nonisolated static func unmarkableAsReadArticleIDs(_ articleIDs: Set<String>, datesByArticleID: [String: Date], cutoffDate: Date) -> Set<String> {
+		Set(articleIDs.filter { articleID in
+			guard let date = datesByArticleID[articleID] else {
+				return true
+			}
+			return date < cutoffDate
+		})
 	}
 
 	func refreshArticleStatus() async throws {
 		guard let account else {
 			return
 		}
-		_ = try await refreshArticleStatusReturningCounts(for: account)
+		if rateLimiter.shouldSkip() {
+			return
+		}
+		do {
+			_ = try await refreshArticleStatusReturningCounts(for: account, includeStarred: true)
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing article status")
+		}
 	}
 
 	/// Attempt to bring local read/starred statuses in line with the remote ones.
 	/// If the user is using another Feedly client at roughly the same time as this app,
 	/// this app does its part to ensure articles have a consistent status between both.
 	/// Returns counts of articles whose unread/starred state actually flipped.
-	private func refreshArticleStatusReturningCounts(for account: Account) async throws -> StatusRefreshCounts {
+	private func refreshArticleStatusReturningCounts(for account: Account, includeStarred: Bool) async throws -> StatusRefreshCounts {
 		Self.logger.info("Feedly: Refreshing article statuses")
 
 		guard let credentials else {
@@ -286,22 +458,31 @@ import Secrets
 				counts.unreadAdded = unread.added
 				counts.unreadRemoved = unread.removed
 			} catch {
+				// Don’t start the starred walk into an active rate limit — up to 40 more requests.
+				if rateLimiter.isRateLimitError(error) {
+					throw error
+				}
 				refreshError = error
 				Self.logger.error("Feedly: Ingesting unread article IDs failed: \(error.localizedDescription)")
 			}
 
-			do {
-				let starred = try await ingestStarredArticleIDs(for: account, userID: credentials.username)
-				counts.starredAdded = starred.added
-				counts.starredRemoved = starred.removed
-			} catch {
-				refreshError = error
-				Self.logger.error("Feedly: Ingesting starred article IDs failed: \(error.localizedDescription)")
+			if includeStarred {
+				do {
+					let starred = try await ingestStarredArticleIDs(for: account, userID: credentials.username)
+					counts.starredAdded = starred.added
+					counts.starredRemoved = starred.removed
+				} catch {
+					refreshError = error
+					Self.logger.error("Feedly: Ingesting starred article IDs failed: \(error.localizedDescription)")
+				}
 			}
 
 			Self.logger.info("Feedly: Finished refreshing article statuses")
 			if let refreshError {
-				postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				// A rate-limit error gets one Error Log entry from noteRateLimited, not one per refresh.
+				if !rateLimiter.isRateLimitError(refreshError) {
+					account.postSyncError(refreshError, operation: "Refreshing article status")
+				}
 				throw refreshError
 			}
 			return counts
@@ -424,10 +605,7 @@ import Secrets
 		do {
 			return try await account.logActivity(kind: .subscribeFeed, detail: urlString) {
 
-				let searchResponse = try await caller.getFeeds(for: urlString, count: 1, locale: Locale.current.identifier)
-				guard let firstResult = searchResponse.results.first else {
-					throw AccountError.createErrorNotFound
-				}
+				let firstResult = try await searchForFeed(url: urlString)
 				let feedResource = FeedlyFeedResourceID(id: firstResult.feedID)
 
 				let collectionFeeds = try await caller.addFeed(with: feedResource, title: name, toCollectionWith: collectionID)
@@ -522,6 +700,12 @@ import Secrets
 			try await account.logActivity(kind: .removeFeed, detail: feed.url) {
 				try await caller.removeFeed(feed.feedID, fromCollectionWith: collectionID)
 			}
+		} catch WebserviceError.httpError(let status) where status == HTTPResponseCode.badRequest || status == HTTPResponseCode.notFound {
+			// Feedly doesn’t recognize this subscription — most likely a stale or malformed feedID.
+			// Let the local removal stand, since otherwise the feed could never be deleted.
+			// If Feedly still has the feed, the next sync will bring it back.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4172>
+			Self.logger.info("FeedlyAccountDelegate: Feedly returned \(status) when removing \(feed.url) — removing the feed locally anyway")
 		} catch {
 			folder.addFeedToTreeAtTopLevel(feed)
 			throw error
@@ -557,6 +741,10 @@ import Secrets
 			do {
 				try await caller.removeFeed(feed.feedID, fromCollectionWith: fromCollectionID)
 			} catch {
+				// Undo the whole move — without removing the remote add and the local
+				// destination copy, the feed ends up in both folders permanently.
+				try? await caller.removeFeed(feed.feedID, fromCollectionWith: toCollectionID)
+				to.removeFeedFromTreeAtTopLevel(feed)
 				from.addFeedToTreeAtTopLevel(feed)
 				throw FeedlyAccountDelegateError.unableToMoveFeedBetweenFolders(feed.nameForDisplay, from.nameForDisplay, to.nameForDisplay)
 			}
@@ -582,7 +770,12 @@ import Secrets
 		}
 		Self.logger.debug("FeedlyAccountDelegate: restoreFolder")
 
-		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+		try await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+			// removeFolder deleted the collection — recreate it first, or restoring the feeds
+			// would target a dead collection ID and the next refresh would drop the folder again.
+			let collection = try await caller.createCollection(named: folder.name ?? "")
+			folder.externalID = collection.id
+
 			for feed in folder.topLevelFeeds {
 
 				folder.topLevelFeeds.remove(feed)
@@ -591,7 +784,7 @@ import Secrets
 					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("Feedly: Restore folder feed error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Restoring feed")
+					account.postSyncError(error, operation: "Restoring feed")
 				}
 			}
 			account.addFolderToTree(folder)
@@ -614,7 +807,7 @@ import Secrets
 			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
+		if !rateLimiter.shouldSkip(), let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -627,6 +820,11 @@ import Secrets
 		}
 		Self.logger.debug("FeedlyAccountDelegate: accountDidInitialize")
 		credentials = try? account.retrieveCredentials(type: .oauthAccessToken)
+
+		// A send in progress when the app was killed left its statuses selected. Clear them so
+		// they get sent, instead of waiting for the next selectForProcessing to pick them up.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
+		syncDatabase.resetAllSelectedForProcessing()
 	}
 
 	func accountWillBeDeleted() {
@@ -640,12 +838,13 @@ import Secrets
 			do {
 				try await account.logActivity(kind: .validateCredentials, detail: "Logging out of Feedly") {
 					try await caller.logout()
-					try? account.removeCredentials(type: .oauthAccessToken)
-					try? account.removeCredentials(type: .oauthRefreshToken)
 				}
 			} catch {
 				Self.logger.error("Feedly: Logout failed: \(error.localizedDescription)")
 			}
+			// Remove the tokens even when the logout request fails — the account is gone either way.
+			try? account.removeCredentials(type: .oauthAccessToken)
+			try? account.removeCredentials(type: .oauthRefreshToken)
 		}
 	}
 
@@ -705,6 +904,30 @@ private extension FeedlyAccountDelegate {
 		return (folder, collectionID)
 	}
 
+	/// Feedly search sometimes fails to resolve a home page URL to its feed.
+	/// When it does, discover the feed URL locally and search again with that.
+	func searchForFeed(url urlString: String) async throws -> FeedlyFeedsSearchResponse.Feed {
+		let searchResponse = try await caller.getFeeds(for: urlString, count: 1, locale: Locale.current.identifier)
+		if let firstResult = searchResponse.results.first {
+			return firstResult
+		}
+
+		guard let url = URL(string: urlString) else {
+			throw AccountError.createErrorNotFound
+		}
+		let feedSpecifiers = try await FeedFinder.find(url: url)
+		let filteredFeedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
+		guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: filteredFeedSpecifiers), bestFeedSpecifier.urlString != urlString else {
+			throw AccountError.createErrorNotFound
+		}
+
+		let retryResponse = try await caller.getFeeds(for: bestFeedSpecifier.urlString, count: 1, locale: Locale.current.identifier)
+		guard let firstResult = retryResponse.results.first else {
+			throw AccountError.createErrorNotFound
+		}
+		return firstResult
+	}
+
 	@discardableResult
 	func refreshFeedList(for account: Account) async throws -> FeedListChanges {
 		let successMessage: (FeedListChanges) -> String? = { changes in
@@ -742,25 +965,42 @@ private extension FeedlyAccountDelegate {
 					feedsRenamed: feedsRenamed)
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing feed list")
+			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per operation.
+			if !rateLimiter.isRateLimitError(error) {
+				account.postSyncError(error, operation: "Refreshing feed list")
+			}
 			throw error
 		}
 	}
 
 	/// Pages through global.all stream IDs, creating a status for each so that downstream
 	/// status sync has something to attach to.
-	func ingestStreamArticleIDs(for account: Account, userID: String) async throws {
+	/// Pages through global.all stream IDs, creating a status for each so that downstream
+	/// status sync has something to attach to. Returns the collected IDs so refreshAll can
+	/// reuse them as the updated-articles set instead of walking the same stream twice.
+	@discardableResult
+	func ingestStreamArticleIDs(for account: Account, userID: String) async throws -> (ids: Set<String>, truncated: Bool) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		_ = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0) article IDs" }, { () -> Int in
-			var total = 0
+
+		// Bounded — walking the entire global.all history every sync was a big part of
+		// the request volume that got users rate limited.
+		let newerThan = max(accountSettings?.lastArticleFetchStartTime ?? .distantPast, Date().bySubtracting(days: Self.streamIngestDaysLimit))
+
+		return try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.ids.count) article IDs" }, { () -> (ids: Set<String>, truncated: Bool) in
+			var collected = Set<String>()
 			var continuation: String?
+			var pageCount = 0
 			repeat {
-				let page = try await self.logRefreshPage(for: account, kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: nil, unreadOnly: nil) })
+				let page = try await account.logRefreshPage(kind: .fetchArticleIDs, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
 				await account.createStatusesIfNeededAsync(articleIDs: Set(page.ids))
-				total += page.ids.count
+				collected.formUnion(page.ids)
 				continuation = page.continuation
-			} while continuation != nil
-			return total
+				pageCount += 1
+			} while continuation != nil && pageCount < Self.maxStreamPageCount
+			if continuation != nil {
+				Self.logger.info("Feedly: stopped the article ID walk at the page cap")
+			}
+			return (collected, continuation != nil)
 		})
 	}
 
@@ -772,18 +1012,33 @@ private extension FeedlyAccountDelegate {
 	@discardableResult
 	func ingestUnreadArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		let remoteUnreadIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: true)
-
-		let pendingArticleIDs = (await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
-		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
+		// The floor is a safety net — Feedly auto-reads at about a month, so its unread
+		// stream can’t reach anywhere near the retention limit anyway. An article absent
+		// from the bounded fetch still gets marked read below, same as an unbounded one.
+		let newerThan = Date().bySubtracting(days: Self.streamIngestDaysLimit)
+		let (remoteUnreadIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, newerThan: newerThan, unreadOnly: true)
 
 		let localUnreadIDs = await account.fetchUnreadArticleIDsAsync()
 
-		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
-		let toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs)
+		// Read the pending set last, right before the diffs — an edit made during the
+		// fetches above must be in it, or the marks below would briefly revert the edit.
+		// A failed pending-statuses read must not read as “nothing pending” — that would
+		// revert pending edits and arm the no-change backoff.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			throw FeedlyAccountDelegateError.databaseReadFailed
+		}
+		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
 
+		let newlyUnread = adjustedRemoteUnreadIDs.subtracting(localUnreadIDs)
 		await account.markAsUnreadAsync(articleIDs: adjustedRemoteUnreadIDs)
-		await account.markAsReadAsync(articleIDs: toMarkRead)
+
+		// A truncated walk isn’t authoritative about absence — marking read from it
+		// would flip everything past the page cap.
+		var toMarkRead = Set<String>()
+		if !truncated {
+			toMarkRead = localUnreadIDs.subtracting(adjustedRemoteUnreadIDs).subtracting(pendingArticleIDs)
+			await account.markAsReadAsync(articleIDs: toMarkRead)
+		}
 
 		return (added: newlyUnread.count, removed: toMarkRead.count)
 	}
@@ -794,60 +1049,57 @@ private extension FeedlyAccountDelegate {
 	@discardableResult
 	func ingestStarredArticleIDs(for account: Account, userID: String) async throws -> (added: Int, removed: Int) {
 		let resource = FeedlyTagResourceID.Global.saved(for: userID)
-		let remoteStarredIDs = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
-
-		let pendingArticleIDs = (await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
-		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
+		let (remoteStarredIDs, truncated) = try await collectStreamIDs(for: account, resource: resource, kind: .refreshArticleStatuses, unreadOnly: nil)
 
 		let localStarredIDs = await account.fetchStarredArticleIDsAsync()
 
-		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
-		let toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs)
+		// Read the pending set last, right before the diffs — an edit made during the
+		// fetches above must be in it, or the marks below would briefly revert the edit.
+		// A failed pending-statuses read must not read as “nothing pending” — that would
+		// revert pending edits and arm the no-change backoff.
+		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			throw FeedlyAccountDelegateError.databaseReadFailed
+		}
+		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
 
+		let newlyStarred = adjustedRemoteStarredIDs.subtracting(localStarredIDs)
 		await account.markAsStarredAsync(articleIDs: adjustedRemoteStarredIDs)
-		await account.markAsUnstarredAsync(articleIDs: toUnstar)
+
+		// A truncated walk isn’t authoritative about absence — unstarring from it
+		// would strip every star past the page cap.
+		var toUnstar = Set<String>()
+		if !truncated {
+			toUnstar = localStarredIDs.subtracting(adjustedRemoteStarredIDs).subtracting(pendingArticleIDs)
+			await account.markAsUnstarredAsync(articleIDs: toUnstar)
+		}
 
 		return (added: newlyStarred.count, removed: toUnstar.count)
 	}
 
-	/// IDs of articles updated on Feedly since `newerThan`.
-	/// When `newerThan` is nil, returns an empty set (everything is new, nothing is updated).
-	func updatedArticleIDs(for account: Account, userID: String, newerThan: Date?) async throws -> Set<String> {
-		guard let newerThan else {
-			Self.logger.debug("Feedly: No date provided so everything must be new (nothing is updated)")
-			return Set<String>()
-		}
-		let resource = FeedlyCategoryResourceID.Global.all(for: userID)
-		let ids = try await account.logActivity(kind: .fetchArticleIDs, detail: "Updated articles", successMessage: { "\($0.count) article IDs" }, { () -> Set<String> in
-			try await self.collectStreamIDs(for: account, resource: resource, kind: .fetchArticleIDs, newerThan: newerThan)
-		})
-		Self.logger.info("Feedly: Articles updated since last successful sync start date: \(ids.count)")
-		return ids
-	}
-
 	/// Page through stream IDs for `resource`, returning the union of every page.
 	/// Each page is logged as a numbered sub-activity of `kind`.
-	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> Set<String> {
+	/// `truncated` is true when the walk stopped at the page cap before reaching the stream’s end.
+	func collectStreamIDs(for account: Account, resource: FeedlyResourceID, kind: ActivityKind, newerThan: Date? = nil, unreadOnly: Bool? = nil) async throws -> (ids: Set<String>, truncated: Bool) {
 		var collected = Set<String>()
 		var continuation: String?
+		var pageCount = 0
 		repeat {
-			let page = try await logRefreshPage(for: account, kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
+			let page = try await account.logRefreshPage(kind: kind, message: { "\($0.ids.count) article IDs" }, { try await self.caller.getStreamIDs(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: unreadOnly) })
 			collected.formUnion(page.ids)
 			continuation = page.continuation
-		} while continuation != nil
-		return collected
+			pageCount += 1
+		} while continuation != nil && pageCount < Self.maxStreamPageCount
+		if continuation != nil {
+			Self.logger.info("Feedly: stopped a stream ID walk at the page cap")
+		}
+		return (collected, continuation != nil)
 	}
 
-	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
-	/// sub-activity of `kind`, reporting the page's item count.
-	private func logRefreshPage<T>(for account: Account, kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
-		try await account.logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
-	}
-
-	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks.
+	/// Fetch full entries for `articleIDs` and update the account, in 1000-ID chunks,
+	/// in order — the front of the list survives the per-sync cap.
 	/// Returns the count of articles ingested.
 	@discardableResult
-	func downloadEntries(for account: Account, articleIDs: Set<String>) async throws -> Int {
+	func downloadEntries(for account: Account, articleIDs: [String]) async throws -> Int {
 		guard !articleIDs.isEmpty else {
 			return 0
 		}
@@ -857,46 +1109,115 @@ private extension FeedlyAccountDelegate {
 		do {
 			return try await account.logActivity(kind: .refreshMissingArticles) { () -> Int in
 				var ingested = 0
-				let chunks = Array(articleIDs).chunked(into: Self.articleDownloadChunkSize)
-				for chunk in chunks {
-					let entries = try await self.logRefreshPage(for: account, kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
-					await self.ingest(entries: entries, into: account)
-					ingested += entries.count
+				let chunks = articleIDs.chunked(into: Self.articleDownloadChunkSize)
+				if chunks.count > Self.maxArticleDownloadChunksPerSync {
+					Self.logger.info("Feedly: downloading \(Self.maxArticleDownloadChunksPerSync * Self.articleDownloadChunkSize) of \(articleIDs.count) articles this sync — the rest follow on later syncs")
+				}
+				for chunk in chunks.prefix(Self.maxArticleDownloadChunksPerSync) {
+					let entries = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0.count) articles" }, { try await self.caller.getEntries(for: Set(chunk)) })
+					let pageResult = await self.ingest(entries: entries, into: account)
+					ingested += pageResult.newArticleCount
 				}
 				return ingested
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Downloading articles")
+			// A rate-limit error gets one Error Log entry from noteRateLimited, not one per operation.
+			if !rateLimiter.isRateLimitError(error) {
+				account.postSyncError(error, operation: "Downloading articles")
+			}
 			throw error
 		}
 	}
 
-	/// Pull stream contents for `resource`, optionally paginated, and update the account.
-	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?) async throws {
-		var continuation: String?
-		repeat {
-			let stream = try await logRefreshPage(for: account, kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil) })
-			await ingest(entries: stream.items, into: account)
-			continuation = paginated ? stream.continuation : nil
-		} while continuation != nil
+	/// Directly refresh a few of the least-recently-checked feeds each sync, fetching each feed's own
+	/// Feedly stream. Backfills articles that the aggregate global.all stream doesn't return.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/4635>
+	/// Returns the total number of new articles ingested across the refreshed feeds.
+	func refreshIndividualFeeds(for account: Account) async -> Int {
+		let now = Date()
+		let due = account.flattenedFeeds()
+			.filter { feed in
+				guard let lastCheckDate = feed.lastCheckDate else {
+					return true // never checked — most overdue
+				}
+				return now.timeIntervalSince(lastCheckDate) >= Self.minimumFeedRefreshInterval
+			}
+			.sorted { ($0.lastCheckDate ?? .distantPast) < ($1.lastCheckDate ?? .distantPast) }
+			.prefix(Self.feedsToRefreshPerSync)
+
+		var newArticleCount = 0
+		for feed in due {
+			let lastCheckDate = feed.lastCheckDate
+			feed.lastCheckDate = now // mark the attempt; a failed feed retries next rotation, not immediately
+			do {
+				let successMessage: (IngestResult) -> String? = { "\($0.newArticleCount) new article\($0.newArticleCount == 1 ? "" : "s")" }
+				let result = try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay, successMessage: successMessage) {
+					let resource = FeedlyFeedResourceID(id: feed.feedID)
+					// Only what arrived since this feed's last check, in small pages. Paginated —
+					// an unpaginated fetch silently dropped everything past the first page while
+					// lastCheckDate advanced anyway, losing those articles for good.
+					let newerThan = lastCheckDate ?? now.bySubtracting(days: Self.streamIngestDaysLimit)
+					return try await self.syncStreamContents(for: account, resource: resource, paginated: true, newerThan: newerThan, count: Self.individualFeedRefreshCount)
+				}
+				newArticleCount += result.newArticleCount
+				// ingest marks new articles read by default; restore the server's unread state for the ones that are unread.
+				if !result.newUnreadArticleIDs.isEmpty {
+					await account.markAsUnreadAsync(articleIDs: result.newUnreadArticleIDs)
+				}
+			} catch {
+				// Arm the limiter and stop the rotation — refreshing more feeds would extend the ban.
+				if rateLimiter.isRateLimitError(error) {
+					rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing feed \(feed.nameForDisplay)")
+					break
+				}
+				account.postSyncError(error, operation: "Refreshing feed \(feed.nameForDisplay)")
+			}
+		}
+		return newArticleCount
 	}
 
-	func ingest(entries: [FeedlyEntry], into account: Account) async {
+	/// Pull stream contents for `resource`, optionally paginated, and update the account.
+	/// Returns the aggregate ingest result across pages.
+	@discardableResult
+	func syncStreamContents(for account: Account, resource: FeedlyResourceID, paginated: Bool, newerThan: Date?, count: Int? = nil) async throws -> IngestResult {
+		var result = IngestResult()
+		var continuation: String?
+		var pageCount = 0
+		repeat {
+			let stream = try await account.logRefreshPage(kind: .refreshArticles, message: { "\($0.items.count) articles" }, { try await caller.getStreamContents(for: resource, continuation: continuation, newerThan: newerThan, unreadOnly: nil, count: count) })
+			let pageResult = await ingest(entries: stream.items, into: account)
+			result.newArticleCount += pageResult.newArticleCount
+			result.newUnreadArticleIDs.formUnion(pageResult.newUnreadArticleIDs)
+			continuation = paginated ? stream.continuation : nil
+			pageCount += 1
+		} while continuation != nil && pageCount < Self.maxStreamPageCount
+		if continuation != nil {
+			Self.logger.info("Feedly: stopped a stream contents walk at the page cap")
+		}
+		return result
+	}
+
+	/// The outcome of ingesting a batch of Feedly entries.
+	struct IngestResult {
+		var newArticleCount = 0
+		/// New (not previously in the database) article IDs that are unread on the server.
+		var newUnreadArticleIDs = Set<String>()
+	}
+
+	/// Ingest entries, reporting the new-article count and which of the new articles are unread on the server.
+	@discardableResult
+	func ingest(entries: [FeedlyEntry], into account: Account) async -> IngestResult {
 		let parsedItems = entries.compactMap { FeedlyEntryParser(entry: $0).parsedItemRepresentation }
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { $0.feedURL }).mapValues { Set($0) }
-		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		let changes = await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+
+		let newArticleIDs = Set(changes.new?.map { $0.articleID } ?? [])
+		let unreadEntryIDs = Set(entries.lazy.filter { $0.unread }.map { $0.id })
+		return IngestResult(newArticleCount: newArticleIDs.count, newUnreadArticleIDs: newArticleIDs.intersection(unreadEntryIDs))
 	}
 }
 
 // MARK: - Sync Error Posting
-
-private extension FeedlyAccountDelegate {
-
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
-	}
-}
 
 // MARK: - FeedlyAPICallerDelegate
 
@@ -906,6 +1227,20 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	/// Storing credentials updates `self.credentials` via `Account.storeCredentials`, which in turn
 	/// hands the fresh access token to the caller.
 	func reauthorizeFeedlyAPICaller() async -> Bool {
+		if let reauthorizeTask {
+			return await reauthorizeTask.value
+		}
+		let task = Task { () -> Bool in
+			defer {
+				reauthorizeTask = nil
+			}
+			return await performReauthorization()
+		}
+		reauthorizeTask = task
+		return await task.value
+	}
+
+	private func performReauthorization() async -> Bool {
 		Self.logger.debug("FeedlyAccountDelegate: reauthorizeFeedlyAPICaller")
 
 		guard let account else {
@@ -916,7 +1251,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			try await account.logActivity(kind: .validateCredentials, detail: "Refreshing access token") {
 				guard let refreshCredentials = try account.retrieveCredentials(type: .oauthRefreshToken) else {
 					Self.logger.error("Feedly: Could not find a refresh token in the keychain. Check the refresh token is added to the Keychain, remove the account and add it again.")
-					throw WebserviceError.httpError(status: 403)
+					throw FeedlyAccountDelegateError.notLoggedIn
 				}
 
 				Self.logger.info("Feedly: Refreshing access token")
@@ -936,8 +1271,23 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 			return true
 		} catch {
 			Self.logger.error("Feedly: Refresh access token failed: \(error.localizedDescription)")
+			if isDefinitiveReauthorizationError(error) {
+				account.postSyncError(error, operation: "Refreshing access token")
+			}
 			return false
 		}
+	}
+
+	/// A failure that won’t resolve on retry — missing refresh token, a rejected refresh
+	/// request, or a token response we can’t decode.
+	private func isDefinitiveReauthorizationError(_ error: Error) -> Bool {
+		if error is FeedlyAccountDelegateError || error is DecodingError {
+			return true
+		}
+		if case WebserviceError.httpError(let status) = error, (400...499).contains(status) {
+			return true
+		}
+		return false
 	}
 }
 
@@ -976,16 +1326,41 @@ extension FeedlyAccountDelegate {
 		var feedListChanges = FeedListChanges()
 		var statusRefreshCounts = StatusRefreshCounts()
 		var articlesDownloaded = 0
+		var newArticlesFromFeedRefresh = 0
 	}
 
 	static func sendStatusMessage(count: Int) -> String {
 		if count == 0 {
 			return "No statuses to send"
 		}
-		return "\(count) status\(count == 1 ? "" : "es") sent"
+		return "\(pluralCount(count, "status", plural: "statuses")) sent"
 	}
 
 	static func refreshStatusMessage(counts: StatusRefreshCounts) -> String {
+		joinedOrNoChanges(refreshStatusMessageParts(counts))
+	}
+
+	static func feedListMessage(changes: FeedListChanges) -> String {
+		joinedOrNoChanges(feedListMessageParts(changes))
+	}
+
+	static func refreshAllMessage(summary: RefreshAllSummary) -> String {
+		var parts = [String]()
+		if summary.articlesDownloaded > 0 {
+			parts.append("\(pluralCount(summary.articlesDownloaded, "article")) downloaded")
+		}
+		if summary.newArticlesFromFeedRefresh > 0 {
+			parts.append("\(summary.newArticlesFromFeedRefresh) new from feed refresh")
+		}
+		parts += refreshStatusMessageParts(summary.statusRefreshCounts)
+		if summary.statusesSent > 0 {
+			parts.append("\(pluralCount(summary.statusesSent, "status", plural: "statuses")) sent")
+		}
+		parts += feedListMessageParts(summary.feedListChanges)
+		return joinedOrNoChanges(parts)
+	}
+
+	private static func refreshStatusMessageParts(_ counts: StatusRefreshCounts) -> [String] {
 		var parts = [String]()
 		if counts.unreadAdded > 0 {
 			parts.append("\(counts.unreadAdded) marked unread")
@@ -999,75 +1374,35 @@ extension FeedlyAccountDelegate {
 		if counts.starredRemoved > 0 {
 			parts.append("\(counts.starredRemoved) unstarred")
 		}
-		if parts.isEmpty {
-			return "No changes"
-		}
-		return parts.joined(separator: ", ")
+		return parts
 	}
 
-	static func feedListMessage(changes: FeedListChanges) -> String {
+	private static func feedListMessageParts(_ changes: FeedListChanges) -> [String] {
 		var parts = [String]()
 		if changes.foldersAdded > 0 {
-			parts.append("\(changes.foldersAdded) folder\(changes.foldersAdded == 1 ? "" : "s") added")
+			parts.append("\(pluralCount(changes.foldersAdded, "folder")) added")
 		}
 		if changes.foldersRemoved > 0 {
-			parts.append("\(changes.foldersRemoved) folder\(changes.foldersRemoved == 1 ? "" : "s") removed")
+			parts.append("\(pluralCount(changes.foldersRemoved, "folder")) removed")
 		}
 		if changes.feedsAdded > 0 {
-			parts.append("\(changes.feedsAdded) feed\(changes.feedsAdded == 1 ? "" : "s") added")
+			parts.append("\(pluralCount(changes.feedsAdded, "feed")) added")
 		}
 		if changes.feedsRemoved > 0 {
-			parts.append("\(changes.feedsRemoved) feed\(changes.feedsRemoved == 1 ? "" : "s") removed")
+			parts.append("\(pluralCount(changes.feedsRemoved, "feed")) removed")
 		}
 		if changes.feedsRenamed > 0 {
-			parts.append("\(changes.feedsRenamed) feed\(changes.feedsRenamed == 1 ? "" : "s") renamed")
+			parts.append("\(pluralCount(changes.feedsRenamed, "feed")) renamed")
 		}
-		if parts.isEmpty {
-			return "No changes"
-		}
-		return parts.joined(separator: ", ")
+		return parts
 	}
 
-	static func refreshAllMessage(summary: RefreshAllSummary) -> String {
-		var parts = [String]()
-		if summary.articlesDownloaded > 0 {
-			parts.append("\(summary.articlesDownloaded) article\(summary.articlesDownloaded == 1 ? "" : "s") downloaded")
-		}
-		let refresh = summary.statusRefreshCounts
-		if refresh.unreadAdded > 0 {
-			parts.append("\(refresh.unreadAdded) marked unread")
-		}
-		if refresh.unreadRemoved > 0 {
-			parts.append("\(refresh.unreadRemoved) marked read")
-		}
-		if refresh.starredAdded > 0 {
-			parts.append("\(refresh.starredAdded) starred")
-		}
-		if refresh.starredRemoved > 0 {
-			parts.append("\(refresh.starredRemoved) unstarred")
-		}
-		if summary.statusesSent > 0 {
-			parts.append("\(summary.statusesSent) status\(summary.statusesSent == 1 ? "" : "es") sent")
-		}
-		let feedList = summary.feedListChanges
-		if feedList.foldersAdded > 0 {
-			parts.append("\(feedList.foldersAdded) folder\(feedList.foldersAdded == 1 ? "" : "s") added")
-		}
-		if feedList.foldersRemoved > 0 {
-			parts.append("\(feedList.foldersRemoved) folder\(feedList.foldersRemoved == 1 ? "" : "s") removed")
-		}
-		if feedList.feedsAdded > 0 {
-			parts.append("\(feedList.feedsAdded) feed\(feedList.feedsAdded == 1 ? "" : "s") added")
-		}
-		if feedList.feedsRemoved > 0 {
-			parts.append("\(feedList.feedsRemoved) feed\(feedList.feedsRemoved == 1 ? "" : "s") removed")
-		}
-		if feedList.feedsRenamed > 0 {
-			parts.append("\(feedList.feedsRenamed) feed\(feedList.feedsRenamed == 1 ? "" : "s") renamed")
-		}
-		if parts.isEmpty {
-			return "No changes"
-		}
-		return parts.joined(separator: ", ")
+	/// "1 feed", "2 feeds" — pass an explicit plural for irregular nouns.
+	private static func pluralCount(_ count: Int, _ singular: String, plural: String? = nil) -> String {
+		"\(count) \(count == 1 ? singular : (plural ?? singular + "s"))"
+	}
+
+	private static func joinedOrNoChanges(_ parts: [String]) -> String {
+		parts.isEmpty ? "No changes" : parts.joined(separator: ", ")
 	}
 }

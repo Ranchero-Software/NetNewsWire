@@ -18,6 +18,14 @@ public struct NewsBlurFeed: Hashable, Codable, Sendable {
 	public let feedURL: String
 	public let homePageURL: String?
 	public let faviconURL: String?
+
+	public init(name: String, feedID: Int, feedURL: String, homePageURL: String?, faviconURL: String?) {
+		self.name = name
+		self.feedID = feedID
+		self.feedURL = feedURL
+		self.homePageURL = homePageURL
+		self.faviconURL = faviconURL
+	}
 }
 
 public struct NewsBlurFeedsResponse: Decodable, Sendable {

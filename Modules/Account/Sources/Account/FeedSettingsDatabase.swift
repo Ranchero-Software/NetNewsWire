@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RSCore
 import os
 import RSDatabase
 import RSDatabaseObjC
@@ -57,7 +58,7 @@ final class FeedSettingsDatabase: Sendable {
 
 	nonisolated(unsafe) private let database: FMDatabase // Used on serial dispatch queue only
 	private let serialDispatchQueue: DispatchQueue
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedSettingsDatabase")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FeedSettingsDatabase")
 
 	init(databasePath: String) {
 		self.databasePath = databasePath

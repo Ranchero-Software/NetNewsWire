@@ -12,9 +12,6 @@ Click Add for Review next to Save
 
 On next screen, click Submit for Review
 
-git tag iOS-7.0.1
-git push origin iOS-7.0.1
-
 Once it appears on App Store…
 
 Optionally…

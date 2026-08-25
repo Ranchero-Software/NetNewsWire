@@ -31,6 +31,9 @@ import ActivityLog
 	private let defaultAccountFolderName = "OnMyMac"
 	private let defaultAccountIdentifier = "OnMyMac"
 
+	private var lastStatusRepairDate: Date?
+	private static let statusRepairInterval: TimeInterval = 1 * 60 * 60
+
 	public var isSuspended = false
 
 	nonisolated static let syncArticleContentForUnreadArticlesKey = "iCloudSyncArticleContentForUnreadArticles"
@@ -49,7 +52,7 @@ import ActivityLog
 		}
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AccountManager")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AccountManager")
 
 	public var areUnreadCountsInitialized: Bool {
 		for account in activeAccounts {
@@ -87,6 +90,17 @@ import ActivityLog
 	public var activeAccounts: [Account] {
 		assert(Thread.isMainThread)
 		return Array(accountsDictionary.values.filter { $0.isActive })
+	}
+
+	/// Repair article statuses in all active accounts, at most once per interval.
+	public func repairStatusesIfNeeded() {
+		if let lastStatusRepairDate, Date().timeIntervalSince(lastStatusRepairDate) < Self.statusRepairInterval {
+			return
+		}
+		lastStatusRepairDate = Date()
+		for account in activeAccounts {
+			account.repairStatuses()
+		}
 	}
 
 	public var sortedActiveAccounts: [Account] {
@@ -221,12 +235,16 @@ import ActivityLog
 		NotificationCenter.default.post(name: .UserDidDeleteAccount, object: self, userInfo: userInfo)
 	}
 
-	public func duplicateServiceAccount(type: AccountType, username: String?) -> Bool {
+	public func duplicateServiceAccount(type: AccountType, username: String?, endpoint: URL? = nil) -> Bool {
 		guard type != .onMyMac else {
 			return false
 		}
 		for account in accounts {
 			if account.type == type && username == account.username {
+				// Self-hosted services can have the same username on different servers.
+				if let endpoint, let existingEndpoint = account.endpointURL, endpoint != existingEndpoint {
+					continue
+				}
 				return true
 			}
 		}
@@ -633,7 +651,7 @@ private extension AccountManager {
 	}
 
 	func duplicateServiceAccount(_ account: Account) -> Bool {
-		duplicateServiceAccount(type: account.type, username: account.username)
+		duplicateServiceAccount(type: account.type, username: account.username, endpoint: account.endpointURL)
 	}
 
 	func sortByName(_ accounts: [Account]) -> [Account] {

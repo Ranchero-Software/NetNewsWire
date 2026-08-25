@@ -73,7 +73,7 @@ import os
 
 	private var urlToFeedDictionary = [String: Feed]()
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccountRefresher")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "LocalAccountRefresher")
 
 	@MainActor public func refreshFeeds(_ feeds: Set<Feed>) async {
 		await withCheckedContinuation { continuation in
@@ -161,6 +161,7 @@ import os
 	}
 
 	@MainActor public func resume() {
+		downloadSession.recreateURLSession()
 		isSuspended = false
 	}
 
@@ -234,7 +235,12 @@ import os
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
-		feed.lastCheckDate = Date()
+
+		// Skip updating lastCheckDate on connectivity errors, so the feed
+		// isn't skipped for timing reasons on the next refresh.
+		if !errorIsConnectivityRelated(error) {
+			feed.lastCheckDate = Date()
+		}
 
 		let activityKind = ActivityKind.refreshFeedContent(feedURL: feed.url)
 
@@ -360,6 +366,14 @@ import os
 		reportFeedRefreshError(feed: feed, error: error, activityKind: .refreshFeedContent(feedURL: feed.url))
 	}
 
+	private func errorIsConnectivityRelated(_ error: NSError?) -> Bool {
+		guard let error, error.domain == NSURLErrorDomain else {
+			return false
+		}
+		let connectivityErrorCodes = [NSURLErrorTimedOut, NSURLErrorCannotConnectToHost, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet]
+		return connectivityErrorCodes.contains(error.code)
+	}
+
 	private func reportFeedRefreshError(feed: Feed, error: Error, activityKind: ActivityKind) {
 		if let activityOwner {
 			ActivityLog.shared.didFail(activityOwner, kind: activityKind, error: error)
@@ -412,19 +426,23 @@ import os
 		self.refreshActivityID = nil
 	}
 
-	/// Cleans up any leftover per-feed activities at the end of a refresh.
-	/// Defense-in-depth for paths we didn’t explicitly cover (e.g. a feed
-	/// the DownloadSession dropped without a `didSkip` callback).
+	/// Clean up any leftover per-feed activities at the end of a refresh.
 	func completeRemainingActivities(accountID: String) {
 		let displayName = AccountManager.shared.existingAccount(accountID: accountID)?.nameForDisplay ?? accountID
 		let owner = ActivityOwner.account(accountID: accountID, displayName: displayName)
 		let activityLog = ActivityLog.shared
 
-		for activity in activityLog.pendingActivities(for: owner) where activity.kind != .refreshAll {
+		for activity in activityLog.pendingActivities(for: owner) {
+			guard case .refreshFeedContent = activity.kind else {
+				continue
+			}
 			activityLog.startIfNeeded(owner, kind: activity.kind)
 			activityLog.didComplete(owner, kind: activity.kind)
 		}
-		for activity in activityLog.runningActivities(for: owner) where activity.kind != .refreshAll {
+		for activity in activityLog.runningActivities(for: owner) {
+			guard case .refreshFeedContent = activity.kind else {
+				continue
+			}
 			activityLog.didComplete(owner, kind: activity.kind)
 		}
 	}

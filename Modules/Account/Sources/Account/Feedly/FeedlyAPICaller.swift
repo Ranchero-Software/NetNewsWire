@@ -44,30 +44,18 @@ enum FeedlyMarkAction: String, Sendable {
 @MainActor final class FeedlyAPICaller {
 
 	enum API: Sendable {
-		case sandbox
 		case cloud
 
 		var baseURLComponents: URLComponents {
 			var components = URLComponents()
 			components.scheme = "https"
-			switch self {
-			case .sandbox:
-				// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
-				components.host = "sandbox7.feedly.com"
-			case .cloud:
-				// https://developer.feedly.com/cloud/
-				components.host = "cloud.feedly.com"
-			}
+			// https://developer.feedly.com/cloud/
+			components.host = "cloud.feedly.com"
 			return components
 		}
 
 		var oauthAuthorizationClient: OAuthAuthorizationClient {
-			switch self {
-			case .sandbox:
-				return .feedlySandboxClient
-			case .cloud:
-				return .feedlyCloudClient
-			}
+			return .feedlyCloudClient
 		}
 	}
 
@@ -78,7 +66,7 @@ enum FeedlyMarkAction: String, Sendable {
 		return baseURLComponents.host
 	}
 
-	private let session = URLSession.webservice
+	private let session = URLSession.makeWebserviceSession()
 	private let baseURLComponents: URLComponents
 	private let uriComponentAllowed: CharacterSet
 	private var isSuspended = false
@@ -133,8 +121,8 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(path: "/v3/collections", method: HTTPMethod.post)
 		request.httpBody = try JSONEncoder().encode(CreateCollectionBody(label: label))
 
-		let (httpResponse, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200, let collection = collections?.first else {
+		let (_, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let collection = collections?.first else {
 			throw URLError(.cannotDecodeContentData)
 		}
 		return collection
@@ -149,8 +137,8 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(path: "/v3/collections", method: HTTPMethod.post)
 		request.httpBody = try JSONEncoder().encode(RenameCollectionBody(id: id, label: name))
 
-		let (httpResponse, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200, let collection = collections?.first else {
+		let (_, collections) = try await send(request: request, resultType: [FeedlyCollection].self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
+		guard let collection = collections?.first else {
 			throw URLError(.cannotDecodeContentData)
 		}
 		return collection
@@ -162,10 +150,7 @@ extension FeedlyAPICaller {
 		}
 		let request = try makeAuthorizedRequest(percentEncodedPath: "/v3/collections/\(encodedID)", method: HTTPMethod.delete)
 
-		let (httpResponse, _) = try await send(request: request, resultType: Optional<FeedlyCollection>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 
 	func addFeed(with feedID: FeedlyFeedResourceID, title: String? = nil, toCollectionWith collectionID: String) async throws -> [FeedlyFeed] {
@@ -198,12 +183,7 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(percentEncodedPath: "/v3/collections/\(encodedCollectionID)/feeds/.mdelete", method: HTTPMethod.delete)
 		request.httpBody = try JSONEncoder().encode([RemovableFeed(id: feedID)])
 
-		// `resultType` is optional because the Feedly API has gone from returning an array of removed feeds to returning `null`.
-		// https://developer.feedly.com/v3/collections/#remove-multiple-feeds-from-a-personal-collection
-		let (httpResponse, _) = try await send(request: request, resultType: Optional<[FeedlyFeed]>.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
@@ -211,7 +191,7 @@ extension FeedlyAPICaller {
 
 extension FeedlyAPICaller {
 
-	func getStreamContents(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?) async throws -> FeedlyStream {
+	func getStreamContents(for resource: FeedlyResourceID, continuation: String? = nil, newerThan: Date?, unreadOnly: Bool?, count: Int? = nil) async throws -> FeedlyStream {
 		var queryItems = [URLQueryItem]()
 
 		if let date = newerThan {
@@ -224,7 +204,7 @@ extension FeedlyAPICaller {
 		if let value = continuation, !value.isEmpty {
 			queryItems.append(URLQueryItem(name: "continuation", value: value))
 		}
-		queryItems.append(URLQueryItem(name: "count", value: String(Self.streamContentsCount)))
+		queryItems.append(URLQueryItem(name: "count", value: String(count ?? Self.streamContentsCount)))
 		queryItems.append(URLQueryItem(name: "streamId", value: resource.id))
 
 		let request = try makeAuthorizedRequest(path: "/v3/streams/contents", queryItems: queryItems)
@@ -287,10 +267,9 @@ extension FeedlyAPICaller {
 		var request = try makeAuthorizedRequest(path: "/v3/markers", method: HTTPMethod.post)
 		request.httpBody = try JSONEncoder().encode(MarkerEntriesBody(action: action.actionValue, entryIds: Array(articleIDs)))
 
-		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		// The markers response body is irrelevant to success — decoding it could
+		// turn a successful mark into a spurious failure that requeues forever.
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
@@ -319,10 +298,7 @@ extension FeedlyAPICaller {
 		request.addValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
 		request.httpBody = opmlData
 
-		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
@@ -342,6 +318,8 @@ extension FeedlyAPICaller {
 			URLQueryItem(name: "count", value: String(count)),
 			URLQueryItem(name: "locale", value: locale)
 		]
+		// A user-typed query can contain + — see makeAuthorizedRequest.
+		components.percentEncodedQuery = components.enhancedPercentEncodedQuery
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
 		}
@@ -396,10 +374,7 @@ extension FeedlyAPICaller {
 
 	func logout() async throws {
 		let request = try makeAuthorizedRequest(path: "/v3/auth/logout", method: HTTPMethod.post)
-		let (httpResponse, _) = try await send(request: request, resultType: String.self, dateDecoding: .millisecondsSince1970, keyDecoding: .convertFromSnakeCase)
-		guard httpResponse.statusCode == 200 else {
-			throw URLError(.cannotDecodeContentData)
-		}
+		_ = try await sendIgnoringResponseBody(request: request)
 	}
 }
 
@@ -408,39 +383,45 @@ extension FeedlyAPICaller {
 private extension FeedlyAPICaller {
 
 	func send<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601, keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys) async throws -> (HTTPURLResponse, R?) {
-
-		do {
-			return try await session.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
-		} catch WebserviceError.httpError(let status) where status == 401 {
-			return try await retryAfterReauthorization(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		try await withReauthorizationRetry(request: request) { request in
+			try await session.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
 		}
 	}
 
-	func retryAfterReauthorization<R: Decodable & Sendable>(request: URLRequest, resultType: R.Type, dateDecoding: JSONDecoder.DateDecodingStrategy, keyDecoding: JSONDecoder.KeyDecodingStrategy) async throws -> (HTTPURLResponse, R?) {
-
-		guard let delegate else {
-			assertionFailure("Check the delegate is set to \(FeedlyAccountDelegate.self).")
-			throw WebserviceError.httpError(status: 401)
+	/// For requests where only the status code matters — the response body is not decoded.
+	func sendIgnoringResponseBody(request: URLRequest) async throws -> HTTPURLResponse {
+		try await withReauthorizationRetry(request: request) { request in
+			let (response, _) = try await session.send(request: request)
+			return response
 		}
+	}
 
-		// Capture credentials before reauthorization so we can detect that they actually changed.
-		let credentialsBefore = credentials
+	/// Performs the request, reauthorizing and retrying exactly once on a 401.
+	private func withReauthorizationRetry<T>(request: URLRequest, _ perform: (URLRequest) async throws -> T) async throws -> T {
+		do {
+			return try await perform(request)
+		} catch WebserviceError.httpError(let status) where status == 401 {
+			guard let delegate else {
+				assertionFailure("Check the delegate is set to \(FeedlyAccountDelegate.self).")
+				throw WebserviceError.httpError(status: 401)
+			}
 
-		let didReauthorize = await delegate.reauthorizeFeedlyAPICaller()
-		guard didReauthorize else {
-			throw WebserviceError.httpError(status: 401)
+			let didReauthorize = await delegate.reauthorizeFeedlyAPICaller()
+			guard didReauthorize else {
+				throw WebserviceError.httpError(status: 401)
+			}
+
+			// The server may hand back the same token — only require that one exists.
+			guard let accessToken = credentials?.secret else {
+				assertionFailure("Could not update the request with an OAuth token. Did \(String(describing: delegate)) set them on \(self)?")
+				throw WebserviceError.httpError(status: 401)
+			}
+
+			var reauthorizedRequest = request
+			reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
+
+			return try await perform(reauthorizedRequest)
 		}
-
-		// Catches an infinitely recursive attempt to refresh.
-		guard let accessToken = credentials?.secret, accessToken != credentialsBefore?.secret else {
-			assertionFailure("Could not update the request with a new OAuth token. Did \(String(describing: delegate)) set them on \(self)?")
-			throw WebserviceError.httpError(status: 401)
-		}
-
-		var reauthorizedRequest = request
-		reauthorizedRequest.setValue("OAuth \(accessToken)", forHTTPHeaderField: HTTPRequestHeader.authorization)
-
-		return try await send(request: reauthorizedRequest, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
 	}
 }
 
@@ -456,6 +437,10 @@ private extension FeedlyAPICaller {
 		components.path = path
 		if let queryItems {
 			components.queryItems = queryItems
+			// URLComponents leaves + unencoded in query values, and Feedly form-decodes
+			// it as a space — which breaks streamIds for feed URLs containing + and
+			// makes pagination restart when a continuation token contains one.
+			components.percentEncodedQuery = components.enhancedPercentEncodedQuery
 		}
 		guard let url = components.url else {
 			fatalError("\(components) does not produce a valid URL.")
@@ -523,7 +508,11 @@ private extension FeedlyAPICaller {
 		encoder.keyEncodingStrategy = .convertToSnakeCase
 		request.httpBody = try encoder.encode(body)
 
-		let (_, response) = try await send(request: request, resultType: FeedlyOAuthAccessTokenResponse.self, keyDecoding: .convertFromSnakeCase)
+		// The raw session, deliberately — a 401 here means the refresh token itself is bad,
+		// and going through send would trigger reauthorization, which calls back into this
+		// method and recurses without bound.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3949>
+		let (_, response) = try await session.send(request: request, resultType: FeedlyOAuthAccessTokenResponse.self, keyDecoding: .convertFromSnakeCase)
 		guard let response else {
 			throw URLError(.cannotDecodeContentData)
 		}

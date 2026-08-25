@@ -12,10 +12,6 @@ import AppKit
 public class RSToolbarItem: NSToolbarItem {
 
 	override public func validate() {
-		guard let view = view, view.window != nil else {
-			isEnabled = false
-			return
-		}
 		isEnabled = isValidAsUserInterfaceItem()
 	}
 }
@@ -29,7 +25,9 @@ private extension RSToolbarItem {
 			return validateWithResponder(target) ?? false
 		}
 
-		var responder = view?.window?.firstResponder
+		// view.window is nil when the item is shown as its menu form representation (the toolbar's
+		// Text Only mode or overflow menu), so fall back to the main window's responder chain.
+		var responder = view?.window?.firstResponder ?? NSApp.mainWindow?.firstResponder
 		if responder == nil {
 			return false
 		}

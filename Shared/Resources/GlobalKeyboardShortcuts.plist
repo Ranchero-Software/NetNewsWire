@@ -166,5 +166,15 @@
 		<key>action</key>
 		<string>openInBrowserUsingOppositeOfSettings:</string>
 	</dict>
+	<dict>
+		<key>title</key>
+		<string>Clean Up</string>
+		<key>key</key>
+		<string>'</string>
+		<key>commandModifier</key>
+		<true/>
+		<key>action</key>
+		<string>cleanUp:</string>
+	</dict>
 </array>
 </plist>

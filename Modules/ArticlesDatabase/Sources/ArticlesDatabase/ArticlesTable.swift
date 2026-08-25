@@ -24,8 +24,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
 	private let articlesCache = OSAllocatedUnfairLock(initialState: [String: Article]())
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticlesTable")
-	private static let signposter = OSSignposter(subsystem: Bundle.main.bundleIdentifier!, category: .pointsOfInterest)
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticlesTable")
+	private static let signposter = OSSignposter(subsystem: Logger.nnwSubsystem, category: .pointsOfInterest)
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	let articleCutoffDate = Date().bySubtracting(days: 90)
@@ -614,6 +614,12 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			let parameters = [cutoffDate] as [Any]
 			database.executeUpdate(sql, withArgumentsIn: parameters)
 		}
+	}
+
+	// MARK: - Repairing
+
+	func repairStatuses(_ database: FMDatabase) {
+		statusesTable.repairStatuses(database)
 	}
 
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.

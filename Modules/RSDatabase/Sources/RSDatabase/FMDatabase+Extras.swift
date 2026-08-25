@@ -33,7 +33,7 @@ public extension FMDatabase {
 		commit()
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FMDatabase")
+	private static let logger = Logger(subsystem: logSubsystem, category: "FMDatabase")
 
 	func vacuum() {
 		let path = databasePath() ?? "unknown"

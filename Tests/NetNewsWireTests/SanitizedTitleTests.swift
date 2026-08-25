@@ -34,6 +34,27 @@ import Testing
 		#expect(ArticleStringFormatter.sanitizedTitle(nil, forHTML: forHTML) == nil)
 	}
 
+	// MARK: - Angle-bracketed text that isn't HTML
+
+	// A title that is literal text in angle brackets — from an Atom
+	// <title type="text"> — must display as-is, not vanish or mangle.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/722>
+
+	@Test func angleBracketedTextForHTMLIsEscaped() {
+		#expect(ArticleStringFormatter.sanitizedTitle("<hello-world>", forHTML: true) == "&lt;hello-world&gt;")
+	}
+
+	@Test func angleBracketedTextNotForHTMLIsPreserved() {
+		#expect(ArticleStringFormatter.sanitizedTitle("<hello-world>", forHTML: false) == "<hello-world>")
+	}
+
+	@Test func htmlLookingTitleWordForHTMLIsEscaped() {
+		#expect(
+			ArticleStringFormatter.sanitizedTitle("It All Starts with a Humble <textarea>", forHTML: true)
+			== "It All Starts with a Humble &lt;textarea&gt;"
+		)
+	}
+
 	// MARK: - Allowed tags (b, i, em, etc.)
 
 	@Test func allowedTagForHTMLIsPreserved() {

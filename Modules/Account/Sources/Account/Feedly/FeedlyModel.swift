@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  FeedlyModel.swift
 //  Account
 //
 //  Created by Brent Simmons on 11/17/25.
@@ -46,7 +46,7 @@ struct FeedlyFeedParser {
 	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
 
 	var title: String? {
-		return rightToLeftTextSantizer.sanitize(feed.title) ?? ""
+		return rightToLeftTextSantizer.sanitize(feed.title)
 	}
 
 	var feedID: String {
@@ -162,6 +162,9 @@ struct FeedlyEntry: Decodable, Sendable {
 	/// the timestamp, in ms, when this article was re-processed and updated by the feedly Cloud servers.
 	let recrawled: Date?
 
+	/// When this article was published, as reported by the feed.
+	let published: Date?
+
 	/// the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
 	let origin: FeedlyOrigin?
 
@@ -218,7 +221,7 @@ struct FeedlyEntryParser {
 		return rightToLeftTextSantizer.sanitize(entry.title)
 	}
 
-	var contentHMTL: String? {
+	var contentHTML: String? {
 		return entry.content?.content ?? entry.summary?.content
 	}
 
@@ -232,6 +235,14 @@ struct FeedlyEntryParser {
 	}
 
 	var datePublished: Date {
+		// The publisher’s date when the feed provides one. Crawled is when Feedly’s
+		// servers processed the article — using it dated a newly added feed’s entire
+		// archive “now.” Publisher dates aren’t always reliable (per Feedly), so a
+		// future-dated article falls back to crawled rather than pinning itself to
+		// the top of a date-sorted timeline.
+		if let published = entry.published, published <= entry.crawled {
+			return published
+		}
 		return entry.crawled
 	}
 
@@ -274,7 +285,7 @@ struct FeedlyEntryParser {
 						  externalURL: externalURL,
 						  title: title,
 						  language: nil,
-						  contentHTML: contentHMTL,
+						  contentHTML: contentHTML,
 						  contentText: contentText,
 						  markdown: nil,
 						  summary: summary,

@@ -82,7 +82,7 @@ import Secrets
 			}
 
 			BatchUpdate.shared.perform {
-				account.loadOPMLItems(children)
+				account.loadOPMLItems(children, isManualImport: true)
 			}
 		}
 	}

@@ -31,18 +31,24 @@ enum ShowFeedName {
 struct SidebarItemNode: Hashable, Sendable {
 	let node: Node
 	let sidebarItemID: SidebarItemIdentifier
+	let folderID: Int? // Identifies this folder (nil if not a folder)
+	let parentFolderID: Int?
 
 	@MainActor init(_ node: Node) {
 		self.node = node
 		self.sidebarItemID = (node.representedObject as! SidebarItem).sidebarItemID!
+		self.folderID = (node.representedObject as? Folder)?.folderID
+		self.parentFolderID = (node.parent?.representedObject as? Folder)?.folderID
 	}
 
 	nonisolated func hash(into hasher: inout Hasher) {
-		hasher.combine(ObjectIdentifier(node))
+		hasher.combine(sidebarItemID)
+		hasher.combine(folderID)
+		hasher.combine(parentFolderID)
 	}
 
 	nonisolated static func == (lhs: SidebarItemNode, rhs: SidebarItemNode) -> Bool {
-		lhs.node === rhs.node
+		lhs.sidebarItemID == rhs.sidebarItemID && lhs.folderID == rhs.folderID && lhs.parentFolderID == rhs.parentFolderID
 	}
 }
 
@@ -67,7 +73,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "SceneCoordinator")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "SceneCoordinator")
 
 	// Which Containers are expanded
 	private var expandedContainers = Set<ContainerIdentifier>()
@@ -169,7 +175,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			return nil
 		}
 
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 
 		let prevIndexPath: IndexPath? = {
 			if indexPath.row - 1 < 0 {
@@ -193,7 +199,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			return nil
 		}
 
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 
 		let nextIndexPath: IndexPath? = {
@@ -304,13 +310,32 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	private static let minimumTimelineWidth: CGFloat = 280
+	private static let maximumTimelineWidth: CGFloat = 440
+
+	private static func clampTimelineWidth(_ width: CGFloat) -> CGFloat {
+		if width < minimumTimelineWidth {
+			return minimumTimelineWidth
+		}
+		if width > maximumTimelineWidth {
+			return maximumTimelineWidth
+		}
+		return width
+	}
+
 	init(rootSplitViewController: RootSplitViewController) {
 		self.rootSplitViewController = rootSplitViewController
 		self.rootSplitViewController.minimumPrimaryColumnWidth = 300
 		self.rootSplitViewController.maximumPrimaryColumnWidth = 500
-		self.rootSplitViewController.minimumSupplementaryColumnWidth = 300
-		self.rootSplitViewController.preferredSupplementaryColumnWidth = 320
-		self.rootSplitViewController.maximumSupplementaryColumnWidth = 360
+		self.rootSplitViewController.minimumSupplementaryColumnWidth = SceneCoordinator.minimumTimelineWidth
+		self.rootSplitViewController.maximumSupplementaryColumnWidth = SceneCoordinator.maximumTimelineWidth
+		let restoredTimelineWidth: CGFloat
+		if let savedTimelineWidth = AppDefaults.shared.timelineWidth {
+			restoredTimelineWidth = CGFloat(savedTimelineWidth)
+		} else {
+			restoredTimelineWidth = 320
+		}
+		self.rootSplitViewController.preferredSupplementaryColumnWidth = Self.clampTimelineWidth(restoredTimelineWidth)
 		self.rootSplitViewController.preferredSplitBehavior = .tile
 
 		self.treeController = TreeController(delegate: treeControllerDelegate)
@@ -356,12 +381,12 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	func restoreWindowState(activity: NSUserActivity?) {
+	func restoreWindowState(activity: NSUserActivity?, restoreSelection: Bool) {
 		let stateInfo = StateRestorationInfo(legacyState: activity)
-		restoreWindowState(stateInfo)
+		restoreWindowState(stateInfo, restoreSelection: restoreSelection)
 	}
 
-	private func restoreWindowState(_ stateInfo: StateRestorationInfo) {
+	private func restoreWindowState(_ stateInfo: StateRestorationInfo, restoreSelection: Bool) {
 		Self.logger.debug("SceneCoordinator: restoreWindowState")
 
 		isRestoringState = true
@@ -386,6 +411,11 @@ struct SidebarItemNode: Hashable, Sendable {
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
 		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
+
+		guard restoreSelection else {
+			isRestoringState = false
+			return
+		}
 
 		restoreSelectedSidebarItemAndArticle(stateInfo)
 	}
@@ -428,21 +458,28 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func handle(_ activity: NSUserActivity) {
+		guard let activityType = ActivityType(rawValue: activity.activityType) else {
+			return
+		}
+
+		// Add Feed just presents a sheet — unlike the activities below, it doesn't navigate,
+		// so it must not clear the current selection.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
+		if activityType == .addFeedIntent {
+			showAddFeed()
+			return
+		}
+
 		selectSidebarItem(indexPath: nil) {
-			guard let activityType = ActivityType(rawValue: activity.activityType) else {
-				return
-			}
 			switch activityType {
-			case .restoration:
-				break
 			case .selectFeed:
 				self.handleSelectFeed(activity.userInfo)
 			case .nextUnread:
 				self.selectFirstUnreadInAllUnread()
 			case .readArticle:
 				self.handleReadArticle(activity.userInfo)
-			case .addFeedIntent:
-				self.showAddFeed()
+			case .restoration, .addFeedIntent:
+				break
 			}
 		}
 	}
@@ -471,7 +508,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func showSearch() {
 		selectSidebarItem(indexPath: nil) {
-			self.rootSplitViewController.show(.supplementary)
+			self.rootSplitViewController.showColumn(.supplementary)
 			DispatchQueue.main.asyncAfter(deadline: .now()) {
 				self.mainTimelineViewController!.showSearchAll()
 			}
@@ -584,6 +621,14 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard let feed = notification.userInfo?[UserInfoKey.feed] as? Feed else {
 			return
 		}
+
+		// Disclosing navigates away from whatever the user was reading, so do it only when
+		// nothing is selected — otherwise adding a feed would cost them their place.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
+		guard timelineFeed == nil else {
+			return
+		}
+
 		discloseFeed(feed, animations: [.scroll, .navigation])
 	}
 
@@ -610,6 +655,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		if !fetchRequestQueue.isAnyCurrentRequest {
 			queueFetchAndMergeArticles()
 		}
+		AccountManager.shared.repairStatusesIfNeeded()
 	}
 
 	@objc func importDownloadedTheme(_ note: Notification) {
@@ -629,7 +675,8 @@ struct SidebarItemNode: Hashable, Sendable {
 				  return
 			  }
 		DispatchQueue.main.async {
-			self.rootSplitViewController.presentError(error, dismiss: nil)
+			let title = NSLocalizedString("Theme Error", comment: "Theme download error")
+			self.rootSplitViewController.presentError(title: title, message: ArticleThemesManager.importErrorMessage(for: error))
 		}
 	}
 
@@ -744,6 +791,19 @@ struct SidebarItemNode: Hashable, Sendable {
 	func didEnterBackground() {
 		hidingReadArticlesState.save()
 		saveExpandedContainers()
+		saveTimelineWidth()
+	}
+
+	private func saveTimelineWidth() {
+		// Only meaningful when the timeline is its own column (iPad, expanded); when collapsed its view fills the screen.
+		guard !rootSplitViewController.isCollapsed else {
+			return
+		}
+		let width = mainTimelineViewController?.view.bounds.width ?? 0
+		guard width > 0 else {
+			return
+		}
+		AppDefaults.shared.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
 	}
 
 	func suspend() {
@@ -802,7 +862,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func nodeFor(_ indexPath: IndexPath) -> Node? {
-		guard let sidebarItemNode = mainFeedCollectionViewController.dataSource.itemIdentifier(for: indexPath) else {
+		guard let sidebarItemNode = mainFeedCollectionViewController.sidebarItemNode(for: indexPath) else {
 			return nil
 		}
 		return sidebarItemNode.node
@@ -810,7 +870,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func indexPathFor(_ node: Node) -> IndexPath? {
 		let sidebarItemNode = SidebarItemNode(node)
-		return mainFeedCollectionViewController.dataSource.indexPath(for: sidebarItemNode)
+		return mainFeedCollectionViewController.indexPath(for: sidebarItemNode)
 	}
 
 	func articleFor(_ articleID: String) -> Article? {
@@ -953,6 +1013,10 @@ struct SidebarItemNode: Hashable, Sendable {
 			tappedFeed = nodeFor(indexPath)?.representedObject as AnyObject?
 		}
 		guard tappedFeed !== timelineFeed as AnyObject? else {
+			// Same feed — just make sure the timeline is showing.
+			if indexPath != nil {
+				rootSplitViewController.showColumn(.supplementary)
+			}
 			completion?()
 			return
 		}
@@ -967,7 +1031,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		if let ip = indexPath, let node = nodeFor(ip), let sidebarItem = node.representedObject as? SidebarItem {
 
 			self.activityManager.selecting(sidebarItem: sidebarItem)
-			self.rootSplitViewController.show(.supplementary)
+			self.rootSplitViewController.showColumn(.supplementary)
 			setTimelineFeed(sidebarItem, animated: false) {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
@@ -983,7 +1047,7 @@ struct SidebarItemNode: Hashable, Sendable {
 					self.rebuildBackingStores()
 				}
 				self.activityManager.invalidateSelecting()
-				self.rootSplitViewController.show(.primary)
+				self.rootSplitViewController.showColumn(.primary)
 				AppDefaults.shared.selectedSidebarItem = nil
 				completion?()
 			}
@@ -1035,12 +1099,12 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		if article == nil {
 			articleViewController?.article = nil
-			rootSplitViewController.show(.supplementary)
+			rootSplitViewController.showColumn(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
 		}
 
-		rootSplitViewController.show(.secondary)
+		rootSplitViewController.showColumn(.secondary)
 		mainTimelineViewController?.didPushArticleViewController = true
 
 		// Mark article as read before navigating to it, so the read status does not flash unread/read on display
@@ -1157,6 +1221,9 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func selectNextUnread() {
 
+		// Flush coalesced unread-count updates so folder counts are current.
+		CoalescingQueue.standard.performCallsImmediately()
+
 		// This should never happen, but I don't want to risk throwing us
 		// into an infinite loop searching for an unread that isn't there.
 		if AccountManager.shared.unreadCount < 1 {
@@ -1210,10 +1277,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		markArticlesWithUndo(articles, statusKey: .read, flag: true, completion: completion)
 	}
 
-	func markAllAsReadInTimeline(completion: (() -> Void)? = nil) {
-		markAllAsRead(articles) {
+	func markAsReadAndShowSidebar(_ articlesToMark: [Article], completion: (() -> Void)? = nil) {
+		markAllAsRead(articlesToMark) {
 			self.rootSplitViewController.preferredDisplayMode = .twoBesideSecondary
-			self.rootSplitViewController.show(.primary)
+			self.rootSplitViewController.showColumn(.primary, bypassDisplayModeRestriction: true)
 			completion?()
 		}
 	}
@@ -1272,6 +1339,13 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	func toggleReaderViewForCurrentArticle() {
+		guard currentArticle != nil else {
+			return
+		}
+		articleViewController?.toggleReaderView(nil)
+	}
+
 	func toggleRead(_ article: Article) {
 		guard !article.status.read || article.isAvailableToMarkUnread else {
 			return
@@ -1324,14 +1398,22 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 
 		rebuildBackingStores(initialLoad: initialLoad, completion: {
-			self.treeControllerDelegate.resetFilterExceptions()
 			self.selectFeed(nil) {
-				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
-					DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+				// Deselecting rebuilds the sidebar, which can hide the feed when
+				// read feeds are filtered — put it back right before selecting it.
+				let ensureAndSelect: @MainActor () -> Void = {
+					if self.isReadFeedsFiltered {
+						self.ensureFeedIsAvailableToSelect(feed) {
+							self.selectFeed(feed, animations: animations, completion: completion)
+						}
+					} else {
 						self.selectFeed(feed, animations: animations, completion: completion)
 					}
+				}
+				if self.rootSplitViewController.traitCollection.horizontalSizeClass == .compact {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: ensureAndSelect)
 				} else {
-					self.selectFeed(feed, animations: animations, completion: completion)
+					ensureAndSelect()
 				}
 			}
 		})
@@ -1405,8 +1487,8 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 
-		// Since Add Feed can be opened from anywhere with a keyboard shortcut, we have to deselect any currently selected feeds
-		selectFeed(nil)
+		// The sheet appears over the current screen, so the feed and article selection stay as they are.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
 
 		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
 
@@ -1416,7 +1498,15 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		addNavViewController.modalPresentationStyle = .formSheet
 		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedCollectionViewController.present(addNavViewController, animated: true)
+
+		// Presenting over an active nav-bar-hosted search bar crashes inside UIKit.
+		guard let mainTimelineViewController else {
+			rootSplitViewController.present(addNavViewController, animated: true)
+			return
+		}
+		mainTimelineViewController.hideSearch {
+			self.rootSplitViewController.present(addNavViewController, animated: true)
+		}
 	}
 
 	func showAddFolder() {
@@ -1426,13 +1516,14 @@ struct SidebarItemNode: Hashable, Sendable {
 		mainFeedCollectionViewController.present(addNavViewController, animated: true)
 	}
 
-	func showFullScreenImage(image: UIImage, imageTitle: String?, transitioningDelegate: UIViewControllerTransitioningDelegate) {
+	func showFullScreenImage(image: UIImage, imageTitle: String?, transition: ImageTransition) {
 		let imageVC = UIStoryboard.main.instantiateController(ofType: ImageViewController.self)
 		imageVC.image = image
 		imageVC.imageTitle = imageTitle
+		imageVC.transition = transition
 		let navController = UINavigationController(rootViewController: imageVC)
 		navController.modalPresentationStyle = .currentContext
-		navController.transitioningDelegate = transitioningDelegate
+		navController.transitioningDelegate = transition
 		rootSplitViewController.present(navController, animated: true)
 	}
 
@@ -1474,20 +1565,50 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	func beganBrowsing(url: URL) {
+		activityManager.browsing(url: url)
+	}
+
+	func endedBrowsing() {
+		activityManager.invalidateBrowsing()
+	}
+
 	func navigateToFeeds() {
-		mainFeedCollectionViewController?.focus()
-		selectArticle(nil)
+		if !isRootSplitCollapsed {
+			// In three-pane mode, focusing the sidebar deselects the article.
+			// In collapsed mode the pop below drives cleanup via navigationController(_:didShow:).
+			selectArticle(nil)
+		}
+		revealColumn(.primary) { [weak self] in
+			self?.mainFeedCollectionViewController?.focus()
+		}
 	}
 
 	func navigateToTimeline() {
-		if currentArticle == nil && articles.count > 0 {
+		// Only auto-select the first article in three-pane mode, where it populates the
+		// detail pane without hiding the timeline.
+		let displayMode = rootSplitViewController.displayMode
+		let isThreePane = !isRootSplitCollapsed && displayMode != .oneBesideSecondary && displayMode != .secondaryOnly
+		if isThreePane && currentArticle == nil && articles.count > 0 {
 			selectArticle(articles[0])
 		}
-		mainTimelineViewController?.focus()
+		revealColumn(.supplementary) { [weak self] in
+			self?.mainTimelineViewController?.focus()
+		}
 	}
 
 	func navigateToDetail() {
-		articleViewController?.focus()
+		// If nothing is selected, open the first article so right-arrow reveals the detail even in
+		// collapsed and two-pane layouts. selectArticle reveals/pushes the detail column itself.
+		if currentArticle == nil {
+			guard articles.count > 0 else {
+				return
+			}
+			selectArticle(articles[0])
+		}
+		revealColumn(.secondary) { [weak self] in
+			self?.articleViewController?.focus()
+		}
 	}
 
 	func selectArticleInCurrentFeed(_ articleID: String, isShowingExtractedArticle: Bool? = nil, articleWindowScrollY: Int? = nil) {
@@ -1560,6 +1681,14 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
+	func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+		mainTimelineViewController?.splitViewStateDidChange()
+	}
+
+	func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+		mainTimelineViewController?.splitViewStateDidChange()
+	}
+
 }
 
 // MARK: UINavigationControllerDelegate
@@ -1605,6 +1734,72 @@ extension SceneCoordinator: UINavigationControllerDelegate {
 // MARK: Private
 
 private extension SceneCoordinator {
+
+	// Reveal the destination column, then focus it. Works across collapsed (iPhone),
+	// two-pane, and three-pane layouts, so arrow-key navigation isn't limited to the
+	// case where all columns are already visible.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3138>
+	func revealColumn(_ column: UISplitViewController.Column, thenFocus focus: @escaping @MainActor () -> Void) {
+		if isRootSplitCollapsed {
+			revealColumnInCollapsedMode(column, thenFocus: focus)
+		} else {
+			rootSplitViewController.showColumn(column, bypassDisplayModeRestriction: true)
+			// Defer focus so becomeFirstResponder targets the revealed column, not the outgoing one.
+			Task { @MainActor in
+				focus()
+			}
+		}
+	}
+
+	func revealColumnInCollapsedMode(_ column: UISplitViewController.Column, thenFocus focus: @escaping @MainActor () -> Void) {
+		guard !isNavigationDisabled, let navController = mainFeedCollectionViewController.navigationController else {
+			return
+		}
+		let targetViewController: UIViewController?
+		switch column {
+		case .primary:
+			targetViewController = mainFeedCollectionViewController
+		case .supplementary:
+			targetViewController = mainTimelineViewController
+		case .secondary:
+			targetViewController = articleViewController
+		default:
+			targetViewController = nil
+		}
+		guard let targetViewController else {
+			return
+		}
+
+		if navController.topViewController === targetViewController {
+			// Already on the destination column — just move focus.
+			Task { @MainActor in
+				focus()
+			}
+		} else if navController.viewControllers.contains(targetViewController) {
+			// Backward navigation. The pop fires navigationController(_:didShow:), which performs
+			// the existing collapsed-mode cleanup. Don't duplicate that here.
+			navController.popToViewController(targetViewController, animated: true)
+			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		} else {
+			// Forward navigation — push the destination column onto the stack.
+			rootSplitViewController.showColumn(column, bypassDisplayModeRestriction: true)
+			focusWhenTransitionCompletes(in: navController, thenFocus: focus)
+		}
+	}
+
+	// Focus once the navigation transition finishes, so becomeFirstResponder lands on the
+	// revealed column rather than firing mid-animation. Falls back to the next runloop.
+	func focusWhenTransitionCompletes(in navController: UINavigationController, thenFocus focus: @escaping @MainActor () -> Void) {
+		if let transitionCoordinator = navController.transitionCoordinator {
+			transitionCoordinator.animate(alongsideTransition: nil) { _ in
+				focus()
+			}
+		} else {
+			Task { @MainActor in
+				focus()
+			}
+		}
+	}
 
 	func markArticlesWithUndo(_ articles: [Article], statusKey: ArticleStatus.Key, flag: Bool, completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager,
@@ -1676,7 +1871,7 @@ private extension SceneCoordinator {
 	}
 
 	func addVisibleSidebarItemsToFilterExceptions() {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		for sidebarItemNode in snapshot.itemIdentifiers {
 			if let feed = sidebarItemNode.node.representedObject as? SidebarItem, let sidebarItemID = feed.sidebarItemID {
 				treeControllerDelegate.addFilterException(sidebarItemID)
@@ -1712,15 +1907,20 @@ private extension SceneCoordinator {
 
 		updateExpandedNodes?()
 
-		// Update currentFeedIndexPath if needed
-		if currentFeedIndexPath != nil {
-			currentFeedIndexPath = indexPathFor(timelineFeed as AnyObject)
-		}
-
 		lastExpandedContainers = expandedContainers
 
 		let snapshot = createSidebarSnapshot()
-		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad, completion: completion)
+		mainFeedCollectionViewController.applySnapshot(snapshot, animatingDifferences: !initialLoad) { [weak self] in
+			guard let self else {
+				return
+			}
+			// The data source reflects the new snapshot only after the apply
+			// completes — recomputing earlier would read the old layout.
+			if self.currentFeedIndexPath != nil {
+				self.currentFeedIndexPath = self.indexPathFor(self.timelineFeed as AnyObject)
+			}
+			completion?()
+		}
 	}
 
 	private func createSidebarSnapshot() -> NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
@@ -1752,7 +1952,7 @@ private extension SceneCoordinator {
 	}
 
 	func reconfigureSidebarItem(_ sidebarItem: SidebarItem) {
-		var snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 
 		// Find all nodes that represent this sidebar item
 		var nodesToReconfigure: [SidebarItemNode] = []
@@ -1767,12 +1967,11 @@ private extension SceneCoordinator {
 			return
 		}
 
-		snapshot.reconfigureItems(nodesToReconfigure)
-		mainFeedCollectionViewController.dataSource.apply(snapshot, animatingDifferences: false)
+		mainFeedCollectionViewController.reconfigureItems(nodesToReconfigure)
 	}
 
 	func sidebarContains(_ sidebarItem: SidebarItem) -> Bool {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		for sidebarItemNode in snapshot.itemIdentifiers {
 			if let nodeSidebarItem = sidebarItemNode.node.representedObject as? SidebarItem, nodeSidebarItem.sidebarItemID == sidebarItem.sidebarItemID {
 				return true
@@ -1918,7 +2117,7 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
 			if indexPath.row - 1 < 0 {
@@ -1947,7 +2146,7 @@ private extension SceneCoordinator {
 
 	@discardableResult
 	func selectPrevUnreadFeedFetcher(startingWith indexPath: IndexPath) -> Bool {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 
 		for i in (0...indexPath.section).reversed() {
 
@@ -2034,7 +2233,7 @@ private extension SceneCoordinator {
 		}()
 
 		// Increment or wrap around the IndexPath
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 		let nextIndexPath: IndexPath = {
 			let count = snapshot.numberOfItems(inSection: snapshot.sectionIdentifiers[indexPath.section])
@@ -2062,7 +2261,7 @@ private extension SceneCoordinator {
 	}
 
 	func selectNextUnreadFeed(startingWith indexPath: IndexPath, completion: @escaping (Bool) -> Void) {
-		let snapshot = mainFeedCollectionViewController.dataSource.snapshot()
+		let snapshot = mainFeedCollectionViewController.currentSidebarSnapshot
 		let numberOfSections = snapshot.numberOfSections
 
 		for i in indexPath.section..<numberOfSections {
@@ -2331,6 +2530,9 @@ private extension SceneCoordinator {
 			return
 		}
 
+		// A deep link supersedes any in-flight state restoration.
+		isRestoringState = false
+
 		guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 			  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 			  let accountName = articlePathUserInfo[ArticlePathKey.accountName] as? String,
@@ -2364,21 +2566,20 @@ private extension SceneCoordinator {
 			return false
 		}
 
-		// Read values from UserDefaults (migration happens in restoreWindowState)
-		let isShowingExtractedArticle = AppDefaults.shared.isShowingExtractedArticle
-		let articleWindowScrollY = AppDefaults.shared.articleWindowScrollY
-
+		// A handoff or deep link opens the article at the top — the persisted scroll
+		// position belongs to launch state restoration, not to this article.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
 		switch sidebarItemID {
 
 		case .smartFeed, .folder:
-			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 			}
 			return found
 
 		case .feed:
-			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			let found = selectSidebarItemAndArticle(sidebarItemID: sidebarItemID, articleID: articleID)
 			if found {
 				treeControllerDelegate.addFilterException(sidebarItemID)
 				if let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let folder = sidebarItemNode.parent?.representedObject as? Folder, let folderSidebarItemID = folder.sidebarItemID {
@@ -2416,13 +2617,13 @@ private extension SceneCoordinator {
 		return nil
 	}
 
-	func selectSidebarItemAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String, isShowingExtractedArticle: Bool, articleWindowScrollY: Int) -> Bool {
+	func selectSidebarItemAndArticle(sidebarItemID: SidebarItemIdentifier, articleID: String) -> Bool {
 		guard let sidebarItemNode = nodeFor(sidebarItemID: sidebarItemID), let sidebarItemIndexPath = indexPathFor(sidebarItemNode) else {
 			return false
 		}
 
 		selectSidebarItem(indexPath: sidebarItemIndexPath) {
-			self.selectArticleInCurrentFeed(articleID, isShowingExtractedArticle: isShowingExtractedArticle, articleWindowScrollY: articleWindowScrollY)
+			self.selectArticleInCurrentFeed(articleID)
 		}
 
 		return true

@@ -75,6 +75,8 @@
 	<string>NetNewsWire.sdef</string>
 	<key>OrganizationIdentifier</key>
 	<string>$(ORGANIZATION_IDENTIFIER)</string>
+	<key>SUEnableInstallerLauncherService</key>
+	<true/>
 	<key>SUFeedURL</key>
 	<string>https://ranchero.com/downloads/netnewswire-release.xml</string>
 	<key>UserAgent</key>

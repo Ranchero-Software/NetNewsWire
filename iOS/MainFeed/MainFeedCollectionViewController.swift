@@ -33,7 +33,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedCollectionViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainFeedCollectionViewController")
 
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
@@ -65,7 +65,13 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	private var isAnimating: Bool = false
 	private var isToolbarConfigured: Bool = false
 
-	var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
+	// Serialized snapshot updates — see enqueueSidebarUpdate below.
+	private var isApplyingSnapshot = false
+	private var queuedSidebarUpdates = [QueuedSidebarUpdate]()
+
+	// Write via applySnapshot/reconfigureItems. Read via currentSidebarSnapshot
+	// and the lookup methods — in an apply completion if you need post-update state.
+	private var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -118,7 +124,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.navigationController?.navigationBar.prefersLargeTitles = true
 			self.navigationItem.largeTitleDisplayMode = .always
 			DispatchQueue.main.async {
-				/// This sizes the navigation bar to large.
+				// Sizes the bar to large. Skip if a pushed VC (e.g. the timeline, which shares this bar
+				// on iPhone) is now on top, or it would be forced large too.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5141>
+				guard self.navigationController?.topViewController === self else {
+					return
+				}
 				self.navigationController?.navigationBar.sizeToFit()
 			}
 
@@ -148,26 +159,15 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.isAnimating = false
 		}
 
-		// Pro Max may have split view in landscape — give the device some
-		// time to change its size class and then decide to deselect
+		// Rotating a Pro Max to landscape expands the split view — wait for the transition to settle.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5043>
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-			// If the iPhone is in portrait, deselect.
-			if UIDevice.current.orientation.isPortrait {
-				if self.collectionView.indexPathsForSelectedItems != nil {
-					self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				}
-				return
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			// Deselect only when the feeds list is full screen.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4691>
+			if self.coordinator.isRootSplitCollapsed, self.collectionView.indexPathsForSelectedItems?.first != nil {
+				self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 			}
-
-			// If the iPhone is in landscape, and the horizontal
-			// size class is compact, deselect.
-			if self.view.window?.traitCollection.horizontalSizeClass == .compact {
-				if self.collectionView.indexPathsForSelectedItems != nil { self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				}
-				return
-			}
-		})
+		}
 	}
 
 	func registerForNotifications() {
@@ -365,7 +365,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				headerView.sectionHeaderType = .smartFeeds
 				headerView.headerTitle.text = SmartFeedsController.shared.nameForDisplay
 				headerView.unreadCount = 0
-				headerView.disclosureExpanded = self.coordinator.isExpanded(SmartFeedsController.shared)
+				headerView.setDisclosure(isExpanded: self.coordinator.isExpanded(SmartFeedsController.shared), animated: false)
 				return headerView
 			}
 
@@ -377,7 +377,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			headerView.sectionHeaderType = .account(sectionID)
 			headerView.headerTitle.text = account.nameForDisplay
 			headerView.unreadCount = account.unreadCount
-			headerView.disclosureExpanded = self.coordinator.isExpanded(account)
+			headerView.setDisclosure(isExpanded: self.coordinator.isExpanded(account), animated: false)
 			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
 
 			return headerView
@@ -388,9 +388,114 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		let feeds = snapshot.itemIdentifiers.compactMap { $0.node.representedObject as? Feed }
 		IconImageCache.shared.prefetchImagesForFeeds(feeds)
 
-		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
-			completion?()
+		enqueueSidebarUpdate(.full(snapshot, animated: animatingDifferences), completion: completion)
+	}
+
+	func reconfigureItems(_ items: [SidebarItemNode], completion: (() -> Void)? = nil) {
+		enqueueSidebarUpdate(.reconfigure(items), completion: completion)
+	}
+
+	// MARK: - Data Source Queries
+
+	var currentSidebarSnapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
+		dataSource.snapshot()
+	}
+
+	func sidebarItemNode(for indexPath: IndexPath) -> SidebarItemNode? {
+		dataSource.itemIdentifier(for: indexPath)
+	}
+
+	func indexPath(for sidebarItemNode: SidebarItemNode) -> IndexPath? {
+		dataSource.indexPath(for: sidebarItemNode)
+	}
+
+	// MARK: - Serialized Snapshot Updates
+
+	// Overlapping animated dataSource.apply calls strand cells — a row mid-delete-animation
+	// never gets recycled while the next update slides another row into its slot, leaving
+	// two cells overlapping. Updates are queued and applied one at a time. The apply
+	// completion is the animation-end signal, so serializing on it is sufficient.
+
+	private func enqueueSidebarUpdate(_ update: SidebarUpdate, completion: (() -> Void)?) {
+		var completions = [() -> Void]()
+		if let completion {
+			completions.append(completion)
 		}
+
+		// A newer full snapshot supersedes a queued one. The superseded update's
+		// completions still run — after a snapshot at least as new as the one they requested.
+		if update.isFull, let index = queuedSidebarUpdates.firstIndex(where: { $0.update.isFull }) {
+			completions = queuedSidebarUpdates[index].completions + completions
+			queuedSidebarUpdates.remove(at: index)
+		}
+
+		queuedSidebarUpdates.append(QueuedSidebarUpdate(update: update, completions: completions))
+		applyNextSidebarUpdateIfPossible()
+	}
+
+	private func applyNextSidebarUpdateIfPossible() {
+		guard !isApplyingSnapshot, !queuedSidebarUpdates.isEmpty else {
+			return
+		}
+
+		let queuedUpdate = queuedSidebarUpdates.removeFirst()
+
+		var snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>
+		var animated = false
+
+		switch queuedUpdate.update {
+		case .full(let fullSnapshot, let fullAnimated):
+			snapshot = fullSnapshot
+			animated = fullAnimated
+		case .reconfigure(let items):
+			snapshot = dataSource.snapshot()
+			let survivingItems = survivingItems(items, in: snapshot)
+			guard !survivingItems.isEmpty else {
+				finishSkippedSidebarUpdate(queuedUpdate)
+				return
+			}
+			snapshot.reconfigureItems(survivingItems)
+		case .reload(let items):
+			snapshot = dataSource.snapshot()
+			let survivingItems = survivingItems(items, in: snapshot)
+			guard !survivingItems.isEmpty else {
+				finishSkippedSidebarUpdate(queuedUpdate)
+				return
+			}
+			snapshot.reloadItems(survivingItems)
+		}
+
+		// Animating a batch update while detached from a window strands cells too.
+		let animatingDifferences = animated && viewIfLoaded?.window != nil
+
+		isApplyingSnapshot = true
+		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) { [weak self] in
+			guard let self else {
+				return
+			}
+			// Completions run before the queue pumps again, so an update enqueued
+			// synchronously by a completion applies after this one — in order.
+			for completion in queuedUpdate.completions {
+				completion()
+			}
+			self.isApplyingSnapshot = false
+			self.applyNextSidebarUpdateIfPossible()
+		}
+	}
+
+	// Reconfigures and reloads resolve their items at execution time, against the
+	// currently applied snapshot. Items removed by an earlier queued update are
+	// skipped — reloading an absent identifier throws.
+	private func survivingItems(_ items: [SidebarItemNode], in snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>) -> [SidebarItemNode] {
+		let currentItems = Set(snapshot.itemIdentifiers)
+		return items.filter { currentItems.contains($0) }
+	}
+
+	private func finishSkippedSidebarUpdate(_ queuedUpdate: QueuedSidebarUpdate) {
+		for completion in queuedUpdate.completions {
+			completion()
+		}
+		applyNextSidebarUpdateIfPossible()
 	}
 
 	@IBAction func settings(_ sender: UIBarButtonItem) {
@@ -405,7 +510,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
+	}
+
+	// Fires on every tap — even on the already-selected feed, which doesn't get didSelectItemAt.
+	override func collectionView(_ collectionView: UICollectionView, performPrimaryActionForItemAt indexPath: IndexPath) {
+		becomeFirstResponder()
 		coordinator.selectSidebarItem(indexPath: indexPath, animations: [.navigation, .select, .scroll])
+	}
+
+	override func collectionView(_ collectionView: UICollectionView, canPerformPrimaryActionForItemAt indexPath: IndexPath) -> Bool {
+		if traitCollection.userInterfaceIdiom == .pad {
+			return true
+		}
+		return !isAnimating
 	}
 
     // MARK: UICollectionViewDelegate
@@ -462,7 +579,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.collapse(node)
 			if let folder = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
-				folder.disclosureExpanded = false
+				folder.setDisclosure(isExpanded: false, animated: true)
 			}
 		}
 	}
@@ -481,7 +598,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.expand(node)
 			if let folder = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
-				folder.disclosureExpanded = true
+				folder.setDisclosure(isExpanded: true, animated: true)
 			}
 		}
 	}
@@ -492,8 +609,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		let title = NSLocalizedString("Mark All as Read", comment: "Command")
+		let articlesToMark = coordinator.articles
+
 		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-			self?.coordinator.markAllAsReadInTimeline()
+			self?.coordinator.markAsReadAndShowSidebar(articlesToMark)
 		}
 	}
 
@@ -551,7 +670,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	func openInAppBrowser() {
 		if let indexPath = coordinator.currentFeedIndexPath,
 			let url = coordinator.homePageURLForFeed(indexPath) {
-			let vc = SFSafariViewController(url: url)
+			guard let vc = SFSafariViewController.safeSafariViewController(url) else {
+				return
+			}
+			// Apply the resolved userInterfaceStyle before presenting to avoid a white flash in dark mode.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5383>
+			vc.overrideUserInterfaceStyle = traitCollection.userInterfaceStyle
 			vc.modalPresentationStyle = .overFullScreen
 			present(vc, animated: true)
 		}
@@ -621,7 +745,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			if adjustScroll {
 				collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
-				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
 			}
 		}
 	}
@@ -713,11 +837,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		var snapshot = dataSource.snapshot()
-		snapshot.reloadItems(items)
-		dataSource.apply(snapshot, animatingDifferences: false) {
-			completion?()
-		}
+		enqueueSidebarUpdate(.reload(items), completion: completion)
 	}
 
 	func setFilterButtonToActive() {
@@ -751,19 +871,15 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		for cell in collectionView.visibleCells {
-			guard let indexPath = collectionView.indexPath(for: cell),
-				  let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
-				  sidebarItemNode.node.representedObject === unreadCountProvider as AnyObject else {
-				continue
-			}
-			if let feedCell = cell as? MainFeedCollectionViewCell {
-				feedCell.unreadCount = unreadCountProvider.unreadCount
-			}
-			if let folderCell = cell as? MainFeedCollectionViewFolderCell {
-				folderCell.unreadCount = unreadCountProvider.unreadCount
-			}
+		// Reconfigure through the serialized funnel — mutating visible cells directly
+		// can change their size in the middle of an animated snapshot apply.
+		let nodesToReconfigure = dataSource.snapshot().itemIdentifiers.filter {
+			$0.node.representedObject === unreadCountProvider as AnyObject
 		}
+		guard !nodesToReconfigure.isEmpty else {
+			return
+		}
+		reconfigureItems(nodesToReconfigure)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -886,10 +1002,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		if coordinator.isExpanded(containerID) {
-			headerView.disclosureExpanded = false
+			headerView.setDisclosure(isExpanded: false, animated: true)
 			coordinator.collapse(containerID)
 		} else {
-			headerView.disclosureExpanded = true
+			headerView.setDisclosure(isExpanded: true, animated: true)
 			coordinator.expand(containerID)
 		}
 	}
@@ -1369,4 +1485,24 @@ extension MainFeedCollectionViewController {
 		pushUndoableCommand(deleteCommand)
 		deleteCommand.perform()
 	}
+}
+
+// MARK: - SidebarUpdate
+
+private enum SidebarUpdate {
+	case full(NSDiffableDataSourceSnapshot<String, SidebarItemNode>, animated: Bool)
+	case reconfigure([SidebarItemNode])
+	case reload([SidebarItemNode])
+
+	var isFull: Bool {
+		if case .full = self {
+			return true
+		}
+		return false
+	}
+}
+
+private struct QueuedSidebarUpdate {
+	let update: SidebarUpdate
+	let completions: [() -> Void]
 }

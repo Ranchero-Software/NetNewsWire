@@ -12,6 +12,10 @@ import Articles
 import RSCore
 import Account
 
+extension Notification.Name {
+	static let SidebarDidAcceptDrop = Notification.Name("SidebarDidAcceptDropNotification")
+}
+
 @objc @MainActor final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 
 	let treeController: TreeController
@@ -98,6 +102,14 @@ import Account
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
+		let accepted = acceptDrop(outlineView, info, item, index)
+		if accepted {
+			NotificationCenter.default.post(name: .SidebarDidAcceptDrop, object: nil)
+		}
+		return accepted
+	}
+
+	private func acceptDrop(_ outlineView: NSOutlineView, _ info: NSDraggingInfo, _ item: Any?, _ index: Int) -> Bool {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
 		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
 		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil) {

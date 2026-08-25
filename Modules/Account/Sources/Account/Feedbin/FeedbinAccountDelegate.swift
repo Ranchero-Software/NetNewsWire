@@ -135,7 +135,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				return sentCount
 			}
 		} catch {
-			postSyncError(error, account: account, operation: "Sending article status")
+			account.postSyncError(error, operation: "Sending article status")
 			throw error
 		}
 	}
@@ -174,7 +174,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 			Self.logger.info("Feedbin: Finished refreshing article statuses")
 			if let refreshError {
-				postSyncError(refreshError, account: account, operation: "Refreshing article status")
+				account.postSyncError(refreshError, operation: "Refreshing article status")
 				throw refreshError
 			}
 			return changedCount
@@ -273,7 +273,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						clearFolderRelationship(for: feed, withFolderName: folder.name ?? "")
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed")
+						account.postSyncError(error, operation: "Removing feed")
 					}
 				}
 			} else {
@@ -283,7 +283,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 						account.clearFeedSettings(feed)
 					} catch {
 						Self.logger.error("Feedbin: Remove feed error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed")
+						account.postSyncError(error, operation: "Removing feed")
 					}
 				}
 			}
@@ -419,7 +419,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 					try await restoreFeed(feed: feed, container: folder)
 				} catch {
 					Self.logger.error("Feedbin: Restore folder feed error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Restoring feed")
+					account.postSyncError(error, operation: "Restoring feed")
 				}
 			}
 
@@ -449,6 +449,11 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 	func accountDidInitialize() {
 		credentials = try? account?.retrieveCredentials(type: .basic)
+
+		// A send in progress when the app was killed left its statuses selected. Clear them so
+		// they get sent, instead of waiting for the next selectForProcessing to pick them up.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
+		syncDatabase.resetAllSelectedForProcessing()
 	}
 
 	func accountWillBeDeleted() {
@@ -549,7 +554,7 @@ private extension FeedbinAccountDelegate {
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing account")
+			account.postSyncError(error, operation: "Refreshing account")
 			throw error
 		}
 	}
@@ -654,9 +659,9 @@ private extension FeedbinAccountDelegate {
 			let subFeedId = String(subscription.feedID)
 
 			if let feed = account.existingFeed(withFeedID: subFeedId) {
-				feed.name = subscription.name
-				// If the name has been changed on the server remove the locally edited name
-				feed.editedName = nil
+				if let name = subscription.name, !name.isEmpty {
+					feed.name = name
+				}
 				feed.homePageURL = subscription.homePageURL
 				feed.externalID = String(subscription.subscriptionID)
 				feed.faviconURL = subscription.jsonFeed?.favicon
@@ -752,7 +757,7 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func sendArticleStatuses(_ statuses: [SyncStatus], apiCall: ([Int]) async throws -> Void) async throws -> Int {
-		guard !statuses.isEmpty else {
+		guard let key = statuses.first?.key else {
 			return 0
 		}
 
@@ -764,12 +769,12 @@ private extension FeedbinAccountDelegate {
 		for articleIDGroup in articleIDGroups {
 			do {
 				try await apiCall(articleIDGroup)
-				await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
+				await self.syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup.map { String($0) }), key: key)
 				sentCount += articleIDGroup.count
 			} catch {
 				savedError = error
 				Self.logger.error("Feedbin: Article status sync call failed: \(error.localizedDescription)")
-				await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) }))
+				await self.syncDatabase.resetSelectedForProcessing(Set(articleIDGroup.map { String($0) }), key: key)
 			}
 		}
 
@@ -873,7 +878,7 @@ private extension FeedbinAccountDelegate {
 				try await self.refreshArticles(account, page: page, updateFetchDate: updateFetchDate)
 			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing articles")
+			account.postSyncError(error, operation: "Refreshing articles")
 			throw error
 		}
 	}
@@ -903,7 +908,7 @@ private extension FeedbinAccountDelegate {
 			}
 
 			if let savedError {
-				postSyncError(savedError, account: account, operation: "Refreshing missing articles")
+				account.postSyncError(savedError, operation: "Refreshing missing articles")
 				throw savedError
 			}
 		}
@@ -964,16 +969,16 @@ private extension FeedbinAccountDelegate {
 		}
 
 		let feedbinUnreadArticleIDs = Set(articleIDs.map { String($0) })
-		let updatableFeedbinUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(pendingArticleIDs)
-
 		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+
 		// Mark articles as unread
-		let deltaUnreadArticleIDs = updatableFeedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
+		let deltaUnreadArticleIDs = feedbinUnreadArticleIDs.subtracting(currentUnreadArticleIDs).subtracting(pendingArticleIDs)
 		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
 
 		// Mark articles as read
-		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableFeedbinUnreadArticleIDs)
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(feedbinUnreadArticleIDs).subtracting(pendingArticleIDs)
 		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
 
 		return markedUnread.count + markedRead.count
@@ -989,16 +994,16 @@ private extension FeedbinAccountDelegate {
 		}
 
 		let feedbinStarredArticleIDs = Set(articleIDs.map { String($0) })
-		let updatableFeedbinStarredArticleIDs = feedbinStarredArticleIDs.subtracting(pendingArticleIDs)
-
 		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
 
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+
 		// Mark articles as starred
-		let deltaStarredArticleIDs = updatableFeedbinStarredArticleIDs.subtracting(currentStarredArticleIDs)
+		let deltaStarredArticleIDs = feedbinStarredArticleIDs.subtracting(currentStarredArticleIDs).subtracting(pendingArticleIDs)
 		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
 
 		// Mark articles as unstarred
-		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableFeedbinStarredArticleIDs)
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(feedbinStarredArticleIDs).subtracting(pendingArticleIDs)
 		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
 
 		return markedStarred.count + markedUnstarred.count
@@ -1039,15 +1044,10 @@ private extension FeedbinAccountDelegate {
 			try await caller.deleteSubscription(subscriptionID: subscriptionID)
 		} catch {
 			Self.logger.error("Feedbin: Unable to remove feed from Feedbin. Removing locally and continuing processing: \(error.localizedDescription)")
-			postSyncError(error, account: account, operation: "Removing feed")
+			account.postSyncError(error, operation: "Removing feed")
 		}
 
 		account.clearFeedSettings(feed)
 		account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
-	}
-
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
 }

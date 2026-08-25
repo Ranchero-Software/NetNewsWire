@@ -3,7 +3,7 @@
 //  AccountTests
 //
 //  Helpers for registering canned responses with `TestingURLProtocol`,
-//  which `URLSession.webservice` uses automatically while running unit tests.
+//  which webservice sessions (`URLSession.makeWebserviceSession()`) use automatically while running unit tests.
 //
 
 import Foundation

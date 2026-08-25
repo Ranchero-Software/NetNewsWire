@@ -25,6 +25,8 @@ public final class CloudKitError: LocalizedError, Sendable {
 		}
 
 		switch ckError.code {
+		case .accountTemporarilyUnavailable:
+			return NSLocalizedString("Account Temporarily Unavailable: iCloud sync is paused. You may need to accept new iCloud Terms and Conditions, or check your iCloud account in Settings.", comment: "Known iCloud Error")
 		case .alreadyShared:
 			return NSLocalizedString("Already Shared: a record or share cannot be saved because doing so would cause the same hierarchy of records to exist in multiple shares.", comment: "Known iCloud Error")
 		case .assetFileModified:

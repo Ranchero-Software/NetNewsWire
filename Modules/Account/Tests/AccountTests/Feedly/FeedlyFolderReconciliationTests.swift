@@ -58,6 +58,44 @@ import XCTest
 		XCTAssertTrue(folders.isEmpty, "Folders should be removed when their collection no longer exists.")
 	}
 
+	func testMirrorCollectionsAsFoldersMatchesByExternalIDAcrossRename() {
+		let pairsBefore = mirrorCollectionsAsFolders([
+			FeedlyCollection(feeds: [], label: "News", id: "collections/1")
+		], in: account)
+		let folderBefore = pairsBefore.first?.folder
+		XCTAssertNotNil(folderBefore)
+
+		// A local rename applied optimistically, with the refresh's collection snapshot still stale.
+		folderBefore?.name = "Nachrichten"
+
+		let pairsAfter = mirrorCollectionsAsFolders([
+			FeedlyCollection(feeds: [], label: "News", id: "collections/1")
+		], in: account)
+
+		XCTAssertEqual(account.folders?.count, 1)
+		XCTAssertTrue(pairsAfter.first?.folder === folderBefore, "The folder should be matched by external ID, not dropped and recreated.")
+		XCTAssertEqual(folderBefore?.name, "News")
+	}
+
+	func testMirrorCollectionsAsFoldersKeepsSameLabelCollectionsDistinct() {
+		let collections = [
+			FeedlyCollection(feeds: [], label: "News", id: "collections/1"),
+			FeedlyCollection(feeds: [], label: "News", id: "collections/2")
+		]
+
+		let pairs = mirrorCollectionsAsFolders(collections, in: account)
+
+		XCTAssertEqual(pairs.count, 2)
+		XCTAssertEqual(account.folders?.count, 2)
+		let externalIDs = Set((account.folders ?? Set()).compactMap { $0.externalID })
+		XCTAssertEqual(externalIDs, Set(["collections/1", "collections/2"]))
+
+		// A second pass matches by ID and keeps both folders — no churn.
+		let secondPairs = mirrorCollectionsAsFolders(collections, in: account)
+		XCTAssertEqual(account.folders?.count, 2)
+		XCTAssertEqual(Set(secondPairs.map { ObjectIdentifier($0.folder) }), Set(pairs.map { ObjectIdentifier($0.folder) }))
+	}
+
 	func testMirrorCollectionsAsFoldersReturnsCollectionFeedsPairedWithFolders() {
 		let feedsForOne = [
 			FeedlyFeed(id: "feed/1", title: "Feed One", updated: nil, website: nil),
@@ -158,6 +196,81 @@ import XCTest
 		let updatedFeed = folder.existingFeed(withFeedID: "feed/1")
 		XCTAssertEqual(updatedFeed?.nameForDisplay, "Updated Title")
 		XCTAssertTrue(originalFeed === updatedFeed, "Renaming a feed should reuse the existing Feed instance.")
+	}
+
+	func testSyncFeedsForCollectionFoldersLeavesUntitledFeedNameAlone() {
+		let collections = [
+			FeedlyCollection(feeds: [FeedlyFeed(id: "feed/1", title: nil, updated: nil, website: nil)], label: "One", id: "collections/1")
+		]
+
+		let pairs = mirrorCollectionsAsFolders(collections, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+
+		let feed = account.existingFeed(withFeedID: "feed/1")
+		XCTAssertNotNil(feed)
+		XCTAssertNil(feed?.name)
+	}
+
+	func testSyncFeedsForCollectionFoldersKeepsRightToLeftFeedNameSanitized() {
+		let rawTitle = "<div style=\"direction:rtl;text-align:right\">חדשות</div>"
+		let collections = [
+			FeedlyCollection(feeds: [FeedlyFeed(id: "feed/1", title: rawTitle, updated: nil, website: nil)], label: "One", id: "collections/1")
+		]
+
+		let pairs = mirrorCollectionsAsFolders(collections, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+		syncFeedsForCollectionFolders(pairs, in: account)
+
+		let feed = account.existingFeed(withFeedID: "feed/1")
+		XCTAssertEqual(feed?.name, "חדשות", "The stored name should stay sanitized, not get rewritten to the raw RTL markup.")
+	}
+
+	func testSyncFeedsForCollectionFoldersRepairsStaleFeedID() {
+		let url = "https://example.com/feed.xml"
+		let canonicalFeedID = "feed/\(url)"
+		let folder = makeFolder(name: "Folder", externalID: "folder/1")
+
+		// A feed created from OPML before its settings row existed gets the bare URL as its feedID.
+		let staleFeed = account.createFeed(with: "Example", url: url, feedID: url, homePageURL: nil)
+		staleFeed.newArticleNotificationsEnabled = true
+		folder.addFeedToTreeAtTopLevel(staleFeed)
+
+		syncFeedsForCollectionFolders([
+			([FeedlyFeed(id: canonicalFeedID, title: "Example", updated: nil, website: nil)], folder)
+		], in: account)
+
+		let feeds = account.flattenedFeeds()
+		XCTAssertEqual(feeds.count, 1)
+
+		let repairedFeed = feeds.first
+		XCTAssertEqual(repairedFeed?.feedID, canonicalFeedID)
+		XCTAssertEqual(repairedFeed?.url, url)
+		assertFolder(folder, contains: [canonicalFeedID])
+
+		XCTAssertEqual(repairedFeed?.newArticleNotificationsEnabled, true, "Settings should survive a feedID repair.")
+	}
+
+	func testSyncFeedsForCollectionFoldersAfterRepairReusesFeedInstance() {
+		let url = "https://example.com/feed.xml"
+		let canonicalFeedID = "feed/\(url)"
+		let folder = makeFolder(name: "Folder", externalID: "folder/1")
+
+		let staleFeed = account.createFeed(with: "Example", url: url, feedID: url, homePageURL: nil)
+		folder.addFeedToTreeAtTopLevel(staleFeed)
+
+		let collectionFeeds = [FeedlyFeed(id: canonicalFeedID, title: "Example", updated: nil, website: nil)]
+
+		syncFeedsForCollectionFolders([(collectionFeeds, folder)], in: account)
+		let repairedFeed = folder.existingFeed(withFeedID: canonicalFeedID)
+		XCTAssertNotNil(repairedFeed)
+
+		// A second pass must not remove and recreate the feed — that was the pre-repair flapping.
+		syncFeedsForCollectionFolders([(collectionFeeds, folder)], in: account)
+		let secondPassFeed = folder.existingFeed(withFeedID: canonicalFeedID)
+
+		XCTAssertTrue(repairedFeed === secondPassFeed, "A repaired feed should be reused on subsequent syncs.")
+		XCTAssertEqual(account.flattenedFeeds().count, 1)
 	}
 
 	// MARK: - Combined behavior

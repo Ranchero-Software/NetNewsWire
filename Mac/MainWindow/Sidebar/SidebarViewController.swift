@@ -758,11 +758,9 @@ private extension SidebarViewController {
 	}
 
 	func shouldSkipRow(_ row: Int) -> Bool {
-		let skipExpandedFolders = UserDefaults.standard.bool(forKey: "JalkutRespectFolderExpansionOnNextUnread")
-
 		// Skip group items, because they should never be selected.
-		// Skip expanded folders only if Jalkut's pref is enabled.
-		if  rowIsGroupItem(row) || (skipExpandedFolders && rowIsExpandedFolder(row)) {
+		// Skip expanded folders — go to the feeds inside instead.
+		if rowIsGroupItem(row) || rowIsExpandedFolder(row) {
 			return true
 		}
 		return false

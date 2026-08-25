@@ -18,7 +18,7 @@ enum TimelineSourceMode {
 }
 
 final class MainWindowController: NSWindowController, NSUserInterfaceValidations {
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainWindowController")
+	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainWindowController")
 
 	@IBOutlet var articleThemePopUpButton: NSPopUpButton?
 
@@ -26,7 +26,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	private var isShowingExtractedArticle = false
 	private var articleExtractor: ArticleExtractor?
-	private var sharingServicePickerDelegate: NSSharingServicePickerDelegate?
+	private var sharingServicePickerDelegate: SharingServicePickerDelegate?
 
 	private let windowAutosaveName = NSWindow.FrameAutosaveName("MainWindow")
 	private static let mainWindowWidthsStateKey = "mainWindowWidthsStateKey"
@@ -149,7 +149,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		Self.logger.debug("MainWindowController: Saving state to UserDefaults: \(state)")
 		let data = try? NSKeyedArchiver.archivedData(withRootObject: state, requiringSecureCoding: true)
 		AppDefaults.shared.secureWindowState = data
-		window?.saveFrame(usingName: windowAutosaveName)
+		// Don't save the frame in full screen — it would replace the saved windowed frame with the screen's frame.
+		if let window, !window.styleMask.contains(.fullScreen) {
+			window.saveFrame(usingName: windowAutosaveName)
+		}
 	}
 
 	func restoreStateFromUserDefaults() {
@@ -387,6 +390,9 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return
 		}
 
+		// Flush coalesced unread-count updates so folder counts are current.
+		CoalescingQueue.standard.performCallsImmediately()
+
 		NSCursor.setHiddenUntilMouseMoves(true)
 
 		// TODO: handle search mode
@@ -533,19 +539,36 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			assertionFailure("Expected toolbarShowShareMenu to be called only by the Share item in the toolbar.")
 			return
 		}
-		guard let view = shareToolbarItem.view else {
-			// TODO: handle menu form representation
+		// In the toolbar's Text Only mode or overflow menu the item's view isn't on-window, so anchor the picker to the window instead.
+		let anchorView: NSView
+		let anchorRect: NSRect
+		if let view = shareToolbarItem.view, view.window != nil {
+			anchorView = view
+			anchorRect = view.bounds
+		} else if let contentView = window?.contentView {
+			anchorView = contentView
+			anchorRect = NSRect(x: contentView.frame.width / 2.0, y: contentView.frame.height - 4, width: 1, height: 1)
+		} else {
 			return
 		}
 
 		let sortedArticles = selectedArticles.sortedByDate(.orderedAscending)
 		let items = sortedArticles.map { ArticlePasteboardWriter(article: $0) }
-		let sharingServicePicker = NSSharingServicePicker(items: items)
-		sharingServicePicker.delegate = sharingServicePickerDelegate
-		sharingServicePicker.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+
+		detailViewController?.fetchSelectedHTML { selectedHTML in
+			self.sharingServicePickerDelegate?.selectedHTML = selectedHTML
+			let sharingServicePicker = NSSharingServicePicker(items: items)
+			sharingServicePicker.delegate = self.sharingServicePickerDelegate
+			sharingServicePicker.show(relativeTo: anchorRect, of: anchorView, preferredEdge: .minY)
+		}
 	}
 
 	@IBAction func moveFocusToSearchField(_ sender: Any?) {
+		// The search field lives in the toolbar — show it if hidden.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4896>
+		if let toolbar = window?.toolbar, !toolbar.isVisible {
+			toolbar.isVisible = true
+		}
 		guard let searchField = currentSearchField else {
 			return
 		}
@@ -852,6 +875,7 @@ extension MainWindowController: NSToolbarDelegate {
 			let button = ArticleExtractorButton()
 			button.action = #selector(toggleArticleExtractor(_:))
 			toolbarItem.view = button
+			toolbarItem.menuFormRepresentation = NSMenuItem(title: description, action: #selector(toggleArticleExtractor(_:)), keyEquivalent: "")
 			return toolbarItem
 
 		case .share:
@@ -1044,7 +1068,14 @@ private extension MainWindowController {
 
 	func restoreState(from state: MainWindowState) {
 		if state.isFullScreen {
-			window?.toggleFullScreen(self)
+			// Defer the toggle — during launch the window isn't on screen yet,
+			// and AppKit ignores toggleFullScreen for windows not yet on screen.
+			Task { @MainActor in
+				guard let window = self.window, !window.styleMask.contains(.fullScreen) else {
+					return
+				}
+				window.toggleFullScreen(nil)
+			}
 		}
 		restoreSplitViewState(from: state)
 
@@ -1157,6 +1188,10 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			// Text Only toolbar mode shows the label and menu form representation, so they need to track state too.
+			let shortName = markingRead ? NSLocalizedString("Mark Read", comment: "command") : NSLocalizedString("Mark Unread", comment: "command")
+			toolbarItem.label = shortName
+			toolbarItem.menuFormRepresentation?.title = shortName
 		}
 
 		if let menuItem = item as? NSMenuItem {
@@ -1241,6 +1276,10 @@ private extension MainWindowController {
 
 		if let toolbarItem = item as? NSToolbarItem {
 			toolbarItem.toolTip = commandName
+			// Text Only toolbar mode shows the label and menu form representation, so they need to track state too.
+			let shortName = starring ? NSLocalizedString("Star", comment: "Star") : NSLocalizedString("Unstar", comment: "Unstar")
+			toolbarItem.label = shortName
+			toolbarItem.menuFormRepresentation?.title = shortName
 		}
 
 		if let menuItem = item as? NSMenuItem {
@@ -1435,6 +1474,8 @@ private extension MainWindowController {
 		toolbarItem.view = button
 		toolbarItem.toolTip = title
 		toolbarItem.label = title
+		// A menu form representation keeps view-based items working in the toolbar's Text Only mode and overflow menu.
+		toolbarItem.menuFormRepresentation = NSMenuItem(title: title, action: Selector((selector)), keyEquivalent: "")
 		return toolbarItem
 	}
 

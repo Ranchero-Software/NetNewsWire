@@ -16,6 +16,14 @@ enum CreateReaderAPISubscriptionResult {
 	case notFound
 }
 
+/// Inoreader’s per-zone API usage, reported on every response. Zone 1 is reads.
+/// <https://www.inoreader.com/developers/rate-limiting>
+struct ReaderAPIUsageLimits {
+	let zone1Usage: Int
+	let zone1Limit: Int
+	let resetDate: Date
+}
+
 @MainActor final class ReaderAPICaller {
 	enum ItemIDType {
 		case unread
@@ -33,6 +41,11 @@ enum CreateReaderAPISubscriptionResult {
 		case readingList = "user/-/state/com.google/reading-list"
 	}
 
+	private struct ConditionalGetKeys {
+		static let subscriptions = "subscriptions"
+		static let tags = "tags"
+	}
+
 	private enum ReaderAPIEndpoints: String {
 		case login = "/accounts/ClientLogin"
 		case token = "/reader/api/0/token"
@@ -48,7 +61,7 @@ enum CreateReaderAPISubscriptionResult {
 		case editTag = "/reader/api/0/edit-tag"
 	}
 
-	private let session = URLSession.webservice
+	private let session = URLSession.makeWebserviceSession()
 	private let uriComponentAllowed: CharacterSet
 	private let logger: Logger
 	private var accessToken: String?
@@ -57,6 +70,9 @@ enum CreateReaderAPISubscriptionResult {
 
 	var variant: ReaderAPIVariant = .generic
 	var credentials: Credentials?
+
+	/// Most recent usage report. Nil for services that don’t send the headers.
+	private(set) var usageLimits: ReaderAPIUsageLimits?
 
 	@MainActor var server: String? {
 		apiBaseURL?.host
@@ -192,10 +208,13 @@ enum CreateReaderAPISubscriptionResult {
 			throw WebserviceError.noURL
 		}
 
-		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.tags)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials, conditionalGet: conditionalGet)
 		addVariantHeaders(&request)
 
-		let (_, wrapper) = try await session.send(request: request, resultType: ReaderAPITagContainer.self)
+		// A 304 Not Modified comes back with an empty body, so this returns nil — callers skip syncing.
+		let (response, wrapper) = try await session.send(request: request, resultType: ReaderAPITagContainer.self)
+		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
 		return wrapper?.tags
 	}
 
@@ -257,11 +276,14 @@ enum CreateReaderAPISubscriptionResult {
 			throw WebserviceError.noURL
 		}
 
-		var request = URLRequest(url: callURL, readerAPICredentials: credentials)
+		let conditionalGet = accountSettings?.conditionalGetInfo(for: ConditionalGetKeys.subscriptions)
+		var request = URLRequest(url: callURL, readerAPICredentials: credentials, conditionalGet: conditionalGet)
 		addVariantHeaders(&request)
 
 		do {
-			let (_, container) = try await session.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
+			// A 304 Not Modified comes back with an empty body, so this returns nil — callers skip syncing.
+			let (response, container) = try await session.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
+			storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
 			return container?.subscriptions
 		} catch {
 			logger.error("ReaderAPICaller: retrieveSubscriptions — error calling API: \(error.localizedDescription)")
@@ -410,26 +432,15 @@ enum CreateReaderAPISubscriptionResult {
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		// Get ids from above into hex representation of value
-		let idsToFetch = articleIDs.compactMap({ articleID -> String? in
-			if self.variant == .theOldReader {
-				return "i=tag:google.com,2005:reader/item/\(articleID)"
-			} else {
-				if let idValue = Int(articleID) {
-					let idHexString = String(idValue, radix: 16, uppercase: false)
-					return "i=tag:google.com,2005:reader/item/\(idHexString)"
-				} else {
-					return nil
-				}
-			}
-		}).joined(separator: "&")
+		let idsToFetch = articleIDs.compactMap(itemIDParameter).joined(separator: "&")
 		if idsToFetch.isEmpty {
 			return nil
 		}
 
 		let entryWrapper = try await withWriteToken(endpoint: baseURL) { token -> ReaderAPIEntryWrapper? in
 			let postData = Data("T=\(token)&output=json&\(idsToFetch)".utf8)
-			let (_, wrapper) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
+			let (response, wrapper) = try await session.send(request: request, method: HTTPMethod.post, data: postData, resultType: ReaderAPIEntryWrapper.self)
+			noteUsageLimits(from: response)
 			return wrapper
 		}
 
@@ -490,6 +501,7 @@ enum CreateReaderAPISubscriptionResult {
 		addVariantHeaders(&request)
 
 		let (response, entries) = try await session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		noteUsageLimits(from: response)
 
 		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
 			return [String]()
@@ -527,7 +539,8 @@ enum CreateReaderAPISubscriptionResult {
 		var request: URLRequest = URLRequest(url: callURL, readerAPICredentials: credentials)
 		addVariantHeaders(&request)
 
-		let (_, entries) = try await self.session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		let (response, entries) = try await self.session.send(request: request, resultType: ReaderAPIReferenceWrapper.self)
+		noteUsageLimits(from: response)
 
 		guard let entriesItemRefs = entries?.itemRefs, entriesItemRefs.count > 0 else {
 			return try await retrieveItemIDs(type: type, url: callURL, dateInfo: dateInfo, itemIDs: itemIDs, continuation: entries?.continuation, pageHandler: pageHandler)
@@ -611,22 +624,49 @@ private extension ReaderAPICaller {
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: "Content-Type")
 		request.httpMethod = "POST"
 
-		// Get ids from above into hex representation of value
-		let idsToFetch = entries.compactMap({ idValue -> String? in
-			if self.variant == .theOldReader {
-				return "i=tag:google.com,2005:reader/item/\(idValue)"
-			} else {
-				guard let intValue = Int(idValue) else { return nil }
-				let idHexString = String(format: "%.16llx", intValue)
-				return "i=tag:google.com,2005:reader/item/\(idHexString)"
-			}
-		}).joined(separator: "&")
+		let idsToFetch = entries.compactMap(itemIDParameter).joined(separator: "&")
 
 		let actionIndicator = add ? "a" : "r"
 
 		try await withWriteToken(endpoint: baseURL) { token in
 			let postData = Data("T=\(token)&\(idsToFetch)&\(actionIndicator)=\(state.rawValue)".utf8)
-			_ = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+			let (response, _) = try await session.send(request: request, method: HTTPMethod.post, payload: postData)
+			noteUsageLimits(from: response)
 		}
+	}
+
+	private enum UsageLimitHeader {
+		static let zone1Usage = "X-Reader-Zone1-Usage"
+		static let zone1Limit = "X-Reader-Zone1-Limit"
+		static let resetAfter = "X-Reader-Limits-Reset-After"
+	}
+
+	private static let defaultUsageLimitsResetAfter: TimeInterval = 60 * 60 * 24
+
+	private func storeConditionalGet(key: String, headers: [AnyHashable: Any]) {
+		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: headers), for: key)
+	}
+
+	private func noteUsageLimits(from response: HTTPURLResponse) {
+		guard let usageValue = response.value(forHTTPHeaderField: UsageLimitHeader.zone1Usage), let usage = Int(usageValue),
+			  let limitValue = response.value(forHTTPHeaderField: UsageLimitHeader.zone1Limit), let limit = Int(limitValue), limit > 0 else {
+			return
+		}
+		let resetAfter = response.value(forHTTPHeaderField: UsageLimitHeader.resetAfter).flatMap { TimeInterval($0) } ?? Self.defaultUsageLimitsResetAfter
+		usageLimits = ReaderAPIUsageLimits(zone1Usage: usage, zone1Limit: limit, resetDate: Date().addingTimeInterval(resetAfter))
+	}
+
+	/// Long-form item parameter for an articleID — i=tag:google.com,2005:reader/item/000000000004c608.
+	/// The long form is zero-padded 16-digit hex, two’s-complement for negative IDs.
+	/// Returns nil for an articleID that can’t be encoded for this server.
+	private func itemIDParameter(_ articleID: String) -> String? {
+		if variant == .theOldReader {
+			return "i=tag:google.com,2005:reader/item/\(articleID)"
+		}
+		guard let idValue = Int(articleID) else {
+			return nil
+		}
+		let idHexString = String(format: "%.16llx", idValue)
+		return "i=tag:google.com,2005:reader/item/\(idHexString)"
 	}
 }

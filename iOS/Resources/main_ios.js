@@ -8,7 +8,8 @@ class ImageViewer {
 	}
 
 	isLoaded() {
-		return this.img.classList.contains("nnwLoaded");
+		// img.complete covers images that loaded before the onload handler was added.
+		return this.img.classList.contains("nnwLoaded") || this.img.complete;
 	}
 
 	clicked() {
@@ -95,6 +96,12 @@ class ImageViewer {
 		// Add the click listener for images
 		window.onclick = function(event) {
 			if (event.target.matches("img") && !event.target.classList.contains("nnw-nozoom")) {
+				// An image inside a link navigates — it might be the only link to an
+				// important page. Zoom only standalone images.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/3641>
+				if (event.target.closest("a[href]")) {
+					return;
+				}
 				if (activeImageViewer && activeImageViewer.img === event.target) {
 					cancelImageLoad();
 				} else {
@@ -129,7 +136,18 @@ function showClickedImage() {
 }
 
 function showFeedInspectorSetup() {
-	document.getElementById("nnwImageIcon").onclick = function(event) {
+	const imageIcon = document.getElementById("nnwImageIcon");
+	if (!imageIcon) {
+		return;
+	}
+
+	// Tell VoiceOver the icon is a button that opens the Feed Info sheet.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4591>
+	imageIcon.setAttribute("role", "button");
+	imageIcon.setAttribute("tabindex", "0");
+	imageIcon.setAttribute("aria-label", nnwGetFeedInfoLabel);
+
+	imageIcon.onclick = function(event) {
 		window.webkit.messageHandlers.showFeedInspector.postMessage("");
 	}
 }
@@ -137,6 +155,22 @@ function showFeedInspectorSetup() {
 function postRenderProcessing() {
 	ImageViewer.init();
 	showFeedInspectorSetup();
+	postMediaSourceURLs();
+}
+
+// Tell the app which URLs are embedded media, so it can tell a real link tap
+// from WebKit’s synthesized link activation for a video’s source.
+function postMediaSourceURLs() {
+	var urls = new Set();
+	document.querySelectorAll("video, audio, video source, audio source").forEach(element => {
+		if (element.src) {
+			urls.add(element.src);
+		}
+		if (element.currentSrc) {
+			urls.add(element.currentSrc);
+		}
+	});
+	window.webkit.messageHandlers.mediaSourceURLs.postMessage(Array.from(urls));
 }
 
 function onResize() {
