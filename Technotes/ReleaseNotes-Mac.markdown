@@ -1,6 +1,10 @@
 # Mac Release Notes
 
-### 7.1.3 7207 19 Aug 2026 — brent: main tag: mac-7.1.3
+### 7.1.4b1 7209 26 Aug 2026 - branch: main tag: mac-7.1.4b1
+
+Fixed bug where article text could overlap the article’s top image in some feeds, including Gear Patrol’s
+
+### 7.1.3 7207 19 Aug 2026 — branch: main tag: mac-7.1.3
 
 Changes since 7.1.2:
 
@@ -70,22 +74,22 @@ Added Clean Up to the global keyboard shortcuts so the keyboard shortcut fires r
 Fixed Handoff showing “No selection” after the source device was locked
 Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning
 
-### 7.1.3b5 7206 16 Aug 2026 — brent: main tag: mac-7.1.3b5
+### 7.1.3b5 7206 16 Aug 2026 — branch: main tag: mac-7.1.3b5
 
 Fixed bug where feeds could lose their names and display as Untitled
 
-### 7.1.3b4 7205 11 Aug 2026 — brent: main tag: mac-7.1.3b4
+### 7.1.3b4 7205 11 Aug 2026 — branch: main tag: mac-7.1.3b4
 
 Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
 Made feed and sync requests wait for connectivity instead of failing when the network isn't ready, such as right after waking from sleep
 Stopped skipping feeds on the next refresh when the previous attempt failed with a connectivity error
 Hid the Slashdot discussion iframe that showed a cookie-consent banner in the article view
 
-### 7.1.3b3 7204 10 Aug 2026 — brent: main tag: mac-7.1.3b3
+### 7.1.3b3 7204 10 Aug 2026 — branch: main tag: mac-7.1.3b3
 
 Fixed bug where article titles, author names, and feed names from FreshRSS could show full-width versions of & < >
 
-### 7.1.3b2 7202 7 Aug 2026 — brent: main tag: mac-7.1.3b2
+### 7.1.3b2 7202 7 Aug 2026 — branch: main tag: mac-7.1.3b2
 
 Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning
 Fixed bug where an article updated during a refresh could reload the article view and reset the scroll position
