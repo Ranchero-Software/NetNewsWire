@@ -84,6 +84,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		becomeFirstResponder()
     }
 
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		coordinator?.sidebarDidLayout()
+	}
+
 	func configureCurrentActivityButton() {
 		if #available(iOS 26, *) {
 			// Toolbar button to open Current Activity. It lights up while activity is happening.
