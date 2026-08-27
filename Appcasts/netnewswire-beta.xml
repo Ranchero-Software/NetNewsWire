@@ -1,210 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
-    <channel>
-        <title>NetNewsWire Betas</title>
-        <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
-        <description>Most recent NetNewsWire changes with links to updates.</description>
-        <language>en</language>
+<channel>
+    <title>NetNewsWire Betas</title>
+    <link>https://ranchero.com/downloads/netnewswire-beta.xml</link>
+    <description>Most recent NetNewsWire changes with links to updates.</description>
+    <language>en</language>
 
-		<item>
-			<title>NetNewsWire 7.1.3</title>
-			<description><![CDATA[
-<p><b>Changes since 7.1.2:</b>
+<item>
+	<title>NetNewsWire 7.1.4b1</title>
+	<description><![CDATA[
 <ul>
-<li>Overhauled Feedly syncing to prevent too-many-requests that could get users temporarily banned
-<li>Fixed the Feedly mark-as-read backlog that could grow forever and re-send the same statuses
-<li>Fixed Feedly folder and feed bugs — renaming a folder during a refresh could delete it, restoring a deleted folder restored nothing, a failed move could leave a feed in two folders, same-named folders collapsed into one, and right-to-left and untitled feed names were rewritten every sync
-<li>Fixed bug where a Feedly feed the server no longer knows about could never be deleted
-<li>Made Feedly sign-in and token refresh more robust — canceling on the consent page no longer shows an error, expired tokens refresh reliably, and removing the account always removes its tokens from the Keychain
-<li>Used the published dates Feedly reports for articles, so a newly added feed’s archive is no longer dated all today
-<li>Paused Reader API syncing when the server reports too many requests, honoring its retry time — and Inoreader additionally conserves its API quota by skipping status downloads when near its daily limit
-<li>Sent queued article statuses for Inoreader on every status sync, so read and starred changes no longer wait out the quota throttle
-<li>Fixed folder creation for Reader API accounts (FreshRSS, BazQux, The Old Reader) — new folders no longer disappear before a feed makes them real on the server
-<li>Fixed Reader API article ID encoding that could make article downloads fail
-<li>Used conditional GET for Reader API tag and subscription lists
-<li>Posted real errors to the Error Log from Reader API status syncing, and kept an unread fetch failure from skipping the starred fetch
-<li>Fixed bug where article titles, author names, and feed names from FreshRSS could show full-width versions of &amp; &lt; &gt;
-<li>Fixed NewsBlur folder syncing aborting on a missing folder, applied server-side feed updates, and preserved locally edited feed names
-<li>Checked iCloud account status before syncing — feeds still refresh, without repeated error alerts, while iCloud is unavailable (such as when new Terms and Conditions need accepting, which now shows a clear message), and syncing resumes automatically when iCloud comes back
-<li>Fixed bug where an iCloud feed moved between folders could disappear until the destination folder synced
-<li>Fixed iCloud sync progress leaks that left the Refresh button and menu item wrongly disabled
-<li>Fixed bugs in Feedbin, Feedly, NewsBlur, and Reader API accounts where a status refresh could briefly revert just-made read and starred changes
-<li>Fixed bug where sending an article’s read status could delete its queued starred status
-<li>Made statuses queued when the app was killed get sent at next launch
-<li>Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
-<li>Fixed bug where feeds could lose their names and display as Untitled
-<li>Preserved custom feed titles from imported OPML across refreshes
-<li>Repaired a feed’s stored ID when a sync service reports a different authoritative one
-<li>Allowed accounts with the same username on different servers
-<li>Showed the account name and type in sync error messages, and stopped showing sync decoding errors as theme import errors
-<li>Dropped unhelpful recovery suggestions from error alerts that have no recovery options
-<li>Made feed and sync requests wait for connectivity instead of failing when the network isn't ready, such as right after waking from sleep
-<li>Stopped skipping feeds on the next refresh when the previous attempt failed with a connectivity error
-<li>Stopped caching failed downloads, so retrying a feed right after a timeout tries the network instead of reporting the feed not found
-<li>Fixed bug where a download callback that started a new download of the same URL was silently dropped
-<li>Used a browser user-agent string for image and theme downloads
-<li>Fixed bug where finishing a refresh could wrongly complete unrelated Activity Log activities, such as an in-progress feed subscribe
-<li>Fixed feed discovery bugs caused by slashes in unquoted HTML attribute values
-<li>Added a feed-finding special case for relay.fm/blog
-<li>Simplified the Safari extension — it sends the page URL and NetNewsWire does all feed discovery, and the toolbar button works without reloading the page
-<li>Supported Atom xml:base for resolving relative URLs
-<li>Extracted the article body from feeds that put a full HTML page in an article
-<li>Kept the current article in the timeline, and kept it selected, when the timeline updates and the sidebar selection hasn’t changed
-<li>Fixed bug where feed-list changes could drop read articles from the timeline before it was time to drop them
-<li>Updated smart feed unread counts on app activation and at the day change
-<li>Skipped expanded folders when going to the next unread, matching iOS
-<li>Removed punctuation and symbols when indexing search text, so words in curly quotes (for instance) are findable
-<li>Cleared undo stacks on all windows after dragging feeds in the sidebar, so a stale undo can’t misfire
-<li>Fixed sidebar cells laid out with a stale width
-<li>Improved contrast for the star icon in the smart feeds list
-<li>Fixed bug where an article updated during a refresh could reload the article view and reset the scroll position
-<li>Stopped scrolling from carrying over to the next article when switching articles mid-scroll
-<li>Fixed text selection in a footnote within a footnote
-<li>Fixed mailto links that were already percent-encoded showing a literal %20 in the subject line
-<li>Removed the system-generated Back and Forward commands from the article view contextual menu
-<li>Preserved the aspect ratio of fixed-size iframes when the article width shrinks them
-<li>Hid Mailchimp newsletter social icon walls and social-share icon blocks whose unsized SVG icons rendered at full width
-<li>Sized inline SVG icons that depend on stripped stylesheets — Tailwind classes and Material for MkDocs markup
-<li>Zeroed negative side margins on tables so they stay inside the article
-<li>Kept absolutely positioned feed content from escaping the article body and overlapping the title
-<li>Hid the Slashdot discussion iframe that showed a cookie-consent banner in the article view
-<li>Declared UTF-8 in the HTML written to the pasteboard when copying
-<li>Passed any selected HTML to MarsEdit and Micro.blog instead of plain text only
-<li>Restored full screen window state across launches
-<li>Made sure the toolbar is showing when moving focus to the search field
-<li>Enabled toolbar items in Text Only mode
-<li>Added Clean Up to the global keyboard shortcuts so the keyboard shortcut fires reliably
-<li>Fixed Handoff showing “No selection” after the source device was locked
-<li>Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning
+<li>Fixed bug where article text could overlap the article’s top image in some feeds, including Gear Patrol’s
 </ul>
-			]]></description>
-			<pubDate>Wed, 19 Aug 2026 10:10:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3/NetNewsWire7.1.3.zip" sparkle:version="7207" sparkle:shortVersionString="7.1.3" length="9760806" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
+	]]></description>
+	<pubDate>Wed, 26 Aug 2026 10:00:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.4b1/NetNewsWire7.1.4b1.zip" sparkle:version="7209" sparkle:shortVersionString="7.1.4b1" length="9761002" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
 
-		<item>
-			<title>NetNewsWire 7.1.3b5</title>
-			<description><![CDATA[
-			<p><b>Changes since 7.1.3b4:</b></p>
-				  <ul>
-				  <li>Fixed bug where feeds could lose their names and display as Untitled
-				</ul>
-			]]></description>
-			<pubDate>Sun, 16 Aug 2026 15:50:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b5/NetNewsWire7.1.3b5.zip" sparkle:version="7206" sparkle:shortVersionString="7.1.3b5" length="9760795" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.1.3b4</title>
-            <description><![CDATA[
-            <p><b>Changes since 7.1.3b3:</b></p>
-  				<ul>
-				  <li>Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
-				  <li>Made feed and sync requests wait for connectivity instead of failing when the network isn't ready, such as right after waking from sleep
-				  <li>Stopped skipping feeds on the next refresh when the previous attempt failed with a connectivity error
-				  <li>Hid the Slashdot discussion iframe that showed a cookie-consent banner in the article view
-				</ul>
-			]]></description>
-        	<pubDate>Tue, 11 Aug 2026 20:55:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b4/NetNewsWire7.1.3b4.zip" sparkle:version="7205" sparkle:shortVersionString="7.1.3b4" length="9758767" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.1.3b3</title>
-            <description><![CDATA[
-            <p><b>Changes since 7.1.3b2:</b></p>
-  				<ul>
-				  <li>Fixed bug where article titles, author names, and feed names from FreshRSS could show full-width versions of &amp; &lt; &gt;
-				</ul>
-			]]></description>
-        	<pubDate>Mon, 10 Aug 2026 11:45:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b3/NetNewsWire7.1.3b3.zip" sparkle:version="7204" sparkle:shortVersionString="7.1.3b3" length="9747303" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.1.3b2</title>
-            <description><![CDATA[
-            <p><b>Changes since 7.1.3b1:</b></p>
-  				<ul>
-				  <li>Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning (after this update)
-				  <li>Fixed bug where an article updated during a refresh could reload the article view and reset the scroll position
-				  <li>Fixed bug where finishing a refresh could wrongly complete unrelated Activity Log activities, such as an in-progress feed subscribe
-				  <li>Removed the system-generated Back and Forward commands from the article view contextual menu
-				</ul>
-			]]></description>
-        	<pubDate>Fri, 07 Aug 2026 11:10:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b2/NetNewsWire7.1.3b2.zip" sparkle:version="7202" sparkle:shortVersionString="7.1.3b2" length="9745906" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-		<item>
-			<title>NetNewsWire 7.1.3b1</title>
-            <description><![CDATA[
-            <p><b>There are lots of bug fixes in this build</b> — which means a lot of code was touched, which could mean there are brand-new bugs. Your help testing is appreciated!</p>
-  				<ul>
-				  <li>Overhauled Feedly syncing to prevent the request floods that could get users temporarily banned — syncing pauses when Feedly reports rate limiting, fetches only what changed since the last sync, caps article downloads per refresh, and directly refreshes a few feeds each sync to backfill articles missing from Feedly’s aggregate stream
-				  <li>Fixed the Feedly mark-as-read backlog that could grow forever and re-send the same statuses — sent statuses are recorded as they succeed, and statuses Feedly can no longer accept (articles past its 31-day marker limit) are dropped
-				  <li>Used the published dates Feedly reports for articles, so a newly added feed’s archive is no longer dated all today
-				  <li>Fixed Feedly folder and feed bugs — renaming a folder during a refresh could delete it, restoring a deleted folder restored nothing, a failed move could leave a feed in two folders, same-named folders collapsed into one, and right-to-left and untitled feed names were rewritten every sync
-				  <li>Made Feedly sign-in and token refresh more robust — canceling on the consent page no longer shows an error, expired tokens refresh reliably, and removing the account always removes its tokens from the Keychain
-				  <li>Fixed bug where a Feedly feed the server no longer knows about could never be deleted
-				  <li>Paused Reader API syncing when the server reports too many requests, honoring its retry time — and Inoreader additionally conserves its API quota by skipping status downloads when near its daily limit
-				  <li>Sent queued article statuses for Inoreader on every status sync, so read and starred changes no longer wait out the quota throttle
-				  <li>Fixed folder creation for Reader API accounts (FreshRSS, BazQux, The Old Reader) — new folders no longer disappear before a feed makes them real on the server
-				  <li>Fixed Reader API article ID encoding that could make article downloads fail
-				  <li>Used conditional GET for Reader API tag and subscription lists
-				  <li>Posted real errors to the Error Log from Reader API status syncing, and kept an unread fetch failure from skipping the starred fetch
-				  <li>Fixed NewsBlur folder syncing aborting on a missing folder, applied server-side feed updates, and preserved locally edited feed names
-				  <li>Checked iCloud account status before syncing — feeds still refresh, without repeated error alerts, while iCloud is unavailable (such as when new Terms and Conditions need accepting, which now shows a clear message), and syncing resumes automatically when iCloud comes back
-				  <li>Fixed bug where an iCloud feed moved between folders could disappear until the destination folder synced
-				  <li>Fixed iCloud sync progress leaks that left the Refresh button and menu item wrongly disabled
-				  <li>Fixed bugs in Feedbin, Feedly, NewsBlur, and Reader API accounts where a status refresh could briefly revert just-made read and starred changes
-				  <li>Fixed bug where sending an article’s read status could delete its queued starred status
-				  <li>Made statuses queued when the app was killed get sent at next launch
-				  <li>Repaired a feed’s stored ID when a sync service reports a different authoritative one
-				  <li>Allowed accounts with the same username on different servers
-				  <li>Showed the account name and type in sync error messages, and stopped showing sync decoding errors as theme import errors
-				  <li>Dropped unhelpful recovery suggestions from error alerts that have no recovery options
-				  <li>Fixed feed discovery bugs caused by slashes in unquoted HTML attribute values
-				  <li>Supported Atom xml:base for resolving relative URLs
-				  <li>Preserved custom feed titles from imported OPML across refreshes
-				  <li>Added a feed-finding special case for relay.fm/blog
-				  <li>Extracted the article body from feeds that put a full HTML page in an article
-				  <li>Simplified the Safari extension — it sends the page URL and NetNewsWire does all feed discovery, and the toolbar button works without reloading the page
-				  <li>Used a browser user-agent string for image and theme downloads
-				  <li>Removed punctuation and symbols when indexing search text, so words in curly quotes (for instance) are findable
-				  <li>Kept the current article in the timeline, and kept it selected, when the timeline updates and the sidebar selection hasn’t changed
-				  <li>Fixed bug where feed-list changes could drop read articles from the timeline before it was time to drop them
-				  <li>Updated smart feed unread counts on app activation and at the day change
-				  <li>Skipped expanded folders when going to the next unread, matching iOS
-				  <li>Cleared undo stacks on all windows after dragging feeds in the sidebar, so a stale undo can’t misfire
-				  <li>Fixed sidebar cells laid out with a stale width
-				  <li>Improved contrast for the star icon in the smart feeds list
-				  <li>Stopped scrolling from carrying over to the next article when switching articles mid-scroll
-				  <li>Preserved the aspect ratio of fixed-size iframes when the article width shrinks them
-				  <li>Hid Mailchimp newsletter social icon walls and social-share icon blocks whose unsized SVG icons rendered at full width
-				  <li>Sized inline SVG icons that depend on stripped stylesheets — Tailwind classes and Material for MkDocs markup
-				  <li>Zeroed negative side margins on tables so they stay inside the article
-				  <li>Kept absolutely positioned feed content from escaping the article body and overlapping the title
-				  <li>Fixed text selection in a footnote within a footnote
-				  <li>Fixed mailto links that were already percent-encoded showing a literal %20 in the subject line
-				  <li>Declared UTF-8 in the HTML written to the pasteboard when copying
-				  <li>Passed any selected HTML to MarsEdit and Micro.blog instead of plain text only
-				  <li>Restored full screen window state across launches
-				  <li>Made sure the toolbar is showing when moving focus to the search field
-				  <li>Enabled toolbar items in Text Only mode
-				  <li>Added Clean Up to the global keyboard shortcuts so the keyboard shortcut fires reliably
-				  <li>Fixed Handoff showing “No selection” after the source device was locked
-				</ul>
-			]]></description>
-        	<pubDate>Tue, 04 Aug 2026 10:30:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.3b1/NetNewsWire7.1.3b1.zip" sparkle:version="7200" sparkle:shortVersionString="7.1.3b1" length="10744873" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
-
-    </channel>
+</channel>
 </rss>
