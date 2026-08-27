@@ -336,12 +336,10 @@ final class WebViewController: UIViewController {
 	}
 
 	func openInAppBrowser() {
-		guard let url = article?.preferredURL else { return }
-		if AppDefaults.shared.useSystemBrowser {
-			UIApplication.shared.open(url, options: [:])
-		} else {
-			openURLInSafariViewController(url)
+		guard let url = article?.preferredURL else {
+			return
 		}
+		openURLInSafariViewController(url)
 	}
 }
 
