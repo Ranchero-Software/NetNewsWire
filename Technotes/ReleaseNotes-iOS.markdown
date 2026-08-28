@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.1.4 build 7210 27 Aug 2026 - branch: main tag: iOS-7.1.4-7210
+
+Fixed bug restoring sidebar width on iPad
+
 ### 7.1.4 build 7209 26 Aug 2026 - branch: main tag: iOS-7.1.4-7209
 
 Fixed bug where article text could overlap the article’s top image in some feeds, including Gear Patrol’s
