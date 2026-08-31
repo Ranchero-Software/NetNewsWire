@@ -126,12 +126,11 @@ final class DinosaursWindowController: NSWindowController {
 		alert.addButton(withTitle: NSLocalizedString("Delete", comment: "Delete button"))
 		alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
-		let selectedIndexes = tableView.selectedRowIndexes
 		alert.beginSheetModal(for: window) { [weak self] response in
 			guard response == .alertFirstButtonReturn, let self else {
 				return
 			}
-			let deletions = self.model.deleteFeeds(at: selectedIndexes)
+			let deletions = self.model.deleteFeeds(rows)
 			self.registerUndoableDelete(deletions)
 			self.refreshModel()
 		}
@@ -214,8 +213,10 @@ extension DinosaursWindowController: NSTableViewDataSource {
 		guard let descriptor = tableView.sortDescriptors.first, let rawKey = descriptor.key, let key = DinosaurSortKey(rawValue: rawKey) else {
 			return
 		}
+		let previousSelection = Set(selectedRows.map(\.id))
 		model.sortBy(key, ascending: descriptor.ascending)
 		tableView.reloadData()
+		restoreSelection(previousSelection)
 	}
 }
 
