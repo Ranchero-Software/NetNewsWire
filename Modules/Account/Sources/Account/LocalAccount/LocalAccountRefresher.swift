@@ -143,6 +143,11 @@ import os
 
 		let urls = filteredFeeds.compactMap { Self.url(for: $0) }
 
+		// This refresh replaces any in-flight one, so resume its caller rather than stranding it.
+		if let previousCompletion = self.completion {
+			previousCompletion()
+		}
+
 		self.completion = completion
 		downloadSession.download(Set(urls))
 	}
