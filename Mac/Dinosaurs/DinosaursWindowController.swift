@@ -108,7 +108,7 @@ final class DinosaursWindowController: NSWindowController {
 
 	@IBAction func deleteSelectedFeeds(_ sender: Any?) {
 		let rows = selectedRows
-		guard !rows.isEmpty, let tableView, let window else {
+		guard !rows.isEmpty, tableView != nil, let window else {
 			return
 		}
 
