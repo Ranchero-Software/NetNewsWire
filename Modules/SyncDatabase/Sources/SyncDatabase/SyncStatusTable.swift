@@ -39,18 +39,22 @@ struct SyncStatusTable {
 			return statuses
 		}
 
-		// An articleID can have both a read row and a starred row, so match on the pair.
-		var parameters = [AnyObject]()
-		let conditions = statuses.map { status -> String in
-			parameters.append(status.articleID as AnyObject)
-			parameters.append(status.key.rawValue as AnyObject)
-			return "(articleID = ? and key = ?)"
-		}
-
-		let updateSQL = "update \(name) set selected = true where \(conditions.joined(separator: " or "))"
-		guard database.executeUpdate(updateSQL, withArgumentsIn: parameters) else {
-			database.rollback()
-			return nil
+		// An articleID can have both a read row and a starred row, so match on the pair —
+		// grouping by key means each statement touches only that key’s articleIDs.
+		let statusesByKey = Dictionary(grouping: statuses, by: \.key)
+		for (key, statusesForKey) in statusesByKey {
+			let articleIDs = statusesForKey.map { $0.articleID }
+			guard let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count)) else {
+				database.rollback()
+				return nil
+			}
+			var parameters = articleIDs.map { $0 as AnyObject }
+			parameters.append(key.rawValue as AnyObject)
+			let updateSQL = "update \(name) set selected = true where articleID in \(placeholders) and key = ?"
+			guard database.executeUpdate(updateSQL, withArgumentsIn: parameters) else {
+				database.rollback()
+				return nil
+			}
 		}
 
 		database.commit()
