@@ -13,6 +13,18 @@ import Secrets
 
 final class AccountsReaderAPIWindowController: NSWindowController {
 
+	private struct CustomHeaderFieldSet {
+		let container: NSStackView
+		let nameTextField: NSTextField
+		let valueTextField: NSTextField
+	}
+
+	private struct CustomHeaderValidationError: LocalizedError {
+		var errorDescription: String? {
+			NSLocalizedString("Custom header names and values are required. Header names must be valid HTTP field names.", comment: "FreshRSS Custom HTTP Header Error")
+		}
+	}
+
 	@IBOutlet var titleImageView: NSImageView!
 	@IBOutlet var titleLabel: NSTextField!
 
@@ -30,6 +42,13 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 	var accountType: AccountType?
 
 	private weak var hostWindow: NSWindow?
+	private var customHeaderStackView: NSStackView?
+	private var customHeaderFieldSets = [CustomHeaderFieldSet]()
+	private var baseWindowFrame: NSRect?
+	private let customHeaderAdditionalWidth: CGFloat = 0
+	private let customHeaderSectionHeight: CGFloat = 37
+	private let customHeaderRowHeight: CGFloat = 91
+	private let customHeaderFieldWidth: CGFloat = 200
 
 	convenience init() {
 		self.init(windowNibName: NSNib.Name("AccountsReaderAPI"))
@@ -64,14 +83,23 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			}
 		}
 
+		baseWindowFrame = window?.frame
 		if let account = account, let credentials = try? account.retrieveCredentials(type: .readerBasic) {
 			usernameTextField.stringValue = credentials.username
 			apiURLTextField.stringValue = account.endpointURL?.absoluteString ?? ""
 			actionButton.title = NSLocalizedString("Update", comment: "Update")
+			if accountType == .freshRSS {
+				let customHeaders = (try? account.retrieveReaderAPICustomHTTPHeaders()) ?? []
+				addCustomHeaderControls(customHeaders: customHeaders)
+			}
 		} else {
 			actionButton.title = NSLocalizedString("Create", comment: "Create")
+			if accountType == .freshRSS {
+				addCustomHeaderControls(customHeaders: [])
+			}
 		}
 
+		resizeWindowForCustomHeaders()
 		enableAutofill()
 		usernameTextField.becomeFirstResponder()
 	}
@@ -132,6 +160,14 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			return
 		}
 
+		let customHTTPHeaders: [ReaderAPICustomHTTPHeader]
+		do {
+			customHTTPHeaders = try validatedCustomHTTPHeaders()
+		} catch {
+			self.errorMessageLabel.stringValue = error.localizedDescription
+			return
+		}
+
 		Task { @MainActor in
 			actionButton.isEnabled = false
 			progressIndicator.isHidden = false
@@ -145,7 +181,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 
 			let credentials = Credentials(type: .readerBasic, username: trimmedUsername, secret: passwordTextField.stringValue)
 			do {
-				let validatedCredentials = try await Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL)
+				let validatedCredentials = try await Account.validateCredentials(type: accountType, credentials: credentials, endpoint: apiURL, customHTTPHeaders: customHTTPHeaders)
 				stopAnimation()
 
 				guard let validatedCredentials else {
@@ -162,6 +198,7 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 
 					try account?.storeCredentials(credentials)
 					try account?.storeCredentials(validatedCredentials)
+					try account?.storeReaderAPICustomHTTPHeaders(customHTTPHeaders)
 
 					hostWindow?.endSheet(window!, returnCode: NSApplication.ModalResponse.OK)
 
@@ -196,6 +233,160 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 	func enableAutofill() {
 		usernameTextField.contentType = .username
 		passwordTextField.contentType = .password
+	}
+
+}
+
+private extension AccountsReaderAPIWindowController {
+
+	func addCustomHeaderControls(customHeaders: [ReaderAPICustomHTTPHeader]) {
+		guard customHeaderStackView == nil else {
+			return
+		}
+
+		let label = NSTextField(labelWithString: NSLocalizedString("Headers:", comment: "FreshRSS Custom HTTP Headers"))
+		label.alignment = .right
+
+		let stackView = NSStackView()
+		stackView.orientation = .vertical
+		stackView.alignment = .left
+		stackView.spacing = 6
+		stackView.translatesAutoresizingMaskIntoConstraints = false
+		customHeaderStackView = stackView
+
+		gridView.addRow(with: [label, stackView])
+		gridView.row(at: gridView.numberOfRows - 1).topPadding = 6
+
+		for customHeader in customHeaders {
+			appendCustomHeaderFieldSet(name: customHeader.name, value: customHeader.value)
+		}
+
+		addCustomHeaderButton()
+	}
+
+	func addCustomHeaderButton() {
+		guard let customHeaderStackView else {
+			return
+		}
+
+		let button = NSButton(title: NSLocalizedString("Add Custom Header", comment: "FreshRSS Custom HTTP Header Button"), target: self, action: #selector(addCustomHeader(_:)))
+		button.bezelStyle = .rounded
+		button.controlSize = .small
+		button.setContentCompressionResistancePriority(.required, for: .horizontal)
+		button.setContentHuggingPriority(.required, for: .horizontal)
+		customHeaderStackView.addArrangedSubview(button)
+	}
+
+	@objc func addCustomHeader(_ sender: Any) {
+		appendCustomHeaderFieldSet(name: "", value: "")
+		resizeWindowForCustomHeaders()
+	}
+
+	func appendCustomHeaderFieldSet(name: String, value: String) {
+		guard let customHeaderStackView else {
+			return
+		}
+
+		let nameTextField = NSTextField()
+		nameTextField.placeholderString = NSLocalizedString("Header name", comment: "FreshRSS Custom HTTP Header Name")
+		nameTextField.stringValue = name
+		nameTextField.translatesAutoresizingMaskIntoConstraints = false
+		nameTextField.cell?.usesSingleLineMode = true
+		nameTextField.cell?.lineBreakMode = .byTruncatingTail
+		nameTextField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+		nameTextField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
+		let valueTextField = NSTextField()
+		valueTextField.placeholderString = NSLocalizedString("Header value", comment: "FreshRSS Custom HTTP Header Value")
+		valueTextField.stringValue = value
+		valueTextField.translatesAutoresizingMaskIntoConstraints = false
+		valueTextField.cell?.usesSingleLineMode = true
+		valueTextField.cell?.lineBreakMode = .byTruncatingTail
+		valueTextField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+		valueTextField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+
+		let removeButton = NSButton(title: "", target: self, action: #selector(removeCustomHeader(_:)))
+		removeButton.image = NSImage(systemSymbolName: "minus.circle", accessibilityDescription: NSLocalizedString("Remove Custom Header", comment: "FreshRSS Remove Custom HTTP Header"))
+		removeButton.title = NSLocalizedString("Remove Header", comment: "FreshRSS Remove Custom HTTP Header Button")
+		removeButton.imagePosition = .imageLeading
+		removeButton.bezelStyle = .rounded
+		removeButton.isBordered = false
+		removeButton.setContentCompressionResistancePriority(.required, for: .horizontal)
+		removeButton.setContentHuggingPriority(.required, for: .horizontal)
+
+		let fieldsStackView = NSStackView(views: [nameTextField, valueTextField, removeButton])
+		fieldsStackView.orientation = .vertical
+		fieldsStackView.alignment = .leading
+		fieldsStackView.spacing = 4
+		fieldsStackView.translatesAutoresizingMaskIntoConstraints = false
+		fieldsStackView.setContentCompressionResistancePriority(.required, for: .horizontal)
+
+		NSLayoutConstraint.activate([
+			nameTextField.widthAnchor.constraint(equalToConstant: customHeaderFieldWidth),
+			valueTextField.widthAnchor.constraint(equalToConstant: customHeaderFieldWidth),
+			fieldsStackView.widthAnchor.constraint(equalToConstant: customHeaderFieldWidth)
+		])
+
+		if let addButton = customHeaderStackView.arrangedSubviews.last as? NSButton {
+			customHeaderStackView.insertArrangedSubview(fieldsStackView, at: max(customHeaderStackView.arrangedSubviews.count - 1, 0))
+			addButton.nextKeyView = nameTextField
+		} else {
+			customHeaderStackView.addArrangedSubview(fieldsStackView)
+		}
+
+		removeButton.target = self
+		removeButton.action = #selector(removeCustomHeader(_:))
+		customHeaderFieldSets.append(CustomHeaderFieldSet(container: fieldsStackView, nameTextField: nameTextField, valueTextField: valueTextField))
+	}
+
+	@objc func removeCustomHeader(_ sender: NSButton) {
+		guard let customHeaderStackView, let fieldSet = customHeaderFieldSets.first(where: { sender.isDescendant(of: $0.container) }) else {
+			return
+		}
+
+		customHeaderStackView.removeArrangedSubview(fieldSet.container)
+		fieldSet.container.removeFromSuperview()
+		customHeaderFieldSets.removeAll { $0.container == fieldSet.container }
+		resizeWindowForCustomHeaders()
+	}
+
+	func resizeWindowForCustomHeaders() {
+		guard let window, let baseWindowFrame else {
+			return
+		}
+
+		let additionalHeight = customHeaderStackView == nil ? 0 : customHeaderSectionHeight + (CGFloat(customHeaderFieldSets.count) * customHeaderRowHeight)
+		let additionalWidth = customHeaderStackView == nil ? 0 : customHeaderAdditionalWidth
+		var frame = baseWindowFrame
+		frame.size.height += additionalHeight
+		frame.origin.y -= additionalHeight
+		frame.size.width += additionalWidth
+		frame.origin.x -= additionalWidth / 2
+		window.setFrame(frame, display: true)
+	}
+
+	func validatedCustomHTTPHeaders() throws -> [ReaderAPICustomHTTPHeader] {
+		guard accountType == .freshRSS else {
+			return []
+		}
+
+		var customHeaders = [ReaderAPICustomHTTPHeader]()
+		for fieldSet in customHeaderFieldSets {
+			let name = fieldSet.nameTextField.stringValue
+			let value = fieldSet.valueTextField.stringValue
+
+			if name.trimmingWhitespace.isEmpty && value.trimmingWhitespace.isEmpty {
+				continue
+			}
+
+			guard let customHeader = ReaderAPICustomHTTPHeader(name: name, value: value) else {
+				throw CustomHeaderValidationError()
+			}
+
+			customHeaders.append(customHeader)
+		}
+
+		return customHeaders
 	}
 
 }

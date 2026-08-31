@@ -58,6 +58,7 @@ public enum CredentialsType: String, Sendable {
 	case newsBlurSessionID = "newsBlurSessionId"
 	case readerBasic = "readerBasic"
 	case readerAPIKey = "readerAPIKey"
+	case readerAPICustomHTTPHeaders = "readerAPICustomHTTPHeaders"
 	case oauthAccessToken = "oauthAccessToken"
 	case oauthAccessTokenSecret = "oauthAccessTokenSecret"
 	case oauthRefreshToken = "oauthRefreshToken"
