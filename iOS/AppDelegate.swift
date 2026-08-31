@@ -415,23 +415,43 @@ private extension AppDelegate {
 
 		Self.logger.info("Performing background refresh.")
 
-		Task { @MainActor in
+		let refreshTaskIsCompleted = OSAllocatedUnfairLock(initialState: false)
+
+		/// Make sure task.setTaskCompleted is called exactly once.
+		func completeRefreshTask(success: Bool) {
+			let shouldComplete = refreshTaskIsCompleted.withLock { isCompleted -> Bool in
+				if isCompleted {
+					return false
+				}
+				isCompleted = true
+				return true
+			}
+			guard shouldComplete else {
+				return
+			}
+			if success {
+				Self.logger.info("Background refresh completed.")
+			} else {
+				Self.logger.info("Background refresh terminated for running too long.")
+			}
+			task.setTaskCompleted(success: success)
+		}
+
+		let refreshTask = Task { @MainActor in
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
 			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
-			if !AccountManager.shared.isSuspended {
+			if !Task.isCancelled {
 				await WidgetDataEncoder.shared?.encodeAndWait()
-				self.suspendApplication()
-				Self.logger.info("Background refresh completed.")
-				task.setTaskCompleted(success: true)
 			}
+			self.suspendApplication()
+			completeRefreshTask(success: true)
 		}
 
-		// set expiration handler
-		task.expirationHandler = { [weak task] in
-			Self.logger.info("Background refresh terminated for running too long.")
-			task?.setTaskCompleted(success: false)
+		task.expirationHandler = {
+			refreshTask.cancel()
+			completeRefreshTask(success: false)
 			Task { @MainActor in
 				self.suspendApplication()
 			}
