@@ -399,7 +399,7 @@ private extension AppDelegate {
 		// task scheduler can hang indefinitely.
 		backgroundTaskDispatchQueue.async {
 			do {
-				let earliestBeginInterval: TimeInterval = 15 * 60
+				let earliestBeginInterval: TimeInterval = 60 * 60
 				let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
 				request.earliestBeginDate = Date(timeIntervalSinceNow: earliestBeginInterval)
 				try BGTaskScheduler.shared.submit(request)
