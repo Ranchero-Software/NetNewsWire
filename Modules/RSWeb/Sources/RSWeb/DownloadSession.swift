@@ -39,7 +39,7 @@ struct HTTP4xxResponse {
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
 	private var tasksPending = Set<URLSessionTask>()
-	private var taskIdentifierToInfoDictionary = [Int: DownloadInfo]()
+	private var taskToInfoDictionary = [URLSessionTask: DownloadInfo]()
 	private var urlsInSession = Set<URL>()
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [URL: URL]()
@@ -276,7 +276,7 @@ private extension DownloadSession {
 		let task = urlSession.dataTask(with: urlRequest)
 
 		let info = DownloadInfo(url)
-		taskIdentifierToInfoDictionary[task.taskIdentifier] = info
+		taskToInfoDictionary[task] = info
 
 		tasksPending.insert(task)
 		task.resume()
@@ -288,13 +288,13 @@ private extension DownloadSession {
 	}
 
 	func infoForTask(_ task: URLSessionTask) -> DownloadInfo? {
-		return taskIdentifierToInfoDictionary[task.taskIdentifier]
+		return taskToInfoDictionary[task]
 	}
 
 	@MainActor func removeTask(_ task: URLSessionTask) {
 		tasksInProgress.remove(task)
 		tasksPending.remove(task)
-		taskIdentifierToInfoDictionary[task.taskIdentifier] = nil
+		taskToInfoDictionary[task] = nil
 
 		addDataTaskFromQueueIfNecessary()
 
