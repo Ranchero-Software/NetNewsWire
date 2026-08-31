@@ -124,6 +124,12 @@ struct HTTP4xxResponse {
 		cleanUp4xxResponsesCache()
 
 		let filteredURLs = Self.filteredURLs(urls)
+
+		if filteredURLs.isEmpty {
+			delegate.downloadSessionDidComplete(self)
+			return
+		}
+
 		for url in filteredURLs {
 			addDataTask(url)
 		}
