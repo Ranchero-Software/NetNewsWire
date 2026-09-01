@@ -383,6 +383,12 @@ import ActivityLog
 		}
 	}
 
+	public func saveAllIfNeeded() {
+		for account in accounts {
+			account.saveIfNeeded()
+		}
+	}
+
 	public func anyAccountHasAtLeastOneFeed() -> Bool {
 		for account in activeAccounts {
 			if account.hasAtLeastOneFeed() {

@@ -52,6 +52,13 @@ import RSParser
 			Self.logger.error("OPML save to disk failed: \(error.localizedDescription)")
 		}
 	}
+
+	@objc func saveToDiskIfNeeded() {
+		if isDirty {
+			isDirty = false
+			save()
+		}
+	}
 }
 
 private extension OPMLFile {
@@ -65,13 +72,6 @@ private extension OPMLFile {
 			Task { @MainActor in
 				saveQueue.add(self, #selector(saveToDiskIfNeeded))
 			}
-		}
-	}
-
-	@objc func saveToDiskIfNeeded() {
-		if isDirty {
-			isDirty = false
-			save()
 		}
 	}
 

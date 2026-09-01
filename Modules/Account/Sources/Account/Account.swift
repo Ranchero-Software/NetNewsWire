@@ -556,6 +556,10 @@ public enum FetchType {
 		}
 	}
 
+	public func saveIfNeeded() {
+		opmlFile.saveToDiskIfNeeded()
+	}
+
 	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted()
 	}
