@@ -750,10 +750,10 @@ private extension ReaderAPIAccountDelegate {
 
 		do {
 			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
-				let tags = try await caller.retrieveTags()
+				let (tags, tagsResponse) = try await caller.retrieveTags()
 				refreshProgress.completeTask()
 
-				let subscriptions = try await caller.retrieveSubscriptions()
+				let (subscriptions, subscriptionsResponse) = try await caller.retrieveSubscriptions()
 				refreshProgress.completeTask()
 
 				BatchUpdate.shared.perform {
@@ -761,6 +761,12 @@ private extension ReaderAPIAccountDelegate {
 					self.syncFeeds(account, subscriptions)
 					self.syncFeedFolderRelationship(account, subscriptions)
 				}
+
+				// Commit the conditional-GET etags only now that the data is applied, so an
+				// interrupted refresh can't leave an etag ahead of the model and 304 forever.
+				caller.storeConditionalGet(key: ReaderAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
+				caller.storeConditionalGet(key: ReaderAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
+
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})
 		} catch {

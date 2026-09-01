@@ -95,7 +95,7 @@ enum CreateSubscriptionResult {
 		return importResult
 	}
 
-	func retrieveTags() async throws -> [FeedbinTag]? {
+	func retrieveTags() async throws -> (tags: [FeedbinTag]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -105,8 +105,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, tags) = try await session.send(request: request, resultType: [FeedbinTag].self)
-		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
-		return tags
+		return (tags, response)
 	}
 
 	func renameTag(oldName: String, newName: String) async throws {
@@ -121,7 +120,7 @@ enum CreateSubscriptionResult {
 		try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
+	func retrieveSubscriptions() async throws -> (subscriptions: [FeedbinSubscription]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -133,8 +132,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, subscriptions) = try await session.send(request: request, resultType: [FeedbinSubscription].self)
-		storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
-		return subscriptions
+		return (subscriptions, response)
 	}
 
 	func createSubscription(url: String) async throws -> CreateSubscriptionResult {
@@ -215,7 +213,7 @@ enum CreateSubscriptionResult {
 		try await session.send(request: request, method: HTTPMethod.delete)
 	}
 
-	func retrieveTaggings() async throws -> [FeedbinTagging]? {
+	func retrieveTaggings() async throws -> (taggings: [FeedbinTagging]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -225,8 +223,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, taggings) = try await session.send(request: request, resultType: [FeedbinTagging].self)
-		storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
-		return taggings
+		return (taggings, response)
 	}
 
 	func createTagging(feedID: Int, name: String) async throws -> Int {
@@ -378,7 +375,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, unreadEntries) = try await session.send(request: request, resultType: [Int].self)
-		storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
+		storeConditionalGet(key: ConditionalGetKeys.unreadEntries, response: response)
 		return unreadEntries
 	}
 
@@ -416,7 +413,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, starredEntries) = try await session.send(request: request, resultType: [Int].self)
-		storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
+		storeConditionalGet(key: ConditionalGetKeys.starredEntries, response: response)
 		return starredEntries
 	}
 
@@ -449,8 +446,11 @@ enum CreateSubscriptionResult {
 
 extension FeedbinAPICaller {
 
-	func storeConditionalGet(key: String, headers: [AnyHashable: Any]) {
-		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: headers), for: key)
+	func storeConditionalGet(key: String, response: HTTPURLResponse) {
+		guard response.forcedStatusCode == HTTPResponseCode.OK else {
+			return
+		}
+		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: response.allHeaderFields), for: key)
 	}
 
 	func extractPageNumber(link: String?) -> Int? {

@@ -537,19 +537,26 @@ private extension FeedbinAccountDelegate {
 	func refreshAccount(_ account: Account) async throws {
 		do {
 			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
-				let tags = try await self.caller.retrieveTags()
+				let (tags, tagsResponse) = try await self.caller.retrieveTags()
 				self.refreshProgress.completeTask()
 
-				let subscriptions = try await self.caller.retrieveSubscriptions()
+				let (subscriptions, subscriptionsResponse) = try await self.caller.retrieveSubscriptions()
 				self.refreshProgress.completeTask()
 				self.forceExpireFolderFeedRelationship(account, tags)
 
-				let taggings = try await self.caller.retrieveTaggings()
+				let (taggings, taggingsResponse) = try await self.caller.retrieveTaggings()
 				BatchUpdate.shared.perform {
 					self.syncFolders(account, tags)
 					self.syncFeeds(account, subscriptions)
 					self.syncFeedFolderRelationship(account, taggings)
 				}
+
+				// Commit the conditional-GET etags only now that the data is applied, so an
+				// interrupted refresh can't leave an etag ahead of the model and 304 forever.
+				self.caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
+				self.caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
+				self.caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.taggings, response: taggingsResponse)
+
 				self.refreshProgress.completeTask()
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})
