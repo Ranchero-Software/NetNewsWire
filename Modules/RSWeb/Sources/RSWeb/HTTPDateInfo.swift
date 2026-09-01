@@ -13,6 +13,7 @@ nonisolated public struct HTTPDateInfo: Codable, Equatable {
 	private static let formatter: DateFormatter = {
 		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "EEEE, dd LLL yyyy HH:mm:ss zzz"
+		dateFormatter.locale = Locale(identifier: "en_US_POSIX")
 		return dateFormatter
 	}()
 

@@ -12,7 +12,7 @@ struct FeedbinDate {
 	public static let formatter: DateFormatter = {
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
-		formatter.locale = Locale(identifier: "en_US")
+		formatter.locale = Locale(identifier: "en_US_POSIX")
 		formatter.timeZone = TimeZone(abbreviation: "GMT")
 		return formatter
 	}()
