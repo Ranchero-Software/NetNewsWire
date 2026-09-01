@@ -444,7 +444,7 @@ enum CreateSubscriptionResult {
 
 extension FeedbinAPICaller {
 
-	func storeConditionalGet(key: String, response: HTTPURLResponse) {
+	func storeConditionalGetIfNeeded(key: String, response: HTTPURLResponse) {
 		guard response.forcedStatusCode == HTTPResponseCode.OK else {
 			return
 		}

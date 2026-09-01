@@ -159,7 +159,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			do {
 				let (articleIDs, response) = try await caller.retrieveUnreadEntries()
 				changedCount += await self.syncArticleReadState(account: account, articleIDs: articleIDs)
-				caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.unreadEntries, response: response)
+				caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.unreadEntries, response: response)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving unread entries failed: \(error.localizedDescription)")
@@ -168,7 +168,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			do {
 				let (articleIDs, response) = try await caller.retrieveStarredEntries()
 				changedCount += await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
-				caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.starredEntries, response: response)
+				caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.starredEntries, response: response)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving starred entries failed: \(error.localizedDescription)")
@@ -555,9 +555,9 @@ private extension FeedbinAccountDelegate {
 
 				// Commit the conditional-GET etags only now that the data is applied, so an
 				// interrupted refresh can't leave an etag ahead of the model and 304 forever.
-				self.caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
-				self.caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
-				self.caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.taggings, response: taggingsResponse)
+				self.caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
+				self.caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
+				self.caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.taggings, response: taggingsResponse)
 
 				self.refreshProgress.completeTask()
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)

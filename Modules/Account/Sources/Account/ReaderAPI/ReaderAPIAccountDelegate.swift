@@ -764,8 +764,8 @@ private extension ReaderAPIAccountDelegate {
 
 				// Commit the conditional-GET etags only now that the data is applied, so an
 				// interrupted refresh can't leave an etag ahead of the model and 304 forever.
-				caller.storeConditionalGet(key: ReaderAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
-				caller.storeConditionalGet(key: ReaderAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
+				caller.storeConditionalGetIfNeeded(key: ReaderAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
+				caller.storeConditionalGetIfNeeded(key: ReaderAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
 
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})

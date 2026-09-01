@@ -642,7 +642,7 @@ private extension ReaderAPICaller {
 
 	private static let defaultUsageLimitsResetAfter: TimeInterval = 60 * 60 * 24
 
-	func storeConditionalGet(key: String, response: HTTPURLResponse) {
+	func storeConditionalGetIfNeeded(key: String, response: HTTPURLResponse) {
 		guard response.forcedStatusCode == HTTPResponseCode.OK else {
 			return
 		}
