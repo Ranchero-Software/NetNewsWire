@@ -32,19 +32,20 @@ final class ImportOPMLWindowController: NSWindowController {
 			if oneAccount.behaviors.contains(.disallowOPMLImports) {
 				continue
 			}
-			addMenuItem(to: menu, for: oneAccount, savedAccountID: savedAccountID)
+			let menuItem = addMenuItem(to: menu, for: oneAccount)
+			if oneAccount.accountID == savedAccountID {
+				accountPopUpButton.select(menuItem)
+			}
 		}
 	}
 
-	private func addMenuItem(to menu: NSMenu, for account: Account, savedAccountID: String?) {
+	@discardableResult
+	private func addMenuItem(to menu: NSMenu, for account: Account) -> NSMenuItem {
 		let menuItem = NSMenuItem()
 		menuItem.title = account.nameForDisplay
 		menuItem.representedObject = account
 		menu.addItem(menuItem)
-
-		if account.accountID == savedAccountID {
-			accountPopUpButton.select(menuItem)
-		}
+		return menuItem
 	}
 
 	// MARK: API
