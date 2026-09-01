@@ -92,12 +92,14 @@ struct ReaderAPIEntry: Codable, Sendable {
 			return idPart
 		}
 
-		// Convert hex representation back to integer and then a string representation
-		guard let idNumber = Int(idPart, radix: 16) else {
+		// Convert hex representation back to integer and then a string representation.
+		// Parse unsigned so a high-bit ID doesn't overflow, then reinterpret the bit
+		// pattern as signed — the two's-complement form itemIDParameter re-encodes.
+		guard let idNumber = UInt64(idPart, radix: 16) else {
 			return articleID
 		}
 
-		return String(idNumber, radix: 10, uppercase: false)
+		return String(Int64(bitPattern: idNumber))
 	}
 
 }
