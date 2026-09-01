@@ -500,6 +500,7 @@ private extension DownloadSession {
 
 	// MARK: - Filtering URLs
 
+	static private let openRSSOrgMinimumRefreshInterval: TimeInterval = 60 * 60 // arbitrary
 	static private let lastOpenRSSOrgFeedRefreshKey = "lastOpenRSSOrgFeedRefresh"
 	static private var lastOpenRSSOrgFeedRefresh: Date {
 		get {
@@ -511,7 +512,7 @@ private extension DownloadSession {
 	}
 
 	static private var canDownloadFromOpenRSSOrg: Bool {
-		let okayToDownloadDate = lastOpenRSSOrgFeedRefresh + TimeInterval(60 * 60 * 10) // 10 minutes (arbitrary)
+		let okayToDownloadDate = lastOpenRSSOrgFeedRefresh + openRSSOrgMinimumRefreshInterval
 		return Date() > okayToDownloadDate
 	}
 
