@@ -133,6 +133,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				if normalizedURLString.mayBeURL {
 					self.coordinator.showAddFeed(initialFeed: normalizedURLString, initialFeedName: nil)
 				}
+				return
 			}
 
 			// Show Unread View or Article
@@ -151,6 +152,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				} else {
 					self.coordinator.selectAllUnreadFeed()
 				}
+				return
 			}
 
 			// Show Today View or Article
@@ -169,6 +171,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				} else {
 					self.coordinator.selectTodayFeed()
 				}
+				return
 			}
 
 			// Show Starred View or Article
@@ -187,6 +190,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				} else {
 					self.coordinator.selectStarredFeed()
 				}
+				return
 			}
 
 			let filename = context.url.standardizedFileURL.path
@@ -197,6 +201,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 			// Handle theme URLs: netnewswire://theme/add?url={url}
 			guard let comps = URLComponents(url: context.url, resolvingAgainstBaseURL: false),
+				  comps.scheme?.lowercased() == "netnewswire",
 				  "theme" == comps.host,
 				 let queryItems = comps.queryItems else {
 				return
