@@ -157,7 +157,6 @@ import os
 
 			let newsBlurFolderFeedIDs = folderRelationships.map { String($0.feedID) }
 
-			// A missing folder must not abort the rest of the relationship sync.
 			guard let folder = folderDict[folderName] else {
 				continue
 			}

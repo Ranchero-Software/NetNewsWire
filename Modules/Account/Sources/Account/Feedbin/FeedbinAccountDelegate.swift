@@ -702,7 +702,9 @@ private extension FeedbinAccountDelegate {
 		// Sync the folders
 		for (folderName, groupedTaggings) in taggingsDict {
 
-			guard let folder = folderDict[folderName] else { return }
+			guard let folder = folderDict[folderName] else {
+				continue
+			}
 
 			let taggingFeedIDs = groupedTaggings.map { String($0.feedID) }
 

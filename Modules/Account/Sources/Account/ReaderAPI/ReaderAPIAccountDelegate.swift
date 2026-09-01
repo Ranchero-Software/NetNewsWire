@@ -897,7 +897,9 @@ private extension ReaderAPIAccountDelegate {
 
 		// Sync the folders
 		for (folderExternalID, groupedTaggings) in taggingsDict {
-			guard let folder = folderDict[folderExternalID] else { return }
+			guard let folder = folderDict[folderExternalID] else {
+				continue
+			}
 			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
 
 			// Move any feeds not in the folder to the account
