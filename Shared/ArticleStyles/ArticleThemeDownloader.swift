@@ -97,17 +97,22 @@ public final class ArticleThemeDownloader: Sendable {
 	private func unzipFile(at location: URL) throws -> URL {
 		do {
 			let unzipDirectory = URL(fileURLWithPath: location.path.replacingOccurrences(of: ".zip", with: ""))
-			try Zip.unzipFile(location, destination: unzipDirectory, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil) // Unzips to folder in Application Support/NetNewsWire/Downloads
+			let themeURL = try unzipTheme(at: location, to: unzipDirectory) // Unzips to folder in Application Support/NetNewsWire/Downloads
 			try FileManager.default.removeItem(at: location) // Delete zip in Cache
-			let themeFilePath = findThemeFile(in: unzipDirectory.path)
-			if themeFilePath == nil {
-				throw ArticleThemeDownloaderError.noThemeFile
-			}
-			return URL(fileURLWithPath: unzipDirectory.appendingPathComponent(themeFilePath!).path)
+			return themeURL
 		} catch {
 			try? FileManager.default.removeItem(at: location)
 			throw error
 		}
+	}
+
+	/// Extracts a theme into `destination` and returns its `.nnwtheme`; throws if an entry escapes `destination` or no theme is present.
+	func unzipTheme(at zipLocation: URL, to destination: URL) throws -> URL {
+		try Zip.unzipFile(zipLocation, destination: destination, overwrite: true, password: nil, progress: nil, fileOutputHandler: nil)
+		guard let themeFilePath = findThemeFile(in: destination.path) else {
+			throw ArticleThemeDownloaderError.noThemeFile
+		}
+		return destination.appendingPathComponent(themeFilePath)
 	}
 
 	/// Performs a deep search of the unzipped directory to find the theme file.
