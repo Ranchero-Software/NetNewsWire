@@ -907,21 +907,23 @@ extension AppDelegate {
 			let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
 
-			var attrs = [NSAttributedString.Key: Any]()
-			attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
-			attrs[.foregroundColor] = NSColor.textColor
+			var attributes = [NSAttributedString.Key: Any]()
+			attributes[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+			attributes[.foregroundColor] = NSColor.textColor
 
 			let titleParagraphStyle = NSMutableParagraphStyle()
 			titleParagraphStyle.alignment = .center
-			attrs[.paragraphStyle] = titleParagraphStyle
+			attributes[.paragraphStyle] = titleParagraphStyle
 
 			let websiteText = NSMutableAttributedString()
-			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attrs))
+			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attributes))
 
 			websiteText.append(NSAttributedString(string: "\n"))
 
-			attrs[.link] = theme.creatorHomePage
-			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
+			if let homePageURL = URL(string: theme.creatorHomePage), homePageURL.isHTTPOrHTTPSURL() {
+				attributes[.link] = theme.creatorHomePage
+			}
+			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attributes))
 
 			let textViewWidth: CGFloat
 			textViewWidth = 200
