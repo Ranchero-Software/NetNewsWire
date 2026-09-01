@@ -16,6 +16,8 @@ public final class ArticleThemeDownloader: Sendable {
 	public enum ArticleThemeDownloaderError: LocalizedError {
 		case downloadFailed
 		case noThemeFile
+		case tooLarge
+		case unsupportedURLScheme
 
 		public var errorDescription: String? {
 			switch self {
@@ -23,13 +25,24 @@ public final class ArticleThemeDownloader: Sendable {
 				return "The NetNewsWire theme could not be downloaded."
 			case .noThemeFile:
 				return "There is no NetNewsWire theme available."
+			case .tooLarge:
+				return "The NetNewsWire theme is too large."
+			case .unsupportedURLScheme:
+				return "A NetNewsWire theme can be downloaded only from an http or https URL."
 			}
 		}
 	}
 
+	private static let maximumThemeSize = 10_000_000
+
 	private init() {}
 
 	@MainActor public func downloadTheme(from url: URL) {
+		guard url.isHTTPOrHTTPSURL() else {
+			NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": ArticleThemeDownloaderError.unsupportedURLScheme])
+			return
+		}
+
 		NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
 
 		Task { @MainActor in
@@ -38,6 +51,9 @@ public final class ArticleThemeDownloader: Sendable {
 				guard let data = downloadResponse.data, !data.isEmpty,
 					  let response = downloadResponse.response, response.statusIsOK else {
 					throw ArticleThemeDownloaderError.downloadFailed
+				}
+				guard data.count <= Self.maximumThemeSize else {
+					throw ArticleThemeDownloaderError.tooLarge
 				}
 
 				// handleFile expects a file whose .tmp name becomes the .zip name.
