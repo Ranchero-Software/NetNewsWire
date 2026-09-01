@@ -356,6 +356,8 @@ let appName = "NetNewsWire"
 		shuttingDown = true
 		saveState()
 
+		AccountManager.shared.saveAllIfNeeded()
+
 		ArticleThemeDownloader.shared.cleanUp()
 
 		Task { @MainActor in

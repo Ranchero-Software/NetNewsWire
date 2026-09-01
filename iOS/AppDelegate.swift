@@ -364,7 +364,7 @@ private extension AppDelegate {
 		}
 
 		AccountManager.shared.suspendNetworkAll()
-		AccountManager.shared.saveAll()
+		AccountManager.shared.saveAllIfNeeded()
 		ArticleThemeDownloader.shared.cleanUp()
 
 		AppNotification.postAppDidGoToBackground()
