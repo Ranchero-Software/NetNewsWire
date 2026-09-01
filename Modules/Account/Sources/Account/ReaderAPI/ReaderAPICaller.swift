@@ -597,6 +597,16 @@ struct ReaderAPIUsageLimits {
 
 // MARK: Private
 
+extension ReaderAPICaller {
+
+	func storeConditionalGetIfNeeded(key: String, response: HTTPURLResponse) {
+		guard response.forcedStatusCode == HTTPResponseCode.OK else {
+			return
+		}
+		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: response.allHeaderFields), for: key)
+	}
+}
+
 private extension ReaderAPICaller {
 
 	func encodeForURLPath(_ pathComponent: String?) -> String? {
@@ -641,13 +651,6 @@ private extension ReaderAPICaller {
 	}
 
 	private static let defaultUsageLimitsResetAfter: TimeInterval = 60 * 60 * 24
-
-	func storeConditionalGetIfNeeded(key: String, response: HTTPURLResponse) {
-		guard response.forcedStatusCode == HTTPResponseCode.OK else {
-			return
-		}
-		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: response.allHeaderFields), for: key)
-	}
 
 	private func noteUsageLimits(from response: HTTPURLResponse) {
 		guard let usageValue = response.value(forHTTPHeaderField: UsageLimitHeader.zone1Usage), let usage = Int(usageValue),
