@@ -246,6 +246,7 @@ let appName = "NetNewsWire"
 		}
 
 		ArticleThemesManager.shared.start()
+		ArticleThemesManager.shared.updateCurrentAppearance(NSApplication.shared.effectiveAppearance.isDarkMode ? .dark : .light)
 		NetworkMonitor.shared.start()
 		MemoryPressureMonitor.shared.start()
 
