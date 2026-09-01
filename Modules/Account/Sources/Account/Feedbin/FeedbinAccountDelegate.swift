@@ -157,16 +157,18 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			var refreshError: Error?
 
 			do {
-				let articleIDs = try await caller.retrieveUnreadEntries()
+				let (articleIDs, response) = try await caller.retrieveUnreadEntries()
 				changedCount += await self.syncArticleReadState(account: account, articleIDs: articleIDs)
+				caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.unreadEntries, response: response)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving unread entries failed: \(error.localizedDescription)")
 			}
 
 			do {
-				let articleIDs = try await caller.retrieveStarredEntries()
+				let (articleIDs, response) = try await caller.retrieveStarredEntries()
 				changedCount += await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
+				caller.storeConditionalGet(key: FeedbinAPICaller.ConditionalGetKeys.starredEntries, response: response)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving starred entries failed: \(error.localizedDescription)")

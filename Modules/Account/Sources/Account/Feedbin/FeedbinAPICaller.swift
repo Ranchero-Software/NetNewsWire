@@ -365,7 +365,7 @@ enum CreateSubscriptionResult {
 		return (entries, pagingInfo.nextPage)
 	}
 
-	func retrieveUnreadEntries() async throws -> [Int]? {
+	func retrieveUnreadEntries() async throws -> (unreadArticleIDs: [Int]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -375,8 +375,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, unreadEntries) = try await session.send(request: request, resultType: [Int].self)
-		storeConditionalGet(key: ConditionalGetKeys.unreadEntries, response: response)
-		return unreadEntries
+		return (unreadEntries, response)
 	}
 
 	func createUnreadEntries(entries: [Int]) async throws {
@@ -403,7 +402,7 @@ enum CreateSubscriptionResult {
 		try await session.send(request: request, method: HTTPMethod.delete, payload: payload)
 	}
 
-	func retrieveStarredEntries() async throws -> [Int]? {
+	func retrieveStarredEntries() async throws -> (starredArticleIDs: [Int]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -413,8 +412,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, starredEntries) = try await session.send(request: request, resultType: [Int].self)
-		storeConditionalGet(key: ConditionalGetKeys.starredEntries, response: response)
-		return starredEntries
+		return (starredEntries, response)
 	}
 
 	func createStarredEntries(entries: [Int]) async throws {
