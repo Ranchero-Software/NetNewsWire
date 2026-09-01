@@ -927,11 +927,9 @@ private extension ReaderAPIAccountDelegate {
 
 		}
 
-		let taggedFeedIDs = Set(subscriptions.filter({ !$0.categories.isEmpty }).map { String($0.feedID) })
-
-		// Remove all feeds from the account container that have a tag
+		let feedIDsInFolders = Set((account.folders ?? Set<Folder>()).flatMap { $0.topLevelFeeds.map { $0.feedID } })
 		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.feedID) {
+			if feedIDsInFolders.contains(feed.feedID) {
 				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
