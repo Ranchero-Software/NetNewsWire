@@ -380,6 +380,7 @@ public extension CloudKitZone {
 		op.modifyRecordsResultBlock = { [weak self] result in
 			Task { @MainActor [weak self] in
 				guard let self else {
+					completion(.failure(CloudKitZoneError.unknown))
 					return
 				}
 
