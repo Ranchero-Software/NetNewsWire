@@ -104,6 +104,7 @@ struct HTTP4xxResponse {
 	// MARK: - API
 
 	public func cancelAll() {
+		queue.removeAll()
 		urlSession.getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
 			for task in dataTasks {
 				task.cancel()
@@ -261,11 +262,13 @@ private extension DownloadSession {
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 429: \(urlToUse)")
 			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 429 Too Many Requests")
+			addDataTaskFromQueueIfNecessary()
 			return
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 400-499: \(urlToUse)")
 			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 4xx error")
+			addDataTaskFromQueueIfNecessary()
 			return
 		}
 
