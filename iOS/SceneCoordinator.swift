@@ -2199,6 +2199,10 @@ private extension SceneCoordinator {
 				}
 			}()
 
+			guard startingRow >= 0 else {
+				continue
+			}
+
 			for j in (0...startingRow).reversed() {
 
 				let prevIndexPath = IndexPath(row: j, section: i)
