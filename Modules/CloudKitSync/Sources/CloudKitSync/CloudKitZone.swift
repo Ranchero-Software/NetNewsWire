@@ -410,7 +410,12 @@ public extension CloudKitZone {
 
 					case .limitExceeded:
 
-						var chunkedRecords = records.chunked(into: 200)
+						guard records.count > 1 else {
+							completion(.failure(CloudKitError(error)))
+							return
+						}
+
+						var chunkedRecords = records.chunked(into: max(1, records.count / 2))
 
 						@MainActor func saveChunksIfNew() {
 							if let records = chunkedRecords.popLast() {
@@ -662,8 +667,13 @@ public extension CloudKitZone {
 						await delaySeconds(timeToWait)
 						self.modify(recordsToSave: recordsToSave, recordIDsToDelete: recordIDsToDelete, completion: completion)
 					case .limitExceeded:
-						var recordToSaveChunks = recordsToSave.chunked(into: 200)
-						var recordIDsToDeleteChunks = recordIDsToDelete.chunked(into: 200)
+						guard recordsToSave.count + recordIDsToDelete.count > 1 else {
+							completion(.failure(CloudKitError(error)))
+							return
+						}
+
+						var recordToSaveChunks = recordsToSave.chunked(into: max(1, recordsToSave.count / 2))
+						var recordIDsToDeleteChunks = recordIDsToDelete.chunked(into: max(1, recordIDsToDelete.count / 2))
 
 						@MainActor func saveChunks(completion: @escaping (Result<Void, Error>) -> Void) {
 							if !recordToSaveChunks.isEmpty {
