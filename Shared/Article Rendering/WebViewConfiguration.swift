@@ -28,6 +28,9 @@ import RSWeb
 
 		let configuration = WKWebViewConfiguration()
 
+		// Ephemeral store so feed content can't persist cookies/localStorage across articles or launches.
+		configuration.websiteDataStore = .nonPersistent()
+
 		configuration.preferences = preferences
 		configuration.defaultWebpagePreferences = webpagePreferences
 		configuration.mediaTypesRequiringUserActionForPlayback = .all
