@@ -734,15 +734,14 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+	func cleanUpCloudKit(progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
 		guard let account else {
 			throw CloudKitAccountDelegateError.unknown
 		}
 		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
-		let detail = dryRun ? "Dry run" : "Manual"
 		do {
-			try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: detail) {
-				try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
+			try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: "Manual") {
+				try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, deleteStaleRecords: false, progress: progress)
 			}
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: cleanUpCloudKit error: \(error)")
@@ -1216,7 +1215,7 @@ private extension CloudKitAccountDelegate {
 				count == 0 ? "no records deleted" : "deleted \(count) record\(count == 1 ? "" : "s")"
 			}
 			let deleted = try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: "Weekly", successMessage: successMessage) { () -> Int in
-				try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
+				try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, deleteStaleRecords: false)
 			}
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {
