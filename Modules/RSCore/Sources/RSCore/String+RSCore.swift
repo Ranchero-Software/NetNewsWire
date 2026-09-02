@@ -282,14 +282,13 @@ public extension String {
 		self.range(of: string, options: .caseInsensitive) != nil
 	}
 
-	/// Returns the string with the special XML characters (other than single-quote) ampersand-escaped.
-	///
-	/// The four escaped characters are `<`, `>`, `&`, and `"`.
+	/// Returns the string with the special XML characters ampersand-escaped.
+	/// Also drops characters that are illegal in XML.
 	var escapingSpecialXMLCharacters: String {
 		var escaped = String()
 
-		for char in self {
-			switch char {
+		for scalar in unicodeScalars {
+			switch scalar {
 			case "&":
 				escaped.append("&amp;")
 			case "<":
@@ -298,8 +297,12 @@ public extension String {
 				escaped.append("&gt;")
 			case "\"":
 				escaped.append("&quot;")
+			case "'":
+				escaped.append("&apos;")
 			default:
-				escaped.append(char)
+				if scalar.isLegalXMLCharacter {
+					escaped.unicodeScalars.append(scalar)
+				}
 			}
 		}
 
@@ -319,5 +322,15 @@ public extension String {
 	/// Returns the string with `http://` or `https://` removed from the beginning.
 	var strippingHTTPOrHTTPSScheme: String {
 		self.stripping(prefix: "http://").stripping(prefix: "https://")
+	}
+}
+
+private extension Unicode.Scalar {
+
+	var isLegalXMLCharacter: Bool {
+		value == 0x9 || value == 0xA || value == 0xD
+			|| (value >= 0x20 && value <= 0xD7FF)
+			|| (value >= 0xE000 && value <= 0xFFFD)
+			|| (value >= 0x10000 && value <= 0x10FFFF)
 	}
 }
