@@ -61,7 +61,7 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
 				#endif
 			case .selfhosted:
-				return [.freshRSS]
+				return [.freshRSS, .miniflux]
 			}
 		}
 	}
@@ -208,6 +208,12 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 			navController.modalPresentationStyle = .currentContext
 			let addViewController = navController.topViewController as! ReaderAPIAccountViewController
 			addViewController.accountType = accountType
+			addViewController.delegate = self
+			present(navController, animated: true)
+		case .miniflux:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "MinifluxAccountNavigationViewController") as! UINavigationController
+			navController.modalPresentationStyle = .currentContext
+			let addViewController = navController.topViewController as! MinifluxAccountViewController
 			addViewController.delegate = self
 			present(navController, animated: true)
 		}
