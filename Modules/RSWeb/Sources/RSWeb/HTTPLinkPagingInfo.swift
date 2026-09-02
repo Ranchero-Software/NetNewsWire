@@ -27,6 +27,9 @@ public struct HTTPLinkPagingInfo {
 		var dict: [String: String] = [:]
 		for link in links {
 			let components = link.components(separatedBy: "; ")
+			guard components.count > 1 else {
+				continue
+			}
 			let page = components[0].trimmingCharacters(in: CharacterSet(charactersIn: " <>"))
 			dict[components[1]] = page
 		}
