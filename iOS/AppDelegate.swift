@@ -26,7 +26,6 @@ import Images
 	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 
 	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 
 	var shuttingDown = false {
 		didSet {
@@ -326,32 +325,33 @@ private extension AppDelegate {
 	}
 
 	func syncArticleStatus() {
-		guard !isSyncArticleStatusRunning else { return }
+		guard !isSyncArticleStatusRunning else {
+			return
+		}
 
 		isSyncArticleStatusRunning = true
 
-		let completeProcessing = { [weak self] in
-			guard let self else {
+		var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
+
+		/// Make sure this run’s background task is ended exactly once.
+		func endSyncBackgroundTask() {
+			guard backgroundTaskIdentifier != .invalid else {
 				return
 			}
-			self.isSyncArticleStatusRunning = false
-			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+			UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+			backgroundTaskIdentifier = .invalid
 		}
 
-		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-			Task { @MainActor in
-				guard let self = self else { return }
-				self.isSyncArticleStatusRunning = false
-				UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-				self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-				Self.logger.info("Accounts sync processing terminated for running too long.")
-			}
-		}
-
-		Task { @MainActor in
+		let syncTask = Task { @MainActor in
 			await AccountManager.shared.syncArticleStatusAll()
-			completeProcessing()
+			isSyncArticleStatusRunning = false
+			endSyncBackgroundTask()
+		}
+
+		backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Sync Article Status") {
+			syncTask.cancel()
+			endSyncBackgroundTask()
+			Self.logger.info("Accounts sync processing terminated for running too long.")
 		}
 	}
 
