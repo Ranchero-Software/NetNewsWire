@@ -268,6 +268,18 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 		}
 	}
 
+	func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+		// Content process died — swap in a fresh web view and re-render.
+		guard webView === self.webView else {
+			return
+		}
+		Self.logger.error("Article web content process terminated — rebuilding the web view.")
+		let newWebView = createWebView()
+		view.addSubview(newWebView, positioned: .below, relativeTo: self.webView)
+		self.webView = newWebView
+		reloadHTML()
+	}
+
 	// WKUIDelegate
 
 	func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
