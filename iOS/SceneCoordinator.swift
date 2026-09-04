@@ -159,6 +159,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	private var exceptionArticleFetcher: ArticleFetcher?
+	private lazy var opmlController = OPMLImportExportController(presentingViewController: rootSplitViewController)
 	private(set) var timelineFeed: SidebarItem? {
 		didSet {
 			mainTimelineViewController?.updateNavigationBarTitle(timelineFeed?.nameForDisplay ?? "")
@@ -1383,7 +1384,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard currentArticle != nil else {
 			return
 		}
-		articleViewController?.toggleReaderView(nil)
+		articleViewController?.toggleReaderView()
 	}
 
 	func toggleRead(_ article: Article) {
@@ -1525,6 +1526,14 @@ struct SidebarItemNode: Hashable, Sendable {
 		rootSplitViewController.present(feedInspectorNavController, animated: true)
 	}
 
+	func importOPML() {
+		opmlController.importOPML()
+	}
+
+	func exportOPML() {
+		opmlController.exportOPML()
+	}
+
 	func showAddFeed(initialFeed: String? = nil, initialFeedName: String? = nil) {
 
 		// The sheet appears over the current screen, so the feed and article selection stay as they are.
@@ -1577,9 +1586,46 @@ struct SidebarItemNode: Hashable, Sendable {
 		return url
 	}
 
-	func showBrowserForCurrentFeed() {
-		if let ip = currentFeedIndexPath, let url = homePageURLForFeed(ip) {
+	/// The pref says where links open; the inverted commands flip it.
+	private func useSystemBrowser(inverted: Bool) -> Bool {
+		AppDefaults.shared.useSystemBrowser != inverted
+	}
+
+	/// True while the in-app browser is on screen. A second one can't open on top of it.
+	var isShowingInAppBrowser: Bool {
+		var presented = rootSplitViewController.presentedViewController
+		while let viewController = presented {
+			if viewController is SFSafariViewController {
+				return true
+			}
+			presented = viewController.presentedViewController
+		}
+		return false
+	}
+
+	/// Whether an open-in-browser command has somewhere to go. The commands that would
+	/// open the in-app browser are unavailable while it's already showing; the ones that
+	/// hand off to the system browser always are.
+	func canOpenBrowser(invertBrowserPreference: Bool = false) -> Bool {
+		useSystemBrowser(inverted: invertBrowserPreference) || !isShowingInAppBrowser
+	}
+
+	/// The home page of the feed selected in the sidebar, if it has one.
+	var currentFeedHomePageURL: URL? {
+		guard let indexPath = currentFeedIndexPath else {
+			return nil
+		}
+		return homePageURLForFeed(indexPath)
+	}
+
+	func showBrowserForCurrentFeed(invertBrowserPreference: Bool = false) {
+		guard let url = currentFeedHomePageURL else {
+			return
+		}
+		if useSystemBrowser(inverted: invertBrowserPreference) {
 			UIApplication.shared.open(url, options: [:])
+		} else {
+			mainFeedCollectionViewController.openInAppBrowser()
 		}
 	}
 
@@ -1590,11 +1636,25 @@ struct SidebarItemNode: Hashable, Sendable {
 		UIApplication.shared.open(url, options: [:])
 	}
 
-	func showBrowserForCurrentArticle() {
+	func showBrowserForCurrentArticle(invertBrowserPreference: Bool = false) {
 		guard let url = currentArticle?.preferredURL else {
 			return
 		}
-		UIApplication.shared.open(url, options: [:])
+		if useSystemBrowser(inverted: invertBrowserPreference) {
+			UIApplication.shared.open(url, options: [:])
+		} else {
+			articleViewController?.openInAppBrowser()
+		}
+	}
+
+	/// With no article selected, the open-in-browser shortcuts fall back to the selected
+	/// feed's home page, the way they do on the Mac when the sidebar has focus.
+	func showBrowserForCurrentArticleOrFeed() {
+		if currentArticle != nil {
+			showBrowserForCurrentArticle()
+		} else {
+			showBrowserForCurrentFeed()
+		}
 	}
 
 	func showInAppBrowser() {
@@ -1611,6 +1671,18 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	func endedBrowsing() {
 		activityManager.invalidateBrowsing()
+	}
+
+	func openInBrowserUsingOppositeOfSettings() {
+		if currentArticle != nil {
+			showBrowserForCurrentArticle(invertBrowserPreference: true)
+		} else {
+			showBrowserForCurrentFeed(invertBrowserPreference: true)
+		}
+	}
+
+	func beginFindInArticle() {
+		articleViewController?.beginFind()
 	}
 
 	func navigateToFeeds() {
