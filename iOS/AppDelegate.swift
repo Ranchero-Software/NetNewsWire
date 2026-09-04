@@ -25,8 +25,6 @@ import Images
 
 	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 
-	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
@@ -278,50 +276,58 @@ private extension AppDelegate {
 private extension AppDelegate {
 
 	func waitForSyncTasksToFinish() {
-		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else { return }
-
-		isWaitingForSyncTasks = true
-
-		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-			guard let self = self else { return }
-			Task { @MainActor in
-				self.completeProcessing(true)
-				Self.logger.info("Accounts wait for progress terminated for running too long.")
-			}
-		}
-
-		DispatchQueue.main.async { [weak self] in
-			self?.waitToComplete { [weak self] suspend in
-				self?.completeProcessing(suspend)
-			}
-		}
-	}
-
-	func waitToComplete(completion: @escaping (Bool) -> Void) {
-		guard UIApplication.shared.applicationState == .background else {
-			Self.logger.info("App came back to foreground, no longer waiting.")
-			completion(false)
+		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else {
 			return
 		}
 
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared?.isRunning ?? false {
-			Self.logger.info("Waiting for sync to finish…")
-			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-				self?.waitToComplete(completion: completion)
+		isWaitingForSyncTasks = true
+
+		var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
+
+		/// Make sure this run’s background task is ended exactly once.
+		func endWaitBackgroundTask() {
+			guard backgroundTaskIdentifier != .invalid else {
+				return
 			}
-		} else {
-			Self.logger.info("Refresh progress complete.")
-			completion(true)
+			UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+			backgroundTaskIdentifier = .invalid
+		}
+
+		let waitTask = Task { @MainActor in
+			let shouldSuspend = await waitToComplete()
+			isWaitingForSyncTasks = false
+			if shouldSuspend {
+				suspendApplication()
+			}
+			endWaitBackgroundTask()
+		}
+
+		backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Wait for Sync Tasks") {
+			waitTask.cancel()
+			self.suspendApplication()
+			endWaitBackgroundTask()
+			Self.logger.info("Accounts wait for progress terminated for running too long.")
 		}
 	}
 
-	func completeProcessing(_ suspend: Bool) {
-		if suspend {
-			suspendApplication()
+	/// Wait for the refresh, status sync, and widget encode to finish. Returns whether the app should suspend.
+	func waitToComplete() async -> Bool {
+		while !Task.isCancelled {
+			guard UIApplication.shared.applicationState == .background else {
+				Self.logger.info("App came back to foreground, no longer waiting.")
+				return false
+			}
+
+			if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared?.isRunning ?? false {
+				Self.logger.info("Waiting for sync to finish…")
+				try? await Task.sleep(for: .seconds(1))
+			} else {
+				Self.logger.info("Refresh progress complete.")
+				return true
+			}
 		}
-		UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
-		self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		isWaitingForSyncTasks = false
+
+		return false
 	}
 
 	func syncArticleStatus() {
