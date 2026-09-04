@@ -1138,10 +1138,20 @@ struct SidebarItemNode: Hashable, Sendable {
 		activityManager.reading(feed: timelineFeed, article: article)
 
 		if article == nil {
+			isArticleViewControllerPending = false
 			articleViewController?.article = nil
 			rootSplitViewController.showColumn(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
+		}
+
+		if !isNavigationDisabled,
+		   rootSplitViewController.isCollapsed,
+		   let timelineViewController = mainTimelineViewController,
+		   timelineViewController.navigationController?.topViewController === timelineViewController {
+			// A push will follow — set to false in ArticleViewController.viewDidAppear.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5417>
+			isArticleViewControllerPending = true
 		}
 
 		rootSplitViewController.showColumn(.secondary)
