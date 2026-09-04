@@ -363,7 +363,7 @@ import os
 		feed.lastCheckDate = Date()
 		feed.lastResponseCode = statusCode
 
-		let webserviceError = WebserviceError.httpError(status: statusCode)
+		let webserviceError = WebserviceError.httpError(status: statusCode, responseBody: nil)
 		let statusDescription = webserviceError.localizedDescription
 		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
 		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])

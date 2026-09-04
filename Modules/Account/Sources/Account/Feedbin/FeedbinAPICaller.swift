@@ -60,7 +60,7 @@ enum CreateSubscriptionResult {
 			try await session.send(request: request)
 			return credentials
 		} catch {
-			if case WebserviceError.httpError(let status) = error, status == 401 {
+			if case WebserviceError.httpError(let status, _) = error, status == 401 {
 				return nil
 			}
 			throw error
@@ -169,11 +169,11 @@ enum CreateSubscriptionResult {
 			case HTTPResponseCode.redirectTemporary: // 302
 				return .alreadySubscribed
 			default:
-				throw WebserviceError.httpError(status: response.forcedStatusCode)
+				throw WebserviceError.httpError(status: response.forcedStatusCode, responseBody: nil)
 			}
 		} catch {
 			switch error {
-			case WebserviceError.httpError(let status):
+			case WebserviceError.httpError(let status, _):
 				switch status {
 				case HTTPResponseCode.unauthorized: // 401
 					// I don’t know why we get 401s here. This looks like a Feedbin bug, but it only happens
