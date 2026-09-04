@@ -301,10 +301,8 @@ import ActivityLog
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
-		Task {
-			for account in activeAccounts {
-				await account.receiveRemoteNotification(userInfo: userInfo)
-			}
+		for account in activeAccounts {
+			await account.receiveRemoteNotification(userInfo: userInfo)
 		}
 	}
 
