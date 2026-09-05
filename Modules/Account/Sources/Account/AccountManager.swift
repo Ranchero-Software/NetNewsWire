@@ -314,10 +314,13 @@ import ActivityLog
 		}
 	}
 
-	public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async {
+	/// Returns `true` if the refresh ran, `false` if it was skipped
+	/// due to no network connection.
+	@discardableResult
+	public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async -> Bool {
 		guard NetworkMonitor.shared.isConnected else {
 			Self.logger.info("AccountManager: skipping refreshAll — not connected to internet.")
-			return
+			return false
 		}
 
 		CombinedRefreshProgress.shared.start()
@@ -336,6 +339,8 @@ import ActivityLog
 				}
 			}
 		}
+
+		return true
 	}
 
 	public func sendArticleStatusAll() async {
