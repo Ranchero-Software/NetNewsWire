@@ -423,8 +423,14 @@ private extension AppDelegate {
 
 		let refreshTaskIsCompleted = OSAllocatedUnfairLock(initialState: false)
 
+		enum RefreshOutcome {
+			case completed
+			case noNetwork
+			case expired
+		}
+
 		/// Make sure task.setTaskCompleted is called exactly once.
-		func completeRefreshTask(success: Bool) {
+		func completeRefreshTask(_ outcome: RefreshOutcome) {
 			let shouldComplete = refreshTaskIsCompleted.withLock { isCompleted -> Bool in
 				if isCompleted {
 					return false
@@ -435,11 +441,20 @@ private extension AppDelegate {
 			guard shouldComplete else {
 				return
 			}
-			if success {
+
+			let success: Bool
+			switch outcome {
+			case .completed:
 				Self.logger.info("Background refresh completed.")
-			} else {
+				success = true
+			case .noNetwork:
+				Self.logger.info("Background refresh skipped — no network path.")
+				success = false
+			case .expired:
 				Self.logger.info("Background refresh terminated for running too long.")
+				success = false
 			}
+
 			task.setTaskCompleted(success: success)
 		}
 
@@ -447,17 +462,17 @@ private extension AppDelegate {
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
-			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			let didRefresh = await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
 			if !Task.isCancelled {
 				await WidgetDataEncoder.shared?.encodeAndWait()
 			}
 			self.suspendApplication()
-			completeRefreshTask(success: true)
+			completeRefreshTask(didRefresh ? .completed : .noNetwork)
 		}
 
 		task.expirationHandler = {
 			refreshTask.cancel()
-			completeRefreshTask(success: false)
+			completeRefreshTask(.expired)
 			Task { @MainActor in
 				self.suspendApplication()
 			}
