@@ -31,7 +31,7 @@ import RSWeb
 			abort()
 		}
 
-		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID)
+		let account = Account(dataFolder: accountFolder.path, type: type, accountID: accountID)
 
 		return account
 	}
