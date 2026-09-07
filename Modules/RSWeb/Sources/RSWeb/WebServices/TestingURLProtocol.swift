@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import os
 
 public final class TestingURLProtocol: URLProtocol {
 
@@ -21,12 +22,23 @@ public final class TestingURLProtocol: URLProtocol {
 	}
 
 	/// Maps a URL substring to the response to return for matching requests.
-	/// Populated by tests; consulted per request, so it may change between requests.
-	nonisolated(unsafe) public static var responses = [String: Response]()
+	/// Written by tests, read on the URL loading system's thread, so it's behind a lock.
+	private static let responses = OSAllocatedUnfairLock<[String: Response]>(initialState: [:])
+
+	/// Register the response to return for requests whose URL contains `urlSubstring`.
+	public static func setResponse(_ response: Response, forURLContaining urlSubstring: String) {
+		responses.withLock { $0[urlSubstring] = response }
+	}
 
 	/// Clears all registered responses. Call between tests.
 	public static func reset() {
-		responses = [:]
+		responses.withLock { $0 = [:] }
+	}
+
+	private static func response(forURLString urlString: String) -> Response? {
+		responses.withLock { responses in
+			responses.first { urlString.contains($0.key) }?.value
+		}
 	}
 
 	public override static func canInit(with request: URLRequest) -> Bool {
@@ -45,7 +57,7 @@ public final class TestingURLProtocol: URLProtocol {
 		}
 
 		let urlString = url.absoluteString
-		let match = Self.responses.first { urlString.contains($0.key) }?.value
+		let match = Self.response(forURLString: urlString)
 
 		let httpResponse = HTTPURLResponse(url: url, statusCode: match?.statusCode ?? 200, httpVersion: "HTTP/1.1", headerFields: nil)!
 		client?.urlProtocol(self, didReceive: httpResponse, cacheStoragePolicy: .notAllowed)
