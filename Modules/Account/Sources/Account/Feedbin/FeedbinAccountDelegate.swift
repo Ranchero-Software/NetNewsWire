@@ -119,19 +119,39 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 				}
 
 				var sentCount = 0
+				var savedError: Error?
 
 				let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
-				sentCount += try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+				do {
+					sentCount += try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+				} catch {
+					savedError = error
+				}
 
 				let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
-				sentCount += try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+				do {
+					sentCount += try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+				} catch {
+					savedError = error
+				}
 
 				let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
-				sentCount += try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+				do {
+					sentCount += try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+				} catch {
+					savedError = error
+				}
 
 				let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
-				sentCount += try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+				do {
+					sentCount += try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+				} catch {
+					savedError = error
+				}
 
+				if let savedError {
+					throw savedError
+				}
 				return sentCount
 			}
 		} catch {
