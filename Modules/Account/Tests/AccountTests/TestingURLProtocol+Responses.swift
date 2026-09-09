@@ -21,6 +21,6 @@ extension TestingURLProtocol {
 		} catch {
 			fatalError("Unable to read response file at \(fileURL) because \(error).")
 		}
-		responses[urlSubstring] = Response(statusCode: statusCode, data: data)
+		setResponse(Response(statusCode: statusCode, data: data), forURLContaining: urlSubstring)
 	}
 }

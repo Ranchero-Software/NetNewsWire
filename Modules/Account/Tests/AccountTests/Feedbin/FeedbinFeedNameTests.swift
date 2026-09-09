@@ -9,31 +9,34 @@ import Testing
 import RSWeb
 @testable import Account
 
-@MainActor struct FeedbinFeedNameTests {
+extension WebserviceTests {
 
-	private static let daringFireballFeedID = "1296379"
+	@MainActor struct FeedbinFeedNameTests {
 
-	private let accountManager = TestAccountManager()
+		private static let daringFireballFeedID = "1296379"
 
-	@Test func refreshLeavesEditedNameAlone() async throws {
-		TestingURLProtocol.reset()
-		TestingURLProtocol.setResponse("tags.json", file: "JSON/tags_add.json")
-		TestingURLProtocol.setResponse("subscriptions.json", file: "JSON/subscriptions_initial.json")
+		private let accountManager = TestAccountManager()
 
-		let account = accountManager.createAccount(type: .feedbin)
-		defer {
-			accountManager.deleteAccount(account)
+		@Test func refreshLeavesEditedNameAlone() async throws {
+			TestingURLProtocol.reset()
+			TestingURLProtocol.setResponse("tags.json", file: "JSON/tags_add.json")
+			TestingURLProtocol.setResponse("subscriptions.json", file: "JSON/subscriptions_initial.json")
+
+			let account = accountManager.createAccount(type: .feedbin)
+			defer {
+				accountManager.deleteAccount(account)
+			}
+
+			try await account.refreshAll()
+			let feed = try #require(account.idToFeedDictionary[Self.daringFireballFeedID])
+			feed.editedName = "Edited Name"
+
+			// A second refresh sees the same server name and must not touch the rename.
+			try await account.refreshAll()
+
+			#expect(feed.editedName == "Edited Name")
+			#expect(feed.name == "Daring Fireball")
+			#expect(feed.nameForDisplay == "Edited Name")
 		}
-
-		try await account.refreshAll()
-		let feed = try #require(account.idToFeedDictionary[Self.daringFireballFeedID])
-		feed.editedName = "Edited Name"
-
-		// A second refresh sees the same server name and must not touch the rename.
-		try await account.refreshAll()
-
-		#expect(feed.editedName == "Edited Name")
-		#expect(feed.name == "Daring Fireball")
-		#expect(feed.nameForDisplay == "Edited Name")
 	}
 }
