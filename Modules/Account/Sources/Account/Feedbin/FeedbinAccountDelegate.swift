@@ -51,7 +51,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	private let syncDatabase: SyncDatabase
+	let syncDatabase: SyncDatabase
 	private let caller: FeedbinAPICaller
 	private var articlesRefreshedCount = 0
 	private static let logger = Feedbin.logger
