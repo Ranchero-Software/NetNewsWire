@@ -589,7 +589,8 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func refreshArticlesAndStatuses(_ account: Account) async throws {
-		try await sendArticleStatus()
+		// A failed status send must not block fetching new articles.
+		try? await sendArticleStatus()
 		try await refreshArticleStatus()
 		try await refreshArticles(account)
 		try await refreshMissingArticles(account)
