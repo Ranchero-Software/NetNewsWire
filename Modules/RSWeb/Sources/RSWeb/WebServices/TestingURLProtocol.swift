@@ -29,16 +29,25 @@ public final class TestingURLProtocol: URLProtocol {
 	/// Carries `currentTestID` from the session's configuration to `startLoading`.
 	public static let testIDHeaderField = "X-NetNewsWire-Testing-ID"
 
-	/// Maps a test ID to that test's URL-substring-to-response table. Requests from a session
+	/// What a registered response answers: a URL substring, and optionally one HTTP method.
+	private struct ResponseKey: Hashable {
+		let urlSubstring: String
+		let httpMethod: String?
+	}
+
+	/// Maps a test ID to that test's registered responses. Requests from a session
 	/// built outside a `currentTestID` scope use `sharedTestID`.
-	private static let responses = OSAllocatedUnfairLock<[String: [String: Response]]>(initialState: [:])
+	private static let responses = OSAllocatedUnfairLock<[String: [ResponseKey: Response]]>(initialState: [:])
 
 	private static let sharedTestID = "shared"
 
 	/// Register the response to return for requests whose URL contains `urlSubstring`.
-	public static func setResponse(_ response: Response, forURLContaining urlSubstring: String) {
+	/// Pass `httpMethod` — `HTTPMethod.post` and friends — to answer only that method.
+	/// A registration without one answers any method no method-specific registration claims.
+	public static func setResponse(_ response: Response, forURLContaining urlSubstring: String, httpMethod: String? = nil) {
 		let testID = currentTestID ?? sharedTestID
-		responses.withLock { $0[testID, default: [:]][urlSubstring] = response }
+		let key = ResponseKey(urlSubstring: urlSubstring, httpMethod: httpMethod)
+		responses.withLock { $0[testID, default: [:]][key] = response }
 	}
 
 	/// Clears the responses registered by the current test. Call between tests.
@@ -58,7 +67,18 @@ public final class TestingURLProtocol: URLProtocol {
 
 		let testID = request.value(forHTTPHeaderField: testIDHeaderField) ?? sharedTestID
 		return responses.withLock { responses in
-			responses[testID]?.first { urlString.contains($0.key) }?.value
+			guard let responsesForTest = responses[testID] else {
+				return nil
+			}
+
+			func response(forHTTPMethod httpMethod: String?) -> Response? {
+				responsesForTest.first { key, _ in
+					key.httpMethod == httpMethod && urlString.contains(key.urlSubstring)
+				}?.value
+			}
+
+			// A registration for this request's method wins over one that answers any method.
+			return response(forHTTPMethod: request.httpMethod) ?? response(forHTTPMethod: nil)
 		}
 	}
 
