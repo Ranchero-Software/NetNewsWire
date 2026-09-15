@@ -29,6 +29,9 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 	/// operation completes.
 	private(set) var sentCount = 0
 
+	/// Whether any statuses failed to send. Read after the operation completes.
+	private(set) var didFail = false
+
 	init(account: Account, articlesZone: CloudKitArticlesZone, database: SyncDatabase, syncArticleContentForUnreadArticles: @escaping @Sendable () -> Bool, syncErrorHandler: CloudKitSyncErrorHandler?) {
 		self.account = account
 		self.accountID = account.accountID
@@ -64,6 +67,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 					activityLog.didComplete(id: activityID, message: message)
 				}
 			} catch {
+				self.didFail = true
 				Self.logger.debug("iCloud: Send status error: \(error.localizedDescription)")
 				activityLog.didFail(id: activityID, error: error)
 			}

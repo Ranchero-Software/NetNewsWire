@@ -188,12 +188,15 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			return false
 		}
 
-		let sentCount = try await sendArticleStatus(account: account, showProgress: false)
+		let sendResult = try await sendArticleStatus(account: account, showProgress: false)
 		try await refreshArticleStatus()
 
 		let didReceiveChanges = !(articlesZoneHasNoChanges && accountZoneHasNoChanges)
-		let didWork = sentCount > 0 || didReceiveChanges
-		if didWork {
+		let didWork = sendResult.sentCount > 0 || didReceiveChanges
+
+		// A failed send means statuses are still waiting to go out, so this isn't a quiet
+		// period. Backing off here would also skip receiving for the next half hour.
+		if didWork || sendResult.didFail {
 			lastNoChangeSyncDate = nil
 		} else {
 			lastNoChangeSyncDate = Date()
@@ -1130,10 +1133,10 @@ private extension CloudKitAccountDelegate {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	/// Returns the number of statuses successfully sent.
-	func sendArticleStatus(account: Account, showProgress: Bool) async throws -> Int {
+	/// Returns the number of statuses successfully sent, and whether any failed to send.
+	func sendArticleStatus(account: Account, showProgress: Bool) async throws -> (sentCount: Int, didFail: Bool) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Int, Error>) in
+		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(sentCount: Int, didFail: Bool), Error>) in
 			let op = CloudKitSendStatusOperation(account: account,
 												 articlesZone: articlesZone,
 												 database: syncDatabase,
@@ -1144,7 +1147,7 @@ private extension CloudKitAccountDelegate {
 				if mainThreadOperation.isCanceled {
 					continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
 				} else {
-					continuation.resume(returning: op.sentCount)
+					continuation.resume(returning: (op.sentCount, op.didFail))
 				}
 			}
 			mainThreadOperationQueue.add(op)
