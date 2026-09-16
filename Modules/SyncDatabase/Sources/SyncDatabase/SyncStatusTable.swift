@@ -17,7 +17,8 @@ struct SyncStatusTable {
 	// Selects first, then marks just the rows being returned. Marking every row would flag rows
 	// past the limit as in-flight, and `deleteSelectedForProcessing` with a nil key would then
 	// delete a queued status that was never sent.
-	static func selectForProcessing(limit: Int?, database: FMDatabase) -> Set<SyncStatus>? {
+	static func selectForProcessing(limit: Int?, database: FMDatabase) throws -> Set<SyncStatus> {
+		let operation = "Reading statuses to send"
 		database.beginTransaction()
 
 		let selectSQL = {
@@ -29,8 +30,9 @@ struct SyncStatusTable {
 		}()
 
 		guard let resultSet = database.executeQuery(selectSQL, withArgumentsIn: nil) else {
+			let error = database.syncDatabaseError(operation: operation)
 			database.rollback()
-			return nil
+			throw error
 		}
 
 		let statuses = resultSet.mapToSet(statusWithRow)
@@ -49,8 +51,9 @@ struct SyncStatusTable {
 			parameters.append(key.rawValue as AnyObject)
 			let updateSQL = "update \(name) set selected = true where articleID in \(placeholders) and key = ?"
 			guard database.executeUpdate(updateSQL, withArgumentsIn: parameters) else {
+				let error = database.syncDatabaseError(operation: "Marking \(articleIDs.count) \(key.rawValue) statuses as in flight")
 				database.rollback()
-				return nil
+				throw error
 			}
 		}
 
@@ -59,37 +62,43 @@ struct SyncStatusTable {
 		return Set(statuses.map { SyncStatus(articleID: $0.articleID, key: $0.key, flag: $0.flag, selected: true) })
 	}
 
-	static func selectPendingCount(database: FMDatabase) -> Int? {
+	static func selectPendingCount(database: FMDatabase) throws -> Int {
+		let operation = "Counting pending statuses"
 		let sql = "select count(*) from \(name)"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-			return nil
+			throw database.syncDatabaseError(operation: operation)
 		}
 
-		let count = resultSet.intWithCountResult()
+		guard let count = resultSet.intWithCountResult() else {
+			throw database.syncDatabaseError(operation: operation)
+		}
 		return count
 	}
 
-	static func selectPendingReadStatusArticleIDs(database: FMDatabase) -> Set<String>? {
-		selectPendingArticleIDs(.read, database: database)
+	static func selectPendingReadStatusArticleIDs(database: FMDatabase) throws -> Set<String> {
+		try selectPendingArticleIDs(.read, database: database)
 	}
 
-	static func selectPendingStarredStatusArticleIDs(database: FMDatabase) -> Set<String>? {
-		selectPendingArticleIDs(.starred, database: database)
+	static func selectPendingStarredStatusArticleIDs(database: FMDatabase) throws -> Set<String> {
+		try selectPendingArticleIDs(.starred, database: database)
 	}
 
-	static func resetAllSelectedForProcessing(database: FMDatabase) {
+	static func resetAllSelectedForProcessing(database: FMDatabase) throws {
 		let updateSQL = "update \(name) set selected = false"
-		database.executeUpdateInTransaction(updateSQL)
+		guard database.executeUpdateInTransaction(updateSQL) else {
+			throw database.syncDatabaseError(operation: "Returning all in-flight statuses to the queue")
+		}
 	}
 
 	// An articleID can have both a read row and a starred row queued. Callers that send
 	// one status kind at a time must pass `key` so they don’t touch the other kind’s rows.
 
-	static func resetSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key?, database: FMDatabase) {
+	static func resetSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key?, database: FMDatabase) throws {
 		guard !articleIDs.isEmpty else {
 			return
 		}
 
+		let operation = "Returning \(articleIDs.count) in-flight statuses to the queue"
 		var parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		var updateSQL = "update \(name) set selected = false where articleID in \(placeholders)"
@@ -97,14 +106,17 @@ struct SyncStatusTable {
 			updateSQL += " and key = ?"
 			parameters.append(key.rawValue as AnyObject)
 		}
-		database.executeUpdateInTransaction(updateSQL, withArgumentsIn: parameters)
+		guard database.executeUpdateInTransaction(updateSQL, withArgumentsIn: parameters) else {
+			throw database.syncDatabaseError(operation: operation)
+		}
 	}
 
-	static func deleteSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key?, database: FMDatabase) {
+	static func deleteSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key?, database: FMDatabase) throws {
 		guard !articleIDs.isEmpty else {
 			return
 		}
 
+		let operation = "Deleting \(articleIDs.count) sent statuses"
 		var parameters = articleIDs.map { $0 as AnyObject }
 		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		var deleteSQL = "delete from \(name) where selected = true and articleID in \(placeholders)"
@@ -112,16 +124,25 @@ struct SyncStatusTable {
 			deleteSQL += " and key = ?"
 			parameters.append(key.rawValue as AnyObject)
 		}
-		database.executeUpdateInTransaction(deleteSQL, withArgumentsIn: parameters)
+		guard database.executeUpdateInTransaction(deleteSQL, withArgumentsIn: parameters) else {
+			throw database.syncDatabaseError(operation: operation)
+		}
 	}
 
-	static func insertStatuses(_ statuses: Set<SyncStatus>, database: FMDatabase) {
+	static func insertStatuses(_ statuses: Set<SyncStatus>, database: FMDatabase) throws {
+		let operation = "Queueing \(statuses.count) statuses to send"
 		database.beginTransaction()
 
 		let statusArray = statuses.map { $0.databaseDictionary() }
-		database.insertRows(statusArray, insertType: .orReplace, tableName: name)
+		guard database.insertRows(statusArray, insertType: .orReplace, tableName: name) else {
+			let error = database.syncDatabaseError(operation: operation)
+			database.rollback()
+			throw error
+		}
 
-		database.commit()
+		guard database.commit() else {
+			throw database.syncDatabaseError(operation: operation)
+		}
 	}
 }
 
@@ -143,10 +164,11 @@ private extension SyncStatusTable {
 	// Includes rows that are selected — a send in flight hasn’t been confirmed by the server yet,
 	// and skipping those let a concurrent refresh revert the change the send was carrying.
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
-	static func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key, database: FMDatabase) -> Set<String>? {
+	static func selectPendingArticleIDs(_ statusKey: ArticleStatus.Key, database: FMDatabase) throws -> Set<String> {
+		let operation = "Reading pending \(statusKey.rawValue) statuses"
 		let sql = "select articleID from \(name) where key = \"\(statusKey.rawValue)\";"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
-			return nil
+			throw database.syncDatabaseError(operation: operation)
 		}
 
 		let articleIDs = resultSet.mapToSet { $0.swiftString(forColumnIndex: 0) }

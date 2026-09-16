@@ -30,23 +30,23 @@ public actor SyncDatabase {
 	}
 
 	public func insertStatuses(_ statuses: Set<SyncStatus>) {
-		SyncStatusTable.insertStatuses(statuses, database: database)
+		try? SyncStatusTable.insertStatuses(statuses, database: database)
 	}
 
 	public func selectForProcessing(limit: Int? = nil) -> Set<SyncStatus>? {
-		SyncStatusTable.selectForProcessing(limit: limit, database: database)
+		try? SyncStatusTable.selectForProcessing(limit: limit, database: database)
 	}
 
 	public func selectPendingCount() -> Int? {
-		SyncStatusTable.selectPendingCount(database: database)
+		try? SyncStatusTable.selectPendingCount(database: database)
 	}
 
 	public func selectPendingReadStatusArticleIDs() -> Set<String>? {
-		SyncStatusTable.selectPendingReadStatusArticleIDs(database: database)
+		try? SyncStatusTable.selectPendingReadStatusArticleIDs(database: database)
 	}
 
 	public func selectPendingStarredStatusArticleIDs() -> Set<String>? {
-		SyncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
+		try? SyncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
 	}
 
 	nonisolated public func resetAllSelectedForProcessing() {
@@ -58,11 +58,11 @@ public actor SyncDatabase {
 	/// Pass `key` when sending one status kind at a time. A nil key matches all kinds —
 	/// correct only when every queued kind for these articleIDs was sent together.
 	public func resetSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
-		SyncStatusTable.resetSelectedForProcessing(articleIDs, key: key, database: database)
+		try? SyncStatusTable.resetSelectedForProcessing(articleIDs, key: key, database: database)
 	}
 
 	public func deleteSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
-		SyncStatusTable.deleteSelectedForProcessing(articleIDs, key: key, database: database)
+		try? SyncStatusTable.deleteSelectedForProcessing(articleIDs, key: key, database: database)
 	}
 }
 
@@ -75,6 +75,6 @@ private extension SyncDatabase {
 	"""
 
 	func _resetAllSelectedForProcessing() {
-		SyncStatusTable.resetAllSelectedForProcessing(database: database)
+		try? SyncStatusTable.resetAllSelectedForProcessing(database: database)
 	}
 }
