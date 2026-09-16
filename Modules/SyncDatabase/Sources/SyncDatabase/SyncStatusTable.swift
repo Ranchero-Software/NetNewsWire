@@ -35,7 +35,16 @@ struct SyncStatusTable {
 			throw error
 		}
 
+		// Rows are fetched during iteration, not by the query above. A failure partway
+		// through stops early and returns the rows read so far, which is indistinguishable
+		// from a complete result.
 		let statuses = resultSet.mapToSet(statusWithRow)
+		guard !database.hadError() else {
+			let error = database.syncDatabaseError(operation: operation)
+			database.rollback()
+			throw error
+		}
+
 		guard !statuses.isEmpty else {
 			database.commit()
 			return statuses
@@ -172,6 +181,10 @@ private extension SyncStatusTable {
 		}
 
 		let articleIDs = resultSet.mapToSet { $0.swiftString(forColumnIndex: 0) }
+		guard !database.hadError() else {
+			throw database.syncDatabaseError(operation: operation)
+		}
+
 		return articleIDs
 	}
 }
