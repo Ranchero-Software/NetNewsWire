@@ -44,10 +44,7 @@ struct SyncStatusTable {
 		let statusesByKey = Dictionary(grouping: statuses, by: \.key)
 		for (key, statusesForKey) in statusesByKey {
 			let articleIDs = statusesForKey.map { $0.articleID }
-			guard let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count)) else {
-				database.rollback()
-				return nil
-			}
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 			var parameters = articleIDs.map { $0 as AnyObject }
 			parameters.append(key.rawValue as AnyObject)
 			let updateSQL = "update \(name) set selected = true where articleID in \(placeholders) and key = ?"
@@ -94,7 +91,7 @@ struct SyncStatusTable {
 		}
 
 		var parameters = articleIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		var updateSQL = "update \(name) set selected = false where articleID in \(placeholders)"
 		if let key {
 			updateSQL += " and key = ?"
@@ -109,7 +106,7 @@ struct SyncStatusTable {
 		}
 
 		var parameters = articleIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		var deleteSQL = "delete from \(name) where selected = true and articleID in \(placeholders)"
 		if let key {
 			deleteSQL += " and key = ?"
