@@ -41,20 +41,20 @@ public actor SyncDatabase {
 		}
 	}
 
-	public func selectForProcessing(limit: Int? = nil) -> Set<SyncStatus>? {
-		try? SyncStatusTable.selectForProcessing(limit: limit, database: database)
+	public func selectForProcessing(limit: Int? = nil) throws -> Set<SyncStatus> {
+		try SyncStatusTable.selectForProcessing(limit: limit, database: database)
 	}
 
-	public func selectPendingCount() -> Int? {
-		try? SyncStatusTable.selectPendingCount(database: database)
+	public func selectPendingCount() throws -> Int {
+		try SyncStatusTable.selectPendingCount(database: database)
 	}
 
-	public func selectPendingReadStatusArticleIDs() -> Set<String>? {
-		try? SyncStatusTable.selectPendingReadStatusArticleIDs(database: database)
+	public func selectPendingReadStatusArticleIDs() throws -> Set<String> {
+		try SyncStatusTable.selectPendingReadStatusArticleIDs(database: database)
 	}
 
-	public func selectPendingStarredStatusArticleIDs() -> Set<String>? {
-		try? SyncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
+	public func selectPendingStarredStatusArticleIDs() throws -> Set<String> {
+		try SyncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
 	}
 
 	nonisolated public func resetAllSelectedForProcessing() {

@@ -113,7 +113,7 @@ import Secrets
 		}
 
 		return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
-			guard let syncStatuses = await syncDatabase.selectForProcessing() else {
+			guard let syncStatuses = try? await syncDatabase.selectForProcessing() else {
 				return 0
 			}
 
@@ -502,7 +502,7 @@ import Secrets
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }

@@ -34,10 +34,10 @@ import SyncDatabase
 			try await account.sendArticleStatus()
 		}
 
-		let pendingReadArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs()
+		let pendingReadArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs()
 		#expect(pendingReadArticleIDs == ["1"])
 
-		let pendingStarredArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs()
+		let pendingStarredArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs()
 		#expect(pendingStarredArticleIDs == [])
 	}
 
@@ -62,7 +62,7 @@ import SyncDatabase
 		try await account.refreshAll()
 
 		// The send really did fail, so its row is still queued.
-		let pendingReadArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs()
+		let pendingReadArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs()
 		#expect(pendingReadArticleIDs == ["1"])
 
 		#expect(account.flattenedFeeds().count == 224)

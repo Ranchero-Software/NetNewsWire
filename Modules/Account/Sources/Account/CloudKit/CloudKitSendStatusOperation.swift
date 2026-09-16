@@ -82,7 +82,7 @@ final class CloudKitSendStatusOperation: MainThreadOperation, @unchecked Sendabl
 
 	/// Returns the total number of statuses sent and the subset whose article content was also uploaded.
 	func selectForProcessing() async throws -> SendResult {
-		guard let syncStatuses = await syncDatabase.selectForProcessing(limit: blockSize),
+		guard let syncStatuses = try? await syncDatabase.selectForProcessing(limit: blockSize),
 			  !syncStatuses.isEmpty else {
 			return (0, 0)
 		}

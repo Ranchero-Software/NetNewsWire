@@ -303,7 +303,7 @@ import os
 			return 0
 		}
 
-		guard let pendingStoryHashes = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+		guard let pendingStoryHashes = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			return 0
 		}
 
@@ -327,7 +327,7 @@ import os
 		guard let hashes else {
 			return 0
 		}
-		guard let pendingStoryHashes = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+		guard let pendingStoryHashes = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			return 0
 		}
 

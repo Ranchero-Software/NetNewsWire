@@ -329,7 +329,7 @@ import Secrets
 		do {
 			return try await account.logActivity(kind: .sendArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> Int in
 				// A failed read must not read as “nothing to send” — zero would arm the no-change backoff.
-				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
+				guard let syncStatuses = try? await syncDatabase.selectForProcessing() else {
 					throw FeedlyAccountDelegateError.databaseReadFailed
 				}
 
@@ -812,7 +812,7 @@ import Secrets
 			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if !rateLimiter.shouldSkip(), let count = await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
+		if !rateLimiter.shouldSkip(), let count = try? await syncDatabase.selectPendingCount(), count > Self.pendingStatusSendThreshold {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -1029,7 +1029,7 @@ private extension FeedlyAccountDelegate {
 		// fetches above must be in it, or the marks below would briefly revert the edit.
 		// A failed pending-statuses read must not read as “nothing pending” — that would
 		// revert pending edits and arm the no-change backoff.
-		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			throw FeedlyAccountDelegateError.databaseReadFailed
 		}
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
@@ -1062,7 +1062,7 @@ private extension FeedlyAccountDelegate {
 		// fetches above must be in it, or the marks below would briefly revert the edit.
 		// A failed pending-statuses read must not read as “nothing pending” — that would
 		// revert pending edits and arm the no-change backoff.
-		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			throw FeedlyAccountDelegateError.databaseReadFailed
 		}
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)

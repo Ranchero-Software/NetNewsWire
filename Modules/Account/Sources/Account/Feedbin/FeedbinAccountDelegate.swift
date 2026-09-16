@@ -114,7 +114,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 		do {
 			return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
-				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
+				guard let syncStatuses = try? await syncDatabase.selectForProcessing() else {
 					return 0
 				}
 
@@ -462,7 +462,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -994,7 +994,7 @@ private extension FeedbinAccountDelegate {
 			return 0
 		}
 
-		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			return 0
 		}
 
@@ -1019,7 +1019,7 @@ private extension FeedbinAccountDelegate {
 			return 0
 		}
 
-		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			return 0
 		}
 

@@ -25,13 +25,13 @@ import SyncDatabase
 		}
 		await database.insertStatuses(statuses)
 
-		let selectedStatuses = try #require(await database.selectForProcessing())
+		let selectedStatuses = try await database.selectForProcessing()
 		#expect(selectedStatuses.count == articleIDCount * 2)
 
 		// Only rows marked selected in the database are deleted, so an empty
 		// pending count is what proves the marking happened.
 		await database.deleteSelectedForProcessing(Set(articleIDs))
-		#expect(await database.selectPendingCount() == 0)
+		#expect(try await database.selectPendingCount() == 0)
 	}
 
 	@Test func selectForProcessingRespectsLimit() async throws {
@@ -39,7 +39,7 @@ import SyncDatabase
 		let statuses = Set((0..<300).map { SyncStatus(articleID: "article-\($0)", key: .read, flag: true) })
 		await database.insertStatuses(statuses)
 
-		let selectedStatuses = try #require(await database.selectForProcessing(limit: limit))
+		let selectedStatuses = try await database.selectForProcessing(limit: limit)
 		#expect(selectedStatuses.count == limit)
 	}
 
@@ -51,31 +51,31 @@ import SyncDatabase
 		]
 		await database.insertStatuses(statuses)
 
-		let selectedStatuses = try #require(await database.selectForProcessing())
+		let selectedStatuses = try await database.selectForProcessing()
 		#expect(selectedStatuses.count == 2)
 
 		await database.deleteSelectedForProcessing([articleID], key: .read)
-		#expect(await database.selectPendingCount() == 1)
-		let pendingStarredArticleIDs = try #require(await database.selectPendingStarredStatusArticleIDs())
+		#expect(try await database.selectPendingCount() == 1)
+		let pendingStarredArticleIDs = try await database.selectPendingStarredStatusArticleIDs()
 		#expect(pendingStarredArticleIDs == [articleID])
 	}
 
 	/// The step check must not fire on a healthy read that simply found no rows.
 	/// A false positive there would stop syncing outright.
 	@Test func emptyQueueReadsCleanly() async throws {
-		#expect(try #require(await database.selectForProcessing()).isEmpty)
-		#expect(await database.selectPendingCount() == 0)
-		#expect(try #require(await database.selectPendingReadStatusArticleIDs()).isEmpty)
-		#expect(try #require(await database.selectPendingStarredStatusArticleIDs()).isEmpty)
+		#expect(try await database.selectForProcessing().isEmpty)
+		#expect(try await database.selectPendingCount() == 0)
+		#expect(try await database.selectPendingReadStatusArticleIDs().isEmpty)
+		#expect(try await database.selectPendingStarredStatusArticleIDs().isEmpty)
 
 		// And again once rows have been queued and then cleared.
 		let statuses = Set((0..<5).map { SyncStatus(articleID: "article-\($0)", key: .read, flag: true) })
 		await database.insertStatuses(statuses)
-		_ = await database.selectForProcessing()
+		_ = try await database.selectForProcessing()
 		await database.deleteSelectedForProcessing(Set(statuses.map { $0.articleID }), key: .read)
 
-		#expect(try #require(await database.selectForProcessing()).isEmpty)
-		#expect(await database.selectPendingCount() == 0)
+		#expect(try await database.selectForProcessing().isEmpty)
+		#expect(try await database.selectPendingCount() == 0)
 	}
 
 	/// A read that stops on a SQLite error has to fail, not return the rows it got to
@@ -99,7 +99,11 @@ import SyncDatabase
 		// cleanly — the failure only shows up while stepping through the rows.
 		try FileManager.default.removeItem(at: folderURL)
 
-		#expect(await database.selectForProcessing() == nil)
-		#expect(await database.selectPendingReadStatusArticleIDs() == nil)
+		await #expect(throws: SyncDatabaseError.self) {
+			try await database.selectForProcessing()
+		}
+		await #expect(throws: SyncDatabaseError.self) {
+			try await database.selectPendingReadStatusArticleIDs()
+		}
 	}
 }
