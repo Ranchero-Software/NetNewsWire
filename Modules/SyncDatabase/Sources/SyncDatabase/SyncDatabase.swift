@@ -7,12 +7,16 @@
 //
 
 import Foundation
+import os
+import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
 public actor SyncDatabase {
 	private let database: FMDatabase
 	public nonisolated let databasePath: String
+
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "SyncDatabase")
 
 	public init(databasePath: String) {
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
@@ -30,7 +34,11 @@ public actor SyncDatabase {
 	}
 
 	public func insertStatuses(_ statuses: Set<SyncStatus>) {
-		try? SyncStatusTable.insertStatuses(statuses, database: database)
+		do {
+			try SyncStatusTable.insertStatuses(statuses, database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
+		}
 	}
 
 	public func selectForProcessing(limit: Int? = nil) -> Set<SyncStatus>? {
@@ -58,11 +66,19 @@ public actor SyncDatabase {
 	/// Pass `key` when sending one status kind at a time. A nil key matches all kinds —
 	/// correct only when every queued kind for these articleIDs was sent together.
 	public func resetSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
-		try? SyncStatusTable.resetSelectedForProcessing(articleIDs, key: key, database: database)
+		do {
+			try SyncStatusTable.resetSelectedForProcessing(articleIDs, key: key, database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
+		}
 	}
 
 	public func deleteSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
-		try? SyncStatusTable.deleteSelectedForProcessing(articleIDs, key: key, database: database)
+		do {
+			try SyncStatusTable.deleteSelectedForProcessing(articleIDs, key: key, database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
+		}
 	}
 }
 
@@ -75,6 +91,10 @@ private extension SyncDatabase {
 	"""
 
 	func _resetAllSelectedForProcessing() {
-		try? SyncStatusTable.resetAllSelectedForProcessing(database: database)
+		do {
+			try SyncStatusTable.resetAllSelectedForProcessing(database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
+		}
 	}
 }
