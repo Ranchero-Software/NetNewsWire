@@ -58,6 +58,13 @@ nonisolated extension URLSession {
 
 		if Platform.isRunningUnitTests {
 			sessionConfiguration.protocolClasses = [TestingURLProtocol.self]
+
+			// Stamp the session so the protocol can tell this test's requests from another's.
+			if let testID = TestingURLProtocol.currentTestID {
+				var headers = sessionConfiguration.httpAdditionalHeaders ?? [:]
+				headers[TestingURLProtocol.testIDHeaderField] = testID
+				sessionConfiguration.httpAdditionalHeaders = headers
+			}
 		}
 
 		return URLSession(configuration: sessionConfiguration)

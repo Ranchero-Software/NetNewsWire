@@ -57,6 +57,8 @@ import Secrets
 
 	var credentials: Credentials? {
 		didSet {
+			reauthorizationDidFailDefinitively = false
+
 			#if DEBUG
 			// https://developer.feedly.com/v3/developer/
 			if let devToken = ProcessInfo.processInfo.environment["FEEDLY_DEV_ACCESS_TOKEN"], !devToken.isEmpty {
@@ -105,6 +107,9 @@ import Secrets
 	// Concurrent 401s must share one token refresh — parallel POSTs to the token
 	// endpoint read as abuse to Feedly and earn the 403 ban.
 	private var reauthorizeTask: Task<Bool, Never>?
+
+	// A rejected refresh token is rejected on the next 401 too.
+	private var reauthorizationDidFailDefinitively = false
 
 	// The refresh timer, background refresh, and the Refresh command can all fire
 	// refreshAll — overlapping runs double the request volume and corrupt progress.
@@ -1227,6 +1232,9 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 	/// Storing credentials updates `self.credentials` via `Account.storeCredentials`, which in turn
 	/// hands the fresh access token to the caller.
 	func reauthorizeFeedlyAPICaller() async -> Bool {
+		guard !reauthorizationDidFailDefinitively else {
+			return false
+		}
 		if let reauthorizeTask {
 			return await reauthorizeTask.value
 		}
@@ -1272,6 +1280,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 		} catch {
 			Self.logger.error("Feedly: Refresh access token failed: \(error.localizedDescription)")
 			if isDefinitiveReauthorizationError(error) {
+				reauthorizationDidFailDefinitively = true
 				account.postSyncError(error, operation: "Refreshing access token")
 			}
 			return false

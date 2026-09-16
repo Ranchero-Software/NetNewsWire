@@ -182,7 +182,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return 0
 		}
 
-		var modifyRecords = [CKRecord]()
+		var statusRecords = [CKRecord]()
+		var articleRecords = [CKRecord]()
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 		var contentUploadCount = 0
@@ -193,9 +194,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		for statusUpdate in statusUpdates {
 			switch statusUpdate.record {
 			case .all:
-				modifyRecords.append(self.makeStatusRecord(statusUpdate))
-				modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
-				contentUploadCount += 1
+				statusRecords.append(self.makeStatusRecord(statusUpdate))
+				articleRecords.append(self.makeArticleRecord(statusUpdate.article!))
 			case .new:
 				newRecords.append(self.makeStatusRecord(statusUpdate))
 				if statusUpdate.article!.status.starred || syncUnreadContent {
@@ -207,22 +207,38 @@ final class CloudKitArticlesZone: CloudKitZone {
 			case .delete:
 				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: zoneID))
 			case .statusOnly:
-				modifyRecords.append(self.makeStatusRecord(statusUpdate))
+				statusRecords.append(self.makeStatusRecord(statusUpdate))
 				deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: zoneID))
 			}
 		}
 
 		await Task.detached(priority: .userInitiated) {
-			self.compressArticleRecords(modifyRecords)
+			self.compressArticleRecords(articleRecords)
 			self.compressArticleRecords(newRecords)
 		}.value
 
+		// Statuses go first, and on their own. They're what sync correctness depends on, and
+		// `modify` is atomic, so batching them with content records means one article too big
+		// to store rejects every status in the request. Sending them first is also the right
+		// order: an article record references its status record.
 		do {
-			try await modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs)
+			try await modify(recordsToSave: statusRecords, recordIDsToDelete: deleteRecordIDs)
 			try await saveIfNew(newRecords)
 		} catch {
 			try await handleModifyArticlesError(error, statusUpdates: statusUpdates)
+			return contentUploadCount
 		}
+
+		// Content is an optimization, so a failure here leaves the statuses sent.
+		if !articleRecords.isEmpty {
+			do {
+				try await modify(recordsToSave: articleRecords, recordIDsToDelete: [])
+				contentUploadCount += articleRecords.count
+			} catch {
+				Self.logger.error("CloudKitArticlesZone: modifyArticles content upload failed: \(error.localizedDescription)")
+			}
+		}
+
 		return contentUploadCount
 	}
 
