@@ -87,13 +87,10 @@ import Images
 			self.updateBadge()
 		}
 
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
-			if granted {
-				DispatchQueue.main.async {
-					UIApplication.shared.registerForRemoteNotifications()
-				}
-			}
-		}
+		// Silent CloudKit pushes don’t need notification permission. setBadgeCount does.
+		UIApplication.shared.registerForRemoteNotifications()
+
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { _, _ in }
 
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
