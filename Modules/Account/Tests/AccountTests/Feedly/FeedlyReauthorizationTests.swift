@@ -5,6 +5,7 @@
 //  Created by Brent Simmons on 9/16/26.
 //
 
+import Foundation
 import Testing
 import RSWeb
 import Secrets
@@ -24,7 +25,10 @@ import Secrets
 			TestAccountManager.shared.deleteAccount(account)
 		}
 		let delegate = try #require(account.delegate as? FeedlyAccountDelegate)
-		try account.storeCredentials(Credentials(type: .oauthRefreshToken, username: "someone", secret: "rejected-token"))
+
+		// Unique per test — keychain entries are keyed by server and username.
+		let username = UUID().uuidString
+		try account.storeCredentials(Credentials(type: .oauthRefreshToken, username: username, secret: "rejected-token"))
 
 		let firstResult = await delegate.reauthorizeFeedlyAPICaller()
 		#expect(firstResult == false)
@@ -45,12 +49,15 @@ import Secrets
 			TestAccountManager.shared.deleteAccount(account)
 		}
 		let delegate = try #require(account.delegate as? FeedlyAccountDelegate)
-		try account.storeCredentials(Credentials(type: .oauthRefreshToken, username: "someone", secret: "rejected-token"))
+
+		// Unique per test — keychain entries are keyed by server and username.
+		let username = UUID().uuidString
+		try account.storeCredentials(Credentials(type: .oauthRefreshToken, username: username, secret: "rejected-token"))
 
 		_ = await delegate.reauthorizeFeedlyAPICaller()
 		#expect(TestingURLProtocol.requestCount(forURLContaining: Self.tokenEndpoint) == 1)
 
-		try account.storeCredentials(Credentials(type: .oauthAccessToken, username: "someone", secret: "fresh-token"))
+		try account.storeCredentials(Credentials(type: .oauthAccessToken, username: username, secret: "fresh-token"))
 
 		_ = await delegate.reauthorizeFeedlyAPICaller()
 		#expect(TestingURLProtocol.requestCount(forURLContaining: Self.tokenEndpoint) == 2)
