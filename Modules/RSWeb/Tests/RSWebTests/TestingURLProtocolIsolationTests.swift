@@ -33,7 +33,7 @@ struct TestingURLProtocolIsolationTests {
 			TestingURLProtocol.setResponse(.init(statusCode: 418), forURLContaining: Self.urlSubstring)
 		}
 		defer {
-			TestingURLProtocol.removeResponses(forTestID: "keeper")
+			TestingURLProtocol.endTest(withID: "keeper")
 		}
 
 		TestingURLProtocol.$currentTestID.withValue("resetter") {
@@ -67,7 +67,7 @@ private extension TestingURLProtocolIsolationTests {
 	static func statusCode(forTestID testID: String, registering statusCode: Int) async throws -> Int {
 		try await TestingURLProtocol.$currentTestID.withValue(testID) {
 			defer {
-				TestingURLProtocol.removeResponses(forTestID: testID)
+				TestingURLProtocol.endTest(withID: testID)
 			}
 			TestingURLProtocol.setResponse(.init(statusCode: statusCode), forURLContaining: urlSubstring)
 			return try await Self.statusCode(for: url)

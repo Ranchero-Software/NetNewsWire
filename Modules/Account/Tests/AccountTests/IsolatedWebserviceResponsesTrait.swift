@@ -24,7 +24,7 @@ struct IsolatedWebserviceResponsesTrait: TestTrait, SuiteTrait, TestScoping {
 		let testID = UUID().uuidString
 		try await TestingURLProtocol.$currentTestID.withValue(testID) {
 			defer {
-				TestingURLProtocol.removeResponses(forTestID: testID)
+				TestingURLProtocol.endTest(withID: testID)
 			}
 			try await function()
 		}

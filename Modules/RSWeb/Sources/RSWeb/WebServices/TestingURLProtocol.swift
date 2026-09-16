@@ -35,9 +35,21 @@ public final class TestingURLProtocol: URLProtocol {
 		let httpMethod: String?
 	}
 
-	/// Maps a test ID to that test's registered responses. Requests from a session
-	/// built outside a `currentTestID` scope use `sharedTestID`.
-	private static let responses = OSAllocatedUnfairLock<[String: [ResponseKey: Response]]>(initialState: [:])
+	/// A request the protocol answered.
+	private struct AnsweredRequest: Sendable {
+		let urlString: String
+		let httpMethod: String?
+	}
+
+	/// What one test registered, and what it has been asked for since.
+	private struct TestState: Sendable {
+		var responses = [ResponseKey: Response]()
+		var answeredRequests = [AnsweredRequest]()
+	}
+
+	/// Maps a test ID to its state. Requests from a session built outside a
+	/// `currentTestID` scope use `sharedTestID`.
+	private static let testStates = OSAllocatedUnfairLock<[String: TestState]>(initialState: [:])
 
 	private static let sharedTestID = "shared"
 
@@ -47,17 +59,46 @@ public final class TestingURLProtocol: URLProtocol {
 	public static func setResponse(_ response: Response, forURLContaining urlSubstring: String, httpMethod: String? = nil) {
 		let testID = currentTestID ?? sharedTestID
 		let key = ResponseKey(urlSubstring: urlSubstring, httpMethod: httpMethod)
-		responses.withLock { $0[testID, default: [:]][key] = response }
+		testStates.withLock { $0[testID, default: TestState()].responses[key] = response }
 	}
 
-	/// Clears the responses registered by the current test. Call between tests.
+	/// How many requests this test has been asked for whose URL contains `urlSubstring`.
+	/// Pass `httpMethod` to count only that method. Counts requests whether or not a
+	/// response was registered for them.
+	public static func requestCount(forURLContaining urlSubstring: String, httpMethod: String? = nil) -> Int {
+		let testID = currentTestID ?? sharedTestID
+		return testStates.withLock { testStates in
+			let answeredRequests = testStates[testID]?.answeredRequests ?? []
+			return answeredRequests.count { answeredRequest in
+				guard answeredRequest.urlString.contains(urlSubstring) else {
+					return false
+				}
+				guard let httpMethod else {
+					return true
+				}
+				return answeredRequest.httpMethod == httpMethod
+			}
+		}
+	}
+
+	/// Clears everything recorded for the current test. Call between tests.
 	public static func reset() {
-		removeResponses(forTestID: currentTestID ?? sharedTestID)
+		endTest(withID: currentTestID ?? sharedTestID)
 	}
 
-	/// Discards one test's responses, for a scope that is ending.
-	public static func removeResponses(forTestID testID: String) {
-		responses.withLock { $0[testID] = nil }
+	/// Discards one test's registrations and request history, for a scope that is ending.
+	public static func endTest(withID testID: String) {
+		testStates.withLock { $0[testID] = nil }
+	}
+
+	private static func recordRequest(_ request: URLRequest) {
+		guard let urlString = request.url?.absoluteString else {
+			return
+		}
+
+		let testID = request.value(forHTTPHeaderField: testIDHeaderField) ?? sharedTestID
+		let answeredRequest = AnsweredRequest(urlString: urlString, httpMethod: request.httpMethod)
+		testStates.withLock { $0[testID, default: TestState()].answeredRequests.append(answeredRequest) }
 	}
 
 	private static func response(for request: URLRequest) -> Response? {
@@ -66,8 +107,8 @@ public final class TestingURLProtocol: URLProtocol {
 		}
 
 		let testID = request.value(forHTTPHeaderField: testIDHeaderField) ?? sharedTestID
-		return responses.withLock { responses in
-			guard let responsesForTest = responses[testID] else {
+		return testStates.withLock { testStates in
+			guard let responsesForTest = testStates[testID]?.responses else {
 				return nil
 			}
 
@@ -96,6 +137,8 @@ public final class TestingURLProtocol: URLProtocol {
 			client?.urlProtocol(self, didFailWithError: URLError(.badURL))
 			return
 		}
+
+		Self.recordRequest(request)
 
 		let match = Self.response(for: request)
 
