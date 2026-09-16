@@ -329,8 +329,11 @@ import Secrets
 		do {
 			return try await account.logActivity(kind: .sendArticleStatuses, successMessage: successMessage, durationIsSignificant: durationIsSignificant) { () -> Int in
 				// A failed read must not read as “nothing to send” — zero would arm the no-change backoff.
-				guard let syncStatuses = try? await syncDatabase.selectForProcessing() else {
-					throw FeedlyAccountDelegateError.databaseReadFailed
+				let syncStatuses: Set<SyncStatus>
+				do {
+					syncStatuses = try await syncDatabase.selectForProcessing()
+				} catch {
+					throw FeedlyAccountDelegateError.databaseReadFailed(error.localizedDescription)
 				}
 
 				var savedError: Error?
@@ -1029,8 +1032,11 @@ private extension FeedlyAccountDelegate {
 		// fetches above must be in it, or the marks below would briefly revert the edit.
 		// A failed pending-statuses read must not read as “nothing pending” — that would
 		// revert pending edits and arm the no-change backoff.
-		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
-			throw FeedlyAccountDelegateError.databaseReadFailed
+		let pendingArticleIDs: Set<String>
+		do {
+			pendingArticleIDs = try await syncDatabase.selectPendingReadStatusArticleIDs()
+		} catch {
+			throw FeedlyAccountDelegateError.databaseReadFailed(error.localizedDescription)
 		}
 		let adjustedRemoteUnreadIDs = remoteUnreadIDs.subtracting(pendingArticleIDs)
 
@@ -1062,8 +1068,11 @@ private extension FeedlyAccountDelegate {
 		// fetches above must be in it, or the marks below would briefly revert the edit.
 		// A failed pending-statuses read must not read as “nothing pending” — that would
 		// revert pending edits and arm the no-change backoff.
-		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
-			throw FeedlyAccountDelegateError.databaseReadFailed
+		let pendingArticleIDs: Set<String>
+		do {
+			pendingArticleIDs = try await syncDatabase.selectPendingStarredStatusArticleIDs()
+		} catch {
+			throw FeedlyAccountDelegateError.databaseReadFailed(error.localizedDescription)
 		}
 		let adjustedRemoteStarredIDs = remoteStarredIDs.subtracting(pendingArticleIDs)
 
