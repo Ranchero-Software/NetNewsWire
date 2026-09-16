@@ -257,15 +257,8 @@ let appName = "NetNewsWire"
 		refreshTimer = AccountRefreshTimer()
 		ArticleStatusSyncTimer.shared.start()
 
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { _, _ in }
-
-		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			if settings.authorizationStatus == .authorized {
-				DispatchQueue.main.async {
-					NSApplication.shared.registerForRemoteNotifications()
-				}
-			}
-		}
+		// Silent CloudKit pushes don’t need notification permission.
+		NSApplication.shared.registerForRemoteNotifications()
 
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
