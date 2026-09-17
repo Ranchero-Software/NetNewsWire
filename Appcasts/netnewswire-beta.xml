@@ -7,14 +7,35 @@
     <language>en</language>
 
 <item>
-	<title>NetNewsWire 7.1.4b1</title>
+	<title>NetNewsWire 7.1.4b2</title>
 	<description><![CDATA[
 <ul>
-<li>Fixed bug where article text could overlap the article’s top image in some feeds, including Gear Patrol’s
+<li>Fixed bug where read and starred statuses could stop syncing once more than 999 of them were queued (Feedbin, Feedly, NewsBlur, Reader API)
+<li>Kept syncing read and starred statuses even when sending article content fails
+<li>Kept fetching articles after an error sending statuses, and kept sending the rest of the statuses after one batch of them fails
+<li>Stopped repeatedly reauthorizing a Feedly token the server has rejected
+<li>Fixed bug where some FreshRSS, BazQux, Inoreader, and The Old Reader articles could never be marked read or starred on the server
+<li>Fixed bug where a feed could disappear during syncing when its folder is missing locally (Feedbin and Reader API)
+<li>Fixed bug where syncing could skip some folders (Feedbin and Reader API)
+<li>Fixed bug where an interrupted sync could cause articles to be skipped (Feedbin and Reader API)
+<li>Fixed bug where dates from servers could fail to parse under some device languages
+<li>Fixed bug where iCloud syncing could stall on a batch the server considers too large
+<li>Fixed potential hangs in iCloud syncing
+<li>Made push-triggered iCloud syncing work even when notifications aren’t authorized
+<li>Showed errors in the Error Log when the database can’t be read or written
+<li>Fixed bug where a site asking the app to slow down (429 responses) could slow down refreshing for other sites with similar names
+<li>Sped up openrss.org feeds — the app now fetches one feed an hour instead of one feed every 10 hours
+<li>Fixed bug where the first refresh after launching could be skipped
+<li>Fixed potential hangs while refreshing
+<li>Fixed bug where a feed in On My iPhone or On My iPad could fail to update after refreshing
+<li>Fixed bug where the article you just selected could be cleared while navigating back
+<li>Stopped the article view from storing cookies and other website data on disk — feed content now runs in a private-browsing-like session
+<li>Made it so it will download article themes from http and https URLs only, with a maximum download size
+<li>Fixed bug where exported OPML could contain characters that make the file invalid
 </ul>
 	]]></description>
-	<pubDate>Wed, 26 Aug 2026 10:00:00 -0700</pubDate>
-	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.4b1/NetNewsWire7.1.4b1.zip" sparkle:version="7209" sparkle:shortVersionString="7.1.4b1" length="9761002" type="application/zip" />
+	<pubDate>Thu, 17 Sep 2026 10:55:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.4b2/NetNewsWire7.1.4b2.zip" sparkle:version="7211" sparkle:shortVersionString="7.1.4b2" length="9794585" type="application/zip" />
 	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
 </item>
 
