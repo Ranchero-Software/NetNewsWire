@@ -88,6 +88,12 @@ final class AccountInspectorViewController: UITableViewController {
 			addViewController.account = account
 			navController.modalPresentationStyle = .currentContext
 			present(navController, animated: true)
+		case .miniflux:
+			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "MinifluxAccountNavigationViewController") as! UINavigationController
+			let addViewController = navController.topViewController as! MinifluxAccountViewController
+			addViewController.account = account
+			navController.modalPresentationStyle = .currentContext
+			present(navController, animated: true)
 		default:
 			break
 		}

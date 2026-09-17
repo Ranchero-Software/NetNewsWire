@@ -1,0 +1,15 @@
+{
+	"id": 5002,
+	"feed_id": 102,
+	"status": "read",
+	"hash": "hash5002",
+	"title": "Read entry",
+	"url": "https://tech-a.example/posts/2",
+	"published_at": "2026-07-06T09:00:00Z",
+	"created_at": "2026-07-06T09:05:00Z",
+	"changed_at": "2026-07-06T09:05:00Z",
+	"content": "<p>Body of the read entry.</p>",
+	"author": "John Smith",
+	"starred": false,
+	"reading_time": 4
+}
