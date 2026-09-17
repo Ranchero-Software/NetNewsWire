@@ -50,6 +50,8 @@ public extension URLRequest {
 		case .readerAPIKey:
 			let auth = "GoogleLogin auth=\(credentials.secret)"
 			setValue(auth, forHTTPHeaderField: HTTPRequestHeader.authorization)
+		case .readerAPICustomHTTPHeaders:
+			assertionFailure("Custom HTTP header credentials are stored in Keychain and applied separately from request credentials.")
 		case .oauthAccessToken:
 			let auth = "OAuth \(credentials.secret)"
 			setValue(auth, forHTTPHeaderField: "Authorization")

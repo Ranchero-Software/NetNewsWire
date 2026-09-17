@@ -39,7 +39,7 @@ nonisolated extension URLSession {
 	/// so canceling one account’s requests can’t cancel another account’s.
 	/// When running unit tests, it routes requests through `TestingURLProtocol`
 	/// so no outside code needs any knowledge of testing.
-	public static func makeWebserviceSession() -> URLSession {
+	public static func makeWebserviceSession(additionalHeaders: [String: String]? = nil) -> URLSession {
 
 		let sessionConfiguration = URLSessionConfiguration.default
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
@@ -52,8 +52,14 @@ nonisolated extension URLSession {
 		sessionConfiguration.httpCookieStorage = nil
 		sessionConfiguration.urlCache = nil
 
-		if let userAgentHeaders = UserAgent.headers() {
-			sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
+		var httpAdditionalHeaders = UserAgent.headers() ?? [:]
+		if let additionalHeaders {
+			for (field, value) in additionalHeaders {
+				httpAdditionalHeaders[field] = value
+			}
+		}
+		if !httpAdditionalHeaders.isEmpty {
+			sessionConfiguration.httpAdditionalHeaders = httpAdditionalHeaders
 		}
 
 		if Platform.isRunningUnitTests {

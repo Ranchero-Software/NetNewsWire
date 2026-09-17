@@ -401,7 +401,41 @@ public enum FetchType {
 		}
 	}
 
-	public static func validateCredentials(type: AccountType, credentials: Credentials, endpoint: URL? = nil) async throws -> Credentials? {
+	public func storeReaderAPICustomHTTPHeaders(_ headers: [ReaderAPICustomHTTPHeader]) throws {
+		guard !headers.isEmpty else {
+			try removeCredentials(type: .readerAPICustomHTTPHeaders)
+			(delegate as? ReaderAPIAccountDelegate)?.customHTTPHeaders = []
+			return
+		}
+		guard let username else {
+			throw CredentialsError.missingUsername
+		}
+
+		let data = try JSONEncoder().encode(headers)
+		guard let secret = String(data: data, encoding: .utf8) else {
+			throw AccountError.invalidParameter
+		}
+
+		let credentials = Credentials(type: .readerAPICustomHTTPHeaders, username: username, secret: secret)
+		guard let server = delegate.server else {
+			assertionFailure()
+			return
+		}
+		try CredentialsManager.storeCredentials(credentials, server: server)
+		(delegate as? ReaderAPIAccountDelegate)?.customHTTPHeaders = headers
+	}
+
+	public func retrieveReaderAPICustomHTTPHeaders() throws -> [ReaderAPICustomHTTPHeader] {
+		guard let credentials = try retrieveCredentials(type: .readerAPICustomHTTPHeaders) else {
+			return []
+		}
+		guard let data = credentials.secret.data(using: .utf8) else {
+			return []
+		}
+		return (try? JSONDecoder().decode([ReaderAPICustomHTTPHeader].self, from: data)) ?? []
+	}
+
+	public static func validateCredentials(type: AccountType, credentials: Credentials, endpoint: URL? = nil, customHTTPHeaders: [ReaderAPICustomHTTPHeader] = []) async throws -> Credentials? {
 		try await ActivityLog.shared.logActivity(owner: .app, kind: .validateCredentials, detail: type.displayName, successMessage: { $0 == nil ? "Invalid credentials" : "Credentials valid" }, {
 			switch type {
 			case .feedbin:
@@ -409,7 +443,7 @@ public enum FetchType {
 			case .newsBlur:
 				return try await NewsBlurAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
 			case .freshRSS, .inoreader, .bazQux, .theOldReader:
-				return try await ReaderAPIAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint)
+				return try await ReaderAPIAccountDelegate.validateCredentials(credentials: credentials, endpoint: endpoint, customHTTPHeaders: customHTTPHeaders)
 			default:
 				return nil
 			}
