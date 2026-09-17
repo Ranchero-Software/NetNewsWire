@@ -198,6 +198,30 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection id="hideReadOverrides-section-id">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" id="hideReadOverrides-cell-id" customClass="VibrantBasicTableViewCell" customModule="NetNewsWire" customModuleProvider="target">
+                                        <rect key="frame" x="20" y="417" width="374" height="51"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="hideReadOverrides-cell-id" id="hideReadOverrides-content-id">
+                                            <rect key="frame" x="0.0" y="0.0" width="343.5" height="51"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Hide Read Articles Settings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hideReadOverrides-label-id">
+                                                    <rect key="frame" x="20" y="15.5" width="210" height="20.5"/>
+                                                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="hideReadOverrides-label-id" firstAttribute="centerY" secondItem="hideReadOverrides-content-id" secondAttribute="centerY" id="hideReadOverrides-centerY-id"/>
+                                                <constraint firstItem="hideReadOverrides-label-id" firstAttribute="leading" secondItem="hideReadOverrides-content-id" secondAttribute="leadingMargin" id="hideReadOverrides-leading-id"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                         </sections>
                         <connections>
                             <outlet property="dataSource" destination="1m3-fZ-n7g" id="eTZ-Uy-P3l"/>
