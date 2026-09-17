@@ -117,7 +117,7 @@ final class SettingsViewController: UITableViewController {
 			refreshClearsReadArticlesSwitch.isOn = false
 		}
 
-		articleThemeDetailLabel.text = ArticleThemesManager.shared.currentTheme.name
+		articleThemeDetailLabel.text = ArticleThemesManager.shared.themeSelectionSummary
 
 		if AppDefaults.shared.confirmMarkAllAsRead {
 			confirmMarkAllAsReadSwitch.isOn = true

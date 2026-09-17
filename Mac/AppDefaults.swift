@@ -15,6 +15,20 @@ enum FontSize: Int {
 	case veryLarge = 3
 }
 
+enum ArticleThemeSelectionMode: Int, CaseIterable, Sendable {
+	case single = 0
+	case appearance = 1
+
+	var title: String {
+		switch self {
+		case .single:
+			return NSLocalizedString("Same Theme for All Appearances", comment: "Article theme selection mode")
+		case .appearance:
+			return NSLocalizedString("Match Appearance", comment: "Article theme selection mode")
+		}
+	}
+}
+
 final class AppDefaults: Sendable {
 
 	static let defaultThemeName = "Default"
@@ -42,6 +56,9 @@ final class AppDefaults: Sendable {
 		static let exportOPMLAccountID = "exportOPMLAccountID"
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
+		static let articleThemeSelectionMode = "articleThemeSelectionMode"
+		static let lightThemeName = "lightThemeName"
+		static let darkThemeName = "darkThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 
 		// Hidden prefs
@@ -221,6 +238,33 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var articleThemeSelectionMode: ArticleThemeSelectionMode {
+		get {
+			ArticleThemeSelectionMode(rawValue: AppDefaults.int(for: Key.articleThemeSelectionMode)) ?? .single
+		}
+		set {
+			AppDefaults.setInt(for: Key.articleThemeSelectionMode, newValue.rawValue)
+		}
+	}
+
+	var lightThemeName: String? {
+		get {
+			return AppDefaults.string(for: Key.lightThemeName)
+		}
+		set {
+			AppDefaults.setString(for: Key.lightThemeName, newValue)
+		}
+	}
+
+	var darkThemeName: String? {
+		get {
+			return AppDefaults.string(for: Key.darkThemeName)
+		}
+		set {
+			AppDefaults.setString(for: Key.darkThemeName, newValue)
+		}
+	}
+
 	var showTitleOnMainWindow: Bool {
 		return AppDefaults.bool(for: Key.showTitleOnMainWindow)
 	}
@@ -344,6 +388,7 @@ final class AppDefaults: Sendable {
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
 			Key.currentThemeName: Self.defaultThemeName,
+			Key.articleThemeSelectionMode: ArticleThemeSelectionMode.single.rawValue,
 			Key.articleContentJavascriptEnabled: true
 		]
 
