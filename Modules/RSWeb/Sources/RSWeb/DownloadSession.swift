@@ -387,8 +387,11 @@ private extension DownloadSession {
 			urlsInSession.removeAll()
 		}
 	}
+}
 
-	// MARK: - 429 Too Many Requests
+// MARK: - 429 Too Many Requests
+
+extension DownloadSession {
 
 	@MainActor func handle429Response(_ dataTask: URLSessionDataTask, _ response: URLResponse) {
 
@@ -433,14 +436,7 @@ private extension DownloadSession {
 
 	@MainActor func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
 
-		let lowercaseHost = host.lowercased(with: localeForLowercasing)
-
-		let tasksToRemove = tasks.filter { task in
-			guard let taskHost = task.lowercaseHost else {
-				return false
-			}
-			return taskHost.contains(lowercaseHost)
-		}
+		let tasksToRemove = Self.tasksWithHost(host, in: tasks)
 
 		for task in tasksToRemove {
 			task.cancel()
@@ -450,9 +446,15 @@ private extension DownloadSession {
 		}
 	}
 
+	/// Tasks whose request host matches `host` exactly, ignoring case.
+	nonisolated static func tasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) -> Set<URLSessionTask> {
+		let lowercaseHost = host.lowercased(with: localeForLowercasing)
+		return tasks.filter { $0.lowercaseHost == lowercaseHost }
+	}
+
 	func requestShouldBeDroppedDueToActive429(_ url: URL) -> Bool {
 
-		guard let host = url.host() else {
+		guard let host = url.host()?.lowercased(with: localeForLowercasing) else {
 			return false
 		}
 		guard let retryAfterMessage = retryAfterMessages[host] else {
@@ -466,6 +468,11 @@ private extension DownloadSession {
 
 		return true
 	}
+}
+
+// MARK: - Private
+
+private extension DownloadSession {
 
 	// MARK: - 400-499 responses
 
