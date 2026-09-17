@@ -169,6 +169,9 @@ let appName = "NetNewsWire"
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
 
+		// Load now, while the app bundle is readable. A translocated app that gets moved can’t read it later.
+		_ = MainWindowKeyboardHandler.shared
+
 		// Ensure the Sparkle feed URL is one of the two supported URLs.
 		// Default to the release builds URL from Info.plist.
 		if let infoDictionary = Bundle.main.infoDictionary,
