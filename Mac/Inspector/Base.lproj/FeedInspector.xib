@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="FeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="homePageURLTextField" destination="zm0-15-BFy" id="0Jh-yy-mnF"/>
+                <outlet property="iconView" destination="I6k-QR-VmV" id="zrk-zx-zk7"/>
+                <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
+                <outlet property="newArticleNotificationsEnabledCheckBox" destination="ZBX-E8-k9c" id="FWc-Ds-LUy"/>
+                <outlet property="readerViewAlwaysEnabledCheckBox" destination="nH2-ab-KJ5" id="xPg-P5-3cr"/>
+                <outlet property="urlTextField" destination="Vvk-KG-JlG" id="bcl-fq-3nQ"/>
+                <outlet property="view" destination="ecA-UY-KEd" id="Hm8-2b-Vt1"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view id="ecA-UY-KEd">
+            <rect key="frame" x="0.0" y="0.0" width="271" height="322"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="IWu-80-XC5">
+                    <rect key="frame" x="20" y="190" width="231" height="56"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="56" id="zV3-AX-gyC"/>
+                    </constraints>
+                    <textFieldCell key="cell" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="tAO-GI-MT1">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <outlet property="delegate" destination="-2" id="Dd0-5H-8HH"/>
+                    </connections>
+                </textField>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="2WO-Iu-p5e">
+                    <rect key="frame" x="18" y="96" width="235" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Home Page" usesSingleLineMode="YES" id="Fg8-rA-G5J">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zm0-15-BFy">
+                    <rect key="frame" x="18" y="76" width="235" height="16"/>
+                    <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" id="L2p-ur-j7a">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ju6-Zo-8X4">
+                    <rect key="frame" x="18" y="40" width="235" height="16"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingTail" allowsUndo="NO" sendsActionOnEndEditing="YES" title="Feed" usesSingleLineMode="YES" id="zzB-rX-1dK">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField focusRingType="none" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="250" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Vvk-KG-JlG">
+                    <rect key="frame" x="18" y="20" width="235" height="16"/>
+                    <textFieldCell key="cell" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" id="HpC-rK-YGK">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <button horizontalHuggingPriority="1000" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="ZBX-E8-k9c">
+                    <rect key="frame" x="20" y="154" width="231" height="16"/>
+                    <buttonCell key="cell" type="check" title="Show notifications for new articles" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Bw5-c7-yDX">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="newArticleNotificationsEnabledChanged:" target="-2" id="Vx9-pQ-RnP"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nH2-ab-KJ5">
+                    <rect key="frame" x="20" y="132" width="167" height="16"/>
+                    <buttonCell key="cell" type="check" title="Always use Reader view" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="aRe-yV-R0h">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="readerViewAlwaysEnabledChanged:" target="-2" id="rsD-0e-ksP"/>
+                    </connections>
+                </button>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="I6k-QR-VmV" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
+                    <rect key="frame" x="111" y="254" width="48" height="48"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="48" id="Faa-nE-lkA"/>
+                        <constraint firstAttribute="width" constant="48" id="esD-dT-oWU"/>
+                    </constraints>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="zm0-15-BFy" firstAttribute="top" secondItem="2WO-Iu-p5e" secondAttribute="bottom" constant="4" id="2fb-QO-XIm"/>
+                <constraint firstItem="ZBX-E8-k9c" firstAttribute="top" secondItem="IWu-80-XC5" secondAttribute="bottom" constant="20" id="5L7-aZ-vdg"/>
+                <constraint firstItem="nH2-ab-KJ5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="8pK-lW-xQk"/>
+                <constraint firstItem="IWu-80-XC5" firstAttribute="top" secondItem="I6k-QR-VmV" secondAttribute="bottom" constant="8" symbolic="YES" id="Bea-j0-QMb"/>
+                <constraint firstItem="nH2-ab-KJ5" firstAttribute="top" secondItem="ZBX-E8-k9c" secondAttribute="bottom" constant="6" symbolic="YES" id="CpA-X9-EbP"/>
+                <constraint firstAttribute="bottom" secondItem="Vvk-KG-JlG" secondAttribute="bottom" constant="20" id="IxJ-5N-NhL"/>
+                <constraint firstAttribute="trailing" secondItem="ju6-Zo-8X4" secondAttribute="trailing" constant="20" symbolic="YES" id="Jzi-tP-TIw"/>
+                <constraint firstAttribute="trailing" secondItem="Vvk-KG-JlG" secondAttribute="trailing" constant="20" symbolic="YES" id="KAS-A7-TxB"/>
+                <constraint firstItem="ju6-Zo-8X4" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="NwI-2x-dAr"/>
+                <constraint firstItem="ju6-Zo-8X4" firstAttribute="top" secondItem="zm0-15-BFy" secondAttribute="bottom" constant="20" id="PFv-jF-JIZ"/>
+                <constraint firstItem="2WO-Iu-p5e" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="PeT-mm-2HJ"/>
+                <constraint firstItem="I6k-QR-VmV" firstAttribute="top" secondItem="ecA-UY-KEd" secondAttribute="top" constant="20" symbolic="YES" id="URB-DN-7vz"/>
+                <constraint firstAttribute="trailing" secondItem="IWu-80-XC5" secondAttribute="trailing" constant="20" symbolic="YES" id="WW6-xR-Zue"/>
+                <constraint firstItem="zm0-15-BFy" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="aho-BJ-kmB"/>
+                <constraint firstItem="ZBX-E8-k9c" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="cjR-0i-YNG"/>
+                <constraint firstAttribute="trailing" secondItem="2WO-Iu-p5e" secondAttribute="trailing" constant="20" symbolic="YES" id="dLU-a6-nfx"/>
+                <constraint firstItem="I6k-QR-VmV" firstAttribute="centerX" secondItem="ecA-UY-KEd" secondAttribute="centerX" id="gFG-ZY-eNp"/>
+                <constraint firstAttribute="trailing" secondItem="zm0-15-BFy" secondAttribute="trailing" constant="20" symbolic="YES" id="js6-b2-FIR"/>
+                <constraint firstAttribute="trailing" secondItem="ZBX-E8-k9c" secondAttribute="trailing" constant="20" symbolic="YES" id="nOw-cs-o8e"/>
+                <constraint firstItem="IWu-80-XC5" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="r6h-Z0-g7b"/>
+                <constraint firstItem="2WO-Iu-p5e" firstAttribute="top" secondItem="nH2-ab-KJ5" secondAttribute="bottom" constant="20" id="rRv-qO-dPa"/>
+                <constraint firstItem="Vvk-KG-JlG" firstAttribute="top" secondItem="ju6-Zo-8X4" secondAttribute="bottom" constant="4" id="sAt-dN-Taz"/>
+                <constraint firstItem="Vvk-KG-JlG" firstAttribute="leading" secondItem="ecA-UY-KEd" secondAttribute="leading" constant="20" symbolic="YES" id="uS2-JS-PPg"/>
+            </constraints>
+            <point key="canvasLocation" x="139" y="154"/>
+        </view>
+    </objects>
+</document>

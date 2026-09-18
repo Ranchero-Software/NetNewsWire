@@ -650,7 +650,7 @@ let appName = "NetNewsWire"
 
 	@IBAction func toggleInspectorWindow(_ sender: Any?) {
 		if inspectorWindowController == nil {
-			inspectorWindowController = (windowControllerWithName("Inspector") as! InspectorWindowController)
+			inspectorWindowController = InspectorWindowController()
 		}
 
 		if inspectorWindowController!.isOpen {
