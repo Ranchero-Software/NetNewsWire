@@ -436,11 +436,15 @@ extension WebViewController: WKNavigationDelegate {
 		}
 	}
 
-	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void) {
+	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
+
+		if let article, ArticleRenderingSpecialCases.shouldDisableJavaScript(for: article) {
+			preferences.allowsContentJavaScript = false
+		}
 
 		if navigationAction.navigationType == .linkActivated {
 			guard let url = navigationAction.request.url else {
-				decisionHandler(.allow)
+				decisionHandler(.allow, preferences)
 				return
 			}
 
@@ -448,13 +452,13 @@ extension WebViewController: WKNavigationDelegate {
 			// targeting the media source. The tap already operates the control — don’t open a browser.
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/3788>
 			if mediaSourceURLs.contains(url.absoluteString) {
-				decisionHandler(.cancel)
+				decisionHandler(.cancel, preferences)
 				return
 			}
 
 			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
 			if components?.scheme == "http" || components?.scheme == "https" {
-				decisionHandler(.cancel)
+				decisionHandler(.cancel, preferences)
 				if AppDefaults.shared.useSystemBrowser {
 					UIApplication.shared.open(url, options: [:])
 				} else {
@@ -467,7 +471,7 @@ extension WebViewController: WKNavigationDelegate {
 				}
 
 			} else if components?.scheme == "mailto" {
-				decisionHandler(.cancel)
+				decisionHandler(.cancel, preferences)
 
 				guard let emailAddress = url.percentEncodedEmailAddress else {
 					return
@@ -481,17 +485,17 @@ extension WebViewController: WKNavigationDelegate {
 					self.present(alert, animated: true, completion: nil)
 				}
 			} else if components?.scheme == "tel" {
-				decisionHandler(.cancel)
+				decisionHandler(.cancel, preferences)
 
 				if UIApplication.shared.canOpenURL(url) {
 					UIApplication.shared.open(url, options: [.universalLinksOnly: false], completionHandler: nil)
 				}
 
 			} else {
-				decisionHandler(.allow)
+				decisionHandler(.allow, preferences)
 			}
 		} else {
-			decisionHandler(.allow)
+			decisionHandler(.allow, preferences)
 		}
 	}
 
