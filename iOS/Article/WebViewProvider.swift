@@ -11,24 +11,18 @@ import UIKit
 import RSCore
 import WebKit
 
-extension Notification.Name {
-	static let articleContentJavascriptEnabledDidChange = Notification.Name("articleContentJavascriptEnabledDidChange")
-}
-
 /// WKWebView has an awful behavior of a flash to white on first load when in dark mode.
 /// Keep a queue of WebViews where we've already done a trivial load so that by the time we need them in the UI, they're past the flash-to-white part of their lifecycle.
 @MainActor final class WebViewProvider: NSObject {
 	private let articleIconSchemeHandler: ArticleIconSchemeHandler
 	private let operationQueue = MainThreadOperationQueue()
 	private var queue = NSMutableArray()
-	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
 
 	init(coordinator: SceneCoordinator) {
 		articleIconSchemeHandler = ArticleIconSchemeHandler(coordinator: coordinator)
 		super.init()
 		replenishQueueIfNeeded()
 		NotificationCenter.default.addObserver(self, selector: #selector(handleWillEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 	}
 
 	func replenishQueueIfNeeded() {
@@ -40,18 +34,6 @@ extension Notification.Name {
 	// so start over with fresh web views.
 	@objc func handleWillEnterForeground(_ note: Notification) {
 		flushQueue()
-	}
-
-	// allowsContentJavaScript is fixed when a web view's configuration is built,
-	// so the only way to apply a change is to build new web views. Replenishing
-	// before posting means article views dequeue web views that use the new setting.
-	@objc func handleUserDefaultsDidChange(_ note: Notification) {
-		guard isArticleContentJavascriptEnabled != AppDefaults.shared.isArticleContentJavascriptEnabled else {
-			return
-		}
-		isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
-		flushQueue()
-		NotificationCenter.default.post(name: .articleContentJavascriptEnabledDidChange, object: self)
 	}
 
 	private func flushQueue() {

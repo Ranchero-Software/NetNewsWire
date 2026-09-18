@@ -55,6 +55,7 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	private var articleTextSize = AppDefaults.shared.articleTextSize
+	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
 
 	private var webInspectorEnabled: Bool {
 		get {
@@ -147,6 +148,10 @@ final class DetailWebViewController: NSViewController {
 			articleTextSize = AppDefaults.shared.articleTextSize
 			reloadHTMLMaintainingScrollPosition()
 		}
+		if isArticleContentJavascriptEnabled != AppDefaults.shared.isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+			reloadHTMLMaintainingScrollPosition()
+		}
 	}
 
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
@@ -235,9 +240,7 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			return
 		}
 
-		if let article, ArticleRenderingSpecialCases.shouldDisableJavaScript(for: article) {
-			preferences.allowsContentJavaScript = false
-		}
+		preferences.allowsContentJavaScript = WebViewConfiguration.allowsContentJavaScript(for: article)
 		decisionHandler(.allow, preferences)
 	}
 
