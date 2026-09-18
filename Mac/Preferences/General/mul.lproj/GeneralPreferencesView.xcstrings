@@ -19,24 +19,6 @@
         }
       }
     },
-    "6pw-Vq-tjM.title" : {
-      "comment" : "Class = \"NSPopUpButtonCell\"; title = \"Medium\"; ObjectID = \"6pw-Vq-tjM\";",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Medium"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mediano"
-          }
-        }
-      }
-    },
     "7e2-TV-hth.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Every 4 hours\"; ObjectID = \"7e2-TV-hth\";",
       "extractionState" : "extracted_with_value",
@@ -249,24 +231,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mediano"
-          }
-        }
-      }
-    },
-    "Jwn-HD-eP6.title" : {
-      "comment" : "Class = \"NSPopUpButtonCell\"; title = \"Manually only\"; ObjectID = \"Jwn-HD-eP6\";",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Manually only"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Solo manualmente"
           }
         }
       }
