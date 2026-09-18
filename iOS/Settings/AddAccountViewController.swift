@@ -8,13 +8,10 @@
 
 import Account
 import UIKit
+import SwiftUI
 import RSCore
 
-protocol AddAccountDismissDelegate: UIViewController {
-	func dismiss()
-}
-
-final class AddAccountViewController: UITableViewController, AddAccountDismissDelegate {
+final class AddAccountViewController: UITableViewController {
 
 	private enum AddAccountSections: Int, CaseIterable {
 		case local = 0
@@ -175,45 +172,32 @@ final class AddAccountViewController: UITableViewController, AddAccountDismissDe
 	private func presentController(for accountType: AccountType) {
 		switch accountType {
 		case .onMyMac:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "LocalAccountNavigationViewController") as! UINavigationController
-			navController.modalPresentationStyle = .currentContext
-			let addViewController = navController.topViewController as! LocalAccountViewController
-			addViewController.delegate = self
-			present(navController, animated: true)
+			presentAccountSheet(LocalAccountView(didAddAccount: { [weak self] in
+				self?.didAddAccount()
+			}))
 		case .cloudKit:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "CloudKitAccountNavigationViewController") as! UINavigationController
-			navController.modalPresentationStyle = .currentContext
-			let addViewController = navController.topViewController as! CloudKitAccountViewController
-			addViewController.delegate = self
-			present(navController, animated: true)
-		case .feedbin:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
-			navController.modalPresentationStyle = .currentContext
-			let addViewController = navController.topViewController as! FeedbinAccountViewController
-			addViewController.delegate = self
-			present(navController, animated: true)
+			presentAccountSheet(CloudKitAccountView(didAddAccount: { [weak self] in
+				self?.didAddAccount()
+			}))
+		case .feedbin, .newsBlur, .bazQux, .inoreader, .freshRSS, .theOldReader:
+			presentAccountSheet(CredentialsAccountView(accountType: accountType, account: nil, didAddAccount: { [weak self] in
+				self?.didAddAccount()
+			}))
 		case .feedly:
 			let addAccount = OAuthAccountAuthorizationOperation(accountType: .feedly)
 			addAccount.delegate = self
 			addAccount.presentationAnchor = self.view.window!
 			MainThreadOperationQueue.shared.add(addAccount)
-		case .newsBlur:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
-			navController.modalPresentationStyle = .currentContext
-			let addViewController = navController.topViewController as! NewsBlurAccountViewController
-			addViewController.delegate = self
-			present(navController, animated: true)
-		case .bazQux, .inoreader, .freshRSS, .theOldReader:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "ReaderAPIAccountNavigationViewController") as! UINavigationController
-			navController.modalPresentationStyle = .currentContext
-			let addViewController = navController.topViewController as! ReaderAPIAccountViewController
-			addViewController.accountType = accountType
-			addViewController.delegate = self
-			present(navController, animated: true)
 		}
 	}
 
-	func dismiss() {
+	private func presentAccountSheet<Content: View>(_ view: Content) {
+		let hostingController = UIHostingController(rootView: view)
+		hostingController.modalPresentationStyle = .currentContext
+		present(hostingController, animated: true)
+	}
+
+	private func didAddAccount() {
 		navigationController?.popViewController(animated: false)
 	}
 
@@ -223,7 +207,7 @@ extension AddAccountViewController: OAuthAccountAuthorizationOperationDelegate {
 
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didCreate account: Account) {
 		account.triggerRefreshAll()
-		dismiss()
+		didAddAccount()
 	}
 
 	func oauthAccountAuthorizationOperation(_ operation: OAuthAccountAuthorizationOperation, didFailWith error: Error) {

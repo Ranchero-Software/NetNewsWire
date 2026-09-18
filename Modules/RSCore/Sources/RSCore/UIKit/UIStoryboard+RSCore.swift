@@ -29,10 +29,6 @@ extension UIStoryboard {
 		UIStoryboard(name: "Inspector", bundle: nil)
 	}
 
-	public static var account: UIStoryboard {
-		UIStoryboard(name: "Account", bundle: nil)
-	}
-
 	public func instantiateController<T>(ofType type: T.Type = T.self) -> T where T: UIViewController {
 		let storyboardId = String(describing: type)
 		guard let viewController = instantiateViewController(withIdentifier: storyboardId) as? T else {

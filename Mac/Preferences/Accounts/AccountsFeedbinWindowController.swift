@@ -70,7 +70,7 @@ final class AccountsFeedbinWindowController: NSWindowController {
 		let trimmedUsername = usernameTextField.stringValue.trimmingWhitespace
 
 		guard !trimmedUsername.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+			errorMessageLabel.stringValue = NSLocalizedString("Username and password are required.", comment: "Credentials Error")
 			return
 		}
 
