@@ -21,7 +21,7 @@ struct LocalAccountView: View {
 		NavigationStack {
 			Form {
 				Section {
-					TextField(NSLocalizedString("Name", comment: "Local account name placeholder"), text: $name)
+					TextField(NSLocalizedString("Name", comment: "Name field placeholder"), text: $name)
 						.textInputAutocapitalization(.words)
 						.focused($isNameFieldFocused)
 						.onSubmit {

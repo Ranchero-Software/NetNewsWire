@@ -456,14 +456,12 @@ private extension SettingsViewController {
 	func addFeed() {
 		self.dismiss(animated: true)
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
-		let addViewController = addNavViewController.topViewController as! AddFeedViewController
-		addViewController.initialFeed = AccountManager.netNewsWireNewsURL
-		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
+		let addFeedView = AddFeedView(initialFeed: AccountManager.netNewsWireNewsURL, initialFeedName: NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News"))
+		let hostingController = UIHostingController(rootView: addFeedView)
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
 
-		presentingParentController?.present(addNavViewController, animated: true)
+		presentingParentController?.present(hostingController, animated: true)
 	}
 
 	func importOPML(sourceView: UIView, sourceRect: CGRect) {

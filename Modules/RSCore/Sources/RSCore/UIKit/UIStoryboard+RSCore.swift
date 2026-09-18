@@ -17,10 +17,6 @@ extension UIStoryboard {
 		UIStoryboard(name: "Main", bundle: nil)
 	}
 
-	public static var add: UIStoryboard {
-		UIStoryboard(name: "Add", bundle: nil)
-	}
-
 	public static var settings: UIStoryboard {
 		UIStoryboard(name: "Settings", bundle: nil)
 	}

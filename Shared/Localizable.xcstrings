@@ -79,6 +79,9 @@
     "Activity may contain feed URLs and other information you may not want to share publicly." : {
       "comment" : "Activity log privacy warning"
     },
+    "Add" : {
+      "comment" : "Add button"
+    },
     "Add ${url} to ${accountName}" : {
 
     },
@@ -206,6 +209,9 @@
     },
     "Choose an account with the subscriptions to export" : {
       "comment" : "Export Account"
+    },
+    "Choose Folder" : {
+      "comment" : "Choose Folder"
     },
     "Clean Up" : {
       "comment" : "Clean Up button"
@@ -662,7 +668,7 @@
       "comment" : "Multiple"
     },
     "Name" : {
-      "comment" : "Local account name placeholder\nName"
+      "comment" : "Name field placeholder"
     },
     "Name:" : {
 
@@ -1081,6 +1087,9 @@
     },
     "Timeline Layout" : {
       "comment" : "Timeline Layout"
+    },
+    "Title (Optional)" : {
+      "comment" : "Feed title placeholder"
     },
     "To add an account to NetNewsWire,\nclick its icon above.\n\nOr click the + button in the lower left." : {
       "comment" : "Add Account Explainer"
