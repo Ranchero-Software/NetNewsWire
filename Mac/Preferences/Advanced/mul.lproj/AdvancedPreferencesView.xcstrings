@@ -1,0 +1,186 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "6bb-c0-guo.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Download:\"; ObjectID = \"6bb-c0-guo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Download:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descargar:"
+          }
+        }
+      }
+    },
+    "AaA-Rr-UYD.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Check for Updates\"; ObjectID = \"AaA-Rr-UYD\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Check for Updates"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones"
+          }
+        }
+      }
+    },
+    "dm8-Xy-0Ba.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Check automatically\"; ObjectID = \"dm8-Xy-0Ba\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Check automatically"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar automáticamente"
+          }
+        }
+      }
+    },
+    "F8M-rS-und.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Release builds\"; ObjectID = \"F8M-rS-und\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Release builds"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versiones finales"
+          }
+        }
+      }
+    },
+    "fOZ-zv-QTc.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss.\"; ObjectID = \"fOZ-zv-QTc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "If you’re not sure, choose Release builds. Test builds may have bugs, which may include crashing bugs and data loss."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Si no estás seguro, elige Versiones finales. Las versiones de prueba pueden tener errores, incluidos fallos y pérdida de datos."
+          }
+        }
+      }
+    },
+    "Fuf-rU-D6M.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Test builds\"; ObjectID = \"Fuf-rU-D6M\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Test builds"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Versiones de prueba"
+          }
+        }
+      }
+    },
+    "jnc-C5-4oI.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Send automatically\"; ObjectID = \"jnc-C5-4oI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Send automatically"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviar automáticamente"
+          }
+        }
+      }
+    },
+    "kSv-Wu-NYx.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Privacy Policy\"; ObjectID = \"kSv-Wu-NYx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Privacy Policy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Política de privacidad"
+          }
+        }
+      }
+    },
+    "qcq-fU-Ks0.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Crash logs:\"; ObjectID = \"qcq-fU-Ks0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Crash logs:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registros de fallos:"
+          }
+        }
+      }
+    },
+    "zqG-X2-E9b.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"App Updates:\"; ObjectID = \"zqG-X2-E9b\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "App Updates:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizaciones de la app:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

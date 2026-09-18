@@ -83,7 +83,7 @@ let appName = "NetNewsWire"
 	}
 
 	private var mainWindowControllers = [MainWindowController]()
-	private lazy var preferencesWindowController = windowControllerWithName("Preferences")
+	private lazy var preferencesWindowController = PreferencesWindowController()
 	private var aboutWindowController: AboutWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
@@ -439,11 +439,6 @@ let appName = "NetNewsWire"
 		}
 		mainWindowControllers.append(controller)
 		return controller
-	}
-
-	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
-		let storyboard = NSStoryboard(name: NSStoryboard.Name(storyboardName), bundle: nil)
-		return storyboard.instantiateInitialController()! as! NSWindowController
 	}
 
 	@discardableResult
