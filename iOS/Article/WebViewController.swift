@@ -93,6 +93,7 @@ final class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSceneDidEnterBackground(_:)), name: UIScene.didEnterBackgroundNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleContentJavascriptEnabledDidChange(_:)), name: .articleContentJavascriptEnabledDidChange, object: nil)
 
 		// Configure the tap zones
 		configureTopShowBarsView()
@@ -141,6 +142,10 @@ final class WebViewController: UIViewController {
 
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
 		loadWebView()
+	}
+
+	@objc func handleArticleContentJavascriptEnabledDidChange(_ note: Notification) {
+		fullReload()
 	}
 
 	// MARK: Actions
