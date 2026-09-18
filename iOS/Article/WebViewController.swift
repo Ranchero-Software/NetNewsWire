@@ -84,6 +84,7 @@ final class WebViewController: UIViewController {
 		}
 	}
 	private var restoreWindowScrollY: Int?
+	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
@@ -93,7 +94,7 @@ final class WebViewController: UIViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(currentArticleThemeDidChangeNotification(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleSceneDidEnterBackground(_:)), name: UIScene.didEnterBackgroundNotification, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleContentJavascriptEnabledDidChange(_:)), name: .articleContentJavascriptEnabledDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 
 		// Configure the tap zones
 		configureTopShowBarsView()
@@ -144,8 +145,12 @@ final class WebViewController: UIViewController {
 		loadWebView()
 	}
 
-	@objc func handleArticleContentJavascriptEnabledDidChange(_ note: Notification) {
-		fullReload()
+	@objc func handleUserDefaultsDidChange(_ note: Notification) {
+		guard isArticleContentJavascriptEnabled != AppDefaults.shared.isArticleContentJavascriptEnabled else {
+			return
+		}
+		isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+		loadWebView()
 	}
 
 	// MARK: Actions
@@ -438,9 +443,7 @@ extension WebViewController: WKNavigationDelegate {
 
 	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
 
-		if let article, ArticleRenderingSpecialCases.shouldDisableJavaScript(for: article) {
-			preferences.allowsContentJavaScript = false
-		}
+		preferences.allowsContentJavaScript = WebViewConfiguration.allowsContentJavaScript(for: article)
 
 		if navigationAction.navigationType == .linkActivated {
 			guard let url = navigationAction.request.url else {
