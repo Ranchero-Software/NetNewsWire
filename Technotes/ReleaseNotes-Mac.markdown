@@ -1,5 +1,10 @@
 # Mac Release Notes
 
+### 7.1.4b3 7212 18 Sep 2026 - branch: main tag: mac-7.1.4b3
+
+Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
+Fixed crash that could happen when the app was moved after macOS had run it from a quarantined location, such as the Downloads folder
+
 ### 7.1.4b2 7211 17 Sep 2026 - branch: main tag: mac-7.1.4b2
 
 Fixed bug where read and starred statuses could stop syncing once more than 999 of them were queued (Feedbin, Feedly, NewsBlur, Reader API)
