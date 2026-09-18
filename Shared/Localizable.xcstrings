@@ -595,9 +595,6 @@
     "Local accounts do not sync feeds across devices" : {
       "comment" : "Local Account"
     },
-    "Local accounts do not sync your feeds across devices" : {
-      "comment" : "Local Account"
-    },
     "Local accounts do not sync your feeds across devices." : {
       "comment" : "Local"
     },
@@ -903,6 +900,9 @@
     "Self-hosted accounts sync your feeds across all your devices" : {
       "comment" : "Self hosted Account"
     },
+    "Self-hosted accounts sync your feeds across all your devices." : {
+      "comment" : "Self hosted Account"
+    },
     "Share" : {
       "comment" : "Share button"
     },
@@ -1203,6 +1203,9 @@
     "Web accounts sync your feeds across all your devices" : {
       "comment" : "Web Account"
     },
+    "Web accounts sync your feeds across all your devices." : {
+      "comment" : "Web Account"
+    },
     "You can enable NetNewsWire notifications in System Preferences." : {
       "comment" : "Notifications are not enabled."
     },
@@ -1213,6 +1216,9 @@
       "comment" : "Missing active account"
     },
     "Your iCloud account syncs your feeds across your Mac and iOS devices" : {
+      "comment" : "iCloud Account"
+    },
+    "Your iCloud account syncs your feeds across your Mac and iOS devices." : {
       "comment" : "iCloud Account"
     }
   },

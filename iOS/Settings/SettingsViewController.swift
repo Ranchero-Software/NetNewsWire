@@ -228,8 +228,10 @@ final class SettingsViewController: UITableViewController {
 		case .accounts:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
-				let controller = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
-				self.navigationController?.pushViewController(controller, animated: true)
+				let addAccountView = AddAccountView(presentationAnchor: view.window) { [weak self] in
+					self?.navigationController?.popViewController(animated: false)
+				}
+				self.navigationController?.pushViewController(UIHostingController(rootView: addAccountView), animated: true)
 			} else {
 				let controller = UIStoryboard.inspector.instantiateController(ofType: AccountInspectorViewController.self)
 				controller.account = sortedAccounts[indexPath.row]
