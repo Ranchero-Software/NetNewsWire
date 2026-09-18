@@ -62,6 +62,10 @@ final class TimelineContainerViewController: NSViewController {
 		return viewController
 	}()
 
+	convenience init() {
+		self.init(nibName: "TimelineContainerView", bundle: nil)
+	}
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setRepresentedObjects(nil, mode: .regular)

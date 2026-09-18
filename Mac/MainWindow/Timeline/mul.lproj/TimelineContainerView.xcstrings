@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "4BZ-ya-evy.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Sort\"; ObjectID = \"4BZ-ya-evy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenar"
+          }
+        }
+      }
+    },
+    "40c-kt-vhO.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Newest Article on Top\"; ObjectID = \"40c-kt-vhO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Newest Article on Top"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artículo más reciente arriba"
+          }
+        }
+      }
+    },
+    "sOF-Ez-vIL.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Oldest Article on Top\"; ObjectID = \"sOF-Ez-vIL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Oldest Article on Top"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artículo más antiguo arriba"
+          }
+        }
+      }
+    },
+    "YSR-5C-Yjd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Group by Feed\"; ObjectID = \"YSR-5C-Yjd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Group by Feed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agrupar por fuente"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

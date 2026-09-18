@@ -432,7 +432,7 @@ let appName = "NetNewsWire"
 	// MARK: Main Window
 
 	func createMainWindowController() -> MainWindowController {
-		let controller: MainWindowController = windowControllerWithName("UnifiedWindow") as! MainWindowController
+		let controller = MainWindowController()
 
 		if !(mainWindowController?.isOpen ?? false) {
 			mainWindowControllers.removeAll()

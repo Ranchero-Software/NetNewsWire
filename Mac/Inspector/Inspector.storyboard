@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24412" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="cfG-Pn-VJS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24412"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -106,7 +106,7 @@ Field</string>
                                 </connections>
                             </button>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="I6k-QR-VmV" customClass="IconView" customModule="NetNewsWire" customModuleProvider="target">
-                                <rect key="frame" x="112" y="254" width="48" height="48"/>
+                                <rect key="frame" x="111" y="254" width="48" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="Faa-nE-lkA"/>
                                     <constraint firstAttribute="width" constant="48" id="esD-dT-oWU"/>
@@ -142,9 +142,9 @@ Field</string>
                     <connections>
                         <outlet property="homePageURLTextField" destination="zm0-15-BFy" id="0Jh-yy-mnF"/>
                         <outlet property="iconView" destination="I6k-QR-VmV" id="zrk-zx-zk7"/>
+                        <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
                         <outlet property="newArticleNotificationsEnabledCheckBox" destination="ZBX-E8-k9c" id="FWc-Ds-LUy"/>
                         <outlet property="readerViewAlwaysEnabledCheckBox" destination="nH2-ab-KJ5" id="xPg-P5-3cr"/>
-                        <outlet property="nameTextField" destination="IWu-80-XC5" id="zg4-5h-hoP"/>
                         <outlet property="urlTextField" destination="Vvk-KG-JlG" id="bcl-fq-3nQ"/>
                     </connections>
                 </viewController>

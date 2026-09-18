@@ -63,6 +63,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
 
+	convenience init() {
+		self.init(nibName: "DetailView", bundle: nil)
+	}
+
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in

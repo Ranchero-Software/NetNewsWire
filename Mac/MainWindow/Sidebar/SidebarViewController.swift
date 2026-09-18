@@ -25,7 +25,7 @@ extension Notification.Name {
 
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
-	@IBOutlet var outlineView: NSOutlineView!
+	@IBOutlet var outlineView: SidebarOutlineView!
 
 	weak var delegate: SidebarDelegate?
 
@@ -66,10 +66,17 @@ extension Notification.Name {
 	}
 
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
+	private let keyboardDelegate = SidebarKeyboardDelegate()
 
 	// MARK: - NSViewController
 
+	convenience init() {
+		self.init(nibName: "SidebarView", bundle: nil)
+	}
+
 	override func viewDidLoad() {
+		keyboardDelegate.sidebarViewController = self
+		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)

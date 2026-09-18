@@ -44,6 +44,9 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	private static var detailViewMinimumThickness = 384
+	private static let sidebarHoldingPriority: Float = 260
+	private static let timelineHoldingPriority: Float = 255
+	private var splitViewController: NSSplitViewController?
 	private var sidebarViewController: SidebarViewController?
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
@@ -62,8 +65,15 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	// MARK: - NSWindowController
 
+	convenience init() {
+		self.init(windowNibName: "MainWindow")
+	}
+
 	override func windowDidLoad() {
 		super.windowDidLoad()
+
+		splitViewController = makeSplitViewController()
+		window?.contentViewController = splitViewController
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
 
@@ -990,11 +1000,19 @@ extension MainWindowController: NSToolbarDelegate {
 
 private extension MainWindowController {
 
-	var splitViewController: NSSplitViewController? {
-		guard let viewController = contentViewController else {
-			return nil
-		}
-		return viewController.children.first as? NSSplitViewController
+	func makeSplitViewController() -> NSSplitViewController {
+		let splitViewController = NSSplitViewController()
+		splitViewController.splitView.dividerStyle = .thin
+		splitViewController.splitView.wantsLayer = true
+
+		let sidebarItem = NSSplitViewItem(sidebarWithViewController: SidebarViewController())
+		sidebarItem.holdingPriority = NSLayoutConstraint.Priority(Self.sidebarHoldingPriority)
+		let timelineItem = NSSplitViewItem(contentListWithViewController: TimelineContainerViewController())
+		timelineItem.holdingPriority = NSLayoutConstraint.Priority(Self.timelineHoldingPriority)
+		let detailItem = NSSplitViewItem(viewController: DetailViewController())
+
+		splitViewController.splitViewItems = [sidebarItem, timelineItem, detailItem]
+		return splitViewController
 	}
 
 	var currentTimelineViewController: TimelineViewController? {
