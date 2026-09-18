@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.1.4 build 7212 18 Sep 2026 - branch: main tag: iOS-7.1.4-7212
+
+Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
+
 ### 7.1.4 build 7211 17 Sep 2026 - branch: main tag: iOS-7.1.4-7211
 
 Fixed bug where read and starred statuses could stop syncing once more than 999 of them were queued (Feedbin, Feedly, NewsBlur, Reader API)
