@@ -185,7 +185,7 @@ final class TimelineContainerViewController: NSViewController {
 
 		// Sort first so the restored selection lands in the right row.
 		if let savedSortParameters = state.sortParameters {
-			sortParameters = savedSortParameters
+			sortParameters = sortParametersAllowedByLayout(savedSortParameters)
 		}
 		regularTimelineViewController.restoreState(from: state)
 		updateReadFilterButton()
@@ -263,13 +263,18 @@ private extension TimelineContainerViewController {
 	}
 
 	func layoutDidChange() {
-		// Standard layout sorts by date only.
-		if layout == .standard && sortParameters.key != .date {
-			sortParameters = sortParameters.withKey(.date, direction: .orderedDescending)
-		}
+		sortParameters = sortParametersAllowedByLayout(sortParameters)
 		regularTimelineViewController.layout = layout
 		searchTimelineViewController.layout = layout
 		updateHeaderVisibility()
+	}
+
+	/// Standard layout sorts by date only.
+	func sortParametersAllowedByLayout(_ parameters: ArticleSortParameters) -> ArticleSortParameters {
+		if layout == .standard && parameters.key != .date {
+			return parameters.withKey(.date, direction: .orderedDescending)
+		}
+		return parameters
 	}
 
 	func updateHeaderVisibility() {
