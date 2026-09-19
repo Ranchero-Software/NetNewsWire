@@ -9,7 +9,7 @@
 import Foundation
 
 /// The column a timeline is sorted by. Raw values double as table column identifiers and sort descriptor keys.
-enum ArticleSortKey: String, CaseIterable, Sendable {
+enum ArticleSortKey: String, Sendable {
 	case date
 	case title
 	case feed
@@ -25,12 +25,6 @@ struct ArticleSortParameters: Equatable, Sendable {
 	let groupByFeed: Bool
 
 	static let newestFirst = ArticleSortParameters(key: .date, direction: .orderedDescending, groupByFeed: false)
-
-	init(key: ArticleSortKey, direction: ComparisonResult, groupByFeed: Bool) {
-		self.key = key
-		self.direction = direction
-		self.groupByFeed = groupByFeed
-	}
 
 	/// Group by feed only makes sense when sorting by date.
 	var effectiveGroupByFeed: Bool {

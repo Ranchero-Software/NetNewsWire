@@ -83,15 +83,6 @@ enum TimelineColumn: String, CaseIterable {
 		}
 	}
 
-	var isStatusColumn: Bool {
-		switch self {
-		case .unread, .starred:
-			true
-		case .title, .feed, .date:
-			false
-		}
-	}
-
 	@MainActor func makeTableColumn() -> NSTableColumn {
 		let column = NSTableColumn(identifier: identifier)
 		column.headerCell = TimelineColumnHeaderCell(textCell: headerTitle)

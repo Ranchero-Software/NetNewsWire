@@ -436,12 +436,4 @@ private extension AppDefaults {
 		}
 		return .orderedDescending
 	}
-
-	static func setSortDirection(for key: String, _ value: ComparisonResult) {
-		if value == .orderedAscending {
-			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
-		} else {
-			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
-		}
-	}
 }
