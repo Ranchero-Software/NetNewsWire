@@ -145,7 +145,13 @@ final class WebViewController: UIViewController {
 		loadWebView()
 	}
 
-	@objc func handleUserDefaultsDidChange(_ note: Notification) {
+	@objc nonisolated func handleUserDefaultsDidChange(_ note: Notification) {
+		Task { @MainActor in
+			self.userDefaultsDidChange()
+		}
+	}
+
+	private func userDefaultsDidChange() {
 		guard isArticleContentJavascriptEnabled != AppDefaults.shared.isArticleContentJavascriptEnabled else {
 			return
 		}
