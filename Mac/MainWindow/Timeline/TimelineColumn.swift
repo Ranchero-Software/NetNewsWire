@@ -94,7 +94,7 @@ enum TimelineColumn: String, CaseIterable {
 
 	@MainActor func makeTableColumn() -> NSTableColumn {
 		let column = NSTableColumn(identifier: identifier)
-		column.title = headerTitle
+		column.headerCell = TimelineColumnHeaderCell(textCell: headerTitle)
 		column.headerToolTip = headerToolTip
 		column.sortDescriptorPrototype = NSSortDescriptor(key: sortKey.rawValue, ascending: sortsAscendingFirst)
 
@@ -123,5 +123,18 @@ enum TimelineColumn: String, CaseIterable {
 		}
 
 		return column
+	}
+}
+
+/// Adds a little room between the column separator and the title, as Mail has.
+final class TimelineColumnHeaderCell: NSTableHeaderCell {
+
+	private static let titleLeftPadding: CGFloat = 6.0
+
+	override func drawInterior(withFrame cellFrame: NSRect, in controlView: NSView) {
+		var frame = cellFrame
+		frame.origin.x += Self.titleLeftPadding
+		frame.size.width -= Self.titleLeftPadding
+		super.drawInterior(withFrame: frame, in: controlView)
 	}
 }

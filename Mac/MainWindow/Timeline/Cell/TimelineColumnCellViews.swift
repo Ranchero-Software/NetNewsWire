@@ -11,7 +11,7 @@ import AppKit
 // Cell views for the timeline’s column layout. Selection state arrives through backgroundStyle,
 // which the standard NSTableRowView sets, so no custom row view is needed.
 
-private let columnCellHorizontalPadding: CGFloat = 4.0
+private let columnCellHorizontalPadding: CGFloat = 8.0
 private let feedIconDimension: CGFloat = 16.0
 private let feedIconMarginRight: CGFloat = 5.0
 
