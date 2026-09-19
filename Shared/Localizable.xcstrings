@@ -45,14 +45,32 @@
     "%lld months" : {
       "comment" : "Dinosaur staleness threshold in months"
     },
+    "A to Z" : {
+      "comment" : "Sort direction"
+    },
+    "Ascending" : {
+      "comment" : "Sort direction"
+    },
     "Date" : {
       "comment" : "Timeline column header"
+    },
+    "Descending" : {
+      "comment" : "Sort direction"
     },
     "Feed" : {
       "comment" : "Timeline column header"
     },
+    "Newest Article on Top" : {
+      "comment" : "Sort direction"
+    },
+    "Oldest Article on Top" : {
+      "comment" : "Sort direction"
+    },
     "Title" : {
       "comment" : "Timeline column header"
+    },
+    "Z to A" : {
+      "comment" : "Sort direction"
     },
     "🦖 Dinosaurs" : {
       "comment" : "The title of the Dinosaurs screen.",

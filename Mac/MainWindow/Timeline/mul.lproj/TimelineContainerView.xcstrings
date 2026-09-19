@@ -20,55 +20,97 @@
       }
     },
     "40c-kt-vhO.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Newest Article on Top\"; ObjectID = \"40c-kt-vhO\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Descending\"; ObjectID = \"40c-kt-vhO\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Newest Article on Top"
+            "value" : "Descending"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Artículo más reciente arriba"
           }
         }
       }
     },
-    "sOF-Ez-vIL.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Oldest Article on Top\"; ObjectID = \"sOF-Ez-vIL\";",
+    "pMf-da-001.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date\"; ObjectID = \"pMf-da-001\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Oldest Article on Top"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Artículo más antiguo arriba"
+            "value" : "Date"
           }
         }
       }
     },
-    "YSR-5C-Yjd.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Group by Feed\"; ObjectID = \"YSR-5C-Yjd\";",
+    "pMf-fe-002.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Feed\"; ObjectID = \"pMf-fe-002\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Group by Feed"
+            "value" : "Feed"
+          }
+        }
+      }
+    },
+    "pMf-st-005.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Starred\"; ObjectID = \"pMf-st-005\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Starred"
+          }
+        }
+      }
+    },
+    "pMf-ti-003.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Title\"; ObjectID = \"pMf-ti-003\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "pMf-un-004.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Unread\"; ObjectID = \"pMf-un-004\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread"
+          }
+        }
+      }
+    },
+    "sOF-Ez-vIL.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Ascending\"; ObjectID = \"sOF-Ez-vIL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ascending"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agrupar por fuente"
+            "state" : "needs_review",
+            "value" : "Artículo más antiguo arriba"
           }
         }
       }

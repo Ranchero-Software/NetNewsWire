@@ -242,7 +242,7 @@ import XCTest
 		let article3 = makeArticle(date: now.addingTimeInterval(120.0), articleID: "3", feedID: "6")
 
 		let articles = [article1, article2, article3]
-		let parameters = ArticleSortParameters(key: .date, direction: .orderedDescending, groupByFeed: false)
+		let parameters = ArticleSortParameters(key: .date, direction: .orderedDescending)
 		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters)
 
 		XCTAssertEqual(sortedArticles, ArticleSorter.sortedByDate(articles: articles, sortDirection: .orderedDescending, groupByFeed: false))
@@ -259,7 +259,7 @@ import XCTest
 		let article4 = makeArticle(date: now, articleID: "4", feedID: "1", title: nil)
 
 		let articles = [article1, article2, article3, article4]
-		let parameters = ArticleSortParameters(key: .title, direction: .orderedAscending, groupByFeed: false)
+		let parameters = ArticleSortParameters(key: .title, direction: .orderedAscending)
 		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters)
 
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article4)
@@ -276,7 +276,7 @@ import XCTest
 		let article3 = makeArticle(date: now, articleID: "3", feedID: "1", title: "cherry")
 
 		let articles = [article1, article2, article3]
-		let parameters = ArticleSortParameters(key: .title, direction: .orderedDescending, groupByFeed: false)
+		let parameters = ArticleSortParameters(key: .title, direction: .orderedDescending)
 		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters)
 
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article3)
@@ -294,7 +294,7 @@ import XCTest
 
 		let articles = [article1, article2, article3, article4]
 		let names: [String: String] = ["1": "Phil's Feed", "2": "Jenny's Feed"]
-		let parameters = ArticleSortParameters(key: .feed, direction: .orderedAscending, groupByFeed: false)
+		let parameters = ArticleSortParameters(key: .feed, direction: .orderedAscending)
 		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters) {
 			names[$0.feedID] ?? ""
 		}
@@ -316,7 +316,7 @@ import XCTest
 
 		let articles = [article1, article2, article3, article4]
 		let names: [String: String] = ["1": "Phil's Feed", "2": "Jenny's Feed"]
-		let parameters = ArticleSortParameters(key: .feed, direction: .orderedDescending, groupByFeed: false)
+		let parameters = ArticleSortParameters(key: .feed, direction: .orderedDescending)
 		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters) {
 			names[$0.feedID] ?? ""
 		}
@@ -337,7 +337,7 @@ import XCTest
 		let article4 = makeArticle(date: now, articleID: "4", feedID: "1", read: false)
 
 		let articles = [article1, article2, article3, article4]
-		let parameters = ArticleSortParameters(key: .unread, direction: .orderedDescending, groupByFeed: false)
+		let parameters = ArticleSortParameters(key: .unread, direction: .orderedDescending)
 		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters)
 
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article4)
@@ -354,27 +354,12 @@ import XCTest
 		let article3 = makeArticle(date: now.addingTimeInterval(60.0), articleID: "3", feedID: "1", starred: true)
 
 		let articles = [article1, article2, article3]
-		let parameters = ArticleSortParameters(key: .starred, direction: .orderedAscending, groupByFeed: false)
+		let parameters = ArticleSortParameters(key: .starred, direction: .orderedAscending)
 		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters)
 
 		XCTAssertEqual(sortedArticles.articleAtRow(0), article2)
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article3)
 		XCTAssertEqual(sortedArticles.articleAtRow(2), article1)
-	}
-
-	func testGroupByFeedIsIgnoredForNonDateKeys() {
-		let now = Date()
-
-		let article1 = makeArticle(date: now, articleID: "1", feedID: "1", title: "b")
-		let article2 = makeArticle(date: now, articleID: "2", feedID: "2", title: "a")
-
-		let articles = [article1, article2]
-		let parameters = ArticleSortParameters(key: .title, direction: .orderedAscending, groupByFeed: true)
-		XCTAssertFalse(parameters.effectiveGroupByFeed)
-
-		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters) { _ in "Same Name" }
-		XCTAssertEqual(sortedArticles.articleAtRow(0), article2)
-		XCTAssertEqual(sortedArticles.articleAtRow(1), article1)
 	}
 }
 

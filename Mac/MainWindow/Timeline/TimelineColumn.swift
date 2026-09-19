@@ -53,12 +53,8 @@ enum TimelineColumn: String, CaseIterable {
 		switch self {
 		case .unread, .starred:
 			""
-		case .title:
-			NSLocalizedString("Title", comment: "Timeline column header")
-		case .feed:
-			NSLocalizedString("Feed", comment: "Timeline column header")
-		case .date:
-			NSLocalizedString("Date", comment: "Timeline column header")
+		case .title, .feed, .date:
+			sortKey.localizedName
 		}
 	}
 
@@ -74,21 +70,11 @@ enum TimelineColumn: String, CaseIterable {
 		}
 	}
 
-	/// Direction used the first time the user clicks the header. Newest, unread, and starred go on top.
-	var sortsAscendingFirst: Bool {
-		switch self {
-		case .title, .feed:
-			true
-		case .unread, .starred, .date:
-			false
-		}
-	}
-
 	@MainActor func makeTableColumn() -> NSTableColumn {
 		let column = NSTableColumn(identifier: identifier)
 		column.headerCell = TimelineColumnHeaderCell(textCell: headerTitle)
 		column.headerToolTip = headerToolTip
-		column.sortDescriptorPrototype = NSSortDescriptor(key: sortKey.rawValue, ascending: sortsAscendingFirst)
+		column.sortDescriptorPrototype = NSSortDescriptor(key: sortKey.rawValue, ascending: sortKey.sortsAscendingFirst)
 
 		switch self {
 		case .unread, .starred:

@@ -1154,18 +1154,18 @@
       }
     },
     "iii-kP-qoF.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Oldest Article on Top\"; ObjectID = \"iii-kP-qoF\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Ascending\"; ObjectID = \"iii-kP-qoF\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Oldest Article on Top"
+            "value" : "Ascending"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Artículo más antiguo arriba"
           }
         }
@@ -1855,6 +1855,66 @@
         }
       }
     },
+    "sMf-da-001.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date\"; ObjectID = \"sMf-da-001\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "sMf-fe-002.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Feed\"; ObjectID = \"sMf-fe-002\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Feed"
+          }
+        }
+      }
+    },
+    "sMf-st-005.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Starred\"; ObjectID = \"sMf-st-005\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Starred"
+          }
+        }
+      }
+    },
+    "sMf-ti-003.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Title\"; ObjectID = \"sMf-ti-003\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "sMf-un-004.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Unread\"; ObjectID = \"sMf-un-004\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread"
+          }
+        }
+      }
+    },
     "snW-S8-Cw5.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show Toolbar\"; ObjectID = \"snW-S8-Cw5\";",
       "extractionState" : "extracted_with_value",
@@ -1892,18 +1952,18 @@
       }
     },
     "TNS-TV-n0U.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Newest Article on Top\"; ObjectID = \"TNS-TV-n0U\";",
+      "comment" : "Class = \"NSMenuItem\"; title = \"Descending\"; ObjectID = \"TNS-TV-n0U\";",
       "extractionState" : "extracted_with_value",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Newest Article on Top"
+            "value" : "Descending"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Artículo más reciente arriba"
           }
         }
@@ -2373,24 +2433,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Destacados"
-          }
-        }
-      }
-    },
-    "Zxm-O6-NRE.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Group By Feed\"; ObjectID = \"Zxm-O6-NRE\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Group By Feed"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agrupar por fuente"
           }
         }
       }

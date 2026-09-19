@@ -317,16 +317,16 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return validateToggleReadArticles(item)
 		}
 
-		if item.action == #selector(sortByNewestArticleOnTop(_:)) {
-			return validateSortByDate(item, direction: .orderedDescending)
+		if item.action == #selector(sortArticlesByField(_:)) {
+			return validateSortArticlesByField(item)
 		}
 
-		if item.action == #selector(sortByOldestArticleOnTop(_:)) {
-			return validateSortByDate(item, direction: .orderedAscending)
+		if item.action == #selector(sortArticlesAscending(_:)) {
+			return validateSortDirection(item, direction: .orderedAscending)
 		}
 
-		if item.action == #selector(groupByFeedToggled(_:)) {
-			return validateGroupByFeed(item)
+		if item.action == #selector(sortArticlesDescending(_:)) {
+			return validateSortDirection(item, direction: .orderedDescending)
 		}
 
 		return true
@@ -619,16 +619,20 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		timelineContainerViewController?.toggleReadFilter()
 	}
 
-	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
-		timelineContainerViewController?.sortByDate(.orderedDescending)
+	@IBAction func sortArticlesByField(_ sender: NSMenuItem) {
+		// The menu item’s identifier is the ArticleSortKey raw value.
+		guard let identifier = sender.identifier, let key = ArticleSortKey(rawValue: identifier.rawValue) else {
+			return
+		}
+		timelineContainerViewController?.sortBy(key: key)
 	}
 
-	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
-		timelineContainerViewController?.sortByDate(.orderedAscending)
+	@IBAction func sortArticlesAscending(_ sender: Any?) {
+		timelineContainerViewController?.setSortDirection(.orderedAscending)
 	}
 
-	@IBAction func groupByFeedToggled(_ sender: Any?) {
-		timelineContainerViewController?.toggleGroupByFeed()
+	@IBAction func sortArticlesDescending(_ sender: Any?) {
+		timelineContainerViewController?.setSortDirection(.orderedDescending)
 	}
 
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
@@ -1551,22 +1555,22 @@ private extension MainWindowController {
 		return true
 	}
 
-	func validateSortByDate(_ item: NSValidatedUserInterfaceItem, direction: ComparisonResult) -> Bool {
-		guard let sortParameters = timelineContainerViewController?.sortParameters else {
+	func validateSortArticlesByField(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		guard let sortParameters = timelineContainerViewController?.sortParameters, let menuItem = item as? NSMenuItem, let identifier = menuItem.identifier, let key = ArticleSortKey(rawValue: identifier.rawValue) else {
 			return false
 		}
-		let isCurrentSort = sortParameters.key == .date && sortParameters.direction == direction
-		(item as? NSMenuItem)?.state = isCurrentSort ? .on : .off
+		menuItem.state = sortParameters.key == key ? .on : .off
 		return true
 	}
 
-	func validateGroupByFeed(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		guard let sortParameters = timelineContainerViewController?.sortParameters else {
+	/// The direction items are worded for the current field: Oldest/Newest for date, A to Z for text, Ascending/Descending for flags.
+	func validateSortDirection(_ item: NSValidatedUserInterfaceItem, direction: ComparisonResult) -> Bool {
+		guard let sortParameters = timelineContainerViewController?.sortParameters, let menuItem = item as? NSMenuItem else {
 			return false
 		}
-		(item as? NSMenuItem)?.state = sortParameters.groupByFeed ? .on : .off
-		// Group by feed applies only when sorting by date.
-		return sortParameters.key == .date
+		menuItem.title = sortParameters.key.localizedDirectionTitle(ascending: direction == .orderedAscending)
+		menuItem.state = sortParameters.direction == direction ? .on : .off
+		return true
 	}
 
 	func validateToggleReadArticles(_ item: NSValidatedUserInterfaceItem) -> Bool {

@@ -19,10 +19,6 @@ import Articles
 final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet var viewOptionsPopUpButton: NSPopUpButton!
-	@IBOutlet var newestToOldestMenuItem: NSMenuItem!
-	@IBOutlet var oldestToNewestMenuItem: NSMenuItem!
-	@IBOutlet var groupByFeedMenuItem: NSMenuItem!
-
 	@IBOutlet var readFilteredButton: NSButton!
 	@IBOutlet var headerSeparator: NSBox!
 	@IBOutlet var containerViewTopToHeaderConstraint: NSLayoutConstraint!
@@ -54,7 +50,7 @@ final class TimelineContainerViewController: NSViewController {
 	}
 
 	/// This window’s sort. Both timelines (regular and search) follow it.
-	private(set) var sortParameters = ArticleSortParameters(key: .date, direction: AppDefaults.shared.timelineSortDirection, groupByFeed: AppDefaults.shared.timelineGroupByFeed) {
+	private(set) var sortParameters = TimelineContainerViewController.seedSortParameters {
 		didSet {
 			if sortParameters == oldValue {
 				return
@@ -101,9 +97,10 @@ final class TimelineContainerViewController: NSViewController {
         setRepresentedObjects(nil, mode: .regular)
 		showTimeline(for: .regular)
 
-		makeMenuItemTitleLarger(newestToOldestMenuItem)
-		makeMenuItemTitleLarger(oldestToNewestMenuItem)
-		makeMenuItemTitleLarger(groupByFeedMenuItem)
+		// The first item is the pop-up’s hidden title.
+		for menuItem in viewOptionsPopUpButton.itemArray.dropFirst() where !menuItem.isSeparatorItem {
+			makeMenuItemTitleLarger(menuItem)
+		}
 		updateViewOptionsPopUpButton()
 		updateHeaderVisibility()
 
@@ -124,12 +121,16 @@ final class TimelineContainerViewController: NSViewController {
 
 	// MARK: - API
 
-	func sortByDate(_ direction: ComparisonResult) {
-		sortParameters = sortParameters.withKey(.date, direction: direction)
+	/// Choosing the current field keeps its direction. Choosing another starts with that field’s natural direction.
+	func sortBy(key: ArticleSortKey) {
+		if key == sortParameters.key {
+			return
+		}
+		sortParameters = sortParameters.withKey(key, direction: key.firstDirection)
 	}
 
-	func toggleGroupByFeed() {
-		sortParameters = sortParameters.withGroupByFeed(!sortParameters.groupByFeed)
+	func setSortDirection(_ direction: ComparisonResult) {
+		sortParameters = sortParameters.withDirection(direction)
 	}
 
 	func setRepresentedObjects(_ objects: [AnyObject]?, mode: TimelineSourceMode) {
@@ -182,7 +183,7 @@ final class TimelineContainerViewController: NSViewController {
 
 		// Sort first so the restored selection lands in the right row.
 		if let savedSortParameters = state.sortParameters {
-			sortParameters = sortParametersAllowedByLayout(savedSortParameters)
+			sortParameters = savedSortParameters
 		}
 		regularTimelineViewController.restoreState(from: state)
 		updateReadFilterButton()
@@ -242,36 +243,27 @@ private extension TimelineContainerViewController {
 		return .regular // Should never get here.
 	}
 
+	// The pop-up’s items share the View menu’s actions, so their checkmarks and direction titles come from
+	// MainWindowController’s validation. Only the button title is set here.
 	func updateViewOptionsPopUpButton() {
 		guard isViewLoaded else {
 			return
 		}
-		if sortParameters.direction == .orderedAscending {
-			newestToOldestMenuItem.state = .off
-			oldestToNewestMenuItem.state = .on
-			viewOptionsPopUpButton.setTitle(oldestToNewestMenuItem.title)
-		} else {
-			newestToOldestMenuItem.state = .on
-			oldestToNewestMenuItem.state = .off
-			viewOptionsPopUpButton.setTitle(newestToOldestMenuItem.title)
-		}
+		viewOptionsPopUpButton.setTitle(sortParameters.key.localizedName)
+	}
 
-		groupByFeedMenuItem.state = sortParameters.groupByFeed ? .on : .off
+	/// For a window with no saved sort. Group By Feed, from before sorting was per window, became sorting by feed.
+	static var seedSortParameters: ArticleSortParameters {
+		if AppDefaults.shared.timelineGroupByFeed {
+			return ArticleSortParameters(key: .feed, direction: .orderedAscending)
+		}
+		return ArticleSortParameters(key: .date, direction: AppDefaults.shared.timelineSortDirection)
 	}
 
 	func layoutDidChange() {
-		sortParameters = sortParametersAllowedByLayout(sortParameters)
 		regularTimelineViewController.layout = layout
 		searchTimelineViewController.layout = layout
 		updateHeaderVisibility()
-	}
-
-	/// Standard layout sorts by date only.
-	func sortParametersAllowedByLayout(_ parameters: ArticleSortParameters) -> ArticleSortParameters {
-		if layout == .standard && parameters.key != .date {
-			return parameters.withKey(.date, direction: .orderedDescending)
-		}
-		return parameters
 	}
 
 	func updateHeaderVisibility() {

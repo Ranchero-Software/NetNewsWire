@@ -363,26 +363,51 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Sort Articles By" id="OlJ-93-6OP">
                                     <items>
-                                        <menuItem title="Newest Article on Top" id="TNS-TV-n0U">
+                                        <menuItem title="Date" identifier="date" id="sMf-da-001">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="sortByNewestArticleOnTop:" target="-1" id="gkW-hU-IQJ"/>
+                                                <action selector="sortArticlesByField:" target="-1" id="sMa-da-001"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Oldest Article on Top" id="iii-kP-qoF">
+                                        <menuItem title="Feed" identifier="feed" id="sMf-fe-002">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <action selector="sortByOldestArticleOnTop:" target="-1" id="8jC-1r-5RH"/>
+                                                <action selector="sortArticlesByField:" target="-1" id="sMa-fe-002"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Title" identifier="title" id="sMf-ti-003">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortArticlesByField:" target="-1" id="sMa-ti-003"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Unread" identifier="unread" id="sMf-un-004">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortArticlesByField:" target="-1" id="sMa-un-004"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Starred" identifier="starred" id="sMf-st-005">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortArticlesByField:" target="-1" id="sMa-st-005"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="sMs-ep-006"/>
+                                        <menuItem title="Ascending" id="iii-kP-qoF">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortArticlesAscending:" target="-1" id="8jC-1r-5RH"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Descending" id="TNS-TV-n0U">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortArticlesDescending:" target="-1" id="gkW-hU-IQJ"/>
                                             </connections>
                                         </menuItem>
                                     </items>
                                 </menu>
-                            </menuItem>
-                            <menuItem title="Group By Feed" id="Zxm-O6-NRE">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="groupByFeedToggled:" target="-1" id="Wxz-eM-hJN"/>
-                                </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
                             <menuItem title="Clean Up Articles" keyEquivalent="'" id="J5h-uQ-57w">

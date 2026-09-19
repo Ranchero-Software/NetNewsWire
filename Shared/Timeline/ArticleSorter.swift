@@ -16,7 +16,7 @@ import Articles
 	static func sorted(articles: [Article], parameters: ArticleSortParameters, feedNameFor: (Article) -> String = { $0.sortableFeedName }) -> [Article] {
 		switch parameters.key {
 		case .date:
-			sortedByDate(articles: articles, sortDirection: parameters.direction, groupByFeed: parameters.effectiveGroupByFeed, feedNameFor: feedNameFor)
+			sortedByDate(articles: articles, sortDirection: parameters.direction)
 		case .feed:
 			sortedByFeedName(articles: articles, sortDirection: .orderedDescending, feedNameDirection: parameters.direction, feedNameFor: feedNameFor)
 		case .title:

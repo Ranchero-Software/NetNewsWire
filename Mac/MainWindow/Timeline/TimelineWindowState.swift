@@ -34,6 +34,7 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 		static let selectedArticleID = "selectedArticleID"
 		static let sortKey = "sortKey"
 		static let sortDirection = "sortDirection"
+		// Read only, to migrate state saved when Group By Feed was a separate setting.
 		static let groupByFeed = "groupByFeed"
 	}
 
@@ -46,7 +47,12 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 		if let rawSortKey = coder.decodeObject(of: NSString.self, forKey: Key.sortKey) as? String, let sortKey = ArticleSortKey(rawValue: rawSortKey) {
 			// Anything other than ascending — including a missing key — means descending.
 			let direction: ComparisonResult = coder.decodeInteger(forKey: Key.sortDirection) == ComparisonResult.orderedAscending.rawValue ? .orderedAscending : .orderedDescending
-			sortParameters = ArticleSortParameters(key: sortKey, direction: direction, groupByFeed: coder.decodeBool(forKey: Key.groupByFeed))
+			if sortKey == .date && coder.decodeBool(forKey: Key.groupByFeed) {
+				// Group By Feed became sorting by feed, A to Z.
+				sortParameters = ArticleSortParameters(key: .feed, direction: .orderedAscending)
+			} else {
+				sortParameters = ArticleSortParameters(key: sortKey, direction: direction)
+			}
 		} else {
 			sortParameters = nil
 		}
@@ -60,14 +66,13 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 		if let sortParameters {
 			coder.encode(sortParameters.key.rawValue, forKey: Key.sortKey)
 			coder.encode(sortParameters.direction.rawValue, forKey: Key.sortDirection)
-			coder.encode(sortParameters.groupByFeed, forKey: Key.groupByFeed)
 		}
 	}
 
 	override var description: String {
 		let sort: String
 		if let sortParameters {
-			sort = "\(sortParameters.key.rawValue) \(sortParameters.direction.rawValue) group=\(sortParameters.groupByFeed)"
+			sort = "\(sortParameters.key.rawValue) \(sortParameters.direction.rawValue)"
 		} else {
 			sort = "nil"
 		}

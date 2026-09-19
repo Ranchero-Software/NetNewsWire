@@ -9,10 +9,7 @@
             <connections>
                 <outlet property="containerView" destination="Zpk-pq-9nW" id="Kye-yX-Wyn"/>
                 <outlet property="containerViewTopToHeaderConstraint" destination="KCa-8b-a6y" id="hdr-cn-st1"/>
-                <outlet property="groupByFeedMenuItem" destination="YSR-5C-Yjd" id="1aN-9S-nE1"/>
                 <outlet property="headerSeparator" destination="7p6-pA-iw6" id="hdr-se-p01"/>
-                <outlet property="newestToOldestMenuItem" destination="40c-kt-vhO" id="AGa-fX-EVy"/>
-                <outlet property="oldestToNewestMenuItem" destination="sOF-Ez-vIL" id="qSg-ST-ww9"/>
                 <outlet property="readFilteredButton" destination="iA5-go-AO0" id="kQg-2g-zNZ"/>
                 <outlet property="view" destination="Dnl-L5-xFP" id="T2c-wM-9Hq"/>
                 <outlet property="viewOptionsPopUpButton" destination="lSU-OC-sEC" id="Z8V-rm-n2m"/>
@@ -35,20 +32,47 @@
                                     <attributedString key="attributedTitle"/>
                                     <modifierMask key="keyEquivalentModifierMask"/>
                                 </menuItem>
-                                <menuItem title="Newest Article on Top" state="on" tag="2" id="40c-kt-vhO">
+                                <menuItem title="Date" identifier="date" id="pMf-da-001">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
                                     <connections>
-                                        <action selector="sortByNewestArticleOnTop:" target="-1" id="vYg-MZ-zve"/>
+                                        <action selector="sortArticlesByField:" target="-1" id="pMa-da-001"/>
                                     </connections>
                                 </menuItem>
-                                <menuItem title="Oldest Article on Top" tag="3" id="sOF-Ez-vIL">
+                                <menuItem title="Feed" identifier="feed" id="pMf-fe-002">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
                                     <connections>
-                                        <action selector="sortByOldestArticleOnTop:" target="-1" id="KFG-M7-blB"/>
+                                        <action selector="sortArticlesByField:" target="-1" id="pMa-fe-002"/>
+                                    </connections>
+                                </menuItem>
+                                <menuItem title="Title" identifier="title" id="pMf-ti-003">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                    <connections>
+                                        <action selector="sortArticlesByField:" target="-1" id="pMa-ti-003"/>
+                                    </connections>
+                                </menuItem>
+                                <menuItem title="Unread" identifier="unread" id="pMf-un-004">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                    <connections>
+                                        <action selector="sortArticlesByField:" target="-1" id="pMa-un-004"/>
+                                    </connections>
+                                </menuItem>
+                                <menuItem title="Starred" identifier="starred" id="pMf-st-005">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                    <connections>
+                                        <action selector="sortArticlesByField:" target="-1" id="pMa-st-005"/>
                                     </connections>
                                 </menuItem>
                                 <menuItem isSeparatorItem="YES" id="xQP-gm-iO9"/>
-                                <menuItem title="Group by Feed" tag="4" id="YSR-5C-Yjd">
+                                <menuItem title="Ascending" id="sOF-Ez-vIL">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
                                     <connections>
-                                        <action selector="groupByFeedToggled:" target="-1" id="4y9-5l-ToF"/>
+                                        <action selector="sortArticlesAscending:" target="-1" id="KFG-M7-blB"/>
+                                    </connections>
+                                </menuItem>
+                                <menuItem title="Descending" id="40c-kt-vhO">
+                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                    <connections>
+                                        <action selector="sortArticlesDescending:" target="-1" id="vYg-MZ-zve"/>
                                     </connections>
                                 </menuItem>
                             </items>
