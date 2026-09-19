@@ -52,30 +52,30 @@ extension TimelineViewController {
 
 		switch column {
 		case .unread:
-			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineUnreadColumnCellView ?? makeCell(TimelineUnreadColumnCellView(), identifier: identifier)
+			let cell = dequeueCell(TimelineUnreadColumnCellView.self, identifier: identifier)
 			cell.isUnread = isUnread
 			return cell
 
 		case .starred:
-			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineStarColumnCellView ?? makeCell(TimelineStarColumnCellView(), identifier: identifier)
+			let cell = dequeueCell(TimelineStarColumnCellView.self, identifier: identifier)
 			cell.isStarred = article?.status.starred ?? false
 			return cell
 
 		case .title:
-			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineTextColumnCellView ?? makeCell(TimelineTextColumnCellView(), identifier: identifier)
+			let cell = dequeueCell(TimelineTextColumnCellView.self, identifier: identifier)
 			cell.textField?.font = textFont
 			cell.textField?.stringValue = article.map { columnTitleText(for: $0) } ?? ""
 			return cell
 
 		case .feed:
-			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineFeedColumnCellView ?? makeCell(TimelineFeedColumnCellView(), identifier: identifier)
+			let cell = dequeueCell(TimelineFeedColumnCellView.self, identifier: identifier)
 			cell.textField?.font = textFont
 			cell.textField?.stringValue = article?.feed?.nameForDisplay ?? ""
 			cell.imageView?.image = article?.feed.flatMap { IconImageCache.shared.imageForFeed($0) }?.image
 			return cell
 
 		case .date:
-			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineTextColumnCellView ?? makeCell(TimelineTextColumnCellView(), identifier: identifier)
+			let cell = dequeueCell(TimelineTextColumnCellView.self, identifier: identifier)
 			cell.textField?.font = textFont
 			cell.textField?.stringValue = article.map { ArticleStringFormatter.shared.dateString($0.logicalDatePublished) } ?? ""
 			return cell
@@ -171,7 +171,11 @@ private extension TimelineViewController {
 		}
 	}
 
-	func makeCell<T: NSTableCellView>(_ cell: T, identifier: NSUserInterfaceItemIdentifier) -> T {
+	func dequeueCell<T: NSTableCellView>(_ type: T.Type, identifier: NSUserInterfaceItemIdentifier) -> T {
+		if let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? T {
+			return cell
+		}
+		let cell = T()
 		cell.identifier = identifier
 		return cell
 	}
