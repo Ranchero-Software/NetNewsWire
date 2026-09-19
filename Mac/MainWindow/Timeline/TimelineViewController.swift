@@ -17,6 +17,7 @@ import Images
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
 	func timelineRequestedFeedSelection(_: TimelineViewController, feed: Feed)
 	func timelineInvalidatedRestorationState(_: TimelineViewController)
+	func timelineRequestedSortChange(_: TimelineViewController, parameters: ArticleSortParameters)
 }
 
 enum TimelineShowFeedName: Sendable {
@@ -190,8 +191,21 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		didSet {
 			if isViewLoaded && sortParameters != oldValue {
 				sortParametersDidChange()
+				applySortDescriptorsToTableView()
 			}
 		}
+	}
+	var layout = AppDefaults.shared.timelineLayout {
+		didSet {
+			if isViewLoaded && layout != oldValue {
+				layoutDidChange()
+			}
+		}
+	}
+	// The nib’s single column, kept so standard layout can put it back.
+	var standardColumn: NSTableColumn?
+	var standardRowHeight: CGFloat {
+		currentRowHeight
 	}
 	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
@@ -227,13 +241,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
 
 		updateRowHeights()
-		tableView.rowHeight = currentRowHeight
 		tableView.target = self
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 		tableView.keyboardDelegate = keyboardDelegate
 
-		tableView.style = .inset
+		standardColumn = tableView.tableColumns.first
+		configureTableView(for: layout)
 
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
@@ -757,6 +771,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@MainActor func userDefaultsDidChange() {
 		fontSize = AppDefaults.shared.timelineFontSize
+		layout = AppDefaults.shared.timelineLayout
 	}
 
 	// MARK: - Reloading Data
@@ -804,7 +819,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		if indexes.isEmpty {
 			return
 		}
-		tableView.reloadData(forRowIndexes: indexes, columnIndexes: NSIndexSet(index: 0) as IndexSet)
+		tableView.reloadData(forRowIndexes: indexes, columnIndexes: IndexSet(integersIn: 0..<tableView.numberOfColumns))
 	}
 
 	// MARK: - Cell Configuring
@@ -915,6 +930,10 @@ extension TimelineViewController: NSTableViewDelegate {
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineRow")
 
 	func tableView(_ tableView: NSTableView, rowViewForRow row: Int) -> NSTableRowView? {
+		if layout == .column {
+			// The standard row view suits column layout. TimelineTableRowView only knows the standard cell.
+			return nil
+		}
 		if let rowView: TimelineTableRowView = tableView.makeView(withIdentifier: TimelineViewController.rowViewIdentifier, owner: nil) as? TimelineTableRowView {
 			return rowView
 		}
@@ -926,6 +945,9 @@ extension TimelineViewController: NSTableViewDelegate {
 	private static let timelineCellIdentifier = NSUserInterfaceItemIdentifier(rawValue: "timelineCell")
 
 	func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+		if layout == .column {
+			return columnCellView(for: tableColumn, row: row)
+		}
 
 		func configure(_ cell: TimelineTableCellView) {
 			cell.cellAppearance = showIcons ? cellAppearanceWithIcon : cellAppearance
@@ -1081,10 +1103,27 @@ private extension TimelineViewController {
 	}
 
 	func updateTableViewRowHeight() {
-		tableView.rowHeight = currentRowHeight
+		tableView.rowHeight = layout == .column ? columnRowHeight() : currentRowHeight
+	}
+
+	func layoutDidChange() {
+		performBlockAndRestoreSelection {
+			configureTableView(for: layout)
+			updateShowIcons()
+			tableView.reloadData()
+		}
+		if tableView.selectedRow != -1 {
+			tableView.scrollRowToVisible(tableView.selectedRow)
+		}
 	}
 
 	func updateShowIcons() {
+		if layout == .column {
+			// The Feed column always shows the feed icon.
+			self.showIcons = true
+			return
+		}
+
 		if showFeedNames == .feed {
 			self.showIcons = true
 			return

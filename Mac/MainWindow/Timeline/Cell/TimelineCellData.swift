@@ -12,7 +12,7 @@ import Images
 
 @MainActor struct TimelineCellData {
 
-	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
+	static let noText = NSLocalizedString("(No Text)", comment: "No Text")
 
 	let title: String
 	let attributedTitle: NSAttributedString

@@ -24,7 +24,19 @@ final class TimelineContainerViewController: NSViewController {
 	@IBOutlet var groupByFeedMenuItem: NSMenuItem!
 
 	@IBOutlet var readFilteredButton: NSButton!
+	@IBOutlet var headerSeparator: NSBox!
+	@IBOutlet var containerViewTopToHeaderConstraint: NSLayoutConstraint!
 	@IBOutlet var containerView: TimelineContainerView!
+
+	private var layout = AppDefaults.shared.timelineLayout {
+		didSet {
+			if layout != oldValue {
+				layoutDidChange()
+			}
+		}
+	}
+	// Column layout hides the sort/filter header, and this pins the timeline to the top instead.
+	private lazy var containerViewTopToViewConstraint = containerView.topAnchor.constraint(equalTo: view.topAnchor)
 
 	var currentTimelineViewController: TimelineViewController? {
 		didSet {
@@ -94,7 +106,22 @@ final class TimelineContainerViewController: NSViewController {
 		makeMenuItemTitleLarger(oldestToNewestMenuItem)
 		makeMenuItemTitleLarger(groupByFeedMenuItem)
 		updateViewOptionsPopUpButton()
+		updateHeaderVisibility()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
     }
+
+	// MARK: - Notifications
+
+	@objc nonisolated func handleUserDefaultsDidChange(_ note: Notification) {
+		Task { @MainActor in
+			self.userDefaultsDidChange()
+		}
+	}
+
+	private func userDefaultsDidChange() {
+		layout = AppDefaults.shared.timelineLayout
+	}
 
 	// MARK: - API
 
@@ -185,6 +212,9 @@ extension TimelineContainerViewController: TimelineDelegate {
 		delegate?.timelineInvalidatedRestorationState(self)
 	}
 
+	func timelineRequestedSortChange(_: TimelineViewController, parameters: ArticleSortParameters) {
+		sortParameters = parameters
+	}
 }
 
 private extension TimelineContainerViewController {
@@ -230,7 +260,29 @@ private extension TimelineContainerViewController {
 		groupByFeedMenuItem.state = sortParameters.groupByFeed ? .on : .off
 	}
 
+	func layoutDidChange() {
+		// Standard layout sorts by date only.
+		if layout == .standard && sortParameters.key != .date {
+			sortParameters = sortParameters.withKey(.date, direction: .orderedDescending)
+		}
+		updateHeaderVisibility()
+	}
+
+	func updateHeaderVisibility() {
+		let isHeaderHidden = layout == .column
+		viewOptionsPopUpButton.isHidden = isHeaderHidden
+		headerSeparator.isHidden = isHeaderHidden
+		containerViewTopToHeaderConstraint.isActive = !isHeaderHidden
+		containerViewTopToViewConstraint.isActive = isHeaderHidden
+		updateReadFilterButton()
+	}
+
 	func updateReadFilterButton() {
+		guard layout == .standard else {
+			readFilteredButton.isHidden = true
+			return
+		}
+
 		guard currentTimelineViewController == regularTimelineViewController else {
 			readFilteredButton.isHidden = true
 			return
