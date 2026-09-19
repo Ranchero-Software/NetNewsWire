@@ -129,7 +129,7 @@ private extension TimelineViewController {
 			tableView.addTableColumn(column.makeTableColumn())
 		}
 		tableView.headerView = NSTableHeaderView()
-		tableView.style = .fullWidth
+		tableView.style = .inset
 		tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
 		tableView.allowsColumnReordering = true
 		tableView.allowsColumnResizing = true
