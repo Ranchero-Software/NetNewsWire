@@ -62,14 +62,15 @@ enum TimelineColumn: String, CaseIterable {
 		}
 	}
 
-	var headerToolTip: String {
+	/// Only the status columns need one — their headers have no text.
+	var headerToolTip: String? {
 		switch self {
 		case .unread:
 			NSLocalizedString("Unread", comment: "Unread")
 		case .starred:
 			NSLocalizedString("Starred", comment: "Starred")
 		case .title, .feed, .date:
-			headerTitle
+			nil
 		}
 	}
 
