@@ -247,6 +247,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		tableView.doubleAction = #selector(openArticleInBrowser(_:))
 		tableView.setDraggingSourceOperationMask(.copy, forLocal: false)
 		tableView.keyboardDelegate = keyboardDelegate
+		tableView.style = .inset
 
 		standardColumn = tableView.tableColumns.first
 		configureTableView(for: layout)
