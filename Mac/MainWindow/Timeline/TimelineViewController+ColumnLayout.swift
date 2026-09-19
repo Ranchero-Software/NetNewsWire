@@ -130,7 +130,7 @@ private extension TimelineViewController {
 		tableView.columnAutoresizingStyle = .lastColumnOnlyAutoresizingStyle
 		tableView.allowsColumnReordering = false
 		tableView.allowsColumnResizing = false
-		tableView.rowHeight = standardRowHeight
+		updateTableViewRowHeight()
 	}
 
 	func configureTableViewForColumnLayout() {
@@ -148,7 +148,7 @@ private extension TimelineViewController {
 		tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
 		tableView.allowsColumnReordering = true
 		tableView.allowsColumnResizing = true
-		tableView.rowHeight = columnRowHeight()
+		updateTableViewRowHeight()
 		// Set the name before turning autosave on so saved widths and order are read back.
 		tableView.autosaveName = columnAutosaveName
 		tableView.autosaveTableColumns = true

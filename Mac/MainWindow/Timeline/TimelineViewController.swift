@@ -209,9 +209,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	var standardColumn: NSTableColumn?
 	// Set while columns are added and autosaved state is restored, which fires sortDescriptorsDidChange.
 	var isConfiguringTableColumns = false
-	var standardRowHeight: CGFloat {
-		currentRowHeight
-	}
 	private var fontSize: FontSize = AppDefaults.shared.timelineFontSize {
 		didSet {
 			if fontSize != oldValue {
@@ -778,6 +775,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		fontSize = AppDefaults.shared.timelineFontSize
 	}
 
+	/// The one place the row height is set — it depends on the layout and the font size.
+	func updateTableViewRowHeight() {
+		tableView.rowHeight = layout == .column ? columnRowHeight() : currentRowHeight
+	}
+
 	// MARK: - Reloading Data
 
 	private func cellForRowView(_ rowView: NSView) -> NSView? {
@@ -1104,10 +1106,6 @@ private extension TimelineViewController {
 			}
 		}
 		unreadCount = count
-	}
-
-	func updateTableViewRowHeight() {
-		tableView.rowHeight = layout == .column ? columnRowHeight() : currentRowHeight
 	}
 
 	func layoutDidChange() {
