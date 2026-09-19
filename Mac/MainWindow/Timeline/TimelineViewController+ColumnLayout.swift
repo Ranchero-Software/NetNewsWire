@@ -162,11 +162,7 @@ private extension TimelineViewController {
 		if !title.isEmpty {
 			return title
 		}
-		let summary = ArticleStringFormatter.shared.truncatedSummary(article).collapsingWhitespace
-		if !summary.isEmpty {
-			return summary
-		}
-		return TimelineCellData.noText
+		return TimelineCellData.summaryText(for: article, title: title).collapsingWhitespace
 	}
 
 	func removeAllTableColumns() {

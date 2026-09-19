@@ -12,7 +12,7 @@ import Images
 
 @MainActor struct TimelineCellData {
 
-	static let noText = NSLocalizedString("(No Text)", comment: "No Text")
+	private static let noText = NSLocalizedString("(No Text)", comment: "No Text")
 
 	let title: String
 	let attributedTitle: NSAttributedString
@@ -30,13 +30,7 @@ import Images
 
 		self.title = ArticleStringFormatter.shared.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.shared.attributedTruncatedTitle(article)
-
-		let truncatedSummary = ArticleStringFormatter.shared.truncatedSummary(article)
-		if self.title.isEmpty && truncatedSummary.isEmpty {
-			self.text = Self.noText
-		} else {
-			self.text = truncatedSummary
-		}
+		self.text = Self.summaryText(for: article, title: self.title)
 
 		self.dateString = ArticleStringFormatter.shared.dateString(article.logicalDatePublished)
 
@@ -59,6 +53,15 @@ import Images
 
 		self.read = article.status.read
 		self.starred = article.status.starred
+	}
+
+	/// The article’s summary, or “(No Text)” when it has neither a title nor a summary.
+	static func summaryText(for article: Article, title: String) -> String {
+		let truncatedSummary = ArticleStringFormatter.shared.truncatedSummary(article)
+		if title.isEmpty && truncatedSummary.isEmpty {
+			return noText
+		}
+		return truncatedSummary
 	}
 
 	init() { // Empty
