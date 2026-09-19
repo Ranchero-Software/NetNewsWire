@@ -90,7 +90,7 @@ final class TimelineTextColumnCellView: NSTableCellView {
 
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
-		let label = TimelineTextColumnCellView.makeLabel()
+		let label = Self.makeLabel()
 		addSubview(label)
 		textField = label
 		NSLayoutConstraint.activate([
