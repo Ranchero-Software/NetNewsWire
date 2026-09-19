@@ -98,7 +98,9 @@ extension TimelineViewController {
 	func tableView(_ tableView: NSTableView, sortDescriptorsDidChange oldDescriptors: [NSSortDescriptor]) {
 		// A header click. Don’t sort here — ask the container, which owns the window’s sort.
 		// Setting sortDescriptors programmatically lands here too, and the equality check ends that loop.
-		guard let descriptor = tableView.sortDescriptors.first, let rawKey = descriptor.key, let key = ArticleSortKey(rawValue: rawKey) else {
+		// The table also autosaves sort descriptors under its autosaveName and restores them when it’s configured.
+		// Those belong to whatever window last saved, so they’re ignored — the window’s own sort is applied right after.
+		guard !isConfiguringTableColumns, let descriptor = tableView.sortDescriptors.first, let rawKey = descriptor.key, let key = ArticleSortKey(rawValue: rawKey) else {
 			return
 		}
 		let direction: ComparisonResult = descriptor.ascending ? .orderedAscending : .orderedDescending
@@ -131,6 +133,10 @@ private extension TimelineViewController {
 	}
 
 	func configureTableViewForColumnLayout() {
+		isConfiguringTableColumns = true
+		defer {
+			isConfiguringTableColumns = false
+		}
 		removeAllTableColumns()
 		for column in TimelineColumn.allCases {
 			tableView.addTableColumn(column.makeTableColumn())
@@ -144,6 +150,7 @@ private extension TimelineViewController {
 		// Set the name before turning autosave on so saved widths and order are read back.
 		tableView.autosaveName = columnAutosaveName
 		tableView.autosaveTableColumns = true
+		isConfiguringTableColumns = false
 		applySortDescriptorsToTableView()
 	}
 

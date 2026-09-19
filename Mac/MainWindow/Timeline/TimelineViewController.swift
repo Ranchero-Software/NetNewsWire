@@ -204,6 +204,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 	// The nib’s single column, kept so standard layout can put it back.
 	var standardColumn: NSTableColumn?
+	// Set while columns are added and autosaved state is restored, which fires sortDescriptorsDidChange.
+	var isConfiguringTableColumns = false
 	var standardRowHeight: CGFloat {
 		currentRowHeight
 	}
