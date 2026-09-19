@@ -1188,10 +1188,16 @@
     "Use iCloud" : {
       "comment" : "Use iCloud button"
     },
+    "Username and password are required." : {
+      "comment" : "Credentials Error"
+    },
     "Username or Email" : {
       "comment" : "Username field placeholder"
     },
     "Username required." : {
+      "comment" : "Credentials Error"
+    },
+    "Username, password, and API URL are required." : {
       "comment" : "Credentials Error"
     },
     "Vacuum Databases" : {
