@@ -126,6 +126,7 @@ private extension TimelineViewController {
 		}
 		tableView.headerView = nil
 		tableView.style = .inset
+		tableView.usesAlternatingRowBackgroundColors = false
 		tableView.columnAutoresizingStyle = .lastColumnOnlyAutoresizingStyle
 		tableView.allowsColumnReordering = false
 		tableView.allowsColumnResizing = false
@@ -143,6 +144,7 @@ private extension TimelineViewController {
 		}
 		tableView.headerView = NSTableHeaderView()
 		tableView.style = .inset
+		tableView.usesAlternatingRowBackgroundColors = true
 		tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
 		tableView.allowsColumnReordering = true
 		tableView.allowsColumnResizing = true
