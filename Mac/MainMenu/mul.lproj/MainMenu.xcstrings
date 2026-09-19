@@ -1945,6 +1945,24 @@
         }
       }
     },
+    "ucL-ay-0ut.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Use Column Layout\"; ObjectID = \"ucL-ay-0ut\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use Column Layout"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar disposición en columnas"
+          }
+        }
+      }
+    },
     "UEZ-Bs-lqG.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Capitalize\"; ObjectID = \"UEZ-Bs-lqG\";",
       "extractionState" : "extracted_with_value",

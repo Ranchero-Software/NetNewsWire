@@ -59,7 +59,7 @@ typealias ArticleArray = [Article]
 	}
 
 	func sorted(by parameters: ArticleSortParameters) -> ArticleArray {
-		return ArticleSorter.sorted(articles: self, parameters: parameters)
+		ArticleSorter.sorted(articles: self, parameters: parameters)
 	}
 
 	func canMarkAllAsRead() -> Bool {

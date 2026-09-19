@@ -30,6 +30,7 @@ final class AppDefaults: Sendable {
 		static let timelineFontSize = "timelineFontSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
+		static let useColumnLayout = "useColumnLayout"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
@@ -268,11 +269,21 @@ final class AppDefaults: Sendable {
 	// Sorting is per window and lives in TimelineWindowState. These two are read-only seeds
 	// for a window that has no saved sort, so a setting from before per-window sorting carries over.
 	var timelineSortDirection: ComparisonResult {
-		return AppDefaults.sortDirection(for: Key.timelineSortDirection)
+		AppDefaults.sortDirection(for: Key.timelineSortDirection)
 	}
 
 	var timelineGroupByFeed: Bool {
-		return AppDefaults.bool(for: Key.timelineGroupByFeed)
+		AppDefaults.bool(for: Key.timelineGroupByFeed)
+	}
+
+	/// Column layout: multi-column timeline table with the article view below it, like Mail’s View > Use Column Layout. Applies to all windows.
+	var useColumnLayout: Bool {
+		get {
+			AppDefaults.bool(for: Key.useColumnLayout)
+		}
+		set {
+			AppDefaults.setBool(for: Key.useColumnLayout, newValue)
+		}
 	}
 
 	var timelineShowsSeparators: Bool {
@@ -332,6 +343,7 @@ final class AppDefaults: Sendable {
 			Key.detailFontSize: FontSize.medium.rawValue,
 			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 			Key.timelineGroupByFeed: false,
+			Key.useColumnLayout: false,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,

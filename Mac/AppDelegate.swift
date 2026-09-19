@@ -52,6 +52,7 @@ let appName = "NetNewsWire"
 	private var isShutDownSyncDone = false
 
 	@IBOutlet var debugMenuItem: NSMenuItem!
+	@IBOutlet var useColumnLayoutMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 
 	var unreadCount = 0 {
@@ -200,6 +201,8 @@ let appName = "NetNewsWire"
 			// Import default feeds.
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
+
+		updateColumnLayoutMenuItem()
 
 		if mainWindowController == nil {
 			let mainWindowController = createAndShowMainWindow()
@@ -387,6 +390,8 @@ let appName = "NetNewsWire"
 	}
 
 	func userDefaultsDidChange() {
+		updateColumnLayoutMenuItem()
+
 		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
 			refreshTimer?.update()
 			lastRefreshInterval = AppDefaults.shared.refreshInterval
@@ -738,6 +743,10 @@ let appName = "NetNewsWire"
 		aboutWindowController?.window?.makeKeyAndOrderFront(nil)
 	}
 
+	@IBAction func toggleColumnLayout(_ sender: Any?) {
+		AppDefaults.shared.useColumnLayout.toggle()
+	}
+
 	@IBAction func checkForUpdates(_ sender: Any?) {
 		softwareUpdater?.checkForUpdates()
 	}
@@ -851,6 +860,10 @@ extension AppDelegate {
 		errorLogWindowController?.saveState()
 		accountStatsWindowController?.saveState()
 		dinosaurWindowController?.saveState()
+	}
+
+	@MainActor func updateColumnLayoutMenuItem() {
+		useColumnLayoutMenuItem.state = AppDefaults.shared.useColumnLayout ? .on : .off
 	}
 
 	func importTheme(url: URL) {

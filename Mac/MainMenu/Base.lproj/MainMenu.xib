@@ -16,6 +16,7 @@
             <connections>
                 <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                 <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
+                <outlet property="useColumnLayoutMenuItem" destination="ucL-ay-0ut" id="ucL-ou-tl1"/>
             </connections>
         </customObject>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -404,6 +405,12 @@
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
                                     <action selector="toggleSidebar:" target="-1" id="CZ1-aO-CkF"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Use Column Layout" id="ucL-ay-0ut">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleColumnLayout:" target="Voe-Tx-rLC" id="ucL-ac-t0n"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="jKG-b2-ZWf"/>
