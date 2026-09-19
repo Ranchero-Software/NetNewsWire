@@ -265,22 +265,14 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	// Sorting is per window and lives in TimelineWindowState. These two are read-only seeds
+	// for a window that has no saved sort, so a setting from before per-window sorting carries over.
 	var timelineSortDirection: ComparisonResult {
-		get {
-			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
-		}
-		set {
-			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
-		}
+		return AppDefaults.sortDirection(for: Key.timelineSortDirection)
 	}
 
 	var timelineGroupByFeed: Bool {
-		get {
-			return AppDefaults.bool(for: Key.timelineGroupByFeed)
-		}
-		set {
-			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
-		}
+		return AppDefaults.bool(for: Key.timelineGroupByFeed)
 	}
 
 	var timelineShowsSeparators: Bool {

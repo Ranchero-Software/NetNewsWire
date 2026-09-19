@@ -307,6 +307,18 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return validateToggleReadArticles(item)
 		}
 
+		if item.action == #selector(sortByNewestArticleOnTop(_:)) {
+			return validateSortByDate(item, direction: .orderedDescending)
+		}
+
+		if item.action == #selector(sortByOldestArticleOnTop(_:)) {
+			return validateSortByDate(item, direction: .orderedAscending)
+		}
+
+		if item.action == #selector(groupByFeedToggled(_:)) {
+			return validateGroupByFeed(item)
+		}
+
 		return true
 	}
 
@@ -595,6 +607,18 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	@IBAction func toggleReadArticlesFilter(_ sender: Any?) {
 		timelineContainerViewController?.toggleReadFilter()
+	}
+
+	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
+		timelineContainerViewController?.sortByDate(.orderedDescending)
+	}
+
+	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
+		timelineContainerViewController?.sortByDate(.orderedAscending)
+	}
+
+	@IBAction func groupByFeedToggled(_ sender: Any?) {
+		timelineContainerViewController?.toggleGroupByFeed()
 	}
 
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
@@ -1322,6 +1346,24 @@ private extension MainWindowController {
 		let hideCommand = NSLocalizedString("Hide Read Feeds", comment: "Command")
 		menuItem.title = sidebarViewController?.isReadFiltered ?? false ? showCommand : hideCommand
 		return true
+	}
+
+	func validateSortByDate(_ item: NSValidatedUserInterfaceItem, direction: ComparisonResult) -> Bool {
+		guard let sortParameters = timelineContainerViewController?.sortParameters else {
+			return false
+		}
+		let isCurrentSort = sortParameters.key == .date && sortParameters.direction == direction
+		(item as? NSMenuItem)?.state = isCurrentSort ? .on : .off
+		return true
+	}
+
+	func validateGroupByFeed(_ item: NSValidatedUserInterfaceItem) -> Bool {
+		guard let sortParameters = timelineContainerViewController?.sortParameters else {
+			return false
+		}
+		(item as? NSMenuItem)?.state = sortParameters.groupByFeed ? .on : .off
+		// Group by feed applies only when sorting by date.
+		return sortParameters.key == .date
 	}
 
 	func validateToggleReadArticles(_ item: NSValidatedUserInterfaceItem) -> Bool {

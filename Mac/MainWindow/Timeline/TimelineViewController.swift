@@ -184,16 +184,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var didRegisterForNotifications = false
 	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5, maxInterval: 2.0)
 
-	private var sortDirection = AppDefaults.shared.timelineSortDirection {
+	// Owned by the window’s TimelineContainerViewController.
+	// Before the view loads there is nothing to re-sort — the first fetch uses the current value.
+	var sortParameters = ArticleSortParameters.newestFirst {
 		didSet {
-			if sortDirection != oldValue {
-				sortParametersDidChange()
-			}
-		}
-	}
-	private var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
-		didSet {
-			if groupByFeed != oldValue {
+			if isViewLoaded && sortParameters != oldValue {
 				sortParametersDidChange()
 			}
 		}
@@ -762,8 +757,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@MainActor func userDefaultsDidChange() {
 		fontSize = AppDefaults.shared.timelineFontSize
-		sortDirection = AppDefaults.shared.timelineSortDirection
-		groupByFeed = AppDefaults.shared.timelineGroupByFeed
 	}
 
 	// MARK: - Reloading Data
@@ -1250,7 +1243,7 @@ private extension TimelineViewController {
 	}
 
 	func replaceArticles(with unsortedArticles: Set<Article>) {
-		articles = Array(unsortedArticles).sortedByDate(sortDirection, groupByFeed: groupByFeed)
+		articles = Array(unsortedArticles).sorted(by: sortParameters)
 	}
 
 	func fetchUnsortedArticlesSync(for representedObjects: [Any]) -> Set<Article> {

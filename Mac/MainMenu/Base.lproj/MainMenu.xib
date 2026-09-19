@@ -16,9 +16,6 @@
             <connections>
                 <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                 <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
-                <outlet property="groupArticlesByFeedMenuItem" destination="Zxm-O6-NRE" id="gwn-VT-2YZ"/>
-                <outlet property="sortByNewestArticleOnTopMenuItem" destination="TNS-TV-n0U" id="gix-Nd-9k4"/>
-                <outlet property="sortByOldestArticleOnTopMenuItem" destination="iii-kP-qoF" id="fTe-Tf-EWG"/>
             </connections>
         </customObject>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -383,7 +380,7 @@
                             <menuItem title="Group By Feed" id="Zxm-O6-NRE">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="groupByFeedToggled:" target="Voe-Tx-rLC" id="Wxz-eM-hJN"/>
+                                    <action selector="groupByFeedToggled:" target="-1" id="Wxz-eM-hJN"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>

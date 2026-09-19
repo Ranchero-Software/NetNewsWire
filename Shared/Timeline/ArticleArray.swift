@@ -58,6 +58,10 @@ typealias ArticleArray = [Article]
 		return ArticleSorter.sortedByDate(articles: self, sortDirection: sortDirection, groupByFeed: groupByFeed)
 	}
 
+	func sorted(by parameters: ArticleSortParameters) -> ArticleArray {
+		return ArticleSorter.sorted(articles: self, parameters: parameters)
+	}
+
 	func canMarkAllAsRead() -> Bool {
 		return anyArticleIsUnread()
 	}
