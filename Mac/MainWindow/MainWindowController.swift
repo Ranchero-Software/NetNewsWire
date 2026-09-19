@@ -64,7 +64,6 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	private var timelineContainerViewController: TimelineContainerViewController?
 	private var detailViewController: DetailViewController?
 	private var currentSearchField: NSSearchField?
-	private let articleThemeMenuToolbarItem = NSMenuToolbarItem(itemIdentifier: .articleThemeMenu)
 	private var searchString: String?
 	private var lastSentSearchString: String?
 	private var timelineSourceMode: TimelineSourceMode = .regular {
@@ -936,11 +935,14 @@ extension MainWindowController: NSToolbarDelegate {
 			return buildToolbarButton(.openInBrowser, title, Assets.Images.openInBrowser, "openArticleInBrowser:")
 
 		case .articleThemeMenu:
-			articleThemeMenuToolbarItem.image = Assets.Images.articleTheme
+			// Built per toolbar: a toolbar item belongs to one toolbar, and the toolbar is rebuilt on a layout switch.
+			let toolbarItem = NSMenuToolbarItem(itemIdentifier: .articleThemeMenu)
+			toolbarItem.image = Assets.Images.articleTheme
 			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
-			articleThemeMenuToolbarItem.toolTip = description
-			articleThemeMenuToolbarItem.label = description
-			return articleThemeMenuToolbarItem
+			toolbarItem.toolTip = description
+			toolbarItem.label = description
+			toolbarItem.menu = makeArticleThemeMenu()
+			return toolbarItem
 
 		case .search:
 			let toolbarItem = NSSearchToolbarItem(itemIdentifier: .search)
@@ -1743,6 +1745,14 @@ private extension MainWindowController {
 	}
 
 	func updateArticleThemeMenu() {
+		let articleThemeMenu = makeArticleThemeMenu()
+		if let toolbarItem = window?.toolbar?.existingItem(withIdentifier: .articleThemeMenu) as? NSMenuToolbarItem {
+			toolbarItem.menu = articleThemeMenu
+		}
+		articleThemePopUpButton?.menu = articleThemeMenu
+	}
+
+	func makeArticleThemeMenu() -> NSMenu {
 		let articleThemeMenu = NSMenu()
 
 		let defaultThemeItem = NSMenuItem()
@@ -1761,7 +1771,6 @@ private extension MainWindowController {
 			articleThemeMenu.addItem(themeItem)
 		}
 
-		articleThemeMenuToolbarItem.menu = articleThemeMenu
-		articleThemePopUpButton?.menu = articleThemeMenu
+		return articleThemeMenu
 	}
 }
