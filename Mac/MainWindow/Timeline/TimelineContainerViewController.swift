@@ -50,10 +50,7 @@ final class TimelineContainerViewController: NSViewController {
 	}
 
 	var windowState: TimelineWindowState? {
-		guard let timelineState = currentTimelineViewController?.windowState else {
-			return nil
-		}
-		return TimelineWindowState(readArticlesFilterStateKeys: timelineState.readArticlesFilterStateKeys, readArticlesFilterStateValues: timelineState.readArticlesFilterStateValues, selectedAccountID: timelineState.selectedAccountID, selectedArticleID: timelineState.selectedArticleID, sortParameters: sortParameters)
+		currentTimelineViewController?.windowState
 	}
 
 	/// This window’s sort. Both timelines (regular and search) follow it.

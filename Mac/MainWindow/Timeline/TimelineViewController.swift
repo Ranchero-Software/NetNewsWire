@@ -94,12 +94,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			return TimelineWindowState(readArticlesFilterStateKeys: readArticlesFilterStateKeys,
 									   readArticlesFilterStateValues: readArticlesFilterStateValues,
 									   selectedAccountID: path[ArticlePathKey.accountID] as? String,
-									   selectedArticleID: path[ArticlePathKey.articleID] as? String)
+									   selectedArticleID: path[ArticlePathKey.articleID] as? String,
+									   sortParameters: sortParameters)
 		} else {
 			return TimelineWindowState(readArticlesFilterStateKeys: readArticlesFilterStateKeys,
 									   readArticlesFilterStateValues: readArticlesFilterStateValues,
 									   selectedAccountID: nil,
-									   selectedArticleID: nil)
+									   selectedArticleID: nil,
+									   sortParameters: sortParameters)
 		}
 
 	}
