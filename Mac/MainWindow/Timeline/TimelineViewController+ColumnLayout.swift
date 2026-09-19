@@ -30,6 +30,11 @@ extension TimelineViewController {
 		NSFont.systemFont(ofSize: AppDefaults.shared.actualFontSize(for: AppDefaults.shared.timelineFontSize))
 	}
 
+	// Unread rows are bold, like Mail.
+	var boldColumnFont: NSFont {
+		NSFont.boldSystemFont(ofSize: AppDefaults.shared.actualFontSize(for: AppDefaults.shared.timelineFontSize))
+	}
+
 	func columnRowHeight() -> CGFloat {
 		let font = columnFont
 		let lineHeight = ceil(font.ascender - font.descender + font.leading)
@@ -42,11 +47,13 @@ extension TimelineViewController {
 		}
 		let article = articles.articleAtRow(row)
 		let identifier = tableColumn.identifier
+		let isUnread = article.map { !$0.status.read } ?? false
+		let textFont = isUnread ? boldColumnFont : columnFont
 
 		switch column {
 		case .unread:
 			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineUnreadColumnCellView ?? makeCell(TimelineUnreadColumnCellView(), identifier: identifier)
-			cell.isUnread = article.map { !$0.status.read } ?? false
+			cell.isUnread = isUnread
 			return cell
 
 		case .starred:
@@ -56,20 +63,20 @@ extension TimelineViewController {
 
 		case .title:
 			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineTextColumnCellView ?? makeCell(TimelineTextColumnCellView(), identifier: identifier)
-			cell.textField?.font = columnFont
+			cell.textField?.font = textFont
 			cell.textField?.stringValue = article.map { columnTitleText(for: $0) } ?? ""
 			return cell
 
 		case .feed:
 			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineFeedColumnCellView ?? makeCell(TimelineFeedColumnCellView(), identifier: identifier)
-			cell.textField?.font = columnFont
+			cell.textField?.font = textFont
 			cell.textField?.stringValue = article?.feed?.nameForDisplay ?? ""
 			cell.imageView?.image = article?.feed.flatMap { IconImageCache.shared.imageForFeed($0) }?.image
 			return cell
 
 		case .date:
 			let cell = tableView.makeView(withIdentifier: identifier, owner: nil) as? TimelineTextColumnCellView ?? makeCell(TimelineTextColumnCellView(), identifier: identifier)
-			cell.textField?.font = columnFont
+			cell.textField?.font = textFont
 			cell.textField?.stringValue = article.map { ArticleStringFormatter.shared.dateString($0.logicalDatePublished) } ?? ""
 			return cell
 		}
