@@ -1133,7 +1133,8 @@ private extension MainWindowController {
 	}
 
 	func makeColumnLayoutSplitViewController(sidebar: SidebarViewController, timeline: TimelineContainerViewController, detail: DetailViewController) -> NSSplitViewController {
-		let contentSplitViewController = makeEmptySplitViewController(isVertical: false)
+		let contentSplitViewController = makeEmptySplitViewController(isVertical: false, splitView: ColumnLayoutSplitView())
+		contentSplitViewController.splitView.dividerStyle = .paneSplitter
 
 		let timelineItem = NSSplitViewItem(viewController: timeline)
 		timelineItem.holdingPriority = NSLayoutConstraint.Priority(Self.timelineHoldingPriority)
@@ -1165,8 +1166,9 @@ private extension MainWindowController {
 		return splitViewController
 	}
 
-	func makeEmptySplitViewController(isVertical: Bool) -> NSSplitViewController {
+	func makeEmptySplitViewController(isVertical: Bool, splitView: NSSplitView = NSSplitView()) -> NSSplitViewController {
 		let splitViewController = NSSplitViewController()
+		splitViewController.splitView = splitView
 		splitViewController.splitView.isVertical = isVertical
 		splitViewController.splitView.dividerStyle = .thin
 		splitViewController.splitView.wantsLayer = true
