@@ -44,7 +44,8 @@ final class TimelineWindowState: NSObject, NSSecureCoding {
 		selectedArticleID = coder.decodeObject(of: NSString.self, forKey: Key.selectedArticleID) as? String
 
 		if let rawSortKey = coder.decodeObject(of: NSString.self, forKey: Key.sortKey) as? String, let sortKey = ArticleSortKey(rawValue: rawSortKey) {
-			let direction = ComparisonResult(rawValue: coder.decodeInteger(forKey: Key.sortDirection)) ?? .orderedDescending
+			// Anything other than ascending — including a missing key — means descending.
+			let direction: ComparisonResult = coder.decodeInteger(forKey: Key.sortDirection) == ComparisonResult.orderedAscending.rawValue ? .orderedAscending : .orderedDescending
 			sortParameters = ArticleSortParameters(key: sortKey, direction: direction, groupByFeed: coder.decodeBool(forKey: Key.groupByFeed))
 		} else {
 			sortParameters = nil
