@@ -22,6 +22,9 @@ final class TimelineUnreadColumnCellView: NSTableCellView {
 	var isUnread = false {
 		didSet {
 			unreadIndicatorView.isHidden = !isUnread
+			// The dot is the only cue, so VoiceOver gets the word instead. Read rows say nothing.
+			setAccessibilityElement(isUnread)
+			setAccessibilityLabel(isUnread ? NSLocalizedString("Unread", comment: "Unread") : nil)
 		}
 	}
 
@@ -37,6 +40,7 @@ final class TimelineUnreadColumnCellView: NSTableCellView {
 		super.init(frame: frameRect)
 		unreadIndicatorView.translatesAutoresizingMaskIntoConstraints = false
 		unreadIndicatorView.isHidden = true
+		unreadIndicatorView.setAccessibilityElement(false)
 		addSubview(unreadIndicatorView)
 		NSLayoutConstraint.activate([
 			unreadIndicatorView.widthAnchor.constraint(equalToConstant: UnreadIndicatorView.unreadCircleDimension),
@@ -58,6 +62,8 @@ final class TimelineStarColumnCellView: NSTableCellView {
 	var isStarred = false {
 		didSet {
 			starImageView.isHidden = !isStarred
+			setAccessibilityElement(isStarred)
+			setAccessibilityLabel(isStarred ? NSLocalizedString("Starred", comment: "Starred") : nil)
 		}
 	}
 
@@ -73,6 +79,7 @@ final class TimelineStarColumnCellView: NSTableCellView {
 		starImageView.imageScaling = .scaleNone
 		starImageView.contentTintColor = Assets.Colors.star
 		starImageView.isHidden = true
+		starImageView.setAccessibilityElement(false)
 		addSubview(starImageView)
 		NSLayoutConstraint.activate([
 			starImageView.centerXAnchor.constraint(equalTo: centerXAnchor),
