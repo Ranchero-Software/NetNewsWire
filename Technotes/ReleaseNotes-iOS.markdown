@@ -1,5 +1,9 @@
 # iOS Release Notes
 
+### 7.1.4 build 7213 18 Sep 2026 - branch: main tag: iOS-7.1.4-7213
+
+Fix crashing bug introduced in previous beta
+
 ### 7.1.4 build 7212 18 Sep 2026 - branch: main tag: iOS-7.1.4-7212
 
 Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
