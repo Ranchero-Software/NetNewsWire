@@ -74,6 +74,10 @@ enum TimelineColumn: String, CaseIterable {
 		let column = NSTableColumn(identifier: identifier)
 		column.headerCell = TimelineColumnHeaderCell(textCell: headerTitle)
 		column.headerToolTip = headerToolTip
+		// The status columns have no header text, so the tooltip doubles as the accessible name.
+		if let headerToolTip {
+			column.headerCell.setAccessibilityLabel(headerToolTip)
+		}
 		column.sortDescriptorPrototype = NSSortDescriptor(key: sortKey.rawValue, ascending: sortKey.sortsAscendingFirst)
 
 		switch self {
