@@ -84,12 +84,14 @@ final class TimelineContainerViewController: NSViewController {
 	lazy var regularTimelineViewController = {
 		let viewController = TimelineViewController(delegate: self)
 		viewController.sortParameters = sortParameters
+		viewController.layout = layout
 		return viewController
 	}()
 	private lazy var searchTimelineViewController: TimelineViewController = {
 		let viewController = TimelineViewController(delegate: self)
 		viewController.showsSearchResults = true
 		viewController.sortParameters = sortParameters
+		viewController.layout = layout
 		return viewController
 	}()
 
@@ -265,6 +267,8 @@ private extension TimelineContainerViewController {
 		if layout == .standard && sortParameters.key != .date {
 			sortParameters = sortParameters.withKey(.date, direction: .orderedDescending)
 		}
+		regularTimelineViewController.layout = layout
+		searchTimelineViewController.layout = layout
 		updateHeaderVisibility()
 	}
 

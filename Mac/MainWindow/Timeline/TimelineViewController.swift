@@ -195,7 +195,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 		}
 	}
-	var layout = AppDefaults.shared.timelineLayout {
+	// Also owned by the container, which pushes the current value before and after the view loads.
+	var layout = TimelineLayout.standard {
 		didSet {
 			if isViewLoaded && layout != oldValue {
 				layoutDidChange()
@@ -773,7 +774,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	@MainActor func userDefaultsDidChange() {
 		fontSize = AppDefaults.shared.timelineFontSize
-		layout = AppDefaults.shared.timelineLayout
 	}
 
 	// MARK: - Reloading Data
