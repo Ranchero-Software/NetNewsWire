@@ -1063,16 +1063,10 @@ private extension MainWindowController {
 		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
 		let firstResponderView = window.firstResponder as? NSView
 
-		// The toolbar is rebuilt, which replaces the search field. The search timeline itself survives,
-		// so an active search carries over: its text goes into the new field and focus returns to it.
-		let activeSearchString = timelineSourceMode == .search ? searchString : nil
-		let searchFieldHadFocus = currentSearchField?.currentEditor() != nil
-
-		// Remove the old toolbar before the split views go away. Its sidebar tracking separator follows the old split view,
-		// and AppKit reports conflicting title-view constraints if it’s still installed while the content view controller changes.
-		let isToolbarVisible = window.toolbar?.isVisible ?? true
-		currentSearchField = nil
-		window.toolbar = nil
+		// The toolbar lives for the window’s life so the user’s customization is one thing. Only its tracking separators
+		// depend on the split views: they come out before the swap (AppKit reports conflicting title-view constraints otherwise)
+		// and go back in the same positions after, which also lets the timeline separator change kind for the new layout.
+		let trackingSeparators = removeTrackingSeparatorsFromToolbar()
 
 		detachSplitViewControllers()
 
@@ -1090,26 +1084,38 @@ private extension MainWindowController {
 			window.setFrame(savedFrame, display: false)
 		}
 
-		let toolbar = makeToolbar()
-		toolbar.isVisible = isToolbarVisible
-		window.toolbar = toolbar
-		if let activeSearchString {
-			currentSearchField?.stringValue = activeSearchString
+		if let toolbar = window.toolbar {
+			for (identifier, index) in trackingSeparators {
+				toolbar.insertItem(withItemIdentifier: identifier, at: index)
+			}
+		} else {
+			window.toolbar = makeToolbar()
 		}
 
 		window.contentView?.layoutSubtreeIfNeeded()
 		applyRememberedGeometry()
 		sidebarSplitViewItem?.isCollapsed = isSidebarHidden
 
-		if searchFieldHadFocus, let currentSearchField {
-			window.makeFirstResponder(currentSearchField)
-		} else if let firstResponderView, firstResponderView.window === window {
+		if let firstResponderView, firstResponderView.window === window {
 			window.makeFirstResponder(firstResponderView)
 		} else {
 			currentTimelineViewController?.focus()
 		}
 		window.recalculateKeyViewLoop()
 		invalidateRestorableState()
+	}
+
+	/// Removes the sidebar and timeline tracking separators, returning their identifiers and positions in ascending order.
+	func removeTrackingSeparatorsFromToolbar() -> [(NSToolbarItem.Identifier, Int)] {
+		guard let toolbar = window?.toolbar else {
+			return []
+		}
+		let separatorIdentifiers: Set<NSToolbarItem.Identifier> = [.sidebarTrackingSeparator, .timelineTrackingSeparator]
+		let separators = toolbar.items.enumerated().filter { separatorIdentifiers.contains($0.element.itemIdentifier) }.map { ($0.element.itemIdentifier, $0.offset) }
+		for (_, index) in separators.reversed() {
+			toolbar.removeItem(at: index)
+		}
+		return separators
 	}
 
 	func detachSplitViewControllers() {
@@ -1194,8 +1200,6 @@ private extension MainWindowController {
 		return splitViewController
 	}
 
-	// Rebuilt on a layout switch so the timeline tracking separator can change kind. Same identifier both times,
-	// so the user’s customization applies to both layouts.
 	func makeToolbar() -> NSToolbar {
 		let toolbar = NSToolbar(identifier: Self.toolbarIdentifier)
 		toolbar.allowsUserCustomization = true
