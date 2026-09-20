@@ -130,6 +130,11 @@ final class TimelineContainerViewController: NSViewController {
 		updateReadFilterButton()
 	}
 
+	func setReadFilterEnabled(_ isEnabled: Bool) {
+		regularTimelineViewController.setReadFilterEnabled(isEnabled)
+		updateReadFilterButton()
+	}
+
 	// MARK: State Restoration
 
 	func restoreState(from state: TimelineWindowState?) {

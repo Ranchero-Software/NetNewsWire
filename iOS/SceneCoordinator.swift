@@ -432,6 +432,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		// You can't assign the Feeds Read Filter until we've built the backing stores at least once or there is nothing
 		// for state restoration to work with while we are waiting for the unread counts to initialize.
+		AppDefaults.shared.hideReadFeeds = stateInfo.hideReadFeeds
 		treeControllerDelegate.isReadFiltered = stateInfo.hideReadFeeds
 
 		guard restoreSelection else {
@@ -878,6 +879,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		treeControllerDelegate.isReadFiltered = newValue
 		AppDefaults.shared.hideReadFeeds = newValue
 		rebuildBackingStores()
+		refreshTimeline(resetScroll: false)
 		mainFeedCollectionViewController?.updateUI()
 	}
 
@@ -893,6 +895,9 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 		hidingReadArticlesState.toggleHidingReadArticles(for: sidebarItemID)
+		treeControllerDelegate.isReadFiltered = AppDefaults.shared.hideReadFeeds
+		rebuildBackingStores()
+		mainFeedCollectionViewController?.updateUI()
 		refreshTimeline(resetScroll: false)
 	}
 
