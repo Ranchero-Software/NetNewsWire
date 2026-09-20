@@ -20,8 +20,6 @@ enum TimelineSourceMode {
 final class MainWindowController: NSWindowController, NSUserInterfaceValidations {
 	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainWindowController")
 
-	@IBOutlet var articleThemePopUpButton: NSPopUpButton?
-
     private var activityManager = ActivityManager()
 
 	private var isShowingExtractedArticle = false
@@ -107,8 +105,6 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		installSplitViewController(for: timelineLayout)
 
 		sharingServicePickerDelegate = SharingServicePickerDelegate(self.window)
-
-		updateArticleThemeMenu()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .AccountRefreshDidBegin, object: nil)
@@ -1765,11 +1761,10 @@ private extension MainWindowController {
 	}
 
 	func updateArticleThemeMenu() {
-		let articleThemeMenu = makeArticleThemeMenu()
-		if let toolbarItem = window?.toolbar?.existingItem(withIdentifier: .articleThemeMenu) as? NSMenuToolbarItem {
-			toolbarItem.menu = articleThemeMenu
+		guard let toolbarItem = window?.toolbar?.existingItem(withIdentifier: .articleThemeMenu) as? NSMenuToolbarItem else {
+			return
 		}
-		articleThemePopUpButton?.menu = articleThemeMenu
+		toolbarItem.menu = makeArticleThemeMenu()
 	}
 
 	func makeArticleThemeMenu() -> NSMenu {
