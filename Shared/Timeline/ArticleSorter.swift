@@ -64,14 +64,23 @@ private extension ArticleSorter {
 
 	static func sortedByTitle(articles: [Article], sortDirection: ComparisonResult) -> [Article] {
 		articles.sorted { article1, article2 in
-			let title1 = article1.title ?? ""
-			let title2 = article2.title ?? ""
+			let title1 = sortableTitle(for: article1)
+			let title2 = sortableTitle(for: article2)
 			return switch title1.compare(title2, options: titleCompareOptions, range: nil, locale: .current) {
 			case .orderedAscending: sortDirection == .orderedAscending
 			case .orderedDescending: sortDirection != .orderedAscending
 			case .orderedSame: isOrderedByDate(article1, article2, sortDirection: .orderedDescending)
 			}
 		}
+	}
+
+	/// The text the timeline shows as the title: the title, or the start of the body for an untitled article.
+	static func sortableTitle(for article: Article) -> String {
+		let title = ArticleStringFormatter.shared.truncatedTitle(article)
+		if !title.isEmpty {
+			return title
+		}
+		return ArticleStringFormatter.shared.truncatedSummary(article)
 	}
 
 	/// Descending puts articles with the flag set on top.
