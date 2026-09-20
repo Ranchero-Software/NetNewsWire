@@ -1061,10 +1061,10 @@ private extension MainWindowController {
 		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
 		let firstResponderView = window.firstResponder as? NSView
 
-		// The toolbar is rebuilt, which drops the search field, so end any search first.
-		if timelineSourceMode == .search {
-			forceSearchToEnd()
-		}
+		// The toolbar is rebuilt, which replaces the search field. The search timeline itself survives,
+		// so an active search carries over: its text goes into the new field and focus returns to it.
+		let activeSearchString = timelineSourceMode == .search ? searchString : nil
+		let searchFieldHadFocus = currentSearchField?.currentEditor() != nil
 
 		// Remove the old toolbar before the split views go away. Its sidebar tracking separator follows the old split view,
 		// and AppKit reports conflicting title-view constraints if it’s still installed while the content view controller changes.
@@ -1091,13 +1091,20 @@ private extension MainWindowController {
 		let toolbar = makeToolbar(for: layout)
 		toolbar.isVisible = isToolbarVisible
 		window.toolbar = toolbar
+		if let activeSearchString {
+			currentSearchField?.stringValue = activeSearchString
+		}
 
 		window.contentView?.layoutSubtreeIfNeeded()
 		applyRememberedGeometry()
 		sidebarSplitViewItem?.isCollapsed = isSidebarHidden
 
-		if let firstResponderView, firstResponderView.window === window {
+		if searchFieldHadFocus, let currentSearchField {
+			window.makeFirstResponder(currentSearchField)
+		} else if let firstResponderView, firstResponderView.window === window {
 			window.makeFirstResponder(firstResponderView)
+		} else {
+			currentTimelineViewController?.focus()
 		}
 		window.recalculateKeyViewLoop()
 		invalidateRestorableState()
