@@ -2,6 +2,36 @@
 
 ### 7.1.4 build 7213 18 Sep 2026 - branch: main tag: iOS-7.1.4-7213
 
+This was originally a TestFlight release. It was submitted to the App Store as the 7.1.4 release version on 20 Sep 2026.
+
+Changes since 7.1.3:
+
+Fixed bug where read and starred statuses could stop syncing once more than 999 of them were queued (Feedbin, Feedly, NewsBlur, Reader API)
+Kept syncing read and starred statuses even when sending article content fails
+Kept fetching articles after an error sending statuses, and kept sending the rest of the statuses after one batch of them fails
+Stopped repeatedly reauthorizing a Feedly token the server has rejected
+Fixed bug where some FreshRSS, BazQux, Inoreader, and The Old Reader articles could never be marked read or starred on the server
+Fixed bug where a feed could disappear during syncing when its folder is missing locally (Feedbin and Reader API)
+Fixed bug where syncing could skip some folders (Feedbin and Reader API)
+Fixed bug where an interrupted sync could cause articles to be skipped (Feedbin and Reader API)
+Fixed bug where dates from servers could fail to parse under some device languages
+Fixed bug where iCloud syncing could stall on a batch the server considers too large
+Fixed potential hangs in iCloud syncing
+Made push-triggered iCloud syncing work even when notifications aren’t authorized
+Showed errors in the Error Log when the database can’t be read or written
+Fixed bug where a site asking the app to slow down (429 responses) could slow down refreshing for other sites with similar names
+Sped up openrss.org feeds — the app now fetches one feed an hour instead of one feed every 10 hours
+Fixed bug where the first refresh after launching could be skipped
+Fixed potential hangs while refreshing
+Fixed bug where a feed in On My iPhone or On My iPad could fail to update after refreshing
+Fixed bug where the article you just selected could be cleared while navigating back
+Stopped the article view from storing cookies and other website data on disk — feed content now runs in a private-browsing-like session
+Made it so it will download article themes from http and https URLs only, with a maximum download size
+Fixed bug where exported OPML could contain characters that make the file invalid
+Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
+
+Changes in this build:
+
 Fixed crashing bug introduced in previous beta
 
 ### 7.1.4 build 7212 18 Sep 2026 - branch: main tag: iOS-7.1.4-7212
