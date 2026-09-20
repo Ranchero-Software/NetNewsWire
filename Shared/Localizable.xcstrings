@@ -66,6 +66,9 @@
     "Oldest Article on Top" : {
       "comment" : "Sort direction"
     },
+    "Timeline Separator" : {
+      "comment" : "Toolbar item"
+    },
     "Title" : {
       "comment" : "Timeline column header"
     },

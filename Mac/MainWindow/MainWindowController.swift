@@ -49,8 +49,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	private static let defaultColumnLayoutTimelineHeightFraction: CGFloat = 0.4
 	private static let sidebarHoldingPriority: Float = 260
 	private static let timelineHoldingPriority: Float = 255
-	private static let standardToolbarIdentifier = "MainWindowToolbar"
-	private static let columnLayoutToolbarIdentifier = "MainWindowToolbarColumnLayout"
+	private static let toolbarIdentifier = "MainWindowToolbar"
 	private var splitViewController: NSSplitViewController?
 	// Column layout only: the vertical split holding the timeline above the article view.
 	private var contentSplitViewController: NSSplitViewController?
@@ -897,8 +896,17 @@ extension MainWindowController: NSToolbarDelegate {
 
 		case .timelineTrackingSeparator:
 			// Only the standard layout has a vertical divider between the timeline and the article view.
+			// Column layout gets a hidden placeholder so the identifier stays in the saved configuration
+			// and the separator returns when the layout does — one toolbar, one customization.
 			guard timelineLayout == .standard, let splitView = splitViewController?.splitView else {
-				return nil
+				let placeholder = NSToolbarItem(itemIdentifier: .timelineTrackingSeparator)
+				placeholder.isHidden = true
+				// Hidden in the toolbar, but the customization palette still lists it, so it needs a name and an image there.
+				let description = NSLocalizedString("Timeline Separator", comment: "Toolbar item")
+				placeholder.label = description
+				placeholder.paletteLabel = description
+				placeholder.image = NSImage(systemSymbolName: "rectangle.split.2x1", accessibilityDescription: description)
+				return placeholder
 			}
 			return NSTrackingSeparatorToolbarItem(identifier: .timelineTrackingSeparator, splitView: splitView, dividerIndex: 1)
 
@@ -963,7 +971,7 @@ extension MainWindowController: NSToolbarDelegate {
 	}
 
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		let identifiers: [NSToolbarItem.Identifier] = [
+		[
 			NSToolbarItem.Identifier.toggleSidebar,
 			.refresh,
 			.newSidebarItemMenu,
@@ -982,11 +990,10 @@ extension MainWindowController: NSToolbarDelegate {
 			.search,
 			.cleanUp
 		]
-		return toolbarItemIdentifiersForCurrentLayout(identifiers)
 	}
 
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		let identifiers: [NSToolbarItem.Identifier] = [
+		[
 			NSToolbarItem.Identifier.toggleSidebar,
 			.flexibleSpace,
 			.refresh,
@@ -1004,7 +1011,6 @@ extension MainWindowController: NSToolbarDelegate {
 			.flexibleSpace,
 			.search
 		]
-		return toolbarItemIdentifiersForCurrentLayout(identifiers)
 	}
 
 	func toolbarWillAddItem(_ notification: Notification) {
@@ -1084,7 +1090,7 @@ private extension MainWindowController {
 			window.setFrame(savedFrame, display: false)
 		}
 
-		let toolbar = makeToolbar(for: layout)
+		let toolbar = makeToolbar()
 		toolbar.isVisible = isToolbarVisible
 		window.toolbar = toolbar
 		if let activeSearchString {
@@ -1188,22 +1194,15 @@ private extension MainWindowController {
 		return splitViewController
 	}
 
-	func makeToolbar(for layout: TimelineLayout) -> NSToolbar {
-		// Separate identifiers so each layout keeps its own customization — column layout has no timeline tracking separator.
-		let identifier = layout == .column ? Self.columnLayoutToolbarIdentifier : Self.standardToolbarIdentifier
-		let toolbar = NSToolbar(identifier: identifier)
+	// Rebuilt on a layout switch so the timeline tracking separator can change kind. Same identifier both times,
+	// so the user’s customization applies to both layouts.
+	func makeToolbar() -> NSToolbar {
+		let toolbar = NSToolbar(identifier: Self.toolbarIdentifier)
 		toolbar.allowsUserCustomization = true
 		toolbar.autosavesConfiguration = true
 		toolbar.displayMode = .iconOnly
 		toolbar.delegate = self
 		return toolbar
-	}
-
-	func toolbarItemIdentifiersForCurrentLayout(_ identifiers: [NSToolbarItem.Identifier]) -> [NSToolbarItem.Identifier] {
-		guard timelineLayout == .column else {
-			return identifiers
-		}
-		return identifiers.filter { $0 != .timelineTrackingSeparator }
 	}
 
 	var currentTimelineViewController: TimelineViewController? {
