@@ -1064,9 +1064,12 @@ private extension MainWindowController {
 		let firstResponderView = window.firstResponder as? NSView
 
 		// The toolbar lives for the window’s life so the user’s customization is one thing. Only its tracking separators
-		// depend on the split views: they come out before the swap (AppKit reports conflicting title-view constraints otherwise)
-		// and go back in the same positions after, which also lets the timeline separator change kind for the new layout.
+		// depend on the split views: they come out before the swap and go back in the same positions after,
+		// which also lets the timeline separator change kind for the new layout. The toolbar is hidden meanwhile —
+		// AppKit lays out its title area during the swap and reports conflicting constraints without the separators.
 		let trackingSeparators = removeTrackingSeparatorsFromToolbar()
+		let isToolbarVisible = window.toolbar?.isVisible ?? true
+		window.toolbar?.isVisible = false
 
 		detachSplitViewControllers()
 
@@ -1088,6 +1091,7 @@ private extension MainWindowController {
 			for (identifier, index) in trackingSeparators {
 				toolbar.insertItem(withItemIdentifier: identifier, at: index)
 			}
+			toolbar.isVisible = isToolbarVisible
 		} else {
 			window.toolbar = makeToolbar()
 		}
