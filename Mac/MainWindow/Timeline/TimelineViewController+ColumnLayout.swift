@@ -134,9 +134,6 @@ private extension TimelineViewController {
 
 	func configureTableViewForColumnLayout() {
 		isConfiguringTableColumns = true
-		defer {
-			isConfiguringTableColumns = false
-		}
 		removeAllTableColumns()
 		for column in TimelineColumn.allCases {
 			tableView.addTableColumn(column.makeTableColumn())
@@ -151,6 +148,7 @@ private extension TimelineViewController {
 		tableView.autosaveName = columnAutosaveName
 		tableView.autosaveTableColumns = true
 		isConfiguringTableColumns = false
+		// After the flag is cleared, so the header shows this window’s sort rather than whatever autosave restored.
 		applySortDescriptorsToTableView()
 	}
 
