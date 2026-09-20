@@ -1066,6 +1066,12 @@ private extension MainWindowController {
 			forceSearchToEnd()
 		}
 
+		// Remove the old toolbar before the split views go away. Its sidebar tracking separator follows the old split view,
+		// and AppKit reports conflicting title-view constraints if it’s still installed while the content view controller changes.
+		let isToolbarVisible = window.toolbar?.isVisible ?? true
+		currentSearchField = nil
+		window.toolbar = nil
+
 		detachSplitViewControllers()
 
 		let newSplitViewController: NSSplitViewController
@@ -1082,8 +1088,9 @@ private extension MainWindowController {
 			window.setFrame(savedFrame, display: false)
 		}
 
-		currentSearchField = nil
-		window.toolbar = makeToolbar(for: layout)
+		let toolbar = makeToolbar(for: layout)
+		toolbar.isVisible = isToolbarVisible
+		window.toolbar = toolbar
 
 		window.contentView?.layoutSubtreeIfNeeded()
 		applyRememberedGeometry()
@@ -1251,7 +1258,10 @@ private extension MainWindowController {
 		}
 		let dividerThickness = splitView.dividerThickness
 		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
-		let sidebarWidth = isSidebarHidden ? 0.0 : sidebarView.frame.width
+		let visibleSidebarWidth = isSidebarHidden ? 0.0 : sidebarView.frame.width
+		// While collapsed, keep the last visible width so a rebuilt split view can reopen the sidebar at that width.
+		let previousSidebarWidth = rememberedStandardLayoutWidths.count == 3 ? rememberedStandardLayoutWidths[0] : 0
+		let sidebarWidth = isSidebarHidden ? previousSidebarWidth : Int(floor(visibleSidebarWidth))
 
 		switch timelineLayout {
 		case .standard:
@@ -1263,14 +1273,14 @@ private extension MainWindowController {
 			// because its width is greater than its apparent width,
 			// so that things can slide under the sidebar.
 			let dividerCount: CGFloat = isSidebarHidden ? 1.0 : 2.0
-			let timelineWidth = window.frame.width - (sidebarWidth + detailWidth + (dividerThickness * dividerCount))
-			rememberedStandardLayoutWidths = [Int(floor(sidebarWidth)), Int(floor(timelineWidth)), Int(floor(detailWidth))]
+			let timelineWidth = window.frame.width - (visibleSidebarWidth + detailWidth + (dividerThickness * dividerCount))
+			rememberedStandardLayoutWidths = [sidebarWidth, Int(floor(timelineWidth)), Int(floor(detailWidth))]
 
 		case .column:
 			if rememberedStandardLayoutWidths.count == 3 {
-				rememberedStandardLayoutWidths[0] = Int(floor(sidebarWidth))
+				rememberedStandardLayoutWidths[0] = sidebarWidth
 			} else {
-				rememberedStandardLayoutWidths = [Int(floor(sidebarWidth)), 0, 0]
+				rememberedStandardLayoutWidths = [sidebarWidth, 0, 0]
 			}
 			if let timelineView = contentSplitViewController?.splitView.arrangedSubviews.first {
 				rememberedColumnLayoutTimelineHeight = Int(floor(timelineView.frame.height))
@@ -1293,6 +1303,8 @@ private extension MainWindowController {
 			let timelineWidth = CGFloat(widths[1])
 			splitView.setPosition(sidebarWidth, ofDividerAt: 0)
 			// A zero timeline width means the standard layout has never been laid out — leave it to the holding priorities.
+			// The sidebar is positioned expanded here and collapsed by the caller afterward, so a zero width only
+			// comes from state saved before the collapsed width was kept.
 			if timelineWidth > 0 {
 				let secondDividerPosition = sidebarWidth > 0 ? sidebarWidth + splitView.dividerThickness + timelineWidth : timelineWidth
 				splitView.setPosition(secondDividerPosition, ofDividerAt: 1)
