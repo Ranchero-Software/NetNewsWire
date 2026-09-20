@@ -1124,9 +1124,6 @@ private extension MainWindowController {
 		}
 		contentSplitViewController = nil
 		splitViewController = nil
-		sidebarViewController?.view.removeFromSuperview()
-		timelineContainerViewController?.view.removeFromSuperview()
-		detailViewController?.view.removeFromSuperview()
 	}
 
 	func makeStandardSplitViewController(sidebar: SidebarViewController, timeline: TimelineContainerViewController, detail: DetailViewController) -> NSSplitViewController {
