@@ -708,7 +708,7 @@ import Secrets
 			try await account.logActivity(kind: .removeFeed, detail: feed.url) {
 				try await caller.removeFeed(feed.feedID, fromCollectionWith: collectionID)
 			}
-		} catch WebserviceError.httpError(let status) where status == HTTPResponseCode.badRequest || status == HTTPResponseCode.notFound {
+		} catch WebserviceError.httpError(let status, _) where status == HTTPResponseCode.badRequest || status == HTTPResponseCode.notFound {
 			// Feedly doesn’t recognize this subscription — most likely a stale or malformed feedID.
 			// Let the local removal stand, since otherwise the feed could never be deleted.
 			// If Feedly still has the feed, the next sync will bring it back.
@@ -1302,7 +1302,7 @@ extension FeedlyAccountDelegate: FeedlyAPICallerDelegate {
 		if error is FeedlyAccountDelegateError || error is DecodingError {
 			return true
 		}
-		if case WebserviceError.httpError(let status) = error, (400...499).contains(status) {
+		if case WebserviceError.httpError(let status, _) = error, (400...499).contains(status) {
 			return true
 		}
 		return false

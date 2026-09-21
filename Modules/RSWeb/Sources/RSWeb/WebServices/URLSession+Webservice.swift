@@ -13,12 +13,12 @@ public enum WebserviceError: LocalizedError, Sendable {
 	case noData
     case noURL
 	case suspended
-	case httpError(status: Int)
+	case httpError(status: Int, responseBody: String?)
 	case tooManyRequests(retryAfter: TimeInterval?)
 
 	public var errorDescription: String? {
 		switch self {
-		case .httpError(let status):
+		case .httpError(let status, _):
 			return "HTTP \(status): \(HTTPURLResponse.localizedString(forStatusCode: status))"
 		case .noData:
 			return NSLocalizedString("No data was returned by the server.", comment: "No data")
@@ -87,26 +87,26 @@ nonisolated extension URLSession {
 	@discardableResult
 	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data) {
 		let (data, response) = try await data(for: request)
-		return (try Self.validatedHTTPResponse(response), data)
+		return (try Self.validatedHTTPResponse(response, data: data), data)
 	}
 
 	public func send(request: URLRequest, method: String) async throws {
 		var sendRequest = request
 		sendRequest.httpMethod = method
-		let (_, response) = try await data(for: sendRequest)
-		try Self.validatedHTTPResponse(response)
+		let (data, response) = try await data(for: sendRequest)
+		try Self.validatedHTTPResponse(response, data: data)
 	}
 
 	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data) {
 		var sendRequest = request
 		sendRequest.httpMethod = method
 		let (data, response) = try await upload(for: sendRequest, from: payload)
-		return (try Self.validatedHTTPResponse(response), data)
+		return (try Self.validatedHTTPResponse(response, data: data), data)
 	}
 
 	/// Require an HTTP response with a 200...399 status code, or throw the matching `WebserviceError`.
 	@discardableResult
-	private static func validatedHTTPResponse(_ response: URLResponse) throws -> HTTPURLResponse {
+	private static func validatedHTTPResponse(_ response: URLResponse, data: Data?) throws -> HTTPURLResponse {
 		guard let httpResponse = response as? HTTPURLResponse else {
 			throw WebserviceError.noData
 		}
@@ -120,7 +120,20 @@ nonisolated extension URLSession {
 			}
 			throw WebserviceError.tooManyRequests(retryAfter: retryAfter)
 		default:
-			throw WebserviceError.httpError(status: httpResponse.forcedStatusCode)
+			throw WebserviceError.httpError(status: httpResponse.forcedStatusCode, responseBody: responseBodyForError(data))
 		}
+	}
+
+	/// A trimmed, whitespace-collapsed prefix of an error response's body.
+	/// The body often says what the server didn't like.
+	private static func responseBodyForError(_ data: Data?) -> String? {
+		guard let data, !data.isEmpty, let body = String(data: data, encoding: .utf8) else {
+			return nil
+		}
+		let collapsed = body.collapsingWhitespace
+		guard !collapsed.isEmpty else {
+			return nil
+		}
+		return String(collapsed.prefix(500))
 	}
 }

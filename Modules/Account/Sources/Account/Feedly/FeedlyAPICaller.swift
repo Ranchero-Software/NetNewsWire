@@ -400,21 +400,21 @@ private extension FeedlyAPICaller {
 	private func withReauthorizationRetry<T>(request: URLRequest, _ perform: (URLRequest) async throws -> T) async throws -> T {
 		do {
 			return try await perform(request)
-		} catch WebserviceError.httpError(let status) where status == 401 {
+		} catch WebserviceError.httpError(let status, _) where status == 401 {
 			guard let delegate else {
 				assertionFailure("Check the delegate is set to \(FeedlyAccountDelegate.self).")
-				throw WebserviceError.httpError(status: 401)
+				throw WebserviceError.httpError(status: 401, responseBody: nil)
 			}
 
 			let didReauthorize = await delegate.reauthorizeFeedlyAPICaller()
 			guard didReauthorize else {
-				throw WebserviceError.httpError(status: 401)
+				throw WebserviceError.httpError(status: 401, responseBody: nil)
 			}
 
 			// The server may hand back the same token — only require that one exists.
 			guard let accessToken = credentials?.secret else {
 				assertionFailure("Could not update the request with an OAuth token. Did \(String(describing: delegate)) set them on \(self)?")
-				throw WebserviceError.httpError(status: 401)
+				throw WebserviceError.httpError(status: 401, responseBody: nil)
 			}
 
 			var reauthorizedRequest = request

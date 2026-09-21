@@ -138,7 +138,7 @@ struct ReaderAPIUsageLimits {
 			return self.credentials
 
 		} catch {
-			if let webserviceError = error as? WebserviceError, case .httpError(let code) = webserviceError, code == 404 {
+			if let webserviceError = error as? WebserviceError, case .httpError(let code, _) = webserviceError, code == 404 {
 				throw AccountError.urlNotFound
 			} else {
 				throw error
@@ -183,7 +183,7 @@ struct ReaderAPIUsageLimits {
 		let token = try await requestAuthorizationToken(endpoint: endpoint)
 		do {
 			return try await operation(token)
-		} catch WebserviceError.httpError(let status) where status == 401 || status == 403 {
+		} catch WebserviceError.httpError(let status, _) where status == 401 || status == 403 {
 			accessToken = nil
 			let freshToken = try await requestAuthorizationToken(endpoint: endpoint)
 			return try await operation(freshToken)
