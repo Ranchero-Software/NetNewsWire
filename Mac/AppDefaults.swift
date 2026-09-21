@@ -30,6 +30,7 @@ final class AppDefaults: Sendable {
 		static let timelineFontSize = "timelineFontSize"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
+		static let useColumnLayout = "useColumnLayout"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
@@ -265,21 +266,23 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	// Sorting is per window and lives in TimelineWindowState. These two are read-only seeds
+	// for a window that has no saved sort, so a setting from before per-window sorting carries over.
 	var timelineSortDirection: ComparisonResult {
-		get {
-			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
-		}
-		set {
-			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
-		}
+		AppDefaults.sortDirection(for: Key.timelineSortDirection)
 	}
 
 	var timelineGroupByFeed: Bool {
+		AppDefaults.bool(for: Key.timelineGroupByFeed)
+	}
+
+	/// Column layout: multi-column timeline table with the article view below it, like Mail’s View > Use Column Layout. Applies to all windows.
+	var useColumnLayout: Bool {
 		get {
-			return AppDefaults.bool(for: Key.timelineGroupByFeed)
+			AppDefaults.bool(for: Key.useColumnLayout)
 		}
 		set {
-			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
+			AppDefaults.setBool(for: Key.useColumnLayout, newValue)
 		}
 	}
 
@@ -340,6 +343,7 @@ final class AppDefaults: Sendable {
 			Key.detailFontSize: FontSize.medium.rawValue,
 			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 			Key.timelineGroupByFeed: false,
+			Key.useColumnLayout: false,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
@@ -431,13 +435,5 @@ private extension AppDefaults {
 			return .orderedAscending
 		}
 		return .orderedDescending
-	}
-
-	static func setSortDirection(for key: String, _ value: ComparisonResult) {
-		if value == .orderedAscending {
-			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
-		} else {
-			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
-		}
 	}
 }

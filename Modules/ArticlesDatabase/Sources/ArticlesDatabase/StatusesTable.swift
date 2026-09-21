@@ -239,9 +239,10 @@ private extension StatusesTable {
 
 	/// The statuses whose database rows disagree with them.
 	func staleStatuses(in statuses: [ArticleStatus], _ database: FMDatabase) -> Set<ArticleStatus> {
-		guard let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(statuses.count)) else {
+		guard !statuses.isEmpty else {
 			return Set<ArticleStatus>()
 		}
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(statuses.count))
 		let statusesByArticleID = Dictionary(statuses.map { ($0.articleID, $0) }, uniquingKeysWith: { first, _ in first })
 		let sql = "select articleID, read, starred from statuses where articleID in \(placeholders);"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: statuses.map { $0.articleID }) else {
@@ -309,9 +310,7 @@ private extension StatusesTable {
 		guard !articleIDs.isEmpty else {
 			return
 		}
-		guard let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count)) else {
-			return
-		}
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		let sql = "update statuses set \(statusKey.rawValue)=? where articleID in \(placeholders) and \(statusKey.rawValue)!=?;"
 		let parameters: [Any] = [flag] + Array(articleIDs) + [flag]
 		database.executeUpdate(sql, withArgumentsIn: parameters)

@@ -32,6 +32,10 @@ final class AccountsPreferencesViewController: NSViewController {
 		account(at: tableView.selectedRow)
 	}
 
+	convenience init() {
+		self.init(nibName: "AccountsPreferencesView", bundle: nil)
+	}
+
 	override func viewDidLoad() {
 		super.viewDidLoad()
 

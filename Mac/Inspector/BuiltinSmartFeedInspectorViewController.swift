@@ -39,6 +39,10 @@ final class BuiltinSmartFeedInspectorViewController: NSViewController, Inspector
 
 	// MARK: NSViewController
 
+	convenience init() {
+		self.init(nibName: "BuiltinSmartFeedInspector", bundle: nil)
+	}
+
 	override func viewDidLoad() {
 
 		updateUI()

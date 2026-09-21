@@ -1,0 +1,120 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "4BZ-ya-evy.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Sort\"; ObjectID = \"4BZ-ya-evy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenar"
+          }
+        }
+      }
+    },
+    "40c-kt-vhO.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Descending\"; ObjectID = \"40c-kt-vhO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Descending"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Artículo más reciente arriba"
+          }
+        }
+      }
+    },
+    "pMf-da-001.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date\"; ObjectID = \"pMf-da-001\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "pMf-fe-002.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Feed\"; ObjectID = \"pMf-fe-002\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Feed"
+          }
+        }
+      }
+    },
+    "pMf-st-005.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Starred\"; ObjectID = \"pMf-st-005\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Starred"
+          }
+        }
+      }
+    },
+    "pMf-ti-003.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Title\"; ObjectID = \"pMf-ti-003\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "pMf-un-004.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Unread\"; ObjectID = \"pMf-un-004\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread"
+          }
+        }
+      }
+    },
+    "sOF-Ez-vIL.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Ascending\"; ObjectID = \"sOF-Ez-vIL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ascending"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Artículo más antiguo arriba"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

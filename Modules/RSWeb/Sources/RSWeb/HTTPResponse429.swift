@@ -30,7 +30,7 @@ struct HTTPResponse429 {
 		}
 
 		self.url = url
-		self.host = host.lowercased()
+		self.host = host.lowercased(with: localeForLowercasing)
 		self.retryAfter = retryAfter
 		self.dateCreated = Date()
 	}

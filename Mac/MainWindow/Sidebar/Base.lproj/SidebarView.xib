@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="SidebarViewController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="outlineView" destination="cnV-kg-Dn2" id="FVf-OT-E3h"/>
+                <outlet property="view" destination="bJZ-bH-vgc" id="aQe-8r-Wm3"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view wantsLayer="YES" id="bJZ-bH-vgc">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="307"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="40" horizontalPageScroll="10" verticalLineScroll="40" verticalPageScroll="10" hasHorizontalScroller="NO" horizontalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="cJj-Wv-9ep">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="307"/>
+                    <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="2eU-Wz-F9g">
+                        <rect key="frame" x="0.0" y="0.0" width="240" height="307"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="firstColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="40" rowSizeStyle="systemDefault" viewBased="YES" floatsGroupRows="NO" indentationPerLevel="13" outlineTableColumn="ih9-mJ-EA7" id="cnV-kg-Dn2" customClass="SidebarOutlineView" customModule="NetNewsWire" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="307"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <size key="intercellSpacing" width="3" height="0.0"/>
+                                <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                <tableColumns>
+                                    <tableColumn width="208" minWidth="23" maxWidth="1000" id="ih9-mJ-EA7">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border">
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" id="sXh-y7-12P">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES"/>
+                                        <prototypeCellViews>
+                                            <tableCellView identifier="HeaderCell" id="qkt-WA-5tB">
+                                                <rect key="frame" x="11" y="0.0" width="217" height="17"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                <subviews>
+                                                    <textField focusRingType="none" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fNJ-z1-0Up">
+                                                        <rect key="frame" x="0.0" y="1" width="145" height="14"/>
+                                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                                        <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" id="dRB-0K-qxz">
+                                                            <font key="font" metaFont="smallSystemBold"/>
+                                                            <color key="textColor" name="headerColor" catalog="System" colorSpace="catalog"/>
+                                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                                        </textFieldCell>
+                                                    </textField>
+                                                </subviews>
+                                                <connections>
+                                                    <outlet property="textField" destination="fNJ-z1-0Up" id="jEh-Oo-s62"/>
+                                                </connections>
+                                            </tableCellView>
+                                            <tableCellView identifier="DataCell" id="HJn-Tm-YNO" customClass="SidebarCell" customModule="NetNewsWire" customModuleProvider="target">
+                                                <rect key="frame" x="11" y="17" width="217" height="17"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            </tableCellView>
+                                        </prototypeCellViews>
+                                    </tableColumn>
+                                </tableColumns>
+                                <accessibility description="Feeds"/>
+                                <connections>
+                                    <outlet property="delegate" destination="-2" id="fPE-cv-p5c"/>
+                                    <outlet property="menu" destination="p3f-EZ-sSD" id="KTA-tl-UrO"/>
+                                </connections>
+                            </outlineView>
+                        </subviews>
+                        <nil key="backgroundColor"/>
+                    </clipView>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="166" id="pzy-wh-tgi"/>
+                    </constraints>
+                    <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="vs5-5h-CXe">
+                        <rect key="frame" x="-100" y="-100" width="238" height="15"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="NO" id="FWV-kB-qct">
+                        <rect key="frame" x="224" y="17" width="15" height="102"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                </scrollView>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="HZs-Zf-G8s" customClass="SidebarStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="-28" width="240" height="28"/>
+                    <subviews>
+                        <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="agw-l1-HkL">
+                            <rect key="frame" x="0.0" y="25" width="240" height="5"/>
+                        </box>
+                        <progressIndicator hidden="YES" wantsLayer="YES" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="y9c-Xf-2fS">
+                            <rect key="frame" x="20" y="3" width="40" height="20"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="40" id="1Yw-ER-8pT"/>
+                            </constraints>
+                        </progressIndicator>
+                        <textField hidden="YES" focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="iyL-pW-cT6">
+                            <rect key="frame" x="62" y="6" width="160" height="16"/>
+                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="dVE-XG-mlU">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="y9c-Xf-2fS" firstAttribute="centerY" secondItem="HZs-Zf-G8s" secondAttribute="centerY" constant="1" id="5Du-sw-hBK"/>
+                        <constraint firstItem="agw-l1-HkL" firstAttribute="leading" secondItem="HZs-Zf-G8s" secondAttribute="leading" id="FVd-l8-q2q"/>
+                        <constraint firstItem="iyL-pW-cT6" firstAttribute="centerY" secondItem="HZs-Zf-G8s" secondAttribute="centerY" id="Hht-GZ-3Ls"/>
+                        <constraint firstAttribute="trailing" secondItem="agw-l1-HkL" secondAttribute="trailing" id="MaE-c5-LIY"/>
+                        <constraint firstItem="iyL-pW-cT6" firstAttribute="leading" secondItem="y9c-Xf-2fS" secondAttribute="trailing" constant="4" id="TAM-VN-Syu"/>
+                        <constraint firstItem="y9c-Xf-2fS" firstAttribute="leading" secondItem="HZs-Zf-G8s" secondAttribute="leading" constant="20" symbolic="YES" id="TV9-iE-nuE"/>
+                        <constraint firstItem="agw-l1-HkL" firstAttribute="top" secondItem="HZs-Zf-G8s" secondAttribute="top" id="rBv-S6-j3b"/>
+                        <constraint firstAttribute="height" constant="28" id="xOq-XX-qcd"/>
+                    </constraints>
+                    <connections>
+                        <outlet property="bottomConstraint" destination="UN9-Wa-uxb" id="SYv-ax-8md"/>
+                        <outlet property="heightConstraint" destination="xOq-XX-qcd" id="ktU-yd-g8x"/>
+                        <outlet property="progressIndicator" destination="y9c-Xf-2fS" id="gaf-6e-siu"/>
+                        <outlet property="progressLabel" destination="iyL-pW-cT6" id="Zpv-44-cfX"/>
+                    </connections>
+                </customView>
+            </subviews>
+            <constraints>
+                <constraint firstItem="HZs-Zf-G8s" firstAttribute="top" secondItem="cJj-Wv-9ep" secondAttribute="bottom" id="0Zg-oW-o7U"/>
+                <constraint firstItem="cJj-Wv-9ep" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="5Rs-9M-TKq"/>
+                <constraint firstItem="cJj-Wv-9ep" firstAttribute="top" secondItem="bJZ-bH-vgc" secondAttribute="top" id="A7C-VI-drt"/>
+                <constraint firstAttribute="trailing" secondItem="iyL-pW-cT6" secondAttribute="trailing" constant="20" id="Mnm-9S-Qpm"/>
+                <constraint firstAttribute="bottom" secondItem="HZs-Zf-G8s" secondAttribute="bottom" constant="-28" id="UN9-Wa-uxb"/>
+                <constraint firstAttribute="trailing" secondItem="HZs-Zf-G8s" secondAttribute="trailing" id="iNE-nb-QEB"/>
+                <constraint firstItem="HZs-Zf-G8s" firstAttribute="leading" secondItem="bJZ-bH-vgc" secondAttribute="leading" id="tPp-xB-CgB"/>
+                <constraint firstAttribute="trailing" secondItem="cJj-Wv-9ep" secondAttribute="trailing" id="vo7-3F-Fd3"/>
+            </constraints>
+            <point key="canvasLocation" x="139" y="154"/>
+        </view>
+        <menu id="p3f-EZ-sSD">
+            <connections>
+                <outlet property="delegate" destination="-2" id="XJm-Ua-9UB"/>
+            </connections>
+        </menu>
+    </objects>
+</document>

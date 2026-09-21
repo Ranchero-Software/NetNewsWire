@@ -129,6 +129,11 @@ struct SidebarItemNode: Hashable, Sendable {
 		return rootSplitViewController.isCollapsed
 	}
 
+	// In collapsed mode, the article view is in the window only while it's on top of the navigation stack.
+	var isArticleViewControllerShowing: Bool {
+		articleViewController?.viewIfLoaded?.window != nil
+	}
+
 	var isReadFeedsFiltered: Bool {
 		return treeControllerDelegate.isReadFiltered
 	}
@@ -1145,10 +1150,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 
-		if !isNavigationDisabled,
-		   rootSplitViewController.isCollapsed,
-		   let timelineViewController = mainTimelineViewController,
-		   timelineViewController.navigationController?.topViewController === timelineViewController {
+		if !isNavigationDisabled, rootSplitViewController.isCollapsed, !isArticleViewControllerShowing {
 			// A push will follow — set to false in ArticleViewController.viewDidAppear.
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5417>
 			isArticleViewControllerPending = true
@@ -1256,13 +1258,16 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 
+		if selectPrevUnreadArticleInTimeline() {
+			return
+		}
+
+		// Disable navigation only while hopping to another feed, so the intermediate
+		// timeline isn't pushed. Selecting within the current timeline must be able to
+		// push the article view controller.
 		isNavigationDisabled = true
 		defer {
 			isNavigationDisabled = false
-		}
-
-		if selectPrevUnreadArticleInTimeline() {
-			return
 		}
 
 		selectPrevUnreadFeedFetcher()
@@ -1280,13 +1285,16 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 
+		if selectNextUnreadArticleInTimeline() {
+			return
+		}
+
+		// Disable navigation only while hopping to another feed, so the intermediate
+		// timeline isn't pushed. Selecting within the current timeline must be able to
+		// push the article view controller.
 		isNavigationDisabled = true
 		defer {
 			isNavigationDisabled = false
-		}
-
-		if selectNextUnreadArticleInTimeline() {
-			return
 		}
 
 		if self.isSearching {
@@ -1540,30 +1548,26 @@ struct SidebarItemNode: Hashable, Sendable {
 		// The sheet appears over the current screen, so the feed and article selection stay as they are.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
-
-		let addViewController = addNavViewController.topViewController as! AddFeedViewController
-		addViewController.initialFeed = initialFeed
-		addViewController.initialFeedName = initialFeedName
-
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
+		let addFeedView = AddFeedView(initialFeed: initialFeed, initialFeedName: initialFeedName)
+		let hostingController = UIHostingController(rootView: addFeedView)
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
 
 		// Presenting over an active nav-bar-hosted search bar crashes inside UIKit.
 		guard let mainTimelineViewController else {
-			rootSplitViewController.present(addNavViewController, animated: true)
+			rootSplitViewController.present(hostingController, animated: true)
 			return
 		}
 		mainTimelineViewController.hideSearch {
-			self.rootSplitViewController.present(addNavViewController, animated: true)
+			self.rootSplitViewController.present(hostingController, animated: true)
 		}
 	}
 
 	func showAddFolder() {
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedCollectionViewController.present(addNavViewController, animated: true)
+		let hostingController = UIHostingController(rootView: AddFolderView())
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = AddFolderView.preferredContentSizeForFormSheetDisplay
+		mainFeedCollectionViewController.present(hostingController, animated: true)
 	}
 
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transition: ImageTransition) {

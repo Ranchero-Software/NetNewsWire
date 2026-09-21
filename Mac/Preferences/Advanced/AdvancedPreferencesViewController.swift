@@ -27,6 +27,10 @@ final class AdvancedPreferencesViewController: NSViewController {
 		}
 	}
 
+	convenience init() {
+		self.init(nibName: "AdvancedPreferencesView", bundle: nil)
+	}
+
 	override func viewWillAppear() {
 		super.viewWillAppear()
 		updateUI()

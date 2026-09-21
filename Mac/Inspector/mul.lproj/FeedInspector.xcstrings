@@ -1,0 +1,78 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "aRe-yV-R0h.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Always use Reader view\"; ObjectID = \"aRe-yV-R0h\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Always use Reader view"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar siempre la vista de lector"
+          }
+        }
+      }
+    },
+    "Bw5-c7-yDX.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Show notifications for new articles\"; ObjectID = \"Bw5-c7-yDX\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show notifications for new articles"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar notificaciones de artículos nuevos"
+          }
+        }
+      }
+    },
+    "Fg8-rA-G5J.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Home Page\"; ObjectID = \"Fg8-rA-G5J\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Home Page"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Página de inicio"
+          }
+        }
+      }
+    },
+    "zzB-rX-1dK.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Feed\"; ObjectID = \"zzB-rX-1dK\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Feed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

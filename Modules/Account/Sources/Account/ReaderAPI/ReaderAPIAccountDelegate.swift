@@ -231,7 +231,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
 
 		return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
-			let syncStatuses = (await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
+			let syncStatuses = (try? await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
 			let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 			let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
@@ -667,7 +667,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -1173,7 +1173,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
-		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			return 0
 		}
 
@@ -1200,7 +1200,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
-		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			return 0
 		}
 

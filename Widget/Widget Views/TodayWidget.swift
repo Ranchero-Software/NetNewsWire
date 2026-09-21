@@ -81,7 +81,7 @@ struct TodayWidgetView: View {
 			Spacer()
 			Image(systemName: "sun.max.fill")
 				.resizable()
-				.aspectRatio(contentMode: .fit)
+				.scaledToFit()
 				.frame(width: 30)
 				.foregroundColor(.orange)
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="DetailViewController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="containerView" destination="cJ9-6s-66u" id="gXc-Pz-9sQ"/>
+                <outlet property="statusBarView" destination="xI5-lx-RD8" id="meP-4g-U63"/>
+                <outlet property="view" destination="cJ9-6s-66u" id="Rk4-Pz-1uD"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="cJ9-6s-66u" customClass="DetailContainerView" customModule="NetNewsWire" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="730" height="300"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <customView hidden="YES" alphaValue="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
+                    <rect key="frame" x="6" y="2" width="12" height="20"/>
+                    <subviews>
+                        <textField focusRingType="none" horizontalHuggingPriority="850" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
+                            <rect key="frame" x="4" y="2" width="4" height="16"/>
+                            <textFieldCell key="cell" lineBreakMode="truncatingMiddle" selectable="YES" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="left" usesSingleLineMode="YES" id="znU-Fh-L7H">
+                                <font key="font" metaFont="system"/>
+                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                            </textFieldCell>
+                        </textField>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="Dim-ed-Dcz" firstAttribute="centerY" secondItem="xI5-lx-RD8" secondAttribute="centerY" id="Hna-uB-3F7"/>
+                        <constraint firstAttribute="trailing" secondItem="Dim-ed-Dcz" secondAttribute="trailing" constant="6" id="O5q-ZN-DjZ"/>
+                        <constraint firstAttribute="height" constant="20" id="Sfk-Ri-WoD"/>
+                        <constraint firstItem="Dim-ed-Dcz" firstAttribute="leading" secondItem="xI5-lx-RD8" secondAttribute="leading" constant="6" id="Y9c-WR-ZBY"/>
+                    </constraints>
+                    <connections>
+                        <outlet property="urlLabel" destination="Dim-ed-Dcz" id="8fY-oo-cGT"/>
+                    </connections>
+                </customView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="sAr-ea-gd1"/>
+            <constraints>
+                <constraint firstItem="xI5-lx-RD8" firstAttribute="leading" secondItem="sAr-ea-gd1" secondAttribute="leading" constant="6" id="5vz-ys-CAo"/>
+                <constraint firstItem="sAr-ea-gd1" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="xI5-lx-RD8" secondAttribute="trailing" constant="6" id="pbD-LN-Gk1"/>
+                <constraint firstAttribute="bottom" secondItem="xI5-lx-RD8" secondAttribute="bottom" constant="2" id="zsv-B0-ChW"/>
+            </constraints>
+            <connections>
+                <outlet property="detailStatusBarView" destination="xI5-lx-RD8" id="yIZ-aP-fKF"/>
+            </connections>
+        </customView>
+    </objects>
+</document>

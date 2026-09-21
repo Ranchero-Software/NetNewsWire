@@ -1,0 +1,42 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "5oG-0x-T8O.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Multiple selection\"; ObjectID = \"5oG-0x-T8O\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Multiple selection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selección múltiple"
+          }
+        }
+      }
+    },
+    "iLD-8q-EAJ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Nothing to inspect\"; ObjectID = \"iLD-8q-EAJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Nothing to inspect"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nada que inspeccionar"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

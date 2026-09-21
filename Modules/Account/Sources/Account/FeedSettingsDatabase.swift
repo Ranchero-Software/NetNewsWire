@@ -253,7 +253,7 @@ final class FeedSettingsDatabase: Sendable {
 
 		let feedURLsArray = Array(feedURLs)
 		serialDispatchQueue.async {
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedURLsArray.count))!
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedURLsArray.count))
 			let sql = "DELETE FROM feedSettings WHERE feedURL NOT IN \(placeholders);"
 			self.database.executeUpdate(sql, withArgumentsIn: feedURLsArray)
 

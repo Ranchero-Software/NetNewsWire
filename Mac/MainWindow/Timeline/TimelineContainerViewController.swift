@@ -19,12 +19,20 @@ import Articles
 final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet var viewOptionsPopUpButton: NSPopUpButton!
-	@IBOutlet var newestToOldestMenuItem: NSMenuItem!
-	@IBOutlet var oldestToNewestMenuItem: NSMenuItem!
-	@IBOutlet var groupByFeedMenuItem: NSMenuItem!
-
 	@IBOutlet var readFilteredButton: NSButton!
+	@IBOutlet var headerSeparator: NSBox!
+	@IBOutlet var containerViewTopToHeaderConstraint: NSLayoutConstraint!
 	@IBOutlet var containerView: TimelineContainerView!
+
+	private var layout = AppDefaults.shared.timelineLayout {
+		didSet {
+			if layout != oldValue {
+				layoutDidChange()
+			}
+		}
+	}
+	// Column layout hides the sort/filter header, and this pins the timeline to the top instead.
+	private lazy var containerViewTopToViewConstraint = containerView.topAnchor.constraint(equalTo: view.topAnchor)
 
 	var currentTimelineViewController: TimelineViewController? {
 		didSet {
@@ -38,7 +46,20 @@ final class TimelineContainerViewController: NSViewController {
 	}
 
 	var windowState: TimelineWindowState? {
-		return currentTimelineViewController?.windowState
+		currentTimelineViewController?.windowState
+	}
+
+	/// This window’s sort. Both timelines (regular and search) follow it.
+	private(set) var sortParameters = TimelineContainerViewController.seedSortParameters {
+		didSet {
+			if sortParameters == oldValue {
+				return
+			}
+			regularTimelineViewController.sortParameters = sortParameters
+			searchTimelineViewController.sortParameters = sortParameters
+			updateViewOptionsPopUpButton()
+			delegate?.timelineInvalidatedRestorationState(self)
+		}
 	}
 
 	weak var delegate: TimelineContainerViewControllerDelegate?
@@ -54,38 +75,63 @@ final class TimelineContainerViewController: NSViewController {
 	}
 
 	lazy var regularTimelineViewController = {
-		return TimelineViewController(delegate: self)
+		let viewController = TimelineViewController(delegate: self)
+		viewController.sortParameters = sortParameters
+		viewController.layout = layout
+		return viewController
 	}()
 	private lazy var searchTimelineViewController: TimelineViewController = {
 		let viewController = TimelineViewController(delegate: self)
 		viewController.showsSearchResults = true
+		viewController.sortParameters = sortParameters
+		viewController.layout = layout
 		return viewController
 	}()
+
+	convenience init() {
+		self.init(nibName: "TimelineContainerView", bundle: nil)
+	}
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setRepresentedObjects(nil, mode: .regular)
 		showTimeline(for: .regular)
 
-		makeMenuItemTitleLarger(newestToOldestMenuItem)
-		makeMenuItemTitleLarger(oldestToNewestMenuItem)
-		makeMenuItemTitleLarger(groupByFeedMenuItem)
-		updateViewOptionsPopUpButton()
-
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			Task { @MainActor in
-				self?.userDefaultsDidChange()
-			}
+		// The first item is the pop-up’s hidden title.
+		for menuItem in viewOptionsPopUpButton.itemArray.dropFirst() where !menuItem.isSeparatorItem {
+			makeMenuItemTitleLarger(menuItem)
 		}
+		updateViewOptionsPopUpButton()
+		updateHeaderVisibility()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
     }
 
 	// MARK: - Notifications
 
-	func userDefaultsDidChange() {
-		updateViewOptionsPopUpButton()
+	@objc nonisolated func handleUserDefaultsDidChange(_ note: Notification) {
+		Task { @MainActor in
+			self.userDefaultsDidChange()
+		}
+	}
+
+	private func userDefaultsDidChange() {
+		layout = AppDefaults.shared.timelineLayout
 	}
 
 	// MARK: - API
+
+	/// Choosing the current field keeps its direction. Choosing another starts with that field’s natural direction.
+	func sortBy(key: ArticleSortKey) {
+		if key == sortParameters.key {
+			return
+		}
+		sortParameters = sortParameters.withKey(key, direction: key.firstDirection)
+	}
+
+	func setSortDirection(_ direction: ComparisonResult) {
+		sortParameters = sortParameters.withDirection(direction)
+	}
 
 	func setRepresentedObjects(_ objects: [AnyObject]?, mode: TimelineSourceMode) {
 		timelineViewController(for: mode).representedObjects = objects
@@ -135,6 +181,10 @@ final class TimelineContainerViewController: NSViewController {
 	func restoreState(from state: TimelineWindowState?) {
 		guard let state else { return }
 
+		// Sort first so the restored selection lands in the right row.
+		if let savedSortParameters = state.sortParameters {
+			sortParameters = savedSortParameters
+		}
 		regularTimelineViewController.restoreState(from: state)
 		updateReadFilterButton()
 	}
@@ -162,6 +212,9 @@ extension TimelineContainerViewController: TimelineDelegate {
 		delegate?.timelineInvalidatedRestorationState(self)
 	}
 
+	func timelineRequestedSortChange(_: TimelineViewController, parameters: ArticleSortParameters) {
+		sortParameters = parameters
+	}
 }
 
 private extension TimelineContainerViewController {
@@ -190,25 +243,44 @@ private extension TimelineContainerViewController {
 		return .regular // Should never get here.
 	}
 
+	// The pop-up’s items share the View menu’s actions, so their checkmarks and direction titles come from
+	// MainWindowController’s validation. Only the button title is set here.
 	func updateViewOptionsPopUpButton() {
-		if AppDefaults.shared.timelineSortDirection == .orderedAscending {
-			newestToOldestMenuItem.state = .off
-			oldestToNewestMenuItem.state = .on
-			viewOptionsPopUpButton.setTitle(oldestToNewestMenuItem.title)
-		} else {
-			newestToOldestMenuItem.state = .on
-			oldestToNewestMenuItem.state = .off
-			viewOptionsPopUpButton.setTitle(newestToOldestMenuItem.title)
+		guard isViewLoaded else {
+			return
 		}
+		viewOptionsPopUpButton.setTitle(sortParameters.key.localizedName)
+	}
 
-		if AppDefaults.shared.timelineGroupByFeed == true {
-			groupByFeedMenuItem.state = .on
-		} else {
-			groupByFeedMenuItem.state = .off
+	/// For a window with no saved sort. Group By Feed, from before sorting was per window, became sorting by feed.
+	static var seedSortParameters: ArticleSortParameters {
+		if AppDefaults.shared.timelineGroupByFeed {
+			return ArticleSortParameters(key: .feed, direction: .orderedAscending)
 		}
+		return ArticleSortParameters(key: .date, direction: AppDefaults.shared.timelineSortDirection)
+	}
+
+	func layoutDidChange() {
+		regularTimelineViewController.layout = layout
+		searchTimelineViewController.layout = layout
+		updateHeaderVisibility()
+	}
+
+	func updateHeaderVisibility() {
+		let isHeaderHidden = layout == .column
+		viewOptionsPopUpButton.isHidden = isHeaderHidden
+		headerSeparator.isHidden = isHeaderHidden
+		containerViewTopToHeaderConstraint.isActive = !isHeaderHidden
+		containerViewTopToViewConstraint.isActive = isHeaderHidden
+		updateReadFilterButton()
 	}
 
 	func updateReadFilterButton() {
+		guard layout == .standard else {
+			readFilteredButton.isHidden = true
+			return
+		}
+
 		guard currentTimelineViewController == regularTimelineViewController else {
 			readFilteredButton.isHidden = true
 			return
