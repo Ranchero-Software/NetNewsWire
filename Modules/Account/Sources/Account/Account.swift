@@ -238,6 +238,7 @@ public enum FetchType {
 	}
 
 	private var fetchingAllUnreadCounts = false
+	private var needsRefetchAllUnreadCounts = false
 	var areUnreadCountsInitialized = false
 
 	public let dataFolder: String
@@ -1408,21 +1409,34 @@ private extension Account {
 	}
 
 	func _fetchAllUnreadCounts() {
+		// Status changes arrive continuously during a refresh. Only one full-count
+		// query is in flight at a time, and one more runs afterward if anything
+		// changed while it ran.
+		if fetchingAllUnreadCounts {
+			needsRefetchAllUnreadCounts = true
+			return
+		}
 		fetchingAllUnreadCounts = true
 
 		Task { @MainActor in
-			guard let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() else {
+			// The flag stays set while the feed counts are applied so updateUnreadCount
+			// runs once at the end instead of once per feed.
+			if let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() {
+				processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
 				fetchingAllUnreadCounts = false
-				return
+				updateUnreadCount()
+
+				if !areUnreadCountsInitialized {
+					areUnreadCountsInitialized = true
+					postUnreadCountDidInitializeNotification()
+				}
+			} else {
+				fetchingAllUnreadCounts = false
 			}
 
-			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
-			fetchingAllUnreadCounts = false
-			updateUnreadCount()
-
-			if !self.areUnreadCountsInitialized {
-				self.areUnreadCountsInitialized = true
-				self.postUnreadCountDidInitializeNotification()
+			if needsRefetchAllUnreadCounts {
+				needsRefetchAllUnreadCounts = false
+				_fetchAllUnreadCounts()
 			}
 		}
 	}

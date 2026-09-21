@@ -228,8 +228,10 @@ final class SettingsViewController: UITableViewController {
 		case .accounts:
 			let sortedAccounts = AccountManager.shared.sortedAccounts
 			if indexPath.row == sortedAccounts.count {
-				let controller = UIStoryboard.settings.instantiateController(ofType: AddAccountViewController.self)
-				self.navigationController?.pushViewController(controller, animated: true)
+				let addAccountView = AddAccountView(presentationAnchor: view.window) { [weak self] in
+					self?.navigationController?.popViewController(animated: false)
+				}
+				self.navigationController?.pushViewController(UIHostingController(rootView: addAccountView), animated: true)
 			} else {
 				let controller = UIStoryboard.inspector.instantiateController(ofType: AccountInspectorViewController.self)
 				controller.account = sortedAccounts[indexPath.row]
@@ -454,14 +456,12 @@ private extension SettingsViewController {
 	func addFeed() {
 		self.dismiss(animated: true)
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
-		let addViewController = addNavViewController.topViewController as! AddFeedViewController
-		addViewController.initialFeed = AccountManager.netNewsWireNewsURL
-		addViewController.initialFeedName = NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News")
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
+		let addFeedView = AddFeedView(initialFeed: AccountManager.netNewsWireNewsURL, initialFeedName: NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News"))
+		let hostingController = UIHostingController(rootView: addFeedView)
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
 
-		presentingParentController?.present(addNavViewController, animated: true)
+		presentingParentController?.present(hostingController, animated: true)
 	}
 
 	func importOPML(sourceView: UIView, sourceRect: CGRect) {

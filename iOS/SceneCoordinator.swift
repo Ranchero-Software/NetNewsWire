@@ -1548,30 +1548,26 @@ struct SidebarItemNode: Hashable, Sendable {
 		// The sheet appears over the current screen, so the feed and article selection stay as they are.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4352>
 
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFeedViewControllerNav") as! UINavigationController
-
-		let addViewController = addNavViewController.topViewController as! AddFeedViewController
-		addViewController.initialFeed = initialFeed
-		addViewController.initialFeedName = initialFeedName
-
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFeedViewController.preferredContentSizeForFormSheetDisplay
+		let addFeedView = AddFeedView(initialFeed: initialFeed, initialFeedName: initialFeedName)
+		let hostingController = UIHostingController(rootView: addFeedView)
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
 
 		// Presenting over an active nav-bar-hosted search bar crashes inside UIKit.
 		guard let mainTimelineViewController else {
-			rootSplitViewController.present(addNavViewController, animated: true)
+			rootSplitViewController.present(hostingController, animated: true)
 			return
 		}
 		mainTimelineViewController.hideSearch {
-			self.rootSplitViewController.present(addNavViewController, animated: true)
+			self.rootSplitViewController.present(hostingController, animated: true)
 		}
 	}
 
 	func showAddFolder() {
-		let addNavViewController = UIStoryboard.add.instantiateViewController(withIdentifier: "AddFolderViewControllerNav") as! UINavigationController
-		addNavViewController.modalPresentationStyle = .formSheet
-		addNavViewController.preferredContentSize = AddFolderViewController.preferredContentSizeForFormSheetDisplay
-		mainFeedCollectionViewController.present(addNavViewController, animated: true)
+		let hostingController = UIHostingController(rootView: AddFolderView())
+		hostingController.modalPresentationStyle = .formSheet
+		hostingController.preferredContentSize = AddFolderView.preferredContentSizeForFormSheetDisplay
+		mainFeedCollectionViewController.present(hostingController, animated: true)
 	}
 
 	func showFullScreenImage(image: UIImage, imageTitle: String?, transition: ImageTransition) {

@@ -15,21 +15,20 @@ final class DetailWebView: WKWebView {
 	private var isObservingResizeNotifications = false
 
 	private static let estimatedToolbarHeight: CGFloat = 52 // Height of macOS 26.2 icon-only toolbar
-	private var toolbarHeight: CGFloat {
-		guard let window,
-			  let toolbar = window.toolbar,
-			  toolbar.isVisible,
-			  let contentView = window.contentView else {
-			return lastToolbarHeight ?? Self.estimatedToolbarHeight
+
+	// How much of the web view sits under the titlebar and toolbar: the toolbar height when the article view
+	// is beside the timeline, zero when it’s below the timeline in column layout.
+	private var obscuredTopInset: CGFloat {
+		guard let window, let toolbar = window.toolbar, toolbar.isVisible, superview != nil else {
+			return lastObscuredTopInset ?? Self.estimatedToolbarHeight
 		}
 
-		let contentLayoutRect = window.contentLayoutRect
-		let windowHeight = contentView.bounds.height
-		let height = windowHeight - contentLayoutRect.height
-		lastToolbarHeight = height
-		return height
+		let frameInWindow = convert(bounds, to: nil)
+		let inset = max(0.0, frameInWindow.maxY - window.contentLayoutRect.maxY)
+		lastObscuredTopInset = inset
+		return inset
 	}
-	private var lastToolbarHeight: CGFloat?
+	private var lastObscuredTopInset: CGFloat?
 
 	override init(frame: CGRect, configuration: WKWebViewConfiguration) {
 		super.init(frame: frame, configuration: configuration)
@@ -71,6 +70,12 @@ final class DetailWebView: WKWebView {
 	}
 
 	@objc func windowDidResize(_ notification: Notification) {
+		updateObscuredContentInsets()
+	}
+
+	override func layout() {
+		super.layout()
+		// The frame moves when the layout switches or the split view divider is dragged.
 		updateObscuredContentInsets()
 	}
 
@@ -125,7 +130,7 @@ private extension DetailWebView {
 
 	func updateObscuredContentInsets() {
 		if #available(macOS 26.0, *) {
-			let updatedObscuredContentInsets = NSEdgeInsets(top: toolbarHeight, left: 0, bottom: 0, right: 0)
+			let updatedObscuredContentInsets = NSEdgeInsets(top: obscuredTopInset, left: 0, bottom: 0, right: 0)
 			if obscuredContentInsets != updatedObscuredContentInsets {
 				obscuredContentInsets = updatedObscuredContentInsets
 			}

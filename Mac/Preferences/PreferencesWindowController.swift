@@ -45,6 +45,10 @@ final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
 		return specs
 	}()
 
+	convenience init() {
+		self.init(windowNibName: "PreferencesWindow")
+	}
+
 	override func windowDidLoad() {
 		let toolbar = NSToolbar(identifier: NSToolbar.Identifier("PreferencesToolbar"))
 		toolbar.delegate = self
@@ -152,8 +156,15 @@ private extension PreferencesWindowController {
 			return cachedViewController
 		}
 
-		let storyboard = NSStoryboard(name: NSStoryboard.Name("Preferences"), bundle: nil)
-		guard let viewController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(identifier)) as? NSViewController else {
+		let viewController: NSViewController
+		switch identifier {
+		case ToolbarItemIdentifier.General:
+			viewController = GeneralPreferencesViewController()
+		case ToolbarItemIdentifier.Accounts:
+			viewController = AccountsPreferencesViewController()
+		case ToolbarItemIdentifier.Advanced:
+			viewController = AdvancedPreferencesViewController()
+		default:
 			assertionFailure("Unknown preferences view controller: \(identifier)")
 			return nil
 		}

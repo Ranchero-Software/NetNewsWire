@@ -1428,7 +1428,7 @@ extension MainFeedCollectionViewController {
 
 		alertController.addTextField { textField in
 			textField.text = sidebarItem.nameForDisplay
-			textField.placeholder = NSLocalizedString("Name", comment: "Name")
+			textField.placeholder = NSLocalizedString("Name", comment: "Name field placeholder")
 			textField.clearButtonMode = .always
 		}
 

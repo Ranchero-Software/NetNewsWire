@@ -26,6 +26,10 @@ final class NothingInspectorViewController: NSViewController, Inspector {
 		return true
 	}
 
+	convenience init() {
+		self.init(nibName: "NothingInspector", bundle: nil)
+	}
+
 	override func viewDidLoad() {
 
 		updateTextFields()

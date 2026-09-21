@@ -48,6 +48,10 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 
 	// MARK: NSViewController
 
+	convenience init() {
+		self.init(nibName: "FeedInspector", bundle: nil)
+	}
+
 	override func viewDidLoad() {
 		updateUI()
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: nil)

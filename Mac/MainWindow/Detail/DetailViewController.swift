@@ -61,6 +61,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		}
 	}
 
+	convenience init() {
+		self.init(nibName: "DetailView", bundle: nil)
+	}
+
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
 	}

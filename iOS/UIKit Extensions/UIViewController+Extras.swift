@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import RSCore
 import Account
 
@@ -38,11 +39,9 @@ private extension UIViewController {
 			let credentialsAction = UIAlertAction(title: credentialsTitle, style: .default) { [weak self] _ in
 				dismiss?()
 
-				let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
-				navController.modalPresentationStyle = .formSheet
-				let addViewController = navController.topViewController as! FeedbinAccountViewController
-				addViewController.account = account
-				self?.present(navController, animated: true)
+				let hostingController = UIHostingController(rootView: CredentialsAccountView(accountType: .feedbin, account: account, didAddAccount: nil))
+				hostingController.modalPresentationStyle = .formSheet
+				self?.present(hostingController, animated: true)
 			}
 
 			alertController.addAction(credentialsAction)
