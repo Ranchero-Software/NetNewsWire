@@ -54,8 +54,8 @@ final class CloudKitArticlesZoneDelegate: CloudKitZoneDelegate {
 		accumulatedChangedCount += changed.count
 		accumulatedDeletedCount += deleted.count
 
-		let pendingReadStatusArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() ?? Set<String>()
-		let pendingStarredStatusArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() ?? Set<String>()
+		let pendingReadStatusArticleIDs = (try? await syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
+		let pendingStarredStatusArticleIDs = (try? await syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
 
 		await delete(recordKeys: deleted, pendingStarredStatusArticleIDs: pendingStarredStatusArticleIDs)
 		await update(records: changed,

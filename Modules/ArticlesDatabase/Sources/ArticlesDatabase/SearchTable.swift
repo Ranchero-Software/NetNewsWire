@@ -214,7 +214,7 @@ private extension SearchTable {
 		guard !searchRowIDs.isEmpty else {
 			return nil
 		}
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))
 		let sql = "select rowid, title, body from \(name) where rowid in \(placeholders);"
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: searchRowIDs) else {
 			return nil

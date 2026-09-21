@@ -33,7 +33,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/marmelroy/Zip.git",
       "state" : {
-        "revision" : "059e7346082d02de16220cd79df7db18ddeba8c3"
+        "revision" : "bca30f6d6c7d37cbc4aa8f6b0002e281dcc36195"
       }
     }
   ],

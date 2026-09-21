@@ -470,7 +470,7 @@ typealias ArticleIDsCompletionBlock = @Sendable (Set<String>) -> Void
 
 private extension ArticlesDatabase {
 
-	func _fetchAllUnreadCounts(_ completion: @escaping UnreadCountDictionaryCompletionBlock) {
+	func _fetchAllUnreadCounts(_ completion: @escaping @Sendable (UnreadCountDictionary?) -> Void) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		Task { @MainActor in
 			let operation = FetchAllUnreadCountsOperation(databaseQueue: queue)
@@ -479,7 +479,8 @@ private extension ArticlesDatabase {
 			}
 			operation.completionBlock = { operation in
 				let fetchOperation = operation as! FetchAllUnreadCountsOperation
-				completion(fetchOperation.unreadCountDictionary ?? UnreadCountDictionary())
+				// A canceled operation has no result — reporting an empty dictionary would zero every unread count.
+				completion(fetchOperation.isCanceled ? nil : fetchOperation.unreadCountDictionary)
 			}
 			operationQueue.add(operation)
 		}

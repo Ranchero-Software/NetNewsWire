@@ -70,7 +70,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	private let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5)
 	private let rebuildBackingStoresQueue = CoalescingQueue(name: "Rebuild The Backing Stores", interval: 0.5)
-	private let saveTimelineWidthQueue = CoalescingQueue(name: "Save Timeline Width", interval: 0.5)
+	private let saveColumnWidthsQueue = CoalescingQueue(name: "Save Column Widths", interval: 0.5)
 	private var fetchSerialNumber = 0
 	private let fetchRequestQueue = FetchRequestQueue()
 
@@ -127,6 +127,11 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	var isRootSplitCollapsed: Bool {
 		return rootSplitViewController.isCollapsed
+	}
+
+	// In collapsed mode, the article view is in the window only while it's on top of the navigation stack.
+	var isArticleViewControllerShowing: Bool {
+		articleViewController?.viewIfLoaded?.window != nil
 	}
 
 	var isReadFeedsFiltered: Bool {
@@ -324,10 +329,23 @@ struct SidebarItemNode: Hashable, Sendable {
 		return width
 	}
 
+	private static let minimumSidebarWidth: CGFloat = 300
+	private static let maximumSidebarWidth: CGFloat = 500
+
+	private static func clampSidebarWidth(_ width: CGFloat) -> CGFloat {
+		if width < minimumSidebarWidth {
+			return minimumSidebarWidth
+		}
+		if width > maximumSidebarWidth {
+			return maximumSidebarWidth
+		}
+		return width
+	}
+
 	init(rootSplitViewController: RootSplitViewController) {
 		self.rootSplitViewController = rootSplitViewController
-		self.rootSplitViewController.minimumPrimaryColumnWidth = 300
-		self.rootSplitViewController.maximumPrimaryColumnWidth = 500
+		self.rootSplitViewController.minimumPrimaryColumnWidth = SceneCoordinator.minimumSidebarWidth
+		self.rootSplitViewController.maximumPrimaryColumnWidth = SceneCoordinator.maximumSidebarWidth
 		self.rootSplitViewController.minimumSupplementaryColumnWidth = SceneCoordinator.minimumTimelineWidth
 		self.rootSplitViewController.maximumSupplementaryColumnWidth = SceneCoordinator.maximumTimelineWidth
 		let restoredTimelineWidth: CGFloat
@@ -337,6 +355,9 @@ struct SidebarItemNode: Hashable, Sendable {
 			restoredTimelineWidth = 320
 		}
 		self.rootSplitViewController.preferredSupplementaryColumnWidth = Self.clampTimelineWidth(restoredTimelineWidth)
+		if let savedSidebarWidth = AppDefaults.shared.sidebarWidth {
+			self.rootSplitViewController.preferredPrimaryColumnWidth = Self.clampSidebarWidth(CGFloat(savedSidebarWidth))
+		}
 		self.rootSplitViewController.preferredSplitBehavior = .tile
 
 		self.treeController = TreeController(delegate: treeControllerDelegate)
@@ -795,7 +816,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func timelineDidLayout() {
-		saveTimelineWidthQueue.add(self, #selector(saveTimelineWidth))
+		saveColumnWidthsQueue.add(self, #selector(saveTimelineWidth))
 	}
 
 	@objc private func saveTimelineWidth() {
@@ -809,6 +830,25 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 		AppDefaults.shared.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
+	}
+
+	func sidebarDidLayout() {
+		saveColumnWidthsQueue.add(self, #selector(saveSidebarWidth))
+	}
+
+	@objc private func saveSidebarWidth() {
+		// The sidebar is only on screen in the "two" display modes. In the others, a layout pass
+		// during a hide animation could measure a transient width that the clamp would floor to the minimum.
+		let displayMode = rootSplitViewController.displayMode
+		let sidebarIsVisible = displayMode == .twoBesideSecondary || displayMode == .twoOverSecondary || displayMode == .twoDisplaceSecondary
+		guard !rootSplitViewController.isCollapsed, sidebarIsVisible else {
+			return
+		}
+		let width = mainFeedCollectionViewController?.view.safeAreaLayoutGuide.layoutFrame.width ?? 0
+		guard width > 0 else {
+			return
+		}
+		AppDefaults.shared.sidebarWidth = Int(SceneCoordinator.clampSidebarWidth(width))
 	}
 
 	func suspend() {
@@ -1103,10 +1143,17 @@ struct SidebarItemNode: Hashable, Sendable {
 		activityManager.reading(feed: timelineFeed, article: article)
 
 		if article == nil {
+			isArticleViewControllerPending = false
 			articleViewController?.article = nil
 			rootSplitViewController.showColumn(.supplementary)
 			mainTimelineViewController?.updateArticleSelection(animations: animations)
 			return
+		}
+
+		if !isNavigationDisabled, rootSplitViewController.isCollapsed, !isArticleViewControllerShowing {
+			// A push will follow — set to false in ArticleViewController.viewDidAppear.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5417>
+			isArticleViewControllerPending = true
 		}
 
 		rootSplitViewController.showColumn(.secondary)
@@ -1211,13 +1258,16 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 
+		if selectPrevUnreadArticleInTimeline() {
+			return
+		}
+
+		// Disable navigation only while hopping to another feed, so the intermediate
+		// timeline isn't pushed. Selecting within the current timeline must be able to
+		// push the article view controller.
 		isNavigationDisabled = true
 		defer {
 			isNavigationDisabled = false
-		}
-
-		if selectPrevUnreadArticleInTimeline() {
-			return
 		}
 
 		selectPrevUnreadFeedFetcher()
@@ -1235,13 +1285,16 @@ struct SidebarItemNode: Hashable, Sendable {
 			return
 		}
 
+		if selectNextUnreadArticleInTimeline() {
+			return
+		}
+
+		// Disable navigation only while hopping to another feed, so the intermediate
+		// timeline isn't pushed. Selecting within the current timeline must be able to
+		// push the article view controller.
 		isNavigationDisabled = true
 		defer {
 			isNavigationDisabled = false
-		}
-
-		if selectNextUnreadArticleInTimeline() {
-			return
 		}
 
 		if self.isSearching {
@@ -2163,6 +2216,10 @@ private extension SceneCoordinator {
 					return count - 1
 				}
 			}()
+
+			guard startingRow >= 0 else {
+				continue
+			}
 
 			for j in (0...startingRow).reversed() {
 

@@ -42,4 +42,32 @@ import Testing
 		let html = "<p>Just an article.</p><script>console.log('hi');</script>"
 		#expect(ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: "https://example.com/a/", html: html) == html)
 	}
+
+	// MARK: - JavaScript disabled by domain
+
+	@Test func slashdotSubdomainLinkDisablesJavaScript() {
+		let link = "https://yro.slashdot.org/story/26/09/18/0023251/will-california-gut-its-net-neutrality-law?utm_source=rss1.0mainlinkanon&utm_medium=feed"
+		#expect(ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: [link, nil, nil]))
+	}
+
+	@Test func slashdotRootLinkDisablesJavaScript() {
+		#expect(ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: ["https://slashdot.org/", nil, nil]))
+	}
+
+	@Test func slashdotFeedURLDisablesJavaScriptWhenLinkIsNil() {
+		#expect(ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: [nil, "https://rss.slashdot.org/Slashdot/slashdotMain", nil]))
+	}
+
+	@Test func otherDomainKeepsJavaScript() {
+		#expect(!ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: ["https://example.com/post/", "https://example.com/feed.xml", "https://example.com/"]))
+	}
+
+	// The domain must match at a subdomain boundary, not as a bare suffix.
+	@Test func similarDomainKeepsJavaScript() {
+		#expect(!ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: ["https://notslashdot.org/story/", nil, nil]))
+	}
+
+	@Test func allNilURLsKeepJavaScript() {
+		#expect(!ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: [nil, nil, nil]))
+	}
 }

@@ -136,15 +136,24 @@ import os
 			return
 		}
 
+		// Key on the request URL: `URL(string:)` doesn’t always round-trip feed.url.
 		urlToFeedDictionary.removeAll()
+		var urls = Set<URL>()
 		for feed in filteredFeeds {
-			urlToFeedDictionary[feed.url] = feed
+			guard let url = Self.url(for: feed) else {
+				continue
+			}
+			urlToFeedDictionary[url.absoluteString] = feed
+			urls.insert(url)
 		}
 
-		let urls = filteredFeeds.compactMap { Self.url(for: $0) }
+		// This refresh replaces any in-flight one, so resume its caller rather than stranding it.
+		if let previousCompletion = self.completion {
+			previousCompletion()
+		}
 
 		self.completion = completion
-		downloadSession.download(Set(urls))
+		downloadSession.download(urls)
 	}
 
 	private var activityOwner: ActivityOwner? {

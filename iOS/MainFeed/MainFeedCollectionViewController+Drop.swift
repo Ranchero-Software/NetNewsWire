@@ -114,10 +114,15 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 	}
 
 	func moveFeedInAccount(feed: Feed, sourceContainer: Container, destinationContainer: Container) {
-		guard sourceContainer !== destinationContainer else { return }
+		guard sourceContainer !== destinationContainer else {
+			return
+		}
+		guard let account = sourceContainer.account else {
+			return
+		}
 
 		BatchUpdate.shared.start()
-		sourceContainer.account?.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
+		account.moveFeed(feed, from: sourceContainer, to: destinationContainer) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -129,11 +134,14 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 	}
 
 	func copyFeedBetweenAccounts(feed: Feed, destinationContainer: Container) {
+		guard let destinationAccount = destinationContainer.account else {
+			return
+		}
 
-		if let existingFeed = destinationContainer.account?.existingFeed(withURL: feed.url) {
+		if let existingFeed = destinationAccount.existingFeed(withURL: feed.url) {
 
 			BatchUpdate.shared.start()
-			destinationContainer.account?.addFeed(existingFeed, to: destinationContainer) { result in
+			destinationAccount.addFeed(existingFeed, to: destinationContainer) { result in
 				BatchUpdate.shared.end()
 				switch result {
 				case .success:
@@ -146,7 +154,7 @@ extension MainFeedCollectionViewController: UICollectionViewDropDelegate {
 		} else {
 
 			BatchUpdate.shared.start()
-			destinationContainer.account?.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
+			destinationAccount.createFeed(url: feed.url, name: feed.editedName, container: destinationContainer, validateFeed: false) { result in
 				BatchUpdate.shared.end()
 				switch result {
 				case .success:

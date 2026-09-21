@@ -9,14 +9,13 @@ import Testing
 import RSWeb
 @testable import Account
 
-@MainActor struct FeedbinFeedNameTests {
+@Suite(.isolatedWebserviceResponses) @MainActor struct FeedbinFeedNameTests {
 
 	private static let daringFireballFeedID = "1296379"
 
 	private let accountManager = TestAccountManager()
 
 	@Test func refreshLeavesEditedNameAlone() async throws {
-		TestingURLProtocol.reset()
 		TestingURLProtocol.setResponse("tags.json", file: "JSON/tags_add.json")
 		TestingURLProtocol.setResponse("subscriptions.json", file: "JSON/subscriptions_initial.json")
 

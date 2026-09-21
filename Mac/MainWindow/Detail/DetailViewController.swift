@@ -61,15 +61,8 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		}
 	}
 
-	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
-
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			Task { @MainActor in
-				self?.userDefaultsDidChange()
-			}
-		}
 	}
 
 	// MARK: - API
@@ -160,28 +153,6 @@ private extension DetailViewController {
 				searchWebViewController = createWebViewController()
 			}
 			return searchWebViewController!
-		}
-	}
-
-	func userDefaultsDidChange() {
-		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
-			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
-			createNewWebViewsAndRestoreState()
-		}
-	}
-
-	func createNewWebViewsAndRestoreState() {
-
-		regularWebViewController = createWebViewController()
-		currentWebViewController = regularWebViewController
-		regularWebViewController.state = detailStateForRegular
-
-		searchWebViewController = nil
-
-		if currentSourceMode == .search {
-			searchWebViewController = createWebViewController()
-			currentWebViewController = searchWebViewController
-			searchWebViewController!.state = detailStateForSearch
 		}
 	}
 }

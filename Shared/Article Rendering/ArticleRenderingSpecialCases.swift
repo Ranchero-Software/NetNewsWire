@@ -7,8 +7,29 @@
 //
 
 import Foundation
+import RSWeb
+import Articles
 
 struct ArticleRenderingSpecialCases {
+
+	// Content JavaScript is always disabled for articles from these domains,
+	// regardless of the user setting. Subdomains match too.
+	private static let domainsWithJavaScriptDisabled = ["slashdot.org"]
+
+	/// True when any of the URL strings (article link, feed URL, feed home page URL)
+	/// is on a domain whose article content must render without JavaScript.
+	static func shouldDisableJavaScript(urlStrings: [String?]) -> Bool {
+		for urlString in urlStrings {
+			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domainsWithJavaScriptDisabled) {
+				return true
+			}
+		}
+		return false
+	}
+
+	@MainActor static func shouldDisableJavaScript(for article: Article) -> Bool {
+		shouldDisableJavaScript(urlStrings: [article.link, article.feed?.url, article.feed?.homePageURL])
+	}
 
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {
 		var filteredHTML = removeLocationHrefRedirectScripts(html)

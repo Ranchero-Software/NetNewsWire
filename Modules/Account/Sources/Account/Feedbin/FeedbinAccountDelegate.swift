@@ -51,7 +51,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		}
 	}
 
-	private let syncDatabase: SyncDatabase
+	let syncDatabase: SyncDatabase
 	private let caller: FeedbinAPICaller
 	private var articlesRefreshedCount = 0
 	private static let logger = Feedbin.logger
@@ -114,24 +114,44 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 
 		do {
 			return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
-				guard let syncStatuses = await syncDatabase.selectForProcessing() else {
+				guard let syncStatuses = try? await syncDatabase.selectForProcessing() else {
 					return 0
 				}
 
 				var sentCount = 0
+				var savedError: Error?
 
 				let createUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false })
-				sentCount += try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+				do {
+					sentCount += try await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
+				} catch {
+					savedError = error
+				}
 
 				let deleteUnreadStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true })
-				sentCount += try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+				do {
+					sentCount += try await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
+				} catch {
+					savedError = error
+				}
 
 				let createStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true })
-				sentCount += try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+				do {
+					sentCount += try await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
+				} catch {
+					savedError = error
+				}
 
 				let deleteStarredStatuses = Array(syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false })
-				sentCount += try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+				do {
+					sentCount += try await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+				} catch {
+					savedError = error
+				}
 
+				if let savedError {
+					throw savedError
+				}
 				return sentCount
 			}
 		} catch {
@@ -157,16 +177,18 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			var refreshError: Error?
 
 			do {
-				let articleIDs = try await caller.retrieveUnreadEntries()
+				let (articleIDs, response) = try await caller.retrieveUnreadEntries()
 				changedCount += await self.syncArticleReadState(account: account, articleIDs: articleIDs)
+				caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.unreadEntries, response: response)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving unread entries failed: \(error.localizedDescription)")
 			}
 
 			do {
-				let articleIDs = try await caller.retrieveStarredEntries()
+				let (articleIDs, response) = try await caller.retrieveStarredEntries()
 				changedCount += await self.syncArticleStarredState(account: account, articleIDs: articleIDs)
+				caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.starredEntries, response: response)
 			} catch {
 				refreshError = error
 				Self.logger.error("Feedbin: Retrieving starred entries failed: \(error.localizedDescription)")
@@ -440,7 +462,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -537,19 +559,26 @@ private extension FeedbinAccountDelegate {
 	func refreshAccount(_ account: Account) async throws {
 		do {
 			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
-				let tags = try await self.caller.retrieveTags()
+				let (tags, tagsResponse) = try await self.caller.retrieveTags()
 				self.refreshProgress.completeTask()
 
-				let subscriptions = try await self.caller.retrieveSubscriptions()
+				let (subscriptions, subscriptionsResponse) = try await self.caller.retrieveSubscriptions()
 				self.refreshProgress.completeTask()
 				self.forceExpireFolderFeedRelationship(account, tags)
 
-				let taggings = try await self.caller.retrieveTaggings()
+				let (taggings, taggingsResponse) = try await self.caller.retrieveTaggings()
 				BatchUpdate.shared.perform {
 					self.syncFolders(account, tags)
 					self.syncFeeds(account, subscriptions)
 					self.syncFeedFolderRelationship(account, taggings)
 				}
+
+				// Commit the conditional-GET etags only now that the data is applied, so an
+				// interrupted refresh can't leave an etag ahead of the model and 304 forever.
+				self.caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
+				self.caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
+				self.caller.storeConditionalGetIfNeeded(key: FeedbinAPICaller.ConditionalGetKeys.taggings, response: taggingsResponse)
+
 				self.refreshProgress.completeTask()
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})
@@ -560,7 +589,8 @@ private extension FeedbinAccountDelegate {
 	}
 
 	func refreshArticlesAndStatuses(_ account: Account) async throws {
-		try await sendArticleStatus()
+		// A failed status send must not block fetching new articles.
+		try? await sendArticleStatus()
 		try await refreshArticleStatus()
 		try await refreshArticles(account)
 		try await refreshMissingArticles(account)
@@ -702,7 +732,9 @@ private extension FeedbinAccountDelegate {
 		// Sync the folders
 		for (folderName, groupedTaggings) in taggingsDict {
 
-			guard let folder = folderDict[folderName] else { return }
+			guard let folder = folderDict[folderName] else {
+				continue
+			}
 
 			let taggingFeedIDs = groupedTaggings.map { String($0.feedID) }
 
@@ -731,11 +763,9 @@ private extension FeedbinAccountDelegate {
 
 		}
 
-		let taggedFeedIDs = Set(taggings.map { String($0.feedID) })
-
-		// Remove all feeds from the account container that have a tag
+		let feedIDsInFolders = Set((account.folders ?? Set<Folder>()).flatMap { $0.topLevelFeeds.map { $0.feedID } })
 		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.feedID) {
+			if feedIDsInFolders.contains(feed.feedID) {
 				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
@@ -964,7 +994,7 @@ private extension FeedbinAccountDelegate {
 			return 0
 		}
 
-		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			return 0
 		}
 
@@ -989,7 +1019,7 @@ private extension FeedbinAccountDelegate {
 			return 0
 		}
 
-		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			return 0
 		}
 

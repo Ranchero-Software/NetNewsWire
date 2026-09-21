@@ -1,6 +1,77 @@
 # Mac Release Notes
 
-### 7.1.3 7207 19 Aug 2026 — brent: main tag: mac-7.1.3
+### 7.1.4 7214 20 Sep 2026 - branch: main tag: mac-7.1.4
+
+Same as 7.1.4b3.
+
+Changes since 7.1.3:
+
+Fixed bug where read and starred statuses could stop syncing once more than 999 of them were queued (Feedbin, Feedly, NewsBlur, Reader API)
+Kept syncing read and starred statuses even when sending article content fails
+Kept fetching articles after an error sending statuses, and kept sending the rest of the statuses after one batch of them fails
+Stopped repeatedly reauthorizing a Feedly token the server has rejected
+Fixed bug where some FreshRSS, BazQux, Inoreader, and The Old Reader articles could never be marked read or starred on the server
+Fixed bug where a feed could disappear during syncing when its folder is missing locally (Feedbin and Reader API)
+Fixed bug where syncing could skip some folders (Feedbin and Reader API)
+Fixed bug where an interrupted sync could cause articles to be skipped (Feedbin and Reader API)
+Fixed bug where dates from servers could fail to parse under some system languages
+Fixed bug where iCloud syncing could stall on a batch the server considers too large
+Fixed potential hangs in iCloud syncing
+Made push-triggered iCloud syncing work even when notifications aren’t authorized
+Showed errors in the Error Log when the database can’t be read or written
+Fixed bug where a site asking the app to slow down (429 responses) could slow down refreshing for other sites with similar names
+Sped up openrss.org feeds — the app now fetches one feed an hour instead of one feed every 10 hours
+Fixed bug where the first refresh after launching could be skipped
+Fixed potential hangs while refreshing
+Fixed bug where a feed in On My Mac could fail to update after refreshing
+Stopped the article view from storing cookies and other website data on disk — feed content now runs in a private-browsing-like session
+Recovered from WebKit content-process termination, so articles no longer come up blank after the system reclaims the web views
+Made it so it will download article themes from http and https URLs only, with a maximum download size
+Fixed bug where exported OPML could contain characters that make the file invalid
+Fixed bug where renaming an account in Preferences lost keyboard focus after each keystroke
+Trimmed spaces from the username when adding a Feedbin or NewsBlur account
+Fixed Dinosaurs bugs where sorting lost the selection and where Delete could remove the wrong feeds
+Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
+Fixed crash that could happen when the app was moved after macOS had run it from a quarantined location, such as the Downloads folder
+
+### 7.1.4b3 7212 18 Sep 2026 - branch: main tag: mac-7.1.4b3
+
+Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
+Fixed crash that could happen when the app was moved after macOS had run it from a quarantined location, such as the Downloads folder
+
+### 7.1.4b2 7211 17 Sep 2026 - branch: main tag: mac-7.1.4b2
+
+Fixed bug where read and starred statuses could stop syncing once more than 999 of them were queued (Feedbin, Feedly, NewsBlur, Reader API)
+Kept syncing read and starred statuses even when sending article content fails
+Kept fetching articles after an error sending statuses, and kept sending the rest of the statuses after one batch of them fails
+Stopped repeatedly reauthorizing a Feedly token the server has rejected
+Fixed bug where some FreshRSS, BazQux, Inoreader, and The Old Reader articles could never be marked read or starred on the server
+Fixed bug where a feed could disappear during syncing when its folder is missing locally (Feedbin and Reader API)
+Fixed bug where syncing could skip some folders (Feedbin and Reader API)
+Fixed bug where an interrupted sync could cause articles to be skipped (Feedbin and Reader API)
+Fixed bug where dates from servers could fail to parse under some system languages
+Fixed bug where iCloud syncing could stall on a batch the server considers too large
+Fixed potential hangs in iCloud syncing
+Made push-triggered iCloud syncing work even when notifications aren’t authorized
+Showed errors in the Error Log when the database can’t be read or written
+Fixed bug where a site asking the app to slow down (429 responses) could slow down refreshing for other sites with similar names
+Sped up openrss.org feeds — the app now fetches one feed an hour instead of one feed every 10 hours
+Fixed bug where the first refresh after launching could be skipped
+Fixed potential hangs while refreshing
+Fixed bug where a feed in On My Mac could fail to update after refreshing
+Stopped the article view from storing cookies and other website data on disk — feed content now runs in a private-browsing-like session
+Recovered from WebKit content-process termination, so articles no longer come up blank after the system reclaims the web views
+Made it so it will download article themes from http and https URLs only, with a maximum download size
+Fixed bug where exported OPML could contain characters that make the file invalid
+Fixed bug where renaming an account in Preferences lost keyboard focus after each keystroke
+Trimmed spaces from the username when adding a Feedbin or NewsBlur account
+Fixed Dinosaurs bugs where sorting lost the selection and where Delete could remove the wrong feeds
+
+### 7.1.4b1 7209 26 Aug 2026 - branch: main tag: mac-7.1.4b1
+
+Fixed bug where article text could overlap the article’s top image in some feeds, including Gear Patrol’s
+
+### 7.1.3 7207 19 Aug 2026 — branch: main tag: mac-7.1.3
 
 Changes since 7.1.2:
 
@@ -70,22 +141,22 @@ Added Clean Up to the global keyboard shortcuts so the keyboard shortcut fires r
 Fixed Handoff showing “No selection” after the source device was locked
 Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning
 
-### 7.1.3b5 7206 16 Aug 2026 — brent: main tag: mac-7.1.3b5
+### 7.1.3b5 7206 16 Aug 2026 — branch: main tag: mac-7.1.3b5
 
 Fixed bug where feeds could lose their names and display as Untitled
 
-### 7.1.3b4 7205 11 Aug 2026 — brent: main tag: mac-7.1.3b4
+### 7.1.3b4 7205 11 Aug 2026 — branch: main tag: mac-7.1.3b4
 
 Fixed bug where a feed could show a phantom unread count that came back after reading articles in other feeds
 Made feed and sync requests wait for connectivity instead of failing when the network isn't ready, such as right after waking from sleep
 Stopped skipping feeds on the next refresh when the previous attempt failed with a connectivity error
 Hid the Slashdot discussion iframe that showed a cookie-consent banner in the article view
 
-### 7.1.3b3 7204 10 Aug 2026 — brent: main tag: mac-7.1.3b3
+### 7.1.3b3 7204 10 Aug 2026 — branch: main tag: mac-7.1.3b3
 
 Fixed bug where article titles, author names, and feed names from FreshRSS could show full-width versions of & < >
 
-### 7.1.3b2 7202 7 Aug 2026 — brent: main tag: mac-7.1.3b2
+### 7.1.3b2 7202 7 Aug 2026 — branch: main tag: mac-7.1.3b2
 
 Switched to the current standard Sparkle framework for software updates — fixes the “Updater.app is damaged” error on macOS 27 betas and the “org.sparkle-project.Downloader” warning
 Fixed bug where an article updated during a refresh could reload the article view and reset the scroll position

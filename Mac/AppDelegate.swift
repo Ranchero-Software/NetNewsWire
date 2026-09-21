@@ -169,6 +169,9 @@ let appName = "NetNewsWire"
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
 
+		// Load now, while the app bundle is readable. A translocated app that gets moved can’t read it later.
+		_ = MainWindowKeyboardHandler.shared
+
 		// Ensure the Sparkle feed URL is one of the two supported URLs.
 		// Default to the release builds URL from Info.plist.
 		if let infoDictionary = Bundle.main.infoDictionary,
@@ -257,15 +260,8 @@ let appName = "NetNewsWire"
 		refreshTimer = AccountRefreshTimer()
 		ArticleStatusSyncTimer.shared.start()
 
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { _, _ in }
-
-		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			if settings.authorizationStatus == .authorized {
-				DispatchQueue.main.async {
-					NSApplication.shared.registerForRemoteNotifications()
-				}
-			}
-		}
+		// Silent CloudKit pushes don’t need notification permission.
+		NSApplication.shared.registerForRemoteNotifications()
 
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
@@ -355,6 +351,8 @@ let appName = "NetNewsWire"
 	func applicationWillTerminate(_ notification: Notification) {
 		shuttingDown = true
 		saveState()
+
+		AccountManager.shared.saveAllIfNeeded()
 
 		ArticleThemeDownloader.shared.cleanUp()
 
@@ -907,21 +905,23 @@ extension AppDelegate {
 			let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
 
-			var attrs = [NSAttributedString.Key: Any]()
-			attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
-			attrs[.foregroundColor] = NSColor.textColor
+			var attributes = [NSAttributedString.Key: Any]()
+			attributes[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+			attributes[.foregroundColor] = NSColor.textColor
 
 			let titleParagraphStyle = NSMutableParagraphStyle()
 			titleParagraphStyle.alignment = .center
-			attrs[.paragraphStyle] = titleParagraphStyle
+			attributes[.paragraphStyle] = titleParagraphStyle
 
 			let websiteText = NSMutableAttributedString()
-			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attrs))
+			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attributes))
 
 			websiteText.append(NSAttributedString(string: "\n"))
 
-			attrs[.link] = theme.creatorHomePage
-			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
+			if let homePageURL = URL(string: theme.creatorHomePage), homePageURL.isHTTPOrHTTPSURL() {
+				attributes[.link] = theme.creatorHomePage
+			}
+			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attributes))
 
 			let textViewWidth: CGFloat
 			textViewWidth = 200

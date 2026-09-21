@@ -243,8 +243,12 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 			}
 		}
 
-		// Deselect only when returning from article navigation
-		if coordinator?.isRootSplitCollapsed ?? true, didPushArticleViewController {
+		// Deselect only when returning from article navigation, and not while
+		// another article push is in flight.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5417>
+		if let coordinator, coordinator.isRootSplitCollapsed,
+		   didPushArticleViewController,
+		   !coordinator.isArticleViewControllerPending {
 			didPushArticleViewController = false
 			self.deselectIfNecessary()
 		}

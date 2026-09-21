@@ -27,6 +27,7 @@ final class AccountsPreferencesViewController: NSViewController {
 	var addAccountsViewController: NSHostingController<AddAccountsView>?
 
 	private var sortedAccounts = [Account]()
+	private var isReloadingTable = false
 	private var selectedAccount: Account? {
 		account(at: tableView.selectedRow)
 	}
@@ -144,12 +145,11 @@ extension AccountsPreferencesViewController: NSTableViewDelegate {
 	func tableViewSelectionDidChange(_ notification: Notification) {
 		updateDeleteButtonState()
 
-		if let selectedAccount {
-			let controller = AccountsDetailViewController(account: selectedAccount)
-			showController(controller)
-		} else {
-			hideController()
+		// A reload can report its selection more than once, so reloadTable(selecting:) updates the detail view when it settles.
+		if isReloadingTable {
+			return
 		}
+		updateDetailView()
 	}
 }
 
@@ -245,11 +245,31 @@ private extension AccountsPreferencesViewController {
 
 	func reloadTable(selecting accountToSelect: Account?) {
 		updateSortedAccounts()
+
+		isReloadingTable = true
 		tableView.reloadData()
 		if let accountToSelect, let row = sortedAccounts.firstIndex(of: accountToSelect) {
 			tableView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
 		}
+		isReloadingTable = false
+
 		updateDeleteButtonState()
+		updateDetailView()
+	}
+
+	/// Reuses the existing detail view controller when it's already showing the selected account, so an in-progress edit isn't destroyed.
+	func updateDetailView() {
+		guard let selectedAccount else {
+			hideController()
+			return
+		}
+
+		let accountShowingInDetailView = (children.first as? AccountsDetailViewController)?.account
+		if accountShowingInDetailView == selectedAccount {
+			return
+		}
+
+		showController(AccountsDetailViewController(account: selectedAccount))
 	}
 
 	func updateDeleteButtonState() {

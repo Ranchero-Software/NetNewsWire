@@ -25,9 +25,6 @@ import Images
 
 	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
 
-	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-
 	var shuttingDown = false {
 		didSet {
 			if shuttingDown {
@@ -90,13 +87,10 @@ import Images
 			self.updateBadge()
 		}
 
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
-			if granted {
-				DispatchQueue.main.async {
-					UIApplication.shared.registerForRemoteNotifications()
-				}
-			}
-		}
+		// Silent CloudKit pushes don’t need notification permission. setBadgeCount does.
+		UIApplication.shared.registerForRemoteNotifications()
+
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { _, _ in }
 
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
@@ -279,79 +273,88 @@ private extension AppDelegate {
 private extension AppDelegate {
 
 	func waitForSyncTasksToFinish() {
-		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else { return }
-
-		isWaitingForSyncTasks = true
-
-		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-			guard let self = self else { return }
-			Task { @MainActor in
-				self.completeProcessing(true)
-				Self.logger.info("Accounts wait for progress terminated for running too long.")
-			}
-		}
-
-		DispatchQueue.main.async { [weak self] in
-			self?.waitToComplete { [weak self] suspend in
-				self?.completeProcessing(suspend)
-			}
-		}
-	}
-
-	func waitToComplete(completion: @escaping (Bool) -> Void) {
-		guard UIApplication.shared.applicationState == .background else {
-			Self.logger.info("App came back to foreground, no longer waiting.")
-			completion(false)
+		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else {
 			return
 		}
 
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared?.isRunning ?? false {
-			Self.logger.info("Waiting for sync to finish…")
-			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-				self?.waitToComplete(completion: completion)
+		isWaitingForSyncTasks = true
+
+		var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
+
+		/// Make sure this run’s background task is ended exactly once.
+		func endWaitBackgroundTask() {
+			guard backgroundTaskIdentifier != .invalid else {
+				return
 			}
-		} else {
-			Self.logger.info("Refresh progress complete.")
-			completion(true)
+			UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+			backgroundTaskIdentifier = .invalid
+		}
+
+		let waitTask = Task { @MainActor in
+			let shouldSuspend = await waitToComplete()
+			isWaitingForSyncTasks = false
+			if shouldSuspend {
+				suspendApplication()
+			}
+			endWaitBackgroundTask()
+		}
+
+		backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Wait for Sync Tasks") {
+			waitTask.cancel()
+			self.suspendApplication()
+			endWaitBackgroundTask()
+			Self.logger.info("Accounts wait for progress terminated for running too long.")
 		}
 	}
 
-	func completeProcessing(_ suspend: Bool) {
-		if suspend {
-			suspendApplication()
+	/// Wait for the refresh, status sync, and widget encode to finish. Returns whether the app should suspend.
+	func waitToComplete() async -> Bool {
+		while !Task.isCancelled {
+			guard UIApplication.shared.applicationState == .background else {
+				Self.logger.info("App came back to foreground, no longer waiting.")
+				return false
+			}
+
+			if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared?.isRunning ?? false {
+				Self.logger.info("Waiting for sync to finish…")
+				try? await Task.sleep(for: .seconds(1))
+			} else {
+				Self.logger.info("Refresh progress complete.")
+				return true
+			}
 		}
-		UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
-		self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		isWaitingForSyncTasks = false
+
+		return false
 	}
 
 	func syncArticleStatus() {
-		guard !isSyncArticleStatusRunning else { return }
+		guard !isSyncArticleStatusRunning else {
+			return
+		}
 
 		isSyncArticleStatusRunning = true
 
-		let completeProcessing = { [weak self] in
-			guard let self else {
+		var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
+
+		/// Make sure this run’s background task is ended exactly once.
+		func endSyncBackgroundTask() {
+			guard backgroundTaskIdentifier != .invalid else {
 				return
 			}
-			self.isSyncArticleStatusRunning = false
-			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
+			UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+			backgroundTaskIdentifier = .invalid
 		}
 
-		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-			Task { @MainActor in
-				guard let self = self else { return }
-				self.isSyncArticleStatusRunning = false
-				UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-				self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-				Self.logger.info("Accounts sync processing terminated for running too long.")
-			}
-		}
-
-		Task { @MainActor in
+		let syncTask = Task { @MainActor in
 			await AccountManager.shared.syncArticleStatusAll()
-			completeProcessing()
+			isSyncArticleStatusRunning = false
+			endSyncBackgroundTask()
+		}
+
+		backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Sync Article Status") {
+			syncTask.cancel()
+			endSyncBackgroundTask()
+			Self.logger.info("Accounts sync processing terminated for running too long.")
 		}
 	}
 
@@ -364,7 +367,7 @@ private extension AppDelegate {
 		}
 
 		AccountManager.shared.suspendNetworkAll()
-		AccountManager.shared.saveAll()
+		AccountManager.shared.saveAllIfNeeded()
 		ArticleThemeDownloader.shared.cleanUp()
 
 		AppNotification.postAppDidGoToBackground()
@@ -399,7 +402,7 @@ private extension AppDelegate {
 		// task scheduler can hang indefinitely.
 		backgroundTaskDispatchQueue.async {
 			do {
-				let earliestBeginInterval: TimeInterval = 15 * 60
+				let earliestBeginInterval: TimeInterval = 60 * 60
 				let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
 				request.earliestBeginDate = Date(timeIntervalSinceNow: earliestBeginInterval)
 				try BGTaskScheduler.shared.submit(request)
@@ -415,23 +418,58 @@ private extension AppDelegate {
 
 		Self.logger.info("Performing background refresh.")
 
-		Task { @MainActor in
+		let refreshTaskIsCompleted = OSAllocatedUnfairLock(initialState: false)
+
+		enum RefreshOutcome {
+			case completed
+			case noNetwork
+			case expired
+		}
+
+		/// Make sure task.setTaskCompleted is called exactly once.
+		func completeRefreshTask(_ outcome: RefreshOutcome) {
+			let shouldComplete = refreshTaskIsCompleted.withLock { isCompleted -> Bool in
+				if isCompleted {
+					return false
+				}
+				isCompleted = true
+				return true
+			}
+			guard shouldComplete else {
+				return
+			}
+
+			let success: Bool
+			switch outcome {
+			case .completed:
+				Self.logger.info("Background refresh completed.")
+				success = true
+			case .noNetwork:
+				Self.logger.info("Background refresh skipped — no network path.")
+				success = false
+			case .expired:
+				Self.logger.info("Background refresh terminated for running too long.")
+				success = false
+			}
+
+			task.setTaskCompleted(success: success)
+		}
+
+		let refreshTask = Task { @MainActor in
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
-			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
-			if !AccountManager.shared.isSuspended {
+			let didRefresh = await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			if !Task.isCancelled {
 				await WidgetDataEncoder.shared?.encodeAndWait()
-				self.suspendApplication()
-				Self.logger.info("Background refresh completed.")
-				task.setTaskCompleted(success: true)
 			}
+			self.suspendApplication()
+			completeRefreshTask(didRefresh ? .completed : .noNetwork)
 		}
 
-		// set expiration handler
-		task.expirationHandler = { [weak task] in
-			Self.logger.info("Background refresh terminated for running too long.")
-			task?.setTaskCompleted(success: false)
+		task.expirationHandler = {
+			refreshTask.cancel()
+			completeRefreshTask(.expired)
 			Task { @MainActor in
 				self.suspendApplication()
 			}

@@ -39,7 +39,7 @@ struct HTTP4xxResponse {
 	private var urlSession: URLSession!
 	private var tasksInProgress = Set<URLSessionTask>()
 	private var tasksPending = Set<URLSessionTask>()
-	private var taskIdentifierToInfoDictionary = [Int: DownloadInfo]()
+	private var taskToInfoDictionary = [URLSessionTask: DownloadInfo]()
 	private var urlsInSession = Set<URL>()
 	private let delegate: DownloadSessionDelegate
 	private var redirectCache = [URL: URL]()
@@ -104,6 +104,7 @@ struct HTTP4xxResponse {
 	// MARK: - API
 
 	public func cancelAll() {
+		queue.removeAll()
 		urlSession.getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
 			for task in dataTasks {
 				task.cancel()
@@ -124,6 +125,12 @@ struct HTTP4xxResponse {
 		cleanUp4xxResponsesCache()
 
 		let filteredURLs = Self.filteredURLs(urls)
+
+		if filteredURLs.isEmpty {
+			delegate.downloadSessionDidComplete(self)
+			return
+		}
+
 		for url in filteredURLs {
 			addDataTask(url)
 		}
@@ -255,11 +262,13 @@ private extension DownloadSession {
 		if requestShouldBeDroppedDueToActive429(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 429: \(urlToUse)")
 			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 429 Too Many Requests")
+			addDataTaskFromQueueIfNecessary()
 			return
 		}
 		if requestShouldBeDroppedDueToPrevious400(urlToUse) {
 			Self.logger.info("DownloadSession: Dropping request for previous 400-499: \(urlToUse)")
 			delegate.downloadSession(self, didSkip: url, reason: "Skipped — previous 4xx error")
+			addDataTaskFromQueueIfNecessary()
 			return
 		}
 
@@ -276,7 +285,7 @@ private extension DownloadSession {
 		let task = urlSession.dataTask(with: urlRequest)
 
 		let info = DownloadInfo(url)
-		taskIdentifierToInfoDictionary[task.taskIdentifier] = info
+		taskToInfoDictionary[task] = info
 
 		tasksPending.insert(task)
 		task.resume()
@@ -288,13 +297,13 @@ private extension DownloadSession {
 	}
 
 	func infoForTask(_ task: URLSessionTask) -> DownloadInfo? {
-		return taskIdentifierToInfoDictionary[task.taskIdentifier]
+		return taskToInfoDictionary[task]
 	}
 
 	@MainActor func removeTask(_ task: URLSessionTask) {
 		tasksInProgress.remove(task)
 		tasksPending.remove(task)
-		taskIdentifierToInfoDictionary[task.taskIdentifier] = nil
+		taskToInfoDictionary[task] = nil
 
 		addDataTaskFromQueueIfNecessary()
 
@@ -378,8 +387,11 @@ private extension DownloadSession {
 			urlsInSession.removeAll()
 		}
 	}
+}
 
-	// MARK: - 429 Too Many Requests
+// MARK: - 429 Too Many Requests
+
+extension DownloadSession {
 
 	@MainActor func handle429Response(_ dataTask: URLSessionDataTask, _ response: URLResponse) {
 
@@ -424,14 +436,7 @@ private extension DownloadSession {
 
 	@MainActor func cancelAndRemoveTasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) {
 
-		let lowercaseHost = host.lowercased(with: localeForLowercasing)
-
-		let tasksToRemove = tasks.filter { task in
-			guard let taskHost = task.lowercaseHost else {
-				return false
-			}
-			return taskHost.contains(lowercaseHost)
-		}
+		let tasksToRemove = Self.tasksWithHost(host, in: tasks)
 
 		for task in tasksToRemove {
 			task.cancel()
@@ -441,9 +446,15 @@ private extension DownloadSession {
 		}
 	}
 
+	/// Tasks whose request host matches `host` exactly, ignoring case.
+	nonisolated static func tasksWithHost(_ host: String, in tasks: Set<URLSessionTask>) -> Set<URLSessionTask> {
+		let lowercaseHost = host.lowercased(with: localeForLowercasing)
+		return tasks.filter { $0.lowercaseHost == lowercaseHost }
+	}
+
 	func requestShouldBeDroppedDueToActive429(_ url: URL) -> Bool {
 
-		guard let host = url.host() else {
+		guard let host = url.host()?.lowercased(with: localeForLowercasing) else {
 			return false
 		}
 		guard let retryAfterMessage = retryAfterMessages[host] else {
@@ -457,6 +468,11 @@ private extension DownloadSession {
 
 		return true
 	}
+}
+
+// MARK: - Private
+
+private extension DownloadSession {
 
 	// MARK: - 400-499 responses
 
@@ -494,6 +510,7 @@ private extension DownloadSession {
 
 	// MARK: - Filtering URLs
 
+	static private let openRSSOrgMinimumRefreshInterval: TimeInterval = 60 * 60 // arbitrary
 	static private let lastOpenRSSOrgFeedRefreshKey = "lastOpenRSSOrgFeedRefresh"
 	static private var lastOpenRSSOrgFeedRefresh: Date {
 		get {
@@ -505,7 +522,7 @@ private extension DownloadSession {
 	}
 
 	static private var canDownloadFromOpenRSSOrg: Bool {
-		let okayToDownloadDate = lastOpenRSSOrgFeedRefresh + TimeInterval(60 * 60 * 10) // 10 minutes (arbitrary)
+		let okayToDownloadDate = lastOpenRSSOrgFeedRefresh + openRSSOrgMinimumRefreshInterval
 		return Date() > okayToDownloadDate
 	}
 
