@@ -223,6 +223,10 @@ pre {
 	border-top: none;
 	border-left: none;
 	padding: 5px;
+
+	&:has(sup) {
+    		text-wrap: pretty;
+	}
 }
 
 .nnw-overflow tr :matches(td, th):last-child {
