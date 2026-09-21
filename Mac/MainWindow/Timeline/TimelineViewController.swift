@@ -251,6 +251,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		standardColumn = tableView.tableColumns.first
 		configureTableView(for: layout)
+		updateShowIcons()
 
 		if !didRegisterForNotifications {
 			NotificationCenter.default.addObserver(self, selector: #selector(statusesDidChange(_:)), name: .StatusesDidChange, object: nil)
