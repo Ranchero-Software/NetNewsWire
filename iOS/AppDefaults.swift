@@ -95,6 +95,7 @@ final class AppDefaults: Sendable {
 		static let articleWindowScrollY = "articleWindowScrollY"
 		static let expandedContainers = "expandedContainers"
 		static let smartFeedsHidingReadArticles = "smartFeedsHidingReadArticles"
+		static let smartFeedsShowingReadArticles = "smartFeedsShowingReadArticles"
 		static let foldersShowingReadArticles = "foldersShowingReadArticles"
 		static let selectedSidebarItem = "selectedSidebarItem"
 		static let selectedArticle = "selectedArticle"
@@ -375,6 +376,17 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	var smartFeedsShowingReadArticles: Set<String> {
+		get {
+			let smartFeedIDs = UserDefaults.standard.array(forKey: Key.smartFeedsShowingReadArticles) as? [String] ?? []
+			return Set(smartFeedIDs)
+		}
+		set {
+			let array = Array(newValue)
+			UserDefaults.standard.set(array, forKey: Key.smartFeedsShowingReadArticles)
+		}
+	}
+
 	var foldersShowingReadArticles: [String: Set<String>] { // Account id: Set<folder.nameForDisplay>
 		get {
 			guard let d = UserDefaults.standard.dictionary(forKey: Key.foldersShowingReadArticles) as? [String: [String]] else {
@@ -547,6 +559,7 @@ struct StateRestorationInfo {
 	let expandedContainers: Set<ContainerIdentifier>
 	let selectedSidebarItem: SidebarItemIdentifier?
 	let smartFeedsHidingReadArticles: Set<String>
+	let smartFeedsShowingReadArticles: Set<String>
 	let feedReadFilterOverrides: FeedReadFilterOverrides
 	let foldersShowingReadArticles: [String: Set<String>]
 	let selectedArticle: ArticleSpecifier?
@@ -557,6 +570,7 @@ struct StateRestorationInfo {
 	     expandedContainers: Set<ContainerIdentifier>,
 	     selectedSidebarItem: SidebarItemIdentifier?,
 	     smartFeedsHidingReadArticles: Set<String>,
+	     smartFeedsShowingReadArticles: Set<String>,
 	     feedReadFilterOverrides: FeedReadFilterOverrides,
 	     foldersShowingReadArticles: [String: Set<String>],
 	     selectedArticle: ArticleSpecifier?,
@@ -566,13 +580,14 @@ struct StateRestorationInfo {
 		self.expandedContainers = expandedContainers
 		self.selectedSidebarItem = selectedSidebarItem
 		self.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
+		self.smartFeedsShowingReadArticles = smartFeedsShowingReadArticles
 		self.feedReadFilterOverrides = feedReadFilterOverrides
 		self.foldersShowingReadArticles = foldersShowingReadArticles
 		self.selectedArticle = selectedArticle
 		self.articleWindowScrollY = articleWindowScrollY
 		self.isShowingExtractedArticle = isShowingExtractedArticle
 
-		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsmartFeedsHidingReadArticles: \(smartFeedsHidingReadArticles)\nfeedReadFilterOverrides: \(String(describing: feedReadFilterOverrides))\nfoldersShowingReadArticles: \(foldersShowingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
+		AppDefaults.logger.debug("AppDefaults: StateRestorationInfo:\nexpandedContainers: \(expandedContainers)\nselectedSidebarItem: \(selectedSidebarItem?.userInfo ?? [String: String]())\nsmartFeedsHidingReadArticles: \(smartFeedsHidingReadArticles)\nsmartFeedsShowingReadArticles: \(smartFeedsShowingReadArticles)\nfeedReadFilterOverrides: \(String(describing: feedReadFilterOverrides))\nfoldersShowingReadArticles: \(foldersShowingReadArticles)\nselectedArticle: \(selectedArticle?.dictionary ?? [String: String]())\narticleWindowScrollY: \(articleWindowScrollY)\nisShowingExtractedArticle: \(isShowingExtractedArticle ? "true" : "false")")
 	}
 
 	init() {
@@ -580,6 +595,7 @@ struct StateRestorationInfo {
 				  expandedContainers: AppDefaults.shared.expandedContainers,
 				  selectedSidebarItem: AppDefaults.shared.selectedSidebarItem,
 				  smartFeedsHidingReadArticles: AppDefaults.shared.smartFeedsHidingReadArticles,
+				  smartFeedsShowingReadArticles: AppDefaults.shared.smartFeedsShowingReadArticles,
 				  feedReadFilterOverrides: AppDefaults.shared.feedReadFilterOverrides,
 				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
 				  selectedArticle: AppDefaults.shared.selectedArticle,
@@ -671,6 +687,7 @@ struct StateRestorationInfo {
 				  expandedContainers: expandedContainers,
 				  selectedSidebarItem: selectedSidebarItem,
 				  smartFeedsHidingReadArticles: smartFeedsHidingReadArticles,
+				  smartFeedsShowingReadArticles: AppDefaults.shared.smartFeedsShowingReadArticles,
 				  feedReadFilterOverrides: FeedReadFilterOverrides.migrating(legacyFeedsHiding: legacyFeedsHiding),
 				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
 				  selectedArticle: AppDefaults.shared.selectedArticle,
