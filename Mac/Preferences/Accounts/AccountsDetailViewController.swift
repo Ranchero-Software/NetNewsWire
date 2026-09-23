@@ -47,7 +47,7 @@ final class AccountsDetailViewController: NSViewController {
 		let overridesView = FeedReadFilterOverridesView(
 			account: account,
 			hasOverride: { feedID in
-				AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
+				AppDefaults.shared.feedReadFilterOverrides.override(accountID: accountID, feedID: feedID) != nil
 			},
 			setOverride: { feedID, enabled in
 				AppDefaults.shared.setFeedHideReadOverride(accountID: accountID, feedID: feedID, enabled: enabled)

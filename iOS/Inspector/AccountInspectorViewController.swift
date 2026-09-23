@@ -9,7 +9,6 @@
 import UIKit
 import SwiftUI
 import SafariServices
-import SwiftUI
 import RSCore
 import Account
 
@@ -125,7 +124,7 @@ final class AccountInspectorViewController: UITableViewController {
 		let view = FeedReadFilterOverridesView(
 			account: account,
 			hasOverride: { feedID in
-				AppDefaults.shared.feedReadFilterOverrides.hasOverride(accountID: accountID, feedID: feedID)
+				AppDefaults.shared.feedReadFilterOverrides.override(accountID: accountID, feedID: feedID) != nil
 			},
 			setOverride: { feedID, enabled in
 				AppDefaults.shared.setFeedHideReadOverride(accountID: accountID, feedID: feedID, enabled: enabled)
@@ -177,10 +176,10 @@ extension AccountInspectorViewController {
 
 	/// The storyboard sections to display, in order, for the current account type.
 	///
-	/// - Default account: name/active only
-	/// - cloudKit: name/active, sync content, delete
-	/// - Other hidden-credentials: name/active, delete
-	/// - All others: name/active, credentials, delete
+	/// - Default account: name/active, hide read overrides
+	/// - cloudKit: name/active, sync content, hide read overrides, delete
+	/// - Other hidden-credentials: name/active, hide read overrides, delete
+	/// - All others: name/active, credentials, hide read overrides, delete
 	var displayedSections: [StoryboardSection] {
 		guard let account else {
 			return []

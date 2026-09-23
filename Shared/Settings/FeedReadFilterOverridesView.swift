@@ -10,7 +10,7 @@ import SwiftUI
 import Account
 import Images
 
-@MainActor struct FeedReadFilterOverridesView: View {
+struct FeedReadFilterOverridesView: View {
 
 	let account: Account
 	let hasOverride: (_ feedID: String) -> Bool
