@@ -20,23 +20,15 @@ struct FeedReadFilterOverrides: Codable, Equatable {
 	}
 
 	/// accountID -> feedID -> Override
-	private var overrides: [String: [String: Override]]
-
-	init() {
-		overrides = [:]
-	}
+	private var overrides = [String: [String: Override]]()
 
 	static func migrating(legacyFeedsHiding: [String: Set<String>]) -> Self {
-		var result = [String: [String: Override]]()
-		for (accountID, feedIDs) in legacyFeedsHiding {
-			var accountOverrides = [String: Override]()
-			for feedID in feedIDs {
-				accountOverrides[feedID] = .hide
-			}
-			result[accountID] = accountOverrides
-		}
 		var migrated = Self()
-		migrated.overrides = result
+		for (accountID, feedIDs) in legacyFeedsHiding {
+			for feedID in feedIDs {
+				migrated.setOverride(.hide, accountID: accountID, feedID: feedID)
+			}
+		}
 		return migrated
 	}
 
@@ -44,18 +36,12 @@ struct FeedReadFilterOverrides: Codable, Equatable {
 		overrides[accountID]?[feedID]
 	}
 
-	func hasOverride(accountID: String, feedID: String) -> Bool {
-		overrides[accountID]?[feedID] != nil
-	}
-
-	mutating func setOverride(accountID: String, feedID: String, _ value: Override) {
-		var accountOverrides = overrides[accountID] ?? [:]
-		accountOverrides[feedID] = value
-		overrides[accountID] = accountOverrides
+	mutating func setOverride(_ value: Override, accountID: String, feedID: String) {
+		overrides[accountID, default: [:]][feedID] = value
 	}
 
 	mutating func clearOverride(accountID: String, feedID: String) {
-		overrides[accountID]?.removeValue(forKey: feedID)
+		overrides[accountID]?[feedID] = nil
 		if overrides[accountID]?.isEmpty == true {
 			overrides[accountID] = nil
 		}
@@ -65,14 +51,12 @@ struct FeedReadFilterOverrides: Codable, Equatable {
 		overrides[accountID] = nil
 	}
 
-	func allFeeds() -> [(accountID: String, feedID: String, override: Override)] {
-		var result = [(String, String, Override)]()
+	/// Used to drop overrides for accounts and feeds that no longer exist.
+	mutating func removeAll(where shouldRemove: (_ accountID: String, _ feedID: String) -> Bool) {
 		for (accountID, accountOverrides) in overrides {
-			for (feedID, value) in accountOverrides {
-				result.append((accountID, feedID, value))
-			}
+			let kept = accountOverrides.filter { !shouldRemove(accountID, $0.key) }
+			overrides[accountID] = kept.isEmpty ? nil : kept
 		}
-		return result
 	}
 }
 

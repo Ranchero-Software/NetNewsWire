@@ -22,7 +22,7 @@ nonisolated public enum ReadFilterType: Sendable {
 
 @MainActor public extension SidebarItem {
 
-	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool], globalHideReadArticles: Bool = false) -> Bool {
+	func readFiltered(readFilterEnabledTable: [SidebarItemIdentifier: Bool], globalHideReadArticles: Bool) -> Bool {
 		guard defaultReadFilterType != .alwaysRead else {
 			return true
 		}

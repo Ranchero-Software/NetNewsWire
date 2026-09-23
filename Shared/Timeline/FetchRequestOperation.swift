@@ -35,7 +35,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 	var isFinished = false
 	private let fetchers: [ArticleFetcher]
 
-	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], globalHideReadArticles: Bool = false, fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], globalHideReadArticles: Bool, fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.readFilterEnabledTable = readFilterEnabledTable

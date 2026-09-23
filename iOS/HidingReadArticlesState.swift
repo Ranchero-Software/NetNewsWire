@@ -96,7 +96,7 @@ private extension HidingReadArticlesState {
 			saveSmartFeedsHidingReadArticles()
 
 		case .feed(let accountID, let feedID):
-			feedReadFilterOverrides.setOverride(accountID: accountID, feedID: feedID, hiding ? .hide : .show)
+			feedReadFilterOverrides.setOverride(hiding ? .hide : .show, accountID: accountID, feedID: feedID)
 			saveFeedReadFilterOverrides()
 
 		case .folder(let accountID, let folderName):
@@ -129,16 +129,10 @@ private extension HidingReadArticlesState {
 	}
 
 	func saveFeedReadFilterOverrides() {
-		var cleanedOverrides = FeedReadFilterOverrides()
-		for entry in feedReadFilterOverrides.allFeeds() {
-			guard let account = AccountManager.shared.existingAccount(accountID: entry.accountID),
-				  account.existingFeed(withFeedID: entry.feedID) != nil else {
-				continue
-			}
-			cleanedOverrides.setOverride(accountID: entry.accountID, feedID: entry.feedID, entry.override)
+		// Filter out accounts and feeds that no longer exist.
+		feedReadFilterOverrides.removeAll { accountID, feedID in
+			AccountManager.shared.existingAccount(accountID: accountID)?.existingFeed(withFeedID: feedID) == nil
 		}
-
-		feedReadFilterOverrides = cleanedOverrides
 		AppDefaults.shared.feedReadFilterOverrides = feedReadFilterOverrides
 	}
 

@@ -447,10 +447,12 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	/// Backs the switches in the overrides screen: turning one on pins the feed to the
+	/// opposite of the current global setting.
 	func setFeedHideReadOverride(accountID: String, feedID: String, enabled: Bool) {
 		var overrides = feedReadFilterOverrides
 		if enabled {
-			overrides.setOverride(accountID: accountID, feedID: feedID, hideReadArticles ? .show : .hide)
+			overrides.setOverride(hideReadArticles ? .show : .hide, accountID: accountID, feedID: feedID)
 		} else {
 			overrides.clearOverride(accountID: accountID, feedID: feedID)
 		}
