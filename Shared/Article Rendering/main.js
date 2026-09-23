@@ -203,6 +203,11 @@ function removeWpSmiley() {
 	}
 }
 
+// <https://github.com/Ranchero-Software/NetNewsWire/issues/3501>
+function removeInstapaperIgnoreElements() {
+	document.querySelectorAll(".instapaper_ignore").forEach(element => element.remove());
+}
+
 function processPage() {
 	// stripStyles must run first — wrapFrames sets aspect-ratio on fixed-size iframes, which stripStyles would remove.
 	stripStyles();
@@ -215,6 +220,7 @@ function processPage() {
 	flattenPreElements();
 	styleLocalFootnotes();
 	removeWpSmiley()
+	removeInstapaperIgnoreElements();
 	postRenderProcessing();
 }
 
