@@ -127,13 +127,13 @@ private extension AddFeedController {
 	func showAlreadySubscribedError(_ feed: Feed?, account: Account) {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Already subscribed", comment: "Feed finder")
+		alert.messageText = NSLocalizedString("Already added", comment: "Feed finder")
 		alert.informativeText = alreadySubscribedErrorText(feed, account: account)
 		alert.beginSheetModal(for: hostWindow)
 	}
 
 	func alreadySubscribedErrorText(_ feed: Feed?, account: Account) -> String {
-		let genericText = NSLocalizedString("Can’t add this feed because you’ve already subscribed to it.", comment: "Feed finder")
+		let genericText = NSLocalizedString("Can’t add this feed because you’ve already added it.", comment: "Feed finder")
 
 		guard let feed else {
 			return genericText
@@ -147,7 +147,7 @@ private extension AddFeedController {
 		}
 
 		let quotedNames = folderNames.map { "“\($0)”" }
-		let formatString = NSLocalizedString("Can’t add this feed because you’ve already subscribed to it in %@.", comment: "Feed finder")
+		let formatString = NSLocalizedString("Can’t add this feed because you’ve already added it in %@.", comment: "Feed finder")
 		return NSString.localizedStringWithFormat(formatString as NSString, quotedNames.formatted(.list(type: .and))) as String
 	}
 
