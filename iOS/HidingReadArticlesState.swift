@@ -11,17 +11,19 @@ import Account
 
 @MainActor final class HidingReadArticlesState {
 	private var smartFeedsHidingReadArticles = Set<String>()
+	private var smartFeedsShowingReadArticles = Set<String>()
 	private(set) var feedReadFilterOverrides = FeedReadFilterOverrides()
 	private var foldersShowingReadArticles = [String: Set<String>]() // accountID: Set<folder.nameForDisplay>
 
 	func copy(from stateRestorationInfo: StateRestorationInfo) {
 		smartFeedsHidingReadArticles = stateRestorationInfo.smartFeedsHidingReadArticles
+		smartFeedsShowingReadArticles = stateRestorationInfo.smartFeedsShowingReadArticles
 		feedReadFilterOverrides = stateRestorationInfo.feedReadFilterOverrides
 		foldersShowingReadArticles = stateRestorationInfo.foldersShowingReadArticles
 	}
 
 	func save() {
-		saveSmartFeedsHidingReadArticles()
+		saveSmartFeedsReadFilterState()
 		saveFeedReadFilterOverrides()
 		saveFoldersShowingReadArticles()
 	}
@@ -50,6 +52,9 @@ import Account
 			}
 			if smartFeedsHidingReadArticles.contains(id) {
 				return true
+			}
+			if smartFeedsShowingReadArticles.contains(id) {
+				return false
 			}
 			return AppDefaults.shared.hideReadArticles
 
@@ -88,12 +93,16 @@ private extension HidingReadArticlesState {
 			if isUnreadSmartFeed(sidebarItemID) {
 				return
 			}
+			// Stored both ways so that showing read articles sticks when the
+			// global setting hides them.
 			if hiding {
 				smartFeedsHidingReadArticles.insert(id)
+				smartFeedsShowingReadArticles.remove(id)
 			} else {
 				smartFeedsHidingReadArticles.remove(id)
+				smartFeedsShowingReadArticles.insert(id)
 			}
-			saveSmartFeedsHidingReadArticles()
+			saveSmartFeedsReadFilterState()
 
 		case .feed(let accountID, let feedID):
 			feedReadFilterOverrides.setOverride(hiding ? .hide : .show, accountID: accountID, feedID: feedID)
@@ -136,7 +145,8 @@ private extension HidingReadArticlesState {
 		AppDefaults.shared.feedReadFilterOverrides = feedReadFilterOverrides
 	}
 
-	func saveSmartFeedsHidingReadArticles() {
+	func saveSmartFeedsReadFilterState() {
 		AppDefaults.shared.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
+		AppDefaults.shared.smartFeedsShowingReadArticles = smartFeedsShowingReadArticles
 	}
 }
