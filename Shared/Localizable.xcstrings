@@ -216,6 +216,9 @@
     "Can’t add this feed because of a download error: “%@”" : {
       "comment" : "Feed finder"
     },
+    "Can’t add this feed because you’ve already subscribed to it in %@." : {
+      "comment" : "Feed finder"
+    },
     "Can’t add this feed because you’ve already subscribed to it." : {
       "comment" : "Feed finder"
     },
