@@ -128,6 +128,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		return sidebarViewController?.selectedObjects
 	}
 
+	func selectedContainerInSidebar() -> Container? {
+		sidebarViewController?.selectedContainer
+	}
+
 	func selectFeedInSidebar(_ feed: Feed) {
 		sidebarViewController?.selectFeed(feed)
 	}

@@ -542,6 +542,16 @@ let appName = "NetNewsWire"
 		showAddFeedSheetOnWindow(windowController.window!, urlString: urlString, name: name, account: account, folder: folder)
 	}
 
+	private func addFeedContainerFromSidebarSelection() -> Container? {
+		guard let container = mainWindowController?.selectedContainerInSidebar() else {
+			return nil
+		}
+		guard let account = container as? Account else {
+			return container
+		}
+		return AddFeedDefaultContainer.substituteContainerIfNeeded(account: account)
+	}
+
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
 		Task { @MainActor in
@@ -608,7 +618,8 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
-		addFeed(nil)
+		let container = addFeedContainerFromSidebarSelection()
+		addFeed(nil, account: container?.account, folder: container as? Folder)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {

@@ -65,6 +65,15 @@ extension Notification.Name {
 		return selectedNodes.representedObjects()
 	}
 
+	var selectedContainer: Container? {
+		for node in selectedNodes {
+			if let container = containerForNode(node) {
+				return container
+			}
+		}
+		return nil
+	}
+
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
 	private let keyboardDelegate = SidebarKeyboardDelegate()
 
@@ -584,6 +593,16 @@ private extension SidebarViewController {
 			return nil
 		}
 		return node.representedObject as? Feed
+	}
+
+	func containerForNode(_ node: Node) -> Container? {
+		if let container = node.representedObject as? Container {
+			return container
+		}
+		if node.representedObject is Feed {
+			return node.parent?.representedObject as? Container
+		}
+		return nil
 	}
 
 	func addAllSelectedToFilterExceptions() {
