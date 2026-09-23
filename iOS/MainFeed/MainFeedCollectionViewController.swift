@@ -35,7 +35,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainFeedCollectionViewController")
 
-	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 
 		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
@@ -45,7 +44,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return nil
 		}
 
-		return keyboardManager.keyCommands
+		return AppCommands.keyCommands(for: .sidebar)
 	}
 
 	override var canBecomeFirstResponder: Bool {
@@ -623,10 +622,6 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	@objc func navigateToTimeline(_ sender: Any?) {
 		coordinator.navigateToTimeline()
-	}
-
-	@objc func openInBrowser(_ sender: Any?) {
-		coordinator.showBrowserForCurrentFeed()
 	}
 
 	@objc func selectNextDown(_ sender: Any?) {
