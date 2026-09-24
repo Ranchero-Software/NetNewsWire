@@ -128,7 +128,10 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 		case .theOldReader:
 			apiURL =  URL(string: ReaderAPIVariant.theOldReader.host)!
 		case .wordpressCom:
-			apiURL =  URL(string: ReaderAPIVariant.wordpressCom.host)!
+			guard let wordpressComURL = URL(string: ReaderAPIVariant.wordpressCom.host) else {
+				return
+			}
+			apiURL = wordpressComURL
 		default:
 			self.errorMessageLabel.stringValue = NSLocalizedString("Unrecognized account type.", comment: "Bad account type")
 			return
@@ -195,7 +198,10 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 		case .theOldReader:
 			NSWorkspace.shared.open(URL(string: "https://theoldreader.com")!)
 		case .wordpressCom:
-			NSWorkspace.shared.open(URL(string: "https://wordpress.com/support/reader/use-a-third-party-rss-reader-with-wordpress-com/")!)
+			guard let url = URL(string: "https://wordpress.com/support/reader/use-a-third-party-rss-reader-with-wordpress-com/") else {
+				return
+			}
+			NSWorkspace.shared.open(url)
 		default:
 			return
 		}
