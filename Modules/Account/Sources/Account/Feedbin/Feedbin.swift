@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import RSCore
 import os
 
 struct Feedbin {
 	// Convention with this logger is to put "Feedbin: " at the beginning of each message.
-	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Feedbin")
+	static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Feedbin")
 }

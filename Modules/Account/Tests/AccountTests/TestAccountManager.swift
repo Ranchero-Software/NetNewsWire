@@ -8,6 +8,7 @@
 
 import Foundation
 import RSWeb
+import Secrets
 
 @testable import Account
 
@@ -15,10 +16,9 @@ import RSWeb
 
 	nonisolated static let shared = TestAccountManager()
 
-	var accountsFolder: URL {
-		return try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-
-	}
+	// Not Caches: macOS puts a `group:everyone deny delete` ACE on it, so test accounts
+	// created there can't be removed afterward.
+	private let accountsFolder = FileManager.default.temporaryDirectory.appendingPathComponent("NetNewsWireTestAccounts")
 
 	func createAccount(type: AccountType, username: String? = nil, password: String? = nil) -> Account {
 
@@ -32,27 +32,22 @@ import RSWeb
 			abort()
 		}
 
-		let account = Account(dataFolder: accountFolder.absoluteString, type: type, accountID: accountID)
+		let account = Account(dataFolder: accountFolder.path, type: type, accountID: accountID)
 
 		return account
-
 	}
 
 	func deleteAccount(_ account: Account) {
 
+		// Credentials live in the keychain, outside the account folder removed below.
+		for credentialsType in CredentialsType.allCases {
+			try? account.removeCredentials(type: credentialsType)
+		}
+
 		account.deleteSettings()
 
-		do {
-			try FileManager.default.removeItem(atPath: account.dataFolder)
-		}
-		catch let error as CocoaError where error.code == .fileNoSuchFile {
-
-		}
-		catch {
-			assertionFailure("Could not delete folder at: \(account.dataFolder) because \(error)")
-			abort()
-		}
-
+		// Cleanup failing is not a test failure, and aborting here would take every
+		// other test in the process down with it.
+		try? FileManager.default.removeItem(atPath: account.dataFolder)
 	}
-
 }

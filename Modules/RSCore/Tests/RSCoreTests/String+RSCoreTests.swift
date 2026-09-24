@@ -98,6 +98,30 @@ final class StringRSCoreTests: XCTestCase {
 
 	}
 
+	func testEscapingSpecialXMLCharactersEscapesApostrophe() {
+
+		let str = "it's a 'test'"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "it&apos;s a &apos;test&apos;")
+	}
+
+	func testEscapingSpecialXMLCharactersDropsInvalidControlCharacters() {
+
+		let str = "a\u{0}b\u{1}c\u{1F}d"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "abcd")
+	}
+
+	func testEscapingSpecialXMLCharactersKeepsTabNewlineAndCarriageReturn() {
+
+		let str = "a\tb\nc\rd"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "a\tb\nc\rd")
+	}
+
+	func testEscapingSpecialXMLCharactersLeavesUnicodeIntact() {
+
+		let str = "café — 🎉"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "café — 🎉")
+	}
+
 	func testStrippingHTTPOrHTTPSScheme() {
 
 		let http = "http://ranchero.com/"

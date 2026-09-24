@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftUI
 import SafariServices
 import RSCore
 import Account
@@ -69,25 +70,10 @@ final class AccountInspectorViewController: UITableViewController {
 	@IBAction func credentials(_ sender: Any) {
 		guard let account = account else { return }
 		switch account.type {
-		case .feedbin:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "FeedbinAccountNavigationViewController") as! UINavigationController
-			let addViewController = navController.topViewController as! FeedbinAccountViewController
-			addViewController.account = account
-			navController.modalPresentationStyle = .currentContext
-			present(navController, animated: true)
-		case .newsBlur:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "NewsBlurAccountNavigationViewController") as! UINavigationController
-			let addViewController = navController.topViewController as! NewsBlurAccountViewController
-			addViewController.account = account
-			navController.modalPresentationStyle = .currentContext
-			present(navController, animated: true)
-		case .inoreader, .bazQux, .theOldReader, .freshRSS:
-			let navController = UIStoryboard.account.instantiateViewController(withIdentifier: "ReaderAPIAccountNavigationViewController") as! UINavigationController
-			let addViewController = navController.topViewController as! ReaderAPIAccountViewController
-			addViewController.accountType = account.type
-			addViewController.account = account
-			navController.modalPresentationStyle = .currentContext
-			present(navController, animated: true)
+		case .feedbin, .newsBlur, .inoreader, .bazQux, .theOldReader, .freshRSS:
+			let hostingController = UIHostingController(rootView: CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil))
+			hostingController.modalPresentationStyle = .currentContext
+			present(hostingController, animated: true)
 		default:
 			break
 		}

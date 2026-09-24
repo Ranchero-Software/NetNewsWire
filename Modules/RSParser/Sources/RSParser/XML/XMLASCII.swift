@@ -21,6 +21,8 @@ extension UInt8 {
 	static let asciiHash = UInt8(ascii: "#")
 	static let asciiAmpersand = UInt8(ascii: "&")
 	static let asciiSingleQuote = UInt8(ascii: "'")
+	static let asciiPlus = UInt8(ascii: "+")
+	static let asciiComma = UInt8(ascii: ",")
 	static let asciiHyphen = UInt8(ascii: "-")
 	static let asciiDot = UInt8(ascii: ".")
 	static let asciiSlash = UInt8(ascii: "/")

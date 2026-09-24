@@ -73,7 +73,7 @@ import os
 
 	private var urlToFeedDictionary = [String: Feed]()
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "LocalAccountRefresher")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "LocalAccountRefresher")
 
 	@MainActor public func refreshFeeds(_ feeds: Set<Feed>) async {
 		await withCheckedContinuation { continuation in
@@ -136,15 +136,24 @@ import os
 			return
 		}
 
+		// Key on the request URL: `URL(string:)` doesn’t always round-trip feed.url.
 		urlToFeedDictionary.removeAll()
+		var urls = Set<URL>()
 		for feed in filteredFeeds {
-			urlToFeedDictionary[feed.url] = feed
+			guard let url = Self.url(for: feed) else {
+				continue
+			}
+			urlToFeedDictionary[url.absoluteString] = feed
+			urls.insert(url)
 		}
 
-		let urls = filteredFeeds.compactMap { Self.url(for: $0) }
+		// This refresh replaces any in-flight one, so resume its caller rather than stranding it.
+		if let previousCompletion = self.completion {
+			previousCompletion()
+		}
 
 		self.completion = completion
-		downloadSession.download(Set(urls))
+		downloadSession.download(urls)
 	}
 
 	private var activityOwner: ActivityOwner? {
@@ -161,6 +170,7 @@ import os
 	}
 
 	@MainActor public func resume() {
+		downloadSession.recreateURLSession()
 		isSuspended = false
 	}
 
@@ -234,7 +244,12 @@ import os
 		guard let feed = urlToFeedDictionary[url.absoluteString] else {
 			return
 		}
-		feed.lastCheckDate = Date()
+
+		// Skip updating lastCheckDate on connectivity errors, so the feed
+		// isn't skipped for timing reasons on the next refresh.
+		if !errorIsConnectivityRelated(error) {
+			feed.lastCheckDate = Date()
+		}
 
 		let activityKind = ActivityKind.refreshFeedContent(feedURL: feed.url)
 
@@ -352,12 +367,20 @@ import os
 		feed.lastCheckDate = Date()
 		feed.lastResponseCode = statusCode
 
-		let webserviceError = WebserviceError.httpError(status: statusCode)
+		let webserviceError = WebserviceError.httpError(status: statusCode, responseBody: nil)
 		let statusDescription = webserviceError.localizedDescription
 		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
 		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])
 
 		reportFeedRefreshError(feed: feed, error: error, activityKind: .refreshFeedContent(feedURL: feed.url))
+	}
+
+	private func errorIsConnectivityRelated(_ error: NSError?) -> Bool {
+		guard let error, error.domain == NSURLErrorDomain else {
+			return false
+		}
+		let connectivityErrorCodes = [NSURLErrorTimedOut, NSURLErrorCannotConnectToHost, NSURLErrorNetworkConnectionLost, NSURLErrorNotConnectedToInternet]
+		return connectivityErrorCodes.contains(error.code)
 	}
 
 	private func reportFeedRefreshError(feed: Feed, error: Error, activityKind: ActivityKind) {
@@ -412,19 +435,23 @@ import os
 		self.refreshActivityID = nil
 	}
 
-	/// Cleans up any leftover per-feed activities at the end of a refresh.
-	/// Defense-in-depth for paths we didn’t explicitly cover (e.g. a feed
-	/// the DownloadSession dropped without a `didSkip` callback).
+	/// Clean up any leftover per-feed activities at the end of a refresh.
 	func completeRemainingActivities(accountID: String) {
 		let displayName = AccountManager.shared.existingAccount(accountID: accountID)?.nameForDisplay ?? accountID
 		let owner = ActivityOwner.account(accountID: accountID, displayName: displayName)
 		let activityLog = ActivityLog.shared
 
-		for activity in activityLog.pendingActivities(for: owner) where activity.kind != .refreshAll {
+		for activity in activityLog.pendingActivities(for: owner) {
+			guard case .refreshFeedContent = activity.kind else {
+				continue
+			}
 			activityLog.startIfNeeded(owner, kind: activity.kind)
 			activityLog.didComplete(owner, kind: activity.kind)
 		}
-		for activity in activityLog.runningActivities(for: owner) where activity.kind != .refreshAll {
+		for activity in activityLog.runningActivities(for: owner) {
+			guard case .refreshFeedContent = activity.kind else {
+				continue
+			}
 			activityLog.didComplete(owner, kind: activity.kind)
 		}
 	}

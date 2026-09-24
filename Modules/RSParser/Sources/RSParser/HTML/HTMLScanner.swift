@@ -220,13 +220,14 @@ private extension HTMLScanner {
 			return String(decoding: out, as: UTF8.self)
 		}
 
-		// Unquoted — consume until whitespace, `>`, or `/`.
+		// Unquoted — consume until whitespace or `>`. A `/` is part of the value,
+		// as in `href=https://example.com/feed` (HTML5 tokenizer behavior).
 		let start = pos
 		var out = [UInt8]()
 		var expanded = false
 		while pos < input.count {
 			let b = input[pos]
-			if b.isASCIIWhitespace || b == .asciiGreaterThan || b == .asciiSlash {
+			if b.isASCIIWhitespace || b == .asciiGreaterThan {
 				break
 			}
 			if b == .asciiAmpersand {

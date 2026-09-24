@@ -28,6 +28,16 @@ let package = Package(
 				.enableUpcomingFeature("InferIsolatedConformances"),
 				.unsafeFlags(["-warnings-as-errors"])
 			]
+		),
+		.testTarget(
+			name: "SyncDatabaseTests",
+			dependencies: [
+				"SyncDatabase"
+			],
+			swiftSettings: [
+				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+				.enableUpcomingFeature("InferIsolatedConformances")
+			]
 		)
 	]
 )

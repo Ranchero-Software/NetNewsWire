@@ -35,7 +35,17 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		rootViewController.coordinator = coordinator
 		rootViewController.delegate = coordinator
 
-		coordinator.restoreWindowState(activity: session.stateRestorationActivity)
+		// An external action (notification tap, URL, shortcut, or user activity)
+		// dictates navigation. Also doing selection restoration — previously selected feed
+		// and article — at the same time would start two competing navigations.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4638>
+		// Restore the window state, but skip restoring the selection.
+		let hasPendingExternalAction = connectionOptions.notificationResponse != nil ||
+			connectionOptions.urlContexts.first?.url != nil ||
+			connectionOptions.shortcutItem != nil ||
+			!connectionOptions.userActivities.isEmpty
+
+		coordinator.restoreWindowState(activity: session.stateRestorationActivity, restoreSelection: !hasPendingExternalAction)
 
 		updateUserInterfaceStyle()
 
@@ -123,6 +133,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				if normalizedURLString.mayBeURL {
 					self.coordinator.showAddFeed(initialFeed: normalizedURLString, initialFeedName: nil)
 				}
+				return
 			}
 
 			// Show Unread View or Article
@@ -141,6 +152,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				} else {
 					self.coordinator.selectAllUnreadFeed()
 				}
+				return
 			}
 
 			// Show Today View or Article
@@ -159,6 +171,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				} else {
 					self.coordinator.selectTodayFeed()
 				}
+				return
 			}
 
 			// Show Starred View or Article
@@ -177,6 +190,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 				} else {
 					self.coordinator.selectStarredFeed()
 				}
+				return
 			}
 
 			let filename = context.url.standardizedFileURL.path
@@ -187,37 +201,15 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 			// Handle theme URLs: netnewswire://theme/add?url={url}
 			guard let comps = URLComponents(url: context.url, resolvingAgainstBaseURL: false),
+				  comps.scheme?.lowercased() == "netnewswire",
 				  "theme" == comps.host,
 				 let queryItems = comps.queryItems else {
 				return
 			}
 
-			if let providedThemeURL = queryItems.first(where: { $0.name == "url" })?.value {
-				if let themeURL = URL(string: providedThemeURL) {
-					let request = URLRequest(url: themeURL)
-
-					DispatchQueue.main.async {
-						NotificationCenter.default.post(name: .didBeginDownloadingTheme, object: nil)
-					}
-					let task = URLSession.shared.downloadTask(with: request) { location, _, error in
-						guard
-							  let location = location else { return }
-
-						Task { @MainActor in
-							do {
-								try ArticleThemeDownloader.shared.handleFile(at: location)
-							} catch {
-								NotificationCenter.default.post(name: .didFailToImportThemeWithError, object: nil, userInfo: ["error": error])
-							}
-						}
-					}
-					task.resume()
-				} else {
-					print("No theme URL")
-					return
-				}
-			} else {
-				return
+			if let providedThemeURL = queryItems.first(where: { $0.name == "url" })?.value,
+			   let themeURL = URL(string: providedThemeURL) {
+				ArticleThemeDownloader.shared.downloadTheme(from: themeURL)
 			}
 		}
 	}

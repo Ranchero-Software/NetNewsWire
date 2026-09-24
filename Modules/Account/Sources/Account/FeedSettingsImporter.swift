@@ -6,12 +6,13 @@
 //
 
 import Foundation
+import RSCore
 import os
 import Articles
 
 /// One-time import from FeedMetadata.plist into FeedSettingsDatabase.
 @MainActor struct FeedSettingsImporter {
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FeedSettingsImporter")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FeedSettingsImporter")
 
 	static func importIfNeeded(dataFolder: String, database: FeedSettingsDatabase) {
 		let plistPath = (dataFolder as NSString).appendingPathComponent("FeedMetadata.plist")

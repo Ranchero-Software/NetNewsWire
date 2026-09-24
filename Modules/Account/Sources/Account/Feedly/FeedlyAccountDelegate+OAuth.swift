@@ -17,21 +17,24 @@ nonisolated public struct FeedlyOAuthAccessTokenResponse: Decodable, OAuthAccess
 	/// The ID of the Feedly user.
 	public let id: String
 
-	// Required properties of the OAuth 2.0 Authorization Framework section 4.1.4.
+	// Properties of the OAuth 2.0 Authorization Framework section 4.1.4.
 	public let accessToken: String
 	public let tokenType: String
 	public let expiresIn: Int
 	public let refreshToken: String?
-	public let scope: String
+
+	// Optional per RFC 6749 §5.1, and Feedly’s refresh response omits it — a non-optional
+	// declaration made every token refresh fail decoding, permanently breaking sync.
+	public let scope: String?
 }
 
 extension FeedlyAccountDelegate: OAuthAuthorizationGranting {
 
 	private static let oauthAuthorizationGrantScope = "https://cloud.feedly.com/subscriptions"
 
-	@MainActor static func oauthAuthorizationCodeGrantRequest() -> URLRequest {
+	@MainActor static func oauthAuthorizationCodeGrantRequest(state: String) -> URLRequest {
 		let client = environment.oauthAuthorizationClient
-		let authorizationRequest = OAuthAuthorizationRequest(clientID: client.id, redirectURI: client.redirectURI, scope: oauthAuthorizationGrantScope, state: client.state)
+		let authorizationRequest = OAuthAuthorizationRequest(clientID: client.id, redirectURI: client.redirectURI, scope: oauthAuthorizationGrantScope, state: state)
 		return FeedlyAPICaller.authorizationCodeURLRequest(for: authorizationRequest, baseURLComponents: environment.baseURLComponents)
 	}
 

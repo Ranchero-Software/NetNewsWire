@@ -2,7 +2,7 @@
 //  SidebarSortType.swift
 //  NetNewsWire
 //
-//  Created by Brent Simmons on 2/24/26.
+//  Created by Willie Abrams on 2/24/26.
 //  Copyright © 2026 Ranchero Software. All rights reserved.
 //
 

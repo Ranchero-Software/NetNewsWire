@@ -61,15 +61,12 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 		}
 	}
 
-	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+	convenience init() {
+		self.init(nibName: "DetailView", bundle: nil)
+	}
 
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			Task { @MainActor in
-				self?.userDefaultsDidChange()
-			}
-		}
 	}
 
 	// MARK: - API
@@ -89,6 +86,10 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	func stopMediaPlayback() {
 		currentWebViewController.stopMediaPlayback()
+	}
+
+	func fetchSelectedHTML(_ completion: @escaping (String?) -> Void) {
+		currentWebViewController.fetchSelectedHTML(completion)
 	}
 
 	func canScrollDown() async -> Bool {
@@ -156,28 +157,6 @@ private extension DetailViewController {
 				searchWebViewController = createWebViewController()
 			}
 			return searchWebViewController!
-		}
-	}
-
-	func userDefaultsDidChange() {
-		if AppDefaults.shared.isArticleContentJavascriptEnabled != isArticleContentJavascriptEnabled {
-			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
-			createNewWebViewsAndRestoreState()
-		}
-	}
-
-	func createNewWebViewsAndRestoreState() {
-
-		regularWebViewController = createWebViewController()
-		currentWebViewController = regularWebViewController
-		regularWebViewController.state = detailStateForRegular
-
-		searchWebViewController = nil
-
-		if currentSourceMode == .search {
-			searchWebViewController = createWebViewController()
-			currentWebViewController = searchWebViewController
-			searchWebViewController!.state = detailStateForSearch
 		}
 	}
 }

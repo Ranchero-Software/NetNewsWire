@@ -71,6 +71,9 @@ private extension MultilineUILabelSizer {
 	}
 
 	func height(for string: String, width: Int) -> Int {
+		guard width > 0 else {
+			return 0
+		}
 		if cache[string] == nil {
 			cache[string] = WidthHeightCache()
 		}

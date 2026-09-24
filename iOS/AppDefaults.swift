@@ -6,6 +6,7 @@
 //  Copyright © 2017 Ranchero Software. All rights reserved.
 //
 
+import RSCore
 import UIKit
 import os
 import Account
@@ -38,7 +39,7 @@ extension Notification.Name {
 final class AppDefaults: Sendable {
 	static let shared = AppDefaults()
 	static let defaultThemeName = "Default"
-	fileprivate static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDefaults")
+	fileprivate static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDefaults")
 
 	private init() {}
 
@@ -78,6 +79,8 @@ final class AppDefaults: Sendable {
 		static let selectedArticle = "selectedArticle"
 		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
 		static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
+		static let timelineWidth = "timelineWidth"
+		static let sidebarWidth = "sidebarWidth"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -234,6 +237,34 @@ final class AppDefaults: Sendable {
 		}
 		set {
 			AppDefaults.setInt(for: Key.splitViewPreferredDisplayMode, newValue)
+		}
+	}
+
+	// The iPad timeline column width. nil until the user has resized it.
+	var timelineWidth: Int? {
+		get {
+			UserDefaults.standard.object(forKey: Key.timelineWidth) as? Int
+		}
+		set {
+			if let newValue {
+				UserDefaults.standard.set(newValue, forKey: Key.timelineWidth)
+			} else {
+				UserDefaults.standard.removeObject(forKey: Key.timelineWidth)
+			}
+		}
+	}
+
+	// The iPad sidebar column width. nil until the user has resized it.
+	var sidebarWidth: Int? {
+		get {
+			UserDefaults.standard.object(forKey: Key.sidebarWidth) as? Int
+		}
+		set {
+			if let newValue {
+				UserDefaults.standard.set(newValue, forKey: Key.sidebarWidth)
+			} else {
+				UserDefaults.standard.removeObject(forKey: Key.sidebarWidth)
+			}
 		}
 	}
 

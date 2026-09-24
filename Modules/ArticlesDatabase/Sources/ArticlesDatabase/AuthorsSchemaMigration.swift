@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RSCore
 import os
 import RSDatabase
 import RSDatabaseObjC
@@ -25,7 +26,7 @@ struct AuthorsSchemaMigration: Sendable {
 	let accountID: String
 	let queue: DatabaseQueue
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AuthorsSchemaMigration")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AuthorsSchemaMigration")
 
 	func run() async {
 		let startTime = Date()
@@ -117,10 +118,10 @@ private extension AuthorsSchemaMigration {
 	}
 
 	func fetchAuthorsByArticleID(_ articleIDs: Set<String>, database: FMDatabase) -> [String: Set<Author>] {
-		guard !articleIDs.isEmpty,
-		      let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count)) else {
+		guard !articleIDs.isEmpty else {
 			return [:]
 		}
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		let sql = "select lookup.articleID, authors.authorID, authors.name, authors.url, authors.avatarURL, authors.emailAddress from authorsLookup lookup inner join authors on authors.authorID = lookup.authorID where lookup.articleID in \(placeholders);"
 		let parameters = Array(articleIDs) as [Any]
 		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {

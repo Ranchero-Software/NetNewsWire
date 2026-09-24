@@ -1,25 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
-    <channel>
-        <title>NetNewsWire Betas</title>
-        <link>https://ranchero.com/downloads/netnewswire6-beta.xml</link>
-        <description>Most recent NetNewsWire changes with links to updates.</description>
-        <language>en</language>
+<channel>
+    <title>NetNewsWire Betas</title>
+    <link>https://ranchero.com/downloads/netnewswire6-beta.xml</link>
+    <description>Most recent NetNewsWire changes with links to updates.</description>
+    <language>en</language>
 
-		<item>
-			<title>NetNewsWire 7.1.1</title>
-            <description><![CDATA[
-            <p>Changes since 7.1:</p>
-  				<ul>
-				  <li>Handled Reddit’s new rate limiting (one feed per minute) by refreshing just one Reddit feed — the least-recently-checked one — per refresh session
-				  <li>Stopped scaling up small feed images — the blurriness is worse than the smallness
-				  <li>Fixed bug where transparent pixels in a feed icon were counted as black when picking a background color
-				</ul>
-			]]></description>
-        	<pubDate>Tue, 30 Jun 2026 09:45:00 -0700</pubDate>
-			<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.1/NetNewsWire7.1.1.zip" sparkle:version="7108" sparkle:shortVersionString="7.1.1" length="10635532" type="application/zip" />
-			<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
-		</item>
+<item>
+	<title>NetNewsWire 7.1.4</title>
+	<description><![CDATA[
+<p><b>Changes since 7.1.3:</b>
+<ul>
+<li>Fixed bug where read and starred statuses could stop syncing once more than 999 of them were queued (Feedbin, Feedly, NewsBlur, Reader API)
+<li>Kept syncing read and starred statuses even when sending article content fails
+<li>Kept fetching articles after an error sending statuses, and kept sending the rest of the statuses after one batch of them fails
+<li>Stopped repeatedly reauthorizing a Feedly token the server has rejected
+<li>Fixed bug where some FreshRSS, BazQux, Inoreader, and The Old Reader articles could never be marked read or starred on the server
+<li>Fixed bug where a feed could disappear during syncing when its folder is missing locally (Feedbin and Reader API)
+<li>Fixed bug where syncing could skip some folders (Feedbin and Reader API)
+<li>Fixed bug where an interrupted sync could cause articles to be skipped (Feedbin and Reader API)
+<li>Fixed bug where dates from servers could fail to parse under some system languages
+<li>Fixed bug where iCloud syncing could stall on a batch the server considers too large
+<li>Fixed potential hangs in iCloud syncing
+<li>Made push-triggered iCloud syncing work even when notifications aren’t authorized
+<li>Showed errors in the Error Log when the database can’t be read or written
+<li>Fixed bug where a site asking the app to slow down (429 responses) could slow down refreshing for other sites with similar names
+<li>Sped up openrss.org feeds — the app now fetches one feed an hour instead of one feed every 10 hours
+<li>Fixed bug where the first refresh after launching could be skipped
+<li>Fixed potential hangs while refreshing
+<li>Fixed bug where a feed in On My Mac could fail to update after refreshing
+<li>Stopped the article view from storing cookies and other website data on disk — feed content now runs in a private-browsing-like session
+<li>Recovered from WebKit content-process termination, so articles no longer come up blank after the system reclaims the web views
+<li>Made it so it will download article themes from http and https URLs only, with a maximum download size
+<li>Fixed bug where exported OPML could contain characters that make the file invalid
+<li>Fixed bug where renaming an account in Preferences lost keyboard focus after each keystroke
+<li>Trimmed spaces from the username when adding a Feedbin or NewsBlur account
+<li>Fixed Dinosaurs bugs where sorting lost the selection and where Delete could remove the wrong feeds
+<li>Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
+<li>Fixed crash that could happen when the app was moved after macOS had run it from a quarantined location, such as the Downloads folder
+</ul>
+	]]></description>
+	<pubDate>Sun, 20 Sep 2026 11:10:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.4/NetNewsWire7.1.4.zip" sparkle:version="7214" sparkle:shortVersionString="7.1.4" length="9794250" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
 
-    </channel>
+<item>
+	<title>NetNewsWire 7.1.4b3</title>
+	<description><![CDATA[
+<ul>
+<li>Disabled JavaScript for Slashdot, regardless of the setting, due to dickovers
+<li>Fixed crash that could happen when the app was moved after macOS had run it from a quarantined location, such as the Downloads folder
+</ul>
+	]]></description>
+	<pubDate>Fri, 18 Sep 2026 14:20:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.4b3/NetNewsWire7.1.4b3.zip" sparkle:version="7212" sparkle:shortVersionString="7.1.4b3" length="9794328" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+</channel>
 </rss>

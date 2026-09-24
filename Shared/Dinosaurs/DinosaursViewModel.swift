@@ -46,7 +46,7 @@ struct DinosaurRow: Identifiable {
 	var monthThreshold = 6
 	private var sortDescriptor: NSSortDescriptor?
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DinosaursViewModel")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "DinosaursViewModel")
 
 	func refresh() async {
 		let start = Date()
@@ -114,9 +114,8 @@ struct DinosaurRow: Identifiable {
 		applySort()
 	}
 
-	func deleteFeeds(at indexes: IndexSet) -> [DinosaurDeletion] {
-		let feedsToDelete = indexes.compactMap { rows.indices.contains($0) ? rows[$0] : nil }
-		let deletions = feedsToDelete.map { row in
+	func deleteFeeds(_ rowsToDelete: [DinosaurRow]) -> [DinosaurDeletion] {
+		let deletions = rowsToDelete.map { row in
 			DinosaurDeletion(feed: row.feed, account: row.account, containers: row.account.existingContainers(withFeed: row.feed))
 		}
 		performDeletions(deletions)

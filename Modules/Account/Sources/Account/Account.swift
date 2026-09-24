@@ -91,7 +91,7 @@ public enum FetchType {
 
 @MainActor public final class Account: ProgressInfoReporter, DisplayNameProvider, UnreadCountProvider, Container, Hashable {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Account")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Account")
 
     public struct UserInfoKey {
 		public static let account = "account" // UserDidAddAccount, UserDidDeleteAccount
@@ -238,6 +238,7 @@ public enum FetchType {
 	}
 
 	private var fetchingAllUnreadCounts = false
+	private var needsRefetchAllUnreadCounts = false
 	var areUnreadCountsInitialized = false
 
 	public let dataFolder: String
@@ -364,7 +365,7 @@ public enum FetchType {
 			try CredentialsManager.storeCredentials(credentials, server: server)
 		} catch {
 			Self.logger.error("Account: storeCredentials: failed to store credentials: \(error.localizedDescription, privacy: .public)")
-			postCredentialError(error, operation: "Storing credentials")
+			postSyncError(error, operation: "Storing credentials")
 			throw error
 		}
 		delegate.credentials = credentials
@@ -383,7 +384,7 @@ public enum FetchType {
 			return try CredentialsManager.retrieveCredentials(type: type, server: server, username: username)
 		} catch {
 			Self.logger.error("Account: retrieveCredentials: failed to retrieve \(type.rawValue, privacy: .public) credentials: \(error.localizedDescription, privacy: .public)")
-			postCredentialError(error, operation: "Retrieving credentials")
+			postSyncError(error, operation: "Retrieving credentials")
 			throw error
 		}
 	}
@@ -396,7 +397,7 @@ public enum FetchType {
 			try CredentialsManager.removeCredentials(type: type, server: server, username: username)
 		} catch {
 			Self.logger.error("Account: removeCredentials: failed to remove credentials: \(error.localizedDescription, privacy: .public)")
-			postCredentialError(error, operation: "Removing credentials")
+			postSyncError(error, operation: "Removing credentials")
 			throw error
 		}
 	}
@@ -425,7 +426,7 @@ public enum FetchType {
 		}
 	}
 
-	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType) -> URLRequest {
+	public static func oauthAuthorizationCodeGrantRequest(for type: AccountType, state: String) -> URLRequest {
 		let grantingType: OAuthAuthorizationGranting.Type
 		switch type {
 		case .feedly:
@@ -434,7 +435,7 @@ public enum FetchType {
 			fatalError("\(type) does not support OAuth authorization code granting.")
 		}
 
-		return grantingType.oauthAuthorizationCodeGrantRequest()
+		return grantingType.oauthAuthorizationCodeGrantRequest(state: state)
 	}
 
 	public static func requestOAuthAccessToken(with response: OAuthAuthorizationResponse,
@@ -494,6 +495,12 @@ public enum FetchType {
 		try ActivityLog.shared.logActivity(owner: activityOwner, kind: kind, detail: detail, successMessage: successMessage, durationIsSignificant: durationIsSignificant, work)
 	}
 
+	/// Fetches one page or chunk of a paginated refresh as its own numbered, timed
+	/// sub-activity of `kind`, reporting the page's item count.
+	func logRefreshPage<T>(kind: ActivityKind, message: @escaping (T) -> String, _ fetch: () async throws -> T) async throws -> T {
+		try await logActivity(kind: kind, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: message, fetch)
+	}
+
 	// MARK: - Syncing Article Status
 
 	public func sendArticleStatus() async throws {
@@ -550,6 +557,10 @@ public enum FetchType {
 		}
 	}
 
+	public func saveIfNeeded() {
+		opmlFile.saveToDiskIfNeeded()
+	}
+
 	public func prepareForDeletion() {
 		delegate.accountWillBeDeleted()
 	}
@@ -558,17 +569,17 @@ public enum FetchType {
 		settings.deleteSettings()
 	}
 
-	func addOPMLItems(_ items: [OPMLItem]) {
+	func addOPMLItems(_ items: [OPMLItem], isManualImport: Bool) {
 		for item in items {
 			if let feedSpecifier = item.feedSpecifier {
-				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
+				addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier, isManualImport: isManualImport))
 			} else {
 				if let title = item.titleFromAttributes, let folder = ensureFolder(with: title) {
 					folder.externalID = item.attributes?["nnw_externalID"]
 					if let itemChildren = item.children {
 						for itemChild in itemChildren {
 							if let feedSpecifier = itemChild.feedSpecifier {
-								folder.addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier))
+								folder.addFeedToTreeAtTopLevel(newFeed(with: feedSpecifier, isManualImport: isManualImport))
 							}
 						}
 					}
@@ -577,8 +588,9 @@ public enum FetchType {
 		}
 	}
 
-	func loadOPMLItems(_ items: [OPMLItem]) {
-		addOPMLItems(OPMLNormalizer.normalize(items))
+	/// Pass `isManualImport: true` for a file the user chose to import, `false` when restoring our own file.
+	func loadOPMLItems(_ items: [OPMLItem], isManualImport: Bool) {
+		addOPMLItems(OPMLNormalizer.normalize(items), isManualImport: isManualImport)
 	}
 
 	public func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
@@ -645,15 +657,22 @@ public enum FetchType {
 		return folders?.first(where: { $0.externalID == externalID })
 	}
 
-	func newFeed(with opmlFeedSpecifier: OPMLFeedSpecifier) -> Feed {
+	func newFeed(with opmlFeedSpecifier: OPMLFeedSpecifier, isManualImport: Bool) -> Feed {
 		let feedURL = opmlFeedSpecifier.feedURL
 		let settings = feedSettings(feedURL: feedURL, feedID: feedURL)
 		let feed = Feed(account: self, url: opmlFeedSpecifier.feedURL, settings: settings)
+
 		if let feedTitle = opmlFeedSpecifier.title {
-			if feed.name == nil {
-				feed.name = feedTitle
+			feed.name = feedTitle
+
+			// A title in a file the user imported is a title the user chose, so it goes in
+			// editedName too and survives refreshes. A title in our own file is just the name.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/609>
+			if isManualImport && feed.editedName == nil {
+				feed.editedName = feedTitle
 			}
 		}
+
 		return feed
 	}
 
@@ -685,6 +704,14 @@ public enum FetchType {
 
 	func createFeed(with name: String?, url: String, feedID: String, homePageURL: String?) -> Feed {
 		let settings = feedSettings(feedURL: url, feedID: feedID)
+
+		// The caller’s feedID is authoritative — repair a stored feedID that disagrees.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4172>
+		if settings.feedID != feedID {
+			Self.logger.info("Account: repairing feedID for \(url, privacy: .public): \(settings.feedID, privacy: .public) is now \(feedID, privacy: .public)")
+			settings.feedID = feedID
+		}
+
 		let feed = Feed(account: self, url: url, settings: settings)
 		feed.name = name
 		feed.homePageURL = homePageURL
@@ -913,16 +940,18 @@ public enum FetchType {
 		return articleChanges
 	}
 
-	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async {
+	@discardableResult
+	func updateAsync(feedIDsAndItems: [String: Set<ParsedItem>], defaultRead: Bool) async -> ArticleChanges {
 		// Used only by syncing systems.
 		precondition(Thread.isMainThread)
 		precondition(type != .onMyMac && type != .cloudKit)
 		guard !feedIDsAndItems.isEmpty else {
-			return
+			return ArticleChanges()
 		}
 
 		let newAndUpdatedArticles = await database.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: defaultRead)
 		sendNotificationAbout(newAndUpdatedArticles)
+		return newAndUpdatedArticles
 	}
 
 	/// Mark statuses for articleIDs. Returns the articleIDs whose status actually changed.
@@ -1073,6 +1102,12 @@ public enum FetchType {
 
 	// MARK: - Vacuum
 
+	/// Update article status rows that disagree with their in-memory statuses,
+	/// which is super-rare but possible.
+	func repairStatuses() {
+		database.repairStatuses()
+	}
+
 	public func vacuumDatabases() async {
 		await logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(database.databasePath)) {
 			await database.vacuum()
@@ -1090,11 +1125,11 @@ public enum FetchType {
 		return try await cloudKitDelegate.fetchCloudKitStats(progress: progress)
 	}
 
-	public func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+	public func cleanUpCloudKit(progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
 		guard type == .cloudKit, let cloudKitDelegate = delegate as? CloudKitAccountDelegate else {
 			throw AccountError.invalidParameter
 		}
-		try await cloudKitDelegate.cleanUpCloudKit(dryRun: dryRun, progress: progress)
+		try await cloudKitDelegate.cleanUpCloudKit(progress: progress)
 	}
 
 	public func debugDropConditionalGetInfo() {
@@ -1165,16 +1200,20 @@ public enum FetchType {
 	}
 }
 
-// MARK: - Fetching Articles (Private)
+// MARK: - Error Log
 
-private extension Account {
+extension Account {
 
-	// MARK: - Credential Errors
-
-	func postCredentialError(_ error: Error, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
+	/// Posts a notification that adds an entry to the Error Log.
+	func postSyncError(_ error: Error, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
 		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: nameForDisplay, sourceID: type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
 		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
 	}
+}
+
+// MARK: - Fetching Articles (Private)
+
+private extension Account {
 
 	// MARK: - Starred Articles
 
@@ -1323,6 +1362,13 @@ private extension Account {
 				feedUnreadCount += 1
 			}
 		}
+
+		// The stored count is database-derived. Disagreement means some
+		// status rows are stale (a lost write) — repair them.
+		if feedUnreadCount != feed.unreadCount {
+			repairStatuses()
+		}
+
 		feed.unreadCount = feedUnreadCount
 	}
 }
@@ -1363,21 +1409,34 @@ private extension Account {
 	}
 
 	func _fetchAllUnreadCounts() {
+		// Status changes arrive continuously during a refresh. Only one full-count
+		// query is in flight at a time, and one more runs afterward if anything
+		// changed while it ran.
+		if fetchingAllUnreadCounts {
+			needsRefetchAllUnreadCounts = true
+			return
+		}
 		fetchingAllUnreadCounts = true
 
 		Task { @MainActor in
-			guard let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() else {
+			// The flag stays set while the feed counts are applied so updateUnreadCount
+			// runs once at the end instead of once per feed.
+			if let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() {
+				processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
 				fetchingAllUnreadCounts = false
-				return
+				updateUnreadCount()
+
+				if !areUnreadCountsInitialized {
+					areUnreadCountsInitialized = true
+					postUnreadCountDidInitializeNotification()
+				}
+			} else {
+				fetchingAllUnreadCounts = false
 			}
 
-			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
-			fetchingAllUnreadCounts = false
-			updateUnreadCount()
-
-			if !self.areUnreadCountsInitialized {
-				self.areUnreadCountsInitialized = true
-				self.postUnreadCountDidInitializeNotification()
+			if needsRefetchAllUnreadCounts {
+				needsRefetchAllUnreadCounts = false
+				_fetchAllUnreadCounts()
 			}
 		}
 	}

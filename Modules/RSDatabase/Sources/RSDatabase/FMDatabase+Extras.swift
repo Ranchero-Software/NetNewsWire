@@ -24,16 +24,23 @@ public extension FMDatabase {
 		return database
 	}
 
-	func executeUpdateInTransaction(_ sql: String, withArgumentsIn parameters: [Any]? = nil) {
+	/// Returns false if the update failed and the transaction was rolled back.
+	@discardableResult
+	func executeUpdateInTransaction(_ sql: String, withArgumentsIn parameters: [Any]? = nil) -> Bool {
 		beginTransaction()
 		guard executeUpdate(sql, withArgumentsIn: parameters) else {
+			// Capture the error before rollback() overwrites the last-error state.
+			let code = lastErrorCode()
+			let message = lastErrorMessage() ?? "unknown"
+			let path = databasePath() ?? "unknown"
 			rollback()
-			return
+			Self.logger.error("Update failed on \(path, privacy: .public) — SQLite \(code, privacy: .public): \(message, privacy: .public)")
+			return false
 		}
-		commit()
+		return commit()
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FMDatabase")
+	private static let logger = Logger(subsystem: logSubsystem, category: "FMDatabase")
 
 	func vacuum() {
 		let path = databasePath() ?? "unknown"
@@ -68,13 +75,20 @@ public extension FMDatabase {
 		}
 	}
 
-	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, tableName: String) {
+	/// Returns false if any row failed to insert. Every row is attempted either way.
+	@discardableResult
+	func insertRows(_ dictionaries: [DatabaseDictionary], insertType: RSDatabaseInsertType, tableName: String) -> Bool {
+		var didInsertAllRows = true
 		for dictionary in dictionaries {
-			insertRow(dictionary, insertType: insertType, tableName: tableName)
+			if !insertRow(dictionary, insertType: insertType, tableName: tableName) {
+				didInsertAllRows = false
+			}
 		}
+		return didInsertAllRows
 	}
 
-	func insertRow(_ dictionary: DatabaseDictionary, insertType: RSDatabaseInsertType, tableName: String) {
+	@discardableResult
+	func insertRow(_ dictionary: DatabaseDictionary, insertType: RSDatabaseInsertType, tableName: String) -> Bool {
 		rs_insertRow(with: dictionary, insertType: insertType, tableName: tableName)
 	}
 

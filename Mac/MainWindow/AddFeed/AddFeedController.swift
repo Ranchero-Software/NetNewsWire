@@ -56,8 +56,8 @@ import RSParser
 		}
 		let account = accountAndFolderSpecifier.account
 
-		if account.hasFeed(withURL: url.absoluteString) {
-			showAlreadySubscribedError(url.absoluteString)
+		if let existingFeed = account.existingFeed(withURL: url.absoluteString) {
+			showAlreadySubscribedError(existingFeed, account: account)
 			return
 		}
 
@@ -73,7 +73,7 @@ import RSParser
 			case .failure(let error):
 				switch error {
 				case AccountError.createErrorAlreadySubscribed:
-					self.showAlreadySubscribedError(url.absoluteString)
+					self.showAlreadySubscribedError(account.existingFeed(withURL: url.absoluteString), account: account)
 				case AccountError.createErrorNotFound:
 					self.showNoFeedsErrorMessage()
 				default:
@@ -124,12 +124,31 @@ private extension AddFeedController {
 
 	// MARK: - Errors
 
-	func showAlreadySubscribedError(_ urlString: String) {
+	func showAlreadySubscribedError(_ feed: Feed?, account: Account) {
 		let alert = NSAlert()
 		alert.alertStyle = .informational
-		alert.messageText = NSLocalizedString("Already subscribed", comment: "Feed finder")
-		alert.informativeText = NSLocalizedString("Can’t add this feed because you’ve already subscribed to it.", comment: "Feed finder")
+		alert.messageText = NSLocalizedString("Already added", comment: "Feed finder")
+		alert.informativeText = alreadySubscribedErrorText(feed, account: account)
 		alert.beginSheetModal(for: hostWindow)
+	}
+
+	func alreadySubscribedErrorText(_ feed: Feed?, account: Account) -> String {
+		let genericText = NSLocalizedString("Can’t add this feed because you’ve already added it.", comment: "Feed finder")
+
+		guard let feed else {
+			return genericText
+		}
+
+		let folderNames = account.existingContainers(withFeed: feed)
+			.compactMap { ($0 as? Folder)?.nameForDisplay }
+			.sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+		if folderNames.isEmpty {
+			return genericText
+		}
+
+		let quotedNames = folderNames.map { "“\($0)”" }
+		let formatString = NSLocalizedString("Can’t add this feed because you’ve already added it in %@.", comment: "Feed finder")
+		return NSString.localizedStringWithFormat(formatString as NSString, quotedNames.formatted(.list(type: .and))) as String
 	}
 
 	func showInitialDownloadError(_ error: Error) {

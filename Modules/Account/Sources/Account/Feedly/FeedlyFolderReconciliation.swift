@@ -18,14 +18,48 @@ import Foundation
 
 	let localFolders = account.folders ?? Set()
 
-	let pairs: [(feeds: [FeedlyFeed], folder: Folder)] = collections.compactMap { collection in
+	var claimedFolders = Set<Folder>()
+	var folderForCollectionID = [String: Folder]()
+
+	// Match by external ID first. Matching by name races a local rename — the renamed
+	// folder would be dropped as unmatched and recreated, losing its identity — and a
+	// name match could steal a folder that belongs, by ID, to a later collection.
+	for collection in collections {
 		let parser = FeedlyCollectionParser(collection: collection)
-		guard let folder = account.ensureFolder(with: parser.folderName) else {
-			assertionFailure("Why wasn't a folder created?")
-			return nil
+		guard let folder = account.existingFolder(withExternalID: parser.externalID), !claimedFolders.contains(folder) else {
+			continue
 		}
-		folder.externalID = parser.externalID
-		return (collection.feeds, folder)
+		claimedFolders.insert(folder)
+		folderForCollectionID[collection.id] = folder
+		if folder.name != parser.folderName {
+			folder.name = parser.folderName
+		}
+	}
+
+	let pairs: [(feeds: [FeedlyFeed], folder: Folder)] = collections.compactMap { collection in
+		if let folder = folderForCollectionID[collection.id] {
+			return (collection.feeds, folder)
+		}
+
+		// No ID match — find or create by name, disambiguating when another collection
+		// already claimed the folder with this label.
+		let parser = FeedlyCollectionParser(collection: collection)
+		var name = parser.folderName
+		var suffix = 2
+		while true {
+			guard let folder = account.ensureFolder(with: name) else {
+				assertionFailure("Why wasn't a folder created?")
+				return nil
+			}
+			if claimedFolders.contains(folder) {
+				name = "\(parser.folderName) (\(suffix))"
+				suffix += 1
+				continue
+			}
+			claimedFolders.insert(folder)
+			folder.externalID = parser.externalID
+			return (collection.feeds, folder)
+		}
 	}
 
 	Feedly.logger.info("Feedly: Ensured \(pairs.count) folders for \(collections.count) collections")
@@ -74,18 +108,14 @@ import Foundation
 		}
 		.compactMap { (collectionFeed, folder) -> (Feed, Folder) in
 
-			if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
-				// If the feed was renamed on Feedly, ingest the new name.
-				if feed.nameForDisplay != collectionFeed.title {
-					feed.name = collectionFeed.title
+			let parser = FeedlyFeedParser(feed: collectionFeed)
 
-					// Let the rest of the app (e.g. the sidebar) know the name changed.
-					// Setting `editedName` would post this; setting `name` does not.
-					if feed.editedName != nil {
-						feed.editedName = nil
-					} else {
-						feed.postDisplayNameDidChangeNotification()
-					}
+			if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
+				// If the feed was renamed on Feedly, ingest the new name. Compare against the
+				// parsed title — feeds are created from it, and the raw title differs for RTL
+				// and untitled feeds, so comparing it rewrote their names every sync.
+				if let title = parser.title, !title.isEmpty, feed.name != title {
+					feed.name = title
 				}
 				return (feed, folder)
 			}
@@ -95,7 +125,6 @@ import Foundation
 				return (existing, folder)
 			}
 
-			let parser = FeedlyFeedParser(feed: collectionFeed)
 			let feed = account.createFeed(with: parser.title, url: parser.url, feedID: parser.feedID, homePageURL: parser.homePageURL)
 			feedsAdded.insert(feed)
 			return (feed, folder)

@@ -24,27 +24,26 @@ final class ArticleExtractorButton: UIButton {
 		return indicator
 	}()
 
+	// Re-assert the visuals even when the state hasn't changed, so a stale button self-heals.
 	var buttonState: ArticleExtractorButtonState = .off {
 		didSet {
-			if buttonState != oldValue {
-				switch buttonState {
-				case .error:
-					activityIndicator.stopAnimating()
-					isUserInteractionEnabled = true
-					setImage(Assets.Images.articleExtractorError, for: .normal)
-				case .animated:
-					setImage(nil, for: .normal)
-					activityIndicator.startAnimating()
-					isUserInteractionEnabled = false
-				case .on:
-					activityIndicator.stopAnimating()
-					isUserInteractionEnabled = true
-					setImage(Assets.Images.articleExtractorOn, for: .normal)
-				case .off:
-					activityIndicator.stopAnimating()
-					isUserInteractionEnabled = true
-					setImage(Assets.Images.articleExtractorOff, for: .normal)
-				}
+			switch buttonState {
+			case .error:
+				activityIndicator.stopAnimating()
+				isUserInteractionEnabled = true
+				setImage(Assets.Images.articleExtractorError, for: .normal)
+			case .animated:
+				setImage(nil, for: .normal)
+				activityIndicator.startAnimating()
+				isUserInteractionEnabled = false
+			case .on:
+				activityIndicator.stopAnimating()
+				isUserInteractionEnabled = true
+				setImage(Assets.Images.articleExtractorOn, for: .normal)
+			case .off:
+				activityIndicator.stopAnimating()
+				isUserInteractionEnabled = true
+				setImage(Assets.Images.articleExtractorOff, for: .normal)
 			}
 		}
 	}

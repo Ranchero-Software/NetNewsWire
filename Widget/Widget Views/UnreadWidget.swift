@@ -79,7 +79,7 @@ struct UnreadWidgetView: View {
 			Spacer()
 			Image(systemName: "largecircle.fill.circle")
 				.resizable()
-				.aspectRatio(contentMode: .fit)
+				.scaledToFit()
 				.foregroundColor(.accentColor)
 				.frame(width: 30)
 

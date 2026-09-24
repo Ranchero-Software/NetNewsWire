@@ -13,11 +13,12 @@ public enum WebserviceError: LocalizedError, Sendable {
 	case noData
     case noURL
 	case suspended
-	case httpError(status: Int)
+	case httpError(status: Int, responseBody: String?)
+	case tooManyRequests(retryAfter: TimeInterval?)
 
 	public var errorDescription: String? {
 		switch self {
-		case .httpError(let status):
+		case .httpError(let status, _):
 			return "HTTP \(status): \(HTTPURLResponse.localizedString(forStatusCode: status))"
 		case .noData:
 			return NSLocalizedString("No data was returned by the server.", comment: "No data")
@@ -25,6 +26,8 @@ public enum WebserviceError: LocalizedError, Sendable {
 			return NSLocalizedString("The URL for the request is missing.", comment: "No URL")
 		case .suspended:
 			return NSLocalizedString("The request was not sent because syncing is suspended.", comment: "Suspended")
+		case .tooManyRequests:
+			return NSLocalizedString("The server reported too many requests. Syncing is paused temporarily.", comment: "Too many requests")
 		}
 	}
 
@@ -32,14 +35,17 @@ public enum WebserviceError: LocalizedError, Sendable {
 
 nonisolated extension URLSession {
 
-	/// The single shared session used for all web service calls.
+	/// A session configured for web service calls. Each API caller owns its own session,
+	/// so canceling one account’s requests can’t cancel another account’s.
 	/// When running unit tests, it routes requests through `TestingURLProtocol`
 	/// so no outside code needs any knowledge of testing.
-	public static let webservice: URLSession = {
+	public static func makeWebserviceSession() -> URLSession {
 
 		let sessionConfiguration = URLSessionConfiguration.default
 		sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
 		sessionConfiguration.timeoutIntervalForRequest = 60.0
+		sessionConfiguration.timeoutIntervalForResource = 120.0
+		sessionConfiguration.waitsForConnectivity = true
 		sessionConfiguration.httpShouldSetCookies = false
 		sessionConfiguration.httpCookieAcceptPolicy = .never
 		sessionConfiguration.httpMaximumConnectionsPerHost = 1
@@ -52,10 +58,17 @@ nonisolated extension URLSession {
 
 		if Platform.isRunningUnitTests {
 			sessionConfiguration.protocolClasses = [TestingURLProtocol.self]
+
+			// Stamp the session so the protocol can tell this test's requests from another's.
+			if let testID = TestingURLProtocol.currentTestID {
+				var headers = sessionConfiguration.httpAdditionalHeaders ?? [:]
+				headers[TestingURLProtocol.testIDHeaderField] = testID
+				sessionConfiguration.httpAdditionalHeaders = headers
+			}
 		}
 
 		return URLSession(configuration: sessionConfiguration)
-	}()
+	}
 
 	public func cancelAll() {
 		getTasksWithCompletionHandler { dataTasks, uploadTasks, downloadTasks in
@@ -74,34 +87,53 @@ nonisolated extension URLSession {
 	@discardableResult
 	public func send(request: URLRequest) async throws -> (HTTPURLResponse, Data) {
 		let (data, response) = try await data(for: request)
-		return (try Self.validatedHTTPResponse(response), data)
+		return (try Self.validatedHTTPResponse(response, data: data), data)
 	}
 
 	public func send(request: URLRequest, method: String) async throws {
 		var sendRequest = request
 		sendRequest.httpMethod = method
-		let (_, response) = try await data(for: sendRequest)
-		try Self.validatedHTTPResponse(response)
+		let (data, response) = try await data(for: sendRequest)
+		try Self.validatedHTTPResponse(response, data: data)
 	}
 
 	public func send(request: URLRequest, method: String, payload: Data) async throws -> (HTTPURLResponse, Data) {
 		var sendRequest = request
 		sendRequest.httpMethod = method
 		let (data, response) = try await upload(for: sendRequest, from: payload)
-		return (try Self.validatedHTTPResponse(response), data)
+		return (try Self.validatedHTTPResponse(response, data: data), data)
 	}
 
 	/// Require an HTTP response with a 200...399 status code, or throw the matching `WebserviceError`.
 	@discardableResult
-	private static func validatedHTTPResponse(_ response: URLResponse) throws -> HTTPURLResponse {
+	private static func validatedHTTPResponse(_ response: URLResponse, data: Data?) throws -> HTTPURLResponse {
 		guard let httpResponse = response as? HTTPURLResponse else {
 			throw WebserviceError.noData
 		}
 		switch httpResponse.forcedStatusCode {
 		case 200...399:
 			return httpResponse
+		case HTTPResponseCode.tooManyRequests:
+			var retryAfter: TimeInterval?
+			if let headerValue = httpResponse.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) {
+				retryAfter = TimeInterval(headerValue)
+			}
+			throw WebserviceError.tooManyRequests(retryAfter: retryAfter)
 		default:
-			throw WebserviceError.httpError(status: httpResponse.forcedStatusCode)
+			throw WebserviceError.httpError(status: httpResponse.forcedStatusCode, responseBody: responseBodyForError(data))
 		}
+	}
+
+	/// A trimmed, whitespace-collapsed prefix of an error response's body.
+	/// The body often says what the server didn't like.
+	private static func responseBodyForError(_ data: Data?) -> String? {
+		guard let data, !data.isEmpty, let body = String(data: data, encoding: .utf8) else {
+			return nil
+		}
+		let collapsed = body.collapsingWhitespace
+		guard !collapsed.isEmpty else {
+			return nil
+		}
+		return String(collapsed.prefix(500))
 	}
 }

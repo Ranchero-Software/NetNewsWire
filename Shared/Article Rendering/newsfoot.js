@@ -65,7 +65,9 @@
 			/** @type {(ev:MouseEvent) => void} */
 			this.clickoutHandler = (ev) => {
 				if (!(ev.target instanceof Element)) return;
-				if (ev.target.closest(`.${POPOVER_CLS}`) === this.popover) return;
+				// Keep this popover open for clicks anywhere inside it, including a nested footnote popover.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/2372>
+				if (this.popover.contains(ev.target)) return;
 				if (ev.target === this.fnref) {
 				    ev.stopPropagation();
 					ev.preventDefault();

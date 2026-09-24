@@ -11,6 +11,8 @@ import RSCore
 
 @objc final class SharingServicePickerDelegate: NSObject, @MainActor NSSharingServicePickerDelegate {
 
+	var selectedHTML: String?
+
 	private let sharingServiceDelegate: SharingServiceDelegate
 
 	init(_ window: NSWindow?) {
@@ -19,14 +21,14 @@ import RSCore
 
 	@MainActor func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, sharingServicesForItems items: [Any], proposedSharingServices proposedServices: [NSSharingService]) -> [NSSharingService] {
 		let filteredServices = proposedServices.filter { $0.menuItemTitle != "NetNewsWire" }
-		return filteredServices + SharingServicePickerDelegate.customSharingServices(for: items)
+		return filteredServices + SharingServicePickerDelegate.customSharingServices(for: items, selectedHTML: selectedHTML)
 	}
 
 	func sharingServicePicker(_ sharingServicePicker: NSSharingServicePicker, delegateFor sharingService: NSSharingService) -> NSSharingServiceDelegate? {
 		return sharingServiceDelegate
 	}
 
-	@MainActor static func customSharingServices(for items: [Any]) -> [NSSharingService] {
+	@MainActor static func customSharingServices(for items: [Any], selectedHTML: String? = nil) -> [NSSharingService] {
 		let customServices: [SendToCommand] = [SendToMarsEditCommand(), SendToMicroBlogCommand()]
 
 		return customServices.compactMap { (sendToCommand) -> NSSharingService? in
@@ -35,13 +37,13 @@ import RSCore
 				return nil
 			}
 
-			guard sendToCommand.canSendObject(object, selectedText: nil) else {
+			guard sendToCommand.canSendObject(object, selectedText: selectedHTML) else {
 				return nil
 			}
 
 			let image = sendToCommand.image ?? NSImage()
 			return NSSharingService(title: sendToCommand.title, image: image, alternateImage: nil) {
-				sendToCommand.sendObject(object, selectedText: nil)
+				sendToCommand.sendObject(object, selectedText: selectedHTML)
 			}
 		}
 	}

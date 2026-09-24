@@ -33,30 +33,38 @@ public extension NSTableView {
 		return indexes.isEmpty ? nil : indexes
 	}
 
-	func scrollTo(row: Int, extraHeight: Int = 150) {
+	/// The part of the document the user can actually see. documentVisibleRect includes
+	/// the area under the toolbar, and under the sidebar on macOS 26.
+	private var unobscuredDocumentRect: NSRect? {
 		guard let scrollView = self.enclosingScrollView else {
+			return nil
+		}
+		let contentInsets = scrollView.contentInsets
+		let documentVisibleRect = scrollView.documentVisibleRect
+		return NSRect(x: documentVisibleRect.minX + contentInsets.left, y: documentVisibleRect.minY + contentInsets.top, width: documentVisibleRect.width - contentInsets.left - contentInsets.right, height: documentVisibleRect.height - contentInsets.top - contentInsets.bottom)
+	}
+
+	func scrollTo(row: Int, extraHeight: Int = 150) {
+		guard let scrollView = self.enclosingScrollView, let unobscuredDocumentRect else {
 			return
 		}
-		let documentVisibleRect = scrollView.documentVisibleRect
 
 		let r = rect(ofRow: row)
-		if documentVisibleRect.contains(r) {
+		if unobscuredDocumentRect.contains(r) {
 			return
 		}
 
+		// Center the row in the unobscured area, which starts contentInsets.top below the clip view’s origin.
 		let rMidY = r.midY
 		var scrollPoint = NSPoint.zero
-		scrollPoint.y = floor(rMidY - (documentVisibleRect.size.height / 2.0)) + CGFloat(extraHeight)
-		scrollPoint.y = max(scrollPoint.y, 0)
-
-		let maxScrollPointY = frame.size.height - documentVisibleRect.size.height
-		scrollPoint.y = min(maxScrollPointY, scrollPoint.y)
+		scrollPoint.y = floor(rMidY - (unobscuredDocumentRect.size.height / 2.0) - scrollView.contentInsets.top) + CGFloat(extraHeight)
 
 		let clipView = scrollView.contentView
 
 		let rClipView = NSRect(x: scrollPoint.x, y: scrollPoint.y, width: clipView.bounds.width, height: clipView.bounds.height)
 
-		clipView.animator().bounds = rClipView
+		// constrainBoundsRect clamps to the legal range, accounting for content insets.
+		clipView.animator().bounds = clipView.constrainBoundsRect(rClipView)
 	}
 
 	func scrollToRowIfNotVisible(_ row: Int) {
@@ -70,11 +78,11 @@ public extension NSTableView {
 	}
 
 	func visibleRowViews() -> [NSTableRowView]? {
-		guard let scrollView = self.enclosingScrollView, numberOfRows > 0 else {
+		guard let unobscuredDocumentRect, numberOfRows > 0 else {
 			return nil
 		}
 
-		let range = rows(in: scrollView.documentVisibleRect)
+		let range = rows(in: unobscuredDocumentRect)
 		let ixMax = numberOfRows - 1
 		let ixStart = min(range.location, ixMax)
 		let ixEnd = min(((range.location + range.length) - 1), ixMax)

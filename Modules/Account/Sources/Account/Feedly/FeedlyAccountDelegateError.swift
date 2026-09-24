@@ -19,6 +19,7 @@ enum FeedlyAccountDelegateError: LocalizedError {
 	case addFeedInvalidFolder(String) // folderName
 	case unableToRenameFeed(String, String)
 	case unableToRemoveFeed(String)
+	case databaseReadFailed(String) // SQLite error description
 
 	var errorDescription: String? {
 		switch self {
@@ -59,6 +60,10 @@ enum FeedlyAccountDelegateError: LocalizedError {
 		case .unableToRemoveFeed(let feedName):
 			let template = NSLocalizedString("Could not remove “%@”.", comment: "Feedly – Could not remove a feed.")
 			return String(format: template, feedName)
+
+		case .databaseReadFailed(let sqliteErrorDescription):
+			let template = NSLocalizedString("Could not read from the syncing database. (%@)", comment: "Feedly – Could not read from the syncing database.")
+			return String(format: template, sqliteErrorDescription)
 		}
 	}
 
@@ -94,6 +99,9 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return nil
 
 		case .unableToRenameFeed:
+			return nil
+
+		case .databaseReadFailed:
 			return nil
 		}
 	}

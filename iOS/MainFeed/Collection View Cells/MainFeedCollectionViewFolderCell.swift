@@ -45,12 +45,9 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		}
 	}
 
-	var disclosureExpanded = true {
-		didSet {
-			updateExpandedState(animate: true)
-			updateUnreadCountVisibility()
-		}
-	}
+	// Mutate via setDisclosure(isExpanded:animated:) so configure-time calls
+	// can skip animation — a 0.3s chevron spin during a diffable apply is wrong.
+	private(set) var disclosureExpanded = true
 
 	override func awakeFromNib() {
 		MainActor.assumeIsolated {
@@ -77,15 +74,14 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		}
 	}
 
-	func updateUnreadCountVisibility() {
-		if !disclosureExpanded && unreadCount > 0 {
+	func updateUnreadCountVisibility(animated: Bool = true) {
+		let alpha: CGFloat = (!disclosureExpanded && unreadCount > 0) ? 1 : 0
+		if animated {
 			UIView.animate {
-				self.unreadCountLabel.alpha = 1
+				self.unreadCountLabel.alpha = alpha
 			}
 		} else {
-			UIView.animate {
-				self.unreadCountLabel.alpha = 0
-			}
+			unreadCountLabel.alpha = alpha
 		}
 	}
 
@@ -97,6 +93,8 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 
 	func setDisclosure(isExpanded: Bool, animated: Bool) {
 		disclosureExpanded = isExpanded
+		updateExpandedState(animate: animated)
+		updateUnreadCountVisibility(animated: animated)
 	}
 
 	override var accessibilityLabel: String? {

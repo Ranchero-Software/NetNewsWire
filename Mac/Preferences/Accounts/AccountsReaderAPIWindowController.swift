@@ -97,21 +97,16 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 		self.errorMessageLabel.stringValue = ""
 
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error")
 			return
 		}
 
 		guard let accountType = accountType, !(accountType == .freshRSS && apiURLTextField.stringValue.isEmpty) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error")
 			return
 		}
 
 		let trimmedUsername = usernameTextField.stringValue.trimmingWhitespace
-
-		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: trimmedUsername) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
-			return
-		}
 
 		let apiURL: URL
 		switch accountType {
@@ -129,6 +124,11 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 			apiURL =  URL(string: ReaderAPIVariant.theOldReader.host)!
 		default:
 			self.errorMessageLabel.stringValue = NSLocalizedString("Unrecognized account type.", comment: "Bad account type")
+			return
+		}
+
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: accountType, username: trimmedUsername, endpoint: apiURL) else {
+			self.errorMessageLabel.stringValue = NSLocalizedString("There is already an account of this type with that username created.", comment: "Duplicate Error")
 			return
 		}
 

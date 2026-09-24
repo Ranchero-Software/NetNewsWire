@@ -202,9 +202,15 @@ enum CloudKitAccountZoneError: LocalizedError {
 		let predicate = NSPredicate(format: "isAccount = \"1\"")
 		let ckQuery = CKQuery(recordType: CloudKitContainer.recordType, predicate: predicate)
 
-		database?.fetch(withQuery: ckQuery, inZoneWith: zoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults) { [weak self] result in
+		guard let database else {
+			completion(.failure(CloudKitZoneError.unknown))
+			return
+		}
+
+		database.fetch(withQuery: ckQuery, inZoneWith: zoneID, desiredKeys: nil, resultsLimit: CKQueryOperation.maximumResults) { [weak self] result in
 			Task { @MainActor [weak self] in
 				guard let self else {
+					completion(.failure(CloudKitZoneError.unknown))
 					return
 				}
 

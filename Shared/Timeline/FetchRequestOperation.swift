@@ -208,7 +208,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 
 private extension FetchRequestOperation {
 
-	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "FetchRequestOperation")
+	static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FetchRequestOperation")
 	static let errorLogSourceID = 101
 
 	static func postFetchError(_ error: Error, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {

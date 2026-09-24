@@ -126,6 +126,8 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 		if let existingUnclaimedFeeds = existingUnclaimedFeeds[containerExternalID] {
 			for existingUnclaimedFeed in existingUnclaimedFeeds {
+				// Clear the top-level safety-net fallback (no-op if not there) so we don't leave a duplicate.
+				account.removeFeedFromTreeAtTopLevel(existingUnclaimedFeed)
 				container.addFeedToTreeAtTopLevel(existingUnclaimedFeed)
 			}
 			self.existingUnclaimedFeeds.removeValue(forKey: containerExternalID)
@@ -167,6 +169,13 @@ private extension CloudKitAcountZoneDelegate {
 					addExistingUnclaimedFeed(feed, containerExternalID: externalID)
 				}
 			}
+		}
+
+		// Never leave a moved feed invisible: if its destination container(s) aren't known locally yet,
+		// keep it visible at the top level. addOrUpdateContainer relocates it when the folder record arrives.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5124>
+		if account.existingContainers(withFeed: feed).isEmpty {
+			account.addFeedToTreeAtTopLevel(feed)
 		}
 	}
 

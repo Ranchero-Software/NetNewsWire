@@ -24,8 +24,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
 	private let articlesCache = OSAllocatedUnfairLock(initialState: [String: Article]())
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticlesTable")
-	private static let signposter = OSSignposter(subsystem: Bundle.main.bundleIdentifier!, category: .pointsOfInterest)
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticlesTable")
+	private static let signposter = OSSignposter(subsystem: Logger.nnwSubsystem, category: .pointsOfInterest)
 
 	// TODO: update articleCutoffDate as time passes and based on user preferences.
 	let articleCutoffDate = Date().bySubtracting(days: 90)
@@ -166,7 +166,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	func fetchArticleSearchInfos(_ articleIDs: Set<String>, in database: FMDatabase) -> Set<ArticleSearchInfo>? {
 		let parameters = articleIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		let query = "select articleID, title, contentHTML, contentText, summary, searchRowID, authors from articles where articleID in \(placeholders);"
 
 		if let resultSet = database.executeQuery(query, withArgumentsIn: parameters) {
@@ -360,7 +360,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 
 		queue.runInDatabase { database in
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 			let sql = "select distinct feedID, count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 group by feedID;"
 
 			let parameters = Array(feedIDs) as [Any]
@@ -397,13 +397,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 
 		queue.runInDatabase { database in
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?)) and read=0;"
-
-			var parameters = [Any]()
-			parameters += Array(feedIDs) as [Any]
-			parameters += [since] as [Any]
-			parameters += [since] as [Any]
+			let (whereClause, parameters) = self.sinceWhereClauseAndParameters(feedIDs, since)
+			let sql = "select count(*) from articles natural join statuses where \(whereClause) and read=0;"
 
 			let unreadCount = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
@@ -420,7 +415,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 
 		queue.runInDatabase { database in
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and read=0 and starred=1;"
 			let parameters = Array(feedIDs) as [Any]
 
@@ -440,13 +435,8 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 
 		queue.runInDatabase { database in
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?));"
-
-			var parameters = [Any]()
-			parameters += Array(feedIDs) as [Any]
-			parameters += [cutoffDate] as [Any]
-			parameters += [cutoffDate] as [Any]
+			let (whereClause, parameters) = self.sinceWhereClauseAndParameters(feedIDs, cutoffDate)
+			let sql = "select count(*) from articles natural join statuses where \(whereClause);"
 
 			let count = self.numberWithSQLAndParameters(sql, parameters, in: database)
 
@@ -463,7 +453,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 
 		queue.runInDatabase { database in
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 			let sql = "select count(*) from articles natural join statuses where feedID in \(placeholders) and starred=1;"
 			let parameters = Array(feedIDs) as [Any]
 
@@ -616,6 +606,12 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 	}
 
+	// MARK: - Repairing
+
+	func repairStatuses(_ database: FMDatabase) {
+		statusesTable.repairStatuses(database)
+	}
+
 	/// Delete articles from feeds that are no longer in the current set of subscribed-to feeds.
 	/// This deletes from the articles and articleStatuses tables,
 	/// and, via a trigger, it also deletes from the search index.
@@ -624,7 +620,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 			return
 		}
 		queue.runInDatabase { database in
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 			let sql = "select articleID from articles where feedID not in \(placeholders);"
 			let parameters = Array(feedIDs) as [Any]
 			guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) else {
@@ -706,6 +702,16 @@ nonisolated private extension ArticlesTable {
 		return articles
 	}
 
+	// The feedID test is repeated in both branches of the or so SQLite can seek on
+	// articles_feedID_datePublished_articleID for each branch instead of scanning every article in the feeds.
+	func sinceWhereClauseAndParameters(_ feedIDs: Set<String>, _ cutoffDate: Date) -> (whereClause: String, parameters: [AnyObject]) {
+		let feedIDParameters = feedIDs.map { $0 as AnyObject }
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
+		let whereClause = "((feedID in \(placeholders) and datePublished > ?) or (feedID in \(placeholders) and datePublished is null and dateArrived > ?))"
+		let parameters = feedIDParameters + [cutoffDate as AnyObject] + feedIDParameters + [cutoffDate as AnyObject]
+		return (whereClause, parameters)
+	}
+
 	func fetchArticlesWithWhereClause(_ database: FMDatabase, whereClause: String, parameters: [AnyObject]) -> Set<Article> {
 		let sql = "select * from articles natural join statuses where \(whereClause);"
 		return articlesWithSQL(sql, parameters, database)
@@ -736,7 +742,7 @@ nonisolated private extension ArticlesTable {
 			return Set<Article>()
 		}
 
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(searchRowIDs.count))
 		let whereClause = "searchRowID in \(placeholders)"
 		let parameters: [AnyObject] = Array(searchRowIDs) as [AnyObject]
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
@@ -780,7 +786,7 @@ nonisolated private extension ArticlesTable {
 			return Set<Article>()
 		}
 		let parameters = feedIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 		let whereClause = "feedID in \(placeholders)"
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
@@ -791,7 +797,7 @@ nonisolated private extension ArticlesTable {
 			return Set<Article>()
 		}
 		let parameters = feedIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 		var whereClause = "feedID in \(placeholders) and read=0"
 		if let limit = limit {
 			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
@@ -808,21 +814,20 @@ nonisolated private extension ArticlesTable {
 			return Set<Article>()
 		}
 		let parameters = articleIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(articleIDs.count))
 		let whereClause = "articleID in \(placeholders)"
 		return fetchArticlesWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
 
 	func fetchArticlesSince(_ feedIDs: Set<String>, _ cutoffDate: Date, _ limit: Int?, _ database: FMDatabase) -> Set<Article> {
-		// select * from articles natural join statuses where feedID in ('http://ranchero.com/xml/rss.xml') and (datePublished > ? || (datePublished is null and dateArrived > ?)
+		// select * from articles natural join statuses where ((feedID in ('http://ranchero.com/xml/rss.xml') and datePublished > ?) or (feedID in ('http://ranchero.com/xml/rss.xml') and datePublished is null and dateArrived > ?));
 		//
 		// datePublished may be nil, so we fall back to dateArrived.
 		if feedIDs.isEmpty {
 			return Set<Article>()
 		}
-		let parameters = feedIDs.map { $0 as AnyObject } + [cutoffDate as AnyObject, cutoffDate as AnyObject]
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
-		var whereClause = "feedID in \(placeholders) and (datePublished > ? or (datePublished is null and dateArrived > ?))"
+		let (sinceWhereClause, parameters) = sinceWhereClauseAndParameters(feedIDs, cutoffDate)
+		var whereClause = sinceWhereClause
 		if let limit = limit {
 			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
 		}
@@ -835,7 +840,7 @@ nonisolated private extension ArticlesTable {
 			return Set<Article>()
 		}
 		let parameters = feedIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 		var whereClause = "feedID in \(placeholders) and starred=1"
 		if let limit = limit {
 			whereClause.append(" order by coalesce(datePublished, dateModified, dateArrived) desc limit \(limit)")
@@ -849,7 +854,7 @@ nonisolated private extension ArticlesTable {
 			return 0
 		}
 		let parameters = feedIDs.map { $0 as AnyObject }
-		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+		let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 		let whereClause = "feedID in \(placeholders) and starred=1"
 		return fetchArticleCountsWithWhereClause(database, whereClause: whereClause, parameters: parameters)
 	}
@@ -877,7 +882,7 @@ nonisolated private extension ArticlesTable {
 			starredCount = 0
 		} else {
 			let parameters = feedIDs.map { $0 as AnyObject }
-			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))!
+			let placeholders = NSString.rs_SQLValueList(withPlaceholders: UInt(feedIDs.count))
 			let feedIDClause = "feedID in \(placeholders)"
 			totalCount = fetchArticleCountsWithWhereClause(database, whereClause: feedIDClause, parameters: parameters)
 			unreadCount = fetchArticleCountsWithWhereClause(database, whereClause: "\(feedIDClause) and read=0", parameters: parameters)

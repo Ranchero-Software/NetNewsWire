@@ -26,7 +26,7 @@ public final class DatabaseQueue: Sendable {
 	private let databasePath: String
 	private let serialDispatchQueue: DispatchQueue
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "DatabaseQueue")
+	private static let logger = Logger(subsystem: logSubsystem, category: "DatabaseQueue")
 
 	public init(databasePath: String) {
 		Self.logger.debug("DatabaseQueue: creating with database path \(databasePath)")

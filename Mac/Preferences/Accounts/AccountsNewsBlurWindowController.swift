@@ -65,12 +65,14 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 	@IBAction func action(_ sender: Any) {
 		errorMessageLabel.stringValue = ""
 
-		guard !usernameTextField.stringValue.isEmpty else {
+		let trimmedUsername = usernameTextField.stringValue.trimmingWhitespace
+
+		guard !trimmedUsername.isEmpty else {
 			errorMessageLabel.stringValue = NSLocalizedString("Username required.", comment: "Credentials Error")
 			return
 		}
 
-		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: usernameTextField.stringValue) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .newsBlur, username: trimmedUsername) else {
 			errorMessageLabel.stringValue = NSLocalizedString("There is already a NewsBlur account with that username created.", comment: "Duplicate Error")
 			return
 		}
@@ -86,7 +88,7 @@ final class AccountsNewsBlurWindowController: NSWindowController {
 				progressIndicator.stopAnimation(self)
 			}
 
-			let credentials = Credentials(type: .newsBlurBasic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
+			let credentials = Credentials(type: .newsBlurBasic, username: trimmedUsername, secret: passwordTextField.stringValue)
 			do {
 				let validatedCredentials = try await Account.validateCredentials(type: .newsBlur, credentials: credentials)
 				stopAnimation()

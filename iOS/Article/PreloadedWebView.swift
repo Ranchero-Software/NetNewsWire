@@ -13,13 +13,17 @@ final class PreloadedWebView: WKWebView {
 
 	private var isReady: Bool = false
 	private var readyCompletion: (() -> Void)?
+	private var fullscreenStateObservation: NSKeyValueObservation?
 
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 		super.init(frame: .zero, configuration: configuration)
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
+		fullscreenStateObservation = observe(\.fullscreenState, options: []) { [weak self] _, _ in
 			Task { @MainActor in
-				self?.userDefaultsDidChange()
+				guard let self else {
+					return
+				}
+				WebViewFullscreenKeeper.shared.updateRetention(for: self)
 			}
 		}
 	}
@@ -39,13 +43,6 @@ final class PreloadedWebView: WKWebView {
 			completeRequest(completion: completion)
 		} else {
 			readyCompletion = completion
-		}
-	}
-
-	func userDefaultsDidChange() {
-		if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
-			configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-			reload()
 		}
 	}
 }

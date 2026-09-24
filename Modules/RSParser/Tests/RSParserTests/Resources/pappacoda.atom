@@ -1,0 +1,586 @@
+<?xml-stylesheet type="text/xsl" href="atom-to-xhtml.xsl"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="it" xml:base="https://andrea.pappacoda.it/blog/">
+	<id>https://andrea.pappacoda.it/blog/feed.atom</id>
+	<link rel="self" type="application/atom+xml" href="https://andrea.pappacoda.it/blog/feed.atom"/>
+	<link rel="alternate" type="application/xhtml+xml" href="https://andrea.pappacoda.it/blog/"/>
+	<link rel="hub" href="https://websubhub.com/hub"/>
+	<title>Andrea Pappacoda - Blog</title>
+	<updated>2026-05-24T13:02:30+02:00</updated>
+	<author>
+		<name>Andrea Pappacoda</name>
+		<uri>https://andrea.pappacoda.it</uri>
+	</author>
+	<generator uri="https://www.vim.org" version="9.0">Vim</generator>
+	<icon>/andrea_pappacoda.jpg</icon>
+	<logo>/assets/debian-button.gif</logo>
+	<rights>© 2026 Andrea Pappacoda</rights>
+	<subtitle>Faccio cose</subtitle>
+	<entry>
+		<id>tag:andrea.pappacoda.it,2026-05-24:favicon_2026</id>
+		<title>Le favicon non sono difficili</title>
+		<published>2026-05-24T13:02:30+02:00</published>
+		<updated>2026-05-24T13:02:30+02:00</updated>
+		<summary>Una guida ragionata alle favicon (e non solo)</summary>
+<link rel="alternate" type="application/xhtml+xml" href="https://andrea.pappacoda.it/blog/favicon_2026/"/>
+<content type="xhtml" xml:base="https://andrea.pappacoda.it/blog/favicon_2026/"><div xmlns="http://www.w3.org/1999/xhtml">
+
+<h1>Le favicon non sono difficili</h1>
+<p>
+	Sembra che nel mondo della creazione dei siti web ci sia una enorme confusione
+	su come specificare le
+	<a href="https://it.wikipedia.org/wiki/Favicon">Favicon</a>, ovvero l'icona di
+	un particolare sito web.
+</p>
+<p>
+	Il mio sito al momento in cui sto scrivendo non ha nessuna favicon, ma in
+	questi giorni ho impostato quella del
+	<a href="https://hackinpovo.it">sito di HackInPovo</a>, un hacklab locale
+	di cui faccio parte. Doveva essere una cosa semplicissima, ma se ci sto
+	scrivendo un articolo a riguardo significa che qualcosa è andato storto.
+</p>
+<p>
+	Il web, infatti, ha fatto un casino. Gente confusa che fa domande, "guru" che
+	danno risposte approssimative, soluzioni che "a me funzionano" sparate un po'
+	qua e là. Ma qual è la causa di questo caos?
+</p>
+<h2>Il problema</h2>
+<p>
+	In breve, il problema è che il web è vecchio. Mi spiego meglio.
+</p>
+<p>
+	Esistono tantissimi web browser, da tantissimi anni, e se oggi la situazione è
+	abbastanza standardizzata, con gruppi di persone che lavorano insieme per far
+	sì che diverse implementazioni funzionino in maniera simile, non è sempre stato
+	così.
+</p>
+<p>
+	In passato i vari autori di browser web hanno aggiunto, ognuno a modo
+	loro, la possibilità per un sito web di comunicare al browser una sua icona
+	"preferita", per dare un riferimento simbolico e visuale al sito. Nonostante
+	l'idea sia generica, le risposte alle domande implementative erano diverse:
+	quali formati immagine supportiamo? Come troviamo l'icona? Di che dimensione
+	dev'essere? Ma se tipo voglio aggiungere un collegamento del sito alla
+	<span xml:lang="en">home page</span> del mio telefono che icona uso? E come
+	facciamo per i temi chiaro/scuro? E così via.
+</p>
+<p>
+	È quindi naturale che in un ecosistema dove chi sviluppa dà risposte diverse a
+	domande che cambiano nel tempo, ogni risposta di un "guru" pubblicata da
+	qualche parte nell'internet lascia il tempo che trova.
+</p>
+<h2>La soluzione</h2>
+<p>
+	La soluzione è non ascoltare quello che dicono i guru. Sì, questo articolo
+	compreso.
+</p>
+<p>
+	O meglio: dobbiamo farci dare le risposte da chi sviluppa le tecnologie del
+	web, in quanto sono loro davvero gli unici che conoscono la verità. A questo,
+	non fa mai male aggiungere un po' di buon senso proprio, più un occhio di
+	riguardo per chi utilizza browser vecchi o alternativi.
+</p>
+<p>
+	Ma dove le dobbiamo cercare, quindi, queste risposte? Ci basta sapere chi
+	sviluppa le tecnologie del web come l'HTML, e dove vengono da loro pubblicate
+	le informazioni per noi comuni mortali.
+</p>
+<p>
+	Lo standard HTML viene sviluppato principalmente da un gruppo di persone
+	chiamato "<a href="https://whatwg.org">WHATWG</a>", e pubblicato come una
+	grossa specifica nota come
+	"<cite><a href="https://html.spec.whatwg.org/dev/">HTML Living Standard</a></cite>".
+	Potete spulciarvi tutto il documento se siete curiosi e avete abbastanza tempo
+	libero, ma se volete semplicemente sapere come cavolo impostare 'ste benedette
+	icone vi rimando direttamente alla pagina che descrive il comportamento
+	dell'elemento <code>link</code>, in particolare la sezione
+	<a href="https://html.spec.whatwg.org/dev/links.html#rel-icon">4.6.6.9 Link type "icon"</a>.
+</p>
+<p>
+	Lo standard mostra come per specificare una icona sia necessario creare
+	un elemento <code>link</code> con l'attributo <code>rel</code> impostato a
+	<code>icon</code>, l'attributo <code>type</code> che specifichi il
+	<a href="https://www.iana.org/assignments/media-types/media-types.xhtml#image">media type</a>
+	dell'immagine, l'attributo <code>sizes</code> che specifichi le dimensioni
+	in pixel dell'immagine e infine l'attributo <code>href</code> che contenga il
+	percorso all'immagine da usare come icona.
+</p>
+<p>
+	Tutte queste informazioni vengono usate dal web browser per capire quale icona
+	scegliere a seconda del contesto. Una immagine vettoriale SVG verrà
+	probabilmente preferita a un PNG, a meno che il PNG non abbia una dimensione in
+	pixel che sia esattamente quella necessaria al browser.
+</p>
+<p>
+	O forse no.
+</p>
+<p>
+	Non ci importa sapere che cosa un determinato browser faccia <em>oggi</em>,
+	perché probabilmente domani agirà in maniera diversa. Quello che ci interessa
+	sapere è come comunicare al browser in maniera efficace tutto quello che gli
+	serve per fare la scelta che questo reputi più giusta.
+</p>
+<h2>Il buon senso</h2>
+<p>
+	Arriviamo quindi alle mie raccomandazioni personali, basate su quello che credo
+	sia un po' di ragionamento e buon senso.
+</p>
+<p>
+	Storicamente i browser web hanno usato una immagine in
+	<a href="https://www.iana.org/assignments/media-types/image/vnd.microsoft.icon">formato ICO</a>
+	chiamata "favicon.ico" e disponibile nella cartella primaria del sito web.
+	Quindi, se il nostro sito è <i>blog.example.org</i>, dovrebbe essere
+	accessibile dall'URL <code>https://blog.example.org/favicon.ico</code>.
+</p>
+<p>
+	È importante assicurarsi che l'immagine sia effettivamente in formato ICO, e
+	non semplicemente chiamata "favicon.ico". Creare una icona in questo formato è
+	abbastanza semplice usando il programma
+	<a href="https://imagemagick.org">ImageMagick</a>:
+</p>
+<pre><samp><span class="prompt">$ </span><kbd>magick immagine.png -resize 256x -define icon:auto-resize favicon.ico</kbd></samp></pre>
+<p>
+	L'opzione
+	<code>
+		<a href="https://imagemagick.org/script/defines.php">-define</a>
+		icon:auto-resize
+	</code> ci permette di sfruttare una utile funzionalità dei file ICO, ovvero
+	quella di inserire più dimensioni della stessa immagine all'interno di un unico
+	file. Possiamo averne conferma sempre con ImageMagick usando il suo
+	sotto-comando <code>identify</code>:
+</p>
+<pre><samp><span class="prompt">$ </span><kbd>magick identify favicon.ico</kbd>
+favicon.ico[0] ICO 256x256 256x256+0+0 8-bit sRGB 0.010u 0:00.003
+favicon.ico[1] ICO 192x192 192x192+0+0 8-bit sRGB 0.010u 0:00.001
+favicon.ico[2] ICO 128x128 128x128+0+0 8-bit sRGB 0.010u 0:00.001
+favicon.ico[3] ICO 96x96 96x96+0+0 8-bit sRGB 0.010u 0:00.000
+favicon.ico[4] ICO 64x64 64x64+0+0 8-bit sRGB 0.010u 0:00.000
+favicon.ico[5] ICO 48x48 48x48+0+0 8-bit sRGB 0.000u 0:00.000
+favicon.ico[6] ICO 40x40 40x40+0+0 8-bit sRGB 0.000u 0:00.000
+favicon.ico[7] ICO 32x32 32x32+0+0 8-bit sRGB 0.000u 0:00.000
+favicon.ico[8] ICO 24x24 24x24+0+0 8-bit sRGB 0.000u 0:00.000
+favicon.ico[9] ICO 16x16 16x16+0+0 8-bit sRGB 569494B 0.000u 0:00.000</samp></pre>
+<p>
+	Essendo che il formato ICO non fa uso di compressione, l'avere così tante
+	immagini di diverse dimensioni può portare a un file di dimensioni eccessive.
+	Il problema è evitabile specificando quali risoluzioni ci interessano
+	all'opzione <code>-define icon:auto-resize</code>, ad esempio con
+	<code>-define icon:auto-resize=128,96,64,48,40,32,24,16</code>.
+</p>
+<p>
+	Infine, questa immagine dovrà essere aggiunta all'intestazione del documento
+	HTML del nostro sito con un elemento <code>link</code>:
+</p>
+<pre><code class="language-html">&lt;link
+	rel="icon"
+	type="image/vnd.microsoft.icon"
+	sizes="128x128 96x96 64x64 48x48 40x40 32x32 24x24 16x16"
+	href="/favicon.ico"
+/&gt;</code></pre>
+<p>
+	Una icona di più alta risoluzione può essere aggiunta usando una immagine di
+	tipo PNG, che è un formato un po' più moderno ed efficiente dei file ICO di
+	Microsoft. Il mio consiglio è di usare una immagine che abbia una risoluzione
+	maggiore dell'immagine ICO, come 256x256 o 512x512 pixel, ma non più di
+	1024x1024 pixel.
+</p>
+<p>
+	Il motivo è che tipicamente le favicon vengono rappresentate come piccolissime
+	immagini sul nostro schermo, e diventano più grandi in condizioni particolari
+	(tipo quando aggiungiamo un sito alla pagina iniziale del browser). Non serve
+	quindi che l'immagine abbia risoluzione estremamente elevata. Per i curiosi,
+	i dettagli sul perché del limite di 1024 pixel sono discussi più sotto.
+</p>
+<p>
+	Il secondo elemento <code>link</code> che quindi consiglio è questo qui:
+</p>
+<pre><code class="language-html">&lt;link
+	rel="icon"
+	type="image/png"
+	sizes="256x256"
+	href="/favicon.png"
+/&gt;</code></pre>
+<p>
+	Ma tutte queste chiacchiere sulle dimensioni sono inutili. La vera soluzione è
+	quella di usare una immagine vettoriale in formato SVG, così che i siano i
+	browser stessi a poter scegliere la dimensione che vogliono, senza dover star
+	lì a impazzire creando mille mila PNG di dimensioni diverse. L'unico motivo per
+	cui non consiglio di usare <em>solo</em> un SVG è che non tutti i browser li
+	supportano.
+</p>
+<p>
+	Il terzo e ultimo elemento <code>link</code> da aggiungere è quindi questo:
+</p>
+<pre><code class="language-html">&lt;link
+	rel="icon"
+	type="image/svg+xml"
+	sizes="any"
+	href="/favicon.svg"
+/&gt;</code></pre>
+<h2>La mela</h2>
+<p>
+	E anche oggi mi tocca parlar di Apple...
+</p>
+<p>
+	Anche se questo articolo parla delle favicon, non posso fare a meno di parlare
+	anche della icona assegnata alle Web Clip su iOS, meglio nota come "Apple touch
+	icon".
+</p>
+<p>
+	Nonostante Safari di Apple utilizzi le icone specificate con
+	<code>rel="icon"</code> come iconcine dei siti all'interno del browser stesso,
+	quando andiamo ad aggiungere il sito alla schermata Home del telefono (creando
+	quindi una Web Clip) quell'immagine viene totalmente ignorata.
+</p>
+<p>
+	Al suo posto viene invece usata l'immagine specificata attraverso il valore
+	<code>apple-touch-icon</code> dell'attributo <code>rel</code>. Questa immagine
+	ha dei requisiti particolari imposti da Apple, sparsi in diverse pagine di
+	documentazione ufficiale.
+	L'<a href="https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariWebContent/ConfiguringWebApplications/ConfiguringWebApplications.html">originale</a>
+	(e ormai obsoleto) documento mostra diverse dimensioni come esempi,
+	raccomandando di leggere le <i xml:lang="en">iOS Human Interface Guidelines</i> per i valori effettivi.
+	Queste, nella
+	<a href="https://developer.apple.com/design/human-interface-guidelines/app-icons#Specifications">sezione dedicata alle icone</a>
+	raccomandano che le icone siano quadrati di 1024 pixel. E, ancora, in una
+	<a href="https://developer.apple.com/documentation/devicemanagement/webclip">pagina
+	di documentazione per sviluppatori</a> riguardante le API di gestione del dispositivo,
+	viene raccomandato che l'immagine non superi i 400x400 pixel.
+</p>
+<p>
+	Insomma, un casino.
+</p>
+<p>
+	Per capire effettivamente cosa fare bisogna fare un passo indietro nel tempo,
+	quando la documentazione di Apple conteneva ancora informazioni precise.
+	<a href="https://archive.is/VBAJs">Nel 2023</a>, infatti, le
+	<abbr title="Human Interface Guidelines">HIG</abbr> spiegavano che i dispositivi
+	iOS usano icone a multipli di 60 pixel, a seconda della loro dimensione.
+	Il mio vecchio iPhone SE, ad esempio, usa un fattore di scala "@2x", quindi
+	vuole le icone di 120x120 pixel, mentre l'ultimissimo iPhone 17 Pro Max ha un
+	fattore di scala @3x, con icone della Home screen a 180x180 pixel.
+</p>
+<p>
+	Potremmo quindi voler usare due immagini, una scalata @2x e una @3x.
+	Se proprio sentite che 180 pixel sembrano troppo pochi, potete anche inventarvi
+	un fattore di scala @4x con una immagine di 240x240 pixel, così da essere pronti
+	anche all'iPhone 28 con Diplay Retina Hyper-Dense™.
+</p>
+<!--
+	In realtà l'icona 120x120 l'ho esclusa di proposito perché per qualche motivo
+	viene sempre preferita anche dagli iPhone scalati @3x, nonostante esista anche
+	l'icona 180x180. E, di fatti, comporta che l'icona della web clip sia leggermente
+	sgranata.
+
+	Ho riportato questo problema a Apple, ma senza ricevere risposta:
+
+	> Hello,
+	>
+	> The Safari browser always prefers a @2x scaled Web Clip icon
+	> (apple-touch-icon-120x120.png) even for devices which use @3x scaled app
+	> icons (like all the most recent iPhones).
+	>
+	> Safari should instead only use the 120x120 image on the devices which perform
+	> @2x scaling, as described in the Layout chapter of the Human Interface
+	> Guidelines, while using the 180x180 images on the @3x-scaled devices.
+	>
+	> For instance, Safari should not unconditionally perform a
+	> GET /apple-touch-icon-120x120.png, but make it conditional on
+	> what I showed above.
+	>
+	> Thank you. Have a nice day.
+
+	Poi vabbè, ci sono altri problemi. Tipo che Safari su iOS 26 sembra ignorare
+	completamente l'attributo link, e faccia due GET hardcoded su
+	apple-touch-icon.png e apple-touch-icon-120x120.png. A caso. Completamente. Boh.
+	E la roba crazy è che su iOS 15 invece i link rel funzionano!!! Ma che cazzzz
+
+	Se stai leggendo questo, sei curioso next level :)
+-->
+<p>
+	Ma in termini pratici, questa distinzione non è davvero necessaria.
+	L'icona infatti verrà infatti riadattata automaticamente dal dispositivo se
+	troppo grande o troppo piccola. Per semplicità consiglio quindi di usare un
+	singolo PNG di 180x180 pixel chiamato <code>apple-touch-icon.png</code>.
+	Inoltre, l'immagine dev'essere quadrata, non circolare (così come le icone di iOS).
+</p>
+<p>
+	Ed ecco quindi il vero ultimo elemento <code>link</code> da aggiungere alla
+	nostra pagina HTML:
+</p>
+<pre><code class="language-html">&lt;link
+	rel="apple-touch-icon"
+	type="image/png"
+	sizes="180x180"
+	href="/apple-touch-icon.png"
+/&gt;</code></pre>
+<h2>Trick extra</h2>
+<p>
+	Se proprio vi piace fare tutto preciso per filo e per segno allora vi consiglio
+	anche l'uso di tre programmini per ottimizzare e semplificare le vostre favicon:
+	<a href="https://pngquant.org">pngquant</a>,
+	<a href="https://github.com/oxipng/oxipng">oxipng</a> e
+	<a href="https://github.com/linebender/resvg/tree/main/crates/usvg">usvg</a>.
+</p>
+<p>
+	I primi due servono per ridurre drasticamente le dimensioni dei file PNG. Il
+	primo ricodifica i PNG in un formato più efficiente, riducendo il numero di
+	colori usati per esprimere l'icona (talvolta con una minima, seppur
+	impercettibile, perdita di dettagli), mentre il secondo rimuove metadati non
+	necessari e ri-comprime l'immagine senza perdita di qualità.
+</p>
+<p>
+	Ad esempio, per creare la favicon di tipo PNG che ho descritto prima potete
+	usare una combo di ImageMagick + pngquant + oxipng in questo modo:
+</p>
+<pre><code>$ magick immagine.png -resize 256x png:- \
+| pngquant --speed 1 - \
+| oxipng --opt max --strip all --out favicon.png -</code></pre>
+<p>
+	usvg, invece, semplifica drasticamente la struttura dei file SVG così che
+	risultino più facilmente gestibili dai vari visualizzatori, risolvendo così
+	eventuali problemi di visualizzazione che alcuni utenti potrebbero incontrare,
+	specialmente su browser vecchi o alternativi. Usarlo è molto semplice:
+</p>
+<pre><code>$ usvg immagine.svg favicon.svg</code></pre>
+<h2>Conclusioni</h2>
+<p>
+	Spero che questo articolo abbia fatto un po' di chiarezza!
+</p>
+<p>
+	Non solo: il messaggio più importante che voglio far passare è che
+	<em>importantissimo</em> sviluppare la capacità di individuare <em>da chi</em>
+	andare a prendere le risposte alle nostre domande. Il web, come ogni altra
+	parte del mondo, è pieno di contenuto che ci viene sparato addosso da ogni
+	lato. Spendere un po' di tempo ed energie per andare alla radice della
+	questione e trovare la <em>vera</em> risposta è l'unico modo per trovare quale,
+	tra il mare di dati, è l'informazione corretta.
+</p>
+<p>
+	E se siete dei nerd come me, è anche divertente :D
+</p>
+<p><small>Dedicato a viirginiax</small></p>
+	
+</div></content>
+	</entry>
+	<entry>
+		<id>tag:andrea.pappacoda.it,2024-12-12:tesi</id>
+		<title>Una nuova primitiva di creazione dei processi per sistemi Unix</title>
+		<published>2024-12-12T15:30:00+01:00</published>
+		<updated>2026-06-02T15:14:31+02:00</updated>
+		<summary>
+			Nei sistemi Unix la creazione dei processi è stata storicamente effettuata
+			attraverso la famiglia di funzioni fork() ed exec(). In questa tesi verrà
+			introdotta e analizzata la funzione spawn(), una nuova primitiva
+			fondamentalmente diversa che, con un design più semplice, mira a risolvere
+			le problematiche legate alla natura di fork()
+		</summary>
+		<link rel="alternate" type="application/pdf" href="https://andrea.pappacoda.it/blog/tesi.pdf"/>
+	</entry>
+	<entry>
+		<id>tag:andrea.pappacoda.it,2023-06-09:c_su_windows</id>
+		<title>C su Windows</title>
+		<published>2023-06-09T16:00:00+01:00</published>
+		<updated>2025-12-26T20:30:00+01:00</updated>
+		<summary>Come installare un ambiente di sviluppo flessibile e moderno per C su Windows</summary>
+<link rel="alternate" type="application/xhtml+xml" href="https://andrea.pappacoda.it/blog/c_su_windows/"/>
+<content type="xhtml" xml:base="https://andrea.pappacoda.it/blog/c_su_windows/"><div xmlns="http://www.w3.org/1999/xhtml">
+
+<h1>C su Windows</h1>
+<p>Installare un compilatore C su Windows può essere semplice quanto complesso, a
+seconda della procedura scelta. Ci sono due modi principali per farlo, uno più
+immediato e uno più flessibile. Si può decidere di installare l'IDE Visual
+Studio e lasciar fare tutto a lui, ma si sarà praticamente obbligati ad usare
+l'IDE per tutte le interazioni con gli strumenti di sviluppo C, oppure si può
+andare a installare gli strumenti di sviluppo manualmente senza l'IDE e andare a
+configurare il nostro editor di codice per fare uso degli strumenti scaricati.</p>
+<p>Qui andrò a spiegare i dettagli della seconda procedura, dato che la prima è
+abbastanza semplice; basta cercare Visual Studio sul web, scaricare l'installer
+e seguire le istruzioni a schermo.</p>
+<p>Potrei partire subito con la lista di cose da fare, ma preferisco prima spiegare
+un attimo cosa e soprattutto perché stiamo facendo le cose in questo modo. C e
+C++, a differenza di altri linguaggi, sono solo &quot;standard&quot;, documenti che
+descrivono come C dovrebbe funzionare, ed esistono quindi diverse
+implementazioni di questi standard, di queste specifiche. Ogni implementazione è
+divisa in due componenti principali: il compilatore C, che prende il nostro
+codice sorgente e lo trasforma in codice macchina eseguibile, e la libreria
+standard C che contiene tutte le funzioni, appunto, &quot;di libreria&quot;, come
+<code>printf()</code>, <code>scanf()</code>, e insomma tutte le funzioni che possiamo includere nel
+nostro codice con direttive come <code>#include &lt;stdlib.h&gt;</code> eccetera.</p>
+<p>Dovrebbe essere ora un po' più chiaro cosa dobbiamo fare, ovvero installare un
+compilatore e una libreria standard. Su Windows esistono diversi compilatori C,
+ma solo una libreria standard. Questi fanno parte di &quot;MSVC&quot;, che sta per
+&quot;Microsoft Visual C&quot;, che come dice il nome sono parte della suite di Visual
+Studio. Per installarli è necessario scaricare i &quot;Visual Studio Build Tools&quot;,
+che sono gli stessi strumenti installati con l'IDE ma senza l'IDE. I Build Tools
+sono sul sito di Visual Studio; basta cercarli sul web e andare in fondo alla
+pagina (oppure andare direttamente su
+<a href="https://visualstudio.microsoft.com/it/downloads/#build-tools-for-visual-studio-2022">https://visualstudio.microsoft.com/it/downloads/#build-tools-for-visual-studio-2022</a>).
+Una volta scaricato ed avviato l'installer ci ritroveremo davanti a una sezione
+che permette di selezionare tanti workload diversi; a noi servono solo una
+manciata di componenti, quindi bisogna spostarsi nella sezione  &quot;Singoli
+componenti&quot; selezionare &quot;Funzionalità di base per C++ Build Tools&quot;, la versione
+più recente di MSVC (nel mio caso &quot;MSVC v143 - VS 2022 C++ Build Tools x64/x86
+(più recente)&quot;), l'ultimo Windows SDK (nel mio caso &quot;Windows 11 SDK
+(10.0.22621.0)&quot;), e &quot;Windows Universal C Runtime&quot;. Una volta selezionati,
+possiamo procedere con l'installazione. Il tutto andrà a occupare un paio di GB
+di spazio di archiviazione.</p>
+<figure>
+	<picture>
+		<source srcset="c_su_windows_visual_studio_componenti_light.png" media="(prefers-color-scheme: light)" width="1280" height="720"/>
+		<img src="c_su_windows_visual_studio_componenti.png" width="1280" height="720" alt="Screenshot del Visual Studio Installer"/>
+	</picture>
+	<figcaption>Componenti da selezionare dal Visual Studio Installer</figcaption>
+</figure>
+<p>A questo punto abbiamo già un ambiente di sviluppo C, benché molto minimale.
+Possiamo accedere al compilatore aprendo il &quot;Prompt dei comandi di sviluppo
+nativo x64&quot;, e dando il comando <code>cl</code>. Per compilare un file si può dare <code>cl nomefile.c</code>, ed eseguire il .exe generato.</p>
+<p>Per come Microsoft ha sviluppato i suoi compilatori, l'uso di questo prompt di
+comandi di sviluppo, a volte installato in inglese come &quot;x64 Native Tools
+Command Prompt&quot;, è obbligatorio per avere accesso al compilatore C. Quindi ogni
+volta che vorremo andare a sviluppare codice C o C++ dovremo lanciare prima di
+tutto uno di quei <code>cmd</code>, e da lì tutti i programmi (ad esempio, se vogliamo
+usare VSCode, dovremo aprire un developer command prompt e digitare <code>code</code> per
+lanciarlo direttamente dal <code>cmd</code> di sviluppo).</p>
+<p>Con questo set up, però, aprendo un editor di codice come VSCode non ci saranno
+funzionalità &quot;smart&quot; come segnalazione di errori, warning, suggerimenti,
+eccetera. Anche qui, abbiamo due opzioni: la prima è specifica a VSCode, di
+qualità relativamente bassa, (e ho visto che è un po' buggata, ma non avendola
+usata molto personalmente non ne sono sicuro), mentre la seconda è utilizzabile
+da pressoché tutti gli editor di codice, è più usata, dà suggerimenti migliori,
+ma vanno fatti dei passaggi a mano. Ovviamente, sceglieremo la seconda opzione.</p>
+<p>La seconda opzione consiste nell'usare clangd, un <em>Language Server</em> basato sul
+compilatore Clang, che parla il <em>Language Server Protocol</em> (LSP). In pratica è
+un programmino che parla con un qualsiasi editor di codice che supporta l'LSP e
+gli dice se e cosa non va bene del codice presente nell'editor. Clang invece è
+un ottimo compilatore basato sul progetto LLVM, ed è naturale che abbia
+suggerimenti molto utili.</p>
+<p>Per ottenere clangd è sufficiente scaricare l'ultima release pubblicata sulla
+sua pagina GitHub, disponibile al link
+<a href="https://github.com/clangd/clangd/releases/latest">https://github.com/clangd/clangd/releases/latest</a> nella sezione &quot;Assets&quot;. Una
+volta scaricato lo zip, possiamo estrarlo in una cartella a piacere e informare
+Windows della sua esistenza, così che possa essere eseguito dal nostro editor di
+testo; in altri termini, dobbiamo aggiungere l'eseguibile <code>clangd</code> alla variabile
+d'ambiente <code>PATH</code>. Per fare ciò ci basta cercare &quot;Variabili d'ambiente&quot; nella
+casella di ricerca di sistema, aprire la pagina delle impostazioni, e andare a
+modificare la variabile <code>Path</code> per l'utente corrente. Una volta schiacciato
+&quot;Modifica&quot;, andiamo a schiacciare &quot;Nuovo&quot; nella finestra di dialogo appena
+aperta e incolliamo il percorso completo alla cartella <code>bin</code> contenuta nello zip
+di clangd appena estratto. Fatto ciò, possiamo schiacciare &quot;Ok&quot; per chiudere
+tutte le finestre appena aperte.</p>
+<figure>
+	<picture>
+		<img src="clangd_path.png" width="950" height="642" alt="Screenshot del dialogo di sistema per modificare le variabili d'ambiente"/>
+	</picture>
+	<figcaption>Variabile Path modificata per clangd</figcaption>
+</figure>
+<p>Bene, ora che abbiamo installato tutta la roba che ci serve, possiamo procedere
+con l'ultimo passaggio: configurare l'editor di codice per fare uso di quello
+che abbiamo installato. Essendo clangd un server LSP standard è possibile usare
+un qualsiasi editor di codice molto facilmente, ed io ho scelto VSCode. Per
+usare clangd su VSCode è sufficiente installare l'estensione &quot;clangd&quot; ed
+assicurarsi che l'estensione C/C++ di Microsoft non sia installata, in quanto
+andrebbe in conflitto con clangd. Finita l'installazione, il nostro editor
+dovrebbe essere in grado di sfruttare tutte le funzionalità intelligenti che
+potremmo desiderare, come salti a definizione di funzioni, documentazione
+appoggiando il puntatore su un simbolo, eccetera.</p>
+<figure>
+	<picture>
+		<source srcset="vscode_lsp_light.png" media="(prefers-color-scheme: light)" width="1024" height="728"/>
+		<img src="vscode_lsp.png" width="1024" height="728" alt="Screenshot di VSCode che mostra la funzionalità di documentazione al passaggio del cursore"/>
+	</picture>
+	<figcaption>Alcune delle funzionalità abilitate da LSP</figcaption>
+</figure>
+<p>Nonostante LSP sia fantastico per quanto riguarda la scrittura di codice, non
+fornisce altre funzionalità che potremmo volere, come il debug in un click di un
+programma. Quest'area è meno standardizzata, per cui so dirvi solo come
+configurare il debugger su VSCode. Il miglior debugger per C e C++ integrato in
+VSCode è, a parer mio, contenuto nell'estensione CodeLLDB. Usa, appunto, il
+debugger LLDB, parte di LLVM proprio come clangd, e supporta il debug di
+programmi scritti per Windows e non. Una volta installata l'estensione, rimane
+un ultima parte di configurazione da fare: bisogna dire a VSCode quale programma
+vogliamo debuggare, come, e dove. Questa configurazione viene fatta creando un
+file chiamato <code>launch.json</code> e memorizzato nella cartella <code>.vscode</code> del progetto,
+contenente più o meno questo:</p>
+<pre class="shiki shiki-themes dark-plus light-plus" style="background-color:light-dark(#FFFFFF, #1E1E1E);--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF;color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000" tabindex="0"><code><span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">{</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">    "version"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"0.2.0"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">    "configurations"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: [</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">        {</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "type"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"lldb"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "expressions"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"native"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "request"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"launch"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "name"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"Debug"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "program"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"${workspaceFolder}/mioprogetto.exe"</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">        }</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">    ]</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">}</span></span></code></pre>
+<p>Quel file dice a VSCode che abbiamo creato una configurazione chiamata &quot;Debug&quot;,
+da eseguire con il debugger &quot;lldb&quot;, che deve lanciare il programma
+&quot;mioprogetto.exe&quot;. L'opzione &quot;expressions: native&quot; dice a LLDB che vogliamo
+usare la classica sintassi C per le espressioni inserite nel pannello &quot;Watch&quot;
+del debugger, e non una alternativa custom di LLDB.</p>
+<p>Bene! Ora ci basta soltanto compilare il nostro file <code>.c</code> dal terminale
+integrato di VSCode e premere il triangolino verde per far partire il debugger.
+Per compilare, ad esempio, un file chiamato &quot;main.c&quot;, ci è sufficiente usare
+questo comando:</p>
+<pre class="shiki shiki-themes dark-plus light-plus" style="background-color:light-dark(#FFFFFF, #1E1E1E);--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF;color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000" tabindex="0"><code><span class="line"><span>cl -Zi main.c</span></span></code></pre>
+<p>E verrà generato l'eseguibile <code>main.exe</code>, insieme ad altri file intermedi che
+non ci interessano. L'uso della opzione <code>-Zi</code> è indispensabile per il debug, in
+quanto senza di questa il nostro codice C verrebbe compilato senza informazioni
+di debug richieste, appunto, da LLDB per debuggare il programma.</p>
+<p>Potremmo fermarci qui, ma c'è un ultima chicca che voglio lasciarvi che renderà
+l'esperienza di debug un po' più gradevole. Dover ricompilare a mano tutte le
+volte il programma prima di poterlo eseguire è un po' una rottura, vero? Beh,
+per me lo è, ma fortunatamente VSCode può automatizzare il tutto con solo un
+altro paio di righe di configurazione.</p>
+<p>Per prima cosa andiamo a creare un nuovo file <code>tasks.json</code> all'interno della
+cartella <code>.vscode</code> creata in precedenza che dice all'editor come compilare il
+nostro progetto:</p>
+<pre class="shiki shiki-themes dark-plus light-plus" style="background-color:light-dark(#FFFFFF, #1E1E1E);--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF;color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000" tabindex="0"><code><span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">{</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">    "version"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"2.0.0"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">    "tasks"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: [</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">        {</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "label"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"compile"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "type"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"process"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "command"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"cl"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "args"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: [</span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"-Zi"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">, </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"mioprogetto.c"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">],</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "presentation"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: {</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">                "reveal"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"silent"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">                "focus"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#0000FF, #569CD6);--shiki-dark:#569CD6;--shiki-light:#0000FF">false</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">            }</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">        }</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">    ]</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">}</span></span></code></pre>
+<p>Il file definisce un task chiamato &quot;compile&quot; che lancia un &quot;process&quot;, &quot;cl&quot;,
+passandogli gli argomenti &quot;-Zi&quot; e &quot;mioprogetto.c&quot;. Visto che è un task di bassa
+importanza, diciamo anche che la sua &quot;presentation&quot; dev'essere &quot;silent&quot;, ovvero
+che l'output della compilazione dev'essere mostrato solo in caso di errore.</p>
+<p>Il secondo e ultimo passaggio è quello di dire a VSCode che il task di
+compilazione dev'essere lanciato appena prima di far partire il debugger, e per
+fare ciò ci basta solamente aggiungere l'opzione <code>&quot;preLaunchTask&quot;: &quot;compile&quot;</code> al
+file <code>launch.json</code> creato prima, che dovrebbe ora essere così:</p>
+<pre class="shiki shiki-themes dark-plus light-plus" style="background-color:light-dark(#FFFFFF, #1E1E1E);--shiki-dark-bg:#1E1E1E;--shiki-light-bg:#FFFFFF;color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000" tabindex="0"><code><span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">{</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">    "version"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"0.2.0"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">    "configurations"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: [</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">        {</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "type"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"lldb"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "expressions"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"native"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "request"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"launch"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "name"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"Debug"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "program"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"${workspaceFolder}/mioprogetto.exe"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">,</span></span>
+<span class="line"><span style="color:light-dark(#0451A5, #9CDCFE);--shiki-dark:#9CDCFE;--shiki-light:#0451A5">            "preLaunchTask"</span><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">: </span><span style="color:light-dark(#A31515, #CE9178);--shiki-dark:#CE9178;--shiki-light:#A31515">"compile"</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">        }</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">    ]</span></span>
+<span class="line"><span style="color:light-dark(#000000, #D4D4D4);--shiki-dark:#D4D4D4;--shiki-light:#000000">}</span></span></code></pre>
+<p>E questo è tutto, potete ora giocare col vostro nuovo ambiente di sviluppo per C
+e C++ sul sistema operativo di casa Microsoft! A parer mio, questo setup è il
+miglior compromesso tra convenienza, semplicità e funzionalità, per non parlare
+di quanto sia più leggero rispetto a un IDE completo come Visual Studio. Usare
+questi strumenti in questo modo vi permette di mettere mano direttamente al
+livello più basso del processo costruzione dei programmi C, così da avere la
+possibilità di capire veramente cosa accade dietro alle quinte quando premete
+quel bel bottone verde per far partire il programma :)</p>
+<p><small>Dedicato al Maestro</small></p>
+	
+</div></content>
+	</entry>
+</feed>

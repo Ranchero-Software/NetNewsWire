@@ -31,7 +31,7 @@ enum CreateSubscriptionResult {
 	}
 
 	private let feedbinBaseURL = URL(string: "https://api.feedbin.com/v2/")!
-	private let session = URLSession.webservice
+	private let session = URLSession.makeWebserviceSession()
 	private var suspended = false
 	private var lastBackdateStartTime: Date?
 
@@ -60,7 +60,7 @@ enum CreateSubscriptionResult {
 			try await session.send(request: request)
 			return credentials
 		} catch {
-			if case WebserviceError.httpError(let status) = error, status == 401 {
+			if case WebserviceError.httpError(let status, _) = error, status == 401 {
 				return nil
 			}
 			throw error
@@ -95,7 +95,7 @@ enum CreateSubscriptionResult {
 		return importResult
 	}
 
-	func retrieveTags() async throws -> [FeedbinTag]? {
+	func retrieveTags() async throws -> (tags: [FeedbinTag]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -105,8 +105,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, tags) = try await session.send(request: request, resultType: [FeedbinTag].self)
-		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
-		return tags
+		return (tags, response)
 	}
 
 	func renameTag(oldName: String, newName: String) async throws {
@@ -121,7 +120,7 @@ enum CreateSubscriptionResult {
 		try await session.send(request: request, method: HTTPMethod.post, payload: payload)
 	}
 
-	func retrieveSubscriptions() async throws -> [FeedbinSubscription]? {
+	func retrieveSubscriptions() async throws -> (subscriptions: [FeedbinSubscription]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -133,8 +132,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callComponents.url!, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, subscriptions) = try await session.send(request: request, resultType: [FeedbinSubscription].self)
-		storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
-		return subscriptions
+		return (subscriptions, response)
 	}
 
 	func createSubscription(url: String) async throws -> CreateSubscriptionResult {
@@ -171,11 +169,11 @@ enum CreateSubscriptionResult {
 			case HTTPResponseCode.redirectTemporary: // 302
 				return .alreadySubscribed
 			default:
-				throw WebserviceError.httpError(status: response.forcedStatusCode)
+				throw WebserviceError.httpError(status: response.forcedStatusCode, responseBody: nil)
 			}
 		} catch {
 			switch error {
-			case WebserviceError.httpError(let status):
+			case WebserviceError.httpError(let status, _):
 				switch status {
 				case HTTPResponseCode.unauthorized: // 401
 					// I don’t know why we get 401s here. This looks like a Feedbin bug, but it only happens
@@ -215,7 +213,7 @@ enum CreateSubscriptionResult {
 		try await session.send(request: request, method: HTTPMethod.delete)
 	}
 
-	func retrieveTaggings() async throws -> [FeedbinTagging]? {
+	func retrieveTaggings() async throws -> (taggings: [FeedbinTagging]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -225,8 +223,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, taggings) = try await session.send(request: request, resultType: [FeedbinTagging].self)
-		storeConditionalGet(key: ConditionalGetKeys.taggings, headers: response.allHeaderFields)
-		return taggings
+		return (taggings, response)
 	}
 
 	func createTagging(feedID: Int, name: String) async throws -> Int {
@@ -368,7 +365,7 @@ enum CreateSubscriptionResult {
 		return (entries, pagingInfo.nextPage)
 	}
 
-	func retrieveUnreadEntries() async throws -> [Int]? {
+	func retrieveUnreadEntries() async throws -> (unreadArticleIDs: [Int]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -378,8 +375,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, unreadEntries) = try await session.send(request: request, resultType: [Int].self)
-		storeConditionalGet(key: ConditionalGetKeys.unreadEntries, headers: response.allHeaderFields)
-		return unreadEntries
+		return (unreadEntries, response)
 	}
 
 	func createUnreadEntries(entries: [Int]) async throws {
@@ -406,7 +402,7 @@ enum CreateSubscriptionResult {
 		try await session.send(request: request, method: HTTPMethod.delete, payload: payload)
 	}
 
-	func retrieveStarredEntries() async throws -> [Int]? {
+	func retrieveStarredEntries() async throws -> (starredArticleIDs: [Int]?, response: HTTPURLResponse) {
 		if suspended {
 			throw WebserviceError.suspended
 		}
@@ -416,8 +412,7 @@ enum CreateSubscriptionResult {
 		let request = URLRequest(url: callURL, credentials: credentials, conditionalGet: conditionalGet)
 
 		let (response, starredEntries) = try await session.send(request: request, resultType: [Int].self)
-		storeConditionalGet(key: ConditionalGetKeys.starredEntries, headers: response.allHeaderFields)
-		return starredEntries
+		return (starredEntries, response)
 	}
 
 	func createStarredEntries(entries: [Int]) async throws {
@@ -449,8 +444,11 @@ enum CreateSubscriptionResult {
 
 extension FeedbinAPICaller {
 
-	func storeConditionalGet(key: String, headers: [AnyHashable: Any]) {
-		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: headers), for: key)
+	func storeConditionalGetIfNeeded(key: String, response: HTTPURLResponse) {
+		guard response.forcedStatusCode == HTTPResponseCode.OK else {
+			return
+		}
+		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: response.allHeaderFields), for: key)
 	}
 
 	func extractPageNumber(link: String?) -> Int? {

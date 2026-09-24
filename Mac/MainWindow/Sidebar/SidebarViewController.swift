@@ -25,7 +25,7 @@ extension Notification.Name {
 
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
-	@IBOutlet var outlineView: NSOutlineView!
+	@IBOutlet var outlineView: SidebarOutlineView!
 
 	weak var delegate: SidebarDelegate?
 
@@ -65,11 +65,27 @@ extension Notification.Name {
 		return selectedNodes.representedObjects()
 	}
 
+	var selectedContainer: Container? {
+		for node in selectedNodes {
+			if let container = containerForNode(node) {
+				return container
+			}
+		}
+		return nil
+	}
+
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
+	private let keyboardDelegate = SidebarKeyboardDelegate()
 
 	// MARK: - NSViewController
 
+	convenience init() {
+		self.init(nibName: "SidebarView", bundle: nil)
+	}
+
 	override func viewDidLoad() {
+		keyboardDelegate.sidebarViewController = self
+		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
@@ -186,7 +202,7 @@ extension Notification.Name {
 		guard notification.object is AccountManager else {
 			return
 		}
-		if isReadFiltered {
+		if isReadFiltered || AppDefaults.shared.sidebarSortType == .byUnreadCount {
 			rebuildTreeAndRestoreSelection()
 		}
 	}
@@ -206,7 +222,7 @@ extension Notification.Name {
 			return
 		}
 
-		if isReadFiltered {
+		if isReadFiltered || AppDefaults.shared.sidebarSortType == .byUnreadCount {
 			queueRebuildTreeAndRestoreSelection()
 		}
 	}
@@ -584,6 +600,16 @@ private extension SidebarViewController {
 		return node.representedObject as? Feed
 	}
 
+	func containerForNode(_ node: Node) -> Container? {
+		if let container = node.representedObject as? Container {
+			return container
+		}
+		if node.representedObject is Feed {
+			return node.parent?.representedObject as? Container
+		}
+		return nil
+	}
+
 	func addAllSelectedToFilterExceptions() {
 		for feed in selectedFeeds {
 			addToFilterExceptionsIfNecessary(feed)
@@ -758,11 +784,9 @@ private extension SidebarViewController {
 	}
 
 	func shouldSkipRow(_ row: Int) -> Bool {
-		let skipExpandedFolders = UserDefaults.standard.bool(forKey: "JalkutRespectFolderExpansionOnNextUnread")
-
 		// Skip group items, because they should never be selected.
-		// Skip expanded folders only if Jalkut's pref is enabled.
-		if  rowIsGroupItem(row) || (skipExpandedFolders && rowIsExpandedFolder(row)) {
+		// Skip expanded folders — go to the feeds inside instead.
+		if rowIsGroupItem(row) || rowIsExpandedFolder(row) {
 			return true
 		}
 		return false

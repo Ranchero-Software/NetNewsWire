@@ -41,9 +41,12 @@ import RSCore
 			}
 
 			// TODO: get text from contentHTML or contentText if no title and no selectedText.
-			// TODO: consider selectedText.
 
-			let s = article.attributionString + article.linkString
+			// The selection, when there is one, is quoted below the link.
+			var s = article.attributionString + article.linkString
+			if let selectedText {
+				s += "\n\n> " + selectedText
+			}
 
 			let urlQueryDictionary = ["text": s]
 			guard let urlQueryString = urlQueryDictionary.urlQueryString else {

@@ -12,6 +12,10 @@ import Articles
 import RSCore
 import Account
 
+extension Notification.Name {
+	static let SidebarDidAcceptDrop = Notification.Name("SidebarDidAcceptDropNotification")
+}
+
 @objc @MainActor final class SidebarOutlineDataSource: NSObject, NSOutlineViewDataSource {
 
 	let treeController: TreeController
@@ -98,6 +102,14 @@ import Account
 	}
 
 	func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
+		let accepted = acceptDrop(outlineView, info, item, index)
+		if accepted {
+			NotificationCenter.default.post(name: .SidebarDidAcceptDrop, object: nil)
+		}
+		return accepted
+	}
+
+	private func acceptDrop(_ outlineView: NSOutlineView, _ info: NSDraggingInfo, _ item: Any?, _ index: Int) -> Bool {
 		let draggedFolders = PasteboardFolder.pasteboardFolders(with: info.draggingPasteboard)
 		let draggedFeeds = PasteboardFeed.pasteboardFeeds(with: info.draggingPasteboard)
 		if (draggedFolders == nil && draggedFeeds == nil) || (draggedFolders != nil && draggedFeeds != nil) {
@@ -326,8 +338,12 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func moveFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
+		guard let account = source.account else {
+			return
+		}
+
 		BatchUpdate.shared.start()
-		source.account?.moveFeed(feed, from: source, to: destination) { result in
+		account.moveFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:
@@ -645,6 +661,10 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
+		// The dragged feed’s unread count isn’t known here, so its sorted position can’t be predicted.
+		guard AppDefaults.shared.sidebarSortType != .byUnreadCount else {
+			return NSOutlineViewDropOnItemIndex
+		}
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
 		let draggedSidebarItemNode = Node(representedObject: draggedFeedWrapper, parent: nil)
 		let nodes = parentNode.childNodes + [draggedSidebarItemNode]
@@ -655,6 +675,9 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func indexWhereDraggedFolderWouldAppear(_ parentNode: Node, _ draggedFolder: PasteboardFolder) -> Int {
+		guard AppDefaults.shared.sidebarSortType != .byUnreadCount else {
+			return NSOutlineViewDropOnItemIndex
+		}
 		let draggedFolderWrapper = PasteboardFolderObjectWrapper(pasteboardFolder: draggedFolder)
 		let draggedFolderNode = Node(representedObject: draggedFolderWrapper, parent: nil)
 		draggedFolderNode.canHaveChildNodes = true

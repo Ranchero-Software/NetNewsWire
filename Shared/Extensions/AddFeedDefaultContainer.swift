@@ -36,7 +36,7 @@ import Account
 		}
 	}
 
-	private static func substituteContainerIfNeeded(account: Account) -> Container? {
+	static func substituteContainerIfNeeded(account: Account) -> Container? {
 		if !account.behaviors.contains(.disallowFeedInRootFolder) {
 			return account
 		} else {

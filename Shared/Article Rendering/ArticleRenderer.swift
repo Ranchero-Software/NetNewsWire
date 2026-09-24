@@ -110,11 +110,14 @@ import Account
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
 		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
+		// Some feeds embed a full HTML document as the article content —
+		// render just the body fragment.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3008>
 		if let content = extractedArticle?.content {
-			self.body = content
+			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
 			self.baseURL = extractedArticle?.url
 		} else {
-			self.body = article?.body ?? ""
+			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
 			self.baseURL = article?.baseURL?.absoluteString
 		}
 	}

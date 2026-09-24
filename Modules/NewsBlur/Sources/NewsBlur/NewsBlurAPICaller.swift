@@ -15,7 +15,7 @@ public final class NewsBlurAPICaller: Sendable {
 	public static let sessionIDCookieKey = "newsblur_sessionid"
 
 	let baseURL = URL(string: "https://www.newsblur.com/")!
-	let session = URLSession.webservice
+	let session = URLSession.makeWebserviceSession()
 
 	private let suspendedLock = OSAllocatedUnfairLock(initialState: false)
 	var suspended: Bool {

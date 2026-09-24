@@ -24,9 +24,9 @@ import Account
 		return Node.nodesSortedAlphabeticallyWithFoldersAtEnd(self)
 	}
 
-	func sortedByUnreadCountWithFoldersAtEnd() -> [Node] {
+	func sortedByUnreadCountWithFoldersAtEnd(ascending: Bool) -> [Node] {
 
-		Node.nodesSortedByUnreadCountWithFoldersAtEnd(self)
+		Node.nodesSortedByUnreadCountWithFoldersAtEnd(self, ascending: ascending)
 	}
 
 	func sorted(by sortType: SidebarSortType, ascending: Bool = true) -> [Node] {
@@ -36,7 +36,8 @@ import Account
 		case .alphabetically:
 			sorted = sortedAlphabeticallyWithFoldersAtEnd()
 		case .byUnreadCount:
-			sorted = sortedByUnreadCountWithFoldersAtEnd()
+			// Direction applies to the count only; ties stay alphabetical.
+			return sortedByUnreadCountWithFoldersAtEnd(ascending: ascending)
 		}
 
 		if ascending {
@@ -89,9 +90,9 @@ import Account
 		}
 	}
 
-	class func nodesSortedByUnreadCountWithFoldersAtEnd(_ nodes: [Node]) -> [Node] {
+	class func nodesSortedByUnreadCountWithFoldersAtEnd(_ nodes: [Node], ascending: Bool) -> [Node] {
 
-		// Sorts ascending: least unread first, with alphabetical tiebreaker
+		// Alphabetical tiebreaker regardless of direction
 		return nodes.sorted { (node1, node2) -> Bool in
 
 			if node1.canHaveChildNodes != node2.canHaveChildNodes {
@@ -105,7 +106,7 @@ import Account
 			let count2 = (node2.representedObject as? UnreadCountProvider)?.unreadCount ?? 0
 
 			if count1 != count2 {
-				return count1 < count2
+				return ascending ? count1 < count2 : count1 > count2
 			}
 
 			guard let obj1 = node1.representedObject as? DisplayNameProvider, let obj2 = node2.representedObject as? DisplayNameProvider else {

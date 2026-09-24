@@ -17,7 +17,7 @@ nonisolated public final class HTMLMetadataDownloader: Sendable {
 
 	public static let shared = HTMLMetadataDownloader()
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "HTMLMetadataDownloader")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "HTMLMetadataDownloader")
 
 	private static let hoursBetweenAttempts = 3
 
@@ -117,7 +117,7 @@ nonisolated private extension HTMLMetadataDownloader {
 			activityLog.didStart(.htmlMetadataDownloader, kind: kind)
 
 			do {
-				let downloadResponse = try await Downloader.shared.download(actualURL)
+				let downloadResponse = try await Downloader.shared.download(actualURL, userAgentStyle: .browser)
 
 				if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
 					let urlToUse = response.url ?? actualURL
