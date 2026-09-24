@@ -103,6 +103,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSortTypeDidChange(_:)), name: .SidebarSortTypeDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
 
 		outlineView.reloadData()
@@ -201,7 +202,7 @@ extension Notification.Name {
 		guard notification.object is AccountManager else {
 			return
 		}
-		if isReadFiltered {
+		if isReadFiltered || AppDefaults.shared.sidebarSortType == .byUnreadCount {
 			rebuildTreeAndRestoreSelection()
 		}
 	}
@@ -227,6 +228,10 @@ extension Notification.Name {
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
+		rebuildTreeAndRestoreSelection()
+	}
+
+	@objc func sidebarSortTypeDidChange(_ note: Notification) {
 		rebuildTreeAndRestoreSelection()
 	}
 

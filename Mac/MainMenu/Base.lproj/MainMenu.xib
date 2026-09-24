@@ -409,6 +409,38 @@
                                     </items>
                                 </menu>
                             </menuItem>
+                            <menuItem title="Sort Feeds By" id="gT7-sF-kRd">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Sort Feeds By" id="hY3-pK-mW9">
+                                    <items>
+                                        <menuItem title="Name" id="qN4-wJ-fR2">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortFeedsByName:" target="-1" id="vK8-hN-3pQ"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Unread Count" id="bL5-rT-xW7">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortFeedsByUnreadCount:" target="-1" id="mD9-jP-4sR"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="kV2-sN-8wQ"/>
+                                        <menuItem title="Ascending" id="aF3-qR-7vN">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortFeedsAscending:" target="-1" id="wH5-tK-9bP"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Descending" id="dG6-uW-2mL">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="sortFeedsDescending:" target="-1" id="xJ8-vM-4cR"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="dZt-2W-gxf"/>
                             <menuItem title="Clean Up Articles" keyEquivalent="'" id="J5h-uQ-57w">
                                 <connections>

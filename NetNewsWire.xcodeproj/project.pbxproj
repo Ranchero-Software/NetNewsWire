@@ -422,6 +422,7 @@
 				ShareExtension/ExtensionFeedAddRequestFile.swift,
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
+				Tree/SidebarSortType.swift,
 				UserInfoKey.swift,
 			);
 			target = 513C5CE5232571C2003D4054 /* NetNewsWire iOS Share Extension */;
@@ -446,6 +447,7 @@
 				ShareExtension/SafariExt.js,
 				ShareExtension/ShareDefaultContainer.swift,
 				Timer/RefreshInterval.swift,
+				Tree/SidebarSortType.swift,
 			);
 			target = 510C415B24E5CDE3008226FD /* NetNewsWire Share Extension */;
 		};
