@@ -222,7 +222,7 @@ extension Notification.Name {
 			return
 		}
 
-		if isReadFiltered || AppDefaults.shared.sidebarSortType == .byUnreadCount {
+		if isReadFiltered {
 			queueRebuildTreeAndRestoreSelection()
 		}
 	}
