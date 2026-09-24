@@ -71,6 +71,11 @@ public extension HTMLMetadataRecord {
 	struct Favicon: Codable, Sendable {
 		public let type: String?
 		public let urlString: String?
+
+		public init(type: String?, urlString: String?) {
+			self.type = type
+			self.urlString = urlString
+		}
 	}
 
 	struct AppleTouchIcon: Codable, Sendable {

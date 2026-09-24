@@ -103,6 +103,13 @@
         "identifier" : "FeedFinderTests",
         "name" : "FeedFinderTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:Modules\/Images",
+        "identifier" : "ImagesTests",
+        "name" : "ImagesTests"
+      }
     }
   ],
   "version" : 1
