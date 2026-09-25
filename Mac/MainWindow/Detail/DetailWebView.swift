@@ -14,15 +14,22 @@ final class DetailWebView: WKWebView {
 	weak var keyboardDelegate: KeyboardDelegate?
 	private var isObservingResizeNotifications = false
 
-	/// When the find bar is visible, the web view is pushed below it and no longer
-	/// extends under the toolbar, so we should not set obscuredContentInsets.
-	var isFindBarVisible = false {
+	/// Height of the find bar when visible. Added to obscuredContentInsets
+	/// so the web view accounts for the find bar pushing it down.
+	var findBarHeight: CGFloat = 0 {
 		didSet {
-			if isFindBarVisible != oldValue {
+			if findBarHeight != oldValue {
+				// TEST: increase offset each time find bar is shown
+				if findBarHeight > 0 {
+					debugInsetOffset += 10
+				}
 				updateObscuredContentInsets()
 			}
 		}
 	}
+
+	// TEST: Debug offset that increases by 10 each time find bar is shown
+	private var debugInsetOffset: CGFloat = 0
 
 	private static let estimatedToolbarHeight: CGFloat = 52 // Height of macOS 26.2 icon-only toolbar
 	private var toolbarHeight: CGFloat {
@@ -148,12 +155,15 @@ private extension DetailWebView {
 	}
 
 	func updateObscuredContentInsets() {
-		// When the find bar is visible, the web view is constrained below it and no longer
-		// extends under the toolbar, so we don't need to account for toolbar obscuring.
-		let topInset = isFindBarVisible ? 0 : toolbarHeight
+		// Account for both the toolbar and the find bar (when visible) in the obscured insets.
+		// TEST: Adding debugInsetOffset to see impact on find highlight positioning
+		let topInset = toolbarHeight + findBarHeight + debugInsetOffset
 		let updatedObscuredContentInsets = NSEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
 		if obscuredContentInsets != updatedObscuredContentInsets {
+			// Reset to zero first to force WKWebView to recalculate
+			obscuredContentInsets = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 			obscuredContentInsets = updatedObscuredContentInsets
+			print("DEBUG: obscuredContentInsets.top = \(topInset) (toolbar: \(toolbarHeight), findBar: \(findBarHeight), debugOffset: \(debugInsetOffset))")
 		}
 	}
 }

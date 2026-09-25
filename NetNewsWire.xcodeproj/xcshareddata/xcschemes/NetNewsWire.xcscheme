@@ -124,6 +124,23 @@
             ReferencedContainer = "container:NetNewsWire.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "DYLD_LIBRARY_PATH"
+            value = "/Users/daniel/SourcesExternal/WebKit/WebKitBuild/Debug"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "__XPC_DYLD_FRAMEWORK_PATH"
+            value = "/Users/daniel/SourcesExternal/WebKit/WebKitBuild/Debug"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "DYLD_FRAMEWORK_PATH"
+            value = "/Users/daniel/SourcesExternal/WebKit/WebKitBuild/Debug"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

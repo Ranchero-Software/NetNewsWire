@@ -28,13 +28,14 @@ final class DetailContainerView: NSView, @MainActor NSTextFinderBarContainer {
 
 			if let contentView = contentView {
 				contentView.translatesAutoresizingMaskIntoConstraints = false
-				addSubview(contentView, positioned: .below, relativeTo: detailStatusBarView)
+				// Add the content view below the find bar container so the find bar floats over it
+				addSubview(contentView, positioned: .below, relativeTo: findBarContainerView)
 
-				// Constrain the content view to fill the available space on all sides except the top, which we'll constrain to the find bar
-				var constraints = constraintsToMakeSubViewFullSize(contentView).filter { $0.firstAttribute != .top }
+				// Constrain the content view to fill the entire container
+				var constraints = constraintsToMakeSubViewFullSize(contentView)
 
+				// Constrain the find bar container to the safe area top (below the toolbar)
 				constraints.append(findBarContainerView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor))
-				constraints.append(findBarContainerView.bottomAnchor.constraint(equalTo: contentView.topAnchor))
 				NSLayoutConstraint.activate(constraints)
 				contentViewConstraints = constraints
 			}
@@ -84,7 +85,7 @@ final class DetailContainerView: NSView, @MainActor NSTextFinderBarContainer {
 
 			// Notify the web view so it can update its obscuredContentInsets
 			if let webView = contentView as? DetailWebView {
-				webView.isFindBarVisible = isFindBarVisible
+				webView.findBarHeight = isFindBarVisible ? findBarHeightConstraint.constant : 0
 			}
 		}
 	}
@@ -94,6 +95,11 @@ final class DetailContainerView: NSView, @MainActor NSTextFinderBarContainer {
 			findBarHeightConstraint.constant = height + 1.0
 			findBarContainerView.layoutSubtreeIfNeeded()
 			findBarView?.setFrameOrigin(NSPoint.zero)
+
+			// Notify the web view about the updated find bar height
+			if isFindBarVisible, let webView = contentView as? DetailWebView {
+				webView.findBarHeight = findBarHeightConstraint.constant
+			}
 		}
 	}
 
