@@ -263,6 +263,9 @@ let appName = "NetNewsWire"
 		// Silent CloudKit pushes don’t need notification permission.
 		NSApplication.shared.registerForRemoteNotifications()
 
+		// Badging the Dock icon needs this permission — it’s not just for alerts.
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { _, _ in }
+
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
 
