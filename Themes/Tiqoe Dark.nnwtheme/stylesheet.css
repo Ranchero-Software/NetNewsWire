@@ -520,7 +520,7 @@ a.footnote:hover,
 	overflow-x: auto;
 }
 
-/* PBS Newshour → Reader View */
+/* PBS News Hour → Reader View */
 .inline-invite.inline-invite-type__funding.inline-invite-style__default:has(> .inline-invite-funding__box):has([href*="give.newshour.org"]) {
 	display: none;
 }
