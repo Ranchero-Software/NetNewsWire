@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.1.5 7216 29 Sep 2026 - branch: release/macos-7.1.5 tag: mac-7.1.5
+
+Fixed bug introduced in 7.1.4 where the app wouldn’t ask for notifications permission on launch, which meant no unread count in the Dock icon for new users
+
 ### 7.1.4 7214 20 Sep 2026 - branch: main tag: mac-7.1.4
 
 Same as 7.1.4b3.
