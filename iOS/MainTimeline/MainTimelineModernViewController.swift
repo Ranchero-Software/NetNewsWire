@@ -136,7 +136,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	weak var coordinator: SceneCoordinator?
 	var undoableCommands = [UndoableCommand]()
 	override var keyCommands: [UIKeyCommand]? {
-		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
+		// If the first responder is the WKWebView (PreloadedWebView) we don’t want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
 		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else { return nil }
@@ -230,6 +230,9 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 		updateNavigationBarTitle(coordinator?.timelineFeed?.nameForDisplay ?? "")
 		coordinator?.updateNavigationBarSubtitles(nil)
 		updateToolbarProgressView()
+
+		// Articles can change while this view is off screen, so always show what the model holds.
+		applyChanges(animated: false)
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
@@ -420,7 +423,7 @@ final class MainTimelineModernViewController: UIViewController, UndoableCommandR
 	@objc func refreshAccounts(_ sender: Any) {
 		collectionView?.refreshControl?.endRefreshing()
 
-		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// This is a hack to make sure that an error dialog doesn’t interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
@@ -730,7 +733,7 @@ private extension MainTimelineModernViewController {
 			let starAction = UIContextualAction(style: .normal, title: starTitle) { [weak self] _, _, completion in
 
 				// Post the accessibility announcement immediately so VoiceOver
-				// doesn't lag behind user actions.
+				// doesn’t lag behind user actions.
 				let announcement = article.status.starred ?
 					NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
 					NSLocalizedString("Starred", comment: "Starred")
@@ -739,7 +742,7 @@ private extension MainTimelineModernViewController {
 				/// The call to `toggleStar` is delayed in order to allow
 				/// the swipe animation to complete. Calling `toggleStar` with no
 				/// delay results UICollectionView internal inconsistency: unexpected
-				/// removal of the current swipe occurrence's mask view error.
+				/// removal of the current swipe occurrence’s mask view error.
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) {
 					self?.toggleStar(article)
 				}
@@ -824,7 +827,7 @@ private extension MainTimelineModernViewController {
 			let readAction = UIContextualAction(style: .normal, title: readTitle) { [weak self] _, _, completion in
 
 				// Post the accessibility announcement immediately so VoiceOver
-				// doesn't lag behind user actions.
+				// doesn’t lag behind user actions.
 				let announcement = article.status.read ?
 					NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
 					NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
@@ -833,7 +836,7 @@ private extension MainTimelineModernViewController {
 				/// The call to `toggleRead` is delayed in order to allow
 				/// the swipe animation to complete. Calling `toggleRead` with no
 				/// delay results UICollectionView internal inconsistency: unexpected
-				/// removal of the current swipe occurrence's mask view error.
+				/// removal of the current swipe occurrence’s mask view error.
 				DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.85) {
 					self?.toggleRead(article)
 				}
@@ -1162,7 +1165,7 @@ extension MainTimelineModernViewController {
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			// Post the accessibility announcement immediately so VoiceOver
-			// doesn't lag behind user actions.
+			// doesn’t lag behind user actions.
 			let announcement = article.status.read ?
 				NSLocalizedString("Marked as Unread", comment: "Accessibility announcement") :
 				NSLocalizedString("Marked as Read", comment: "Accessibility announcement")
@@ -1190,7 +1193,7 @@ extension MainTimelineModernViewController {
 
 		let action = UIAction(title: title, image: image) { [weak self] _ in
 			// Post the accessibility announcement immediately so VoiceOver
-			// doesn't lag behind user actions.
+			// doesn’t lag behind user actions.
 			let announcement = article.status.starred ?
 				NSLocalizedString("Unstarred", comment: "Accessibility announcement") :
 				NSLocalizedString("Starred", comment: "Starred")
@@ -1327,7 +1330,7 @@ extension MainTimelineModernViewController {
 
 	func markAllAsRead(_ articles: ArticleArray) {
 		assert(coordinator != nil)
-		coordinator?.markAllAsRead(articles)
+		coordinator?.markAllAsReadInTimeline(articles)
 	}
 
 	func markAllInFeedAsReadAction(_ article: Article, indexPath: IndexPath) -> UIAction? {
