@@ -31,6 +31,21 @@ struct ArticleRenderingSpecialCases {
 		shouldDisableJavaScript(urlStrings: [article.link, article.feed?.url, article.feed?.homePageURL])
 	}
 
+	private static let feedDomainsWithParagraphsSeparatedByReturns = ["slashdot.org"]
+	private static let consecutiveReturnsRegex = try? NSRegularExpression(pattern: "(?:\\r?\\n[ \\t]*){2,}")
+
+	static func insertParagraphTagsIfNeeded(_ html: String, feedURLString: String?) -> String {
+		guard let feedURLString, SpecialCase.urlStringMatchesDomain(feedURLString, feedDomainsWithParagraphsSeparatedByReturns) else {
+			return html
+		}
+		guard html.utf8.contains(UInt8(ascii: "\n")), let consecutiveReturnsRegex else {
+			return html
+		}
+
+		let range = NSRange(html.startIndex..., in: html)
+		return consecutiveReturnsRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "<p>")
+	}
+
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {
 		var filteredHTML = removeLocationHrefRedirectScripts(html)
 

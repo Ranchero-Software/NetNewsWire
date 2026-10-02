@@ -117,7 +117,8 @@ import Account
 			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
 			self.baseURL = extractedArticle?.url
 		} else {
-			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			let articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			self.body = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURLString: article?.feed?.url)
 			self.baseURL = article?.baseURL?.absoluteString
 		}
 	}
