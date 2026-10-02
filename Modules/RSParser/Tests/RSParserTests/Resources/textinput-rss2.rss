@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Test Feed</title>
+    <textInput>
+      <title>Search Test Feed</title>
+      <description>Search Test Feed articles</description>
+      <name>query</name>
+      <link>https://example.com/search</link>
+    </textInput>
+    <link>https://example.com</link>
+    <description>Test feed with a textInput element inside the channel.</description>
+    <item>
+      <title>Real Article Title</title>
+      <link>https://example.com/articles/1</link>
+      <guid>https://example.com/articles/1</guid>
+    </item>
+  </channel>
+</rss>
