@@ -113,7 +113,7 @@
         <!--Timeline-->
         <scene sceneID="zD6-2d-bd7">
             <objects>
-                <viewController title="Timeline" extendedLayoutIncludesOpaqueBars="YES" id="QJM-al-rDe" customClass="MainTimelineModernViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Timeline" extendedLayoutIncludesOpaqueBars="YES" id="QJM-al-rDe" customClass="MainTimelineViewController" customModule="NetNewsWire" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="NY8-Yd-8Av">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
