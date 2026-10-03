@@ -111,7 +111,7 @@ import Foundation
 			let parser = FeedlyFeedParser(feed: collectionFeed)
 
 			if let feed = account.existingFeed(withFeedID: collectionFeed.id) {
-				// If the feed was renamed on Feedly, ingest the new name. Compare against the
+				// If the feed was renamed on Feedly, use the new name. Compare against the
 				// parsed title — feeds are created from it, and the raw title differs for RTL
 				// and untitled feeds, so comparing it rewrote their names every sync.
 				if let title = parser.title, !title.isEmpty, feed.name != title {

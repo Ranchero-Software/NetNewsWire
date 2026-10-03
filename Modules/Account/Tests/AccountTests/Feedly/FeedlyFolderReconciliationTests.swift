@@ -146,11 +146,11 @@ import XCTest
 		syncFeedsForCollectionFolders(pairs, in: account)
 
 		let accountFeeds = account.flattenedFeeds()
-		let ingestedIDs = Set(accountFeeds.map { $0.feedID })
-		let ingestedTitles = Set(accountFeeds.map { $0.nameForDisplay })
+		let feedIDs = Set(accountFeeds.map { $0.feedID })
+		let feedTitles = Set(accountFeeds.map { $0.nameForDisplay })
 
-		XCTAssertEqual(ingestedIDs, Set(["feed/1", "feed/2", "feed/3"]))
-		XCTAssertEqual(ingestedTitles, Set(["Feed One", "Feed Two", "Feed Three"]))
+		XCTAssertEqual(feedIDs, Set(["feed/1", "feed/2", "feed/3"]))
+		XCTAssertEqual(feedTitles, Set(["Feed One", "Feed Two", "Feed Three"]))
 
 		assertFolder(folderOne, contains: ["feed/1", "feed/2"])
 		assertFolder(folderTwo, contains: ["feed/1", "feed/3"])
