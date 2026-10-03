@@ -415,6 +415,18 @@
         }
       }
     },
+    "aF3-qR-7vN.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Ascending\"; ObjectID = \"aF3-qR-7vN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ascending"
+          }
+        }
+      }
+    },
     "alg-Wn-m1q.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Activity Log\"; ObjectID = \"alg-Wn-m1q\";",
       "extractionState" : "extracted_with_value",
@@ -541,6 +553,18 @@
         }
       }
     },
+    "bL5-rT-xW7.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Unread Count\"; ObjectID = \"bL5-rT-xW7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread Count"
+          }
+        }
+      }
+    },
     "BOF-NM-1cW.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Preferences…\"; ObjectID = \"BOF-NM-1cW\";",
       "extractionState" : "extracted_with_value",
@@ -645,6 +669,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Convertir en minúsculas"
+          }
+        }
+      }
+    },
+    "dG6-uW-2mL.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Descending\"; ObjectID = \"dG6-uW-2mL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Descending"
           }
         }
       }
@@ -937,6 +973,18 @@
         }
       }
     },
+    "gT7-sF-kRd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Sort Feeds By\"; ObjectID = \"gT7-sF-kRd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort Feeds By"
+          }
+        }
+      }
+    },
     "gVA-U4-sdL.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Paste\"; ObjectID = \"gVA-U4-sdL\";",
       "extractionState" : "extracted_with_value",
@@ -1077,6 +1125,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Comillas tipográficas"
+          }
+        }
+      }
+    },
+    "hY3-pK-mW9.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Sort Feeds By\"; ObjectID = \"hY3-pK-mW9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort Feeds By"
           }
         }
       }
@@ -1707,6 +1767,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Repositorio de GitHub"
+          }
+        }
+      }
+    },
+    "qN4-wJ-fR2.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Name\"; ObjectID = \"qN4-wJ-fR2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Name"
           }
         }
       }
