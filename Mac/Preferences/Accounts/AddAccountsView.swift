@@ -60,7 +60,7 @@ enum AddAccountSections: Int, CaseIterable {
 				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
 			}
 		case .selfhosted:
-			return [.freshRSS]
+			return [.freshRSS, .miniflux]
 		case .allOrdered:
 			return AddAccountSections.local.sectionContent +
 			AddAccountSections.icloud.sectionContent +

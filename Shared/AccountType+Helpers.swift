@@ -36,6 +36,8 @@ extension AccountType {
 			return .systemTeal
 		case .inoreader:
 			return .systemBrown
+		case .miniflux:
+			return .systemMint
 		case .bazQux:
 			return .systemIndigo
 		case .theOldReader:
@@ -59,6 +61,8 @@ extension AccountType {
 			return .teal
 		case .inoreader:
 			return .brown
+		case .miniflux:
+			return .mint
 		case .bazQux:
 			return .indigo
 		case .theOldReader:
@@ -93,6 +97,8 @@ extension AccountType {
 			return Image("accountFreshRSS")
 		case .inoreader:
 			return Image("accountInoreader")
+		case .miniflux:
+			return Image("accountMiniflux")
 		case .newsBlur:
 			return Image("accountNewsBlur")
 		case .theOldReader:
