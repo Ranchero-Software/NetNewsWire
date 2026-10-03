@@ -350,6 +350,6 @@ private extension ArticleRenderer {
 		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
 			return nil
 		}
-		return url
+		return ArticleRenderingSpecialCases.baseURLForRendering(url)
 	}
 }

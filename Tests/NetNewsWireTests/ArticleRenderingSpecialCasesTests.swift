@@ -91,4 +91,15 @@ import Testing
 		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURLString: feedURLString)
 		#expect(result == expected)
 	}
+
+	// MARK: - Base URL for YouTube articles
+
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>
+	@Test func youtubeArticleGetsNetNewsWireBaseURL() throws {
+		let youtubeLink = try #require(URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+		#expect(ArticleRenderingSpecialCases.baseURLForRendering(youtubeLink).absoluteString == "https://netnewswire.com/")
+
+		let hackadayLink = try #require(URL(string: "https://hackaday.com/2025/12/01/necroprinting-isnt-as-bad-as-it-sounds/"))
+		#expect(ArticleRenderingSpecialCases.baseURLForRendering(hackadayLink) == hackadayLink)
+	}
 }

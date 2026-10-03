@@ -99,6 +99,20 @@ struct ArticleRenderingSpecialCases {
 		return host.lowercased().contains("theverge.com")
 	}
 
+	// YouTube won’t play an embed whose host page is itself on youtube.com — the
+	// embed’s Referer has to identify a third-party client. Articles from YouTube
+	// channel feeds link to youtube.com/watch, so they render with NetNewsWire’s
+	// site as the base URL instead.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>
+	private static let baseURLForYouTubeArticles = URL(string: "https://netnewswire.com/")
+
+	static func baseURLForRendering(_ url: URL) -> URL {
+		if url.isYoutubeURL, let baseURLForYouTubeArticles {
+			return baseURLForYouTubeArticles
+		}
+		return url
+	}
+
 	// The content between a real <body …> tag and </body> (or the end of the string).
 	// Returns nil when there's no body tag.
 	private static func bodyFragment(_ html: String) -> String? {
