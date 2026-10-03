@@ -165,7 +165,7 @@ private extension ArticleRenderer {
 	}
 
 	private var loadingHTML: String {
-		let body = "<h3 class='systemMessage'>Loading...</h3>"
+		let body = "<h3 class='systemMessage'>Loading…</h3>"
 		return body
 	}
 
