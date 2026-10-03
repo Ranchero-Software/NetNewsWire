@@ -36,6 +36,9 @@ let package = Package(
 				.enableUpcomingFeature("InferIsolatedConformances"),
 				.unsafeFlags(["-warnings-as-errors"])
 			]
-		)
+		),
+		.testTarget(
+			name: "ImagesTests",
+			dependencies: ["Images", "HTMLMetadata"])
 	]
 )
