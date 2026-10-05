@@ -70,4 +70,36 @@ import Testing
 	@Test func allNilURLsKeepJavaScript() {
 		#expect(!ArticleRenderingSpecialCases.shouldDisableJavaScript(urlStrings: [nil, nil, nil]))
 	}
+
+	// MARK: - Paragraphs separated by returns
+
+	// The first article in the Slashdot feed on 2026-10-02, with each paragraph cut to its first sentence.
+	@Test func slashdotArticleBodyGetsParagraphTags() {
+		let feedURLString = "https://rss.slashdot.org/Slashdot/slashdotMain"
+
+		let paragraph1 = "An anonymous reader quotes a report from Reuters: A growing number of people think social media manipulates and divides people and harms democracy, Pew Research Center said on Thursday, echoing rising concern and tighter scrutiny across the world."
+		let paragraph2 = "Australia has proposed rules to let users opt out of algorithmically recommended feeds, after becoming the first country to ban social media for children under 16."
+		let paragraph3 = "People in wealthier countries, including the US, Canada and UK, are more inclined to believe that social media is harming democracy, versus their counterparts in economies with lower gross domestic product per capita -- such as Ghana, Kenya and Nigeria."
+		let shareLinks = #"<p><div class="share_submission" style="position:relative;">"# + "\n"
+			+ #"<a class="slashpop" href="http://twitter.com/home?status=Social+Media+Harms+Democracy+By+Spreading+Rumors%2C+Survey+Shows%3A+https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0632243%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"><img src="https://a.fsdn.com/sd/twitter_icon_large.png"></a>"# + "\n"
+			+ #"<a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0632243%2Fsocial-media-harms-democracy-by-spreading-rumors-survey-shows%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"><img src="https://a.fsdn.com/sd/facebook_icon_large.png"></a>"#
+		let readMore = #"</div></p><p><a href="https://tech.slashdot.org/story/26/10/02/0632243/social-media-harms-democracy-by-spreading-rumors-survey-shows?utm_source=rss1.0moreanon&amp;utm_medium=feed">Read more of this story</a> at Slashdot.</p><iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;id=24112882&amp;smallembed=1" style="height: 300px; width: 100%; border: none;"></iframe>"#
+
+		let html = paragraph1 + "\n \n" + paragraph2 + "\n \n" + paragraph3 + shareLinks + "\n\n\n\n" + readMore
+		let expected = paragraph1 + "<p>" + paragraph2 + "<p>" + paragraph3 + shareLinks + "<p>" + readMore
+
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURLString: feedURLString)
+		#expect(result == expected)
+	}
+
+	// MARK: - Base URL for YouTube articles
+
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>
+	@Test func youtubeArticleGetsNetNewsWireBaseURL() throws {
+		let youtubeLink = try #require(URL(string: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"))
+		#expect(ArticleRenderingSpecialCases.baseURLForRendering(youtubeLink).absoluteString == "https://netnewswire.com/")
+
+		let hackadayLink = try #require(URL(string: "https://hackaday.com/2025/12/01/necroprinting-isnt-as-bad-as-it-sounds/"))
+		#expect(ArticleRenderingSpecialCases.baseURLForRendering(hackadayLink) == hackadayLink)
+	}
 }

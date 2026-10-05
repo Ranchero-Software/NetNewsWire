@@ -117,7 +117,8 @@ import Account
 			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
 			self.baseURL = extractedArticle?.url
 		} else {
-			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			let articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			self.body = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURLString: article?.feed?.url)
 			self.baseURL = article?.baseURL?.absoluteString
 		}
 	}
@@ -164,7 +165,7 @@ private extension ArticleRenderer {
 	}
 
 	private var loadingHTML: String {
-		let body = "<h3 class='systemMessage'>Loading...</h3>"
+		let body = "<h3 class='systemMessage'>Loading…</h3>"
 		return body
 	}
 
@@ -349,6 +350,6 @@ private extension ArticleRenderer {
 		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
 			return nil
 		}
-		return url
+		return ArticleRenderingSpecialCases.baseURLForRendering(url)
 	}
 }

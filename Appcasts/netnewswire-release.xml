@@ -7,6 +7,19 @@
         <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.1.5</title>
+	<description><![CDATA[
+<p><b>Changes since 7.1.4:</b>
+<ul>
+<li>Fixed bug introduced in 7.1.4 where the app wouldn’t ask for notifications permission on launch, which meant no unread count in the Dock icon for new users
+</ul>
+	]]></description>
+	<pubDate>Tue, 29 Sep 2026 11:40:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.1.5/NetNewsWire7.1.5.zip" sparkle:version="7216" sparkle:shortVersionString="7.1.5" length="9794853" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.1.4</title>
 	<description><![CDATA[
 <p><b>Changes since 7.1.3:</b>

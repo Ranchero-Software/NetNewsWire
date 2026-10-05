@@ -1,6 +1,9 @@
 // Here we are making iframes responsive.  Particularly useful for inline Youtube videos.
 function wrapFrames() {
 	document.querySelectorAll("iframe").forEach(element => {
+		if (getComputedStyle(element).display === "none") {
+			return;
+		}
 		if (parseInt(element.height) > 0) {
 			preserveAspectRatioOfFixedSizeFrame(element);
 			return;
