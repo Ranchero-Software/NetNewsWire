@@ -316,6 +316,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	private var isTimelineUnreadCountSubtitleShown: Bool {
+		timelineFeed != nil && timelineUnreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count
+	}
+
 	private static let minimumTimelineWidth: CGFloat = 280
 	private static let maximumTimelineWidth: CGFloat = 440
 
@@ -395,6 +399,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
@@ -702,6 +707,10 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateNavigationBarSubtitles(nil)
+	}
+
 	/// Updates navigation bar subtitles in response to feed selection, unread count changes,
 	/// `progressInfoDidChange` notifications, and a timed refresh every
 	/// 60s.
@@ -713,7 +722,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	/// - When refreshed: Feeds will display "Updated <#relative_time#>" on both iPhone and iPad.
 	///
 	/// `MainTimelineViewController`
-	/// - Where the unread count for the timeline is > 0, this is displayed on both iPhone and iPad.
+	/// - Where the unread count for the timeline is > 0 and the Unread Counts setting is Show, this is displayed on both iPhone and iPad.
 	/// - If the timeline count is 0, the iPhone follows the same logic as `MainFeedViewController`
 	/// - Specific to iPad, if the unread count is 0, the iPad will not display a subtitle. The refresh text
 	/// will generally be visible in the sidebar and there’s no need to display it twice.
@@ -737,7 +746,7 @@ struct SidebarItemNode: Hashable, Sendable {
 					}
 
 					// If unread count > 0, add unread string to timeline
-					if timelineFeed != nil, timelineUnreadCount > 0 {
+					if isTimelineUnreadCountSubtitleShown {
 						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 						let unreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
 						self.mainTimelineViewController?.updateNavigationBarSubtitle(unreadCount)
@@ -756,7 +765,7 @@ struct SidebarItemNode: Hashable, Sendable {
 					}
 
 					// If unread count > 0, add unread string to timeline
-					if timelineFeed != nil, timelineUnreadCount > 0 {
+					if isTimelineUnreadCountSubtitleShown {
 						let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 						let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
 						self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)
@@ -774,7 +783,7 @@ struct SidebarItemNode: Hashable, Sendable {
 					self.mainFeedCollectionViewController?.navigationItem.subtitle = ""
 				}
 				// If unread count > 0, add unread string to timeline
-				if timelineFeed != nil, timelineUnreadCount > 0 {
+				if isTimelineUnreadCountSubtitleShown {
 					let localizedUnreadCount = NSLocalizedString("%i Unread", comment: "14 Unread")
 					let refreshTextWithUnreadCount = NSString.localizedStringWithFormat(localizedUnreadCount as NSString, timelineUnreadCount) as String
 					self.mainTimelineViewController?.updateNavigationBarSubtitle(refreshTextWithUnreadCount)

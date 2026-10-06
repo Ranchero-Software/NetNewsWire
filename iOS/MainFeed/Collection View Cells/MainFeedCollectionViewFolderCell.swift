@@ -29,14 +29,18 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 		}
 		set {
 			_unreadCount = newValue
-			if newValue == 0 {
-				unreadCountLabel.isHidden = true
-			} else {
-				unreadCountLabel.isHidden = false
+			let unreadCountText = unreadCountText
+			unreadCountLabel.isHidden = unreadCountText == nil
+			if unreadCountText != nil {
 				updateUnreadCountVisibility()
 			}
-			unreadCountLabel.text = newValue.formatted()
+			unreadCountLabel.setUnreadCount(newValue)
+			setNeedsUpdateConfiguration()
 		}
+	}
+
+	private var unreadCountText: String? {
+		AppDefaults.shared.unreadCountDisplay.text(for: unreadCount)
 	}
 
 	var iconImage: IconImage? {
@@ -76,7 +80,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	func updateUnreadCountVisibility(animated: Bool = true) {
-		let alpha: CGFloat = (!disclosureExpanded && unreadCount > 0) ? 1 : 0
+		let alpha: CGFloat = (!disclosureExpanded && unreadCountText != nil) ? 1 : 0
 		if animated {
 			UIView.animate {
 				self.unreadCountLabel.alpha = alpha
@@ -101,7 +105,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = folderTitle.text ?? ""
-			if unreadCount > 0 {
+			if unreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
 				return "\(name) \(unreadCount) \(unreadLabel) \(expandedStateMessage)"
 			} else {
