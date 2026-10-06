@@ -1798,10 +1798,12 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 
 	func splitViewControllerDidCollapse(_ svc: UISplitViewController) {
+		mainFeedCollectionViewController?.splitViewStateDidChange()
 		mainTimelineViewController?.splitViewStateDidChange()
 	}
 
 	func splitViewControllerDidExpand(_ svc: UISplitViewController) {
+		mainFeedCollectionViewController?.splitViewStateDidChange()
 		mainTimelineViewController?.splitViewStateDidChange()
 	}
 

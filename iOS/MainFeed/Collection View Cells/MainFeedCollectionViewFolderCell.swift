@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSCore
 import Images
 
 @MainActor protocol MainFeedCollectionViewFolderCellDelegate: AnyObject {
@@ -144,19 +145,39 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
 		}
 
-		switch (state.isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
+		// Matches the timeline: accent background and white text when the feeds list is first responder,
+		// and no highlight while a row is pressed, so the row goes straight to the selected style.
+		let isExpanded = isInExpandedSplitView
+		let isActiveSelection = state.isSelected && isExpanded && enclosingViewController?.isFirstResponder == true
+		let isHighlighted = state.isHighlighted && !isExpanded
+		if state.isHighlighted && !state.isSelected && isExpanded {
+			backgroundConfig.backgroundColor = .clear
+		}
+
+		switch (isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
+		case _ where isActiveSelection:
+			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
+			folderTitle.textColor = .white
+			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			unreadCountLabel.textColor = .white
+			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			faviconView.tintColor = .white
+			disclosureButton.configuration?.baseForegroundColor = .white
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			folderTitle.textColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
 			unreadCountLabel.textColor = Assets.Colors.primaryAccent
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			faviconView.tintColor = Assets.Colors.primaryAccent
+			disclosureButton.configuration?.baseForegroundColor = .label
 		default:
 			folderTitle.textColor = .label
 			faviconView.tintColor = Assets.Colors.primaryAccent
 			folderTitle.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.textColor = .secondaryLabel
 			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
+			disclosureButton.configuration?.baseForegroundColor = .label
 		}
 
 		if state.cellDropState == .targeted {

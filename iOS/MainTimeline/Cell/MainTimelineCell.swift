@@ -142,20 +142,6 @@ final class MainTimelineCell: UICollectionViewCell {
 
 private extension MainTimelineCell {
 
-	// True when the timeline is showing beside the article view — on iPad,
-	// and on large iPhones in landscape. Found via the responder chain, so this
-	// is false for a cell that isn't in the view hierarchy yet.
-	var isInExpandedSplitView: Bool {
-		var responder: UIResponder? = self
-		while let currentResponder = responder {
-			if let viewController = currentResponder as? UIViewController {
-				return viewController.splitViewController?.isCollapsed == false
-			}
-			responder = currentResponder.next
-		}
-		return false
-	}
-
 	static func singleLineLabel() -> UILabel {
 		let label = NonIntrinsicLabel()
 		label.lineBreakMode = .byTruncatingTail

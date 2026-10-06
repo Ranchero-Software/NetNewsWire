@@ -52,6 +52,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		return true
 	}
 
+	// The selected row is accent-colored only while the feeds list is first responder.
+	@discardableResult override func becomeFirstResponder() -> Bool {
+		let didBecomeFirstResponder = super.becomeFirstResponder()
+		updateVisibleCellConfigurations()
+		return didBecomeFirstResponder
+	}
+
+	@discardableResult override func resignFirstResponder() -> Bool {
+		let didResignFirstResponder = super.resignFirstResponder()
+		updateVisibleCellConfigurations()
+		return didResignFirstResponder
+	}
+
 	private let refreshProgressView = RefreshProgressView(frame: .zero)
 	private var currentActivityButton: UIBarButtonItem?
 
@@ -694,6 +707,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
 				completion(cell, indexPath)
 			}
+		}
+	}
+
+	func splitViewStateDidChange() {
+		updateVisibleCellConfigurations()
+	}
+
+	private func updateVisibleCellConfigurations() {
+		guard isViewLoaded, let collectionView else {
+			return
+		}
+		for cell in collectionView.visibleCells {
+			cell.setNeedsUpdateConfiguration()
 		}
 	}
 
