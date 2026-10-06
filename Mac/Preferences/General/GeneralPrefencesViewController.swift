@@ -17,6 +17,9 @@ final class GeneralPreferencesViewController: NSViewController {
 	@IBOutlet var articleTextSizePopup: NSPopUpButton!
 	@IBOutlet var articleThemePopup: NSPopUpButton!
 	@IBOutlet var defaultBrowserPopup: NSPopUpButton!
+	@IBOutlet var showUnreadCountsButton: NSButton?
+	@IBOutlet var showUnreadCountDotButton: NSButton?
+	@IBOutlet var hideUnreadCountsButton: NSButton?
 
 	convenience init() {
 		self.init(nibName: "GeneralPreferencesView", bundle: nil)
@@ -49,6 +52,10 @@ final class GeneralPreferencesViewController: NSViewController {
 		updateArticleThemePopup()
 	}
 
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateUnreadCountDisplayButtons()
+	}
+
 	// MARK: - Actions
 
 	@IBAction func showThemesFolder(_ sender: Any) {
@@ -62,6 +69,13 @@ final class GeneralPreferencesViewController: NSViewController {
 		}
 		ArticleThemesManager.shared.currentThemeName = menuItem.title
 		updateArticleThemePopup()
+	}
+
+	@IBAction func unreadCountDisplaySettingDidChange(_ sender: NSButton) {
+		guard let unreadCountDisplay = UnreadCountDisplay(rawValue: sender.tag) else {
+			return
+		}
+		AppDefaults.shared.unreadCountDisplay = unreadCountDisplay
 	}
 
 	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
@@ -114,11 +128,20 @@ private extension GeneralPreferencesViewController {
 	func commonInit() {
 		NotificationCenter.default.addObserver(self, selector: #selector(applicationWillBecomeActive(_:)), name: NSApplication.willBecomeActiveNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 	}
 
 	func updateUI() {
 		updateArticleThemePopup()
 		updateBrowserPopup()
+		updateUnreadCountDisplayButtons()
+	}
+
+	func updateUnreadCountDisplayButtons() {
+		let selectedTag = AppDefaults.shared.unreadCountDisplay.rawValue
+		for case let button? in [showUnreadCountsButton, showUnreadCountDotButton, hideUnreadCountsButton] {
+			button.state = button.tag == selectedTag ? .on : .off
+		}
 	}
 
 	func updateArticleThemePopup() {
