@@ -102,15 +102,15 @@ final class MainTimelineCell: UICollectionViewCell {
 			backgroundConfig.cornerRadius = 0
 		}
 
+		// Matches the feeds list: accent background when the timeline is first responder, gray otherwise.
+		let isActiveSelection = state.isSelected && isInExpandedSplitView && enclosingViewController?.isFirstResponder == true
+
 		if state.isSwiped {
 			backgroundConfig.backgroundColor = .secondarySystemFill
 		} else if state.isSelected {
-			// When the split view is expanded, force the accent color so the selection stays
-			// blue even when the timeline isn't first responder (updated(for: state) would
-			// otherwise dim it to gray). When collapsed, keep the standard system selection
-			// color from updated(for: state).
+			// When collapsed, keep the standard system selection color from updated(for: state).
 			if isInExpandedSplitView {
-				backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
+				backgroundConfig.backgroundColor = isActiveSelection ? Assets.Colors.primaryAccent : .tertiarySystemFill
 			}
 		} else {
 			backgroundConfig.backgroundColor = .clear
@@ -125,12 +125,9 @@ final class MainTimelineCell: UICollectionViewCell {
 
 		topSeparator.alpha = (isActive || isPreview) ? 0.0 : 1.0
 
-		// Expanded split view: the selected cell has an accent-colored background, so its text
-		// goes white. Collapsed: the selection is a light system color, so labels keep their
-		// normal colors.
-		let active = state.isSelected && isInExpandedSplitView
-		updateColors(active: active)
-		updateIndicatorView(active: active)
+		// Text goes white only on the accent background. On gray, labels keep their normal colors.
+		updateColors(active: isActiveSelection)
+		updateIndicatorView(active: isActiveSelection)
 	}
 
 	func setIconImage(_ image: IconImage) {

@@ -1690,11 +1690,6 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func navigateToFeeds() {
-		if !isRootSplitCollapsed {
-			// In three-pane mode, focusing the sidebar deselects the article.
-			// In collapsed mode the pop below drives cleanup via navigationController(_:didShow:).
-			selectArticle(nil)
-		}
 		revealColumn(.primary) { [weak self] in
 			self?.mainFeedCollectionViewController?.focus()
 		}

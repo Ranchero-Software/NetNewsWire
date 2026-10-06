@@ -147,6 +147,19 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		true
 	}
 
+	// The selected row is accent-colored only while the timeline is first responder.
+	@discardableResult override func becomeFirstResponder() -> Bool {
+		let didBecomeFirstResponder = super.becomeFirstResponder()
+		updateVisibleCellConfigurations()
+		return didBecomeFirstResponder
+	}
+
+	@discardableResult override func resignFirstResponder() -> Bool {
+		let didResignFirstResponder = super.resignFirstResponder()
+		updateVisibleCellConfigurations()
+		return didResignFirstResponder
+	}
+
 	// MARK: Private Constants
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
@@ -656,17 +669,21 @@ extension MainTimelineViewController {
 	/// expanded — depends on the split view state, so visible cells need a refresh
 	/// when it changes.
 	func splitViewStateDidChange() {
-		guard let collectionView else {
+		updateVisibleCellConfigurations()
+	}
+}
+
+// MARK: Private API
+private extension MainTimelineViewController {
+
+	func updateVisibleCellConfigurations() {
+		guard isViewLoaded, let collectionView else {
 			return
 		}
 		for cell in collectionView.visibleCells {
 			cell.setNeedsUpdateConfiguration()
 		}
 	}
-}
-
-// MARK: Private API
-private extension MainTimelineViewController {
 
 	func addNotificationObservers() {
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
