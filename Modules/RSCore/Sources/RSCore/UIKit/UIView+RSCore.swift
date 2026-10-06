@@ -24,6 +24,24 @@ extension UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
+
+	/// The nearest view controller in the responder chain (may be nil).
+	public var enclosingViewController: UIViewController? {
+		var responder: UIResponder? = self
+		while let currentResponder = responder {
+			if let viewController = currentResponder as? UIViewController {
+				return viewController
+			}
+			responder = currentResponder.next
+		}
+		return nil
+	}
+
+	/// True when this view’s split view controller is showing multiple columns —
+	/// iPad and large iPhones in landscape.
+	public var isInExpandedSplitView: Bool {
+		enclosingViewController?.splitViewController?.isCollapsed == false
+	}
 }
 
 #endif

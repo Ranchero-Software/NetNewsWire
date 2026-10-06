@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns="http://purl.org/rss/1.0/"
+ xmlns:admin="http://webns.net/mvcb/"
+ xmlns:content="http://purl.org/rss/1.0/modules/content/"
+ xmlns:dc="http://purl.org/dc/elements/1.1/"
+ xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+ xmlns:syn="http://purl.org/rss/1.0/modules/syndication/"
+ xmlns:taxo="http://purl.org/rss/1.0/modules/taxonomy/"
+>
+
+<channel rdf:about="https://slashdot.org/">
+<title>Slashdot</title>
+<link>https://slashdot.org/</link>
+<description>News for nerds, stuff that matters</description>
+<dc:language>en-us</dc:language>
+<dc:rights>Copyright Slashdot Media. All Rights Reserved.</dc:rights>
+<dc:date>2026-10-02T16:28:04+00:00</dc:date>
+<dc:publisher>Slashdot Media</dc:publisher>
+<dc:creator>feedback@slashdot.org</dc:creator>
+<dc:subject>Technology</dc:subject>
+<syn:updateBase>1970-01-01T00:00+00:00</syn:updateBase>
+<syn:updateFrequency>1</syn:updateFrequency>
+<syn:updatePeriod>hourly</syn:updatePeriod>
+<items>
+ <rdf:Seq>
+  <rdf:li rdf:resource="https://tech.slashdot.org/story/26/10/02/0632243/social-media-harms-democracy-by-spreading-rumors-survey-shows?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://tech.slashdot.org/story/26/10/02/0211256/error-prone-ai-nearly-sparked-world-war-three-last-month?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://news.slashdot.org/story/26/10/02/0220226/20-of-swiss-glaciers-lost-in-five-years?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://it.slashdot.org/story/26/10/02/0226205/openai-alerts-more-than-100-groups-about-rogue-ai-agent-activity?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://news.slashdot.org/story/26/10/01/2159252/california-rushes-to-prepare-for-massive-kelvin-wave-predicted-sea-level-rise?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://news.slashdot.org/story/26/10/01/2149250/amazons-new-kindle-accessories-bring-back-physical-controls?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://yro.slashdot.org/story/26/10/01/2124230/russian-owned-snooping-software-used-by-us-secret-service?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://tech.slashdot.org/story/26/10/01/2110250/cloudflare-tries-to-outplay-jev-with-open-weight-clef-models?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://slashdot.org/story/26/10/01/1832232/ryan-roslansky-is-leaving-after-nearly-18-years-at-linkedin-and-microsoft?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://hardware.slashdot.org/story/26/10/01/1822222/micron-projects-tightening-ram-shortages-through-2028-as-it-generates-record-profit?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://yro.slashdot.org/story/26/10/01/1813207/cops-can-bypass-iphones-automatic-reboot-to-get-into-locked-phones?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://news.slashdot.org/story/26/10/01/1728203/pentagon-creates-autowarcom-to-expand-ai-and-drone-capabilities?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://yro.slashdot.org/story/26/10/01/1720206/ftc-is-investigating-openai-anthropic-and-other-ai-companies-over-product-risks?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://hardware.slashdot.org/story/26/10/01/1514239/hps-answer-to-the-macbook-neo-is-thinner-lighter-and-comes-with-oled?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+  <rdf:li rdf:resource="https://games.slashdot.org/story/26/10/01/1510234/ps5-emulation-is-suddenly-making-big-strides-on-pc?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed" />
+ </rdf:Seq>
+</items>
+<image rdf:resource="https://a.fsdn.com/sd/topics/topicslashdot.gif" />
+<textinput rdf:resource="https://slashdot.org/search.pl" />
+</channel>
+<image rdf:about="https://a.fsdn.com/sd/topics/topicslashdot.gif">
+<title>Slashdot</title>
+<url>https://a.fsdn.com/sd/topics/topicslashdot.gif</url>
+<link>https://slashdot.org/</link>
+</image>
+<item rdf:about="https://tech.slashdot.org/story/26/10/02/0632243/social-media-harms-democracy-by-spreading-rumors-survey-shows?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Social Media Harms Democracy By Spreading Rumors, Survey Shows</title>
+<link>https://tech.slashdot.org/story/26/10/02/0632243/social-media-harms-democracy-by-spreading-rumors-survey-shows?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>An anonymous reader quotes a report from Reuters: A growing number of people think social media manipulates and divides people and harms democracy, Pew Research Center said on Thursday, echoing rising concern and tighter scrutiny across the world. Companies running popular social platforms, including Meta, Snap, and TikTok, have faced thousands of lawsuits and paid large sums to settle claims that they harmed users. Governments, meanwhile, have sought foolproof ways to protect their citizens' privacy.
+ 
+Australia has proposed rules to let users opt out of algorithmically recommended feeds, after becoming the first country to ban social media for children under 16. Pew's latest survey showed that 82% of Australian adults support the government's move to restrict social media access for children. A majority of respondents said social media informs people and gives them a voice in politics, but there was a broad rise in those who now see social media as a "bad thing" compared to 2022, according to the report.
+ 
+People in wealthier countries, including the US, Canada and UK, are more inclined to believe that social media is harming democracy, versus their counterparts in economies with lower gross domestic product per capita -- such as Ghana, Kenya and Nigeria. The US is among the most skeptical, with 64% of adult respondents saying social media harms democracy. The share of people who consider social media bad for democracy increased in 16 of 26 countries where older data was available. Pew Research said it surveyed more than 45,000 people in 37 countries, while polling an additional 5,511 US adults on American social media use.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Social+Media+Harms+Democracy+By+Spreading+Rumors%2C+Survey+Shows%3A+https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0632243%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0632243%2Fsocial-media-harms-democracy-by-spreading-rumors-survey-shows%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://tech.slashdot.org/story/26/10/02/0632243/social-media-harms-democracy-by-spreading-rumors-survey-shows?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112882&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-02T16:00:00+00:00</dc:date>
+<dc:subject>social</dc:subject>
+<slash:department>shifting-sentiment</slash:department>
+<slash:section>technology</slash:section>
+<slash:comments>7</slash:comments>
+<slash:hit_parade>7,7,7,7,1,0,0</slash:hit_parade>
+</item>
+<item rdf:about="https://tech.slashdot.org/story/26/10/02/0211256/error-prone-ai-nearly-sparked-world-war-three-last-month?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Error-Prone AI Nearly Sparked World War Three Last Month</title>
+<link>https://tech.slashdot.org/story/26/10/02/0211256/error-prone-ai-nearly-sparked-world-war-three-last-month?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>In an op-ed for The Guardian, authors Timnit Gebru and Emily M. Bender argue that policymakers are focusing too heavily on hypothetical "superintelligence" while overlooking the more immediate danger of deploying unreliable AI in high-stakes settings. They point to an as-yet independently unverified CNN report claiming U.S. officials nearly intercepted a Chinese vessel after an AI-assisted intelligence report incorrectly said it was carrying nuclear-weapons components. From the article: While so many of us were focused on fictional superintelligent machines that we were told could hypothetically cause human extinction, however, there was a more serious story being reported. A series of events almost got us to armageddon, not caused by "rogue, superintelligent AI," but by government reliance on error-prone systems that are marketed by their manufacturers as being close to superintelligent.
+ 
+A CNN report published on September 18, which hasn't been verified by other major outlets, describes how the US "almost started a war" with China, based on an intelligence report that claimed a Chinese ship was transporting components of nuclear weapons. Military personnel made plans to intercept the Chinese vessel, complete with aircraft and soldiers ready to board the ship. A military skirmish of this kind between China and the US could quickly escalate and spiral into world war three.
+ 
+It was only moments before executing on the plan that American officials further investigated the intelligence report and found that it had been generated with the use of a chatbot and contained erroneous information about the vessel's contents. Unlike the terminator, "rogue AI," scenario, this incident didn't galvanize lawmakers into announcing calls for regulation so as to avoid potential human extinction. Media outlet after media outlet didn't warn the public that we almost triggered a war against a nuclear superpower because of our military's reliance on error-prone chatbots.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Error-Prone+AI+Nearly+Sparked+World+War+Three+Last+Month%3A+https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0211256%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F02%2F0211256%2Ferror-prone-ai-nearly-sparked-world-war-three-last-month%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://tech.slashdot.org/story/26/10/02/0211256/error-prone-ai-nearly-sparked-world-war-three-last-month?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112754&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-02T15:00:00+00:00</dc:date>
+<dc:subject>ai</dc:subject>
+<slash:department>close-call</slash:department>
+<slash:section>technology</slash:section>
+<slash:comments>30</slash:comments>
+<slash:hit_parade>30,30,20,17,4,0,0</slash:hit_parade>
+</item>
+<item rdf:about="https://news.slashdot.org/story/26/10/02/0220226/20-of-swiss-glaciers-lost-in-five-years?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>20% of Swiss Glaciers Lost In Five Years</title>
+<link>https://news.slashdot.org/story/26/10/02/0220226/20-of-swiss-glaciers-lost-in-five-years?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>Swiss glaciers lost 5.5% of their ice volume in the first eight months of 2026, bringing total losses since 2021 to 19.4%. Researchers say some glaciers are now collapsing from within as meltwater carves out large cavities. The Guardian reports: Matthias Huss, a glaciologist at ETH Zurich and lead author of the report, said many people do not realize how fast glaciers are retreating, or that just one generation ago some now-barren sites used to sit beneath hundreds of meters of ice. The scientists have not yet compiled a formal tally of lost glaciers this year but said they had witnessed the death of a number of small ones. "I visited one last week and it's so impressive to stand in this moonlike landscape where there was a big layer of ice -- an extensive glacier -- just a few years ago," said Huss. "And now it's a rock desert where there's some scattered blocks of old ice still lying around and melting on the hot rocks."
+ 
+The report, a collaboration between the Swiss Glacier Monitoring Network and the Swiss Commission for Cryosphere Observation, found the mean thickness of individual glaciers fell by between 2.5 metres and 4 metres in 2026. Huss said scientists were increasingly seeing glaciers collapse from the inside -- the result of internal streams beneath the ice that excavate caverns -- rather than simply retreating from surface heat. [...] Analysis published by MeteoSwiss on Tuesday found the summer half-year from April to September was the hottest and driest it had been since records began in 1864. In that time, humanity has filled the atmosphere with 1.8tn tons of carbon dioxide and heated the planet by about 1.4C.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=20%25+of+Swiss+Glaciers+Lost+In+Five+Years%3A+https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F02%2F0220226%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F02%2F0220226%2F20-of-swiss-glaciers-lost-in-five-years%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://news.slashdot.org/story/26/10/02/0220226/20-of-swiss-glaciers-lost-in-five-years?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112772&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-02T11:00:00+00:00</dc:date>
+<dc:subject>earth</dc:subject>
+<slash:department>glacial-retreat</slash:department>
+<slash:section>news</slash:section>
+<slash:comments>38</slash:comments>
+<slash:hit_parade>38,38,30,30,8,4,1</slash:hit_parade>
+</item>
+<item rdf:about="https://it.slashdot.org/story/26/10/02/0226205/openai-alerts-more-than-100-groups-about-rogue-ai-agent-activity?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>OpenAI Alerts More Than 100 Groups About Rogue AI Agent Activity</title>
+<link>https://it.slashdot.org/story/26/10/02/0226205/openai-alerts-more-than-100-groups-about-rogue-ai-agent-activity?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>An anonymous reader quotes a report from Reuters: OpenAI has informed more than 100 organizations about incidents involving unauthorized activity tied to its AI agents, according to a blog post by the ChatGPT maker, as AI labs face mounting scrutiny over rogue AI agent activity. Here are some other details:
+ - The Sam Altman-led company has been conducting a broad review of the activities of its AI models after the accidental hacking of Hugging Face. - OpenAI is searching through roughly 50 petabytes of data as it works to understand the full scope of its rogue agent activity. - A string of high-profile breaches globally by rogue AI agents in recent months has sparked widespread worries within the AI industry over its ability to control the more powerful AI models now under development. - "In some cases, models used internet access in unintended ways or, in retrospect, did not have the ideal restrictions applied. Over the last several months, we have been applying new technical and operational measures to avoid similar problems, or catch them very early, and will continue this work," OpenAI said. - OpenAI previously said the review would take months to complete given the scale of the work. - The Hugging Face incident remains the most severe rogue agent activity OpenAI has identified from its AI models so far.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=OpenAI+Alerts+More+Than+100+Groups+About+Rogue+AI+Agent+Activity%3A+https%3A%2F%2Fit.slashdot.org%2Fstory%2F26%2F10%2F02%2F0226205%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fit.slashdot.org%2Fstory%2F26%2F10%2F02%2F0226205%2Fopenai-alerts-more-than-100-groups-about-rogue-ai-agent-activity%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://it.slashdot.org/story/26/10/02/0226205/openai-alerts-more-than-100-groups-about-rogue-ai-agent-activity?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112776&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-02T07:00:00+00:00</dc:date>
+<dc:subject>security</dc:subject>
+<slash:department>well-well-well</slash:department>
+<slash:section>it</slash:section>
+<slash:comments>33</slash:comments>
+<slash:hit_parade>33,33,30,26,5,4,4</slash:hit_parade>
+</item>
+<item rdf:about="https://news.slashdot.org/story/26/10/01/2159252/california-rushes-to-prepare-for-massive-kelvin-wave-predicted-sea-level-rise?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>California Rushes To Prepare For Massive 'Kelvin' Wave, Predicted Sea Level Rise</title>
+<link>https://news.slashdot.org/story/26/10/01/2159252/california-rushes-to-prepare-for-massive-kelvin-wave-predicted-sea-level-rise?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>fjo3 shares a report from The Guardian: Communities across California are rushing to prepare for the imminent arrival of the so-called "Kelvin wave," a massive underwater band of warm water threatening to inundate swaths of the vast North American shoreline. The wave is nearing southern California and expected to reach the San Francisco Bay Area by early October, as it crawls toward Alaska. Waters could rise by a foot along the California coast, according to scientists, who have warned that this could dramatically double the 8-12in rise in sea levels already caused by climate change over the last century.
+ 
+The Kelvin wave doesn't climb and crash like a typical ocean wave; rather, it swells the tides from beneath the surface. It's effectively a massive slosh of warm water, driven by El Nino conditions, that moves across the Pacific before colliding with the South American coastline and surging north. It also won't transport water in the way a tsunami might, but creates conditions that enable higher sea levels to linger. On their own, Kelvin waves aren't always hazardous, according to Mike Jacox, a research oceanographer with the National Marine Fisheries Service, though they can reduce the growth of phytoplankton that form the base of the marine food web. "But when there are very high tides or storm surges, their effects can be amplified," he said.
+ 
+If the rising waters coincide with other climatic events, such as rainstorms and high tides, the phenomenon could swallow beaches, chew away bluffs and coastlines, and submerge streets, homes and businesses. "This coming Kelvin wave is just the beginning," said Dr Jonathan Warrick, a research geologist at the US Geological Survey. "The thing to look out for is what will happen in January, February and March -- that's when we get the biggest storms, we get our largest waves and we have some very large tides." If these events align, their effects will compound, setting the stage for a tumultuous winter. Together, Warrick said, the systems will pack a far bigger punch. "When it comes to these storms and the tides," he said, "we really are kind of rolling the dice."&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=California+Rushes+To+Prepare+For+Massive+'Kelvin'+Wave%2C+Predicted+Sea+Level+Rise%3A+https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F01%2F2159252%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F01%2F2159252%2Fcalifornia-rushes-to-prepare-for-massive-kelvin-wave-predicted-sea-level-rise%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://news.slashdot.org/story/26/10/01/2159252/california-rushes-to-prepare-for-massive-kelvin-wave-predicted-sea-level-rise?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112616&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-02T03:30:00+00:00</dc:date>
+<dc:subject>earth</dc:subject>
+<slash:department>what-to-expect</slash:department>
+<slash:section>news</slash:section>
+<slash:comments>57</slash:comments>
+<slash:hit_parade>57,49,42,34,11,7,1</slash:hit_parade>
+</item>
+<item rdf:about="https://news.slashdot.org/story/26/10/01/2149250/amazons-new-kindle-accessories-bring-back-physical-controls?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Amazon's New Kindle Accessories Bring Back Physical Controls</title>
+<link>https://news.slashdot.org/story/26/10/01/2149250/amazons-new-kindle-accessories-bring-back-physical-controls?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>Alongside a refreshed Kindle lineup, Amazon today introduced two accessories that bring physical buttons back to its touchscreen e-readers. The $34.99 Kindle Click is a Bluetooth remote that lets readers turn pages and adjust brightness without touching the device, while a new $79.99 magnetic cover is available for select Paperwhite and Colorsoft models. GeekWire reports: Amazon says [the Kindle Click is] meant for reading under the covers, on a treadmill, or on an airplane tray table. It's available for preorder and ships Oct. 28. It recharges over USB-C, includes side buttons for adjusting brightness, and works with Kindles released in 2024 or later. The company cited BookTok as an inspiration, Bloomberg reported, a reference to the community of readers on TikTok who post book recommendations, reviews and their reading setups. Kindle fans there have been showing off third-party clickers for years.
+ 
+Amazon is also bringing back physical page-turn buttons, which disappeared when the company discontinued the Kindle Oasis in 2024. This time they come in a separate $79.99 magnetic cover, which works only with the new Signature Edition versions of the Paperwhite and Colorsoft. The new Kindles have screens that sit flush with the edges, colors that wrap around to the front, and optional aluminum housings. They also have user-replaceable batteries to comply with European Union rules, Amazon told The Verge.
+ 
+The base Kindle starts at $149.99, or $189.99 in aluminum. The Paperwhite starts at $199.99 and the Colorsoft at $289.99, with Signature Editions at $249.99 and $319.99. Those prices match what Amazon has charged since August, when it raised Kindle prices by $40 to $50, citing memory and storage costs. The base Kindle is available now. The Paperwhite and Colorsoft ship Oct. 28.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Amazon's+New+Kindle+Accessories+Bring+Back+Physical+Controls%3A+https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F01%2F2149250%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F01%2F2149250%2Famazons-new-kindle-accessories-bring-back-physical-controls%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://news.slashdot.org/story/26/10/01/2149250/amazons-new-kindle-accessories-bring-back-physical-controls?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112600&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-02T01:00:00+00:00</dc:date>
+<dc:subject>books</dc:subject>
+<slash:department>what's-old-is-new-again</slash:department>
+<slash:section>news</slash:section>
+<slash:comments>24</slash:comments>
+<slash:hit_parade>24,24,23,23,4,3,1</slash:hit_parade>
+</item>
+<item rdf:about="https://yro.slashdot.org/story/26/10/01/2124230/russian-owned-snooping-software-used-by-us-secret-service?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Russian-Owned Snooping Software Used By US Secret Service</title>
+<link>https://yro.slashdot.org/story/26/10/01/2124230/russian-owned-snooping-software-used-by-us-secret-service?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>Bruce66423 shares a report from The Telegraph: British police forces, including specialist units within the Metropolitan Police, have used Oxygen Forensics software to break into the phones of suspects during live investigations, public documents show. The Virginia-based company behind the software has been accused in the US of having hidden its Russian ownership to avoid sanctions, before it was awarded government contracts. Its American chief executive and a Russian national were arrested last week after a US investigation found the company had sought to hide its ownership in an alleged attempt to avoid sanctions and scrutiny.
+ 
+[...] By September 2024, the US Secret Service had awarded Oxygen a five-year contract for its software. In December 2022, and in October 2023, Oxygen's chief executive told the US government that Oxygen Forensics had "no immediate or highest-level owner." By September 2024, the US Secret Service had awarded Oxygen a five-year contract for its software. In March, Mr Reiber allegedly told the US government that there had been no Russians involved in developing the software and that no one in Russia had access to the environment in which it was built. US prosecutors say this was false. If convicted, both Mr Reiber and Mr Davydov could face a sentence of 20 years in prison.
+&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Russian-Owned+Snooping+Software+Used+By+US+Secret+Service%3A+https%3A%2F%2Fyro.slashdot.org%2Fstory%2F26%2F10%2F01%2F2124230%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fyro.slashdot.org%2Fstory%2F26%2F10%2F01%2F2124230%2Frussian-owned-snooping-software-used-by-us-secret-service%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://yro.slashdot.org/story/26/10/01/2124230/russian-owned-snooping-software-used-by-us-secret-service?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112582&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T23:00:00+00:00</dc:date>
+<dc:subject>software</dc:subject>
+<slash:department>would-you-look-at-that</slash:department>
+<slash:section>yro</slash:section>
+<slash:comments>18</slash:comments>
+<slash:hit_parade>18,16,13,11,5,3,2</slash:hit_parade>
+</item>
+<item rdf:about="https://tech.slashdot.org/story/26/10/01/2110250/cloudflare-tries-to-outplay-jev-with-open-weight-clef-models?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Cloudflare Tries to Outplay Jev With Open-Weight Clef Models</title>
+<link>https://tech.slashdot.org/story/26/10/01/2110250/cloudflare-tries-to-outplay-jev-with-open-weight-clef-models?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>Cloudflare has launched two open-weight decision models, Clef and Clef-flash, designed for structured yes/no, multiple-choice, and ranking tasks while also supporting images, video, and up to a 64K context window. Cloudflare says its models outperform TypeSafe's Jev on several benchmarks and can run locally from Hugging Face. The Register reports: For starters, Clef has an LLM backbone. According to Cloudflare, Clef uses specially post-trained, frozen versions of Qwen3.8-27B and Qwen3.5-9B for Clef and Clef-flash, respectively, with the Qwen backbone performing a prefill-only pass during inference. Clef is still fast - faster than Jev, to be fair - and scores choices in parallel after that prefill-only pass. It's not clear what Jev's underlying architecture is, as TypeSafe has kept that a secret.
+ 
+As for its speed and capability, Clef moves fast. Cloudflare ran it against Jev and some other open decision models using the Jev Decision Index available on Hugging Face, and the company's own ranking suggests Clef is slightly slower than other open models, but more accurate, with Clef-flash just as accurate as most of the others, but far faster.
+ 
+To be fair to the competition, Cloudflare self-reported its own scores against the benchmark, and they have yet to be reproduced for ranking on the official Decision Index. Cloudflare also ran Clef against TypeSafe's own benchmarks, and claimed it beat Jev in three out of four areas, only losing out on agent trace observability. Even if it were a bit slower or less accurate, Clef has another major leg up on Jev: It's not limited to classifying text -- it can also handle images and video. Additionally, Clef supports a 64k context window. Jev can also handle up to 64k tokens across a request, although its state plus longest individual question is limited to 32k.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Cloudflare+Tries+to+Outplay+Jev+With+Open-Weight+Clef+Models%3A+https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F01%2F2110250%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Ftech.slashdot.org%2Fstory%2F26%2F10%2F01%2F2110250%2Fcloudflare-tries-to-outplay-jev-with-open-weight-clef-models%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://tech.slashdot.org/story/26/10/01/2110250/cloudflare-tries-to-outplay-jev-with-open-weight-clef-models?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112560&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T22:00:00+00:00</dc:date>
+<dc:subject>internet</dc:subject>
+<slash:department>fine-tuned</slash:department>
+<slash:section>technology</slash:section>
+<slash:comments>12</slash:comments>
+<slash:hit_parade>12,12,8,7,2,2,2</slash:hit_parade>
+</item>
+<item rdf:about="https://slashdot.org/story/26/10/01/1832232/ryan-roslansky-is-leaving-after-nearly-18-years-at-linkedin-and-microsoft?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Ryan Roslansky Is Leaving After Nearly 18 Years At LinkedIn and Microsoft</title>
+<link>https://slashdot.org/story/26/10/01/1832232/ryan-roslansky-is-leaving-after-nearly-18-years-at-linkedin-and-microsoft?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>Ryan Roslansky is leaving Microsoft and LinkedIn after nearly 18 years, triggering another leadership shuffle across Office and Teams. "Roslansky, who until recently was the CEO of LinkedIn, was promoted to the head of Office last year and then took control of Microsoft Teams earlier this year," notes The Verge. From the report: "Ryan leaves the organization in a strong position," says Microsoft CEO Satya Nadella in an internal memo. "Over the past year, Ryan's team has done critical work bringing together the product, engineering, and design foundations that have made this next phase possible."
+ 
+Roslansky is leaving a week after Microsoft announced its new Copilot, which the company is positioning as "the OS for work." He's also leaving around a month after calling fully AI-generated documents "a doom loop" for workers. "If we're not careful, we'll end up with a very expensive way to avoid writing and reading in an ocean of sameness, genericness," said Roslansky in his LinkedIn post.
+ 
+Microsoft is now moving the teams behind Office and Microsoft Teams over to Charles Lamanna, as part of the Copilot, Agents, and Platform (CAP) organization. [...] Microsoft's chief design officer, Jon Friedman, is also moving to report to Copilot chief Jacob Andreou. Microsoft appointed Dan Shapero as its LinkedIn CEO earlier this year, and he will continue in this role and report directly to Nadella.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Ryan+Roslansky+Is+Leaving+After+Nearly+18+Years+At+LinkedIn+and+Microsoft%3A+https%3A%2F%2Fslashdot.org%2Fstory%2F26%2F10%2F01%2F1832232%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fslashdot.org%2Fstory%2F26%2F10%2F01%2F1832232%2Fryan-roslansky-is-leaving-after-nearly-18-years-at-linkedin-and-microsoft%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://slashdot.org/story/26/10/01/1832232/ryan-roslansky-is-leaving-after-nearly-18-years-at-linkedin-and-microsoft?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112452&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T21:00:00+00:00</dc:date>
+<dc:subject>microsoft</dc:subject>
+<slash:department>long-tenures</slash:department>
+<slash:section>slashdot</slash:section>
+<slash:comments>18</slash:comments>
+<slash:hit_parade>18,18,17,16,9,6,5</slash:hit_parade>
+</item>
+<item rdf:about="https://hardware.slashdot.org/story/26/10/01/1822222/micron-projects-tightening-ram-shortages-through-2028-as-it-generates-record-profit?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Micron Projects Tightening RAM Shortages Through 2028 As It Generates Record Profit</title>
+<link>https://hardware.slashdot.org/story/26/10/01/1822222/micron-projects-tightening-ram-shortages-through-2028-as-it-generates-record-profit?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>Micron says the global RAM and storage shortage will tighten further through 2027 and 2028, with CEO Sanjay Mehrotra saying the company has already sold most of next year's capacity. "In calendar 2027 as well as 2028, we see demand exceeding supply. In fact, we see greater tightness in the industry in 2027 and in 2028 versus 2026. Overall, supply-demand environment is only getting tighter," Mehrotra said. "We do not have line of sight to when supply and demand will return to balance." As a result, the company is forecasting record revenue and an 86.25% gross margin. Tom's Hardware reports: The memory and storage industry is not holding back on increasing production, though, with Micron saying that NAND and DRAM shipments are expected to grow in the low-to-mid 20s percentage range for the next two years. However, it seems that this is not enough to match growing demand, as it expects "the industry to remain supply constrained in both years." Still, it seems that manufacturers are prioritizing HBM demand for AI data centers, with the company expecting shipments of these chips to grow faster than conventional DRAM.
+ 
+Micron and other chip manufacturers are bringing new factories online to increase output, but it's going to take years before they can start producing chips. But even as we're amid an unprecedented multi-year memory chip shortage, Micron also announced record financial guidance. It forecasted a record $61.5 billion FQ1 revenue and a gross margin of 86.25%, implying a gross profit of more than $53 billion. After accounting for an estimated $2.06 billion in operating expenses and a tax rate of around 15.5%, the company said its earnings per share sit at $38.15, plus or minus $1.00, for approximately 1.15 billion shares.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Micron+Projects+Tightening+RAM+Shortages+Through+2028+As+It+Generates+Record+Profit%3A+https%3A%2F%2Fhardware.slashdot.org%2Fstory%2F26%2F10%2F01%2F1822222%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fhardware.slashdot.org%2Fstory%2F26%2F10%2F01%2F1822222%2Fmicron-projects-tightening-ram-shortages-through-2028-as-it-generates-record-profit%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://hardware.slashdot.org/story/26/10/01/1822222/micron-projects-tightening-ram-shortages-through-2028-as-it-generates-record-profit?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112450&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T20:00:00+00:00</dc:date>
+<dc:subject>hardware</dc:subject>
+<slash:department>supply-and-demand</slash:department>
+<slash:section>hardware</slash:section>
+<slash:comments>55</slash:comments>
+<slash:hit_parade>55,52,40,38,10,7,4</slash:hit_parade>
+</item>
+<item rdf:about="https://yro.slashdot.org/story/26/10/01/1813207/cops-can-bypass-iphones-automatic-reboot-to-get-into-locked-phones?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Cops Can Bypass iPhone's Automatic Reboot To Get Into Locked Phones</title>
+<link>https://yro.slashdot.org/story/26/10/01/1813207/cops-can-bypass-iphones-automatic-reboot-to-get-into-locked-phones?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>An anonymous reader quotes a report from 404 Media: A company that makes phone hacking devices claims to have developed a solution that freezes iPhones in a state that lets cops more easily access sensitive data inside them, according to a video obtained by 404 Media. [...] The new technology to get around inactivity reboot was developed by Magnet Forensics, the company behind GrayKey, a popular tool sold to law enforcement agencies that allows them to unlock and access data stored in iPhones and Android smartphones. Magnet has developed a new device called GrayKey Preserve and a feature for its regular GrayKey devices called Evidence Preservation Mode, according to the video.
+ 
+"This is an absolute game changer for iOS forensics and a function that I wish we had years ago," a Magnet employee says in the leaked video, specifically mentioning that the solution is targeted at the iPhone's inactivity reboot feature and the data it makes unavailable. GrayKey Preserve and Evidence Preservation Mode are also designed to combat another iPhone feature that automatically deletes certain data -- such as cached locations, and recently deleted photos and iMessages -- after a certain number of days. "We're gonna be able to preserve that data for an infinite amount of time."
+ 
+[...] 404 Media shared a transcript of the video with Jiska Classen, a researcher at the Hasso Plattner Institute who studies iPhone security. While Classen said that it's impossible to know for sure how Magnet's new feature works based on the video, she posited some theories and agreed that it is "quite a game changer" or "at least puts things back to where they were before inactivity reboot." She thinks Magnet has found a way to manipulate the iPhone's clock, effectively "slowing down time" or even "stopping the clock from ticking, even after a reboot." Most likely, according to her, the GrayKey may disable the iPhone tasks that set data to expire. The "inactivity reboot" feature mentioned above was added to iOS in November 2024 and automatically restarts iPhones that have not been unlocked for 72 hours, making them harder for police to access using forensic tools.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Cops+Can+Bypass+iPhone's+Automatic+Reboot+To+Get+Into+Locked+Phones%3A+https%3A%2F%2Fyro.slashdot.org%2Fstory%2F26%2F10%2F01%2F1813207%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fyro.slashdot.org%2Fstory%2F26%2F10%2F01%2F1813207%2Fcops-can-bypass-iphones-automatic-reboot-to-get-into-locked-phones%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://yro.slashdot.org/story/26/10/01/1813207/cops-can-bypass-iphones-automatic-reboot-to-get-into-locked-phones?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112444&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T19:00:00+00:00</dc:date>
+<dc:subject>privacy</dc:subject>
+<slash:department>your-move-Apple</slash:department>
+<slash:section>yro</slash:section>
+<slash:comments>41</slash:comments>
+<slash:hit_parade>41,38,34,31,14,5,3</slash:hit_parade>
+</item>
+<item rdf:about="https://news.slashdot.org/story/26/10/01/1728203/pentagon-creates-autowarcom-to-expand-ai-and-drone-capabilities?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>Pentagon Creates 'Autowarcom' to Expand AI and Drone Capabilities</title>
+<link>https://news.slashdot.org/story/26/10/01/1728203/pentagon-creates-autowarcom-to-expand-ai-and-drone-capabilities?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>Longtime Slashdot reader ThurstonMoore shares a report from Reuters: U.S. Defense Secretary Pete Hegseth on Wednesday announced the creation of a new military command that would be dedicated to building and providing autonomous and robotic capabilities across the U.S. military. The command, which Hegseth said would be called "Autonomous Warfare Command," highlights the rapidly changing nature of warfare and the need to make progress on systems like drones and the use of artificial intelligence.
+ 
+Speaking in front of hundreds of junior officers and enlisted personnel at Quantico, Virginia, in a speech peppered with attacks on the media, Hegseth said the command would be led by a four-star officer. "The pace of war is changing faster than the process to support it," Hegseth said in a speech called the "State of the Force," in which he announced other changes, including the creation of the office of religious affairs. "Cheap compute, superintelligence, and advanced commercial manufacturing have enabled the proliferation of low-cost, high-precision strike," Hegseth added.
+ 
+[...] The United States has long relied on its vast military budget to field some of the world's most expensive weapons systems. But there is an increasing realization within the Pentagon that this is not sustainable. "Today we need both quality and quantity," Hegseth said.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=Pentagon+Creates+'Autowarcom'+to+Expand+AI+and+Drone+Capabilities%3A+https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F01%2F1728203%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fnews.slashdot.org%2Fstory%2F26%2F10%2F01%2F1728203%2Fpentagon-creates-autowarcom-to-expand-ai-and-drone-capabilities%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://news.slashdot.org/story/26/10/01/1728203/pentagon-creates-autowarcom-to-expand-ai-and-drone-capabilities?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112398&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T18:00:00+00:00</dc:date>
+<dc:subject>usa</dc:subject>
+<slash:department>changing-battlefield</slash:department>
+<slash:section>news</slash:section>
+<slash:comments>38</slash:comments>
+<slash:hit_parade>38,38,33,31,16,14,9</slash:hit_parade>
+</item>
+<item rdf:about="https://yro.slashdot.org/story/26/10/01/1720206/ftc-is-investigating-openai-anthropic-and-other-ai-companies-over-product-risks?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>FTC Is Investigating OpenAI, Anthropic and Other AI Companies Over Product Risks</title>
+<link>https://yro.slashdot.org/story/26/10/01/1720206/ftc-is-investigating-openai-anthropic-and-other-ai-companies-over-product-risks?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>The Federal Trade Commission has opened an investigation into OpenAI, Anthropic and other AI companies over potential consumer and safety risks posed by their products, with the agency reportedly preparing requests for documents and executive testimony. CNBC reports: OpenAI stunned the industry in July when it disclosed that its agents broke out of a testing environment and hacked into open-source platform Hugging Face. [...] Earlier this month, Anthropic CEO Dario Amodei rocked the tech sector by urging AI companies to slow how quickly they improve their most advanced models and calling for stronger government oversight. He published a three-step proposal aimed at tempering the pace of development without "sacrificing commercial advantage or the United States' lead in AI."
+ 
+ CEO Jensen Huang, argued that individual companies should be responsible for ensuring the safety of their products. President Donald Trump convened top executives from Alphabet, Meta, SpaceX, Nvidia, Palantir, Anthropic, OpenAI and other companies on Tuesday to discuss the issue. The group signed a short voluntary, nonbinding accord, which says that "every company is responsible for developing its own technology safely and in a way that builds trust with customers and the public."&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=FTC+Is+Investigating+OpenAI%2C+Anthropic+and+Other+AI+Companies+Over+Product+Risks%3A+https%3A%2F%2Fyro.slashdot.org%2Fstory%2F26%2F10%2F01%2F1720206%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fyro.slashdot.org%2Fstory%2F26%2F10%2F01%2F1720206%2Fftc-is-investigating-openai-anthropic-and-other-ai-companies-over-product-risks%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://yro.slashdot.org/story/26/10/01/1720206/ftc-is-investigating-openai-anthropic-and-other-ai-companies-over-product-risks?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112396&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T17:22:00+00:00</dc:date>
+<dc:subject>ai</dc:subject>
+<slash:department>rogue-agents-meet-regulators</slash:department>
+<slash:section>yro</slash:section>
+<slash:comments>19</slash:comments>
+<slash:hit_parade>19,19,19,19,1,0,0</slash:hit_parade>
+</item>
+<item rdf:about="https://hardware.slashdot.org/story/26/10/01/1514239/hps-answer-to-the-macbook-neo-is-thinner-lighter-and-comes-with-oled?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>HP's Answer to the MacBook Neo Is Thinner, Lighter, and Comes With OLED</title>
+<link>https://hardware.slashdot.org/story/26/10/01/1514239/hps-answer-to-the-macbook-neo-is-thinner-lighter-and-comes-with-oled?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>HP is taking aim at Apple's MacBook Neo with the new OmniBook 5 14, a $699.99 Windows laptop that starts with an Intel Core 5 315 processor, 8GB of RAM and 256GB of storage but includes an OLED display even on the base model. It's also slightly thinner and lighter than the Neo. The Verge reports: The OmniBook 5 14 can be configured much higher, with up to a Core 7 350 chip, 16GB of RAM, and a 1TB SSD, but all models include a 1080p webcam, dual speakers, HDMI, 3.5mm audio jack, and just two 10Gbps USB-C ports. And while the inclusion of OLED across the range is a major draw to the new OmniBook, the base config only has a passable 1920 x 1200 resolution and 300 nits of max brightness on its non-touch panel. A touchscreen version will be available when the OmniBook 5 launches in October, but a version with a 2560 x 1600 resolution OLED and 400 nits of brightness isn't coming until March 2027.
+ 
+While the OmniBook 5 14 doesn't seem poised to best the MacBook Neo in raw processing power (based on our other reviews of Wildcat Lake laptops) or screen brightness, it's quite thin, light, and colorful. HP even gave it the nicer, sleeker lid logo usually reserved for pricier models. It starts at just 2.56 pounds, and it's as thin as 0.46 inches / 11.7mm. That's slightly lighter and thinner than a Neo. And I'd expect its Wildcat Lake chips to offer some good-to-great battery life. But we'll have to see how it delivers in actual testing. HP also announced a new ProBook 4 G2iS that is the company's "thinnest business notebook," measuring in at 0.47 inches / 12mm. It'll launch in December with Intel Wildcat Lake chips, 8GB of RAM, and a 256GB SSD, though pricing hasn't been announced.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=HP's+Answer+to+the+MacBook+Neo+Is+Thinner%2C+Lighter%2C+and+Comes+With+OLED%3A+https%3A%2F%2Fhardware.slashdot.org%2Fstory%2F26%2F10%2F01%2F1514239%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fhardware.slashdot.org%2Fstory%2F26%2F10%2F01%2F1514239%2Fhps-answer-to-the-macbook-neo-is-thinner-lighter-and-comes-with-oled%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://hardware.slashdot.org/story/26/10/01/1514239/hps-answer-to-the-macbook-neo-is-thinner-lighter-and-comes-with-oled?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112300&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T16:00:00+00:00</dc:date>
+<dc:subject>hp</dc:subject>
+<slash:department>new-and-shiny</slash:department>
+<slash:section>hardware</slash:section>
+<slash:comments>95</slash:comments>
+<slash:hit_parade>95,95,82,80,13,8,6</slash:hit_parade>
+</item>
+<item rdf:about="https://games.slashdot.org/story/26/10/01/1510234/ps5-emulation-is-suddenly-making-big-strides-on-pc?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed">
+<title>PS5 Emulation Is Suddenly Making Big Strides On PC</title>
+<link>https://games.slashdot.org/story/26/10/01/1510234/ps5-emulation-is-suddenly-making-big-strides-on-pc?utm_source=rss1.0mainlinkanon&amp;utm_medium=feed</link>
+<description>An anonymous reader quotes a report from Ars Technica: For a long time, PC gamers could access many PlayStation 5 games only if the publisher invested in a bespoke port (something Sony has recently said it will be scaling back). Now, though, rapid advancements in PS5 emulators and other tools are making recent PlayStation titles increasingly playable on generic PCs. SharpEmu was the first of these emulators, advancing from a "very early alpha stage" in May to a current state that can "load the eboot.bin of real games, execute native CPU instructions, and partially handle GPU-related functionality." The most recent release boasts 10 tested games that reach a "playable" state, including six that developer CursedIfElse says are "fully playable at 60 fps." That includes simple 2D games like Tetris Forever but also 3D titles like Astro Bot and the PS5 Demon's Souls remaster running at playable frame rates.
+ 
+[...] Amid that SharpEmu progress, fellow PS5 emulator KytyPS5 launched its first public version last week. The major expansion of PS4-focused emulator Kyty "can boot 2D games and a selection of 3D games, including titles built with Unreal Engine 4/5, Unity, and custom engines," according to its GitHub page. An extensive compatibility list for KytyPS5 already shows 134 titles with "controllable gameplay" on the new emulator, though many of those still include reports of persistent, game-breaking bugs. But you can already find YouTube footage of PS5 titles like Astro's Playroom and Demon's Souls running quite capably under the emulator.
+ 
+On top of those more traditional emulators, AnyPS5 might be the most interesting effort to get PS5 games running on PC. The self-described "tool for automatic executables porting" works kind of like Apple's Game Porting Toolkit, relinking a PS5 game's original x86 game code directly to native executable instructions that can run on PC. That puts the effort somewhere between direct static decompilation of a game's source code and more complete emulation of the entire PS5 environment.&lt;p&gt;&lt;div class="share_submission" style="position:relative;"&gt;
+&lt;a class="slashpop" href="http://twitter.com/home?status=PS5+Emulation+Is+Suddenly+Making+Big+Strides+On+PC%3A+https%3A%2F%2Fgames.slashdot.org%2Fstory%2F26%2F10%2F01%2F1510234%2F%3Futm_source%3Dtwitter%26utm_medium%3Dtwitter"&gt;&lt;img src="https://a.fsdn.com/sd/twitter_icon_large.png"&gt;&lt;/a&gt;
+&lt;a class="slashpop" href="http://www.facebook.com/sharer.php?u=https%3A%2F%2Fgames.slashdot.org%2Fstory%2F26%2F10%2F01%2F1510234%2Fps5-emulation-is-suddenly-making-big-strides-on-pc%3Futm_source%3Dslashdot%26utm_medium%3Dfacebook"&gt;&lt;img src="https://a.fsdn.com/sd/facebook_icon_large.png"&gt;&lt;/a&gt;
+
+
+
+&lt;/div&gt;&lt;/p&gt;&lt;p&gt;&lt;a href="https://games.slashdot.org/story/26/10/01/1510234/ps5-emulation-is-suddenly-making-big-strides-on-pc?utm_source=rss1.0moreanon&amp;amp;utm_medium=feed"&gt;Read more of this story&lt;/a&gt; at Slashdot.&lt;/p&gt;&lt;iframe src="https://slashdot.org/slashdot-it.pl?op=discuss&amp;amp;id=24112278&amp;amp;smallembed=1" style="height: 300px; width: 100%; border: none;"&gt;&lt;/iframe&gt;</description>
+<dc:creator>BeauHD</dc:creator>
+<dc:date>2026-10-01T15:15:00+00:00</dc:date>
+<dc:subject>emulation</dc:subject>
+<slash:department>no-console-required</slash:department>
+<slash:section>games</slash:section>
+<slash:comments>24</slash:comments>
+<slash:hit_parade>24,24,20,18,6,3,0</slash:hit_parade>
+</item>
+<textinput rdf:about="https://slashdot.org/search.pl">
+<title>Search Slashdot</title>
+<description>Search Slashdot stories</description>
+<name>query</name>
+<link>https://slashdot.org/search.pl</link>
+</textinput>
+</rdf:RDF>
