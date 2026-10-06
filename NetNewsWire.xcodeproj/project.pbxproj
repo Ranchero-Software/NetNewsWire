@@ -429,6 +429,7 @@
 		84D35E0E2DB9F32D004AA60E /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				UnreadCountDisplay.swift,
 				Widget/WidgetData.swift,
 				Widget/WidgetDataDecoder.swift,
 				Widget/WidgetDeepLinks.swift,
