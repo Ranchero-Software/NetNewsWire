@@ -136,7 +136,7 @@ struct AddAccountsView: View {
 					HStack(alignment: .center) {
 						account.image()
 							.resizable()
-							.aspectRatio(contentMode: .fit)
+							.scaledToFit()
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 						Text(account.displayName)
@@ -168,7 +168,7 @@ struct AddAccountsView: View {
 					HStack(alignment: .center) {
 						account.image()
 							.resizable()
-							.aspectRatio(contentMode: .fit)
+							.scaledToFit()
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 
@@ -204,7 +204,7 @@ struct AddAccountsView: View {
 								HStack(alignment: .center) {
 									account.image()
 										.resizable()
-										.aspectRatio(contentMode: .fit)
+										.scaledToFit()
 										.frame(width: 20, height: 20, alignment: .center)
 										.padding(.leading, 4)
 									Text(account.displayName)
@@ -238,7 +238,7 @@ struct AddAccountsView: View {
 					HStack(alignment: .center) {
 						account.image()
 							.resizable()
-							.aspectRatio(contentMode: .fit)
+							.scaledToFit()
 							.frame(width: 20, height: 20, alignment: .center)
 							.padding(.leading, 4)
 

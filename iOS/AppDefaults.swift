@@ -80,6 +80,7 @@ final class AppDefaults: Sendable {
 		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
 		static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
 		static let timelineWidth = "timelineWidth"
+		static let sidebarWidth = "sidebarWidth"
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -231,16 +232,30 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	// The iPad timeline (supplementary) column width. nil until the user has resized it.
+	// The iPad timeline column width. nil until the user has resized it.
 	var timelineWidth: Int? {
 		get {
-			return AppDefaults.store.object(forKey: Key.timelineWidth) as? Int
+			UserDefaults.standard.object(forKey: Key.timelineWidth) as? Int
 		}
 		set {
 			if let newValue {
-				AppDefaults.store.set(newValue, forKey: Key.timelineWidth)
+				UserDefaults.standard.set(newValue, forKey: Key.timelineWidth)
 			} else {
-				AppDefaults.store.removeObject(forKey: Key.timelineWidth)
+				UserDefaults.standard.removeObject(forKey: Key.timelineWidth)
+			}
+		}
+	}
+
+	// The iPad sidebar column width. nil until the user has resized it.
+	var sidebarWidth: Int? {
+		get {
+			UserDefaults.standard.object(forKey: Key.sidebarWidth) as? Int
+		}
+		set {
+			if let newValue {
+				UserDefaults.standard.set(newValue, forKey: Key.sidebarWidth)
+			} else {
+				UserDefaults.standard.removeObject(forKey: Key.sidebarWidth)
 			}
 		}
 	}

@@ -301,10 +301,8 @@ import ActivityLog
 	}
 
 	public func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
-		Task {
-			for account in activeAccounts {
-				await account.receiveRemoteNotification(userInfo: userInfo)
-			}
+		for account in activeAccounts {
+			await account.receiveRemoteNotification(userInfo: userInfo)
 		}
 	}
 
@@ -316,10 +314,13 @@ import ActivityLog
 		}
 	}
 
-	public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async {
+	/// Returns `true` if the refresh ran, `false` if it was skipped
+	/// due to no network connection.
+	@discardableResult
+	public func refreshAll(errorHandler: ErrorHandlerCallback? = nil) async -> Bool {
 		guard NetworkMonitor.shared.isConnected else {
 			Self.logger.info("AccountManager: skipping refreshAll — not connected to internet.")
-			return
+			return false
 		}
 
 		CombinedRefreshProgress.shared.start()
@@ -338,6 +339,8 @@ import ActivityLog
 				}
 			}
 		}
+
+		return true
 	}
 
 	public func sendArticleStatusAll() async {
@@ -380,6 +383,12 @@ import ActivityLog
 	public func saveAll() {
 		for account in accounts {
 			account.save()
+		}
+	}
+
+	public func saveAllIfNeeded() {
+		for account in accounts {
+			account.saveIfNeeded()
 		}
 	}
 

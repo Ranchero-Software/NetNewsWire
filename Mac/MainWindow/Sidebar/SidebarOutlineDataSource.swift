@@ -338,8 +338,12 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func moveFeedInAccount(_ feed: Feed, _ source: Container, _ destination: Container) {
+		guard let account = source.account else {
+			return
+		}
+
 		BatchUpdate.shared.start()
-		source.account?.moveFeed(feed, from: source, to: destination) { result in
+		account.moveFeed(feed, from: source, to: destination) { result in
 			BatchUpdate.shared.end()
 			switch result {
 			case .success:

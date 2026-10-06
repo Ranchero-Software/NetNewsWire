@@ -49,16 +49,14 @@ final class InspectorWindowController: NSWindowController {
 		static let windowOrigin = "FloatingInspectorOrigin"
 	}
 
+	convenience init() {
+		self.init(windowNibName: "InspectorWindow")
+	}
+
 	override func windowDidLoad() {
 
-		let nothingInspector = window?.contentViewController as! InspectorViewController
-
-		let storyboard = NSStoryboard(name: NSStoryboard.Name("Inspector"), bundle: nil)
-		let feedInspector = inspector("Feed", storyboard)
-		let folderInspector = inspector("Folder", storyboard)
-		let builtinSmartFeedInspector = inspector("BuiltinSmartFeed", storyboard)
-
-		inspectors = [feedInspector, folderInspector, builtinSmartFeedInspector, nothingInspector]
+		let nothingInspector = NothingInspectorViewController()
+		inspectors = [FeedInspectorViewController(), FolderInspectorViewController(), BuiltinSmartFeedInspectorViewController(), nothingInspector]
 		currentInspector = nothingInspector
 		window?.title = currentInspector.windowTitle
 
@@ -94,11 +92,6 @@ final class InspectorWindowController: NSWindowController {
 }
 
 private extension InspectorWindowController {
-
-	func inspector(_ identifier: String, _ storyboard: NSStoryboard) -> InspectorViewController {
-
-		return storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(identifier)) as! InspectorViewController
-	}
 
 	func show(_ inspector: InspectorViewController) {
 

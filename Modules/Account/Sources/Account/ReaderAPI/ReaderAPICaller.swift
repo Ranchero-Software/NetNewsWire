@@ -41,7 +41,7 @@ struct ReaderAPIUsageLimits {
 		case readingList = "user/-/state/com.google/reading-list"
 	}
 
-	private struct ConditionalGetKeys {
+	struct ConditionalGetKeys {
 		static let subscriptions = "subscriptions"
 		static let tags = "tags"
 	}
@@ -138,7 +138,7 @@ struct ReaderAPIUsageLimits {
 			return self.credentials
 
 		} catch {
-			if let webserviceError = error as? WebserviceError, case .httpError(let code) = webserviceError, code == 404 {
+			if let webserviceError = error as? WebserviceError, case .httpError(let code, _) = webserviceError, code == 404 {
 				throw AccountError.urlNotFound
 			} else {
 				throw error
@@ -183,14 +183,14 @@ struct ReaderAPIUsageLimits {
 		let token = try await requestAuthorizationToken(endpoint: endpoint)
 		do {
 			return try await operation(token)
-		} catch WebserviceError.httpError(let status) where status == 401 || status == 403 {
+		} catch WebserviceError.httpError(let status, _) where status == 401 || status == 403 {
 			accessToken = nil
 			let freshToken = try await requestAuthorizationToken(endpoint: endpoint)
 			return try await operation(freshToken)
 		}
 	}
 
-	@MainActor public func retrieveTags() async throws -> [ReaderAPITag]? {
+	@MainActor public func retrieveTags() async throws -> (tags: [ReaderAPITag]?, response: HTTPURLResponse) {
 
 		guard let baseURL = apiBaseURL else {
 			throw CredentialsError.missingEndpointURL
@@ -214,8 +214,7 @@ struct ReaderAPIUsageLimits {
 
 		// A 304 Not Modified comes back with an empty body, so this returns nil — callers skip syncing.
 		let (response, wrapper) = try await session.send(request: request, resultType: ReaderAPITagContainer.self)
-		storeConditionalGet(key: ConditionalGetKeys.tags, headers: response.allHeaderFields)
-		return wrapper?.tags
+		return (wrapper?.tags, response)
 	}
 
 	@MainActor public func renameTag(oldName: String, newName: String) async throws {
@@ -259,7 +258,7 @@ struct ReaderAPIUsageLimits {
 		}
 	}
 
-	@MainActor public func retrieveSubscriptions() async throws -> [ReaderAPISubscription]? {
+	@MainActor public func retrieveSubscriptions() async throws -> (subscriptions: [ReaderAPISubscription]?, response: HTTPURLResponse) {
 		logger.debug("ReaderAPICaller: retrieveSubscriptions")
 
 		guard let baseURL = apiBaseURL else {
@@ -283,8 +282,7 @@ struct ReaderAPIUsageLimits {
 		do {
 			// A 304 Not Modified comes back with an empty body, so this returns nil — callers skip syncing.
 			let (response, container) = try await session.send(request: request, resultType: ReaderAPISubscriptionContainer.self)
-			storeConditionalGet(key: ConditionalGetKeys.subscriptions, headers: response.allHeaderFields)
-			return container?.subscriptions
+			return (container?.subscriptions, response)
 		} catch {
 			logger.error("ReaderAPICaller: retrieveSubscriptions — error calling API: \(error.localizedDescription)")
 			throw error
@@ -327,7 +325,8 @@ struct ReaderAPIUsageLimits {
 
 		// There is no call to get a single subscription entry, so we get them all,
 		// look up the one we just subscribed to and return that
-		guard let subscriptions = try await retrieveSubscriptions() else {
+		let (subscriptions, _) = try await retrieveSubscriptions()
+		guard let subscriptions else {
 			logger.error("ReaderAPICaller: createSubscription — url \(url) name \(name ?? "") — expected non-nil subscriptions from API call")
 			throw AccountError.createErrorNotFound
 		}
@@ -598,6 +597,16 @@ struct ReaderAPIUsageLimits {
 
 // MARK: Private
 
+extension ReaderAPICaller {
+
+	func storeConditionalGetIfNeeded(key: String, response: HTTPURLResponse) {
+		guard response.forcedStatusCode == HTTPResponseCode.OK else {
+			return
+		}
+		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: response.allHeaderFields), for: key)
+	}
+}
+
 private extension ReaderAPICaller {
 
 	func encodeForURLPath(_ pathComponent: String?) -> String? {
@@ -642,10 +651,6 @@ private extension ReaderAPICaller {
 	}
 
 	private static let defaultUsageLimitsResetAfter: TimeInterval = 60 * 60 * 24
-
-	private func storeConditionalGet(key: String, headers: [AnyHashable: Any]) {
-		accountSettings?.setConditionalGetInfo(HTTPConditionalGetInfo(headers: headers), for: key)
-	}
 
 	private func noteUsageLimits(from response: HTTPURLResponse) {
 		guard let usageValue = response.value(forHTTPHeaderField: UsageLimitHeader.zone1Usage), let usage = Int(usageValue),

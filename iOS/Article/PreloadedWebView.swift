@@ -18,11 +18,6 @@ final class PreloadedWebView: WKWebView {
 	init(articleIconSchemeHandler: ArticleIconSchemeHandler) {
 		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
 		super.init(frame: .zero, configuration: configuration)
-		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-			Task { @MainActor in
-				self?.userDefaultsDidChange()
-			}
-		}
 		fullscreenStateObservation = observe(\.fullscreenState, options: []) { [weak self] _, _ in
 			Task { @MainActor in
 				guard let self else {
@@ -48,13 +43,6 @@ final class PreloadedWebView: WKWebView {
 			completeRequest(completion: completion)
 		} else {
 			readyCompletion = completion
-		}
-	}
-
-	func userDefaultsDidChange() {
-		if configuration.defaultWebpagePreferences.allowsContentJavaScript != AppDefaults.shared.isArticleContentJavascriptEnabled {
-			configuration.defaultWebpagePreferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
-			reload()
 		}
 	}
 }

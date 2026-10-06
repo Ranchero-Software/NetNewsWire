@@ -14,9 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /*Returns @"(?, ?, ?)" -- where number of ? spots is specified by numberOfValues.
- numberOfValues should be greater than 0. Triggers an NSParameterAssert if not.*/
+ numberOfValues should be greater than 0. Triggers an NSParameterAssert if not, and
+ returns @"()", which SQLite accepts and which matches nothing.*/
 
-+ (nullable NSString *)rs_SQLValueListWithPlaceholders:(NSUInteger)numberOfValues;
++ (NSString *)rs_SQLValueListWithPlaceholders:(NSUInteger)numberOfValues;
 
 
 /*Returns @"(someColumn, anotherColumm, thirdColumn)" -- using passed-in keys.

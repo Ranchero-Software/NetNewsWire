@@ -28,7 +28,7 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 
 	override var accessibilityLabel: String? {
 		get {
-			if unreadCount > 0 {
+			if unreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
 				return "\(headerTitle.text ?? "") \(unreadCount) \(unreadLabel) \(expandedStateMessage) "
 			} else {
@@ -54,8 +54,12 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 		set {
 			_unreadCount = newValue
 			updateUnreadCount()
-			unreadCountLabel.text = newValue.formatted()
+			unreadCountLabel.setUnreadCount(newValue)
 		}
+	}
+
+	private var unreadCountText: String? {
+		AppDefaults.shared.unreadCountDisplay.text(for: unreadCount)
 	}
 
 	// Mutate via setDisclosure(isExpanded:animated:) — the supplementary provider
@@ -125,7 +129,7 @@ final class MainFeedCollectionHeaderReusableView: UICollectionReusableView {
 	}
 
 	func updateUnreadCount(animated: Bool = true) {
-		let alpha: CGFloat = (!disclosureExpanded && unreadCount > 0) ? 1 : 0
+		let alpha: CGFloat = (!disclosureExpanded && unreadCountText != nil) ? 1 : 0
 		if animated {
 			UIView.animate(withDuration: 0.3) {
 				self.unreadCountLabel.alpha = alpha

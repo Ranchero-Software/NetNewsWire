@@ -38,7 +38,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 
-		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
+		// If the first responder is the WKWebView (PreloadedWebView) we don’t want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
 		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else {
@@ -50,6 +50,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 
 	override var canBecomeFirstResponder: Bool {
 		return true
+	}
+
+	// The selected row is accent-colored only while the feeds list is first responder.
+	@discardableResult override func becomeFirstResponder() -> Bool {
+		let didBecomeFirstResponder = super.becomeFirstResponder()
+		updateVisibleCellConfigurations()
+		return didBecomeFirstResponder
+	}
+
+	@discardableResult override func resignFirstResponder() -> Bool {
+		let didResignFirstResponder = super.resignFirstResponder()
+		updateVisibleCellConfigurations()
+		return didResignFirstResponder
 	}
 
 	private let refreshProgressView = RefreshProgressView(frame: .zero)
@@ -83,6 +96,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		collectionView.dropDelegate = self
 		becomeFirstResponder()
     }
+
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		coordinator?.sidebarDidLayout()
+	}
 
 	func configureCurrentActivityButton() {
 		if #available(iOS 26, *) {
@@ -180,6 +198,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 	}
@@ -422,7 +441,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			completions.append(completion)
 		}
 
-		// A newer full snapshot supersedes a queued one. The superseded update's
+		// A newer full snapshot supersedes a queued one. The superseded update’s
 		// completions still run — after a snapshot at least as new as the one they requested.
 		if update.isFull, let index = queuedSidebarUpdates.firstIndex(where: { $0.update.isFull }) {
 			completions = queuedSidebarUpdates[index].completions + completions
@@ -512,7 +531,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		becomeFirstResponder()
 	}
 
-	// Fires on every tap — even on the already-selected feed, which doesn't get didSelectItemAt.
+	// Fires on every tap — even on the already-selected feed, which doesn’t get didSelectItemAt.
 	override func collectionView(_ collectionView: UICollectionView, performPrimaryActionForItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		coordinator.selectSidebarItem(indexPath: indexPath, animations: [.navigation, .select, .scroll])
@@ -689,6 +708,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
 				completion(cell, indexPath)
 			}
+		}
+	}
+
+	func splitViewStateDidChange() {
+		updateVisibleCellConfigurations()
+	}
+
+	private func updateVisibleCellConfigurations() {
+		guard isViewLoaded, let collectionView else {
+			return
+		}
+		for cell in collectionView.visibleCells {
+			cell.setNeedsUpdateConfiguration()
 		}
 	}
 
@@ -882,6 +914,17 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		reconfigureItems(nodesToReconfigure)
 	}
 
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		for account in AccountManager.shared.activeAccounts {
+			if let headerView = findHeaderViewForAccount(account) {
+				headerView.unreadCount = account.unreadCount
+			}
+		}
+
+		// Only realized cells are reconfigured. Others pick up the setting when dequeued.
+		reconfigureItems(dataSource.snapshot().itemIdentifiers)
+	}
+
 	@objc func feedSettingDidChange(_ note: Notification) {
 		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
 			return
@@ -934,7 +977,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	@objc func refreshAccounts(_ sender: Any) {
 		collectionView.refreshControl?.endRefreshing()
 
-		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// This is a hack to make sure that an error dialog doesn’t interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
@@ -1264,7 +1307,7 @@ extension MainFeedCollectionViewController {
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
-				self?.coordinator.markAllAsRead(Array(articles))
+				self?.coordinator.markAllAsRead(Array(articles), in: feed)
 				completion(true)
 			}
 		}
@@ -1349,7 +1392,7 @@ extension MainFeedCollectionViewController {
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
 				let articles = sidebarItem.fetchUnreadArticles()
-				self?.coordinator.markAllAsRead(Array(articles))
+				self?.coordinator.markAllAsRead(Array(articles), in: sidebarItem)
 			}
 		}
 
@@ -1365,7 +1408,7 @@ extension MainFeedCollectionViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				// If you don't have this delay the screen flashes when it executes this code
+				// If you don’t have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 					let articles = account.fetchArticles(.unread())
 					self?.coordinator.markAllAsRead(Array(articles))
@@ -1423,7 +1466,7 @@ extension MainFeedCollectionViewController {
 
 		alertController.addTextField { textField in
 			textField.text = sidebarItem.nameForDisplay
-			textField.placeholder = NSLocalizedString("Name", comment: "Name")
+			textField.placeholder = NSLocalizedString("Name", comment: "Name field placeholder")
 			textField.clearButtonMode = .always
 		}
 

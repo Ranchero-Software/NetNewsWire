@@ -20,7 +20,6 @@ final class CloudKitArticlesZone: CloudKitZone {
 	private static let logger = cloudKitLogger
 	private static let staleStatusRecordInterval: TimeInterval = ArticleStatus.staleIntervalInSeconds
 	private static let cleanUpLimit = 400
-	private static let dryRunSleepSeconds = 10
 	private static let jsonEncoder = JSONEncoder()
 	private static let matchAllPredicate = NSPredicate(format: "creationDate >= %@", Date.distantPast as CVarArg)
 
@@ -183,7 +182,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 			return 0
 		}
 
-		var modifyRecords = [CKRecord]()
+		var statusRecords = [CKRecord]()
+		var articleRecords = [CKRecord]()
 		var newRecords = [CKRecord]()
 		var deleteRecordIDs = [CKRecord.ID]()
 		var contentUploadCount = 0
@@ -194,9 +194,8 @@ final class CloudKitArticlesZone: CloudKitZone {
 		for statusUpdate in statusUpdates {
 			switch statusUpdate.record {
 			case .all:
-				modifyRecords.append(self.makeStatusRecord(statusUpdate))
-				modifyRecords.append(self.makeArticleRecord(statusUpdate.article!))
-				contentUploadCount += 1
+				statusRecords.append(self.makeStatusRecord(statusUpdate))
+				articleRecords.append(self.makeArticleRecord(statusUpdate.article!))
 			case .new:
 				newRecords.append(self.makeStatusRecord(statusUpdate))
 				if statusUpdate.article!.status.starred || syncUnreadContent {
@@ -208,29 +207,45 @@ final class CloudKitArticlesZone: CloudKitZone {
 			case .delete:
 				deleteRecordIDs.append(CKRecord.ID(recordName: self.statusID(statusUpdate.articleID), zoneID: zoneID))
 			case .statusOnly:
-				modifyRecords.append(self.makeStatusRecord(statusUpdate))
+				statusRecords.append(self.makeStatusRecord(statusUpdate))
 				deleteRecordIDs.append(CKRecord.ID(recordName: self.articleID(statusUpdate.articleID), zoneID: zoneID))
 			}
 		}
 
 		await Task.detached(priority: .userInitiated) {
-			self.compressArticleRecords(modifyRecords)
+			self.compressArticleRecords(articleRecords)
 			self.compressArticleRecords(newRecords)
 		}.value
 
+		// Statuses go first, and on their own. They're what sync correctness depends on, and
+		// `modify` is atomic, so batching them with content records means one article too big
+		// to store rejects every status in the request. Sending them first is also the right
+		// order: an article record references its status record.
 		do {
-			try await modify(recordsToSave: modifyRecords, recordIDsToDelete: deleteRecordIDs)
+			try await modify(recordsToSave: statusRecords, recordIDsToDelete: deleteRecordIDs)
 			try await saveIfNew(newRecords)
 		} catch {
 			try await handleModifyArticlesError(error, statusUpdates: statusUpdates)
+			return contentUploadCount
 		}
+
+		// Content is an optimization, so a failure here leaves the statuses sent.
+		if !articleRecords.isEmpty {
+			do {
+				try await modify(recordsToSave: articleRecords, recordIDsToDelete: [])
+				contentUploadCount += articleRecords.count
+			} catch {
+				Self.logger.error("CloudKitArticlesZone: modifyArticles content upload failed: \(error.localizedDescription)")
+			}
+		}
+
 		return contentUploadCount
 	}
 
 	/// Periodic cleanup path. Scans content records incrementally, stopping when
 	/// the limit is hit. No `ScanCache` awareness — the periodic cleanup runs on
 	/// launch before the user would open the stats window.
-	func cleanUpRecords(account: Account, syncUnreadContent: Bool, dryRun: Bool, deleteStaleRecords: Bool, limit: Int = CloudKitArticlesZone.cleanUpLimit) async throws -> Int {
+	func cleanUpRecords(account: Account, syncUnreadContent: Bool, deleteStaleRecords: Bool, limit: Int = CloudKitArticlesZone.cleanUpLimit) async throws -> Int {
 		guard let database else {
 			return 0
 		}
@@ -249,13 +264,13 @@ final class CloudKitArticlesZone: CloudKitZone {
 			deleteRecordIDs.append(contentsOf: statusIDs)
 		}
 
-		return try await deleteCleanUpRecords(deleteRecordIDs, account: account, dryRun: dryRun)
+		return try await deleteCleanUpRecords(deleteRecordIDs, account: account)
 	}
 
 	/// Cache-aware cleanup with per-category progress reporting.
 	/// Deletes records in separate batches by category so the caller
 	/// can update progress after each category completes.
-	func cleanUpRecordsUsingCache(account: Account, syncUnreadContent: Bool, dryRun: Bool, deleteStaleRecords: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+	func cleanUpRecordsUsingCache(account: Account, syncUnreadContent: Bool, deleteStaleRecords: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
 		guard database != nil else {
 			return
 		}
@@ -281,19 +296,9 @@ final class CloudKitArticlesZone: CloudKitZone {
 		scanCache = nil
 
 		// Categorize content record IDs
-		var categorized = categorizeContentRecordIDs(contentRecordIDByStatusID: contentRecordIDByStatusID, orphanedContentRecordIDs: orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent)
+		let categorized = categorizeContentRecordIDs(contentRecordIDByStatusID: contentRecordIDByStatusID, orphanedContentRecordIDs: orphanedContentRecordIDs, statusByRecordID: statusByRecordID, syncUnreadContent: syncUnreadContent)
 
-		var staleStatusIDs = staleStatusRecordIDsToDelete(from: statusByRecordID)
-
-		// TODO: remove dry run test data before shipping
-		if dryRun {
-			let fakeID = { CKRecord.ID(recordName: UUID().uuidString, zoneID: self.zoneID) }
-			staleStatusIDs = (0..<876).map { _ in fakeID() }
-			categorized = CategorizedContentRecordIDs(
-				readContentIDs: (0..<8170).map { _ in fakeID() },
-				unreadContentIDs: (0..<450).map { _ in fakeID() }
-			)
-		}
+		let staleStatusIDs = staleStatusRecordIDsToDelete(from: statusByRecordID)
 
 		var staleStatusDeleted = 0
 		var readContentDeleted = 0
@@ -306,14 +311,10 @@ final class CloudKitArticlesZone: CloudKitZone {
 		// Delete stale status records
 		if deleteStaleRecords && !staleStatusIDs.isEmpty {
 			reportProgress(.deletingStaleStatus)
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(staleStatusIDs.count, privacy: .public) stale status records")
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): deleting \(staleStatusIDs.count, privacy: .public) stale status records")
 			for batch in staleStatusIDs.chunked(into: Self.cleanUpLimit) {
 				try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: { _ in "\(batch.count) stale status records" }, {
-					if dryRun {
-						try await Task.sleep(for: .seconds(1))
-					} else {
-						try await delete(recordIDs: batch)
-					}
+					try await delete(recordIDs: batch)
 				})
 				staleStatusDeleted += batch.count
 				reportProgress(.deletingStaleStatus)
@@ -323,14 +324,10 @@ final class CloudKitArticlesZone: CloudKitZone {
 		// Delete read content records
 		if !categorized.readContentIDs.isEmpty {
 			reportProgress(.deletingReadContent)
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.readContentIDs.count, privacy: .public) read content records")
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): deleting \(categorized.readContentIDs.count, privacy: .public) read content records")
 			for batch in categorized.readContentIDs.chunked(into: Self.cleanUpLimit) {
 				try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: { _ in "\(batch.count) read content records" }, {
-					if dryRun {
-						try await Task.sleep(for: .seconds(1))
-					} else {
-						try await delete(recordIDs: batch)
-					}
+					try await delete(recordIDs: batch)
 				})
 				readContentDeleted += batch.count
 				reportProgress(.deletingReadContent)
@@ -340,14 +337,10 @@ final class CloudKitArticlesZone: CloudKitZone {
 		// Delete unread content records
 		if !categorized.unreadContentIDs.isEmpty {
 			reportProgress(.deletingUnreadContent)
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): \(dryRun ? "DRY RUN" : "deleting", privacy: .public) \(categorized.unreadContentIDs.count, privacy: .public) unread content records")
+			Self.logger.info("CloudKitArticlesZone: cleanUpRecordsUsingCache(progress:): deleting \(categorized.unreadContentIDs.count, privacy: .public) unread content records")
 			for batch in categorized.unreadContentIDs.chunked(into: Self.cleanUpLimit) {
 				try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: ActivityLog.shared.nextTaskNumberString(), successMessage: { _ in "\(batch.count) unread content records" }, {
-					if dryRun {
-						try await Task.sleep(for: .seconds(1))
-					} else {
-						try await delete(recordIDs: batch)
-					}
+					try await delete(recordIDs: batch)
 				})
 				unreadContentDeleted += batch.count
 				reportProgress(.deletingUnreadContent)
@@ -580,16 +573,11 @@ private extension CloudKitArticlesZone {
 		}
 	}
 
-	/// Shared tail for both cleanup entry points: log, dry-run check, delete.
-	func deleteCleanUpRecords(_ deleteRecordIDs: [CKRecord.ID], account: Account, dryRun: Bool) async throws -> Int {
+	/// Shared tail for both cleanup entry points: log, delete.
+	func deleteCleanUpRecords(_ deleteRecordIDs: [CKRecord.ID], account: Account) async throws -> Int {
 		if deleteRecordIDs.isEmpty {
 			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: nothing to clean up")
 			return 0
-		}
-
-		if dryRun {
-			Self.logger.info("CloudKitArticlesZone: cleanUpRecords: DRY RUN — would delete \(deleteRecordIDs.count, privacy: .public) total records")
-			return deleteRecordIDs.count
 		}
 
 		Self.logger.info("CloudKitArticlesZone: cleanUpRecords: deleting \(deleteRecordIDs.count, privacy: .public) total records")

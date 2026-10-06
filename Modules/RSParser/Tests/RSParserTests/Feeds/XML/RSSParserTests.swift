@@ -375,4 +375,30 @@ import RSParser
 		#expect(item.contentHTML == "<p>Body HTML</p>")
 		#expect(item.authors?.first?.name == "Jane Maker")
 	}
+
+	@Test func slashdotTextInputDoesNotOverwriteFeedTitle() throws {
+		// slashdot.rss is RSS 1.0 and ends with a <textinput> element whose
+		// <title> is “Search Slashdot”.
+		let d = parserData("slashdot", "rss", "https://rss.slashdot.org/Slashdot/slashdotMain")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		#expect(parsedFeed.title == "Slashdot")
+		#expect(parsedFeed.homePageURL == "https://slashdot.org/")
+		#expect(parsedFeed.items.count == 15)
+	}
+
+	@Test func textInputInsideChannelIsIgnored() throws {
+		// RSS 2.0 <textInput> sits inside <channel>, after the channel’s <title>
+		// and before its <link>.
+		let d = parserData("textinput-rss2", "rss", "https://example.com/feed")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		#expect(parsedFeed.title == "Test Feed")
+		#expect(parsedFeed.homePageURL == "https://example.com")
+		#expect(parsedFeed.items.count == 1)
+
+		let item = try #require(parsedFeed.items.first)
+		#expect(item.title == "Real Article Title")
+		#expect(item.url == "https://example.com/articles/1")
+	}
 }

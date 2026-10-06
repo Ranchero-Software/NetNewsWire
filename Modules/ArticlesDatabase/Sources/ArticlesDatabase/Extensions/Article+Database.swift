@@ -72,7 +72,11 @@ extension Article {
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article, String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
 		if self[keyPath: comparisonKeyPath] != otherArticle[keyPath: comparisonKeyPath] {
-			dictionary[key] = self[keyPath: comparisonKeyPath] ?? ""
+			if let value = self[keyPath: comparisonKeyPath] {
+				dictionary[key] = value
+			} else {
+				dictionary[key] = NSNull()
+			}
 		}
 	}
 
@@ -89,6 +93,7 @@ extension Article {
 		addPossibleStringChangeWithKeyPath(\Article.title, existingArticle, DatabaseKey.title, &d)
 		addPossibleStringChangeWithKeyPath(\Article.contentHTML, existingArticle, DatabaseKey.contentHTML, &d)
 		addPossibleStringChangeWithKeyPath(\Article.contentText, existingArticle, DatabaseKey.contentText, &d)
+		addPossibleStringChangeWithKeyPath(\Article.markdown, existingArticle, DatabaseKey.markdown, &d)
 		addPossibleStringChangeWithKeyPath(\Article.rawLink, existingArticle, DatabaseKey.url, &d)
 		addPossibleStringChangeWithKeyPath(\Article.rawExternalLink, existingArticle, DatabaseKey.externalURL, &d)
 		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)

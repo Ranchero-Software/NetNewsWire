@@ -11,6 +11,7 @@ import RSCore
 import os
 import WebKit
 import RSWeb
+import Articles
 
 @MainActor final class WebViewConfiguration {
 
@@ -28,8 +29,10 @@ import RSWeb
 
 		let configuration = WKWebViewConfiguration()
 
+		// Ephemeral store so feed content can't persist cookies/localStorage across articles or launches.
+		configuration.websiteDataStore = .nonPersistent()
+
 		configuration.preferences = preferences
-		configuration.defaultWebpagePreferences = webpagePreferences
 		configuration.mediaTypesRequiringUserActionForPlayback = .all
 		configuration.setURLSchemeHandler(urlSchemeHandler, forURLScheme: ArticleRenderer.imageIconScheme)
 		configuration.userContentController = userContentController
@@ -43,6 +46,18 @@ import RSWeb
 #endif
 
 		return configuration
+	}
+
+	/// Whether the article view should run content JavaScript for this article.
+	/// Called from the navigation delegate on every navigation, so a change to the user setting takes effect on the next load.
+	static func allowsContentJavaScript(for article: Article?) -> Bool {
+		guard AppDefaults.shared.isArticleContentJavascriptEnabled else {
+			return false
+		}
+		guard let article else {
+			return true
+		}
+		return !ArticleRenderingSpecialCases.shouldDisableJavaScript(for: article)
 	}
 
 	/// Add content blocking rules to a web view. Call before loading article content.
@@ -114,14 +129,6 @@ private extension WebViewConfiguration {
 		preferences.minimumFontSize = 12
 		preferences.isElementFullscreenEnabled = true
 
-		return preferences
-	}
-
-	static var webpagePreferences: WKWebpagePreferences {
-		assert(Thread.isMainThread)
-
-		let preferences = WKWebpagePreferences()
-		preferences.allowsContentJavaScript = AppDefaults.shared.isArticleContentJavascriptEnabled
 		return preferences
 	}
 

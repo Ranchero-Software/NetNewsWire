@@ -108,7 +108,7 @@ Some frameworks are not permitted to add dependencies, and should be treated as 
 
 Stick to stock elements, since this tends to eliminate bugs and future churn. This isn’t always possible, of course, but any custom work should be the minimum possible. We’re in this for the long haul.
 
-Storyboards are preferred to xibs — except when the problem is xib-sized.
+xibs are preferred to storyboards — except where the system requires a storyboard.
 
 Use AppDefaults where parameters (sizes, colors, etc.) are needed.
 

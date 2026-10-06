@@ -16,7 +16,7 @@ nonisolated public final class NetworkMonitor: Sendable {
 	private let queue = DispatchQueue(label: "RSWeb NetworkMonitor")
 
 	private struct State: Sendable {
-		var isConnected = false
+		var isConnected: Bool?
 		var connectionType: NWInterface.InterfaceType?
 		var isExpensive = false
 		var isConstrained = false
@@ -24,8 +24,10 @@ nonisolated public final class NetworkMonitor: Sendable {
 
 	private let state = OSAllocatedUnfairLock<State>(initialState: State())
 
+	/// `true` until `NWPathMonitor` delivers its first path, so callers attempt
+	/// network work rather than skip it on an answer we don't have yet.
 	public var isConnected: Bool {
-		state.withLock { $0.isConnected }
+		state.withLock { $0.isConnected ?? true }
 	}
 
 	public var connectionType: NWInterface.InterfaceType? {

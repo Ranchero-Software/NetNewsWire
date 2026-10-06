@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSWeb
 
 @MainActor struct ArticleThemeImporter {
 
@@ -24,7 +25,7 @@ import UIKit
 		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
-		if let websiteURL = URL(string: theme.creatorHomePage) {
+		if let websiteURL = URL(string: theme.creatorHomePage), websiteURL.isHTTPOrHTTPSURL() {
 			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
 			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { _ in
 				UIApplication.shared.open(websiteURL)

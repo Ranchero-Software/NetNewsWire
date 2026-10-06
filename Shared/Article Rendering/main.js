@@ -1,6 +1,9 @@
 // Here we are making iframes responsive.  Particularly useful for inline Youtube videos.
 function wrapFrames() {
 	document.querySelectorAll("iframe").forEach(element => {
+		if (getComputedStyle(element).display === "none") {
+			return;
+		}
 		if (parseInt(element.height) > 0) {
 			preserveAspectRatioOfFixedSizeFrame(element);
 			return;
@@ -39,7 +42,8 @@ function stripStylesFromElement(element, propertiesToStrip) {
 function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
 	// Removing "background" and "font" will also remove properties that would be reflected in them, e.g., "background-color" and "font-family"
-	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height", "position"]));
+	// The stylesheet forces images to height: auto, so an author aspect-ratio box can't be filled by its image — content after the box overlaps the overflowing image.
+	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height", "position", "aspect-ratio"]));
 }
 
 // Constrain the height of iframes whose heights are defined relative to the document body to be at most
@@ -204,17 +208,24 @@ function removeWpSmiley() {
 	}
 }
 
+// <https://github.com/Ranchero-Software/NetNewsWire/issues/3501>
+function removeInstapaperIgnoreElements() {
+	document.querySelectorAll(".instapaper_ignore").forEach(element => element.remove());
+}
+
 function processPage() {
+	// stripStyles must run first — wrapFrames sets aspect-ratio on fixed-size iframes, which stripStyles would remove.
+	stripStyles();
 	wrapFrames();
 	wrapTables();
 	inlineVideos();
-	stripStyles();
 	sizeTailwindSVGs();
 	constrainBodyRelativeIframes();
 	convertImgSrc();
 	flattenPreElements();
 	styleLocalFootnotes();
 	removeWpSmiley()
+	removeInstapaperIgnoreElements();
 	postRenderProcessing();
 }
 

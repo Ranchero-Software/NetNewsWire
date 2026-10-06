@@ -231,7 +231,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
 
 		return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
-			let syncStatuses = (await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
+			let syncStatuses = (try? await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
 			let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
 			let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
@@ -667,7 +667,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		if !syncStatuses.isEmpty {
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -750,10 +750,10 @@ private extension ReaderAPIAccountDelegate {
 
 		do {
 			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
-				let tags = try await caller.retrieveTags()
+				let (tags, tagsResponse) = try await caller.retrieveTags()
 				refreshProgress.completeTask()
 
-				let subscriptions = try await caller.retrieveSubscriptions()
+				let (subscriptions, subscriptionsResponse) = try await caller.retrieveSubscriptions()
 				refreshProgress.completeTask()
 
 				BatchUpdate.shared.perform {
@@ -761,6 +761,12 @@ private extension ReaderAPIAccountDelegate {
 					self.syncFeeds(account, subscriptions)
 					self.syncFeedFolderRelationship(account, subscriptions)
 				}
+
+				// Commit the conditional-GET etags only now that the data is applied, so an
+				// interrupted refresh can't leave an etag ahead of the model and 304 forever.
+				caller.storeConditionalGetIfNeeded(key: ReaderAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
+				caller.storeConditionalGetIfNeeded(key: ReaderAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
+
 				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
 			})
 		} catch {
@@ -897,7 +903,9 @@ private extension ReaderAPIAccountDelegate {
 
 		// Sync the folders
 		for (folderExternalID, groupedTaggings) in taggingsDict {
-			guard let folder = folderDict[folderExternalID] else { return }
+			guard let folder = folderDict[folderExternalID] else {
+				continue
+			}
 			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
 
 			// Move any feeds not in the folder to the account
@@ -925,11 +933,9 @@ private extension ReaderAPIAccountDelegate {
 
 		}
 
-		let taggedFeedIDs = Set(subscriptions.filter({ !$0.categories.isEmpty }).map { String($0.feedID) })
-
-		// Remove all feeds from the account container that have a tag
+		let feedIDsInFolders = Set((account.folders ?? Set<Folder>()).flatMap { $0.topLevelFeeds.map { $0.feedID } })
 		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.feedID) {
+			if feedIDsInFolders.contains(feed.feedID) {
 				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
@@ -1167,7 +1173,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
-		guard let pendingArticleIDs = await syncDatabase.selectPendingReadStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
 			return 0
 		}
 
@@ -1194,7 +1200,7 @@ private extension ReaderAPIAccountDelegate {
 		}
 
 		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
-		guard let pendingArticleIDs = await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
 			return 0
 		}
 

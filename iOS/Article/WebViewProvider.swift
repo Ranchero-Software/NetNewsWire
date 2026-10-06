@@ -33,6 +33,10 @@ import WebKit
 	// background. A load into a dead web view can fail silently, showing blank —
 	// so start over with fresh web views.
 	@objc func handleWillEnterForeground(_ note: Notification) {
+		flushQueue()
+	}
+
+	private func flushQueue() {
 		queue.removeAllObjects()
 		replenishQueueIfNeeded()
 	}

@@ -29,7 +29,7 @@
                         </constraints>
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="accountCloudKit" id="9RZ-J3-ioX"/>
                     </imageView>
-                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="80D-3X-rL2">
+                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="80D-3X-rL2">
                         <rect key="frame" x="76" y="92" width="359" height="16"/>
                         <textFieldCell key="cell" lineBreakMode="clipping" title="Use your iCloud account" id="1d2-Mx-TKe">
                             <font key="font" metaFont="systemBold"/>
@@ -37,7 +37,7 @@
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
-                    <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Kj-Cl-FJQ">
+                    <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Kj-Cl-FJQ">
                         <rect key="frame" x="76" y="52" width="359" height="32"/>
                         <textFieldCell key="cell" selectable="YES" allowsUndo="NO" title="NetNewsWire will use your iCloud account to sync your feeds across your Mac and iOS devices." id="wfr-Dv-UIF">
                             <font key="font" usesAppearanceFont="YES"/>

@@ -136,15 +136,24 @@ import os
 			return
 		}
 
+		// Key on the request URL: `URL(string:)` doesn’t always round-trip feed.url.
 		urlToFeedDictionary.removeAll()
+		var urls = Set<URL>()
 		for feed in filteredFeeds {
-			urlToFeedDictionary[feed.url] = feed
+			guard let url = Self.url(for: feed) else {
+				continue
+			}
+			urlToFeedDictionary[url.absoluteString] = feed
+			urls.insert(url)
 		}
 
-		let urls = filteredFeeds.compactMap { Self.url(for: $0) }
+		// This refresh replaces any in-flight one, so resume its caller rather than stranding it.
+		if let previousCompletion = self.completion {
+			previousCompletion()
+		}
 
 		self.completion = completion
-		downloadSession.download(Set(urls))
+		downloadSession.download(urls)
 	}
 
 	private var activityOwner: ActivityOwner? {
@@ -358,7 +367,7 @@ import os
 		feed.lastCheckDate = Date()
 		feed.lastResponseCode = statusCode
 
-		let webserviceError = WebserviceError.httpError(status: statusCode)
+		let webserviceError = WebserviceError.httpError(status: statusCode, responseBody: nil)
 		let statusDescription = webserviceError.localizedDescription
 		let errorMessage = "HTTP \(statusCode) \(statusDescription): \(url.absoluteString)"
 		let error = NSError(domain: "NetNewsWire", code: statusCode, userInfo: [NSLocalizedDescriptionKey: errorMessage])

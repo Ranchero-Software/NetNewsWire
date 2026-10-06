@@ -55,6 +55,7 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	private var articleTextSize = AppDefaults.shared.articleTextSize
+	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
 
 	private var webInspectorEnabled: Bool {
 		get {
@@ -147,6 +148,10 @@ final class DetailWebViewController: NSViewController {
 			articleTextSize = AppDefaults.shared.articleTextSize
 			reloadHTMLMaintainingScrollPosition()
 		}
+		if isArticleContentJavascriptEnabled != AppDefaults.shared.isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+			reloadHTMLMaintainingScrollPosition()
+		}
 	}
 
 	@objc func currentArticleThemeDidChangeNotification(_ note: Notification) {
@@ -220,22 +225,23 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 
 	// WKNavigationDelegate
 
-	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy) -> Void) {
+	func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping @MainActor @Sendable (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
 		if navigationAction.navigationType == .linkActivated {
 			if let url = navigationAction.request.url {
 				self.openInBrowser(url, flags: navigationAction.modifierFlags)
 			}
-			decisionHandler(.cancel)
+			decisionHandler(.cancel, preferences)
 			return
 		}
 
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5381>
 		if navigationAction.navigationType == .backForward {
-			decisionHandler(.cancel)
+			decisionHandler(.cancel, preferences)
 			return
 		}
 
-		decisionHandler(.allow)
+		preferences.allowsContentJavaScript = WebViewConfiguration.allowsContentJavaScript(for: article)
+		decisionHandler(.allow, preferences)
 	}
 
 	public func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
@@ -266,6 +272,18 @@ extension DetailWebViewController: WKNavigationDelegate, WKUIDelegate {
 			webView.evaluateJavaScript("window.scrollTo(0, \(pendingScrollRestorationY));")
 			self.pendingScrollRestorationY = nil
 		}
+	}
+
+	func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+		// Content process died — swap in a fresh web view and re-render.
+		guard webView === self.webView else {
+			return
+		}
+		Self.logger.error("Article web content process terminated — rebuilding the web view.")
+		let newWebView = createWebView()
+		view.addSubview(newWebView, positioned: .below, relativeTo: self.webView)
+		self.webView = newWebView
+		reloadHTML()
 	}
 
 	// WKUIDelegate

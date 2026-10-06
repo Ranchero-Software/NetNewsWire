@@ -25,7 +25,7 @@ extension Notification.Name {
 
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
-	@IBOutlet var outlineView: NSOutlineView!
+	@IBOutlet var outlineView: SidebarOutlineView!
 
 	weak var delegate: SidebarDelegate?
 
@@ -65,11 +65,27 @@ extension Notification.Name {
 		return selectedNodes.representedObjects()
 	}
 
+	var selectedContainer: Container? {
+		for node in selectedNodes {
+			if let container = containerForNode(node) {
+				return container
+			}
+		}
+		return nil
+	}
+
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
+	private let keyboardDelegate = SidebarKeyboardDelegate()
 
 	// MARK: - NSViewController
 
+	convenience init() {
+		self.init(nibName: "SidebarView", bundle: nil)
+	}
+
 	override func viewDidLoad() {
+		keyboardDelegate.sidebarViewController = self
+		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
@@ -77,6 +93,7 @@ extension Notification.Name {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
@@ -207,6 +224,12 @@ extension Notification.Name {
 
 		if isReadFiltered {
 			queueRebuildTreeAndRestoreSelection()
+		}
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		applyToAvailableCells { cell, _ in
+			cell.updateUnreadCountView()
 		}
 	}
 
@@ -579,6 +602,16 @@ private extension SidebarViewController {
 		return node.representedObject as? Feed
 	}
 
+	func containerForNode(_ node: Node) -> Container? {
+		if let container = node.representedObject as? Container {
+			return container
+		}
+		if node.representedObject is Feed {
+			return node.parent?.representedObject as? Container
+		}
+		return nil
+	}
+
 	func addAllSelectedToFilterExceptions() {
 		for feed in selectedFeeds {
 			addToFilterExceptionsIfNecessary(feed)
@@ -818,6 +851,7 @@ private extension SidebarViewController {
 		cell.cellAppearance = SidebarCellAppearance(rowSizeStyle: outlineView.effectiveRowSizeStyle)
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
+		cell.updateUnreadCountView() // A reused cell may predate a display setting change
 		configureFavicon(cell, node)
 		cell.shouldShowImage = node.representedObject is SmallIconProvider
 	}

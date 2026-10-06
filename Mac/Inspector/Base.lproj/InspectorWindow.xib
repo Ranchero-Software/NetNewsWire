@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="InspectorWindowController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="window" destination="bma-LM-jVu" id="Qn3-wA-7kD"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window identifier="InspectorPanel" title="Inspector" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" tabbingMode="disallowed" id="bma-LM-jVu" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="314" y="928" width="256" height="256"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="2560" height="1417"/>
+            <value key="minSize" type="size" width="256" height="256"/>
+            <value key="maxSize" type="size" width="256" height="2048"/>
+            <connections>
+                <outlet property="delegate" destination="-2" id="nAa-rb-Rpi"/>
+            </connections>
+            <point key="canvasLocation" x="139" y="146"/>
+        </window>
+    </objects>
+</document>

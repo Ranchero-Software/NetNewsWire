@@ -97,12 +97,12 @@ final class AccountsReaderAPIWindowController: NSWindowController {
 		self.errorMessageLabel.stringValue = ""
 
 		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error")
 			return
 		}
 
 		guard let accountType = accountType, !(accountType == .freshRSS && apiURLTextField.stringValue.isEmpty) else {
-			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password & API URL are required.", comment: "Credentials Error")
+			self.errorMessageLabel.stringValue = NSLocalizedString("Username, password, and API URL are required.", comment: "Credentials Error")
 			return
 		}
 

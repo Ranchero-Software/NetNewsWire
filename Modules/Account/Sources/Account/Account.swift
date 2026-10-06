@@ -238,6 +238,7 @@ public enum FetchType {
 	}
 
 	private var fetchingAllUnreadCounts = false
+	private var needsRefetchAllUnreadCounts = false
 	var areUnreadCountsInitialized = false
 
 	public let dataFolder: String
@@ -554,6 +555,10 @@ public enum FetchType {
 		MainActor.assumeIsolated {
 			opmlFile.save()
 		}
+	}
+
+	public func saveIfNeeded() {
+		opmlFile.saveToDiskIfNeeded()
 	}
 
 	public func prepareForDeletion() {
@@ -1120,11 +1125,11 @@ public enum FetchType {
 		return try await cloudKitDelegate.fetchCloudKitStats(progress: progress)
 	}
 
-	public func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+	public func cleanUpCloudKit(progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
 		guard type == .cloudKit, let cloudKitDelegate = delegate as? CloudKitAccountDelegate else {
 			throw AccountError.invalidParameter
 		}
-		try await cloudKitDelegate.cleanUpCloudKit(dryRun: dryRun, progress: progress)
+		try await cloudKitDelegate.cleanUpCloudKit(progress: progress)
 	}
 
 	public func debugDropConditionalGetInfo() {
@@ -1404,21 +1409,34 @@ private extension Account {
 	}
 
 	func _fetchAllUnreadCounts() {
+		// Status changes arrive continuously during a refresh. Only one full-count
+		// query is in flight at a time, and one more runs afterward if anything
+		// changed while it ran.
+		if fetchingAllUnreadCounts {
+			needsRefetchAllUnreadCounts = true
+			return
+		}
 		fetchingAllUnreadCounts = true
 
 		Task { @MainActor in
-			guard let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() else {
+			// The flag stays set while the feed counts are applied so updateUnreadCount
+			// runs once at the end instead of once per feed.
+			if let unreadCountDictionary = await database.fetchAllUnreadCountsAsync() {
+				processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
 				fetchingAllUnreadCounts = false
-				return
+				updateUnreadCount()
+
+				if !areUnreadCountsInitialized {
+					areUnreadCountsInitialized = true
+					postUnreadCountDidInitializeNotification()
+				}
+			} else {
+				fetchingAllUnreadCounts = false
 			}
 
-			processUnreadCounts(unreadCountDictionary: unreadCountDictionary, feeds: flattenedFeeds())
-			fetchingAllUnreadCounts = false
-			updateUnreadCount()
-
-			if !self.areUnreadCountsInitialized {
-				self.areUnreadCountsInitialized = true
-				self.postUnreadCountDidInitializeNotification()
+			if needsRefetchAllUnreadCounts {
+				needsRefetchAllUnreadCounts = false
+				_fetchAllUnreadCounts()
 			}
 		}
 	}

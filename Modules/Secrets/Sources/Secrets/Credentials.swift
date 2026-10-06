@@ -52,7 +52,7 @@ extension CredentialsError: LocalizedError {
 	}
 }
 
-public enum CredentialsType: String, Sendable {
+public enum CredentialsType: String, CaseIterable, Sendable {
 	case basic = "password"
 	case newsBlurBasic = "newsBlurBasic"
 	case newsBlurSessionID = "newsBlurSessionId"

@@ -36,6 +36,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	private var parsingArticle = false
 	private var parsingAuthor = false
 	private var parsingChannelImage = false
+	private var parsingTextInput = false
 	private var currentAttributes: [String: String] = [:]
 
 	// Keep track of depth to ignore unprefixed <title> (for instance)
@@ -107,6 +108,15 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			return
 		}
 
+		// RSS 1.0 spells it textinput, RSS 2.0 spells it textInput.
+		if isUnprefixed && localName.equalsASCIICaseInsensitive(lowercaseLiteral: "textinput") {
+			parsingTextInput = true
+			return
+		}
+		if parsingTextInput {
+			return
+		}
+
 		// Grab attributes where we'll need them later.
 		if (isRDF && localName.equals("item"))
 			|| localName.equals("guid")
@@ -162,6 +172,14 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 		if isUnprefixed && localName.equals("rss") {
 			endRSSFound = true
+			return
+		}
+
+		if isUnprefixed && localName.equalsASCIICaseInsensitive(lowercaseLiteral: "textinput") {
+			parsingTextInput = false
+			return
+		}
+		if parsingTextInput {
 			return
 		}
 

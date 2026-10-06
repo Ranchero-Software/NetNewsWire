@@ -188,12 +188,15 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			return false
 		}
 
-		let sentCount = try await sendArticleStatus(account: account, showProgress: false)
+		let sendResult = try await sendArticleStatus(account: account, showProgress: false)
 		try await refreshArticleStatus()
 
 		let didReceiveChanges = !(articlesZoneHasNoChanges && accountZoneHasNoChanges)
-		let didWork = sentCount > 0 || didReceiveChanges
-		if didWork {
+		let didWork = sendResult.sentCount > 0 || didReceiveChanges
+
+		// A failed send means statuses are still waiting to go out, so this isn't a quiet
+		// period. Backing off here would also skip receiving for the next half hour.
+		if didWork || sendResult.didFail {
 			lastNoChangeSyncDate = nil
 		} else {
 			lastNoChangeSyncDate = Date()
@@ -631,7 +634,7 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 			lastNoChangeSyncDate = nil
 			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
 		}
-		if let count = await syncDatabase.selectPendingCount(), count > 100 {
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
 			// Flush in the background so marking doesn't block the caller
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
 			Task { try? await sendArticleStatus() }
@@ -734,15 +737,14 @@ enum CloudKitAccountDelegateError: LocalizedError, Sendable {
 		}
 	}
 
-	func cleanUpCloudKit(dryRun: Bool, progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
+	func cleanUpCloudKit(progress: @escaping @MainActor @Sendable (CloudKitCleanUpProgress) -> Void) async throws {
 		guard let account else {
 			throw CloudKitAccountDelegateError.unknown
 		}
 		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
-		let detail = dryRun ? "Dry run" : "Manual"
 		do {
-			try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: detail) {
-				try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, dryRun: dryRun, deleteStaleRecords: false, progress: progress)
+			try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: "Manual") {
+				try await articlesZone.cleanUpRecordsUsingCache(account: account, syncUnreadContent: syncUnreadContent, deleteStaleRecords: false, progress: progress)
 			}
 		} catch {
 			Self.logger.error("CloudKitAccountDelegate: cleanUpCloudKit error: \(error)")
@@ -1131,10 +1133,10 @@ private extension CloudKitAccountDelegate {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public) did complete")
 	}
 
-	/// Returns the number of statuses successfully sent.
-	func sendArticleStatus(account: Account, showProgress: Bool) async throws -> Int {
+	/// Returns the number of statuses successfully sent, and whether any failed to send.
+	func sendArticleStatus(account: Account, showProgress: Bool) async throws -> (sentCount: Int, didFail: Bool) {
 		Self.logger.debug("CloudKitAccountDelegate: \(#function, privacy: .public)")
-		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Int, Error>) in
+		return try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(sentCount: Int, didFail: Bool), Error>) in
 			let op = CloudKitSendStatusOperation(account: account,
 												 articlesZone: articlesZone,
 												 database: syncDatabase,
@@ -1145,7 +1147,7 @@ private extension CloudKitAccountDelegate {
 				if mainThreadOperation.isCanceled {
 					continuation.resume(throwing: CloudKitAccountDelegateError.unknown)
 				} else {
-					continuation.resume(returning: op.sentCount)
+					continuation.resume(returning: (op.sentCount, op.didFail))
 				}
 			}
 			mainThreadOperationQueue.add(op)
@@ -1216,7 +1218,7 @@ private extension CloudKitAccountDelegate {
 				count == 0 ? "no records deleted" : "deleted \(count) record\(count == 1 ? "" : "s")"
 			}
 			let deleted = try await account.logActivity(kind: .cleanUpCloudKitRecords, detail: "Weekly", successMessage: successMessage) { () -> Int in
-				try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, dryRun: false, deleteStaleRecords: false)
+				try await articlesZone.cleanUpRecords(account: account, syncUnreadContent: syncUnreadContent, deleteStaleRecords: false)
 			}
 			Self.logger.info("CloudKitAccountDelegate: weekly cleanup deleted \(deleted, privacy: .public) records")
 		} catch {

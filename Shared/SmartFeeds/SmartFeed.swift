@@ -47,7 +47,8 @@ import Images
 	#endif
 
 	private let delegate: SmartFeedDelegate
-	private var unreadCounts = [String: Int]()
+	private var isFetchingUnreadCounts = false
+	private var needsRefetch = false
 
 	init(delegate: SmartFeedDelegate) {
 		self.delegate = delegate
@@ -77,25 +78,35 @@ import Images
 	}
 
 	@objc func fetchUnreadCounts() {
-		let activeAccounts = AccountManager.shared.activeAccounts
-
-		// Remove any accounts that are no longer active or have been deleted
-		let activeAccountIDs = activeAccounts.map { $0.accountID }
-		for accountID in unreadCounts.keys {
-			if !activeAccountIDs.contains(accountID) {
-				unreadCounts.removeValue(forKey: accountID)
-			}
+		// Unread counts change continuously during a refresh. Only one round of
+		// database queries is in flight at a time, and one more is queued
+		// afterward if anything changed while it ran.
+		if isFetchingUnreadCounts {
+			needsRefetch = true
+			return
 		}
 
+		let activeAccounts = AccountManager.shared.activeAccounts
 		if activeAccounts.isEmpty {
-			updateUnreadCount()
-		} else {
+			unreadCount = 0
+			return
+		}
+
+		isFetchingUnreadCounts = true
+		Task { @MainActor in
+			var updatedUnreadCount = 0
 			for account in activeAccounts {
-				fetchUnreadCount(account: account)
+				updatedUnreadCount += await delegate.fetchUnreadCount(account: account)
+			}
+			unreadCount = updatedUnreadCount
+
+			isFetchingUnreadCounts = false
+			if needsRefetch {
+				needsRefetch = false
+				queueFetchUnreadCounts()
 			}
 		}
 	}
-
 }
 
 extension SmartFeed: ArticleFetcher {
@@ -121,24 +132,5 @@ private extension SmartFeed {
 
 	func queueFetchUnreadCounts() {
 		CoalescingQueue.standard.add(self, #selector(fetchUnreadCounts))
-	}
-
-	func fetchUnreadCount(account: Account) {
-		Task { @MainActor in
-			let unreadCount = await delegate.fetchUnreadCount(account: account)
-			unreadCounts[account.accountID] = unreadCount
-			updateUnreadCount()
-		}
-	}
-
-	func updateUnreadCount() {
-		var updatedUnreadCount = 0
-		for account in AccountManager.shared.activeAccounts {
-			if let oneUnreadCount = unreadCounts[account.accountID] {
-				updatedUnreadCount += oneUnreadCount
-			}
-		}
-
-		unreadCount = updatedUnreadCount
 	}
 }

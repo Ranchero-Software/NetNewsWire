@@ -67,12 +67,14 @@ final class AccountsFeedbinWindowController: NSWindowController {
 	@IBAction func action(_ sender: Any) {
 		errorMessageLabel.stringValue = ""
 
-		guard !usernameTextField.stringValue.isEmpty && !passwordTextField.stringValue.isEmpty else {
-			errorMessageLabel.stringValue = NSLocalizedString("Username & password required.", comment: "Credentials Error")
+		let trimmedUsername = usernameTextField.stringValue.trimmingWhitespace
+
+		guard !trimmedUsername.isEmpty && !passwordTextField.stringValue.isEmpty else {
+			errorMessageLabel.stringValue = NSLocalizedString("Username and password are required.", comment: "Credentials Error")
 			return
 		}
 
-		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: usernameTextField.stringValue) else {
+		guard account != nil || !AccountManager.shared.duplicateServiceAccount(type: .feedbin, username: trimmedUsername) else {
 			errorMessageLabel.stringValue = NSLocalizedString("There is already a Feedbin account with that username created.", comment: "Duplicate Error")
 			return
 		}
@@ -88,7 +90,7 @@ final class AccountsFeedbinWindowController: NSWindowController {
 				progressIndicator.stopAnimation(self)
 			}
 
-			let credentials = Credentials(type: .basic, username: usernameTextField.stringValue, secret: passwordTextField.stringValue)
+			let credentials = Credentials(type: .basic, username: trimmedUsername, secret: passwordTextField.stringValue)
 			do {
 				let validatedCredentials = try await Account.validateCredentials(type: .feedbin, credentials: credentials)
 				stopAnimation()

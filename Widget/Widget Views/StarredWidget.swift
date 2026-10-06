@@ -80,7 +80,7 @@ struct StarredWidgetView: View {
 			Spacer()
 			Image(systemName: "star.fill")
 				.resizable()
-				.aspectRatio(contentMode: .fit)
+				.scaledToFit()
 				.frame(width: 30)
 				.foregroundColor(.yellow)
 

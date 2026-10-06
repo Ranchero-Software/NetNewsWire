@@ -54,6 +54,6 @@
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 2019-2026 Brent Simmons. All rights reserved.</string>
 	<key>NSHumanReadableDescription</key>
-	<string>This extension adds a Safari toolbar button for easily subscribing to the syndication feed for the current page.</string>
+	<string>This extension adds a Safari toolbar button for easily subscribing to the feed for the current page.</string>
 </dict>
 </plist>

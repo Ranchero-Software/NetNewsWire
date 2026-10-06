@@ -7,8 +7,44 @@
 //
 
 import Foundation
+import RSWeb
+import Articles
 
 struct ArticleRenderingSpecialCases {
+
+	// Content JavaScript is always disabled for articles from these domains,
+	// regardless of the user setting. Subdomains match too.
+	private static let domainsWithJavaScriptDisabled = ["slashdot.org"]
+
+	/// True when any of the URL strings (article link, feed URL, feed home page URL)
+	/// is on a domain whose article content must render without JavaScript.
+	static func shouldDisableJavaScript(urlStrings: [String?]) -> Bool {
+		for urlString in urlStrings {
+			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domainsWithJavaScriptDisabled) {
+				return true
+			}
+		}
+		return false
+	}
+
+	@MainActor static func shouldDisableJavaScript(for article: Article) -> Bool {
+		shouldDisableJavaScript(urlStrings: [article.link, article.feed?.url, article.feed?.homePageURL])
+	}
+
+	private static let feedDomainsWithParagraphsSeparatedByReturns = ["slashdot.org"]
+	private static let consecutiveReturnsRegex = try? NSRegularExpression(pattern: "(?:\\r?\\n[ \\t]*){2,}")
+
+	static func insertParagraphTagsIfNeeded(_ html: String, feedURLString: String?) -> String {
+		guard let feedURLString, SpecialCase.urlStringMatchesDomain(feedURLString, feedDomainsWithParagraphsSeparatedByReturns) else {
+			return html
+		}
+		guard html.utf8.contains(UInt8(ascii: "\n")), let consecutiveReturnsRegex else {
+			return html
+		}
+
+		let range = NSRange(html.startIndex..., in: html)
+		return consecutiveReturnsRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "<p>")
+	}
 
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {
 		var filteredHTML = removeLocationHrefRedirectScripts(html)
@@ -61,6 +97,20 @@ struct ArticleRenderingSpecialCases {
 		}
 
 		return host.lowercased().contains("theverge.com")
+	}
+
+	// YouTube won’t play an embed whose host page is itself on youtube.com — the
+	// embed’s Referer has to identify a third-party client. Articles from YouTube
+	// channel feeds link to youtube.com/watch, so they render with NetNewsWire’s
+	// site as the base URL instead.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>
+	private static let baseURLForYouTubeArticles = URL(string: "https://netnewswire.com/")
+
+	static func baseURLForRendering(_ url: URL) -> URL {
+		if url.isYoutubeURL, let baseURLForYouTubeArticles {
+			return baseURLForYouTubeArticles
+		}
+		return url
 	}
 
 	// The content between a real <body …> tag and </body> (or the end of the string).

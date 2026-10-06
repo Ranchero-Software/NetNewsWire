@@ -7,13 +7,27 @@
 //
 
 import Foundation
+import os
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
 @MainActor public final class FetchAllUnreadCountsOperation: MainThreadOperation, @unchecked Sendable {
-	nonisolated(unsafe) var unreadCountDictionary: UnreadCountDictionary?
+
+	private struct State {
+		var unreadCountDictionary: UnreadCountDictionary?
+	}
+	private let state = OSAllocatedUnfairLock(initialState: State())
 	private let queue: DatabaseQueue
+
+	nonisolated var unreadCountDictionary: UnreadCountDictionary? {
+		get {
+			state.withLock { $0.unreadCountDictionary }
+		}
+		set {
+			state.withLock { $0.unreadCountDictionary = newValue }
+		}
+	}
 
 	init(databaseQueue: DatabaseQueue) {
 		self.queue = databaseQueue

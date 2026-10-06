@@ -19,7 +19,7 @@ struct LockScreenSummaryWidgetView: View {
 				unreadImage
 				Text("label.text.unread", comment: "Unread")
 				Spacer()
-				Text(verbatim: entry.widgetData.totalUnreadCount.formatted())
+				Text(verbatim: unreadCountText)
 					.frame(maxWidth: .infinity, alignment: .trailing)
 			}
 			HStack(alignment: .center) {
@@ -39,6 +39,15 @@ struct LockScreenSummaryWidgetView: View {
 		}
 		.font(.subheadline)
     }
+
+	/// Shows 0 when counts are showing, so the row doesn’t look broken.
+	var unreadCountText: String {
+		let widgetData = entry.widgetData
+		guard widgetData.effectiveUnreadCountDisplay == .count else {
+			return widgetData.effectiveUnreadCountDisplay.text(for: widgetData.totalUnreadCount) ?? ""
+		}
+		return widgetData.totalUnreadCount.formatted()
+	}
 
 	var starredImage: some View {
 		Image(systemName: "star.fill")

@@ -14,6 +14,10 @@ html {
 	position: relative;
 }
 
+pre, code {
+	tab-size: 4;
+}
+
 /* This is the activity indicator (currently iOS only) that is used while image zooming */
 
 .activityIndicatorWrap {

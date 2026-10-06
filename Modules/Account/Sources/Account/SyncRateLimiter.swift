@@ -55,7 +55,7 @@ import RSWeb
 		if case WebserviceError.tooManyRequests = error {
 			return true
 		}
-		if treatsForbiddenAsRateLimited, case WebserviceError.httpError(let status) = error, status == HTTPResponseCode.forbidden {
+		if treatsForbiddenAsRateLimited, case WebserviceError.httpError(let status, _) = error, status == HTTPResponseCode.forbidden {
 			return true
 		}
 		return false

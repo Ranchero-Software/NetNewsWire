@@ -43,8 +43,21 @@ struct UnableToStartASWebAuthenticationSessionError: LocalizedError, Sendable {
 		comment: "OAuth - recovery suggestion - ensure browser selected supports web authentication.")
 }
 
-@objc nonisolated final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-	nonisolated(unsafe) var presentationAnchor: ASPresentationAnchor?
+@objc nonisolated final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding, @unchecked Sendable {
+
+	private struct State: @unchecked Sendable {
+		var presentationAnchor: ASPresentationAnchor?
+	}
+	private let state = OSAllocatedUnfairLock(initialState: State())
+
+	var presentationAnchor: ASPresentationAnchor? {
+		get {
+			state.withLock { $0.presentationAnchor }
+		}
+		set {
+			state.withLock { $0.presentationAnchor = newValue }
+		}
+	}
 
 	// MARK: - ASWebAuthenticationPresentationContextProviding
 
@@ -68,13 +81,25 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 
 	public weak var delegate: OAuthAccountAuthorizationOperationDelegate?
 
+	private struct SessionState: @unchecked Sendable {
+		var session: ASWebAuthenticationSession?
+	}
+	private let sessionState = OSAllocatedUnfairLock(initialState: SessionState())
 	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
-	nonisolated(unsafe) private let anchorProvider = PresentationAnchorProvider()
-	nonisolated(unsafe) private var session: ASWebAuthenticationSession?
+	private let anchorProvider = PresentationAnchorProvider()
 	private var error: Error?
 	private var activityID: Int?
 	private var userCancelledAuthentication = false
+
+	nonisolated private var session: ASWebAuthenticationSession? {
+		get {
+			sessionState.withLock { $0.session }
+		}
+		set {
+			sessionState.withLock { $0.session = newValue }
+		}
+	}
 
 	// Round-tripped via the OAuth state parameter to verify the callback answers our request.
 	private let state = UUID().uuidString
