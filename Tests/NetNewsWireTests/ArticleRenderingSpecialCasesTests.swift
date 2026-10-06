@@ -102,4 +102,35 @@ import Testing
 		let hackadayLink = try #require(URL(string: "https://hackaday.com/2025/12/01/necroprinting-isnt-as-bad-as-it-sounds/"))
 		#expect(ArticleRenderingSpecialCases.baseURLForRendering(hackadayLink) == hackadayLink)
 	}
+
+	// MARK: De-sanizite FreshRSS content
+	@Test(
+		"The sanitization happening in FreshRSS breaks inline footnotes, so we de-sanitize id and class attributes",
+		.bug("https://github.com/Ranchero-Software/NetNewsWire/issues/5472")
+	)
+	func freshRSSContent_desanitizedIdAndClass(){
+		let sanitized = """
+<div data-sanitized-class="footnotes">
+	<li data-sanitized-id="footnote-1">
+		<p>
+			This is the footnote content
+			<a href="#footnote-1-ref" data-sanitized-class="footnoteBackLink">Go back to content</a>
+		</p>
+	</li>
+</div>
+"""
+		let expected = """
+<div class="footnotes">
+	<li id="footnote-1">
+		<p>
+			This is the footnote content
+			<a href="#footnote-1-ref" class="footnoteBackLink">Go back to content</a>
+		</p>
+	</li>
+</div>
+"""
+
+		#expect(ArticleRenderingSpecialCases.desanitizeFreshRSSContent(sanitized) == expected)
+	}
+
 }

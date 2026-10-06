@@ -200,4 +200,13 @@ struct ArticleRenderingSpecialCases {
 
 		return filteredHTML
 	}
+
+	/// De-sanitize some parts of the HTML that FreshRSS sanitized.
+	///
+	/// Doing this allows inline footnotes to work, without it they are broken, since they rely on matching `id` and `class` attributes.
+	static func desanitizeFreshRSSContent(_ content: String) -> String {
+		content
+			.replacingOccurrences(of: "data-sanitized-class", with: "class")
+			.replacingOccurrences(of: "data-sanitized-id", with: "id")
+	}
 }

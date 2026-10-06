@@ -114,11 +114,13 @@ import Account
 		// render just the body fragment.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3008>
 		if let content = extractedArticle?.content {
-			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
+			let body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
+			self.body = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(body)
 			self.baseURL = extractedArticle?.url
 		} else {
 			let articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
-			self.body = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURLString: article?.feed?.url)
+			let withParagraphs = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURLString: article?.feed?.url)
+			self.body = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(withParagraphs)
 			self.baseURL = article?.baseURL?.absoluteString
 		}
 	}
