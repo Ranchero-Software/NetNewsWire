@@ -38,16 +38,16 @@ final class CloudKitStatsScanContentView: NSView {
 		buildSectionRows(statusSectionView, rows: [
 			.header(NSLocalizedString("Status Records", comment: "Status records section header")),
 			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Total", comment: "Total row label")), valueLabel: statusRecordCountLabel),
-			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Starred", comment: "Starred row label"), symbolName: "star.fill", color: CloudKitStatsLayout.starColor), valueLabel: starredCountLabel),
-			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Unread", comment: "Unread row label"), symbolName: "circle.fill", color: .controlAccentColor, iconOffset: 0.5), valueLabel: unreadCountLabel),
+			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Starred", comment: "Starred"), symbolName: "star.fill", color: CloudKitStatsLayout.starColor), valueLabel: starredCountLabel),
+			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Unread", comment: "Unread"), symbolName: "circle.fill", color: .controlAccentColor, iconOffset: 0.5), valueLabel: unreadCountLabel),
 			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Read", comment: "Read row label")), valueLabel: readCountLabel)
 		])
 
 		buildSectionRows(articleSectionView, rows: [
-			.header(NSLocalizedString("Article Content Records", comment: "Article content records section header")),
+			.header(NSLocalizedString("Article Content Records", comment: "Article content records header")),
 			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Total", comment: "Total row label")), valueLabel: totalContentCountLabel),
-			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Starred", comment: "Starred row label"), symbolName: "star.fill", color: CloudKitStatsLayout.starColor), valueLabel: starredContentCountLabel),
-			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Unread", comment: "Unread row label"), symbolName: "circle.fill", color: .controlAccentColor, iconOffset: 0.5), valueLabel: unreadContentCountLabel),
+			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Starred", comment: "Starred"), symbolName: "star.fill", color: CloudKitStatsLayout.starColor), valueLabel: starredContentCountLabel),
+			.data(labelView: CloudKitStatsLayout.makeLabelWithIcon(NSLocalizedString("Unread", comment: "Unread"), symbolName: "circle.fill", color: .controlAccentColor, iconOffset: 0.5), valueLabel: unreadContentCountLabel),
 			.data(labelView: NSTextField(labelWithString: NSLocalizedString("Read", comment: "Read row label")), valueLabel: readContentCountLabel)
 		])
 

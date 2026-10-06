@@ -11,6 +11,7 @@ import RSTree
 import Articles
 import Account
 import RSCore
+import Images
 
 extension Notification.Name {
 	static let appleSideBarDefaultIconSizeChanged = Notification.Name("AppleSideBarDefaultIconSizeChanged")
@@ -24,7 +25,7 @@ extension Notification.Name {
 
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
-	@IBOutlet var outlineView: NSOutlineView!
+	@IBOutlet var outlineView: SidebarOutlineView!
 
 	weak var delegate: SidebarDelegate?
 
@@ -64,11 +65,27 @@ extension Notification.Name {
 		return selectedNodes.representedObjects()
 	}
 
+	var selectedContainer: Container? {
+		for node in selectedNodes {
+			if let container = containerForNode(node) {
+				return container
+			}
+		}
+		return nil
+	}
+
 	private static let rowViewIdentifier = NSUserInterfaceItemIdentifier(rawValue: "sidebarRow")
+	private let keyboardDelegate = SidebarKeyboardDelegate()
 
 	// MARK: - NSViewController
 
+	convenience init() {
+		self.init(nibName: "SidebarView", bundle: nil)
+	}
+
 	override func viewDidLoad() {
+		keyboardDelegate.sidebarViewController = self
+		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
 		outlineView.setDraggingSourceOperationMask([.move, .copy], forLocal: true)
@@ -76,6 +93,7 @@ extension Notification.Name {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidInitialize(_:)), name: .UnreadCountDidInitialize, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
@@ -97,7 +115,7 @@ extension Notification.Name {
 			}
 		}
 		expandNodes()
-
+		prefetchFeedIcons()
 	}
 
 	// MARK: State Restoration
@@ -209,6 +227,12 @@ extension Notification.Name {
 		}
 	}
 
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		applyToAvailableCells { cell, _ in
+			cell.updateUnreadCountView()
+		}
+	}
+
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		rebuildTreeAndRestoreSelection()
 	}
@@ -298,7 +322,7 @@ extension Notification.Name {
 		guard outlineView.clickedRow == outlineView.selectedRow else {
 			return
 		}
-		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = try? singleSelectedFeed?.fetchUnreadArticles() {
+		if AppDefaults.shared.feedDoubleClickMarkAsRead, let articles = singleSelectedFeed?.fetchUnreadArticles() {
 			if let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: Array(articles), markingRead: true, undoManager: undoManager) {
 				runCommand(markReadCommand)
 			}
@@ -452,6 +476,10 @@ extension Notification.Name {
 			expandedTable.insert(containerID)
 			delegate?.sidebarInvalidatedRestorationState(self)
 		}
+
+		var feeds = [Feed]()
+		collectExpandedFeeds(in: node, into: &feeds)
+		IconImageCache.shared.prefetchImagesForFeeds(feeds)
  	}
 
 	func outlineViewItemDidCollapse(_ notification: Notification) {
@@ -574,6 +602,16 @@ private extension SidebarViewController {
 		return node.representedObject as? Feed
 	}
 
+	func containerForNode(_ node: Node) -> Container? {
+		if let container = node.representedObject as? Container {
+			return container
+		}
+		if node.representedObject is Feed {
+			return node.parent?.representedObject as? Container
+		}
+		return nil
+	}
+
 	func addAllSelectedToFilterExceptions() {
 		for feed in selectedFeeds {
 			addToFilterExceptionsIfNecessary(feed)
@@ -634,6 +672,24 @@ private extension SidebarViewController {
 			treeControllerDelegate.resetFilterExceptions()
 			outlineView.reloadData()
 			expandNodes()
+			prefetchFeedIcons()
+		}
+	}
+
+	func prefetchFeedIcons() {
+		var feeds = [Feed]()
+		collectExpandedFeeds(in: treeController.rootNode, into: &feeds)
+		IconImageCache.shared.prefetchImagesForFeeds(feeds)
+	}
+
+	private func collectExpandedFeeds(in node: Node, into feeds: inout [Feed]) {
+		for childNode in node.childNodes {
+			if let feed = childNode.representedObject as? Feed {
+				feeds.append(feed)
+			}
+			if outlineView.isItemExpanded(childNode) {
+				collectExpandedFeeds(in: childNode, into: &feeds)
+			}
 		}
 	}
 
@@ -730,11 +786,9 @@ private extension SidebarViewController {
 	}
 
 	func shouldSkipRow(_ row: Int) -> Bool {
-		let skipExpandedFolders = UserDefaults.standard.bool(forKey: "JalkutRespectFolderExpansionOnNextUnread")
-
 		// Skip group items, because they should never be selected.
-		// Skip expanded folders only if Jalkut's pref is enabled.
-		if  rowIsGroupItem(row) || (skipExpandedFolders && rowIsExpandedFolder(row)) {
+		// Skip expanded folders — go to the feeds inside instead.
+		if rowIsGroupItem(row) || rowIsExpandedFolder(row) {
 			return true
 		}
 		return false
@@ -797,6 +851,7 @@ private extension SidebarViewController {
 		cell.cellAppearance = SidebarCellAppearance(rowSizeStyle: outlineView.effectiveRowSizeStyle)
 		cell.name = nameFor(node)
 		configureUnreadCount(cell, node)
+		cell.updateUnreadCountView() // A reused cell may predate a display setting change
 		configureFavicon(cell, node)
 		cell.shouldShowImage = node.representedObject is SmallIconProvider
 	}

@@ -14,7 +14,7 @@ public extension URL {
 		guard scheme == "mailto" else {
 			return nil
 		}
-		guard let urlString = absoluteString.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else {
+		guard let urlString = absoluteString.addingPercentEncoding(withAllowedCharacters: .mailtoAllowed) else {
 			return nil
 		}
 		return URL(string: urlString)
@@ -29,4 +29,10 @@ public extension URL {
 		}
 		return URL(string: link.replacingOccurrences(of: " ", with: "%20"))
 	}
+}
+
+private extension CharacterSet {
+
+	// Includes % so existing percent escapes don't get encoded a second time.
+	static let mailtoAllowed = CharacterSet.urlQueryAllowed.union(CharacterSet(charactersIn: "%"))
 }

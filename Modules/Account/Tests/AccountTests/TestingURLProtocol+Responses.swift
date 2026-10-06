@@ -1,0 +1,26 @@
+//
+//  TestingURLProtocol+Responses.swift
+//  AccountTests
+//
+//  Helpers for registering canned responses with `TestingURLProtocol`,
+//  which webservice sessions (`URLSession.makeWebserviceSession()`) use automatically while running unit tests.
+//
+
+import Foundation
+import RSWeb
+
+extension TestingURLProtocol {
+
+	/// Register the response to return for any request whose URL contains `urlSubstring`.
+	/// The body is loaded from `file`, relative to the test bundle resources (e.g. "JSON/tags_add.json").
+	static func setResponse(_ urlSubstring: String, file: String, statusCode: Int = 200, httpMethod: String? = nil) {
+		let fileURL = Bundle.module.resourceURL!.appendingPathComponent(file)
+		let data: Data
+		do {
+			data = try Data(contentsOf: fileURL)
+		} catch {
+			fatalError("Unable to read response file at \(fileURL) because \(error).")
+		}
+		setResponse(Response(statusCode: statusCode, data: data), forURLContaining: urlSubstring, httpMethod: httpMethod)
+	}
+}

@@ -133,13 +133,7 @@ public enum CloudKitCleanUpStatus {
 	private var fetchSerialNumber = 0
 	private var cleanUpTask: Task<Void, Never>?
 
-	// TODO: remove dryRunCleanUpPlan before shipping
-	private static let dryRunCleanUpPlan = CloudKitCleanUpPlan(staleStatusCount: 0, readContentCount: 8170, unreadContentCount: 212)
-
 	public var cleanUpPlan: CloudKitCleanUpPlan {
-		if dryRunCleanUp {
-			return Self.dryRunCleanUpPlan
-		}
 		let syncUnreadContent = AccountManager.shared.syncArticleContentForUnreadArticles
 		return stats.cleanUpPlan(syncUnreadContent: syncUnreadContent)
 	}
@@ -176,22 +170,10 @@ public enum CloudKitCleanUpStatus {
 		return lines.joined(separator: "\n")
 	}
 
-	// TODO: set to false before shipping
-	private let useTestScanData = false
-	private let dryRunCleanUp = false
-
 	public init() {
 	}
 
 	public func fetch() {
-		if useTestScanData {
-			cleanUpStatus = .idle
-			cleanUpPlanIsStale = false
-			stats = CloudKitStats(statusCount: 12107, starredStatusCount: 5, unreadStatusCount: 247, readStatusCount: 11855, staleStatusCount: 876, articleCount: 8387, starredArticleCount: 5, unreadArticleCount: 212, readArticleCount: 8170)
-			fetchStatus = .completed
-			return
-		}
-
 		guard let account = AccountManager.shared.iCloudAccount else {
 			fetchStatus = .error(CloudKitStatsError.noiCloudAccount)
 			return
@@ -245,13 +227,7 @@ public enum CloudKitCleanUpStatus {
 		}
 	}
 
-	// TODO: change dryRun to false before shipping
 	public func cleanUp() {
-		if useTestScanData {
-			simulateCleanUp()
-			return
-		}
-
 		guard let account = AccountManager.shared.iCloudAccount else {
 			cleanUpStatus = .error(CloudKitStatsError.noiCloudAccount)
 			return
@@ -261,7 +237,7 @@ public enum CloudKitCleanUpStatus {
 
 		cleanUpTask = Task {
 			do {
-				try await account.cleanUpCloudKit(dryRun: dryRunCleanUp) { progress in
+				try await account.cleanUpCloudKit { progress in
 					self.cleanUpStatus = .cleaning(progress)
 					if progress.phase == .completed {
 						self.cleanUpPlanIsStale = true
@@ -277,35 +253,6 @@ public enum CloudKitCleanUpStatus {
 		}
 	}
 
-	private func simulateCleanUp() {
-		let plan = cleanUpPlan
-
-		cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingReadContent, staleStatusDeleted: 0, readContentDeleted: 0, unreadContentDeleted: 0))
-
-		cleanUpTask = Task {
-			do {
-				let sleepSeconds = 3
-
-				if plan.readContentCount > 0 {
-					try await Task.sleep(for: .seconds(sleepSeconds))
-					cleanUpStatus = .cleaning(CloudKitCleanUpProgress(phase: .deletingUnreadContent, staleStatusDeleted: 0, readContentDeleted: plan.readContentCount, unreadContentDeleted: 0))
-				}
-
-				if plan.unreadContentCount > 0 {
-					try await Task.sleep(for: .seconds(sleepSeconds))
-				}
-
-				let finalProgress = CloudKitCleanUpProgress(phase: .completed, staleStatusDeleted: 0, readContentDeleted: plan.readContentCount, unreadContentDeleted: plan.unreadContentCount)
-				cleanUpPlanIsStale = true
-				cleanUpStatus = .completed(finalProgress)
-			} catch {
-				if !cleanUpStatus.isCanceled {
-					cleanUpPlanIsStale = true
-					cleanUpStatus = .error(error)
-				}
-			}
-		}
-	}
 }
 
 private extension CloudKitStatsViewModel {

@@ -14,6 +14,7 @@ import Account
 import Articles
 import Intents
 import UniformTypeIdentifiers
+import Images
 
 @MainActor final class ActivityManager {
 
@@ -21,6 +22,7 @@ import UniformTypeIdentifiers
 	private var selectingActivity: NSUserActivity?
 	private var readingActivity: NSUserActivity?
 	private var readingArticle: Article?
+	private var browsingActivity: NSUserActivity?
 
 	#if os(macOS)
 	var stateRestorationActivity: NSUserActivity {
@@ -39,12 +41,11 @@ import UniformTypeIdentifiers
 	}
 	#else // iOS
 	var stateRestorationActivity: NSUserActivity {
-		// State restoration is now handled via UserDefaults (AppDefaults.selectedSidebarItem and AppDefaults.selectedArticle).
-		// The reading/selecting activities are still maintained for Handoff, Spotlight, and Siri Shortcuts,
-		// but we don't use them for same-device state restoration anymore.
+		// State restoration uses UserDefaults; this activity is left non-current so it doesn't displace
+		// the reading/selecting activity that Handoff advertises.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5368>
 		let activity = NSUserActivity(activityType: ActivityType.restoration.rawValue)
 		activity.persistentIdentifier = UUID().uuidString
-		activity.becomeCurrent()
 		return activity
 	}
 	#endif
@@ -54,9 +55,28 @@ import UniformTypeIdentifiers
 	}
 
 	func invalidateCurrentActivities() {
+		invalidateBrowsing()
 		invalidateReading()
 		invalidateSelecting()
 		invalidateNextUnread()
+	}
+
+	// Handoff advertises the in-app browser's page, not the article behind it.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5369>
+	func browsing(url: URL) {
+		browsingActivity?.invalidate()
+
+		let activity = NSUserActivity(activityType: NSUserActivityTypeBrowsingWeb)
+		activity.webpageURL = url
+		activity.isEligibleForHandoff = true
+		browsingActivity = activity
+		activity.becomeCurrent()
+	}
+
+	func invalidateBrowsing() {
+		browsingActivity?.invalidate()
+		browsingActivity = nil
+		readingActivity?.becomeCurrent()
 	}
 
 	func selecting(sidebarItem: SidebarItem) {
@@ -98,6 +118,7 @@ import UniformTypeIdentifiers
 	}
 
 	func reading(feed: SidebarItem?, article: Article?) {
+		invalidateBrowsing()
 		invalidateReading()
 		invalidateNextUnread()
 
@@ -299,10 +320,9 @@ import UniformTypeIdentifiers
 	static func identifiers(for feed: Feed) -> [String] {
 		var ids = [String]()
 		ids.append(identifier(for: feed))
-		if let articles = try? feed.fetchArticles() {
-			for article in articles {
-				ids.append(identifier(for: article))
-			}
+		let articles = feed.fetchArticles()
+		for article in articles {
+			ids.append(identifier(for: article))
 		}
 
 		return ids

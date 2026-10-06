@@ -19,22 +19,23 @@ enum FeedlyAccountDelegateError: LocalizedError {
 	case addFeedInvalidFolder(String) // folderName
 	case unableToRenameFeed(String, String)
 	case unableToRemoveFeed(String)
+	case databaseReadFailed(String) // SQLite error description
 
 	var errorDescription: String? {
 		switch self {
 		case .notLoggedIn:
 			return NSLocalizedString("Please add the Feedly account again. If this problem persists, open Keychain Access and delete all feedly.com entries, then try again.", comment: "Feedly – Credentials not found.")
 
-		case .unexpectedResourceID(let resourceId):
+		case .unexpectedResourceID(let resourceID):
 			let template = NSLocalizedString("Could not encode the identifier “%@”.", comment: "Feedly – Could not encode resource id to send to Feedly.")
-			return String(format: template, resourceId)
+			return String(format: template, resourceID)
 
 		case .unableToAddFolder(let name):
 			let template = NSLocalizedString("Could not create a folder named “%@”.", comment: "Feedly – Could not create a folder/collection.")
 			return String(format: template, name)
 
 		case .unableToRenameFolder(let from, let to):
-			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Feedly – Could not rename a folder/collection.")
+			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Could not rename.")
 			return String(format: template, from, to)
 
 		case .unableToRemoveFolder(let name):
@@ -53,12 +54,16 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return String(format: template, folderName)
 
 		case .unableToRenameFeed(let from, let to):
-			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Feedly – Could not rename a feed.")
+			let template = NSLocalizedString("Could not rename “%@” to “%@”.", comment: "Could not rename.")
 			return String(format: template, from, to)
 
 		case .unableToRemoveFeed(let feedName):
 			let template = NSLocalizedString("Could not remove “%@”.", comment: "Feedly – Could not remove a feed.")
 			return String(format: template, feedName)
+
+		case .databaseReadFailed(let sqliteErrorDescription):
+			let template = NSLocalizedString("Could not read from the syncing database. (%@)", comment: "Feedly – Could not read from the syncing database.")
+			return String(format: template, sqliteErrorDescription)
 		}
 	}
 
@@ -94,6 +99,9 @@ enum FeedlyAccountDelegateError: LocalizedError {
 			return nil
 
 		case .unableToRenameFeed:
+			return nil
+
+		case .databaseReadFailed:
 			return nil
 		}
 	}

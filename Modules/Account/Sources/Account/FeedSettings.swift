@@ -11,9 +11,18 @@ import Articles
 
 @MainActor final class FeedSettings {
 	private let feedURL: String
-	let feedID: String
 	private let database: FeedSettingsDatabase
 	weak var feed: Feed?
+
+	// Reassign only before a Feed is created from these settings — Feed copies feedID at init and hashes on it.
+	var feedID: String {
+		didSet {
+			if feedID != oldValue {
+				database.setString(feedID, for: feedURL, column: .feedID)
+				postSettingDidChange(.feedID)
+			}
+		}
+	}
 
 	var homePageURL: String? {
 		didSet {
@@ -78,7 +87,7 @@ import Articles
 		}
 	}
 
-	var authors: [Author]? {
+	var authors: Set<Author>? {
 		didSet {
 			if authors != oldValue {
 				database.setAuthors(authors, for: feedURL)
@@ -149,6 +158,16 @@ import Articles
 		}
 	}
 
+	/// HTTP status code from the most recent feed download attempt.
+	var lastResponseCode: Int? {
+		didSet {
+			if lastResponseCode != oldValue {
+				database.setInt(lastResponseCode, for: feedURL, column: .lastResponseCode)
+				postSettingDidChange(.lastResponseCode)
+			}
+		}
+	}
+
 	/// Create from database row (bulk load at startup).
 	init(feedURL: String, row: FeedSettingsDatabase.Row, database: FeedSettingsDatabase) {
 		self.feedURL = feedURL
@@ -168,6 +187,7 @@ import Articles
 		self.externalID = row.externalID
 		self.folderRelationship = row.folderRelationship
 		self.lastCheckDate = row.lastCheckDate
+		self.lastResponseCode = row.lastResponseCode
 	}
 
 	/// Create for a new feed not yet in the database.

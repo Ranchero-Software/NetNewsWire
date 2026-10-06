@@ -20,7 +20,7 @@ final class HTMLFeedFinder {
 	private var feedSpecifiersDictionary = [String: FeedSpecifier]()
 
 	init(parserData: ParserData) {
-		let metadata = RSHTMLMetadataParser.htmlMetadata(with: parserData)
+		let metadata = HTMLMetadataParser.htmlMetadata(with: parserData)
 		var orderFound = 0
 
 		for oneFeedLink in metadata.feedLinks {
@@ -31,7 +31,7 @@ final class HTMLFeedFinder {
 			}
 		}
 
-		let bodyLinks = RSHTMLLinkParser.htmlLinks(with: parserData)
+		let bodyLinks = HTMLLinkParser.htmlLinks(with: parserData)
 		for oneBodyLink in bodyLinks {
 			if linkMightBeFeed(oneBodyLink), let normalizedURL = oneBodyLink.urlString?.normalizedURL {
 				orderFound += 1
@@ -56,6 +56,10 @@ private extension HTMLFeedFinder {
 	}
 
 	func urlStringMightBeFeed(_ urlString: String) -> Bool {
+		if urlStringIsDefinitelyNotFeed(urlString) {
+			return false
+		}
+
 		let massagedURLString = urlString.replacingOccurrences(of: "buzzfeed", with: "_")
 
 		for oneMatch in feedURLWordsToMatch {
@@ -68,7 +72,20 @@ private extension HTMLFeedFinder {
 		return false
 	}
 
-	func linkMightBeFeed(_ link: RSHTMLLink) -> Bool {
+	static let nonFeedDomains = ["x.com", "twitter.com", "facebook.com", "instagram.com"]
+	static let nonFeedExtensions = ["html", "pdf", "jpg", "jpeg", "png", "gif", "tiff", "heic", "svg", "webp", "bmp", "ico", "zip", "tar", "tgz", "gz", "dmg", "mp3", "mp4", "mov", "mpeg", "mpg", "m4a", "aac", "wav", "aiff", "doc", "docx", "xls", "xlsx", "ppt", "pptx"]
+
+	func urlStringIsDefinitelyNotFeed(_ urlString: String) -> Bool {
+		for oneExtension in Self.nonFeedExtensions {
+			let fileExtension = ".\(oneExtension)"
+			if urlString.hasSuffix(fileExtension) {
+				return true
+			}
+		}
+		return false
+	}
+
+	func linkMightBeFeed(_ link: HTMLLink) -> Bool {
 		if let linkURLString = link.urlString, urlStringMightBeFeed(linkURLString) {
 			return true
 		}

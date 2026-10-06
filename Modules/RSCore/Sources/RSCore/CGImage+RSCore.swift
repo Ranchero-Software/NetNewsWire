@@ -39,6 +39,10 @@ public extension CGImage {
 		// is (2^10)^3 = 1 billion color options!
 		guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorSpace, bitmapInfo: bitmapInfo) else { return nil }
 
+		// We only need an average, so nearest-neighbor sampling is plenty — and much faster
+		// than the default interpolation when downscaling a large source image.
+		context.interpolationQuality = .none
+
 		// Draw our resized image
 		context.draw(self, in: CGRect(origin: .zero, size: size))
 
@@ -54,11 +58,21 @@ public extension CGImage {
 		for i in 0 ..< totalPixels {
 			let pixel = pointer[i]
 
-			let r = red(for: pixel)
-			let g = green(for: pixel)
-			let b = blue(for: pixel)
+			let a = alpha(for: pixel)
+			if a == 0 {
+				// Transparent pixels carry no color, so skip them. Counting them
+				// as black would drag a bright icon on a transparent background
+				// down into the .regular (or .dark) range.
+				continue
+			}
 
-			let luminance = (0.299 * Double(r) + 0.587 * Double(g) + 0.114 * Double(b))
+			// Channels are premultiplied by alpha, so un-premultiply to recover
+			// the icon's true color before measuring luminance.
+			let r = Double(red(for: pixel)) * 255.0 / Double(a)
+			let g = Double(green(for: pixel)) * 255.0 / Double(a)
+			let b = Double(blue(for: pixel)) * 255.0 / Double(a)
+
+			let luminance = (0.299 * r + 0.587 * g + 0.114 * b)
 
 			totalLuminance += luminance
 			pixelsProcessed += 1
@@ -74,15 +88,25 @@ public extension CGImage {
 			}
 		}
 
-		let avgLuminance = totalLuminance / Double(totalPixels)
+		// No visible pixels — there's nothing to draw a background behind.
+		guard pixelsProcessed > 0 else {
+			return .regular
+		}
 
-		if totalLuminance == 0 || avgLuminance < 40 {
+		let avgLuminance = totalLuminance / Double(pixelsProcessed)
+
+		if avgLuminance < 40 {
 			return .dark
 		} else if avgLuminance > 180 {
 			return .bright
 		} else {
 			return .regular
 		}
+	}
+
+	@inline(__always)
+	func alpha(for pixelData: UInt32) -> UInt8 {
+		return UInt8((pixelData >> 24) & 255)
 	}
 
 	@inline(__always)

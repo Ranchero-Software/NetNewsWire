@@ -6,66 +6,61 @@
 //
 
 import AppKit
+import RSCore
+import RSWeb
 import Account
 import ErrorLog
 
-@MainActor final class ErrorLogWindowController: NSWindowController, NSWindowDelegate {
+final class ErrorLogWindowController: NSWindowController, NSWindowDelegate {
 
 	private static let windowIsOpenKey = "ErrorLogWindowIsOpen"
-	private static let errorLogWindowAutosaveFrameName = "ErrorLogWindow"
 
 	static private(set) var shouldOpenAtStartup: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: windowIsOpenKey)
 		}
 		set {
-			UserDefaults.standard.set(newValue, forKey: Self.windowIsOpenKey)
+			UserDefaults.standard.set(newValue, forKey: windowIsOpenKey)
 		}
 	}
 
-	private var textView = NSTextView()
-	private var copyButton: NSButton?
+	@IBOutlet private var textView: NSTextView?
+	@IBOutlet private var copyButton: NSButton?
+
 	private var hasBeenShown = false
 	private var hasLoadedEntries = false
+	private var isLoadingEntries = false
 
-	private static let defaultWindowSize = NSSize(width: 640, height: 400)
-	private static let minimumWindowSize = NSSize(width: 640, height: 300)
-	private static let aboveCenterOffset: CGFloat = 40
-
-	init() {
-		let window = NSWindow(contentRect: NSRect(origin: .zero, size: Self.defaultWindowSize), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: true)
-		window.title = NSLocalizedString("Error Log", comment: "Error Log window title")
-		window.minSize = Self.minimumWindowSize
-		window.isReleasedWhenClosed = false
-
-		super.init(window: window)
-		setupUI()
-
-		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidEncounterError(_:)), name: .appDidEncounterError, object: nil)
-
-		window.delegate = self
+	convenience init() {
+		self.init(windowNibName: "ErrorLogWindow")
 	}
 
-	@available(*, unavailable)
-	required init?(coder: NSCoder) {
-		fatalError("init(coder:) is not supported")
+	override func windowDidLoad() {
+		super.windowDidLoad()
+		window?.delegate = self
+
+		textView?.usesFindBar = true
+		textView?.font = NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: .regular)
+		textView?.textContainerInset = NSSize(width: LogTextStyle.textContainerInset, height: LogTextStyle.textContainerInset)
+
+		updateCopyButtonState()
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidEncounterError(_:)), name: .appDidEncounterError, object: nil)
 	}
 
 	override func showWindow(_ sender: Any?) {
 		if !hasBeenShown {
 			hasBeenShown = true
-			window?.center()
-			if var frame = window?.frame {
-				frame.origin.y += Self.aboveCenterOffset
-				window?.setFrame(frame, display: false)
-			}
-			window?.setFrameAutosaveName(Self.errorLogWindowAutosaveFrameName)
+			window?.centerAboveCenter(by: LogTextStyle.aboveCenterOffset)
 		}
 		super.showWindow(sender)
-		if !hasLoadedEntries {
-			hasLoadedEntries = true
+		if !hasLoadedEntries && !isLoadingEntries {
 			loadEntries()
 		}
+	}
+
+	@IBAction override func performTextFinderAction(_ sender: Any?) {
+		textView?.performTextFinderAction(sender)
 	}
 
 	func saveState() {
@@ -75,31 +70,29 @@ import ErrorLog
 	// MARK: - NSWindowDelegate
 
 	func windowDidResize(_ notification: Notification) {
-		// Make the NSTextView resize during live resize.
-		guard let container = textView.textContainer else {
-			return
-		}
-		container.size = NSSize(width: textView.bounds.width - textView.textContainerInset.width * 2, height: CGFloat.greatestFiniteMagnitude)
-		textView.layoutManager?.ensureLayout(for: container)
+		textView?.updateContainerSizeForLiveResize()
 	}
 
 	// MARK: - Notifications
 
 	@objc func handleAppDidEncounterError(_ notification: Notification) {
-		guard let errorMessage = notification.userInfo?[ErrorLogUserInfoKey.errorMessage] as? String,
-			  let sourceName = notification.userInfo?[ErrorLogUserInfoKey.sourceName] as? String,
-			  let sourceID = notification.userInfo?[ErrorLogUserInfoKey.sourceID] as? Int else {
+		guard let entry = ErrorLogEntry(notification: notification) else {
 			return
 		}
-		let operation = notification.userInfo?[ErrorLogUserInfoKey.operation] as? String ?? ""
-		let fileName = notification.userInfo?[ErrorLogUserInfoKey.fileName] as? String ?? ""
-		let functionName = notification.userInfo?[ErrorLogUserInfoKey.functionName] as? String ?? ""
-		let lineNumber = notification.userInfo?[ErrorLogUserInfoKey.lineNumber] as? Int ?? 0
-
-		let entry = ErrorLogEntry(id: 0, date: Date(), sourceName: sourceName, sourceID: sourceID, operation: operation, fileName: fileName, functionName: functionName, lineNumber: lineNumber, errorMessage: errorMessage)
-
 		Task { @MainActor in
 			appendEntry(entry)
+		}
+	}
+
+	// MARK: - Actions
+
+	@IBAction func copyContents(_ sender: Any?) {
+		textView?.copyAllToPasteboard()
+	}
+
+	@IBAction func showErrorLogHelp(_ sender: Any?) {
+		if let url = URL(string: "https://netnewswire.com/help/error-log.html") {
+			MacWebBrowser.openURL(url)
 		}
 	}
 }
@@ -108,114 +101,20 @@ import ErrorLog
 
 private extension ErrorLogWindowController {
 
-	static let dateFormatter: DateFormatter = {
-		let formatter = DateFormatter()
-		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-		return formatter
-	}()
-
-	static let fontSize: CGFloat = 16.0
-	static let textContainerInset: CGFloat = 8
-	static let separatorHeight: CGFloat = 1
-	static let separatorWhite: CGFloat = 0.75
-	static let bottomBarHeight: CGFloat = 52
-	static let bottomBarPadding: CGFloat = 16
-	static let lineSpacing: CGFloat = 4
-	static let paragraphSpacing: CGFloat = 7
-	static let entryParagraphStyle: NSParagraphStyle = {
-		let style = NSMutableParagraphStyle()
-		style.lineSpacing = lineSpacing
-		style.paragraphSpacing = paragraphSpacing
-		return style
-	}()
-
-	func setupUI() {
-		guard let contentView = window?.contentView else {
-			return
-		}
-
-		let scrollView = NSTextView.scrollableTextView()
-		scrollView.translatesAutoresizingMaskIntoConstraints = false
-		scrollView.hasVerticalScroller = true
-		scrollView.autohidesScrollers = true
-		scrollView.drawsBackground = true
-
-		let embeddedTextView = scrollView.documentView as! NSTextView
-		embeddedTextView.isEditable = false
-		embeddedTextView.isSelectable = true
-		embeddedTextView.textContainerInset = NSSize(width: Self.textContainerInset, height: Self.textContainerInset)
-		embeddedTextView.font = NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular)
-		self.textView = embeddedTextView
-
-		let separator = NSView()
-		separator.translatesAutoresizingMaskIntoConstraints = false
-		separator.wantsLayer = true
-		separator.layer?.backgroundColor = NSColor(white: Self.separatorWhite, alpha: 1.0).cgColor
-
-		let bottomBar = NSVisualEffectView()
-		bottomBar.translatesAutoresizingMaskIntoConstraints = false
-		bottomBar.blendingMode = .withinWindow
-		bottomBar.material = .titlebar
-
-		let warningLabel = NSTextField(wrappingLabelWithString: NSLocalizedString("Errors may contain feed URLs and other information you may not want to share publicly.", comment: "Error log privacy warning"))
-		warningLabel.translatesAutoresizingMaskIntoConstraints = false
-		warningLabel.font = NSFont.systemFont(ofSize: Self.fontSize)
-		warningLabel.textColor = .secondaryLabelColor
-
-		let copyButton = NSButton(title: NSLocalizedString("Copy Contents", comment: "Copy Contents button"), target: self, action: #selector(copyContents(_:)))
-		copyButton.translatesAutoresizingMaskIntoConstraints = false
-		copyButton.controlSize = .large
-		copyButton.font = NSFont.systemFont(ofSize: NSFont.systemFontSize)
-		copyButton.isEnabled = false
-		self.copyButton = copyButton
-
-		bottomBar.addSubview(warningLabel)
-		bottomBar.addSubview(copyButton)
-
-		warningLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-		copyButton.setContentCompressionResistancePriority(.required, for: .horizontal)
-		copyButton.setContentHuggingPriority(.required, for: .horizontal)
-
-		contentView.addSubview(scrollView)
-		contentView.addSubview(separator)
-		contentView.addSubview(bottomBar)
-
-		NSLayoutConstraint.activate([
-			scrollView.topAnchor.constraint(equalTo: contentView.topAnchor),
-			scrollView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			scrollView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-			scrollView.bottomAnchor.constraint(equalTo: separator.topAnchor),
-
-			separator.heightAnchor.constraint(equalToConstant: Self.separatorHeight),
-			separator.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			separator.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-			separator.bottomAnchor.constraint(equalTo: bottomBar.topAnchor),
-
-			warningLabel.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: Self.bottomBarPadding),
-			warningLabel.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
-			warningLabel.trailingAnchor.constraint(lessThanOrEqualTo: copyButton.leadingAnchor, constant: -Self.bottomBarPadding),
-
-			copyButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor, constant: -Self.bottomBarPadding),
-			copyButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
-
-			bottomBar.heightAnchor.constraint(equalToConstant: Self.bottomBarHeight),
-
-			bottomBar.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-			bottomBar.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-			bottomBar.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
-		])
-	}
-
-	/// Load recent entries from the on-disk error log database.
+	/// Load recent entries from the on-disk error log database. Notifications that arrive while
+	/// the load is in flight are dropped — they're already persisted by ErrorLogDatabase and will
+	/// be loaded the next time this window opens.
 	func loadEntries() {
+		isLoadingEntries = true
 		Task {
 			let entries = await AccountManager.shared.errorLogDatabase.allEntries()
-			guard !entries.isEmpty else {
+			defer {
+				isLoadingEntries = false
+				hasLoadedEntries = true
+			}
+			guard let textView else {
 				return
 			}
-
-			// Build attributed string for all entries at once,
-			// replacing any entries that arrived via notifications before the window opened.
 			let combined = NSMutableAttributedString()
 			for entry in entries {
 				combined.append(attributedString(for: entry))
@@ -227,13 +126,15 @@ private extension ErrorLogWindowController {
 	}
 
 	func appendEntry(_ entry: ErrorLogEntry) {
-		guard let textStorage = textView.textStorage else {
+		guard hasLoadedEntries else {
+			return
+		}
+		guard let textView, let textStorage = textView.textStorage else {
 			return
 		}
 
-		let wasScrolledToBottom = isScrolledToBottom
-		let attributedEntry = attributedString(for: entry)
-		textStorage.append(attributedEntry)
+		let wasScrolledToBottom = textView.isScrolledToBottom
+		textStorage.append(attributedString(for: entry))
 
 		if wasScrolledToBottom {
 			textView.scrollToEndOfDocument(nil)
@@ -242,28 +143,17 @@ private extension ErrorLogWindowController {
 	}
 
 	func updateCopyButtonState() {
-		copyButton?.isEnabled = !textView.string.isEmpty
-	}
-
-	var isScrolledToBottom: Bool {
-		guard let scrollView = textView.enclosingScrollView else {
-			return true
-		}
-		let contentView = scrollView.contentView
-		let visibleMaxY = contentView.bounds.maxY
-		let documentMaxY = textView.frame.maxY
-		// Allow 1 point of tolerance for fractional pixel rounding.
-		return visibleMaxY >= documentMaxY - 1
+		copyButton?.isEnabled = !(textView?.string.isEmpty ?? true)
 	}
 
 	func attributedString(for entry: ErrorLogEntry) -> NSAttributedString {
 		let result = NSMutableAttributedString()
 
-		let timestampString = "[\(Self.dateFormatter.string(from: entry.date))] "
+		let timestampString = "[\(DateFormatter.logTimestamp.string(from: entry.date))] "
 		let timestampAttributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: NSColor.secondaryLabelColor,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-			.paragraphStyle: Self.entryParagraphStyle
+			.font: NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: .regular),
+			.paragraphStyle: LogTextStyle.entryParagraphStyle
 		]
 		result.append(NSAttributedString(string: timestampString, attributes: timestampAttributes))
 
@@ -273,18 +163,18 @@ private extension ErrorLogWindowController {
 		} else {
 			sourceNameString = "\(entry.sourceName) — \(entry.operation): "
 		}
-		let sourceColor = color(for: entry.sourceID)
+		let sourceColor = AccountType(rawValue: entry.sourceID)?.logColor ?? .secondaryLabelColor
 		let sourceAttributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: sourceColor,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .medium),
-			.paragraphStyle: Self.entryParagraphStyle
+			.font: NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: .medium),
+			.paragraphStyle: LogTextStyle.entryParagraphStyle
 		]
 		result.append(NSAttributedString(string: sourceNameString, attributes: sourceAttributes))
 
 		let messageAttributes: [NSAttributedString.Key: Any] = [
 			.foregroundColor: NSColor.labelColor,
-			.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-			.paragraphStyle: Self.entryParagraphStyle
+			.font: NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: .regular),
+			.paragraphStyle: LogTextStyle.entryParagraphStyle
 		]
 		result.append(NSAttributedString(string: entry.errorMessage, attributes: messageAttributes))
 
@@ -292,8 +182,8 @@ private extension ErrorLogWindowController {
 			let locationString = " (\(entry.fileName):\(entry.functionName):\(entry.lineNumber))"
 			let locationAttributes: [NSAttributedString.Key: Any] = [
 				.foregroundColor: NSColor.tertiaryLabelColor,
-				.font: NSFont.monospacedSystemFont(ofSize: Self.fontSize, weight: .regular),
-				.paragraphStyle: Self.entryParagraphStyle
+				.font: NSFont.monospacedSystemFont(ofSize: LogTextStyle.fontSize, weight: .regular),
+				.paragraphStyle: LogTextStyle.entryParagraphStyle
 			]
 			result.append(NSAttributedString(string: locationString, attributes: locationAttributes))
 		}
@@ -301,41 +191,5 @@ private extension ErrorLogWindowController {
 		result.append(NSAttributedString(string: "\n", attributes: messageAttributes))
 
 		return result
-	}
-
-	func color(for sourceID: Int) -> NSColor {
-		guard let type = AccountType(rawValue: sourceID) else {
-			return .secondaryLabelColor
-		}
-
-		switch type {
-		case .onMyMac:
-			return .secondaryLabelColor
-		case .cloudKit:
-			return .systemPurple
-		case .feedly:
-			return .systemGreen
-		case .feedbin:
-			return .systemBlue
-		case .newsBlur:
-			return .systemOrange
-		case .freshRSS:
-			return .systemTeal
-		case .inoreader:
-			return .systemBrown
-		case .bazQux:
-			return .systemIndigo
-		case .theOldReader:
-			return .systemPink
-		}
-	}
-
-	@objc func copyContents(_ sender: Any?) {
-		let text = textView.string
-		guard !text.isEmpty else {
-			return
-		}
-		NSPasteboard.general.clearContents()
-		NSPasteboard.general.setString(text, forType: .string)
 	}
 }

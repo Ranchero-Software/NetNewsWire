@@ -7,21 +7,19 @@
 //
 
 import XCTest
+import RSWeb
 @testable import Account
 
 @MainActor final class AccountFeedbinFolderSyncTest: XCTestCase {
 
     override func setUp() {
-    }
-
-    override func tearDown() {
+		TestingURLProtocol.reset()
     }
 
     func testDownloadSync() async throws {
 
-		let testTransport = TestTransport()
-		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_initial.json"
-		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
+		TestingURLProtocol.setResponse("https://api.feedbin.com/v2/tags.json", file: "JSON/tags_initial.json")
+		let account = TestAccountManager.shared.createAccount(type: .feedbin)
 
 		// Test initial folders
 		try await account.refreshAll()
@@ -36,7 +34,7 @@ import XCTest
 		XCTAssertTrue(initialFolderNames.contains("Outdoors"))
 
 		// Test removing folders
-		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_delete.json"
+		TestingURLProtocol.setResponse("https://api.feedbin.com/v2/tags.json", file: "JSON/tags_delete.json")
 
 		try await account.refreshAll()
 
@@ -51,7 +49,7 @@ import XCTest
 		XCTAssertFalse(deleteFolderNames.contains("Tech Media"))
 
 		// Test Adding Folders
-		testTransport.testFiles["https://api.feedbin.com/v2/tags.json"] = "JSON/tags_add.json"
+		TestingURLProtocol.setResponse("https://api.feedbin.com/v2/tags.json", file: "JSON/tags_add.json")
 
 		try await account.refreshAll()
 

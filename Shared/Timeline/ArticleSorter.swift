@@ -6,23 +6,33 @@
 //  Copyright © 2019 Ranchero Software. All rights reserved.
 //
 
-import Articles
 import Foundation
-
-@MainActor protocol SortableArticle {
-	var sortableName: String { get }
-	var sortableDate: Date { get }
-	var sortableArticleID: String { get }
-	var sortableFeedID: String { get }
-}
+import Articles
 
 @MainActor struct ArticleSorter {
 
-	static func sortedByDate<T: SortableArticle>(articles: [T], sortDirection: ComparisonResult, groupByFeed: Bool) -> [T] {
+	private static let titleCompareOptions: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
+
+	static func sorted(articles: [Article], parameters: ArticleSortParameters, feedNameFor: (Article) -> String = { $0.sortableFeedName }) -> [Article] {
+		switch parameters.key {
+		case .date:
+			sortedByDate(articles: articles, sortDirection: parameters.direction)
+		case .feed:
+			sortedByFeedName(articles: articles, sortDirection: .orderedDescending, feedNameDirection: parameters.direction, feedNameFor: feedNameFor)
+		case .title:
+			sortedByTitle(articles: articles, sortDirection: parameters.direction)
+		case .unread:
+			sortedByFlag(articles: articles, sortDirection: parameters.direction) { !$0.status.read }
+		case .starred:
+			sortedByFlag(articles: articles, sortDirection: parameters.direction) { $0.status.starred }
+		}
+	}
+
+	static func sortedByDate(articles: [Article], sortDirection: ComparisonResult, groupByFeed: Bool, feedNameFor: (Article) -> String = { $0.sortableFeedName }) -> [Article] {
 		if groupByFeed {
-			return sortedByFeedName(articles: articles, sortByDateDirection: sortDirection)
+			sortedByFeedName(articles: articles, sortDirection: sortDirection, feedNameDirection: .orderedAscending, feedNameFor: feedNameFor)
 		} else {
-			return sortedByDate(articles: articles, sortDirection: sortDirection)
+			sortedByDate(articles: articles, sortDirection: sortDirection)
 		}
 	}
 }
@@ -31,29 +41,80 @@ import Foundation
 
 private extension ArticleSorter {
 
-	static func sortedByFeedName<T: SortableArticle>(articles: [T], sortByDateDirection: ComparisonResult) -> [T] {
-		// Group articles by "feed-feedID" - feed ID is used to differentiate between
-		// two feeds that have the same name
-		let groupedArticles = Dictionary(grouping: articles) { "\($0.sortableName.lowercased())-\($0.sortableFeedID)" }
-		return groupedArticles
-			.sorted { $0.key < $1.key }
-			.flatMap { (tuple) -> [T] in
-				let (_, articles) = tuple
+	static func sortedByFeedName(articles: [Article], sortDirection: ComparisonResult, feedNameDirection: ComparisonResult, feedNameFor: (Article) -> String) -> [Article] {
+		// Group articles by feed ID so that two feeds with the same name remain in distinct groups.
+		let groupedArticles = Dictionary(grouping: articles, by: \.feedID)
+		let groupsWithNames = groupedArticles.map { (feedID: $0.key, name: feedNameFor($0.value[0]), articles: $0.value) }
+		return groupsWithNames
+			.sorted { lhs, rhs in
+				switch lhs.name.localizedCaseInsensitiveCompare(rhs.name) {
+				case .orderedAscending: feedNameDirection == .orderedAscending
+				case .orderedDescending: feedNameDirection != .orderedAscending
+				case .orderedSame: lhs.feedID < rhs.feedID
+				}
+			}
+			.flatMap { sortedByDate(articles: $0.articles, sortDirection: sortDirection) }
+	}
 
-				return sortedByDate(articles: articles, sortDirection: sortByDateDirection)
+	static func sortedByDate(articles: [Article], sortDirection: ComparisonResult) -> [Article] {
+		articles.sorted { article1, article2 in
+			isOrderedByDate(article1, article2, sortDirection: sortDirection)
 		}
 	}
 
-	static func sortedByDate<T: SortableArticle>(articles: [T], sortDirection: ComparisonResult) -> [T] {
-		articles.sorted { (article1, article2) -> Bool in
-			if article1.sortableDate == article2.sortableDate {
-				return article1.sortableArticleID < article2.sortableArticleID
+	static func sortedByTitle(articles: [Article], sortDirection: ComparisonResult) -> [Article] {
+		articles.sorted { article1, article2 in
+			let title1 = sortableTitle(for: article1)
+			let title2 = sortableTitle(for: article2)
+			return switch title1.compare(title2, options: titleCompareOptions, range: nil, locale: .current) {
+			case .orderedAscending: sortDirection == .orderedAscending
+			case .orderedDescending: sortDirection != .orderedAscending
+			case .orderedSame: isOrderedByDate(article1, article2, sortDirection: .orderedDescending)
+			}
+		}
+	}
+
+	/// The text the timeline shows as the title: the title, or the start of the body for an untitled article.
+	static func sortableTitle(for article: Article) -> String {
+		let title = ArticleStringFormatter.shared.truncatedTitle(article)
+		if !title.isEmpty {
+			return title
+		}
+		return ArticleStringFormatter.shared.truncatedSummary(article)
+	}
+
+	/// Descending puts articles with the flag set on top.
+	static func sortedByFlag(articles: [Article], sortDirection: ComparisonResult, flag: (Article) -> Bool) -> [Article] {
+		articles.sorted { article1, article2 in
+			let flag1 = flag(article1)
+			let flag2 = flag(article2)
+			if flag1 == flag2 {
+				return isOrderedByDate(article1, article2, sortDirection: .orderedDescending)
 			}
 			if sortDirection == .orderedDescending {
-				return article1.sortableDate > article2.sortableDate
+				return flag1
 			}
-
-			return article1.sortableDate < article2.sortableDate
+			return flag2
 		}
+	}
+
+	/// Ties on date are broken by articleID so the order is stable.
+	static func isOrderedByDate(_ article1: Article, _ article2: Article, sortDirection: ComparisonResult) -> Bool {
+		if article1.logicalDatePublished == article2.logicalDatePublished {
+			article1.articleID < article2.articleID
+		} else if sortDirection == .orderedDescending {
+			article1.logicalDatePublished > article2.logicalDatePublished
+		} else {
+			article1.logicalDatePublished < article2.logicalDatePublished
+		}
+	}
+}
+
+// MARK: - Sorting
+
+@MainActor extension Article {
+
+	fileprivate var sortableFeedName: String {
+		feed?.nameForDisplay ?? ""
 	}
 }

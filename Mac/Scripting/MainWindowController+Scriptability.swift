@@ -7,9 +7,11 @@
 //
 
 import Foundation
+import Account
 import Articles
 
 @MainActor protocol ScriptingMainWindowController {
     var scriptingCurrentArticle: Article? { get }
     var scriptingSelectedArticles: [Article] { get }
+    var scriptingSelectedFeeds: [Feed] { get }
 }

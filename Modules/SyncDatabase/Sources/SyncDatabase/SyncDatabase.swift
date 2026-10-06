@@ -7,20 +7,21 @@
 //
 
 import Foundation
+import os
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
 
 public actor SyncDatabase {
-	private var database: FMDatabase?
-	private let databasePath: String
+	private let database: FMDatabase
+	public nonisolated let databasePath: String
+
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "SyncDatabase")
 
 	public init(databasePath: String) {
 		let database = FMDatabase.openAndSetUpDatabase(path: databasePath)
 		database.runCreateStatements(Self.tableCreationStatements)
-		if !Platform.isRunningUnitTests {
-			database.vacuum()
-		}
+		database.vacuumIfNeeded()
 
 		self.database = database
 		self.databasePath = databasePath
@@ -29,80 +30,55 @@ public actor SyncDatabase {
 	// MARK: - API
 
 	public func vacuum() {
-		database?.vacuum()
+		database.vacuum()
 	}
 
-	public func insertStatuses(_ statuses: Set<SyncStatus>) throws {
-		guard let database else {
-			throw DatabaseError.isSuspended
+	public func insertStatuses(_ statuses: Set<SyncStatus>) {
+		do {
+			try SyncStatusTable.insertStatuses(statuses, database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
 		}
-		SyncStatusTable.insertStatuses(statuses, database: database)
 	}
 
-	public func selectForProcessing(limit: Int? = nil) throws -> Set<SyncStatus>? {
-		guard let database else {
-			throw DatabaseError.isSuspended
-		}
-		return SyncStatusTable.selectForProcessing(limit: limit, database: database)
+	public func selectForProcessing(limit: Int? = nil) throws -> Set<SyncStatus> {
+		try SyncStatusTable.selectForProcessing(limit: limit, database: database)
 	}
 
-	public func selectPendingCount() throws -> Int? {
-		guard let database else {
-			throw DatabaseError.isSuspended
-		}
-		return SyncStatusTable.selectPendingCount(database: database)
+	public func selectPendingCount() throws -> Int {
+		try SyncStatusTable.selectPendingCount(database: database)
 	}
 
-	public func selectPendingReadStatusArticleIDs() throws -> Set<String>? {
-		guard let database else {
-			throw DatabaseError.isSuspended
-		}
-		return SyncStatusTable.selectPendingReadStatusArticleIDs(database: database)
+	public func selectPendingReadStatusArticleIDs() throws -> Set<String> {
+		try SyncStatusTable.selectPendingReadStatusArticleIDs(database: database)
 	}
 
-	public func selectPendingStarredStatusArticleIDs() throws -> Set<String>? {
-		guard let database else {
-			throw DatabaseError.isSuspended
-		}
-		return SyncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
+	public func selectPendingStarredStatusArticleIDs() throws -> Set<String> {
+		try SyncStatusTable.selectPendingStarredStatusArticleIDs(database: database)
 	}
 
 	nonisolated public func resetAllSelectedForProcessing() {
 		Task {
-			try? await _resetAllSelectedForProcessing()
+			await _resetAllSelectedForProcessing()
 		}
 	}
 
-	public func resetSelectedForProcessing(_ articleIDs: Set<String>) throws {
-		guard let database else {
-			throw DatabaseError.isSuspended
+	/// Pass `key` when sending one status kind at a time. A nil key matches all kinds —
+	/// correct only when every queued kind for these articleIDs was sent together.
+	public func resetSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
+		do {
+			try SyncStatusTable.resetSelectedForProcessing(articleIDs, key: key, database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
 		}
-		SyncStatusTable.resetSelectedForProcessing(articleIDs, database: database)
 	}
 
-	public func deleteSelectedForProcessing(_ articleIDs: Set<String>) throws {
-		guard let database else {
-			throw DatabaseError.isSuspended
+	public func deleteSelectedForProcessing(_ articleIDs: Set<String>, key: SyncStatus.Key? = nil) {
+		do {
+			try SyncStatusTable.deleteSelectedForProcessing(articleIDs, key: key, database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
 		}
-		SyncStatusTable.deleteSelectedForProcessing(articleIDs, database: database)
-	}
-
-	// MARK: - Suspend and Resume (for iOS)
-
-	nonisolated public func suspend() {
-#if os(iOS)
-		Task {
-			await _suspend()
-		}
-#endif
-	}
-
-	nonisolated public func resume() {
-#if os(iOS)
-		Task {
-			await _resume()
-		}
-#endif
 	}
 }
 
@@ -114,25 +90,11 @@ private extension SyncDatabase {
 	CREATE TABLE if not EXISTS syncStatus (articleID TEXT NOT NULL, key TEXT NOT NULL, flag BOOL NOT NULL DEFAULT 0, selected BOOL NOT NULL DEFAULT 0, PRIMARY KEY (articleID, key));
 	"""
 
-	func _resetAllSelectedForProcessing() throws {
-		guard let database else {
-			throw DatabaseError.isSuspended
+	func _resetAllSelectedForProcessing() {
+		do {
+			try SyncStatusTable.resetAllSelectedForProcessing(database: database)
+		} catch {
+			Self.logger.error("\(#function, privacy: .public) — \(self.databasePath, privacy: .public) — \(error.localizedDescription, privacy: .public)")
 		}
-		SyncStatusTable.resetAllSelectedForProcessing(database: database)
-	}
-
-	func _suspend() {
-#if os(iOS)
-		database?.close()
-		database = nil
-#endif
-	}
-
-	func _resume() {
-#if os(iOS)
-		if database == nil {
-			self.database = FMDatabase.openAndSetUpDatabase(path: databasePath)
-		}
-#endif
 	}
 }

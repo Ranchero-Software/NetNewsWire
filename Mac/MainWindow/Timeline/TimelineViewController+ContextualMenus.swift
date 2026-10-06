@@ -77,7 +77,8 @@ extension TimelineViewController {
 			return
 		}
 
-		guard let unreadArticles = try? feed.fetchUnreadArticles(), !unreadArticles.isEmpty else {
+		let unreadArticles = feed.fetchUnreadArticles()
+		guard !unreadArticles.isEmpty else {
 			return
 		}
 		guard let undoManager, let markReadCommand = MarkStatusCommand(
@@ -225,37 +226,33 @@ private extension TimelineViewController {
 	}
 
 	func markReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-
-		return menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkRead)
+		menuItem(NSLocalizedString("Mark as Read", comment: "Command"), #selector(markArticlesReadFromContextualMenu(_:)), articles)
 	}
 
 	func markUnreadMenuItem(_ articles: [Article]) -> NSMenuItem {
-
-		return menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkUnread)
+		menuItem(NSLocalizedString("Mark as Unread", comment: "Command"), #selector(markArticlesUnreadFromContextualMenu(_:)), articles)
 	}
 
 	func markStarredMenuItem(_ articles: [Article]) -> NSMenuItem {
-
-		return menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkStarred)
+		menuItem(NSLocalizedString("Mark as Starred", comment: "Command"), #selector(markArticlesStarredFromContextualMenu(_:)), articles)
 	}
 
 	func markUnstarredMenuItem(_ articles: [Article]) -> NSMenuItem {
-
-		return menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles, image: Assets.Images.swipeMarkUnstarred)
+		menuItem(NSLocalizedString("Mark as Unstarred", comment: "Command"), #selector(markArticlesUnstarredFromContextualMenu(_:)), articles)
 	}
 
 	func markAboveReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"), #selector(markAboveArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.markAboveAsRead)
+		menuItem(NSLocalizedString("Mark Above as Read", comment: "Command"), #selector(markAboveArticlesReadFromContextualMenu(_:)), articles)
 	}
 
 	func markBelowReadMenuItem(_ articles: [Article]) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"), #selector(markBelowArticlesReadFromContextualMenu(_:)), articles, image: Assets.Images.markBelowAsRead)
+		menuItem(NSLocalizedString("Mark Below as Read", comment: "Command"), #selector(markBelowArticlesReadFromContextualMenu(_:)), articles)
 	}
 
 	func selectFeedInSidebarMenuItem(_ feed: Feed) -> NSMenuItem {
 		let localizedMenuText = NSLocalizedString("Select “%@” in Sidebar", comment: "Command")
 		let formattedMenuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay)
-		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed, image: nil)
+		return menuItem(formattedMenuText as String, #selector(selectFeedInSidebarFromContextualMenu(_:)), feed)
 	}
 
 	func markAllAsReadMenuItem(_ feed: Feed) -> NSMenuItem? {
@@ -266,30 +263,26 @@ private extension TimelineViewController {
 		let localizedMenuText = NSLocalizedString("Mark All as Read in “%@”", comment: "Command")
 		let menuText = NSString.localizedStringWithFormat(localizedMenuText as NSString, feed.nameForDisplay) as String
 
-		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), feed, image: Assets.Images.markAllAsRead)
+		return menuItem(menuText, #selector(markAllInFeedAsRead(_:)), feed)
 	}
 
 	func openInBrowserMenuItem(_ urlString: String) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString, image: Assets.Images.openInBrowser)
+		return menuItem(NSLocalizedString("Open in Browser", comment: "Command"), #selector(openInBrowserFromContextualMenu(_:)), urlString)
 	}
 
 	func copyArticleURLMenuItem(_ urlString: String) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString, image: Assets.Images.copy)
+		return menuItem(NSLocalizedString("Copy Article URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString)
 	}
 
 	func copyExternalURLMenuItem(_ urlString: String) -> NSMenuItem {
-		return menuItem(NSLocalizedString("Copy External URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString, image: Assets.Images.copy)
+		return menuItem(NSLocalizedString("Copy External URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), urlString)
 	}
 
-	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any, image: RSImage?) -> NSMenuItem {
-
+	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {
 		let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
 		item.representedObject = representedObject
 		item.target = self
-		if let image {
-			item.image = image
-		}
 		return item
 	}
 }

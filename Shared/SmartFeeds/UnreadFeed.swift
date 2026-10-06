@@ -15,8 +15,9 @@ import RSCore
 import Account
 import Articles
 import ArticlesDatabase
+import Images
 
-// This just shows the global unread count, which appDelegate already has. Easy.
+// This just shows the global unread count, which AccountManager already has. Easy.
 
 @MainActor final class UnreadFeed: PseudoFeed {
 
@@ -53,32 +54,32 @@ import ArticlesDatabase
 
 	init() {
 
-		self.unreadCount = appDelegate.unreadCount
-		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: appDelegate)
+		self.unreadCount = AccountManager.shared.unreadCount
+		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
 	}
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 
-		assert(note.object is AppDelegate)
-		unreadCount = appDelegate.unreadCount
+		assert(note.object is AccountManager)
+		unreadCount = AccountManager.shared.unreadCount
 	}
 }
 
 @MainActor extension UnreadFeed: ArticleFetcher {
 
-	func fetchArticles() throws -> Set<Article> {
-		return try fetchUnreadArticles()
+	func fetchArticles() -> Set<Article> {
+		fetchUnreadArticles()
 	}
 
-	func fetchArticlesAsync() async throws -> Set<Article> {
-		try await fetchUnreadArticlesAsync()
+	func fetchArticlesAsync() async -> Set<Article> {
+		await fetchUnreadArticlesAsync()
 	}
 
-	func fetchUnreadArticles() throws -> Set<Article> {
-		try AccountManager.shared.fetchArticles(fetchType)
+	func fetchUnreadArticles() -> Set<Article> {
+		AccountManager.shared.fetchArticles(fetchType)
 	}
 
-	func fetchUnreadArticlesAsync() async throws -> Set<Article> {
-		try await AccountManager.shared.fetchArticlesAsync(fetchType)
+	func fetchUnreadArticlesAsync() async -> Set<Article> {
+		await AccountManager.shared.fetchArticlesAsync(fetchType)
 	}
 }

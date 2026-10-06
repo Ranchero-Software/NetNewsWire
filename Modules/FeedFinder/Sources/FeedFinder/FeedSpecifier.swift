@@ -40,6 +40,13 @@ public struct FeedSpecifier: Hashable, Sendable {
 			return FeedSpecifier(title: "writing - rachelbythebay", urlString: feedURLString, source: .userEntered, orderFound: 0)
 		}
 
+		// The blog page only advertises the master podcast feed in its <head>, so the finder would
+		// otherwise miss the blog feed. <https://github.com/Ranchero-Software/NetNewsWire/issues/5299>
+		if url.isRelayFMBlogURL {
+			let feedURLString = "https://www.relay.fm/blog/feed"
+			return FeedSpecifier(title: "Relay FM Blog", urlString: feedURLString, source: .userEntered, orderFound: 0)
+		}
+
 		return nil
 	}
 

@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import RSCore
 import os
 
 struct Feedly: Sendable {
-	static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Feedly")
+	static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Feedly")
 }

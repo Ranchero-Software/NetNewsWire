@@ -12,7 +12,7 @@ import RSCore
 
 struct ErrorHandler: Sendable {
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ErrorHandler")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ErrorHandler")
 
 	@Sendable public static func present(_ viewController: UIViewController) -> @Sendable (Error) -> Void {
 		return { [weak viewController] error in

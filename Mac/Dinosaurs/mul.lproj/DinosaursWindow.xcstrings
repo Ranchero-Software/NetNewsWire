@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "3a0-Nt-hom.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Show feeds that haven’t updated in\"; ObjectID = \"3a0-Nt-hom\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show feeds that haven’t updated in"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar fuentes que no se han actualizado en"
+          }
+        }
+      }
+    },
+    "5c9-4X-Ee3.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Open Home Page\"; ObjectID = \"5c9-4X-Ee3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Home Page"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir página de inicio"
+          }
+        }
+      }
+    },
+    "5W5-R7-HYY.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Copy Feed URL\"; ObjectID = \"5W5-R7-HYY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy Feed URL"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar URL de la fuente"
+          }
+        }
+      }
+    },
+    "20O-mq-mzx.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Go to Feed\"; ObjectID = \"20O-mq-mzx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go to Feed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a la fuente"
+          }
+        }
+      }
+    },
+    "agO-2P-t0w.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Delete\"; ObjectID = \"agO-2P-t0w\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Delete"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar"
+          }
+        }
+      }
+    },
+    "CFC-G6-8mQ.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"months\"; ObjectID = \"CFC-G6-8mQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "months"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "meses"
+          }
+        }
+      }
+    },
+    "FTr-7I-PML.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Account\"; ObjectID = \"FTr-7I-PML\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Account"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuenta"
+          }
+        }
+      }
+    },
+    "fXG-dM-Rac.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Feed\"; ObjectID = \"fXG-dM-Rac\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Feed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente"
+          }
+        }
+      }
+    },
+    "ibd-OR-6eM.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Last Article\"; ObjectID = \"ibd-OR-6eM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last Article"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Último artículo"
+          }
+        }
+      }
+    },
+    "Kg1-WV-eCn.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"URL\"; ObjectID = \"Kg1-WV-eCn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "URL"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL"
+          }
+        }
+      }
+    },
+    "QvC-M9-y7g.title" : {
+      "comment" : "Class = \"NSWindow\"; title = \"Dinosaurs\"; ObjectID = \"QvC-M9-y7g\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Dinosaurs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinosaurios"
+          }
+        }
+      }
+    },
+    "w3f-qj-qKv.headerCell.title" : {
+      "comment" : "Class = \"NSTableColumn\"; headerCell.title = \"Last Response\"; ObjectID = \"w3f-qj-qKv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last Response"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Última respuesta"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

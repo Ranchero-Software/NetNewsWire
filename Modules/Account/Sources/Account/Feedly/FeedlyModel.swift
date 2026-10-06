@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  FeedlyModel.swift
 //  Account
 //
 //  Created by Brent Simmons on 11/17/25.
@@ -46,7 +46,7 @@ struct FeedlyFeedParser {
 	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
 
 	var title: String? {
-		return rightToLeftTextSantizer.sanitize(feed.title) ?? ""
+		return rightToLeftTextSantizer.sanitize(feed.title)
 	}
 
 	var feedID: String {
@@ -54,7 +54,7 @@ struct FeedlyFeedParser {
 	}
 
 	var url: String {
-		let resource = FeedlyFeedResourceId(id: feed.id)
+		let resource = FeedlyFeedResourceID(id: feed.id)
 		return resource.url
 	}
 
@@ -66,7 +66,12 @@ struct FeedlyFeedParser {
 struct FeedlyFeedsSearchResponse: Decodable, Sendable {
 	struct Feed: Decodable {
 		let title: String
-		let feedId: String
+		let feedID: String
+
+		enum CodingKeys: String, CodingKey {
+			case title
+			case feedID = "feedId"
+		}
 	}
 
 	let results: [Feed]
@@ -83,8 +88,14 @@ struct FeedlyLink: Decodable, Sendable {
 
 struct FeedlyOrigin: Decodable, Sendable {
 	let title: String?
-	let streamId: String?
-	let htmlUrl: String?
+	let streamID: String?
+	let htmlURL: String?
+
+	enum CodingKeys: String, CodingKey {
+		case title
+		case streamID = "streamId"
+		case htmlURL = "htmlUrl"
+	}
 }
 
 struct FeedlyStream: Decodable, Sendable {
@@ -104,7 +115,7 @@ struct FeedlyStream: Decodable, Sendable {
 	}
 }
 
-struct FeedlyStreamIds: Decodable, Sendable {
+struct FeedlyStreamIDs: Decodable, Sendable {
 	let continuation: String?
 	let ids: [String]
 
@@ -151,6 +162,9 @@ struct FeedlyEntry: Decodable, Sendable {
 	/// the timestamp, in ms, when this article was re-processed and updated by the feedly Cloud servers.
 	let recrawled: Date?
 
+	/// When this article was published, as reported by the feed.
+	let published: Date?
+
 	/// the feed from which this article was crawled. If present, “streamId” will contain the feed id, “title” will contain the feed title, and “htmlUrl” will contain the feed’s website.
 	let origin: FeedlyOrigin?
 
@@ -183,9 +197,9 @@ struct FeedlyEntryParser {
 		return entry.id
 	}
 
-	/// When ingesting articles, the feedURL must match a feed's `feedID` for the article to be reachable between it and its matching feed. It reminds me of a foreign key.
-	var feedUrl: String? {
-		guard let id = entry.origin?.streamId else {
+	/// When saving articles, the feedURL must match a feed's `feedID` for the article to be reachable between it and its matching feed. It reminds me of a foreign key.
+	var feedURL: String? {
+		guard let id = entry.origin?.streamID else {
 			// At this point, check Feedly's API isn't glitching or the response has not changed structure.
 			assertionFailure("Entries need to be traceable to a feed or this entry will be dropped.")
 			return nil
@@ -195,7 +209,7 @@ struct FeedlyEntryParser {
 
 	/// Convoluted external URL logic "documented" here:
 	/// https://groups.google.com/forum/#!searchin/feedly-cloud/feed$20url%7Csort:date/feedly-cloud/Rx3dVd4aTFQ/Hf1ZfLJoCQAJ
-	var externalUrl: String? {
+	var externalURL: String? {
 		let multidimensionalArrayOfLinks = [entry.canonical, entry.alternate]
 		let withExistingValues = multidimensionalArrayOfLinks.compactMap { $0 }
 		let flattened = withExistingValues.flatMap { $0 }
@@ -207,7 +221,7 @@ struct FeedlyEntryParser {
 		return rightToLeftTextSantizer.sanitize(entry.title)
 	}
 
-	var contentHMTL: String? {
+	var contentHTML: String? {
 		return entry.content?.content ?? entry.summary?.content
 	}
 
@@ -221,6 +235,14 @@ struct FeedlyEntryParser {
 	}
 
 	var datePublished: Date {
+		// The publisher’s date when the feed provides one. Crawled is when Feedly’s
+		// servers processed the article — using it dated a newly added feed’s entire
+		// archive “now.” Publisher dates aren’t always reliable (per Feedly), so a
+		// future-dated article falls back to crawled rather than pinning itself to
+		// the top of a date-sorted timeline.
+		if let published = entry.published, published <= entry.crawled {
+			return published
+		}
 		return entry.crawled
 	}
 
@@ -252,18 +274,18 @@ struct FeedlyEntryParser {
 	}
 
 	var parsedItemRepresentation: ParsedItem? {
-		guard let feedUrl = feedUrl else {
+		guard let feedURL else {
 			return nil
 		}
 
 		return ParsedItem(syncServiceID: id,
 						  uniqueID: id, // This value seems to get ignored or replaced.
-						  feedURL: feedUrl,
+						  feedURL: feedURL,
 						  url: nil,
-						  externalURL: externalUrl,
+						  externalURL: externalURL,
 						  title: title,
 						  language: nil,
-						  contentHTML: contentHMTL,
+						  contentHTML: contentHTML,
 						  contentText: contentText,
 						  markdown: nil,
 						  summary: summary,
@@ -296,40 +318,20 @@ struct FeedlyRTLTextSanitizer: Sendable {
 	}
 }
 
-protocol FeedlyEntryIdentifierProviding: AnyObject {
-	var entryIDs: Set<String> { get }
-}
+/// The kinds of Resource IDs are documented here: https://developer.feedly.com/cloud/
+protocol FeedlyResourceID {
 
-final class FeedlyEntryIdentifierProvider: FeedlyEntryIdentifierProviding {
-	private(set) var entryIDs: Set<String>
-
-	init(entryIDs: Set<String> = Set()) {
-		self.entryIDs = entryIDs
-	}
-
-	func addEntryIDs(from provider: FeedlyEntryIdentifierProviding) {
-		entryIDs.formUnion(provider.entryIDs)
-	}
-
-	func addEntryIDs(in articleIDs: [String]) {
-		entryIDs.formUnion(articleIDs)
-	}
-}
-
-/// The kinds of Resource Ids is documented here: https://developer.feedly.com/cloud/
-protocol FeedlyResourceId {
-
-	/// The resource Id from Feedly.
+	/// The resource ID from Feedly.
 	var id: String { get }
 }
 
 /// The Feed Resource is documented here: https://developer.feedly.com/cloud/
-struct FeedlyFeedResourceId: FeedlyResourceId {
+struct FeedlyFeedResourceID: FeedlyResourceID {
 	let id: String
 
 	/// The location of the kind of resource a concrete type represents.
-	/// If the concrete type cannot strip the resource type from the Id, it should just return the Id
-	/// since the Id is a legitimate URL.
+	/// If the concrete type cannot strip the resource type from the ID, it should just return the ID
+	/// since the ID is a legitimate URL.
 	/// This is basically assuming Feedly prefixes source feed URLs with `feed/`.
 	/// It is not documented as such and could potentially change.
 	/// Feedly does not include the source feed URL as a separate field.
@@ -346,48 +348,48 @@ struct FeedlyFeedResourceId: FeedlyResourceId {
 	}
 }
 
-extension FeedlyFeedResourceId {
+extension FeedlyFeedResourceID {
 	init(url: String) {
 		self.id = "feed/\(url)"
 	}
 }
 
-struct FeedlyCategoryResourceId: FeedlyResourceId {
+struct FeedlyCategoryResourceID: FeedlyResourceID {
 	let id: String
 
 	enum Global {
 
-		static func uncategorized(for userId: String) -> FeedlyCategoryResourceId {
+		static func uncategorized(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.uncategorized"
-			return FeedlyCategoryResourceId(id: id)
+			let id = "user/\(userID)/category/global.uncategorized"
+			return FeedlyCategoryResourceID(id: id)
 		}
 
 		/// All articles from all the feeds the user subscribes to.
-		static func all(for userId: String) -> FeedlyCategoryResourceId {
+		static func all(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.all"
-			return FeedlyCategoryResourceId(id: id)
+			let id = "user/\(userID)/category/global.all"
+			return FeedlyCategoryResourceID(id: id)
 		}
 
 		/// All articles from all the feeds the user loves most.
-		static func mustRead(for userId: String) -> FeedlyCategoryResourceId {
+		static func mustRead(for userID: String) -> FeedlyCategoryResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/category/global.must"
-			return FeedlyCategoryResourceId(id: id)
+			let id = "user/\(userID)/category/global.must"
+			return FeedlyCategoryResourceID(id: id)
 		}
 	}
 }
 
-struct FeedlyTagResourceId: FeedlyResourceId {
+struct FeedlyTagResourceID: FeedlyResourceID {
 	let id: String
 
 	enum Global {
 
-		static func saved(for userId: String) -> FeedlyTagResourceId {
+		static func saved(for userID: String) -> FeedlyTagResourceID {
 			// https://developer.feedly.com/cloud/#global-resource-ids
-			let id = "user/\(userId)/tag/global.saved"
-			return FeedlyTagResourceId(id: id)
+			let id = "user/\(userID)/tag/global.saved"
+			return FeedlyTagResourceID(id: id)
 		}
 	}
 }

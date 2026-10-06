@@ -1,0 +1,60 @@
+
+<!-- Template Variables
+
+title: The title of the article
+preferred_link: The best link to associate with the article for linking out.
+
+external_link_label: A localized label for the external link.
+external_link_stripped: The external link minus the scheme. Useful for displaying the external link.
+external_link: The external link of the article if there is one provided by the author.
+
+feed_link_title: The name of the feed associated with this article.
+feed_link: The URL of the feed associated with this article.
+byline: HTML that combines all the authors and links to them if available.
+avatar_src: The image source URL for the feed icon / avatar.
+dateline_style: Either "articleDateline" or "articleDatelineTitle" depending on if the title was populated or not.
+
+datetime_long: Long version of a combined publish date and time.
+datetime_medium: Medium length version of a combined publish date and time.
+datetime_short: Short version of a combined publish date and time.
+
+date_long: Long version of the publish date.
+date_medium: Medium version of the publish date.
+date_short: Long version of the publish date.
+
+time_long: Long version of the publish time.
+time_medium: Medium version of the publish time.
+time_short: Long version of the publish time.
+
+text_size_class: The size class that the user has selected in Preferences for article text.
+body: The body of the article.
+
+-->
+
+<div class="feedHeader">
+	<td class="header rightAlign avatar"><img id="nnwImageIcon" src="[[avatar_src]]" height=48 width=48 /></td>
+	<div class="articleTitle">
+		<h1><a href="[[preferred_link]]">[[title]]</a></h1>
+	</div>
+	<div><a href="[[feed_link]]">[[feed_link_title]]</a></div>
+	<div>[[byline]]</div>
+</div>
+<hr  />
+
+<article>
+<div id="bodyContainer" class="articleBody [[text_size_class]]">[[body]]</div>
+<div class="[[dateline_style]]"><a href="[[preferred_link]]">[[datetime_medium]]</a></div>
+<div class="externalLink"><a href="[[external_link]]">[[external_link]]</a></div>
+</article>
+<script type="text/javascript">
+	/* 
+	The arrow-circle-right SVG is provided by Font Awesome under the Creative Commons Attribution 4.0 International License.
+	For more details view the license here: https://fontawesome.com/license
+	*/
+	let externalLinkElement = document.body.getElementsByClassName('externalLink')[0].querySelectorAll('a')[0];
+	if (externalLinkElement.innerText != '') { 
+		let host = externalLinkElement.hostname;
+		externalLinkElement.innerHTML = host + " " + '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-circle-right" class="svg-inline--fa fa-arrow-circle-right fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm-28.9 143.6l75.5 72.4H120c-13.3 0-24 10.7-24 24v16c0 13.3 10.7 24 24 24h182.6l-75.5 72.4c-9.7 9.3-9.9 24.8-.4 34.3l11 10.9c9.4 9.4 24.6 9.4 33.9 0L404.3 273c9.4-9.4 9.4-24.6 0-33.9L271.6 106.3c-9.4-9.4-24.6-9.4-33.9 0l-11 10.9c-9.5 9.6-9.3 25.1.4 34.4z"></path></svg>';	
+	}
+</script>
+

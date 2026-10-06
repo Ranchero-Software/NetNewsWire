@@ -2,7 +2,8 @@
   "sourceLanguage" : "en",
   "strings" : {
     "account.name.on-my-device" : {
-      "comment" : "Device specific default account name, e.g: On my iPhone",
+      "comment" : "Device specific default account name, e.g: On My iPhone",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "variations" : {

@@ -11,6 +11,7 @@ import UserNotifications
 import os
 import Articles
 import Account
+import Images
 
 final class FeedInspectorViewController: NSViewController, Inspector {
 	@IBOutlet var iconView: IconView!
@@ -46,6 +47,10 @@ final class FeedInspectorViewController: NSViewController, Inspector {
 	}
 
 	// MARK: NSViewController
+
+	convenience init() {
+		self.init(nibName: "FeedInspector", bundle: nil)
+	}
 
 	override func viewDidLoad() {
 		updateUI()

@@ -10,14 +10,6 @@ import XCTest
 
 final class StringRSCoreTests: XCTestCase {
 
-	func testCollapsingWhitespace() {
-
-		let str = "   lots\t\tof   random\n\nwhitespace\r\n"
-		let expected = "lots of random whitespace"
-		XCTAssertEqual(str.collapsingWhitespace, expected)
-
-	}
-
 	func testTrimmingWhitespace() {
 		let str = "   lots\t\tof   random\n\nwhitespace\r\n"
 		let expected = "lots\t\tof   random\n\nwhitespace"
@@ -104,6 +96,30 @@ final class StringRSCoreTests: XCTestCase {
 		let expected = "&lt;foo attr=&quot;value&quot;&gt;bar&amp;baz&lt;/foo&gt;"
 		XCTAssertEqual(str.escapingSpecialXMLCharacters, expected)
 
+	}
+
+	func testEscapingSpecialXMLCharactersEscapesApostrophe() {
+
+		let str = "it's a 'test'"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "it&apos;s a &apos;test&apos;")
+	}
+
+	func testEscapingSpecialXMLCharactersDropsInvalidControlCharacters() {
+
+		let str = "a\u{0}b\u{1}c\u{1F}d"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "abcd")
+	}
+
+	func testEscapingSpecialXMLCharactersKeepsTabNewlineAndCarriageReturn() {
+
+		let str = "a\tb\nc\rd"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "a\tb\nc\rd")
+	}
+
+	func testEscapingSpecialXMLCharactersLeavesUnicodeIntact() {
+
+		let str = "café — 🎉"
+		XCTAssertEqual(str.escapingSpecialXMLCharacters, "café — 🎉")
 	}
 
 	func testStrippingHTTPOrHTTPSScheme() {

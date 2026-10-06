@@ -11,6 +11,7 @@ import RSCore
 import Account
 import Articles
 import ArticlesDatabase
+import Images
 
 struct SearchFeedDelegate: SmartFeedDelegate {
 
@@ -32,8 +33,8 @@ struct SearchFeedDelegate: SmartFeedDelegate {
 		self.fetchType = .search(searchString)
 	}
 
-	func fetchUnreadCount(account: Account) async throws -> Int? {
+	func fetchUnreadCount(account: Account) async -> Int {
 		// TODO: after 5.0
-		nil
+		0
 	}
 }

@@ -17,20 +17,12 @@ extension UIStoryboard {
 		UIStoryboard(name: "Main", bundle: nil)
 	}
 
-	public static var add: UIStoryboard {
-		UIStoryboard(name: "Add", bundle: nil)
-	}
-
 	public static var settings: UIStoryboard {
 		UIStoryboard(name: "Settings", bundle: nil)
 	}
 
 	public static var inspector: UIStoryboard {
 		UIStoryboard(name: "Inspector", bundle: nil)
-	}
-
-	public static var account: UIStoryboard {
-		UIStoryboard(name: "Account", bundle: nil)
 	}
 
 	public func instantiateController<T>(ofType type: T.Type = T.self) -> T where T: UIViewController {

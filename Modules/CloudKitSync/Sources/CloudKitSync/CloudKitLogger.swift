@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RSCore
 import os
 
-public let cloudKitLogger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "CloudKit")
+public let cloudKitLogger = Logger(subsystem: Logger.nnwSubsystem, category: "CloudKit")

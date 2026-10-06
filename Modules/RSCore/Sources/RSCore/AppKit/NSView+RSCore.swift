@@ -46,7 +46,7 @@ public extension NSView {
 	/// Sets the view's frame if it's different from the current frame.
 	///
 	/// - Parameter rect: The new frame.
-	func setFrame(ifNotEqualTo rect: NSRect) {
+	func setFrameIfNotEqual(_ rect: NSRect) {
 		if self.frame != rect {
 			self.frame = rect
 		}

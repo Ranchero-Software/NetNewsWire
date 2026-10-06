@@ -88,7 +88,7 @@ private extension CloudKitStatsCleanUpContentView {
 		errorTextField.isHidden = true
 
 		refreshButton.bezelStyle = .rounded
-		refreshButton.title = NSLocalizedString("Refresh", comment: "Refresh button")
+		refreshButton.title = NSLocalizedString("Refresh", comment: "Refresh")
 		refreshButton.translatesAutoresizingMaskIntoConstraints = false
 		refreshButton.isHidden = true
 	}

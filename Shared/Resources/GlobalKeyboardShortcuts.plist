@@ -30,14 +30,6 @@
 	</dict>
 	<dict>
 		<key>key</key>
-		<string>[uparrow]</string>
-		<key>shiftModifier</key>
-		<true/>
-		<key>action</key>
-		<string>goToPreviousUnread:</string>
-	</dict>
-	<dict>
-		<key>key</key>
 		<string>+</string>
 		<key>action</key>
 		<string>nextUnread:</string>
@@ -173,6 +165,16 @@
 		<true/>
 		<key>action</key>
 		<string>openInBrowserUsingOppositeOfSettings:</string>
+	</dict>
+	<dict>
+		<key>title</key>
+		<string>Clean Up</string>
+		<key>key</key>
+		<string>'</string>
+		<key>commandModifier</key>
+		<true/>
+		<key>action</key>
+		<string>cleanUp:</string>
 	</dict>
 </array>
 </plist>

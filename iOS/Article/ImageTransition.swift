@@ -38,8 +38,7 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 		let imageView = UIImageView(image: originImage)
 		imageView.frame = originFrame
 
-		let fromView = transitionContext.view(forKey: .from)!
-		fromView.removeFromSuperview()
+		transitionContext.view(forKey: .from)?.removeFromSuperview()
 
 		transitionContext.containerView.backgroundColor = Assets.Colors.fullScreenBackground
 		transitionContext.containerView.addSubview(imageView)
@@ -52,26 +51,41 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 			usingSpringWithDamping: 0.8,
 			initialSpringVelocity: 0.2,
 			animations: {
-				let imageController = transitionContext.viewController(forKey: .to) as! ImageViewController
-				imageView.frame = imageController.zoomedFrame
+				if let imageController = self.imageViewController(forKey: .to, in: transitionContext) {
+					imageView.frame = imageController.zoomedFrame
+				}
 			}, completion: { _ in
 				imageView.removeFromSuperview()
-				let toView = transitionContext.view(forKey: .to)!
-				transitionContext.containerView.addSubview(toView)
+				if let toView = transitionContext.view(forKey: .to) {
+					transitionContext.containerView.addSubview(toView)
+				}
 				transitionContext.completeTransition(true)
 		})
 	}
 
 	private func animateTransitionReturning(using transitionContext: UIViewControllerContextTransitioning) {
-		let imageController = transitionContext.viewController(forKey: .from) as! ImageViewController
+
+		// The presenting animation removed the destination view from the window,
+		// so it must be restored on every path out of here.
+		guard let toView = transitionContext.view(forKey: .to) else {
+			transitionContext.completeTransition(false)
+			return
+		}
+
+		guard let imageController = imageViewController(forKey: .from, in: transitionContext),
+			  let fromView = transitionContext.view(forKey: .from),
+			  let window = fromView.window else {
+			transitionContext.containerView.addSubview(toView)
+			transitionContext.completeTransition(true)
+			return
+		}
+
 		let imageView = UIImageView(image: originImage)
 		imageView.frame = imageController.zoomedFrame
 
-		let fromView = transitionContext.view(forKey: .from)!
-		let windowFrame = fromView.window!.frame
+		let windowFrame = window.frame
 		fromView.removeFromSuperview()
 
-		let toView = transitionContext.view(forKey: .to)!
 		transitionContext.containerView.addSubview(toView)
 
 		let maskingView = UIView()
@@ -107,4 +121,27 @@ final class ImageTransition: NSObject, UIViewControllerAnimatedTransitioning {
 		})
 	}
 
+	private func imageViewController(forKey key: UITransitionContextViewControllerKey, in context: UIViewControllerContextTransitioning) -> ImageViewController? {
+		let navigationController = context.viewController(forKey: key) as? UINavigationController
+		return navigationController?.viewControllers.first as? ImageViewController
+	}
+
+}
+
+// The transition is its own transitioning delegate, strongly owned by the presented
+// ImageViewController — the WebViewController that configured it can be deallocated
+// while the viewer is up, and the dismissal animation must still run to restore the
+// view the presenting animation removed.
+// <https://github.com/Ranchero-Software/NetNewsWire/issues/3641>
+extension ImageTransition: UIViewControllerTransitioningDelegate {
+
+	func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		self.presenting = true
+		return self
+	}
+
+	func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+		self.presenting = false
+		return self
+	}
 }

@@ -109,12 +109,16 @@ import Account
 		self.article = article
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
-		self.title = article?.sanitizedTitle() ?? ""
+		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
+		// Some feeds embed a full HTML document as the article content —
+		// render just the body fragment.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3008>
 		if let content = extractedArticle?.content {
-			self.body = content
+			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
 			self.baseURL = extractedArticle?.url
 		} else {
-			self.body = article?.body ?? ""
+			let articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			self.body = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURLString: article?.feed?.url)
 			self.baseURL = article?.baseURL?.absoluteString
 		}
 	}
@@ -161,7 +165,7 @@ private extension ArticleRenderer {
 	}
 
 	private var loadingHTML: String {
-		let body = "<h3 class='systemMessage'>Loading...</h3>"
+		let body = "<h3 class='systemMessage'>Loading…</h3>"
 		return body
 	}
 
@@ -346,6 +350,6 @@ private extension ArticleRenderer {
 		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
 			return nil
 		}
-		return url
+		return ArticleRenderingSpecialCases.baseURLForRendering(url)
 	}
 }

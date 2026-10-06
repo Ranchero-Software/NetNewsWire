@@ -1,5 +1,5 @@
 //
-//  OAuthAuthorizationClient+NetNewsWire.swift
+//  OAuthAuthorizationClient+Feedly.swift
 //  Account
 //
 //  Created by Kiel Gillard on 8/11/19.
@@ -16,21 +16,7 @@ nonisolated extension OAuthAuthorizationClient {
 		/// These placeholders are substituted at build time using a Run Script phase with build settings.
 		/// https://developer.feedly.com/v3/auth/#authenticating-a-user-and-obtaining-an-auth-code
 		return OAuthAuthorizationClient(id: SecretKey.feedlyClientID,
-										redirectUri: "netnewswire://auth/feedly",
-										state: nil,
+										redirectURI: "netnewswire://auth/feedly",
 										secret: SecretKey.feedlyClientSecret)
-	}
-
-	static var feedlySandboxClient: OAuthAuthorizationClient {
-		/// We use this funky redirect URI because ASWebAuthenticationSession will try to load http://localhost URLs.
-		/// See https://developer.feedly.com/v3/sandbox/ for more information.
-		/// The return value models public sandbox API values found at:
-		/// https://groups.google.com/forum/#!topic/feedly-cloud/WwQWMgDmOuw
-		/// They are due to expire on May 31st 2020.
-		/// Verify the sandbox URL host in the FeedlyAPICaller.API.baseUrlComponents method, too.
-		return OAuthAuthorizationClient(id: "sandbox",
-										redirectUri: "urn:ietf:wg:oauth:2.0:oob",
-										state: nil,
-										secret: "4ZfZ5DvqmJ8vKgMj")
 	}
 }

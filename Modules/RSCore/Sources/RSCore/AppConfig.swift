@@ -57,6 +57,16 @@ import Foundation
 		createFolderIfNecessary(folder)
 		return folder
 	}
+
+	/// Returns the given absolute path relative to `dataFolder`. Used to label
+	/// files in user-visible diagnostics (Activity Log, Error Log).
+	public static func relativeDataPath(_ absolutePath: String) -> String {
+		let prefix = dataFolder.path + "/"
+		if absolutePath.hasPrefix(prefix) {
+			return String(absolutePath.dropFirst(prefix.count))
+		}
+		return absolutePath
+	}
 }
 
 private extension AppConfig {

@@ -11,13 +11,17 @@ import UserNotifications
 import os
 import Articles
 import Account
+import ActivityLog
 import ErrorLog
 import RSCore
+import RSCoreObjC
 import RSCoreResources
 import RSWeb
 import Secrets
 import CrashReporter
 import Sparkle
+import Images
+import HTMLMetadata
 
 let appName = "NetNewsWire"
 
@@ -26,7 +30,7 @@ let appName = "NetNewsWire"
 @main
 @MainActor final class AppDelegate: NSObject, NSApplicationDelegate, NSUserInterfaceValidations, UNUserNotificationCenterDelegate, UnreadCountProvider, SPUStandardUserDriverDelegate, SPUUpdaterDelegate {
 
-	static private let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "AppDelegate")
+	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDelegate")
 
 	private struct WindowRestorationIdentifiers {
 		static let mainWindow = "mainWindow"
@@ -48,9 +52,7 @@ let appName = "NetNewsWire"
 	private var isShutDownSyncDone = false
 
 	@IBOutlet var debugMenuItem: NSMenuItem!
-	@IBOutlet var sortByOldestArticleOnTopMenuItem: NSMenuItem!
-	@IBOutlet var sortByNewestArticleOnTopMenuItem: NSMenuItem!
-	@IBOutlet var groupArticlesByFeedMenuItem: NSMenuItem!
+	@IBOutlet var useColumnLayoutMenuItem: NSMenuItem!
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 
 	var unreadCount = 0 {
@@ -79,7 +81,7 @@ let appName = "NetNewsWire"
 	}
 
 	private var mainWindowControllers = [MainWindowController]()
-	private lazy var preferencesWindowController = windowControllerWithName("Preferences")
+	private lazy var preferencesWindowController = PreferencesWindowController()
 	private var aboutWindowController: AboutWindowController?
 	private var addFeedController: AddFeedController?
 	private var addFolderWindowController: AddFolderWindowController?
@@ -87,9 +89,13 @@ let appName = "NetNewsWire"
 	private var exportOPMLController: ExportOPMLWindowController?
 	private var keyboardShortcutsWindowController: WebViewWindowController?
 	private var inspectorWindowController: InspectorWindowController?
+	private var activityWindowController: CurrentActivityWindowController?
+	private var activityLogWindowController: ActivityLogWindowController?
 	private var errorLogWindowController: ErrorLogWindowController?
+	private var dinosaurWindowController: DinosaursWindowController?
 	private var crashReportWindowController: CrashReportWindowController? // For testing only
 	private var cloudKitStatsWindowController: CloudKitStatsWindowController?
+	private var accountStatsWindowController: AccountStatsWindowController?
 	private let appMovementMonitor: RSAppMovementMonitor
 	private var softwareUpdater: SPUUpdater?
 	private var crashReporter: PLCrashReporter?
@@ -112,9 +118,11 @@ let appName = "NetNewsWire"
 		AccountManager.shared.start()
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: AccountManager.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(inspectableObjectsDidChange(_:)), name: .InspectableObjectsDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(importDownloadedTheme(_:)), name: .didEndDownloadingTheme, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(themeImportError(_:)), name: .didFailToImportThemeWithError, object: nil)
+		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(willSleepNotification(_:)), name: NSWorkspace.willSleepNotification, object: nil)
 		NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(didWakeNotification(_:)), name: NSWorkspace.didWakeNotification, object: nil)
 	}
 
@@ -133,6 +141,8 @@ let appName = "NetNewsWire"
 	// MARK: - NSApplicationDelegate
 
 	func applicationWillFinishLaunching(_ notification: Notification) {
+		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
+
 		installAppleEventHandlers()
 
 		CacheCleaner.purgeIfNecessary()
@@ -153,9 +163,13 @@ let appName = "NetNewsWire"
 
 	func applicationDidFinishLaunching(_ note: Notification) {
 
+		WebViewConfiguration.resolveBrowserUserAgent()
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
+
+		// Load now, while the app bundle is readable. A translocated app that gets moved can’t read it later.
+		_ = MainWindowKeyboardHandler.shared
 
 		// Ensure the Sparkle feed URL is one of the two supported URLs.
 		// Default to the release builds URL from Info.plist.
@@ -189,8 +203,7 @@ let appName = "NetNewsWire"
 			DefaultFeedsImporter.importDefaultFeeds(account: localAccount)
 		}
 
-		updateSortMenuItems()
-		updateGroupByFeedMenuItem()
+		updateColumnLayoutMenuItem()
 
 		if mainWindowController == nil {
 			let mainWindowController = createAndShowMainWindow()
@@ -212,12 +225,25 @@ let appName = "NetNewsWire"
 			self.unreadCount = AccountManager.shared.unreadCount
 		}
 
-		if InspectorWindowController.shouldOpenAtStartup {
-			toggleInspectorWindow(self)
-		}
-
-		if ErrorLogWindowController.shouldOpenAtStartup {
-			showErrorLog(self)
+		if !Platform.isRunningUnitTests {
+			if InspectorWindowController.shouldOpenAtStartup {
+				toggleInspectorWindow(self)
+			}
+			if CurrentActivityWindowController.shouldOpenAtStartup {
+				showActivityWindow(self)
+			}
+			if ActivityLogWindowController.shouldOpenAtStartup {
+				showActivityLog(self)
+			}
+			if ErrorLogWindowController.shouldOpenAtStartup {
+				showErrorLog(self)
+			}
+			if AccountStatsWindowController.shouldOpenAtStartup {
+				showAccountStats(self)
+			}
+			if DinosaursWindowController.shouldOpenAtStartup {
+				showDinosaursWindow(self)
+			}
 		}
 
 		ArticleThemesManager.shared.start()
@@ -232,15 +258,11 @@ let appName = "NetNewsWire"
 		refreshTimer = AccountRefreshTimer()
 		ArticleStatusSyncTimer.shared.start()
 
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge]) { _, _ in }
+		// Silent CloudKit pushes don’t need notification permission.
+		NSApplication.shared.registerForRemoteNotifications()
 
-		UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-			if settings.authorizationStatus == .authorized {
-				DispatchQueue.main.async {
-					NSApplication.shared.registerForRemoteNotifications()
-				}
-			}
-		}
+		// Badging the Dock icon needs this permission — it’s not just for alerts.
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { _, _ in }
 
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
@@ -269,10 +291,6 @@ let appName = "NetNewsWire"
 				CrashReporter.check(crashReporter: crashReporter)
 			}
 		}
-
-//		#if DEBUG
-//		postFakeErrorsForTesting()
-//		#endif
 	}
 
 	func application(_ application: NSApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([NSUserActivityRestoring]) -> Void) -> Bool {
@@ -293,7 +311,11 @@ let appName = "NetNewsWire"
 		guard let mainWindowController, mainWindowController.isWindowLoaded else {
 			return false
 		}
-		mainWindowController.showWindow(self)
+		// Only bring the main window forward when it’s been closed — leave it
+		// alone if it’s already open (or miniaturized).
+		if !mainWindowController.isOpen {
+			mainWindowController.showWindow(self)
+		}
 		return false
 	}
 
@@ -303,6 +325,7 @@ let appName = "NetNewsWire"
 
 	func applicationDidBecomeActive(_ notification: Notification) {
 		fireOldTimers()
+		AppNotification.postAppDidBecomeActive()
 	}
 
 	func applicationDidResignActive(_ notification: Notification) {
@@ -330,6 +353,8 @@ let appName = "NetNewsWire"
 		shuttingDown = true
 		saveState()
 
+		AccountManager.shared.saveAllIfNeeded()
+
 		ArticleThemeDownloader.shared.cleanUp()
 
 		Task { @MainActor in
@@ -346,6 +371,10 @@ let appName = "NetNewsWire"
 	@objc func unreadCountDidChange(_ note: Notification) {
 		assert(note.object is AccountManager)
 		unreadCount = AccountManager.shared.unreadCount
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateDockBadge()
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -369,8 +398,7 @@ let appName = "NetNewsWire"
 	}
 
 	func userDefaultsDidChange() {
-		updateSortMenuItems()
-		updateGroupByFeedMenuItem()
+		updateColumnLayoutMenuItem()
 
 		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
 			refreshTimer?.update()
@@ -380,9 +408,18 @@ let appName = "NetNewsWire"
 		updateDockBadge()
 	}
 
+	@objc func willSleepNotification(_ note: Notification) {
+		// Pause feed refreshing while the Mac is asleep. Article status syncing is
+		// left running on purpose.
+		Task { @MainActor in
+			refreshTimer?.suspend()
+		}
+	}
+
 	@objc func didWakeNotification(_ note: Notification) {
-		MainActor.assumeIsolated {
-			fireOldTimers()
+		Task { @MainActor in
+			refreshTimer?.resume()
+			ArticleStatusSyncTimer.shared.fireOldTimer()
 		}
 	}
 
@@ -399,18 +436,13 @@ let appName = "NetNewsWire"
 	// MARK: Main Window
 
 	func createMainWindowController() -> MainWindowController {
-		let controller: MainWindowController = windowControllerWithName("UnifiedWindow") as! MainWindowController
+		let controller = MainWindowController()
 
 		if !(mainWindowController?.isOpen ?? false) {
 			mainWindowControllers.removeAll()
 		}
 		mainWindowControllers.append(controller)
 		return controller
-	}
-
-	func windowControllerWithName(_ storyboardName: String) -> NSWindowController {
-		let storyboard = NSStoryboard(name: NSStoryboard.Name(storyboardName), bundle: nil)
-		return storyboard.instantiateInitialController()! as! NSWindowController
 	}
 
 	@discardableResult
@@ -459,10 +491,6 @@ let appName = "NetNewsWire"
 
 		if item.action == #selector(addAppNews(_:)) {
 			return !isDisplayingSheet && !AccountManager.shared.anyAccountHasNetNewsWireNewsSubscription() && !AccountManager.shared.activeAccounts.isEmpty
-		}
-
-		if item.action == #selector(sortByNewestArticleOnTop(_:)) || item.action == #selector(sortByOldestArticleOnTop(_:)) {
-			return mainWindowController?.isOpen ?? false
 		}
 
 		if item.action == #selector(showAddFeedWindow(_:)) || item.action == #selector(showAddFolderWindow(_:)) {
@@ -522,11 +550,20 @@ let appName = "NetNewsWire"
 		showAddFeedSheetOnWindow(windowController.window!, urlString: urlString, name: name, account: account, folder: folder)
 	}
 
+	private func addFeedContainerFromSidebarSelection() -> Container? {
+		guard let container = mainWindowController?.selectedContainerInSidebar() else {
+			return nil
+		}
+		guard let account = container as? Account else {
+			return container
+		}
+		return AddFeedDefaultContainer.substituteContainerIfNeeded(account: account)
+	}
+
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
 		Task { @MainActor in
-			let label = unreadCount > 0 ? "\(unreadCount)" : ""
-			NSApplication.shared.dockTile.badgeLabel = label
+			NSApplication.shared.dockTile.badgeLabel = AppDefaults.shared.unreadCountDisplay.text(for: unreadCount) ?? ""
 		}
 	}
 
@@ -551,12 +588,45 @@ let appName = "NetNewsWire"
 		errorLogWindowController!.showWindow(self)
 	}
 
+	@IBAction func showDinosaursWindow(_ sender: Any?) {
+		if dinosaurWindowController == nil {
+			dinosaurWindowController = DinosaursWindowController()
+		}
+		dinosaurWindowController!.showWindow(self)
+	}
+
+	@objc func selectFeedInSidebar(_ sender: Any?) {
+		guard let feed = sender as? Feed else {
+			return
+		}
+		guard let mainWindowController else {
+			return
+		}
+		mainWindowController.showWindow(self)
+		mainWindowController.selectFeedInSidebar(feed)
+	}
+
+	@IBAction func showActivityWindow(_ sender: Any?) {
+		if activityWindowController == nil {
+			activityWindowController = CurrentActivityWindowController()
+		}
+		activityWindowController?.showWindow(self)
+	}
+
+	@IBAction func showActivityLog(_ sender: Any?) {
+		if activityLogWindowController == nil {
+			activityLogWindowController = ActivityLogWindowController()
+		}
+		activityLogWindowController?.showWindow(self)
+	}
+
 	@IBAction func refreshAll(_ sender: Any?) {
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.present)
 	}
 
 	@IBAction func showAddFeedWindow(_ sender: Any?) {
-		addFeed(nil)
+		let container = addFeedContainerFromSidebarSelection()
+		addFeed(nil, account: container?.account, folder: container as? Folder)
 	}
 
 	@IBAction func showAddFolderWindow(_ sender: Any?) {
@@ -585,7 +655,7 @@ let appName = "NetNewsWire"
 
 	@IBAction func toggleInspectorWindow(_ sender: Any?) {
 		if inspectorWindowController == nil {
-			inspectorWindowController = (windowControllerWithName("Inspector") as! InspectorWindowController)
+			inspectorWindowController = InspectorWindowController()
 		}
 
 		if inspectorWindowController!.isOpen {
@@ -691,16 +761,8 @@ let appName = "NetNewsWire"
 		aboutWindowController?.window?.makeKeyAndOrderFront(nil)
 	}
 
-	@IBAction func sortByOldestArticleOnTop(_ sender: Any?) {
-		AppDefaults.shared.timelineSortDirection = .orderedAscending
-	}
-
-	@IBAction func sortByNewestArticleOnTop(_ sender: Any?) {
-		AppDefaults.shared.timelineSortDirection = .orderedDescending
-	}
-
-	@IBAction func groupByFeedToggled(_ sender: NSMenuItem) {
-		AppDefaults.shared.timelineGroupByFeed.toggle()
+	@IBAction func toggleColumnLayout(_ sender: Any?) {
+		AppDefaults.shared.useColumnLayout.toggle()
 	}
 
 	@IBAction func checkForUpdates(_ sender: Any?) {
@@ -710,27 +772,6 @@ let appName = "NetNewsWire"
 
 // MARK: - Debug Menu
 extension AppDelegate {
-
-	#if DEBUG
-	func postFakeErrorsForTesting() {
-		let fakeErrors: [(String, Int, String, String)] = [
-			("On My Mac", AccountType.onMyMac.rawValue, "Downloading feed", "HTTP 404 Not Found: https://example.com/feed.xml"),
-			("Feedbin", AccountType.feedbin.rawValue, "Syncing starred status", "HTTP 401 Unauthorized"),
-			("iCloud", AccountType.cloudKit.rawValue, "Refreshing", "HTTP 429 Too Many Requests: https://daringfireball.net/feeds/main"),
-			("NewsBlur", AccountType.newsBlur.rawValue, "Syncing read status", "The operation couldn’t be completed. Network connection lost."),
-			("FreshRSS", AccountType.freshRSS.rawValue, "Refreshing articles", "HTTP 403 Forbidden: https://freshrss.example.com/api/greader.php"),
-			("Feedly", AccountType.feedly.rawValue, "Restoring feed", "HTTP 500 Internal Server Error: https://cloud.feedly.com/v3/streams"),
-			("Inoreader", AccountType.inoreader.rawValue, "Refreshing", "The request timed out."),
-			("BazQux", AccountType.bazQux.rawValue, "Removing feed", "HTTP 502 Bad Gateway: https://www.bazqux.com/reader/api"),
-			("The Old Reader", AccountType.theOldReader.rawValue, "Refreshing articles", "A server with the specified hostname could not be found.")
-		]
-
-		for (accountName, accountType, operation, message) in fakeErrors {
-			let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountType, operation: operation, errorMessage: message)
-			NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
-		}
-	}
-	#endif
 
 	@IBAction func debugSearch(_ sender: Any?) {
 		AccountManager.shared.defaultAccount.debugRunSearch()
@@ -780,12 +821,6 @@ extension AppDelegate {
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 
-	@IBAction func vacuumDatabases(_ sender: Any?) {
-		Task {
-			await AccountManager.shared.vacuumAllDatabases()
-		}
-	}
-
 	@IBAction func openImageCacheFolder(_ sender: Any?) {
 		NSWorkspace.shared.open(AppConfig.cacheFolder)
 	}
@@ -795,6 +830,13 @@ extension AppDelegate {
 			cloudKitStatsWindowController = CloudKitStatsWindowController()
 		}
 		cloudKitStatsWindowController?.showWindow(self)
+	}
+
+	@IBAction func showAccountStats(_ sender: Any?) {
+		if accountStatsWindowController == nil {
+			accountStatsWindowController = AccountStatsWindowController()
+		}
+		accountStatsWindowController?.showWindow(self)
 	}
 
 	@IBAction func showiCloudDriveMissingAlert(_ sender: Any?) {
@@ -824,20 +866,22 @@ extension AppDelegate {
 	}
 
 	func saveState() {
+		guard !Platform.isRunningUnitTests else {
+			return
+		}
+
 		mainWindowController?.saveStateToUserDefaults()
+
 		inspectorWindowController?.saveState()
+		activityWindowController?.saveState()
+		activityLogWindowController?.saveState()
 		errorLogWindowController?.saveState()
+		accountStatsWindowController?.saveState()
+		dinosaurWindowController?.saveState()
 	}
 
-	@MainActor func updateSortMenuItems() {
-		let sortByNewestOnTop = AppDefaults.shared.timelineSortDirection == .orderedDescending
-		sortByNewestArticleOnTopMenuItem.state = sortByNewestOnTop ? .on : .off
-		sortByOldestArticleOnTopMenuItem.state = sortByNewestOnTop ? .off : .on
-	}
-
-	@MainActor func updateGroupByFeedMenuItem() {
-		let groupByFeedEnabled = AppDefaults.shared.timelineGroupByFeed
-		groupArticlesByFeedMenuItem.state = groupByFeedEnabled ? .on : .off
+	@MainActor func updateColumnLayoutMenuItem() {
+		useColumnLayoutMenuItem.state = AppDefaults.shared.useColumnLayout ? .on : .off
 	}
 
 	func importTheme(url: URL) {
@@ -851,21 +895,23 @@ extension AppDelegate {
 			let localizedMessageText = NSLocalizedString("Install theme “%@” by %@?", comment: "Theme message text")
 			alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name, theme.creatorName) as String
 
-			var attrs = [NSAttributedString.Key: Any]()
-			attrs[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
-			attrs[.foregroundColor] = NSColor.textColor
+			var attributes = [NSAttributedString.Key: Any]()
+			attributes[.font] = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
+			attributes[.foregroundColor] = NSColor.textColor
 
 			let titleParagraphStyle = NSMutableParagraphStyle()
 			titleParagraphStyle.alignment = .center
-			attrs[.paragraphStyle] = titleParagraphStyle
+			attributes[.paragraphStyle] = titleParagraphStyle
 
 			let websiteText = NSMutableAttributedString()
-			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attrs))
+			websiteText.append(NSAttributedString(string: NSLocalizedString("Author‘s website:", comment: "Author's Website"), attributes: attributes))
 
 			websiteText.append(NSAttributedString(string: "\n"))
 
-			attrs[.link] = theme.creatorHomePage
-			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attrs))
+			if let homePageURL = URL(string: theme.creatorHomePage), homePageURL.isHTTPOrHTTPSURL() {
+				attributes[.link] = theme.creatorHomePage
+			}
+			websiteText.append(NSAttributedString(string: theme.creatorHomePage, attributes: attributes))
 
 			let textViewWidth: CGFloat
 			textViewWidth = 200
@@ -877,7 +923,7 @@ extension AppDelegate {
 			alert.accessoryView = textView
 
 			alert.addButton(withTitle: NSLocalizedString("Install Theme", comment: "Install Theme"))
-			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+			alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 			func importTheme() {
 				do {
@@ -899,7 +945,7 @@ extension AppDelegate {
 						alert.messageText = NSString.localizedStringWithFormat(localizedMessageText as NSString, theme.name) as String
 
 						alert.addButton(withTitle: NSLocalizedString("Overwrite", comment: "Overwrite"))
-						alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel Install Theme"))
+						alert.addButton(withTitle: NSLocalizedString("Cancel", comment: "Cancel button"))
 
 						alert.beginSheetModal(for: window) { result in
 							if result == NSApplication.ModalResponse.alertFirstButtonReturn {
@@ -926,7 +972,7 @@ extension AppDelegate {
 		let localizedInformativeText = NSLocalizedString("The theme “%@” has been installed.", comment: "Theme installed")
 		alert.informativeText = NSString.localizedStringWithFormat(localizedInformativeText as NSString, themeName) as String
 
-		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+		alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK button"))
 
 		alert.beginSheetModal(for: window)
 	}
@@ -937,33 +983,7 @@ extension AppDelegate {
 				  return
 			  }
 		themeImportPath = userInfo["path"] as? String
-		var informativeText: String = ""
-		if let decodingError = error as? DecodingError {
-			switch decodingError {
-			case .typeMismatch(let type, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the type—“%@”—is mismatched in the Info.plist", comment: "Type mismatch")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, type as! CVarArg) as String
-			case .valueNotFound(let value, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the value—“%@”—is not found in the Info.plist.", comment: "Decoding value missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, value as! CVarArg) as String
-			case .keyNotFound(let codingKey, _):
-				let localizedError = NSLocalizedString("This theme cannot be used because the the key—“%@”—is not found in the Info.plist.", comment: "Decoding key missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, codingKey.stringValue) as String
-			case .dataCorrupted(let context):
-				guard let underlyingError = context.underlyingError as NSError?,
-					  let debugDescription = underlyingError.userInfo["NSDebugDescription"] as? String else {
-					informativeText = error.localizedDescription
-					break
-				}
-				let localizedError = NSLocalizedString("This theme cannot be used because of data corruption in the Info.plist: %@.", comment: "Decoding key missing")
-				informativeText = NSString.localizedStringWithFormat(localizedError as NSString, debugDescription) as String
-
-			default:
-				informativeText = error.localizedDescription
-			}
-		} else {
-			informativeText = error.localizedDescription
-		}
+		let informativeText = ArticleThemesManager.importErrorMessage(for: error)
 
 		DispatchQueue.main.async {
 			let alert = NSAlert()
@@ -971,7 +991,7 @@ extension AppDelegate {
 			alert.messageText = NSLocalizedString("Theme Error", comment: "Theme download error")
 			alert.informativeText = informativeText
 			alert.addButton(withTitle: NSLocalizedString("Open Theme Folder", comment: "Open Theme Folder"))
-			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK"))
+			alert.addButton(withTitle: NSLocalizedString("OK", comment: "OK button"))
 
 			let button = alert.buttons.first
 			button?.target = self
@@ -1003,15 +1023,19 @@ extension AppDelegate {
 */
 extension AppDelegate: ScriptingAppDelegate {
     var scriptingMainWindowController: ScriptingMainWindowController? {
-        return mainWindowController
+        mainWindowController
     }
 
     var scriptingCurrentArticle: Article? {
-        return self.scriptingMainWindowController?.scriptingCurrentArticle
+        scriptingMainWindowController?.scriptingCurrentArticle
     }
 
     var scriptingSelectedArticles: [Article] {
-        return self.scriptingMainWindowController?.scriptingSelectedArticles ?? []
+        scriptingMainWindowController?.scriptingSelectedArticles ?? []
+    }
+
+    var scriptingSelectedFeeds: [Feed] {
+        scriptingMainWindowController?.scriptingSelectedFeeds ?? []
     }
 }
 
@@ -1039,7 +1063,7 @@ private extension AppDelegate {
 	}
 
 	private func handleStatusNotification(userInfo: [AnyHashable: Any], statusKey: ArticleStatus.Key) {
-		MainActor.assumeIsolated {
+		Task { @MainActor in
 			guard let articlePathUserInfo = userInfo[UserInfoKey.articlePath] as? [AnyHashable: Any],
 				  let accountID = articlePathUserInfo[ArticlePathKey.accountID] as? String,
 				  let articleID = articlePathUserInfo[ArticlePathKey.articleID] as? String else {
@@ -1054,14 +1078,7 @@ private extension AppDelegate {
 				return
 			}
 
-			guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
-				assertionFailure("Expected article with \(articleID)")
-				Self.logger.error("No article with articleID found \(articleID) from status notification")
-				return
-			}
-
-			assert(singleArticleSet.count == 1)
-			account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
+			try? await account.markArticles(articleIDs: [articleID], statusKey: statusKey, flag: true)
 		}
 	}
 }

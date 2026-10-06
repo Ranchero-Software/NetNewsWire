@@ -17,9 +17,6 @@ public struct ProgressInfo: Sendable, Equatable {
 	}
 
 	public init(numberOfTasks: Int = 0, numberCompleted: Int = 0, numberRemaining: Int = 0) {
-		assert(numberOfTasks >= 0 && numberCompleted >= 0 && numberRemaining >= 0)
-		assert(numberOfTasks == numberCompleted + numberRemaining)
-
 		self.numberOfTasks = numberOfTasks
 		self.numberCompleted = numberCompleted
 		self.numberRemaining = numberRemaining
@@ -57,10 +54,23 @@ public extension Notification.Name {
 	}
 }
 
+/// Tracks how much work is left to do, in arbitrary "tasks".
+///
+/// All counts are *estimates* — callers don't have to predict exactly how many
+/// tasks they'll add or complete. After every mutation the three counts are
+/// normalized so that:
+///
+/// - `numberOfTasks`, `numberCompleted`, and `numberRemaining` are all `>= 0`
+/// - `numberOfTasks == numberCompleted + numberRemaining`
+///
+/// If the work outgrows the estimate (more completions than added tasks, or a
+/// negative count is passed), the counts are adjusted to stay consistent.
+/// The progress bar may jump as the estimate catches up to reality,
+/// but the numbers will never be nonsense.
 @MainActor public final class RSProgress: ProgressInfoReporter {
-	public var numberOfTasks = 0
-	public var numberCompleted = 0
-	public var numberRemaining = 0
+	public private(set) var numberOfTasks = 0
+	public private(set) var numberCompleted = 0
+	public private(set) var numberRemaining = 0
 	public var children: [RSProgress]?
 
 	/// Report progress including all children.
@@ -73,44 +83,57 @@ public extension Notification.Name {
 	}
 
 	public var hasNoRemainingTasks: Bool {
-		assert(numberRemaining >= 0)
-		return numberRemaining < 1
+		numberRemaining < 1
 	}
 
+	/// `numberOfTasks` is an estimate; pass 0 if unknown.
 	public init(numberOfTasks: Int = 0) {
-		assert(numberOfTasks >= 0)
-		self.numberOfTasks = numberOfTasks
+		self.numberOfTasks = max(0, numberOfTasks)
+		self.numberRemaining = self.numberOfTasks
 	}
 
 	/// Directly set the number of remaining tasks, instead of calling `completeTasks`.
-	/// Updates `numberCompleted`.
+	/// Updates `numberCompleted`. Negative values are treated as 0; values larger
+	/// than `numberOfTasks` grow `numberOfTasks` to match.
 	public func updateNumberRemaining(_ newNumberRemaining: Int) {
-		if newNumberRemaining == numberRemaining {
+		let clamped = max(0, newNumberRemaining)
+		if clamped == numberRemaining {
 			return
 		}
 
-		assert(newNumberRemaining <= numberOfTasks)
-		numberRemaining = newNumberRemaining
-		numberCompleted = numberOfTasks - numberRemaining
+		numberRemaining = clamped
+		if numberCompleted + numberRemaining > numberOfTasks {
+			numberOfTasks = numberCompleted + numberRemaining
+		} else {
+			numberCompleted = numberOfTasks - numberRemaining
+		}
 		updateProgressInfo()
 	}
 
 	/// Directly set the number of completed tasks, instead of calling `completeTasks`.
-	/// Updates `numberRemaining`.
+	/// Updates `numberRemaining`. Negative values are treated as 0; values larger
+	/// than `numberOfTasks` grow `numberOfTasks` to match.
 	public func updateNumberCompleted(_ newNumberCompleted: Int) {
-		if newNumberCompleted == numberCompleted {
+		let clamped = max(0, newNumberCompleted)
+		if clamped == numberCompleted {
 			return
 		}
 
-		assert(newNumberCompleted <= numberOfTasks)
-		numberCompleted = newNumberCompleted
+		numberCompleted = clamped
+		if numberCompleted > numberOfTasks {
+			numberOfTasks = numberCompleted
+		}
 		numberRemaining = numberOfTasks - numberCompleted
 		updateProgressInfo()
 	}
 
+	/// Adds to the estimated task total. Negative values are ignored.
 	public func addTasks(_ count: Int) {
+		guard count > 0 else {
+			return
+		}
 		numberOfTasks += count
-		numberRemaining += count
+		numberRemaining = numberOfTasks - numberCompleted
 		updateProgressInfo()
 	}
 
@@ -118,16 +141,18 @@ public extension Notification.Name {
 		addTasks(1)
 	}
 
+	/// Marks `count` more tasks complete. Negative values are ignored.
+	/// If completion exceeds the estimate, `numberOfTasks` grows to match so
+	/// the invariant holds.
 	public func completeTasks(_ count: Int) {
-		numberCompleted += count
-
-		numberRemaining -= count
-		assert(numberRemaining >= 0)
-		if numberRemaining < 0 {
-			numberRemaining = 0
+		guard count > 0 else {
+			return
 		}
-
-		assert(numberOfTasks == numberRemaining + numberCompleted)
+		numberCompleted += count
+		if numberCompleted > numberOfTasks {
+			numberOfTasks = numberCompleted
+		}
+		numberRemaining = numberOfTasks - numberCompleted
 		updateProgressInfo()
 	}
 

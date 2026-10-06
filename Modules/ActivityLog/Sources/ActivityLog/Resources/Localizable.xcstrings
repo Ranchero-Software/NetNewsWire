@@ -1,0 +1,334 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Adding feed" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadiendo fuente"
+          }
+        }
+      }
+    },
+    "Avatars" : {
+      "comment" : "Activity owner name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avatares"
+          }
+        }
+      }
+    },
+    "Cleaning up iCloud records" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpiando registros de iCloud"
+          }
+        }
+      }
+    },
+    "Creating folder" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Creando carpeta"
+          }
+        }
+      }
+    },
+    "Downloading avatar %@" : {
+      "comment" : "Activity kind — downloading an author avatar — %@ is the URL"
+    },
+    "Downloading favicon %@" : {
+      "comment" : "Activity kind — downloading a favicon — %@ is the URL"
+    },
+    "Downloading image %@" : {
+      "comment" : "Activity kind — downloading a feed image — %@ is the URL"
+    },
+    "Downloading metadata %@" : {
+      "comment" : "Activity kind — downloading HTML metadata — %@ is the URL"
+    },
+    "Exporting OPML" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exportando OPML"
+          }
+        }
+      }
+    },
+    "Favicons" : {
+      "comment" : "Activity owner name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favicons"
+          }
+        }
+      }
+    },
+    "Feed Finder" : {
+      "comment" : "Activity owner name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscador de fuentes"
+          }
+        }
+      }
+    },
+    "Feed Images" : {
+      "comment" : "Activity owner name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imágenes de fuentes"
+          }
+        }
+      }
+    },
+    "Feed redirect" : {
+      "comment" : "Activity kind"
+    },
+    "Fetching %@" : {
+      "comment" : "Activity kind — fetching a candidate URL during feed finding"
+    },
+    "Fetching article IDs" : {
+      "comment" : "Activity kind"
+    },
+    "Fetching iCloud stats" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obteniendo estadísticas de iCloud"
+          }
+        }
+      }
+    },
+    "Finding feed %@" : {
+      "comment" : "Activity kind — finding a feed at %@ URL"
+    },
+    "HTML Metadata" : {
+      "comment" : "Activity owner name",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metadatos HTML"
+          }
+        }
+      }
+    },
+    "Importing OPML" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importando OPML"
+          }
+        }
+      }
+    },
+    "Moving feed" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moviendo fuente"
+          }
+        }
+      }
+    },
+    "Receiving sync notification" : {
+      "comment" : "Activity kind"
+    },
+    "Refresh all" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar todo"
+          }
+        }
+      }
+    },
+    "Refreshing articles" : {
+      "comment" : "Activity kind"
+    },
+    "Refreshing feed list" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizando lista de fuentes"
+          }
+        }
+      }
+    },
+    "Refreshing feed: %@" : {
+      "comment" : "Activity kind — refreshing a feed — %@ is the feed name or URL"
+    },
+    "Refreshing missing articles" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizando artículos faltantes"
+          }
+        }
+      }
+    },
+    "Refreshing statuses" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizando estados"
+          }
+        }
+      }
+    },
+    "Removing feed" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminando fuente"
+          }
+        }
+      }
+    },
+    "Removing folder" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminando carpeta"
+          }
+        }
+      }
+    },
+    "Renaming feed" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renombrando fuente"
+          }
+        }
+      }
+    },
+    "Renaming folder" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renombrando carpeta"
+          }
+        }
+      }
+    },
+    "Restoring feed" : {
+      "comment" : "Activity kind"
+    },
+    "Restoring folder" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restaurando carpeta"
+          }
+        }
+      }
+    },
+    "Scanning iCloud article records" : {
+      "comment" : "Activity kind"
+    },
+    "Scanning iCloud status records" : {
+      "comment" : "Activity kind"
+    },
+    "Sending statuses" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enviando estados"
+          }
+        }
+      }
+    },
+    "Subscribing to feed" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscribiéndose a fuente"
+          }
+        }
+      }
+    },
+    "Subscribing to zone changes" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscribiéndose a cambios de zona"
+          }
+        }
+      }
+    },
+    "Vacuuming database" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compactando base de datos"
+          }
+        }
+      }
+    },
+    "Validating credentials" : {
+      "comment" : "Activity kind",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Validando credenciales"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  swiftlint:
+    name: SwiftLint
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Run SwiftLint
+        run: swiftlint lint --strict --reporter github-actions-logging
+
+  macos-tests:
+    name: macOS Tests
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Generate Secrets Sources
+        run: PROJECT_DIR="$GITHUB_WORKSPACE" ./buildscripts/updateSecrets.sh
+
+      - name: Select Xcode 26.3
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+
+      - name: Run macOS Test Plan
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          result_bundle="${RUNNER_TEMP}/NetNewsWire-macOS.xcresult"
+          build_log="${RUNNER_TEMP}/NetNewsWire-macOS-build.log"
+          rm -rf "$result_bundle"
+
+          set -o pipefail
+          xcodebuild \
+            -project NetNewsWire.xcodeproj \
+            -scheme NetNewsWire \
+            -testPlan NetNewsWire-CI \
+            -xcconfig .github/macos-ci-no-signing.xcconfig \
+            -destination "platform=macOS,arch=arm64" \
+            -resultBundlePath "$result_bundle" \
+            test 2>&1 | tee "$build_log" | xcbeautify --renderer github-actions
+
+          ./buildscripts/fail_on_warnings.sh "$build_log"
+
+      - name: Upload macOS Result Bundle
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netnewswire-macos-xcresult
+          path: ${{ runner.temp }}/NetNewsWire-macOS.xcresult
+          if-no-files-found: warn
+          retention-days: 7
+
+  ios-simulator-tests:
+    name: iOS Simulator Tests
+    runs-on: macos-26
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Generate Secrets Sources
+        run: PROJECT_DIR="$GITHUB_WORKSPACE" ./buildscripts/updateSecrets.sh
+
+      - name: Select Xcode 26.3
+        run: sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+
+      - name: Run iOS Test Plan
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          result_bundle="${RUNNER_TEMP}/NetNewsWire-iOS.xcresult"
+          build_log="${RUNNER_TEMP}/NetNewsWire-iOS-build.log"
+          rm -rf "$result_bundle"
+
+          set -o pipefail
+          xcodebuild \
+            -project NetNewsWire.xcodeproj \
+            -scheme NetNewsWire-iOS \
+            -testPlan NetNewsWire-iOS \
+            -xcconfig .github/ios-ci-no-signing.xcconfig \
+            -destination "platform=iOS Simulator,name=iPhone 17" \
+            OTHER_SWIFT_FLAGS='$(inherited) -DDEBUG -DSKIP_APP_GROUP_ACCESS' \
+            -resultBundlePath "$result_bundle" \
+            test 2>&1 | tee "$build_log" | xcbeautify --renderer github-actions
+
+          ./buildscripts/fail_on_warnings.sh "$build_log"
+
+      - name: Upload iOS Result Bundle
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: netnewswire-ios-xcresult
+          path: ${{ runner.temp }}/NetNewsWire-iOS.xcresult
+          if-no-files-found: warn
+          retention-days: 7

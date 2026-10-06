@@ -79,7 +79,7 @@ final class ArticleThemesTableViewController: UITableViewController {
 			  let theme = ArticleThemesManager.shared.articleThemeWithThemeName(themeName),
 			  !theme.isAppTheme	else { return nil }
 
-		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteTitle = NSLocalizedString("Delete", comment: "Delete button")
 		let deleteAction = UIContextualAction(style: .normal, title: deleteTitle) { [weak self] (_, _, completion) in
 			let title = NSLocalizedString("Delete Theme?", comment: "Delete Theme")
 
@@ -88,13 +88,13 @@ final class ArticleThemesTableViewController: UITableViewController {
 
 			let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+			let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 			let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 				completion(true)
 			}
 			alertController.addAction(cancelAction)
 
-			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+			let deleteTitle = NSLocalizedString("Delete", comment: "Delete button")
 			let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { _ in
 				ArticleThemesManager.shared.deleteTheme(themeName: themeName)
 				completion(true)

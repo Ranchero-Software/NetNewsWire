@@ -6,6 +6,8 @@
 //  Copyright © 2019 Ranchero Software, LLC. All rights reserved.
 //
 
+import Foundation
+import ActivityLog
 import Articles
 import ErrorLog
 import RSCore
@@ -21,6 +23,7 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 	case invalidParameter
 	case invalidResponse
 	case urlNotFound
+	case unsendableStatuses(Int)
 
 	public var errorDescription: String? {
 		switch self {
@@ -29,21 +32,30 @@ public enum ReaderAPIAccountDelegateError: LocalizedError {
 		case .invalidParameter:
 			return NSLocalizedString("An invalid parameter was passed.", comment: "An invalid parameter was passed.")
 		case .invalidResponse:
-			return NSLocalizedString("There was an invalid response from the server.", comment: "There was an invalid response from the server.")
+			return NSLocalizedString("There was an invalid response from the server.", comment: "Invalid response")
 		case .urlNotFound:
 			return NSLocalizedString("The API URL wasn't found.", comment: "The API URL wasn't found.")
+		case .unsendableStatuses(let count):
+			return String(format: NSLocalizedString("Dropped %d article status changes that can’t be encoded for this service.", comment: "Dropped unsendable article status changes"), count)
 		}
 	}
 }
 
 final class ReaderAPIAccountDelegate: AccountDelegate {
 
+	weak var account: Account?
+
 	private let variant: ReaderAPIVariant
 
 	private let syncDatabase: SyncDatabase
 
 	private let caller: ReaderAPICaller
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ReaderAPI")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ReaderAPI")
+
+	// Skipping while rate limited protects the shared per-application API quota.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/3001>
+	private let rateLimiter = SyncRateLimiter(serviceName: "ReaderAPI", treatsForbiddenAsRateLimited: false, logger: ReaderAPIAccountDelegate.logger)
+	private static let zone1UsageThreshold = 0.9
 
 	var progressInfo = ProgressInfo() {
 		didSet {
@@ -80,28 +92,11 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	init(dataFolder: String, transport: Transport?, variant: ReaderAPIVariant) {
+	init(dataFolder: String, variant: ReaderAPIVariant) {
 		let databasePath = (dataFolder as NSString).appendingPathComponent("Sync.sqlite3")
 		syncDatabase = SyncDatabase(databasePath: databasePath)
 
-		if transport != nil {
-			self.caller = ReaderAPICaller(transport: transport!, logger: Self.logger)
-		} else {
-			let sessionConfiguration = URLSessionConfiguration.default
-			sessionConfiguration.requestCachePolicy = .reloadIgnoringLocalCacheData
-			sessionConfiguration.timeoutIntervalForRequest = 60.0
-			sessionConfiguration.httpShouldSetCookies = false
-			sessionConfiguration.httpCookieAcceptPolicy = .never
-			sessionConfiguration.httpMaximumConnectionsPerHost = 1
-			sessionConfiguration.httpCookieStorage = nil
-			sessionConfiguration.urlCache = nil
-
-			if let userAgentHeaders = UserAgent.headers() {
-				sessionConfiguration.httpAdditionalHeaders = userAgentHeaders
-			}
-
-			self.caller = ReaderAPICaller(transport: URLSession(configuration: sessionConfiguration), logger: Self.logger)
-		}
+		self.caller = ReaderAPICaller(logger: Self.logger)
 
 		self.caller.variant = variant
 		self.variant = variant
@@ -109,10 +104,20 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: refreshProgress)
 	}
 
-	func receiveRemoteNotification(for account: Account, userInfo: [AnyHashable: Any]) async {
+	func receiveRemoteNotification(userInfo: [AnyHashable: Any]) async {
 	}
 
-	func refreshAll(for account: Account) async throws {
+	func refreshAll() async throws {
+		guard let account else {
+			return
+		}
+		if rateLimiter.shouldSkip() {
+			if let resumeDate = rateLimiter.resumeDate {
+				let resumeTime = DateFormatter.localizedString(from: resumeDate, dateStyle: .none, timeStyle: .short)
+				ActivityLog.shared.logCompletedActivity(owner: account.activityOwner, kind: .refreshAll, message: "Skipped — rate limited by \(account.type.displayName) until \(resumeTime)")
+			}
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAll")
 
 		retrieveCredentialsIfNeeded(account)
@@ -120,21 +125,37 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		refreshProgress.addTasks(6)
 
 		do {
-			try await refreshAccount(account)
+			try await account.logActivity(kind: .refreshAll) {
+				try await refreshAccount(account)
 
-			try await sendArticleStatus(for: account)
-			refreshProgress.completeTask()
+				// A failed status send must not block fetching new articles.
+				// <https://discourse.netnewswire.com/t/no-feed-updates/336>
+				try? await sendArticleStatus()
+				refreshProgress.completeTask()
 
-			let articleIDs = try await caller.retrieveItemIDs(type: .allForAccount)
-			refreshProgress.completeTask()
+				// The mark-as-read of all fetched article IDs and the unread download that
+				// corrects it are a pair — skipping just the second half would leave new
+				// articles wrongly marked read. Skip or run the whole reconcile together.
+				if shouldSkipStatusDownloadsToConserveQuota() {
+					refreshProgress.completeTask()
+					refreshProgress.completeTask()
+				} else {
+					let articleIDs = try await account.logActivity(kind: .fetchArticleIDs, detail: "All articles", successMessage: { "\($0.count) article IDs" }, {
+						try await caller.retrieveItemIDs(type: .allForAccount, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
+					})
+					refreshProgress.completeTask()
 
-			_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
-			try? await refreshArticleStatus(for: account)
-			refreshProgress.completeTask()
+					_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
+					try? await refreshArticleStatus()
+					refreshProgress.completeTask()
+				}
 
-			await refreshMissingArticles(account)
+				await refreshMissingArticles(account)
+				refreshProgress.reset()
+			}
+		} catch where rateLimiter.isRateLimitError(error) {
 			refreshProgress.reset()
-
+			rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing account")
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: refreshAll 1 — error \(error.localizedDescription)")
 			refreshProgress.reset()
@@ -148,7 +169,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					if let apiCredentials = try await caller.validateCredentials(endpoint: endpoint) {
 						try? account.storeCredentials(apiCredentials)
 						caller.credentials = apiCredentials
-						try await refreshAll(for: account)
+						try await refreshAll()
 						return
 					}
 					throw wrappedError
@@ -163,94 +184,220 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	@MainActor func syncArticleStatus(for account: Account) async throws {
-		guard variant != .inoreader else {
-			return
+	@MainActor func syncArticleStatus() async throws -> Bool {
+		guard let account else {
+			return false
+		}
+		if rateLimiter.shouldSkip() {
+			return false
 		}
 
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStatus")
 
-		try await sendArticleStatus(for: account)
-		try await refreshArticleStatus(for: account)
+		do {
+			let sentCount = try await sendArticleStatusReturningCount(for: account)
+
+			// Inoreader: skip downloading statuses, to conserve its API rate limits — but do send,
+			// since a send is a single cheap request and skipping it loses stars.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
+			if variant == .inoreader {
+				return sentCount > 0
+			}
+
+			let refreshChangedCount = try await refreshArticleStatusReturningCount(for: account)
+			return sentCount > 0 || refreshChangedCount > 0
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Syncing article status")
+			return false
+		}
 	}
 
-	public func sendArticleStatus(for account: Account) async throws {
+	public func sendArticleStatus() async throws {
+		guard let account else {
+			return
+		}
+		if rateLimiter.shouldSkip() {
+			return
+		}
+		do {
+			_ = try await sendArticleStatusReturningCount(for: account)
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Sending article status")
+		}
+	}
+
+	/// Sends queued local status changes upstream. Returns the count successfully sent.
+	private func sendArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatus")
 
-		let syncStatuses = (try await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
+		return try await account.logActivity(kind: .sendArticleStatuses) { () -> Int in
+			let syncStatuses = (try? await self.syncDatabase.selectForProcessing()) ?? Set<SyncStatus>()
 
-		let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
-		let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
-		let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
-		let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
+			let createUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == false }
+			let deleteUnreadStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.read && $0.flag == true }
+			let createStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == true }
+			let deleteStarredStatuses = syncStatuses.filter { $0.key == SyncStatus.Key.starred && $0.flag == false }
 
-		await sendArticleStatuses(createUnreadStatuses, apiCall: caller.createUnreadEntries)
-		await sendArticleStatuses(deleteUnreadStatuses, apiCall: caller.deleteUnreadEntries)
-		await sendArticleStatuses(createStarredStatuses, apiCall: caller.createStarredEntries)
-		await sendArticleStatuses(deleteStarredStatuses, apiCall: caller.deleteStarredEntries)
+			var sentCount = 0
+			var savedError: Error?
+
+			do {
+				sentCount += try await sendArticleStatuses(createUnreadStatuses, account: account, label: "unread", apiCall: caller.createUnreadEntries)
+			} catch {
+				savedError = error
+			}
+
+			do {
+				sentCount += try await sendArticleStatuses(deleteUnreadStatuses, account: account, label: "read", apiCall: caller.deleteUnreadEntries)
+			} catch {
+				savedError = error
+			}
+
+			do {
+				sentCount += try await sendArticleStatuses(createStarredStatuses, account: account, label: "starred", apiCall: caller.createStarredEntries)
+			} catch {
+				savedError = error
+			}
+
+			do {
+				sentCount += try await sendArticleStatuses(deleteStarredStatuses, account: account, label: "unstarred", apiCall: caller.deleteStarredEntries)
+			} catch {
+				savedError = error
+			}
+
+			if let savedError {
+				// A 429 gets one Error Log entry from noteRateLimited, not one per send.
+				if !rateLimiter.isRateLimitError(savedError) {
+					account.postSyncError(savedError, operation: "Sending article status")
+				}
+				throw savedError
+			}
+			return sentCount
+		}
 	}
 
-	@MainActor func refreshArticleStatus(for account: Account) async throws {
+	@MainActor func refreshArticleStatus() async throws {
+		guard let account else {
+			return
+		}
+		if rateLimiter.shouldSkip() {
+			return
+		}
+		do {
+			_ = try await refreshArticleStatusReturningCount(for: account)
+		} catch where rateLimiter.isRateLimitError(error) {
+			rateLimiter.noteRateLimited(error, account: account, operation: "Refreshing article status")
+		}
+	}
+
+	/// Brings local read/starred statuses in line with the server. Returns the count
+	/// of articles whose local state actually changed.
+	@MainActor private func refreshArticleStatusReturningCount(for account: Account) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshArticleStatus")
 
-		var errorOccurred = false
-
-		let articleIDs = try await caller.retrieveItemIDs(type: .unread)
-
-		do {
-			try await syncArticleReadState(account: account, articleIDs: articleIDs)
-		} catch {
-			errorOccurred = true
-			Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving unread entries failed: \(error.localizedDescription)")
+		if shouldSkipStatusDownloadsToConserveQuota() {
+			return 0
 		}
 
-		do {
-			let articleIDs = try await caller.retrieveItemIDs(type: .starred)
-			await syncArticleStarredState(account: account, articleIDs: articleIDs)
-		} catch {
-			errorOccurred = true
-			Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving starred entries failed: \(error.localizedDescription)")
-		}
+		return try await account.logActivity(kind: .refreshArticleStatuses) { () -> Int in
+			var changedCount = 0
+			var savedError: Error?
 
-		if errorOccurred {
-			let error = AccountError.unknown
-			postSyncError(error, account: account, operation: "Refreshing article status")
-			throw error
+			do {
+				let articleIDs = try await caller.retrieveItemIDs(type: .unread, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
+				changedCount += await syncArticleReadState(account: account, articleIDs: articleIDs)
+			} catch {
+				savedError = error
+				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving unread entries failed: \(error.localizedDescription)")
+			}
+
+			do {
+				let articleIDs = try await caller.retrieveItemIDs(type: .starred, pageHandler: articleIDPageHandler(for: account, kind: .refreshArticleStatuses))
+				changedCount += await syncArticleStarredState(account: account, articleIDs: articleIDs)
+			} catch {
+				if savedError == nil {
+					savedError = error
+				}
+				Self.logger.error("ReaderAPIAccountDelegate: refreshArticleStatus — retrieving starred entries failed: \(error.localizedDescription)")
+			}
+
+			if let savedError {
+				// A 429 gets one Error Log entry from noteRateLimited, not one per refresh.
+				if !rateLimiter.isRateLimitError(savedError) {
+					account.postSyncError(savedError, operation: "Refreshing article status")
+				}
+				throw savedError
+			}
+			return changedCount
 		}
 	}
 
-	@MainActor func importOPML(for account: Account, opmlFile: URL) async throws {
-        let opmlData = try Data(contentsOf: opmlFile)
-        try await caller.importOPML(opmlData: opmlData)
+	@MainActor func importOPML(opmlFile: URL) async throws {
+		guard let account else {
+			return
+		}
+		try await account.logActivity(kind: .importOPML, detail: opmlFile.lastPathComponent) {
+			let opmlData = try Data(contentsOf: opmlFile)
+			try await caller.importOPML(opmlData: opmlData)
+		}
 	}
 
-	@MainActor func createFolder(for account: Account, name: String) async throws -> Folder {
-		Self.logger.debug("ReaderAPIAccountDelegate: createFolder — name \(name)")
-
-		guard let folder = account.ensureFolder(with: name) else {
-			Self.logger.error("ReaderAPIAccountDelegate: createFolder failed — account.ensureFolder failed")
+	@MainActor func createFolder(name: String) async throws -> Folder {
+		guard let account else {
 			throw AccountError.invalidParameter
 		}
-		return folder
+		Self.logger.debug("ReaderAPIAccountDelegate: createFolder — name \(name)")
+
+		// Reader API has no endpoint for creating a tag — the server creates one when a feed is
+		// tagged with it. The folder stays local, with no externalID, until it gets its first feed.
+		return try account.logActivity(kind: .createFolder, detail: name) {
+			guard let folder = account.ensureFolder(with: name) else {
+				Self.logger.error("ReaderAPIAccountDelegate: createFolder failed — account.ensureFolder failed")
+				throw AccountError.invalidParameter
+			}
+			return folder
+		}
 	}
 
-	func renameFolder(for account: Account, with folder: Folder, to name: String) async throws {
+	func renameFolder(with folder: Folder, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: renameFolder — name \(folder.nameForDisplay) to \(name)")
+
+		// A folder with no externalID has no tag on the server yet, so there’s nothing to rename there.
+		guard folder.externalID != nil else {
+			account.logActivity(kind: .renameFolder, detail: "\(folder.name ?? "") → \(name)") {
+				folder.name = name
+			}
+			return
+		}
 
 		refreshProgress.addTask()
 		defer { refreshProgress.completeTask() }
 
 		do {
-			try await caller.renameTag(oldName: folder.name ?? "", newName: name)
-			folder.externalID = "user/-/label/\(name)"
-			folder.name = name
+			try await account.logActivity(kind: .renameFolder, detail: "\(folder.name ?? "") → \(name)") {
+				try await caller.renameTag(oldName: folder.name ?? "", newName: name)
+				folder.externalID = Self.folderExternalID(forFolderName: name)
+				folder.name = name
+			}
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: renameFolder — error: \(error.localizedDescription)")
 			throw AccountError.wrapped(error, account)
 		}
 	}
 
-	func removeFolder(for account: Account, with folder: Folder) async throws {
+	func removeFolder(with folder: Folder) async throws {
+		guard let account else {
+			return
+		}
+		try await account.logActivity(kind: .removeFolder, detail: folder.name ?? "") {
+			try await removeFolderImpl(for: account, with: folder)
+		}
+	}
+
+	private func removeFolderImpl(for account: Account, with folder: Folder) async throws {
 		Self.logger.debug("ReaderAPIAccountDelegate: removeFolder — name \(folder.nameForDisplay)")
 
 		for feed in folder.topLevelFeeds {
@@ -268,7 +415,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 					} catch {
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder — remove feed 1 error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed from folder")
+						account.postSyncError(error, operation: "Removing feed from folder")
 					}
 				}
 
@@ -279,12 +426,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 					do {
 						try await caller.deleteSubscription(subscriptionID: subscriptionID)
+						account.clearFeedSettings(feed)
 						refreshProgress.completeTask()
 					} catch {
 
 						refreshProgress.completeTask()
 						Self.logger.error("ReaderAPIAccountDelegate: removeFolder - remove feed 2 error: \(error.localizedDescription)")
-						postSyncError(error, account: account, operation: "Removing feed from folder")
+						account.postSyncError(error, operation: "Removing feed from folder")
 					}
 				}
 			}
@@ -301,7 +449,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 	}
 
 	@discardableResult
-	func createFeed(for account: Account, url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+	func createFeed(url: String, name: String?, container: Container, validateFeed: Bool) async throws -> Feed {
+		guard let account else {
+			throw AccountError.invalidParameter
+		}
 		retrieveCredentialsIfNeeded(account)
 
 		Self.logger.debug("ReaderAPIAccountDelegate: createFeed — url \(url) name \(name ?? "")")
@@ -313,26 +464,26 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		refreshProgress.addTasks(2)
 
 		do {
+			return try await account.logActivity(kind: .subscribeFeed, detail: url.absoluteString) {
+				let feedSpecifiers = try await FeedFinder.find(url: url)
+				refreshProgress.completeTask()
 
-			let feedSpecifiers = try await FeedFinder.find(url: url)
-			refreshProgress.completeTask()
+				let filteredFeedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
+				guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: filteredFeedSpecifiers) else {
+					refreshProgress.reset()
+					throw AccountError.createErrorNotFound
+				}
 
-			let filteredFeedSpecifiers = feedSpecifiers.filter { !$0.urlString.contains("json") }
-			guard let bestFeedSpecifier = FeedSpecifier.bestFeed(in: filteredFeedSpecifiers) else {
-				refreshProgress.reset()
-				throw AccountError.createErrorNotFound
+				let subResult = try await caller.createSubscription(url: bestFeedSpecifier.urlString, name: name)
+				refreshProgress.completeTask()
+
+				switch subResult {
+				case .created(let subscription):
+					return try await createFeed(account: account, subscription: subscription, name: name, container: container)
+				case .notFound:
+					throw AccountError.createErrorNotFound
+				}
 			}
-
-			let subResult = try await caller.createSubscription(url: bestFeedSpecifier.urlString, name: name)
-			refreshProgress.completeTask()
-
-			switch subResult {
-			case .created(let subscription):
-				return try await createFeed(account: account, subscription: subscription, name: name, container: container)
-			case .notFound:
-				throw AccountError.createErrorNotFound
-			}
-
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: createFeed - error: \(error.localizedDescription)")
 			refreshProgress.reset()
@@ -340,7 +491,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func renameFeed(for account: Account, with feed: Feed, to name: String) async throws {
+	func renameFeed(with feed: Feed, to name: String) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: renameFeed — name \(feed.nameForDisplay) to name \(name)")
 
 		// This error should never happen
@@ -352,8 +506,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		refreshProgress.addTask()
 
 		do {
-			try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
-			feed.editedName = name
+			try await account.logActivity(kind: .renameFeed, detail: feed.url) {
+				try await caller.renameSubscription(subscriptionID: subscriptionID, newName: name)
+				feed.editedName = name
+			}
 			refreshProgress.completeTask()
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: renameFeed - error: \(error.localizedDescription)")
@@ -362,7 +518,10 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		}
 	}
 
-	func removeFeed(account: Account, feed: Feed, container: any Container) async throws {
+	func removeFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: removeFeed — url \(feed.url)")
 
 		guard let subscriptionID = feed.externalID else {
@@ -374,136 +533,179 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		defer { refreshProgress.completeTask()}
 
 		do {
-			try await caller.deleteSubscription(subscriptionID: subscriptionID)
-			account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
+			try await account.logActivity(kind: .removeFeed, detail: feed.url) {
+				try await caller.deleteSubscription(subscriptionID: subscriptionID)
+				account.clearFeedSettings(feed)
+				account.removeAllInstancesOfFeedFromTreeAtAllLevels(feed)
+			}
 		} catch {
 			Self.logger.error("ReaderAPIAccountDelegate: removeFeed - error: \(error.localizedDescription)")
 			throw AccountError.wrapped(error, account)
 		}
 	}
 
-	func moveFeed(account: Account, feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+	func moveFeed(feed: Feed, sourceContainer: Container, destinationContainer: Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: moveFeed — url \(feed.url)")
 
-		if sourceContainer is Account {
-			try await addFeed(account: account, feed: feed, container: destinationContainer)
-		} else {
+		try await account.logActivity(kind: .moveFeed, detail: feed.url) {
+			if sourceContainer is Account {
+				try await addFeed(feed: feed, container: destinationContainer)
+			} else {
 
-			guard
-				let subscriptionID = feed.externalID,
-				let sourceTag = (sourceContainer as? Folder)?.name,
-				let destinationTag = (destinationContainer as? Folder)?.name
-			else {
-				throw AccountError.invalidParameter
-			}
+				guard
+					let subscriptionID = feed.externalID,
+					let sourceTag = (sourceContainer as? Folder)?.name,
+					let destinationFolder = destinationContainer as? Folder,
+					let destinationTag = destinationFolder.name
+				else {
+					throw AccountError.invalidParameter
+				}
 
-			refreshProgress.addTask()
-			defer { refreshProgress.completeTask() }
+				refreshProgress.addTask()
+				defer { refreshProgress.completeTask() }
 
-			do {
-				try await caller.moveSubscription(subscriptionID: subscriptionID, sourceTag: sourceTag, destinationTag: destinationTag)
-				sourceContainer.removeFeedFromTreeAtTopLevel(feed)
-				destinationContainer.addFeedToTreeAtTopLevel(feed)
-			} catch {
-				Self.logger.error("ReaderAPIAccountDelegate: moveFeed - error: \(error.localizedDescription)")
-				throw error
+				do {
+					try await caller.moveSubscription(subscriptionID: subscriptionID, sourceTag: sourceTag, destinationTag: destinationTag)
+					Self.ensureFolderExternalID(destinationFolder)
+					sourceContainer.removeFeedFromTreeAtTopLevel(feed)
+					destinationContainer.addFeedToTreeAtTopLevel(feed)
+				} catch {
+					Self.logger.error("ReaderAPIAccountDelegate: moveFeed - error: \(error.localizedDescription)")
+					throw error
+				}
 			}
 		}
 	}
 
-	func addFeed(account: Account, feed: Feed, container: any Container) async throws {
+	func addFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: addFeed — url \(feed.url)")
 
-		if let folder = container as? Folder, let feedExternalID = feed.externalID {
+		try await account.logActivity(kind: .addFeed, detail: feed.url) {
+			if let folder = container as? Folder, let feedExternalID = feed.externalID {
 
-			refreshProgress.addTask()
+				refreshProgress.addTask()
 
-			do {
+				do {
 
-				try await caller.createTagging(subscriptionID: feedExternalID, tagName: folder.name ?? "")
+					try await caller.createTagging(subscriptionID: feedExternalID, tagName: folder.name ?? "")
 
-				self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
-				account.removeFeedFromTreeAtTopLevel(feed)
-				folder.addFeedToTreeAtTopLevel(feed)
+					Self.ensureFolderExternalID(folder)
+					self.saveFolderRelationship(for: feed, folderExternalID: folder.externalID, feedExternalID: feedExternalID)
+					account.removeFeedFromTreeAtTopLevel(feed)
+					folder.addFeedToTreeAtTopLevel(feed)
 
-				refreshProgress.completeTask()
+					refreshProgress.completeTask()
 
-			} catch {
-				Self.logger.error("ReaderAPIAccountDelegate: addFeed - error: \(error.localizedDescription)")
-				refreshProgress.completeTask()
-				throw AccountError.wrapped(error, account)
-			}
-		} else {
+				} catch {
+					Self.logger.error("ReaderAPIAccountDelegate: addFeed - error: \(error.localizedDescription)")
+					refreshProgress.completeTask()
+					throw AccountError.wrapped(error, account)
+				}
+			} else {
 
-			if let account = container as? Account {
-				account.addFeedIfNotInAnyFolder(feed)
+				if let containerAccount = container as? Account {
+					containerAccount.addFeedIfNotInAnyFolder(feed)
+				}
 			}
 		}
 	}
 
-	func restoreFeed(for account: Account, feed: Feed, container: any Container) async throws {
+	func restoreFeed(feed: Feed, container: any Container) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: restoreFeed — url \(feed.url)")
 
 		if let existingFeed = account.existingFeed(withURL: feed.url) {
 			try await account.addFeed(existingFeed, container: container)
 		} else {
-			try await createFeed(for: account, url: feed.url, name: feed.editedName, container: container, validateFeed: true)
+			try await createFeed(url: feed.url, name: feed.editedName, container: container, validateFeed: true)
 		}
 	}
 
-	func restoreFolder(for account: Account, folder: Folder) async throws {
+	func restoreFolder(folder: Folder) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: restoreFolder — name \(folder.nameForDisplay)")
 
-		for feed in folder.topLevelFeeds {
+		await account.logActivity(kind: .restoreFolder, detail: folder.name ?? "") {
+			for feed in folder.topLevelFeeds {
 
-			folder.topLevelFeeds.remove(feed)
+				folder.topLevelFeeds.remove(feed)
 
-			do {
-				try await restoreFeed(for: account, feed: feed, container: folder)
-			} catch {
-				Self.logger.error("ReaderAPIAccountDelegate: restoreFolder — error: \(error.localizedDescription)")
-				postSyncError(error, account: account, operation: "Restoring feed to folder")
+				do {
+					try await restoreFeed(feed: feed, container: folder)
+				} catch {
+					Self.logger.error("ReaderAPIAccountDelegate: restoreFolder error: \(error.localizedDescription)")
+					account.postSyncError(error, operation: "Restoring feed to folder")
+				}
 			}
-		}
 
-		account.addFolderToTree(folder)
+			account.addFolderToTree(folder)
+		}
 	}
 
-	@MainActor func markArticles(for account: Account, articles: Set<Article>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+	@MainActor func markArticles(articleIDs: Set<String>, statusKey: ArticleStatus.Key, flag: Bool) async throws {
+		guard let account else {
+			return
+		}
 		Self.logger.debug("ReaderAPIAccountDelegate: markArticles — statusKey \(statusKey.rawValue)")
 
-		let articles = try await account.updateAsync(articles: articles, statusKey: statusKey, flag: flag)
-		let syncStatuses = Set(articles.map { article in
-			SyncStatus(articleID: article.articleID, key: SyncStatus.Key(statusKey), flag: flag)
+		let changedArticleIDs = await account.updateStatusesAsync(articleIDs: articleIDs, statusKey: statusKey, flag: flag)
+		let syncStatuses = Set(changedArticleIDs.map { articleID in
+			SyncStatus(articleID: articleID, key: SyncStatus.Key(statusKey), flag: flag)
 		})
 
-		try await syncDatabase.insertStatuses(syncStatuses)
-		if let count = try await syncDatabase.selectPendingCount(), count > 100 {
-			try? await sendArticleStatus(for: account)
+		await syncDatabase.insertStatuses(syncStatuses)
+		if !syncStatuses.isEmpty {
+			NotificationCenter.default.post(name: .AccountDidQueueArticleStatuses, object: account)
+		}
+		if let count = try? await syncDatabase.selectPendingCount(), count > 100 {
+			// Flush in the background so marking doesn't block the caller
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5273>
+			Task { try? await sendArticleStatus() }
 		}
 	}
 
-	func accountDidInitialize(_ account: Account) {
+	func accountDidInitialize() {
+		guard let account else {
+			return
+		}
 		retrieveCredentialsIfNeeded(account)
+
+		// A send in progress when the app was killed left its statuses selected. Clear them so
+		// they get sent, instead of waiting for the next selectForProcessing to pick them up.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4280>
+		syncDatabase.resetAllSelectedForProcessing()
 	}
 
-	func accountWillBeDeleted(_ account: Account) {
+	func accountWillBeDeleted() {
 	}
 
-	static func validateCredentials(transport: Transport, credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
+	static func validateCredentials(credentials: Credentials, endpoint: URL?) async throws -> Credentials? {
 		Self.logger.debug("ReaderAPIAccountDelegate: validateCredentials")
 
 		guard let endpoint else {
-			throw TransportError.noURL
+			throw WebserviceError.noURL
 		}
 
-		let caller = ReaderAPICaller(transport: transport, logger: Self.logger)
+		let caller = ReaderAPICaller(logger: Self.logger)
 		caller.credentials = credentials
 		return try await caller.validateCredentials(endpoint: endpoint)
 	}
 
-	func vacuumDatabases() {
-		Task {
+	func vacuumDatabases() async {
+		guard let account else {
+			return
+		}
+		await account.logActivity(kind: .vacuumDatabase, detail: AppConfig.relativeDataPath(syncDatabase.databasePath)) {
 			await syncDatabase.vacuum()
 		}
 	}
@@ -517,19 +719,13 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 		caller.cancelAll()
 	}
 
-	/// Suspend the SQLLite databases
-	func suspendDatabase() {
-		Self.logger.debug("ReaderAPIAccountDelegate: suspendDatabase")
-
-		syncDatabase.suspend()
-	}
-
-	/// Make sure no SQLite databases are open and we are ready to issue network requests.
-	func resume(account: Account) {
+	/// Resume network activity after a previous `suspendNetwork()`.
+	func resume() {
 		Self.logger.debug("ReaderAPIAccountDelegate: resume")
 
-		retrieveCredentialsIfNeeded(account)
-		syncDatabase.resume()
+		if let account {
+			retrieveCredentialsIfNeeded(account)
+		}
 	}
 
 	// MARK: - Notifications
@@ -553,20 +749,39 @@ private extension ReaderAPIAccountDelegate {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshAccount")
 
 		do {
-			let tags = try await caller.retrieveTags()
-			refreshProgress.completeTask()
+			try await account.logActivity(kind: .refreshFeedList, successMessage: { "\($0.feeds) feeds, \($0.folders) folders" }, { () -> (folders: Int, feeds: Int) in
+				let (tags, tagsResponse) = try await caller.retrieveTags()
+				refreshProgress.completeTask()
 
-			let subscriptions = try await caller.retrieveSubscriptions()
-			refreshProgress.completeTask()
+				let (subscriptions, subscriptionsResponse) = try await caller.retrieveSubscriptions()
+				refreshProgress.completeTask()
 
-			BatchUpdate.shared.perform {
-				self.syncFolders(account, tags)
-				self.syncFeeds(account, subscriptions)
-				self.syncFeedFolderRelationship(account, subscriptions)
-			}
+				BatchUpdate.shared.perform {
+					self.syncFolders(account, tags)
+					self.syncFeeds(account, subscriptions)
+					self.syncFeedFolderRelationship(account, subscriptions)
+				}
+
+				// Commit the conditional-GET etags only now that the data is applied, so an
+				// interrupted refresh can't leave an etag ahead of the model and 304 forever.
+				caller.storeConditionalGetIfNeeded(key: ReaderAPICaller.ConditionalGetKeys.tags, response: tagsResponse)
+				caller.storeConditionalGetIfNeeded(key: ReaderAPICaller.ConditionalGetKeys.subscriptions, response: subscriptionsResponse)
+
+				return (folders: tags?.count ?? 0, feeds: subscriptions?.count ?? 0)
+			})
 		} catch {
-			postSyncError(error, account: account, operation: "Refreshing account")
+			account.postSyncError(error, operation: "Refreshing account")
 			throw error
+		}
+	}
+
+	/// Returns a per-page handler for paginated `retrieveItemIDs` calls, logging each
+	/// page as a numbered sub-activity of `kind` reporting the page's article-ID count.
+	func articleIDPageHandler(for account: Account, kind: ActivityKind) -> @MainActor (Int) -> Void {
+		let owner = account.activityOwner
+		return { count in
+			let detail = ActivityLog.shared.nextTaskNumberString()
+			ActivityLog.shared.logCompletedActivity(owner: owner, kind: kind, detail: detail, message: "\(count) article IDs")
 		}
 	}
 
@@ -587,10 +802,14 @@ private extension ReaderAPIAccountDelegate {
 
 		let readerFolderExternalIDs = folderTags.compactMap { $0.tagID }
 
-		// Delete any folders not at Reader
+		// Delete any folders not at Reader. A folder with no externalID has never been sent to the
+		// server — it’s waiting for its first feed — so leave it alone.
 		if let folders = account.folders {
 			for folder in folders {
-				if !readerFolderExternalIDs.contains(folder.externalID ?? "") {
+				guard let folderExternalID = folder.externalID else {
+					continue
+				}
+				if !readerFolderExternalIDs.contains(folderExternalID) {
 					for feed in folder.topLevelFeeds {
 						account.addFeedToTreeAtTopLevel(feed)
 						clearFolderRelationship(for: feed, folderExternalID: folder.externalID)
@@ -630,6 +849,7 @@ private extension ReaderAPIAccountDelegate {
 			for folder in folders {
 				for feed in folder.topLevelFeeds {
 					if !subFeedIds.contains(feed.feedID) {
+						account.clearFeedSettings(feed)
 						folder.removeFeedFromTreeAtTopLevel(feed)
 					}
 				}
@@ -638,6 +858,7 @@ private extension ReaderAPIAccountDelegate {
 
 		for feed in account.topLevelFeeds {
 			if !subFeedIds.contains(feed.feedID) {
+				account.clearFeedSettings(feed)
 				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
@@ -645,11 +866,12 @@ private extension ReaderAPIAccountDelegate {
 		// Add any feeds we don't have and update any we do
 		for subscription in subscriptions {
 			if let feed = account.existingFeed(withFeedID: subscription.feedID) {
-				feed.name = subscription.name
-				feed.editedName = nil
+				if let name = subscription.name?.decodingFullwidthEscapedCharacters, !name.isEmpty {
+					feed.name = name
+				}
 				feed.homePageURL = subscription.homePageURL
 			} else {
-				let feed = account.createFeed(with: subscription.name, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)
+				let feed = account.createFeed(with: subscription.name?.decodingFullwidthEscapedCharacters, url: subscription.url, feedID: subscription.feedID, homePageURL: subscription.homePageURL)
 				feed.externalID = subscription.feedID
 				account.addFeedToTreeAtTopLevel(feed)
 			}
@@ -681,7 +903,9 @@ private extension ReaderAPIAccountDelegate {
 
 		// Sync the folders
 		for (folderExternalID, groupedTaggings) in taggingsDict {
-			guard let folder = folderDict[folderExternalID] else { return }
+			guard let folder = folderDict[folderExternalID] else {
+				continue
+			}
 			let taggingFeedIDs = groupedTaggings.map { $0.feedID }
 
 			// Move any feeds not in the folder to the account
@@ -709,11 +933,9 @@ private extension ReaderAPIAccountDelegate {
 
 		}
 
-		let taggedFeedIDs = Set(subscriptions.filter({ !$0.categories.isEmpty }).map { String($0.feedID) })
-
-		// Remove all feeds from the account container that have a tag
+		let feedIDsInFolders = Set((account.folders ?? Set<Folder>()).flatMap { $0.topLevelFeeds.map { $0.feedID } })
 		for feed in account.topLevelFeeds {
-			if taggedFeedIDs.contains(feed.feedID) {
+			if feedIDsInFolders.contains(feed.feedID) {
 				account.removeFeedFromTreeAtTopLevel(feed)
 			}
 		}
@@ -735,25 +957,67 @@ private extension ReaderAPIAccountDelegate {
 		return d
 	}
 
-	func sendArticleStatuses(_ statuses: Set<SyncStatus>, apiCall: ([String]) async throws -> Void) async {
+	func sendArticleStatuses(_ statuses: Set<SyncStatus>, account: Account, label: String, apiCall: ([String]) async throws -> Void) async throws -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: sendArticleStatuses")
 
-		guard !statuses.isEmpty else {
-			return
+		guard let key = statuses.first?.key else {
+			return 0
 		}
 
 		let articleIDs = statuses.compactMap { $0.articleID }
-		let articleIDGroups = articleIDs.chunked(into: 1000)
+
+		// Article IDs that can't be encoded for this server can never be sent — they would
+		// fail every sync forever, churning the database. Delete them instead of retrying.
+		let unsendableArticleIDs = Set(articleIDs.filter { !articleIDIsSendable($0) })
+		if !unsendableArticleIDs.isEmpty {
+			Self.logger.error("ReaderAPIAccountDelegate: dropping \(unsendableArticleIDs.count) unsendable article IDs from the status queue")
+			account.postSyncError(ReaderAPIAccountDelegateError.unsendableStatuses(unsendableArticleIDs.count), operation: "Sending article status")
+			await syncDatabase.deleteSelectedForProcessing(unsendableArticleIDs, key: key)
+		}
+		let sendableArticleIDs = articleIDs.filter { articleIDIsSendable($0) }
+
+		var sentCount = 0
+		var savedError: Error?
+		let articleIDGroups = sendableArticleIDs.chunked(into: 1000)
 		for articleIDGroup in articleIDGroups {
 
 			do {
-				_ = try await apiCall(articleIDGroup)
-				try? await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup))
+				try await account.logRefreshPage(kind: .sendArticleStatuses, message: { _ in "\(articleIDGroup.count) \(label)" }, { try await apiCall(articleIDGroup) })
+				await syncDatabase.deleteSelectedForProcessing(Set(articleIDGroup), key: key)
+				sentCount += articleIDGroup.count
 			} catch {
+				savedError = error
 				Self.logger.error("ReaderAPIAccountDelegate: sendArticleStatuses — error \(error.localizedDescription)")
-				try? await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup))
+				await syncDatabase.resetSelectedForProcessing(Set(articleIDGroup), key: key)
 			}
 		}
+
+		if let savedError {
+			throw savedError
+		}
+		return sentCount
+	}
+
+	/// Whether an article ID can be encoded for this server's edit-tag API. Mirrors the
+	/// ID encoding in ReaderAPICaller.updateStateToEntries.
+	private func articleIDIsSendable(_ articleID: String) -> Bool {
+		if variant == .theOldReader {
+			return true
+		}
+		return Int(articleID) != nil
+	}
+
+	static func folderExternalID(forFolderName name: String) -> String {
+		"user/-/label/\(name)"
+	}
+
+	/// Give a folder an externalID now that tagging a feed has created its tag on the server.
+	static func ensureFolderExternalID(_ folder: Folder) {
+		guard folder.externalID == nil, let name = folder.name else {
+			return
+		}
+		logger.debug("ReaderAPIAccountDelegate: ensureFolderExternalID — \(name)")
+		folder.externalID = folderExternalID(forFolderName: name)
 	}
 
 	func clearFolderRelationship(for feed: Feed, folderExternalID: String?) {
@@ -783,7 +1047,7 @@ private extension ReaderAPIAccountDelegate {
 
 		try await account.addFeed(feed, container: container)
 		if let name {
-			try await renameFeed(for: account, with: feed, to: name)
+			try await renameFeed(with: feed, to: name)
 		}
 		try await initialFeedDownload(account: account, feed: feed)
 
@@ -796,19 +1060,21 @@ private extension ReaderAPIAccountDelegate {
 
 		refreshProgress.addTasks(5)
 
-		// Download the initial articles
-		let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID)
+		try await account.logActivity(kind: .refreshFeedContent(feedURL: feed.url), detail: feed.nameForDisplay) {
+			// Download the initial articles
+			let articleIDs = try await caller.retrieveItemIDs(type: .allForFeed, feedID: feed.feedID, pageHandler: articleIDPageHandler(for: account, kind: .fetchArticleIDs))
 
-		refreshProgress.completeTask()
+			refreshProgress.completeTask()
 
-		_ = try? await account.markAsReadAsync(articleIDs: Set(articleIDs))
-		refreshProgress.completeTask()
+			_ = await account.markAsReadAsync(articleIDs: Set(articleIDs))
+			refreshProgress.completeTask()
 
-		try? await refreshArticleStatus(for: account)
-		refreshProgress.completeTask()
+			try? await refreshArticleStatus()
+			refreshProgress.completeTask()
 
-		await refreshMissingArticles(account)
-		refreshProgress.reset()
+			await refreshMissingArticles(account)
+			refreshProgress.reset()
+		}
 
 		return feed
 	}
@@ -816,8 +1082,8 @@ private extension ReaderAPIAccountDelegate {
 	func refreshMissingArticles(_ account: Account) async {
 		Self.logger.debug("ReaderAPIAccountDelegate: refreshMissingArticles")
 
-		do {
-			let fetchedArticleIDs = (try? await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()) ?? Set<String>()
+		await account.logActivity(kind: .refreshMissingArticles) {
+			let fetchedArticleIDs = await account.fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDateAsync()
 
 			if fetchedArticleIDs.isEmpty {
 				return
@@ -833,12 +1099,12 @@ private extension ReaderAPIAccountDelegate {
 			for chunk in chunkedArticleIDs {
 
 				do {
-					let entries = try await caller.retrieveEntries(articleIDs: chunk)
+					let entries = try await account.logRefreshPage(kind: .refreshMissingArticles, message: { "\($0?.count ?? 0) articles" }, { try await caller.retrieveEntries(articleIDs: chunk) })
 					refreshProgress.completeTask()
 					await processEntries(account: account, entries: entries)
 				} catch {
 					Self.logger.error("ReaderAPI: Refresh missing articles error: \(error.localizedDescription)")
-					postSyncError(error, account: account, operation: "Refreshing missing articles")
+					account.postSyncError(error, operation: "Refreshing missing articles")
 				}
 			}
 
@@ -853,7 +1119,7 @@ private extension ReaderAPIAccountDelegate {
 		let parsedItems = mapEntriesToParsedItems(account: account, entries: entries)
 		let feedIDsAndItems = Dictionary(grouping: parsedItems, by: { item in item.feedURL }).mapValues { Set($0) }
 
-		try? await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
+		await account.updateAsync(feedIDsAndItems: feedIDsAndItems, defaultRead: true)
 	}
 
 	func mapEntriesToParsedItems(account: Account, entries: [ReaderAPIEntry]?) -> Set<ParsedItem> {
@@ -872,7 +1138,7 @@ private extension ReaderAPIAccountDelegate {
 				guard let name = entry.author else {
 					return nil
 				}
-				return Set([ParsedAuthor(name: name, url: nil, avatarURL: nil, emailAddress: nil)])
+				return Set([ParsedAuthor(name: name.decodingFullwidthEscapedCharacters, url: nil, avatarURL: nil, emailAddress: nil)])
 			}
 
 			return ParsedItem(syncServiceID: entry.uniqueID(variant: variant),
@@ -880,7 +1146,7 @@ private extension ReaderAPIAccountDelegate {
 							  feedURL: streamID,
 							  url: nil,
 							  externalURL: entry.alternates?.first?.url,
-							  title: entry.title,
+							  title: entry.title?.decodingFullwidthEscapedCharacters,
 							  language: nil,
 							  contentHTML: entry.summary.content,
 							  contentText: nil,
@@ -899,66 +1165,93 @@ private extension ReaderAPIAccountDelegate {
 
 	}
 
-	func syncArticleReadState(account: Account, articleIDs: [String]?) async throws {
+	func syncArticleReadState(account: Account, articleIDs: [String]?) async -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleReadState — articleIDs.count \(articleIDs?.count ?? 0)")
 
 		guard let articleIDs else {
-			return
+			return 0
 		}
 
-		Task { @MainActor in
-			do {
-
-				let pendingArticleIDs = (try await self.syncDatabase.selectPendingReadStatusArticleIDs()) ?? Set<String>()
-
-				let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
-				let currentUnreadArticleIDs = try await account.fetchUnreadArticleIDsAsync()
-
-				// Mark articles as unread
-				let deltaUnreadArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentUnreadArticleIDs)
-				_ = try? await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
-
-				// Mark articles as read
-				let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-				_ = try? await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
-
-			} catch {
-				Self.logger.error("ReaderAPIAccountDelegate: syncArticleReadState — error \(error.localizedDescription)")
-			}
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingReadStatusArticleIDs() else {
+			return 0
 		}
+
+		let serverUnreadArticleIDs = Set(articleIDs)
+		let currentUnreadArticleIDs = await account.fetchUnreadArticleIDsAsync()
+
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+		// Mark articles as unread
+		let deltaUnreadArticleIDs = serverUnreadArticleIDs.subtracting(currentUnreadArticleIDs).subtracting(pendingArticleIDs)
+		let markedUnread = await account.markAsUnreadAsync(articleIDs: deltaUnreadArticleIDs)
+
+		// Mark articles as read
+		let deltaReadArticleIDs = currentUnreadArticleIDs.subtracting(serverUnreadArticleIDs).subtracting(pendingArticleIDs)
+		let markedRead = await account.markAsReadAsync(articleIDs: deltaReadArticleIDs)
+
+		return markedUnread.count + markedRead.count
 	}
 
-	func syncArticleStarredState(account: Account, articleIDs: [String]?) async {
+	func syncArticleStarredState(account: Account, articleIDs: [String]?) async -> Int {
 		Self.logger.debug("ReaderAPIAccountDelegate: syncArticleStarredState — articleIDs.count \(articleIDs?.count ?? 0)")
 
 		guard let articleIDs else {
-			return
+			return 0
 		}
 
-		do {
-
-			let pendingArticleIDs = (try await self.syncDatabase.selectPendingStarredStatusArticleIDs()) ?? Set<String>()
-
-			let updatableReaderUnreadArticleIDs = Set(articleIDs).subtracting(pendingArticleIDs)
-
-			let currentStarredArticleIDs = try await account.fetchStarredArticleIDsAsync()
-
-			// Mark articles as starred
-			let deltaStarredArticleIDs = updatableReaderUnreadArticleIDs.subtracting(currentStarredArticleIDs)
-			_ = try? await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
-
-			// Mark articles as unstarred
-			let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(updatableReaderUnreadArticleIDs)
-			_ = try? await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
-
-		} catch {
-			Self.logger.error("ReaderAPIAccountDelegate: syncArticleStarredState — error \(error.localizedDescription)")
+		// A failed pending-statuses read must not be treated as “nothing pending” — that would revert pending changes.
+		guard let pendingArticleIDs = try? await syncDatabase.selectPendingStarredStatusArticleIDs() else {
+			return 0
 		}
+
+		let serverStarredArticleIDs = Set(articleIDs)
+		let currentStarredArticleIDs = await account.fetchStarredArticleIDsAsync()
+
+		// Skip articles with pending local changes in both directions — the pending send is the truth.
+		// Previously a pending unsent star landed in the unstarred delta and got visibly reverted.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/4476>
+
+		// Mark articles as starred
+		let deltaStarredArticleIDs = serverStarredArticleIDs.subtracting(currentStarredArticleIDs).subtracting(pendingArticleIDs)
+		let markedStarred = await account.markAsStarredAsync(articleIDs: deltaStarredArticleIDs)
+
+		// Mark articles as unstarred
+		let deltaUnstarredArticleIDs = currentStarredArticleIDs.subtracting(serverStarredArticleIDs).subtracting(pendingArticleIDs)
+		let markedUnstarred = await account.markAsUnstarredAsync(articleIDs: deltaUnstarredArticleIDs)
+
+		return markedStarred.count + markedUnstarred.count
 	}
 
-	func postSyncError(_ error: Error, account: Account, operation: String, fileName: String = #fileID, functionName: String = #function, lineNumber: Int = #line) {
-		let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: account.nameForDisplay, sourceID: account.type.rawValue, operation: operation, errorMessage: AccountError.detailedErrorMessage(error), fileName: fileName, functionName: functionName, lineNumber: lineNumber)
-		NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
+	// MARK: - Rate Limiting
+
+	/// True when the reported Zone 1 (read) usage is close enough to the daily limit
+	/// that the full status downloads should be skipped until the limits reset.
+	private func shouldSkipStatusDownloadsToConserveQuota() -> Bool {
+		guard let usageLimits = caller.usageLimits else {
+			return false
+		}
+		guard usageLimits.resetDate > Date() else {
+			return false
+		}
+		guard Double(usageLimits.zone1Usage) >= Double(usageLimits.zone1Limit) * Self.zone1UsageThreshold else {
+			return false
+		}
+		Self.logger.info("ReaderAPIAccountDelegate: skipping status downloads — Zone 1 API usage is \(usageLimits.zone1Usage) of \(usageLimits.zone1Limit)")
+		return true
+	}
+}
+
+private extension String {
+
+	// FreshRSS escapes & < > as their fullwidth equivalents in article titles,
+	// author names, and feed names. Map them back.
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5143>
+	var decodingFullwidthEscapedCharacters: String {
+		guard contains("＆") || contains("＜") || contains("＞") else {
+			return self
+		}
+		return replacingOccurrences(of: "＆", with: "&")
+			.replacingOccurrences(of: "＜", with: "<")
+			.replacingOccurrences(of: "＞", with: ">")
 	}
 }

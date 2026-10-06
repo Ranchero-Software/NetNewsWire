@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RSWeb
 
 @MainActor struct ArticleThemeImporter {
 
@@ -21,10 +22,10 @@ import UIKit
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
-		if let websiteURL = URL(string: theme.creatorHomePage) {
+		if let websiteURL = URL(string: theme.creatorHomePage), websiteURL.isHTTPOrHTTPSURL() {
 			let visitSiteTitle = NSLocalizedString("Show Website", comment: "Show Website")
 			let visitSiteAction = UIAlertAction(title: visitSiteTitle, style: .default) { _ in
 				UIApplication.shared.open(websiteURL)
@@ -58,7 +59,7 @@ import UIKit
 
 				let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+				let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 				alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
 				let overwriteAction = UIAlertAction(title: NSLocalizedString("Overwrite", comment: "Overwrite"), style: .default) { _ in

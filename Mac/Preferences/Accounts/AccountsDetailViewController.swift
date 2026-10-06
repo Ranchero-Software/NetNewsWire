@@ -12,7 +12,7 @@ import Account
 
 final class AccountsDetailViewController: NSViewController {
 
-	private let account: Account
+	let account: Account
 	private var accountsWindowController: NSWindowController?
 
 	init(account: Account) {

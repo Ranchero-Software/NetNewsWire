@@ -17,7 +17,7 @@ final class PreferencesControlsBackgroundView: NSView {
 	private let lightModeBorderColor = NSColor(white: 0.71, alpha: 1.0)
 	private let darkModeBorderColor = NSColor(red: 0.41, green: 0.43, blue: 0.44, alpha: 1.0)
 
-	override var isFlipped: Bool {
+	nonisolated override var isFlipped: Bool {
 		return true
 	}
 

@@ -23,7 +23,7 @@ import Account
 	private let imageContainer: URL
 	private let dataURL: URL
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "WidgetDataEncoder")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "WidgetDataEncoder")
 
 	init?() {
 		guard let appGroup = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String else {
@@ -44,28 +44,43 @@ import Account
 			Self.logger.error("WidgetDataEncoder: unable to create folder for images")
 			return nil
 		}
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 	}
 
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		encode()
+	}
+
+	/// Fire-and-forget. Sets `isRunning` synchronously so the background-task wait loop
+	/// (see AppDelegate.waitToComplete) holds the app awake until encoding finishes.
 	func encode() {
 		guard !isRunning else {
 			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
 			return
 		}
-
 		isRunning = true
+		Task { @MainActor in
+			await performEncode()
+		}
+	}
+
+	/// Awaitable variant for callers that must finish encoding before suspending the app.
+	func encodeAndWait() async {
+		guard !isRunning else {
+			Self.logger.debug("WidgetDataEncoder: skipping encode because already in encode")
+			return
+		}
+		isRunning = true
+		await performEncode()
+	}
+
+	private func performEncode() async {
 		defer { isRunning = false }
 
 		removeStaleFaviconsFromSharedContainer()
 
-		let latestData: WidgetData
-		do {
-			latestData = try fetchWidgetData()
-			Self.logger.debug("WidgetDataEncoder: fetched latest widget data")
-		} catch {
-			Self.logger.error("WidgetDataEncoder: error fetching widget data: \(error.localizedDescription)")
-			return
-		}
-
+		let latestData = await fetchWidgetData()
 		let encodedData: Data
 		do {
 			encodedData = try JSONEncoder().encode(latestData)
@@ -87,6 +102,12 @@ import Account
 
 	func reloadTimelines(newData: WidgetData, existingData: WidgetData?) {
 		if let existingData = existingData {
+			if existingData.effectiveUnreadCountDisplay != newData.effectiveUnreadCountDisplay {
+				WidgetCenter.shared.reloadAllTimelines()
+				Self.logger.debug("WidgetDataEncoder: Reloading all widgets because unread count display changed")
+				return
+			}
+
 			var shouldRefreshSummary = false
 
 			if existingData.unreadArticles != newData.unreadArticles {
@@ -118,27 +139,29 @@ import Account
 
 @MainActor private extension WidgetDataEncoder {
 
-	func fetchWidgetData() throws -> WidgetData {
-		let fetchedUnreadArticles = try AccountManager.shared.fetchArticles(.unread(fetchLimit))
+	func fetchWidgetData() async -> WidgetData {
+		let fetchedUnreadArticles = await AccountManager.shared.fetchArticlesAsync(.unread(fetchLimit))
 		let unreadArticles = sortedLatestArticles(fetchedUnreadArticles)
 
-		let fetchedStarredArticles = try AccountManager.shared.fetchArticles(.starred(fetchLimit))
+		let fetchedStarredArticles = await AccountManager.shared.fetchArticlesAsync(.starred(fetchLimit))
 		let starredArticles = sortedLatestArticles(fetchedStarredArticles)
 
-		let fetchedTodayArticles = try AccountManager.shared.fetchArticles(.today(fetchLimit))
-		let fetchedTodayTotal = try AccountManager.shared.fetchArticles(.today())
-		let fetchedTodayTotalCount = fetchedTodayTotal.count
-		let fetchedTodayUnreadCount = fetchedTodayTotal.filter({ $0.status.read == false }).count
+		let fetchedTodayArticles = await AccountManager.shared.fetchArticlesAsync(.today(fetchLimit))
 		let todayArticles = sortedLatestArticles(fetchedTodayArticles)
 
+		let totalTodayCount = await AccountManager.shared.fetchCountForTodayArticlesAsync()
+		let totalTodayUnreadCount = await AccountManager.shared.fetchUnreadCountForTodayAsync()
+		let totalStarredCount = await AccountManager.shared.fetchCountForStarredArticlesAsync()
+
 		let latestData = WidgetData(totalUnreadCount: SmartFeedsController.shared.unreadFeed.unreadCount,
-									totalTodayCount: fetchedTodayTotalCount,
-									totalTodayUnreadCount: fetchedTodayUnreadCount,
-									totalStarredCount: (try? AccountManager.shared.fetchCountForStarredArticles()) ?? 0,
+									totalTodayCount: totalTodayCount,
+									totalTodayUnreadCount: totalTodayUnreadCount,
+									totalStarredCount: totalStarredCount,
 									unreadArticles: unreadArticles,
 									starredArticles: starredArticles,
 									todayArticles: todayArticles,
-									lastUpdateTime: Date.now)
+									lastUpdateTime: Date.now,
+									unreadCountDisplay: AppDefaults.shared.unreadCountDisplay)
 
 		return latestData
 	}
@@ -209,8 +232,8 @@ import Account
 
 		let pubDate = article.datePublished?.description ?? ""
 
-		let latestArticle = LatestArticle(id: article.sortableArticleID,
-										  feedTitle: article.sortableName,
+		let latestArticle = LatestArticle(id: article.articleID,
+										  feedTitle: article.feed?.nameForDisplay ?? "",
 										  articleTitle: articleTitle,
 										  articleSummary: article.summary,
 										  feedIconPath: feedIconPath,

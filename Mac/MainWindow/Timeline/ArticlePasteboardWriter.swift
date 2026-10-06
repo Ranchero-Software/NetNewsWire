@@ -57,7 +57,9 @@ extension Article: @retroactive PasteboardWriterOwner {
 
 		switch type {
 		case .html:
-			return renderedHTML
+			// Receivers sniff the encoding from the bytes — declare it, or non-ASCII text turns to gibberish.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/3978>
+			return "<meta charset=\"utf-8\">" + renderedHTML
 		case .string:
 			plist = plainText()
 		case .URL:

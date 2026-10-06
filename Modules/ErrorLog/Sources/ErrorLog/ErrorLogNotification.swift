@@ -36,3 +36,28 @@ public struct ErrorLogUserInfoKey {
 		]
 	}
 }
+
+public extension ErrorLogEntry {
+
+	/// Build an entry from an `.appDidEncounterError` notification. Returns nil if any required
+	/// key is missing. The id is 0 — the entry has not yet been persisted.
+	init?(notification: Notification) {
+		guard let userInfo = notification.userInfo,
+			  let errorMessage = userInfo[ErrorLogUserInfoKey.errorMessage] as? String,
+			  let sourceName = userInfo[ErrorLogUserInfoKey.sourceName] as? String,
+			  let sourceID = userInfo[ErrorLogUserInfoKey.sourceID] as? Int else {
+			return nil
+		}
+		self.init(
+			id: 0,
+			date: Date(),
+			sourceName: sourceName,
+			sourceID: sourceID,
+			operation: userInfo[ErrorLogUserInfoKey.operation] as? String ?? "",
+			fileName: userInfo[ErrorLogUserInfoKey.fileName] as? String ?? "",
+			functionName: userInfo[ErrorLogUserInfoKey.functionName] as? String ?? "",
+			lineNumber: userInfo[ErrorLogUserInfoKey.lineNumber] as? Int ?? 0,
+			errorMessage: errorMessage
+		)
+	}
+}

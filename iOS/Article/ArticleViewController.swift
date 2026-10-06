@@ -33,6 +33,8 @@ final class ArticleViewController: UIViewController {
 	private var defaultControls: [UIBarButtonItem]?
 
 	private var pageViewController: UIPageViewController!
+	private var isPageTransitionInProgress = false
+	private var pendingSetViewController: WebViewController?
 
 	private var currentWebViewController: WebViewController? {
 		return pageViewController?.viewControllers?.first as? WebViewController
@@ -45,7 +47,7 @@ final class ArticleViewController: UIViewController {
 		if #unavailable(iOS 26) {
 			button.tintColor = Assets.Colors.primaryAccent
 		} else {
-			button.tintColor = .secondaryLabel
+			button.tintColor = .label
 		}
 		return button
 	}()
@@ -53,21 +55,43 @@ final class ArticleViewController: UIViewController {
 	weak var coordinator: SceneCoordinator!
 
 	private let poppableDelegate = PoppableGestureRecognizerDelegate()
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "ArticleViewController")
+	private weak var originalPopGestureRecognizerDelegate: UIGestureRecognizerDelegate?
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticleViewController")
 
 	var article: Article? {
 		didSet {
 			Self.logger.debug("ArticleViewController: article didSet: \(self.article?.accountID ?? "nil") \(self.article?.articleID ?? "nil") \(self.article?.title ?? "nil")")
 
+			if oldValue != article {
+				// The launch-restoration scroll position belongs only to the restored article.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
+				restoreScrollPosition = nil
+			}
+
 			if let controller = currentWebViewController, controller.article != article {
 				controller.setArticle(article)
-				DispatchQueue.main.async {
-					// You have to set the view controller to clear out the UIPageViewController child controller cache.
-					// You also have to do it in an async call or you will get a strange assertion error.
-					self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+				if isPageTransitionInProgress {
+					// Calling setViewControllers during an active page transition trips a UIPageViewController
+					// internal assertion (NSInternalInconsistencyException) and crashes the app. Stash the
+					// controller and flush it from didFinishAnimating once the transition has ended.
+					pendingSetViewController = controller
+				} else {
+					DispatchQueue.main.async {
+						// You have to set the view controller to clear out the UIPageViewController child controller cache.
+						// You also have to do it in an async call or you will get a strange assertion error.
+						// Re-check the transition state: a user swipe between enqueue and execution can flip
+						// isPageTransitionInProgress to true, and calling setViewControllers then would crash.
+						if self.isPageTransitionInProgress {
+							self.pendingSetViewController = controller
+						} else {
+							self.pageViewController.setViewControllers([controller], direction: .forward, animated: false, completion: nil)
+							self.syncArticleExtractorButtonState()
+						}
+					}
 				}
 			}
 			updateUI()
+			syncArticleExtractorButtonState()
 		}
 	}
 
@@ -201,15 +225,20 @@ final class ArticleViewController: UIViewController {
 	}
 
 	override func viewDidAppear(_ animated: Bool) {
-		super.viewDidAppear(true)
+		super.viewDidAppear(animated)
 		if #available(iOS 26, *) {
 			navigationController?.navigationBar.topItem?.subtitle = nil
 		}
 		coordinator.isArticleViewControllerPending = false
 		searchBar.shouldBeginEditing = true
-		if let parentNavController = navigationController?.parent as? UINavigationController {
+		// Scoped to the article screen — restored in viewDidDisappear.
+		if let parentNavController = navigationController?.parent as? UINavigationController,
+			let gestureRecognizer = parentNavController.interactivePopGestureRecognizer {
+			if gestureRecognizer.delegate !== poppableDelegate {
+				originalPopGestureRecognizerDelegate = gestureRecognizer.delegate
+			}
 			poppableDelegate.navigationController = parentNavController
-			parentNavController.interactivePopGestureRecognizer?.delegate = poppableDelegate
+			gestureRecognizer.delegate = poppableDelegate
 		}
 	}
 
@@ -219,20 +248,19 @@ final class ArticleViewController: UIViewController {
 			endFind()
 			searchBar.shouldBeginEditing = false
 		}
-		currentWebViewController?.showBars()
+		// Pass animated: false — animating the nav bar / toolbar visibility change during the
+		// disappear transition triggers an Auto Layout assertion (NSISEngine) and crashes.
+		currentWebViewController?.showBars(animated: false)
+	}
+
+	override func viewDidDisappear(_ animated: Bool) {
+		super.viewDidDisappear(animated)
+		restoreOriginalPopGestureRecognizerDelegate()
 	}
 
 	override func viewSafeAreaInsetsDidChange() {
 		// This will animate if the show/hide bars animation is happening.
 		view.layoutIfNeeded()
-	}
-
-	override func willTransition(to newCollection: UITraitCollection, with coordinator: any UIViewControllerTransitionCoordinator) {
-		// We only want to show bars when rotating to horizontalSizeClass == .regular
-		// (i.e., big) iPhones to resolve crash #4483.
-		if traitCollection.userInterfaceIdiom == .phone && newCollection.horizontalSizeClass == .regular {
-			currentWebViewController?.showBars()
-		}
 	}
 
 	func updateUI() {
@@ -248,7 +276,7 @@ final class ArticleViewController: UIViewController {
 			return
 		}
 
-		nextUnreadBarButtonItem.isEnabled = coordinator.isAnyUnreadAvailable
+		nextUnreadBarButtonItem.isEnabled = coordinator.isNextUnreadAvailable
 		prevArticleBarButtonItem.isEnabled = coordinator.isPrevArticleAvailable
 		nextArticleBarButtonItem.isEnabled = coordinator.isNextArticleAvailable
 		readBarButtonItem.isEnabled = true
@@ -466,9 +494,10 @@ extension ArticleViewController {
 extension ArticleViewController: WebViewControllerDelegate {
 
 	func webViewController(_ webViewController: WebViewController, articleExtractorButtonStateDidUpdate buttonState: ArticleExtractorButtonState) {
-		if webViewController === currentWebViewController {
-			articleExtractorButton.buttonState = buttonState
+		guard webViewController === currentWebViewController else {
+			return
 		}
+		syncArticleExtractorButtonState()
 	}
 
 }
@@ -501,12 +530,34 @@ extension ArticleViewController: UIPageViewControllerDataSource {
 
 extension ArticleViewController: UIPageViewControllerDelegate {
 
+	func pageViewController(_ pageViewController: UIPageViewController, willTransitionTo pendingViewControllers: [UIViewController]) {
+		isPageTransitionInProgress = true
+	}
+
 	func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
+		isPageTransitionInProgress = false
+
+		if let pending = pendingSetViewController {
+			pendingSetViewController = nil
+			// Async because UIKit is still finishing the swipe — a synchronous
+			// setViewControllers here triggers an assertion in _UIQueuingScrollView.
+			DispatchQueue.main.async {
+				if self.isPageTransitionInProgress {
+					self.pendingSetViewController = pending
+				} else {
+					self.pageViewController.setViewControllers([pending], direction: .forward, animated: false, completion: nil)
+					self.syncArticleExtractorButtonState()
+				}
+			}
+		}
+
+		syncArticleExtractorButtonState()
+
 		guard finished, completed else { return }
 		guard let article = currentWebViewController?.article else { return }
 
 		coordinator.selectArticle(article, animations: [.select, .scroll, .navigation])
-		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
+		syncArticleExtractorButtonState()
 
 		for viewController in previousViewControllers {
 			if let webViewController = viewController as? WebViewController {
@@ -544,6 +595,18 @@ private extension ArticleViewController {
 		controller.delegate = self
 		controller.setArticle(article, updateView: updateView)
 		return controller
+	}
+
+	func syncArticleExtractorButtonState() {
+		articleExtractorButton.buttonState = currentWebViewController?.articleExtractorButtonState ?? .off
+	}
+
+	func restoreOriginalPopGestureRecognizerDelegate() {
+		guard let gestureRecognizer = poppableDelegate.navigationController?.interactivePopGestureRecognizer,
+			gestureRecognizer.delegate === poppableDelegate else {
+			return
+		}
+		gestureRecognizer.delegate = originalPopGestureRecognizerDelegate
 	}
 
 }

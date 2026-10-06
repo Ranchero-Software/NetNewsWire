@@ -8,14 +8,17 @@
 
 import Foundation
 import Account
+import ActivityLog
 
 @MainActor final class AccountRefreshTimer {
 
 	var shuttingDown = false
+	var isSystemSleeping = false
 
 	private var internalTimer: Timer?
 	private var lastTimedRefresh: Date?
 	private let launchTime = Date()
+	private var suspendedFireDate: Date?
 
 	func fireOldTimer() {
 		if let timer = internalTimer {
@@ -35,6 +38,24 @@ import Account
 			timer.invalidate()
 		}
 		internalTimer = nil
+	}
+
+	func suspend() {
+		suspendedFireDate = internalTimer?.fireDate
+		invalidate()
+	}
+
+	func resume() {
+		guard !shuttingDown else {
+			return
+		}
+		let dueDate = suspendedFireDate
+		suspendedFireDate = nil
+		if let dueDate, dueDate < Date() {
+			timedRefresh(nil)
+		} else {
+			update()
+		}
 	}
 
 	func update() {
@@ -67,6 +88,14 @@ import Account
 	@objc func timedRefresh(_ sender: Timer?) {
 
 		guard !shuttingDown else {
+			return
+		}
+
+		if isSystemSleeping {
+			ActivityLog.shared.logCompletedActivity(owner: .app, kind: .refreshAll, message: "Skipped — computer is asleep")
+
+			lastTimedRefresh = Date()
+			update()
 			return
 		}
 

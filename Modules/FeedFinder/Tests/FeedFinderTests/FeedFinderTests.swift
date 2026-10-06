@@ -15,4 +15,13 @@ final class FeedFinderTests: XCTestCase {
 		let feedFinder = FeedFinder()
 		XCTAssertNotNil(feedFinder)
 	}
+
+	func testKnownFeedSpecifierForRelayFMBlog() throws {
+		let specifier = FeedSpecifier.knownFeedSpecifier(url: URL(string: "https://www.relay.fm/blog")!)
+		XCTAssertEqual(specifier?.urlString, "https://www.relay.fm/blog/feed")
+	}
+
+	func testKnownFeedSpecifierIgnoresRelayFMRoot() throws {
+		XCTAssertNil(FeedSpecifier.knownFeedSpecifier(url: URL(string: "https://www.relay.fm")!))
+	}
 }

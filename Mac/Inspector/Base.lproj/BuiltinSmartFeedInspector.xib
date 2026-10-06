@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="BuiltinSmartFeedInspectorViewController" customModule="NetNewsWire" customModuleProvider="target">
+            <connections>
+                <outlet property="nameTextField" destination="4Xp-FX-kn3" id="iJx-DZ-MjF"/>
+                <outlet property="smartFeedImageView" destination="cwK-Ep-mNL" id="kd1-2v-3yO"/>
+                <outlet property="view" destination="DXo-3M-jJQ" id="Pz2-uN-4cX"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <view id="DXo-3M-jJQ">
+            <rect key="frame" x="0.0" y="0.0" width="267" height="112"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cwK-Ep-mNL">
+                    <rect key="frame" x="110" y="44" width="48" height="48"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="48" id="33r-tp-RWH"/>
+                        <constraint firstAttribute="height" constant="48" id="8F1-sH-5Xs"/>
+                    </constraints>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="NSSmartBadgeTemplate" id="Z52-bd-Lgz"/>
+                </imageView>
+                <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4Xp-FX-kn3">
+                    <rect key="frame" x="18" y="20" width="231" height="16"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="3v9-Z7-d7l">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+            <constraints>
+                <constraint firstItem="cwK-Ep-mNL" firstAttribute="top" secondItem="DXo-3M-jJQ" secondAttribute="top" constant="20" symbolic="YES" id="2YU-iy-D2t"/>
+                <constraint firstAttribute="bottom" secondItem="4Xp-FX-kn3" secondAttribute="bottom" constant="20" symbolic="YES" id="43t-uN-KJE"/>
+                <constraint firstItem="4Xp-FX-kn3" firstAttribute="leading" secondItem="DXo-3M-jJQ" secondAttribute="leading" constant="20" symbolic="YES" id="K5o-r4-LbL"/>
+                <constraint firstItem="cwK-Ep-mNL" firstAttribute="centerX" secondItem="DXo-3M-jJQ" secondAttribute="centerX" id="LUf-q3-0Xk"/>
+                <constraint firstItem="4Xp-FX-kn3" firstAttribute="top" secondItem="cwK-Ep-mNL" secondAttribute="bottom" constant="8" symbolic="YES" id="T0n-0d-nHb"/>
+                <constraint firstAttribute="trailing" secondItem="4Xp-FX-kn3" secondAttribute="trailing" constant="20" symbolic="YES" id="aEl-FU-VDu"/>
+            </constraints>
+            <point key="canvasLocation" x="139" y="154"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="NSSmartBadgeTemplate" width="14" height="14"/>
+    </resources>
+</document>

@@ -23,12 +23,19 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 	weak var account: Account?
 	weak var articlesZone: CloudKitArticlesZone?
 
+	/// Number of records changed in the most recent sync.
+	private(set) var lastChangedCount = 0
+	/// Number of records deleted in the most recent sync.
+	private(set) var lastDeletedCount = 0
+
 	init(account: Account, articlesZone: CloudKitArticlesZone) {
 		self.account = account
 		self.articlesZone = articlesZone
 	}
 
 	@MainActor func cloudKitDidModify(changed: [CKRecord], deleted: [CloudKitRecordKey]) async throws {
+		lastChangedCount = changed.count
+		lastDeletedCount = deleted.count
 		for deletedRecordKey in deleted {
 			switch deletedRecordKey.recordType {
 			case CloudKitAccountZone.CloudKitFeed.recordType:
@@ -119,6 +126,8 @@ final class CloudKitAcountZoneDelegate: CloudKitZoneDelegate {
 
 		if let existingUnclaimedFeeds = existingUnclaimedFeeds[containerExternalID] {
 			for existingUnclaimedFeed in existingUnclaimedFeeds {
+				// Clear the top-level safety-net fallback (no-op if not there) so we don't leave a duplicate.
+				account.removeFeedFromTreeAtTopLevel(existingUnclaimedFeed)
 				container.addFeedToTreeAtTopLevel(existingUnclaimedFeed)
 			}
 			self.existingUnclaimedFeeds.removeValue(forKey: containerExternalID)
@@ -160,6 +169,13 @@ private extension CloudKitAcountZoneDelegate {
 					addExistingUnclaimedFeed(feed, containerExternalID: externalID)
 				}
 			}
+		}
+
+		// Never leave a moved feed invisible: if its destination container(s) aren't known locally yet,
+		// keep it visible at the top level. addOrUpdateContainer relocates it when the folder record arrives.
+		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5124>
+		if account.existingContainers(withFeed: feed).isEmpty {
+			account.addFeedToTreeAtTopLevel(feed)
 		}
 	}
 

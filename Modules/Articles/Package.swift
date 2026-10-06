@@ -22,6 +22,9 @@ let package = Package(
 			swiftSettings: [
 				.enableUpcomingFeature("NonisolatedNonsendingByDefault"),
 				.enableUpcomingFeature("InferIsolatedConformances")
-			])
+			]),
+		.testTarget(
+			name: "ArticlesTests",
+			dependencies: ["Articles"])
 	]
 )

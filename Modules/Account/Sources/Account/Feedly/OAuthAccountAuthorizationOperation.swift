@@ -9,6 +9,7 @@
 import Foundation
 @preconcurrency import AuthenticationServices
 import os
+import ActivityLog
 import RSCore
 
 @MainActor public protocol OAuthAccountAuthorizationOperationDelegate: AnyObject {
@@ -18,9 +19,15 @@ import RSCore
 
 public enum OAuthAccountAuthorizationOperationError: LocalizedError, Sendable {
 	case duplicateAccount
+	case stateMismatch
 
 	public var errorDescription: String? {
-		return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
+		switch self {
+		case .duplicateAccount:
+			return NSLocalizedString("There is already a Feedly account with that username created.", comment: "Duplicate Error")
+		case .stateMismatch:
+			return NSLocalizedString("The authorization response didn’t match the authorization request.", comment: "OAuth - error description - state parameter in callback didn’t match the request.")
+		}
 	}
 }
 
@@ -36,8 +43,21 @@ struct UnableToStartASWebAuthenticationSessionError: LocalizedError, Sendable {
 		comment: "OAuth - recovery suggestion - ensure browser selected supports web authentication.")
 }
 
-@objc nonisolated final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding {
-	nonisolated(unsafe) var presentationAnchor: ASPresentationAnchor?
+@objc nonisolated final class PresentationAnchorProvider: NSObject, ASWebAuthenticationPresentationContextProviding, @unchecked Sendable {
+
+	private struct State: @unchecked Sendable {
+		var presentationAnchor: ASPresentationAnchor?
+	}
+	private let state = OSAllocatedUnfairLock(initialState: State())
+
+	var presentationAnchor: ASPresentationAnchor? {
+		get {
+			state.withLock { $0.presentationAnchor }
+		}
+		set {
+			state.withLock { $0.presentationAnchor = newValue }
+		}
+	}
 
 	// MARK: - ASWebAuthenticationPresentationContextProviding
 
@@ -61,12 +81,29 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 
 	public weak var delegate: OAuthAccountAuthorizationOperationDelegate?
 
+	private struct SessionState: @unchecked Sendable {
+		var session: ASWebAuthenticationSession?
+	}
+	private let sessionState = OSAllocatedUnfairLock(initialState: SessionState())
 	private let accountType: AccountType
 	private let oauthClient: OAuthAuthorizationClient
-	nonisolated(unsafe) private let anchorProvider = PresentationAnchorProvider()
-	nonisolated(unsafe) private var session: ASWebAuthenticationSession?
+	private let anchorProvider = PresentationAnchorProvider()
 	private var error: Error?
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "OAuthAccountAuthorizationOperation")
+	private var activityID: Int?
+	private var userCancelledAuthentication = false
+
+	nonisolated private var session: ASWebAuthenticationSession? {
+		get {
+			sessionState.withLock { $0.session }
+		}
+		set {
+			sessionState.withLock { $0.session = newValue }
+		}
+	}
+
+	// Round-tripped via the OAuth state parameter to verify the callback answers our request.
+	private let state = UUID().uuidString
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "OAuthAccountAuthorizationOperation")
 
 	public init(accountType: AccountType) {
 		self.accountType = accountType
@@ -78,15 +115,19 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 		Self.logger.debug("OAuthAccountAuthorizationOperation: run")
 		assert(presentationAnchor != nil, "\(self) outlived presentation anchor.")
 
-		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType)
+		let id = ActivityLog.shared.createActivity(owner: .app, kind: .validateCredentials, detail: "Authorizing \(accountType.displayName)")
+		ActivityLog.shared.didStart(id: id)
+		activityID = id
+
+		let request = Account.oauthAuthorizationCodeGrantRequest(for: accountType, state: state)
 
 		guard let url = request.url else {
 			didEndAuthentication(url: nil, error: URLError(.badURL))
 			return
 		}
 
-		guard let redirectUri = URL(string: oauthClient.redirectUri), let scheme = redirectUri.scheme else {
-			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectUri)")
+		guard let redirectURI = URL(string: oauthClient.redirectURI), let scheme = redirectURI.scheme else {
+			assertionFailure("Could not get callback URL scheme from \(oauthClient.redirectURI)")
 			didEndAuthentication(url: nil, error: URLError(.badURL))
 			return
 		}
@@ -96,15 +137,19 @@ public final class OAuthAccountAuthorizationOperation: MainThreadOperation, @unc
 		}
 	}
 
-	public func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-		guard let anchor = presentationAnchor else {
-			fatalError("\(self) has outlived presentation anchor.")
-		}
-		return anchor
-	}
-
 	override public func noteDidComplete() {
 		Self.logger.debug("OAuthAccountAuthorizationOperation: noteDidComplete")
+
+		if let activityID {
+			if let error {
+				ActivityLog.shared.didFail(id: activityID, error: error)
+			} else if isCanceled || userCancelledAuthentication {
+				ActivityLog.shared.didFail(id: activityID, error: CocoaError(.userCancelled))
+			} else {
+				ActivityLog.shared.didComplete(id: activityID)
+			}
+			self.activityID = nil
+		}
 
 		if isCanceled {
 			Self.logger.debug("OAuthAccountAuthorizationOperation: noteDidComplete — canceled")
@@ -132,7 +177,17 @@ private extension OAuthAccountAuthorizationOperation {
 
 		session.presentationContextProvider = anchorProvider
 
+		// Assign before starting so cancellation can always reach the session.
+		self.session = session
+
+		// The operation may have been canceled before the session existed — don’t open the browser.
+		guard !isCanceled else {
+			self.session = nil
+			return
+		}
+
 		guard session.start() else {
+			self.session = nil
 			Task { @MainActor in
 				Self.logger.error("OAuthAccountAuthorizationOperation: run — could not start session")
 				error = UnableToStartASWebAuthenticationSessionError()
@@ -140,8 +195,6 @@ private extension OAuthAccountAuthorizationOperation {
 			}
 			return
 		}
-
-		self.session = session
 	}
 
 	func didEndAuthentication(url: URL?, error: Error?) {
@@ -166,10 +219,31 @@ private extension OAuthAccountAuthorizationOperation {
 
 			let response = try OAuthAuthorizationResponse(url: url, client: oauthClient)
 
-			Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType, completion: didEndRequestingAccessToken(_:))
+			guard response.state == state else {
+				throw OAuthAccountAuthorizationOperationError.stateMismatch
+			}
 
-		} catch is ASWebAuthenticationSessionError {
-			didComplete() // Primarily, cancellation.
+			Task { @MainActor in
+				do {
+					let grant = try await Account.requestOAuthAccessToken(with: response, client: oauthClient, accountType: accountType)
+					self.didEndRequestingAccessToken(.success(grant))
+				} catch {
+					self.didEndRequestingAccessToken(.failure(error))
+				}
+			}
+
+		} catch let errorResponse as OAuthAuthorizationErrorResponse where errorResponse.isAccessDenied {
+			// The user clicked Deny on the consent page — a cancellation, not a failure.
+			userCancelledAuthentication = true
+			didComplete()
+
+		} catch let sessionError as ASWebAuthenticationSessionError {
+			if sessionError.code == .canceledLogin {
+				userCancelledAuthentication = true
+			} else {
+				self.error = sessionError
+			}
+			didComplete()
 
 		} catch {
 			self.error = error
@@ -196,13 +270,13 @@ private extension OAuthAccountAuthorizationOperation {
 
 	func saveAccount(for grant: OAuthAuthorizationGrant) {
 		Self.logger.debug("OAuthAccountAuthorizationOperation: saveAccount")
-		guard !AccountManager.shared.duplicateServiceAccount(type: .feedly, username: grant.accessToken.username) else {
+		guard !AccountManager.shared.duplicateServiceAccount(type: accountType, username: grant.accessToken.username) else {
 			self.error = OAuthAccountAuthorizationOperationError.duplicateAccount
 			didComplete()
 			return
 		}
 
-		let account = AccountManager.shared.createAccount(type: .feedly)
+		let account = AccountManager.shared.createAccount(type: accountType)
 		do {
 
 			// Store the refresh token first because it sends this token to the account delegate.
@@ -215,10 +289,11 @@ private extension OAuthAccountAuthorizationOperation {
 
 			delegate?.oauthAccountAuthorizationOperation(self, didCreate: account)
 		} catch {
+			// Don’t leave behind an account with no credentials.
+			AccountManager.shared.deleteAccount(account)
 			self.error = error
 		}
 
 		didComplete()
 	}
 }
-

@@ -1,0 +1,4 @@
+# Every file in the repo requires review from @brentsimmons before a PR
+# can be merged. See https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-security/customizing-your-repository/about-code-owners
+
+* @brentsimmons

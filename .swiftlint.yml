@@ -28,9 +28,10 @@ disabled_rules:
   - type_body_length
   - function_parameter_count
   - line_length
-  - operator_whitespace
+  - function_name_whitespace
   - nesting
   - class_delegate_protocol
+  - optional_data_string_conversion
 
 excluded:
   - ".build"

@@ -18,7 +18,7 @@
 
 	NSParameterAssert(numberOfValues > 0);
 	if (numberOfValues < 1) {
-		return nil;
+		return @"()";
 	}
 
 	static NSMutableDictionary *cache = nil;

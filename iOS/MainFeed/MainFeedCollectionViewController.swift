@@ -14,8 +14,11 @@ import WebKit
 import RSCore
 import RSTree
 import RSWeb
+import HTMLMetadata
 import Account
+import ActivityLog
 import Articles
+import Images
 
 private let reuseIdentifier = "FeedCell"
 private let folderIdentifier = "Folder"
@@ -30,12 +33,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
-	private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "MainFeedCollectionViewController")
+	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainFeedCollectionViewController")
 
 	private let keyboardManager = KeyboardManager(type: .sidebar)
 	override var keyCommands: [UIKeyCommand]? {
 
-		// If the first responder is the WKWebView (PreloadedWebView) we don't want to supply any keyboard
+		// If the first responder is the WKWebView (PreloadedWebView) we don’t want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
 		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else {
@@ -49,7 +52,21 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		return true
 	}
 
+	// The selected row is accent-colored only while the feeds list is first responder.
+	@discardableResult override func becomeFirstResponder() -> Bool {
+		let didBecomeFirstResponder = super.becomeFirstResponder()
+		updateVisibleCellConfigurations()
+		return didBecomeFirstResponder
+	}
+
+	@discardableResult override func resignFirstResponder() -> Bool {
+		let didResignFirstResponder = super.resignFirstResponder()
+		updateVisibleCellConfigurations()
+		return didResignFirstResponder
+	}
+
 	private let refreshProgressView = RefreshProgressView(frame: .zero)
+	private var currentActivityButton: UIBarButtonItem?
 
 	var undoableCommands = [UndoableCommand]()
 	weak var coordinator: SceneCoordinator!
@@ -61,17 +78,58 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	private var isAnimating: Bool = false
 	private var isToolbarConfigured: Bool = false
 
-	var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
+	// Serialized snapshot updates — see enqueueSidebarUpdate below.
+	private var isApplyingSnapshot = false
+	private var queuedSidebarUpdates = [QueuedSidebarUpdate]()
+
+	// Write via applySnapshot/reconfigureItems. Read via currentSidebarSnapshot
+	// and the lookup methods — in an apply completion if you need post-update state.
+	private var dataSource: UICollectionViewDiffableDataSource<String, SidebarItemNode>!
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		registerForNotifications()
+		configureCurrentActivityButton()
 		configureCollectionView()
 		configureDiffableDataSource()
 		collectionView.dragDelegate = self
 		collectionView.dropDelegate = self
 		becomeFirstResponder()
     }
+
+	override func viewDidLayoutSubviews() {
+		super.viewDidLayoutSubviews()
+		coordinator?.sidebarDidLayout()
+	}
+
+	func configureCurrentActivityButton() {
+		if #available(iOS 26, *) {
+			// Toolbar button to open Current Activity. It lights up while activity is happening.
+			let settingsButtonIndex = 0
+			let button = UIBarButtonItem(image: Assets.Images.currentActivity, style: .plain, target: self, action: #selector(showCurrentActivity(_:)))
+			button.accessibilityLabel = NSLocalizedString("Current Activity", comment: "Current Activity")
+			toolbarItems?.insert(button, at: settingsButtonIndex + 1)
+			currentActivityButton = button
+			NotificationCenter.default.addObserver(self, selector: #selector(activityDidChange(_:)), name: .activityDidChange, object: nil)
+			updateCurrentActivityButtonState()
+		} else {
+			// Tap progress view in the toolbar to open Current Activity.
+			refreshProgressView.isUserInteractionEnabled = true
+			refreshProgressView.accessibilityTraits = .button
+			refreshProgressView.accessibilityHint = NSLocalizedString("Shows current activity", comment: "Current Activity accessibility hint")
+			let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showCurrentActivity(_:)))
+			refreshProgressView.addGestureRecognizer(tapGestureRecognizer)
+		}
+	}
+
+	@objc func activityDidChange(_ note: Notification) {
+		updateCurrentActivityButtonState()
+	}
+
+	func updateCurrentActivityButtonState() {
+		let hasCurrentActivity = !ActivityLog.shared.runningActivities.isEmpty || !ActivityLog.shared.pendingActivities.isEmpty
+		currentActivityButton?.tintColor = hasCurrentActivity ? Assets.Colors.primaryAccent : .label
+	}
 
 	override func viewWillAppear(_ animated: Bool) {
 		Self.logger.debug("MainFeedCollectionViewController: viewWillAppear")
@@ -84,7 +142,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.navigationController?.navigationBar.prefersLargeTitles = true
 			self.navigationItem.largeTitleDisplayMode = .always
 			DispatchQueue.main.async {
-				/// This sizes the navigation bar to large.
+				// Sizes the bar to large. Skip if a pushed VC (e.g. the timeline, which shares this bar
+				// on iPhone) is now on top, or it would be forced large too.
+				// <https://github.com/Ranchero-Software/NetNewsWire/issues/5141>
+				guard self.navigationController?.topViewController === self else {
+					return
+				}
 				self.navigationController?.navigationBar.sizeToFit()
 			}
 
@@ -114,26 +177,15 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			self.isAnimating = false
 		}
 
-		// Pro Max may have split view in landscape — give the device some
-		// time to change its size class and then decide to deselect
+		// Rotating a Pro Max to landscape expands the split view — wait for the transition to settle.
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5043>
-		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1, execute: {
-			// If the iPhone is in portrait, deselect.
-			if UIDevice.current.orientation.isPortrait {
-				if self.collectionView.indexPathsForSelectedItems != nil {
-					self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				}
-				return
+		DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			// Deselect only when the feeds list is full screen.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/4691>
+			if self.coordinator.isRootSplitCollapsed, self.collectionView.indexPathsForSelectedItems?.first != nil {
+				self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
 			}
-
-			// If the iPhone is in landscape, and the horizontal
-			// size class is compact, deselect.
-			if self.view.window?.traitCollection.horizontalSizeClass == .compact {
-				if self.collectionView.indexPathsForSelectedItems != nil { self.coordinator.selectSidebarItem(indexPath: nil, animations: [.select])
-				}
-				return
-			}
-		})
+		}
 	}
 
 	func registerForNotifications() {
@@ -146,6 +198,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 	}
@@ -158,12 +211,15 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		var config = UICollectionLayoutListConfiguration(appearance: useSidebarAppearance ? .sidebar : .insetGrouped)
 		config.headerMode = .supplementary
 
-		config.trailingSwipeActionsConfigurationProvider = { [unowned self] indexPath in
+		config.trailingSwipeActionsConfigurationProvider = { [weak self] indexPath in
+			guard let self else {
+				return nil
+			}
 			if indexPath.section == 0 { return UISwipeActionsConfiguration(actions: []) }
 			var actions = [UIContextualAction]()
 
 			// Set up the delete action
-			let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+			let deleteTitle = NSLocalizedString("Delete", comment: "Delete button")
 			let deleteAction = UIContextualAction(style: .destructive, title: nil) { [weak self] _, _, completion in
 				self?.delete(indexPath: indexPath)
 				completion(true)
@@ -174,7 +230,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			actions.append(deleteAction)
 
 			// Set up the rename action
-			let renameTitle = NSLocalizedString("Rename", comment: "Rename")
+			let renameTitle = NSLocalizedString("Rename", comment: "Command")
 			let renameAction = UIContextualAction(style: .normal, title: nil) { [weak self] _, _, completion in
 				self?.rename(indexPath: indexPath)
 				completion(true)
@@ -216,7 +272,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 							alert.addAction(action)
 						}
 
-						let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+						let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 						alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel) { _ in
 							completion(true)
 						})
@@ -274,6 +330,8 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if config.appearance == .sidebar {
 			// This defrosts the glass.
 			collectionView.backgroundColor = .clear
+		} else {
+			collectionView.backgroundColor = .systemGroupedBackground
 		}
 	}
 
@@ -326,7 +384,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 				headerView.sectionHeaderType = .smartFeeds
 				headerView.headerTitle.text = SmartFeedsController.shared.nameForDisplay
 				headerView.unreadCount = 0
-				headerView.disclosureExpanded = self.coordinator.isExpanded(SmartFeedsController.shared)
+				headerView.setDisclosure(isExpanded: self.coordinator.isExpanded(SmartFeedsController.shared), animated: false)
 				return headerView
 			}
 
@@ -338,7 +396,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			headerView.sectionHeaderType = .account(sectionID)
 			headerView.headerTitle.text = account.nameForDisplay
 			headerView.unreadCount = account.unreadCount
-			headerView.disclosureExpanded = self.coordinator.isExpanded(account)
+			headerView.setDisclosure(isExpanded: self.coordinator.isExpanded(account), animated: false)
 			headerView.addInteraction(UIContextMenuInteraction(delegate: self))
 
 			return headerView
@@ -346,20 +404,144 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	}
 
 	func applySnapshot(_ snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>, animatingDifferences: Bool, completion: (() -> Void)? = nil) {
-		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
-			completion?()
+		let feeds = snapshot.itemIdentifiers.compactMap { $0.node.representedObject as? Feed }
+		IconImageCache.shared.prefetchImagesForFeeds(feeds)
+
+		enqueueSidebarUpdate(.full(snapshot, animated: animatingDifferences), completion: completion)
+	}
+
+	func reconfigureItems(_ items: [SidebarItemNode], completion: (() -> Void)? = nil) {
+		enqueueSidebarUpdate(.reconfigure(items), completion: completion)
+	}
+
+	// MARK: - Data Source Queries
+
+	var currentSidebarSnapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode> {
+		dataSource.snapshot()
+	}
+
+	func sidebarItemNode(for indexPath: IndexPath) -> SidebarItemNode? {
+		dataSource.itemIdentifier(for: indexPath)
+	}
+
+	func indexPath(for sidebarItemNode: SidebarItemNode) -> IndexPath? {
+		dataSource.indexPath(for: sidebarItemNode)
+	}
+
+	// MARK: - Serialized Snapshot Updates
+
+	// Overlapping animated dataSource.apply calls strand cells — a row mid-delete-animation
+	// never gets recycled while the next update slides another row into its slot, leaving
+	// two cells overlapping. Updates are queued and applied one at a time. The apply
+	// completion is the animation-end signal, so serializing on it is sufficient.
+
+	private func enqueueSidebarUpdate(_ update: SidebarUpdate, completion: (() -> Void)?) {
+		var completions = [() -> Void]()
+		if let completion {
+			completions.append(completion)
 		}
+
+		// A newer full snapshot supersedes a queued one. The superseded update’s
+		// completions still run — after a snapshot at least as new as the one they requested.
+		if update.isFull, let index = queuedSidebarUpdates.firstIndex(where: { $0.update.isFull }) {
+			completions = queuedSidebarUpdates[index].completions + completions
+			queuedSidebarUpdates.remove(at: index)
+		}
+
+		queuedSidebarUpdates.append(QueuedSidebarUpdate(update: update, completions: completions))
+		applyNextSidebarUpdateIfPossible()
+	}
+
+	private func applyNextSidebarUpdateIfPossible() {
+		guard !isApplyingSnapshot, !queuedSidebarUpdates.isEmpty else {
+			return
+		}
+
+		let queuedUpdate = queuedSidebarUpdates.removeFirst()
+
+		var snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>
+		var animated = false
+
+		switch queuedUpdate.update {
+		case .full(let fullSnapshot, let fullAnimated):
+			snapshot = fullSnapshot
+			animated = fullAnimated
+		case .reconfigure(let items):
+			snapshot = dataSource.snapshot()
+			let survivingItems = survivingItems(items, in: snapshot)
+			guard !survivingItems.isEmpty else {
+				finishSkippedSidebarUpdate(queuedUpdate)
+				return
+			}
+			snapshot.reconfigureItems(survivingItems)
+		case .reload(let items):
+			snapshot = dataSource.snapshot()
+			let survivingItems = survivingItems(items, in: snapshot)
+			guard !survivingItems.isEmpty else {
+				finishSkippedSidebarUpdate(queuedUpdate)
+				return
+			}
+			snapshot.reloadItems(survivingItems)
+		}
+
+		// Animating a batch update while detached from a window strands cells too.
+		let animatingDifferences = animated && viewIfLoaded?.window != nil
+
+		isApplyingSnapshot = true
+		dataSource.apply(snapshot, animatingDifferences: animatingDifferences) { [weak self] in
+			guard let self else {
+				return
+			}
+			// Completions run before the queue pumps again, so an update enqueued
+			// synchronously by a completion applies after this one — in order.
+			for completion in queuedUpdate.completions {
+				completion()
+			}
+			self.isApplyingSnapshot = false
+			self.applyNextSidebarUpdateIfPossible()
+		}
+	}
+
+	// Reconfigures and reloads resolve their items at execution time, against the
+	// currently applied snapshot. Items removed by an earlier queued update are
+	// skipped — reloading an absent identifier throws.
+	private func survivingItems(_ items: [SidebarItemNode], in snapshot: NSDiffableDataSourceSnapshot<String, SidebarItemNode>) -> [SidebarItemNode] {
+		let currentItems = Set(snapshot.itemIdentifiers)
+		return items.filter { currentItems.contains($0) }
+	}
+
+	private func finishSkippedSidebarUpdate(_ queuedUpdate: QueuedSidebarUpdate) {
+		for completion in queuedUpdate.completions {
+			completion()
+		}
+		applyNextSidebarUpdateIfPossible()
 	}
 
 	@IBAction func settings(_ sender: UIBarButtonItem) {
 		coordinator.showSettings()
 	}
 
+	@objc func showCurrentActivity(_ sender: Any?) {
+		coordinator.showCurrentActivity()
+	}
+
     // MARK: UICollectionViewDelegate
 
 	override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
+	}
+
+	// Fires on every tap — even on the already-selected feed, which doesn’t get didSelectItemAt.
+	override func collectionView(_ collectionView: UICollectionView, performPrimaryActionForItemAt indexPath: IndexPath) {
+		becomeFirstResponder()
 		coordinator.selectSidebarItem(indexPath: indexPath, animations: [.navigation, .select, .scroll])
+	}
+
+	override func collectionView(_ collectionView: UICollectionView, canPerformPrimaryActionForItemAt indexPath: IndexPath) -> Bool {
+		if traitCollection.userInterfaceIdiom == .pad {
+			return true
+		}
+		return !isAnimating
 	}
 
     // MARK: UICollectionViewDelegate
@@ -416,7 +598,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.collapse(node)
 			if let folder = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
-				folder.disclosureExpanded = false
+				folder.setDisclosure(isExpanded: false, animated: true)
 			}
 		}
 	}
@@ -435,7 +617,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		if let indexPath = coordinator.currentFeedIndexPath, let node = coordinator.nodeFor(indexPath) {
 			coordinator.expand(node)
 			if let folder = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewFolderCell {
-				folder.disclosureExpanded = true
+				folder.setDisclosure(isExpanded: true, animated: true)
 			}
 		}
 	}
@@ -445,9 +627,11 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		let title = NSLocalizedString("Mark All as Read", comment: "Mark All as Read")
+		let title = NSLocalizedString("Mark All as Read", comment: "Command")
+		let articlesToMark = coordinator.articles
+
 		MarkAsReadAlertController.confirm(self, coordinator: coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-			self?.coordinator.markAllAsReadInTimeline()
+			self?.coordinator.markAsReadAndShowSidebar(articlesToMark)
 		}
 	}
 
@@ -505,7 +689,12 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	func openInAppBrowser() {
 		if let indexPath = coordinator.currentFeedIndexPath,
 			let url = coordinator.homePageURLForFeed(indexPath) {
-			let vc = SFSafariViewController(url: url)
+			guard let vc = SFSafariViewController.safeSafariViewController(url) else {
+				return
+			}
+			// Apply the resolved userInterfaceStyle before presenting to avoid a white flash in dark mode.
+			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5383>
+			vc.overrideUserInterfaceStyle = traitCollection.userInterfaceStyle
 			vc.modalPresentationStyle = .overFullScreen
 			present(vc, animated: true)
 		}
@@ -519,6 +708,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			if let cell = collectionView.cellForItem(at: indexPath) as? MainFeedCollectionViewCell {
 				completion(cell, indexPath)
 			}
+		}
+	}
+
+	func splitViewStateDidChange() {
+		updateVisibleCellConfigurations()
+	}
+
+	private func updateVisibleCellConfigurations() {
+		guard isViewLoaded, let collectionView else {
+			return
+		}
+		for cell in collectionView.visibleCells {
+			cell.setNeedsUpdateConfiguration()
 		}
 	}
 
@@ -575,7 +777,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			if adjustScroll {
 				collectionView.selectItemAndScrollIfNotVisible(at: indexPath, animations: [])
 			} else {
-				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: .centeredVertically)
+				collectionView.selectItem(at: indexPath, animated: false, scrollPosition: [])
 			}
 		}
 	}
@@ -667,11 +869,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		var snapshot = dataSource.snapshot()
-		snapshot.reloadItems(items)
-		dataSource.apply(snapshot, animatingDifferences: false) {
-			completion?()
-		}
+		enqueueSidebarUpdate(.reload(items), completion: completion)
 	}
 
 	func setFilterButtonToActive() {
@@ -705,19 +903,26 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 
-		for cell in collectionView.visibleCells {
-			guard let indexPath = collectionView.indexPath(for: cell),
-				  let sidebarItemNode = dataSource.itemIdentifier(for: indexPath),
-				  sidebarItemNode.node.representedObject === unreadCountProvider as AnyObject else {
-				continue
-			}
-			if let feedCell = cell as? MainFeedCollectionViewCell {
-				feedCell.unreadCount = unreadCountProvider.unreadCount
-			}
-			if let folderCell = cell as? MainFeedCollectionViewFolderCell {
-				folderCell.unreadCount = unreadCountProvider.unreadCount
+		// Reconfigure through the serialized funnel — mutating visible cells directly
+		// can change their size in the middle of an animated snapshot apply.
+		let nodesToReconfigure = dataSource.snapshot().itemIdentifiers.filter {
+			$0.node.representedObject === unreadCountProvider as AnyObject
+		}
+		guard !nodesToReconfigure.isEmpty else {
+			return
+		}
+		reconfigureItems(nodesToReconfigure)
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		for account in AccountManager.shared.activeAccounts {
+			if let headerView = findHeaderViewForAccount(account) {
+				headerView.unreadCount = account.unreadCount
 			}
 		}
+
+		// Only realized cells are reconfigured. Others pick up the setting when dequeued.
+		reconfigureItems(dataSource.snapshot().itemIdentifiers)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {
@@ -772,7 +977,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	@objc func refreshAccounts(_ sender: Any) {
 		collectionView.refreshControl?.endRefreshing()
 
-		// This is a hack to make sure that an error dialog doesn't interfere with dismissing the refreshControl.
+		// This is a hack to make sure that an error dialog doesn’t interfere with dismissing the refreshControl.
 		// If the error dialog appears too closely to the call to endRefreshing, then the refreshControl never disappears.
 		DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
 			appDelegate.manualRefresh(errorHandler: ErrorHandler.present(self))
@@ -782,7 +987,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 	@IBAction func add(_ sender: UIBarButtonItem) {
 		let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		let cancelAction = UIAlertAction(title: cancelTitle, style: .cancel)
 
 		let addFeedActionTitle = NSLocalizedString("Add Feed", comment: "Add Feed")
@@ -807,7 +1012,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			}
 			alertController.addAction(addFolderAction)
 		}
-		
+
 		alertController.addAction(cancelAction)
 
 		alertController.popoverPresentationController?.barButtonItem = sender
@@ -840,10 +1045,10 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 
 		if coordinator.isExpanded(containerID) {
-			headerView.disclosureExpanded = false
+			headerView.setDisclosure(isExpanded: false, animated: true)
 			coordinator.collapse(containerID)
 		} else {
-			headerView.disclosureExpanded = true
+			headerView.setDisclosure(isExpanded: true, animated: true)
 			coordinator.expand(containerID)
 		}
 	}
@@ -894,6 +1099,8 @@ extension MainFeedCollectionViewController: UIContextMenuInteractionDelegate {
 
 			var menuElements = [UIMenuElement]()
 			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountInfoAction(account: account)]))
+
+			menuElements.append(UIMenu(title: "", options: .displayInline, children: [self.getAccountNotificationsAction(account: account)]))
 
 			if let markAllAction = self.markAllAsReadAction(account: account, contentView: interaction.view) {
 				menuElements.append(UIMenu(title: "", options: .displayInline, children: [markAllAction]))
@@ -1004,7 +1211,7 @@ extension MainFeedCollectionViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
+		let title = NSLocalizedString("Open Home Page", comment: "Command")
 		let action = UIAction(title: title, image: Assets.Images.safari) { _ in
 			UIApplication.shared.open(url, options: [:])
 		}
@@ -1018,7 +1225,7 @@ extension MainFeedCollectionViewController {
 			return nil
 		}
 
-		let title = NSLocalizedString("Open Home Page", comment: "Open Home Page")
+		let title = NSLocalizedString("Open Home Page", comment: "Command")
 		let action = UIAlertAction(title: title, style: .default) { _ in
 			UIApplication.shared.open(url, options: [:])
 			completion(true)
@@ -1032,7 +1239,7 @@ extension MainFeedCollectionViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
+		let title = NSLocalizedString("Copy Feed URL", comment: "Command")
 		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
@@ -1045,7 +1252,7 @@ extension MainFeedCollectionViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("Copy Feed URL", comment: "Copy Feed URL")
+		let title = NSLocalizedString("Copy Feed URL", comment: "Command")
 		let action = UIAlertAction(title: title, style: .default) { _ in
 			UIPasteboard.general.url = url
 			completion(true)
@@ -1060,7 +1267,7 @@ extension MainFeedCollectionViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
+		let title = NSLocalizedString("Copy Home Page URL", comment: "Command")
 		let action = UIAction(title: title, image: Assets.Images.copy) { _ in
 			UIPasteboard.general.url = url
 		}
@@ -1074,7 +1281,7 @@ extension MainFeedCollectionViewController {
 				  return nil
 			  }
 
-		let title = NSLocalizedString("Copy Home Page URL", comment: "Copy Home Page URL")
+		let title = NSLocalizedString("Copy Home Page URL", comment: "Command")
 		let action = UIAlertAction(title: title, style: .default) { _ in
 			UIPasteboard.general.url = url
 			completion(true)
@@ -1084,8 +1291,11 @@ extension MainFeedCollectionViewController {
 
 	func markAllAsReadAlertAction(indexPath: IndexPath, completion: @escaping (Bool) -> Void) -> UIAlertAction? {
 		guard let feed = dataSource.itemIdentifier(for: indexPath)?.node.representedObject as? Feed,
-			feed.unreadCount > 0,
-			let articles = try? feed.fetchArticles(), let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
+			  feed.unreadCount > 0 else {
+			return nil
+		}
+		let articles = feed.fetchArticles()
+		guard let contentView = self.collectionView.cellForItem(at: indexPath)?.contentView else {
 				return nil
 		}
 
@@ -1097,7 +1307,7 @@ extension MainFeedCollectionViewController {
 
 		let action = UIAlertAction(title: title, style: .default) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView, cancelCompletion: cancel) { [weak self] in
-				self?.coordinator.markAllAsRead(Array(articles))
+				self?.coordinator.markAllAsRead(Array(articles), in: feed)
 				completion(true)
 			}
 		}
@@ -1105,7 +1315,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func deleteAction(indexPath: IndexPath) -> UIAction {
-		let title = NSLocalizedString("Delete", comment: "Delete")
+		let title = NSLocalizedString("Delete", comment: "Delete button")
 
 		let action = UIAction(title: title, image: Assets.Images.trash, attributes: .destructive) { [weak self] _ in
 			self?.delete(indexPath: indexPath)
@@ -1114,7 +1324,7 @@ extension MainFeedCollectionViewController {
 	}
 
 	func renameAction(indexPath: IndexPath) -> UIAction {
-		let title = NSLocalizedString("Rename", comment: "Rename")
+		let title = NSLocalizedString("Rename", comment: "Command")
 		let action = UIAction(title: title, image: Assets.Images.edit) { [weak self] _ in
 			self?.rename(indexPath: indexPath)
 		}
@@ -1137,6 +1347,14 @@ extension MainFeedCollectionViewController {
 		let title = NSLocalizedString("Get Info", comment: "Get Info")
 		let action = UIAction(title: title, image: Assets.Images.info) { [weak self] _ in
 			self?.coordinator.showAccountInspector(for: account)
+		}
+		return action
+	}
+
+	func getAccountNotificationsAction(account: Account) -> UIAction {
+		let title = NSLocalizedString("Notifications", comment: "Notifications")
+		let action = UIAction(title: title, image: UIImage(systemName: "bell.badge")) { [weak self] _ in
+			self?.coordinator.showNotificationInspector(for: account)
 		}
 		return action
 	}
@@ -1173,9 +1391,8 @@ extension MainFeedCollectionViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, sidebarItem.nameForDisplay) as String
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				if let articles = try? sidebarItem.fetchUnreadArticles() {
-					self?.coordinator.markAllAsRead(Array(articles))
-				}
+				let articles = sidebarItem.fetchUnreadArticles()
+				self?.coordinator.markAllAsRead(Array(articles), in: sidebarItem)
 			}
 		}
 
@@ -1191,11 +1408,10 @@ extension MainFeedCollectionViewController {
 		let title = NSString.localizedStringWithFormat(localizedMenuText as NSString, account.nameForDisplay) as String
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				// If you don't have this delay the screen flashes when it executes this code
+				// If you don’t have this delay the screen flashes when it executes this code
 				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-					if let articles = try? account.fetchArticles(.unread()) {
-						self?.coordinator.markAllAsRead(Array(articles))
-					}
+					let articles = account.fetchArticles(.unread())
+					self?.coordinator.markAllAsRead(Array(articles))
 				}
 			}
 		}
@@ -1213,10 +1429,10 @@ extension MainFeedCollectionViewController {
 
 		let alertController = UIAlertController(title: title, message: nil, preferredStyle: .alert)
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
-		let renameTitle = NSLocalizedString("Rename", comment: "Rename")
+		let renameTitle = NSLocalizedString("Rename", comment: "Command")
 		let renameAction = UIAlertAction(title: renameTitle, style: .default) { [weak self] _ in
 
 			guard let name = alertController.textFields?[0].text, !name.isEmpty else {
@@ -1250,7 +1466,7 @@ extension MainFeedCollectionViewController {
 
 		alertController.addTextField { textField in
 			textField.text = sidebarItem.nameForDisplay
-			textField.placeholder = NSLocalizedString("Name", comment: "Name")
+			textField.placeholder = NSLocalizedString("Name", comment: "Name field placeholder")
 			textField.clearButtonMode = .always
 		}
 
@@ -1268,21 +1484,21 @@ extension MainFeedCollectionViewController {
 		let title: String
 		let message: String
 		if sidebarItem is Folder {
-			title = NSLocalizedString("Delete Folder", comment: "Delete folder")
+			title = NSLocalizedString("Delete Folder", comment: "Command")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” folder?", comment: "Folder delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, sidebarItem.nameForDisplay) as String
 		} else {
-			title = NSLocalizedString("Delete Feed", comment: "Delete feed")
+			title = NSLocalizedString("Delete Feed", comment: "Delete Feed")
 			let localizedInformativeText = NSLocalizedString("Are you sure you want to delete the “%@” feed?", comment: "Feed delete text")
 			message = NSString.localizedStringWithFormat(localizedInformativeText as NSString, sidebarItem.nameForDisplay) as String
 		}
 
 		let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel")
+		let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button")
 		alertController.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
 
-		let deleteTitle = NSLocalizedString("Delete", comment: "Delete")
+		let deleteTitle = NSLocalizedString("Delete", comment: "Delete button")
 		let deleteAction = UIAlertAction(title: deleteTitle, style: .destructive) { [weak self] _ in
 			self?.performDelete(indexPath: indexPath)
 		}
@@ -1312,4 +1528,24 @@ extension MainFeedCollectionViewController {
 		pushUndoableCommand(deleteCommand)
 		deleteCommand.perform()
 	}
+}
+
+// MARK: - SidebarUpdate
+
+private enum SidebarUpdate {
+	case full(NSDiffableDataSourceSnapshot<String, SidebarItemNode>, animated: Bool)
+	case reconfigure([SidebarItemNode])
+	case reload([SidebarItemNode])
+
+	var isFull: Bool {
+		if case .full = self {
+			return true
+		}
+		return false
+	}
+}
+
+private struct QueuedSidebarUpdate {
+	let update: SidebarUpdate
+	let completions: [() -> Void]
 }

@@ -75,10 +75,10 @@ extension NewsBlurAPICaller {
 	/// GET URL with params, discard response
 	func requestData(callURL: URL) async throws {
 
-		guard !suspended else { throw TransportError.suspended }
+		guard !suspended else { throw WebserviceError.suspended }
 
 		let request = URLRequest(url: callURL, newsBlurCredentials: credentials)
-		try await transport.send(request: request)
+		try await session.send(request: request)
 	}
 
 	/// GET URL with params
@@ -89,22 +89,22 @@ extension NewsBlurAPICaller {
 		dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601,
 		keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys)
 	async throws -> (HTTPURLResponse, R?) {
-		guard !suspended else { throw TransportError.suspended }
+		guard !suspended else { throw WebserviceError.suspended }
 
 		let request = URLRequest(url: callURL, newsBlurCredentials: credentials)
-		let response = try await transport.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		let response = try await session.send(request: request, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
 		return response
 	}
 
 	/// POST to URL with params, discard response
 	func sendUpdates(callURL: URL, payload: NewsBlurDataConvertible) async throws {
-		guard !suspended else { throw TransportError.suspended }
+		guard !suspended else { throw WebserviceError.suspended }
 
 		var request = URLRequest(url: callURL, newsBlurCredentials: credentials)
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: HTTPRequestHeader.contentType)
 		request.httpBody = payload.asData
 
-		try await transport.send(request: request, method: HTTPMethod.post)
+		try await session.send(request: request, method: HTTPMethod.post)
 	}
 
 	/// POST to URL with params
@@ -115,7 +115,7 @@ extension NewsBlurAPICaller {
 		dateDecoding: JSONDecoder.DateDecodingStrategy = .iso8601,
 		keyDecoding: JSONDecoder.KeyDecodingStrategy = .useDefaultKeys)
 	async throws -> (HTTPURLResponse, R?) {
-		guard !suspended else { throw TransportError.suspended }
+		guard !suspended else { throw WebserviceError.suspended }
 		guard let data = payload.asData else {
 			throw NewsBlurError.invalidParameter
 		}
@@ -123,7 +123,7 @@ extension NewsBlurAPICaller {
 		var request = URLRequest(url: callURL, newsBlurCredentials: credentials)
 		request.setValue(MimeType.formURLEncoded, forHTTPHeaderField: HTTPRequestHeader.contentType)
 
-		let response = try await transport.send(request: request, method: HTTPMethod.post, data: data, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
+		let response = try await session.send(request: request, method: HTTPMethod.post, data: data, resultType: resultType, dateDecoding: dateDecoding, keyDecoding: keyDecoding)
 		return response
 	}
 }

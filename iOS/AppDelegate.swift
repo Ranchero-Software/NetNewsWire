@@ -16,6 +16,7 @@ import Account
 import Articles
 import Secrets
 import ErrorLog
+import Images
 
 @MainActor var appDelegate: AppDelegate!
 
@@ -23,9 +24,6 @@ import ErrorLog
 @MainActor final class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, UnreadCountProvider {
 
 	private let backgroundTaskDispatchQueue = DispatchQueue.init(label: "BGTaskScheduler")
-
-	private var waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-	private var syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
 
 	var shuttingDown = false {
 		didSet {
@@ -35,7 +33,7 @@ import ErrorLog
 		}
 	}
 
-	nonisolated private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "Application")
+	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "Application")
 
 	var unreadCount = 0 {
 		didSet {
@@ -57,9 +55,13 @@ import ErrorLog
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
+
+		WebViewConfiguration.resolveBrowserUserAgent()
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
@@ -86,13 +88,10 @@ import ErrorLog
 			self.updateBadge()
 		}
 
-		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { (granted, _) in
-			if granted {
-				DispatchQueue.main.async {
-					UIApplication.shared.registerForRemoteNotifications()
-				}
-			}
-		}
+		// Silent CloudKit pushes don’t need notification permission. setBadgeCount does.
+		UIApplication.shared.registerForRemoteNotifications()
+
+		UNUserNotificationCenter.current().requestAuthorization(options: [.badge, .sound, .alert]) { _, _ in }
 
 		UNUserNotificationCenter.current().delegate = self
 		UserNotificationManager.shared.start()
@@ -107,7 +106,6 @@ import ErrorLog
 
 		#if DEBUG
 		ArticleStatusSyncTimer.shared.update()
-		postFakeErrorsForTesting()
 		#endif
 
 		return true
@@ -116,7 +114,7 @@ import ErrorLog
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
 		Task { @MainActor in
-			self.resumeDatabaseProcessingIfNecessary()
+			self.resumeIfNecessary()
 			await AccountManager.shared.receiveRemoteNotification(userInfo: userInfo)
 			self.suspendApplication()
 			completionHandler(.newData)
@@ -137,7 +135,8 @@ import ErrorLog
 
 	private func updateBadge() {
 		assert(unreadCount == AccountManager.shared.unreadCount)
-		UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+		let badgeCount = AppDefaults.shared.unreadCountDisplay == .count ? unreadCount : 0
+		UNUserNotificationCenter.current().setBadgeCount(badgeCount)
 	}
 
 	// MARK: Notifications
@@ -152,6 +151,10 @@ import ErrorLog
 		AppDefaults.shared.lastRefresh = Date()
 	}
 
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateBadge()
+	}
+
 	// MARK: - API
 
 	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> Void) {
@@ -162,7 +165,9 @@ import ErrorLog
 		AccountManager.shared.refreshAllWithoutWaiting(errorHandler: errorHandler)
 	}
 
-	func resumeDatabaseProcessingIfNecessary() {
+	/// Un-suspend network activity if it was suspended on background entry.
+	func resumeIfNecessary() {
+		AppNotification.postAppDidBecomeActive()
 		if AccountManager.shared.isSuspended {
 			AccountManager.shared.resumeAll()
 			Self.logger.info("Application processing resumed.")
@@ -205,36 +210,40 @@ import ErrorLog
 		completionHandler([.list, .banner, .badge, .sound])
     }
 
-    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+	// Wrapper to safely transfer non-Sendable values to MainActor
+	private struct UnsafeSendable<T>: @unchecked Sendable {
+		let value: T
+	}
 
-		// Wrapper to safely transfer non-Sendable values to MainActor
-		struct UnsafeSendable<T>: @unchecked Sendable {
-			let value: T
-		}
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
 
 		let wrappedResponse = UnsafeSendable(value: response)
 		let wrappedCompletionHandler = UnsafeSendable(value: completionHandler)
 
 		Task { @MainActor in
-			let response = wrappedResponse.value
-			let userInfo = response.notification.request.content.userInfo
-
-			switch response.actionIdentifier {
-			case UserNotificationManager.ActionIdentifier.markAsRead:
-				handleMarkAsRead(userInfo: userInfo)
-			case UserNotificationManager.ActionIdentifier.markAsStarred:
-				handleMarkAsStarred(userInfo: userInfo)
-			default:
-				if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
-					sceneDelegate.handle(response)
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-						sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
-					})
-				}
-			}
+			handle(notificationResponse: wrappedResponse.value)
 			wrappedCompletionHandler.value()
 		}
     }
+
+	private func handle(notificationResponse response: UNNotificationResponse) {
+
+		let userInfo = response.notification.request.content.userInfo
+
+		switch response.actionIdentifier {
+		case UserNotificationManager.ActionIdentifier.markAsRead:
+			handleMarkAsRead(userInfo: userInfo)
+		case UserNotificationManager.ActionIdentifier.markAsStarred:
+			handleMarkAsStarred(userInfo: userInfo)
+		default:
+			if let sceneDelegate = response.targetScene?.delegate as? SceneDelegate {
+				sceneDelegate.handle(response)
+				DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+					sceneDelegate.coordinator.dismissIfLaunchingFromExternalAction()
+				})
+			}
+		}
+	}
 }
 
 // MARK: App Initialization
@@ -270,76 +279,88 @@ private extension AppDelegate {
 private extension AppDelegate {
 
 	func waitForSyncTasksToFinish() {
-		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else { return }
-
-		isWaitingForSyncTasks = true
-
-		self.waitBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-			guard let self = self else { return }
-			Task { @MainActor in
-				self.completeProcessing(true)
-				Self.logger.info("Accounts wait for progress terminated for running too long.")
-			}
-		}
-
-		DispatchQueue.main.async { [weak self] in
-			self?.waitToComplete { [weak self] suspend in
-				self?.completeProcessing(suspend)
-			}
-		}
-	}
-
-	func waitToComplete(completion: @escaping (Bool) -> Void) {
-		guard UIApplication.shared.applicationState == .background else {
-			Self.logger.info("App came back to foreground, no longer waiting.")
-			completion(false)
+		guard !isWaitingForSyncTasks && UIApplication.shared.applicationState == .background else {
 			return
 		}
 
-		if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared?.isRunning ?? false {
-			Self.logger.info("Waiting for sync to finish…")
-			DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-				self?.waitToComplete(completion: completion)
+		isWaitingForSyncTasks = true
+
+		var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
+
+		/// Make sure this run’s background task is ended exactly once.
+		func endWaitBackgroundTask() {
+			guard backgroundTaskIdentifier != .invalid else {
+				return
 			}
-		} else {
-			Self.logger.info("Refresh progress complete.")
-			completion(true)
+			UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+			backgroundTaskIdentifier = .invalid
+		}
+
+		let waitTask = Task { @MainActor in
+			let shouldSuspend = await waitToComplete()
+			isWaitingForSyncTasks = false
+			if shouldSuspend {
+				suspendApplication()
+			}
+			endWaitBackgroundTask()
+		}
+
+		backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Wait for Sync Tasks") {
+			waitTask.cancel()
+			self.suspendApplication()
+			endWaitBackgroundTask()
+			Self.logger.info("Accounts wait for progress terminated for running too long.")
 		}
 	}
 
-	func completeProcessing(_ suspend: Bool) {
-		if suspend {
-			suspendApplication()
+	/// Wait for the refresh, status sync, and widget encode to finish. Returns whether the app should suspend.
+	func waitToComplete() async -> Bool {
+		while !Task.isCancelled {
+			guard UIApplication.shared.applicationState == .background else {
+				Self.logger.info("App came back to foreground, no longer waiting.")
+				return false
+			}
+
+			if AccountManager.shared.refreshInProgress || isSyncArticleStatusRunning || WidgetDataEncoder.shared?.isRunning ?? false {
+				Self.logger.info("Waiting for sync to finish…")
+				try? await Task.sleep(for: .seconds(1))
+			} else {
+				Self.logger.info("Refresh progress complete.")
+				return true
+			}
 		}
-		UIApplication.shared.endBackgroundTask(self.waitBackgroundUpdateTask)
-		self.waitBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		isWaitingForSyncTasks = false
+
+		return false
 	}
 
 	func syncArticleStatus() {
-		guard !isSyncArticleStatusRunning else { return }
+		guard !isSyncArticleStatusRunning else {
+			return
+		}
 
 		isSyncArticleStatusRunning = true
 
-		let completeProcessing = { [unowned self] in
-			self.isSyncArticleStatusRunning = false
-			UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-			self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-		}
+		var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
 
-		self.syncBackgroundUpdateTask = UIApplication.shared.beginBackgroundTask { [weak self] in
-			Task { @MainActor in
-				guard let self = self else { return }
-				self.isSyncArticleStatusRunning = false
-				UIApplication.shared.endBackgroundTask(self.syncBackgroundUpdateTask)
-				self.syncBackgroundUpdateTask = UIBackgroundTaskIdentifier.invalid
-				Self.logger.info("Accounts sync processing terminated for running too long.")
+		/// Make sure this run’s background task is ended exactly once.
+		func endSyncBackgroundTask() {
+			guard backgroundTaskIdentifier != .invalid else {
+				return
 			}
+			UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+			backgroundTaskIdentifier = .invalid
 		}
 
-		Task { @MainActor in
+		let syncTask = Task { @MainActor in
 			await AccountManager.shared.syncArticleStatusAll()
-			completeProcessing()
+			isSyncArticleStatusRunning = false
+			endSyncBackgroundTask()
+		}
+
+		backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(withName: "Sync Article Status") {
+			syncTask.cancel()
+			endSyncBackgroundTask()
+			Self.logger.info("Accounts sync processing terminated for running too long.")
 		}
 	}
 
@@ -347,9 +368,12 @@ private extension AppDelegate {
 		guard UIApplication.shared.applicationState == .background else {
 			return
 		}
+		guard !AccountManager.shared.isSuspended else {
+			return
+		}
 
 		AccountManager.shared.suspendNetworkAll()
-		AccountManager.shared.suspendDatabaseAll()
+		AccountManager.shared.saveAllIfNeeded()
 		ArticleThemeDownloader.shared.cleanUp()
 
 		AppNotification.postAppDidGoToBackground()
@@ -377,14 +401,16 @@ private extension AppDelegate {
 		}
 	}
 
-	/// Schedule a background app refresh based on `AppDefaults.refreshInterval`.
+	/// Ask the system for the next background app refresh.
+	/// The actual timing is up to the system.
 	nonisolated func scheduleBackgroundFeedRefresh() {
 		// We send this to a dedicated serial queue because as of 11/05/19 on iOS 13.2 the call to the
 		// task scheduler can hang indefinitely.
 		backgroundTaskDispatchQueue.async {
 			do {
+				let earliestBeginInterval: TimeInterval = 60 * 60
 				let request = BGAppRefreshTaskRequest(identifier: "com.ranchero.NetNewsWire.FeedRefresh")
-				request.earliestBeginDate = Date(timeIntervalSinceNow: 60 * 60)
+				request.earliestBeginDate = Date(timeIntervalSinceNow: earliestBeginInterval)
 				try BGTaskScheduler.shared.submit(request)
 			} catch {
 				Self.logger.error("Could not schedule app refresh: \(error.localizedDescription)")
@@ -398,23 +424,58 @@ private extension AppDelegate {
 
 		Self.logger.info("Performing background refresh.")
 
-		Task { @MainActor in
+		let refreshTaskIsCompleted = OSAllocatedUnfairLock(initialState: false)
+
+		enum RefreshOutcome {
+			case completed
+			case noNetwork
+			case expired
+		}
+
+		/// Make sure task.setTaskCompleted is called exactly once.
+		func completeRefreshTask(_ outcome: RefreshOutcome) {
+			let shouldComplete = refreshTaskIsCompleted.withLock { isCompleted -> Bool in
+				if isCompleted {
+					return false
+				}
+				isCompleted = true
+				return true
+			}
+			guard shouldComplete else {
+				return
+			}
+
+			let success: Bool
+			switch outcome {
+			case .completed:
+				Self.logger.info("Background refresh completed.")
+				success = true
+			case .noNetwork:
+				Self.logger.info("Background refresh skipped — no network path.")
+				success = false
+			case .expired:
+				Self.logger.info("Background refresh terminated for running too long.")
+				success = false
+			}
+
+			task.setTaskCompleted(success: success)
+		}
+
+		let refreshTask = Task { @MainActor in
 			if AccountManager.shared.isSuspended {
 				AccountManager.shared.resumeAll()
 			}
-			await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
-			if !AccountManager.shared.isSuspended {
-				WidgetDataEncoder.shared?.encode()
-				self.suspendApplication()
-				Self.logger.info("Background refresh completed.")
-				task.setTaskCompleted(success: true)
+			let didRefresh = await AccountManager.shared.refreshAll(errorHandler: ErrorHandler.log)
+			if !Task.isCancelled {
+				await WidgetDataEncoder.shared?.encodeAndWait()
 			}
+			self.suspendApplication()
+			completeRefreshTask(didRefresh ? .completed : .noNetwork)
 		}
 
-		// set expiration handler
-		task.expirationHandler = { [weak task] in
-			Self.logger.info("Background refresh terminated for running too long.")
-			task?.setTaskCompleted(success: false)
+		task.expirationHandler = {
+			refreshTask.cancel()
+			completeRefreshTask(.expired)
 			Task { @MainActor in
 				self.suspendApplication()
 			}
@@ -440,7 +501,7 @@ private extension AppDelegate {
 				return
 		}
 
-		resumeDatabaseProcessingIfNecessary()
+		resumeIfNecessary()
 
 		guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
 			assertionFailure("Expected account with \(accountID)")
@@ -448,45 +509,11 @@ private extension AppDelegate {
 			return
 		}
 
-		guard let singleArticleSet = try? account.fetchArticles(.articleIDs([articleID])) else {
-			assertionFailure("Expected article with \(articleID)")
-			Self.logger.error("No article with articleID found \(articleID) from status notification")
-			return
-		}
-
-		assert(singleArticleSet.count == 1)
-		account.markArticles(singleArticleSet, statusKey: statusKey, flag: true) { _ in }
-
 		Task { @MainActor in
-			try? await account.syncArticleStatus()
+			try? await account.markArticles(articleIDs: [articleID], statusKey: statusKey, flag: true)
+			_ = try? await account.syncArticleStatus()
 			prepareAccountsForBackground()
 			suspendApplication()
 		}
 	}
-}
-
-// MARK: - Debug
-
-extension AppDelegate {
-
-	#if DEBUG
-	func postFakeErrorsForTesting() {
-		let fakeErrors: [(String, Int, String, String)] = [
-			("On My Mac", AccountType.onMyMac.rawValue, "Downloading feed", "HTTP 404 Not Found: https://example.com/feed.xml"),
-			("Feedbin", AccountType.feedbin.rawValue, "Syncing starred status", "HTTP 401 Unauthorized"),
-			("iCloud", AccountType.cloudKit.rawValue, "Refreshing", "HTTP 429 Too Many Requests: https://daringfireball.net/feeds/main"),
-			("Feedly", AccountType.feedly.rawValue, "Fetching articles", "The request timed out."),
-			("NewsBlur", AccountType.newsBlur.rawValue, "Refreshing feeds", "HTTP 503 Service Unavailable"),
-			("FreshRSS", AccountType.freshRSS.rawValue, "Syncing", "Could not connect to the server."),
-			("Inoreader", AccountType.inoreader.rawValue, "Fetching unread counts", "HTTP 500 Internal Server Error"),
-			("BazQux", AccountType.bazQux.rawValue, "Syncing articles", "The Internet connection appears to be offline."),
-			("The Old Reader", AccountType.theOldReader.rawValue, "Refreshing articles", "A server with the specified hostname could not be found.")
-		]
-
-		for (accountName, accountType, operation, message) in fakeErrors {
-			let errorLogUserInfo = ErrorLogUserInfoKey.userInfo(sourceName: accountName, sourceID: accountType, operation: operation, errorMessage: message)
-			NotificationCenter.default.post(name: .appDidEncounterError, object: self, userInfo: errorLogUserInfo)
-		}
-	}
-	#endif
 }

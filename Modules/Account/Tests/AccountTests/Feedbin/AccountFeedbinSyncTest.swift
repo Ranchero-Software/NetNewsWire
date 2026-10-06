@@ -7,16 +7,20 @@
 //
 
 import XCTest
+import RSWeb
 @testable import Account
 
 @MainActor final class AccountFeedbinSyncTest: XCTestCase {
-	
+
+	override func setUp() {
+		TestingURLProtocol.reset()
+	}
+
 	func testDownloadSync() async throws {
 
-		let testTransport = TestTransport()
-		testTransport.testFiles["tags.json"] = "JSON/tags_add.json"
-		testTransport.testFiles["subscriptions.json"] = "JSON/subscriptions_initial.json"
-		let account = TestAccountManager.shared.createAccount(type: .feedbin, transport: testTransport)
+		TestingURLProtocol.setResponse("tags.json", file: "JSON/tags_add.json")
+		TestingURLProtocol.setResponse("subscriptions.json", file: "JSON/subscriptions_initial.json")
+		let account = TestAccountManager.shared.createAccount(type: .feedbin)
 
 		// Test initial folders
 		try await account.refreshAll()
@@ -29,7 +33,7 @@ import XCTest
 		XCTAssertEqual("https://daringfireball.net/", daringFireball!.homePageURL)
 
 		// Test Adding a Feed
-		testTransport.testFiles["subscriptions.json"] = "JSON/subscriptions_add.json"
+		TestingURLProtocol.setResponse("subscriptions.json", file: "JSON/subscriptions_add.json")
 
 		try await account.refreshAll()
 

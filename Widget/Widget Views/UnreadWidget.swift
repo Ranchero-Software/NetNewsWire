@@ -33,8 +33,8 @@ struct UnreadWidgetView: View {
 						.layoutPriority(1)
 					Spacer()
 						.layoutPriority(0)
-					if entry.widgetData.totalUnreadCount - maxCount() > 0 {
-						Text(verbatim: entry.widgetData.totalUnreadCount.formatted())
+					if entry.widgetData.totalUnreadCount - maxCount() > 0, let unreadCountText = entry.widgetData.effectiveUnreadCountDisplay.text(for: entry.widgetData.totalUnreadCount) {
+						Text(verbatim: unreadCountText)
 							.font(.caption2)
 							.bold()
 							.foregroundColor(.secondary)
@@ -45,11 +45,9 @@ struct UnreadWidgetView: View {
 				}
 				.widgetURL(WidgetDeepLink.unread.url)
 				Divider()
-				if entry.widgetData.unreadArticles.count > 0 {
-					ForEach(0..<maxCount(), id: \.self, content: { i in
-						ArticleItemView(article: entry.widgetData.unreadArticles[i],
-										deepLink: WidgetDeepLink.unreadArticle(id: entry.widgetData.unreadArticles[i].id).url)
-					})
+				ForEach(entry.widgetData.unreadArticles.prefix(maxCount())) { article in
+					ArticleItemView(article: article,
+									deepLink: WidgetDeepLink.unreadArticle(id: article.id).url)
 				}
 				Spacer()
 			}
@@ -81,7 +79,7 @@ struct UnreadWidgetView: View {
 			Spacer()
 			Image(systemName: "largecircle.fill.circle")
 				.resizable()
-				.aspectRatio(contentMode: .fit)
+				.scaledToFit()
 				.foregroundColor(.accentColor)
 				.frame(width: 30)
 

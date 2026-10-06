@@ -141,21 +141,26 @@ final class DeleteCommand: UndoableCommand {
 
 	func delete(completion: @escaping () -> Void) {
 		if let feed {
-			guard let container = path.resolveContainer() else {
+			guard let account, let container = path.resolveContainer() else {
 				completion()
 				return
 			}
 
 			BatchUpdate.shared.start()
-			account?.removeFeed(feed, from: container) { result in
+			account.removeFeed(feed, from: container) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
 			}
 
 		} else if let folder {
+			guard let account else {
+				completion()
+				return
+			}
+
 			BatchUpdate.shared.start()
-			account?.removeFolder(folder) { result in
+			account.removeFolder(folder) { result in
 				BatchUpdate.shared.end()
 				completion()
 				self.checkResult(result)
@@ -244,9 +249,9 @@ final class DeleteCommand: UndoableCommand {
 
 private struct DeleteActionName {
 
-	private static let deleteFeed = NSLocalizedString("Delete Feed", comment: "command")
-	private static let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "command")
-	private static let deleteFolder = NSLocalizedString("Delete Folder", comment: "command")
+	private static let deleteFeed = NSLocalizedString("Delete Feed", comment: "Delete Feed")
+	private static let deleteFeeds = NSLocalizedString("Delete Feeds", comment: "Delete Feeds")
+	private static let deleteFolder = NSLocalizedString("Delete Folder", comment: "Command")
 	private static let deleteFolders = NSLocalizedString("Delete Folders", comment: "command")
 	private static let deleteFeedsAndFolders = NSLocalizedString("Delete Feeds and Folders", comment: "command")
 

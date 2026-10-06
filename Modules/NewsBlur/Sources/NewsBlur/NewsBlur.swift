@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import RSCore
 import os
 
 public struct NewsBlur {
 	// Convention with this logger is to put "NewsBlur: " at the beginning of each message.
-	public static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: "NewsBlur")
+	public static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "NewsBlur")
 }

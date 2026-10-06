@@ -1,0 +1,2442 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "1b7-l0-nxx.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Find\"; ObjectID = \"1b7-l0-nxx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar"
+          }
+        }
+      }
+    },
+    "1nF-7O-aKU.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Check for Updates…\"; ObjectID = \"1nF-7O-aKU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Check for Updates…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar actualizaciones…"
+          }
+        }
+      }
+    },
+    "1UK-8n-QPP.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Customize Toolbar…\"; ObjectID = \"1UK-8n-QPP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Customize Toolbar…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personalizar barra de herramientas…"
+          }
+        }
+      }
+    },
+    "1Xt-HY-uBw.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"NetNewsWire\"; ObjectID = \"1Xt-HY-uBw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "NetNewsWire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NetNewsWire"
+          }
+        }
+      }
+    },
+    "2oI-Rn-ZJC.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Transformations\"; ObjectID = \"2oI-Rn-ZJC\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Transformations"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transformaciones"
+          }
+        }
+      }
+    },
+    "3IN-sU-3Bg.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Spelling\"; ObjectID = \"3IN-sU-3Bg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Spelling"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortografía"
+          }
+        }
+      }
+    },
+    "3rS-ZA-NoH.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Speech\"; ObjectID = \"3rS-ZA-NoH\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Speech"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz"
+          }
+        }
+      }
+    },
+    "4EN-yA-p0u.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Find\"; ObjectID = \"4EN-yA-p0u\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar"
+          }
+        }
+      }
+    },
+    "4iQ-1v-dTa.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Open in Browser\"; ObjectID = \"4iQ-1v-dTa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open in Browser"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir en el navegador"
+          }
+        }
+      }
+    },
+    "4J7-dP-txa.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Enter Full Screen\"; ObjectID = \"4J7-dP-txa\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enter Full Screen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar pantalla completa"
+          }
+        }
+      }
+    },
+    "4sb-4s-VLi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Quit NetNewsWire\"; ObjectID = \"4sb-4s-VLi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Quit NetNewsWire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Salir de NetNewsWire"
+          }
+        }
+      }
+    },
+    "5kV-Vb-QxS.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"About NetNewsWire\"; ObjectID = \"5kV-Vb-QxS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "About NetNewsWire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acerca de NetNewsWire"
+          }
+        }
+      }
+    },
+    "5QF-Oa-p0T.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Edit\"; ObjectID = \"5QF-Oa-p0T\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Edit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edición"
+          }
+        }
+      }
+    },
+    "6dh-zS-Vam.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Redo\"; ObjectID = \"6dh-zS-Vam\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Redo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rehacer"
+          }
+        }
+      }
+    },
+    "8lZ-XI-I4y.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Mark Below as Read\"; ObjectID = \"8lZ-XI-I4y\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark Below as Read"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar los de abajo como leídos"
+          }
+        }
+      }
+    },
+    "8ZT-ew-JNc.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"All Unread\"; ObjectID = \"8ZT-ew-JNc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "All Unread"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Todos los no leídos"
+          }
+        }
+      }
+    },
+    "9ic-FL-obx.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Substitutions\"; ObjectID = \"9ic-FL-obx\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Substitutions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustituciones"
+          }
+        }
+      }
+    },
+    "9Ot-wC-s5U.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Debug Search\"; ObjectID = \"9Ot-wC-s5U\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Debug Search"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depurar búsqueda"
+          }
+        }
+      }
+    },
+    "9yt-4B-nSM.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Smart Copy/Paste\"; ObjectID = \"9yt-4B-nSM\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Smart Copy/Paste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar/pegar inteligente"
+          }
+        }
+      }
+    },
+    "24r-2i-fXR.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Info\"; ObjectID = \"24r-2i-fXR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Info"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Información"
+          }
+        }
+      }
+    },
+    "57V-gv-vEw.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Article\"; ObjectID = \"57V-gv-vEw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Article"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artículo"
+          }
+        }
+      }
+    },
+    "78Y-hA-62v.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Correct Spelling Automatically\"; ObjectID = \"78Y-hA-62v\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Correct Spelling Automatically"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Corregir ortografía automáticamente"
+          }
+        }
+      }
+    },
+    "act-Wn-d0w.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Current Activity\"; ObjectID = \"act-Wn-d0w\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Current Activity"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actividad actual"
+          }
+        }
+      }
+    },
+    "alg-Wn-m1q.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Activity Log\"; ObjectID = \"alg-Wn-m1q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Activity Log"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de actividad"
+          }
+        }
+      }
+    },
+    "aS7-kP-m3Q.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Account Stats\"; ObjectID = \"aS7-kP-m3Q\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Account Stats"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estadísticas de cuentas"
+          }
+        }
+      }
+    },
+    "aUF-d1-5bR.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Window\"; ObjectID = \"aUF-d1-5bR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ventana"
+          }
+        }
+      }
+    },
+    "AYu-sK-qS6.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Main Menu\"; ObjectID = \"AYu-sK-qS6\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Main Menu"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Menú principal"
+          }
+        }
+      }
+    },
+    "b5s-xg-B1w.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Release Notes\"; ObjectID = \"b5s-xg-B1w\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Release Notes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notas de la versión"
+          }
+        }
+      }
+    },
+    "b10-sA-Yzi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Hide Read Articles\"; ObjectID = \"b10-sA-Yzi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide Read Articles"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar artículos leídos"
+          }
+        }
+      }
+    },
+    "bib-Uj-vzu.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"File\"; ObjectID = \"bib-Uj-vzu\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo"
+          }
+        }
+      }
+    },
+    "BOF-NM-1cW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Preferences…\"; ObjectID = \"BOF-NM-1cW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Preferences…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preferencias…"
+          }
+        }
+      }
+    },
+    "buJ-ug-pKt.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Use Selection for Find\"; ObjectID = \"buJ-ug-pKt\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use Selection for Find"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar selección para buscar"
+          }
+        }
+      }
+    },
+    "c8a-y6-VQd.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Transformations\"; ObjectID = \"c8a-y6-VQd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Transformations"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transformaciones"
+          }
+        }
+      }
+    },
+    "cmP-uH-mS8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Add NetNewsWire News Feed\"; ObjectID = \"cmP-uH-mS8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add NetNewsWire News Feed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Añadir fuente de noticias de NetNewsWire"
+          }
+        }
+      }
+    },
+    "cwL-P1-jid.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Smart Links\"; ObjectID = \"cwL-P1-jid\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Smart Links"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enlaces inteligentes"
+          }
+        }
+      }
+    },
+    "d9M-CD-aMd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Make Lower Case\"; ObjectID = \"d9M-CD-aMd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Make Lower Case"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertir en minúsculas"
+          }
+        }
+      }
+    },
+    "din-0s-aUR.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Dinosaurs\"; ObjectID = \"din-0s-aUR\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Dinosaurs"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dinosaurios"
+          }
+        }
+      }
+    },
+    "dLy-xR-u6N.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"iCloud Storage Stats\"; ObjectID = \"dLy-xR-u6N\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "iCloud Storage Stats"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estadísticas de almacenamiento de iCloud"
+          }
+        }
+      }
+    },
+    "dMs-cI-mzQ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"File\"; ObjectID = \"dMs-cI-mzQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "File"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archivo"
+          }
+        }
+      }
+    },
+    "dRJ-4n-Yzg.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Undo\"; ObjectID = \"dRJ-4n-Yzg\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Undo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshacer"
+          }
+        }
+      }
+    },
+    "Dv1-io-Yv7.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Spelling and Grammar\"; ObjectID = \"Dv1-io-Yv7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Spelling and Grammar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ortografía y gramática"
+          }
+        }
+      }
+    },
+    "DVo-aG-piG.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Close Window\"; ObjectID = \"DVo-aG-piG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Close Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cerrar ventana"
+          }
+        }
+      }
+    },
+    "E9K-zV-nLv.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Hide Read Feeds\"; ObjectID = \"E9K-zV-nLv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide Read Feeds"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar fuentes leídas"
+          }
+        }
+      }
+    },
+    "EjD-X9-Pjf.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Open in Browser Inverted\"; ObjectID = \"EjD-X9-Pjf\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open in Browser Inverted"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir en el navegador (invertido)"
+          }
+        }
+      }
+    },
+    "erl-0g-Kw7.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Error Log\"; ObjectID = \"erl-0g-Kw7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Error Log"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Registro de errores"
+          }
+        }
+      }
+    },
+    "EwI-z4-ZA3.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Enable Web Inspector\"; ObjectID = \"EwI-z4-ZA3\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Enable Web Inspector"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activar inspector web"
+          }
+        }
+      }
+    },
+    "F2S-fz-NVQ.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Help\"; ObjectID = \"F2S-fz-NVQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Help"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda"
+          }
+        }
+      }
+    },
+    "Fc9-c7-2AY.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Mark as Read\"; ObjectID = \"Fc9-c7-2AY\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark as Read"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar como leído"
+          }
+        }
+      }
+    },
+    "FeM-D8-WVr.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Substitutions\"; ObjectID = \"FeM-D8-WVr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Substitutions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sustituciones"
+          }
+        }
+      }
+    },
+    "FKE-Sm-Kum.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"NetNewsWire Help\"; ObjectID = \"FKE-Sm-Kum\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "NetNewsWire Help"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda de NetNewsWire"
+          }
+        }
+      }
+    },
+    "fOF-99-6Iv.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Copy External URL\"; ObjectID = \"fOF-99-6Iv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy External URL"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar URL externa"
+          }
+        }
+      }
+    },
+    "FPs-q4-hLT.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Go\"; ObjectID = \"FPs-q4-hLT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir"
+          }
+        }
+      }
+    },
+    "gVA-U4-sdL.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Paste\"; ObjectID = \"gVA-U4-sdL\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Paste"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegar"
+          }
+        }
+      }
+    },
+    "gVd-kQ-efj.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Test Crash Reporter Window\"; ObjectID = \"gVd-kQ-efj\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Test Crash Reporter Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probar ventana de informe de fallos"
+          }
+        }
+      }
+    },
+    "gVt-cz-eoJ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Force Crash\"; ObjectID = \"gVt-cz-eoJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Force Crash"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forzar fallo"
+          }
+        }
+      }
+    },
+    "H8h-7b-M4v.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"View\"; ObjectID = \"H8h-7b-M4v\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "View"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualización"
+          }
+        }
+      }
+    },
+    "HdN-Ks-cwh.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Mark All as Read\"; ObjectID = \"HdN-Ks-cwh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark All as Read"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar todos como leídos"
+          }
+        }
+      }
+    },
+    "HFo-cy-zxI.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Spelling and Grammar\"; ObjectID = \"HFo-cy-zxI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Spelling and Grammar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar ortografía y gramática"
+          }
+        }
+      }
+    },
+    "HFQ-gK-NFA.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Text Replacement\"; ObjectID = \"HFQ-gK-NFA\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Text Replacement"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reemplazar texto"
+          }
+        }
+      }
+    },
+    "hQb-2v-fYv.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Smart Quotes\"; ObjectID = \"hQb-2v-fYv\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Smart Quotes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comillas tipográficas"
+          }
+        }
+      }
+    },
+    "HyV-fh-RgO.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"View\"; ObjectID = \"HyV-fh-RgO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "View"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visualización"
+          }
+        }
+      }
+    },
+    "hz2-CU-CR7.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Check Document Now\"; ObjectID = \"hz2-CU-CR7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Check Document Now"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar documento ahora"
+          }
+        }
+      }
+    },
+    "hz9-B4-Xy5.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Services\"; ObjectID = \"hz9-B4-Xy5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Services"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicios"
+          }
+        }
+      }
+    },
+    "i8e-24-dto.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Import NNW 3 Subscriptions…\"; ObjectID = \"i8e-24-dto\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Import NNW 3 Subscriptions…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar suscripciones de NNW 3…"
+          }
+        }
+      }
+    },
+    "iii-kP-qoF.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Ascending\"; ObjectID = \"iii-kP-qoF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Ascending"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Artículo más antiguo arriba"
+          }
+        }
+      }
+    },
+    "J5h-uQ-57w.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Clean Up Articles\"; ObjectID = \"J5h-uQ-57w\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Clean Up Articles"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limpiar artículos"
+          }
+        }
+      }
+    },
+    "Kd2-mp-pUS.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show All\"; ObjectID = \"Kd2-mp-pUS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show All"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar todo"
+          }
+        }
+      }
+    },
+    "kfC-NQ-g3E.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"How To Support NetNewsWire\"; ObjectID = \"kfC-NQ-g3E\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "How To Support NetNewsWire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo apoyar a NetNewsWire"
+          }
+        }
+      }
+    },
+    "kIP-vf-haE.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Sidebar\"; ObjectID = \"kIP-vf-haE\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Sidebar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar barra lateral"
+          }
+        }
+      }
+    },
+    "L20-jv-7c9.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Today\"; ObjectID = \"L20-jv-7c9\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Today"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        }
+      }
+    },
+    "LE2-aR-0XJ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Bring All to Front\"; ObjectID = \"LE2-aR-0XJ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bring All to Front"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traer todo al frente"
+          }
+        }
+      }
+    },
+    "LSZ-ci-Jb5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Main Window\"; ObjectID = \"LSZ-ci-Jb5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Main Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ventana principal"
+          }
+        }
+      }
+    },
+    "m0T-w3-neT.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show iCloud Drive Missing Alert\"; ObjectID = \"m0T-w3-neT\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show iCloud Drive Missing Alert"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar alerta de iCloud Drive no disponible"
+          }
+        }
+      }
+    },
+    "mE2-pM-rQF.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Bug Tracker\"; ObjectID = \"mE2-pM-rQF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Bug Tracker"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguimiento de errores"
+          }
+        }
+      }
+    },
+    "mK6-2p-4JG.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Check Grammar With Spelling\"; ObjectID = \"mK6-2p-4JG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Check Grammar With Spelling"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar gramática con la ortografía"
+          }
+        }
+      }
+    },
+    "nB2-mv-2i5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Article Search…\"; ObjectID = \"nB2-mv-2i5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Article Search…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar artículos…"
+          }
+        }
+      }
+    },
+    "nLP-fa-KUi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Sort Articles By\"; ObjectID = \"nLP-fa-KUi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort Articles By"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenar artículos por"
+          }
+        }
+      }
+    },
+    "NMo-om-nkz.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Services\"; ObjectID = \"NMo-om-nkz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Services"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Servicios"
+          }
+        }
+      }
+    },
+    "NOT-8E-ykF.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Debug\"; ObjectID = \"NOT-8E-ykF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Debug"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depuración"
+          }
+        }
+      }
+    },
+    "NQW-Ph-lw2.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Go\"; ObjectID = \"NQW-Ph-lw2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Go"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir"
+          }
+        }
+      }
+    },
+    "OKC-FV-V33.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Discourse Forum\"; ObjectID = \"OKC-FV-V33\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Discourse Forum"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Foro de Discourse"
+          }
+        }
+      }
+    },
+    "OlJ-93-6OP.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Sort Articles By\"; ObjectID = \"OlJ-93-6OP\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Sort Articles By"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ordenar artículos por"
+          }
+        }
+      }
+    },
+    "Olw-nP-bQN.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Hide NetNewsWire\"; ObjectID = \"Olw-nP-bQN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide NetNewsWire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar NetNewsWire"
+          }
+        }
+      }
+    },
+    "OwM-mh-QMV.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Find Previous\"; ObjectID = \"OwM-mh-QMV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find Previous"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar anterior"
+          }
+        }
+      }
+    },
+    "OY7-WF-poV.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Minimize\"; ObjectID = \"OY7-WF-poV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Minimize"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minimizar"
+          }
+        }
+      }
+    },
+    "Oyz-dy-DGm.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Stop Speaking\"; ObjectID = \"Oyz-dy-DGm\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Stop Speaking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener locución"
+          }
+        }
+      }
+    },
+    "p1o-EG-Uo8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Mark Above as Read\"; ObjectID = \"p1o-EG-Uo8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark Above as Read"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar los de arriba como leídos"
+          }
+        }
+      }
+    },
+    "p5x-Xq-1fW.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Reader View\"; ObjectID = \"p5x-Xq-1fW\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Reader View"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar vista de lector"
+          }
+        }
+      }
+    },
+    "pa3-QI-u2k.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Delete\"; ObjectID = \"pa3-QI-u2k\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Delete"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eliminar"
+          }
+        }
+      }
+    },
+    "pGg-Gc-PU2.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"New Window\"; ObjectID = \"pGg-Gc-PU2\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "New Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva ventana"
+          }
+        }
+      }
+    },
+    "Ppm-uh-K5n.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Refresh\"; ObjectID = \"Ppm-uh-K5n\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Refresh"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar"
+          }
+        }
+      }
+    },
+    "q2Z-9K-GBd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Website\"; ObjectID = \"q2Z-9K-GBd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Website"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sitio web"
+          }
+        }
+      }
+    },
+    "q3p-nE-m2k.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Next Unread\"; ObjectID = \"q3p-nE-m2k\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Next Unread"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siguiente no leído"
+          }
+        }
+      }
+    },
+    "q09-fT-Sye.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Find Next\"; ObjectID = \"q09-fT-Sye\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find Next"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar siguiente"
+          }
+        }
+      }
+    },
+    "QfD-Xw-sdF.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"GitHub Repository\"; ObjectID = \"QfD-Xw-sdF\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "GitHub Repository"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repositorio de GitHub"
+          }
+        }
+      }
+    },
+    "qNk-By-jKp.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Copy Article URL\"; ObjectID = \"qNk-By-jKp\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy Article URL"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar URL del artículo"
+          }
+        }
+      }
+    },
+    "QxZ-DC-21I.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Open Application Support Folder\"; ObjectID = \"QxZ-DC-21I\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Application Support Folder"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir carpeta Application Support"
+          }
+        }
+      }
+    },
+    "R4o-n2-Eq4.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Zoom\"; ObjectID = \"R4o-n2-Eq4\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Zoom"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom"
+          }
+        }
+      }
+    },
+    "rbD-Rh-wIN.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Check Spelling While Typing\"; ObjectID = \"rbD-Rh-wIN\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Check Spelling While Typing"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprobar ortografía al escribir"
+          }
+        }
+      }
+    },
+    "rgM-f4-ycn.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Smart Dashes\"; ObjectID = \"rgM-f4-ycn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Smart Dashes"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guiones inteligentes"
+          }
+        }
+      }
+    },
+    "rSl-F4-qo7.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Import Subscriptions…\"; ObjectID = \"rSl-F4-qo7\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Import Subscriptions…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importar suscripciones…"
+          }
+        }
+      }
+    },
+    "Ruw-6m-B2m.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Select All\"; ObjectID = \"Ruw-6m-B2m\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Select All"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seleccionar todo"
+          }
+        }
+      }
+    },
+    "S0p-oC-mLd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Jump to Selection\"; ObjectID = \"S0p-oC-mLd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Jump to Selection"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir a la selección"
+          }
+        }
+      }
+    },
+    "sMf-da-001.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Date\"; ObjectID = \"sMf-da-001\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Date"
+          }
+        }
+      }
+    },
+    "sMf-fe-002.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Feed\"; ObjectID = \"sMf-fe-002\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Feed"
+          }
+        }
+      }
+    },
+    "sMf-st-005.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Starred\"; ObjectID = \"sMf-st-005\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Starred"
+          }
+        }
+      }
+    },
+    "sMf-ti-003.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Title\"; ObjectID = \"sMf-ti-003\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Title"
+          }
+        }
+      }
+    },
+    "sMf-un-004.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Unread\"; ObjectID = \"sMf-un-004\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread"
+          }
+        }
+      }
+    },
+    "snW-S8-Cw5.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Toolbar\"; ObjectID = \"snW-S8-Cw5\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Toolbar"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar barra de herramientas"
+          }
+        }
+      }
+    },
+    "Td7-aD-5lo.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Window\"; ObjectID = \"Td7-aD-5lo\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Window"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ventana"
+          }
+        }
+      }
+    },
+    "TNS-TV-n0U.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Descending\"; ObjectID = \"TNS-TV-n0U\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Descending"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Artículo más reciente arriba"
+          }
+        }
+      }
+    },
+    "tRr-pd-1PS.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Data Detectors\"; ObjectID = \"tRr-pd-1PS\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Data Detectors"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detectores de datos"
+          }
+        }
+      }
+    },
+    "TzI-3g-N0v.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Article\"; ObjectID = \"TzI-3g-N0v\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Article"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Artículo"
+          }
+        }
+      }
+    },
+    "ucL-ay-0ut.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Use Column Layout\"; ObjectID = \"ucL-ay-0ut\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use Column Layout"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar disposición en columnas"
+          }
+        }
+      }
+    },
+    "UEZ-Bs-lqG.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Capitalize\"; ObjectID = \"UEZ-Bs-lqG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Capitalize"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capitalizar"
+          }
+        }
+      }
+    },
+    "UqE-mp-gtV.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Debug\"; ObjectID = \"UqE-mp-gtV\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Debug"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depuración"
+          }
+        }
+      }
+    },
+    "uQy-DD-JDr.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"NetNewsWire\"; ObjectID = \"uQy-DD-JDr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "NetNewsWire"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "NetNewsWire"
+          }
+        }
+      }
+    },
+    "uRl-iY-unG.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Cut\"; ObjectID = \"uRl-iY-unG\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Cut"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cortar"
+          }
+        }
+      }
+    },
+    "Vdr-fp-XzO.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Hide Others\"; ObjectID = \"Vdr-fp-XzO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide Others"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar otros"
+          }
+        }
+      }
+    },
+    "Veh-SV-KWy.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Refresh\"; ObjectID = \"Veh-SV-KWy\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Refresh"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualizar"
+          }
+        }
+      }
+    },
+    "vmV-6d-7jI.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Make Upper Case\"; ObjectID = \"vmV-6d-7jI\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Make Upper Case"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Convertir en mayúsculas"
+          }
+        }
+      }
+    },
+    "vvo-ZM-8kl.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Mark as Starred\"; ObjectID = \"vvo-ZM-8kl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Mark as Starred"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marcar como destacado"
+          }
+        }
+      }
+    },
+    "w6o-j8-cda.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Keyboard Shortcuts\"; ObjectID = \"w6o-j8-cda\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Keyboard Shortcuts"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funciones rápidas de teclado"
+          }
+        }
+      }
+    },
+    "W48-6f-4Dl.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Edit\"; ObjectID = \"W48-6f-4Dl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Edit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edición"
+          }
+        }
+      }
+    },
+    "Was-JA-tGl.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"New Feed…\"; ObjectID = \"Was-JA-tGl\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "New Feed…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva fuente…"
+          }
+        }
+      }
+    },
+    "WeT-3V-zwk.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Paste and Match Style\"; ObjectID = \"WeT-3V-zwk\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Paste and Match Style"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pegar con el mismo estilo"
+          }
+        }
+      }
+    },
+    "wkh-LX-Xp1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"New Folder…\"; ObjectID = \"wkh-LX-Xp1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "New Folder…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva carpeta…"
+          }
+        }
+      }
+    },
+    "wpr-3q-Mcd.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Help\"; ObjectID = \"wpr-3q-Mcd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Help"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayuda"
+          }
+        }
+      }
+    },
+    "x3v-GG-iWU.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Copy\"; ObjectID = \"x3v-GG-iWU\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Copy"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copiar"
+          }
+        }
+      }
+    },
+    "x9L-mW-2vQ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Open Image Cache Folder\"; ObjectID = \"x9L-mW-2vQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open Image Cache Folder"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir carpeta de caché de imágenes"
+          }
+        }
+      }
+    },
+    "XJG-gO-OKi.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Test Crash Log Sender\"; ObjectID = \"XJG-gO-OKi\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Test Crash Log Sender"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probar envío de registros de fallos"
+          }
+        }
+      }
+    },
+    "xrE-MZ-jX0.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Speech\"; ObjectID = \"xrE-MZ-jX0\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Speech"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voz"
+          }
+        }
+      }
+    },
+    "Xy2-v8-Lj8.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Export Subscriptions…\"; ObjectID = \"Xy2-v8-Lj8\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Export Subscriptions…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exportar suscripciones…"
+          }
+        }
+      }
+    },
+    "Xz5-n4-O0W.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Find…\"; ObjectID = \"Xz5-n4-O0W\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Find…"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buscar…"
+          }
+        }
+      }
+    },
+    "Ynk-f8-cLZ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Start Speaking\"; ObjectID = \"Ynk-f8-cLZ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Start Speaking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Iniciar locución"
+          }
+        }
+      }
+    },
+    "z6F-FW-3nz.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Show Substitutions\"; ObjectID = \"z6F-FW-3nz\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show Substitutions"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar sustituciones"
+          }
+        }
+      }
+    },
+    "ZRx-me-QXO.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Starred\"; ObjectID = \"ZRx-me-QXO\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Starred"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destacados"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.2"
+}

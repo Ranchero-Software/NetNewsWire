@@ -43,6 +43,10 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 	// MARK: NSViewController
 
+	convenience init() {
+		self.init(nibName: "FolderInspector", bundle: nil)
+	}
+
 	override func viewDidLoad() {
 		updateUI()
 

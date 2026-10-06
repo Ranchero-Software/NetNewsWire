@@ -7,7 +7,7 @@
 
 import AppKit
 
-enum CloudKitStatsLayout {
+@MainActor enum CloudKitStatsLayout {
 
 	static let containerWidth: CGFloat = 400
 	static let windowHeight: CGFloat = 530
@@ -24,14 +24,14 @@ enum CloudKitStatsLayout {
 	static let starColor = Assets.Colors.star
 	static let warningColor = NSColor.systemOrange
 
-	@MainActor static func makeDivider() -> NSView {
+	static func makeDivider() -> NSView {
 		let divider = NSBox()
 		divider.boxType = .separator
 		divider.translatesAutoresizingMaskIntoConstraints = false
 		return divider
 	}
 
-	@MainActor static func makeLabelWithIcon(_ text: String, symbolName: String, color: NSColor, iconOffset: CGFloat = 0) -> NSView {
+	static func makeLabelWithIcon(_ text: String, symbolName: String, color: NSColor, iconOffset: CGFloat = 0) -> NSView {
 		let container = NSView()
 		container.translatesAutoresizingMaskIntoConstraints = false
 
@@ -62,7 +62,7 @@ enum CloudKitStatsLayout {
 		return container
 	}
 
-	@MainActor static func configureValueLabel(_ label: NSTextField) {
+	static func configureValueLabel(_ label: NSTextField) {
 		label.font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
 		label.alignment = .right
 	}

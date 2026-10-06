@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSCore
 
 public typealias ArticleSetBlock = (Set<Article>) -> Void
 
@@ -53,7 +54,7 @@ public final class Article: Hashable, Sendable {
 	}
 
 	public static func calculatedArticleID(feedID: String, uniqueID: String) -> String {
-		return databaseIDWithString("\(feedID) \(uniqueID)")
+		return "\(feedID) \(uniqueID)".md5String
 	}
 
 	// MARK: - Hashable
@@ -65,7 +66,7 @@ public final class Article: Hashable, Sendable {
 	// MARK: - Equatable
 
 	static public func ==(lhs: Article, rhs: Article) -> Bool {
-		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.rawLink == rhs.rawLink && lhs.rawExternalLink == rhs.rawExternalLink && lhs.summary == rhs.summary && lhs.rawImageLink == rhs.rawImageLink && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
+		return lhs.articleID == rhs.articleID && lhs.accountID == rhs.accountID && lhs.feedID == rhs.feedID && lhs.uniqueID == rhs.uniqueID && lhs.title == rhs.title && lhs.contentHTML == rhs.contentHTML && lhs.contentText == rhs.contentText && lhs.markdown == rhs.markdown && lhs.rawLink == rhs.rawLink && lhs.rawExternalLink == rhs.rawExternalLink && lhs.summary == rhs.summary && lhs.rawImageLink == rhs.rawImageLink && lhs.datePublished == rhs.datePublished && lhs.dateModified == rhs.dateModified && lhs.authors == rhs.authors
 	}
 }
 
@@ -89,49 +90,5 @@ public extension Array where Element == Article {
 
 	func articleIDs() -> [String] {
 		return map { $0.articleID }
-	}
-}
-
-public extension Article {
-	private static let allowedTags: Set = ["b", "bdi", "bdo", "cite", "code", "del", "dfn", "em", "i", "ins", "kbd", "mark", "q", "s", "samp", "small", "strong", "sub", "sup", "time", "u", "var"]
-
-	func sanitizedTitle(forHTML: Bool = true) -> String? {
-		guard let title else {
-			return nil
-		}
-
-		let scanner = Scanner(string: title)
-		scanner.charactersToBeSkipped = nil
-		var result = ""
-		result.reserveCapacity(title.count)
-
-		while !scanner.isAtEnd {
-			if let text = scanner.scanUpToString("<") {
-				result.append(text)
-			}
-
-			if scanner.scanString("<") != nil {
-				// All the allowed tags currently don't allow attributes
-				if let tag = scanner.scanUpToString(">") {
-					if Self.allowedTags.contains(tag.replacingOccurrences(of: "/", with: "")) {
-						if forHTML {
-							result.append("<\(tag)>")
-						} else {
-							result.append("")
-						}
-					} else {
-						if forHTML {
-							result.append("&lt;\(tag)&gt;")
-						} else {
-							result.append("<\(tag)>")
-						}
-					}
-
-					_ = scanner.scanString(">")
-				}
-			}
-		}
-
-		return result
 	}
 }

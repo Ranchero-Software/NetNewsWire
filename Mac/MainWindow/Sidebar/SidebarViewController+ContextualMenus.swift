@@ -213,28 +213,28 @@ private extension SidebarViewController {
 		}
 
 		if let homePageURL = feed.homePageURL, URL(string: homePageURL) != nil {
-			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL, image: Assets.Images.openInBrowser)
+			let item = menuItem(NSLocalizedString("Open Home Page", comment: "Command"), #selector(openHomePageFromContextualMenu(_:)), homePageURL)
 			menu.addItem(item)
 			menu.addItem(NSMenuItem.separator())
 		}
 
-		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), feed.url, image: Assets.Images.copy)
+		let copyFeedURLItem = menuItem(NSLocalizedString("Copy Feed URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), feed.url)
 		menu.addItem(copyFeedURLItem)
 
 		if let homePageURL = feed.homePageURL {
-			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL, image: Assets.Images.copy)
+			let item = menuItem(NSLocalizedString("Copy Home Page URL", comment: "Command"), #selector(copyURLFromContextualMenu(_:)), homePageURL)
 			menu.addItem(item)
 		}
 		menu.addItem(NSMenuItem.separator())
 
 		let notificationText = feed.notificationDisplayName.capitalized
 
-		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed, image: Assets.Images.notification)
+		let notificationMenuItem = menuItem(notificationText, #selector(toggleNotificationsFromContextMenu(_:)), feed)
 		notificationMenuItem.state = feed.newArticleNotificationsEnabled ? .on : .off
 		menu.addItem(notificationMenuItem)
 
 		let articleExtractorText = NSLocalizedString("Always Use Reader View", comment: "Always Use Reader View")
-		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), feed, image: Assets.Images.articleExtractorOff)
+		let articleExtractorMenuItem = menuItem(articleExtractorText, #selector(toggleArticleExtractorFromContextMenu(_:)), feed)
 
 		articleExtractorMenuItem.state = feed.readerViewAlwaysEnabled ? .on : .off
 		menu.addItem(articleExtractorMenuItem)
@@ -290,17 +290,17 @@ private extension SidebarViewController {
 
 	func markAllReadMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects, image: Assets.Images.markAllAsReadMenu)
+		return menuItem(NSLocalizedString("Mark All as Read", comment: "Command"), #selector(markObjectsReadFromContextualMenu(_:)), objects)
 	}
 
 	func deleteMenuItem(_ objects: [Any]) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Delete", comment: "Command"), #selector(deleteFromContextualMenu(_:)), objects, image: Assets.Images.delete)
+		return menuItem(NSLocalizedString("Delete", comment: "Delete button"), #selector(deleteFromContextualMenu(_:)), objects)
 	}
 
 	func renameMenuItem(_ object: Any) -> NSMenuItem {
 
-		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object, image: Assets.Images.rename)
+		return menuItem(NSLocalizedString("Rename", comment: "Command"), #selector(renameFromContextualMenu(_:)), object)
 	}
 
 	func anyObjectInArrayHasNonZeroUnreadCount(_ objects: [Any]) -> Bool {
@@ -330,14 +330,11 @@ private extension SidebarViewController {
 		return object is Feed || object is Folder
 	}
 
-	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any, image: RSImage?) -> NSMenuItem {
+	func menuItem(_ title: String, _ action: Selector, _ representedObject: Any) -> NSMenuItem {
 
 		let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
 		item.representedObject = representedObject
 		item.target = self
-		if let image {
-			item.image = image
-		}
 		return item
 	}
 
@@ -346,9 +343,8 @@ private extension SidebarViewController {
 		var articles = Set<Article>()
 		for object in objects {
 			if let articleFetcher = object as? ArticleFetcher {
-				if let unreadArticles = try? articleFetcher.fetchUnreadArticles() {
-					articles.formUnion(unreadArticles)
-				}
+				let unreadArticles = articleFetcher.fetchUnreadArticles()
+				articles.formUnion(unreadArticles)
 			}
 		}
 		return articles

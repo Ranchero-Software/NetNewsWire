@@ -23,11 +23,6 @@ public extension DatabaseTable {
 		return database.rs_selectRowsWhereKey(key, equalsValue: value, tableName: name)
 	}
 
-	func selectSingleRowWhere(key: String, equals value: Any, in database: FMDatabase) -> FMResultSet? {
-
-		return database.rs_selectSingleRowWhereKey(key, equalsValue: value, tableName: name)
-	}
-
 	func selectRowsWhere(key: String, inValues values: [Any], in database: FMDatabase) -> FMResultSet? {
 		if values.isEmpty {
 			return nil
@@ -68,32 +63,11 @@ public extension DatabaseTable {
 
 	// MARK: Counting
 
-	func numberWithCountResultSet(_ resultSet: FMResultSet) -> Int {
-		guard resultSet.next() else {
+	func numberWithSQLAndParameters(_ sql: String, _ parameters: [Any], in database: FMDatabase) -> Int {
+		guard let resultSet = database.executeQuery(sql, withArgumentsIn: parameters), resultSet.next() else {
 			return 0
 		}
 		return Int(resultSet.int(forColumnIndex: 0))
-	}
-
-	func numberWithSQLAndParameters(_ sql: String, _ parameters: [Any], in database: FMDatabase) -> Int {
-
-		if let resultSet = database.executeQuery(sql, withArgumentsIn: parameters) {
-			return numberWithCountResultSet(resultSet)
-		}
-		return 0
-	}
-
-	// MARK: Mapping
-
-	func mapResultSet<T>(_ resultSet: FMResultSet, _ completion: (_ resultSet: FMResultSet) -> T?) -> [T] {
-
-		var objects = [T]()
-		while resultSet.next() {
-			if let obj = completion(resultSet) {
-				objects += [obj]
-			}
-		}
-		return objects
 	}
 
 	// MARK: Columns

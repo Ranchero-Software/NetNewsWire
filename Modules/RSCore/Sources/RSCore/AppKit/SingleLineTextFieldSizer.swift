@@ -37,7 +37,13 @@ import AppKit
 		}
 
 		textField.stringValue = text
-		var calculatedSize = textField.fittingSize
+
+		// cell.cellSize measures the text without running the Auto Layout engine that fittingSize uses.
+		// For a single-line label it matches fittingSize exactly. Verified in SingleLineTextFieldSizerTests.
+		guard let cell = textField.cell else {
+			return NSSize.zero
+		}
+		var calculatedSize = cell.cellSize
 		calculatedSize.height = ceil(calculatedSize.height)
 		calculatedSize.width = ceil(calculatedSize.width)
 
