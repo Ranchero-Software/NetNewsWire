@@ -36,7 +36,7 @@ import RSCore
 		rTextField = rTextField.centeredVertically(in: bounds)
 
 		let unreadCountSize = unreadCountView.intrinsicContentSize
-		let unreadCountIsHidden = unreadCountView.unreadCount < 1
+		let unreadCountIsHidden = unreadCountView.unreadCountText == nil
 
 		var rUnread = NSRect.zero
 		if !unreadCountIsHidden {

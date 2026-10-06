@@ -403,6 +403,42 @@
         }
       }
     },
+    "uC1-cL-sHw.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Show\"; ObjectID = \"uC1-cL-sHw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show"
+          }
+        }
+      }
+    },
+    "uC2-cL-dSh.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Show dot\"; ObjectID = \"uC2-cL-dSh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show dot"
+          }
+        }
+      }
+    },
+    "uC3-cL-hDn.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Hide\"; ObjectID = \"uC3-cL-hDn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide"
+          }
+        }
+      }
+    },
     "uvx-O8-HvU.title" : {
       "comment" : "Class = \"NSButtonCell\"; title = \"Open feeds in NetNewsWire\"; ObjectID = \"uvx-O8-HvU\";",
       "extractionState" : "extracted_with_value",
@@ -417,6 +453,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Abrir fuentes en NetNewsWire"
+          }
+        }
+      }
+    },
+    "wAn-gW-UJc.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Unread Counts:\"; ObjectID = \"wAn-gW-UJc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread Counts:"
           }
         }
       }

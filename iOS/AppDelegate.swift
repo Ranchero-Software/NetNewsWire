@@ -55,6 +55,7 @@ import Images
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountRefreshDidFinish(_:)), name: .AccountRefreshDidFinish, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -134,7 +135,8 @@ import Images
 
 	private func updateBadge() {
 		assert(unreadCount == AccountManager.shared.unreadCount)
-		UNUserNotificationCenter.current().setBadgeCount(unreadCount)
+		let badgeCount = AppDefaults.shared.unreadCountDisplay == .count ? unreadCount : 0
+		UNUserNotificationCenter.current().setBadgeCount(badgeCount)
 	}
 
 	// MARK: Notifications
@@ -147,6 +149,10 @@ import Images
 
 	@objc func accountRefreshDidFinish(_ note: Notification) {
 		AppDefaults.shared.lastRefresh = Date()
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateBadge()
 	}
 
 	// MARK: - API
