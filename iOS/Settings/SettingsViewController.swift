@@ -73,12 +73,16 @@ final class SettingsViewController: UITableViewController {
 	@IBOutlet var articleThemeDetailLabel: UILabel!
 	@IBOutlet var confirmMarkAllAsReadSwitch: UISwitch!
 	@IBOutlet var showFullscreenArticlesSwitch: UISwitch!
-	@IBOutlet var colorPaletteDetailLabel: UILabel!
+	@IBOutlet var colorPaletteCell: UITableViewCell?
+	@IBOutlet var unreadCountDisplayCell: UITableViewCell?
 	@IBOutlet var openLinksInNetNewsWire: UISwitch!
 	@IBOutlet var enableJavaScriptSwitch: UISwitch!
 
 	var scrollToArticlesSection = false
 	weak var presentingParentController: UIViewController?
+
+	private lazy var colorPalettePopUpButton = Self.makePopUpButton()
+	private lazy var unreadCountDisplayPopUpButton = Self.makePopUpButton()
 
 	override func viewDidLoad() {
 		// This hack mostly works around a bug in static tables with dynamic type.  See: https://spin.atomicobject.com/2018/10/15/dynamic-type-static-uitableview/
@@ -88,12 +92,19 @@ final class SettingsViewController: UITableViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidAddAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 
 		tableView.register(UINib(nibName: "SettingsComboTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsComboTableViewCell")
 		tableView.register(UINib(nibName: "SettingsTableViewCell", bundle: nil), forCellReuseIdentifier: "SettingsTableViewCell")
 
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
+
+		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell)
+		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell)
+		updateColorPalettePopUpButton()
+		updateUnreadCountDisplayPopUpButton()
 	}
 
 	override func viewWillAppear(_ animated: Bool) {
@@ -136,8 +147,6 @@ final class SettingsViewController: UITableViewController {
 		} else {
 			enableJavaScriptSwitch.isOn = false
 		}
-
-		colorPaletteDetailLabel.text = String(describing: AppDefaults.userInterfaceColorPalette)
 
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
 
@@ -273,9 +282,6 @@ final class SettingsViewController: UITableViewController {
 			default:
 				break
 			}
-		case .appearance:
-			let colorPalette = UIStoryboard.settings.instantiateController(ofType: ColorPaletteTableViewController.self)
-			self.navigationController?.pushViewController(colorPalette, animated: true)
 		case .troubleshooting:
 			let viewController: UIViewController? = {
 				switch TroubleshootingRow(rawValue: indexPath.row) {
@@ -426,6 +432,14 @@ final class SettingsViewController: UITableViewController {
 		tableView.reloadData()
 	}
 
+	@objc func handleUserInterfaceColorPaletteDidUpdate(_ notification: Notification) {
+		updateColorPalettePopUpButton()
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateUnreadCountDisplayPopUpButton()
+	}
+
 }
 
 // MARK: - OPML Document Picker
@@ -452,6 +466,49 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 // MARK: - Private
 
 private extension SettingsViewController {
+
+	static func makePopUpButton() -> UIButton {
+		var configuration = UIButton.Configuration.plain()
+		configuration.baseForegroundColor = .secondaryLabel
+		let button = UIButton(configuration: configuration)
+		button.showsMenuAsPrimaryAction = true
+		button.changesSelectionAsPrimaryAction = true
+		return button
+	}
+
+	/// Auto Layout lets the button resize itself when choosing an item changes its title.
+	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell?) {
+		guard let cell else {
+			return
+		}
+		button.translatesAutoresizingMaskIntoConstraints = false
+		button.setContentCompressionResistancePriority(.required, for: .horizontal)
+		cell.contentView.addSubview(button)
+		NSLayoutConstraint.activate([
+			button.trailingAnchor.constraint(equalTo: cell.contentView.layoutMarginsGuide.trailingAnchor),
+			button.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
+		])
+	}
+
+	func updateColorPalettePopUpButton() {
+		let currentColorPalette = AppDefaults.userInterfaceColorPalette
+		let actions = UserInterfaceColorPalette.allCases.map { colorPalette in
+			UIAction(title: String(describing: colorPalette), state: colorPalette == currentColorPalette ? .on : .off) { _ in
+				AppDefaults.userInterfaceColorPalette = colorPalette
+			}
+		}
+		colorPalettePopUpButton.menu = UIMenu(children: actions)
+	}
+
+	func updateUnreadCountDisplayPopUpButton() {
+		let currentUnreadCountDisplay = AppDefaults.shared.unreadCountDisplay
+		let actions = UnreadCountDisplay.allCases.map { unreadCountDisplay in
+			UIAction(title: String(describing: unreadCountDisplay), state: unreadCountDisplay == currentUnreadCountDisplay ? .on : .off) { _ in
+				AppDefaults.shared.unreadCountDisplay = unreadCountDisplay
+			}
+		}
+		unreadCountDisplayPopUpButton.menu = UIMenu(children: actions)
+	}
 
 	func addFeed() {
 		self.dismiss(animated: true)

@@ -52,8 +52,13 @@ final class UnreadCountView: NSView {
 			needsDisplay = true
 		}
 	}
-	var unreadCountString: String {
-		return unreadCount < 1 ? "" : "\(unreadCount.formatted())"
+	/// Text for the unread count, or nil when nothing should be drawn.
+	var unreadCountText: String? {
+		AppDefaults.shared.unreadCountDisplay.text(for: unreadCount)
+	}
+
+	private var showsDot: Bool {
+		AppDefaults.shared.unreadCountDisplay.showsDot(for: unreadCount)
 	}
 
 	var isSelected: Bool = false {
@@ -83,8 +88,12 @@ final class UnreadCountView: NSView {
 	override var intrinsicContentSize: NSSize {
 		if !intrinsicContentSizeIsValid {
 			var size = NSSize.zero
-			if unreadCount > 0 {
-				size = textSize()
+			if showsDot {
+				// Same height as a count, so the row lays out the same either way.
+				size.width = UnreadIndicatorView.unreadCircleDimension + Appearance.padding.left + Appearance.padding.right
+				size.height = textSize(Self.digitForHeight).height + Appearance.padding.top + Appearance.padding.bottom
+			} else if let unreadCountText {
+				size = textSize(unreadCountText)
 				size.width += (Appearance.padding.left + Appearance.padding.right)
 				size.height += (Appearance.padding.top + Appearance.padding.bottom)
 			}
@@ -102,27 +111,23 @@ final class UnreadCountView: NSView {
 		intrinsicContentSizeIsValid = false
 	}
 
-	private static var textSizeCache = [Int: NSSize]()
+	private static var textSizeCache = [String: NSSize]()
 
-	private func textSize() -> NSSize {
-		if unreadCount < 1 {
-			return NSSize.zero
-		}
-
-		if let cachedSize = UnreadCountView.textSizeCache[unreadCount] {
+	private func textSize(_ text: String) -> NSSize {
+		if let cachedSize = UnreadCountView.textSizeCache[text] {
 			return cachedSize
 		}
 
-		var size = unreadCountString.size(withAttributes: textAttributes)
+		var size = text.size(withAttributes: textAttributes)
 		size.height = ceil(size.height)
 		size.width = ceil(size.width)
 
-		UnreadCountView.textSizeCache[unreadCount] = size
+		UnreadCountView.textSizeCache[text] = size
 		return size
 	}
 
-	private func textRect() -> NSRect {
-		let size = textSize()
+	private func textRect(_ text: String) -> NSRect {
+		let size = textSize(text)
 		var r = NSRect.zero
 		r.size = size
 		r.origin.x = (bounds.maxX - Appearance.padding.right) - r.size.width
@@ -130,13 +135,29 @@ final class UnreadCountView: NSView {
 		return r
 	}
 
+	private static let digitForHeight = "0"
+
+	/// Drawn without the pill.
+	private func drawDot() {
+		let dimension = UnreadIndicatorView.unreadCircleDimension
+		let r = NSRect(x: (bounds.maxX - Appearance.padding.right) - dimension, y: bounds.midY - (dimension / 2.0), width: dimension, height: dimension)
+		let color = isSelected ? NSColor.white : NSColor.secondaryLabelColor
+		color.setFill()
+		NSBezierPath(ovalIn: r).fill()
+	}
+
 	override func draw(_ dirtyRect: NSRect) {
+		if showsDot {
+			drawDot()
+			return
+		}
+
 		let path = NSBezierPath(roundedRect: bounds, xRadius: Appearance.cornerRadius, yRadius: Appearance.cornerRadius)
 		Appearance.backgroundColor.setFill()
 		path.fill()
 
-		if unreadCount > 0 {
-			unreadCountString.draw(at: textRect().origin, withAttributes: textAttributes)
+		if let unreadCountText {
+			unreadCountText.draw(at: textRect(unreadCountText).origin, withAttributes: textAttributes)
 		}
 	}
 }

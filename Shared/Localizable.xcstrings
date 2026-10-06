@@ -531,7 +531,7 @@
       "comment" : "Here"
     },
     "Hide" : {
-      "comment" : "Hide password button"
+      "comment" : "Hide"
     },
     "Hide Read Articles" : {
       "comment" : "Command"
@@ -943,7 +943,10 @@
       "comment" : "Share…"
     },
     "Show" : {
-      "comment" : "Show password button"
+      "comment" : "Show"
+    },
+    "Show dot" : {
+      "comment" : "Unread Counts setting: show a dot instead of the number of unread articles"
     },
     "Show Feed Article" : {
       "comment" : "Show Feed Article"

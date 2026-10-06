@@ -22,7 +22,7 @@ extension UICollectionView {
 				return
 		}
 
-		selectItem(at: indexPath, animated: true, scrollPosition: [])
+		selectItem(at: indexPath, animated: animations.contains(.select), scrollPosition: [])
 
 		// indexPathsForVisibleItems includes cells hidden under the bars —
 		// check the unobscured region instead.

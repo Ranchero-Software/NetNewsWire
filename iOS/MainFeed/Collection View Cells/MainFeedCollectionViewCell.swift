@@ -33,12 +33,9 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 		set {
 			_unreadCount = newValue
-			if newValue == 0 {
-				unreadCountLabel.isHidden = true
-			} else {
-				unreadCountLabel.isHidden = false
-			}
-			unreadCountLabel.text = newValue.formatted()
+			unreadCountLabel.isHidden = AppDefaults.shared.unreadCountDisplay.text(for: newValue) == nil
+			unreadCountLabel.setUnreadCount(newValue)
+			setNeedsUpdateConfiguration()
 		}
 	}
 
@@ -60,7 +57,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = feedTitle.text ?? ""
-			if unreadCount > 0 {
+			if unreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count {
 				let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
 				return "\(name) \(unreadCount) \(unreadLabel)"
 			} else {
@@ -92,7 +89,23 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
 		}
 
-		switch (state.isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
+		// Matches the timeline: accent background and white text when the feeds list is first responder,
+		// and no highlight while a row is pressed, so the row goes straight to the selected style.
+		let isExpanded = isInExpandedSplitView
+		let isActiveSelection = state.isSelected && isExpanded && enclosingViewController?.isFirstResponder == true
+		let isHighlighted = state.isHighlighted && !isExpanded
+		if state.isHighlighted && !state.isSelected && isExpanded {
+			backgroundConfig.backgroundColor = .clear
+		}
+
+		switch (isHighlighted || state.isSelected || state.isFocused, traitCollection.userInterfaceIdiom) {
+		case _ where isActiveSelection:
+			backgroundConfig.backgroundColor = Assets.Colors.primaryAccent
+			feedTitle.textColor = .white
+			feedTitle.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			unreadCountLabel.textColor = .white
+			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			faviconView.tintColor = .white
 		case (true, .pad):
 			backgroundConfig.backgroundColor = .tertiarySystemFill
 			feedTitle.textColor = Assets.Colors.primaryAccent
@@ -100,16 +113,13 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 											   weight: .semibold)
 			unreadCountLabel.textColor = Assets.Colors.primaryAccent
 			unreadCountLabel.font = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .body).pointSize, weight: .semibold)
+			faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
 		default:
 			feedTitle.textColor = .label
 			feedTitle.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .body)
 			unreadCountLabel.textColor = .secondaryLabel
-			if traitCollection.userInterfaceIdiom == .phone {
-				if feedTitle.text == "All Unread" {
-					faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
-				}
-			}
+			faviconView.tintColor = iconImage?.preferredColor ?? Assets.Colors.secondaryAccent
 		}
 		self.backgroundConfiguration = backgroundConfig
 	}

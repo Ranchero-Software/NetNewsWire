@@ -44,6 +44,12 @@ import Account
 			Self.logger.error("WidgetDataEncoder: unable to create folder for images")
 			return nil
 		}
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		encode()
 	}
 
 	/// Fire-and-forget. Sets `isRunning` synchronously so the background-task wait loop
@@ -96,6 +102,12 @@ import Account
 
 	func reloadTimelines(newData: WidgetData, existingData: WidgetData?) {
 		if let existingData = existingData {
+			if existingData.effectiveUnreadCountDisplay != newData.effectiveUnreadCountDisplay {
+				WidgetCenter.shared.reloadAllTimelines()
+				Self.logger.debug("WidgetDataEncoder: Reloading all widgets because unread count display changed")
+				return
+			}
+
 			var shouldRefreshSummary = false
 
 			if existingData.unreadArticles != newData.unreadArticles {
@@ -148,7 +160,8 @@ import Account
 									unreadArticles: unreadArticles,
 									starredArticles: starredArticles,
 									todayArticles: todayArticles,
-									lastUpdateTime: Date.now)
+									lastUpdateTime: Date.now,
+									unreadCountDisplay: AppDefaults.shared.unreadCountDisplay)
 
 		return latestData
 	}
