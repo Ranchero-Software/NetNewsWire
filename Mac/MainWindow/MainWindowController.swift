@@ -111,6 +111,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		NotificationCenter.default.addObserver(self, selector: #selector(refreshProgressDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(unreadCountDidChange(_:)), name: .UnreadCountDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(self, selector: #selector(articleThemeNamesDidChangeNotification(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
@@ -196,6 +197,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	@objc func unreadCountDidChange(_ note: Notification) {
 		CoalescingQueue.standard.add(self, #selector(coalescedUpdateWindowTitle))
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		updateWindowTitle()
 	}
 
 	@objc func coalescedUpdateWindowTitle() {
@@ -1657,6 +1662,10 @@ private extension MainWindowController {
 		}
 
 		func setSubtitle(_ count: Int) {
+			guard AppDefaults.shared.unreadCountDisplay == .count else {
+				window?.subtitle = ""
+				return
+			}
 			let localizedLabel = NSLocalizedString("%d unread", comment: "Unread")
 			let formattedLabel = NSString.localizedStringWithFormat(localizedLabel as NSString, count)
 			window?.subtitle = formattedLabel as String
