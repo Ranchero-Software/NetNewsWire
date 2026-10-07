@@ -9,7 +9,7 @@ Fixed bug where YouTube embeds in articles showed an error instead of playing
 Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
 Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
 Added support for the instapaper_ignore class — elements marked with it are now removed from articles
-Added support for Substack-style footnotes in the article popover
+Added support for Substack-style footnotes
 Improved CJK text rendering in the article view by adding text-autospace
 Changed tabs in pre and code elements in articles to display as four spaces
 Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds

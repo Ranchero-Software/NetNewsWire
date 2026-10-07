@@ -1,5 +1,11 @@
 # Mac Release Notes
 
+### 7.2b2 7219 7 Oct 2026 - branch: main tag: mac-7.2b2
+
+Added support for Substack-style footnotes
+Improved CJK text rendering in the article view by adding text-autospace
+Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+
 ### 7.2b1 7217 6 Oct 2026 - branch: main tag: mac-7.2b1
 
 Added unread count display setting — show the count, show a dot, or hide it — which applies to the Dock icon badge, window title, and sidebar
