@@ -205,8 +205,14 @@ struct ArticleRenderingSpecialCases {
 	///
 	/// Doing this allows inline footnotes to work, without it they are broken, since they rely on matching `id` and `class` attributes.
 	static func desanitizeFreshRSSContent(_ content: String) -> String {
-		content
-			.replacingOccurrences(of: "data-sanitized-class", with: "class")
-			.replacingOccurrences(of: "data-sanitized-id", with: "id")
+		let classRegex = /(?'open'<.*)data-sanitized-class(?'close'.*>)/
+		let idRegex = /(?'open'<.*)data-sanitized-id(?'close'.*>)/
+		return content
+			.replacing(classRegex, with: { match in
+				match.output.open + "class" + match.output.close
+			})
+			.replacing(idRegex, with: { match in
+				match.output.open + "id" + match.output.close
+			})
 	}
 }

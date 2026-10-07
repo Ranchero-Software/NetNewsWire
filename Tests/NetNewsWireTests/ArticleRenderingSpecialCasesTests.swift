@@ -108,12 +108,12 @@ import Testing
 		"The sanitization happening in FreshRSS breaks inline footnotes, so we de-sanitize id and class attributes",
 		.bug("https://github.com/Ranchero-Software/NetNewsWire/issues/5472")
 	)
-	func freshRSSContent_desanitizedIdAndClass(){
+	func freshRSSContent_desanitizedIDAndClass(){
 		let sanitized = """
 <div data-sanitized-class="footnotes">
 	<li data-sanitized-id="footnote-1">
 		<p>
-			This is the footnote content
+			This is the footnote content, about `data-sanitized-class`.
 			<a href="#footnote-1-ref" data-sanitized-class="footnoteBackLink">Go back to content</a>
 		</p>
 	</li>
@@ -123,7 +123,7 @@ import Testing
 <div class="footnotes">
 	<li id="footnote-1">
 		<p>
-			This is the footnote content
+			This is the footnote content, about `data-sanitized-class`.
 			<a href="#footnote-1-ref" class="footnoteBackLink">Go back to content</a>
 		</p>
 	</li>
