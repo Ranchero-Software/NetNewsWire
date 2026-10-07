@@ -57,6 +57,7 @@ final class DetailWebView: WKWebView {
 	override func viewDidMoveToWindow() {
 		super.viewDidMoveToWindow()
 		updateObscuredContentInsets()
+		ArticleThemesManager.shared.updateCurrentAppearance(NSApplication.shared.effectiveAppearance.isDarkMode ? .dark : .light)
 
 		if let window, !isObservingResizeNotifications {
 			NotificationCenter.default.addObserver(
@@ -67,6 +68,11 @@ final class DetailWebView: WKWebView {
 			)
 			isObservingResizeNotifications = true
 		}
+	}
+
+	override func viewDidChangeEffectiveAppearance() {
+		super.viewDidChangeEffectiveAppearance()
+		ArticleThemesManager.shared.updateCurrentAppearance(NSApplication.shared.effectiveAppearance.isDarkMode ? .dark : .light)
 	}
 
 	@objc func windowDidResize(_ notification: Notification) {
