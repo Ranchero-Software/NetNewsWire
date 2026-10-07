@@ -7,6 +7,23 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.2b2</title>
+	<description><![CDATA[
+In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.
+<p>
+Changes since 7.2b1:
+<ul>
+<li>Added support for Substack-style footnotes
+<li>Improved CJK text rendering in the article view by adding text-autospace
+<li>Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+</ul>
+	]]></description>
+	<pubDate>Wed, 7 Oct 2026 10:20:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2b2/NetNewsWire7.2b2.zip" sparkle:version="7219" sparkle:shortVersionString="7.2b2" length="9891509" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.2b1</title>
 	<description><![CDATA[
 <ul>
