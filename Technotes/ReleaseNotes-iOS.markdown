@@ -1,5 +1,25 @@
 # iOS Release Notes
 
+### 7.2 build 7218 6 Oct 2026 - branch: main tag: iOS-7.2-7218
+
+Added unread count display setting — show the count, show a dot, or hide it — which applies to the app icon badge, feeds list, and widgets
+Fixed bug where the timeline selection was cleared when using the left arrow or shift-tab to go back to the feeds list (when multiple columns are showing)
+Changed the selection color in the feeds list to blue when it has keyboard focus and multiple columns are showing
+Fixed bug where YouTube embeds in articles showed an error instead of playing
+Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+Added support for Substack-style footnotes
+Improved CJK text rendering in the article view by adding text-autospace
+Changed tabs in pre and code elements in articles to display as four spaces
+Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+Changed finding a feed to use the redirected-to URL
+Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme
+Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+Changed the Tiqoe Dark theme to hide the PBS NewsHour funding invite in Reader View
+Sped up Today and unread count queries
+Added up to 500 characters of the HTTP error response body to Error Log entries
+
 ### 7.1.4 build 7213 18 Sep 2026 - branch: main tag: iOS-7.1.4-7213
 
 This was originally a TestFlight release. It was submitted to the App Store as the 7.1.4 release version on 20 Sep 2026.
