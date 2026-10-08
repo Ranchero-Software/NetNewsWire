@@ -117,6 +117,7 @@ import Testing
 			<a href="#footnote-1-ref" data-sanitized-class="footnoteBackLink">Go back to content</a>
 		</p>
 	</li>
+	<li data-sanitized-id="footnote-2"><p>Another footnote, about `data-sanitized-id`.<a href="#footnote-2-ref" data-sanitized-class="footnoteBackLink">Go back to content</a></p></li>
 </div>
 """
 		let expected = """
@@ -127,10 +128,10 @@ import Testing
 			<a href="#footnote-1-ref" class="footnoteBackLink">Go back to content</a>
 		</p>
 	</li>
+	<li id="footnote-2"><p>Another footnote, about `data-sanitized-id`.<a href="#footnote-2-ref" class="footnoteBackLink">Go back to content</a></p></li>
 </div>
 """
 
 		#expect(ArticleRenderingSpecialCases.desanitizeFreshRSSContent(sanitized) == expected)
 	}
-
 }
