@@ -35,9 +35,14 @@ final class GeneralPreferencesViewController: NSViewController {
 		commonInit()
 	}
 
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		fixArticleTextSizeBaselineIfNeeded()
+		view.sizeHeightToFit()
+	}
+
 	override func viewWillAppear() {
 		super.viewWillAppear()
-		fixArticleTextSizeBaselineIfNeeded()
 		updateUI()
 		updateNotificationSettings()
 	}
