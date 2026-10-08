@@ -34,7 +34,7 @@ final class AdvancedPreferencesViewController: NSViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		view.sizeHeightToFit()
+		view.sizeToFittingSize()
 	}
 
 	override func viewWillAppear() {

@@ -52,10 +52,10 @@ public extension NSView {
 		}
 	}
 
-	/// Sets the view’s height to its Auto Layout fitting height, keeping its width.
-	func sizeHeightToFit() {
+	/// Sets the view’s size to its Auto Layout fitting size.
+	func sizeToFittingSize() {
 		layoutSubtreeIfNeeded()
-		setFrameSize(NSSize(width: frame.width, height: fittingSize.height))
+		setFrameSize(fittingSize)
 	}
 }
 #endif

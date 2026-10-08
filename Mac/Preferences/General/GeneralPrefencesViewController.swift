@@ -38,7 +38,7 @@ final class GeneralPreferencesViewController: NSViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		fixArticleTextSizeBaselineIfNeeded()
-		view.sizeHeightToFit()
+		view.sizeToFittingSize()
 	}
 
 	override func viewWillAppear() {
