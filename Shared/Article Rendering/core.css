@@ -176,7 +176,9 @@ sup[id^='fn'] {
 	vertical-align: baseline;
 }
 
-a.footnote {
+a.footnote,
+a.footnote-anchor
+{
 	display: inline-block;
 	text-decoration: none;
 	padding: 0.05em 0.75em;

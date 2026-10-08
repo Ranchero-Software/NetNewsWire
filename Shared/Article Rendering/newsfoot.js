@@ -128,9 +128,18 @@
 	/** @type {{fnref(target:HTMLAnchorElement): string|undefined}[]} */
 	const footnoteFormats = [
 		{ // Multimarkdown
-			fnref(target) {
+			getTargetElement(target) {
 				if (!target.matches(".footnote")) return;
-				return idFromHash(target);
+				const targetId = idFromHash(target);
+				return document.getElementById(targetId);
+			}
+		},
+		{ // Substack
+			getTargetElement(target) {
+				if (!target.matches(".footnote-anchor")) return;
+				const backlinkId = idFromHash(target);
+				const backlink = document.getElementById(backlinkId)
+				return backlink.parentElement.querySelector(".footnote-content")
 			}
 		}
 	];
@@ -139,18 +148,15 @@
 	document.addEventListener("click", (ev) => {
 		if (!(ev.target && ev.target instanceof HTMLAnchorElement)) return;
 
-		let targetId = undefined;
+		let targetElement = undefined;
 		for(const f of footnoteFormats) {
-			targetId = f.fnref(ev.target);
-			if (targetId) break;
+			targetElement = f.getTargetElement(ev.target);
+			if (targetElement) break;
 		}
-		if (targetId === undefined) return;
-		
 		// Only override the default behaviour when we know we can find the
 		// target element
-		const targetElement = document.getElementById(targetId);
-		if (targetElement === null) return;
-				
+		if (targetElement === undefined) return;
+
 		ev.preventDefault();
 
 		installContainer(ev.target);

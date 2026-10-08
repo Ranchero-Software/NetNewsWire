@@ -338,6 +338,8 @@ blockquote {
 
 body a.footnote,
 body a.footnote:visited,
+body a.footnote-anchor,
+body a.footnote-anchor:visited,
 .newsfoot-footnote-popover + a.footnote:hover {
 	background: #aaa;
 	color: white;
@@ -345,6 +347,7 @@ body a.footnote:visited,
 }
 
 a.footnote:hover,
+a.footnote-anchor:hover,
 .newsfoot-footnote-popover + a.footnote {
 	background: #666;
 	transition: background-color 200ms ease-out;
@@ -367,6 +370,7 @@ a.footnote:hover,
 	}
 
 	body a.footnote,
+	body a.footnote-anchor,
 	body a.footnote:visited,
 	.newsfoot-footnote-popover + a.footnote:hover {
 		background: #aaa;
@@ -375,6 +379,7 @@ a.footnote:hover,
 	}
 
 	a.footnote:hover,
+	a.footnote-anchor:hover,
 	.newsfoot-footnote-popover + a.footnote {
 		background: #666;
 		transition: background-color 200ms ease-out;
