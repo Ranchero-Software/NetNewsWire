@@ -12,10 +12,6 @@ import Account
 /// Sheet for subscribing to a feed by URL, with an optional title and a choice of account or folder.
 struct AddFeedView: View {
 
-	/// URL to start with. When nil, a URL on the pasteboard is used if there is one.
-	let initialFeed: String?
-	let initialFeedName: String?
-
 	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460, height: 400)
 
 	@Environment(\.dismiss) private var dismiss
@@ -25,6 +21,17 @@ struct AddFeedView: View {
 	@State private var isAdding = false
 	@State private var errorMessage: String?
 	@FocusState private var isURLFieldFocused: Bool
+
+	/// When `initialFeed` is nil, a URL on the pasteboard is used if there is one.
+	init(initialFeed: String?, initialFeedName: String?) {
+		var urlString = initialFeed ?? ""
+		if initialFeed == nil, let pasteboardString = UIPasteboard.general.string, pasteboardString.mayBeURL {
+			urlString = pasteboardString.normalizedURL
+		}
+		self._urlString = State(initialValue: urlString)
+		self._name = State(initialValue: initialFeedName ?? "")
+		self._container = State(initialValue: AddFeedDefaultContainer.defaultContainer)
+	}
 
 	var body: some View {
 		NavigationStack {
@@ -78,7 +85,9 @@ struct AddFeedView: View {
 				Text(verbatim: errorMessage ?? "")
 			}
 			.onAppear {
-				loadInitialValues()
+				if urlString.isEmpty {
+					isURLFieldFocused = true
+				}
 			}
 		}
 	}
@@ -104,20 +113,6 @@ struct AddFeedView: View {
 			if !isShowing {
 				errorMessage = nil
 			}
-		}
-	}
-
-	private func loadInitialValues() {
-		if let initialFeed {
-			urlString = initialFeed
-		} else if let pasteboardString = UIPasteboard.general.string, pasteboardString.mayBeURL {
-			urlString = pasteboardString.normalizedURL
-		}
-		name = initialFeedName ?? ""
-		container = AddFeedDefaultContainer.defaultContainer
-
-		if urlString.isEmpty {
-			isURLFieldFocused = true
 		}
 	}
 

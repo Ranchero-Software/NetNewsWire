@@ -25,7 +25,11 @@ struct AddFolderView: View {
 	private let accounts: [Account]
 
 	init() {
-		self.accounts = AccountManager.shared.sortedActiveAccounts.filter { !$0.behaviors.contains(.disallowFolderManagement) }
+		let accounts = AccountManager.shared.sortedActiveAccounts.filter { !$0.behaviors.contains(.disallowFolderManagement) }
+		self.accounts = accounts
+
+		let rememberedAccount = accounts.first { $0.accountID == AppDefaults.shared.addFolderAccountID }
+		self._selectedAccountID = State(initialValue: (rememberedAccount ?? accounts.first)?.accountID ?? "")
 	}
 
 	var body: some View {
@@ -81,7 +85,7 @@ struct AddFolderView: View {
 				Text(verbatim: errorMessage ?? "")
 			}
 			.onAppear {
-				loadInitialValues()
+				isNameFieldFocused = true
 			}
 		}
 	}
@@ -102,15 +106,6 @@ struct AddFolderView: View {
 				errorMessage = nil
 			}
 		}
-	}
-
-	private func loadInitialValues() {
-		if let rememberedAccountID = AppDefaults.shared.addFolderAccountID, accounts.contains(where: { $0.accountID == rememberedAccountID }) {
-			selectedAccountID = rememberedAccountID
-		} else {
-			selectedAccountID = accounts.first?.accountID ?? ""
-		}
-		isNameFieldFocused = true
 	}
 
 	private func addFolder() async {

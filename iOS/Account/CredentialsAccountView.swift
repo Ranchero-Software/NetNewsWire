@@ -29,6 +29,17 @@ struct CredentialsAccountView: View {
 
 	private static let passwordPlaceholder = NSLocalizedString("Password", comment: "Password field placeholder")
 
+	init(accountType: AccountType, account: Account?, didAddAccount: (() -> Void)?) {
+		self.accountType = accountType
+		self.account = account
+		self.didAddAccount = didAddAccount
+
+		if let account, let credentials = try? account.retrieveCredentials(type: accountType.credentialsType) {
+			self._username = State(initialValue: credentials.username)
+			self._password = State(initialValue: credentials.secret)
+		}
+	}
+
 	var body: some View {
 		NavigationStack {
 			Form {
@@ -90,9 +101,6 @@ struct CredentialsAccountView: View {
 					SafariView(url: signUpURL)
 				}
 			}
-			.onAppear {
-				loadExistingCredentials()
-			}
 		}
 	}
 
@@ -143,14 +151,6 @@ struct CredentialsAccountView: View {
 				errorMessage = nil
 			}
 		}
-	}
-
-	private func loadExistingCredentials() {
-		guard let account, let credentials = try? account.retrieveCredentials(type: accountType.credentialsType) else {
-			return
-		}
-		username = credentials.username
-		password = credentials.secret
 	}
 
 	@MainActor private func submit() async {
