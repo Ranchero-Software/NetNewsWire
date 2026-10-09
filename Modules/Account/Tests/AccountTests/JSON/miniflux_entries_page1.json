@@ -1,0 +1,88 @@
+{
+	"total": 5,
+	"entries": [
+		{
+			"id": 5001,
+			"feed_id": 101,
+			"status": "unread",
+			"hash": "hash5001",
+			"title": "Unread and starred entry",
+			"url": "https://general.example/posts/1",
+			"published_at": "2026-07-07T05:12:06.668113Z",
+			"created_at": "2026-07-07T05:13:22.668113Z",
+			"changed_at": "2026-07-07T05:13:22.668113Z",
+			"content": "<p>Body of the unread starred entry.</p>",
+			"author": "Jane Doe",
+			"starred": true,
+			"reading_time": 2,
+			"feed_id_str": "101"
+		},
+		{
+			"id": 5002,
+			"feed_id": 102,
+			"status": "read",
+			"hash": "hash5002",
+			"title": "Read entry",
+			"url": "https://tech-a.example/posts/2",
+			"published_at": "2026-07-06T09:00:00Z",
+			"created_at": "2026-07-06T09:05:00Z",
+			"changed_at": "2026-07-06T09:05:00Z",
+			"content": "<p>Body of the read entry.</p>",
+			"author": "John Smith",
+			"starred": false,
+			"reading_time": 4
+		},
+		{
+			"id": 5003,
+			"feed_id": 103,
+			"status": "unread",
+			"hash": "hash5003",
+			"title": "Entry with no author",
+			"url": "https://tech-b.example/posts/3",
+			"published_at": "2026-07-05T12:30:00Z",
+			"created_at": "2026-07-05T12:31:00Z",
+			"changed_at": "2026-07-05T12:31:00Z",
+			"content": "<p>Body of the entry with no author.</p>",
+			"starred": false,
+			"reading_time": 1
+		},
+		{
+			"id": 5004,
+			"feed_id": 104,
+			"status": "unread",
+			"hash": "hash5004",
+			"title": "Entry with empty enclosures",
+			"url": "https://news-a.example/posts/4",
+			"published_at": "2026-07-04T08:15:00Z",
+			"created_at": "2026-07-04T08:16:00Z",
+			"changed_at": "2026-07-04T08:16:00Z",
+			"content": "<p>Body of the entry with empty enclosures.</p>",
+			"author": "News Desk",
+			"starred": false,
+			"reading_time": 3,
+			"enclosures": []
+		},
+		{
+			"id": 5005,
+			"feed_id": 105,
+			"status": "read",
+			"hash": "hash5005",
+			"title": "Entry with an enclosure",
+			"url": "https://general-b.example/posts/5",
+			"published_at": "2026-07-03T18:45:00Z",
+			"created_at": "2026-07-03T18:46:00Z",
+			"changed_at": "2026-07-03T18:46:00Z",
+			"content": "<p>Body of the entry with an enclosure.</p>",
+			"author": "Jane Doe",
+			"starred": false,
+			"reading_time": 5,
+			"enclosures": [
+				{
+					"url": "https://media.example/ep1.mp3",
+					"mime_type": "audio/mpeg",
+					"size": 1234567
+				}
+			]
+		}
+	]
+}

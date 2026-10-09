@@ -351,6 +351,29 @@ final class ArticlesTable: DatabaseTable, Sendable {
 		}
 	}
 
+	/// Delete statuses for articles the sync service reports as deleted.
+	///
+	/// Statuses deliberately outlive their articles: they're what lets
+	/// `articleIsIgnorable` drop a re-appearing old article instead of resurrecting
+	/// it, and what keeps long-lived feed items from coming back as unread. So
+	/// nothing else — not article deletion, not the retention cleanups — removes a
+	/// status before its own aging window ends.
+	///
+	/// The flip side: a status whose article no longer exists on the sync service
+	/// matches `fetchArticleIDsForStatusesWithoutArticlesNewerThanCutoffDate`
+	/// on every sync, so the account delegate re-requests the article forever and
+	/// the service keeps saying it's gone. Deleting the status is the terminal state
+	/// for that loop — and it's only safe here, when the service has affirmatively
+	/// reported the article deleted.
+	public func deleteStatuses(articleIDs: Set<String>, completion: DatabaseCompletionBlock?) {
+		self.queue.runInTransaction { database in
+			self.statusesTable.removeStatuses(articleIDs, database)
+			DispatchQueue.main.async {
+				completion?()
+			}
+		}
+	}
+
 	// MARK: - Unread Counts
 
 	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
