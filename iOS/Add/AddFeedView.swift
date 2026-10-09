@@ -35,7 +35,7 @@ struct AddFeedView: View {
 		NavigationStack {
 			Form {
 				Section {
-					TextField(NSLocalizedString("URL", comment: "Label for the URL parameter in the Add Feed intent."), text: $urlString)
+					TextField(NSLocalizedString("URL", comment: "Label for a feed URL"), text: $urlString)
 						.textContentType(.URL)
 						.keyboardType(.URL)
 						.textInputAutocapitalization(.never)
@@ -51,7 +51,7 @@ struct AddFeedView: View {
 					NavigationLink {
 						AddFeedContainerPickerView(selectedContainer: $container)
 					} label: {
-						LabeledContent(NSLocalizedString("Folder", comment: "Label for a parameter that lets the user choose a folder."), value: containerName)
+						LabeledContent(NSLocalizedString("Folder", comment: "Label for choosing the folder a feed is added to"), value: containerName)
 					}
 				}
 			}
