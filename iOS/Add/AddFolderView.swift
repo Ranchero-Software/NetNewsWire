@@ -46,6 +46,7 @@ struct AddFolderView: View {
 						Picker(NSLocalizedString("Account", comment: "Account"), selection: $selectedAccountID) {
 							ForEach(accounts, id: \.accountID) { account in
 								Text(verbatim: account.nameForDisplay)
+									.tag(account.accountID)
 							}
 						}
 					} else if let account = accounts.first {
