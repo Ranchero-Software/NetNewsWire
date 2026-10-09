@@ -13,7 +13,7 @@ import Account
 /// The list of account types the user picks from. Pushed onto the Settings navigation stack.
 struct AddAccountView: View {
 
-	/// Window the Feedly OAuth sheet attaches to. Nil is tolerated by the operation.
+	/// Window the Feedly OAuth sheet attaches to. Feedly can’t be added without one.
 	let presentationAnchor: ASPresentationAnchor?
 	/// Called after an account is added so the host can pop this screen.
 	let didAddAccount: () -> Void
@@ -162,6 +162,10 @@ struct AddAccountView: View {
 	}
 
 	private func startOAuth(for accountType: AccountType) {
+		guard let presentationAnchor else {
+			return
+		}
+
 		oauthHandler.didCreateAccount = { account in
 			account.triggerRefreshAll()
 			didAddAccount()
