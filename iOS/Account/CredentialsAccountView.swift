@@ -44,60 +44,42 @@ struct CredentialsAccountView: View {
 	}
 
 	var body: some View {
-		NavigationStack {
-			Form {
-				Section {
-					TextField(accountType.usernamePlaceholder, text: $username)
-						.textContentType(.username)
-						.keyboardType(.emailAddress)
+		AccountSetupSheet(accountType: accountType, isWorking: isValidating) {
+			Section {
+				TextField(accountType.usernamePlaceholder, text: $username)
+					.textContentType(.username)
+					.keyboardType(.emailAddress)
+					.textInputAutocapitalization(.never)
+					.autocorrectionDisabled()
+				passwordRow
+				if accountType.needsAPIURL {
+					TextField(NSLocalizedString("API URL: https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper"), text: $apiURLString)
+						.textContentType(.URL)
+						.keyboardType(.URL)
 						.textInputAutocapitalization(.never)
 						.autocorrectionDisabled()
-					passwordRow
-					if accountType.needsAPIURL {
-						TextField(NSLocalizedString("API URL: https://fresh.rss.net/api/greader.php", comment: "FreshRSS API Helper"), text: $apiURLString)
-							.textContentType(.URL)
-							.keyboardType(.URL)
-							.textInputAutocapitalization(.never)
-							.autocorrectionDisabled()
-					}
-				} header: {
-					AccountIconHeader(accountType: accountType)
 				}
-				Section {
-					Button(actionTitle) {
-						Task {
-							await submit()
-						}
+			} header: {
+				AccountIconHeader(accountType: accountType)
+			}
+			Section {
+				Button(actionTitle) {
+					Task {
+						await submit()
 					}
-					.frame(maxWidth: .infinity)
-					.disabled(!canSubmit || isValidating)
-				} footer: {
-					AccountSheetFooter(text: accountType.footerText, linkTitle: accountType.signUpTitle) {
-						isShowingSignUp = true
-					}
+				}
+				.frame(maxWidth: .infinity)
+				.disabled(!canSubmit || isValidating)
+			} footer: {
+				AccountSheetFooter(text: accountType.footerText, linkTitle: accountType.signUpTitle) {
+					isShowingSignUp = true
 				}
 			}
-			.navigationTitle(Text(verbatim: accountType.displayName))
-			.navigationBarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-						dismiss()
-					}
-					.disabled(isValidating)
-				}
-				ToolbarItem(placement: .topBarTrailing) {
-					if isValidating {
-						ProgressView()
-					}
-				}
-			}
-			.interactiveDismissDisabled(isValidating)
-			.errorAlert(message: $errorMessage)
-			.sheet(isPresented: $isShowingSignUp) {
-				if let signUpURL = accountType.signUpURL {
-					SafariView(url: signUpURL)
-				}
+		}
+		.errorAlert(message: $errorMessage)
+		.sheet(isPresented: $isShowingSignUp) {
+			if let signUpURL = accountType.signUpURL {
+				SafariView(url: signUpURL)
 			}
 		}
 	}
