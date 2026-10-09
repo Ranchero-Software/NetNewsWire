@@ -102,15 +102,14 @@ final class MainTimelineCell: UICollectionViewCell {
 			backgroundConfig.cornerRadius = 0
 		}
 
-		// Matches the feeds list: accent background when the timeline is first responder, gray otherwise.
-		let isActiveSelection = state.isSelected && isInExpandedSplitView && enclosingViewController?.isFirstResponder == true
+		let showsAccentSelection = isActiveSelection(state)
 
 		if state.isSwiped {
 			backgroundConfig.backgroundColor = .secondarySystemFill
 		} else if state.isSelected {
 			// When collapsed, keep the standard system selection color from updated(for: state).
 			if isInExpandedSplitView {
-				backgroundConfig.backgroundColor = isActiveSelection ? Assets.Colors.primaryAccent : .tertiarySystemFill
+				backgroundConfig.backgroundColor = showsAccentSelection ? Assets.Colors.primaryAccent : .tertiarySystemFill
 			}
 		} else {
 			backgroundConfig.backgroundColor = .clear
@@ -126,8 +125,8 @@ final class MainTimelineCell: UICollectionViewCell {
 		topSeparator.alpha = (isActive || isPreview) ? 0.0 : 1.0
 
 		// Text goes white only on the accent background. On gray, labels keep their normal colors.
-		updateColors(active: isActiveSelection)
-		updateIndicatorView(active: isActiveSelection)
+		updateColors(active: showsAccentSelection)
+		updateIndicatorView(active: showsAccentSelection)
 	}
 
 	func setIconImage(_ image: IconImage) {
@@ -216,11 +215,16 @@ private extension MainTimelineCell {
 			iconView.isHidden = true
 		}
 
-		let active = configurationState.isSelected && isInExpandedSplitView
+		let active = isActiveSelection(configurationState)
 		updateColors(active: active)
 		updateIndicatorView(active: active)
 		updateAccessibilityLabel()
 		setNeedsLayout()
+	}
+
+	/// Matches the feeds list: accent background (and white text) when the timeline is first responder, gray otherwise.
+	func isActiveSelection(_ state: UICellConfigurationState) -> Bool {
+		state.isSelected && isInExpandedSplitView && enclosingViewController?.isFirstResponder == true
 	}
 
 	func updateColors(active: Bool) {
