@@ -1148,7 +1148,7 @@
     "Sign in to your FreshRSS account." : {
       "comment" : "FreshRSS"
     },
-    "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?" : {
+    "Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a FreshRSS instance?" : {
       "comment" : "FreshRSS"
     },
     "Sign in to your Inoreader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an Inoreader account?" : {

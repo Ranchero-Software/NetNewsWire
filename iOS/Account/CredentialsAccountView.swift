@@ -308,7 +308,7 @@ private extension AccountType {
 		case .theOldReader:
 			return NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
 		case .freshRSS:
-			return NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
+			return NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a FreshRSS instance?", comment: "FreshRSS")
 		default:
 			return ""
 		}
