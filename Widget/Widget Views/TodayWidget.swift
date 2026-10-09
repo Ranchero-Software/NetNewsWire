@@ -35,7 +35,7 @@ struct TodayWidgetView: View {
 					Spacer()
 						.layoutPriority(0)
 					if entry.widgetData.totalTodayCount > 0 {
-						Text(verbatim: entry.widgetData.totalTodayUnreadCount > 0 ? "\(entry.widgetData.totalTodayCount.formatted()), \(entry.widgetData.totalTodayUnreadCount.formatted()) unread" : entry.widgetData.totalTodayCount.formatted())
+						Text(verbatim: countText)
 							.font(.caption2)
 							.bold()
 							.foregroundColor(.secondary)
@@ -54,6 +54,15 @@ struct TodayWidgetView: View {
 			}
 			.padding(.vertical, 2)
 		}
+	}
+
+	/// The unread part is omitted unless unread counts are set to show — “3, • unread” would say nothing.
+	var countText: String {
+		let widgetData = entry.widgetData
+		guard widgetData.totalTodayUnreadCount > 0, widgetData.effectiveUnreadCountDisplay == .count else {
+			return widgetData.totalTodayCount.formatted()
+		}
+		return "\(widgetData.totalTodayCount.formatted()), \(widgetData.totalTodayUnreadCount.formatted()) unread"
 	}
 
 	var todayImage: some View {

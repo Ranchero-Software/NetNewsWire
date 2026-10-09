@@ -52,6 +52,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		return true
 	}
 
+	// The selected row is accent-colored only while the feeds list is first responder.
+	@discardableResult override func becomeFirstResponder() -> Bool {
+		let didBecomeFirstResponder = super.becomeFirstResponder()
+		updateVisibleCellConfigurations()
+		return didBecomeFirstResponder
+	}
+
+	@discardableResult override func resignFirstResponder() -> Bool {
+		let didResignFirstResponder = super.resignFirstResponder()
+		updateVisibleCellConfigurations()
+		return didResignFirstResponder
+	}
+
 	private let refreshProgressView = RefreshProgressView(frame: .zero)
 	private var currentActivityButton: UIBarButtonItem?
 
@@ -185,6 +198,7 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
 
 		registerForTraitChanges([UITraitPreferredContentSizeCategory.self], target: self, action: #selector(preferredContentSizeCategoryDidChange))
 	}
@@ -697,6 +711,19 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 		}
 	}
 
+	func splitViewStateDidChange() {
+		updateVisibleCellConfigurations()
+	}
+
+	private func updateVisibleCellConfigurations() {
+		guard isViewLoaded, let collectionView else {
+			return
+		}
+		for cell in collectionView.visibleCells {
+			cell.setNeedsUpdateConfiguration()
+		}
+	}
+
 	func configureIcon(_ cell: MainFeedCollectionViewCell, sidebarItem: SidebarItem) {
 		guard let sidebarItemID = sidebarItem.sidebarItemID else {
 			return
@@ -885,6 +912,17 @@ final class MainFeedCollectionViewController: UICollectionViewController, Undoab
 			return
 		}
 		reconfigureItems(nodesToReconfigure)
+	}
+
+	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
+		for account in AccountManager.shared.activeAccounts {
+			if let headerView = findHeaderViewForAccount(account) {
+				headerView.unreadCount = account.unreadCount
+			}
+		}
+
+		// Only realized cells are reconfigured. Others pick up the setting when dequeued.
+		reconfigureItems(dataSource.snapshot().itemIdentifiers)
 	}
 
 	@objc func feedSettingDidChange(_ note: Notification) {

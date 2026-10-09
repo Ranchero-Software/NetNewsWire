@@ -44,8 +44,7 @@ final class SidebarCell: NSTableCellView {
 		set {
 			if unreadCountView.unreadCount != newValue {
 				unreadCountView.unreadCount = newValue
-				unreadCountView.isHidden = (newValue < 1)
-				needsLayout = true
+				updateUnreadCountView()
 			}
 		}
 	}
@@ -112,8 +111,15 @@ final class SidebarCell: NSTableCellView {
 		layoutWith(layout)
 	}
 
+	func updateUnreadCountView() {
+		unreadCountView.invalidateIntrinsicContentSize()
+		unreadCountView.needsDisplay = true
+		unreadCountView.isHidden = unreadCountView.unreadCountText == nil
+		needsLayout = true
+	}
+
 	override func accessibilityLabel() -> String? {
-		if unreadCount > 0 {
+		if unreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count {
 			let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
 			return "\(name) \(unreadCount) \(unreadLabel)"
 		} else {

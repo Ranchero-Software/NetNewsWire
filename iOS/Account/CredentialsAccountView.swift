@@ -107,7 +107,7 @@ struct CredentialsAccountView: View {
 				SecureField(Self.passwordPlaceholder, text: $password)
 					.textContentType(.password)
 			}
-			Button(isPasswordVisible ? NSLocalizedString("Hide", comment: "Hide password button") : NSLocalizedString("Show", comment: "Show password button")) {
+			Button(isPasswordVisible ? NSLocalizedString("Hide", comment: "Hide") : NSLocalizedString("Show", comment: "Show")) {
 				isPasswordVisible.toggle()
 			}
 			.buttonStyle(.borderless)

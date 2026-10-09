@@ -51,5 +51,11 @@ public extension NSView {
 			self.frame = rect
 		}
 	}
+
+	/// Sets the view’s size to its Auto Layout fitting size.
+	func sizeToFittingSize() {
+		layoutSubtreeIfNeeded()
+		setFrameSize(fittingSize)
+	}
 }
 #endif

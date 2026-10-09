@@ -380,7 +380,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir fuentes en el lector de noticias predeterminado"
+            "value" : "Abrir fuentes en el lector predeterminado"
           }
         }
       }
@@ -398,7 +398,61 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir páginas web en segundo plano en el navegador"
+            "value" : "Abrir páginas web en segundo plano"
+          }
+        }
+      }
+    },
+    "uC1-cL-sHw.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Show\"; ObjectID = \"uC1-cL-sHw\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
+        }
+      }
+    },
+    "uC2-cL-dSh.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Show dot\"; ObjectID = \"uC2-cL-dSh\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Show dot"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar punto"
+          }
+        }
+      }
+    },
+    "uC3-cL-hDn.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Hide\"; ObjectID = \"uC3-cL-hDn\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar"
           }
         }
       }
@@ -421,6 +475,24 @@
         }
       }
     },
+    "wAn-gW-UJc.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Unread Counts:\"; ObjectID = \"wAn-gW-UJc\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unread Counts:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contadores de no leídos:"
+          }
+        }
+      }
+    },
     "xQu-QV-91i.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Article Text Size:\"; ObjectID = \"xQu-QV-91i\";",
       "extractionState" : "extracted_with_value",
@@ -434,7 +506,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tamaño del texto del artículo:"
+            "value" : "Tamaño del texto:"
           }
         }
       }

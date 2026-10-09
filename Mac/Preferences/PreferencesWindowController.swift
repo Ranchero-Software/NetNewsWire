@@ -29,7 +29,7 @@ private struct ToolbarItemIdentifier {
 
 final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
 
-	private let windowWidth = CGFloat(512.0) // Width is constant for all views; only the height changes
+	private let minimumWindowWidth = CGFloat(512.0) // Panes that need more room widen the window
 	private var viewControllers = [String: NSViewController]()
 	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
 		var specs = [PreferencesToolbarItemSpec]()
@@ -178,6 +178,7 @@ private extension PreferencesWindowController {
 		let windowFrame = window!.frame
 		let contentViewFrame = window!.contentView!.frame
 
+		let windowWidth = max(minimumWindowWidth, viewFrame.width)
 		let deltaHeight = contentViewFrame.height - viewFrame.height
 		let heightForWindow = windowFrame.height - deltaHeight
 		let windowOriginY = windowFrame.minY + deltaHeight
@@ -185,7 +186,7 @@ private extension PreferencesWindowController {
 		var updatedWindowFrame = windowFrame
 		updatedWindowFrame.size.height = heightForWindow
 		updatedWindowFrame.origin.y = windowOriginY
-		updatedWindowFrame.size.width = windowWidth // NSWidth(viewFrame)
+		updatedWindowFrame.size.width = windowWidth
 
 		var updatedViewFrame = viewFrame
 		updatedViewFrame.origin = NSPoint.zero

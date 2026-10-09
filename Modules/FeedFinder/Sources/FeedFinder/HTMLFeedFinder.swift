@@ -56,6 +56,10 @@ private extension HTMLFeedFinder {
 	}
 
 	func urlStringMightBeFeed(_ urlString: String) -> Bool {
+		if urlStringIsDefinitelyNotFeed(urlString) {
+			return false
+		}
+
 		let massagedURLString = urlString.replacingOccurrences(of: "buzzfeed", with: "_")
 
 		for oneMatch in feedURLWordsToMatch {
@@ -65,6 +69,19 @@ private extension HTMLFeedFinder {
 			}
 		}
 
+		return false
+	}
+
+	static let nonFeedDomains = ["x.com", "twitter.com", "facebook.com", "instagram.com"]
+	static let nonFeedExtensions = ["html", "pdf", "jpg", "jpeg", "png", "gif", "tiff", "heic", "svg", "webp", "bmp", "ico", "zip", "tar", "tgz", "gz", "dmg", "mp3", "mp4", "mov", "mpeg", "mpg", "m4a", "aac", "wav", "aiff", "doc", "docx", "xls", "xlsx", "ppt", "pptx"]
+
+	func urlStringIsDefinitelyNotFeed(_ urlString: String) -> Bool {
+		for oneExtension in Self.nonFeedExtensions {
+			let fileExtension = ".\(oneExtension)"
+			if urlString.hasSuffix(fileExtension) {
+				return true
+			}
+		}
 		return false
 	}
 
