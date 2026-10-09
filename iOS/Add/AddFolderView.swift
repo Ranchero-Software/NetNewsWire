@@ -95,8 +95,12 @@ struct AddFolderView: View {
 		accounts.first { $0.accountID == selectedAccountID }
 	}
 
+	private var trimmedName: String {
+		name.trimmingWhitespace
+	}
+
 	private var canAdd: Bool {
-		!name.isEmpty && selectedAccount != nil
+		!trimmedName.isEmpty && selectedAccount != nil
 	}
 
 	private var isShowingError: Binding<Bool> {
@@ -121,7 +125,7 @@ struct AddFolderView: View {
 		}
 
 		do {
-			try await selectedAccount.addFolder(name)
+			try await selectedAccount.addFolder(trimmedName)
 			dismiss()
 		} catch {
 			errorMessage = error.localizedDescription
