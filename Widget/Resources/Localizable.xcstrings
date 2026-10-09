@@ -121,6 +121,9 @@
           }
         }
       }
+    },
+    "unread" : {
+      "comment" : "Unread label for accessibility"
     }
   },
   "version" : "1.1"
