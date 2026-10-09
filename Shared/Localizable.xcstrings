@@ -355,6 +355,9 @@
     "Collapsed" : {
       "comment" : "Collapsed"
     },
+    "Color Palette" : {
+      "comment" : "Color Palette"
+    },
     "Completed" : {
       "comment" : "Completed"
     },
@@ -1482,6 +1485,9 @@
     },
     "unread content records" : {
       "comment" : "Plural label for unread content records"
+    },
+    "Unread Counts" : {
+      "comment" : "Unread Counts"
     },
     "Unrecognized account type." : {
       "comment" : "Bad account type"

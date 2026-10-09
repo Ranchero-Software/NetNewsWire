@@ -101,8 +101,8 @@ final class SettingsViewController: UITableViewController {
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
 
-		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell)
-		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell)
+		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell, accessibilityLabel: NSLocalizedString("Color Palette", comment: "Color Palette"))
+		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
 		updateColorPalettePopUpButton()
 		updateUnreadCountDisplayPopUpButton()
 	}
@@ -477,10 +477,12 @@ private extension SettingsViewController {
 	}
 
 	/// Auto Layout lets the button resize itself when choosing an item changes its title.
-	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell?) {
+	/// The accessibility label names the setting, since the button’s title is only the current choice.
+	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell?, accessibilityLabel: String) {
 		guard let cell else {
 			return
 		}
+		button.accessibilityLabel = accessibilityLabel
 		button.translatesAutoresizingMaskIntoConstraints = false
 		button.setContentCompressionResistancePriority(.required, for: .horizontal)
 		cell.contentView.addSubview(button)
@@ -498,6 +500,7 @@ private extension SettingsViewController {
 			}
 		}
 		colorPalettePopUpButton.menu = UIMenu(children: actions)
+		colorPalettePopUpButton.accessibilityValue = String(describing: currentColorPalette)
 	}
 
 	func updateUnreadCountDisplayPopUpButton() {
@@ -508,6 +511,7 @@ private extension SettingsViewController {
 			}
 		}
 		unreadCountDisplayPopUpButton.menu = UIMenu(children: actions)
+		unreadCountDisplayPopUpButton.accessibilityValue = String(describing: currentUnreadCountDisplay)
 	}
 
 	func addFeed() {
