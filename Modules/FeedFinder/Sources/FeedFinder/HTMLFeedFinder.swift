@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RSWeb
 import RSParser
 
 private let feedURLWordsToMatch = ["feed", "xml", "rss", "atom", "json"]
@@ -76,6 +77,9 @@ private extension HTMLFeedFinder {
 	static let nonFeedExtensions = ["html", "pdf", "jpg", "jpeg", "png", "gif", "tiff", "heic", "svg", "webp", "bmp", "ico", "zip", "tar", "tgz", "gz", "dmg", "mp3", "mp4", "mov", "mpeg", "mpg", "m4a", "aac", "wav", "aiff", "doc", "docx", "xls", "xlsx", "ppt", "pptx"]
 
 	func urlStringIsDefinitelyNotFeed(_ urlString: String) -> Bool {
+		if SpecialCase.urlStringMatchesDomain(urlString, Self.nonFeedDomains) {
+			return true
+		}
 		for oneExtension in Self.nonFeedExtensions {
 			let fileExtension = ".\(oneExtension)"
 			if urlString.hasSuffix(fileExtension) {
