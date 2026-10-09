@@ -1317,17 +1317,19 @@ private extension MainWindowController {
 			}
 			let sidebarWidth = CGFloat(widths[0])
 			let timelineWidth = CGFloat(widths[1])
-			splitView.setPosition(sidebarWidth, ofDividerAt: 0)
+			// The sidebar is positioned expanded here and collapsed by the caller afterward. A zero sidebar width
+			// comes from state saved before the collapsed width was kept (7.1.x) — keep the default width.
+			if sidebarWidth > 0 {
+				splitView.setPosition(sidebarWidth, ofDividerAt: 0)
+			}
 			// A zero timeline width means the standard layout has never been laid out — leave it to the holding priorities.
-			// The sidebar is positioned expanded here and collapsed by the caller afterward, so a zero width only
-			// comes from state saved before the collapsed width was kept.
 			if timelineWidth > 0 {
 				let secondDividerPosition = sidebarWidth > 0 ? sidebarWidth + splitView.dividerThickness + timelineWidth : timelineWidth
 				splitView.setPosition(secondDividerPosition, ofDividerAt: 1)
 			}
 
 		case .column:
-			if widths.count == 3 {
+			if widths.count == 3 && widths[0] > 0 {
 				splitView.setPosition(CGFloat(widths[0]), ofDividerAt: 0)
 			}
 			guard let contentSplitView = contentSplitViewController?.splitView else {
