@@ -83,6 +83,9 @@ public extension NSTableView {
 		}
 
 		let range = rows(in: unobscuredDocumentRect)
+		guard range.length > 0 else {
+			return nil
+		}
 		let ixMax = numberOfRows - 1
 		let ixStart = min(range.location, ixMax)
 		let ixEnd = min(((range.location + range.length) - 1), ixMax)
