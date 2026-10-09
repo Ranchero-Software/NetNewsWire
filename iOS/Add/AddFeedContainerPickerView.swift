@@ -62,6 +62,7 @@ struct AddFeedContainerPickerView: View {
 			}
 			.foregroundStyle(canSelect(row.container) ? .primary : .secondary)
 			.disabled(!canSelect(row.container))
+			.accessibilityAddTraits(isSelected(row.container) ? .isSelected : [])
 		}
 		.navigationTitle(NSLocalizedString("Choose Folder", comment: "Choose Folder"))
 		.navigationBarTitleDisplayMode(.inline)
