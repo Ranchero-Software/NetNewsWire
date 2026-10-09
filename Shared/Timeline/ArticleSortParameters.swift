@@ -25,9 +25,9 @@ enum ArticleSortKey: String, Sendable {
 		case .title:
 			NSLocalizedString("Title", comment: "Timeline column header")
 		case .unread:
-			NSLocalizedString("Unread", comment: "Unread")
+			NSLocalizedString("timeline.column.unread", value: "Unread", comment: "Timeline column and sort field name")
 		case .starred:
-			NSLocalizedString("Starred", comment: "Starred")
+			NSLocalizedString("timeline.column.starred", value: "Starred", comment: "Timeline column and sort field name")
 		}
 	}
 

@@ -1165,8 +1165,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Artículo más antiguo arriba"
+            "state" : "translated",
+            "value" : "Ascendente"
           }
         }
       }
@@ -1864,6 +1864,12 @@
             "state" : "new",
             "value" : "Date"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fecha"
+          }
         }
       }
     },
@@ -1875,6 +1881,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Feed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fuente"
           }
         }
       }
@@ -1888,6 +1900,12 @@
             "state" : "new",
             "value" : "Starred"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destacados"
+          }
         }
       }
     },
@@ -1900,6 +1918,12 @@
             "state" : "new",
             "value" : "Title"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Título"
+          }
         }
       }
     },
@@ -1911,6 +1935,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Unread"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No leídos"
           }
         }
       }
@@ -1963,8 +1993,8 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Artículo más reciente arriba"
+            "state" : "translated",
+            "value" : "Descendente"
           }
         }
       }
