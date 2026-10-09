@@ -123,7 +123,7 @@ struct CredentialsAccountView: View {
 		}
 	}
 
-	@MainActor private func submit() async {
+	private func submit() async {
 		let trimmedUsername = username.trimmingWhitespace
 
 		let endpoint: URL?
