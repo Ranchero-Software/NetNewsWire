@@ -78,13 +78,7 @@ struct AddFolderView: View {
 				}
 			}
 			.interactiveDismissDisabled(isAdding)
-			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-				Button(NSLocalizedString("OK", comment: "OK button")) {
-					errorMessage = nil
-				}
-			} message: {
-				Text(verbatim: errorMessage ?? "")
-			}
+			.errorAlert(message: $errorMessage)
 			.onAppear {
 				isNameFieldFocused = true
 			}
@@ -101,16 +95,6 @@ struct AddFolderView: View {
 
 	private var canAdd: Bool {
 		!trimmedName.isEmpty && selectedAccount != nil
-	}
-
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
-		}
 	}
 
 	private func addFolder() async {

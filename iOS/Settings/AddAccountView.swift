@@ -104,13 +104,7 @@ struct AddAccountView: View {
 				CredentialsAccountView(accountType: sheet.accountType, account: nil, didAddAccount: didAddAccount)
 			}
 		}
-		.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-			Button(NSLocalizedString("OK", comment: "OK button")) {
-				errorMessage = nil
-			}
-		} message: {
-			Text(verbatim: errorMessage ?? "")
-		}
+		.errorAlert(message: $errorMessage)
 	}
 
 	private func accountRow(_ accountType: AccountType) -> some View {
@@ -140,16 +134,6 @@ struct AddAccountView: View {
 
 	private func isDisabled(_ accountType: AccountType) -> Bool {
 		accountType == .cloudKit && AccountManager.shared.hasiCloudAccount
-	}
-
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
-		}
 	}
 
 	private func select(_ accountType: AccountType) {

@@ -78,13 +78,7 @@ struct AddFeedView: View {
 				}
 			}
 			.interactiveDismissDisabled(isAdding)
-			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-				Button(NSLocalizedString("OK", comment: "OK button")) {
-					errorMessage = nil
-				}
-			} message: {
-				Text(verbatim: errorMessage ?? "")
-			}
+			.errorAlert(message: $errorMessage)
 			.onAppear {
 				if urlString.isEmpty {
 					isURLFieldFocused = true
@@ -105,16 +99,6 @@ struct AddFeedView: View {
 
 	private var canAdd: Bool {
 		urlString.mayBeURL && container != nil
-	}
-
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
-		}
 	}
 
 	private func addFeed() {

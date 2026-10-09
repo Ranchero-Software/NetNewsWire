@@ -93,13 +93,7 @@ struct CredentialsAccountView: View {
 				}
 			}
 			.interactiveDismissDisabled(isValidating)
-			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-				Button(NSLocalizedString("OK", comment: "OK button")) {
-					errorMessage = nil
-				}
-			} message: {
-				Text(verbatim: errorMessage ?? "")
-			}
+			.errorAlert(message: $errorMessage)
 			.sheet(isPresented: $isShowingSignUp) {
 				if let signUpURL = accountType.signUpURL {
 					SafariView(url: signUpURL)
@@ -144,16 +138,6 @@ struct CredentialsAccountView: View {
 			return hasUsername && hasPassword && hasAPIURL
 		default:
 			return hasUsername && hasPassword
-		}
-	}
-
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
 		}
 	}
 
