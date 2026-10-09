@@ -184,7 +184,7 @@ extension AccountsPreferencesViewController: AccountsPreferencesAddAccountDelega
 			addAccountWindowController = accountsFeedbinWindowController
 			accountsFeedbinWindowController.runSheetOnWindow(window)
 
-		case .freshRSS, .inoreader, .bazQux, .theOldReader:
+		case .freshRSS, .inoreader, .bazQux, .theOldReader, .wordpressCom:
 			let accountsReaderAPIWindowController = AccountsReaderAPIWindowController()
 			addAccountWindowController = accountsReaderAPIWindowController
 			accountsReaderAPIWindowController.accountType = accountType

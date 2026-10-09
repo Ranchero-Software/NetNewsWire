@@ -64,7 +64,7 @@ struct AddAccountView: View {
 			case .icloud:
 				return [.cloudKit]
 			case .web:
-				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader]
+				return [.bazQux, .feedbin, .feedly, .inoreader, .newsBlur, .theOldReader, .wordpressCom]
 			case .selfhosted:
 				return [.freshRSS]
 			}

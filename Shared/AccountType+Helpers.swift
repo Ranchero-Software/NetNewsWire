@@ -40,6 +40,8 @@ extension AccountType {
 			return .systemIndigo
 		case .theOldReader:
 			return .systemPink
+		case .wordpressCom:
+			return .systemCyan
 		}
 	}
 	#else
@@ -63,6 +65,8 @@ extension AccountType {
 			return .indigo
 		case .theOldReader:
 			return .pink
+		case .wordpressCom:
+			return .cyan
 		}
 	}
 	#endif
@@ -97,6 +101,8 @@ extension AccountType {
 			return Image("accountNewsBlur")
 		case .theOldReader:
 			return Image("accountTheOldReader")
+		case .wordpressCom:
+			return Image("accountWordPress")
 		}
 	}
 

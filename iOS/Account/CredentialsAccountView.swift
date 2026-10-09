@@ -255,6 +255,8 @@ private extension AccountType {
 			return URL(string: ReaderAPIVariant.bazQux.host)
 		case .theOldReader:
 			return URL(string: ReaderAPIVariant.theOldReader.host)
+		case .wordpressCom:
+			return URL(string: ReaderAPIVariant.wordpressCom.host)
 		default:
 			return nil
 		}
@@ -274,6 +276,8 @@ private extension AccountType {
 			return URL(string: "https://theoldreader.com")
 		case .freshRSS:
 			return URL(string: "https://freshrss.org")
+		case .wordpressCom:
+			return URL(string: "https://wordpress.com/support/reader/use-a-third-party-rss-reader-with-wordpress-com/")
 		default:
 			return nil
 		}
@@ -281,7 +285,7 @@ private extension AccountType {
 
 	var signUpTitle: String {
 		switch self {
-		case .freshRSS:
+		case .freshRSS, .wordpressCom:
 			return NSLocalizedString("Find Out More", comment: "Find Out More")
 		default:
 			return NSLocalizedString("Sign Up Here", comment: "Sign Up")
@@ -302,6 +306,8 @@ private extension AccountType {
 			return NSLocalizedString("Sign in to your The Old Reader account and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have a The Old Reader account?", comment: "TOR")
 		case .freshRSS:
 			return NSLocalizedString("Sign in to your FreshRSS instance and sync your feeds across your devices. Your username and password will be encrypted and stored in Keychain.\n\nDon’t have an FreshRSS instance?", comment: "FreshRSS")
+		case .wordpressCom:
+			return NSLocalizedString("Sign in with your WordPress.com username and an application password to sync your feeds across your devices. Your credentials will be encrypted and stored in Keychain.\n\nNeed to set up an application password?", comment: "WordPress.com")
 		default:
 			return ""
 		}
