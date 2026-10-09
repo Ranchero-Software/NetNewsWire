@@ -27,6 +27,9 @@ struct CredentialsAccountView: View {
 	@State private var errorMessage: String?
 	@State private var isShowingSignUp = false
 
+	/// Account types that sign in with this sheet.
+	static let accountTypes: Set<AccountType> = [.feedbin, .newsBlur, .inoreader, .bazQux, .theOldReader, .freshRSS]
+
 	private static let passwordPlaceholder = NSLocalizedString("Password", comment: "Password field placeholder")
 
 	init(accountType: AccountType, account: Account?, didAddAccount: (() -> Void)?) {
