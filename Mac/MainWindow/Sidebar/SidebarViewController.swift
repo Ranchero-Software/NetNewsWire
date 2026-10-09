@@ -84,7 +84,6 @@ extension Notification.Name {
 	}
 
 	override func viewDidLoad() {
-		keyboardDelegate.sidebarViewController = self
 		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
