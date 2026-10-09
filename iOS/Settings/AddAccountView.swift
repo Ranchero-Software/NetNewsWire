@@ -125,7 +125,7 @@ struct AddAccountView: View {
 				Text(verbatim: accountType.displayName)
 			}
 		}
-		.foregroundStyle(.primary)
+		.foregroundStyle(isDisabled(accountType) ? .secondary : .primary)
 		.disabled(isDisabled(accountType))
 	}
 
