@@ -12,8 +12,6 @@ import Account
 /// Sheet for adding a folder to an account.
 struct AddFolderView: View {
 
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460, height: 400)
-
 	@Environment(\.dismiss) private var dismiss
 	@State private var name = ""
 	@State private var selectedAccountID = ""

@@ -516,7 +516,7 @@ private extension SettingsViewController {
 		let addFeedView = AddFeedView(initialFeed: AccountManager.netNewsWireNewsURL, initialFeedName: NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News"))
 		let hostingController = UIHostingController(rootView: addFeedView)
 		hostingController.modalPresentationStyle = .formSheet
-		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
+		hostingController.preferredContentSize = UIViewController.formSheetSize
 
 		presentingParentController?.present(hostingController, animated: true)
 	}

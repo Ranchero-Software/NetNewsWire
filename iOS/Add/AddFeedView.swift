@@ -12,8 +12,6 @@ import Account
 /// Sheet for subscribing to a feed by URL, with an optional title and a choice of account or folder.
 struct AddFeedView: View {
 
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460, height: 400)
-
 	@Environment(\.dismiss) private var dismiss
 	@State private var urlString = ""
 	@State private var name = ""

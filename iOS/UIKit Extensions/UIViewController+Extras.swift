@@ -13,6 +13,9 @@ import Account
 
 extension UIViewController {
 
+	/// Size of form sheets on iPad.
+	static let formSheetSize = CGSize(width: 460, height: 400)
+
 	func presentError(_ error: Error, dismiss: (() -> Void)? = nil) {
 		if let accountError = error as? AccountError, accountError.isCredentialsError {
 			presentAccountError(accountError, dismiss: dismiss)

@@ -11,8 +11,6 @@
 import UIKit
 
 extension UIStoryboard {
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
-
 	public static var main: UIStoryboard {
 		UIStoryboard(name: "Main", bundle: nil)
 	}
