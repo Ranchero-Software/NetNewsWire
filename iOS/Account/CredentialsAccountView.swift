@@ -201,6 +201,9 @@ struct CredentialsAccountView: View {
 		do {
 			try store(basicCredentials: basicCredentials, validatedCredentials: validatedCredentials, in: account, endpoint: endpoint)
 		} catch {
+			if self.account == nil {
+				AccountManager.shared.deleteAccount(account)
+			}
 			errorMessage = NSLocalizedString("Keychain error while storing credentials.", comment: "Credentials Error")
 			return
 		}
