@@ -19,12 +19,7 @@ struct ArticleRenderingSpecialCases {
 	/// True when any of the URL strings (article link, feed URL, feed home page URL)
 	/// is on a domain whose article content must render without JavaScript.
 	static func shouldDisableJavaScript(urlStrings: [String?]) -> Bool {
-		for urlString in urlStrings {
-			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domainsWithJavaScriptDisabled) {
-				return true
-			}
-		}
-		return false
+		anyURLStringMatchesAnyDomain(urlStrings, domainsWithJavaScriptDisabled)
 	}
 
 	@MainActor static func shouldDisableJavaScript(for article: Article) -> Bool {
@@ -34,8 +29,9 @@ struct ArticleRenderingSpecialCases {
 	private static let feedDomainsWithParagraphsSeparatedByReturns = ["slashdot.org"]
 	private static let consecutiveReturnsRegex = try? NSRegularExpression(pattern: "(?:\\r?\\n[ \\t]*){2,}")
 
-	static func insertParagraphTagsIfNeeded(_ html: String, feedURLString: String?) -> String {
-		guard let feedURLString, SpecialCase.urlStringMatchesDomain(feedURLString, feedDomainsWithParagraphsSeparatedByReturns) else {
+	/// Checks the home page too, which catches a feed subscribed through a proxy such as FeedBurner.
+	static func insertParagraphTagsIfNeeded(_ html: String, feedURL: String?, homePageURL: String?) -> String {
+		guard anyURLStringMatchesAnyDomain([feedURL, homePageURL], feedDomainsWithParagraphsSeparatedByReturns) else {
 			return html
 		}
 		guard html.utf8.contains(UInt8(ascii: "\n")), let consecutiveReturnsRegex else {
@@ -111,6 +107,15 @@ struct ArticleRenderingSpecialCases {
 			return baseURLForYouTubeArticles
 		}
 		return url
+	}
+
+	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
+		for urlString in urlStrings {
+			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {
+				return true
+			}
+		}
+		return false
 	}
 
 	// The content between a real <body …> tag and </body> (or the end of the string).

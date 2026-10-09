@@ -88,8 +88,20 @@ import Testing
 		let html = paragraph1 + "\n \n" + paragraph2 + "\n \n" + paragraph3 + shareLinks + "\n\n\n\n" + readMore
 		let expected = paragraph1 + "<p>" + paragraph2 + "<p>" + paragraph3 + shareLinks + "<p>" + readMore
 
-		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURLString: feedURLString)
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: feedURLString, homePageURL: nil)
 		#expect(result == expected)
+	}
+
+	@Test func slashdotHomePageURLGetsParagraphTagsForProxiedFeed() {
+		let html = "First paragraph.\n\nSecond paragraph."
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: "https://feeds.feedburner.com/Slashdot/slashdot", homePageURL: "https://slashdot.org/")
+		#expect(result == "First paragraph.<p>Second paragraph.")
+	}
+
+	@Test func otherFeedsDontGetParagraphTags() {
+		let html = "First paragraph.\n\nSecond paragraph."
+		let result = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(html, feedURL: "https://example.com/feed.xml", homePageURL: "https://example.com/")
+		#expect(result == html)
 	}
 
 	// MARK: - Base URL for YouTube articles
