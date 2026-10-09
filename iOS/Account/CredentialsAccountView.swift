@@ -38,6 +38,9 @@ struct CredentialsAccountView: View {
 			self._username = State(initialValue: credentials.username)
 			self._password = State(initialValue: credentials.secret)
 		}
+		if accountType.needsAPIURL, let endpointURL = account?.endpointURL {
+			self._apiURLString = State(initialValue: endpointURL.absoluteString)
+		}
 	}
 
 	var body: some View {
