@@ -77,6 +77,7 @@ struct AddFolderView: View {
 					}
 				}
 			}
+			.interactiveDismissDisabled(isAdding)
 			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
 				Button(NSLocalizedString("OK", comment: "OK button")) {
 					errorMessage = nil

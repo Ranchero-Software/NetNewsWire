@@ -92,6 +92,7 @@ struct CredentialsAccountView: View {
 					}
 				}
 			}
+			.interactiveDismissDisabled(isValidating)
 			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
 				Button(NSLocalizedString("OK", comment: "OK button")) {
 					errorMessage = nil
