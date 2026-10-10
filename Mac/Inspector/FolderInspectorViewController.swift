@@ -25,7 +25,6 @@ final class FolderInspectorViewController: NSViewController, Inspector {
 
 	// MARK: Inspector
 
-	let isFallbackInspector = false
 	var objects: [Any]? {
 		didSet {
 			renameFolderIfNecessary()
