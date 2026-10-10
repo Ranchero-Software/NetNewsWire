@@ -12,14 +12,16 @@ struct AccountsDetailView: View {
 
 	let account: Account
 	var onCredentials: (() -> Void)?
+	var onHideReadOverrides: (() -> Void)?
 
 	@State private var accountName: String
 	@State private var isActive: Bool
 	@State private var syncUnreadContent: Bool
 
-	init(account: Account, onCredentials: (() -> Void)? = nil) {
+	init(account: Account, onCredentials: (() -> Void)? = nil, onHideReadOverrides: (() -> Void)? = nil) {
 		self.account = account
 		self.onCredentials = onCredentials
+		self.onHideReadOverrides = onHideReadOverrides
 		_accountName = State(initialValue: account.name ?? "")
 		_isActive = State(initialValue: account.isActive)
 		_syncUnreadContent = State(initialValue: AccountManager.shared.syncArticleContentForUnreadArticles)
@@ -35,74 +37,100 @@ struct AccountsDetailView: View {
 	}
 
 	var body: some View {
-		VStack(alignment: .leading, spacing: 0) {
-			Grid(alignment: .leading, verticalSpacing: 0) {
-				GridRow(alignment: .firstTextBaseline) {
-					Text("Type:")
-						.gridColumnAlignment(.trailing)
-					Text(account.defaultName)
-				}
+		// Scrolls so nothing clips when the pane is shorter than its content
+		// (e.g. an iCloud account with the sync controls). `.basedOnSize` keeps
+		// it from rubber-banding when the content already fits.
+		ScrollView {
+			accountForm
+		}
+		.scrollBounceBehavior(.basedOnSize)
+	}
 
-				GridRow {
-					Color.clear
-						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Toggle("Active", isOn: $isActive)
-						.onChange(of: isActive) {
-							account.isActive = isActive
-						}
-						.padding(.top, 9)
-				}
+	private var accountForm: some View {
+		Grid(alignment: .leading, verticalSpacing: 0) {
+			GridRow(alignment: .firstTextBaseline) {
+				Text("Type:")
+					.gridColumnAlignment(.trailing)
+				Text(account.defaultName)
+			}
 
-				GridRow(alignment: .firstTextBaseline) {
-					Text("Name:")
-					TextField("", text: $accountName)
-						.frame(width: 150)
-						.onSubmit {
-							commitName()
-						}
-						.onChange(of: accountName) {
-							commitName()
-						}
-				}
-				.padding(.top, 14)
-
-				GridRow {
-					Color.clear
-						.gridCellUnsizedAxes([.horizontal, .vertical])
-					Text("The name can be anything you want. You can even use emoji. 🎸")
-						.foregroundStyle(.secondary)
-						.fixedSize(horizontal: false, vertical: true)
-						.padding(.top, 1)
-				}
-
-				if showCredentialsButton {
-					GridRow {
-						Color.clear
-							.gridCellUnsizedAxes([.horizontal, .vertical])
-						Button("Credentials") {
-							onCredentials?()
-						}
-						.padding(.top, 12)
+			GridRow {
+				Color.clear
+					.gridCellUnsizedAxes([.horizontal, .vertical])
+				Toggle("Active", isOn: $isActive)
+					.onChange(of: isActive) {
+						account.isActive = isActive
 					}
+					.padding(.top, 9)
+			}
+
+			GridRow(alignment: .firstTextBaseline) {
+				Text("Name:")
+				TextField("", text: $accountName)
+					.frame(width: 150)
+					.onSubmit {
+						commitName()
+					}
+					.onChange(of: accountName) {
+						commitName()
+					}
+			}
+			.padding(.top, 14)
+
+			GridRow {
+				Color.clear
+					.gridCellUnsizedAxes([.horizontal, .vertical])
+				Text("The name can be anything you want. You can even use emoji. 🎸")
+					.foregroundStyle(.secondary)
+					.fixedSize(horizontal: false, vertical: true)
+					.padding(.top, 1)
+			}
+
+			if showCredentialsButton {
+				GridRow {
+					Color.clear
+						.gridCellUnsizedAxes([.horizontal, .vertical])
+					Button("Credentials") {
+						onCredentials?()
+					}
+					.padding(.top, 12)
 				}
 			}
 
 			if account.type == .cloudKit {
-				Toggle("Sync content of unread articles", isOn: $syncUnreadContent)
-					.onChange(of: syncUnreadContent) {
-						AccountManager.shared.syncArticleContentForUnreadArticles = syncUnreadContent
-					}
-					.padding(.top, 12)
+				GridRow {
+					Color.clear
+						.gridCellUnsizedAxes([.horizontal, .vertical])
+					Toggle("Sync content of unread articles", isOn: $syncUnreadContent)
+						.onChange(of: syncUnreadContent) {
+							AccountManager.shared.syncArticleContentForUnreadArticles = syncUnreadContent
+						}
+						.padding(.top, 12)
+				}
 
-				Text("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.")
-					.foregroundStyle(.secondary)
-					.fixedSize(horizontal: false, vertical: true)
-					.padding(.top, 4)
-					.padding(.leading, 21)
+				GridRow {
+					Color.clear
+						.gridCellUnsizedAxes([.horizontal, .vertical])
+					Text("Syncing article content increases iCloud storage use, sync time, and battery use.\n\nArticle status and the content of starred articles are always synced.")
+						.foregroundStyle(.secondary)
+						.fixedSize(horizontal: false, vertical: true)
+						.padding(.top, 4)
+				}
+			}
+
+			// Placed last so it sits at the bottom for every account type.
+			GridRow {
+				Color.clear
+					.gridCellUnsizedAxes([.horizontal, .vertical])
+				Button("Hide Read Articles Settings…") {
+					onHideReadOverrides?()
+				}
+				.fixedSize()
+				.padding(.top, 12)
 			}
 		}
 		.padding(20)
-		.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+		.frame(maxWidth: .infinity, alignment: .topLeading)
 	}
 
 	private func commitName() {

@@ -44,6 +44,8 @@ final class AppDefaults: Sendable {
 		static let defaultBrowserID = "defaultBrowserID"
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
+		static let feedReadFilterOverrides = "feedReadFilterOverrides"
+		static let hideReadArticles = "hideReadArticles"
 
 		// Hidden prefs
 		static let showDebugMenu = "ShowDebugMenu"
@@ -320,6 +322,42 @@ final class AppDefaults: Sendable {
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
 		}
+	}
+
+	var feedReadFilterOverrides: FeedReadFilterOverrides {
+		get {
+			FeedReadFilterOverrides(data: UserDefaults.standard.data(forKey: Key.feedReadFilterOverrides))
+		}
+		set {
+			UserDefaults.standard.set(newValue.data, forKey: Key.feedReadFilterOverrides)
+		}
+	}
+
+	var hideReadArticles: Bool {
+		get {
+			return AppDefaults.bool(for: Key.hideReadArticles)
+		}
+		set {
+			AppDefaults.setBool(for: Key.hideReadArticles, newValue)
+		}
+	}
+
+	/// Backs the switches in the overrides screen: turning one on pins the feed to the
+	/// opposite of the current global setting.
+	func setFeedHideReadOverride(accountID: String, feedID: String, enabled: Bool) {
+		var overrides = feedReadFilterOverrides
+		if enabled {
+			overrides.setOverride(hideReadArticles ? .show : .hide, accountID: accountID, feedID: feedID)
+		} else {
+			overrides.clearOverride(accountID: accountID, feedID: feedID)
+		}
+		feedReadFilterOverrides = overrides
+	}
+
+	func clearFeedHideReadOverrides(accountID: String) {
+		var overrides = feedReadFilterOverrides
+		overrides.clearAll(accountID: accountID)
+		feedReadFilterOverrides = overrides
 	}
 
 	init() {

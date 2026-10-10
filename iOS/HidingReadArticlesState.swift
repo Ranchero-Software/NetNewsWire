@@ -11,19 +11,25 @@ import Account
 
 @MainActor final class HidingReadArticlesState {
 	private var smartFeedsHidingReadArticles = Set<String>()
-	private var feedsHidingReadArticles = [String: Set<String>]() // accountID: Set<feed.feedID>
+	private var smartFeedsShowingReadArticles = Set<String>()
+	private(set) var feedReadFilterOverrides = FeedReadFilterOverrides()
 	private var foldersShowingReadArticles = [String: Set<String>]() // accountID: Set<folder.nameForDisplay>
 
 	func copy(from stateRestorationInfo: StateRestorationInfo) {
 		smartFeedsHidingReadArticles = stateRestorationInfo.smartFeedsHidingReadArticles
-		feedsHidingReadArticles = stateRestorationInfo.feedsHidingReadArticles
+		smartFeedsShowingReadArticles = stateRestorationInfo.smartFeedsShowingReadArticles
+		feedReadFilterOverrides = stateRestorationInfo.feedReadFilterOverrides
 		foldersShowingReadArticles = stateRestorationInfo.foldersShowingReadArticles
 	}
 
 	func save() {
-		saveSmartFeedsHidingReadArticles()
-		saveFeedsHidingReadArticles()
+		saveSmartFeedsReadFilterState()
+		saveFeedReadFilterOverrides()
 		saveFoldersShowingReadArticles()
+	}
+
+	func reloadFeedOverridesFromDefaults() {
+		feedReadFilterOverrides = AppDefaults.shared.feedReadFilterOverrides
 	}
 
 	func toggleHidingReadArticles(for sidebarItemID: SidebarItemIdentifier) {
@@ -44,14 +50,19 @@ import Account
 			if isUnreadSmartFeed(sidebarItemID) {
 				return true
 			}
-			return smartFeedsHidingReadArticles.contains(id)
+			if smartFeedsHidingReadArticles.contains(id) {
+				return true
+			}
+			if smartFeedsShowingReadArticles.contains(id) {
+				return false
+			}
+			return AppDefaults.shared.hideReadArticles
 
 		case .feed(let accountID, let feedID):
-			var isHidingReadArticles = false
-			if let feedIDs = feedsHidingReadArticles[accountID] {
-				isHidingReadArticles = feedIDs.contains(feedID)
+			if let override = feedReadFilterOverrides.override(accountID: accountID, feedID: feedID) {
+				return override == .hide
 			}
-			return isHidingReadArticles
+			return AppDefaults.shared.hideReadArticles
 
 		case .folder(let accountID, let folderName):
 			// Folders hide read articles by default, so we check if not showing read articles.
@@ -82,27 +93,24 @@ private extension HidingReadArticlesState {
 			if isUnreadSmartFeed(sidebarItemID) {
 				return
 			}
+			// Stored both ways so that showing read articles sticks when the
+			// global setting hides them.
 			if hiding {
 				smartFeedsHidingReadArticles.insert(id)
+				smartFeedsShowingReadArticles.remove(id)
 			} else {
 				smartFeedsHidingReadArticles.remove(id)
+				smartFeedsShowingReadArticles.insert(id)
 			}
-			saveSmartFeedsHidingReadArticles()
+			saveSmartFeedsReadFilterState()
 
 		case .feed(let accountID, let feedID):
-			if hiding {
-				var feedIDs = feedsHidingReadArticles[accountID] ?? Set<String>()
-				feedIDs.insert(feedID)
-				feedsHidingReadArticles[accountID] = feedIDs
-			} else {
-				feedsHidingReadArticles[accountID]?.remove(feedID)
-			}
-			saveFeedsHidingReadArticles()
+			feedReadFilterOverrides.setOverride(hiding ? .hide : .show, accountID: accountID, feedID: feedID)
+			saveFeedReadFilterOverrides()
 
 		case .folder(let accountID, let folderName):
 			// Folders hide read articles by default, so we store the folder
-			// only if it's showing read articles. It's the opposite of
-			// feedsHidingReadArticles.
+			// only if it's showing read articles.
 			if hiding {
 				foldersShowingReadArticles[accountID]?.remove(folderName)
 			} else {
@@ -129,22 +137,16 @@ private extension HidingReadArticlesState {
 		AppDefaults.shared.foldersShowingReadArticles = d
 	}
 
-	func saveFeedsHidingReadArticles() {
-		var d = feedsHidingReadArticles
-
+	func saveFeedReadFilterOverrides() {
 		// Filter out accounts and feeds that no longer exist.
-		for accountID in Array(d.keys) {
-			guard let account = AccountManager.shared.existingAccount(accountID: accountID) else {
-				d[accountID] = nil
-				continue
-			}
-			d[accountID] = d[accountID]?.filter { account.existingFeed(withFeedID: $0) != nil }
+		feedReadFilterOverrides.removeAll { accountID, feedID in
+			AccountManager.shared.existingAccount(accountID: accountID)?.existingFeed(withFeedID: feedID) == nil
 		}
-
-		AppDefaults.shared.feedsHidingReadArticles = d
+		AppDefaults.shared.feedReadFilterOverrides = feedReadFilterOverrides
 	}
 
-	func saveSmartFeedsHidingReadArticles() {
+	func saveSmartFeedsReadFilterState() {
 		AppDefaults.shared.smartFeedsHidingReadArticles = smartFeedsHidingReadArticles
+		AppDefaults.shared.smartFeedsShowingReadArticles = smartFeedsShowingReadArticles
 	}
 }
