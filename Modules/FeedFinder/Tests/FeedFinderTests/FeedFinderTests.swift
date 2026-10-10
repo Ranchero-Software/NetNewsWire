@@ -8,6 +8,7 @@
 
 import XCTest
 @testable import FeedFinder
+import RSParser
 
 final class FeedFinderTests: XCTestCase {
 
@@ -23,5 +24,26 @@ final class FeedFinderTests: XCTestCase {
 
 	func testKnownFeedSpecifierIgnoresRelayFMRoot() throws {
 		XCTAssertNil(FeedSpecifier.knownFeedSpecifier(url: URL(string: "https://www.relay.fm")!))
+	}
+
+	func testBodyLinksWithNonFeedExtensionsAreIgnored() throws {
+		let urlStrings = feedURLStringsInBodyLinks([
+			"https://example.com/feed.xml",
+			"https://example.com/feed.PDF",
+			"https://example.com/feed.pdf?download=1",
+			"https://example.com/rss.jpg#top"
+		])
+		XCTAssertEqual(urlStrings, ["https://example.com/feed.xml"])
+	}
+}
+
+private extension FeedFinderTests {
+
+	func feedURLStringsInBodyLinks(_ urlStrings: [String]) -> Set<String> {
+		let links = urlStrings.map { "<a href=\"\($0)\">Link</a>" }.joined()
+		let html = "<html><body>\(links)</body></html>"
+		let parserData = ParserData(url: "https://example.com/", data: Data(html.utf8))
+		let feedFinder = HTMLFeedFinder(parserData: parserData)
+		return Set(feedFinder.feedSpecifiers.map(\.urlString))
 	}
 }
