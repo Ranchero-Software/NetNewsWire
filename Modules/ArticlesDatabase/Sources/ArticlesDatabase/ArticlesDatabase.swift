@@ -54,7 +54,6 @@ public struct ArticleCounts: Sendable {
 
 	private let articlesTable: ArticlesTable
 	private let queue: DatabaseQueue
-	private let operationQueue = MainThreadOperationQueue()
 	private let retentionStyle: RetentionStyle
 	private let accountID: String
 
@@ -251,10 +250,11 @@ public struct ArticleCounts: Sendable {
 
 	// MARK: - Unread Counts
 
-	/// Fetch all non-zero unread counts.
+	/// Fetch all non-zero unread counts. Nil if the query fails.
 	public func fetchAllUnreadCountsAsync() async -> UnreadCountDictionary? {
-		await withCheckedContinuation { continuation in
-			_fetchAllUnreadCounts { unreadCountDictionary in
+		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
+		return await withCheckedContinuation { continuation in
+			articlesTable.fetchAllUnreadCounts { unreadCountDictionary in
 				continuation.resume(returning: unreadCountDictionary)
 			}
 		}
@@ -460,18 +460,6 @@ typealias ArticleSetResultBlock = @Sendable (Set<Article>) -> Void
 typealias ArticleIDsCompletionBlock = @Sendable (Set<String>) -> Void
 
 private extension ArticlesDatabase {
-
-	func _fetchAllUnreadCounts(_ completion: @escaping @Sendable (UnreadCountDictionary?) -> Void) {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		Task { @MainActor in
-			let operation = FetchAllUnreadCountsOperation(databaseQueue: queue)
-			operation.completionBlock = { operation in
-				let fetchOperation = operation as! FetchAllUnreadCountsOperation
-				completion(fetchOperation.unreadCountDictionary)
-			}
-			operationQueue.add(operation)
-		}
-	}
 
 	func _fetchUnreadCounts(feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
