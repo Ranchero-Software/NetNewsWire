@@ -1,5 +1,19 @@
 # Mac Release Notes
 
+### 7.2b3 7220 10 Oct 2026 - branch: main tag: mac-7.2b3
+
+Fixed the Settings layout on macOS 15
+Added Spanish translations for Settings and the Sort Articles By menu
+Made each Settings pane size itself to fit, for languages that need more room
+Fixed bug where the sidebar could reopen with no width when it had been collapsed in 7.1.x
+Fixed a memory leak when closing a main window
+Fixed a possible crash when the sidebar or timeline had no visible rows
+Changed sorting by title and by feed to sort numbers by value — “Episode 2” comes before “Episode 10”
+Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram, and links to files with uppercase extensions or URL queries (such as .PDF or .jpg?w=600)
+Fixed bug where some sites with “youtube” in their names were treated as YouTube
+Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+Changed VoiceOver to say “unread” for sidebar unread counts shown as dots
+
 ### 7.2b2 7219 7 Oct 2026 - branch: main tag: mac-7.2b2
 
 Added support for Substack-style footnotes

@@ -1,5 +1,24 @@
 # iOS Release Notes
 
+### 7.2 build 7220 10 Oct 2026 - branch: main tag: iOS-7.2-7220
+
+Fixed bug where Add Feed lost the typed URL and title after choosing a folder
+Offered Update Credentials in the account error alert for all username and password accounts, not just Feedbin
+Filled in the API URL when editing a FreshRSS account’s credentials
+Removed a newly added account when its credentials can’t be saved to the keychain
+Stopped account sheets from being swiped away while they’re working
+Showed unavailable rows in Add Account and the Add Feed folder picker as disabled
+Trimmed spaces from folder names when adding a folder
+Fixed timeline text sometimes showing white on the gray selection background
+Stopped the scroll animation when restoring the selection in the feeds list and timeline
+Changed sort-by-feed to sort feed names with numbers by value — “Episode 2” comes before “Episode 10”
+Improved finding feeds in a page by skipping links to X, Twitter, Facebook, and Instagram, and links to files with uppercase extensions or URL queries (such as .PDF or .jpg?w=600)
+Fixed bug where some sites with “youtube” in their names were treated as YouTube
+Fixed Slashdot feed detection (for Slashdot special cases) when the feed comes through a proxy such as FeedBurner
+Changed VoiceOver to say “unread” for unread counts shown as dots
+Added VoiceOver labels and values for the Settings pop-up buttons
+Told VoiceOver which folder is selected in the Add Feed folder picker
+
 ### 7.2 build 7218 6 Oct 2026 - branch: main tag: iOS-7.2-7218
 
 Added unread count display setting — show the count, show a dot, or hide it — which applies to the app icon badge, feeds list, and widgets
