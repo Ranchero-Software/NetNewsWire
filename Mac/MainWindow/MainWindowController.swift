@@ -1087,7 +1087,9 @@ private extension MainWindowController {
 		case .standard:
 			newSplitViewController = makeStandardSplitViewController(sidebar: sidebarViewController, timeline: timelineContainerViewController, detail: detailViewController)
 		case .column:
-			newSplitViewController = makeColumnLayoutSplitViewController(sidebar: sidebarViewController, timeline: timelineContainerViewController, detail: detailViewController)
+			let columnLayoutSplitViewControllers = makeColumnLayoutSplitViewControllers(sidebar: sidebarViewController, timeline: timelineContainerViewController, detail: detailViewController)
+			newSplitViewController = columnLayoutSplitViewControllers.split
+			contentSplitViewController = columnLayoutSplitViewControllers.content
 		}
 		splitViewController = newSplitViewController
 		timelineLayout = layout
@@ -1170,7 +1172,8 @@ private extension MainWindowController {
 		return splitViewController
 	}
 
-	func makeColumnLayoutSplitViewController(sidebar: SidebarViewController, timeline: TimelineContainerViewController, detail: DetailViewController) -> NSSplitViewController {
+	/// Returns the outer split (sidebar and content) and the content split (timeline above detail) it contains.
+	func makeColumnLayoutSplitViewControllers(sidebar: SidebarViewController, timeline: TimelineContainerViewController, detail: DetailViewController) -> (split: NSSplitViewController, content: NSSplitViewController) {
 		let contentSplitViewController = makeEmptySplitViewController(isVertical: false, splitView: ColumnLayoutSplitView())
 		contentSplitViewController.splitView.dividerStyle = .paneSplitter
 
@@ -1184,7 +1187,6 @@ private extension MainWindowController {
 		detailItem.canCollapse = false
 
 		contentSplitViewController.splitViewItems = [timelineItem, detailItem]
-		self.contentSplitViewController = contentSplitViewController
 
 		let splitViewController = makeEmptySplitViewController(isVertical: true)
 
@@ -1194,14 +1196,13 @@ private extension MainWindowController {
 		let contentItem = NSSplitViewItem(viewController: contentSplitViewController)
 		if #available(macOS 26.0, *) {
 			contentItem.automaticallyAdjustsSafeAreaInsets = true
-		}
-		if #unavailable(macOS 26.0) {
+		} else {
 			contentItem.titlebarSeparatorStyle = .line
 		}
 
 		splitViewController.splitViewItems = [sidebarItem, contentItem]
 		sidebar.splitViewItem = sidebarItem
-		return splitViewController
+		return (splitViewController, contentSplitViewController)
 	}
 
 	func makeEmptySplitViewController(isVertical: Bool, splitView: NSSplitView = NSSplitView()) -> NSSplitViewController {
