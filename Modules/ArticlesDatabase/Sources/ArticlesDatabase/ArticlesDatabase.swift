@@ -449,15 +449,6 @@ private extension ArticlesDatabase {
 		// 24 hours previous. This is used by the Today smart feed, which should not actually empty out at midnight.
 		return Date(timeIntervalSinceNow: -(60 * 60 * 24)) // This does not need to be more precise.
 	}
-
-	// MARK: - Operations
-
-	func cancelOperations() {
-		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
-		Task { @MainActor in
-			operationQueue.cancelAll()
-		}
-	}
 }
 
 // MARK: - Articles Table (Private)
@@ -474,13 +465,9 @@ private extension ArticlesDatabase {
 		Self.logger.debug("ArticlesDatabase: \(#function, privacy: .public) \(self.accountID, privacy: .public)")
 		Task { @MainActor in
 			let operation = FetchAllUnreadCountsOperation(databaseQueue: queue)
-			if let operationName = operation.name {
-				operationQueue.cancel(named: operationName)
-			}
 			operation.completionBlock = { operation in
 				let fetchOperation = operation as! FetchAllUnreadCountsOperation
-				// A canceled operation has no result — reporting an empty dictionary would zero every unread count.
-				completion(fetchOperation.isCanceled ? nil : fetchOperation.unreadCountDictionary)
+				completion(fetchOperation.unreadCountDictionary)
 			}
 			operationQueue.add(operation)
 		}
