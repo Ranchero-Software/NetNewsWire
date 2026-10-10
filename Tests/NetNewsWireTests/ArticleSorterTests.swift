@@ -255,7 +255,7 @@ import XCTest
 
 		let article1 = makeArticle(date: now, articleID: "1", feedID: "1", title: "banana")
 		let article2 = makeArticle(date: now, articleID: "2", feedID: "1", title: "Apple")
-		let article3 = makeArticle(date: now.addingTimeInterval(-60.0), articleID: "3", feedID: "1", title: "apple")
+		let article3 = makeArticle(date: now.addingTimeInterval(-60.0), articleID: "3", feedID: "1", title: "Apple")
 		let article4 = makeArticle(date: now, articleID: "4", feedID: "1", title: nil)
 
 		let articles = [article1, article2, article3, article4]
@@ -266,6 +266,22 @@ import XCTest
 		XCTAssertEqual(sortedArticles.articleAtRow(1), article2)
 		XCTAssertEqual(sortedArticles.articleAtRow(2), article3)
 		XCTAssertEqual(sortedArticles.articleAtRow(3), article1)
+	}
+
+	func testSortedByTitleAscendingOrdersNumbersByValue() {
+		let now = Date()
+
+		let article1 = makeArticle(date: now, articleID: "1", feedID: "1", title: "Episode 10")
+		let article2 = makeArticle(date: now, articleID: "2", feedID: "1", title: "Episode 2")
+		let article3 = makeArticle(date: now, articleID: "3", feedID: "1", title: "Episode 1")
+
+		let articles = [article1, article2, article3]
+		let parameters = ArticleSortParameters(key: .title, direction: .orderedAscending)
+		let sortedArticles = ArticleSorter.sorted(articles: articles, parameters: parameters)
+
+		XCTAssertEqual(sortedArticles.articleAtRow(0), article3)
+		XCTAssertEqual(sortedArticles.articleAtRow(1), article2)
+		XCTAssertEqual(sortedArticles.articleAtRow(2), article1)
 	}
 
 	func testSortedByTitleDescending() {
