@@ -13,72 +13,65 @@ private struct PreferencesToolbarItemSpec {
 	let identifier: NSToolbarItem.Identifier
 	let name: String
 	let image: NSImage?
-
-	init(identifierRawValue: String, name: String, image: NSImage?) {
-		self.identifier = NSToolbarItem.Identifier(identifierRawValue)
-		self.name = name
-		self.image = image
-	}
-}
-
-private struct ToolbarItemIdentifier {
-	static let General = "General"
-	static let Accounts = "Accounts"
-	static let Advanced = "Advanced"
+	let makeViewController: @MainActor () -> NSViewController
 }
 
 final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
 
 	private let minimumWindowWidth = CGFloat(512.0) // Panes that need more room widen the window
-	private var viewControllers = [String: NSViewController]()
-	private let toolbarItemSpecs: [PreferencesToolbarItemSpec] = {
-		var specs = [PreferencesToolbarItemSpec]()
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.General,
-											 name: NSLocalizedString("General", comment: "Preferences"),
-											 image: Assets.Images.preferencesToolbarGeneral)]
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Accounts,
-											 name: NSLocalizedString("Accounts", comment: "Preferences"),
-											 image: Assets.Images.preferencesToolbarAccounts)]
-		specs += [PreferencesToolbarItemSpec(identifierRawValue: ToolbarItemIdentifier.Advanced,
-											 name: NSLocalizedString("Advanced", comment: "Preferences"),
-											 image: Assets.Images.preferencesToolbarAdvanced)]
-		return specs
-	}()
+	private var viewControllers = [NSToolbarItem.Identifier: NSViewController]()
+	private let toolbarItemSpecs = [
+		PreferencesToolbarItemSpec(identifier: NSToolbarItem.Identifier("General"),
+								   name: NSLocalizedString("General", comment: "Preferences"),
+								   image: Assets.Images.preferencesToolbarGeneral,
+								   makeViewController: { GeneralPreferencesViewController() }),
+		PreferencesToolbarItemSpec(identifier: NSToolbarItem.Identifier("Accounts"),
+								   name: NSLocalizedString("Accounts", comment: "Preferences"),
+								   image: Assets.Images.preferencesToolbarAccounts,
+								   makeViewController: { AccountsPreferencesViewController() }),
+		PreferencesToolbarItemSpec(identifier: NSToolbarItem.Identifier("Advanced"),
+								   name: NSLocalizedString("Advanced", comment: "Preferences"),
+								   image: Assets.Images.preferencesToolbarAdvanced,
+								   makeViewController: { AdvancedPreferencesViewController() })
+	]
 
 	convenience init() {
 		self.init(windowNibName: "PreferencesWindow")
 	}
 
 	override func windowDidLoad() {
+		guard let window, let firstToolbarItemSpec = toolbarItemSpecs.first else {
+			return
+		}
+
 		let toolbar = NSToolbar(identifier: NSToolbar.Identifier("PreferencesToolbar"))
 		toolbar.delegate = self
 		toolbar.autosavesConfiguration = false
 		toolbar.allowsUserCustomization = false
 		toolbar.displayMode = .iconAndLabel
-		toolbar.selectedItemIdentifier = toolbarItemSpecs.first!.identifier
+		toolbar.selectedItemIdentifier = firstToolbarItemSpec.identifier
 
-		window?.showsToolbarButton = false
-		window?.toolbar = toolbar
+		window.showsToolbarButton = false
+		window.toolbar = toolbar
 
-		switchToViewAtIndex(0)
+		switchToView(for: firstToolbarItemSpec)
 
-		window?.center()
+		window.center()
 	}
 
 	// MARK: Actions
 
 	@objc func toolbarItemClicked(_ sender: Any?) {
-		guard let toolbarItem = sender as? NSToolbarItem else {
+		guard let toolbarItem = sender as? NSToolbarItem, let toolbarItemSpec = toolbarItemSpec(for: toolbarItem.itemIdentifier) else {
 			return
 		}
-		switchToView(identifier: toolbarItem.itemIdentifier.rawValue)
+		switchToView(for: toolbarItemSpec)
 	}
 
 	// MARK: NSToolbarDelegate
 
 	func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-
-		guard let toolbarItemSpec = toolbarItemSpecs.first(where: { $0.identifier.rawValue == itemIdentifier.rawValue }) else {
+		guard let toolbarItemSpec = toolbarItemSpec(for: itemIdentifier) else {
 			return nil
 		}
 
@@ -93,90 +86,72 @@ final class PreferencesWindowController: NSWindowController, NSToolbarDelegate {
 	}
 
 	func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		return toolbarItemSpecs.map { $0.identifier }
+		toolbarItemSpecs.map { $0.identifier }
 	}
 
 	func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		return toolbarDefaultItemIdentifiers(toolbar)
+		toolbarDefaultItemIdentifiers(toolbar)
 	}
 
 	func toolbarSelectableItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
-		return toolbarDefaultItemIdentifiers(toolbar)
+		toolbarDefaultItemIdentifiers(toolbar)
 	}
 }
 
 private extension PreferencesWindowController {
 
 	var currentView: NSView? {
-		return window?.contentView?.subviews.first
+		window?.contentView?.subviews.first
 	}
 
-	func toolbarItemSpec(for identifier: String) -> PreferencesToolbarItemSpec? {
-		return toolbarItemSpecs.first(where: { $0.identifier.rawValue == identifier })
+	func toolbarItemSpec(for identifier: NSToolbarItem.Identifier) -> PreferencesToolbarItemSpec? {
+		toolbarItemSpecs.first { $0.identifier == identifier }
 	}
 
-	func switchToViewAtIndex(_ index: Int) {
-		let identifier = toolbarItemSpecs[index].identifier
-		switchToView(identifier: identifier.rawValue)
-	}
-
-	func switchToView(identifier: String) {
-		guard let toolbarItemSpec = toolbarItemSpec(for: identifier) else {
-			assertionFailure("Preferences window: no toolbarItemSpec matching \(identifier).")
+	func switchToView(for toolbarItemSpec: PreferencesToolbarItemSpec) {
+		guard let window, let contentView = window.contentView else {
 			return
 		}
 
-		guard let newViewController = viewController(identifier: identifier) else {
-			assertionFailure("Preferences window: no view controller matching \(identifier).")
-			return
-		}
-
+		let newViewController = viewController(for: toolbarItemSpec)
 		if newViewController.view == currentView {
 			return
 		}
 
 		newViewController.view.nextResponder = newViewController
-		newViewController.nextResponder = window!.contentView
+		newViewController.nextResponder = contentView
 
-		window!.title = toolbarItemSpec.name
+		window.title = toolbarItemSpec.name
 
 		resizeWindow(toFitView: newViewController.view)
 
-		if let currentView = currentView {
-			window!.contentView?.replaceSubview(currentView, with: newViewController.view)
+		if let currentView {
+			contentView.replaceSubview(currentView, with: newViewController.view)
 		} else {
-			window!.contentView?.addSubview(newViewController.view)
+			contentView.addSubview(newViewController.view)
 		}
 
-		window!.makeFirstResponder(newViewController.view)
+		window.makeFirstResponder(newViewController.view)
 	}
 
-	func viewController(identifier: String) -> NSViewController? {
-		if let cachedViewController = viewControllers[identifier] {
+	func viewController(for toolbarItemSpec: PreferencesToolbarItemSpec) -> NSViewController {
+		if let cachedViewController = viewControllers[toolbarItemSpec.identifier] {
 			return cachedViewController
 		}
 
-		let viewController: NSViewController
-		switch identifier {
-		case ToolbarItemIdentifier.General:
-			viewController = GeneralPreferencesViewController()
-		case ToolbarItemIdentifier.Accounts:
-			viewController = AccountsPreferencesViewController()
-		case ToolbarItemIdentifier.Advanced:
-			viewController = AdvancedPreferencesViewController()
-		default:
-			assertionFailure("Unknown preferences view controller: \(identifier)")
-			return nil
-		}
-
-		viewControllers[identifier] = viewController
+		let viewController = toolbarItemSpec.makeViewController()
+		viewControllers[toolbarItemSpec.identifier] = viewController
 		return viewController
 	}
 
 	func resizeWindow(toFitView view: NSView) {
+		guard let window, let contentView = window.contentView else {
+			return
+		}
+
 		let viewFrame = view.frame
-		let windowFrame = window!.frame
-		let contentViewFrame = window!.contentView!.frame
+		let windowFrame = window.frame
+		let contentViewFrame = contentView.frame
 
 		let windowWidth = max(minimumWindowWidth, viewFrame.width)
 		let deltaHeight = contentViewFrame.height - viewFrame.height
@@ -196,9 +171,9 @@ private extension PreferencesWindowController {
 		}
 
 		if windowFrame != updatedWindowFrame {
-			window!.contentView?.alphaValue = 0.0
-			window!.setFrame(updatedWindowFrame, display: true, animate: true)
-			window!.contentView?.alphaValue = 1.0
+			contentView.alphaValue = 0.0
+			window.setFrame(updatedWindowFrame, display: true, animate: true)
+			contentView.alphaValue = 1.0
 		}
 	}
 }
