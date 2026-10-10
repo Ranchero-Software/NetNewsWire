@@ -126,7 +126,7 @@ final class TimelineContainerViewController: NSViewController {
 		if key == sortParameters.key {
 			return
 		}
-		sortParameters = sortParameters.withKey(key, direction: key.firstDirection)
+		sortParameters = ArticleSortParameters(key: key, direction: key.firstDirection)
 	}
 
 	func setSortDirection(_ direction: ComparisonResult) {

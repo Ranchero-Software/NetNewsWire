@@ -72,10 +72,6 @@ struct ArticleSortParameters: Equatable, Sendable {
 
 	static let newestFirst = ArticleSortParameters(key: .date, direction: .orderedDescending)
 
-	func withKey(_ key: ArticleSortKey, direction: ComparisonResult) -> ArticleSortParameters {
-		ArticleSortParameters(key: key, direction: direction)
-	}
-
 	func withDirection(_ direction: ComparisonResult) -> ArticleSortParameters {
 		ArticleSortParameters(key: key, direction: direction)
 	}
