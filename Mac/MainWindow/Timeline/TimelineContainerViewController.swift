@@ -20,8 +20,8 @@ final class TimelineContainerViewController: NSViewController {
 
 	@IBOutlet var viewOptionsPopUpButton: NSPopUpButton!
 	@IBOutlet var readFilteredButton: NSButton!
-	@IBOutlet var headerSeparator: NSBox!
-	@IBOutlet var containerViewTopToHeaderConstraint: NSLayoutConstraint!
+	@IBOutlet var headerSeparator: NSBox?
+	@IBOutlet var containerViewTopToHeaderConstraint: NSLayoutConstraint?
 	@IBOutlet var containerView: TimelineContainerView!
 
 	private var layout = AppDefaults.shared.timelineLayout {
@@ -269,8 +269,8 @@ private extension TimelineContainerViewController {
 	func updateHeaderVisibility() {
 		let isHeaderHidden = layout == .column
 		viewOptionsPopUpButton.isHidden = isHeaderHidden
-		headerSeparator.isHidden = isHeaderHidden
-		containerViewTopToHeaderConstraint.isActive = !isHeaderHidden
+		headerSeparator?.isHidden = isHeaderHidden
+		containerViewTopToHeaderConstraint?.isActive = !isHeaderHidden
 		containerViewTopToViewConstraint.isActive = isHeaderHidden
 		updateReadFilterButton()
 	}

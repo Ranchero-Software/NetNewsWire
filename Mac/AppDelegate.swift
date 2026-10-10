@@ -52,7 +52,7 @@ let appName = "NetNewsWire"
 	private var isShutDownSyncDone = false
 
 	@IBOutlet var debugMenuItem: NSMenuItem!
-	@IBOutlet var useColumnLayoutMenuItem: NSMenuItem!
+	@IBOutlet var useColumnLayoutMenuItem: NSMenuItem?
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 
 	var unreadCount = 0 {
@@ -881,7 +881,7 @@ extension AppDelegate {
 	}
 
 	@MainActor func updateColumnLayoutMenuItem() {
-		useColumnLayoutMenuItem.state = AppDefaults.shared.useColumnLayout ? .on : .off
+		useColumnLayoutMenuItem?.state = AppDefaults.shared.useColumnLayout ? .on : .off
 	}
 
 	func importTheme(url: URL) {
