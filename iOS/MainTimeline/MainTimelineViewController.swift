@@ -1355,9 +1355,7 @@ extension MainTimelineViewController {
 			return nil
 		}
 
-		let fetchedArticles = feed.fetchArticles()
-		let articles = Array(fetchedArticles)
-		guard articles.canMarkAllAsRead(), let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
+		guard feed.unreadCount > 0, let collectionView, let contentView = collectionView.cellForItem(at: indexPath)?.contentView else {
 			return nil
 		}
 
@@ -1366,7 +1364,8 @@ extension MainTimelineViewController {
 
 		let action = UIAction(title: title, image: Assets.Images.markAllAsRead) { [weak self] _ in
 			MarkAsReadAlertController.confirm(self, coordinator: self?.coordinator, confirmTitle: title, sourceType: contentView) { [weak self] in
-				self?.markAllAsRead(articles)
+				let articles = feed.fetchUnreadArticles()
+				self?.markAllAsRead(Array(articles))
 			}
 		}
 		return action
