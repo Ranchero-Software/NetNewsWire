@@ -1,5 +1,9 @@
 # Mac Release Notes
 
+### 7.2b4 7221 11 Oct 2026 - branch: main tag: mac-7.2b4
+
+Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+
 ### 7.2b3 7220 10 Oct 2026 - branch: main tag: mac-7.2b3
 
 Fixed the Settings layout on macOS 15
