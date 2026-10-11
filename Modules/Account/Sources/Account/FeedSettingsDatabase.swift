@@ -14,7 +14,7 @@ import RSWeb
 import Articles
 
 final class FeedSettingsDatabase: Sendable {
-	enum Column: String {
+	enum Column: String, CaseIterable {
 		case feedID
 		case homePageURL
 		case iconURL
@@ -145,8 +145,16 @@ final class FeedSettingsDatabase: Sendable {
 
 	// MARK: - String
 
+	private static let validColumnNames: Set<String> = Set(Column.allCases.map(\.rawValue))
+
+	private static func safeColumnName(_ column: Column) -> String? {
+		validColumnNames.contains(column.rawValue) ? column.rawValue : nil
+	}
+
 	func setString(_ value: String?, for feedURL: String, column: Column) {
-		let name = column.rawValue
+		guard let name = Self.safeColumnName(column) else {
+			return
+		}
 		serialDispatchQueue.async {
 			if let value {
 				self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
@@ -159,7 +167,9 @@ final class FeedSettingsDatabase: Sendable {
 	// MARK: - Bool
 
 	func setBool(_ value: Bool, for feedURL: String, column: Column) {
-		let name = column.rawValue
+		guard let name = Self.safeColumnName(column) else {
+			return
+		}
 		serialDispatchQueue.async {
 			self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
 		}
@@ -168,7 +178,9 @@ final class FeedSettingsDatabase: Sendable {
 	// MARK: - Int
 
 	func setInt(_ value: Int?, for feedURL: String, column: Column) {
-		let name = column.rawValue
+		guard let name = Self.safeColumnName(column) else {
+			return
+		}
 		serialDispatchQueue.async {
 			if let value {
 				self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value, feedURL])
@@ -181,7 +193,9 @@ final class FeedSettingsDatabase: Sendable {
 	// MARK: - Date
 
 	func setDate(_ value: Date?, for feedURL: String, column: Column) {
-		let name = column.rawValue
+		guard let name = Self.safeColumnName(column) else {
+			return
+		}
 		serialDispatchQueue.async {
 			if let value {
 				self.database.executeUpdate("UPDATE feedSettings SET \(name) = ? WHERE feedURL = ?;", withArgumentsIn: [value.timeIntervalSinceReferenceDate, feedURL])

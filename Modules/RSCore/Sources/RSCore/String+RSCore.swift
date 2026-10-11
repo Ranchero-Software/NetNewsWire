@@ -14,10 +14,25 @@ private let hexDigits: [UInt8] = Array("0123456789abcdef".utf8)
 public extension String {
 
 	func htmlByAddingLink(_ link: String, className: String? = nil) -> String {
-		if let className = className {
-			return "<a class=\"\(className)\" href=\"\(link)\">\(self)</a>"
+		let safeText = self.escapingSpecialXMLCharacters
+		let trimmedLink = link.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !trimmedLink.isEmpty else {
+			return safeText
 		}
-		return "<a href=\"\(link)\">\(self)</a>"
+
+		guard let url = URL(string: trimmedLink),
+		      let scheme = url.scheme?.lowercased(),
+		      scheme == "http" || scheme == "https" || scheme == "mailto"
+		else {
+			return safeText
+		}
+
+		let safeLink = url.absoluteString.escapingSpecialXMLCharacters
+		let safeClassName = className?.escapingSpecialXMLCharacters
+		if let safeClassName {
+			return "<a class=\"\(safeClassName)\" href=\"\(safeLink)\">\(safeText)</a>"
+		}
+		return "<a href=\"\(safeLink)\">\(safeText)</a>"
 	}
 
 	static func htmlWithLink(_ link: String) -> String {

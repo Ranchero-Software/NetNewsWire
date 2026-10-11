@@ -116,6 +116,17 @@ final class StringRSCoreTests: XCTestCase {
 		XCTAssertEqual(str.escapingSpecialXMLCharacters, "a\tb\nc\rd")
 	}
 
+	func testHTMLLinkEscapesUnsafeContentAndRejectsDangerousSchemes() {
+		let safe = "Alice & Bob".htmlByAddingLink("https://example.com/?q=1&x=2")
+		XCTAssertEqual(safe, "<a href=\"https://example.com/?q=1&amp;x=2\">Alice &amp; Bob</a>")
+
+		let dangerous = "<script>alert(1)</script>".htmlByAddingLink("javascript:alert(1)")
+		XCTAssertEqual(dangerous, "&lt;script&gt;alert(1)&lt;/script&gt;")
+
+		let mailto = "Support".htmlByAddingLink("mailto:support@example.com")
+		XCTAssertEqual(mailto, "<a href=\"mailto:support@example.com\">Support</a>")
+	}
+
 	func testEscapingSpecialXMLCharactersLeavesUnicodeIntact() {
 
 		let str = "café — 🎉"
