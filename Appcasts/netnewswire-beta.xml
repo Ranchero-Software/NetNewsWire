@@ -7,6 +7,21 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.2b4</title>
+	<description><![CDATA[
+In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.
+<p>
+Changes since 7.2b3:
+<ul>
+<li>Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+</ul>
+	]]></description>
+	<pubDate>Sun, 11 Oct 2026 11:10:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2b4/NetNewsWire7.2b4.zip" sparkle:version="7221" sparkle:shortVersionString="7.2b4" length="9999900" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.2b3</title>
 	<description><![CDATA[
 In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.
