@@ -1,5 +1,10 @@
 # iOS Release Notes
 
+### 7.2 build 7221 11 Oct 2026 - branch: main tag: iOS-7.2-7221
+
+Fixed bug on iPad where fullscreen YouTube videos were black with audio only
+Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+
 ### 7.2 build 7220 10 Oct 2026 - branch: main tag: iOS-7.2-7220
 
 Fixed bug where Add Feed lost the typed URL and title after choosing a folder
