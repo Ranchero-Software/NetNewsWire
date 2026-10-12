@@ -139,9 +139,11 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		// If the first responder is the WKWebView (PreloadedWebView) we don’t want to supply any keyboard
 		// commands that the system is looking for by going up the responder chain. They will interfere with
 		// the WKWebViews built in hardware keyboard shortcuts, specifically the up and down arrow keys.
-		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else { return nil }
+		guard let current = UIResponder.currentFirstResponder, !(current is PreloadedWebView) else {
+			return nil
+		}
 
-		return keyboardManager.keyCommands
+		return AppCommands.keyCommands(for: .timeline)
 	}
 	override var canBecomeFirstResponder: Bool {
 		true
@@ -162,7 +164,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 	// MARK: Private Constants
 	private let searchController = UISearchController(searchResultsController: nil)
-	private let keyboardManager = KeyboardManager(type: .timeline)
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineViewController")
 
 	// MARK: Constants
@@ -471,16 +472,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	}
 
 	// MARK: - IBActions
-
-	@objc func openInBrowser(_ sender: Any?) {
-		assert(coordinator != nil)
-		coordinator?.showBrowserForCurrentArticle()
-	}
-
-	@objc func openInAppBrowser(_ sender: Any?) {
-		assert(coordinator != nil)
-		coordinator?.showInAppBrowser()
-	}
 
 	@IBAction func toggleFilter(_ sender: Any) {
 		assert(coordinator != nil)
