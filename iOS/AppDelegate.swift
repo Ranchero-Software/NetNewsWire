@@ -155,6 +155,16 @@ import Images
 		updateBadge()
 	}
 
+	// MARK: - Main Menu
+
+	override func buildMenu(with builder: UIMenuBuilder) {
+		super.buildMenu(with: builder)
+		guard builder.system == .main else {
+			return
+		}
+		AppCommands.buildMenus(with: builder)
+	}
+
 	// MARK: - API
 
 	func manualRefresh(errorHandler: @escaping @Sendable (Error) -> Void) {
