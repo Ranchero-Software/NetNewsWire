@@ -116,9 +116,8 @@ final class ArticleViewController: UIViewController {
 
 	var restoreState: State?
 
-	private let keyboardManager = KeyboardManager(type: .detail)
 	override var keyCommands: [UIKeyCommand]? {
-		return keyboardManager.keyCommands
+		AppCommands.keyCommands(for: .detail)
 	}
 
 	override func viewDidLoad() {
@@ -392,7 +391,7 @@ final class ArticleViewController: UIViewController {
 		currentWebViewController?.showActivityDialog(popOverBarButtonItem: actionBarButtonItem)
 	}
 
-	@objc func toggleReaderView(_ sender: Any?) {
+	func toggleReaderView() {
 		currentWebViewController?.toggleArticleExtractor()
 	}
 
