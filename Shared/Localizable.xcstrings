@@ -245,7 +245,7 @@
       "comment" : "Article content records header"
     },
     "Article Search" : {
-      "comment" : "Article Search"
+      "comment" : "Command"
     },
     "Article Theme" : {
       "comment" : "Article Theme"
@@ -366,6 +366,12 @@
     "Collapse" : {
       "comment" : "Collapse"
     },
+    "Collapse All" : {
+      "comment" : "Command"
+    },
+    "Collapse Selected Row" : {
+      "comment" : "Command"
+    },
     "Collapsed" : {
       "comment" : "Collapsed"
     },
@@ -428,7 +434,7 @@
       }
     },
     "Current Activity" : {
-      "comment" : "Current Activity"
+      "comment" : "Command\nCurrent Activity"
     },
     "Current Activity Help" : {
       "comment" : "Help link"
@@ -606,6 +612,12 @@
     "Expand" : {
       "comment" : "Expand"
     },
+    "Expand All" : {
+      "comment" : "Command"
+    },
+    "Expand Selected Row" : {
+      "comment" : "Command"
+    },
     "Expanded" : {
       "comment" : "Expanded"
     },
@@ -614,6 +626,9 @@
     },
     "Export Subscriptions" : {
       "comment" : "Export Subscriptions"
+    },
+    "Export Subscriptions…" : {
+      "comment" : "Command"
     },
     "Export to:" : {
       "comment" : "Export OPML"
@@ -668,8 +683,11 @@
     "Filter Read Feeds" : {
       "comment" : "Filter Read Feeds"
     },
+    "Find" : {
+      "comment" : "Command"
+    },
     "Find in Article" : {
-      "comment" : "Find in Article"
+      "comment" : "Command\nFind in Article"
     },
     "Find out more" : {
       "comment" : "No FreshRSS Button\nNo Miniflux Button"
@@ -724,20 +742,23 @@
     "Get Info" : {
       "comment" : "Get Info"
     },
-    "Go To All Unread" : {
-      "comment" : "Go To All Unread"
+    "Go" : {
+      "comment" : "Command"
     },
     "Go to Feed" : {
       "comment" : "Go to Feed"
     },
+    "Go to Next Feed" : {
+      "comment" : "Command"
+    },
+    "Go to Previous Feed" : {
+      "comment" : "Command"
+    },
+    "Go to Previous Unread" : {
+      "comment" : "Command"
+    },
     "Go To Settings" : {
-      "comment" : "Go To Settings"
-    },
-    "Go To Starred" : {
-      "comment" : "Go To Starred"
-    },
-    "Go To Today" : {
-      "comment" : "Go To Today"
+      "comment" : "Command"
     },
     "Grayscale Feed Icons" : {
       "comment" : "Grayscale Feed Icons"
@@ -803,6 +824,9 @@
     },
     "Import Subscriptions" : {
       "comment" : "Import Subscriptions"
+    },
+    "Import Subscriptions…" : {
+      "comment" : "Command"
     },
     "Import Theme" : {
       "comment" : "Import Theme"
@@ -906,6 +930,9 @@
     "Mark All as Read in “%@”" : {
       "comment" : "Command"
     },
+    "Mark All as Read in Timeline and Go To Next Unread" : {
+      "comment" : "Command"
+    },
     "Mark Article Unread" : {
       "comment" : "Mark Article Unread"
     },
@@ -924,6 +951,9 @@
     "Mark Below as Read" : {
       "comment" : "Command"
     },
+    "Mark Older as Read" : {
+      "comment" : "Command"
+    },
     "Mark Read" : {
       "comment" : "command"
     },
@@ -932,6 +962,9 @@
     },
     "Mark Unread" : {
       "comment" : "command"
+    },
+    "Mark Unread and Go To Next Unread" : {
+      "comment" : "Command"
     },
     "Mark Unstarred" : {
       "comment" : "command"
@@ -978,6 +1011,15 @@
           }
         }
       }
+    },
+    "Navigate to Detail" : {
+      "comment" : "Command"
+    },
+    "Navigate to Feeds" : {
+      "comment" : "Command"
+    },
+    "Navigate to Timeline" : {
+      "comment" : "Command"
     },
     "NetNewsWire 7 is dedicated to everyone working to save democracy in the United States and around the world." : {
       "comment" : "A dedication to those working to save democracy.",
@@ -1093,17 +1135,20 @@
     "Open Home Page" : {
       "comment" : "Command"
     },
-    "Open in Browser" : {
+    "Open In App Browser" : {
       "comment" : "Command"
     },
-    "Open In Browser" : {
-      "comment" : "Open In Browser"
+    "Open in Browser" : {
+      "comment" : "Command"
     },
     "Open in Browser in Background" : {
       "comment" : "Open in Browser in Background menu item title"
     },
     "Open in Browser in Foreground" : {
       "comment" : "Open in Browser in Foreground menu item title"
+    },
+    "Open in NetNewsWire" : {
+      "comment" : "Command"
     },
     "Open Links in NetNewsWire" : {
       "comment" : "Open Links in NetNewsWire"
@@ -1231,6 +1276,9 @@
     "Scroll Down" : {
       "comment" : "Scroll Down"
     },
+    "Scroll or Go to Next Unread" : {
+      "comment" : "Command"
+    },
     "Scroll Up" : {
       "comment" : "Scroll Up"
     },
@@ -1256,10 +1304,10 @@
       "comment" : "Command"
     },
     "Select Next Down" : {
-      "comment" : "Select Next Down"
+      "comment" : "Command"
     },
     "Select Next Up" : {
-      "comment" : "Select Next Up"
+      "comment" : "Command"
     },
     "Selected - Filter Read Articles" : {
       "comment" : "Selected - Filter Read Articles"
@@ -1341,7 +1389,7 @@
       "comment" : "Command"
     },
     "Show Reader View" : {
-      "comment" : "Show Reader View"
+      "comment" : "Command\nShow Reader View"
     },
     "Show Sidebar" : {
       "comment" : "Command"
@@ -1426,6 +1474,9 @@
     },
     "Some content, such as videos and embedded social media posts, may require JavaScript to work correctly." : {
       "comment" : "Some content, such as videos and embedded social media posts, may require JavaScript to work correctly."
+    },
+    "Sort Articles By" : {
+      "comment" : "Command"
     },
     "Sort Oldest to Newest" : {
       "comment" : "Sort Oldest to Newest"
@@ -1653,24 +1704,6 @@
     "Today" : {
       "comment" : "Today pseudo-feed title"
     },
-    "Toggle Read Articles Filter" : {
-      "comment" : "Toggle Read Articles Filter"
-    },
-    "Toggle Read Feeds Filter" : {
-      "comment" : "Toggle Read Feeds Filter"
-    },
-    "Toggle Read Status" : {
-      "comment" : "Toggle Read Status"
-    },
-    "Toggle Reader View" : {
-      "comment" : "Toggle Reader View"
-    },
-    "Toggle Sidebar" : {
-      "comment" : "Toggle Sidebar"
-    },
-    "Toggle Starred Status" : {
-      "comment" : "Toggle Starred Status"
-    },
     "Total" : {
       "comment" : "Total row label"
     },
@@ -1773,6 +1806,9 @@
     },
     "Vacuuming may make databases faster." : {
       "comment" : "Vacuum explanation"
+    },
+    "View" : {
+      "comment" : "Command"
     },
     "Waiting for access to Feedly" : {
       "comment" : "Alert title when adding a Feedly account and waiting for authorization from the user.",
