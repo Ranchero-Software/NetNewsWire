@@ -74,8 +74,6 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	private var restoreArticleWindowScrollY: CGFloat?
 	// Holds the split view controller and the status bar.
 	private let mainWindowContentViewController = MainWindowContentViewController()
-	// The split view whose resizing the status bar tracks.
-	private weak var observedSplitView: NSSplitView?
 	private var mouseoverLink: String? {
 		didSet {
 			updateStatusBarLink()
@@ -1881,12 +1879,9 @@ private extension MainWindowController {
 
 	/// Tracks the sidebar divider in the status bar. Call after the split view controller is replaced.
 	func observeSplitViewForStatusBar() {
-		if let observedSplitView {
-			NotificationCenter.default.removeObserver(self, name: NSSplitView.didResizeSubviewsNotification, object: observedSplitView)
-		}
-		observedSplitView = splitViewController?.splitView
-		if let observedSplitView {
-			NotificationCenter.default.addObserver(self, selector: #selector(handleSplitViewDidResizeSubviews(_:)), name: NSSplitView.didResizeSubviewsNotification, object: observedSplitView)
+		NotificationCenter.default.removeObserver(self, name: NSSplitView.didResizeSubviewsNotification, object: nil)
+		if let splitView = splitViewController?.splitView {
+			NotificationCenter.default.addObserver(self, selector: #selector(handleSplitViewDidResizeSubviews(_:)), name: NSSplitView.didResizeSubviewsNotification, object: splitView)
 		}
 		updateStatusBarSidebarDivider()
 	}
