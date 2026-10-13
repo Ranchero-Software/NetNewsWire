@@ -60,6 +60,9 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	private var mouseoverLink: String? {
 		didSet {
+			guard mouseoverLink != oldValue else {
+				return
+			}
 			updateMouseoverLinkOverlay()
 			delegate?.detailViewController(self, mouseoverLinkDidChange: mouseoverLink)
 		}
