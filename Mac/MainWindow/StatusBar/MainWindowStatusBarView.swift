@@ -224,7 +224,7 @@ final class MainWindowStatusBarView: NSView {
 
 	@objc nonisolated func handleUserDefaultsDidChange(_ notification: Notification) {
 		Task { @MainActor in
-			self.updateCountLabel()
+			CoalescingQueue.standard.add(self, #selector(self.updateCountLabel))
 			self.updateThemePopUpButtonVisibility()
 		}
 	}
@@ -467,7 +467,11 @@ private extension MainWindowStatusBarView {
 	}
 
 	func updateThemePopUpButtonVisibility() {
-		themePopUpButton.isHidden = !AppDefaults.shared.showStatusBarThemeMenu
+		let isHidden = !AppDefaults.shared.showStatusBarThemeMenu
+		guard themePopUpButton.isHidden != isHidden else {
+			return
+		}
+		themePopUpButton.isHidden = isHidden
 		needsLayout = true
 	}
 }
