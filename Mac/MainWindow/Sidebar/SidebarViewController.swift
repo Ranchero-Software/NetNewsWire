@@ -26,8 +26,16 @@ extension Notification.Name {
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
 	@IBOutlet var outlineView: SidebarOutlineView!
+	@IBOutlet var progressView: SidebarProgressView?
 
 	weak var delegate: SidebarDelegate?
+
+	/// False when the main window status bar takes over refresh progress.
+	var showsProgressView = true {
+		didSet {
+			progressView?.isSuppressed = !showsProgressView
+		}
+	}
 
 	weak var splitViewItem: NSSplitViewItem?
 
@@ -84,6 +92,7 @@ extension Notification.Name {
 	}
 
 	override func viewDidLoad() {
+		progressView?.isSuppressed = !showsProgressView
 		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))

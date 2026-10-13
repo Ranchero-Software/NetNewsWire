@@ -1,5 +1,5 @@
 //
-//  DetailStatusBarView.swift
+//  DetailLinkOverlayView.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 12/16/17.
@@ -9,7 +9,7 @@
 import AppKit
 import Articles
 
-final class DetailStatusBarView: NSView {
+final class DetailLinkOverlayView: NSView {
 
 	@IBOutlet var urlLabel: NSTextField!
 
@@ -55,14 +55,14 @@ final class DetailStatusBarView: NSView {
 			didConfigureLayerRadius = true
 		}
 
-		let color = self.effectiveAppearance.isDarkMode ? NSColor.textBackgroundColor : NSColor(named: "DetailStatusBarBackground")!
+		let color = self.effectiveAppearance.isDarkMode ? NSColor.textBackgroundColor : NSColor(named: "DetailLinkOverlayBackground")!
 		layer.backgroundColor = color.cgColor
 	}
 }
 
 // MARK: - Private
 
-private extension DetailStatusBarView {
+private extension DetailLinkOverlayView {
 
 	func updateLinkForDisplay() {
 		if let mouseoverLink = mouseoverLink, !mouseoverLink.isEmpty {

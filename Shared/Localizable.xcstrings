@@ -45,6 +45,12 @@
     "%lld months" : {
       "comment" : "Dinosaur staleness threshold in months"
     },
+    "^[%lld folder](inflect: true), ^[%lld feed](inflect: true)" : {
+      "comment" : "Status bar: number of folders and feeds"
+    },
+    "Actions" : {
+      "comment" : "Status bar gear menu accessibility label"
+    },
     "Are you sure you want to delete the account “%@”? This cannot be undone." : {
       "comment" : "Delete account alert message",
       "localizations" : {
@@ -56,6 +62,9 @@
         }
       }
     },
+    "Copy" : {
+      "comment" : "Status bar link contextual menu: copy the link"
+    },
     "Delete “%@”?" : {
       "comment" : "Delete account alert title",
       "localizations" : {
@@ -66,6 +75,30 @@
           }
         }
       }
+    },
+    "Hide Status Bar" : {
+      "comment" : "Command"
+    },
+    "Hide Theme Menu in Status Bar" : {
+      "comment" : "Command"
+    },
+    "Multiple feeds" : {
+      "comment" : "Status bar gear menu: header for a selection of several feeds"
+    },
+    "Multiple folders" : {
+      "comment" : "Status bar gear menu: header for a selection of several folders"
+    },
+    "Multiple selection" : {
+      "comment" : "Status bar gear menu: header for a selection of different kinds of items"
+    },
+    "Multiple smart feeds" : {
+      "comment" : "Status bar gear menu: header for a selection of several smart feeds"
+    },
+    "Show Status Bar" : {
+      "comment" : "Command"
+    },
+    "Show Theme Menu in Status Bar" : {
+      "comment" : "Command"
     },
     "🦖 Dinosaurs" : {
       "comment" : "The title of the Dinosaurs screen.",

@@ -8,7 +8,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="DetailViewController" customModule="NetNewsWire" customModuleProvider="target">
             <connections>
                 <outlet property="containerView" destination="cJ9-6s-66u" id="gXc-Pz-9sQ"/>
-                <outlet property="statusBarView" destination="xI5-lx-RD8" id="meP-4g-U63"/>
+                <outlet property="linkOverlayView" destination="xI5-lx-RD8" id="meP-4g-U63"/>
                 <outlet property="view" destination="cJ9-6s-66u" id="Rk4-Pz-1uD"/>
             </connections>
         </customObject>
@@ -18,7 +18,7 @@
             <rect key="frame" x="0.0" y="0.0" width="730" height="300"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <customView hidden="YES" alphaValue="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailStatusBarView" customModule="NetNewsWire" customModuleProvider="target">
+                <customView hidden="YES" alphaValue="0.90000000000000002" translatesAutoresizingMaskIntoConstraints="NO" id="xI5-lx-RD8" customClass="DetailLinkOverlayView" customModule="NetNewsWire" customModuleProvider="target">
                     <rect key="frame" x="6" y="2" width="12" height="20"/>
                     <subviews>
                         <textField focusRingType="none" horizontalHuggingPriority="850" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Dim-ed-Dcz" userLabel="URL Label">
@@ -48,7 +48,7 @@
                 <constraint firstAttribute="bottom" secondItem="xI5-lx-RD8" secondAttribute="bottom" constant="2" id="zsv-B0-ChW"/>
             </constraints>
             <connections>
-                <outlet property="detailStatusBarView" destination="xI5-lx-RD8" id="yIZ-aP-fKF"/>
+                <outlet property="linkOverlayView" destination="xI5-lx-RD8" id="yIZ-aP-fKF"/>
             </connections>
         </customView>
     </objects>

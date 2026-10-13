@@ -67,10 +67,20 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		didSet {
 			timelineContainerViewController?.showTimeline(for: timelineSourceMode)
 			detailViewController?.showDetail(for: timelineSourceMode)
+			updateStatusBarLink()
 		}
 	}
 	private var searchSmartFeed: SmartFeed?
 	private var restoreArticleWindowScrollY: CGFloat?
+	// Holds the split view controller and the status bar.
+	private let mainWindowContentViewController = MainWindowContentViewController()
+	// The split view whose resizing the status bar tracks.
+	private weak var observedSplitView: NSSplitView?
+	private var mouseoverLink: String? {
+		didSet {
+			updateStatusBarLink()
+		}
+	}
 
 	// MARK: - NSWindowController
 
@@ -99,7 +109,12 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		timelineContainerViewController.delegate = self
 		self.timelineContainerViewController = timelineContainerViewController
 
-		detailViewController = DetailViewController()
+		let detailViewController = DetailViewController()
+		detailViewController.delegate = self
+		self.detailViewController = detailViewController
+
+		mainWindowContentViewController.statusBarView.delegate = self
+		updateStatusBarVisibility()
 
 		installSplitViewController(for: timelineLayout)
 
@@ -189,6 +204,15 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		if layout != timelineLayout {
 			installSplitViewController(for: layout)
 		}
+		updateStatusBarVisibility()
+	}
+
+	/// The status bar, when showing, takes the place of the detail view’s floating link overlay and the sidebar’s progress view.
+	func updateStatusBarVisibility() {
+		let showStatusBar = AppDefaults.shared.showStatusBar
+		mainWindowContentViewController.isStatusBarHidden = !showStatusBar
+		detailViewController?.showsMouseoverLinkOverlay = !showStatusBar
+		sidebarViewController?.showsProgressView = !showStatusBar
 	}
 
 	@objc func refreshProgressDidChange(_ note: Notification) {
@@ -732,6 +756,7 @@ extension MainWindowController: TimelineContainerViewControllerDelegate {
 		}
 
 		detailViewController?.setState(detailState, mode: mode)
+		updateStatusBarLink()
 	}
 
 	func timelineRequestedFeedSelection(_: TimelineContainerViewController, feed: Feed) {
@@ -855,6 +880,60 @@ extension MainWindowController: ScriptingMainWindowController {
     }
 }
 
+// MARK: - Article Theme Menu
+
+extension MainWindowController {
+
+	static func makeArticleThemeMenu() -> NSMenu {
+		let articleThemeMenu = NSMenu()
+
+		let defaultThemeItem = NSMenuItem()
+		defaultThemeItem.title = ArticleTheme.defaultTheme.name
+		defaultThemeItem.action = #selector(MainWindowController.selectArticleTheme(_:))
+		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+		articleThemeMenu.addItem(defaultThemeItem)
+
+		articleThemeMenu.addItem(NSMenuItem.separator())
+
+		for themeName in ArticleThemesManager.shared.themeNames {
+			let themeItem = NSMenuItem()
+			themeItem.title = themeName
+			themeItem.action = #selector(MainWindowController.selectArticleTheme(_:))
+			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
+			articleThemeMenu.addItem(themeItem)
+		}
+
+		return articleThemeMenu
+	}
+}
+
+// MARK: - DetailViewControllerDelegate
+
+extension MainWindowController: DetailViewControllerDelegate {
+
+	func detailViewController(_ detailViewController: DetailViewController, mouseoverLinkDidChange link: String?) {
+		mouseoverLink = link
+	}
+}
+
+// MARK: - MainWindowStatusBarViewDelegate
+
+extension MainWindowController: MainWindowStatusBarViewDelegate {
+
+	func statusBarViewGearMenu(_ statusBarView: MainWindowStatusBarView) -> NSMenu? {
+		sidebarViewController?.statusBarMenu()
+	}
+
+	func statusBarView(_ statusBarView: MainWindowStatusBarView, moveSidebarDividerTo position: CGFloat) {
+		guard let splitView = splitViewController?.splitView else {
+			return
+		}
+		let positionInWindow = statusBarView.convert(NSPoint(x: position, y: 0), to: nil)
+		let positionInSplitView = splitView.convert(positionInWindow, from: nil)
+		splitView.setPosition(positionInSplitView.x, ofDividerAt: 0)
+	}
+}
+
 // MARK: - NSToolbarDelegate
 
 extension NSToolbarItem.Identifier {
@@ -958,7 +1037,7 @@ extension MainWindowController: NSToolbarDelegate {
 			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
-			toolbarItem.menu = makeArticleThemeMenu()
+			toolbarItem.menu = Self.makeArticleThemeMenu()
 			return toolbarItem
 
 		case .search:
@@ -1093,7 +1172,10 @@ private extension MainWindowController {
 		}
 		splitViewController = newSplitViewController
 		timelineLayout = layout
-		window.contentViewController = newSplitViewController
+		if window.contentViewController !== mainWindowContentViewController {
+			window.contentViewController = mainWindowContentViewController
+		}
+		mainWindowContentViewController.splitViewController = newSplitViewController
 		if window.frame != savedFrame && !window.styleMask.contains(.fullScreen) {
 			window.setFrame(savedFrame, display: false)
 		}
@@ -1117,6 +1199,7 @@ private extension MainWindowController {
 			currentTimelineViewController?.focus()
 		}
 		window.recalculateKeyViewLoop()
+		observeSplitViewForStatusBar()
 		invalidateRestorableState()
 	}
 
@@ -1787,28 +1870,50 @@ private extension MainWindowController {
 		guard let toolbarItem = window?.toolbar?.existingItem(withIdentifier: .articleThemeMenu) as? NSMenuToolbarItem else {
 			return
 		}
-		toolbarItem.menu = makeArticleThemeMenu()
+		toolbarItem.menu = Self.makeArticleThemeMenu()
 	}
 
-	func makeArticleThemeMenu() -> NSMenu {
-		let articleThemeMenu = NSMenu()
+	// MARK: - Status Bar
 
-		let defaultThemeItem = NSMenuItem()
-		defaultThemeItem.title = ArticleTheme.defaultTheme.name
-		defaultThemeItem.action = #selector(selectArticleTheme(_:))
-		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
-		articleThemeMenu.addItem(defaultThemeItem)
+	func updateStatusBarLink() {
+		mainWindowContentViewController.statusBarView.link = mouseoverLink ?? currentLink
+	}
 
-		articleThemeMenu.addItem(NSMenuItem.separator())
-
-		for themeName in ArticleThemesManager.shared.themeNames {
-			let themeItem = NSMenuItem()
-			themeItem.title = themeName
-			themeItem.action = #selector(selectArticleTheme(_:))
-			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
-			articleThemeMenu.addItem(themeItem)
+	/// Tracks the sidebar divider in the status bar. Call after the split view controller is replaced.
+	func observeSplitViewForStatusBar() {
+		if let observedSplitView {
+			NotificationCenter.default.removeObserver(self, name: NSSplitView.didResizeSubviewsNotification, object: observedSplitView)
 		}
+		observedSplitView = splitViewController?.splitView
+		if let observedSplitView {
+			NotificationCenter.default.addObserver(self, selector: #selector(handleSplitViewDidResizeSubviews(_:)), name: NSSplitView.didResizeSubviewsNotification, object: observedSplitView)
+		}
+		updateStatusBarSidebarDivider()
+	}
 
-		return articleThemeMenu
+	@objc func handleSplitViewDidResizeSubviews(_ notification: Notification) {
+		updateStatusBarSidebarDivider()
+	}
+
+	func updateStatusBarSidebarDivider() {
+		let statusBarView = mainWindowContentViewController.statusBarView
+		guard let sidebarSplitViewItem, !sidebarSplitViewItem.isCollapsed else {
+			statusBarView.sidebarDividerPosition = nil
+			return
+		}
+		let sidebarView = sidebarSplitViewItem.viewController.view
+		let sidebarFrameInWindow = sidebarView.convert(sidebarView.bounds, to: nil)
+		let dividerPositionInStatusBar = statusBarView.convert(NSPoint(x: sidebarFrameInWindow.maxX, y: 0), from: nil)
+
+		// Starting with macOS 26, the content beside the sidebar extends under it, and the divider is a hairline
+		// at the sidebar’s trailing edge. Before that, the divider follows the sidebar.
+		if let splitView = splitViewController?.splitView, splitView.arrangedSubviews.count > 1 {
+			let arrangedSubviews = splitView.arrangedSubviews
+			let contentExtendsUnderSidebar = arrangedSubviews[1].frame.minX < arrangedSubviews[0].frame.maxX
+			let hairline = 1 / (window?.backingScaleFactor ?? 1)
+			statusBarView.sidebarDividerLineOffset = contentExtendsUnderSidebar ? -hairline : 0
+			statusBarView.sidebarDividerLineWidth = contentExtendsUnderSidebar ? hairline : splitView.dividerThickness
+		}
+		statusBarView.sidebarDividerPosition = dividerPositionInStatusBar.x
 	}
 }
