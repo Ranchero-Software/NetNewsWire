@@ -205,14 +205,6 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		updateStatusBarVisibility()
 	}
 
-	/// The status bar, when showing, takes the place of the detail view’s floating link overlay and the sidebar’s progress view.
-	func updateStatusBarVisibility() {
-		let showStatusBar = AppDefaults.shared.showStatusBar
-		mainWindowContentViewController.isStatusBarHidden = !showStatusBar
-		detailViewController?.showsMouseoverLinkOverlay = !showStatusBar
-		sidebarViewController?.showsProgressView = !showStatusBar
-	}
-
 	@objc func refreshProgressDidChange(_ note: Notification) {
 		CoalescingQueue.standard.add(self, #selector(makeToolbarValidate))
 	}
@@ -1872,6 +1864,14 @@ private extension MainWindowController {
 	}
 
 	// MARK: - Status Bar
+
+	/// The status bar, when showing, takes the place of the detail view’s floating link overlay and the sidebar’s progress view.
+	func updateStatusBarVisibility() {
+		let showStatusBar = AppDefaults.shared.showStatusBar
+		mainWindowContentViewController.isStatusBarHidden = !showStatusBar
+		detailViewController?.showsMouseoverLinkOverlay = !showStatusBar
+		sidebarViewController?.showsProgressView = !showStatusBar
+	}
 
 	func updateStatusBarLink() {
 		mainWindowContentViewController.statusBarView.link = mouseoverLink ?? currentLink
