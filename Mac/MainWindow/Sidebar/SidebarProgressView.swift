@@ -19,9 +19,12 @@ final class SidebarProgressView: NSView {
 	@IBOutlet var heightConstraint: NSLayoutConstraint!
 
 	/// When true, the view stays hidden and shows no progress.
+	/// When collapsed, this view sits just below the sidebar, unclipped — where the main window status bar is.
+	/// Its separator would double the status bar’s top line, so it’s hidden while suppressed.
 	var isSuppressed = false {
 		didSet {
 			if isSuppressed != oldValue {
+				isHidden = isSuppressed
 				updateUI()
 			}
 		}
@@ -43,13 +46,11 @@ final class SidebarProgressView: NSView {
 			progressLabel.stringValue = ""
 
 			NotificationCenter.default.addObserver(self, selector: #selector(progressInfoDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
-			updateVisibility()
 		}
 	}
 
 	@objc func updateUI() {
 
-		updateVisibility()
 		updateProgressIndicator()
 		updateProgressLabel()
 	}
@@ -62,12 +63,6 @@ final class SidebarProgressView: NSView {
 }
 
 private extension SidebarProgressView {
-
-	// When collapsed, this view sits just below the sidebar, unclipped — where the main window status bar is.
-	// Its separator would double the status bar’s top line, so it’s hidden while suppressed.
-	func updateVisibility() {
-		isHidden = isSuppressed
-	}
 
 	// MARK: Progress
 
