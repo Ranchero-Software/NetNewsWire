@@ -315,7 +315,7 @@ final class AppDefaults: Sendable {
 	}
 
 	/// The status bar is off by default on macOS 26 and on by default everywhere else.
-	static var showStatusBarDefault: Bool {
+	private static var showStatusBarDefault: Bool {
 		if #available(macOS 27.0, *) {
 			return true
 		}
@@ -336,10 +336,10 @@ final class AppDefaults: Sendable {
 
 	var statusBarCountMode: StatusBarCountMode {
 		get {
-			StatusBarCountMode(rawValue: UserDefaults.standard.integer(forKey: Key.statusBarCountMode)) ?? .unreadCount
+			StatusBarCountMode(rawValue: AppDefaults.int(for: Key.statusBarCountMode)) ?? .unreadCount
 		}
 		set {
-			UserDefaults.standard.set(newValue.rawValue, forKey: Key.statusBarCountMode)
+			AppDefaults.setInt(for: Key.statusBarCountMode, newValue.rawValue)
 		}
 	}
 
