@@ -312,6 +312,9 @@ private extension MainWindowStatusBarView {
 		themePopUpButton.isBordered = false
 		themePopUpButton.controlSize = .small
 		themePopUpButton.font = NSFont.systemFont(ofSize: Self.fontSize)
+		let themeDescription = NSLocalizedString("Article Theme", comment: "Article Theme")
+		themePopUpButton.setAccessibilityLabel(themeDescription)
+		themePopUpButton.toolTip = themeDescription
 		updateThemePopUpButtonShadow()
 
 		// The split handle is added last so it’s on top: it straddles the left section’s edge.
