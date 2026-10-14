@@ -34,14 +34,25 @@ public extension NSTableView {
 	}
 
 	/// The part of the document the user can actually see. documentVisibleRect includes
-	/// the area under the toolbar, and under the sidebar on macOS 26.
+	/// the area under the toolbar, under the sidebar on macOS 26, and under the header view.
 	private var unobscuredDocumentRect: NSRect? {
 		guard let scrollView = self.enclosingScrollView else {
 			return nil
 		}
 		let contentInsets = scrollView.contentInsets
 		let documentVisibleRect = scrollView.documentVisibleRect
-		return NSRect(x: documentVisibleRect.minX + contentInsets.left, y: documentVisibleRect.minY + contentInsets.top, width: documentVisibleRect.width - contentInsets.left - contentInsets.right, height: documentVisibleRect.height - contentInsets.top - contentInsets.bottom)
+		var rect = NSRect(x: documentVisibleRect.minX + contentInsets.left, y: documentVisibleRect.minY + contentInsets.top, width: documentVisibleRect.width - contentInsets.left - contentInsets.right, height: documentVisibleRect.height - contentInsets.top - contentInsets.bottom)
+
+		// The header floats over the clip view but isn’t part of contentInsets.
+		if let headerView, headerView.window != nil {
+			let headerBottom = convert(headerView.bounds, from: headerView).maxY
+			if headerBottom > rect.minY {
+				rect.size.height = max(0, rect.maxY - headerBottom)
+				rect.origin.y = headerBottom
+			}
+		}
+
+		return rect
 	}
 
 	func scrollTo(row: Int, extraHeight: Int = 150) {
@@ -54,10 +65,11 @@ public extension NSTableView {
 			return
 		}
 
-		// Center the row in the unobscured area, which starts contentInsets.top below the clip view’s origin.
+		// Center the row in the unobscured area, which starts obscuredTop below the clip view’s origin.
+		let obscuredTop = unobscuredDocumentRect.minY - scrollView.documentVisibleRect.minY
 		let rMidY = r.midY
 		var scrollPoint = NSPoint.zero
-		scrollPoint.y = floor(rMidY - (unobscuredDocumentRect.size.height / 2.0) - scrollView.contentInsets.top) + CGFloat(extraHeight)
+		scrollPoint.y = floor(rMidY - (unobscuredDocumentRect.size.height / 2.0) - obscuredTop) + CGFloat(extraHeight)
 
 		let clipView = scrollView.contentView
 
