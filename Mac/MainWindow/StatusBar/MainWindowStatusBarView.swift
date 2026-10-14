@@ -294,6 +294,11 @@ private extension MainWindowStatusBarView {
 	func commonInit() {
 		heightAnchor.constraint(equalToConstant: Self.height).isActive = true
 
+		// A labeled group, so VoiceOver can find the bar and move through its controls.
+		setAccessibilityElement(true)
+		setAccessibilityRole(.group)
+		setAccessibilityLabel(NSLocalizedString("Status Bar", comment: "Main window status bar accessibility label"))
+
 		gearButton.delegate = self
 
 		progressIndicator.style = .bar
