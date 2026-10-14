@@ -1,5 +1,38 @@
 # Mac Release Notes
 
+### 7.2 7222 14 Oct 2026 - branch: main tag: mac-7.2
+
+Changes since 7.2b4:
+
+Fixed column view bug where next-unread could scroll to a row that’s hidden under the column headers
+
+Changes since 7.1.5:
+
+Added unread count display setting — show the count, show a dot, or hide it — which applies to the Dock icon badge, window title, and sidebar
+Added column layout for the timeline — choose View > Use Column Layout
+Expanded View > Sort Articles By with more options (works with standard and column layouts)
+Made timeline sorting per window instead of one setting for the whole app
+Made the Add Feed sheet start with the folder or account selected in the sidebar
+Changed the message for adding a feed that’s already added to include the name of the folder (or folders)
+Fixed bug where YouTube embeds in articles showed an error instead of playing
+Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
+Fixed extra whitespace at the end of Slashdot articles and paragraphs running together
+Fixed parsing of RSS feed titles when a feed contains a textinput section (Slashdot, for instance)
+Added support for the instapaper_ignore class — elements marked with it are now removed from articles
+Changed tabs in pre and code elements in articles to display as four spaces
+Improved finding feeds in a page by skipping links to PDFs, movies, and other files that can’t be feeds
+Changed finding a feed to use the redirected-to URL
+Sped up Today and unread count queries
+Added up to 500 characters of the HTTP error response body to Error Log entries
+Fixed bug where the sidebar could reopen with no width when it had been collapsed in 7.1.x
+Fixed a memory leak when closing a main window
+Fixed a possible crash when the sidebar or timeline had no visible rows
+Changed sorting by title and by feed to sort numbers by value — “Episode 2” comes before “Episode 10”
+Added support for Substack-style footnotes
+Improved CJK text rendering in the article view by adding text-autospace
+Fixed horizontal overflow of WordPress Math blocks and SVGs in the Tiqoe Dark theme
+Improved font sizing and fixed superscript orphans in table cells in the Tiqoe Dark theme
+
 ### 7.2b4 7221 11 Oct 2026 - branch: main tag: mac-7.2b4
 
 Fixed bug where embedded videos with no set height — such as Inoreader’s YouTube player — collapsed to a short strip
