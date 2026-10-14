@@ -550,7 +550,7 @@ extension MainTimelineModernViewController: UICollectionViewDelegate {
 
 		})
 	}
-	
+
 	func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: any UIContextMenuInteractionCommitAnimating) {
 		animator.addCompletion { [weak self] in
 			guard let indexRow = configuration.identifier as? Int,
