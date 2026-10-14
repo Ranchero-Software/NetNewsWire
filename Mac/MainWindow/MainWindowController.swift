@@ -870,33 +870,6 @@ extension MainWindowController: ScriptingMainWindowController {
     }
 }
 
-// MARK: - Article Theme Menu
-
-extension MainWindowController {
-
-	static func makeArticleThemeMenu() -> NSMenu {
-		let articleThemeMenu = NSMenu()
-
-		let defaultThemeItem = NSMenuItem()
-		defaultThemeItem.title = ArticleTheme.defaultTheme.name
-		defaultThemeItem.action = #selector(MainWindowController.selectArticleTheme(_:))
-		defaultThemeItem.state = defaultThemeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
-		articleThemeMenu.addItem(defaultThemeItem)
-
-		articleThemeMenu.addItem(NSMenuItem.separator())
-
-		for themeName in ArticleThemesManager.shared.themeNames {
-			let themeItem = NSMenuItem()
-			themeItem.title = themeName
-			themeItem.action = #selector(MainWindowController.selectArticleTheme(_:))
-			themeItem.state = themeItem.title == ArticleThemesManager.shared.currentThemeName ? .on : .off
-			articleThemeMenu.addItem(themeItem)
-		}
-
-		return articleThemeMenu
-	}
-}
-
 // MARK: - DetailViewControllerDelegate
 
 extension MainWindowController: DetailViewControllerDelegate {
@@ -1027,7 +1000,7 @@ extension MainWindowController: NSToolbarDelegate {
 			let description = NSLocalizedString("Article Theme", comment: "Article Theme")
 			toolbarItem.toolTip = description
 			toolbarItem.label = description
-			toolbarItem.menu = Self.makeArticleThemeMenu()
+			toolbarItem.menu = ArticleThemesManager.shared.makeArticleThemeMenu()
 			return toolbarItem
 
 		case .search:
@@ -1860,7 +1833,7 @@ private extension MainWindowController {
 		guard let toolbarItem = window?.toolbar?.existingItem(withIdentifier: .articleThemeMenu) as? NSMenuToolbarItem else {
 			return
 		}
-		toolbarItem.menu = Self.makeArticleThemeMenu()
+		toolbarItem.menu = ArticleThemesManager.shared.makeArticleThemeMenu()
 	}
 
 	// MARK: - Status Bar

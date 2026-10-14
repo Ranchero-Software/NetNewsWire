@@ -446,7 +446,7 @@ private extension MainWindowStatusBarView {
 	// MARK: - Theme
 
 	func updateThemePopUpButton() {
-		themePopUpButton.menu = MainWindowController.makeArticleThemeMenu()
+		themePopUpButton.menu = ArticleThemesManager.shared.makeArticleThemeMenu()
 		themePopUpButton.selectItem(withTitle: ArticleThemesManager.shared.currentThemeName)
 		updateThemePopUpButtonVisibility()
 	}
