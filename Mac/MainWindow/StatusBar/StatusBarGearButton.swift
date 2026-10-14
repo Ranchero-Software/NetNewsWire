@@ -35,13 +35,12 @@ final class StatusBarGearButton: NSView {
 
 	override init(frame frameRect: NSRect) {
 		super.init(frame: frameRect)
-		setAccessibilityElement(true)
-		setAccessibilityRole(.popUpButton)
-		setAccessibilityLabel(NSLocalizedString("Actions", comment: "Status bar gear menu accessibility label"))
+		commonInit()
 	}
 
 	required init?(coder: NSCoder) {
 		super.init(coder: coder)
+		commonInit()
 	}
 
 	override var intrinsicContentSize: NSSize {
@@ -76,6 +75,14 @@ final class StatusBarGearButton: NSView {
 }
 
 private extension StatusBarGearButton {
+
+	func commonInit() {
+		let description = NSLocalizedString("Actions", comment: "Status bar gear menu accessibility label")
+		setAccessibilityElement(true)
+		setAccessibilityRole(.popUpButton)
+		setAccessibilityLabel(description)
+		toolTip = description
+	}
 
 	@discardableResult
 	func popUpMenu() -> Bool {
