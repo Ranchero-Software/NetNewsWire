@@ -459,13 +459,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		tableView.selectRow(nextRowIndex)
 
-		let followingRowIndex = nextRowIndex - 1
-		if followingRowIndex < 0 {
+		if scrollToRowIfNotFullyVisible(nextRowIndex) {
 			return
 		}
 
-		tableView.scrollToRowIfNotVisible(followingRowIndex)
-
+		scrollToRowIfNotFullyVisible(nextRowIndex - 1)
 	}
 
 	@IBAction func selectNextDown(_ sender: Any?) {
@@ -481,13 +479,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		tableView.selectRow(nextRowIndex)
 
-		let followingRowIndex = nextRowIndex + 1
-		if followingRowIndex > tableMaxIndex {
+		if scrollToRowIfNotFullyVisible(nextRowIndex) {
 			return
 		}
 
-		tableView.scrollToRowIfNotVisible(followingRowIndex)
-
+		scrollToRowIfNotFullyVisible(nextRowIndex + 1)
 	}
 
 	func toggleReadStatusForSelectedArticles() {
@@ -1078,6 +1074,17 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
+
+	/// Returns true if it scrolled. Callers should skip further scrolling then,
+	/// since the animation hasn’t updated the visible rect yet.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5486>
+	@discardableResult func scrollToRowIfNotFullyVisible(_ row: Int) -> Bool {
+		guard (0..<tableView.numberOfRows).contains(row), !tableView.isRowFullyVisible(row) else {
+			return false
+		}
+		tableView.scrollTo(row: row, extraHeight: 0)
+		return true
+	}
 
 	func fetchAndReplacePreservingSelection() {
 		if let article = oneSelectedArticle, let account = article.account {
