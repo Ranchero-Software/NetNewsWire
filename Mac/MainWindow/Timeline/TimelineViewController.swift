@@ -1082,7 +1082,7 @@ private extension TimelineViewController {
 		guard (0..<tableView.numberOfRows).contains(row), !tableView.isRowFullyVisible(row) else {
 			return false
 		}
-		tableView.scrollTo(row: row, extraHeight: 0)
+		tableView.scrollRowFullyIntoView(row)
 		return true
 	}
 

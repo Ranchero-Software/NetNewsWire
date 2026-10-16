@@ -89,25 +89,25 @@ public extension NSTableView {
 		clipView.animator().bounds = clipView.constrainBoundsRect(rClipView)
 	}
 
-	/// Scrolls the minimum distance needed to show the whole row, unlike scrollTo(row:), which centers it.
+	/// A row above the visible area scrolls down just far enough to show it.
+	/// A row below the visible area is centered, so the rows after it show too.
 	func scrollRowFullyIntoView(_ row: Int) {
 		guard let scrollView = self.enclosingScrollView, let unobscuredDocumentRect else {
 			return
 		}
 
 		let r = rect(ofRow: row)
-		let deltaY: CGFloat
-		if r.minY < unobscuredDocumentRect.minY {
-			deltaY = r.minY - unobscuredDocumentRect.minY
-		} else if r.maxY > unobscuredDocumentRect.maxY {
-			deltaY = r.maxY - unobscuredDocumentRect.maxY
-		} else {
+		if r.maxY > unobscuredDocumentRect.maxY {
+			scrollTo(row: row, extraHeight: 0)
+			return
+		}
+		guard r.minY < unobscuredDocumentRect.minY else {
 			return
 		}
 
 		let clipView = scrollView.contentView
 		var bounds = clipView.bounds
-		bounds.origin.y += deltaY
+		bounds.origin.y += r.minY - unobscuredDocumentRect.minY
 		clipView.animator().bounds = clipView.constrainBoundsRect(bounds)
 	}
 
