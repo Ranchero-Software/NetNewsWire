@@ -55,16 +55,23 @@ public extension NSTableView {
 		return rect
 	}
 
+	func isRowFullyVisible(_ row: Int) -> Bool {
+		guard let unobscuredDocumentRect else {
+			return false
+		}
+		return unobscuredDocumentRect.contains(rect(ofRow: row))
+	}
+
 	func scrollTo(row: Int, extraHeight: Int = 150) {
 		guard let scrollView = self.enclosingScrollView, let unobscuredDocumentRect else {
 			return
 		}
 
-		let r = rect(ofRow: row)
-		if unobscuredDocumentRect.contains(r) {
+		if isRowFullyVisible(row) {
 			return
 		}
 
+		let r = rect(ofRow: row)
 		// Center the row in the unobscured area, which starts obscuredTop below the clip view’s origin.
 		let obscuredTop = unobscuredDocumentRect.minY - scrollView.documentVisibleRect.minY
 		let rMidY = r.midY
