@@ -55,6 +55,18 @@
         }
       }
     },
+    "av1-Tc-Hdr.title" : {
+      "comment" : "Class = \"NSTextFieldCell\"; title = \"Article Visibility:\"; ObjectID = \"av1-Tc-Hdr\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Article Visibility:"
+          }
+        }
+      }
+    },
     "BJB-pP-mhQ.title" : {
       "comment" : "Class = \"NSTextFieldCell\"; title = \"Article Content:\"; ObjectID = \"BJB-pP-mhQ\";",
       "extractionState" : "extracted_with_value",
@@ -213,6 +225,18 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Activar JavaScript"
+          }
+        }
+      }
+    },
+    "hr1-Bc-Hrd.title" : {
+      "comment" : "Class = \"NSButtonCell\"; title = \"Hide read articles by default\"; ObjectID = \"hr1-Bc-Hrd\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Hide read articles by default"
           }
         }
       }
