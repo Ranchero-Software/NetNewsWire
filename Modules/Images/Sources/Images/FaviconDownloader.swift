@@ -30,7 +30,7 @@ extension Notification.Name {
 	private let diskCache: BinaryDiskCache
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
-	private var currentHomePageHasOnlyFaviconICO = false
+	private var homePagesWithOnlyDefaultFaviconURL = Set<String>()
 
 	private let queue: DispatchQueue
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
@@ -151,8 +151,6 @@ extension Notification.Name {
 		}
 
 		if let faviconURLs = findFaviconURLs(with: url) {
-			// If the site explicitly specifies favicon.ico, it will appear twice.
-			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 			self.remainingFaviconURLs[url] = faviconURLs[...]
 			downloadNextFavicon(forHomePageURL: url)
 		}
@@ -179,6 +177,10 @@ extension Notification.Name {
 			return
 		}
 		guard singleFaviconDownloader.iconImage != nil else {
+			if singleFaviconDownloader.error == nil {
+				// Transient — not an answer about the site.
+				homePagesWithOnlyDefaultFaviconURL.remove(homePageURL)
+			}
 			if remainingFaviconURLs[homePageURL] != nil {
 				downloadNextFavicon(forHomePageURL: homePageURL)
 			}
@@ -186,6 +188,7 @@ extension Notification.Name {
 		}
 
 		remainingFaviconURLs[homePageURL] = nil
+		homePagesWithOnlyDefaultFaviconURL.remove(homePageURL)
 
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
 	}
@@ -211,24 +214,22 @@ private extension FaviconDownloader {
 		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
 	}
 
-	static let localeForLowercasing = Locale(identifier: "en_US")
+	nonisolated static let localeForLowercasing = Locale(identifier: "en_US")
 
 	func findFaviconURLs(with homePageURL: String) -> [String]? {
 
-		guard let url = URL(string: homePageURL) else {
+		let downloader = HTMLMetadataDownloader.shared
+		let metadata = downloader.cachedMetadata(for: homePageURL)
+		let candidates = Self.faviconCandidates(homePageURL: homePageURL, favicons: metadata?.favicons,
+												metadataIsUnavailable: downloader.metadataIsUnavailable(for: homePageURL))
+
+		guard let candidates else {
 			return nil
 		}
-		guard let htmlMetadata = HTMLMetadataDownloader.shared.cachedMetadata(for: homePageURL) else {
-			return nil
+		if candidates.onlyDefaultFaviconURL {
+			homePagesWithOnlyDefaultFaviconURL.insert(homePageURL)
 		}
-		let faviconURLs = htmlMetadata.usableFaviconURLs() ?? [String]()
-
-		guard let scheme = url.scheme, let host = url.host else {
-			return faviconURLs.isEmpty ? nil : faviconURLs
-		}
-
-		let defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
-		return faviconURLs + [defaultFaviconURL]
+		return candidates.urls
 	}
 
 	func canAttemptDownload(_ faviconURL: String) -> Bool {
@@ -256,7 +257,7 @@ private extension FaviconDownloader {
 		}
 
 		remainingFaviconURLs[homePageURL] = nil
-		if currentHomePageHasOnlyFaviconICO {
+		if homePagesWithOnlyDefaultFaviconURL.remove(homePageURL) != nil {
 			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 		}
 	}
@@ -297,7 +298,7 @@ private extension FaviconDownloader {
 
 private extension HTMLMetadataRecord {
 
-	func usableFaviconURLs() -> [String]? {
+	static func usableFaviconURLs(_ favicons: [Favicon]) -> [String] {
 
 		favicons.compactMap { favicon in
 			shouldAllowFavicon(favicon) ? favicon.urlString : nil
@@ -306,7 +307,7 @@ private extension HTMLMetadataRecord {
 
 	static let ignoredTypes = [UTType.svg]
 
-	private func shouldAllowFavicon(_ favicon: HTMLMetadataRecord.Favicon) -> Bool {
+	private static func shouldAllowFavicon(_ favicon: HTMLMetadataRecord.Favicon) -> Bool {
 
 		// Only http(s) — a data: or other non-web URL can't be downloaded as a favicon.
 		guard let urlString = favicon.urlString,
@@ -329,5 +330,49 @@ private extension HTMLMetadataRecord {
 		}
 
 		return true
+	}
+}
+
+// MARK: - Candidates
+
+extension FaviconDownloader {
+
+	struct FaviconCandidates: Equatable {
+		let urls: [String]
+		/// The page was read and named no favicon of its own, leaving only the default
+		/// favicon.ico — so failing to fetch it is a real answer about the site.
+		let onlyDefaultFaviconURL: Bool
+	}
+
+	/// The favicon URLs to try for a home page, best first. `favicons` is nil when the page’s
+	/// metadata hasn’t been read; `metadataIsUnavailable` says it isn’t coming.
+	nonisolated static func faviconCandidates(homePageURL: String, favicons: [HTMLMetadataRecord.Favicon]?, metadataIsUnavailable: Bool) -> FaviconCandidates? {
+
+		guard let url = URL(string: homePageURL) else {
+			return nil
+		}
+		let defaultFaviconURL = defaultFaviconURL(for: url)
+
+		guard let favicons else {
+			// favicon.ico needs no HTML, so it’s still worth a try when the page won’t load.
+			guard metadataIsUnavailable, let defaultFaviconURL else {
+				return nil
+			}
+			return FaviconCandidates(urls: [defaultFaviconURL], onlyDefaultFaviconURL: false)
+		}
+
+		let declaredURLs = HTMLMetadataRecord.usableFaviconURLs(favicons)
+		guard let defaultFaviconURL else {
+			return declaredURLs.isEmpty ? nil : FaviconCandidates(urls: declaredURLs, onlyDefaultFaviconURL: false)
+		}
+		return FaviconCandidates(urls: declaredURLs + [defaultFaviconURL], onlyDefaultFaviconURL: declaredURLs.isEmpty)
+	}
+
+	/// Every site is entitled to a favicon.ico at its root, whether or not it says so.
+	nonisolated static func defaultFaviconURL(for url: URL) -> String? {
+		guard let scheme = url.scheme, let host = url.host else {
+			return nil
+		}
+		return "\(scheme)://\(host)/favicon.ico".lowercased(with: localeForLowercasing)
 	}
 }
