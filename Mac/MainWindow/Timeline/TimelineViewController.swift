@@ -279,6 +279,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		sharingServiceDelegate = SharingServiceDelegate(self.view.window)
 	}
 
+	override func viewDidLayout() {
+		super.viewDidLayout()
+		fitTableViewToVisibleWidthInStandardLayout()
+	}
+
 	// MARK: - API
 
 	func markAllAsRead(completion: (() -> Void)? = nil) {
@@ -1074,6 +1079,20 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
+
+	/// The table doesn’t shrink by itself when the pane narrows after leaving column layout.
+	func fitTableViewToVisibleWidthInStandardLayout() {
+		guard layout == .standard, let scrollView = tableView.enclosingScrollView else {
+			return
+		}
+		let contentInsets = scrollView.contentInsets
+		let visibleWidth = scrollView.contentView.bounds.width - contentInsets.left - contentInsets.right
+		guard visibleWidth > 0, tableView.frame.width != visibleWidth else {
+			return
+		}
+		tableView.setFrameSize(NSSize(width: visibleWidth, height: tableView.frame.height))
+		tableView.sizeLastColumnToFit()
+	}
 
 	/// Returns true if it scrolled. Callers should skip further scrolling then,
 	/// since the animation hasn’t updated the visible rect yet.
