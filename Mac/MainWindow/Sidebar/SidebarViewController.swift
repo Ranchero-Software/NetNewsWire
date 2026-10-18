@@ -105,6 +105,11 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
 
+		if let clipView = outlineView.enclosingScrollView?.contentView {
+			clipView.postsFrameChangedNotifications = true
+			NotificationCenter.default.addObserver(self, selector: #selector(handleClipViewFrameDidChange(_:)), name: NSView.frameDidChangeNotification, object: clipView)
+		}
+
 		outlineView.reloadData()
 
 		// Expand top level items by default.  If there is state to restore, overlay this.
@@ -230,6 +235,10 @@ extension Notification.Name {
 		applyToAvailableCells { cell, _ in
 			cell.updateUnreadCountView()
 		}
+	}
+
+	@objc func handleClipViewFrameDidChange(_ notification: Notification) {
+		fitOutlineViewToVisibleWidth()
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
@@ -571,6 +580,22 @@ extension SidebarViewController: NSUserInterfaceValidations {
 // MARK: - Private
 
 private extension SidebarViewController {
+
+	/// The outline view doesn’t resize its rows when the scroller appears or disappears,
+	/// which leaves the selection highlight at a stale width.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5487>
+	func fitOutlineViewToVisibleWidth() {
+		guard let scrollView = outlineView.enclosingScrollView else {
+			return
+		}
+		let contentInsets = scrollView.contentInsets
+		let visibleWidth = scrollView.contentView.bounds.width - contentInsets.left - contentInsets.right
+		guard visibleWidth > 0, outlineView.frame.width != visibleWidth else {
+			return
+		}
+		outlineView.setFrameSize(NSSize(width: visibleWidth, height: outlineView.frame.height))
+		outlineView.sizeLastColumnToFit()
+	}
 
 	var accountNodes: [Account] {
 		return treeController.rootNode.childNodes.compactMap { $0.representedObject as? Account }
