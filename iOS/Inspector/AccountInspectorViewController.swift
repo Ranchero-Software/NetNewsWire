@@ -112,6 +112,29 @@ final class AccountInspectorViewController: UITableViewController {
 		present(alertController, animated: true)
 	}
 
+	func showHideReadArticlesSettings() {
+		guard let account else {
+			return
+		}
+
+		let accountID = account.accountID
+		let view = FeedReadFilterOverridesView(
+			account: account,
+			hasOverride: { feedID in
+				AppDefaults.shared.feedReadFilterOverrides.override(accountID: accountID, feedID: feedID) != nil
+			},
+			setOverride: { feedID, enabled in
+				AppDefaults.shared.setFeedHideReadOverride(accountID: accountID, feedID: feedID, enabled: enabled)
+			},
+			clearAllOverrides: {
+				AppDefaults.shared.clearFeedHideReadOverrides(accountID: accountID)
+			}
+		)
+
+		let hostingController = UIHostingController(rootView: view)
+		navigationController?.pushViewController(hostingController, animated: true)
+	}
+
 	@IBAction func openLimitationsAndSolutions(_ sender: Any) {
 		let vc = SFSafariViewController(url: CloudKitWebDocumentation.limitationsAndSolutionsURL)
 		vc.modalPresentationStyle = .pageSheet
@@ -129,6 +152,7 @@ extension AccountInspectorViewController {
 		case credentials = 1
 		case deleteAccount = 2
 		case syncContent = 3
+		case hideReadOverrides = 4
 	}
 
 	var isCloudKitAccount: Bool {
@@ -149,24 +173,24 @@ extension AccountInspectorViewController {
 
 	/// The storyboard sections to display, in order, for the current account type.
 	///
-	/// - Default account: name/active only
-	/// - cloudKit: name/active, sync content, delete
-	/// - Other hidden-credentials: name/active, delete
-	/// - All others: name/active, credentials, delete
+	/// - Default account: name/active, hide read overrides
+	/// - cloudKit: name/active, sync content, hide read overrides, delete
+	/// - Other hidden-credentials: name/active, hide read overrides, delete
+	/// - All others: name/active, credentials, hide read overrides, delete
 	var displayedSections: [StoryboardSection] {
 		guard let account else {
 			return []
 		}
 		if account == AccountManager.shared.defaultAccount {
-			return [.nameAndActive]
+			return [.nameAndActive, .hideReadOverrides]
 		}
 		if isCloudKitAccount {
-			return [.nameAndActive, .syncContent, .deleteAccount]
+			return [.nameAndActive, .syncContent, .hideReadOverrides, .deleteAccount]
 		}
 		if hidesCredentialsSection {
-			return [.nameAndActive, .deleteAccount]
+			return [.nameAndActive, .hideReadOverrides, .deleteAccount]
 		}
-		return [.nameAndActive, .credentials, .deleteAccount]
+		return [.nameAndActive, .credentials, .hideReadOverrides, .deleteAccount]
 	}
 
 	override func numberOfSections(in tableView: UITableView) -> Int {
@@ -220,6 +244,10 @@ extension AccountInspectorViewController {
 	}
 
 	override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		let section = displayedSections[indexPath.section]
+		if section == .hideReadOverrides {
+			showHideReadArticlesSettings()
+		}
 		tableView.selectRow(at: nil, animated: true, scrollPosition: .none)
 	}
 }
