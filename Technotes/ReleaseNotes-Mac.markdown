@@ -1,5 +1,15 @@
 # Mac Release Notes
 
+### 7.2.1 7224 19 Oct 2026 - branch: main tag: mac-7.2.1
+
+Same as 7.2.1b1 — just bumped the version.
+
+Changes since 7.2:
+
+Fixed bug where navigated-to row, in column layout, might appear under column headers
+Fixed bug where scroller hiding/showing could mess up sidebar layout
+Added magnet as an allowed link scheme
+
 ### 7.2.1b1 7223 18 Oct 2026 - branch: main tag: mac-7.2.1b1
 
 Fixed bug where navigated-to row, in column layout, might appear under column headers
