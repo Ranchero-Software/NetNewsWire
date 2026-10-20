@@ -104,6 +104,31 @@ import Testing
 		#expect(result == html)
 	}
 
+	// MARK: - MacRumors stray line breaks
+
+	// <https://github.com/Ranchero-Software/NetNewsWire/issues/5498>
+
+	// From the MacRumors feed on 2026-10-19, cut to one list item.
+	@Test func macRumorsListLosesStrayLineBreaks() {
+		let html = "GM said the rollout will occur as follows.\n<br/>\n\n<br/>\n<p><h2>September–October 2026</h2></p>\n<br/>\n<ul>\n<br/>\n  <li>Cadillac Vistiq (2027)</li>\n<br/>\n</ul>GM said customers will see a notification."
+		let expected = "GM said the rollout will occur as follows.\n<br/>\n\n<br/>\n<p><h2>September–October 2026</h2></p>\n<br/>\n<ul>\n  <li>Cadillac Vistiq (2027)</li>\n</ul>GM said customers will see a notification."
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: "https://feeds.macrumors.com/MacRumors-All", homePageURL: nil)
+		#expect(result == expected)
+	}
+
+	@Test func macRumorsTableLosesStrayLineBreaksButKeepsCellLineBreaks() {
+		let html = "<table class=\"specs\">\n<br/>\n<tr>\n<br/>\n<th>Height</th>\n<br/>\n<td>5.91 inches</td>\n<br/>\n<td>closed<br/>open</td>\n<br/>\n</tr>\n<br/>\n</table>\n<br/>\nAfter."
+		let expected = "<table class=\"specs\">\n<tr>\n<th>Height</th>\n<td>5.91 inches</td>\n<td>closed<br/>open</td>\n</tr>\n</table>\n<br/>\nAfter."
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: nil, homePageURL: "https://www.macrumors.com/")
+		#expect(result == expected)
+	}
+
+	@Test func otherFeedsKeepLineBreaksInListsAndTables() {
+		let html = "<ul>\n<br/>\n<li>Item</li>\n<br/>\n</ul><table>\n<br/>\n<tr><td>Cell</td></tr></table>"
+		let result = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(html, feedURL: "https://example.com/feed.xml", homePageURL: "https://example.com/")
+		#expect(result == html)
+	}
+
 	// MARK: - Base URL for YouTube articles
 
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4860>
