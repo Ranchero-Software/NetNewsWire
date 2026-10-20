@@ -82,6 +82,7 @@ public enum FeedbinAccountDelegateError: String, Error, Sendable {
 			try await account.logActivity(kind: .refreshAll) {
 				try await refreshAccount(account)
 				try await refreshArticlesAndStatuses(account)
+				accountSettings?.lastRefreshCompletedDate = Date()
 			}
 		} catch {
 			refreshProgress.reset()
@@ -948,7 +949,6 @@ private extension FeedbinAccountDelegate {
 		guard let page else {
 			if let lastArticleFetch = updateFetchDate {
 				accountSettings?.lastArticleFetchStartTime = lastArticleFetch
-				accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return
 		}
