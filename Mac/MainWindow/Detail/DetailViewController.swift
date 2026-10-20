@@ -20,10 +20,25 @@ enum DetailState: Equatable {
 	case extracted(Article, ExtractedArticle, CGFloat?)
 }
 
+@MainActor protocol DetailViewControllerDelegate: AnyObject {
+	func detailViewController(_ detailViewController: DetailViewController, mouseoverLinkDidChange link: String?)
+}
+
 final class DetailViewController: NSViewController, WKUIDelegate {
 
 	@IBOutlet var containerView: DetailContainerView!
-	@IBOutlet var statusBarView: DetailStatusBarView!
+	@IBOutlet var linkOverlayView: DetailLinkOverlayView!
+
+	weak var delegate: DetailViewControllerDelegate?
+
+	/// Whether the hovered link shows in the floating overlay. The delegate gets the hovered link either way.
+	var showsMouseoverLinkOverlay = true {
+		didSet {
+			if showsMouseoverLinkOverlay != oldValue {
+				updateMouseoverLinkOverlay()
+			}
+		}
+	}
 
 	private lazy var regularWebViewController = createWebViewController()
 	private var searchWebViewController: DetailWebViewController?
@@ -38,8 +53,18 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 			if containerView.contentView === webview {
 				return
 			}
-			statusBarView.mouseoverLink = nil
+			mouseoverLink = nil
 			containerView.contentView = webview
+		}
+	}
+
+	private var mouseoverLink: String? {
+		didSet {
+			guard mouseoverLink != oldValue else {
+				return
+			}
+			updateMouseoverLinkOverlay()
+			delegate?.detailViewController(self, mouseoverLinkDidChange: mouseoverLink)
 		}
 	}
 
@@ -67,6 +92,7 @@ final class DetailViewController: NSViewController, WKUIDelegate {
 
 	override func viewDidLoad() {
 		currentWebViewController = regularWebViewController
+		updateMouseoverLinkOverlay()
 	}
 
 	// MARK: - API
@@ -126,20 +152,27 @@ extension DetailViewController: DetailWebViewControllerDelegate {
 		guard !link.isEmpty, detailWebViewController === currentWebViewController else {
 			return
 		}
-		statusBarView.mouseoverLink = link
+		mouseoverLink = link
 	}
 
 	func mouseDidExit(_ detailWebViewController: DetailWebViewController) {
 		guard detailWebViewController === currentWebViewController else {
 			return
 		}
-		statusBarView.mouseoverLink = nil
+		mouseoverLink = nil
 	}
 }
 
 // MARK: - Private
 
 private extension DetailViewController {
+
+	func updateMouseoverLinkOverlay() {
+		guard isViewLoaded else {
+			return
+		}
+		linkOverlayView.mouseoverLink = showsMouseoverLinkOverlay ? mouseoverLink : nil
+	}
 
 	func createWebViewController() -> DetailWebViewController {
 		let controller = DetailWebViewController()

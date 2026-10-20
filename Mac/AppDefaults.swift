@@ -15,6 +15,21 @@ enum FontSize: Int {
 	case veryLarge = 3
 }
 
+/// What the status bar’s count text shows. Clicking the text switches between them.
+enum StatusBarCountMode: Int {
+	case unreadCount = 0
+	case foldersAndFeeds = 1
+
+	var toggled: StatusBarCountMode {
+		switch self {
+		case .unreadCount:
+			.foldersAndFeeds
+		case .foldersAndFeeds:
+			.unreadCount
+		}
+	}
+}
+
 final class AppDefaults: Sendable {
 
 	static let defaultThemeName = "Default"
@@ -31,6 +46,9 @@ final class AppDefaults: Sendable {
 		static let timelineSortDirection = "timelineSortDirection"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let useColumnLayout = "useColumnLayout"
+		static let showStatusBar = "showStatusBar"
+		static let showStatusBarThemeMenu = "showStatusBarThemeMenu"
+		static let statusBarCountMode = "statusBarCountMode"
 		static let detailFontSize = "detailFontSize"
 		static let openInBrowserInBackground = "openInBrowserInBackground"
 		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
@@ -286,6 +304,45 @@ final class AppDefaults: Sendable {
 		}
 	}
 
+	/// The main window status bar. Applies to all windows.
+	var showStatusBar: Bool {
+		get {
+			AppDefaults.bool(for: Key.showStatusBar)
+		}
+		set {
+			AppDefaults.setBool(for: Key.showStatusBar, newValue)
+		}
+	}
+
+	/// The status bar is off by default on macOS 26 and on by default everywhere else.
+	private static var showStatusBarDefault: Bool {
+		if #available(macOS 27.0, *) {
+			return true
+		}
+		if #available(macOS 26.0, *) {
+			return false
+		}
+		return true
+	}
+
+	var showStatusBarThemeMenu: Bool {
+		get {
+			AppDefaults.bool(for: Key.showStatusBarThemeMenu)
+		}
+		set {
+			AppDefaults.setBool(for: Key.showStatusBarThemeMenu, newValue)
+		}
+	}
+
+	var statusBarCountMode: StatusBarCountMode {
+		get {
+			StatusBarCountMode(rawValue: AppDefaults.int(for: Key.statusBarCountMode)) ?? .unreadCount
+		}
+		set {
+			AppDefaults.setInt(for: Key.statusBarCountMode, newValue.rawValue)
+		}
+	}
+
 	var timelineShowsSeparators: Bool {
 		return AppDefaults.bool(for: Key.timelineShowsSeparators)
 	}
@@ -344,6 +401,8 @@ final class AppDefaults: Sendable {
 			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 			Key.timelineGroupByFeed: false,
 			Key.useColumnLayout: false,
+			Key.showStatusBar: Self.showStatusBarDefault,
+			Key.showStatusBarThemeMenu: true,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
