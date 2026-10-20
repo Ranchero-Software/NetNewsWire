@@ -2,7 +2,7 @@
 
 ### 7.3b1 7225 20 Oct 2026 - branch: main tag: mac-7.3b1
 
-Restore the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
+Restored the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
 
 ### 7.2.1 7224 19 Oct 2026 - branch: main tag: mac-7.2.1
 

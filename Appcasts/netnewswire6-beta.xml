@@ -7,6 +7,18 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b1</title>
+	<description><![CDATA[
+<ul>
+<li>Restore the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
+</ul>
+	]]></description>
+	<pubDate>Tue, 20 Oct 2026 11:35:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b1/NetNewsWire7.3b1.zip" sparkle:version="7225" sparkle:shortVersionString="7.3b1" length="10048664" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.2.1</title>
 	<description><![CDATA[
 Changes since 7.2:
