@@ -214,6 +214,19 @@ final class MainWindowStatusBarView: NSView {
 		CoalescingQueue.standard.add(self, #selector(updateCountLabel))
 	}
 
+	// The last refresh time shows the date only when it’s not today, so it changes at midnight.
+	@objc func handleCalendarDayChanged(_ notification: Notification) {
+		updateCountLabel()
+	}
+
+	@objc func handleCurrentLocaleDidChange(_ notification: Notification) {
+		updateCountLabel()
+	}
+
+	@objc func handleSystemTimeZoneDidChange(_ notification: Notification) {
+		updateCountLabel()
+	}
+
 	@objc func handleArticleThemeNamesDidChange(_ notification: Notification) {
 		updateThemePopUpButton()
 	}
@@ -239,11 +252,7 @@ final class MainWindowStatusBarView: NSView {
 	}
 
 	@objc func toggleCountMode(_ sender: Any?) {
-		// With unread counts hidden, the folders and feeds count is the only mode.
-		guard Self.showsUnreadCounts else {
-			return
-		}
-		AppDefaults.shared.statusBarCountMode = AppDefaults.shared.statusBarCountMode.toggled
+		AppDefaults.shared.statusBarCountMode = effectiveCountMode.next(includingUnreadCount: Self.showsUnreadCounts)
 	}
 }
 
@@ -344,6 +353,9 @@ private extension MainWindowStatusBarView {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountChildrenDidChange(_:)), name: .UserDidDeleteAccount, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAccountChildrenDidChange(_:)), name: .AccountStateDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleProgressInfoDidChange(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleCalendarDayChanged(_:)), name: .NSCalendarDayChanged, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleCurrentLocaleDidChange(_:)), name: NSLocale.currentLocaleDidChangeNotification, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleSystemTimeZoneDidChange(_:)), name: .NSSystemTimeZoneDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThemeNamesDidChange(_:)), name: .ArticleThemeNamesDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleCurrentArticleThemeDidChange(_:)), name: .CurrentArticleThemeDidChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
@@ -409,13 +421,24 @@ private extension MainWindowStatusBarView {
 		AppDefaults.shared.unreadCountDisplay == .count
 	}
 
-	/// The saved mode, except that hidden unread counts (hidden or a dot) mean folders and feeds.
+	/// The saved mode, except that the unread count becomes the last refresh time when unread counts are hidden (hidden or a dot).
 	var effectiveCountMode: StatusBarCountMode {
-		Self.showsUnreadCounts ? AppDefaults.shared.statusBarCountMode : .foldersAndFeeds
+		let mode = AppDefaults.shared.statusBarCountMode
+		if mode == .unreadCount && !Self.showsUnreadCounts {
+			return .lastRefresh
+		}
+		return mode
 	}
 
 	func countText() -> String {
 		switch effectiveCountMode {
+		case .lastRefresh:
+			guard let lastRefreshDate = AccountManager.shared.lastRefreshCompletedDate else {
+				return NSLocalizedString("Not updated yet", comment: "Status bar: no refresh has completed yet")
+			}
+			let formatString = NSLocalizedString("Updated %@", comment: "Updated")
+			return String(format: formatString, Self.lastRefreshDateString(lastRefreshDate))
+
 		case .unreadCount:
 			let formatString = NSLocalizedString("%d unread", comment: "Unread")
 			return String.localizedStringWithFormat(formatString, AccountManager.shared.unreadCount)
@@ -427,6 +450,14 @@ private extension MainWindowStatusBarView {
 			let attributedString = AttributedString(localized: "^[\(folderCount) folder](inflect: true), ^[\(feedCount) feed](inflect: true)", comment: "Status bar: number of folders and feeds")
 			return String(attributedString.characters)
 		}
+	}
+
+	/// Just the time when it’s today, otherwise the date and time — in the user’s locale.
+	static func lastRefreshDateString(_ date: Date) -> String {
+		if Calendar.current.isDateInToday(date) {
+			return date.formatted(date: .omitted, time: .shortened)
+		}
+		return date.formatted(date: .abbreviated, time: .shortened)
 	}
 
 	// MARK: - Link

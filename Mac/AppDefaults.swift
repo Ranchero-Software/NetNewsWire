@@ -15,17 +15,21 @@ enum FontSize: Int {
 	case veryLarge = 3
 }
 
-/// What the status bar’s count text shows. Clicking the text switches between them.
+/// What the status bar’s count text shows. Clicking the text cycles through them.
 enum StatusBarCountMode: Int {
 	case unreadCount = 0
 	case foldersAndFeeds = 1
+	case lastRefresh = 2
 
-	var toggled: StatusBarCountMode {
+	/// The mode after this one when clicking. Skips the unread count when unread counts are hidden.
+	func next(includingUnreadCount: Bool) -> StatusBarCountMode {
 		switch self {
+		case .lastRefresh:
+			includingUnreadCount ? .unreadCount : .foldersAndFeeds
 		case .unreadCount:
 			.foldersAndFeeds
 		case .foldersAndFeeds:
-			.unreadCount
+			.lastRefresh
 		}
 	}
 }
@@ -336,7 +340,7 @@ final class AppDefaults: Sendable {
 
 	var statusBarCountMode: StatusBarCountMode {
 		get {
-			StatusBarCountMode(rawValue: AppDefaults.int(for: Key.statusBarCountMode)) ?? .unreadCount
+			StatusBarCountMode(rawValue: AppDefaults.int(for: Key.statusBarCountMode)) ?? .lastRefresh
 		}
 		set {
 			AppDefaults.setInt(for: Key.statusBarCountMode, newValue.rawValue)
@@ -403,6 +407,7 @@ final class AppDefaults: Sendable {
 			Key.useColumnLayout: false,
 			Key.showStatusBar: Self.showStatusBarDefault,
 			Key.showStatusBarThemeMenu: true,
+			Key.statusBarCountMode: StatusBarCountMode.lastRefresh.rawValue,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
 			Key.showDebugMenu: showDebugMenu,
