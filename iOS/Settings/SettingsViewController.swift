@@ -153,12 +153,13 @@ final class SettingsViewController: UITableViewController {
 		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
-		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
+		buildLabel.text = versionString
 		buildLabel.sizeToFit()
-		buildLabel.translatesAutoresizingMaskIntoConstraints = false
+		buildLabel.isUserInteractionEnabled = true
+		buildLabel.addInteraction(UIEditMenuInteraction(delegate: self))
+		buildLabel.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(showVersionEditMenu(_:))))
 
-		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
-		wrapperView.translatesAutoresizingMaskIntoConstraints = false
+		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: buildLabel.frame.height + 10.0))
 		wrapperView.addSubview(buildLabel)
 		tableView.tableFooterView = wrapperView
 
@@ -463,9 +464,38 @@ extension SettingsViewController: UIDocumentPickerDelegate {
 
 }
 
+// MARK: - Version Edit Menu
+
+extension SettingsViewController: @preconcurrency UIEditMenuInteractionDelegate {
+
+	func editMenuInteraction(_ interaction: UIEditMenuInteraction, menuFor configuration: UIEditMenuConfiguration, suggestedActions: [UIMenuElement]) -> UIMenu? {
+		let versionString = versionString
+		let title = NSLocalizedString("Copy", comment: "Command")
+		let copyAction = UIAction(title: title) { _ in
+			UIPasteboard.general.string = versionString
+		}
+		return UIMenu(children: [copyAction])
+	}
+}
+
 // MARK: - Private
 
 private extension SettingsViewController {
+
+	var versionString: String {
+		"\(Bundle.main.appName) \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
+	}
+
+	@objc func showVersionEditMenu(_ recognizer: UILongPressGestureRecognizer) {
+		guard recognizer.state == .began, let label = recognizer.view else {
+			return
+		}
+		guard let editMenuInteraction = label.interactions.first(where: { $0 is UIEditMenuInteraction }) as? UIEditMenuInteraction else {
+			return
+		}
+		let sourcePoint = CGPoint(x: label.bounds.midX, y: label.bounds.minY)
+		editMenuInteraction.presentEditMenu(with: UIEditMenuConfiguration(identifier: nil, sourcePoint: sourcePoint))
+	}
 
 	static func makePopUpButton() -> UIButton {
 		var configuration = UIButton.Configuration.plain()
