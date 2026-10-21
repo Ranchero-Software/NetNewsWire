@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import RSCore
 
 struct AboutView: View {
     var body: some View {
@@ -20,8 +21,9 @@ struct AboutView: View {
 				Text(verbatim: "NetNewsWire")
 					.font(.largeTitle)
 
+				CopyableText(text: "Version \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))")
+
 				Text(verbatim: "By Brent Simmons and the NetNewsWire team")
-					.foregroundStyle(.secondary)
 				Text("[netnewswire.com](https://netnewswire.com/)")
 
 				VStack(spacing: 6) {
