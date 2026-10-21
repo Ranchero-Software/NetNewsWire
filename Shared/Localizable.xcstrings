@@ -367,7 +367,7 @@
       }
     },
     "Copy" : {
-      "comment" : "Status bar link contextual menu: copy the link"
+      "comment" : "Command"
     },
     "Copy Article URL" : {
       "comment" : "Command"

@@ -465,7 +465,7 @@ private extension MainWindowStatusBarView {
 	/// The link’s contextual menu. Copy copies the whole link, with its scheme.
 	func makeLinkMenu() -> NSMenu {
 		let menu = NSMenu()
-		let copyItem = NSMenuItem(title: NSLocalizedString("Copy", comment: "Status bar link contextual menu: copy the link"), action: #selector(copyLink(_:)), keyEquivalent: "")
+		let copyItem = NSMenuItem(title: NSLocalizedString("Copy", comment: "Command"), action: #selector(copyLink(_:)), keyEquivalent: "")
 		copyItem.target = self
 		menu.addItem(copyItem)
 		return menu
