@@ -169,7 +169,6 @@ body > .systemMessage {
 	text-overflow: ellipsis;
 }
 
-
 .articleBody {
 	margin-top: 20px;
 	line-height: 1.6em;
@@ -528,4 +527,9 @@ a.footnote:hover,
 /* TechCrunch → Reader View */
 .affiliate-disclaimer-text:has([href*="techcrunch.com/techcrunch-affiliate-monetization-standards"]) {
 	display: none;
+}
+
+/* Macworld */
+div:has([href*="macworld.com/newsletters/signup"]) :is(figcaption, button.lightbox-trigger, p.imageCredit) {
+display: none;
 }
