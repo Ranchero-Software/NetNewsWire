@@ -20,7 +20,7 @@ struct AboutView: View {
 				Text(verbatim: "NetNewsWire")
 					.font(.largeTitle)
 
-				Text(verbatim: "By Brent Simmons and the Ranchero Software team")
+				Text(verbatim: "By Brent Simmons and the NetNewsWire team")
 					.foregroundStyle(.secondary)
 				Text("[netnewswire.com](https://netnewswire.com/)")
 
