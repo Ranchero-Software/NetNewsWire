@@ -457,7 +457,7 @@ private extension MainWindowStatusBarView {
 		if Calendar.current.isDateInToday(date) {
 			return date.formatted(date: .omitted, time: .shortened)
 		}
-		return date.formatted(date: .abbreviated, time: .shortened)
+		return date.formatted(date: .numeric, time: .shortened)
 	}
 
 	// MARK: - Link
