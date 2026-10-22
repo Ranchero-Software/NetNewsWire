@@ -59,13 +59,14 @@ import Images
 	}
 
 	func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+		AppDefaults.registerDefaults()
+
 		FaviconGenerator.templateImage = Assets.Images.faviconTemplate
 
 		WebViewConfiguration.resolveBrowserUserAgent()
 		Task {
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
-		AppDefaults.registerDefaults()
 
 		let isFirstRun = AppDefaults.shared.isFirstRun
 		if isFirstRun {

@@ -43,12 +43,6 @@ final class AppDefaults: Sendable {
 
 	private init() {}
 
-	nonisolated(unsafe) static let store: UserDefaults = {
-		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
-		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
-		return UserDefaults.init(suiteName: suiteName)!
-	}()
-
 	struct Key {
 		static let userInterfaceColorPalette = "userInterfaceColorPalette"
 		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
@@ -81,6 +75,10 @@ final class AppDefaults: Sendable {
 		static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
 		static let timelineWidth = "timelineWidth"
 		static let sidebarWidth = "sidebarWidth"
+		static let didMigrateAppGroupDefaults = "didMigrateAppGroupDefaults"
+
+		// Keys that used to be stored in the app-group suite.
+		static let appGroupKeys = [userInterfaceColorPalette, lastImageCacheFlushDate, firstRunDate, timelineGroupByFeed, refreshClearsReadArticles, timelineNumberOfLines, timelineIconDimension, timelineSortDirection, articleFullscreenAvailable, articleFullscreenEnabled, confirmMarkAllAsRead, articleContentJavascriptEnabled, splitViewPreferredDisplayMode, lastRefresh]
 	}
 
 	let isDeveloperBuild: Bool = {
@@ -91,7 +89,7 @@ final class AppDefaults: Sendable {
 	}()
 
 	let isFirstRun: Bool = {
-		if AppDefaults.store.object(forKey: Key.firstRunDate) is Date {
+		if UserDefaults.standard.object(forKey: Key.firstRunDate) is Date {
 			return false
 		}
 		firstRunDate = Date()
@@ -281,11 +279,11 @@ final class AppDefaults: Sendable {
 
 	var timelineIconSize: IconSize {
 		get {
-			let rawValue = AppDefaults.store.integer(forKey: Key.timelineIconDimension)
+			let rawValue = UserDefaults.standard.integer(forKey: Key.timelineIconDimension)
 			return IconSize(rawValue: rawValue) ?? IconSize.medium
 		}
 		set {
-			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineIconDimension)
 			NotificationCenter.default.post(name: .timelineIconSizeDidChange, object: nil)
 		}
 	}
@@ -420,6 +418,9 @@ final class AppDefaults: Sendable {
 	}
 
 	@MainActor static func registerDefaults() {
+		// Must run before register(defaults:) so registered values aren’t copied as explicit ones.
+		migrateAppGroupDefaultsIfNeeded()
+
 		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
 										Key.timelineGroupByFeed: false,
 										Key.refreshClearsReadArticles: false,
@@ -432,7 +433,16 @@ final class AppDefaults: Sendable {
 										Key.articleContentJavascriptEnabled: true,
 										Key.currentThemeName: Self.defaultThemeName,
 									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue]
-		AppDefaults.store.register(defaults: defaults)
+		UserDefaults.standard.register(defaults: defaults)
+	}
+
+	/// Copies each key’s value from source to destination, unless destination already has a value.
+	static func migrate(from source: UserDefaults, to destination: UserDefaults, keys: [String]) {
+		for key in keys {
+			if let value = source.object(forKey: key), destination.object(forKey: key) == nil {
+				destination.set(value, forKey: key)
+			}
+		}
 	}
 }
 
@@ -456,27 +466,46 @@ private extension AppDefaults {
 	}
 
 	static func bool(for key: String) -> Bool {
-		return AppDefaults.store.bool(forKey: key)
+		return UserDefaults.standard.bool(forKey: key)
 	}
 
 	static func setBool(for key: String, _ flag: Bool) {
-		AppDefaults.store.set(flag, forKey: key)
+		UserDefaults.standard.set(flag, forKey: key)
 	}
 
 	static func int(for key: String) -> Int {
-		return AppDefaults.store.integer(forKey: key)
+		return UserDefaults.standard.integer(forKey: key)
 	}
 
 	static func setInt(for key: String, _ x: Int) {
-		AppDefaults.store.set(x, forKey: key)
+		UserDefaults.standard.set(x, forKey: key)
 	}
 
 	static func date(for key: String) -> Date? {
-		return AppDefaults.store.object(forKey: key) as? Date
+		return UserDefaults.standard.object(forKey: key) as? Date
 	}
 
 	static func setDate(for key: String, _ date: Date?) {
-		AppDefaults.store.set(date, forKey: key)
+		UserDefaults.standard.set(date, forKey: key)
+	}
+
+	/// Moves settings from the app-group suite to UserDefaults.standard, then deletes the suite.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5466>
+	static func migrateAppGroupDefaultsIfNeeded() {
+		guard !UserDefaults.standard.bool(forKey: Key.didMigrateAppGroupDefaults) else {
+			return
+		}
+		UserDefaults.standard.set(true, forKey: Key.didMigrateAppGroupDefaults)
+
+		guard let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as? String, let bundleIdentifier = Bundle.main.bundleIdentifier else {
+			return
+		}
+		let suiteName = "\(appIdentifierPrefix)group.\(bundleIdentifier)"
+		guard let appGroupDefaults = UserDefaults(suiteName: suiteName) else {
+			return
+		}
+		migrate(from: appGroupDefaults, to: UserDefaults.standard, keys: Key.appGroupKeys)
+		appGroupDefaults.removePersistentDomain(forName: suiteName)
 	}
 
 	static func sortDirection(for key: String) -> ComparisonResult {
