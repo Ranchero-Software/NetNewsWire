@@ -50,7 +50,7 @@ enum AppDefaults {
 
 	static var lastImageCacheFlushDate: Date? {
 		get {
-			return date(for: Key.lastImageCacheFlushDate)
+			date(for: Key.lastImageCacheFlushDate)
 		}
 		set {
 			setDate(for: Key.lastImageCacheFlushDate, newValue)
@@ -59,7 +59,7 @@ enum AppDefaults {
 
 	static var addFeedAccountID: String? {
 		get {
-			return string(for: Key.addFeedAccountID)
+			string(for: Key.addFeedAccountID)
 		}
 		set {
 			setString(for: Key.addFeedAccountID, newValue)
@@ -68,7 +68,7 @@ enum AppDefaults {
 
 	static var addFeedFolderName: String? {
 		get {
-			return string(for: Key.addFeedFolderName)
+			string(for: Key.addFeedFolderName)
 		}
 		set {
 			setString(for: Key.addFeedFolderName, newValue)
@@ -77,7 +77,7 @@ enum AppDefaults {
 
 	static var addFolderAccountID: String? {
 		get {
-			return string(for: Key.addFolderAccountID)
+			string(for: Key.addFolderAccountID)
 		}
 		set {
 			setString(for: Key.addFolderAccountID, newValue)
@@ -86,7 +86,7 @@ enum AppDefaults {
 
 	static var currentThemeName: String? {
 		get {
-			return string(for: Key.currentThemeName)
+			string(for: Key.currentThemeName)
 		}
 		set {
 			setString(for: Key.currentThemeName, newValue)
@@ -95,7 +95,7 @@ enum AppDefaults {
 
 	static var isArticleContentJavascriptEnabled: Bool {
 		get {
-			return bool(for: Key.articleContentJavascriptEnabled)
+			bool(for: Key.articleContentJavascriptEnabled)
 		}
 		set {
 			setBool(for: Key.articleContentJavascriptEnabled, newValue)
@@ -118,7 +118,7 @@ enum AppDefaults {
 extension AppDefaults {
 
 	static func string(for key: String) -> String? {
-		return UserDefaults.standard.string(forKey: key)
+		UserDefaults.standard.string(forKey: key)
 	}
 
 	static func setString(for key: String, _ value: String?) {
@@ -126,7 +126,7 @@ extension AppDefaults {
 	}
 
 	static func bool(for key: String) -> Bool {
-		return UserDefaults.standard.bool(forKey: key)
+		UserDefaults.standard.bool(forKey: key)
 	}
 
 	static func setBool(for key: String, _ flag: Bool) {
@@ -134,7 +134,7 @@ extension AppDefaults {
 	}
 
 	static func int(for key: String) -> Int {
-		return UserDefaults.standard.integer(forKey: key)
+		UserDefaults.standard.integer(forKey: key)
 	}
 
 	static func setInt(for key: String, _ x: Int) {
@@ -142,7 +142,7 @@ extension AppDefaults {
 	}
 
 	static func date(for key: String) -> Date? {
-		return UserDefaults.standard.object(forKey: key) as? Date
+		UserDefaults.standard.object(forKey: key) as? Date
 	}
 
 	static func setDate(for key: String, _ date: Date?) {
@@ -162,7 +162,7 @@ private extension AppDefaults {
 
 	static var firstRunDate: Date? {
 		get {
-			return date(for: Key.firstRunDate)
+			date(for: Key.firstRunDate)
 		}
 		set {
 			setDate(for: Key.firstRunDate, newValue)

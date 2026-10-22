@@ -21,11 +21,11 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	var description: String {
 		switch self {
 		case .automatic:
-			return NSLocalizedString("Automatic", comment: "Automatic")
+			NSLocalizedString("Automatic", comment: "Automatic")
 		case .light:
-			return NSLocalizedString("Light", comment: "Light")
+			NSLocalizedString("Light", comment: "Light")
 		case .dark:
-			return NSLocalizedString("Dark", comment: "Dark")
+			NSLocalizedString("Dark", comment: "Dark")
 		}
 	}
 }
@@ -84,7 +84,7 @@ extension AppDefaults {
 
 	static var useSystemBrowser: Bool {
 		get {
-			return UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
+			UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
 		}
 		set {
 			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
@@ -93,7 +93,7 @@ extension AppDefaults {
 
 	static var timelineGroupByFeed: Bool {
 		get {
-			return AppDefaults.bool(for: Key.timelineGroupByFeed)
+			AppDefaults.bool(for: Key.timelineGroupByFeed)
 		}
 		set {
 			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
@@ -102,7 +102,7 @@ extension AppDefaults {
 
 	static var refreshClearsReadArticles: Bool {
 		get {
-			return AppDefaults.bool(for: Key.refreshClearsReadArticles)
+			AppDefaults.bool(for: Key.refreshClearsReadArticles)
 		}
 		set {
 			AppDefaults.setBool(for: Key.refreshClearsReadArticles, newValue)
@@ -111,7 +111,7 @@ extension AppDefaults {
 
 	static var timelineSortDirection: ComparisonResult {
 		get {
-			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
+			AppDefaults.sortDirection(for: Key.timelineSortDirection)
 		}
 		set {
 			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
@@ -120,7 +120,7 @@ extension AppDefaults {
 
 	static var articleFullscreenAvailable: Bool {
 		get {
-			return AppDefaults.bool(for: Key.articleFullscreenAvailable)
+			AppDefaults.bool(for: Key.articleFullscreenAvailable)
 		}
 		set {
 			AppDefaults.setBool(for: Key.articleFullscreenAvailable, newValue)
@@ -129,7 +129,7 @@ extension AppDefaults {
 
 	static var articleFullscreenEnabled: Bool {
 		get {
-			return articleFullscreenAvailable && AppDefaults.bool(for: Key.articleFullscreenEnabled)
+			articleFullscreenAvailable && AppDefaults.bool(for: Key.articleFullscreenEnabled)
 		}
 		set {
 			AppDefaults.setBool(for: Key.articleFullscreenEnabled, newValue)
@@ -142,7 +142,7 @@ extension AppDefaults {
 
 	static var confirmMarkAllAsRead: Bool {
 		get {
-			return AppDefaults.bool(for: Key.confirmMarkAllAsRead)
+			AppDefaults.bool(for: Key.confirmMarkAllAsRead)
 		}
 		set {
 			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
@@ -151,7 +151,7 @@ extension AppDefaults {
 
 	static var splitViewPreferredDisplayMode: Int {
 		get {
-			return AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
+			AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
 		}
 		set {
 			AppDefaults.setInt(for: Key.splitViewPreferredDisplayMode, newValue)
@@ -188,7 +188,7 @@ extension AppDefaults {
 
 	static var lastRefresh: Date? {
 		get {
-			return AppDefaults.date(for: Key.lastRefresh)
+			AppDefaults.date(for: Key.lastRefresh)
 		}
 		set {
 			AppDefaults.setDate(for: Key.lastRefresh, newValue)
@@ -197,7 +197,7 @@ extension AppDefaults {
 
 	static var timelineNumberOfLines: Int {
 		get {
-			return AppDefaults.int(for: Key.timelineNumberOfLines)
+			AppDefaults.int(for: Key.timelineNumberOfLines)
 		}
 		set {
 			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)

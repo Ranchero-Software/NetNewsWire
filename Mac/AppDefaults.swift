@@ -90,7 +90,7 @@ extension AppDefaults {
 
 	static var openInBrowserInBackground: Bool {
 		get {
-			return AppDefaults.bool(for: Key.openInBrowserInBackground)
+			AppDefaults.bool(for: Key.openInBrowserInBackground)
 		}
 		set {
 			AppDefaults.setBool(for: Key.openInBrowserInBackground, newValue)
@@ -102,15 +102,15 @@ extension AppDefaults {
 	static var subscribeToFeedDefaults: UserDefaults {
 		if let appGroupID = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String,
 		   let appGroupDefaults = UserDefaults(suiteName: appGroupID) {
-			return appGroupDefaults
+			appGroupDefaults
 		} else {
-			return UserDefaults.standard
+			UserDefaults.standard
 		}
 	}
 
 	static var subscribeToFeedsInDefaultBrowser: Bool {
 		get {
-			return subscribeToFeedDefaults.bool(forKey: Key.subscribeToFeedsInDefaultBrowser)
+			subscribeToFeedDefaults.bool(forKey: Key.subscribeToFeedsInDefaultBrowser)
 		}
 		set {
 			subscribeToFeedDefaults.set(newValue, forKey: Key.subscribeToFeedsInDefaultBrowser)
@@ -119,7 +119,7 @@ extension AppDefaults {
 
 	static var sidebarFontSize: FontSize {
 		get {
-			return fontSize(for: Key.sidebarFontSize)
+			fontSize(for: Key.sidebarFontSize)
 		}
 		set {
 			AppDefaults.setFontSize(for: Key.sidebarFontSize, newValue)
@@ -128,7 +128,7 @@ extension AppDefaults {
 
 	static var timelineFontSize: FontSize {
 		get {
-			return fontSize(for: Key.timelineFontSize)
+			fontSize(for: Key.timelineFontSize)
 		}
 		set {
 			AppDefaults.setFontSize(for: Key.timelineFontSize, newValue)
@@ -137,7 +137,7 @@ extension AppDefaults {
 
 	static var detailFontSize: FontSize {
 		get {
-			return fontSize(for: Key.detailFontSize)
+			fontSize(for: Key.detailFontSize)
 		}
 		set {
 			AppDefaults.setFontSize(for: Key.detailFontSize, newValue)
@@ -146,7 +146,7 @@ extension AppDefaults {
 
 	static var importOPMLAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.importOPMLAccountID)
+			AppDefaults.string(for: Key.importOPMLAccountID)
 		}
 		set {
 			AppDefaults.setString(for: Key.importOPMLAccountID, newValue)
@@ -155,7 +155,7 @@ extension AppDefaults {
 
 	static var exportOPMLAccountID: String? {
 		get {
-			return AppDefaults.string(for: Key.exportOPMLAccountID)
+			AppDefaults.string(for: Key.exportOPMLAccountID)
 		}
 		set {
 			AppDefaults.setString(for: Key.exportOPMLAccountID, newValue)
@@ -164,7 +164,7 @@ extension AppDefaults {
 
 	static var defaultBrowserID: String? {
 		get {
-			return AppDefaults.string(for: Key.defaultBrowserID)
+			AppDefaults.string(for: Key.defaultBrowserID)
 		}
 		set {
 			AppDefaults.setString(for: Key.defaultBrowserID, newValue)
@@ -172,16 +172,16 @@ extension AppDefaults {
 	}
 
 	static var showTitleOnMainWindow: Bool {
-		return AppDefaults.bool(for: Key.showTitleOnMainWindow)
+		AppDefaults.bool(for: Key.showTitleOnMainWindow)
 	}
 
 	static var showDebugMenu: Bool {
-		return AppDefaults.bool(for: Key.showDebugMenu)
- 	}
+		AppDefaults.bool(for: Key.showDebugMenu)
+	}
 
 	static var feedDoubleClickMarkAsRead: Bool {
 		get {
-			return AppDefaults.bool(for: Key.feedDoubleClickMarkAsRead)
+			AppDefaults.bool(for: Key.feedDoubleClickMarkAsRead)
 		}
 		set {
 			AppDefaults.setBool(for: Key.feedDoubleClickMarkAsRead, newValue)
@@ -190,7 +190,7 @@ extension AppDefaults {
 
 	static var suppressSyncOnLaunch: Bool {
 		get {
-			return AppDefaults.bool(for: Key.suppressSyncOnLaunch)
+			AppDefaults.bool(for: Key.suppressSyncOnLaunch)
 		}
 		set {
 			AppDefaults.setBool(for: Key.suppressSyncOnLaunch, newValue)
@@ -199,7 +199,7 @@ extension AppDefaults {
 
 	static var webInspectorEnabled: Bool {
 		get {
-			return AppDefaults.bool(for: Key.webInspectorEnabled)
+			AppDefaults.bool(for: Key.webInspectorEnabled)
 		}
 		set {
 			AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
@@ -208,7 +208,7 @@ extension AppDefaults {
 
 	static var webInspectorStartsAttached: Bool {
 		get {
-			return AppDefaults.bool(for: Key.webInspectorStartsAttached)
+			AppDefaults.bool(for: Key.webInspectorStartsAttached)
 		}
 		set {
 			AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
@@ -275,7 +275,7 @@ extension AppDefaults {
 	}
 
 	static var timelineShowsSeparators: Bool {
-		return AppDefaults.bool(for: Key.timelineShowsSeparators)
+		AppDefaults.bool(for: Key.timelineShowsSeparators)
 	}
 
 	static var articleTextSize: ArticleTextSize {
@@ -334,13 +334,13 @@ extension AppDefaults {
 	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
 		switch fontSize {
 		case .small:
-			return NSFont.systemFontSize
+			NSFont.systemFontSize
 		case .medium:
-			return actualFontSize(for: .small) + 1.0
+			actualFontSize(for: .small) + 1.0
 		case .large:
-			return actualFontSize(for: .medium) + 4.0
+			actualFontSize(for: .medium) + 4.0
 		case .veryLarge:
-			return actualFontSize(for: .large) + 8.0
+			actualFontSize(for: .large) + 8.0
 		}
 	}
 }
@@ -349,7 +349,7 @@ private extension AppDefaults {
 
 	static func fontSize(for key: String) -> FontSize {
 		// Punted till after 1.0.
-		return .medium
+		.medium
 
 //		var rawFontSize = int(for: key)
 //		if rawFontSize < smallestFontSizeRawValue {
