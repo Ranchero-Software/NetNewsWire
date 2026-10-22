@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import os
+import Synchronization
 
 public final class TestingURLProtocol: URLProtocol {
 
@@ -49,7 +49,7 @@ public final class TestingURLProtocol: URLProtocol {
 
 	/// Maps a test ID to its state. Requests from a session built outside a
 	/// `currentTestID` scope use `sharedTestID`.
-	private static let testStates = OSAllocatedUnfairLock<[String: TestState]>(initialState: [:])
+	private static let testStates = Mutex<[String: TestState]>([:])
 
 	private static let sharedTestID = "shared"
 
