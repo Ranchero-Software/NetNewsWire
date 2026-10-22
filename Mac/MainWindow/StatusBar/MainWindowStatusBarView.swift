@@ -251,8 +251,17 @@ final class MainWindowStatusBarView: NSView {
 		URLPasteboardWriter.write(urlStrings: [link], to: .general)
 	}
 
-	@objc func toggleCountMode(_ sender: Any?) {
-		AppDefaults.shared.statusBarCountMode = effectiveCountMode.next(includingUnreadCount: Self.showsUnreadCounts)
+	/// While refreshing, the label shows progress, and a click opens the Current Activity window. Otherwise a click toggles the count mode.
+	@objc func countLabelClicked(_ sender: Any?) {
+		if CombinedRefreshProgress.shared.progressInfo.isComplete {
+			AppDefaults.shared.statusBarCountMode = effectiveCountMode.next(includingUnreadCount: Self.showsUnreadCounts)
+		} else {
+			showActivityWindow(sender)
+		}
+	}
+
+	@objc func showActivityWindow(_ sender: Any?) {
+		NSApp.sendAction(#selector(AppDelegate.showActivityWindow(_:)), to: nil, from: self)
 	}
 }
 
@@ -316,7 +325,8 @@ private extension MainWindowStatusBarView {
 		progressIndicator.isHidden = true
 		countLabel.isHidden = true
 
-		countLabel.addGestureRecognizer(NSClickGestureRecognizer(target: self, action: #selector(toggleCountMode(_:))))
+		progressIndicator.addGestureRecognizer(NSClickGestureRecognizer(target: self, action: #selector(showActivityWindow(_:))))
+		countLabel.addGestureRecognizer(NSClickGestureRecognizer(target: self, action: #selector(countLabelClicked(_:))))
 
 		linkLabel.menu = makeLinkMenu()
 
