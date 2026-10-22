@@ -59,55 +59,55 @@ enum AppDefaults {
 
 	static var addFeedAccountID: String? {
 		get {
-			string(for: Key.addFeedAccountID)
+			UserDefaults.standard.string(forKey: Key.addFeedAccountID)
 		}
 		set {
-			setString(for: Key.addFeedAccountID, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.addFeedAccountID)
 		}
 	}
 
 	static var addFeedFolderName: String? {
 		get {
-			string(for: Key.addFeedFolderName)
+			UserDefaults.standard.string(forKey: Key.addFeedFolderName)
 		}
 		set {
-			setString(for: Key.addFeedFolderName, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.addFeedFolderName)
 		}
 	}
 
 	static var addFolderAccountID: String? {
 		get {
-			string(for: Key.addFolderAccountID)
+			UserDefaults.standard.string(forKey: Key.addFolderAccountID)
 		}
 		set {
-			setString(for: Key.addFolderAccountID, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.addFolderAccountID)
 		}
 	}
 
 	static var currentThemeName: String? {
 		get {
-			string(for: Key.currentThemeName)
+			UserDefaults.standard.string(forKey: Key.currentThemeName)
 		}
 		set {
-			setString(for: Key.currentThemeName, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.currentThemeName)
 		}
 	}
 
 	static var isArticleContentJavascriptEnabled: Bool {
 		get {
-			bool(for: Key.articleContentJavascriptEnabled)
+			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
 		}
 		set {
-			setBool(for: Key.articleContentJavascriptEnabled, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
 		}
 	}
 
 	static var unreadCountDisplay: UnreadCountDisplay {
 		get {
-			UnreadCountDisplay(rawValue: int(for: Key.unreadCountDisplay)) ?? .count
+			UnreadCountDisplay(rawValue: UserDefaults.standard.integer(forKey: Key.unreadCountDisplay)) ?? .count
 		}
 		set {
-			setInt(for: Key.unreadCountDisplay, newValue.rawValue)
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.unreadCountDisplay)
 			NotificationCenter.default.post(name: .unreadCountDisplaySettingDidChange, object: self)
 		}
 	}
@@ -116,30 +116,6 @@ enum AppDefaults {
 // MARK: - Helpers
 
 extension AppDefaults {
-
-	static func string(for key: String) -> String? {
-		UserDefaults.standard.string(forKey: key)
-	}
-
-	static func setString(for key: String, _ value: String?) {
-		UserDefaults.standard.set(value, forKey: key)
-	}
-
-	static func bool(for key: String) -> Bool {
-		UserDefaults.standard.bool(forKey: key)
-	}
-
-	static func setBool(for key: String, _ flag: Bool) {
-		UserDefaults.standard.set(flag, forKey: key)
-	}
-
-	static func int(for key: String) -> Int {
-		UserDefaults.standard.integer(forKey: key)
-	}
-
-	static func setInt(for key: String, _ x: Int) {
-		UserDefaults.standard.set(x, forKey: key)
-	}
 
 	static func date(for key: String) -> Date? {
 		UserDefaults.standard.object(forKey: key) as? Date
@@ -150,7 +126,7 @@ extension AppDefaults {
 	}
 
 	static func sortDirection(for key: String) -> ComparisonResult {
-		let rawInt = int(for: key)
+		let rawInt = UserDefaults.standard.integer(forKey: key)
 		if rawInt == ComparisonResult.orderedAscending.rawValue {
 			return .orderedAscending
 		}

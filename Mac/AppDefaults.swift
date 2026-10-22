@@ -90,10 +90,10 @@ extension AppDefaults {
 
 	static var openInBrowserInBackground: Bool {
 		get {
-			AppDefaults.bool(for: Key.openInBrowserInBackground)
+			UserDefaults.standard.bool(forKey: Key.openInBrowserInBackground)
 		}
 		set {
-			AppDefaults.setBool(for: Key.openInBrowserInBackground, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.openInBrowserInBackground)
 		}
 	}
 
@@ -146,72 +146,72 @@ extension AppDefaults {
 
 	static var importOPMLAccountID: String? {
 		get {
-			AppDefaults.string(for: Key.importOPMLAccountID)
+			UserDefaults.standard.string(forKey: Key.importOPMLAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.importOPMLAccountID, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.importOPMLAccountID)
 		}
 	}
 
 	static var exportOPMLAccountID: String? {
 		get {
-			AppDefaults.string(for: Key.exportOPMLAccountID)
+			UserDefaults.standard.string(forKey: Key.exportOPMLAccountID)
 		}
 		set {
-			AppDefaults.setString(for: Key.exportOPMLAccountID, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.exportOPMLAccountID)
 		}
 	}
 
 	static var defaultBrowserID: String? {
 		get {
-			AppDefaults.string(for: Key.defaultBrowserID)
+			UserDefaults.standard.string(forKey: Key.defaultBrowserID)
 		}
 		set {
-			AppDefaults.setString(for: Key.defaultBrowserID, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.defaultBrowserID)
 		}
 	}
 
 	static var showTitleOnMainWindow: Bool {
-		AppDefaults.bool(for: Key.showTitleOnMainWindow)
+		UserDefaults.standard.bool(forKey: Key.showTitleOnMainWindow)
 	}
 
 	static var showDebugMenu: Bool {
-		AppDefaults.bool(for: Key.showDebugMenu)
+		UserDefaults.standard.bool(forKey: Key.showDebugMenu)
 	}
 
 	static var feedDoubleClickMarkAsRead: Bool {
 		get {
-			AppDefaults.bool(for: Key.feedDoubleClickMarkAsRead)
+			UserDefaults.standard.bool(forKey: Key.feedDoubleClickMarkAsRead)
 		}
 		set {
-			AppDefaults.setBool(for: Key.feedDoubleClickMarkAsRead, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.feedDoubleClickMarkAsRead)
 		}
 	}
 
 	static var suppressSyncOnLaunch: Bool {
 		get {
-			AppDefaults.bool(for: Key.suppressSyncOnLaunch)
+			UserDefaults.standard.bool(forKey: Key.suppressSyncOnLaunch)
 		}
 		set {
-			AppDefaults.setBool(for: Key.suppressSyncOnLaunch, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.suppressSyncOnLaunch)
 		}
 	}
 
 	static var webInspectorEnabled: Bool {
 		get {
-			AppDefaults.bool(for: Key.webInspectorEnabled)
+			UserDefaults.standard.bool(forKey: Key.webInspectorEnabled)
 		}
 		set {
-			AppDefaults.setBool(for: Key.webInspectorEnabled, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.webInspectorEnabled)
 		}
 	}
 
 	static var webInspectorStartsAttached: Bool {
 		get {
-			AppDefaults.bool(for: Key.webInspectorStartsAttached)
+			UserDefaults.standard.bool(forKey: Key.webInspectorStartsAttached)
 		}
 		set {
-			AppDefaults.setBool(for: Key.webInspectorStartsAttached, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.webInspectorStartsAttached)
 		}
 	}
 
@@ -222,26 +222,26 @@ extension AppDefaults {
 	}
 
 	static var timelineGroupByFeed: Bool {
-		AppDefaults.bool(for: Key.timelineGroupByFeed)
+		UserDefaults.standard.bool(forKey: Key.timelineGroupByFeed)
 	}
 
 	/// Column layout: multi-column timeline table with the article view below it, like Mail’s View > Use Column Layout. Applies to all windows.
 	static var useColumnLayout: Bool {
 		get {
-			AppDefaults.bool(for: Key.useColumnLayout)
+			UserDefaults.standard.bool(forKey: Key.useColumnLayout)
 		}
 		set {
-			AppDefaults.setBool(for: Key.useColumnLayout, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.useColumnLayout)
 		}
 	}
 
 	/// The main window status bar. Applies to all windows.
 	static var showStatusBar: Bool {
 		get {
-			AppDefaults.bool(for: Key.showStatusBar)
+			UserDefaults.standard.bool(forKey: Key.showStatusBar)
 		}
 		set {
-			AppDefaults.setBool(for: Key.showStatusBar, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.showStatusBar)
 		}
 	}
 
@@ -258,24 +258,24 @@ extension AppDefaults {
 
 	static var showStatusBarThemeMenu: Bool {
 		get {
-			AppDefaults.bool(for: Key.showStatusBarThemeMenu)
+			UserDefaults.standard.bool(forKey: Key.showStatusBarThemeMenu)
 		}
 		set {
-			AppDefaults.setBool(for: Key.showStatusBarThemeMenu, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.showStatusBarThemeMenu)
 		}
 	}
 
 	static var statusBarCountMode: StatusBarCountMode {
 		get {
-			StatusBarCountMode(rawValue: AppDefaults.int(for: Key.statusBarCountMode)) ?? .lastRefresh
+			StatusBarCountMode(rawValue: UserDefaults.standard.integer(forKey: Key.statusBarCountMode)) ?? .lastRefresh
 		}
 		set {
-			AppDefaults.setInt(for: Key.statusBarCountMode, newValue.rawValue)
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.statusBarCountMode)
 		}
 	}
 
 	static var timelineShowsSeparators: Bool {
-		AppDefaults.bool(for: Key.timelineShowsSeparators)
+		UserDefaults.standard.bool(forKey: Key.timelineShowsSeparators)
 	}
 
 	static var articleTextSize: ArticleTextSize {
@@ -351,7 +351,7 @@ private extension AppDefaults {
 		// Punted till after 1.0.
 		.medium
 
-//		var rawFontSize = int(for: key)
+//		var rawFontSize = UserDefaults.standard.integer(forKey: key)
 //		if rawFontSize < smallestFontSizeRawValue {
 //			rawFontSize = smallestFontSizeRawValue
 //		}
@@ -362,6 +362,6 @@ private extension AppDefaults {
 	}
 
 	static func setFontSize(for key: String, _ fontSize: FontSize) {
-		setInt(for: key, fontSize.rawValue)
+		UserDefaults.standard.set(fontSize.rawValue, forKey: key)
 	}
 }

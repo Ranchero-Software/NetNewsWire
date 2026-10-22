@@ -71,13 +71,13 @@ extension AppDefaults {
 
 	static var userInterfaceColorPalette: UserInterfaceColorPalette {
 		get {
-			if let result = UserInterfaceColorPalette(rawValue: int(for: Key.userInterfaceColorPalette)) {
+			if let result = UserInterfaceColorPalette(rawValue: UserDefaults.standard.integer(forKey: Key.userInterfaceColorPalette)) {
 				return result
 			}
 			return .automatic
 		}
 		set {
-			setInt(for: Key.userInterfaceColorPalette, newValue.rawValue)
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
 			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: self)
 		}
 	}
@@ -93,19 +93,19 @@ extension AppDefaults {
 
 	static var timelineGroupByFeed: Bool {
 		get {
-			AppDefaults.bool(for: Key.timelineGroupByFeed)
+			UserDefaults.standard.bool(forKey: Key.timelineGroupByFeed)
 		}
 		set {
-			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.timelineGroupByFeed)
 		}
 	}
 
 	static var refreshClearsReadArticles: Bool {
 		get {
-			AppDefaults.bool(for: Key.refreshClearsReadArticles)
+			UserDefaults.standard.bool(forKey: Key.refreshClearsReadArticles)
 		}
 		set {
-			AppDefaults.setBool(for: Key.refreshClearsReadArticles, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.refreshClearsReadArticles)
 		}
 	}
 
@@ -120,19 +120,19 @@ extension AppDefaults {
 
 	static var articleFullscreenAvailable: Bool {
 		get {
-			AppDefaults.bool(for: Key.articleFullscreenAvailable)
+			UserDefaults.standard.bool(forKey: Key.articleFullscreenAvailable)
 		}
 		set {
-			AppDefaults.setBool(for: Key.articleFullscreenAvailable, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.articleFullscreenAvailable)
 		}
 	}
 
 	static var articleFullscreenEnabled: Bool {
 		get {
-			articleFullscreenAvailable && AppDefaults.bool(for: Key.articleFullscreenEnabled)
+			articleFullscreenAvailable && UserDefaults.standard.bool(forKey: Key.articleFullscreenEnabled)
 		}
 		set {
-			AppDefaults.setBool(for: Key.articleFullscreenEnabled, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.articleFullscreenEnabled)
 		}
 	}
 
@@ -142,19 +142,19 @@ extension AppDefaults {
 
 	static var confirmMarkAllAsRead: Bool {
 		get {
-			AppDefaults.bool(for: Key.confirmMarkAllAsRead)
+			UserDefaults.standard.bool(forKey: Key.confirmMarkAllAsRead)
 		}
 		set {
-			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.confirmMarkAllAsRead)
 		}
 	}
 
 	static var splitViewPreferredDisplayMode: Int {
 		get {
-			AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
+			UserDefaults.standard.integer(forKey: Key.splitViewPreferredDisplayMode)
 		}
 		set {
-			AppDefaults.setInt(for: Key.splitViewPreferredDisplayMode, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.splitViewPreferredDisplayMode)
 		}
 	}
 
@@ -197,10 +197,10 @@ extension AppDefaults {
 
 	static var timelineNumberOfLines: Int {
 		get {
-			AppDefaults.int(for: Key.timelineNumberOfLines)
+			UserDefaults.standard.integer(forKey: Key.timelineNumberOfLines)
 		}
 		set {
-			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.timelineNumberOfLines)
 			NotificationCenter.default.post(name: .timelineNumberOfLinesDidChange, object: nil)
 		}
 	}
@@ -388,9 +388,9 @@ private extension AppDefaults {
 
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {
 		if value == .orderedAscending {
-			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
+			UserDefaults.standard.set(ComparisonResult.orderedAscending.rawValue, forKey: key)
 		} else {
-			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
+			UserDefaults.standard.set(ComparisonResult.orderedDescending.rawValue, forKey: key)
 		}
 	}
 }
