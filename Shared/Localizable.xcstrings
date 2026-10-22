@@ -928,13 +928,13 @@
       "comment" : "Command"
     },
     "New Feed…" : {
-      "comment" : "New Feed"
+      "comment" : "Command"
     },
     "New Folder" : {
       "comment" : "Command"
     },
     "New Folder…" : {
-      "comment" : "New Folder"
+      "comment" : "Command"
     },
     "Newest Article on Top" : {
       "comment" : "Sort direction",
