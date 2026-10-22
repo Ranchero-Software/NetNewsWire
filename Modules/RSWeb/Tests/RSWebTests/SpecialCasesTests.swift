@@ -24,6 +24,18 @@ struct SpecialCasesTests {
 		#expect(!URL(string: "https://example.com/r/reddit.com")!.isRedditURL)
 	}
 
+	@Test func isYoutubeURLMatchesSubdomains() {
+		#expect(URL(string: "https://www.youtube.com/watch?v=abc")!.isYoutubeURL)
+		#expect(URL(string: "https://youtube.com/feeds/videos.xml")!.isYoutubeURL)
+		#expect(URL(string: "https://m.youtube.com/watch?v=abc")!.isYoutubeURL)
+	}
+
+	@Test func isYoutubeURLRejectsLookalikes() {
+		#expect(!URL(string: "https://youtube.com.example.net/feed")!.isYoutubeURL)
+		#expect(!URL(string: "https://myyoutube.community/feed")!.isYoutubeURL)
+		#expect(!URL(string: "https://example.com/youtube.com")!.isYoutubeURL)
+	}
+
 	@Test func isRelayFMBlogURLMatchesBlog() {
 		#expect(URL(string: "https://www.relay.fm/blog")!.isRelayFMBlogURL)
 		#expect(URL(string: "http://relay.fm/blog")!.isRelayFMBlogURL)

@@ -118,13 +118,18 @@ import Account
 			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
 			self.baseURL = extractedArticle?.url
 		} else {
-			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
-			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURLString: article?.feed?.url)
+			let feedURL = article?.feed?.url
+			let homePageURL = article?.feed?.homePageURL
+			var articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			if article?.account?.type == .freshRSS {
+			  articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
+		  }
+      self.body = articleBody
 			self.baseURL = article?.baseURL?.absoluteString
 		}
-		if article?.account?.type == .freshRSS {
-			articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
-		}
+		
 		self.body = articleBody
 	}
 
@@ -153,6 +158,20 @@ import Account
 	static func noContentHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
+	}
+
+	/// Full page HTML for a rendering, ready to load into a web view.
+	static func pageHTML(_ rendering: Rendering, windowScrollY: Int) -> String {
+		let substitutions = [
+			"title": rendering.title,
+			"baseURL": rendering.baseURL,
+			"style": rendering.style,
+			"body": rendering.html,
+			"windowScrollY": String(windowScrollY)
+		]
+
+		let html = try! MacroProcessor.renderedText(withTemplate: page.html, substitutions: substitutions)
+		return ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
 	}
 }
 

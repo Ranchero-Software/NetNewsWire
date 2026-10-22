@@ -13,16 +13,8 @@ import RSDatabaseObjC
 
 /// Manage a serial queue and a SQLite database.
 public final class DatabaseQueue: Sendable {
-	private struct State: @unchecked Sendable {
-		var isCallingDatabase = false
-		let database: FMDatabase
 
-		init(_ database: FMDatabase) {
-			self.database = database
-		}
-	}
-
-	private let state: OSAllocatedUnfairLock<State>
+	nonisolated(unsafe) private let database: FMDatabase // Used on serial dispatch queue only
 	private let databasePath: String
 	private let serialDispatchQueue: DispatchQueue
 
@@ -34,10 +26,9 @@ public final class DatabaseQueue: Sendable {
 		self.serialDispatchQueue = DispatchQueue(label: "DatabaseQueue (Serial) - \(databasePath)")
 
 		self.databasePath = databasePath
-		let database = FMDatabase(path: databasePath)!
-		self.state = OSAllocatedUnfairLock(initialState: State(database))
+		self.database = FMDatabase(path: databasePath)!
 
-		self.state.withLock { openDatabase($0.database) }
+		openDatabase(database)
 	}
 
 	// MARK: - Make Database Calls
@@ -48,18 +39,14 @@ public final class DatabaseQueue: Sendable {
 	/// scheduled on the queue. Use sparingly — prefer async versions.
 	public func runInDatabaseSync(_ databaseBlock: DatabaseBlock) {
 		serialDispatchQueue.sync {
-			self.state.withLock { state in
-				self._runInDatabase(&state, databaseBlock, false)
-			}
+			self._runInDatabase(databaseBlock, false)
 		}
 	}
 
 	/// Run a DatabaseBlock asynchronously.
 	public func runInDatabase(_ databaseBlock: @escaping DatabaseBlock) {
 		serialDispatchQueue.async {
-			self.state.withLock { state in
-				self._runInDatabase(&state, databaseBlock, false)
-			}
+			self._runInDatabase(databaseBlock, false)
 		}
 	}
 
@@ -69,9 +56,7 @@ public final class DatabaseQueue: Sendable {
 	/// prefer the async `runInTransaction` instead.
 	public func runInTransactionSync(_ databaseBlock: @escaping DatabaseBlock) {
 		serialDispatchQueue.sync {
-			self.state.withLock { state in
-				self._runInDatabase(&state, databaseBlock, true)
-			}
+			self._runInDatabase(databaseBlock, true)
 		}
 	}
 
@@ -79,9 +64,7 @@ public final class DatabaseQueue: Sendable {
 	/// Transactions help performance significantly when updating the database.
 	public func runInTransaction(_ databaseBlock: @escaping DatabaseBlock) {
 		serialDispatchQueue.async {
-			self.state.withLock { state in
-				self._runInDatabase(&state, databaseBlock, true)
-			}
+			self._runInDatabase(databaseBlock, true)
 		}
 	}
 
@@ -116,21 +99,16 @@ public final class DatabaseQueue: Sendable {
 
 private extension DatabaseQueue {
 
-	private func _runInDatabase(_ state: inout State, _ databaseBlock: DatabaseBlock, _ useTransaction: Bool) {
-		precondition(!state.isCallingDatabase)
-
-		state.isCallingDatabase = true
-		defer {
-			state.isCallingDatabase = false
-		}
+	private func _runInDatabase(_ databaseBlock: DatabaseBlock, _ useTransaction: Bool) {
+		dispatchPrecondition(condition: .onQueue(serialDispatchQueue))
 
 		autoreleasepool {
 			if useTransaction {
-				state.database.beginTransaction()
+				database.beginTransaction()
 			}
-			databaseBlock(state.database)
+			databaseBlock(database)
 			if useTransaction {
-				state.database.commit()
+				database.commit()
 			}
 		}
 	}

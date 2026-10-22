@@ -518,7 +518,6 @@ struct ReaderAPIUsageLimits {
 		guard let continuation else {
 			if type == .allForAccount {
 				self.accountSettings?.lastArticleFetchStartTime = dateInfo?.date
-				self.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return itemIDs
 		}

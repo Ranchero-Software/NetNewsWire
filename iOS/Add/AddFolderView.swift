@@ -12,8 +12,6 @@ import Account
 /// Sheet for adding a folder to an account.
 struct AddFolderView: View {
 
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460, height: 400)
-
 	@Environment(\.dismiss) private var dismiss
 	@State private var name = ""
 	@State private var selectedAccountID = ""
@@ -25,7 +23,11 @@ struct AddFolderView: View {
 	private let accounts: [Account]
 
 	init() {
-		self.accounts = AccountManager.shared.sortedActiveAccounts.filter { !$0.behaviors.contains(.disallowFolderManagement) }
+		let accounts = AccountManager.shared.sortedActiveAccounts.filter { !$0.behaviors.contains(.disallowFolderManagement) }
+		self.accounts = accounts
+
+		let rememberedAccount = accounts.first { $0.accountID == AppDefaults.shared.addFolderAccountID }
+		self._selectedAccountID = State(initialValue: (rememberedAccount ?? accounts.first)?.accountID ?? "")
 	}
 
 	var body: some View {
@@ -44,6 +46,7 @@ struct AddFolderView: View {
 						Picker(NSLocalizedString("Account", comment: "Account"), selection: $selectedAccountID) {
 							ForEach(accounts, id: \.accountID) { account in
 								Text(verbatim: account.nameForDisplay)
+									.tag(account.accountID)
 							}
 						}
 					} else if let account = accounts.first {
@@ -73,15 +76,10 @@ struct AddFolderView: View {
 					}
 				}
 			}
-			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-				Button(NSLocalizedString("OK", comment: "OK button")) {
-					errorMessage = nil
-				}
-			} message: {
-				Text(verbatim: errorMessage ?? "")
-			}
+			.interactiveDismissDisabled(isAdding)
+			.errorAlert(message: $errorMessage)
 			.onAppear {
-				loadInitialValues()
+				isNameFieldFocused = true
 			}
 		}
 	}
@@ -90,27 +88,12 @@ struct AddFolderView: View {
 		accounts.first { $0.accountID == selectedAccountID }
 	}
 
+	private var trimmedName: String {
+		name.trimmingWhitespace
+	}
+
 	private var canAdd: Bool {
-		!name.isEmpty && selectedAccount != nil
-	}
-
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
-		}
-	}
-
-	private func loadInitialValues() {
-		if let rememberedAccountID = AppDefaults.shared.addFolderAccountID, accounts.contains(where: { $0.accountID == rememberedAccountID }) {
-			selectedAccountID = rememberedAccountID
-		} else {
-			selectedAccountID = accounts.first?.accountID ?? ""
-		}
-		isNameFieldFocused = true
+		!trimmedName.isEmpty && selectedAccount != nil
 	}
 
 	private func addFolder() async {
@@ -125,7 +108,7 @@ struct AddFolderView: View {
 		}
 
 		do {
-			try await selectedAccount.addFolder(name)
+			try await selectedAccount.addFolder(trimmedName)
 			dismiss()
 		} catch {
 			errorMessage = error.localizedDescription

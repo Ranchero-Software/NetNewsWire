@@ -12,12 +12,6 @@ import Account
 /// Sheet for subscribing to a feed by URL, with an optional title and a choice of account or folder.
 struct AddFeedView: View {
 
-	/// URL to start with. When nil, a URL on the pasteboard is used if there is one.
-	let initialFeed: String?
-	let initialFeedName: String?
-
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460, height: 400)
-
 	@Environment(\.dismiss) private var dismiss
 	@State private var urlString = ""
 	@State private var name = ""
@@ -26,11 +20,22 @@ struct AddFeedView: View {
 	@State private var errorMessage: String?
 	@FocusState private var isURLFieldFocused: Bool
 
+	/// When `initialFeed` is nil, a URL on the pasteboard is used if there is one.
+	init(initialFeed: String?, initialFeedName: String?) {
+		var urlString = initialFeed ?? ""
+		if initialFeed == nil, let pasteboardString = UIPasteboard.general.string, pasteboardString.mayBeURL {
+			urlString = pasteboardString.normalizedURL
+		}
+		self._urlString = State(initialValue: urlString)
+		self._name = State(initialValue: initialFeedName ?? "")
+		self._container = State(initialValue: AddFeedDefaultContainer.defaultContainer)
+	}
+
 	var body: some View {
 		NavigationStack {
 			Form {
 				Section {
-					TextField(NSLocalizedString("URL", comment: "Label for the URL parameter in the Add Feed intent."), text: $urlString)
+					TextField(NSLocalizedString("URL", comment: "Label for a feed URL"), text: $urlString)
 						.textContentType(.URL)
 						.keyboardType(.URL)
 						.textInputAutocapitalization(.never)
@@ -46,7 +51,7 @@ struct AddFeedView: View {
 					NavigationLink {
 						AddFeedContainerPickerView(selectedContainer: $container)
 					} label: {
-						LabeledContent(NSLocalizedString("Folder", comment: "Label for a parameter that lets the user choose a folder."), value: containerName)
+						LabeledContent(NSLocalizedString("Folder", comment: "Label for choosing the folder a feed is added to"), value: containerName)
 					}
 				}
 			}
@@ -70,15 +75,12 @@ struct AddFeedView: View {
 					}
 				}
 			}
-			.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-				Button(NSLocalizedString("OK", comment: "OK button")) {
-					errorMessage = nil
-				}
-			} message: {
-				Text(verbatim: errorMessage ?? "")
-			}
+			.interactiveDismissDisabled(isAdding)
+			.errorAlert(message: $errorMessage)
 			.onAppear {
-				loadInitialValues()
+				if urlString.isEmpty {
+					isURLFieldFocused = true
+				}
 			}
 		}
 	}
@@ -95,30 +97,6 @@ struct AddFeedView: View {
 
 	private var canAdd: Bool {
 		urlString.mayBeURL && container != nil
-	}
-
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
-		}
-	}
-
-	private func loadInitialValues() {
-		if let initialFeed {
-			urlString = initialFeed
-		} else if let pasteboardString = UIPasteboard.general.string, pasteboardString.mayBeURL {
-			urlString = pasteboardString.normalizedURL
-		}
-		name = initialFeedName ?? ""
-		container = AddFeedDefaultContainer.defaultContainer
-
-		if urlString.isEmpty {
-			isURLFieldFocused = true
-		}
 	}
 
 	private func addFeed() {

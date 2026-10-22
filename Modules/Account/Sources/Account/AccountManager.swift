@@ -132,6 +132,10 @@ import ActivityLog
 		return false
 	}
 
+	public var canRefresh: Bool {
+		!refreshInProgress && !activeAccounts.isEmpty
+	}
+
 	private var isActive = false
 
 	public init() {

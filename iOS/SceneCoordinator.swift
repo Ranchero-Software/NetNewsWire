@@ -1585,7 +1585,7 @@ struct SidebarItemNode: Hashable, Sendable {
 			UIStoryboard.inspector.instantiateViewController(identifier: "AccountInspectorNavigationViewController") as! UINavigationController
 		let accountInspectorController = accountInspectorNavController.topViewController as! AccountInspectorViewController
 		accountInspectorNavController.modalPresentationStyle = .formSheet
-		accountInspectorNavController.preferredContentSize = AccountInspectorViewController.preferredContentSizeForFormSheetDisplay
+		accountInspectorNavController.preferredContentSize = UIViewController.formSheetSize
 		accountInspectorController.isModal = true
 		accountInspectorController.account = account
 		rootSplitViewController.present(accountInspectorNavController, animated: true)
@@ -1622,7 +1622,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		let addFeedView = AddFeedView(initialFeed: initialFeed, initialFeedName: initialFeedName)
 		let hostingController = UIHostingController(rootView: addFeedView)
 		hostingController.modalPresentationStyle = .formSheet
-		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
+		hostingController.preferredContentSize = UIViewController.formSheetSize
 
 		// Presenting over an active nav-bar-hosted search bar crashes inside UIKit.
 		guard let mainTimelineViewController else {
@@ -1637,7 +1637,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	func showAddFolder() {
 		let hostingController = UIHostingController(rootView: AddFolderView())
 		hostingController.modalPresentationStyle = .formSheet
-		hostingController.preferredContentSize = AddFolderView.preferredContentSizeForFormSheetDisplay
+		hostingController.preferredContentSize = UIViewController.formSheetSize
 		mainFeedCollectionViewController.present(hostingController, animated: true)
 	}
 

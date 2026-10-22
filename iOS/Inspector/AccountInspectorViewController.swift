@@ -13,7 +13,6 @@ import RSCore
 import Account
 
 final class AccountInspectorViewController: UITableViewController {
-	static let preferredContentSizeForFormSheetDisplay = CGSize(width: 460.0, height: 400.0)
 
 	@IBOutlet var nameTextField: UITextField!
 	@IBOutlet var activeSwitch: UISwitch!
@@ -68,15 +67,12 @@ final class AccountInspectorViewController: UITableViewController {
 	}
 
 	@IBAction func credentials(_ sender: Any) {
-		guard let account = account else { return }
-		switch account.type {
-		case .feedbin, .newsBlur, .inoreader, .bazQux, .theOldReader, .freshRSS:
-			let hostingController = UIHostingController(rootView: CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil))
-			hostingController.modalPresentationStyle = .currentContext
-			present(hostingController, animated: true)
-		default:
-			break
+		guard let account, CredentialsAccountView.accountTypes.contains(account.type) else {
+			return
 		}
+		let hostingController = UIHostingController(rootView: CredentialsAccountView(accountType: account.type, account: account, didAddAccount: nil))
+		hostingController.modalPresentationStyle = .currentContext
+		present(hostingController, animated: true)
 	}
 
 	@IBAction func deleteAccount(_ sender: Any) {

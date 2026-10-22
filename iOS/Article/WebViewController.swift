@@ -692,16 +692,7 @@ private extension WebViewController {
 			rendering = ArticleRenderer.noSelectionHTML(theme: theme)
 		}
 
-		let substitutions = [
-			"title": rendering.title,
-			"baseURL": rendering.baseURL,
-			"style": rendering.style,
-			"body": rendering.html,
-			"windowScrollY": String(windowScrollY)
-		]
-
-		var html = try! MacroProcessor.renderedText(withTemplate: ArticleRenderer.page.html, substitutions: substitutions)
-		html = ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
+		let html = ArticleRenderer.pageHTML(rendering, windowScrollY: windowScrollY)
 
 		// Uncomment when you want to debug HTML and CSS for an article.
 		// If you’re running in the simulator, this will write the file to a location on your Mac.

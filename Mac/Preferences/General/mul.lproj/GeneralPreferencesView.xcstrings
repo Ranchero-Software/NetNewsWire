@@ -380,7 +380,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir fuentes en el lector de noticias predeterminado"
+            "value" : "Abrir fuentes en el lector predeterminado"
           }
         }
       }
@@ -398,7 +398,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abrir páginas web en segundo plano en el navegador"
+            "value" : "Abrir páginas web en segundo plano"
           }
         }
       }
@@ -412,6 +412,12 @@
             "state" : "new",
             "value" : "Show"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar"
+          }
         }
       }
     },
@@ -424,6 +430,12 @@
             "state" : "new",
             "value" : "Show dot"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mostrar punto"
+          }
         }
       }
     },
@@ -435,6 +447,12 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Hide"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar"
           }
         }
       }
@@ -466,6 +484,12 @@
             "state" : "new",
             "value" : "Unread Counts:"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contadores de no leídos:"
+          }
         }
       }
     },
@@ -482,7 +506,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tamaño del texto del artículo:"
+            "value" : "Tamaño del texto:"
           }
         }
       }

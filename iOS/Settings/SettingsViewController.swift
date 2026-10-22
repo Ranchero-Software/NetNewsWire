@@ -101,8 +101,8 @@ final class SettingsViewController: UITableViewController {
 		tableView.rowHeight = UITableView.automaticDimension
 		tableView.estimatedRowHeight = 44
 
-		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell)
-		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell)
+		addPopUpButton(colorPalettePopUpButton, to: colorPaletteCell, accessibilityLabel: NSLocalizedString("Color Palette", comment: "Color Palette"))
+		addPopUpButton(unreadCountDisplayPopUpButton, to: unreadCountDisplayCell, accessibilityLabel: NSLocalizedString("Unread Counts", comment: "Unread Counts"))
 		updateColorPalettePopUpButton()
 		updateUnreadCountDisplayPopUpButton()
 	}
@@ -150,15 +150,13 @@ final class SettingsViewController: UITableViewController {
 
 		openLinksInNetNewsWire.isOn = !AppDefaults.shared.useSystemBrowser
 
-		let buildLabel = NonIntrinsicLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
+		let buildLabel = CopyableLabel(frame: CGRect(x: 32.0, y: 0.0, width: 0.0, height: 0.0))
 		buildLabel.font = UIFont.systemFont(ofSize: 11.0)
 		buildLabel.textColor = UIColor.gray
-		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (Build \(Bundle.main.buildNumber))"
+		buildLabel.text = "\(Bundle.main.appName) \(Bundle.main.versionNumber) (build \(Bundle.main.buildNumber))"
 		buildLabel.sizeToFit()
-		buildLabel.translatesAutoresizingMaskIntoConstraints = false
 
-		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: buildLabel.frame.width, height: buildLabel.frame.height + 10.0))
-		wrapperView.translatesAutoresizingMaskIntoConstraints = false
+		let wrapperView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: buildLabel.frame.height + 10.0))
 		wrapperView.addSubview(buildLabel)
 		tableView.tableFooterView = wrapperView
 
@@ -477,10 +475,12 @@ private extension SettingsViewController {
 	}
 
 	/// Auto Layout lets the button resize itself when choosing an item changes its title.
-	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell?) {
+	/// The accessibility label names the setting, since the button’s title is only the current choice.
+	func addPopUpButton(_ button: UIButton, to cell: UITableViewCell?, accessibilityLabel: String) {
 		guard let cell else {
 			return
 		}
+		button.accessibilityLabel = accessibilityLabel
 		button.translatesAutoresizingMaskIntoConstraints = false
 		button.setContentCompressionResistancePriority(.required, for: .horizontal)
 		cell.contentView.addSubview(button)
@@ -498,6 +498,7 @@ private extension SettingsViewController {
 			}
 		}
 		colorPalettePopUpButton.menu = UIMenu(children: actions)
+		colorPalettePopUpButton.accessibilityValue = String(describing: currentColorPalette)
 	}
 
 	func updateUnreadCountDisplayPopUpButton() {
@@ -508,6 +509,7 @@ private extension SettingsViewController {
 			}
 		}
 		unreadCountDisplayPopUpButton.menu = UIMenu(children: actions)
+		unreadCountDisplayPopUpButton.accessibilityValue = String(describing: currentUnreadCountDisplay)
 	}
 
 	func addFeed() {
@@ -516,7 +518,7 @@ private extension SettingsViewController {
 		let addFeedView = AddFeedView(initialFeed: AccountManager.netNewsWireNewsURL, initialFeedName: NSLocalizedString("NetNewsWire News", comment: "NetNewsWire News"))
 		let hostingController = UIHostingController(rootView: addFeedView)
 		hostingController.modalPresentationStyle = .formSheet
-		hostingController.preferredContentSize = AddFeedView.preferredContentSizeForFormSheetDisplay
+		hostingController.preferredContentSize = UIViewController.formSheetSize
 
 		presentingParentController?.present(hostingController, animated: true)
 	}

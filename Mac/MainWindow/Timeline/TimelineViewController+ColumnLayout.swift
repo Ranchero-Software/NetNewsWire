@@ -104,7 +104,7 @@ extension TimelineViewController {
 			return
 		}
 		let direction: ComparisonResult = descriptor.ascending ? .orderedAscending : .orderedDescending
-		let requestedParameters = sortParameters.withKey(key, direction: direction)
+		let requestedParameters = ArticleSortParameters(key: key, direction: direction)
 		if requestedParameters == sortParameters {
 			return
 		}

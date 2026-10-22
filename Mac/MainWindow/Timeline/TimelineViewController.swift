@@ -279,10 +279,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		sharingServiceDelegate = SharingServiceDelegate(self.view.window)
 	}
 
+	override func viewDidLayout() {
+		super.viewDidLayout()
+		fitTableViewToVisibleWidthInStandardLayout()
+	}
+
 	// MARK: - API
 
 	func markAllAsRead(completion: (() -> Void)? = nil) {
 		guard let undoManager = undoManager, let markReadCommand = MarkStatusCommand(initialArticles: articles, markingRead: true, undoManager: undoManager, completion: completion) else {
+			completion?()
 			return
 		}
 		runCommand(markReadCommand)
@@ -458,13 +464,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		tableView.selectRow(nextRowIndex)
 
-		let followingRowIndex = nextRowIndex - 1
-		if followingRowIndex < 0 {
+		if scrollToRowIfNotFullyVisible(nextRowIndex) {
 			return
 		}
 
-		tableView.scrollToRowIfNotVisible(followingRowIndex)
-
+		scrollToRowIfNotFullyVisible(nextRowIndex - 1)
 	}
 
 	@IBAction func selectNextDown(_ sender: Any?) {
@@ -480,13 +484,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 		tableView.selectRow(nextRowIndex)
 
-		let followingRowIndex = nextRowIndex + 1
-		if followingRowIndex > tableMaxIndex {
+		if scrollToRowIfNotFullyVisible(nextRowIndex) {
 			return
 		}
 
-		tableView.scrollToRowIfNotVisible(followingRowIndex)
-
+		scrollToRowIfNotFullyVisible(nextRowIndex + 1)
 	}
 
 	func toggleReadStatusForSelectedArticles() {
@@ -1077,6 +1079,31 @@ extension TimelineViewController: NSTableViewDelegate {
 // MARK: - Private
 
 private extension TimelineViewController {
+
+	/// The table doesn’t shrink by itself when the pane narrows after leaving column layout.
+	func fitTableViewToVisibleWidthInStandardLayout() {
+		guard layout == .standard, let scrollView = tableView.enclosingScrollView else {
+			return
+		}
+		let contentInsets = scrollView.contentInsets
+		let visibleWidth = scrollView.contentView.bounds.width - contentInsets.left - contentInsets.right
+		guard visibleWidth > 0, tableView.frame.width != visibleWidth else {
+			return
+		}
+		tableView.setFrameSize(NSSize(width: visibleWidth, height: tableView.frame.height))
+		tableView.sizeLastColumnToFit()
+	}
+
+	/// Returns true if it scrolled. Callers should skip further scrolling then,
+	/// since the animation hasn’t updated the visible rect yet.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5486>
+	@discardableResult func scrollToRowIfNotFullyVisible(_ row: Int) -> Bool {
+		guard (0..<tableView.numberOfRows).contains(row), !tableView.isRowFullyVisible(row) else {
+			return false
+		}
+		tableView.scrollRowFullyIntoView(row)
+		return true
+	}
 
 	func fetchAndReplacePreservingSelection() {
 		if let article = oneSelectedArticle, let account = article.account {

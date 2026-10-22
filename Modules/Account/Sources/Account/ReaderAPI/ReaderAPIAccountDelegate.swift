@@ -152,6 +152,7 @@ final class ReaderAPIAccountDelegate: AccountDelegate {
 
 				await refreshMissingArticles(account)
 				refreshProgress.reset()
+				accountSettings?.lastRefreshCompletedDate = Date()
 			}
 		} catch where rateLimiter.isRateLimitError(error) {
 			refreshProgress.reset()

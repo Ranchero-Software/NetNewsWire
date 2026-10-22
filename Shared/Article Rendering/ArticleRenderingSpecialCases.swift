@@ -19,12 +19,7 @@ struct ArticleRenderingSpecialCases {
 	/// True when any of the URL strings (article link, feed URL, feed home page URL)
 	/// is on a domain whose article content must render without JavaScript.
 	static func shouldDisableJavaScript(urlStrings: [String?]) -> Bool {
-		for urlString in urlStrings {
-			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domainsWithJavaScriptDisabled) {
-				return true
-			}
-		}
-		return false
+		anyURLStringMatchesAnyDomain(urlStrings, domainsWithJavaScriptDisabled)
 	}
 
 	@MainActor static func shouldDisableJavaScript(for article: Article) -> Bool {
@@ -34,8 +29,9 @@ struct ArticleRenderingSpecialCases {
 	private static let feedDomainsWithParagraphsSeparatedByReturns = ["slashdot.org"]
 	private static let consecutiveReturnsRegex = try? NSRegularExpression(pattern: "(?:\\r?\\n[ \\t]*){2,}")
 
-	static func insertParagraphTagsIfNeeded(_ html: String, feedURLString: String?) -> String {
-		guard let feedURLString, SpecialCase.urlStringMatchesDomain(feedURLString, feedDomainsWithParagraphsSeparatedByReturns) else {
+	/// Checks the home page too, which catches a feed subscribed through a proxy such as FeedBurner.
+	static func insertParagraphTagsIfNeeded(_ html: String, feedURL: String?, homePageURL: String?) -> String {
+		guard anyURLStringMatchesAnyDomain([feedURL, homePageURL], feedDomainsWithParagraphsSeparatedByReturns) else {
 			return html
 		}
 		guard html.utf8.contains(UInt8(ascii: "\n")), let consecutiveReturnsRegex else {
@@ -44,6 +40,32 @@ struct ArticleRenderingSpecialCases {
 
 		let range = NSRange(html.startIndex..., in: html)
 		return consecutiveReturnsRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "<p>")
+	}
+
+	private static let feedDomainsWithStrayLineBreaks = ["macrumors.com"]
+
+	// One or more <br>s right after a tag where a <br> can't appear — between list items,
+	// table rows, or table cells. Not after an opening <li>, <td>, or <th>: a <br> there is content.
+	private static let strayLineBreaksRegex = try? NSRegularExpression(
+		pattern: "(<(?:ul|ol|table|thead|tbody|tfoot|tr)\\b[^>]*>|</(?:li|tr|td|th|thead|tbody|tfoot)>)(?:\\s*<br\\s*/?>)+",
+		options: [.caseInsensitive]
+	)
+
+	/// MacRumors puts a <br/> after every line of its feed HTML, including inside lists and tables.
+	/// In lists each one renders as a blank line. In tables the HTML parser moves them all
+	/// to just before the table, leaving a huge gap above it. Remove them before parsing,
+	/// while they’re still recognizable.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5498>
+	static func removeStrayLineBreaksIfNeeded(_ html: String, feedURL: String?, homePageURL: String?) -> String {
+		guard anyURLStringMatchesAnyDomain([feedURL, homePageURL], feedDomainsWithStrayLineBreaks) else {
+			return html
+		}
+		guard html.range(of: "<br", options: .caseInsensitive) != nil, let strayLineBreaksRegex else {
+			return html
+		}
+
+		let range = NSRange(html.startIndex..., in: html)
+		return strayLineBreaksRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "$1")
 	}
 
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {
@@ -111,6 +133,15 @@ struct ArticleRenderingSpecialCases {
 			return baseURLForYouTubeArticles
 		}
 		return url
+	}
+
+	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
+		for urlString in urlStrings {
+			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {
+				return true
+			}
+		}
+		return false
 	}
 
 	// The content between a real <body …> tag and </body> (or the end of the string).

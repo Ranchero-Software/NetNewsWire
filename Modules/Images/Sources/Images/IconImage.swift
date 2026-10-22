@@ -11,7 +11,7 @@ import AppKit
 #else
 import UIKit
 #endif
-import os
+import Synchronization
 import RSCore
 
 extension RSImage {
@@ -24,7 +24,7 @@ public final class IconImage: @unchecked Sendable {
 	public let isBackgroundSuppressed: Bool
 	public let preferredColor: RSColor?
 
-	private let cachedLuminanceType = OSAllocatedUnfairLock<ImageLuminanceType?>(initialState: nil)
+	private let cachedLuminanceType = Mutex<ImageLuminanceType?>(nil)
 	private static let luminanceQueue = DispatchQueue(label: "com.ranchero.NetNewsWire.IconImage.luminance", qos: .utility, attributes: .concurrent)
 
 	public var isDark: Bool {

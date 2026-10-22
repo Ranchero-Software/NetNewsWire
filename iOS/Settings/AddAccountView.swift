@@ -13,7 +13,7 @@ import Account
 /// The list of account types the user picks from. Pushed onto the Settings navigation stack.
 struct AddAccountView: View {
 
-	/// Window the Feedly OAuth sheet attaches to. Nil is tolerated by the operation.
+	/// Window the Feedly OAuth sheet attaches to. Feedly can’t be added without one.
 	let presentationAnchor: ASPresentationAnchor?
 	/// Called after an account is added so the host can pop this screen.
 	let didAddAccount: () -> Void
@@ -104,13 +104,7 @@ struct AddAccountView: View {
 				CredentialsAccountView(accountType: sheet.accountType, account: nil, didAddAccount: didAddAccount)
 			}
 		}
-		.alert(NSLocalizedString("Error", comment: "Error"), isPresented: isShowingError) {
-			Button(NSLocalizedString("OK", comment: "OK button")) {
-				errorMessage = nil
-			}
-		} message: {
-			Text(verbatim: errorMessage ?? "")
-		}
+		.errorAlert(message: $errorMessage)
 	}
 
 	private func accountRow(_ accountType: AccountType) -> some View {
@@ -125,7 +119,7 @@ struct AddAccountView: View {
 				Text(verbatim: accountType.displayName)
 			}
 		}
-		.foregroundStyle(.primary)
+		.foregroundStyle(isDisabled(accountType) ? .secondary : .primary)
 		.disabled(isDisabled(accountType))
 	}
 
@@ -142,16 +136,6 @@ struct AddAccountView: View {
 		accountType == .cloudKit && AccountManager.shared.hasiCloudAccount
 	}
 
-	private var isShowingError: Binding<Bool> {
-		Binding {
-			errorMessage != nil
-		} set: { isShowing in
-			if !isShowing {
-				errorMessage = nil
-			}
-		}
-	}
-
 	private func select(_ accountType: AccountType) {
 		switch accountType {
 		case .feedly:
@@ -162,6 +146,10 @@ struct AddAccountView: View {
 	}
 
 	private func startOAuth(for accountType: AccountType) {
+		guard let presentationAnchor else {
+			return
+		}
+
 		oauthHandler.didCreateAccount = { account in
 			account.triggerRefreshAll()
 			didAddAccount()

@@ -11,6 +11,7 @@ import os
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
+import Synchronization
 import Articles
 
 // Article->ArticleStatus is a to-one relationship.
@@ -325,7 +326,7 @@ private final class StatusCache: Sendable {
 		var dictionary = [String: ArticleStatus]()
 	}
 
-	private let state = OSAllocatedUnfairLock(initialState: State())
+	private let state = Mutex(State())
 
 	func addStatusIfNotCached(_ status: ArticleStatus) {
 		addIfNotCached(Set([status]))

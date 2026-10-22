@@ -107,7 +107,7 @@ final class SidebarCell: NSTableCellView {
 		guard let cellAppearance = cellAppearance else {
 			return
 		}
-		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, trailingEdge: trailingEdge(), shouldShowImage: shouldShowImage, textField: titleView, unreadCountView: unreadCountView)
+		let layout = SidebarCellLayout(appearance: cellAppearance, cellSize: bounds.size, shouldShowImage: shouldShowImage, textField: titleView, unreadCountView: unreadCountView)
 		layoutWith(layout)
 	}
 
@@ -119,12 +119,10 @@ final class SidebarCell: NSTableCellView {
 	}
 
 	override func accessibilityLabel() -> String? {
-		if unreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count {
-			let unreadLabel = NSLocalizedString("unread", comment: "Unread label for accessibility")
-			return "\(name) \(unreadCount) \(unreadLabel)"
-		} else {
+		guard let unreadText = AppDefaults.shared.unreadCountDisplay.accessibilityText(for: unreadCount) else {
 			return name
 		}
+		return "\(name) \(unreadText)"
 	}
 }
 
@@ -139,24 +137,6 @@ private extension SidebarCell {
 	func addSubviewAtInit(_ view: NSView) {
 		addSubview(view)
 		view.translatesAutoresizingMaskIntoConstraints = false
-	}
-
-	// Ask the outline view for the cell frame instead of trusting
-	// the cell's own width, which can be stale while the outline view is tiling.
-	func trailingEdge() -> CGFloat {
-		var view = superview
-		while let currentView = view {
-			if let outlineView = currentView as? NSOutlineView {
-				let row = outlineView.row(for: self)
-				if row < 0 {
-					return bounds.maxX
-				}
-				let cellFrame = outlineView.frameOfCell(atColumn: 0, row: row)
-				return convert(NSPoint(x: cellFrame.maxX, y: 0), from: outlineView).x
-			}
-			view = currentView.superview
-		}
-		return bounds.maxX
 	}
 
 	func layoutWith(_ layout: SidebarCellLayout) {

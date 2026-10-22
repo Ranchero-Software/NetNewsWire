@@ -76,10 +76,7 @@ nonisolated extension URL {
 	}
 
 	public var isYoutubeURL: Bool {
-		guard let host = host() else {
-			return false
-		}
-		return SpecialCase.urlStringContainSpecialCase(host, [SpecialCase.youtubeHostName])
+		SpecialCase.urlStringMatchesDomain(absoluteString, [SpecialCase.youtubeHostName])
 	}
 
 	public var isRedditURL: Bool {

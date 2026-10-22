@@ -237,7 +237,6 @@ import os
 		guard let hashes = hashes, !hashes.isEmpty else {
 			if let lastArticleFetch = updateFetchDate {
 				self.accountSettings?.lastArticleFetchStartTime = lastArticleFetch
-				self.accountSettings?.lastRefreshCompletedDate = Date()
 			}
 			return
 		}

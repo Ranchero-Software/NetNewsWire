@@ -43,7 +43,11 @@ function stripStyles() {
 	document.getElementsByTagName("body")[0].querySelectorAll("style, link[rel=stylesheet]").forEach(element => element.remove());
 	// Removing "background" and "font" will also remove properties that would be reflected in them, e.g., "background-color" and "font-family"
 	// The stylesheet forces images to height: auto, so an author aspect-ratio box can't be filled by its image — content after the box overlaps the overflowing image.
-	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => stripStylesFromElement(element, ["color", "background", "font", "max-width", "max-height", "position", "aspect-ratio"]));
+	// Iframes keep their aspect-ratio: without it an iframe with no pixel height collapses to the default 150px.
+	document.getElementsByTagName("body")[0].querySelectorAll("[style]").forEach(element => {
+		const isIframe = element.tagName === "IFRAME";
+		stripStylesFromElement(element, isIframe ? ["color", "background", "font", "max-width", "max-height", "position"] : ["color", "background", "font", "max-width", "max-height", "position", "aspect-ratio"]);
+	});
 }
 
 // Constrain the height of iframes whose heights are defined relative to the document body to be at most

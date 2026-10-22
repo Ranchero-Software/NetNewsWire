@@ -12,6 +12,7 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import RSParser
+import Synchronization
 import Articles
 
 final class ArticlesTable: DatabaseTable, Sendable {
@@ -22,7 +23,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	private let statusesTable: StatusesTable
 	private let searchTable: SearchTable
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
-	private let articlesCache = OSAllocatedUnfairLock(initialState: [String: Article]())
+	private let articlesCache = Mutex([String: Article]())
 
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticlesTable")
 	private static let signposter = OSSignposter(subsystem: Logger.nnwSubsystem, category: .pointsOfInterest)
@@ -353,6 +354,28 @@ final class ArticlesTable: DatabaseTable, Sendable {
 
 	// MARK: - Unread Counts
 
+	/// Calls `completion` with nil if the query fails, so a failure doesn’t zero every unread count.
+	func fetchAllUnreadCounts(_ completion: @escaping @Sendable (UnreadCountDictionary?) -> Void) {
+		queue.runInDatabase { database in
+			let sql = "select distinct feedID, count(*) from articles natural join statuses where read=0 group by feedID;"
+
+			guard let resultSet = database.executeQuery(sql, withArgumentsIn: nil) else {
+				DispatchQueue.main.async {
+					completion(nil)
+				}
+				return
+			}
+			defer {
+				resultSet.close()
+			}
+
+			let unreadCountDictionary = self.unreadCountDictionary(with: resultSet)
+			DispatchQueue.main.async {
+				completion(unreadCountDictionary)
+			}
+		}
+	}
+
 	func fetchUnreadCounts(_ feedIDs: Set<String>, _ completion: @escaping UnreadCountDictionaryCompletionBlock) {
 		if feedIDs.isEmpty {
 			completion(UnreadCountDictionary())
@@ -375,14 +398,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 				resultSet.close()
 			}
 
-			var unreadCountDictionary = UnreadCountDictionary()
-			while resultSet.next() {
-				let unreadCount = resultSet.long(forColumnIndex: 1)
-				if let feedID = resultSet.swiftString(forColumnIndex: 0) {
-					unreadCountDictionary[feedID] = unreadCount
-				}
-			}
-
+			let unreadCountDictionary = self.unreadCountDictionary(with: resultSet)
 			DispatchQueue.main.async {
 				completion(unreadCountDictionary)
 			}
@@ -667,6 +683,18 @@ nonisolated private extension ArticlesTable {
 				completion(articles)
 			}
 		}
+	}
+
+	/// Reads feedID, count rows.
+	func unreadCountDictionary(with resultSet: FMResultSet) -> UnreadCountDictionary {
+		var unreadCountDictionary = UnreadCountDictionary()
+		while resultSet.next() {
+			let unreadCount = resultSet.long(forColumnIndex: 1)
+			if let feedID = resultSet.swiftString(forColumnIndex: 0) {
+				unreadCountDictionary[feedID] = unreadCount
+			}
+		}
+		return unreadCountDictionary
 	}
 
 	func articlesWithResultSet(_ resultSet: FMResultSet, _ database: FMDatabase) -> Set<Article> {

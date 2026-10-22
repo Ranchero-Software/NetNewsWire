@@ -26,8 +26,16 @@ extension Notification.Name {
 @objc final class SidebarViewController: NSViewController, NSOutlineViewDelegate, NSMenuDelegate, UndoableCommandRunner {
 
 	@IBOutlet var outlineView: SidebarOutlineView!
+	@IBOutlet var progressView: SidebarProgressView?
 
 	weak var delegate: SidebarDelegate?
+
+	/// False when the main window status bar takes over refresh progress.
+	var showsProgressView = true {
+		didSet {
+			progressView?.isSuppressed = !showsProgressView
+		}
+	}
 
 	weak var splitViewItem: NSSplitViewItem?
 
@@ -84,7 +92,7 @@ extension Notification.Name {
 	}
 
 	override func viewDidLoad() {
-		keyboardDelegate.sidebarViewController = self
+		progressView?.isSuppressed = !showsProgressView
 		outlineView.keyboardDelegate = keyboardDelegate
 		outlineView.dataSource = dataSource
 		outlineView.doubleAction = #selector(doubleClickedSidebar(_:))
@@ -105,6 +113,11 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
+
+		if let clipView = outlineView.enclosingScrollView?.contentView {
+			clipView.postsFrameChangedNotifications = true
+			NotificationCenter.default.addObserver(self, selector: #selector(handleClipViewFrameDidChange(_:)), name: NSView.frameDidChangeNotification, object: clipView)
+		}
 
 		outlineView.reloadData()
 
@@ -231,6 +244,10 @@ extension Notification.Name {
 		applyToAvailableCells { cell, _ in
 			cell.updateUnreadCountView()
 		}
+	}
+
+	@objc func handleClipViewFrameDidChange(_ notification: Notification) {
+		fitOutlineViewToVisibleWidth()
 	}
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
@@ -572,6 +589,22 @@ extension SidebarViewController: NSUserInterfaceValidations {
 // MARK: - Private
 
 private extension SidebarViewController {
+
+	/// The outline view doesn’t resize its rows when the scroller appears or disappears,
+	/// which leaves the selection highlight at a stale width.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5487>
+	func fitOutlineViewToVisibleWidth() {
+		guard let scrollView = outlineView.enclosingScrollView else {
+			return
+		}
+		let contentInsets = scrollView.contentInsets
+		let visibleWidth = scrollView.contentView.bounds.width - contentInsets.left - contentInsets.right
+		guard visibleWidth > 0, outlineView.frame.width != visibleWidth else {
+			return
+		}
+		outlineView.setFrameSize(NSSize(width: visibleWidth, height: outlineView.frame.height))
+		outlineView.sizeLastColumnToFit()
+	}
 
 	var accountNodes: [Account] {
 		return treeController.rootNode.childNodes.compactMap { $0.representedObject as? Account }

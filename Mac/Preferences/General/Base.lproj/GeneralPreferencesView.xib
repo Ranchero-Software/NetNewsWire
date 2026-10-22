@@ -202,7 +202,7 @@
                                 <action selector="browserPopUpDidChangeValue:" target="-2" id="vSr-98-LQL"/>
                             </connections>
                         </popUpButton>
-                        <button horizontalHuggingPriority="1000" verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
+                        <button verticalHuggingPriority="1000" horizontalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="Ubm-Pk-l7x">
                             <rect key="frame" x="110" y="151" width="283" height="16"/>
                             <buttonCell key="cell" type="check" title="Open web pages in background in browser" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="t0a-LN-rCv">
                                 <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -351,7 +351,6 @@
                         <constraint firstItem="UI6-sq-M15" firstAttribute="leading" secondItem="Z6O-Zt-V1g" secondAttribute="leading" id="ffy-ld-r5Q"/>
                         <constraint firstAttribute="trailing" secondItem="Ci4-fW-KjU" secondAttribute="trailing" constant="1" id="h0b-Nh-tJJ"/>
                         <constraint firstAttribute="trailing" secondItem="SFF-mL-yc8" secondAttribute="trailing" constant="1" id="hYk-Ff-wTy"/>
-                        <constraint firstItem="SFF-mL-yc8" firstAttribute="leading" secondItem="hQy-ng-ijd" secondAttribute="trailing" constant="-282" id="hhb-8Q-KWc"/>
                         <constraint firstItem="0W5-tO-S63" firstAttribute="leading" secondItem="UI6-sq-M15" secondAttribute="leading" constant="22" id="jmc-lb-wp2"/>
                         <constraint firstAttribute="trailing" secondItem="Yrc-6Q-kx8" secondAttribute="trailing" id="o3L-x4-mEr"/>
                         <constraint firstItem="Wsb-Lr-8Q7" firstAttribute="trailing" secondItem="pR2-Bf-7Fd" secondAttribute="trailing" id="obL-84-81H"/>
@@ -387,6 +386,8 @@
             </subviews>
             <constraints>
                 <constraint firstItem="Ut3-yd-q6G" firstAttribute="centerX" secondItem="WnV-px-wCT" secondAttribute="centerX" constant="-1" id="87C-ym-WzY"/>
+                <constraint firstItem="Ut3-yd-q6G" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="WnV-px-wCT" secondAttribute="leading" constant="20" id="gNl-lM-g01"/>
+                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Ut3-yd-q6G" secondAttribute="trailing" constant="20" id="gNl-tM-g02"/>
                 <constraint firstAttribute="bottom" secondItem="Ut3-yd-q6G" secondAttribute="bottom" constant="16" id="FVX-gg-o9H"/>
                 <constraint firstItem="Ut3-yd-q6G" firstAttribute="top" secondItem="WnV-px-wCT" secondAttribute="top" constant="16" id="jtz-mW-ptL"/>
             </constraints>

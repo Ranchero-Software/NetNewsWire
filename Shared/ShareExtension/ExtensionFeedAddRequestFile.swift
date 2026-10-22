@@ -9,6 +9,7 @@
 import Foundation
 import RSCore
 import os
+import Synchronization
 import Account
 
 final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
@@ -36,7 +37,7 @@ final class ExtensionFeedAddRequestFile: NSObject, NSFilePresenter, Sendable {
 		operationQueue
 	}
 
-	private let didStart = OSAllocatedUnfairLock(initialState: false)
+	private let didStart = Mutex(false)
 
 	func start() {
 		let alreadyStarted = didStart.withLock { didStart -> Bool in

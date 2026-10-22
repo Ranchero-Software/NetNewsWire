@@ -30,7 +30,6 @@ import Articles
         // Filter out articles that already have the desired status or can’t be marked.
 		let articlesToMark = MarkStatusCommand.filteredArticles(initialArticles, statusKey, flag)
 		if articlesToMark.isEmpty {
-			completion?()
 			return nil
 		}
 		self.articleIDsByAccountID = Dictionary(grouping: articlesToMark, by: { $0.accountID }).mapValues { Set($0.articleIDs()) }

@@ -7,6 +7,47 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b1</title>
+	<description><![CDATA[
+<ul>
+<li>Restored the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
+</ul>
+	]]></description>
+	<pubDate>Tue, 20 Oct 2026 11:35:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b1/NetNewsWire7.3b1.zip" sparkle:version="7225" sparkle:shortVersionString="7.3b1" length="10048664" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2.1</title>
+	<description><![CDATA[
+Changes since 7.2:
+<ul>
+<li>Fixed bug where navigated-to row, in column layout, might appear under column headers
+<li>Fixed bug where scroller hiding/showing could mess up sidebar layout
+<li>Added magnet as an allowed link scheme
+</ul>
+	]]></description>
+	<pubDate>Tue, 20 Oct 2026 10:00:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2.1/NetNewsWire7.2.1.zip" sparkle:version="7224" sparkle:shortVersionString="7.2.1" length="10002485" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
+	<title>NetNewsWire 7.2.1b1</title>
+	<description><![CDATA[
+<ul>
+<li>Fixed bug where navigated-to row, in column layout, might appear under column headers
+<li>Fixed bug where scroller hiding/showing could mess up sidebar layout
+<li>Added magnet as an allowed link scheme
+</ul>
+	]]></description>
+	<pubDate>Sun, 18 Oct 2026 11:40:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.2.1b1/NetNewsWire7.2.1b1.zip" sparkle:version="7223" sparkle:shortVersionString="7.2.1b1" length="10002414" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.2b2</title>
 	<description><![CDATA[
 In case you missed 7.2b1 — note the new <code>View > Use Column Layout</code> menu item. Also note the new setting for unread counts at the top of the General (first) settings tab.

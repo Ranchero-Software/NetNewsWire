@@ -127,7 +127,13 @@ private extension WebViewConfiguration {
 		let preferences = WKPreferences()
 		preferences.javaScriptCanOpenWindowsAutomatically = false
 		preferences.minimumFontSize = 12
+#if os(iOS)
+		// With element fullscreen enabled, YouTube embeds go fullscreen on iPad as a black screen with audio only.
+		// Without it, they use video fullscreen like on iPhone.
+		preferences.isElementFullscreenEnabled = UIDevice.current.userInterfaceIdiom != .pad
+#else
 		preferences.isElementFullscreenEnabled = true
+#endif
 
 		return preferences
 	}

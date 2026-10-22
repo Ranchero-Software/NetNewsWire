@@ -35,9 +35,14 @@ final class GeneralPreferencesViewController: NSViewController {
 		commonInit()
 	}
 
+	override func viewDidLoad() {
+		super.viewDidLoad()
+		fixArticleTextSizeBaselineIfNeeded()
+		view.sizeToFittingSize()
+	}
+
 	override func viewWillAppear() {
 		super.viewWillAppear()
-		fixArticleTextSizeBaselineIfNeeded()
 		updateUI()
 		updateNotificationSettings()
 	}
@@ -226,19 +231,6 @@ private extension GeneralPreferencesViewController {
 					NSApplication.shared.registerForRemoteNotifications()
 				}
 			}
-		}
-	}
-
-	func showNotificationsDeniedError() {
-		let updateAlert = NSAlert()
-		updateAlert.alertStyle = .informational
-		updateAlert.messageText = NSLocalizedString("Enable Notifications", comment: "Notifications")
-		updateAlert.informativeText = NSLocalizedString("To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.", comment: "To enable notifications, open Notifications in System Preferences, then find NetNewsWire in the list.")
-		updateAlert.addButton(withTitle: NSLocalizedString("Open System Preferences", comment: "Open System Preferences"))
-		updateAlert.addButton(withTitle: NSLocalizedString("Close", comment: "Close"))
-		let modalResponse = updateAlert.runModal()
-		if modalResponse == .alertFirstButtonReturn {
-			NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!)
 		}
 	}
 

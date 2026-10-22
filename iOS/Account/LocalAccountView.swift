@@ -18,37 +18,26 @@ struct LocalAccountView: View {
 	@FocusState private var isNameFieldFocused: Bool
 
 	var body: some View {
-		NavigationStack {
-			Form {
-				Section {
-					TextField(NSLocalizedString("Name", comment: "Name field placeholder"), text: $name)
-						.textInputAutocapitalization(.words)
-						.focused($isNameFieldFocused)
-						.onSubmit {
-							isNameFieldFocused = false
-						}
-				} header: {
-					AccountIconHeader(accountType: .onMyMac)
-				}
-				Section {
-					Button(NSLocalizedString("Add Account", comment: "Add Account")) {
-						addAccount()
+		AccountSetupSheet(accountType: .onMyMac) {
+			Section {
+				TextField(NSLocalizedString("Name", comment: "Name field placeholder"), text: $name)
+					.textInputAutocapitalization(.words)
+					.focused($isNameFieldFocused)
+					.onSubmit {
+						isNameFieldFocused = false
 					}
-					.frame(maxWidth: .infinity)
-				} footer: {
-					Text(NSLocalizedString("Local accounts do not sync your feeds across devices.", comment: "Local"))
-						.multilineTextAlignment(.center)
-						.frame(maxWidth: .infinity)
-				}
+			} header: {
+				AccountIconHeader(accountType: .onMyMac)
 			}
-			.navigationTitle(Text(verbatim: AccountType.onMyMac.displayName))
-			.navigationBarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .cancellationAction) {
-					Button(NSLocalizedString("Cancel", comment: "Cancel button"), role: .cancel) {
-						dismiss()
-					}
+			Section {
+				Button(NSLocalizedString("Add Account", comment: "Add Account")) {
+					addAccount()
 				}
+				.frame(maxWidth: .infinity)
+			} footer: {
+				Text(NSLocalizedString("Local accounts do not sync your feeds across devices.", comment: "Local"))
+					.multilineTextAlignment(.center)
+					.frame(maxWidth: .infinity)
 			}
 		}
 	}

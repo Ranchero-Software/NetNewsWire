@@ -46,6 +46,12 @@ import RSWeb
 	static func open(_ urlString: String, inBackground: Bool) {
 		guard let url = URL(string: urlString), let preparedURL = url.preparedForOpeningInBrowser() else { return }
 
+		// Non-web links (mailto, magnet) go to the system handler, not a browser.
+		guard preparedURL.isHTTPOrHTTPSURL() else {
+			NSWorkspace.shared.open(preparedURL)
+			return
+		}
+
 		let configuration = NSWorkspace.OpenConfiguration()
 		configuration.requiresUniversalLinks = true
 		configuration.promptsUserIfNeeded = false

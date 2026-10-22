@@ -11,8 +11,6 @@ import Articles
 
 @MainActor struct ArticleSorter {
 
-	private static let titleCompareOptions: String.CompareOptions = [.caseInsensitive, .diacriticInsensitive]
-
 	static func sorted(articles: [Article], parameters: ArticleSortParameters, feedNameFor: (Article) -> String = { $0.sortableFeedName }) -> [Article] {
 		switch parameters.key {
 		case .date:
@@ -47,7 +45,7 @@ private extension ArticleSorter {
 		let groupsWithNames = groupedArticles.map { (feedID: $0.key, name: feedNameFor($0.value[0]), articles: $0.value) }
 		return groupsWithNames
 			.sorted { lhs, rhs in
-				switch lhs.name.localizedCaseInsensitiveCompare(rhs.name) {
+				switch lhs.name.localizedStandardCompare(rhs.name) {
 				case .orderedAscending: feedNameDirection == .orderedAscending
 				case .orderedDescending: feedNameDirection != .orderedAscending
 				case .orderedSame: lhs.feedID < rhs.feedID
@@ -63,15 +61,15 @@ private extension ArticleSorter {
 	}
 
 	static func sortedByTitle(articles: [Article], sortDirection: ComparisonResult) -> [Article] {
-		articles.sorted { article1, article2 in
-			let title1 = sortableTitle(for: article1)
-			let title2 = sortableTitle(for: article2)
-			return switch title1.compare(title2, options: titleCompareOptions, range: nil, locale: .current) {
+		// Look up each title once instead of twice per comparison.
+		let titledArticles = articles.map { (article: $0, title: sortableTitle(for: $0)) }
+		return titledArticles.sorted { item1, item2 in
+			switch item1.title.localizedStandardCompare(item2.title) {
 			case .orderedAscending: sortDirection == .orderedAscending
 			case .orderedDescending: sortDirection != .orderedAscending
-			case .orderedSame: isOrderedByDate(article1, article2, sortDirection: .orderedDescending)
+			case .orderedSame: isOrderedByDate(item1.article, item2.article, sortDirection: .orderedDescending)
 			}
-		}
+		}.map(\.article)
 	}
 
 	/// The text the timeline shows as the title: the title, or the start of the body for an untitled article.
