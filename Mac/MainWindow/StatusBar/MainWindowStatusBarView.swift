@@ -215,16 +215,23 @@ final class MainWindowStatusBarView: NSView {
 	}
 
 	// The last refresh time shows the date only when it’s not today, so it changes at midnight.
-	@objc func handleCalendarDayChanged(_ notification: Notification) {
-		updateCountLabel()
+	// These system notifications aren’t guaranteed to arrive on the main thread.
+	@objc nonisolated func handleCalendarDayChanged(_ notification: Notification) {
+		Task { @MainActor in
+			self.updateCountLabel()
+		}
 	}
 
-	@objc func handleCurrentLocaleDidChange(_ notification: Notification) {
-		updateCountLabel()
+	@objc nonisolated func handleCurrentLocaleDidChange(_ notification: Notification) {
+		Task { @MainActor in
+			self.updateCountLabel()
+		}
 	}
 
-	@objc func handleSystemTimeZoneDidChange(_ notification: Notification) {
-		updateCountLabel()
+	@objc nonisolated func handleSystemTimeZoneDidChange(_ notification: Notification) {
+		Task { @MainActor in
+			self.updateCountLabel()
+		}
 	}
 
 	@objc func handleArticleThemeNamesDidChange(_ notification: Notification) {
