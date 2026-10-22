@@ -704,6 +704,9 @@
     "Hide Read Feeds" : {
       "comment" : "Command"
     },
+    "Hide Sidebar" : {
+      "comment" : "Command"
+    },
     "Hide Status Bar" : {
       "comment" : "Command"
     },
@@ -1214,6 +1217,9 @@
     },
     "Show Reader View" : {
       "comment" : "Show Reader View"
+    },
+    "Show Sidebar" : {
+      "comment" : "Command"
     },
     "Show Status Bar" : {
       "comment" : "Command"

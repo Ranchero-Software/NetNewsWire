@@ -884,7 +884,22 @@ extension MainWindowController: DetailViewControllerDelegate {
 extension MainWindowController: MainWindowStatusBarViewDelegate {
 
 	func statusBarViewGearMenu(_ statusBarView: MainWindowStatusBarView) -> NSMenu? {
-		sidebarViewController?.statusBarMenu()
+		guard let menu = sidebarViewController?.statusBarMenu() else {
+			return nil
+		}
+
+		var index = 0
+		if AccountManager.shared.canRefresh {
+			menu.insertItem(withTitle: NSLocalizedString("Refresh", comment: "Refresh"), action: #selector(AppDelegate.refreshAll(_:)), keyEquivalent: "", at: index)
+			index += 1
+		}
+
+		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
+		let sidebarTitle = isSidebarHidden ? NSLocalizedString("Show Sidebar", comment: "Command") : NSLocalizedString("Hide Sidebar", comment: "Command")
+		menu.insertItem(withTitle: sidebarTitle, action: #selector(NSSplitViewController.toggleSidebar(_:)), keyEquivalent: "", at: index)
+		menu.insertItem(NSMenuItem.separator(), at: index + 1)
+
+		return menu
 	}
 
 	func statusBarView(_ statusBarView: MainWindowStatusBarView, moveSidebarDividerTo position: CGFloat) {

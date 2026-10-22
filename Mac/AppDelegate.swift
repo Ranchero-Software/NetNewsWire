@@ -486,7 +486,7 @@ let appName = "NetNewsWire"
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 
 		if item.action == #selector(refreshAll(_:)) {
-			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
+			return AccountManager.shared.canRefresh
 		}
 
 		if item.action == #selector(importOPMLFromFile(_:)) {
