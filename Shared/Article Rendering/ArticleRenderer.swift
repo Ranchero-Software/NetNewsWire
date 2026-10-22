@@ -110,27 +110,28 @@ import Account
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
 		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
-		// Some feeds embed a full HTML document as the article content —
-		// render just the body fragment.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3008>
+
 		var articleBody: String
+		var baseURL: String?
 		if let content = extractedArticle?.content {
 			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
-			self.baseURL = extractedArticle?.url
+			baseURL = extractedArticle?.url
 		} else {
 			let feedURL = article?.feed?.url
 			let homePageURL = article?.feed?.homePageURL
-			var articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
 			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
 			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
 			if article?.account?.type == .freshRSS {
-			  articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
-		  }
-      self.body = articleBody
-			self.baseURL = article?.baseURL?.absoluteString
+				articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
+			}
+
+			baseURL = article?.baseURL?.absoluteString
 		}
-		
+
 		self.body = articleBody
+		self.baseURL = baseURL
 	}
 
 	// MARK: - API
