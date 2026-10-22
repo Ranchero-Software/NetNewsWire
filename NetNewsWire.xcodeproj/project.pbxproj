@@ -349,8 +349,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"NetNewsWire-iOSTests/ActivityItemSourceTests.swift",
-				"NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift",
 				"NetNewsWire-iOSTests/AppDefaultsMigrationTests.swift",
+				"NetNewsWire-iOSTests/MultilineUILabelSizerTests.swift",
 			);
 			target = 849C64701ED37A5D003D8FC0 /* NetNewsWireTests */;
 		};

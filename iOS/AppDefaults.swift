@@ -36,62 +36,38 @@ extension Notification.Name {
 	public static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
 }
 
-enum AppDefaults {
-	static let defaultThemeName = "Default"
+extension AppDefaults.Key {
+	static let userInterfaceColorPalette = "userInterfaceColorPalette"
+	static let refreshClearsReadArticles = "refreshClearsReadArticles"
+	static let timelineNumberOfLines = "timelineNumberOfLines"
+	static let timelineIconDimension = "timelineIconSize"
+	static let articleFullscreenAvailable = "articleFullscreenAvailable"
+	static let articleFullscreenEnabled = "articleFullscreenEnabled"
+	static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
+	static let lastRefresh = "lastRefresh"
+	static let useSystemBrowser = "useSystemBrowser"
+	static let hideReadFeeds = "hideReadFeeds"
+	static let isShowingExtractedArticle = "isShowingExtractedArticle"
+	static let articleWindowScrollY = "articleWindowScrollY"
+	static let expandedContainers = "expandedContainers"
+	static let smartFeedsHidingReadArticles = "smartFeedsHidingReadArticles"
+	static let feedsHidingReadArticles = "feedsHidingReadArticles"
+	static let foldersShowingReadArticles = "foldersShowingReadArticles"
+	static let selectedSidebarItem = "selectedSidebarItem"
+	static let selectedArticle = "selectedArticle"
+	static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
+	static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
+	static let timelineWidth = "timelineWidth"
+	static let sidebarWidth = "sidebarWidth"
+	static let didMigrateAppGroupDefaults = "didMigrateAppGroupDefaults"
+
+	// Keys that used to be stored in the app-group suite.
+	static let appGroupKeys = [userInterfaceColorPalette, lastImageCacheFlushDate, firstRunDate, timelineGroupByFeed, refreshClearsReadArticles, timelineNumberOfLines, timelineIconDimension, timelineSortDirection, articleFullscreenAvailable, articleFullscreenEnabled, confirmMarkAllAsRead, articleContentJavascriptEnabled, splitViewPreferredDisplayMode, lastRefresh]
+}
+
+extension AppDefaults {
+
 	fileprivate static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDefaults")
-
-	struct Key {
-		static let userInterfaceColorPalette = "userInterfaceColorPalette"
-		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
-		static let firstRunDate = "firstRunDate"
-		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let refreshClearsReadArticles = "refreshClearsReadArticles"
-		static let timelineNumberOfLines = "timelineNumberOfLines"
-		static let timelineIconDimension = "timelineIconSize"
-		static let timelineSortDirection = "timelineSortDirection"
-		static let articleFullscreenAvailable = "articleFullscreenAvailable"
-		static let articleFullscreenEnabled = "articleFullscreenEnabled"
-		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
-		static let lastRefresh = "lastRefresh"
-		static let addFeedAccountID = "addFeedAccountID"
-		static let addFeedFolderName = "addFeedFolderName"
-		static let addFolderAccountID = "addFolderAccountID"
-		static let useSystemBrowser = "useSystemBrowser"
-		static let currentThemeName = "currentThemeName"
-		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
-		static let hideReadFeeds = "hideReadFeeds"
-		static let isShowingExtractedArticle = "isShowingExtractedArticle"
-		static let articleWindowScrollY = "articleWindowScrollY"
-		static let expandedContainers = "expandedContainers"
-		static let smartFeedsHidingReadArticles = "smartFeedsHidingReadArticles"
-		static let feedsHidingReadArticles = "feedsHidingReadArticles"
-		static let foldersShowingReadArticles = "foldersShowingReadArticles"
-		static let selectedSidebarItem = "selectedSidebarItem"
-		static let selectedArticle = "selectedArticle"
-		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
-		static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
-		static let timelineWidth = "timelineWidth"
-		static let sidebarWidth = "sidebarWidth"
-		static let didMigrateAppGroupDefaults = "didMigrateAppGroupDefaults"
-
-		// Keys that used to be stored in the app-group suite.
-		static let appGroupKeys = [userInterfaceColorPalette, lastImageCacheFlushDate, firstRunDate, timelineGroupByFeed, refreshClearsReadArticles, timelineNumberOfLines, timelineIconDimension, timelineSortDirection, articleFullscreenAvailable, articleFullscreenEnabled, confirmMarkAllAsRead, articleContentJavascriptEnabled, splitViewPreferredDisplayMode, lastRefresh]
-	}
-
-	static let isDeveloperBuild: Bool = {
-		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
-			return true
-		}
-		return false
-	}()
-
-	static let isFirstRun: Bool = {
-		if UserDefaults.standard.object(forKey: Key.firstRunDate) is Date {
-			return false
-		}
-		firstRunDate = Date()
-		return true
-	}()
 
 	static var userInterfaceColorPalette: UserInterfaceColorPalette {
 		get {
@@ -106,48 +82,12 @@ enum AppDefaults {
 		}
 	}
 
-	static var addFeedAccountID: String? {
-		get {
-			return AppDefaults.string(for: Key.addFeedAccountID)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
-		}
-	}
-
-	static var addFeedFolderName: String? {
-		get {
-			return AppDefaults.string(for: Key.addFeedFolderName)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
-		}
-	}
-
-	static var addFolderAccountID: String? {
-		get {
-			return AppDefaults.string(for: Key.addFolderAccountID)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
-		}
-	}
-
 	static var useSystemBrowser: Bool {
 		get {
 			return UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
 		}
 		set {
 			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
-		}
-	}
-
-	static var lastImageCacheFlushDate: Date? {
-		get {
-			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
-		}
-		set {
-			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
 		}
 	}
 
@@ -206,15 +146,6 @@ enum AppDefaults {
 		}
 		set {
 			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
-		}
-	}
-
-	static var isArticleContentJavascriptEnabled: Bool {
-		get {
-			return AppDefaults.bool(for: Key.articleContentJavascriptEnabled)
-		}
-		set {
-			AppDefaults.setBool(for: Key.articleContentJavascriptEnabled, newValue)
 		}
 	}
 
@@ -282,15 +213,6 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineIconDimension)
 			NotificationCenter.default.post(name: .timelineIconSizeDidChange, object: nil)
-		}
-	}
-
-	static var currentThemeName: String? {
-		get {
-			return AppDefaults.string(for: Key.currentThemeName)
-		}
-		set {
-			AppDefaults.setString(for: Key.currentThemeName, newValue)
 		}
 	}
 
@@ -418,18 +340,18 @@ enum AppDefaults {
 		// Must run before register(defaults:) so registered values aren’t copied as explicit ones.
 		migrateAppGroupDefaultsIfNeeded()
 
-		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
-										Key.timelineGroupByFeed: false,
-										Key.refreshClearsReadArticles: false,
-										Key.timelineNumberOfLines: 2,
-										Key.timelineIconDimension: IconSize.medium.rawValue,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-										Key.articleFullscreenAvailable: false,
-										Key.articleFullscreenEnabled: false,
-										Key.confirmMarkAllAsRead: true,
-										Key.articleContentJavascriptEnabled: true,
-										Key.currentThemeName: Self.defaultThemeName,
-									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue]
+		let platformDefaults: [String: Any] = [
+			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+			Key.refreshClearsReadArticles: false,
+			Key.timelineNumberOfLines: 2,
+			Key.timelineIconDimension: IconSize.medium.rawValue,
+			Key.articleFullscreenAvailable: false,
+			Key.articleFullscreenEnabled: false,
+			Key.confirmMarkAllAsRead: true,
+			Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue
+		]
+
+		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }
 		UserDefaults.standard.register(defaults: defaults)
 	}
 
@@ -444,47 +366,6 @@ enum AppDefaults {
 }
 
 private extension AppDefaults {
-
-	static var firstRunDate: Date? {
-		get {
-			return date(for: Key.firstRunDate)
-		}
-		set {
-			setDate(for: Key.firstRunDate, newValue)
-		}
-	}
-
-	static func string(for key: String) -> String? {
-		return UserDefaults.standard.string(forKey: key)
-	}
-
-	static func setString(for key: String, _ value: String?) {
-		UserDefaults.standard.set(value, forKey: key)
-	}
-
-	static func bool(for key: String) -> Bool {
-		return UserDefaults.standard.bool(forKey: key)
-	}
-
-	static func setBool(for key: String, _ flag: Bool) {
-		UserDefaults.standard.set(flag, forKey: key)
-	}
-
-	static func int(for key: String) -> Int {
-		return UserDefaults.standard.integer(forKey: key)
-	}
-
-	static func setInt(for key: String, _ x: Int) {
-		UserDefaults.standard.set(x, forKey: key)
-	}
-
-	static func date(for key: String) -> Date? {
-		return UserDefaults.standard.object(forKey: key) as? Date
-	}
-
-	static func setDate(for key: String, _ date: Date?) {
-		UserDefaults.standard.set(date, forKey: key)
-	}
 
 	/// Moves settings from the app-group suite to UserDefaults.standard, then deletes the suite.
 	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5466>
@@ -503,14 +384,6 @@ private extension AppDefaults {
 		}
 		migrate(from: appGroupDefaults, to: UserDefaults.standard, keys: Key.appGroupKeys)
 		appGroupDefaults.removePersistentDomain(forName: suiteName)
-	}
-
-	static func sortDirection(for key: String) -> ComparisonResult {
-		let rawInt = int(for: key)
-		if rawInt == ComparisonResult.orderedAscending.rawValue {
-			return .orderedAscending
-		}
-		return .orderedDescending
 	}
 
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {

@@ -34,64 +34,38 @@ enum StatusBarCountMode: Int {
 	}
 }
 
-enum AppDefaults {
+extension AppDefaults.Key {
+	static let legacyWindowState = "windowState"
+	static let secureWindowState = "secureWindowState"
+	static let sidebarFontSize = "sidebarFontSize"
+	static let timelineFontSize = "timelineFontSize"
+	static let useColumnLayout = "useColumnLayout"
+	static let showStatusBar = "showStatusBar"
+	static let showStatusBarThemeMenu = "showStatusBarThemeMenu"
+	static let statusBarCountMode = "statusBarCountMode"
+	static let detailFontSize = "detailFontSize"
+	static let openInBrowserInBackground = "openInBrowserInBackground"
+	static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
+	static let articleTextSize = "articleTextSize"
+	static let refreshInterval = "refreshInterval"
+	static let importOPMLAccountID = "importOPMLAccountID"
+	static let exportOPMLAccountID = "exportOPMLAccountID"
+	static let defaultBrowserID = "defaultBrowserID"
 
-	static let defaultThemeName = "Default"
+	// Hidden prefs
+	static let showDebugMenu = "ShowDebugMenu"
+	static let timelineShowsSeparators = "CorreiaSeparators"
+	static let showTitleOnMainWindow = "KafasisTitleMode"
+	static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
+	static let suppressSyncOnLaunch = "DevroeSuppressSyncOnLaunch"
+	static let webInspectorEnabled = "WebInspectorEnabled"
+	static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
+}
 
-	struct Key {
-		static let firstRunDate = "firstRunDate"
-		static let legacyWindowState = "windowState"
-		static let secureWindowState = "secureWindowState"
-		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
-		static let sidebarFontSize = "sidebarFontSize"
-		static let timelineFontSize = "timelineFontSize"
-		static let timelineSortDirection = "timelineSortDirection"
-		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let useColumnLayout = "useColumnLayout"
-		static let showStatusBar = "showStatusBar"
-		static let showStatusBarThemeMenu = "showStatusBarThemeMenu"
-		static let statusBarCountMode = "statusBarCountMode"
-		static let detailFontSize = "detailFontSize"
-		static let openInBrowserInBackground = "openInBrowserInBackground"
-		static let subscribeToFeedsInDefaultBrowser = "subscribeToFeedsInDefaultBrowser"
-		static let articleTextSize = "articleTextSize"
-		static let refreshInterval = "refreshInterval"
-		static let addFeedAccountID = "addFeedAccountID"
-		static let addFeedFolderName = "addFeedFolderName"
-		static let addFolderAccountID = "addFolderAccountID"
-		static let importOPMLAccountID = "importOPMLAccountID"
-		static let exportOPMLAccountID = "exportOPMLAccountID"
-		static let defaultBrowserID = "defaultBrowserID"
-		static let currentThemeName = "currentThemeName"
-		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
-
-		// Hidden prefs
-		static let showDebugMenu = "ShowDebugMenu"
-		static let timelineShowsSeparators = "CorreiaSeparators"
-		static let showTitleOnMainWindow = "KafasisTitleMode"
-		static let feedDoubleClickMarkAsRead = "GruberFeedDoubleClickMarkAsRead"
-		static let suppressSyncOnLaunch = "DevroeSuppressSyncOnLaunch"
-		static let webInspectorEnabled = "WebInspectorEnabled"
-		static let webInspectorStartsAttached = "__WebInspectorPageGroupLevel1__.WebKit2InspectorStartsAttached"
-	}
+extension AppDefaults {
 
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
 	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
-
-	static let isDeveloperBuild: Bool = {
-		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
-			return true
-		}
-		return false
-	}()
-
-	static let isFirstRun: Bool = {
-		if UserDefaults.standard.object(forKey: Key.firstRunDate) is Date {
-			return false
-		}
-		firstRunDate = Date()
-		return true
-	}()
 
 	/// Stores window state prior to switching to secure state restoration.
 	///
@@ -111,15 +85,6 @@ enum AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue, forKey: Key.secureWindowState)
-		}
-	}
-
-	static var lastImageCacheFlushDate: Date? {
-		get {
-			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
-		}
-		set {
-			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
 		}
 	}
 
@@ -179,33 +144,6 @@ enum AppDefaults {
 		}
 	}
 
-	static var addFeedAccountID: String? {
-		get {
-			return AppDefaults.string(for: Key.addFeedAccountID)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
-		}
-	}
-
-	static var addFeedFolderName: String? {
-		get {
-			return AppDefaults.string(for: Key.addFeedFolderName)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
-		}
-	}
-
-	static var addFolderAccountID: String? {
-		get {
-			return AppDefaults.string(for: Key.addFolderAccountID)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
-		}
-	}
-
 	static var importOPMLAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.importOPMLAccountID)
@@ -230,15 +168,6 @@ enum AppDefaults {
 		}
 		set {
 			AppDefaults.setString(for: Key.defaultBrowserID, newValue)
-		}
-	}
-
-	static var currentThemeName: String? {
-		get {
-			return AppDefaults.string(for: Key.currentThemeName)
-		}
-		set {
-			AppDefaults.setString(for: Key.currentThemeName, newValue)
 		}
 	}
 
@@ -372,15 +301,6 @@ enum AppDefaults {
 		}
 	}
 
-	static var isArticleContentJavascriptEnabled: Bool {
-		get {
-			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
-		}
-		set {
-			UserDefaults.standard.set(newValue, forKey: Key.articleContentJavascriptEnabled)
-		}
-	}
-
 	@MainActor static func registerDefaults() {
 		// Migrate every-10-minute refresh interval to 30 minutes.
 		let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
@@ -394,23 +314,20 @@ enum AppDefaults {
  		let showDebugMenu = false
  		#endif
 
-		let defaults: [String: Any] = [
+		let platformDefaults: [String: Any] = [
 			Key.sidebarFontSize: FontSize.medium.rawValue,
 			Key.timelineFontSize: FontSize.medium.rawValue,
 			Key.detailFontSize: FontSize.medium.rawValue,
-			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-			Key.timelineGroupByFeed: false,
 			Key.useColumnLayout: false,
 			Key.showStatusBar: Self.showStatusBarDefault,
 			Key.showStatusBarThemeMenu: true,
 			Key.statusBarCountMode: StatusBarCountMode.lastRefresh.rawValue,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
-			Key.showDebugMenu: showDebugMenu,
-			Key.currentThemeName: Self.defaultThemeName,
-			Key.articleContentJavascriptEnabled: true
+			Key.showDebugMenu: showDebugMenu
 		]
 
+		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }
 		UserDefaults.standard.register(defaults: defaults)
 	}
 
@@ -430,15 +347,6 @@ enum AppDefaults {
 
 private extension AppDefaults {
 
-	static var firstRunDate: Date? {
-		get {
-			return AppDefaults.date(for: Key.firstRunDate)
-		}
-		set {
-			AppDefaults.setDate(for: Key.firstRunDate, newValue)
-		}
-	}
-
 	static func fontSize(for key: String) -> FontSize {
 		// Punted till after 1.0.
 		return .medium
@@ -455,45 +363,5 @@ private extension AppDefaults {
 
 	static func setFontSize(for key: String, _ fontSize: FontSize) {
 		setInt(for: key, fontSize.rawValue)
-	}
-
-	static func string(for key: String) -> String? {
-		return UserDefaults.standard.string(forKey: key)
-	}
-
-	static func setString(for key: String, _ value: String?) {
-		UserDefaults.standard.set(value, forKey: key)
-	}
-
-	static func bool(for key: String) -> Bool {
-		return UserDefaults.standard.bool(forKey: key)
-	}
-
-	static func setBool(for key: String, _ flag: Bool) {
-		UserDefaults.standard.set(flag, forKey: key)
-	}
-
-	static func int(for key: String) -> Int {
-		return UserDefaults.standard.integer(forKey: key)
-	}
-
-	static func setInt(for key: String, _ x: Int) {
-		UserDefaults.standard.set(x, forKey: key)
-	}
-
-	static func date(for key: String) -> Date? {
-		return UserDefaults.standard.object(forKey: key) as? Date
-	}
-
-	static func setDate(for key: String, _ date: Date?) {
-		UserDefaults.standard.set(date, forKey: key)
-	}
-
-	static func sortDirection(for key: String) -> ComparisonResult {
-		let rawInt = int(for: key)
-		if rawInt == ComparisonResult.orderedAscending.rawValue {
-			return .orderedAscending
-		}
-		return .orderedDescending
 	}
 }
