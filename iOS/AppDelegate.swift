@@ -9,6 +9,7 @@
 import UIKit
 @preconcurrency import BackgroundTasks
 import os
+import Synchronization
 import WidgetKit
 import RSCore
 import RSWeb
@@ -424,7 +425,7 @@ private extension AppDelegate {
 
 		Self.logger.info("Performing background refresh.")
 
-		let refreshTaskIsCompleted = OSAllocatedUnfairLock(initialState: false)
+		let refreshTaskIsCompleted = Mutex(false)
 
 		enum RefreshOutcome {
 			case completed

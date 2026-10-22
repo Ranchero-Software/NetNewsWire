@@ -53,6 +53,8 @@ let appName = "NetNewsWire"
 
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var useColumnLayoutMenuItem: NSMenuItem?
+	@IBOutlet var showStatusBarMenuItem: NSMenuItem?
+	@IBOutlet var showStatusBarThemeMenuMenuItem: NSMenuItem?
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
 
 	var unreadCount = 0 {
@@ -204,6 +206,7 @@ let appName = "NetNewsWire"
 		}
 
 		updateColumnLayoutMenuItem()
+		updateStatusBarMenuItems()
 
 		if mainWindowController == nil {
 			let mainWindowController = createAndShowMainWindow()
@@ -399,6 +402,7 @@ let appName = "NetNewsWire"
 
 	func userDefaultsDidChange() {
 		updateColumnLayoutMenuItem()
+		updateStatusBarMenuItems()
 
 		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
 			refreshTimer?.update()
@@ -482,7 +486,7 @@ let appName = "NetNewsWire"
 		let isDisplayingSheet = mainWindowController?.isDisplayingSheet ?? false
 
 		if item.action == #selector(refreshAll(_:)) {
-			return !AccountManager.shared.refreshInProgress && !AccountManager.shared.activeAccounts.isEmpty
+			return AccountManager.shared.canRefresh
 		}
 
 		if item.action == #selector(importOPMLFromFile(_:)) {
@@ -499,6 +503,10 @@ let appName = "NetNewsWire"
 
 		if item.action == #selector(showCloudKitStats(_:)) {
 			return AccountManager.shared.hasiCloudAccount
+		}
+
+		if item.action == #selector(toggleStatusBarThemeMenu(_:)) {
+			return AppDefaults.shared.showStatusBar
 		}
 
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
@@ -765,6 +773,14 @@ let appName = "NetNewsWire"
 		AppDefaults.shared.useColumnLayout.toggle()
 	}
 
+	@IBAction func toggleStatusBar(_ sender: Any?) {
+		AppDefaults.shared.showStatusBar.toggle()
+	}
+
+	@IBAction func toggleStatusBarThemeMenu(_ sender: Any?) {
+		AppDefaults.shared.showStatusBarThemeMenu.toggle()
+	}
+
 	@IBAction func checkForUpdates(_ sender: Any?) {
 		softwareUpdater?.checkForUpdates()
 	}
@@ -882,6 +898,19 @@ extension AppDelegate {
 
 	@MainActor func updateColumnLayoutMenuItem() {
 		useColumnLayoutMenuItem?.state = AppDefaults.shared.useColumnLayout ? .on : .off
+	}
+
+	@MainActor func updateStatusBarMenuItems() {
+		if AppDefaults.shared.showStatusBar {
+			showStatusBarMenuItem?.title = NSLocalizedString("Hide Status Bar", comment: "Command")
+		} else {
+			showStatusBarMenuItem?.title = NSLocalizedString("Show Status Bar", comment: "Command")
+		}
+		if AppDefaults.shared.showStatusBarThemeMenu {
+			showStatusBarThemeMenuMenuItem?.title = NSLocalizedString("Hide Theme Menu in Status Bar", comment: "Command")
+		} else {
+			showStatusBarThemeMenuMenuItem?.title = NSLocalizedString("Show Theme Menu in Status Bar", comment: "Command")
+		}
 	}
 
 	func importTheme(url: URL) {

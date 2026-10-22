@@ -42,6 +42,32 @@ struct ArticleRenderingSpecialCases {
 		return consecutiveReturnsRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "<p>")
 	}
 
+	private static let feedDomainsWithStrayLineBreaks = ["macrumors.com"]
+
+	// One or more <br>s right after a tag where a <br> can't appear — between list items,
+	// table rows, or table cells. Not after an opening <li>, <td>, or <th>: a <br> there is content.
+	private static let strayLineBreaksRegex = try? NSRegularExpression(
+		pattern: "(<(?:ul|ol|table|thead|tbody|tfoot|tr)\\b[^>]*>|</(?:li|tr|td|th|thead|tbody|tfoot)>)(?:\\s*<br\\s*/?>)+",
+		options: [.caseInsensitive]
+	)
+
+	/// MacRumors puts a <br/> after every line of its feed HTML, including inside lists and tables.
+	/// In lists each one renders as a blank line. In tables the HTML parser moves them all
+	/// to just before the table, leaving a huge gap above it. Remove them before parsing,
+	/// while they’re still recognizable.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5498>
+	static func removeStrayLineBreaksIfNeeded(_ html: String, feedURL: String?, homePageURL: String?) -> String {
+		guard anyURLStringMatchesAnyDomain([feedURL, homePageURL], feedDomainsWithStrayLineBreaks) else {
+			return html
+		}
+		guard html.range(of: "<br", options: .caseInsensitive) != nil, let strayLineBreaksRegex else {
+			return html
+		}
+
+		let range = NSRange(html.startIndex..., in: html)
+		return strayLineBreaksRegex.stringByReplacingMatches(in: html, range: range, withTemplate: "$1")
+	}
+
 	static func filterHTMLIfNeeded(baseURL: String, html: String) -> String {
 		var filteredHTML = removeLocationHrefRedirectScripts(html)
 

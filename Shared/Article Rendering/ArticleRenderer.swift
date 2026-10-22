@@ -117,8 +117,12 @@ import Account
 			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
 			self.baseURL = extractedArticle?.url
 		} else {
-			let articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
-			self.body = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: article?.feed?.url, homePageURL: article?.feed?.homePageURL)
+			let feedURL = article?.feed?.url
+			let homePageURL = article?.feed?.homePageURL
+			var articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
+			self.body = articleBody
 			self.baseURL = article?.baseURL?.absoluteString
 		}
 	}

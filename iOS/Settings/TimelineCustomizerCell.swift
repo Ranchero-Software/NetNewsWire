@@ -55,12 +55,7 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-		}
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.backgroundColor = traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
 		backgroundConfig.cornerRadius = 20
 		self.backgroundConfiguration = backgroundConfig

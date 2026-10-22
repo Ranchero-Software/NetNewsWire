@@ -138,14 +138,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else if traitCollection.userInterfaceIdiom == .pad {
-			backgroundConfig = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-		}
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 
 		// Matches the timeline: accent background and white text when the feeds list is first responder,
 		// and no highlight while a row is pressed, so the row goes straight to the selected style.

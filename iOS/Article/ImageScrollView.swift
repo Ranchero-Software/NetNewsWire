@@ -343,7 +343,6 @@ extension ImageScrollView: UIScrollViewDelegate {
 		return false
 	}
 
-	@available(iOS 11.0, *)
 	public func scrollViewDidChangeAdjustedContentInset(_ scrollView: UIScrollView) {
 		imageScrollViewDelegate?.scrollViewDidChangeAdjustedContentInset?(scrollView)
 	}

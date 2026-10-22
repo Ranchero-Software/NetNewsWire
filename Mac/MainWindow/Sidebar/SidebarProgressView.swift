@@ -1,5 +1,5 @@
 //
-//  SidebarStatusBarView.swift
+//  SidebarProgressView.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 9/17/16.
@@ -12,11 +12,23 @@ import Articles
 import RSWeb
 import Account
 
-final class SidebarStatusBarView: NSView {
+final class SidebarProgressView: NSView {
 	@IBOutlet var progressIndicator: NSProgressIndicator!
 	@IBOutlet var progressLabel: NSTextField!
 	@IBOutlet var bottomConstraint: NSLayoutConstraint!
 	@IBOutlet var heightConstraint: NSLayoutConstraint!
+
+	/// When true, the view stays hidden and shows no progress.
+	/// When collapsed, this view sits just below the sidebar, unclipped — where the main window status bar is.
+	/// Its separator would double the status bar’s top line, so it’s hidden while suppressed.
+	var isSuppressed = false {
+		didSet {
+			if isSuppressed != oldValue {
+				isHidden = isSuppressed
+				updateUI()
+			}
+		}
+	}
 
 	private var isAnimatingProgress = false
 
@@ -50,7 +62,7 @@ final class SidebarStatusBarView: NSView {
 	}
 }
 
-private extension SidebarStatusBarView {
+private extension SidebarProgressView {
 
 	// MARK: Progress
 
@@ -69,7 +81,7 @@ private extension SidebarStatusBarView {
 		superview?.layoutSubtreeIfNeeded()
 
 		NSAnimationContext.runAnimationGroup { context in
-			context.duration = SidebarStatusBarView.animationDuration
+			context.duration = SidebarProgressView.animationDuration
 			context.allowsImplicitAnimation = true
 			bottomConstraint.constant = -(heightConstraint.constant)
 			superview?.layoutSubtreeIfNeeded()
@@ -89,7 +101,7 @@ private extension SidebarStatusBarView {
 		superview?.layoutSubtreeIfNeeded()
 
 		NSAnimationContext.runAnimationGroup { context in
-			context.duration = SidebarStatusBarView.animationDuration
+			context.duration = SidebarProgressView.animationDuration
 			context.allowsImplicitAnimation = true
 			bottomConstraint.constant = 0
 			superview?.layoutSubtreeIfNeeded()
@@ -100,7 +112,7 @@ private extension SidebarStatusBarView {
 
 		let progressInfo = CombinedRefreshProgress.shared.progressInfo
 
-		if progressInfo.isComplete {
+		if progressInfo.isComplete || isSuppressed {
 			stopProgressIfNeeded()
 			return
 		}

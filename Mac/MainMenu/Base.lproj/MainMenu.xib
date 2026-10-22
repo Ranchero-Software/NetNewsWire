@@ -17,6 +17,8 @@
                 <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                 <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
                 <outlet property="useColumnLayoutMenuItem" destination="ucL-ay-0ut" id="ucL-ou-tl1"/>
+                <outlet property="showStatusBarMenuItem" destination="stB-ar-mI1" id="stB-ar-oU1"/>
+                <outlet property="showStatusBarThemeMenuMenuItem" destination="stT-hm-mI1" id="stT-hm-oU1"/>
             </connections>
         </customObject>
         <menu title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
@@ -436,6 +438,18 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleColumnLayout:" target="Voe-Tx-rLC" id="ucL-ac-t0n"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Status Bar" id="stB-ar-mI1">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleStatusBar:" target="Voe-Tx-rLC" id="stB-ar-aC1"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Show Theme Menu in Status Bar" id="stT-hm-mI1">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleStatusBarThemeMenu:" target="Voe-Tx-rLC" id="stT-hm-aC1"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="jKG-b2-ZWf"/>
