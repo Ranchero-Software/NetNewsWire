@@ -28,8 +28,7 @@ final class ArticlePreviewViewController: UIViewController {
 
 	override func loadView() {
 		let configuration = WebViewConfiguration.configuration(with: articleIconSchemeHandler)
-		// The app’s own user scripts still run.
-		configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+		configuration.defaultWebpagePreferences.allowsContentJavaScript = WebViewConfiguration.allowsContentJavaScript(for: article)
 
 		let webView = WKWebView(frame: .zero, configuration: configuration)
 		webView.isUserInteractionEnabled = false
