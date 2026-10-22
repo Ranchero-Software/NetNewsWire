@@ -1880,19 +1880,19 @@ private extension MainWindowController {
 
 	func updateStatusBarSidebarDivider() {
 		let statusBarView = mainWindowContentViewController.statusBarView
-		guard let sidebarSplitViewItem, !sidebarSplitViewItem.isCollapsed else {
+		guard let sidebarSplitViewItem, !sidebarSplitViewItem.isCollapsed, let splitView = splitViewController?.splitView, let sidebarPane = splitView.arrangedSubviews.first else {
 			statusBarView.sidebarDividerPosition = nil
 			return
 		}
-		let sidebarView = sidebarSplitViewItem.viewController.view
-		let sidebarFrameInWindow = sidebarView.convert(sidebarView.bounds, to: nil)
-		let dividerPositionInStatusBar = statusBarView.convert(NSPoint(x: sidebarFrameInWindow.maxX, y: 0), from: nil)
+		// Use the split view’s sidebar pane, not the sidebar view: while the sidebar slides in,
+		// the sidebar view’s position lags a step behind the pane and isn’t updated after the last resize.
+		let dividerPositionInStatusBar = statusBarView.convert(NSPoint(x: sidebarPane.frame.maxX, y: 0), from: splitView)
 
 		// Starting with macOS 26, the content beside the sidebar extends under it, and the divider is a hairline
 		// at the sidebar’s trailing edge. Before that, the divider follows the sidebar.
-		if let splitView = splitViewController?.splitView, splitView.arrangedSubviews.count > 1 {
-			let arrangedSubviews = splitView.arrangedSubviews
-			let contentExtendsUnderSidebar = arrangedSubviews[1].frame.minX < arrangedSubviews[0].frame.maxX
+		let arrangedSubviews = splitView.arrangedSubviews
+		if arrangedSubviews.count > 1 {
+			let contentExtendsUnderSidebar = arrangedSubviews[1].frame.minX < sidebarPane.frame.maxX
 			let hairline = 1 / (window?.backingScaleFactor ?? 1)
 			statusBarView.sidebarDividerLineOffset = contentExtendsUnderSidebar ? -hairline : 0
 			statusBarView.sidebarDividerLineWidth = contentExtendsUnderSidebar ? hairline : splitView.dividerThickness
