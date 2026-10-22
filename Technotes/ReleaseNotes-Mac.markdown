@@ -14,6 +14,7 @@ Added netnewswire, feed, feeds, and x-netnewswire-feed as allowed link schemes i
 ### 7.3b1 7225 20 Oct 2026 - branch: main tag: mac-7.3b1
 
 Restored the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
+Fixed extra vertical space in MacRumors articles
 
 ### 7.2.1 7224 19 Oct 2026 - branch: main tag: mac-7.2.1
 
