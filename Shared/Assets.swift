@@ -42,27 +42,9 @@ struct Assets {
 		nonisolated static var nnwFeedIcon: RSImage { RSImage(named: "nnwFeedIcon")! }
 		static var faviconTemplate: RSImage { RSImage(named: "faviconTemplateImage")! }
 
-		static let articleExtractorOff: RSImage = {
-			if #available(iOS 18, macOS 15, *) {
-				return RSImage(symbol: "text.page")!
-			} else {
-				return RSImage(symbol: "doc.plaintext")!
-			}
-		}()
-		static let articleExtractorOn: RSImage = {
-			if #available(iOS 18, macOS 15, *) {
-				return RSImage(symbol: "text.page.fill")!
-			} else {
-				return RSImage(symbol: "doc.plaintext.fill")!
-			}
-		}()
-		static let articleExtractorError: RSImage = {
-			if #available(iOS 18, macOS 15, *) {
-				return RSImage(symbol: "text.page.slash")!
-			} else {
-				return RSImage(symbol: "exclamationmark.triangle")!
-			}
-		}()
+		static let articleExtractorOff: RSImage = RSImage(symbol: "text.page")!
+		static let articleExtractorOn: RSImage = RSImage(symbol: "text.page.fill")!
+		static let articleExtractorError: RSImage = RSImage(symbol: "text.page.slash")!
 		static let share = RSImage(symbol: "square.and.arrow.up")!
 		static let folder = RSImage(symbol: "folder")!
 		static let starredFeed = IconImage(starClosed, isSymbol: true, isBackgroundSuppressed: true, preferredColor: Assets.Colors.star)
