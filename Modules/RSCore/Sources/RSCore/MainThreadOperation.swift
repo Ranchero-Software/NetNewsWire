@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import os
+import Synchronization
 
 /// Code to be run by MainThreadOperationQueue on @MainActor.
 ///
@@ -31,7 +31,7 @@ import os
 	private struct State: Sendable {
 		var isCanceled = false
 	}
-	private let state = OSAllocatedUnfairLock(initialState: State())
+	private let state = Mutex(State())
 
 	// Check this at appropriate times in case the operation has been canceled.
 	nonisolated public var isCanceled: Bool {
