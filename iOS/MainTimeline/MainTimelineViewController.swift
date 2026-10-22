@@ -547,14 +547,14 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let dataSource, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
-		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying,
-										  previewProvider: {
-			let previewController = WebViewController()
-			previewController.coordinator = self.coordinator
-			previewController.article = article
-			return previewController
-		},
-										  actionProvider: { [weak self] _ in
+		let previewProvider: UIContextMenuContentPreviewProvider = { [weak self] in
+			guard let coordinator = self?.coordinator else {
+				return nil
+			}
+			return ArticlePreviewViewController(article: article, coordinator: coordinator)
+		}
+
+		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: previewProvider, actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -609,11 +609,13 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 	}
 
 	func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: any UIContextMenuInteractionCommitAnimating) {
+		// The timeline may have changed since the menu opened, so use the previewed article, not the row.
+		guard let articlePreviewViewController = animator.previewViewController as? ArticlePreviewViewController else {
+			return
+		}
+		let article = articlePreviewViewController.article
 		animator.addCompletion { [weak self] in
-			guard let indexRow = configuration.identifier as? Int,
-				  let dataSource = self?.dataSource,
-					let article = dataSource.itemIdentifier(for: IndexPath(item: indexRow, section: 0)) else { return }
-			self?.coordinator?.selectArticle(article)
+			self?.coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
 		}
 	}
 
