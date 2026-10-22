@@ -52,11 +52,11 @@ final class ArticleThemesManager: NSObject, NSFilePresenter, Sendable {
 
 	var currentThemeName: String {
 		get {
-			AppDefaults.shared.currentThemeName ?? AppDefaults.defaultThemeName
+			AppDefaults.currentThemeName ?? AppDefaults.defaultThemeName
 		}
 		set {
 			if newValue != currentThemeName {
-				AppDefaults.shared.currentThemeName = newValue
+				AppDefaults.currentThemeName = newValue
 				updateThemeNames()
 				updateCurrentTheme()
 			}

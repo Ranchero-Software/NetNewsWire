@@ -129,7 +129,7 @@ struct AddAccountView: View {
 	}
 
 	private func visibleAccountTypes(in group: AccountGroup) -> [AccountType] {
-		group.accountTypes.filter { !(AppDefaults.shared.isDeveloperBuild && $0.isDeveloperRestricted) }
+		group.accountTypes.filter { !(AppDefaults.isDeveloperBuild && $0.isDeveloperRestricted) }
 	}
 
 	private func isDisabled(_ accountType: AccountType) -> Bool {

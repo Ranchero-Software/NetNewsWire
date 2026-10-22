@@ -34,11 +34,9 @@ enum StatusBarCountMode: Int {
 	}
 }
 
-final class AppDefaults: Sendable {
+enum AppDefaults {
 
 	static let defaultThemeName = "Default"
-
-	static let shared = AppDefaults()
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
@@ -80,14 +78,14 @@ final class AppDefaults: Sendable {
 	private static let smallestFontSizeRawValue = FontSize.small.rawValue
 	private static let largestFontSizeRawValue = FontSize.veryLarge.rawValue
 
-	let isDeveloperBuild: Bool = {
+	static let isDeveloperBuild: Bool = {
 		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
 			return true
 		}
 		return false
 	}()
 
-	let isFirstRun: Bool = {
+	static let isFirstRun: Bool = {
 		if UserDefaults.standard.object(forKey: Key.firstRunDate) is Date {
 			return false
 		}
@@ -99,15 +97,15 @@ final class AppDefaults: Sendable {
 	///
 	/// This is referenced temporarily, only to be able to provide migration from legacy to secure window state.
 	/// TODO: delete for NetNewsWire 7.
-	var legacyWindowState: [AnyHashable: Any]? {
+	static var legacyWindowState: [AnyHashable: Any]? {
 		UserDefaults.standard.object(forKey: Key.legacyWindowState) as? [AnyHashable: Any]
 	}
 
-	func deleteLegacyWindowState() {
+	static func deleteLegacyWindowState() {
 		UserDefaults.standard.removeObject(forKey: Key.legacyWindowState)
 	}
 
-	var secureWindowState: Data? {
+	static var secureWindowState: Data? {
 		get {
 			UserDefaults.standard.object(forKey: Key.secureWindowState) as? Data
 		}
@@ -116,7 +114,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var lastImageCacheFlushDate: Date? {
+	static var lastImageCacheFlushDate: Date? {
 		get {
 			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
 		}
@@ -125,7 +123,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var openInBrowserInBackground: Bool {
+	static var openInBrowserInBackground: Bool {
 		get {
 			return AppDefaults.bool(for: Key.openInBrowserInBackground)
 		}
@@ -136,7 +134,7 @@ final class AppDefaults: Sendable {
 
 	// Special case for this default: store/retrieve it from the shared app group
 	// defaults, so that it can be resolved by the Safari App Extension.
-	var subscribeToFeedDefaults: UserDefaults {
+	static var subscribeToFeedDefaults: UserDefaults {
 		if let appGroupID = Bundle.main.object(forInfoDictionaryKey: "AppGroup") as? String,
 		   let appGroupDefaults = UserDefaults(suiteName: appGroupID) {
 			return appGroupDefaults
@@ -145,7 +143,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var subscribeToFeedsInDefaultBrowser: Bool {
+	static var subscribeToFeedsInDefaultBrowser: Bool {
 		get {
 			return subscribeToFeedDefaults.bool(forKey: Key.subscribeToFeedsInDefaultBrowser)
 		}
@@ -154,7 +152,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var sidebarFontSize: FontSize {
+	static var sidebarFontSize: FontSize {
 		get {
 			return fontSize(for: Key.sidebarFontSize)
 		}
@@ -163,7 +161,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var timelineFontSize: FontSize {
+	static var timelineFontSize: FontSize {
 		get {
 			return fontSize(for: Key.timelineFontSize)
 		}
@@ -172,7 +170,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var detailFontSize: FontSize {
+	static var detailFontSize: FontSize {
 		get {
 			return fontSize(for: Key.detailFontSize)
 		}
@@ -181,7 +179,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var addFeedAccountID: String? {
+	static var addFeedAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.addFeedAccountID)
 		}
@@ -190,7 +188,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var addFeedFolderName: String? {
+	static var addFeedFolderName: String? {
 		get {
 			return AppDefaults.string(for: Key.addFeedFolderName)
 		}
@@ -199,7 +197,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var addFolderAccountID: String? {
+	static var addFolderAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.addFolderAccountID)
 		}
@@ -208,7 +206,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var importOPMLAccountID: String? {
+	static var importOPMLAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.importOPMLAccountID)
 		}
@@ -217,7 +215,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var exportOPMLAccountID: String? {
+	static var exportOPMLAccountID: String? {
 		get {
 			return AppDefaults.string(for: Key.exportOPMLAccountID)
 		}
@@ -226,7 +224,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var defaultBrowserID: String? {
+	static var defaultBrowserID: String? {
 		get {
 			return AppDefaults.string(for: Key.defaultBrowserID)
 		}
@@ -235,7 +233,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var currentThemeName: String? {
+	static var currentThemeName: String? {
 		get {
 			return AppDefaults.string(for: Key.currentThemeName)
 		}
@@ -244,15 +242,15 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var showTitleOnMainWindow: Bool {
+	static var showTitleOnMainWindow: Bool {
 		return AppDefaults.bool(for: Key.showTitleOnMainWindow)
 	}
 
-	var showDebugMenu: Bool {
+	static var showDebugMenu: Bool {
 		return AppDefaults.bool(for: Key.showDebugMenu)
  	}
 
-	var feedDoubleClickMarkAsRead: Bool {
+	static var feedDoubleClickMarkAsRead: Bool {
 		get {
 			return AppDefaults.bool(for: Key.feedDoubleClickMarkAsRead)
 		}
@@ -261,7 +259,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var suppressSyncOnLaunch: Bool {
+	static var suppressSyncOnLaunch: Bool {
 		get {
 			return AppDefaults.bool(for: Key.suppressSyncOnLaunch)
 		}
@@ -270,7 +268,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var webInspectorEnabled: Bool {
+	static var webInspectorEnabled: Bool {
 		get {
 			return AppDefaults.bool(for: Key.webInspectorEnabled)
 		}
@@ -279,7 +277,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var webInspectorStartsAttached: Bool {
+	static var webInspectorStartsAttached: Bool {
 		get {
 			return AppDefaults.bool(for: Key.webInspectorStartsAttached)
 		}
@@ -290,16 +288,16 @@ final class AppDefaults: Sendable {
 
 	// Sorting is per window and lives in TimelineWindowState. These two are read-only seeds
 	// for a window that has no saved sort, so a setting from before per-window sorting carries over.
-	var timelineSortDirection: ComparisonResult {
+	static var timelineSortDirection: ComparisonResult {
 		AppDefaults.sortDirection(for: Key.timelineSortDirection)
 	}
 
-	var timelineGroupByFeed: Bool {
+	static var timelineGroupByFeed: Bool {
 		AppDefaults.bool(for: Key.timelineGroupByFeed)
 	}
 
 	/// Column layout: multi-column timeline table with the article view below it, like Mail’s View > Use Column Layout. Applies to all windows.
-	var useColumnLayout: Bool {
+	static var useColumnLayout: Bool {
 		get {
 			AppDefaults.bool(for: Key.useColumnLayout)
 		}
@@ -309,7 +307,7 @@ final class AppDefaults: Sendable {
 	}
 
 	/// The main window status bar. Applies to all windows.
-	var showStatusBar: Bool {
+	static var showStatusBar: Bool {
 		get {
 			AppDefaults.bool(for: Key.showStatusBar)
 		}
@@ -329,7 +327,7 @@ final class AppDefaults: Sendable {
 		return true
 	}
 
-	var showStatusBarThemeMenu: Bool {
+	static var showStatusBarThemeMenu: Bool {
 		get {
 			AppDefaults.bool(for: Key.showStatusBarThemeMenu)
 		}
@@ -338,7 +336,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var statusBarCountMode: StatusBarCountMode {
+	static var statusBarCountMode: StatusBarCountMode {
 		get {
 			StatusBarCountMode(rawValue: AppDefaults.int(for: Key.statusBarCountMode)) ?? .lastRefresh
 		}
@@ -347,11 +345,11 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var timelineShowsSeparators: Bool {
+	static var timelineShowsSeparators: Bool {
 		return AppDefaults.bool(for: Key.timelineShowsSeparators)
 	}
 
-	var articleTextSize: ArticleTextSize {
+	static var articleTextSize: ArticleTextSize {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.articleTextSize)
 			return ArticleTextSize(rawValue: rawValue) ?? ArticleTextSize.large
@@ -361,7 +359,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var refreshInterval: RefreshInterval {
+	static var refreshInterval: RefreshInterval {
 		get {
 			let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
 			if rawValue == 2 { // Old every-10-minutes setting — now using 30 minutes as minimum.
@@ -374,7 +372,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var isArticleContentJavascriptEnabled: Bool {
+	static var isArticleContentJavascriptEnabled: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.articleContentJavascriptEnabled)
 		}
@@ -383,15 +381,13 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	init() {
+	@MainActor static func registerDefaults() {
 		// Migrate every-10-minute refresh interval to 30 minutes.
 		let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
 		if rawValue == 2 {
 			UserDefaults.standard.set(RefreshInterval.every30Minutes.rawValue, forKey: Key.refreshInterval)
 		}
-	}
 
-	@MainActor func registerDefaults() {
 		#if DEBUG
  		let showDebugMenu = true
  		#else
@@ -418,7 +414,7 @@ final class AppDefaults: Sendable {
 		UserDefaults.standard.register(defaults: defaults)
 	}
 
-	func actualFontSize(for fontSize: FontSize) -> CGFloat {
+	static func actualFontSize(for fontSize: FontSize) -> CGFloat {
 		switch fontSize {
 		case .small:
 			return NSFont.systemFontSize
@@ -443,7 +439,7 @@ private extension AppDefaults {
 		}
 	}
 
-	func fontSize(for key: String) -> FontSize {
+	static func fontSize(for key: String) -> FontSize {
 		// Punted till after 1.0.
 		return .medium
 

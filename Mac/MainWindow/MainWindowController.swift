@@ -53,7 +53,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	private var splitViewController: NSSplitViewController?
 	// Column layout only: the vertical split holding the timeline above the article view.
 	private var contentSplitViewController: NSSplitViewController?
-	private var timelineLayout = AppDefaults.shared.timelineLayout
+	private var timelineLayout = AppDefaults.timelineLayout
 	// Geometry for the layout that isn’t showing, so a round trip through the other layout keeps it.
 	private var rememberedStandardLayoutWidths = [Int]()
 	private var rememberedColumnLayoutTimelineHeight = 0
@@ -168,7 +168,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		let state = savableState()
 		Self.logger.debug("MainWindowController: Saving state to UserDefaults: \(state)")
 		let data = try? NSKeyedArchiver.archivedData(withRootObject: state, requiringSecureCoding: true)
-		AppDefaults.shared.secureWindowState = data
+		AppDefaults.secureWindowState = data
 		// Don't save the frame in full screen — it would replace the saved windowed frame with the screen's frame.
 		if let window, !window.styleMask.contains(.fullScreen) {
 			window.saveFrame(usingName: windowAutosaveName)
@@ -176,16 +176,16 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	func restoreStateFromUserDefaults() {
-		if let data = AppDefaults.shared.secureWindowState,
+		if let data = AppDefaults.secureWindowState,
 		   let state = try? NSKeyedUnarchiver.unarchivedObject(ofClass: MainWindowState.self, from: data) {
 			Self.logger.debug("MainWindowController: restoring state from UserDefaults: \(state)")
 			window?.setFrameUsingName(windowAutosaveName, force: true)
 			restoreState(from: state)
-		} else if let state = AppDefaults.shared.legacyWindowState {
+		} else if let state = AppDefaults.legacyWindowState {
 			// Migrate from previous window state data. Delete data when finished.
 			window?.setFrameUsingName(windowAutosaveName, force: true)
 			restoreLegacyState(from: state)
-			AppDefaults.shared.deleteLegacyWindowState()
+			AppDefaults.deleteLegacyWindowState()
 		}
 	}
 
@@ -198,7 +198,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	private func userDefaultsDidChange() {
-		let layout = AppDefaults.shared.timelineLayout
+		let layout = AppDefaults.timelineLayout
 		if layout != timelineLayout {
 			installSplitViewController(for: layout)
 		}
@@ -415,7 +415,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
-		if AppDefaults.shared.openInBrowserInBackground {
+		if AppDefaults.openInBrowserInBackground {
 			window?.makeKeyAndOrderFront(self)
 		}
 		openArticleInBrowser(sender)
@@ -427,11 +427,11 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func openInBrowserUsingOppositeOfSettings(_ sender: Any?) {
-		if !AppDefaults.shared.openInBrowserInBackground {
+		if !AppDefaults.openInBrowserInBackground {
 			window?.makeKeyAndOrderFront(self)
 		}
 		if let link = currentLink {
-			Browser.open(link, inBackground: !AppDefaults.shared.openInBrowserInBackground)
+			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
 		}
 	}
 
@@ -1547,7 +1547,7 @@ private extension MainWindowController {
 	}
 
 	func validateToggleArticleExtractor(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		guard !AppDefaults.shared.isDeveloperBuild else {
+		guard !AppDefaults.isDeveloperBuild else {
 			return false
 		}
 
@@ -1726,7 +1726,7 @@ private extension MainWindowController {
 		}
 
 		func setSubtitle(_ count: Int) {
-			guard AppDefaults.shared.unreadCountDisplay == .count else {
+			guard AppDefaults.unreadCountDisplay == .count else {
 				window?.subtitle = ""
 				return
 			}
@@ -1855,7 +1855,7 @@ private extension MainWindowController {
 
 	/// The status bar, when showing, takes the place of the detail view’s floating link overlay and the sidebar’s progress view.
 	func updateStatusBarVisibility() {
-		let showStatusBar = AppDefaults.shared.showStatusBar
+		let showStatusBar = AppDefaults.showStatusBar
 		mainWindowContentViewController.isStatusBarHidden = !showStatusBar
 		detailViewController?.showsMouseoverLinkOverlay = !showStatusBar
 		sidebarViewController?.showsProgressView = !showStatusBar

@@ -40,7 +40,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	}
 
 	private var unreadCountText: String? {
-		AppDefaults.shared.unreadCountDisplay.text(for: unreadCount)
+		AppDefaults.unreadCountDisplay.text(for: unreadCount)
 	}
 
 	var iconImage: IconImage? {
@@ -105,7 +105,7 @@ class MainFeedCollectionViewFolderCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = folderTitle.text ?? ""
-			guard let unreadText = AppDefaults.shared.unreadCountDisplay.accessibilityText(for: unreadCount) else {
+			guard let unreadText = AppDefaults.unreadCountDisplay.accessibilityText(for: unreadCount) else {
 				return "\(name) \(expandedStateMessage)"
 			}
 			return "\(name) \(unreadText) \(expandedStateMessage)"

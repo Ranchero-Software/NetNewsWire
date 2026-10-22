@@ -261,7 +261,7 @@ final class MainWindowStatusBarView: NSView {
 	/// While refreshing, the label shows progress, and a click opens the Current Activity window. Otherwise a click toggles the count mode.
 	@objc func countLabelClicked(_ sender: Any?) {
 		if CombinedRefreshProgress.shared.progressInfo.isComplete {
-			AppDefaults.shared.statusBarCountMode = effectiveCountMode.next(includingUnreadCount: Self.showsUnreadCounts)
+			AppDefaults.statusBarCountMode = effectiveCountMode.next(includingUnreadCount: Self.showsUnreadCounts)
 		} else {
 			showActivityWindow(sender)
 		}
@@ -435,12 +435,12 @@ private extension MainWindowStatusBarView {
 	}
 
 	static var showsUnreadCounts: Bool {
-		AppDefaults.shared.unreadCountDisplay == .count
+		AppDefaults.unreadCountDisplay == .count
 	}
 
 	/// The saved mode, except that the unread count becomes the last refresh time when unread counts are hidden (hidden or a dot).
 	var effectiveCountMode: StatusBarCountMode {
-		let mode = AppDefaults.shared.statusBarCountMode
+		let mode = AppDefaults.statusBarCountMode
 		if mode == .unreadCount && !Self.showsUnreadCounts {
 			return .lastRefresh
 		}
@@ -523,7 +523,7 @@ private extension MainWindowStatusBarView {
 	}
 
 	func updateThemePopUpButtonVisibility() {
-		let isHidden = !AppDefaults.shared.showStatusBarThemeMenu
+		let isHidden = !AppDefaults.showStatusBarThemeMenu
 		guard themePopUpButton.isHidden != isHidden else {
 			return
 		}

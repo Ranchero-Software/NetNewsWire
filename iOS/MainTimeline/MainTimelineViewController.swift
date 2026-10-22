@@ -187,8 +187,8 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		configureSearchController()
 		definesPresentationContext = true
 
-		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-		iconSize = AppDefaults.shared.timelineIconSize
+		numberOfTextLines = AppDefaults.timelineNumberOfLines
+		iconSize = AppDefaults.timelineIconSize
 
 		assert(collectionView?.refreshControl != nil)
 		collectionView?.refreshControl = UIRefreshControl()
@@ -1100,16 +1100,16 @@ private extension MainTimelineViewController {
 
 	@objc func timelineIconSizeDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: timelineIconSizeDidChange")
-		if iconSize != AppDefaults.shared.timelineIconSize {
-			iconSize = AppDefaults.shared.timelineIconSize
+		if iconSize != AppDefaults.timelineIconSize {
+			iconSize = AppDefaults.timelineIconSize
 			reloadVisibleCells()
 		}
 	}
 
 	@objc func timelineNumberOfLinesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: timelineNumberOfLinesDidChange")
-		if numberOfTextLines != AppDefaults.shared.timelineNumberOfLines {
-			numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+		if numberOfTextLines != AppDefaults.timelineNumberOfLines {
+			numberOfTextLines = AppDefaults.timelineNumberOfLines
 			reloadVisibleCells()
 		}
 	}

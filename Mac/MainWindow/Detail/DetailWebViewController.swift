@@ -54,8 +54,8 @@ final class DetailWebViewController: NSViewController {
 		}
 	}
 
-	private var articleTextSize = AppDefaults.shared.articleTextSize
-	private var isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+	private var articleTextSize = AppDefaults.articleTextSize
+	private var isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 
 	private var webInspectorEnabled: Bool {
 		get {
@@ -144,12 +144,12 @@ final class DetailWebViewController: NSViewController {
 	}
 
 	func userDefaultsDidChange() {
-		if articleTextSize != AppDefaults.shared.articleTextSize {
-			articleTextSize = AppDefaults.shared.articleTextSize
+		if articleTextSize != AppDefaults.articleTextSize {
+			articleTextSize = AppDefaults.articleTextSize
 			reloadHTMLMaintainingScrollPosition()
 		}
-		if isArticleContentJavascriptEnabled != AppDefaults.shared.isArticleContentJavascriptEnabled {
-			isArticleContentJavascriptEnabled = AppDefaults.shared.isArticleContentJavascriptEnabled
+		if isArticleContentJavascriptEnabled != AppDefaults.isArticleContentJavascriptEnabled {
+			isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 			reloadHTMLMaintainingScrollPosition()
 		}
 	}
@@ -329,7 +329,7 @@ private extension DetailWebViewController {
 		webView.navigationDelegate = self
 		webView.keyboardDelegate = keyboardDelegate
 		webView.autoresizingMask = [.width, .height]
-		webView.configuration.preferences._developerExtrasEnabled = AppDefaults.shared.webInspectorEnabled
+		webView.configuration.preferences._developerExtrasEnabled = AppDefaults.webInspectorEnabled
 
 		return webView
 	}

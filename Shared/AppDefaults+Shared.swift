@@ -13,7 +13,7 @@ private extension AppDefaults.Key {
 
 extension AppDefaults {
 
-	var unreadCountDisplay: UnreadCountDisplay {
+	static var unreadCountDisplay: UnreadCountDisplay {
 		get {
 			UnreadCountDisplay(rawValue: UserDefaults.standard.integer(forKey: Key.unreadCountDisplay)) ?? .count
 		}

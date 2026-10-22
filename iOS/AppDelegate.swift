@@ -68,7 +68,7 @@ import Images
 			await WebViewConfiguration.compileContentBlockingRules()
 		}
 
-		let isFirstRun = AppDefaults.shared.isFirstRun
+		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			Self.logger.info("Is first run.")
 		}
@@ -136,7 +136,7 @@ import Images
 
 	private func updateBadge() {
 		assert(unreadCount == AccountManager.shared.unreadCount)
-		let badgeCount = AppDefaults.shared.unreadCountDisplay == .count ? unreadCount : 0
+		let badgeCount = AppDefaults.unreadCountDisplay == .count ? unreadCount : 0
 		UNUserNotificationCenter.current().setBadgeCount(badgeCount)
 	}
 
@@ -149,7 +149,7 @@ import Images
 	}
 
 	@objc func accountRefreshDidFinish(_ note: Notification) {
-		AppDefaults.shared.lastRefresh = Date()
+		AppDefaults.lastRefresh = Date()
 	}
 
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
@@ -196,7 +196,7 @@ import Images
 #endif
 		ArticleStatusSyncTimer.shared.update()
 
-		if let lastRefresh = AppDefaults.shared.lastRefresh {
+		if let lastRefresh = AppDefaults.lastRefresh {
 			if Date() > lastRefresh.addingTimeInterval(15 * 60) {
 				AccountManager.shared.refreshAllWithoutWaiting(errorHandler: ErrorHandler.log)
 			} else {

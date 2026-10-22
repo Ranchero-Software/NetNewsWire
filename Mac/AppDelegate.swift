@@ -37,7 +37,7 @@ let appName = "NetNewsWire"
 	}
 
 	private var refreshTimer: AccountRefreshTimer?
-	private var lastRefreshInterval = AppDefaults.shared.refreshInterval
+	private var lastRefreshInterval = AppDefaults.refreshInterval
 
 	private var shuttingDown = false {
 		didSet {
@@ -194,8 +194,8 @@ let appName = "NetNewsWire"
 			Self.logger.error("Failed to start software updater with error: \(error.localizedDescription)")
 		}
 
-		AppDefaults.shared.registerDefaults()
-		let isFirstRun = AppDefaults.shared.isFirstRun
+		AppDefaults.registerDefaults()
+		let isFirstRun = AppDefaults.isFirstRun
 		if isFirstRun {
 			Self.logger.debug("Is first run.")
 		}
@@ -274,7 +274,7 @@ let appName = "NetNewsWire"
 		refreshTimer!.update()
 		ArticleStatusSyncTimer.shared.update()
 		#else
-		if AppDefaults.shared.suppressSyncOnLaunch {
+		if AppDefaults.suppressSyncOnLaunch {
 			refreshTimer!.update()
 			ArticleStatusSyncTimer.shared.update()
 		} else {
@@ -285,7 +285,7 @@ let appName = "NetNewsWire"
 		}
 		#endif
 
-		if !AppDefaults.shared.showDebugMenu {
+		if !AppDefaults.showDebugMenu {
 			debugMenuItem.menu?.removeItem(debugMenuItem)
 		}
 
@@ -404,9 +404,9 @@ let appName = "NetNewsWire"
 		updateColumnLayoutMenuItem()
 		updateStatusBarMenuItems()
 
-		if lastRefreshInterval != AppDefaults.shared.refreshInterval {
+		if lastRefreshInterval != AppDefaults.refreshInterval {
 			refreshTimer?.update()
-			lastRefreshInterval = AppDefaults.shared.refreshInterval
+			lastRefreshInterval = AppDefaults.refreshInterval
 		}
 
 		updateDockBadge()
@@ -506,11 +506,11 @@ let appName = "NetNewsWire"
 		}
 
 		if item.action == #selector(toggleStatusBarThemeMenu(_:)) {
-			return AppDefaults.shared.showStatusBar
+			return AppDefaults.showStatusBar
 		}
 
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
-			(item as! NSMenuItem).state = AppDefaults.shared.webInspectorEnabled ? .on : .off
+			(item as! NSMenuItem).state = AppDefaults.webInspectorEnabled ? .on : .off
 		}
 
 		return true
@@ -571,7 +571,7 @@ let appName = "NetNewsWire"
 	// MARK: - Dock Badge
 	@objc func updateDockBadge() {
 		Task { @MainActor in
-			NSApplication.shared.dockTile.badgeLabel = AppDefaults.shared.unreadCountDisplay.text(for: unreadCount) ?? ""
+			NSApplication.shared.dockTile.badgeLabel = AppDefaults.unreadCountDisplay.text(for: unreadCount) ?? ""
 		}
 	}
 
@@ -770,15 +770,15 @@ let appName = "NetNewsWire"
 	}
 
 	@IBAction func toggleColumnLayout(_ sender: Any?) {
-		AppDefaults.shared.useColumnLayout.toggle()
+		AppDefaults.useColumnLayout.toggle()
 	}
 
 	@IBAction func toggleStatusBar(_ sender: Any?) {
-		AppDefaults.shared.showStatusBar.toggle()
+		AppDefaults.showStatusBar.toggle()
 	}
 
 	@IBAction func toggleStatusBarThemeMenu(_ sender: Any?) {
-		AppDefaults.shared.showStatusBarThemeMenu.toggle()
+		AppDefaults.showStatusBarThemeMenu.toggle()
 	}
 
 	@IBAction func checkForUpdates(_ sender: Any?) {
@@ -827,13 +827,13 @@ extension AppDelegate {
 	}
 
 	@IBAction func toggleWebInspectorEnabled(_ sender: Any?) {
-		let newValue = !AppDefaults.shared.webInspectorEnabled
-		AppDefaults.shared.webInspectorEnabled = newValue
+		let newValue = !AppDefaults.webInspectorEnabled
+		AppDefaults.webInspectorEnabled = newValue
 
 			// An attached inspector can display incorrectly on certain setups (like mine); default to displaying in a separate window,
 			// and reset the default to a separate window when the preference is toggled off and on again in case the inspector is
 			// accidentally reattached.
-		AppDefaults.shared.webInspectorStartsAttached = false
+		AppDefaults.webInspectorStartsAttached = false
 			NotificationCenter.default.post(name: .WebInspectorEnabledDidChange, object: newValue)
 	}
 
@@ -897,16 +897,16 @@ extension AppDelegate {
 	}
 
 	@MainActor func updateColumnLayoutMenuItem() {
-		useColumnLayoutMenuItem?.state = AppDefaults.shared.useColumnLayout ? .on : .off
+		useColumnLayoutMenuItem?.state = AppDefaults.useColumnLayout ? .on : .off
 	}
 
 	@MainActor func updateStatusBarMenuItems() {
-		if AppDefaults.shared.showStatusBar {
+		if AppDefaults.showStatusBar {
 			showStatusBarMenuItem?.title = NSLocalizedString("Hide Status Bar", comment: "Command")
 		} else {
 			showStatusBarMenuItem?.title = NSLocalizedString("Show Status Bar", comment: "Command")
 		}
-		if AppDefaults.shared.showStatusBarThemeMenu {
+		if AppDefaults.showStatusBarThemeMenu {
 			showStatusBarThemeMenuMenuItem?.title = NSLocalizedString("Hide Theme Menu in Status Bar", comment: "Command")
 		} else {
 			showStatusBarThemeMenuMenuItem?.title = NSLocalizedString("Show Theme Menu in Status Bar", comment: "Command")

@@ -161,7 +161,7 @@ import Account
 									starredArticles: starredArticles,
 									todayArticles: todayArticles,
 									lastUpdateTime: Date.now,
-									unreadCountDisplay: AppDefaults.shared.unreadCountDisplay)
+									unreadCountDisplay: AppDefaults.unreadCountDisplay)
 
 		return latestData
 	}

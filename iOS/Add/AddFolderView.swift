@@ -26,7 +26,7 @@ struct AddFolderView: View {
 		let accounts = AccountManager.shared.sortedActiveAccounts.filter { !$0.behaviors.contains(.disallowFolderManagement) }
 		self.accounts = accounts
 
-		let rememberedAccount = accounts.first { $0.accountID == AppDefaults.shared.addFolderAccountID }
+		let rememberedAccount = accounts.first { $0.accountID == AppDefaults.addFolderAccountID }
 		self._selectedAccountID = State(initialValue: (rememberedAccount ?? accounts.first)?.accountID ?? "")
 	}
 
@@ -100,7 +100,7 @@ struct AddFolderView: View {
 		guard let selectedAccount else {
 			return
 		}
-		AppDefaults.shared.addFolderAccountID = selectedAccount.accountID
+		AppDefaults.addFolderAccountID = selectedAccount.accountID
 
 		isAdding = true
 		defer {

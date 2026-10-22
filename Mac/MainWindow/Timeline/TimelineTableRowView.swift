@@ -47,7 +47,7 @@ final class TimelineTableRowView: NSTableRowView {
 	}
 
 	override func viewDidMoveToSuperview() {
-		if AppDefaults.shared.timelineShowsSeparators {
+		if AppDefaults.timelineShowsSeparators {
 			addSeparatorView()
 		}
 	}

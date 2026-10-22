@@ -80,7 +80,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		guard let unreadCountDisplay = UnreadCountDisplay(rawValue: sender.tag) else {
 			return
 		}
-		AppDefaults.shared.unreadCountDisplay = unreadCountDisplay
+		AppDefaults.unreadCountDisplay = unreadCountDisplay
 	}
 
 	@IBAction func browserPopUpDidChangeValue(_ sender: Any?) {
@@ -89,7 +89,7 @@ final class GeneralPreferencesViewController: NSViewController {
 		}
 
 		let bundleID = menuItem.representedObject as? String
-		AppDefaults.shared.defaultBrowserID = bundleID
+		AppDefaults.defaultBrowserID = bundleID
 		updateBrowserPopup()
 	}
 
@@ -143,7 +143,7 @@ private extension GeneralPreferencesViewController {
 	}
 
 	func updateUnreadCountDisplayButtons() {
-		let selectedTag = AppDefaults.shared.unreadCountDisplay.rawValue
+		let selectedTag = AppDefaults.unreadCountDisplay.rawValue
 		for case let button? in [showUnreadCountsButton, showUnreadCountDotButton, hideUnreadCountsButton] {
 			button.state = button.tag == selectedTag ? .on : .off
 		}
@@ -221,7 +221,7 @@ private extension GeneralPreferencesViewController {
 			menu.addItem(item)
 		}
 
-		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.shared.defaultBrowserID))
+		defaultBrowserPopup.selectItem(at: defaultBrowserPopup.indexOfItem(withRepresentedObject: AppDefaults.defaultBrowserID))
 	}
 
 	func updateNotificationSettings() {
@@ -236,10 +236,10 @@ private extension GeneralPreferencesViewController {
 
 	@objc var openFeedsInDefaultNewsReader: Bool {
 		get {
-			return AppDefaults.shared.subscribeToFeedsInDefaultBrowser
+			return AppDefaults.subscribeToFeedsInDefaultBrowser
 		}
 		set {
-			AppDefaults.shared.subscribeToFeedsInDefaultBrowser = newValue
+			AppDefaults.subscribeToFeedsInDefaultBrowser = newValue
 		}
 	}
 }

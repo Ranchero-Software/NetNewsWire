@@ -33,7 +33,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 		set {
 			_unreadCount = newValue
-			unreadCountLabel.isHidden = AppDefaults.shared.unreadCountDisplay.text(for: newValue) == nil
+			unreadCountLabel.isHidden = AppDefaults.unreadCountDisplay.text(for: newValue) == nil
 			unreadCountLabel.setUnreadCount(newValue)
 			setNeedsUpdateConfiguration()
 		}
@@ -57,7 +57,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = feedTitle.text ?? ""
-			guard let unreadText = AppDefaults.shared.unreadCountDisplay.accessibilityText(for: unreadCount) else {
+			guard let unreadText = AppDefaults.unreadCountDisplay.accessibilityText(for: unreadCount) else {
 				return name
 			}
 			return "\(name) \(unreadText)"

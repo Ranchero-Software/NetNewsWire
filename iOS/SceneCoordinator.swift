@@ -98,7 +98,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	/// `Bool` to track whether a refresh is scheduled.
 	private var isNavigationBarSubtitleRefreshScheduled: Bool = false
 
-	private(set) var sortDirection = AppDefaults.shared.timelineSortDirection {
+	private(set) var sortDirection = AppDefaults.timelineSortDirection {
 		didSet {
 			if sortDirection != oldValue {
 				sortParametersDidChange()
@@ -106,7 +106,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	private(set) var groupByFeed = AppDefaults.shared.timelineGroupByFeed {
+	private(set) var groupByFeed = AppDefaults.timelineGroupByFeed {
 		didSet {
 			if groupByFeed != oldValue {
 				sortParametersDidChange()
@@ -266,9 +266,9 @@ struct SidebarItemNode: Hashable, Sendable {
 	var currentArticle: Article? {
 		didSet {
 			if let article = currentArticle {
-				AppDefaults.shared.selectedArticle = ArticleSpecifier(article: article)
+				AppDefaults.selectedArticle = ArticleSpecifier(article: article)
 			} else {
-				AppDefaults.shared.selectedArticle = nil
+				AppDefaults.selectedArticle = nil
 			}
 		}
 	}
@@ -317,7 +317,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	private var isTimelineUnreadCountSubtitleShown: Bool {
-		timelineFeed != nil && timelineUnreadCount > 0 && AppDefaults.shared.unreadCountDisplay == .count
+		timelineFeed != nil && timelineUnreadCount > 0 && AppDefaults.unreadCountDisplay == .count
 	}
 
 	private static let minimumTimelineWidth: CGFloat = 280
@@ -353,13 +353,13 @@ struct SidebarItemNode: Hashable, Sendable {
 		self.rootSplitViewController.minimumSupplementaryColumnWidth = SceneCoordinator.minimumTimelineWidth
 		self.rootSplitViewController.maximumSupplementaryColumnWidth = SceneCoordinator.maximumTimelineWidth
 		let restoredTimelineWidth: CGFloat
-		if let savedTimelineWidth = AppDefaults.shared.timelineWidth {
+		if let savedTimelineWidth = AppDefaults.timelineWidth {
 			restoredTimelineWidth = CGFloat(savedTimelineWidth)
 		} else {
 			restoredTimelineWidth = 320
 		}
 		self.rootSplitViewController.preferredSupplementaryColumnWidth = Self.clampTimelineWidth(restoredTimelineWidth)
-		if let savedSidebarWidth = AppDefaults.shared.sidebarWidth {
+		if let savedSidebarWidth = AppDefaults.sidebarWidth {
 			self.rootSplitViewController.preferredPrimaryColumnWidth = Self.clampSidebarWidth(CGFloat(savedSidebarWidth))
 		}
 		self.rootSplitViewController.preferredSplitBehavior = .tile
@@ -418,7 +418,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		isRestoringState = true
 
-		if AppDefaults.shared.isFirstRun {
+		if AppDefaults.isFirstRun {
 			// Expand top-level items on first run.
 			for sectionNode in treeController.rootNode.childNodes {
 				markExpanded(sectionNode)
@@ -660,8 +660,8 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func userDefaultsDidChange() {
-		sortDirection = AppDefaults.shared.timelineSortDirection
-		groupByFeed = AppDefaults.shared.timelineGroupByFeed
+		sortDirection = AppDefaults.timelineSortDirection
+		groupByFeed = AppDefaults.timelineGroupByFeed
 	}
 
 	@objc func accountDidDownloadArticles(_ note: Notification) {
@@ -838,7 +838,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard width > 0 else {
 			return
 		}
-		AppDefaults.shared.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
+		AppDefaults.timelineWidth = Int(SceneCoordinator.clampTimelineWidth(width))
 	}
 
 	func sidebarDidLayout() {
@@ -857,7 +857,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		guard width > 0 else {
 			return
 		}
-		AppDefaults.shared.sidebarWidth = Int(SceneCoordinator.clampSidebarWidth(width))
+		AppDefaults.sidebarWidth = Int(SceneCoordinator.clampSidebarWidth(width))
 	}
 
 	func suspend() {
@@ -867,7 +867,7 @@ struct SidebarItemNode: Hashable, Sendable {
 	}
 
 	func saveExpandedContainers() {
-		AppDefaults.shared.expandedContainers = expandedContainers
+		AppDefaults.expandedContainers = expandedContainers
 	}
 
 	func cleanUp(conditional: Bool) {
@@ -875,7 +875,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		if isReadFeedsFiltered {
 			rebuildBackingStores()
 		}
-		if AppDefaults.shared.refreshClearsReadArticles || !conditional {
+		if AppDefaults.refreshClearsReadArticles || !conditional {
 			removeArticlesHiddenByReadFilter()
 		}
 	}
@@ -928,7 +928,7 @@ struct SidebarItemNode: Hashable, Sendable {
 
 		let newValue = !isReadFeedsFiltered
 		treeControllerDelegate.isReadFiltered = newValue
-		AppDefaults.shared.hideReadFeeds = newValue
+		AppDefaults.hideReadFeeds = newValue
 		rebuildBackingStores()
 		mainFeedCollectionViewController?.updateUI()
 	}
@@ -1130,7 +1130,7 @@ struct SidebarItemNode: Hashable, Sendable {
 				if self.isReadFeedsFiltered {
 					self.rebuildBackingStores()
 				}
-				AppDefaults.shared.selectedSidebarItem = sidebarItem.sidebarItemID
+				AppDefaults.selectedSidebarItem = sidebarItem.sidebarItemID
 				completion?()
 			}
 
@@ -1142,7 +1142,7 @@ struct SidebarItemNode: Hashable, Sendable {
 				}
 				self.activityManager.invalidateSelecting()
 				self.rootSplitViewController.showColumn(.primary)
-				AppDefaults.shared.selectedSidebarItem = nil
+				AppDefaults.selectedSidebarItem = nil
 				completion?()
 			}
 
@@ -1797,7 +1797,7 @@ extension SceneCoordinator: UISplitViewControllerDelegate {
 	}
 
 	func splitViewController(_ svc: UISplitViewController, willChangeTo displayMode: UISplitViewController.DisplayMode) {
-		AppDefaults.shared.splitViewPreferredDisplayMode = displayMode.rawValue
+		AppDefaults.splitViewPreferredDisplayMode = displayMode.rawValue
 		mainTimelineViewController?.updateToolbarProgressView(for: displayMode)
 	}
 
