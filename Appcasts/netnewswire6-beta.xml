@@ -7,6 +7,25 @@
     <language>en</language>
 
 <item>
+	<title>NetNewsWire 7.3b2</title>
+	<description><![CDATA[
+<ul>
+<li>Fixed a crash at midnight when the status bar is showing
+<li>Added the last-refresh time to the status bar, and made it the default
+<li>Changed the status bar to use a shorter date format
+<li>Added Refresh and Show/Hide Sidebar commands to the status bar gear menu
+<li>Made clicking the progress indicator in the status bar open the Current Activity window (as in NetNewsWire of Yore)
+<li>Fixed bug where the status bar divider might drift from the split view divider
+<li>Fixed inline footnotes in FreshRSS articles
+<li>Added netnewswire, feed, feeds, and x-netnewswire-feed as allowed link schemes in the article view — so clicking a link to install a theme (for instance) works
+</ul>
+	]]></description>
+	<pubDate>Thu, 22 Oct 2026 11:20:00 -0700</pubDate>
+	<enclosure url="https://github.com/Ranchero-Software/NetNewsWire/releases/download/mac-7.3b2/NetNewsWire7.3b2.zip" sparkle:version="7226" sparkle:shortVersionString="7.3b2" length="10028435" type="application/zip" />
+	<sparkle:minimumSystemVersion>15.0</sparkle:minimumSystemVersion>
+</item>
+
+<item>
 	<title>NetNewsWire 7.3b1</title>
 	<description><![CDATA[
 <ul>
