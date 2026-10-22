@@ -9,6 +9,7 @@
 import Foundation
 import os
 import SQLite3
+import Synchronization
 import RSDatabaseObjC
 
 /// Manage a serial queue and a SQLite database.
@@ -22,7 +23,7 @@ public final class DatabaseQueue: Sendable {
 		}
 	}
 
-	private let state: OSAllocatedUnfairLock<State>
+	private let state: Mutex<State>
 	private let databasePath: String
 	private let serialDispatchQueue: DispatchQueue
 
@@ -35,7 +36,7 @@ public final class DatabaseQueue: Sendable {
 
 		self.databasePath = databasePath
 		let database = FMDatabase(path: databasePath)!
-		self.state = OSAllocatedUnfairLock(initialState: State(database))
+		self.state = Mutex(State(database))
 
 		self.state.withLock { openDatabase($0.database) }
 	}
