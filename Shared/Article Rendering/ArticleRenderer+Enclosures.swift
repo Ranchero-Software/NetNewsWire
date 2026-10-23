@@ -15,25 +15,31 @@ extension ArticleRenderer {
 
 	private static let secondsPerMinute = 60
 	private static let secondsPerHour = 3600
+	private static let visualElementTags = ["<img", "<picture", "<video", "<iframe"]
 
 	/// Empty when there’s nothing to show. Skips attachments whose URLs already appear
 	/// in the body, since feeds often embed the same image they list as an enclosure.
-	static func enclosuresHTML(attachments: Set<Attachment>?, body: String, posterURL: String?) -> String {
-		guard let attachments, !attachments.isEmpty else {
-			return ""
-		}
-
-		let sortedAttachments = attachments.sorted { $0.url < $1.url }
+	/// The article’s image (`media:thumbnail`, for instance) is shown only when nothing
+	/// else visual is — no image or video enclosure, and no image or video in the body.
+	static func enclosuresHTML(attachments: Set<Attachment>?, body: String, imageURL: String?) -> String {
 		var enclosures = [String]()
+		var hasVisualEnclosure = false
+		let sortedAttachments = (attachments ?? []).sorted { $0.url < $1.url }
 		for attachment in sortedAttachments where !bodyContainsURL(body, attachment.url) {
-			if let enclosure = enclosureHTML(attachment, posterURL: posterURL) {
+			if let enclosure = enclosureHTML(attachment, posterURL: imageURL) {
 				enclosures.append(enclosure)
+				hasVisualEnclosure = hasVisualEnclosure || isVisual(attachment)
 			}
 		}
+
+		if !hasVisualEnclosure, let imageURL, !imageURL.isEmpty, !bodyContainsVisualElement(body), !bodyContainsURL(body, imageURL) {
+			let image = "<figure class=\"nnw-enclosure nnw-enclosure-image\"><img src=\"\(imageURL.escapingSpecialXMLCharacters)\" alt=\"\"></figure>"
+			enclosures.insert(image, at: 0)
+		}
+
 		guard !enclosures.isEmpty else {
 			return ""
 		}
-
 		return "<div class=\"nnw-enclosures\">\n\(enclosures.joined(separator: "\n"))\n</div>"
 	}
 }
@@ -119,6 +125,17 @@ private extension ArticleRenderer {
 			return nil
 		}
 		return lastPathComponent.removingPercentEncoding ?? lastPathComponent
+	}
+
+	static func isVisual(_ attachment: Attachment) -> Bool {
+		if ArticleRenderingSpecialCases.youTubeEmbedURL(forAttachmentURL: attachment.url) != nil {
+			return true
+		}
+		return attachment.displayMedium == .image || attachment.displayMedium == .video
+	}
+
+	static func bodyContainsVisualElement(_ body: String) -> Bool {
+		visualElementTags.contains { body.range(of: $0, options: .caseInsensitive) != nil }
 	}
 
 	/// Body HTML escapes `&` in attributes, so check both forms of the URL.

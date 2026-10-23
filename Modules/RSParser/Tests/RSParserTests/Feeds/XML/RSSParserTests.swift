@@ -58,6 +58,7 @@ import RSParser
 		#expect(attachment.mimeType == "audio/mpeg")
 		#expect(attachment.sizeInBytes == 54919661)
 		#expect(attachment.durationInSeconds == 6849) // itunes:duration 01:54:09
+		#expect(article.imageURL == "http://static1.squarespace.com/static/513abd71e4b0fe58c655c105/t/52c45a37e4b0a77a5034aa84/1388599866232/1500w/Artwork.jpg") // itunes:image
 	}
 
 	@Test func cloudBlogMediaContentImages() throws {

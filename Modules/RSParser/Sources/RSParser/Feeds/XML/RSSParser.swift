@@ -100,6 +100,13 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			parser.beginStoringCharacters()
 			return
 		}
+		if parsingArticle && namespace.isITunes && localName.equals("image") {
+			if let currentItem, currentItem.itunesImageURL == nil, let href = attributes.value(forNameCaseInsensitive: "href"), !href.isEmpty {
+				currentItem.itunesImageURL = resolveURL(href)
+			}
+			namespaceElementDepth = 1
+			return
+		}
 		if mediaElementTracker.containerDepth > 0 {
 			namespaceElementDepth = 1
 			return
