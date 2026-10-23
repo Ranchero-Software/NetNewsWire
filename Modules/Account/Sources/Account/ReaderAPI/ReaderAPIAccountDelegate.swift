@@ -1154,6 +1154,7 @@ private extension ReaderAPIAccountDelegate {
 							  markdown: nil,
 							  summary: entry.summary.content,
 							  imageURL: nil,
+							  thumbnailURL: nil,
 							  bannerImageURL: nil,
 							  datePublished: entry.parseDatePublished(),
 							  dateModified: nil,

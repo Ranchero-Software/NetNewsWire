@@ -32,6 +32,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				externalURL: nil,
 				summary: nil,
 				imageURL: nil,
+				thumbnailURL: nil,
 				datePublished: date,
 				dateModified: nil,
 				authors: Set([Author(authorID: "_testAuthorID", name: "J. R. R. Tolkien", url: nil, avatarURL: nil, emailAddress: nil)!]),

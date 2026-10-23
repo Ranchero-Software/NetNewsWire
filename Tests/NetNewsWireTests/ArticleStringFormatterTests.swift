@@ -230,6 +230,7 @@ import Testing
 		externalURL: nil,
 		summary: nil,
 		imageURL: nil,
+		thumbnailURL: nil,
 		datePublished: Date(),
 		dateModified: nil,
 		authors: nil,

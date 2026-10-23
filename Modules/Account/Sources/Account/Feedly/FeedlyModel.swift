@@ -290,6 +290,7 @@ struct FeedlyEntryParser {
 						  markdown: nil,
 						  summary: summary,
 						  imageURL: nil,
+						  thumbnailURL: nil,
 						  bannerImageURL: nil,
 						  datePublished: datePublished,
 						  dateModified: dateModified,

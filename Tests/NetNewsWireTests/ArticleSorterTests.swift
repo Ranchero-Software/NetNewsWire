@@ -394,6 +394,7 @@ import XCTest
 			externalURL: nil,
 			summary: nil,
 			imageURL: nil,
+			thumbnailURL: nil,
 			datePublished: date,
 			dateModified: nil,
 			authors: nil,
