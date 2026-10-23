@@ -658,7 +658,7 @@ import RSParser
 
 		#expect(item.title == "Real Video Title")
 		#expect(item.url == "https://www.youtube.com/watch?v=abcdefghijk")
-		#expect(item.imageURL == "https://i1.ytimg.com/vi/abcdefghijk/hqdefault.jpg")
+		#expect(item.thumbnailURL == "https://i1.ytimg.com/vi/abcdefghijk/hqdefault.jpg")
 
 		// No content or summary, so the plain-text media:description is the body.
 		#expect(item.contentHTML == nil)

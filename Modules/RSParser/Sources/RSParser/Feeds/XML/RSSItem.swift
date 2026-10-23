@@ -23,7 +23,7 @@ final class RSSItem {
 	var dateModified: Date?
 	var authors: Set<ParsedAuthor> = []
 	var attachments: [ParsedAttachment] = []
-	var imageURL: String?
+	var thumbnailURL: String?
 	var itunesImageURL: String?
 	var itunesDurationInSeconds: Int?
 	var mediaDescription: String?
@@ -99,8 +99,8 @@ final class RSSItem {
 			contentText: contentText,
 			markdown: markdown,
 			summary: itemSummary,
-			imageURL: imageURL ?? itunesImageURL,
-			thumbnailURL: nil,
+			imageURL: itunesImageURL,
+			thumbnailURL: thumbnailURL,
 			bannerImageURL: nil,
 			datePublished: datePublished,
 			dateModified: dateModified,

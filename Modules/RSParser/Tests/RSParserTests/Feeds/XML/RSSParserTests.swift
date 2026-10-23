@@ -83,7 +83,7 @@ import RSParser
 		let item = try #require(parsedFeed.items.first)
 
 		#expect(item.title == "Real Article Title")
-		#expect(item.imageURL == "https://example.com/videos/1.jpg")
+		#expect(item.thumbnailURL == "https://example.com/videos/1.jpg")
 
 		let attachments = try #require(item.attachments)
 		#expect(attachments.count == 1)

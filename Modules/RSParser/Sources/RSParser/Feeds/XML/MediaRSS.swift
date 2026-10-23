@@ -108,8 +108,8 @@ struct MediaElementTracker {
 			return false
 		}
 
-		if localName.equals("thumbnail"), item.imageURL == nil, let urlString = attributes.value(forNameCaseInsensitive: "url"), !urlString.isEmpty {
-			item.imageURL = resolveURL(urlString)
+		if localName.equals("thumbnail"), item.thumbnailURL == nil, let urlString = attributes.value(forNameCaseInsensitive: "url"), !urlString.isEmpty {
+			item.thumbnailURL = resolveURL(urlString)
 		}
 		return true
 	}

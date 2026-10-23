@@ -260,7 +260,7 @@ private extension ArticleRenderer {
 		}
 
 		// Templates without [[enclosures]] get them at the end of the body.
-		let enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, imageURL: article.imageLink)
+		let enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, imageURL: article.imageLink ?? article.thumbnailLink)
 		if template().contains("[[enclosures]]") {
 			d["body"] = body
 			d["enclosures"] = enclosures

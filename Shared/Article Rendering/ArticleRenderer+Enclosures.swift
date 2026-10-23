@@ -19,7 +19,7 @@ extension ArticleRenderer {
 
 	/// Empty when there’s nothing to show. Skips attachments whose URLs already appear
 	/// in the body, since feeds often embed the same image they list as an enclosure.
-	/// The article’s image (`media:thumbnail`, for instance) is shown only when nothing
+	/// `imageURL` (the article’s image, else its thumbnail) is shown only when nothing
 	/// else visual is — no image or video enclosure, and no image or video in the body.
 	static func enclosuresHTML(attachments: Set<Attachment>?, body: String, imageURL: String?) -> String {
 		var enclosures = [String]()
