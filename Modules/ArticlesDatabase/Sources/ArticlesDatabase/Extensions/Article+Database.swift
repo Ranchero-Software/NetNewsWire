@@ -39,8 +39,9 @@ extension Article {
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 		let authors = Self.authorsFromRow(row)
+		let attachments = Self.attachmentsFromRow(row)
 
-		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
 	}
 
 	private static func authorsFromRow(_ row: FMResultSet) -> Set<Author>? {
@@ -50,8 +51,16 @@ extension Article {
 		return Author.authorsWithJSON(data)
 	}
 
+	private static func attachmentsFromRow(_ row: FMResultSet) -> Set<Attachment>? {
+		guard let json = row.swiftString(forColumn: DatabaseKey.attachments), !json.isEmpty, let data = json.data(using: .utf8) else {
+			return nil
+		}
+		return Attachment.attachmentsWithJSON(data)
+	}
+
 	convenience init(parsedItem: ParsedItem, maximumDateAllowed: Date, accountID: String, feedID: String, status: ArticleStatus) {
 		let authors = Author.authorsWithParsedAuthors(parsedItem.authors)
+		let attachments = Attachment.attachmentsWithParsedAttachments(parsedItem.attachments)
 
 		// Deal with future datePublished and dateModified dates.
 		var datePublished = parsedItem.datePublished
@@ -67,7 +76,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, markdown: parsedItem.markdown, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, markdown: parsedItem.markdown, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article, String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -104,6 +113,14 @@ extension Article {
 				d[DatabaseKey.authors] = json
 			} else {
 				d[DatabaseKey.authors] = ""
+			}
+		}
+
+		if attachments != existingArticle.attachments {
+			if let attachments, !attachments.isEmpty, let json = attachments.json() {
+				d[DatabaseKey.attachments] = json
+			} else {
+				d[DatabaseKey.attachments] = ""
 			}
 		}
 
@@ -192,6 +209,9 @@ extension Article {
 		}
 		if let authors, !authors.isEmpty, let json = authors.json() {
 			d[DatabaseKey.authors] = json
+		}
+		if let attachments, !attachments.isEmpty, let json = attachments.json() {
+			d[DatabaseKey.attachments] = json
 		}
 		return d
 	}
