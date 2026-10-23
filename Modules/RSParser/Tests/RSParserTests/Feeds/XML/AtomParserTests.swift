@@ -660,6 +660,10 @@ import RSParser
 		#expect(item.url == "https://www.youtube.com/watch?v=abcdefghijk")
 		#expect(item.imageURL == "https://i1.ytimg.com/vi/abcdefghijk/hqdefault.jpg")
 
+		// No content or summary, so the plain-text media:description is the body.
+		#expect(item.contentHTML == nil)
+		#expect(item.contentText == "The video’s description.")
+
 		let attachments = try #require(item.attachments)
 		#expect(attachments.count == 1)
 		let attachment = try #require(attachments.first)

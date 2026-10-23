@@ -91,7 +91,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			return
 		}
 		if parsingArticle && namespace.isMediaRSS {
-			if let currentItem, mediaElementTracker.start(localName: localName, attributes: attributes, item: currentItem, resolveURL: resolveURL) {
+			if let currentItem, mediaElementTracker.start(localName: localName, attributes: attributes, item: currentItem, parser: parser, resolveURL: resolveURL) {
 				namespaceElementDepth = 1
 			}
 			return
@@ -184,7 +184,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 		if parsingArticle && namespace.isMediaRSS {
 			if let currentItem {
-				mediaElementTracker.end(localName: localName, item: currentItem)
+				mediaElementTracker.end(localName: localName, item: currentItem, parser: parser)
 			}
 			return
 		}

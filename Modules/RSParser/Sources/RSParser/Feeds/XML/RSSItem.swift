@@ -25,6 +25,8 @@ final class RSSItem {
 	var attachments: [ParsedAttachment] = []
 	var imageURL: String?
 	var itunesDurationInSeconds: Int?
+	var mediaDescription: String?
+	var mediaDescriptionIsHTML = false
 
 	/// Returns `guid` if present. Otherwise MD5-hashes available properties
 	/// to build the most likely stable ID.
@@ -74,6 +76,16 @@ final class RSSItem {
 			itemSummary = nil
 		}
 
+		// With no body or summary, fall back to media:description (YouTube, for instance).
+		var contentText: String?
+		if contentHTML == nil || contentHTML?.isEmpty == true, let mediaDescription {
+			if mediaDescriptionIsHTML {
+				contentHTML = mediaDescription
+			} else {
+				contentText = mediaDescription
+			}
+		}
+
 		return ParsedItem(
 			syncServiceID: nil,
 			uniqueID: uniqueID,
@@ -83,7 +95,7 @@ final class RSSItem {
 			title: title,
 			language: language,
 			contentHTML: contentHTML,
-			contentText: nil,
+			contentText: contentText,
 			markdown: markdown,
 			summary: itemSummary,
 			imageURL: imageURL,

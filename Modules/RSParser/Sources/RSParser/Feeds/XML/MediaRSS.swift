@@ -63,11 +63,11 @@ enum MediaRSS {
 	}
 }
 
-/// Tracks `media:group` and `media:content` while parsing an item, adding attachments
-/// and the thumbnail to the item. Used by the RSS and Atom parsers.
+/// Tracks `media:group` and `media:content` while parsing an item, adding attachments,
+/// the thumbnail, and the description to the item. Used by the RSS and Atom parsers.
 struct MediaElementTracker {
 
-	/// Depth inside `media:group` and `media:content`. The parsers skip
+	/// Depth inside `media:group`, `media:content`, and `media:description`. The parsers skip
 	/// non-Media RSS elements in there, so an unprefixed child (`<title>`)
 	/// can’t be mistaken for one of the item’s own elements.
 	private(set) var containerDepth = 0
@@ -80,7 +80,7 @@ struct MediaElementTracker {
 	}
 
 	/// Returns true when the parser should skip the element’s subtree.
-	mutating func start(localName: ArraySlice<UInt8>, attributes: XMLAttributes, item: RSSItem, resolveURL: (String) -> String?) -> Bool {
+	mutating func start(localName: ArraySlice<UInt8>, attributes: XMLAttributes, item: RSSItem, parser: XMLSAXParser, resolveURL: (String) -> String?) -> Bool {
 		if localName.equals("group") {
 			group = MediaGroup()
 			containerDepth += 1
@@ -99,13 +99,22 @@ struct MediaElementTracker {
 			return false
 		}
 
+		if localName.equals("description") {
+			if item.mediaDescription == nil {
+				item.mediaDescriptionIsHTML = attributes.value(forNameCaseInsensitive: "type")?.lowercased() == "html"
+				parser.beginStoringCharacters()
+			}
+			containerDepth += 1
+			return false
+		}
+
 		if localName.equals("thumbnail"), item.imageURL == nil, let urlString = attributes.value(forNameCaseInsensitive: "url"), !urlString.isEmpty {
 			item.imageURL = resolveURL(urlString)
 		}
 		return true
 	}
 
-	mutating func end(localName: ArraySlice<UInt8>, item: RSSItem) {
+	mutating func end(localName: ArraySlice<UInt8>, item: RSSItem, parser: XMLSAXParser) {
 		if localName.equals("group") {
 			if let attachment = group?.chosenAttachment {
 				item.attachments.append(attachment)
@@ -113,6 +122,11 @@ struct MediaElementTracker {
 			group = nil
 			containerDepth -= 1
 		} else if localName.equals("content") {
+			containerDepth -= 1
+		} else if localName.equals("description") {
+			if item.mediaDescription == nil {
+				item.mediaDescription = parser.currentStringWithTrimmedWhitespace
+			}
 			containerDepth -= 1
 		}
 	}

@@ -124,7 +124,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 			return
 		}
 		if parsingArticle && namespace.isMediaRSS {
-			if let currentArticle, mediaElementTracker.start(localName: localName, attributes: attributes, item: currentArticle, resolveURL: resolvedURLString) {
+			if let currentArticle, mediaElementTracker.start(localName: localName, attributes: attributes, item: currentArticle, parser: parser, resolveURL: resolvedURLString) {
 				namespaceElementDepth = 1
 			}
 			return
@@ -243,7 +243,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 
 		if parsingArticle && namespace.isMediaRSS {
 			if let currentArticle {
-				mediaElementTracker.end(localName: localName, item: currentArticle)
+				mediaElementTracker.end(localName: localName, item: currentArticle, parser: parser)
 			}
 			return
 		}
