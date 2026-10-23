@@ -28,7 +28,7 @@ import ArticlesDatabase
 	}
 
 	@Test func identicalUpdateReportsNoChanges() async {
-		let item = parsedItem(title: "Title", markdown: nil, attachments: nil)
+		let item = parsedItem(title: "Title", markdown: nil, attachments: nil, thumbnailURL: nil)
 		let firstChanges = await database.updateAsync(parsedItems: [item], feedID: feedID, deleteOlder: false)
 		#expect(firstChanges.new?.count == 1)
 
@@ -39,10 +39,10 @@ import ArticlesDatabase
 	}
 
 	@Test func markdownChangePersists() async {
-		let original = parsedItem(title: "Title", markdown: "one", attachments: nil)
+		let original = parsedItem(title: "Title", markdown: "one", attachments: nil, thumbnailURL: nil)
 		_ = await database.updateAsync(parsedItems: [original], feedID: feedID, deleteOlder: false)
 
-		let edited = parsedItem(title: "Title", markdown: "two", attachments: nil)
+		let edited = parsedItem(title: "Title", markdown: "two", attachments: nil, thumbnailURL: nil)
 		let changes = await database.updateAsync(parsedItems: [edited], feedID: feedID, deleteOlder: false)
 		#expect(changes.updated?.count == 1)
 
@@ -52,10 +52,10 @@ import ArticlesDatabase
 	}
 
 	@Test func clearedFieldStopsReportingAsUpdated() async {
-		let withTitle = parsedItem(title: "Title", markdown: nil, attachments: nil)
+		let withTitle = parsedItem(title: "Title", markdown: nil, attachments: nil, thumbnailURL: nil)
 		_ = await database.updateAsync(parsedItems: [withTitle], feedID: feedID, deleteOlder: false)
 
-		let withoutTitle = parsedItem(title: nil, markdown: nil, attachments: nil)
+		let withoutTitle = parsedItem(title: nil, markdown: nil, attachments: nil, thumbnailURL: nil)
 		let clearingChanges = await database.updateAsync(parsedItems: [withoutTitle], feedID: feedID, deleteOlder: false)
 		#expect(clearingChanges.updated?.count == 1)
 
@@ -76,7 +76,7 @@ import ArticlesDatabase
 	}
 
 	@Test func attachmentsPersist() async throws {
-		let item = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: 3600)])
+		let item = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: 3600)], thumbnailURL: nil)
 		_ = await database.updateAsync(parsedItems: [item], feedID: feedID, deleteOlder: false)
 
 		database.emptyCaches()
@@ -91,11 +91,11 @@ import ArticlesDatabase
 	}
 
 	@Test func attachmentOnlyChangeIsUpdate() async throws {
-		let original = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: nil)])
+		let original = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: nil)], thumbnailURL: nil)
 		_ = await database.updateAsync(parsedItems: [original], feedID: feedID, deleteOlder: false)
 
 		database.emptyCaches()
-		let edited = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: 3600)])
+		let edited = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: 3600)], thumbnailURL: nil)
 		let changes = await database.updateAsync(parsedItems: [edited], feedID: feedID, deleteOlder: false)
 		#expect(changes.updated?.count == 1)
 
@@ -105,11 +105,11 @@ import ArticlesDatabase
 	}
 
 	@Test func clearedAttachmentsStopReportingAsUpdated() async throws {
-		let withAttachments = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: 3600)])
+		let withAttachments = parsedItem(title: "Title", markdown: nil, attachments: [try episodeAttachment(durationInSeconds: 3600)], thumbnailURL: nil)
 		_ = await database.updateAsync(parsedItems: [withAttachments], feedID: feedID, deleteOlder: false)
 
 		database.emptyCaches()
-		let withoutAttachments = parsedItem(title: "Title", markdown: nil, attachments: nil)
+		let withoutAttachments = parsedItem(title: "Title", markdown: nil, attachments: nil, thumbnailURL: nil)
 		let clearingChanges = await database.updateAsync(parsedItems: [withoutAttachments], feedID: feedID, deleteOlder: false)
 		#expect(clearingChanges.updated?.count == 1)
 
@@ -121,19 +121,33 @@ import ArticlesDatabase
 		let repeatChanges = await database.updateAsync(parsedItems: [withoutAttachments], feedID: feedID, deleteOlder: false)
 		#expect(repeatChanges.updated == nil)
 	}
+
+	@Test func thumbnailChangePersists() async {
+		let original = parsedItem(title: "Title", markdown: nil, attachments: nil, thumbnailURL: "https://example.com/small.jpg")
+		_ = await database.updateAsync(parsedItems: [original], feedID: feedID, deleteOlder: false)
+
+		database.emptyCaches()
+		let edited = parsedItem(title: "Title", markdown: nil, attachments: nil, thumbnailURL: "https://example.com/small-2.jpg")
+		let changes = await database.updateAsync(parsedItems: [edited], feedID: feedID, deleteOlder: false)
+		#expect(changes.updated?.count == 1)
+
+		database.emptyCaches()
+		let fetched = await database.fetchArticlesAsync(feedID: feedID).first
+		#expect(fetched?.rawThumbnailLink == "https://example.com/small-2.jpg")
+	}
 }
 
 // MARK: - Helpers
 
 private extension ArticleUpdateTests {
 
-	func parsedItem(title: String?, markdown: String?, attachments: Set<ParsedAttachment>?) -> ParsedItem {
-		ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedID, url: "https://example.com/\(uniqueID)", externalURL: nil, title: title, language: nil, contentHTML: "<p>Test</p>", contentText: nil, markdown: markdown, summary: nil, imageURL: nil, bannerImageURL: nil, datePublished: Date(timeIntervalSince1970: 0), dateModified: nil, authors: nil, tags: nil, attachments: attachments)
+	func parsedItem(title: String?, markdown: String?, attachments: Set<ParsedAttachment>?, thumbnailURL: String?) -> ParsedItem {
+		ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedID, url: "https://example.com/\(uniqueID)", externalURL: nil, title: title, language: nil, contentHTML: "<p>Test</p>", contentText: nil, markdown: markdown, summary: nil, imageURL: nil, thumbnailURL: thumbnailURL, bannerImageURL: nil, datePublished: Date(timeIntervalSince1970: 0), dateModified: nil, authors: nil, tags: nil, attachments: attachments)
 	}
 
 	func article(markdown: String?) -> Article {
 		let status = ArticleStatus(articleID: "article1", read: false, starred: false, dateArrived: Date(timeIntervalSince1970: 0))
-		return Article(accountID: "test", articleID: "article1", feedID: feedID, uniqueID: uniqueID, title: "Title", contentHTML: "<p>Test</p>", contentText: nil, markdown: markdown, url: nil, externalURL: nil, summary: nil, imageURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
+		return Article(accountID: "test", articleID: "article1", feedID: feedID, uniqueID: uniqueID, title: "Title", contentHTML: "<p>Test</p>", contentText: nil, markdown: markdown, url: nil, externalURL: nil, summary: nil, imageURL: nil, thumbnailURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 	}
 
 	func episodeAttachment(durationInSeconds: Int?) throws -> ParsedAttachment {

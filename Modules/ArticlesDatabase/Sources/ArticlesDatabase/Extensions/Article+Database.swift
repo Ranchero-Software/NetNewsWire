@@ -36,12 +36,13 @@ extension Article {
 		let externalURL = row.swiftString(forColumn: DatabaseKey.externalURL)
 		let summary = row.swiftString(forColumn: DatabaseKey.summary)
 		let imageURL = row.swiftString(forColumn: DatabaseKey.imageURL)
+		let thumbnailURL = row.swiftString(forColumn: DatabaseKey.thumbnailURL)
 		let datePublished = row.date(forColumn: DatabaseKey.datePublished)
 		let dateModified = row.date(forColumn: DatabaseKey.dateModified)
 		let authors = Self.authorsFromRow(row)
 		let attachments = Self.attachmentsFromRow(row)
 
-		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
+		self.init(accountID: accountID, articleID: articleID, feedID: feedID, uniqueID: uniqueID, title: title, contentHTML: contentHTML, contentText: contentText, markdown: markdown, url: url, externalURL: externalURL, summary: summary, imageURL: imageURL, thumbnailURL: thumbnailURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
 	}
 
 	private static func authorsFromRow(_ row: FMResultSet) -> Set<Author>? {
@@ -76,7 +77,7 @@ extension Article {
 			dateModified = nil
 		}
 
-		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, markdown: parsedItem.markdown, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
+		self.init(accountID: accountID, articleID: parsedItem.syncServiceID, feedID: feedID, uniqueID: parsedItem.uniqueID, title: parsedItem.title, contentHTML: parsedItem.contentHTML, contentText: parsedItem.contentText, markdown: parsedItem.markdown, url: parsedItem.url, externalURL: parsedItem.externalURL, summary: parsedItem.summary, imageURL: parsedItem.imageURL, thumbnailURL: parsedItem.thumbnailURL, datePublished: datePublished, dateModified: dateModified, authors: authors, attachments: attachments, status: status)
 	}
 
 	private func addPossibleStringChangeWithKeyPath(_ comparisonKeyPath: KeyPath<Article, String?>, _ otherArticle: Article, _ key: String, _ dictionary: inout DatabaseDictionary) {
@@ -107,6 +108,7 @@ extension Article {
 		addPossibleStringChangeWithKeyPath(\Article.rawExternalLink, existingArticle, DatabaseKey.externalURL, &d)
 		addPossibleStringChangeWithKeyPath(\Article.summary, existingArticle, DatabaseKey.summary, &d)
 		addPossibleStringChangeWithKeyPath(\Article.rawImageLink, existingArticle, DatabaseKey.imageURL, &d)
+		addPossibleStringChangeWithKeyPath(\Article.rawThumbnailLink, existingArticle, DatabaseKey.thumbnailURL, &d)
 
 		if authors != existingArticle.authors {
 			if let authors, !authors.isEmpty, let json = authors.json() {
@@ -200,6 +202,9 @@ extension Article {
 		}
 		if let rawImageLink = rawImageLink {
 			d[DatabaseKey.imageURL] = rawImageLink
+		}
+		if let rawThumbnailLink {
+			d[DatabaseKey.thumbnailURL] = rawThumbnailLink
 		}
 		if let datePublished = datePublished {
 			d[DatabaseKey.datePublished] = datePublished
