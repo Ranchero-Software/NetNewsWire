@@ -33,7 +33,66 @@ import RSParser
 				#expect(size >= 22275279)
 			}
 			#expect(attachment.mimeType == "audio/mpeg")
+			#expect(attachment.durationInSeconds != nil)
 		}
+	}
+
+	@Test func atpEnclosureAndMediaContentMerged() throws {
+		// Each atp.fm item has the same file as both <enclosure> and <media:content>.
+		let d = parserData("atp", "rss", "http://atp.fm/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		#expect(parsedFeed.items.count == 100)
+
+		for article in parsedFeed.items {
+			let attachments = try #require(article.attachments)
+			#expect(attachments.count == 1)
+			let attachment = try #require(attachments.first)
+			// Some items have no type attribute, only medium.
+			#expect(attachment.medium == .audio)
+			#expect(attachment.sizeInBytes != nil)
+		}
+
+		let article = try #require(parsedFeed.items.first { $0.title == "311: Mutually Assured Destruction" })
+		let attachment = try #require(article.attachments?.first)
+		#expect(attachment.url == "http://traffic.libsyn.com/atpfm/atp311.mp3")
+		#expect(attachment.mimeType == "audio/mpeg")
+		#expect(attachment.sizeInBytes == 54919661)
+		#expect(attachment.durationInSeconds == 6849) // itunes:duration 01:54:09
+	}
+
+	@Test func cloudBlogMediaContentImages() throws {
+		let d = parserData("cloudblog", "rss", "https://cloud.google.com/blog/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+
+		let articlesWithAttachments = parsedFeed.items.filter { $0.attachments != nil }
+		#expect(articlesWithAttachments.count == 18)
+		for article in articlesWithAttachments {
+			let attachments = try #require(article.attachments)
+			#expect(attachments.count == 1)
+			let attachment = try #require(attachments.first)
+			#expect(attachment.url.hasPrefix("https://storage.googleapis.com/"))
+			#expect(attachment.width != nil)
+			#expect(attachment.height != nil)
+		}
+	}
+
+	@Test func mediaGroupKeepsDefaultRendition() throws {
+		let d = parserData("media-group", "rss", "https://example.com/feed")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		#expect(item.title == "Real Article Title")
+		#expect(item.imageURL == "https://example.com/videos/1.jpg")
+
+		let attachments = try #require(item.attachments)
+		#expect(attachments.count == 1)
+		let attachment = try #require(attachments.first)
+		#expect(attachment.url == "https://example.com/videos/1-high.mp4")
+		#expect(attachment.mimeType == "video/mp4")
+		#expect(attachment.medium == .video)
+		#expect(attachment.width == 1920)
+		#expect(attachment.height == 1080)
+		#expect(attachment.durationInSeconds == 125)
 	}
 
 	@Test func theOmniShowUniqueIDs() throws {

@@ -60,13 +60,12 @@ public struct XMLAttributes: Sendable {
 		value(forName: name, caseInsensitive: false)
 	}
 
-	/// Case-insensitive qualified-name lookup — for RSS authors who mess up attribute
-	/// casing (`isPermaLink` vs `ispermalink`).
+	/// For feeds with messed up casing (`isPermaLink` vs `ispermalink`).
 	public func value(forNameCaseInsensitive name: String) -> String? {
 		value(forName: name, caseInsensitive: true)
 	}
 
-	/// Materialize a `[String: String]` dictionary of qualified names → values.
+	/// Create dictionary of qualified names to values.
 	public func dictionary() -> [String: String] {
 		var dict = [String: String]()
 		dict.reserveCapacity(attributes.count)

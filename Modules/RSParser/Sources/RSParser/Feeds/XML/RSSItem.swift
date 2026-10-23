@@ -22,7 +22,9 @@ final class RSSItem {
 	var datePublished: Date?
 	var dateModified: Date?
 	var authors: Set<ParsedAuthor> = []
-	var attachments: Set<ParsedAttachment> = []
+	var attachments: [ParsedAttachment] = []
+	var imageURL: String?
+	var itunesDurationInSeconds: Int?
 
 	/// Returns `guid` if present. Otherwise MD5-hashes available properties
 	/// to build the most likely stable ID.
@@ -84,13 +86,49 @@ final class RSSItem {
 			contentText: nil,
 			markdown: markdown,
 			summary: itemSummary,
-			imageURL: nil,
+			imageURL: imageURL,
 			bannerImageURL: nil,
 			datePublished: datePublished,
 			dateModified: dateModified,
 			authors: authors.isEmpty ? nil : authors,
 			tags: nil,
-			attachments: attachments.isEmpty ? nil : attachments
+			attachments: mergedAttachments()
 		)
+	}
+
+	/// Podcast feeds often list the same file as both `<enclosure>` and `media:content`,
+	/// so attachments with the same URL are merged into one. `itunes:duration` applies to
+	/// audio and video attachments that don’t have their own duration.
+	private func mergedAttachments() -> Set<ParsedAttachment>? {
+		var attachmentsByURL = [String: ParsedAttachment]()
+		for attachment in attachments {
+			if let existingAttachment = attachmentsByURL[attachment.url] {
+				attachmentsByURL[attachment.url] = existingAttachment.filledIn(from: attachment)
+			} else {
+				attachmentsByURL[attachment.url] = attachment
+			}
+		}
+		guard !attachmentsByURL.isEmpty else {
+			return nil
+		}
+
+		var mergedAttachments = Set<ParsedAttachment>()
+		for var attachment in attachmentsByURL.values {
+			if let itunesDurationInSeconds, attachment.durationInSeconds == nil, Self.isAudioOrVideo(attachment) {
+				attachment = attachment.withDurationInSeconds(itunesDurationInSeconds)
+			}
+			mergedAttachments.insert(attachment)
+		}
+		return mergedAttachments
+	}
+
+	private static func isAudioOrVideo(_ attachment: ParsedAttachment) -> Bool {
+		if attachment.medium == .audio || attachment.medium == .video {
+			return true
+		}
+		guard let mimeType = attachment.mimeType?.lowercased() else {
+			return false
+		}
+		return mimeType.hasPrefix("audio/") || mimeType.hasPrefix("video/")
 	}
 }

@@ -43,6 +43,10 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 	// inside of namespaced section (<s:variant>, for instance).
 	private var namespaceElementDepth = 0
 
+	// Depth inside media:group and media:content, whose non-Media RSS children are skipped.
+	private var mediaContainerDepth = 0
+	private var mediaGroup: MediaGroup?
+
 	init(urlString: String) {
 		self.feedURLString = urlString
 	}
@@ -88,6 +92,18 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 			namespaceElementDepth += 1
 			return
 		}
+		if parsingArticle && namespace.isMediaRSS {
+			handleMediaElementStart(localName: localName, attributes: attributes)
+			return
+		}
+		if parsingArticle && namespace.isITunes && localName.equals("duration") {
+			parser.beginStoringCharacters()
+			return
+		}
+		if mediaContainerDepth > 0 {
+			namespaceElementDepth = 1
+			return
+		}
 		if parsingArticle && namespace.prefix != nil
 			&& !namespace.isDublinCore && !namespace.isContent && !namespace.isSource {
 			// Skip this element (in an unexpected namespace) and its subtree, so a nested
@@ -129,6 +145,8 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		if isUnprefixed && localName.equals("item") {
 			items.append(RSSItem())
 			parsingArticle = true
+			mediaContainerDepth = 0
+			mediaGroup = nil
 
 			if isRDF, let about = currentAttributes["rdf:about"], !about.isEmpty {
 				currentItem?.guid = about
@@ -162,6 +180,11 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 
 		if namespaceElementDepth > 0 {
 			namespaceElementDepth -= 1
+			return
+		}
+
+		if parsingArticle && namespace.isMediaRSS {
+			handleMediaElementEnd(localName: localName)
 			return
 		}
 
@@ -237,6 +260,10 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 				}
 				return
 			}
+			if namespace.isITunes && localName.equals("duration") {
+				article.itunesDurationInSeconds = MediaRSS.durationInSeconds(parser.currentStringWithTrimmedWhitespace)
+				return
+			}
 			// `source:markdown` — scripting.com's namespace, used by WordLand-generated feeds.
 			if namespace.isSource && localName.equals("markdown") {
 				article.markdown = parser.currentStringWithTrimmedWhitespace
@@ -294,7 +321,42 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		let mimeType = currentAttributes["type"]
 		let sizeInBytes = length > 0 ? length : nil
 		if let attachment = ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
-			article.attachments.insert(attachment)
+			article.attachments.append(attachment)
+		}
+	}
+
+	// MARK: Media RSS elements
+
+	private func handleMediaElementStart(localName: ArraySlice<UInt8>, attributes: XMLAttributes) {
+		if localName.equals("group") {
+			mediaGroup = MediaGroup()
+			mediaContainerDepth += 1
+		} else if localName.equals("content") {
+			if let attachment = MediaRSS.attachment(attributes) {
+				if mediaGroup != nil {
+					mediaGroup?.add(attachment, isDefault: MediaRSS.isDefault(attributes))
+				} else {
+					currentItem?.attachments.append(attachment)
+				}
+			}
+			mediaContainerDepth += 1
+		} else {
+			if localName.equals("thumbnail"), currentItem?.imageURL == nil, let url = attributes.value(forNameCaseInsensitive: "url"), !url.isEmpty {
+				currentItem?.imageURL = url
+			}
+			namespaceElementDepth = 1
+		}
+	}
+
+	private func handleMediaElementEnd(localName: ArraySlice<UInt8>) {
+		if localName.equals("group") {
+			if let attachment = mediaGroup?.chosenAttachment {
+				currentItem?.attachments.append(attachment)
+			}
+			mediaGroup = nil
+			mediaContainerDepth -= 1
+		} else if localName.equals("content") {
+			mediaContainerDepth -= 1
 		}
 	}
 

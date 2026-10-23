@@ -9,6 +9,7 @@
 import Foundation
 
 public struct ParsedAttachment: Hashable, Sendable {
+
 	/// Media RSS `medium` attribute.
 	public enum Medium: String, Sendable {
 		case image
@@ -46,5 +47,19 @@ public struct ParsedAttachment: Hashable, Sendable {
 
 	public func hash(into hasher: inout Hasher) {
 		hasher.combine(url)
+	}
+}
+
+// MARK: - Merging
+
+extension ParsedAttachment {
+
+	/// Copy with each nil property filled in from `other`.
+	func filledIn(from other: ParsedAttachment) -> ParsedAttachment {
+		ParsedAttachment(url: url, mimeType: mimeType ?? other.mimeType, title: title ?? other.title, sizeInBytes: sizeInBytes ?? other.sizeInBytes, durationInSeconds: durationInSeconds ?? other.durationInSeconds, width: width ?? other.width, height: height ?? other.height, medium: medium ?? other.medium) ?? self
+	}
+
+	func withDurationInSeconds(_ durationInSeconds: Int) -> ParsedAttachment {
+		ParsedAttachment(url: url, mimeType: mimeType, title: title, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds, width: width, height: height, medium: medium) ?? self
 	}
 }
