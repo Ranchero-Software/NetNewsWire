@@ -35,6 +35,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				datePublished: date,
 				dateModified: nil,
 				authors: Set([Author(authorID: "_testAuthorID", name: "J. R. R. Tolkien", url: nil, avatarURL: nil, emailAddress: nil)!]),
+				attachments: nil,
 				status: ArticleStatus(articleID: "_testArticleID", read: false, starred: false, dateArrived: .now))
 	}
 

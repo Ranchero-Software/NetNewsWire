@@ -55,6 +55,7 @@ import XCTest
 					   datePublished: nil,
 					   dateModified: nil,
 					   authors: nil,
+					   attachments: nil,
 					   status: ArticleStatus(articleID: articleId, read: true, dateArrived: Date())
 		)
     }

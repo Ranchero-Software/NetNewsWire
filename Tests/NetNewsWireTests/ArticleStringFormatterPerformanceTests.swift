@@ -121,6 +121,7 @@ import XCTest
 			datePublished: Date(),
 			dateModified: nil,
 			authors: nil,
+			attachments: nil,
 			status: status
 		)
 		result.append(article)

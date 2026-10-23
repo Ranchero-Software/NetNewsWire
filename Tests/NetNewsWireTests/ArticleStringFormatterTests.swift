@@ -233,6 +233,7 @@ import Testing
 		datePublished: Date(),
 		dateModified: nil,
 		authors: nil,
+		attachments: nil,
 		status: status
 	)
 }
