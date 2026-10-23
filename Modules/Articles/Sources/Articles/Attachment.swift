@@ -55,6 +55,49 @@ public struct Attachment: Codable, Hashable, Sendable {
 	}
 }
 
+// MARK: - Display
+
+extension Attachment {
+
+	private static let audioFileExtensions: Set = ["mp3", "m4a", "aac", "wav", "ogg", "oga", "opus", "flac"]
+	private static let videoFileExtensions: Set = ["mp4", "m4v", "mov", "webm"]
+	private static let imageFileExtensions: Set = ["jpg", "jpeg", "png", "gif", "webp", "heic", "avif"]
+
+	/// How the article view shows this attachment: `.audio`, `.video`, or `.image`.
+	/// Nil for anything else. Checks the MIME type, then `medium`, then the URL’s file extension.
+	public var displayMedium: Medium? {
+		if let mimeType = mimeType?.lowercased() {
+			if mimeType.hasPrefix("audio/") {
+				return .audio
+			}
+			if mimeType.hasPrefix("video/") {
+				return .video
+			}
+			if mimeType.hasPrefix("image/") {
+				return .image
+			}
+		}
+
+		if medium == .audio || medium == .video || medium == .image {
+			return medium
+		}
+
+		guard let pathExtension = URL(string: url)?.pathExtension.lowercased(), !pathExtension.isEmpty else {
+			return nil
+		}
+		if Self.audioFileExtensions.contains(pathExtension) {
+			return .audio
+		}
+		if Self.videoFileExtensions.contains(pathExtension) {
+			return .video
+		}
+		if Self.imageFileExtensions.contains(pathExtension) {
+			return .image
+		}
+		return nil
+	}
+}
+
 extension Set where Element == Attachment {
 
 	public func json() -> String? {
