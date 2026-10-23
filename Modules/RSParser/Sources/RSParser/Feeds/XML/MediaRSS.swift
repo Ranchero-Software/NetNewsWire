@@ -10,11 +10,8 @@ import Foundation
 /// Media RSS and iTunes helpers shared by the RSS and Atom parsers.
 enum MediaRSS {
 
-	/// Attachment from a `media:content` element’s attributes.
-	static func attachment(_ attributes: XMLAttributes) -> ParsedAttachment? {
-		guard let url = attributes.value(forNameCaseInsensitive: "url") else {
-			return nil
-		}
+	/// Attachment from a `media:content` element’s attributes. `url` is the resolved `url` attribute.
+	static func attachment(url: String, attributes: XMLAttributes) -> ParsedAttachment? {
 
 		let mimeType = attributes.value(forNameCaseInsensitive: "type")
 		// The spec says fileSize. Some feeds (atp.fm) use length, as in RSS enclosures.
@@ -66,9 +63,64 @@ enum MediaRSS {
 	}
 }
 
+/// Tracks `media:group` and `media:content` while parsing an item, adding attachments
+/// and the thumbnail to the item. Used by the RSS and Atom parsers.
+struct MediaElementTracker {
+
+	/// Depth inside `media:group` and `media:content`. The parsers skip
+	/// non-Media RSS elements in there, so an unprefixed child (`<title>`)
+	/// can’t be mistaken for one of the item’s own elements.
+	private(set) var containerDepth = 0
+
+	private var group: MediaGroup?
+
+	mutating func reset() {
+		containerDepth = 0
+		group = nil
+	}
+
+	/// Returns true when the parser should skip the element’s subtree.
+	mutating func start(localName: ArraySlice<UInt8>, attributes: XMLAttributes, item: RSSItem, resolveURL: (String) -> String?) -> Bool {
+		if localName.equals("group") {
+			group = MediaGroup()
+			containerDepth += 1
+			return false
+		}
+
+		if localName.equals("content") {
+			if let urlString = attributes.value(forNameCaseInsensitive: "url"), let url = resolveURL(urlString), let attachment = MediaRSS.attachment(url: url, attributes: attributes) {
+				if group != nil {
+					group?.add(attachment, isDefault: MediaRSS.isDefault(attributes))
+				} else {
+					item.attachments.append(attachment)
+				}
+			}
+			containerDepth += 1
+			return false
+		}
+
+		if localName.equals("thumbnail"), item.imageURL == nil, let urlString = attributes.value(forNameCaseInsensitive: "url"), !urlString.isEmpty {
+			item.imageURL = resolveURL(urlString)
+		}
+		return true
+	}
+
+	mutating func end(localName: ArraySlice<UInt8>, item: RSSItem) {
+		if localName.equals("group") {
+			if let attachment = group?.chosenAttachment {
+				item.attachments.append(attachment)
+			}
+			group = nil
+			containerDepth -= 1
+		} else if localName.equals("content") {
+			containerDepth -= 1
+		}
+	}
+}
+
 /// Collects the renditions in a `media:group`. They’re alternates of one thing,
 /// so only one is kept: the `isDefault` one, else the first.
-struct MediaGroup {
+private struct MediaGroup {
 
 	private var defaultAttachment: ParsedAttachment?
 	private var firstAttachment: ParsedAttachment?

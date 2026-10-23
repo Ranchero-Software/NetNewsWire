@@ -650,4 +650,22 @@ import RSParser
 		let item = try #require(parsedFeed.items.first { $0.uniqueID == "https://draw-down.com/products/9225111929086" })
 		#expect(item.title == "Revue Faire — no. 56 (Reading Until I Sleep: Manuel Raeder)")
 	}
+
+	@Test func youTubeMediaGroup() throws {
+		let d = parserData("youtube", "atom", "https://www.youtube.com/feeds/videos.xml?channel_id=UCexamplechannel000000")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+
+		#expect(item.title == "Real Video Title")
+		#expect(item.url == "https://www.youtube.com/watch?v=abcdefghijk")
+		#expect(item.imageURL == "https://i1.ytimg.com/vi/abcdefghijk/hqdefault.jpg")
+
+		let attachments = try #require(item.attachments)
+		#expect(attachments.count == 1)
+		let attachment = try #require(attachments.first)
+		#expect(attachment.url == "https://www.youtube.com/v/abcdefghijk?version=3")
+		#expect(attachment.mimeType == "application/x-shockwave-flash")
+		#expect(attachment.width == 640)
+		#expect(attachment.height == 390)
+	}
 }

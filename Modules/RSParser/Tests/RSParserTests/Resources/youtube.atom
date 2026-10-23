@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <link rel="self" href="https://www.youtube.com/feeds/videos.xml?channel_id=UCexamplechannel000000"/>
+ <id>yt:channel:examplechannel000000</id>
+ <yt:channelId>examplechannel000000</yt:channelId>
+ <title>Example Channel</title>
+ <link rel="alternate" href="https://www.youtube.com/channel/UCexamplechannel000000"/>
+ <author>
+  <name>Example Channel</name>
+  <uri>https://www.youtube.com/channel/UCexamplechannel000000</uri>
+ </author>
+ <published>2020-01-01T00:00:00+00:00</published>
+ <entry>
+  <id>yt:video:abcdefghijk</id>
+  <yt:videoId>abcdefghijk</yt:videoId>
+  <yt:channelId>UCexamplechannel000000</yt:channelId>
+  <title>Real Video Title</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=abcdefghijk"/>
+  <author>
+   <name>Example Channel</name>
+   <uri>https://www.youtube.com/channel/UCexamplechannel000000</uri>
+  </author>
+  <published>2026-10-01T12:00:00+00:00</published>
+  <updated>2026-10-02T12:00:00+00:00</updated>
+  <media:group>
+   <media:title>Media Title</media:title>
+   <media:content url="https://www.youtube.com/v/abcdefghijk?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i1.ytimg.com/vi/abcdefghijk/hqdefault.jpg" width="480" height="360"/>
+   <media:description>The video’s description.</media:description>
+   <media:community>
+    <media:starRating count="100" average="5.00" min="1" max="5"/>
+    <media:statistics views="1000"/>
+   </media:community>
+  </media:group>
+ </entry>
+</feed>
