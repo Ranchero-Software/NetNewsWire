@@ -33,7 +33,7 @@ extension ArticleRenderer {
 		}
 
 		if !hasVisualEnclosure, let imageURL, !imageURL.isEmpty, !bodyContainsVisualElement(body), !bodyContainsURL(body, imageURL) {
-			let image = "<figure class=\"nnw-enclosure nnw-enclosure-image\"><img src=\"\(imageURL.escapingSpecialXMLCharacters)\" alt=\"\"></figure>"
+			let image = "<div class=\"nnw-enclosure nnw-enclosure-image\"><img src=\"\(imageURL.escapingSpecialXMLCharacters)\" alt=\"\"></div>"
 			enclosures.insert(image, at: 0)
 		}
 
@@ -49,7 +49,7 @@ private extension ArticleRenderer {
 	static func enclosureHTML(_ attachment: Attachment, posterURL: String?) -> String? {
 		if let youTubeEmbedURL = ArticleRenderingSpecialCases.youTubeEmbedURL(forAttachmentURL: attachment.url) {
 			let iframe = "<iframe src=\"\(youTubeEmbedURL)\"" + dimensionAttributes(attachment) + " allowfullscreen></iframe>"
-			return "<figure class=\"nnw-enclosure nnw-enclosure-video\">\(iframe)</figure>"
+			return "<div class=\"nnw-enclosure nnw-enclosure-video\">\(iframe)</div>"
 		}
 
 		guard let displayMedium = attachment.displayMedium else {
@@ -78,11 +78,11 @@ private extension ArticleRenderer {
 			return nil
 		}
 
-		var html = "<figure class=\"nnw-enclosure nnw-enclosure-\(displayMedium.rawValue)\">\(mediaElement)"
+		var html = "<div class=\"nnw-enclosure nnw-enclosure-\(displayMedium.rawValue)\">\(mediaElement)"
 		if let caption, !caption.isEmpty {
-			html += "<figcaption>\(caption.escapingSpecialXMLCharacters)</figcaption>"
+			html += "<div class=\"nnw-enclosure-caption\">\(caption.escapingSpecialXMLCharacters)</div>"
 		}
-		html += "</figure>"
+		html += "</div>"
 		return html
 	}
 

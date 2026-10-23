@@ -82,7 +82,8 @@ img.twemoji, img.emoji {
 	height: auto;
 }
 
-.nnw-enclosure figcaption {
+.nnw-enclosure-caption {
+	margin: 0.5em 0 0;
 	font-size: 0.9em;
 }
 
