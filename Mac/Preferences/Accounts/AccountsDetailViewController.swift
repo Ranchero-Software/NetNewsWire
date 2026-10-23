@@ -57,6 +57,12 @@ final class AccountsDetailViewController: NSViewController {
 			accountsNewsBlurWindowController.account = account
 			accountsNewsBlurWindowController.runSheetOnWindow(window)
 
+		case .miniflux:
+			let accountsMinifluxWindowController = AccountsMinifluxWindowController()
+			accountsWindowController = accountsMinifluxWindowController
+			accountsMinifluxWindowController.account = account
+			accountsMinifluxWindowController.runSheetOnWindow(window)
+
 		default:
 			break
 		}

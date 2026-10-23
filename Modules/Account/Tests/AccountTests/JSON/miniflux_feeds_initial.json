@@ -1,0 +1,87 @@
+[
+	{
+		"id": 101,
+		"feed_url": "https://miniflux.test/feeds/general.xml",
+		"site_url": "https://general.example",
+		"title": "General Feed",
+		"checked_at": "2026-07-07T05:00:00Z",
+		"category": {
+			"id": 1,
+			"title": "All",
+			"user_id": 35,
+			"hide_globally": false
+		},
+		"icon": {
+			"feed_id": 101,
+			"icon_id": 201,
+			"external_icon_id": "abc101"
+		}
+	},
+	{
+		"id": 102,
+		"feed_url": "https://tech-a.example/rss.xml",
+		"site_url": "https://tech-a.example",
+		"title": "Tech Feed A",
+		"checked_at": "2026-07-07T05:00:00Z",
+		"category": {
+			"id": 2,
+			"title": "Tech",
+			"user_id": 35,
+			"hide_globally": false
+		},
+		"icon": {
+			"feed_id": 102,
+			"icon_id": 202,
+			"external_icon_id": "abc102"
+		}
+	},
+	{
+		"id": 103,
+		"feed_url": "https://tech-b.example/feed",
+		"site_url": "https://tech-b.example",
+		"title": "Tech Feed B",
+		"checked_at": "2026-07-07T05:00:00Z",
+		"category": {
+			"id": 2,
+			"title": "Tech",
+			"user_id": 35,
+			"hide_globally": false
+		},
+		"icon": {
+			"feed_id": 103,
+			"icon_id": 203,
+			"external_icon_id": "abc103"
+		}
+	},
+	{
+		"id": 104,
+		"feed_url": "https://news-a.example/atom.xml",
+		"site_url": "https://news-a.example",
+		"title": "News Feed A",
+		"checked_at": "2026-07-07T05:00:00Z",
+		"category": {
+			"id": 3,
+			"title": "News",
+			"user_id": 35,
+			"hide_globally": false
+		},
+		"icon": {
+			"feed_id": 104,
+			"icon_id": 204,
+			"external_icon_id": "abc104"
+		}
+	},
+	{
+		"id": 105,
+		"feed_url": "https://general-b.example/feed.json",
+		"site_url": "https://general-b.example",
+		"title": "General Feed B",
+		"checked_at": "2026-07-07T05:00:00Z",
+		"category": {
+			"id": 1,
+			"title": "All",
+			"user_id": 35,
+			"hide_globally": false
+		}
+	}
+]

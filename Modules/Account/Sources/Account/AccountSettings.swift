@@ -21,6 +21,7 @@ import RSWeb
 		case lastArticleFetchStartTime
 		case lastRefreshCompletedDate
 		case endpointURL
+		case detectedServerVersion
 		case externalID
 		case imported
 	}
@@ -127,6 +128,17 @@ import RSWeb
 				return
 			}
 			UserDefaults.standard.set(trimmed, forKey: defaultsKey(.endpointURL))
+		}
+	}
+
+	/// The sync server's self-reported version string (e.g. "2.4.1"), for services whose
+	/// available endpoints vary by version. `nil` until the first successful detection.
+	var detectedServerVersion: String? {
+		get {
+			UserDefaults.standard.string(forKey: defaultsKey(.detectedServerVersion))
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: defaultsKey(.detectedServerVersion))
 		}
 	}
 
