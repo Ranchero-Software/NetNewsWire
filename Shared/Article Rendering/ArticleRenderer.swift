@@ -120,7 +120,7 @@ import Account
 			let feedURL = article?.feed?.url
 			let homePageURL = article?.feed?.homePageURL
 
-			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(Self.bodyHTML(article))
 			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
 			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
 			if article?.account?.type == .freshRSS {
@@ -179,6 +179,17 @@ import Account
 // MARK: - Private
 
 private extension ArticleRenderer {
+
+	/// The article’s body as HTML. Plain text (`contentText`, used when there’s no `contentHTML`) gets converted.
+	static func bodyHTML(_ article: Article?) -> String {
+		guard let article else {
+			return ""
+		}
+		if article.contentHTML == nil, let contentText = article.contentText {
+			return contentText.convertingPlainTextToHTML
+		}
+		return article.body ?? ""
+	}
 
 	private var articleHTML: String {
 		return try! MacroProcessor.renderedText(withTemplate: template(), substitutions: articleSubstitutions())
