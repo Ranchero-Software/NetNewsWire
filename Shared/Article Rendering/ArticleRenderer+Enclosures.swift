@@ -41,6 +41,11 @@ extension ArticleRenderer {
 private extension ArticleRenderer {
 
 	static func enclosureHTML(_ attachment: Attachment, posterURL: String?) -> String? {
+		if let youTubeEmbedURL = ArticleRenderingSpecialCases.youTubeEmbedURL(forAttachmentURL: attachment.url) {
+			let iframe = "<iframe src=\"\(youTubeEmbedURL)\"" + dimensionAttributes(attachment) + " allowfullscreen></iframe>"
+			return "<figure class=\"nnw-enclosure nnw-enclosure-video\">\(iframe)</figure>"
+		}
+
 		guard let displayMedium = attachment.displayMedium else {
 			return nil
 		}

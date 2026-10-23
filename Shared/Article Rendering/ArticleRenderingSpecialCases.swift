@@ -135,6 +135,23 @@ struct ArticleRenderingSpecialCases {
 		return url
 	}
 
+	private static let youTubeFlashPlayerPathPrefix = "/v/"
+	private static let youTubeEmbedURLPrefix = "https://www.youtube-nocookie.com/embed/"
+	private static let youTubeVideoIDCharacters = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
+
+	/// YouTube channel feeds list each video as a dead Flash player URL (youtube.com/v/ID).
+	/// Returns the privacy-enhanced embed player URL for the same video.
+	static func youTubeEmbedURL(forAttachmentURL urlString: String) -> String? {
+		guard let url = URL(string: urlString), url.isYoutubeURL, url.path.hasPrefix(youTubeFlashPlayerPathPrefix) else {
+			return nil
+		}
+		let videoID = url.path.dropFirst(youTubeFlashPlayerPathPrefix.count)
+		guard !videoID.isEmpty, videoID.unicodeScalars.allSatisfy({ youTubeVideoIDCharacters.contains($0) }) else {
+			return nil
+		}
+		return youTubeEmbedURLPrefix + videoID
+	}
+
 	private static func anyURLStringMatchesAnyDomain(_ urlStrings: [String?], _ domains: [String]) -> Bool {
 		for urlString in urlStrings {
 			if let urlString, SpecialCase.urlStringMatchesDomain(urlString, domains) {
