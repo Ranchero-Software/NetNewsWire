@@ -264,8 +264,12 @@ private extension ArticleRenderer {
 		if template().contains("[[enclosures]]") {
 			d["body"] = body
 			d["enclosures"] = enclosures
+		} else if enclosures.isEmpty {
+			d["body"] = body
 		} else {
-			d["body"] = body + enclosures
+			// The wrapper div closes anything the body leaves open, such as an unclosed
+			// <audio> (Micro.blog posts have them), so the enclosures can’t end up inside it.
+			d["body"] = "<div>" + body + "</div>" + enclosures
 		}
 
 		#if os(macOS)
