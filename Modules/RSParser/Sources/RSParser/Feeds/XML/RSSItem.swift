@@ -100,6 +100,7 @@ final class RSSItem {
 			markdown: markdown,
 			summary: itemSummary,
 			imageURL: imageURL ?? itunesImageURL,
+			thumbnailURL: nil,
 			bannerImageURL: nil,
 			datePublished: datePublished,
 			dateModified: dateModified,

@@ -22,6 +22,7 @@ public struct ParsedItem: Hashable, Sendable {
 	public let markdown: String?
 	public let summary: String?
 	public let imageURL: String?
+	public let thumbnailURL: String?
 	public let bannerImageURL: String?
 	public let datePublished: Date?
 	public let dateModified: Date?
@@ -41,6 +42,7 @@ public struct ParsedItem: Hashable, Sendable {
 	            markdown: String?,
 	            summary: String?,
 	            imageURL: String?,
+	            thumbnailURL: String?,
 	            bannerImageURL: String?,
 	            datePublished: Date?,
 	            dateModified: Date?,
@@ -58,6 +60,7 @@ public struct ParsedItem: Hashable, Sendable {
 		self.markdown = markdown
 		self.summary = summary
 		self.imageURL = imageURL
+		self.thumbnailURL = thumbnailURL
 		self.bannerImageURL = bannerImageURL
 		self.datePublished = datePublished
 		self.dateModified = dateModified
