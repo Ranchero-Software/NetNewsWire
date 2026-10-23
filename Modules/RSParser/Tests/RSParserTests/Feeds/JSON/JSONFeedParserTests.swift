@@ -98,4 +98,22 @@ import RSParser
 		let bothAuthorsItem = try #require(parsedFeed.items.first { $0.uniqueID == "Item with both" })
 		#expect(bothAuthorsItem.authors == itemAuthors)
 	}
+
+	@Test func attachments() throws {
+		let d = parserData("attachments", "json", "https://example.com/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first)
+		let attachments = try #require(item.attachments)
+		#expect(attachments.count == 2)
+
+		let audio = try #require(attachments.first { $0.url == "https://example.com/episode1.mp3" })
+		#expect(audio.mimeType == "audio/mpeg")
+		#expect(audio.title == "Episode 1")
+		#expect(audio.sizeInBytes == 12345678)
+		#expect(audio.durationInSeconds == 3600)
+
+		// mime_type is optional in the JSON Feed spec.
+		let image = try #require(attachments.first { $0.url == "https://example.com/episode1.jpg" })
+		#expect(image.mimeType == nil)
+	}
 }

@@ -293,7 +293,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 		let length = Int(currentAttributes["length"] ?? "") ?? 0
 		let mimeType = currentAttributes["type"]
 		let sizeInBytes = length > 0 ? length : nil
-		if let attachment = ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil) {
+		if let attachment = ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
 			article.attachments.insert(attachment)
 		}
 	}

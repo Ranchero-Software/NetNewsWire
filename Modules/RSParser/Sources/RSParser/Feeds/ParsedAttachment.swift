@@ -9,13 +9,25 @@
 import Foundation
 
 public struct ParsedAttachment: Hashable, Sendable {
+	/// Media RSS `medium` attribute.
+	public enum Medium: String, Sendable {
+		case image
+		case audio
+		case video
+		case document
+		case executable
+	}
+
 	public let url: String
 	public let mimeType: String?
 	public let title: String?
 	public let sizeInBytes: Int?
 	public let durationInSeconds: Int?
+	public let width: Int?
+	public let height: Int?
+	public let medium: Medium?
 
-	public init?(url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?) {
+	public init?(url: String, mimeType: String?, title: String?, sizeInBytes: Int?, durationInSeconds: Int?, width: Int?, height: Int?, medium: Medium?) {
 		if url.isEmpty {
 			return nil
 		}
@@ -25,6 +37,9 @@ public struct ParsedAttachment: Hashable, Sendable {
 		self.title = title
 		self.sizeInBytes = sizeInBytes
 		self.durationInSeconds = durationInSeconds
+		self.width = width
+		self.height = height
+		self.medium = medium
 	}
 
 	// MARK: - Hashable

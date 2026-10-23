@@ -315,7 +315,7 @@ private final class AtomDelegate: XMLSAXParserDelegate {
 		if rel == "enclosure" {
 			let length = Int(attributes["length"] ?? "") ?? 0
 			let sizeInBytes = length > 0 ? length : nil
-			if let attachment = ParsedAttachment(url: resolved, mimeType: attributes["type"], title: attributes["title"], sizeInBytes: sizeInBytes, durationInSeconds: nil) {
+			if let attachment = ParsedAttachment(url: resolved, mimeType: attributes["type"], title: attributes["title"], sizeInBytes: sizeInBytes, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
 				article.attachments.insert(attachment)
 			}
 			return

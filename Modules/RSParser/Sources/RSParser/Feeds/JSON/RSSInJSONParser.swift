@@ -174,7 +174,7 @@ private extension RSSInJSONParser {
 		}
 
 		let type = enclosureObject["type"] as? String
-		if let attachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil) {
+		if let attachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
 			return Set([attachment])
 		}
 		return nil

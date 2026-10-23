@@ -1,0 +1,22 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Attachments test feed",
+  "items": [
+    {
+      "id": "Episode 1",
+      "content_html": "<p>Show notes.</p>",
+      "attachments": [
+        {
+          "url": "https://example.com/episode1.mp3",
+          "mime_type": "audio/mpeg",
+          "title": "Episode 1",
+          "size_in_bytes": 12345678,
+          "duration_in_seconds": 3600
+        },
+        {
+          "url": "https://example.com/episode1.jpg"
+        }
+      ]
+    }
+  ]
+}
