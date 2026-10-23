@@ -1,5 +1,5 @@
 //
-//  AppDefaults.swift
+//  AppDefaults+iOS.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 9/22/17.

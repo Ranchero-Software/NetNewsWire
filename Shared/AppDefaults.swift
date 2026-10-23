@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Settings common to Mac and iOS. Platform-specific settings are in extensions in Mac/AppDefaults.swift and iOS/AppDefaults.swift.
+/// Settings common to Mac and iOS. Platform-specific settings are in extensions in AppDefaults+Mac.swift and AppDefaults+iOS.swift.
 enum AppDefaults {
 
 	static let defaultThemeName = "Default"
@@ -26,12 +26,14 @@ enum AppDefaults {
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
-	static let commonRegisteredDefaults: [String: Any] = [
-		Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-		Key.timelineGroupByFeed: false,
-		Key.currentThemeName: defaultThemeName,
-		Key.articleContentJavascriptEnabled: true
-	]
+	static var commonRegisteredDefaults: [String: Any] {
+		[
+			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
+			Key.timelineGroupByFeed: false,
+			Key.currentThemeName: defaultThemeName,
+			Key.articleContentJavascriptEnabled: true
+		]
+	}
 
 	static let isDeveloperBuild: Bool = {
 		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
