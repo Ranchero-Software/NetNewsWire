@@ -248,7 +248,14 @@ private extension ArticleRenderer {
 			d["external_link"] = ""
 		}
 
-		d["body"] = body
+		// Templates without [[enclosures]] get them at the end of the body.
+		let enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, posterURL: article.imageLink)
+		if template().contains("[[enclosures]]") {
+			d["body"] = body
+			d["enclosures"] = enclosures
+		} else {
+			d["body"] = body + enclosures
+		}
 
 		#if os(macOS)
 		d["text_size_class"] = AppDefaults.articleTextSize.cssClass

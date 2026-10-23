@@ -27,6 +27,7 @@ time_short: Long version of the publish time.
 
 text_size_class: The size class that the user has selected in Preferences for article text.
 body: The body of the article.
+enclosures: Audio and video players and images from the article’s enclosures. If a template doesn’t include this, they’re added to the end of the body.
 
 -->
 
@@ -44,4 +45,5 @@ body: The body of the article.
 <div class="[[dateline_style]]"><a href="[[preferred_link]]">[[datetime_medium]]</a></div>
 <div class="externalLink">[[external_link_label]] <a href="[[external_link]]">[[external_link_stripped]]</a></div>
 <div id="bodyContainer" class="articleBody [[text_size_class]]">[[body]]</div>
+[[enclosures]]
 </article>

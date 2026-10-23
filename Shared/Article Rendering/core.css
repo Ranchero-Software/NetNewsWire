@@ -63,6 +63,29 @@ img.twemoji, img.emoji {
 	width: auto;
 }
 
+/* Enclosures: audio and video players and images after the article body */
+
+.nnw-enclosures {
+	margin-top: 1.5em;
+}
+
+.nnw-enclosure {
+	margin: 1em 0;
+}
+
+.nnw-enclosure audio {
+	width: 100%;
+}
+
+.nnw-enclosure video,
+.nnw-enclosure img {
+	height: auto;
+}
+
+.nnw-enclosure figcaption {
+	font-size: 0.9em;
+}
+
 /* Hide the external link at the bottom of Daring Fireball posts */
 
 .x-netnewswire-hide {
