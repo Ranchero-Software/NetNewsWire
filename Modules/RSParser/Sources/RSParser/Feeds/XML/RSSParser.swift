@@ -269,7 +269,7 @@ private final class RSSDelegate: XMLSAXParserDelegate {
 				return
 			}
 			if namespace.isITunes && localName.equals("duration") {
-				article.itunesDurationInSeconds = MediaRSS.durationInSeconds(parser.currentStringWithTrimmedWhitespace)
+				article.itunesDurationInSeconds = ParsedAttachment.durationInSeconds(parser.currentStringWithTrimmedWhitespace)
 				return
 			}
 			// `source:markdown` — scripting.com's namespace, used by WordLand-generated feeds.

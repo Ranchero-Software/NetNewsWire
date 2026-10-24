@@ -50,6 +50,37 @@ public struct ParsedAttachment: Hashable, Sendable {
 	}
 }
 
+// MARK: - Duration
+
+extension ParsedAttachment {
+
+	private static let maximumDurationComponentCount = 3 // 1:00:00
+
+	/// Parses plain seconds (`3600`, `3600.5`) and clock forms (`1:00:00`, `59:30`).
+	public static func durationInSeconds(_ s: String?) -> Int? {
+		guard let s else {
+			return nil
+		}
+		let components = s.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: ":", omittingEmptySubsequences: false)
+		guard components.count <= maximumDurationComponentCount else {
+			return nil
+		}
+
+		var seconds = 0.0
+		for component in components {
+			guard let value = Double(component), value.isFinite, value >= 0 else {
+				return nil
+			}
+			seconds = seconds * 60 + value
+		}
+
+		guard let wholeSeconds = Int(exactly: seconds.rounded(.down)), wholeSeconds > 0 else {
+			return nil
+		}
+		return wholeSeconds
+	}
+}
+
 // MARK: - Merging
 
 extension ParsedAttachment {

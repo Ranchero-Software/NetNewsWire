@@ -16,7 +16,7 @@ enum MediaRSS {
 		let mimeType = attributes.value(forNameCaseInsensitive: "type")
 		// The spec says fileSize. Some feeds (atp.fm) use length, as in RSS enclosures.
 		let sizeInBytes = positiveInt(attributes.value(forNameCaseInsensitive: "fileSize") ?? attributes.value(forNameCaseInsensitive: "length"))
-		let durationInSeconds = durationInSeconds(attributes.value(forNameCaseInsensitive: "duration"))
+		let durationInSeconds = ParsedAttachment.durationInSeconds(attributes.value(forNameCaseInsensitive: "duration"))
 		let width = positiveInt(attributes.value(forNameCaseInsensitive: "width"))
 		let height = positiveInt(attributes.value(forNameCaseInsensitive: "height"))
 		let mediumValue = attributes.value(forNameCaseInsensitive: "medium")
@@ -27,32 +27,6 @@ enum MediaRSS {
 
 	static func isDefault(_ attributes: XMLAttributes) -> Bool {
 		attributes.value(forNameCaseInsensitive: "isDefault")?.lowercased() == "true"
-	}
-
-	private static let maximumDurationComponentCount = 3 // 1:00:00
-
-	/// Parses plain seconds (`3600`, `3600.5`) and clock forms (`1:00:00`, `59:30`).
-	static func durationInSeconds(_ s: String?) -> Int? {
-		guard let s else {
-			return nil
-		}
-		let components = s.trimmingCharacters(in: .whitespacesAndNewlines).split(separator: ":", omittingEmptySubsequences: false)
-		guard components.count <= maximumDurationComponentCount else {
-			return nil
-		}
-
-		var seconds = 0.0
-		for component in components {
-			guard let value = Double(component), value.isFinite, value >= 0 else {
-				return nil
-			}
-			seconds = seconds * 60 + value
-		}
-
-		guard let wholeSeconds = Int(exactly: seconds.rounded(.down)), wholeSeconds > 0 else {
-			return nil
-		}
-		return wholeSeconds
 	}
 
 	private static func positiveInt(_ s: String?) -> Int? {
