@@ -50,6 +50,33 @@ struct ReaderAPIEntryTests {
 		}
 	}
 
+	@Test func enclosures() throws {
+		// From FreshRSS’s toGReader: a MIME type, or a bare medium.
+		let json = """
+		{
+			"id": "tag:google.com,2005:reader/item/00058b10ce338909",
+			"summary": {},
+			"categories": [],
+			"origin": {},
+			"enclosure": [
+				{"href": "https://example.com/episode.mp3", "type": "audio/mpeg", "length": 54947132},
+				{"href": "https://example.com/cover.jpg", "type": "image"}
+			]
+		}
+		"""
+		let entry = try JSONDecoder().decode(ReaderAPIEntry.self, from: Data(json.utf8))
+
+		#expect(entry.imageURL == "https://example.com/cover.jpg")
+
+		let attachments = try #require(entry.attachments)
+		let audio = try #require(attachments.first { $0.url == "https://example.com/episode.mp3" })
+		#expect(audio.mimeType == "audio/mpeg")
+		#expect(audio.sizeInBytes == 54947132)
+		let image = try #require(attachments.first { $0.url == "https://example.com/cover.jpg" })
+		#expect(image.mimeType == nil)
+		#expect(image.medium == .image)
+	}
+
 	private func makeEntry(articleID: String) throws -> ReaderAPIEntry {
 		let json = "{\"id\":\"\(articleID)\",\"summary\":{},\"categories\":[],\"origin\":{}}"
 		return try JSONDecoder().decode(ReaderAPIEntry.self, from: Data(json.utf8))

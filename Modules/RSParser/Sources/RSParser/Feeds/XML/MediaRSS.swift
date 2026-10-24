@@ -130,7 +130,7 @@ private struct MediaGroup {
 extension ParsedAttachment.Medium {
 
 	/// Case-insensitive. Nil for values the Media RSS spec doesn’t define.
-	init?(mediaRSSValue: String?) {
+	public init?(mediaRSSValue: String?) {
 		guard let mediaRSSValue else {
 			return nil
 		}

@@ -1153,14 +1153,14 @@ private extension ReaderAPIAccountDelegate {
 							  contentText: nil,
 							  markdown: nil,
 							  summary: entry.summary.content,
-							  imageURL: nil,
+							  imageURL: entry.imageURL,
 							  thumbnailURL: nil,
 							  bannerImageURL: nil,
 							  datePublished: entry.parseDatePublished(),
 							  dateModified: nil,
 							  authors: authors,
 							  tags: nil,
-							  attachments: nil)
+							  attachments: entry.attachments)
 		}
 
 		return Set(parsedItems)
