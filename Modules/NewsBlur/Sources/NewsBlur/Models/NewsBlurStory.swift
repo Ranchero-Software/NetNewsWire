@@ -22,8 +22,18 @@ public struct NewsBlurStoriesResponse: Decodable, Sendable {
 		public let url: String?
 		public let authorName: String?
 		public let contentHTML: String?
+		/// The secure (proxied) copy of the first image, else the image itself.
 		public var imageURL: String? {
-			return imageURLs?.first?.value
+			guard let firstImageURL = imageURLs?.first else {
+				return nil
+			}
+			return secureImageURLs?[firstImageURL] ?? firstImageURL
+		}
+		public var thumbnailURL: String? {
+			guard let firstImageURL = imageURLs?.first else {
+				return nil
+			}
+			return secureImageThumbnails?[firstImageURL]
 		}
 		public var tags: [String]?
 		public var datePublished: Date? {
@@ -31,7 +41,10 @@ public struct NewsBlurStoriesResponse: Decodable, Sendable {
 			return Date(timeIntervalSince1970: interval)
 		}
 
-		private var imageURLs: [String: String]?
+		/// In story order. The secure dictionaries are keyed by these URLs.
+		private var imageURLs: [String]?
+		private var secureImageURLs: [String: String]?
+		private var secureImageThumbnails: [String: String]?
 		private var publishedTimestamp: String
 	}
 }
@@ -50,7 +63,9 @@ extension NewsBlurStoriesResponse.Story {
 		case url = "story_permalink"
 		case authorName = "story_authors"
 		case contentHTML = "story_content"
-		case imageURLs = "secure_image_urls"
+		case imageURLs = "image_urls"
+		case secureImageURLs = "secure_image_urls"
+		case secureImageThumbnails = "secure_image_thumbnails"
 		case tags = "story_tags"
 		case publishedTimestamp = "story_timestamp"
 	}
