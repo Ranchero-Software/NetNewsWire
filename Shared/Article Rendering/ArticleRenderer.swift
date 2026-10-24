@@ -110,21 +110,28 @@ import Account
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
 		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
-		// Some feeds embed a full HTML document as the article content —
-		// render just the body fragment.
-		// <https://github.com/Ranchero-Software/NetNewsWire/issues/3008>
+
+		var articleBody: String
+		var baseURL: String?
 		if let content = extractedArticle?.content {
-			self.body = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
-			self.baseURL = extractedArticle?.url
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(content)
+			baseURL = extractedArticle?.url
 		} else {
 			let feedURL = article?.feed?.url
 			let homePageURL = article?.feed?.homePageURL
-			var articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
+
+			articleBody = ArticleRenderingSpecialCases.extractBodyFragmentIfNeeded(article?.body ?? "")
 			articleBody = ArticleRenderingSpecialCases.insertParagraphTagsIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
 			articleBody = ArticleRenderingSpecialCases.removeStrayLineBreaksIfNeeded(articleBody, feedURL: feedURL, homePageURL: homePageURL)
-			self.body = articleBody
-			self.baseURL = article?.baseURL?.absoluteString
+			if article?.account?.type == .freshRSS {
+				articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
+			}
+
+			baseURL = article?.baseURL?.absoluteString
 		}
+
+		self.body = articleBody
+		self.baseURL = baseURL
 	}
 
 	// MARK: - API
@@ -152,6 +159,20 @@ import Account
 	static func noContentHTML(theme: ArticleTheme) -> Rendering {
 		let renderer = ArticleRenderer(article: nil, extractedArticle: nil, theme: theme)
 		return (renderer.articleCSS, renderer.noContentHTML, renderer.title, renderer.baseURL ?? "")
+	}
+
+	/// Full page HTML for a rendering, ready to load into a web view.
+	static func pageHTML(_ rendering: Rendering, windowScrollY: Int) -> String {
+		let substitutions = [
+			"title": rendering.title,
+			"baseURL": rendering.baseURL,
+			"style": rendering.style,
+			"body": rendering.html,
+			"windowScrollY": String(windowScrollY)
+		]
+
+		let html = try! MacroProcessor.renderedText(withTemplate: page.html, substitutions: substitutions)
+		return ArticleRenderingSpecialCases.filterHTMLIfNeeded(baseURL: rendering.baseURL, html: html)
 	}
 }
 
@@ -230,7 +251,7 @@ private extension ArticleRenderer {
 		d["body"] = body
 
 		#if os(macOS)
-		d["text_size_class"] = AppDefaults.shared.articleTextSize.cssClass
+		d["text_size_class"] = AppDefaults.articleTextSize.cssClass
 		#endif
 
 		var components = URLComponents()

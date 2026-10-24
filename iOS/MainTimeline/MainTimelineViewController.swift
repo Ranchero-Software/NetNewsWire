@@ -187,8 +187,8 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		configureSearchController()
 		definesPresentationContext = true
 
-		numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
-		iconSize = AppDefaults.shared.timelineIconSize
+		numberOfTextLines = AppDefaults.timelineNumberOfLines
+		iconSize = AppDefaults.timelineIconSize
 
 		assert(collectionView?.refreshControl != nil)
 		collectionView?.refreshControl = UIRefreshControl()
@@ -547,7 +547,14 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let dataSource, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
-		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: nil, actionProvider: { [weak self] _ in
+		let previewProvider: UIContextMenuContentPreviewProvider = { [weak self] in
+			guard let coordinator = self?.coordinator else {
+				return nil
+			}
+			return ArticlePreviewViewController(article: article, coordinator: coordinator)
+		}
+
+		return UIContextMenuConfiguration(identifier: firstIndex.row as NSCopying, previewProvider: previewProvider, actionProvider: { [weak self] _ in
 
 			guard let self = self else { return nil }
 
@@ -599,6 +606,17 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 			return UIMenu(title: "", children: menuElements)
 
 		})
+	}
+
+	func collectionView(_ collectionView: UICollectionView, willPerformPreviewActionForMenuWith configuration: UIContextMenuConfiguration, animator: any UIContextMenuInteractionCommitAnimating) {
+		// The timeline may have changed since the menu opened, so use the previewed article, not the row.
+		guard let articlePreviewViewController = animator.previewViewController as? ArticlePreviewViewController else {
+			return
+		}
+		let article = articlePreviewViewController.article
+		animator.addCompletion { [weak self] in
+			self?.coordinator?.selectArticle(article, animations: [.scroll, .select, .navigation])
+		}
 	}
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfiguration configuration: UIContextMenuConfiguration, highlightPreviewForItemAt indexPath: IndexPath) -> UITargetedPreview? {
@@ -1082,16 +1100,16 @@ private extension MainTimelineViewController {
 
 	@objc func timelineIconSizeDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: timelineIconSizeDidChange")
-		if iconSize != AppDefaults.shared.timelineIconSize {
-			iconSize = AppDefaults.shared.timelineIconSize
+		if iconSize != AppDefaults.timelineIconSize {
+			iconSize = AppDefaults.timelineIconSize
 			reloadVisibleCells()
 		}
 	}
 
 	@objc func timelineNumberOfLinesDidChange(_ note: Notification) {
 		Self.logger.debug("MainTimelineViewController: timelineNumberOfLinesDidChange")
-		if numberOfTextLines != AppDefaults.shared.timelineNumberOfLines {
-			numberOfTextLines = AppDefaults.shared.timelineNumberOfLines
+		if numberOfTextLines != AppDefaults.timelineNumberOfLines {
+			numberOfTextLines = AppDefaults.timelineNumberOfLines
 			reloadVisibleCells()
 		}
 	}

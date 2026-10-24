@@ -51,7 +51,7 @@ import Articles
 	/// Whether the article view should run content JavaScript for this article.
 	/// Called from the navigation delegate on every navigation, so a change to the user setting takes effect on the next load.
 	static func allowsContentJavaScript(for article: Article?) -> Bool {
-		guard AppDefaults.shared.isArticleContentJavascriptEnabled else {
+		guard AppDefaults.isArticleContentJavascriptEnabled else {
 			return false
 		}
 		guard let article else {

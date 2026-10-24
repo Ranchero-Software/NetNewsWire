@@ -10,10 +10,13 @@ import Foundation
 
 @MainActor struct ShareDefaultContainer {
 
+	private static let addFeedAccountIDKey = "addFeedAccountID"
+	private static let addFeedFolderNameKey = "addFeedFolderName"
+
 	static func defaultContainer(containers: ExtensionContainers) -> ExtensionContainer? {
 
-		if let accountID = AppDefaults.shared.addFeedAccountID, let account = containers.accounts.first(where: { $0.accountID == accountID }) {
-			if let folderName = AppDefaults.shared.addFeedFolderName, let folder = account.folders.first(where: { $0.name == folderName }) {
+		if let accountID = UserDefaults.standard.string(forKey: addFeedAccountIDKey), let account = containers.accounts.first(where: { $0.accountID == accountID }) {
+			if let folderName = UserDefaults.standard.string(forKey: addFeedFolderNameKey), let folder = account.folders.first(where: { $0.name == folderName }) {
 				return folder
 			} else {
 				return substituteContainerIfNeeded(account: account)
@@ -27,11 +30,11 @@ import Foundation
 	}
 
 	static func saveDefaultContainer(_ container: ExtensionContainer) {
-		AppDefaults.shared.addFeedAccountID = container.accountID
+		UserDefaults.standard.set(container.accountID, forKey: addFeedAccountIDKey)
 		if let folder = container as? ExtensionFolder {
-			AppDefaults.shared.addFeedFolderName = folder.name
+			UserDefaults.standard.set(folder.name, forKey: addFeedFolderNameKey)
 		} else {
-			AppDefaults.shared.addFeedFolderName = nil
+			UserDefaults.standard.removeObject(forKey: addFeedFolderNameKey)
 		}
 	}
 

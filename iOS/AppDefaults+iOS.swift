@@ -1,5 +1,5 @@
 //
-//  AppDefaults.swift
+//  AppDefaults+iOS.swift
 //  NetNewsWire
 //
 //  Created by Brent Simmons on 9/22/17.
@@ -21,11 +21,11 @@ enum UserInterfaceColorPalette: Int, CustomStringConvertible, CaseIterable {
 	var description: String {
 		switch self {
 		case .automatic:
-			return NSLocalizedString("Automatic", comment: "Automatic")
+			NSLocalizedString("Automatic", comment: "Automatic")
 		case .light:
-			return NSLocalizedString("Light", comment: "Light")
+			NSLocalizedString("Light", comment: "Light")
 		case .dark:
-			return NSLocalizedString("Dark", comment: "Dark")
+			NSLocalizedString("Dark", comment: "Dark")
 		}
 	}
 }
@@ -36,204 +36,130 @@ extension Notification.Name {
 	public static let timelineNumberOfLinesDidChange = Notification.Name("TimelineNumberOfLinesDidChangeNotification")
 }
 
-final class AppDefaults: Sendable {
-	static let shared = AppDefaults()
-	static let defaultThemeName = "Default"
+extension AppDefaults.Key {
+	static let userInterfaceColorPalette = "userInterfaceColorPalette"
+	static let refreshClearsReadArticles = "refreshClearsReadArticles"
+	static let timelineNumberOfLines = "timelineNumberOfLines"
+	static let timelineIconDimension = "timelineIconSize"
+	static let articleFullscreenAvailable = "articleFullscreenAvailable"
+	static let articleFullscreenEnabled = "articleFullscreenEnabled"
+	static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
+	static let lastRefresh = "lastRefresh"
+	static let useSystemBrowser = "useSystemBrowser"
+	static let hideReadFeeds = "hideReadFeeds"
+	static let isShowingExtractedArticle = "isShowingExtractedArticle"
+	static let articleWindowScrollY = "articleWindowScrollY"
+	static let expandedContainers = "expandedContainers"
+	static let smartFeedsHidingReadArticles = "smartFeedsHidingReadArticles"
+	static let feedsHidingReadArticles = "feedsHidingReadArticles"
+	static let foldersShowingReadArticles = "foldersShowingReadArticles"
+	static let selectedSidebarItem = "selectedSidebarItem"
+	static let selectedArticle = "selectedArticle"
+	static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
+	static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
+	static let timelineWidth = "timelineWidth"
+	static let sidebarWidth = "sidebarWidth"
+	static let didMigrateAppGroupDefaults = "didMigrateAppGroupDefaults"
+
+	// Keys that used to be stored in the app-group suite.
+	static let appGroupKeys = [userInterfaceColorPalette, lastImageCacheFlushDate, firstRunDate, timelineGroupByFeed, refreshClearsReadArticles, timelineNumberOfLines, timelineIconDimension, timelineSortDirection, articleFullscreenAvailable, articleFullscreenEnabled, confirmMarkAllAsRead, articleContentJavascriptEnabled, splitViewPreferredDisplayMode, lastRefresh]
+}
+
+extension AppDefaults {
+
 	fileprivate static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "AppDefaults")
-
-	private init() {}
-
-	nonisolated(unsafe) static let store: UserDefaults = {
-		let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as! String
-		let suiteName = "\(appIdentifierPrefix)group.\(Bundle.main.bundleIdentifier!)"
-		return UserDefaults.init(suiteName: suiteName)!
-	}()
-
-	struct Key {
-		static let userInterfaceColorPalette = "userInterfaceColorPalette"
-		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
-		static let firstRunDate = "firstRunDate"
-		static let timelineGroupByFeed = "timelineGroupByFeed"
-		static let refreshClearsReadArticles = "refreshClearsReadArticles"
-		static let timelineNumberOfLines = "timelineNumberOfLines"
-		static let timelineIconDimension = "timelineIconSize"
-		static let timelineSortDirection = "timelineSortDirection"
-		static let articleFullscreenAvailable = "articleFullscreenAvailable"
-		static let articleFullscreenEnabled = "articleFullscreenEnabled"
-		static let confirmMarkAllAsRead = "confirmMarkAllAsRead"
-		static let lastRefresh = "lastRefresh"
-		static let addFeedAccountID = "addFeedAccountID"
-		static let addFeedFolderName = "addFeedFolderName"
-		static let addFolderAccountID = "addFolderAccountID"
-		static let useSystemBrowser = "useSystemBrowser"
-		static let currentThemeName = "currentThemeName"
-		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
-		static let hideReadFeeds = "hideReadFeeds"
-		static let isShowingExtractedArticle = "isShowingExtractedArticle"
-		static let articleWindowScrollY = "articleWindowScrollY"
-		static let expandedContainers = "expandedContainers"
-		static let smartFeedsHidingReadArticles = "smartFeedsHidingReadArticles"
-		static let feedsHidingReadArticles = "feedsHidingReadArticles"
-		static let foldersShowingReadArticles = "foldersShowingReadArticles"
-		static let selectedSidebarItem = "selectedSidebarItem"
-		static let selectedArticle = "selectedArticle"
-		static let didMigrateLegacyStateRestorationInfo = "didMigrateLegacyStateRestorationInfo"
-		static let splitViewPreferredDisplayMode = "splitViewPreferredDisplayMode"
-		static let timelineWidth = "timelineWidth"
-		static let sidebarWidth = "sidebarWidth"
-	}
-
-	let isDeveloperBuild: Bool = {
-		if let dev = Bundle.main.object(forInfoDictionaryKey: "DeveloperEntitlements") as? String, dev == "-dev" {
-			return true
-		}
-		return false
-	}()
-
-	let isFirstRun: Bool = {
-		if AppDefaults.store.object(forKey: Key.firstRunDate) is Date {
-			return false
-		}
-		firstRunDate = Date()
-		return true
-	}()
 
 	static var userInterfaceColorPalette: UserInterfaceColorPalette {
 		get {
-			if let result = UserInterfaceColorPalette(rawValue: int(for: Key.userInterfaceColorPalette)) {
+			if let result = UserInterfaceColorPalette(rawValue: UserDefaults.standard.integer(forKey: Key.userInterfaceColorPalette)) {
 				return result
 			}
 			return .automatic
 		}
 		set {
-			setInt(for: Key.userInterfaceColorPalette, newValue.rawValue)
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
 			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: self)
 		}
 	}
 
-	var addFeedAccountID: String? {
+	static var useSystemBrowser: Bool {
 		get {
-			return AppDefaults.string(for: Key.addFeedAccountID)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFeedAccountID, newValue)
-		}
-	}
-
-	var addFeedFolderName: String? {
-		get {
-			return AppDefaults.string(for: Key.addFeedFolderName)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFeedFolderName, newValue)
-		}
-	}
-
-	var addFolderAccountID: String? {
-		get {
-			return AppDefaults.string(for: Key.addFolderAccountID)
-		}
-		set {
-			AppDefaults.setString(for: Key.addFolderAccountID, newValue)
-		}
-	}
-
-	var useSystemBrowser: Bool {
-		get {
-			return UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
+			UserDefaults.standard.bool(forKey: Key.useSystemBrowser)
 		}
 		set {
 			UserDefaults.standard.setValue(newValue, forKey: Key.useSystemBrowser)
 		}
 	}
 
-	var lastImageCacheFlushDate: Date? {
+	static var timelineGroupByFeed: Bool {
 		get {
-			return AppDefaults.date(for: Key.lastImageCacheFlushDate)
+			UserDefaults.standard.bool(forKey: Key.timelineGroupByFeed)
 		}
 		set {
-			AppDefaults.setDate(for: Key.lastImageCacheFlushDate, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.timelineGroupByFeed)
 		}
 	}
 
-	var timelineGroupByFeed: Bool {
+	static var refreshClearsReadArticles: Bool {
 		get {
-			return AppDefaults.bool(for: Key.timelineGroupByFeed)
+			UserDefaults.standard.bool(forKey: Key.refreshClearsReadArticles)
 		}
 		set {
-			AppDefaults.setBool(for: Key.timelineGroupByFeed, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.refreshClearsReadArticles)
 		}
 	}
 
-	var refreshClearsReadArticles: Bool {
+	static var timelineSortDirection: ComparisonResult {
 		get {
-			return AppDefaults.bool(for: Key.refreshClearsReadArticles)
-		}
-		set {
-			AppDefaults.setBool(for: Key.refreshClearsReadArticles, newValue)
-		}
-	}
-
-	var timelineSortDirection: ComparisonResult {
-		get {
-			return AppDefaults.sortDirection(for: Key.timelineSortDirection)
+			AppDefaults.sortDirection(for: Key.timelineSortDirection)
 		}
 		set {
 			AppDefaults.setSortDirection(for: Key.timelineSortDirection, newValue)
 		}
 	}
 
-	var articleFullscreenAvailable: Bool {
+	static var articleFullscreenAvailable: Bool {
 		get {
-			return AppDefaults.bool(for: Key.articleFullscreenAvailable)
+			UserDefaults.standard.bool(forKey: Key.articleFullscreenAvailable)
 		}
 		set {
-			AppDefaults.setBool(for: Key.articleFullscreenAvailable, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.articleFullscreenAvailable)
 		}
 	}
 
-	var articleFullscreenEnabled: Bool {
+	static var articleFullscreenEnabled: Bool {
 		get {
-			return articleFullscreenAvailable && AppDefaults.bool(for: Key.articleFullscreenEnabled)
+			articleFullscreenAvailable && UserDefaults.standard.bool(forKey: Key.articleFullscreenEnabled)
 		}
 		set {
-			AppDefaults.setBool(for: Key.articleFullscreenEnabled, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.articleFullscreenEnabled)
 		}
 	}
 
-	var logicalArticleFullscreenEnabled: Bool {
+	static var logicalArticleFullscreenEnabled: Bool {
 		articleFullscreenAvailable && articleFullscreenEnabled
 	}
 
-	var confirmMarkAllAsRead: Bool {
+	static var confirmMarkAllAsRead: Bool {
 		get {
-			return AppDefaults.bool(for: Key.confirmMarkAllAsRead)
+			UserDefaults.standard.bool(forKey: Key.confirmMarkAllAsRead)
 		}
 		set {
-			AppDefaults.setBool(for: Key.confirmMarkAllAsRead, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.confirmMarkAllAsRead)
 		}
 	}
 
-	var isArticleContentJavascriptEnabled: Bool {
+	static var splitViewPreferredDisplayMode: Int {
 		get {
-			return AppDefaults.bool(for: Key.articleContentJavascriptEnabled)
+			UserDefaults.standard.integer(forKey: Key.splitViewPreferredDisplayMode)
 		}
 		set {
-			AppDefaults.setBool(for: Key.articleContentJavascriptEnabled, newValue)
-		}
-	}
-
-	var splitViewPreferredDisplayMode: Int {
-		get {
-			return AppDefaults.int(for: Key.splitViewPreferredDisplayMode)
-		}
-		set {
-			AppDefaults.setInt(for: Key.splitViewPreferredDisplayMode, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.splitViewPreferredDisplayMode)
 		}
 	}
 
 	// The iPad timeline column width. nil until the user has resized it.
-	var timelineWidth: Int? {
+	static var timelineWidth: Int? {
 		get {
 			UserDefaults.standard.object(forKey: Key.timelineWidth) as? Int
 		}
@@ -247,7 +173,7 @@ final class AppDefaults: Sendable {
 	}
 
 	// The iPad sidebar column width. nil until the user has resized it.
-	var sidebarWidth: Int? {
+	static var sidebarWidth: Int? {
 		get {
 			UserDefaults.standard.object(forKey: Key.sidebarWidth) as? Int
 		}
@@ -260,46 +186,37 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var lastRefresh: Date? {
+	static var lastRefresh: Date? {
 		get {
-			return AppDefaults.date(for: Key.lastRefresh)
+			AppDefaults.date(for: Key.lastRefresh)
 		}
 		set {
 			AppDefaults.setDate(for: Key.lastRefresh, newValue)
 		}
 	}
 
-	var timelineNumberOfLines: Int {
+	static var timelineNumberOfLines: Int {
 		get {
-			return AppDefaults.int(for: Key.timelineNumberOfLines)
+			UserDefaults.standard.integer(forKey: Key.timelineNumberOfLines)
 		}
 		set {
-			AppDefaults.setInt(for: Key.timelineNumberOfLines, newValue)
+			UserDefaults.standard.set(newValue, forKey: Key.timelineNumberOfLines)
 			NotificationCenter.default.post(name: .timelineNumberOfLinesDidChange, object: nil)
 		}
 	}
 
-	var timelineIconSize: IconSize {
+	static var timelineIconSize: IconSize {
 		get {
-			let rawValue = AppDefaults.store.integer(forKey: Key.timelineIconDimension)
+			let rawValue = UserDefaults.standard.integer(forKey: Key.timelineIconDimension)
 			return IconSize(rawValue: rawValue) ?? IconSize.medium
 		}
 		set {
-			AppDefaults.store.set(newValue.rawValue, forKey: Key.timelineIconDimension)
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineIconDimension)
 			NotificationCenter.default.post(name: .timelineIconSizeDidChange, object: nil)
 		}
 	}
 
-	var currentThemeName: String? {
-		get {
-			return AppDefaults.string(for: Key.currentThemeName)
-		}
-		set {
-			AppDefaults.setString(for: Key.currentThemeName, newValue)
-		}
-	}
-
-	var hideReadFeeds: Bool {
+	static var hideReadFeeds: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.hideReadFeeds)
 		}
@@ -308,7 +225,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var isShowingExtractedArticle: Bool {
+	static var isShowingExtractedArticle: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.isShowingExtractedArticle)
 		}
@@ -317,7 +234,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var articleWindowScrollY: Int {
+	static var articleWindowScrollY: Int {
 		get {
 			UserDefaults.standard.integer(forKey: Key.articleWindowScrollY)
 		}
@@ -326,7 +243,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var expandedContainers: Set<ContainerIdentifier> {
+	static var expandedContainers: Set<ContainerIdentifier> {
 		get {
 			guard let rawIdentifiers = UserDefaults.standard.array(forKey: Key.expandedContainers) as? [[String: String]] else {
 				return Set<ContainerIdentifier>()
@@ -341,7 +258,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var smartFeedsHidingReadArticles: Set<String> {
+	static var smartFeedsHidingReadArticles: Set<String> {
 		get {
 			let smartFeedIDs = UserDefaults.standard.array(forKey: Key.smartFeedsHidingReadArticles) as? [String] ?? []
 			return Set(smartFeedIDs)
@@ -352,7 +269,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var feedsHidingReadArticles: [String: Set<String>] { // Account id: Set<feed.feedID>
+	static var feedsHidingReadArticles: [String: Set<String>] { // Account id: Set<feed.feedID>
 		get {
 			guard let d = UserDefaults.standard.dictionary(forKey: Key.feedsHidingReadArticles) as? [String: [String]] else {
 				return [String: Set<String>]()
@@ -365,7 +282,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var foldersShowingReadArticles: [String: Set<String>] { // Account id: Set<folder.nameForDisplay>
+	static var foldersShowingReadArticles: [String: Set<String>] { // Account id: Set<folder.nameForDisplay>
 		get {
 			guard let d = UserDefaults.standard.dictionary(forKey: Key.foldersShowingReadArticles) as? [String: [String]] else {
 				return [String: Set<String>]()
@@ -378,7 +295,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var selectedSidebarItem: SidebarItemIdentifier? {
+	static var selectedSidebarItem: SidebarItemIdentifier? {
 		get {
 			guard let userInfo = UserDefaults.standard.dictionary(forKey: Key.selectedSidebarItem) as? [String: String] else {
 				return nil
@@ -394,7 +311,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var selectedArticle: ArticleSpecifier? {
+	static var selectedArticle: ArticleSpecifier? {
 		get {
 			guard let d = UserDefaults.standard.dictionary(forKey: Key.selectedArticle) as? [String: String] else {
 				return nil
@@ -410,7 +327,7 @@ final class AppDefaults: Sendable {
 		}
 	}
 
-	var didMigrateLegacyStateRestorationInfo: Bool {
+	static var didMigrateLegacyStateRestorationInfo: Bool {
 		get {
 			UserDefaults.standard.bool(forKey: Key.didMigrateLegacyStateRestorationInfo)
 		}
@@ -420,78 +337,60 @@ final class AppDefaults: Sendable {
 	}
 
 	@MainActor static func registerDefaults() {
-		let defaults: [String: Any] = [Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
-										Key.timelineGroupByFeed: false,
-										Key.refreshClearsReadArticles: false,
-										Key.timelineNumberOfLines: 2,
-										Key.timelineIconDimension: IconSize.medium.rawValue,
-										Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
-										Key.articleFullscreenAvailable: false,
-										Key.articleFullscreenEnabled: false,
-										Key.confirmMarkAllAsRead: true,
-										Key.articleContentJavascriptEnabled: true,
-										Key.currentThemeName: Self.defaultThemeName,
-									   Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue]
-		AppDefaults.store.register(defaults: defaults)
+		// Must run before register(defaults:) so registered values aren’t copied as explicit ones.
+		migrateAppGroupDefaultsIfNeeded()
+
+		let platformDefaults: [String: Any] = [
+			Key.userInterfaceColorPalette: UserInterfaceColorPalette.automatic.rawValue,
+			Key.refreshClearsReadArticles: false,
+			Key.timelineNumberOfLines: 2,
+			Key.timelineIconDimension: IconSize.medium.rawValue,
+			Key.articleFullscreenAvailable: false,
+			Key.articleFullscreenEnabled: false,
+			Key.confirmMarkAllAsRead: true,
+			Key.splitViewPreferredDisplayMode: UISplitViewController.DisplayMode.oneBesideSecondary.rawValue
+		]
+
+		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }
+		UserDefaults.standard.register(defaults: defaults)
+	}
+
+	/// Copies each key’s value from source to destination, unless destination already has a value.
+	static func migrate(from source: UserDefaults, to destination: UserDefaults, keys: [String]) {
+		for key in keys {
+			if let value = source.object(forKey: key), destination.object(forKey: key) == nil {
+				destination.set(value, forKey: key)
+			}
+		}
 	}
 }
 
 private extension AppDefaults {
 
-	static var firstRunDate: Date? {
-		get {
-			return date(for: Key.firstRunDate)
+	/// Moves settings from the app-group suite to UserDefaults.standard, then deletes the suite.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/5466>
+	static func migrateAppGroupDefaultsIfNeeded() {
+		guard !UserDefaults.standard.bool(forKey: Key.didMigrateAppGroupDefaults) else {
+			return
 		}
-		set {
-			setDate(for: Key.firstRunDate, newValue)
+		UserDefaults.standard.set(true, forKey: Key.didMigrateAppGroupDefaults)
+
+		guard let appIdentifierPrefix = Bundle.main.object(forInfoDictionaryKey: "AppIdentifierPrefix") as? String, let bundleIdentifier = Bundle.main.bundleIdentifier else {
+			return
 		}
-	}
-
-	static func string(for key: String) -> String? {
-		return UserDefaults.standard.string(forKey: key)
-	}
-
-	static func setString(for key: String, _ value: String?) {
-		UserDefaults.standard.set(value, forKey: key)
-	}
-
-	static func bool(for key: String) -> Bool {
-		return AppDefaults.store.bool(forKey: key)
-	}
-
-	static func setBool(for key: String, _ flag: Bool) {
-		AppDefaults.store.set(flag, forKey: key)
-	}
-
-	static func int(for key: String) -> Int {
-		return AppDefaults.store.integer(forKey: key)
-	}
-
-	static func setInt(for key: String, _ x: Int) {
-		AppDefaults.store.set(x, forKey: key)
-	}
-
-	static func date(for key: String) -> Date? {
-		return AppDefaults.store.object(forKey: key) as? Date
-	}
-
-	static func setDate(for key: String, _ date: Date?) {
-		AppDefaults.store.set(date, forKey: key)
-	}
-
-	static func sortDirection(for key: String) -> ComparisonResult {
-		let rawInt = int(for: key)
-		if rawInt == ComparisonResult.orderedAscending.rawValue {
-			return .orderedAscending
+		let suiteName = "\(appIdentifierPrefix)group.\(bundleIdentifier)"
+		guard let appGroupDefaults = UserDefaults(suiteName: suiteName) else {
+			return
 		}
-		return .orderedDescending
+		migrate(from: appGroupDefaults, to: UserDefaults.standard, keys: Key.appGroupKeys)
+		appGroupDefaults.removePersistentDomain(forName: suiteName)
 	}
 
 	static func setSortDirection(for key: String, _ value: ComparisonResult) {
 		if value == .orderedAscending {
-			setInt(for: key, ComparisonResult.orderedAscending.rawValue)
+			UserDefaults.standard.set(ComparisonResult.orderedAscending.rawValue, forKey: key)
 		} else {
-			setInt(for: key, ComparisonResult.orderedDescending.rawValue)
+			UserDefaults.standard.set(ComparisonResult.orderedDescending.rawValue, forKey: key)
 		}
 	}
 }
@@ -530,25 +429,25 @@ struct StateRestorationInfo {
 	}
 
 	init() {
-		self.init(hideReadFeeds: AppDefaults.shared.hideReadFeeds,
-				  expandedContainers: AppDefaults.shared.expandedContainers,
-				  selectedSidebarItem: AppDefaults.shared.selectedSidebarItem,
-				  smartFeedsHidingReadArticles: AppDefaults.shared.smartFeedsHidingReadArticles,
-				  feedsHidingReadArticles: AppDefaults.shared.feedsHidingReadArticles,
-				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
-				  selectedArticle: AppDefaults.shared.selectedArticle,
-				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
-				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)
+		self.init(hideReadFeeds: AppDefaults.hideReadFeeds,
+				  expandedContainers: AppDefaults.expandedContainers,
+				  selectedSidebarItem: AppDefaults.selectedSidebarItem,
+				  smartFeedsHidingReadArticles: AppDefaults.smartFeedsHidingReadArticles,
+				  feedsHidingReadArticles: AppDefaults.feedsHidingReadArticles,
+				  foldersShowingReadArticles: AppDefaults.foldersShowingReadArticles,
+				  selectedArticle: AppDefaults.selectedArticle,
+				  articleWindowScrollY: AppDefaults.articleWindowScrollY,
+				  isShowingExtractedArticle: AppDefaults.isShowingExtractedArticle)
 	}
 
 	// TODO: Delete for NetNewsWire 7.1.
 	init(legacyState: NSUserActivity?) {
-		if AppDefaults.shared.didMigrateLegacyStateRestorationInfo {
+		if AppDefaults.didMigrateLegacyStateRestorationInfo {
 			self.init()
 			return
 		}
 
-		AppDefaults.shared.didMigrateLegacyStateRestorationInfo = true
+		AppDefaults.didMigrateLegacyStateRestorationInfo = true
 
 		// Extract legacy window state if available
 		guard let windowState = legacyState?.userInfo?[UserInfoKey.windowState] as? [AnyHashable: Any] else {
@@ -560,7 +459,7 @@ struct StateRestorationInfo {
 		if let legacyValue = windowState[UserInfoKey.readFeedsFilterState] as? Bool {
 			hideReadFeeds = legacyValue
 		} else {
-			hideReadFeeds = AppDefaults.shared.hideReadFeeds
+			hideReadFeeds = AppDefaults.hideReadFeeds
 		}
 
 		let expandedContainers: Set<ContainerIdentifier>
@@ -577,7 +476,7 @@ struct StateRestorationInfo {
 			let containerIdentifiers = convertedState.compactMap { ContainerIdentifier(userInfo: $0) }
 			expandedContainers = Set(containerIdentifiers)
 		} else {
-			expandedContainers = AppDefaults.shared.expandedContainers
+			expandedContainers = AppDefaults.expandedContainers
 		}
 
 		let sidebarItemsHidingReadArticles: Set<SidebarItemIdentifier>
@@ -618,7 +517,7 @@ struct StateRestorationInfo {
 		   let sidebarItemIdentifier = SidebarItemIdentifier(userInfo: legacyState) {
 			selectedSidebarItem = sidebarItemIdentifier
 		} else {
-			selectedSidebarItem = AppDefaults.shared.selectedSidebarItem
+			selectedSidebarItem = AppDefaults.selectedSidebarItem
 		}
 
 		self.init(hideReadFeeds: hideReadFeeds,
@@ -626,9 +525,9 @@ struct StateRestorationInfo {
 				  selectedSidebarItem: selectedSidebarItem,
 				  smartFeedsHidingReadArticles: smartFeedsHidingReadArticles,
 				  feedsHidingReadArticles: feedsHidingReadArticles,
-				  foldersShowingReadArticles: AppDefaults.shared.foldersShowingReadArticles,
-				  selectedArticle: AppDefaults.shared.selectedArticle,
-				  articleWindowScrollY: AppDefaults.shared.articleWindowScrollY,
-				  isShowingExtractedArticle: AppDefaults.shared.isShowingExtractedArticle)
+				  foldersShowingReadArticles: AppDefaults.foldersShowingReadArticles,
+				  selectedArticle: AppDefaults.selectedArticle,
+				  articleWindowScrollY: AppDefaults.articleWindowScrollY,
+				  isShowingExtractedArticle: AppDefaults.isShowingExtractedArticle)
 	}
 }

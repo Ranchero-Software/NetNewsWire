@@ -54,11 +54,11 @@ final class UnreadCountView: NSView {
 	}
 	/// Text for the unread count, or nil when nothing should be drawn.
 	var unreadCountText: String? {
-		AppDefaults.shared.unreadCountDisplay.text(for: unreadCount)
+		AppDefaults.unreadCountDisplay.text(for: unreadCount)
 	}
 
 	private var showsDot: Bool {
-		AppDefaults.shared.unreadCountDisplay.showsDot(for: unreadCount)
+		AppDefaults.unreadCountDisplay.showsDot(for: unreadCount)
 	}
 
 	var isSelected: Bool = false {

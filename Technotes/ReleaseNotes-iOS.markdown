@@ -1,5 +1,14 @@
 # iOS Release Notes
 
+### 7.3 build 7226 22 Oct 2026 - branch: main tag: iOS-7.3-7226
+
+Added an article preview to the timeline context menu — touch and hold an article to see it, and tap the preview to open the article
+Added version string to the About view
+Added a Copy command to the version string in Settings and in the About view — touch and hold to copy
+Fixed inline footnotes in FreshRSS articles
+Fixed extra vertical space in MacRumors articles
+Bumped minimum iOS version from 17 to 18
+
 ### 7.2 build 7221 11 Oct 2026 - branch: main tag: iOS-7.2-7221
 
 Submitted to App Store 15 Oct. 2026. Originally a TestFlight release.

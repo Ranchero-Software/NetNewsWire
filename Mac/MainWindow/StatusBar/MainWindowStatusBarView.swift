@@ -215,16 +215,23 @@ final class MainWindowStatusBarView: NSView {
 	}
 
 	// The last refresh time shows the date only when it’s not today, so it changes at midnight.
-	@objc func handleCalendarDayChanged(_ notification: Notification) {
-		updateCountLabel()
+	// These system notifications aren’t guaranteed to arrive on the main thread.
+	@objc nonisolated func handleCalendarDayChanged(_ notification: Notification) {
+		Task { @MainActor in
+			self.updateCountLabel()
+		}
 	}
 
-	@objc func handleCurrentLocaleDidChange(_ notification: Notification) {
-		updateCountLabel()
+	@objc nonisolated func handleCurrentLocaleDidChange(_ notification: Notification) {
+		Task { @MainActor in
+			self.updateCountLabel()
+		}
 	}
 
-	@objc func handleSystemTimeZoneDidChange(_ notification: Notification) {
-		updateCountLabel()
+	@objc nonisolated func handleSystemTimeZoneDidChange(_ notification: Notification) {
+		Task { @MainActor in
+			self.updateCountLabel()
+		}
 	}
 
 	@objc func handleArticleThemeNamesDidChange(_ notification: Notification) {
@@ -251,8 +258,17 @@ final class MainWindowStatusBarView: NSView {
 		URLPasteboardWriter.write(urlStrings: [link], to: .general)
 	}
 
-	@objc func toggleCountMode(_ sender: Any?) {
-		AppDefaults.shared.statusBarCountMode = effectiveCountMode.next(includingUnreadCount: Self.showsUnreadCounts)
+	/// While refreshing, the label shows progress, and a click opens the Current Activity window. Otherwise a click toggles the count mode.
+	@objc func countLabelClicked(_ sender: Any?) {
+		if CombinedRefreshProgress.shared.progressInfo.isComplete {
+			AppDefaults.statusBarCountMode = effectiveCountMode.next(includingUnreadCount: Self.showsUnreadCounts)
+		} else {
+			showActivityWindow(sender)
+		}
+	}
+
+	@objc func showActivityWindow(_ sender: Any?) {
+		NSApp.sendAction(#selector(AppDelegate.showActivityWindow(_:)), to: nil, from: self)
 	}
 }
 
@@ -316,7 +332,8 @@ private extension MainWindowStatusBarView {
 		progressIndicator.isHidden = true
 		countLabel.isHidden = true
 
-		countLabel.addGestureRecognizer(NSClickGestureRecognizer(target: self, action: #selector(toggleCountMode(_:))))
+		progressIndicator.addGestureRecognizer(NSClickGestureRecognizer(target: self, action: #selector(showActivityWindow(_:))))
+		countLabel.addGestureRecognizer(NSClickGestureRecognizer(target: self, action: #selector(countLabelClicked(_:))))
 
 		linkLabel.menu = makeLinkMenu()
 
@@ -418,12 +435,12 @@ private extension MainWindowStatusBarView {
 	}
 
 	static var showsUnreadCounts: Bool {
-		AppDefaults.shared.unreadCountDisplay == .count
+		AppDefaults.unreadCountDisplay == .count
 	}
 
 	/// The saved mode, except that the unread count becomes the last refresh time when unread counts are hidden (hidden or a dot).
 	var effectiveCountMode: StatusBarCountMode {
-		let mode = AppDefaults.shared.statusBarCountMode
+		let mode = AppDefaults.statusBarCountMode
 		if mode == .unreadCount && !Self.showsUnreadCounts {
 			return .lastRefresh
 		}
@@ -457,7 +474,7 @@ private extension MainWindowStatusBarView {
 		if Calendar.current.isDateInToday(date) {
 			return date.formatted(date: .omitted, time: .shortened)
 		}
-		return date.formatted(date: .abbreviated, time: .shortened)
+		return date.formatted(date: .numeric, time: .shortened)
 	}
 
 	// MARK: - Link
@@ -506,7 +523,7 @@ private extension MainWindowStatusBarView {
 	}
 
 	func updateThemePopUpButtonVisibility() {
-		let isHidden = !AppDefaults.shared.showStatusBarThemeMenu
+		let isHidden = !AppDefaults.showStatusBarThemeMenu
 		guard themePopUpButton.isHidden != isHidden else {
 			return
 		}

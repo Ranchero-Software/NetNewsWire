@@ -53,7 +53,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	private var splitViewController: NSSplitViewController?
 	// Column layout only: the vertical split holding the timeline above the article view.
 	private var contentSplitViewController: NSSplitViewController?
-	private var timelineLayout = AppDefaults.shared.timelineLayout
+	private var timelineLayout = AppDefaults.timelineLayout
 	// Geometry for the layout that isn’t showing, so a round trip through the other layout keeps it.
 	private var rememberedStandardLayoutWidths = [Int]()
 	private var rememberedColumnLayoutTimelineHeight = 0
@@ -168,7 +168,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 		let state = savableState()
 		Self.logger.debug("MainWindowController: Saving state to UserDefaults: \(state)")
 		let data = try? NSKeyedArchiver.archivedData(withRootObject: state, requiringSecureCoding: true)
-		AppDefaults.shared.secureWindowState = data
+		AppDefaults.secureWindowState = data
 		// Don't save the frame in full screen — it would replace the saved windowed frame with the screen's frame.
 		if let window, !window.styleMask.contains(.fullScreen) {
 			window.saveFrame(usingName: windowAutosaveName)
@@ -176,16 +176,16 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	func restoreStateFromUserDefaults() {
-		if let data = AppDefaults.shared.secureWindowState,
+		if let data = AppDefaults.secureWindowState,
 		   let state = try? NSKeyedUnarchiver.unarchivedObject(ofClass: MainWindowState.self, from: data) {
 			Self.logger.debug("MainWindowController: restoring state from UserDefaults: \(state)")
 			window?.setFrameUsingName(windowAutosaveName, force: true)
 			restoreState(from: state)
-		} else if let state = AppDefaults.shared.legacyWindowState {
+		} else if let state = AppDefaults.legacyWindowState {
 			// Migrate from previous window state data. Delete data when finished.
 			window?.setFrameUsingName(windowAutosaveName, force: true)
 			restoreLegacyState(from: state)
-			AppDefaults.shared.deleteLegacyWindowState()
+			AppDefaults.deleteLegacyWindowState()
 		}
 	}
 
@@ -198,7 +198,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	private func userDefaultsDidChange() {
-		let layout = AppDefaults.shared.timelineLayout
+		let layout = AppDefaults.timelineLayout
 		if layout != timelineLayout {
 			installSplitViewController(for: layout)
 		}
@@ -415,7 +415,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func openInBrowser(_ sender: Any?) {
-		if AppDefaults.shared.openInBrowserInBackground {
+		if AppDefaults.openInBrowserInBackground {
 			window?.makeKeyAndOrderFront(self)
 		}
 		openArticleInBrowser(sender)
@@ -427,11 +427,11 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 	}
 
 	@IBAction func openInBrowserUsingOppositeOfSettings(_ sender: Any?) {
-		if !AppDefaults.shared.openInBrowserInBackground {
+		if !AppDefaults.openInBrowserInBackground {
 			window?.makeKeyAndOrderFront(self)
 		}
 		if let link = currentLink {
-			Browser.open(link, inBackground: !AppDefaults.shared.openInBrowserInBackground)
+			Browser.open(link, inBackground: !AppDefaults.openInBrowserInBackground)
 		}
 	}
 
@@ -884,7 +884,22 @@ extension MainWindowController: DetailViewControllerDelegate {
 extension MainWindowController: MainWindowStatusBarViewDelegate {
 
 	func statusBarViewGearMenu(_ statusBarView: MainWindowStatusBarView) -> NSMenu? {
-		sidebarViewController?.statusBarMenu()
+		guard let menu = sidebarViewController?.statusBarMenu() else {
+			return nil
+		}
+
+		var index = 0
+		if AccountManager.shared.canRefresh {
+			menu.insertItem(withTitle: NSLocalizedString("Refresh", comment: "Refresh"), action: #selector(AppDelegate.refreshAll(_:)), keyEquivalent: "", at: index)
+			index += 1
+		}
+
+		let isSidebarHidden = sidebarSplitViewItem?.isCollapsed ?? false
+		let sidebarTitle = isSidebarHidden ? NSLocalizedString("Show Sidebar", comment: "Command") : NSLocalizedString("Hide Sidebar", comment: "Command")
+		menu.insertItem(withTitle: sidebarTitle, action: #selector(NSSplitViewController.toggleSidebar(_:)), keyEquivalent: "", at: index)
+		menu.insertItem(NSMenuItem.separator(), at: index + 1)
+
+		return menu
 	}
 
 	func statusBarView(_ statusBarView: MainWindowStatusBarView, moveSidebarDividerTo position: CGFloat) {
@@ -1532,7 +1547,7 @@ private extension MainWindowController {
 	}
 
 	func validateToggleArticleExtractor(_ item: NSValidatedUserInterfaceItem) -> Bool {
-		guard !AppDefaults.shared.isDeveloperBuild else {
+		guard !AppDefaults.isDeveloperBuild else {
 			return false
 		}
 
@@ -1711,7 +1726,7 @@ private extension MainWindowController {
 		}
 
 		func setSubtitle(_ count: Int) {
-			guard AppDefaults.shared.unreadCountDisplay == .count else {
+			guard AppDefaults.unreadCountDisplay == .count else {
 				window?.subtitle = ""
 				return
 			}
@@ -1817,12 +1832,12 @@ private extension MainWindowController {
 		let menu = NSMenu()
 
 		let newFeedItem = NSMenuItem()
-		newFeedItem.title = NSLocalizedString("New Feed…", comment: "New Feed")
+		newFeedItem.title = NSLocalizedString("New Feed…", comment: "Command")
 		newFeedItem.action = #selector(AppDelegate.showAddFeedWindow(_:))
 		menu.addItem(newFeedItem)
 
 		let newFolderFeedItem = NSMenuItem()
-		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "New Folder")
+		newFolderFeedItem.title = NSLocalizedString("New Folder…", comment: "Command")
 		newFolderFeedItem.action = #selector(AppDelegate.showAddFolderWindow(_:))
 		menu.addItem(newFolderFeedItem)
 
@@ -1840,7 +1855,7 @@ private extension MainWindowController {
 
 	/// The status bar, when showing, takes the place of the detail view’s floating link overlay and the sidebar’s progress view.
 	func updateStatusBarVisibility() {
-		let showStatusBar = AppDefaults.shared.showStatusBar
+		let showStatusBar = AppDefaults.showStatusBar
 		mainWindowContentViewController.isStatusBarHidden = !showStatusBar
 		detailViewController?.showsMouseoverLinkOverlay = !showStatusBar
 		sidebarViewController?.showsProgressView = !showStatusBar
@@ -1865,19 +1880,19 @@ private extension MainWindowController {
 
 	func updateStatusBarSidebarDivider() {
 		let statusBarView = mainWindowContentViewController.statusBarView
-		guard let sidebarSplitViewItem, !sidebarSplitViewItem.isCollapsed else {
+		guard let sidebarSplitViewItem, !sidebarSplitViewItem.isCollapsed, let splitView = splitViewController?.splitView, let sidebarPane = splitView.arrangedSubviews.first else {
 			statusBarView.sidebarDividerPosition = nil
 			return
 		}
-		let sidebarView = sidebarSplitViewItem.viewController.view
-		let sidebarFrameInWindow = sidebarView.convert(sidebarView.bounds, to: nil)
-		let dividerPositionInStatusBar = statusBarView.convert(NSPoint(x: sidebarFrameInWindow.maxX, y: 0), from: nil)
+		// Use the split view’s sidebar pane, not the sidebar view: while the sidebar slides in,
+		// the sidebar view’s position lags a step behind the pane and isn’t updated after the last resize.
+		let dividerPositionInStatusBar = statusBarView.convert(NSPoint(x: sidebarPane.frame.maxX, y: 0), from: splitView)
 
 		// Starting with macOS 26, the content beside the sidebar extends under it, and the divider is a hairline
 		// at the sidebar’s trailing edge. Before that, the divider follows the sidebar.
-		if let splitView = splitViewController?.splitView, splitView.arrangedSubviews.count > 1 {
-			let arrangedSubviews = splitView.arrangedSubviews
-			let contentExtendsUnderSidebar = arrangedSubviews[1].frame.minX < arrangedSubviews[0].frame.maxX
+		let arrangedSubviews = splitView.arrangedSubviews
+		if arrangedSubviews.count > 1 {
+			let contentExtendsUnderSidebar = arrangedSubviews[1].frame.minX < sidebarPane.frame.maxX
 			let hairline = 1 / (window?.backingScaleFactor ?? 1)
 			statusBarView.sidebarDividerLineOffset = contentExtendsUnderSidebar ? -hairline : 0
 			statusBarView.sidebarDividerLineWidth = contentExtendsUnderSidebar ? hairline : splitView.dividerThickness

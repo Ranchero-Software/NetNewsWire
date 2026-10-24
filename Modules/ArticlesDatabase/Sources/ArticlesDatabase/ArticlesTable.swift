@@ -12,6 +12,7 @@ import RSCore
 import RSDatabase
 import RSDatabaseObjC
 import RSParser
+import Synchronization
 import Articles
 
 final class ArticlesTable: DatabaseTable, Sendable {
@@ -22,7 +23,7 @@ final class ArticlesTable: DatabaseTable, Sendable {
 	private let statusesTable: StatusesTable
 	private let searchTable: SearchTable
 	private let retentionStyle: ArticlesDatabase.RetentionStyle
-	private let articlesCache = OSAllocatedUnfairLock(initialState: [String: Article]())
+	private let articlesCache = Mutex([String: Article]())
 
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ArticlesTable")
 	private static let signposter = OSSignposter(subsystem: Logger.nnwSubsystem, category: .pointsOfInterest)

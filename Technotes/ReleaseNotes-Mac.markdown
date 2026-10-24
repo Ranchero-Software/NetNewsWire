@@ -1,8 +1,20 @@
 # Mac Release Notes
 
+### 7.3b2 7226 22 Oct 2026 - branch: main tag: mac-7.3b2
+
+Fixed a crash at midnight when the status bar is showing
+Added the last-refresh time to the status bar, and made it the default
+Changed the status bar to use a shorter date format
+Added Refresh and Show/Hide Sidebar commands to the status bar gear menu
+Made clicking the progress indicator in the status bar open the Current Activity window (as in NetNewsWire of Yore)
+Fixed bug where the status bar divider might drift from the split view divider
+Fixed inline footnotes in FreshRSS articles
+Added netnewswire, feed, feeds, and x-netnewswire-feed as allowed link schemes in the article view — so clicking a link to install a theme (for instance) works
+
 ### 7.3b1 7225 20 Oct 2026 - branch: main tag: mac-7.3b1
 
 Restored the status bar from NetNewsWire of Yore (NetNewsWire 1-3). Show and hide it via the View menu
+Fixed extra vertical space in MacRumors articles
 
 ### 7.2.1 7224 19 Oct 2026 - branch: main tag: mac-7.2.1
 

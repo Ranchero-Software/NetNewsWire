@@ -33,7 +33,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 		}
 		set {
 			_unreadCount = newValue
-			unreadCountLabel.isHidden = AppDefaults.shared.unreadCountDisplay.text(for: newValue) == nil
+			unreadCountLabel.isHidden = AppDefaults.unreadCountDisplay.text(for: newValue) == nil
 			unreadCountLabel.setUnreadCount(newValue)
 			setNeedsUpdateConfiguration()
 		}
@@ -57,7 +57,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
 	override var accessibilityLabel: String? {
 		get {
 			let name = feedTitle.text ?? ""
-			guard let unreadText = AppDefaults.shared.unreadCountDisplay.accessibilityText(for: unreadCount) else {
+			guard let unreadText = AppDefaults.unreadCountDisplay.accessibilityText(for: unreadCount) else {
 				return name
 			}
 			return "\(name) \(unreadText)"
@@ -78,14 +78,7 @@ final class MainFeedCollectionViewCell: UICollectionViewCell {
     }
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else if traitCollection.userInterfaceIdiom == .pad {
-			backgroundConfig = UIBackgroundConfiguration.listSidebarCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-		}
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 
 		// Matches the timeline: accent background and white text when the feeds list is first responder,
 		// and no highlight while a row is pressed, so the row goes straight to the selected style.

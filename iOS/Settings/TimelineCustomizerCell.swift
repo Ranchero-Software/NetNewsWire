@@ -26,7 +26,7 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 				if #available(iOS 26, *) {
 					slider.trackConfiguration = .init(allowsTickValuesOnly: true, numberOfTicks: 6)
 				}
-				slider.value = Float(AppDefaults.shared.timelineNumberOfLines)
+				slider.value = Float(AppDefaults.timelineNumberOfLines)
 				slider.addTickMarks()
 			case .iconSize:
 				slider.minimumValue = 1
@@ -34,7 +34,7 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 				if #available(iOS 26, *) {
 					slider.trackConfiguration = .init(allowsTickValuesOnly: true, numberOfTicks: 3)
 				}
-				slider.value = Float(AppDefaults.shared.timelineIconSize.rawValue)
+				slider.value = Float(AppDefaults.timelineIconSize.rawValue)
 				slider.addTickMarks()
 			case .none:
 				return
@@ -45,22 +45,17 @@ final class TimelineCustomizerCell: UICollectionViewCell {
 	@IBAction func sliderValueChanges(_ sender: Any) {
 		switch sliderConfiguration {
 		case .numberOfLines:
-			AppDefaults.shared.timelineNumberOfLines = Int(slider.value.rounded())
+			AppDefaults.timelineNumberOfLines = Int(slider.value.rounded())
 		case .iconSize:
 			guard let iconSize = IconSize(rawValue: Int(slider.value.rounded())) else { return }
-			AppDefaults.shared.timelineIconSize = iconSize
+			AppDefaults.timelineIconSize = iconSize
 		case .none:
 			return
 		}
 	}
 
 	override func updateConfiguration(using state: UICellConfigurationState) {
-		var backgroundConfig: UIBackgroundConfiguration
-		if #available(iOS 18, *) {
-			backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
-		} else {
-			backgroundConfig = UIBackgroundConfiguration.listGroupedCell().updated(for: state)
-		}
+		var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
 		backgroundConfig.backgroundColor = traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
 		backgroundConfig.cornerRadius = 20
 		self.backgroundConfiguration = backgroundConfig

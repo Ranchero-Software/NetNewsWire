@@ -17,7 +17,7 @@ enum TimelineLayout {
 
 extension AppDefaults {
 
-	var timelineLayout: TimelineLayout {
+	static var timelineLayout: TimelineLayout {
 		useColumnLayout ? .column : .standard
 	}
 }

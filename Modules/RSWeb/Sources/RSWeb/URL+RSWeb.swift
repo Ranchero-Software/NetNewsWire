@@ -14,11 +14,15 @@ private struct URLConstants {
 	static let schemeMailto = "mailto"
 	static let prefixHTTP = "http://"
 	static let prefixHTTPS = "https://"
+	static let schemeNetNewsWire = "netnewswire"
+	static let schemeFeed = "feed"
+	static let schemeFeeds = "feeds"
 #if os(macOS)
 	static let schemeMagnet = "magnet"
-	static let allowedSchemesForOpening: Set<String> = [schemeHTTP, schemeHTTPS, schemeMailto, schemeMagnet]
+	static let schemeNetNewsWireFeed = "x-netnewswire-feed"
+	static let allowedSchemesForOpening: Set<String> = [schemeHTTP, schemeHTTPS, schemeMailto, schemeMagnet, schemeNetNewsWire, schemeFeed, schemeFeeds, schemeNetNewsWireFeed]
 #else
-	static let allowedSchemesForOpening: Set<String> = [schemeHTTP, schemeHTTPS, schemeMailto]
+	static let allowedSchemesForOpening: Set<String> = [schemeHTTP, schemeHTTPS, schemeMailto, schemeNetNewsWire, schemeFeed, schemeFeeds]
 #endif
 }
 
@@ -65,7 +69,6 @@ public extension URL {
 	}
 
 	func preparedForOpeningInBrowser() -> URL? {
-		// Open http, https, and mailto links only, plus magnet on macOS.
 		guard let scheme = scheme?.lowercased(with: localeForLowercasing),
 			  URLConstants.allowedSchemesForOpening.contains(scheme) else {
 			return nil
