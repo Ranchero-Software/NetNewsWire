@@ -186,10 +186,20 @@ struct FeedlyEntry: Decodable, Sendable {
 
 	/// A list of media links (videos, images, sound etc) provided by the feed. Some entries do not have a summary or content, only a collection of media links.
 	let enclosure: [FeedlyLink]?
+
+	/// The image Feedly associates with the article.
+	let visual: FeedlyVisual?
+}
+
+struct FeedlyVisual: Decodable, Sendable {
+	/// Sometimes the literal `none`.
+	let url: String?
 }
 
 struct FeedlyEntryParser {
 	let entry: FeedlyEntry
+
+	private static let noVisualURL = "none"
 
 	private let rightToLeftTextSantizer = FeedlyRTLTextSanitizer()
 
@@ -273,6 +283,13 @@ struct FeedlyEntryParser {
 		return attachments.isEmpty ? nil : Set(attachments)
 	}
 
+	var imageURL: String? {
+		guard let url = entry.visual?.url, !url.isEmpty, url != Self.noVisualURL else {
+			return nil
+		}
+		return url
+	}
+
 	var parsedItemRepresentation: ParsedItem? {
 		guard let feedURL else {
 			return nil
@@ -289,7 +306,7 @@ struct FeedlyEntryParser {
 						  contentText: contentText,
 						  markdown: nil,
 						  summary: summary,
-						  imageURL: nil,
+						  imageURL: imageURL,
 						  thumbnailURL: nil,
 						  bannerImageURL: nil,
 						  datePublished: datePublished,

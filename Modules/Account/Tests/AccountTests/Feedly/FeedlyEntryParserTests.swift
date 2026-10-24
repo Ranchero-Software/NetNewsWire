@@ -34,7 +34,8 @@ import XCTest
 								unread: false,
 								tags: tags,
 								categories: nil,
-								enclosure: nil)
+								enclosure: nil,
+								visual: nil)
 
 		let parser = FeedlyEntryParser(entry: entry)
 
@@ -93,7 +94,8 @@ import XCTest
 								unread: false,
 								tags: nil,
 								categories: nil,
-								enclosure: nil)
+								enclosure: nil,
+								visual: nil)
 
 		let parser = FeedlyEntryParser(entry: entry)
 
@@ -122,7 +124,8 @@ import XCTest
 								unread: false,
 								tags: nil,
 								categories: nil,
-								enclosure: nil)
+								enclosure: nil,
+								visual: nil)
 
 		let parser = FeedlyEntryParser(entry: entry)
 
@@ -146,7 +149,8 @@ import XCTest
 								unread: false,
 								tags: nil,
 								categories: nil,
-								enclosure: nil)
+								enclosure: nil,
+								visual: nil)
 
 		let parser = FeedlyEntryParser(entry: entry)
 
@@ -170,7 +174,8 @@ import XCTest
 								unread: false,
 								tags: nil,
 								categories: nil,
-								enclosure: nil)
+								enclosure: nil,
+								visual: nil)
 
 		let parser = FeedlyEntryParser(entry: entry)
 
@@ -209,7 +214,8 @@ import XCTest
 								unread: false,
 								tags: nil,
 								categories: nil,
-								enclosure: nil)
+								enclosure: nil,
+								visual: nil)
 
 		let parser = FeedlyEntryParser(entry: entry)
 
@@ -231,6 +237,7 @@ import XCTest
 					unread: false,
 					tags: nil,
 					categories: nil,
-					enclosure: nil)
+					enclosure: nil,
+					visual: nil)
 	}
 }
