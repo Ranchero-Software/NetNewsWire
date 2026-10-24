@@ -20,13 +20,12 @@ jobs:
         platform: [macos, ios, ipad]
     env:
       DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
-      READER_RESULTS_DIR: ${{ runner.temp }}/reader-results
     steps:
       - uses: actions/checkout@v5
       - name: Verify aggregate failure propagation
         run: python3 -m unittest discover -s scripts/tests -v
       - name: Test Reader
-        run: bash scripts/test-reader.sh '${{ matrix.platform }}'
+        run: READER_RESULTS_DIR="$RUNNER_TEMP/reader-results" bash scripts/test-reader.sh '${{ matrix.platform }}'
       - uses: actions/upload-artifact@v4
         if: always()
         with:
