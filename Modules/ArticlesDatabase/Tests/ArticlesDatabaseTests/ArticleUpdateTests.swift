@@ -141,7 +141,7 @@ import ArticlesDatabase
 
 private extension ArticleUpdateTests {
 
-	func parsedItem(title: String?, markdown: String?, attachments: Set<ParsedAttachment>?, thumbnailURL: String?) -> ParsedItem {
+	func parsedItem(title: String?, markdown: String?, attachments: [ParsedAttachment]?, thumbnailURL: String?) -> ParsedItem {
 		ParsedItem(syncServiceID: nil, uniqueID: uniqueID, feedURL: feedID, url: "https://example.com/\(uniqueID)", externalURL: nil, title: title, language: nil, contentHTML: "<p>Test</p>", contentText: nil, markdown: markdown, summary: nil, imageURL: nil, thumbnailURL: thumbnailURL, bannerImageURL: nil, datePublished: Date(timeIntervalSince1970: 0), dateModified: nil, authors: nil, tags: nil, attachments: attachments)
 	}
 

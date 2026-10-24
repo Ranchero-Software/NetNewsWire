@@ -16,12 +16,14 @@ extension Attachment {
 		self.init(url: parsedAttachment.url, mimeType: parsedAttachment.mimeType, title: parsedAttachment.title, sizeInBytes: parsedAttachment.sizeInBytes, durationInSeconds: parsedAttachment.durationInSeconds, width: parsedAttachment.width, height: parsedAttachment.height, medium: medium)
 	}
 
-	public static func attachmentsWithParsedAttachments(_ parsedAttachments: Set<ParsedAttachment>?) -> Set<Attachment>? {
+	/// Keeps the order, dropping repeats of a URL.
+	public static func attachmentsWithParsedAttachments(_ parsedAttachments: [ParsedAttachment]?) -> [Attachment]? {
 		guard let parsedAttachments else {
 			return nil
 		}
 
-		let attachments = Set(parsedAttachments.compactMap { Attachment(parsedAttachment: $0) })
+		var urls = Set<String>()
+		let attachments = parsedAttachments.filter { urls.insert($0.url).inserted }.compactMap { Attachment(parsedAttachment: $0) }
 		return attachments.isEmpty ? nil : attachments
 	}
 }

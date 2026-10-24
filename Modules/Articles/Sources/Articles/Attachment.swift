@@ -43,11 +43,10 @@ public struct Attachment: Codable, Hashable, Sendable {
 		self.medium = medium
 	}
 
-	public static func attachmentsWithJSON(_ data: Data) -> Set<Attachment>? {
+	public static func attachmentsWithJSON(_ data: Data) -> [Attachment]? {
 		let decoder = JSONDecoder()
 		do {
-			let attachments = try decoder.decode([Attachment].self, from: data)
-			return Set(attachments)
+			return try decoder.decode([Attachment].self, from: data)
 		} catch {
 			assertionFailure("JSON representation of Attachment array could not be decoded, error: \(error)")
 		}
@@ -98,12 +97,12 @@ extension Attachment {
 	}
 }
 
-extension Set where Element == Attachment {
+extension Array where Element == Attachment {
 
 	public func json() -> String? {
 		let encoder = JSONEncoder()
 		do {
-			let jsonData = try encoder.encode(Array(self))
+			let jsonData = try encoder.encode(self)
 			return String(data: jsonData, encoding: .utf8)
 		} catch {
 			assertionFailure("JSON representation of Attachment array could not be encoded: \(self) error: \(error)")

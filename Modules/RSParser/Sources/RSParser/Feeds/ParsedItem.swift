@@ -28,7 +28,7 @@ public struct ParsedItem: Hashable, Sendable {
 	public let dateModified: Date?
 	public let authors: Set<ParsedAuthor>?
 	public let tags: Set<String>?
-	public let attachments: Set<ParsedAttachment>?
+	public let attachments: [ParsedAttachment]?
 
 	public init(syncServiceID: String?,
 	            uniqueID: String,
@@ -48,7 +48,7 @@ public struct ParsedItem: Hashable, Sendable {
 	            dateModified: Date?,
 	            authors: Set<ParsedAuthor>?,
 	            tags: Set<String>?,
-	            attachments: Set<ParsedAttachment>?) {
+	            attachments: [ParsedAttachment]?) {
 		self.syncServiceID = syncServiceID
 		self.uniqueID = uniqueID
 		self.feedURL = feedURL

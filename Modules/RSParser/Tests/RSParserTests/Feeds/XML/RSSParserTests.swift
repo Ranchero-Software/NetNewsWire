@@ -106,7 +106,8 @@ import RSParser
 		#expect(author.name == "postpunkmonk")
 		#expect(author.avatarURL == "https://0.gravatar.com/avatar/fb95b7a51c1ce5897b406c1e656c6eb5f1ecfb4f537d200249ad0c3c53d6b7a1?s=96&d=&r=PG")
 
-		let attachmentURLs = Set(try #require(item.attachments).map { $0.url })
+		// In feed order.
+		let attachmentURLs = try #require(item.attachments).map { $0.url }
 		#expect(attachmentURLs == [
 			"https://postpunkmonk.com/wp-content/uploads/2026/10/automatic-shadowplay.jpg",
 			"https://postpunkmonk.com/wp-content/uploads/2026/10/automatic40eulogy9-26.jpg",

@@ -221,12 +221,12 @@ private extension JSONFeedParser {
 		return DateParser.date(from: dateString)
 	}
 
-	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
 
 		guard let attachmentsArray = itemDictionary[Key.attachments] as? JSONArray else {
 			return nil
 		}
-		return Set(attachmentsArray.compactMap { parseAttachment($0) })
+		return attachmentsArray.compactMap { parseAttachment($0) }
 	}
 
 	static func parseAttachment(_ attachmentObject: JSONDictionary) -> ParsedAttachment? {

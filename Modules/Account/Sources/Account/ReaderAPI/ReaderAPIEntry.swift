@@ -61,9 +61,9 @@ struct ReaderAPIEntry: Codable, Sendable {
 	let origin: ReaderAPIEntryOrigin
 	let enclosures: [ReaderAPIEnclosure]?
 
-	var attachments: Set<ParsedAttachment>? {
+	var attachments: [ParsedAttachment]? {
 		let attachments = enclosures?.compactMap { $0.parsedAttachment } ?? []
-		return attachments.isEmpty ? nil : Set(attachments)
+		return attachments.isEmpty ? nil : attachments
 	}
 
 	var imageURL: String? {

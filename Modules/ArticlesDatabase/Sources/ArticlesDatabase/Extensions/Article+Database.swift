@@ -52,7 +52,7 @@ extension Article {
 		return Author.authorsWithJSON(data)
 	}
 
-	private static func attachmentsFromRow(_ row: FMResultSet) -> Set<Attachment>? {
+	private static func attachmentsFromRow(_ row: FMResultSet) -> [Attachment]? {
 		guard let json = row.swiftString(forColumn: DatabaseKey.attachments), !json.isEmpty, let data = json.data(using: .utf8) else {
 			return nil
 		}

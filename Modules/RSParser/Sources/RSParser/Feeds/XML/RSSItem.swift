@@ -133,29 +133,32 @@ final class RSSItem {
 	}
 
 	/// Podcast feeds often list the same file as both `<enclosure>` and `media:content`,
-	/// so attachments with the same URL are merged into one. `itunes:duration` applies to
-	/// audio and video attachments that don’t have their own duration.
-	private func mergedAttachments(_ attachments: [ParsedAttachment]) -> Set<ParsedAttachment>? {
-		var attachmentsByURL = [String: ParsedAttachment]()
+	/// so attachments with the same URL are merged into one, in the place of the first.
+	/// `itunes:duration` applies to audio and video attachments that don’t have their own duration.
+	private func mergedAttachments(_ attachments: [ParsedAttachment]) -> [ParsedAttachment]? {
+		var mergedAttachments = [ParsedAttachment]()
+		var indexesByURL = [String: Int]()
 		for attachment in attachments {
-			if let existingAttachment = attachmentsByURL[attachment.url] {
-				attachmentsByURL[attachment.url] = existingAttachment.filledIn(from: attachment)
+			if let index = indexesByURL[attachment.url] {
+				mergedAttachments[index] = mergedAttachments[index].filledIn(from: attachment)
 			} else {
-				attachmentsByURL[attachment.url] = attachment
+				indexesByURL[attachment.url] = mergedAttachments.count
+				mergedAttachments.append(attachment)
 			}
 		}
-		guard !attachmentsByURL.isEmpty else {
+		guard !mergedAttachments.isEmpty else {
 			return nil
 		}
 
-		var mergedAttachments = Set<ParsedAttachment>()
-		for var attachment in attachmentsByURL.values {
-			if let itunesDurationInSeconds, attachment.durationInSeconds == nil, Self.isAudioOrVideo(attachment) {
-				attachment = attachment.withDurationInSeconds(itunesDurationInSeconds)
-			}
-			mergedAttachments.insert(attachment)
+		guard let itunesDurationInSeconds else {
+			return mergedAttachments
 		}
-		return mergedAttachments
+		return mergedAttachments.map { attachment in
+			guard attachment.durationInSeconds == nil, Self.isAudioOrVideo(attachment) else {
+				return attachment
+			}
+			return attachment.withDurationInSeconds(itunesDurationInSeconds)
+		}
 	}
 
 	private static func isAudioOrVideo(_ attachment: ParsedAttachment) -> Bool {

@@ -275,12 +275,12 @@ struct FeedlyEntryParser {
 		return Set(labels)
 	}
 
-	var attachments: Set<ParsedAttachment>? {
+	var attachments: [ParsedAttachment]? {
 		guard let enclosure = entry.enclosure, !enclosure.isEmpty else {
 			return nil
 		}
 		let attachments = enclosure.compactMap { ParsedAttachment(url: $0.href, mimeType: $0.type, title: nil, sizeInBytes: nil, durationInSeconds: nil, width: nil, height: nil, medium: nil) }
-		return attachments.isEmpty ? nil : Set(attachments)
+		return attachments.isEmpty ? nil : attachments
 	}
 
 	var imageURL: String? {

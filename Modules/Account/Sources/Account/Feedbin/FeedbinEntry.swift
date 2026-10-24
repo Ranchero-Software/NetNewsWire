@@ -43,7 +43,7 @@ final class FeedbinEntry: Decodable, Sendable {
 		images?.thumbnail?.cdnURL
 	}
 
-	var attachments: Set<ParsedAttachment>? {
+	var attachments: [ParsedAttachment]? {
 		guard let attachment = enclosure?.parsedAttachment else {
 			return nil
 		}

@@ -157,7 +157,7 @@ private extension RSSInJSONParser {
 		return nil
 	}
 
-	static func parseAttachments(_ itemDictionary: JSONDictionary) -> Set<ParsedAttachment>? {
+	static func parseAttachments(_ itemDictionary: JSONDictionary) -> [ParsedAttachment]? {
 
 		guard let enclosureObject = itemDictionary["enclosure"] as? JSONDictionary else {
 			return nil
@@ -175,7 +175,7 @@ private extension RSSInJSONParser {
 
 		let type = enclosureObject["type"] as? String
 		if let attachment = ParsedAttachment(url: attachmentURL, mimeType: type, title: nil, sizeInBytes: attachmentSize, durationInSeconds: nil, width: nil, height: nil, medium: nil) {
-			return Set([attachment])
+			return [attachment]
 		}
 		return nil
 	}

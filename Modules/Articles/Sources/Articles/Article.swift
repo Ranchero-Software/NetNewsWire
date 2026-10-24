@@ -28,10 +28,10 @@ public final class Article: Hashable, Sendable {
 	public let datePublished: Date?
 	public let dateModified: Date?
 	public let authors: Set<Author>?
-	public let attachments: Set<Attachment>?
+	public let attachments: [Attachment]?
 	public let status: ArticleStatus
 
-	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, markdown: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, thumbnailURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: Set<Attachment>?, status: ArticleStatus) {
+	public init(accountID: String, articleID: String?, feedID: String, uniqueID: String, title: String?, contentHTML: String?, contentText: String?, markdown: String?, url: String?, externalURL: String?, summary: String?, imageURL: String?, thumbnailURL: String?, datePublished: Date?, dateModified: Date?, authors: Set<Author>?, attachments: [Attachment]?, status: ArticleStatus) {
 		self.accountID = accountID
 		self.feedID = feedID
 		self.uniqueID = uniqueID

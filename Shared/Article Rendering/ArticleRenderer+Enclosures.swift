@@ -21,11 +21,10 @@ extension ArticleRenderer {
 	/// in the body, since feeds often embed the same image they list as an enclosure.
 	/// `imageURL` (the article’s image, else its thumbnail) is shown only when nothing
 	/// else visual is — no image or video enclosure, and no image or video in the body.
-	static func enclosuresHTML(attachments: Set<Attachment>?, body: String, imageURL: String?) -> String {
+	static func enclosuresHTML(attachments: [Attachment]?, body: String, imageURL: String?) -> String {
 		var enclosures = [String]()
 		var hasVisualEnclosure = false
-		let sortedAttachments = (attachments ?? []).sorted { $0.url < $1.url }
-		for attachment in sortedAttachments where !bodyContainsURL(body, attachment.url) {
+		for attachment in attachments ?? [] where !bodyContainsURL(body, attachment.url) {
 			if let enclosure = enclosureHTML(attachment, posterURL: imageURL) {
 				enclosures.append(enclosure)
 				hasVisualEnclosure = hasVisualEnclosure || isVisual(attachment)
