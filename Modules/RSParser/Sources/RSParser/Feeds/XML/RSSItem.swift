@@ -28,6 +28,8 @@ final class RSSItem {
 	var itunesDurationInSeconds: Int?
 	var mediaDescription: String?
 	var mediaDescriptionIsHTML = false
+	/// `media:title` of each Gravatar `media:content`, by URL.
+	var gravatarTitlesByURL = [String: String]()
 
 	/// Returns `guid` if present. Otherwise MD5-hashes available properties
 	/// to build the most likely stable ID.
@@ -87,6 +89,8 @@ final class RSSItem {
 			}
 		}
 
+		let (authorsWithAvatars, avatarURLs) = authorsWithGravatars()
+
 		return ParsedItem(
 			syncServiceID: nil,
 			uniqueID: uniqueID,
@@ -104,16 +108,34 @@ final class RSSItem {
 			bannerImageURL: nil,
 			datePublished: datePublished,
 			dateModified: dateModified,
-			authors: authors.isEmpty ? nil : authors,
+			authors: authorsWithAvatars.isEmpty ? nil : authorsWithAvatars,
 			tags: nil,
-			attachments: mergedAttachments()
+			attachments: mergedAttachments(attachments.filter { !avatarURLs.contains($0.url) })
 		)
+	}
+
+	/// WordPress adds each post author’s Gravatar as a `media:content` titled with the author’s name.
+	/// A match becomes the author’s avatar instead of an attachment.
+	private func authorsWithGravatars() -> (authors: Set<ParsedAuthor>, avatarURLs: Set<String>) {
+		var avatarURLs = Set<String>()
+		let authorsWithAvatars = Set(authors.map { author in
+			guard author.avatarURL == nil, let name = author.name, let avatarURL = gravatarURL(authorName: name) else {
+				return author
+			}
+			avatarURLs.insert(avatarURL)
+			return ParsedAuthor(name: author.name, url: author.url, avatarURL: avatarURL, emailAddress: author.emailAddress)
+		})
+		return (authorsWithAvatars, avatarURLs)
+	}
+
+	private func gravatarURL(authorName: String) -> String? {
+		gravatarTitlesByURL.first { $0.value.caseInsensitiveCompare(authorName) == .orderedSame }?.key
 	}
 
 	/// Podcast feeds often list the same file as both `<enclosure>` and `media:content`,
 	/// so attachments with the same URL are merged into one. `itunes:duration` applies to
 	/// audio and video attachments that don’t have their own duration.
-	private func mergedAttachments() -> Set<ParsedAttachment>? {
+	private func mergedAttachments(_ attachments: [ParsedAttachment]) -> Set<ParsedAttachment>? {
 		var attachmentsByURL = [String: ParsedAttachment]()
 		for attachment in attachments {
 			if let existingAttachment = attachmentsByURL[attachment.url] {

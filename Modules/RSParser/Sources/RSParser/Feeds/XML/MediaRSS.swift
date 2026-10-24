@@ -25,6 +25,18 @@ enum MediaRSS {
 		return ParsedAttachment(url: url, mimeType: mimeType, title: nil, sizeInBytes: sizeInBytes, durationInSeconds: durationInSeconds, width: width, height: height, medium: medium)
 	}
 
+	private static let gravatarHost = "gravatar.com"
+	private static let gravatarSubdomainSuffix = ".gravatar.com"
+	private static let gravatarAvatarPathPrefix = "/avatar/"
+
+	static func isGravatarAvatar(_ urlString: String) -> Bool {
+		guard let url = URL(string: urlString), let host = url.host()?.lowercased() else {
+			return false
+		}
+		let isGravatarHost = host == gravatarHost || host.hasSuffix(gravatarSubdomainSuffix)
+		return isGravatarHost && url.path().hasPrefix(gravatarAvatarPathPrefix)
+	}
+
 	static func isDefault(_ attributes: XMLAttributes) -> Bool {
 		attributes.value(forNameCaseInsensitive: "isDefault")?.lowercased() == "true"
 	}
@@ -38,19 +50,23 @@ enum MediaRSS {
 }
 
 /// Tracks `media:group` and `media:content` while parsing an item, adding attachments,
-/// the thumbnail, and the description to the item. Used by the RSS and Atom parsers.
+/// the thumbnail, the description, and Gravatar titles to the item. Used by the RSS and Atom parsers.
 struct MediaElementTracker {
 
-	/// Depth inside `media:group`, `media:content`, and `media:description`. The parsers skip
+	/// Depth inside `media:group`, `media:content`, `media:description`, and a Gravatar’s `media:title`. The parsers skip
 	/// non-Media RSS elements in there, so an unprefixed child (`<title>`)
 	/// can’t be mistaken for one of the item’s own elements.
 	private(set) var containerDepth = 0
 
 	private var group: MediaGroup?
 
+	/// Set inside a `media:content` that’s a Gravatar avatar, so its `media:title` is kept.
+	private var gravatarURL: String?
+
 	mutating func reset() {
 		containerDepth = 0
 		group = nil
+		gravatarURL = nil
 	}
 
 	/// Returns true when the parser should skip the element’s subtree.
@@ -67,8 +83,17 @@ struct MediaElementTracker {
 					group?.add(attachment, isDefault: MediaRSS.isDefault(attributes))
 				} else {
 					item.attachments.append(attachment)
+					if MediaRSS.isGravatarAvatar(url) {
+						gravatarURL = url
+					}
 				}
 			}
+			containerDepth += 1
+			return false
+		}
+
+		if localName.equals("title"), gravatarURL != nil {
+			parser.beginStoringCharacters()
 			containerDepth += 1
 			return false
 		}
@@ -96,6 +121,12 @@ struct MediaElementTracker {
 			group = nil
 			containerDepth -= 1
 		} else if localName.equals("content") {
+			gravatarURL = nil
+			containerDepth -= 1
+		} else if localName.equals("title") {
+			if let gravatarURL, let title = parser.currentStringWithTrimmedWhitespace, !title.isEmpty {
+				item.gravatarTitlesByURL[gravatarURL] = title
+			}
 			containerDepth -= 1
 		} else if localName.equals("description") {
 			if item.mediaDescription == nil {

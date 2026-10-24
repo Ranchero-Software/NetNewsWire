@@ -96,6 +96,24 @@ import RSParser
 		#expect(attachment.durationInSeconds == 125)
 	}
 
+	@Test func gravatarBecomesAuthorAvatar() throws {
+		// WordPress adds the author’s Gravatar as a media:content titled with the author’s name.
+		let d = parserData("postpunkmonk", "rss", "https://postpunkmonk.com/")
+		let parsedFeed = try #require(try FeedParser.parse(d))
+		let item = try #require(parsedFeed.items.first { $0.title?.hasPrefix("Automatic Honor") == true })
+
+		let author = try #require(item.authors?.first)
+		#expect(author.name == "postpunkmonk")
+		#expect(author.avatarURL == "https://0.gravatar.com/avatar/fb95b7a51c1ce5897b406c1e656c6eb5f1ecfb4f537d200249ad0c3c53d6b7a1?s=96&d=&r=PG")
+
+		let attachmentURLs = Set(try #require(item.attachments).map { $0.url })
+		#expect(attachmentURLs == [
+			"https://postpunkmonk.com/wp-content/uploads/2026/10/automatic-shadowplay.jpg",
+			"https://postpunkmonk.com/wp-content/uploads/2026/10/automatic40eulogy9-26.jpg",
+			"https://postpunkmonk.com/wp-content/uploads/2022/10/8-ball-yes.jpg"
+		])
+	}
+
 	@Test func theOmniShowUniqueIDs() throws {
 		let d = parserData("theomnishow", "rss", "https://theomnishow.omnigroup.com/")
 		let parsedFeed = try #require(try FeedParser.parse(d))
