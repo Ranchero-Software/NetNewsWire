@@ -1,0 +1,33 @@
+{
+  "configurations": [
+    {
+      "id": "E373F31C-94B3-4AE4-9923-756B8F8359E3",
+      "name": "Reader",
+      "options": {}
+    }
+  ],
+  "defaultOptions": {
+    "targetForVariableExpansion": {
+      "containerPath": "container:Reader.xcodeproj",
+      "identifier": "30F22C3AE6F3FD3B17E57F9D",
+      "name": "Reader"
+    }
+  },
+  "testTargets": [
+    {
+      "target": {
+        "containerPath": "container:Reader.xcodeproj",
+        "identifier": "D58A296CCBFB0C65D1E4740C",
+        "name": "ReaderContractTests"
+      }
+    },
+    {
+      "target": {
+        "containerPath": "container:Reader.xcodeproj",
+        "identifier": "50CA53E53B1698EDC5D0EE27",
+        "name": "ReaderSmokeTests"
+      }
+    }
+  ],
+  "version": 1
+}

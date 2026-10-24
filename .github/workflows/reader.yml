@@ -1,0 +1,35 @@
+name: Reader OS 27
+on:
+  pull_request:
+    paths: ['ReaderKit/**', 'ReaderApp/**', 'Reader.xcodeproj/**', 'scripts/test-reader.sh', '.github/workflows/reader.yml']
+  push:
+    branches: [main, 'codex/intelligence-reader']
+    paths: ['ReaderKit/**', 'ReaderApp/**', 'Reader.xcodeproj/**', 'scripts/test-reader.sh', '.github/workflows/reader.yml']
+permissions:
+  contents: read
+concurrency:
+  group: reader-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  tests:
+    # https://github.com/actions/runner-images/blob/main/images/macos/xcode-27-arm64-Readme.md
+    runs-on: xcode-27
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos, ios, ipad]
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
+      READER_RESULTS_DIR: ${{ runner.temp }}/reader-results
+    steps:
+      - uses: actions/checkout@v5
+      - name: Verify aggregate failure propagation
+        run: python3 -m unittest discover -s scripts/tests -v
+      - name: Test Reader
+        run: bash scripts/test-reader.sh '${{ matrix.platform }}'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reader-${{ matrix.platform }}-results
+          path: ${{ runner.temp }}/reader-results/*.xcresult
+          if-no-files-found: warn
