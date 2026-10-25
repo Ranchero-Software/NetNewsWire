@@ -84,6 +84,7 @@ final class WebViewController: UIViewController {
 		}
 	}
 	private var restoreWindowScrollY: Int?
+	private var isChangingSize = false
 	private var isArticleContentJavascriptEnabled = AppDefaults.isArticleContentJavascriptEnabled
 
 	override func viewDidLoad() {
@@ -107,6 +108,22 @@ final class WebViewController: UIViewController {
 		super.viewSafeAreaInsetsDidChange()
 		if isFullScreenAvailable && AppDefaults.logicalArticleFullscreenEnabled {
 			updateBottomSafeAreaForFullScreen()
+		}
+	}
+
+	override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+		super.viewWillTransition(to: size, with: coordinator)
+
+		// Reflowing at a new width moves whatever the reader was looking at, and the offsets
+		// the web view reports mid-transition aren't where they were. Stop recording until
+		// it settles, then scroll back to the last place we knew about.
+		isChangingSize = true
+		coordinator.animate(alongsideTransition: nil) { [weak self] _ in
+			guard let self else {
+				return
+			}
+			self.restoreScrollAnchor()
+			self.isChangingSize = false
 		}
 	}
 
@@ -565,12 +582,25 @@ extension WebViewController: WKScriptMessageHandler {
 extension WebViewController: UIScrollViewDelegate {
 
 	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		guard !isChangingSize else {
+			return
+		}
 		scrollPositionQueue.add(self, #selector(scrollPositionDidChange))
 	}
 
 	@objc func scrollPositionDidChange() {
 		let articleIDWhenAsked = article?.articleID
-		webView?.evaluateJavaScript("window.scrollY") { (scrollY, error) in
+		// Note the element at the top of the viewport along with the offset. The offset alone
+		// means nothing once the article reflows at a different width.
+		let javascript = """
+			(function() {
+				const element = document.elementFromPoint(window.innerWidth / 2, 1);
+				window.nnwScrollAnchor = element;
+				window.nnwScrollAnchorTop = element ? element.getBoundingClientRect().top : 0;
+				return window.scrollY;
+			})();
+			"""
+		webView?.evaluateJavaScript(javascript) { (scrollY, error) in
 			guard error == nil else { return }
 			// A late callback must not record the previous article’s offset.
 			// <https://github.com/Ranchero-Software/NetNewsWire/issues/5243>
@@ -703,6 +733,21 @@ private extension WebViewController {
 
 		WebViewConfiguration.addContentBlockingRules(to: webView)
 		webView.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
+	}
+
+	/// Scrolls back to the element that was at the top of the viewport before the article
+	/// reflowed, so rotating doesn't lose the reader's place.
+	func restoreScrollAnchor() {
+		let javascript = """
+			(function() {
+				const element = window.nnwScrollAnchor;
+				if (!element || !element.isConnected) {
+					return;
+				}
+				window.scrollTo(0, window.scrollY + element.getBoundingClientRect().top - window.nnwScrollAnchorTop);
+			})();
+			"""
+		webView?.evaluateJavaScript(javascript, completionHandler: nil)
 	}
 
 	func finalScrollPosition(scrollingUp: Bool) -> CGFloat {
