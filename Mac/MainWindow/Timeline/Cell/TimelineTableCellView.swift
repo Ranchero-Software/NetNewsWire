@@ -19,7 +19,11 @@ final class TimelineTableCellView: NSTableCellView {
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
 	private lazy var iconView = IconView()
-	private lazy var thumbnailView = ThumbnailView()
+	private lazy var thumbnailView: ThumbnailView = {
+		let thumbnailView = ThumbnailView()
+		thumbnailView.fitsImage = true
+		return thumbnailView
+	}()
 
 	private var starView = TimelineTableCellView.imageView(with: Assets.Images.timelineStar, scaling: .scaleNone)
 
@@ -33,6 +37,7 @@ final class TimelineTableCellView: NSTableCellView {
 				updateTextFieldFonts()
 				iconView.layer?.cornerRadius = cellAppearance.iconCornerRadius
 				thumbnailView.cornerRadius = cellAppearance.thumbnailCornerRadius
+				thumbnailView.fillColor = cellAppearance.showsLargeThumbnails ? .tertiarySystemFill : .systemFill
 				needsLayout = true
 			}
 		}

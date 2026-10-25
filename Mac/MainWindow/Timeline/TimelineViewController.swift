@@ -191,7 +191,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var showIcons = false
 	private var currentRowHeight: CGFloat = 0.0
 	private var largeThumbnailRowHeight: CGFloat = 0.0
-	private var largeThumbnailRowHeightWidth: CGFloat = 0.0 // Column width largeThumbnailRowHeight was calculated for
 	private var thumbnailLookaheadRows: Range<Int>? // Rows most recently prefetched by prefetchThumbnailsForNextScreen
 	private var thumbnailURLCache = [String: String]() // articleID: thumbnailURL
 	private var articleIDsWithNoThumbnail = Set<String>()
@@ -320,7 +319,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	override func viewDidLayout() {
 		super.viewDidLayout()
 		fitTableViewToVisibleWidthInStandardLayout()
-		updateLargeThumbnailRowHeightIfWidthChanged()
 	}
 
 	// MARK: - API
@@ -915,36 +913,26 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: - Cell Configuring
 
-	private func calculateRowHeight(showThumbnail: Bool, width: CGFloat) -> CGFloat {
+	private func calculateRowHeight(showThumbnail: Bool) -> CGFloat {
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, thumbnailURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 
 		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, thumbnail: nil, showThumbnail: showThumbnail)
-		let height = TimelineCellLayout.height(for: width, cellData: prototypeCellData, appearance: cellAppearance)
+		let height = TimelineCellLayout.height(for: Self.prototypeRowWidth, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
 
 	private func updateRowHeights() {
-		currentRowHeight = calculateRowHeight(showThumbnail: false, width: Self.prototypeRowWidth)
+		currentRowHeight = calculateRowHeight(showThumbnail: false)
 		updateLargeThumbnailRowHeight()
 		updateTableViewRowHeight()
 	}
 
-	/// Depends on the column width, since a large thumbnail spans the cell at a fixed aspect ratio.
+	/// Depends on the cell appearance, which has the large thumbnail’s height only in large mode.
 	private func updateLargeThumbnailRowHeight() {
-		let width = tableView.tableColumns.first?.width ?? 0.0
-		largeThumbnailRowHeightWidth = width
-		largeThumbnailRowHeight = width > 0.0 ? calculateRowHeight(showThumbnail: true, width: width) : 0.0
-	}
-
-	private func updateLargeThumbnailRowHeightIfWidthChanged() {
-		guard usesLargeThumbnailRows, let width = tableView.tableColumns.first?.width, width != largeThumbnailRowHeightWidth else {
-			return
-		}
-		updateLargeThumbnailRowHeight()
-		noteHeightOfAllRows()
+		largeThumbnailRowHeight = calculateRowHeight(showThumbnail: true)
 	}
 
 	private func noteHeightOfAllRows() {
@@ -1242,7 +1230,6 @@ private extension TimelineViewController {
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
-			updateLargeThumbnailRowHeight()
 			tableView.reloadData()
 		}
 		if tableView.selectedRow != -1 {

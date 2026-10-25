@@ -45,7 +45,7 @@ struct TimelineCellAppearance: Equatable {
 	let thumbnailMarginLeft: CGFloat = 8.0
 	let thumbnailCornerRadius: CGFloat = 4.0
 	let largeThumbnailMarginTop: CGFloat = 8.0
-	let largeThumbnailAspectRatio: CGFloat = 2.0 // width / height
+	let largeThumbnailHeight: CGFloat = 180.0
 
 	let boxLeftMargin: CGFloat
 

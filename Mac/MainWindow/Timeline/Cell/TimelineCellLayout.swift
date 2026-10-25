@@ -243,7 +243,8 @@ import RSCore
 		return NSRect(x: originX, y: appearance.cellPadding.top, width: thumbnailDimension, height: thumbnailDimension)
 	}
 
-	/// Spans the cell below the text and icon at `largeThumbnailAspectRatio`.
+	/// Below the text and icon, `largeThumbnailHeight` tall, from the icon’s left edge
+	/// (or the text’s, when there’s no icon) to the right padding.
 	/// In a cell, it’s bottom-aligned, since rows share one height and titles vary in length,
 	/// and it shrinks rather than overlap the text if the row is shorter than expected.
 	static func rectForLargeThumbnail(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ textBoxRect: NSRect, _ iconImageRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
@@ -251,8 +252,9 @@ import RSCore
 			return NSRect.zero
 		}
 
-		let thumbnailWidth = floor(width - appearance.cellPadding.left - appearance.cellPadding.right)
-		var thumbnailHeight = floor(thumbnailWidth / appearance.largeThumbnailAspectRatio)
+		let originX = cellData.showIcon ? iconImageRect.minX : textBoxRect.minX
+		let thumbnailWidth = floor(width - appearance.cellPadding.right - originX)
+		var thumbnailHeight = appearance.largeThumbnailHeight
 		let minimumOriginY = ceil(max(textBoxRect.maxY, iconImageRect.maxY) + appearance.largeThumbnailMarginTop)
 		var originY = minimumOriginY
 
@@ -265,7 +267,7 @@ import RSCore
 		guard thumbnailWidth > 0.0, thumbnailHeight > 0.0 else {
 			return NSRect.zero
 		}
-		return NSRect(x: appearance.cellPadding.left, y: originY, width: thumbnailWidth, height: thumbnailHeight)
+		return NSRect(x: originX, y: originY, width: thumbnailWidth, height: thumbnailHeight)
 	}
 
 	static func rectForSeparator(_ cellData: TimelineCellData, _ appearance: TimelineCellAppearance, _ alignmentRect: NSRect, _ width: CGFloat, _ height: CGFloat) -> NSRect {
