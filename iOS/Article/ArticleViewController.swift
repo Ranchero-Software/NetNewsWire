@@ -576,11 +576,13 @@ extension ArticleViewController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-		let point = gestureRecognizer.location(in: nil)
-		if point.x > 40 {
+		// Paging is the only thing to hold back near the left edge. Refusing every other
+		// recognizer there also blocked the split view's reveal gesture, so an edge swipe
+		// did nothing over the article while it still worked alongside the toolbars.
+		guard otherGestureRecognizer === pageViewController.scrollViewInsidePageControl?.panGestureRecognizer else {
 			return true
 		}
-		return false
+		return gestureRecognizer.location(in: nil).x > 40
     }
 
 }
