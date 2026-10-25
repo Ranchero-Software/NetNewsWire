@@ -298,6 +298,7 @@ open class ImageScrollView: UIScrollView {
 
 	open func resize() {
 		self.configureImageForSize(self.imageSize)
+		self.adjustFrameToCenter()
 	}
 }
 
