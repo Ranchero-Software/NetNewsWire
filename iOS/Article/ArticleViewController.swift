@@ -145,8 +145,8 @@ final class ArticleViewController: UIViewController {
 		articleExtractorBarButtonItem.title = NSLocalizedString("Reader View", comment: "Reader View")
 
 		if #available(iOS 26, *) {
-			#if compiler(>=6.3)
-			// This stops Xcode 26 having a hissy in CI.
+			#if compiler(>=6.4)
+			// This stops Xcode 26 having a hissy.
 			if #available(iOS 27, *) {
 				readBarButtonItem.visibilityPriority = .standard
 				starBarButtonItem.visibilityPriority = .standard
