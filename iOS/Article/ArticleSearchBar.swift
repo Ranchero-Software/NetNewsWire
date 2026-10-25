@@ -101,6 +101,8 @@ private extension ArticleSearchBar {
 	func updateMarginsForReservedRegions() {
 		var margins = NSDirectionalEdgeInsets(top: 6, leading: 8, bottom: 6, trailing: 8)
 
+		#if compiler(>=6.3)
+		// This stops Xcode 26 having a hissy in CI.
 		if #available(iOS 27.1, *),
 		   let division = reservedRegions(kind: .division).first(where: { region in
 			   region.frame.intersects(bounds) && region.frame.height > region.frame.width
@@ -113,6 +115,7 @@ private extension ArticleSearchBar {
 				margins.leading = division.frame.maxX - bounds.minX + 8
 			}
 		}
+		#endif
 
 		if directionalLayoutMargins != margins {
 			directionalLayoutMargins = margins
@@ -132,11 +135,15 @@ private extension ArticleSearchBar {
 		addSubview(background)
 
 		var doneConfiguration: UIButton.Configuration
+		#if compiler(>=6.3)
 		if #available(iOS 27, *) {
 			doneConfiguration = .glass()
 		} else {
 			doneConfiguration = .tinted()
 		}
+		#else
+		doneConfiguration = .tinted()
+		#endif
 		doneConfiguration.image = UIImage(systemName: "xmark")
 		doneConfiguration.buttonSize = .medium
 		doneConfiguration.cornerStyle = .capsule
