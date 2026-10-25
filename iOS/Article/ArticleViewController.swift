@@ -142,8 +142,16 @@ final class ArticleViewController: UIViewController {
 
 		articleExtractorButton.addTarget(self, action: #selector(toggleArticleExtractor(_:)), for: .touchUpInside)
 		let articleExtractorBarButtonItem = UIBarButtonItem(customView: articleExtractorButton)
+		articleExtractorBarButtonItem.title = NSLocalizedString("Reader View", comment: "Reader View")
 
 		if #available(iOS 26, *) {
+			if #available(iOS 27, *) {
+				readBarButtonItem.visibilityPriority = .standard
+				starBarButtonItem.visibilityPriority = .standard
+				nextUnreadBarButtonItem.visibilityPriority = .high
+				articleExtractorBarButtonItem.visibilityPriority = .low
+				actionBarButtonItem.visibilityPriority = .high
+			}
 			toolbarItems?.insert(articleExtractorBarButtonItem, at: 5)
 		} else {
 			let flex = { UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil) }
@@ -458,14 +466,16 @@ extension ArticleViewController {
 
 	@objc func beginFind(_ _: Any? = nil) {
 		searchBar.isHidden = false
+		searchBarBottomConstraint.constant = 8
 		navigationController?.setToolbarHidden(true, animated: true)
-		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height
+		currentWebViewController?.additionalSafeAreaInsets.bottom = searchBar.frame.height + 8
 		searchBar.becomeFirstResponder()
 	}
 
 	@objc func endFind(_ _: Any? = nil) {
 		searchBar.resignFirstResponder()
 		searchBar.isHidden = true
+		searchBarBottomConstraint.constant = 0
 		navigationController?.setToolbarHidden(false, animated: true)
 		currentWebViewController?.additionalSafeAreaInsets.bottom = 0
 		currentWebViewController?.endSearch()
@@ -473,14 +483,17 @@ extension ArticleViewController {
 
 	@objc func keyboardWillChangeFrame(_ notification: Notification) {
 		if !searchBar.isHidden,
+			let window = view.window,
 			let duration = notification.userInfo?[UIWindow.keyboardAnimationDurationUserInfoKey] as? Double,
 			let curveRaw = notification.userInfo?[UIWindow.keyboardAnimationCurveUserInfoKey] as? UInt,
 			let frame = notification.userInfo?[UIWindow.keyboardFrameEndUserInfoKey] as? CGRect {
 
 			let curve = UIView.AnimationOptions(rawValue: curveRaw)
-			let newHeight = view.safeAreaLayoutGuide.layoutFrame.maxY - frame.minY
-			currentWebViewController?.additionalSafeAreaInsets.bottom = newHeight + searchBar.frame.height + 10
-			self.searchBarBottomConstraint.constant = newHeight
+			let keyboardFrame = view.convert(frame, from: window.screen.coordinateSpace)
+			let coversBottomEdge = keyboardFrame.maxY >= view.bounds.maxY
+			let newHeight = coversBottomEdge ? max(0, view.safeAreaLayoutGuide.layoutFrame.maxY - keyboardFrame.minY) : 0
+			currentWebViewController?.additionalSafeAreaInsets.bottom = newHeight + searchBar.frame.height + 18
+			self.searchBarBottomConstraint.constant = newHeight + 8
 			UIView.animate(withDuration: duration, delay: 0, options: curve, animations: {
 				self.view.layoutIfNeeded()
 			})
