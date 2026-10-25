@@ -97,17 +97,28 @@
 			const visibleRect = articleBody ? articleBody.getBoundingClientRect() : document.documentElement.getBoundingClientRect();
 			const maximumWidth = stripPx(this.style.maxWidth);
 			const popoverWidth = Math.min(visibleRect.width, maximumWidth);
-			const popoverLeft = visibleRect.left + ((visibleRect.width - popoverWidth) / 2);
+			const refCenter = refRect.left + (refRect.width / 2);
+			const minimumLeft = visibleRect.left;
+			const maximumLeft = visibleRect.right - popoverWidth;
+			const popoverLeft = Math.min(
+				Math.max(refCenter - (popoverWidth / 2), minimumLeft),
+				maximumLeft
+			);
 
-			// Position against the visible article column rather than the full web view,
-			// which may extend beneath adjacent columns and the Duo's navigation button stack thing.
+			// Keep the popover inside the visible article column while centering it on the
+			// footnote reference whenever there is enough room.
 			this.popover.style.left = `${popoverLeft - containerRect.left}px`;
 			this.popover.style.right = "auto";
 			this.popover.style.width = `${popoverWidth}px`;
 			this.popover.style.transform = "none";
 
-			const arrowCenter = refRect.left + (refRect.width / 2) - popoverLeft;
-			this.arrow.style.left = `${arrowCenter - (this.arrow.clientWidth / 2)}px`;
+			const arrowWidth = this.arrow.clientWidth;
+			const arrowCenter = refCenter - popoverLeft;
+			const insetArrowCenter = Math.min(
+				Math.max(arrowCenter, arrowWidth),
+				popoverWidth - arrowWidth
+			);
+			this.arrow.style.left = `${insetArrowCenter - (arrowWidth / 2)}px`;
 			this.arrow.style.transform = "rotate(45deg)";
 		}
 	}
