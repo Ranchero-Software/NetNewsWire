@@ -92,23 +92,23 @@
   
 		reposition() {
 			const refRect = this.fnref.getBoundingClientRect();
-			const center = refRect.left + (refRect.width / 2);
-			const popoverHalfWidth = this.popover.clientWidth / 2;
-			const marginLeft = stripPx(this.style.marginLeft);
-			const marginRight = stripPx(this.style.marginRight);
+			const containerRect = this.fnref.closest(`.${CONTAINER_CLS}`).getBoundingClientRect();
+			const articleBody = this.fnref.closest(".articleBody");
+			const visibleRect = articleBody ? articleBody.getBoundingClientRect() : document.documentElement.getBoundingClientRect();
+			const maximumWidth = stripPx(this.style.maxWidth);
+			const popoverWidth = Math.min(visibleRect.width, maximumWidth);
+			const popoverLeft = visibleRect.left + ((visibleRect.width - popoverWidth) / 2);
 
-			const rightOverhang = center + popoverHalfWidth + marginRight > window.innerWidth;
-			const leftOverhang = center - (popoverHalfWidth + marginLeft) < 0;
+			// Position against the visible article column rather than the full web view,
+			// which may extend beneath adjacent columns and the Duo's navigation button stack thing.
+			this.popover.style.left = `${popoverLeft - containerRect.left}px`;
+			this.popover.style.right = "auto";
+			this.popover.style.width = `${popoverWidth}px`;
+			this.popover.style.transform = "none";
 
-			let offset = 0;
-			if (leftOverhang || rightOverhang) {
-				// Popover can't be centered on the ref without overflowing the viewport.
-				// Center it horizontally in the viewport so left/right margins are balanced.
-				// The arrow gets the inverse transform below and stays anchored to the ref.
-				offset = (window.innerWidth / 2) - center;
-			}
-			this.popover.style.transform = `translate(${offset}px)`;
-			this.arrow.style.transform = `translate(${-offset}px) rotate(45deg)`;
+			const arrowCenter = refRect.left + (refRect.width / 2) - popoverLeft;
+			this.arrow.style.left = `${arrowCenter - (this.arrow.clientWidth / 2)}px`;
+			this.arrow.style.transform = "rotate(45deg)";
 		}
 	}
 
