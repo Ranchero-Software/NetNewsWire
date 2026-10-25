@@ -24,6 +24,12 @@ public typealias RSColor = UIColor
 
 private let RSImageLogger = Logger(subsystem: Logger.nnwSubsystem, category: "RSImage")
 
+public enum ScaledImageFormat: Sendable {
+	case png
+	/// Images with an alpha channel are encoded as PNG, since JPEG can’t store transparency.
+	case jpeg(compressionQuality: Double)
+}
+
 public extension RSImage {
 
 	/// Create a colored image from the source image using a specified color.
@@ -132,44 +138,32 @@ public extension RSImage {
 		}
 	}
 
-	/// Scales image data down to maxPixelSize and returns the result as PNG Data.
+	/// Pixel dimensions of the largest frame, read from the image header without decoding.
+	/// Returns nil if the data can't be read as an image.
+	static func largestFramePixelSize(_ data: Data) -> (width: Int, height: Int)? {
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = largestFrame(in: imageSource) else {
+			return nil
+		}
+		return (width: largestFrame.width, height: largestFrame.height)
+	}
+
+	/// Scales image data down to maxPixelSize and returns the result encoded in `format`.
 	/// If the image is a single frame already at or below maxPixelSize, returns
 	/// the original data unchanged. For multi-image sources (like ICO), extracts
 	/// the largest frame. Returns nil if the data can't be decoded as an image.
-	static func scaledImageData(_ data: Data, maxPixelSize: Int) -> Data? {
+	static func scaledImageData(_ data: Data, maxPixelSize: Int, format: ScaledImageFormat = .png) -> Data? {
 		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
 			return nil
 		}
 
 		let count = CGImageSourceGetCount(imageSource)
-		guard count > 0 else {
+		guard let largestFrame = largestFrame(in: imageSource) else {
 			return nil
 		}
-
-		// Find the largest frame in the image source.
-		var largestIndex = 0
-		var largestWidth = 0
-		var largestHeight = 0
-		var largestMaxDimension = 0
-
-		for i in 0..<count {
-			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
-				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
-				  let height = properties[kCGImagePropertyPixelHeight] as? Int else {
-				continue
-			}
-			let maxDimension = max(width, height)
-			if maxDimension > largestMaxDimension {
-				largestIndex = i
-				largestWidth = width
-				largestHeight = height
-				largestMaxDimension = maxDimension
-			}
-		}
-
-		guard largestMaxDimension > 0 else {
-			return nil
-		}
+		let largestIndex = largestFrame.index
+		let largestWidth = largestFrame.width
+		let largestHeight = largestFrame.height
+		let largestMaxDimension = max(largestWidth, largestHeight)
 
 		let needsResize = largestMaxDimension > maxPixelSize
 		let isMultiImage = count > 1
@@ -180,7 +174,7 @@ public extension RSImage {
 			return data
 		}
 
-		// Either too large or multi-image — extract/resize to a single PNG.
+		// Either too large or multi-image — extract/resize to a single image.
 		// Always use CreateThumbnailAtIndex rather than CreateImageAtIndex,
 		// because the latter mishandles indexed-color ICO files (produces
 		// grayscale with a nil color space instead of correct RGB).
@@ -196,11 +190,12 @@ public extension RSImage {
 			return nil
 		}
 
+		let (type, destinationProperties) = destinationTypeAndProperties(format, cgImage)
 		guard let mutableData = CFDataCreateMutable(nil, 0),
-			  let destination = CGImageDestinationCreateWithData(mutableData, UTType.png.identifier as CFString, 1, nil) else {
+			  let destination = CGImageDestinationCreateWithData(mutableData, type.identifier as CFString, 1, nil) else {
 			return nil
 		}
-		CGImageDestinationAddImage(destination, cgImage, nil)
+		CGImageDestinationAddImage(destination, cgImage, destinationProperties as CFDictionary?)
 		guard CGImageDestinationFinalize(destination) else {
 			return nil
 		}
@@ -212,5 +207,40 @@ public extension RSImage {
 		}
 
 		return mutableData as Data
+	}
+}
+
+private extension RSImage {
+
+	static func largestFrame(in imageSource: CGImageSource) -> (index: Int, width: Int, height: Int)? {
+		var largest: (index: Int, width: Int, height: Int)?
+
+		for i in 0..<CGImageSourceGetCount(imageSource) {
+			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
+				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
+				  let height = properties[kCGImagePropertyPixelHeight] as? Int,
+				  width > 0, height > 0 else {
+				continue
+			}
+			if let largest, max(largest.width, largest.height) >= max(width, height) {
+				continue
+			}
+			largest = (index: i, width: width, height: height)
+		}
+
+		return largest
+	}
+
+	static func destinationTypeAndProperties(_ format: ScaledImageFormat, _ cgImage: CGImage) -> (UTType, [CFString: Any]?) {
+		switch format {
+		case .png:
+			return (.png, nil)
+		case .jpeg(let compressionQuality):
+			let isOpaque = [.none, .noneSkipFirst, .noneSkipLast].contains(cgImage.alphaInfo)
+			guard isOpaque else {
+				return (.png, nil)
+			}
+			return (.jpeg, [kCGImageDestinationLossyCompressionQuality: compressionQuality])
+		}
 	}
 }
