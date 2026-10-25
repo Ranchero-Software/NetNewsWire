@@ -53,6 +53,7 @@ let appName = "NetNewsWire"
 
 	@IBOutlet var debugMenuItem: NSMenuItem!
 	@IBOutlet var useColumnLayoutMenuItem: NSMenuItem?
+	@IBOutlet var showLargeThumbnailsMenuItem: NSMenuItem?
 	@IBOutlet var showStatusBarMenuItem: NSMenuItem?
 	@IBOutlet var showStatusBarThemeMenuMenuItem: NSMenuItem?
 	@IBOutlet var checkForUpdatesMenuItem: NSMenuItem!
@@ -206,6 +207,7 @@ let appName = "NetNewsWire"
 		}
 
 		updateColumnLayoutMenuItem()
+		updateLargeThumbnailsMenuItem()
 		updateStatusBarMenuItems()
 
 		if mainWindowController == nil {
@@ -402,6 +404,7 @@ let appName = "NetNewsWire"
 
 	func userDefaultsDidChange() {
 		updateColumnLayoutMenuItem()
+		updateLargeThumbnailsMenuItem()
 		updateStatusBarMenuItems()
 
 		if lastRefreshInterval != AppDefaults.refreshInterval {
@@ -507,6 +510,10 @@ let appName = "NetNewsWire"
 
 		if item.action == #selector(toggleStatusBarThemeMenu(_:)) {
 			return AppDefaults.showStatusBar
+		}
+
+		if item.action == #selector(toggleLargeThumbnails(_:)) {
+			return !AppDefaults.useColumnLayout
 		}
 
 		if item.action == #selector(toggleWebInspectorEnabled(_:)) {
@@ -773,6 +780,10 @@ let appName = "NetNewsWire"
 		AppDefaults.useColumnLayout.toggle()
 	}
 
+	@IBAction func toggleLargeThumbnails(_ sender: Any?) {
+		AppDefaults.timelineShowsLargeThumbnails.toggle()
+	}
+
 	@IBAction func toggleStatusBar(_ sender: Any?) {
 		AppDefaults.showStatusBar.toggle()
 	}
@@ -898,6 +909,10 @@ extension AppDelegate {
 
 	@MainActor func updateColumnLayoutMenuItem() {
 		useColumnLayoutMenuItem?.state = AppDefaults.useColumnLayout ? .on : .off
+	}
+
+	@MainActor func updateLargeThumbnailsMenuItem() {
+		showLargeThumbnailsMenuItem?.state = AppDefaults.timelineShowsLargeThumbnails ? .on : .off
 	}
 
 	@MainActor func updateStatusBarMenuItems() {

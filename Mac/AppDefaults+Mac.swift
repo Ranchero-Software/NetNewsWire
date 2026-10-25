@@ -40,6 +40,7 @@ extension AppDefaults.Key {
 	static let sidebarFontSize = "sidebarFontSize"
 	static let timelineFontSize = "timelineFontSize"
 	static let useColumnLayout = "useColumnLayout"
+	static let timelineShowsLargeThumbnails = "timelineShowsLargeThumbnails"
 	static let showStatusBar = "showStatusBar"
 	static let showStatusBarThemeMenu = "showStatusBarThemeMenu"
 	static let statusBarCountMode = "statusBarCountMode"
@@ -235,6 +236,17 @@ extension AppDefaults {
 		}
 	}
 
+	/// Timeline thumbnails below the text, spanning the cell, instead of small ones on the right.
+	/// Standard layout only — column layout never shows thumbnails. Applies to all windows.
+	static var timelineShowsLargeThumbnails: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.timelineShowsLargeThumbnails)
+		}
+		set {
+			UserDefaults.standard.set(newValue, forKey: Key.timelineShowsLargeThumbnails)
+		}
+	}
+
 	/// The main window status bar. Applies to all windows.
 	static var showStatusBar: Bool {
 		get {
@@ -319,6 +331,7 @@ extension AppDefaults {
 			Key.timelineFontSize: FontSize.medium.rawValue,
 			Key.detailFontSize: FontSize.medium.rawValue,
 			Key.useColumnLayout: false,
+			Key.timelineShowsLargeThumbnails: false,
 			Key.showStatusBar: Self.showStatusBarDefault,
 			Key.showStatusBarThemeMenu: true,
 			Key.statusBarCountMode: StatusBarCountMode.lastRefresh.rawValue,

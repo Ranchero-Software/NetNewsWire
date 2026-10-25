@@ -11,6 +11,7 @@ import AppKit
 struct TimelineCellAppearance: Equatable {
 
 	let showIcon: Bool
+	let showsLargeThumbnails: Bool
 
 	let cellPadding: NSEdgeInsets
 
@@ -43,10 +44,12 @@ struct TimelineCellAppearance: Equatable {
 	let thumbnailMaximumDimension: CGFloat = 76.0 // Smaller when the row is too short
 	let thumbnailMarginLeft: CGFloat = 8.0
 	let thumbnailCornerRadius: CGFloat = 4.0
+	let largeThumbnailMarginTop: CGFloat = 8.0
+	let largeThumbnailAspectRatio: CGFloat = 2.0 // width / height
 
 	let boxLeftMargin: CGFloat
 
-	init(showIcon: Bool, fontSize: FontSize) {
+	init(showIcon: Bool, fontSize: FontSize, showsLargeThumbnails: Bool) {
 
 		let actualFontSize = AppDefaults.actualFontSize(for: fontSize)
 		let smallItemFontSize = floor(actualFontSize * 0.90)
@@ -59,6 +62,7 @@ struct TimelineCellAppearance: Equatable {
 		self.textOnlyFont = NSFont.systemFont(ofSize: largeItemFontSize)
 
 		self.showIcon = showIcon
+		self.showsLargeThumbnails = showsLargeThumbnails
 
 		cellPadding = NSEdgeInsets(top: 8.0, left: 4.0, bottom: 10.0, right: 4.0)
 

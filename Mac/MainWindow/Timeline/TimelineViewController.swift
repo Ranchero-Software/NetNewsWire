@@ -132,6 +132,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				// but some data in some of the articles may have changed.
 				// Just reload visible cells in this case: don’t call reloadData.
 				articleRowMap = [String: [Int]]()
+				clearThumbnailURLCache()
+				if usesLargeThumbnailRows {
+					noteHeightOfAllRows()
+				}
 				reloadVisibleCells()
 				return
 			}
@@ -151,6 +155,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 			articleRowMap = [String: [Int]]()
 			thumbnailLookaheadRows = nil
+			clearThumbnailURLCache()
 			tableView.reloadData()
 			IconImageCache.shared.prefetchImagesForArticles(articles)
 			discoverThumbnailURLs()
@@ -185,15 +190,34 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	private var showIcons = false
 	private var currentRowHeight: CGFloat = 0.0
+	private var largeThumbnailRowHeight: CGFloat = 0.0
+	private var largeThumbnailRowHeightWidth: CGFloat = 0.0 // Column width largeThumbnailRowHeight was calculated for
 	private var thumbnailLookaheadRows: Range<Int>? // Rows most recently prefetched by prefetchThumbnailsForNextScreen
+	private var thumbnailURLCache = [String: String]() // articleID: thumbnailURL
+	private var articleIDsWithNoThumbnail = Set<String>()
+	private var showsLargeThumbnails = AppDefaults.timelineShowsLargeThumbnails {
+		didSet {
+			if showsLargeThumbnails != oldValue {
+				largeThumbnailsDidChange()
+			}
+		}
+	}
+
+	/// Narrow enough that the prototype’s title uses every line.
+	private static let prototypeRowWidth: CGFloat = 100.0
 
 	/// Column layout never shows thumbnails.
 	private var showsThumbnails: Bool {
 		layout == .standard
 	}
 
+	/// Rows with a thumbnail are taller than the rest.
+	private var usesLargeThumbnailRows: Bool {
+		showsThumbnails && showsLargeThumbnails
+	}
+
 	private var thumbnailMode: ArticleThumbnailFinder.Mode {
-		.small
+		showsLargeThumbnails ? .large : .small
 	}
 
 	private var didRegisterForNotifications = false
@@ -251,8 +275,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	override func viewDidLoad() {
-		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize)
-		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
+		updateCellAppearances()
 
 		updateRowHeights()
 		tableView.target = self
@@ -283,11 +306,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(userDidDeleteAccount(_:)), name: .UserDidDeleteAccount, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarDidAcceptDrop(_:)), name: .SidebarDidAcceptDrop, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
-			NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
-				Task { @MainActor in
-					self?.userDefaultsDidChange()
-				}
-			}
+			NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -301,6 +320,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	override func viewDidLayout() {
 		super.viewDidLayout()
 		fitTableViewToVisibleWidthInStandardLayout()
+		updateLargeThumbnailRowHeightIfWidthChanged()
 	}
 
 	// MARK: - API
@@ -753,7 +773,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard showsThumbnails, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
 			return
 		}
-		reloadVisibleCells(for: articleIDs)
+		thumbnailURLsDidChange(for: articleIDs)
 	}
 
 	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
@@ -764,7 +784,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			guard let article = articles.articleAtRow(row) else {
 				return false
 			}
-			return ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url
+			return thumbnailURL(for: article) == url
 		}
 		if let indexesToReload {
 			reloadCells(for: indexesToReload)
@@ -772,11 +792,18 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func handleArticleThumbnailDownloadDidFail(_ notification: Notification) {
-		guard showsThumbnails else {
+		guard showsThumbnails, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
 			return
 		}
-		// No article has the failed URL as its thumbnail URL anymore, so rows can’t be matched by URL.
-		reloadVisibleCells()
+		// Articles that used the failed URL now get their next source, or none.
+		let articleIDs = Set(thumbnailURLCache.filter { $0.value == url }.keys)
+		thumbnailURLsDidChange(for: articleIDs)
+	}
+
+	@objc nonisolated func handleUserDefaultsDidChange(_ notification: Notification) {
+		Task { @MainActor in
+			self.userDefaultsDidChange()
+		}
 	}
 
 	@objc func handleBoundsDidChange(_ notification: Notification) {
@@ -828,8 +855,9 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@MainActor func userDefaultsDidChange() {
+	private func userDefaultsDidChange() {
 		fontSize = AppDefaults.timelineFontSize
+		showsLargeThumbnails = AppDefaults.timelineShowsLargeThumbnails
 	}
 
 	/// The one place the row height is set — it depends on the layout and the font size.
@@ -887,20 +915,40 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	// MARK: - Cell Configuring
 
-	private func calculateRowHeight() -> CGFloat {
+	private func calculateRowHeight(showThumbnail: Bool, width: CGFloat) -> CGFloat {
 		let longTitle = "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally encounter consequences that are extremely painful. Nor again is there anyone who loves or pursues or desires to obtain pain of itself, because it is pain, but because occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no resultant pleasure?"
 		let prototypeID = "prototype"
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, thumbnailURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, thumbnail: nil, showThumbnail: false)
-		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, thumbnail: nil, showThumbnail: showThumbnail)
+		let height = TimelineCellLayout.height(for: width, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
 
 	private func updateRowHeights() {
-		currentRowHeight = calculateRowHeight()
+		currentRowHeight = calculateRowHeight(showThumbnail: false, width: Self.prototypeRowWidth)
+		updateLargeThumbnailRowHeight()
 		updateTableViewRowHeight()
+	}
+
+	/// Depends on the column width, since a large thumbnail spans the cell at a fixed aspect ratio.
+	private func updateLargeThumbnailRowHeight() {
+		let width = tableView.tableColumns.first?.width ?? 0.0
+		largeThumbnailRowHeightWidth = width
+		largeThumbnailRowHeight = width > 0.0 ? calculateRowHeight(showThumbnail: true, width: width) : 0.0
+	}
+
+	private func updateLargeThumbnailRowHeightIfWidthChanged() {
+		guard usesLargeThumbnailRows, let width = tableView.tableColumns.first?.width, width != largeThumbnailRowHeightWidth else {
+			return
+		}
+		updateLargeThumbnailRowHeight()
+		noteHeightOfAllRows()
+	}
+
+	private func noteHeightOfAllRows() {
+		tableView.noteHeightOfRows(withIndexesChanged: IndexSet(integersIn: 0..<tableView.numberOfRows))
 	}
 
 	@objc func fetchAndMergeArticles() {
@@ -981,6 +1029,9 @@ extension TimelineViewController: NSTableViewDataSource {
 	}
 
 	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+		if usesLargeThumbnailRows, largeThumbnailRowHeight > 0.0, let article = articles.articleAtRow(row), thumbnailURL(for: article) != nil {
+			return largeThumbnailRowHeight
+		}
 		// Keeping -[NSTableViewDelegate tableView:heightOfRow:] implemented fixes
 		// an issue that the bottom inset of NSTableView disappears on macOS Monterey.
 		return tableView.rowHeight
@@ -1064,7 +1115,7 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		let showThumbnail = showsThumbnails && ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) != nil
+		let showThumbnail = showsThumbnails && thumbnailURL(for: article) != nil
 		let thumbnail = showThumbnail ? ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode) : nil
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, thumbnail: thumbnail, showThumbnail: showThumbnail)
 	}
@@ -1187,9 +1238,11 @@ private extension TimelineViewController {
 
 	func layoutDidChange() {
 		thumbnailLookaheadRows = nil
+		clearThumbnailURLCache()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
+			updateLargeThumbnailRowHeight()
 			tableView.reloadData()
 		}
 		if tableView.selectedRow != -1 {
@@ -1306,6 +1359,61 @@ private extension TimelineViewController {
 
 	// MARK: - Thumbnails
 
+	/// Cached per article, since large-mode row heights ask for every row.
+	func thumbnailURL(for article: Article) -> String? {
+		let articleID = article.articleID
+		if let thumbnailURL = thumbnailURLCache[articleID] {
+			return thumbnailURL
+		}
+		if articleIDsWithNoThumbnail.contains(articleID) {
+			return nil
+		}
+
+		let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode)
+		if let thumbnailURL {
+			thumbnailURLCache[articleID] = thumbnailURL
+		} else {
+			articleIDsWithNoThumbnail.insert(articleID)
+		}
+		return thumbnailURL
+	}
+
+	func clearThumbnailURLCache() {
+		thumbnailURLCache.removeAll()
+		articleIDsWithNoThumbnail.removeAll()
+	}
+
+	/// Recalculates thumbnail URLs, row heights in large mode, and visible cells.
+	func thumbnailURLsDidChange(for articleIDs: Set<String>) {
+		guard !articleIDs.isEmpty else {
+			return
+		}
+		for articleID in articleIDs {
+			thumbnailURLCache[articleID] = nil
+			articleIDsWithNoThumbnail.remove(articleID)
+		}
+		if usesLargeThumbnailRows {
+			tableView.noteHeightOfRows(withIndexesChanged: indexesForArticleIDs(articleIDs))
+		}
+		reloadVisibleCells(for: articleIDs)
+	}
+
+	func largeThumbnailsDidChange() {
+		updateCellAppearances()
+		clearThumbnailURLCache()
+		thumbnailLookaheadRows = nil
+		guard showsThumbnails else {
+			return
+		}
+		updateLargeThumbnailRowHeight()
+		performBlockAndRestoreSelection {
+			tableView.reloadData()
+		}
+		if tableView.selectedRow != -1 {
+			tableView.scrollRowToVisible(tableView.selectedRow)
+		}
+	}
+
 	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
 	func discoverThumbnailURLs() {
 		guard showsThumbnails else {
@@ -1345,9 +1453,13 @@ private extension TimelineViewController {
 
 	// MARK: - Appearance Change
 
+	private func updateCellAppearances() {
+		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize, showsLargeThumbnails: showsLargeThumbnails)
+		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize, showsLargeThumbnails: showsLargeThumbnails)
+	}
+
 	private func fontSizeDidChange() {
-		cellAppearance = TimelineCellAppearance(showIcon: false, fontSize: fontSize)
-		cellAppearanceWithIcon = TimelineCellAppearance(showIcon: true, fontSize: fontSize)
+		updateCellAppearances()
 		updateRowHeights()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
