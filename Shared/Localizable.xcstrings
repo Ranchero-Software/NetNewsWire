@@ -532,6 +532,9 @@
     "Downloading metadata" : {
       "comment" : "Downloading metadata"
     },
+    "Downloading thumbnail" : {
+      "comment" : "Downloading thumbnail"
+    },
     "Duplicate Theme" : {
       "comment" : "Duplicate Theme"
     },

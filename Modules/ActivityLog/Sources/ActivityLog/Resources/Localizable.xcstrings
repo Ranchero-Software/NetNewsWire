@@ -57,6 +57,9 @@
     "Downloading metadata %@" : {
       "comment" : "Activity kind — downloading HTML metadata — %@ is the URL"
     },
+    "Downloading thumbnail %@" : {
+      "comment" : "Activity kind — downloading a timeline thumbnail — %@ is the URL"
+    },
     "Exporting OPML" : {
       "comment" : "Activity kind",
       "localizations" : {
@@ -306,6 +309,9 @@
           }
         }
       }
+    },
+    "Thumbnails" : {
+      "comment" : "Activity owner name"
     },
     "Vacuuming database" : {
       "comment" : "Activity kind",
