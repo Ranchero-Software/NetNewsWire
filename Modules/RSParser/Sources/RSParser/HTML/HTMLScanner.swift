@@ -25,21 +25,26 @@ public final class HTMLScanner {
 
 	public weak var delegate: HTMLScannerDelegate?
 
+	private var input: [UInt8] = []
+	private var pos: Int = 0
+	private var stopped = false
+
 	public init(delegate: HTMLScannerDelegate) {
 		self.delegate = delegate
 	}
 
 	public func parse(_ bytes: [UInt8]) {
-		self.input = bytes
-		self.pos = 0
+		input = bytes
+		pos = 0
+		stopped = false
 		drive()
 		delegate?.htmlScannerDidEnd(self)
 	}
 
-	// MARK: - Private state
-
-	private var input: [UInt8] = []
-	private var pos: Int = 0
+	/// Ends parsing after the current delegate callback returns.
+	public func stopParsing() {
+		stopped = true
+	}
 }
 
 // MARK: - Private
@@ -52,7 +57,7 @@ private extension HTMLScanner {
 	static let styleBytes: [UInt8] = Array("style".utf8)
 
 	func drive() {
-		while pos < input.count {
+		while pos < input.count && !stopped {
 			let b = input[pos]
 			if b == .asciiLessThan {
 				scanMarkup()
