@@ -63,6 +63,7 @@ public enum ActivityKind: Sendable, Hashable {
 	case downloadFavicon(faviconURL: String)
 	case downloadAvatar(avatarURL: String)
 	case downloadHTMLMetadata(urlString: String)
+	case downloadThumbnail(imageURL: String)
 
 	/// Localized description for activity kinds that don't carry a URL to display separately.
 	/// Returns nil for the URL-bearing cases — each caller renders its own primary + URL form.
@@ -124,7 +125,7 @@ public enum ActivityKind: Sendable, Hashable {
 			return NSLocalizedString("Validating credentials", bundle: .module, comment: "Activity kind")
 		case .exportOPML:
 			return NSLocalizedString("Exporting OPML", bundle: .module, comment: "Activity kind")
-		case .refreshFeedContent, .findFeed, .fetchFeedCandidate, .downloadFeedImage, .downloadFavicon, .downloadAvatar, .downloadHTMLMetadata:
+		case .refreshFeedContent, .findFeed, .fetchFeedCandidate, .downloadFeedImage, .downloadFavicon, .downloadAvatar, .downloadHTMLMetadata, .downloadThumbnail:
 			return nil
 		}
 	}
@@ -157,6 +158,9 @@ public enum ActivityKind: Sendable, Hashable {
 		case .downloadHTMLMetadata(let urlString):
 			let format = NSLocalizedString("Downloading metadata %@", bundle: .module, comment: "Activity kind — downloading HTML metadata — %@ is the URL")
 			return String(format: format, urlString)
+		case .downloadThumbnail(let imageURL):
+			let format = NSLocalizedString("Downloading thumbnail %@", bundle: .module, comment: "Activity kind — downloading a timeline thumbnail — %@ is the URL")
+			return String(format: format, imageURL)
 		default:
 			return ""
 		}
