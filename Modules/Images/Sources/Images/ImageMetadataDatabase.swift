@@ -12,6 +12,7 @@ import RSDatabase
 import RSDatabaseObjC
 
 /// Per-URL image metadata: discovered URLs and failure tracking.
+/// Also thumbnails found in article HTML, which aren’t loaded into memory at init, since there’s a row per article.
 @MainActor public final class ImageMetadataDatabase {
 
 	public static let shared = ImageMetadataDatabase()
@@ -34,11 +35,14 @@ import RSDatabaseObjC
 	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, statusCode INTEGER, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL, lastChecked REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS articleThumbnail (articleID TEXT PRIMARY KEY NOT NULL, thumbnailURL TEXT, lastChecked REAL NOT NULL);
 	"""
 
-	private init() {
-		let databasePath = AppConfig.dataFolder
-			.appendingPathComponent("ImageMetadata.db").path
+	private convenience init() {
+		self.init(databasePath: AppConfig.dataFolder.appendingPathComponent("ImageMetadata.db").path)
+	}
+
+	init(databasePath: String) {
 		self.databasePath = databasePath
 		let queue = DatabaseQueue(databasePath: databasePath)
 		queue.runCreateStatements(Self.tableCreationStatements)
@@ -49,6 +53,8 @@ import RSDatabaseObjC
 		let cutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetentionDays)
 		queue.runInDatabase { database in
 			DownloadFailureTable.removeExpired(olderThan: cutoff, database: database)
+			// Expiring rows means articles get rechecked, in case their HTML changed.
+			ArticleThumbnailTable.removeExpired(olderThan: cutoff, database: database)
 			database.vacuumIfNeeded()
 		}
 	}
@@ -92,6 +98,22 @@ import RSDatabaseObjC
 		feedURLToIconURL[feedURL] = iconURL
 		queue.runInDatabase { database in
 			FeedIconURLTable.save(feedURL: feedURL, iconURL: iconURL, database: database)
+		}
+	}
+
+	// MARK: - ArticleThumbnail
+
+	func fetchArticleThumbnails(articleIDs: [String]) async -> [ArticleThumbnailRecord] {
+		await withCheckedContinuation { continuation in
+			queue.runInDatabase { database in
+				continuation.resume(returning: ArticleThumbnailTable.fetch(articleIDs: articleIDs, database: database))
+			}
+		}
+	}
+
+	func saveArticleThumbnails(_ records: [ArticleThumbnailRecord]) {
+		queue.runInTransaction { database in
+			ArticleThumbnailTable.save(records, database: database)
 		}
 	}
 
