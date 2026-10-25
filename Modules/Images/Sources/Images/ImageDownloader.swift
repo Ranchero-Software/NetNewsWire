@@ -9,6 +9,7 @@
 import Foundation
 import os
 import RSCore
+import RSParser
 import RSWeb
 import ActivityLog
 
@@ -20,10 +21,21 @@ public struct ImageDownloadError: Error {
 	public let statusCode: Int?
 	public let decodingFailed: Bool
 	public let isTransient: Bool // No network, DNS issues, timeout, 5xx response, etc.
+	public let rejectedPixelSize: (width: Int, height: Int)? // Too small or too narrow to be a thumbnail
+
+	init(statusCode: Int?, decodingFailed: Bool, isTransient: Bool, rejectedPixelSize: (width: Int, height: Int)? = nil) {
+		self.statusCode = statusCode
+		self.decodingFailed = decodingFailed
+		self.isTransient = isTransient
+		self.rejectedPixelSize = rejectedPixelSize
+	}
 }
 
 extension ImageDownloadError: LocalizedError {
 	public var errorDescription: String? {
+		if let rejectedPixelSize {
+			return "Image too small or too narrow (\(rejectedPixelSize.width)×\(rejectedPixelSize.height))"
+		}
 		if decodingFailed {
 			if let statusCode {
 				return "Couldn’t decode image bytes (HTTP \(statusCode))"
@@ -37,31 +49,62 @@ extension ImageDownloadError: LocalizedError {
 	}
 }
 
+/// Downloads images, resizes them, and caches them in memory and on disk.
+/// Each instance has its own disk cache folder, since the disk key is the URL alone.
 @MainActor public final class ImageDownloader {
-	public static let shared = ImageDownloader()
+
+	/// Feed icons, favicons, and avatars.
+	public static let shared = ImageDownloader(configuration: Configuration(cacheFolderName: "Images", maxPixelSize: RSImage.maxIconPixelSize, format: .png, memoryCacheByteLimit: 0, requiresSignificantDimensions: false, downloadLimiter: nil))
+
+	/// Timeline thumbnails, sized for aspect-fill cropping into a small square.
+	public static let thumbnails = ImageDownloader(configuration: Configuration(cacheFolderName: "Thumbnails", maxPixelSize: thumbnailMaxPixelSize, format: .jpeg(compressionQuality: thumbnailCompressionQuality), memoryCacheByteLimit: thumbnailMemoryCacheByteLimit, requiresSignificantDimensions: true, downloadLimiter: thumbnailDownloadLimiter))
+
+	/// Timeline thumbnails, sized to span the timeline’s width.
+	public static let largeThumbnails = ImageDownloader(configuration: Configuration(cacheFolderName: "LargeThumbnails", maxPixelSize: largeThumbnailMaxPixelSize, format: .jpeg(compressionQuality: thumbnailCompressionQuality), memoryCacheByteLimit: thumbnailMemoryCacheByteLimit, requiresSignificantDimensions: true, downloadLimiter: thumbnailDownloadLimiter))
+
+	struct Configuration: Sendable {
+		let cacheFolderName: String
+		let maxPixelSize: Int
+		let format: ScaledImageFormat
+		let memoryCacheByteLimit: Int // 0 means no limit
+		let requiresSignificantDimensions: Bool // Checked against the downloaded image’s real pixel dimensions
+		let downloadLimiter: DownloadLimiter?
+	}
+
+	private static let thumbnailMaxPixelSize = 512
+	private static let largeThumbnailMaxPixelSize = 1200
+	private static let thumbnailCompressionQuality = 0.8
+	private static let thumbnailMemoryCacheByteLimit = 32 * 1024 * 1024
+	private static let maximumConcurrentThumbnailDownloads = 4
+
+	/// Shared by both thumbnail downloaders.
+	private static let thumbnailDownloadLimiter = DownloadLimiter(maximumConcurrentDownloads: maximumConcurrentThumbnailDownloads)
 
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageDownloader")
 
+	private let configuration: Configuration
 	nonisolated private let diskCache: BinaryDiskCache
 	private let queue: DispatchQueue
-	private var imageCache = [String: Data]() // url: image
+	private let imageCache = NSCache<NSString, NSData>() // url: image
 	private var urlsInProgress = Set<String>()
 
-	init() {
-		let folder = AppConfig.cacheSubfolder(named: "Images")
+	init(configuration: Configuration) {
+		self.configuration = configuration
+		let folder = AppConfig.cacheSubfolder(named: configuration.cacheFolderName)
 		self.diskCache = BinaryDiskCache(folder: folder.path)
 		self.queue = DispatchQueue(label: "ImageDownloader serial queue - \(folder.path)")
+		self.imageCache.totalCostLimit = configuration.memoryCacheByteLimit
 
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
-		imageCache.removeAll()
+		imageCache.removeAllObjects()
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
-		imageCache.removeAll()
+		imageCache.removeAllObjects()
 	}
 
 	/// Returns the data if in memory, else dispatches a disk-then-network fetch and returns nil.
@@ -73,8 +116,8 @@ extension ImageDownloadError: LocalizedError {
 			Self.logger.debug("Skipping non-http(s) URL: \(url)")
 			return nil
 		}
-		if let data = imageCache[url] {
-			return data
+		if let data = imageCache.object(forKey: url as NSString) {
+			return data as Data
 		}
 		if ImageMetadataDatabase.shared.recentlyFailed(url: url) {
 			Self.logger.debug("Skipping recently-failed URL: \(url)")
@@ -93,7 +136,7 @@ private extension ImageDownloader {
 
 	func cacheImage(_ url: String, _ image: Data) {
 		assert(Thread.isMainThread)
-		imageCache[url] = image
+		imageCache.setObject(image as NSData, forKey: url as NSString, cost: image.count)
 		postImageDidBecomeAvailableNotification(url)
 	}
 
@@ -109,6 +152,19 @@ private extension ImageDownloader {
 			return
 		}
 
+		if let downloadLimiter = configuration.downloadLimiter {
+			guard downloadLimiter.networkAllowsDownloads else {
+				urlsInProgress.remove(url)
+				return
+			}
+			await downloadLimiter.waitForTurn()
+		}
+		await downloadImageFromNetwork(url, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
+		configuration.downloadLimiter?.downloadDidFinish()
+		urlsInProgress.remove(url)
+	}
+
+	func downloadImageFromNetwork(_ url: String, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async {
 		let activityLog = ActivityLog.shared
 		if let activityOwner, let activityKind {
 			activityLog.createActivity(owner: activityOwner, kind: activityKind, detail: activityDetail)
@@ -131,7 +187,6 @@ private extension ImageDownloader {
 				ImageMetadataDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
 			}
 		}
-		urlsInProgress.remove(url)
 	}
 
 	func readFromDisk(url: String) async -> Data? {
@@ -170,13 +225,13 @@ private extension ImageDownloader {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)
 		}
 
+		let statusCode = (downloadResponse.response as? HTTPURLResponse)?.statusCode
 		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
-			let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
+			let scaledData = try await Self.scaledImageData(data, statusCode: statusCode, configuration: configuration)
 			saveToDisk(url, scaledData)
 			return (scaledData, downloadResponse)
 		}
 
-		let statusCode = (downloadResponse.response as? HTTPURLResponse)?.statusCode
 		// 2xx with empty / missing body — server said OK but gave us no image bytes.
 		if let response = downloadResponse.response, response.statusIsOK {
 			throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: false)
@@ -198,5 +253,24 @@ private extension ImageDownloader {
 	func postImageDidBecomeAvailableNotification(_ url: String) {
 		assert(Thread.isMainThread)
 		NotificationCenter.default.post(name: .imageDidBecomeAvailable, object: self, userInfo: ["url": url])
+	}
+}
+
+// MARK: - Image Processing
+
+extension ImageDownloader {
+
+	/// Resizes off the main thread. Throws when `requiresSignificantDimensions` and the image is
+	/// unreadable, too small, or too narrow, so it’s recorded as a failure, as a 404 would be.
+	@concurrent static func scaledImageData(_ data: Data, statusCode: Int?, configuration: Configuration) async throws(ImageDownloadError) -> Data {
+		if configuration.requiresSignificantDimensions {
+			guard let pixelSize = RSImage.largestFramePixelSize(data) else {
+				throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: false)
+			}
+			guard SignificantImageFilter.hasSignificantDimensions(width: pixelSize.width, height: pixelSize.height) else {
+				throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: false, rejectedPixelSize: pixelSize)
+			}
+		}
+		return RSImage.scaledImageData(data, maxPixelSize: configuration.maxPixelSize, format: configuration.format) ?? data
 	}
 }
