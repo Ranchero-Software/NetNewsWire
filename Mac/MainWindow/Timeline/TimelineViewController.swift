@@ -150,8 +150,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 
 			articleRowMap = [String: [Int]]()
+			thumbnailLookaheadRows = nil
 			tableView.reloadData()
 			IconImageCache.shared.prefetchImagesForArticles(articles)
+			discoverThumbnailURLs()
 		}
 	}
 
@@ -183,6 +185,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	private var showIcons = false
 	private var currentRowHeight: CGFloat = 0.0
+	private var thumbnailLookaheadRows: Range<Int>? // Rows most recently prefetched by prefetchThumbnailsForNextScreen
+
+	/// Column layout never shows thumbnails.
+	private var showsThumbnails: Bool {
+		layout == .standard
+	}
+
+	private var thumbnailMode: ArticleThumbnailFinder.Mode {
+		.small
+	}
 
 	private var didRegisterForNotifications = false
 	static let fetchAndMergeArticlesQueue = CoalescingQueue(name: "Fetch and Merge Articles", interval: 0.5, maxInterval: 2.0)
@@ -258,6 +270,13 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
+			if let clipView = tableView.enclosingScrollView?.contentView {
+				clipView.postsBoundsChangedNotifications = true
+				NotificationCenter.default.addObserver(self, selector: #selector(handleBoundsDidChange(_:)), name: NSView.boundsDidChangeNotification, object: clipView)
+			}
 			NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountStateDidChange(_:)), name: .AccountStateDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(accountsDidChange(_:)), name: .UserDidAddAccount, object: nil)
@@ -730,6 +749,40 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
+	@objc func handleArticleThumbnailURLsDidBecomeAvailable(_ notification: Notification) {
+		guard showsThumbnails, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
+			return
+		}
+		reloadVisibleCells(for: articleIDs)
+	}
+
+	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
+		guard showsThumbnails, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
+			return
+		}
+		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { row in
+			guard let article = articles.articleAtRow(row) else {
+				return false
+			}
+			return ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url
+		}
+		if let indexesToReload {
+			reloadCells(for: indexesToReload)
+		}
+	}
+
+	@objc func handleArticleThumbnailDownloadDidFail(_ notification: Notification) {
+		guard showsThumbnails else {
+			return
+		}
+		// No article has the failed URL as its thumbnail URL anymore, so rows can’t be matched by URL.
+		reloadVisibleCells()
+	}
+
+	@objc func handleBoundsDidChange(_ notification: Notification) {
+		prefetchThumbnailsForNextScreen()
+	}
+
 	@objc func accountDidDownloadArticles(_ note: Notification) {
 		guard let feeds = note.userInfo?[Account.UserInfoKey.feeds] as? Set<Feed> else {
 			return
@@ -840,7 +893,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		let status = ArticleStatus(articleID: prototypeID, read: false, starred: false, dateArrived: Date())
 		let prototypeArticle = Article(accountID: prototypeID, articleID: prototypeID, feedID: prototypeID, uniqueID: prototypeID, title: longTitle, contentHTML: nil, contentText: nil, markdown: nil, url: nil, externalURL: nil, summary: nil, imageURL: nil, thumbnailURL: nil, datePublished: nil, dateModified: nil, authors: nil, attachments: nil, status: status)
 
-		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false)
+		let prototypeCellData = TimelineCellData(article: prototypeArticle, showFeedName: .feed, feedName: "Prototype Feed Name", byline: nil, iconImage: nil, showIcon: false, thumbnail: nil, showThumbnail: false)
 		let height = TimelineCellLayout.height(for: 100, cellData: prototypeCellData, appearance: cellAppearance)
 		return height
 	}
@@ -1011,14 +1064,9 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons)
-	}
-
-	private func iconFor(_ article: Article) -> IconImage? {
-		if !showIcons {
-			return nil
-		}
-		return IconImageCache.shared.imageForArticle(article)
+		let showThumbnail = showsThumbnails && ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) != nil
+		let thumbnail = showThumbnail ? ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode) : nil
+		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, thumbnail: thumbnail, showThumbnail: showThumbnail)
 	}
 
 	private func avatarForAuthor(_ author: Author) -> IconImage? {
@@ -1138,6 +1186,7 @@ private extension TimelineViewController {
 	}
 
 	func layoutDidChange() {
+		thumbnailLookaheadRows = nil
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
@@ -1146,6 +1195,7 @@ private extension TimelineViewController {
 		if tableView.selectedRow != -1 {
 			tableView.scrollRowToVisible(tableView.selectedRow)
 		}
+		discoverThumbnailURLs()
 	}
 
 	func updateShowIcons() {
@@ -1252,6 +1302,45 @@ private extension TimelineViewController {
 		}
 
 		return indexes
+	}
+
+	// MARK: - Thumbnails
+
+	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
+	func discoverThumbnailURLs() {
+		guard showsThumbnails else {
+			return
+		}
+		let articles = self.articles
+		Task {
+			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articles)
+		}
+	}
+
+	/// Starts thumbnail downloads for the screenful of rows below the visible rows.
+	/// Visible rows start their own downloads when their cells are configured.
+	func prefetchThumbnailsForNextScreen() {
+		guard showsThumbnails else {
+			return
+		}
+		let visibleRows = tableView.rows(in: tableView.visibleRect)
+		let start = visibleRows.location + visibleRows.length
+		let end = min(start + visibleRows.length, articles.count)
+		guard visibleRows.length > 0, start < end else {
+			return
+		}
+
+		let lookaheadRows = start..<end
+		guard lookaheadRows != thumbnailLookaheadRows else {
+			return
+		}
+		thumbnailLookaheadRows = lookaheadRows
+
+		for row in lookaheadRows {
+			if let article = articles.articleAtRow(row) {
+				_ = ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode)
+			}
+		}
 	}
 
 	// MARK: - Appearance Change

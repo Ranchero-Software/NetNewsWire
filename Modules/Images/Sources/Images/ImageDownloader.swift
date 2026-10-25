@@ -15,6 +15,7 @@ import ActivityLog
 
 extension Notification.Name {
 	public static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // userInfo key: "url"
+	public static let imageDownloadDidFail = Notification.Name("ImageDownloadDidFailNotification") // userInfo key: "url". Not posted for transient failures.
 }
 
 public struct ImageDownloadError: Error {
@@ -185,6 +186,7 @@ private extension ImageDownloader {
 			}
 			if !error.isTransient {
 				ImageMetadataDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
+				NotificationCenter.default.post(name: .imageDownloadDidFail, object: self, userInfo: ["url": url])
 			}
 		}
 	}

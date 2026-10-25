@@ -24,6 +24,11 @@ extension Notification.Name {
 	/// Posted when a thumbnail image requested by `thumbnail(for:mode:)` is ready.
 	/// userInfo key: `ArticleThumbnailFinder.urlKey` (the thumbnail URL).
 	public static let articleThumbnailDidBecomeAvailable = Notification.Name("ArticleThumbnailDidBecomeAvailable")
+
+	/// Posted when a thumbnail image fails to download or is rejected for its size.
+	/// `thumbnailURL(for:mode:)` now skips that URL, so articles that used it may have a different thumbnail.
+	/// userInfo key: `ArticleThumbnailFinder.urlKey` (the failed URL).
+	public static let articleThumbnailDownloadDidFail = Notification.Name("ArticleThumbnailDownloadDidFail")
 }
 
 /// Finds the image that stands for an article in the timeline.
@@ -70,7 +75,7 @@ extension Notification.Name {
 		self.metadataDatabase = metadataDatabase
 		self.imageCache.totalCostLimit = Self.imageCacheByteLimit
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleImageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: ImageDownloader.thumbnails)
+		observeImageDownloader(ImageDownloader.thumbnails)
 		// Not flushed on appDidGoToBackground, which would make thumbnails flash on resume.
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
@@ -147,6 +152,13 @@ extension Notification.Name {
 		decodeAndCacheImage(data, url: url, mode: mode)
 	}
 
+	@objc func handleImageDownloadDidFail(_ notification: Notification) {
+		guard let url = notification.userInfo?["url"] as? String else {
+			return
+		}
+		NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.urlKey: url])
+	}
+
 	@objc func handleLowMemory(_ notification: Notification) {
 		imageCache.removeAllObjects()
 	}
@@ -184,10 +196,15 @@ private extension ArticleThumbnailFinder {
 		case .large:
 			if !isObservingLargeThumbnails {
 				isObservingLargeThumbnails = true
-				NotificationCenter.default.addObserver(self, selector: #selector(handleImageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: ImageDownloader.largeThumbnails)
+				observeImageDownloader(ImageDownloader.largeThumbnails)
 			}
 			return ImageDownloader.largeThumbnails
 		}
+	}
+
+	func observeImageDownloader(_ imageDownloader: ImageDownloader) {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleImageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleImageDownloadDidFail(_:)), name: .imageDownloadDidFail, object: imageDownloader)
 	}
 
 	func decodeAndCacheImage(_ data: Data, url: String, mode: Mode) {

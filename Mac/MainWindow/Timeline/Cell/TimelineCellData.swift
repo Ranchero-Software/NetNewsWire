@@ -23,10 +23,12 @@ import Images
 	let showFeedName: TimelineShowFeedName
 	let iconImage: IconImage? // feed icon, user avatar, or favicon
 	let showIcon: Bool // Make space even when icon is nil
+	let thumbnail: NSImage?
+	let showThumbnail: Bool // Make space even when thumbnail is nil
 	let read: Bool
 	let starred: Bool
 
-	init(article: Article, showFeedName: TimelineShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool) {
+	init(article: Article, showFeedName: TimelineShowFeedName, feedName: String?, byline: String?, iconImage: IconImage?, showIcon: Bool, thumbnail: NSImage?, showThumbnail: Bool) {
 
 		self.title = ArticleStringFormatter.shared.truncatedTitle(article)
 		self.attributedTitle = ArticleStringFormatter.shared.attributedTruncatedTitle(article)
@@ -51,6 +53,9 @@ import Images
 		self.showIcon = showIcon
 		self.iconImage = iconImage
 
+		self.thumbnail = thumbnail
+		self.showThumbnail = showThumbnail
+
 		self.read = article.status.read
 		self.starred = article.status.starred
 	}
@@ -73,6 +78,8 @@ import Images
 		self.showFeedName = .none
 		self.showIcon = false
 		self.iconImage = nil
+		self.thumbnail = nil
+		self.showThumbnail = false
 		self.read = true
 		self.starred = false
 		self.attributedTitle = NSAttributedString()
