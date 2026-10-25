@@ -30,11 +30,13 @@ struct CacheCleaner {
 			let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 			let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
 			let imagesFolderURL = tempDir.appendingPathComponent("Images")
+			let thumbnailsFolderURL = tempDir.appendingPathComponent("Thumbnails")
+			let largeThumbnailsFolderURL = tempDir.appendingPathComponent("LargeThumbnails")
 			let feedURLToIconURL = tempDir.appendingPathComponent("FeedURLToIconURLCache.plist")
 			let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
 			let homePagesWithNoIconURL = tempDir.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
 
-			for tempItem in [faviconsFolderURL, imagesFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
+			for tempItem in [faviconsFolderURL, imagesFolderURL, thumbnailsFolderURL, largeThumbnailsFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
 				do {
 					logger.info("Removing cache file: \(tempItem.absoluteString)")
 					try FileManager.default.removeItem(at: tempItem)
