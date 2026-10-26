@@ -1070,6 +1070,12 @@
     "Preview with Feed Icon" : {
       "comment" : "Timeline Layout: header for the preview that shows a feed icon"
     },
+    "Preview with Feed Icon and Thumbnail" : {
+      "comment" : "Timeline Layout: header for the preview that shows a feed icon and a thumbnail"
+    },
+    "Preview with Thumbnail" : {
+      "comment" : "Timeline Layout: header for the preview that shows a thumbnail"
+    },
     "Previous Article" : {
       "comment" : "Previous Article"
     },
