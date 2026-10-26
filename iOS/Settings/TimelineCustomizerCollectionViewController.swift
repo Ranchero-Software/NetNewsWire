@@ -212,6 +212,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
 		reconfigureOptionsRows()
+		collectionView.reloadSections([Section.noIconPreview.rawValue, Section.iconPreview.rawValue])
 	}
 }
 
@@ -240,7 +241,10 @@ private extension TimelineCustomizerCollectionViewController {
 											 iconImage: IconImage(Assets.Images.nnwFeedIcon),
 											 showIcon: showIcon,
 											 numberOfLines: AppDefaults.timelineNumberOfLines,
-											 iconSize: AppDefaults.timelineIconSize)
+											 iconSize: AppDefaults.timelineIconSize,
+											 thumbnail: Assets.Images.nnwAppIcon,
+											 showThumbnail: AppDefaults.timelineThumbnailsDisplay != .none,
+											 thumbnailsDisplay: AppDefaults.timelineThumbnailsDisplay)
 		cell.isPreview = true
 		return cell
 	}

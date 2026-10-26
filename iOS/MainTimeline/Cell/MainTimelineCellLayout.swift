@@ -19,6 +19,7 @@ import Images
 	var summaryRect: CGRect { get }
 	var feedNameRect: CGRect { get }
 	var dateRect: CGRect { get }
+	var thumbnailRect: CGRect { get }
 	var separatorRect: CGRect { get }
 }
 
@@ -119,6 +120,12 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 
 	static var summaryFont: UIFont { UIFont.preferredFont(forTextStyle: .body) }
 
+	static let thumbnailDimension = CGFloat(76)
+	static let thumbnailMarginLeft = CGFloat(8)
+	static let thumbnailCornerRadius = CGFloat(4)
+	static let largeThumbnailMarginTop = CGFloat(8)
+	static let largeThumbnailHeight = CGFloat(180)
+
 	let height: CGFloat
 	let unreadIndicatorRect: CGRect
 	let starRect: CGRect
@@ -127,6 +134,7 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 	let summaryRect: CGRect
 	let feedNameRect: CGRect
 	let dateRect: CGRect
+	let thumbnailRect: CGRect
 	let separatorRect: CGRect
 
 	init(width: CGFloat, insets: UIEdgeInsets, cellData: MainTimelineCellData) {
@@ -147,8 +155,11 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 			self.iconImageRect = CGRect.zero
 		}
 
-		let textAreaWidth = width - (currentPoint.x + Self.cellPadding.right + insets.right)
-		self.separatorRect = CGRect(x: currentPoint.x, y: 0, width: textAreaWidth, height: 0)
+		let rightEdge = width - (Self.cellPadding.right + insets.right)
+		let showsSmallThumbnail = cellData.showThumbnail && cellData.thumbnailsDisplay == .small
+		let smallThumbnailSpace = showsSmallThumbnail ? Self.thumbnailDimension + Self.thumbnailMarginLeft : 0
+		let textAreaWidth = rightEdge - currentPoint.x - smallThumbnailSpace
+		self.separatorRect = CGRect(x: currentPoint.x, y: 0, width: rightEdge - currentPoint.x, height: 0)
 
 		let (titleRect, numberOfLinesForTitle) = Self.rectForTitle(cellData, currentPoint, textAreaWidth)
 		self.titleRect = titleRect
@@ -171,7 +182,19 @@ struct MainTimelineDefaultCellLayout: MainTimelineCellLayout {
 		let feedNameWidth = textAreaWidth - (Self.feedRightMargin + self.dateRect.size.width)
 		self.feedNameRect = Self.rectForFeedName(cellData, currentPoint, feedNameWidth)
 
-		self.height = [self.iconImageRect, self.feedNameRect, self.dateRect].maxY() + Self.cellPadding.bottom
+		if showsSmallThumbnail {
+			// Top right. The cell grows if needed to fit it.
+			self.thumbnailRect = CGRect(x: rightEdge - Self.thumbnailDimension, y: Self.cellPadding.top, width: Self.thumbnailDimension, height: Self.thumbnailDimension)
+		} else if cellData.showThumbnail && cellData.thumbnailsDisplay == .large {
+			// Below the text and icon, from the icon’s left edge (or the text’s) to the right padding.
+			let originX = cellData.showIcon ? self.iconImageRect.minX : currentPoint.x
+			let originY = ceil(max([self.feedNameRect, self.dateRect].maxY(), self.iconImageRect.maxY) + Self.largeThumbnailMarginTop)
+			self.thumbnailRect = CGRect(x: originX, y: originY, width: rightEdge - originX, height: Self.largeThumbnailHeight)
+		} else {
+			self.thumbnailRect = CGRect.zero
+		}
+
+		self.height = [self.iconImageRect, self.feedNameRect, self.dateRect, self.thumbnailRect].maxY() + Self.cellPadding.bottom
 	}
 
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {
@@ -196,6 +219,7 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 	let summaryRect: CGRect
 	let feedNameRect: CGRect
 	let dateRect: CGRect
+	let thumbnailRect: CGRect
 	let separatorRect: CGRect
 
 	init(width: CGFloat, insets: UIEdgeInsets, cellData: MainTimelineCellData) {
@@ -238,7 +262,19 @@ struct MainTimelineAccessibilityCellLayout: MainTimelineCellLayout {
 
 		self.dateRect = Self.rectForDate(cellData, currentPoint, textAreaWidth)
 
-		self.height = self.dateRect.maxY + MainTimelineDefaultCellLayout.cellPadding.bottom
+		// Below the date, at the text’s left edge. Large spans the text area.
+		if cellData.showThumbnail && cellData.thumbnailsDisplay != .none {
+			let originY = ceil(self.dateRect.maxY + MainTimelineDefaultCellLayout.largeThumbnailMarginTop)
+			if cellData.thumbnailsDisplay == .large {
+				self.thumbnailRect = CGRect(x: currentPoint.x, y: originY, width: textAreaWidth, height: MainTimelineDefaultCellLayout.largeThumbnailHeight)
+			} else {
+				self.thumbnailRect = CGRect(x: currentPoint.x, y: originY, width: MainTimelineDefaultCellLayout.thumbnailDimension, height: MainTimelineDefaultCellLayout.thumbnailDimension)
+			}
+		} else {
+			self.thumbnailRect = CGRect.zero
+		}
+
+		self.height = [self.dateRect, self.thumbnailRect].maxY() + MainTimelineDefaultCellLayout.cellPadding.bottom
 	}
 
 	static func rectForDate(_ cellData: MainTimelineCellData, _ point: CGPoint, _ textAreaWidth: CGFloat) -> CGRect {

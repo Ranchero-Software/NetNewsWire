@@ -23,6 +23,7 @@ final class MainTimelineCell: UICollectionViewCell {
 	private let feedNameView = MainTimelineCell.singleLineLabel()
 	private lazy var iconView = IconView()
 	private lazy var indicatorView = IconView()
+	private let thumbnailView = UIImageView()
 	private let topSeparator = UIView()
 
 	var cellData: MainTimelineCellData! {
@@ -44,6 +45,7 @@ final class MainTimelineCell: UICollectionViewCell {
 	override func prepareForReuse() {
 		super.prepareForReuse()
 		indicatorView.isHidden = true
+		thumbnailView.image = nil
 	}
 
 	override func preferredLayoutAttributesFitting(_ layoutAttributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
@@ -65,6 +67,7 @@ final class MainTimelineCell: UICollectionViewCell {
 		feedNameView.setFrameIfNotEqual(layout.feedNameRect)
 		dateView.setFrameIfNotEqual(layout.dateRect)
 		iconView.setFrameIfNotEqual(layout.iconImageRect)
+		thumbnailView.setFrameIfNotEqual(layout.thumbnailRect)
 		indicatorView.setFrameIfNotEqual(cellData.starred ? layout.starRect : layout.unreadIndicatorRect)
 		topSeparator.frame = CGRect(x: layout.separatorRect.minX, y: 0, width: layout.separatorRect.width, height: 1.0 / traitCollection.displayScale)
 	}
@@ -153,11 +156,15 @@ private extension MainTimelineCell {
 	func commonInit() {
 		isAccessibilityElement = true
 		topSeparator.backgroundColor = .separator.withAlphaComponent(0.1)
-		for view in [titleView, summaryView, dateView, feedNameView, iconView, indicatorView, topSeparator] {
+		thumbnailView.contentMode = .scaleAspectFit
+		thumbnailView.clipsToBounds = true
+		thumbnailView.layer.cornerRadius = MainTimelineDefaultCellLayout.thumbnailCornerRadius
+		for view in [titleView, summaryView, dateView, feedNameView, iconView, indicatorView, thumbnailView, topSeparator] {
 			contentView.addSubview(view)
 			view.isAccessibilityElement = false
 		}
 		indicatorView.isHidden = true
+		thumbnailView.isHidden = true
 	}
 
 	func updatedLayout(width: CGFloat) -> MainTimelineCellLayout {
@@ -208,6 +215,16 @@ private extension MainTimelineCell {
 		} else {
 			iconView.iconImage = nil
 			iconView.isHidden = true
+		}
+
+		if cellData.showThumbnail {
+			thumbnailView.image = cellData.thumbnail
+			// Matches the Mac. The fill shows around the image, and in place of it until it arrives.
+			thumbnailView.backgroundColor = cellData.thumbnailsDisplay == .large ? .tertiarySystemFill : .systemFill
+			thumbnailView.isHidden = false
+		} else {
+			thumbnailView.image = nil
+			thumbnailView.isHidden = true
 		}
 
 		let active = isActiveSelection(configurationState)
