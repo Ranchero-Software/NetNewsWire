@@ -21,6 +21,9 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	// MARK: Private Variables
 	private var numberOfTextLines = 0
 	private var iconSize = IconSize.medium
+	private var thumbnailsDisplay = TimelineThumbnailsDisplay.none
+	private var thumbnailURLCache = [String: String]() // articleID: thumbnailURL
+	private var articleIDsWithNoThumbnail = Set<String>()
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var nextUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(nextUnread(_:)))
@@ -38,6 +41,18 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private var showIcons: Bool {
 		assert(coordinator != nil)
 		return coordinator?.showIcons ?? false
+	}
+
+	/// Nil when the timeline doesn’t show thumbnails.
+	private var thumbnailMode: ArticleThumbnailFinder.Mode? {
+		switch thumbnailsDisplay {
+		case .small:
+			.small
+		case .large:
+			.large
+		case .none:
+			nil
+		}
 	}
 
 	private var currentArticle: Article? {
@@ -183,12 +198,14 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 		assert(dataSource != nil)
 		configureCollectionView(dataSource!)
+		collectionView?.prefetchDataSource = self
 
 		configureSearchController()
 		definesPresentationContext = true
 
 		numberOfTextLines = AppDefaults.timelineNumberOfLines
 		iconSize = AppDefaults.timelineIconSize
+		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 
 		assert(collectionView?.refreshControl != nil)
 		collectionView?.refreshControl = UIRefreshControl()
@@ -718,6 +735,10 @@ private extension MainTimelineViewController {
 
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -935,7 +956,13 @@ private extension MainTimelineViewController {
 		let iconImage = iconImageFor(article)
 		let showFeedNames = coordinator?.showFeedNames ?? ShowFeedName.none
 		let showIcon = showIcons && iconImage != nil
-		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: nil, showThumbnail: false, thumbnailsDisplay: .none)
+		var thumbnail: UIImage?
+		var showThumbnail = false
+		if let thumbnailMode, thumbnailURL(for: article) != nil {
+			showThumbnail = true
+			thumbnail = ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode)
+		}
+		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay)
 		return cellData
 	}
 
@@ -1033,6 +1060,9 @@ private extension MainTimelineViewController {
 			return
 		}
 
+		clearThumbnailURLCache()
+		discoverThumbnailURLs()
+
 		var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(articles ?? ArticleArray(), toSection: 0)
@@ -1043,6 +1073,84 @@ private extension MainTimelineViewController {
 		}
 	}
 
+}
+
+// MARK: - Thumbnails
+
+private extension MainTimelineViewController {
+
+	/// Cached per article, since cells are configured often.
+	func thumbnailURL(for article: Article) -> String? {
+		guard let thumbnailMode else {
+			return nil
+		}
+		let articleID = article.articleID
+		if let thumbnailURL = thumbnailURLCache[articleID] {
+			return thumbnailURL
+		}
+		if articleIDsWithNoThumbnail.contains(articleID) {
+			return nil
+		}
+
+		let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode)
+		if let thumbnailURL {
+			thumbnailURLCache[articleID] = thumbnailURL
+		} else {
+			articleIDsWithNoThumbnail.insert(articleID)
+		}
+		return thumbnailURL
+	}
+
+	func clearThumbnailURLCache() {
+		thumbnailURLCache.removeAll()
+		articleIDsWithNoThumbnail.removeAll()
+	}
+
+	/// Recalculates thumbnail URLs and reloads the visible cells for those articles.
+	func thumbnailURLsDidChange(for articleIDs: Set<String>) {
+		guard !articleIDs.isEmpty else {
+			return
+		}
+		for articleID in articleIDs {
+			thumbnailURLCache[articleID] = nil
+			articleIDsWithNoThumbnail.remove(articleID)
+		}
+		reloadCells(visibleArticles().filter { articleIDs.contains($0.articleID) })
+	}
+
+	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
+	func discoverThumbnailURLs() {
+		guard thumbnailMode != nil, let articles, !articles.isEmpty else {
+			return
+		}
+		Task {
+			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articles)
+		}
+	}
+
+	func visibleArticles() -> [Article] {
+		guard let collectionView, let dataSource else {
+			return []
+		}
+		return collectionView.indexPathsForVisibleItems.compactMap { dataSource.itemIdentifier(for: $0) }
+	}
+}
+
+// MARK: - UICollectionViewDataSourcePrefetching
+
+extension MainTimelineViewController: UICollectionViewDataSourcePrefetching {
+
+	/// Starts thumbnail downloads before cells scroll into view.
+	func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+		guard let thumbnailMode, let dataSource else {
+			return
+		}
+		for indexPath in indexPaths {
+			if let article = dataSource.itemIdentifier(for: indexPath), thumbnailURL(for: article) != nil {
+				_ = ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode)
+			}
+		}
+	}
 }
 
 // MARK: - Notifications API
@@ -1112,6 +1220,39 @@ private extension MainTimelineViewController {
 			numberOfTextLines = AppDefaults.timelineNumberOfLines
 			reloadVisibleCells()
 		}
+	}
+
+	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
+		guard thumbnailsDisplay != AppDefaults.timelineThumbnailsDisplay else {
+			return
+		}
+		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
+		clearThumbnailURLCache()
+		discoverThumbnailURLs()
+		reloadVisibleCells()
+	}
+
+	@objc func handleArticleThumbnailURLsDidBecomeAvailable(_ notification: Notification) {
+		guard thumbnailMode != nil, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
+			return
+		}
+		thumbnailURLsDidChange(for: articleIDs)
+	}
+
+	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
+		guard thumbnailMode != nil, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
+			return
+		}
+		reloadCells(visibleArticles().filter { thumbnailURL(for: $0) == url })
+	}
+
+	@objc func handleArticleThumbnailDownloadDidFail(_ notification: Notification) {
+		guard thumbnailMode != nil, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
+			return
+		}
+		// Articles that used the failed URL now get their next source, or none.
+		let articleIDs = Set(thumbnailURLCache.filter { $0.value == url }.keys)
+		thumbnailURLsDidChange(for: articleIDs)
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
