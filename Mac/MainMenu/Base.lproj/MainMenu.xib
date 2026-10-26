@@ -17,7 +17,7 @@
                 <outlet property="checkForUpdatesMenuItem" destination="1nF-7O-aKU" id="JmT-jc-DJ8"/>
                 <outlet property="debugMenuItem" destination="UqE-mp-gtV" id="OnR-lr-Zlt"/>
                 <outlet property="useColumnLayoutMenuItem" destination="ucL-ay-0ut" id="ucL-ou-tl1"/>
-                <outlet property="showLargeThumbnailsMenuItem" destination="lgT-hb-mI1" id="lgT-hb-oU1"/>
+                <outlet property="thumbnailsMenu" destination="tHm-nu-mN1" id="tHm-nu-oU1"/>
                 <outlet property="showStatusBarMenuItem" destination="stB-ar-mI1" id="stB-ar-oU1"/>
                 <outlet property="showStatusBarThemeMenuMenuItem" destination="stT-hm-mI1" id="stT-hm-oU1"/>
             </connections>
@@ -441,11 +441,9 @@
                                     <action selector="toggleColumnLayout:" target="Voe-Tx-rLC" id="ucL-ac-t0n"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Show Large Thumbnails" id="lgT-hb-mI1">
+                            <menuItem title="Thumbnails" id="tHm-nu-mI1">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="toggleLargeThumbnails:" target="Voe-Tx-rLC" id="lgT-hb-aC1"/>
-                                </connections>
+                                <menu key="submenu" title="Thumbnails" id="tHm-nu-mN1"/>
                             </menuItem>
                             <menuItem title="Show Status Bar" id="stB-ar-mI1">
                                 <modifierMask key="keyEquivalentModifierMask"/>

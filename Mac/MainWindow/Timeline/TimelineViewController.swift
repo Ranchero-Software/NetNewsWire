@@ -194,10 +194,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var thumbnailLookaheadRows: Range<Int>? // Rows most recently prefetched by prefetchThumbnailsForNextScreen
 	private var thumbnailURLCache = [String: String]() // articleID: thumbnailURL
 	private var articleIDsWithNoThumbnail = Set<String>()
-	private var showsLargeThumbnails = AppDefaults.timelineShowsLargeThumbnails {
+	private var thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay {
 		didSet {
-			if showsLargeThumbnails != oldValue {
-				largeThumbnailsDidChange()
+			if thumbnailsDisplay != oldValue {
+				thumbnailsDisplayDidChange()
 			}
 		}
 	}
@@ -207,7 +207,11 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	/// Column layout never shows thumbnails.
 	private var showsThumbnails: Bool {
-		layout == .standard
+		layout == .standard && thumbnailsDisplay != .none
+	}
+
+	private var showsLargeThumbnails: Bool {
+		thumbnailsDisplay == .large
 	}
 
 	/// Rows with a thumbnail are taller than the rest.
@@ -855,7 +859,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	private func userDefaultsDidChange() {
 		fontSize = AppDefaults.timelineFontSize
-		showsLargeThumbnails = AppDefaults.timelineShowsLargeThumbnails
+		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 	}
 
 	/// The one place the row height is set — it depends on the layout and the font size.
@@ -1385,11 +1389,11 @@ private extension TimelineViewController {
 		reloadVisibleCells(for: articleIDs)
 	}
 
-	func largeThumbnailsDidChange() {
+	func thumbnailsDisplayDidChange() {
 		updateCellAppearances()
 		clearThumbnailURLCache()
 		thumbnailLookaheadRows = nil
-		guard showsThumbnails else {
+		guard layout == .standard else {
 			return
 		}
 		updateLargeThumbnailRowHeight()
@@ -1399,6 +1403,7 @@ private extension TimelineViewController {
 		if tableView.selectedRow != -1 {
 			tableView.scrollRowToVisible(tableView.selectedRow)
 		}
+		discoverThumbnailURLs()
 	}
 
 	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.

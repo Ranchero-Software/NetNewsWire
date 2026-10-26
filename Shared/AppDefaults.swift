@@ -23,6 +23,7 @@ enum AppDefaults {
 		static let currentThemeName = "currentThemeName"
 		static let articleContentJavascriptEnabled = "articleContentJavascriptEnabled"
 		static let unreadCountDisplay = "unreadCountDisplay"
+		static let timelineThumbnailsDisplay = "timelineThumbnailsDisplay"
 	}
 
 	/// Registered by both platforms. Each platform’s registerDefaults adds its own.
@@ -31,7 +32,8 @@ enum AppDefaults {
 			Key.timelineSortDirection: ComparisonResult.orderedDescending.rawValue,
 			Key.timelineGroupByFeed: false,
 			Key.currentThemeName: defaultThemeName,
-			Key.articleContentJavascriptEnabled: true
+			Key.articleContentJavascriptEnabled: true,
+			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.small.rawValue
 		]
 	}
 
@@ -111,6 +113,16 @@ enum AppDefaults {
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.unreadCountDisplay)
 			NotificationCenter.default.post(name: .unreadCountDisplaySettingDidChange, object: self)
+		}
+	}
+
+	static var timelineThumbnailsDisplay: TimelineThumbnailsDisplay {
+		get {
+			TimelineThumbnailsDisplay(rawValue: UserDefaults.standard.integer(forKey: Key.timelineThumbnailsDisplay)) ?? .small
+		}
+		set {
+			UserDefaults.standard.set(newValue.rawValue, forKey: Key.timelineThumbnailsDisplay)
+			NotificationCenter.default.post(name: .timelineThumbnailsDisplayDidChange, object: nil)
 		}
 	}
 }

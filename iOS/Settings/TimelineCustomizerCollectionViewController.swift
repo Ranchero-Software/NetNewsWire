@@ -11,6 +11,19 @@ import Articles
 import Images
 
 class TimelineCustomizerCollectionViewController: UICollectionViewController {
+
+	private enum Section: Int, CaseIterable {
+		case iconSize
+		case numberOfLines
+		case options
+		case noIconPreview
+		case iconPreview
+	}
+
+	private enum OptionsRow: Int, CaseIterable {
+		case thumbnails
+	}
+
 	private var previewArticle: Article {
 		var components = DateComponents()
 		components.year = 1954
@@ -43,8 +56,13 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	private var cachedTimelineLines: Int = AppDefaults.timelineNumberOfLines
 	private var cachedIconSize: IconSize = AppDefaults.timelineIconSize
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
+	// Created up front, since UIKit disallows creating a registration in cellForItemAt.
+	private let optionsCellRegistration = UICollectionView.CellRegistration<UICollectionViewListCell, OptionsRow> { cell, _, optionsRow in
+		TimelineCustomizerCollectionViewController.configureOptionsCell(cell, optionsRow: optionsRow)
+	}
+
+	override func viewDidLoad() {
+		super.viewDidLoad()
 		title = NSLocalizedString("Timeline Layout", comment: "Timeline Layout")
 
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
@@ -62,9 +80,10 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				}
 			}
 		}
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 
 		configureCollectionView()
-    }
+	}
 
 	private func configureCollectionView() {
 		collectionView.register(
@@ -84,62 +103,41 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		collectionView.setCollectionViewLayout(layout, animated: false)
 	}
 
-    // MARK: UICollectionViewDataSource
+	// MARK: UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 4
-    }
+	override func numberOfSections(in collectionView: UICollectionView) -> Int {
+		Section.allCases.count
+	}
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 1
-    }
+	override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+		if Section(rawValue: section) == .options {
+			return OptionsRow.allCases.count
+		}
+		return 1
+	}
 
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+	override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
-		if indexPath.section == 0 {
+		switch Section(rawValue: indexPath.section) {
+		case .iconSize:
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "IconSizeSelector", for: indexPath) as! TimelineCustomizerCell
 			cell.sliderConfiguration = .iconSize
 			return cell
-		}
-
-		if indexPath.section == 1 {
+		case .numberOfLines:
 			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "NumberOfLinesSelector", for: indexPath) as! TimelineCustomizerCell
 			cell.sliderConfiguration = .numberOfLines
 			return cell
+		case .options:
+			let optionsRow = OptionsRow(rawValue: indexPath.item) ?? .thumbnails
+			return collectionView.dequeueConfiguredReusableCell(using: optionsCellRegistration, for: indexPath, item: optionsRow)
+		case .noIconPreview:
+			return previewCell(showIcon: false, indexPath: indexPath)
+		case .iconPreview:
+			return previewCell(showIcon: true, indexPath: indexPath)
+		case .none:
+			return collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath)
 		}
-
-		if indexPath.section == 2 {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
-			cell.cellData = MainTimelineCellData(article: previewArticle,
-												 showFeedName: .byline,
-												 feedName: "The Fellowship of the Ring",
-												 byline: "J. R. R. Tolkien",
-												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
-												 showIcon: false,
-												 numberOfLines: AppDefaults.timelineNumberOfLines,
-												 iconSize: AppDefaults.timelineIconSize)
-			cell.isPreview = true
-			return cell
-		}
-
-		if indexPath.section == 3 {
-			let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
-			cell.cellData = MainTimelineCellData(article: previewArticle,
-												 showFeedName: .byline,
-												 feedName: "The Fellowship of the Ring",
-												 byline: "J. R. R. Tolkien",
-												 iconImage: IconImage(Assets.Images.nnwFeedIcon),
-												 showIcon: true,
-												 numberOfLines: AppDefaults.timelineNumberOfLines,
-												 iconSize: AppDefaults.timelineIconSize)
-			cell.isPreview = true
-			return cell
-		}
-
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath)
-        return cell
-    }
+	}
 
 	// MARK: UICollectionViewDelegate
 
@@ -156,17 +154,17 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			for: indexPath
 		) as! TimelineHeaderView
 
-		switch indexPath.section {
-		case 0:
+		switch Section(rawValue: indexPath.section) {
+		case .iconSize:
 			header.label.text = NSLocalizedString("Icon Size", comment: "Icon Size")
-		case 1:
+		case .numberOfLines:
 			header.label.text = NSLocalizedString("Number of Lines", comment: "Number of Lines")
-		case 2:
+		case .noIconPreview:
 			header.label.text = NSLocalizedString("No Icon Preview", comment: "No Icon Preview")
-		case 3:
+		case .iconPreview:
 			header.label.text = NSLocalizedString("Icon Preview", comment: "Icon Preview")
-		default:
-			header.label.text = NSLocalizedString("", comment: "")
+		case .options, .none:
+			header.label.text = nil
 		}
 		return header
 	}
@@ -177,16 +175,73 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	}
 
 	override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-		if indexPath.section > 1 {
+		switch Section(rawValue: indexPath.section) {
+		case .iconSize, .numberOfLines:
+			return true
+		default:
 			return false
 		}
-		return true
 	}
 
 	// MARK: Notifications
 
 	func userDefaultsDidChange() {
-		collectionView.reloadSections([2, 3])
+		collectionView.reloadSections([Section.noIconPreview.rawValue, Section.iconPreview.rawValue])
 	}
 
+	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
+		reconfigureOptionsRows()
+	}
+}
+
+// MARK: - Private
+
+private extension TimelineCustomizerCollectionViewController {
+
+	func previewCell(showIcon: Bool, indexPath: IndexPath) -> MainTimelineCell {
+		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
+		cell.cellData = MainTimelineCellData(article: previewArticle,
+											 showFeedName: .byline,
+											 feedName: "The Fellowship of the Ring",
+											 byline: "J. R. R. Tolkien",
+											 iconImage: IconImage(Assets.Images.nnwFeedIcon),
+											 showIcon: showIcon,
+											 numberOfLines: AppDefaults.timelineNumberOfLines,
+											 iconSize: AppDefaults.timelineIconSize)
+		cell.isPreview = true
+		return cell
+	}
+
+	static private func configureOptionsCell(_ cell: UICollectionViewListCell, optionsRow: OptionsRow) {
+		var content = cell.defaultContentConfiguration()
+		switch optionsRow {
+		case .thumbnails:
+			content.text = NSLocalizedString("Thumbnails", comment: "Thumbnails")
+			cell.accessories = [.popUpMenu(timelineThumbnailsDisplayMenu())]
+		}
+		cell.contentConfiguration = content
+
+		// Matches TimelineCustomizerCell.
+		cell.configurationUpdateHandler = { cell, state in
+			var backgroundConfig = UIBackgroundConfiguration.listCell().updated(for: state)
+			backgroundConfig.backgroundColor = cell.traitCollection.userInterfaceStyle == .dark ? .secondarySystemBackground : .white
+			backgroundConfig.cornerRadius = 20
+			cell.backgroundConfiguration = backgroundConfig
+		}
+	}
+
+	static func timelineThumbnailsDisplayMenu() -> UIMenu {
+		let currentThumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
+		let actions = TimelineThumbnailsDisplay.allCases.map { thumbnailsDisplay in
+			UIAction(title: String(describing: thumbnailsDisplay), state: thumbnailsDisplay == currentThumbnailsDisplay ? .on : .off) { _ in
+				AppDefaults.timelineThumbnailsDisplay = thumbnailsDisplay
+			}
+		}
+		return UIMenu(options: .singleSelection, children: actions)
+	}
+
+	func reconfigureOptionsRows() {
+		let indexPaths = OptionsRow.allCases.map { IndexPath(item: $0.rawValue, section: Section.options.rawValue) }
+		collectionView.reconfigureItems(at: indexPaths)
+	}
 }

@@ -977,6 +977,9 @@
     "No results" : {
       "comment" : "No results"
     },
+    "None" : {
+      "comment" : "None"
+    },
     "Not updated yet" : {
       "comment" : "Status bar: no refresh has completed yet"
     },
@@ -1404,6 +1407,9 @@
     },
     "This will delete:" : {
       "comment" : "Clean up confirmation prefix"
+    },
+    "Thumbnails" : {
+      "comment" : "Thumbnails"
     },
     "Timeline" : {
       "comment" : "Timeline"

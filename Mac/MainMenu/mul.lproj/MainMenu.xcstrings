@@ -1279,18 +1279,6 @@
         }
       }
     },
-    "lgT-hb-mI1.title" : {
-      "comment" : "Class = \"NSMenuItem\"; title = \"Show Large Thumbnails\"; ObjectID = \"lgT-hb-mI1\";",
-      "extractionState" : "extracted_with_value",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Show Large Thumbnails"
-          }
-        }
-      }
-    },
     "LSZ-ci-Jb5.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Main Window\"; ObjectID = \"LSZ-ci-Jb5\";",
       "extractionState" : "extracted_with_value",
@@ -2013,6 +2001,30 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ventana"
+          }
+        }
+      }
+    },
+    "tHm-nu-mI1.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Thumbnails\"; ObjectID = \"tHm-nu-mI1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Thumbnails"
+          }
+        }
+      }
+    },
+    "tHm-nu-mN1.title" : {
+      "comment" : "Class = \"NSMenu\"; title = \"Thumbnails\"; ObjectID = \"tHm-nu-mN1\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Thumbnails"
           }
         }
       }
