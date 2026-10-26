@@ -400,6 +400,7 @@ struct SidebarItemNode: Hashable, Sendable {
 		NotificationCenter.default.addObserver(self, selector: #selector(themeDownloadDidFail(_:)), name: .didFailToImportThemeWithError, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(updateNavigationBarSubtitles(_:)), name: .progressInfoDidChange, object: CombinedRefreshProgress.shared)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleUnreadCountDisplaySettingDidChange(_:)), name: .unreadCountDisplaySettingDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 
 		NotificationCenter.default.addObserver(forName: UserDefaults.didChangeNotification, object: nil, queue: .main) { [weak self] _ in
 			Task { @MainActor in
@@ -709,6 +710,11 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	@objc func handleUnreadCountDisplaySettingDidChange(_ notification: Notification) {
 		updateNavigationBarSubtitles(nil)
+	}
+
+	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
+		updateShowNamesAndIcons()
+		mainTimelineViewController?.queueReloadAvailableCells()
 	}
 
 	/// Updates navigation bar subtitles in response to feed selection, unread count changes,
@@ -2139,6 +2145,17 @@ private extension SceneCoordinator {
 			}()
 		} else {
 			showFeedNames = .feed
+		}
+
+		switch AppDefaults.timelineFeedIconsDisplay {
+		case .always:
+			self.showIcons = true
+			return
+		case .never:
+			self.showIcons = false
+			return
+		case .automatic:
+			break
 		}
 
 		if showFeedNames == .feed {

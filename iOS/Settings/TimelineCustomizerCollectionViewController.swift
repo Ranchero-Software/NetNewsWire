@@ -21,6 +21,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	}
 
 	private enum OptionsRow: Int, CaseIterable {
+		case feedIcons
 		case thumbnails
 	}
 
@@ -80,6 +81,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 				}
 			}
 		}
+		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineFeedIconsDisplayDidChange(_:)), name: .timelineFeedIconsDisplayDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 
 		configureCollectionView()
@@ -128,7 +130,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			cell.sliderConfiguration = .numberOfLines
 			return cell
 		case .options:
-			let optionsRow = OptionsRow(rawValue: indexPath.item) ?? .thumbnails
+			let optionsRow = OptionsRow(rawValue: indexPath.item) ?? .feedIcons
 			return collectionView.dequeueConfiguredReusableCell(using: optionsCellRegistration, for: indexPath, item: optionsRow)
 		case .noIconPreview:
 			return previewCell(showIcon: false, indexPath: indexPath)
@@ -189,6 +191,10 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		collectionView.reloadSections([Section.noIconPreview.rawValue, Section.iconPreview.rawValue])
 	}
 
+	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
+		reconfigureOptionsRows()
+	}
+
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
 		reconfigureOptionsRows()
 	}
@@ -213,10 +219,16 @@ private extension TimelineCustomizerCollectionViewController {
 	}
 
 	static private func configureOptionsCell(_ cell: UICollectionViewListCell, optionsRow: OptionsRow) {
-		var content = cell.defaultContentConfiguration()
+		// The pop-up menu accessory shows only a chevron, so the value cell’s secondary text shows the current choice.
+		var content = UIListContentConfiguration.valueCell()
 		switch optionsRow {
+		case .feedIcons:
+			content.text = NSLocalizedString("Feed Icons", comment: "Feed Icons")
+			content.secondaryText = AppDefaults.timelineFeedIconsDisplay.description
+			cell.accessories = [.popUpMenu(timelineFeedIconsDisplayMenu())]
 		case .thumbnails:
-			content.text = NSLocalizedString("Thumbnails", comment: "Thumbnails")
+			content.text = NSLocalizedString("Thumbnail Size", comment: "Thumbnail Size")
+			content.secondaryText = AppDefaults.timelineThumbnailsDisplay.description
 			cell.accessories = [.popUpMenu(timelineThumbnailsDisplayMenu())]
 		}
 		cell.contentConfiguration = content
@@ -228,6 +240,16 @@ private extension TimelineCustomizerCollectionViewController {
 			backgroundConfig.cornerRadius = 20
 			cell.backgroundConfiguration = backgroundConfig
 		}
+	}
+
+	static func timelineFeedIconsDisplayMenu() -> UIMenu {
+		let currentFeedIconsDisplay = AppDefaults.timelineFeedIconsDisplay
+		let actions = TimelineFeedIconsDisplay.allCases.map { feedIconsDisplay in
+			UIAction(title: String(describing: feedIconsDisplay), subtitle: feedIconsDisplay.subtitle, state: feedIconsDisplay == currentFeedIconsDisplay ? .on : .off) { _ in
+				AppDefaults.timelineFeedIconsDisplay = feedIconsDisplay
+			}
+		}
+		return UIMenu(options: .singleSelection, children: actions)
 	}
 
 	static func timelineThumbnailsDisplayMenu() -> UIMenu {

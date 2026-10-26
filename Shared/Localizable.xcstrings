@@ -184,6 +184,9 @@
     "Already added" : {
       "comment" : "Feed finder"
     },
+    "Always" : {
+      "comment" : "Always"
+    },
     "Always Use Reader View" : {
       "comment" : "Always Use Reader View"
     },
@@ -612,6 +615,9 @@
         }
       }
     },
+    "Feed Icons" : {
+      "comment" : "Feed Icons"
+    },
     "Feed Inspector" : {
       "comment" : "Feed Inspector window title"
     },
@@ -923,6 +929,9 @@
     },
     "Network error. Try again later." : {
       "comment" : "Credentials Error"
+    },
+    "Never" : {
+      "comment" : "Never"
     },
     "New Article Notifications" : {
       "comment" : "New Article Notifications"
@@ -1408,8 +1417,8 @@
     "This will delete:" : {
       "comment" : "Clean up confirmation prefix"
     },
-    "Thumbnails" : {
-      "comment" : "Thumbnails"
+    "Thumbnail Size" : {
+      "comment" : "Thumbnail Size"
     },
     "Timeline" : {
       "comment" : "Timeline"
