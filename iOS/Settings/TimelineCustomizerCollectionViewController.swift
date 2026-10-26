@@ -16,8 +16,20 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		case iconSize
 		case numberOfLines
 		case options
-		case noIconPreview
-		case iconPreview
+		case preview
+		case previewWithThumbnail
+		case previewWithFeedIcon
+		case previewWithFeedIconAndThumbnail
+
+		static let previews: [Section] = [.preview, .previewWithThumbnail, .previewWithFeedIcon, .previewWithFeedIconAndThumbnail]
+
+		var showsFeedIcon: Bool {
+			self == .previewWithFeedIcon || self == .previewWithFeedIconAndThumbnail
+		}
+
+		var showsThumbnail: Bool {
+			self == .previewWithThumbnail || self == .previewWithFeedIconAndThumbnail
+		}
 	}
 
 	private enum OptionsRow: Int, CaseIterable {
@@ -143,10 +155,8 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		case .options:
 			let optionsRow = OptionsRow(rawValue: indexPath.item) ?? .feedIcons
 			return collectionView.dequeueConfiguredReusableCell(using: optionsCellRegistration, for: indexPath, item: optionsRow)
-		case .noIconPreview:
-			return previewCell(showIcon: false, indexPath: indexPath)
-		case .iconPreview:
-			return previewCell(showIcon: true, indexPath: indexPath)
+		case .preview, .previewWithThumbnail, .previewWithFeedIcon, .previewWithFeedIconAndThumbnail:
+			return previewCell(section: Section(rawValue: indexPath.section) ?? .preview, indexPath: indexPath)
 		case .none:
 			return collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath)
 		}
@@ -172,10 +182,8 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 			header.label.text = NSLocalizedString("Icon Size", comment: "Icon Size")
 		case .numberOfLines:
 			header.label.text = NSLocalizedString("Number of Lines", comment: "Number of Lines")
-		case .noIconPreview:
-			header.label.text = NSLocalizedString("Preview", comment: "Preview")
-		case .iconPreview:
-			header.label.text = Self.isHidden(.noIconPreview) ? NSLocalizedString("Preview", comment: "Preview") : NSLocalizedString("Preview with Feed Icon", comment: "Timeline Layout: header for the preview that shows a feed icon")
+		case .preview, .previewWithThumbnail, .previewWithFeedIcon, .previewWithFeedIconAndThumbnail:
+			header.label.text = Self.previewHeaderTitle(Section(rawValue: indexPath.section) ?? .preview)
 		case .options, .none:
 			header.label.text = nil
 		}
@@ -199,20 +207,15 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	// MARK: Notifications
 
 	func userDefaultsDidChange() {
-		collectionView.reloadSections([Section.noIconPreview.rawValue, Section.iconPreview.rawValue])
+		reloadPreviews()
 	}
 
 	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
-		// One batch, since reconfiguring alone fails validation when a preview section’s item count has changed.
-		collectionView.performBatchUpdates {
-			reconfigureOptionsRows()
-			collectionView.reloadSections([Section.noIconPreview.rawValue, Section.iconPreview.rawValue])
-		}
+		reloadOptionsRowsAndPreviews()
 	}
 
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
-		reconfigureOptionsRows()
-		collectionView.reloadSections([Section.noIconPreview.rawValue, Section.iconPreview.rawValue])
+		reloadOptionsRowsAndPreviews()
 	}
 }
 
@@ -220,30 +223,52 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 
 private extension TimelineCustomizerCollectionViewController {
 
-	/// Hides a preview that the Feed Icons setting means would never be seen.
+	/// Hides a preview that the Feed Icons and Thumbnail Size settings mean would never be seen.
+	/// Previews without a thumbnail always show, since not every article has one.
 	static private func isHidden(_ section: Section?) -> Bool {
-		switch section {
-		case .noIconPreview:
-			AppDefaults.timelineFeedIconsDisplay == .always
-		case .iconPreview:
-			AppDefaults.timelineFeedIconsDisplay == .never
-		default:
-			false
+		guard let section, Section.previews.contains(section) else {
+			return false
+		}
+		if section.showsThumbnail && AppDefaults.timelineThumbnailsDisplay == .none {
+			return true
+		}
+		switch AppDefaults.timelineFeedIconsDisplay {
+		case .automatic:
+			return false
+		case .always:
+			return !section.showsFeedIcon
+		case .never:
+			return section.showsFeedIcon
 		}
 	}
 
-	func previewCell(showIcon: Bool, indexPath: IndexPath) -> MainTimelineCell {
+	/// Names only what differs among the visible previews.
+	static private func previewHeaderTitle(_ section: Section) -> String {
+		let mentionsFeedIcon = section.showsFeedIcon && AppDefaults.timelineFeedIconsDisplay == .automatic
+		switch (mentionsFeedIcon, section.showsThumbnail) {
+		case (false, false):
+			return NSLocalizedString("Preview", comment: "Preview")
+		case (false, true):
+			return NSLocalizedString("Preview with Thumbnail", comment: "Timeline Layout: header for the preview that shows a thumbnail")
+		case (true, false):
+			return NSLocalizedString("Preview with Feed Icon", comment: "Timeline Layout: header for the preview that shows a feed icon")
+		case (true, true):
+			return NSLocalizedString("Preview with Feed Icon and Thumbnail", comment: "Timeline Layout: header for the preview that shows a feed icon and a thumbnail")
+		}
+	}
+
+	func previewCell(section: Section, indexPath: IndexPath) -> MainTimelineCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
 		cell.cellData = MainTimelineCellData(article: previewArticle,
 											 showFeedName: .byline,
 											 feedName: "The Fellowship of the Ring",
 											 byline: "J. R. R. Tolkien",
 											 iconImage: IconImage(Assets.Images.nnwFeedIcon),
-											 showIcon: showIcon,
+											 showIcon: section.showsFeedIcon,
 											 numberOfLines: AppDefaults.timelineNumberOfLines,
 											 iconSize: AppDefaults.timelineIconSize,
 											 thumbnail: Assets.Images.nnwAppIcon,
-											 showThumbnail: AppDefaults.timelineThumbnailsDisplay != .none,
+											 showThumbnail: section.showsThumbnail,
 											 thumbnailsDisplay: AppDefaults.timelineThumbnailsDisplay)
 		cell.isPreview = true
 		return cell
@@ -293,8 +318,16 @@ private extension TimelineCustomizerCollectionViewController {
 		return UIMenu(options: .singleSelection, children: actions)
 	}
 
-	func reconfigureOptionsRows() {
-		let indexPaths = OptionsRow.allCases.map { IndexPath(item: $0.rawValue, section: Section.options.rawValue) }
-		collectionView.reconfigureItems(at: indexPaths)
+	func reloadPreviews() {
+		collectionView.reloadSections(IndexSet(Section.previews.map(\.rawValue)))
+	}
+
+	/// One batch, since reconfiguring alone fails validation when a preview section’s item count has changed.
+	func reloadOptionsRowsAndPreviews() {
+		collectionView.performBatchUpdates {
+			let indexPaths = OptionsRow.allCases.map { IndexPath(item: $0.rawValue, section: Section.options.rawValue) }
+			collectionView.reconfigureItems(at: indexPaths)
+			reloadPreviews()
+		}
 	}
 }
