@@ -257,7 +257,7 @@ private extension TimelineCustomizerCollectionViewController {
 		}
 	}
 
-	func previewCell(section: Section, indexPath: IndexPath) -> MainTimelineCell {
+	private func previewCell(section: Section, indexPath: IndexPath) -> MainTimelineCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell
 		cell.cellData = MainTimelineCellData(article: previewArticle,
 											 showFeedName: .byline,
