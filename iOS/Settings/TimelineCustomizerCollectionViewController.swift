@@ -96,11 +96,18 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 
 		collectionView.register(MainTimelineCell.self, forCellWithReuseIdentifier: MainTimelineCell.reuseIdentifier)
 
-		var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
-		config.showsSeparators = false
-		config.headerMode = .supplementary
-
-		let layout = UICollectionViewCompositionalLayout.list(using: config)
+		let layout = UICollectionViewCompositionalLayout { sectionIndex, layoutEnvironment in
+			var config = UICollectionLayoutListConfiguration(appearance: .insetGrouped)
+			config.showsSeparators = false
+			let isHidden = Self.isHidden(Section(rawValue: sectionIndex))
+			config.headerMode = isHidden ? .none : .supplementary
+			let section = NSCollectionLayoutSection.list(using: config, layoutEnvironment: layoutEnvironment)
+			if isHidden {
+				// An empty section still has insets, which would leave a gap.
+				section.contentInsets = .zero
+			}
+			return section
+		}
 
 		collectionView.setCollectionViewLayout(layout, animated: false)
 	}
@@ -112,7 +119,11 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	}
 
 	override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		if Section(rawValue: section) == .options {
+		let section = Section(rawValue: section)
+		if Self.isHidden(section) {
+			return 0
+		}
+		if section == .options {
 			return OptionsRow.allCases.count
 		}
 		return 1
@@ -162,9 +173,9 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 		case .numberOfLines:
 			header.label.text = NSLocalizedString("Number of Lines", comment: "Number of Lines")
 		case .noIconPreview:
-			header.label.text = NSLocalizedString("No Icon Preview", comment: "No Icon Preview")
+			header.label.text = NSLocalizedString("Preview", comment: "Preview")
 		case .iconPreview:
-			header.label.text = NSLocalizedString("Icon Preview", comment: "Icon Preview")
+			header.label.text = Self.isHidden(.noIconPreview) ? NSLocalizedString("Preview", comment: "Preview") : NSLocalizedString("Preview with Feed Icon", comment: "Timeline Layout: header for the preview that shows a feed icon")
 		case .options, .none:
 			header.label.text = nil
 		}
@@ -192,7 +203,11 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 	}
 
 	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
-		reconfigureOptionsRows()
+		// One batch, since reconfiguring alone fails validation when a preview section’s item count has changed.
+		collectionView.performBatchUpdates {
+			reconfigureOptionsRows()
+			collectionView.reloadSections([Section.noIconPreview.rawValue, Section.iconPreview.rawValue])
+		}
 	}
 
 	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
@@ -203,6 +218,18 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 // MARK: - Private
 
 private extension TimelineCustomizerCollectionViewController {
+
+	/// Hides a preview that the Feed Icons setting means would never be seen.
+	static private func isHidden(_ section: Section?) -> Bool {
+		switch section {
+		case .noIconPreview:
+			AppDefaults.timelineFeedIconsDisplay == .always
+		case .iconPreview:
+			AppDefaults.timelineFeedIconsDisplay == .never
+		default:
+			false
+		}
+	}
 
 	func previewCell(showIcon: Bool, indexPath: IndexPath) -> MainTimelineCell {
 		let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainTimelineCell.reuseIdentifier, for: indexPath) as! MainTimelineCell

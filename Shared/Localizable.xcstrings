@@ -660,6 +660,9 @@
     "Folders" : {
       "comment" : "Folders"
     },
+    "Folders, smart feeds, and authors with avatars" : {
+      "comment" : "Feed Icons setting: explains when Automatic shows feed icons"
+    },
     "from cache" : {
       "comment" : "Activity log — appended when a download was served from cache instead of the network"
     },
@@ -744,9 +747,6 @@
     },
     "iCloud Storage Stats" : {
       "comment" : "iCloud Storage Stats window title"
-    },
-    "Icon Preview" : {
-      "comment" : "Icon Preview"
     },
     "Icon Size" : {
       "comment" : "Icon Size"
@@ -980,9 +980,6 @@
     "No Errors Logged" : {
       "comment" : "Error log empty state"
     },
-    "No Icon Preview" : {
-      "comment" : "No Icon Preview"
-    },
     "No results" : {
       "comment" : "No results"
     },
@@ -1066,6 +1063,12 @@
     },
     "Pending" : {
       "comment" : "Pending"
+    },
+    "Preview" : {
+      "comment" : "Preview"
+    },
+    "Preview with Feed Icon" : {
+      "comment" : "Timeline Layout: header for the preview that shows a feed icon"
     },
     "Previous Article" : {
       "comment" : "Previous Article"
