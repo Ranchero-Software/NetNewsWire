@@ -49,7 +49,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 		updateUserInterfaceStyle()
 
-		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: AppDefaults.self)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleUserInterfaceColorPaletteDidUpdate(_:)), name: .userInterfaceColorPaletteDidUpdate, object: nil)
 
 		if connectionOptions.urlContexts.first?.url != nil {
 			self.scene(scene, openURLContexts: connectionOptions.urlContexts)

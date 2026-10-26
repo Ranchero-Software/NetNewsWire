@@ -78,7 +78,7 @@ extension AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.userInterfaceColorPalette)
-			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: self)
+			NotificationCenter.default.post(name: .userInterfaceColorPaletteDidUpdate, object: nil)
 		}
 	}
 

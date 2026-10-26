@@ -114,7 +114,7 @@ enum AppDefaults {
 		}
 		set {
 			UserDefaults.standard.set(newValue.rawValue, forKey: Key.unreadCountDisplay)
-			NotificationCenter.default.post(name: .unreadCountDisplaySettingDidChange, object: self)
+			NotificationCenter.default.post(name: .unreadCountDisplaySettingDidChange, object: nil)
 		}
 	}
 
