@@ -7,20 +7,21 @@
 
 import Foundation
 
-/// Finds the first `<img>` in an HTML document that passes `SignificantImageFilter`,
+/// Finds the `<img>`s in an HTML document that pass `SignificantImageFilter`,
 /// which also sees the enclosing `<a>` link so it can reject share buttons.
-/// Stops scanning once it finds one.
+/// Stops scanning once it has found `maximumCount`.
 ///
 /// Tries `data-lazy-src`, `data-src`, `src`, and the largest `srcset` candidate,
 /// in that order, and uses the first that passes the filter. Lazy-loading images
 /// often have a placeholder in `src`.
 public enum HTMLImageParser {
 
-	public static func firstSignificantImage(with parserData: ParserData) -> HTMLImage? {
-		let delegate = ImageParserDelegate(baseURL: URL(string: parserData.url))
+	/// In document order, with no repeated URLs.
+	public static func significantImages(with parserData: ParserData, maximumCount: Int) -> [HTMLImage] {
+		let delegate = ImageParserDelegate(baseURL: URL(string: parserData.url), maximumCount: maximumCount)
 		let scanner = HTMLScanner(delegate: delegate)
 		scanner.parse(Array(parserData.data))
-		return delegate.image
+		return delegate.images
 	}
 }
 
@@ -29,15 +30,17 @@ public enum HTMLImageParser {
 private final class ImageParserDelegate: HTMLScannerDelegate {
 
 	private let baseURL: URL?
-	private(set) var image: HTMLImage?
+	private let maximumCount: Int
+	private(set) var images = [HTMLImage]()
 	private var enclosingLinkURLString: String?
 
 	private static let imgBytes: [UInt8] = Array("img".utf8)
 	private static let anchorBytes: [UInt8] = Array("a".utf8)
 	private static let sourceAttributeNames = ["data-lazy-src", "data-src", "src"]
 
-	init(baseURL: URL?) {
+	init(baseURL: URL?, maximumCount: Int) {
 		self.baseURL = baseURL
+		self.maximumCount = maximumCount
 	}
 
 	func htmlScanner(_ scanner: HTMLScanner,
@@ -48,7 +51,7 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 			enclosingLinkURLString = resolvedURLString(attributes["href"])
 			return
 		}
-		guard tagName(name, equals: Self.imgBytes) else {
+		guard images.count < maximumCount, tagName(name, equals: Self.imgBytes) else {
 			return
 		}
 
@@ -57,8 +60,12 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		let htmlClass = attributes["class"]
 		for urlString in imageURLStrings(attributes) {
 			if SignificantImageFilter.isSignificant(urlString: urlString, width: width, height: height, htmlClass: htmlClass, enclosingLinkURLString: enclosingLinkURLString) {
-				image = HTMLImage(urlString: urlString, width: width, height: height)
-				scanner.stopParsing()
+				if !images.contains(where: { $0.urlString == urlString }) {
+					images.append(HTMLImage(urlString: urlString, width: width, height: height))
+				}
+				if images.count >= maximumCount {
+					scanner.stopParsing()
+				}
 				return
 			}
 		}

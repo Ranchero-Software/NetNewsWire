@@ -54,6 +54,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		let html = """
 		<p><a href="https://twitter.com/intent/tweet?url=x"><img src="/share/twitter.png"></a></p>
 		<p><img src="/uploads/photo.jpg" width="640" height="480"></p>
+		<p><img src="/uploads/second-photo.jpg" width="640" height="480"></p>
 		"""
 		let articleWithImage = makeArticle(articleID: "1", contentHTML: html)
 		let articleWithoutImage = makeArticle(articleID: "2", contentHTML: "<p>No images.</p>")
@@ -66,8 +67,11 @@ private typealias ArticleAttachment = Articles.Attachment
 
 		let records = await metadataDatabase.fetchArticleThumbnails(articleIDs: ["1", "2"])
 		#expect(Set(records.map(\.articleID)) == ["1", "2"])
-		#expect(records.first { $0.articleID == "1" }?.thumbnailURL == "https://example.com/uploads/photo.jpg")
-		#expect(records.first { $0.articleID == "2" }?.thumbnailURL == nil)
+		#expect(records.first { $0.articleID == "1" }?.thumbnailURLs == ["https://example.com/uploads/photo.jpg", "https://example.com/uploads/second-photo.jpg"])
+		#expect(records.first { $0.articleID == "2" }?.thumbnailURLs == [])
+
+		metadataDatabase.recordFailure(url: "https://example.com/uploads/photo.jpg", statusCode: 404)
+		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/second-photo.jpg")
 	}
 
 	@Test func thumbnailTooSmallIsRejected() async throws {

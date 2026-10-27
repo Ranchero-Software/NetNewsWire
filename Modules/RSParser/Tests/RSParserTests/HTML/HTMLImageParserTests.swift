@@ -19,7 +19,7 @@ import RSParser
 			guard let html = item.contentHTML else {
 				continue
 			}
-			let image = HTMLImageParser.firstSignificantImage(with: ParserData(url: item.url ?? "", data: Data(html.utf8)))
+			let image = HTMLImageParser.significantImages(with: ParserData(url: item.url ?? "", data: Data(html.utf8)), maximumCount: 1).first
 			if let image {
 				foundImageCount += 1
 				#expect(!image.urlString.contains("s.w.org"))
@@ -93,6 +93,14 @@ import RSParser
 		#expect(firstSignificantImage(html)?.urlString == "https://example.com/uploads/photo.jpg")
 	}
 
+	@Test func significantImagesAreFoundUpToMaximumCount() {
+		let html = """
+		<img src="/a.jpg"><img src="/a.jpg"><img src="/logo.svg"><img src="/b.jpg"><img src="/c.jpg">
+		"""
+		let images = HTMLImageParser.significantImages(with: ParserData(url: "https://example.com/posts/1", data: Data(html.utf8)), maximumCount: 2)
+		#expect(images.map(\.urlString) == ["https://example.com/a.jpg", "https://example.com/b.jpg"])
+	}
+
 	@Test func relativeURLsAreResolved() {
 		#expect(firstSignificantImage(#"<img src="images/a.jpg">"#)?.urlString == "https://example.com/posts/images/a.jpg")
 		#expect(firstSignificantImage(#"<img src="//cdn.example.net/a.jpg">"#)?.urlString == "https://cdn.example.net/a.jpg")
@@ -115,5 +123,5 @@ import RSParser
 // MARK: - Helpers
 
 private func firstSignificantImage(_ html: String) -> HTMLImage? {
-	HTMLImageParser.firstSignificantImage(with: ParserData(url: "https://example.com/posts/1", data: Data(html.utf8)))
+	HTMLImageParser.significantImages(with: ParserData(url: "https://example.com/posts/1", data: Data(html.utf8)), maximumCount: 1).first
 }

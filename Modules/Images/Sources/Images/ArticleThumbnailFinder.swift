@@ -34,7 +34,7 @@ extension Notification.Name {
 /// Finds the image that stands for an article in the timeline.
 ///
 /// Sources: the provided thumbnail, the article’s image, the first significant image
-/// attachment, and the first significant image in the article’s HTML. Small mode
+/// attachment, and the first few significant images in the article’s HTML. Small mode
 /// tries them in that order. Large mode tries the article’s image and attachments
 /// before the provided thumbnail, which is usually too small to fill the timeline’s width.
 ///
@@ -59,7 +59,7 @@ extension Notification.Name {
 	public static let urlKey = "url"
 
 	private let metadataDatabase: ImageMetadataDatabase
-	private var htmlThumbnailURLs = [String: String]() // articleID: thumbnailURL
+	private var htmlThumbnailURLs = [String: [String]]() // articleID: thumbnailURLs, in document order
 	private var articleIDsWithNoHTMLThumbnail = Set<String>()
 	private var articleIDsBeingDiscovered = Set<String>()
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
@@ -70,7 +70,9 @@ extension Notification.Name {
 	private static let imageCacheByteLimit = 128 * 1024 * 1024
 	/// Sized for aspect-fill cropping into a small square.
 	private static let smallThumbnailMaxPixelSize = 512
-	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, about 300 bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
+	/// HTML images saved per article, so one that fails or is too small falls through to the next.
+	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
+	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, a few hundred bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
 	private static let maxCachedArticleCount = 20_000
 
 	init(metadataDatabase: ImageMetadataDatabase) {
@@ -109,10 +111,7 @@ extension Notification.Name {
 		if let providedThumbnailURL = providedThumbnailURL(for: article, mode: mode) {
 			return providedThumbnailURL
 		}
-		guard let htmlThumbnailURL = htmlThumbnailURLs[article.articleID], isUsable(htmlThumbnailURL) else {
-			return nil
-		}
-		return htmlThumbnailURL
+		return htmlThumbnailURLs[article.articleID]?.first(where: isUsable)
 	}
 
 	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
@@ -145,7 +144,7 @@ extension Notification.Name {
 			metadataDatabase.saveArticleThumbnails(parsedRecords)
 		}
 
-		let foundArticleIDs = Set((savedRecords + parsedRecords).filter { $0.thumbnailURL != nil }.map(\.articleID))
+		let foundArticleIDs = Set((savedRecords + parsedRecords).filter { !$0.thumbnailURLs.isEmpty }.map(\.articleID))
 		if !foundArticleIDs.isEmpty {
 			NotificationCenter.default.post(name: .articleThumbnailURLsDidBecomeAvailable, object: self, userInfo: [Self.articleIDsKey: foundArticleIDs])
 		}
@@ -260,8 +259,8 @@ private extension ArticleThumbnailFinder {
 
 	func cacheRecords(_ records: [ArticleThumbnailRecord]) {
 		for record in records {
-			if let thumbnailURL = record.thumbnailURL {
-				htmlThumbnailURLs[record.articleID] = thumbnailURL
+			if !record.thumbnailURLs.isEmpty {
+				htmlThumbnailURLs[record.articleID] = record.thumbnailURLs
 			} else {
 				articleIDsWithNoHTMLThumbnail.insert(record.articleID)
 			}
@@ -271,8 +270,8 @@ private extension ArticleThumbnailFinder {
 	@concurrent static func parseThumbnailURLs(_ articleHTMLs: [ArticleHTML]) async -> [ArticleThumbnailRecord] {
 		articleHTMLs.map { articleHTML in
 			let parserData = ParserData(url: articleHTML.baseURL ?? "", data: Data(articleHTML.html.utf8))
-			let image = HTMLImageParser.firstSignificantImage(with: parserData)
-			return ArticleThumbnailRecord(articleID: articleHTML.articleID, thumbnailURL: image?.urlString)
+			let images = HTMLImageParser.significantImages(with: parserData, maximumCount: maxHTMLThumbnailURLsPerArticle)
+			return ArticleThumbnailRecord(articleID: articleHTML.articleID, thumbnailURLs: images.map(\.urlString))
 		}
 	}
 

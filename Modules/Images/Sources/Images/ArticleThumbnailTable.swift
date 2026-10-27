@@ -11,22 +11,25 @@ import RSDatabase
 import RSDatabaseObjC
 
 /// The result of looking for a thumbnail in an article’s HTML.
-/// `thumbnailURL` is nil when the HTML has no usable image.
+/// `thumbnailURLs` is in document order, and empty when the HTML has no usable image.
 struct ArticleThumbnailRecord: Sendable, Equatable {
 	let articleID: String
-	let thumbnailURL: String?
+	let thumbnailURLs: [String]
 }
 
 /// Thumbnails found in article HTML. Rows exist only for articles whose HTML was parsed.
 struct ArticleThumbnailTable {
 
-	static let name = "articleThumbnail"
+	static let name = "articleThumbnailURLs"
 
 	private struct Column {
 		static let articleID = "articleID"
-		static let thumbnailURL = "thumbnailURL"
+		static let thumbnailURLs = "thumbnailURLs"
 		static let lastChecked = "lastChecked"
 	}
+
+	/// Resolved URLs have no unencoded newlines.
+	private static let urlSeparator = "\n"
 
 	/// Keeps each query under the database’s limit on parameters.
 	private static let maximumArticleIDsPerQuery = 500
@@ -41,7 +44,8 @@ struct ArticleThumbnailTable {
 				guard let articleID = resultSet.string(forColumn: Column.articleID) else {
 					continue
 				}
-				results.append(ArticleThumbnailRecord(articleID: articleID, thumbnailURL: resultSet.string(forColumn: Column.thumbnailURL)))
+				let thumbnailURLs = resultSet.string(forColumn: Column.thumbnailURLs)?.components(separatedBy: urlSeparator) ?? []
+				results.append(ArticleThumbnailRecord(articleID: articleID, thumbnailURLs: thumbnailURLs))
 			}
 			resultSet.close()
 		}
@@ -53,7 +57,7 @@ struct ArticleThumbnailTable {
 		for record in records {
 			let dictionary: DatabaseDictionary = [
 				Column.articleID: record.articleID,
-				Column.thumbnailURL: record.thumbnailURL as Any,
+				Column.thumbnailURLs: record.thumbnailURLs.isEmpty ? NSNull() : record.thumbnailURLs.joined(separator: urlSeparator),
 				Column.lastChecked: lastChecked
 			]
 			database.insertRow(dictionary, insertType: .orReplace, tableName: name)
