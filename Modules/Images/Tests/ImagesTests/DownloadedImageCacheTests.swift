@@ -34,6 +34,14 @@ import Testing
 		#expect(removal.remainingByteCount == 200)
 	}
 
+	@Test func shortMaxAgeIsRaisedToThreeDays() throws {
+		let url = try #require(URL(string: "https://example.com/icon.png"))
+		let httpResponse = try #require(HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: ["Cache-Control": "max-age=60", "ETag": "\"abc\""]))
+
+		let interval = DownloadedImageCache.nextCheck(httpResponse, hasValidators: true).timeIntervalSinceNow
+		#expect(abs(interval - TimeInterval(days: 3)) < 60)
+	}
+
 	@Test func recentlyUsedImagesAreKeptUnlessOverHardLimit() {
 		let now = Date()
 		let records = (0..<5).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", byteCount: 100, lastAccessed: now.addingTimeInterval(-TimeInterval(days: 1) + TimeInterval($0))) }

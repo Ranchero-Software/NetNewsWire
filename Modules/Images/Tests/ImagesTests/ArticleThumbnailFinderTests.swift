@@ -42,7 +42,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		let finder = ArticleThumbnailFinder(metadataDatabase: metadataDatabase)
 		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/logo.png")
 
-		metadataDatabase.saveDownloadedImage(DownloadedImageRecord(url: "https://example.com/logo.png", byteCount: 1024, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil))
+		metadataDatabase.saveDownloadedImage(DownloadedImageRecord(url: "https://example.com/logo.png", byteCount: 1024, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: Date()))
 
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
 		#expect(!metadataDatabase.recentlyFailed(url: "https://example.com/logo.png"))

@@ -17,6 +17,13 @@ struct DownloadedImageRecord: Sendable {
 	let byteCount: Int
 	let pixelSize: (width: Int, height: Int)?
 	let conditionalGetInfo: HTTPConditionalGetInfo?
+	let nextCheck: Date
+}
+
+/// What `DownloadedImageCache` needs to check with the server whether a copy is current.
+struct DownloadedImageValidation: Sendable {
+	let nextCheck: Date
+	let conditionalGetInfo: HTTPConditionalGetInfo?
 }
 
 /// What `DownloadedImageCache` needs to choose images to remove.
@@ -39,6 +46,7 @@ struct DownloadedImageTable {
 		static let lastAccessed = "lastAccessed"
 		static let etag = "etag"
 		static let lastModified = "lastModified"
+		static let nextCheck = "nextCheck"
 	}
 
 	/// Keeps each query under the database’s limit on parameters.
@@ -85,6 +93,25 @@ struct DownloadedImageTable {
 		return results
 	}
 
+	static func fetchValidation(url: String, database: FMDatabase) -> DownloadedImageValidation? {
+		guard let resultSet = database.selectRowsWhere(key: Column.url, equalsAnyValue: [url], tableName: name) else {
+			return nil
+		}
+		defer {
+			resultSet.close()
+		}
+		guard resultSet.next() else {
+			return nil
+		}
+		let nextCheck = Date(timeIntervalSince1970: resultSet.double(forColumn: Column.nextCheck))
+		let conditionalGetInfo = HTTPConditionalGetInfo(lastModified: resultSet.string(forColumn: Column.lastModified), etag: resultSet.string(forColumn: Column.etag))
+		return DownloadedImageValidation(nextCheck: nextCheck, conditionalGetInfo: conditionalGetInfo)
+	}
+
+	static func saveNextCheck(url: String, nextCheck: Date, database: FMDatabase) {
+		database.updateRowsWithValue(nextCheck.timeIntervalSince1970, valueKey: Column.nextCheck, whereKey: Column.url, equals: url, tableName: name)
+	}
+
 	static func saveAccessDate(url: String, database: FMDatabase) {
 		database.updateRowsWithValue(Date().timeIntervalSince1970, valueKey: Column.lastAccessed, whereKey: Column.url, equals: url, tableName: name)
 	}
@@ -103,7 +130,8 @@ struct DownloadedImageTable {
 			Column.pixelHeight: record.pixelSize?.height as Any,
 			Column.lastAccessed: Date().timeIntervalSince1970,
 			Column.etag: record.conditionalGetInfo?.etag as Any,
-			Column.lastModified: record.conditionalGetInfo?.lastModified as Any
+			Column.lastModified: record.conditionalGetInfo?.lastModified as Any,
+			Column.nextCheck: record.nextCheck.timeIntervalSince1970
 		]
 		database.insertRow(dictionary, insertType: .orReplace, tableName: name)
 	}

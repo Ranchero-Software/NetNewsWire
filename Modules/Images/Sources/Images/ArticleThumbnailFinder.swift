@@ -187,7 +187,7 @@ private extension ArticleThumbnailFinder {
 				cacheKeysInProgress.remove(cacheKey as String)
 			}
 			do throws(ImageDownloadError) {
-				let data = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadLimiter: true, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
+				let data = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadLimiter: true, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
 				let decodedImage = try await Self.decodedImage(data, maxPixelSize: Self.maxPixelSize(mode))
 				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
 				NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
