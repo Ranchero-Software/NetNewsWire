@@ -137,14 +137,14 @@ private extension DownloadedImageCache {
 				let message = downloadResponse.data.map(ActivityLog.dataSizeMessage)
 				activityLog.didComplete(activityOwner, kind: activityKind, message: message, returnedFromCache: downloadResponse.returnedFromCache)
 			}
-			ImageMetadataDatabase.shared.clearFailure(url: url)
+			ImageDatabase.shared.clearFailure(url: url)
 			return .success(data)
 		} catch {
 			if let activityOwner, let activityKind {
 				activityLog.didFail(activityOwner, kind: activityKind, error: error)
 			}
 			if !error.isTransient {
-				ImageMetadataDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
+				ImageDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
 			}
 			return .failure(error)
 		}
@@ -191,7 +191,7 @@ private extension DownloadedImageCache {
 			conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 		}
 		let nextCheck = Self.nextCheck(httpResponse, hasValidators: conditionalGetInfo != nil)
-		ImageMetadataDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: storedImage.data.count, pixelSize: storedImage.pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
+		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: storedImage.data.count, pixelSize: storedImage.pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
 		imageWasSaved(byteCount: storedImage.data.count)
 		return storedImage.data
 	}
@@ -204,7 +204,7 @@ private extension DownloadedImageCache {
 			return
 		}
 		readDatesNoted[url] = now
-		ImageMetadataDatabase.shared.saveDownloadedImageAccessDate(url: url)
+		ImageDatabase.shared.saveDownloadedImageAccessDate(url: url)
 		guard checksForUpdates else {
 			return
 		}
@@ -218,7 +218,7 @@ private extension DownloadedImageCache {
 	/// Doesn’t use the download limiter, since icons aren’t limited either.
 	/// A network error leaves `nextCheck` as is, so the next day’s use tries again.
 	func revalidateIfDue(_ url: String) async {
-		guard let validation = await ImageMetadataDatabase.shared.fetchDownloadedImageValidation(url: url), validation.nextCheck <= Date() else {
+		guard let validation = await ImageDatabase.shared.fetchDownloadedImageValidation(url: url), validation.nextCheck <= Date() else {
 			return
 		}
 		guard let imageURL = URL(string: url) else {
@@ -242,7 +242,7 @@ private extension DownloadedImageCache {
 		}
 
 		// 304 Not Modified, or an error response: keep the copy and check again later.
-		ImageMetadataDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: Self.nextCheck(httpResponse, hasValidators: validation.conditionalGetInfo != nil))
+		ImageDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: Self.nextCheck(httpResponse, hasValidators: validation.conditionalGetInfo != nil))
 	}
 
 	// MARK: - Removing Images
@@ -267,7 +267,7 @@ private extension DownloadedImageCache {
 		totalByteCount = nil
 		let startDate = Date()
 
-		let records = await ImageMetadataDatabase.shared.fetchDownloadedImageUsageByLeastRecentAccess()
+		let records = await ImageDatabase.shared.fetchDownloadedImageUsageByLeastRecentAccess()
 		let fileDates = await Self.fileModificationDates(diskCache)
 		let removal = Self.imageRemoval(records: records, fileDates: fileDates, now: startDate, limit: Self.limit, hardLimit: Self.hardLimit)
 
@@ -276,7 +276,7 @@ private extension DownloadedImageCache {
 		guard !removal.urls.isEmpty || !removal.keys.isEmpty else {
 			return
 		}
-		ImageMetadataDatabase.shared.deleteDownloadedImages(urls: removal.urls)
+		ImageDatabase.shared.deleteDownloadedImages(urls: removal.urls)
 		await Self.deleteFromDisk(diskCache, keys: removal.keys)
 		Self.logger.info("Removed \(removal.keys.count) files and \(removal.urls.count) records. \(removal.remainingByteCount) bytes remain.")
 	}

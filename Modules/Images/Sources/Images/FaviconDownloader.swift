@@ -115,7 +115,7 @@ extension Notification.Name {
 		if let faviconURL = feed.faviconURL {
 			return faviconURL
 		}
-		if let homePageURL = feed.homePageURL, let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
+		if let homePageURL = feed.homePageURL, let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
 			return faviconURL
 		}
 		return nil
@@ -133,11 +133,11 @@ extension Notification.Name {
 
 		let url = homePageURL.normalizedURL
 
-		if ImageMetadataDatabase.shared.homePageHasNoFavicon(url) {
+		if ImageDatabase.shared.homePageHasNoFavicon(url) {
 			return nil
 		}
 
-		if let faviconURL = ImageMetadataDatabase.shared.faviconURL(forHomePageURL: url) {
+		if let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: url) {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
@@ -161,9 +161,9 @@ extension Notification.Name {
 
 		// URL-level outcome runs before the homePageURL guard so we record it even when homePageURL is nil.
 		if let error = singleFaviconDownloader.error {
-			ImageMetadataDatabase.shared.recordFailure(url: singleFaviconDownloader.faviconURL, statusCode: error.statusCode)
+			ImageDatabase.shared.recordFailure(url: singleFaviconDownloader.faviconURL, statusCode: error.statusCode)
 		} else if singleFaviconDownloader.iconImage != nil {
-			ImageMetadataDatabase.shared.clearFailure(url: singleFaviconDownloader.faviconURL)
+			ImageDatabase.shared.clearFailure(url: singleFaviconDownloader.faviconURL)
 		}
 
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
@@ -227,7 +227,7 @@ private extension FaviconDownloader {
 			Self.logger.debug("Skipping non-http(s) URL: \(faviconURL)")
 			return false
 		}
-		if ImageMetadataDatabase.shared.recentlyFailed(url: faviconURL) {
+		if ImageDatabase.shared.recentlyFailed(url: faviconURL) {
 			Self.logger.debug("Skipping recently-failed URL: \(faviconURL)")
 			return false
 		}
@@ -248,7 +248,7 @@ private extension FaviconDownloader {
 
 		remainingFaviconURLs[homePageURL] = nil
 		if currentHomePageHasOnlyFaviconICO {
-			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
+			ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 		}
 	}
 
@@ -256,8 +256,8 @@ private extension FaviconDownloader {
 
 		var firstTimeSeeingHomepageURL = false
 
-		if let homePageURL, ImageMetadataDatabase.shared.faviconURL(forHomePageURL: homePageURL) == nil {
-			ImageMetadataDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
+		if let homePageURL, ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) == nil {
+			ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
 			firstTimeSeeingHomepageURL = true
 		}
 

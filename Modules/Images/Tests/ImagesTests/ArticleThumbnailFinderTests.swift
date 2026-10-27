@@ -19,7 +19,7 @@ private typealias ArticleAttachment = Articles.Attachment
 @MainActor @Suite struct ArticleThumbnailFinderTests {
 
 	@Test func smallModePrefersThumbnailAndLargeModePrefersImage() throws {
-		let finder = ArticleThumbnailFinder(metadataDatabase: ImageMetadataDatabase(databasePath: ":memory:"))
+		let finder = ArticleThumbnailFinder(imageDatabase: ImageDatabase(databasePath: ":memory:"))
 		let attachment = try #require(ArticleAttachment(url: "https://example.com/attachment.jpg", mimeType: "image/jpeg", title: nil, sizeInBytes: nil, durationInSeconds: nil, width: 1200, height: 800, medium: nil))
 		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg", attachments: [attachment])
 
@@ -28,29 +28,29 @@ private typealias ArticleAttachment = Articles.Attachment
 	}
 
 	@Test func failedImageFallsThroughToNextSource() {
-		let metadataDatabase = ImageMetadataDatabase(databasePath: ":memory:")
-		let finder = ArticleThumbnailFinder(metadataDatabase: metadataDatabase)
+		let imageDatabase = ImageDatabase(databasePath: ":memory:")
+		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
 		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
 
-		metadataDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
+		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
 
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
 	}
 
 	@Test func insignificantDimensionsFallThroughButAreNotAFailure() {
-		let metadataDatabase = ImageMetadataDatabase(databasePath: ":memory:")
-		let finder = ArticleThumbnailFinder(metadataDatabase: metadataDatabase)
+		let imageDatabase = ImageDatabase(databasePath: ":memory:")
+		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
 		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/logo.png")
 
-		metadataDatabase.saveDownloadedImage(DownloadedImageRecord(url: "https://example.com/logo.png", byteCount: 1024, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: Date()))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: "https://example.com/logo.png", byteCount: 1024, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: Date()))
 
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
-		#expect(!metadataDatabase.recentlyFailed(url: "https://example.com/logo.png"))
+		#expect(!imageDatabase.recentlyFailed(url: "https://example.com/logo.png"))
 	}
 
 	@Test func htmlThumbnailIsDiscoveredAndSaved() async {
-		let metadataDatabase = ImageMetadataDatabase(databasePath: ":memory:")
-		let finder = ArticleThumbnailFinder(metadataDatabase: metadataDatabase)
+		let imageDatabase = ImageDatabase(databasePath: ":memory:")
+		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
 		let html = """
 		<p><a href="https://twitter.com/intent/tweet?url=x"><img src="/share/twitter.png"></a></p>
 		<p><img src="/uploads/photo.jpg" width="640" height="480"></p>
@@ -65,12 +65,12 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithoutImage, mode: .small) == nil)
 
-		let records = await metadataDatabase.fetchArticleThumbnails(articleIDs: ["1", "2"])
+		let records = await imageDatabase.fetchArticleThumbnails(articleIDs: ["1", "2"])
 		#expect(Set(records.map(\.articleID)) == ["1", "2"])
 		#expect(records.first { $0.articleID == "1" }?.thumbnailURLs == ["https://example.com/uploads/photo.jpg", "https://example.com/uploads/second-photo.jpg"])
 		#expect(records.first { $0.articleID == "2" }?.thumbnailURLs == [])
 
-		metadataDatabase.recordFailure(url: "https://example.com/uploads/photo.jpg", statusCode: 404)
+		imageDatabase.recordFailure(url: "https://example.com/uploads/photo.jpg", statusCode: 404)
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/second-photo.jpg")
 	}
 

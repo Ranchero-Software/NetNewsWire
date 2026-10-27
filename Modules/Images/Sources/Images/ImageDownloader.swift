@@ -85,7 +85,7 @@ extension ImageDownloadError: LocalizedError {
 		if let data = imageCache.object(forKey: url as NSString) {
 			return data as Data
 		}
-		if ImageMetadataDatabase.shared.recentlyFailed(url: url) {
+		if ImageDatabase.shared.recentlyFailed(url: url) {
 			Self.logger.debug("Skipping recently-failed URL: \(url)")
 			return nil
 		}

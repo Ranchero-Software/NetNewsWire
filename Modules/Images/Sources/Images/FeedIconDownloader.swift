@@ -102,7 +102,7 @@ extension Notification.Name {
 		// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
 		let feedDeclaresIconURL = feed.iconURL != nil && !Self.shouldIgnoreFeedIconURL(feed)
 
-		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageMetadataDatabase.shared.iconURL(forFeedURL: feed.url) {
+		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageDatabase.shared.iconURL(forFeedURL: feed.url) {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { image, _ in
 				if self.cache[feed] != nil {
 					return // already cached
@@ -239,7 +239,7 @@ private extension FeedIconDownloader {
 		}
 
 		let urlIsUnfetchable = !url.hasPrefix("http://") && !url.hasPrefix("https://")
-		if urlIsUnfetchable || ImageMetadataDatabase.shared.recentlyFailed(url: url) {
+		if urlIsUnfetchable || ImageDatabase.shared.recentlyFailed(url: url) {
 			imageResultBlock(nil, true)
 			return
 		}
@@ -257,6 +257,6 @@ private extension FeedIconDownloader {
 	}
 
 	func cacheIconURLForFeedURL(iconURL: String, feedURL: String) {
-		ImageMetadataDatabase.shared.saveFeedIconURL(feedURL: feedURL, iconURL: iconURL)
+		ImageDatabase.shared.saveFeedIconURL(feedURL: feedURL, iconURL: iconURL)
 	}
 }

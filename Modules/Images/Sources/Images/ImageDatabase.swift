@@ -1,5 +1,5 @@
 //
-//  ImageMetadataDatabase.swift
+//  ImageDatabase.swift
 //  Images
 //
 //  Created by Brent Simmons on 5/28/26.
@@ -14,16 +14,16 @@ import RSParser
 
 /// Per-URL image metadata: discovered URLs, failure tracking, and the copies `DownloadedImageCache` stores.
 /// Also thumbnails found in article HTML, which aren’t loaded into memory at init, since there’s a row per article.
-@MainActor public final class ImageMetadataDatabase {
+@MainActor public final class ImageDatabase {
 
-	public static let shared = ImageMetadataDatabase()
+	public static let shared = ImageDatabase()
 
 	public static let failureRetryDays = 5
 	private static let failureRetentionDays = 33
 
 	public let databasePath: String
 
-	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageMetadataDatabase")
+	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageDatabase")
 
 	private let queue: DatabaseQueue
 
@@ -203,7 +203,7 @@ import RSParser
 	}
 }
 
-private extension ImageMetadataDatabase {
+private extension ImageDatabase {
 
 	static func isSuitableForThumbnail(_ pixelSize: (width: Int, height: Int)?) -> Bool {
 		guard let pixelSize else {

@@ -39,7 +39,7 @@ extension Notification.Name {
 /// before the provided thumbnail, which is usually too small to fill the timeline’s width.
 ///
 /// The first three sources are property reads. The HTML is parsed off the main thread
-/// by `discoverThumbnailURLs(for:)`, and the results are saved in `ImageMetadataDatabase`,
+/// by `discoverThumbnailURLs(for:)`, and the results are saved in `ImageDatabase`,
 /// so each article’s HTML is parsed once.
 ///
 /// URLs that recently failed to download, and images too small, too narrow, or unreadable
@@ -53,12 +53,12 @@ extension Notification.Name {
 		case large
 	}
 
-	public static let shared = ArticleThumbnailFinder(metadataDatabase: .shared)
+	public static let shared = ArticleThumbnailFinder(imageDatabase: .shared)
 
 	public static let articleIDsKey = "articleIDs"
 	public static let urlKey = "url"
 
-	private let metadataDatabase: ImageMetadataDatabase
+	private let imageDatabase: ImageDatabase
 	private var htmlThumbnailURLs = [String: [String]]() // articleID: thumbnailURLs, in document order
 	private var articleIDsWithNoHTMLThumbnail = Set<String>()
 	private var articleIDsBeingDiscovered = Set<String>()
@@ -75,8 +75,8 @@ extension Notification.Name {
 	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, a few hundred bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
 	private static let maxCachedArticleCount = 20_000
 
-	init(metadataDatabase: ImageMetadataDatabase) {
-		self.metadataDatabase = metadataDatabase
+	init(imageDatabase: ImageDatabase) {
+		self.imageDatabase = imageDatabase
 		self.imageCache.totalCostLimit = Self.imageCacheByteLimit
 
 		// Not flushed on appDidGoToBackground, which would make thumbnails flash on resume.
@@ -130,7 +130,7 @@ extension Notification.Name {
 			articleIDsBeingDiscovered.subtract(articleIDs)
 		}
 
-		let savedRecords = await metadataDatabase.fetchArticleThumbnails(articleIDs: articleIDs)
+		let savedRecords = await imageDatabase.fetchArticleThumbnails(articleIDs: articleIDs)
 		cacheRecords(savedRecords)
 
 		let articleHTMLsToParse = articleHTMLs.filter { !isCached($0.articleID) }
@@ -138,7 +138,7 @@ extension Notification.Name {
 		if !articleHTMLsToParse.isEmpty {
 			parsedRecords = await Self.parseThumbnailURLs(articleHTMLsToParse)
 			cacheRecords(parsedRecords)
-			metadataDatabase.saveArticleThumbnails(parsedRecords)
+			imageDatabase.saveArticleThumbnails(parsedRecords)
 		}
 
 		let foundArticleIDs = Set((savedRecords + parsedRecords).filter { !$0.thumbnailURLs.isEmpty }.map(\.articleID))
@@ -238,7 +238,7 @@ private extension ArticleThumbnailFinder {
 	}
 
 	func isUsable(_ urlString: String) -> Bool {
-		SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) && !metadataDatabase.recentlyFailed(url: urlString) && !metadataDatabase.isUnsuitableForThumbnail(url: urlString) && !urlsThatFailedToDecode.contains(urlString)
+		SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) && !imageDatabase.recentlyFailed(url: urlString) && !imageDatabase.isUnsuitableForThumbnail(url: urlString) && !urlsThatFailedToDecode.contains(urlString)
 	}
 
 	func needsHTMLDiscovery(_ article: Article) -> Bool {
