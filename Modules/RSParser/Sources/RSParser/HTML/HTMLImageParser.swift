@@ -11,8 +11,9 @@ import Foundation
 /// which also sees the enclosing `<a>` link so it can reject share buttons.
 /// Stops scanning once it finds one.
 ///
-/// Uses `src`, falling back to the largest `srcset` candidate when `src` is
-/// missing or a `data:` placeholder (as with lazy-loading images).
+/// Tries `data-lazy-src`, `data-src`, `src`, and the largest `srcset` candidate,
+/// in that order, and uses the first that passes the filter. Lazy-loading images
+/// often have a placeholder in `src`.
 public enum HTMLImageParser {
 
 	public static func firstSignificantImage(with parserData: ParserData) -> HTMLImage? {
@@ -33,6 +34,7 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 
 	private static let imgBytes: [UInt8] = Array("img".utf8)
 	private static let anchorBytes: [UInt8] = Array("a".utf8)
+	private static let sourceAttributeNames = ["data-lazy-src", "data-src", "src"]
 
 	init(baseURL: URL?) {
 		self.baseURL = baseURL
@@ -49,18 +51,17 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		guard tagName(name, equals: Self.imgBytes) else {
 			return
 		}
-		guard let urlString = imageURLString(attributes) else {
-			return
-		}
 
 		let width = pixelDimension(attributes["width"])
 		let height = pixelDimension(attributes["height"])
-		guard SignificantImageFilter.isSignificant(urlString: urlString, width: width, height: height, htmlClass: attributes["class"], enclosingLinkURLString: enclosingLinkURLString) else {
-			return
+		let htmlClass = attributes["class"]
+		for urlString in imageURLStrings(attributes) {
+			if SignificantImageFilter.isSignificant(urlString: urlString, width: width, height: height, htmlClass: htmlClass, enclosingLinkURLString: enclosingLinkURLString) {
+				image = HTMLImage(urlString: urlString, width: width, height: height)
+				scanner.stopParsing()
+				return
+			}
 		}
-
-		image = HTMLImage(urlString: urlString, width: width, height: height)
-		scanner.stopParsing()
 	}
 
 	func htmlScanner(_ scanner: HTMLScanner,
@@ -80,25 +81,20 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		return zip(name, lowercasedName).allSatisfy { $0.asciiLowercased == $1 }
 	}
 
-	private func imageURLString(_ attributes: HTMLAttributes) -> String? {
-		resolvedURLString(imageSource(attributes))
+	private func imageURLStrings(_ attributes: HTMLAttributes) -> [String] {
+		var sources = Self.sourceAttributeNames.compactMap { attributes[$0] }
+		if let srcset = attributes["srcset"], let candidate = largestSrcsetCandidate(srcset) {
+			sources.append(candidate)
+		}
+		return sources.compactMap(resolvedURLString)
 	}
 
+	/// Nil for an empty string or a `data:` URL.
 	private func resolvedURLString(_ urlString: String?) -> String? {
-		guard let urlString else {
+		guard let urlString = urlString?.trimmingCharacters(in: .whitespacesAndNewlines), !urlString.isEmpty, !urlString.lowercased().hasPrefix("data:") else {
 			return nil
 		}
 		return URL(string: urlString, relativeTo: baseURL)?.absoluteString
-	}
-
-	private func imageSource(_ attributes: HTMLAttributes) -> String? {
-		if let src = attributes["src"]?.trimmingCharacters(in: .whitespacesAndNewlines), !src.isEmpty, !src.lowercased().hasPrefix("data:") {
-			return src
-		}
-		guard let srcset = attributes["srcset"] else {
-			return nil
-		}
-		return largestSrcsetCandidate(srcset)
 	}
 
 	/// The URL with the largest width (`640w`) or density (`2x`) descriptor. A candidate with no descriptor counts as `1x`.

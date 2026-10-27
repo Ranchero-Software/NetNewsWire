@@ -85,6 +85,14 @@ import RSParser
 		#expect(firstSignificantImage(html)?.urlString == "https://example.com/a-1024.jpg")
 	}
 
+	@Test func lazySourceIsUsedWhenSrcIsPlaceholder() {
+		let html = """
+		<a href=" https://twitter.com/intent/tweet?url=x "><img src="/share/twitter.png"></a>
+		<img src="https://s0.wp.com/i/blank.jpg" data-lazy-src="/uploads/photo.jpg" width="640" height="480">
+		"""
+		#expect(firstSignificantImage(html)?.urlString == "https://example.com/uploads/photo.jpg")
+	}
+
 	@Test func relativeURLsAreResolved() {
 		#expect(firstSignificantImage(#"<img src="images/a.jpg">"#)?.urlString == "https://example.com/posts/images/a.jpg")
 		#expect(firstSignificantImage(#"<img src="//cdn.example.net/a.jpg">"#)?.urlString == "https://cdn.example.net/a.jpg")
