@@ -124,6 +124,10 @@ extension ImageDownloadError: LocalizedError {
 			Self.logger.debug("Skipping recently-failed URL: \(url)")
 			return nil
 		}
+		if configuration.requiresSignificantDimensions && ImageMetadataDatabase.shared.recentlyLackedSignificantDimensions(url: url) {
+			Self.logger.debug("Skipping thumbnail URL with insignificant dimensions: \(url)")
+			return nil
+		}
 
 		Task { @MainActor in
 			await findImage(url, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
@@ -185,7 +189,11 @@ private extension ImageDownloader {
 				activityLog.didFail(activityOwner, kind: activityKind, error: error)
 			}
 			if !error.isTransient {
-				ImageMetadataDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
+				if error.rejectedPixelSize != nil {
+					ImageMetadataDatabase.shared.recordInsignificantDimensions(url: url)
+				} else {
+					ImageMetadataDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
+				}
 				NotificationCenter.default.post(name: .imageDownloadDidFail, object: self, userInfo: ["url": url])
 			}
 		}

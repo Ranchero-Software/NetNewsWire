@@ -19,6 +19,7 @@ import RSDatabaseObjC
 
 	public static let failureRetryDays = 5
 	private static let failureRetentionDays = 33
+	private static let insignificantDimensionsKeyPrefix = "insignificantDimensions:" // Can’t collide with an http(s) URL
 
 	public let databasePath: String
 
@@ -140,6 +141,26 @@ import RSDatabaseObjC
 		queue.runInDatabase { database in
 			DownloadFailureTable.clear(url: url, database: database)
 		}
+	}
+
+	// MARK: - Insignificant Dimensions
+
+	// An image too small or too narrow to be a thumbnail may still be a fine feed icon,
+	// so these are kept apart from failures, which every downloader honors.
+
+	public func recentlyLackedSignificantDimensions(url: String) -> Bool {
+		recentlyFailed(url: Self.insignificantDimensionsKey(url))
+	}
+
+	public func recordInsignificantDimensions(url: String) {
+		recordFailure(url: Self.insignificantDimensionsKey(url), statusCode: nil)
+	}
+}
+
+private extension ImageMetadataDatabase {
+
+	static func insignificantDimensionsKey(_ url: String) -> String {
+		insignificantDimensionsKeyPrefix + url
 	}
 }
 

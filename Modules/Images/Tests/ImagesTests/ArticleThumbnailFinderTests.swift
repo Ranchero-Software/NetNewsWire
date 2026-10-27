@@ -34,6 +34,17 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
 	}
 
+	@Test func insignificantDimensionsFallThroughButAreNotAFailure() {
+		let metadataDatabase = ImageMetadataDatabase(databasePath: ":memory:")
+		let finder = ArticleThumbnailFinder(metadataDatabase: metadataDatabase)
+		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/logo.png")
+
+		metadataDatabase.recordInsignificantDimensions(url: "https://example.com/logo.png")
+
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
+		#expect(!metadataDatabase.recentlyFailed(url: "https://example.com/logo.png"))
+	}
+
 	@Test func htmlThumbnailIsDiscoveredAndSaved() async {
 		let metadataDatabase = ImageMetadataDatabase(databasePath: ":memory:")
 		let finder = ArticleThumbnailFinder(metadataDatabase: metadataDatabase)

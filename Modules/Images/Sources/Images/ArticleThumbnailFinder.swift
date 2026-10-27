@@ -260,7 +260,7 @@ private extension ArticleThumbnailFinder {
 	}
 
 	func isUsable(_ urlString: String) -> Bool {
-		SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) && !metadataDatabase.recentlyFailed(url: urlString)
+		SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) && !metadataDatabase.recentlyFailed(url: urlString) && !metadataDatabase.recentlyLackedSignificantDimensions(url: urlString)
 	}
 
 	func needsHTMLDiscovery(_ article: Article) -> Bool {
