@@ -278,6 +278,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	override func viewDidLoad() {
+		// The search timeline can be created long before its view loads, and defaults are observed only from here on.
+		userDefaultsDidChange()
 		updateCellAppearances()
 
 		updateRowHeights()
