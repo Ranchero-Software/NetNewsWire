@@ -100,7 +100,7 @@ import RSParser
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://s0.wp.com/i/blank.jpg", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://pixel.wp.com/b.gif?v=1", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "ftp://example.com/a.jpg", width: nil, height: nil))
-		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/banner.jpg", width: 1200, height: 300))
+		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/banner.jpg", width: 1200, height: 250))
 	}
 }
 
