@@ -11,6 +11,12 @@ import os
 import SQLite3
 import RSDatabaseObjC
 
+/// DELETE avoids the extra -wal and -shm files. WAL makes frequent small writes faster.
+public enum JournalMode: String, Sendable {
+	case delete = "DELETE"
+	case wal = "WAL"
+}
+
 /// Manage a serial queue and a SQLite database.
 public final class DatabaseQueue: Sendable {
 
@@ -20,7 +26,7 @@ public final class DatabaseQueue: Sendable {
 
 	private static let logger = Logger(subsystem: logSubsystem, category: "DatabaseQueue")
 
-	public init(databasePath: String) {
+	public init(databasePath: String, journalMode: JournalMode = .delete) {
 		Self.logger.debug("DatabaseQueue: creating with database path \(databasePath)")
 
 		self.serialDispatchQueue = DispatchQueue(label: "DatabaseQueue (Serial) - \(databasePath)")
@@ -28,7 +34,7 @@ public final class DatabaseQueue: Sendable {
 		self.databasePath = databasePath
 		self.database = FMDatabase(path: databasePath)!
 
-		openDatabase(database)
+		openDatabase(database, journalMode: journalMode)
 	}
 
 	// MARK: - Make Database Calls
@@ -95,6 +101,17 @@ public final class DatabaseQueue: Sendable {
 			}
 		}
 	}
+
+	/// Copy the WAL into the database and truncate the -wal file.
+	/// For WAL-mode databases, this takes the place of vacuum().
+	public func checkpoint() async {
+		await withCheckedContinuation { continuation in
+			runInDatabase { database in
+				database.checkpoint()
+				continuation.resume()
+			}
+		}
+	}
 }
 
 private extension DatabaseQueue {
@@ -113,11 +130,9 @@ private extension DatabaseQueue {
 		}
 	}
 
-	func openDatabase(_ database: FMDatabase) {
+	func openDatabase(_ database: FMDatabase, journalMode: JournalMode) {
 		database.open()
-		// All databases are single-connection and serialized — WAL gains us nothing
-		// and produces extra -wal/-shm files that bloat on disk.
-		database.executeStatements("PRAGMA journal_mode = DELETE;")
+		database.executeStatements("PRAGMA journal_mode = \(journalMode.rawValue);")
 		database.executeStatements("PRAGMA synchronous = 1;")
 		database.setShouldCacheStatements(true)
 	}

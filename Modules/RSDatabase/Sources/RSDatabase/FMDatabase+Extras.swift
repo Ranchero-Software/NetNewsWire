@@ -15,8 +15,6 @@ public extension FMDatabase {
 		let database = FMDatabase(path: path)!
 
 		database.open()
-		// All databases are single-connection and serialized — WAL gains us nothing
-		// and produces extra -wal/-shm files that bloat on disk.
 		database.executeStatements("PRAGMA journal_mode = DELETE;")
 		database.executeStatements("PRAGMA synchronous = 1;")
 		database.setShouldCacheStatements(true)
@@ -48,6 +46,15 @@ public extension FMDatabase {
 		executeStatements("vacuum;")
 		let duration = Date().timeIntervalSince(start)
 		Self.logger.debug("VACUUM \(path, privacy: .public) took \(duration, format: .fixed(precision: 4), privacy: .public) seconds")
+	}
+
+	/// Copy the WAL into the database and truncate the -wal file.
+	func checkpoint() {
+		let path = databasePath() ?? "unknown"
+		let start = Date()
+		executeStatements("PRAGMA wal_checkpoint(TRUNCATE);")
+		let duration = Date().timeIntervalSince(start)
+		Self.logger.debug("Checkpoint \(path, privacy: .public) took \(duration, format: .fixed(precision: 4), privacy: .public) seconds")
 	}
 
 	/// Vacuum if at least `daysBetweenVacuums` have passed since last time.
