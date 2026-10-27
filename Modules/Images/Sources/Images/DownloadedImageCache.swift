@@ -13,9 +13,8 @@ import ActivityLog
 
 /// Downloads each image URL once and keeps one copy on disk, shared by icons and thumbnails.
 ///
-/// The copy is scaled down to `maxPixelSize`, the largest size anything displays,
-/// or kept as is when it’s already smaller. `ImageDownloader` and `ArticleThumbnailFinder`
-/// make their own sizes from it.
+/// The copy is the image as downloaded, since the article view shows it at full size.
+/// `ImageDownloader` and `ArticleThumbnailFinder` make their own sizes from it.
 /// Requests for a URL that’s already being read or downloaded share that work.
 ///
 /// Copies on disk are kept until they total more than `limit`. Then the least recently used are
@@ -30,11 +29,7 @@ import ActivityLog
 
 	static let shared = DownloadedImageCache()
 
-	/// The size of large thumbnails, the largest images displayed.
-	nonisolated static let maxPixelSize = 1200
-
 	private static let folderName = "DownloadedImages"
-	nonisolated private static let compressionQuality = 0.8
 	private static let maximumConcurrentLimitedDownloads = 4
 	/// A few screens of thumbnails.
 	private static let maximumWaitingLimitedDownloads = 60
@@ -167,8 +162,8 @@ private extension DownloadedImageCache {
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
 		let statusCode = httpResponse?.statusCode
 		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
-			let storedData = await saveImage(data, url: url, httpResponse: httpResponse)
-			return (storedData, downloadResponse)
+			await saveImage(data, url: url, httpResponse: httpResponse)
+			return (data, downloadResponse)
 		}
 
 		// 2xx with empty / missing body — server said OK but gave us no image bytes.
@@ -182,18 +177,16 @@ private extension DownloadedImageCache {
 		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient)
 	}
 
-	/// Returns the stored data.
-	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async -> Data {
-		let storedImage = await Self.storedImage(data)
-		await Self.saveToDisk(diskCache, key: Self.diskKey(url), data: storedImage.data)
+	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async {
+		let pixelSize = await Self.pixelSize(data)
+		await Self.saveToDisk(diskCache, key: Self.diskKey(url), data: data)
 		var conditionalGetInfo: HTTPConditionalGetInfo?
 		if let httpResponse {
 			conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 		}
 		let nextCheck = Self.nextCheck(httpResponse, hasValidators: conditionalGetInfo != nil)
-		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: storedImage.data.count, pixelSize: storedImage.pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
-		imageWasSaved(byteCount: storedImage.data.count)
-		return storedImage.data
+		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: data.count, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
+		imageWasSaved(byteCount: data.count)
 	}
 
 	/// At most once a day per image: saves the access date, which orders images for removal,
@@ -237,7 +230,7 @@ private extension DownloadedImageCache {
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
 		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK {
 			Self.logger.info("Replaced changed image at \(url)")
-			_ = await saveImage(data, url: url, httpResponse: httpResponse)
+			await saveImage(data, url: url, httpResponse: httpResponse)
 			return
 		}
 
@@ -281,10 +274,9 @@ private extension DownloadedImageCache {
 		Self.logger.info("Removed \(removal.keys.count) files and \(removal.urls.count) records. \(removal.remainingByteCount) bytes remain.")
 	}
 
-	/// Data that ImageIO can’t read, such as SVG, is kept as is, since `RSImage` may still read it.
-	@concurrent static func storedImage(_ data: Data) async -> (data: Data, pixelSize: (width: Int, height: Int)?) {
-		let storedData = RSImage.scaledImageData(data, maxPixelSize: maxPixelSize, format: .jpeg(compressionQuality: compressionQuality)) ?? data
-		return (data: storedData, pixelSize: RSImage.largestFramePixelSize(storedData))
+	/// Nil when ImageIO can’t read the image, such as SVG.
+	@concurrent static func pixelSize(_ data: Data) async -> (width: Int, height: Int)? {
+		RSImage.largestFramePixelSize(data)
 	}
 
 	@concurrent static func readFromDisk(_ diskCache: BinaryDiskCache, key: String) async -> Data? {
