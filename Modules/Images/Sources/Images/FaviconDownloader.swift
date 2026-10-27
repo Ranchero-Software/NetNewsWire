@@ -26,13 +26,10 @@ extension Notification.Name {
 
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FaviconDownloader")
 
-	private let folder: String
-	private let diskCache: BinaryDiskCache
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
 	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
 	private var currentHomePageHasOnlyFaviconICO = false
 
-	private let queue: DispatchQueue
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
 	public struct UserInfoKey {
@@ -40,12 +37,6 @@ extension Notification.Name {
 	}
 
 	init() {
-		let folderURL = AppConfig.cacheSubfolder(named: "Favicons")
-		let folder = folderURL.path
-		self.folder = folder
-		self.diskCache = BinaryDiskCache(folder: folder)
-		self.queue = DispatchQueue(label: "FaviconDownloader serial queue - \(folder)")
-
 		NotificationCenter.default.addObserver(self, selector: #selector(didLoadFavicon(_:)), name: .DidLoadFavicon, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
@@ -281,7 +272,7 @@ private extension FaviconDownloader {
 			return downloader
 		}
 
-		let downloader = SingleFaviconDownloader(faviconURL: faviconURL, homePageURL: homePageURL, diskCache: diskCache, queue: queue)
+		let downloader = SingleFaviconDownloader(faviconURL: faviconURL, homePageURL: homePageURL)
 		singleFaviconDownloaderCache[faviconURL] = downloader
 		return downloader
 	}
