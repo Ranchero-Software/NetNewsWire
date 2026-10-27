@@ -24,6 +24,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private var thumbnailsDisplay = TimelineThumbnailsDisplay.none
 	private var thumbnailURLCache = [String: String]() // articleID: thumbnailURL
 	private var articleIDsWithNoThumbnail = Set<String>()
+	private var articleIDsToReload = Set<String>()
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var nextUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(nextUnread(_:)))
@@ -179,6 +180,8 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineViewController")
+	/// Thumbnails arriving within this interval are reloaded together.
+	private static let cellReloadDelay: TimeInterval = 0.1
 
 	// MARK: Constants
 	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
@@ -431,23 +434,39 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		reloadCells(visibleArticles)
 	}
 
+	/// Reloads after `cellReloadDelay`, together with any other cells queued by then.
 	private func reloadCells(_ articles: [Article]) {
-		Self.logger.debug("MainTimelineViewController: reloadCells")
-		guard !articles.isEmpty, let dataSource else {
+		guard !articles.isEmpty else {
+			return
+		}
+		let isReloadScheduled = !articleIDsToReload.isEmpty
+		articleIDsToReload.formUnion(articles.map(\.articleID))
+		guard !isReloadScheduled else {
+			return
+		}
+		DispatchQueue.main.asyncAfter(deadline: .now() + Self.cellReloadDelay) {
+			self.reloadQueuedCells()
+		}
+	}
+
+	/// Uses the current snapshot, so articles that changed or left the timeline since being queued are handled.
+	private func reloadQueuedCells() {
+		Self.logger.debug("MainTimelineViewController: reloadQueuedCells")
+		let articleIDs = articleIDsToReload
+		articleIDsToReload.removeAll()
+		guard let dataSource else {
 			return
 		}
 
 		var snapshot = dataSource.snapshot()
-		snapshot.reloadItems(articles)
-		DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.0, execute: {
-			guard let dataSource = self.dataSource else {
-				return
-			}
-			dataSource.apply(snapshot, animatingDifferences: false) { [weak self = self] in
-				self?.restoreSelectionIfNecessary(adjustScroll: false)
-			}
-		})
-
+		let articlesToReload = snapshot.itemIdentifiers.filter { articleIDs.contains($0.articleID) }
+		guard !articlesToReload.isEmpty else {
+			return
+		}
+		snapshot.reloadItems(articlesToReload)
+		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
+			self?.restoreSelectionIfNecessary(adjustScroll: false)
+		}
 	}
 
 	@objc func refreshAccounts(_ sender: Any) {
