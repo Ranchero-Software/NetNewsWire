@@ -149,19 +149,6 @@ let appName = "NetNewsWire"
 		installAppleEventHandlers()
 
 		CacheCleaner.purgeIfNecessary()
-
-		// Try to establish a cache in the Caches folder, but if it fails for some reason fall back to a temporary dir
-		let cacheFolder: String
-		if let userCacheFolder = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false).path {
-			cacheFolder = userCacheFolder
-		} else {
-			let bundleIdentifier = (Bundle.main.infoDictionary!["CFBundleIdentifier"]! as! String)
-			cacheFolder = (NSTemporaryDirectory() as NSString).appendingPathComponent(bundleIdentifier)
-		}
-
-		let imagesFolder = (cacheFolder as NSString).appendingPathComponent("Images")
-		let imagesFolderURL = URL(fileURLWithPath: imagesFolder)
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
 	}
 
 	func applicationDidFinishLaunching(_ note: Notification) {

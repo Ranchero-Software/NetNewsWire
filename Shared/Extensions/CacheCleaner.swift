@@ -15,10 +15,12 @@ struct CacheCleaner {
 	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "CacheCleaner")
 
 	private static let didPurgeImageCachesForResizingKey = "didPurgeImageCachesForResizing-2026-03-30"
+	private static let didRemoveFoldersReplacedByDownloadedImageCacheKey = "didRemoveFoldersReplacedByDownloadedImageCache-2026-10-26"
 
 	static func purgeIfNecessary() {
 
 		purgeImageCachesForResizingIfNeeded()
+		removeFoldersReplacedByDownloadedImageCacheIfNeeded()
 
 		guard let flushDate = AppDefaults.lastImageCacheFlushDate else {
 			AppDefaults.lastImageCacheFlushDate = Date()
@@ -29,14 +31,12 @@ struct CacheCleaner {
 		if flushDate.addingTimeInterval(3600 * 24 * 3) < Date() {
 			let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 			let faviconsFolderURL = tempDir.appendingPathComponent("Favicons")
-			let imagesFolderURL = tempDir.appendingPathComponent("Images")
-			let thumbnailsFolderURL = tempDir.appendingPathComponent("Thumbnails")
-			let largeThumbnailsFolderURL = tempDir.appendingPathComponent("LargeThumbnails")
+			let downloadedImagesFolderURL = tempDir.appendingPathComponent("DownloadedImages")
 			let feedURLToIconURL = tempDir.appendingPathComponent("FeedURLToIconURLCache.plist")
 			let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
 			let homePagesWithNoIconURL = tempDir.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
 
-			for tempItem in [faviconsFolderURL, imagesFolderURL, thumbnailsFolderURL, largeThumbnailsFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
+			for tempItem in [faviconsFolderURL, downloadedImagesFolderURL, feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
 				do {
 					logger.info("Removing cache file: \(tempItem.absoluteString)")
 					try FileManager.default.removeItem(at: tempItem)
@@ -76,5 +76,30 @@ private extension CacheCleaner {
 		}
 
 		UserDefaults.standard.set(true, forKey: didPurgeImageCachesForResizingKey)
+	}
+
+	/// One-time removal of the image folders that DownloadedImageCache’s DownloadedImages folder replaces.
+	static func removeFoldersReplacedByDownloadedImageCacheIfNeeded() {
+		guard !UserDefaults.standard.bool(forKey: didRemoveFoldersReplacedByDownloadedImageCacheKey) else {
+			return
+		}
+
+		let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+		let foldersToRemove = [
+			cacheDir.appendingPathComponent("Images"),
+			cacheDir.appendingPathComponent("Thumbnails"),
+			cacheDir.appendingPathComponent("LargeThumbnails")
+		]
+
+		for folder in foldersToRemove {
+			do {
+				try FileManager.default.removeItem(at: folder)
+				logger.info("Removed image folder replaced by DownloadedImageCache: \(folder.lastPathComponent, privacy: .public)")
+			} catch {
+				// Folder may not exist — that's fine
+			}
+		}
+
+		UserDefaults.standard.set(true, forKey: didRemoveFoldersReplacedByDownloadedImageCacheKey)
 	}
 }

@@ -80,7 +80,6 @@ import Images
 
 		registerBackgroundTasks()
 		CacheCleaner.purgeIfNecessary()
-		initializeDownloaders()
 		initializeHomeScreenQuickActions()
 
 		DispatchQueue.main.async {
@@ -250,12 +249,6 @@ import Images
 // MARK: App Initialization
 
 private extension AppDelegate {
-
-	private func initializeDownloaders() {
-		let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let imagesFolderURL = tempDir.appendingPathComponent("Images")
-		try! FileManager.default.createDirectory(at: imagesFolderURL, withIntermediateDirectories: true, attributes: nil)
-	}
 
 	private func initializeHomeScreenQuickActions() {
 		let unreadTitle = NSLocalizedString("First Unread", comment: "First Unread")

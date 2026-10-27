@@ -175,7 +175,10 @@ private extension SingleFaviconDownloader {
 			activityLog.didFail(.faviconDownloader, kind: kind, error: error)
 			throw error
 		}
-		let isTransient = statusCode.map { (500...599).contains($0) } ?? true
+		var isTransient = true
+		if let statusCode {
+			isTransient = statusCode >= 500 && statusCode <= 599
+		}
 		let error = ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient)
 		activityLog.didFail(.faviconDownloader, kind: kind, error: error)
 		throw error

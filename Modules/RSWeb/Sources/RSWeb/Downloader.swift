@@ -14,7 +14,7 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 
 /// Simple downloader, for a one-shot download like an image
 /// or a web page. For a download-feeds session, see DownloadSession.
-/// Caches response for a short time for GET requests. May return cached response.
+/// Caches response for a short time for GET requests, unless `cachesResponse` is false. May return cached response.
 @MainActor public final class Downloader {
 	public static let shared = Downloader()
 	private let urlSession: URLSession
@@ -42,13 +42,13 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 		urlSession.invalidateAndCancel()
 	}
 
-	public func download(_ url: URL, userAgentStyle: UserAgentStyle = .feed) async throws -> DownloadResponse {
-		try await download(URLRequest(url: url), userAgentStyle: userAgentStyle)
+	public func download(_ url: URL, userAgentStyle: UserAgentStyle = .feed, cachesResponse: Bool = true) async throws -> DownloadResponse {
+		try await download(URLRequest(url: url), userAgentStyle: userAgentStyle, cachesResponse: cachesResponse)
 	}
 
-	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed) async throws -> DownloadResponse {
+	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed, cachesResponse: Bool = true) async throws -> DownloadResponse {
 		try await withCheckedThrowingContinuation { continuation in
-			download(urlRequest, userAgentStyle: userAgentStyle) { downloadResponse, error in
+			download(urlRequest, userAgentStyle: userAgentStyle, cachesResponse: cachesResponse) { downloadResponse, error in
 				if let error {
 					continuation.resume(throwing: error)
 				} else {
@@ -63,7 +63,7 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 		download(URLRequest(url: url), userAgentStyle: userAgentStyle, callback)
 	}
 
-	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed, _ callback: @escaping DownloadCallback) {
+	public func download(_ urlRequest: URLRequest, userAgentStyle: UserAgentStyle = .feed, cachesResponse: Bool = true, _ callback: @escaping DownloadCallback) {
 		assert(Thread.isMainThread)
 
 		guard let url = urlRequest.url else {
@@ -115,7 +115,7 @@ public typealias DownloadCallback = @MainActor (DownloadResponse, Error?) -> Swi
 		let task = urlSession.dataTask(with: urlRequestToUse) { (data, response, error) in
 
 			// Don’t cache errors — a retry should hit the network.
-			if isCacheableRequest && error == nil {
+			if isCacheableRequest && cachesResponse && error == nil {
 				Self.logger.debug("Downloader: caching response for \(url)")
 				self.cache.add(url.absoluteString, data: data, response: response)
 			}

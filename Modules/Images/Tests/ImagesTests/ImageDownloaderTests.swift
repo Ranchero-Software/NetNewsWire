@@ -15,11 +15,11 @@ import UniformTypeIdentifiers
 @Suite struct ImageDownloaderTests {
 
 	@Test func thumbnailTooSmallIsRejected() async throws {
-		let configuration = ImageDownloader.Configuration(cacheFolderName: "Test", maxPixelSize: 512, format: .jpeg(compressionQuality: 0.8), memoryCacheByteLimit: 0, requiresSignificantDimensions: true, downloadLimiter: nil)
+		let configuration = ImageDownloader.Configuration(maxPixelSize: 512, format: .jpeg(compressionQuality: 0.8), memoryCacheByteLimit: 0, requiresSignificantDimensions: true, usesDownloadLimiter: false)
 		let smallImageData = try #require(pngData(width: 48, height: 48))
 
 		await #expect {
-			_ = try await ImageDownloader.scaledImageData(smallImageData, statusCode: 200, configuration: configuration)
+			_ = try await ImageDownloader.scaledImageData(smallImageData, configuration: configuration)
 		} throws: { error in
 			(error as? ImageDownloadError)?.rejectedPixelSize?.width == 48
 		}
