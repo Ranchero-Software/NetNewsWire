@@ -70,6 +70,8 @@ extension Notification.Name {
 	private static let imageCacheByteLimit = 128 * 1024 * 1024
 	/// Sized for aspect-fill cropping into a small square.
 	private static let smallThumbnailMaxPixelSize = 512
+	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, about 300 bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
+	private static let maxCachedArticleCount = 20_000
 
 	init(metadataDatabase: ImageMetadataDatabase) {
 		self.metadataDatabase = metadataDatabase
@@ -116,6 +118,11 @@ extension Notification.Name {
 	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
 	/// Uses results saved in the database, parses the rest off the main thread, and saves those results.
 	public func discoverThumbnailURLs(for articles: some Collection<Article>) async {
+		if htmlThumbnailURLs.count + articleIDsWithNoHTMLThumbnail.count > Self.maxCachedArticleCount {
+			htmlThumbnailURLs.removeAll()
+			articleIDsWithNoHTMLThumbnail.removeAll()
+		}
+
 		let articlesToCheck = articles.filter(needsHTMLDiscovery)
 		guard !articlesToCheck.isEmpty else {
 			return
