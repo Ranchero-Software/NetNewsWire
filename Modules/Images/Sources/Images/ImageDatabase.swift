@@ -41,15 +41,33 @@ import RSParser
 	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, byteCount INTEGER NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL);
 	"""
 
+	private static let databaseFileName = "Images.db"
+	private static let legacyDatabaseFileName = "ImageMetadata.db"
+
+	/// Tables and columns imported from ImageMetadata.db, which shipped before Images.db replaced it.
+	nonisolated private static let legacyTableColumns = [
+		(table: "downloadFailure", columns: "url, statusCode, lastChecked"),
+		(table: "homePageFavicon", columns: "homePageURL, faviconURL, lastChecked"),
+		(table: "feedIconURL", columns: "feedURL, iconURL, lastChecked")
+	]
+
 	private convenience init() {
-		self.init(databasePath: AppConfig.dataFolder.appendingPathComponent("ImageMetadata.db").path)
+		self.init(databasePath: AppConfig.dataFolder.appendingPathComponent(Self.databaseFileName).path, legacyDatabasePath: AppConfig.dataFolder.appendingPathComponent(Self.legacyDatabaseFileName).path)
 	}
 
-	init(databasePath: String) {
+	init(databasePath: String, legacyDatabasePath: String? = nil) {
 		self.databasePath = databasePath
-		let queue = DatabaseQueue(databasePath: databasePath)
+		let queue = DatabaseQueue(databasePath: databasePath, journalMode: .wal)
 		queue.runCreateStatements(Self.tableCreationStatements)
 		self.queue = queue
+
+		if let legacyDatabasePath, FileManager.default.fileExists(atPath: legacyDatabasePath) {
+			queue.runInDatabaseSync { database in
+				Self.importLegacyDatabase(path: legacyDatabasePath, database: database)
+			}
+			// Deleted even if the import failed: the data can be rebuilt, and this keeps the import to one run.
+			Self.deleteLegacyDatabase(path: legacyDatabasePath)
+		}
 
 		loadCachesFromDatabase()
 
@@ -58,14 +76,15 @@ import RSParser
 			DownloadFailureTable.removeExpired(olderThan: cutoff, database: database)
 			// Expiring rows means articles get rechecked, in case their HTML changed.
 			ArticleThumbnailTable.removeExpired(olderThan: cutoff, database: database)
-			database.vacuumIfNeeded()
+			database.checkpoint()
 		}
 	}
 
 	// MARK: - Vacuum
 
+	/// A WAL checkpoint, since this database is in WAL mode.
 	public func vacuum() async {
-		await queue.vacuum()
+		await queue.checkpoint()
 	}
 
 	// MARK: - HomePageFavicon
@@ -210,6 +229,35 @@ private extension ImageDatabase {
 			return false
 		}
 		return SignificantImageFilter.hasSignificantDimensions(width: pixelSize.width, height: pixelSize.height)
+	}
+
+	nonisolated static func importLegacyDatabase(path: String, database: FMDatabase) {
+		guard database.executeUpdate("ATTACH DATABASE ? AS legacy", withArgumentsIn: [path]) else {
+			logger.error("Could not attach legacy database: \(database.lastErrorMessage() ?? "unknown", privacy: .public)")
+			return
+		}
+
+		// ATTACH and DETACH can’t run inside a transaction.
+		database.beginTransaction()
+		for (table, columns) in legacyTableColumns {
+			if database.executeUpdate("INSERT OR IGNORE INTO main.\(table) (\(columns)) SELECT \(columns) FROM legacy.\(table)", withArgumentsIn: []) {
+				let rowCount = database.changes()
+				logger.info("Imported \(rowCount) rows into \(table, privacy: .public) from legacy database")
+			} else {
+				logger.error("Could not import \(table, privacy: .public) from legacy database: \(database.lastErrorMessage() ?? "unknown", privacy: .public)")
+			}
+		}
+		database.commit()
+
+		database.executeStatements("DETACH DATABASE legacy;")
+	}
+
+	static func deleteLegacyDatabase(path: String) {
+		do {
+			try FileManager.default.removeItem(atPath: path)
+		} catch {
+			logger.error("Could not delete legacy database \(path, privacy: .public): \(error.localizedDescription, privacy: .public)")
+		}
 	}
 
 	func loadCachesFromDatabase() {
