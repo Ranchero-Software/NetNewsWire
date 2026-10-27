@@ -224,7 +224,7 @@ class TimelineCustomizerCollectionViewController: UICollectionViewController {
 private extension TimelineCustomizerCollectionViewController {
 
 	/// Hides a preview that the Feed Icons and Thumbnail Size settings mean would never be seen.
-	/// Previews without a thumbnail always show, since not every article has one.
+	/// Thumbnails don’t hide previews without one, since not every article has a thumbnail.
 	static private func isHidden(_ section: Section?) -> Bool {
 		guard let section, Section.previews.contains(section) else {
 			return false
