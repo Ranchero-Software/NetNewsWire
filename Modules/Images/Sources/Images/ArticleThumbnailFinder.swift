@@ -45,8 +45,7 @@ extension Notification.Name {
 /// URLs that recently failed to download are skipped, so a dead or rejected image
 /// falls through to the next source.
 ///
-/// Images come from `ImageDownloader.thumbnails` in small mode and
-/// `ImageDownloader.largeThumbnails` in large mode, and are decoded off the main thread.
+/// Images are decoded at display size from `DownloadedImageCache`’s copy, off the main thread.
 @MainActor public final class ArticleThumbnailFinder {
 
 	public enum Mode: Sendable {
@@ -64,18 +63,17 @@ extension Notification.Name {
 	private var articleIDsWithNoHTMLThumbnail = Set<String>()
 	private var articleIDsBeingDiscovered = Set<String>()
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
-	private var cacheKeysBeingDecoded = Set<String>()
-	private var isObservingLargeThumbnails = false
+	private var cacheKeysInProgress = Set<String>()
 
 	/// Decoded bitmaps: about 1 MB each in small mode, 2–5 MB in large mode.
 	private static let imageCacheByteLimit = 128 * 1024 * 1024
-	nonisolated private static let bytesPerPixel = 4
+	/// Sized for aspect-fill cropping into a small square.
+	private static let smallThumbnailMaxPixelSize = 512
 
 	init(metadataDatabase: ImageMetadataDatabase) {
 		self.metadataDatabase = metadataDatabase
 		self.imageCache.totalCostLimit = Self.imageCacheByteLimit
 
-		observeImageDownloader(ImageDownloader.thumbnails)
 		// Not flushed on appDidGoToBackground, which would make thumbnails flash on resume.
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
@@ -90,10 +88,7 @@ extension Notification.Name {
 			return image
 		}
 
-		let kind = ActivityKind.downloadThumbnail(imageURL: url)
-		if let data = imageDownloader(for: mode).image(for: url, activityOwner: .thumbnailDownloader, activityKind: kind, activityDetail: article.title) {
-			decodeAndCacheImage(data, url: url, mode: mode)
-		}
+		findImage(url, mode: mode, activityDetail: article.title)
 		return nil
 	}
 
@@ -141,24 +136,6 @@ extension Notification.Name {
 
 	// MARK: - Notifications
 
-	@objc func handleImageDidBecomeAvailable(_ notification: Notification) {
-		guard let url = notification.userInfo?["url"] as? String else {
-			return
-		}
-		let mode: Mode = notification.object as AnyObject === ImageDownloader.thumbnails ? .small : .large
-		guard imageCache.object(forKey: Self.cacheKey(url, mode)) == nil, let data = imageDownloader(for: mode).image(for: url) else {
-			return
-		}
-		decodeAndCacheImage(data, url: url, mode: mode)
-	}
-
-	@objc func handleImageDownloadDidFail(_ notification: Notification) {
-		guard let url = notification.userInfo?["url"] as? String else {
-			return
-		}
-		NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.urlKey: url])
-	}
-
 	@objc func handleLowMemory(_ notification: Notification) {
 		imageCache.removeAllObjects()
 	}
@@ -188,55 +165,40 @@ private extension ArticleThumbnailFinder {
 		"\(mode) \(url)" as NSString
 	}
 
-	/// The large-thumbnail downloader isn’t created or observed until large mode is used.
-	func imageDownloader(for mode: Mode) -> ImageDownloader {
+	static func maxPixelSize(_ mode: Mode) -> Int {
 		switch mode {
 		case .small:
-			return ImageDownloader.thumbnails
+			smallThumbnailMaxPixelSize
 		case .large:
-			if !isObservingLargeThumbnails {
-				isObservingLargeThumbnails = true
-				observeImageDownloader(ImageDownloader.largeThumbnails)
-			}
-			return ImageDownloader.largeThumbnails
+			DownloadedImageCache.maxPixelSize
 		}
 	}
 
-	func observeImageDownloader(_ imageDownloader: ImageDownloader) {
-		NotificationCenter.default.addObserver(self, selector: #selector(handleImageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleImageDownloadDidFail(_:)), name: .imageDownloadDidFail, object: imageDownloader)
-	}
-
-	func decodeAndCacheImage(_ data: Data, url: String, mode: Mode) {
+	func findImage(_ url: String, mode: Mode, activityDetail: String?) {
 		let cacheKey = Self.cacheKey(url, mode)
-		guard !cacheKeysBeingDecoded.contains(cacheKey as String) else {
+		guard !cacheKeysInProgress.contains(cacheKey as String) else {
 			return
 		}
-		cacheKeysBeingDecoded.insert(cacheKey as String)
+		cacheKeysInProgress.insert(cacheKey as String)
 
 		Task {
-			let decodedImage = await Self.decodedImage(data)
-			cacheKeysBeingDecoded.remove(cacheKey as String)
-			guard let decodedImage else {
-				return
+			defer {
+				cacheKeysInProgress.remove(cacheKey as String)
 			}
-			imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
-			NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
+			do throws(ImageDownloadError) {
+				let data = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadLimiter: true, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
+				let decodedImage = try await Self.decodedImage(data, maxPixelSize: Self.maxPixelSize(mode))
+				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
+				NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
+			} catch {
+				if error.rejectedPixelSize != nil {
+					metadataDatabase.recordInsignificantDimensions(url: url)
+				}
+				if !error.isTransient {
+					NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.urlKey: url])
+				}
+			}
 		}
-	}
-
-	/// Decodes now, so drawing the image in the timeline doesn’t decode it on the main thread.
-	@concurrent static func decodedImage(_ data: Data) async -> (image: RSImage, byteCount: Int)? {
-		let options = [kCGImageSourceShouldCacheImmediately: true] as CFDictionary
-		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, options) else {
-			return nil
-		}
-		let byteCount = cgImage.width * cgImage.height * bytesPerPixel
-		#if os(macOS)
-		return (image: NSImage(cgImage: cgImage, size: .zero), byteCount: byteCount)
-		#else
-		return (image: UIImage(cgImage: cgImage), byteCount: byteCount)
-		#endif
 	}
 
 	func providedThumbnailURL(for article: Article, mode: Mode) -> String? {
@@ -312,5 +274,38 @@ private extension ArticleThumbnailFinder {
 			return nil
 		}
 		return URL.encodeSpacesIfNeeded(link)?.absoluteString ?? link
+	}
+}
+
+// MARK: - Decoding
+
+extension ArticleThumbnailFinder {
+
+	/// Decodes now, at display size and in EXIF orientation, so drawing the image in the timeline
+	/// doesn’t decode it on the main thread. Throws when the image is unreadable, too small, or too narrow.
+	@concurrent static func decodedImage(_ data: Data, maxPixelSize: Int) async throws(ImageDownloadError) -> (image: RSImage, byteCount: Int) {
+		guard let pixelSize = RSImage.largestFramePixelSize(data) else {
+			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
+		}
+		guard SignificantImageFilter.hasSignificantDimensions(width: pixelSize.width, height: pixelSize.height) else {
+			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false, rejectedPixelSize: pixelSize)
+		}
+
+		let options: [CFString: Any] = [
+			kCGImageSourceCreateThumbnailWithTransform: true,
+			kCGImageSourceCreateThumbnailFromImageAlways: true,
+			kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+			kCGImageSourceShouldCacheImmediately: true
+		]
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
+			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
+		}
+
+		let byteCount = cgImage.bytesPerRow * cgImage.height
+		#if os(macOS)
+		return (image: NSImage(cgImage: cgImage, size: .zero), byteCount: byteCount)
+		#else
+		return (image: UIImage(cgImage: cgImage), byteCount: byteCount)
+		#endif
 	}
 }

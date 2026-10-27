@@ -11,10 +11,11 @@ import RSCore
 import RSWeb
 import ActivityLog
 
-/// Downloads each image URL once and keeps one copy on disk, shared by every `ImageDownloader`.
+/// Downloads each image URL once and keeps one copy on disk, shared by icons and thumbnails.
 ///
 /// The copy is scaled down to `maxPixelSize`, the largest size anything displays,
-/// or kept as is when it’s already smaller. Each `ImageDownloader` makes its own size from it.
+/// or kept as is when it’s already smaller. `ImageDownloader` and `ArticleThumbnailFinder`
+/// make their own sizes from it.
 /// Requests for a URL that’s already being read or downloaded share that work.
 @MainActor final class DownloadedImageCache {
 

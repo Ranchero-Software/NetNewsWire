@@ -7,6 +7,9 @@
 
 import Foundation
 import Testing
+import CoreGraphics
+import ImageIO
+import UniformTypeIdentifiers
 import Articles
 @testable import Images
 
@@ -66,6 +69,23 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(records.first { $0.articleID == "1" }?.thumbnailURL == "https://example.com/uploads/photo.jpg")
 		#expect(records.first { $0.articleID == "2" }?.thumbnailURL == nil)
 	}
+
+	@Test func thumbnailTooSmallIsRejected() async throws {
+		let smallImageData = try #require(jpegData(width: 48, height: 48))
+
+		await #expect {
+			_ = try await ArticleThumbnailFinder.decodedImage(smallImageData, maxPixelSize: 512)
+		} throws: { error in
+			(error as? ImageDownloadError)?.rejectedPixelSize?.width == 48
+		}
+	}
+
+	@Test func thumbnailIsDecodedInEXIFOrientation() async throws {
+		let rotatedImageData = try #require(jpegData(width: 400, height: 200, orientation: .right))
+
+		let decodedImage = try await ArticleThumbnailFinder.decodedImage(rotatedImageData, maxPixelSize: 512)
+		#expect(decodedImage.image.size == CGSize(width: 200, height: 400))
+	}
 }
 
 // MARK: - Helpers
@@ -73,4 +93,21 @@ private typealias ArticleAttachment = Articles.Attachment
 private func makeArticle(articleID: String = "1", contentHTML: String? = nil, imageURL: String? = nil, thumbnailURL: String? = nil, attachments: [ArticleAttachment]? = nil) -> Article {
 	let status = ArticleStatus(articleID: articleID, read: false, starred: false, dateArrived: Date())
 	return Article(accountID: "account", articleID: articleID, feedID: "feed", uniqueID: articleID, title: nil, contentHTML: contentHTML, contentText: nil, markdown: nil, url: "https://example.com/posts/\(articleID)", externalURL: nil, summary: nil, imageURL: imageURL, thumbnailURL: thumbnailURL, datePublished: nil, dateModified: nil, authors: nil, attachments: attachments, status: status)
+}
+
+private func jpegData(width: Int, height: Int, orientation: CGImagePropertyOrientation = .up) -> Data? {
+	guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else {
+		return nil
+	}
+	context.setFillColor(red: 0.2, green: 0.4, blue: 0.6, alpha: 1)
+	context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+	guard let cgImage = context.makeImage(), let mutableData = CFDataCreateMutable(nil, 0), let destination = CGImageDestinationCreateWithData(mutableData, UTType.jpeg.identifier as CFString, 1, nil) else {
+		return nil
+	}
+	let properties = [kCGImagePropertyOrientation: orientation.rawValue] as CFDictionary
+	CGImageDestinationAddImage(destination, cgImage, properties)
+	guard CGImageDestinationFinalize(destination) else {
+		return nil
+	}
+	return mutableData as Data
 }
