@@ -594,6 +594,7 @@ private struct ImageClickMessage: Codable {
 	let height: Float
 	let imageTitle: String?
 	let imageURL: String
+	let isTimelineImage: Bool // Served from the timeline’s copy
 }
 
 // MARK: Private
@@ -755,12 +756,15 @@ private extension WebViewController {
 
 		imageDownloadTask?.cancel()
 		imageDownloadTask = Task { [weak self] in
-			guard let downloadResponse = try? await Downloader.shared.download(imageURL, userAgentStyle: .browser) else {
-				return
+			var data: Data?
+			if clickMessage.isTimelineImage {
+				data = try? await ArticleThumbnailFinder.shared.fullSizeImageData(url: clickMessage.imageURL, articleTitle: nil)
+			} else {
+				data = try? await Downloader.shared.download(imageURL, userAgentStyle: .browser).data
 			}
 			// A late completion must not present the viewer over a different article
 			// or a returning app.
-			guard !Task.isCancelled, let self, let data = downloadResponse.data, !data.isEmpty,
+			guard !Task.isCancelled, let self, let data, !data.isEmpty,
 				  let image = UIImage(data: data) else {
 				return
 			}

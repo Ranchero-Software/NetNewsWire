@@ -44,7 +44,8 @@ class ImageViewer {
 			width: rect.width,
 			height: rect.height,
 			imageTitle: this.img.title,
-			imageURL: this.img.src,
+			imageURL: this.img.dataset.nnwSrc || this.img.src,
+			isTimelineImage: this.img.hasAttribute("data-nnw-src"),
 		};
 
 		var jsonMessage = JSON.stringify(message);
