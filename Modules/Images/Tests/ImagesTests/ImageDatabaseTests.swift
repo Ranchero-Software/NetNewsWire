@@ -13,7 +13,7 @@ import RSDatabaseObjC
 
 @MainActor @Suite struct ImageDatabaseTests {
 
-	@Test func legacyDatabaseIsImportedAndDeleted() throws {
+	@Test func legacyDatabaseIsImportedAndDeleted() async throws {
 		let folder = FileManager.default.temporaryDirectory.appendingPathComponent("ImageDatabaseTests-\(UUID().uuidString)")
 		try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
 		defer {
@@ -29,6 +29,9 @@ import RSDatabaseObjC
 		#expect(imageDatabase.iconURL(forFeedURL: "https://example.com/feed.xml") == "https://example.com/icon.png")
 		#expect(imageDatabase.recentlyFailed(url: "https://example.com/missing.png"))
 		#expect(!FileManager.default.fileExists(atPath: legacyDatabasePath))
+
+		// Waits for the cleanup init queues, which would otherwise run after the folder is deleted.
+		await imageDatabase.vacuum()
 	}
 }
 
