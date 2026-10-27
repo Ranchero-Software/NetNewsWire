@@ -19,11 +19,7 @@ final class TimelineTableCellView: NSTableCellView {
 	private let feedNameView = TimelineTableCellView.singleLineTextField()
 
 	private lazy var iconView = IconView()
-	private lazy var thumbnailView: ThumbnailView = {
-		let thumbnailView = ThumbnailView()
-		thumbnailView.fitsImage = true
-		return thumbnailView
-	}()
+	private let thumbnailView = ThumbnailView()
 
 	private var starView = TimelineTableCellView.imageView(with: Assets.Images.timelineStar, scaling: .scaleNone)
 
