@@ -117,11 +117,17 @@ private extension DownloadedImageCache {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)
 		}
 
-		let statusCode = (downloadResponse.response as? HTTPURLResponse)?.statusCode
+		let httpResponse = downloadResponse.response as? HTTPURLResponse
+		let statusCode = httpResponse?.statusCode
 		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
-			let storedData = await Self.scaledImageData(data)
-			await Self.saveToDisk(diskCache, key: Self.diskKey(url), data: storedData)
-			return (storedData, downloadResponse)
+			let storedImage = await Self.storedImage(data)
+			await Self.saveToDisk(diskCache, key: Self.diskKey(url), data: storedImage.data)
+			var conditionalGetInfo: HTTPConditionalGetInfo?
+			if let httpResponse {
+				conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
+			}
+			ImageMetadataDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: storedImage.data.count, pixelSize: storedImage.pixelSize, conditionalGetInfo: conditionalGetInfo))
+			return (storedImage.data, downloadResponse)
 		}
 
 		// 2xx with empty / missing body — server said OK but gave us no image bytes.
@@ -140,8 +146,9 @@ private extension DownloadedImageCache {
 	}
 
 	/// Data that ImageIO can’t read, such as SVG, is kept as is, since `RSImage` may still read it.
-	@concurrent static func scaledImageData(_ data: Data) async -> Data {
-		RSImage.scaledImageData(data, maxPixelSize: maxPixelSize, format: .jpeg(compressionQuality: compressionQuality)) ?? data
+	@concurrent static func storedImage(_ data: Data) async -> (data: Data, pixelSize: (width: Int, height: Int)?) {
+		let storedData = RSImage.scaledImageData(data, maxPixelSize: maxPixelSize, format: .jpeg(compressionQuality: compressionQuality)) ?? data
+		return (data: storedData, pixelSize: RSImage.largestFramePixelSize(storedData))
 	}
 
 	@concurrent static func readFromDisk(_ diskCache: BinaryDiskCache, key: String) async -> Data? {

@@ -42,8 +42,8 @@ extension Notification.Name {
 /// by `discoverThumbnailURLs(for:)`, and the results are saved in `ImageMetadataDatabase`,
 /// so each article’s HTML is parsed once.
 ///
-/// URLs that recently failed to download are skipped, so a dead or rejected image
-/// falls through to the next source.
+/// URLs that recently failed to download, and images too small, too narrow, or unreadable
+/// to be thumbnails, are skipped, so they fall through to the next source.
 ///
 /// Images are decoded at display size from `DownloadedImageCache`’s copy, off the main thread.
 @MainActor public final class ArticleThumbnailFinder {
@@ -64,6 +64,7 @@ extension Notification.Name {
 	private var articleIDsBeingDiscovered = Set<String>()
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
 	private var cacheKeysInProgress = Set<String>()
+	private var urlsThatFailedToDecode = Set<String>() // So a failure notification can’t lead to the same attempt again
 
 	/// Decoded bitmaps: about 1 MB each in small mode, 2–5 MB in large mode.
 	private static let imageCacheByteLimit = 128 * 1024 * 1024
@@ -191,8 +192,8 @@ private extension ArticleThumbnailFinder {
 				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
 				NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
 			} catch {
-				if error.rejectedPixelSize != nil {
-					metadataDatabase.recordInsignificantDimensions(url: url)
+				if error.decodingFailed || error.rejectedPixelSize != nil {
+					urlsThatFailedToDecode.insert(url)
 				}
 				if !error.isTransient {
 					NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.urlKey: url])
@@ -222,7 +223,7 @@ private extension ArticleThumbnailFinder {
 	}
 
 	func isUsable(_ urlString: String) -> Bool {
-		SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) && !metadataDatabase.recentlyFailed(url: urlString) && !metadataDatabase.recentlyLackedSignificantDimensions(url: urlString)
+		SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) && !metadataDatabase.recentlyFailed(url: urlString) && !metadataDatabase.isUnsuitableForThumbnail(url: urlString) && !urlsThatFailedToDecode.contains(urlString)
 	}
 
 	func needsHTMLDiscovery(_ article: Article) -> Bool {

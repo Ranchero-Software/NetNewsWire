@@ -10,8 +10,9 @@ import os
 import RSCore
 import RSDatabase
 import RSDatabaseObjC
+import RSParser
 
-/// Per-URL image metadata: discovered URLs and failure tracking.
+/// Per-URL image metadata: discovered URLs, failure tracking, and the copies `DownloadedImageCache` stores.
 /// Also thumbnails found in article HTML, which aren’t loaded into memory at init, since there’s a row per article.
 @MainActor public final class ImageMetadataDatabase {
 
@@ -19,7 +20,6 @@ import RSDatabaseObjC
 
 	public static let failureRetryDays = 5
 	private static let failureRetentionDays = 33
-	private static let insignificantDimensionsKeyPrefix = "insignificantDimensions:" // Can’t collide with an http(s) URL
 
 	public let databasePath: String
 
@@ -31,12 +31,14 @@ import RSDatabaseObjC
 	private var homePagesWithNoFavicon = Set<String>()
 	private var feedURLToIconURL = [String: String]()
 	private var failureDates = [String: Date]()
+	private var urlsUnsuitableForThumbnails = Set<String>()
 
 	private static let tableCreationStatements = """
 	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, statusCode INTEGER, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS articleThumbnail (articleID TEXT PRIMARY KEY NOT NULL, thumbnailURL TEXT, lastChecked REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, byteCount INTEGER NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT);
 	"""
 
 	private convenience init() {
@@ -143,36 +145,44 @@ import RSDatabaseObjC
 		}
 	}
 
-	// MARK: - Insignificant Dimensions
+	// MARK: - DownloadedImage
 
-	// An image too small or too narrow to be a thumbnail may still be a fine feed icon,
-	// so these are kept apart from failures, which every downloader honors.
-
-	public func recentlyLackedSignificantDimensions(url: String) -> Bool {
-		recentlyFailed(url: Self.insignificantDimensionsKey(url))
+	/// True when the stored copy is too small, too narrow, or unreadable by ImageIO.
+	/// It may still be a fine feed icon.
+	public func isUnsuitableForThumbnail(url: String) -> Bool {
+		urlsUnsuitableForThumbnails.contains(url)
 	}
 
-	public func recordInsignificantDimensions(url: String) {
-		recordFailure(url: Self.insignificantDimensionsKey(url), statusCode: nil)
+	func saveDownloadedImage(_ record: DownloadedImageRecord) {
+		if Self.isSuitableForThumbnail(record.pixelSize) {
+			urlsUnsuitableForThumbnails.remove(record.url)
+		} else {
+			urlsUnsuitableForThumbnails.insert(record.url)
+		}
+		queue.runInDatabase { database in
+			DownloadedImageTable.save(record, database: database)
+		}
 	}
 }
 
 private extension ImageMetadataDatabase {
 
-	static func insignificantDimensionsKey(_ url: String) -> String {
-		insignificantDimensionsKeyPrefix + url
+	static func isSuitableForThumbnail(_ pixelSize: (width: Int, height: Int)?) -> Bool {
+		guard let pixelSize else {
+			return false
+		}
+		return SignificantImageFilter.hasSignificantDimensions(width: pixelSize.width, height: pixelSize.height)
 	}
-}
-
-private extension ImageMetadataDatabase {
 
 	func loadCachesFromDatabase() {
 		nonisolated(unsafe) var homePageRecords = [HomePageFaviconRecord]()
 		nonisolated(unsafe) var feedIcons = [String: String]()
 		nonisolated(unsafe) var failures = [String: Date]()
+		nonisolated(unsafe) var pixelSizes = [(url: String, pixelSize: (width: Int, height: Int)?)]()
 		nonisolated(unsafe) var homePageDuration: TimeInterval = 0
 		nonisolated(unsafe) var feedIconDuration: TimeInterval = 0
 		nonisolated(unsafe) var failureDuration: TimeInterval = 0
+		nonisolated(unsafe) var pixelSizeDuration: TimeInterval = 0
 
 		let totalStart = Date()
 		queue.runInDatabaseSync { database in
@@ -187,6 +197,10 @@ private extension ImageMetadataDatabase {
 			stepStart = Date()
 			failures = DownloadFailureTable.fetchAll(database: database)
 			failureDuration = Date().timeIntervalSince(stepStart)
+
+			stepStart = Date()
+			pixelSizes = DownloadedImageTable.fetchPixelSizes(database: database)
+			pixelSizeDuration = Date().timeIntervalSince(stepStart)
 		}
 		let totalDuration = Date().timeIntervalSince(totalStart)
 
@@ -200,7 +214,8 @@ private extension ImageMetadataDatabase {
 		}
 		feedURLToIconURL = feedIcons
 		failureDates = failures
+		urlsUnsuitableForThumbnails = Set(pixelSizes.filter { !Self.isSuitableForThumbnail($0.pixelSize) }.map(\.url))
 
-		Self.logger.info("Initial fetches: homePageFavicon \(homePageRecords.count) rows in \(homePageDuration) seconds, feedIconURL \(feedIcons.count) rows in \(feedIconDuration) seconds, downloadFailure \(failures.count) rows in \(failureDuration) seconds, total \(totalDuration) seconds")
+		Self.logger.info("Initial fetches: homePageFavicon \(homePageRecords.count) rows in \(homePageDuration) seconds, feedIconURL \(feedIcons.count) rows in \(feedIconDuration) seconds, downloadFailure \(failures.count) rows in \(failureDuration) seconds, downloadedImage \(pixelSizes.count) rows in \(pixelSizeDuration) seconds, total \(totalDuration) seconds")
 	}
 }
