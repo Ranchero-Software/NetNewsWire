@@ -31,6 +31,8 @@ import Account
 	}
 
 	static var imageIconScheme = "nnwImageIcon"
+	/// Serves an image from the timeline’s copy. The percent-encoded original URL follows the scheme.
+	static let articleImageScheme = "nnwArticleImage"
 
 	static var blank = Page(name: "blank")
 	static var page = Page(name: "page")
