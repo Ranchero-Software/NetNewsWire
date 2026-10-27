@@ -163,6 +163,30 @@ import RSParser
 			DownloadedImageTable.save(record, database: database)
 		}
 	}
+
+	func saveDownloadedImageAccessDate(url: String) {
+		queue.runInDatabase { database in
+			DownloadedImageTable.saveAccessDate(url: url, database: database)
+		}
+	}
+
+	func fetchDownloadedImageUsageByLeastRecentAccess() async -> [DownloadedImageUsage] {
+		await withCheckedContinuation { continuation in
+			queue.runInDatabase { database in
+				continuation.resume(returning: DownloadedImageTable.fetchUsageByLeastRecentAccess(database: database))
+			}
+		}
+	}
+
+	func deleteDownloadedImages(urls: [String]) {
+		guard !urls.isEmpty else {
+			return
+		}
+		urlsUnsuitableForThumbnails.subtract(urls)
+		queue.runInTransaction { database in
+			DownloadedImageTable.delete(urls: urls, database: database)
+		}
+	}
 }
 
 private extension ImageMetadataDatabase {
