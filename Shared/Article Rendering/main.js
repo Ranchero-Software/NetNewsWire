@@ -69,12 +69,23 @@ function constrainBodyRelativeIframes() {
 	}
 }
 
+// An image served from the timeline’s copy falls back to its original URL when the copy can’t be loaded.
+// Registered at document start, and capturing, since error events don’t bubble.
+document.addEventListener("error", event => {
+	const element = event.target;
+	if (element instanceof HTMLImageElement && element.hasAttribute("data-nnw-src")) {
+		const originalSrc = element.getAttribute("data-nnw-src");
+		element.removeAttribute("data-nnw-src");
+		element.src = originalSrc;
+	}
+}, true);
+
 // Convert all Feedbin proxy images to be used as src, otherwise change image locations to be absolute if not already
 function convertImgSrc() {
 	document.querySelectorAll("img").forEach(element => {
 		if (element.hasAttribute("data-canonical-src")) {
 			element.src = element.getAttribute("data-canonical-src")
-		} else if (!/^[a-z]+\:\/\//i.test(element.src)) {
+		} else if (!element.hasAttribute("data-nnw-src") && !/^[a-z]+\:\/\//i.test(element.src)) {
 			element.src = new URL(element.src, document.baseURI).href;
 		}
 	});

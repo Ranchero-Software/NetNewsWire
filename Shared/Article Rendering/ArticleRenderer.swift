@@ -11,8 +11,10 @@ import Foundation
 import UIKit
 #endif
 import RSCore
+import RSParser
 import Articles
 import Account
+import Images
 
 @MainActor struct ArticleRenderer {
 
@@ -262,7 +264,12 @@ private extension ArticleRenderer {
 		}
 
 		// Templates without [[enclosures]] get them at the end of the body.
-		let enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, imageURL: article.imageLink ?? article.thumbnailLink)
+		var enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, imageURL: article.imageLink ?? article.thumbnailLink)
+		var body = body
+		if let thumbnailMode = AppDefaults.timelineThumbnailsDisplay.thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
+			body = Self.routingThumbnailImages(body, thumbnailURL: thumbnailURL, baseURL: baseURL)
+			enclosures = Self.routingThumbnailImages(enclosures, thumbnailURL: thumbnailURL, baseURL: baseURL)
+		}
 		if template().contains("[[enclosures]]") {
 			d["body"] = body
 			d["enclosures"] = enclosures
@@ -310,6 +317,17 @@ private extension ArticleRenderer {
 		d["time_short"] = Self.shortTimeFormatter.string(from: datePublished)
 
 		return d
+	}
+
+	/// Points the `<img>`s that show the article’s timeline thumbnail at `articleImageScheme`,
+	/// so the article view uses the timeline’s copy instead of downloading the image again.
+	/// `data-nnw-src` keeps the original URL, which main.js falls back to when the copy can’t be loaded.
+	static func routingThumbnailImages(_ html: String, thumbnailURL: String, baseURL: String?) -> String {
+		guard let encodedURL = thumbnailURL.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else {
+			return html
+		}
+		let attributes = " src=\"\(articleImageScheme):\(encodedURL)\" data-nnw-src=\"\(thumbnailURL.escapingSpecialXMLCharacters)\""
+		return HTMLImageAttributeInserter.insertingAttributes(attributes, intoImagesWithSource: thumbnailURL, html: html, baseURL: baseURL)
 	}
 
 	func byline() -> String {
