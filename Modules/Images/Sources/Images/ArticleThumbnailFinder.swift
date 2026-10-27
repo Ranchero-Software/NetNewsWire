@@ -122,12 +122,12 @@ extension Notification.Name {
 			articleIDsWithNoHTMLThumbnail.removeAll()
 		}
 
-		let articlesToCheck = articles.filter(needsHTMLDiscovery)
-		guard !articlesToCheck.isEmpty else {
+		let articleHTMLs = articles.filter(needsHTMLDiscovery).compactMap(ArticleHTML.init)
+		guard !articleHTMLs.isEmpty else {
 			return
 		}
 
-		let articleIDs = articlesToCheck.map(\.articleID)
+		let articleIDs = articleHTMLs.map(\.articleID)
 		articleIDsBeingDiscovered.formUnion(articleIDs)
 		defer {
 			articleIDsBeingDiscovered.subtract(articleIDs)
@@ -136,10 +136,10 @@ extension Notification.Name {
 		let savedRecords = await metadataDatabase.fetchArticleThumbnails(articleIDs: articleIDs)
 		cacheRecords(savedRecords)
 
-		let articleHTMLs = articlesToCheck.filter { !isCached($0.articleID) }.compactMap(ArticleHTML.init)
+		let articleHTMLsToParse = articleHTMLs.filter { !isCached($0.articleID) }
 		var parsedRecords = [ArticleThumbnailRecord]()
-		if !articleHTMLs.isEmpty {
-			parsedRecords = await Self.parseThumbnailURLs(articleHTMLs)
+		if !articleHTMLsToParse.isEmpty {
+			parsedRecords = await Self.parseThumbnailURLs(articleHTMLsToParse)
 			cacheRecords(parsedRecords)
 			metadataDatabase.saveArticleThumbnails(parsedRecords)
 		}
