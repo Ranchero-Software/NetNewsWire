@@ -940,7 +940,30 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	private func noteHeightOfAllRows() {
-		tableView.noteHeightOfRows(withIndexesChanged: IndexSet(integersIn: 0..<tableView.numberOfRows))
+		noteHeightOfRowsKeepingScrollPosition(IndexSet(integersIn: 0..<tableView.numberOfRows))
+	}
+
+	/// Keeps the top visible row in place when rows above it change height.
+	private func noteHeightOfRowsKeepingScrollPosition(_ rowIndexes: IndexSet) {
+		guard let scrollView = tableView.enclosingScrollView else {
+			tableView.noteHeightOfRows(withIndexesChanged: rowIndexes)
+			return
+		}
+		let clipView = scrollView.contentView
+		let topY = clipView.bounds.minY
+		let topRow = tableView.row(at: NSPoint(x: 0, y: max(topY, 0)))
+		guard topRow > 0, let firstChangedRow = rowIndexes.first, firstChangedRow < topRow else {
+			tableView.noteHeightOfRows(withIndexesChanged: rowIndexes)
+			return
+		}
+
+		let offsetIntoTopRow = topY - tableView.rect(ofRow: topRow).minY
+		NSAnimationContext.runAnimationGroup { context in
+			context.duration = 0
+			tableView.noteHeightOfRows(withIndexesChanged: rowIndexes)
+		}
+		clipView.scroll(to: NSPoint(x: clipView.bounds.minX, y: tableView.rect(ofRow: topRow).minY + offsetIntoTopRow))
+		scrollView.reflectScrolledClipView(clipView)
 	}
 
 	@objc func fetchAndMergeArticles() {
@@ -1384,7 +1407,7 @@ private extension TimelineViewController {
 			articleIDsWithNoThumbnail.remove(articleID)
 		}
 		if usesLargeThumbnailRows {
-			tableView.noteHeightOfRows(withIndexesChanged: indexesForArticleIDs(articleIDs))
+			noteHeightOfRowsKeepingScrollPosition(indexesForArticleIDs(articleIDs))
 		}
 		reloadVisibleCells(for: articleIDs)
 	}
