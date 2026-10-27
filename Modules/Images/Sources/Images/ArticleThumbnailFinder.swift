@@ -105,6 +105,13 @@ extension Notification.Name {
 		findImage(url, mode: mode, downloadPriority: .prefetch, activityDetail: articleTitle)
 	}
 
+	/// The image as downloaded, for the article view, which shows the thumbnail image at full size.
+	/// Shares the timeline’s copy and any download in progress, so the image is downloaded once.
+	/// A download starts right away rather than waiting behind timeline downloads.
+	public func fullSizeImageData(url: String, articleTitle: String?) async throws(ImageDownloadError) -> Data {
+		try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: nil, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: articleTitle)
+	}
+
 	/// Nil when the article has no usable image, or when its HTML hasn’t been checked yet.
 	public func thumbnailURL(for article: Article, mode: Mode) -> String? {
 		if let providedThumbnailURL = providedThumbnailURL(for: article, mode: mode) {
