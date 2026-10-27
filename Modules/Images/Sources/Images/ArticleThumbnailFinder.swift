@@ -83,27 +83,24 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
+	/// `url` is from `thumbnailURL(for:mode:)`. `articleTitle` is shown in the activity log.
 	/// Nil when the image isn’t ready. Starts a download when needed and posts
 	/// `.articleThumbnailDidBecomeAvailable` once the image is ready.
-	public func thumbnail(for article: Article, mode: Mode) -> RSImage? {
-		guard let url = thumbnailURL(for: article, mode: mode) else {
-			return nil
-		}
+	public func thumbnail(url: String, mode: Mode, articleTitle: String?) -> RSImage? {
 		if let image = imageCache.object(forKey: Self.cacheKey(url, mode)) {
 			return image
 		}
-
-		findImage(url, mode: mode, downloadPriority: .visible, activityDetail: article.title)
+		findImage(url, mode: mode, downloadPriority: .visible, activityDetail: articleTitle)
 		return nil
 	}
 
-	/// Gets the thumbnail ready for an article expected to be shown soon.
+	/// Gets a thumbnail ready for an article expected to be shown soon.
 	/// Its download waits behind thumbnails being shown now.
-	public func prefetchThumbnail(for article: Article, mode: Mode) {
-		guard let url = thumbnailURL(for: article, mode: mode), imageCache.object(forKey: Self.cacheKey(url, mode)) == nil else {
+	public func prefetchThumbnail(url: String, mode: Mode, articleTitle: String?) {
+		guard imageCache.object(forKey: Self.cacheKey(url, mode)) == nil else {
 			return
 		}
-		findImage(url, mode: mode, downloadPriority: .prefetch, activityDetail: article.title)
+		findImage(url, mode: mode, downloadPriority: .prefetch, activityDetail: articleTitle)
 	}
 
 	/// Nil when the article has no usable image, or when its HTML hasn’t been checked yet.

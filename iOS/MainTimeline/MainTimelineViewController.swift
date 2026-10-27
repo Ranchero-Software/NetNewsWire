@@ -981,9 +981,9 @@ private extension MainTimelineViewController {
 		let showIcon = showIcons && iconImage != nil
 		var thumbnail: UIImage?
 		var showThumbnail = false
-		if let thumbnailMode, thumbnailURL(for: article) != nil {
+		if let thumbnailMode, let thumbnailURL = thumbnailURL(for: article) {
 			showThumbnail = true
-			thumbnail = ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode)
+			thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 		}
 		let cellData = MainTimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcon, numberOfLines: numberOfTextLines, iconSize: iconSize, thumbnail: thumbnail, showThumbnail: showThumbnail, thumbnailsDisplay: thumbnailsDisplay)
 		return cellData
@@ -1153,8 +1153,8 @@ private extension MainTimelineViewController {
 		thumbnailLookaheadItems = lookaheadItems
 
 		for item in lookaheadItems {
-			if let article = dataSource.itemIdentifier(for: IndexPath(item: item, section: section)) {
-				ArticleThumbnailFinder.shared.prefetchThumbnail(for: article, mode: thumbnailMode)
+			if let article = dataSource.itemIdentifier(for: IndexPath(item: item, section: section)), let thumbnailURL = thumbnailURL(for: article) {
+				ArticleThumbnailFinder.shared.prefetchThumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 			}
 		}
 	}

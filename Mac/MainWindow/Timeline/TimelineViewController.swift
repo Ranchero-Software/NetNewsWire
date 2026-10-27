@@ -1132,8 +1132,12 @@ extension TimelineViewController: NSTableViewDelegate {
 	private func configureTimelineCell(_ cell: TimelineTableCellView, article: Article) {
 		cell.objectValue = article
 		let iconImage = article.iconImage()
-		let showThumbnail = showsThumbnails && thumbnailURL(for: article) != nil
-		let thumbnail = showThumbnail ? ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode) : nil
+		var thumbnail: NSImage?
+		var showThumbnail = false
+		if showsThumbnails, let thumbnailURL = thumbnailURL(for: article) {
+			showThumbnail = true
+			thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+		}
 		cell.cellData = TimelineCellData(article: article, showFeedName: showFeedNames, feedName: article.feed?.nameForDisplay, byline: article.byline(), iconImage: iconImage, showIcon: showIcons, thumbnail: thumbnail, showThumbnail: showThumbnail)
 	}
 
@@ -1462,8 +1466,8 @@ private extension TimelineViewController {
 		thumbnailLookaheadRows = lookaheadRows
 
 		for row in lookaheadRows {
-			if let article = articles.articleAtRow(row) {
-				ArticleThumbnailFinder.shared.prefetchThumbnail(for: article, mode: thumbnailMode)
+			if let article = articles.articleAtRow(row), let thumbnailURL = thumbnailURL(for: article) {
+				ArticleThumbnailFinder.shared.prefetchThumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 			}
 		}
 	}
