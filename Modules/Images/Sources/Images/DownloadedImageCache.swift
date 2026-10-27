@@ -36,6 +36,8 @@ import ActivityLog
 	private static let folderName = "DownloadedImages"
 	nonisolated private static let compressionQuality = 0.8
 	private static let maximumConcurrentLimitedDownloads = 4
+	/// A few screens of thumbnails.
+	private static let maximumWaitingLimitedDownloads = 60
 
 	#if os(macOS)
 	private static let limit = ByteLimit(maximumByteCount: 300 * 1024 * 1024)
@@ -60,7 +62,7 @@ import ActivityLog
 	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "DownloadedImageCache")
 
 	private let diskCache: BinaryDiskCache
-	private let downloadLimiter = DownloadLimiter(maximumConcurrentDownloads: maximumConcurrentLimitedDownloads)
+	private let downloadLimiter = DownloadLimiter(maximumConcurrentDownloads: maximumConcurrentLimitedDownloads, maximumWaitingDownloads: maximumWaitingLimitedDownloads)
 	private var tasks = [String: Task<Result<Data, ImageDownloadError>, Never>]() // url: task
 	private var totalByteCount: Int? // Nil while a removal pass counts it
 	private var removalByteCount = limit.maximumByteCount // A save that takes the total over this starts a pass
@@ -102,10 +104,9 @@ private extension DownloadedImageCache {
 		}
 
 		if usesDownloadLimiter {
-			guard downloadLimiter.networkAllowsDownloads else {
+			guard downloadLimiter.networkAllowsDownloads, await downloadLimiter.waitForTurn() else {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			}
-			await downloadLimiter.waitForTurn()
 		}
 		let result = await downloadImageFromNetwork(url, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 		if usesDownloadLimiter {
@@ -205,19 +206,14 @@ private extension DownloadedImageCache {
 
 	// MARK: - Revalidating Images
 
-	/// Waits behind other downloads using the download limiter.
+	/// Doesn’t use the download limiter, since icons aren’t limited either.
 	/// A network error leaves `nextCheck` as is, so the next day’s use tries again.
 	func revalidateIfDue(_ url: String) async {
 		guard let validation = await ImageMetadataDatabase.shared.fetchDownloadedImageValidation(url: url), validation.nextCheck <= Date() else {
 			return
 		}
-		guard let imageURL = URL(string: url), downloadLimiter.networkAllowsDownloads else {
+		guard let imageURL = URL(string: url) else {
 			return
-		}
-
-		await downloadLimiter.waitForTurn()
-		defer {
-			downloadLimiter.downloadDidFinish()
 		}
 
 		var urlRequest = URLRequest(url: imageURL)
