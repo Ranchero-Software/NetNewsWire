@@ -23,6 +23,14 @@ public enum HTMLImageParser {
 		scanner.parse(Array(parserData.data))
 		return delegate.images
 	}
+
+	/// Nil for an empty string or a `data:` URL.
+	static func resolvedURLString(_ urlString: String?, baseURL: URL?) -> String? {
+		guard let urlString = urlString?.trimmingCharacters(in: .whitespacesAndNewlines), !urlString.isEmpty, !urlString.lowercased().hasPrefix("data:") else {
+			return nil
+		}
+		return URL(string: urlString, relativeTo: baseURL)?.absoluteString
+	}
 }
 
 // MARK: - Delegate
@@ -96,12 +104,8 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		return sources.compactMap(resolvedURLString)
 	}
 
-	/// Nil for an empty string or a `data:` URL.
 	private func resolvedURLString(_ urlString: String?) -> String? {
-		guard let urlString = urlString?.trimmingCharacters(in: .whitespacesAndNewlines), !urlString.isEmpty, !urlString.lowercased().hasPrefix("data:") else {
-			return nil
-		}
-		return URL(string: urlString, relativeTo: baseURL)?.absoluteString
+		HTMLImageParser.resolvedURLString(urlString, baseURL: baseURL)
 	}
 
 	/// The URL with the largest width (`640w`) or density (`2x`) descriptor. A candidate with no descriptor counts as `1x`.
