@@ -47,14 +47,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 	/// Nil when the timeline doesn’t show thumbnails.
 	private var thumbnailMode: ArticleThumbnailFinder.Mode? {
-		switch thumbnailsDisplay {
-		case .small:
-			.small
-		case .large:
-			.large
-		case .none:
-			nil
-		}
+		thumbnailsDisplay.thumbnailMode
 	}
 
 	private var currentArticle: Article? {

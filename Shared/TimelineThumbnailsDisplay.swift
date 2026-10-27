@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Images
 
 extension Notification.Name {
 	static let timelineThumbnailsDisplayDidChange = Notification.Name("TimelineThumbnailsDisplayDidChangeNotification")
@@ -25,6 +26,18 @@ enum TimelineThumbnailsDisplay: Int, CaseIterable, CustomStringConvertible {
 			NSLocalizedString("Large", comment: "Large")
 		case .none:
 			NSLocalizedString("None", comment: "None")
+		}
+	}
+
+	/// Nil when the timeline doesn’t show thumbnails.
+	var thumbnailMode: ArticleThumbnailFinder.Mode? {
+		switch self {
+		case .small:
+			.small
+		case .large:
+			.large
+		case .none:
+			nil
 		}
 	}
 }
