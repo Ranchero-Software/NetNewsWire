@@ -64,7 +64,7 @@ private extension SingleFaviconDownloader {
 	func findFavicon() async {
 		do throws(ImageDownloadError) {
 			let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
-			let storedData = try await DownloadedImageCache.shared.imageData(for: faviconURL, usesDownloadLimiter: false, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL)
+			let storedData = try await DownloadedImageCache.shared.imageData(for: faviconURL, downloadPriority: nil, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL)
 			guard let image = await Self.iconImage(storedData, maxPixelSize: RSImage.maxIconPixelSize) else {
 				throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
 			}

@@ -1418,7 +1418,7 @@ private extension TimelineViewController {
 	}
 
 	/// Starts thumbnail downloads for the screenful of rows below the visible rows.
-	/// Visible rows start their own downloads when their cells are configured.
+	/// They wait behind visible rows, which start their own downloads when their cells are configured.
 	func prefetchThumbnailsForNextScreen() {
 		guard showsThumbnails else {
 			return
@@ -1438,7 +1438,7 @@ private extension TimelineViewController {
 
 		for row in lookaheadRows {
 			if let article = articles.articleAtRow(row) {
-				_ = ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode)
+				ArticleThumbnailFinder.shared.prefetchThumbnail(for: article, mode: thumbnailMode)
 			}
 		}
 	}

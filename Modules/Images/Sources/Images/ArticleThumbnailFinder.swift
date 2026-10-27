@@ -89,8 +89,17 @@ extension Notification.Name {
 			return image
 		}
 
-		findImage(url, mode: mode, activityDetail: article.title)
+		findImage(url, mode: mode, downloadPriority: .visible, activityDetail: article.title)
 		return nil
+	}
+
+	/// Gets the thumbnail ready for an article expected to be shown soon.
+	/// Its download waits behind thumbnails being shown now.
+	public func prefetchThumbnail(for article: Article, mode: Mode) {
+		guard let url = thumbnailURL(for: article, mode: mode), imageCache.object(forKey: Self.cacheKey(url, mode)) == nil else {
+			return
+		}
+		findImage(url, mode: mode, downloadPriority: .prefetch, activityDetail: article.title)
 	}
 
 	/// Nil when the article has no usable image, or when its HTML hasn’t been checked yet.
@@ -175,9 +184,12 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
-	func findImage(_ url: String, mode: Mode, activityDetail: String?) {
+	func findImage(_ url: String, mode: Mode, downloadPriority: DownloadPriority, activityDetail: String?) {
 		let cacheKey = Self.cacheKey(url, mode)
 		guard !cacheKeysInProgress.contains(cacheKey as String) else {
+			if downloadPriority == .visible {
+				DownloadedImageCache.shared.prioritizeDownload(for: url)
+			}
 			return
 		}
 		cacheKeysInProgress.insert(cacheKey as String)
@@ -187,7 +199,7 @@ private extension ArticleThumbnailFinder {
 				cacheKeysInProgress.remove(cacheKey as String)
 			}
 			do throws(ImageDownloadError) {
-				let data = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadLimiter: true, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
+				let data = try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: downloadPriority, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
 				let decodedImage = try await Self.decodedImage(data, maxPixelSize: Self.maxPixelSize(mode))
 				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
 				NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])

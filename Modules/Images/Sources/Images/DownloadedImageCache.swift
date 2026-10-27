@@ -77,39 +77,48 @@ import ActivityLog
 		}
 	}
 
-	/// The stored copy, read from disk or downloaded. Downloads that use the download limiter
-	/// wait their turn, and don’t start when offline or in Low Data Mode.
+	/// The stored copy, read from disk or downloaded. With a `downloadPriority`, a download
+	/// waits its turn in the download limiter, and doesn’t start when offline or in Low Data Mode.
+	/// Without one, it starts right away.
 	/// Activity log fires only when the request reaches the network.
-	func imageData(for url: String, usesDownloadLimiter: Bool, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async throws(ImageDownloadError) -> Data {
+	func imageData(for url: String, downloadPriority: DownloadPriority?, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async throws(ImageDownloadError) -> Data {
 		if let task = tasks[url] {
+			if downloadPriority == .visible {
+				prioritizeDownload(for: url)
+			}
 			return try await task.value.get()
 		}
 
 		let task = Task {
-			await findImage(url, usesDownloadLimiter: usesDownloadLimiter, checksForUpdates: checksForUpdates, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
+			await findImage(url, downloadPriority: downloadPriority, checksForUpdates: checksForUpdates, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 		}
 		tasks[url] = task
 		let result = await task.value
 		tasks[url] = nil
 		return try result.get()
 	}
+
+	/// Moves a waiting download to the front, for an image that just became visible.
+	func prioritizeDownload(for url: String) {
+		downloadLimiter.prioritize(key: url)
+	}
 }
 
 private extension DownloadedImageCache {
 
-	func findImage(_ url: String, usesDownloadLimiter: Bool, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
+	func findImage(_ url: String, downloadPriority: DownloadPriority?, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
 		if let data = await Self.readFromDisk(diskCache, key: Self.diskKey(url)) {
 			imageWasRead(url, checksForUpdates: checksForUpdates)
 			return .success(data)
 		}
 
-		if usesDownloadLimiter {
-			guard downloadLimiter.networkAllowsDownloads, await downloadLimiter.waitForTurn() else {
+		if let downloadPriority {
+			guard downloadLimiter.networkAllowsDownloads, await downloadLimiter.waitForTurn(key: url, priority: downloadPriority) else {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			}
 		}
 		let result = await downloadImageFromNetwork(url, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
-		if usesDownloadLimiter {
+		if downloadPriority != nil {
 			downloadLimiter.downloadDidFinish()
 		}
 		return result

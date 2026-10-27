@@ -25,6 +25,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private var thumbnailURLCache = [String: String]() // articleID: thumbnailURL
 	private var articleIDsWithNoThumbnail = Set<String>()
 	private var articleIDsToReload = Set<String>()
+	private var thumbnailLookaheadItems: Range<Int>? // Items most recently prefetched by prefetchThumbnailsForNextScreen
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var nextUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(nextUnread(_:)))
@@ -201,7 +202,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 		assert(dataSource != nil)
 		configureCollectionView(dataSource!)
-		collectionView?.prefetchDataSource = self
 
 		configureSearchController()
 		definesPresentationContext = true
@@ -572,6 +572,10 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 // MARK: - UICollectionViewDelegate
 
 extension MainTimelineViewController: UICollectionViewDelegate {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
+		prefetchThumbnailsForNextScreen()
+	}
+
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		if let dataSource {
@@ -1123,6 +1127,36 @@ private extension MainTimelineViewController {
 	func clearThumbnailURLCache() {
 		thumbnailURLCache.removeAll()
 		articleIDsWithNoThumbnail.removeAll()
+		thumbnailLookaheadItems = nil
+	}
+
+	/// Requests thumbnails for the screen below the visible rows. They download behind visible thumbnails.
+	func prefetchThumbnailsForNextScreen() {
+		guard let thumbnailMode, let collectionView, let dataSource else {
+			return
+		}
+		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
+		guard let lastVisibleIndexPath = visibleIndexPaths.max() else {
+			return
+		}
+		let section = lastVisibleIndexPath.section
+		let start = lastVisibleIndexPath.item + 1
+		let end = min(start + visibleIndexPaths.count, collectionView.numberOfItems(inSection: section))
+		guard start < end else {
+			return
+		}
+
+		let lookaheadItems = start..<end
+		guard lookaheadItems != thumbnailLookaheadItems else {
+			return
+		}
+		thumbnailLookaheadItems = lookaheadItems
+
+		for item in lookaheadItems {
+			if let article = dataSource.itemIdentifier(for: IndexPath(item: item, section: section)) {
+				ArticleThumbnailFinder.shared.prefetchThumbnail(for: article, mode: thumbnailMode)
+			}
+		}
 	}
 
 	/// Recalculates thumbnail URLs and reloads the visible cells for those articles.
@@ -1152,23 +1186,6 @@ private extension MainTimelineViewController {
 			return []
 		}
 		return collectionView.indexPathsForVisibleItems.compactMap { dataSource.itemIdentifier(for: $0) }
-	}
-}
-
-// MARK: - UICollectionViewDataSourcePrefetching
-
-extension MainTimelineViewController: UICollectionViewDataSourcePrefetching {
-
-	/// Starts thumbnail downloads before cells scroll into view.
-	func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-		guard let thumbnailMode, let dataSource else {
-			return
-		}
-		for indexPath in indexPaths {
-			if let article = dataSource.itemIdentifier(for: indexPath), thumbnailURL(for: article) != nil {
-				_ = ArticleThumbnailFinder.shared.thumbnail(for: article, mode: thumbnailMode)
-			}
-		}
 	}
 }
 
