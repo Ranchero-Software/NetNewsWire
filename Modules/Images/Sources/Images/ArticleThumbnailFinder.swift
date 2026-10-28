@@ -75,7 +75,7 @@ extension Notification.Name {
 	/// HTML images saved per article, so one that fails or is too small falls through to the next.
 	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
 	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, a few hundred bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
-	private static let maxCachedArticleCount = 20_000
+	private static let maxCachedArticleCount = 50_000
 
 	init(imageDatabase: ImageDatabase) {
 		self.imageDatabase = imageDatabase
