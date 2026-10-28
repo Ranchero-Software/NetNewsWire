@@ -147,6 +147,26 @@ public extension RSImage {
 		return (width: largestFrame.width, height: largestFrame.height)
 	}
 
+	/// Index and pixel dimensions of the largest frame, read from the image header without decoding.
+	static func largestFrame(in imageSource: CGImageSource) -> (index: Int, width: Int, height: Int)? {
+		var largest: (index: Int, width: Int, height: Int)?
+
+		for i in 0..<CGImageSourceGetCount(imageSource) {
+			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
+				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
+				  let height = properties[kCGImagePropertyPixelHeight] as? Int,
+				  width > 0, height > 0 else {
+				continue
+			}
+			if let largest, max(largest.width, largest.height) >= max(width, height) {
+				continue
+			}
+			largest = (index: i, width: width, height: height)
+		}
+
+		return largest
+	}
+
 	/// Scales image data down to maxPixelSize and returns the result encoded in `format`.
 	/// If the image is a single frame already at or below maxPixelSize, returns
 	/// the original data unchanged. For multi-image sources (like ICO), extracts
@@ -211,25 +231,6 @@ public extension RSImage {
 }
 
 private extension RSImage {
-
-	static func largestFrame(in imageSource: CGImageSource) -> (index: Int, width: Int, height: Int)? {
-		var largest: (index: Int, width: Int, height: Int)?
-
-		for i in 0..<CGImageSourceGetCount(imageSource) {
-			guard let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, i, nil) as NSDictionary?,
-				  let width = properties[kCGImagePropertyPixelWidth] as? Int,
-				  let height = properties[kCGImagePropertyPixelHeight] as? Int,
-				  width > 0, height > 0 else {
-				continue
-			}
-			if let largest, max(largest.width, largest.height) >= max(width, height) {
-				continue
-			}
-			largest = (index: i, width: width, height: height)
-		}
-
-		return largest
-	}
 
 	static func destinationTypeAndProperties(_ format: ScaledImageFormat, _ cgImage: CGImage) -> (UTType, [CFString: Any]?) {
 		switch format {
