@@ -9,6 +9,11 @@ import Foundation
 import Network
 import Synchronization
 
+extension Notification.Name {
+	/// Posted on the main thread when `isConnected` or `isConstrained` changes.
+	public static let networkStatusDidChange = Notification.Name("NetworkStatusDidChange")
+}
+
 nonisolated public final class NetworkMonitor: Sendable {
 	public static let shared = NetworkMonitor()
 
@@ -68,11 +73,20 @@ nonisolated public final class NetworkMonitor: Sendable {
 	}
 
 	private func updateStatus(with path: NWPath) {
-		state.withLock { state in
-			state.isConnected = path.status == .satisfied
+		let statusDidChange = state.withLock { state in
+			let isConnected = path.status == .satisfied
+			let statusDidChange = isConnected != (state.isConnected ?? true) || path.isConstrained != state.isConstrained
+			state.isConnected = isConnected
 			state.connectionType = path.availableInterfaces.first?.type
 			state.isExpensive = path.isExpensive
 			state.isConstrained = path.isConstrained
+			return statusDidChange
+		}
+		guard statusDidChange else {
+			return
+		}
+		Task { @MainActor in
+			NotificationCenter.default.post(name: .networkStatusDidChange, object: self)
 		}
 	}
 }
