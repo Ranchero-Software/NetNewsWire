@@ -44,7 +44,7 @@ final class ArticlePreviewViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme)
+		let rendering = ArticleRenderer.articleHTML(article: article, theme: ArticleThemesManager.shared.currentTheme, routesThumbnailImages: true)
 		let html = ArticleRenderer.pageHTML(rendering, windowScrollY: 0)
 		webView?.loadHTMLString(html, baseURL: URL(string: rendering.baseURL))
 	}

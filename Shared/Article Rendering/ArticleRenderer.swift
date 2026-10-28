@@ -45,6 +45,7 @@ import Images
 	private let title: String
 	private let body: String
 	private let baseURL: String?
+	private let routesThumbnailImages: Bool
 
 	private static let longDateTimeFormatter: DateFormatter = {
 		let formatter = DateFormatter()
@@ -109,10 +110,11 @@ import Images
 		return formatter
 	}()
 
-	private init(article: Article?, extractedArticle: ExtractedArticle?, theme: ArticleTheme) {
+	private init(article: Article?, extractedArticle: ExtractedArticle?, theme: ArticleTheme, routesThumbnailImages: Bool = false) {
 		self.article = article
 		self.extractedArticle = extractedArticle
 		self.articleTheme = theme
+		self.routesThumbnailImages = routesThumbnailImages
 		self.title = ArticleStringFormatter.sanitizedTitle(article?.title, forHTML: true) ?? ""
 
 		var articleBody: String
@@ -140,8 +142,9 @@ import Images
 
 	// MARK: - API
 
-	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme) -> Rendering {
-		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme)
+	/// `routesThumbnailImages` points the thumbnail’s `<img>`s at `articleImageScheme`, which only a web view with `ArticleImageSchemeHandler` can load.
+	static func articleHTML(article: Article, extractedArticle: ExtractedArticle? = nil, theme: ArticleTheme, routesThumbnailImages: Bool = false) -> Rendering {
+		let renderer = ArticleRenderer(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: routesThumbnailImages)
 		return (renderer.articleCSS, renderer.articleHTML, renderer.title, renderer.baseURL ?? "")
 	}
 
@@ -266,7 +269,7 @@ private extension ArticleRenderer {
 		// Templates without [[enclosures]] get them at the end of the body.
 		var enclosures = Self.enclosuresHTML(attachments: article.attachments, body: body, imageURL: article.imageLink ?? article.thumbnailLink)
 		var body = body
-		if let thumbnailMode = AppDefaults.timelineThumbnailsDisplay.thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
+		if routesThumbnailImages, let thumbnailMode = AppDefaults.timelineThumbnailsDisplay.thumbnailMode, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			body = Self.routingThumbnailImages(body, thumbnailURL: thumbnailURL, baseURL: baseURL)
 			enclosures = Self.routingThumbnailImages(enclosures, thumbnailURL: thumbnailURL, baseURL: baseURL)
 		}

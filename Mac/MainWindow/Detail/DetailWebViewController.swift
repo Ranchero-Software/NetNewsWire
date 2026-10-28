@@ -378,10 +378,10 @@ private extension DetailWebViewController {
 			rendering = ArticleRenderer.loadingHTML(theme: theme)
 		case .article(let article, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme, routesThumbnailImages: true)
 		case .extracted(let article, let extractedArticle, _):
 			detailIconSchemeHandler.currentArticle = article
-			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
+			rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: true)
 		}
 
 		let substitutions = [

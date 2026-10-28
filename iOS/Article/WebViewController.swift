@@ -680,15 +680,15 @@ private extension WebViewController {
 		if let articleExtractor = articleExtractor, articleExtractor.state == .processing {
 			rendering = ArticleRenderer.loadingHTML(theme: theme)
 		} else if let articleExtractor = articleExtractor, articleExtractor.state == .failedToParse, let article = article {
-			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme, routesThumbnailImages: true)
 		} else if let article = article, let extractedArticle = extractedArticle {
 			if isShowingExtractedArticle {
-				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme)
+				rendering = ArticleRenderer.articleHTML(article: article, extractedArticle: extractedArticle, theme: theme, routesThumbnailImages: true)
 			} else {
-				rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
+				rendering = ArticleRenderer.articleHTML(article: article, theme: theme, routesThumbnailImages: true)
 			}
 		} else if let article = article {
-			rendering = ArticleRenderer.articleHTML(article: article, theme: theme)
+			rendering = ArticleRenderer.articleHTML(article: article, theme: theme, routesThumbnailImages: true)
 		} else {
 			rendering = ArticleRenderer.noSelectionHTML(theme: theme)
 		}
