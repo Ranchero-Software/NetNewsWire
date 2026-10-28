@@ -313,12 +313,13 @@ extension ArticleThumbnailFinder {
 
 	/// Decodes now, at display size and in EXIF orientation, so drawing the image in the timeline
 	/// doesn’t decode it on the main thread. Throws when the image is unreadable, too small, or too narrow.
+	/// For a multi-image file such as ICO, the largest frame is the one checked and decoded.
 	@concurrent static func decodedImage(_ data: Data, maxPixelSize: Int) async throws(ImageDownloadError) -> (image: RSImage, byteCount: Int) {
-		guard let pixelSize = RSImage.largestFramePixelSize(data) else {
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = RSImage.largestFrame(in: imageSource) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
 		}
-		guard SignificantImageFilter.hasSignificantDimensions(width: pixelSize.width, height: pixelSize.height) else {
-			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false, rejectedPixelSize: pixelSize)
+		guard SignificantImageFilter.hasSignificantDimensions(width: largestFrame.width, height: largestFrame.height) else {
+			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false, rejectedPixelSize: (width: largestFrame.width, height: largestFrame.height))
 		}
 
 		let options: [CFString: Any] = [
@@ -327,7 +328,7 @@ extension ArticleThumbnailFinder {
 			kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
 			kCGImageSourceShouldCacheImmediately: true
 		]
-		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, options as CFDictionary) else {
+		guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestFrame.index, options as CFDictionary) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
 		}
 
