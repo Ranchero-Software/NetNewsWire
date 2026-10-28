@@ -801,7 +801,16 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 		// Articles that used the failed URL now get their next source, or none.
 		let articleIDs = Set(thumbnailURLCache.filter { $0.value == url }.keys)
+		guard !articleIDs.isEmpty else {
+			return
+		}
 		thumbnailURLsDidChange(for: articleIDs)
+
+		// A failed provided image falls back to images in the HTML.
+		let articlesUsingURL = articles.filter { articleIDs.contains($0.articleID) }
+		Task {
+			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articlesUsingURL)
+		}
 	}
 
 	@objc nonisolated func handleUserDefaultsDidChange(_ notification: Notification) {
