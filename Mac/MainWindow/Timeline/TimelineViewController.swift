@@ -1441,10 +1441,10 @@ private extension TimelineViewController {
 		updateCellAppearances()
 		clearThumbnailURLCache()
 		thumbnailLookaheadRows = nil
+		updateLargeThumbnailRowHeight()
 		guard layout == .standard else {
 			return
 		}
-		updateLargeThumbnailRowHeight()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
