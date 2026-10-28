@@ -113,7 +113,7 @@ private extension DownloadedImageCache {
 		}
 
 		if let downloadPriority {
-			guard downloadLimiter.networkAllowsDownloads, await downloadLimiter.waitForTurn(key: url, priority: downloadPriority) else {
+			guard DownloadLimiter.networkAllowsDownloads, await downloadLimiter.waitForTurn(key: url, priority: downloadPriority) else {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			}
 		}

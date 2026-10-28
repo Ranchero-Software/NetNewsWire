@@ -40,7 +40,7 @@ public enum DownloadPriority: Sendable {
 	}
 
 	/// False when offline or in Low Data Mode.
-	var networkAllowsDownloads: Bool {
+	static var networkAllowsDownloads: Bool {
 		NetworkMonitor.shared.isConnected && !NetworkMonitor.shared.isConstrained
 	}
 

@@ -12,6 +12,7 @@ import Articles
 import Account
 import os
 import Images
+import RSWeb
 
 @MainActor protocol TimelineDelegate: AnyObject {
 	func timelineSelectionDidChange(_: TimelineViewController, selectedArticles: [Article]?)
@@ -301,6 +302,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 			if let clipView = tableView.enclosingScrollView?.contentView {
 				clipView.postsBoundsChangedNotifications = true
 				NotificationCenter.default.addObserver(self, selector: #selector(handleBoundsDidChange(_:)), name: NSView.boundsDidChangeNotification, object: clipView)
@@ -811,6 +813,14 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		Task {
 			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articlesUsingURL)
 		}
+	}
+
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		guard showsThumbnails, ArticleThumbnailFinder.shared.networkAllowsDownloads else {
+			return
+		}
+		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+		reloadVisibleCells()
 	}
 
 	@objc nonisolated func handleUserDefaultsDidChange(_ notification: Notification) {

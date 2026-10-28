@@ -85,6 +85,11 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 	}
 
+	/// False when offline or in Low Data Mode, when thumbnails not already on disk aren’t downloaded.
+	public var networkAllowsDownloads: Bool {
+		DownloadLimiter.networkAllowsDownloads
+	}
+
 	/// `url` is from `thumbnailURL(for:mode:)`. `articleTitle` is shown in the activity log.
 	/// Nil when the image isn’t ready. Starts a download when needed and posts
 	/// `.articleThumbnailDidBecomeAvailable` once the image is ready.
