@@ -52,4 +52,16 @@ import Testing
 		limiter.downloadDidFinish()
 		#expect(await secondPrefetch.value)
 	}
+
+	@Test func articleViewImageStartsWithoutWaitingForASlot() async {
+		let limiter = DownloadLimiter(maximumConcurrentDownloads: 1, maximumWaitingDownloads: 10)
+		#expect(await limiter.waitForTurn(key: "running", priority: .visible))
+
+		let articleImage = Task { await limiter.waitForTurn(key: "articleImage", priority: .prefetch) }
+		await Task.yield()
+
+		// Starts while the running download still holds the only slot.
+		limiter.startNow(key: "articleImage")
+		#expect(await articleImage.value)
+	}
 }

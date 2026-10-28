@@ -74,12 +74,17 @@ import ActivityLog
 
 	/// The stored copy, read from disk or downloaded. With a `downloadPriority`, a download
 	/// waits its turn in the download limiter, and doesn’t start when offline or in Low Data Mode.
-	/// Without one, it starts right away.
+	/// Without one, it starts right away, as does a waiting download for the same URL.
 	/// Activity log fires only when the request reaches the network.
 	func imageData(for url: String, downloadPriority: DownloadPriority?, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async throws(ImageDownloadError) -> Data {
 		if let task = tasks[url] {
-			if downloadPriority == .visible {
+			switch downloadPriority {
+			case .visible:
 				prioritizeDownload(for: url)
+			case nil:
+				downloadLimiter.startNow(key: url)
+			case .prefetch:
+				break
 			}
 			return try await task.value.get()
 		}

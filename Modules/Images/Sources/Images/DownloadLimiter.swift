@@ -83,4 +83,14 @@ public enum DownloadPriority: Sendable {
 		let waitingDownload = waiting.remove(at: index)
 		waiting.append(WaitingDownload(key: key, priority: .visible, continuation: waitingDownload.continuation))
 	}
+
+	/// Starts a waiting download now, even when that goes over the limit.
+	func startNow(key: String) {
+		guard let index = waiting.lastIndex(where: { $0.key == key }) else {
+			return
+		}
+		let waitingDownload = waiting.remove(at: index)
+		runningCount += 1
+		waitingDownload.continuation.resume(returning: true)
+	}
 }
