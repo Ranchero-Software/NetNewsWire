@@ -133,7 +133,9 @@ import Images
 				articleBody = ArticleRenderingSpecialCases.desanitizeFreshRSSContent(articleBody)
 			}
 
-			baseURL = article?.baseURL?.absoluteString
+			if let articleBaseURL = article?.baseURL {
+				baseURL = ArticleRenderingSpecialCases.baseURLForRendering(articleBaseURL).absoluteString
+			}
 		}
 
 		self.body = articleBody
@@ -392,34 +394,4 @@ private extension ArticleRenderer {
 	}
 	#endif
 
-}
-
-// MARK: - Article extension
-
-@MainActor private extension Article {
-
-	var baseURL: URL? {
-		var s = link
-		if s == nil {
-			s = feed?.homePageURL
-		}
-		if s == nil {
-			s = feed?.url
-		}
-
-		guard let urlString = s else {
-			return nil
-		}
-		var urlComponents = URLComponents(string: urlString)
-		if urlComponents == nil {
-			return nil
-		}
-
-		// Can’t use url-with-fragment as base URL. The webview won’t load. See scripting.com/rss.xml for example.
-		urlComponents!.fragment = nil
-		guard let url = urlComponents!.url, url.scheme == "http" || url.scheme == "https" else {
-			return nil
-		}
-		return ArticleRenderingSpecialCases.baseURLForRendering(url)
-	}
 }

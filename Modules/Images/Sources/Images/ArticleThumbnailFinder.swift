@@ -172,13 +172,13 @@ private extension ArticleThumbnailFinder {
 		let html: String
 		let baseURL: String?
 
-		init?(_ article: Article) {
+		@MainActor init?(_ article: Article) {
 			guard let html = article.contentHTML ?? article.summary, !html.isEmpty else {
 				return nil
 			}
 			self.articleID = article.articleID
 			self.html = html
-			self.baseURL = article.rawLink ?? article.rawExternalLink
+			self.baseURL = article.baseURL?.absoluteString
 		}
 	}
 
