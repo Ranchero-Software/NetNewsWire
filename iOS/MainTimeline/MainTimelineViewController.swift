@@ -755,6 +755,7 @@ private extension MainTimelineViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange), name: UIContentSizeCategory.didChangeNotification, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange), name: .DisplayNameDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground(_:)), name: UIApplication.willEnterForegroundNotification, object: nil)
@@ -1293,6 +1294,14 @@ private extension MainTimelineViewController {
 		Task {
 			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articlesUsingURL)
 		}
+	}
+
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		guard thumbnailMode != nil, ArticleThumbnailFinder.shared.networkAllowsDownloads else {
+			return
+		}
+		// Thumbnails that couldn’t download while offline or in Low Data Mode try again.
+		reloadVisibleCells()
 	}
 
 	@objc func contentSizeCategoryDidChange(_ note: Notification) {
