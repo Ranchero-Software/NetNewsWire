@@ -44,6 +44,8 @@ extension Notification.Name {
 	private static let maximumConcurrentLimitedDownloads = 4
 	/// A few screens of thumbnails.
 	private static let maximumWaitingLimitedDownloads = 60
+	/// Larger images aren’t saved for the timeline. The article view and icons have no limit.
+	private static let maximumLimitedDownloadByteCount = 25 * 1024 * 1024
 
 	#if os(macOS)
 	private static let limit = ByteLimit(maximumByteCount: 300 * 1024 * 1024)
@@ -145,7 +147,8 @@ private extension DownloadedImageCache {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			}
 		}
-		let result = await downloadImageFromNetwork(url, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
+		let maximumByteCount = downloadPriority == nil ? nil : Self.maximumLimitedDownloadByteCount
+		let result = await downloadImageFromNetwork(url, maximumByteCount: maximumByteCount, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 		if downloadPriority != nil {
 			downloadLimiter.downloadDidFinish()
 		}
@@ -200,7 +203,7 @@ private extension DownloadedImageCache {
 		URL(string: url)?.host()?.lowercased(with: localeForLowercasing)
 	}
 
-	func downloadImageFromNetwork(_ url: String, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
+	func downloadImageFromNetwork(_ url: String, maximumByteCount: Int?, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
 		let activityLog = ActivityLog.shared
 		if let activityOwner, let activityKind {
 			activityLog.createActivity(owner: activityOwner, kind: activityKind, detail: activityDetail)
@@ -208,7 +211,7 @@ private extension DownloadedImageCache {
 		}
 
 		do {
-			let (data, downloadResponse) = try await downloadImage(url)
+			let (data, downloadResponse) = try await downloadImage(url, maximumByteCount: maximumByteCount)
 			if let activityOwner, let activityKind {
 				let message = downloadResponse.data.map(ActivityLog.dataSizeMessage)
 				activityLog.didComplete(activityOwner, kind: activityKind, message: message, returnedFromCache: downloadResponse.returnedFromCache)
@@ -226,7 +229,7 @@ private extension DownloadedImageCache {
 		}
 	}
 
-	func downloadImage(_ url: String) async throws(ImageDownloadError) -> (Data, DownloadResponse) {
+	func downloadImage(_ url: String, maximumByteCount: Int?) async throws(ImageDownloadError) -> (Data, DownloadResponse) {
 		guard let imageURL = URL(string: url) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false)
 		}
@@ -243,6 +246,9 @@ private extension DownloadedImageCache {
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
 		let statusCode = httpResponse?.statusCode
 		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
+			if let maximumByteCount, data.count > maximumByteCount {
+				throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: false, rejectedByteCount: data.count)
+			}
 			await saveImage(data, url: url, httpResponse: httpResponse)
 			return (data, downloadResponse)
 		}
