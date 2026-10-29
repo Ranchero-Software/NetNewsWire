@@ -32,8 +32,9 @@ extension Notification.Name {
 /// background whether it changed. Unchanged icons cost a 304 response, not the image again.
 /// Other images, such as thumbnails, keep the version first downloaded.
 ///
-/// After a transient failure, such as a timeout or a 5xx response, a URL isn’t requested again
-/// until its retry date. The wait starts at a minute and doubles with each failure, up to an hour.
+/// After a transient failure, such as a timeout or a 5xx response, neither the URL nor anything
+/// else on its host is requested again until a retry date. The wait starts at a minute and doubles
+/// with each failure, up to an hour, or is the server’s Retry-After when that’s longer.
 @MainActor final class DownloadedImageCache {
 
 	static let shared = DownloadedImageCache()
@@ -75,6 +76,7 @@ extension Notification.Name {
 	private var removalByteCount = limit.maximumByteCount // A save that takes the total over this starts a pass
 	private var readDatesNoted = [String: Date]() // url: date
 	private var retryDelays = [String: RetryDelay]() // url: wait after its last transient failure
+	private var hostRetryDelays = [String: RetryDelay]() // lowercased host: wait after its last transient failure
 
 	private init() {
 		let folder = AppConfig.cacheSubfolder(named: Self.folderName)
@@ -121,6 +123,7 @@ extension Notification.Name {
 	/// Failures while offline say nothing about the servers, so retries can start right away.
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
 		retryDelays.removeAll()
+		hostRetryDelays.removeAll()
 	}
 }
 
@@ -132,7 +135,7 @@ private extension DownloadedImageCache {
 			return .success(data)
 		}
 
-		if let retryDate = retryDelays[url]?.retryDate, retryDate > Date() {
+		if isWaitingToRetry(url) {
 			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 		}
 		if let downloadPriority {
@@ -153,16 +156,46 @@ private extension DownloadedImageCache {
 		let delay: TimeInterval
 	}
 
+	func isWaitingToRetry(_ url: String) -> Bool {
+		let now = Date()
+		if let retryDate = retryDelays[url]?.retryDate, retryDate > now {
+			return true
+		}
+		if let host = Self.host(url), let retryDate = hostRetryDelays[host]?.retryDate, retryDate > now {
+			return true
+		}
+		return false
+	}
+
+	/// Any response that isn’t a transient failure means the host is answering, so its wait ends.
 	func noteDownloadResult(_ result: Result<Data, ImageDownloadError>, url: String) {
+		let host = Self.host(url)
 		guard case .failure(let error) = result, error.isTransient else {
 			retryDelays[url] = nil
+			if let host {
+				hostRetryDelays[host] = nil
+			}
 			return
 		}
-		var delay = Self.initialRetryDelay
-		if let previousDelay = retryDelays[url]?.delay {
-			delay = min(previousDelay * 2, Self.maximumRetryDelay)
+		retryDelays[url] = Self.nextRetryDelay(after: retryDelays[url], retryAfter: error.retryAfter)
+		if let host {
+			hostRetryDelays[host] = Self.nextRetryDelay(after: hostRetryDelays[host], retryAfter: error.retryAfter)
 		}
-		retryDelays[url] = RetryDelay(retryDate: Date().addingTimeInterval(delay), delay: delay)
+	}
+
+	static func nextRetryDelay(after previousRetryDelay: RetryDelay?, retryAfter: TimeInterval?) -> RetryDelay {
+		var delay = initialRetryDelay
+		if let previousRetryDelay {
+			delay = min(previousRetryDelay.delay * 2, maximumRetryDelay)
+		}
+		if let retryAfter {
+			delay = max(delay, retryAfter)
+		}
+		return RetryDelay(retryDate: Date().addingTimeInterval(delay), delay: delay)
+	}
+
+	static func host(_ url: String) -> String? {
+		URL(string: url)?.host()?.lowercased(with: localeForLowercasing)
 	}
 
 	func downloadImageFromNetwork(_ url: String, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
@@ -220,7 +253,11 @@ private extension DownloadedImageCache {
 		if let statusCode {
 			isTransient = (statusCode >= 500 && statusCode <= 599) || statusCode == HTTPResponseCode.tooManyRequests || statusCode == HTTPResponseCode.requestTimeout
 		}
-		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient)
+		var retryAfter: TimeInterval?
+		if let retryAfterValue = httpResponse?.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) {
+			retryAfter = TimeInterval(retryAfterValue.trimmingCharacters(in: .whitespaces))
+		}
+		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient, retryAfter: retryAfter)
 	}
 
 	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async {
