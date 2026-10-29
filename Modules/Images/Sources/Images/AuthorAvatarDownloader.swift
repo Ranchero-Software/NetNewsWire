@@ -24,6 +24,7 @@ extension Notification.Name {
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 	}
@@ -74,6 +75,15 @@ extension Notification.Name {
 			return
 		}
 		scaleAndCacheImageData(imageData, avatarURL)
+	}
+
+	/// `ImageDownloader` makes the image again, and the avatar is replaced when it’s ready.
+	@objc func handleDownloadedImageDidChange(_ notification: Notification) {
+		guard let avatarURL = notification.userInfo?[DownloadedImageCache.urlKey] as? String, cache[avatarURL] != nil else {
+			return
+		}
+		cache[avatarURL] = nil
+		waitingForAvatarURLs.insert(avatarURL)
 	}
 }
 

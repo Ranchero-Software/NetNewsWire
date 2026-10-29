@@ -30,6 +30,7 @@ extension Notification.Name {
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
@@ -132,6 +133,18 @@ extension Notification.Name {
 		}
 	}
 
+	/// `ImageDownloader` makes the image again, and feeds using it get their icon again when it’s ready.
+	@objc func handleDownloadedImageDidChange(_ notification: Notification) {
+		guard let url = notification.userInfo?[DownloadedImageCache.urlKey] as? String else {
+			return
+		}
+		let feeds = cache.keys.filter { Self.iconURLs(for: $0).contains(url) }
+		for feed in feeds {
+			cache[feed] = nil
+			waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
+		}
+	}
+
 	@objc func handleFeedSettingDidChange(_ note: Notification) {
 		guard let feed = note.object as? Feed, let key = note.userInfo?[Feed.SettingUserInfoKey] as? Feed.SettingKey else {
 			return
@@ -177,6 +190,11 @@ private extension FeedIconDownloader {
 
 	static func shouldSkipDownloadingFeedIcon(_ urlString: String) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(urlString, specialCasesToSkip)
+	}
+
+	/// The URLs a feed’s icon may have been made from: its own icon URL and the one found on its home page.
+	static func iconURLs(for feed: Feed) -> [String] {
+		[feed.iconURL, ImageDatabase.shared.iconURL(forFeedURL: feed.url)].compactMap { $0 }.map(sanitizedIconURL)
 	}
 
 	static func sanitizedIconURL(_ url: String) -> String {
