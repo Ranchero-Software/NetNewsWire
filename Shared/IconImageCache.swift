@@ -174,13 +174,10 @@ private extension IconImageCache {
 	}
 
 	func imageForAuthor(_ author: Author) -> IconImage? {
-		if let iconImage = authorIconImageCache[author] {
-			return iconImage
-		}
 		if let iconImage = AuthorAvatarDownloader.shared.cachedImage(for: author) {
 			authorIconImageCache[author] = iconImage
 			return iconImage
 		}
-		return nil
+		return authorIconImageCache[author]
 	}
 }
