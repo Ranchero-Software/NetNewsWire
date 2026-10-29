@@ -47,6 +47,12 @@ private extension SignificantImageFilter {
 
 	static let decorativeClasses: Set<String> = ["emoji", "wp-smiley"]
 
+	/// File names, without extension, of tracking pixels and placeholders on any host. Lowercase.
+	static let blockedFileNames: Set<String> = ["1x1", "blank", "pixel", "spacer", "transparent"]
+
+	/// Path components of open-tracking and click-tracking URLs on any host. Lowercase.
+	static let blockedPathComponents: Set<String> = ["open", "track"]
+
 	/// Share buttons, badges, tracking pixels, and placeholders. Hosts include their subdomains. Path prefixes are lowercase.
 	static let blockedImagePrefixes: [HostAndPathPrefix] = [
 		(host: "addtoany.com", pathPrefix: "/"),
@@ -94,6 +100,12 @@ private extension SignificantImageFilter {
 			return true
 		}
 		if url.pathExtension.lowercased() == "svg" {
+			return true
+		}
+		if blockedFileNames.contains(url.deletingPathExtension().lastPathComponent.lowercased()) {
+			return true
+		}
+		if url.pathComponents.contains(where: { blockedPathComponents.contains($0.lowercased()) }) {
 			return true
 		}
 		if matches(host: host, path: url.path().lowercased(), blockedImagePrefixes) {

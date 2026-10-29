@@ -66,8 +66,8 @@ import RSParser
 
 	@Test func imageWithUndeclaredDimensionsIsAccepted() {
 		// Real dimensions are checked at download time.
-		let html = #"<img src="https://example.com/pixel.gif">"#
-		#expect(firstSignificantImage(html) == HTMLImage(urlString: "https://example.com/pixel.gif", width: nil, height: nil))
+		let html = #"<img src="https://example.com/photo.jpg">"#
+		#expect(firstSignificantImage(html) == HTMLImage(urlString: "https://example.com/photo.jpg", width: nil, height: nil))
 	}
 
 	@Test func gravatarIsSkipped() {
@@ -122,6 +122,9 @@ import RSParser
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://pixel.wp.com/b.gif?v=1", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "ftp://example.com/a.jpg", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/banner.jpg", width: 1200, height: 250))
+		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/images/spacer.gif", width: nil, height: nil))
+		#expect(!SignificantImageFilter.isSignificant(urlString: "https://email.example.net/open/abc123.gif", width: nil, height: nil))
+		#expect(SignificantImageFilter.isSignificant(urlString: "https://example.com/2026/open-source-pixel-art.jpg", width: nil, height: nil))
 	}
 }
 
