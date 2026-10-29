@@ -62,6 +62,8 @@ extension ImageDownloadError: LocalizedError {
 	public static let shared = ImageDownloader()
 
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "ImageDownloader")
+	/// Scaled icons are saved next to their originals, so they aren’t rescaled after the memory cache is emptied.
+	private static let scaledCopySuffix = String(RSImage.maxIconPixelSize)
 
 	private let imageCache = NSCache<NSString, NSData>() // url: image
 	private var urlsInProgress = Set<String>()
@@ -87,6 +89,7 @@ extension ImageDownloadError: LocalizedError {
 		}
 		imageCache.removeObject(forKey: url as NSString)
 		Task { @MainActor in
+			await DownloadedImageCache.shared.deleteDerivedImageData(for: url, suffix: Self.scaledCopySuffix)
 			await findImage(url, activityOwner: nil, activityKind: nil, activityDetail: nil)
 		}
 	}
@@ -129,9 +132,16 @@ private extension ImageDownloader {
 			urlsInProgress.remove(url)
 		}
 
+		if let scaledData = await DownloadedImageCache.shared.derivedImageData(for: url, suffix: Self.scaledCopySuffix) {
+			DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: true)
+			cacheImage(url, scaledData)
+			return
+		}
+
 		do {
 			let storedData = try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: nil, checksForUpdates: true, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 			let data = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
+			await DownloadedImageCache.shared.saveDerivedImageData(data, for: url, suffix: Self.scaledCopySuffix)
 			cacheImage(url, data)
 		} catch {
 			if !error.isTransient {
