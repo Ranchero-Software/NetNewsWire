@@ -126,6 +126,24 @@ extension Notification.Name {
 		downloadLimiter.prioritize(key: url)
 	}
 
+	/// At most once a day per image: saves the access date, which orders images for removal,
+	/// and, when `checksForUpdates`, checks with the server if the copy is due.
+	/// Callers that keep images in memory call this on memory hits too, so images in use aren’t removed first.
+	func imageWasUsed(_ url: String, checksForUpdates: Bool) {
+		let now = Date()
+		if let readDate = readDatesNoted[url], now.timeIntervalSince(readDate) < Self.readNoteInterval {
+			return
+		}
+		readDatesNoted[url] = now
+		ImageDatabase.shared.saveDownloadedImageAccessDate(url: url)
+		guard checksForUpdates else {
+			return
+		}
+		Task {
+			await revalidateIfDue(url)
+		}
+	}
+
 	/// Failures while offline say nothing about the servers, so retries can start right away.
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
 		retryDelays.removeAll()
@@ -137,7 +155,7 @@ private extension DownloadedImageCache {
 
 	func findImage(_ url: String, downloadPriority: DownloadPriority?, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
 		if let data = await Self.readFromDisk(diskCache, key: Self.diskKey(url)) {
-			imageWasRead(url, checksForUpdates: checksForUpdates)
+			imageWasUsed(url, checksForUpdates: checksForUpdates)
 			return .success(data)
 		}
 
@@ -290,23 +308,6 @@ private extension DownloadedImageCache {
 		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: data.count, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
 		imageWasSaved(byteCount: data.count)
 		return true
-	}
-
-	/// At most once a day per image: saves the access date, which orders images for removal,
-	/// and, when `checksForUpdates`, checks with the server if the copy is due.
-	func imageWasRead(_ url: String, checksForUpdates: Bool) {
-		let now = Date()
-		if let readDate = readDatesNoted[url], now.timeIntervalSince(readDate) < Self.readNoteInterval {
-			return
-		}
-		readDatesNoted[url] = now
-		ImageDatabase.shared.saveDownloadedImageAccessDate(url: url)
-		guard checksForUpdates else {
-			return
-		}
-		Task {
-			await revalidateIfDue(url)
-		}
 	}
 
 	// MARK: - Revalidating Images

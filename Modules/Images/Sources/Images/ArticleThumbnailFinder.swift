@@ -95,6 +95,7 @@ extension Notification.Name {
 	/// `.articleThumbnailDidBecomeAvailable` once the image is ready.
 	public func thumbnail(url: String, mode: Mode, articleTitle: String?) -> RSImage? {
 		if let image = imageCache.object(forKey: Self.cacheKey(url, mode)) {
+			DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: false)
 			return image
 		}
 		findImage(url, mode: mode, downloadPriority: .visible, activityDetail: articleTitle)
