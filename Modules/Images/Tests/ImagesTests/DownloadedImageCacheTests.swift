@@ -51,7 +51,7 @@ import Testing
 		let httpResponse = try #require(HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: ["Cache-Control": "max-age=60", "ETag": "\"abc\""]))
 
 		let interval = DownloadedImageCache.nextCheck(httpResponse, hasValidators: true).timeIntervalSinceNow
-		#expect(abs(interval - TimeInterval(days: 3)) < 60)
+		#expect(interval > TimeInterval(days: 3) * 0.8 - 60 && interval < TimeInterval(days: 3) * 1.2)
 	}
 
 	@Test func recentlyUsedImagesAreKeptUnlessOverHardLimit() {

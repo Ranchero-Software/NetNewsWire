@@ -60,6 +60,8 @@ extension Notification.Name {
 	/// A server’s max-age is kept within these, so a misconfigured server isn’t asked too often.
 	nonisolated private static let minimumCheckInterval = TimeInterval(days: 3)
 	nonisolated private static let maximumCheckInterval = TimeInterval(days: 30)
+	/// Check intervals vary by up to this fraction either way, so images downloaded together aren’t all checked together.
+	nonisolated private static let checkIntervalJitter = 0.2
 	/// Images used this recently are removed only to stay under `hardLimit`.
 	nonisolated private static let recentUseInterval = TimeInterval(days: 3)
 	/// A file and its record are saved moments apart, so anything this recent may be mid-save.
@@ -410,6 +412,7 @@ extension DownloadedImageCache {
 		} else if let httpResponse, let cacheControlInfo = CacheControlInfo(urlResponse: httpResponse) {
 			interval = min(max(cacheControlInfo.maxAge, minimumCheckInterval), maximumCheckInterval)
 		}
+		interval *= Double.random(in: (1 - checkIntervalJitter)...(1 + checkIntervalJitter))
 		return Date().addingTimeInterval(interval)
 	}
 
