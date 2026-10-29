@@ -31,6 +31,9 @@ extension Notification.Name {
 /// An icon used after its `nextCheck` date is still used, and the server is asked in the
 /// background whether it changed. Unchanged icons cost a 304 response, not the image again.
 /// Other images, such as thumbnails, keep the version first downloaded.
+///
+/// After a transient failure, such as a timeout or a 5xx response, a URL isn’t requested again
+/// until its retry date. The wait starts at a minute and doubles with each failure, up to an hour.
 @MainActor final class DownloadedImageCache {
 
 	static let shared = DownloadedImageCache()
@@ -60,6 +63,8 @@ extension Notification.Name {
 	nonisolated private static let recentUseInterval = TimeInterval(days: 3)
 	/// A file and its record are saved moments apart, so anything this recent may be mid-save.
 	nonisolated private static let recentChangeInterval: TimeInterval = 60
+	private static let initialRetryDelay: TimeInterval = 60
+	private static let maximumRetryDelay: TimeInterval = 60 * 60
 
 	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "DownloadedImageCache")
 
@@ -69,10 +74,13 @@ extension Notification.Name {
 	private var totalByteCount: Int? // Nil while a removal pass counts it
 	private var removalByteCount = limit.maximumByteCount // A save that takes the total over this starts a pass
 	private var readDatesNoted = [String: Date]() // url: date
+	private var retryDelays = [String: RetryDelay]() // url: wait after its last transient failure
 
 	private init() {
 		let folder = AppConfig.cacheSubfolder(named: Self.folderName)
 		self.diskCache = BinaryDiskCache(folder: folder.path)
+
+		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 
 		Task {
 			await self.removeImagesOverSizeLimit()
@@ -109,6 +117,11 @@ extension Notification.Name {
 	func prioritizeDownload(for url: String) {
 		downloadLimiter.prioritize(key: url)
 	}
+
+	/// Failures while offline say nothing about the servers, so retries can start right away.
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		retryDelays.removeAll()
+	}
 }
 
 private extension DownloadedImageCache {
@@ -119,6 +132,9 @@ private extension DownloadedImageCache {
 			return .success(data)
 		}
 
+		if let retryDate = retryDelays[url]?.retryDate, retryDate > Date() {
+			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
+		}
 		if let downloadPriority {
 			guard DownloadLimiter.networkAllowsDownloads, await downloadLimiter.waitForTurn(key: url, priority: downloadPriority) else {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
@@ -128,7 +144,25 @@ private extension DownloadedImageCache {
 		if downloadPriority != nil {
 			downloadLimiter.downloadDidFinish()
 		}
+		noteDownloadResult(result, url: url)
 		return result
+	}
+
+	struct RetryDelay {
+		let retryDate: Date
+		let delay: TimeInterval
+	}
+
+	func noteDownloadResult(_ result: Result<Data, ImageDownloadError>, url: String) {
+		guard case .failure(let error) = result, error.isTransient else {
+			retryDelays[url] = nil
+			return
+		}
+		var delay = Self.initialRetryDelay
+		if let previousDelay = retryDelays[url]?.delay {
+			delay = min(previousDelay * 2, Self.maximumRetryDelay)
+		}
+		retryDelays[url] = RetryDelay(retryDate: Date().addingTimeInterval(delay), delay: delay)
 	}
 
 	func downloadImageFromNetwork(_ url: String, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
