@@ -77,6 +77,7 @@ private extension CacheCleaner {
 	}
 
 	/// One-time removal of the image folders that DownloadedImageCache’s DownloadedImages folder replaces.
+	/// Off the main thread, since a large old folder can take a while to delete.
 	static func removeFoldersReplacedByDownloadedImageCacheIfNeeded() {
 		guard !UserDefaults.standard.bool(forKey: didRemoveFoldersReplacedByDownloadedImageCacheKey) else {
 			return
@@ -90,15 +91,17 @@ private extension CacheCleaner {
 			cacheDir.appendingPathComponent("LargeThumbnails")
 		]
 
-		for folder in foldersToRemove {
-			do {
-				try FileManager.default.removeItem(at: folder)
-				logger.info("Removed image folder replaced by DownloadedImageCache: \(folder.lastPathComponent, privacy: .public)")
-			} catch {
-				// Folder may not exist — that's fine
+		Task.detached(priority: .utility) {
+			for folder in foldersToRemove {
+				do {
+					try FileManager.default.removeItem(at: folder)
+					logger.info("Removed image folder replaced by DownloadedImageCache: \(folder.lastPathComponent, privacy: .public)")
+				} catch {
+					// Folder may not exist — that's fine
+				}
 			}
-		}
 
-		UserDefaults.standard.set(true, forKey: didRemoveFoldersReplacedByDownloadedImageCacheKey)
+			UserDefaults.standard.set(true, forKey: didRemoveFoldersReplacedByDownloadedImageCacheKey)
+		}
 	}
 }
