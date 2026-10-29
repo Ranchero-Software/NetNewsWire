@@ -44,6 +44,19 @@ public enum DownloadPriority: Sendable {
 		NetworkMonitor.shared.isConnected && !NetworkMonitor.shared.isConstrained
 	}
 
+	/// Prefetching also waits for a network that isn’t expensive, such as cellular, and for Low Power Mode to be off.
+	static func networkAllowsDownload(priority: DownloadPriority) -> Bool {
+		guard networkAllowsDownloads else {
+			return false
+		}
+		switch priority {
+		case .visible:
+			return true
+		case .prefetch:
+			return !NetworkMonitor.shared.isExpensive && !ProcessInfo.processInfo.isLowPowerModeEnabled
+		}
+	}
+
 	/// Returns true when the download may start. Call `downloadDidFinish` after it finishes.
 	/// Returns false when the download was dropped. Don’t call `downloadDidFinish` then.
 	func waitForTurn(key: String, priority: DownloadPriority) async -> Bool {

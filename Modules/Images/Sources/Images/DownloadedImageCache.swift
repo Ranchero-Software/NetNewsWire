@@ -95,7 +95,8 @@ extension Notification.Name {
 
 	/// The stored copy, read from disk or downloaded. With a `downloadPriority`, a download
 	/// waits its turn in the download limiter, and doesn’t start when offline or in Low Data Mode.
-	/// Without one, it starts right away, as does a waiting download for the same URL.
+	/// A prefetch also doesn’t start on an expensive network or in Low Power Mode.
+	/// Without a `downloadPriority`, it starts right away, as does a waiting download for the same URL.
 	/// Activity log fires only when the request reaches the network.
 	func imageData(for url: String, downloadPriority: DownloadPriority?, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async throws(ImageDownloadError) -> Data {
 		if let task = tasks[url] {
@@ -143,7 +144,7 @@ private extension DownloadedImageCache {
 			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 		}
 		if let downloadPriority {
-			guard DownloadLimiter.networkAllowsDownloads, await downloadLimiter.waitForTurn(key: url, priority: downloadPriority) else {
+			guard DownloadLimiter.networkAllowsDownload(priority: downloadPriority), await downloadLimiter.waitForTurn(key: url, priority: downloadPriority) else {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			}
 		}
