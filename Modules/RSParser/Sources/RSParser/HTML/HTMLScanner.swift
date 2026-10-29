@@ -12,8 +12,9 @@
 //
 // Differs from the XML scanner in ways HTML requires:
 //   - Tag names compared case-insensitively (but emitted as they appear).
-//   - Content of `<script>` and `<style>` treated as opaque raw text: only
-//     the matching `</script>` / `</style>` ends the block.
+//   - Content of `<script>`, `<style>`, `<textarea>`, `<title>`, `<xmp>`, and
+//     `<noembed>` treated as opaque raw text: only the matching end tag ends
+//     the block. Entities in `<textarea>` and `<title>` aren't expanded.
 //   - Attributes may have no value (`<input disabled>`), single-quoted values,
 //     or unquoted values (`<a href=foo>`).
 //   - No void-element tracking. Consumers that care (both of ours don't)
@@ -52,9 +53,8 @@ public final class HTMLScanner {
 private extension HTMLScanner {
 
 	// Tag names that enter raw-text mode. Their content isn't parsed as markup;
-	// only the matching </script> or </style> ends the block.
-	static let scriptBytes: [UInt8] = Array("script".utf8)
-	static let styleBytes: [UInt8] = Array("style".utf8)
+	// only the matching end tag ends the block.
+	static let rawTextTagNames: [[UInt8]] = ["script", "style", "textarea", "title", "xmp", "noembed"].map { Array($0.utf8) }
 
 	func drive() {
 		while pos < input.count && !stopped {
@@ -153,13 +153,8 @@ private extension HTMLScanner {
 		let attributeView = HTMLAttributes(attributes: attributes)
 		delegate?.htmlScanner(self, didStartTag: nameSlice, attributes: attributeView, selfClosing: selfClosing)
 
-		// Raw-text mode for <script> and <style>.
-		if !selfClosing {
-			if tagNameEqualsIgnoringCase(nameSlice, Self.scriptBytes[...]) {
-				consumeRawText(until: Self.scriptBytes[...])
-			} else if tagNameEqualsIgnoringCase(nameSlice, Self.styleBytes[...]) {
-				consumeRawText(until: Self.styleBytes[...])
-			}
+		if !selfClosing, let rawTextTagName = Self.rawTextTagNames.first(where: { tagNameEqualsIgnoringCase(nameSlice, $0[...]) }) {
+			consumeRawText(until: rawTextTagName[...])
 		}
 	}
 
@@ -276,9 +271,9 @@ private extension HTMLScanner {
 		delegate?.htmlScanner(self, didEndTag: nameSlice)
 	}
 
-	// MARK: - Script / style raw text
+	// MARK: - Raw text
 
-	/// In raw-text mode after a `<script>` or `<style>` start tag, scan forward
+	/// In raw-text mode after a start tag in `rawTextTagNames`, scan forward
 	/// until the matching end tag `</name>` (case-insensitive) and emit the
 	/// accumulated bytes as characters, followed by the end tag.
 	func consumeRawText(until tagName: ArraySlice<UInt8>) {

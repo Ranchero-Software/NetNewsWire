@@ -26,4 +26,11 @@ import RSParser
 		"""
 		#expect(result == expected)
 	}
+
+	@Test func imagesWrittenAsTextInTextareaAreLeftAlone() {
+		let html = #"<textarea>Embed: <img src="/images/photo.jpg"></textarea><img src="/images/photo.jpg">"#
+		let result = HTMLImageAttributeInserter.insertingAttributes(" src=\"nnw:x\"", intoImagesWithSource: "https://example.com/images/photo.jpg", html: html, baseURL: "https://example.com/")
+
+		#expect(result == #"<textarea>Embed: <img src="/images/photo.jpg"></textarea><img src="nnw:x" src="/images/photo.jpg">"#)
+	}
 }
