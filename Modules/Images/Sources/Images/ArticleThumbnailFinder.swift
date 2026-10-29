@@ -66,10 +66,10 @@ extension Notification.Name {
 	private var cacheKeysInProgress = Set<String>()
 	private var urlsThatFailedToDecode = Set<String>() // So a failure notification can’t lead to the same attempt again
 
-	/// Decoded bitmaps: about 1 MB each in small mode, 2–5 MB in large mode.
+	/// Decoded bitmaps: about 0.25 MB each in small mode, 2–5 MB in large mode.
 	private static let imageCacheByteLimit = 128 * 1024 * 1024
-	/// Sized for aspect-fill cropping into a small square.
-	private static let smallThumbnailMaxPixelSize = 512
+	/// The small thumbnail is aspect-fit into a box of at most 76pt, which is 228 pixels at 3x.
+	private static let smallThumbnailMaxPixelSize = 256
 	/// Sized to fill the timeline’s width.
 	private static let largeThumbnailMaxPixelSize = 1200
 	/// HTML images saved per article, so one that fails or is too small falls through to the next.
