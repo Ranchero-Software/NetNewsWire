@@ -11,6 +11,12 @@ import RSCore
 import RSWeb
 import ActivityLog
 
+extension Notification.Name {
+	/// Posted when a check with the server replaces the stored copy of an image with a changed one.
+	/// userInfo key: `DownloadedImageCache.urlKey`.
+	static let downloadedImageDidChange = Notification.Name("DownloadedImageDidChange")
+}
+
 /// Downloads each image URL once and keeps one copy on disk, shared by icons and thumbnails.
 ///
 /// The copy is the image as downloaded, since the article view shows it at full size.
@@ -28,6 +34,7 @@ import ActivityLog
 @MainActor final class DownloadedImageCache {
 
 	static let shared = DownloadedImageCache()
+	static let urlKey = "url"
 
 	private static let folderName = "DownloadedImages"
 	private static let maximumConcurrentLimitedDownloads = 4
@@ -236,6 +243,7 @@ private extension DownloadedImageCache {
 		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK {
 			Self.logger.info("Replaced changed image at \(url)")
 			await saveImage(data, url: url, httpResponse: httpResponse)
+			NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
 			return
 		}
 
