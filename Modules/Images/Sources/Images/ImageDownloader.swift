@@ -19,7 +19,7 @@ extension Notification.Name {
 public struct ImageDownloadError: Error {
 	public let statusCode: Int?
 	public let decodingFailed: Bool
-	public let isTransient: Bool // No network, DNS issues, timeout, 5xx response, etc.
+	public let isTransient: Bool // No network, DNS issues, timeout, 5xx, 429, or 408 response, etc.
 	public let rejectedPixelSize: (width: Int, height: Int)? // Too small or too narrow to be a thumbnail
 
 	init(statusCode: Int?, decodingFailed: Bool, isTransient: Bool, rejectedPixelSize: (width: Int, height: Int)? = nil) {

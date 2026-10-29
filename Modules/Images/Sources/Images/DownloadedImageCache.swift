@@ -218,7 +218,7 @@ private extension DownloadedImageCache {
 		}
 		var isTransient = true
 		if let statusCode {
-			isTransient = statusCode >= 500 && statusCode <= 599
+			isTransient = (statusCode >= 500 && statusCode <= 599) || statusCode == HTTPResponseCode.tooManyRequests || statusCode == HTTPResponseCode.requestTimeout
 		}
 		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient)
 	}
