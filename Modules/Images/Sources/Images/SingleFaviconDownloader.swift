@@ -133,6 +133,17 @@ private extension SingleFaviconDownloader {
 		}
 	}
 
+	/// Scales and PNG-encodes the image on the downloader's serial queue,
+	/// keeping the ImageIO work off the main actor.
+	func scaledImageDataOffMainActor(_ data: Data, maxPixelSize: Int) async -> Data {
+		await withCheckedContinuation { continuation in
+			queue.async {
+				let scaledData = RSImage.scaledImageData(data, maxPixelSize: maxPixelSize) ?? data
+				continuation.resume(returning: scaledData)
+			}
+		}
+	}
+
 	func downloadFavicon() async throws(ImageDownloadError) -> RSImage {
 		assert(Thread.isMainThread)
 
@@ -155,7 +166,10 @@ private extension SingleFaviconDownloader {
 		}
 
 		if let data = downloadResponse.data, !data.isEmpty, let response = downloadResponse.response, response.statusIsOK {
-			let scaledData = RSImage.scaledImageData(data, maxPixelSize: RSImage.maxIconPixelSize) ?? data
+			// Capture the pixel size on the main actor, then do the ImageIO
+			// resize and PNG encoding off the main actor.
+			let maxPixelSize = RSImage.maxIconPixelSize
+			let scaledData = await scaledImageDataOffMainActor(data, maxPixelSize: maxPixelSize)
 			let image = await RSImage.image(data: scaledData)
 			guard let image else {
 				let responseStatusCode = (response as? HTTPURLResponse)?.statusCode
