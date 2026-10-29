@@ -23,6 +23,9 @@ extension Notification.Name {
 /// `ImageDownloader` and `ArticleThumbnailFinder` make their own sizes from it.
 /// Requests for a URL that’s already being read or downloaded share that work.
 ///
+/// A copy made from an image, such as a scaled icon, can be stored next to it with a suffix.
+/// It’s kept while the image is, and removed with it. It doesn’t count toward the limits.
+///
 /// Copies on disk are kept until they total more than `limit`. Then the least recently used are
 /// deleted from disk, except those used in the last few days, which may still be on screen.
 /// `hardLimit` caps those too. That’s checked at launch and whenever a download goes over the limit.
@@ -69,6 +72,8 @@ extension Notification.Name {
 	nonisolated private static let recentUseInterval = TimeInterval(days: 3)
 	/// A file and its record are saved moments apart, so anything this recent may be mid-save.
 	nonisolated private static let recentChangeInterval: TimeInterval = 60
+	/// Disk keys are hex, so this can’t appear in an image’s own key.
+	nonisolated private static let derivedKeySeparator: Character = "-"
 	private static let initialRetryDelay: TimeInterval = 60
 	private static let maximumRetryDelay: TimeInterval = 60 * 60
 
@@ -124,6 +129,19 @@ extension Notification.Name {
 	/// Moves a waiting download to the front, for an image that just became visible.
 	func prioritizeDownload(for url: String) {
 		downloadLimiter.prioritize(key: url)
+	}
+
+	/// A copy made from the image at `url`, such as a scaled icon. Nil when none has been saved.
+	func derivedImageData(for url: String, suffix: String) async -> Data? {
+		await Self.readFromDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix))
+	}
+
+	func saveDerivedImageData(_ data: Data, for url: String, suffix: String) async {
+		await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix), data: data)
+	}
+
+	func deleteDerivedImageData(for url: String, suffix: String) async {
+		await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: suffix)])
 	}
 
 	/// At most once a day per image: saves the access date, which orders images for removal,
@@ -422,6 +440,18 @@ extension DownloadedImageCache {
 		url.md5String
 	}
 
+	nonisolated static func derivedDiskKey(_ url: String, suffix: String) -> String {
+		"\(diskKey(url))\(derivedKeySeparator)\(suffix)"
+	}
+
+	/// The key of the image a derived copy was made from, or `key` itself for an image.
+	nonisolated static func baseDiskKey(_ key: String) -> String {
+		guard let separatorIndex = key.firstIndex(of: derivedKeySeparator) else {
+			return key
+		}
+		return String(key[..<separatorIndex])
+	}
+
 	/// Without an ETag or Last-Modified, a check downloads the whole image, so it waits the longest.
 	nonisolated static func nextCheck(_ httpResponse: HTTPURLResponse?, hasValidators: Bool) -> Date {
 		var interval = defaultCheckInterval
@@ -452,7 +482,7 @@ extension DownloadedImageCache {
 	}
 
 	/// `records` are least recently accessed first. Files with no record and records with no file
-	/// are removed. Then, when over `limit`, the least recently accessed images not used recently
+	/// are removed, along with derived copies of removed images. Then, when over `limit`, the least recently accessed images not used recently
 	/// are removed, and when still over `hardLimit`, the least recently accessed of the rest.
 	/// Nothing changed in the last minute is removed, since it may be in the middle of being saved.
 	/// Images in `urlsInUse` are being read or downloaded, so they’re kept too.
@@ -472,7 +502,7 @@ extension DownloadedImageCache {
 				recordsToKeep.append((record: record, key: key))
 			}
 		}
-		var keys = Set(fileDates.filter { !recordedKeys.contains($0.key) && $0.value < recentChangeDate }.keys)
+		var keys = Set(fileDates.filter { !recordedKeys.contains(baseDiskKey($0.key)) && $0.value < recentChangeDate }.keys)
 		var byteCount = recordsToKeep.reduce(0) { $0 + $1.record.byteCount }
 
 		func removeLeastRecentlyUsed(accessedBefore date: Date, limit: ByteLimit) {
@@ -493,6 +523,10 @@ extension DownloadedImageCache {
 		}
 		removeLeastRecentlyUsed(accessedBefore: recentUseDate, limit: limit)
 		removeLeastRecentlyUsed(accessedBefore: recentChangeDate, limit: hardLimit)
+
+		// Derived copies go with their images.
+		let removedKeys = keys.union(urls.map(diskKey))
+		keys.formUnion(fileDates.keys.filter { baseDiskKey($0) != $0 && removedKeys.contains(baseDiskKey($0)) })
 
 		return ImageRemoval(urls: urls, keys: keys, remainingByteCount: byteCount)
 	}

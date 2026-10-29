@@ -25,7 +25,7 @@ import Testing
 		let keys = urls.map { DownloadedImageCache.diskKey($0) }
 		var fileDates = Dictionary(uniqueKeysWithValues: keys.map { ($0, longAgo) })
 		fileDates["unrecorded"] = longAgo
-		fileDates["unrecorded-just-saved"] = now
+		fileDates["unrecordedJustSaved"] = now
 
 		let removal = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 350), hardLimit: .init(maximumByteCount: 1000))
 
@@ -43,6 +43,25 @@ import Testing
 		let removal = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [records[0].url], now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 1000))
 
 		#expect(removal.urls == [records[1].url, records[2].url])
+		#expect(removal.remainingByteCount == 100)
+	}
+
+	@Test func derivedCopiesAreKeptAndRemovedWithTheirImages() {
+		let now = Date()
+		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
+		let records = (0..<2).map { DownloadedImageUsage(url: "https://example.com/\($0).png", byteCount: 100, lastAccessed: longAgo.addingTimeInterval(TimeInterval($0))) }
+		let removedCopy = DownloadedImageCache.derivedDiskKey(records[0].url, suffix: "144")
+		let keptCopy = DownloadedImageCache.derivedDiskKey(records[1].url, suffix: "144")
+		let orphanedCopy = DownloadedImageCache.derivedDiskKey("https://example.com/gone.png", suffix: "144")
+		var fileDates = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), longAgo) })
+		for key in [removedCopy, keptCopy, orphanedCopy] {
+			fileDates[key] = longAgo
+		}
+
+		let removal = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 150), hardLimit: .init(maximumByteCount: 1000))
+
+		#expect(removal.urls == [records[0].url])
+		#expect(removal.keys == [DownloadedImageCache.diskKey(records[0].url), removedCopy, orphanedCopy])
 		#expect(removal.remainingByteCount == 100)
 	}
 
