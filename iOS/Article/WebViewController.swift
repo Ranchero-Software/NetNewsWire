@@ -593,8 +593,7 @@ private struct ImageClickMessage: Codable {
 	let width: Float
 	let height: Float
 	let imageTitle: String?
-	let imageURL: String
-	let isTimelineImage: Bool // Served from the timeline’s copy
+	let imageURL: String // The <img>’s src, which may be a routed timeline image
 }
 
 // MARK: Private
@@ -757,8 +756,9 @@ private extension WebViewController {
 		imageDownloadTask?.cancel()
 		imageDownloadTask = Task { [weak self] in
 			var data: Data?
-			if clickMessage.isTimelineImage {
-				data = try? await ArticleThumbnailFinder.shared.fullSizeImageData(url: clickMessage.imageURL, articleTitle: nil)
+			// Only a correctly signed routed URL uses the timeline’s copy, so page content can’t claim one.
+			if imageURL.scheme?.caseInsensitiveCompare(ArticleRenderer.articleImageScheme) == .orderedSame, let timelineImageURL = ArticleImageSchemeHandler.imageURL(imageURL) {
+				data = try? await ArticleThumbnailFinder.shared.fullSizeImageData(url: timelineImageURL, articleTitle: nil)
 			} else {
 				data = try? await Downloader.shared.download(imageURL, userAgentStyle: .browser).data
 			}
