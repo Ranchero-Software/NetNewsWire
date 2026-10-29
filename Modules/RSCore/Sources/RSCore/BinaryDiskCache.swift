@@ -56,7 +56,8 @@ nonisolated private extension BinaryDiskCache {
 
 	func _data(forKey key: String) throws -> Data? {
 		let url = urlForKey(key)
-		return try Data(contentsOf: url)
+		// Mapped, so the bytes are file-backed pages the system can reclaim, not heap memory.
+		return try Data(contentsOf: url, options: .mappedIfSafe)
 	}
 
 	func _setData(_ data: Data, forKey key: String) throws {
