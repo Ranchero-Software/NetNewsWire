@@ -85,6 +85,11 @@ import RSParser
 		#expect(firstSignificantImage(html)?.urlString == "https://example.com/a-1024.jpg")
 	}
 
+	@Test func srcsetIsUsedBeforeSrc() {
+		let html = #"<img src="/spacer.gif" srcset="/real-400.jpg 400w, /real-800.jpg 800w">"#
+		#expect(firstSignificantImage(html)?.urlString == "https://example.com/real-800.jpg")
+	}
+
 	@Test func lazySourceIsUsedWhenSrcIsPlaceholder() {
 		let html = """
 		<a href=" https://twitter.com/intent/tweet?url=x "><img src="/share/twitter.png"></a>

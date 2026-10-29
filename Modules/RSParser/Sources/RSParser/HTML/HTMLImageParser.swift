@@ -11,7 +11,7 @@ import Foundation
 /// which also sees the enclosing `<a>` link so it can reject share buttons.
 /// Stops scanning once it has found `maximumCount`.
 ///
-/// Tries `data-lazy-src`, `data-src`, `src`, and the largest `srcset` candidate,
+/// Tries `data-lazy-src`, `data-src`, the largest `srcset` candidate, and `src`,
 /// in that order, and uses the first that passes the filter. Lazy-loading images
 /// often have a placeholder in `src`.
 public enum HTMLImageParser {
@@ -44,7 +44,7 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 
 	private static let imgBytes: [UInt8] = Array("img".utf8)
 	private static let anchorBytes: [UInt8] = Array("a".utf8)
-	private static let sourceAttributeNames = ["data-lazy-src", "data-src", "src"]
+	private static let lazySourceAttributeNames = ["data-lazy-src", "data-src"]
 
 	init(baseURL: URL?, maximumCount: Int) {
 		self.baseURL = baseURL
@@ -97,9 +97,12 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 	}
 
 	private func imageURLStrings(_ attributes: HTMLAttributes) -> [String] {
-		var sources = Self.sourceAttributeNames.compactMap { attributes[$0] }
+		var sources = Self.lazySourceAttributeNames.compactMap { attributes[$0] }
 		if let srcset = attributes["srcset"], let candidate = largestSrcsetCandidate(srcset) {
 			sources.append(candidate)
+		}
+		if let src = attributes["src"] {
+			sources.append(src)
 		}
 		return sources.compactMap(resolvedURLString)
 	}
