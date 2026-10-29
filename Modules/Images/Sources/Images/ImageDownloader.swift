@@ -62,6 +62,7 @@ extension ImageDownloadError: LocalizedError {
 	private init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
 	}
 
 	@objc func handleAppDidGoToBackground(_ notification: Notification) {
@@ -70,6 +71,17 @@ extension ImageDownloadError: LocalizedError {
 
 	@objc func handleLowMemory(_ notification: Notification) {
 		imageCache.removeAllObjects()
+	}
+
+	/// Made again even when not in memory, since icons made from the old copy may be cached elsewhere.
+	@objc func handleDownloadedImageDidChange(_ notification: Notification) {
+		guard let url = notification.userInfo?[DownloadedImageCache.urlKey] as? String else {
+			return
+		}
+		imageCache.removeObject(forKey: url as NSString)
+		Task { @MainActor in
+			await findImage(url, activityOwner: nil, activityKind: nil, activityDetail: nil)
+		}
 	}
 
 	/// Returns the data if in memory, else makes it from `DownloadedImageCache`’s copy and returns nil.
