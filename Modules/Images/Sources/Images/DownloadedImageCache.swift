@@ -61,6 +61,8 @@ extension Notification.Name {
 	/// When recently used images keep the total over `limit`, the next pass waits for this much more.
 	private static let byteCountBetweenPasses = limit.maximumByteCount / 10
 	private static let readNoteInterval = TimeInterval(days: 1)
+	/// Past this, `readDatesNoted` is emptied, so a session lasting weeks doesn’t keep every URL it used.
+	private static let maximumReadDatesNotedCount = 10_000
 	/// Eight days, not seven, so checks spread across the days of the week.
 	nonisolated private static let defaultCheckInterval = TimeInterval(days: 8)
 	/// A server’s max-age is kept within these, so a misconfigured server isn’t asked too often.
@@ -151,6 +153,9 @@ extension Notification.Name {
 		let now = Date()
 		if let readDate = readDatesNoted[url], now.timeIntervalSince(readDate) < Self.readNoteInterval {
 			return
+		}
+		if readDatesNoted.count >= Self.maximumReadDatesNotedCount {
+			readDatesNoted.removeAll()
 		}
 		readDatesNoted[url] = now
 		ImageDatabase.shared.saveDownloadedImageAccessDate(url: url)
