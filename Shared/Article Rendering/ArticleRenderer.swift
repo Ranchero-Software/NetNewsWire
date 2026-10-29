@@ -328,10 +328,10 @@ private extension ArticleRenderer {
 	/// so the article view uses the timeline’s copy instead of downloading the image again.
 	/// `data-nnw-src` keeps the original URL, which main.js falls back to when the copy can’t be loaded.
 	static func routingThumbnailImages(_ html: String, thumbnailURL: String, baseURL: String?) -> String {
-		guard let encodedURL = thumbnailURL.addingPercentEncoding(withAllowedCharacters: .alphanumerics) else {
+		guard let routedURLString = ArticleImageSchemeHandler.routedURLString(thumbnailURL) else {
 			return html
 		}
-		let attributes = " src=\"\(articleImageScheme):\(encodedURL)\" data-nnw-src=\"\(thumbnailURL.escapingSpecialXMLCharacters)\""
+		let attributes = " src=\"\(routedURLString)\" data-nnw-src=\"\(thumbnailURL.escapingSpecialXMLCharacters)\""
 		return HTMLImageAttributeInserter.insertingAttributes(attributes, intoImagesWithSource: thumbnailURL, html: html, baseURL: baseURL)
 	}
 
