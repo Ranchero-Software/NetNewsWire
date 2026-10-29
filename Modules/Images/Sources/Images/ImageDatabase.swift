@@ -20,6 +20,8 @@ import RSParser
 
 	public static let failureRetryDays = 5
 	private static let failureRetentionDays = 33
+	/// After this, an article’s HTML is checked for thumbnails again, in case it changed.
+	private static let htmlThumbnailRetentionDays = 33
 
 	public let databasePath: String
 
@@ -71,11 +73,12 @@ import RSParser
 
 		loadCachesFromDatabase()
 
-		let cutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetentionDays)
+		let now = Date().timeIntervalSince1970
+		let failureCutoff = now - TimeInterval(days: Self.failureRetentionDays)
+		let htmlThumbnailCutoff = now - TimeInterval(days: Self.htmlThumbnailRetentionDays)
 		queue.runInDatabase { database in
-			DownloadFailureTable.removeExpired(olderThan: cutoff, database: database)
-			// Expiring rows means articles get rechecked, in case their HTML changed.
-			ArticleThumbnailTable.removeExpired(olderThan: cutoff, database: database)
+			DownloadFailureTable.removeExpired(olderThan: failureCutoff, database: database)
+			ArticleThumbnailTable.removeExpired(olderThan: htmlThumbnailCutoff, database: database)
 			database.checkpoint()
 		}
 	}
