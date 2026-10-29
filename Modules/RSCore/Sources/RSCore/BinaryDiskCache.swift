@@ -72,7 +72,7 @@ nonisolated private extension BinaryDiskCache {
 
 	func _setData(_ data: Data, forKey key: String) throws {
 		let url = urlForKey(key)
-		try data.write(to: url)
+		try data.write(to: url, options: .atomic)
 	}
 
 	func _deleteData(forKey key: String) throws {
