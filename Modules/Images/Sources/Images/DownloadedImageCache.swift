@@ -267,7 +267,7 @@ private extension DownloadedImageCache {
 
 		let records = await ImageDatabase.shared.fetchDownloadedImageUsageByLeastRecentAccess()
 		let fileDates = await Self.fileModificationDates(diskCache)
-		let removal = Self.imageRemoval(records: records, fileDates: fileDates, now: startDate, limit: Self.limit, hardLimit: Self.hardLimit)
+		let removal = Self.imageRemoval(records: records, fileDates: fileDates, urlsInUse: Set(tasks.keys), now: startDate, limit: Self.limit, hardLimit: Self.hardLimit)
 
 		totalByteCount = removal.remainingByteCount
 		removalByteCount = max(Self.limit.maximumByteCount, removal.remainingByteCount + Self.byteCountBetweenPasses)
@@ -355,7 +355,8 @@ extension DownloadedImageCache {
 	/// are removed. Then, when over `limit`, the least recently accessed images not used recently
 	/// are removed, and when still over `hardLimit`, the least recently accessed of the rest.
 	/// Nothing changed in the last minute is removed, since it may be in the middle of being saved.
-	nonisolated static func imageRemoval(records: [DownloadedImageUsage], fileDates: [String: Date], now: Date, limit: ByteLimit, hardLimit: ByteLimit) -> ImageRemoval {
+	/// Images in `urlsInUse` are being read or downloaded, so they’re kept too.
+	nonisolated static func imageRemoval(records: [DownloadedImageUsage], fileDates: [String: Date], urlsInUse: Set<String>, now: Date, limit: ByteLimit, hardLimit: ByteLimit) -> ImageRemoval {
 		let recentChangeDate = now.addingTimeInterval(-recentChangeInterval)
 		let recentUseDate = now.addingTimeInterval(-recentUseInterval)
 
@@ -382,7 +383,7 @@ extension DownloadedImageCache {
 				if byteCount <= limit.byteCountAfterRemoval || record.lastAccessed >= date {
 					break
 				}
-				if keys.contains(key) {
+				if keys.contains(key) || urlsInUse.contains(record.url) {
 					continue
 				}
 				urls.append(record.url)

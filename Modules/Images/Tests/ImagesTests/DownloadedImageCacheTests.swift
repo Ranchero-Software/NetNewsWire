@@ -27,11 +27,23 @@ import Testing
 		fileDates["unrecorded"] = longAgo
 		fileDates["unrecorded-just-saved"] = now
 
-		let removal = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, now: now, limit: .init(maximumByteCount: 350), hardLimit: .init(maximumByteCount: 1000))
+		let removal = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 350), hardLimit: .init(maximumByteCount: 1000))
 
 		#expect(removal.urls == ["https://example.com/no-file.jpg", urls[0], urls[1]])
 		#expect(removal.keys == ["unrecorded", keys[0], keys[1]])
 		#expect(removal.remainingByteCount == 200)
+	}
+
+	@Test func imagesInUseAreKept() {
+		let now = Date()
+		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
+		let records = (0..<3).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", byteCount: 100, lastAccessed: longAgo) }
+		let fileDates = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), longAgo) })
+
+		let removal = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [records[0].url], now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 1000))
+
+		#expect(removal.urls == [records[1].url, records[2].url])
+		#expect(removal.remainingByteCount == 100)
 	}
 
 	@Test func shortMaxAgeIsRaisedToThreeDays() throws {
@@ -48,11 +60,11 @@ import Testing
 		let keys = records.map { DownloadedImageCache.diskKey($0.url) }
 		let fileDates = Dictionary(uniqueKeysWithValues: keys.map { ($0, now.addingTimeInterval(-TimeInterval(days: 1))) })
 
-		let underHardLimit = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 1000))
+		let underHardLimit = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 1000))
 		#expect(underHardLimit.urls.isEmpty)
 		#expect(underHardLimit.remainingByteCount == 500)
 
-		let overHardLimit = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 400))
+		let overHardLimit = DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 400))
 		#expect(overHardLimit.urls == [records[0].url, records[1].url])
 		#expect(overHardLimit.remainingByteCount == 300)
 	}
