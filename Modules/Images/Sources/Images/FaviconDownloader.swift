@@ -41,6 +41,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(htmlMetadataIsAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
 	}
 
 	// MARK: - API
@@ -179,6 +180,18 @@ extension Notification.Name {
 		remainingFaviconURLs[homePageURL] = nil
 
 		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
+	}
+
+	/// A new downloader reads the new copy and posts `.DidLoadFavicon`, which leads to `.FaviconDidBecomeAvailable`.
+	@objc func handleDownloadedImageDidChange(_ notification: Notification) {
+		guard let faviconURL = notification.userInfo?[DownloadedImageCache.urlKey] as? String, let downloader = singleFaviconDownloaderCache[faviconURL] else {
+			return
+		}
+		let feeds = cache.keys.filter { cachedFaviconURL(for: $0) == faviconURL }
+		for feed in feeds {
+			cache[feed] = nil
+		}
+		singleFaviconDownloaderCache[faviconURL] = SingleFaviconDownloader(faviconURL: faviconURL, homePageURL: downloader.homePageURL)
 	}
 
 	@objc func htmlMetadataIsAvailable(_ note: Notification) {
