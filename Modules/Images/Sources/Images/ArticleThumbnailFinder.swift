@@ -67,7 +67,11 @@ extension Notification.Name {
 	private var urlsThatFailedToDecode = Set<String>() // So a failure notification can’t lead to the same attempt again
 
 	/// Decoded bitmaps: about 0.25 MB each in small mode, 2–5 MB in large mode.
+	#if os(macOS)
 	private static let imageCacheByteLimit = 128 * 1024 * 1024
+	#else
+	private static let imageCacheByteLimit = 64 * 1024 * 1024
+	#endif
 	/// The small thumbnail is aspect-fit into a box of at most 76pt, which is 228 pixels at 3x.
 	private static let smallThumbnailMaxPixelSize = 256
 	/// Sized to fill the timeline’s width.
