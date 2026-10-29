@@ -41,6 +41,7 @@ extension Notification.Name {
 	static let urlKey = "url"
 
 	private static let folderName = "DownloadedImages"
+	private static let svgMIMEType = "image/svg+xml"
 	private static let maximumConcurrentLimitedDownloads = 4
 	/// A few screens of thumbnails.
 	private static let maximumWaitingLimitedDownloads = 60
@@ -250,7 +251,10 @@ private extension DownloadedImageCache {
 			if let maximumByteCount, data.count > maximumByteCount {
 				throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: false, rejectedByteCount: data.count)
 			}
-			await saveImage(data, url: url, httpResponse: httpResponse)
+			// Transient, since a captive portal’s login page would otherwise fail every image for days.
+			guard await saveImage(data, url: url, httpResponse: httpResponse) else {
+				throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: true)
+			}
 			return (data, downloadResponse)
 		}
 
@@ -269,8 +273,14 @@ private extension DownloadedImageCache {
 		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient, retryAfter: retryAfter)
 	}
 
-	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async {
+	/// Returns false, and saves nothing, when the data isn’t an image, such as an HTML error page.
+	/// SVG is saved, though ImageIO can’t read it.
+	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async -> Bool {
 		let pixelSize = await Self.pixelSize(data)
+		guard pixelSize != nil || httpResponse?.mimeType == Self.svgMIMEType else {
+			Self.logger.info("Didn’t save unreadable image at \(url)")
+			return false
+		}
 		await Self.saveToDisk(diskCache, key: Self.diskKey(url), data: data)
 		var conditionalGetInfo: HTTPConditionalGetInfo?
 		if let httpResponse {
@@ -279,6 +289,7 @@ private extension DownloadedImageCache {
 		let nextCheck = Self.nextCheck(httpResponse, hasValidators: conditionalGetInfo != nil)
 		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: data.count, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
 		imageWasSaved(byteCount: data.count)
+		return true
 	}
 
 	/// At most once a day per image: saves the access date, which orders images for removal,
@@ -320,14 +331,13 @@ private extension DownloadedImageCache {
 		}
 
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
-		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK {
+		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK, await saveImage(data, url: url, httpResponse: httpResponse) {
 			Self.logger.info("Replaced changed image at \(url)")
-			await saveImage(data, url: url, httpResponse: httpResponse)
 			NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
 			return
 		}
 
-		// 304 Not Modified, or an error response: keep the copy and check again later.
+		// 304 Not Modified, an error response, or not an image: keep the copy and check again later.
 		ImageDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: Self.nextCheck(httpResponse, hasValidators: validation.conditionalGetInfo != nil))
 	}
 
