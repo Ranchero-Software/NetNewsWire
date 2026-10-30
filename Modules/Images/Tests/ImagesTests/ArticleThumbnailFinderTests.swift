@@ -71,6 +71,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(records.first { $0.articleID == "2" }?.thumbnailURLs == [])
 
 		imageDatabase.recordFailure(url: "https://example.com/uploads/photo.jpg", statusCode: 404)
+		finder.thumbnailURLDidFail("https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/second-photo.jpg")
 	}
 

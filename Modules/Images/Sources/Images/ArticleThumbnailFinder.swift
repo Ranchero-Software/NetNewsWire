@@ -27,7 +27,8 @@ extension Notification.Name {
 
 	/// Posted when a thumbnail image fails to download or is rejected for its size.
 	/// `thumbnailURL(for:mode:)` now skips that URL, so articles that used it may have a different thumbnail.
-	/// userInfo key: `ArticleThumbnailFinder.urlKey` (the failed URL).
+	/// userInfo keys: `ArticleThumbnailFinder.urlKey` (the failed URL) and `ArticleThumbnailFinder.articleIDsKey`
+	/// (`Set<String>`, the articles whose `thumbnailURL(for:mode:)` was that URL).
 	public static let articleThumbnailDownloadDidFail = Notification.Name("ArticleThumbnailDownloadDidFail")
 }
 
@@ -48,7 +49,7 @@ extension Notification.Name {
 /// Images are decoded at display size from `DownloadedImageCache`’s copy, off the main thread.
 @MainActor public final class ArticleThumbnailFinder {
 
-	public enum Mode: Sendable {
+	public enum Mode: Sendable, CaseIterable {
 		case small
 		case large
 	}
@@ -65,6 +66,7 @@ extension Notification.Name {
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
 	private var cacheKeysInProgress = Set<String>()
 	private var urlsThatFailedToDecode = Set<String>() // So a failure notification can’t lead to the same attempt again
+	private var chosenThumbnailURLs = [Mode: [String: ChosenThumbnailURL]]() // articleID: the URL thumbnailURL(for:mode:) chose, since large-mode row heights ask for every row
 
 	/// Decoded bitmaps: about 0.25 MB each in small mode, 2–5 MB in large mode.
 	#if os(macOS)
@@ -80,6 +82,8 @@ extension Notification.Name {
 	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
 	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, a few hundred bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
 	private static let maxCachedArticleCount = 50_000
+	/// Entries per mode in chosenThumbnailURLs. Past this, that mode’s entries are emptied.
+	private static let maxChosenThumbnailURLCount = 50_000
 
 	init(imageDatabase: ImageDatabase) {
 		self.imageDatabase = imageDatabase
@@ -124,10 +128,17 @@ extension Notification.Name {
 
 	/// Nil when the article has no usable image, or when its HTML hasn’t been checked yet.
 	public func thumbnailURL(for article: Article, mode: Mode) -> String? {
-		if let providedThumbnailURL = providedThumbnailURL(for: article, mode: mode) {
-			return providedThumbnailURL
+		let articleID = article.articleID
+		if let chosenThumbnailURL = chosenThumbnailURLs[mode]?[articleID], chosenThumbnailURL.article === article {
+			return chosenThumbnailURL.thumbnailURL
 		}
-		return htmlThumbnailURLs[article.articleID]?.first(where: isUsable)
+
+		let thumbnailURL = providedThumbnailURL(for: article, mode: mode) ?? htmlThumbnailURLs[articleID]?.first(where: isUsable)
+		if chosenThumbnailURLs[mode, default: [:]].count >= Self.maxChosenThumbnailURLCount {
+			chosenThumbnailURLs[mode] = nil
+		}
+		chosenThumbnailURLs[mode, default: [:]][articleID] = ChosenThumbnailURL(article: article, thumbnailURL: thumbnailURL)
+		return thumbnailURL
 	}
 
 	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
@@ -166,6 +177,19 @@ extension Notification.Name {
 		}
 	}
 
+	/// Forgets the chosen thumbnail URL of each article that used `url`, and posts `.articleThumbnailDownloadDidFail`.
+	func thumbnailURLDidFail(_ url: String) {
+		var articleIDs = Set<String>()
+		for chosenThumbnailURLsForMode in chosenThumbnailURLs.values {
+			articleIDs.formUnion(chosenThumbnailURLsForMode.filter { $0.value.thumbnailURL == url }.keys)
+		}
+		guard !articleIDs.isEmpty else {
+			return
+		}
+		forgetChosenThumbnailURLs(articleIDs)
+		NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.urlKey: url, Self.articleIDsKey: articleIDs])
+	}
+
 	// MARK: - Notifications
 
 	@objc func handleLowMemory(_ notification: Notification) {
@@ -176,6 +200,12 @@ extension Notification.Name {
 // MARK: - Private
 
 private extension ArticleThumbnailFinder {
+
+	struct ChosenThumbnailURL {
+		/// Articles are immutable, so a different instance with the same articleID may have different images.
+		let article: Article
+		let thumbnailURL: String?
+	}
 
 	struct ArticleHTML: Sendable {
 		let articleID: String
@@ -230,8 +260,16 @@ private extension ArticleThumbnailFinder {
 					urlsThatFailedToDecode.insert(url)
 				}
 				if !error.isTransient {
-					NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.urlKey: url])
+					thumbnailURLDidFail(url)
 				}
+			}
+		}
+	}
+
+	func forgetChosenThumbnailURLs(_ articleIDs: some Sequence<String>) {
+		for mode in Mode.allCases {
+			for articleID in articleIDs {
+				chosenThumbnailURLs[mode]?[articleID] = nil
 			}
 		}
 	}
@@ -265,8 +303,8 @@ private extension ArticleThumbnailFinder {
 		if isCached(articleID) || articleIDsBeingDiscovered.contains(articleID) {
 			return false
 		}
-		// Which source is chosen depends on mode, but whether there is one doesn’t.
-		return providedThumbnailURL(for: article, mode: .small) == nil
+		// Without HTML results, thumbnailURL is the provided image. Which one is chosen depends on mode, but whether there is one doesn’t.
+		return thumbnailURL(for: article, mode: .small) == nil
 	}
 
 	func isCached(_ articleID: String) -> Bool {
@@ -274,6 +312,7 @@ private extension ArticleThumbnailFinder {
 	}
 
 	func cacheRecords(_ records: [ArticleThumbnailRecord]) {
+		forgetChosenThumbnailURLs(records.map(\.articleID))
 		for record in records {
 			if !record.thumbnailURLs.isEmpty {
 				htmlThumbnailURLs[record.articleID] = record.thumbnailURLs
