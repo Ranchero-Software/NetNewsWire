@@ -220,6 +220,7 @@ extension Notification.Name {
 
 	@objc func handleLowMemory(_ notification: Notification) {
 		imageCache.removeAllObjects()
+		chosenThumbnailURLs.removeAll()
 	}
 
 	/// What failed to decode may have been a captive portal’s login page, not the image.
