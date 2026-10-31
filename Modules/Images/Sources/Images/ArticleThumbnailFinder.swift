@@ -14,6 +14,7 @@ import ImageIO
 import Articles
 import RSCore
 import RSParser
+import RSWeb
 import ActivityLog
 
 extension Notification.Name {
@@ -95,6 +96,7 @@ extension Notification.Name {
 
 		// Not flushed on appDidGoToBackground, which would make thumbnails flash on resume.
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 	}
 
 	/// False when offline or in Low Data Mode, when thumbnails not already on disk aren’t downloaded.
@@ -191,6 +193,16 @@ extension Notification.Name {
 		}
 	}
 
+	func thumbnailDidFail(url: String, error: ImageDownloadError) {
+		if error.decodingFailed || error.rejectedPixelSize != nil {
+			urlsThatFailedToDecode.insert(url)
+		}
+		// A transient decoding failure counts, since the row would otherwise keep waiting for an image that isn’t coming.
+		if !error.isTransient || error.decodingFailed {
+			thumbnailURLDidFail(url)
+		}
+	}
+
 	/// Forgets the chosen thumbnail URL of each article that used `url`, and posts `.articleThumbnailDownloadDidFail`.
 	func thumbnailURLDidFail(_ url: String) {
 		var articleIDs = Set<String>()
@@ -208,6 +220,11 @@ extension Notification.Name {
 
 	@objc func handleLowMemory(_ notification: Notification) {
 		imageCache.removeAllObjects()
+	}
+
+	/// What failed to decode may have been a captive portal’s login page, not the image.
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		urlsThatFailedToDecode.removeAll()
 	}
 }
 
@@ -279,12 +296,7 @@ private extension ArticleThumbnailFinder {
 				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
 				NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
 			} catch {
-				if error.decodingFailed || error.rejectedPixelSize != nil {
-					urlsThatFailedToDecode.insert(url)
-				}
-				if !error.isTransient {
-					thumbnailURLDidFail(url)
-				}
+				thumbnailDidFail(url: url, error: error)
 			}
 		}
 	}

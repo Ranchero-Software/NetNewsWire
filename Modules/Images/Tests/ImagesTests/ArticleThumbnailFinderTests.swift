@@ -11,6 +11,7 @@ import CoreGraphics
 import ImageIO
 import UniformTypeIdentifiers
 import Articles
+import RSWeb
 @testable import Images
 
 /// Swift Testing also has an `Attachment` type.
@@ -91,6 +92,19 @@ private typealias ArticleAttachment = Articles.Attachment
 
 		await finder.discoverThumbnailURLs(for: [article])
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
+	}
+
+	@Test func nonImageResponseMovesToNextSourceUntilNetworkChanges() {
+		let finder = ArticleThumbnailFinder(imageDatabase: ImageDatabase(databasePath: ":memory:"))
+		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
+
+		finder.thumbnailDidFail(url: "https://example.com/thumbnail.jpg", error: ImageDownloadError(statusCode: 200, decodingFailed: true, isTransient: true))
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
+
+		finder.handleNetworkStatusDidChange(Notification(name: .networkStatusDidChange))
+		let updatedArticle = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
+		#expect(finder.thumbnailURL(for: updatedArticle, mode: .small) == "https://example.com/thumbnail.jpg")
 	}
 
 	@Test func savedHTMLThumbnailIsLoadedWithoutDiscovery() async {
