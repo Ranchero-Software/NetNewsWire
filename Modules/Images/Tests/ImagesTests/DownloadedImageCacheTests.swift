@@ -73,6 +73,14 @@ import Testing
 		#expect(interval > TimeInterval(days: 3) * 0.8 - 60 && interval < TimeInterval(days: 3) * 1.2)
 	}
 
+	@Test func imageWithoutValidatorsWaitsLongestBetweenChecks() throws {
+		let url = try #require(URL(string: "https://example.com/icon.png"))
+		let httpResponse = try #require(HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: ["Cache-Control": "max-age=60"]))
+
+		let interval = DownloadedImageCache.nextCheck(httpResponse, hasValidators: false).timeIntervalSinceNow
+		#expect(interval > TimeInterval(days: 30) * 0.8 - 60 && interval < TimeInterval(days: 30) * 1.2)
+	}
+
 	@Test func serverErrorsAndRateLimitsAreTransientButMissingImagesAreNot() {
 		#expect(DownloadedImageCache.isTransient(statusCode: 503))
 		#expect(DownloadedImageCache.isTransient(statusCode: 429))
