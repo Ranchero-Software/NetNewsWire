@@ -61,8 +61,7 @@ extension Notification.Name {
 	public static let urlKey = "url"
 
 	private let imageDatabase: ImageDatabase
-	private var htmlThumbnailURLs = [String: [String]]() // articleID: thumbnailURLs, in document order
-	private var articleIDsWithNoHTMLThumbnail = Set<String>()
+	private var htmlThumbnailURLs = [String: [String]]() // articleID: thumbnailURLs, in document order. Empty when the HTML has none.
 	private var articleIDsBeingDiscovered = Set<String>()
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
 	private let decodeQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentDecodes, maximumWaitingCount: maximumWaitingDecodes)
@@ -88,7 +87,7 @@ extension Notification.Name {
 	#endif
 	/// HTML images saved per article, so one that fails or is too small falls through to the next.
 	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
-	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, a few hundred bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
+	/// Entries in htmlThumbnailURLs, a few hundred bytes each. Past this, it’s emptied, and the next discovery reloads its articles from the database.
 	private static let maxCachedArticleCount = 50_000
 	/// Entries per mode in chosenThumbnailURLs. Past this, that mode’s entries are emptied.
 	private static let maxChosenThumbnailURLCount = 50_000
@@ -159,9 +158,8 @@ extension Notification.Name {
 	/// The rest are parsed off the main thread and saved, and `.articleThumbnailURLsDidBecomeAvailable` is posted
 	/// for those that have thumbnails. The returned task finishes after that.
 	@discardableResult public func findThumbnailURLs(for articles: some Collection<Article>) -> Task<Void, Never> {
-		if htmlThumbnailURLs.count + articleIDsWithNoHTMLThumbnail.count > Self.maxCachedArticleCount {
+		if htmlThumbnailURLs.count > Self.maxCachedArticleCount {
 			htmlThumbnailURLs.removeAll()
-			articleIDsWithNoHTMLThumbnail.removeAll()
 		}
 
 		let articlesToFind = articles.filter(needsHTMLDiscovery)
@@ -367,17 +365,13 @@ private extension ArticleThumbnailFinder {
 	}
 
 	func isCached(_ articleID: String) -> Bool {
-		htmlThumbnailURLs[articleID] != nil || articleIDsWithNoHTMLThumbnail.contains(articleID)
+		htmlThumbnailURLs[articleID] != nil
 	}
 
 	func cacheRecords(_ records: [ArticleThumbnailRecord]) {
 		forgetChosenThumbnailURLs(records.map(\.articleID))
 		for record in records {
-			if !record.thumbnailURLs.isEmpty {
-				htmlThumbnailURLs[record.articleID] = record.thumbnailURLs
-			} else {
-				articleIDsWithNoHTMLThumbnail.insert(record.articleID)
-			}
+			htmlThumbnailURLs[record.articleID] = record.thumbnailURLs
 		}
 	}
 
