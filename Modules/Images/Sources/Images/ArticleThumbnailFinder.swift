@@ -49,7 +49,7 @@ extension Notification.Name {
 /// a few at a time and newest first, so a fast scroll doesn’t spend time on rows long gone.
 @MainActor public final class ArticleThumbnailFinder {
 
-	public enum Mode: Sendable, CaseIterable {
+	public enum Mode: String, Sendable, CaseIterable {
 		case small
 		case large
 	}
@@ -238,7 +238,7 @@ private extension ArticleThumbnailFinder {
 
 	/// The same URL can be cached at both sizes.
 	static func cacheKey(_ url: String, _ mode: Mode) -> NSString {
-		"\(mode) \(url)" as NSString
+		"\(mode.rawValue) \(url)" as NSString
 	}
 
 	static func maxPixelSize(_ mode: Mode) -> Int {
