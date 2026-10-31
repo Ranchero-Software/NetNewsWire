@@ -142,6 +142,11 @@ extension Notification.Name {
 		downloadQueue.prioritize(key: url)
 	}
 
+	/// True when the URL returned something other than an image, and the network status hasn’t changed since.
+	func returnedNonImage(_ url: String) -> Bool {
+		urlsThatReturnedNonImage.contains(url)
+	}
+
 	/// A copy made from the image at `url`, such as a scaled icon. Nil when none has been saved.
 	func derivedImageData(for url: String, suffix: String) async -> Data? {
 		await Self.readFromDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix))

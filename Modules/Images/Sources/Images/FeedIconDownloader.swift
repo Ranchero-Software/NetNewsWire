@@ -257,7 +257,7 @@ private extension FeedIconDownloader {
 		}
 
 		let urlIsUnfetchable = !url.hasPrefix("http://") && !url.hasPrefix("https://")
-		if urlIsUnfetchable || ImageDatabase.shared.recentlyFailed(url: url) {
+		if urlIsUnfetchable || ImageDatabase.shared.recentlyFailed(url: url) || DownloadedImageCache.shared.returnedNonImage(url) {
 			imageResultBlock(nil, true)
 			return
 		}
