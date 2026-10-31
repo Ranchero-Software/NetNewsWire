@@ -39,6 +39,8 @@ extension Notification.Name {
 /// until a retry date. After a 429, a 503, or no response, nothing else on its host is requested
 /// either. The wait starts at a minute and doubles with each failure after a wait ends, up to an hour,
 /// or is the server’s Retry-After when that’s longer.
+///
+/// A URL that returned something other than an image isn’t requested again until the network status changes.
 @MainActor final class DownloadedImageCache {
 
 	static let shared = DownloadedImageCache()
@@ -90,6 +92,7 @@ extension Notification.Name {
 	private var readDatesNoted = [String: Date]() // url: date
 	private var retryDelays = [String: RetryDelay]() // url: wait after its last transient failure
 	private var hostRetryDelays = [String: RetryDelay]() // lowercased host: wait after its last transient failure
+	private var urlsThatReturnedNonImage = Set<String>()
 
 	private init() {
 		let folder = AppConfig.cacheSubfolder(named: Self.folderName)
@@ -174,9 +177,11 @@ extension Notification.Name {
 	}
 
 	/// Failures while offline say nothing about the servers, so retries can start right away.
+	/// What wasn’t an image may have been a captive portal’s login page.
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
 		retryDelays.removeAll()
 		hostRetryDelays.removeAll()
+		urlsThatReturnedNonImage.removeAll()
 	}
 }
 
@@ -188,6 +193,9 @@ private extension DownloadedImageCache {
 			return .success(data)
 		}
 
+		if urlsThatReturnedNonImage.contains(url) {
+			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: true))
+		}
 		if isWaitingToRetry(url) {
 			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 		}
@@ -318,6 +326,7 @@ private extension DownloadedImageCache {
 			}
 			// Transient, since a captive portal’s login page would otherwise fail every image for days.
 			guard await saveImage(data, url: url, httpResponse: httpResponse) else {
+				urlsThatReturnedNonImage.insert(url)
 				throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: true)
 			}
 			return (data, downloadResponse)
