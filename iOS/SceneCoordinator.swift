@@ -714,7 +714,8 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	@objc func handleTimelineFeedIconsDisplayDidChange(_ notification: Notification) {
 		updateShowNamesAndIcons()
-		mainTimelineViewController?.queueReloadAvailableCells()
+		// Showing the icon changes the text width, and so the height of every row.
+		mainTimelineViewController?.reloadAllCells()
 	}
 
 	/// Updates navigation bar subtitles in response to feed selection, unread count changes,

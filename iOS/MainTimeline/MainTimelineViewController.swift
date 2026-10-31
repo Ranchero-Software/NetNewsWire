@@ -426,7 +426,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	}
 
 	/// Measures every row again, including rows that aren’t visible.
-	private func reloadAllCells() {
+	func reloadAllCells() {
 		guard let dataSource else {
 			return
 		}
