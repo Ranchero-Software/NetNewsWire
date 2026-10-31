@@ -345,11 +345,14 @@ private extension DownloadedImageCache {
 		if let statusCode {
 			isTransient = Self.isTransient(statusCode: statusCode)
 		}
-		var retryAfter: TimeInterval?
-		if let retryAfterValue = httpResponse?.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) {
-			retryAfter = TimeInterval(retryAfterValue.trimmingCharacters(in: .whitespaces))
+		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient, retryAfter: Self.retryAfter(httpResponse))
+	}
+
+	static func retryAfter(_ httpResponse: HTTPURLResponse?) -> TimeInterval? {
+		guard let retryAfterValue = httpResponse?.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) else {
+			return nil
 		}
-		throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: isTransient, retryAfter: retryAfter)
+		return TimeInterval(retryAfterValue.trimmingCharacters(in: .whitespaces))
 	}
 
 	/// Returns false, and saves nothing, when the data isn’t an image, such as an HTML error page.
@@ -374,8 +377,11 @@ private extension DownloadedImageCache {
 	// MARK: - Revalidating Images
 
 	/// Doesn’t use the download queue, since icons aren’t limited either.
-	/// A network error leaves `nextCheck` as is, so the next day’s use tries again.
+	/// A network that doesn’t allow downloads, a retry wait, or a network error leaves `nextCheck` as is, so the next day’s use tries again.
 	func revalidateIfDue(_ url: String) async {
+		guard Self.networkAllowsDownloads, !isWaitingToRetry(url) else {
+			return
+		}
 		guard let validation = await ImageDatabase.shared.fetchDownloadedImageValidation(url: url), validation.nextCheck <= Date() else {
 			return
 		}
@@ -397,6 +403,11 @@ private extension DownloadedImageCache {
 			Self.logger.info("Replaced changed image at \(url)")
 			NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
 			return
+		}
+
+		if let httpResponse, Self.isTransient(statusCode: httpResponse.statusCode) {
+			let error = ImageDownloadError(statusCode: httpResponse.statusCode, decodingFailed: false, isTransient: true, retryAfter: Self.retryAfter(httpResponse))
+			noteDownloadResult(.failure(error), url: url)
 		}
 
 		// 304 Not Modified, an error response, or not an image: keep the copy and check again later.
