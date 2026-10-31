@@ -99,6 +99,8 @@ import Testing
 
 		let longerRetryAfter = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: firstDelay.delay * 10, now: now.addingTimeInterval(1))
 		#expect(longerRetryAfter.retryDate == now.addingTimeInterval(1 + firstDelay.delay * 10))
+		#expect(longerRetryAfter.isFromRetryAfter)
+		#expect(!firstDelay.isFromRetryAfter)
 
 		let afterWait = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: nil, now: firstDelay.retryDate)
 		#expect(afterWait.delay == firstDelay.delay * 2)

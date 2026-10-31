@@ -183,11 +183,12 @@ extension Notification.Name {
 		}
 	}
 
-	/// Failures while offline say nothing about the servers, so retries can start right away.
+	/// Failures while offline say nothing about the servers, so retries can start right away,
+	/// except where a server asked for a wait with Retry-After.
 	/// What wasn’t an image may have been a captive portal’s login page.
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
-		retryDelays.removeAll()
-		hostRetryDelays.removeAll()
+		retryDelays = retryDelays.filter { $0.value.isFromRetryAfter }
+		hostRetryDelays = hostRetryDelays.filter { $0.value.isFromRetryAfter }
 		urlsThatReturnedNonImage.removeAll()
 	}
 }
@@ -516,6 +517,7 @@ extension DownloadedImageCache {
 	struct RetryDelay {
 		let retryDate: Date
 		let delay: TimeInterval
+		let isFromRetryAfter: Bool
 	}
 
 	/// Requests already running when a wait starts can fail during it, so the wait doubles only
@@ -525,7 +527,7 @@ extension DownloadedImageCache {
 			guard let retryAfter, now.addingTimeInterval(retryAfter) > previousRetryDelay.retryDate else {
 				return previousRetryDelay
 			}
-			return RetryDelay(retryDate: now.addingTimeInterval(retryAfter), delay: max(previousRetryDelay.delay, retryAfter))
+			return RetryDelay(retryDate: now.addingTimeInterval(retryAfter), delay: max(previousRetryDelay.delay, retryAfter), isFromRetryAfter: true)
 		}
 
 		var delay = initialRetryDelay
@@ -535,7 +537,7 @@ extension DownloadedImageCache {
 		if let retryAfter {
 			delay = max(delay, retryAfter)
 		}
-		return RetryDelay(retryDate: now.addingTimeInterval(delay), delay: delay)
+		return RetryDelay(retryDate: now.addingTimeInterval(delay), delay: delay, isFromRetryAfter: retryAfter != nil)
 	}
 
 	/// Without an ETag or Last-Modified, a check downloads the whole image, so it waits the longest.
