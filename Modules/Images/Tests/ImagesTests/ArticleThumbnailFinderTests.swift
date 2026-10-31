@@ -75,6 +75,18 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/second-photo.jpg")
 	}
 
+	@Test func savedHTMLThumbnailIsLoadedWithoutDiscovery() async {
+		let imageDatabase = ImageDatabase(databasePath: ":memory:")
+		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#)
+		await ArticleThumbnailFinder(imageDatabase: imageDatabase).discoverThumbnailURLs(for: [article])
+
+		let finderAfterRelaunch = ArticleThumbnailFinder(imageDatabase: imageDatabase)
+		#expect(finderAfterRelaunch.thumbnailURL(for: article, mode: .large) == nil)
+
+		finderAfterRelaunch.loadSavedThumbnailURLs(for: [article])
+		#expect(finderAfterRelaunch.thumbnailURL(for: article, mode: .large) == "https://example.com/uploads/photo.jpg")
+	}
+
 	@Test func thumbnailTooSmallIsRejected() async throws {
 		let smallImageData = try #require(jpegData(width: 48, height: 48))
 

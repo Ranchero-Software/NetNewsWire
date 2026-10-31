@@ -140,6 +140,16 @@ extension Notification.Name {
 		return thumbnailURL
 	}
 
+	/// Loads HTML thumbnail URLs saved in the database, without waiting for `discoverThumbnailURLs(for:)`,
+	/// so that rows laid out next can use them. Blocks until the database has answered, and posts no notification.
+	public func loadSavedThumbnailURLs(for articles: some Collection<Article>) {
+		let articleIDs = articles.filter(needsHTMLDiscovery).compactMap(ArticleHTML.init).map(\.articleID)
+		guard !articleIDs.isEmpty else {
+			return
+		}
+		cacheRecords(imageDatabase.fetchArticleThumbnailsSync(articleIDs: articleIDs))
+	}
+
 	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
 	/// Uses results saved in the database, parses the rest off the main thread, and saves those results.
 	public func discoverThumbnailURLs(for articles: some Collection<Article>) async {

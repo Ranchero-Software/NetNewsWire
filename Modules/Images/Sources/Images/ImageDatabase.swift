@@ -136,6 +136,14 @@ import RSParser
 		}
 	}
 
+	func fetchArticleThumbnailsSync(articleIDs: [String]) -> [ArticleThumbnailRecord] {
+		nonisolated(unsafe) var records = [ArticleThumbnailRecord]()
+		queue.runInDatabaseSync { database in
+			records = ArticleThumbnailTable.fetch(articleIDs: articleIDs, database: database)
+		}
+		return records
+	}
+
 	func saveArticleThumbnails(_ records: [ArticleThumbnailRecord]) {
 		queue.runInTransaction { database in
 			ArticleThumbnailTable.save(records, database: database)
