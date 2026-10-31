@@ -35,9 +35,10 @@ extension Notification.Name {
 /// background whether it changed. Unchanged icons cost a 304 response, not the image again.
 /// Other images, such as thumbnails, keep the version first downloaded.
 ///
-/// After a transient failure, such as a timeout or a 5xx response, neither the URL nor anything
-/// else on its host is requested again until a retry date. The wait starts at a minute and doubles
-/// with each failure after a wait ends, up to an hour, or is the server’s Retry-After when that’s longer.
+/// After a transient failure, such as a timeout or a 5xx response, the URL isn’t requested again
+/// until a retry date. After a 429, a 503, or no response, nothing else on its host is requested
+/// either. The wait starts at a minute and doubles with each failure after a wait ends, up to an hour,
+/// or is the server’s Retry-After when that’s longer.
 @MainActor final class DownloadedImageCache {
 
 	static let shared = DownloadedImageCache()
@@ -240,9 +241,17 @@ private extension DownloadedImageCache {
 		}
 		let now = Date()
 		retryDelays[url] = Self.nextRetryDelay(after: retryDelays[url], retryAfter: error.retryAfter, now: now)
-		if let host {
+		if let host, Self.failureAppliesToHost(statusCode: error.statusCode) {
 			hostRetryDelays[host] = Self.nextRetryDelay(after: hostRetryDelays[host], retryAfter: error.retryAfter, now: now)
 		}
+	}
+
+	/// A host that’s rate limiting, overloaded, or not answering gets a wait. Other failures may be just the one URL.
+	static func failureAppliesToHost(statusCode: Int?) -> Bool {
+		guard let statusCode else {
+			return true
+		}
+		return statusCode == HTTPResponseCode.tooManyRequests || statusCode == HTTPResponseCode.serviceUnavailable
 	}
 
 	static func host(_ url: String) -> String? {
