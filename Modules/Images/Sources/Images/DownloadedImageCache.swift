@@ -45,6 +45,8 @@ extension Notification.Name {
 
 	static let shared = DownloadedImageCache()
 	static let urlKey = "url"
+	/// Scaled icons are saved next to their originals, so they aren’t rescaled after a memory cache is emptied.
+	static let scaledIconSuffix = String(RSImage.maxIconPixelSize)
 
 	private static let folderName = "DownloadedImages"
 	private static let svgMIMEType = "image/svg+xml"
@@ -156,10 +158,6 @@ extension Notification.Name {
 
 	func saveDerivedImageData(_ data: Data, for url: String, suffix: String) async {
 		try? await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix), data: data)
-	}
-
-	func deleteDerivedImageData(for url: String, suffix: String) async {
-		await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: suffix)])
 	}
 
 	/// At most once a day per image: saves the access date, which orders images for removal,
@@ -411,6 +409,7 @@ private extension DownloadedImageCache {
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
 		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK, (try? await saveImage(data, url: url, httpResponse: httpResponse)) == true {
 			Self.logger.info("Replaced changed image at \(url)")
+			await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix)])
 			NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
 			return
 		}
