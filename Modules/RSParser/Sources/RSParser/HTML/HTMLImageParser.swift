@@ -145,12 +145,13 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 				remaining = remaining.dropFirst(descriptor.count)
 			}
 
-			let trimmedDescriptor = descriptor.trimmingCharacters(in: .whitespaces)
-			let size = Double(trimmedDescriptor.dropLast()) ?? 1
+			// A descriptor can have a second part, as in `400w 300h`.
+			let sizeDescriptor = descriptor.split(whereSeparator: \.isWhitespace).first ?? ""
+			let size = Double(sizeDescriptor.dropLast()) ?? 1
 			if url.isEmpty {
 				continue
 			}
-			if trimmedDescriptor.hasSuffix("w"), size >= Self.preferredSrcsetWidth, size < narrowestWideEnough?.size ?? .infinity {
+			if sizeDescriptor.hasSuffix("w"), size >= Self.preferredSrcsetWidth, size < narrowestWideEnough?.size ?? .infinity {
 				narrowestWideEnough = (url: url, size: size)
 			}
 			if size > largest?.size ?? -.infinity {

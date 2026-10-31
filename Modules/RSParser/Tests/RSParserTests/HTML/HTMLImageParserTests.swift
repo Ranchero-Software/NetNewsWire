@@ -95,6 +95,19 @@ import RSParser
 		#expect(firstSignificantImage(html)?.urlString == "https://example.com/a-1536.jpg")
 	}
 
+	@Test func srcsetDescriptorCanEndWithNewlineOrHaveHeight() {
+		let htmlWithNewlines = """
+		<img srcset="
+			/a-400.jpg 400w,
+			/a-800.jpg 800w
+		">
+		"""
+		#expect(firstSignificantImage(htmlWithNewlines)?.urlString == "https://example.com/a-800.jpg")
+
+		let htmlWithHeights = #"<img srcset="/a-400.jpg 400w 300h, /a-800.jpg 800w 600h">"#
+		#expect(firstSignificantImage(htmlWithHeights)?.urlString == "https://example.com/a-800.jpg")
+	}
+
 	@Test func lazySourceIsUsedWhenSrcIsPlaceholder() {
 		let html = """
 		<a href=" https://twitter.com/intent/tweet?url=x "><img src="/share/twitter.png"></a>
