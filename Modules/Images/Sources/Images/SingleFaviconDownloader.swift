@@ -62,10 +62,22 @@ private extension SingleFaviconDownloader {
 	func findFavicon() async {
 		let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
 		lastFailureWasTransient = false
+		if let scaledData = await DownloadedImageCache.shared.derivedImageData(for: faviconURL, suffix: DownloadedImageCache.scaledIconSuffix), let image = await Self.image(scaledData) {
+			DownloadedImageCache.shared.imageWasUsed(faviconURL, checksForUpdates: true)
+			iconImage = IconImage(image)
+			ImageDatabase.shared.clearFailure(url: faviconURL)
+			postDidLoadFaviconNotification()
+			return
+		}
 		do throws(ImageDownloadError) {
 			let storedData = try await DownloadedImageCache.shared.imageData(for: faviconURL, downloadPriority: nil, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL)
+			let scaledData = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
 			// DownloadedImageCache records download failures, but can’t know whether the data decodes as an icon.
-			if let image = await Self.iconImage(storedData, maxPixelSize: RSImage.maxIconPixelSize) {
+			if let image = await Self.image(scaledData) {
+				// An image that’s already small enough needs no second file.
+				if scaledData != storedData {
+					await DownloadedImageCache.shared.saveDerivedImageData(scaledData, for: faviconURL, suffix: DownloadedImageCache.scaledIconSuffix)
+				}
 				iconImage = IconImage(image)
 				ImageDatabase.shared.clearFailure(url: faviconURL)
 			} else {
@@ -78,9 +90,12 @@ private extension SingleFaviconDownloader {
 		postDidLoadFaviconNotification()
 	}
 
-	@concurrent static func iconImage(_ data: Data, maxPixelSize: Int) async -> RSImage? {
-		let scaledData = RSImage.scaledImageData(data, maxPixelSize: maxPixelSize) ?? data
-		return RSImage(data: scaledData)
+	@concurrent static func scaledImageData(_ data: Data, maxPixelSize: Int) async -> Data {
+		RSImage.scaledImageData(data, maxPixelSize: maxPixelSize) ?? data
+	}
+
+	@concurrent static func image(_ data: Data) async -> RSImage? {
+		RSImage(data: data)
 	}
 
 	func postDidLoadFaviconNotification() {
