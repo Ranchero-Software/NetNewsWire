@@ -464,7 +464,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		guard !articlesToReload.isEmpty else {
 			return
 		}
-		snapshot.reloadItems(articlesToReload)
+		snapshot.reconfigureItems(articlesToReload)
 		dataSource.apply(snapshot, animatingDifferences: false) { [weak self] in
 			self?.restoreSelectionIfNecessary(adjustScroll: false)
 		}
