@@ -1248,10 +1248,16 @@ private extension MainTimelineViewController {
 	}
 
 	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
-		guard let thumbnailMode, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
+		guard let thumbnailMode, let collectionView, let dataSource, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
 			return
 		}
-		reloadCells(visibleArticles().filter { ArticleThumbnailFinder.shared.thumbnailURL(for: $0, mode: thumbnailMode) == url })
+		// The row’s height already allows for the thumbnail, so only the cell’s contents change.
+		for indexPath in collectionView.indexPathsForVisibleItems {
+			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell else {
+				continue
+			}
+			cell.cellData = configure(article: article)
+		}
 	}
 
 	@objc func handleArticleThumbnailDownloadDidFail(_ notification: Notification) {
