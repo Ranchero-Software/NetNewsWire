@@ -9,6 +9,7 @@ import Foundation
 import Testing
 import RSDatabase
 import RSDatabaseObjC
+import RSWeb
 @testable import Images
 
 @MainActor @Suite struct ImageDatabaseTests {
@@ -32,6 +33,46 @@ import RSDatabaseObjC
 
 		// Waits for the cleanup init queues, which would otherwise run after the folder is deleted.
 		await imageDatabase.vacuum()
+	}
+
+	@Test func downloadedImagesAreSavedAndCheckedForThumbnailSuitability() async throws {
+		let folder = FileManager.default.temporaryDirectory.appendingPathComponent("ImageDatabaseTests-\(UUID().uuidString)")
+		try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+		defer {
+			try? FileManager.default.removeItem(at: folder)
+		}
+		let databasePath = folder.appendingPathComponent("Images.db").path
+		let iconURL = "https://example.com/icon.png"
+		let replacedIconURL = "https://example.com/replaced-icon.png"
+		let photoURL = "https://example.com/photo.jpg"
+		let unreadableImageURL = "https://example.com/unreadable.png"
+		let nextCheck = Date(timeIntervalSince1970: 2_000_000_000)
+		let conditionalGetInfo = try #require(HTTPConditionalGetInfo(lastModified: nil, etag: "\"abc\""))
+
+		let imageDatabase = ImageDatabase(databasePath: databasePath)
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: iconURL, byteCount: 100, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, byteCount: 100, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, byteCount: 200, pixelSize: (width: 512, height: 512), conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: photoURL, byteCount: 300, pixelSize: (width: 800, height: 600), conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: unreadableImageURL, byteCount: 400, pixelSize: nil, conditionalGetInfo: nil, nextCheck: nextCheck))
+
+		let validation = await imageDatabase.fetchDownloadedImageValidation(url: photoURL)
+		#expect(validation?.conditionalGetInfo == conditionalGetInfo)
+		#expect(validation?.nextCheck == nextCheck)
+
+		// Waits for the saves, so the database opened below sees them.
+		await imageDatabase.vacuum()
+
+		let reopenedImageDatabase = ImageDatabase(databasePath: databasePath)
+		for database in [imageDatabase, reopenedImageDatabase] {
+			#expect(database.isUnsuitableForThumbnail(url: iconURL))
+			#expect(!database.isUnsuitableForThumbnail(url: replacedIconURL))
+			#expect(!database.isUnsuitableForThumbnail(url: photoURL))
+			#expect(database.isUnsuitableForThumbnail(url: unreadableImageURL))
+		}
+
+		// Waits for the cleanup init queues, which would otherwise run after the folder is deleted.
+		await reopenedImageDatabase.vacuum()
 	}
 }
 
