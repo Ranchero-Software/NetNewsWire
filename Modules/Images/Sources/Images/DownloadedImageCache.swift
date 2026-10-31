@@ -155,7 +155,7 @@ extension Notification.Name {
 	}
 
 	func saveDerivedImageData(_ data: Data, for url: String, suffix: String) async {
-		await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix), data: data)
+		try? await Self.saveToDisk(diskCache, key: Self.derivedDiskKey(url, suffix: suffix), data: data)
 	}
 
 	func deleteDerivedImageData(for url: String, suffix: String) async {
@@ -334,7 +334,7 @@ private extension DownloadedImageCache {
 				throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: false, rejectedByteCount: data.count)
 			}
 			// Transient, since a captive portal’s login page would otherwise fail every image for days.
-			guard await saveImage(data, url: url, httpResponse: httpResponse) else {
+			guard try await saveImage(data, url: url, httpResponse: httpResponse) else {
 				urlsThatReturnedNonImage.insert(url)
 				throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: true)
 			}
@@ -361,13 +361,19 @@ private extension DownloadedImageCache {
 
 	/// Returns false, and saves nothing, when the data isn’t an image, such as an HTML error page.
 	/// SVG is saved, though ImageIO can’t read it.
-	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async -> Bool {
+	/// Throws a transient error, and records nothing, when the file can’t be written.
+	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async throws(ImageDownloadError) -> Bool {
 		let pixelSize = await Self.pixelSize(data)
 		guard pixelSize != nil || httpResponse?.mimeType == Self.svgMIMEType else {
 			Self.logger.info("Didn’t save unreadable image at \(url)")
 			return false
 		}
-		await Self.saveToDisk(diskCache, key: Self.diskKey(url), data: data)
+		do {
+			try await Self.saveToDisk(diskCache, key: Self.diskKey(url), data: data)
+		} catch {
+			Self.logger.error("Couldn’t write image from \(url): \(error.localizedDescription)")
+			throw ImageDownloadError(statusCode: httpResponse?.statusCode, decodingFailed: false, isTransient: true)
+		}
 		var conditionalGetInfo: HTTPConditionalGetInfo?
 		if let httpResponse {
 			conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
@@ -403,7 +409,7 @@ private extension DownloadedImageCache {
 		}
 
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
-		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK, await saveImage(data, url: url, httpResponse: httpResponse) {
+		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK, (try? await saveImage(data, url: url, httpResponse: httpResponse)) == true {
 			Self.logger.info("Replaced changed image at \(url)")
 			NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
 			return
@@ -414,7 +420,7 @@ private extension DownloadedImageCache {
 			noteDownloadResult(.failure(error), url: url)
 		}
 
-		// 304 Not Modified, an error response, or not an image: keep the copy and check again later.
+		// 304 Not Modified, an error response, not an image, or a failed write: keep the copy and check again later.
 		ImageDatabase.shared.saveDownloadedImageNextCheck(url: url, nextCheck: Self.nextCheck(httpResponse, hasValidators: validation.conditionalGetInfo != nil))
 	}
 
@@ -472,8 +478,8 @@ private extension DownloadedImageCache {
 		return data
 	}
 
-	@concurrent static func saveToDisk(_ diskCache: BinaryDiskCache, key: String, data: Data) async {
-		diskCache[key] = data
+	@concurrent static func saveToDisk(_ diskCache: BinaryDiskCache, key: String, data: Data) async throws {
+		try diskCache.setData(data, forKey: key)
 	}
 
 	@concurrent static func deleteFromDisk(_ diskCache: BinaryDiskCache, keys: Set<String>) async {
