@@ -23,7 +23,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private var iconSize = IconSize.medium
 	private var thumbnailsDisplay = TimelineThumbnailsDisplay.none
 	private var articleIDsToReload = Set<String>()
-	private var thumbnailLookaheadItems: Range<Int>? // Items most recently prefetched by prefetchThumbnailsForNextScreen
 	private lazy var feedTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showFeedInspector(_:)))
 	private lazy var filterButton = UIBarButtonItem(image: Assets.Images.filter, style: .plain, target: self, action: #selector(toggleFilter(_:)))
 	private lazy var nextUnreadButton = UIBarButtonItem(image: Assets.Images.nextUnread, style: .plain, target: self, action: #selector(nextUnread(_:)))
@@ -193,6 +192,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 		assert(dataSource != nil)
 		configureCollectionView(dataSource!)
+		collectionView?.prefetchDataSource = self
 
 		configureSearchController()
 		definesPresentationContext = true
@@ -570,13 +570,26 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 }
 
+// MARK: - UICollectionViewDataSourcePrefetching
+
+extension MainTimelineViewController: UICollectionViewDataSourcePrefetching {
+	/// Thumbnails download behind visible thumbnails.
+	func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+		guard let thumbnailMode, let dataSource else {
+			return
+		}
+		// Index paths are nearest first, and the most recent request starts first.
+		for indexPath in indexPaths.reversed() {
+			if let article = dataSource.itemIdentifier(for: indexPath), let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
+				ArticleThumbnailFinder.shared.prefetchThumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
+			}
+		}
+	}
+}
+
 // MARK: - UICollectionViewDelegate
 
 extension MainTimelineViewController: UICollectionViewDelegate {
-	func scrollViewDidScroll(_ scrollView: UIScrollView) {
-		prefetchThumbnailsForNextScreen()
-	}
-
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		becomeFirstResponder()
 		if let dataSource {
@@ -1085,7 +1098,6 @@ private extension MainTimelineViewController {
 			return
 		}
 
-		thumbnailLookaheadItems = nil
 		discoverThumbnailURLs()
 
 		var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
@@ -1103,35 +1115,6 @@ private extension MainTimelineViewController {
 // MARK: - Thumbnails
 
 private extension MainTimelineViewController {
-
-	/// Requests thumbnails for the screen below the visible rows. They download behind visible thumbnails.
-	func prefetchThumbnailsForNextScreen() {
-		guard let thumbnailMode, let collectionView, let dataSource else {
-			return
-		}
-		let visibleIndexPaths = collectionView.indexPathsForVisibleItems
-		guard let lastVisibleIndexPath = visibleIndexPaths.max() else {
-			return
-		}
-		let section = lastVisibleIndexPath.section
-		let start = lastVisibleIndexPath.item + 1
-		let end = min(start + visibleIndexPaths.count, collectionView.numberOfItems(inSection: section))
-		guard start < end else {
-			return
-		}
-
-		let lookaheadItems = start..<end
-		guard lookaheadItems != thumbnailLookaheadItems else {
-			return
-		}
-		thumbnailLookaheadItems = lookaheadItems
-
-		for item in lookaheadItems {
-			if let article = dataSource.itemIdentifier(for: IndexPath(item: item, section: section)), let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
-				ArticleThumbnailFinder.shared.prefetchThumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
-			}
-		}
-	}
 
 	/// Reloads the visible cells for those articles.
 	func thumbnailURLsDidChange(for articleIDs: Set<String>) {
@@ -1235,7 +1218,6 @@ private extension MainTimelineViewController {
 			return
 		}
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
-		thumbnailLookaheadItems = nil
 		discoverThumbnailURLs()
 		reloadAllCells()
 	}
