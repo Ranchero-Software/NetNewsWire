@@ -199,6 +199,44 @@ extension Notification.Name {
 		}
 	}
 
+	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
+	/// Results saved in the database are ready when this returns, so that rows laid out next can use them.
+	/// This blocks until the database has answered.
+	/// The rest are parsed off the main thread and saved, and `.articleThumbnailURLsDidBecomeAvailable` is posted
+	/// for those that have thumbnails. The returned task finishes after that.
+	@discardableResult public func findThumbnailURLs(for articles: some Collection<Article>) -> Task<Void, Never> {
+		if htmlThumbnailURLs.count + articleIDsWithNoHTMLThumbnail.count > Self.maxCachedArticleCount {
+			htmlThumbnailURLs.removeAll()
+			articleIDsWithNoHTMLThumbnail.removeAll()
+		}
+
+		let articlesToFind = articles.filter(needsHTMLDiscovery)
+		if !articlesToFind.isEmpty {
+			cacheRecords(imageDatabase.fetchArticleThumbnailsSync(articleIDs: articlesToFind.map(\.articleID)))
+		}
+
+		let articleHTMLs = articlesToFind.filter { !isCached($0.articleID) }.compactMap(ArticleHTML.init)
+		let articleIDs = articleHTMLs.map(\.articleID)
+		articleIDsBeingDiscovered.formUnion(articleIDs)
+
+		return Task {
+			defer {
+				articleIDsBeingDiscovered.subtract(articleIDs)
+			}
+			guard !articleHTMLs.isEmpty else {
+				return
+			}
+			let parsedRecords = await Self.parseThumbnailURLs(articleHTMLs)
+			cacheRecords(parsedRecords)
+			imageDatabase.saveArticleThumbnails(parsedRecords)
+
+			let foundArticleIDs = Set(parsedRecords.filter { !$0.thumbnailURLs.isEmpty }.map(\.articleID))
+			if !foundArticleIDs.isEmpty {
+				NotificationCenter.default.post(name: .articleThumbnailURLsDidBecomeAvailable, object: self, userInfo: [Self.articleIDsKey: foundArticleIDs])
+			}
+		}
+	}
+
 	func thumbnailDidFail(url: String, error: ImageDownloadError) {
 		if error.decodingFailed || error.rejectedPixelSize != nil {
 			urlsThatFailedToDecode.insert(url)
