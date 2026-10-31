@@ -66,7 +66,7 @@ extension Notification.Name {
 	private static let hardLimit = ByteLimit(maximumByteCount: 500 * 1024 * 1024)
 	#endif
 	/// When recently used images keep the total over `limit`, the next pass waits for this much more.
-	private static let byteCountBetweenPasses = limit.maximumByteCount / 10
+	private static let byteCountBetweenPasses = limit.maximumByteCount / 4
 	private static let readNoteInterval = TimeInterval(days: 1)
 	/// Past this, `readDatesNoted` is emptied, so a session lasting weeks doesn’t keep every URL it used.
 	private static let maximumReadDatesNotedCount = 10_000
