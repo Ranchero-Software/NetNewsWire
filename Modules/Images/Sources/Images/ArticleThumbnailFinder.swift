@@ -286,7 +286,7 @@ private extension ArticleThumbnailFinder {
 			}
 			do throws(ImageDownloadError) {
 				let data = try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: priority, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
-				guard await decodeQueue.waitForTurn(key: decodeKey, priority: prioritiesInProgress[decodeKey] ?? priority) else {
+				guard await decodeQueue.waitForTurn(key: decodeKey, priority: prioritiesInProgress[decodeKey] ?? priority) != .dropped else {
 					return
 				}
 				defer {

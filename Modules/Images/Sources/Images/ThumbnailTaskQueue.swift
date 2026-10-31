@@ -12,6 +12,12 @@ public enum ThumbnailPriority: Sendable {
 	case prefetch // Expected to be shown soon
 }
 
+enum ThumbnailTurn: Equatable, Sendable {
+	case dropped
+	case start(priority: ThumbnailPriority) // The priority now, which a wait can raise from prefetch to visible
+	case startNow // Started by `startNow`, whatever its priority
+}
+
 /// Decides when thumbnail tasks, such as downloads, may start, and limits how many run at once.
 ///
 /// Tasks start most-recent-first, so images for rows the user just scrolled to go ahead
@@ -25,7 +31,7 @@ public enum ThumbnailPriority: Sendable {
 	private struct WaitingTask {
 		let key: String
 		let priority: ThumbnailPriority
-		let continuation: CheckedContinuation<Bool, Never>
+		let continuation: CheckedContinuation<ThumbnailTurn, Never>
 	}
 
 	private let maximumRunningCount: Int
@@ -42,12 +48,11 @@ public enum ThumbnailPriority: Sendable {
 		self.maximumWaitingCount = maximumWaitingCount
 	}
 
-	/// Returns true when the task may start. Call `taskDidFinish` after it finishes.
-	/// Returns false when the task was dropped. Don’t call `taskDidFinish` then.
-	func waitForTurn(key: String, priority: ThumbnailPriority) async -> Bool {
+	/// Call `taskDidFinish` after the task finishes, unless it was dropped.
+	func waitForTurn(key: String, priority: ThumbnailPriority) async -> ThumbnailTurn {
 		if runningCount < maximumRunningCount {
 			runningCount += 1
-			return true
+			return .start(priority: priority)
 		}
 		return await withCheckedContinuation { continuation in
 			let waitingTask = WaitingTask(key: key, priority: priority, continuation: continuation)
@@ -59,7 +64,7 @@ public enum ThumbnailPriority: Sendable {
 				waiting.insert(waitingTask, at: firstVisibleIndex)
 			}
 			if waiting.count > maximumWaitingCount {
-				waiting.removeFirst().continuation.resume(returning: false)
+				waiting.removeFirst().continuation.resume(returning: .dropped)
 			}
 		}
 	}
@@ -67,7 +72,7 @@ public enum ThumbnailPriority: Sendable {
 	func taskDidFinish() {
 		// The finished task’s slot passes straight to the next one.
 		if let next = waiting.popLast() {
-			next.continuation.resume(returning: true)
+			next.continuation.resume(returning: .start(priority: next.priority))
 		} else {
 			runningCount -= 1
 		}
@@ -89,6 +94,6 @@ public enum ThumbnailPriority: Sendable {
 		}
 		let waitingTask = waiting.remove(at: index)
 		runningCount += 1
-		waitingTask.continuation.resume(returning: true)
+		waitingTask.continuation.resume(returning: .startNow)
 	}
 }
