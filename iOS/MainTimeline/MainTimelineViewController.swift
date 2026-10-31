@@ -425,6 +425,16 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		reloadCells(visibleArticles)
 	}
 
+	/// Measures every row again, including rows that aren’t visible.
+	private func reloadAllCells() {
+		guard let dataSource else {
+			return
+		}
+		dataSource.applySnapshotUsingReloadData(dataSource.snapshot()) { [weak self] in
+			self?.restoreSelectionIfNecessary(adjustScroll: true)
+		}
+	}
+
 	/// Reloads after `cellReloadDelay`, together with any other cells queued by then.
 	private func reloadCells(_ articles: [Article]) {
 		guard !articles.isEmpty else {
@@ -1227,7 +1237,7 @@ private extension MainTimelineViewController {
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 		thumbnailLookaheadItems = nil
 		discoverThumbnailURLs()
-		reloadVisibleCells()
+		reloadAllCells()
 	}
 
 	@objc func handleArticleThumbnailURLsDidBecomeAvailable(_ notification: Notification) {
