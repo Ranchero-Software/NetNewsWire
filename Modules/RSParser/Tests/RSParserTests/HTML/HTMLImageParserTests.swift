@@ -98,6 +98,13 @@ import RSParser
 		#expect(firstSignificantImage(html)?.urlString == "https://example.com/uploads/photo.jpg")
 	}
 
+	@Test func lazySrcsetAndOriginalAreUsedWhenSrcIsPlaceholder() {
+		let placeholder = "data:image/gif;base64,R0lGODlhAQABAAAAACw="
+		#expect(firstSignificantImage(#"<img src="\#(placeholder)" data-srcset="/a-400.jpg 400w, /a-800.jpg 800w">"#)?.urlString == "https://example.com/a-800.jpg")
+		#expect(firstSignificantImage(#"<img src="\#(placeholder)" data-lazy-srcset="/b-400.jpg 400w, /b-800.jpg 800w">"#)?.urlString == "https://example.com/b-800.jpg")
+		#expect(firstSignificantImage(#"<img src="\#(placeholder)" data-original="/c.jpg">"#)?.urlString == "https://example.com/c.jpg")
+	}
+
 	@Test func significantImagesAreFoundUpToMaximumCount() {
 		let html = """
 		<img src="/a.jpg"><img src="/a.jpg"><img src="/logo.svg"><img src="/b.jpg"><img src="/c.jpg">

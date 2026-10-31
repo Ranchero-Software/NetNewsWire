@@ -55,7 +55,8 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 
 	private static let imgBytes: [UInt8] = Array("img".utf8)
 	private static let anchorBytes: [UInt8] = Array("a".utf8)
-	private static let lazySourceAttributeNames = ["data-lazy-src", "data-src"]
+	private static let lazySrcsetAttributeNames = ["data-lazy-srcset", "data-srcset"]
+	private static let lazySourceAttributeNames = ["data-lazy-src", "data-src", "data-original"]
 
 	init(baseURL: URL?, maximumCount: Int) {
 		self.baseURL = baseURL
@@ -100,7 +101,8 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 	// MARK: Helpers
 
 	private func imageURLStrings(_ attributes: HTMLAttributes) -> [String] {
-		var sources = Self.lazySourceAttributeNames.compactMap { attributes[$0] }
+		var sources = Self.lazySrcsetAttributeNames.compactMap { attributes[$0] }.compactMap(largestSrcsetCandidate)
+		sources += Self.lazySourceAttributeNames.compactMap { attributes[$0] }
 		if let srcset = attributes["srcset"], let candidate = largestSrcsetCandidate(srcset) {
 			sources.append(candidate)
 		}
