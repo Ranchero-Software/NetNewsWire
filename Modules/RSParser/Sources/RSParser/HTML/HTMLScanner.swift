@@ -17,7 +17,7 @@
 //     the block. Entities in `<textarea>` and `<title>` aren't expanded.
 //   - Attributes may have no value (`<input disabled>`), single-quoted values,
 //     or unquoted values (`<a href=foo>`).
-//   - No void-element tracking. Consumers that care (both of ours don't)
+//   - No void-element tracking. Consumers that care (none of ours do)
 //     apply their own void-element list at the delegate level.
 //
 // Not re-entrant. Callbacks happen on the thread that called `parse(_:)`.
