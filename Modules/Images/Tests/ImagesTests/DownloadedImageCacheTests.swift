@@ -73,6 +73,14 @@ import Testing
 		#expect(interval > TimeInterval(days: 3) * 0.8 - 60 && interval < TimeInterval(days: 3) * 1.2)
 	}
 
+	@Test func serverErrorsAndRateLimitsAreTransientButMissingImagesAreNot() {
+		#expect(DownloadedImageCache.isTransient(statusCode: 503))
+		#expect(DownloadedImageCache.isTransient(statusCode: 429))
+		#expect(DownloadedImageCache.isTransient(statusCode: 408))
+		#expect(!DownloadedImageCache.isTransient(statusCode: 404))
+		#expect(!DownloadedImageCache.isTransient(statusCode: 403))
+	}
+
 	@Test func recentlyUsedImagesAreKeptUnlessOverHardLimit() async {
 		let now = Date()
 		let records = (0..<5).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", byteCount: 100, lastAccessed: now.addingTimeInterval(-TimeInterval(days: 1) + TimeInterval($0))) }

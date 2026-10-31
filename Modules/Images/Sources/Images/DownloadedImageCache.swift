@@ -323,7 +323,7 @@ private extension DownloadedImageCache {
 		}
 		var isTransient = true
 		if let statusCode {
-			isTransient = (statusCode >= 500 && statusCode <= 599) || statusCode == HTTPResponseCode.tooManyRequests || statusCode == HTTPResponseCode.requestTimeout
+			isTransient = Self.isTransient(statusCode: statusCode)
 		}
 		var retryAfter: TimeInterval?
 		if let retryAfterValue = httpResponse?.value(forHTTPHeaderField: HTTPResponseHeader.retryAfter) {
@@ -473,6 +473,10 @@ extension DownloadedImageCache {
 			return key
 		}
 		return String(key[..<separatorIndex])
+	}
+
+	nonisolated static func isTransient(statusCode: Int) -> Bool {
+		(statusCode >= 500 && statusCode <= 599) || statusCode == HTTPResponseCode.tooManyRequests || statusCode == HTTPResponseCode.requestTimeout
 	}
 
 	/// Without an ETag or Last-Modified, a check downloads the whole image, so it waits the longest.
