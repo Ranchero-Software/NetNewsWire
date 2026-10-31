@@ -141,7 +141,10 @@ private extension ImageDownloader {
 		do {
 			let storedData = try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: nil, checksForUpdates: true, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 			let data = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
-			await DownloadedImageCache.shared.saveDerivedImageData(data, for: url, suffix: Self.scaledCopySuffix)
+			// An image that’s already small enough needs no second file.
+			if data != storedData {
+				await DownloadedImageCache.shared.saveDerivedImageData(data, for: url, suffix: Self.scaledCopySuffix)
+			}
 			cacheImage(url, data)
 		} catch {
 			if !error.isTransient {
