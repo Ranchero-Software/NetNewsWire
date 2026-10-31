@@ -269,6 +269,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	override func viewDidLoad() {
 		// The search timeline can be created long before its view loads, and defaults are observed only from here on.
 		userDefaultsDidChange()
+		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 		updateCellAppearances()
 
 		updateRowHeights()
@@ -302,6 +303,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(handleSidebarDidAcceptDrop(_:)), name: .SidebarDidAcceptDrop, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(containerChildrenDidChange(_:)), name: .ChildrenDidChange, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleUserDefaultsDidChange(_:)), name: UserDefaults.didChangeNotification, object: nil)
+			NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
 			didRegisterForNotifications = true
 		}
 
@@ -810,6 +812,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
+	@objc func handleTimelineThumbnailsDisplayDidChange(_ notification: Notification) {
+		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
+	}
+
 	@objc func handleBoundsDidChange(_ notification: Notification) {
 		prefetchThumbnailsForNextScreen()
 	}
@@ -861,7 +867,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 	private func userDefaultsDidChange() {
 		fontSize = AppDefaults.timelineFontSize
-		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
 	}
 
 	/// The one place the row height is set — it depends on the layout and the font size.
