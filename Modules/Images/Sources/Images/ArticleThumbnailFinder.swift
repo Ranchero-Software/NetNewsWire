@@ -111,7 +111,7 @@ extension Notification.Name {
 		DownloadedImageCache.networkAllowsDownloads
 	}
 
-	/// `url` is from `thumbnailURL(for:mode:)`. `articleTitle` is shown in the activity log.
+	/// `url` is from `thumbnailURL(for:mode:)`. `articleTitle` is shown in the activity log when the download fails.
 	/// Nil when the image isn’t ready. Starts a download when needed and posts
 	/// `.articleThumbnailDidBecomeAvailable` once the image is ready.
 	public func thumbnail(url: String, mode: Mode, articleTitle: String?) -> RSImage? {
