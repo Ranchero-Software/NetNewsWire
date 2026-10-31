@@ -29,7 +29,7 @@ enum MediaRSS {
 	private static let gravatarSubdomainSuffix = ".gravatar.com"
 	private static let gravatarAvatarPathPrefix = "/avatar/"
 
-	static func isGravatarAvatar(_ url: URL) -> Bool {
+	static func isGravatar(_ url: URL) -> Bool {
 		guard let host = url.host()?.lowercased() else {
 			return false
 		}
@@ -83,7 +83,7 @@ struct MediaElementTracker {
 					group?.add(attachment, isDefault: MediaRSS.isDefault(attributes))
 				} else {
 					item.attachments.append(attachment)
-					if let parsedURL = URL(string: url), MediaRSS.isGravatarAvatar(parsedURL) {
+					if let parsedURL = URL(string: url), MediaRSS.isGravatar(parsedURL) {
 						gravatarURL = url
 					}
 				}
