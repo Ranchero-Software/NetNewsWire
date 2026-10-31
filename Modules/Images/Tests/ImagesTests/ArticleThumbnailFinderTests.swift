@@ -103,8 +103,23 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
 
 		finder.handleNetworkStatusDidChange(Notification(name: .networkStatusDidChange))
-		let updatedArticle = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
-		#expect(finder.thumbnailURL(for: updatedArticle, mode: .small) == "https://example.com/thumbnail.jpg")
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
+	}
+
+	@Test func newArticleInstanceReusesChosenURLUnlessItsImagesChanged() {
+		let imageDatabase = ImageDatabase(databasePath: ":memory:")
+		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
+		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
+
+		// A failure with no notification shows whether the choice was made again.
+		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
+
+		let sameImages = makeArticle(contentHTML: "<p>Edited.</p>", imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
+		#expect(finder.thumbnailURL(for: sameImages, mode: .small) == "https://example.com/thumbnail.jpg")
+
+		let differentImages = makeArticle(imageURL: "https://example.com/new-image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
+		#expect(finder.thumbnailURL(for: differentImages, mode: .small) == "https://example.com/new-image.jpg")
 	}
 
 	@Test func savedHTMLThumbnailIsLoadedWithoutDiscovery() async {

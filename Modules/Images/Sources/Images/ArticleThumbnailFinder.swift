@@ -135,7 +135,7 @@ extension Notification.Name {
 	/// Nil when the article has no usable image, or when its HTML hasn’t been checked yet.
 	public func thumbnailURL(for article: Article, mode: Mode) -> String? {
 		let articleID = article.articleID
-		if let chosenThumbnailURL = chosenThumbnailURLs[mode]?[articleID], chosenThumbnailURL.article === article {
+		if let chosenThumbnailURL = chosenThumbnailURLs[mode]?[articleID], chosenThumbnailURL.hasSameImages(as: article) {
 			return chosenThumbnailURL.thumbnailURL
 		}
 
@@ -143,7 +143,7 @@ extension Notification.Name {
 		if chosenThumbnailURLs[mode, default: [:]].count >= Self.maxChosenThumbnailURLCount {
 			chosenThumbnailURLs[mode] = nil
 		}
-		chosenThumbnailURLs[mode, default: [:]][articleID] = ChosenThumbnailURL(article: article, thumbnailURL: thumbnailURL)
+		chosenThumbnailURLs[mode, default: [:]][articleID] = ChosenThumbnailURL(article, thumbnailURL: thumbnailURL)
 		return thumbnailURL
 	}
 
@@ -225,6 +225,7 @@ extension Notification.Name {
 	/// What failed to decode may have been a captive portal’s login page, not the image.
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
 		urlsThatFailedToDecode.removeAll()
+		chosenThumbnailURLs.removeAll()
 	}
 }
 
@@ -232,10 +233,24 @@ extension Notification.Name {
 
 private extension ArticleThumbnailFinder {
 
+	/// Keeps the article’s image fields, not the article, which would keep its HTML in memory.
 	struct ChosenThumbnailURL {
-		/// Articles are immutable, so a different instance with the same articleID may have different images.
-		let article: Article
+		let rawThumbnailLink: String?
+		let rawImageLink: String?
+		let attachments: [Attachment]?
 		let thumbnailURL: String?
+
+		init(_ article: Article, thumbnailURL: String?) {
+			self.rawThumbnailLink = article.rawThumbnailLink
+			self.rawImageLink = article.rawImageLink
+			self.attachments = article.attachments
+			self.thumbnailURL = thumbnailURL
+		}
+
+		/// Articles are immutable, so a different instance with the same articleID may have different images.
+		func hasSameImages(as article: Article) -> Bool {
+			rawThumbnailLink == article.rawThumbnailLink && rawImageLink == article.rawImageLink && attachments == article.attachments
+		}
 	}
 
 	struct ArticleHTML: Sendable {
