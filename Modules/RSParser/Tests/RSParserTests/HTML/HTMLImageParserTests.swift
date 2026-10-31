@@ -111,6 +111,12 @@ import RSParser
 		#expect(firstSignificantImage(#"<img src="//cdn.example.net/a.jpg">"#)?.urlString == "https://cdn.example.net/a.jpg")
 	}
 
+	@Test func relativeURLIsSkippedWithoutBaseURL() {
+		let html = #"<img src="/images/a.jpg"><img src="https://example.com/b.jpg">"#
+		let images = HTMLImageParser.significantImages(html: html, baseURL: nil, maximumCount: 3)
+		#expect(images.map(\.urlString) == ["https://example.com/b.jpg"])
+	}
+
 	@Test func dimensionsInPixelsAreParsed() {
 		let html = #"<img src="https://example.com/a.jpg" width="50%" height="300px">"#
 		#expect(firstSignificantImage(html) == HTMLImage(urlString: "https://example.com/a.jpg", width: nil, height: 300))
