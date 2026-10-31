@@ -138,7 +138,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		let smallImageData = try #require(jpegData(width: 48, height: 48))
 
 		await #expect {
-			_ = try await ArticleThumbnailFinder.decodedImage(smallImageData, maxPixelSize: 512)
+			_ = try await ArticleThumbnailFinder.decodedImage(smallImageData, maxPixelSize: 512, maxPixelHeight: nil)
 		} throws: { error in
 			(error as? ImageDownloadError)?.rejectedPixelSize?.width == 48
 		}
@@ -147,15 +147,30 @@ private typealias ArticleAttachment = Articles.Attachment
 	@Test func thumbnailIsDecodedInEXIFOrientation() async throws {
 		let rotatedImageData = try #require(jpegData(width: 400, height: 200, orientation: .right))
 
-		let decodedImage = try await ArticleThumbnailFinder.decodedImage(rotatedImageData, maxPixelSize: 512)
+		let decodedImage = try await ArticleThumbnailFinder.decodedImage(rotatedImageData, maxPixelSize: 512, maxPixelHeight: nil)
 		#expect(decodedImage.image.size == CGSize(width: 200, height: 400))
 	}
 
 	@Test func largestFrameOfMultiImageFileIsDecoded() async throws {
 		let imageData = try #require(tiffData(frameSizes: [(width: 48, height: 48), (width: 400, height: 200)]))
 
-		let decodedImage = try await ArticleThumbnailFinder.decodedImage(imageData, maxPixelSize: 512)
+		let decodedImage = try await ArticleThumbnailFinder.decodedImage(imageData, maxPixelSize: 512, maxPixelHeight: nil)
 		#expect(decodedImage.image.size == CGSize(width: 400, height: 200))
+	}
+
+	@Test func largeThumbnailIsDecodedToItsDisplayedHeight() async throws {
+		let landscapeImageData = try #require(jpegData(width: 1500, height: 1000))
+		let landscapeImage = try await ArticleThumbnailFinder.decodedImage(landscapeImageData, maxPixelSize: 1200, maxPixelHeight: 360)
+		#expect(landscapeImage.image.size == CGSize(width: 540, height: 360))
+
+		// Stored taller than wide, displayed wider than tall.
+		let rotatedImageData = try #require(jpegData(width: 1000, height: 1500, orientation: .right))
+		let rotatedImage = try await ArticleThumbnailFinder.decodedImage(rotatedImageData, maxPixelSize: 1200, maxPixelHeight: 360)
+		#expect(rotatedImage.image.size == CGSize(width: 540, height: 360))
+
+		let wideImageData = try #require(jpegData(width: 2000, height: 500))
+		let wideImage = try await ArticleThumbnailFinder.decodedImage(wideImageData, maxPixelSize: 1200, maxPixelHeight: 360)
+		#expect(wideImage.image.size == CGSize(width: 1200, height: 300))
 	}
 }
 

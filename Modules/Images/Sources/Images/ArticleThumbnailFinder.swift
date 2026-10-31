@@ -70,7 +70,7 @@ extension Notification.Name {
 	private var urlsThatFailedToDecode = Set<String>() // So a failure notification can’t lead to the same attempt again
 	private var chosenThumbnailURLs = [Mode: [String: ChosenThumbnailURL]]() // articleID: the URL thumbnailURL(for:mode:) chose, since large-mode row heights ask for every row
 
-	/// Decoded bitmaps: about 0.25 MB each in small mode, 2–5 MB in large mode.
+	/// Decoded bitmaps: about 0.25 MB each in small mode, at most about 2.5 MB in large mode.
 	#if os(macOS)
 	private static let imageCacheByteLimit = 128 * 1024 * 1024
 	#else
@@ -78,8 +78,14 @@ extension Notification.Name {
 	#endif
 	/// The small thumbnail is aspect-fit into a box of at most 76pt, which is 228 pixels at 3x.
 	private static let smallThumbnailMaxPixelSize = 256
-	/// Sized to fill the timeline’s width.
+	/// The longest side of a wide image, which fills the timeline’s width before it reaches the height limit.
 	private static let largeThumbnailMaxPixelSize = 1200
+	/// The large thumbnail is aspect-fit into a box 180pt tall.
+	#if os(macOS)
+	private static let largeThumbnailMaxPixelHeight = 360
+	#else
+	private static let largeThumbnailMaxPixelHeight = 540
+	#endif
 	/// HTML images saved per article, so one that fails or is too small falls through to the next.
 	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
 	/// Combined entries in htmlThumbnailURLs and articleIDsWithNoHTMLThumbnail, a few hundred bytes each. Past this, both are emptied, and the next discovery reloads its articles from the database.
@@ -283,6 +289,15 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
+	static func maxPixelHeight(_ mode: Mode) -> Int? {
+		switch mode {
+		case .small:
+			nil
+		case .large:
+			largeThumbnailMaxPixelHeight
+		}
+	}
+
 	func findImage(_ url: String, mode: Mode, priority: ThumbnailPriority, activityDetail: String?) {
 		let cacheKey = Self.cacheKey(url, mode)
 		let decodeKey = cacheKey as String
@@ -308,7 +323,7 @@ private extension ArticleThumbnailFinder {
 				defer {
 					decodeQueue.taskDidFinish()
 				}
-				let decodedImage = try await Self.decodedImage(data, maxPixelSize: Self.maxPixelSize(mode))
+				let decodedImage = try await Self.decodedImage(data, maxPixelSize: Self.maxPixelSize(mode), maxPixelHeight: Self.maxPixelHeight(mode))
 				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
 				NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
 			} catch {
@@ -409,7 +424,8 @@ extension ArticleThumbnailFinder {
 	/// Decodes now, at display size and in EXIF orientation, so drawing the image in the timeline
 	/// doesn’t decode it on the main thread. Throws when the image is unreadable, too small, or too narrow.
 	/// For a multi-image file such as ICO, the largest frame is the one checked and decoded.
-	@concurrent static func decodedImage(_ data: Data, maxPixelSize: Int) async throws(ImageDownloadError) -> (image: RSImage, byteCount: Int) {
+	/// With a `maxPixelHeight`, the image is also no taller than that as displayed.
+	@concurrent static func decodedImage(_ data: Data, maxPixelSize: Int, maxPixelHeight: Int?) async throws(ImageDownloadError) -> (image: RSImage, byteCount: Int) {
 		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = RSImage.largestFrame(in: imageSource) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
 		}
@@ -417,10 +433,18 @@ extension ArticleThumbnailFinder {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false, rejectedPixelSize: (width: largestFrame.width, height: largestFrame.height))
 		}
 
+		var longestSide = maxPixelSize
+		if let maxPixelHeight {
+			let isRotated = isRotatedQuarterTurn(imageSource, frameIndex: largestFrame.index)
+			let displayedWidth = isRotated ? largestFrame.height : largestFrame.width
+			let displayedHeight = isRotated ? largestFrame.width : largestFrame.height
+			longestSide = min(maxPixelSize, longestSideAtHeight(maxPixelHeight, width: displayedWidth, height: displayedHeight))
+		}
+
 		let options: [CFString: Any] = [
 			kCGImageSourceCreateThumbnailWithTransform: true,
 			kCGImageSourceCreateThumbnailFromImageAlways: true,
-			kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+			kCGImageSourceThumbnailMaxPixelSize: longestSide,
 			kCGImageSourceShouldCacheImmediately: true
 		]
 		guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestFrame.index, options as CFDictionary) else {
@@ -433,5 +457,26 @@ extension ArticleThumbnailFinder {
 		#else
 		return (image: UIImage(cgImage: cgImage), byteCount: byteCount)
 		#endif
+	}
+
+	/// True when EXIF orientation swaps the frame’s width and height.
+	nonisolated private static func isRotatedQuarterTurn(_ imageSource: CGImageSource, frameIndex: Int) -> Bool {
+		let properties = CGImageSourceCopyPropertiesAtIndex(imageSource, frameIndex, nil) as NSDictionary?
+		guard let rawOrientation = properties?[kCGImagePropertyOrientation] as? UInt32, let orientation = CGImagePropertyOrientation(rawValue: rawOrientation) else {
+			return false
+		}
+		switch orientation {
+		case .left, .leftMirrored, .right, .rightMirrored:
+			return true
+		case .up, .upMirrored, .down, .downMirrored:
+			return false
+		}
+	}
+
+	nonisolated private static func longestSideAtHeight(_ displayedHeight: Int, width: Int, height: Int) -> Int {
+		guard width > height else {
+			return displayedHeight
+		}
+		return Int((Double(displayedHeight) * Double(width) / Double(height)).rounded(.up))
 	}
 }
