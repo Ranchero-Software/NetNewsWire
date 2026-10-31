@@ -11,9 +11,9 @@ import Foundation
 /// which also sees the enclosing `<a>` link so it can reject share buttons.
 /// Stops scanning once it has found `maximumCount`.
 ///
-/// Tries `data-lazy-src`, `data-src`, the largest `srcset` candidate, and `src`,
-/// in that order, and uses the first that passes the filter. Lazy-loading images
-/// often have a placeholder in `src`.
+/// Tries `data-lazy-srcset`, `data-srcset`, `data-lazy-src`, `data-src`, `data-original`,
+/// `srcset`, and `src`, in that order, and uses the first that passes the filter.
+/// Lazy-loading images often have a placeholder in `src`.
 public enum HTMLImageParser {
 
 	private static let dataURLPrefix = "data:"
@@ -57,6 +57,8 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 	private static let anchorBytes: [UInt8] = Array("a".utf8)
 	private static let lazySrcsetAttributeNames = ["data-lazy-srcset", "data-srcset"]
 	private static let lazySourceAttributeNames = ["data-lazy-src", "data-src", "data-original"]
+	/// Wide enough for a timeline thumbnail at its largest.
+	private static let preferredSrcsetWidth: Double = 1200
 
 	init(baseURL: URL?, maximumCount: Int) {
 		self.baseURL = baseURL
@@ -101,9 +103,9 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 	// MARK: Helpers
 
 	private func imageURLStrings(_ attributes: HTMLAttributes) -> [String] {
-		var sources = Self.lazySrcsetAttributeNames.compactMap { attributes[$0] }.compactMap(largestSrcsetCandidate)
+		var sources = Self.lazySrcsetAttributeNames.compactMap { attributes[$0] }.compactMap(preferredSrcsetCandidate)
 		sources += Self.lazySourceAttributeNames.compactMap { attributes[$0] }
-		if let srcset = attributes["srcset"], let candidate = largestSrcsetCandidate(srcset) {
+		if let srcset = attributes["srcset"], let candidate = preferredSrcsetCandidate(srcset) {
 			sources.append(candidate)
 		}
 		if let src = attributes["src"] {
@@ -116,8 +118,10 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		HTMLImageParser.resolvedURLString(urlString, baseURL: baseURL)
 	}
 
-	/// The URL with the largest width (`640w`) or density (`2x`) descriptor. A candidate with no descriptor counts as `1x`.
-	private func largestSrcsetCandidate(_ srcset: String) -> String? {
+	/// The narrowest URL with a width descriptor (`640w`) of at least `preferredSrcsetWidth`.
+	/// Otherwise, the URL with the largest width or density (`2x`) descriptor. A candidate with no descriptor counts as `1x`.
+	private func preferredSrcsetCandidate(_ srcset: String) -> String? {
+		var narrowestWideEnough: (url: Substring, size: Double)?
 		var largest: (url: Substring, size: Double)?
 		var remaining = srcset[...]
 
@@ -141,20 +145,23 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 				remaining = remaining.dropFirst(descriptor.count)
 			}
 
-			let size = Double(descriptor.trimmingCharacters(in: .whitespaces).dropLast()) ?? 1
+			let trimmedDescriptor = descriptor.trimmingCharacters(in: .whitespaces)
+			let size = Double(trimmedDescriptor.dropLast()) ?? 1
 			if url.isEmpty {
 				continue
 			}
-			if let largest, largest.size >= size {
-				continue
+			if trimmedDescriptor.hasSuffix("w"), size >= Self.preferredSrcsetWidth, size < narrowestWideEnough?.size ?? .infinity {
+				narrowestWideEnough = (url: url, size: size)
 			}
-			largest = (url: url, size: size)
+			if size > largest?.size ?? -.infinity {
+				largest = (url: url, size: size)
+			}
 		}
 
-		guard let largest else {
+		guard let candidate = narrowestWideEnough ?? largest else {
 			return nil
 		}
-		return String(largest.url)
+		return String(candidate.url)
 	}
 
 	/// `"300"` and `"300px"` are pixel dimensions. Percentages and other units are not.

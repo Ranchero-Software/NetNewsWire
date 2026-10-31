@@ -90,6 +90,11 @@ import RSParser
 		#expect(firstSignificantImage(html)?.urlString == "https://example.com/real-800.jpg")
 	}
 
+	@Test func srcsetUsesNarrowestCandidateWideEnoughForThumbnail() {
+		let html = #"<img srcset="/a-768.jpg 768w, /a-2048.jpg 2048w, /a-1536.jpg 1536w, /a-2560.jpg 2560w">"#
+		#expect(firstSignificantImage(html)?.urlString == "https://example.com/a-1536.jpg")
+	}
+
 	@Test func lazySourceIsUsedWhenSrcIsPlaceholder() {
 		let html = """
 		<a href=" https://twitter.com/intent/tweet?url=x "><img src="/share/twitter.png"></a>
