@@ -58,14 +58,38 @@ import Testing
 		queue.startNow(key: "articleImage")
 		#expect(await articleImage.value == .startNow)
 	}
+
+	@Test func downloadsFromSlowHostLeaveSlotsForOtherHosts() async {
+		let slowHost = "slow.example.com"
+		let fastHost = "fast.example.com"
+		let queue = ThumbnailTaskQueue(maximumRunningCount: 2, maximumWaitingCount: 10, maximumRunningCountPerGroup: 1)
+		#expect(await queue.waitForTurn(key: "slow1", group: slowHost, priority: .visible) == .start(priority: .visible))
+		let slow2 = await startWaitingTask(queue: queue, key: "slow2", group: slowHost, priority: .visible)
+
+		// Starts even though slow2 is waiting, since slow2’s host is at its limit.
+		#expect(await queue.waitForTurn(key: "fast1", group: fastHost, priority: .visible) == .start(priority: .visible))
+
+		let fast2 = await startWaitingTask(queue: queue, key: "fast2", group: fastHost, priority: .visible)
+		let slow3 = await startWaitingTask(queue: queue, key: "slow3", group: slowHost, priority: .visible)
+
+		// slow3 is the newest, but its host is still at its limit.
+		queue.taskDidFinish(group: fastHost)
+		#expect(await fast2.value == .start(priority: .visible))
+
+		queue.taskDidFinish(group: slowHost)
+		#expect(await slow3.value == .start(priority: .visible))
+
+		queue.taskDidFinish(group: slowHost)
+		#expect(await slow2.value == .start(priority: .visible))
+	}
 }
 
 private extension ThumbnailTaskQueueTests {
 
 	/// Returns once the task is in the queue, so the order tasks are queued in doesn’t depend on scheduling.
-	func startWaitingTask(queue: ThumbnailTaskQueue, key: String, priority: ThumbnailPriority) async -> Task<ThumbnailTurn, Never> {
+	func startWaitingTask(queue: ThumbnailTaskQueue, key: String, group: String? = nil, priority: ThumbnailPriority) async -> Task<ThumbnailTurn, Never> {
 		let waitingCount = queue.waitingCount
-		let task = Task { await queue.waitForTurn(key: key, priority: priority) }
+		let task = Task { await queue.waitForTurn(key: key, group: group, priority: priority) }
 		while queue.waitingCount == waitingCount {
 			await Task.yield()
 		}

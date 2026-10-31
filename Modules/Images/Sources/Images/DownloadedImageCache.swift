@@ -49,6 +49,8 @@ extension Notification.Name {
 	private static let folderName = "DownloadedImages"
 	private static let svgMIMEType = "image/svg+xml"
 	private static let maximumConcurrentLimitedDownloads = 4
+	/// Requests to one HTTP/1.1 host run one at a time, so a stalled host could otherwise hold every slot.
+	private static let maximumDownloadsPerHost = 2
 	/// A few screens of thumbnails.
 	private static let maximumWaitingLimitedDownloads = 60
 	/// Larger images aren’t saved for the timeline. The article view and icons have no limit.
@@ -85,7 +87,7 @@ extension Notification.Name {
 	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "DownloadedImageCache")
 
 	private let diskCache: BinaryDiskCache
-	private let downloadQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentLimitedDownloads, maximumWaitingCount: maximumWaitingLimitedDownloads)
+	private let downloadQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentLimitedDownloads, maximumWaitingCount: maximumWaitingLimitedDownloads, maximumRunningCountPerGroup: maximumDownloadsPerHost)
 	private var tasks = [String: Task<Result<Data, ImageDownloadError>, Never>]() // url: task
 	private var totalByteCount: Int? // Nil while a removal pass counts it
 	private var removalByteCount = limit.maximumByteCount // A save that takes the total over this starts a pass
@@ -204,17 +206,18 @@ private extension DownloadedImageCache {
 		if isWaitingToRetry(url) {
 			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 		}
+		let host = Self.host(url)
 		if let downloadPriority {
 			guard Self.networkAllowsDownload(priority: downloadPriority) else {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			}
-			switch await downloadQueue.waitForTurn(key: url, priority: downloadPriority) {
+			switch await downloadQueue.waitForTurn(key: url, group: host, priority: downloadPriority) {
 			case .dropped:
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			case .start(let currentPriority):
 				// The network or a retry wait may have changed while this was queued.
 				guard !isWaitingToRetry(url), Self.networkAllowsDownload(priority: currentPriority) else {
-					downloadQueue.taskDidFinish()
+					downloadQueue.taskDidFinish(group: host)
 					return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 				}
 			case .startNow:
@@ -224,7 +227,7 @@ private extension DownloadedImageCache {
 		let maximumByteCount = downloadPriority == nil ? nil : Self.maximumLimitedDownloadByteCount
 		let result = await downloadImageFromNetwork(url, maximumByteCount: maximumByteCount, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 		if downloadPriority != nil {
-			downloadQueue.taskDidFinish()
+			downloadQueue.taskDidFinish(group: host)
 		}
 		noteDownloadResult(result, url: url)
 		return result
