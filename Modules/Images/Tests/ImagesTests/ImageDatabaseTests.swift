@@ -35,6 +35,14 @@ import RSWeb
 		await imageDatabase.vacuum()
 	}
 
+	@Test func failedUsageQueryReturnsNil() {
+		let database = FMDatabase.openAndSetUpDatabase(path: ":memory:")
+		defer {
+			database.close()
+		}
+		#expect(DownloadedImageTable.fetchUsageByLeastRecentAccess(database: database) == nil)
+	}
+
 	@Test func downloadedImagesAreSavedAndCheckedForThumbnailSuitability() async throws {
 		let folder = FileManager.default.temporaryDirectory.appendingPathComponent("ImageDatabaseTests-\(UUID().uuidString)")
 		try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)

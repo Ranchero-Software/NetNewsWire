@@ -74,11 +74,11 @@ struct DownloadedImageTable {
 		return results
 	}
 
-	/// Least recently accessed first.
-	static func fetchUsageByLeastRecentAccess(database: FMDatabase) -> [DownloadedImageUsage] {
+	/// Least recently accessed first. Nil when the query fails.
+	static func fetchUsageByLeastRecentAccess(database: FMDatabase) -> [DownloadedImageUsage]? {
 		var results = [DownloadedImageUsage]()
 		guard let resultSet = database.executeQuery("SELECT \(Column.url), \(Column.byteCount), \(Column.lastAccessed) FROM \(name) ORDER BY \(Column.lastAccessed);", withArgumentsIn: []) else {
-			return results
+			return nil
 		}
 		defer {
 			resultSet.close()

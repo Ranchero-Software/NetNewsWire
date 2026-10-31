@@ -206,7 +206,7 @@ import RSParser
 		}
 	}
 
-	func fetchDownloadedImageUsageByLeastRecentAccess() async -> [DownloadedImageUsage] {
+	func fetchDownloadedImageUsageByLeastRecentAccess() async -> [DownloadedImageUsage]? {
 		await withCheckedContinuation { continuation in
 			queue.runInDatabase { database in
 				continuation.resume(returning: DownloadedImageTable.fetchUsageByLeastRecentAccess(database: database))

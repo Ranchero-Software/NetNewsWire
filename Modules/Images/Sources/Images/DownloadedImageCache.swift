@@ -440,7 +440,10 @@ private extension DownloadedImageCache {
 		totalByteCount = nil
 		let startDate = Date()
 
-		let records = await ImageDatabase.shared.fetchDownloadedImageUsageByLeastRecentAccess()
+		guard let records = await ImageDatabase.shared.fetchDownloadedImageUsageByLeastRecentAccess() else {
+			Self.logger.error("Skipped removing images: couldn’t read the image records.")
+			return
+		}
 		guard let fileDates = await Self.fileModificationDates(diskCache) else {
 			Self.logger.error("Skipped removing images: couldn’t list the images folder.")
 			return
