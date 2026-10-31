@@ -16,6 +16,8 @@ import Foundation
 /// often have a placeholder in `src`.
 public enum HTMLImageParser {
 
+	private static let dataURLPrefix = "data:"
+
 	/// In document order, with no repeated URLs.
 	public static func significantImages(html: String, baseURL: URL?, maximumCount: Int) -> [HTMLImage] {
 		let delegate = ImageParserDelegate(baseURL: baseURL, maximumCount: maximumCount)
@@ -26,10 +28,19 @@ public enum HTMLImageParser {
 
 	/// Nil for an empty string or a `data:` URL.
 	static func resolvedURLString(_ urlString: String?, baseURL: URL?) -> String? {
-		guard let urlString = urlString?.trimmingCharacters(in: .whitespacesAndNewlines), !urlString.isEmpty, !urlString.lowercased().hasPrefix("data:") else {
+		guard let urlString, !isDataURL(urlString) else {
 			return nil
 		}
-		return URL(string: urlString, relativeTo: baseURL)?.absoluteString
+		let trimmedURLString = urlString.trimmingCharacters(in: .whitespacesAndNewlines)
+		guard !trimmedURLString.isEmpty else {
+			return nil
+		}
+		return URL(string: trimmedURLString, relativeTo: baseURL)?.absoluteString
+	}
+
+	/// Looks at only the start of the string, since an inline image can be megabytes.
+	private static func isDataURL(_ urlString: String) -> Bool {
+		urlString.drop(while: \.isWhitespace).prefix(dataURLPrefix.count).lowercased() == dataURLPrefix
 	}
 }
 
