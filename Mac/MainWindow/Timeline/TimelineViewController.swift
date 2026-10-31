@@ -143,7 +143,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
-			loadSavedThumbnailURLsForLargeRows()
+			loadSavedThumbnailURLs()
 
 			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
 				showFeedNames = {
@@ -1276,7 +1276,7 @@ private extension TimelineViewController {
 
 	func layoutDidChange() {
 		thumbnailFirstVisibleRow = nil
-		loadSavedThumbnailURLsForLargeRows()
+		loadSavedThumbnailURLs()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
@@ -1414,7 +1414,7 @@ private extension TimelineViewController {
 		guard layout == .standard else {
 			return
 		}
-		loadSavedThumbnailURLsForLargeRows()
+		loadSavedThumbnailURLs()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
@@ -1424,9 +1424,9 @@ private extension TimelineViewController {
 		discoverThumbnailURLs()
 	}
 
-	/// Large-mode row heights depend on having a thumbnail URL, so this runs before rows are laid out.
-	func loadSavedThumbnailURLsForLargeRows() {
-		guard thumbnailMode == .large else {
+	/// Row heights and text width depend on having a thumbnail URL, so this runs before rows are laid out.
+	func loadSavedThumbnailURLs() {
+		guard thumbnailMode != nil else {
 			return
 		}
 		ArticleThumbnailFinder.shared.loadSavedThumbnailURLs(for: articles)
