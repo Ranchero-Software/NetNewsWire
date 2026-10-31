@@ -23,9 +23,6 @@ extension Notification.Name {
 
 	public var iconImage: IconImage?
 
-	/// The persistent failure, if any. Nil after success or for transient failures.
-	public private(set) var error: ImageDownloadError?
-
 	private static let retryInterval: TimeInterval = 30 * 60 // 30 minutes
 
 	private var lastDownloadAttemptDate: Date
@@ -62,16 +59,15 @@ extension Notification.Name {
 private extension SingleFaviconDownloader {
 
 	func findFavicon() async {
-		do throws(ImageDownloadError) {
-			let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
-			let storedData = try await DownloadedImageCache.shared.imageData(for: faviconURL, downloadPriority: nil, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL)
-			guard let image = await Self.iconImage(storedData, maxPixelSize: RSImage.maxIconPixelSize) else {
-				throw ImageDownloadError(statusCode: nil, decodingFailed: true, isTransient: false)
+		let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
+		if let storedData = try? await DownloadedImageCache.shared.imageData(for: faviconURL, downloadPriority: nil, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL) {
+			// DownloadedImageCache records download failures, but can’t know whether the data decodes as an icon.
+			if let image = await Self.iconImage(storedData, maxPixelSize: RSImage.maxIconPixelSize) {
+				iconImage = IconImage(image)
+				ImageDatabase.shared.clearFailure(url: faviconURL)
+			} else {
+				ImageDatabase.shared.recordFailure(url: faviconURL, statusCode: nil)
 			}
-			iconImage = IconImage(image)
-			error = nil
-		} catch {
-			self.error = error.isTransient ? nil : error
 		}
 		postDidLoadFaviconNotification()
 	}

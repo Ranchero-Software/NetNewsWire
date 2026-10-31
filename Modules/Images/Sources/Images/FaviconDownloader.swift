@@ -160,13 +160,6 @@ extension Notification.Name {
 			return
 		}
 
-		// URL-level outcome runs before the homePageURL guard so we record it even when homePageURL is nil.
-		if let error = singleFaviconDownloader.error {
-			ImageDatabase.shared.recordFailure(url: singleFaviconDownloader.faviconURL, statusCode: error.statusCode)
-		} else if singleFaviconDownloader.iconImage != nil {
-			ImageDatabase.shared.clearFailure(url: singleFaviconDownloader.faviconURL)
-		}
-
 		guard let homePageURL = singleFaviconDownloader.homePageURL else {
 			return
 		}
