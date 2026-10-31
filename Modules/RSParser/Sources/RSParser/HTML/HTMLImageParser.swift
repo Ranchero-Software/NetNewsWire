@@ -77,8 +77,14 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 			return
 		}
 
-		let width = pixelDimension(attributes["width"])
-		let height = pixelDimension(attributes["height"])
+		let style = styleProperties(attributes["style"])
+		if attributes["hidden"] != nil || style["display"]?.hasPrefix("none") == true {
+			return
+		}
+
+		// CSS overrides the attributes.
+		let width = pixelDimension(style["width"]) ?? pixelDimension(attributes["width"])
+		let height = pixelDimension(style["height"]) ?? pixelDimension(attributes["height"])
 		let htmlClass = attributes["class"]
 		for urlString in imageURLStrings(attributes) {
 			if SignificantImageFilter.isSignificant(urlString: urlString, width: width, height: height, htmlClass: htmlClass, enclosingLinkURLString: enclosingLinkURLString) {
@@ -163,6 +169,23 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 			return nil
 		}
 		return String(candidate.url)
+	}
+
+	/// Lowercase property names and values from a `style` attribute.
+	private func styleProperties(_ style: String?) -> [String: String] {
+		guard let style else {
+			return [:]
+		}
+		var properties = [String: String]()
+		for declaration in style.split(separator: ";") {
+			let nameAndValue = declaration.split(separator: ":", maxSplits: 1)
+			guard nameAndValue.count == 2 else {
+				continue
+			}
+			let name = nameAndValue[0].trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+			properties[name] = nameAndValue[1].trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+		}
+		return properties
 	}
 
 	/// `"300"` and `"300px"` are pixel dimensions. Percentages and other units are not.

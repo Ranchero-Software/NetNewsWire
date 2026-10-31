@@ -44,6 +44,17 @@ import RSParser
 		#expect(firstSignificantImage(html) == nil)
 	}
 
+	@Test func hiddenImagesAreSkipped() {
+		let html = """
+		<img src="https://t.example.com/o/abc" style="display:none">
+		<img src="https://t.example.com/o/def" style="DISPLAY: none !important">
+		<img src="https://t.example.com/o/ghi" hidden>
+		<img src="https://t.example.com/o/jkl" style="width:1px;height:1px">
+		<img src="/real.jpg" style="max-width:1px;width:100%">
+		"""
+		#expect(firstSignificantImage(html)?.urlString == "https://example.com/real.jpg")
+	}
+
 	@Test func shareButtonsAreSkipped() {
 		let html = """
 		<div class="sharedaddy">
