@@ -334,23 +334,19 @@ private extension ArticleThumbnailFinder {
 	}
 
 	func providedThumbnailURL(for article: Article, mode: Mode) -> String? {
-		let thumbnailURL = Self.normalizedURLString(article.rawThumbnailLink)
-		let imageURL = Self.normalizedURLString(article.rawImageLink)
-		let attachmentURL = Self.firstSignificantImageAttachmentURL(article)
-
-		let candidates = switch mode {
+		switch mode {
 		case .small:
-			[thumbnailURL, imageURL, attachmentURL]
+			usableProvidedURL(Self.normalizedURLString(article.rawThumbnailLink)) ?? usableProvidedURL(Self.normalizedURLString(article.rawImageLink)) ?? usableProvidedURL(Self.firstSignificantImageAttachmentURL(article))
 		case .large:
-			[imageURL, attachmentURL, thumbnailURL]
+			usableProvidedURL(Self.normalizedURLString(article.rawImageLink)) ?? usableProvidedURL(Self.firstSignificantImageAttachmentURL(article)) ?? usableProvidedURL(Self.normalizedURLString(article.rawThumbnailLink))
 		}
+	}
 
-		for candidate in candidates {
-			if let candidate, !hasFailed(candidate), SignificantImageFilter.isSignificant(urlString: candidate, width: nil, height: nil) {
-				return candidate
-			}
+	func usableProvidedURL(_ urlString: String?) -> String? {
+		guard let urlString, !hasFailed(urlString), SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) else {
+			return nil
 		}
-		return nil
+		return urlString
 	}
 
 	/// True when the URL recently failed to download, or its image was too small, too narrow, or unreadable.
