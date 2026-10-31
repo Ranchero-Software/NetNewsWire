@@ -55,11 +55,11 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 	                 didStartTag name: ArraySlice<UInt8>,
 	                 attributes: HTMLAttributes,
 	                 selfClosing: Bool) {
-		if tagName(name, equals: Self.anchorBytes) {
+		if HTMLScanner.tagNameEqualsIgnoringCase(name, Self.anchorBytes[...]) {
 			enclosingLinkURLString = resolvedURLString(attributes["href"])
 			return
 		}
-		guard images.count < maximumCount, tagName(name, equals: Self.imgBytes) else {
+		guard images.count < maximumCount, HTMLScanner.tagNameEqualsIgnoringCase(name, Self.imgBytes[...]) else {
 			return
 		}
 
@@ -81,20 +81,12 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 
 	func htmlScanner(_ scanner: HTMLScanner,
 	                 didEndTag name: ArraySlice<UInt8>) {
-		if tagName(name, equals: Self.anchorBytes) {
+		if HTMLScanner.tagNameEqualsIgnoringCase(name, Self.anchorBytes[...]) {
 			enclosingLinkURLString = nil
 		}
 	}
 
 	// MARK: Helpers
-
-	/// `lowercasedName` must be all lowercase.
-	private func tagName(_ name: ArraySlice<UInt8>, equals lowercasedName: [UInt8]) -> Bool {
-		guard name.count == lowercasedName.count else {
-			return false
-		}
-		return zip(name, lowercasedName).allSatisfy { $0.asciiLowercased == $1 }
-	}
 
 	private func imageURLStrings(_ attributes: HTMLAttributes) -> [String] {
 		var sources = Self.lazySourceAttributeNames.compactMap { attributes[$0] }

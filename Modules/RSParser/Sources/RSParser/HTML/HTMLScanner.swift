@@ -153,7 +153,7 @@ private extension HTMLScanner {
 		let attributeView = HTMLAttributes(attributes: attributes)
 		delegate?.htmlScanner(self, didStartTag: nameSlice, attributes: attributeView, selfClosing: selfClosing)
 
-		if !selfClosing, let rawTextTagName = Self.rawTextTagNames.first(where: { tagNameEqualsIgnoringCase(nameSlice, $0[...]) }) {
+		if !selfClosing, let rawTextTagName = Self.rawTextTagNames.first(where: { Self.tagNameEqualsIgnoringCase(nameSlice, $0[...]) }) {
 			consumeRawText(until: rawTextTagName[...])
 		}
 	}
@@ -287,7 +287,7 @@ private extension HTMLScanner {
 					nameEnd += 1
 				}
 				let candidateName = input[closerStart..<nameEnd]
-				if tagNameEqualsIgnoringCase(candidateName, tagName) {
+				if Self.tagNameEqualsIgnoringCase(candidateName, tagName) {
 					if start < savedPos {
 						delegate?.htmlScanner(self, didFindCharacters: input[start..<savedPos])
 					}
@@ -461,8 +461,11 @@ private extension HTMLScanner {
 			return true
 		}
 	}
+}
 
-	func tagNameEqualsIgnoringCase(_ a: ArraySlice<UInt8>, _ b: ArraySlice<UInt8>) -> Bool {
+extension HTMLScanner {
+
+	static func tagNameEqualsIgnoringCase(_ a: ArraySlice<UInt8>, _ b: ArraySlice<UInt8>) -> Bool {
 		guard a.count == b.count else {
 			return false
 		}

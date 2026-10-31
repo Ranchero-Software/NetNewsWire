@@ -58,13 +58,13 @@ private final class InserterDelegate: HTMLScannerDelegate {
 	}
 
 	func htmlScanner(_ scanner: HTMLScanner, didStartTag name: ArraySlice<UInt8>, attributes: HTMLAttributes, selfClosing: Bool) {
-		if tagName(name, equals: Self.pictureBytes) {
+		if HTMLScanner.tagNameEqualsIgnoringCase(name, Self.pictureBytes[...]) {
 			if !selfClosing {
 				pictureDepth += 1
 			}
 			return
 		}
-		guard pictureDepth == 0, tagName(name, equals: Self.imgBytes) else {
+		guard pictureDepth == 0, HTMLScanner.tagNameEqualsIgnoringCase(name, Self.imgBytes[...]) else {
 			return
 		}
 		guard attributes["srcset"] == nil, attributes["data-canonical-src"] == nil else {
@@ -77,16 +77,8 @@ private final class InserterDelegate: HTMLScannerDelegate {
 	}
 
 	func htmlScanner(_ scanner: HTMLScanner, didEndTag name: ArraySlice<UInt8>) {
-		if pictureDepth > 0, tagName(name, equals: Self.pictureBytes) {
+		if pictureDepth > 0, HTMLScanner.tagNameEqualsIgnoringCase(name, Self.pictureBytes[...]) {
 			pictureDepth -= 1
 		}
-	}
-
-	/// `lowercasedName` must be all lowercase.
-	private func tagName(_ name: ArraySlice<UInt8>, equals lowercasedName: [UInt8]) -> Bool {
-		guard name.count == lowercasedName.count else {
-			return false
-		}
-		return zip(name, lowercasedName).allSatisfy { $0.asciiLowercased == $1 }
 	}
 }
