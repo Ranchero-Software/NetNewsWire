@@ -800,13 +800,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard showsThumbnails, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
 			return
 		}
-		// Articles that used the failed URL now get their next source, or none.
-		thumbnailURLsDidChange(for: articleIDs)
-
-		// A failed provided image falls back to images in the HTML.
+		// A failed provided image falls back to images in the HTML. Those are found first, so a row that has one doesn’t shrink and then grow back.
 		let articlesUsingURL = articles.filter { articleIDs.contains($0.articleID) }
 		Task {
 			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articlesUsingURL)
+			// Articles that used the failed URL now get their next source, or none.
+			thumbnailURLsDidChange(for: articleIDs)
 		}
 	}
 
