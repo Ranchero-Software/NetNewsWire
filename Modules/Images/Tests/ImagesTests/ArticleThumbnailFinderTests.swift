@@ -75,6 +75,24 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/second-photo.jpg")
 	}
 
+	@Test func failedProvidedImageFallsBackToHTMLThumbnail() async {
+		let imageDatabase = ImageDatabase(databasePath: ":memory:")
+		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
+		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#, thumbnailURL: "https://example.com/thumbnail.jpg")
+
+		// The HTML isn’t parsed while the provided image is usable.
+		await finder.discoverThumbnailURLs(for: [article])
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
+		#expect(await imageDatabase.fetchArticleThumbnails(articleIDs: ["1"]).isEmpty)
+
+		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
+		finder.thumbnailURLDidFail("https://example.com/thumbnail.jpg")
+		#expect(finder.thumbnailURL(for: article, mode: .small) == nil)
+
+		await finder.discoverThumbnailURLs(for: [article])
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
+	}
+
 	@Test func savedHTMLThumbnailIsLoadedWithoutDiscovery() async {
 		let imageDatabase = ImageDatabase(databasePath: ":memory:")
 		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#)
