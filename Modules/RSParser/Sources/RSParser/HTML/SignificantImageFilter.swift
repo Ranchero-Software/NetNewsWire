@@ -53,6 +53,9 @@ private extension SignificantImageFilter {
 	/// Path components of open-tracking and click-tracking URLs on any host. Lowercase.
 	static let blockedPathComponents: Set<String> = ["open", "track"]
 
+	/// A URL ending in one of these isn’t blocked by its path components. GIF isn’t included, since it’s the usual format for tracking pixels.
+	static let photoFileExtensions: Set<String> = ["avif", "heic", "jpeg", "jpg", "png", "webp"]
+
 	/// Share buttons, badges, tracking pixels, and placeholders. Hosts include their subdomains. Path prefixes are lowercase.
 	static let blockedImagePrefixes: [HostAndPathPrefix] = [
 		(host: "addtoany.com", pathPrefix: "/"),
@@ -105,7 +108,7 @@ private extension SignificantImageFilter {
 		if blockedFileNames.contains(url.deletingPathExtension().lastPathComponent.lowercased()) {
 			return true
 		}
-		if url.pathComponents.contains(where: { blockedPathComponents.contains($0.lowercased()) }) {
+		if !photoFileExtensions.contains(url.pathExtension.lowercased()), url.pathComponents.contains(where: { blockedPathComponents.contains($0.lowercased()) }) {
 			return true
 		}
 		if matches(host: host, path: url.path().lowercased(), blockedImagePrefixes) {

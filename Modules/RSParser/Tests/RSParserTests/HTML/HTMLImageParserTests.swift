@@ -155,6 +155,8 @@ import RSParser
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/banner.jpg", width: 1200, height: 250))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://example.com/images/spacer.gif", width: nil, height: nil))
 		#expect(!SignificantImageFilter.isSignificant(urlString: "https://email.example.net/open/abc123.gif", width: nil, height: nil))
+		#expect(!SignificantImageFilter.isSignificant(urlString: "https://email.example.net/wf/open?upn=abc123", width: nil, height: nil))
+		#expect(SignificantImageFilter.isSignificant(urlString: "https://cdn.example.com/track/cover.jpg", width: nil, height: nil))
 		#expect(SignificantImageFilter.isSignificant(urlString: "https://example.com/2026/open-source-pixel-art.jpg", width: nil, height: nil))
 	}
 }
