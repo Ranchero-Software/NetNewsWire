@@ -27,8 +27,7 @@ extension Notification.Name {
 
 	/// Posted when a thumbnail image fails to download or is rejected for its size.
 	/// `thumbnailURL(for:mode:)` now skips that URL, so articles that used it may have a different thumbnail.
-	/// userInfo keys: `ArticleThumbnailFinder.urlKey` (the failed URL) and `ArticleThumbnailFinder.articleIDsKey`
-	/// (`Set<String>`, the articles whose `thumbnailURL(for:mode:)` was that URL).
+	/// userInfo key: `ArticleThumbnailFinder.articleIDsKey` (`Set<String>`, the articles whose `thumbnailURL(for:mode:)` was that URL).
 	public static let articleThumbnailDownloadDidFail = Notification.Name("ArticleThumbnailDownloadDidFail")
 }
 
@@ -187,7 +186,7 @@ extension Notification.Name {
 			return
 		}
 		forgetChosenThumbnailURLs(articleIDs)
-		NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.urlKey: url, Self.articleIDsKey: articleIDs])
+		NotificationCenter.default.post(name: .articleThumbnailDownloadDidFail, object: self, userInfo: [Self.articleIDsKey: articleIDs])
 	}
 
 	// MARK: - Notifications
