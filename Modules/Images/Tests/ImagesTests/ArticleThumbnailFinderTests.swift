@@ -137,6 +137,16 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finderAfterRelaunch.thumbnailURL(for: newArticle, mode: .large) == "https://example.com/uploads/new.jpg")
 	}
 
+	@Test func parsedThumbnailURLsArePostedInBatches() async {
+		let finder = ArticleThumbnailFinder(imageDatabase: ImageDatabase(databasePath: ":memory:"))
+		let articles = (0...ArticleThumbnailFinder.parsingBatchSize).map { makeArticle(articleID: String($0), contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#) }
+		let recorder = ThumbnailURLNotificationRecorder(finder: finder)
+
+		await finder.findThumbnailURLs(for: articles).value
+
+		#expect(recorder.articleIDCounts == [ArticleThumbnailFinder.parsingBatchSize, 1])
+	}
+
 	@Test func thumbnailTooSmallIsRejected() async throws {
 		let smallImageData = try #require(jpegData(width: 48, height: 48))
 
@@ -178,6 +188,21 @@ private typealias ArticleAttachment = Articles.Attachment
 }
 
 // MARK: - Helpers
+
+@MainActor private final class ThumbnailURLNotificationRecorder {
+
+	private(set) var articleIDCounts = [Int]()
+
+	init(finder: ArticleThumbnailFinder) {
+		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: finder)
+	}
+
+	@objc func handleArticleThumbnailURLsDidBecomeAvailable(_ notification: Notification) {
+		if let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> {
+			articleIDCounts.append(articleIDs.count)
+		}
+	}
+}
 
 private func makeArticle(articleID: String = "1", contentHTML: String? = nil, imageURL: String? = nil, thumbnailURL: String? = nil, attachments: [ArticleAttachment]? = nil) -> Article {
 	let status = ArticleStatus(articleID: articleID, read: false, starred: false, dateArrived: Date())
