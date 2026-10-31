@@ -134,7 +134,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				// Just reload visible cells in this case: don’t call reloadData.
 				articleRowMap = [String: [Int]]()
 				if usesLargeThumbnailRows {
-					noteHeightOfAllRows()
+					let rows = rowsThatGainedOrLostThumbnail(comparedWith: oldValue)
+					if !rows.isEmpty {
+						noteHeightOfRowsKeepingScrollPosition(rows)
+					}
 				}
 				reloadVisibleCells()
 				return
@@ -952,8 +955,17 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		largeThumbnailRowHeight = calculateRowHeight(showThumbnail: true)
 	}
 
-	private func noteHeightOfAllRows() {
-		noteHeightOfRowsKeepingScrollPosition(IndexSet(integersIn: 0..<tableView.numberOfRows))
+	/// `oldArticles` are the same articles in the same order. An article with the same instance has the same images.
+	private func rowsThatGainedOrLostThumbnail(comparedWith oldArticles: ArticleArray) -> IndexSet {
+		var rows = IndexSet()
+		for (row, (oldArticle, article)) in zip(oldArticles, articles).enumerated() where oldArticle !== article {
+			let hadThumbnail = ArticleThumbnailFinder.shared.thumbnailURL(for: oldArticle, mode: thumbnailMode) != nil
+			let hasThumbnail = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) != nil
+			if hadThumbnail != hasThumbnail {
+				rows.insert(row)
+			}
+		}
+		return rows
 	}
 
 	/// Keeps the top visible row in place when rows above it change height.
