@@ -143,7 +143,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
-			loadSavedThumbnailURLs()
+			findThumbnailURLs()
 
 			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
 				showFeedNames = {
@@ -162,7 +162,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			thumbnailFirstVisibleRow = nil
 			tableView.reloadData()
 			IconImageCache.shared.prefetchImagesForArticles(articles)
-			discoverThumbnailURLs()
 		}
 	}
 
@@ -792,7 +791,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		// A failed provided image falls back to images in the HTML. Those are found first, so a row that has one doesn’t shrink and then grow back.
 		let articlesUsingURL = articles.filter { articleIDs.contains($0.articleID) }
 		Task {
-			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articlesUsingURL)
+			await ArticleThumbnailFinder.shared.findThumbnailURLs(for: articlesUsingURL).value
 			// Articles that used the failed URL now get their next source, or none.
 			thumbnailURLsDidChange(for: articleIDs)
 		}
@@ -1276,7 +1275,7 @@ private extension TimelineViewController {
 
 	func layoutDidChange() {
 		thumbnailFirstVisibleRow = nil
-		loadSavedThumbnailURLs()
+		findThumbnailURLs()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
@@ -1285,7 +1284,6 @@ private extension TimelineViewController {
 		if tableView.selectedRow != -1 {
 			tableView.scrollRowToVisible(tableView.selectedRow)
 		}
-		discoverThumbnailURLs()
 	}
 
 	func updateShowIcons() {
@@ -1414,33 +1412,22 @@ private extension TimelineViewController {
 		guard layout == .standard else {
 			return
 		}
-		loadSavedThumbnailURLs()
+		findThumbnailURLs()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
 		if tableView.selectedRow != -1 {
 			tableView.scrollRowToVisible(tableView.selectedRow)
 		}
-		discoverThumbnailURLs()
-	}
-
-	/// Row heights and text width depend on having a thumbnail URL, so this runs before rows are laid out.
-	func loadSavedThumbnailURLs() {
-		guard thumbnailMode != nil else {
-			return
-		}
-		ArticleThumbnailFinder.shared.loadSavedThumbnailURLs(for: articles)
 	}
 
 	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
-	func discoverThumbnailURLs() {
+	/// Row heights and text width depend on having a thumbnail URL, so this runs before rows are laid out.
+	func findThumbnailURLs() {
 		guard thumbnailMode != nil else {
 			return
 		}
-		let articles = self.articles
-		Task {
-			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articles)
-		}
+		ArticleThumbnailFinder.shared.findThumbnailURLs(for: articles)
 	}
 
 	/// Starts thumbnail downloads for the screenful of rows the table is scrolling toward.

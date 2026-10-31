@@ -1115,7 +1115,7 @@ private extension MainTimelineViewController {
 			return
 		}
 
-		discoverThumbnailURLs()
+		findThumbnailURLs()
 
 		var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
@@ -1143,14 +1143,11 @@ private extension MainTimelineViewController {
 
 	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
 	/// Saved results are ready when this returns, so rows laid out next get their final heights.
-	func discoverThumbnailURLs() {
+	func findThumbnailURLs() {
 		guard thumbnailMode != nil, let articles, !articles.isEmpty else {
 			return
 		}
-		ArticleThumbnailFinder.shared.loadSavedThumbnailURLs(for: articles)
-		Task {
-			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articles)
-		}
+		ArticleThumbnailFinder.shared.findThumbnailURLs(for: articles)
 	}
 
 	func visibleArticles() -> [Article] {
@@ -1235,7 +1232,7 @@ private extension MainTimelineViewController {
 			return
 		}
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
-		discoverThumbnailURLs()
+		findThumbnailURLs()
 		reloadAllCells()
 	}
 
@@ -1266,7 +1263,7 @@ private extension MainTimelineViewController {
 		// A failed provided image falls back to images in the HTML. Those are found first, so a row that has one doesn’t shrink and then grow back.
 		let articlesUsingURL = articles?.filter { articleIDs.contains($0.articleID) } ?? []
 		Task {
-			await ArticleThumbnailFinder.shared.discoverThumbnailURLs(for: articlesUsingURL)
+			await ArticleThumbnailFinder.shared.findThumbnailURLs(for: articlesUsingURL).value
 			// Articles that used the failed URL now get their next source, or none.
 			thumbnailURLsDidChange(for: articleIDs)
 		}
