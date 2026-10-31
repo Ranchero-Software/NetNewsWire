@@ -121,6 +121,13 @@ private typealias ArticleAttachment = Articles.Attachment
 		let decodedImage = try await ArticleThumbnailFinder.decodedImage(rotatedImageData, maxPixelSize: 512)
 		#expect(decodedImage.image.size == CGSize(width: 200, height: 400))
 	}
+
+	@Test func largestFrameOfMultiImageFileIsDecoded() async throws {
+		let imageData = try #require(tiffData(frameSizes: [(width: 48, height: 48), (width: 400, height: 200)]))
+
+		let decodedImage = try await ArticleThumbnailFinder.decodedImage(imageData, maxPixelSize: 512)
+		#expect(decodedImage.image.size == CGSize(width: 400, height: 200))
+	}
 }
 
 // MARK: - Helpers
@@ -130,13 +137,33 @@ private func makeArticle(articleID: String = "1", contentHTML: String? = nil, im
 	return Article(accountID: "account", articleID: articleID, feedID: "feed", uniqueID: articleID, title: nil, contentHTML: contentHTML, contentText: nil, markdown: nil, url: "https://example.com/posts/\(articleID)", externalURL: nil, summary: nil, imageURL: imageURL, thumbnailURL: thumbnailURL, datePublished: nil, dateModified: nil, authors: nil, attachments: attachments, status: status)
 }
 
-private func jpegData(width: Int, height: Int, orientation: CGImagePropertyOrientation = .up) -> Data? {
+private func makeImage(width: Int, height: Int) -> CGImage? {
 	guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else {
 		return nil
 	}
 	context.setFillColor(red: 0.2, green: 0.4, blue: 0.6, alpha: 1)
 	context.fill(CGRect(x: 0, y: 0, width: width, height: height))
-	guard let cgImage = context.makeImage(), let mutableData = CFDataCreateMutable(nil, 0), let destination = CGImageDestinationCreateWithData(mutableData, UTType.jpeg.identifier as CFString, 1, nil) else {
+	return context.makeImage()
+}
+
+private func tiffData(frameSizes: [(width: Int, height: Int)]) -> Data? {
+	guard let mutableData = CFDataCreateMutable(nil, 0), let destination = CGImageDestinationCreateWithData(mutableData, UTType.tiff.identifier as CFString, frameSizes.count, nil) else {
+		return nil
+	}
+	for frameSize in frameSizes {
+		guard let cgImage = makeImage(width: frameSize.width, height: frameSize.height) else {
+			return nil
+		}
+		CGImageDestinationAddImage(destination, cgImage, nil)
+	}
+	guard CGImageDestinationFinalize(destination) else {
+		return nil
+	}
+	return mutableData as Data
+}
+
+private func jpegData(width: Int, height: Int, orientation: CGImagePropertyOrientation = .up) -> Data? {
+	guard let cgImage = makeImage(width: width, height: height), let mutableData = CFDataCreateMutable(nil, 0), let destination = CGImageDestinationCreateWithData(mutableData, UTType.jpeg.identifier as CFString, 1, nil) else {
 		return nil
 	}
 	let properties = [kCGImagePropertyOrientation: orientation.rawValue] as CFDictionary
