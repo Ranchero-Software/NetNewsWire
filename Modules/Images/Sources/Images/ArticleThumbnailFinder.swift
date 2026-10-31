@@ -376,8 +376,8 @@ private extension ArticleThumbnailFinder {
 
 	@concurrent static func parseThumbnailURLs(_ articleHTMLs: [ArticleHTML]) async -> [ArticleThumbnailRecord] {
 		articleHTMLs.map { articleHTML in
-			let images = HTMLImageParser.significantImages(html: articleHTML.html, baseURL: articleHTML.baseURL, maximumCount: maxHTMLThumbnailURLsPerArticle)
-			return ArticleThumbnailRecord(articleID: articleHTML.articleID, thumbnailURLs: images.map(\.urlString))
+			let thumbnailURLs = HTMLImageParser.significantImageURLStrings(html: articleHTML.html, baseURL: articleHTML.baseURL, maximumCount: maxHTMLThumbnailURLsPerArticle)
+			return ArticleThumbnailRecord(articleID: articleHTML.articleID, thumbnailURLs: thumbnailURLs)
 		}
 	}
 

@@ -18,12 +18,12 @@ public enum HTMLImageParser {
 
 	private static let dataURLPrefix = "data:"
 
-	/// In document order, with no repeated URLs.
-	public static func significantImages(html: String, baseURL: URL?, maximumCount: Int) -> [HTMLImage] {
+	/// Absolute URLs, resolved against `baseURL`, in document order, with none repeated.
+	public static func significantImageURLStrings(html: String, baseURL: URL?, maximumCount: Int) -> [String] {
 		let delegate = ImageParserDelegate(baseURL: baseURL, maximumCount: maximumCount)
 		let scanner = HTMLScanner(delegate: delegate)
 		scanner.parse(Array(html.utf8))
-		return delegate.images
+		return delegate.urlStrings
 	}
 
 	/// Nil for an empty string or a `data:` URL.
@@ -50,7 +50,7 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 
 	private let baseURL: URL?
 	private let maximumCount: Int
-	private(set) var images = [HTMLImage]()
+	private(set) var urlStrings = [String]()
 	private var enclosingLinkURLString: String?
 
 	private static let imgBytes: [UInt8] = Array("img".utf8)
@@ -73,7 +73,7 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 			enclosingLinkURLString = resolvedURLString(attributes["href"])
 			return
 		}
-		guard images.count < maximumCount, HTMLScanner.tagNameEqualsIgnoringCase(name, Self.imgBytes[...]) else {
+		guard urlStrings.count < maximumCount, HTMLScanner.tagNameEqualsIgnoringCase(name, Self.imgBytes[...]) else {
 			return
 		}
 
@@ -88,10 +88,10 @@ private final class ImageParserDelegate: HTMLScannerDelegate {
 		let htmlClass = attributes["class"]
 		for urlString in imageURLStrings(attributes) {
 			if SignificantImageFilter.isSignificant(urlString: urlString, width: width, height: height, htmlClass: htmlClass, enclosingLinkURLString: enclosingLinkURLString) {
-				if !images.contains(where: { $0.urlString == urlString }) {
-					images.append(HTMLImage(urlString: urlString, width: width, height: height))
+				if !urlStrings.contains(urlString) {
+					urlStrings.append(urlString)
 				}
-				if images.count >= maximumCount {
+				if urlStrings.count >= maximumCount {
 					scanner.stopParsing()
 				}
 				return
