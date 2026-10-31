@@ -111,7 +111,7 @@ private extension SignificantImageFilter {
 		if matches(host: host, path: url.path().lowercased(), blockedImagePrefixes) {
 			return true
 		}
-		return MediaRSS.isGravatarAvatar(urlString)
+		return MediaRSS.isGravatarAvatar(url)
 	}
 
 	/// Includes `mailto:` links, the usual target of an email-this-article button.
