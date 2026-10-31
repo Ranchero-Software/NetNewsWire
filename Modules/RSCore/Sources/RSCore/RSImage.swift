@@ -24,12 +24,6 @@ public typealias RSColor = UIColor
 
 private let RSImageLogger = Logger(subsystem: Logger.nnwSubsystem, category: "RSImage")
 
-public enum ScaledImageFormat: Sendable {
-	case png
-	/// Images with an alpha channel are encoded as PNG, since JPEG can’t store transparency.
-	case jpeg(compressionQuality: Double)
-}
-
 public extension RSImage {
 
 	/// Create a colored image from the source image using a specified color.
@@ -167,11 +161,11 @@ public extension RSImage {
 		return largest
 	}
 
-	/// Scales image data down to maxPixelSize and returns the result encoded in `format`.
+	/// Scales image data down to maxPixelSize and returns the result encoded as PNG.
 	/// If the image is a single frame already at or below maxPixelSize, returns
 	/// the original data unchanged. For multi-image sources (like ICO), extracts
 	/// the largest frame. Returns nil if the data can't be decoded as an image.
-	static func scaledImageData(_ data: Data, maxPixelSize: Int, format: ScaledImageFormat = .png) -> Data? {
+	static func scaledImageData(_ data: Data, maxPixelSize: Int) -> Data? {
 		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
 			return nil
 		}
@@ -210,12 +204,11 @@ public extension RSImage {
 			return nil
 		}
 
-		let (type, destinationProperties) = destinationTypeAndProperties(format, cgImage)
 		guard let mutableData = CFDataCreateMutable(nil, 0),
-			  let destination = CGImageDestinationCreateWithData(mutableData, type.identifier as CFString, 1, nil) else {
+			  let destination = CGImageDestinationCreateWithData(mutableData, UTType.png.identifier as CFString, 1, nil) else {
 			return nil
 		}
-		CGImageDestinationAddImage(destination, cgImage, destinationProperties as CFDictionary?)
+		CGImageDestinationAddImage(destination, cgImage, nil)
 		guard CGImageDestinationFinalize(destination) else {
 			return nil
 		}
@@ -227,21 +220,5 @@ public extension RSImage {
 		}
 
 		return mutableData as Data
-	}
-}
-
-private extension RSImage {
-
-	static func destinationTypeAndProperties(_ format: ScaledImageFormat, _ cgImage: CGImage) -> (UTType, [CFString: Any]?) {
-		switch format {
-		case .png:
-			return (.png, nil)
-		case .jpeg(let compressionQuality):
-			let isOpaque = [.none, .noneSkipFirst, .noneSkipLast].contains(cgImage.alphaInfo)
-			guard isOpaque else {
-				return (.png, nil)
-			}
-			return (.jpeg, [kCGImageDestinationLossyCompressionQuality: compressionQuality])
-		}
 	}
 }

@@ -14,24 +14,21 @@ import UniformTypeIdentifiers
 
 @Suite struct ScaledImageDataTests {
 
-	@Test func jpegFormatResizesOpaqueImageToJPEGAndTransparentImageToPNG() throws {
-		let opaqueData = try #require(pngData(width: 2000, height: 1000, alphaInfo: .noneSkipLast))
-		let transparentData = try #require(pngData(width: 2000, height: 1000, alphaInfo: .premultipliedLast))
+	@Test func largeImageIsResizedToPNG() throws {
+		let data = try #require(pngData(width: 2000, height: 1000))
 
-		let scaledOpaqueData = try #require(RSImage.scaledImageData(opaqueData, maxPixelSize: 512, format: .jpeg(compressionQuality: 0.8)))
-		let scaledTransparentData = try #require(RSImage.scaledImageData(transparentData, maxPixelSize: 512, format: .jpeg(compressionQuality: 0.8)))
+		let scaledData = try #require(RSImage.scaledImageData(data, maxPixelSize: 512))
 
-		#expect(imageType(scaledOpaqueData) == UTType.jpeg.identifier)
-		#expect(imageType(scaledTransparentData) == UTType.png.identifier)
-		#expect(RSImage.largestFramePixelSize(scaledOpaqueData)?.width == 512)
-		#expect(RSImage.largestFramePixelSize(scaledOpaqueData)?.height == 256)
+		#expect(imageType(scaledData) == UTType.png.identifier)
+		#expect(RSImage.largestFramePixelSize(scaledData)?.width == 512)
+		#expect(RSImage.largestFramePixelSize(scaledData)?.height == 256)
 	}
 }
 
 // MARK: - Helpers
 
-private func pngData(width: Int, height: Int, alphaInfo: CGImageAlphaInfo) -> Data? {
-	guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: alphaInfo.rawValue) else {
+private func pngData(width: Int, height: Int) -> Data? {
+	guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else {
 		return nil
 	}
 	context.setFillColor(red: 0.2, green: 0.4, blue: 0.6, alpha: 1)
