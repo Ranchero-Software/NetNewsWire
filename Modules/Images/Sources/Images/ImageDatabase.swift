@@ -128,14 +128,6 @@ import RSParser
 
 	// MARK: - ArticleThumbnail
 
-	func fetchArticleThumbnails(articleIDs: [String]) async -> [ArticleThumbnailRecord] {
-		await withCheckedContinuation { continuation in
-			queue.runInDatabase { database in
-				continuation.resume(returning: ArticleThumbnailTable.fetch(articleIDs: articleIDs, database: database))
-			}
-		}
-	}
-
 	func fetchArticleThumbnailsSync(articleIDs: [String]) -> [ArticleThumbnailRecord] {
 		nonisolated(unsafe) var records = [ArticleThumbnailRecord]()
 		queue.runInDatabaseSync { database in

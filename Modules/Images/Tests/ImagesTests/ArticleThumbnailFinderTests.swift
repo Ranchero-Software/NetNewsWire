@@ -62,11 +62,11 @@ private typealias ArticleAttachment = Articles.Attachment
 
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == nil)
 
-		await finder.discoverThumbnailURLs(for: [articleWithImage, articleWithoutImage])
+		await finder.findThumbnailURLs(for: [articleWithImage, articleWithoutImage]).value
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithoutImage, mode: .small) == nil)
 
-		let records = await imageDatabase.fetchArticleThumbnails(articleIDs: ["1", "2"])
+		let records = imageDatabase.fetchArticleThumbnailsSync(articleIDs: ["1", "2"])
 		#expect(Set(records.map(\.articleID)) == ["1", "2"])
 		#expect(records.first { $0.articleID == "1" }?.thumbnailURLs == ["https://example.com/uploads/photo.jpg", "https://example.com/uploads/second-photo.jpg"])
 		#expect(records.first { $0.articleID == "2" }?.thumbnailURLs == [])
@@ -82,15 +82,15 @@ private typealias ArticleAttachment = Articles.Attachment
 		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#, thumbnailURL: "https://example.com/thumbnail.jpg")
 
 		// The HTML isn’t parsed while the provided image is usable.
-		await finder.discoverThumbnailURLs(for: [article])
+		await finder.findThumbnailURLs(for: [article]).value
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
-		#expect(await imageDatabase.fetchArticleThumbnails(articleIDs: ["1"]).isEmpty)
+		#expect(imageDatabase.fetchArticleThumbnailsSync(articleIDs: ["1"]).isEmpty)
 
 		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
 		finder.thumbnailURLDidFail("https://example.com/thumbnail.jpg")
 		#expect(finder.thumbnailURL(for: article, mode: .small) == nil)
 
-		await finder.discoverThumbnailURLs(for: [article])
+		await finder.findThumbnailURLs(for: [article]).value
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
 	}
 
@@ -120,18 +120,6 @@ private typealias ArticleAttachment = Articles.Attachment
 
 		let differentImages = makeArticle(imageURL: "https://example.com/new-image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
 		#expect(finder.thumbnailURL(for: differentImages, mode: .small) == "https://example.com/new-image.jpg")
-	}
-
-	@Test func savedHTMLThumbnailIsLoadedWithoutDiscovery() async {
-		let imageDatabase = ImageDatabase(databasePath: ":memory:")
-		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#)
-		await ArticleThumbnailFinder(imageDatabase: imageDatabase).discoverThumbnailURLs(for: [article])
-
-		let finderAfterRelaunch = ArticleThumbnailFinder(imageDatabase: imageDatabase)
-		#expect(finderAfterRelaunch.thumbnailURL(for: article, mode: .large) == nil)
-
-		finderAfterRelaunch.loadSavedThumbnailURLs(for: [article])
-		#expect(finderAfterRelaunch.thumbnailURL(for: article, mode: .large) == "https://example.com/uploads/photo.jpg")
 	}
 
 	@Test func savedThumbnailURLsAreFoundBeforeReturningAndTheRestAreParsed() async {

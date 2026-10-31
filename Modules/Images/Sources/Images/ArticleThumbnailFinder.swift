@@ -18,7 +18,7 @@ import RSWeb
 import ActivityLog
 
 extension Notification.Name {
-	/// Posted when `discoverThumbnailURLs(for:)` finds thumbnails in article HTML.
+	/// Posted when `findThumbnailURLs(for:)` parses thumbnails from article HTML.
 	/// userInfo key: `ArticleThumbnailFinder.articleIDsKey` (`Set<String>`).
 	public static let articleThumbnailURLsDidBecomeAvailable = Notification.Name("ArticleThumbnailURLsDidBecomeAvailable")
 
@@ -40,7 +40,7 @@ extension Notification.Name {
 /// before the provided thumbnail, which is usually too small to fill the timeline’s width.
 ///
 /// The first three sources are property reads. The HTML is parsed off the main thread
-/// by `discoverThumbnailURLs(for:)`, and the results are saved in `ImageDatabase`,
+/// by `findThumbnailURLs(for:)`, and the results are saved in `ImageDatabase`,
 /// so each article’s HTML is parsed once.
 ///
 /// URLs that recently failed to download, and images too small, too narrow, or unreadable
@@ -151,52 +151,6 @@ extension Notification.Name {
 		}
 		chosenThumbnailURLs[mode, default: [:]][articleID] = ChosenThumbnailURL(article, thumbnailURL: thumbnailURL)
 		return thumbnailURL
-	}
-
-	/// Loads HTML thumbnail URLs saved in the database, without waiting for `discoverThumbnailURLs(for:)`,
-	/// so that rows laid out next can use them. Blocks until the database has answered, and posts no notification.
-	public func loadSavedThumbnailURLs(for articles: some Collection<Article>) {
-		let articleIDs = articles.filter(needsHTMLDiscovery).compactMap(ArticleHTML.init).map(\.articleID)
-		guard !articleIDs.isEmpty else {
-			return
-		}
-		cacheRecords(imageDatabase.fetchArticleThumbnailsSync(articleIDs: articleIDs))
-	}
-
-	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
-	/// Uses results saved in the database, parses the rest off the main thread, and saves those results.
-	public func discoverThumbnailURLs(for articles: some Collection<Article>) async {
-		if htmlThumbnailURLs.count + articleIDsWithNoHTMLThumbnail.count > Self.maxCachedArticleCount {
-			htmlThumbnailURLs.removeAll()
-			articleIDsWithNoHTMLThumbnail.removeAll()
-		}
-
-		let articleHTMLs = articles.filter(needsHTMLDiscovery).compactMap(ArticleHTML.init)
-		guard !articleHTMLs.isEmpty else {
-			return
-		}
-
-		let articleIDs = articleHTMLs.map(\.articleID)
-		articleIDsBeingDiscovered.formUnion(articleIDs)
-		defer {
-			articleIDsBeingDiscovered.subtract(articleIDs)
-		}
-
-		let savedRecords = await imageDatabase.fetchArticleThumbnails(articleIDs: articleIDs)
-		cacheRecords(savedRecords)
-
-		let articleHTMLsToParse = articleHTMLs.filter { !isCached($0.articleID) }
-		var parsedRecords = [ArticleThumbnailRecord]()
-		if !articleHTMLsToParse.isEmpty {
-			parsedRecords = await Self.parseThumbnailURLs(articleHTMLsToParse)
-			cacheRecords(parsedRecords)
-			imageDatabase.saveArticleThumbnails(parsedRecords)
-		}
-
-		let foundArticleIDs = Set((savedRecords + parsedRecords).filter { !$0.thumbnailURLs.isEmpty }.map(\.articleID))
-		if !foundArticleIDs.isEmpty {
-			NotificationCenter.default.post(name: .articleThumbnailURLsDidBecomeAvailable, object: self, userInfo: [Self.articleIDsKey: foundArticleIDs])
-		}
 	}
 
 	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
