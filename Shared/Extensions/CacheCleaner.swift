@@ -14,12 +14,10 @@ struct CacheCleaner {
 
 	static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "CacheCleaner")
 
-	private static let didPurgeImageCachesForResizingKey = "didPurgeImageCachesForResizing-2026-03-30"
 	private static let didRemoveFoldersReplacedByDownloadedImageCacheKey = "didRemoveFoldersReplacedByDownloadedImageCache-2026-10-27"
 
 	static func purgeIfNecessary() {
 
-		purgeImageCachesForResizingIfNeeded()
 		removeFoldersReplacedByDownloadedImageCacheIfNeeded()
 
 		guard let flushDate = AppDefaults.lastImageCacheFlushDate else {
@@ -50,32 +48,6 @@ struct CacheCleaner {
 
 private extension CacheCleaner {
 
-	/// One-time purge of image caches so that oversized cached images
-	/// are replaced with properly resized versions on re-download.
-	static func purgeImageCachesForResizingIfNeeded() {
-		guard !UserDefaults.standard.bool(forKey: didPurgeImageCachesForResizingKey) else {
-			return
-		}
-
-		let cacheDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-		let foldersToRemove = [
-			cacheDir.appendingPathComponent("Favicons"),
-			cacheDir.appendingPathComponent("Images"),
-			cacheDir.appendingPathComponent("FeedIcons")
-		]
-
-		for folder in foldersToRemove {
-			do {
-				try FileManager.default.removeItem(at: folder)
-				logger.info("Purged image cache folder: \(folder.lastPathComponent, privacy: .public)")
-			} catch {
-				// Folder may not exist yet — that's fine
-			}
-		}
-
-		UserDefaults.standard.set(true, forKey: didPurgeImageCachesForResizingKey)
-	}
-
 	/// One-time removal of the image folders that DownloadedImageCache’s DownloadedImages folder replaces.
 	/// Off the main thread, since a large old folder can take a while to delete.
 	static func removeFoldersReplacedByDownloadedImageCacheIfNeeded() {
@@ -87,6 +59,7 @@ private extension CacheCleaner {
 		let foldersToRemove = [
 			cacheDir.appendingPathComponent("Favicons"),
 			cacheDir.appendingPathComponent("Images"),
+			cacheDir.appendingPathComponent("FeedIcons"),
 			cacheDir.appendingPathComponent("Thumbnails"),
 			cacheDir.appendingPathComponent("LargeThumbnails")
 		]
