@@ -159,7 +159,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			}
 
 			articleRowMap = [String: [Int]]()
-			thumbnailFirstVisibleRow = nil
+			thumbnailPrefetchPosition = nil
 			tableView.reloadData()
 			IconImageCache.shared.prefetchImagesForArticles(articles)
 		}
@@ -194,7 +194,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var showIcons = false
 	private var currentRowHeight: CGFloat = 0.0
 	private var largeThumbnailRowHeight: CGFloat = 0.0
-	private var thumbnailFirstVisibleRow: Int? // When prefetchThumbnailsForNextScreen last ran, to tell which way the table is scrolling
+	private var thumbnailPrefetchPosition: (firstVisibleRow: Int, lookaheadRows: Range<Int>)? // When prefetchThumbnailsForNextScreen last ran, to tell which way the table is scrolling and which rows it already requested
 	private var thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay {
 		didSet {
 			if thumbnailsDisplay != oldValue {
@@ -1274,7 +1274,7 @@ private extension TimelineViewController {
 	}
 
 	func layoutDidChange() {
-		thumbnailFirstVisibleRow = nil
+		thumbnailPrefetchPosition = nil
 		findThumbnailURLs()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
@@ -1407,7 +1407,7 @@ private extension TimelineViewController {
 
 	func thumbnailsDisplayDidChange() {
 		updateCellAppearances()
-		thumbnailFirstVisibleRow = nil
+		thumbnailPrefetchPosition = nil
 		updateLargeThumbnailRowHeight()
 		guard layout == .standard else {
 			return
@@ -1437,26 +1437,24 @@ private extension TimelineViewController {
 			return
 		}
 		let visibleRows = tableView.rows(in: tableView.visibleRect)
-		guard visibleRows.length > 0, visibleRows.location != thumbnailFirstVisibleRow else {
+		guard visibleRows.length > 0, visibleRows.location != thumbnailPrefetchPosition?.firstVisibleRow else {
 			return
 		}
-		let isScrollingUp = visibleRows.location < thumbnailFirstVisibleRow ?? 0
-		thumbnailFirstVisibleRow = visibleRows.location
+		let isScrollingUp = visibleRows.location < thumbnailPrefetchPosition?.firstVisibleRow ?? 0
+		let previousLookaheadRows = thumbnailPrefetchPosition?.lookaheadRows
 
-		// The most recent request starts first, so the nearest rows are requested last.
-		let lookaheadRows: [Int]
+		let lookaheadRows: Range<Int>
 		if isScrollingUp {
-			lookaheadRows = Array(max(visibleRows.location - visibleRows.length, 0)..<visibleRows.location)
+			lookaheadRows = max(visibleRows.location - visibleRows.length, 0)..<visibleRows.location
 		} else {
 			let start = visibleRows.location + visibleRows.length
-			let end = min(start + visibleRows.length, articles.count)
-			guard start < end else {
-				return
-			}
-			lookaheadRows = (start..<end).reversed()
+			lookaheadRows = min(start, articles.count)..<min(start + visibleRows.length, articles.count)
 		}
+		thumbnailPrefetchPosition = (firstVisibleRow: visibleRows.location, lookaheadRows: lookaheadRows)
 
-		for row in lookaheadRows {
+		// The most recent request starts first, so the nearest rows are requested last.
+		let rowsToRequest = isScrollingUp ? Array(lookaheadRows) : lookaheadRows.reversed()
+		for row in rowsToRequest where previousLookaheadRows?.contains(row) != true {
 			if let article = articles.articleAtRow(row), let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 				ArticleThumbnailFinder.shared.prefetchThumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 			}
