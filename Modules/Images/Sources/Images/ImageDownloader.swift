@@ -108,7 +108,7 @@ extension ImageDownloadError: LocalizedError {
 			DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: true)
 			return data as Data
 		}
-		if ImageDatabase.shared.recentlyFailed(url: url) {
+		if ImageDatabase.shared.recentlyFailed(url: url) || DownloadedImageCache.shared.returnedNonImage(url) {
 			Self.logger.debug("Skipping recently-failed URL: \(url)")
 			return nil
 		}
