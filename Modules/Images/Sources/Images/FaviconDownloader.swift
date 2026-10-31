@@ -146,7 +146,7 @@ extension Notification.Name {
 			// If the site explicitly specifies favicon.ico, it will appear twice.
 			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
 			self.remainingFaviconURLs[url] = faviconURLs[...]
-			downloadNextFavicon(forHomePageURL: url)
+			downloadNextFavicon(forHomePageURL: url, lastFailureWasTransient: false)
 		}
 
 		return nil
@@ -165,7 +165,7 @@ extension Notification.Name {
 		}
 		guard singleFaviconDownloader.iconImage != nil else {
 			if remainingFaviconURLs[homePageURL] != nil {
-				downloadNextFavicon(forHomePageURL: homePageURL)
+				downloadNextFavicon(forHomePageURL: homePageURL, lastFailureWasTransient: singleFaviconDownloader.lastFailureWasTransient)
 			}
 			return
 		}
@@ -243,7 +243,7 @@ private extension FaviconDownloader {
 	// A skipped candidate advances to the next one — otherwise the queue
 	// would stall and the remaining candidates would never be tried.
 	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4868>
-	func downloadNextFavicon(forHomePageURL homePageURL: String) {
+	func downloadNextFavicon(forHomePageURL homePageURL: String, lastFailureWasTransient: Bool) {
 		while let faviconURL = remainingFaviconURLs[homePageURL]?.first {
 			remainingFaviconURLs[homePageURL] = remainingFaviconURLs[homePageURL]?.dropFirst()
 			if canAttemptDownload(faviconURL) {
@@ -253,7 +253,7 @@ private extension FaviconDownloader {
 		}
 
 		remainingFaviconURLs[homePageURL] = nil
-		if currentHomePageHasOnlyFaviconICO {
+		if currentHomePageHasOnlyFaviconICO && !lastFailureWasTransient {
 			ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 		}
 	}
