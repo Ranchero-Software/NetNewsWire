@@ -33,6 +33,10 @@ public enum ThumbnailPriority: Sendable {
 	private var runningCount = 0
 	private var waiting = [WaitingTask]() // Prefetches, then visible. Next to start is last.
 
+	var waitingCount: Int {
+		waiting.count
+	}
+
 	init(maximumRunningCount: Int, maximumWaitingCount: Int) {
 		self.maximumRunningCount = maximumRunningCount
 		self.maximumWaitingCount = maximumWaitingCount

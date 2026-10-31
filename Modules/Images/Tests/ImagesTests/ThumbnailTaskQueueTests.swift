@@ -15,13 +15,11 @@ import Testing
 		let queue = ThumbnailTaskQueue(maximumRunningCount: 1, maximumWaitingCount: 2)
 		#expect(await queue.waitForTurn(key: "running", priority: .visible))
 
-		let oldest = Task { await queue.waitForTurn(key: "oldest", priority: .visible) }
-		await Task.yield()
-		let middle = Task { await queue.waitForTurn(key: "middle", priority: .visible) }
-		await Task.yield()
+		let oldest = await startWaitingTask(queue: queue, key: "oldest", priority: .visible)
+		let middle = await startWaitingTask(queue: queue, key: "middle", priority: .visible)
 		let newest = Task { await queue.waitForTurn(key: "newest", priority: .visible) }
-		await Task.yield()
 
+		// Waiting for the drop also means the newest task is in the queue.
 		#expect(await oldest.value == false)
 
 		queue.taskDidFinish()
@@ -34,12 +32,9 @@ import Testing
 		let queue = ThumbnailTaskQueue(maximumRunningCount: 1, maximumWaitingCount: 10)
 		#expect(await queue.waitForTurn(key: "running", priority: .visible))
 
-		let firstPrefetch = Task { await queue.waitForTurn(key: "firstPrefetch", priority: .prefetch) }
-		await Task.yield()
-		let visible = Task { await queue.waitForTurn(key: "visible", priority: .visible) }
-		await Task.yield()
-		let secondPrefetch = Task { await queue.waitForTurn(key: "secondPrefetch", priority: .prefetch) }
-		await Task.yield()
+		let firstPrefetch = await startWaitingTask(queue: queue, key: "firstPrefetch", priority: .prefetch)
+		let visible = await startWaitingTask(queue: queue, key: "visible", priority: .visible)
+		let secondPrefetch = await startWaitingTask(queue: queue, key: "secondPrefetch", priority: .prefetch)
 
 		// Visible goes first, even though the second prefetch was requested later.
 		queue.taskDidFinish()
@@ -57,11 +52,23 @@ import Testing
 		let queue = ThumbnailTaskQueue(maximumRunningCount: 1, maximumWaitingCount: 10)
 		#expect(await queue.waitForTurn(key: "running", priority: .visible))
 
-		let articleImage = Task { await queue.waitForTurn(key: "articleImage", priority: .prefetch) }
-		await Task.yield()
+		let articleImage = await startWaitingTask(queue: queue, key: "articleImage", priority: .prefetch)
 
 		// Starts while the running download still holds the only slot.
 		queue.startNow(key: "articleImage")
 		#expect(await articleImage.value)
+	}
+}
+
+private extension ThumbnailTaskQueueTests {
+
+	/// Returns once the task is in the queue, so the order tasks are queued in doesn’t depend on scheduling.
+	func startWaitingTask(queue: ThumbnailTaskQueue, key: String, priority: ThumbnailPriority) async -> Task<Bool, Never> {
+		let waitingCount = queue.waitingCount
+		let task = Task { await queue.waitForTurn(key: key, priority: priority) }
+		while queue.waitingCount == waitingCount {
+			await Task.yield()
+		}
+		return task
 	}
 }
