@@ -94,7 +94,7 @@ extension Notification.Name {
 
 	/// False when offline or in Low Data Mode, when thumbnails not already on disk aren’t downloaded.
 	public var networkAllowsDownloads: Bool {
-		DownloadLimiter.networkAllowsDownloads
+		DownloadedImageCache.networkAllowsDownloads
 	}
 
 	/// `url` is from `thumbnailURL(for:mode:)`. `articleTitle` is shown in the activity log.
@@ -245,7 +245,7 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
-	func findImage(_ url: String, mode: Mode, downloadPriority: DownloadPriority, activityDetail: String?) {
+	func findImage(_ url: String, mode: Mode, downloadPriority: ThumbnailPriority, activityDetail: String?) {
 		let cacheKey = Self.cacheKey(url, mode)
 		guard !cacheKeysInProgress.contains(cacheKey as String) else {
 			if downloadPriority == .visible {
