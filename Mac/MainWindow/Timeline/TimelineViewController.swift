@@ -143,6 +143,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
+			loadSavedThumbnailURLsForLargeRows()
+
 			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
 				showFeedNames = {
 					for article in articles {
@@ -1282,6 +1284,7 @@ private extension TimelineViewController {
 
 	func layoutDidChange() {
 		thumbnailLookaheadRows = nil
+		loadSavedThumbnailURLsForLargeRows()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
@@ -1419,6 +1422,7 @@ private extension TimelineViewController {
 		guard layout == .standard else {
 			return
 		}
+		loadSavedThumbnailURLsForLargeRows()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
@@ -1426,6 +1430,14 @@ private extension TimelineViewController {
 			tableView.scrollRowToVisible(tableView.selectedRow)
 		}
 		discoverThumbnailURLs()
+	}
+
+	/// Large-mode row heights depend on having a thumbnail URL, so this runs before rows are laid out.
+	func loadSavedThumbnailURLsForLargeRows() {
+		guard usesLargeThumbnailRows else {
+			return
+		}
+		ArticleThumbnailFinder.shared.loadSavedThumbnailURLs(for: articles)
 	}
 
 	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
