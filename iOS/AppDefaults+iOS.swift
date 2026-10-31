@@ -62,7 +62,7 @@ extension AppDefaults.Key {
 	static let didMigrateAppGroupDefaults = "didMigrateAppGroupDefaults"
 
 	// Keys that used to be stored in the app-group suite.
-	static let appGroupKeys = [userInterfaceColorPalette, lastImageCacheFlushDate, firstRunDate, timelineGroupByFeed, refreshClearsReadArticles, timelineNumberOfLines, timelineIconDimension, timelineSortDirection, articleFullscreenAvailable, articleFullscreenEnabled, confirmMarkAllAsRead, articleContentJavascriptEnabled, splitViewPreferredDisplayMode, lastRefresh]
+	static let appGroupKeys = [userInterfaceColorPalette, firstRunDate, timelineGroupByFeed, refreshClearsReadArticles, timelineNumberOfLines, timelineIconDimension, timelineSortDirection, articleFullscreenAvailable, articleFullscreenEnabled, confirmMarkAllAsRead, articleContentJavascriptEnabled, splitViewPreferredDisplayMode, lastRefresh]
 }
 
 extension AppDefaults {

@@ -14,7 +14,6 @@ enum AppDefaults {
 
 	struct Key {
 		static let firstRunDate = "firstRunDate"
-		static let lastImageCacheFlushDate = "lastImageCacheFlushDate"
 		static let timelineSortDirection = "timelineSortDirection"
 		static let timelineGroupByFeed = "timelineGroupByFeed"
 		static let addFeedAccountID = "addFeedAccountID"
@@ -53,15 +52,6 @@ enum AppDefaults {
 		firstRunDate = Date()
 		return true
 	}()
-
-	static var lastImageCacheFlushDate: Date? {
-		get {
-			date(for: Key.lastImageCacheFlushDate)
-		}
-		set {
-			setDate(for: Key.lastImageCacheFlushDate, newValue)
-		}
-	}
 
 	static var addFeedAccountID: String? {
 		get {

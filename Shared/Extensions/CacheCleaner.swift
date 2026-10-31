@@ -17,32 +17,7 @@ struct CacheCleaner {
 	private static let didRemoveFoldersReplacedByDownloadedImageCacheKey = "didRemoveFoldersReplacedByDownloadedImageCache-2026-10-27"
 
 	static func purgeIfNecessary() {
-
 		removeFoldersReplacedByDownloadedImageCacheIfNeeded()
-
-		guard let flushDate = AppDefaults.lastImageCacheFlushDate else {
-			AppDefaults.lastImageCacheFlushDate = Date()
-			return
-		}
-
-		// If the image disk cache hasn't been flushed for 3 days, delete it
-		if flushDate.addingTimeInterval(3600 * 24 * 3) < Date() {
-			let tempDir = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-			let feedURLToIconURL = tempDir.appendingPathComponent("FeedURLToIconURLCache.plist")
-			let homePageToIconURL = tempDir.appendingPathComponent("HomePageToIconURLCache.plist")
-			let homePagesWithNoIconURL = tempDir.appendingPathComponent("HomePagesWithNoIconURLCache.plist")
-
-			for tempItem in [feedURLToIconURL, homePageToIconURL, homePagesWithNoIconURL] {
-				do {
-					logger.info("Removing cache file: \(tempItem.absoluteString)")
-					try FileManager.default.removeItem(at: tempItem)
-				} catch {
-					logger.error("Could not delete cache file: \(error.localizedDescription)")
-				}
-			}
-
-			AppDefaults.lastImageCacheFlushDate = Date()
-		}
 	}
 }
 
