@@ -171,8 +171,6 @@ struct SidebarItemNode: Hashable, Sendable {
 		}
 	}
 
-	var timelineMiddleIndexPath: IndexPath?
-
 	private(set) var showFeedNames = ShowFeedName.none
 	private(set) var showIcons = false
 
@@ -275,7 +273,6 @@ struct SidebarItemNode: Hashable, Sendable {
 
 	private(set) var articles = ArticleArray() {
 		didSet {
-			timelineMiddleIndexPath = nil
 			articleDictionaryNeedsUpdate = true
 		}
 	}

@@ -52,15 +52,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		return coordinator?.currentArticle
 	}
 
-	private var timelineMiddleIndexPath: IndexPath? {
-		get {
-			coordinator?.timelineMiddleIndexPath
-		}
-		set {
-			coordinator?.timelineMiddleIndexPath = newValue
-		}
-	}
-
 	private var isTimelineViewControllerPending: Bool {
 		get {
 			coordinator?.isTimelineViewControllerPending ?? false
@@ -175,7 +166,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private static let cellReloadDelay: TimeInterval = 0.1
 
 	// MARK: Constants
-	private let scrollPositionQueue = CoalescingQueue(name: "Timeline Scroll Position", interval: 0.3, maxInterval: 1.0)
 	private let updateQueue = CoalescingQueue(name: "Timeline Update Queue", interval: 0.5, maxInterval: 1.0)
 
 	// MARK: - IBOutlets
@@ -208,12 +198,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 		configureToolbar()
 		resetUI(resetScroll: true)
 
-		// Load the table and then scroll to the saved position if available
-		applyChanges(animated: false) {
-			if let restoreIndexPath = self.timelineMiddleIndexPath {
-				self.collectionView?.scrollToItem(at: restoreIndexPath, at: .centeredVertically, animated: false)
-			}
-		}
+		applyChanges(animated: false)
 
 		// Disable swipe back on iPad Mice
 		guard let gesture = self.navigationController?.interactivePopGestureRecognizer as? UIPanGestureRecognizer else {
@@ -1303,11 +1288,6 @@ private extension MainTimelineViewController {
 	func emptyTextSizerCaches() {
 		MultilineUILabelSizer.emptyCache()
 		SingleLineUILabelSizer.emptyCache()
-	}
-
-	@objc func scrollPositionDidChange() {
-		Self.logger.debug("MainTimelineViewController: scrollPositionDidChange")
-		timelineMiddleIndexPath = collectionView?.middleVisibleRow()
 	}
 
 }
