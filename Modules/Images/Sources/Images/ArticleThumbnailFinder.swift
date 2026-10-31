@@ -45,7 +45,8 @@ extension Notification.Name {
 /// URLs that recently failed to download, and images too small, too narrow, or unreadable
 /// to be thumbnails, are skipped, so they fall through to the next source.
 ///
-/// Images are decoded at display size from `DownloadedImageCache`’s copy, off the main thread.
+/// Images are decoded at display size from `DownloadedImageCache`’s copy, off the main thread,
+/// a few at a time and newest first, so a fast scroll doesn’t spend time on rows long gone.
 @MainActor public final class ArticleThumbnailFinder {
 
 	public enum Mode: Sendable, CaseIterable {
@@ -63,7 +64,8 @@ extension Notification.Name {
 	private var articleIDsWithNoHTMLThumbnail = Set<String>()
 	private var articleIDsBeingDiscovered = Set<String>()
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
-	private var cacheKeysInProgress = Set<String>()
+	private let decodeQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentDecodes, maximumWaitingCount: maximumWaitingDecodes)
+	private var prioritiesInProgress = [String: ThumbnailPriority]() // cacheKey: priority, which a prefetch’s row becoming visible changes
 	private var urlsThatFailedToDecode = Set<String>() // So a failure notification can’t lead to the same attempt again
 	private var chosenThumbnailURLs = [Mode: [String: ChosenThumbnailURL]]() // articleID: the URL thumbnailURL(for:mode:) chose, since large-mode row heights ask for every row
 
@@ -83,6 +85,9 @@ extension Notification.Name {
 	private static let maxCachedArticleCount = 50_000
 	/// Entries per mode in chosenThumbnailURLs. Past this, that mode’s entries are emptied.
 	private static let maxChosenThumbnailURLCount = 50_000
+	private static let maximumConcurrentDecodes = 4
+	/// A few screens of thumbnails.
+	private static let maximumWaitingDecodes = 60
 
 	init(imageDatabase: ImageDatabase) {
 		self.imageDatabase = imageDatabase
@@ -105,7 +110,7 @@ extension Notification.Name {
 			DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: false)
 			return image
 		}
-		findImage(url, mode: mode, downloadPriority: .visible, activityDetail: articleTitle)
+		findImage(url, mode: mode, priority: .visible, activityDetail: articleTitle)
 		return nil
 	}
 
@@ -115,7 +120,7 @@ extension Notification.Name {
 		guard imageCache.object(forKey: Self.cacheKey(url, mode)) == nil else {
 			return
 		}
-		findImage(url, mode: mode, downloadPriority: .prefetch, activityDetail: articleTitle)
+		findImage(url, mode: mode, priority: .prefetch, activityDetail: articleTitle)
 	}
 
 	/// The image as downloaded, for the article view, which shows the thumbnail image at full size.
@@ -245,22 +250,31 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
-	func findImage(_ url: String, mode: Mode, downloadPriority: ThumbnailPriority, activityDetail: String?) {
+	func findImage(_ url: String, mode: Mode, priority: ThumbnailPriority, activityDetail: String?) {
 		let cacheKey = Self.cacheKey(url, mode)
-		guard !cacheKeysInProgress.contains(cacheKey as String) else {
-			if downloadPriority == .visible {
+		let decodeKey = cacheKey as String
+		guard prioritiesInProgress[decodeKey] == nil else {
+			if priority == .visible {
+				prioritiesInProgress[decodeKey] = .visible
 				DownloadedImageCache.shared.prioritizeDownload(for: url)
+				decodeQueue.prioritize(key: decodeKey)
 			}
 			return
 		}
-		cacheKeysInProgress.insert(cacheKey as String)
+		prioritiesInProgress[decodeKey] = priority
 
 		Task {
 			defer {
-				cacheKeysInProgress.remove(cacheKey as String)
+				prioritiesInProgress[decodeKey] = nil
 			}
 			do throws(ImageDownloadError) {
-				let data = try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: downloadPriority, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
+				let data = try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: priority, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
+				guard await decodeQueue.waitForTurn(key: decodeKey, priority: prioritiesInProgress[decodeKey] ?? priority) else {
+					return
+				}
+				defer {
+					decodeQueue.taskDidFinish()
+				}
 				let decodedImage = try await Self.decodedImage(data, maxPixelSize: Self.maxPixelSize(mode))
 				imageCache.setObject(decodedImage.image, forKey: cacheKey, cost: decodedImage.byteCount)
 				NotificationCenter.default.post(name: .articleThumbnailDidBecomeAvailable, object: self, userInfo: [Self.urlKey: url])
