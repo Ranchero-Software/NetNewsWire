@@ -775,12 +775,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard let thumbnailMode, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
 			return
 		}
-		// The row already has room for the thumbnail, so the rest of the cell’s data stays as it is.
+		// The row already has room for the thumbnail, so only the image changes.
 		tableView.enumerateAvailableRowViews { rowView, row in
 			guard let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = cellForRowView(rowView) as? TimelineTableCellView, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
 				return
 			}
-			cell.cellData?.thumbnail = thumbnail
+			cell.thumbnail = thumbnail
 		}
 	}
 

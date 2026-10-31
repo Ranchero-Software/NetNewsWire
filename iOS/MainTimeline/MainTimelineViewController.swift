@@ -609,10 +609,10 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 			reloadCells([article])
 			return
 		}
-		guard let thumbnailURL, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cellData.thumbnail else {
+		guard let thumbnailURL, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cell.thumbnail else {
 			return
 		}
-		cell.cellData = configure(article: article)
+		cell.thumbnail = thumbnail
 	}
 
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
@@ -1249,10 +1249,10 @@ private extension MainTimelineViewController {
 		}
 		// The row’s height already allows for the thumbnail, so only the cell’s contents change.
 		for indexPath in collectionView.indexPathsForVisibleItems {
-			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell else {
+			guard let article = dataSource.itemIdentifier(for: indexPath), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = collectionView.cellForItem(at: indexPath) as? MainTimelineCell, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
 				continue
 			}
-			cell.cellData = configure(article: article)
+			cell.thumbnail = thumbnail
 		}
 	}
 

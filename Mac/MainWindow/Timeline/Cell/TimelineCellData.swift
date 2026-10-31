@@ -23,7 +23,7 @@ import Images
 	let showFeedName: TimelineShowFeedName
 	let iconImage: IconImage? // feed icon, user avatar, or favicon
 	let showIcon: Bool // Make space even when icon is nil
-	var thumbnail: NSImage?
+	let thumbnail: NSImage?
 	let showThumbnail: Bool // Make space even when thumbnail is nil
 	let read: Bool
 	let starred: Bool

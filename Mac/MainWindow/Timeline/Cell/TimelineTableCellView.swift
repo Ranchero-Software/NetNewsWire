@@ -45,6 +45,16 @@ final class TimelineTableCellView: NSTableCellView {
 		}
 	}
 
+	/// The image shown now, which can be newer than `cellData.thumbnail`. Setting this leaves the rest of the cell as it is.
+	var thumbnail: NSImage? {
+		get {
+			thumbnailView.image
+		}
+		set {
+			thumbnailView.image = newValue
+		}
+	}
+
 	var isEmphasized: Bool = false {
 		didSet {
 			unreadIndicatorView.isEmphasized = isEmphasized

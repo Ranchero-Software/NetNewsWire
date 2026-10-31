@@ -32,6 +32,16 @@ final class MainTimelineCell: UICollectionViewCell {
 		}
 	}
 
+	/// The image shown now, which can be newer than `cellData.thumbnail`. Setting this leaves the rest of the cell as it is.
+	var thumbnail: UIImage? {
+		get {
+			thumbnailView.image
+		}
+		set {
+			thumbnailView.image = newValue
+		}
+	}
+
 	override init(frame: CGRect) {
 		super.init(frame: frame)
 		commonInit()
@@ -125,10 +135,6 @@ final class MainTimelineCell: UICollectionViewCell {
 		// Text goes white only on the accent background. On gray, labels keep their normal colors.
 		updateColors(active: showsAccentSelection)
 		updateIndicatorView(active: showsAccentSelection)
-	}
-
-	func setIconImage(_ image: IconImage) {
-		iconView.iconImage = image
 	}
 }
 
