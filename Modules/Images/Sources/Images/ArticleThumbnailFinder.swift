@@ -224,7 +224,7 @@ private extension ArticleThumbnailFinder {
 	struct ArticleHTML: Sendable {
 		let articleID: String
 		let html: String
-		let baseURL: String?
+		let baseURL: URL?
 
 		@MainActor init?(_ article: Article) {
 			guard let html = article.contentHTML ?? article.summary, !html.isEmpty else {
@@ -232,7 +232,7 @@ private extension ArticleThumbnailFinder {
 			}
 			self.articleID = article.articleID
 			self.html = html
-			self.baseURL = article.baseURL?.absoluteString
+			self.baseURL = article.baseURL
 		}
 	}
 
@@ -348,8 +348,7 @@ private extension ArticleThumbnailFinder {
 
 	@concurrent static func parseThumbnailURLs(_ articleHTMLs: [ArticleHTML]) async -> [ArticleThumbnailRecord] {
 		articleHTMLs.map { articleHTML in
-			let parserData = ParserData(url: articleHTML.baseURL ?? "", data: Data(articleHTML.html.utf8))
-			let images = HTMLImageParser.significantImages(with: parserData, maximumCount: maxHTMLThumbnailURLsPerArticle)
+			let images = HTMLImageParser.significantImages(html: articleHTML.html, baseURL: articleHTML.baseURL, maximumCount: maxHTMLThumbnailURLsPerArticle)
 			return ArticleThumbnailRecord(articleID: articleHTML.articleID, thumbnailURLs: images.map(\.urlString))
 		}
 	}

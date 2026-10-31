@@ -17,10 +17,10 @@ import Foundation
 public enum HTMLImageParser {
 
 	/// In document order, with no repeated URLs.
-	public static func significantImages(with parserData: ParserData, maximumCount: Int) -> [HTMLImage] {
-		let delegate = ImageParserDelegate(baseURL: URL(string: parserData.url), maximumCount: maximumCount)
+	public static func significantImages(html: String, baseURL: URL?, maximumCount: Int) -> [HTMLImage] {
+		let delegate = ImageParserDelegate(baseURL: baseURL, maximumCount: maximumCount)
 		let scanner = HTMLScanner(delegate: delegate)
-		scanner.parse(Array(parserData.data))
+		scanner.parse(Array(html.utf8))
 		return delegate.images
 	}
 
