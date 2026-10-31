@@ -788,8 +788,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard thumbnailMode != nil, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
 			return
 		}
+		let rowsUsingURL = indexesForArticleIDs(articleIDs)
+		guard !rowsUsingURL.isEmpty else {
+			return
+		}
 		// A failed provided image falls back to images in the HTML. Those are found first, so a row that has one doesn’t shrink and then grow back.
-		let articlesUsingURL = articles.filter { articleIDs.contains($0.articleID) }
+		let articlesUsingURL = rowsUsingURL.compactMap { articles.articleAtRow($0) }
 		Task {
 			await ArticleThumbnailFinder.shared.findThumbnailURLs(for: articlesUsingURL).value
 			// Articles that used the failed URL now get their next source, or none.
