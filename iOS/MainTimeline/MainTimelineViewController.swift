@@ -171,7 +171,7 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 	private let searchController = UISearchController(searchResultsController: nil)
 	private let keyboardManager = KeyboardManager(type: .timeline)
 	private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "MainTimelineViewController")
-	/// Thumbnails arriving within this interval are reloaded together.
+	/// Cells queued within this interval, such as for several thumbnail downloads that failed, are reloaded together.
 	private static let cellReloadDelay: TimeInterval = 0.1
 
 	// MARK: Constants
