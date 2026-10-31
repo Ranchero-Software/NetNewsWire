@@ -37,7 +37,7 @@ extension Notification.Name {
 ///
 /// After a transient failure, such as a timeout or a 5xx response, neither the URL nor anything
 /// else on its host is requested again until a retry date. The wait starts at a minute and doubles
-/// with each failure, up to an hour, or is the server’s Retry-After when that’s longer.
+/// with each failure after a wait ends, up to an hour, or is the server’s Retry-After when that’s longer.
 @MainActor final class DownloadedImageCache {
 
 	static let shared = DownloadedImageCache()
@@ -76,8 +76,8 @@ extension Notification.Name {
 	nonisolated private static let recentChangeInterval: TimeInterval = 60
 	/// Disk keys are hex, so this can’t appear in an image’s own key.
 	nonisolated private static let derivedKeySeparator: Character = "-"
-	private static let initialRetryDelay: TimeInterval = 60
-	private static let maximumRetryDelay: TimeInterval = 60 * 60
+	nonisolated private static let initialRetryDelay: TimeInterval = 60
+	nonisolated private static let maximumRetryDelay: TimeInterval = 60 * 60
 
 	nonisolated private static let logger = Logger(subsystem: Logger.nnwSubsystem, category: "DownloadedImageCache")
 
@@ -217,11 +217,6 @@ private extension DownloadedImageCache {
 		}
 	}
 
-	struct RetryDelay {
-		let retryDate: Date
-		let delay: TimeInterval
-	}
-
 	func isWaitingToRetry(_ url: String) -> Bool {
 		let now = Date()
 		if let retryDate = retryDelays[url]?.retryDate, retryDate > now {
@@ -243,21 +238,11 @@ private extension DownloadedImageCache {
 			}
 			return
 		}
-		retryDelays[url] = Self.nextRetryDelay(after: retryDelays[url], retryAfter: error.retryAfter)
+		let now = Date()
+		retryDelays[url] = Self.nextRetryDelay(after: retryDelays[url], retryAfter: error.retryAfter, now: now)
 		if let host {
-			hostRetryDelays[host] = Self.nextRetryDelay(after: hostRetryDelays[host], retryAfter: error.retryAfter)
+			hostRetryDelays[host] = Self.nextRetryDelay(after: hostRetryDelays[host], retryAfter: error.retryAfter, now: now)
 		}
-	}
-
-	static func nextRetryDelay(after previousRetryDelay: RetryDelay?, retryAfter: TimeInterval?) -> RetryDelay {
-		var delay = initialRetryDelay
-		if let previousRetryDelay {
-			delay = min(previousRetryDelay.delay * 2, maximumRetryDelay)
-		}
-		if let retryAfter {
-			delay = max(delay, retryAfter)
-		}
-		return RetryDelay(retryDate: Date().addingTimeInterval(delay), delay: delay)
 	}
 
 	static func host(_ url: String) -> String? {
@@ -477,6 +462,31 @@ extension DownloadedImageCache {
 
 	nonisolated static func isTransient(statusCode: Int) -> Bool {
 		(statusCode >= 500 && statusCode <= 599) || statusCode == HTTPResponseCode.tooManyRequests || statusCode == HTTPResponseCode.requestTimeout
+	}
+
+	struct RetryDelay {
+		let retryDate: Date
+		let delay: TimeInterval
+	}
+
+	/// Requests already running when a wait starts can fail during it, so the wait doubles only
+	/// after it has ended. During a wait, only a longer Retry-After changes it.
+	nonisolated static func nextRetryDelay(after previousRetryDelay: RetryDelay?, retryAfter: TimeInterval?, now: Date) -> RetryDelay {
+		if let previousRetryDelay, previousRetryDelay.retryDate > now {
+			guard let retryAfter, now.addingTimeInterval(retryAfter) > previousRetryDelay.retryDate else {
+				return previousRetryDelay
+			}
+			return RetryDelay(retryDate: now.addingTimeInterval(retryAfter), delay: max(previousRetryDelay.delay, retryAfter))
+		}
+
+		var delay = initialRetryDelay
+		if let previousRetryDelay {
+			delay = min(previousRetryDelay.delay * 2, maximumRetryDelay)
+		}
+		if let retryAfter {
+			delay = max(delay, retryAfter)
+		}
+		return RetryDelay(retryDate: now.addingTimeInterval(delay), delay: delay)
 	}
 
 	/// Without an ETag or Last-Modified, a check downloads the whole image, so it waits the longest.

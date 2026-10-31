@@ -89,6 +89,21 @@ import Testing
 		#expect(!DownloadedImageCache.isTransient(statusCode: 403))
 	}
 
+	@Test func failureDuringWaitDoesNotDoubleIt() {
+		let now = Date()
+		let firstDelay = DownloadedImageCache.nextRetryDelay(after: nil, retryAfter: nil, now: now)
+
+		let duringWait = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: nil, now: now.addingTimeInterval(1))
+		#expect(duringWait.delay == firstDelay.delay)
+		#expect(duringWait.retryDate == firstDelay.retryDate)
+
+		let longerRetryAfter = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: firstDelay.delay * 10, now: now.addingTimeInterval(1))
+		#expect(longerRetryAfter.retryDate == now.addingTimeInterval(1 + firstDelay.delay * 10))
+
+		let afterWait = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: nil, now: firstDelay.retryDate)
+		#expect(afterWait.delay == firstDelay.delay * 2)
+	}
+
 	@Test func recentlyUsedImagesAreKeptUnlessOverHardLimit() async {
 		let now = Date()
 		let records = (0..<5).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", byteCount: 100, lastAccessed: now.addingTimeInterval(-TimeInterval(days: 1) + TimeInterval($0))) }
