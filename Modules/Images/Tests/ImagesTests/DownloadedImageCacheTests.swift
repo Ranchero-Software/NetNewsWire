@@ -7,6 +7,7 @@
 
 import Foundation
 import Testing
+import RSCore
 @testable import Images
 
 @Suite struct DownloadedImageCacheTests {
@@ -63,6 +64,12 @@ import Testing
 		#expect(removal.urls == [records[0].url])
 		#expect(removal.keys == [DownloadedImageCache.diskKey(records[0].url), removedCopy, orphanedCopy])
 		#expect(removal.remainingByteCount == 100)
+	}
+
+	@Test func folderThatCantBeListedHasNoFileDates() async {
+		let missingFolder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString).path
+		let fileDates = await DownloadedImageCache.fileModificationDates(BinaryDiskCache(folder: missingFolder))
+		#expect(fileDates == nil)
 	}
 
 	@Test func shortMaxAgeIsRaisedToThreeDays() throws {

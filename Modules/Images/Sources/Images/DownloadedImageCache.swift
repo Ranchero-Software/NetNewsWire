@@ -441,7 +441,10 @@ private extension DownloadedImageCache {
 		let startDate = Date()
 
 		let records = await ImageDatabase.shared.fetchDownloadedImageUsageByLeastRecentAccess()
-		let fileDates = await Self.fileModificationDates(diskCache)
+		guard let fileDates = await Self.fileModificationDates(diskCache) else {
+			Self.logger.error("Skipped removing images: couldn’t list the images folder.")
+			return
+		}
 		let removal = await Self.imageRemoval(records: records, fileDates: fileDates, urlsInUse: Set(tasks.keys), now: startDate, limit: Self.limit, hardLimit: Self.hardLimit)
 
 		totalByteCount = removal.remainingByteCount
@@ -470,19 +473,6 @@ private extension DownloadedImageCache {
 		diskCache[key] = data
 	}
 
-	/// Keys are file names.
-	@concurrent static func fileModificationDates(_ diskCache: BinaryDiskCache) async -> [String: Date] {
-		let folderURL = URL(fileURLWithPath: diskCache.folder)
-		guard let fileURLs = try? FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey]) else {
-			return [:]
-		}
-		var fileDates = [String: Date]()
-		for fileURL in fileURLs {
-			fileDates[fileURL.lastPathComponent] = (try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
-		}
-		return fileDates
-	}
-
 	@concurrent static func deleteFromDisk(_ diskCache: BinaryDiskCache, keys: Set<String>) async {
 		for key in keys {
 			diskCache[key] = nil
@@ -493,6 +483,19 @@ private extension DownloadedImageCache {
 // MARK: - Disk Keys, Check Dates, and Removal
 
 extension DownloadedImageCache {
+
+	/// Keys are file names. Nil when the folder can’t be listed.
+	@concurrent static func fileModificationDates(_ diskCache: BinaryDiskCache) async -> [String: Date]? {
+		let folderURL = URL(fileURLWithPath: diskCache.folder)
+		guard let fileURLs = try? FileManager.default.contentsOfDirectory(at: folderURL, includingPropertiesForKeys: [.contentModificationDateKey]) else {
+			return nil
+		}
+		var fileDates = [String: Date]()
+		for fileURL in fileURLs {
+			fileDates[fileURL.lastPathComponent] = (try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate ?? .distantPast
+		}
+		return fileDates
+	}
 
 	nonisolated static func diskKey(_ url: String) -> String {
 		url.md5String
