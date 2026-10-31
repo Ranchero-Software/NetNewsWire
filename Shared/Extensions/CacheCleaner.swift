@@ -34,9 +34,7 @@ private extension CacheCleaner {
 		let foldersToRemove = [
 			cacheDir.appendingPathComponent("Favicons"),
 			cacheDir.appendingPathComponent("Images"),
-			cacheDir.appendingPathComponent("FeedIcons"),
-			cacheDir.appendingPathComponent("Thumbnails"),
-			cacheDir.appendingPathComponent("LargeThumbnails")
+			cacheDir.appendingPathComponent("FeedIcons")
 		]
 
 		Task.detached(priority: .utility) {
