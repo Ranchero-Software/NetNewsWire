@@ -787,14 +787,12 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard showsThumbnails, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
 			return
 		}
-		let indexesToReload = tableView.indexesOfAvailableRowsPassingTest { row in
-			guard let article = articles.articleAtRow(row) else {
-				return false
+		// The row already has room for the thumbnail, so the rest of the cell’s data stays as it is.
+		tableView.enumerateAvailableRowViews { rowView, row in
+			guard let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url, let cell = cellForRowView(rowView) as? TimelineTableCellView, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: url, mode: thumbnailMode, articleTitle: article.title) else {
+				return
 			}
-			return ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url
-		}
-		if let indexesToReload {
-			reloadCells(for: indexesToReload)
+			cell.cellData?.thumbnail = thumbnail
 		}
 	}
 
