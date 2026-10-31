@@ -598,6 +598,23 @@ extension MainTimelineViewController: UICollectionViewDelegate {
 		}
 	}
 
+	/// Cells are configured before they’re displayed, and thumbnail notifications update only visible cells.
+	func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+		guard let thumbnailMode, let cell = cell as? MainTimelineCell, let cellData = cell.cellData, let article = dataSource?.itemIdentifier(for: indexPath) else {
+			return
+		}
+		let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode)
+		if (thumbnailURL != nil) != cellData.showThumbnail {
+			// The row’s height changes too.
+			reloadCells([article])
+			return
+		}
+		guard let thumbnailURL, let thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title), thumbnail !== cellData.thumbnail else {
+			return
+		}
+		cell.cellData = configure(article: article)
+	}
+
 	func collectionView(_ collectionView: UICollectionView, contextMenuConfigurationForItemsAt indexPaths: [IndexPath], point: CGPoint) -> UIContextMenuConfiguration? {
 		guard let firstIndex = indexPaths.first, let dataSource, let article = dataSource.itemIdentifier(for: firstIndex) else { return nil }
 
