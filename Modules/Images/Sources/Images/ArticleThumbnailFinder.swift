@@ -137,7 +137,7 @@ extension Notification.Name {
 			return chosenThumbnailURL.thumbnailURL
 		}
 
-		let thumbnailURL = providedThumbnailURL(for: article, mode: mode) ?? htmlThumbnailURLs[articleID]?.first(where: isUsable)
+		let thumbnailURL = providedThumbnailURL(for: article, mode: mode) ?? htmlThumbnailURLs[articleID]?.first { !hasFailed($0) }
 		if chosenThumbnailURLs[mode, default: [:]].count >= Self.maxChosenThumbnailURLCount {
 			chosenThumbnailURLs[mode] = nil
 		}
@@ -310,15 +310,16 @@ private extension ArticleThumbnailFinder {
 		}
 
 		for candidate in candidates {
-			if let candidate, isUsable(candidate) {
+			if let candidate, !hasFailed(candidate), SignificantImageFilter.isSignificant(urlString: candidate, width: nil, height: nil) {
 				return candidate
 			}
 		}
 		return nil
 	}
 
-	func isUsable(_ urlString: String) -> Bool {
-		SignificantImageFilter.isSignificant(urlString: urlString, width: nil, height: nil) && !imageDatabase.recentlyFailed(url: urlString) && !imageDatabase.isUnsuitableForThumbnail(url: urlString) && !urlsThatFailedToDecode.contains(urlString)
+	/// True when the URL recently failed to download, or its image was too small, too narrow, or unreadable.
+	func hasFailed(_ urlString: String) -> Bool {
+		imageDatabase.recentlyFailed(url: urlString) || imageDatabase.isUnsuitableForThumbnail(url: urlString) || urlsThatFailedToDecode.contains(urlString)
 	}
 
 	func needsHTMLDiscovery(_ article: Article) -> Bool {
