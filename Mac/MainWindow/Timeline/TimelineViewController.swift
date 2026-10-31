@@ -133,7 +133,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				// but some data in some of the articles may have changed.
 				// Just reload visible cells in this case: don’t call reloadData.
 				articleRowMap = [String: [Int]]()
-				clearThumbnailURLCache()
 				if usesLargeThumbnailRows {
 					noteHeightOfAllRows()
 				}
@@ -156,7 +155,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 
 			articleRowMap = [String: [Int]]()
 			thumbnailLookaheadRows = nil
-			clearThumbnailURLCache()
 			tableView.reloadData()
 			IconImageCache.shared.prefetchImagesForArticles(articles)
 			discoverThumbnailURLs()
@@ -193,8 +191,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	private var currentRowHeight: CGFloat = 0.0
 	private var largeThumbnailRowHeight: CGFloat = 0.0
 	private var thumbnailLookaheadRows: Range<Int>? // Rows most recently prefetched by prefetchThumbnailsForNextScreen
-	private var thumbnailURLCache = [String: String]() // articleID: thumbnailURL
-	private var articleIDsWithNoThumbnail = Set<String>()
 	private var thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay {
 		didSet {
 			if thumbnailsDisplay != oldValue {
@@ -790,7 +786,7 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			guard let article = articles.articleAtRow(row) else {
 				return false
 			}
-			return thumbnailURL(for: article) == url
+			return ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) == url
 		}
 		if let indexesToReload {
 			reloadCells(for: indexesToReload)
@@ -798,14 +794,10 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 	}
 
 	@objc func handleArticleThumbnailDownloadDidFail(_ notification: Notification) {
-		guard showsThumbnails, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
+		guard showsThumbnails, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
 			return
 		}
 		// Articles that used the failed URL now get their next source, or none.
-		let articleIDs = Set(thumbnailURLCache.filter { $0.value == url }.keys)
-		guard !articleIDs.isEmpty else {
-			return
-		}
 		thumbnailURLsDidChange(for: articleIDs)
 
 		// A failed provided image falls back to images in the HTML.
@@ -1065,7 +1057,7 @@ extension TimelineViewController: NSTableViewDataSource {
 	}
 
 	func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-		if usesLargeThumbnailRows, largeThumbnailRowHeight > 0.0, let article = articles.articleAtRow(row), thumbnailURL(for: article) != nil {
+		if usesLargeThumbnailRows, largeThumbnailRowHeight > 0.0, let article = articles.articleAtRow(row), ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) != nil {
 			return largeThumbnailRowHeight
 		}
 		// Keeping -[NSTableViewDelegate tableView:heightOfRow:] implemented fixes
@@ -1153,7 +1145,7 @@ extension TimelineViewController: NSTableViewDelegate {
 		let iconImage = article.iconImage()
 		var thumbnail: NSImage?
 		var showThumbnail = false
-		if showsThumbnails, let thumbnailURL = thumbnailURL(for: article) {
+		if showsThumbnails, let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 			showThumbnail = true
 			thumbnail = ArticleThumbnailFinder.shared.thumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 		}
@@ -1278,7 +1270,6 @@ private extension TimelineViewController {
 
 	func layoutDidChange() {
 		thumbnailLookaheadRows = nil
-		clearThumbnailURLCache()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
@@ -1398,38 +1389,10 @@ private extension TimelineViewController {
 
 	// MARK: - Thumbnails
 
-	/// Cached per article, since large-mode row heights ask for every row.
-	func thumbnailURL(for article: Article) -> String? {
-		let articleID = article.articleID
-		if let thumbnailURL = thumbnailURLCache[articleID] {
-			return thumbnailURL
-		}
-		if articleIDsWithNoThumbnail.contains(articleID) {
-			return nil
-		}
-
-		let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode)
-		if let thumbnailURL {
-			thumbnailURLCache[articleID] = thumbnailURL
-		} else {
-			articleIDsWithNoThumbnail.insert(articleID)
-		}
-		return thumbnailURL
-	}
-
-	func clearThumbnailURLCache() {
-		thumbnailURLCache.removeAll()
-		articleIDsWithNoThumbnail.removeAll()
-	}
-
-	/// Recalculates thumbnail URLs, row heights in large mode, and visible cells.
+	/// Updates row heights in large mode, and visible cells.
 	func thumbnailURLsDidChange(for articleIDs: Set<String>) {
 		guard !articleIDs.isEmpty else {
 			return
-		}
-		for articleID in articleIDs {
-			thumbnailURLCache[articleID] = nil
-			articleIDsWithNoThumbnail.remove(articleID)
 		}
 		if usesLargeThumbnailRows {
 			noteHeightOfRowsKeepingScrollPosition(indexesForArticleIDs(articleIDs))
@@ -1439,7 +1402,6 @@ private extension TimelineViewController {
 
 	func thumbnailsDisplayDidChange() {
 		updateCellAppearances()
-		clearThumbnailURLCache()
 		thumbnailLookaheadRows = nil
 		updateLargeThumbnailRowHeight()
 		guard layout == .standard else {
@@ -1485,7 +1447,7 @@ private extension TimelineViewController {
 		thumbnailLookaheadRows = lookaheadRows
 
 		for row in lookaheadRows {
-			if let article = articles.articleAtRow(row), let thumbnailURL = thumbnailURL(for: article) {
+			if let article = articles.articleAtRow(row), let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
 				ArticleThumbnailFinder.shared.prefetchThumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
 			}
 		}
