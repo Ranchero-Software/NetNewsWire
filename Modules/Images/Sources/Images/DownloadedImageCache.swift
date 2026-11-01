@@ -24,11 +24,10 @@ extension Notification.Name {
 /// Requests for a URL that’s already being read or downloaded share that work.
 ///
 /// A copy made from an image, such as a scaled icon, can be stored next to it with a suffix.
-/// It’s kept while the image is, and removed with it. It doesn’t count toward the limits.
+/// It’s kept while the image is, and removed with it. It doesn’t count toward the limit.
 ///
-/// Copies on disk are kept until they total more than `limit`. Then the least recently used are
-/// deleted from disk, except those used in the last few days, which may still be on screen.
-/// `hardLimit` caps those too. That’s checked at launch and whenever a download goes over the limit.
+/// At launch, the least recently used copies are deleted from disk until the rest total no more than
+/// `maximumStoredByteCount`. The total can go over that until the next launch.
 ///
 /// Icons can change at the same URL, so callers that show icons pass `checksForUpdates`.
 /// An icon used after its `nextCheck` date is still used, and the server is asked in the
@@ -56,14 +55,10 @@ extension Notification.Name {
 	private static let maximumLimitedDownloadByteCount = 25 * 1024 * 1024
 
 	#if os(macOS)
-	private static let limit = ByteLimit(maximumByteCount: 300 * 1024 * 1024)
-	private static let hardLimit = ByteLimit(maximumByteCount: 1024 * 1024 * 1024)
+	private static let maximumStoredByteCount = 300 * 1024 * 1024
 	#else
-	private static let limit = ByteLimit(maximumByteCount: 150 * 1024 * 1024)
-	private static let hardLimit = ByteLimit(maximumByteCount: 500 * 1024 * 1024)
+	private static let maximumStoredByteCount = 150 * 1024 * 1024
 	#endif
-	/// When recently used images keep the total over `limit`, the next pass waits for this much more.
-	private static let byteCountBetweenPasses = limit.maximumByteCount / 4
 	private static let readNoteInterval = TimeInterval(days: 1)
 	/// Past this, `readDatesNoted` is emptied, so a session lasting weeks doesn’t keep every URL it used.
 	private static let maximumReadDatesNotedCount = 10_000
@@ -74,8 +69,6 @@ extension Notification.Name {
 	nonisolated private static let maximumCheckInterval = TimeInterval(days: 30)
 	/// Check intervals vary by up to this fraction either way, so images downloaded together aren’t all checked together.
 	nonisolated private static let checkIntervalJitter = 0.2
-	/// Images used this recently are removed only to stay under `hardLimit`.
-	nonisolated private static let recentUseInterval = TimeInterval(days: 3)
 	/// A file and its record are saved moments apart, so anything this recent may be mid-save.
 	nonisolated private static let recentChangeInterval: TimeInterval = 60
 	/// Disk keys are hex, so this can’t appear in an image’s own key.
@@ -87,8 +80,6 @@ extension Notification.Name {
 	private let diskCache: BinaryDiskCache
 	private let downloadQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentLimitedDownloads, maximumWaitingCount: maximumWaitingLimitedDownloads, maximumRunningCountPerGroup: maximumDownloadsPerHost)
 	private var tasks = [String: Task<Result<Data, ImageDownloadError>, Never>]() // url: task
-	private var totalByteCount: Int? // Nil while a removal pass counts it
-	private var removalByteCount = limit.maximumByteCount // A save that takes the total over this starts a pass
 	private var readDatesNoted = [String: Date]() // url: date
 	private var retryDates = [String: Date]() // url: end of the wait after its last transient failure
 	private var hostRetryDates = [String: Date]() // lowercased host: end of the wait after its last transient failure
@@ -354,7 +345,6 @@ private extension DownloadedImageCache {
 		}
 		let nextCheck = Self.nextCheck(httpResponse, hasValidators: conditionalGetInfo != nil)
 		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, byteCount: data.count, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
-		imageWasSaved(byteCount: data.count)
 		return true
 	}
 
@@ -401,24 +391,9 @@ private extension DownloadedImageCache {
 
 	// MARK: - Removing Images
 
-	func imageWasSaved(byteCount: Int) {
-		guard let totalByteCount else {
-			return
-		}
-		let updatedTotalByteCount = totalByteCount + byteCount
-		self.totalByteCount = updatedTotalByteCount
-		if updatedTotalByteCount > removalByteCount {
-			Task {
-				await removeImagesOverSizeLimit()
-			}
-		}
-	}
-
-	/// Removes the least recently used images until the total is `byteCountAfterRemoval`.
+	/// Removes the least recently used images until the total is `maximumStoredByteCount`.
 	/// Also removes files with no record and records with no file, so the total matches the disk.
-	/// Saves don’t start another pass while `totalByteCount` is nil.
 	func removeImagesOverSizeLimit() async {
-		totalByteCount = nil
 		let startDate = Date()
 
 		guard let records = await ImageDatabase.shared.fetchDownloadedImageUsageByLeastRecentAccess() else {
@@ -429,10 +404,8 @@ private extension DownloadedImageCache {
 			Self.logger.error("Skipped removing images: couldn’t list the images folder.")
 			return
 		}
-		let removal = await Self.imageRemoval(records: records, fileDates: fileDates, urlsInUse: Set(tasks.keys), now: startDate, limit: Self.limit, hardLimit: Self.hardLimit)
+		let removal = await Self.imageRemoval(records: records, fileDates: fileDates, urlsInUse: Set(tasks.keys), now: startDate, maximumByteCount: Self.maximumStoredByteCount)
 
-		totalByteCount = removal.remainingByteCount
-		removalByteCount = max(Self.limit.maximumByteCount, removal.remainingByteCount + Self.byteCountBetweenPasses)
 		guard !removal.urls.isEmpty || !removal.keys.isEmpty else {
 			return
 		}
@@ -522,17 +495,6 @@ extension DownloadedImageCache {
 		return Date().addingTimeInterval(interval)
 	}
 
-	struct ByteLimit {
-		let maximumByteCount: Int
-		/// Removing more than needed means removal doesn’t run again with every download.
-		let byteCountAfterRemoval: Int
-
-		init(maximumByteCount: Int) {
-			self.maximumByteCount = maximumByteCount
-			self.byteCountAfterRemoval = maximumByteCount / 5 * 4
-		}
-	}
-
 	struct ImageRemoval: Equatable {
 		let urls: [String] // Records to delete
 		let keys: Set<String> // Files to delete
@@ -540,13 +502,12 @@ extension DownloadedImageCache {
 	}
 
 	/// `records` are least recently accessed first. Files with no record and records with no file
-	/// are removed, along with derived copies of removed images. Then, when over `limit`, the least recently accessed images not used recently
-	/// are removed, and when still over `hardLimit`, the least recently accessed of the rest.
+	/// are removed, along with derived copies of removed images. Then, when over `maximumByteCount`,
+	/// the least recently accessed images are removed.
 	/// Nothing changed in the last minute is removed, since it may be in the middle of being saved.
 	/// Images in `urlsInUse` are being read or downloaded, so they’re kept too.
-	@concurrent static func imageRemoval(records: [DownloadedImageUsage], fileDates: [String: Date], urlsInUse: Set<String>, now: Date, limit: ByteLimit, hardLimit: ByteLimit) async -> ImageRemoval {
+	@concurrent static func imageRemoval(records: [DownloadedImageUsage], fileDates: [String: Date], urlsInUse: Set<String>, now: Date, maximumByteCount: Int) async -> ImageRemoval {
 		let recentChangeDate = now.addingTimeInterval(-recentChangeInterval)
-		let recentUseDate = now.addingTimeInterval(-recentUseInterval)
 
 		var recordsToKeep = [(record: DownloadedImageUsage, key: String)]()
 		var recordedKeys = Set<String>()
@@ -563,24 +524,14 @@ extension DownloadedImageCache {
 		var keys = Set(fileDates.filter { !recordedKeys.contains(baseDiskKey($0.key)) && $0.value < recentChangeDate }.keys)
 		var byteCount = recordsToKeep.reduce(0) { $0 + $1.record.byteCount }
 
-		func removeLeastRecentlyUsed(accessedBefore date: Date, limit: ByteLimit) {
-			guard byteCount > limit.maximumByteCount else {
-				return
+		for (record, key) in recordsToKeep where !urlsInUse.contains(record.url) {
+			if byteCount <= maximumByteCount || record.lastAccessed >= recentChangeDate {
+				break
 			}
-			for (record, key) in recordsToKeep {
-				if byteCount <= limit.byteCountAfterRemoval || record.lastAccessed >= date {
-					break
-				}
-				if keys.contains(key) || urlsInUse.contains(record.url) {
-					continue
-				}
-				urls.append(record.url)
-				keys.insert(key)
-				byteCount -= record.byteCount
-			}
+			urls.append(record.url)
+			keys.insert(key)
+			byteCount -= record.byteCount
 		}
-		removeLeastRecentlyUsed(accessedBefore: recentUseDate, limit: limit)
-		removeLeastRecentlyUsed(accessedBefore: recentChangeDate, limit: hardLimit)
 
 		// Derived copies go with their images.
 		let removedKeys = keys.union(urls.map(diskKey))

@@ -12,7 +12,7 @@ import RSCore
 
 @Suite struct DownloadedImageCacheTests {
 
-	@Test func leastRecentlyUsedImagesAreRemovedDownToTarget() async {
+	@Test func leastRecentlyUsedImagesAreRemovedDownToLimit() async {
 		let now = Date()
 		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
 		let urls = ["https://example.com/a.jpg", "https://example.com/b.jpg", "https://example.com/c.jpg", "https://example.com/just-saved.jpg"]
@@ -28,11 +28,11 @@ import RSCore
 		fileDates["unrecorded"] = longAgo
 		fileDates["unrecordedJustSaved"] = now
 
-		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 350), hardLimit: .init(maximumByteCount: 1000))
+		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, maximumByteCount: 350)
 
-		#expect(removal.urls == ["https://example.com/no-file.jpg", urls[0], urls[1]])
-		#expect(removal.keys == ["unrecorded", keys[0], keys[1]])
-		#expect(removal.remainingByteCount == 200)
+		#expect(removal.urls == ["https://example.com/no-file.jpg", urls[0]])
+		#expect(removal.keys == ["unrecorded", keys[0]])
+		#expect(removal.remainingByteCount == 300)
 	}
 
 	@Test func imagesInUseAreKept() async {
@@ -41,10 +41,10 @@ import RSCore
 		let records = (0..<3).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", byteCount: 100, lastAccessed: longAgo) }
 		let fileDates = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), longAgo) })
 
-		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [records[0].url], now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 1000))
+		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [records[0].url], now: now, maximumByteCount: 200)
 
-		#expect(removal.urls == [records[1].url, records[2].url])
-		#expect(removal.remainingByteCount == 100)
+		#expect(removal.urls == [records[1].url])
+		#expect(removal.remainingByteCount == 200)
 	}
 
 	@Test func derivedCopiesAreKeptAndRemovedWithTheirImages() async {
@@ -59,7 +59,7 @@ import RSCore
 			fileDates[key] = longAgo
 		}
 
-		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 150), hardLimit: .init(maximumByteCount: 1000))
+		let removal = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, maximumByteCount: 150)
 
 		#expect(removal.urls == [records[0].url])
 		#expect(removal.keys == [DownloadedImageCache.diskKey(records[0].url), removedCopy, orphanedCopy])
@@ -106,20 +106,5 @@ import RSCore
 
 		let retryDateAfterLaterFailure = DownloadedImageCache.retryDate(after: retryDateFromRetryAfter, retryAfter: nil, now: now.addingTimeInterval(1))
 		#expect(retryDateAfterLaterFailure == retryDateFromRetryAfter)
-	}
-
-	@Test func recentlyUsedImagesAreKeptUnlessOverHardLimit() async {
-		let now = Date()
-		let records = (0..<5).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", byteCount: 100, lastAccessed: now.addingTimeInterval(-TimeInterval(days: 1) + TimeInterval($0))) }
-		let keys = records.map { DownloadedImageCache.diskKey($0.url) }
-		let fileDates = Dictionary(uniqueKeysWithValues: keys.map { ($0, now.addingTimeInterval(-TimeInterval(days: 1))) })
-
-		let underHardLimit = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 1000))
-		#expect(underHardLimit.urls.isEmpty)
-		#expect(underHardLimit.remainingByteCount == 500)
-
-		let overHardLimit = await DownloadedImageCache.imageRemoval(records: records, fileDates: fileDates, urlsInUse: [], now: now, limit: .init(maximumByteCount: 200), hardLimit: .init(maximumByteCount: 400))
-		#expect(overHardLimit.urls == [records[0].url, records[1].url])
-		#expect(overHardLimit.remainingByteCount == 300)
 	}
 }
