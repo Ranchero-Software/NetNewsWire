@@ -23,7 +23,6 @@ nonisolated public final class NetworkMonitor: Sendable {
 	private struct State: Sendable {
 		var isConnected: Bool?
 		var connectionType: NWInterface.InterfaceType?
-		var isExpensive = false
 		var isConstrained = false
 	}
 
@@ -37,11 +36,6 @@ nonisolated public final class NetworkMonitor: Sendable {
 
 	public var connectionType: NWInterface.InterfaceType? {
 		state.withLock { $0.connectionType }
-	}
-
-	/// Is the connection expensive (cellular data with limited plan, for instance)
-	public var isExpensive: Bool {
-		state.withLock { $0.isExpensive }
 	}
 
 	/// Is the connection constrained (Low Data Mode enabled, for instance)
@@ -78,7 +72,6 @@ nonisolated public final class NetworkMonitor: Sendable {
 			let statusDidChange = isConnected != (state.isConnected ?? true) || path.isConstrained != state.isConstrained
 			state.isConnected = isConnected
 			state.connectionType = path.availableInterfaces.first?.type
-			state.isExpensive = path.isExpensive
 			state.isConstrained = path.isConstrained
 			return statusDidChange
 		}

@@ -114,26 +114,22 @@ extension Notification.Name {
 		NetworkMonitor.shared.isConnected && !NetworkMonitor.shared.isConstrained
 	}
 
-	/// The stored copy, read from disk or downloaded. With a `downloadPriority`, a download
+	/// The stored copy, read from disk or downloaded. With `usesDownloadQueue`, a download
 	/// waits its turn in the download queue, and doesn’t start when offline or in Low Data Mode.
-	/// A prefetch also doesn’t start on an expensive network or in Low Power Mode.
-	/// Without a `downloadPriority`, it starts right away, as does a waiting download for the same URL.
+	/// Without it, a download starts right away, as does a waiting download for the same URL.
 	/// Activity log fires only when the request reaches the network.
-	func imageData(for url: String, downloadPriority: ThumbnailPriority?, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async throws(ImageDownloadError) -> Data {
+	func imageData(for url: String, usesDownloadQueue: Bool, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async throws(ImageDownloadError) -> Data {
 		if let task = tasks[url] {
-			switch downloadPriority {
-			case .visible:
+			if usesDownloadQueue {
 				prioritizeDownload(for: url)
-			case nil:
+			} else {
 				downloadQueue.startNow(key: url)
-			case .prefetch:
-				break
 			}
 			return try await task.value.get()
 		}
 
 		let task = Task {
-			await findImage(url, downloadPriority: downloadPriority, checksForUpdates: checksForUpdates, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
+			await findImage(url, usesDownloadQueue: usesDownloadQueue, checksForUpdates: checksForUpdates, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 		}
 		tasks[url] = task
 		let result = await task.value
@@ -141,7 +137,7 @@ extension Notification.Name {
 		return try result.get()
 	}
 
-	/// Moves a waiting download to the front, for an image that just became visible.
+	/// Moves a waiting download to the front, for an image whose row is shown again.
 	func prioritizeDownload(for url: String) {
 		downloadQueue.prioritize(key: url)
 	}
@@ -193,7 +189,7 @@ extension Notification.Name {
 
 private extension DownloadedImageCache {
 
-	func findImage(_ url: String, downloadPriority: ThumbnailPriority?, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
+	func findImage(_ url: String, usesDownloadQueue: Bool, checksForUpdates: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
 		if let data = await Self.readFromDisk(diskCache, key: Self.diskKey(url)) {
 			imageWasUsed(url, checksForUpdates: checksForUpdates)
 			return .success(data)
@@ -206,16 +202,16 @@ private extension DownloadedImageCache {
 			return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 		}
 		let host = Self.host(url)
-		if let downloadPriority {
-			guard Self.networkAllowsDownload(priority: downloadPriority) else {
+		if usesDownloadQueue {
+			guard Self.networkAllowsDownloads else {
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 			}
-			switch await downloadQueue.waitForTurn(key: url, group: host, priority: downloadPriority) {
+			switch await downloadQueue.waitForTurn(key: url, group: host) {
 			case .dropped:
 				return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
-			case .start(let currentPriority):
+			case .start:
 				// The network or a retry wait may have changed while this was queued.
-				guard !isWaitingToRetry(url), Self.networkAllowsDownload(priority: currentPriority) else {
+				guard !isWaitingToRetry(url), Self.networkAllowsDownloads else {
 					downloadQueue.taskDidFinish(group: host)
 					return .failure(ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true))
 				}
@@ -223,26 +219,13 @@ private extension DownloadedImageCache {
 				break
 			}
 		}
-		let maximumByteCount = downloadPriority == nil ? nil : Self.maximumLimitedDownloadByteCount
+		let maximumByteCount = usesDownloadQueue ? Self.maximumLimitedDownloadByteCount : nil
 		let result = await downloadImageFromNetwork(url, maximumByteCount: maximumByteCount, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
-		if downloadPriority != nil {
+		if usesDownloadQueue {
 			downloadQueue.taskDidFinish(group: host)
 		}
 		noteDownloadResult(result, url: url)
 		return result
-	}
-
-	/// Prefetching also waits for a network that isn’t expensive, such as cellular, and for Low Power Mode to be off.
-	static func networkAllowsDownload(priority: ThumbnailPriority) -> Bool {
-		guard networkAllowsDownloads else {
-			return false
-		}
-		switch priority {
-		case .visible:
-			return true
-		case .prefetch:
-			return !NetworkMonitor.shared.isExpensive && !ProcessInfo.processInfo.isLowPowerModeEnabled
-		}
 	}
 
 	func isWaitingToRetry(_ url: String) -> Bool {

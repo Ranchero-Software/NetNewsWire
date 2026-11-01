@@ -65,7 +65,7 @@ extension Notification.Name {
 	private var articleIDsBeingDiscovered = Set<String>()
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
 	private let decodeQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentDecodes, maximumWaitingCount: maximumWaitingDecodes)
-	private var prioritiesInProgress = [String: ThumbnailPriority]() // cacheKey: priority, which a prefetch’s row becoming visible changes
+	private var decodeKeysInProgress = Set<String>()
 	private var urlsThatFailedToDecode = Set<String>() // So a failure notification can’t lead to the same attempt again
 	private var chosenThumbnailURLs = [Mode: [String: ChosenThumbnailURL]]() // articleID: the URL thumbnailURL(for:mode:) chose, since large-mode row heights ask for every row
 
@@ -119,7 +119,7 @@ extension Notification.Name {
 			DownloadedImageCache.shared.imageWasUsed(url, checksForUpdates: false)
 			return image
 		}
-		findImage(url, mode: mode, priority: .visible, activityDetail: articleTitle)
+		findImage(url, mode: mode, activityDetail: articleTitle)
 		return nil
 	}
 
@@ -127,7 +127,7 @@ extension Notification.Name {
 	/// Shares the timeline’s copy and any download in progress, so the image is downloaded once.
 	/// A download starts right away rather than waiting behind timeline downloads.
 	public func fullSizeImageData(url: String, articleTitle: String?) async throws(ImageDownloadError) -> Data {
-		try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: nil, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: articleTitle)
+		try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: false, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: articleTitle)
 	}
 
 	/// Nil when the article has no usable image, or when its HTML hasn’t been checked yet.
@@ -282,26 +282,23 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
-	func findImage(_ url: String, mode: Mode, priority: ThumbnailPriority, activityDetail: String?) {
+	func findImage(_ url: String, mode: Mode, activityDetail: String?) {
 		let cacheKey = Self.cacheKey(url, mode)
 		let decodeKey = cacheKey as String
-		guard prioritiesInProgress[decodeKey] == nil else {
-			if priority == .visible {
-				prioritiesInProgress[decodeKey] = .visible
-				DownloadedImageCache.shared.prioritizeDownload(for: url)
-				decodeQueue.prioritize(key: decodeKey)
-			}
+		guard !decodeKeysInProgress.contains(decodeKey) else {
+			DownloadedImageCache.shared.prioritizeDownload(for: url)
+			decodeQueue.prioritize(key: decodeKey)
 			return
 		}
-		prioritiesInProgress[decodeKey] = priority
+		decodeKeysInProgress.insert(decodeKey)
 
 		Task {
 			defer {
-				prioritiesInProgress[decodeKey] = nil
+				decodeKeysInProgress.remove(decodeKey)
 			}
 			do throws(ImageDownloadError) {
-				let data = try await DownloadedImageCache.shared.imageData(for: url, downloadPriority: priority, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
-				guard await decodeQueue.waitForTurn(key: decodeKey, priority: prioritiesInProgress[decodeKey] ?? priority) != .dropped else {
+				let data = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: true, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: activityDetail)
+				guard await decodeQueue.waitForTurn(key: decodeKey) != .dropped else {
 					return
 				}
 				defer {

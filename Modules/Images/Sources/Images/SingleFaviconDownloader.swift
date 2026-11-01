@@ -70,7 +70,7 @@ private extension SingleFaviconDownloader {
 			return
 		}
 		do throws(ImageDownloadError) {
-			let storedData = try await DownloadedImageCache.shared.imageData(for: faviconURL, downloadPriority: nil, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL)
+			let storedData = try await DownloadedImageCache.shared.imageData(for: faviconURL, usesDownloadQueue: false, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL)
 			let scaledData = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
 			// DownloadedImageCache records download failures, but can’t know whether the data decodes as an icon.
 			if let image = await Self.image(scaledData) {
