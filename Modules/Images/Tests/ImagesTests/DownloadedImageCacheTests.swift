@@ -96,21 +96,16 @@ import RSCore
 		#expect(!DownloadedImageCache.isTransient(statusCode: 403))
 	}
 
-	@Test func failureDuringWaitDoesNotDoubleIt() {
+	@Test func longerRetryAfterExtendsWaitAndLaterFailureDoesNotShortenIt() {
 		let now = Date()
-		let firstDelay = DownloadedImageCache.nextRetryDelay(after: nil, retryAfter: nil, now: now)
+		let retryAfter = TimeInterval(days: 1)
+		let firstRetryDate = DownloadedImageCache.retryDate(after: nil, retryAfter: nil, now: now)
 
-		let duringWait = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: nil, now: now.addingTimeInterval(1))
-		#expect(duringWait.delay == firstDelay.delay)
-		#expect(duringWait.retryDate == firstDelay.retryDate)
+		let retryDateFromRetryAfter = DownloadedImageCache.retryDate(after: firstRetryDate, retryAfter: retryAfter, now: now)
+		#expect(retryDateFromRetryAfter == now.addingTimeInterval(retryAfter))
 
-		let longerRetryAfter = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: firstDelay.delay * 10, now: now.addingTimeInterval(1))
-		#expect(longerRetryAfter.retryDate == now.addingTimeInterval(1 + firstDelay.delay * 10))
-		#expect(longerRetryAfter.isFromRetryAfter)
-		#expect(!firstDelay.isFromRetryAfter)
-
-		let afterWait = DownloadedImageCache.nextRetryDelay(after: firstDelay, retryAfter: nil, now: firstDelay.retryDate)
-		#expect(afterWait.delay == firstDelay.delay * 2)
+		let retryDateAfterLaterFailure = DownloadedImageCache.retryDate(after: retryDateFromRetryAfter, retryAfter: nil, now: now.addingTimeInterval(1))
+		#expect(retryDateAfterLaterFailure == retryDateFromRetryAfter)
 	}
 
 	@Test func recentlyUsedImagesAreKeptUnlessOverHardLimit() async {
