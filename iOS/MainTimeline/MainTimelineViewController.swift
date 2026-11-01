@@ -182,7 +182,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
 
 		assert(dataSource != nil)
 		configureCollectionView(dataSource!)
-		collectionView?.prefetchDataSource = self
 
 		configureSearchController()
 		definesPresentationContext = true
@@ -553,23 +552,6 @@ final class MainTimelineViewController: UIViewController, UndoableCommandRunner 
     }
     */
 
-}
-
-// MARK: - UICollectionViewDataSourcePrefetching
-
-extension MainTimelineViewController: UICollectionViewDataSourcePrefetching {
-	/// Thumbnails download behind visible thumbnails.
-	func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-		guard let thumbnailMode, let dataSource else {
-			return
-		}
-		// Index paths are nearest first, and the most recent request starts first.
-		for indexPath in indexPaths.reversed() {
-			if let article = dataSource.itemIdentifier(for: indexPath), let thumbnailURL = ArticleThumbnailFinder.shared.thumbnailURL(for: article, mode: thumbnailMode) {
-				ArticleThumbnailFinder.shared.prefetchThumbnail(url: thumbnailURL, mode: thumbnailMode, articleTitle: article.title)
-			}
-		}
-	}
 }
 
 // MARK: - UICollectionViewDelegate

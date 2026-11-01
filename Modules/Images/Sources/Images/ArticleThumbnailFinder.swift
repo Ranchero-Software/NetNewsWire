@@ -123,15 +123,6 @@ extension Notification.Name {
 		return nil
 	}
 
-	/// Gets a thumbnail ready for an article expected to be shown soon.
-	/// Its download waits behind thumbnails being shown now.
-	public func prefetchThumbnail(url: String, mode: Mode, articleTitle: String?) {
-		guard imageCache.object(forKey: Self.cacheKey(url, mode)) == nil else {
-			return
-		}
-		findImage(url, mode: mode, priority: .prefetch, activityDetail: articleTitle)
-	}
-
 	/// The image as downloaded, for the article view, which shows the thumbnail image at full size.
 	/// Shares the timeline’s copy and any download in progress, so the image is downloaded once.
 	/// A download starts right away rather than waiting behind timeline downloads.
