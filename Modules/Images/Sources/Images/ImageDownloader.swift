@@ -13,7 +13,7 @@ import ActivityLog
 
 extension Notification.Name {
 	public static let imageDidBecomeAvailable = Notification.Name("ImageDidBecomeAvailableNotification") // userInfo key: "url"
-	public static let imageDownloadDidFail = Notification.Name("ImageDownloadDidFailNotification") // userInfo key: "url". Not posted for transient failures.
+	public static let imageDownloadDidFail = Notification.Name("ImageDownloadDidFailNotification") // userInfo key: "url". Not posted when the URL was already waiting to retry.
 }
 
 public struct ImageDownloadError: Error {
@@ -135,6 +135,8 @@ private extension ImageDownloader {
 			return
 		}
 
+		// A URL already waiting to retry fails without a request, so that failure isn’t news.
+		let wasWaitingToRetry = DownloadedImageCache.shared.isWaitingToRetry(url)
 		do {
 			let storedData = try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: false, checksForUpdates: true, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 			let data = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
@@ -144,7 +146,7 @@ private extension ImageDownloader {
 			}
 			cacheImage(url, data)
 		} catch {
-			if !error.isTransient {
+			if !wasWaitingToRetry {
 				NotificationCenter.default.post(name: .imageDownloadDidFail, object: self, userInfo: ["url": url])
 			}
 		}

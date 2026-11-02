@@ -30,6 +30,7 @@ extension Notification.Name {
 
 	init() {
 		NotificationCenter.default.addObserver(self, selector: #selector(imageDidBecomeAvailable(_:)), name: .imageDidBecomeAvailable, object: imageDownloader)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleImageDownloadDidFail(_:)), name: .imageDownloadDidFail, object: imageDownloader)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleDownloadedImageDidChange(_:)), name: .downloadedImageDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleFeedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
@@ -128,6 +129,18 @@ extension Notification.Name {
 		// A single image URL may be shared by multiple feeds.
 		waitingForFeedURLs[url] = nil
 		for feed in feeds {
+			_ = icon(for: feed)
+		}
+	}
+
+	/// Feeds waiting on the failed URL look again, which falls back to the home page icon.
+	@objc func handleImageDownloadDidFail(_ notification: Notification) {
+		guard let url = notification.userInfo?["url"] as? String, let feeds = waitingForFeedURLs[url] else {
+			return
+		}
+		waitingForFeedURLs[url] = nil
+		for feed in feeds {
+			cache[feed] = nil
 			_ = icon(for: feed)
 		}
 	}
