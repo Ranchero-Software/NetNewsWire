@@ -38,9 +38,6 @@ import RSParser
 	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL);
 	"""
 
-	/// Development builds created this table.
-	nonisolated private static let dropArticleThumbnailTableStatement = "DROP TABLE IF EXISTS articleThumbnailURLs;"
-
 	private static let databaseFileName = "Images.db"
 	private static let legacyDatabaseFileName = "ImageMetadata.db"
 
@@ -74,7 +71,6 @@ import RSParser
 		let failureCutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetryDays)
 		queue.runInDatabase { database in
 			DownloadFailureTable.removeExpired(olderThan: failureCutoff, database: database)
-			database.executeStatements(Self.dropArticleThumbnailTableStatement)
 			database.checkpoint()
 		}
 	}
