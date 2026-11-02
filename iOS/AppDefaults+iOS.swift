@@ -149,6 +149,14 @@ extension AppDefaults {
 		}
 	}
 
+	static var sidebarSortType: SidebarSortType {
+		.alphabetically
+	}
+
+	static var sidebarSortAscending: Bool {
+		true
+	}
+
 	static var splitViewPreferredDisplayMode: Int {
 		get {
 			UserDefaults.standard.integer(forKey: Key.splitViewPreferredDisplayMode)

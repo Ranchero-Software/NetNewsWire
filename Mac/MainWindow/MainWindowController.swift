@@ -347,6 +347,26 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return validateSortDirection(item, direction: .orderedDescending)
 		}
 
+		if item.action == #selector(sortFeedsByName(_:)) {
+			return validateSortFeeds(item, isOn: AppDefaults.sidebarSortType == .alphabetically)
+		}
+
+		if item.action == #selector(sortFeedsByUnreadCount(_:)) {
+			return validateSortFeeds(item, isOn: AppDefaults.sidebarSortType == .byUnreadCount)
+		}
+
+		if item.action == #selector(sortFeedsByLastUpdate(_:)) {
+			return validateSortFeeds(item, isOn: AppDefaults.sidebarSortType == .byLastUpdate)
+		}
+
+		if item.action == #selector(sortFeedsAscending(_:)) {
+			return validateSortFeeds(item, isOn: AppDefaults.sidebarSortAscending)
+		}
+
+		if item.action == #selector(sortFeedsDescending(_:)) {
+			return validateSortFeeds(item, isOn: !AppDefaults.sidebarSortAscending)
+		}
+
 		return true
 	}
 
@@ -651,6 +671,37 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	@IBAction func sortArticlesDescending(_ sender: Any?) {
 		timelineContainerViewController?.setSortDirection(.orderedDescending)
+	}
+
+	@IBAction func sortFeedsByName(_ sender: Any?) {
+		// Switching sort type resets direction to that type’s natural default,
+		// like clicking a different column header: name A–Z, most unread first, newest update first.
+		guard AppDefaults.sidebarSortType != .alphabetically else {
+			return
+		}
+		AppDefaults.setSidebarSort(.alphabetically, ascending: true)
+	}
+
+	@IBAction func sortFeedsByUnreadCount(_ sender: Any?) {
+		guard AppDefaults.sidebarSortType != .byUnreadCount else {
+			return
+		}
+		AppDefaults.setSidebarSort(.byUnreadCount, ascending: false)
+	}
+
+	@IBAction func sortFeedsByLastUpdate(_ sender: Any?) {
+		guard AppDefaults.sidebarSortType != .byLastUpdate else {
+			return
+		}
+		AppDefaults.setSidebarSort(.byLastUpdate, ascending: false)
+	}
+
+	@IBAction func sortFeedsAscending(_ sender: Any?) {
+		AppDefaults.sidebarSortAscending = true
+	}
+
+	@IBAction func sortFeedsDescending(_ sender: Any?) {
+		AppDefaults.sidebarSortAscending = false
 	}
 
 	@objc func selectArticleTheme(_ menuItem: NSMenuItem) {
@@ -1662,6 +1713,11 @@ private extension MainWindowController {
 		}
 		menuItem.title = sortParameters.key.localizedDirectionTitle(ascending: direction == .orderedAscending)
 		menuItem.state = sortParameters.direction == direction ? .on : .off
+		return true
+	}
+
+	func validateSortFeeds(_ item: NSValidatedUserInterfaceItem, isOn: Bool) -> Bool {
+		(item as? NSMenuItem)?.state = isOn ? .on : .off
 		return true
 	}
 

@@ -51,6 +51,8 @@ extension AppDefaults.Key {
 	static let importOPMLAccountID = "importOPMLAccountID"
 	static let exportOPMLAccountID = "exportOPMLAccountID"
 	static let defaultBrowserID = "defaultBrowserID"
+	static let sidebarSortType = "sidebarSortType"
+	static let sidebarSortAscending = "sidebarSortAscending"
 
 	// Hidden prefs
 	static let showDebugMenu = "ShowDebugMenu"
@@ -301,6 +303,34 @@ extension AppDefaults {
 		}
 	}
 
+	static var sidebarSortType: SidebarSortType {
+		let rawValue = UserDefaults.standard.integer(forKey: Key.sidebarSortType)
+		return SidebarSortType(rawValue: rawValue) ?? .alphabetically
+	}
+
+	/// Sets type and direction together so the sidebar rebuilds once.
+	static func setSidebarSort(_ sortType: SidebarSortType, ascending: Bool) {
+		guard sortType != sidebarSortType || ascending != sidebarSortAscending else {
+			return
+		}
+		UserDefaults.standard.set(sortType.rawValue, forKey: Key.sidebarSortType)
+		UserDefaults.standard.set(ascending, forKey: Key.sidebarSortAscending)
+		NotificationCenter.default.post(name: .SidebarSortTypeDidChange, object: nil)
+	}
+
+	static var sidebarSortAscending: Bool {
+		get {
+			UserDefaults.standard.bool(forKey: Key.sidebarSortAscending)
+		}
+		set {
+			guard newValue != sidebarSortAscending else {
+				return
+			}
+			UserDefaults.standard.set(newValue, forKey: Key.sidebarSortAscending)
+			NotificationCenter.default.post(name: .SidebarSortTypeDidChange, object: nil)
+		}
+	}
+
 	@MainActor static func registerDefaults() {
 		// Migrate every-10-minute refresh interval to 30 minutes.
 		let rawValue = UserDefaults.standard.integer(forKey: Key.refreshInterval)
@@ -324,7 +354,9 @@ extension AppDefaults {
 			Key.statusBarCountMode: StatusBarCountMode.lastRefresh.rawValue,
 			"NSScrollViewShouldScrollUnderTitlebar": false,
 			Key.refreshInterval: RefreshInterval.every2Hours.rawValue,
-			Key.showDebugMenu: showDebugMenu
+			Key.showDebugMenu: showDebugMenu,
+			Key.sidebarSortType: SidebarSortType.alphabetically.rawValue,
+			Key.sidebarSortAscending: true
 		]
 
 		let defaults = commonRegisteredDefaults.merging(platformDefaults) { _, platformValue in platformValue }

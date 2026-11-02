@@ -112,6 +112,8 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(feedSettingDidChange(_:)), name: .feedSettingDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(displayNameDidChange(_:)), name: .DisplayNameDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(sidebarSortTypeDidChange(_:)), name: .SidebarSortTypeDidChange, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(accountDidDownloadArticles(_:)), name: .AccountDidDownloadArticles, object: nil)
 		DistributedNotificationCenter.default().addObserver(self, selector: #selector(appleSideBarDefaultIconSizeChanged(_:)), name: .appleSideBarDefaultIconSizeChanged, object: nil)
 
 		if let clipView = outlineView.enclosingScrollView?.contentView {
@@ -215,7 +217,9 @@ extension Notification.Name {
 		guard notification.object is AccountManager else {
 			return
 		}
-		if isReadFiltered {
+		if AppDefaults.sidebarSortType == .byLastUpdate {
+			refreshLastUpdateDatesAndRebuildTree()
+		} else if isReadFiltered || AppDefaults.sidebarSortType == .byUnreadCount {
 			rebuildTreeAndRestoreSelection()
 		}
 	}
@@ -252,6 +256,33 @@ extension Notification.Name {
 
 	@objc func containerChildrenDidChange(_ note: Notification) {
 		rebuildTreeAndRestoreSelection()
+	}
+
+	@objc func sidebarSortTypeDidChange(_ note: Notification) {
+		if AppDefaults.sidebarSortType == .byLastUpdate {
+			refreshLastUpdateDatesAndRebuildTree()
+		} else {
+			rebuildTreeAndRestoreSelection()
+		}
+	}
+
+	@objc func accountDidDownloadArticles(_ note: Notification) {
+		// Keep the dates current for the next re-sort, without re-sorting while the user reads.
+		guard AppDefaults.sidebarSortType == .byLastUpdate, let account = note.object as? Account else {
+			return
+		}
+		Task {
+			await account.refreshLastUpdateDates()
+		}
+	}
+
+	func refreshLastUpdateDatesAndRebuildTree() {
+		Task {
+			for account in AccountManager.shared.activeAccounts {
+				await account.refreshLastUpdateDates()
+			}
+			rebuildTreeAndRestoreSelection()
+		}
 	}
 
 	@objc func accountsDidChange(_ notification: Notification) {
@@ -679,7 +710,17 @@ private extension SidebarViewController {
 	}
 
 	func queueRebuildTreeAndRestoreSelection() {
-		rebuildTreeAndRestoreSelectionQueue.add(self, #selector(rebuildTreeAndRestoreSelection))
+		rebuildTreeAndRestoreSelectionQueue.add(self, #selector(rebuildTreeKeepingOrderAndRestoreSelection))
+	}
+
+	/// Hides and shows feeds as unread counts change without re-sorting, so the selected feed
+	/// doesn’t jump away under unread-count sorting.
+	@objc func rebuildTreeKeepingOrderAndRestoreSelection() {
+		treeControllerDelegate.preservesOrder = true
+		defer {
+			treeControllerDelegate.preservesOrder = false
+		}
+		rebuildTreeAndRestoreSelection()
 	}
 
 	@objc func rebuildTreeAndRestoreSelection() {
