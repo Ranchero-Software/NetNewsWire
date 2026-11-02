@@ -24,7 +24,7 @@ extension Notification.Name {
 
 	private let imageDownloader = ImageDownloader.shared
 	private var homePagesWithNoIconURL = Set<String>()
-	private var cache = [Feed: IconImage]()
+	private var cache = [Feed: CachedIcon]()
 	private var waitingForFeedURLs = [String: Set<Feed>]()
 	private var feedsWaitingForHTMLMetadata = Set<Feed>()
 
@@ -49,9 +49,9 @@ extension Notification.Name {
 
 	public func icon(for feed: Feed) -> IconImage? {
 
-		if let cachedImage = cache[feed] {
+		if let cachedIcon = cache[feed] {
 			requestOwnIconIfRetryWaitEnded(feed)
-			return cachedImage
+			return cachedIcon.iconImage
 		}
 
 		if Self.shouldSkipDownloadingFeedIcon(feed: feed) {
@@ -66,11 +66,7 @@ extension Notification.Name {
 				return
 			}
 			icon(forHomePageURL: homePageURL, feed: feed) { iconImage, iconURL in
-				if self.cache[feed] != nil {
-					return // already cached
-				}
-				if let iconImage, let iconURL {
-					self.cache[feed] = iconImage
+				if let iconImage, let iconURL, self.cacheIcon(iconImage, for: feed, isFeedOwnIcon: false) {
 					self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
 					self.postFeedIconDidBecomeAvailableNotification(feed)
 				}
@@ -81,13 +77,11 @@ extension Notification.Name {
 			if let iconURL = feed.iconURL, !Self.shouldIgnoreFeedIconURL(feed) {
 				icon(forURL: iconURL, feed: feed) { (iconImage, isDefinitive) in
 					Task { @MainActor in
-						if self.cache[feed] != nil {
-							return // already cached
-						}
 						if let iconImage {
-							self.cache[feed] = iconImage
-							self.postFeedIconDidBecomeAvailableNotification(feed)
-						} else if isDefinitive {
+							if self.cacheIcon(iconImage, for: feed, isFeedOwnIcon: true) {
+								self.postFeedIconDidBecomeAvailableNotification(feed)
+							}
+						} else if self.cache[feed] == nil, isDefinitive {
 							// The declared icon failed or isn’t an image. A still-downloading
 							// icon is no reason to fall back to the home page’s icon.
 							// <https://github.com/Ranchero-Software/NetNewsWire/issues/5376>
@@ -107,13 +101,11 @@ extension Notification.Name {
 
 		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageDatabase.shared.iconURL(forFeedURL: feed.url) {
 			icon(forURL: previouslyFoundIconURL, feed: feed) { iconImage, isDefinitive in
-				if self.cache[feed] != nil {
-					return // already cached
-				}
 				if let iconImage {
-					self.cache[feed] = iconImage
-					self.postFeedIconDidBecomeAvailableNotification(feed)
-				} else if isDefinitive {
+					if self.cacheIcon(iconImage, for: feed, isFeedOwnIcon: false) {
+						self.postFeedIconDidBecomeAvailableNotification(feed)
+					}
+				} else if self.cache[feed] == nil, isDefinitive {
 					// The site may have moved its icon, so the home page is checked again.
 					checkHomePageURL()
 				}
@@ -197,11 +189,25 @@ extension Notification.Name {
 
 	/// Returns the in-memory icon for `feed` without triggering a download.
 	public func cachedIcon(for feed: Feed) -> IconImage? {
-		cache[feed]
+		cache[feed]?.iconImage
 	}
 }
 
 private extension FeedIconDownloader {
+
+	struct CachedIcon {
+		let iconImage: IconImage
+		let isFeedOwnIcon: Bool
+	}
+
+	/// The feed’s own icon replaces its home page icon, but a home page icon never replaces the feed’s own.
+	func cacheIcon(_ iconImage: IconImage, for feed: Feed, isFeedOwnIcon: Bool) -> Bool {
+		if let cachedIcon = cache[feed], cachedIcon.isFeedOwnIcon || !isFeedOwnIcon {
+			return false
+		}
+		cache[feed] = CachedIcon(iconImage: iconImage, isFeedOwnIcon: isFeedOwnIcon)
+		return true
+	}
 
 	static let specialCasesToSkip = ["macsparky.com", "xkcd.com", SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
 
