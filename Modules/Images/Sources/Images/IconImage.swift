@@ -24,7 +24,7 @@ public final class IconImage: @unchecked Sendable {
 	public let isBackgroundSuppressed: Bool
 	public let preferredColor: RSColor?
 
-	private let cachedLuminanceType = Mutex<ImageLuminanceType?>(nil)
+	private let cachedLuminanceType: Mutex<ImageLuminanceType?>
 	private static let luminanceQueue = DispatchQueue(label: "com.ranchero.NetNewsWire.IconImage.luminance", qos: .utility, attributes: .concurrent)
 
 	public var isDark: Bool {
@@ -40,9 +40,27 @@ public final class IconImage: @unchecked Sendable {
 		self.isSymbol = isSymbol
 		self.preferredColor = preferredColor
 		self.isBackgroundSuppressed = isBackgroundSuppressed
+		self.cachedLuminanceType = Mutex(nil)
 		if !isBackgroundSuppressed && Thread.isMainThread {
 			preloadLuminanceType()
 		}
+	}
+
+	private init(_ image: RSImage, luminanceType: ImageLuminanceType) {
+		self.image = image
+		self.isSymbol = false
+		self.preferredColor = nil
+		self.isBackgroundSuppressed = false
+		self.cachedLuminanceType = Mutex(luminanceType)
+	}
+
+	/// Decodes the image and computes its luminance off the main thread, so neither happens when a view first shows it.
+	@concurrent public static func decodedIconImage(_ data: Data) async -> IconImage? {
+		guard let image = RSImage.decodedImage(data: data) else {
+			return nil
+		}
+		let luminanceType = Self.luminanceType(for: Self.cgImage(of: image))
+		return IconImage(image, luminanceType: luminanceType)
 	}
 }
 
@@ -53,7 +71,7 @@ private extension IconImage {
 			return luminanceType
 		}
 
-		let luminanceType = IconImage.luminanceType(for: luminanceCGImage())
+		let luminanceType = IconImage.luminanceType(for: IconImage.cgImage(of: image))
 		cachedLuminanceType.withLock {
 			if $0 == nil {
 				$0 = luminanceType
@@ -68,7 +86,7 @@ private extension IconImage {
 			return
 		}
 
-		let cgImage = luminanceCGImage()
+		let cgImage = IconImage.cgImage(of: image)
 		IconImage.luminanceQueue.async {
 			let luminanceType = IconImage.luminanceType(for: cgImage)
 			self.cachedLuminanceType.withLock {
@@ -79,7 +97,7 @@ private extension IconImage {
 		}
 	}
 
-	func luminanceCGImage() -> CGImage? {
+	static func cgImage(of image: RSImage) -> CGImage? {
 		#if os(macOS)
 		image.cgImage(forProposedRect: nil, context: nil, hints: nil)
 		#else

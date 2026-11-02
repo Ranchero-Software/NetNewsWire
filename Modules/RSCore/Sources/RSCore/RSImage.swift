@@ -132,6 +132,36 @@ public extension RSImage {
 		}
 	}
 
+	/// Makes an image whose pixels are already decoded, so the first draw doesn’t decode it.
+	/// Call it off the main thread.
+	static func decodedImage(data: Data) -> RSImage? {
+#if os(macOS)
+		guard let image = NSImage(data: data) else {
+			return nil
+		}
+		guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil), let largestFrame = largestFrame(in: imageSource) else {
+			return image
+		}
+		let options: [CFString: Any] = [
+			kCGImageSourceCreateThumbnailWithTransform: true,
+			kCGImageSourceCreateThumbnailFromImageAlways: true,
+			kCGImageSourceThumbnailMaxPixelSize: max(largestFrame.width, largestFrame.height),
+			kCGImageSourceShouldCacheImmediately: true
+		]
+		// Thumbnail rather than CreateImageAtIndex, which mishandles indexed-color ICO files.
+		guard let cgImage = CGImageSourceCreateThumbnailAtIndex(imageSource, largestFrame.index, options as CFDictionary) else {
+			return image
+		}
+		// Same size in points as NSImage(data:), which reads it from the image’s resolution.
+		return NSImage(cgImage: cgImage, size: image.size)
+#else
+		guard let image = UIImage(data: data) else {
+			return nil
+		}
+		return image.preparingForDisplay() ?? image
+#endif
+	}
+
 	/// Pixel dimensions of the largest frame, read from the image header without decoding.
 	/// Returns nil if the data can't be read as an image.
 	static func largestFramePixelSize(_ data: Data) -> (width: Int, height: Int)? {

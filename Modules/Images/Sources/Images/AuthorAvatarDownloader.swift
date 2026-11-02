@@ -90,18 +90,16 @@ extension Notification.Name {
 @MainActor private extension AuthorAvatarDownloader {
 
 	func scaleAndCacheImageData(_ imageData: Data, _ avatarURL: String) {
-		RSImage.image(with: imageData) { (image) in
-			MainActor.assumeIsolated {
-				if let image {
-					self.handleImageDidBecomeAvailable(avatarURL, image)
-				}
+		Task { @MainActor in
+			if let iconImage = await IconImage.decodedIconImage(imageData) {
+				handleImageDidBecomeAvailable(avatarURL, iconImage)
 			}
 		}
 	}
 
-	func handleImageDidBecomeAvailable(_ avatarURL: String, _ image: RSImage) {
+	func handleImageDidBecomeAvailable(_ avatarURL: String, _ iconImage: IconImage) {
 		if cache[avatarURL] == nil {
-			cache[avatarURL] = IconImage(image)
+			cache[avatarURL] = iconImage
 		}
 		if waitingForAvatarURLs.contains(avatarURL) {
 			waitingForAvatarURLs.remove(avatarURL)

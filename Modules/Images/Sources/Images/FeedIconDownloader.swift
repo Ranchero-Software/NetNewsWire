@@ -65,12 +65,12 @@ extension Notification.Name {
 			if homePagesWithNoIconURL.contains(homePageURL) {
 				return
 			}
-			icon(forHomePageURL: homePageURL, feed: feed) { image, iconURL in
+			icon(forHomePageURL: homePageURL, feed: feed) { iconImage, iconURL in
 				if self.cache[feed] != nil {
 					return // already cached
 				}
-				if let image, let iconURL {
-					self.cache[feed] = IconImage(image)
+				if let iconImage, let iconURL {
+					self.cache[feed] = iconImage
 					self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
 					self.postFeedIconDidBecomeAvailableNotification(feed)
 				}
@@ -79,13 +79,13 @@ extension Notification.Name {
 
 		@MainActor func checkFeedIconURL() {
 			if let iconURL = feed.iconURL, !Self.shouldIgnoreFeedIconURL(feed) {
-				icon(forURL: iconURL, feed: feed) { (image, isDefinitive) in
+				icon(forURL: iconURL, feed: feed) { (iconImage, isDefinitive) in
 					Task { @MainActor in
 						if self.cache[feed] != nil {
 							return // already cached
 						}
-						if let image = image {
-							self.cache[feed] = IconImage(image)
+						if let iconImage {
+							self.cache[feed] = iconImage
 							self.postFeedIconDidBecomeAvailableNotification(feed)
 						} else if isDefinitive {
 							// The declared icon failed or isn’t an image. A still-downloading
@@ -106,12 +106,12 @@ extension Notification.Name {
 		let feedDeclaresIconURL = feed.iconURL != nil && !Self.shouldIgnoreFeedIconURL(feed)
 
 		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageDatabase.shared.iconURL(forFeedURL: feed.url) {
-			icon(forURL: previouslyFoundIconURL, feed: feed) { image, isDefinitive in
+			icon(forURL: previouslyFoundIconURL, feed: feed) { iconImage, isDefinitive in
 				if self.cache[feed] != nil {
 					return // already cached
 				}
-				if let image {
-					self.cache[feed] = IconImage(image)
+				if let iconImage {
+					self.cache[feed] = iconImage
 					self.postFeedIconDidBecomeAvailableNotification(feed)
 				} else if isDefinitive {
 					// The site may have moved its icon, so the home page is checked again.
@@ -240,7 +240,7 @@ private extension FeedIconDownloader {
 		return components.string ?? url
 	}
 
-	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (RSImage?, String?) -> Void) {
+	func icon(forHomePageURL homePageURL: String, feed: Feed, _ resultBlock: @escaping @MainActor (IconImage?, String?) -> Void) {
 		if Self.shouldSkipDownloadingFeedIcon(homePageURL) {
 			resultBlock(nil, nil)
 			return
@@ -259,9 +259,9 @@ private extension FeedIconDownloader {
 
 		if let url = metadata.bestWebsiteIconURL() {
 			homePagesWithNoIconURL.remove(homePageURL)
-			icon(forURL: url, feed: feed) { image, _ in
+			icon(forURL: url, feed: feed) { iconImage, _ in
 				Task { @MainActor in
-					resultBlock(image, url)
+					resultBlock(iconImage, url)
 				}
 			}
 			return
@@ -276,13 +276,13 @@ private extension FeedIconDownloader {
 	///
 	/// After a transient failure, `isDefinitive` is true, so the caller can fall back to the home page icon,
 	/// and the feed still waits for this image, which replaces the fallback when it arrives.
-	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @MainActor (RSImage?, _ isDefinitive: Bool) -> Void) {
+	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @MainActor (IconImage?, _ isDefinitive: Bool) -> Void) {
 
 		let url = Self.sanitizedIconURL(url)
 
 		if let imageData = imageData(for: url, feed: feed) {
-			RSImage.image(with: imageData) { image in
-				imageResultBlock(image, true)
+			Task { @MainActor in
+				imageResultBlock(await IconImage.decodedIconImage(imageData), true)
 			}
 			return
 		}

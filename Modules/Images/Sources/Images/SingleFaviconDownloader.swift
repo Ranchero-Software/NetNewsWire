@@ -62,9 +62,9 @@ private extension SingleFaviconDownloader {
 	func findFavicon() async {
 		let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
 		lastFailureWasTransient = false
-		if let scaledData = await DownloadedImageCache.shared.derivedImageData(for: faviconURL, suffix: DownloadedImageCache.scaledIconSuffix), let image = await Self.image(scaledData) {
+		if let scaledData = await DownloadedImageCache.shared.derivedImageData(for: faviconURL, suffix: DownloadedImageCache.scaledIconSuffix), let iconImage = await IconImage.decodedIconImage(scaledData) {
 			DownloadedImageCache.shared.imageWasUsed(faviconURL, checksForUpdates: true)
-			iconImage = IconImage(image)
+			self.iconImage = iconImage
 			ImageDatabase.shared.clearFailure(url: faviconURL)
 			postDidLoadFaviconNotification()
 			return
@@ -73,12 +73,12 @@ private extension SingleFaviconDownloader {
 			let storedData = try await DownloadedImageCache.shared.imageData(for: faviconURL, usesDownloadQueue: false, checksForUpdates: true, activityOwner: .faviconDownloader, activityKind: kind, activityDetail: homePageURL)
 			let scaledData = await Self.scaledImageData(storedData, maxPixelSize: RSImage.maxIconPixelSize)
 			// DownloadedImageCache records download failures, but can’t know whether the data decodes as an icon.
-			if let image = await Self.image(scaledData) {
+			if let iconImage = await IconImage.decodedIconImage(scaledData) {
 				// An image that’s already small enough needs no second file.
 				if scaledData != storedData {
 					await DownloadedImageCache.shared.saveDerivedImageData(scaledData, for: faviconURL, suffix: DownloadedImageCache.scaledIconSuffix)
 				}
-				iconImage = IconImage(image)
+				self.iconImage = iconImage
 				ImageDatabase.shared.clearFailure(url: faviconURL)
 			} else {
 				ImageDatabase.shared.recordFailure(url: faviconURL)
@@ -92,10 +92,6 @@ private extension SingleFaviconDownloader {
 
 	@concurrent static func scaledImageData(_ data: Data, maxPixelSize: Int) async -> Data {
 		RSImage.scaledImageData(data, maxPixelSize: maxPixelSize) ?? data
-	}
-
-	@concurrent static func image(_ data: Data) async -> RSImage? {
-		RSImage(data: data)
 	}
 
 	func postDidLoadFaviconNotification() {
