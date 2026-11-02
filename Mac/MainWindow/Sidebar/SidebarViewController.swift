@@ -684,7 +684,17 @@ private extension SidebarViewController {
 	}
 
 	func queueRebuildTreeAndRestoreSelection() {
-		rebuildTreeAndRestoreSelectionQueue.add(self, #selector(rebuildTreeAndRestoreSelection))
+		rebuildTreeAndRestoreSelectionQueue.add(self, #selector(rebuildTreeKeepingOrderAndRestoreSelection))
+	}
+
+	/// Hides and shows feeds as unread counts change without re-sorting, so the selected feed
+	/// doesn’t jump away under unread-count sorting.
+	@objc func rebuildTreeKeepingOrderAndRestoreSelection() {
+		treeControllerDelegate.preservesOrder = true
+		defer {
+			treeControllerDelegate.preservesOrder = false
+		}
+		rebuildTreeAndRestoreSelection()
 	}
 
 	@objc func rebuildTreeAndRestoreSelection() {

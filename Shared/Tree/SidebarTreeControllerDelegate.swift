@@ -14,6 +14,9 @@ import Account
 @MainActor final class SidebarTreeControllerDelegate: TreeControllerDelegate {
 	private var filterExceptions = Set<SidebarItemIdentifier>()
 	var isReadFiltered = false
+	/// Keep nodes already in the tree in their current order, so a rebuild that only hides or shows
+	/// feeds doesn’t re-sort the sidebar while the user is reading.
+	var preservesOrder = false
 
 	func addFilterException(_ feedID: SidebarItemIdentifier) {
 		filterExceptions.insert(feedID)
@@ -95,7 +98,15 @@ private extension SidebarTreeControllerDelegate {
 			}
 		}
 
-		return updatedChildNodes.sorted(by: AppDefaults.sidebarSortType, ascending: AppDefaults.sidebarSortAscending)
+		let sortedNodes = updatedChildNodes.sorted(by: AppDefaults.sidebarSortType, ascending: AppDefaults.sidebarSortAscending)
+		guard preservesOrder else {
+			return sortedNodes
+		}
+
+		// New nodes take their sorted position; existing nodes fill the remaining slots in their old order.
+		let oldChildNodes = containerNode.childNodes
+		var existingNodesInOldOrder = oldChildNodes.filter { sortedNodes.contains($0) }.makeIterator()
+		return sortedNodes.compactMap { oldChildNodes.contains($0) ? existingNodesInOldOrder.next() : $0 }
 	}
 
 	func createNode(representedObject: Any, parent: Node) -> Node? {
