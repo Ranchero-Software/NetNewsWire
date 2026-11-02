@@ -106,13 +106,16 @@ extension Notification.Name {
 		let feedDeclaresIconURL = feed.iconURL != nil && !Self.shouldIgnoreFeedIconURL(feed)
 
 		if !feedDeclaresIconURL, let previouslyFoundIconURL = ImageDatabase.shared.iconURL(forFeedURL: feed.url) {
-			icon(forURL: previouslyFoundIconURL, feed: feed) { image, _ in
+			icon(forURL: previouslyFoundIconURL, feed: feed) { image, isDefinitive in
 				if self.cache[feed] != nil {
 					return // already cached
 				}
 				if let image {
 					self.cache[feed] = IconImage(image)
 					self.postFeedIconDidBecomeAvailableNotification(feed)
+				} else if isDefinitive {
+					// The site may have moved its icon, so the home page is checked again.
+					checkHomePageURL()
 				}
 			}
 
