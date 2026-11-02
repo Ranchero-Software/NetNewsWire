@@ -84,8 +84,8 @@ private extension SingleFaviconDownloader {
 				ImageDatabase.shared.recordFailure(url: faviconURL)
 			}
 		} catch {
-			// A non-image response usually means the site has no favicon at this URL.
-			lastFailureWasTransient = error.isTransient && !error.decodingFailed
+			// A non-image response is transient, so a captive portal’s login page can’t lead to “no favicon”.
+			lastFailureWasTransient = error.isTransient
 		}
 		postDidLoadFaviconNotification()
 	}
