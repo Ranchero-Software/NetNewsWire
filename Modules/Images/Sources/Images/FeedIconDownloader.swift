@@ -83,7 +83,6 @@ extension Notification.Name {
 						}
 						if let image = image {
 							self.cache[feed] = IconImage(image)
-							self.cacheIconURLForFeedURL(iconURL: iconURL, feedURL: feed.url)
 							self.postFeedIconDidBecomeAvailableNotification(feed)
 						} else if isDefinitive {
 							// The declared icon failed or isn’t an image. A still-downloading
