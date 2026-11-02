@@ -69,21 +69,29 @@ public enum ArticleExtractorState: Sendable {
 	public func process() {
 		state = .processing
 
+		if let host = url.host?.lowercased(), Self.isCoolingDown(host) {
+			// Fail on the next run loop turn: the delegate only accepts failures
+			// once startArticleExtractor() has stored this extractor.
+			Task { @MainActor [weak self] in
+				self?.fail(with: URLError(.userAuthenticationRequired))
+			}
+			return
+		}
+
 		let configuration = WKWebViewConfiguration()
 		// Use the app's shared, persistent cookie store so a logged-in session
 		// (e.g. a paywall login made in the in-app browser) carries into
 		// extraction and Readability sees the full article, not the free sample.
 		configuration.websiteDataStore = .default()
-		// Identify the app by appending to WebKit's native User-Agent rather than
-		// replacing it. Overriding `customUserAgent` with our bare UA drops the
-		// browser-engine token ("AppleWebKit … KHTML, like Gecko"); sites fronted by
-		// a CDN/WAF (e.g. motorsport.com behind CloudFront) then return a 403 error
-		// page, which WKWebView loads as a successful navigation, so Readability finds
-		// no article and extraction fails. `applicationNameForUserAgent` keeps the
-		// browser token, so the request isn't blocked.
-		if let userAgent = UserAgent.fromInfoPlist() {
-			configuration.applicationNameForUserAgent = userAgent
-		}
+		// Keep WebKit's default User-Agent, the same one the in-app browser sends.
+		// Both web views share the cookie store above, so they must present as the
+		// same client: bot managers such as Akamai (lesechos.fr) bind their session
+		// cookies to the client that earned them. Sending those cookies under a
+		// second UA (formerly "… NetNewsWire (RSS Reader; https://netnewswire.com/)")
+		// reads as cookie replay, so Akamai blocks the whole IP for several minutes,
+		// in-app browser included. Never set `customUserAgent` either: a bare UA
+		// without the browser-engine token gets 403s from CloudFront-fronted sites
+		// such as motorsport.com.
 		let userScript = WKUserScript(source: ReadabilityResource.javaScript,
 									  injectionTime: .atDocumentEnd,
 									  forMainFrameOnly: true)
@@ -105,6 +113,26 @@ public enum ArticleExtractorState: Sendable {
 	public func cancel() {
 		state = .cancelled
 		teardown()
+	}
+
+	// MARK: - Blocked hosts
+
+	/// Hosts whose main page answered extraction with 403 or 429, and when.
+	/// WAF blocks are per IP and extended by every retry, so while one is fresh
+	/// we don't hit the site again: the user can still open the in-app browser
+	/// once it lifts instead of prolonging it with each Reader View attempt.
+	private static var blockedHosts = [String: Date]()
+	private static let blockCooldown: TimeInterval = 10 * 60
+
+	private static func isCoolingDown(_ host: String) -> Bool {
+		guard let blockedAt = blockedHosts[host] else {
+			return false
+		}
+		if Date().timeIntervalSince(blockedAt) < blockCooldown {
+			return true
+		}
+		blockedHosts[host] = nil
+		return false
 	}
 
 	// MARK: - Private
@@ -285,6 +313,22 @@ public enum ArticleExtractorState: Sendable {
 }
 
 extension ArticleExtractor: WKNavigationDelegate {
+
+	func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse, decisionHandler: @escaping @MainActor @Sendable (WKNavigationResponsePolicy) -> Void) {
+		// A WAF error page loads as a successful navigation; catch it here so we
+		// stop hitting the site instead of running Readability on the error page.
+		if navigationResponse.isForMainFrame,
+		   let response = navigationResponse.response as? HTTPURLResponse,
+		   response.statusCode == 403 || response.statusCode == 429 {
+			if let host = url.host?.lowercased() {
+				Self.blockedHosts[host] = Date()
+			}
+			decisionHandler(.cancel)
+			fail(with: URLError(.userAuthenticationRequired))
+			return
+		}
+		decisionHandler(.allow)
+	}
 
 	func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
 		runReadability()
