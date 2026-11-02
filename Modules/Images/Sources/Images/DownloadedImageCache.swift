@@ -273,7 +273,7 @@ private extension DownloadedImageCache {
 				activityLog.didFail(activityOwner, kind: activityKind, error: error)
 			}
 			if !error.isTransient {
-				ImageDatabase.shared.recordFailure(url: url, statusCode: error.statusCode)
+				ImageDatabase.shared.recordFailure(url: url)
 			}
 			return .failure(error)
 		}

@@ -81,7 +81,7 @@ private extension SingleFaviconDownloader {
 				iconImage = IconImage(image)
 				ImageDatabase.shared.clearFailure(url: faviconURL)
 			} else {
-				ImageDatabase.shared.recordFailure(url: faviconURL, statusCode: nil)
+				ImageDatabase.shared.recordFailure(url: faviconURL)
 			}
 		} catch {
 			// A non-image response usually means the site has no favicon at this URL.

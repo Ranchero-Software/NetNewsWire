@@ -45,7 +45,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
 		let article = makeArticle(imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
 
-		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
+		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg")
 
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/image.jpg")
 	}
@@ -76,7 +76,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithoutImage, mode: .small) == nil)
 
-		imageDatabase.recordFailure(url: "https://example.com/uploads/photo.jpg", statusCode: 404)
+		imageDatabase.recordFailure(url: "https://example.com/uploads/photo.jpg")
 		finder.thumbnailURLDidFail("https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/second-photo.jpg")
 	}
@@ -89,7 +89,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		await finder.findThumbnailURLs(for: [article])
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
 
-		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
+		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg")
 		finder.thumbnailURLDidFail("https://example.com/thumbnail.jpg")
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
 	}
@@ -122,7 +122,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
 
 		// A failure with no notification shows whether the choice was made again.
-		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
+		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg")
 
 		let sameImages = makeArticle(contentHTML: "<p>Edited.</p>", imageURL: "https://example.com/image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
 		#expect(finder.thumbnailURL(for: sameImages, mode: .small) == "https://example.com/thumbnail.jpg")

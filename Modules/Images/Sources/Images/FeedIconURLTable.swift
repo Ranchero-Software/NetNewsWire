@@ -16,7 +16,6 @@ struct FeedIconURLTable {
 	private struct Column {
 		static let feedURL = "feedURL"
 		static let iconURL = "iconURL"
-		static let lastChecked = "lastChecked"
 	}
 
 	static func fetchAll(database: FMDatabase) -> [String: String] {
@@ -40,8 +39,7 @@ struct FeedIconURLTable {
 	static func save(feedURL: String, iconURL: String, database: FMDatabase) {
 		let dictionary: DatabaseDictionary = [
 			Column.feedURL: feedURL,
-			Column.iconURL: iconURL,
-			Column.lastChecked: Date().timeIntervalSince1970
+			Column.iconURL: iconURL
 		]
 		database.insertRow(dictionary, insertType: .orReplace, tableName: name)
 	}

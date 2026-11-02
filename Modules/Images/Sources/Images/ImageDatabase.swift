@@ -17,8 +17,7 @@ import RSParser
 
 	public static let shared = ImageDatabase()
 
-	public static let failureRetryDays = 5
-	private static let failureRetentionDays = 33
+	private static let failureRetryDays = 5
 
 	public let databasePath: String
 
@@ -33,9 +32,9 @@ import RSParser
 	private var urlsUnsuitableForThumbnails = Set<String>()
 
 	private static let tableCreationStatements = """
-	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, statusCode INTEGER, lastChecked REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
-	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL, lastChecked REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL);
 	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, byteCount INTEGER NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL);
 	"""
 
@@ -47,9 +46,9 @@ import RSParser
 
 	/// Tables and columns imported from ImageMetadata.db, which shipped before Images.db replaced it.
 	nonisolated private static let legacyTableColumns = [
-		(table: "downloadFailure", columns: "url, statusCode, lastChecked"),
+		(table: "downloadFailure", columns: "url, lastChecked"),
 		(table: "homePageFavicon", columns: "homePageURL, faviconURL, lastChecked"),
-		(table: "feedIconURL", columns: "feedURL, iconURL, lastChecked")
+		(table: "feedIconURL", columns: "feedURL, iconURL")
 	]
 
 	private convenience init() {
@@ -72,7 +71,7 @@ import RSParser
 
 		loadCachesFromDatabase()
 
-		let failureCutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetentionDays)
+		let failureCutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetryDays)
 		queue.runInDatabase { database in
 			DownloadFailureTable.removeExpired(olderThan: failureCutoff, database: database)
 			database.executeStatements(Self.dropArticleThumbnailTableStatement)
@@ -132,10 +131,10 @@ import RSParser
 		return Date().timeIntervalSince(lastFailure) < TimeInterval(days: Self.failureRetryDays)
 	}
 
-	public func recordFailure(url: String, statusCode: Int?) {
+	public func recordFailure(url: String) {
 		failureDates[url] = Date()
 		queue.runInDatabase { database in
-			DownloadFailureTable.save(url: url, statusCode: statusCode, database: database)
+			DownloadFailureTable.save(url: url, database: database)
 		}
 	}
 
