@@ -134,20 +134,17 @@ extension Notification.Name {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
-		guard searches[url] == nil else {
-			return nil
-		}
-		if let faviconURLs = findFaviconURLs(with: url) {
-			searches[url] = FaviconSearch(remainingFaviconURLs: faviconURLs[...])
-			downloadNextFavicon(forHomePageURL: url)
-		}
-
+		searchForFavicon(homePageURL: url)
 		return nil
 	}
 
 	// MARK: - Notifications
 
 	/// Every home page searching with this favicon URL moves on: to saving it, or to its next candidate.
+	///
+	/// When a saved favicon URL returns something that isn’t an image, the site may have moved its favicon,
+	/// so its home pages are searched again. The saved URL stays until a search finds another one,
+	/// so a captive portal can’t clear it.
 	@objc func didLoadFavicon(_ note: Notification) {
 
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
@@ -168,6 +165,12 @@ extension Notification.Name {
 					searches[homePageURL]?.hadTransientFailure = true
 				}
 				downloadNextFavicon(forHomePageURL: homePageURL)
+			}
+		}
+
+		if !foundFavicon && singleFaviconDownloader.lastFailureWasNotAnImage {
+			for homePageURL in ImageDatabase.shared.homePageURLs(withFaviconURL: faviconURL) {
+				searchForFavicon(homePageURL: homePageURL)
 			}
 		}
 	}
@@ -242,6 +245,14 @@ private extension FaviconDownloader {
 
 		let defaultFaviconURL = "\(scheme)://\(host)/favicon.ico".lowercased(with: FaviconDownloader.localeForLowercasing)
 		return faviconURLs + [defaultFaviconURL]
+	}
+
+	func searchForFavicon(homePageURL: String) {
+		guard searches[homePageURL] == nil, let faviconURLs = findFaviconURLs(with: homePageURL) else {
+			return
+		}
+		searches[homePageURL] = FaviconSearch(remainingFaviconURLs: faviconURLs[...])
+		downloadNextFavicon(forHomePageURL: homePageURL)
 	}
 
 	func canAttemptDownload(_ faviconURL: String) -> Bool {

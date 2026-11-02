@@ -88,6 +88,10 @@ import RSParser
 		homePageToFaviconURL[homePageURL]
 	}
 
+	public func homePageURLs(withFaviconURL faviconURL: String) -> [String] {
+		homePageToFaviconURL.filter { $0.value == faviconURL }.map { $0.key }
+	}
+
 	public func homePageHasNoFavicon(_ homePageURL: String) -> Bool {
 		homePagesWithNoFavicon.contains(homePageURL)
 	}

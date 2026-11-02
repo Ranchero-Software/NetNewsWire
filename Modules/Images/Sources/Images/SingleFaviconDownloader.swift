@@ -23,6 +23,7 @@ extension Notification.Name {
 
 	public var iconImage: IconImage?
 	private(set) var lastFailureWasTransient = false
+	private(set) var lastFailureWasNotAnImage = false
 	/// True until `.DidLoadFavicon` is posted for the current attempt.
 	private(set) var isFinding = true
 
@@ -62,6 +63,7 @@ private extension SingleFaviconDownloader {
 	func findFavicon() async {
 		let kind = ActivityKind.downloadFavicon(faviconURL: faviconURL)
 		lastFailureWasTransient = false
+		lastFailureWasNotAnImage = false
 		if let scaledData = await DownloadedImageCache.shared.derivedImageData(for: faviconURL, suffix: DownloadedImageCache.scaledIconSuffix), let iconImage = await IconImage.decodedIconImage(scaledData) {
 			DownloadedImageCache.shared.imageWasUsed(faviconURL, checksForUpdates: true)
 			self.iconImage = iconImage
@@ -86,6 +88,7 @@ private extension SingleFaviconDownloader {
 		} catch {
 			// A non-image response is transient, so a captive portal’s login page can’t lead to “no favicon”.
 			lastFailureWasTransient = error.isTransient
+			lastFailureWasNotAnImage = error.decodingFailed
 		}
 		postDidLoadFaviconNotification()
 	}
