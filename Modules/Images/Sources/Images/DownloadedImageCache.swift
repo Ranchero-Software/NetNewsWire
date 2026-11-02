@@ -290,7 +290,9 @@ private extension DownloadedImageCache {
 			downloadResponse = try await Downloader.shared.download(imageURL, userAgentStyle: .browser, cachesResponse: false)
 		} catch {
 			Self.logger.error("Error downloading image at \(url) \(error.localizedDescription)")
-			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: true)
+			// DNS and certificate errors stay transient, since a captive portal causes them too.
+			let isUnsupportedURL = (error as? URLError)?.code == .unsupportedURL
+			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: !isUnsupportedURL)
 		}
 
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
