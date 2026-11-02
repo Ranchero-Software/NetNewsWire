@@ -36,6 +36,7 @@ extension Notification.Name {
 		NotificationCenter.default.addObserver(self, selector: #selector(handleHTMLMetadataAvailable(_:)), name: .htmlMetadataAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 	}
 
 	@objc func handleLowMemory(_ notification: Notification) {
@@ -49,6 +50,7 @@ extension Notification.Name {
 	public func icon(for feed: Feed) -> IconImage? {
 
 		if let cachedImage = cache[feed] {
+			requestOwnIconIfRetryWaitEnded(feed)
 			return cachedImage
 		}
 
@@ -129,7 +131,19 @@ extension Notification.Name {
 		// A single image URL may be shared by multiple feeds.
 		waitingForFeedURLs[url] = nil
 		for feed in feeds {
+			// A waiting feed with an icon is showing its home page icon until its own arrives.
+			cache[feed] = nil
 			_ = icon(for: feed)
+		}
+	}
+
+	/// Waits for transient failures may have just ended, so waiting icons are requested again.
+	/// Runs after `DownloadedImageCache` ends those waits, which it does on this notification too.
+	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
+		Task { @MainActor in
+			for (url, feeds) in waitingForFeedURLs where !DownloadedImageCache.shared.isWaitingToRetry(url) {
+				_ = imageData(for: url, feed: feeds.first)
+			}
 		}
 	}
 
@@ -256,12 +270,14 @@ private extension FeedIconDownloader {
 
 	/// `isDefinitive` is false when the image is still downloading — imageDidBecomeAvailable
 	/// re-runs icon(for:) when it arrives.
+	///
+	/// After a transient failure, `isDefinitive` is true, so the caller can fall back to the home page icon,
+	/// and the feed still waits for this image, which replaces the fallback when it arrives.
 	func icon(forURL url: String, feed: Feed, _ imageResultBlock: @escaping @MainActor (RSImage?, _ isDefinitive: Bool) -> Void) {
 
 		let url = Self.sanitizedIconURL(url)
 
-		let kind = ActivityKind.downloadFeedImage(feedURL: url)
-		if let imageData = imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: kind, activityDetail: feed.nameForDisplay) {
+		if let imageData = imageData(for: url, feed: feed) {
 			RSImage.image(with: imageData) { image in
 				imageResultBlock(image, true)
 			}
@@ -269,13 +285,30 @@ private extension FeedIconDownloader {
 		}
 
 		let urlIsUnfetchable = !url.hasPrefix("http://") && !url.hasPrefix("https://")
-		if urlIsUnfetchable || ImageDatabase.shared.recentlyFailed(url: url) || DownloadedImageCache.shared.isWaitingToRetry(url) {
+		if urlIsUnfetchable || ImageDatabase.shared.recentlyFailed(url: url) {
 			imageResultBlock(nil, true)
 			return
 		}
 
 		waitingForFeedURLs[url, default: Set<Feed>()].insert(feed)
-		imageResultBlock(nil, false)
+		imageResultBlock(nil, DownloadedImageCache.shared.isWaitingToRetry(url))
+	}
+
+	/// Returns the data if in memory, else requests it. `imageDidBecomeAvailable` follows when it’s ready.
+	func imageData(for url: String, feed: Feed?) -> Data? {
+		imageDownloader.image(for: url, activityOwner: .feedImageDownloader, activityKind: .downloadFeedImage(feedURL: url), activityDetail: feed?.nameForDisplay)
+	}
+
+	/// A feed showing its home page icon while it waits for its own requests it again once the retry wait ends.
+	func requestOwnIconIfRetryWaitEnded(_ feed: Feed) {
+		guard let iconURL = feed.iconURL, !Self.shouldIgnoreFeedIconURL(feed) else {
+			return
+		}
+		let url = Self.sanitizedIconURL(iconURL)
+		guard waitingForFeedURLs[url]?.contains(feed) == true, !DownloadedImageCache.shared.isWaitingToRetry(url) else {
+			return
+		}
+		_ = imageData(for: url, feed: feed)
 	}
 
 	func postFeedIconDidBecomeAvailableNotification(_ feed: Feed) {
