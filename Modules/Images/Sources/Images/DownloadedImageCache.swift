@@ -28,6 +28,8 @@ extension Notification.Name {
 ///
 /// At launch, the least recently used copies are deleted from disk until the rest total no more than
 /// `maximumStoredByteCount`. The total can go over that until the next launch.
+/// Icons don’t count toward the limit and aren’t removed for it, so thumbnails can’t push them out.
+/// Instead, icons not used in `unusedIconExpirationInterval` are deleted at launch.
 ///
 /// Icons can change at the same URL, so callers that show icons pass `checksForUpdates`.
 /// An icon used after its `nextCheck` date is still used, and the server is asked in the
@@ -71,6 +73,7 @@ extension Notification.Name {
 	nonisolated private static let checkIntervalJitter = 0.2
 	/// A file and its record are saved moments apart, so anything this recent may be mid-save.
 	nonisolated private static let recentChangeInterval: TimeInterval = 60
+	nonisolated private static let unusedIconExpirationInterval = TimeInterval(days: 180)
 	/// Disk keys are hex, so this can’t appear in an image’s own key.
 	nonisolated private static let derivedKeySeparator: Character = "-"
 	nonisolated private static let retryWait: TimeInterval = 37 * 60
@@ -81,6 +84,7 @@ extension Notification.Name {
 	private let downloadQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentLimitedDownloads, maximumWaitingCount: maximumWaitingLimitedDownloads, maximumRunningCountPerGroup: maximumDownloadsPerHost)
 	private var tasks = [String: Task<Result<Data, ImageDownloadError>, Never>]() // url: task
 	private var readDatesNoted = [String: Date]() // url: date
+	private var iconURLsNoted = Set<String>()
 	private var retryDates = [String: Date]() // url: end of the wait after its last transient failure
 	private var hostRetryDates = [String: Date]() // lowercased host: end of the wait after its last transient failure
 
@@ -152,7 +156,14 @@ extension Notification.Name {
 	/// At most once a day per image: saves the access date, which orders images for removal,
 	/// and, when `checksForUpdates`, checks with the server if the copy is due.
 	/// Callers that keep images in memory call this on memory hits too, so images in use aren’t removed first.
+	///
+	/// `checksForUpdates` means the image is an icon, which is saved once per session, so an image first saved as a thumbnail is kept as an icon.
 	func imageWasUsed(_ url: String, checksForUpdates: Bool) {
+		if checksForUpdates && !iconURLsNoted.contains(url) {
+			iconURLsNoted.insert(url)
+			ImageDatabase.shared.saveDownloadedImageIsIcon(url: url)
+		}
+
 		let now = Date()
 		if let readDate = readDatesNoted[url], now.timeIntervalSince(readDate) < Self.readNoteInterval {
 			return
@@ -211,7 +222,7 @@ private extension DownloadedImageCache {
 			}
 		}
 		let maximumByteCount = usesDownloadQueue ? Self.maximumLimitedDownloadByteCount : nil
-		let result = await downloadImageFromNetwork(url, maximumByteCount: maximumByteCount, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
+		let result = await downloadImageFromNetwork(url, maximumByteCount: maximumByteCount, isIcon: checksForUpdates, activityOwner: activityOwner, activityKind: activityKind, activityDetail: activityDetail)
 		if usesDownloadQueue {
 			downloadQueue.taskDidFinish(group: host)
 		}
@@ -248,7 +259,7 @@ private extension DownloadedImageCache {
 		URL(string: url)?.host()?.lowercased(with: localeForLowercasing)
 	}
 
-	func downloadImageFromNetwork(_ url: String, maximumByteCount: Int?, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
+	func downloadImageFromNetwork(_ url: String, maximumByteCount: Int?, isIcon: Bool, activityOwner: ActivityOwner?, activityKind: ActivityKind?, activityDetail: String?) async -> Result<Data, ImageDownloadError> {
 		let activityLog = ActivityLog.shared
 		// Thumbnails log only failures, since a few screens of scrolling would otherwise push out the rest of the log.
 		let logsOnlyFailure = activityOwner == .thumbnailDownloader
@@ -258,7 +269,7 @@ private extension DownloadedImageCache {
 		}
 
 		do {
-			let (data, downloadResponse) = try await downloadImage(url, maximumByteCount: maximumByteCount)
+			let (data, downloadResponse) = try await downloadImage(url, maximumByteCount: maximumByteCount, isIcon: isIcon)
 			if !logsOnlyFailure, let activityOwner, let activityKind {
 				let message = downloadResponse.data.map(ActivityLog.dataSizeMessage)
 				activityLog.didComplete(activityOwner, kind: activityKind, message: message, returnedFromCache: downloadResponse.returnedFromCache)
@@ -279,7 +290,7 @@ private extension DownloadedImageCache {
 		}
 	}
 
-	func downloadImage(_ url: String, maximumByteCount: Int?) async throws(ImageDownloadError) -> (Data, DownloadResponse) {
+	func downloadImage(_ url: String, maximumByteCount: Int?, isIcon: Bool) async throws(ImageDownloadError) -> (Data, DownloadResponse) {
 		guard let imageURL = URL(string: url) else {
 			throw ImageDownloadError(statusCode: nil, decodingFailed: false, isTransient: false)
 		}
@@ -302,7 +313,7 @@ private extension DownloadedImageCache {
 				throw ImageDownloadError(statusCode: statusCode, decodingFailed: false, isTransient: false, rejectedByteCount: data.count)
 			}
 			// Transient, since a captive portal’s login page would otherwise fail every image for days.
-			guard try await saveImage(data, url: url, httpResponse: httpResponse) else {
+			guard try await saveImage(data, url: url, httpResponse: httpResponse, isIcon: isIcon) else {
 				throw ImageDownloadError(statusCode: statusCode, decodingFailed: true, isTransient: true)
 			}
 			return (data, downloadResponse)
@@ -329,7 +340,7 @@ private extension DownloadedImageCache {
 	/// Returns false, and saves nothing, when the data isn’t an image, such as an HTML error page.
 	/// SVG is saved, though ImageIO can’t read it.
 	/// Throws a transient error, and records nothing, when the file can’t be written.
-	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?) async throws(ImageDownloadError) -> Bool {
+	func saveImage(_ data: Data, url: String, httpResponse: HTTPURLResponse?, isIcon: Bool) async throws(ImageDownloadError) -> Bool {
 		let pixelSize = await Self.pixelSize(data)
 		guard pixelSize != nil || httpResponse?.mimeType == Self.svgMIMEType else {
 			Self.logger.info("Didn’t save unreadable image at \(url)")
@@ -346,7 +357,7 @@ private extension DownloadedImageCache {
 			conditionalGetInfo = HTTPConditionalGetInfo(urlResponse: httpResponse)
 		}
 		let nextCheck = Self.nextCheck(httpResponse, hasValidators: conditionalGetInfo != nil)
-		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
+		ImageDatabase.shared.saveDownloadedImage(DownloadedImageRecord(url: url, pixelSize: pixelSize, conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck, isIcon: isIcon))
 		return true
 	}
 
@@ -375,7 +386,7 @@ private extension DownloadedImageCache {
 		}
 
 		let httpResponse = downloadResponse.response as? HTTPURLResponse
-		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK, (try? await saveImage(data, url: url, httpResponse: httpResponse)) == true {
+		if let data = downloadResponse.data, !data.isEmpty, let httpResponse, httpResponse.statusIsOK, (try? await saveImage(data, url: url, httpResponse: httpResponse, isIcon: true)) == true {
 			Self.logger.info("Replaced changed image at \(url)")
 			await Self.deleteFromDisk(diskCache, keys: [Self.derivedDiskKey(url, suffix: Self.scaledIconSuffix)])
 			NotificationCenter.default.post(name: .downloadedImageDidChange, object: self, userInfo: [Self.urlKey: url])
@@ -393,7 +404,7 @@ private extension DownloadedImageCache {
 
 	// MARK: - Removing Images
 
-	/// Removes the least recently used images until their files total `maximumStoredByteCount`.
+	/// Removes the least recently used images, other than icons, until their files total `maximumStoredByteCount`.
 	/// Also removes files with no record and records with no file.
 	func removeImagesOverSizeLimit() async {
 		let startDate = Date()
@@ -512,13 +523,15 @@ extension DownloadedImageCache {
 
 	/// `records` are least recently accessed first. Files with no record and records with no file
 	/// are removed, along with derived copies of removed images. Then, when over `maximumByteCount`,
-	/// the least recently accessed images are removed.
+	/// the least recently accessed images are removed. Icons don’t count toward it and aren’t removed for it.
+	/// Icons not used in `unusedIconExpirationInterval` are removed.
 	/// Nothing changed in the last minute is removed, since it may be in the middle of being saved.
 	/// Images in `urlsInUse` are being read or downloaded, so they’re kept too.
 	@concurrent static func imageRemoval(records: [DownloadedImageUsage], files: [String: StoredFile], urlsInUse: Set<String>, now: Date, maximumByteCount: Int) async -> ImageRemoval {
 		let recentChangeDate = now.addingTimeInterval(-recentChangeInterval)
 
-		var recordsToKeep = [(record: DownloadedImageUsage, key: String, byteCount: Int)]()
+		var recordsCountedTowardLimit = [(record: DownloadedImageUsage, key: String, byteCount: Int)]()
+		var iconRecords = [(record: DownloadedImageUsage, key: String)]()
 		var recordedKeys = Set<String>()
 		var urls = [String]()
 		for record in records {
@@ -526,20 +539,29 @@ extension DownloadedImageCache {
 			recordedKeys.insert(key)
 			if files[key] == nil && record.lastAccessed < recentChangeDate {
 				urls.append(record.url)
+			} else if record.isIcon {
+				iconRecords.append((record: record, key: key))
 			} else {
-				recordsToKeep.append((record: record, key: key, byteCount: files[key]?.byteCount ?? 0))
+				recordsCountedTowardLimit.append((record: record, key: key, byteCount: files[key]?.byteCount ?? 0))
 			}
 		}
 		var keys = Set(files.filter { !recordedKeys.contains(baseDiskKey($0.key)) && $0.value.modificationDate < recentChangeDate }.keys)
-		var byteCount = recordsToKeep.reduce(0) { $0 + $1.byteCount }
+		var byteCount = recordsCountedTowardLimit.reduce(0) { $0 + $1.byteCount }
 
-		for (record, key, recordByteCount) in recordsToKeep where !urlsInUse.contains(record.url) {
+		for (record, key, recordByteCount) in recordsCountedTowardLimit where !urlsInUse.contains(record.url) {
 			if byteCount <= maximumByteCount || record.lastAccessed >= recentChangeDate {
 				break
 			}
 			urls.append(record.url)
 			keys.insert(key)
 			byteCount -= recordByteCount
+		}
+
+		// Such as icons of deleted feeds.
+		let unusedIconDate = now.addingTimeInterval(-unusedIconExpirationInterval)
+		for (record, key) in iconRecords where record.lastAccessed < unusedIconDate && !urlsInUse.contains(record.url) {
+			urls.append(record.url)
+			keys.insert(key)
 		}
 
 		// Derived copies go with their images.

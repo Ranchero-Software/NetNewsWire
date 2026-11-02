@@ -17,6 +17,7 @@ struct DownloadedImageRecord: Sendable {
 	let pixelSize: (width: Int, height: Int)?
 	let conditionalGetInfo: HTTPConditionalGetInfo?
 	let nextCheck: Date
+	let isIcon: Bool
 }
 
 /// What `DownloadedImageCache` needs to check with the server whether a copy is current.
@@ -26,9 +27,11 @@ struct DownloadedImageValidation: Sendable {
 }
 
 /// What `DownloadedImageCache` needs to choose images to remove.
+/// Icons don’t count toward the size limit.
 struct DownloadedImageUsage: Sendable {
 	let url: String
 	let lastAccessed: Date
+	let isIcon: Bool
 }
 
 /// One row per copy stored by `DownloadedImageCache`.
@@ -44,6 +47,7 @@ struct DownloadedImageTable {
 		static let etag = "etag"
 		static let lastModified = "lastModified"
 		static let nextCheck = "nextCheck"
+		static let isIcon = "isIcon"
 	}
 
 	/// Keeps each query under the database’s limit on parameters.
@@ -74,7 +78,7 @@ struct DownloadedImageTable {
 	/// Least recently accessed first. Nil when the query fails.
 	static func fetchUsageByLeastRecentAccess(database: FMDatabase) -> [DownloadedImageUsage]? {
 		var results = [DownloadedImageUsage]()
-		guard let resultSet = database.executeQuery("SELECT \(Column.url), \(Column.lastAccessed) FROM \(name) ORDER BY \(Column.lastAccessed);", withArgumentsIn: []) else {
+		guard let resultSet = database.executeQuery("SELECT \(Column.url), \(Column.lastAccessed), \(Column.isIcon) FROM \(name) ORDER BY \(Column.lastAccessed);", withArgumentsIn: []) else {
 			return nil
 		}
 		defer {
@@ -85,7 +89,7 @@ struct DownloadedImageTable {
 				continue
 			}
 			let lastAccessed = Date(timeIntervalSince1970: resultSet.double(forColumn: Column.lastAccessed))
-			results.append(DownloadedImageUsage(url: url, lastAccessed: lastAccessed))
+			results.append(DownloadedImageUsage(url: url, lastAccessed: lastAccessed, isIcon: resultSet.bool(forColumn: Column.isIcon)))
 		}
 		return results
 	}
@@ -113,6 +117,10 @@ struct DownloadedImageTable {
 		database.updateRowsWithValue(Date().timeIntervalSince1970, valueKey: Column.lastAccessed, whereKey: Column.url, equals: url, tableName: name)
 	}
 
+	static func saveIsIcon(url: String, database: FMDatabase) {
+		database.updateRowsWithValue(true, valueKey: Column.isIcon, whereKey: Column.url, equals: url, tableName: name)
+	}
+
 	static func delete(urls: [String], database: FMDatabase) {
 		for urlsChunk in urls.chunked(into: maximumURLsPerQuery) {
 			database.deleteRowsWhere(key: Column.url, equalsAnyValue: urlsChunk, tableName: name)
@@ -127,7 +135,8 @@ struct DownloadedImageTable {
 			Column.lastAccessed: Date().timeIntervalSince1970,
 			Column.etag: record.conditionalGetInfo?.etag as Any,
 			Column.lastModified: record.conditionalGetInfo?.lastModified as Any,
-			Column.nextCheck: record.nextCheck.timeIntervalSince1970
+			Column.nextCheck: record.nextCheck.timeIntervalSince1970,
+			Column.isIcon: record.isIcon
 		]
 		database.insertRow(dictionary, insertType: .orReplace, tableName: name)
 	}

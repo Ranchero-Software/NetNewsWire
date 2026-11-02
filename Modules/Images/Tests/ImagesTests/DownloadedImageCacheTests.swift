@@ -17,11 +17,11 @@ import RSCore
 		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
 		let urls = ["https://example.com/a.jpg", "https://example.com/b.jpg", "https://example.com/c.jpg", "https://example.com/just-saved.jpg"]
 		let records = [
-			DownloadedImageUsage(url: "https://example.com/no-file.jpg", lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[0], lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[1], lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[2], lastAccessed: longAgo),
-			DownloadedImageUsage(url: urls[3], lastAccessed: now)
+			DownloadedImageUsage(url: "https://example.com/no-file.jpg", lastAccessed: longAgo, isIcon: false),
+			DownloadedImageUsage(url: urls[0], lastAccessed: longAgo, isIcon: false),
+			DownloadedImageUsage(url: urls[1], lastAccessed: longAgo, isIcon: false),
+			DownloadedImageUsage(url: urls[2], lastAccessed: longAgo, isIcon: false),
+			DownloadedImageUsage(url: urls[3], lastAccessed: now, isIcon: false)
 		]
 		let keys = urls.map { DownloadedImageCache.diskKey($0) }
 		var files = Dictionary(uniqueKeysWithValues: keys.map { ($0, storedFile(longAgo, byteCount: 100)) })
@@ -38,7 +38,7 @@ import RSCore
 	@Test func imagesInUseAreKept() async {
 		let now = Date()
 		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
-		let records = (0..<3).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", lastAccessed: longAgo) }
+		let records = (0..<3).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", lastAccessed: longAgo, isIcon: false) }
 		let files = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), storedFile(longAgo, byteCount: 100)) })
 
 		let removal = await DownloadedImageCache.imageRemoval(records: records, files: files, urlsInUse: [records[0].url], now: now, maximumByteCount: 200)
@@ -50,7 +50,7 @@ import RSCore
 	@Test func derivedCopiesAreKeptAndRemovedWithTheirImages() async {
 		let now = Date()
 		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
-		let records = (0..<2).map { DownloadedImageUsage(url: "https://example.com/\($0).png", lastAccessed: longAgo.addingTimeInterval(TimeInterval($0))) }
+		let records = (0..<2).map { DownloadedImageUsage(url: "https://example.com/\($0).png", lastAccessed: longAgo.addingTimeInterval(TimeInterval($0)), isIcon: false) }
 		let removedCopy = DownloadedImageCache.derivedDiskKey(records[0].url, suffix: "144")
 		let keptCopy = DownloadedImageCache.derivedDiskKey(records[1].url, suffix: "144")
 		let orphanedCopy = DownloadedImageCache.derivedDiskKey("https://example.com/gone.png", suffix: "144")
@@ -64,6 +64,33 @@ import RSCore
 		#expect(removal.urls == [records[0].url])
 		#expect(removal.keys == [DownloadedImageCache.diskKey(records[0].url), removedCopy, orphanedCopy])
 		#expect(removal.remainingByteCount == 100)
+	}
+
+	@Test func iconsDoNotCountTowardLimit() async {
+		let now = Date()
+		let longAgo = now.addingTimeInterval(-TimeInterval(days: 10))
+		let icon = DownloadedImageUsage(url: "https://example.com/apple-touch-icon.png", lastAccessed: longAgo, isIcon: true)
+		let thumbnails = (0..<2).map { DownloadedImageUsage(url: "https://example.com/\($0).jpg", lastAccessed: longAgo.addingTimeInterval(TimeInterval($0 + 1)), isIcon: false) }
+		let records = [icon] + thumbnails
+		let files = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), storedFile(longAgo, byteCount: 100)) })
+
+		let removal = await DownloadedImageCache.imageRemoval(records: records, files: files, urlsInUse: [], now: now, maximumByteCount: 100)
+
+		#expect(removal.urls == [thumbnails[0].url])
+		#expect(removal.remainingByteCount == 100)
+	}
+
+	@Test func iconsNotUsedIn180DaysAreRemoved() async {
+		let now = Date()
+		let unusedIcon = DownloadedImageUsage(url: "https://example.com/deleted-feed-icon.png", lastAccessed: now.addingTimeInterval(-TimeInterval(days: 181)), isIcon: true)
+		let usedIcon = DownloadedImageUsage(url: "https://example.com/feed-icon.png", lastAccessed: now.addingTimeInterval(-TimeInterval(days: 179)), isIcon: true)
+		let records = [unusedIcon, usedIcon]
+		let files = Dictionary(uniqueKeysWithValues: records.map { (DownloadedImageCache.diskKey($0.url), storedFile(unusedIcon.lastAccessed, byteCount: 100)) })
+
+		let removal = await DownloadedImageCache.imageRemoval(records: records, files: files, urlsInUse: [], now: now, maximumByteCount: 1000)
+
+		#expect(removal.urls == [unusedIcon.url])
+		#expect(removal.keys == [DownloadedImageCache.diskKey(unusedIcon.url)])
 	}
 
 	@Test func folderThatCantBeListedHasNoStoredFiles() async {

@@ -35,7 +35,7 @@ import RSParser
 	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL);
-	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL);
+	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL, isIcon INTEGER NOT NULL DEFAULT 0);
 	"""
 
 	private static let databaseFileName = "Images.db"
@@ -169,6 +169,12 @@ import RSParser
 	func saveDownloadedImageAccessDate(url: String) {
 		queue.runInDatabase { database in
 			DownloadedImageTable.saveAccessDate(url: url, database: database)
+		}
+	}
+
+	func saveDownloadedImageIsIcon(url: String) {
+		queue.runInDatabase { database in
+			DownloadedImageTable.saveIsIcon(url: url, database: database)
 		}
 	}
 

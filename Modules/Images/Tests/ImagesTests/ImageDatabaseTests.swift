@@ -58,11 +58,11 @@ import RSWeb
 		let conditionalGetInfo = try #require(HTTPConditionalGetInfo(lastModified: nil, etag: "\"abc\""))
 
 		let imageDatabase = ImageDatabase(databasePath: databasePath)
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: iconURL, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, pixelSize: (width: 512, height: 512), conditionalGetInfo: nil, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: photoURL, pixelSize: (width: 800, height: 600), conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck))
-		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: unreadableImageURL, pixelSize: nil, conditionalGetInfo: nil, nextCheck: nextCheck))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: iconURL, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck, isIcon: false))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, pixelSize: (width: 48, height: 48), conditionalGetInfo: nil, nextCheck: nextCheck, isIcon: false))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: replacedIconURL, pixelSize: (width: 512, height: 512), conditionalGetInfo: nil, nextCheck: nextCheck, isIcon: false))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: photoURL, pixelSize: (width: 800, height: 600), conditionalGetInfo: conditionalGetInfo, nextCheck: nextCheck, isIcon: false))
+		imageDatabase.saveDownloadedImage(DownloadedImageRecord(url: unreadableImageURL, pixelSize: nil, conditionalGetInfo: nil, nextCheck: nextCheck, isIcon: false))
 
 		let validation = await imageDatabase.fetchDownloadedImageValidation(url: photoURL)
 		#expect(validation?.conditionalGetInfo == conditionalGetInfo)
