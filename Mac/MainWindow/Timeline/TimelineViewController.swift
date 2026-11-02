@@ -143,8 +143,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 				return
 			}
 
-			findThumbnailURLs()
-
 			if let representedObjects = representedObjects, representedObjects.count == 1 && representedObjects.first is Feed {
 				showFeedNames = {
 					for article in articles {
@@ -285,7 +283,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 			NotificationCenter.default.addObserver(self, selector: #selector(feedIconDidBecomeAvailable(_:)), name: .feedIconDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(avatarDidBecomeAvailable(_:)), name: .AvatarDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(faviconDidBecomeAvailable(_:)), name: .FaviconDidBecomeAvailable, object: nil)
-			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 			NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
@@ -758,13 +755,6 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		}
 	}
 
-	@objc func handleArticleThumbnailURLsDidBecomeAvailable(_ notification: Notification) {
-		guard thumbnailMode != nil, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
-			return
-		}
-		thumbnailURLsDidChange(for: articleIDs)
-	}
-
 	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
 		guard let thumbnailMode, let url = notification.userInfo?[ArticleThumbnailFinder.urlKey] as? String else {
 			return
@@ -782,17 +772,8 @@ final class TimelineViewController: NSViewController, UndoableCommandRunner, Unr
 		guard thumbnailMode != nil, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
 			return
 		}
-		let rowsUsingURL = indexesForArticleIDs(articleIDs)
-		guard !rowsUsingURL.isEmpty else {
-			return
-		}
-		// A failed provided image falls back to images in the HTML. Those are found first, so a row that has one doesn’t shrink and then grow back.
-		let articlesUsingURL = rowsUsingURL.compactMap { articles.articleAtRow($0) }
-		Task {
-			await ArticleThumbnailFinder.shared.findThumbnailURLs(for: articlesUsingURL).value
-			// Articles that used the failed URL now get their next source, or none.
-			thumbnailURLsDidChange(for: articleIDs)
-		}
+		// Articles that used the failed URL now get their next source, or none.
+		thumbnailURLsDidChange(for: articleIDs)
 	}
 
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {
@@ -1268,7 +1249,6 @@ private extension TimelineViewController {
 	}
 
 	func layoutDidChange() {
-		findThumbnailURLs()
 		performBlockAndRestoreSelection {
 			configureTableView(for: layout)
 			updateShowIcons()
@@ -1399,27 +1379,20 @@ private extension TimelineViewController {
 	}
 
 	func thumbnailsDisplayDidChange() {
+		if thumbnailsDisplay.thumbnailMode == nil {
+			ArticleThumbnailFinder.shared.emptyHTMLThumbnailCache()
+		}
 		updateCellAppearances()
 		updateLargeThumbnailRowHeight()
 		guard layout == .standard else {
 			return
 		}
-		findThumbnailURLs()
 		performBlockAndRestoreSelection {
 			tableView.reloadData()
 		}
 		if tableView.selectedRow != -1 {
 			tableView.scrollRowToVisible(tableView.selectedRow)
 		}
-	}
-
-	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
-	/// Row heights and text width depend on having a thumbnail URL, so this runs before rows are laid out.
-	func findThumbnailURLs() {
-		guard thumbnailMode != nil else {
-			return
-		}
-		ArticleThumbnailFinder.shared.findThumbnailURLs(for: articles)
 	}
 
 	// MARK: - Appearance Change
@@ -1514,7 +1487,7 @@ private extension TimelineViewController {
 		precondition(Thread.isMainThread)
 		cancelPendingAsyncFetches()
 		let fetchers = representedObjects.compactMap { $0 as? ArticleFetcher }
-		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers) { [weak self] (articles, operation) in
+		let fetchOperation = FetchRequestOperation(id: fetchSerialNumber, readFilterEnabledTable: readFilterEnabledTable, fetchers: fetchers, findsThumbnailURLs: thumbnailMode != nil) { [weak self] (articles, operation) in
 			precondition(Thread.isMainThread)
 			guard !operation.isCanceled, let strongSelf = self, operation.id == strongSelf.fetchSerialNumber else {
 				return

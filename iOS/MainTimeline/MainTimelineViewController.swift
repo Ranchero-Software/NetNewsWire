@@ -757,7 +757,6 @@ private extension MainTimelineViewController {
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineIconSizeDidChange(_:)), name: .timelineIconSizeDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(timelineNumberOfLinesDidChange(_:)), name: .timelineNumberOfLinesDidChange, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleTimelineThumbnailsDisplayDidChange(_:)), name: .timelineThumbnailsDisplayDidChange, object: nil)
-		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDidBecomeAvailable(_:)), name: .articleThumbnailDidBecomeAvailable, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailDownloadDidFail(_:)), name: .articleThumbnailDownloadDidFail, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
@@ -1082,8 +1081,6 @@ private extension MainTimelineViewController {
 			return
 		}
 
-		findThumbnailURLs()
-
 		var snapshot = NSDiffableDataSourceSnapshot<Int, Article>()
 		snapshot.appendSections([0])
 		snapshot.appendItems(articles ?? ArticleArray(), toSection: 0)
@@ -1106,15 +1103,6 @@ private extension MainTimelineViewController {
 			return
 		}
 		reloadCells(visibleArticles().filter { articleIDs.contains($0.articleID) })
-	}
-
-	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
-	/// Results for the first articles are ready when this returns, so rows laid out next get their final heights.
-	func findThumbnailURLs() {
-		guard thumbnailMode != nil, let articles, !articles.isEmpty else {
-			return
-		}
-		ArticleThumbnailFinder.shared.findThumbnailURLs(for: articles)
 	}
 
 	func visibleArticles() -> [Article] {
@@ -1199,15 +1187,10 @@ private extension MainTimelineViewController {
 			return
 		}
 		thumbnailsDisplay = AppDefaults.timelineThumbnailsDisplay
-		findThumbnailURLs()
-		reloadAllCells()
-	}
-
-	@objc func handleArticleThumbnailURLsDidBecomeAvailable(_ notification: Notification) {
-		guard thumbnailMode != nil, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
-			return
+		if thumbnailMode == nil {
+			ArticleThumbnailFinder.shared.emptyHTMLThumbnailCache()
 		}
-		thumbnailURLsDidChange(for: articleIDs)
+		reloadAllCells()
 	}
 
 	@objc func handleArticleThumbnailDidBecomeAvailable(_ notification: Notification) {
@@ -1227,13 +1210,8 @@ private extension MainTimelineViewController {
 		guard thumbnailMode != nil, let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> else {
 			return
 		}
-		// A failed provided image falls back to images in the HTML. Those are found first, so a row that has one doesn’t shrink and then grow back.
-		let articlesUsingURL = articles?.filter { articleIDs.contains($0.articleID) } ?? []
-		Task {
-			await ArticleThumbnailFinder.shared.findThumbnailURLs(for: articlesUsingURL).value
-			// Articles that used the failed URL now get their next source, or none.
-			thumbnailURLsDidChange(for: articleIDs)
-		}
+		// Articles that used the failed URL now get their next source, or none.
+		thumbnailURLsDidChange(for: articleIDs)
 	}
 
 	@objc func handleNetworkStatusDidChange(_ notification: Notification) {

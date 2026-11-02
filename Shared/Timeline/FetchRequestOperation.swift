@@ -13,6 +13,7 @@ import RSDatabase
 import Account
 import Articles
 import ErrorLog
+import Images
 
 // Main thread only.
 // Runs an asynchronous fetch.
@@ -33,12 +34,14 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 	var isCanceled = false
 	var isFinished = false
 	private let fetchers: [ArticleFetcher]
+	private let findsThumbnailURLs: Bool
 
-	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, readFilterEnabledTable: [SidebarItemIdentifier: Bool], fetchers: [ArticleFetcher], findsThumbnailURLs: Bool, resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.readFilterEnabledTable = readFilterEnabledTable
 		self.fetchers = fetchers
+		self.findsThumbnailURLs = findsThumbnailURLs
 		self.resultBlock = resultBlock
 	}
 
@@ -74,7 +77,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 			var fetchersReturned = 0
 			var fetchedArticles = Set<Article>()
 
-			@MainActor func process(_ articles: Set<Article>) {
+			@MainActor func process(_ articles: Set<Article>) async {
 				precondition(Thread.isMainThread)
 				guard !self.isCanceled else {
 					callCompletionIfNeeded()
@@ -86,6 +89,13 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 				fetchedArticles.formUnion(articles)
 				fetchersReturned += 1
 				if fetchersReturned == numberOfFetchers {
+					if findsThumbnailURLs {
+						await ArticleThumbnailFinder.shared.findThumbnailURLs(for: fetchedArticles)
+						guard !self.isCanceled else {
+							callCompletionIfNeeded()
+							return
+						}
+					}
 					self.isFinished = true
 					self.resultBlock(fetchedArticles, self)
 					callCompletionIfNeeded()
@@ -101,7 +111,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 					articles = await fetcher.fetchArticlesAsync()
 				}
 
-				process(articles)
+				await process(articles)
 			}
 
 			// Belt-and-suspenders: ensure the queue never deadlocks even if
@@ -121,12 +131,14 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 	var isCanceled = false
 	var isFinished = false
 	private let fetchers: [ArticleFetcher]
+	private let findsThumbnailURLs: Bool
 
-	init(id: Int, hidingReadArticlesState: HidingReadArticlesState, fetchers: [ArticleFetcher], resultBlock: @escaping FetchRequestOperationResultBlock) {
+	init(id: Int, hidingReadArticlesState: HidingReadArticlesState, fetchers: [ArticleFetcher], findsThumbnailURLs: Bool, resultBlock: @escaping FetchRequestOperationResultBlock) {
 		precondition(Thread.isMainThread)
 		self.id = id
 		self.hidingReadArticlesState = hidingReadArticlesState
 		self.fetchers = fetchers
+		self.findsThumbnailURLs = findsThumbnailURLs
 		self.resultBlock = resultBlock
 	}
 
@@ -162,7 +174,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 			var fetchersReturned = 0
 			var fetchedArticles = Set<Article>()
 
-			@MainActor func process(_ articles: Set<Article>) {
+			@MainActor func process(_ articles: Set<Article>) async {
 				precondition(Thread.isMainThread)
 				guard !self.isCanceled else {
 					callCompletionIfNeeded()
@@ -174,6 +186,13 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 				fetchedArticles.formUnion(articles)
 				fetchersReturned += 1
 				if fetchersReturned == numberOfFetchers {
+					if findsThumbnailURLs {
+						await ArticleThumbnailFinder.shared.findThumbnailURLs(for: fetchedArticles)
+						guard !self.isCanceled else {
+							callCompletionIfNeeded()
+							return
+						}
+					}
 					self.isFinished = true
 					self.resultBlock(fetchedArticles, self)
 					callCompletionIfNeeded()
@@ -194,7 +213,7 @@ typealias FetchRequestOperationResultBlock = (Set<Article>, FetchRequestOperatio
 				} else {
 					articles = await fetcher.fetchArticlesAsync()
 				}
-				process(articles)
+				await process(articles)
 			}
 
 			// Ensure the queue never deadlocks even if

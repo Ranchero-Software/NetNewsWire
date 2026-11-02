@@ -60,9 +60,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		let articleWithImage = makeArticle(articleID: "1", contentHTML: html)
 		let articleWithoutImage = makeArticle(articleID: "2", contentHTML: "<p>No images.</p>")
 
-		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == nil)
-
-		await finder.findThumbnailURLs(for: [articleWithImage, articleWithoutImage]).value
+		await finder.findThumbnailURLs(for: [articleWithImage, articleWithoutImage])
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithoutImage, mode: .small) == nil)
 
@@ -76,15 +74,20 @@ private typealias ArticleAttachment = Articles.Attachment
 		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
 		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#, thumbnailURL: "https://example.com/thumbnail.jpg")
 
-		// The HTML isn’t parsed while the provided image is usable.
-		await finder.findThumbnailURLs(for: [article]).value
+		await finder.findThumbnailURLs(for: [article])
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
 
 		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
 		finder.thumbnailURLDidFail("https://example.com/thumbnail.jpg")
-		#expect(finder.thumbnailURL(for: article, mode: .small) == nil)
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
+	}
 
-		await finder.findThumbnailURLs(for: [article]).value
+	@Test func htmlThumbnailIsParsedOnCacheMissAndAfterCacheIsEmptied() {
+		let finder = ArticleThumbnailFinder(imageDatabase: ImageDatabase(databasePath: ":memory:"))
+		let article = makeArticle(contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#)
+		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
+
+		finder.handleAppDidGoToBackground(Notification(name: .appDidGoToBackground))
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/uploads/photo.jpg")
 	}
 
@@ -114,24 +117,6 @@ private typealias ArticleAttachment = Articles.Attachment
 
 		let differentImages = makeArticle(imageURL: "https://example.com/new-image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
 		#expect(finder.thumbnailURL(for: differentImages, mode: .small) == "https://example.com/new-image.jpg")
-	}
-
-	@Test func articlesPastTheLimitAreParsedAfterReturningAndPostedInBatches() async throws {
-		let finder = ArticleThumbnailFinder(imageDatabase: ImageDatabase(databasePath: ":memory:"))
-		let limit = ArticleThumbnailFinder.maximumArticlesParsedBeforeReturning
-		let batchSize = ArticleThumbnailFinder.parsingBatchSize
-		let articles = (0...(limit + batchSize)).map { makeArticle(articleID: String($0), contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#) }
-		let lastArticleParsedBeforeReturning = articles[limit - 1]
-		let lastArticle = try #require(articles.last)
-		let recorder = ThumbnailURLNotificationRecorder(finder: finder)
-
-		let parsing = finder.findThumbnailURLs(for: articles)
-		#expect(finder.thumbnailURL(for: lastArticleParsedBeforeReturning, mode: .small) == "https://example.com/uploads/photo.jpg")
-		#expect(finder.thumbnailURL(for: lastArticle, mode: .small) == nil)
-
-		await parsing.value
-		#expect(finder.thumbnailURL(for: lastArticle, mode: .small) == "https://example.com/uploads/photo.jpg")
-		#expect(recorder.articleIDCounts == [limit, batchSize, 1])
 	}
 
 	@Test func thumbnailTooSmallIsRejected() async throws {
@@ -175,21 +160,6 @@ private typealias ArticleAttachment = Articles.Attachment
 }
 
 // MARK: - Helpers
-
-@MainActor private final class ThumbnailURLNotificationRecorder {
-
-	private(set) var articleIDCounts = [Int]()
-
-	init(finder: ArticleThumbnailFinder) {
-		NotificationCenter.default.addObserver(self, selector: #selector(handleArticleThumbnailURLsDidBecomeAvailable(_:)), name: .articleThumbnailURLsDidBecomeAvailable, object: finder)
-	}
-
-	@objc func handleArticleThumbnailURLsDidBecomeAvailable(_ notification: Notification) {
-		if let articleIDs = notification.userInfo?[ArticleThumbnailFinder.articleIDsKey] as? Set<String> {
-			articleIDCounts.append(articleIDs.count)
-		}
-	}
-}
 
 private func makeArticle(articleID: String = "1", contentHTML: String? = nil, imageURL: String? = nil, thumbnailURL: String? = nil, attachments: [ArticleAttachment]? = nil) -> Article {
 	let status = ArticleStatus(articleID: articleID, read: false, starred: false, dateArrived: Date())

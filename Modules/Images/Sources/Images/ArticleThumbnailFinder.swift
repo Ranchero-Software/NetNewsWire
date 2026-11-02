@@ -18,10 +18,6 @@ import RSWeb
 import ActivityLog
 
 extension Notification.Name {
-	/// Posted when `findThumbnailURLs(for:)` parses thumbnails from article HTML.
-	/// userInfo key: `ArticleThumbnailFinder.articleIDsKey` (`Set<String>`).
-	public static let articleThumbnailURLsDidBecomeAvailable = Notification.Name("ArticleThumbnailURLsDidBecomeAvailable")
-
 	/// Posted when a thumbnail image requested by `thumbnail(for:mode:)` is ready.
 	/// userInfo key: `ArticleThumbnailFinder.urlKey` (the thumbnail URL).
 	public static let articleThumbnailDidBecomeAvailable = Notification.Name("ArticleThumbnailDidBecomeAvailable")
@@ -39,8 +35,9 @@ extension Notification.Name {
 /// tries them in that order. Large mode tries the article’s image and attachments
 /// before the provided thumbnail, which is usually too small to fill the timeline’s width.
 ///
-/// The first three sources are property reads. The HTML is parsed by `findThumbnailURLs(for:)`,
-/// and the results are cached in memory, so each article’s HTML is parsed once per launch.
+/// The first three sources are property reads. The HTML is parsed off the main thread by
+/// `findThumbnailURLs(for:)` at fetch time, or by `thumbnailURL(for:mode:)` on a cache miss.
+/// The results are cached in memory until the app goes to the background or memory is low.
 /// Parsing 1,000 articles takes about 0.036 seconds on an M1 Max in a release build, measured
 /// on 8,660 real articles: median 0.000018 seconds and 2,463 bytes of HTML per article.
 ///
@@ -63,7 +60,6 @@ extension Notification.Name {
 
 	private let imageDatabase: ImageDatabase
 	private var htmlThumbnailURLs = [String: [String]]() // articleID: thumbnailURLs, in document order. Empty when the HTML has none.
-	private var articleIDsBeingDiscovered = Set<String>()
 	private let imageCache = NSCache<NSString, RSImage>() // See cacheKey
 	private let decodeQueue = ThumbnailTaskQueue(maximumRunningCount: maximumConcurrentDecodes, maximumWaitingCount: maximumWaitingDecodes)
 	private var decodeKeysInProgress = Set<String>()
@@ -88,12 +84,6 @@ extension Notification.Name {
 	#endif
 	/// HTML images kept per article, so one that fails or is too small falls through to the next.
 	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
-	/// Articles parsed at a time off the main thread.
-	static let parsingBatchSize = 100
-	/// Parsed on the main thread, so that rows laid out next can use the results.
-	static let maximumArticlesParsedBeforeReturning = 1000
-	/// Entries in htmlThumbnailURLs, a few hundred bytes each. Past this, it’s emptied, and the next discovery parses its articles again.
-	private static let maxCachedArticleCount = 50_000
 	/// Entries per mode in chosenThumbnailURLs. Past this, that mode’s entries are emptied.
 	private static let maxChosenThumbnailURLCount = 50_000
 	private static let maximumConcurrentDecodes = 4
@@ -104,8 +94,8 @@ extension Notification.Name {
 		self.imageDatabase = imageDatabase
 		self.imageCache.totalCostLimit = Self.imageCacheByteLimit
 
-		// Not flushed on appDidGoToBackground, which would make thumbnails flash on resume.
 		NotificationCenter.default.addObserver(self, selector: #selector(handleLowMemory(_:)), name: .lowMemory, object: nil)
+		NotificationCenter.default.addObserver(self, selector: #selector(handleAppDidGoToBackground(_:)), name: .appDidGoToBackground, object: nil)
 		NotificationCenter.default.addObserver(self, selector: #selector(handleNetworkStatusDidChange(_:)), name: .networkStatusDidChange, object: nil)
 	}
 
@@ -133,14 +123,14 @@ extension Notification.Name {
 		try await DownloadedImageCache.shared.imageData(for: url, usesDownloadQueue: false, checksForUpdates: false, activityOwner: .thumbnailDownloader, activityKind: .downloadThumbnail(imageURL: url), activityDetail: articleTitle)
 	}
 
-	/// Nil when the article has no usable image, or when its HTML hasn’t been checked yet.
+	/// Nil when the article has no usable image. Parses the article’s HTML when it isn’t cached.
 	public func thumbnailURL(for article: Article, mode: Mode) -> String? {
 		let articleID = article.articleID
 		if let chosenThumbnailURL = chosenThumbnailURLs[mode]?[articleID], chosenThumbnailURL.hasSameImages(as: article) {
 			return chosenThumbnailURL.thumbnailURL
 		}
 
-		let thumbnailURL = providedThumbnailURL(for: article, mode: mode) ?? htmlThumbnailURLs[articleID]?.first { !hasFailed($0) }
+		let thumbnailURL = providedThumbnailURL(for: article, mode: mode) ?? cachedOrParsedHTMLThumbnailURLs(for: article).first { !hasFailed($0) }
 		if chosenThumbnailURLs[mode, default: [:]].count >= Self.maxChosenThumbnailURLCount {
 			chosenThumbnailURLs[mode] = nil
 		}
@@ -148,38 +138,28 @@ extension Notification.Name {
 		return thumbnailURL
 	}
 
-	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
-	/// The first articles are parsed before this returns, so that rows laid out next can use the results.
-	/// The rest are parsed off the main thread in batches, in the order given.
-	/// `.articleThumbnailURLsDidBecomeAvailable` is posted after this returns, for those that have thumbnails: once for the first articles, then after each batch.
-	/// The returned task finishes after the last batch.
-	@discardableResult public func findThumbnailURLs(for articles: some Collection<Article>) -> Task<Void, Never> {
-		if htmlThumbnailURLs.count > Self.maxCachedArticleCount {
-			htmlThumbnailURLs.removeAll()
-		}
-
-		let articleHTMLs = articles.filter(needsHTMLDiscovery).compactMap(ArticleHTML.init)
-		let recordsParsedBeforeReturning = Self.thumbnailRecords(Array(articleHTMLs.prefix(Self.maximumArticlesParsedBeforeReturning)))
-		cacheRecords(recordsParsedBeforeReturning)
-
-		let articleHTMLsToParseLater = Array(articleHTMLs.dropFirst(Self.maximumArticlesParsedBeforeReturning))
-		let articleIDsToParseLater = articleHTMLsToParseLater.map(\.articleID)
-		articleIDsBeingDiscovered.formUnion(articleIDsToParseLater)
-
-		return Task {
-			defer {
-				articleIDsBeingDiscovered.subtract(articleIDsToParseLater)
-			}
-
-			postThumbnailURLsDidBecomeAvailable(recordsParsedBeforeReturning)
-
-			for batchStart in stride(from: 0, to: articleHTMLsToParseLater.count, by: Self.parsingBatchSize) {
-				let batchEnd = min(batchStart + Self.parsingBatchSize, articleHTMLsToParseLater.count)
-				let parsedRecords = await Self.parseThumbnailURLs(Array(articleHTMLsToParseLater[batchStart..<batchEnd]))
-				cacheRecords(parsedRecords)
-				postThumbnailURLsDidBecomeAvailable(parsedRecords)
+	/// Parses, off the main thread, the HTML of articles that have no usable provided image and no cached result.
+	public func findThumbnailURLs(for articles: some Collection<Article>) async {
+		var articleHTMLs = [ArticleHTML]()
+		for article in articles where needsHTMLParsing(article) {
+			if let articleHTML = ArticleHTML(article) {
+				articleHTMLs.append(articleHTML)
+			} else {
+				htmlThumbnailURLs[article.articleID] = []
 			}
 		}
+		guard !articleHTMLs.isEmpty else {
+			return
+		}
+
+		let parsedThumbnailURLs = await Self.parsedThumbnailURLs(articleHTMLs)
+		htmlThumbnailURLs.merge(parsedThumbnailURLs) { _, parsedURLs in parsedURLs }
+	}
+
+	/// Empties the results of parsing article HTML, which `thumbnailURL(for:mode:)` parses again as needed.
+	public func emptyHTMLThumbnailCache() {
+		htmlThumbnailURLs.removeAll()
+		chosenThumbnailURLs.removeAll()
 	}
 
 	func thumbnailDidFail(url: String, error: ImageDownloadError) {
@@ -209,7 +189,12 @@ extension Notification.Name {
 
 	@objc func handleLowMemory(_ notification: Notification) {
 		imageCache.removeAllObjects()
-		chosenThumbnailURLs.removeAll()
+		emptyHTMLThumbnailCache()
+	}
+
+	/// Leaves imageCache alone, since emptying it would make thumbnails flash on resume.
+	@objc func handleAppDidGoToBackground(_ notification: Notification) {
+		emptyHTMLThumbnailCache()
 	}
 
 	/// What failed to decode may have been a captive portal’s login page, not the image.
@@ -243,13 +228,6 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
-	/// The result of looking for thumbnails in an article’s HTML.
-	/// `thumbnailURLs` is in document order, and empty when the HTML has no usable image.
-	struct ArticleThumbnailRecord: Sendable {
-		let articleID: String
-		let thumbnailURLs: [String]
-	}
-
 	struct ArticleHTML: Sendable {
 		let articleID: String
 		let html: String
@@ -262,6 +240,11 @@ private extension ArticleThumbnailFinder {
 			self.articleID = article.articleID
 			self.html = html
 			self.baseURL = article.baseURL
+		}
+
+		/// In document order. Empty when the HTML has no usable image.
+		nonisolated func parsedThumbnailURLs() -> [String] {
+			HTMLImageParser.significantImageURLStrings(html: html, baseURL: baseURL, maximumCount: maxHTMLThumbnailURLsPerArticle)
 		}
 	}
 
@@ -348,42 +331,30 @@ private extension ArticleThumbnailFinder {
 		imageDatabase.recentlyFailed(url: urlString) || imageDatabase.isUnsuitableForThumbnail(url: urlString) || urlsThatFailedToDecode.contains(urlString)
 	}
 
-	func needsHTMLDiscovery(_ article: Article) -> Bool {
-		let articleID = article.articleID
-		if isCached(articleID) || articleIDsBeingDiscovered.contains(articleID) {
+	func needsHTMLParsing(_ article: Article) -> Bool {
+		guard htmlThumbnailURLs[article.articleID] == nil else {
 			return false
 		}
-		// Without HTML results, thumbnailURL is the provided image. Which one is chosen depends on mode, but whether there is one doesn’t.
-		return thumbnailURL(for: article, mode: .small) == nil
+		// Which provided image is chosen depends on mode, but whether there is one doesn’t.
+		return providedThumbnailURL(for: article, mode: .small) == nil
 	}
 
-	func isCached(_ articleID: String) -> Bool {
-		htmlThumbnailURLs[articleID] != nil
-	}
-
-	func cacheRecords(_ records: [ArticleThumbnailRecord]) {
-		forgetChosenThumbnailURLs(records.map(\.articleID))
-		for record in records {
-			htmlThumbnailURLs[record.articleID] = record.thumbnailURLs
+	func cachedOrParsedHTMLThumbnailURLs(for article: Article) -> [String] {
+		if let thumbnailURLs = htmlThumbnailURLs[article.articleID] {
+			return thumbnailURLs
 		}
+		let thumbnailURLs = ArticleHTML(article)?.parsedThumbnailURLs() ?? []
+		htmlThumbnailURLs[article.articleID] = thumbnailURLs
+		return thumbnailURLs
 	}
 
-	func postThumbnailURLsDidBecomeAvailable(_ records: [ArticleThumbnailRecord]) {
-		let foundArticleIDs = Set(records.filter { !$0.thumbnailURLs.isEmpty }.map(\.articleID))
-		if !foundArticleIDs.isEmpty {
-			NotificationCenter.default.post(name: .articleThumbnailURLsDidBecomeAvailable, object: self, userInfo: [Self.articleIDsKey: foundArticleIDs])
+	/// articleID: thumbnailURLs
+	@concurrent static func parsedThumbnailURLs(_ articleHTMLs: [ArticleHTML]) async -> [String: [String]] {
+		var thumbnailURLs = [String: [String]]()
+		for articleHTML in articleHTMLs {
+			thumbnailURLs[articleHTML.articleID] = articleHTML.parsedThumbnailURLs()
 		}
-	}
-
-	@concurrent static func parseThumbnailURLs(_ articleHTMLs: [ArticleHTML]) async -> [ArticleThumbnailRecord] {
-		thumbnailRecords(articleHTMLs)
-	}
-
-	nonisolated static func thumbnailRecords(_ articleHTMLs: [ArticleHTML]) -> [ArticleThumbnailRecord] {
-		articleHTMLs.map { articleHTML in
-			let thumbnailURLs = HTMLImageParser.significantImageURLStrings(html: articleHTML.html, baseURL: articleHTML.baseURL, maximumCount: maxHTMLThumbnailURLsPerArticle)
-			return ArticleThumbnailRecord(articleID: articleHTML.articleID, thumbnailURLs: thumbnailURLs)
-		}
+		return thumbnailURLs
 	}
 
 	static func firstSignificantImageAttachmentURL(_ article: Article) -> String? {
