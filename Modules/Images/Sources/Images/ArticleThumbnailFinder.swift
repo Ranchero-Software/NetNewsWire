@@ -32,8 +32,8 @@ extension Notification.Name {
 ///
 /// Sources: the provided thumbnail, the article’s image, the first significant image
 /// attachment, and the first few significant images in the article’s HTML. Small mode
-/// tries them in that order. Large mode tries the article’s image and attachments
-/// before the provided thumbnail, which is usually too small to fill the timeline’s width.
+/// tries them in that order. Large mode tries the provided thumbnail last, since it’s usually
+/// too small to fill the timeline’s width. Blogger’s, for instance, are 72-pixel square crops.
 ///
 /// The first three sources are property reads. The HTML is parsed off the main thread by
 /// `findThumbnailURLs(for:)` at fetch time, or by `thumbnailURL(for:mode:)` on a cache miss.
@@ -130,7 +130,7 @@ extension Notification.Name {
 			return chosenThumbnailURL.thumbnailURL
 		}
 
-		let thumbnailURL = providedThumbnailURL(for: article, mode: mode) ?? cachedOrParsedHTMLThumbnailURLs(for: article).first { !hasFailed($0) }
+		let thumbnailURL = providedThumbnailURL(for: article, mode: mode) ?? cachedOrParsedHTMLThumbnailURLs(for: article).first { !hasFailed($0) } ?? usableProvidedURL(Self.normalizedURLString(article.rawThumbnailLink))
 		if chosenThumbnailURLs[mode, default: [:]].count >= Self.maxChosenThumbnailURLCount {
 			chosenThumbnailURLs[mode] = nil
 		}
@@ -310,12 +310,13 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
+	/// The provided image to use ahead of images in the HTML.
 	func providedThumbnailURL(for article: Article, mode: Mode) -> String? {
 		switch mode {
 		case .small:
 			usableProvidedURL(Self.normalizedURLString(article.rawThumbnailLink)) ?? usableProvidedURL(Self.normalizedURLString(article.rawImageLink)) ?? usableProvidedURL(Self.firstSignificantImageAttachmentURL(article))
 		case .large:
-			usableProvidedURL(Self.normalizedURLString(article.rawImageLink)) ?? usableProvidedURL(Self.firstSignificantImageAttachmentURL(article)) ?? usableProvidedURL(Self.normalizedURLString(article.rawThumbnailLink))
+			usableProvidedURL(Self.normalizedURLString(article.rawImageLink)) ?? usableProvidedURL(Self.firstSignificantImageAttachmentURL(article))
 		}
 	}
 
@@ -335,8 +336,8 @@ private extension ArticleThumbnailFinder {
 		guard htmlThumbnailURLs[article.articleID] == nil else {
 			return false
 		}
-		// Which provided image is chosen depends on mode, but whether there is one doesn’t.
-		return providedThumbnailURL(for: article, mode: .small) == nil
+		// Large mode uses the HTML for any article that small mode does, and for those with only a provided thumbnail.
+		return providedThumbnailURL(for: article, mode: .large) == nil
 	}
 
 	func cachedOrParsedHTMLThumbnailURLs(for article: Article) -> [String] {

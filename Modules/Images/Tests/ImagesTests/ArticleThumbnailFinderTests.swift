@@ -28,6 +28,18 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: article, mode: .large) == "https://example.com/image.jpg")
 	}
 
+	@Test func largeModePrefersHTMLImageToBloggerSquareThumbnail() {
+		let finder = ArticleThumbnailFinder(imageDatabase: ImageDatabase(databasePath: ":memory:"))
+		let bloggerThumbnailURL = "https://blogger.googleusercontent.com/img/b/photo/s72-w424-h353-c/202610211751.jpg"
+		let bloggerImageURL = "https://blogger.googleusercontent.com/img/b/photo/w424-h353/202610211751.jpg"
+		let article = makeArticle(contentHTML: "<p><img src=\"\(bloggerImageURL)\"></p>", thumbnailURL: bloggerThumbnailURL)
+		let articleWithNoHTMLImage = makeArticle(articleID: "2", contentHTML: "<p>No images.</p>", thumbnailURL: bloggerThumbnailURL)
+
+		#expect(finder.thumbnailURL(for: article, mode: .large) == bloggerImageURL)
+		#expect(finder.thumbnailURL(for: article, mode: .small) == bloggerThumbnailURL)
+		#expect(finder.thumbnailURL(for: articleWithNoHTMLImage, mode: .large) == bloggerThumbnailURL)
+	}
+
 	@Test func failedImageFallsThroughToNextSource() {
 		let imageDatabase = ImageDatabase(databasePath: ":memory:")
 		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
