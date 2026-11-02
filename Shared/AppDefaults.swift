@@ -33,7 +33,7 @@ enum AppDefaults {
 			Key.timelineGroupByFeed: false,
 			Key.currentThemeName: defaultThemeName,
 			Key.articleContentJavascriptEnabled: true,
-			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.small.rawValue,
+			Key.timelineThumbnailsDisplay: TimelineThumbnailsDisplay.none.rawValue,
 			Key.timelineFeedIconsDisplay: TimelineFeedIconsDisplay.automatic.rawValue
 		]
 	}
