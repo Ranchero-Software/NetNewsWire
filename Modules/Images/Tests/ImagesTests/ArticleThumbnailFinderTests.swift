@@ -49,7 +49,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(!imageDatabase.recentlyFailed(url: "https://example.com/logo.png"))
 	}
 
-	@Test func htmlThumbnailIsDiscoveredAndSaved() async {
+	@Test func htmlThumbnailIsDiscovered() async {
 		let imageDatabase = ImageDatabase(databasePath: ":memory:")
 		let finder = ArticleThumbnailFinder(imageDatabase: imageDatabase)
 		let html = """
@@ -66,11 +66,6 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithoutImage, mode: .small) == nil)
 
-		let records = imageDatabase.fetchArticleThumbnailsSync(articleIDs: ["1", "2"])
-		#expect(Set(records.map(\.articleID)) == ["1", "2"])
-		#expect(records.first { $0.articleID == "1" }?.thumbnailURLs == ["https://example.com/uploads/photo.jpg", "https://example.com/uploads/second-photo.jpg"])
-		#expect(records.first { $0.articleID == "2" }?.thumbnailURLs == [])
-
 		imageDatabase.recordFailure(url: "https://example.com/uploads/photo.jpg", statusCode: 404)
 		finder.thumbnailURLDidFail("https://example.com/uploads/photo.jpg")
 		#expect(finder.thumbnailURL(for: articleWithImage, mode: .small) == "https://example.com/uploads/second-photo.jpg")
@@ -84,7 +79,6 @@ private typealias ArticleAttachment = Articles.Attachment
 		// The HTML isn’t parsed while the provided image is usable.
 		await finder.findThumbnailURLs(for: [article]).value
 		#expect(finder.thumbnailURL(for: article, mode: .small) == "https://example.com/thumbnail.jpg")
-		#expect(imageDatabase.fetchArticleThumbnailsSync(articleIDs: ["1"]).isEmpty)
 
 		imageDatabase.recordFailure(url: "https://example.com/thumbnail.jpg", statusCode: 404)
 		finder.thumbnailURLDidFail("https://example.com/thumbnail.jpg")
@@ -120,21 +114,6 @@ private typealias ArticleAttachment = Articles.Attachment
 
 		let differentImages = makeArticle(imageURL: "https://example.com/new-image.jpg", thumbnailURL: "https://example.com/thumbnail.jpg")
 		#expect(finder.thumbnailURL(for: differentImages, mode: .small) == "https://example.com/new-image.jpg")
-	}
-
-	@Test func savedAndNewThumbnailURLsAreFoundBeforeReturning() async {
-		let imageDatabase = ImageDatabase(databasePath: ":memory:")
-		let savedArticle = makeArticle(articleID: "1", contentHTML: #"<p><img src="/uploads/saved.jpg" width="640" height="480"></p>"#)
-		await ArticleThumbnailFinder(imageDatabase: imageDatabase).findThumbnailURLs(for: [savedArticle]).value
-
-		let finderAfterRelaunch = ArticleThumbnailFinder(imageDatabase: imageDatabase)
-		let newArticle = makeArticle(articleID: "2", contentHTML: #"<p><img src="/uploads/new.jpg" width="640" height="480"></p>"#)
-		let parsing = finderAfterRelaunch.findThumbnailURLs(for: [savedArticle, newArticle])
-		#expect(finderAfterRelaunch.thumbnailURL(for: savedArticle, mode: .large) == "https://example.com/uploads/saved.jpg")
-		#expect(finderAfterRelaunch.thumbnailURL(for: newArticle, mode: .large) == "https://example.com/uploads/new.jpg")
-
-		await parsing.value
-		#expect(imageDatabase.fetchArticleThumbnailsSync(articleIDs: ["2"]).first?.thumbnailURLs == ["https://example.com/uploads/new.jpg"])
 	}
 
 	@Test func articlesPastTheLimitAreParsedAfterReturningAndPostedInBatches() async throws {

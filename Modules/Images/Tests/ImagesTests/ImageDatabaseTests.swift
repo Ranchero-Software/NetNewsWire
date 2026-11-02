@@ -35,6 +35,31 @@ import RSWeb
 		await imageDatabase.vacuum()
 	}
 
+	@Test func articleThumbnailTableIsDropped() async throws {
+		let folder = FileManager.default.temporaryDirectory.appendingPathComponent("ImageDatabaseTests-\(UUID().uuidString)")
+		try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+		defer {
+			try? FileManager.default.removeItem(at: folder)
+		}
+		let databasePath = folder.appendingPathComponent("Images.db").path
+		let tableName = "articleThumbnailURLs"
+
+		let databaseWithTable = FMDatabase.openAndSetUpDatabase(path: databasePath)
+		databaseWithTable.executeStatements("CREATE TABLE \(tableName) (articleID TEXT PRIMARY KEY NOT NULL, thumbnailURLs TEXT, lastChecked REAL NOT NULL);")
+		#expect(databaseWithTable.tableExists(tableName))
+		databaseWithTable.close()
+
+		let imageDatabase = ImageDatabase(databasePath: databasePath)
+		// Waits for the cleanup init queues.
+		await imageDatabase.vacuum()
+
+		let reopenedDatabase = FMDatabase.openAndSetUpDatabase(path: databasePath)
+		defer {
+			reopenedDatabase.close()
+		}
+		#expect(!reopenedDatabase.tableExists(tableName))
+	}
+
 	@Test func failedUsageQueryReturnsNil() {
 		let database = FMDatabase.openAndSetUpDatabase(path: ":memory:")
 		defer {

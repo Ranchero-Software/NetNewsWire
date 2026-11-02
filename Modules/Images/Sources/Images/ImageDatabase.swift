@@ -13,15 +13,12 @@ import RSDatabaseObjC
 import RSParser
 
 /// Per-URL image metadata: discovered URLs, failure tracking, and the copies `DownloadedImageCache` stores.
-/// Also thumbnails found in article HTML, which aren’t loaded into memory at init, since there’s a row per article.
 @MainActor public final class ImageDatabase {
 
 	public static let shared = ImageDatabase()
 
 	public static let failureRetryDays = 5
 	private static let failureRetentionDays = 33
-	/// After this, an article’s HTML is checked for thumbnails again, in case it changed.
-	private static let htmlThumbnailRetentionDays = 33
 
 	public let databasePath: String
 
@@ -39,9 +36,11 @@ import RSParser
 	CREATE TABLE IF NOT EXISTS downloadFailure (url TEXT PRIMARY KEY NOT NULL, statusCode INTEGER, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS homePageFavicon (homePageURL TEXT PRIMARY KEY NOT NULL, faviconURL TEXT, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS feedIconURL (feedURL TEXT PRIMARY KEY NOT NULL, iconURL TEXT NOT NULL, lastChecked REAL NOT NULL);
-	CREATE TABLE IF NOT EXISTS articleThumbnailURLs (articleID TEXT PRIMARY KEY NOT NULL, thumbnailURLs TEXT, lastChecked REAL NOT NULL);
 	CREATE TABLE IF NOT EXISTS downloadedImage (url TEXT PRIMARY KEY NOT NULL, byteCount INTEGER NOT NULL, pixelWidth INTEGER, pixelHeight INTEGER, lastAccessed REAL NOT NULL, etag TEXT, lastModified TEXT, nextCheck REAL NOT NULL);
 	"""
+
+	/// Development builds created this table.
+	nonisolated private static let dropArticleThumbnailTableStatement = "DROP TABLE IF EXISTS articleThumbnailURLs;"
 
 	private static let databaseFileName = "Images.db"
 	private static let legacyDatabaseFileName = "ImageMetadata.db"
@@ -73,12 +72,10 @@ import RSParser
 
 		loadCachesFromDatabase()
 
-		let now = Date().timeIntervalSince1970
-		let failureCutoff = now - TimeInterval(days: Self.failureRetentionDays)
-		let htmlThumbnailCutoff = now - TimeInterval(days: Self.htmlThumbnailRetentionDays)
+		let failureCutoff = Date().timeIntervalSince1970 - TimeInterval(days: Self.failureRetentionDays)
 		queue.runInDatabase { database in
 			DownloadFailureTable.removeExpired(olderThan: failureCutoff, database: database)
-			ArticleThumbnailTable.removeExpired(olderThan: htmlThumbnailCutoff, database: database)
+			database.executeStatements(Self.dropArticleThumbnailTableStatement)
 			database.checkpoint()
 		}
 	}
@@ -123,22 +120,6 @@ import RSParser
 		feedURLToIconURL[feedURL] = iconURL
 		queue.runInDatabase { database in
 			FeedIconURLTable.save(feedURL: feedURL, iconURL: iconURL, database: database)
-		}
-	}
-
-	// MARK: - ArticleThumbnail
-
-	func fetchArticleThumbnailsSync(articleIDs: [String]) -> [ArticleThumbnailRecord] {
-		nonisolated(unsafe) var records = [ArticleThumbnailRecord]()
-		queue.runInDatabaseSync { database in
-			records = ArticleThumbnailTable.fetch(articleIDs: articleIDs, database: database)
-		}
-		return records
-	}
-
-	func saveArticleThumbnails(_ records: [ArticleThumbnailRecord]) {
-		queue.runInTransaction { database in
-			ArticleThumbnailTable.save(records, database: database)
 		}
 	}
 
