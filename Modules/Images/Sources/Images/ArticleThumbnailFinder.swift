@@ -39,9 +39,8 @@ extension Notification.Name {
 /// tries them in that order. Large mode tries the article’s image and attachments
 /// before the provided thumbnail, which is usually too small to fill the timeline’s width.
 ///
-/// The first three sources are property reads. The HTML is parsed off the main thread
-/// by `findThumbnailURLs(for:)`, and the results are saved in `ImageDatabase`,
-/// so each article’s HTML is parsed once.
+/// The first three sources are property reads. The HTML is parsed by `findThumbnailURLs(for:)`,
+/// and the results are saved in `ImageDatabase`, so each article’s HTML is parsed once.
 ///
 /// URLs that recently failed to download, and images too small, too narrow, or unreadable
 /// to be thumbnails, are skipped, so they fall through to the next source.
@@ -89,6 +88,8 @@ extension Notification.Name {
 	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
 	/// Articles parsed and saved at a time, which also limits how long a save holds the database queue.
 	static let parsingBatchSize = 100
+	/// Takes about 0.04 seconds on an M1 Max.
+	static let maximumArticlesParsedBeforeReturning = 1000
 	/// Entries in htmlThumbnailURLs, a few hundred bytes each. Past this, it’s emptied, and the next discovery reloads its articles from the database.
 	private static let maxCachedArticleCount = 50_000
 	/// Entries per mode in chosenThumbnailURLs. Past this, that mode’s entries are emptied.
@@ -146,10 +147,10 @@ extension Notification.Name {
 	}
 
 	/// Looks for thumbnails in the HTML of articles that have no usable provided image.
-	/// Results saved in the database are ready when this returns, so that rows laid out next can use them.
-	/// This blocks until the database has answered.
-	/// The rest are parsed off the main thread and saved in batches, in the order given, so the first rows don’t wait for the last.
-	/// `.articleThumbnailURLsDidBecomeAvailable` is posted after each batch for those that have thumbnails.
+	/// Results saved in the database, and the first articles’ parsed results, are ready when this returns, so that rows laid out next can use them.
+	/// This blocks while the database answers and those articles are parsed.
+	/// The rest are parsed off the main thread in batches, in the order given.
+	/// `.articleThumbnailURLsDidBecomeAvailable` is posted after this returns, for those that have thumbnails: once for the first articles, then after each batch.
 	/// The returned task finishes after the last batch.
 	@discardableResult public func findThumbnailURLs(for articles: some Collection<Article>) -> Task<Void, Never> {
 		if htmlThumbnailURLs.count > Self.maxCachedArticleCount {
@@ -162,23 +163,30 @@ extension Notification.Name {
 		}
 
 		let articleHTMLs = articlesToFind.filter { !isCached($0.articleID) }.compactMap(ArticleHTML.init)
-		let articleIDs = articleHTMLs.map(\.articleID)
-		articleIDsBeingDiscovered.formUnion(articleIDs)
+		let recordsParsedBeforeReturning = Self.thumbnailRecords(Array(articleHTMLs.prefix(Self.maximumArticlesParsedBeforeReturning)))
+		cacheRecords(recordsParsedBeforeReturning)
+
+		let articleHTMLsToParseLater = Array(articleHTMLs.dropFirst(Self.maximumArticlesParsedBeforeReturning))
+		let articleIDsToParseLater = articleHTMLsToParseLater.map(\.articleID)
+		articleIDsBeingDiscovered.formUnion(articleIDsToParseLater)
 
 		return Task {
 			defer {
-				articleIDsBeingDiscovered.subtract(articleIDs)
+				articleIDsBeingDiscovered.subtract(articleIDsToParseLater)
 			}
-			for batchStart in stride(from: 0, to: articleHTMLs.count, by: Self.parsingBatchSize) {
-				let batchEnd = min(batchStart + Self.parsingBatchSize, articleHTMLs.count)
-				let parsedRecords = await Self.parseThumbnailURLs(Array(articleHTMLs[batchStart..<batchEnd]))
+
+			for batchStart in stride(from: 0, to: recordsParsedBeforeReturning.count, by: Self.parsingBatchSize) {
+				let batchEnd = min(batchStart + Self.parsingBatchSize, recordsParsedBeforeReturning.count)
+				imageDatabase.saveArticleThumbnails(Array(recordsParsedBeforeReturning[batchStart..<batchEnd]))
+			}
+			postThumbnailURLsDidBecomeAvailable(recordsParsedBeforeReturning)
+
+			for batchStart in stride(from: 0, to: articleHTMLsToParseLater.count, by: Self.parsingBatchSize) {
+				let batchEnd = min(batchStart + Self.parsingBatchSize, articleHTMLsToParseLater.count)
+				let parsedRecords = await Self.parseThumbnailURLs(Array(articleHTMLsToParseLater[batchStart..<batchEnd]))
 				cacheRecords(parsedRecords)
 				imageDatabase.saveArticleThumbnails(parsedRecords)
-
-				let foundArticleIDs = Set(parsedRecords.filter { !$0.thumbnailURLs.isEmpty }.map(\.articleID))
-				if !foundArticleIDs.isEmpty {
-					NotificationCenter.default.post(name: .articleThumbnailURLsDidBecomeAvailable, object: self, userInfo: [Self.articleIDsKey: foundArticleIDs])
-				}
+				postThumbnailURLsDidBecomeAvailable(parsedRecords)
 			}
 		}
 	}
@@ -362,7 +370,18 @@ private extension ArticleThumbnailFinder {
 		}
 	}
 
+	func postThumbnailURLsDidBecomeAvailable(_ records: [ArticleThumbnailRecord]) {
+		let foundArticleIDs = Set(records.filter { !$0.thumbnailURLs.isEmpty }.map(\.articleID))
+		if !foundArticleIDs.isEmpty {
+			NotificationCenter.default.post(name: .articleThumbnailURLsDidBecomeAvailable, object: self, userInfo: [Self.articleIDsKey: foundArticleIDs])
+		}
+	}
+
 	@concurrent static func parseThumbnailURLs(_ articleHTMLs: [ArticleHTML]) async -> [ArticleThumbnailRecord] {
+		thumbnailRecords(articleHTMLs)
+	}
+
+	nonisolated static func thumbnailRecords(_ articleHTMLs: [ArticleHTML]) -> [ArticleThumbnailRecord] {
 		articleHTMLs.map { articleHTML in
 			let thumbnailURLs = HTMLImageParser.significantImageURLStrings(html: articleHTML.html, baseURL: articleHTML.baseURL, maximumCount: maxHTMLThumbnailURLsPerArticle)
 			return ArticleThumbnailRecord(articleID: articleHTML.articleID, thumbnailURLs: thumbnailURLs)

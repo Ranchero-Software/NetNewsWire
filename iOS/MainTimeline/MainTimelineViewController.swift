@@ -1109,7 +1109,7 @@ private extension MainTimelineViewController {
 	}
 
 	/// Finds thumbnails in the HTML of articles with no provided image. Local work, no downloads.
-	/// Saved results are ready when this returns, so rows laid out next get their final heights.
+	/// Results for saved articles and the first articles are ready when this returns, so rows laid out next get their final heights.
 	func findThumbnailURLs() {
 		guard thumbnailMode != nil, let articles, !articles.isEmpty else {
 			return

@@ -122,7 +122,7 @@ private typealias ArticleAttachment = Articles.Attachment
 		#expect(finder.thumbnailURL(for: differentImages, mode: .small) == "https://example.com/new-image.jpg")
 	}
 
-	@Test func savedThumbnailURLsAreFoundBeforeReturningAndTheRestAreParsed() async {
+	@Test func savedAndNewThumbnailURLsAreFoundBeforeReturning() async {
 		let imageDatabase = ImageDatabase(databasePath: ":memory:")
 		let savedArticle = makeArticle(articleID: "1", contentHTML: #"<p><img src="/uploads/saved.jpg" width="640" height="480"></p>"#)
 		await ArticleThumbnailFinder(imageDatabase: imageDatabase).findThumbnailURLs(for: [savedArticle]).value
@@ -131,20 +131,28 @@ private typealias ArticleAttachment = Articles.Attachment
 		let newArticle = makeArticle(articleID: "2", contentHTML: #"<p><img src="/uploads/new.jpg" width="640" height="480"></p>"#)
 		let parsing = finderAfterRelaunch.findThumbnailURLs(for: [savedArticle, newArticle])
 		#expect(finderAfterRelaunch.thumbnailURL(for: savedArticle, mode: .large) == "https://example.com/uploads/saved.jpg")
-		#expect(finderAfterRelaunch.thumbnailURL(for: newArticle, mode: .large) == nil)
+		#expect(finderAfterRelaunch.thumbnailURL(for: newArticle, mode: .large) == "https://example.com/uploads/new.jpg")
 
 		await parsing.value
-		#expect(finderAfterRelaunch.thumbnailURL(for: newArticle, mode: .large) == "https://example.com/uploads/new.jpg")
+		#expect(imageDatabase.fetchArticleThumbnailsSync(articleIDs: ["2"]).first?.thumbnailURLs == ["https://example.com/uploads/new.jpg"])
 	}
 
-	@Test func parsedThumbnailURLsArePostedInBatches() async {
+	@Test func articlesPastTheLimitAreParsedAfterReturningAndPostedInBatches() async throws {
 		let finder = ArticleThumbnailFinder(imageDatabase: ImageDatabase(databasePath: ":memory:"))
-		let articles = (0...ArticleThumbnailFinder.parsingBatchSize).map { makeArticle(articleID: String($0), contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#) }
+		let limit = ArticleThumbnailFinder.maximumArticlesParsedBeforeReturning
+		let batchSize = ArticleThumbnailFinder.parsingBatchSize
+		let articles = (0...(limit + batchSize)).map { makeArticle(articleID: String($0), contentHTML: #"<p><img src="/uploads/photo.jpg" width="640" height="480"></p>"#) }
+		let lastArticleParsedBeforeReturning = articles[limit - 1]
+		let lastArticle = try #require(articles.last)
 		let recorder = ThumbnailURLNotificationRecorder(finder: finder)
 
-		await finder.findThumbnailURLs(for: articles).value
+		let parsing = finder.findThumbnailURLs(for: articles)
+		#expect(finder.thumbnailURL(for: lastArticleParsedBeforeReturning, mode: .small) == "https://example.com/uploads/photo.jpg")
+		#expect(finder.thumbnailURL(for: lastArticle, mode: .small) == nil)
 
-		#expect(recorder.articleIDCounts == [ArticleThumbnailFinder.parsingBatchSize, 1])
+		await parsing.value
+		#expect(finder.thumbnailURL(for: lastArticle, mode: .small) == "https://example.com/uploads/photo.jpg")
+		#expect(recorder.articleIDCounts == [limit, batchSize, 1])
 	}
 
 	@Test func thumbnailTooSmallIsRejected() async throws {
