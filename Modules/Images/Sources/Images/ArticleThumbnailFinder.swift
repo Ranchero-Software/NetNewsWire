@@ -41,6 +41,8 @@ extension Notification.Name {
 ///
 /// The first three sources are property reads. The HTML is parsed by `findThumbnailURLs(for:)`,
 /// and the results are cached in memory, so each article’s HTML is parsed once per launch.
+/// Parsing 1,000 articles takes about 0.036 seconds on an M1 Max in a release build, measured
+/// on 8,660 real articles: median 0.000018 seconds and 2,463 bytes of HTML per article.
 ///
 /// URLs that recently failed to download, and images too small, too narrow, or unreadable
 /// to be thumbnails, are skipped, so they fall through to the next source.
@@ -88,7 +90,7 @@ extension Notification.Name {
 	nonisolated private static let maxHTMLThumbnailURLsPerArticle = 3
 	/// Articles parsed at a time off the main thread.
 	static let parsingBatchSize = 100
-	/// Takes about 0.04 seconds on an M1 Max.
+	/// Parsed on the main thread, so that rows laid out next can use the results.
 	static let maximumArticlesParsedBeforeReturning = 1000
 	/// Entries in htmlThumbnailURLs, a few hundred bytes each. Past this, it’s emptied, and the next discovery parses its articles again.
 	private static let maxCachedArticleCount = 50_000
