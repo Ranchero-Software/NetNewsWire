@@ -355,6 +355,10 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return validateSortFeeds(item, isOn: AppDefaults.sidebarSortType == .byUnreadCount)
 		}
 
+		if item.action == #selector(sortFeedsByLastUpdate(_:)) {
+			return validateSortFeeds(item, isOn: AppDefaults.sidebarSortType == .byLastUpdate)
+		}
+
 		if item.action == #selector(sortFeedsAscending(_:)) {
 			return validateSortFeeds(item, isOn: AppDefaults.sidebarSortAscending)
 		}
@@ -671,7 +675,7 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 
 	@IBAction func sortFeedsByName(_ sender: Any?) {
 		// Switching sort type resets direction to that type’s natural default,
-		// like clicking a different column header: name A–Z, most unread first.
+		// like clicking a different column header: name A–Z, most unread first, newest update first.
 		guard AppDefaults.sidebarSortType != .alphabetically else {
 			return
 		}
@@ -683,6 +687,13 @@ final class MainWindowController: NSWindowController, NSUserInterfaceValidations
 			return
 		}
 		AppDefaults.setSidebarSort(.byUnreadCount, ascending: false)
+	}
+
+	@IBAction func sortFeedsByLastUpdate(_ sender: Any?) {
+		guard AppDefaults.sidebarSortType != .byLastUpdate else {
+			return
+		}
+		AppDefaults.setSidebarSort(.byLastUpdate, ascending: false)
 	}
 
 	@IBAction func sortFeedsAscending(_ sender: Any?) {

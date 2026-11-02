@@ -1357,6 +1357,18 @@
         }
       }
     },
+    "lU8-dT-4mQ.title" : {
+      "comment" : "Class = \"NSMenuItem\"; title = \"Last Update\"; ObjectID = \"lU8-dT-4mQ\";",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Last Update"
+          }
+        }
+      }
+    },
     "m0T-w3-neT.title" : {
       "comment" : "Class = \"NSMenuItem\"; title = \"Show iCloud Drive Missing Alert\"; ObjectID = \"m0T-w3-neT\";",
       "extractionState" : "extracted_with_value",

@@ -872,6 +872,13 @@ public enum FetchType {
 		await database.fetchLastUpdateDates()
 	}
 
+	/// Newest article date by feedID, as of the last call to refreshLastUpdateDates. Used for sorting.
+	public private(set) var lastUpdateDates = [String: Date]()
+
+	public func refreshLastUpdateDates() async {
+		lastUpdateDates = await fetchLastUpdateDates()
+	}
+
 	public func fetchUnreadCountForTodayAsync() async -> Int {
 		await database.fetchUnreadCountForTodayAsync(feedIDs: flattenedFeedsIDs)
 	}

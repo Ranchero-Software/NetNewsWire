@@ -661,8 +661,8 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func indexWhereDraggedFeedWouldAppear(_ parentNode: Node, _ draggedFeed: PasteboardFeed) -> Int {
-		// The dragged feed’s unread count isn’t known here, so its sorted position can’t be predicted.
-		guard AppDefaults.sidebarSortType != .byUnreadCount else {
+		// The dragged feed’s unread count and last update aren’t known here, so its sorted position can’t be predicted.
+		guard AppDefaults.sidebarSortType == .alphabetically else {
 			return NSOutlineViewDropOnItemIndex
 		}
 		let draggedFeedWrapper = PasteboardFeedObjectWrapper(pasteboardFeed: draggedFeed)
@@ -675,7 +675,7 @@ private extension SidebarOutlineDataSource {
 	}
 
 	func indexWhereDraggedFolderWouldAppear(_ parentNode: Node, _ draggedFolder: PasteboardFolder) -> Int {
-		guard AppDefaults.sidebarSortType != .byUnreadCount else {
+		guard AppDefaults.sidebarSortType == .alphabetically else {
 			return NSOutlineViewDropOnItemIndex
 		}
 		let draggedFolderWrapper = PasteboardFolderObjectWrapper(pasteboardFolder: draggedFolder)
