@@ -17,7 +17,7 @@ import Foundation
 public enum SignificantImageFilter {
 
 	public static let minimumDimension = 64
-	public static let maximumAspectRatio = 4.0
+	public static let maximumAspectRatio = 6.0
 
 	/// `htmlClass` is an `<img>` tag’s `class` attribute. `enclosingLinkURLString` is the `href` of the `<a>` it’s inside.
 	public static func isSignificant(urlString: String, width: Int?, height: Int?, htmlClass: String? = nil, enclosingLinkURLString: String? = nil) -> Bool {
