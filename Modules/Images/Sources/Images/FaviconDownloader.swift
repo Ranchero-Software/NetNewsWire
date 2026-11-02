@@ -27,8 +27,7 @@ extension Notification.Name {
 	nonisolated static private let logger = Logger(subsystem: Logger.nnwSubsystem, category: "FaviconDownloader")
 
 	private var singleFaviconDownloaderCache = [String: SingleFaviconDownloader]() // faviconURL: SingleFaviconDownloader
-	private var remainingFaviconURLs = [String: ArraySlice<String>]() // homePageURL: array of faviconURLs that haven't been checked yet
-	private var currentHomePageHasOnlyFaviconICO = false
+	private var searches = [String: FaviconSearch]() // homePageURL: search through its favicon URLs
 
 	private var cache = [Feed: IconImage]() // faviconURL: RSImage
 
@@ -138,15 +137,17 @@ extension Notification.Name {
 			return nil
 		}
 
-		if let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: url) {
+		// A saved favicon that keeps failing is searched for again, in case the site moved it.
+		if let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: url), !ImageDatabase.shared.recentlyFailed(url: faviconURL) {
 			return favicon(with: faviconURL, homePageURL: url)
 		}
 
+		guard searches[url] == nil else {
+			return nil
+		}
 		if let faviconURLs = findFaviconURLs(with: url) {
-			// If the site explicitly specifies favicon.ico, it will appear twice.
-			self.currentHomePageHasOnlyFaviconICO = faviconURLs.count == 1
-			self.remainingFaviconURLs[url] = faviconURLs[...]
-			downloadNextFavicon(forHomePageURL: url, lastFailureWasTransient: false)
+			searches[url] = FaviconSearch(remainingFaviconURLs: faviconURLs[...])
+			downloadNextFavicon(forHomePageURL: url)
 		}
 
 		return nil
@@ -154,25 +155,29 @@ extension Notification.Name {
 
 	// MARK: - Notifications
 
+	/// Every home page searching with this favicon URL moves on: to saving it, or to its next candidate.
 	@objc func didLoadFavicon(_ note: Notification) {
 
 		guard let singleFaviconDownloader = note.object as? SingleFaviconDownloader else {
 			return
 		}
-
-		guard let homePageURL = singleFaviconDownloader.homePageURL else {
-			return
+		let faviconURL = singleFaviconDownloader.faviconURL
+		let foundFavicon = singleFaviconDownloader.iconImage != nil
+		if foundFavicon {
+			postFaviconDidBecomeAvailableNotification(faviconURL)
 		}
-		guard singleFaviconDownloader.iconImage != nil else {
-			if remainingFaviconURLs[homePageURL] != nil {
-				downloadNextFavicon(forHomePageURL: homePageURL, lastFailureWasTransient: singleFaviconDownloader.lastFailureWasTransient)
+
+		let homePageURLs = searches.filter { $0.value.faviconURL == faviconURL }.keys
+		for homePageURL in homePageURLs {
+			if foundFavicon {
+				saveFoundFavicon(faviconURL, homePageURL: homePageURL)
+			} else {
+				if singleFaviconDownloader.lastFailureWasTransient {
+					searches[homePageURL]?.hadTransientFailure = true
+				}
+				downloadNextFavicon(forHomePageURL: homePageURL)
 			}
-			return
 		}
-
-		remainingFaviconURLs[homePageURL] = nil
-
-		postFaviconDidBecomeAvailableNotification(singleFaviconDownloader.faviconURL)
 	}
 
 	/// A new downloader reads the new copy and posts `.DidLoadFavicon`, which leads to `.FaviconDidBecomeAvailable`.
@@ -203,6 +208,13 @@ extension Notification.Name {
 private extension FaviconDownloader {
 
 	static let specialCasesToSkip = [SpecialCase.rachelByTheBayHostName, SpecialCase.openRSSOrgHostName]
+
+	/// A home page’s favicon URLs are tried in order until one works.
+	struct FaviconSearch {
+		var remainingFaviconURLs: ArraySlice<String>
+		var faviconURL: String? // Being downloaded
+		var hadTransientFailure = false
+	}
 
 	func shouldSkipDownloadingFavicon(feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
@@ -240,41 +252,54 @@ private extension FaviconDownloader {
 		return true
 	}
 
-	// A skipped candidate advances to the next one — otherwise the queue
-	// would stall and the remaining candidates would never be tried.
-	// <https://github.com/Ranchero-Software/NetNewsWire/issues/4868>
-	func downloadNextFavicon(forHomePageURL homePageURL: String, lastFailureWasTransient: Bool) {
-		while let faviconURL = remainingFaviconURLs[homePageURL]?.first {
-			remainingFaviconURLs[homePageURL] = remainingFaviconURLs[homePageURL]?.dropFirst()
-			if canAttemptDownload(faviconURL) {
-				_ = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
+	/// A skipped candidate advances to the next one — otherwise the search
+	/// would stall and the remaining candidates would never be tried.
+	/// <https://github.com/Ranchero-Software/NetNewsWire/issues/4868>
+	///
+	/// Without a transient failure, a search that runs out of candidates saves that the home page has no favicon.
+	func downloadNextFavicon(forHomePageURL homePageURL: String) {
+		while var search = searches[homePageURL], let faviconURL = search.remainingFaviconURLs.first {
+			search.remainingFaviconURLs = search.remainingFaviconURLs.dropFirst()
+			search.faviconURL = nil
+			searches[homePageURL] = search
+			guard canAttemptDownload(faviconURL) else {
+				continue
+			}
+
+			let downloader = faviconDownloader(withURL: faviconURL, homePageURL: homePageURL)
+			if downloader.iconImage != nil {
+				// Already downloaded for another home page, such as one on the same site, so no `.DidLoadFavicon` is coming.
+				saveFoundFavicon(faviconURL, homePageURL: homePageURL)
+				postFaviconDidBecomeAvailableNotification(faviconURL)
 				return
+			}
+			if downloader.isFinding {
+				searches[homePageURL]?.faviconURL = faviconURL
+				return
+			}
+			// Failed earlier in this session, and isn’t due to be tried again yet.
+			if downloader.lastFailureWasTransient {
+				searches[homePageURL]?.hadTransientFailure = true
 			}
 		}
 
-		remainingFaviconURLs[homePageURL] = nil
-		if currentHomePageHasOnlyFaviconICO && !lastFailureWasTransient {
+		guard let search = searches.removeValue(forKey: homePageURL) else {
+			return
+		}
+		if !search.hadTransientFailure {
 			ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: nil)
 		}
 	}
 
+	func saveFoundFavicon(_ faviconURL: String, homePageURL: String) {
+		searches[homePageURL] = nil
+		ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
+	}
+
+	/// A cached downloader without an image tries again if its last attempt was a while ago.
 	func faviconDownloader(withURL faviconURL: String, homePageURL: String?) -> SingleFaviconDownloader {
-
-		var firstTimeSeeingHomepageURL = false
-
-		if let homePageURL, ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) == nil {
-			ImageDatabase.shared.saveHomePageFavicon(homePageURL: homePageURL, faviconURL: faviconURL)
-			firstTimeSeeingHomepageURL = true
-		}
-
 		if let downloader = singleFaviconDownloaderCache[faviconURL] {
-			if firstTimeSeeingHomepageURL && !downloader.downloadFaviconIfNeeded() {
-				// This is to handle the scenario where we have different homepages, but the same favicon.
-				// This happens for Twitter and probably other sites like Blogger.  Because the favicon
-				// is cached, we wouldn't send out a notification that it is now available unless we send
-				// it here.
-				postFaviconDidBecomeAvailableNotification(faviconURL)
-			}
+			downloader.downloadFaviconIfNeeded()
 			return downloader
 		}
 

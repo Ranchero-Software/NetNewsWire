@@ -23,6 +23,8 @@ extension Notification.Name {
 
 	public var iconImage: IconImage?
 	private(set) var lastFailureWasTransient = false
+	/// True until `.DidLoadFavicon` is posted for the current attempt.
+	private(set) var isFinding = true
 
 	private static let retryInterval: TimeInterval = 30 * 60 // 30 minutes
 
@@ -38,22 +40,20 @@ extension Notification.Name {
 		}
 	}
 
-	public func downloadFaviconIfNeeded() -> Bool {
-		// If we don’t have an image, and lastDownloadAttemptDate is a while ago, try again.
-		guard iconImage == nil else {
-			return false
+	/// Tries again when there’s no image and the last attempt was a while ago.
+	public func downloadFaviconIfNeeded() {
+		guard iconImage == nil, !isFinding else {
+			return
 		}
-
 		if Date().timeIntervalSince(lastDownloadAttemptDate) < Self.retryInterval {
-			return false
+			return
 		}
 		lastDownloadAttemptDate = Date()
+		isFinding = true
 
 		Task { @MainActor in
 			await findFavicon()
 		}
-
-		return true
 	}
 }
 
@@ -100,6 +100,7 @@ private extension SingleFaviconDownloader {
 
 	func postDidLoadFaviconNotification() {
 		assert(Thread.isMainThread)
+		isFinding = false
 		NotificationCenter.default.post(name: .DidLoadFavicon, object: self)
 	}
 }
