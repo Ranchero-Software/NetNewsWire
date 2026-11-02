@@ -62,21 +62,12 @@ extension Notification.Name {
 			return nil
 		}
 
-		var homePageURL = feed.homePageURL
 		if let faviconURL = feed.faviconURL {
-			return favicon(with: faviconURL, homePageURL: homePageURL)
+			return favicon(with: faviconURL, homePageURL: feed.homePageURL)
 		}
-
-		if homePageURL == nil {
-			// Base homePageURL off feedURL if needed. Won’t always be accurate, but is good enough.
-			if let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host {
-				homePageURL = scheme + "://" + host + "/"
-			}
-		}
-		if let homePageURL = homePageURL {
+		if let homePageURL = faviconHomePageURL(for: feed) {
 			return favicon(withHomePageURL: homePageURL)
 		}
-
 		return nil
 	}
 
@@ -111,11 +102,12 @@ extension Notification.Name {
 
 	/// The known favicon URL for `feed` (from feed settings or the home-page→favicon map), without
 	/// triggering any download. Both lookups are in-memory, so this is cheap to call per row.
+	/// The home page is the same one `favicon(for:)` saves under.
 	public func cachedFaviconURL(for feed: Feed) -> String? {
 		if let faviconURL = feed.faviconURL {
 			return faviconURL
 		}
-		if let homePageURL = feed.homePageURL, let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
+		if let homePageURL = faviconHomePageURL(for: feed), let faviconURL = ImageDatabase.shared.faviconURL(forHomePageURL: homePageURL) {
 			return faviconURL
 		}
 		return nil
@@ -218,6 +210,18 @@ private extension FaviconDownloader {
 
 	func shouldSkipDownloadingFavicon(feed: Feed) -> Bool {
 		SpecialCase.urlStringContainSpecialCase(feed.url, Self.specialCasesToSkip)
+	}
+
+	/// The home page that favicons are saved under: the feed’s home page, or else the feed URL’s scheme and host.
+	func faviconHomePageURL(for feed: Feed) -> String? {
+		if let homePageURL = feed.homePageURL {
+			return homePageURL.normalizedURL
+		}
+		// Won’t always be the real home page, but is good enough.
+		guard let feedURL = URL(string: feed.url), let scheme = feedURL.scheme, let host = feedURL.host else {
+			return nil
+		}
+		return (scheme + "://" + host + "/").normalizedURL
 	}
 
 	static let localeForLowercasing = Locale(identifier: "en_US")
